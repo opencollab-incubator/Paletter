@@ -148,7 +148,7 @@ public final class ConstantsGenerator {
      * @param version the Paletter version new and deprecated constants are marked with, e.g. {@code 2.1.0}
      */
     public static Result generate(Path data, Names names, JsonObject history, String version) throws IOException {
-        return generate(data, names, history, version, Sources.read(data, null));
+        return generate(data, names, history, version, Sources.read(data, null, Map.of()));
     }
 
     /**
@@ -628,16 +628,19 @@ public final class ConstantsGenerator {
             return new Sources(List.of(release), Map.of(), Map.of(), Set.of(), Set.of(), Map.of());
         }
 
-        public static Sources read(Path data, Path bds) throws IOException {
-            return read(data, bds, null);
-        }
-
         /**
          * @param data the bundled data directory ({@code versions.txt} and the version files)
          * @param bds the {@code data/bds} directory with the captures, or null for none
          * @param variantNames the {@code variant_names.txt}, or null for none
          */
         public static Sources read(Path data, Path bds, Path variantNames) throws IOException {
+            return read(data, bds, VariantNames.read(variantNames));
+        }
+
+        /**
+         * @param variantNames bundled version name to its item variant names, as {@link VariantNames#read} gives them
+         */
+        public static Sources read(Path data, Path bds, Map<String, List<VariantNames.Entry>> variantNames) throws IOException {
             List<VanillaData> releases = new ArrayList<>();
             List<Bundle> bundles = new ArrayList<>();
             for (Bundle bundle : readIndex(data)) {
@@ -683,7 +686,7 @@ public final class ConstantsGenerator {
                     }
                 }
             }
-            return new Sources(releases, gatedItems, gatedBlocks, educationItems, educationBlocks, VariantNames.read(variantNames));
+            return new Sources(releases, gatedItems, gatedBlocks, educationItems, educationBlocks, variantNames);
         }
 
         /** The variant names of a bundled version, preview or release; none for a version without. */

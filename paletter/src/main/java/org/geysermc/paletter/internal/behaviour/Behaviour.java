@@ -21,8 +21,8 @@ import java.util.List;
 import java.util.Objects;
 
 /**
- * The behaviour values of the blocks and items of one {@link Palette}, behind {@link Palette#blockBehaviour} and
- * {@link Palette#itemBehaviour}. Thread safe.
+ * The behaviour values of the blocks and items of one {@link Palette}, behind {@link Palette#resolve(org.geysermc.paletter.vanilla.BedrockBlockState)} and
+ * {@link org.geysermc.paletter.item.ResolvedItem#behaviour()}. Thread safe.
  * <p>
  * Vanilla values come from the bundled captures of the palette's data version (an older capture's value when the
  * version has none, see {@link Provenance#inherited()}); keys the captures lack fall back to what the component data
@@ -48,6 +48,8 @@ public final class Behaviour {
     private final BehaviourStore store;
     /** The behaviour of the palette this one extends, whose states come first here; null if there is none. */
     private final @Nullable Behaviour parent;
+    /** The behaviour of the palette this one extends, whose items this one shares by instance; null if there is none. */
+    private final @Nullable Behaviour itemParent;
     /** The number of states of {@link #parent}: the states from this position on are this behaviour's own. */
     private final int base;
     /** The columns of the own states by key ordinal, null until built; written under the lock, read without it. */
@@ -65,6 +67,7 @@ public final class Behaviour {
         BlockRegistry registry = palette.blocks();
         boolean extending = parent != null && registry.extendsStatesOf(parent.palette.blocks());
         this.parent = extending ? parent : null;
+        this.itemParent = parent;
         this.base = extending ? parent.palette.blocks().size() : 0;
         this.items = palette.items().definitions();
         this.minRuntimeId = items.stream().mapToInt(RegisteredItem::getRuntimeId).min().orElse(0);
@@ -110,12 +113,27 @@ public final class Behaviour {
     }
 
     /**
-     * @return the handle of an item of the palette, see {@link #block(int)}; null if the item is not of the palette
+     * @return the handle of an item of the palette, of the palette this one extends for an item they share (the same instance), see {@link #block(int)}; null if the item is not of the palette
      */
     public @Nullable ItemValues item(@NonNull RegisteredItem item) {
+        // The oldest behaviour that has this instance owns the handle, so one item has one handle in a palette and its extensions.
+        // A loop, not a call on the parent, for the same reason as in {@link #block(int)}
+        Behaviour owner = null;
+        int found = -1;
+        for (Behaviour candidate = this; candidate != null; candidate = candidate.itemParent) {
+            int position = candidate.positionOf(item);
+            if (position >= 0) {
+                owner = candidate;
+                found = position;
+            }
+        }
+        return owner == null ? null : new ItemValues(owner, found);
+    }
+
+    private int positionOf(RegisteredItem item) {
         int at = item.getRuntimeId() - minRuntimeId;
         int position = at < 0 || at >= positions.length ? -1 : positions[at];
-        return position < 0 || items.get(position) != item ? null : new ItemValues(this, position);
+        return position < 0 || items.get(position) != item ? -1 : position;
     }
 
     /**

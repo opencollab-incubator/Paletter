@@ -58,9 +58,10 @@ BedrockItemVariant variant = palette.itemVariant("minecraft:potion", 5, Lookup.R
 int stone = palette.runtimeId(BedrockBlocks.STONE.defaultState());
 ItemData apples = palette.encode(BedrockItemStack.of(BedrockItems.APPLE.base(), 3));
 
-// Behaviour values BDS uses but never sends to clients
-float friction = palette.blockBehaviour(stone).get(BlockBehaviour.FRICTION);
-BlockShape collision = palette.blockBehaviour(stone).get(BlockBehaviour.COLLISION_SHAPE);
+// Behaviour values BDS uses but never sends to clients, of what the palette resolved
+ResolvedBlock block = palette.resolve(BedrockBlocks.STONE.defaultState());
+float friction = block.behaviour().get(BlockBehaviour.FRICTION);
+BlockShape collision = block.behaviour().get(BlockBehaviour.COLLISION_SHAPE);
 ```
 
 Runnable versions of this are in [`examples/`](examples) (`./gradlew :examples:run`): a Bedrock server, a translator

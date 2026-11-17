@@ -7,7 +7,7 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
 /**
- * The behaviour keys of item types, read with {@code palette.itemBehaviour(type).get(key)} ({@link ItemValues}). Values
+ * The behaviour keys of item types, read with {@code palette.resolve(variant).behaviour().get(key)} ({@link ItemValues}). Values
  * are per item type (not per aux value) and per data version. Each key is a property of Bedrock Dedicated Server (its
  * source is named on the key).
  *

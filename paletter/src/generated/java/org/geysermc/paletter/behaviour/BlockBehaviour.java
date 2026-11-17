@@ -7,7 +7,7 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
 /**
- * The behaviour keys of block states, read with {@code palette.blockBehaviour(state).get(key)} ({@link BlockValues}).
+ * The behaviour keys of block states, read with {@code palette.resolve(state).behaviour().get(key)} ({@link BlockValues}).
  * Values are per state and per data version; {@link BlockValues#explain} says where one comes from. Each key is a property
  * of Bedrock Dedicated Server (its source is named on the key), in BDS's units, not those of add-on components: custom
  * blocks are converted (the component {@code minecraft:friction} 0.4 is a friction of 0.6).

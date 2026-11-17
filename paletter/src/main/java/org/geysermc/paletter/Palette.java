@@ -1,8 +1,6 @@
 package org.geysermc.paletter;
 
 import org.geysermc.paletter.annotation.Internal;
-import org.geysermc.paletter.behaviour.BlockValues;
-import org.geysermc.paletter.behaviour.ItemValues;
 import org.geysermc.paletter.internal.behaviour.Behaviour;
 import org.geysermc.paletter.internal.behaviour.BehaviourStore;
 import org.geysermc.paletter.internal.Canonicals;
@@ -29,6 +27,7 @@ import org.geysermc.paletter.internal.block.BlockResolution;
 import org.geysermc.paletter.internal.block.BlockStates;
 import org.geysermc.paletter.internal.CanonicalBlocks;
 import org.geysermc.paletter.block.RegisteredBlockState;
+import org.geysermc.paletter.block.ResolvedBlock;
 import org.geysermc.paletter.creative.CreativeContent;
 import org.geysermc.paletter.creative.CreativeLayout;
 import org.geysermc.paletter.creative.CreativeOrdering;
@@ -116,6 +115,8 @@ public final class Palette {
         this.creative = creative;
         this.report = report;
         this.ordering = ordering;
+        // Last: the registry may be asked for the behaviour of this palette from now on
+        items.bind(this);
     }
 
     /**
@@ -154,75 +155,72 @@ public final class Palette {
     }
 
     /**
-     * @return the behaviour values of this palette, behind {@link #blockBehaviour} and {@link #itemBehaviour}
+     * @return the behaviour values of this palette, behind {@link #resolve(BedrockBlockState)} and {@link ResolvedItem#behaviour()}
      */
     @Internal
     public @NonNull Behaviour behaviour() {
         Behaviour result = behaviour;
+        return result != null ? result : buildBehaviour();
+    }
+
+    /** Out of line and small: a hot caller can inline {@link #behaviour()} whole. */
+    private synchronized Behaviour buildBehaviour() {
+        Behaviour result = behaviour;
         if (result == null) {
-            synchronized (this) {
-                result = behaviour;
-                if (result == null) {
-                    behaviour = result = Behaviour.of(this, behaviourStore.get(), parent == null ? null : parent.behaviour());
-                }
-            }
+            behaviour = result = Behaviour.of(this, behaviourStore.get(), parent == null ? null : parent.behaviour());
         }
         return result;
     }
 
     /**
-     * The behaviour values (friction, destroy time, collision shape, light, ...) of a block state in this palette:
-     * {@code palette.blockBehaviour(runtimeId).get(BlockBehaviour.FRICTION)}. Vanilla values come from the bundled
-     * captures of the palette's version, custom ones from their components. A lookup of the runtime id and an array
-     * read; it does not allocate.
+     * What this palette sends for a block state and what that does: the definition (fallbacks applied, as
+     * {@link #blockDefinition(BedrockBlockState)}), whether a fallback was used, and its behaviour values (friction,
+     * destroy time, collision shape, light, ...): {@code palette.resolve(state).behaviour().get(BlockBehaviour.FRICTION)}.
+     * Vanilla values come from the bundled captures of the palette's version, custom ones from their components.
+     * Behaviour is only reachable through a resolution, so the palette that resolved it is the one that answers.
+     * <p>
+     * Makes a {@link ResolvedBlock} on each call, which is cheap: the lookups are array reads. Do not compare resolutions with {@code ==}.
      *
-     * @param runtimeId the runtime id of a state of this palette, as it sends it: the hash, or the sequential id of a
-     *                  palette that numbers them
-     * @throws IllegalArgumentException if the palette has no state with this runtime id; {@link #blockDefinition(int)}
-     *         is null then
+     * @throws IllegalArgumentException like {@link #blockDefinition(BedrockBlockState)}. Use
+     *         {@link #resolve(BedrockBlockState, ResolvedBlock)} for states that may be missing
      * @since 0.1.0
      */
-    public @NonNull BlockValues blockBehaviour(int runtimeId) {
+    public @NonNull ResolvedBlock resolve(@NonNull BedrockBlockState state) {
+        return resolveCanonical(requireCanonical(state));
+    }
+
+    /**
+     * @param orElse what to return where {@link #resolve(BedrockBlockState)} throws, may be null: like
+     *         {@link #blockDefinition(BedrockBlockState, RegisteredBlockState)}, not the configured {@code Fallbacks},
+     *         which apply before it
+     * @return the resolution of a state, or {@code orElse} if the state is not in this palette
+     * @since 0.1.0
+     */
+    public @Nullable ResolvedBlock resolve(@NonNull BedrockBlockState state, @Nullable ResolvedBlock orElse) {
+        int canonical = state.canonicalIn(blocks.canonical());
+        return canonical == -1 ? orElse : resolveCanonical(canonical);
+    }
+
+    private ResolvedBlock resolveCanonical(int canonical) {
+        RegisteredBlockState block = blocks.block(canonical);
+        return new ResolvedBlock(block, blocks.isFallback(canonical), behaviour().block(blocks.indexOfRuntimeId(block.getRuntimeId())));
+    }
+
+    /**
+     * What this palette does with a block it sent, by runtime id: for ids a server stores itself or reads from
+     * packets, see {@link #blockDefinition(int)}. Never a fallback: the block is what is sent.
+     *
+     * @param runtimeId a block runtime id of this palette
+     * @return the resolution, or null if this palette has no block with this runtime id
+     * @since 0.1.0
+     */
+    public @Nullable ResolvedBlock resolveBlock(int runtimeId) {
         int index = blocks.indexOfRuntimeId(runtimeId);
         if (index == -1) {
-            throw new IllegalArgumentException("no block state with runtime id " + runtimeId + " in " + this);
+            return null;
         }
-        return behaviour().block(index);
-    }
-
-    /**
-     * @return the behaviour values of the state this palette sends for a state, see {@link #blockDefinition(BedrockBlockState)}
-     * @throws IllegalArgumentException like {@link #blockDefinition(BedrockBlockState)}
-     * @since 0.1.0
-     */
-    public @NonNull BlockValues blockBehaviour(@NonNull BedrockBlockState state) {
-        return blockBehaviour(blockDefinition(state).getRuntimeId());
-    }
-
-    /**
-     * @return the behaviour values of the default state of a block, see {@link #blockBehaviour(BedrockBlockState)}
-     * @throws IllegalArgumentException like {@link #blockDefinition(BedrockBlockState)}
-     * @since 0.1.0
-     */
-    public @NonNull BlockValues blockBehaviour(@NonNull BedrockBlockType type) {
-        return blockBehaviour(type.defaultState());
-    }
-
-    /**
-     * The behaviour values (max stack size, durability, attack damage, ...) of an item in this palette:
-     * {@code palette.itemBehaviour(BedrockItems.APPLE).get(ItemBehaviour.MAX_STACK_SIZE)}.
-     *
-     * @throws IllegalArgumentException if this palette has no such item: {@link #itemDefinition(BedrockItemType)} is
-     *         null then
-     * @since 0.1.0
-     */
-    public @NonNull ItemValues itemBehaviour(@NonNull BedrockItemType type) {
-        RegisteredItem item = itemDefinition(type);
-        ItemValues values = item == null ? null : behaviour().item(item);
-        if (values == null) {
-            throw new IllegalArgumentException(type + " is not an item of " + this);
-        }
-        return values;
+        RegisteredBlockState block = blocks.byIndex(index);
+        return new ResolvedBlock(block, false, behaviour().block(index));
     }
 
     public @NonNull DataVersion version() {

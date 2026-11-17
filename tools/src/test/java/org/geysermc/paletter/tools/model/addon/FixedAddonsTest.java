@@ -54,6 +54,18 @@ class FixedAddonsTest {
     }
 
     @Test
+    void probesDoNotShareTheUuidsOfTheSpecAddon(@TempDir Path out) throws IOException {
+        // update installs them on the server the spec capture reuses, and a world loads its packs by UUID
+        FixedAddons.writeCreative(out.resolve("creative"));
+        FixedAddons.writeCreativeLarge(out.resolve("large"));
+        for (Path manifest : List.of(out.resolve("creative/behavior_pack/manifest.json"), out.resolve("large/behavior_pack/manifest.json"))) {
+            String uuid = com.google.gson.JsonParser.parseString(Files.readString(manifest)).getAsJsonObject()
+                .getAsJsonObject("header").get("uuid").getAsString();
+            assertTrue(!uuid.equals(AddonGenerator.BP_UUID) && !uuid.equals(AddonGenerator.RP_UUID), manifest + ": " + uuid);
+        }
+    }
+
+    @Test
     void largeProbeHasTheCapturedIdentifiers(@TempDir Path out) throws IOException {
         FixedAddons.writeCreativeLarge(out);
         Path capture = ROOT.resolve("data/bds/1.26.63.1/creative-large");

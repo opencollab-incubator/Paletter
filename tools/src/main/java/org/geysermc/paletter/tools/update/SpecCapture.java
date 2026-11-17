@@ -399,9 +399,9 @@ public final class SpecCapture {
     }
 
     /**
-     * Removes the packs in {@code packs} whose manifest has the spec add-on's UUID. On a server that {@code update} reuses,
-     * the creative order probe pack ({@code FixedAddons.writeCreative}) is still installed with that UUID, and BDS would
-     * load it for the spec world in place of the spec add-on.
+     * Removes the packs in {@code packs} whose manifest has the spec add-on's UUID. A safeguard for a server that
+     * {@code update} reuses: when the creative order probe pack ({@code FixedAddons.writeCreative}) had that UUID, BDS
+     * loaded it for the spec world in place of the spec add-on.
      */
     static void removePacksWithUuid(Path packs, String uuid) throws IOException {
         if (!Files.isDirectory(packs)) {

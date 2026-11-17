@@ -1,6 +1,8 @@
 package org.geysermc.paletter.item;
 
 import org.geysermc.paletter.Origin;
+import org.geysermc.paletter.Palette;
+import org.geysermc.paletter.internal.behaviour.Behaviour;
 import org.geysermc.paletter.internal.CanonicalItems;
 import org.geysermc.paletter.internal.item.ItemInterner;
 import org.geysermc.paletter.internal.item.ItemVariant;
@@ -99,6 +101,32 @@ public final class ItemRegistry implements DefinitionRegistry<ItemDefinition> {
     private final IntSet renumbered;
     private volatile @Nullable CanonicalTable canonicalTable;
     private volatile @Nullable ResolvedItem defaultResolved;
+    /** The palette that owns this registry, for the behaviour of what it resolves; null until the palette is made. */
+    private volatile @Nullable Palette owner;
+
+    /**
+     * Internal: binds the palette that owns this registry, unless one is bound: a palette that shares the registry of
+     * another (a copy with a report) has the same values. Called by the palette when it is made.
+     */
+    @Internal
+    public synchronized void bind(@NonNull Palette palette) {
+        if (owner == null) {
+            owner = palette;
+        }
+    }
+
+    /**
+     * @return the behaviour of the palette that owns this registry
+     * @throws IllegalStateException if no palette owns it yet, which what a palette resolves never sees
+     */
+    @Internal
+    public @NonNull Behaviour behaviour() {
+        Palette palette = owner;
+        if (palette == null) {
+            throw new IllegalStateException("no palette owns this item registry");
+        }
+        return palette.behaviour();
+    }
 
     private ItemRegistry(Builder builder, Map<String, RegisteredBlockState> defaultBlocks, Set<String> multiStateBlockItems) {
         this.parent = builder.parent;
@@ -374,7 +402,7 @@ public final class ItemRegistry implements DefinitionRegistry<ItemDefinition> {
             RegisteredItem fallback = getDefinition(defaultFallback.target().identifier());
             if (fallback != null) {
                 defaultResolved = result = new ResolvedItem(fallback, defaultFallback.variant() == null ? 0 : defaultFallback.variant().aux(),
-                    defaultBlockOf(fallback.getIdentifier()), true);
+                    defaultBlockOf(fallback.getIdentifier()), true, this);
             }
         }
         return result;
@@ -403,7 +431,7 @@ public final class ItemRegistry implements DefinitionRegistry<ItemDefinition> {
                 block = resolution.block();
             }
         }
-        return new ResolvedItem(item, damage, block, fallback);
+        return new ResolvedItem(item, damage, block, fallback, this);
     }
 
     // ---- Canonical ids ----
@@ -575,6 +603,10 @@ public final class ItemRegistry implements DefinitionRegistry<ItemDefinition> {
         return result;
     }
 
+    private static boolean sameResolution(@Nullable ResolvedItem a, @Nullable ResolvedItem b) {
+        return a == b || a != null && b != null && a.sameAs(b);
+    }
+
     /**
      * @return true if the entries of the parent's table that name a block state resolve to the same here: with custom
      * blocks added, a state that did not resolve before may do now. Entries without a state do not depend on the blocks
@@ -585,7 +617,7 @@ public final class ItemRegistry implements DefinitionRegistry<ItemDefinition> {
         }
         for (int i = 0; i < base.items.length; i++) {
             ItemVariant variant = canonical.variant(i);
-            if (variant.blockState() != null && !Objects.equals(resolveOrDefault(variant), base.items[i])) {
+            if (variant.blockState() != null && !sameResolution(resolveOrDefault(variant), base.items[i])) {
                 return false;
             }
         }
