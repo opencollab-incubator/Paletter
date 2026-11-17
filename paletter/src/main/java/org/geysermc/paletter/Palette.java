@@ -235,10 +235,14 @@ public final class Palette {
         return layers;
     }
 
+    /** Internal: use {@link #blockDefinition(BedrockBlockState)}, {@link #blockState(BlockDefinition)} and the other methods of this class. */
+    @Internal
     public @NonNull BlockRegistry blocks() {
         return blocks;
     }
 
+    /** Internal: use {@link #itemDefinition(String)}, {@link #itemDefinitions()}, {@link #itemTags()} and the other methods of this class. */
+    @Internal
     public @NonNull ItemRegistry items() {
         return items;
     }
@@ -396,6 +400,41 @@ public final class Palette {
      */
     public @Nullable RegisteredItem itemDefinition(@NonNull BedrockItemType type) {
         return items.item(type.identifier());
+    }
+
+    /**
+     * @param identifier an item identifier such as {@code minecraft:stick}
+     * @return the item with this identifier as registered in this palette, or null if it has none; fallbacks are not
+     *         applied, see {@link #encode}
+     * @since 0.1.0
+     */
+    public @Nullable RegisteredItem itemDefinition(@NonNull String identifier) {
+        return items.item(identifier);
+    }
+
+    /**
+     * @return every item registered in this palette, in runtime id order
+     * @since 0.1.0
+     */
+    public @NonNull List<RegisteredItem> itemDefinitions() {
+        return items.definitions();
+    }
+
+    /**
+     * @return the item tags, tag to item identifiers: the vanilla tags plus the tags of custom items and layers
+     * @since 0.1.0
+     */
+    public @NonNull Map<String, List<String>> itemTags() {
+        return items.tags();
+    }
+
+    /**
+     * @return the key of a block this palette sends, the inverse of {@link #blockDefinition(BedrockBlockState)}, or null
+     *         for a definition of another palette or one that no state resolves to
+     * @since 0.1.0
+     */
+    public @Nullable BedrockBlockState blockState(@NonNull BlockDefinition definition) {
+        return definition instanceof RegisteredBlockState block ? blocks.key(block) : null;
     }
 
     // ---- Stacks ----

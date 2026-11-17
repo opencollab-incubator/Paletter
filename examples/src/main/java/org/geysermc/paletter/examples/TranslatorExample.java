@@ -68,7 +68,7 @@ public final class TranslatorExample {
         // A session: a short lived layer on top of the shared palette; what it does not touch stays identical
         CustomItem sessionItem = CustomItem.builder("example:session_item").component(Icon.of("session_item")).build();
         Palette session = shared.extend(PaletteLayer.builder("session").item(sessionItem).build());
-        System.out.println("session shares the block palette: " + (session.blocks() == shared.blocks()));
-        System.out.println("session adds item ids: " + (session.items().definitions().size() - shared.items().definitions().size()));
+        System.out.println("session shares the block palette: " + (session.blockDefinition(BedrockBlocks.STONE.defaultState()) == shared.blockDefinition(BedrockBlocks.STONE.defaultState())));
+        System.out.println("session adds item ids: " + (session.itemDefinitions().size() - shared.itemDefinitions().size()));
     }
 }

@@ -36,7 +36,7 @@ is not packaged, because Cloudburst's dependencies split packages across jars.
 Keys (`BedrockBlockType`, `BedrockBlockState`, `BedrockItemType`, `BedrockItemVariant`) are identities. `equals` always
 works. `==` works too for vanilla keys, which are singletons, and for registered custom content: a `CustomItem` or
 `CustomBlock` creates its types, their base item variant and its block states once and owns them, and a palette it is
-registered in hands back exactly those (`decode`, `block(NbtMap)`, `RegisteredItem#key`, `RegisteredBlockState#key`,
+registered in hands back exactly those (`decode`, `block(NbtMap)`, `RegisteredItem#key`, `Palette#blockState`,
 ...). Other variants of a custom item (`layer.variant(ruby.type().variantOf(5))`) are equal to the one the layer was
 given, not identical: compare them with `equals`. A key for an identifier Paletter does
 not know is a plain value, equal by identifier and not interned, so memory is bounded by registered content. Equal custom
@@ -51,6 +51,8 @@ Methods named `blockState`, `itemVariant` or `...Of` return keys; methods named 
 | `Palette#runtimeId(BedrockBlockState)` | The runtime id (the state hash). Throws if the palette lacks the state; `runtimeIdOrDefault` does not. |
 | `Palette#blockDefinition(BedrockBlockState)` | The `RegisteredBlockState` this version sends, after adapting and fallbacks. `blockOrNull` returns null instead of throwing. |
 | `Palette#itemDefinition(BedrockItemType)` | The `RegisteredItem`, or null if the version lacks it. Fallbacks are not applied. |
+| `Palette#itemDefinition(String)` | The `RegisteredItem` for an identifier, or null. `itemDefinitions()` lists all items in runtime id order, `itemTags()` the item tags (tag to identifiers). |
+| `Palette#blockState(BlockDefinition)` | The key of a block this palette sends, the inverse of `blockDefinition`; null for a definition of another palette. |
 | `Palette#resolve(BedrockItemVariant)` | What `encode` would send, without building an `ItemData`. `variant()` is the variant this palette sends for the requested one: the requested variant itself unless `fallback()`. |
 | `Palette#blockOf(BedrockItemVariant)` | The key of the block an item is sent with, or null. `blockDefinition(blockOf(v))` is what is sent. |
 | `Palette#encode(BedrockItemStack)` | The `ItemData` for the client, with fallbacks applied. |

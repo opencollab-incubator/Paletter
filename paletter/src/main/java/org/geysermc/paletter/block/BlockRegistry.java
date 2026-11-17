@@ -52,6 +52,7 @@ import java.util.concurrent.ConcurrentHashMap;
  *
  * @since 0.1.0
  */
+@Internal
 public final class BlockRegistry implements DefinitionRegistry<BlockDefinition> {
     /**
      * Numeric ids of custom blocks start here, to stay clear of vanilla block ids: where BDS starts them in every spec capture.

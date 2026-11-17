@@ -70,6 +70,7 @@ import java.util.function.Consumer;
  *
  * @since 0.1.0
  */
+@Internal
 public final class ItemRegistry implements DefinitionRegistry<ItemDefinition> {
     private static final NbtMap NO_BLOCK = NbtMap.builder().putString("name", "paletter:no_block").build();
 

@@ -30,6 +30,7 @@ import java.util.Set;
  *
  * @since 0.1.0
  */
+@Internal
 public final class RegisteredBlock {
     private final String identifier;
     private final Origin origin;
