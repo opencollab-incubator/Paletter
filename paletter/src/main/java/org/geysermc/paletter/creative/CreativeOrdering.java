@@ -1,7 +1,7 @@
 package org.geysermc.paletter.creative;
 
-import org.geysermc.paletter.annotation.Internal;
 import org.checkerframework.checker.nullness.qual.NonNull;
+import org.geysermc.paletter.annotation.Internal;
 
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;

@@ -1,8 +1,8 @@
 package org.geysermc.paletter.creative;
 
-import org.geysermc.paletter.annotation.Internal;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
+import org.geysermc.paletter.annotation.Internal;
 import org.geysermc.paletter.item.BedrockItemStack;
 import org.geysermc.paletter.vanilla.BedrockItemType;
 import org.geysermc.paletter.vanilla.BedrockItemVariant;

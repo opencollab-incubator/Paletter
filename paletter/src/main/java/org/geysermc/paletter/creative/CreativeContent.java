@@ -1,6 +1,5 @@
 package org.geysermc.paletter.creative;
 
-import org.geysermc.paletter.annotation.Internal;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.cloudburstmc.protocol.bedrock.data.inventory.CreativeItemData;
@@ -8,6 +7,7 @@ import org.cloudburstmc.protocol.bedrock.data.inventory.CreativeItemGroup;
 import org.cloudburstmc.protocol.bedrock.data.inventory.ItemData;
 import org.cloudburstmc.protocol.bedrock.packet.CreativeContentPacket;
 import org.geysermc.paletter.PaletteReport;
+import org.geysermc.paletter.annotation.Internal;
 import org.geysermc.paletter.item.BedrockItemStack;
 import org.geysermc.paletter.item.ItemRegistry;
 
