@@ -43,6 +43,11 @@ public record CapturedData(Map<String, NbtMap> items, Map<String, NbtMap> blockP
         return new CapturedData(items, blocks, creativeLayout(creative));
     }
 
+    /** The recipe files of a capture directory ({@link RecipeCapture}). */
+    public static RecipeCapture.Recipes recipes(Path directory) throws IOException {
+        return RecipeCapture.read(directory);
+    }
+
     /** Same conversion as the generator's importer: wire groups (unnamed = run of loose stacks) to the layout model. */
     static RawLayout creativeLayout(JsonObject root) throws IOException {
         JsonArray groups = root.getAsJsonArray("groups");

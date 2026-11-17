@@ -118,6 +118,11 @@ public final class CaptureWriter {
         if (result.voxelShapes != null) {
             VoxelShapeCapture.write(directory.resolve(VoxelShapeCapture.FILE), result.voxelShapes, bdsVersion);
         }
+        Map<Integer, String> itemNames = new LinkedHashMap<>();
+        for (ItemDefinition item : result.items) {
+            itemNames.put(item.getRuntimeId(), item.getIdentifier());
+        }
+        new RecipeCapture(itemNames, statesByHash::get).write(directory, result.crafting, result.trim, bdsVersion);
         Files.writeString(directory.resolve("capture.json"), GSON.toJson(summary()));
 
         if (customDirectory != null) {
