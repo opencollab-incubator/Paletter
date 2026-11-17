@@ -88,7 +88,7 @@ public final class ResolvedItem {
     /**
      * The variant this palette sends for the requested one, as a key: the requested variant itself, or if {@link #fallback()} its replacement
      * (of an {@code ItemFallback}, also a forced one, or the default fallback {@code minecraft:unknown} for a variant
-     * the version lacks). A replacement has the aux of the fallback's variant, else the replaced variant's.
+     * the version lacks). A replacement is exactly the fallback's variant.
      *
      * @return the variant this palette sends for the requested one, never null
      * @since 0.1.0

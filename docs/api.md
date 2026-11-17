@@ -123,8 +123,8 @@ aux, so creating or using one loads no bundled data, and a key made before any p
 after. The base variant and the named constants of `BedrockItemVariants` are the same object whenever they are asked for,
 so `==` holds for them; other auxes are new variants, compare those with `equals`. An `ItemKey` always means exactly that
 variant, and a type means aux 0, in every method that takes one (`ItemFallback.of`, `ItemMatcher.of`,
-`CreativePlacement.after` too); where a type means every aux, the name says so (`ItemFallback.keepingAux`, `ItemMatcher.anyVariantOf`,
-`CreativePlacement.afterAnyOf`). Keys for an identifier are made with `Palette#itemType` and
+`CreativePlacement.after` too); where a type means every aux, the name says so (`ItemMatcher.anyVariantOf`,
+`CreativePlacement.afterAnyVariantOf`). Keys for an identifier are made with `Palette#itemType` and
 `Palette#itemVariant`, or are the type of a `CustomItem`.
 
 `BedrockItemVariants` names the aux variants of potions, splash and lingering potions, tipped arrows, beds and banners.
@@ -199,10 +199,13 @@ items).
 ```java
 Fallbacks fallbacks = Fallbacks.builder()
     .block(BedrockBlocks.ICICLE, BedrockBlocks.STONE)
-    .item(version, BedrockItems.POPLAR_BOAT, ItemFallback.keepingAux(BedrockItems.BIRCH_BOAT))
+    .item(version, BedrockItems.POPLAR_BOAT, ItemFallback.of(BedrockItems.BIRCH_BOAT))
     .block(version, BedrockBlocks.POPLAR_LOG, BlockFallback.of(BedrockBlocks.BIRCH_LOG).forced())
     .build();
 ```
+
+An item fallback is an exact variant: `ItemFallback.of(BedrockItems.BIRCH_BOAT)` sends the base variant of that type, and
+`ItemFallback.of(BedrockItems.POTION.variant(5))` that variant, whichever variant it replaces.
 
 `.forced()` replaces content even in versions that have it. Paletter ships no fallbacks: which replacement is right is
 your decision. `./gradlew :tools:run --args="check-data"` lists what each older version lacks.

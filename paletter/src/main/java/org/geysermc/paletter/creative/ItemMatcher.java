@@ -50,8 +50,8 @@ public sealed interface ItemMatcher permits ItemMatchers.Id, ItemMatchers.Damage
     }
 
     /**
-     * Matches the stacks of exactly this variant: its item and aux value (a type is its base variant, aux 0; see
-     * {@link #anyVariantOf} for every aux).
+     * Matches the stacks of exactly that variant (a type is its base variant; see {@link #anyVariantOf} for any
+     * variant).
      *
      * @since 0.1.0
      */

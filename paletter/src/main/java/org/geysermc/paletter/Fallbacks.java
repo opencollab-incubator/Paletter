@@ -121,8 +121,11 @@ public final class Fallbacks {
             return this;
         }
 
+        /**
+         * Like {@link #item(BedrockItemType, ItemFallback)} with {@link ItemFallback#of} the base variant of {@code replacement}.
+         */
         public @NonNull Builder item(@NonNull BedrockItemType type, @NonNull BedrockItemType replacement) {
-            return item(type, ItemFallback.keepingAux(replacement));
+            return item(type, ItemFallback.of(replacement));
         }
 
         /**

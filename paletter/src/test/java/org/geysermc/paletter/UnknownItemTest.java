@@ -61,8 +61,16 @@ class UnknownItemTest {
     }
 
     @Test
+    void unknownIsTheExactBaseVariantWhateverAuxWasAsked() {
+        Palette oldest = PALETTER.palette(OLDEST);
+        BedrockItemVariant nobody = BedrockItemVariant.fromIdentifier("nobody:item", 7);
+        assertEquals(0, oldest.resolve(nobody).variant().aux());
+        assertEquals(BedrockItems.UNKNOWN.variant(), oldest.resolve(nobody).variant());
+    }
+
+    @Test
     void theConfiguredDefaultFallbackIsUsedEverywhere() {
-        Paletter stick = Paletter.builder().fallbacks(Fallbacks.builder().defaultItem(ItemFallback.keepingAux(BedrockItems.STICK)).build()).build();
+        Paletter stick = Paletter.builder().fallbacks(Fallbacks.builder().defaultItem(ItemFallback.of(BedrockItems.STICK)).build()).build();
         Palette oldest = stick.palette(OLDEST);
         BedrockItemVariant missing = missingInOldest(oldest);
         BedrockItemVariant nobody = BedrockItemVariant.fromIdentifier("nobody:item", 7);

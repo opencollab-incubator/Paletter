@@ -35,7 +35,7 @@ class ResolvedBehaviourTest {
     private static final Paletter PALETTER = Paletter.builder().build();
     private static final Paletter FORCED = Paletter.builder().fallbacks(Fallbacks.builder()
         .block(BedrockBlocks.DIRT, BlockFallback.of(BedrockBlocks.ICE).forced())
-        .item(BedrockItems.ENDER_PEARL, ItemFallback.keepingAux(BedrockItems.DIAMOND_SWORD).forced())
+        .item(BedrockItems.ENDER_PEARL, ItemFallback.of(BedrockItems.DIAMOND_SWORD).forced())
         .build()).build();
 
     private static Palette latest() {
