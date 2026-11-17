@@ -7,6 +7,7 @@ import org.geysermc.paletter.block.component.Friction;
 import org.geysermc.paletter.block.component.Geometry;
 import org.geysermc.paletter.block.component.LightEmission;
 import org.geysermc.paletter.internal.component.ComponentIndex;
+import org.geysermc.paletter.item.component.Durability;
 import org.geysermc.paletter.item.component.KineticWeapon;
 import org.geysermc.paletter.item.component.Rarity;
 import org.junit.jupiter.api.Test;
@@ -154,6 +155,9 @@ class GeneratedApiTest {
         assertTrue(checked > 0);
         assertThrows(IllegalArgumentException.class, () -> new Friction(5f), "BDS takes 0 to 0.9");
         assertThrows(IllegalArgumentException.class, () -> new LightEmission(16), "BDS takes at most 15");
+        // and an order between two fields BDS demands ("max value cannot be lower than min value")
+        assertThrows(IllegalArgumentException.class, () -> Durability.DamageChance.builder().min(50).max(10).build());
+        assertEquals(10, Durability.DamageChance.builder().min(10).max(10).build().max(), "equal is in order");
     }
 
     /** The JSON BDS accepts that the docs do not model, as the API expresses it (the conformance suite checks each against BDS's NBT). */

@@ -37,6 +37,14 @@ public final class Check {
         throw new IllegalArgumentException(field + " must be one of [" + list + "], was " + format(value, ""));
     }
 
+    /** Two values of one object BDS takes only in order ("max value cannot be lower than min value"). */
+    public static void order(@NonNull String owner, @NonNull String low, double lowValue, @NonNull String high, double highValue) {
+        if (highValue < lowValue) {
+            throw new IllegalArgumentException(owner + "." + high + " must not be below " + low + ", was " + format(highValue, "") + " and "
+                + format(lowValue, ""));
+        }
+    }
+
     /** A value BDS takes only in whole steps (degrees in quarter turns): a multiple of {@code step}. */
     public static void multipleOf(@NonNull String field, double value, double step) {
         double steps = value / step;

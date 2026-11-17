@@ -401,6 +401,9 @@ final class ApiSource {
         if (f.allowed != null) {
             s.append(" One of ").append(f.allowed.stream().map(Docs::number).toList()).append('.');
         }
+        if (f.notBelow != null) {
+            s.append(" Not below {@code ").append(f.notBelow.json).append("} (").append(f.notBelowSource).append(").");
+        }
         if (f.multipleOf != null) {
             s.append(" Multiples of ").append(Docs.number(f.multipleOf)).append(" only (BDS refuses the others).");
         }
@@ -517,6 +520,21 @@ final class ApiSource {
                 }
                 body.addStatement("$T.oneOf($S, $N, $L)", CHECK, name, f.java, String.join(", ", f.allowed.stream().map(Docs::number).toList()));
                 if (nullable) {
+                    body.endControlFlow();
+                }
+            }
+            if (f.notBelow != null) {
+                List<String> unset = new ArrayList<>();
+                for (Field side : List.of(f.notBelow, f)) {
+                    if (nullable(side)) {
+                        unset.add(side.java + " != null");
+                    }
+                }
+                if (!unset.isEmpty()) {
+                    body.beginControlFlow("if ($L)", String.join(" && ", unset));
+                }
+                body.addStatement("$T.order($S, $S, $N, $S, $N)", CHECK, owner, f.notBelow.java, f.notBelow.java, f.java, f.java);
+                if (!unset.isEmpty()) {
                     body.endControlFlow();
                 }
             }

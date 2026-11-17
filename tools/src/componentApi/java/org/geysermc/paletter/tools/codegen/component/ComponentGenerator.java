@@ -338,6 +338,7 @@ public final class ComponentGenerator {
         for (Field f : children(c, "", fields, c.root)) {
             c.root.fields.add(f);
         }
+        orders(c, c.root);
         keyedExtras(c);
         // Forms: synthetic fields, or shorthands of a field
         for (Map.Entry<String, JsonObject> form : c.pendingForms.entrySet()) {
@@ -1165,6 +1166,30 @@ public final class ComponentGenerator {
     private void register(Comp c, ObjType o) {
         // Same name: allowed only for the same structure (merged later)
         c.allTypes.add(o);
+        orders(c, o);
+    }
+
+    /**
+     * The order BDS demands between two number fields of an object ({@code bds-feedback.json}: {@code order <low> <high>}
+     * on the object's path, from "max value cannot be lower than min value"): the record's constructor checks it.
+     */
+    private void orders(Comp c, ObjType o) {
+        for (String note : notes(c, c.standalone && !o.path.isEmpty() ? standalonePrefix(c.id) + "." + o.path : o.path)) {
+            Matcher order = Pattern.compile("order (\\S+) (\\S+)").matcher(note);
+            if (!order.matches()) {
+                continue;
+            }
+            Field low = o.fields.stream().filter(f -> order.group(1).equals(f.json)).findFirst().orElse(null);
+            Field high = o.fields.stream().filter(f -> order.group(2).equals(f.json)).findFirst().orElse(null);
+            if (low != null && high != null && number(low) && number(high)) {
+                high.notBelow = low;
+                high.notBelowSource = "BDS " + bdsVersion();
+            }
+        }
+    }
+
+    private static boolean number(Field f) {
+        return f.type instanceof Scalar s && (s.kind() == ScalarKind.INT || s.kind() == ScalarKind.FLOAT);
     }
 
     /** Object types with the same fields share one record; types with the same name must be the same. */
@@ -1215,7 +1240,8 @@ public final class ComponentGenerator {
     private static String signature(ObjType o) {
         StringBuilder s = new StringBuilder("{");
         for (Field f : o.fields) {
-            s.append(f.json).append(':').append(typeSignature(f.type)).append('=').append(f.docsDefault).append(f.required).append(';');
+            s.append(f.json).append(':').append(typeSignature(f.type)).append('=').append(f.docsDefault).append(f.required)
+                .append(f.notBelow == null ? "" : ">=" + f.notBelow.json).append(';');
         }
         return s.append('}').toString();
     }

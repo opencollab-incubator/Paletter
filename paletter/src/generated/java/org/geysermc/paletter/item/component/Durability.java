@@ -103,12 +103,14 @@ public record Durability(Durability. @NonNull DamageChance damageChance,
      * with min and max value. Check that the limits imposed on the range (minimum, maximum and maximum distance
      * between values) are respected.
      *
-     * @param max Add-on JSON {@code max}. Default: <code>100</code>. Range [0, 100] (BDS 1.26.63.1).
+     * @param max Add-on JSON {@code max}. Default: <code>100</code>. Range [0, 100] (BDS 1.26.63.1). Not below {@code min} (BDS
+     *        1.26.63.1).
      * @param min Add-on JSON {@code min}. Default: <code>100</code>. Range [0, 100] (BDS 1.26.63.1).
      */
     public record DamageChance(int max, int min) {
         public DamageChance {
             Check.range("Durability.DamageChance.max", max, 0.0, 100.0);
+            Check.order("Durability.DamageChance", "min", min, "max", max);
             Check.range("Durability.DamageChance.min", min, 0.0, 100.0);
         }
 

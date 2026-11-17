@@ -113,12 +113,14 @@ public record RandomOffset(RandomOffset. @NonNull X x, RandomOffset. @NonNull X 
      * The range of the random offset. Check that the limits imposed on the range (minimum, maximum and maximum
      * distance between values) are respected
      *
-     * @param max Add-on JSON {@code max}. Default: <code>0</code>. Range [-8, 8] (BDS 1.26.63.1).
+     * @param max Add-on JSON {@code max}. Default: <code>0</code>. Range [-8, 8] (BDS 1.26.63.1). Not below {@code min} (BDS
+     *        1.26.63.1).
      * @param min Add-on JSON {@code min}. Default: <code>0</code>. Range [-8, 8] (BDS 1.26.63.1).
      */
     public record Range(float max, float min) {
         public Range {
             Check.range("RandomOffset.Range.max", max, -8.0, 8.0);
+            Check.order("RandomOffset.Range", "min", min, "max", max);
             Check.range("RandomOffset.Range.min", min, -8.0, 8.0);
         }
 

@@ -254,6 +254,9 @@ final class ApiModel {
         /** Where each limit comes from: {@code docs} or {@code BDS <build>}. */
         String minSource;
         String maxSource;
+        /** The number field of the same object this one must not be below (BDS: "max value cannot be lower than min value"). */
+        Field notBelow;
+        String notBelowSource;
         List<Double> allowed;
         /** The step BDS takes the values in (an inferred rule's {@code multipleOf}: it refused the others); null if none. */
         Double multipleOf;

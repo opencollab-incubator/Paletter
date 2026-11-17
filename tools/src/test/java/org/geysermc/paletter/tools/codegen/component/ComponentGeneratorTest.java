@@ -309,6 +309,28 @@ class ComponentGeneratorTest {
     }
 
     @Test
+    void theRecordConstructorChecksAnOrderBdsDemands() {
+        // bds-feedback.json: BDS refused a max below the min of the object
+        Inputs in = lamp();
+        in.components().getAsJsonArray("components").asList().stream().map(JsonElement::getAsJsonObject)
+            .filter(c -> c.get("id").getAsString().equals("block:test:lamp")).findFirst().orElseThrow().getAsJsonArray("fields").addAll(json("""
+                {"fields": [
+                  {"path": "geo.span", "types": [{"type": "object", "ref": "Span"}], "required": false, "enumValues": [], "examples": [], "doc": ""},
+                  {"path": "geo.span.min", "types": [{"type": "integer"}], "defaultValue": 0, "required": false, "enumValues": [], "examples": [], "doc": ""},
+                  {"path": "geo.span.max", "types": [{"type": "integer"}], "required": false, "enumValues": [], "examples": [], "doc": ""}
+                ]}""").getAsJsonArray("fields"));
+        in.feedback().add("block:test:lamp", json("{\"geo.span\": [\"order min max\"]}"));
+        String lamp = ComponentGenerator.generate(in).get("org/geysermc/paletter/block/component/Lamp.java");
+        // max is not required, so it can be unset: checked only when it is set
+        assertTrue(lamp.contains("""
+                        if (max != null) {
+                            Check.order("Lamp.Span", "min", min, "max", max);
+                        }
+            """), lamp);
+        assertTrue(lamp.contains("Not below {@code min} (BDS "), lamp);
+    }
+
+    @Test
     void learnLinksFollowTheDocsPaths() {
         assertEquals("https://learn.microsoft.com/en-us/minecraft/creator/reference/content/itemreference/examples/itemcomponents/minecraft_render_offsets?view=minecraft-bedrock-stable",
             Docs.learnUrl("creator/Reference/Content/ItemReference/Examples/ItemComponents/minecraft_render_offsets.md"));
