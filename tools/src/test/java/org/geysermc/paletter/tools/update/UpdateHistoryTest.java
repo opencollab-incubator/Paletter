@@ -39,6 +39,13 @@ class UpdateHistoryTest {
     }
 
     @Test
+    void aHistoryCheckStagesNoVariantNames(@TempDir Path root) throws IOException {
+        Update update = historyCheck(root);
+        update.stageVariantNames(Map.of());
+        assertTrue(update.report().repoChanges.isEmpty());
+    }
+
+    @Test
     void anyChangedCheckChangesTheBuildAndBundleChecksAreNotCompared(@TempDir Path root) throws IOException {
         Update update = historyCheck(root);
         update.report().check(Report.Status.PASS, "Script API vs baseline 1.26.36.1", "identical");

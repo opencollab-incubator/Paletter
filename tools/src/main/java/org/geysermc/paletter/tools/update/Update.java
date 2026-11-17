@@ -1478,7 +1478,14 @@ public final class Update {
             new Checker(staging.resources).problems(preview);
             updateVariantNames(variantNames, name, dump, captured);
         }
-        stage(root.resolve(VariantNames.FILE), VariantNames.render(variantNames).getBytes(StandardCharsets.UTF_8), "item variant names");
+        stageVariantNames(variantNames);
+    }
+
+    /** The variant names go to the repository; a history check stages only into its build's directory and keeps none. */
+    void stageVariantNames(Map<String, List<VariantNames.Entry>> variantNames) throws IOException {
+        if (against == null) {
+            stage(root.resolve(VariantNames.FILE), VariantNames.render(variantNames).getBytes(StandardCharsets.UTF_8), "item variant names");
+        }
     }
 
     /** The variant names of a version from the dump; an incomplete dump is a FAIL and leaves the names as they are. */
