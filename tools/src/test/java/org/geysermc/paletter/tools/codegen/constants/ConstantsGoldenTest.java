@@ -41,7 +41,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * The constants generator on a small synthetic bundle, compared byte for byte with the committed expected sources in
  * {@code src/test/resources/constants-golden}. The fixture has bool, int (range and list) and string states, a value set
  * shared by two states, a name collision settled by a name override, a block that needs a lookup table, a removed block, a
- * renamed block, a removed item with a curated fallback, and a preview-only block and item.
+ * renamed block, a removed item with a curated fallback, and a preview-only block and item. Item variants: two named
+ * potion variants of the release (one already in the history, one new), a removed one, and one only the preview has.
  * <p>
  * After an intended change of the output: {@code ./gradlew :tools:test -PupdateGolden=true}, then review the diff.
  */
@@ -152,6 +153,22 @@ class ConstantsGoldenTest {
             new Renames(Map.of("minecraft:old_door", "minecraft:test_door"), Map.of()));
     }
 
+    /** {@code variant_names.txt} of the second generation: the release names two potion variants, the preview one more. */
+    private static final String VARIANT_NAMES = """
+        # test
+        1.1 minecraft:potion 5 POTION_NIGHTVISION
+        1.1 minecraft:potion 7 POTION_LONG_NIGHTVISION
+        1.2 minecraft:potion 0 POTION_WATER
+        1.2 minecraft:potion 5 POTION_NIGHTVISION
+        1.2 minecraft:potion 7 POTION_LONG_NIGHTVISION
+        """;
+
+    private static JsonObject variantEntry(String identifier, int aux) {
+        JsonObject entry = entry(identifier);
+        entry.addProperty("aux", aux);
+        return entry;
+    }
+
     private static JsonObject entry(String identifier) {
         JsonObject entry = new JsonObject();
         entry.addProperty("identifier", identifier);
@@ -181,6 +198,8 @@ class ConstantsGoldenTest {
         JsonObject oldStick = entry("minecraft:old_stick");
         oldStick.addProperty("fallback", "minecraft:apple");
         history.getAsJsonObject("items").add("OLD_STICK", oldStick);
+        history.getAsJsonObject("variants").add("POTION_NIGHTVISION", variantEntry("minecraft:potion", 5));
+        history.getAsJsonObject("variants").add("OLD_POTION", variantEntry("minecraft:potion", 9));
 
         Path second = temp.resolve("second");
         List<List<NbtMap>> previewBlocks = new ArrayList<>(releaseBlocks(true));
@@ -192,6 +211,7 @@ class ConstantsGoldenTest {
             data("1.0", 100, releaseBlocks(false), releaseItems(false)),
             data("1.1", 110, shuffleBlocks.apply(releaseBlocks(true)), shuffleItems.apply(releaseItems(true))),
             data("1.2", 120, shuffleBlocks.apply(previewBlocks), shuffleItems.apply(previewItems))), List.of(false, false, true));
+        Files.writeString(second.resolve("variant_names.txt"), VARIANT_NAMES);
         return ConstantsGenerator.generate(second, names(), shuffleJson.apply(history), "2.1.0",
             ConstantsGenerator.Sources.read(second, captures(temp.resolve("bds"))));
     }
@@ -243,9 +263,10 @@ class ConstantsGoldenTest {
         assertEquals(List.of("minecraft:test_sparse: 3 states, but its values have 6 combinations: not a full product"), result.tableBlocks());
         assertEquals(List.of("BedrockBlocks.OLD_DOOR (minecraft:old_door, now TEST_DOOR)",
             "BedrockBlocks.REMOVED_BLOCK (minecraft:removed_block, removed; resolves to minecraft:unknown)",
-            "BedrockItems.OLD_STICK (minecraft:old_stick, removed; resolves to minecraft:apple)"), result.deprecated());
-        assertEquals(List.of("BedrockStates.LEVEL = level", "BedrockBlocks.TEST_LAMP = minecraft:test_lamp", "BedrockItems.TEST_LAMP = minecraft:test_lamp"),
-            result.added());
+            "BedrockItems.OLD_STICK (minecraft:old_stick, removed; resolves to minecraft:apple)",
+            "BedrockItemVariants.OLD_POTION (minecraft:potion@9, removed)"), result.deprecated());
+        assertEquals(List.of("BedrockStates.LEVEL = level", "BedrockBlocks.TEST_LAMP = minecraft:test_lamp", "BedrockItems.TEST_LAMP = minecraft:test_lamp",
+            "BedrockItemVariants.POTION_LONG_NIGHTVISION = minecraft:potion@7"), result.added());
         assertEquals("1.1", result.release());
         assertEquals("1.2", result.preview());
     }
@@ -329,6 +350,21 @@ class ConstantsGoldenTest {
         List<List<NbtMap>> mixed = new ArrayList<>(releaseBlocks(false));
         mixed.add(List.of(state("minecraft:test_mixed", "age", "young"), state("minecraft:test_mixed", "age", "old")));
         assertEquals("State age has values of no supported kind: [young, old, 0, 2, 5]", failure(temp.resolve("mixed"), mixed, names(), new JsonObject()));
+    }
+
+    @Test
+    void aVariantNameKeepsItsMeaning(@TempDir Path temp) throws IOException {
+        Path data = temp.resolve("data");
+        write(data, List.of(data("1.1", 110, releaseBlocks(false), releaseItems(false))), List.of(false));
+        Files.writeString(data.resolve("variant_names.txt"), VARIANT_NAMES);
+        JsonObject history = JsonParser.parseString(ConstantsGenerator.generate(data, names(), new JsonObject(), "0.1.0")
+            .files().get(ConstantsGenerator.HISTORY)).getAsJsonObject();
+        assertEquals(variantEntry("minecraft:potion", 7).get("aux"), history.getAsJsonObject("variants").getAsJsonObject("POTION_LONG_NIGHTVISION").get("aux"));
+
+        history.getAsJsonObject("variants").getAsJsonObject("POTION_LONG_NIGHTVISION").addProperty("aux", 6);
+        assertEquals("BedrockItemVariants.POTION_LONG_NIGHTVISION is minecraft:potion@6 in data/model/constants-history.json but BDS now has "
+            + "minecraft:potion@7 under that name; a name keeps its meaning, so this needs a split in renames.txt and a new name",
+            assertThrows(IllegalStateException.class, () -> ConstantsGenerator.generate(data, names(), history, "0.1.0")).getMessage());
     }
 
     @Test

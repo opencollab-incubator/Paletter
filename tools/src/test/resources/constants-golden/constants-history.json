@@ -36,5 +36,10 @@
     "POTION": {"identifier":"minecraft:potion","since":"0.1.0","bedrock":"1.1"},
     "TEST_DOOR": {"identifier":"minecraft:test_door","since":"0.1.0","bedrock":"1.0"},
     "TEST_LAMP": {"identifier":"minecraft:test_lamp","since":"2.1.0","bedrock":"1.1"}
+  },
+  "variants": {
+    "OLD_POTION": {"identifier":"minecraft:potion","aux":9,"since":"0.1.0","deprecated":"2.1.0"},
+    "POTION_LONG_NIGHTVISION": {"identifier":"minecraft:potion","aux":7,"since":"2.1.0","bedrock":"1.1"},
+    "POTION_NIGHTVISION": {"identifier":"minecraft:potion","aux":5,"since":"0.1.0","bedrock":"1.1"}
   }
 }
