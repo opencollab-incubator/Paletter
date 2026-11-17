@@ -155,7 +155,9 @@ class ComponentConformanceTest {
         "item:minecraft:use_animation", "item:minecraft:block_placer", "item:minecraft:entity_placer", "item:minecraft:digger",
         "block:minecraft:placement_filter", "block:minecraft:collision_box", "block:minecraft:selection_box", "block:minecraft:transformation",
         // the script custom components (control included) are not in the committed captures yet
-        "block:minecraft:custom_components", "item:minecraft:custom_components");
+        "block:minecraft:custom_components", "item:minecraft:custom_components",
+        // the blocks with block tags (role tag) are not in the committed captures yet
+        "block:minecraft:tag");
 
     /** Not in the committed captures yet: the components of {@link #RECAPTURE_PENDING}, and every script variant (the placers' ones too). */
     private static boolean pending(String component, String role) {

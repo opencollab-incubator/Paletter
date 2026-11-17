@@ -2,6 +2,7 @@ package org.geysermc.paletter.tools.update;
 
 import org.geysermc.paletter.tools.bds.BdsDistribution;
 import org.geysermc.paletter.tools.client.Capture;
+import org.geysermc.paletter.tools.data.CreativeOrderCheck;
 import org.geysermc.paletter.tools.Layout;
 import org.geysermc.paletter.tools.model.addon.AddonGenerator;
 import org.geysermc.paletter.tools.model.infer.MappingInference;
@@ -174,14 +175,30 @@ final class SpecStage {
 
     /**
      * What the spec add-on world shows beyond the mappings: its creative block ids resolve to palette states (custom blocks
-     * with trait states), start game reports the requested toggles, and every captured wire path is in the mappings or has a known
-     * reason. What BDS rejects or accepts is compared with the earlier
+     * with trait states), start game reports the requested toggles, every captured wire path is in the mappings or has a known
+     * reason, and BDS's block ids and block map order are Paletter's. What BDS rejects or accepts is compared with the earlier
      * capture ({@link SpecDiff#acceptance}).
      */
     private void specChecks(Path capture, Capture.Summary summary, Runs runs) throws Exception {
         captures.hashCheck("spec add-on", summary);
         captures.appliedCheck(runs.experiments, "spec add-on world", runs.experiments.current, summary);
         new ShapesStage(ctx).coverage(capture);
+        if (runs.existing != null) {
+            CreativeOrderCheck.Result order = CreativeOrderCheck.blockOrder(runs.protocol, ctx.resources,
+                capture.resolve("custom_item_registry.nbt"), capture.resolve("custom_block_properties.nbt"));
+            if (order.skipped() != null) {
+                ctx.report.check(Report.Status.SKIP, "Block map order (spec add-on)", order.skipped());
+            } else {
+                // A history check numbers against the bundled data of its window; the capture's blocks are compared build to build
+                ctx.notCompared(order.matches(), "Block map order (spec add-on)", order.matches()
+                    ? "block ids and CreativeOrdering.BDS's block order are BDS's for " + order.customStacks() + " custom blocks"
+                    : "BDS numbers or orders custom blocks differently: " + String.join("; ", order.differences()),
+                    "the spec capture's block ids and order are compared with the earlier build's");
+                if (!order.matches() && ctx.against == null) {
+                    ctx.report.action("update BlockIdOrder and CreativeOrdering.BDS (BDS changed how it numbers or orders custom blocks; docs/wire-notes.md)");
+                }
+            }
+        }
     }
 
     /** Says which values of the add-on the generator cut at {@code MAX_VALUES} (the capture's {@code valuesCut}): no variant has them. */

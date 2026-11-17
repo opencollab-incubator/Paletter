@@ -266,6 +266,24 @@ public final class AddonGenerator {
             }
             scriptVariants(c); // the placers: with a script component that has onUseOn
         }
+        tagVariants();
+    }
+
+    /** The block tags of {@link #BLOCK_TAGS}, which BDS sends as the block's {@code blockTags}. */
+    public static final List<String> BLOCK_TAGS = List.of("paletter:tag_a", "paletter:tag_b");
+
+    /**
+     * Blocks with block tags (role {@code tag}): a tag is a component named {@code tag:<name>} that the docs have no table for, so
+     * the model has no fields for it ({@code block:minecraft:tag}). One block has the first tag, one has all of them.
+     */
+    private void tagVariants() {
+        model.components().stream().filter(c -> c.id().equals("block:minecraft:tag")).findFirst().ifPresent(c -> {
+            for (int count = 1; count <= BLOCK_TAGS.size(); count += BLOCK_TAGS.size() - 1) {
+                JsonObject tags = new JsonObject();
+                BLOCK_TAGS.subList(0, count).forEach(tag -> tags.add("tag:" + tag, new JsonObject()));
+                variant(c, "tag", "", count + " tags", null, tags);
+            }
+        });
     }
 
     /**
@@ -323,7 +341,7 @@ public final class AddonGenerator {
                 }
             }
         }
-        JsonObject definition = definition(c, identifier, json, format == null ? formatVersion : format, role.equals("script"));
+        JsonObject definition = definition(c, identifier, json, format == null ? formatVersion : format, namesComponents(role));
         String file = (c.kind().equals("block") ? "blocks/" : "items/") + identifier.substring(NAMESPACE.length() + 1) + ".json";
         Variant variant = new Variant(identifier, c.kind(), file, c.id(), role, path, label, value, json, definition, format,
             links == null ? List.of() : links.paths(), companion);
@@ -445,7 +463,7 @@ public final class AddonGenerator {
      * @param json the component's JSON of the variant ({@code null} for a control without the component)
      */
     public JsonObject definitionOf(String componentId, String identifier, String role, JsonElement json) {
-        return definition(component(componentId), identifier, json, formatVersion, role.equals("script"));
+        return definition(component(componentId), identifier, json, formatVersion, namesComponents(role));
     }
 
     /** Adds the base of a component, which the probes of its keys are compared with. */
@@ -547,6 +565,11 @@ public final class AddonGenerator {
             }
         }
         return 0;
+    }
+
+    /** Whether a variant of this role carries a map of components by name instead of one component's value. */
+    private static boolean namesComponents(String role) {
+        return role.equals("script") || role.equals("tag");
     }
 
     private Component component(String id) {
