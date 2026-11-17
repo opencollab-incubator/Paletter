@@ -14,6 +14,8 @@ import org.geysermc.paletter.Palette;
 import org.geysermc.paletter.PaletteLayer;
 import org.geysermc.paletter.Paletter;
 import org.geysermc.paletter.block.CustomBlock;
+import org.geysermc.paletter.data.DataVersion;
+import org.geysermc.paletter.data.PaletteDataSource;
 import org.geysermc.paletter.creative.CreativeCategory;
 import org.geysermc.paletter.creative.CreativeOrdering;
 import org.geysermc.paletter.creative.CreativePlacement;
@@ -58,9 +60,10 @@ public final class CreativeOrderCheck {
         }
     }
 
-    public record Result(int customStacks, List<String> differences) {
+    /** @param skipped why nothing was compared, or null */
+    public record Result(int customStacks, List<String> differences, String skipped) {
         public boolean matches() {
-            return differences.isEmpty();
+            return skipped == null && differences.isEmpty();
         }
     }
 
@@ -68,28 +71,51 @@ public final class CreativeOrderCheck {
     }
 
     /**
+     * @param data the bundled data directory; its version with exactly this protocol is compared, previews included
      * @param creativeItems the full {@code creative_items.json} of the capture (gzipped or not)
      * @param customItems {@code custom_item_registry.nbt} of the capture
      * @param customBlocks {@code custom_block_properties.nbt} of the capture
      */
-    public static Result check(int protocol, Path creativeItems, Path customItems, Path customBlocks) throws IOException {
-        return check(protocol, creativeItems, customItems, customBlocks, CreativeOrdering.BDS);
+    public static Result check(int protocol, Path data, Path creativeItems, Path customItems, Path customBlocks) throws IOException {
+        return check(protocol, data, creativeItems, customItems, customBlocks, CreativeOrdering.BDS);
     }
 
-    public static Result check(int protocol, Path creativeItems, Path customItems, Path customBlocks,
+    public static Result check(int protocol, Path data, Path creativeItems, Path customItems, Path customBlocks,
                         CreativeOrdering ordering) throws IOException {
         PaletteLayer layer = layer(readList(customItems, "items"), readList(customBlocks, "blocks"));
         // The ordering is global policy: compile with a Paletter of its own (on the bundled data, like every caller)
-        Paletter capture = Paletter.builder().creativeOrdering(ordering).layer(layer).build();
+        Paletter capture = withPreviews(data, ordering, layer);
+        DataVersion version = capture.versions().stream().filter(v -> v.protocolVersion() == protocol).findFirst().orElse(null);
+        if (version == null) {
+            return new Result(0, List.of(), "no bundled data version has protocol " + protocol);
+        }
         Palette palette = capture.palette(protocol);
-        Palette vanilla = capture.vanilla(palette.version());
+        Palette vanilla = capture.vanilla(version);
 
         Set<String> vanillaStacks = new HashSet<>();
         vanilla.creative().items().forEach(entry -> vanillaStacks.add(stack(entry.getItem())));
         List<Node> expected = bds(readJson(creativeItems), vanillaStacks);
         List<Node> actual = paletter(palette);
         int custom = (int) expected.stream().flatMap(node -> node.stacks().stream()).filter(id -> !id.startsWith("minecraft:")).count();
-        return new Result(custom, differences(expected, actual));
+        return new Result(custom, differences(expected, actual), null);
+    }
+
+    /**
+     * The captured build is compared with the data of its own version, which may be a preview. Read from the directory,
+     * since the bundled source has read its version index already.
+     */
+    static Paletter withPreviews(Path data, CreativeOrdering ordering, PaletteLayer layer) {
+        String before = System.getProperty("paletter.previews");
+        System.setProperty("paletter.previews", "true");
+        try {
+            return Paletter.builder().data(PaletteDataSource.directory(data)).creativeOrdering(ordering).layer(layer).build();
+        } finally {
+            if (before == null) {
+                System.clearProperty("paletter.previews");
+            } else {
+                System.setProperty("paletter.previews", before);
+            }
+        }
     }
 
     /**

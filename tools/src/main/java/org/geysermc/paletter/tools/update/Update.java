@@ -1458,9 +1458,11 @@ public final class Update {
             }
             Path directory = Path.of(capture[1]);
             Path custom = Path.of(capture[2]);
-            CreativeOrderCheck.Result result = CreativeOrderCheck.check(runs.protocol,
+            CreativeOrderCheck.Result result = CreativeOrderCheck.check(runs.protocol, resources,
                 directory.resolve("creative_items.json"), custom.resolve("custom_item_registry.nbt"), custom.resolve("custom_block_properties.nbt"));
-            if (result.matches()) {
+            if (result.skipped() != null) {
+                report.check(Report.Status.SKIP, "Creative order (" + capture[0] + ")", result.skipped());
+            } else if (result.matches()) {
                 report.check(Report.Status.PASS, "Creative order (" + capture[0] + ")", "CreativeOrdering.BDS reproduces the "
                     + "creative inventory BDS sent (" + result.customStacks() + " custom stacks)");
             } else if (against != null && capture[0].equals("add-on")) {
