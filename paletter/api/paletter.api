@@ -2280,14 +2280,14 @@ public sealed interface org.geysermc.paletter.creative.CreativePlacement permits
 public record org.geysermc.paletter.creative.CreativePlacement$After implements org.geysermc.paletter.creative.CreativePlacement {
     public <init>(org.geysermc.paletter.creative.ItemMatcher)
     public org.geysermc.paletter.creative.ItemMatcher anchor()
-    public void apply(org.geysermc.paletter.creative.CreativeEditor, org.geysermc.paletter.item.BedrockItemStack, org.geysermc.paletter.creative.CreativeCategory, java.lang.String, org.geysermc.paletter.creative.CreativeOrdering)
+    public boolean apply(org.geysermc.paletter.creative.CreativeEditor, org.geysermc.paletter.item.BedrockItemStack, org.geysermc.paletter.creative.CreativeCategory, java.lang.String, org.geysermc.paletter.creative.CreativeOrdering)
     public final boolean equals(java.lang.Object)
     public final int hashCode()
     public final java.lang.String toString()
 }
 
 public static final class org.geysermc.paletter.creative.CreativePlacement$Default implements org.geysermc.paletter.creative.CreativePlacement {
-    public void apply(org.geysermc.paletter.creative.CreativeEditor, org.geysermc.paletter.item.BedrockItemStack, org.geysermc.paletter.creative.CreativeCategory, java.lang.String, org.geysermc.paletter.creative.CreativeOrdering)
+    public boolean apply(org.geysermc.paletter.creative.CreativeEditor, org.geysermc.paletter.item.BedrockItemStack, org.geysermc.paletter.creative.CreativeCategory, java.lang.String, org.geysermc.paletter.creative.CreativeOrdering)
     public java.lang.String toString()
 }
 

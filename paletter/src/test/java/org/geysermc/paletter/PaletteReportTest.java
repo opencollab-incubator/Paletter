@@ -3,7 +3,6 @@ package org.geysermc.paletter;
 import org.cloudburstmc.nbt.NbtMap;
 import org.geysermc.paletter.block.CustomBlock;
 import org.geysermc.paletter.creative.CreativeCategory;
-import org.geysermc.paletter.creative.CreativePlacement;
 import org.geysermc.paletter.data.DataVersion;
 import org.geysermc.paletter.internal.block.BlockStates;
 import org.geysermc.paletter.item.CustomItem;
@@ -61,7 +60,7 @@ class PaletteReportTest {
     void anExtendedPaletteKeepsWhatTheParentReported() {
         Palette base = PALETTER.vanilla(OLDEST);
         CustomBlock lamp = CustomBlock.builder("report:lamp").build();
-        CustomItem ruby = CustomItem.builder("report:ruby").creative(CreativePlacement.loose(CreativeCategory.ITEMS)).build();
+        CustomItem ruby = CustomItem.builder("report:ruby").menuCategory(CreativeCategory.ITEMS).build();
         // Custom content grows the canonical set; what the vanilla data lacks stays the same
         Palette extended = base.extend(PaletteLayer.builder("test:report").block(lamp).item(ruby).build());
         assertEquals(OLDEST, extended.report().version());
