@@ -83,7 +83,7 @@ class VariantBlockTest {
         assertNotNull(missing, "fixture: the oldest version lacks a block item of the newest");
         RegisteredBlockState block = palette.resolve(missing).block();
         assertNotNull(block);
-        assertEquals(palette.resolve(palette.resolve(missing).sent()).block(), block);
+        assertEquals(palette.resolve(palette.resolve(missing).variant()).block(), block);
         assertEquals(BedrockBlocks.UNKNOWN, palette.blocks().key(block).type());
     }
 

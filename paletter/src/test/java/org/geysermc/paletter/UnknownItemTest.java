@@ -54,8 +54,8 @@ class UnknownItemTest {
         assertSame(fromMissing.getDefinition(), fromNobody.getDefinition());
         assertEquals(3, fromNobody.getCount());
         assertTrue(oldest.resolve(nobody).fallback());
-        assertEquals(BedrockItems.UNKNOWN.base(), oldest.resolve(nobody).sent());
-        assertEquals(oldest.resolve(missing).sent(), oldest.resolve(nobody).sent());
+        assertEquals(BedrockItems.UNKNOWN.base(), oldest.resolve(nobody).variant());
+        assertEquals(oldest.resolve(missing).variant(), oldest.resolve(nobody).variant());
         // The newest version has no item of that name either
         assertEquals("minecraft:unknown", latest().encode(BedrockItemStack.of(nobody)).getDefinition().getIdentifier());
     }
@@ -68,7 +68,7 @@ class UnknownItemTest {
         BedrockItemVariant nobody = BedrockItemVariant.of("nobody:item", 7);
         assertEquals("minecraft:stick", oldest.encode(BedrockItemStack.of(missing)).getDefinition().getIdentifier());
         assertEquals("minecraft:stick", oldest.encode(BedrockItemStack.of(nobody)).getDefinition().getIdentifier());
-        assertEquals(BedrockItems.STICK.base(), oldest.resolve(nobody).sent());
+        assertEquals(BedrockItems.STICK.base(), oldest.resolve(nobody).variant());
     }
 
     @Test

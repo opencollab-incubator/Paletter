@@ -2491,9 +2491,9 @@ public record org.geysermc.paletter.item.ResolvedItem {
     public final boolean equals(java.lang.Object)
     public boolean fallback()
     public final int hashCode()
-    public org.geysermc.paletter.vanilla.BedrockItemVariant sent()
     public org.cloudburstmc.protocol.bedrock.data.inventory.ItemData$Builder toItemData()
     public final java.lang.String toString()
+    public org.geysermc.paletter.vanilla.BedrockItemVariant variant()
 }
 
 public record org.geysermc.paletter.item.component.AllowOffHand implements org.geysermc.paletter.item.component.ItemComponent {

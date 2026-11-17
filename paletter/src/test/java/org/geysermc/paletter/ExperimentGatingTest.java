@@ -43,7 +43,7 @@ class ExperimentGatingTest {
 
         Palette gated = paletter.palette(OLDEST);
         assertTrue(gated.resolve(BedrockItems.BLACK_CUSHION.base()).fallback());
-        assertEquals(BedrockItems.STICK.base(), gated.resolve(BedrockItems.BLACK_CUSHION.base()).sent());
+        assertEquals(BedrockItems.STICK.base(), gated.resolve(BedrockItems.BLACK_CUSHION.base()).variant());
         assertNull(gated.itemDefinition(BedrockItems.BLACK_CUSHION));
         assertEquals(List.of(), gated.experiments());
 
@@ -53,7 +53,7 @@ class ExperimentGatingTest {
         assertEquals(List.of(), regular.experiments());
 
         // Without a fallback of its own the gated item is the default fallback, like content the version lacks
-        assertEquals(BedrockItems.UNKNOWN.base(), PALETTER.palette(OLDEST).resolve(BedrockItems.BLACK_CUSHION.base()).sent());
+        assertEquals(BedrockItems.UNKNOWN.base(), PALETTER.palette(OLDEST).resolve(BedrockItems.BLACK_CUSHION.base()).variant());
     }
 
     private static final Paletter PALETTER = Paletter.bundled();
