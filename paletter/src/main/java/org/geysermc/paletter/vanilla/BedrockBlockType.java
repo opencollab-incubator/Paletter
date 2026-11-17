@@ -299,9 +299,12 @@ public final class BedrockBlockType {
         if (this == o) {
             return true;
         }
-        // Vanilla types are singletons; custom types are equal if they have the same identifier and states
-        return o instanceof BedrockBlockType other && custom && other.custom && identifier.equals(other.identifier)
-            && Arrays.equals(layout().properties, other.layout().properties)
+        if (!(o instanceof BedrockBlockType other) || custom != other.custom || !identifier.equals(other.identifier)) {
+            return false;
+        }
+        // Vanilla types are singletons, except those of blocks only a preview has (see PreviewBlocks): equal to the
+        // constant of the identifier. Custom types are equal if they have the same identifier and states
+        return !custom || Arrays.equals(layout().properties, other.layout().properties)
             && Arrays.deepEquals(layout().values, other.layout().values);
     }
 

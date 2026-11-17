@@ -45,8 +45,7 @@ public final class BedrockBlockState {
     /**
      * Plumbing of {@link org.geysermc.paletter.Palette}: the handle of a canonical id.
      *
-     * @return the state of a canonical id of any palette lineage, or null if there is no such id or the state is not
-     *         known to the constants (a vanilla state of a source that has states the bundled data lacks)
+     * @return the state of a canonical id of any palette lineage, or null if there is no such id 
      */
     @Internal
     public static @Nullable BedrockBlockState fromCanonical(@NonNull CanonicalBlocks canonical, int id) {
@@ -56,7 +55,9 @@ public final class BedrockBlockState {
         VanillaIndex index = VanillaIndex.get();
         if (id < canonical.vanillaSize()) {
             // The ids belong to the palette's own newest version, which is not necessarily the bundled one
-            return index.state(canonical.root() == index.blocks ? id : canonical.vanillaIdsIn(index.blocks)[id]);
+            int bundled = canonical.root() == index.blocks ? id : canonical.vanillaIdsIn(index.blocks)[id];
+            // A state only a preview has: the constants are linked to the release, so the palette's own table makes it
+            return bundled != -1 ? index.state(bundled) : PreviewBlocks.state(canonical.root(), id);
         }
         BedrockBlockType type = canonical.customTypeAt(id);
         return type == null ? null : type.layout().byOffset(id - canonical.customStartAt(id));
