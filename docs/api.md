@@ -306,6 +306,26 @@ always. Every palette has it: a palette of a version whose data has no vanilla s
 `PaletteException`. `VoxelShape.ofBoxes` rejects what BDS rejects. In 26.30 the vanilla shapes are behind the
 `voxel_shapes` experiment. How BDS builds the registry is in [wire-notes.md](wire-notes.md#voxel-shapes).
 
+## Recipes
+
+The optional `paletter-recipes` module has the vanilla crafting, smelting, smithing and brewing recipes of each data version
+(`VanillaRecipes.of(version)`) and encodes them for a palette. `:paletter` never depends on it.
+
+```java
+VanillaRecipes vanilla = VanillaRecipes.of(palette.version());
+CraftingData data = CraftingData.builder(palette)
+    .recipes(vanilla.recipes()).potionMixes(vanilla.potionMixes()).containerMixes(vanilla.containerMixes())
+    .build();
+data.applyTo(craftingDataPacket);
+```
+
+`build()` never throws. Items resolve through the palette, layers included, and tags are `palette.itemTags()`. A recipe with an
+item the palette does not have, a tag without items, or a result block state it does not have is dropped, as BDS drops it;
+`data.dropped()` lists them and `data.netId(recipe)` is -1 for them. Net ids are 1, 2, ... in the order the recipes were
+added. UUIDs come from the recipe's id (and station), so they are the same on every run; the 14 multi recipes keep their fixed
+UUIDs. Apart from net ids and UUIDs the packet is what BDS sends for the same palette: a test compares the encoding of
+BDS 1.26.63.1's recipes with the committed capture. `applyTo` sets `cleanRecipes`, as BDS does.
+
 ## Errors and reports
 
 Layers given to `Paletter.builder()` are startup configuration: a problem throws `PaletteException` on the first

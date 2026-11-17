@@ -9,6 +9,20 @@ public record org.geysermc.paletter.recipes.ContainerMix {
     public final java.lang.String toString()
 }
 
+public final class org.geysermc.paletter.recipes.CraftingData {
+    public void applyTo(org.cloudburstmc.protocol.bedrock.packet.CraftingDataPacket)
+    public static org.geysermc.paletter.recipes.CraftingData$Builder builder(org.geysermc.paletter.Palette)
+    public java.util.List<org.geysermc.paletter.recipes.Recipe> dropped()
+    public int netId(org.geysermc.paletter.recipes.Recipe)
+}
+
+public static final class org.geysermc.paletter.recipes.CraftingData$Builder {
+    public org.geysermc.paletter.recipes.CraftingData build()
+    public org.geysermc.paletter.recipes.CraftingData$Builder containerMixes(java.util.List<org.geysermc.paletter.recipes.ContainerMix>)
+    public org.geysermc.paletter.recipes.CraftingData$Builder potionMixes(java.util.List<org.geysermc.paletter.recipes.PotionMix>)
+    public org.geysermc.paletter.recipes.CraftingData$Builder recipes(java.util.List<org.geysermc.paletter.recipes.Recipe>)
+}
+
 public sealed interface org.geysermc.paletter.recipes.Ingredient permits org.geysermc.paletter.recipes.Ingredient$Alias, org.geysermc.paletter.recipes.Ingredient$AnyVariant, org.geysermc.paletter.recipes.Ingredient$Empty, org.geysermc.paletter.recipes.Ingredient$Item, org.geysermc.paletter.recipes.Ingredient$Tag {
     public abstract int count()
 }
