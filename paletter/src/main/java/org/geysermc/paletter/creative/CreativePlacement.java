@@ -41,15 +41,15 @@ public record CreativePlacement(@NonNull CreativeCategory category, @Nullable St
     }
 
     /**
-     * @return this placement, right after the stacks of every variant of an item type if present
+     * @return this placement, right after the stacks of any variant of an item type if present
      * @since 0.1.0
      */
-    public @NonNull CreativePlacement afterAnyOf(@NonNull BedrockItemType anchor) {
+    public @NonNull CreativePlacement afterAnyVariantOf(@NonNull BedrockItemType anchor) {
         return after(ItemMatcher.anyVariantOf(anchor));
     }
 
     /**
-     * @return this placement, right after exactly this variant if present (a type is its base variant, aux 0)
+     * @return this placement, right after exactly that variant if present (a type is its base variant)
      * @since 0.1.0
      */
     public @NonNull CreativePlacement after(@NonNull ItemKey anchor) {

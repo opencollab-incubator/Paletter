@@ -64,7 +64,7 @@ class FallbackTest {
 
     /** Points the item at nothing, which keeps a test independent of other fallbacks. */
     private static Fallbacks.Builder broken(Palette vanilla, int item) {
-        return Fallbacks.builder().item(BedrockItemType.fromIdentifier(Ids.canonicalItems(vanilla).variant(item).identifier()), ItemFallback.keepingAux(BedrockItemType.fromIdentifier("paletter:nothing")));
+        return Fallbacks.builder().item(BedrockItemType.fromIdentifier(Ids.canonicalItems(vanilla).variant(item).identifier()), ItemFallback.of(BedrockItemType.fromIdentifier("paletter:nothing")));
     }
 
     private static Paletter with(Fallbacks.Builder fallbacks) {
@@ -142,7 +142,7 @@ class FallbackTest {
 
         int item = missingItem(vanilla);
         String itemName = Ids.canonicalItems(vanilla).variant(item).identifier();
-        Palette withItem = with(Fallbacks.builder().item(oldest, BedrockItemType.fromIdentifier(itemName), ItemFallback.keepingAux(BedrockItems.STICK))).palette(OLDEST);
+        Palette withItem = with(Fallbacks.builder().item(oldest, BedrockItemType.fromIdentifier(itemName), ItemFallback.of(BedrockItems.STICK))).palette(OLDEST);
         assertEquals("minecraft:stick", Ids.itemAt(withItem, item).definition().getIdentifier());
     }
 
@@ -159,7 +159,7 @@ class FallbackTest {
         assertNull(Ids.itemAt(none, item));
 
         Palette custom = with(broken(vanilla, item)
-            .defaultBlock(BlockFallback.of(BedrockBlocks.BEDROCK)).defaultItem(ItemFallback.keepingAux(BedrockItems.BARRIER))).palette(OLDEST);
+            .defaultBlock(BlockFallback.of(BedrockBlocks.BEDROCK)).defaultItem(ItemFallback.of(BedrockItems.BARRIER))).palette(OLDEST);
         assertEquals("minecraft:bedrock", BlockStates.name(Ids.blockAt(custom, block).getState()));
         assertEquals("minecraft:barrier", Ids.itemAt(custom, item).definition().getIdentifier());
 
@@ -181,7 +181,7 @@ class FallbackTest {
         assertEquals(2, missing.size(), "fixture: the oldest version lacks two items of the newest");
         Fallbacks.Builder fallbacks = Fallbacks.builder();
         for (int item : missing) {
-            fallbacks.item(BedrockItemType.fromIdentifier(Ids.canonicalItems(vanilla).variant(item).identifier()), ItemFallback.keepingAux(BedrockItemType.fromIdentifier("paletter:nothing")));
+            fallbacks.item(BedrockItemType.fromIdentifier(Ids.canonicalItems(vanilla).variant(item).identifier()), ItemFallback.of(BedrockItemType.fromIdentifier("paletter:nothing")));
         }
         Palette palette = with(fallbacks).palette(OLDEST);
         ResolvedItem first = Ids.itemAt(palette, missing.get(0));

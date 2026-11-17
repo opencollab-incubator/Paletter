@@ -140,7 +140,9 @@ public final class PaletteDataCodec {
         Map<String, ItemFallback> itemFallbacks = new HashMap<>();
         fallbacksNbt.getCompound("items", NbtMap.EMPTY).forEach((name, value) -> {
             NbtMap fallback = (NbtMap) value;
-            itemFallbacks.put(name, new ItemFallback(BedrockItemType.fromIdentifier(fallback.getString("target")), null, fallback.getBoolean("force")));
+            // Bundled data names the target type only: the base variant, aux 0
+            BedrockItemType target = BedrockItemType.fromIdentifier(fallback.getString("target"));
+            itemFallbacks.put(name, new ItemFallback(target, target.variant(), fallback.getBoolean("force")));
         });
         Set<String> unmapped = new HashSet<>(fallbacksNbt.getList("unmapped", NbtType.STRING, List.of()));
 

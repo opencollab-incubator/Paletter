@@ -403,7 +403,7 @@ public final class ItemRegistry implements DefinitionRegistry<ItemDefinition> {
         if (result == null && defaultFallback != null) {
             RegisteredItem fallback = getDefinition(defaultFallback.target().identifier());
             if (fallback != null) {
-                defaultResolved = result = new ResolvedItem(fallback, defaultFallback.variant() == null ? 0 : defaultFallback.variant().aux(),
+                defaultResolved = result = new ResolvedItem(fallback, defaultFallback.variant().aux(),
                     defaultBlockOf(fallback.getIdentifier()), true, this);
             }
         }
@@ -421,9 +421,7 @@ public final class ItemRegistry implements DefinitionRegistry<ItemDefinition> {
             if (item == null) {
                 return null;
             }
-            if (target.variant() != null) {
-                damage = target.variant().aux();
-            }
+            damage = target.variant().aux();
             fallback = true;
         }
         RegisteredBlockState block = defaultBlockOf(item.getIdentifier());

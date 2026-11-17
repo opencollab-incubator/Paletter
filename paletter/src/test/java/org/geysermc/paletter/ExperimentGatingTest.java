@@ -40,7 +40,7 @@ class ExperimentGatingTest {
     /** 26.40 has the cushions behind y_2026_drop_3, 26.50 has them as regular content (see data/bds/1.26.45.1). */
     @Test
     void aFlatFallbackAppliesWhereTheItemIsGatedOnly() {
-        Fallbacks flat = Fallbacks.builder().item(BedrockItems.BLACK_CUSHION, ItemFallback.keepingAux(BedrockItems.STICK)).build();
+        Fallbacks flat = Fallbacks.builder().item(BedrockItems.BLACK_CUSHION, ItemFallback.of(BedrockItems.STICK)).build();
         Paletter paletter = Paletter.builder().fallbacks(flat).build();
 
         Palette gated = paletter.palette(OLDEST);
@@ -112,7 +112,7 @@ class ExperimentGatingTest {
 
     @Test
     void enablingTheToggleMakesTheContentPresentAndIsSent() {
-        Fallbacks flat = Fallbacks.builder().item(BedrockItems.BLACK_CUSHION, ItemFallback.keepingAux(BedrockItems.STICK)).build();
+        Fallbacks flat = Fallbacks.builder().item(BedrockItems.BLACK_CUSHION, ItemFallback.of(BedrockItems.STICK)).build();
         Paletter paletter = Paletter.builder().fallbacks(flat).vanilla(vanilla -> vanilla.experiments(TOGGLE)).build();
 
         Palette enabled = paletter.palette(OLDEST);
