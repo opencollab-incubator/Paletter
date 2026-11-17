@@ -83,8 +83,8 @@ descending order. Read ids from the palette, never keep them across layers.
 
 ## Vanilla constants
 
-`org.geysermc.paletter.vanilla` has generated constants for the newest bundled release: `BedrockBlocks`, `BedrockStates`
-and `BedrockItems`, plus enums for string states in `vanilla.state`. They are objects, not `int` constants, and load
+`org.geysermc.paletter.vanilla` has generated constants for the newest bundled release: `BedrockBlocks`, `BedrockStates`,
+`BedrockItems` and `BedrockItemVariants`, plus enums for string states in `vanilla.state`. They are objects, not `int` constants, and load
 nothing until used.
 
 ```java
@@ -104,6 +104,16 @@ the same name.
 When Bedrock removes content, its constant stays, deprecated, and resolves to `minecraft:unknown` (`isAvailable()` is
 false). A renamed identifier keeps its old constant as a deprecated alias. `@since` on a constant is the first Bedrock
 release that has the content without an experiment. `@Education` marks Education Edition content.
+
+`BedrockItemVariants` names the aux variants of potions, splash and lingering potions, tipped arrows, beds and banners.
+The names are BDS's own spellings (`POTION_LONG_NIGHTVISION`, `BED_SILVER`), taken from the Script API when the data is
+captured. A constant is the very variant of `type.variant(aux)`, and referencing it loads nothing. Variants of other items
+(suspicious stew, goat horns, ...) have no names.
+
+```java
+ItemData potion = palette.encode(BedrockItemStack.of(BedrockItemVariants.POTION_LONG_NIGHTVISION));
+boolean same = BedrockItemVariants.BED_SILVER == BedrockItems.BED.variant(8); // true
+```
 
 ## Components
 

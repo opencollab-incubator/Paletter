@@ -17,8 +17,8 @@ import java.util.Objects;
  * ItemData apple = palette.item(BedrockItems.APPLE).toItemData().count(3).build();
  * ItemData potion = palette.item(BedrockItems.POTION.variant(5)).toItemData().build();
  * }</pre>
- * Items whose variants differ by damage (potions, banners, goat horns, ...) expose them with {@link #variant(int)} (null if unknown, {@link #variantOf(int)} makes any): the
- * bundled data has no names for them, so they have no constants of their own.
+ * Items whose variants differ by damage (potions, banners, goat horns, ...) expose them with {@link #variant(int)} (null if unknown, {@link #variantOf(int)} makes any).
+ * The potions, tipped arrows, beds and banners have constants for them in {@link BedrockItemVariants}.
  * <p>
  * Equality: {@code equals} always works, and types are map keys. {@code ==} works too for vanilla types, which are
  * singletons (the constants), and for registered custom content: a {@link CustomItem} owns its {@link CustomItem#type()
