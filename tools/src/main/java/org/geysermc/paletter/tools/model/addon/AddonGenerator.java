@@ -899,7 +899,8 @@ public final class AddonGenerator {
      * an identifier nothing defines. A Molang field (its docs say so) also gets a constant beside the expression.
      */
     private List<Labeled> strings(Component c, String path, JType type, Field field) {
-        List<JsonElement> strings = new ArrayList<>();
+        // The probes come first, so that MAX_VALUES never cuts one
+        List<JsonElement> strings = new ArrayList<>(fixtures.probeValues(c.id(), path));
         JsonElement exact = fixtures.sample(c.id(), path, null);
         if (exact != null && exact.isJsonPrimitive()) {
             strings.add(exact);
@@ -942,7 +943,6 @@ public final class AddonGenerator {
                 strings.add(new JsonPrimitive("0"));
             }
         }
-        strings.addAll(fixtures.probeValues(c.id(), path));
         return new LinkedHashSet<>(strings).stream().map(s -> new Labeled(s.getAsString(), s)).toList();
     }
 
@@ -985,8 +985,9 @@ public final class AddonGenerator {
         values.add(new Labeled("-4,5.5,0", arrayOf(number(-4), number(5.5), number(0))));
         values.add(new Labeled("0,0,0", array(0, 0, 0)));
         values.add(new Labeled("16,16,16", array(16, 16, 16)));
-        // Between the typical values above in every element (x -4 to 1, y 0 to 5.5, z 0 to 3: BDS took those), so inside the
-        // limits they keep. It is a further distinct value of each element, so that no rule over them is fitted to two points
+        // Between the typical values above in every element (x -4 to 1, y 0 to 5.5, z 0 to 3: BDS took those). BDS rejects it
+        // for the selection_box size and the single-form size of collision_box. It is a further distinct value of each
+        // element, so that no rule over them is fitted to two points
         values.add(new Labeled("-2,1,1", array(-2, 1, 1)));
         return values;
     }

@@ -52,7 +52,7 @@ public final class SpecCapture {
     private static final String WORLD = "paletter_spec";
     /** The custom creative inventory BDS sent in a capture ({@code id}, {@code block_runtime_id}: the hash of the default state). */
     public static final String CREATIVE_ITEMS = "custom_creative_items.json.gz";
-    /** The content log in the order BDS wrote it, beside the sorted {@code content-log.txt}. */
+    /** The ERROR and WARN lines of the content log in the order BDS wrote them, beside the sorted {@code content-log.txt}. */
     public static final String RAW_CONTENT_LOG = "content-log.raw.txt";
     /** At most this many captures per build: the first, and the ones of the variants it shrunk. */
     private static final int SHRINK_ROUNDS = 4;
@@ -202,7 +202,7 @@ public final class SpecCapture {
         }
     }
 
-    /** What one BDS run of an add-on gave: its content log (sorted, and as BDS wrote it), the capture and the protocol it spoke. */
+    /** What one BDS run of an add-on gave: its content log (sorted, and the ERROR and WARN lines as BDS wrote them), the capture and the protocol it spoke. */
     private record Run(List<String> contentLog, List<String> rawLog, Capture.Summary summary, int protocol) {
     }
 

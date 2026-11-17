@@ -545,6 +545,34 @@
       }
     },
     {
+      "name": "replaced_hidden_block",
+      "components": {
+        "minecraft:block_placer": {
+          "block": "paletter:replaced_hidden_block",
+          "replace_block_item": true
+        }
+      },
+      "description": {
+        "menu_category": {
+          "category": "items"
+        }
+      }
+    },
+    {
+      "name": "replaced_shown_block",
+      "components": {
+        "minecraft:block_placer": {
+          "block": "paletter:replaced_shown_block",
+          "replace_block_item": true
+        }
+      },
+      "description": {
+        "menu_category": {
+          "category": "none"
+        }
+      }
+    },
+    {
       "name": "projectile",
       "components": {
         "minecraft:projectile": {
@@ -1413,6 +1441,24 @@
     {
       "name": "plain_block",
       "components": {}
+    },
+    {
+      "name": "replaced_hidden_block",
+      "components": {},
+      "description": {
+        "menu_category": {
+          "category": "none"
+        }
+      }
+    },
+    {
+      "name": "replaced_shown_block",
+      "components": {},
+      "description": {
+        "menu_category": {
+          "category": "construction"
+        }
+      }
     },
     {
       "name": "precipitation_interactions",

@@ -59,8 +59,22 @@ class ProbeValuesTest {
         List<String> color = labels(root, "color");
         assertTrue(color.containsAll(List.of("gold", "red", "paletter_a", "paletter_b", "")), color.toString());
         // beside an enum too: the enum's values and the invalid one stay
-        assertEquals(List.of("paletter_invalid", "a", "b", "c"), labels(root, "mode"));
+        assertEquals(List.of("c", "paletter_invalid", "a", "b"), labels(root, "mode"));
         assertFalse(labels(root, "plain").contains("gold"), "only the field the key names");
+    }
+
+    @Test
+    void noProbeValueIsCutAtMaxValues(@TempDir Path root) throws IOException {
+        List<String> probes = java.util.stream.IntStream.range(0, AddonGenerator.MAX_VALUES - 2).mapToObj(i -> "probe_" + i).toList();
+        String fixtures = FIXTURES.replace("[\"gold\", \"red\"]", probes.stream().map(p -> "\"" + p + "\"").toList().toString());
+        Path model = Files.createDirectories(root.resolve("model"));
+        Files.writeString(model.resolve("components.json"), MODEL);
+        Files.writeString(model.resolve("fixtures.json"), fixtures);
+        AddonGenerator generator = new AddonGenerator(Model.read(model.resolve("components.json")), Fixtures.read(model), "1.26.60");
+        List<String> color = generator.variants().stream().filter(v -> v.role().equals("field") && v.path().equals("color"))
+            .map(v -> v.label().substring(v.label().indexOf(':') + 1)).toList();
+        assertTrue(color.containsAll(probes), "a probe was cut: " + color);
+        assertEquals(AddonGenerator.MAX_VALUES, color.size(), "the cap cuts the generic values after the probes");
     }
 
     @Test

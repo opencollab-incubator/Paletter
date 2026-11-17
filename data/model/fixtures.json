@@ -168,6 +168,7 @@
       {"name": "minecraft:oak_log", "states": {"pillar_axis": "z"}},
       {"name": "minecraft:oak_log", "states": {"pillar_axis": "w"}},
       {"name": "minecraft:oak_log", "states": {"pillar_axis": 1}},
+      {"name": "minecraft:oak_log", "states": {"paletter_unknown": 1}},
       {"name": "minecraft:furnace", "states": {"minecraft:cardinal_direction": "south"}},
       {"name": "minecraft:furnace", "states": {"minecraft:cardinal_direction": "east"}},
       {"name": "minecraft:lever", "states": {"lever_direction": "east"}},
@@ -177,6 +178,7 @@
       {"name": "minecraft:lever", "states": {"open_bit": "true"}},
       {"name": "minecraft:white_candle", "states": {"candles": 2}},
       {"name": "minecraft:white_candle", "states": {"candles": "2"}},
+      {"name": "minecraft:white_candle", "states": {"candles": 4}},
       {"name": "minecraft:white_candle", "states": {"lit": true}}
     ]
   },

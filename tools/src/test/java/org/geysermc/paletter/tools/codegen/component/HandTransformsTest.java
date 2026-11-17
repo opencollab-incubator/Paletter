@@ -87,6 +87,21 @@ class HandTransformsTest {
         assertTrue(colors.size() >= 1 && animations.size() >= 4, "the evidence of mappings.json could not be read");
     }
 
+    /** A recapture only learns an unverified entry if the add-on tries it: each one must be a probe value of its field. */
+    @Test
+    void everyUnverifiedEntryIsAProbeValue() throws Exception {
+        JsonObject probes = JsonParser.parseString(Files.readString(ComponentConformanceTest.MODEL.resolve("fixtures.json")))
+            .getAsJsonObject().getAsJsonObject("probeValues");
+        for (String key : List.of("item:minecraft:use_animation:value", "item:minecraft:hover_text_color:value")) {
+            Set<String> listed = new TreeSet<>();
+            probes.getAsJsonArray(key).forEach(e -> listed.add(e.getAsString()));
+            Set<String> unverified = key.contains("use_animation") ? UNVERIFIED_USE_ANIMATIONS : UNVERIFIED_COLORS;
+            Set<String> missing = new TreeSet<>(unverified);
+            missing.removeAll(listed);
+            assertEquals(Set.of(), missing, "unverified entries that fixtures.json probeValues " + key + " does not try");
+        }
+    }
+
     private static Map<String, Object> table(Class<?> transforms, String name) throws ReflectiveOperationException {
         java.lang.reflect.Field field = transforms.getDeclaredField(name);
         field.setAccessible(true);

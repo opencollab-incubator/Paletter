@@ -97,6 +97,9 @@ Paletter's choices, all **unverified on a client** (no client test exists; vanil
 - A block and an item with the same identifier make BDS rename the block item to `<namespace>:item.<name>`, unless the
   item uses `block_placer.replace_block_item`.
 - Custom items in the `minecraft` namespace, and creative groups without a namespace, are rejected.
+- To be captured: whether a block whose item is replaced shows in the creative inventory when the block's `menu_category` and
+  the replacing item's differ. `paletter:replaced_hidden_block` has block category `none` and item category `items`;
+  `paletter:replaced_shown_block` has block category `construction` and item category `none` (the `addon` capture).
 
 ## Creative inventory order
 

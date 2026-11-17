@@ -342,8 +342,8 @@ for a member it does not vary, `spec-capture` shrinks the variant and captures a
 **Probes.** Values that no docs text or BDS message lists, but that a hand table of `Transforms` holds, are tried too: `fixtures.json`
 `probeValues` gives a field further strings (the formatting colour names of `hover_text_color`, the animation names of
 `use_animation`), and `descriptorValues` gives every block descriptor field real vanilla blocks with enum, boolean and string
-state values. They are probes, not facts: only what BDS accepts and sends is evidence. `spec-capture` also keeps the content log
-in the order BDS wrote it (`content-log.raw.txt`) beside the sorted `content-log.txt`, so that a line can later be attributed
+state values. They are probes, not facts: only what BDS accepts and sends is evidence. `spec-capture` also keeps the ERROR and WARN lines of the content log
+in the order BDS wrote them (`content-log.raw.txt`) beside the sorted `content-log.txt`, so that a line can later be attributed
 by the lines around it.
 
 **Linked fields.** One field at a time is not enough where BDS ties two fields: `damage_chance.max` below the default
