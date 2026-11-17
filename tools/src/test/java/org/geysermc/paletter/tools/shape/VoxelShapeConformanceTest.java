@@ -95,7 +95,6 @@ class VoxelShapeConformanceTest {
 
     private static void same(VoxelShapesPacket expected, Palette palette) {
         VoxelShapesPacket actual = palette.voxelShapesPacket();
-        assertNotNull(actual, "no voxel shapes bundled for " + palette.version());
         for (int i = 0; i < Math.min(expected.getShapes().size(), actual.getShapes().size()); i++) {
             assertEquals(expected.getShapes().get(i), actual.getShapes().get(i), "shape " + i);
         }

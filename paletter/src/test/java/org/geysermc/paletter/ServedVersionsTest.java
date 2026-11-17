@@ -7,6 +7,7 @@ import org.geysermc.paletter.internal.CanonicalItems;
 import org.geysermc.paletter.internal.block.BlockStates;
 import org.geysermc.paletter.internal.data.Renames;
 import org.geysermc.paletter.internal.data.VanillaData;
+import org.geysermc.paletter.internal.shape.VoxelShapeStore;
 import org.geysermc.paletter.vanilla.BedrockBlockState;
 import org.geysermc.paletter.vanilla.BedrockBlocks;
 import org.geysermc.paletter.vanilla.BedrockItemVariant;
@@ -51,6 +52,11 @@ class ServedVersionsTest {
             @Override
             public Renames renames() {
                 return bundled.renames();
+            }
+
+            @Override
+            public VoxelShapeStore voxelShapes() {
+                return bundled.voxelShapes();
             }
         }).build();
     }

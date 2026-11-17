@@ -71,7 +71,7 @@ public final class VoxelShapeStore {
 
     /**
      * @param experiment whether the world has the experiment {@value #EXPERIMENT} on
-     * @return the vanilla shapes of a version in id order, or null if no capture of the version is bundled
+     * @return the vanilla shapes of a version in id order, or null if the store has none of the version
      */
     public @Nullable List<Entry> shapes(@NonNull DataVersion version, boolean experiment) {
         List<Entry> plain = null;

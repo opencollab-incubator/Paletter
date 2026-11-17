@@ -9,6 +9,7 @@ import org.geysermc.paletter.data.DataVersion;
 import org.geysermc.paletter.data.PaletteDataSource;
 import org.geysermc.paletter.internal.data.ExperimentContent;
 import org.geysermc.paletter.internal.data.VanillaData;
+import org.geysermc.paletter.internal.shape.VoxelShapeStore;
 import org.geysermc.paletter.item.CustomItem;
 import org.geysermc.paletter.item.ItemFallback;
 import org.geysermc.paletter.internal.item.ItemVariant;
@@ -69,7 +70,7 @@ class PaletterBuilderTest {
 
     @Test
     void aDirectoryInTheBundledFormatIsADataSource(@TempDir Path directory) throws IOException {
-        for (String file : List.of("versions.txt", "properties.nbt", "renames.txt")) {
+        for (String file : List.of("versions.txt", "properties.nbt", "voxel_shapes.nbt", "renames.txt")) {
             copy(file, directory);
         }
         for (DataVersion version : PALETTER.versions()) {
@@ -82,6 +83,7 @@ class PaletterBuilderTest {
         Palette actual = paletter.palette(PALETTER.latest().protocolVersion());
         assertEquals(expected.blocks().size(), actual.blocks().size());
         assertEquals(stacks(expected), stacks(actual));
+        assertEquals(expected.voxelShapesPacket(), actual.voxelShapesPacket());
         assertThrows(java.io.UncheckedIOException.class,
             () -> Paletter.builder().data(PaletteDataSource.directory(directory.resolve("missing"))).build().versions());
     }
@@ -176,6 +178,11 @@ class PaletterBuilderTest {
             @Override
             public org.geysermc.paletter.internal.data.Renames renames() {
                 return bundled.renames();
+            }
+
+            @Override
+            public VoxelShapeStore voxelShapes() {
+                return bundled.voxelShapes();
             }
         };
     }

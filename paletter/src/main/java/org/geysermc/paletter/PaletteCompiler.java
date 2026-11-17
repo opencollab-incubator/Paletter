@@ -75,8 +75,13 @@ final class PaletteCompiler {
         // The experiment changes the vanilla voxel shapes of some versions: those palettes need the toggle
         boolean shapeExperiment = content.requests(VoxelShapeStore.EXPERIMENT) && shapeStore.experimentMatters(data.version());
         List<VoxelShapeStore.Entry> vanillaShapes = shapeStore.shapes(data.version(), shapeExperiment);
-        Palette.Shapes shapes = new Palette.Shapes(vanillaShapes,
-            vanillaShapes == null ? null : VoxelShapeCompiler.compile(vanillaShapes, Map.of(), blocks, report));
+        if (vanillaShapes == null) {
+            // BDS sends the voxel shapes packet to every client (protocol 924 and later), so a palette needs them
+            throw new PaletteException("No vanilla voxel shapes for " + data.version() + " in the data source (no registry"
+                + " of the version in voxel_shapes.nbt): the palette cannot build the voxel shapes packet, which BDS sends"
+                + " to every client before start game");
+        }
+        Palette.Shapes shapes = new Palette.Shapes(vanillaShapes, VoxelShapeCompiler.compile(vanillaShapes, Map.of(), blocks, report));
         VanillaContent.ExperimentGating gating = shapeExperiment ? applied.gating().withEnabled(VoxelShapeStore.EXPERIMENT) : applied.gating();
         return new Palette(data, List.of(), blocks, items, layout, creative, report, ordering, gating, behaviour, shapes, null);
     }
@@ -208,7 +213,7 @@ final class PaletteCompiler {
             layers.add(layer);
             // The voxel shapes are the parent's unless the layer defines shapes or blocks (which may name shapes)
             Palette.Shapes shapes = parent.shapes();
-            if (shapes.vanilla() != null && (!layer.voxelShapes().isEmpty() || !layer.blocks().isEmpty())) {
+            if (!layer.voxelShapes().isEmpty() || !layer.blocks().isEmpty()) {
                 Map<String, VoxelShape> custom = new LinkedHashMap<>();
                 for (PaletteLayer each : layers) {
                     each.voxelShapes().forEach((identifier, shape) -> {

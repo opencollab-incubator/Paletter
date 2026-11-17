@@ -9,6 +9,7 @@ import org.geysermc.paletter.data.PaletteDataSource;
 import org.geysermc.paletter.internal.data.ExperimentContent;
 import org.geysermc.paletter.internal.data.Renames;
 import org.geysermc.paletter.internal.data.VanillaData;
+import org.geysermc.paletter.internal.shape.VoxelShapeStore;
 import org.geysermc.paletter.item.ItemFallback;
 import org.geysermc.paletter.vanilla.BedrockBlockState;
 import org.geysermc.paletter.vanilla.BedrockBlocks;
@@ -121,6 +122,11 @@ class ExperimentGatingTest {
             @Override
             public Renames renames() {
                 return bundled.renames();
+            }
+
+            @Override
+            public VoxelShapeStore voxelShapes() {
+                return bundled.voxelShapes();
             }
         };
     }

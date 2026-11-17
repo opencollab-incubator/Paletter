@@ -2,6 +2,7 @@ package org.geysermc.paletter.block;
 
 import org.cloudburstmc.protocol.bedrock.packet.VoxelShapesPacket;
 import org.geysermc.paletter.Palette;
+import org.geysermc.paletter.PaletteException;
 import org.geysermc.paletter.PaletteLayer;
 import org.geysermc.paletter.Palettes;
 import org.geysermc.paletter.Paletter;
@@ -10,8 +11,13 @@ import org.geysermc.paletter.block.component.Geometry;
 import org.geysermc.paletter.block.component.MaterialInstances;
 import org.geysermc.paletter.block.component.Transformation;
 import org.geysermc.paletter.data.DataVersion;
+import org.geysermc.paletter.data.PaletteDataSource;
+import org.geysermc.paletter.internal.data.VanillaData;
+import org.geysermc.paletter.internal.shape.VoxelShapeStore;
 import org.junit.jupiter.api.Test;
 
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
@@ -164,5 +170,39 @@ class VoxelShapesTest {
         Palette extended = base.extend(PaletteLayer.builder("session").voxelShape("example:post", POST).build());
         assertEquals(base.voxelShapes().size() + 1, extended.voxelShapes().size());
         assertEquals(1, extended.voxelShapesPacket().getCustomShapeCount());
+    }
+
+    @Test
+    void aVersionWithoutVanillaShapesFailsWhenItsPaletteIsBuilt() {
+        PaletteDataSource bundled = PaletteDataSource.bundled();
+        DataVersion missing = bundled.versions().getFirst();
+        // The bundled shapes, less those of one version
+        List<VoxelShapeStore.Registry> registries = new ArrayList<>();
+        for (VoxelShapeStore.Registry registry : bundled.voxelShapes().registries()) {
+            List<String> versions = new ArrayList<>(registry.versions());
+            versions.remove(missing.name());
+            registries.add(new VoxelShapeStore.Registry(versions, registry.experiment(), registry.shapes()));
+        }
+        VoxelShapeStore store = new VoxelShapeStore(registries);
+        Paletter paletter = Paletter.builder().data(new PaletteDataSource() {
+            @Override
+            public List<DataVersion> versions() {
+                return bundled.versions();
+            }
+
+            @Override
+            public VanillaData load(DataVersion version) throws IOException {
+                return bundled.load(version);
+            }
+
+            @Override
+            public VoxelShapeStore voxelShapes() {
+                return store;
+            }
+        }).build();
+        assertNotNull(paletter.palette(bundled.versions().get(1).protocolVersion()).voxelShapesPacket());
+        PaletteException e = assertThrows(PaletteException.class, () -> paletter.palette(missing.protocolVersion()));
+        assertTrue(e.getMessage().contains("voxel shapes for " + missing), e.getMessage());
+        assertThrows(PaletteException.class, paletter::warmUp);
     }
 }

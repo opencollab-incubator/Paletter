@@ -64,7 +64,7 @@ public interface PaletteDataSource {
 
     /**
      * @return the vanilla voxel shapes of the versions; the bundled source reads {@code voxel_shapes.nbt}, the default
-     * has none
+     * has none. A palette of a version without them cannot be built
      */
     @org.geysermc.paletter.annotation.Internal
     default @NonNull VoxelShapeStore voxelShapes() {

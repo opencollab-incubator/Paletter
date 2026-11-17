@@ -66,7 +66,7 @@ import java.util.function.Supplier;
  * <pre>{@code
  * palette.applyTo(session.getCodecHelper());     // item and block definitions for the codec
  * palette.applyTo(startGamePacket);              // block properties and the block network id mode
- * session.sendPacket(palette.voxelShapesPacket());   // before start game
+ * session.sendPacket(palette.voxelShapesPacket());   // always, before start game
  * session.sendPacket(palette.itemComponentPacket());
  * session.sendPacket(palette.creativeContentPacket());
  * }</pre>
@@ -135,10 +135,10 @@ public final class Palette {
     /**
      * The voxel shapes of a palette and what they were compiled from.
      *
-     * @param vanilla the vanilla shapes of the palette's version, or null if no capture of it is bundled
-     * @param compiled the shapes of the palette, or null if {@code vanilla} is
+     * @param vanilla the vanilla shapes of the palette's version
+     * @param compiled the shapes of the palette
      */
-    record Shapes(@Nullable List<VoxelShapeStore.Entry> vanilla, @Nullable VoxelShapes compiled) {
+    record Shapes(@NonNull List<VoxelShapeStore.Entry> vanilla, @NonNull VoxelShapes compiled) {
     }
 
     Shapes shapes() {
@@ -774,21 +774,22 @@ public final class Palette {
 
     /**
      * @return the voxel shapes of this palette (the shapes Bedrock culls block faces with): the vanilla ones BDS of this
-     * version sends, plus the ones the layers define and what Bedrock derives from them for custom blocks. Null if no
-     * capture of this version is bundled
+     * version sends, plus the ones the layers define and what Bedrock derives from them for custom blocks
      * @since 0.1.0
      */
-    public @Nullable VoxelShapes voxelShapes() {
+    public @NonNull VoxelShapes voxelShapes() {
         return shapes.compiled();
     }
 
     /**
-     * @return the voxel shapes packet to send before start game (protocol 924 and later), identical to the one BDS
-     * sends for the same content; null if no capture of this version is bundled
+     * BDS sends this packet to every client, before start game, also when the world has no custom shapes. Send it
+     * the same way: always.
+     *
+     * @return the voxel shapes packet to send before start game, identical to the one BDS sends for the same content
      * @since 0.1.0
      */
-    public @Nullable VoxelShapesPacket voxelShapesPacket() {
-        return shapes.compiled() == null ? null : shapes.compiled().toPacket();
+    public @NonNull VoxelShapesPacket voxelShapesPacket() {
+        return shapes.compiled().toPacket();
     }
 
     public @NonNull ItemComponentPacket itemComponentPacket() {
