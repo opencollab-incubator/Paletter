@@ -58,7 +58,7 @@ command takes `--help`. Paths are relative to the repository root (`--root` over
 | `inspect` | Prints `Palette#explain` for a block state or item in one or all bundled versions. |
 
 Gradle tasks: `generateConstants`, `generateComponentApi`, `generateComponentApiPreview`, `generateModel`,
-`generateAddon` and `inferMappings` write; `checkConstants`, `checkComponentApi` and `checkMappings` (strict) are part
+`generateAddon` and `inferMappings` write; `checkConstants`, `checkComponentApi`, `checkMappings` (strict) and `checkWhitebox` are part
 of `./gradlew build` and fail when committed output is stale, `checkData` fails on problems of the bundled data.
 
 Generator tests compare against golden files. After an intended change of generator output, run
@@ -140,7 +140,8 @@ hold nothing Paletter needs.
 ### CI
 
 - `build.yml` runs `./gradlew build` on pushes to `main` and on pull requests. Its `check` includes `:tools:checkMappings`
-  (`check-mappings --strict`: every captured bit and wire path is explained) and `:tools:checkData` (`check-data`).
+  (`check-mappings --strict`: every captured bit and wire path is explained), `:tools:checkData` (`check-data`) and
+  `:tools:checkWhitebox`.
 - `bds-data.yml` runs `update` once a day for the release and preview channels on Windows BDS (a Windows runner, like
   the committed captures), then `generateComponentApi` and `:paletter:apiDump`. On a failure or a difference it opens
   or comments on an issue and opens a pull request from `bds-data/<channel>` with the updated data (only data and
@@ -219,7 +220,7 @@ protocol windows) or with a hand transform, never waived.
 Captures show what BDS sends for the add-on it is given. They cannot show a component nobody wrote a variant for, a
 key that only a rare input switches on, or a component the docs do not mention. The code of BDS can: `whitebox` reads
 the public server binary of a build, without running it, and lists what the code is able to send. `whitebox-coverage`
-then names what no capture of that build shows. Status: a prototype. `update` does not run it yet (see "In `update`").
+then names what no capture of that build shows. `update` runs both (see "In `update`").
 
 ```
 ./gradlew :tools:run --args="whitebox --bds 1.26.63.1"      # -> data/bds/1.26.63.1/whitebox.json, and the diff to the build before
@@ -302,8 +303,7 @@ close (a value BDS writes as a constant, a literal that is not sent) and stay li
 them, there is no list of exceptions.
 
 `whitebox-coverage --check` fails when a committed report is not what the committed facts and captures give, so the
-list cannot drift from the data. `--strict` fails on any gap; it becomes the build's check once the list is down to
-the ones that cannot close.
+list cannot drift from the data. `--strict` fails on any gap; it is opt-in, as some gaps never close.
 
 ### Script custom components
 
@@ -328,17 +328,22 @@ current format, plus a block with two components. `fixtures.json` skips both com
 
 ### In `update`
 
-Not wired in yet. The plan:
+`update` runs it after the captures and never depends on it. On the build's Linux zip it reads the facts, checks them,
+stages `whitebox.json` and `whitebox-coverage.md`, diffs against the build before and puts what needs a human under
+"Needs attention": `!` lines (a new component, a changed network flag or kind, a key that came or went), each naming
+what to capture again, and the gaps the committed report did not list. `~` lines (the writer's code changed, its keys
+did not) stay in the collapsed part.
 
-1. After the Script API dump, `update` runs `whitebox` on the build's Linux zip (it is already downloaded for
-   `bds-inventory`) and stages `whitebox.json`.
-2. It diffs against the build before and puts the `!` lines under "Needs attention" in the report: a new component,
-   a changed network flag or kind, a key that came or went. Each names the component to capture again. `~` lines (the
-   writer's code changed, its keys did not) go to the collapsed part.
-3. After the captures, it runs `whitebox-coverage` and stages `whitebox-coverage.md`; new gaps against the committed
-   report are listed under "Needs attention" with the component and key.
-4. `./gradlew build` runs `:tools:checkWhitebox` (`whitebox-coverage --check`), like `checkMappings`. The task exists;
-   it joins `check` together with steps 1 to 3, so that an `update` cannot leave a stale report behind.
+Safeguards, so that it can never break an update or go quietly wrong:
+
+- An exception or a failed self-check is a FAIL row, "white-box unavailable for this build: <reason>"; `whitebox.json`
+  is staged only after a pass, and everything else of the update goes on. The self-checks (`WhiteboxChecks`): every
+  component the build's spec captures show is found, and no more than 3 components or keys (or 2%) are lost against the
+  build before unless its captures lost them too. Docs-generator schemas are not read yet; the captures and the build
+  before stand in for them.
+- CI (`:tools:checkWhitebox`, in `check`) compares committed reports with committed facts and captures, never the
+  binary; `--strict` is opt-in and a gap is a line in the report, not a red build. `:tools:whiteboxRegression` (not in
+  `check`) runs the analysis on a cached zip and compares it with the committed facts, and skips without the zip.
 
 What stays capture-based: every shape, type, value and default; the order of keys; which JSON produces what; the
 versions at which behaviour changes (the format sweep); everything `mappings.json` and the conformance tests hold.
