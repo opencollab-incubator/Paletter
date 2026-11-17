@@ -11,15 +11,15 @@ import org.geysermc.paletter.annotation.SincePreview;
  * {@code BED_SILVER}. Every constant is the very {@link BedrockItemVariant} of {@code type.variant(aux)}. Referencing
  * them loads nothing.
  * <p>
- * Constants are added when Bedrock adds variants (binary compatible). A variant Bedrock removes stays, deprecated.
+ * Constants are added when Bedrock adds variants (binary compatible). A variant Bedrock removes keeps its constant,
+ * deprecated: {@code type.variant(aux)} is then null. A name BDS changes stays as a deprecated alias of the new one.
  * <p>
- * The {@code @since} of a constant is the bundled Bedrock release it first appears in, without an experiment toggle
- * (decided from the BDS captures in {@code data/bds}); {@code 26.40} is the oldest bundled release, so it may be older.
- * {@link org.geysermc.paletter.annotation.Education @Education} marks content BDS only offers to worlds with Education
- * Edition features, which {@code isEducation()} of the type answers at runtime.
- * {@link org.geysermc.paletter.annotation.SincePreview @SincePreview} marks content only the bundled Bedrock preview
- * has. It is only {@code isAvailable()} with previews loaded (system property {@code paletter.previews}), else it
- * resolves to {@code minecraft:unknown}. The mark goes when a release has it; the constant goes if a newer preview drops it.
+ * The {@code @since} of a constant is the Paletter version that added it. The names come from BDS dumps of the newest
+ * builds only, so a variant may be older than Bedrock 26.60 even if its constant is not.
+ * {@link org.geysermc.paletter.annotation.SincePreview @SincePreview} marks variants only the bundled Bedrock preview
+ * has: without previews loaded ({@code paletter.previews}) its type has no such variant, so {@code type.variant(aux)}
+ * is null and the constant stays a plain key. The mark goes when a release has it; the constant goes if a newer
+ * preview drops it.
  *
  * @since 0.1.0
  */
@@ -27,7 +27,7 @@ public final class BedrockItemVariants {
     /**
      * {@code minecraft:arrow} with aux 13.
      *
-     * @since 26.60
+     * @since 0.1.0
      */
     public static final BedrockItemVariant ARROW_FIRE_RESISTANCE = VanillaTypes.variant(BedrockItems.ARROW, 13);
 
@@ -41,42 +41,42 @@ public final class BedrockItemVariants {
     /**
      * {@code minecraft:arrow} with aux 24.
      *
-     * @since 26.60
+     * @since 0.1.0
      */
     public static final BedrockItemVariant ARROW_HARMING = VanillaTypes.variant(BedrockItems.ARROW, 24);
 
     /**
      * {@code minecraft:arrow} with aux 22.
      *
-     * @since 26.60
+     * @since 0.1.0
      */
     public static final BedrockItemVariant ARROW_HEALING = VanillaTypes.variant(BedrockItems.ARROW, 22);
 
     /**
      * {@code minecraft:arrow} with aux 47.
      *
-     * @since 26.60
+     * @since 0.1.0
      */
     public static final BedrockItemVariant ARROW_INFESTED = VanillaTypes.variant(BedrockItems.ARROW, 47);
 
     /**
      * {@code minecraft:arrow} with aux 8.
      *
-     * @since 26.60
+     * @since 0.1.0
      */
     public static final BedrockItemVariant ARROW_INVISIBILITY = VanillaTypes.variant(BedrockItems.ARROW, 8);
 
     /**
      * {@code minecraft:arrow} with aux 10.
      *
-     * @since 26.60
+     * @since 0.1.0
      */
     public static final BedrockItemVariant ARROW_LEAPING = VanillaTypes.variant(BedrockItems.ARROW, 10);
 
     /**
      * {@code minecraft:arrow} with aux 14.
      *
-     * @since 26.60
+     * @since 0.1.0
      */
     public static final BedrockItemVariant ARROW_LONG_FIRE_RESISTANCE = VanillaTypes.variant(BedrockItems.ARROW, 14);
 
@@ -90,483 +90,483 @@ public final class BedrockItemVariants {
     /**
      * {@code minecraft:arrow} with aux 9.
      *
-     * @since 26.60
+     * @since 0.1.0
      */
     public static final BedrockItemVariant ARROW_LONG_INVISIBILITY = VanillaTypes.variant(BedrockItems.ARROW, 9);
 
     /**
      * {@code minecraft:arrow} with aux 11.
      *
-     * @since 26.60
+     * @since 0.1.0
      */
     public static final BedrockItemVariant ARROW_LONG_LEAPING = VanillaTypes.variant(BedrockItems.ARROW, 11);
 
     /**
      * {@code minecraft:arrow} with aux 7.
      *
-     * @since 26.60
+     * @since 0.1.0
      */
     public static final BedrockItemVariant ARROW_LONG_NIGHTVISION = VanillaTypes.variant(BedrockItems.ARROW, 7);
 
     /**
      * {@code minecraft:arrow} with aux 27.
      *
-     * @since 26.60
+     * @since 0.1.0
      */
     public static final BedrockItemVariant ARROW_LONG_POISON = VanillaTypes.variant(BedrockItems.ARROW, 27);
 
     /**
      * {@code minecraft:arrow} with aux 30.
      *
-     * @since 26.60
+     * @since 0.1.0
      */
     public static final BedrockItemVariant ARROW_LONG_REGENERATION = VanillaTypes.variant(BedrockItems.ARROW, 30);
 
     /**
      * {@code minecraft:arrow} with aux 19.
      *
-     * @since 26.60
+     * @since 0.1.0
      */
     public static final BedrockItemVariant ARROW_LONG_SLOWNESS = VanillaTypes.variant(BedrockItems.ARROW, 19);
 
     /**
      * {@code minecraft:arrow} with aux 42.
      *
-     * @since 26.60
+     * @since 0.1.0
      */
     public static final BedrockItemVariant ARROW_LONG_SLOW_FALLING = VanillaTypes.variant(BedrockItems.ARROW, 42);
 
     /**
      * {@code minecraft:arrow} with aux 33.
      *
-     * @since 26.60
+     * @since 0.1.0
      */
     public static final BedrockItemVariant ARROW_LONG_STRENGTH = VanillaTypes.variant(BedrockItems.ARROW, 33);
 
     /**
      * {@code minecraft:arrow} with aux 16.
      *
-     * @since 26.60
+     * @since 0.1.0
      */
     public static final BedrockItemVariant ARROW_LONG_SWIFTNESS = VanillaTypes.variant(BedrockItems.ARROW, 16);
 
     /**
      * {@code minecraft:arrow} with aux 39.
      *
-     * @since 26.60
+     * @since 0.1.0
      */
     public static final BedrockItemVariant ARROW_LONG_TURTLE_MASTER = VanillaTypes.variant(BedrockItems.ARROW, 39);
 
     /**
      * {@code minecraft:arrow} with aux 21.
      *
-     * @since 26.60
+     * @since 0.1.0
      */
     public static final BedrockItemVariant ARROW_LONG_WATER_BREATHING = VanillaTypes.variant(BedrockItems.ARROW, 21);
 
     /**
      * {@code minecraft:arrow} with aux 36.
      *
-     * @since 26.60
+     * @since 0.1.0
      */
     public static final BedrockItemVariant ARROW_LONG_WEAKNESS = VanillaTypes.variant(BedrockItems.ARROW, 36);
 
     /**
      * {@code minecraft:arrow} with aux 6.
      *
-     * @since 26.60
+     * @since 0.1.0
      */
     public static final BedrockItemVariant ARROW_NIGHTVISION = VanillaTypes.variant(BedrockItems.ARROW, 6);
 
     /**
      * {@code minecraft:arrow} with aux 46.
      *
-     * @since 26.60
+     * @since 0.1.0
      */
     public static final BedrockItemVariant ARROW_OOZING = VanillaTypes.variant(BedrockItems.ARROW, 46);
 
     /**
      * {@code minecraft:arrow} with aux 26.
      *
-     * @since 26.60
+     * @since 0.1.0
      */
     public static final BedrockItemVariant ARROW_POISON = VanillaTypes.variant(BedrockItems.ARROW, 26);
 
     /**
      * {@code minecraft:arrow} with aux 29.
      *
-     * @since 26.60
+     * @since 0.1.0
      */
     public static final BedrockItemVariant ARROW_REGENERATION = VanillaTypes.variant(BedrockItems.ARROW, 29);
 
     /**
      * {@code minecraft:arrow} with aux 18.
      *
-     * @since 26.60
+     * @since 0.1.0
      */
     public static final BedrockItemVariant ARROW_SLOWNESS = VanillaTypes.variant(BedrockItems.ARROW, 18);
 
     /**
      * {@code minecraft:arrow} with aux 41.
      *
-     * @since 26.60
+     * @since 0.1.0
      */
     public static final BedrockItemVariant ARROW_SLOW_FALLING = VanillaTypes.variant(BedrockItems.ARROW, 41);
 
     /**
      * {@code minecraft:arrow} with aux 32.
      *
-     * @since 26.60
+     * @since 0.1.0
      */
     public static final BedrockItemVariant ARROW_STRENGTH = VanillaTypes.variant(BedrockItems.ARROW, 32);
 
     /**
      * {@code minecraft:arrow} with aux 25.
      *
-     * @since 26.60
+     * @since 0.1.0
      */
     public static final BedrockItemVariant ARROW_STRONG_HARMING = VanillaTypes.variant(BedrockItems.ARROW, 25);
 
     /**
      * {@code minecraft:arrow} with aux 23.
      *
-     * @since 26.60
+     * @since 0.1.0
      */
     public static final BedrockItemVariant ARROW_STRONG_HEALING = VanillaTypes.variant(BedrockItems.ARROW, 23);
 
     /**
      * {@code minecraft:arrow} with aux 12.
      *
-     * @since 26.60
+     * @since 0.1.0
      */
     public static final BedrockItemVariant ARROW_STRONG_LEAPING = VanillaTypes.variant(BedrockItems.ARROW, 12);
 
     /**
      * {@code minecraft:arrow} with aux 28.
      *
-     * @since 26.60
+     * @since 0.1.0
      */
     public static final BedrockItemVariant ARROW_STRONG_POISON = VanillaTypes.variant(BedrockItems.ARROW, 28);
 
     /**
      * {@code minecraft:arrow} with aux 31.
      *
-     * @since 26.60
+     * @since 0.1.0
      */
     public static final BedrockItemVariant ARROW_STRONG_REGENERATION = VanillaTypes.variant(BedrockItems.ARROW, 31);
 
     /**
      * {@code minecraft:arrow} with aux 43.
      *
-     * @since 26.60
+     * @since 0.1.0
      */
     public static final BedrockItemVariant ARROW_STRONG_SLOWNESS = VanillaTypes.variant(BedrockItems.ARROW, 43);
 
     /**
      * {@code minecraft:arrow} with aux 34.
      *
-     * @since 26.60
+     * @since 0.1.0
      */
     public static final BedrockItemVariant ARROW_STRONG_STRENGTH = VanillaTypes.variant(BedrockItems.ARROW, 34);
 
     /**
      * {@code minecraft:arrow} with aux 17.
      *
-     * @since 26.60
+     * @since 0.1.0
      */
     public static final BedrockItemVariant ARROW_STRONG_SWIFTNESS = VanillaTypes.variant(BedrockItems.ARROW, 17);
 
     /**
      * {@code minecraft:arrow} with aux 40.
      *
-     * @since 26.60
+     * @since 0.1.0
      */
     public static final BedrockItemVariant ARROW_STRONG_TURTLE_MASTER = VanillaTypes.variant(BedrockItems.ARROW, 40);
 
     /**
      * {@code minecraft:arrow} with aux 15.
      *
-     * @since 26.60
+     * @since 0.1.0
      */
     public static final BedrockItemVariant ARROW_SWIFTNESS = VanillaTypes.variant(BedrockItems.ARROW, 15);
 
     /**
      * {@code minecraft:arrow} with aux 38.
      *
-     * @since 26.60
+     * @since 0.1.0
      */
     public static final BedrockItemVariant ARROW_TURTLE_MASTER = VanillaTypes.variant(BedrockItems.ARROW, 38);
 
     /**
      * {@code minecraft:arrow} with aux 20.
      *
-     * @since 26.60
+     * @since 0.1.0
      */
     public static final BedrockItemVariant ARROW_WATER_BREATHING = VanillaTypes.variant(BedrockItems.ARROW, 20);
 
     /**
      * {@code minecraft:arrow} with aux 35.
      *
-     * @since 26.60
+     * @since 0.1.0
      */
     public static final BedrockItemVariant ARROW_WEAKNESS = VanillaTypes.variant(BedrockItems.ARROW, 35);
 
     /**
      * {@code minecraft:arrow} with aux 45.
      *
-     * @since 26.60
+     * @since 0.1.0
      */
     public static final BedrockItemVariant ARROW_WEAVING = VanillaTypes.variant(BedrockItems.ARROW, 45);
 
     /**
      * {@code minecraft:arrow} with aux 44.
      *
-     * @since 26.60
+     * @since 0.1.0
      */
     public static final BedrockItemVariant ARROW_WIND_CHARGED = VanillaTypes.variant(BedrockItems.ARROW, 44);
 
     /**
      * {@code minecraft:arrow} with aux 37.
      *
-     * @since 26.60
+     * @since 0.1.0
      */
     public static final BedrockItemVariant ARROW_WITHER = VanillaTypes.variant(BedrockItems.ARROW, 37);
 
     /**
      * {@code minecraft:banner} with aux 0.
      *
-     * @since 26.60
+     * @since 0.1.0
      */
     public static final BedrockItemVariant BANNER_BLACK = VanillaTypes.variant(BedrockItems.BANNER, 0);
 
     /**
      * {@code minecraft:banner} with aux 4.
      *
-     * @since 26.60
+     * @since 0.1.0
      */
     public static final BedrockItemVariant BANNER_BLUE = VanillaTypes.variant(BedrockItems.BANNER, 4);
 
     /**
      * {@code minecraft:banner} with aux 3.
      *
-     * @since 26.60
+     * @since 0.1.0
      */
     public static final BedrockItemVariant BANNER_BROWN = VanillaTypes.variant(BedrockItems.BANNER, 3);
 
     /**
      * {@code minecraft:banner} with aux 6.
      *
-     * @since 26.60
+     * @since 0.1.0
      */
     public static final BedrockItemVariant BANNER_CYAN = VanillaTypes.variant(BedrockItems.BANNER, 6);
 
     /**
      * {@code minecraft:banner} with aux 8.
      *
-     * @since 26.60
+     * @since 0.1.0
      */
     public static final BedrockItemVariant BANNER_GRAY = VanillaTypes.variant(BedrockItems.BANNER, 8);
 
     /**
      * {@code minecraft:banner} with aux 2.
      *
-     * @since 26.60
+     * @since 0.1.0
      */
     public static final BedrockItemVariant BANNER_GREEN = VanillaTypes.variant(BedrockItems.BANNER, 2);
 
     /**
      * {@code minecraft:banner} with aux 12.
      *
-     * @since 26.60
+     * @since 0.1.0
      */
     public static final BedrockItemVariant BANNER_LIGHT_BLUE = VanillaTypes.variant(BedrockItems.BANNER, 12);
 
     /**
      * {@code minecraft:banner} with aux 10.
      *
-     * @since 26.60
+     * @since 0.1.0
      */
     public static final BedrockItemVariant BANNER_LIME = VanillaTypes.variant(BedrockItems.BANNER, 10);
 
     /**
      * {@code minecraft:banner} with aux 13.
      *
-     * @since 26.60
+     * @since 0.1.0
      */
     public static final BedrockItemVariant BANNER_MAGENTA = VanillaTypes.variant(BedrockItems.BANNER, 13);
 
     /**
      * {@code minecraft:banner} with aux 14.
      *
-     * @since 26.60
+     * @since 0.1.0
      */
     public static final BedrockItemVariant BANNER_ORANGE = VanillaTypes.variant(BedrockItems.BANNER, 14);
 
     /**
      * {@code minecraft:banner} with aux 9.
      *
-     * @since 26.60
+     * @since 0.1.0
      */
     public static final BedrockItemVariant BANNER_PINK = VanillaTypes.variant(BedrockItems.BANNER, 9);
 
     /**
      * {@code minecraft:banner} with aux 5.
      *
-     * @since 26.60
+     * @since 0.1.0
      */
     public static final BedrockItemVariant BANNER_PURPLE = VanillaTypes.variant(BedrockItems.BANNER, 5);
 
     /**
      * {@code minecraft:banner} with aux 1.
      *
-     * @since 26.60
+     * @since 0.1.0
      */
     public static final BedrockItemVariant BANNER_RED = VanillaTypes.variant(BedrockItems.BANNER, 1);
 
     /**
      * {@code minecraft:banner} with aux 7.
      *
-     * @since 26.60
+     * @since 0.1.0
      */
     public static final BedrockItemVariant BANNER_SILVER = VanillaTypes.variant(BedrockItems.BANNER, 7);
 
     /**
      * {@code minecraft:banner} with aux 15.
      *
-     * @since 26.60
+     * @since 0.1.0
      */
     public static final BedrockItemVariant BANNER_WHITE = VanillaTypes.variant(BedrockItems.BANNER, 15);
 
     /**
      * {@code minecraft:banner} with aux 11.
      *
-     * @since 26.60
+     * @since 0.1.0
      */
     public static final BedrockItemVariant BANNER_YELLOW = VanillaTypes.variant(BedrockItems.BANNER, 11);
 
     /**
      * {@code minecraft:bed} with aux 15.
      *
-     * @since 26.60
+     * @since 0.1.0
      */
     public static final BedrockItemVariant BED_BLACK = VanillaTypes.variant(BedrockItems.BED, 15);
 
     /**
      * {@code minecraft:bed} with aux 11.
      *
-     * @since 26.60
+     * @since 0.1.0
      */
     public static final BedrockItemVariant BED_BLUE = VanillaTypes.variant(BedrockItems.BED, 11);
 
     /**
      * {@code minecraft:bed} with aux 12.
      *
-     * @since 26.60
+     * @since 0.1.0
      */
     public static final BedrockItemVariant BED_BROWN = VanillaTypes.variant(BedrockItems.BED, 12);
 
     /**
      * {@code minecraft:bed} with aux 9.
      *
-     * @since 26.60
+     * @since 0.1.0
      */
     public static final BedrockItemVariant BED_CYAN = VanillaTypes.variant(BedrockItems.BED, 9);
 
     /**
      * {@code minecraft:bed} with aux 7.
      *
-     * @since 26.60
+     * @since 0.1.0
      */
     public static final BedrockItemVariant BED_GRAY = VanillaTypes.variant(BedrockItems.BED, 7);
 
     /**
      * {@code minecraft:bed} with aux 13.
      *
-     * @since 26.60
+     * @since 0.1.0
      */
     public static final BedrockItemVariant BED_GREEN = VanillaTypes.variant(BedrockItems.BED, 13);
 
     /**
      * {@code minecraft:bed} with aux 3.
      *
-     * @since 26.60
+     * @since 0.1.0
      */
     public static final BedrockItemVariant BED_LIGHT_BLUE = VanillaTypes.variant(BedrockItems.BED, 3);
 
     /**
      * {@code minecraft:bed} with aux 5.
      *
-     * @since 26.60
+     * @since 0.1.0
      */
     public static final BedrockItemVariant BED_LIME = VanillaTypes.variant(BedrockItems.BED, 5);
 
     /**
      * {@code minecraft:bed} with aux 2.
      *
-     * @since 26.60
+     * @since 0.1.0
      */
     public static final BedrockItemVariant BED_MAGENTA = VanillaTypes.variant(BedrockItems.BED, 2);
 
     /**
      * {@code minecraft:bed} with aux 1.
      *
-     * @since 26.60
+     * @since 0.1.0
      */
     public static final BedrockItemVariant BED_ORANGE = VanillaTypes.variant(BedrockItems.BED, 1);
 
     /**
      * {@code minecraft:bed} with aux 6.
      *
-     * @since 26.60
+     * @since 0.1.0
      */
     public static final BedrockItemVariant BED_PINK = VanillaTypes.variant(BedrockItems.BED, 6);
 
     /**
      * {@code minecraft:bed} with aux 10.
      *
-     * @since 26.60
+     * @since 0.1.0
      */
     public static final BedrockItemVariant BED_PURPLE = VanillaTypes.variant(BedrockItems.BED, 10);
 
     /**
      * {@code minecraft:bed} with aux 14.
      *
-     * @since 26.60
+     * @since 0.1.0
      */
     public static final BedrockItemVariant BED_RED = VanillaTypes.variant(BedrockItems.BED, 14);
 
     /**
      * {@code minecraft:bed} with aux 8.
      *
-     * @since 26.60
+     * @since 0.1.0
      */
     public static final BedrockItemVariant BED_SILVER = VanillaTypes.variant(BedrockItems.BED, 8);
 
     /**
      * {@code minecraft:bed} with aux 0.
      *
-     * @since 26.60
+     * @since 0.1.0
      */
     public static final BedrockItemVariant BED_WHITE = VanillaTypes.variant(BedrockItems.BED, 0);
 
     /**
      * {@code minecraft:bed} with aux 4.
      *
-     * @since 26.60
+     * @since 0.1.0
      */
     public static final BedrockItemVariant BED_YELLOW = VanillaTypes.variant(BedrockItems.BED, 4);
 
     /**
      * {@code minecraft:lingering_potion} with aux 4.
      *
-     * @since 26.60
+     * @since 0.1.0
      */
     public static final BedrockItemVariant LINGERING_POTION_AWKWARD = VanillaTypes.variant(BedrockItems.LINGERING_POTION, 4);
 
     /**
      * {@code minecraft:lingering_potion} with aux 12.
      *
-     * @since 26.60
+     * @since 0.1.0
      */
     public static final BedrockItemVariant LINGERING_POTION_FIRE_RESISTANCE = VanillaTypes.variant(BedrockItems.LINGERING_POTION, 12);
 
@@ -580,42 +580,42 @@ public final class BedrockItemVariants {
     /**
      * {@code minecraft:lingering_potion} with aux 23.
      *
-     * @since 26.60
+     * @since 0.1.0
      */
     public static final BedrockItemVariant LINGERING_POTION_HARMING = VanillaTypes.variant(BedrockItems.LINGERING_POTION, 23);
 
     /**
      * {@code minecraft:lingering_potion} with aux 21.
      *
-     * @since 26.60
+     * @since 0.1.0
      */
     public static final BedrockItemVariant LINGERING_POTION_HEALING = VanillaTypes.variant(BedrockItems.LINGERING_POTION, 21);
 
     /**
      * {@code minecraft:lingering_potion} with aux 46.
      *
-     * @since 26.60
+     * @since 0.1.0
      */
     public static final BedrockItemVariant LINGERING_POTION_INFESTED = VanillaTypes.variant(BedrockItems.LINGERING_POTION, 46);
 
     /**
      * {@code minecraft:lingering_potion} with aux 7.
      *
-     * @since 26.60
+     * @since 0.1.0
      */
     public static final BedrockItemVariant LINGERING_POTION_INVISIBILITY = VanillaTypes.variant(BedrockItems.LINGERING_POTION, 7);
 
     /**
      * {@code minecraft:lingering_potion} with aux 9.
      *
-     * @since 26.60
+     * @since 0.1.0
      */
     public static final BedrockItemVariant LINGERING_POTION_LEAPING = VanillaTypes.variant(BedrockItems.LINGERING_POTION, 9);
 
     /**
      * {@code minecraft:lingering_potion} with aux 13.
      *
-     * @since 26.60
+     * @since 0.1.0
      */
     public static final BedrockItemVariant LINGERING_POTION_LONG_FIRE_RESISTANCE = VanillaTypes.variant(BedrockItems.LINGERING_POTION, 13);
 
@@ -629,287 +629,287 @@ public final class BedrockItemVariants {
     /**
      * {@code minecraft:lingering_potion} with aux 8.
      *
-     * @since 26.60
+     * @since 0.1.0
      */
     public static final BedrockItemVariant LINGERING_POTION_LONG_INVISIBILITY = VanillaTypes.variant(BedrockItems.LINGERING_POTION, 8);
 
     /**
      * {@code minecraft:lingering_potion} with aux 10.
      *
-     * @since 26.60
+     * @since 0.1.0
      */
     public static final BedrockItemVariant LINGERING_POTION_LONG_LEAPING = VanillaTypes.variant(BedrockItems.LINGERING_POTION, 10);
 
     /**
      * {@code minecraft:lingering_potion} with aux 2.
      *
-     * @since 26.60
+     * @since 0.1.0
      */
     public static final BedrockItemVariant LINGERING_POTION_LONG_MUNDANE = VanillaTypes.variant(BedrockItems.LINGERING_POTION, 2);
 
     /**
      * {@code minecraft:lingering_potion} with aux 6.
      *
-     * @since 26.60
+     * @since 0.1.0
      */
     public static final BedrockItemVariant LINGERING_POTION_LONG_NIGHTVISION = VanillaTypes.variant(BedrockItems.LINGERING_POTION, 6);
 
     /**
      * {@code minecraft:lingering_potion} with aux 26.
      *
-     * @since 26.60
+     * @since 0.1.0
      */
     public static final BedrockItemVariant LINGERING_POTION_LONG_POISON = VanillaTypes.variant(BedrockItems.LINGERING_POTION, 26);
 
     /**
      * {@code minecraft:lingering_potion} with aux 29.
      *
-     * @since 26.60
+     * @since 0.1.0
      */
     public static final BedrockItemVariant LINGERING_POTION_LONG_REGENERATION = VanillaTypes.variant(BedrockItems.LINGERING_POTION, 29);
 
     /**
      * {@code minecraft:lingering_potion} with aux 18.
      *
-     * @since 26.60
+     * @since 0.1.0
      */
     public static final BedrockItemVariant LINGERING_POTION_LONG_SLOWNESS = VanillaTypes.variant(BedrockItems.LINGERING_POTION, 18);
 
     /**
      * {@code minecraft:lingering_potion} with aux 41.
      *
-     * @since 26.60
+     * @since 0.1.0
      */
     public static final BedrockItemVariant LINGERING_POTION_LONG_SLOW_FALLING = VanillaTypes.variant(BedrockItems.LINGERING_POTION, 41);
 
     /**
      * {@code minecraft:lingering_potion} with aux 32.
      *
-     * @since 26.60
+     * @since 0.1.0
      */
     public static final BedrockItemVariant LINGERING_POTION_LONG_STRENGTH = VanillaTypes.variant(BedrockItems.LINGERING_POTION, 32);
 
     /**
      * {@code minecraft:lingering_potion} with aux 15.
      *
-     * @since 26.60
+     * @since 0.1.0
      */
     public static final BedrockItemVariant LINGERING_POTION_LONG_SWIFTNESS = VanillaTypes.variant(BedrockItems.LINGERING_POTION, 15);
 
     /**
      * {@code minecraft:lingering_potion} with aux 38.
      *
-     * @since 26.60
+     * @since 0.1.0
      */
     public static final BedrockItemVariant LINGERING_POTION_LONG_TURTLE_MASTER = VanillaTypes.variant(BedrockItems.LINGERING_POTION, 38);
 
     /**
      * {@code minecraft:lingering_potion} with aux 20.
      *
-     * @since 26.60
+     * @since 0.1.0
      */
     public static final BedrockItemVariant LINGERING_POTION_LONG_WATER_BREATHING = VanillaTypes.variant(BedrockItems.LINGERING_POTION, 20);
 
     /**
      * {@code minecraft:lingering_potion} with aux 35.
      *
-     * @since 26.60
+     * @since 0.1.0
      */
     public static final BedrockItemVariant LINGERING_POTION_LONG_WEAKNESS = VanillaTypes.variant(BedrockItems.LINGERING_POTION, 35);
 
     /**
      * {@code minecraft:lingering_potion} with aux 1.
      *
-     * @since 26.60
+     * @since 0.1.0
      */
     public static final BedrockItemVariant LINGERING_POTION_MUNDANE = VanillaTypes.variant(BedrockItems.LINGERING_POTION, 1);
 
     /**
      * {@code minecraft:lingering_potion} with aux 5.
      *
-     * @since 26.60
+     * @since 0.1.0
      */
     public static final BedrockItemVariant LINGERING_POTION_NIGHTVISION = VanillaTypes.variant(BedrockItems.LINGERING_POTION, 5);
 
     /**
      * {@code minecraft:lingering_potion} with aux 45.
      *
-     * @since 26.60
+     * @since 0.1.0
      */
     public static final BedrockItemVariant LINGERING_POTION_OOZING = VanillaTypes.variant(BedrockItems.LINGERING_POTION, 45);
 
     /**
      * {@code minecraft:lingering_potion} with aux 25.
      *
-     * @since 26.60
+     * @since 0.1.0
      */
     public static final BedrockItemVariant LINGERING_POTION_POISON = VanillaTypes.variant(BedrockItems.LINGERING_POTION, 25);
 
     /**
      * {@code minecraft:lingering_potion} with aux 28.
      *
-     * @since 26.60
+     * @since 0.1.0
      */
     public static final BedrockItemVariant LINGERING_POTION_REGENERATION = VanillaTypes.variant(BedrockItems.LINGERING_POTION, 28);
 
     /**
      * {@code minecraft:lingering_potion} with aux 17.
      *
-     * @since 26.60
+     * @since 0.1.0
      */
     public static final BedrockItemVariant LINGERING_POTION_SLOWNESS = VanillaTypes.variant(BedrockItems.LINGERING_POTION, 17);
 
     /**
      * {@code minecraft:lingering_potion} with aux 40.
      *
-     * @since 26.60
+     * @since 0.1.0
      */
     public static final BedrockItemVariant LINGERING_POTION_SLOW_FALLING = VanillaTypes.variant(BedrockItems.LINGERING_POTION, 40);
 
     /**
      * {@code minecraft:lingering_potion} with aux 31.
      *
-     * @since 26.60
+     * @since 0.1.0
      */
     public static final BedrockItemVariant LINGERING_POTION_STRENGTH = VanillaTypes.variant(BedrockItems.LINGERING_POTION, 31);
 
     /**
      * {@code minecraft:lingering_potion} with aux 24.
      *
-     * @since 26.60
+     * @since 0.1.0
      */
     public static final BedrockItemVariant LINGERING_POTION_STRONG_HARMING = VanillaTypes.variant(BedrockItems.LINGERING_POTION, 24);
 
     /**
      * {@code minecraft:lingering_potion} with aux 22.
      *
-     * @since 26.60
+     * @since 0.1.0
      */
     public static final BedrockItemVariant LINGERING_POTION_STRONG_HEALING = VanillaTypes.variant(BedrockItems.LINGERING_POTION, 22);
 
     /**
      * {@code minecraft:lingering_potion} with aux 11.
      *
-     * @since 26.60
+     * @since 0.1.0
      */
     public static final BedrockItemVariant LINGERING_POTION_STRONG_LEAPING = VanillaTypes.variant(BedrockItems.LINGERING_POTION, 11);
 
     /**
      * {@code minecraft:lingering_potion} with aux 27.
      *
-     * @since 26.60
+     * @since 0.1.0
      */
     public static final BedrockItemVariant LINGERING_POTION_STRONG_POISON = VanillaTypes.variant(BedrockItems.LINGERING_POTION, 27);
 
     /**
      * {@code minecraft:lingering_potion} with aux 30.
      *
-     * @since 26.60
+     * @since 0.1.0
      */
     public static final BedrockItemVariant LINGERING_POTION_STRONG_REGENERATION = VanillaTypes.variant(BedrockItems.LINGERING_POTION, 30);
 
     /**
      * {@code minecraft:lingering_potion} with aux 42.
      *
-     * @since 26.60
+     * @since 0.1.0
      */
     public static final BedrockItemVariant LINGERING_POTION_STRONG_SLOWNESS = VanillaTypes.variant(BedrockItems.LINGERING_POTION, 42);
 
     /**
      * {@code minecraft:lingering_potion} with aux 33.
      *
-     * @since 26.60
+     * @since 0.1.0
      */
     public static final BedrockItemVariant LINGERING_POTION_STRONG_STRENGTH = VanillaTypes.variant(BedrockItems.LINGERING_POTION, 33);
 
     /**
      * {@code minecraft:lingering_potion} with aux 16.
      *
-     * @since 26.60
+     * @since 0.1.0
      */
     public static final BedrockItemVariant LINGERING_POTION_STRONG_SWIFTNESS = VanillaTypes.variant(BedrockItems.LINGERING_POTION, 16);
 
     /**
      * {@code minecraft:lingering_potion} with aux 39.
      *
-     * @since 26.60
+     * @since 0.1.0
      */
     public static final BedrockItemVariant LINGERING_POTION_STRONG_TURTLE_MASTER = VanillaTypes.variant(BedrockItems.LINGERING_POTION, 39);
 
     /**
      * {@code minecraft:lingering_potion} with aux 14.
      *
-     * @since 26.60
+     * @since 0.1.0
      */
     public static final BedrockItemVariant LINGERING_POTION_SWIFTNESS = VanillaTypes.variant(BedrockItems.LINGERING_POTION, 14);
 
     /**
      * {@code minecraft:lingering_potion} with aux 3.
      *
-     * @since 26.60
+     * @since 0.1.0
      */
     public static final BedrockItemVariant LINGERING_POTION_THICK = VanillaTypes.variant(BedrockItems.LINGERING_POTION, 3);
 
     /**
      * {@code minecraft:lingering_potion} with aux 37.
      *
-     * @since 26.60
+     * @since 0.1.0
      */
     public static final BedrockItemVariant LINGERING_POTION_TURTLE_MASTER = VanillaTypes.variant(BedrockItems.LINGERING_POTION, 37);
 
     /**
      * {@code minecraft:lingering_potion} with aux 0.
      *
-     * @since 26.60
+     * @since 0.1.0
      */
     public static final BedrockItemVariant LINGERING_POTION_WATER = VanillaTypes.variant(BedrockItems.LINGERING_POTION, 0);
 
     /**
      * {@code minecraft:lingering_potion} with aux 19.
      *
-     * @since 26.60
+     * @since 0.1.0
      */
     public static final BedrockItemVariant LINGERING_POTION_WATER_BREATHING = VanillaTypes.variant(BedrockItems.LINGERING_POTION, 19);
 
     /**
      * {@code minecraft:lingering_potion} with aux 34.
      *
-     * @since 26.60
+     * @since 0.1.0
      */
     public static final BedrockItemVariant LINGERING_POTION_WEAKNESS = VanillaTypes.variant(BedrockItems.LINGERING_POTION, 34);
 
     /**
      * {@code minecraft:lingering_potion} with aux 44.
      *
-     * @since 26.60
+     * @since 0.1.0
      */
     public static final BedrockItemVariant LINGERING_POTION_WEAVING = VanillaTypes.variant(BedrockItems.LINGERING_POTION, 44);
 
     /**
      * {@code minecraft:lingering_potion} with aux 43.
      *
-     * @since 26.60
+     * @since 0.1.0
      */
     public static final BedrockItemVariant LINGERING_POTION_WIND_CHARGED = VanillaTypes.variant(BedrockItems.LINGERING_POTION, 43);
 
     /**
      * {@code minecraft:lingering_potion} with aux 36.
      *
-     * @since 26.60
+     * @since 0.1.0
      */
     public static final BedrockItemVariant LINGERING_POTION_WITHER = VanillaTypes.variant(BedrockItems.LINGERING_POTION, 36);
 
     /**
      * {@code minecraft:potion} with aux 4.
      *
-     * @since 26.60
+     * @since 0.1.0
      */
     public static final BedrockItemVariant POTION_AWKWARD = VanillaTypes.variant(BedrockItems.POTION, 4);
 
     /**
      * {@code minecraft:potion} with aux 12.
      *
-     * @since 26.60
+     * @since 0.1.0
      */
     public static final BedrockItemVariant POTION_FIRE_RESISTANCE = VanillaTypes.variant(BedrockItems.POTION, 12);
 
@@ -923,42 +923,42 @@ public final class BedrockItemVariants {
     /**
      * {@code minecraft:potion} with aux 23.
      *
-     * @since 26.60
+     * @since 0.1.0
      */
     public static final BedrockItemVariant POTION_HARMING = VanillaTypes.variant(BedrockItems.POTION, 23);
 
     /**
      * {@code minecraft:potion} with aux 21.
      *
-     * @since 26.60
+     * @since 0.1.0
      */
     public static final BedrockItemVariant POTION_HEALING = VanillaTypes.variant(BedrockItems.POTION, 21);
 
     /**
      * {@code minecraft:potion} with aux 46.
      *
-     * @since 26.60
+     * @since 0.1.0
      */
     public static final BedrockItemVariant POTION_INFESTED = VanillaTypes.variant(BedrockItems.POTION, 46);
 
     /**
      * {@code minecraft:potion} with aux 7.
      *
-     * @since 26.60
+     * @since 0.1.0
      */
     public static final BedrockItemVariant POTION_INVISIBILITY = VanillaTypes.variant(BedrockItems.POTION, 7);
 
     /**
      * {@code minecraft:potion} with aux 9.
      *
-     * @since 26.60
+     * @since 0.1.0
      */
     public static final BedrockItemVariant POTION_LEAPING = VanillaTypes.variant(BedrockItems.POTION, 9);
 
     /**
      * {@code minecraft:potion} with aux 13.
      *
-     * @since 26.60
+     * @since 0.1.0
      */
     public static final BedrockItemVariant POTION_LONG_FIRE_RESISTANCE = VanillaTypes.variant(BedrockItems.POTION, 13);
 
@@ -972,287 +972,287 @@ public final class BedrockItemVariants {
     /**
      * {@code minecraft:potion} with aux 8.
      *
-     * @since 26.60
+     * @since 0.1.0
      */
     public static final BedrockItemVariant POTION_LONG_INVISIBILITY = VanillaTypes.variant(BedrockItems.POTION, 8);
 
     /**
      * {@code minecraft:potion} with aux 10.
      *
-     * @since 26.60
+     * @since 0.1.0
      */
     public static final BedrockItemVariant POTION_LONG_LEAPING = VanillaTypes.variant(BedrockItems.POTION, 10);
 
     /**
      * {@code minecraft:potion} with aux 2.
      *
-     * @since 26.60
+     * @since 0.1.0
      */
     public static final BedrockItemVariant POTION_LONG_MUNDANE = VanillaTypes.variant(BedrockItems.POTION, 2);
 
     /**
      * {@code minecraft:potion} with aux 6.
      *
-     * @since 26.60
+     * @since 0.1.0
      */
     public static final BedrockItemVariant POTION_LONG_NIGHTVISION = VanillaTypes.variant(BedrockItems.POTION, 6);
 
     /**
      * {@code minecraft:potion} with aux 26.
      *
-     * @since 26.60
+     * @since 0.1.0
      */
     public static final BedrockItemVariant POTION_LONG_POISON = VanillaTypes.variant(BedrockItems.POTION, 26);
 
     /**
      * {@code minecraft:potion} with aux 29.
      *
-     * @since 26.60
+     * @since 0.1.0
      */
     public static final BedrockItemVariant POTION_LONG_REGENERATION = VanillaTypes.variant(BedrockItems.POTION, 29);
 
     /**
      * {@code minecraft:potion} with aux 18.
      *
-     * @since 26.60
+     * @since 0.1.0
      */
     public static final BedrockItemVariant POTION_LONG_SLOWNESS = VanillaTypes.variant(BedrockItems.POTION, 18);
 
     /**
      * {@code minecraft:potion} with aux 41.
      *
-     * @since 26.60
+     * @since 0.1.0
      */
     public static final BedrockItemVariant POTION_LONG_SLOW_FALLING = VanillaTypes.variant(BedrockItems.POTION, 41);
 
     /**
      * {@code minecraft:potion} with aux 32.
      *
-     * @since 26.60
+     * @since 0.1.0
      */
     public static final BedrockItemVariant POTION_LONG_STRENGTH = VanillaTypes.variant(BedrockItems.POTION, 32);
 
     /**
      * {@code minecraft:potion} with aux 15.
      *
-     * @since 26.60
+     * @since 0.1.0
      */
     public static final BedrockItemVariant POTION_LONG_SWIFTNESS = VanillaTypes.variant(BedrockItems.POTION, 15);
 
     /**
      * {@code minecraft:potion} with aux 38.
      *
-     * @since 26.60
+     * @since 0.1.0
      */
     public static final BedrockItemVariant POTION_LONG_TURTLE_MASTER = VanillaTypes.variant(BedrockItems.POTION, 38);
 
     /**
      * {@code minecraft:potion} with aux 20.
      *
-     * @since 26.60
+     * @since 0.1.0
      */
     public static final BedrockItemVariant POTION_LONG_WATER_BREATHING = VanillaTypes.variant(BedrockItems.POTION, 20);
 
     /**
      * {@code minecraft:potion} with aux 35.
      *
-     * @since 26.60
+     * @since 0.1.0
      */
     public static final BedrockItemVariant POTION_LONG_WEAKNESS = VanillaTypes.variant(BedrockItems.POTION, 35);
 
     /**
      * {@code minecraft:potion} with aux 1.
      *
-     * @since 26.60
+     * @since 0.1.0
      */
     public static final BedrockItemVariant POTION_MUNDANE = VanillaTypes.variant(BedrockItems.POTION, 1);
 
     /**
      * {@code minecraft:potion} with aux 5.
      *
-     * @since 26.60
+     * @since 0.1.0
      */
     public static final BedrockItemVariant POTION_NIGHTVISION = VanillaTypes.variant(BedrockItems.POTION, 5);
 
     /**
      * {@code minecraft:potion} with aux 45.
      *
-     * @since 26.60
+     * @since 0.1.0
      */
     public static final BedrockItemVariant POTION_OOZING = VanillaTypes.variant(BedrockItems.POTION, 45);
 
     /**
      * {@code minecraft:potion} with aux 25.
      *
-     * @since 26.60
+     * @since 0.1.0
      */
     public static final BedrockItemVariant POTION_POISON = VanillaTypes.variant(BedrockItems.POTION, 25);
 
     /**
      * {@code minecraft:potion} with aux 28.
      *
-     * @since 26.60
+     * @since 0.1.0
      */
     public static final BedrockItemVariant POTION_REGENERATION = VanillaTypes.variant(BedrockItems.POTION, 28);
 
     /**
      * {@code minecraft:potion} with aux 17.
      *
-     * @since 26.60
+     * @since 0.1.0
      */
     public static final BedrockItemVariant POTION_SLOWNESS = VanillaTypes.variant(BedrockItems.POTION, 17);
 
     /**
      * {@code minecraft:potion} with aux 40.
      *
-     * @since 26.60
+     * @since 0.1.0
      */
     public static final BedrockItemVariant POTION_SLOW_FALLING = VanillaTypes.variant(BedrockItems.POTION, 40);
 
     /**
      * {@code minecraft:potion} with aux 31.
      *
-     * @since 26.60
+     * @since 0.1.0
      */
     public static final BedrockItemVariant POTION_STRENGTH = VanillaTypes.variant(BedrockItems.POTION, 31);
 
     /**
      * {@code minecraft:potion} with aux 24.
      *
-     * @since 26.60
+     * @since 0.1.0
      */
     public static final BedrockItemVariant POTION_STRONG_HARMING = VanillaTypes.variant(BedrockItems.POTION, 24);
 
     /**
      * {@code minecraft:potion} with aux 22.
      *
-     * @since 26.60
+     * @since 0.1.0
      */
     public static final BedrockItemVariant POTION_STRONG_HEALING = VanillaTypes.variant(BedrockItems.POTION, 22);
 
     /**
      * {@code minecraft:potion} with aux 11.
      *
-     * @since 26.60
+     * @since 0.1.0
      */
     public static final BedrockItemVariant POTION_STRONG_LEAPING = VanillaTypes.variant(BedrockItems.POTION, 11);
 
     /**
      * {@code minecraft:potion} with aux 27.
      *
-     * @since 26.60
+     * @since 0.1.0
      */
     public static final BedrockItemVariant POTION_STRONG_POISON = VanillaTypes.variant(BedrockItems.POTION, 27);
 
     /**
      * {@code minecraft:potion} with aux 30.
      *
-     * @since 26.60
+     * @since 0.1.0
      */
     public static final BedrockItemVariant POTION_STRONG_REGENERATION = VanillaTypes.variant(BedrockItems.POTION, 30);
 
     /**
      * {@code minecraft:potion} with aux 42.
      *
-     * @since 26.60
+     * @since 0.1.0
      */
     public static final BedrockItemVariant POTION_STRONG_SLOWNESS = VanillaTypes.variant(BedrockItems.POTION, 42);
 
     /**
      * {@code minecraft:potion} with aux 33.
      *
-     * @since 26.60
+     * @since 0.1.0
      */
     public static final BedrockItemVariant POTION_STRONG_STRENGTH = VanillaTypes.variant(BedrockItems.POTION, 33);
 
     /**
      * {@code minecraft:potion} with aux 16.
      *
-     * @since 26.60
+     * @since 0.1.0
      */
     public static final BedrockItemVariant POTION_STRONG_SWIFTNESS = VanillaTypes.variant(BedrockItems.POTION, 16);
 
     /**
      * {@code minecraft:potion} with aux 39.
      *
-     * @since 26.60
+     * @since 0.1.0
      */
     public static final BedrockItemVariant POTION_STRONG_TURTLE_MASTER = VanillaTypes.variant(BedrockItems.POTION, 39);
 
     /**
      * {@code minecraft:potion} with aux 14.
      *
-     * @since 26.60
+     * @since 0.1.0
      */
     public static final BedrockItemVariant POTION_SWIFTNESS = VanillaTypes.variant(BedrockItems.POTION, 14);
 
     /**
      * {@code minecraft:potion} with aux 3.
      *
-     * @since 26.60
+     * @since 0.1.0
      */
     public static final BedrockItemVariant POTION_THICK = VanillaTypes.variant(BedrockItems.POTION, 3);
 
     /**
      * {@code minecraft:potion} with aux 37.
      *
-     * @since 26.60
+     * @since 0.1.0
      */
     public static final BedrockItemVariant POTION_TURTLE_MASTER = VanillaTypes.variant(BedrockItems.POTION, 37);
 
     /**
      * {@code minecraft:potion} with aux 0.
      *
-     * @since 26.60
+     * @since 0.1.0
      */
     public static final BedrockItemVariant POTION_WATER = VanillaTypes.variant(BedrockItems.POTION, 0);
 
     /**
      * {@code minecraft:potion} with aux 19.
      *
-     * @since 26.60
+     * @since 0.1.0
      */
     public static final BedrockItemVariant POTION_WATER_BREATHING = VanillaTypes.variant(BedrockItems.POTION, 19);
 
     /**
      * {@code minecraft:potion} with aux 34.
      *
-     * @since 26.60
+     * @since 0.1.0
      */
     public static final BedrockItemVariant POTION_WEAKNESS = VanillaTypes.variant(BedrockItems.POTION, 34);
 
     /**
      * {@code minecraft:potion} with aux 44.
      *
-     * @since 26.60
+     * @since 0.1.0
      */
     public static final BedrockItemVariant POTION_WEAVING = VanillaTypes.variant(BedrockItems.POTION, 44);
 
     /**
      * {@code minecraft:potion} with aux 43.
      *
-     * @since 26.60
+     * @since 0.1.0
      */
     public static final BedrockItemVariant POTION_WIND_CHARGED = VanillaTypes.variant(BedrockItems.POTION, 43);
 
     /**
      * {@code minecraft:potion} with aux 36.
      *
-     * @since 26.60
+     * @since 0.1.0
      */
     public static final BedrockItemVariant POTION_WITHER = VanillaTypes.variant(BedrockItems.POTION, 36);
 
     /**
      * {@code minecraft:splash_potion} with aux 4.
      *
-     * @since 26.60
+     * @since 0.1.0
      */
     public static final BedrockItemVariant SPLASH_POTION_AWKWARD = VanillaTypes.variant(BedrockItems.SPLASH_POTION, 4);
 
     /**
      * {@code minecraft:splash_potion} with aux 12.
      *
-     * @since 26.60
+     * @since 0.1.0
      */
     public static final BedrockItemVariant SPLASH_POTION_FIRE_RESISTANCE = VanillaTypes.variant(BedrockItems.SPLASH_POTION, 12);
 
@@ -1266,42 +1266,42 @@ public final class BedrockItemVariants {
     /**
      * {@code minecraft:splash_potion} with aux 23.
      *
-     * @since 26.60
+     * @since 0.1.0
      */
     public static final BedrockItemVariant SPLASH_POTION_HARMING = VanillaTypes.variant(BedrockItems.SPLASH_POTION, 23);
 
     /**
      * {@code minecraft:splash_potion} with aux 21.
      *
-     * @since 26.60
+     * @since 0.1.0
      */
     public static final BedrockItemVariant SPLASH_POTION_HEALING = VanillaTypes.variant(BedrockItems.SPLASH_POTION, 21);
 
     /**
      * {@code minecraft:splash_potion} with aux 46.
      *
-     * @since 26.60
+     * @since 0.1.0
      */
     public static final BedrockItemVariant SPLASH_POTION_INFESTED = VanillaTypes.variant(BedrockItems.SPLASH_POTION, 46);
 
     /**
      * {@code minecraft:splash_potion} with aux 7.
      *
-     * @since 26.60
+     * @since 0.1.0
      */
     public static final BedrockItemVariant SPLASH_POTION_INVISIBILITY = VanillaTypes.variant(BedrockItems.SPLASH_POTION, 7);
 
     /**
      * {@code minecraft:splash_potion} with aux 9.
      *
-     * @since 26.60
+     * @since 0.1.0
      */
     public static final BedrockItemVariant SPLASH_POTION_LEAPING = VanillaTypes.variant(BedrockItems.SPLASH_POTION, 9);
 
     /**
      * {@code minecraft:splash_potion} with aux 13.
      *
-     * @since 26.60
+     * @since 0.1.0
      */
     public static final BedrockItemVariant SPLASH_POTION_LONG_FIRE_RESISTANCE = VanillaTypes.variant(BedrockItems.SPLASH_POTION, 13);
 
@@ -1315,273 +1315,273 @@ public final class BedrockItemVariants {
     /**
      * {@code minecraft:splash_potion} with aux 8.
      *
-     * @since 26.60
+     * @since 0.1.0
      */
     public static final BedrockItemVariant SPLASH_POTION_LONG_INVISIBILITY = VanillaTypes.variant(BedrockItems.SPLASH_POTION, 8);
 
     /**
      * {@code minecraft:splash_potion} with aux 10.
      *
-     * @since 26.60
+     * @since 0.1.0
      */
     public static final BedrockItemVariant SPLASH_POTION_LONG_LEAPING = VanillaTypes.variant(BedrockItems.SPLASH_POTION, 10);
 
     /**
      * {@code minecraft:splash_potion} with aux 2.
      *
-     * @since 26.60
+     * @since 0.1.0
      */
     public static final BedrockItemVariant SPLASH_POTION_LONG_MUNDANE = VanillaTypes.variant(BedrockItems.SPLASH_POTION, 2);
 
     /**
      * {@code minecraft:splash_potion} with aux 6.
      *
-     * @since 26.60
+     * @since 0.1.0
      */
     public static final BedrockItemVariant SPLASH_POTION_LONG_NIGHTVISION = VanillaTypes.variant(BedrockItems.SPLASH_POTION, 6);
 
     /**
      * {@code minecraft:splash_potion} with aux 26.
      *
-     * @since 26.60
+     * @since 0.1.0
      */
     public static final BedrockItemVariant SPLASH_POTION_LONG_POISON = VanillaTypes.variant(BedrockItems.SPLASH_POTION, 26);
 
     /**
      * {@code minecraft:splash_potion} with aux 29.
      *
-     * @since 26.60
+     * @since 0.1.0
      */
     public static final BedrockItemVariant SPLASH_POTION_LONG_REGENERATION = VanillaTypes.variant(BedrockItems.SPLASH_POTION, 29);
 
     /**
      * {@code minecraft:splash_potion} with aux 18.
      *
-     * @since 26.60
+     * @since 0.1.0
      */
     public static final BedrockItemVariant SPLASH_POTION_LONG_SLOWNESS = VanillaTypes.variant(BedrockItems.SPLASH_POTION, 18);
 
     /**
      * {@code minecraft:splash_potion} with aux 41.
      *
-     * @since 26.60
+     * @since 0.1.0
      */
     public static final BedrockItemVariant SPLASH_POTION_LONG_SLOW_FALLING = VanillaTypes.variant(BedrockItems.SPLASH_POTION, 41);
 
     /**
      * {@code minecraft:splash_potion} with aux 32.
      *
-     * @since 26.60
+     * @since 0.1.0
      */
     public static final BedrockItemVariant SPLASH_POTION_LONG_STRENGTH = VanillaTypes.variant(BedrockItems.SPLASH_POTION, 32);
 
     /**
      * {@code minecraft:splash_potion} with aux 15.
      *
-     * @since 26.60
+     * @since 0.1.0
      */
     public static final BedrockItemVariant SPLASH_POTION_LONG_SWIFTNESS = VanillaTypes.variant(BedrockItems.SPLASH_POTION, 15);
 
     /**
      * {@code minecraft:splash_potion} with aux 38.
      *
-     * @since 26.60
+     * @since 0.1.0
      */
     public static final BedrockItemVariant SPLASH_POTION_LONG_TURTLE_MASTER = VanillaTypes.variant(BedrockItems.SPLASH_POTION, 38);
 
     /**
      * {@code minecraft:splash_potion} with aux 20.
      *
-     * @since 26.60
+     * @since 0.1.0
      */
     public static final BedrockItemVariant SPLASH_POTION_LONG_WATER_BREATHING = VanillaTypes.variant(BedrockItems.SPLASH_POTION, 20);
 
     /**
      * {@code minecraft:splash_potion} with aux 35.
      *
-     * @since 26.60
+     * @since 0.1.0
      */
     public static final BedrockItemVariant SPLASH_POTION_LONG_WEAKNESS = VanillaTypes.variant(BedrockItems.SPLASH_POTION, 35);
 
     /**
      * {@code minecraft:splash_potion} with aux 1.
      *
-     * @since 26.60
+     * @since 0.1.0
      */
     public static final BedrockItemVariant SPLASH_POTION_MUNDANE = VanillaTypes.variant(BedrockItems.SPLASH_POTION, 1);
 
     /**
      * {@code minecraft:splash_potion} with aux 5.
      *
-     * @since 26.60
+     * @since 0.1.0
      */
     public static final BedrockItemVariant SPLASH_POTION_NIGHTVISION = VanillaTypes.variant(BedrockItems.SPLASH_POTION, 5);
 
     /**
      * {@code minecraft:splash_potion} with aux 45.
      *
-     * @since 26.60
+     * @since 0.1.0
      */
     public static final BedrockItemVariant SPLASH_POTION_OOZING = VanillaTypes.variant(BedrockItems.SPLASH_POTION, 45);
 
     /**
      * {@code minecraft:splash_potion} with aux 25.
      *
-     * @since 26.60
+     * @since 0.1.0
      */
     public static final BedrockItemVariant SPLASH_POTION_POISON = VanillaTypes.variant(BedrockItems.SPLASH_POTION, 25);
 
     /**
      * {@code minecraft:splash_potion} with aux 28.
      *
-     * @since 26.60
+     * @since 0.1.0
      */
     public static final BedrockItemVariant SPLASH_POTION_REGENERATION = VanillaTypes.variant(BedrockItems.SPLASH_POTION, 28);
 
     /**
      * {@code minecraft:splash_potion} with aux 17.
      *
-     * @since 26.60
+     * @since 0.1.0
      */
     public static final BedrockItemVariant SPLASH_POTION_SLOWNESS = VanillaTypes.variant(BedrockItems.SPLASH_POTION, 17);
 
     /**
      * {@code minecraft:splash_potion} with aux 40.
      *
-     * @since 26.60
+     * @since 0.1.0
      */
     public static final BedrockItemVariant SPLASH_POTION_SLOW_FALLING = VanillaTypes.variant(BedrockItems.SPLASH_POTION, 40);
 
     /**
      * {@code minecraft:splash_potion} with aux 31.
      *
-     * @since 26.60
+     * @since 0.1.0
      */
     public static final BedrockItemVariant SPLASH_POTION_STRENGTH = VanillaTypes.variant(BedrockItems.SPLASH_POTION, 31);
 
     /**
      * {@code minecraft:splash_potion} with aux 24.
      *
-     * @since 26.60
+     * @since 0.1.0
      */
     public static final BedrockItemVariant SPLASH_POTION_STRONG_HARMING = VanillaTypes.variant(BedrockItems.SPLASH_POTION, 24);
 
     /**
      * {@code minecraft:splash_potion} with aux 22.
      *
-     * @since 26.60
+     * @since 0.1.0
      */
     public static final BedrockItemVariant SPLASH_POTION_STRONG_HEALING = VanillaTypes.variant(BedrockItems.SPLASH_POTION, 22);
 
     /**
      * {@code minecraft:splash_potion} with aux 11.
      *
-     * @since 26.60
+     * @since 0.1.0
      */
     public static final BedrockItemVariant SPLASH_POTION_STRONG_LEAPING = VanillaTypes.variant(BedrockItems.SPLASH_POTION, 11);
 
     /**
      * {@code minecraft:splash_potion} with aux 27.
      *
-     * @since 26.60
+     * @since 0.1.0
      */
     public static final BedrockItemVariant SPLASH_POTION_STRONG_POISON = VanillaTypes.variant(BedrockItems.SPLASH_POTION, 27);
 
     /**
      * {@code minecraft:splash_potion} with aux 30.
      *
-     * @since 26.60
+     * @since 0.1.0
      */
     public static final BedrockItemVariant SPLASH_POTION_STRONG_REGENERATION = VanillaTypes.variant(BedrockItems.SPLASH_POTION, 30);
 
     /**
      * {@code minecraft:splash_potion} with aux 42.
      *
-     * @since 26.60
+     * @since 0.1.0
      */
     public static final BedrockItemVariant SPLASH_POTION_STRONG_SLOWNESS = VanillaTypes.variant(BedrockItems.SPLASH_POTION, 42);
 
     /**
      * {@code minecraft:splash_potion} with aux 33.
      *
-     * @since 26.60
+     * @since 0.1.0
      */
     public static final BedrockItemVariant SPLASH_POTION_STRONG_STRENGTH = VanillaTypes.variant(BedrockItems.SPLASH_POTION, 33);
 
     /**
      * {@code minecraft:splash_potion} with aux 16.
      *
-     * @since 26.60
+     * @since 0.1.0
      */
     public static final BedrockItemVariant SPLASH_POTION_STRONG_SWIFTNESS = VanillaTypes.variant(BedrockItems.SPLASH_POTION, 16);
 
     /**
      * {@code minecraft:splash_potion} with aux 39.
      *
-     * @since 26.60
+     * @since 0.1.0
      */
     public static final BedrockItemVariant SPLASH_POTION_STRONG_TURTLE_MASTER = VanillaTypes.variant(BedrockItems.SPLASH_POTION, 39);
 
     /**
      * {@code minecraft:splash_potion} with aux 14.
      *
-     * @since 26.60
+     * @since 0.1.0
      */
     public static final BedrockItemVariant SPLASH_POTION_SWIFTNESS = VanillaTypes.variant(BedrockItems.SPLASH_POTION, 14);
 
     /**
      * {@code minecraft:splash_potion} with aux 3.
      *
-     * @since 26.60
+     * @since 0.1.0
      */
     public static final BedrockItemVariant SPLASH_POTION_THICK = VanillaTypes.variant(BedrockItems.SPLASH_POTION, 3);
 
     /**
      * {@code minecraft:splash_potion} with aux 37.
      *
-     * @since 26.60
+     * @since 0.1.0
      */
     public static final BedrockItemVariant SPLASH_POTION_TURTLE_MASTER = VanillaTypes.variant(BedrockItems.SPLASH_POTION, 37);
 
     /**
      * {@code minecraft:splash_potion} with aux 0.
      *
-     * @since 26.60
+     * @since 0.1.0
      */
     public static final BedrockItemVariant SPLASH_POTION_WATER = VanillaTypes.variant(BedrockItems.SPLASH_POTION, 0);
 
     /**
      * {@code minecraft:splash_potion} with aux 19.
      *
-     * @since 26.60
+     * @since 0.1.0
      */
     public static final BedrockItemVariant SPLASH_POTION_WATER_BREATHING = VanillaTypes.variant(BedrockItems.SPLASH_POTION, 19);
 
     /**
      * {@code minecraft:splash_potion} with aux 34.
      *
-     * @since 26.60
+     * @since 0.1.0
      */
     public static final BedrockItemVariant SPLASH_POTION_WEAKNESS = VanillaTypes.variant(BedrockItems.SPLASH_POTION, 34);
 
     /**
      * {@code minecraft:splash_potion} with aux 44.
      *
-     * @since 26.60
+     * @since 0.1.0
      */
     public static final BedrockItemVariant SPLASH_POTION_WEAVING = VanillaTypes.variant(BedrockItems.SPLASH_POTION, 44);
 
     /**
      * {@code minecraft:splash_potion} with aux 43.
      *
-     * @since 26.60
+     * @since 0.1.0
      */
     public static final BedrockItemVariant SPLASH_POTION_WIND_CHARGED = VanillaTypes.variant(BedrockItems.SPLASH_POTION, 43);
 
     /**
      * {@code minecraft:splash_potion} with aux 36.
      *
-     * @since 26.60
+     * @since 0.1.0
      */
     public static final BedrockItemVariant SPLASH_POTION_WITHER = VanillaTypes.variant(BedrockItems.SPLASH_POTION, 36);
 

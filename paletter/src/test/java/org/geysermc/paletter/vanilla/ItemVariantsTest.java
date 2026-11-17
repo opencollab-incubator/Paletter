@@ -2,11 +2,13 @@ package org.geysermc.paletter.vanilla;
 
 import org.geysermc.paletter.Paletter;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
@@ -27,10 +29,13 @@ class ItemVariantsTest {
     }
 
     @Test
-    void referencingAConstantLoadsNoData() throws IOException, InterruptedException {
+    void referencingAConstantLoadsNoData(@TempDir Path temp) throws IOException, InterruptedException {
         String java = Path.of(System.getProperty("java.home"), "bin", "java").toString();
-        Process process = new ProcessBuilder(java, "-verbose:class", "-cp", System.getProperty("java.class.path"), Reference.class.getName())
-            .redirectErrorStream(true).start();
+        // The class path goes through an argument file: it can exceed the command line limit of Windows
+        Path arguments = temp.resolve("java.args");
+        String classPath = System.getProperty("java.class.path").replace("\\", "\\\\");
+        Files.writeString(arguments, String.join("\n", "-verbose:class", "-cp", "\"" + classPath + "\"", Reference.class.getName()));
+        Process process = new ProcessBuilder(java, "@" + arguments).redirectErrorStream(true).start();
         String output = new String(process.getInputStream().readAllBytes(), StandardCharsets.UTF_8);
         assertEquals(0, process.waitFor(), output);
         assertTrue(output.contains("VARIANT 6"), output);

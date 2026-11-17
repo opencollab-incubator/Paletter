@@ -89,9 +89,6 @@ public final class Importer {
         VanillaData data = new VanillaData(version, blocks, items, dataDriven, creative, tags, VersionFallbacks.NONE, defaults, Map.of(), blockItems);
         // The version file has no components; properties.nbt gets them, next to those of the other versions
         BundledFiles.write(output, data);
-        if (bdsDump != null) {
-            VariantNames.update(output, name, VariantNames.of(BdsDump.read(bdsDump), data));
-        }
         updateIndex(version, preview);
         System.out.printf("Wrote %s: %d block states, %d items, %d data driven blocks, %d creative stacks, %d item tags, %d block defaults, %d blocks with an item%n",
             version, blocks.size(), items.size(), dataDriven.size(), creative.stacks().count(), tags.size(),
@@ -312,7 +309,6 @@ public final class Importer {
     public static void remove(Path directory, String name) throws IOException {
         writeIndex(directory, readIndex(directory).stream().filter(entry -> !entry.name().equals(name)).toList());
         Files.deleteIfExists(directory.resolve(name + ".nbt"));
-        VariantNames.remove(directory, name);
     }
 
     private static void writeIndex(Path directory, java.util.Collection<IndexEntry> entries) throws IOException {

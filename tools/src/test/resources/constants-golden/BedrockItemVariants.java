@@ -11,15 +11,15 @@ import org.geysermc.paletter.annotation.SincePreview;
  * {@code BED_SILVER}. Every constant is the very {@link BedrockItemVariant} of {@code type.variant(aux)}. Referencing
  * them loads nothing.
  * <p>
- * Constants are added when Bedrock adds variants (binary compatible). A variant Bedrock removes stays, deprecated.
+ * Constants are added when Bedrock adds variants (binary compatible). A variant Bedrock removes keeps its constant,
+ * deprecated: {@code type.variant(aux)} is then null. A name BDS changes stays as a deprecated alias of the new one.
  * <p>
- * The {@code @since} of a constant is the bundled Bedrock release it first appears in, without an experiment toggle
- * (decided from the BDS captures in {@code data/bds}); {@code 26.40} is the oldest bundled release, so it may be older.
- * {@link org.geysermc.paletter.annotation.Education @Education} marks content BDS only offers to worlds with Education
- * Edition features, which {@code isEducation()} of the type answers at runtime.
- * {@link org.geysermc.paletter.annotation.SincePreview @SincePreview} marks content only the bundled Bedrock preview
- * has. It is only {@code isAvailable()} with previews loaded (system property {@code paletter.previews}), else it
- * resolves to {@code minecraft:unknown}. The mark goes when a release has it; the constant goes if a newer preview drops it.
+ * The {@code @since} of a constant is the Paletter version that added it. The names come from BDS dumps of the newest
+ * builds only, so a variant may be older than Bedrock 26.60 even if its constant is not.
+ * {@link org.geysermc.paletter.annotation.SincePreview @SincePreview} marks variants only the bundled Bedrock preview
+ * has: without previews loaded ({@code paletter.previews}) its type has no such variant, so {@code type.variant(aux)}
+ * is null and the constant stays a plain key. The mark goes when a release has it; the constant goes if a newer
+ * preview drops it.
  *
  * @since 0.1.0
  */
@@ -35,16 +35,15 @@ public final class BedrockItemVariants {
 
     /**
      * {@code minecraft:potion} with aux 7.
-     * Added in Paletter 2.1.0.
      *
-     * @since 1.1
+     * @since 2.1.0
      */
     public static final BedrockItemVariant POTION_LONG_NIGHTVISION = VanillaTypes.variant(BedrockItems.POTION, 7);
 
     /**
      * {@code minecraft:potion} with aux 5.
      *
-     * @since 1.1
+     * @since 0.1.0
      */
     public static final BedrockItemVariant POTION_NIGHTVISION = VanillaTypes.variant(BedrockItems.POTION, 5);
 
@@ -54,6 +53,15 @@ public final class BedrockItemVariants {
      */
     @SincePreview("1.2")
     public static final BedrockItemVariant POTION_WATER = VanillaTypes.variant(BedrockItems.POTION, 0);
+
+    /**
+     * {@code minecraft:potion} with aux 5.
+     *
+     * @since 0.1.0
+     * @deprecated renamed to {@link #POTION_NIGHTVISION}
+     */
+    @Deprecated(since = "2.1.0", forRemoval = true)
+    public static final BedrockItemVariant NIGHT_VISION = POTION_NIGHTVISION;
 
     private BedrockItemVariants() {
     }

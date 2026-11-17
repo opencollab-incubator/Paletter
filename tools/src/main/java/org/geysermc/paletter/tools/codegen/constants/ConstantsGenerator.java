@@ -139,7 +139,7 @@ public final class ConstantsGenerator {
      */
     public static Result generate(Path root) throws IOException {
         return generate(root.resolve(DATA), names(root), readJson(root.resolve(HISTORY)), paletterVersion(root),
-            Sources.read(root.resolve(DATA), root.resolve(BDS)));
+            Sources.read(root.resolve(DATA), root.resolve(BDS), root.resolve(VariantNames.FILE)));
     }
 
     /**
@@ -451,7 +451,9 @@ public final class ConstantsGenerator {
     /**
      * An item variant constant: the generated constant of {@code BedrockItemVariants}.
      *
-     * @param constant the name, identifier, versions and marks; the identifier is the item's
+     * @param constant the name, the item's identifier, {@code since} and the marks. It has no {@code bedrock} version: the
+     *                 names come from dumps of only the newest builds, which say nothing of older ones
+     * @param aux the aux value
      */
     record Variant(Constant constant, int aux) {
     }
@@ -459,16 +461,17 @@ public final class ConstantsGenerator {
     /**
      * The constants of {@code BedrockItemVariants}: the names of {@code variant_names.txt} for the newest release, with
      * what only the bundled preview has marked {@code @SincePreview}. The history records each name with its identifier and
-     * aux: a name is never dropped (one the data no longer has stays, deprecated) and never changes meaning (a changed
-     * identifier or aux fails generation: older bundled versions keep the old aux, so it would need a split in
-     * {@code renames.txt} and a new name).
+     * aux: a name is never dropped (one the data no longer has stays, deprecated; one that is now another name for the same
+     * variant becomes an alias of it) and never changes meaning (a changed identifier or aux fails generation: older
+     * bundled versions keep the old aux, so it would need a split in {@code renames.txt} and a new name).
      */
     private List<Variant> variants() {
         JsonObject previous = object(history, "variants");
         Map<String, VariantNames.Entry> current = new TreeMap<>();
         sources.variantNames(release.version().name()).forEach(entry -> current.put(entry.name(), entry));
+        Map<String, String> nameOf = new HashMap<>();
+        current.values().forEach(entry -> nameOf.put(entry.identifier() + "@" + entry.aux(), entry.name()));
         Map<String, Variant> variants = new TreeMap<>();
-        JsonObject out = new JsonObject();
         for (VariantNames.Entry entry : current.values()) {
             checkName(entry);
             JsonObject old = previous.has(entry.name()) ? previous.getAsJsonObject(entry.name()) : null;
@@ -478,8 +481,7 @@ public final class ConstantsGenerator {
                 added.add("BedrockItemVariants." + entry.name() + " = " + entry.identifier() + "@" + entry.aux());
             }
             String since = old != null ? required(old, "since", "variants." + entry.name()) : version;
-            String bedrock = old != null && old.has("bedrock") ? old.get("bedrock").getAsString() : sources.firstVariantVersion(entry);
-            variants.put(entry.name(), new Variant(new Constant(entry.name(), entry.identifier(), since, null, null, null, bedrock, false, null, null),
+            variants.put(entry.name(), new Variant(new Constant(entry.name(), entry.identifier(), since, null, null, null, null, false, null, null),
                 entry.aux()));
         }
         // Names the data no longer has stay, deprecated
@@ -489,25 +491,34 @@ public final class ConstantsGenerator {
             }
             JsonObject old = entry.getValue().getAsJsonObject();
             String name = entry.getKey();
+            String identifier = required(old, "identifier", "variants." + name);
+            int aux = old.get("aux").getAsInt();
             String deprecatedSince = old.has("deprecated") ? old.get("deprecated").getAsString() : version;
-            if (!old.has("deprecated")) {
-                deprecated.add("BedrockItemVariants." + name + " (" + old.get("identifier").getAsString() + "@" + old.get("aux").getAsInt() + ", removed)");
+            String target = nameOf.get(identifier + "@" + aux);
+            if (target == null && old.has("replacement") && previous.has(old.get("replacement").getAsString())) {
+                target = old.get("replacement").getAsString();
             }
-            variants.put(name, new Variant(new Constant(name, required(old, "identifier", "variants." + name), required(old, "since", "variants." + name),
-                deprecatedSince, null, "minecraft:unknown", old.has("bedrock") ? old.get("bedrock").getAsString() : null, false, null, null),
-                old.get("aux").getAsInt()));
+            if (!old.has("deprecated")) {
+                deprecated.add("BedrockItemVariants." + name + " (" + identifier + "@" + aux + (target != null ? ", now " + target : ", removed") + ")");
+            }
+            variants.put(name, new Variant(new Constant(name, identifier, required(old, "since", "variants." + name), deprecatedSince, target, null,
+                null, false, null, null), aux));
         }
+        JsonObject out = new JsonObject();
         for (Variant variant : variants.values()) {
             Constant constant = variant.constant();
+            if (constant.replacement() != null && !variants.containsKey(constant.replacement())) {
+                throw new IllegalStateException("BedrockItemVariants." + constant.name() + " is deprecated for " + constant.replacement() + ", which does not exist");
+            }
             JsonObject entry = new JsonObject();
             entry.addProperty("identifier", constant.identifier());
             entry.addProperty("aux", variant.aux());
             entry.addProperty("since", constant.since());
-            if (constant.bedrock() != null) {
-                entry.addProperty("bedrock", constant.bedrock());
-            }
             if (constant.deprecated() != null) {
                 entry.addProperty("deprecated", constant.deprecated());
+                if (constant.replacement() != null) {
+                    entry.addProperty("replacement", constant.replacement());
+                }
             }
             out.add(constant.name(), entry);
         }
@@ -583,13 +594,6 @@ public final class ConstantsGenerator {
         /**
          * @param gatedItems release name to item identifier to the current experiment toggle that adds it in that release
          * @param gatedBlocks the same for blocks
-         */
-        public Sources(List<VanillaData> releases, Map<String, Map<String, String>> gatedItems, Map<String, Map<String, String>> gatedBlocks,
-                       Set<String> educationItems, Set<String> educationBlocks) {
-            this(releases, gatedItems, gatedBlocks, educationItems, educationBlocks, Map.of());
-        }
-
-        /**
          * @param variantNames bundled version name to the item variant names of {@code variant_names.txt}
          */
         public Sources(List<VanillaData> releases, Map<String, Map<String, String>> gatedItems, Map<String, Map<String, String>> gatedBlocks,
@@ -617,14 +621,19 @@ public final class ConstantsGenerator {
 
         /** Only the given release: everything is {@code @since} it, nothing is gated, nothing is education. */
         public static Sources of(VanillaData release) {
-            return new Sources(List.of(release), Map.of(), Map.of(), Set.of(), Set.of());
+            return new Sources(List.of(release), Map.of(), Map.of(), Set.of(), Set.of(), Map.of());
+        }
+
+        public static Sources read(Path data, Path bds) throws IOException {
+            return read(data, bds, null);
         }
 
         /**
          * @param data the bundled data directory ({@code versions.txt} and the version files)
          * @param bds the {@code data/bds} directory with the captures, or null for none
+         * @param variantNames the {@code variant_names.txt}, or null for none
          */
-        public static Sources read(Path data, Path bds) throws IOException {
+        public static Sources read(Path data, Path bds, Path variantNames) throws IOException {
             List<VanillaData> releases = new ArrayList<>();
             List<Bundle> bundles = new ArrayList<>();
             for (Bundle bundle : readIndex(data)) {
@@ -670,22 +679,12 @@ public final class ConstantsGenerator {
                     }
                 }
             }
-            return new Sources(releases, gatedItems, gatedBlocks, educationItems, educationBlocks, VariantNames.read(data));
+            return new Sources(releases, gatedItems, gatedBlocks, educationItems, educationBlocks, VariantNames.read(variantNames));
         }
 
         /** The variant names of a bundled version, preview or release; none for a version without. */
         List<VariantNames.Entry> variantNames(String version) {
             return variantNames.getOrDefault(version, List.of());
-        }
-
-        /** The first bundled release that names the variant: the oldest release BDS was dumped for. */
-        String firstVariantVersion(VariantNames.Entry entry) {
-            for (VanillaData release : releases) {
-                if (variantNames(release.version().name()).contains(entry)) {
-                    return release.version().name();
-                }
-            }
-            return releases.getLast().version().name();
         }
 
         /** The bundled release a protocol belongs to: the newest whose first protocol is not above it. */

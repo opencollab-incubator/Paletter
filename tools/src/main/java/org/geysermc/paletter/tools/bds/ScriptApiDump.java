@@ -29,13 +29,21 @@ public final class ScriptApiDump {
 
     /** Runs the add-on; its console goes to {@code log}. */
     public static void run(Path root, Path server, Path log, int timeout, int port) throws IOException, InterruptedException {
-        List<String> effects = potionEffects(server, log.resolveSibling("bds-docgen.log"), timeout, port);
+        List<String> effects;
+        try {
+            effects = potionEffects(server, log.resolveSibling("bds-docgen.log"), timeout, port);
+        } catch (IOException | RuntimeException e) {
+            // The dump still runs: without the loot tables the add-on reports an error per effect, and tipped arrows stay unnamed
+            System.out.println("No potion effect list from BDS's documentation generator, so no tipped arrows are dumped: " + e.getMessage());
+            effects = List.of();
+        }
         new BdsRunner(root.resolve(Layout.DUMP_ADDON)).withPackFiles(lootTables(effects)).run(server, log, timeout, port, false);
     }
 
     /**
-     * Writes the dump of a console log as {@code data/bds/<build>/dump.json.gz}, and its variant names into the bundled
-     * version it belongs to, if there is one (what {@code update} does as part of a run).
+     * Writes the dump of a console log as {@code data/bds/<build>/dump.json.gz}, and its variant names into
+     * {@code data/model/variant_names.txt} for the bundled version it belongs to, if there is one (what {@code update} does as
+     * part of a run).
      *
      * @param build the BDS build, e.g. {@code 1.26.63.1} (a preview prints another version than its download name)
      * @param dataVersion the name of the bundled version of the build, e.g. {@code 26.60}
@@ -50,7 +58,10 @@ public final class ScriptApiDump {
         }
         Path data = root.resolve("paletter/src/main/resources/paletter");
         if (Files.exists(data.resolve(dataVersion + ".nbt"))) {
-            VariantNames.update(data, dataVersion, VariantNames.of(dump, BundledFiles.read(data.resolve(dataVersion + ".nbt"))));
+            Path names = root.resolve(VariantNames.FILE);
+            Map<String, List<VariantNames.Entry>> all = VariantNames.read(names);
+            VariantNames.update(all, dataVersion, dump, BundledFiles.read(data.resolve(dataVersion + ".nbt")));
+            Files.writeString(names, VariantNames.render(all));
         }
         return file;
     }
@@ -70,8 +81,8 @@ public final class ScriptApiDump {
     static List<String> potionEffects(Path server, Path log, int timeout, int port) throws IOException, InterruptedException {
         BdsRunner.configure(server, port);
         Path config = server.resolve("test_config.json");
-        Files.writeString(config, "{\"generate_documentation\": true}");
         try (BdsServer bds = new BdsServer(server, false)) {
+            Files.writeString(config, "{\"generate_documentation\": true}");
             bds.start(log);
             if (bds.await(line -> line.contains("Server stop requested."), timeout) == null) {
                 throw new IOException("BDS did not generate its documentation within " + timeout + "s; see " + log);

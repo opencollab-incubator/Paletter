@@ -69,10 +69,8 @@ public record BdsDump(
      * @param localizationKey the translation key of the stack
      * @param potion the potion effect, e.g. {@code minecraft:long_nightvision}, or null (potions: the Script API's potion
      *               component; tipped arrows: the effect whose {@code set_potion} loot table gives this aux, if one does)
-     * @param delivery the potion delivery of the potion component ({@code Consume}, {@code ThrownSplash},
-     *                 {@code ThrownLingering}), or null
      */
-    public record Variant(String localizationKey, String potion, String delivery) {
+    public record Variant(String localizationKey, String potion) {
     }
 
     /**
@@ -181,8 +179,7 @@ public record BdsDump(
             for (Map.Entry<String, JsonElement> aux : item.getValue().getAsJsonObject().entrySet()) {
                 JsonObject variant = aux.getValue().getAsJsonObject();
                 variants.put(Integer.parseInt(aux.getKey()), new Variant(variant.get("key").getAsString(),
-                    variant.has("potion") ? variant.get("potion").getAsString() : null,
-                    variant.has("delivery") ? variant.get("delivery").getAsString() : null));
+                    variant.has("potion") ? variant.get("potion").getAsString() : null));
             }
             itemVariants.put(item.getKey(), variants);
         }

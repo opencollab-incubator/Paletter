@@ -200,6 +200,8 @@ class ConstantsGoldenTest {
         history.getAsJsonObject("items").add("OLD_STICK", oldStick);
         history.getAsJsonObject("variants").add("POTION_NIGHTVISION", variantEntry("minecraft:potion", 5));
         history.getAsJsonObject("variants").add("OLD_POTION", variantEntry("minecraft:potion", 9));
+        // The name BDS gave aux 5 before: an alias of the new one
+        history.getAsJsonObject("variants").add("NIGHT_VISION", variantEntry("minecraft:potion", 5));
 
         Path second = temp.resolve("second");
         List<List<NbtMap>> previewBlocks = new ArrayList<>(releaseBlocks(true));
@@ -213,7 +215,7 @@ class ConstantsGoldenTest {
             data("1.2", 120, shuffleBlocks.apply(previewBlocks), shuffleItems.apply(previewItems))), List.of(false, false, true));
         Files.writeString(second.resolve("variant_names.txt"), VARIANT_NAMES);
         return ConstantsGenerator.generate(second, names(), shuffleJson.apply(history), "2.1.0",
-            ConstantsGenerator.Sources.read(second, captures(temp.resolve("bds"))));
+            ConstantsGenerator.Sources.read(second, captures(temp.resolve("bds")), second.resolve("variant_names.txt")));
     }
 
     /**
@@ -264,7 +266,8 @@ class ConstantsGoldenTest {
         assertEquals(List.of("BedrockBlocks.OLD_DOOR (minecraft:old_door, now TEST_DOOR)",
             "BedrockBlocks.REMOVED_BLOCK (minecraft:removed_block, removed; resolves to minecraft:unknown)",
             "BedrockItems.OLD_STICK (minecraft:old_stick, removed; resolves to minecraft:apple)",
-            "BedrockItemVariants.OLD_POTION (minecraft:potion@9, removed)"), result.deprecated());
+            "BedrockItemVariants.OLD_POTION (minecraft:potion@9, removed)",
+            "BedrockItemVariants.NIGHT_VISION (minecraft:potion@5, now POTION_NIGHTVISION)"), result.deprecated());
         assertEquals(List.of("BedrockStates.LEVEL = level", "BedrockBlocks.TEST_LAMP = minecraft:test_lamp", "BedrockItems.TEST_LAMP = minecraft:test_lamp",
             "BedrockItemVariants.POTION_LONG_NIGHTVISION = minecraft:potion@7"), result.added());
         assertEquals("1.1", result.release());
@@ -352,19 +355,70 @@ class ConstantsGoldenTest {
         assertEquals("State age has values of no supported kind: [young, old, 0, 2, 5]", failure(temp.resolve("mixed"), mixed, names(), new JsonObject()));
     }
 
+    /** The data of a release with one potion variant per entry of {@code names} (aux and name), for {@code variant_names.txt}. */
+    private static Path variantData(Path dir, String names) throws IOException {
+        write(dir, List.of(data("1.0", 100, releaseBlocks(false), releaseItems(false)), data("1.1", 110, releaseBlocks(false), releaseItems(false))),
+            List.of(false, false));
+        Files.writeString(dir.resolve("variant_names.txt"), names);
+        return dir;
+    }
+
+    private static ConstantsGenerator.Result variants(Path dir, String names, JsonObject history, String version) throws IOException {
+        variantData(dir, names);
+        return ConstantsGenerator.generate(dir, names(), history, version, ConstantsGenerator.Sources.read(dir, null, dir.resolve("variant_names.txt")));
+    }
+
+    private static JsonObject historyOf(ConstantsGenerator.Result result) {
+        return JsonParser.parseString(result.files().get(ConstantsGenerator.HISTORY)).getAsJsonObject().getAsJsonObject("variants");
+    }
+
+    @Test
+    void variantsAreKeptAcrossReleases(@TempDir Path temp) throws IOException {
+        JsonObject first = JsonParser.parseString(variants(temp.resolve("a"), "1.1 minecraft:potion 1 POTION_A\n1.1 minecraft:potion 2 POTION_B\n",
+            new JsonObject(), "0.1.0").files().get(ConstantsGenerator.HISTORY)).getAsJsonObject();
+
+        // Release 1.1 drops B, renames aux 3 and adds C: A keeps its since, B is deprecated, C is new
+        ConstantsGenerator.Result second = variants(temp.resolve("b"), "1.1 minecraft:potion 1 POTION_A\n1.1 minecraft:potion 3 POTION_C\n", first, "2.1.0");
+        JsonObject history = historyOf(second);
+        assertEquals("{\"identifier\":\"minecraft:potion\",\"aux\":1,\"since\":\"0.1.0\"}", history.get("POTION_A").toString());
+        assertEquals("{\"identifier\":\"minecraft:potion\",\"aux\":2,\"since\":\"0.1.0\",\"deprecated\":\"2.1.0\"}", history.get("POTION_B").toString());
+        assertEquals("{\"identifier\":\"minecraft:potion\",\"aux\":3,\"since\":\"2.1.0\"}", history.get("POTION_C").toString());
+        assertEquals(List.of("BedrockItemVariants.POTION_C = minecraft:potion@3"), second.added().stream().filter(a -> a.startsWith("BedrockItemVariants")).toList());
+        assertEquals(List.of("BedrockItemVariants.POTION_B (minecraft:potion@2, removed)"), second.deprecated());
+
+        // A later generation of the same data changes nothing, and the deprecation stays as it was
+        JsonObject secondHistory = JsonParser.parseString(second.files().get(ConstantsGenerator.HISTORY)).getAsJsonObject();
+        ConstantsGenerator.Result third = variants(temp.resolve("c"), "1.1 minecraft:potion 1 POTION_A\n1.1 minecraft:potion 3 POTION_C\n", secondHistory, "3.0.0");
+        assertEquals(second.files(), third.files());
+        assertEquals(List.of(), third.deprecated());
+
+        // BDS names aux 3 differently: the old name becomes an alias of the new one, and stays one
+        ConstantsGenerator.Result renamed = variants(temp.resolve("d"), "1.1 minecraft:potion 1 POTION_A\n1.1 minecraft:potion 3 POTION_D\n", secondHistory, "3.0.0");
+        assertEquals(List.of("BedrockItemVariants.POTION_C (minecraft:potion@3, now POTION_D)"), renamed.deprecated());
+        assertEquals("{\"identifier\":\"minecraft:potion\",\"aux\":3,\"since\":\"2.1.0\",\"deprecated\":\"3.0.0\",\"replacement\":\"POTION_D\"}",
+            historyOf(renamed).get("POTION_C").toString());
+        String source = renamed.files().get(ConstantsGenerator.PACKAGE_DIR + "/BedrockItemVariants.java");
+        assertTrue(source.contains("public static final BedrockItemVariant POTION_C = POTION_D;"), source);
+        assertTrue(source.indexOf("POTION_D = VanillaTypes") < source.indexOf("POTION_C = POTION_D"), "an alias comes after its target");
+        ConstantsGenerator.Result again = variants(temp.resolve("e"), "1.1 minecraft:potion 1 POTION_A\n1.1 minecraft:potion 3 POTION_D\n",
+            JsonParser.parseString(renamed.files().get(ConstantsGenerator.HISTORY)).getAsJsonObject(), "4.0.0");
+        assertEquals(renamed.files(), again.files());
+    }
+
     @Test
     void aVariantNameKeepsItsMeaning(@TempDir Path temp) throws IOException {
         Path data = temp.resolve("data");
         write(data, List.of(data("1.1", 110, releaseBlocks(false), releaseItems(false))), List.of(false));
         Files.writeString(data.resolve("variant_names.txt"), VARIANT_NAMES);
-        JsonObject history = JsonParser.parseString(ConstantsGenerator.generate(data, names(), new JsonObject(), "0.1.0")
+        ConstantsGenerator.Sources sources = ConstantsGenerator.Sources.read(data, null, data.resolve("variant_names.txt"));
+        JsonObject history = JsonParser.parseString(ConstantsGenerator.generate(data, names(), new JsonObject(), "0.1.0", sources)
             .files().get(ConstantsGenerator.HISTORY)).getAsJsonObject();
         assertEquals(variantEntry("minecraft:potion", 7).get("aux"), history.getAsJsonObject("variants").getAsJsonObject("POTION_LONG_NIGHTVISION").get("aux"));
 
         history.getAsJsonObject("variants").getAsJsonObject("POTION_LONG_NIGHTVISION").addProperty("aux", 6);
         assertEquals("BedrockItemVariants.POTION_LONG_NIGHTVISION is minecraft:potion@6 in data/model/constants-history.json but BDS now has "
             + "minecraft:potion@7 under that name; a name keeps its meaning, so this needs a split in renames.txt and a new name",
-            assertThrows(IllegalStateException.class, () -> ConstantsGenerator.generate(data, names(), history, "0.1.0")).getMessage());
+            assertThrows(IllegalStateException.class, () -> ConstantsGenerator.generate(data, names(), history, "0.1.0", sources)).getMessage());
     }
 
     @Test
