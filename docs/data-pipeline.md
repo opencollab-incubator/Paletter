@@ -58,6 +58,7 @@ command takes `--help`. Paths are relative to the repository root (`--root` over
 | `voxel-shapes capture\|import\|check` | Voxel shape captures and `voxel_shapes.nbt`. |
 | `creative-probe` | Runs an add-on on BDS and records the creative inventory order. |
 | `education-capture` | Records what only an Education Edition world adds (`education.json`, used for `@Education`). |
+| `recipes-capture` | Records the crafting and trim data of one build (`vanilla/crafting_data.json.gz`, `vanilla/trim_data.json`); `update` writes them too. |
 | `inspect` | Prints `Palette#explain` for a block state or item in one or all bundled versions. |
 
 Gradle tasks: `generateConstants`, `generateComponentApi`, `generateComponentApiPreview`, `generateModel`,
