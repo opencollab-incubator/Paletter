@@ -1,5 +1,10 @@
 package org.geysermc.paletter.recipes;
 
+import org.geysermc.paletter.PaletteLayer;
+import org.geysermc.paletter.creative.CreativeCategory;
+import org.geysermc.paletter.item.CustomItem;
+import org.geysermc.paletter.item.component.Icon;
+import org.geysermc.paletter.item.component.Tags;
 import org.geysermc.paletter.Palette;
 import org.geysermc.paletter.Paletter;
 import org.geysermc.paletter.data.DataVersion;
@@ -77,5 +82,24 @@ class IngredientsTest {
             }
         }
         throw new AssertionError("No tag of the newest version has an item the oldest lacks");
+    }
+
+    private static CustomItem item(String name, String... tags) {
+        return CustomItem.builder("example:" + name).component(Icon.of(name)).component(Tags.builder().tags(tags).build()).menuCategory(CreativeCategory.ITEMS).build();
+    }
+
+    @Test
+    void ofSeveralMatchingTagsTheOneWithFewestMembersWinsThenTheName() {
+        // b, c and d are {x, y}; a is {x, y, z}
+        Palette palette = NEWEST.extend(PaletteLayer.builder("tags")
+            .item(item("x", "example:a", "example:b", "example:c", "example:d"))
+            .item(item("y", "example:a", "example:b", "example:c", "example:d"))
+            .item(item("z", "example:a")).build());
+        BedrockItemType x = BedrockItemType.fromIdentifier("example:x");
+        BedrockItemType y = BedrockItemType.fromIdentifier("example:y");
+        BedrockItemType z = BedrockItemType.fromIdentifier("example:z");
+        assertEquals("example:b", Ingredients.tagOf(palette, Set.of(x, y), item -> false).tag(), "tie on 2 members: the first name");
+        // With z unobtainable a matches too, and sorts first by name, but has more members
+        assertEquals("example:b", Ingredients.tagOf(palette, Set.of(x, y), z::equals).tag());
     }
 }

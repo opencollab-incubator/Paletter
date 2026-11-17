@@ -322,9 +322,12 @@ data.applyTo(craftingDataPacket);
 `build()` never throws. Items resolve through the palette, layers included, and tags are `palette.itemTags()`. A recipe with an
 item the palette does not have, a tag without items, or a result block state it does not have is dropped, as BDS drops it;
 `data.dropped()` lists them and `data.netId(recipe)` is -1 for them. Net ids are 1, 2, ... in the order the recipes were
-added. UUIDs come from the recipe's id (and station), so they are the same on every run; the 14 multi recipes keep their fixed
-UUIDs. Apart from net ids and UUIDs the packet is what BDS sends for the same palette: a test compares the encoding of
-BDS 1.26.63.1's recipes with the committed capture. `applyTo` sets `cleanRecipes`, as BDS does.
+added. UUIDs come from the recipe's id (and station), so they are the same on every run; the multi recipes keep their fixed
+UUIDs. Apart from net ids and UUIDs the packet is what BDS sends for the same palette: a test compares the encoding of every bundled
+data version's recipes with BDS's committed capture of it. `applyTo` sets `cleanRecipes`, as BDS does. Palettes of protocols below 2168 (26.30) read one recipe list instead of one per
+kind, so `applyTo` fills that too, in the order the recipes were added (BDS interleaves the kinds there; the recipes themselves
+are compared with BDS's 26.30 capture, the order is not). Equal recipes added twice are encoded once; different recipes with
+the same id and station get the same UUID.
 
 `Ingredients.tagOf(palette, items, unobtainable)` finds the palette's item tag (layers included) whose members are exactly a set
 of items, for sending an ingredient as one tag instead of one entry per item. Items the palette lacks (an older version) and

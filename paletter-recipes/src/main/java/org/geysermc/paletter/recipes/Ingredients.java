@@ -27,7 +27,7 @@ public final class Ingredients {
      * A tag matches if its members and {@code items} are the same set, after leaving out the items the palette does not have
      * (an older version lacks newer items, and none of its tags can have them) and the items {@code unobtainable} accepts (items
      * a player can never hold, which a tag may or may not list). A set with no items left matches no tag. If several tags
-     * match, the one with the fewest members wins, then the first by name.
+     * match, the one with the fewest members (counting those left out) wins, then the first by name.
      * <p>
      * This looks through every tag of the palette on each call.
      *
@@ -56,9 +56,9 @@ public final class Ingredients {
                     members.add(member);
                 }
             }
-            if (members.equals(wanted) && (best == null || members.size() < bestSize || members.size() == bestSize && tag.getKey().compareTo(best) < 0)) {
+            if (members.equals(wanted) && (best == null || tag.getValue().size() < bestSize || tag.getValue().size() == bestSize && tag.getKey().compareTo(best) < 0)) {
                 best = tag.getKey();
-                bestSize = members.size();
+                bestSize = tag.getValue().size();
             }
         }
         return best == null ? null : new Ingredient.Tag(best, 1);
