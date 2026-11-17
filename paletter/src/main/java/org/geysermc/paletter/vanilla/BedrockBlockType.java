@@ -21,7 +21,7 @@ import java.util.Objects;
  *     .with(BedrockStates.CARDINAL_DIRECTION, CardinalDirection.NORTH)
  *     .with(BedrockStates.OPEN_BIT, true)
  *     .build();
- * int runtimeId = palette.runtimeId(door, -1);
+ * int runtimeId = palette.runtimeId(door);
  * }</pre>
  * Referencing a type loads nothing; its states are resolved against the newest data of {@link
  * org.geysermc.paletter.Paletter#bundled()} on first use. A vanilla constant the data does not have (deprecated

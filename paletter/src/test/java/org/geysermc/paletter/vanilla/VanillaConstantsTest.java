@@ -62,7 +62,7 @@ class VanillaConstantsTest {
             assertSame(state, Ids.canonicalBlocks(PALETTER).handle(id));
             assertSame(state, PALETTER.block(nbt, Lookup.STRICT));
             assertEquals(id, Ids.block(palette, state));
-            assertEquals(Ids.runtimeId(palette, id), palette.runtimeId(state, -1));
+            assertEquals(Ids.runtimeId(palette, id), palette.runtimeId(state));
             assertEquals(nbt, BlockStates.normalize(palette.blockDefinition(state).getState()));
         }
     }
@@ -276,7 +276,7 @@ class VanillaConstantsTest {
             int canonical = Ids.block(palette, state.toNbt());
             assertTrue(canonical >= Ids.canonicalBlocks(palette).vanillaSize());
             assertEquals(canonical, Ids.block(palette, state));
-            assertEquals(Ids.runtimeId(palette, canonical), palette.runtimeId(state, -1));
+            assertEquals(Ids.runtimeId(palette, canonical), palette.runtimeId(state));
         }
         // The vanilla enum state works on a custom property of the same name
         BedrockBlockState east = type.defaultState().with(BedrockStates.CARDINAL_DIRECTION, CardinalDirection.EAST)
@@ -288,8 +288,7 @@ class VanillaConstantsTest {
         // Not in a palette without the layer
         Palette vanilla = PALETTER.palette(PALETTER.latest().protocolVersion());
         assertEquals(-1, Ids.block(vanilla, east));
-        assertNull(vanilla.blockDefinition(east));
-        assertEquals(-1, vanilla.runtimeId(east, -1));
+        assertThrows(IllegalArgumentException.class, () -> vanilla.runtimeId(east));
 
         assertEquals(Ids.item(palette, ItemVariant.of("example:ruby")), Ids.item(palette, ruby.type()));
         assertEquals("example:ruby", palette.itemDefinition(ruby.type()).getIdentifier());

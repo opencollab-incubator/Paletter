@@ -172,7 +172,7 @@ class HotPathTest {
             assertNotNull(key, state.toString());
             assertEquals(state.getState(), key.toNbt(), state.toString());
             assertSame(key.type(), palette.blocks().block(state).customBlock().type(), state.toString());
-            assertEquals(state.getRuntimeId(), palette.runtimeId(key, -1), state.toString());
+            assertEquals(state.getRuntimeId(), palette.runtimeId(key), state.toString());
         }
         // 9 blocks of 2 * (level + 1) states
         assertEquals(2 * (1 + 2 + 3 + 4 + 5 + 6 + 7 + 8 + 9), customs);

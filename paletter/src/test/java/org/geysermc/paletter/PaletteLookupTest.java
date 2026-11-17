@@ -15,8 +15,9 @@ import static org.junit.jupiter.api.Assertions.assertNotSame;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
-/** The lookup of a block state that a palette may not have, and the way back to a key. */
+/** The throwing and the null or default lookup of a block state that a palette may not have, and the way back to a key. */
 class PaletteLookupTest {
     private static final Paletter HASHED = Palettes.paletter();
     private static final CustomBlock LAMP = CustomBlock.builder("lookup:lamp")
@@ -25,15 +26,16 @@ class PaletteLookupTest {
         .build();
 
     @Test
-    void aStateThatIsNotInThePaletteGivesNullOrTheDefault() {
+    void aStateThatIsNotInThePaletteThrowsOrGivesNullOrTheDefault() {
         Palette base = HASHED.palette(HASHED.latest().protocolVersion());
         BedrockBlockState lamp = LAMP.type().defaultState();
-        assertNull(base.blockDefinition(lamp));
-        assertNull(base.blockBehaviour(lamp));
-        assertNull(base.blockBehaviour(LAMP.type()));
-        int air = base.runtimeId(BedrockBlocks.AIR.defaultState(), -1);
+        assertThrows(IllegalArgumentException.class, () -> base.runtimeId(lamp));
+        assertThrows(IllegalArgumentException.class, () -> base.blockDefinition(lamp));
+        assertThrows(IllegalArgumentException.class, () -> base.blockBehaviour(lamp));
+        int air = base.runtimeId(BedrockBlocks.AIR.defaultState());
         assertEquals(air, base.runtimeId(lamp, air));
         assertEquals(-1, base.runtimeId(lamp, -1));
+        assertNull(base.blockDefinitionOrNull(lamp));
     }
 
     @Test
@@ -42,22 +44,23 @@ class PaletteLookupTest {
         for (DataVersion version : HASHED.versions()) {
             Palette palette = HASHED.vanilla(version);
             for (int id = 0; id < canonical.vanillaSize(); id++) {
-                assertNotNull(palette.blockDefinition(canonical.handle(id)), version + " " + canonical.state(id));
+                assertNotNull(palette.blockDefinitionOrNull(canonical.handle(id)), version + " " + canonical.state(id));
             }
         }
     }
 
     @Test
-    void aStateInThePaletteIsFoundWhateverTheDefault() {
+    void aStateInThePaletteGivesTheSameAsTheThrowingVariants() {
         Palette base = HASHED.palette(HASHED.latest().protocolVersion());
         Palette session = base.extend(PaletteLayer.builder("session").block(LAMP).build());
         BedrockBlockState lamp = LAMP.type().defaultState();
-        RegisteredBlockState block = session.blockDefinition(lamp);
+        assertEquals(session.runtimeId(lamp), session.runtimeId(lamp, -1));
+        RegisteredBlockState block = session.blockDefinitionOrNull(lamp);
         assertNotNull(block);
-        assertEquals(block.getRuntimeId(), session.runtimeId(lamp, -1));
-        assertEquals(block.getRuntimeId(), session.runtimeId(lamp, 0));
+        assertSame(session.blockDefinition(lamp), block);
         BedrockBlockState stone = BedrockBlocks.STONE.defaultState();
-        assertEquals(base.runtimeId(stone, -1), base.runtimeId(stone, 0));
+        assertEquals(base.runtimeId(stone), base.runtimeId(stone, -1));
+        assertSame(base.blockDefinition(stone), base.blockDefinitionOrNull(stone));
     }
 
     @Test
@@ -83,7 +86,7 @@ class PaletteLookupTest {
             .component(Geometry.of("minecraft:geometry.full_block"))
             .build();
         Palette other = base.extend(PaletteLayer.builder("other").block(otherLamp).build());
-        assertEquals(lampBlock.getRuntimeId(), other.runtimeId(otherLamp.type().defaultState(), -1));
+        assertEquals(lampBlock.getRuntimeId(), other.runtimeId(otherLamp.type().defaultState()));
         assertSame(otherLamp.type().defaultState(), other.blockState(lampBlock));
         assertNotSame(lamp, other.blockState(lampBlock));
     }

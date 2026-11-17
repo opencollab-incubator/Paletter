@@ -330,7 +330,7 @@ public final class CustomBlock {
     /**
      * The type of the block, to use it like a vanilla {@link org.geysermc.paletter.vanilla.BedrockBlocks} constant. Its
      * states have canonical ids per layer lineage, see
-     * {@link org.geysermc.paletter.Palette#runtimeId(org.geysermc.paletter.vanilla.BedrockBlockState, int)}.
+     * {@link org.geysermc.paletter.Palette#runtimeId(org.geysermc.paletter.vanilla.BedrockBlockState)}.
      * <p>
      * It is created with the block and belongs to it: every call returns the same type with the same states, and a
      * palette the block is registered in hands back exactly these for it ({@code block}, {@code decode},

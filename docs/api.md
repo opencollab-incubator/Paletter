@@ -48,8 +48,8 @@ Methods named `blockState`, `itemVariant` or `...Of` return keys; methods named 
 | Lookup | Returns |
 |---|---|
 | `Paletter#block(NbtMap)`, `Paletter#item(identifier, aux)` | The key for a state or variant of any bundled version, or null. `explainUnknown` says why. |
-| `Palette#runtimeId(BedrockBlockState, int orElse)` | The runtime id (the state hash), or `orElse` if the palette lacks the state. |
-| `Palette#blockDefinition(BedrockBlockState)` | The `RegisteredBlockState` this version sends, after adapting and fallbacks, or null if the palette lacks the state (a custom block of a layer it does not have). With the bundled data, a vanilla state is never lacking: these are not null, and `orElse` is not used. |
+| `Palette#runtimeId(BedrockBlockState)` | The runtime id (the state hash). Throws if the palette lacks the state; `runtimeId(state, orElse)` returns `orElse` instead. |
+| `Palette#blockDefinition(BedrockBlockState)` | The `RegisteredBlockState` this version sends, after adapting and fallbacks. Throws if the palette lacks the state; `blockDefinitionOrNull` returns null instead. Only a custom block of a layer the palette does not have can be lacking: with the bundled data, every version has each vanilla state. |
 | `Palette#itemDefinition(BedrockItemType)` | The `RegisteredItem`, or null if the version lacks it. Fallbacks are not applied. |
 | `Palette#itemDefinition(String)` | The `RegisteredItem` for an identifier, or null. `itemDefinitions()` lists all items in runtime id order, `itemTags()` the item tags (tag to identifiers). |
 | `Palette#blockState(BlockDefinition)` | The key of a block this palette sends, looked up by runtime id: `blockDefinition(blockState(d))` is `d`. A definition of another palette gives the key of the block with its runtime id here, or null if there is none. |
@@ -88,7 +88,7 @@ BedrockBlockState door = BedrockBlocks.WOODEN_DOOR.state()
     .with(BedrockStates.OPEN_BIT, true)
     .build();
 CardinalDirection facing = door.get(BedrockStates.CARDINAL_DIRECTION);
-int runtimeId = palette.runtimeId(door, -1);
+int runtimeId = palette.runtimeId(door);
 ItemData potion = palette.encode(BedrockItemStack.of(BedrockItems.POTION.variant(5)));
 ```
 
@@ -196,7 +196,8 @@ String why = palette.blockBehaviour(BedrockBlocks.BLUE_ICE).explain(BlockBehavio
 - Keys are the constants of `BlockBehaviour` and `ItemBehaviour`. Number and boolean keys return primitives; lookups by
   runtime id read an array and do not allocate.
 - `blockBehaviour` takes a runtime id, a `BedrockBlockState` or a `BedrockBlockType` (its default state). Content that is
-  not in the palette gives null, like the lookups above.
+  not in the palette throws `IllegalArgumentException`; for content that may be missing, look up its definition first
+  (`blockDefinitionOrNull`, `blockDefinition(int)`, `itemDefinition`).
 - `get` throws `IllegalStateException` when no value is known; `getOrElse(key, fallback)` returns the fallback instead.
 - Values belong to the palette, not the state: a newer capture can change a value for one version only. An extended
   palette shares the values of its base.

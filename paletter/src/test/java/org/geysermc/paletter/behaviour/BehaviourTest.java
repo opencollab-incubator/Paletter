@@ -98,9 +98,9 @@ class BehaviourTest {
         Palette palette = latest();
         BlockValues byType = palette.blockBehaviour(BedrockBlocks.ICE);
         assertEquals(byType, palette.blockBehaviour(BedrockBlocks.ICE.defaultState()));
-        assertEquals(byType, palette.blockBehaviour(palette.runtimeId(BedrockBlocks.ICE.defaultState(), -1)));
+        assertEquals(byType, palette.blockBehaviour(palette.runtimeId(BedrockBlocks.ICE.defaultState())));
         assertSame(palette.blockDefinition(BedrockBlocks.ICE.defaultState()), byType.state());
-        assertNull(palette.blockBehaviour(0x7eadbeef), "no such runtime id");
+        assertThrows(IllegalArgumentException.class, () -> palette.blockBehaviour(0x7eadbeef), "no such runtime id");
         assertEquals(palette.itemBehaviour(BedrockItems.APPLE), palette.itemBehaviour(BedrockItems.APPLE));
     }
 
@@ -506,7 +506,7 @@ class BehaviourTest {
         assertEquals(stone, session.blockBehaviour(BedrockBlocks.STONE), "a shared state has the values of the parent palette");
         int custom = session.blocks().block("test:block").defaultState().getRuntimeId();
         assertEquals(0.9f, session.blockBehaviour(custom).get(BlockBehaviour.FRICTION), 1e-6f);
-        assertNull(base.blockBehaviour(custom), "not a state of the parent");
+        assertThrows(IllegalArgumentException.class, () -> base.blockBehaviour(custom), "not a state of the parent");
 
         // Another layer on top of the session still shares them, and the first session's block
         CustomBlock other = CustomBlock.builder("test:other").component(Friction.of(0.2f)).build();
@@ -562,7 +562,7 @@ class BehaviourTest {
         Palette palette = mixed();
         RegisteredItem foreign = Objects.requireNonNull(PALETTER.vanilla(PALETTER.versions().getFirst()).itemDefinition(BedrockItems.APPLE));
         assertEquals(null, palette.behaviour().item(foreign), "an item of another palette is not an item of this one");
-        assertNull(latest().itemBehaviour(CustomItem.builder("test:nowhere").build().type()));
+        assertThrows(IllegalArgumentException.class, () -> latest().itemBehaviour(CustomItem.builder("test:nowhere").build().type()));
     }
 
     @Test

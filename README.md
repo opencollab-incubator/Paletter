@@ -51,7 +51,7 @@ session.sendPacket(palette.itemComponentPacket());
 session.sendPacket(palette.creativeContentPacket());
 
 // Blocks and items are keys; the palette gives the ids for its version
-int stone = palette.runtimeId(BedrockBlocks.STONE.defaultState(), -1);
+int stone = palette.runtimeId(BedrockBlocks.STONE.defaultState());
 ItemData apples = palette.encode(BedrockItemStack.of(BedrockItems.APPLE.base(), 3));
 
 // Behaviour values BDS uses but never sends to clients

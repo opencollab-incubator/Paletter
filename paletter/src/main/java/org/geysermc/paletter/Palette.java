@@ -72,7 +72,7 @@ import java.util.function.Supplier;
  * }</pre>
  * Translating content uses handles, version independent and interned objects ({@link BedrockBlockState},
  * {@link BedrockItemVariant}): {@link #block(NbtMap)} and {@link #item(String, int)} find them once, then
- * {@link #runtimeId(BedrockBlockState, int)} and {@link #blockDefinition(BedrockBlockState)} for blocks, {@link #resolve(BedrockItemVariant)}
+ * {@link #runtimeId(BedrockBlockState)} and {@link #blockDefinition(BedrockBlockState)} for blocks, {@link #resolve(BedrockItemVariant)}
  * for items. {@link #encode} and {@link #decode} translate whole stacks at the protocol boundary. They are field reads and array lookups that do not allocate. The ids behind
  * the handles are not API.
  *
@@ -174,33 +174,33 @@ public final class Palette {
      *
      * @param runtimeId the runtime id of a state of this palette, as it sends it: the hash, or the sequential id of a
      *                  palette that numbers them
-     * @return the values, or null if the palette has no state with this runtime id
+     * @throws IllegalArgumentException if the palette has no state with this runtime id; {@link #blockDefinition(int)}
+     *         is null then
      * @since 0.1.0
      */
-    public @Nullable BlockValues blockBehaviour(int runtimeId) {
+    public @NonNull BlockValues blockBehaviour(int runtimeId) {
         int index = blocks.indexOfRuntimeId(runtimeId);
         if (index == -1) {
-            return null;
+            throw new IllegalArgumentException("no block state with runtime id " + runtimeId + " in " + this);
         }
         return behaviour().block(index);
     }
 
     /**
-     * @return the behaviour values of the state this palette sends for a state, see {@link #blockDefinition(BedrockBlockState)};
-     *         null if the state is not in this palette
+     * @return the behaviour values of the state this palette sends for a state, see {@link #blockDefinition(BedrockBlockState)}
+     * @throws IllegalArgumentException like {@link #blockDefinition(BedrockBlockState)}
      * @since 0.1.0
      */
-    public @Nullable BlockValues blockBehaviour(@NonNull BedrockBlockState state) {
-        RegisteredBlockState definition = blockDefinition(state);
-        return definition == null ? null : blockBehaviour(definition.getRuntimeId());
+    public @NonNull BlockValues blockBehaviour(@NonNull BedrockBlockState state) {
+        return blockBehaviour(blockDefinition(state).getRuntimeId());
     }
 
     /**
-     * @return the behaviour values of the default state of a block, see {@link #blockBehaviour(BedrockBlockState)};
-     *         null if the block is not in this palette
+     * @return the behaviour values of the default state of a block, see {@link #blockBehaviour(BedrockBlockState)}
+     * @throws IllegalArgumentException like {@link #blockDefinition(BedrockBlockState)}
      * @since 0.1.0
      */
-    public @Nullable BlockValues blockBehaviour(@NonNull BedrockBlockType type) {
+    public @NonNull BlockValues blockBehaviour(@NonNull BedrockBlockType type) {
         return blockBehaviour(type.defaultState());
     }
 
@@ -208,12 +208,17 @@ public final class Palette {
      * The behaviour values (max stack size, durability, attack damage, ...) of an item in this palette:
      * {@code palette.itemBehaviour(BedrockItems.APPLE).get(ItemBehaviour.MAX_STACK_SIZE)}.
      *
-     * @return the values, or null if this palette has no such item, see {@link #itemDefinition(BedrockItemType)}
+     * @throws IllegalArgumentException if this palette has no such item: {@link #itemDefinition(BedrockItemType)} is
+     *         null then
      * @since 0.1.0
      */
-    public @Nullable ItemValues itemBehaviour(@NonNull BedrockItemType type) {
+    public @NonNull ItemValues itemBehaviour(@NonNull BedrockItemType type) {
         RegisteredItem item = itemDefinition(type);
-        return item == null ? null : behaviour().item(item);
+        ItemValues values = item == null ? null : behaviour().item(item);
+        if (values == null) {
+            throw new IllegalArgumentException(type + " is not an item of " + this);
+        }
+        return values;
     }
 
     public @NonNull DataVersion version() {
@@ -302,28 +307,54 @@ public final class Palette {
     }
 
     /**
-     * @return the block to send for a state; resolved for this version, air if nothing fits. A field read and an array
-     *         load, it does not allocate. Null if the state is not in this palette (a custom block of a layer it does
-     *         not have, e.g. one a session palette shows from another session). Never null for a vanilla state when
-     *         the data is bundled: every version sends something for it
+     * @return the block to send for a state; resolved for this version with its fallbacks, air if nothing fits. A field
+     *         read and an array load, it does not allocate
+     * @throws IllegalArgumentException if the state is not in this palette: a custom block of a layer it does not have,
+     *         e.g. one a session palette shows from another session. Never for a vanilla state when the data is
+     *         bundled: every version sends something for it. Use {@link #blockDefinitionOrNull(BedrockBlockState)} for
+     *         states that may be missing
      * @since 0.1.0
      */
-    public @Nullable RegisteredBlockState blockDefinition(@NonNull BedrockBlockState state) {
+    public @NonNull RegisteredBlockState blockDefinition(@NonNull BedrockBlockState state) {
+        return blocks.block(requireCanonical(state));
+    }
+
+    /**
+     * @return the block to send for a state like {@link #blockDefinition(BedrockBlockState)}, or null where that throws
+     * @since 0.1.0
+     */
+    public @Nullable RegisteredBlockState blockDefinitionOrNull(@NonNull BedrockBlockState state) {
         int canonical = state.canonicalIn(blocks.canonical());
         return canonical == -1 ? null : blocks.block(canonical);
     }
 
     /**
-     * @param orElse what to return for a state that is not in this palette (a custom block of a layer it does not have),
-     *               e.g. the runtime id of air. Never used for a vanilla state when the data is bundled, see
-     *               {@link #blockDefinition(BedrockBlockState)}
-     * @return the runtime id to send for a state: its hash, see {@link BlockHashes}, or {@code orElse} if the state is
-     *         not in this palette. A field read and an array load, it does not allocate
+     * @return the runtime id to send for a state: its hash, see {@link BlockHashes}. A field read and an array load, it
+     *         does not allocate
+     * @throws IllegalArgumentException like {@link #blockDefinition(BedrockBlockState)}. Use
+     *         {@link #runtimeId(BedrockBlockState, int)} for states that may be missing
+     * @since 0.1.0
+     */
+    public int runtimeId(@NonNull BedrockBlockState state) {
+        return blocks.runtimeId(requireCanonical(state));
+    }
+
+    /**
+     * @param orElse what to return where {@link #runtimeId(BedrockBlockState)} throws, e.g. the runtime id of air
+     * @return the runtime id to send for a state, or {@code orElse} if the state is not in this palette
      * @since 0.1.0
      */
     public int runtimeId(@NonNull BedrockBlockState state, int orElse) {
         int canonical = state.canonicalIn(blocks.canonical());
         return canonical == -1 ? orElse : blocks.runtimeId(canonical);
+    }
+
+    private int requireCanonical(BedrockBlockState state) {
+        int canonical = state.canonicalIn(blocks.canonical());
+        if (canonical == -1) {
+            throw new IllegalArgumentException(state + " is not in " + this);
+        }
+        return canonical;
     }
 
     /**
@@ -333,7 +364,7 @@ public final class Palette {
      * {@code blockDefinition(blockOf(variant))} is what is sent, and {@code resolve(variant).block()} the same without the
      * key. Unlike
      * {@link Paletter#blockOf}, which knows the vanilla variants of the newest data only, this follows the palette: the
-     * fallback's block in an old version, the custom block of a layer. {@link #runtimeId(BedrockBlockState, int)} gives its
+     * fallback's block in an old version, the custom block of a layer. {@link #runtimeId(BedrockBlockState)} gives its
      * runtime id here.
      *
      * @return the block's key, or null if the item is not a block item here (or no state of the newest data

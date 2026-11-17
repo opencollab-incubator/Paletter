@@ -160,7 +160,7 @@ public class HotPathBenchmark {
     /** A custom block handle to its runtime id. */
     @Benchmark
     public int customRuntimeId() {
-        return palette.runtimeId(customHandles[nextCustom()], -1);
+        return palette.runtimeId(customHandles[nextCustom()]);
     }
 
     /** A vanilla block handle to its runtime id. */

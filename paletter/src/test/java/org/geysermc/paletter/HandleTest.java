@@ -51,7 +51,7 @@ class HandleTest {
         assertNotNull(PALETTER.explainUnknown(BlockStates.of("minecraft:not_a_block")));
         Palette palette = PALETTER.palette(PALETTER.latest().protocolVersion());
         assertSame(stone, palette.block(BlockStates.of("minecraft:stone")));
-        assertEquals(palette.blockDefinition(stone).getRuntimeId(), palette.runtimeId(stone, -1));
+        assertEquals(palette.blockDefinition(stone).getRuntimeId(), palette.runtimeId(stone));
     }
 
     @Test
@@ -107,7 +107,7 @@ class HandleTest {
         long sum = 0;
         for (int warmup = 0; warmup < 30; warmup++) {
             for (BedrockBlockState handle : handles) {
-                sum += palette.runtimeId(handle, -1);
+                sum += palette.runtimeId(handle);
             }
         }
         ThreadMXBean threads = (ThreadMXBean) ManagementFactory.getThreadMXBean();
@@ -115,7 +115,7 @@ class HandleTest {
         long before = threads.getThreadAllocatedBytes(thread);
         for (int round = 0; round < 20; round++) {
             for (BedrockBlockState handle : handles) {
-                sum += palette.runtimeId(handle, -1);
+                sum += palette.runtimeId(handle);
             }
         }
         long allocated = threads.getThreadAllocatedBytes(thread) - before;
