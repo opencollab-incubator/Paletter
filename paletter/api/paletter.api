@@ -107,7 +107,7 @@ public final class org.geysermc.paletter.Palette {
     public org.geysermc.paletter.behaviour.BlockValues blockBehaviour(org.geysermc.paletter.vanilla.BedrockBlockType)
     public org.geysermc.paletter.block.RegisteredBlockState blockDefinition(int)
     public org.geysermc.paletter.block.RegisteredBlockState blockDefinition(org.geysermc.paletter.vanilla.BedrockBlockState)
-    public org.geysermc.paletter.block.RegisteredBlockState blockDefinitionOrNull(org.geysermc.paletter.vanilla.BedrockBlockState)
+    public org.geysermc.paletter.block.RegisteredBlockState blockDefinition(org.geysermc.paletter.vanilla.BedrockBlockState, org.geysermc.paletter.block.RegisteredBlockState)
     public org.geysermc.paletter.vanilla.BedrockBlockState blockOf(org.geysermc.paletter.vanilla.BedrockItemVariant)
     public org.geysermc.paletter.vanilla.BedrockBlockState blockState(int)
     public org.geysermc.paletter.vanilla.BedrockBlockState blockState(org.cloudburstmc.protocol.bedrock.data.definitions.BlockDefinition)

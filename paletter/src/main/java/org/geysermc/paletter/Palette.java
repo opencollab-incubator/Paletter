@@ -311,8 +311,8 @@ public final class Palette {
      *         read and an array load, it does not allocate
      * @throws IllegalArgumentException if the state is not in this palette: a custom block of a layer it does not have,
      *         e.g. one a session palette shows from another session. Never for a vanilla state when the data is
-     *         bundled: every version sends something for it. Use {@link #blockDefinitionOrNull(BedrockBlockState)} for
-     *         states that may be missing
+     *         bundled: every version sends something for it. Use {@link #blockDefinition(BedrockBlockState, RegisteredBlockState)}
+     *         for states that may be missing
      * @since 0.1.0
      */
     public @NonNull RegisteredBlockState blockDefinition(@NonNull BedrockBlockState state) {
@@ -320,12 +320,15 @@ public final class Palette {
     }
 
     /**
-     * @return the block to send for a state like {@link #blockDefinition(BedrockBlockState)}, or null where that throws
+     * @param orElse what to return where {@link #blockDefinition(BedrockBlockState)} throws, may be null; not the
+     *         configured {@code Fallbacks}, which apply before it
+     * @return the block to send for a state, or {@code orElse} if the state is not in this palette
      * @since 0.1.0
      */
-    public @Nullable RegisteredBlockState blockDefinitionOrNull(@NonNull BedrockBlockState state) {
+    public @Nullable RegisteredBlockState blockDefinition(@NonNull BedrockBlockState state,
+                                                          @Nullable RegisteredBlockState orElse) {
         int canonical = state.canonicalIn(blocks.canonical());
-        return canonical == -1 ? null : blocks.block(canonical);
+        return canonical == -1 ? orElse : blocks.block(canonical);
     }
 
     /**

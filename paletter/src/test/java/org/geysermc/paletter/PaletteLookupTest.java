@@ -32,10 +32,12 @@ class PaletteLookupTest {
         assertThrows(IllegalArgumentException.class, () -> base.runtimeId(lamp));
         assertThrows(IllegalArgumentException.class, () -> base.blockDefinition(lamp));
         assertThrows(IllegalArgumentException.class, () -> base.blockBehaviour(lamp));
-        int air = base.runtimeId(BedrockBlocks.AIR.defaultState());
-        assertEquals(air, base.runtimeId(lamp, air));
+        int airId = base.runtimeId(BedrockBlocks.AIR.defaultState());
+        assertEquals(airId, base.runtimeId(lamp, airId));
         assertEquals(-1, base.runtimeId(lamp, -1));
-        assertNull(base.blockDefinitionOrNull(lamp));
+        assertNull(base.blockDefinition(lamp, null));
+        RegisteredBlockState air = base.blockDefinition(BedrockBlocks.AIR.defaultState());
+        assertSame(air, base.blockDefinition(lamp, air));
     }
 
     @Test
@@ -44,7 +46,7 @@ class PaletteLookupTest {
         for (DataVersion version : HASHED.versions()) {
             Palette palette = HASHED.vanilla(version);
             for (int id = 0; id < canonical.vanillaSize(); id++) {
-                assertNotNull(palette.blockDefinitionOrNull(canonical.handle(id)), version + " " + canonical.state(id));
+                assertNotNull(palette.blockDefinition(canonical.handle(id), null), version + " " + canonical.state(id));
             }
         }
     }
@@ -55,12 +57,12 @@ class PaletteLookupTest {
         Palette session = base.extend(PaletteLayer.builder("session").block(LAMP).build());
         BedrockBlockState lamp = LAMP.type().defaultState();
         assertEquals(session.runtimeId(lamp), session.runtimeId(lamp, -1));
-        RegisteredBlockState block = session.blockDefinitionOrNull(lamp);
+        RegisteredBlockState block = session.blockDefinition(lamp, null);
         assertNotNull(block);
         assertSame(session.blockDefinition(lamp), block);
         BedrockBlockState stone = BedrockBlocks.STONE.defaultState();
         assertEquals(base.runtimeId(stone), base.runtimeId(stone, -1));
-        assertSame(base.blockDefinition(stone), base.blockDefinitionOrNull(stone));
+        assertSame(base.blockDefinition(stone), base.blockDefinition(stone, null));
     }
 
     @Test

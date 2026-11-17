@@ -49,7 +49,8 @@ Methods named `blockState`, `itemVariant` or `...Of` return keys; methods named 
 |---|---|
 | `Paletter#block(NbtMap)`, `Paletter#item(identifier, aux)` | The key for a state or variant of any bundled version, or null. `explainUnknown` says why. |
 | `Palette#runtimeId(BedrockBlockState)` | The runtime id (the state hash). Throws if the palette lacks the state; `runtimeId(state, orElse)` returns `orElse` instead. |
-| `Palette#blockDefinition(BedrockBlockState)` | The `RegisteredBlockState` this version sends, after adapting and fallbacks. Throws if the palette lacks the state; `blockDefinitionOrNull` returns null instead. Only a custom block of a layer the palette does not have can be lacking: with the bundled data, every version has each vanilla state. |
+| `Palette#blockDefinition(BedrockBlockState)` | The `RegisteredBlockState` this version sends, after adapting and fallbacks. Throws if the palette lacks the state. Only a custom block of a layer the palette does not have can be lacking: with the bundled data, every version has each vanilla state. |
+| `Palette#blockDefinition(BedrockBlockState, RegisteredBlockState)` | Like `blockDefinition(state)`, but returns `orElse` (may be null) where that throws; as `runtimeId(state, orElse)` does for the runtime id. |
 | `Palette#itemDefinition(BedrockItemType)` | The `RegisteredItem`, or null if the version lacks it. Fallbacks are not applied. |
 | `Palette#itemDefinition(String)` | The `RegisteredItem` for an identifier, or null. `itemDefinitions()` lists all items in runtime id order, `itemTags()` the item tags (tag to identifiers). |
 | `Palette#blockState(BlockDefinition)` | The key of a block this palette sends, looked up by runtime id: `blockDefinition(blockState(d))` is `d`. A definition of another palette gives the key of the block with its runtime id here, or null if there is none. |
@@ -197,7 +198,7 @@ String why = palette.blockBehaviour(BedrockBlocks.BLUE_ICE).explain(BlockBehavio
   runtime id read an array and do not allocate.
 - `blockBehaviour` takes a runtime id, a `BedrockBlockState` or a `BedrockBlockType` (its default state). Content that is
   not in the palette throws `IllegalArgumentException`; for content that may be missing, look up its definition first
-  (`blockDefinitionOrNull`, `blockDefinition(int)`, `itemDefinition`).
+  (`blockDefinition(state, null)`, `blockDefinition(int)`, `itemDefinition`).
 - `get` throws `IllegalStateException` when no value is known; `getOrElse(key, fallback)` returns the fallback instead.
 - Values belong to the palette, not the state: a newer capture can change a value for one version only. An extended
   palette shares the values of its base.
