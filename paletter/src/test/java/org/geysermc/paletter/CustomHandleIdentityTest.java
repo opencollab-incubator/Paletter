@@ -166,7 +166,7 @@ class CustomHandleIdentityTest {
         assertEquals(lampA, lampB);
         assertEquals(lampA.hashCode(), lampB.hashCode());
         // A handle of one works in the other palette
-        assertEquals(a.runtimeId(lampA, -1), b.runtimeId(lampA, -1));
+        assertEquals(a.blockDefinition(lampA).getRuntimeId(), b.runtimeId(lampA, -1));
         assertSame(b.itemDefinition(first.type()), b.itemDefinition(second.type()));
     }
 

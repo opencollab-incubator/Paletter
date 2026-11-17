@@ -4,6 +4,8 @@ import org.geysermc.paletter.block.BlockProperty;
 import org.geysermc.paletter.block.CustomBlock;
 import org.geysermc.paletter.block.RegisteredBlockState;
 import org.geysermc.paletter.block.component.Geometry;
+import org.geysermc.paletter.data.DataVersion;
+import org.geysermc.paletter.internal.CanonicalBlocks;
 import org.geysermc.paletter.vanilla.BedrockBlockState;
 import org.geysermc.paletter.vanilla.BedrockBlocks;
 import org.junit.jupiter.api.Test;
@@ -14,7 +16,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 
-/** The throwing and the non-throwing lookup of a block state that a palette may not have, and the way back to a key. */
+/** The lookup of a block state that a palette may not have, and the way back to a key. */
 class PaletteLookupTest {
     private static final Paletter HASHED = Palettes.paletter();
     private static final CustomBlock LAMP = CustomBlock.builder("lookup:lamp")
@@ -32,6 +34,17 @@ class PaletteLookupTest {
         int air = base.runtimeId(BedrockBlocks.AIR.defaultState(), -1);
         assertEquals(air, base.runtimeId(lamp, air));
         assertEquals(-1, base.runtimeId(lamp, -1));
+    }
+
+    @Test
+    void everyVanillaStateIsInEveryVersion() {
+        CanonicalBlocks canonical = HASHED.canonicalBlocks();
+        for (DataVersion version : HASHED.versions()) {
+            Palette palette = HASHED.vanilla(version);
+            for (int id = 0; id < canonical.vanillaSize(); id++) {
+                assertNotNull(palette.blockDefinition(canonical.handle(id)), version + " " + canonical.state(id));
+            }
+        }
     }
 
     @Test
