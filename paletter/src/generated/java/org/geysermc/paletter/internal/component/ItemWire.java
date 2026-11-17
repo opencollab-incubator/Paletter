@@ -697,25 +697,23 @@ public final class ItemWire {
         int v1 = c.protection();
         out.put("minecraft:wearable.protection", Wire.toInt(v1));
         Wearable.Slot v2 = c.slot();
-        switch (v2.value()) {
-            case "slot.armor.body" -> out.put("item_properties.allow_off_hand", (byte) 0);
-            case "slot.armor.chest" -> out.put("item_properties.allow_off_hand", (byte) 0);
-            case "slot.armor.feet" -> out.put("item_properties.allow_off_hand", (byte) 0);
-            case "slot.armor.head" -> out.put("item_properties.allow_off_hand", (byte) 0);
-            case "slot.armor.legs" -> out.put("item_properties.allow_off_hand", (byte) 0);
-            case "slot.weapon.mainhand" -> out.put("item_properties.allow_off_hand", (byte) 0);
-            case "slot.weapon.offhand" -> out.put("item_properties.allow_off_hand", (byte) 1);
-            default -> throw new IllegalStateException("slot is not a value of its enum: " + v2.value());
+        switch (v2) {
+            case SLOT_ARMOR_BODY -> out.put("item_properties.allow_off_hand", (byte) 0);
+            case SLOT_ARMOR_CHEST -> out.put("item_properties.allow_off_hand", (byte) 0);
+            case SLOT_ARMOR_FEET -> out.put("item_properties.allow_off_hand", (byte) 0);
+            case SLOT_ARMOR_HEAD -> out.put("item_properties.allow_off_hand", (byte) 0);
+            case SLOT_ARMOR_LEGS -> out.put("item_properties.allow_off_hand", (byte) 0);
+            case SLOT_WEAPON_MAINHAND -> out.put("item_properties.allow_off_hand", (byte) 0);
+            case SLOT_WEAPON_OFFHAND -> out.put("item_properties.allow_off_hand", (byte) 1);
         }
-        switch (v2.value()) {
-            case "slot.armor.body" -> out.put("item_properties.max_stack_size", 1);
-            case "slot.armor.chest" -> out.put("item_properties.max_stack_size", 1);
-            case "slot.armor.feet" -> out.put("item_properties.max_stack_size", 1);
-            case "slot.armor.head" -> out.put("item_properties.max_stack_size", 1);
-            case "slot.armor.legs" -> out.put("item_properties.max_stack_size", 1);
-            case "slot.weapon.mainhand" -> out.put("item_properties.max_stack_size", 64);
-            case "slot.weapon.offhand" -> out.put("item_properties.max_stack_size", 64);
-            default -> throw new IllegalStateException("slot is not a value of its enum: " + v2.value());
+        switch (v2) {
+            case SLOT_ARMOR_BODY -> out.put("item_properties.max_stack_size", 1);
+            case SLOT_ARMOR_CHEST -> out.put("item_properties.max_stack_size", 1);
+            case SLOT_ARMOR_FEET -> out.put("item_properties.max_stack_size", 1);
+            case SLOT_ARMOR_HEAD -> out.put("item_properties.max_stack_size", 1);
+            case SLOT_ARMOR_LEGS -> out.put("item_properties.max_stack_size", 1);
+            case SLOT_WEAPON_MAINHAND -> out.put("item_properties.max_stack_size", 64);
+            case SLOT_WEAPON_OFFHAND -> out.put("item_properties.max_stack_size", 64);
         }
         out.put("minecraft:wearable.slot", v2.value());
     }
@@ -733,13 +731,12 @@ public final class ItemWire {
         }
         MenuCategory.Category v0 = c.category();
         if (v0 != null) {
-            switch (v0.value()) {
-                case "construction" -> out.put("item_properties.creative_category", 1);
-                case "equipment" -> out.put("item_properties.creative_category", 3);
-                case "items" -> out.put("item_properties.creative_category", 4);
-                case "nature" -> out.put("item_properties.creative_category", 2);
-                case "none" -> out.put("item_properties.creative_category", 5);
-                default -> throw new IllegalStateException("category is not a value of its enum: " + v0.value());
+            switch (v0) {
+                case CONSTRUCTION -> out.put("item_properties.creative_category", 1);
+                case EQUIPMENT -> out.put("item_properties.creative_category", 3);
+                case ITEMS -> out.put("item_properties.creative_category", 4);
+                case NATURE -> out.put("item_properties.creative_category", 2);
+                case NONE -> out.put("item_properties.creative_category", 5);
             }
         } else {
             out.put("item_properties.creative_category", 5);

@@ -13,6 +13,7 @@ import com.palantir.javapoet.TypeName;
 import com.palantir.javapoet.TypeSpec;
 import org.geysermc.paletter.tools.codegen.component.ApiModel.Comp;
 import org.geysermc.paletter.tools.codegen.component.ApiModel.EnumRef;
+import org.geysermc.paletter.tools.codegen.component.ApiModel.EnumType;
 import org.geysermc.paletter.tools.codegen.component.ApiModel.Field;
 import org.geysermc.paletter.tools.codegen.component.ApiModel.Kind;
 import org.geysermc.paletter.tools.codegen.component.ApiModel.ListOf;
@@ -771,6 +772,29 @@ final class WireSource {
                 }
             }
             return numeric(type, at);
+        }
+
+        @Override
+        public CodeBlock enumValue() {
+            enumType();
+            return expr;
+        }
+
+        @Override
+        public String enumConstant(String value) {
+            EnumType type = enumType();
+            int i = type.values.indexOf(value);
+            if (i < 0) {
+                throw error("the enum has no value " + value + " (it has " + type.values + ")");
+            }
+            return type.constants.get(i);
+        }
+
+        private EnumType enumType() {
+            if (list || !(t instanceof EnumRef r)) {
+                throw error("an enum table needs an enum field");
+            }
+            return r.type();
         }
 
         @Override

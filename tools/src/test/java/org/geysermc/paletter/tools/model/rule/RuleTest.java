@@ -68,15 +68,14 @@ class RuleTest {
     }
 
     @Test
-    void anEnumTableHasACaseForEveryValueAndNoFallback() {
+    void anEnumTableSwitchesOverTheEnumWithoutADefault() {
         RecordingEmitter e = new RecordingEmitter();
         rule("{\"kind\": \"enum-table\", \"table\": {\"eat\": \"1\", \"none\": \"0\", \"hide\": \"<not sent>\"}, \"nbt\": \"int\"}").emit(e);
         assertEquals("""
             switch (key) {
-              case "eat" -> write("1 (int)");
-              case "hide" -> write("<not sent>");
-              case "none" -> write("0 (int)");
-              default -> throw new java.lang.IllegalStateException("path is not a value of its enum: " + key);
+              case EAT -> write("1 (int)");
+              case HIDE -> write("<not sent>");
+              case NONE -> write("0 (int)");
             }""", e.written());
     }
 

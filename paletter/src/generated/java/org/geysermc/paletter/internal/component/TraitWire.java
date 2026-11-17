@@ -70,14 +70,13 @@ public final class TraitWire {
         int v1 = c.parts();
         out.put("part_count", Wire.toByte(v1));
         MultiBlock.Direction v2 = c.direction();
-        switch (v2.value()) {
-            case "down" -> out.put("direction", (byte) 0);
-            case "east" -> out.put("direction", (byte) 5);
-            case "north" -> out.put("direction", (byte) 2);
-            case "south" -> out.put("direction", (byte) 3);
-            case "up" -> out.put("direction", (byte) 1);
-            case "west" -> out.put("direction", (byte) 4);
-            default -> throw new IllegalStateException("direction is not a value of its enum: " + v2.value());
+        switch (v2) {
+            case DOWN -> out.put("direction", (byte) 0);
+            case EAST -> out.put("direction", (byte) 5);
+            case NORTH -> out.put("direction", (byte) 2);
+            case SOUTH -> out.put("direction", (byte) 3);
+            case UP -> out.put("direction", (byte) 1);
+            case WEST -> out.put("direction", (byte) 4);
         }
     }
 

@@ -68,6 +68,16 @@ final class RecordingEmitter implements Emitter {
     }
 
     @Override
+    public CodeBlock enumValue() {
+        return CodeBlock.of("key");
+    }
+
+    @Override
+    public String enumConstant(String value) {
+        return value.toUpperCase();
+    }
+
+    @Override
     public CodeBlock string() {
         return CodeBlock.of("string");
     }
