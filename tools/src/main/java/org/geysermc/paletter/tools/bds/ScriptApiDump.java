@@ -3,6 +3,8 @@ package org.geysermc.paletter.tools.bds;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 import org.geysermc.paletter.tools.Layout;
+import org.geysermc.paletter.tools.data.BundledFiles;
+import org.geysermc.paletter.tools.data.VariantNames;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -11,6 +13,7 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.zip.GZIPOutputStream;
 
 /**
  * Runs the Script API dump add-on ({@code data/addons/dump}) on an extracted BDS. The add-on finds the aux value of a
@@ -28,6 +31,28 @@ public final class ScriptApiDump {
     public static void run(Path root, Path server, Path log, int timeout, int port) throws IOException, InterruptedException {
         List<String> effects = potionEffects(server, log.resolveSibling("bds-docgen.log"), timeout, port);
         new BdsRunner(root.resolve(Layout.DUMP_ADDON)).withPackFiles(lootTables(effects)).run(server, log, timeout, port, false);
+    }
+
+    /**
+     * Writes the dump of a console log as {@code data/bds/<build>/dump.json.gz}, and its variant names into the bundled
+     * version it belongs to, if there is one (what {@code update} does as part of a run).
+     *
+     * @param build the BDS build, e.g. {@code 1.26.63.1} (a preview prints another version than its download name)
+     * @param dataVersion the name of the bundled version of the build, e.g. {@code 26.60}
+     */
+    public static Path write(Path root, Path log, String build, String dataVersion) throws IOException {
+        String[] json = BdsDump.json(log);
+        BdsDump dump = BdsDump.parse(json[1], build);
+        Path file = root.resolve(Layout.BDS).resolve(build).resolve("dump.json.gz");
+        Files.createDirectories(file.getParent());
+        try (java.io.OutputStream out = new GZIPOutputStream(Files.newOutputStream(file))) {
+            out.write(BdsDump.canonicalJson(json[1]).getBytes(java.nio.charset.StandardCharsets.UTF_8));
+        }
+        Path data = root.resolve("paletter/src/main/resources/paletter");
+        if (Files.exists(data.resolve(dataVersion + ".nbt"))) {
+            VariantNames.update(data, dataVersion, VariantNames.of(dump, BundledFiles.read(data.resolve(dataVersion + ".nbt"))));
+        }
+        return file;
     }
 
     /** The loot tables of the add-on: one arrow with {@code set_potion} per effect, by path inside the pack. */

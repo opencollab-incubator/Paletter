@@ -8,6 +8,7 @@ import org.geysermc.paletter.tools.bds.BdsDistribution;
 import org.geysermc.paletter.tools.bds.BdsDump;
 import org.geysermc.paletter.tools.bds.BdsInventory;
 import org.geysermc.paletter.tools.bds.CapturePlatform;
+import org.geysermc.paletter.tools.bds.ScriptApiDump;
 import org.geysermc.paletter.tools.client.Capture;
 import org.geysermc.paletter.tools.client.CaptureClient;
 import org.geysermc.paletter.tools.client.CaptureWriter;
@@ -59,7 +60,7 @@ import java.util.concurrent.Callable;
     Cli.VerifyCommand.class, Cli.CheckData.class, Cli.DataDiffCommand.class, Cli.CreativeProbeCommand.class, Cli.EducationCaptureCommand.class, Cli.ExperimentMarksCommand.class,
     Cli.CaptureCommand.class, Cli.Experiments.class, Cli.CompareCommand.class,
     Cli.Docs.class, Cli.Addon.class, Cli.Infer.class, Cli.CheckMappings.class,
-    Cli.Constants.class, Cli.Components.class, Cli.InspectCommand.class, Cli.BehaviourCommand.class, Cli.BehaviourProbeCommand.class, Cli.BehaviourDumpCommand.class,
+    Cli.Constants.class, Cli.Components.class, Cli.InspectCommand.class, Cli.BehaviourCommand.class, Cli.BehaviourProbeCommand.class, Cli.BehaviourDumpCommand.class, Cli.ScriptDumpCommand.class,
     Cli.VoxelShapesCommand.class
 })
 public final class Cli implements Runnable {
@@ -754,6 +755,27 @@ public final class Cli implements Runnable {
                 org.geysermc.paletter.tools.behaviour.BehaviourDump.run(root(), bds, preview, server, cache, port, timeout, console);
             }
             org.geysermc.paletter.tools.behaviour.BehaviourDump.write(root(), console);
+            return 0;
+        }
+    }
+
+    @Command(name = "script-dump", description = "Runs the Script API dump add-on (data/addons/dump) on BDS (--bds VERSION, extracted into the cache) "
+        + "and writes data/bds/<BDS version>/dump.json.gz and the variant names of the bundled version (what update does as its first step). "
+        + "Downloading BDS means accepting the Minecraft EULA.")
+    static final class ScriptDumpCommand extends Rooted implements Callable<Integer> {
+        @Option(names = "--bds", required = true, description = "BDS version, e.g. 1.26.63.1") String bds;
+        @Option(names = "--preview", description = "--bds is a preview build") boolean preview;
+        @Option(names = "--cache") Path cache;
+        @Option(names = "--port", defaultValue = "19297") int port;
+        @Option(names = "--timeout", defaultValue = "600") int timeout;
+
+        @Override
+        public Integer call() throws Exception {
+            Path cacheDirectory = cache != null ? cache : BdsDistribution.defaultCache();
+            Path log = cacheDirectory.resolve("runs").resolve("script-dump-" + bds + ".log");
+            BdsDistribution.resolve(preview, bds).onServer(cacheDirectory,
+                server -> ScriptApiDump.run(root(), server, log, timeout, port));
+            System.out.println("Wrote " + ScriptApiDump.write(root(), log, bds, Update.versionName(bds)));
             return 0;
         }
     }

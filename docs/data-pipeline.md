@@ -52,6 +52,7 @@ command takes `--help`. Paths are relative to the repository root (`--root` over
 | `docs`, `addon`, `spec-capture`, `infer`, `check-mappings` | The component model (below). |
 | `components generate\|check`, `constants generate\|check` | The generators (below). |
 | `behaviour import`, `behaviour-probe`, `behaviour-dump` | Behaviour values (below). |
+| `script-dump` | Runs the Script API dump add-on on one BDS build: `data/bds/<build>/dump.json.gz` and the item variant names (below). |
 | `voxel-shapes capture\|import\|check` | Voxel shape captures and `voxel_shapes.nbt`. |
 | `creative-probe` | Runs an add-on on BDS and records the creative inventory order. |
 | `education-capture` | Records what only an Education Edition world adds (`education.json`, used for `@Education`). |
@@ -77,7 +78,12 @@ Useful options: `--version <build>` for a specific build, `--channel preview` fo
 
 A run downloads BDS and, in `<cache>/runs/<platform>-<version>/`:
 
-1. Runs the Script API dump pack (`data/addons/dump`).
+1. Runs the Script API dump pack (`data/addons/dump`). BDS's documentation generator runs first, for the potion effect
+   list the pack's tipped arrow loot tables (`set_potion`, one per effect) are written from. The dump includes
+   `item_variants`: the aux values BDS accepts of potions, tipped arrows, beds and banners, with the Script API's potion
+   effect and delivery or the localization key of each. Import turns them into `variant_names.txt` in the bundled data
+   (only the variants the version's creative inventory has), which `generateConstants` turns into `BedrockItemVariants`.
+   The names are BDS's own spellings, never renamed: a name in `constants-history.json` keeps its identifier and aux.
 2. Captures a vanilla world with the headless client: item registry, creative inventory and block properties. Every
    creative block id is checked against the computed state hash. It captures again with sequential ids.
 3. Discovers the build's experiment toggles (below) and captures with each one.

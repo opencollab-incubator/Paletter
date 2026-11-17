@@ -1,6 +1,7 @@
 package org.geysermc.paletter.tools.update;
 
 import org.geysermc.paletter.tools.data.Nbt;
+import org.geysermc.paletter.tools.data.VariantNames;
 import org.geysermc.paletter.tools.bds.BdsDistribution;
 import org.geysermc.paletter.tools.bds.BdsDump;
 import org.geysermc.paletter.tools.bds.ScriptApiDump;
@@ -1203,6 +1204,7 @@ public final class Update {
                 bds.identical() ? "identical" : bds.count() + " differences");
             report.diff("Item tags and block defaults: BDS " + distribution.version() + " vs bundled " + name, bds);
             Files.write(staging.resources.resolve(name + ".nbt"), write(refreshed));
+            VariantNames.update(staging.resources, name, VariantNames.of(dump, refreshed));
         } else {
             Importer.IndexEntry latest = Importer.readIndex(resources).stream().filter(e -> !e.preview()).reduce((a, b) -> b).orElseThrow();
             VanillaData previous = read(resources.resolve(latest.name() + ".nbt"));
