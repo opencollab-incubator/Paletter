@@ -90,16 +90,28 @@ loadScripts(document, 'script');</script>
 </div>
 <section class="class-description" id="class-description">
 <hr>
-<div class="type-signature"><span class="modifiers">public final class </span><span class="element-name type-name-label">ItemOverride</span>
+<div class="type-signature"><span class="annotations"><a href="../annotation/Experimental.html" title="annotation interface in org.geysermc.paletter.annotation">@Experimental</a>
+</span><span class="modifiers">public final class </span><span class="element-name type-name-label">ItemOverride</span>
 <span class="extends-implements">extends <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></span></div>
 <div class="block">Changes to a vanilla (or earlier layer's) item definition, applied in a layer. Received in
  <a href="../PaletteLayer.Builder.html#overrideItem(java.lang.String,java.util.function.Consumer)"><code>PaletteLayer.Builder.overrideItem(java.lang.String, java.util.function.Consumer&lt;org.geysermc.paletter.item.ItemOverride&gt;)</code></a>; anything not set keeps its current value.
  <pre><code>
  // Bedrock stacks cakes to 64, Java to 1
- layer.overrideItem("minecraft:cake", item -&gt; item.components(MaxStackSize.of(1)));
- // Prevent client side firework boosting by making the item data driven
- layer.overrideItem("minecraft:firework_rocket", item -&gt; item.dataDriven(MaxStackSize.of(64), Throwable.builder().build()));
- </code></pre></div>
+ layer.overrideItem("minecraft:cake", item -&gt; item.modifyComponents(MaxStackSize.of(1)));
+ // Like a BDS add-on for a data driven item: only these components are left (the apple keeps its creative category)
+ layer.overrideItem("minecraft:apple", item -&gt; item.replaceComponents(MaxStackSize.of(3)));
+ // Make the firework rocket data driven and merge onto its current data; whether that stops the client's
+ // own firework boosting is unverified on a client
+ layer.overrideItem("minecraft:firework_rocket", item -&gt; item.version(ItemVersion.DATA_DRIVEN).modifyComponents(MaxStackSize.of(64)));
+ </code></pre>
+ <p>
+ <b>Experimental.</b> BDS overrides of a vanilla data driven item (such as <code>minecraft:apple</code>, format 1.26.60)
+ replace the vanilla components (<a href="#replaceComponents(org.geysermc.paletter.item.component.ItemComponent...)"><code>replaceComponents(org.geysermc.paletter.item.component.ItemComponent...)</code></a>). For hard coded items BDS accepted
+ <code>minecraft:feather</code> at format 1.10 (it became a legacy item, id kept) and rejected <code>minecraft:stick</code> at
+ 1.26.60; a legacy <code>minecraft:bread</code> at 1.16.100 was rejected, asking for 1.20.0 or higher, which was never
+ tried. Paletter does not refuse any override. How the Bedrock client treats Paletter's overrides is <b>unverified on a
+ client</b>: no client test exists. Paletter also keeps every vanilla runtime id fixed, where BDS moves an overridden
+ data driven item. This API may change.</div>
 <dl class="notes">
 <dt>Since:</dt>
 <dd>0.1.0</dd>
@@ -127,24 +139,25 @@ loadScripts(document, 'script');</script>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#componentBased(boolean)" class="member-name-link">componentBased</a><wbr>(boolean&nbsp;componentBased)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@NonNull <a href="ItemOverride.html" title="class in org.geysermc.paletter.item">ItemOverride</a></code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#components(org.geysermc.paletter.item.component.ItemComponent...)" class="member-name-link">components</a><wbr>(@NonNull <a href="component/ItemComponent.html" title="interface in org.geysermc.paletter.item.component">ItemComponent</a>...&nbsp;components)</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#modifyComponents(org.geysermc.paletter.item.component.ItemComponent...)" class="member-name-link">modifyComponents</a><wbr>(@NonNull <a href="component/ItemComponent.html" title="interface in org.geysermc.paletter.item.component">ItemComponent</a>...&nbsp;components)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
-<div class="block">Adds components on top of the item's current component data: what they write replaces the original keys
- (including single <code>item_properties</code> entries), everything else is sent as before.</div>
+<div class="block">Merges components onto the item's current component data: what they write replaces the original keys (including
+ single <code>item_properties</code> entries), everything else is sent as before.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@NonNull <a href="ItemOverride.html" title="class in org.geysermc.paletter.item">ItemOverride</a></code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#dataDriven(org.geysermc.paletter.item.component.ItemComponent...)" class="member-name-link">dataDriven</a><wbr>(@NonNull <a href="component/ItemComponent.html" title="interface in org.geysermc.paletter.item.component">ItemComponent</a>...&nbsp;components)</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#noBlock()" class="member-name-link">noBlock</a>()</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
-<div class="block">Turns the item into a data driven item with only these components (the custom item defaults underneath).</div>
-</div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@NonNull <a href="ItemOverride.html" title="class in org.geysermc.paletter.item">ItemOverride</a></code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#noBlock()" class="member-name-link">noBlock</a>()</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Sends the item without a block, e.g.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@NonNull <a href="RegisteredItem.html" title="class in org.geysermc.paletter.item">RegisteredItem</a></code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#original()" class="member-name-link">original</a>()</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@NonNull <a href="RegisteredItem.html" title="class in org.geysermc.paletter.item">RegisteredItem</a></code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#original()" class="member-name-link">original</a>()</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@NonNull <a href="ItemOverride.html" title="class in org.geysermc.paletter.item">ItemOverride</a></code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#replaceComponents(org.geysermc.paletter.item.component.ItemComponent...)" class="member-name-link">replaceComponents</a><wbr>(@NonNull <a href="component/ItemComponent.html" title="interface in org.geysermc.paletter.item.component">ItemComponent</a>...&nbsp;components)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="block">Replaces the item's components with only these (the custom item defaults underneath), like a BDS add-on that
+ overrides a vanilla data driven item.</div>
+</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@NonNull <a href="ItemOverride.html" title="class in org.geysermc.paletter.item">ItemOverride</a></code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#version(org.cloudburstmc.protocol.bedrock.data.inventory.ItemVersion)" class="member-name-link">version</a><wbr>(@NonNull org.cloudburstmc.protocol.bedrock.data.inventory.ItemVersion&nbsp;version)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
@@ -188,20 +201,29 @@ loadScripts(document, 'script');</script>
 </section>
 </li>
 <li>
-<section class="detail" id="components(org.geysermc.paletter.item.component.ItemComponent...)">
-<h3>components</h3>
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">@NonNull <a href="ItemOverride.html" title="class in org.geysermc.paletter.item">ItemOverride</a></span>&nbsp;<span class="element-name">components</span><wbr><span class="parameters">(@NonNull <a href="component/ItemComponent.html" title="interface in org.geysermc.paletter.item.component">ItemComponent</a>...&nbsp;components)</span></div>
-<div class="block">Adds components on top of the item's current component data: what they write replaces the original keys
- (including single <code>item_properties</code> entries), everything else is sent as before. Marks the item component
- based.</div>
+<section class="detail" id="modifyComponents(org.geysermc.paletter.item.component.ItemComponent...)">
+<h3>modifyComponents</h3>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">@NonNull <a href="ItemOverride.html" title="class in org.geysermc.paletter.item">ItemOverride</a></span>&nbsp;<span class="element-name">modifyComponents</span><wbr><span class="parameters">(@NonNull <a href="component/ItemComponent.html" title="interface in org.geysermc.paletter.item.component">ItemComponent</a>...&nbsp;components)</span></div>
+<div class="block">Merges components onto the item's current component data: what they write replaces the original keys (including
+ single <code>item_properties</code> entries), everything else is sent as before. Marks the item component based.
+ <p>
+ BDS never produces this shape: an add-on override replaces the vanilla components, see <a href="#replaceComponents(org.geysermc.paletter.item.component.ItemComponent...)"><code>replaceComponents(org.geysermc.paletter.item.component.ItemComponent...)</code></a>.
+ The client's behaviour for a merged vanilla item is unverified.</div>
 </section>
 </li>
 <li>
-<section class="detail" id="dataDriven(org.geysermc.paletter.item.component.ItemComponent...)">
-<h3>dataDriven</h3>
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">@NonNull <a href="ItemOverride.html" title="class in org.geysermc.paletter.item">ItemOverride</a></span>&nbsp;<span class="element-name">dataDriven</span><wbr><span class="parameters">(@NonNull <a href="component/ItemComponent.html" title="interface in org.geysermc.paletter.item.component">ItemComponent</a>...&nbsp;components)</span></div>
-<div class="block">Turns the item into a data driven item with only these components (the custom item defaults underneath). The
- client then stops applying its hardcoded behaviour, e.g. firework boosting.</div>
+<section class="detail" id="replaceComponents(org.geysermc.paletter.item.component.ItemComponent...)">
+<h3>replaceComponents</h3>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">@NonNull <a href="ItemOverride.html" title="class in org.geysermc.paletter.item">ItemOverride</a></span>&nbsp;<span class="element-name">replaceComponents</span><wbr><span class="parameters">(@NonNull <a href="component/ItemComponent.html" title="interface in org.geysermc.paletter.item.component">ItemComponent</a>...&nbsp;components)</span></div>
+<div class="block">Replaces the item's components with only these (the custom item defaults underneath), like a BDS add-on that
+ overrides a vanilla data driven item. The vanilla <code>item_properties.creative_category</code> is kept, as BDS does.
+ Also forces the item data driven and component based, and discards the components of earlier
+ <a href="#modifyComponents(org.geysermc.paletter.item.component.ItemComponent...)"><code>modifyComponents(org.geysermc.paletter.item.component.ItemComponent...)</code></a> calls. Whether the client then stops applying hard coded behaviour is unverified on a
+ client.
+ <p>
+ BDS accepted this for the data driven apple; for a hard coded item it rejected the stick (1.26.60) and accepted
+ the feather only as a legacy item (1.10). Paletter applies it to any item (unverified on a client). Unlike BDS,
+ the runtime id stays the vanilla one.</div>
 </section>
 </li>
 <li>

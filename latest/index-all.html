@@ -4796,11 +4796,6 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Adds components, replacing those of the same names.</div>
 </dd>
-<dt><a href="org/geysermc/paletter/item/ItemOverride.html#components(org.geysermc.paletter.item.component.ItemComponent...)" class="member-name-link">components(ItemComponent...)</a> - Method in class org.geysermc.paletter.item.<a href="org/geysermc/paletter/item/ItemOverride.html" title="class in org.geysermc.paletter.item">ItemOverride</a></dt>
-<dd>
-<div class="block">Adds components on top of the item's current component data: what they write replaces the original keys
- (including single <code>item_properties</code> entries), everything else is sent as before.</div>
-</dd>
 <dt><a href="org/geysermc/paletter/behaviour/ItemBehaviour.html#COMPOST_CHANCE" class="member-name-link">COMPOST_CHANCE</a> - Static variable in class org.geysermc.paletter.behaviour.<a href="org/geysermc/paletter/behaviour/ItemBehaviour.html" title="class in org.geysermc.paletter.behaviour">ItemBehaviour</a></dt>
 <dd>
 <div class="block">Chance in percent that the item adds a layer to a composter; null if it cannot be composted.</div>
@@ -6431,10 +6426,6 @@ loadScripts(document, 'script');</script>
 <dt><a href="org/geysermc/paletter/block/CustomBlock.BlockItem.html#dataDriven(org.geysermc.paletter.item.component.ItemComponent...)" class="member-name-link">dataDriven(ItemComponent...)</a> - Static method in interface org.geysermc.paletter.block.<a href="org/geysermc/paletter/block/CustomBlock.BlockItem.html" title="interface in org.geysermc.paletter.block">CustomBlock.BlockItem</a></dt>
 <dd>
 <div class="block">A data driven item that places the block, e.g.</div>
-</dd>
-<dt><a href="org/geysermc/paletter/item/ItemOverride.html#dataDriven(org.geysermc.paletter.item.component.ItemComponent...)" class="member-name-link">dataDriven(ItemComponent...)</a> - Method in class org.geysermc.paletter.item.<a href="org/geysermc/paletter/item/ItemOverride.html" title="class in org.geysermc.paletter.item">ItemOverride</a></dt>
-<dd>
-<div class="block">Turns the item into a data driven item with only these components (the custom item defaults underneath).</div>
 </dd>
 <dt><a href="org/geysermc/paletter/block/CustomBlock.BlockItem.DataDriven.html#%3Cinit%3E(java.util.List)" class="member-name-link">DataDriven(List&lt;ItemComponent&gt;)</a> - Constructor for record class org.geysermc.paletter.block.<a href="org/geysermc/paletter/block/CustomBlock.BlockItem.DataDriven.html" title="class in org.geysermc.paletter.block">CustomBlock.BlockItem.DataDriven</a></dt>
 <dd>
@@ -16237,6 +16228,11 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Returns the value of the <code>modifier</code> record component.</div>
 </dd>
+<dt><a href="org/geysermc/paletter/item/ItemOverride.html#modifyComponents(org.geysermc.paletter.item.component.ItemComponent...)" class="member-name-link">modifyComponents(ItemComponent...)</a> - Method in class org.geysermc.paletter.item.<a href="org/geysermc/paletter/item/ItemOverride.html" title="class in org.geysermc.paletter.item">ItemOverride</a></dt>
+<dd>
+<div class="block">Merges components onto the item's current component data: what they write replaces the original keys (including
+ single <code>item_properties</code> entries), everything else is sent as before.</div>
+</dd>
 <dt><a href="org/geysermc/paletter/vanilla/BedrockStates.html#MOISTURIZED_AMOUNT" class="member-name-link">MOISTURIZED_AMOUNT</a> - Static variable in class org.geysermc.paletter.vanilla.<a href="org/geysermc/paletter/vanilla/BedrockStates.html" title="class in org.geysermc.paletter.vanilla">BedrockStates</a></dt>
 <dd>
 <div class="block"><code>moisturized_amount</code>: 0 to 7.</div>
@@ -18869,7 +18865,8 @@ loadScripts(document, 'script');</script>
 </dd>
 <dt><a href="org/geysermc/paletter/PaletteLayer.Builder.html#overrideItem(org.geysermc.paletter.vanilla.BedrockItemType,java.util.function.Consumer)" class="member-name-link">overrideItem(BedrockItemType, Consumer&lt;ItemOverride&gt;)</a> - Method in class org.geysermc.paletter.<a href="org/geysermc/paletter/PaletteLayer.Builder.html" title="class in org.geysermc.paletter">PaletteLayer.Builder</a></dt>
 <dd>
-<div class="block">Changes an existing item definition, like <a href="org/geysermc/paletter/PaletteLayer.Builder.html#overrideItem(java.lang.String,java.util.function.Consumer)"><code>PaletteLayer.Builder.overrideItem(String, Consumer)</code></a>.</div>
+<div class="block">Changes an existing item definition, like <a href="org/geysermc/paletter/PaletteLayer.Builder.html#overrideItem(java.lang.String,java.util.function.Consumer)"><code>PaletteLayer.Builder.overrideItem(String, Consumer)</code></a>, with the same caveats:
+ experimental, and unverified on a client.</div>
 </dd>
 <dt><a href="org/geysermc/paletter/PaletteLayer.html#overrides()" class="member-name-link">overrides()</a> - Method in class org.geysermc.paletter.<a href="org/geysermc/paletter/PaletteLayer.html" title="class in org.geysermc.paletter">PaletteLayer</a></dt>
 <dd>&nbsp;</dd>
@@ -22060,6 +22057,11 @@ loadScripts(document, 'script');</script>
 <dt><a href="org/geysermc/paletter/internal/component/Transforms.html#replaceBlockItem(org.geysermc.paletter.internal.component.WireContext,org.geysermc.paletter.internal.component.WireNode,org.geysermc.paletter.item.component.BlockPlacer)" class="member-name-link">replaceBlockItem(WireContext, WireNode, BlockPlacer)</a> - Static method in class org.geysermc.paletter.internal.component.<a href="org/geysermc/paletter/internal/component/Transforms.html" title="class in org.geysermc.paletter.internal.component">Transforms</a></dt>
 <dd>
 <div class="block"><code>block_placer.replace_block_item</code>: BDS takes it only for the block that has the item's own identifier.</div>
+</dd>
+<dt><a href="org/geysermc/paletter/item/ItemOverride.html#replaceComponents(org.geysermc.paletter.item.component.ItemComponent...)" class="member-name-link">replaceComponents(ItemComponent...)</a> - Method in class org.geysermc.paletter.item.<a href="org/geysermc/paletter/item/ItemOverride.html" title="class in org.geysermc.paletter.item">ItemOverride</a></dt>
+<dd>
+<div class="block">Replaces the item's components with only these (the custom item defaults underneath), like a BDS add-on that
+ overrides a vanilla data driven item.</div>
 </dd>
 <dt><a href="org/geysermc/paletter/annotation/ReplacedBy.html" class="type-name-link" title="annotation interface in org.geysermc.paletter.annotation">ReplacedBy</a> - Annotation Interface in <a href="org/geysermc/paletter/annotation/package-summary.html">org.geysermc.paletter.annotation</a></dt>
 <dd>

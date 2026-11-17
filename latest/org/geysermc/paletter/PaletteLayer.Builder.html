@@ -146,7 +146,8 @@ loadScripts(document, 'script');</script>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#overrideItem(org.geysermc.paletter.vanilla.BedrockItemType,java.util.function.Consumer)" class="member-name-link">overrideItem</a><wbr>(@NonNull <a href="vanilla/BedrockItemType.html" title="class in org.geysermc.paletter.vanilla">BedrockItemType</a>&nbsp;type,
  @NonNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Consumer.html" title="class or interface in java.util.function" class="external-link">Consumer</a>&lt;<a href="item/ItemOverride.html" title="class in org.geysermc.paletter.item">ItemOverride</a>&gt;&nbsp;modifier)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
-<div class="block">Changes an existing item definition, like <a href="#overrideItem(java.lang.String,java.util.function.Consumer)"><code>overrideItem(String, Consumer)</code></a>.</div>
+<div class="block">Changes an existing item definition, like <a href="#overrideItem(java.lang.String,java.util.function.Consumer)"><code>overrideItem(String, Consumer)</code></a>, with the same caveats:
+ experimental, and unverified on a client.</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@NonNull <a href="PaletteLayer.Builder.html" title="class in org.geysermc.paletter">PaletteLayer.Builder</a></code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#tag(java.lang.String,java.lang.String...)" class="member-name-link">tag</a><wbr>(@NonNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;tag,
@@ -220,17 +221,25 @@ loadScripts(document, 'script');</script>
 <li>
 <section class="detail" id="overrideItem(java.lang.String,java.util.function.Consumer)">
 <h3>overrideItem</h3>
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">@NonNull <a href="PaletteLayer.Builder.html" title="class in org.geysermc.paletter">PaletteLayer.Builder</a></span>&nbsp;<span class="element-name">overrideItem</span><wbr><span class="parameters">(@NonNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;identifier,
+<div class="member-signature"><span class="annotations"><a href="annotation/Experimental.html" title="annotation interface in org.geysermc.paletter.annotation">@Experimental</a>
+</span><span class="modifiers">public</span>&nbsp;<span class="return-type">@NonNull <a href="PaletteLayer.Builder.html" title="class in org.geysermc.paletter">PaletteLayer.Builder</a></span>&nbsp;<span class="element-name">overrideItem</span><wbr><span class="parameters">(@NonNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;identifier,
  @NonNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Consumer.html" title="class or interface in java.util.function" class="external-link">Consumer</a>&lt;<a href="item/ItemOverride.html" title="class in org.geysermc.paletter.item">ItemOverride</a>&gt;&nbsp;modifier)</span></div>
-<div class="block">Changes an existing item definition. Skipped (and reported) for versions without the item.</div>
+<div class="block">Changes an existing item definition. Skipped (and reported) for versions without the item.
+ <p>
+ <b>Experimental.</b> BDS replaced the components of an overridden vanilla data driven item; for hard coded items
+ it accepted the feather at format 1.10 (as a legacy item) and rejected the stick at 1.26.60, and it rejected a
+ legacy bread at 1.16.100 (1.20 and up was never tried). Paletter refuses nothing. The client's behaviour for
+ Paletter's overrides is <b>unverified on a client</b> (no client test exists). The API may change.</div>
 </section>
 </li>
 <li>
 <section class="detail" id="overrideItem(org.geysermc.paletter.vanilla.BedrockItemType,java.util.function.Consumer)">
 <h3>overrideItem</h3>
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">@NonNull <a href="PaletteLayer.Builder.html" title="class in org.geysermc.paletter">PaletteLayer.Builder</a></span>&nbsp;<span class="element-name">overrideItem</span><wbr><span class="parameters">(@NonNull <a href="vanilla/BedrockItemType.html" title="class in org.geysermc.paletter.vanilla">BedrockItemType</a>&nbsp;type,
+<div class="member-signature"><span class="annotations"><a href="annotation/Experimental.html" title="annotation interface in org.geysermc.paletter.annotation">@Experimental</a>
+</span><span class="modifiers">public</span>&nbsp;<span class="return-type">@NonNull <a href="PaletteLayer.Builder.html" title="class in org.geysermc.paletter">PaletteLayer.Builder</a></span>&nbsp;<span class="element-name">overrideItem</span><wbr><span class="parameters">(@NonNull <a href="vanilla/BedrockItemType.html" title="class in org.geysermc.paletter.vanilla">BedrockItemType</a>&nbsp;type,
  @NonNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Consumer.html" title="class or interface in java.util.function" class="external-link">Consumer</a>&lt;<a href="item/ItemOverride.html" title="class in org.geysermc.paletter.item">ItemOverride</a>&gt;&nbsp;modifier)</span></div>
-<div class="block">Changes an existing item definition, like <a href="#overrideItem(java.lang.String,java.util.function.Consumer)"><code>overrideItem(String, Consumer)</code></a>.</div>
+<div class="block">Changes an existing item definition, like <a href="#overrideItem(java.lang.String,java.util.function.Consumer)"><code>overrideItem(String, Consumer)</code></a>, with the same caveats:
+ experimental, and unverified on a client.</div>
 <dl class="notes">
 <dt>Since:</dt>
 <dd>0.1.0</dd>
