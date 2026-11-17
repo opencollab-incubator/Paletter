@@ -41,6 +41,11 @@ public final class Identity extends Rule {
     }
 
     @Override
+    public boolean mapValue() {
+        return true;
+    }
+
+    @Override
     public boolean wholeList() {
         return true;
     }

@@ -42,8 +42,13 @@ final class RecordingEmitter implements Emitter {
     }
 
     @Override
-    public String leaf() {
+    public String leafPath() {
         return "leaf";
+    }
+
+    @Override
+    public CodeBlock leaf() {
+        return CodeBlock.of("leaf()");
     }
 
     @Override

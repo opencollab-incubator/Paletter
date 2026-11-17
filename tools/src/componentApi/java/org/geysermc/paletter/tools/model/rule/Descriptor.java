@@ -108,10 +108,10 @@ public final class Descriptor extends Rule {
     @Override
     public void emit(Emitter e) {
         if (of.equals("block")) {
-            e.code().addStatement("$T.blockDescriptor(ctx, $L, $S, $L.name(), $L.states(), $L.tags())", Emitter.WIRE, e.node(), e.leaf(),
+            e.code().addStatement("$T.blockDescriptor(ctx, $L, $S, $L.name(), $L.states(), $L.tags())", Emitter.WIRE, e.node(), e.leafPath(),
                 e.value(), e.value(), e.value());
         } else {
-            e.code().addStatement("$T.itemDescriptor(ctx, $L, $S, $L, $S, $L)", Emitter.WIRE, e.node(), e.leaf(), e.component(), e.path(),
+            e.code().addStatement("$T.itemDescriptor(ctx, $L, $S, $L, $S, $L)", Emitter.WIRE, e.node(), e.leafPath(), e.component(), e.path(),
                 e.string());
         }
     }

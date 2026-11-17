@@ -65,12 +65,13 @@ together and capture again); `rejected`: every variant setting it was rejected;
 | identity | 232 |
 | linear | 15 |
 | ordered-set | 2 |
+| packed-bits | 8 |
 | structure | 29 |
-| table | 11 |
+| table | 3 |
 
 | tag | rules |
 |---|---|
-| enum->int | 14 |
+| enum->int | 6 |
 | explained-by-child-fields | 29 |
 | flattened | 18 |
 | injected-default | 209 |
@@ -78,6 +79,7 @@ together and capture again); `rejected`: every variant setting it was rejected;
 | list-element | 33 |
 | nested | 84 |
 | outside-component:* | 3 |
+| packed-bits | 8 |
 | presence | 17 |
 | renamed | 96 |
 | type:* | 110 |

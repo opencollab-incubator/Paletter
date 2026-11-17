@@ -15,10 +15,14 @@ import org.geysermc.paletter.tools.model.rule.Count;
 import org.geysermc.paletter.tools.model.rule.EmptyList;
 import org.geysermc.paletter.tools.model.rule.EmptyMap;
 import org.geysermc.paletter.tools.model.rule.EnumTable;
+import org.geysermc.paletter.tools.model.rule.HashOrderedSet;
 import org.geysermc.paletter.tools.model.rule.Identity;
 import org.geysermc.paletter.tools.model.rule.Leaf;
 import org.geysermc.paletter.tools.model.rule.Linear;
+import org.geysermc.paletter.tools.model.rule.Molang;
 import org.geysermc.paletter.tools.model.rule.Observation;
+import org.geysermc.paletter.tools.model.rule.OrderedSet;
+import org.geysermc.paletter.tools.model.rule.PackedBits;
 import org.geysermc.paletter.tools.model.rule.Rule;
 import org.geysermc.paletter.tools.model.rule.Table;
 import org.geysermc.paletter.tools.model.rule.Union;
@@ -46,6 +50,15 @@ final class RuleFit {
         this.feedback = feedback;
     }
 
+    /** @return the rules of the list leaves the field's lists are sent as a set: in an order of BDS's own, or by the hash of each name */
+    static List<Rule> sets(List<Observation> observations, Set<String> varying, Set<String> closed) {
+        List<Rule> rules = new ArrayList<>(OrderedSet.fit(observations, varying, closed));
+        Set<String> rest = new TreeSet<>(varying);
+        rules.forEach(r -> rest.removeIf(w -> w.matches(Pattern.quote(r.wire.substring(0, r.wire.length() - 2)) + "\\[\\d+]")));
+        rules.addAll(HashOrderedSet.fit(observations, rest));
+        return rules;
+    }
+
     /** @return the rule of the leaf the field's JSON value decides, with its NBT type and tags; null if no kind fits */
     Rule fit(Component component, String path, String wire, List<Observation> observations) {
         List<Observation> set = observations.stream().filter(p -> p.json() != null && !p.json().isJsonNull()).toList();
@@ -53,10 +66,10 @@ final class RuleFit {
             return null;
         }
         String jsonName = path.isEmpty() ? "" : JsonPath.tokens(path).getLast();
-        Rule rule = byShape(component, path, wire, set);
+        Rule rule = byShape(component, path, wire, set, observations);
         if (rule == null) {
             // no one rule for every JSON type of the field: a rule for each type
-            rule = Union.fit(set, wire, type -> byShape(component, path, wire, type));
+            rule = Union.fit(set, wire, type -> byShape(component, path, wire, type, type));
         }
         if (rule == null) {
             return null;
@@ -70,7 +83,8 @@ final class RuleFit {
     }
 
     /** The rule of observations of one shape of JSON value (scalars, lists or objects), or of a mix of shapes. */
-    private Rule byShape(Component component, String path, String wire, List<Observation> set) {
+    private Rule byShape(Component component, String path, String wire, List<Observation> set,
+                         List<Observation> observations) {
         Field field = component.field(path);
         // an enum of the docs, or one BDS lists in its content log ("expects one of the following strings")
         boolean enumerated = field != null && !field.enumValues().isEmpty() || feedback.has(component.id(), path, "values");
@@ -78,6 +92,9 @@ final class RuleFit {
             Rule rule = scalar(set, Observation::json, wire);
             if (rule instanceof Table && !tableAllowed(set, enumerated)) {
                 rule = Affix.fit(set, wire);
+            }
+            if (rule instanceof Table && PackedBits.fit(observations, wire) != null) {
+                rule = PackedBits.fit(observations, wire);
             }
             EnumTable complete = EnumTable.fit(rule, closedValues(component, path));
             return complete != null ? complete : rule;
@@ -136,6 +153,9 @@ final class RuleFit {
         Rule rule = Identity.fit(xs, ys);
         if (rule == null) {
             rule = Linear.fit(xs, ys);
+        }
+        if (rule == null) {
+            rule = Molang.fit(xs, ys);
         }
         return rule != null ? rule : Table.fit(xs, ys);
     }
