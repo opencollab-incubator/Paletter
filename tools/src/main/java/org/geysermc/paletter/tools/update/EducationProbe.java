@@ -188,23 +188,34 @@ public final class EducationProbe {
         return result;
     }
 
-    /** The bundled version {@code name}, or the one with the newest protocol not above {@code protocol}. */
+    /**
+     * The bundled version {@code name}, or the one of this protocol (a bundled preview too: it was imported from this
+     * build's own states, so hashes of blocks that changed in it resolve), else the newest release not above it.
+     */
     public static VanillaData reference(Path root, String name, int protocol) throws IOException {
         Path data = root.resolve(ConstantsGenerator.DATA);
         if (name == null) {
-            ConstantsGenerator.Bundle best = null;
-            for (ConstantsGenerator.Bundle bundle : ConstantsGenerator.readIndex(data)) {
-                if (!bundle.preview() && bundle.protocol() <= protocol) {
-                    best = bundle;
-                }
-            }
-            if (best == null) {
-                throw new IOException("No bundled version for protocol " + protocol + "; pass --reference");
-            }
-            name = best.name();
+            name = reference(ConstantsGenerator.readIndex(data), protocol).name();
         }
         try (InputStream stream = Files.newInputStream(data.resolve(name + ".nbt"))) {
             return PaletteDataCodec.read(stream);
         }
+    }
+
+    /** The bundled version a capture of {@code protocol} resolves block hashes with. */
+    static ConstantsGenerator.Bundle reference(List<ConstantsGenerator.Bundle> bundles, int protocol) throws IOException {
+        ConstantsGenerator.Bundle best = null;
+        for (ConstantsGenerator.Bundle bundle : bundles) {
+            if (bundle.protocol() == protocol) {
+                return bundle;
+            }
+            if (!bundle.preview() && bundle.protocol() < protocol) {
+                best = bundle;
+            }
+        }
+        if (best == null) {
+            throw new IOException("No bundled version for protocol " + protocol + "; pass --reference");
+        }
+        return best;
     }
 }
