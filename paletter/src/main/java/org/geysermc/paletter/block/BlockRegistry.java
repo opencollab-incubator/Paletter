@@ -284,6 +284,15 @@ public final class BlockRegistry implements DefinitionRegistry<BlockDefinition> 
     }
 
     /**
+     * @return whether {@link #block(int)} is a replacement for this canonical id: a fallback (also a forced one) or the
+     *         default fallback was used, see {@link #isMissing}; not for a state that is only adapted to this version
+     */
+@Internal
+    public boolean isFallback(int canonical) {
+        return canonicalTable().fallbackIds.get(canonical);
+    }
+
+    /**
      * Like {@link #block(int)}, but only the runtime id. An array lookup.
      */
 @Internal
@@ -364,6 +373,7 @@ public final class BlockRegistry implements DefinitionRegistry<BlockDefinition> 
         int[] reverse = new int[table.size()];
         Set<NbtMap> missing = new LinkedHashSet<>();
         BitSet missingIds = new BitSet(size);
+        BitSet fallbackIds = new BitSet(size);
         int firstPage = 0;
         int firstIndex = 0;
         // A patch over a registry with the same fallbacks resolves the canonical ids below the parent's size the same
@@ -379,6 +389,7 @@ public final class BlockRegistry implements DefinitionRegistry<BlockDefinition> 
             System.arraycopy(parentTable.reverse, 0, reverse, 0, firstIndex);
             missing.addAll(parentTable.missing);
             missingIds.or(parentTable.missingIds.get(0, firstPage << PAGE_BITS));
+            fallbackIds.or(parentTable.fallbackIds.get(0, firstPage << PAGE_BITS));
         }
         for (int i = firstIndex; i < reverse.length; i++) {
             reverse[i] = canonical.index(table.byIndex(i).getState());
@@ -392,12 +403,17 @@ public final class BlockRegistry implements DefinitionRegistry<BlockDefinition> 
             for (int j = 0; j < length; j++) {
                 int id = start + j;
                 NbtMap state = canonical.state(id);
-                RegisteredBlockState block = resolve(state).block();
+                BlockResolution resolution = resolve(state);
+                RegisteredBlockState block = resolution.block();
+                if (resolution.kind() == BlockResolution.Kind.FALLBACK) {
+                    fallbackIds.set(id);
+                }
                 if (block == null) {
                     RegisteredBlockState fallback = defaultBlock();
                     block = fallback != null ? fallback : table.air;
                     missing.add(state);
                     missingIds.set(id);
+                    fallbackIds.set(id);
                 }
                 pageBlocks[j] = block;
                 pageIds[j] = block.getRuntimeId();
@@ -415,11 +431,11 @@ public final class BlockRegistry implements DefinitionRegistry<BlockDefinition> 
             blocks[page] = pageBlocks;
             runtimeIds[page] = pageIds;
         }
-        return new CanonicalTable(blocks, runtimeIds, reverse, List.copyOf(missing), missingIds);
+        return new CanonicalTable(blocks, runtimeIds, reverse, List.copyOf(missing), missingIds, fallbackIds);
     }
 
     private record CanonicalTable(RegisteredBlockState[][] blocks, int[][] runtimeIds, int[] reverse, List<NbtMap> missing,
-                                  BitSet missingIds) {
+                                  BitSet missingIds, BitSet fallbackIds) {
     }
 
     // ---- States ----

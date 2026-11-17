@@ -5,6 +5,9 @@ import org.geysermc.paletter.Palette;
 import org.geysermc.paletter.PaletteLayer;
 import org.geysermc.paletter.Paletter;
 import org.geysermc.paletter.behaviour.BlockBehaviour;
+import org.geysermc.paletter.behaviour.ItemBehaviour;
+import org.geysermc.paletter.block.ResolvedBlock;
+import org.geysermc.paletter.vanilla.BedrockBlocks;
 import org.geysermc.paletter.block.BlockProperty;
 import org.geysermc.paletter.block.CustomBlock;
 import org.geysermc.paletter.block.RegisteredBlockState;
@@ -45,6 +48,8 @@ public class HotPathBenchmark {
     /** Equal to {@link #encoded}, element by element, but other instances. */
     private ItemData[] copies;
     private int[] runtimeIds;
+    /** The key of each of {@link #runtimeIds}, air where a block has none. */
+    private BedrockBlockState[] states;
     private RegisteredBlockState[] customStates;
     private BedrockBlockState[] customHandles;
     private int item;
@@ -82,6 +87,11 @@ public class HotPathBenchmark {
         }
         Collections.shuffle(ids, random);
         runtimeIds = ids.stream().mapToInt(Integer::intValue).toArray();
+        states = new BedrockBlockState[runtimeIds.length];
+        for (int i = 0; i < states.length; i++) {
+            BedrockBlockState key = palette.blocks().key(palette.blocks().byRuntimeId(runtimeIds[i]));
+            states[i] = key != null ? key : BedrockBlocks.AIR.defaultState();
+        }
         Collections.shuffle(customs, random);
         customStates = customs.toArray(RegisteredBlockState[]::new);
         customHandles = new BedrockBlockState[customStates.length];
@@ -146,9 +156,25 @@ public class HotPathBenchmark {
         return palette.blocks().byRuntimeId(runtimeIds[nextBlock()]);
     }
 
+    /** A block by runtime id to its values, what a chunk palette read does. */
     @Benchmark
     public float blockBehaviour() {
-        return palette.blockBehaviour(runtimeIds[nextBlock()]).get(BlockBehaviour.FRICTION);
+        return palette.resolveBlock(runtimeIds[nextBlock()]).behaviour().get(BlockBehaviour.FRICTION);
+    }
+
+    @Benchmark
+    public ResolvedBlock resolveState() {
+        return palette.resolve(states[nextBlock()]);
+    }
+
+    @Benchmark
+    public float resolveStateBehaviour() {
+        return palette.resolve(states[nextBlock()]).behaviour().get(BlockBehaviour.FRICTION);
+    }
+
+    @Benchmark
+    public int resolveItemBehaviour() {
+        return palette.resolve(variants[nextItem()]).behaviour().getOrElse(ItemBehaviour.MAX_STACK_SIZE, 0);
     }
 
     /** A custom block of the client to its handle: what decoding a stack that places a custom block does. */

@@ -8,9 +8,9 @@ import org.geysermc.paletter.internal.behaviour.Behaviour;
 import org.geysermc.paletter.internal.behaviour.Column;
 
 /**
- * The behaviour values of one block state in one palette: {@code palette.blockBehaviour(runtimeId)}. A handle is the
+ * The behaviour values of one block state in one palette: {@code palette.resolve(state).behaviour()}. A handle is the
  * palette's values and the position of the state in them: {@code get} reads an array and neither allocates nor boxes.
- * Call {@code palette.blockBehaviour(...).get(key)} on the hot path as it is; inlined, the handle costs nothing. Handles
+ * Call {@code palette.resolve(...).behaviour().get(key)} on the hot path as it is; inlined, the handle costs nothing. Handles
  * are equal for the same state in the same palette; compare them with {@code equals}, not {@code ==}.
  * <p>
  * {@code get} returns the value: what the user's component sets, else the vanilla value, else BDS's default for custom
@@ -25,7 +25,7 @@ public final class BlockValues {
     private final int index;
 
     /**
-     * Plumbing of {@link Palette#blockBehaviour}: public for it, not part of the API.
+     * Plumbing of {@link Palette#resolve(org.geysermc.paletter.vanilla.BedrockBlockState)}: public for it, not part of the API.
      */
     @Internal
     public BlockValues(@NonNull Behaviour behaviour, int index) {

@@ -103,12 +103,12 @@ public final class BehaviourKeys {
     }
 
     static final String BLOCK_DOC = """
-        The behaviour keys of block states, read with {@code palette.blockBehaviour(state).get(key)} ({@link BlockValues}).
+        The behaviour keys of block states, read with {@code palette.resolve(state).behaviour().get(key)} ({@link BlockValues}).
         Values are per state and per data version; {@link BlockValues#explain} says where one comes from. Each key is a property
         of Bedrock Dedicated Server (its source is named on the key), in BDS's units, not those of add-on components: custom
         blocks are converted (the component {@code minecraft:friction} 0.4 is a friction of 0.6).""";
     static final String ITEM_DOC = """
-        The behaviour keys of item types, read with {@code palette.itemBehaviour(type).get(key)} ({@link ItemValues}). Values
+        The behaviour keys of item types, read with {@code palette.resolve(variant).behaviour().get(key)} ({@link ItemValues}). Values
         are per item type (not per aux value) and per data version. Each key is a property of Bedrock Dedicated Server (its
         source is named on the key).""";
 

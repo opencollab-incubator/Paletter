@@ -31,7 +31,7 @@ class PaletteLookupTest {
         BedrockBlockState lamp = LAMP.type().defaultState();
         assertThrows(IllegalArgumentException.class, () -> base.runtimeId(lamp));
         assertThrows(IllegalArgumentException.class, () -> base.blockDefinition(lamp));
-        assertThrows(IllegalArgumentException.class, () -> base.blockBehaviour(lamp));
+        assertThrows(IllegalArgumentException.class, () -> base.resolve(lamp).behaviour());
         int airId = base.runtimeId(BedrockBlocks.AIR.defaultState());
         assertEquals(airId, base.runtimeId(lamp, airId));
         assertEquals(-1, base.runtimeId(lamp, -1));
