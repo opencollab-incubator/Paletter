@@ -14,6 +14,8 @@ import org.geysermc.paletter.internal.data.VanillaData;
 import org.geysermc.paletter.internal.data.VanillaItem;
 import org.geysermc.paletter.tools.bds.BdsDump;
 import org.geysermc.paletter.tools.client.CapturedData;
+import org.geysermc.paletter.tools.client.RecipeCapture;
+import com.google.gson.JsonObject;
 
 import java.io.IOException;
 import java.io.PrintStream;
@@ -43,6 +45,7 @@ import java.util.TreeSet;
  *   <li>{@link #bdsDump}: a Script API dump against a bundled version (the {@code bds-compare} command)</li>
  *   <li>{@link #source}: a directory in the CloudburstMC/Data layout against a bundled version, every aspect the bundled
  *       format keeps compared exactly (the {@code verify} command)</li>
+ *   <li>{@link #recipes}: two recipe captures, normalised ({@link RecipeData#normalize}), by recipe id</li>
  *   <li>{@link #shapes}: the wire shapes of components of two captures ({@link WireShapes})</li>
  * </ul>
  * Output: {@link #print} (console) and {@link #markdown} (report).
@@ -177,6 +180,74 @@ public final class Diff {
             diff.blockItems(before, after);
         }
         return diff;
+    }
+
+    /**
+     * Two recipe captures, whatever their list layout: recipes added, removed and changed (with the changed fields), unlock
+     * changes, potion and container mixes and material reducers, trim patterns and materials. Lines start with the kind.
+     */
+    public static Diff recipes(RecipeCapture.Recipes previous, RecipeCapture.Recipes captured) {
+        Map<String, Map<String, JsonObject>> before = RecipeData.normalize(previous);
+        Map<String, Map<String, JsonObject>> after = RecipeData.normalize(captured);
+        Diff diff = new Diff();
+        List<String> added = new ArrayList<>();
+        List<String> removed = new ArrayList<>();
+        List<String> changed = new ArrayList<>();
+        List<String> unlock = new ArrayList<>();
+        List<String> mixes = new ArrayList<>();
+        List<String> trim = new ArrayList<>();
+        for (String kind : new TreeSet<>(union(before.keySet(), after.keySet()))) {
+            Map<String, JsonObject> x = before.getOrDefault(kind, Map.of());
+            Map<String, JsonObject> y = after.getOrDefault(kind, Map.of());
+            boolean mix = RecipeData.MIXES.contains(kind);
+            boolean trimData = kind.startsWith("trim_");
+            List<String> addedTo = mix ? mixes : trimData ? trim : added;
+            List<String> removedFrom = mix ? mixes : trimData ? trim : removed;
+            String plus = mix || trimData ? "+ " : "";
+            String minus = mix || trimData ? "- " : "";
+            for (String key : y.keySet()) {
+                if (!x.containsKey(key)) {
+                    addedTo.add(plus + kind + " " + key);
+                }
+            }
+            for (String key : x.keySet()) {
+                if (!y.containsKey(key)) {
+                    removedFrom.add(minus + kind + " " + key);
+                }
+            }
+            for (String key : x.keySet()) {
+                JsonObject a = x.get(key);
+                JsonObject b = y.get(key);
+                if (b == null || a.equals(b)) {
+                    continue;
+                }
+                List<String> fields = new ArrayList<>();
+                for (String field : new TreeSet<>(union(a.keySet(), b.keySet()))) {
+                    if (!Objects.equals(a.get(field), b.get(field))) {
+                        fields.add(field);
+                    }
+                }
+                if (fields.remove("unlock")) {
+                    unlock.add(kind + " " + key);
+                }
+                if (!fields.isEmpty()) {
+                    (trimData ? trim : changed).add(kind + " " + key + ": " + String.join(", ", fields));
+                }
+            }
+        }
+        diff.putIfAny("recipes added", added);
+        diff.putIfAny("recipes removed", removed);
+        diff.putIfAny("recipes changed", changed);
+        diff.putIfAny("recipe unlock changes", unlock);
+        diff.putIfAny("potion and container mixes", mixes);
+        diff.putIfAny("trim patterns and materials", trim);
+        return diff;
+    }
+
+    private static <T> Set<T> union(Set<T> a, Set<T> b) {
+        Set<T> union = new LinkedHashSet<>(a);
+        union.addAll(b);
+        return union;
     }
 
     /** A network capture against a bundled version: items, item components, block properties, creative layout. */
