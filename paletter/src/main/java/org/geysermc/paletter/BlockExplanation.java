@@ -18,7 +18,7 @@ import java.util.List;
  * @param sent the state that is sent to the client, or null if nothing fits ({@link Kind#MISSING})
  * @param runtimeId the runtime id of the sent state in this palette's network id mode, or -1
  * @param hashedId the hashed network id of the sent state, whatever the palette's mode, or -1
- * @since 0.1.0
+ * @since 1.0.0
  */
 @Experimental
 public record BlockExplanation(@NonNull NbtMap requested, @Nullable BedrockBlockState handle, @NonNull Kind kind,
@@ -27,7 +27,7 @@ public record BlockExplanation(@NonNull NbtMap requested, @Nullable BedrockBlock
     /**
      * How a {@link Palette} resolved something for its version.
      *
-     * @since 0.1.0
+     * @since 1.0.0
      */
     public enum Kind {
         /**

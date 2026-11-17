@@ -32,7 +32,7 @@ import java.util.WeakHashMap;
  * handles carry them in a hidden field and {@code Palette#runtimeId(BedrockBlockState)} is an array
  * lookup with them.
  *
- * @since 0.1.0
+ * @since 1.0.0
  */
 public final class CanonicalBlocks {
     private final @Nullable CanonicalBlocks parent;
@@ -181,7 +181,7 @@ public final class CanonicalBlocks {
      * </ol>
      * Block fallbacks are not involved: they go from the newest version to an older one, this goes the other way.
      *
-     * @since 0.1.0
+     * @since 1.0.0
      */
     public @NonNull Forwarding forward(@NonNull NbtMap state) {
         NbtMap normalized = BlockStates.normalize(state);

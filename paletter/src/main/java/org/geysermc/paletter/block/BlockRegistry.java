@@ -50,7 +50,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * Runtime ids are state hashes ({@link BlockHashes}). Each state also has a dense position, {@link #indexOf}; vanilla
  * definitions are shared between versions.
  *
- * @since 0.1.0
+ * @since 1.0.0
  */
 @Internal
 public final class BlockRegistry implements DefinitionRegistry<BlockDefinition> {
@@ -329,7 +329,7 @@ public final class BlockRegistry implements DefinitionRegistry<BlockDefinition> 
      * compiled from, so it also works for palettes of other data sources and older versions.
      *
      * @return the key, or null for a runtime id this registry lacks, or a block that no state of the newest data resolves to
-     * @since 0.1.0
+     * @since 1.0.0
      */
     public @Nullable BedrockBlockState key(@NonNull RegisteredBlockState block) {
         return canonical.handle(canonical(block));

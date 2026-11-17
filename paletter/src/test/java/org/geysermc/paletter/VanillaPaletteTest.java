@@ -131,16 +131,21 @@ class VanillaPaletteTest {
         assertSame(palette.blocks().air(), palette.blocks().exact(withExtras));
     }
 
+    // The version files hold no item components, so items are compared by identifier, id, version and kind
+    private static List<String> identifiers(VanillaData data) {
+        return data.items().stream().map(item -> item.identifier() + " " + item.runtimeId() + " " + item.version() + " " + item.componentBased()).toList();
+    }
+
     @Test
     void dataCodecRoundTrips() throws Exception {
-        // Format 1 carries the item components; format 2 leaves them to the property store (PropertyStoreTest)
+        // The item components are not in the version files: the property store has them (PropertyStoreTest)
         VanillaData data = PALETTER.vanillaData(PALETTER.latest());
         ByteArrayOutputStream out = new ByteArrayOutputStream();
-        PaletteDataCodec.write(data, out, PaletteDataCodec.FORMAT_1);
+        PaletteDataCodec.write(data, out);
         VanillaData read = PaletteDataCodec.read(new ByteArrayInputStream(out.toByteArray()));
         assertEquals(data.version(), read.version());
         assertEquals(data.blockStates(), read.blockStates());
-        assertEquals(data.items(), read.items());
+        assertEquals(identifiers(data), identifiers(read));
         assertEquals(data.creative(), read.creative());
         assertEquals(data.itemTags(), read.itemTags());
         assertEquals(data.fallbacks(), read.fallbacks());
@@ -150,22 +155,22 @@ class VanillaPaletteTest {
     void experimentMarksRoundTripAndAreOptional() throws Exception {
         VanillaData data = PALETTER.vanillaData(PALETTER.latest());
         ByteArrayOutputStream plain = new ByteArrayOutputStream();
-        PaletteDataCodec.write(data.withExperiments(java.util.Map.of()), plain, PaletteDataCodec.FORMAT_1);
+        PaletteDataCodec.write(data.withExperiments(java.util.Map.of()), plain);
         ByteArrayOutputStream again = new ByteArrayOutputStream();
-        PaletteDataCodec.write(PaletteDataCodec.read(new ByteArrayInputStream(plain.toByteArray())), again, PaletteDataCodec.FORMAT_1);
+        PaletteDataCodec.write(PaletteDataCodec.read(new ByteArrayInputStream(plain.toByteArray())), again);
         // Without marks nothing is written: data captured without experiments keeps its bytes
         assertEquals(java.util.Arrays.toString(plain.toByteArray()), java.util.Arrays.toString(again.toByteArray()));
 
         ExperimentContent drop = new ExperimentContent(List.of("minecraft:ice_ball", "minecraft:icicle"), List.of("minecraft:icicle"),
             List.of("minecraft:arrow:48", "minecraft:ice_ball"));
         ByteArrayOutputStream marked = new ByteArrayOutputStream();
-        PaletteDataCodec.write(data.withExperiments(java.util.Map.of("y_2026_drop_4", drop)), marked, PaletteDataCodec.FORMAT_1);
+        PaletteDataCodec.write(data.withExperiments(java.util.Map.of("y_2026_drop_4", drop)), marked);
         VanillaData read = PaletteDataCodec.read(new ByteArrayInputStream(marked.toByteArray()));
         assertEquals(java.util.Map.of("y_2026_drop_4", drop), read.experiments());
         assertEquals(List.of("y_2026_drop_4"), read.experimentsOfBlock("minecraft:icicle"));
         assertEquals(List.of("y_2026_drop_4"), read.experimentsOfItem("minecraft:ice_ball"));
         assertEquals(List.of(), read.experimentsOfItem("minecraft:stone"));
-        assertEquals(data.items(), read.items());
+        assertEquals(identifiers(data), identifiers(read));
     }
 
     @Test

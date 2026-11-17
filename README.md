@@ -118,7 +118,7 @@ a new Bedrock version.
 
 ## Status
 
-Paletter is at 0.1.0-SNAPSHOT. Until 1.0 the API can change in any release, without a deprecation period. The build
+Paletter is at 1.0.0-SNAPSHOT, not released yet. Until the first release the API can change without a deprecation period. The build
 already tracks API changes (`paletter/api/paletter.api`), so every change is visible in review.
 
 Bundled versions ([versions.txt](paletter/src/main/resources/paletter/versions.txt)): 26.30, 26.40, 26.50, 26.60 and

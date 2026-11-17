@@ -15,7 +15,7 @@ import org.geysermc.paletter.annotation.ReplacedBy;
  * client.
  *
  * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/itemreference/examples/itemcomponents/test_old?view=minecraft-bedrock-stable">Microsoft Learn: test:old</a>
- * @since 0.1.0
+ * @since 1.0.0
  * @deprecated replaced by {@link Widget} (BDS message (data/bds/9.9.9/spec): "Use test:widget instead")
  */
 @Deprecated

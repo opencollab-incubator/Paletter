@@ -25,7 +25,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-/** The importer writes format 2 version files and keeps {@code properties.nbt} up to date across versions. */
+/** The importer writes version files and keeps {@code properties.nbt} up to date across versions. */
 class ImporterPropertiesTest {
     private static final DataVersion A = new DataVersion("1.0", 100);
     private static final DataVersion B = new DataVersion("1.1", 200);
@@ -103,34 +103,5 @@ class ImporterPropertiesTest {
         PropertyStore store = BundledFiles.readStore(output);
         assertEquals(32, store.item("test:sword", A).component("minecraft:max_stack_size").getInt("max_stack_size"));
         assertEquals(16, store.item("test:sword", B).component("minecraft:max_stack_size").getInt("max_stack_size"));
-    }
-
-    @Test
-    void rewriteConvertsFormat1Files() throws Exception {
-        Path output = directory.resolve("old");
-        Files.createDirectories(output);
-        VanillaData first = version(A, 64);
-        VanillaData second = version(B, 16);
-        for (VanillaData data : List.of(first, second)) {
-            try (var stream = Files.newOutputStream(output.resolve(data.version().name() + ".nbt"))) {
-                PaletteDataCodec.write(data, stream, PaletteDataCodec.FORMAT_1);
-            }
-        }
-        BundledFiles.rewrite(output);
-        Map<String, VanillaData> all = BundledFiles.readAll(output);
-        assertEquals(first.items(), all.get("1.0").items());
-        assertEquals(second.items(), all.get("1.1").items());
-        assertEquals(second.dataDrivenBlocks(), all.get("1.1").dataDrivenBlocks());
-        try (InputStream stream = Files.newInputStream(output.resolve("1.0.nbt"))) {
-            assertTrue(PaletteDataCodec.read(stream).items().stream().allMatch(item -> item.componentData() == null));
-        }
-        // rewriting again changes nothing
-        byte[] store = Files.readAllBytes(output.resolve("properties.nbt"));
-        byte[] file = Files.readAllBytes(output.resolve("1.1.nbt"));
-        BundledFiles.rewrite(output);
-        assertEquals(List.of(store.length, file.length), List.of(Files.readAllBytes(output.resolve("properties.nbt")).length,
-            Files.readAllBytes(output.resolve("1.1.nbt")).length));
-        assertTrue(java.util.Arrays.equals(store, Files.readAllBytes(output.resolve("properties.nbt"))));
-        assertTrue(java.util.Arrays.equals(file, Files.readAllBytes(output.resolve("1.1.nbt"))));
     }
 }

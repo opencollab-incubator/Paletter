@@ -21,7 +21,7 @@ import org.geysermc.paletter.annotation.Experimental;
  *
  * @param shape Required field. The type of support shape for this block. Add-on JSON {@code shape}. Required.
  * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/blockreference/examples/blockcomponents/minecraftblock_support?view=minecraft-bedrock-stable">Microsoft Learn: minecraft:support</a>
- * @since 0.1.0
+ * @since 1.0.0
  */
 @BedrockFormat("1.21.130")
 @Experimental

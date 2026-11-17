@@ -42,7 +42,7 @@ import java.util.function.Consumer;
  * Canonical ids never change: custom content is appended. Block runtime ids are state hashes, so adding custom blocks
  * does not change the ids of other blocks.
  *
- * @since 0.1.0
+ * @since 1.0.0
  */
 public final class PaletteLayer {
     private final String id;
@@ -90,7 +90,7 @@ public final class PaletteLayer {
      * @return custom items and items of custom blocks registered with {@link Builder#blockItem}, in registration
      * order: the order their runtime and canonical ids are assigned in. Items of blocks registered with
      * {@link Builder#block} follow them
-     * @since 0.1.0
+     * @since 1.0.0
      */
     public @NonNull List<ItemEntry> itemEntries() {
         return itemEntries;
@@ -122,7 +122,7 @@ public final class PaletteLayer {
 
     /**
      * @return the voxel shapes this layer defines, by identifier, in the order they were registered
-     * @since 0.1.0
+     * @since 1.0.0
      */
     public @NonNull Map<String, VoxelShape> voxelShapes() {
         return voxelShapes;
@@ -146,11 +146,11 @@ public final class PaletteLayer {
     /**
      * An item a layer registers: a custom item, or the item of a custom block.
      *
-     * @since 0.1.0
+     * @since 1.0.0
      */
     public sealed interface ItemEntry {
         /**
-         * @since 0.1.0
+         * @since 1.0.0
          */
         record Custom(@NonNull CustomItem item) implements ItemEntry {
         }
@@ -159,7 +159,7 @@ public final class PaletteLayer {
          * @param block the identifier of a custom block of this layer or an earlier one
          * @param item how the item is registered
          * @param creative where it goes in the creative inventory, or null to leave it out
-         * @since 0.1.0
+         * @since 1.0.0
          */
         record OfBlock(@NonNull String block, CustomBlock.@NonNull BlockItem item, @Nullable CreativePlacement creative) implements ItemEntry {
         }
@@ -189,7 +189,7 @@ public final class PaletteLayer {
          * layer (registered there with {@link CustomBlock.BlockItem#NONE}), or to order block items among custom items:
          * runtime and canonical ids are assigned in the order of {@link #item} and {@code blockItem} calls.
          *
-         * @since 0.1.0
+         * @since 1.0.0
          */
         public @NonNull Builder blockItem(@NonNull String block, CustomBlock.@NonNull BlockItem item, @Nullable CreativePlacement creative) {
             itemEntries.add(new ItemEntry.OfBlock(Objects.requireNonNull(block), Objects.requireNonNull(item), creative));
@@ -219,7 +219,7 @@ public final class PaletteLayer {
          * Changes an existing item definition, like {@link #overrideItem(String, Consumer)}, with the same caveats:
          * experimental, and unverified on a client.
          *
-         * @since 0.1.0
+         * @since 1.0.0
          */
         @Experimental
         public @NonNull Builder overrideItem(@NonNull BedrockItemType type, @NonNull Consumer<ItemOverride> modifier) {
@@ -261,7 +261,7 @@ public final class PaletteLayer {
          * neither an item's base variant nor in the creative inventory. A palette hands back a variant equal to this one,
          * not necessarily this object: compare it with {@code equals}.
          *
-         * @since 0.1.0
+         * @since 1.0.0
          */
         public @NonNull Builder variant(@NonNull ItemKey key) {
             return variant(key.variant().toItemVariant());
@@ -291,7 +291,7 @@ public final class PaletteLayer {
          *
          * @param identifier the name blocks use, e.g. {@code my:half_pipe}
          * @param shape the shape
-         * @since 0.1.0
+         * @since 1.0.0
          */
         public @NonNull Builder voxelShape(@NonNull String identifier, @NonNull VoxelShape shape) {
             VoxelShapeRules.checkIdentifier(identifier);

@@ -22,7 +22,7 @@ import org.geysermc.paletter.annotation.BedrockFormat;
  *        Default is 'use'. This item requires a format version of at least 1.21.130. Add-on JSON {@code type}. Default:
  *        <code>"use"</code>.
  * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/itemreference/examples/itemcomponents/minecraft_cooldown?view=minecraft-bedrock-stable">Microsoft Learn: minecraft:cooldown</a>
- * @since 0.1.0
+ * @since 1.0.0
  */
 @BedrockFormat("1.20.10")
 public record Cooldown(@NonNull String category, float duration,

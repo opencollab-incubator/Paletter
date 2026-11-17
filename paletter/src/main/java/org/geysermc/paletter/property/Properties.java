@@ -13,7 +13,7 @@ import java.util.Map;
 /**
  * The properties of one item or block in one version. Immutable.
  *
- * @since 0.1.0
+ * @since 1.0.0
  */
 public final class Properties {
     /** No properties. */

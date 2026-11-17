@@ -25,7 +25,7 @@ import org.geysermc.paletter.vanilla.BedrockItemType;
  *        JSON {@code using_converts_to}. Optional (null: not set). The docs give the default {}, which is not a value
  *        of this type; unset, BDS's behaviour applies.
  * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/itemreference/examples/itemcomponents/minecraft_food?view=minecraft-bedrock-stable">Microsoft Learn: minecraft:food</a>
- * @since 0.1.0
+ * @since 1.0.0
  */
 @BedrockFormat("1.20.30")
 public record Food(boolean canAlwaysEat, int nutrition, float saturationModifier,

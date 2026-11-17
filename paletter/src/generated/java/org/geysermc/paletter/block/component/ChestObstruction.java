@@ -25,7 +25,7 @@ import org.geysermc.paletter.annotation.ServerOnly;
  *        Block can define its collision shape by adding a collision component. Add-on JSON {@code obstruction_rule}.
  *        Default: <code>"shape"</code>.
  * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/blockreference/examples/blockcomponents/minecraftblock_chest_obstruction?view=minecraft-bedrock-stable">Microsoft Learn: minecraft:chest_obstruction</a>
- * @since 0.1.0
+ * @since 1.0.0
  */
 @BedrockFormat("1.26.10")
 @Experimental

@@ -24,7 +24,7 @@ import java.util.Set;
  * These are culling shapes, not collision or selection shapes ({@code BlockBehaviour#COLLISION_SHAPE} is a
  * {@code BlockShape}); the Script API does not expose them.
  *
- * @since 0.1.0
+ * @since 1.0.0
  */
 public final class VoxelShapes {
     private final List<VoxelGrid> shapes;

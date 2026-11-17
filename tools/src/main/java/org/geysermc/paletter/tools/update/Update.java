@@ -1452,12 +1452,7 @@ public final class Update {
             recipes(distribution, runs, captured);
             stageRecipes(distribution, runs);
         } catch (Exception e) {
-            // The recipe data never blocks the import
-            report.check(Report.Status.INFO, "Recipes", "not compared: " + e);
-            report.evidence("Recipes", List.of("- " + e));
-            if (against != null) {
-                report.notCompared.add("Recipes: " + e);
-            }
+            report.fail("Recipes", e);
         }
 
         if (runs.existing != null) {
@@ -1523,12 +1518,11 @@ public final class Update {
     /**
      * The recipe capture against the committed one of this build, or of the build before ({@link #baseline}), and the
      * assumptions the recipe data rests on (items and tags exist in the imported palette, results have their block state,
-     * net ids are 1..n). Runs before the capture is committed, so it still sees the old one. Only ever INFO, PASS or DIFF:
-     * it must not block an import.
+     * net ids are 1..n). Runs before the capture is committed, so it still sees the old one. A missing or unreadable
+     * capture is a FAIL; the assumptions are only ever INFO.
      */
     private void recipes(BdsDistribution distribution, Runs runs, VanillaData captured) throws IOException {
-        if (!Files.exists(runs.vanilla.resolve(RecipeCapture.CRAFTING))) {
-            report.check(Report.Status.INFO, "Recipes", "no crafting data in the capture");
+        if (!requireRecipeCapture(report, runs.vanilla)) {
             return;
         }
         RecipeCapture.Recipes recipes = RecipeCapture.read(runs.vanilla);
@@ -1554,6 +1548,15 @@ public final class Update {
         assumption("Recipe tags have members", RecipeData.emptyTags(recipes, captured.itemTags()));
         assumption("Recipe results have their block state", RecipeData.missingBlockStates(recipes));
         assumption("Recipe net ids are 1..n", RecipeData.netIdProblems(recipes));
+    }
+
+    /** A capture without recipe data is a failure of the run (exit code 1), not something to compare. */
+    static boolean requireRecipeCapture(Report report, Path vanilla) {
+        if (Files.exists(vanilla.resolve(RecipeCapture.CRAFTING))) {
+            return true;
+        }
+        report.check(Report.Status.FAIL, "Recipes", "no " + RecipeCapture.CRAFTING + " in the capture");
+        return false;
     }
 
     /** A broken assumption is information about the recipe data, never a difference of the build. */
@@ -2578,7 +2581,7 @@ public final class Update {
         return BundledFiles.read(file);
     }
 
-    /** A version file (format 2): the properties are not in it, {@code properties.nbt} keeps them. */
+    /** A version file: the properties are not in it, {@code properties.nbt} keeps them. */
     private static byte[] write(VanillaData data) throws IOException {
         return BundledFiles.bytes(data);
     }

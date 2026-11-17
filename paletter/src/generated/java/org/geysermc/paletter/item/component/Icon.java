@@ -21,7 +21,7 @@ import org.geysermc.paletter.internal.component.Check;
  *        Add-on JSON {@code textures}. Optional (null: not set).
  * @param texture The string form: the icon's default texture (item_texture.json short name). Optional (null: not set).
  * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/itemreference/examples/itemcomponents/minecraft_icon?view=minecraft-bedrock-stable">Microsoft Learn: minecraft:icon</a>
- * @since 0.1.0
+ * @since 1.0.0
  */
 @BedrockFormat("1.20.0")
 public record Icon(@Nullable Map<String, String> textures,

@@ -9,7 +9,7 @@ import org.checkerframework.checker.nullness.qual.NonNull;
  *
  * @param bdsVersion the BDS build number, e.g. {@code 1.26.63.1}
  * @param protocolVersion the protocol version the build speaks
- * @since 0.1.0
+ * @since 1.0.0
  */
 public record VerifiedBuild(@NonNull String bdsVersion, int protocolVersion) {
 

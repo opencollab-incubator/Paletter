@@ -19,7 +19,7 @@ import org.geysermc.paletter.annotation.ServerOnly;
  *
  * @param value The string form of the component (add-on JSON {@code "minecraft:loot": <string>}). Required.
  * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/blockreference/examples/blockcomponents/minecraftblock_loot?view=minecraft-bedrock-stable">Microsoft Learn: minecraft:loot</a>
- * @since 0.1.0
+ * @since 1.0.0
  */
 @ServerOnly
 public record Loot(@NonNull String value) implements BlockComponent {

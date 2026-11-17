@@ -21,7 +21,7 @@ import java.util.List;
  * Cells are numbered {@code (x * ySize + y) * zSize + z}. The empty shape has no cells and the single coordinate
  * {@code 0} on every axis.
  *
- * @since 0.1.0
+ * @since 1.0.0
  */
 public final class VoxelShape {
     /** The shape without cells, {@code minecraft:empty}. */

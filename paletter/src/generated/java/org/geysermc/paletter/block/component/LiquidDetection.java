@@ -17,7 +17,7 @@ import org.geysermc.paletter.annotation.BedrockFormat;
  *
  * @param detectionRules Add-on JSON {@code detection_rules}. Required.
  * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/blockreference/examples/blockcomponents/minecraftblock_liquid_detection?view=minecraft-bedrock-stable">Microsoft Learn: minecraft:liquid_detection</a>
- * @since 0.1.0
+ * @since 1.0.0
  */
 @BedrockFormat("1.21.60")
 public record LiquidDetection(

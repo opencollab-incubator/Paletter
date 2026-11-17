@@ -20,7 +20,7 @@ import org.geysermc.paletter.internal.component.Check;
  * @param materialInstances The "minecraft:material_instances" component of the item. Value must have at most 64 items. Add-on JSON {@code
  *        material_instances}. Required. Compiled by the hand transform {@code Transforms.materialInstancesPacked}.
  * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/blockreference/examples/blockcomponents/minecraftblock_item_visual?view=minecraft-bedrock-stable">Microsoft Learn: minecraft:item_visual</a>
- * @since 0.1.0
+ * @since 1.0.0
  */
 @BedrockFormat("1.21.60")
 public record ItemVisual(ItemVisual. @NonNull Geometry geometry,

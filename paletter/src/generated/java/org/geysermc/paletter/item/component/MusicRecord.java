@@ -20,7 +20,7 @@ import org.geysermc.paletter.annotation.BedrockFormat;
  * @param soundEvent Sound event type: 13, cat, blocks, chirp, far, mall, mellohi, stal, strad, ward, 11, wait, pigstep, otherside,
  *        5, relic. Add-on JSON {@code sound_event}. Default: <code>"undefined"</code>.
  * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/itemreference/examples/itemcomponents/minecraft_record?view=minecraft-bedrock-stable">Microsoft Learn: minecraft:record</a>
- * @since 0.1.0
+ * @since 1.0.0
  */
 @BedrockFormat("1.20.10")
 public record MusicRecord(int comparatorSignal, float duration,

@@ -36,7 +36,7 @@ import org.geysermc.paletter.annotation.ReplacedBy;
  *        1.18.x for items like glow berries, but has been removed in later versions. Add-on JSON {@code plant_at_face}.
  *        Optional (null: not set).
  * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/itemreference/examples/itemcomponents/minecraft_seed?view=minecraft-bedrock-stable">Microsoft Learn: minecraft:seed</a>
- * @since 0.1.0
+ * @since 1.0.0
  * @deprecated replaced by {@link BlockPlacer} (BDS message (data/bds/1.26.70.24/spec): "Use minecraft:block_placer instead")
  */
 @BedrockFormat("1.10.0")

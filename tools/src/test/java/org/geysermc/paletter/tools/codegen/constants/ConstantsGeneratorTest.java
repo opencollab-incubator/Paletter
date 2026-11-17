@@ -58,7 +58,7 @@ class ConstantsGeneratorTest {
     private static JsonObject entry(String identifier) {
         JsonObject entry = new JsonObject();
         entry.addProperty("identifier", identifier);
-        entry.addProperty("since", "0.1.0");
+        entry.addProperty("since", "1.0.0");
         return entry;
     }
 
@@ -139,7 +139,7 @@ class ConstantsGeneratorTest {
 
     @Test
     void removedAndRenamedContentIsDeprecated(@TempDir Path temp) throws IOException {
-        JsonObject first = history(ConstantsGenerator.generate(release, null, names, new JsonObject(), "0.1.0"));
+        JsonObject first = history(ConstantsGenerator.generate(release, null, names, new JsonObject(), "1.0.0"));
 
         // A previous generation had a block Bedrock removed, a constant since renamed, an item Bedrock renamed,
         // a state Bedrock removed and an enum value no state has anymore; STONE did not exist yet
@@ -151,11 +151,11 @@ class ConstantsGeneratorTest {
         JsonObject state = new JsonObject();
         state.addProperty("name", "removed_state");
         state.addProperty("kind", "bool");
-        state.addProperty("since", "0.1.0");
+        state.addProperty("since", "1.0.0");
         first.getAsJsonObject("states").add("REMOVED_STATE", state);
         JsonObject value = new JsonObject();
         value.addProperty("value", "upwards");
-        value.addProperty("since", "0.1.0");
+        value.addProperty("since", "1.0.0");
         first.getAsJsonObject("enums").getAsJsonObject("CardinalDirection").getAsJsonObject("values").add("UPWARDS", value);
 
         ConstantsGenerator.Names names = new ConstantsGenerator.Names(this.names.blocks(), this.names.items(), this.names.states(),
@@ -217,17 +217,17 @@ class ConstantsGeneratorTest {
         ConstantsGenerator.Names clash = new ConstantsGenerator.Names(Map.of("minecraft:dirt", "STONE"), names.items(), names.states(),
             names.enums(), names.renames(), java.util.Set.of());
         IllegalStateException e = assertThrows(IllegalStateException.class,
-            () -> ConstantsGenerator.generate(release, null, clash, new JsonObject(), "0.1.0"));
+            () -> ConstantsGenerator.generate(release, null, clash, new JsonObject(), "1.0.0"));
         assertTrue(e.getMessage().contains("Duplicate constant BedrockBlocks.STONE"), e.getMessage());
 
         ConstantsGenerator.Names noOverride = new ConstantsGenerator.Names(names.blocks(), names.items(), Map.of(), names.enums(),
             names.renames(), java.util.Set.of());
-        e = assertThrows(IllegalStateException.class, () -> ConstantsGenerator.generate(release, null, noOverride, new JsonObject(), "0.1.0"));
+        e = assertThrows(IllegalStateException.class, () -> ConstantsGenerator.generate(release, null, noOverride, new JsonObject(), "1.0.0"));
         assertTrue(e.getMessage().contains("Duplicate constant BedrockStates.FACING_DIRECTION"), e.getMessage());
 
         ConstantsGenerator.Names invalid = new ConstantsGenerator.Names(names.blocks(), Map.of("minecraft:apple", "1APPLE"), names.states(),
             names.enums(), names.renames(), java.util.Set.of());
-        assertThrows(IllegalStateException.class, () -> ConstantsGenerator.generate(release, null, invalid, new JsonObject(), "0.1.0"));
+        assertThrows(IllegalStateException.class, () -> ConstantsGenerator.generate(release, null, invalid, new JsonObject(), "1.0.0"));
     }
 
     @Test
@@ -240,7 +240,7 @@ class ConstantsGeneratorTest {
         VanillaData preview = new VanillaData(new DataVersion("26.70", 9999), states, items, release.dataDrivenBlocks(), release.creative(),
             release.itemTags(), release.fallbacks(), release.blockDefaults());
 
-        ConstantsGenerator.Result result = ConstantsGenerator.generate(release, preview, names, new JsonObject(), "0.1.0");
+        ConstantsGenerator.Result result = ConstantsGenerator.generate(release, preview, names, new JsonObject(), "1.0.0");
         // In the same classes as the release, marked with the preview
         assertFalse(result.files().containsKey(ConstantsGenerator.PACKAGE_DIR + "/BedrockPreviewBlocks.java"));
         assertTrue(result.files().get(BLOCKS).contains("    @SincePreview(\"26.70\")\n    public static final BedrockBlockType PREVIEW_BLOCK = "
@@ -302,7 +302,7 @@ class ConstantsGeneratorTest {
         // Added in the version of the run: @since is that, and the Bedrock release is its own line; the old one has no @since
         assertTrue(source.contains("     * First in Bedrock 1.0.\n     *\n     * @since 2.0.0\n     */\n    public static final BedrockItemType EGG"), source);
         assertTrue(source.contains("     * First in Bedrock 1.0.\n     */\n    public static final BedrockItemType APPLE"), source);
-        assertFalse(source.contains("@since 1.0"), "a Bedrock release is never a @since");
+        assertFalse(source.contains("@since 1.0\n"), "a Bedrock release is never a @since");
         compile(result, temp);
     }
 
@@ -311,7 +311,7 @@ class ConstantsGeneratorTest {
         List<String> committed = Files.readAllLines(ROOT.resolve(ConstantsGenerator.NAMES));
         // Without any history, the hand names alone give the names the committed history has
         ConstantsGenerator.Result fresh = ConstantsGenerator.generate(release, null,
-            ConstantsGenerator.Names.of(Renames.NONE, committed, new JsonObject()), new JsonObject(), "0.1.0");
+            ConstantsGenerator.Names.of(Renames.NONE, committed, new JsonObject()), new JsonObject(), "1.0.0");
         JsonObject committedHistory = ConstantsGenerator.readJson(ROOT.resolve(ConstantsGenerator.HISTORY));
         assertEquals(committedHistory.getAsJsonObject("states").keySet(), history(fresh).getAsJsonObject("states").keySet());
         assertEquals(committedHistory.getAsJsonObject("enums").keySet(), history(fresh).getAsJsonObject("enums").keySet());
@@ -320,7 +320,7 @@ class ConstantsGeneratorTest {
         List<String> renamed = new ArrayList<>(committed);
         renamed.add("items minecraft:apple FRUIT");
         String items = ConstantsGenerator.generate(release, null, ConstantsGenerator.Names.of(Renames.NONE, renamed, new JsonObject()),
-            new JsonObject(), "0.1.0").files().get(ITEMS);
+            new JsonObject(), "1.0.0").files().get(ITEMS);
         assertTrue(items.contains("BedrockItemType FRUIT = VanillaTypes.item(\"minecraft:apple\")"));
         assertFalse(items.contains(" APPLE = "));
 
@@ -328,7 +328,7 @@ class ConstantsGeneratorTest {
         List<String> unused = new ArrayList<>(committed);
         unused.add("blocks minecraft:nothing NOTHING");
         IllegalStateException e = assertThrows(IllegalStateException.class, () -> ConstantsGenerator.generate(release, null,
-            ConstantsGenerator.Names.of(Renames.NONE, unused, new JsonObject()), new JsonObject(), "0.1.0"));
+            ConstantsGenerator.Names.of(Renames.NONE, unused, new JsonObject()), new JsonObject(), "1.0.0"));
         assertTrue(e.getMessage().startsWith(ConstantsGenerator.NAMES) && e.getMessage().contains("blocks minecraft:nothing"), e.getMessage());
         e = assertThrows(IllegalStateException.class, () -> ConstantsGenerator.Names.of(Renames.NONE, List.of("# c", "blocks minecraft:dirt"), new JsonObject()));
         assertEquals(ConstantsGenerator.NAMES + " line 2: expected `blocks|items|states|enums <key> <name>`, got `blocks minecraft:dirt`", e.getMessage());

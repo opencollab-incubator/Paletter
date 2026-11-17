@@ -34,7 +34,7 @@ import java.util.List;
  * client</b>: no client test exists. Paletter also keeps every vanilla runtime id fixed, where BDS moves an overridden
  * data driven item. This API may change.
  *
- * @since 0.1.0
+ * @since 1.0.0
  */
 @Experimental
 public final class ItemOverride {

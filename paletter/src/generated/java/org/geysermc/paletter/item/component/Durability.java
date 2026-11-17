@@ -22,7 +22,7 @@ import org.geysermc.paletter.internal.component.Check;
  * @param maxDurability Max durability is the amount of damage that this item can take before breaking. This is a required parameter
  *        and has a minimum of 0. Add-on JSON {@code max_durability}. Required. At least 0 (BDS 1.26.63.1).
  * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/itemreference/examples/itemcomponents/minecraft_durability?view=minecraft-bedrock-stable">Microsoft Learn: minecraft:durability</a>
- * @since 0.1.0
+ * @since 1.0.0
  */
 @BedrockFormat("1.20.0")
 public record Durability(Durability. @NonNull DamageChance damageChance,

@@ -19,7 +19,7 @@ import org.checkerframework.checker.nullness.qual.NonNull;
  * </ul>
  *
  * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/blockreference/examples/blockcomponents/blockcomponentslist?view=minecraft-bedrock-stable">Microsoft Learn: block components</a>
- * @since 0.1.0
+ * @since 1.0.0
  */
 public sealed interface BlockComponent permits BlockEntity, BlockLightAbsorption, BlockLightEmission, BoneVisibility, Breathability, ChestObstruction, CollisionBox, ConnectionRule, CraftingTable, DestroyTime, DestructibleByExplosion, DestructibleByMining, DestructionParticles, DisplayName, EmbeddedVisual, EntityFallOn, ExplosionResistance, Flammable, FlowerPottable, Friction, Geometry, InstrumentSound, ItemVisual, LightDampening, LightEmission, LiquidDetection, Loot, MapColor, MaterialInstances, Movable, PlacementFilter, PrecipitationInteractions, RandomOffset, RedstoneConductivity, RedstoneConsumer, RedstoneProducer, Replaceable, SelectionBox, Support, Tick, Transformation, UnitCube, WireOnlyBlockComponent {
     /**

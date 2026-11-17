@@ -14,7 +14,7 @@ import java.util.Objects;
  * needed. Resolutions are equal if they have the same definition, fallback and behaviour (a handle of the same state
  * in the same palette).
  *
- * @since 0.1.0
+ * @since 1.0.0
  */
 public final class ResolvedBlock {
     private final RegisteredBlockState definition;

@@ -29,7 +29,7 @@ import java.util.function.UnaryOperator;
  * Placements that depend on an anchor return {@code false} when the anchor does not exist, so a fallback is a plain
  * {@code ||}: {@code insertion.after(anchor) || insertion.intoGroup(name)}.
  *
- * @since 0.1.0
+ * @since 1.0.0
  */
 public final class CreativeEditor {
     private final Map<CreativeCategory, List<Object>> categories = new EnumMap<>(CreativeCategory.class);
@@ -56,7 +56,7 @@ public final class CreativeEditor {
 
     /**
      * @return true if a stack matching the matcher is in the layout being edited
-     * @since 0.1.0
+     * @since 1.0.0
      */
     public boolean contains(@NonNull ItemMatcher matcher) {
         return find(matcher, null) != null;
@@ -64,7 +64,7 @@ public final class CreativeEditor {
 
     /**
      * @return the name of the group holding the first stack matching the matcher, or null if there is none or it is loose
-     * @since 0.1.0
+     * @since 1.0.0
      */
     public @Nullable String groupOf(@NonNull ItemMatcher matcher) {
         Position position = find(matcher, null);

@@ -17,7 +17,7 @@ import org.checkerframework.checker.nullness.qual.Nullable;
  * @param enabledStates Which states to enable. Must specify at least one. Valid values are <code>minecraft:block_face</code> and
  *        <code>minecraft:vertical_half</code>. Add-on JSON {@code enabled_states}. Required.
  * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/blockreference/examples/traits/placement_position?view=minecraft-bedrock-stable">Microsoft Learn: minecraft:placement_position</a>
- * @since 0.1.0
+ * @since 1.0.0
  */
 public record PlacementPosition(
         @NonNull List<PlacementPosition.EnabledStates> enabledStates) implements BlockTrait {

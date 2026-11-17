@@ -23,7 +23,7 @@ an overridden data driven item (apple), accepted the hard coded feather at forma
 stick at 1.26.60. The client's behaviour for Paletter's overrides is unverified on a client (see
 [wire-notes](wire-notes.md#overriding-vanilla-items)). `replaceComponents` has BDS's shape, `modifyComponents` merges.
 
-Paletter is at 0.1.0-SNAPSHOT, so any release may change or remove API. The build keeps API changes visible:
+Paletter is at 1.0.0-SNAPSHOT, so any release may change or remove API. The build keeps API changes visible:
 
 - `:paletter:apiCheck` compares the compiled API with the committed dump
   [`paletter/api/paletter.api`](../paletter/api/paletter.api). After an intended change, run `:paletter:apiDump` and

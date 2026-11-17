@@ -19,7 +19,7 @@ import java.util.TreeSet;
  */
 public final class JavaWriter {
     /** The version the classes themselves appeared in; members only get a {@code @since} of their own if newer. */
-    static final String CLASS_SINCE = "0.1.0";
+    static final String CLASS_SINCE = "1.0.0";
 
     /**
      * What the member tags of the constants say. {@code @since} is the Paletter version everywhere (as {@code @Deprecated(since)}

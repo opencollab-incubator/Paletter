@@ -173,12 +173,12 @@ class ConstantsGoldenTest {
     private static JsonObject entry(String identifier) {
         JsonObject entry = new JsonObject();
         entry.addProperty("identifier", identifier);
-        entry.addProperty("since", "0.1.0");
+        entry.addProperty("since", "1.0.0");
         return entry;
     }
 
     /**
-     * Two generations: 0.1.0 from a release without the lamp (plus history entries of content that is gone since), then
+     * Two generations: 1.0.0 from a release without the lamp (plus history entries of content that is gone since), then
      * 2.1.0 from the full release and a preview.
      *
      * @param shuffle reorders the blocks of the palette, the items and the keys of the history
@@ -188,7 +188,7 @@ class ConstantsGoldenTest {
         throws IOException {
         Path first = temp.resolve("first");
         write(first, List.of(data("1.0", 100, shuffleBlocks.apply(releaseBlocks(false)), shuffleItems.apply(releaseItems(false)))), List.of(false));
-        JsonObject history = JsonParser.parseString(ConstantsGenerator.generate(first, names(), new JsonObject(), "0.1.0")
+        JsonObject history = JsonParser.parseString(ConstantsGenerator.generate(first, names(), new JsonObject(), "1.0.0")
             .files().get(ConstantsGenerator.HISTORY)).getAsJsonObject();
         // A history from before the Bedrock versions were recorded: they are derived from the releases and captures again
         for (String section : List.of("blocks", "items")) {
@@ -343,13 +343,13 @@ class ConstantsGoldenTest {
 
     private static String failure(Path temp, List<List<NbtMap>> blocks, ConstantsGenerator.Names names, JsonObject history) throws IOException {
         write(temp, List.of(data("9.9", 999, blocks, releaseItems(false))), List.of(false));
-        return assertThrows(IllegalStateException.class, () -> ConstantsGenerator.generate(temp, names, history, "0.1.0")).getMessage();
+        return assertThrows(IllegalStateException.class, () -> ConstantsGenerator.generate(temp, names, history, "1.0.0")).getMessage();
     }
 
     private static String historyFailure(Path temp, UnaryOperator<JsonObject> edit) throws IOException {
         Path base = temp.resolve("base");
         write(base, List.of(data("9.9", 999, releaseBlocks(false), releaseItems(false))), List.of(false));
-        JsonObject history = JsonParser.parseString(ConstantsGenerator.generate(base, names(), new JsonObject(), "0.1.0")
+        JsonObject history = JsonParser.parseString(ConstantsGenerator.generate(base, names(), new JsonObject(), "1.0.0")
             .files().get(ConstantsGenerator.HISTORY)).getAsJsonObject();
         return assertThrows(IllegalStateException.class, () -> ConstantsGenerator.generate(base, names(), edit.apply(history), "2.1.0")).getMessage();
     }
@@ -397,13 +397,13 @@ class ConstantsGoldenTest {
     @Test
     void variantsAreKeptAcrossReleases(@TempDir Path temp) throws IOException {
         JsonObject first = JsonParser.parseString(variants(temp.resolve("a"), "1.1 minecraft:potion 1 POTION_A\n1.1 minecraft:potion 2 POTION_B\n",
-            new JsonObject(), "0.1.0").files().get(ConstantsGenerator.HISTORY)).getAsJsonObject();
+            new JsonObject(), "1.0.0").files().get(ConstantsGenerator.HISTORY)).getAsJsonObject();
 
         // Release 1.1 drops B, renames aux 3 and adds C: A keeps its since, B is deprecated, C is new
         ConstantsGenerator.Result second = variants(temp.resolve("b"), "1.1 minecraft:potion 1 POTION_A\n1.1 minecraft:potion 3 POTION_C\n", first, "2.1.0");
         JsonObject history = historyOf(second);
-        assertEquals("{\"identifier\":\"minecraft:potion\",\"aux\":1,\"since\":\"0.1.0\"}", history.get("POTION_A").toString());
-        assertEquals("{\"identifier\":\"minecraft:potion\",\"aux\":2,\"since\":\"0.1.0\",\"deprecated\":\"2.1.0\"}", history.get("POTION_B").toString());
+        assertEquals("{\"identifier\":\"minecraft:potion\",\"aux\":1,\"since\":\"1.0.0\"}", history.get("POTION_A").toString());
+        assertEquals("{\"identifier\":\"minecraft:potion\",\"aux\":2,\"since\":\"1.0.0\",\"deprecated\":\"2.1.0\"}", history.get("POTION_B").toString());
         assertEquals("{\"identifier\":\"minecraft:potion\",\"aux\":3,\"since\":\"2.1.0\"}", history.get("POTION_C").toString());
         assertEquals(List.of("BedrockItemVariants.POTION_C = minecraft:potion@3"), second.added().stream().filter(a -> a.startsWith("BedrockItemVariants")).toList());
         assertEquals(List.of("BedrockItemVariants.POTION_B (minecraft:potion@2, removed)"), second.deprecated());
@@ -429,13 +429,13 @@ class ConstantsGoldenTest {
 
     @Test
     void aReleaseWithoutVariantNamesDoesNotDeprecateThem(@TempDir Path temp) throws IOException {
-        JsonObject history = JsonParser.parseString(variants(temp.resolve("a"), "1.1 minecraft:potion 1 POTION_A\n", new JsonObject(), "0.1.0")
+        JsonObject history = JsonParser.parseString(variants(temp.resolve("a"), "1.1 minecraft:potion 1 POTION_A\n", new JsonObject(), "1.0.0")
             .files().get(ConstantsGenerator.HISTORY)).getAsJsonObject();
         assertEquals("The newest release 1.1 has no variant names in data/model/variant_names.txt, but data/model/constants-history.json has 1: "
             + "that would deprecate them all. Run script-dump on a build of it; names are not carried forward",
             assertThrows(IllegalStateException.class, () -> variants(temp.resolve("b"), "# nothing\n", history, "2.1.0")).getMessage());
         // Without a history there is nothing to lose
-        assertEquals("{}", historyOf(variants(temp.resolve("c"), "# nothing\n", new JsonObject(), "0.1.0")).toString());
+        assertEquals("{}", historyOf(variants(temp.resolve("c"), "# nothing\n", new JsonObject(), "1.0.0")).toString());
     }
 
     @Test
@@ -444,14 +444,14 @@ class ConstantsGoldenTest {
         write(data, List.of(data("1.1", 110, releaseBlocks(false), releaseItems(false))), List.of(false));
         Files.writeString(data.resolve("variant_names.txt"), VARIANT_NAMES);
         ConstantsGenerator.Sources sources = ConstantsGenerator.Sources.read(data, null, data.resolve("variant_names.txt"));
-        JsonObject history = JsonParser.parseString(ConstantsGenerator.generate(data, names(), new JsonObject(), "0.1.0", sources)
+        JsonObject history = JsonParser.parseString(ConstantsGenerator.generate(data, names(), new JsonObject(), "1.0.0", sources)
             .files().get(ConstantsGenerator.HISTORY)).getAsJsonObject();
         assertEquals(variantEntry("minecraft:potion", 7).get("aux"), history.getAsJsonObject("variants").getAsJsonObject("POTION_LONG_NIGHTVISION").get("aux"));
 
         history.getAsJsonObject("variants").getAsJsonObject("POTION_LONG_NIGHTVISION").addProperty("aux", 6);
         assertEquals("BedrockItemVariants.POTION_LONG_NIGHTVISION is minecraft:potion@6 in data/model/constants-history.json but BDS now has "
             + "minecraft:potion@7 under that name; a name keeps its meaning, so this needs a split in renames.txt and a new name",
-            assertThrows(IllegalStateException.class, () -> ConstantsGenerator.generate(data, names(), history, "0.1.0", sources)).getMessage());
+            assertThrows(IllegalStateException.class, () -> ConstantsGenerator.generate(data, names(), history, "1.0.0", sources)).getMessage());
     }
 
     @Test
@@ -479,14 +479,14 @@ class ConstantsGoldenTest {
     void inconsistentHistoryFailsClearly(@TempDir Path temp) throws IOException {
         assertEquals("data/model/constants-history.json: blocks.GONE lacks \"identifier\"", historyFailure(temp.resolve("a"), history -> {
             JsonObject entry = new JsonObject();
-            entry.addProperty("since", "0.1.0");
+            entry.addProperty("since", "1.0.0");
             history.getAsJsonObject("blocks").add("GONE", entry);
             return history;
         }));
         assertEquals("data/model/constants-history.json: blocks.GONE is an alias of NOWHERE, which is neither generated nor in the history",
             historyFailure(temp.resolve("b"), history -> {
                 JsonObject entry = entry("minecraft:gone");
-                entry.addProperty("deprecated", "0.1.0");
+                entry.addProperty("deprecated", "1.0.0");
                 entry.addProperty("replacement", "NOWHERE");
                 history.getAsJsonObject("blocks").add("GONE", entry);
                 return history;
@@ -498,18 +498,18 @@ class ConstantsGoldenTest {
             }));
         assertEquals("data/model/constants-history.json: states.GONE has the unknown kind \"float\" (bool, int or enum)",
             historyFailure(temp.resolve("d"), history -> {
-                history.getAsJsonObject("states").add("GONE", JsonParser.parseString("{\"name\":\"gone\",\"kind\":\"float\",\"since\":\"0.1.0\"}"));
+                history.getAsJsonObject("states").add("GONE", JsonParser.parseString("{\"name\":\"gone\",\"kind\":\"float\",\"since\":\"1.0.0\"}"));
                 return history;
             }));
         assertEquals("data/model/constants-history.json: states.GONE is an enum state without \"enum\"",
             historyFailure(temp.resolve("e"), history -> {
-                history.getAsJsonObject("states").add("GONE", JsonParser.parseString("{\"name\":\"gone\",\"kind\":\"enum\",\"since\":\"0.1.0\"}"));
+                history.getAsJsonObject("states").add("GONE", JsonParser.parseString("{\"name\":\"gone\",\"kind\":\"enum\",\"since\":\"1.0.0\"}"));
                 return history;
             }));
         assertEquals("BedrockStates.GONE needs enum Nowhere, which is not in the history",
             historyFailure(temp.resolve("f"), history -> {
                 history.getAsJsonObject("states").add("GONE",
-                    JsonParser.parseString("{\"name\":\"gone\",\"kind\":\"enum\",\"enum\":\"Nowhere\",\"since\":\"0.1.0\"}"));
+                    JsonParser.parseString("{\"name\":\"gone\",\"kind\":\"enum\",\"enum\":\"Nowhere\",\"since\":\"1.0.0\"}"));
                 return history;
             }));
         assertEquals("data/model/constants-history.json: enums.WallSide.NONE lacks \"since\"", historyFailure(temp.resolve("g"), history -> {

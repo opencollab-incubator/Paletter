@@ -19,7 +19,7 @@ import java.util.TreeMap;
  * has the same id in every version and in every palette, custom blocks included, so tables and encoded chunks can be
  * shared between client versions.
  *
- * @since 0.1.0
+ * @since 1.0.0
  */
 public final class BlockHashes {
     private BlockHashes() {

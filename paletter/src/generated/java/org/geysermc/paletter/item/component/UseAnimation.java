@@ -15,7 +15,7 @@ import org.geysermc.paletter.annotation.BedrockFormat;
  * @param value Specifies which animation to play when the item is used. Add-on JSON {@code value}. Optional (null: not set).
  *        Compiled by the hand transform {@code Transforms.useAnimationId}.
  * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/itemreference/examples/itemcomponents/minecraft_use_animation?view=minecraft-bedrock-stable">Microsoft Learn: minecraft:use_animation</a>
- * @since 0.1.0
+ * @since 1.0.0
  */
 @BedrockFormat("1.20.30")
 public record UseAnimation(@Nullable String value) implements ItemComponent {

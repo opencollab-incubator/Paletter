@@ -2,6 +2,7 @@ package org.geysermc.paletter.tools.update;
 
 import org.cloudburstmc.nbt.NbtMap;
 import org.geysermc.paletter.tools.bds.BdsDump;
+import org.geysermc.paletter.tools.client.RecipeCapture;
 import org.geysermc.paletter.tools.data.Importer;
 import org.geysermc.paletter.tools.data.Diff;
 import org.geysermc.paletter.tools.data.VariantNames;
@@ -153,6 +154,19 @@ class UpdateTest {
         report.check(Report.Status.FAIL, "Network capture", "no answer");
         assertEquals(1, Update.exitCode(report, false, work));
         assertEquals("1\n", Files.readString(work.resolve(Update.EXIT_CODE)));
+    }
+
+    @Test
+    void aMissingRecipeCaptureFailsTheRun(@TempDir Path work) throws Exception {
+        Report report = new Report("t");
+        assertFalse(Update.requireRecipeCapture(report, work));
+        assertTrue(report.failed());
+        assertEquals(1, Update.exitCode(report, false, work));
+
+        Files.write(work.resolve(RecipeCapture.CRAFTING), new byte[0]);
+        Report present = new Report("t");
+        assertTrue(Update.requireRecipeCapture(present, work));
+        assertFalse(present.failed());
     }
 
     @Test

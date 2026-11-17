@@ -14,7 +14,7 @@ import org.checkerframework.checker.nullness.qual.NonNull;
  * send it to a client.
  *
  * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/blockreference/examples/blockcomponents/minecraftblock_unit_cube?view=minecraft-bedrock-stable">Microsoft Learn: minecraft:unit_cube</a>
- * @since 0.1.0
+ * @since 1.0.0
  * @deprecated rejected by every captured BDS (oldest: 1.26.36.1, protocol 1001): minecraft:unit_cube: member
  *        "minecraft:unit_cube" is deprecated
  */

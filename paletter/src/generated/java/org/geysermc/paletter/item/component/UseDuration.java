@@ -18,7 +18,7 @@ import org.geysermc.paletter.annotation.ReplacedBy;
  *
  * @param value How long the item takes to use in seconds. Add-on JSON {@code value}. Optional (null: not set).
  * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/itemreference/examples/itemcomponents/minecraft_use_duration?view=minecraft-bedrock-stable">Microsoft Learn: minecraft:use_duration</a>
- * @since 0.1.0
+ * @since 1.0.0
  * @deprecated replaced by {@link UseModifiers} (the docs of minecraft:use_modifiers list a field use_duration)
  */
 @Deprecated

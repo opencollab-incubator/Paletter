@@ -12,7 +12,7 @@ import org.checkerframework.checker.nullness.qual.Nullable;
  * of Bedrock Dedicated Server (its source is named on the key), in BDS's units, not those of add-on components: custom
  * blocks are converted (the component {@code minecraft:friction} 0.4 is a friction of 0.6).
  *
- * @since 0.1.0
+ * @since 1.0.0
  */
 public final class BlockBehaviour {
     /**

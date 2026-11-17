@@ -24,7 +24,7 @@ import org.geysermc.paletter.vanilla.BedrockBlockType;
  * @param useEfficiency When true, the Efficiency enchantment will increase the dig speed of this item. Default is false. Add-on JSON
  *        {@code use_efficiency}. Default: <code>false</code>.
  * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/itemreference/examples/itemcomponents/minecraft_digger?view=minecraft-bedrock-stable">Microsoft Learn: minecraft:digger</a>
- * @since 0.1.0
+ * @since 1.0.0
  */
 @BedrockFormat("1.20.30")
 public record Digger(@NonNull List<Digger.DestroySpeeds> destroySpeeds,

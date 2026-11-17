@@ -20,7 +20,7 @@ import org.geysermc.paletter.annotation.BedrockFormat;
  *        the biome the block is placed in to compute the tint. Add-on JSON {@code tint_method}. Default:
  *        <code>"none"</code>.
  * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/blockreference/examples/blockcomponents/minecraftblock_destruction_particles?view=minecraft-bedrock-stable">Microsoft Learn: minecraft:destruction_particles</a>
- * @since 0.1.0
+ * @since 1.0.0
  */
 @BedrockFormat("1.21.80")
 public record DestructionParticles(int particleCount, @Nullable String texture,

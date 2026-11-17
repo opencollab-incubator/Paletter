@@ -24,7 +24,7 @@ import org.geysermc.paletter.annotation.ServerOnly;
  *        "grass", "water". This item requires a format version of at least 1.21.80. Add-on JSON {@code tint_method}.
  *        Optional (null: not set).
  * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/blockreference/examples/blockcomponents/minecraftblock_map_color?view=minecraft-bedrock-stable">Microsoft Learn: minecraft:map_color</a>
- * @since 0.1.0
+ * @since 1.0.0
  */
 @ServerOnly
 public record MapColor(@NonNull String color,

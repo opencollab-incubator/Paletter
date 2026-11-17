@@ -8,7 +8,7 @@ import org.geysermc.paletter.vanilla.StateValue;
 /**
  * Values of {@code bamboo_leaf_size}.
  *
- * @since 0.1.0
+ * @since 1.0.0
  */
 public enum BambooLeafSize implements StateValue {
     /**

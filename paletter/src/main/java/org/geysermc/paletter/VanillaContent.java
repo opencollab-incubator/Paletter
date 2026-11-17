@@ -26,7 +26,7 @@ import java.util.TreeSet;
  * Content a version has only behind an experiment toggle (BDS offers it only to worlds with that experiment, see
  * {@link #experiments}) is missing unless the toggle is enabled, so ordinary (non-forced) fallbacks apply to it.
  *
- * @since 0.1.0
+ * @since 1.0.0
  */
 public final class VanillaContent {
     private final Set<String> removed = new HashSet<>();

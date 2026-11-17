@@ -27,7 +27,7 @@ import org.geysermc.paletter.vanilla.BedrockItemType;
  * @param enabled The boolean form of the component (add-on JSON {@code "minecraft:destructible_by_mining": <boolean>}).
  *        Optional (null: not set).
  * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/blockreference/examples/blockcomponents/minecraftblock_destructible_by_mining?view=minecraft-bedrock-stable">Microsoft Learn: minecraft:destructible_by_mining</a>
- * @since 0.1.0
+ * @since 1.0.0
  */
 @BedrockFormat("1.21.50")
 public record DestructibleByMining(

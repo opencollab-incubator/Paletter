@@ -23,7 +23,7 @@ import org.geysermc.paletter.annotation.SincePreview;
  * has. It is only {@code isAvailable()} with previews loaded (system property {@code paletter.previews}), else it
  * resolves to {@code minecraft:unknown}. The mark goes when a release has it; the constant goes if a newer preview drops it.
  *
- * @since 0.1.0
+ * @since 1.0.0
  */
 public final class BedrockItems {
     /**

@@ -23,7 +23,7 @@ import org.geysermc.paletter.internal.component.Check;
  * @param entityStorage (bds-schema 1.26.63.1) BDS accepts this key; the creator docs do not list it. Add-on JSON {@code
  *        entity_storage}. Optional (null: not set).
  * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/blockreference/examples/blockcomponents/minecraftblock_block_entity?view=minecraft-bedrock-stable">Microsoft Learn: minecraft:block_entity</a>
- * @since 0.1.0
+ * @since 1.0.0
  */
 @ServerOnly(
         until = 2193

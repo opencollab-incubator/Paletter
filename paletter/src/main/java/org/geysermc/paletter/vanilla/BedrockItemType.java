@@ -34,7 +34,7 @@ import java.util.Objects;
  * without the preview loaded) is not {@link #isAvailable() available} and resolves to its fallback, normally
  * {@code minecraft:unknown}.
  *
- * @since 0.1.0
+ * @since 1.0.0
  */
 public final class BedrockItemType implements ItemKey {
     private final String identifier;
@@ -190,7 +190,7 @@ public final class BedrockItemType implements ItemKey {
      * one that is not deprecated. Loads no data.
      *
      * @return the constant's name, e.g. {@code APPLE}, or null for a custom type or one without a constant
-     * @since 0.1.0
+     * @since 1.0.0
      */
     public @Nullable String constantName() {
         return ConstantNames.of(this);
@@ -205,7 +205,7 @@ public final class BedrockItemType implements ItemKey {
      * constant carries {@link org.geysermc.paletter.annotation.Education @Education} for). Decided from BDS captures when
      * the constants were generated; always false for custom items and for types made for an unknown identifier.
      *
-     * @since 0.1.0
+     * @since 1.0.0
      */
     public boolean isEducation() {
         return education;
@@ -273,7 +273,7 @@ public final class BedrockItemType implements ItemKey {
     /**
      * @return whether the newest bundled data names a variant with this damage value, i.e. it is one of
      *         {@link #variants()}. Loads the data
-     * @since 0.1.0
+     * @since 1.0.0
      */
     public boolean hasVariant(int damage) {
         for (BedrockItemVariant variant : linked().variants) {

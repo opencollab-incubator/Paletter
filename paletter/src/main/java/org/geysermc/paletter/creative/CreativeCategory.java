@@ -13,7 +13,7 @@ import java.util.Locale;
  * {@code menu_category}. The numeric id of the {@code creative_category} item property is the generated encoder's,
  * inferred from the spec captures.
  *
- * @since 0.1.0
+ * @since 1.0.0
  */
 public enum CreativeCategory {
     CONSTRUCTION("construction", CreativeItemCategory.CONSTRUCTION),
