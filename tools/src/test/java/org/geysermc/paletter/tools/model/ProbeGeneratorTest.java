@@ -144,6 +144,6 @@ class ProbeGeneratorTest {
         JsonObject manifest = generator.manifest().get(0).getAsJsonObject();
         assertEquals("1.21.100", manifest.get("format").getAsString());
         assertEquals("format", manifest.get("role").getAsString());
-        assertEquals("1.26.60", generator.definitionOf("block:minecraft:mat", "paletter:x", null).get("format_version").getAsString());
+        assertEquals("1.26.60", generator.definitionOf("block:minecraft:mat", "paletter:x", "control", null).get("format_version").getAsString());
     }
 }

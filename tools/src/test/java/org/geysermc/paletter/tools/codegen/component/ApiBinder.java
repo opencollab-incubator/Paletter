@@ -58,7 +58,17 @@ public final class ApiBinder {
         }
     }
 
+    private static final JsonObject SCRIPT_COMPONENTS = scriptComponents();
+
     private ApiBinder() {
+    }
+
+    private static JsonObject scriptComponents() {
+        try {
+            return Fixtures.read(ComponentConformanceTest.MODEL).scriptComponents();
+        } catch (IOException e) {
+            throw new UncheckedIOException(e);
+        }
     }
 
     static CustomItem item(JsonObject file) {
@@ -157,16 +167,12 @@ public final class ApiBinder {
         if (entry.getKey().startsWith("minecraft:")) {
             return false;
         }
-        try {
-            JsonObject registered = Fixtures.read(ComponentConformanceTest.MODEL).scriptComponents().getAsJsonObject(kind);
-            if (!registered.has(entry.getKey())) {
-                throw new Unbindable("script component " + entry.getKey() + " is not registered by the add-on script");
-            }
-            registered.getAsJsonArray(entry.getKey()).forEach(c -> callbacks.add(c.getAsString()));
-            return true;
-        } catch (IOException e) {
-            throw new UncheckedIOException(e);
+        JsonObject registered = SCRIPT_COMPONENTS.getAsJsonObject(kind);
+        if (!registered.has(entry.getKey())) {
+            throw new Unbindable("script component " + entry.getKey() + " is not registered by the add-on script");
         }
+        registered.getAsJsonArray(entry.getKey()).forEach(c -> callbacks.add(c.getAsString()));
+        return true;
     }
 
     private static BlockProperty<?> property(String name, JsonElement values) {

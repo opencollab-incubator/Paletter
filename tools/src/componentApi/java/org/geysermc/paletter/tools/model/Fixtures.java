@@ -177,6 +177,11 @@ public final class Fixtures {
         return skip.has(key) ? skip.get(key).getAsString() : null;
     }
 
+    /** Whether there is a {@code scriptComponents} table; without one the add-on has no script and no script variants. */
+    public boolean hasScriptComponents() {
+        return json.has("scriptComponents");
+    }
+
     /** The script custom components of the spec add-on ({@code scriptComponents}): the module version, the components, the variants. */
     public JsonObject scriptComponents() {
         return json.getAsJsonObject("scriptComponents");
@@ -185,7 +190,7 @@ public final class Fixtures {
     /** The variants that bind script custom components under a component (by id), in file order; empty for most. */
     public List<JsonObject> scriptVariants(String component) {
         List<JsonObject> out = new ArrayList<>();
-        if (!json.has("scriptComponents")) {
+        if (!hasScriptComponents()) {
             return out;
         }
         JsonObject variants = scriptComponents().getAsJsonObject("variants");

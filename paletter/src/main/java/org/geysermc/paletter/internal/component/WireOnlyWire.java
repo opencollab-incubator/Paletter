@@ -32,9 +32,16 @@ public final class WireOnlyWire {
     public static final int FRAME_COUNT_FROM = ComponentIndex.OLDEST_CAPTURED_PROTOCOL;
     /** Not sent by BDS: no capture to date it from, assumed. */
     static final int ON_PLAYER_PLACING_FROM = 0;
-    /** BDS sends both, but no capture has them yet (the add-on's script components are not captured): assumed for every bundled version, unverified. */
+    /**
+     * BDS sends it for script components, but no capture has one yet: assumed for every bundled version, unverified.
+     * TODO: move after the recapture, from the first capture that has the {@code minecraft:custom_components} compound.
+     */
     static final int SCRIPT_HOOKS_FROM = 0;
-    static final int USE_ON_HOOK_FROM = 0;
+    /**
+     * Every spec capture already has the {@code minecraft:publisher_on_use_on.autoSucceedOnClient} leaf, through the placers
+     * ({@code WireOnlyWindowsTest} checks it), so this starts at the oldest.
+     */
+    public static final int USE_ON_HOOK_FROM = ComponentIndex.OLDEST_CAPTURED_PROTOCOL;
 
     private WireOnlyWire() {
     }

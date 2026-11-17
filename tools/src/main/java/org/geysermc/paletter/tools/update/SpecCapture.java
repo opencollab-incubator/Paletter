@@ -115,14 +115,14 @@ public final class SpecCapture {
             for (int round = 1; ; round++) {
                 generator.write(addon);
                 try {
-                    run = captureRun(server, addon, work, port, timeout, distribution.version());
+                    run = captureRun(server, addon, work, port, timeout, distribution.version(), generator.scriptMarker());
                 } catch (IOException e) {
                     if (!String.valueOf(e.getMessage()).startsWith("BDS did not start")) {
                         throw e;
                     }
                     // BDS now and then hangs while it starts: once more, on the same add-on
                     System.out.println(e.getMessage().lines().findFirst().orElse("") + "; starting it again");
-                    run = captureRun(server, addon, work, port, timeout, distribution.version());
+                    run = captureRun(server, addon, work, port, timeout, distribution.version(), generator.scriptMarker());
                 }
                 if (evidence != null || round == SHRINK_ROUNDS) {
                     break;
@@ -203,7 +203,7 @@ public final class SpecCapture {
     }
 
     /** Installs the add-on on a fresh world, starts BDS with the experiments on and captures what it sends a client. */
-    private Run captureRun(Path server, Path addon, Path work, int port, int timeout, String version) throws Exception {
+    private Run captureRun(Path server, Path addon, Path work, int port, int timeout, String version, String marker) throws Exception {
         Map<String, String> properties = new LinkedHashMap<>();
         properties.put("level-type", "FLAT");
         properties.put("level-seed", "0");
@@ -234,9 +234,9 @@ public final class SpecCapture {
             bds.start(work.resolve("bds-capture.log"));
             bds.awaitStarted(timeout);
             // Without its script the script custom components would look like ones without callbacks: wrong evidence that looks valid
-            if (!bds.sawLine(line -> line.contains(AddonGenerator.SCRIPT_MARKER))) {
-                throw new IOException("The add-on's script did not register its components (no " + AddonGenerator.SCRIPT_MARKER
-                    + " line); the scripting log:\n  " + String.join("\n  ", bds.lines(line -> line.contains("Scripting"))));
+            if (marker != null && !bds.sawLine(line -> line.matches(".*" + marker + "(\\D.*)?"))) {
+                throw new IOException("The add-on's script did not register all its components (no line with \"" + marker
+                    + "\"); the scripting log:\n  " + String.join("\n  ", bds.lines(line -> line.contains("Scripting"))));
             }
             List<String> contentLog = attribute(bds.lines(line -> line.matches(".*(ERROR|WARN)\\] \\[.*") && !line.contains("TRANSPORT")
                 && !line.contains(AddonGenerator.SCRIPT_MARKER))

@@ -58,7 +58,11 @@ class ScriptComponentsTest {
     }
 
     private static JsonObject components(AddonGenerator.Variant v) {
-        return v.definition().getAsJsonObject("minecraft:" + v.kind()).getAsJsonObject("components");
+        return components(v.definition());
+    }
+
+    private static JsonObject components(JsonObject definition) {
+        return definition.getAsJsonObject(definition.has("minecraft:block") ? "minecraft:block" : "minecraft:item").getAsJsonObject("components");
     }
 
     @Test
@@ -114,9 +118,38 @@ class ScriptComponentsTest {
                 if (v.format() != null) {
                     continue; // definitionOf builds at the generator's format; the capture keeps the variant's own
                 }
-                assertEquals(v.definition(), generator.definitionOf(component, v.identifier(), v.component()), v.identifier());
+                assertEquals(v.definition(), generator.definitionOf(component, v.identifier(), v.role(), v.component()), v.identifier());
             }
         }
+    }
+
+    @Test
+    void otherRolesKeepTheValueUnderTheComponentsNameWhateverItsShape(@TempDir Path root) throws IOException {
+        // the format sweep's base for custom_components is {}: it is the component's value, not an empty map of components
+        JsonObject definition = generator(root).definitionOf("block:minecraft:custom_components", "paletter:x", "format", new JsonObject());
+        assertEquals(JsonParser.parseString("{\"minecraft:custom_components\": {}}"), components(definition));
+    }
+
+    @Test
+    void theCommittedFormatSweepsRebuildWithTheValueUnderTheName() throws IOException {
+        Path bds = Path.of(System.getProperty("paletter.root", "..")).resolve("data/bds");
+        Path model = Path.of(System.getProperty("paletter.root", "..")).resolve("data/model");
+        AddonGenerator generator = new AddonGenerator(Model.read(model.resolve("components.json")), Fixtures.read(model));
+        int rebuilt = 0;
+        try (java.util.stream.Stream<Path> builds = Files.list(bds)) {
+            for (Path variants : builds.map(b -> b.resolve("spec-format/variants.json")).filter(Files::exists).toList()) {
+                for (var e : JsonParser.parseString(Files.readString(variants)).getAsJsonArray()) {
+                    JsonObject entry = e.getAsJsonObject();
+                    if (entry.get("component").getAsString().endsWith(":minecraft:custom_components")) {
+                        JsonObject definition = generator.definitionOf(entry.get("component").getAsString(), entry.get("identifier").getAsString(),
+                            entry.get("role").getAsString(), entry.get("json"));
+                        assertEquals(entry.get("json"), components(definition).get("minecraft:custom_components"), entry.get("identifier").getAsString());
+                        rebuilt++;
+                    }
+                }
+            }
+        }
+        assertTrue(rebuilt > 0, "no committed format sweep variant of custom_components to rebuild");
     }
 
     @Test
@@ -137,5 +170,6 @@ class ScriptComponentsTest {
         assertTrue(script.contains("system.beforeEvents.startup.subscribe"));
         assertTrue(script.contains("registerCustomComponent"));
         assertTrue(script.contains(AddonGenerator.SCRIPT_MARKER));
+        assertEquals("PALETTER-COMPONENTS 3", generator(root.resolve("again")).scriptMarker(), "the count the script prints: every registered component");
     }
 }
