@@ -79,8 +79,10 @@ public interface PaletteDataSource {
     }
 
     /**
-     * @param directory a directory in the bundled format: {@code versions.txt}, one {@code <name>.nbt} per version, and
-     *                  optionally {@code properties.nbt}, {@code behaviour.nbt}, {@code voxel_shapes.nbt} and {@code renames.txt}. Read when first needed
+     * @param directory a directory in the bundled format: {@code versions.txt}, one {@code <name>.nbt} per version,
+     *                  {@code voxel_shapes.nbt} with the shapes of every version (a palette without them fails to build),
+     *                  and optionally {@code properties.nbt}, {@code behaviour.nbt} and {@code renames.txt}. Read when first
+     *                  needed
      * @return a source reading that directory
      * @since 0.1.0
      */
