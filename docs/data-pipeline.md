@@ -205,8 +205,8 @@ with the new one. `recapture.yml` does that in parallel and opens **one** pull r
 
 **When it runs.** By hand (Actions > Recapture > Run workflow; the `ref` input names the branch to recapture, empty is
 the branch the run was started on), and from `bds-data.yml` when the data update's patch changes an add-on input
-(`data/model/components.json`, `fixtures.json`, `bds-feedback.json`, `schema.json`): the daily workflow then calls it
-on the update's own branch, `bds-data/<channel>`, and the recapture pull request is opened against that branch. Nothing
+(`data/model/components.json`, `fixtures.json`, `bds-feedback.json`, `bds-keys.json`), read from git: the pull request of the update was created or updated by this run, and its pushed branch changes one of them against the base: the daily workflow then calls it
+on the update's own branch, `bds-data/<channel>`, and the recapture pull request is opened against that branch. A run that leaves the data pull request as it was starts nothing, so a day without news neither recaptures nor force-pushes away a recapture merged into the branch. Nothing
 starts it on a push. If both channels change the add-on in one run, only the release one is recaptured; start the
 workflow by hand on `bds-data/preview` for the other.
 
@@ -221,16 +221,16 @@ workflow by hand on `bds-data/preview` for the other.
    `spec/`) are written to `<dir>` instead, and the bundled data, constants, model, white-box and build table are left to
    the next job. A release kept by a history check is recaptured as one (`--against <build>`). The BDS zips are cached
    per build (the daily check's cache keys). The captures and the run's report are uploaded as the artifact
-   `captures-<build>`; a failed leg uploads its report and logs, no captures.
+   `captures-<build>`; a failed leg uploads its report and logs, never captures. Under `--capture-only` an `--against` add-on mismatch is information, not a failure (the captures are of the new add-on by design), nothing deletes a directory of the repository, and the Gradle cache is read-only in the capture jobs.
 3. `assemble` (only when every leg succeeded: captures of two add-ons never share a pull request) validates the
    artifacts, copies them over `data/bds/<build>/` (overlaying, deleting nothing) and runs what `update` does after the
    captures, with no BDS: `inferMappings`, `whitebox-coverage` (from the committed `whitebox.json`; the binary did not
-   change), `generateComponentApi`, `:paletter:apiDump`, `generateConstants`. It fails when the inference changed
-   `bds-feedback.json`, `fixtures.json` or `components.json`: those captures were made with an add-on that is not the
+   change), `generateComponentApi`, `:paletter:apiDump`, `generateConstants`, `voxel-shapes import` (as `update` does). It also runs `check-mappings --strict` and puts its verdict (residual bits, unclassified wire paths, linked fields) into the report, without failing on it. It fails when the inference changed
+   `bds-feedback.json`, `fixtures.json`, `components.json` or `bds-keys.json` (and uploads `git diff -- data/model` as the artifact `recapture-guard-diff`): those captures were made with an add-on that is not the
    final one, so the change is committed and the workflow runs again until a pass changes nothing. It writes a patch of
    the data paths and a report (one verdict line and the collapsed report per build).
 4. `publish` applies the patch with the checks of `bds-data.yml` and opens or updates the pull request
-   `bds-data/recapture`, with the report as its body.
+   `recapture/<base>` (for the data update of the release channel: `recapture/bds-data/release`), with the report as its body. `assemble` hands over the id of its artifact and `publish` downloads exactly that one.
 
 The builds are not checked against each other again: the set of kept builds does not change in a recapture (that is
 `builds check`, which stays a separate step), and each leg compared its capture with the committed captures of its own
@@ -240,9 +240,9 @@ new one lacks stay in `data/bds/<build>`; the patch has no deletions of them.
 **Security.** The jobs that run the BDS binary and Gradle over captures (`capture`, and `assemble`, which runs Gradle on
 data from the capture jobs) have `contents: read`, no credentials in the checkout and no secrets. Only `publish` has write
 permissions and `BDS_DATA_TOKEN`, and it runs no Gradle, BDS or repository script: it applies a patch confined to the data
-paths (no other path, no `..`, no renames, no links, and every changed path of the working tree checked again). Artifacts
+paths (no other path, no segment starting with `.`, no renames, no links, and every changed path of the working tree checked again). Artifacts
 are data: the build names are checked against the plan and strict patterns, the captures may hold only regular files and
-directories, every path matches a plain relative-path pattern without `..`, size is capped, and nothing in an artifact is
+directories, every path matches a plain relative-path pattern without a segment starting with `.`, size is capped, and nothing in an artifact is
 run. All actions are pinned by commit SHA.
 
 **Determinism.** The capture platform stays `windows` (`CapturePlatform`): the committed captures come from Windows BDS, and
@@ -259,12 +259,7 @@ generation): about 30 to 60 minutes of wall-clock time and about 2 to 3 runner h
 runners. The matrix grows with the kept builds, so wall-clock time stays flat up to 6 builds and then grows by the slowest
 leg per 6 builds.
 
-**The trade-off.** A change to the model that changes the add-on is complete only with its recapture, so it merges only
-after its recapture pull request does: the two belong together (merging the model change alone leaves captures of the
-old add-on next to the new model). In exchange nobody recaptures by hand, and the captures of every
-build always answer for the committed add-on. A daily update that changes the add-on therefore leaves two pull requests,
-the data update and the recapture stacked on it; merge the first, then the second (GitHub retargets the second when its
-base branch is deleted on merge).
+**The trade-off and the merge order.** A change to the model that changes the add-on is complete only with its recapture: merging the model change alone leaves captures of the old add-on next to the new model. So the recapture pull request targets the branch of the data pull request: merge the recapture into `bds-data/<channel>` first (it adds its commit to the data pull request, which then carries model and recapture together), then merge the data pull request into the base branch. Nothing of the model change reaches the base without its recapture, and there is one review of the whole, in the data pull request. In exchange nobody recaptures by hand. If the daily run updates the data pull request between the two merges, it force-pushes the branch and the merged recapture is gone from it; the run then also starts a new recapture, so merge both on the same day.
 
 ### Experiments
 

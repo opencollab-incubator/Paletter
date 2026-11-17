@@ -1492,7 +1492,9 @@ public final class Update {
             report.check(Report.Status.DIFF, "New protocol " + runs.protocol, "not bundled yet; " + diff.count() + " differences to " + latest.name());
             report.diff("What changed: " + name + " (BDS " + distribution.version() + ") vs bundled " + latest.name(), diff);
             fallbackTodos(diff.lines("new blocks"), diff.lines("new items"), "network");
-            dropPreviews(distribution, name, runs.protocol, staging, variantNames);
+            if (captureOnly == null) {
+                dropPreviews(distribution, name, runs.protocol, staging, variantNames);
+            }
             new Importer(staging.resources).run(runs.vanilla, name, runs.protocol, null, runs.dumpLog, preview);
             report.check(Report.Status.INFO, "Import", "imported " + name + " (" + runs.protocol + ")" + (preview ? " as a preview version" : ""));
             // Content older versions lack is listed above (INFO); there are no bundled fallbacks to check
@@ -1797,6 +1799,23 @@ public final class Update {
     }
 
     /**
+     * Reports captures of different add-ons. The values and acceptance only cover the variants both were given alike: in a
+     * history check that would call two captures of different add-ons identical, so it fails. A recapture's captures are
+     * of the new add-on by design, compared with the committed ones of the old: only information.
+     *
+     * @return whether the comparison goes on
+     */
+    boolean variantsAlike(SpecDiff.Pairing pairing, String previousBuild) {
+        if (against != null && captureOnly == null) {
+            report.check(Report.Status.FAIL, "Spec capture variants", previousBuild + ": " + pairing.mismatch());
+            return false;
+        }
+        report.check(Report.Status.INFO, "Spec capture variants", previousBuild + ": " + pairing.mismatch()
+            + "; the comparison below covers the " + pairing.variants() + " variants alike only");
+        return true;
+    }
+
+    /**
      * The captured wire paths the mappings do not cover, by reason ({@link WireShapes#classify}). An unclassified path is a
      * wire change and a TODO: the model or the classification has to learn it.
      */
@@ -1861,15 +1880,8 @@ public final class Update {
         report.check(Report.Status.INFO, "Spec capture", "`" + (write ? root.relativize(out) : out) + "`");
         cutValues(out);
         SpecDiff.Pairing pairing = previous == null ? null : SpecDiff.pairing(previous, out);
-        if (pairing != null && !pairing.same()) {
-            // The values and acceptance only cover the variants both were given alike: in a history check that would
-            // call two captures of different add-ons identical
-            if (against != null) {
-                report.check(Report.Status.FAIL, "Spec capture variants", previousBuild + ": " + pairing.mismatch());
-                return;
-            }
-            report.check(Report.Status.INFO, "Spec capture variants", previousBuild + ": " + pairing.mismatch()
-                + "; the comparison below covers the " + pairing.variants() + " variants alike only");
+        if (pairing != null && !pairing.same() && !variantsAlike(pairing, previousBuild)) {
+            return;
         }
         if (previous != null) {
             List<SpecDiff.Change> changes = SpecDiff.compare(previous, out);
@@ -1938,7 +1950,7 @@ public final class Update {
             }
             report.check(Report.Status.INFO, "Component model", "mappings inferred; run :tools:generateComponentApi and the conformance suite (:tools:test) for the new protocol");
         } else {
-            report.check(Report.Status.INFO, "Component model", "mappings not inferred (" + (against != null ? "history check" : "verify only") + ")");
+            report.check(Report.Status.INFO, "Component model", "mappings not inferred (" + (captureOnly != null ? "capture only" : against != null ? "history check" : "verify only") + ")");
         }
     }
 

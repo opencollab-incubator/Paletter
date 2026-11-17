@@ -1,6 +1,7 @@
 package org.geysermc.paletter.tools.update;
 
 import org.geysermc.paletter.tools.bds.BdsDistribution;
+import org.geysermc.paletter.tools.model.infer.SpecDiff;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
@@ -43,6 +44,19 @@ class UpdateHistoryTest {
         Update update = historyCheck(root);
         update.stageVariantNames(Map.of());
         assertTrue(update.report().repoChanges.isEmpty());
+    }
+
+    @Test
+    void capturesOfAnotherAddOnFailAHistoryCheckButNotACaptureOnlyRun(@TempDir Path root, @TempDir Path out) throws IOException {
+        SpecDiff.Pairing other = new SpecDiff.Pairing(10, 2, 3, 0);
+        Update check = historyCheck(root);
+        assertFalse(check.variantsAlike(other, "1.26.36.1"));
+        assertTrue(check.report().failed());
+        // A recapture's captures are of the new add-on by design, even when it compares with the committed ones of a release
+        Update recapture = new Update(root, Map.of("channel", "release", "against", "1.26.36.1", "capture-only", out.toString()));
+        recapture.begin(new BdsDistribution("1.26.31.1", false, "win", "https://example.invalid/bedrock-server-1.26.31.1.zip"));
+        assertTrue(recapture.variantsAlike(other, "1.26.36.1"));
+        assertFalse(recapture.report().failed());
     }
 
     @Test
