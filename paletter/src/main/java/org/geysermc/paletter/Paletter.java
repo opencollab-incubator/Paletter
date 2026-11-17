@@ -51,6 +51,7 @@ import java.util.function.Predicate;
  */
 public final class Paletter {
     private final PaletteDataSource source;
+    private final boolean previews;
     private final List<DataVersion> versions;
     private final Fallbacks fallbacks;
     private final VanillaContent vanillaContent;
@@ -68,7 +69,8 @@ public final class Paletter {
 
     private Paletter(Builder builder) {
         this.source = builder.source;
-        this.versions = source.versions().stream().filter(builder.versions).toList();
+        this.previews = builder.previews;
+        this.versions = source.versions().stream().filter(this::available).filter(builder.versions).toList();
         this.fallbacks = builder.fallbacks;
         this.vanillaContent = builder.vanillaContent.copy();
         for (DataVersion version : vanillaContent.experimentVersions()) {
@@ -124,17 +126,29 @@ public final class Paletter {
         return source.verifiedBuilds(version);
     }
 
-    /**
-     * What is loaded from the data source, and the canonical ids derived from it, only depends on the data source: every
-     * Paletter over the bundled data shares those of {@link #bundled()}, which the generated constants are linked to.
-     */
-    private boolean sharesBundledCanonicals() {
+    /** Whether the data of a version is there for this instance: a preview's only with previews. */
+    private boolean available(DataVersion version) {
+        return previews || !version.isPreview();
+    }
+
+    /** What is loaded from the data source only depends on the data source: every Paletter over the bundled data shares it. */
+    private boolean sharesBundledData() {
         return source == PaletteDataSource.bundled() && this != Holder.BUNDLED;
+    }
+
+    /**
+     * The canonical ids derive from the newest version, so they depend on the data source and on previews: every Paletter
+     * over the bundled data and the same previews setting shares them. The generated constants are linked to the newest
+     * release's; the canonical ids of the others are mapped from them.
+     */
+    private @Nullable Paletter sharedCanonicals() {
+        Paletter shared = previews ? Holder.WITH_PREVIEWS : Holder.BUNDLED;
+        return source == PaletteDataSource.bundled() && this != shared ? shared : null;
     }
 
     /** The newest version of the data, whether served or not: canonical ids are defined by it. */
     private DataVersion newest() {
-        return source.versions().getLast();
+        return source.versions().stream().filter(this::available).reduce((older, newer) -> newer).orElseThrow();
     }
 
     /**
@@ -170,7 +184,7 @@ public final class Paletter {
 
     @Internal
     public @NonNull VanillaData vanillaData(@NonNull DataVersion version) {
-        if (sharesBundledCanonicals()) {
+        if (sharesBundledData()) {
             return Holder.BUNDLED.vanillaData(version);
         }
         return data.computeIfAbsent(version, v -> {
@@ -215,7 +229,7 @@ public final class Paletter {
             synchronized (this) {
                 blocks = canonicalBlocks;
                 if (blocks == null) {
-                    canonicalBlocks = blocks = sharesBundledCanonicals() ? Holder.BUNDLED.canonicalBlocks()
+                    canonicalBlocks = blocks = sharedCanonicals() != null ? sharedCanonicals().canonicalBlocks()
                         : CanonicalBlocks.of(vanillaData(newest()), source.renames());
                 }
             }
@@ -233,7 +247,7 @@ public final class Paletter {
             synchronized (this) {
                 items = canonicalItems;
                 if (items == null) {
-                    canonicalItems = items = sharesBundledCanonicals() ? Holder.BUNDLED.canonicalItems()
+                    canonicalItems = items = sharedCanonicals() != null ? sharedCanonicals().canonicalItems()
                         : CanonicalItems.of(vanillaData(newest()), source.renames());
                 }
             }
@@ -342,6 +356,7 @@ public final class Paletter {
     public static final class Builder {
         private PaletteDataSource source = PaletteDataSource.bundled();
         private Predicate<DataVersion> versions = version -> true;
+        private boolean previews;
         private Fallbacks fallbacks = Fallbacks.UNKNOWN;
         private final VanillaContent vanillaContent = new VanillaContent();
         private CreativeOrdering creativeOrdering = CreativeOrdering.BDS;
@@ -365,6 +380,17 @@ public final class Paletter {
          */
         public @NonNull Builder versions(@NonNull Predicate<DataVersion> versions) {
             this.versions = Objects.requireNonNull(versions);
+            return this;
+        }
+
+        /**
+         * @param previews whether the data of Bedrock preview builds is served as well; default {@code false}. The
+         *                 constants only a preview has ({@link org.geysermc.paletter.annotation.SincePreview}) exist either
+         *                 way, but are linked to the newest release: they resolve through {@link #fallbacks(Fallbacks)
+         *                 fallbacks}, with previews or not
+         */
+        public @NonNull Builder previews(boolean previews) {
+            this.previews = previews;
             return this;
         }
 
@@ -464,6 +490,7 @@ public final class Paletter {
 
     private static final class Holder {
         private static final Paletter BUNDLED = builder().build();
+        private static final Paletter WITH_PREVIEWS = builder().previews(true).build();
     }
 
     // ---- Properties ----

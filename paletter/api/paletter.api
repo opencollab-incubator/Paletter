@@ -235,6 +235,7 @@ public static final class org.geysermc.paletter.Paletter$Builder {
     public org.geysermc.paletter.Paletter$Builder experiments(java.lang.String...)
     public org.geysermc.paletter.Paletter$Builder fallbacks(org.geysermc.paletter.Fallbacks)
     public org.geysermc.paletter.Paletter$Builder layer(org.geysermc.paletter.PaletteLayer)
+    public org.geysermc.paletter.Paletter$Builder previews(boolean)
     public org.geysermc.paletter.Paletter$Builder removeItems(org.geysermc.paletter.vanilla.BedrockItemType...)
     public org.geysermc.paletter.Paletter$Builder reports(java.util.function.Consumer<org.geysermc.paletter.PaletteReport>)
     public org.geysermc.paletter.Paletter$Builder versions(java.util.function.Predicate<org.geysermc.paletter.data.DataVersion>)
@@ -2291,10 +2292,13 @@ public sealed interface org.geysermc.paletter.creative.ItemMatcher permits org.g
 
 public record org.geysermc.paletter.data.DataVersion extends java.lang.Record implements java.lang.Comparable<org.geysermc.paletter.data.DataVersion> {
     public <init>(java.lang.String, int)
+    public <init>(java.lang.String, int, boolean)
     public int compareTo(org.geysermc.paletter.data.DataVersion)
-    public final boolean equals(java.lang.Object)
-    public final int hashCode()
+    public boolean equals(java.lang.Object)
+    public int hashCode()
+    public boolean isPreview()
     public java.lang.String name()
+    public boolean preview()
     public int protocolVersion()
     public java.lang.String toString()
 }

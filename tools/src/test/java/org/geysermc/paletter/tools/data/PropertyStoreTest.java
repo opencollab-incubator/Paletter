@@ -203,7 +203,7 @@ class PropertyStoreTest {
     @Test
     void committedDataDrivenBlocksAreInTheOrderBdsSends() throws Exception {
         PaletteDataSource source = PaletteDataSource.bundled();
-        DataVersion newest = source.versions().stream().max(java.util.Comparator.naturalOrder()).orElseThrow();
+        DataVersion newest = source.versions().stream().filter(v -> !v.isPreview()).max(java.util.Comparator.naturalOrder()).orElseThrow();
         List<String> names = source.load(newest).dataDrivenBlocks().stream().map(BlockPropertyData::getName).toList();
         assertTrue(names.size() > 50);
         assertTrue(!names.equals(names.stream().sorted().toList()), "the order of BDS, not the sorted one");

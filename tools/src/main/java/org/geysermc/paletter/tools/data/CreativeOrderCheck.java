@@ -100,22 +100,9 @@ public final class CreativeOrderCheck {
         return new Result(custom, differences(expected, actual), null);
     }
 
-    /**
-     * The captured build is compared with the data of its own version, which may be a preview. Read from the directory,
-     * since the bundled source has read its version index already.
-     */
+    /** The captured build is compared with the data of its own version, which may be a preview. */
     static Paletter withPreviews(Path data, CreativeOrdering ordering, PaletteLayer layer) {
-        String before = System.getProperty("paletter.previews");
-        System.setProperty("paletter.previews", "true");
-        try {
-            return Paletter.builder().data(PaletteDataSource.directory(data)).creativeOrdering(ordering).layer(layer).build();
-        } finally {
-            if (before == null) {
-                System.clearProperty("paletter.previews");
-            } else {
-                System.setProperty("paletter.previews", before);
-            }
-        }
+        return Paletter.builder().data(PaletteDataSource.directory(data)).previews(true).creativeOrdering(ordering).layer(layer).build();
     }
 
     /**

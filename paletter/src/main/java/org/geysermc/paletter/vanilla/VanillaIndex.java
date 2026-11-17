@@ -21,7 +21,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * The generated constants linked to the newest data of {@link Paletter#bundled()}: built once, on the first use of a
+ * The generated constants linked to the newest bundled release (see {@link Paletter#bundled()}): built once, on the first use of a
  * constant that needs data (a state, a canonical id). Referencing constants alone loads nothing.
  */
 final class VanillaIndex {
@@ -69,6 +69,7 @@ final class VanillaIndex {
 
         this.itemConstants = constantItems;
         this.blockConstants = constantBlocks;
+        // The constants of a preview are not in the data of a release: they resolve via their fallback
         Paletter paletter = Paletter.bundled();
         VanillaData latest = paletter.vanillaData(paletter.latest());
         this.blocks = paletter.canonicalBlocks();

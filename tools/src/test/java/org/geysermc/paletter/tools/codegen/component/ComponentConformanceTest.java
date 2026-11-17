@@ -15,7 +15,6 @@ import org.geysermc.paletter.internal.PaletteReportBuilder;
 import org.geysermc.paletter.Paletter;
 import org.geysermc.paletter.block.CustomBlock;
 import org.geysermc.paletter.data.DataVersion;
-import org.geysermc.paletter.data.PaletteDataSource;
 import org.geysermc.paletter.internal.component.BlockCompiler;
 import org.geysermc.paletter.internal.component.ItemCompiler;
 import org.geysermc.paletter.internal.component.WireContext;
@@ -338,22 +337,9 @@ class ComponentConformanceTest {
         return out;
     }
 
-    /**
-     * The bundled data with its previews: the capture of a preview build is compiled for the preview's own version. Read
-     * from the sources, since the bundled source has read its version index already.
-     */
+    /** The bundled data with its previews: the capture of a preview build is compiled for the preview's own version. */
     static Paletter withPreviews() {
-        String before = System.getProperty("paletter.previews");
-        System.setProperty("paletter.previews", "true");
-        try {
-            return Paletter.builder().data(PaletteDataSource.directory(ROOT.resolve("paletter/src/main/resources/paletter"))).build();
-        } finally {
-            if (before == null) {
-                System.clearProperty("paletter.previews");
-            } else {
-                System.setProperty("paletter.previews", before);
-            }
-        }
+        return Paletter.builder().previews(true).build();
     }
 
     static NbtMap read(Path file) throws IOException {

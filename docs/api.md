@@ -239,10 +239,12 @@ the version gates content with, except the voxel shape experiment, which only co
 
 ## Previews
 
-Preview versions of Bedrock can be bundled next to releases. They are marked `preview` in `versions.txt` and skipped
-unless the system property `paletter.previews` is `true`. Generated API that only a bundled preview has (constants,
-states, enum values, components and fields) sits with the rest and is marked `@SincePreview("26.70")`; without previews
-enabled those constants resolve to `minecraft:unknown`. The mark goes away when the release has it.
+Preview versions of Bedrock can be bundled next to releases. They are marked `preview` in `versions.txt` (`DataVersion#isPreview()`)
+and served only by a Paletter built with `Paletter.builder().previews(true)`, which is off by default. Previews are a
+setting of the instance: Paletters with different settings coexist in one JVM. Generated API that only a bundled
+preview has (constants, states, enum values, components and fields) sits with the rest and is marked
+`@SincePreview("26.70")`; the constants exist either way, but are linked to the newest release, so they resolve through
+the fallbacks (normally to `minecraft:unknown`) in every Paletter, with previews or not. The mark goes away when the release has it.
 
 ## Behaviour
 
