@@ -4,6 +4,7 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.geysermc.paletter.vanilla.BedrockItemType;
 import org.geysermc.paletter.vanilla.BedrockItemVariant;
+import org.geysermc.paletter.vanilla.ItemKey;
 import org.geysermc.paletter.vanilla.BedrockItems;
 
 import java.util.Objects;
@@ -42,11 +43,13 @@ public record ItemFallback(@NonNull BedrockItemType target, @Nullable BedrockIte
     }
 
     /**
-     * @return a fallback to one variant (type and aux)
+     * @return a fallback to exactly this variant, type and aux (a type is its base variant, aux 0; see
+     *         {@link #keepingAux} to keep the replaced item's aux)
      * @since 0.1.0
      */
-    public static @NonNull ItemFallback of(@NonNull BedrockItemVariant target) {
-        return new ItemFallback(target.type(), target, false);
+    public static @NonNull ItemFallback of(@NonNull ItemKey target) {
+        BedrockItemVariant variant = target.variant();
+        return new ItemFallback(variant.type(), variant, false);
     }
 
     /**

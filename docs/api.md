@@ -121,8 +121,9 @@ An `ItemKey` is a `BedrockItemType` or a `BedrockItemVariant`, and the methods t
 an aux, never null (an aux the data does not name gives a plain variant without a canonical id). A key is a type and an
 aux, so creating or using one loads no bundled data, and a key made before any palette resolves exactly like one made
 after. The base variant and the named constants of `BedrockItemVariants` are the same object whenever they are asked for,
-so `==` holds for them; other auxes are new variants, compare those with `equals`. Methods that take an `ItemKey` read a
-type as aux 0; where a type means every aux, the name says so (`ItemFallback.keepingAux`, `ItemMatcher.anyVariantOf`,
+so `==` holds for them; other auxes are new variants, compare those with `equals`. An `ItemKey` always means exactly that
+variant, and a type means aux 0, in every method that takes one (`ItemFallback.of`, `ItemMatcher.of`,
+`CreativePlacement.after` too); where a type means every aux, the name says so (`ItemFallback.keepingAux`, `ItemMatcher.anyVariantOf`,
 `CreativePlacement.afterAnyOf`). Keys for an identifier are made with `Palette#itemType` and
 `Palette#itemVariant`, or are the type of a `CustomItem`.
 

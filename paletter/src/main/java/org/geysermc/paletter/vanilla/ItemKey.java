@@ -9,8 +9,8 @@ import org.checkerframework.checker.nullness.qual.NonNull;
  * ResolvedItem apple = palette.resolve(BedrockItems.APPLE);
  * ResolvedItem potion = palette.resolve(BedrockItems.POTION.variant(5));
  * }</pre>
- * The methods that take an {@code ItemKey} read a type as its base variant, aux 0. Where a type means every aux instead,
- * the method says so in its name ({@code ItemFallback.keepingAux}, {@code ItemMatcher.anyVariantOf},
+ * Every method that takes an {@code ItemKey} means exactly that variant, and reads a type as its base variant, aux 0.
+ * The forms that mean every aux instead say so in their name ({@code ItemFallback.keepingAux}, {@code ItemMatcher.anyVariantOf},
  * {@code CreativePlacement.afterAnyOf}), so dropping a {@code .variant()} never changes what a call means.
  * <p>
  * A key is a plain value, a type and an aux: creating or referencing one loads no data, so the constants of

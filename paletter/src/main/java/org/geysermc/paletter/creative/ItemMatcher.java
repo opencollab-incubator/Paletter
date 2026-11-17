@@ -7,6 +7,7 @@ import org.geysermc.paletter.item.BedrockItemStack;
 import org.geysermc.paletter.vanilla.BedrockBlockState;
 import org.geysermc.paletter.vanilla.BedrockItemType;
 import org.geysermc.paletter.vanilla.BedrockItemVariant;
+import org.geysermc.paletter.vanilla.ItemKey;
 
 import java.util.function.Predicate;
 
@@ -49,11 +50,13 @@ public sealed interface ItemMatcher permits ItemMatchers.Id, ItemMatchers.Damage
     }
 
     /**
-     * Matches the stacks of a variant: its item and aux value.
+     * Matches the stacks of exactly this variant: its item and aux value (a type is its base variant, aux 0; see
+     * {@link #anyVariantOf} for every aux).
      *
      * @since 0.1.0
      */
-    static @NonNull ItemMatcher of(@NonNull BedrockItemVariant variant) {
+    static @NonNull ItemMatcher of(@NonNull ItemKey key) {
+        BedrockItemVariant variant = key.variant();
         return new ItemMatchers.Id(variant.type().identifier()).and(new ItemMatchers.Damage(variant.aux()));
     }
 

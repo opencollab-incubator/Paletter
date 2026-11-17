@@ -104,6 +104,21 @@ class ItemVariantsTest {
     }
 
     @Test
+    void aTypeAsAKeyMeansAuxZeroEverywhere() {
+        var bed = BedrockItems.BED;
+        assertEquals(org.geysermc.paletter.item.ItemFallback.of(bed), org.geysermc.paletter.item.ItemFallback.of(bed.variant()));
+        assertFalse(org.geysermc.paletter.item.ItemFallback.keepingAux(bed).equals(org.geysermc.paletter.item.ItemFallback.of(bed)));
+        var white = org.geysermc.paletter.item.BedrockItemStack.of(bed);
+        var silver = org.geysermc.paletter.item.BedrockItemStack.of(bed.variant(8));
+        assertTrue(org.geysermc.paletter.creative.ItemMatcher.of(bed).matches(white));
+        assertFalse(org.geysermc.paletter.creative.ItemMatcher.of(bed).matches(silver));
+        assertTrue(org.geysermc.paletter.creative.ItemMatcher.of(bed.variant()).matches(white));
+        assertFalse(org.geysermc.paletter.creative.ItemMatcher.of(bed.variant()).matches(silver));
+        assertTrue(org.geysermc.paletter.creative.ItemMatcher.anyVariantOf(bed).matches(white));
+        assertTrue(org.geysermc.paletter.creative.ItemMatcher.anyVariantOf(bed).matches(silver));
+    }
+
+    @Test
     void aVariantWithoutAnIdResolvesToTheRightId() {
         CanonicalItems canonical = Paletter.bundled().canonicalItems();
         // Named constants and the base have no id of their own: the type's link knows it
