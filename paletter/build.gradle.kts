@@ -17,6 +17,8 @@ dependencies {
 
     // BehaviourTest reads the probe's capture (data/bds/<build>/behaviour-probe/capture.json)
     testImplementation(libs.gson)
+    // Memory baseline (MemoryBaselineTest, docs/benchmarks.md): measurement only, not a runtime dependency
+    testImplementation(libs.jol.core)
 }
 
 // Generated sources (component API, vanilla constants) live beside the hand-written ones; see docs/data-pipeline.md
@@ -46,10 +48,11 @@ tasks.javadoc {
 // `-Pjmh.includes=<regex>`. Results go to build/results/jmh.
 jmh {
     jmhVersion.set("1.37")
-    fork.set(1)
-    warmupIterations.set(3)
+    // -Pjmh.warmups=1 -Pjmh.iterations=2 -Pjmh.forks=1 for a quick run
+    fork.set(providers.gradleProperty("jmh.forks").map(String::toInt).orElse(1))
+    warmupIterations.set(providers.gradleProperty("jmh.warmups").map(String::toInt).orElse(3))
     warmup.set("1s")
-    iterations.set(5)
+    iterations.set(providers.gradleProperty("jmh.iterations").map(String::toInt).orElse(5))
     timeOnIteration.set("1s")
     providers.gradleProperty("jmh.includes").orNull?.let { includes.set(listOf(it)) }
 }

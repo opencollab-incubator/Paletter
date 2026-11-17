@@ -18,6 +18,8 @@ asm = "9.11.1"
 iced = "1.21.0"
 japicmp = "0.4.6"
 jmh-plugin = "0.7.4"
+# Memory measurement (paletter test and jmh only, never a runtime dependency)
+jol = "0.17"
 
 [libraries]
 protocol-codec = { group = "org.cloudburstmc.protocol", name = "bedrock-codec", version.ref = "protocol" }
@@ -29,6 +31,7 @@ checker-qual = { group = "org.checkerframework", name = "checker-qual", version.
 nethernet = { group = "org.cloudburstmc.netty", name = "netty-transport-nethernet", version.ref = "network" }
 raknet = { group = "org.cloudburstmc.netty", name = "netty-transport-raknet", version.ref = "network" }
 libdatachannel = { group = "dev.opencollab", name = "libdatachannel-java-arch-detect", version.ref = "libdatachannel" }
+jol-core = { group = "org.openjdk.jol", name = "jol-core", version.ref = "jol" }
 gson = { group = "com.google.code.gson", name = "gson", version.ref = "gson" }
 picocli = { group = "info.picocli", name = "picocli", version.ref = "picocli" }
 javapoet = { group = "com.palantir.javapoet", name = "javapoet", version.ref = "javapoet" }
