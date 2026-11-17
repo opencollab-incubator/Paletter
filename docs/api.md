@@ -51,7 +51,8 @@ Methods named `blockState`, `itemVariant` or `...Of` return keys; methods named 
 
 | Lookup | Returns |
 |---|---|
-| `Paletter#block(NbtMap)`, `Paletter#item(identifier, aux)` | The key for a state or variant of any bundled version, or null. `explainUnknown` says why. |
+| `Palette#block(NbtMap)`, `Palette#item(identifier, aux)` | The key for a state or variant of any bundled version, mapped forward, or null. `explainUnknown` says why. |
+| `Palette#blockState(NbtMap, Lookup)`, `Palette#itemVariant(identifier, aux, Lookup)`, `Palette#itemType(identifier, Lookup)` | The key (or item type) if the `Lookup` accepts the content in this palette's version, else null. |
 | `Palette#runtimeId(BedrockBlockState)` | The runtime id (the state hash). Throws if the palette lacks the state; `runtimeId(state, orElse)` returns `orElse` instead. |
 | `Palette#blockDefinition(BedrockBlockState)` | The `RegisteredBlockState` this version sends, after adapting and fallbacks. Throws if the palette lacks the state. Only a custom block of a layer the palette does not have can be lacking: with the bundled data, every version has each vanilla state. |
 | `Palette#blockDefinition(BedrockBlockState, RegisteredBlockState)` | Like `blockDefinition(state)`, but returns `orElse` (may be null) where that throws; as `runtimeId(state, orElse)` does for the runtime id. |
@@ -67,11 +68,13 @@ Methods named `blockState`, `itemVariant` or `...Of` return keys; methods named 
 | `Palette#decode(ItemData)` | The stack a client sent, or null if unknown. |
 | `Palette#explain(...)` | A readable explanation of how a block state or item resolves. |
 
-`Paletter#block` and `Paletter#item` accept content from any bundled version. Content the newest version lacks is mapped
-forward: states are adapted and renamed identifiers follow `renames.txt`. A mapping written against 26.50 therefore keeps
-working when 26.60 becomes the newest version. To match strictly, pass a `Lookup`: `Lookup.STRICT` accepts only what
-exists as is in the newest data, `Lookup.of(version)` only what exists in that version, and `.withRenames()` also
-accepts renamed identifiers.
+Lookups are on `Palette`, because the palette is the version. `Palette#blockState(NbtMap, Lookup)`, `itemVariant(identifier, aux, Lookup)`
+and `itemType(identifier, Lookup)` take the `Lookup` explicitly: `Lookup.EXACT` accepts only what exists as written in the
+palette's own version, `Lookup.RENAMED` also what that version has under a new name (renamed identifiers following
+`renames.txt`, changed state keys). Each returns null if the lookup does not accept the content, and
+`explainUnknown(..., Lookup)` says why. Content of the palette's layers is always accepted. `Palette#block(NbtMap)` and
+`Palette#item(identifier, aux)` map content of any bundled version forward, so a mapping written against 26.50 keeps
+working when 26.60 becomes the newest version.
 
 Paletter decides which block an item carries (`Palette#blockOf`, a key). A layer override wins, then the block to item relation
 captured from the Script API, then the block states in the creative inventory.

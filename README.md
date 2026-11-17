@@ -50,6 +50,10 @@ session.sendPacket(startGamePacket);
 session.sendPacket(palette.itemComponentPacket());
 session.sendPacket(palette.creativeContentPacket());
 
+// Content written down elsewhere becomes a key: exactly as this palette's version has it, or also under renamed names
+BedrockBlockState state = palette.blockState(nbt, Lookup.EXACT);   // null if absent
+BedrockItemVariant variant = palette.itemVariant("minecraft:potion", 5, Lookup.RENAMED);
+
 // Blocks and items are keys; the palette gives the ids for its version
 int stone = palette.runtimeId(BedrockBlocks.STONE.defaultState());
 ItemData apples = palette.encode(BedrockItemStack.of(BedrockItems.APPLE.base(), 3));
