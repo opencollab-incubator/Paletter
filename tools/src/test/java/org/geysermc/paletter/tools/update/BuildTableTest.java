@@ -53,6 +53,25 @@ class BuildTableTest {
     }
 
     @Test
+    void aGapFailsTheStrictMappingCheckAndTheUpdateReportAsksForADataVersion() {
+        List<String> gaps = List.of("1.26.65.1 (protocol 2226, data version 26.60): kept, differs from 1.26.63.1");
+        assertEquals(List.of(), BuildTable.unexplained(List.of()));
+        assertEquals(List.of("build 1.26.65.1 (protocol 2226, data version 26.60): kept, differs from 1.26.63.1: it sent other data than "
+            + "the build chosen for its data version, which needs a data version of its own"), BuildTable.unexplained(gaps));
+
+        Report none = new Report("t");
+        Update.buildGaps(none, List.of());
+        assertEquals("OK: no changes", none.verdict());
+        Report gap = new Report("t");
+        Update.buildGaps(gap, gaps);
+        assertEquals("Changed: 1 change, 1 decision needed", gap.verdict());
+        String markdown = gap.render();
+        assertTrue(markdown.contains("**Builds within a data version**: 1 builds need a data version of their own; to do: "
+            + "import a data version for each build (decided by hand)"), markdown);
+        assertTrue(markdown.contains("- 1.26.65.1 (protocol 2226, data version 26.60)"), markdown);
+    }
+
+    @Test
     void aBuildAHistoryCheckKeptIsAGapNeverTheDataVersionsBuild() {
         // 1.26.63.1 was imported; 1.26.65.1 is newer, kept by a history check because it differs, and 1.26.66.1 equals it
         Map<String, BuildHistory.Entry> record = new TreeMap<>(Versions.ORDER);

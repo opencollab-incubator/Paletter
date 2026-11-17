@@ -776,8 +776,7 @@ public final class Cli implements Runnable {
             }
             List<String> unexplained = new ArrayList<>(inference.unexplainedBits());
             unexplained.addAll(inference.linkedFields());
-            org.geysermc.paletter.tools.update.BuildTable.gaps(root()).forEach(gap -> unexplained.add("build " + gap
-                + ": it sent other data than the build chosen for its data version, which needs a data version of its own"));
+            unexplained.addAll(org.geysermc.paletter.tools.update.BuildTable.unexplained(org.geysermc.paletter.tools.update.BuildTable.gaps(root())));
             Path model = root().resolve(Layout.MODEL);
             JsonObject mappings = JsonParser.parseString(Files.readString(model.resolve("mappings.json"))).getAsJsonObject();
             Model components = Fixtures.read(model).apply(Model.read(model.resolve("components.json")));
