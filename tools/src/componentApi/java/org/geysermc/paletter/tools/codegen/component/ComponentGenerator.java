@@ -211,6 +211,10 @@ public final class ComponentGenerator {
                 model.omitted.put(id, "excluded in api.json");
                 continue;
             }
+            if (api("retired").has(id)) {
+                model.omitted.put(id, "retired, never on the wire: " + api("retired").get(id).getAsString());
+                continue;
+            }
             if (standalone == null && !category.equals("component") && !category.equals("trait")) {
                 model.omitted.put(id, "part of the definition core (CustomItem / CustomBlock)");
                 continue;

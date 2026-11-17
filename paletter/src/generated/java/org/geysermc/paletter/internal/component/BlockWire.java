@@ -24,7 +24,6 @@ import org.geysermc.paletter.block.component.DestructionParticles;
 import org.geysermc.paletter.block.component.DisplayName;
 import org.geysermc.paletter.block.component.EmbeddedVisual;
 import org.geysermc.paletter.block.component.EntityFallOn;
-import org.geysermc.paletter.block.component.ExplosionResistance;
 import org.geysermc.paletter.block.component.Flammable;
 import org.geysermc.paletter.block.component.FlowerPottable;
 import org.geysermc.paletter.block.component.Friction;
@@ -85,7 +84,6 @@ public final class BlockWire {
             case DisplayName value -> displayName(value, ctx, out);
             case EmbeddedVisual value -> embeddedVisual(value, ctx, out);
             case EntityFallOn value -> entityFallOn(value, ctx, out);
-            case ExplosionResistance value -> explosionResistance(value, ctx, out);
             case Flammable value -> flammable(value, ctx, out);
             case FlowerPottable value -> flowerPottable(value, ctx, out);
             case Friction value -> friction(value, ctx, out);
@@ -300,10 +298,6 @@ public final class BlockWire {
 
     private static void entityFallOn(EntityFallOn c, WireContext ctx, WireNode out) {
         // server only: BDS sends nothing to clients
-    }
-
-    private static void explosionResistance(ExplosionResistance c, WireContext ctx, WireNode out) {
-        ctx.drop(ExplosionResistance.NAME, "is not sent to clients (BDS: rejected)");
     }
 
     private static void flammable(Flammable c, WireContext ctx, WireNode out) {

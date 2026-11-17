@@ -229,6 +229,15 @@
     "block:minecraft:collision_box:[].min",
     "block:minecraft:collision_box:[].max"
   ],
+  "retired": {
+    "_comment": "Deprecated components that never reach the wire: BDS either accepts them and sends nothing (server only) or its server does not send them at all. No record is generated; the interface docs list them with their replacement. A deprecated component BDS does send (at any format) keeps its record, @Deprecated and @ReplacedBy.",
+    "item:minecraft:chargeable": "BDS 1.26.63.1 accepts it at formats 1.20.30 and 1.20.40 and sends the same as without it (data/bds/1.26.63.1/spec-format); rejected from 1.20.50",
+    "item:minecraft:seed": "BDS 1.26.63.1 accepts it at formats 1.10.0 and 1.16.0 only inside an old-style item (componentBased 0, data/bds/1.26.63.1/spec-format); Paletter writes no old-style items",
+    "item:minecraft:weapon": "BDS 1.26.63.1 accepts it at formats 1.20.30 and 1.20.40 and sends the same as without it (data/bds/1.26.63.1/spec-format)",
+    "block:minecraft:queued_ticking": "the white-box of BDS 1.26.70.24 has it with network false (not sent)",
+    "block:minecraft:random_ticking": "the white-box of BDS 1.26.70.24 has it with network false (not sent)",
+    "block:minecraft:explosion_resistance": "the white-box of BDS 1.26.70.24 has no component of that name, and its replacement destructible_by_explosion is accepted but server only (data/bds/1.26.63.1/spec)"
+  },
   "handWritten": {
     "block:minecraft:custom_components": "the wire-only ScriptHooks (the flags BDS sends for script custom components; names and parameters never reach the wire)",
     "item:minecraft:custom_components": "the wire-only UseOnHook (minecraft:publisher_on_use_on, which BDS adds for a script component with onUseOn)",

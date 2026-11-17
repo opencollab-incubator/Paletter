@@ -167,6 +167,38 @@ work too. The Javadoc comes from the creator documentation, with these annotatio
 When a component field cannot be sent in a palette's protocol, it is left out and `Palette#report()` gets a warning.
 Compiling a palette never fails because of the Bedrock version.
 
+### Deprecated components
+
+Bedrock deprecates components and BDS rejects them at the current `format_version`. A deprecated component keeps its
+generated record (`@Deprecated`, `@ReplacedBy` where there is a replacement, the replacement in the Javadoc) only if BDS
+sends something for it at some format. A component that never reaches the wire has no record: the Javadoc of
+`BlockComponent` and `ItemComponent` lists it as retired, with its replacement and why. BDS decides, so the formats are
+asked from BDS: the format sweep of `update` (`spec-format/`) puts each rejected component at every known format beside a
+control of the same format. `Pending` rows wait for the capture with that sweep: until then the record stays and the
+conformance test lists them (`SWEEP_PENDING`).
+
+| Component | Replacement | Record | State |
+|---|---|---|---|
+| block `minecraft:block_light_absorption` | `light_dampening` | kept | pending sweep (the committed sweep has BDS accept it at 1.16.100) |
+| block `minecraft:block_light_emission` | `light_emission` | kept | pending sweep |
+| block `minecraft:bone_visibility` | the `bone_visibility` field of `geometry` | kept | pending sweep |
+| block `minecraft:breathability` | none documented | kept | pending sweep |
+| block `minecraft:destroy_time` | `destructible_by_mining` | kept | pending sweep |
+| block `minecraft:explosion_resistance` | `destructible_by_explosion` | retired | not on the wire: the white-box has no component of that name, and `destructible_by_explosion` is server only |
+| block `minecraft:queued_ticking` | `tick` | retired | not on the wire: the white-box says `network: false` |
+| block `minecraft:random_ticking` | none documented | retired | not on the wire: the white-box says `network: false` |
+| block `minecraft:unit_cube` | none documented | kept | pending sweep |
+| item `minecraft:chargeable` | `use_modifiers` | retired | BDS accepts it at formats 1.20.30 and 1.20.40 and sends nothing for it |
+| block and item `minecraft:custom_components` (the list of names) | the object form of `custom_components` | not generated | accepted up to format 1.21.80; the API offers only the object form |
+| item `minecraft:render_offsets` | none documented | kept (hand-written `RenderOffsets`) | pending sweep |
+| item `minecraft:seed` | `block_placer` | retired | BDS sends it only inside an old-style item (formats below 1.16.100), which Paletter does not write |
+| item `minecraft:use_duration` | `use_modifiers` | kept | pending sweep (the committed sweep has BDS accept it at 1.20.20 and 1.20.40) |
+| item `minecraft:weapon` | `damage`, `cooldown`, `durability` | retired | BDS accepts it at formats 1.20.30 and 1.20.40 and sends nothing for it |
+
+The sweep decides `breathability`, `unit_cube`, `render_offsets`, `block_light_emission`, `bone_visibility` and
+`destroy_time`: a record stays only if BDS sends something for the component, and one the sweep proves silent is
+removed like the retired ones.
+
 `MiningSpeed`, `FrameCount`, `RenderOffsets` and `OnPlayerPlacing` are hand-written, not generated. They are wire fields
 Geyser needs that have no add-on JSON form, so there is no BDS capture to verify them against.
 `ScriptHooks` (block `minecraft:custom_components`: whether any script component handles interaction and placement) and

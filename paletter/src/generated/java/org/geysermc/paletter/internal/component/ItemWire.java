@@ -40,7 +40,6 @@ import org.geysermc.paletter.item.component.PiercingWeapon;
 import org.geysermc.paletter.item.component.Projectile;
 import org.geysermc.paletter.item.component.Rarity;
 import org.geysermc.paletter.item.component.Repairable;
-import org.geysermc.paletter.item.component.Seed;
 import org.geysermc.paletter.item.component.Shooter;
 import org.geysermc.paletter.item.component.ShouldDespawn;
 import org.geysermc.paletter.item.component.StackedByData;
@@ -104,7 +103,6 @@ public final class ItemWire {
             case Rarity value -> rarity(value, ctx, out);
             case MusicRecord value -> musicRecord(value, ctx, out);
             case Repairable value -> repairable(value, ctx, out);
-            case Seed value -> seed(value, ctx, out);
             case Shooter value -> shooter(value, ctx, out);
             case ShouldDespawn value -> shouldDespawn(value, ctx, out);
             case StackedByData value -> stackedByData(value, ctx, out);
@@ -539,10 +537,6 @@ public final class ItemWire {
 
     private static void repairable(Repairable c, WireContext ctx, WireNode out) {
         Transforms.itemDescriptorList(ctx, out, c);
-    }
-
-    private static void seed(Seed c, WireContext ctx, WireNode out) {
-        ctx.drop(Seed.NAME, "is not sent to clients (BDS: rejected)");
     }
 
     private static void shooter(Shooter c, WireContext ctx, WireNode out) {
