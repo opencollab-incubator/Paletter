@@ -4,7 +4,9 @@ import org.cloudburstmc.nbt.NbtMap;
 import org.geysermc.paletter.tools.bds.BdsDump;
 import org.geysermc.paletter.tools.data.Importer;
 import org.geysermc.paletter.tools.data.Diff;
+import org.geysermc.paletter.tools.data.VariantNames;
 import org.geysermc.paletter.tools.data.WireShapes;
+import org.geysermc.paletter.tools.codegen.constants.ConstantsGenerator;
 import org.geysermc.paletter.tools.model.Model;
 import java.util.List;
 import java.util.Map;
@@ -17,15 +19,29 @@ import java.nio.file.Path;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class UpdateTest {
+    private static final Path ROOT = Path.of("..");
 
     @Test
     void versionNames() {
         assertEquals("26.70", Update.versionName("1.26.70.23"));
         assertEquals("26.60", Update.versionName("1.26.63.1"));
         assertEquals("26.40", Update.versionName("1.26.45.1"));
+    }
+
+    @Test
+    void theConstantsOfAnUpdateHaveTheVariantNamesItStages() throws Exception {
+        // update regenerates the constants from the names it stages: the committed ones give the committed constants
+        Path resources = ROOT.resolve(ConstantsGenerator.DATA);
+        ConstantsGenerator.Result result = Update.generateConstants(ROOT, resources, VariantNames.read(ROOT.resolve(VariantNames.FILE)));
+        assertEquals(ConstantsGenerator.generate(ROOT).files(), result.files());
+        assertEquals(List.of(), result.deprecated());
+        // Without names the newest release would lose every variant constant: that fails instead
+        assertTrue(assertThrows(IllegalStateException.class,
+            () -> Update.generateConstants(ROOT, resources, Map.of())).getMessage().contains("has no variant names"));
     }
 
     @Test

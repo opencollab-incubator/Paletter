@@ -385,6 +385,15 @@ public final class Update {
     }
 
     /**
+     * The vanilla constants of the bundled data in {@code resources} with the variant names {@code variantNames}, the
+     * history and the captures of {@code root}.
+     */
+    static ConstantsGenerator.Result generateConstants(Path root, Path resources, Map<String, List<VariantNames.Entry>> variantNames) throws IOException {
+        return ConstantsGenerator.generate(resources, ConstantsGenerator.names(root), ConstantsGenerator.readJson(root.resolve(ConstantsGenerator.HISTORY)),
+            ConstantsGenerator.paletterVersion(root), ConstantsGenerator.Sources.read(resources, root.resolve(ConstantsGenerator.BDS), variantNames));
+    }
+
+    /**
      * Captures the voxel shapes ({@link ShapeProbe}): into {@code data/bds/<build>/voxel-shapes} when this run writes, else
      * into the work directory, and says whether they are the committed ones.
      */
@@ -435,13 +444,10 @@ public final class Update {
     private void constants(Staging staging) throws IOException {
         ConstantsGenerator.Result result;
         try {
-            result = ConstantsGenerator.generate(staging.resources, ConstantsGenerator.names(root),
-                ConstantsGenerator.readJson(root.resolve(ConstantsGenerator.HISTORY)), ConstantsGenerator.paletterVersion(root),
-                ConstantsGenerator.Sources.read(staging.resources, root.resolve(ConstantsGenerator.BDS)));
+            result = generateConstants(root, staging.resources, staging.variantNames);
         } catch (IllegalStateException e) {
-            // A name collision or a state that changed its kind needs an entry in the name overrides of ConstantsGenerator
+            // The message says what to do (a name override, a script-dump, a split in renames.txt)
             report.check(Report.Status.FAIL, "Vanilla constants", e.getMessage());
-            report.action("add a name override in ConstantsGenerator");
             return;
         }
         List<String> lines = new ArrayList<>();
@@ -1331,7 +1337,7 @@ public final class Update {
         new Importer(scratch).run(runs.vanilla, name, runs.protocol, null, runs.dumpLog);
         VanillaData captured = read(scratch.resolve(name + ".nbt"));
         runs.imported = scratch.resolve(name + ".nbt");
-        Map<String, List<VariantNames.Entry>> variantNames = VariantNames.read(root.resolve(VariantNames.FILE));
+        Map<String, List<VariantNames.Entry>> variantNames = staging.variantNames;
 
         if (runs.existing != null) {
             VanillaData bundled = read(resources.resolve(name + ".nbt"));
@@ -1821,10 +1827,13 @@ public final class Update {
     private final class Staging {
         final Path directory;
         final Path resources;
+        /** The item variant names the run stages: the constants are generated from these, also in a verify-only run. */
+        final Map<String, List<VariantNames.Entry>> variantNames;
 
         Staging(Path directory) throws IOException {
             this.directory = directory;
             this.resources = directory.resolve("resources");
+            this.variantNames = VariantNames.read(root.resolve(VariantNames.FILE));
             Files.createDirectories(resources);
             try (Stream<Path> files = Files.list(Update.this.resources)) {
                 for (Path file : files.toList()) {
