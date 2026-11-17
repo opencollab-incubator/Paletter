@@ -142,7 +142,7 @@ the start game block property list and the block pass iterate it. Paletter repro
 
 Custom block ids follow descending file name order of the block files, not identifier order: in the
 `creative-probe-file-order` capture, files `b14.json` to `b01.json` got ids 10000 to 10013. With one file per block named
-after the block, which is the usual layout, that equals descending identifier order. Paletter has no files, so it numbers
+after the block, which is the usual layout, that equals descending identifier order, compared in upper case: the file listing of Windows BDS sorts names in upper case, so `_` sorts after letters (`b_x` is numbered before `block_x`; every spec capture of 1.26.36.1 to 1.26.70.24 follows this, `CreativeOrderCheckTest.blockMapOrderMatchesTheSpecCapture`). Paletter has no files, so it numbers
 custom blocks by identifier, descending, whatever order the layers register them in. For add-ons whose file names do not
 sort like their identifiers, block items will be ordered differently than on BDS. Item order is unaffected.
 
