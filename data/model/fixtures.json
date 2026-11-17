@@ -17,7 +17,6 @@
     {"component": "block:minecraft:collision_box", "path": "size", "types": ["vec3"], "why": "Single box form, see forms."},
     {"component": "block:minecraft:geometry", "path": "uv_lock", "types": ["boolean", "array<string>"], "why": "Docs type column says String; the prose says a Boolean or an array of bone names."},
     {"component": "block:minecraft:embedded_visual", "path": "material_instances", "types": ["object"], "why": "Docs: Array of items; BDS takes the minecraft:material_instances object."},
-    {"component": "block:minecraft:item_visual", "path": "geometry", "types": ["string"], "why": "Same shorthand as minecraft:geometry."},
     {"component": "block:minecraft:item_visual", "path": "geometry.uv_lock", "types": ["boolean", "array<string>"], "why": "Docs type column says Object; the prose says a Boolean or an array of strings, as minecraft:geometry's uv_lock."},
     {"component": "block:minecraft:embedded_visual", "path": "geometry.uv_lock", "types": ["boolean", "array<string>"], "why": "See minecraft:item_visual's geometry.uv_lock."},
     {"component": "block:minecraft:item_visual", "path": "geometry.bone_visibility", "types": ["map<string>"], "why": "The docs type column says a map of booleans; the prose of item_visual's geometry says the value is a Molang expression (limited to query.block_state()). BDS 1.26.36.1 to 1.26.52.3 refuse a boolean there."},

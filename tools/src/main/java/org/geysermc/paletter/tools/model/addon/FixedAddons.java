@@ -99,7 +99,7 @@ public final class FixedAddons {
             }
             write(bp.resolve("blocks/" + name + ".json"), versioned(formatVersion, "minecraft:block", body));
         }
-        write(bp.resolve("loot_tables/paletter_empty.json"), json("{\"pools\": []}"));
+        writeLootTable(bp);
         write(bp.resolve("manifest.json"), manifest("Paletter capture", "Custom items and blocks with every component, for wire captures",
             "a1e5c0de-0000-4000-8000-00000000b001", "a1e5c0de-0000-4000-8000-00000000b002", "data",
             "a1e5c0de-0000-4000-8000-00000000c001", formatVersion));
@@ -110,28 +110,7 @@ public final class FixedAddons {
                         "uuid": "a1e5c0de-0000-4000-8000-00000000c001", "version": [1, 0, 0], "min_engine_version": %s},
              "modules": [{"type": "resources", "uuid": "a1e5c0de-0000-4000-8000-00000000c002", "version": [1, 0, 0]}]}""".formatted(
             AddonGenerator.minEngine(formatVersion))));
-        write(rp.resolve("textures/terrain_texture.json"), json("""
-            {"resource_pack_name": "paletter", "texture_name": "atlas.terrain", "padding": 8, "num_mip_levels": 4,
-             "texture_data": {"paletter_tex": {"textures": "textures/blocks/paletter_tex"},
-                              "paletter_tex_alt": {"textures": "textures/blocks/paletter_tex_alt"}}}"""));
-        write(rp.resolve("textures/item_texture.json"), json("""
-            {"resource_pack_name": "paletter", "texture_name": "atlas.items",
-             "texture_data": {"paletter_icon": {"textures": "textures/items/paletter_icon"},
-                              "paletter_icon_alt": {"textures": "textures/items/paletter_icon_alt"}}}"""));
-        png(rp.resolve("textures/blocks/paletter_tex.png"), 200, 60, 60, 255);
-        png(rp.resolve("textures/blocks/paletter_tex_alt.png"), 60, 200, 60, 255);
-        png(rp.resolve("textures/items/paletter_icon.png"), 60, 60, 200, 255);
-        png(rp.resolve("textures/items/paletter_icon_alt.png"), 200, 200, 60, 255);
-        write(rp.resolve("models/blocks/paletter_cube.geo.json"), json("""
-            {"format_version": "1.21.0",
-             "minecraft:geometry": [{"description": {"identifier": "%s", "texture_width": 16, "texture_height": 16},
-               "bones": [{"name": "bone_a", "pivot": [0, 0, 0], "cubes": [{"origin": [-8, 0, -8], "size": [16, 8, 16], "uv": [0, 0]}]},
-                         {"name": "bone_b", "pivot": [0, 8, 0], "cubes": [{"origin": [-4, 8, -4], "size": [8, 8, 8], "uv": [0, 0]}]}]}]}"""
-            .formatted(GEOMETRY)));
-        write(rp.resolve("block_culling/paletter_culling.json"), json("""
-            {"format_version": "1.21.80",
-             "minecraft:block_culling_rules": {"description": {"identifier": "paletter:culling"},
-               "rules": [{"geometry_part": {"bone": "bone_a", "cube": 0, "face": "down"}, "direction": "down"}]}}"""));
+        writeResources(rp);
     }
 
     // ---------------------------------------------------------------------------------------------------------------
@@ -504,5 +483,38 @@ public final class FixedAddons {
                 values[j] = tmp;
             }
         }
+    }
+
+    /**
+     * The textures, the geometry and the culling rule every capture pack of Paletter shares (the fixed capture add-on and the
+     * spec add-on): the names that fixtures.json samples refer to, so there is one definition of them.
+     */
+    static void writeResources(Path rp) throws IOException {
+        write(rp.resolve("textures/terrain_texture.json"), json("""
+            {"resource_pack_name": "paletter", "texture_name": "atlas.terrain", "padding": 8, "num_mip_levels": 4,
+             "texture_data": {"paletter_tex": {"textures": "textures/blocks/paletter_tex"},
+                              "paletter_tex_alt": {"textures": "textures/blocks/paletter_tex_alt"}}}"""));
+        write(rp.resolve("textures/item_texture.json"), json("""
+            {"resource_pack_name": "paletter", "texture_name": "atlas.items",
+             "texture_data": {"paletter_icon": {"textures": "textures/items/paletter_icon"},
+                              "paletter_icon_alt": {"textures": "textures/items/paletter_icon_alt"}}}"""));
+        png(rp.resolve("textures/blocks/paletter_tex.png"), 200, 60, 60, 255);
+        png(rp.resolve("textures/blocks/paletter_tex_alt.png"), 60, 200, 60, 255);
+        png(rp.resolve("textures/items/paletter_icon.png"), 60, 60, 200, 255);
+        png(rp.resolve("textures/items/paletter_icon_alt.png"), 200, 200, 60, 255);
+        write(rp.resolve("models/blocks/paletter_cube.geo.json"), json("""
+            {"format_version": "1.21.0",
+             "minecraft:geometry": [{"description": {"identifier": "%s", "texture_width": 16, "texture_height": 16},
+               "bones": [{"name": "bone_a", "pivot": [0, 0, 0], "cubes": [{"origin": [-8, 0, -8], "size": [16, 8, 16], "uv": [0, 0]}]},
+                         {"name": "bone_b", "pivot": [0, 8, 0], "cubes": [{"origin": [-4, 8, -4], "size": [8, 8, 8], "uv": [0, 0]}]}]}]}"""
+            .formatted(GEOMETRY)));
+        write(rp.resolve("block_culling/paletter_culling.json"), json("""
+            {"format_version": "1.21.80",
+             "minecraft:block_culling_rules": {"description": {"identifier": "paletter:culling"},
+               "rules": [{"geometry_part": {"bone": "bone_a", "cube": 0, "face": "down"}, "direction": "down"}]}}"""));
+    }
+    /** The loot table the capture packs' blocks name. */
+    static void writeLootTable(Path bp) throws IOException {
+        write(bp.resolve("loot_tables/paletter_empty.json"), json("{\"pools\": []}"));
     }
 }

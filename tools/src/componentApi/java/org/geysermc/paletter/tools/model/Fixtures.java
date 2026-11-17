@@ -242,12 +242,16 @@ public final class Fixtures {
             List<JType> forms = new ArrayList<>(c.forms());
             List<Field> fields = new ArrayList<>(c.fields());
             if (erratum.has("forms")) {
+                int before = forms.size();
                 erratum.getAsJsonArray("forms").forEach(f -> {
                     JType type = parseType(f.getAsString());
                     if (forms.stream().noneMatch(form -> form.toString().equals(type.toString()))) {
                         forms.add(type);
                     }
                 });
+                if (forms.size() == before && !erratum.has("path")) {
+                    throw new IllegalStateException("Erratum of " + id + " adds no form the docs lack: it is stale, remove it");
+                }
             }
             if (erratum.has("path")) {
                 String path = erratum.get("path").getAsString();
@@ -255,10 +259,17 @@ public final class Fixtures {
                 erratum.getAsJsonArray("types").forEach(t -> types.add(parseType(t.getAsString())));
                 Field existing = c.field(path);
                 if (existing == null) {
+                    if (!parentExists(path, fields)) {
+                        throw new IllegalStateException("Erratum of " + id + " names " + path + ", whose parent is no field of the component: "
+                            + "a mistyped path would add a new field instead of correcting one");
+                    }
                     fields.add(new Field(path, types, null, false, List.of(), null, null, List.of(), "(erratum) " + erratum.get("why").getAsString()));
                 } else {
                     List<JType> merged = new ArrayList<>(types);
                     existing.types().stream().filter(t -> merged.stream().noneMatch(m -> m.toString().equals(t.toString()))).forEach(merged::add);
+                    if (merged.stream().map(JType::toString).toList().equals(existing.types().stream().map(JType::toString).toList())) {
+                        throw new IllegalStateException("Erratum of " + id + " for " + path + " changes nothing the docs say: it is stale, remove it");
+                    }
                     List<JsonElement> values = existing.enumValues();
                     if (values.isEmpty() && types.stream().anyMatch(t -> t.type().equals("string"))) {
                         values = DocValues.valuesIn(existing.doc());
@@ -274,6 +285,53 @@ public final class Fixtures {
         JsonObject json = Model.GSON.toJsonTree(errata).getAsJsonObject();
         BdsErrata.apply(json, feedback, keys);
         return schema.apply(Model.GSON.fromJson(json, Model.class));
+    }
+
+    /** The sections of fixtures.json and api.json whose keys start with a component id ({@code item:minecraft:food:path}). */
+    private static final List<String> FIXTURE_SECTIONS = List.of("requires", "context", "skip", "together", "samples", "alternatives",
+        "mapValues", "mapKeys", "probeOnly");
+    private static final List<String> API_SECTIONS = List.of("rootLists", "forms", "types", "unions", "keyedExtras", "descriptors",
+        "blockDescriptors", "fields", "typeNames", "standalone", "standalonePaths", "openEnums", "exclude", "handWritten", "classes",
+        "optional", "noDefaults", "enums");
+
+    /**
+     * The hand input entries that name no component of the model, as {@code <file> <section>: <key>}. A renamed or removed
+     * docs page would otherwise leave its entries in fixtures.json and api.json unread, with the generated output changing
+     * silently. Keys that do not start with a component id ({@code block}, a bare field name, {@code default}) are skipped.
+     */
+    public static List<String> orphans(JsonObject fixtures, JsonObject api, java.util.Set<String> componentIds) {
+        List<String> orphans = new ArrayList<>();
+        collectOrphans("fixtures.json", FIXTURE_SECTIONS, fixtures, componentIds, orphans);
+        collectOrphans("api.json", API_SECTIONS, api, componentIds, orphans);
+        return orphans;
+    }
+
+    private static void collectOrphans(String file, List<String> sections, JsonObject json, java.util.Set<String> ids, List<String> out) {
+        for (String section : sections) {
+            if (!json.has(section)) {
+                continue;
+            }
+            List<String> keys = json.get(section).isJsonArray()
+                ? json.getAsJsonArray(section).asList().stream().map(JsonElement::getAsString).toList()
+                : List.copyOf(json.getAsJsonObject(section).keySet());
+            for (String key : keys) {
+                boolean component = key.startsWith("item:") || key.startsWith("block:");
+                if (component && ids.stream().noneMatch(id -> key.equals(id) || key.startsWith(id + ":"))) {
+                    out.add(file + " " + section + ": " + key);
+                }
+            }
+        }
+    }
+
+    /** Whether the parent of a path is a field, or the path is top level or an element of a list ({@code [].origin}). */
+    private static boolean parentExists(String path, List<Field> fields) {
+        int cut = path.lastIndexOf('.');
+        String parent = cut < 0 ? "" : path.substring(0, cut);
+        if (parent.isEmpty() || parent.equals("[]")) {
+            return true;
+        }
+        String field = parent.endsWith("[]") ? parent.substring(0, parent.length() - 2) : parent;
+        return fields.stream().anyMatch(f -> f.path().equals(field));
     }
 
     /** {@code integer}, {@code array<object>}, {@code map<string>}, ... */

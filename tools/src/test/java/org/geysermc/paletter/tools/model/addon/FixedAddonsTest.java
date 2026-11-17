@@ -28,6 +28,26 @@ class FixedAddonsTest {
         assertSame(out.resolve("resource_pack"), ROOT.resolve("data/addons/capture/resource_pack"));
     }
 
+    /**
+     * The format version is kept twice by hand (the fixed packs' constant and fixtures.json): bumping one alone would give the
+     * captures of one build two formats. Every committed spec capture was made with the one the build can load.
+     */
+    @Test
+    void theFormatVersionHasOneValueAndEveryCommittedCaptureUsedIt() throws IOException {
+        org.geysermc.paletter.tools.model.Fixtures fixtures = org.geysermc.paletter.tools.model.Fixtures.read(ROOT.resolve("data/model"));
+        assertEquals(FixedAddons.FORMAT_VERSION, fixtures.formatVersion, "FixedAddons.FORMAT_VERSION and fixtures.json formatVersion differ");
+        try (Stream<Path> builds = Files.list(ROOT.resolve("data/bds"))) {
+            for (Path build : builds.filter(Files::isDirectory).toList()) {
+                Path capture = build.resolve("spec/capture.json");
+                if (Files.exists(capture)) {
+                    String used = com.google.gson.JsonParser.parseString(Files.readString(capture)).getAsJsonObject().get("formatVersion").getAsString();
+                    assertEquals(AddonGenerator.formatVersionFor(fixtures.formatVersion, build.getFileName().toString()), used,
+                        capture + " was made with another format version than the model's (recapture after a bump)");
+                }
+            }
+        }
+    }
+
     @Test
     void packsOfAnOlderBuildAskForItsFormatVersion(@TempDir Path out) throws IOException {
         FixedAddons.writeCapture(out.resolve("capture"), "1.26.30");

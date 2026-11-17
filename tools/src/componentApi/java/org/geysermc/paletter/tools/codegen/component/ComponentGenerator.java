@@ -22,6 +22,7 @@ import org.geysermc.paletter.tools.codegen.component.ApiModel.Type;
 import org.geysermc.paletter.tools.codegen.component.ApiModel.Vec3;
 import org.geysermc.paletter.tools.codegen.component.ApiModel.Window;
 import org.geysermc.paletter.tools.model.Fixtures;
+import org.geysermc.paletter.tools.model.MappingWindows;
 import org.geysermc.paletter.tools.model.Model;
 
 import java.io.IOException;
@@ -144,6 +145,10 @@ public final class ComponentGenerator {
         List<JsonObject> docs = new ArrayList<>();
         in.components().getAsJsonArray("components").forEach(e -> docs.add(e.getAsJsonObject()));
         docs.sort(Comparator.comparing(o -> o.get("id").getAsString()));
+        List<String> orphans = Fixtures.orphans(in.fixtures(), in.api(), docs.stream().map(d -> d.get("id").getAsString()).collect(java.util.stream.Collectors.toSet()));
+        if (!orphans.isEmpty()) {
+            throw new GenerationException("hand input that names no component of the model (renamed or removed in the docs?): " + String.join("; ", orphans));
+        }
         JsonObject mappings = in.mappings().has("components") ? in.mappings().getAsJsonObject("components") : new JsonObject();
         JsonObject skip = in.fixtures().has("skip") ? in.fixtures().getAsJsonObject("skip") : new JsonObject();
         Set<String> excluded = new TreeSet<>();
@@ -213,6 +218,15 @@ public final class ComponentGenerator {
             // The status of the newest capture decides, unless an older one sent the component: then it is generated, and
             // the windows that do not send it leave it out of their palettes with a report entry
             List<Window> observed = mapping == null ? List.of() : windows(id, mapping);
+            if (mapping != null) {
+                // A capture without the component would be absorbed by its neighbour window: no BDS data for that protocol
+                java.util.TreeSet<Integer> missing = new java.util.TreeSet<>(model.windowProtocols.values());
+                java.util.TreeSet<Integer> has = MappingWindows.protocols(mapping);
+                missing.removeAll(has);
+                if (!has.isEmpty() && !missing.isEmpty()) {
+                    throw new GenerationException(id + " has no result for the captures of protocols " + missing + ": capture again with the current add-on");
+                }
+            }
             if (!observed.isEmpty()) {
                 status = observed.getLast().status();
             }
@@ -594,15 +608,14 @@ public final class ComponentGenerator {
             }
         }
         for (String key : mapping.keySet()) {
-            Matcher m = Pattern.compile("protocol(\\d+)").matcher(key);
-            if (m.matches()) {
+            if (MappingWindows.protocolOfKey(key) >= 0) {
                 // The window's own protocols (the captures with this mapping), else just the one in the key
                 JsonObject window = mapping.getAsJsonObject(key);
                 List<Integer> protocols = new ArrayList<>();
                 if (window.has("protocols")) {
                     window.getAsJsonArray("protocols").forEach(p -> protocols.add(p.getAsInt()));
                 } else {
-                    protocols.add(Integer.parseInt(m.group(1)));
+                    protocols.add(MappingWindows.protocolOfKey(key));
                 }
                 for (int protocol : protocols) {
                     JsonObject other = byProtocol.put(protocol, window);

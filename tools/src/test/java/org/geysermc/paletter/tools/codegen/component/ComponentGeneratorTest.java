@@ -117,7 +117,7 @@ class ComponentGeneratorTest {
         return json("""
             {"captures": [{"capture": "data/bds/8.8.8/spec", "bdsVersion": "8.8.8", "protocol": 100, "windowProtocol": 100,
                            "firstCustomBlockId": 10000, "blockItemIdPlusBlockId": 255},
-                         {"capture": "data/bds/9.9.9/spec", "bdsVersion": "9.9.9", "protocol": 200, "windowProtocol": 200,
+                         {"capture": "data/bds/9.9.9/spec", "bdsVersion": "9.9.9", "protocol": 200, "windowProtocol": 100,
                            "firstCustomBlockId": 10000, "blockItemIdPlusBlockId": 255}],
              "traitStates": {"test:turn": {
                "test:facing": [{"name": "test:facing", "type": "string", "values": ["south", "north"],

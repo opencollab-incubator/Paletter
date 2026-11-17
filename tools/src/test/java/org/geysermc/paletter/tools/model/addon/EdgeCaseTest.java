@@ -48,10 +48,14 @@ class EdgeCaseTest {
         {"block:minecraft:box": {"": ["box origin size -8,0,-8 8,16,8"], "rules": ["maxItems 3"], "angle": ["step 90"]}}""";
 
     private static List<String> labels(Path root, String path) throws IOException {
+        return labels(root, path, FEEDBACK);
+    }
+
+    private static List<String> labels(Path root, String path, String feedback) throws IOException {
         Path model = Files.createDirectories(root.resolve("model"));
         Files.writeString(model.resolve("components.json"), MODEL);
         Files.writeString(model.resolve("fixtures.json"), FIXTURES);
-        Files.writeString(model.resolve("bds-feedback.json"), FEEDBACK);
+        Files.writeString(model.resolve("bds-feedback.json"), feedback);
         AddonGenerator generator = new AddonGenerator(Model.read(model.resolve("components.json")), Fixtures.read(model), "1.26.60");
         return generator.variants().stream().filter(v -> v.role().equals("field") && v.path().equals(path))
             .map(v -> v.label().substring(v.label().indexOf(':') + 1)).toList();
@@ -65,6 +69,23 @@ class EdgeCaseTest {
         List<String> free = labels(root, "free");
         assertTrue(free.containsAll(List.of("0", "-1")) && !free.contains("65"), "no known limit: only the safe values");
         assertTrue(labels(root, "angle").containsAll(List.of("45", "135")), "off the step BDS's rule has");
+    }
+
+    @Test
+    void aLimitBdsLogsWinsOverTheDocsRange(@TempDir Path root) throws IOException {
+        List<String> count = labels(root, "count", """
+            {"block:minecraft:box": {"": ["box origin size -8,0,-8 8,16,8"], "count": ["max 16", "min 2"]}}""");
+        assertEquals(List.of("2", "1", "16", "17"), count.subList(0, 4), "BDS's limits, not the docs' 1 to 64");
+        assertTrue(!count.contains("64") && !count.contains("65"));
+    }
+
+    @Test
+    void anIntegerFieldWithAnOddStepIsSentOnlyWholeNumbersExceptItsOneNonInteger(@TempDir Path root) throws IOException {
+        List<String> angle = labels(root, "angle", """
+            {"block:minecraft:box": {"": ["box origin size -8,0,-8 8,16,8"], "angle": ["step 3"]}}""");
+        assertTrue(angle.stream().filter(label -> !label.equals("1.5")).allMatch(label -> label.matches("-?\\d+")), "every label is a whole number: " + angle);
+        assertEquals(1, angle.stream().filter(label -> label.equals("1.5")).count(), "the non-integer variant survives once");
+        assertTrue(angle.contains("1"), "the honest 1 is not evicted: " + angle);
     }
 
     @Test

@@ -13,8 +13,6 @@ import org.geysermc.paletter.tools.model.Model.Field;
 import org.geysermc.paletter.tools.model.Model.JType;
 import org.geysermc.paletter.tools.model.docs.DocsParser;
 
-import javax.imageio.ImageIO;
-import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -42,7 +40,6 @@ public final class AddonGenerator {
     public static final String NAMESPACE = "paletter";
     public static final String BP_UUID = "a1e5c0de-0000-4000-8000-00000000d001";
     public static final String RP_UUID = "a1e5c0de-0000-4000-8000-00000000e001";
-    private static final String GEO = "geometry.paletter_cube";
 
     private final Model model;
     private final Fixtures fixtures;
@@ -879,6 +876,9 @@ public final class AddonGenerator {
         }
         List<Labeled> values = new ArrayList<>();
         for (double d : numbers) {
+            if (integer && d != Math.rint(d)) {
+                continue; // an integer field gets whole numbers here, its one non-integer below: a label always says what is sent
+            }
             values.add(new Labeled(d == Math.rint(d) ? String.valueOf((long) d) : String.valueOf(d), integer ? new JsonPrimitive((long) d) : number(d)));
         }
         if (integer) {
@@ -1247,7 +1247,7 @@ public final class AddonGenerator {
         return DocsParser.valuesIn(field.doc()).stream().filter(e -> e.isJsonPrimitive() && e.getAsJsonPrimitive().isString()).toList();
     }
 
-    /** The field with the numeric range BDS enforces (content log) when the docs state none. */
+    /** The field with the numeric range BDS enforces (content log): where the docs state another, BDS wins. */
     private Field withFeedback(Component c, Field field) {
         if (field == null) {
             return null;
@@ -1261,10 +1261,10 @@ public final class AddonGenerator {
                 min = Double.parseDouble(parts[1]);
                 max = Double.parseDouble(parts[2]);
                 changed = true;
-            } else if (parts[0].equals("max") && max == null) {
+            } else if (parts[0].equals("max")) {
                 max = Double.parseDouble(parts[1]);
                 changed = true;
-            } else if (parts[0].equals("min") && min == null) {
+            } else if (parts[0].equals("min")) {
                 min = Double.parseDouble(parts[1]);
                 changed = true;
             }
@@ -1500,7 +1500,7 @@ public final class AddonGenerator {
                 json(bp.resolve(folder + variant.identifier().substring(NAMESPACE.length() + 1) + ".json"), variant.companion());
             }
         }
-        json(bp.resolve("loot_tables/paletter_empty.json"), JsonParser.parseString("{\"pools\": []}"));
+        FixedAddons.writeLootTable(bp);
         json(bp.resolve("manifest.json"), JsonParser.parseString("""
             {"format_version": 2, "header": {"name": "Paletter spec capture", "description": "Generated from data/model: every documented component field, varied",
               "uuid": "%s", "version": [1, 0, 0], "min_engine_version": %s},
@@ -1510,23 +1510,7 @@ public final class AddonGenerator {
             {"format_version": 2, "header": {"name": "Paletter spec capture resources", "description": "Textures and geometry for the spec capture",
               "uuid": "%s", "version": [1, 0, 0], "min_engine_version": %s},
              "modules": [{"type": "resources", "uuid": "a1e5c0de-0000-4000-8000-00000000e002", "version": [1, 0, 0]}]}""".formatted(RP_UUID, minEngine(formatVersion))));
-        json(rp.resolve("textures/terrain_texture.json"), JsonParser.parseString("""
-            {"resource_pack_name": "paletter", "texture_name": "atlas.terrain", "padding": 8, "num_mip_levels": 4,
-             "texture_data": {"paletter_tex": {"textures": "textures/blocks/paletter_tex"}, "paletter_tex_alt": {"textures": "textures/blocks/paletter_tex_alt"}}}"""));
-        json(rp.resolve("textures/item_texture.json"), JsonParser.parseString("""
-            {"resource_pack_name": "paletter", "texture_name": "atlas.items",
-             "texture_data": {"paletter_icon": {"textures": "textures/items/paletter_icon"}, "paletter_icon_alt": {"textures": "textures/items/paletter_icon_alt"}}}"""));
-        png(rp.resolve("textures/blocks/paletter_tex.png"), 200, 60, 60);
-        png(rp.resolve("textures/blocks/paletter_tex_alt.png"), 60, 200, 60);
-        png(rp.resolve("textures/items/paletter_icon.png"), 60, 60, 200);
-        png(rp.resolve("textures/items/paletter_icon_alt.png"), 200, 200, 60);
-        json(rp.resolve("models/blocks/paletter_cube.geo.json"), JsonParser.parseString("""
-            {"format_version": "1.21.0", "minecraft:geometry": [{"description": {"identifier": "%s", "texture_width": 16, "texture_height": 16},
-              "bones": [{"name": "bone_a", "pivot": [0, 0, 0], "cubes": [{"origin": [-8, 0, -8], "size": [16, 8, 16], "uv": [0, 0]}]},
-                        {"name": "bone_b", "pivot": [0, 8, 0], "cubes": [{"origin": [-4, 8, -4], "size": [8, 8, 8], "uv": [0, 0]}]}]}]}""".formatted(GEO)));
-        json(rp.resolve("block_culling/paletter_culling.json"), JsonParser.parseString("""
-            {"format_version": "1.21.80", "minecraft:block_culling_rules": {"description": {"identifier": "paletter:culling"},
-             "rules": [{"geometry_part": {"bone": "bone_a", "cube": 0, "face": "down"}, "direction": "down"}]}}"""));
+        FixedAddons.writeResources(rp);
         json(out.resolve("variants.json"), manifest());
         long items = variants.stream().filter(v -> v.kind().equals("item")).count();
         System.out.println(items + " items, " + (variants.size() - items) + " blocks (" + model.components().size() + " components) -> " + out);
@@ -1562,18 +1546,6 @@ public final class AddonGenerator {
     private static void json(Path file, JsonElement json) throws IOException {
         Files.createDirectories(file.getParent());
         Files.writeString(file, Model.GSON.toJson(json) + "\n", StandardCharsets.UTF_8);
-    }
-
-    /** A 16x16 texture of one opaque colour. */
-    private static void png(Path file, int r, int g, int b) throws IOException {
-        BufferedImage image = new BufferedImage(16, 16, BufferedImage.TYPE_INT_ARGB);
-        for (int y = 0; y < 16; y++) {
-            for (int x = 0; x < 16; x++) {
-                image.setRGB(x, y, 0xff << 24 | r << 16 | g << 8 | b);
-            }
-        }
-        Files.createDirectories(file.getParent());
-        ImageIO.write(image, "png", file.toFile());
     }
 
     static String lower(String s) {
