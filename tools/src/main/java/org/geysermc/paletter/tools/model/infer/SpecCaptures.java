@@ -6,6 +6,7 @@ import com.google.gson.JsonParser;
 import org.cloudburstmc.nbt.NbtMap;
 import org.geysermc.paletter.tools.data.Nbt;
 import org.geysermc.paletter.tools.model.addon.AddonGenerator;
+import org.geysermc.paletter.tools.model.addon.JsonPath;
 import org.geysermc.paletter.tools.model.rule.Leaf;
 
 import java.io.IOException;
@@ -15,7 +16,6 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
@@ -227,7 +227,7 @@ final class SpecCaptures {
             return null;
         }
         JsonElement current = root;
-        for (String token : AddonGenerator.tokens(path)) {
+        for (String token : JsonPath.tokens(path)) {
             if (current == null) {
                 return null;
             }
@@ -253,7 +253,4 @@ final class SpecCaptures {
         return text.replaceAll("paletter:[a-z0-9_]+", "<id>").replace("'", "").trim();
     }
 
-    static String lower(String s) {
-        return s.toLowerCase(Locale.ROOT);
-    }
 }

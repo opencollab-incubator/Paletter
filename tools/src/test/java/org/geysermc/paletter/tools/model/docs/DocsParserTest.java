@@ -2,6 +2,7 @@ package org.geysermc.paletter.tools.model.docs;
 
 import com.google.gson.JsonPrimitive;
 import org.geysermc.paletter.tools.model.addon.AddonGenerator;
+import org.geysermc.paletter.tools.model.addon.JsonPath;
 import org.geysermc.paletter.tools.model.Model;
 import org.junit.jupiter.api.Test;
 
@@ -117,8 +118,8 @@ class DocsParserTest {
     void slugsAndPaths() {
         assertEquals("legacy-floatrange", Markdown.slug("Legacy FloatRange"));
         assertEquals("rotation-rotation", Markdown.slug("Rotation (Rotation)"));
-        assertEquals(List.of("conditions", "[]", "block_filter", "[]", "name"), AddonGenerator.tokens("conditions[].block_filter[].name"));
-        assertEquals(List.of("{}", "values", "min"), AddonGenerator.tokens("{}.values.min"));
-        assertEquals("conditions[].block_filter", AddonGenerator.parentOf("conditions[].block_filter[]"));
+        assertEquals(List.of("conditions", "[]", "block_filter", "[]", "name"), JsonPath.tokens("conditions[].block_filter[].name"));
+        assertEquals(List.of("{}", "values", "min"), JsonPath.tokens("{}.values.min"));
+        assertEquals("conditions[].block_filter", JsonPath.parentOf("conditions[].block_filter[]"));
     }
 }

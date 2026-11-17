@@ -5,6 +5,7 @@ import com.google.gson.JsonPrimitive;
 import org.geysermc.paletter.tools.model.Model.Component;
 import org.geysermc.paletter.tools.model.Model.Field;
 import org.geysermc.paletter.tools.model.addon.AddonGenerator;
+import org.geysermc.paletter.tools.model.addon.JsonPath;
 import org.geysermc.paletter.tools.model.infer.SpecCaptures.Obs;
 import org.geysermc.paletter.tools.model.rule.Affix;
 import org.geysermc.paletter.tools.model.rule.Bitset;
@@ -48,7 +49,7 @@ final class RuleFit {
         if (set.isEmpty()) {
             return null;
         }
-        String jsonName = path.isEmpty() ? "" : AddonGenerator.tokens(path).getLast();
+        String jsonName = path.isEmpty() ? "" : JsonPath.tokens(path).getLast();
         boolean scalars = set.stream().allMatch(p -> p.json().isJsonPrimitive());
         Rule rule;
         Field field = component.field(path);
@@ -303,7 +304,7 @@ final class RuleFit {
         } else if (!segments.get(0).replace("[]", "").equals(component.name()) && component.category().equals("component")) {
             tags.add("outside-component:" + segments.get(0).replace("[]", ""));
         }
-        int jsonDepth = path.isEmpty() ? 0 : AddonGenerator.tokens(path).stream().filter(t -> !t.equals("[]") && !t.equals("{}")).toList().size();
+        int jsonDepth = path.isEmpty() ? 0 : JsonPath.tokens(path).stream().filter(t -> !t.equals("[]") && !t.equals("{}")).toList().size();
         int wireDepth = segments.size() - (component.category().equals("component") ? 1 : 0);
         if (!path.isEmpty() && wireDepth != jsonDepth && !wire.startsWith("item_properties")) {
             tags.add(wireDepth > jsonDepth ? "nested" : "flattened");

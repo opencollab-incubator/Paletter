@@ -6,6 +6,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
 import org.geysermc.paletter.tools.model.Model;
 import org.geysermc.paletter.tools.model.addon.AddonGenerator;
+import org.geysermc.paletter.tools.model.addon.JsonPath;
 import org.geysermc.paletter.tools.model.rule.Linear;
 import org.geysermc.paletter.tools.model.rule.Rule;
 
@@ -188,7 +189,7 @@ public final class Feedback {
         if (own != null && own.isJsonPrimitive() && own.getAsJsonPrimitive().isString() && !message.contains(OWN_IDENTIFIER)
             && quotes(message, own.getAsString())) {
             members(variant.json(), "", other -> {
-                if (!related(other, variant.path()) && names(message, AddonGenerator.tokens(other).getLast())) {
+                if (!related(other, variant.path()) && names(message, JsonPath.tokens(other).getLast())) {
                     facts.computeIfAbsent(variant.component(), k -> new TreeMap<>()).computeIfAbsent(other, k -> new TreeSet<>())
                         .add("conflicts " + variant.path() + " '" + own.getAsString() + "'");
                 }
@@ -268,7 +269,7 @@ public final class Feedback {
         Set<String> words = new java.util.HashSet<>(List.of(text.split("[^a-z0-9_]+")));
         Set<String> out = new LinkedHashSet<>();
         for (Model.Field field : component.fields()) {
-            String last = AddonGenerator.tokens(field.path()).stream().filter(t -> !t.equals("[]") && !t.equals("{}")).reduce((a, b) -> b).orElse("");
+            String last = JsonPath.tokens(field.path()).stream().filter(t -> !t.equals("[]") && !t.equals("{}")).reduce((a, b) -> b).orElse("");
             if (!related(field.path(), varied) && words.contains(last)) {
                 out.add(field.path());
             }

@@ -15,7 +15,6 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 
 /**
@@ -212,23 +211,6 @@ public final class AddonGenerator {
     /** The values cut at {@link VariantValues#MAX_VALUES}, see {@link VariantValues#cutValues}. */
     public List<String> cutValues() {
         return values.cutValues();
-    }
-
-    // The path helpers moved to {@link JsonPath}; these stay for the callers in the update and infer packages.
-    public static List<String> tokens(String path) {
-        return JsonPath.tokens(path);
-    }
-
-    public static String parentOf(String path) {
-        return JsonPath.parentOf(path);
-    }
-
-    public static JsonElement get(JsonElement root, String path) {
-        return JsonPath.get(root, path);
-    }
-
-    public static boolean remove(JsonElement root, String path) {
-        return JsonPath.remove(root, path);
     }
 
     // ---------------------------------------------------------------------------------------------------------------
@@ -643,7 +625,4 @@ public final class AddonGenerator {
         return file;
     }
 
-    static String lower(String s) {
-        return s.toLowerCase(Locale.ROOT);
-    }
 }

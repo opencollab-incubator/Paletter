@@ -10,6 +10,7 @@ import org.geysermc.paletter.tools.model.Model;
 import org.geysermc.paletter.tools.model.Model.Component;
 import org.geysermc.paletter.tools.model.Model.Field;
 import org.geysermc.paletter.tools.model.addon.AddonGenerator;
+import org.geysermc.paletter.tools.model.addon.JsonPath;
 import org.geysermc.paletter.tools.model.rule.Leaf;
 
 import java.io.IOException;
@@ -117,7 +118,7 @@ final class KeyDiscovery {
             }
         }
         for (String level : candidates) {
-            if (level.isEmpty() || c.fields().stream().anyMatch(f -> AddonGenerator.parentOf(f.path()).equals(level))) {
+            if (level.isEmpty() || c.fields().stream().anyMatch(f -> JsonPath.parentOf(f.path()).equals(level))) {
                 levels.add(level);
             }
         }
@@ -138,7 +139,7 @@ final class KeyDiscovery {
 
     private static boolean known(Component c, String level, String key) {
         String path = level.isEmpty() ? key : level + "." + key;
-        return c.field(path) != null || c.fields().stream().anyMatch(f -> f.name().equals(key) && AddonGenerator.parentOf(f.path()).equals(level));
+        return c.field(path) != null || c.fields().stream().anyMatch(f -> f.name().equals(key) && JsonPath.parentOf(f.path()).equals(level));
     }
 
     private static void fromBinary(Model model, Path binary, Evidence evidence) throws IOException {
@@ -152,7 +153,7 @@ final class KeyDiscovery {
             for (Field field : c.fields()) {
                 String name = field.name();
                 if (name.length() >= 6 && name.contains("_") && name.matches("[a-z][a-z0-9_]*")) {
-                    anchors.computeIfAbsent(name, k -> new LinkedHashSet<>()).add(new Candidate(c.id(), AddonGenerator.parentOf(field.path()), name));
+                    anchors.computeIfAbsent(name, k -> new LinkedHashSet<>()).add(new Candidate(c.id(), JsonPath.parentOf(field.path()), name));
                 }
             }
         }
@@ -217,7 +218,7 @@ final class KeyDiscovery {
                 if (markdown != null) {
                     for (WikiSource.Key key : WikiSource.keys(kind, markdown)) {
                         Component c = model.component(key.component());
-                        String parent = AddonGenerator.parentOf(key.path());
+                        String parent = JsonPath.parentOf(key.path());
                         String name = key.path().substring(parent.isEmpty() ? 0 : parent.length() + 1);
                         if (c != null && !known(c, level(c, parent), name)) {
                             evidence.candidate(new Candidate(c.id(), level(c, parent), name), "wiki.bedrock.dev " + page);

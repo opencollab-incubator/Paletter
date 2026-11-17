@@ -14,6 +14,7 @@ import org.geysermc.paletter.internal.data.PaletteDataCodec;
 import org.geysermc.paletter.internal.data.VanillaData;
 import org.geysermc.paletter.tools.model.Fixtures;
 import org.geysermc.paletter.tools.model.addon.AddonGenerator;
+import org.geysermc.paletter.tools.model.addon.JsonPath;
 import org.geysermc.paletter.tools.model.addon.AddonWriter;
 import org.geysermc.paletter.tools.model.Model;
 import org.geysermc.paletter.tools.model.infer.Feedback;
@@ -309,7 +310,7 @@ public final class SpecCapture {
                     }
                 }
                 for (String path : named) {
-                    if (!dropped.contains(path) && !(field && related(path, v.path())) && AddonGenerator.remove(json, path)) {
+                    if (!dropped.contains(path) && !(field && related(path, v.path())) && JsonPath.remove(json, path)) {
                         dropped.add(path);
                     }
                 }
