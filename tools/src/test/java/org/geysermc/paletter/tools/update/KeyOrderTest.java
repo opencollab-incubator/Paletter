@@ -37,8 +37,8 @@ class KeyOrderTest {
         Map<String, List<String>> before = strides(read("26.50"));
         Map<String, List<String>> after = strides(read("26.60"));
         script.forEach((block, keys) -> {
-            List<String> base = before.containsKey(block) ? before.get(block) : Update.similarBlockOrder(new LinkedHashSet<>(keys), before);
-            assertEquals(after.get(block), Update.keyOrder(base, keys, before), block);
+            List<String> base = before.containsKey(block) ? before.get(block) : ReferencePalette.similarBlockOrder(new LinkedHashSet<>(keys), before);
+            assertEquals(after.get(block), ReferencePalette.keyOrder(base, keys, before), block);
         });
     }
 
@@ -57,7 +57,7 @@ class KeyOrderTest {
             // The Script API's order is unknown here; the palette's, reversed, is the least helpful input
             List<String> keys = new ArrayList<>(entry.getValue());
             java.util.Collections.reverse(keys);
-            if (!entry.getValue().equals(Update.keyOrder(old, keys, before))) {
+            if (!entry.getValue().equals(ReferencePalette.keyOrder(old, keys, before))) {
                 wrong.add(entry.getKey());
             }
         }
@@ -73,9 +73,9 @@ class KeyOrderTest {
         Map<String, List<Object>> values = new LinkedHashMap<>();
         values.put("z", List.of((byte) 0, (byte) 1));
         values.put("a", List.of(0, 1, 2));
-        List<NbtMap> states = Update.combinations("test:block", values);
+        List<NbtMap> states = ReferencePalette.combinations("test:block", values);
         assertEquals(6, states.size());
-        assertEquals(List.of("z", "a"), Update.strideOrder(states).reversed());
+        assertEquals(List.of("z", "a"), ReferencePalette.strideOrder(states).reversed());
         states.forEach(state -> assertEquals(List.of("a", "z"), new ArrayList<>(BlockStates.states(state).keySet())));
     }
 
@@ -90,7 +90,7 @@ class KeyOrderTest {
         Map<String, List<NbtMap>> blocks = new LinkedHashMap<>();
         data.blockStates().forEach(state -> blocks.computeIfAbsent(BlockStates.name(state), n -> new ArrayList<>()).add(state));
         Map<String, List<String>> strides = new LinkedHashMap<>();
-        blocks.forEach((name, states) -> strides.put(name, Update.strideOrder(states)));
+        blocks.forEach((name, states) -> strides.put(name, ReferencePalette.strideOrder(states)));
         return strides;
     }
 }

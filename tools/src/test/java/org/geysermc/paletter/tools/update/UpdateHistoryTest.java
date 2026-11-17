@@ -30,11 +30,11 @@ class UpdateHistoryTest {
     @Test
     void aHistoryCheckStagesOnlyIntoItsBuildDirectory(@TempDir Path root) throws IOException {
         Update update = historyCheck(root);
-        update.stage(root.resolve("data/bds/1.26.31.1/experiments.json"), "{}".getBytes(StandardCharsets.UTF_8), "experiment record");
+        update.context().stage(root.resolve("data/bds/1.26.31.1/experiments.json"), "{}".getBytes(StandardCharsets.UTF_8), "experiment record");
         // Anything else is a bug of the pipeline: it throws instead of dropping the file silently
         for (Path outside : List.of(root.resolve("data/addons/capture/content-log.txt"), root.resolve("data/bds/1.26.36.1/experiments.json"),
             root.resolve("data/bds/1.26.31.1/../1.26.36.1/x"), root.resolve("data/bds/1.26.31.1"))) {
-            assertThrows(IllegalStateException.class, () -> update.stage(outside, new byte[0], "x"), outside.toString());
+            assertThrows(IllegalStateException.class, () -> update.context().stage(outside, new byte[0], "x"), outside.toString());
         }
         assertFalse(Files.exists(root.resolve("data/bds/1.26.31.1")), "nothing is written before the build is kept");
     }
@@ -42,7 +42,7 @@ class UpdateHistoryTest {
     @Test
     void aHistoryCheckStagesNoVariantNames(@TempDir Path root) throws IOException {
         Update update = historyCheck(root);
-        update.stageVariantNames(Map.of());
+        new NetworkDataStage(update.context()).stageVariantNames(Map.of());
         assertTrue(update.report().repoChanges.isEmpty());
     }
 
@@ -50,12 +50,12 @@ class UpdateHistoryTest {
     void capturesOfAnotherAddOnFailAHistoryCheckButNotACaptureOnlyRun(@TempDir Path root, @TempDir Path out) throws IOException {
         SpecDiff.Pairing other = new SpecDiff.Pairing(10, 2, 3, 0);
         Update check = historyCheck(root);
-        assertFalse(check.variantsAlike(other, "1.26.36.1"));
+        assertFalse(new SpecStage(check.context()).variantsAlike(other, "1.26.36.1"));
         assertTrue(check.report().failed());
         // A recapture's captures are of the new add-on by design, even when it compares with the committed ones of a release
         Update recapture = new Update(root, Map.of("channel", "release", "against", "1.26.36.1", "capture-only", out.toString()));
         recapture.begin(new BdsDistribution("1.26.31.1", false, "win", "https://example.invalid/bedrock-server-1.26.31.1.zip"));
-        assertTrue(recapture.variantsAlike(other, "1.26.36.1"));
+        assertTrue(new SpecStage(recapture.context()).variantsAlike(other, "1.26.36.1"));
         assertFalse(recapture.report().failed());
     }
 
@@ -74,13 +74,31 @@ class UpdateHistoryTest {
     @Test
     void aKeptBuildGetsWhatWasStagedAndItsSpecCapture(@TempDir Path root, @TempDir Path work) throws IOException {
         Update update = historyCheck(root);
-        update.stage(root.resolve("data/bds/1.26.31.1/addon/content-log.txt"), "WARN x\n".getBytes(StandardCharsets.UTF_8), "add-on content log");
+        update.context().stage(root.resolve("data/bds/1.26.31.1/addon/content-log.txt"), "WARN x\n".getBytes(StandardCharsets.UTF_8), "add-on content log");
         Files.createDirectories(work.resolve("spec"));
         Files.writeString(work.resolve("spec/capture.json"), "{\"bdsVersion\": \"1.26.31.1\", \"protocol\": 1001}");
-        update.keep(work);
+        update.context().keep(work);
         assertEquals("WARN x\n", Files.readString(root.resolve("data/bds/1.26.31.1/addon/content-log.txt")));
         assertTrue(Files.exists(root.resolve("data/bds/1.26.31.1/spec/capture.json")));
         assertTrue(update.report().repoChanges.contains("add `data/bds/1.26.31.1` (captures of this build)"), update.report().repoChanges.toString());
+    }
+
+    @Test
+    void stagesRunOnASyntheticRunState(@TempDir Path root, @TempDir Path work) throws IOException {
+        Update update = historyCheck(root);
+        Path earlier = root.resolve("data/bds/1.26.36.1/addon/content-log.txt");
+        Files.createDirectories(earlier.getParent());
+        Files.writeString(earlier, "WARN a\nWARN b\n");
+        Runs runs = new Runs();
+        runs.addonContentLog = List.of("WARN a", "WARN c");
+        new AddonChecksStage(update.context()).contentLog(runs);
+        new ExperimentReportStage(update.context()).experimentsReport(new BdsDistribution("1.26.31.1", false, "win", "u"), runs, null);
+        String report = update.report().render();
+        assertTrue(report.contains("- new: `WARN c`") && report.contains("- gone: `WARN b`"), report);
+        assertTrue(report.contains("Experiments"), report);
+        assertTrue(update.changed());
+        update.context().keep(work);
+        assertEquals("WARN a\nWARN c\n", Files.readString(root.resolve("data/bds/1.26.31.1/addon/content-log.txt")));
     }
 
     @Test
@@ -95,10 +113,10 @@ class UpdateHistoryTest {
         BdsDistribution build = new BdsDistribution("1.26.31.1", false, "win", "https://example.invalid/bedrock-server-1.26.31.1.zip");
         Update update = historyCheck(root);
         // BDS's documentation generator wrote nothing
-        update.schema(cache, build, null);
+        new ScriptApiStage(update.context()).schema(cache, build, null);
         // It wrote something the extract cannot read (no component schemas)
         Files.createDirectories(docs.resolve("json_schemas/server"));
-        update.schema(cache, build, docs);
+        new ScriptApiStage(update.context()).schema(cache, build, docs);
         String report = update.report().render();
         assertTrue(report.contains("BDS's documentation generator wrote no docs"), report);
         assertTrue(report.contains("not extracted, the previous schema stays: java.io.IOException: No component schemas"), report);
@@ -113,14 +131,14 @@ class UpdateHistoryTest {
         Files.writeString(root.resolve("data/bds/1.26.36.1/experiments.json"), "old");
         Update update = new Update(root, Map.of("channel", "release", "capture-only", out.toString()));
         update.begin(new BdsDistribution("1.26.36.1", false, "win", "https://example.invalid/bedrock-server-1.26.36.1.zip"));
-        update.stage(root.resolve("data/bds/1.26.36.1/experiments.json"), "new".getBytes(StandardCharsets.UTF_8), "experiment record");
-        update.stage(root.resolve("data/bds/1.26.36.1/addon/content-log.txt"), "WARN x\n".getBytes(StandardCharsets.UTF_8), "add-on content log");
+        update.context().stage(root.resolve("data/bds/1.26.36.1/experiments.json"), "new".getBytes(StandardCharsets.UTF_8), "experiment record");
+        update.context().stage(root.resolve("data/bds/1.26.36.1/addon/content-log.txt"), "WARN x\n".getBytes(StandardCharsets.UTF_8), "add-on content log");
         // Derived data is the gathering job's: dropped, never written into the checkout or the directory
-        update.stage(root.resolve("paletter/src/main/resources/paletter/26.30.nbt"), new byte[1], "bundled data");
-        update.stage(root.resolve("data/model/variant_names.txt"), new byte[1], "item variant names");
+        update.context().stage(root.resolve("paletter/src/main/resources/paletter/26.30.nbt"), new byte[1], "bundled data");
+        update.context().stage(root.resolve("data/model/variant_names.txt"), new byte[1], "item variant names");
         Files.createDirectories(work.resolve("spec"));
         Files.writeString(work.resolve("spec/capture.json"), "{\"protocol\": 1001}");
-        update.keep(work);
+        update.context().keep(work);
         assertEquals("new", Files.readString(out.resolve("experiments.json")));
         assertEquals("WARN x\n", Files.readString(out.resolve("addon/content-log.txt")));
         assertTrue(Files.exists(out.resolve("spec/capture.json")));

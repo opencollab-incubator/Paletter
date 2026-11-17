@@ -1,0 +1,111 @@
+package org.geysermc.paletter.tools.update;
+
+import org.geysermc.paletter.tools.bds.BdsDistribution;
+import org.geysermc.paletter.tools.bds.BdsDump;
+import org.geysermc.paletter.tools.bds.BdsDocGen;
+import org.geysermc.paletter.tools.data.Diff;
+import org.geysermc.paletter.tools.Layout;
+import org.geysermc.paletter.tools.model.Schema;
+import org.geysermc.paletter.tools.model.SchemaExtract;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.List;
+
+/** The Script API dump and the BDS schema against the committed ones. */
+final class ScriptApiStage {
+    private final UpdateContext ctx;
+
+    ScriptApiStage(UpdateContext ctx) {
+        this.ctx = ctx;
+    }
+
+    /** The Script API view against the committed dump of this build, or of the build before ({@link #baseline}). */
+    void scriptApi(BdsDistribution distribution, BdsDump dump, Runs runs) throws IOException {
+        // A history check compares with the build it is checked against
+        String baselineBuild = ctx.against != null ? ctx.against : UpdateContext.baseline(distribution.version(), ctx.committedBuilds("dump.json.gz"));
+        Path baselineFile = baselineBuild == null ? null : ctx.bdsData.resolve(baselineBuild).resolve("dump.json.gz");
+        Path target = ctx.bdsData.resolve(distribution.version()).resolve("dump.json.gz");
+        if (baselineFile == null || !Files.exists(baselineFile)) {
+            ctx.compared(false, "Script API vs baseline", "no baseline dump in data/bds/" + (ctx.against != null ? ctx.against : "*") + "/dump.json.gz");
+        } else {
+            String baselineVersion = baselineBuild;
+            BdsDump baseline = BdsDump.parse(UpdateContext.readGzipText(baselineFile), baselineVersion);
+            Diff diff = Diff.scriptApi(baseline, dump);
+            ctx.compared(diff.identical(), "Script API vs baseline " + baselineVersion, diff.identical() ? "identical" : diff.count() + " differences");
+            ctx.report.diff("Script API: BDS " + distribution.version() + " vs baseline " + baselineVersion, diff);
+            valueOrder(baseline, dump);
+            if (runs.vanilla == null) {
+                FallbackTodos.list(ctx, diff.lines("new blocks"), diff.lines("new items"), "Script API");
+            }
+        }
+        ctx.stage(target, UpdateContext.gzip(runs.dumpJson), "Script API baseline " + distribution.version());
+    }
+
+    /** A warning, never a failure: BDS lists a state type's values in another order than in the baseline build. */
+    private void valueOrder(BdsDump baseline, BdsDump dump) {
+        if (baseline.stateTypes().isEmpty()) {
+            ctx.report.check(Report.Status.SKIP, "Script API value order", "the baseline dump " + baseline.version()
+                + " has its values sorted; compared from the next recapture on");
+            return;
+        }
+        List<String> differences = baseline.valueOrderDifferences(dump);
+        if (differences.isEmpty()) {
+            ctx.report.check(Report.Status.PASS, "Script API value order", "the state types list their values in the baseline's order");
+        } else {
+            ctx.report.check(Report.Status.INFO, "Script API value order", "warning: " + differences.size() + " state types list their values in "
+                + "another order than in " + baseline.version() + "; generated blocks may need their value order checked");
+            ctx.report.evidence("State types (baseline vs this build)", differences);
+        }
+    }
+
+    /**
+     * The schema of the build ({@code schema.json}: the facts of BDS's own JSON schemas, written by its documentation generator)
+     * and what changed against the schema of the previous build. Never a failure: whatever goes wrong here (no docs, a schema
+     * layout the extract does not read) is a skipped row, and the previous schema stays what the model merges.
+     */
+    void schema(Path cache, BdsDistribution distribution, Path docs) {
+        String build = distribution.version();
+        try {
+            if (docs == null) {
+                ctx.report.check(Report.Status.SKIP, "BDS schema", "BDS's documentation generator wrote no docs (see bds-docgen.log); the previous schema stays");
+                return;
+            }
+            Schema previous = Schema.newest(ctx.bdsData, build);
+            JsonObject extract = SchemaExtract.extract(BdsDocGen.keep(docs, cache, build), build);
+            Schema schema = Schema.of(extract);
+            if (previous == Schema.NONE) {
+                ctx.report.check(Report.Status.INFO, "BDS schema", schema.summary() + "; no schema of an older build to diff against");
+            } else {
+                List<String> diff = Schema.diff(previous, schema);
+                ctx.report.check(diff.isEmpty() ? Report.Status.PASS : Report.Status.DIFF, "BDS schema vs " + previous.build(),
+                    schema.summary() + (diff.isEmpty() ? ", no changes" : ", " + diff.size() + " changes"));
+                if (!diff.isEmpty()) {
+                    ctx.report.evidence("Schema changes", diff.stream().map(line -> "- `" + line + "`").toList());
+                }
+            }
+            if (!schema.skipped().isEmpty()) {
+                ctx.report.check(Report.Status.DIFF, "BDS schema components skipped", schema.skipped().size() + " components could not be read and are not in schema.json");
+                ctx.report.evidence("Schema components skipped", schema.skipped().stream().map(line -> "- " + line).toList());
+            }
+            if (!schema.unhandledKeywords().isEmpty()) {
+                ctx.report.check(Report.Status.INFO, "BDS schema keywords", "the extract does not know " + schema.unhandledKeywords());
+            }
+            // What the content log said that the schema contradicts: the add-on tests both until a capture settles it
+            Path feedback = ctx.root.resolve(Layout.MODEL).resolve("bds-feedback.json");
+            List<String> disputes = Files.exists(feedback)
+                ? schema.disputes(JsonParser.parseString(Files.readString(feedback, StandardCharsets.UTF_8)).getAsJsonObject()) : List.of();
+            ctx.report.check(disputes.isEmpty() ? Report.Status.PASS : Report.Status.DIFF, "BDS schema vs content log",
+                disputes.isEmpty() ? "no limit or value the log and the schema disagree on" : disputes.size() + " disputes, the add-on tests both");
+            if (!disputes.isEmpty()) {
+                ctx.report.evidence("Schema and content log disagree", disputes.stream().map(line -> "- " + line).toList());
+            }
+            ctx.stage(ctx.bdsData.resolve(build).resolve(Schema.FILE), SchemaExtract.render(extract).getBytes(StandardCharsets.UTF_8), "BDS schema " + build);
+        } catch (Exception e) {
+            ctx.report.check(Report.Status.SKIP, "BDS schema", "not extracted, the previous schema stays: " + e);
+        }
+    }
+}
