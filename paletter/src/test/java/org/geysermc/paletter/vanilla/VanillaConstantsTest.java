@@ -244,12 +244,9 @@ class VanillaConstantsTest {
         assertSame(BedrockBlocks.UNKNOWN, removed.resolved());
         assertSame(BedrockBlocks.UNKNOWN.defaultState(), removed.defaultState());
 
-        BedrockBlockType toStone = VanillaTypes.block("minecraft:paletter_test_removed_stone", "minecraft:stone");
-        assertSame(BedrockBlocks.STONE.defaultState(), toStone.defaultState());
-
-        BedrockItemType removedItem = VanillaTypes.item("minecraft:paletter_test_removed_item", "minecraft:stick");
+        BedrockItemType removedItem = VanillaTypes.item("minecraft:paletter_test_removed_item");
         assertFalse(removedItem.isAvailable());
-        assertEquals(Ids.item(PALETTER, BedrockItems.STICK), Ids.item(PALETTER, removedItem));
+        assertEquals(Ids.item(PALETTER, BedrockItems.UNKNOWN), Ids.item(PALETTER, removedItem));
     }
 
     @Test

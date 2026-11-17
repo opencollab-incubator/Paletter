@@ -8,14 +8,15 @@ import org.geysermc.paletter.annotation.SincePreview;
 /**
  * Every item type of Bedrock 1.1, the newest bundled release. The constants are resolved against
  * the newest data of {@link org.geysermc.paletter.Paletter#bundled()} on first use; referencing them loads nothing.
- * Variants that differ by damage (potions, banners, ...) are {@link BedrockItemType#variant(int)}: the bundled data
- * does not name them.
+ * Variants that differ by damage are {@link BedrockItemType#variant(int)}; the named ones are the constants of
+ * {@link BedrockItemVariants}.
  * <p>
  * Constants are added when Bedrock adds items (binary compatible). Items Bedrock removes stay, deprecated, and
- * resolve to their fallback; renamed items keep their old constant, deprecated, as an alias of the new one.
+ * resolve to {@code minecraft:unknown}; renamed items keep their old constant, deprecated, as an alias of the new one.
  * <p>
- * The {@code @since} of a constant is the bundled Bedrock release it first appears in, without an experiment toggle
- * (decided from the BDS captures in {@code data/bds}); {@code 26.40} is the oldest bundled release, so it may be older.
+ * {@code @since} is the Paletter version that added a constant, and only written if newer than the class. The line
+ * {@code First in Bedrock} is the bundled Bedrock release it first appears in, without an experiment toggle (decided from
+ * the BDS captures in {@code data/bds}); {@code 1.0} is the oldest bundled release, so it may be older.
  * {@link org.geysermc.paletter.annotation.Education @Education} marks content BDS only offers to worlds with Education
  * Edition features, which {@code isEducation()} of the type answers at runtime.
  * {@link org.geysermc.paletter.annotation.SincePreview @SincePreview} marks content only the bundled Bedrock preview
@@ -28,48 +29,43 @@ public final class BedrockItems {
     /**
      * {@code minecraft:apple}.
      * Education Edition content: BDS only offers it to worlds with Education Edition features.
-     *
-     * @since 1.0
+     * First in Bedrock 1.0.
      */
     @Education
     public static final BedrockItemType APPLE = VanillaTypes.educationItem("minecraft:apple");
 
     /**
      * {@code minecraft:item.test_door}.
-     *
-     * @since 1.0
+     * First in Bedrock 1.0.
      */
     public static final BedrockItemType ITEM_TEST_DOOR = VanillaTypes.item("minecraft:item.test_door");
 
     /**
      * {@code minecraft:old_stick}, no longer in the bundled data.
-     *
-     * @since 1.0
-     * @deprecated Bedrock removed the item; resolves to {@code minecraft:apple}
+     * First in Bedrock 1.0.
+     * @deprecated Bedrock removed the item; resolves to {@code minecraft:unknown}
      */
-    @Deprecated(since = "2.1.0", forRemoval = true)
-    public static final BedrockItemType OLD_STICK = VanillaTypes.item("minecraft:old_stick", "minecraft:apple");
+    @Deprecated(since = "2.1.0")
+    public static final BedrockItemType OLD_STICK = VanillaTypes.item("minecraft:old_stick");
 
     /**
      * {@code minecraft:potion}: 2 more variants by damage, see {@link BedrockItemType#variant(int)}.
      * Behind the experiment {@code drop} in 1.0: without it the version does not have it.
-     *
-     * @since 1.1
+     * First in Bedrock 1.1.
      */
     public static final BedrockItemType POTION = VanillaTypes.item("minecraft:potion");
 
     /**
      * {@code minecraft:test_door}.
-     *
-     * @since 1.0
+     * First in Bedrock 1.0.
      */
     public static final BedrockItemType TEST_DOOR = VanillaTypes.item("minecraft:test_door");
 
     /**
      * {@code minecraft:test_lamp}.
-     * Added in Paletter 2.1.0.
+     * First in Bedrock 1.1.
      *
-     * @since 1.1
+     * @since 2.1.0
      */
     public static final BedrockItemType TEST_LAMP = VanillaTypes.item("minecraft:test_lamp");
 

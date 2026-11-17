@@ -10,10 +10,11 @@ import org.geysermc.paletter.annotation.SincePreview;
  * the newest data of {@link org.geysermc.paletter.Paletter#bundled()} on first use; referencing them loads nothing.
  * <p>
  * Constants are added when Bedrock adds blocks (binary compatible). Blocks Bedrock removes stay, deprecated, and
- * resolve to their fallback; renamed blocks keep their old constant, deprecated, as an alias of the new one.
+ * resolve to {@code minecraft:unknown}; renamed blocks keep their old constant, deprecated, as an alias of the new one.
  * <p>
- * The {@code @since} of a constant is the bundled Bedrock release it first appears in, without an experiment toggle
- * (decided from the BDS captures in {@code data/bds}); {@code 26.40} is the oldest bundled release, so it may be older.
+ * {@code @since} is the Paletter version that added a constant, and only written if newer than the class. The line
+ * {@code First in Bedrock} is the bundled Bedrock release it first appears in, without an experiment toggle (decided from
+ * the BDS captures in {@code data/bds}); {@code 1.0} is the oldest bundled release, so it may be older.
  * {@link org.geysermc.paletter.annotation.Education @Education} marks content BDS only offers to worlds with Education
  * Edition features, which {@code isEducation()} of the type answers at runtime.
  * {@link org.geysermc.paletter.annotation.SincePreview @SincePreview} marks content only the bundled Bedrock preview
@@ -25,55 +26,49 @@ import org.geysermc.paletter.annotation.SincePreview;
 public final class BedrockBlocks {
     /**
      * {@code minecraft:air}, 1 state.
-     *
-     * @since 1.0
+     * First in Bedrock 1.0.
      */
     public static final BedrockBlockType AIR = VanillaTypes.block("minecraft:air");
 
     /**
      * {@code minecraft:removed_block}, no longer in the bundled data.
-     *
-     * @since 1.0
+     * First in Bedrock 1.0.
      * @deprecated Bedrock removed the block; resolves to {@code minecraft:unknown}
      */
-    @Deprecated(since = "2.1.0", forRemoval = true)
+    @Deprecated(since = "2.1.0")
     public static final BedrockBlockType REMOVED_BLOCK = VanillaTypes.block("minecraft:removed_block");
 
     /**
      * {@code minecraft:test_block}: {@link BedrockStates#FACING}; 2 states.
      * Education Edition content: BDS only offers it to worlds with Education Edition features.
-     *
-     * @since 1.0
+     * First in Bedrock 1.0.
      */
     @Education
     public static final BedrockBlockType TEST_BLOCK = VanillaTypes.educationBlock("minecraft:test_block");
 
     /**
      * {@code minecraft:test_door}: {@link BedrockStates#CARDINAL_DIRECTION}, {@link BedrockStates#OPEN_BIT}; 8 states.
-     *
-     * @since 1.0
+     * First in Bedrock 1.0.
      */
     public static final BedrockBlockType TEST_DOOR = VanillaTypes.block("minecraft:test_door");
 
     /**
      * {@code minecraft:test.block}, 1 state.
-     *
-     * @since 1.0
+     * First in Bedrock 1.0.
      */
     public static final BedrockBlockType TEST_DOT_BLOCK = VanillaTypes.block("minecraft:test.block");
 
     /**
      * {@code minecraft:test_face}: {@link BedrockStates#MINECRAFT_FACING}; 2 states.
-     *
-     * @since 1.0
+     * First in Bedrock 1.0.
      */
     public static final BedrockBlockType TEST_FACE = VanillaTypes.block("minecraft:test_face");
 
     /**
      * {@code minecraft:test_lamp}: {@link BedrockStates#LEVEL}, {@link BedrockStates#LIT}; 8 states.
-     * Added in Paletter 2.1.0.
+     * First in Bedrock 1.1.
      *
-     * @since 1.1
+     * @since 2.1.0
      */
     public static final BedrockBlockType TEST_LAMP = VanillaTypes.block("minecraft:test_lamp");
 
@@ -87,32 +82,28 @@ public final class BedrockBlocks {
     /**
      * {@code minecraft:test_sparse}: {@link BedrockStates#AGE}, {@link BedrockStates#LIT}; 3 states (3 states, but its values have 6 combinations: not a full product: resolved with a lookup table).
      * Behind the experiment {@code drop} in 1.0: without it the version does not have it.
-     *
-     * @since 1.1
+     * First in Bedrock 1.1.
      */
     public static final BedrockBlockType TEST_SPARSE = VanillaTypes.block("minecraft:test_sparse");
 
     /**
      * {@code minecraft:test_wall}: {@link BedrockStates#WALL_EAST}, {@link BedrockStates#WALL_WEST}; 9 states.
-     *
-     * @since 1.0
+     * First in Bedrock 1.0.
      */
     public static final BedrockBlockType TEST_WALL = VanillaTypes.block("minecraft:test_wall");
 
     /**
      * {@code minecraft:unknown}, 1 state.
-     *
-     * @since 1.0
+     * First in Bedrock 1.0.
      */
     public static final BedrockBlockType UNKNOWN = VanillaTypes.block("minecraft:unknown");
 
     /**
      * {@code minecraft:old_door}.
-     *
-     * @since 1.0
+     * First in Bedrock 1.0.
      * @deprecated Bedrock renamed it to {@link #TEST_DOOR}
      */
-    @Deprecated(since = "2.1.0", forRemoval = true)
+    @Deprecated(since = "2.1.0")
     public static final BedrockBlockType OLD_DOOR = TEST_DOOR;
 
     private BedrockBlocks() {

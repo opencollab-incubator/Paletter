@@ -60,11 +60,34 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * build is checked against what that build was given, not against what today's model would generate.
  * <p>
  * Outcomes per variant: {@code pass}, {@code fail} (different NBT), {@code unbindable} (the generated API cannot express
- * the JSON), {@code not-generated} (it uses a component that is not generated). Only {@code pass} is accepted: BDS always
- * wins, so nothing is waived and there is no list of known exceptions. The table goes to
+ * the JSON), {@code not-generated} (it uses a component that is not generated), {@code missing} (BDS neither sent it nor
+ * logged an error for it). Only {@code pass} is accepted: BDS always wins, so nothing is waived and there is no list of
+ * known exceptions. The only variants not compared are those the content log has an ERROR line for (counted in the report),
+ * and every component of a capture needs at least one compared variant. The table goes to
  * {@code build/reports/component-conformance-<protocol>.md}.
  */
 class ComponentConformanceTest {
+    /**
+     * Components that no capture has an accepted variant of besides the control one: BDS rejects every other
+     * variant in the content log ("not present in the Schema" = its schema does not know the component at all,
+     * "deprecated" = the member is rejected as deprecated). Their encoding is not verified: gaps to close before the full
+     * recapture. A component that is not listed must have a compared variant, so a new fully rejected one fails.
+     */
+    private static final Map<String, String> KNOWN_GAPS = Map.ofEntries(
+        Map.entry("block:minecraft:block_light_absorption", "not present in the Schema"),
+        Map.entry("block:minecraft:block_light_emission", "not present in the Schema"),
+        Map.entry("block:minecraft:bone_visibility", "not present in the Schema"),
+        Map.entry("block:minecraft:breathability", "deprecated"),
+        Map.entry("block:minecraft:destroy_time", "not present in the Schema"),
+        Map.entry("block:minecraft:explosion_resistance", "not present in the Schema"),
+        Map.entry("block:minecraft:queued_ticking", "deprecated"),
+        Map.entry("block:minecraft:random_ticking", "deprecated"),
+        Map.entry("block:minecraft:unit_cube", "deprecated"),
+        Map.entry("item:minecraft:chargeable", "not present in the Schema"),
+        Map.entry("item:minecraft:render_offsets", "not present in the Schema"),
+        Map.entry("item:minecraft:seed", "not present in the Schema"),
+        Map.entry("item:minecraft:use_duration", "not present in the Schema"),
+        Map.entry("item:minecraft:weapon", "not present in the Schema"));
     static final Path ROOT = Path.of(System.getProperty("paletter.root", ".."));
     static final Path MODEL = ROOT.resolve("data/model");
 
@@ -80,11 +103,34 @@ class ComponentConformanceTest {
     }
 
     static int protocolOf(Path capture) {
+        return meta(capture).get("protocol").getAsInt();
+    }
+
+    static boolean isPreview(Path capture) {
+        JsonObject meta = meta(capture);
+        return meta.has("preview") && meta.get("preview").getAsBoolean();
+    }
+
+    private static JsonObject meta(Path capture) {
         try {
-            return JsonParser.parseString(Files.readString(capture.resolve("capture.json"))).getAsJsonObject().get("protocol").getAsInt();
+            return JsonParser.parseString(Files.readString(capture.resolve("capture.json"))).getAsJsonObject();
         } catch (IOException e) {
             throw new UncheckedIOException(e);
         }
+    }
+
+    /**
+     * The bundled version a capture is of: the newest bundled version, previews included, that is not above its protocol. A
+     * release capture must land on a release (not on a preview newer than it, nor on an older release because its own is
+     * not bundled), a preview capture on the preview of its own protocol.
+     */
+    static DataVersion versionOf(int protocol, boolean preview) {
+        DataVersion version = withPreviews().version(protocol);
+        boolean previewVersion = !Paletter.bundled().versions().contains(version);
+        assertEquals(preview, previewVersion, "the " + (preview ? "preview" : "release") + " capture of protocol " + protocol
+            + " resolves to the " + (previewVersion ? "preview " : "release ") + version);
+        assertTrue(!preview || version.protocolVersion() == protocol, "the preview " + protocol + " is not bundled, got " + version);
+        return version;
     }
 
     @TestFactory
@@ -131,38 +177,55 @@ class ComponentConformanceTest {
         }
         Set<String> errors = errorVariants(capture.resolve("content-log.txt"));
 
-        boolean preview = meta.has("preview") && meta.get("preview").getAsBoolean();
-        Paletter paletter = preview ? withPreviews() : Paletter.bundled();
-        DataVersion version = paletter.version(protocol);
-        assertTrue(!preview || version.protocolVersion() == protocol, "the preview " + protocol + " is not bundled, got " + version);
-        VanillaData data = paletter.vanillaData(version);
+        boolean preview = isPreview(capture);
+        DataVersion version = versionOf(protocol, preview);
+        VanillaData data = (preview ? withPreviews() : Paletter.bundled()).vanillaData(version);
 
         List<Outcome> outcomes = new ArrayList<>();
+        Set<String> components = new TreeSet<>();
+        Set<String> compared = new TreeSet<>();
+        int rejected = 0;
         for (JsonObject entry : recorded) {
             String identifier = entry.get("identifier").getAsString();
             boolean block = entry.get("kind").getAsString().equals("block");
-            NbtMap expected = block ? blocks.get(identifier) : items.get(identifier);
-            if (expected == null || errors.contains(identifier)) {
-                continue; // rejected by BDS: nothing to conform to
-            }
-            JsonElement json = entry.get("json");
             String component = entry.get("component").getAsString();
-            outcomes.add(check(identifier, component, block, generator.definitionOf(component, identifier, json), expected, data));
+            components.add(component);
+            if (errors.contains(identifier)) {
+                rejected++; // rejected by BDS: nothing to conform to
+                continue;
+            }
+            NbtMap expected = block ? blocks.get(identifier) : items.get(identifier);
+            if (expected == null) {
+                outcomes.add(new Outcome(identifier, component, "missing", "BDS neither sent it nor logged an error for it"));
+                continue;
+            }
+            outcomes.add(check(identifier, component, block, generator.definitionOf(component, identifier, entry.get("json")), expected, data));
+            // The control variant is accepted whatever the component is, so it says nothing of it; the base one sets the component
+            String role = entry.has("role") ? entry.get("role").getAsString() : "";
+            if (!role.equals("control")) {
+                compared.add(component);
+            }
         }
+        Set<String> uncompared = new TreeSet<>(components);
+        uncompared.removeAll(compared);
+        uncompared.removeAll(KNOWN_GAPS.keySet());
+        assertTrue(uncompared.isEmpty(), "protocol " + protocol + ": no variant of these components, other than the control one, was both "
+            + "accepted by BDS and found in its data, so their generated encoding is not verified: " + uncompared);
 
         // Report
         Map<String, int[]> perComponent = new TreeMap<>();
         Map<String, Integer> totals = new TreeMap<>();
         for (Outcome o : outcomes) {
-            int[] counts = perComponent.computeIfAbsent(o.component(), k -> new int[4]);
-            counts[List.of("pass", "fail", "unbindable", "not-generated").indexOf(o.status())]++;
+            int[] counts = perComponent.computeIfAbsent(o.component(), k -> new int[5]);
+            counts[List.of("pass", "fail", "unbindable", "not-generated", "missing").indexOf(o.status())]++;
             totals.merge(o.status(), 1, Integer::sum);
         }
         StringBuilder report = new StringBuilder("# Component conformance against " + capture.getParent().getFileName() + " (protocol " + protocol + ")\n\n");
-        report.append("Accepted variants: ").append(outcomes.size()).append(". ").append(totals).append("\n\n");
-        report.append("| component | pass | fail | unbindable | not generated |\n|---|---|---|---|---|\n");
+        report.append("Accepted variants: ").append(outcomes.size()).append(". ").append(totals).append(". Rejected by BDS (content log ERROR, not compared): ")
+            .append(rejected).append("\n\n");
+        report.append("| component | pass | fail | unbindable | not generated | missing |\n|---|---|---|---|---|---|\n");
         perComponent.forEach((c, n) -> report.append("| `").append(c).append("` | ").append(n[0]).append(" | ").append(n[1]).append(" | ")
-            .append(n[2]).append(" | ").append(n[3]).append(" |\n"));
+            .append(n[2]).append(" | ").append(n[3]).append(" | ").append(n[4]).append(" |\n"));
         report.append("\n## Not passing\n\n");
         for (Outcome o : outcomes) {
             if (!o.status().equals("pass")) {

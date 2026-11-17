@@ -36,13 +36,20 @@ public final class Main {
         }
     }
 
-    /** Generated files that the result no longer has: enums, and the preview classes earlier generators wrote. */
+    /**
+     * Generated files that the result no longer has: enums, and the preview classes earlier generators wrote. A file without
+     * the generator's header is hand-written and never stale.
+     */
     public static List<Path> stale(Path root, Map<String, String> files) throws IOException {
         List<Path> stale = new ArrayList<>();
         Path dir = root.resolve(ConstantsGenerator.STATE_DIR);
         if (Files.isDirectory(dir)) {
             try (Stream<Path> list = Files.list(dir)) {
-                list.filter(f -> !files.containsKey(ConstantsGenerator.STATE_DIR + "/" + f.getFileName())).forEach(stale::add);
+                for (Path file : list.filter(f -> !files.containsKey(ConstantsGenerator.STATE_DIR + "/" + f.getFileName())).toList()) {
+                    if (Files.readString(file, StandardCharsets.UTF_8).startsWith(JavaWriter.GENERATOR)) {
+                        stale.add(file);
+                    }
+                }
             }
         }
         for (String preview : List.of("BedrockPreviewBlocks.java", "BedrockPreviewItems.java")) {
@@ -54,7 +61,7 @@ public final class Main {
         return stale;
     }
 
-    private static void write(Path root, ConstantsGenerator.Result result) throws IOException {
+    static void write(Path root, ConstantsGenerator.Result result) throws IOException {
         for (Path file : stale(root, result.files())) {
             Files.delete(file);
         }
@@ -91,7 +98,7 @@ public final class Main {
         return out.toString();
     }
 
-    private static void check(Path root, ConstantsGenerator.Result result) throws IOException {
+    static void check(Path root, ConstantsGenerator.Result result) throws IOException {
         List<String> problems = new ArrayList<>();
         for (Path file : stale(root, result.files())) {
             problems.add("stale generated file " + file);

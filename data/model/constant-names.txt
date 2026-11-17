@@ -1,0 +1,15 @@
+# HAND-WRITTEN. Names of vanilla constants where the default name does not work or was chosen by hand.
+# Read by :tools:generateConstants; constants-history.json (generated) records the result. One line per name:
+#   blocks <identifier> <CONSTANT>        the constant of a block in BedrockBlocks
+#   items  <identifier> <CONSTANT>        the constant of an item in BedrockItems
+#   states <state name> <CONSTANT>        the constant of a block state in BedrockStates
+#   enums  <state name> <ClassName>       the enum of a string state's values; any state of the enum names it
+# The default is the UPPER_SNAKE of the identifier path (a state name, or the PascalCase of an enum's first state).
+# Generation fails if a default is not a valid or unique name, or if a line here matches nothing in the data.
+
+# facing_direction and minecraft:facing_direction are both FACING_DIRECTION by default
+states minecraft:facing_direction MINECRAFT_FACING_DIRECTION
+
+enums minecraft:block_face Direction
+enums redstone_east RedstoneConnection
+enums wall_connection_type_east WallConnectionType
