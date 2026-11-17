@@ -63,6 +63,11 @@ accepts renamed identifiers.
 Paletter decides which block an item carries (`Palette#blockOf`). A layer override wins, then the block to item relation
 captured from the Script API, then the block states in the creative inventory.
 
+Vanilla items keep the runtime ids of the bundled data in every palette: custom items and data driven block items get
+sequential ids after them. A custom block's plain item (`BlockItem.SIMPLE`) has the runtime id `255 - block_id`, as in
+BDS: negative, and it changes when a later layer adds blocks, because BDS numbers custom blocks by identifier in
+descending order. Read ids from the palette, never keep them across layers.
+
 ## Vanilla constants
 
 `org.geysermc.paletter.vanilla` has generated constants for the newest bundled release: `BedrockBlocks`, `BedrockStates`
@@ -88,10 +93,6 @@ false). A renamed identifier keeps its old constant as a deprecated alias. `@sin
 release that has the content without an experiment. `@Education` marks Education Edition content.
 
 ## Components
-
-A custom block's plain item (`BlockItem.SIMPLE`) has the runtime id `255 - block_id`, as in BDS: negative, and it changes
-when a later layer adds blocks, because BDS numbers custom blocks by identifier in descending order. Read ids from the
-palette, never keep them across layers. Data driven block items (`BlockItem.dataDriven`) get sequential ids.
 
 Custom items and blocks use Bedrock's add-on component model as generated Java: one record per component
 (`minecraft:durability` is `Durability`), nested records for objects, enums for documented enums, and builders that apply

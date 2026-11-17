@@ -253,8 +253,9 @@ public final class CustomBlock {
 
         /**
          * A data driven item that places the block, e.g. to give it its own icon. The palette adds the
-         * {@code minecraft:block_placer} component for the block (with {@code replace_block_item}, as BDS sends it) unless
-         * the components have one. The item has a sequential runtime id like any data driven item.
+         * {@code minecraft:block_placer} component for the block unless the components have one, with
+         * {@code replace_block_item}, which BDS needs for an item named like its block. The item has a sequential
+         * runtime id like any data driven item.
          */
         static @NonNull BlockItem dataDriven(@NonNull ItemComponent... components) {
             return new DataDriven(List.of(components));

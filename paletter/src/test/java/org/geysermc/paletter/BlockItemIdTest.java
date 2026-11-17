@@ -10,6 +10,7 @@ import org.junit.jupiter.api.Test;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -61,7 +62,7 @@ class BlockItemIdTest {
         Palette second = first.extend(layer("second", "ids:e", "ids:a"));
         assertPlainItemsFollowBlockIds(first);
         assertPlainItemsFollowBlockIds(second);
-        assertTrue(second.items().getDefinition("ids:b").getRuntimeId() != before);
+        assertNotEquals(before, second.items().getDefinition("ids:b").getRuntimeId());
         assertEquals(first.items().definitions().size() + 2, second.items().definitions().size());
         // The id the item had in the first palette names nothing, or another block's item
         RegisteredItem old = second.items().getDefinition(before);
