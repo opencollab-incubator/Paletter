@@ -6,7 +6,8 @@ import java.util.List;
 import java.util.UUID;
 
 /**
- * A vanilla recipe, as BDS sends it. Smelting recipes are {@link Shapeless} recipes of a furnace station. Net ids are not
+ * A vanilla recipe, as BDS sends it. Smelting recipes are {@link Shapeless} recipes of a furnace station ({@link RecipeStations}). The
+ * records check their own shape: the ingredients of a {@link Shaped} fill its grid, and a recipe has results. Net ids are not
  * part of it (they number the recipes a server sends, whatever it adds), and neither are the random UUIDs BDS gives
  * crafting recipes: only the {@link Multi} recipes have fixed ones.
  *
@@ -19,9 +20,9 @@ public sealed interface Recipe {
      * @param id the recipe's string id
      * @param width the grid's width
      * @param height the grid's height
-     * @param ingredients the slots
-     * @param results the items produced
-     * @param station the crafting station tag, e.g. {@code crafting_table}
+     * @param ingredients the slots, exactly {@code width * height}
+     * @param results the items produced, at least one
+     * @param station the crafting station tag, one of {@link RecipeStations}
      * @param priority the recipe's priority
      * @param assumeSymmetry whether the mirrored recipe matches too
      * @param unlock what unlocks it in the recipe book
@@ -32,6 +33,10 @@ public sealed interface Recipe {
         public Shaped {
             ingredients = List.copyOf(ingredients);
             results = List.copyOf(results);
+            if (width < 1 || height < 1 || width * height != ingredients.size()) {
+                throw new IllegalArgumentException("A " + width + "x" + height + " recipe needs " + width * height + " ingredients, not " + ingredients.size());
+            }
+            requireResults(results);
         }
     }
 
@@ -41,7 +46,7 @@ public sealed interface Recipe {
      * @param id the recipe's string id
      * @param ingredients the slots
      * @param results the items produced
-     * @param station the station tag, e.g. {@code crafting_table} or {@code furnace}
+     * @param station the station tag, one of {@link RecipeStations}
      * @param priority the recipe's priority
      * @param shulkerBox whether BDS sends it in the shulker box list of the recipes (the dyeing of shulker boxes and bundles)
      * @param unlock what unlocks it in the recipe book
@@ -52,6 +57,7 @@ public sealed interface Recipe {
         public Shapeless {
             ingredients = List.copyOf(ingredients);
             results = List.copyOf(results);
+            requireResults(results);
         }
     }
 
@@ -72,7 +78,7 @@ public sealed interface Recipe {
      * @param base the base slot
      * @param addition the addition slot
      * @param result the item produced
-     * @param station the station tag
+     * @param station the station tag, one of {@link RecipeStations}
      * @since 1.0.0
      */
     record SmithingTransform(@NonNull String id, @NonNull Ingredient template, @NonNull Ingredient base, @NonNull Ingredient addition,
@@ -86,10 +92,16 @@ public sealed interface Recipe {
      * @param template the template slot
      * @param base the base slot
      * @param addition the addition slot
-     * @param station the station tag
+     * @param station the station tag, one of {@link RecipeStations}
      * @since 1.0.0
      */
     record SmithingTrim(@NonNull String id, @NonNull Ingredient template, @NonNull Ingredient base, @NonNull Ingredient addition,
                         @NonNull String station) implements Recipe {
+    }
+
+    private static void requireResults(List<Result> results) {
+        if (results.isEmpty()) {
+            throw new IllegalArgumentException("A recipe needs at least one result");
+        }
     }
 }

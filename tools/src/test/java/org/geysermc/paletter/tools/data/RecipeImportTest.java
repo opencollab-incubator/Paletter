@@ -28,7 +28,7 @@ class RecipeImportTest {
     private static final String CAPTURE = """
         {"shaped":[{"id":"minecraft:stick","width":1,"height":2,"ingredients":[{"kind":"item_tag","tag":"minecraft:planks","count":1},{"kind":"invalid","count":0}],
           "results":[{"id":"minecraft:stick","aux":0,"count":4}],"uuid":"random","tag":"crafting_table","priority":3,"netId":9,
-          "assumeSymmetry":true,"unlock":{"context":"always_unlocked","ingredients":[{"kind":"complex_alias","name":"minecraft:log","count":1}]}}],
+          "assumeSymmetry":true,"unlock":{"context":"none","ingredients":[{"kind":"complex_alias","name":"minecraft:log","count":1}]}}],
          "shapeless":[{"id":"minecraft:torch","ingredients":[{"kind":"default","id":"minecraft:stick","aux":32767,"count":2}],
           "results":[{"id":"minecraft:torch","aux":0,"count":4}],"uuid":"random","tag":"furnace","priority":0,"netId":10,
           "unlock":{"context":"none","ingredients":[]}}],
@@ -47,13 +47,9 @@ class RecipeImportTest {
         return JsonParser.parseString(text).getAsJsonObject();
     }
 
-    private static NbtMap bundle(String experiments) {
-        return RecipeImport.bundle(new RecipeCapture.Recipes(json(CAPTURE), json(TRIM)), json(experiments), ITEMS);
-    }
-
     @Test
     void theBundleHoldsTheRecipesWithoutNetIdsAndRandomUuids() {
-        NbtMap bundle = bundle("{\"toggles\":{}}");
+        NbtMap bundle = bundleOf(CAPTURE);
         List<NbtMap> recipes = bundle.getList("recipes", NbtType.COMPOUND);
         assertEquals(List.of("shaped", "shapeless", "multi"), recipes.stream().map(recipe -> recipe.getString("type")).toList());
         NbtMap shaped = recipes.get(0);
@@ -69,27 +65,13 @@ class RecipeImportTest {
         }
         assertEquals("minecraft:splash_potion", bundle.getList("container_mixes", NbtType.COMPOUND).getFirst().getString("output"));
         assertEquals("quartz", bundle.getList("trim_materials", NbtType.COMPOUND).getFirst().getString("id"));
-        assertFalse(bundle.containsKey("experiments"));
-    }
-
-    @Test
-    void experimentMarksComeFromTheRecordsRecipes() {
-        NbtMap marks = bundle("""
-            {"toggles":{"a":{"status":"current","content":{"recipes":{"recipes added":["shaped minecraft:new"],
-              "mixes removed":["potion_mix minecraft:potion:4 + x"],"recipe unlock changes":["shaped minecraft:stick"]}}},
-              "b":{"status":"current","content":{}},"c":{"status":"retired"}}}""").getCompound("experiments");
-        assertEquals(List.of("a"), List.copyOf(marks.keySet()));
-        NbtMap a = marks.getCompound("a");
-        assertEquals(List.of("shaped minecraft:new"), a.getList("added", NbtType.STRING));
-        assertEquals(List.of("potion_mix minecraft:potion:4 + x"), a.getList("removed", NbtType.STRING));
-        assertEquals(List.of("shaped minecraft:stick: unlock"), a.getList("changed", NbtType.STRING));
     }
 
     @Test
     void anUnknownDescriptorFailsTheImport() {
         String molang = CAPTURE.replace("\"kind\":\"invalid\",\"count\":0", "\"kind\":\"molang\",\"expression\":\"q\",\"version\":1,\"count\":1");
         var capture = new RecipeCapture.Recipes(json(molang), json(TRIM));
-        assertThrows(IllegalStateException.class, () -> RecipeImport.bundle(capture, json("{\"toggles\":{}}"), ITEMS));
+        assertThrows(IllegalStateException.class, () -> RecipeImport.bundle(capture, ITEMS));
     }
 
     @Test
@@ -119,7 +101,7 @@ class RecipeImportTest {
           "uuid":"u","tag":"crafting_table","priority":0,"netId":3,"unlock":{"context":"none","ingredients":[]}}]}""";
 
     private static NbtMap bundleOf(String crafting) {
-        return RecipeImport.bundle(new RecipeCapture.Recipes(json(crafting), json(TRIM)), json("{\"toggles\":{}}"), ITEMS);
+        return RecipeImport.bundle(new RecipeCapture.Recipes(json(crafting), json(TRIM)), ITEMS);
     }
 
     @Test
@@ -155,13 +137,13 @@ class RecipeImportTest {
     }
 
     private static void assertImportFails(String capture, String trim) {
-        assertThrows(RuntimeException.class, () -> RecipeImport.bundle(new RecipeCapture.Recipes(json(capture), json(trim)), json("{\"toggles\":{}}"), ITEMS));
+        assertThrows(RuntimeException.class, () -> RecipeImport.bundle(new RecipeCapture.Recipes(json(capture), json(trim)), ITEMS));
     }
 
     @Test
     void whatTheLoaderCouldOnlyGuessFailsTheImport() throws IOException {
         assertImportFails(CAPTURE.replace("\"reagent\":{\"id\":\"minecraft:gunpowder\",\"aux\":0}", "\"reagent\":{\"id\":\"minecraft:gunpowder\",\"aux\":1}"), TRIM);
-        assertImportFails(CAPTURE.replace("always_unlocked", "sometimes"), TRIM);
+        assertImportFails(CAPTURE.replace("\"context\":\"none\"", "\"context\":\"sometimes\""), TRIM);
         assertImportFails(CAPTURE.replace("00000000-0000-0000-0000-000000000001", "not-a-uuid"), TRIM);
         assertImportFails(CAPTURE.replace("minecraft:splash_potion", "minecraft:not_an_item"), TRIM);
         assertImportFails(CAPTURE, TRIM.replace("minecraft:quartz", "minecraft:not_an_item"));
@@ -200,7 +182,8 @@ class RecipeImportTest {
     void checkReportsMissingStaleAndChangedFilesButNotOtherCompressionOfTheSameData(@TempDir Path directory) throws IOException {
         Path root = root(directory, true);
         Path file = root.resolve(RecipeImport.DIRECTORY).resolve("26.30.nbt");
-        assertEquals(List.of("26.30.nbt is missing or not what the captures give"), RecipeImport.check(root));
+        assertEquals(List.of("26.30.nbt is missing or not what the captures give", "RecipeStations.java is missing or not what the captures give"),
+            RecipeImport.check(root));
         RecipeImport.run(root);
         assertEquals(List.of(), RecipeImport.check(root));
 
@@ -223,5 +206,18 @@ class RecipeImportTest {
             nbt.writeTag(changed);
         }
         assertEquals(List.of("26.30.nbt is missing or not what the captures give"), RecipeImport.check(root));
+    }
+
+    @Test
+    void stationsBecomeSortedConstants() {
+        String source = RecipeImport.stationsSource(new java.util.TreeSet<>(List.of("crafting_table", "blast_furnace")));
+        assertTrue(source.startsWith("// Generated by "));
+        assertTrue(source.contains("public static final String BLAST_FURNACE = \"blast_furnace\";"));
+        assertTrue(source.indexOf("BLAST_FURNACE") < source.indexOf("CRAFTING_TABLE"));
+    }
+
+    @Test
+    void stationsAreThoseOfTheRecipesOfTheCaptures(@TempDir Path directory) throws IOException {
+        assertEquals(Set.of("crafting_table", "furnace"), RecipeImport.stations(root(directory, true)));
     }
 }

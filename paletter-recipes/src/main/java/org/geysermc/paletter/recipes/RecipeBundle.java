@@ -8,15 +8,12 @@ import org.cloudburstmc.protocol.bedrock.data.inventory.crafting.RecipeUnlocking
 import org.geysermc.paletter.data.DataVersion;
 import org.geysermc.paletter.vanilla.BedrockItemType;
 import org.geysermc.paletter.vanilla.BedrockItemVariant;
-import org.geysermc.paletter.vanilla.ItemKey;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
-import java.util.TreeMap;
 import java.util.UUID;
 
 /**
@@ -38,8 +35,7 @@ import java.util.UUID;
  *     unlock: {context: name of the UnlockingContext, ingredients: [ingredient]}
  * potion_mixes: [{input, reagent, output}]     each {id, aux}
  * container_mixes: [{input, reagent, output}]  each an item identifier
- * trim_patterns: [{id, item}], trim_materials: [{id, color, item}]
- * experiments: {toggle: {added: [string], removed: [string], changed: [string]}}      optional
+ * trim_patterns: [{id, item}], trim_materials: [{id, color, item}]      kept in the bundle, not read (no API for them)
  * </pre>
  */
 final class RecipeBundle {
@@ -70,21 +66,7 @@ final class RecipeBundle {
         for (NbtMap mix : root.getList("container_mixes", NbtType.COMPOUND)) {
             containerMixes.add(new ContainerMix(type(mix.getString("input")), type(mix.getString("reagent")), type(mix.getString("output"))));
         }
-        List<TrimPattern> patterns = new ArrayList<>();
-        for (NbtMap pattern : root.getList("trim_patterns", NbtType.COMPOUND)) {
-            patterns.add(new TrimPattern(pattern.getString("id"), type(pattern.getString("item"))));
-        }
-        List<TrimMaterial> materials = new ArrayList<>();
-        for (NbtMap material : root.getList("trim_materials", NbtType.COMPOUND)) {
-            materials.add(new TrimMaterial(material.getString("id"), material.getString("color"), type(material.getString("item"))));
-        }
-        Map<String, ExperimentRecipes> experiments = new TreeMap<>();
-        root.getCompound("experiments", NbtMap.EMPTY).forEach((toggle, value) -> {
-            NbtMap changes = (NbtMap) value;
-            experiments.put(toggle, new ExperimentRecipes(changes.getList("added", NbtType.STRING, List.of()),
-                changes.getList("removed", NbtType.STRING, List.of()), changes.getList("changed", NbtType.STRING, List.of())));
-        });
-        return new VanillaRecipes(version, recipes, potionMixes, containerMixes, patterns, materials, experiments);
+        return new VanillaRecipes(version, recipes, potionMixes, containerMixes);
     }
 
     private static Recipe recipe(NbtMap recipe) throws IOException {
@@ -119,9 +101,8 @@ final class RecipeBundle {
         int count = ingredient.getInt("count");
         if (ingredient.containsKey("item")) {
             int aux = ingredient.getInt("aux");
-            boolean any = aux == ANY_AUX;
-            ItemKey item = any ? type(ingredient.getString("item")) : BedrockItemVariant.fromIdentifier(ingredient.getString("item"), aux);
-            return new Ingredient.Item(item, any, count);
+            return aux == ANY_AUX ? new Ingredient.AnyVariant(type(ingredient.getString("item")), count)
+                : new Ingredient.Item(BedrockItemVariant.fromIdentifier(ingredient.getString("item"), aux), count);
         }
         if (ingredient.containsKey("tag")) {
             return new Ingredient.Tag(ingredient.getString("tag"), count);

@@ -15,6 +15,11 @@ dependencies {
     "apiModuleJars"(project(":paletter"))
 }
 
+// RecipeStations is generated (recipes-import), beside the hand-written sources
+sourceSets.main {
+    java.srcDir("src/generated/java")
+}
+
 java {
     withSourcesJar()
     withJavadocJar()

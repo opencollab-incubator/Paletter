@@ -1,7 +1,7 @@
 package org.geysermc.paletter.recipes;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
-import org.geysermc.paletter.vanilla.ItemKey;
+import org.geysermc.paletter.vanilla.BedrockItemVariant;
 
 /**
  * A brewing stand recipe that changes a potion.
@@ -11,5 +11,5 @@ import org.geysermc.paletter.vanilla.ItemKey;
  * @param output the item that comes out
  * @since 1.0.0
  */
-public record PotionMix(@NonNull ItemKey input, @NonNull ItemKey reagent, @NonNull ItemKey output) {
+public record PotionMix(@NonNull BedrockItemVariant input, @NonNull BedrockItemVariant reagent, @NonNull BedrockItemVariant output) {
 }

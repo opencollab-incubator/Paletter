@@ -1,6 +1,7 @@
 package org.geysermc.paletter.recipes;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
 import org.geysermc.paletter.data.DataVersion;
 import org.geysermc.paletter.data.PaletteDataSource;
 
@@ -12,10 +13,12 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * The vanilla recipes of one data version, as the Bedrock Dedicated Server sends them, bundled in the library. They are
- * generated from the BDS captures in the repository's {@code data/bds}, without experiments: what a toggle changes is in
- * {@link #experiments()}. Items are {@link org.geysermc.paletter.vanilla.ItemKey}s, so they resolve through a palette
- * ({@code Palette#resolve}) like any other.
+ * The vanilla recipes of one data version, as the Bedrock Dedicated Server sends them, bundled in the library: crafting,
+ * smelting and smithing recipes and the brewing stand mixes. They are generated from the BDS captures in the repository's
+ * {@code data/bds}, without experiments. Items are {@link org.geysermc.paletter.vanilla.ItemKey}s, so they resolve through
+ * a palette ({@code Palette#resolve}) like any other.
+ * <p>
+ * There is a bundle for every data version of {@code Paletter#versions()} of the bundled data, previews included.
  *
  * @since 1.0.0
  */
@@ -26,53 +29,68 @@ public final class VanillaRecipes {
     private final List<Recipe> recipes;
     private final List<PotionMix> potionMixes;
     private final List<ContainerMix> containerMixes;
-    private final List<TrimPattern> trimPatterns;
-    private final List<TrimMaterial> trimMaterials;
-    private final Map<String, ExperimentRecipes> experiments;
 
-    VanillaRecipes(DataVersion version, List<Recipe> recipes, List<PotionMix> potionMixes, List<ContainerMix> containerMixes,
-                   List<TrimPattern> trimPatterns, List<TrimMaterial> trimMaterials, Map<String, ExperimentRecipes> experiments) {
+    VanillaRecipes(DataVersion version, List<Recipe> recipes, List<PotionMix> potionMixes, List<ContainerMix> containerMixes) {
         this.version = version;
         this.recipes = List.copyOf(recipes);
         this.potionMixes = List.copyOf(potionMixes);
         this.containerMixes = List.copyOf(containerMixes);
-        this.trimPatterns = List.copyOf(trimPatterns);
-        this.trimMaterials = List.copyOf(trimMaterials);
-        this.experiments = Map.copyOf(experiments);
     }
 
     /**
-     * The recipes of the newest bundled data version that is not newer than the given one (a version serves every protocol
-     * from its first one up to the next version's, as for the palettes), or of the oldest bundled one if the given version is
-     * older than all of them. The result is cached.
+     * @return the data versions that have recipes: those of the bundled data, oldest first
+     */
+    public static @NonNull List<DataVersion> versions() {
+        return PaletteDataSource.bundled().versions().stream().filter(VanillaRecipes::hasBundle).toList();
+    }
+
+    /**
+     * The recipes of a data version, cached.
      *
-     * @param version a data version, e.g. of a palette ({@code Palette#version()})
-     * @return the recipes; {@link #version()} is the bundled version they belong to
+     * @param version a data version of {@link #versions()}
+     * @return its recipes
+     * @throws IllegalArgumentException if the version has no bundled recipes (use {@link #of(DataVersion, VanillaRecipes)} to get
+     *         a fallback instead)
      * @throws UncheckedIOException if the bundled file cannot be read (a damaged library jar)
      */
     public static @NonNull VanillaRecipes of(@NonNull DataVersion version) {
-        List<DataVersion> bundled = PaletteDataSource.bundled().versions();
-        DataVersion chosen = bundled.getFirst();
-        for (DataVersion candidate : bundled) {
-            if (candidate.compareTo(version) <= 0) {
-                chosen = candidate;
-            }
+        VanillaRecipes recipes = of(version, null);
+        if (recipes == null) {
+            throw new IllegalArgumentException("No bundled recipes for the data version " + version + "; the versions with recipes are " + versions());
         }
-        DataVersion served = chosen;
-        return CACHE.computeIfAbsent(served.name(), name -> {
-            try (InputStream stream = VanillaRecipes.class.getResourceAsStream("/paletter/recipes/" + name + ".nbt")) {
-                if (stream == null) {
-                    throw new IOException("The library has no recipes for the data version " + name);
-                }
-                return RecipeBundle.read(served, stream);
+        return recipes;
+    }
+
+    /**
+     * @param version a data version
+     * @param orElse what to return for a version without bundled recipes
+     * @return the recipes of the version, or {@code orElse}
+     * @throws UncheckedIOException if the bundled file cannot be read (a damaged library jar)
+     */
+    public static @Nullable VanillaRecipes of(@NonNull DataVersion version, @Nullable VanillaRecipes orElse) {
+        if (!hasBundle(version)) {
+            return orElse;
+        }
+        return CACHE.computeIfAbsent(version.name(), name -> {
+            try (InputStream stream = VanillaRecipes.class.getResourceAsStream(path(version))) {
+                return RecipeBundle.read(version, stream);
             } catch (IOException e) {
                 throw new UncheckedIOException(e);
             }
         });
     }
 
+    /** Whether the data source has the version (exactly) and the library has its recipes. */
+    private static boolean hasBundle(DataVersion version) {
+        return PaletteDataSource.bundled().versions().contains(version) && VanillaRecipes.class.getResource(path(version)) != null;
+    }
+
+    private static String path(DataVersion version) {
+        return "/paletter/recipes/" + version.name() + ".nbt";
+    }
+
     /**
-     * @return the bundled data version these recipes belong to
+     * @return the data version these recipes belong to
      */
     public @NonNull DataVersion version() {
         return version;
@@ -98,27 +116,5 @@ public final class VanillaRecipes {
      */
     public @NonNull List<ContainerMix> containerMixes() {
         return containerMixes;
-    }
-
-    /**
-     * @return the armor trim patterns
-     */
-    public @NonNull List<TrimPattern> trimPatterns() {
-        return trimPatterns;
-    }
-
-    /**
-     * @return the armor trim materials
-     */
-    public @NonNull List<TrimMaterial> trimMaterials() {
-        return trimMaterials;
-    }
-
-    /**
-     * @return per experiment toggle, what it does to the recipes; only toggles that touch recipes, and only for versions whose
-     *         captures recorded it
-     */
-    public @NonNull Map<String, ExperimentRecipes> experiments() {
-        return experiments;
     }
 }

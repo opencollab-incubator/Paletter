@@ -1,6 +1,8 @@
 package org.geysermc.paletter.tools.data;
 
 import com.google.gson.JsonObject;
+import org.cloudburstmc.nbt.NbtMap;
+import org.cloudburstmc.nbt.NbtType;
 import org.cloudburstmc.protocol.bedrock.data.inventory.crafting.RecipeUnlockingRequirement.UnlockingContext;
 import org.geysermc.paletter.Lookup;
 import org.geysermc.paletter.Palette;
@@ -9,6 +11,7 @@ import org.geysermc.paletter.data.DataVersion;
 import org.geysermc.paletter.data.PaletteDataSource;
 import org.geysermc.paletter.recipes.Ingredient;
 import org.geysermc.paletter.recipes.Recipe;
+import org.geysermc.paletter.recipes.RecipeStations;
 import org.geysermc.paletter.recipes.Result;
 import org.geysermc.paletter.recipes.VanillaRecipes;
 import org.geysermc.paletter.tools.client.RecipeCapture;
@@ -19,8 +22,10 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.EnumMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -42,6 +47,7 @@ class RecipeBundleLoadTest {
 
     @Test
     void everyVersionHasAsManyRecipesMixesAndTrimsAsItsCapture() throws IOException {
+        Map<String, NbtMap> bundles = RecipeImport.bundles(ROOT);
         for (DataVersion version : VERSIONS) {
             RecipeCapture.Recipes capture = capture(version);
             VanillaRecipes loaded = VanillaRecipes.of(version);
@@ -55,8 +61,9 @@ class RecipeBundleLoadTest {
             assertEquals(expected, loaded.recipes().size(), name);
             assertEquals(capture.count("potion_mix"), loaded.potionMixes().size(), name);
             assertEquals(capture.count("container_mix"), loaded.containerMixes().size(), name);
-            assertEquals(capture.trim().getAsJsonArray("patterns").size(), loaded.trimPatterns().size(), name);
-            assertEquals(capture.trim().getAsJsonArray("materials").size(), loaded.trimMaterials().size(), name);
+            NbtMap bundled = bundles.get(version.name());
+            assertEquals(capture.trim().getAsJsonArray("patterns").size(), bundled.getList("trim_patterns", NbtType.COMPOUND).size(), name);
+            assertEquals(capture.trim().getAsJsonArray("materials").size(), bundled.getList("trim_materials", NbtType.COMPOUND).size(), name);
             long shulker = 0;
             for (Recipe recipe : loaded.recipes()) {
                 shulker += recipe instanceof Recipe.Shapeless shapeless && shapeless.shulkerBox() ? 1 : 0;
@@ -87,6 +94,26 @@ class RecipeBundleLoadTest {
             }
             assertEquals(expected, loaded, version.toString());
             assertTrue(loaded.size() > 1, version.toString());
+        }
+    }
+
+    @Test
+    void everyStationIsAConstantOfRecipeStations() throws ReflectiveOperationException {
+        Set<String> constants = new HashSet<>();
+        for (var field : RecipeStations.class.getFields()) {
+            constants.add((String) field.get(null));
+        }
+        for (DataVersion version : VERSIONS) {
+            for (Recipe recipe : recipes(version)) {
+                String station = switch (recipe) {
+                    case Recipe.Shaped shaped -> shaped.station();
+                    case Recipe.Shapeless shapeless -> shapeless.station();
+                    case Recipe.SmithingTransform transform -> transform.station();
+                    case Recipe.SmithingTrim trim -> trim.station();
+                    case Recipe.Multi multi -> null;
+                };
+                assertTrue(station == null || constants.contains(station), station + " in " + version);
+            }
         }
     }
 
@@ -130,6 +157,8 @@ class RecipeBundleLoadTest {
             ingredients(version).forEach(ingredient -> {
                 if (ingredient instanceof Ingredient.Item item) {
                     keys.add(item.item());
+                } else if (ingredient instanceof Ingredient.AnyVariant any) {
+                    keys.add(any.type());
                 }
             });
             for (Recipe recipe : loaded.recipes()) {
@@ -143,8 +172,6 @@ class RecipeBundleLoadTest {
             }
             loaded.potionMixes().forEach(mix -> keys.addAll(List.of(mix.input(), mix.reagent(), mix.output())));
             loaded.containerMixes().forEach(mix -> keys.addAll(List.of(mix.input(), mix.reagent(), mix.output())));
-            loaded.trimPatterns().forEach(pattern -> keys.add(pattern.item()));
-            loaded.trimMaterials().forEach(material -> keys.add(material.item()));
             assertFalse(keys.isEmpty());
             for (ItemKey key : keys) {
                 String identifier = key.type().identifier();
