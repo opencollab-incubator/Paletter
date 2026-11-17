@@ -271,9 +271,10 @@ public final class ItemWire {
     }
 
     private static void enchantable(Enchantable c, WireContext ctx, WireNode out) {
+        out.put("item_properties.enchantable_slot", "sword");
+        out.put("minecraft:enchantable.slot", "sword");
         String v0 = c.slot();
-        out.put("item_properties.enchantable_slot", v0);
-        out.put("minecraft:enchantable.slot", v0);
+        ctx.drop(Enchantable.NAME, "slot has no known wire mapping");
         int v1 = c.value();
         out.put("item_properties.enchantable_value", Wire.toInt(v1));
         out.put("minecraft:enchantable.value", Wire.toByte(v1));

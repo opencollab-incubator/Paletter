@@ -18073,25 +18073,7 @@
             "[Item]  Error Parsing Item <id>:",
             "slot: expected string to match the \"none|all|g_armor|armor_head|armor_torso|armor_feet|armor_legs|sword|bow|spear|crossbow|melee_spear|g_tool|hoe|shears|flintsteel|shield|g_digging|axe|pickaxe|shovel|fishing_rod|carrot_stick|elytra|cosmetic_head\" regex"
           ],
-          "status": "no-evidence",
-          "rules": [
-            {
-              "kind": "identity",
-              "nbt": "string",
-              "tags": [
-                "assumed-by-name"
-              ],
-              "wire": "item_properties.enchantable_slot"
-            },
-            {
-              "kind": "identity",
-              "nbt": "string",
-              "tags": [
-                "assumed-by-name"
-              ],
-              "wire": "minecraft:enchantable.slot"
-            }
-          ]
+          "status": "no-evidence"
         },
         "value": {
           "accepted": 5,
@@ -18128,6 +18110,10 @@
             }
           ]
         }
+      },
+      "constants": {
+        "item_properties.enchantable_slot": "sword (string)",
+        "minecraft:enchantable.slot": "sword (string)"
       },
       "protocols": [
         1001,

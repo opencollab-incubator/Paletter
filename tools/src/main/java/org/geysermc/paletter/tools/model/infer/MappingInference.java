@@ -292,10 +292,7 @@ public final class MappingInference {
                 JsonObject result = analyze(capture, component);
                 if (result != null) {
                     resultsByCapture.get(i).put(component.id(), result);
-                    if (result.has("findings")) {
-                        result.getAsJsonArray("findings").forEach(f -> findings.putIfAbsent(f.getAsJsonObject().get("id").getAsString(),
-                            describe(f.getAsJsonObject(), formatBits.getOrDefault(component.id() + " " + leafOfFinding(f.getAsJsonObject()), 0L))));
-                    }
+                    collectFindings(findings, component.id(), result, formatBits);
                     results.add(result);
                     resultProtocols.add(dataProtocol(capture.protocol()));
                 }
@@ -310,6 +307,7 @@ public final class MappingInference {
         }
         mappings.add("envelope", envelopeWindows(captures, resultsByCapture));
         mappings.add("components", components);
+        coverage.wirePaths(org.geysermc.paletter.tools.data.WireShapes.uncoveredByBuild(root.resolve(org.geysermc.paletter.tools.Layout.BDS), mappings, model));
         coverage.findings(findings);
         findings.forEach((id, description) -> {
             if (description.contains(UNEXPLAINED)) {
@@ -320,6 +318,17 @@ public final class MappingInference {
     }
 
     private static final String UNEXPLAINED = "UNEXPLAINED";
+
+    /**
+     * Adds the findings of a capture's result. Captures come oldest first and the newest decides: an older window's finding
+     * must not hide a bit that only a newer build sets.
+     */
+    static void collectFindings(Map<String, String> findings, String componentId, JsonObject result, Map<String, Long> formatBits) {
+        if (result.has("findings")) {
+            result.getAsJsonArray("findings").forEach(f -> findings.put(f.getAsJsonObject().get("id").getAsString(),
+                describe(f.getAsJsonObject(), formatBits.getOrDefault(componentId + " " + leafOfFinding(f.getAsJsonObject()), 0L))));
+        }
+    }
 
     /**
      * What a finding says, and whether the format sweep explains its bits: a bit BDS sets or clears by the add-on's
@@ -465,15 +474,7 @@ public final class MappingInference {
 
     /** @return the window of the newest capture of a merged component */
     static JsonObject newest(JsonObject merged) {
-        JsonObject newest = merged;
-        int newestProtocol = merged.getAsJsonArray("protocols").get(0).getAsInt();
-        for (String key : merged.keySet()) {
-            if (key.matches("protocol\\d+") && Integer.parseInt(key.substring("protocol".length())) > newestProtocol) {
-                newestProtocol = Integer.parseInt(key.substring("protocol".length()));
-                newest = merged.getAsJsonObject(key);
-            }
-        }
-        return newest;
+        return org.geysermc.paletter.tools.model.MappingWindows.newest(merged);
     }
 
     /**
@@ -917,7 +918,7 @@ public final class MappingInference {
             fields.add(field.path(), f);
         }
         result.add("fields", fields);
-        JsonObject constants = constants(component, result, observations, control, base);
+        JsonObject constants = constants(result, observations, control);
         if (!constants.isEmpty()) {
             result.add("constants", constants);
         }
@@ -1113,7 +1114,7 @@ public final class MappingInference {
      * {@code hasJsonVersionBeforeValidation: 0b}, {@code damage_chance.max: 100} in every accepted variant). A compiler
      * writes them whenever it writes the component (list element leaves per element).
      */
-    private static JsonObject constants(Component component, JsonObject result, List<Obs> observations, Obs control, Obs base) {
+    private static JsonObject constants(JsonObject result, List<Obs> observations, Obs control) {
         JsonObject constants = new JsonObject();
         if (!result.has("wire") || !"sent".equals(result.get("status").getAsString())) {
             return constants;
@@ -1152,37 +1153,12 @@ public final class MappingInference {
                 }
             }
         }
-        String shortName = component.name().replaceFirst("^minecraft:", "");
         values.forEach((path, value) -> {
             if (varying.contains(path)) {
                 return;
             }
-            // A field whose variants could not move the leaf (one accepted value), named like the leaf and set to its
-            // value in the base: the leaf follows the field (enchantable slot -> slot and item_properties.enchantable_slot)
-            String last = path.substring(path.lastIndexOf('.') + 1);
-            if (base != null && base.accepted()) {
-                for (Map.Entry<String, JsonElement> f : result.getAsJsonObject("fields").entrySet()) {
-                    JsonObject field = f.getValue().getAsJsonObject();
-                    String status = field.get("status").getAsString();
-                    String token = AddonGenerator.tokens(f.getKey()).getLast();
-                    JsonElement json = f.getKey().contains("[") || f.getKey().contains("{") ? null : jsonAt(base.variant().json(), f.getKey());
-                    if ((status.equals("no-evidence") || status.equals("dropped")) && (last.equals(token) || last.equals(shortName + "_" + token))
-                        && json != null && json.isJsonPrimitive() && value.equals(json.getAsString() + value.substring(value.lastIndexOf(" (")))) {
-                        JsonObject rule = new JsonObject();
-                        rule.addProperty("kind", "identity");
-                        rule.addProperty("nbt", value.substring(value.lastIndexOf(" (") + 2, value.length() - 1));
-                        JsonArray tags = new JsonArray();
-                        tags.add("assumed-by-name");
-                        rule.add("tags", tags);
-                        rule.addProperty("wire", path);
-                        if (!field.has("rules")) {
-                            field.add("rules", new JsonArray());
-                        }
-                        field.getAsJsonArray("rules").add(rule);
-                        return;
-                    }
-                }
-            }
+            // A leaf no accepted variant moved is a constant, whatever its name: a field of the same name is no evidence
+            // that it follows the field (such a field stays no-evidence until BDS accepts a second value)
             constants.addProperty(path, value);
         });
         return constants;
@@ -1245,11 +1221,18 @@ public final class MappingInference {
             observations.add(new Pair(value, o.wire(), o.variant().label()));
         }
         Set<String> varying = new TreeSet<>();
+        // A leaf the linked field moves is left out of a linked variant by name, so a leaf both fields write is masked: the
+        // field's own effect on it is lost. Such a field is never "dropped" (server only); it stays open as linked
+        boolean maskedByLink = false;
         for (Obs o : accepted) {
             Set<String> byLinked = new TreeSet<>();
             o.variant().linked().forEach(other -> byLinked.addAll(moved.getOrDefault(other, Set.of())));
             for (Map.Entry<String, Leaf[]> d : Wire.diff(reference.wire(), o.wire()).entrySet()) {
-                if ((filler != null && d.getKey().startsWith(filler) && d.getValue()[1] == null) || byLinked.contains(Wire.generic(d.getKey()))) {
+                if (filler != null && d.getKey().startsWith(filler) && d.getValue()[1] == null) {
+                    continue;
+                }
+                if (byLinked.contains(Wire.generic(d.getKey()))) {
+                    maskedByLink = true;
                     continue;
                 }
                 varying.add(d.getKey());
@@ -1329,7 +1312,7 @@ public final class MappingInference {
             // Whichever way the field came to be dropped (no leaf follows it, or only its presence does): not server only if
             // BDS may have decided the wire by another field (an order, a value it cannot be used with). Where no leaf
             // follows it even in the variants linked with that field, it is server only after all
-            List<String> others = linkedTo(component, path, variants, varying.isEmpty());
+            List<String> others = linkedTo(component, path, variants, varying.isEmpty() && !maskedByLink);
             if (!others.isEmpty()) {
                 status = "linked";
                 JsonArray to = new JsonArray();

@@ -35,6 +35,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
@@ -144,6 +145,13 @@ class ComponentConformanceTest {
             () -> conformance(capture, capture.equals(captures.getLast()))));
     }
 
+    /**
+     * Components whose variants the generator makes differently from the newest capture, because the add-on changed after it
+     * (enchantable slot: the accepted strings are now read from BDS's regex message, so its values are all tried). Their
+     * definitions are compared again once the capture is redone; until then this must name them, and fails when they match.
+     */
+    private static final Set<String> RECAPTURE_PENDING = Set.of("item:minecraft:enchantable");
+
     private void conformance(Path capture, boolean newest) throws IOException {
         JsonObject meta = JsonParser.parseString(Files.readString(capture.resolve("capture.json"))).getAsJsonObject();
         int protocol = meta.get("protocol").getAsInt();
@@ -157,11 +165,18 @@ class ComponentConformanceTest {
         AddonGenerator generator = new AddonGenerator(Model.read(MODEL.resolve("components.json")), fixtures,
             meta.get("formatVersion").getAsString(), AddonGenerator.Shrunk.of(manifest));
         if (newest) {
-            assertEquals(recorded.length, generator.variants().size(), "the add-on generator no longer produces the captured variants");
-            for (int i = 0; i < recorded.length; i++) {
-                AddonGenerator.Variant v = generator.variants().get(i);
-                assertEquals(recorded[i].get("json"), v.component() == null || v.component() == JsonNull.INSTANCE ? null : v.component(),
+            List<JsonObject> captured = Arrays.stream(recorded).filter(r -> !RECAPTURE_PENDING.contains(r.get("component").getAsString())).toList();
+            List<AddonGenerator.Variant> generated = generator.variants().stream().filter(v -> !RECAPTURE_PENDING.contains(v.componentId())).toList();
+            assertEquals(captured.size(), generated.size(), "the add-on generator no longer produces the captured variants");
+            for (int i = 0; i < captured.size(); i++) {
+                AddonGenerator.Variant v = generated.get(i);
+                assertEquals(captured.get(i).get("json"), v.component() == null || v.component() == JsonNull.INSTANCE ? null : v.component(),
                     v.identifier() + " differs from the captured variant");
+            }
+            for (String pending : RECAPTURE_PENDING) {
+                assertTrue(Arrays.stream(recorded).filter(r -> r.get("component").getAsString().equals(pending)).count()
+                    != generator.variants().stream().filter(v -> v.componentId().equals(pending)).count(),
+                    pending + " is generated as captured again: remove it from RECAPTURE_PENDING");
             }
         }
 

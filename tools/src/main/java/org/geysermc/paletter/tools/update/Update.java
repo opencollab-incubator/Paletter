@@ -1951,6 +1951,12 @@ public final class Update {
             if (!linked.isEmpty()) {
                 report.action("capture again: the add-on generator links them from bds-feedback.json", "Fields", linked.stream().map(field -> "- " + field).toList());
             }
+            List<String> gaps = BuildTable.gaps(root);
+            report.check(gaps.isEmpty() ? Report.Status.PASS : Report.Status.DIFF, "Builds within a data version", gaps.isEmpty()
+                ? "no build sent other data than the build chosen for its data version" : gaps.size() + " builds need a data version of their own");
+            if (!gaps.isEmpty()) {
+                report.action("import a data version for each build (decided by hand)", "Builds", gaps.stream().map(gap -> "- " + gap).toList());
+            }
             report.check(Report.Status.INFO, "Component model", "mappings inferred; run :tools:generateComponentApi and the conformance suite (:tools:test) for the new protocol");
         } else {
             report.check(Report.Status.INFO, "Component model", "mappings not inferred (" + (captureOnly != null ? "capture only" : against != null ? "history check" : "verify only") + ")");

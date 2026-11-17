@@ -8,6 +8,7 @@ import org.geysermc.paletter.tools.model.Model;
 import org.geysermc.paletter.tools.model.addon.AddonGenerator;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -16,6 +17,7 @@ import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 /**
  * {@code data/model/bds-feedback.json}: what the BDS content log says about the JSON schema, per component and
@@ -135,11 +137,16 @@ public final class Feedback {
             fact = "constraint " + message.replaceAll("for block: .*", "").trim();
         } else if (message.contains("expects one of the following strings")) {
             fact = "values " + message.replaceAll(".*following strings: ", "").replaceAll("\\.? ?Found:.*", "").trim();
+        } else if ((range = ALTERNATIVES.matcher(message)).find()) {
+            // expected string to match the "none|all|sword" regex: a plain alternation lists the accepted strings
+            fact = "values " + Arrays.stream(range.group(1).split("\\|")).map(v -> "'" + v + "'").collect(Collectors.joining(", "));
         }
         if (fact != null) {
             facts.computeIfAbsent(component, k -> new TreeMap<>()).computeIfAbsent(path, k -> new TreeSet<>()).add(fact);
         }
     }
+
+    private static final Pattern ALTERNATIVES = Pattern.compile("expected string to match the \"\\^?(\\w+(?:\\|\\w+)+)\\$?\" regex");
 
     /**
      * The fields BDS ties to the field a variant varies, where a line of the variant quotes the value another field has in

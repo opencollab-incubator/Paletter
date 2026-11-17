@@ -348,13 +348,7 @@ final class BehaviourSource {
         if (component == null) {
             throw new GenerationException(where + ": mappings.json has no component " + id);
         }
-        List<JsonObject> windows = new ArrayList<>();
-        windows.add(component);
-        for (Map.Entry<String, JsonElement> e : component.entrySet()) {
-            if (e.getKey().startsWith("protocol") && e.getValue().isJsonObject()) {
-                windows.add(e.getValue().getAsJsonObject());
-            }
-        }
+        List<JsonObject> windows = org.geysermc.paletter.tools.model.MappingWindows.of(component);
         JsonObject found = null;
         for (JsonObject window : windows) {
             List<JsonObject> rules = new ArrayList<>();

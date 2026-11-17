@@ -5,6 +5,9 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import org.junit.jupiter.api.Test;
 
+import java.util.Map;
+import java.util.TreeMap;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -55,5 +58,23 @@ class ResidualBitsTest {
     void stringAndNegativeTablesAreNotIntegralBits() {
         assertTrue(MappingInference.findings("c", result(field("c.x", "string", "{\"a\": \"4\", \"b\": \"6\"}"))).isEmpty());
         assertTrue(MappingInference.findings("c", result(field("c.x", "int", "{\"a\": \"-4\", \"b\": \"-2\"}"))).isEmpty());
+    }
+
+    /** The newest capture decides: a bit only a newer build sets must not hide behind an older, explained finding. */
+    @Test
+    void aBitOnlyTheNewerCaptureSetsIsNotHiddenByTheOlderFinding() {
+        // older build: bit 2 is in every value, and the format sweep explains it
+        JsonObject older = result(field("m.materials.*.packed_bools", "byte", "{\"false\": \"4\", \"true\": \"5\"}"));
+        older.add("findings", MappingInference.findings("block:m", older));
+        // newer build: bit 3 as well, which the sweep does not explain
+        JsonObject newer = result(field("m.materials.*.packed_bools", "byte", "{\"false\": \"12\", \"true\": \"13\"}"));
+        newer.add("findings", MappingInference.findings("block:m", newer));
+        Map<String, Long> formatBits = Map.of("block:m packed_bools", 4L);
+        Map<String, String> findings = new TreeMap<>();
+        MappingInference.collectFindings(findings, "block:m", older, formatBits);
+        assertTrue(!findings.values().iterator().next().contains("UNEXPLAINED"), findings.toString());
+        MappingInference.collectFindings(findings, "block:m", newer, formatBits);
+        assertEquals(1, findings.size());
+        assertTrue(findings.values().iterator().next().contains("UNEXPLAINED"), "the newer capture's bit 3 is unexplained: " + findings);
     }
 }

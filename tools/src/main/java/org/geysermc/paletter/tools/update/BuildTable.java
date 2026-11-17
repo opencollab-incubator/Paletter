@@ -148,7 +148,7 @@ public final class BuildTable {
     }
 
     /** {@link #gaps(List)} of the repository. */
-    static List<String> gaps(Path root) throws IOException {
+    public static List<String> gaps(Path root) throws IOException {
         return gaps(rows(root));
     }
 

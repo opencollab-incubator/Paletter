@@ -60,7 +60,7 @@ together and capture again); `rejected`: every variant setting it was rejected;
 | constant | 208 |
 | empty-list | 18 |
 | empty-map | 9 |
-| identity | 234 |
+| identity | 232 |
 | linear | 15 |
 | ordered-set | 2 |
 | structure | 29 |
@@ -68,7 +68,6 @@ together and capture again); `rejected`: every variant setting it was rejected;
 
 | tag | rules |
 |---|---|
-| assumed-by-name | 2 |
 | enum->int | 14 |
 | explained-by-child-fields | 29 |
 | flattened | 18 |
@@ -357,7 +356,129 @@ Statements that change behaviour or shape at a format version:
 - 1.26.50 `block:trait:minecraft:multi_block`: For horizontal directions the experiment is required for `format_version` less than 1.26.50.
 - current `item:definition`: Item definition page minecraft_item.md (Items Documentation - minecraft:item): identical to minecraft_item_v1_26_0.md
 
+## Wire paths no rule covers
+
+In the add-on capture of each build, with the reason the model has no rule for them. A new path here is a change to review.
+
+### 1.26.36.1
+
+block definition data around the components: written by BlockCompiler, checked by the conformance suite (3):
+
+- `block:block_definition blockTags`
+- `block:block_definition blockTags[]`
+- `block:block_definition vanilla_block_data.block_id`
+
+the creator docs do not describe the component, so the model has no fields for it (3):
+
+- `block:minecraft:leashable`
+- `block:minecraft:leashable offset`
+- `block:minecraft:leashable offset[]`
+
+### 1.26.63.1
+
+block definition data around the components: written by BlockCompiler, checked by the conformance suite (3):
+
+- `block:block_definition blockTags`
+- `block:block_definition blockTags[]`
+- `block:block_definition vanilla_block_data.block_id`
+
+the creator docs do not describe the component, so the model has no fields for it (5):
+
+- `block:minecraft:leashable`
+- `block:minecraft:leashable offset`
+- `block:minecraft:leashable offset[]`
+- `block:minecraft:sound`
+- `block:minecraft:sound sound`
+
+### 1.26.70.24
+
+block definition data around the components: written by BlockCompiler, checked by the conformance suite (3):
+
+- `block:block_definition blockTags`
+- `block:block_definition blockTags[]`
+- `block:block_definition vanilla_block_data.block_id`
+
+the creator docs do not describe the component, so the model has no fields for it (5):
+
+- `block:minecraft:leashable`
+- `block:minecraft:leashable offset`
+- `block:minecraft:leashable offset[]`
+- `block:minecraft:sound`
+- `block:minecraft:sound sound`
+
 ## Content log lines without a variant
+
+BDS names no variant in these; a variant they belong to is counted as accepted. A new line is a change to review.
+
+### 1.26.36.1
+
+- `ERROR [Components] MaterialInstances can't mix and match opaque and transparent materials.`
+- `ERROR [Item] ItemDescriptor missing key to reconstruct from (expression tags, item name or item tag)`
+- `ERROR [Json] Damage Source not found: paletter_b`
+- `ERROR [Molang] minecraft:paletter_a | Error: unknown token: minecraft:paletter_a`
+- `ERROR [Molang] minecraft:paletter_a | unrecognized token: minecraft:paletter_a`
+- `ERROR [Molang] minecraft:paletter_unknown | Error: unknown token: minecraft:paletter_unknown`
+- `ERROR [Molang] minecraft:paletter_unknown | unrecognized token: minecraft:paletter_unknown`
+- `ERROR [Molang] paletter_a | Error: unknown token: paletter_a`
+- `ERROR [Molang] paletter_a | unrecognized token: paletter_a`
+- `ERROR [Molang] paletter_b | Error: unknown token: paletter_b`
+- `ERROR [Molang] paletter_b | unrecognized token: paletter_b`
+- `ERROR [VoxelShape] Voxel shape with name "paletter_a" doesn't exist in the registry. Defaulting to minecraft:empty for identifier.`
+- `ERROR [VoxelShape] Voxel shape with name "paletter_b" doesn't exist in the registry. Defaulting to minecraft:empty for identifier.`
+- `WARN [Components] All MaterialInstances must use the same render_method for a given block. This may create rendering issues otherwise.`
+
+### 1.26.45.1
+
+- `ERROR [Components] MaterialInstances can't mix and match opaque and transparent materials.`
+- `ERROR [Item] ItemDescriptor missing key to reconstruct from (expression tags, item name or item tag)`
+- `ERROR [Json] Damage Source not found: paletter_b`
+- `ERROR [Molang] minecraft:paletter_a | Error: unknown token: minecraft:paletter_a`
+- `ERROR [Molang] minecraft:paletter_a | unrecognized token: minecraft:paletter_a`
+- `ERROR [Molang] minecraft:paletter_unknown | Error: unknown token: minecraft:paletter_unknown`
+- `ERROR [Molang] minecraft:paletter_unknown | unrecognized token: minecraft:paletter_unknown`
+- `ERROR [Molang] paletter_a | Error: unknown token: paletter_a`
+- `ERROR [Molang] paletter_a | unrecognized token: paletter_a`
+- `ERROR [Molang] paletter_b | Error: unknown token: paletter_b`
+- `ERROR [Molang] paletter_b | unrecognized token: paletter_b`
+- `ERROR [VoxelShape] Voxel shape with name "paletter_a" doesn't exist in the registry. Defaulting to minecraft:empty for identifier.`
+- `ERROR [VoxelShape] Voxel shape with name "paletter_b" doesn't exist in the registry. Defaulting to minecraft:empty for identifier.`
+- `WARN [Components] All MaterialInstances must use the same render_method for a given block. This may create rendering issues otherwise.`
+
+### 1.26.52.3
+
+- `ERROR [Components] MaterialInstances can't mix and match opaque and transparent materials.`
+- `ERROR [Item] ItemDescriptor missing key to reconstruct from (expression tags, item name or item tag)`
+- `ERROR [Json] Damage Source not found: paletter_b`
+- `ERROR [Molang] minecraft:paletter_a | Error: unknown token: minecraft:paletter_a`
+- `ERROR [Molang] minecraft:paletter_a | unrecognized token: minecraft:paletter_a`
+- `ERROR [Molang] minecraft:paletter_unknown | Error: unknown token: minecraft:paletter_unknown`
+- `ERROR [Molang] minecraft:paletter_unknown | unrecognized token: minecraft:paletter_unknown`
+- `ERROR [Molang] paletter_a | Error: unknown token: paletter_a`
+- `ERROR [Molang] paletter_a | unrecognized token: paletter_a`
+- `ERROR [Molang] paletter_b | Error: unknown token: paletter_b`
+- `ERROR [Molang] paletter_b | unrecognized token: paletter_b`
+- `ERROR [VoxelShape] Voxel shape with name "paletter_a" doesn't exist in the registry. Defaulting to minecraft:empty for identifier.`
+- `ERROR [VoxelShape] Voxel shape with name "paletter_b" doesn't exist in the registry. Defaulting to minecraft:empty for identifier.`
+- `WARN [Components] All MaterialInstances must use the same render_method for a given block. This may create rendering issues otherwise.`
+
+### 1.26.63.1
+
+- `ERROR [Components] MaterialInstances can't mix and match opaque and transparent materials.`
+- `ERROR [Item] ItemDescriptor missing key to reconstruct from (expression tags, item name or item tag)`
+- `ERROR [Json] Damage Source not found: paletter_b`
+- `ERROR [Molang] minecraft:paletter_a | Error: unknown token: minecraft:paletter_a`
+- `ERROR [Molang] minecraft:paletter_a | unrecognized token: minecraft:paletter_a`
+- `ERROR [Molang] minecraft:paletter_unknown | Error: unknown token: minecraft:paletter_unknown`
+- `ERROR [Molang] minecraft:paletter_unknown | unrecognized token: minecraft:paletter_unknown`
+- `ERROR [Molang] paletter_a | Error: unknown token: paletter_a`
+- `ERROR [Molang] paletter_a | unrecognized token: paletter_a`
+- `ERROR [Molang] paletter_b | Error: unknown token: paletter_b`
+- `ERROR [Molang] paletter_b | unrecognized token: paletter_b`
+- `ERROR [VoxelShape] Voxel shape with name "paletter_a" doesn't exist in the registry. Defaulting to minecraft:empty for identifier.`
+- `ERROR [VoxelShape] Voxel shape with name "paletter_b" doesn't exist in the registry. Defaulting to minecraft:empty for identifier.`
+- `WARN [Components] All MaterialInstances must use the same render_method for a given block. This may create rendering issues otherwise.`
+
+### 1.26.70.24
 
 - `ERROR [Components] MaterialInstances can't mix and match opaque and transparent materials.`
 - `ERROR [Item] ItemDescriptor missing key to reconstruct from (expression tags, item name or item tag)`

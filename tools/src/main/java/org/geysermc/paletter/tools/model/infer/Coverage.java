@@ -251,11 +251,43 @@ public final class Coverage {
             md.append("- ").append(note.version()).append(" `").append(note.component()).append("`: ")
                 .append(note.text().length() > 220 ? note.text().substring(0, 220) + "..." : note.text()).append('\n');
         }
-        if (!captures.isEmpty() && !captures.getLast().unattributed().isEmpty()) {
+        wirePathsSection(md);
+        // Every capture's, all of them: a variant such a line belongs to counts as accepted, so a new line (a new BDS
+        // message format) must show as a diff of this file, which check-mappings compares
+        if (captures.stream().anyMatch(c -> !c.unattributed().isEmpty())) {
             md.append("\n## Content log lines without a variant\n\n");
-            captures.getLast().unattributed().stream().distinct().limit(20).forEach(l -> md.append("- `").append(l.replace("`", "'")).append("`\n"));
+            md.append("BDS names no variant in these; a variant they belong to is counted as accepted. A new line is a change to review.\n");
+            for (MappingInference.Capture capture : captures) {
+                if (!capture.unattributed().isEmpty()) {
+                    md.append("\n### ").append(capture.bdsVersion()).append("\n\n");
+                    capture.unattributed().stream().distinct().forEach(l -> md.append("- `").append(l.replace("`", "'")).append("`\n"));
+                }
+            }
         }
         return md.toString();
+    }
+
+    private Map<String, Map<String, List<String>>> wirePaths = Map.of();
+
+    /** The captured wire paths no rule covers, per build and reason ({@link org.geysermc.paletter.tools.data.WireShapes#uncoveredByBuild}). */
+    void wirePaths(Map<String, Map<String, List<String>>> wirePaths) {
+        this.wirePaths = wirePaths;
+    }
+
+    /** Listed, so that a new wire path (of an undocumented component too) shows as a diff of this file instead of passing silently. */
+    private void wirePathsSection(StringBuilder md) {
+        if (wirePaths.isEmpty()) {
+            return;
+        }
+        md.append("\n## Wire paths no rule covers\n\n");
+        md.append("In the add-on capture of each build, with the reason the model has no rule for them. A new path here is a change to review.\n");
+        wirePaths.forEach((build, reasons) -> {
+            md.append("\n### ").append(build).append("\n");
+            reasons.forEach((reason, paths) -> {
+                md.append("\n").append(reason).append(" (").append(paths.size()).append("):\n\n");
+                paths.forEach(path -> md.append("- `").append(path).append("`\n"));
+            });
+        });
     }
 
     /** What the inference could not explain: bits that are set whatever the JSON says. */

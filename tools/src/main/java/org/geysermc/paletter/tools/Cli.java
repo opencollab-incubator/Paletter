@@ -776,14 +776,18 @@ public final class Cli implements Runnable {
             }
             List<String> unexplained = new ArrayList<>(inference.unexplainedBits());
             unexplained.addAll(inference.linkedFields());
+            org.geysermc.paletter.tools.update.BuildTable.gaps(root()).forEach(gap -> unexplained.add("build " + gap
+                + ": it sent other data than the build chosen for its data version, which needs a data version of its own"));
             Path model = root().resolve(Layout.MODEL);
             JsonObject mappings = JsonParser.parseString(Files.readString(model.resolve("mappings.json"))).getAsJsonObject();
             Model components = Fixtures.read(model).apply(Model.read(model.resolve("components.json")));
-            Path capture = Update.latestAddonCapture(root().resolve(Layout.BDS));
-            Map<String, List<String>> uncovered = WireShapes.classify(WireShapes.ofCapture(capture).uncovered(mappings), mappings, components);
-            uncovered.forEach((reason, paths) -> System.out.println(reason + ":\n  " + String.join("\n  ", paths)));
-            uncovered.getOrDefault(WireShapes.UNCLASSIFIED, List.of()).forEach(path -> unexplained.add("wire path " + path + " of "
-                + root().relativize(capture) + " is not in mappings.json and no reason of WireShapes.classify fits"));
+            // every build's add-on capture; the paths with a reason are listed in coverage.md, which is compared above, so a
+            // new one there is a reviewed change
+            WireShapes.uncoveredByBuild(root().resolve(Layout.BDS), mappings, components).forEach((build, uncovered) -> {
+                uncovered.forEach((reason, paths) -> System.out.println(build + ", " + reason + ":\n  " + String.join("\n  ", paths)));
+                uncovered.getOrDefault(WireShapes.UNCLASSIFIED, List.of()).forEach(path -> unexplained.add("wire path " + path + " of "
+                    + build + " is not in mappings.json and no reason of WireShapes.classify fits"));
+            });
             unexplained.forEach(line -> System.err.println("UNEXPLAINED: " + line));
             return ok && unexplained.isEmpty() ? 0 : 1;
         }

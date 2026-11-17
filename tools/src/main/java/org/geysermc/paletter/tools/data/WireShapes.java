@@ -192,6 +192,31 @@ public final class WireShapes {
         return uncovered;
     }
 
+    /**
+     * {@link #uncovered} and {@link #classify} for the add-on capture of every build ({@code <bdsData>/<build>/addon}), oldest
+     * build first: a new wire path of an older build is as much a gap as one of the newest.
+     *
+     * @return build -> reason -> paths, only builds with an add-on capture and reasons with paths
+     */
+    public static Map<String, Map<String, List<String>>> uncoveredByBuild(Path bdsData, JsonObject mappings, Model model) throws IOException {
+        Map<String, Map<String, List<String>>> out = new java.util.LinkedHashMap<>();
+        if (!Files.isDirectory(bdsData)) {
+            return out;
+        }
+        List<Path> builds;
+        try (java.util.stream.Stream<Path> files = Files.list(bdsData)) {
+            builds = files.filter(f -> Files.exists(f.resolve("addon/custom_item_registry.nbt")))
+                .sorted(java.util.Comparator.comparing(f -> f.getFileName().toString(), org.geysermc.paletter.tools.Versions.ORDER)).toList();
+        }
+        for (Path build : builds) {
+            Map<String, List<String>> classified = classify(ofCapture(build.resolve("addon")).uncovered(mappings), mappings, model);
+            if (!classified.isEmpty()) {
+                out.put(build.getFileName().toString(), classified);
+            }
+        }
+        return out;
+    }
+
     /** What {@link #classify} calls an uncovered path no rule explains: the report lists these for a human to look at. */
     public static final String UNCLASSIFIED = "unclassified";
 
@@ -238,7 +263,8 @@ public final class WireShapes {
         if (mapping.has("status") && mapping.get("status").getAsString().equals("untestable")) {
             return true;
         }
-        return mapping.entrySet().stream().anyMatch(e -> e.getKey().matches("protocol\\d+") && untestable(e.getValue().getAsJsonObject()));
+        return org.geysermc.paletter.tools.model.MappingWindows.of(mapping).stream()
+            .anyMatch(window -> window != mapping && untestable(window));
     }
 
     private static boolean covered(String path, Set<String> wire) {
