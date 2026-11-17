@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import org.cloudburstmc.nbt.NbtMap;
 import org.geysermc.paletter.internal.data.PaletteDataCodec;
 import org.geysermc.paletter.internal.data.VanillaData;
@@ -127,6 +128,39 @@ public final class EducationProbe {
 
     private static Result capture(Path root, Map<String, String> options, BdsDistribution distribution, Path server, Path out,
                                   int port, int timeout) throws Exception {
+        Capture.Reachable reachable = createWorld(server, port, out, timeout);
+        if (reachable == null || reachable.protocol() == 0) {
+            throw new IOException("BDS answers no ping or LAN discovery with a protocol; pass the version to education-capture");
+        }
+        int protocol = reachable.protocol();
+        VanillaData reference = reference(root, options.get("reference"), protocol);
+        System.out.println("BDS " + distribution.version() + ", protocol " + protocol + ", hashes resolved against " + reference.version().name());
+        Result result = compare(server, port, protocol, reference, reachable.netherNet(), distribution.version(), out, timeout);
+        Path target = BdsDistribution.inside(root.resolve(Layout.BDS), distribution.version()).resolve("education.json");
+        Files.createDirectories(target.getParent());
+        Files.writeString(target, render(result, distribution.version(), protocol), StandardCharsets.UTF_8);
+        System.out.println("Wrote " + root.relativize(target));
+        return result;
+    }
+
+    /** The content of {@code education.json}. */
+    public static String render(Result result, String bdsVersion, int protocol) {
+        return GSON.toJson(result.toJson(bdsVersion, protocol)) + "\n";
+    }
+
+    /** Whether two {@code education.json} files list the same identifiers: the build and protocol they were taken on are left out. */
+    public static boolean sameContent(String a, String b) {
+        JsonObject first = JsonParser.parseString(a).getAsJsonObject();
+        JsonObject second = JsonParser.parseString(b).getAsJsonObject();
+        for (JsonObject json : new JsonObject[] {first, second}) {
+            json.remove("bdsVersion");
+            json.remove("protocol");
+        }
+        return first.equals(second);
+    }
+
+    /** The server properties of the education world; the world is created on {@code port}. */
+    private static Map<String, String> properties(int port) {
         Map<String, String> properties = new LinkedHashMap<>();
         properties.put("level-name", WORLD);
         properties.put("level-type", "FLAT");
@@ -140,25 +174,38 @@ public final class EducationProbe {
         properties.put("allow-list", "false");
         properties.put("view-distance", "4");
         properties.put("block-network-ids-are-hashes", "true");
-        BdsServer.configure(server, properties);
+        return properties;
+    }
+
+    /**
+     * Creates the education world on {@code server} with one start of BDS.
+     *
+     * @return how the started server was reached, null if it answered neither a RakNet ping nor LAN discovery
+     */
+    public static Capture.Reachable createWorld(Path server, int port, Path out, int timeout) throws Exception {
+        BdsServer.configure(server, properties(port));
         BdsDistribution.deleteRecursively(server.resolve("worlds").resolve(WORLD));
         Files.createDirectories(server.resolve("worlds").resolve(WORLD));
-        Path levelDat = server.resolve("worlds").resolve(WORLD).resolve("level.dat");
-        InetSocketAddress address = new InetSocketAddress("127.0.0.1", port);
-
-        int protocol;
         try (BdsServer bds = new BdsServer(server, false)) {
             bds.start(out.resolve("bds-create.log"));
             bds.awaitStarted(timeout);
-            Capture.Reachable reachable = Capture.reachable(bds, address, 20);
-            if (reachable == null || reachable.netherNet() || reachable.protocol() == 0) {
-                throw new IOException("BDS answers no RakNet ping with a protocol; education-capture needs a RakNet server");
-            }
-            protocol = reachable.protocol();
+            return Capture.reachable(bds, new InetSocketAddress("127.0.0.1", port), 20);
         }
-        VanillaData reference = reference(root, options.get("reference"), protocol);
-        System.out.println("BDS " + distribution.version() + ", protocol " + protocol + ", hashes resolved against " + reference.version().name());
+    }
 
+    /**
+     * Captures the world made by {@link #createWorld} with education off and on (two starts of BDS) and keeps what only the
+     * second has.
+     *
+     * @param reference the palette the block hashes are resolved against
+     * @param netherNet whether the server is reached over NetherNet instead of RakNet
+     * @throws IOException if the two captures are the same
+     */
+    public static Result compare(Path server, int port, int protocol, VanillaData reference, boolean netherNet, String bdsVersion,
+                                 Path out, int timeout) throws Exception {
+        Map<String, String> properties = properties(port);
+        Path levelDat = server.resolve("worlds").resolve(WORLD).resolve("level.dat");
+        InetSocketAddress address = new InetSocketAddress("127.0.0.1", port);
         // Education off is the world as created; both captures go through the same level.dat round trip
         Map<Boolean, Path> captures = new LinkedHashMap<>();
         properties.put("enable-lan-visibility", "false");
@@ -169,7 +216,7 @@ public final class EducationProbe {
             try (BdsServer bds = new BdsServer(server, false)) {
                 bds.start(out.resolve("bds-" + (education ? "on" : "off") + ".log"));
                 bds.awaitStarted(timeout);
-                Capture.capture(address, protocol, reference, distribution.version(), dir, null, 90);
+                Capture.capture(address, protocol, reference, bdsVersion, dir, null, 90, netherNet);
             }
             if (LevelDat.education(levelDat) != education) {
                 throw new IOException("BDS did not keep educationFeaturesEnabled=" + education + " in level.dat");
@@ -178,13 +225,9 @@ public final class EducationProbe {
         }
         Result result = diff(CapturedData.read(captures.get(false)), CapturedData.read(captures.get(true)));
         if (result.isEmpty()) {
-            throw new IOException("The Education Edition world has no content the other lacks: BDS " + distribution.version()
+            throw new IOException("The Education Edition world has no content the other lacks: BDS " + bdsVersion
                 + " ignored educationFeaturesEnabled, or the capture is incomplete");
         }
-        Path target = BdsDistribution.inside(root.resolve(Layout.BDS), distribution.version()).resolve("education.json");
-        Files.createDirectories(target.getParent());
-        Files.writeString(target, GSON.toJson(result.toJson(distribution.version(), protocol)) + "\n", StandardCharsets.UTF_8);
-        System.out.println("Wrote " + root.relativize(target));
         return result;
     }
 

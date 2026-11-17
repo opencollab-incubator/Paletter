@@ -33,6 +33,8 @@ public final class BehaviourProbe {
     static final String DIRECTORY = "behaviour-probe";
     static final String CAPTURE = "capture.json";
     static final String LOG = "probe.log";
+    /** The directory of the add-on in the {@code behavior_packs} of the server it ran on. */
+    public static final String PACK = "paletter_probe";
 
     /** A body's horizontal speed falls by this factor times the friction of what it stands on each tick. */
     static final double MOB_DRAG = 0.91;
@@ -56,7 +58,7 @@ public final class BehaviourProbe {
      */
     public static void run(Path root, String bdsVersion, boolean preview, Path server, Path cache, int port, int timeout, Path log)
         throws IOException, InterruptedException {
-        BdsRunner runner = new BdsRunner(root.resolve(Layout.PROBE_ADDON), "PROBE", "paletter_probe");
+        BdsRunner runner = new BdsRunner(root.resolve(Layout.PROBE_ADDON), "PROBE", PACK);
         if (server != null) {
             runner.run(server, log, timeout, port, false);
         } else {
@@ -66,19 +68,47 @@ public final class BehaviourProbe {
     }
 
     /**
+     * What a run of the probe kept for its BDS build.
+     *
+     * @param version the BDS version the probe reported
+     * @param build its Build ID
+     * @param log the content of {@link #LOG}
+     * @param capture the content of {@link #CAPTURE}
+     */
+    public record Measured(String version, String build, String log, String capture) {
+    }
+
+    /** Measures a console log of the probe. */
+    public static Measured fromConsole(Path root, Path console) throws IOException {
+        ProbeLog log = ProbeLog.parse(Files.readAllLines(console, StandardCharsets.UTF_8));
+        JsonObject plain = JsonParser.parseString(Files.readString(root.resolve(Layout.PROBE_ADDON).resolve("blocks/plain.json"))).getAsJsonObject();
+        JsonObject capture = measure(log, plain.get("format_version").getAsString());
+        return new Measured(log.version(), log.build(), String.join("\n", log.extract()) + "\n", Json.pretty(capture));
+    }
+
+    /** Whether two {@link #CAPTURE} files say the same about BDS: the build they were taken on is left out. */
+    public static boolean sameCapture(String a, String b) {
+        return withoutBuild(a).equals(withoutBuild(b));
+    }
+
+    private static JsonObject withoutBuild(String capture) {
+        JsonObject json = JsonParser.parseString(capture).getAsJsonObject();
+        json.remove("bds");
+        return json;
+    }
+
+    /**
      * Measures a console log of the probe and writes the capture next to the other captures of its BDS build.
      *
      * @return the directory written
      */
     public static Path write(Path root, Path console) throws IOException {
-        ProbeLog log = ProbeLog.parse(Files.readAllLines(console, StandardCharsets.UTF_8));
-        JsonObject plain = JsonParser.parseString(Files.readString(root.resolve(Layout.PROBE_ADDON).resolve("blocks/plain.json"))).getAsJsonObject();
-        JsonObject capture = measure(log, plain.get("format_version").getAsString());
-        Path directory = root.resolve("data/bds").resolve(log.version()).resolve(DIRECTORY);
+        Measured measured = fromConsole(root, console);
+        Path directory = root.resolve("data/bds").resolve(measured.version()).resolve(DIRECTORY);
         Files.createDirectories(directory);
-        Files.writeString(directory.resolve(LOG), String.join("\n", log.extract()) + "\n");
-        Files.writeString(directory.resolve(CAPTURE), Json.pretty(capture));
-        System.out.println("Wrote " + directory.resolve(CAPTURE) + " from BDS " + log.version() + " (Build ID " + log.build() + ")");
+        Files.writeString(directory.resolve(LOG), measured.log());
+        Files.writeString(directory.resolve(CAPTURE), measured.capture());
+        System.out.println("Wrote " + directory.resolve(CAPTURE) + " from BDS " + measured.version() + " (Build ID " + measured.build() + ")");
         return directory;
     }
 

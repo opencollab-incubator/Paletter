@@ -238,6 +238,9 @@ public final class Update {
             } else {
                 ctx.report.check(Report.Status.SKIP, "Voxel shapes", "no capture of this build");
             }
+
+            // 4. Behaviour dump, behaviour probe and Education Edition capture, on this server (before the spec capture removes it)
+            new BehaviourStage(ctx).behaviour(distribution, server, work, runs);
         } finally {
             // With a capture, the spec capture runs on this server too (reuse-server) and removes it
             if (!ctx.keepServer && runs.protocol == null) {
@@ -249,7 +252,7 @@ public final class Update {
             }
         }
 
-        // 4. Compare and update
+        // 5. Compare and update
         scriptApi.scriptApi(distribution, dump, runs);
         new InventoryStage(ctx).inventory(cache, distribution);
         Staging staging = new Staging(ctx, work.resolve("staging"));

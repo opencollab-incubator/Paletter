@@ -610,6 +610,12 @@ writes `behaviour.nbt` and `data/behaviour/REPORT.md` from:
 - CloudburstMC/Data (Apache-2.0) and AllayMC/Allay (MIT), read from their git history and matched to versions by block
   state hashes. These are third-party and labelled as such.
 
+`update` (and `update --capture-only`, the capture half of a full recapture) runs `behaviour-dump`, `behaviour-probe` and
+`education-capture` on the server of its other captures, six more starts of BDS, and stages their files like the other
+captures: only when they differ from the committed ones of the build. A step that fails is a skipped row and a TODO, never
+a failed run. The recapture's assemble job then runs `behaviour import` on the staged captures and on CloudburstMC/Data and
+AllayMC/Allay at the commits pinned in `.github/workflows/recapture.yml` (the ones `data/behaviour/REPORT.md` lists).
+
 The report lists the ranking, which source decides each key in each version, disputes and post-processed values. The
 same sources at the same commits give the same bytes. Keys that only have third-party sources are the `NATIVE:` ones in
 the report; [native-capture.md](native-capture.md) is the plan for capturing them from BDS.
