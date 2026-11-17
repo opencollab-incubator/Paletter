@@ -66,7 +66,7 @@ import java.util.concurrent.Callable;
     Cli.CaptureCommand.class, Cli.Experiments.class, Cli.CompareCommand.class,
     Cli.Docs.class, Cli.Addon.class, Cli.Infer.class, Cli.CheckMappings.class,
     Cli.Constants.class, Cli.Components.class, Cli.InspectCommand.class, Cli.BehaviourCommand.class, Cli.BehaviourProbeCommand.class, Cli.BehaviourDumpCommand.class, Cli.ScriptDumpCommand.class,
-    Cli.VoxelShapesCommand.class, Cli.RecipesCaptureCommand.class, Cli.RecipesDiffCommand.class
+    Cli.VoxelShapesCommand.class, Cli.RecipesCaptureCommand.class, Cli.RecipesDiffCommand.class, Cli.RecipesImportCommand.class
 })
 public final class Cli implements Runnable {
     /** The docs commit the committed model was generated from (MicrosoftDocs/minecraft-creator main, 2026-11-06). */
@@ -546,6 +546,25 @@ public final class Cli implements Runnable {
             diff.print(System.out);
             System.out.println(diff.identical() ? "IDENTICAL" : "DIFFERENT");
             return 0;
+        }
+    }
+
+    @Command(name = "recipes-import", description = "The recipe captures of data/bds -> the bundled recipes/<version>.nbt of paletter-recipes (--check: fail if they differ).")
+    static final class RecipesImportCommand extends Rooted implements Callable<Integer> {
+        @Option(names = "--check", description = "Write nothing; fail if the bundled files are not what the captures give") boolean check;
+
+        @Override
+        public Integer call() throws Exception {
+            if (!check) {
+                org.geysermc.paletter.tools.data.RecipeImport.run(root());
+                return 0;
+            }
+            List<String> problems = org.geysermc.paletter.tools.data.RecipeImport.check(root());
+            problems.forEach(System.err::println);
+            if (!problems.isEmpty()) {
+                System.err.println("Run `recipes-import`");
+            }
+            return problems.isEmpty() ? 0 : 1;
         }
     }
 
