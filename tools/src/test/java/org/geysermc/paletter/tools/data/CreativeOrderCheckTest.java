@@ -25,16 +25,17 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
- * Paletter's default creative ordering against what BDS 1.26.63.1 sent for three add-ons (see docs/wire-notes.md):
- * the capture add-on (66 blocks, 84 items, with experiments), the creative order probe (every kind of menu category
- * placement) and the large probe (700 blocks, so BDS's block map has more than 512 buckets).
+ * Paletter's default creative ordering against what BDS 1.26.63.1 sent (see docs/wire-notes.md): the creative inventory
+ * of the creative order probe (every kind of menu category placement) and of the large probe (700 blocks, so BDS's block
+ * map has more than 512 buckets), and the block ids and block map order of the spec add-on, which BDS iterates for the start
+ * game block properties and for the block pass alike.
  */
 class CreativeOrderCheckTest {
     private static final Path CAPTURES = Path.of("../data/bds/1.26.63.1");
     private static final Path DATA = Path.of("../paletter/src/main/resources/paletter");
 
     @ParameterizedTest
-    @CsvSource({"addon, 149", "creative-probe, 30", "creative-large, 700"})
+    @CsvSource({"creative-probe, 30", "creative-large, 700"})
     void bdsOrderingMatchesTheCapture(String capture, int customStacks) throws Exception {
         Path directory = CAPTURES.resolve(capture);
         CreativeOrderCheck.Result result = CreativeOrderCheck.check(2225, DATA,
@@ -42,6 +43,25 @@ class CreativeOrderCheckTest {
             directory.resolve("custom_block_properties.nbt"));
         assertTrue(result.matches(), String.join("\n", result.differences()));
         assertTrue(result.customStacks() >= customStacks, "only " + result.customStacks() + " custom stacks compared");
+    }
+
+    /** Every spec capture of a build: BDS numbers the custom blocks and puts them in the block pass in Paletter's order. */
+    @ParameterizedTest
+    @CsvSource({"1.26.63.1, 2225", "1.26.70.24, 2259"})
+    void blockMapOrderMatchesTheSpecCaptures(String build, int protocol) throws Exception {
+        Path directory = Path.of("../data/bds").resolve(build).resolve("spec");
+        CreativeOrderCheck.Result result = CreativeOrderCheck.blockOrder(protocol, DATA, directory.resolve("custom_item_registry.nbt"),
+            directory.resolve("custom_block_properties.nbt"));
+        assertTrue(result.matches(), String.join("\n", result.differences()));
+        assertTrue(result.customStacks() >= 1000, "only " + result.customStacks() + " custom blocks compared");
+    }
+
+    @Test
+    void blockMapOrderOfAnUnbundledProtocolIsSkipped() throws Exception {
+        Path directory = CAPTURES.resolve("spec");
+        CreativeOrderCheck.Result result = CreativeOrderCheck.blockOrder(2226, DATA, directory.resolve("custom_item_registry.nbt"),
+            directory.resolve("custom_block_properties.nbt"));
+        assertNotNull(result.skipped());
     }
 
     @Test
@@ -69,7 +89,7 @@ class CreativeOrderCheckTest {
 
     @Test
     void unbundledProtocolIsSkipped() throws Exception {
-        Path directory = CAPTURES.resolve("addon");
+        Path directory = CAPTURES.resolve("creative-probe");
         CreativeOrderCheck.Result result = CreativeOrderCheck.check(2226, DATA,
             directory.resolve("creative_items.json.gz"), directory.resolve("custom_item_registry.nbt"),
             directory.resolve("custom_block_properties.nbt"));

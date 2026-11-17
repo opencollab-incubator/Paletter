@@ -4,8 +4,8 @@ What Paletter learned about BDS from captures, beyond what the component model r
 observations are from BDS 1.26.63.1 on Windows (protocol 2225), captured with the headless client (`capture`).
 
 Per-component wire shapes are not repeated here: `data/model/mappings.json` is their record and the conformance suite
-holds the encoders to it. Raw captures are under `data/bds/<build>/`, for example `addon/custom_item_registry.snbt`
-and `addon/custom_block_properties.snbt` (typed SNBT in wire order).
+holds the encoders to it. Raw captures are under `data/bds/<build>/`, for example `spec/custom_item_registry.nbt`
+and `spec/custom_block_properties.nbt` (gzipped NBT in wire order).
 
 ## What is on the wire
 
@@ -99,7 +99,7 @@ Paletter's choices, all **unverified on a client** (no client test exists; vanil
 - Custom items in the `minecraft` namespace, and creative groups without a namespace, are rejected.
 - To be captured: whether a block whose item is replaced shows in the creative inventory when the block's `menu_category` and
   the replacing item's differ. `paletter:replaced_hidden_block` has block category `none` and item category `items`;
-  `paletter:replaced_shown_block` has block category `construction` and item category `none` (the `addon` capture).
+  `paletter:replaced_shown_block` has block category `construction` and item category `none` (the `creative-probe` capture: the creative order probe).
 
 ## Creative inventory order
 
@@ -132,7 +132,7 @@ the start game block property list and the block pass iterate it. Paletter repro
 
 Custom block ids follow descending file name order of the block files, not identifier order: in the
 `creative-probe-file-order` capture, files `b14.json` to `b01.json` got ids 10000 to 10013. With one file per block named
-after the block, which is the usual layout, that equals descending identifier order. Paletter has no files, so it numbers
+after the block, which is the usual layout, that equals descending identifier order, compared in upper case: the file listing of Windows BDS sorts names in upper case, so `_` sorts after letters (`b_x` is numbered before `block_x`; every spec capture of 1.26.36.1 to 1.26.70.24 follows this, `CreativeOrderCheckTest.blockMapOrderMatchesTheSpecCapture`). Paletter has no files, so it numbers
 custom blocks by identifier, descending, whatever order the layers register them in. For add-ons whose file names do not
 sort like their identifiers, block items will be ordered differently than on BDS. Item order is unaffected.
 
@@ -145,11 +145,28 @@ order, groups matched by name in any category.
 probably differs; it has not been captured. Each layer runs both passes over its own content after earlier layers, so
 content split across layers is ordered layer by layer.
 
-**Evidence.** The `addon`, `creative-probe`, `creative-large` (700 blocks, 40 items, random identifiers; the map grows
+**Evidence.** The `creative-probe`, `creative-large` (700 blocks, 40 items, random identifiers; the map grows
 to 1024 buckets) and `creative-probe-file-order` captures in `data/bds/1.26.63.1/`. Repeated server starts give identical
 packets. `CreativeOrderCheckTest` compiles each capture's custom content through Paletter and compares the whole creative
 inventory with the captured packet, and `update` repeats the check on every new build. To probe by hand:
 `./gradlew :tools:run --args="creative-probe --addon <dir> --out <dir> --starts 2"`.
+
+## Recipe unlock
+
+**To be captured.** What BDS sends as a recipe's `unlock` depends on the recipe's `format_version`: an add-on recipe with
+`unlock: AlwaysUnlocked` at format 1.20.10 was sent as `NONE` (a one-off probe on 1.26.63.1). Nothing else is known. The
+creative order probe pack carries one shapeless recipe per unlock form and per recipe format (`UnlockProbe`), so that
+`update` records the answer for every build: `data/bds/<build>/recipe-probe/crafting_data.json.gz` has the recipes whose
+identifier starts with `paletter:unlock_`, `unlock` raw as BDS sent them, and the content log of the creative order probe
+world says which BDS rejected. The identifier of a recipe is `paletter:unlock_<form>_<format with _ for .>`.
+
+- **Forms** (from BDS): no `unlock` key (the control); a list of `{"item"}`, of `{"item", "data"}` and of `{"tag"}`, as BDS's own
+  vanilla recipes have them; the object `{"context": ...}` with `None` and `PlayerInWater` (vanilla recipes) and `AlwaysUnlocked`
+  and `PlayerHasManyItems` (strings in the BDS binary of 1.26.63.1).
+- **Formats** (from BDS): 1.12, 1.14, 1.16, 1.19, 1.20.10, 1.20.30, 1.20.60, 1.21.30, 1.21.40, 1.21.50, 1.21.60, 1.21.80, 1.21.90,
+  1.21.100, 1.21.110, 1.26.0, 1.26.30 and 1.26.50: every `format_version` the vanilla packs of BDS 1.26.63.1 give shapeless and
+  shaped recipes. A build that does not know one rejects the recipe.
+- **Not probed:** shaped recipes (same field on the wire), furnace and smithing recipes.
 
 ## Join sequence
 

@@ -359,53 +359,37 @@ Statements that change behaviour or shape at a format version:
 
 ## Wire paths no rule covers
 
-In the add-on capture of each build, with the reason the model has no rule for them. A new path here is a change to review.
+In the spec capture of each build, with the reason the model has no rule for them. A new path here is a change to review.
 
 ### 1.26.36.1
 
-block definition data around the components: written by BlockCompiler, checked by the conformance suite (3):
+block definition data around the components: written by BlockCompiler, checked by the conformance suite (1):
 
-- `block:block_definition blockTags`
-- `block:block_definition blockTags[]`
 - `block:block_definition vanilla_block_data.block_id`
 
-the creator docs do not describe the component, so the model has no fields for it (3):
+### 1.26.45.1
 
-- `block:minecraft:leashable`
-- `block:minecraft:leashable offset`
-- `block:minecraft:leashable offset[]`
+block definition data around the components: written by BlockCompiler, checked by the conformance suite (1):
+
+- `block:block_definition vanilla_block_data.block_id`
+
+### 1.26.52.3
+
+block definition data around the components: written by BlockCompiler, checked by the conformance suite (1):
+
+- `block:block_definition vanilla_block_data.block_id`
 
 ### 1.26.63.1
 
-block definition data around the components: written by BlockCompiler, checked by the conformance suite (3):
+block definition data around the components: written by BlockCompiler, checked by the conformance suite (1):
 
-- `block:block_definition blockTags`
-- `block:block_definition blockTags[]`
 - `block:block_definition vanilla_block_data.block_id`
-
-the creator docs do not describe the component, so the model has no fields for it (5):
-
-- `block:minecraft:leashable`
-- `block:minecraft:leashable offset`
-- `block:minecraft:leashable offset[]`
-- `block:minecraft:sound`
-- `block:minecraft:sound sound`
 
 ### 1.26.70.24
 
-block definition data around the components: written by BlockCompiler, checked by the conformance suite (3):
+block definition data around the components: written by BlockCompiler, checked by the conformance suite (1):
 
-- `block:block_definition blockTags`
-- `block:block_definition blockTags[]`
 - `block:block_definition vanilla_block_data.block_id`
-
-the creator docs do not describe the component, so the model has no fields for it (5):
-
-- `block:minecraft:leashable`
-- `block:minecraft:leashable offset`
-- `block:minecraft:leashable offset[]`
-- `block:minecraft:sound`
-- `block:minecraft:sound sound`
 
 ## Content log lines without a variant
 

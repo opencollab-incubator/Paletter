@@ -21,12 +21,11 @@ import java.util.Map;
 import java.util.stream.Stream;
 
 /**
- * The server runs: the vanilla, experiment, add-on and creative order worlds, each captured over the network (hashed and
- * sequential block ids).
+ * The server runs: the vanilla, experiment and creative order probe worlds, each captured over the network (hashed and
+ * sequential block ids). The add-on world of the spec capture is {@link SpecCapture}'s.
  */
 final class CaptureStage {
     private static final String VANILLA_WORLD = "paletter_vanilla";
-    private static final String ADDON_WORLD = "paletter_addon";
     private static final String CAPTURE_PACK = "paletter_capture";
     private static final String CREATIVE_WORLD = "paletter_creative";
 
@@ -102,7 +101,6 @@ final class CaptureStage {
         if (network != null) {
             ctx.report.check(Report.Status.FAIL, "Network capture", "BDS answers neither a RakNet ping nor NetherNet signaling on port " + ctx.port);
             ctx.report.evidence("Network lines of the server", List.of("```", String.join("\n", network), "```"));
-            runs.addonContentLog = addonWorldContentLog(server, work, properties, runs);
             return;
         }
         properties.put("block-network-ids-are-hashes", "false");
@@ -123,32 +121,10 @@ final class CaptureStage {
             new ExperimentStage(ctx, this).experiments(server, work, address, dump, runs, properties);
         } catch (Exception e) {
             ctx.report.fail("Experiments", e);
-            ctx.report.action("check the toggles: the add-on world used " + runs.experiments.current + " (" + runs.experiments.source + ")");
+            ctx.report.action("check the toggles: the spec add-on world uses " + runs.experiments.current + " (" + runs.experiments.source + ")");
         }
 
-        // Add-on world: created once, experiments switched on in level.dat, then captured
-        runs.addonContentLog = addonWorldContentLog(server, work, properties, runs);
-        properties.put("level-name", ADDON_WORLD);
-        properties.put("block-network-ids-are-hashes", "true");
-        BdsServer.configure(server, properties);
-        try (BdsServer bds = new BdsServer(server, false)) {
-            bds.start(work.resolve("bds-addon.log"));
-            bds.awaitStarted(ctx.timeout);
-            Capture.Summary summary = capture(address, runs, work.resolve("addon"), work.resolve("addon/custom"), "add-on capture");
-            runs.addon = work.resolve("addon");
-            runs.customCapture = work.resolve("addon/custom");
-            hashCheck("add-on", summary);
-            appliedCheck(runs.experiments, "add-on world", runs.experiments.current, summary);
-        }
-        properties.put("block-network-ids-are-hashes", "false");
-        BdsServer.configure(server, properties);
-        try (BdsServer bds = new BdsServer(server, false)) {
-            bds.start(work.resolve("bds-addon-sequential.log"));
-            bds.awaitStarted(ctx.timeout);
-            capture(address, runs, work.resolve("addon-sequential"), null, "add-on capture (sequential ids)");
-        }
-
-        // Creative order probe: every kind of menu category placement, no experiments
+        // Creative order probe: every kind of menu category placement, no experiments; hashed and sequential ids
         Path creativePack = work.resolve("creative-pack");
         FixedAddons.writeCreative(creativePack, runs.formatVersion);
         freshWorld(server, CREATIVE_WORLD, creativePack);
@@ -158,15 +134,24 @@ final class CaptureStage {
         try (BdsServer bds = new BdsServer(server, false)) {
             bds.start(work.resolve("bds-creative.log"));
             bds.awaitStarted(ctx.timeout);
-            capture(address, runs, work.resolve("creative"), work.resolve("creative/custom"), "creative order probe capture");
+            Capture.Summary summary = capture(address, runs, work.resolve("creative"), work.resolve("creative/custom"),
+                "creative order probe capture");
             runs.creative = work.resolve("creative");
+            hashCheck("creative order probe", summary);
+        }
+        properties.put("block-network-ids-are-hashes", "false");
+        BdsServer.configure(server, properties);
+        try (BdsServer bds = new BdsServer(server, false)) {
+            bds.start(work.resolve("bds-creative-sequential.log"));
+            bds.awaitStarted(ctx.timeout);
+            capture(address, runs, work.resolve("creative-sequential"), null, "creative order probe capture (sequential ids)");
         }
 
         OrderingCheck ordering = new OrderingCheck();
         ordering.bundledOrder("reference palette " + runs.reference.version().name(), runs.reference.blockStates());
         ordering.sequential("vanilla", work.resolve("vanilla"), work.resolve("vanilla-sequential"));
-        ordering.sequential("add-on", work.resolve("addon"), work.resolve("addon-sequential"));
-        ordering.customBlockIds("add-on", work.resolve("addon"));
+        ordering.sequential("creative order probe", work.resolve("creative"), work.resolve("creative-sequential"));
+        ordering.customBlockIds("creative order probe", work.resolve("creative"));
         ordering.passes.forEach(pass -> ctx.report.check(Report.Status.PASS, "Block numbering", pass));
         // A history check numbers against the bundled data version of its window, which may lack states of this build and
         // of the build it is checked against alike: the states themselves are compared through the Script API dump
@@ -187,30 +172,6 @@ final class CaptureStage {
         }
     }
 
-    /**
-     * Creates the add-on world (packs installed, experiments on) and returns the content log of a start with the
-     * experiments enabled: the definitions BDS rejects. Leaves the server stopped.
-     */
-    private List<String> addonWorldContentLog(Path server, Path work, Map<String, String> properties, Runs runs) throws Exception {
-        Path addon = work.resolve("capture-pack");
-        FixedAddons.writeCapture(addon, runs.formatVersion);
-        freshWorld(server, ADDON_WORLD, addon);
-        properties.put("level-name", ADDON_WORLD);
-        properties.put("block-network-ids-are-hashes", "true");
-        BdsServer.configure(server, properties);
-        try (BdsServer bds = new BdsServer(server, false)) {
-            bds.start(work.resolve("bds-addon-create.log"));
-            bds.awaitStarted(ctx.timeout);
-        }
-        Capture.enableExperiments(server.resolve("worlds").resolve(ADDON_WORLD).resolve("level.dat"), runs.experiments.current);
-        try (BdsServer bds = new BdsServer(server, false)) {
-            bds.start(work.resolve("bds-addon-content-log.log"));
-            bds.awaitStarted(ctx.timeout);
-            return bds.lines(line -> line.matches(".*(ERROR|WARN)\\] \\[.*") && !line.contains("TRANSPORT"))
-                .stream().map(line -> line.replaceFirst("^\\[[^]]*(ERROR|WARN)\\] ", "$1 ")).sorted().distinct().toList();
-        }
-    }
-
     Capture.Summary capture(InetSocketAddress address, Runs runs, Path out, Path customOut, String what) throws Exception {
         Capture.Summary summary = Capture.capture(address, runs.protocol, runs.reference, runs.bdsVersion, out, customOut, 90, runs.netherNet);
         ctx.report.check(Report.Status.PASS, what, (summary.blockNetworkIdsHashed() ? "hashed" : "sequential") + " block ids; protocol "
@@ -227,7 +188,7 @@ final class CaptureStage {
     /** Whether the missing protocol codec is reported already. */
     private boolean codecReported;
 
-    private void hashCheck(String label, Capture.Summary summary) {
+    void hashCheck(String label, Capture.Summary summary) {
         if (summary.unresolvedHashes() == 0) {
             ctx.report.check(Report.Status.PASS, "Block hashes (" + label + ")", "all " + summary.resolvedHashes()
                 + " creative block ids are FNV-1a 32 hashes of palette states");

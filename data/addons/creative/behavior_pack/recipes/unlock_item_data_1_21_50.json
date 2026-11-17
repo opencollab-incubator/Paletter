@@ -1,0 +1,25 @@
+{
+  "format_version": "1.21.50",
+  "minecraft:recipe_shapeless": {
+    "description": {
+      "identifier": "paletter:unlock_item_data_1_21_50"
+    },
+    "tags": [
+      "crafting_table"
+    ],
+    "ingredients": [
+      {
+        "item": "minecraft:dirt"
+      }
+    ],
+    "result": {
+      "item": "minecraft:stick"
+    },
+    "unlock": [
+      {
+        "item": "minecraft:stick",
+        "data": 0
+      }
+    ]
+  }
+}

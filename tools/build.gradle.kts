@@ -113,7 +113,7 @@ tasks.register<JavaExec>("generateComponentApiPreview") {
     args = listOf("generate") + root + listOf("--sources", layout.buildDirectory.dir("component-api").get().asFile.absolutePath)
 }
 
-// The component model: the add-on JSON side from Microsoft's creator docs, a capture add-on generated from it, and the
+// The component model: the add-on JSON side from Microsoft's creator docs, the spec capture add-on generated from it, and the
 // JSON -> wire mapping inferred from BDS captures of that add-on.
 // Needs the docs: -Pdocs=DIR (a checkout of MicrosoftDocs/minecraft-creator) or a download of the pinned commit
 tasks.register<JavaExec>("generateModel") {

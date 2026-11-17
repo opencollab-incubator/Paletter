@@ -1,13 +1,10 @@
 package org.geysermc.paletter.tools.update;
 
-import org.geysermc.paletter.tools.data.Nbt;
-import org.geysermc.paletter.tools.bds.BdsDistribution;
 import org.geysermc.paletter.tools.data.Diff;
 import org.geysermc.paletter.tools.data.WireShapes;
 import org.geysermc.paletter.tools.Layout;
 import org.geysermc.paletter.tools.model.Fixtures;
 import org.geysermc.paletter.tools.model.Model;
-import org.geysermc.paletter.tools.model.infer.Coverage;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import java.nio.file.Files;
@@ -16,7 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-/** Component wire shapes: the add-on and vanilla captures against the committed ones. */
+/** Component wire shapes: the vanilla data driven content against the bundled data, and the spec capture's coverage by the mappings. */
 final class ShapesStage {
     private final UpdateContext ctx;
 
@@ -24,63 +21,20 @@ final class ShapesStage {
         this.ctx = ctx;
     }
 
-    /** Component wire shapes: the new add-on and vanilla captures against the committed ones. */
-    void shapes(BdsDistribution distribution, Runs runs) throws Exception {
-        // A history check: the add-on capture of the build it is checked against, or of the newest build before it
-        String previousBuild = UpdateContext.baseline(ctx.against != null ? ctx.against : distribution.version(), ctx.committedBuilds("addon/custom_item_registry.nbt"));
-        Path previous = previousBuild == null ? null : ctx.bdsData.resolve(previousBuild).resolve("addon");
-        Path target = ctx.bdsData.resolve(distribution.version()).resolve("addon");
-        List<String> files = List.of("custom_block_properties.nbt", "custom_item_registry.nbt");
-        WireShapes captured = WireShapes.ofCapture(runs.customCapture);
+    /** Component wire shapes of the vanilla data driven items and blocks: the capture against the bundled reference version. */
+    void vanillaShapes(Runs runs) throws Exception {
+        WireShapes reference = WireShapes.ofPalette(ctx.resources.resolve(runs.referenceName + ".nbt"));
+        WireShapes imported = WireShapes.ofPalette(runs.imported);
+        report(Diff.shapes(reference.components(), imported.components()), "vanilla components vs bundled " + runs.referenceName);
+        reportValues(Diff.values(reference.values(), imported.values()), "vanilla components vs bundled " + runs.referenceName);
+    }
 
-        if (previous != null) {
-            WireShapes earlier = WireShapes.ofCapture(previous);
-            if (previousBuild.equals(distribution.version())) {
-                // This build's own committed capture: a difference is BDS sending it differently now, not a new wire format
-                String what = "add-on components vs the committed capture of " + previousBuild;
-                Diff shapes = Diff.shapes(earlier.components(), captured.components());
-                ctx.report.check(shapes.identical() ? Report.Status.PASS : Report.Status.DIFF, "Component shapes", what + ": "
-                    + (shapes.identical() ? "identical" : shapes.count() + " differences; re-capture this build and review the diff"));
-                ctx.report.diff("Component shapes: " + what, shapes);
-                reportValues(Diff.values(earlier.values(), captured.values()), what);
-            } else {
-                report(Diff.shapes(earlier.components(), captured.components()), "add-on components vs " + previousBuild);
-                reportValues(Diff.values(earlier.values(), captured.values()), "add-on components vs " + previousBuild);
-            }
-        }
-        // Vanilla data driven items and blocks: the reference version against the capture
-        if (runs.imported != null) {
-            WireShapes reference = WireShapes.ofPalette(ctx.resources.resolve(runs.referenceName + ".nbt"));
-            WireShapes imported = WireShapes.ofPalette(runs.imported);
-            report(Diff.shapes(reference.components(), imported.components()), "vanilla components vs bundled " + runs.referenceName);
-            reportValues(Diff.values(reference.values(), imported.values()), "vanilla components vs bundled " + runs.referenceName);
-        }
-        // Coverage: everything captured must be something the component model can produce
+    /** Coverage: everything the spec capture sent must be something the component model can produce. */
+    void coverage(Path capture) throws Exception {
         Path model = ctx.root.resolve(Layout.MODEL);
         JsonObject mappings = JsonParser.parseString(Files.readString(model.resolve("mappings.json"))).getAsJsonObject();
         Model components = Fixtures.read(model).apply(Model.read(model.resolve("components.json")));
-        Map<String, List<String>> uncovered = WireShapes.classify(captured.uncovered(mappings), mappings, components);
-        reportUncovered(uncovered);
-
-        // A history check compares with the add-on capture of the build it is checked against (or the newest older one)
-        Path committed = ctx.against != null ? previous : target;
-        boolean same = committed != null && Files.isDirectory(committed);
-        for (String file : files) {
-            same &= Files.exists(committed.resolve(file))
-                && Nbt.readGzip(committed.resolve(file)).equals(Nbt.readGzip(runs.customCapture.resolve(file)));
-        }
-        String where = committed == null ? "no add-on capture" : "`" + ctx.relative(committed) + "`";
-        ctx.compared(same, "Add-on capture vs " + ctx.relative(ctx.bdsData), same ? where + " has the same NBT" : where + " is missing or differs");
-        if (ctx.against != null) {
-            for (String file : files) {
-                ctx.stageCopy(target.resolve(file), runs.customCapture.resolve(file), "component capture " + file);
-            }
-        } else if (!same) {
-            for (String file : files) {
-                ctx.stageCopy(target.resolve(file), runs.customCapture.resolve(file), "component capture " + file);
-            }
-            ctx.report.check(Report.Status.INFO, "Component model", "new add-on capture staged; run the model checks (checkMappings, checkComponentApi) and review the diff");
-        }
+        reportUncovered(WireShapes.classify(WireShapes.ofCapture(capture).uncovered(mappings), mappings, components));
     }
 
     /**

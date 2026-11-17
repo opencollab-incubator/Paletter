@@ -1,6 +1,8 @@
 package org.geysermc.paletter.tools.update;
 
 import org.geysermc.paletter.tools.bds.BdsDistribution;
+import org.geysermc.paletter.tools.client.Capture;
+import org.geysermc.paletter.tools.data.CreativeOrderCheck;
 import org.geysermc.paletter.tools.Layout;
 import org.geysermc.paletter.tools.model.addon.AddonGenerator;
 import org.geysermc.paletter.tools.model.infer.MappingInference;
@@ -22,9 +24,11 @@ import java.util.stream.Stream;
 /** The spec capture of the build (with the format sweep) and the mapping inference over all captures. */
 final class SpecStage {
     private final UpdateContext ctx;
+    private final CaptureStage captures;
 
-    SpecStage(UpdateContext ctx) {
+    SpecStage(UpdateContext ctx, CaptureStage captures) {
         this.ctx = ctx;
+        this.captures = captures;
     }
 
     /**
@@ -65,6 +69,8 @@ final class SpecStage {
         if (!ctx.verifyOnly && ctx.against == null) {
             specOptions.put("with-format-sweep", "true");
         }
+        // The spec add-on world has this build's current toggles on, so it also covers experimental content
+        specOptions.put("experiments", String.join(",", runs.experiments.current));
         // A history check compares with the build it is checked against
         String previousBuild = ctx.against != null ? ctx.against : UpdateContext.baseline(distribution.version(), ctx.committedBuilds("spec/capture.json"));
         boolean own = distribution.version().equals(previousBuild);
@@ -76,10 +82,11 @@ final class SpecStage {
             copyRecursively(previous, committed);
             previous = committed;
         }
+        SpecCapture spec = new SpecCapture(ctx.root, specOptions);
         try {
             // Only the files whose bytes changed are repository changes: a capture identical to the committed one is none
-            if ((write ? UpdateContext.track(ctx.report, ctx.root, List.of(out, out.resolveSibling("spec-format")), "spec capture", () -> new SpecCapture(ctx.root, specOptions).run())
-                : new SpecCapture(ctx.root, specOptions).run()) != 0) {
+            if ((write ? UpdateContext.track(ctx.report, ctx.root, List.of(out, out.resolveSibling("spec-format")), "spec capture", spec::run)
+                : spec.run()) != 0) {
                 ctx.report.check(Report.Status.FAIL, "Spec capture", "failed");
                 return;
             }
@@ -89,6 +96,7 @@ final class SpecStage {
         }
         ctx.report.check(Report.Status.INFO, "Spec capture", "`" + (write ? ctx.root.relativize(out) : out) + "`");
         cutValues(out);
+        specChecks(out, spec.summary(), runs);
         SpecDiff.Pairing pairing = previous == null ? null : SpecDiff.pairing(previous, out);
         if (pairing != null && !pairing.same() && !variantsAlike(pairing, previousBuild)) {
             return;
@@ -162,6 +170,34 @@ final class SpecStage {
             ctx.report.check(Report.Status.INFO, "Component model", "mappings inferred; run :tools:generateComponentApi and the conformance suite (:tools:test) for the new protocol");
         } else {
             ctx.report.check(Report.Status.INFO, "Component model", "mappings not inferred (" + (ctx.captureOnly != null ? "capture only" : ctx.against != null ? "history check" : "verify only") + ")");
+        }
+    }
+
+    /**
+     * What the spec add-on world shows beyond the mappings: its creative block ids resolve to palette states (custom blocks
+     * with trait states), start game reports the requested toggles, every captured wire path is in the mappings or has a known
+     * reason, and BDS's block ids and block map order are Paletter's. What BDS rejects or accepts is compared with the earlier
+     * capture ({@link SpecDiff#acceptance}).
+     */
+    private void specChecks(Path capture, Capture.Summary summary, Runs runs) throws Exception {
+        captures.hashCheck("spec add-on", summary);
+        captures.appliedCheck(runs.experiments, "spec add-on world", runs.experiments.current, summary);
+        new ShapesStage(ctx).coverage(capture);
+        if (runs.existing != null) {
+            CreativeOrderCheck.Result order = CreativeOrderCheck.blockOrder(runs.protocol, ctx.resources,
+                capture.resolve("custom_item_registry.nbt"), capture.resolve("custom_block_properties.nbt"));
+            if (order.skipped() != null) {
+                ctx.report.check(Report.Status.SKIP, "Block map order (spec add-on)", order.skipped());
+            } else {
+                // A history check numbers against the bundled data of its window; the capture's blocks are compared build to build
+                ctx.notCompared(order.matches(), "Block map order (spec add-on)", order.matches()
+                    ? "block ids and CreativeOrdering.BDS's block order are BDS's for " + order.customStacks() + " custom blocks"
+                    : "BDS numbers or orders custom blocks differently: " + String.join("; ", order.differences()),
+                    "the spec capture's block ids and order are compared with the earlier build's");
+                if (!order.matches() && ctx.against == null) {
+                    ctx.report.action("update BlockIdOrder and CreativeOrdering.BDS (BDS changed how it numbers or orders custom blocks; docs/wire-notes.md)");
+                }
+            }
         }
     }
 

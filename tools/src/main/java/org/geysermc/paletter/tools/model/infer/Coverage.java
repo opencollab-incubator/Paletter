@@ -294,7 +294,7 @@ public final class Coverage {
             return;
         }
         md.append("\n## Wire paths no rule covers\n\n");
-        md.append("In the add-on capture of each build, with the reason the model has no rule for them. A new path here is a change to review.\n");
+        md.append("In the spec capture of each build, with the reason the model has no rule for them. A new path here is a change to review.\n");
         wirePaths.forEach((build, reasons) -> {
             md.append("\n### ").append(build).append("\n");
             reasons.forEach((reason, paths) -> {

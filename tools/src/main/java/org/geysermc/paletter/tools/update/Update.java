@@ -5,7 +5,6 @@ import org.geysermc.paletter.tools.bds.BdsDump;
 import org.geysermc.paletter.tools.bds.ScriptApiDump;
 import org.geysermc.paletter.tools.bds.CapturePlatform;
 import org.geysermc.paletter.tools.Layout;
-import org.geysermc.paletter.tools.Versions;
 import org.geysermc.paletter.tools.model.addon.AddonGenerator;
 import org.geysermc.paletter.tools.model.addon.FixedAddons;
 import org.geysermc.paletter.tools.shape.ShapeImport;
@@ -15,11 +14,8 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.LocalDate;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
-import java.util.stream.Stream;
 
 /**
  * {@code update}: pulls the newest BDS of a channel, runs the Script API dump and the network captures, compares the
@@ -210,6 +206,7 @@ public final class Update {
         ctx.report.header.put("Server", "`" + server + "`" + (ctx.keepServer ? " (kept)" : " (removed after the run)"));
         ScriptApiStage scriptApi = new ScriptApiStage(ctx);
         AddonChecksStage addonChecks = new AddonChecksStage(ctx);
+        CaptureStage captures = new CaptureStage(ctx);
         BdsDump dump;
         Runs runs = new Runs();
         runs.bdsVersion = distribution.version();
@@ -228,8 +225,8 @@ public final class Update {
                 "BDS reports " + json[0] + "; " + dump.items().size() + " items, " + dump.blockDefaults().size() + " blocks, "
                     + dump.itemTags().size() + " item tags" + (dump.errors().isEmpty() ? "" : "; addon errors: " + dump.errors()));
 
-            // 2. Network captures (vanilla and add-on, hashed and sequential block ids)
-            new CaptureStage(ctx).captures(server, work, dump, runs);
+            // 2. Network captures (vanilla, experiments and the creative order probe, hashed and sequential block ids)
+            captures.captures(server, work, dump, runs);
             protocol = runs.protocol;
 
             // 3. Voxel shapes: the packet of the vanilla world, of the probe add-on and of the anchors
@@ -262,13 +259,12 @@ public final class Update {
         } else {
             networkData.missingNetworkData(distribution, dump);
         }
-        addonChecks.contentLog(runs);
         new ExperimentReportStage(ctx).experimentsReport(distribution, runs, staging);
         addonChecks.creativeOrder(runs);
-        if (runs.addon != null) {
-            new ShapesStage(ctx).shapes(distribution, runs);
+        if (runs.imported != null) {
+            new ShapesStage(ctx).vanillaShapes(runs);
         }
-        SpecStage spec = new SpecStage(ctx);
+        SpecStage spec = new SpecStage(ctx, captures);
         if (ctx.against != null || ctx.captureOnly != null) {
             // A history check (and the capture half of a recapture) leaves the repository's bundled data, constants and model alone
             if (runs.protocol != null) {
@@ -306,20 +302,5 @@ public final class Update {
         String[] parts = bdsVersion.split("[.-]");
         int offset = parts[0].equals("1") ? 1 : 0;
         return parts[offset] + "." + (Integer.parseInt(parts[offset + 1]) / 10 * 10);
-    }
-
-    /** The newest committed add-on capture directory ({@code <bdsData>/<version>/addon}), null if there is none. */
-    public static Path latestAddonCapture(Path bdsData) throws IOException {
-        return latestAddonCapture(bdsData, Set.of());
-    }
-
-    private static Path latestAddonCapture(Path bdsData, Set<String> skip) throws IOException {
-        if (!Files.isDirectory(bdsData)) {
-            return null;
-        }
-        try (Stream<Path> files = Files.list(bdsData)) {
-            return files.filter(f -> !skip.contains(f.getFileName().toString()) && Files.exists(f.resolve("addon/custom_item_registry.nbt")))
-                .max(Comparator.comparing(f -> f.getFileName().toString(), Versions.ORDER)).map(f -> f.resolve("addon")).orElse(null);
-        }
     }
 }

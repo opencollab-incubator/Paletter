@@ -101,6 +101,54 @@ public final class CreativeOrderCheck {
     }
 
     /**
+     * The block pass without a creative packet: BDS iterates its map of data driven blocks for the start game block
+     * properties as for the block items it adds to the creative inventory, so the custom blocks of a capture are on the
+     * wire in block pass order. Paletter, given the capture's custom content, must number the blocks as BDS did and
+     * order them as the wire does ({@link CreativeOrdering#blockOrder}). Checked on the spec captures, which hold no
+     * creative inventory.
+     *
+     * @param data the bundled data directory, as for {@link #check}
+     * @param customItems {@code custom_item_registry.nbt} of the capture
+     * @param customBlocks {@code custom_block_properties.nbt} of the capture
+     * @return the custom blocks compared and the first differences
+     */
+    public static Result blockOrder(int protocol, Path data, Path customItems, Path customBlocks) throws IOException {
+        List<NbtMap> blocks = readList(customBlocks, "blocks");
+        Paletter capture = withPreviews(data, CreativeOrdering.BDS, layer(readList(customItems, "items"), blocks));
+        if (capture.versions().stream().noneMatch(v -> v.protocolVersion() == protocol)) {
+            return new Result(0, List.of(), "no bundled data version has protocol " + protocol);
+        }
+        Palette palette = capture.palette(protocol);
+        List<String> differences = new ArrayList<>();
+        Map<String, Integer> paletterIds = new LinkedHashMap<>();
+        palette.blocks().blockProperties().stream().filter(block -> !block.getName().startsWith("minecraft:"))
+            .forEach(block -> paletterIds.put(block.getName(), blockId(block.getProperties())));
+        for (NbtMap block : blocks) {
+            int bds = blockId(block.getCompound("properties"));
+            Integer ours = paletterIds.get(block.getString("name"));
+            if (!Objects.equals(bds, ours) && differences.size() < 20) {
+                differences.add(block.getString("name") + ": block id BDS " + bds + " / Paletter " + ours);
+            }
+        }
+        List<String> wire = blocks.stream().map(block -> block.getString("name")).toList();
+        List<String> byId = paletterIds.entrySet().stream().sorted(Map.Entry.comparingByValue()).map(Map.Entry::getKey).toList();
+        List<String> order = CreativeOrdering.BDS.blockOrder(byId,
+            palette.vanillaData().dataDrivenBlocks().stream().map(block -> block.getName()).toList());
+        for (int i = 0; i < Math.max(wire.size(), order.size()) && differences.size() < 20; i++) {
+            String bds = i < wire.size() ? wire.get(i) : null;
+            String ours = i < order.size() ? order.get(i) : null;
+            if (!Objects.equals(bds, ours)) {
+                differences.add("block " + i + ": BDS " + bds + " / Paletter " + ours);
+            }
+        }
+        return new Result(blocks.size(), differences, null);
+    }
+
+    private static int blockId(NbtMap properties) {
+        return properties.getCompound("vanilla_block_data").getInt("block_id");
+    }
+
+    /**
      * The captured build is compared with the data of its own version, which may be a preview. Read from the directory,
      * since the bundled source has read its version index already.
      */

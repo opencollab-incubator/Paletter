@@ -383,7 +383,7 @@ jobs:
       # After the pull request exists: the recapture stacks its own on that branch (see the recapture jobs below). Only
       # when this run created or changed the pull request (a run that left it as it was has nothing new to recapture,
       # and must not start over what was merged into the branch since), and only when the pushed branch itself changes
-      # an input of the capture add-on (the model, the fixtures, the feedback, the BDS keys): read from git here, in the
+      # an input of the spec add-on (the model, the fixtures, the feedback, the BDS keys): read from git here, in the
       # job that holds the token, never from anything the capture job handed over
       - name: Note a changed add-on
         id: addon
@@ -413,7 +413,7 @@ jobs:
           fi
           exit 1
 
-  # A new build whose schema or model changes the capture add-on: every kept build is captured again with it, in the
+  # A new build whose schema or model changes the spec add-on: every kept build is captured again with it, in the
   # recapture workflow, which opens one more pull request on the branch of the data update. The model change merges
   # only after that pull request (docs/data-pipeline.md, "Full recapture"). One branch per run: the release one when
   # both channels changed the add-on; start recapture.yml by hand for the other.

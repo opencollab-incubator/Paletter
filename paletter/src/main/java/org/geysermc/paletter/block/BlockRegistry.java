@@ -166,11 +166,11 @@ public final class BlockRegistry implements DefinitionRegistry<BlockDefinition> 
         }
         List<CustomBlock> all = new ArrayList<>(table.customBlocks);
         all.addAll(additional);
-        // BDS numbers custom blocks by identifier in descending order, whatever order they were registered in (verified
+        // BDS numbers custom blocks by identifier in descending order (BlockIdOrder), whatever order they were registered in (verified
         // on 1.26.63.1), so ids of the blocks already here can change: encode all of them again
         List<String> byIdentifier = new ArrayList<>(all.size());
         all.forEach(block -> byIdentifier.add(block.identifier()));
-        byIdentifier.sort(java.util.Comparator.reverseOrder());
+        byIdentifier.sort(org.geysermc.paletter.internal.BlockIdOrder.DESCENDING);
         Map<String, Integer> blockIds = new HashMap<>();
         for (int i = 0; i < byIdentifier.size(); i++) {
             blockIds.put(byIdentifier.get(i), CUSTOM_BLOCK_ID_START + i);
