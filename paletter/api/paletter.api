@@ -128,10 +128,10 @@ public final class org.geysermc.paletter.Palette {
     public java.util.List<org.geysermc.paletter.vanilla.BedrockItemVariant> itemVariants()
     public java.util.List<org.geysermc.paletter.PaletteLayer> layers()
     public org.geysermc.paletter.PaletteReport report()
-    public org.geysermc.paletter.block.ResolvedBlock resolve(int)
     public org.geysermc.paletter.block.ResolvedBlock resolve(org.geysermc.paletter.vanilla.BedrockBlockState)
     public org.geysermc.paletter.block.ResolvedBlock resolve(org.geysermc.paletter.vanilla.BedrockBlockState, org.geysermc.paletter.block.ResolvedBlock)
     public org.geysermc.paletter.item.ResolvedItem resolve(org.geysermc.paletter.vanilla.BedrockItemVariant)
+    public org.geysermc.paletter.block.ResolvedBlock resolveBlock(int)
     public int runtimeId(org.geysermc.paletter.vanilla.BedrockBlockState)
     public int runtimeId(org.geysermc.paletter.vanilla.BedrockBlockState, int)
     public boolean sameStack(org.cloudburstmc.protocol.bedrock.data.inventory.ItemData, org.cloudburstmc.protocol.bedrock.data.inventory.ItemData)
@@ -555,14 +555,13 @@ public final class org.geysermc.paletter.block.RegisteredBlockState implements o
     public java.lang.String toString()
 }
 
-public record org.geysermc.paletter.block.ResolvedBlock {
-    public <init>(org.geysermc.paletter.block.RegisteredBlockState, boolean, org.geysermc.paletter.behaviour.BlockValues)
+public final class org.geysermc.paletter.block.ResolvedBlock {
     public org.geysermc.paletter.behaviour.BlockValues behaviour()
     public org.geysermc.paletter.block.RegisteredBlockState definition()
-    public final boolean equals(java.lang.Object)
+    public boolean equals(java.lang.Object)
     public boolean fallback()
-    public final int hashCode()
-    public final java.lang.String toString()
+    public int hashCode()
+    public java.lang.String toString()
 }
 
 public final class org.geysermc.paletter.block.VoxelShape {
@@ -2422,9 +2421,6 @@ public record org.geysermc.paletter.item.ItemFallback {
     public org.geysermc.paletter.item.ItemOverride version(org.cloudburstmc.protocol.bedrock.data.inventory.ItemVersion)
 }
 
-public final class org.geysermc.paletter.item.PaletteLink {
-}
-
 public final class org.geysermc.paletter.item.RegisteredItem implements org.cloudburstmc.protocol.bedrock.data.definitions.ItemDefinition {
     public java.util.List<org.geysermc.paletter.item.component.ItemComponent> components()
     public org.geysermc.paletter.item.CustomItem customItem()
@@ -2440,17 +2436,14 @@ public final class org.geysermc.paletter.item.RegisteredItem implements org.clou
     public java.lang.String toString()
 }
 
-public record org.geysermc.paletter.item.ResolvedItem {
-    public <init>(org.geysermc.paletter.item.RegisteredItem, int, org.geysermc.paletter.block.RegisteredBlockState, boolean, org.geysermc.paletter.item.PaletteLink)
+public final class org.geysermc.paletter.item.ResolvedItem {
     public org.geysermc.paletter.behaviour.ItemValues behaviour()
     public org.geysermc.paletter.block.RegisteredBlockState block()
     public int damage()
     public org.geysermc.paletter.item.RegisteredItem definition()
-    public boolean equals(java.lang.Object)
     public boolean fallback()
-    public int hashCode()
     public org.cloudburstmc.protocol.bedrock.data.inventory.ItemData$Builder toItemData()
-    public final java.lang.String toString()
+    public java.lang.String toString()
     public org.geysermc.paletter.vanilla.BedrockItemVariant variant()
 }
 

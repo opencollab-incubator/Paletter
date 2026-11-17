@@ -111,11 +111,12 @@ public final class Palette {
         this.layers = List.copyOf(layers);
         this.blocks = blocks;
         this.items = items;
-        items.behaviourLink().bind(this);
         this.creativeLayout = creativeLayout;
         this.creative = creative;
         this.report = report;
         this.ordering = ordering;
+        // Last: the registry may be asked for the behaviour of this palette from now on
+        items.bind(this);
     }
 
     /**
@@ -159,13 +160,14 @@ public final class Palette {
     @Internal
     public @NonNull Behaviour behaviour() {
         Behaviour result = behaviour;
+        return result != null ? result : buildBehaviour();
+    }
+
+    /** Out of line and small: a hot caller can inline {@link #behaviour()} whole. */
+    private synchronized Behaviour buildBehaviour() {
+        Behaviour result = behaviour;
         if (result == null) {
-            synchronized (this) {
-                result = behaviour;
-                if (result == null) {
-                    behaviour = result = Behaviour.of(this, behaviourStore.get(), parent == null ? null : parent.behaviour());
-                }
-            }
+            behaviour = result = Behaviour.of(this, behaviourStore.get(), parent == null ? null : parent.behaviour());
         }
         return result;
     }
@@ -177,14 +179,14 @@ public final class Palette {
      * Vanilla values come from the bundled captures of the palette's version, custom ones from their components.
      * Behaviour is only reachable through a resolution, so the palette that resolved it is the one that answers.
      * <p>
-     * Makes a {@link ResolvedBlock} on each call, which is cheap and not cached; the lookups are array reads.
+     * Makes a {@link ResolvedBlock} on each call, which is cheap: the lookups are array reads. Do not compare resolutions with {@code ==}.
      *
      * @throws IllegalArgumentException like {@link #blockDefinition(BedrockBlockState)}. Use
      *         {@link #resolve(BedrockBlockState, ResolvedBlock)} for states that may be missing
      * @since 0.1.0
      */
     public @NonNull ResolvedBlock resolve(@NonNull BedrockBlockState state) {
-        return resolveCanonical(state, requireCanonical(state));
+        return resolveCanonical(requireCanonical(state));
     }
 
     /**
@@ -196,14 +198,12 @@ public final class Palette {
      */
     public @Nullable ResolvedBlock resolve(@NonNull BedrockBlockState state, @Nullable ResolvedBlock orElse) {
         int canonical = state.canonicalIn(blocks.canonical());
-        return canonical == -1 ? orElse : resolveCanonical(state, canonical);
+        return canonical == -1 ? orElse : resolveCanonical(canonical);
     }
 
-    private ResolvedBlock resolveCanonical(BedrockBlockState state, int canonical) {
+    private ResolvedBlock resolveCanonical(int canonical) {
         RegisteredBlockState block = blocks.block(canonical);
-        // The state is its own block if the block's first canonical state is this one
-        boolean fallback = blocks.canonical(block) != canonical;
-        return new ResolvedBlock(block, fallback, behaviour().block(blocks.indexOfRuntimeId(block.getRuntimeId())));
+        return new ResolvedBlock(block, blocks.isFallback(canonical), behaviour().block(blocks.indexOfRuntimeId(block.getRuntimeId())));
     }
 
     /**
@@ -214,9 +214,13 @@ public final class Palette {
      * @return the resolution, or null if this palette has no block with this runtime id
      * @since 0.1.0
      */
-    public @Nullable ResolvedBlock resolve(int runtimeId) {
+    public @Nullable ResolvedBlock resolveBlock(int runtimeId) {
         int index = blocks.indexOfRuntimeId(runtimeId);
-        return index == -1 ? null : new ResolvedBlock(blocks.byIndex(index), false, behaviour().block(index));
+        if (index == -1) {
+            return null;
+        }
+        RegisteredBlockState block = blocks.byIndex(index);
+        return new ResolvedBlock(block, false, behaviour().block(index));
     }
 
     public @NonNull DataVersion version() {
