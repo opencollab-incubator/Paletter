@@ -35,8 +35,8 @@ class EnginePacksTest {
     void eachEngineVersionIsAPackWithOnlyAControlBlockInTheSameFormat(@TempDir Path root) throws IOException {
         Path out = root.resolve("addon");
         generator(root, true).write(out);
-        assertEquals(AddonGenerator.ENGINE_VERSIONS.size(), AddonGenerator.enginePacks().size());
-        for (AddonGenerator.EnginePack pack : AddonGenerator.enginePacks()) {
+        assertEquals(AddonWriter.ENGINE_VERSIONS.size(), AddonWriter.enginePacks().size());
+        for (AddonWriter.EnginePack pack : AddonWriter.enginePacks()) {
             JsonObject manifest = JsonParser.parseString(Files.readString(out.resolve(pack.directory()).resolve("manifest.json"))).getAsJsonObject();
             String[] version = pack.minEngineVersion().split("\\.");
             JsonObject header = manifest.getAsJsonObject("header");
@@ -50,13 +50,13 @@ class EnginePacksTest {
             assertEquals(pack.identifier(), file.getAsJsonObject("minecraft:block").getAsJsonObject("description").get("identifier").getAsString());
             assertTrue(file.getAsJsonObject("minecraft:block").getAsJsonObject("components").isEmpty(), "a control: no component");
         }
-        assertEquals(AddonGenerator.enginePacks().stream().map(AddonGenerator.EnginePack::uuid).distinct().count(), AddonGenerator.enginePacks().size());
+        assertEquals(AddonWriter.enginePacks().stream().map(AddonWriter.EnginePack::uuid).distinct().count(), AddonWriter.enginePacks().size());
     }
 
     @Test
     void theProbesDoNotCarryThem(@TempDir Path root) throws IOException {
         Path out = root.resolve("addon");
         generator(root, false).write(out);
-        assertFalse(Files.exists(out.resolve(AddonGenerator.enginePacks().get(0).directory())));
+        assertFalse(Files.exists(out.resolve(AddonWriter.enginePacks().get(0).directory())));
     }
 }

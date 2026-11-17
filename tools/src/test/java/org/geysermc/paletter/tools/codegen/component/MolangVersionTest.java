@@ -3,6 +3,7 @@ package org.geysermc.paletter.tools.codegen.component;
 import org.cloudburstmc.nbt.NbtMap;
 import org.cloudburstmc.nbt.NbtType;
 import org.geysermc.paletter.tools.model.addon.AddonGenerator;
+import org.geysermc.paletter.tools.model.addon.AddonWriter;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
@@ -19,7 +20,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 /**
  * The {@code molangVersion} {@code BlockWire} writes into every block is a constant. The captures back it in two steps: every block
  * of every spec capture has it ({@link #everyCapturedBlockHasTheConstant}), and the control blocks of the add-on's extra packs, whose
- * {@code min_engine_version} is older ({@link AddonGenerator#enginePacks}), have the same ({@link #theEnginePacksAgree}). If a pack's
+ * {@code min_engine_version} is older ({@link AddonWriter#enginePacks}), have the same ({@link #theEnginePacksAgree}). If a pack's
  * block has another value, the engine version decides it: the constant must become an input of the API, and this test fails to
  * say so.
  */
@@ -64,7 +65,7 @@ class MolangVersionTest {
             String build = capture.getParent().getFileName().toString();
             Set<String> found = new TreeSet<>();
             for (NbtMap block : ComponentConformanceTest.read(capture.resolve("custom_block_properties.nbt")).getList("blocks", NbtType.COMPOUND)) {
-                AddonGenerator.enginePacks().stream().filter(p -> p.identifier().equals(block.getString("name"))).forEach(pack -> {
+                AddonWriter.enginePacks().stream().filter(p -> p.identifier().equals(block.getString("name"))).forEach(pack -> {
                     found.add(pack.identifier());
                     assertEquals(constant, molang(block), build + ": the block of the pack with min_engine_version " + pack.minEngineVersion()
                         + " has another molangVersion: it follows the engine version, so BlockWire's constant must become an input");
@@ -73,7 +74,7 @@ class MolangVersionTest {
             if (found.isEmpty()) {
                 without.add(build);
             } else {
-                assertEquals(AddonGenerator.enginePacks().size(), found.size(), build + ": a block of an engine pack is missing");
+                assertEquals(AddonWriter.enginePacks().size(), found.size(), build + ": a block of an engine pack is missing");
             }
         }
         assertEquals(ENGINE_PACKS_PENDING, without, "the builds whose capture has the engine pack blocks must leave ENGINE_PACKS_PENDING");

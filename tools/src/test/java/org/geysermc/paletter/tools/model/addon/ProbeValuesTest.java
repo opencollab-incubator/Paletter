@@ -65,7 +65,7 @@ class ProbeValuesTest {
 
     @Test
     void noProbeValueIsCutAtMaxValues(@TempDir Path root) throws IOException {
-        List<String> probes = java.util.stream.IntStream.range(0, AddonGenerator.MAX_VALUES - 2).mapToObj(i -> "probe_" + i).toList();
+        List<String> probes = java.util.stream.IntStream.range(0, VariantValues.MAX_VALUES - 2).mapToObj(i -> "probe_" + i).toList();
         String fixtures = FIXTURES.replace("[\"gold\", \"red\"]", probes.stream().map(p -> "\"" + p + "\"").toList().toString());
         Path model = Files.createDirectories(root.resolve("model"));
         Files.writeString(model.resolve("components.json"), MODEL);
@@ -74,7 +74,7 @@ class ProbeValuesTest {
         List<String> color = generator.variants().stream().filter(v -> v.role().equals("field") && v.path().equals("color"))
             .map(v -> v.label().substring(v.label().indexOf(':') + 1)).toList();
         assertTrue(color.containsAll(probes), "a probe was cut: " + color);
-        assertEquals(AddonGenerator.MAX_VALUES, color.size(), "the cap cuts the generic values after the probes");
+        assertEquals(VariantValues.MAX_VALUES, color.size(), "the cap cuts the generic values after the probes");
     }
 
     @Test

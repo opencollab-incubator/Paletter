@@ -14,6 +14,7 @@ import org.geysermc.paletter.internal.data.PaletteDataCodec;
 import org.geysermc.paletter.internal.data.VanillaData;
 import org.geysermc.paletter.tools.model.Fixtures;
 import org.geysermc.paletter.tools.model.addon.AddonGenerator;
+import org.geysermc.paletter.tools.model.addon.AddonWriter;
 import org.geysermc.paletter.tools.model.Model;
 import org.geysermc.paletter.tools.model.infer.Feedback;
 import org.geysermc.paletter.tools.model.infer.Wire;
@@ -464,7 +465,7 @@ public final class SpecCapture {
             List<String> ids = new ArrayList<>(List.of(uuids.get(kind)));
             install(addon.resolve(kind + "_pack"), server.resolve(kind + "_packs"), "paletter_spec", uuids.get(kind));
             if (kind.equals("behavior")) {
-                for (AddonGenerator.EnginePack pack : AddonGenerator.enginePacks()) {
+                for (AddonWriter.EnginePack pack : AddonWriter.enginePacks()) {
                     if (Files.isDirectory(addon.resolve(pack.directory()))) {
                         install(addon.resolve(pack.directory()), server.resolve("behavior_packs"), "paletter_spec_" + pack.directory(), pack.uuid());
                         ids.add(pack.uuid());
