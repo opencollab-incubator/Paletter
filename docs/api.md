@@ -211,7 +211,9 @@ PaletteLayer.builder("content")
 ```
 
 `palette.voxelShapesPacket()` is byte for byte the packet BDS sends for the same content, including the shapes Bedrock
-derives for custom blocks. `VoxelShape.ofBoxes` rejects what BDS rejects. In 26.30 the vanilla shapes are behind the
+derives for custom blocks. BDS sends it to every client before start game, also without custom shapes, so send it
+always. Every palette has it: a palette of a version whose data has no vanilla shapes fails to build with a
+`PaletteException`. `VoxelShape.ofBoxes` rejects what BDS rejects. In 26.30 the vanilla shapes are behind the
 `voxel_shapes` experiment. How BDS builds the registry is in [wire-notes.md](wire-notes.md#voxel-shapes).
 
 ## Errors and reports

@@ -45,10 +45,7 @@ Palette palette = paletter.palette(session.getCodec());
 palette.applyTo(session.getPeer().getCodecHelper());   // item and block definitions
 palette.applyTo(startGamePacket);                      // block properties, hashed block ids
 
-VoxelShapesPacket shapes = palette.voxelShapesPacket(); // null if no shapes are captured for this version
-if (shapes != null) {
-    session.sendPacket(shapes);                        // before start game
-}
+session.sendPacket(palette.voxelShapesPacket());       // always, before start game
 session.sendPacket(startGamePacket);
 session.sendPacket(palette.itemComponentPacket());
 session.sendPacket(palette.creativeContentPacket());
