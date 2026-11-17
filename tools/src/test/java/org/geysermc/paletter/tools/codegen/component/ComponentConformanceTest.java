@@ -64,31 +64,23 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * the JSON), {@code not-generated} (it uses a component that is not generated), {@code missing} (BDS neither sent it nor
  * logged an error for it). Only {@code pass} is accepted: BDS always wins, so nothing is waived and there is no list of
  * known exceptions. The only variants not compared are those the content log has an ERROR line for (counted in the report),
- * and every component of a capture needs at least one compared variant. The table goes to
+ * and every component of a capture needs at least one compared variant, or an account from the data of the format sweep
+ * ({@link OldFormats}: replaced, old-style item, server-only, rejected at every format; {@link #SWEEP_PENDING} until it is captured). The table goes to
  * {@code build/reports/component-conformance-<protocol>.md}.
  */
 class ComponentConformanceTest {
     /**
-     * Components that no capture has an accepted variant of besides the control one: BDS rejects every other
-     * variant in the content log ("not present in the Schema" = its schema does not know the component at all,
-     * "deprecated" = the member is rejected as deprecated). Their encoding is not verified: gaps to close before the full
-     * recapture. A component that is not listed must have a compared variant, so a new fully rejected one fails.
+     * Components BDS rejects at the current format, whose old-format classification ({@link OldFormats}) waits for the capture with
+     * the format sweep: its {@code formats} are not in {@code mappings.json} yet, so nothing says whether BDS upgrades them, sends them
+     * only in old-style items, never sends them, or rejects them at every format. Explicit until the recapture; a component whose
+     * data is there fails the test until it is removed from this set, and so does one that is not in it and fits none of the
+     * classes. {@code breathability}, {@code unit_cube}, {@code render_offsets}, {@code block_light_emission}, {@code bone_visibility}
+     * and {@code destroy_time} stay generated in the API until the sweep decides.
      */
-    private static final Map<String, String> KNOWN_GAPS = Map.ofEntries(
-        Map.entry("block:minecraft:block_light_absorption", "not present in the Schema"),
-        Map.entry("block:minecraft:block_light_emission", "not present in the Schema"),
-        Map.entry("block:minecraft:bone_visibility", "not present in the Schema"),
-        Map.entry("block:minecraft:breathability", "deprecated"),
-        Map.entry("block:minecraft:destroy_time", "not present in the Schema"),
-        Map.entry("block:minecraft:explosion_resistance", "not present in the Schema"),
-        Map.entry("block:minecraft:queued_ticking", "deprecated"),
-        Map.entry("block:minecraft:random_ticking", "deprecated"),
-        Map.entry("block:minecraft:unit_cube", "deprecated"),
-        Map.entry("item:minecraft:chargeable", "not present in the Schema"),
-        Map.entry("item:minecraft:render_offsets", "not present in the Schema"),
-        Map.entry("item:minecraft:seed", "not present in the Schema"),
-        Map.entry("item:minecraft:use_duration", "not present in the Schema"),
-        Map.entry("item:minecraft:weapon", "not present in the Schema"));
+    private static final Set<String> SWEEP_PENDING = Set.of("block:minecraft:block_light_absorption", "block:minecraft:block_light_emission",
+        "block:minecraft:bone_visibility", "block:minecraft:breathability", "block:minecraft:destroy_time", "block:minecraft:explosion_resistance",
+        "block:minecraft:unit_cube", "item:minecraft:chargeable", "item:minecraft:render_offsets", "item:minecraft:seed",
+        "item:minecraft:use_duration", "item:minecraft:weapon");
     static final Path ROOT = Path.of(System.getProperty("paletter.root", ".."));
     static final Path MODEL = ROOT.resolve("data/model");
 
@@ -246,9 +238,27 @@ class ComponentConformanceTest {
         }
         Set<String> uncompared = new TreeSet<>(components);
         uncompared.removeAll(compared);
-        uncompared.removeAll(KNOWN_GAPS.keySet());
-        assertTrue(uncompared.isEmpty(), "protocol " + protocol + ": no variant of these components, other than the control one, was both "
-            + "accepted by BDS and found in its data, so their generated encoding is not verified: " + uncompared);
+        List<String> unexplained = new ArrayList<>();
+        Set<String> classifiedNow = new TreeSet<>();
+        JsonObject mappings = JsonParser.parseString(Files.readString(MODEL.resolve("mappings.json"), StandardCharsets.UTF_8)).getAsJsonObject().getAsJsonObject("components");
+        for (String component : uncompared) {
+            String how = OldFormats.classify(mappings.has(component) ? mappings.getAsJsonObject(component) : null, OldFormats.notSent(whitebox(), component), compared);
+            if (how == null || (how.equals(OldFormats.PENDING_SWEEP) && !SWEEP_PENDING.contains(component))) {
+                unexplained.add(component + (how == null ? " (its formats fit no class)" : ""));
+            } else if (!how.equals(OldFormats.PENDING_SWEEP)) {
+                classifiedNow.add(component);
+            }
+        }
+        assertTrue(unexplained.isEmpty(), "protocol " + protocol + ": no variant of these components, other than the control one, was both accepted by BDS "
+            + "and found in its data, and the format sweep does not account for them (replaced, old-style item, server-only, rejected at every format), "
+            + "so their generated encoding is not verified: " + unexplained);
+        if (newest) {
+            classifiedNow.retainAll(SWEEP_PENDING);
+            assertTrue(classifiedNow.isEmpty(), "the data classifies these now: remove them from SWEEP_PENDING: " + classifiedNow);
+            Set<String> stale = new TreeSet<>(SWEEP_PENDING);
+            stale.removeAll(uncompared);
+            assertTrue(stale.isEmpty(), "these have a compared variant now: remove them from SWEEP_PENDING: " + stale);
+        }
 
         // Report
         Map<String, int[]> perComponent = new TreeMap<>();
@@ -282,7 +292,15 @@ class ComponentConformanceTest {
             + " (see build/reports/component-conformance-" + protocol + ".md):\n  " + String.join("\n  ", notPassing));
     }
 
-    private static Set<String> union(Set<String> a, Set<String> b) {
+/** The white-box of the newest build that has one, or null. */
+private static JsonObject whitebox() throws IOException {
+    try (Stream<Path> dirs = Files.list(ROOT.resolve("data/bds"))) {
+        Path newest = dirs.filter(d -> Files.exists(d.resolve("whitebox.json"))).max(Comparator.comparing(d -> d.getFileName().toString(), org.geysermc.paletter.tools.Versions.ORDER)).orElse(null);
+        return newest == null ? null : JsonParser.parseString(Files.readString(newest.resolve("whitebox.json"), StandardCharsets.UTF_8)).getAsJsonObject();
+    }
+}
+
+private static Set<String> union(Set<String> a, Set<String> b) {
         Set<String> s = new TreeSet<>(a);
         s.addAll(b);
         return s;

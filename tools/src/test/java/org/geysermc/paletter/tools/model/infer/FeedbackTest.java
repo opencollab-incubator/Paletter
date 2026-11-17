@@ -22,6 +22,15 @@ class FeedbackTest {
     }
 
     @Test
+    void aDeprecatedMemberRejectsTheWholeComponentAndAFormatIsAFactOfIt() {
+        assertEquals("[\"deprecated\"]", facts("block:minecraft:unit_cube", "",
+            BLOCK + "minecraft:unit_cube: member \"minecraft:unit_cube\" is deprecated"));
+        Feedback feedback = new Feedback();
+        feedback.format("item:minecraft:use_duration", "1.20.40");
+        assertEquals("[\"format 1.20.40\"]", feedback.json().getAsJsonObject("item:minecraft:use_duration").getAsJsonArray("").toString());
+    }
+
+    @Test
     void listLengths() {
         assertEquals("[\"maxItems 1\"]", facts("block:minecraft:liquid_detection", "detection_rules",
             BLOCK + "minecraft:liquid_detection -> detection_rules: too many input elements, expected no more than 1"));

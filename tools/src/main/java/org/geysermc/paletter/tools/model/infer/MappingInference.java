@@ -305,6 +305,7 @@ public final class MappingInference {
             coverage.add(component, newest(merged));
             steps(component.id(), newest(merged));
         }
+        formats(components);
         mappings.add("envelope", envelopeWindows(captures, resultsByCapture));
         mappings.add("components", components);
         coverage.wirePaths(org.geysermc.paletter.tools.data.WireShapes.uncoveredByBuild(root.resolve(org.geysermc.paletter.tools.Layout.BDS), mappings, model));
@@ -315,6 +316,52 @@ public final class MappingInference {
             }
         });
         return new Output(Model.GSON.toJson(mappings) + "\n", coverage.markdown(captures), Model.GSON.toJson(feedback.json()) + "\n", coverage);
+    }
+
+    /**
+     * Adds {@code formats} ({@link FormatInference}) to the components the format sweeps asked, and the formats BDS accepted them
+     * at to the feedback ({@code format <F>}). The newest build that swept a component decides.
+     */
+    private void formats(JsonObject components) throws IOException {
+        Map<String, Set<String>> wireKeys = new HashMap<>();
+        components.entrySet().forEach(e -> {
+            Set<String> keys = new TreeSet<>();
+            JsonObject newest = newest(e.getValue().getAsJsonObject());
+            if (newest.has("wire")) {
+                newest.getAsJsonArray("wire").forEach(k -> keys.add(k.getAsString()));
+            }
+            wireKeys.put(e.getKey(), keys);
+        });
+        List<Path> sweeps = new ArrayList<>();
+        Path bds = root.resolve(org.geysermc.paletter.tools.Layout.BDS);
+        if (Files.isDirectory(bds)) {
+            try (Stream<Path> builds = Files.list(bds)) {
+                builds.map(b -> b.resolve("spec-format")).filter(d -> Files.exists(d.resolve("variants.json"))).sorted().forEach(sweeps::add);
+            }
+        }
+        Map<String, java.util.TreeMap<String, JsonObject>> swept = new TreeMap<>();
+        for (Path sweep : sweeps.stream().sorted(Comparator.comparingInt((Path d) -> protocolOf(d))).toList()) {
+            swept.putAll(FormatInference.read(sweep, model, fixtures, wireKeys));
+        }
+        swept.forEach((id, byFormat) -> {
+            if (!components.has(id)) {
+                return;
+            }
+            JsonObject formats = new JsonObject();
+            byFormat.forEach((format, entry) -> {
+                formats.add(format, entry);
+                feedback.format(id, format);
+            });
+            components.getAsJsonObject(id).add("formats", formats);
+        });
+    }
+
+    private static int protocolOf(Path capture) {
+        try {
+            return JsonParser.parseString(Files.readString(capture.resolve("capture.json"))).getAsJsonObject().get("protocol").getAsInt();
+        } catch (IOException e) {
+            throw new java.io.UncheckedIOException(e);
+        }
     }
 
     private static final String UNEXPLAINED = "UNEXPLAINED";
@@ -388,6 +435,17 @@ public final class MappingInference {
             }));
         }
         return out;
+    }
+
+    /** The keys of the wire paths a variant changes: the top level key, and for {@code item_properties} the one below it. */
+    static Set<String> wireKeys(Set<String> paths) {
+        Set<String> keys = new TreeSet<>();
+        for (String path : paths) {
+            List<String> segments = Wire.segments(path);
+            String top = segments.get(0).replaceAll("\\[\\d+]", "");
+            keys.add(top.equals("item_properties") && segments.size() > 1 ? top + "." + segments.get(1).replaceAll("\\[\\d+]", "") : top);
+        }
+        return keys;
     }
 
     private static Set<String> keysOf(Map<String, Leaf> wire) {
@@ -838,12 +896,7 @@ public final class MappingInference {
                 footprint.add(d.getKey());
             }
         }
-        Set<String> keys = new TreeSet<>();
-        for (String path : footprint) {
-            List<String> segments = Wire.segments(path);
-            String top = segments.get(0).replaceAll("\\[\\d+]", "");
-            keys.add(top.equals("item_properties") && segments.size() > 1 ? top + "." + segments.get(1).replaceAll("\\[\\d+]", "") : top);
-        }
+        Set<String> keys = wireKeys(footprint);
         JsonArray wireKeys = new JsonArray();
         keys.forEach(wireKeys::add);
         result.add("wire", wireKeys);

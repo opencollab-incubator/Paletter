@@ -109,6 +109,8 @@ public final class Feedback {
             fact = "nonEmpty";
         } else if (message.contains("not present in the Schema")) {
             fact = "unknown";
+        } else if (message.matches("member \".*\" is deprecated")) {
+            fact = "deprecated"; // the whole component is rejected at the current format
         } else if (message.contains("missing required field")) {
             fact = "required";
         } else if (message.contains("expected an array")) {
@@ -305,6 +307,11 @@ public final class Feedback {
      */
     void step(String component, String path, long step) {
         facts.computeIfAbsent(component, k -> new TreeMap<>()).computeIfAbsent(path, k -> new TreeSet<>()).add("step " + step);
+    }
+
+    /** The component is accepted at an older format ({@code format <F>}), with a wire that differs from the companions alone ({@link FormatInference}). */
+    void format(String component, String format) {
+        facts.computeIfAbsent(component, k -> new TreeMap<>()).computeIfAbsent("", k -> new TreeSet<>()).add("format " + format);
     }
 
     /** Forgets that a member is unknown where {@code other} (the newest preview's content log) does not say so. */
