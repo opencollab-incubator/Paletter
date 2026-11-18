@@ -84,8 +84,8 @@ public final class PaletteDataCodec {
         Map<NbtMap, NbtMap> interner = new HashMap<>();
         List<NbtMap> blocks = new ArrayList<>();
         for (NbtMap block : root.getList("blocks", NbtType.COMPOUND)) {
-            NbtMap states = interner.computeIfAbsent(block.getCompound("states"), s -> s);
-            blocks.add(BlockStates.of(block.getString("name"), states));
+            NbtMap states = interner.computeIfAbsent(block.getCompound("states"), PaletteDataCodec::internStrings);
+            blocks.add(BlockStates.of(block.getString("name").intern(), states));
         }
 
         List<VanillaItem> items = new ArrayList<>();
@@ -141,7 +141,7 @@ public final class PaletteDataCodec {
 
         Map<String, NbtMap> defaults = new HashMap<>();
         root.getCompound("block_defaults", NbtMap.EMPTY).forEach((name, states) ->
-            defaults.put(name, BlockStates.of(name, interner.computeIfAbsent((NbtMap) states, s -> s))));
+            defaults.put(name, BlockStates.of(name.intern(), interner.computeIfAbsent((NbtMap) states, PaletteDataCodec::internStrings))));
 
         Map<String, ExperimentContent> experiments = new HashMap<>();
         root.getCompound("experiments", NbtMap.EMPTY).forEach((toggle, value) -> {
@@ -258,10 +258,17 @@ public final class PaletteDataCodec {
         }
     }
 
+    /** The keys and string values of the states of a block repeat in thousands of states: one String instance of each. */
+    private static NbtMap internStrings(NbtMap states) {
+        NbtMapBuilder builder = NbtMap.builder();
+        states.forEach((key, value) -> builder.put(key.intern(), value instanceof String text ? text.intern() : value));
+        return builder.build();
+    }
+
     private static RawStack readStack(NbtMap nbt, Map<NbtMap, NbtMap> interner) {
         NbtMap block = nbt.getCompound("block", null);
         if (block != null) {
-            block = BlockStates.of(block.getString("name"), interner.computeIfAbsent(block.getCompound("states"), s -> s));
+            block = BlockStates.of(block.getString("name").intern(), interner.computeIfAbsent(block.getCompound("states"), PaletteDataCodec::internStrings));
         }
         return new RawStack(nbt.getString("id"), nbt.getInt("damage", 0), nbt.getInt("count", 1), block, nbt.getCompound("nbt", null));
     }

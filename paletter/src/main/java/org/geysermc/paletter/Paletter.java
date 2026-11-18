@@ -62,7 +62,10 @@ public final class Paletter {
     private final Map<DataVersion, VanillaData> data = new ConcurrentHashMap<>();
     private final Map<DataVersion, Palette> vanilla = new ConcurrentHashMap<>();
     private final Map<Palette, Palette> newerThanData = new ConcurrentHashMap<>();
-    private final Map<NbtMap, NbtMap> interned = new HashMap<>();
+    private final Object internLock = new Object();
+    /** Equal states and component data of the versions loaded so far, see {@link #intern}; dropped when all are loaded. */
+    private @Nullable Map<NbtMap, NbtMap> interned = new HashMap<>();
+    private volatile boolean internedReleased;
     private final BlockInterner blockInterner = new BlockInterner();
     private volatile CanonicalBlocks canonicalBlocks;
     private volatile CanonicalItems canonicalItems;
@@ -187,20 +190,34 @@ public final class Paletter {
         if (sharesBundledData()) {
             return Holder.BUNDLED.vanillaData(version);
         }
-        return data.computeIfAbsent(version, v -> {
+        VanillaData loaded = data.computeIfAbsent(version, v -> {
             try {
                 return intern(source.load(v));
             } catch (IOException e) {
                 throw new UncheckedIOException("Unable to load Bedrock data " + v, e);
             }
         });
+        if (!internedReleased && data.keySet().containsAll(versions)) {
+            releaseInterned();
+        }
+        return loaded;
+    }
+
+    /** Interning only matters while versions are still to be loaded: once all are, the map (about a megabyte) is not needed. */
+    private void releaseInterned() {
+        synchronized (internLock) {
+            interned = null;
+            internedReleased = true;
+        }
     }
 
     /**
      * Makes equal block states and item components of different versions the same instances.
      */
     private VanillaData intern(VanillaData loaded) {
-        synchronized (interned) {
+        synchronized (internLock) {
+            // Dropped once every version served was loaded: a load after that is of a version outside them, which shares nothing
+            Map<NbtMap, NbtMap> interned = this.interned != null ? this.interned : new HashMap<>();
             List<NbtMap> states = new ArrayList<>(loaded.blockStates().size());
             for (NbtMap state : loaded.blockStates()) {
                 states.add(interned.computeIfAbsent(state, s -> s));
