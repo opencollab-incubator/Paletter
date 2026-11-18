@@ -61,6 +61,33 @@ class ScriptApiValuesTest {
         assertEquals(List.of(), log);
     }
 
+    /**
+     * Two items as the committed dump of BDS 1.26.63.1 (data/bds/1.26.63.1/behaviour-dump.json.gz) has them: the apple is
+     * the only one of its 1623 items whose ItemStack.getComponents() lists ItemFoodComponent, the bread (food too, in the
+     * game) has no such entry. The importer reads every item that has the properties; the bread's are not in the dump.
+     */
+    @Test
+    void readsFoodOfTheItemsTheDumpHasItFor() {
+        JsonObject dump = JsonParser.parseString("""
+            {"items": {
+              "minecraft:apple": {"ItemStack.maxAmount": 64, "ItemStack.isStackable": true, "ItemStack.weight": 1,
+                "ItemFoodComponent.nutrition": 4, "ItemFoodComponent.saturationModifier": 0.30000001192092896,
+                "ItemFoodComponent.canAlwaysEat": false, "ItemFoodComponent.usingConvertsTo": "",
+                "ItemCompostableComponent.compostingChance": 65},
+              "minecraft:bread": {"ItemStack.maxAmount": 64, "ItemStack.isStackable": true, "ItemStack.weight": 1,
+                "ItemCompostableComponent.compostingChance": 85}}}
+            """).getAsJsonObject();
+        List<String> log = new ArrayList<>();
+        List<Values<String>> groups = new ScriptApiValues(dump, log).items(Set.of("minecraft:apple", "minecraft:bread"), "test");
+        Map<Object, Object> merged = new java.util.HashMap<>();
+        groups.forEach(group -> group.byKey.forEach((key, values) -> merged.put(key, values)));
+        assertEquals(Map.of("minecraft:apple", 4), merged.get(ItemBehaviour.NUTRITION));
+        assertEquals(Map.of("minecraft:apple", 0.3f), merged.get(ItemBehaviour.SATURATION_MODIFIER));
+        assertEquals(Map.of("minecraft:apple", false), merged.get(ItemBehaviour.CAN_ALWAYS_EAT));
+        assertEquals(Map.of("minecraft:apple", 65, "minecraft:bread", 85), merged.get(ItemBehaviour.COMPOST_CHANCE));
+        assertEquals(List.of(), log);
+    }
+
     @Test
     void readsItemsWithAbsentDurabilityAsZero() {
         List<Values<String>> groups = new ScriptApiValues(DUMP, new ArrayList<>()).items(Set.of("minecraft:sword", "minecraft:stick"), "test");

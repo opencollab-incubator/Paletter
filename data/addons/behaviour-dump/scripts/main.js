@@ -542,6 +542,17 @@ function* dumpItems(out) {
         for (const component of toArray(stack.getComponents())) {
             readAll(component, values);
         }
+        // getComponents listed ItemFoodComponent for the apple only in the dumps of 1.26.36.1 to 1.26.63.1 (1 of 1623 items).
+        // Asked by name too: whether getComponent finds the food of the other items is not known, the next capture shows it.
+        // The importer reads ItemFoodComponent.* the same way whichever call found it.
+        try {
+            const food = stack.getComponent("minecraft:food");
+            if (food && values["ItemFoodComponent.nutrition"] === undefined) {
+                readAll(food, values);
+            }
+        } catch (error) {
+            warn(`no food component of item ${type.id}: ${error}`);
+        }
         out.items[type.id] = values;
         yield;
     }

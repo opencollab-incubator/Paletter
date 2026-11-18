@@ -214,7 +214,12 @@ workflow by hand on `bds-data/preview` for the other.
 **What it does.**
 
 1. `plan` runs `builds plan`: every kept release build (`data/bds/builds.json`, plus builds with captures the record
-   lacks) and the newest preview with captures in `data/bds`, as a matrix. It pins the commit all jobs use.
+   lacks), the newest unrecorded build of each line with a kept build (read from the build list, so a hotfix nobody ran
+   `builds check` on is looked at: its leg is compared with the newest kept build of its line, and capture-only keeps
+   its captures, which the next `builds check` verifies), and the newest preview with captures in `data/bds`, as a
+   matrix. A line is a data version of `versions.txt`: `26.60` is the builds `1.26.60.x` to `1.26.69.x`, since the
+   protocol of an unchecked build is not known. A line without a kept build is a new data version, which `update`
+   imports. It pins the commit all jobs use.
 2. `capture`, one Windows job per build (`fail-fast: false`, at most 6 at a time), runs
    `update --channel <channel> --version <build> --capture-only <dir>`, with the add-on generated from the checked-out
    commit. `--capture-only` is the capture half of `update`: the same captures and the same comparison with the committed
