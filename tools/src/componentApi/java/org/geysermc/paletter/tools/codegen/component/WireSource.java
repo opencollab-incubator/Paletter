@@ -184,7 +184,7 @@ final class WireSource {
     }
 
     static String method(Comp c) {
-        return ComponentGenerator.camel(c.baseName != null ? c.baseName : c.className);
+        return JavaNames.camel(c.baseName != null ? c.baseName : c.className);
     }
 
     // ---- One component -------------------------------------------------------------------------------------------------
@@ -363,16 +363,16 @@ final class WireSource {
 
     private void transformedLeaves(ObjType o, Window w, boolean inside, Set<String> leaves) {
         for (Field f : fieldsWithAlternatives(o)) {
-            boolean transformed = inside || f.transform != null || ComponentGenerator.writesHolder(w, f);
+            boolean transformed = inside || f.transform != null || WireRules.writesHolder(w, f);
             if (transformed) {
-                for (Rule rule : Rule.all(ComponentGenerator.mappingOf(w, f))) {
+                for (Rule rule : Rule.all(WireRules.mappingOf(w, f))) {
                     // not what only the field's presence switches: such a constant can be another field's leaf
                     if (!(rule instanceof Constant) || rule.mapEntry) {
                         leaves.add(strip(rule.wire));
                     }
                 }
             }
-            ObjType child = ComponentGenerator.objectOf(f.type);
+            ObjType child = WireRules.objectOf(f.type);
             if (child != null) {
                 transformedLeaves(child, w, transformed, leaves);
             }
@@ -391,18 +391,18 @@ final class WireSource {
 
     private void collectOwned(ObjType o, boolean transformed) {
         for (Field f : fieldsWithAlternatives(o)) {
-            if (transformed && (f.transform != null || ComponentGenerator.writesHolder(window, f))) {
-                for (Rule r : Rule.all(ComponentGenerator.mappingOf(window, f))) {
+            if (transformed && (f.transform != null || WireRules.writesHolder(window, f))) {
+                for (Rule r : Rule.all(WireRules.mappingOf(window, f))) {
                     String wire = strip(r.wire);
                     owned.add(wire);
                     ownerOf.putIfAbsent(wire, f);
                 }
-                for (String wire : ComponentGenerator.whenAbsent(window, f).keySet()) {
+                for (String wire : WireRules.whenAbsent(window, f).keySet()) {
                     owned.add(strip(wire));
                     ownerOf.putIfAbsent(strip(wire), f);
                 }
             }
-            ObjType child = ComponentGenerator.objectOf(f.type);
+            ObjType child = WireRules.objectOf(f.type);
             if (!transformed) {
                 for (Rule r : rules(f)) {
                     if (r.writesValue()) {
@@ -438,7 +438,7 @@ final class WireSource {
     }
 
     private List<Rule> rules(Field f) {
-        List<Rule> rules = new ArrayList<>(ComponentGenerator.rulesOf(window, f));
+        List<Rule> rules = new ArrayList<>(WireRules.rulesOf(window, f));
         if (f.type instanceof Vec3) {
             // The x/y/z children of the object form write the same leaves as the elements of the array form
             for (String axis : List.of("x", "y", "z")) {
@@ -478,7 +478,7 @@ final class WireSource {
             }
         }
         for (Field f : fieldsWithAlternatives(o)) {
-            if (f.transform == null && !ComponentGenerator.writesHolder(window, f) && !writesOnly(f, held)) {
+            if (f.transform == null && !WireRules.writesHolder(window, f) && !writesOnly(f, held)) {
                 if (f.type instanceof ApiModel.UnionRef) {
                     throw new GenerationException(c.id + " " + f.path + " takes several forms; name a hand transform for it in HandTransforms");
                 }
@@ -616,7 +616,7 @@ final class WireSource {
             return;
         }
         if (!mapped && rules.stream().noneMatch(x -> x instanceof Constant)) {
-            JsonObject m = ComponentGenerator.mappingOf(window, f);
+            JsonObject m = WireRules.mappingOf(window, f);
             String status = m == null ? "none" : m.get("status").getAsString();
             if (!status.equals("dropped")) {
                 if (!replacedByConstant(f, prefix)) {
@@ -677,10 +677,10 @@ final class WireSource {
     private List<String> allWires(ObjType o) {
         List<String> wires = new ArrayList<>();
         for (Field f : fieldsWithAlternatives(o)) {
-            for (Rule r : ComponentGenerator.rulesOf(window, f)) {
+            for (Rule r : WireRules.rulesOf(window, f)) {
                 wires.add(strip(r.wire));
             }
-            ObjType child = ComponentGenerator.objectOf(f.type);
+            ObjType child = WireRules.objectOf(f.type);
             if (child != null) {
                 wires.addAll(allWires(child));
             }
@@ -1034,7 +1034,7 @@ final class WireSource {
         if (field == subject) {
             return true;
         }
-        ObjType child = ComponentGenerator.objectOf(subject.type);
+        ObjType child = WireRules.objectOf(subject.type);
         if (child == null) {
             return false;
         }
@@ -1047,7 +1047,7 @@ final class WireSource {
     }
 
     private void absentLines(Field subject, Field f, String node, String prefix, Set<String> decided) {
-        for (Map.Entry<String, String> e : ComponentGenerator.whenAbsent(window, f).entrySet()) {
+        for (Map.Entry<String, String> e : WireRules.whenAbsent(window, f).entrySet()) {
             String wire = strip(e.getKey());
             // What BDS sends for another field's leaf when this one is omitted is that field's business
             Field owner = ownerOf.get(wire);
@@ -1067,7 +1067,7 @@ final class WireSource {
         ObjType child = f.type instanceof ObjRef r ? r.wire() : null;
         if (child != null) {
             for (Field cf : fieldsWithAlternatives(child)) {
-                if (cf.transform == null && !ComponentGenerator.writesHolder(window, cf)) {
+                if (cf.transform == null && !WireRules.writesHolder(window, cf)) {
                     absentLines(subject, cf, node, prefix, decided);
                 }
             }
