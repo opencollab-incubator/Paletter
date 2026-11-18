@@ -196,7 +196,7 @@ class ComponentGeneratorTest {
                 + "\"unions\": {\"item:test:widget:stripes\": " + STRIPES + ", \"item:test:widget:outline\": " + STRIPES + "}, "
                 + "\"rootLists\": {\"block:test:slab\": \"parts\"}, "
                 + "\"forms\": {\"block:test:slab\": {\"object\": {\"listElementOf\": \"parts\"}}}}"), "9.0.0",
-            new ComponentGenerator.Context(Set.of(), Map.of("Test Toggle", "test_toggle")));
+            new ComponentGenerator.Context(Set.of(), Map.of("Test Toggle", "test_toggle"), Map.of()));
     }
 
     // ---- Golden files --------------------------------------------------------------------------------------------

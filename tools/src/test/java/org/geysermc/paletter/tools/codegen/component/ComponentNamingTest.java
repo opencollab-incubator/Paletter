@@ -10,6 +10,7 @@ import org.junit.jupiter.api.io.TempDir;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -84,7 +85,7 @@ class ComponentNamingTest {
 
     @Test
     void aNameOfAPublicTypeThatIsNotGeneratedHereGetsAPrefixToo() {
-        Map<String, String> files = ComponentGenerator.generate(ComponentGeneratorTest.inputs().withContext(new Context(Set.of("Gadget"), Map.of())));
+        Map<String, String> files = ComponentGenerator.generate(ComponentGeneratorTest.inputs().withContext(new Context(Set.of("Gadget"), Map.of(), Map.of())));
         assertTrue(files.containsKey(ITEM_PKG + "ItemGadget.java"), files.keySet().toString());
         assertFalse(files.containsKey(ITEM_PKG + "Gadget.java"));
         assertTrue(files.containsKey(ITEM_PKG + "Widget.java"));
@@ -93,14 +94,14 @@ class ComponentNamingTest {
     @Test
     void aNestedTypeThatShadowsAPublicTypeIsAnError() {
         // Widget has a nested Entry record
-        Inputs in = ComponentGeneratorTest.inputs().withContext(new Context(Set.of("Entry"), Map.of()));
+        Inputs in = ComponentGeneratorTest.inputs().withContext(new Context(Set.of("Entry"), Map.of(), Map.of()));
         GenerationException e = assertThrows(GenerationException.class, () -> ComponentGenerator.generate(in));
         assertTrue(e.getMessage().contains("nested type Entry") && e.getMessage().contains("typeNames"), e.getMessage());
     }
 
     @Test
     void anExperimentThatTheCapturesNameBecomesBedrockExperimentNotExperimental() {
-        Inputs in = withExperiments(new Context(Set.of(), Map.of("Test Toggle", "test_toggle")), "Test Toggle");
+        Inputs in = withExperiments(new Context(Set.of(), Map.of("Test Toggle", "test_toggle"), Map.of()), "Test Toggle");
         String gadget = ComponentGenerator.generate(in).get(ITEM_PKG + "Gadget.java");
         assertTrue(gadget.contains("@BedrockExperiment(\"test_toggle\")"), gadget);
         assertFalse(gadget.contains("@Experimental"), "Experimental means the API is unstable, nothing else");
@@ -110,7 +111,7 @@ class ComponentNamingTest {
     @Test
     void anExperimentTheCapturesDoNotNameIsOnlyInTheJavadoc() {
         // "Holiday Creator Features" is in no capture: nothing is guessed
-        Inputs in = withExperiments(new Context(Set.of(), Map.of("Test Toggle", "test_toggle")), "Holiday Creator Features");
+        Inputs in = withExperiments(new Context(Set.of(), Map.of("Test Toggle", "test_toggle"), Map.of()), "Holiday Creator Features");
         String gadget = ComponentGenerator.generate(in).get(ITEM_PKG + "Gadget.java");
         assertFalse(gadget.contains("@BedrockExperiment"), gadget);
         assertTrue(gadget.contains("The creator docs name the experiment Holiday Creator Features for it (in some format versions); unverified against BDS."), gadget);
@@ -119,8 +120,29 @@ class ComponentNamingTest {
     }
 
     @Test
+    void aGatingCaptureMakesTheJavadocBdsVerifiedForTheBuildsItCovers() {
+        Context context = new Context(Set.of(), Map.of("Test Toggle", "test_toggle"), Map.of("item:test:gadget", List.of(
+            new Gating.Result("1.26.36.1", Gating.REJECTED, Gating.ACCEPTED), new Gating.Result("1.26.45.1", Gating.IGNORED, Gating.ACCEPTED),
+            new Gating.Result("1.26.52.3", Gating.ACCEPTED, Gating.ACCEPTED), new Gating.Result("1.26.63.1", Gating.REJECTED, Gating.REJECTED))));
+        String gadget = ComponentGenerator.generate(withExperiments(context, "Test Toggle")).get(ITEM_PKG + "Gadget.java");
+        assertTrue(gadget.contains("BDS-verified: in a world without experiments BDS rejects or ignores it in 1.26.36.1, 1.26.45.1."), gadget);
+        assertTrue(gadget.contains("BDS takes it without any experiment in 1.26.52.3: the docs' gating does not hold there."), gadget);
+        assertTrue(gadget.contains("BDS rejects it even with the experiments on in 1.26.63.1."), gadget);
+        assertFalse(gadget.contains("unverified against BDS"), gadget);
+        assertTrue(gadget.contains("@BedrockExperiment(\"test_toggle\")"), gadget);
+    }
+
+    @Test
+    void aGatingCaptureVerifiesAnExperimentNoCaptureNamesToo() {
+        Context context = new Context(Set.of(), Map.of(), Map.of("item:test:gadget", List.of(new Gating.Result("1.26.70.24", Gating.REJECTED, Gating.ACCEPTED))));
+        String gadget = ComponentGenerator.generate(withExperiments(context, "Holiday Creator Features")).get(ITEM_PKG + "Gadget.java");
+        assertTrue(gadget.contains("BDS-verified: in a world without experiments BDS rejects it in 1.26.70.24."), gadget);
+        assertFalse(gadget.contains("@BedrockExperiment"), "the toggle that enables it is still unknown");
+    }
+
+    @Test
     void severalNamedToggleIdsOfOneComponentFailInsteadOfDroppingOne() {
-        Inputs in = withExperiments(new Context(Set.of(), Map.of("A", "toggle_a", "B", "toggle_b")), "A", "B");
+        Inputs in = withExperiments(new Context(Set.of(), Map.of("A", "toggle_a", "B", "toggle_b"), Map.of()), "A", "B");
         GenerationException e = assertThrows(GenerationException.class, () -> ComponentGenerator.generate(in));
         assertTrue(e.getMessage().contains("toggle_a") && e.getMessage().contains("toggle_b"), e.getMessage());
     }

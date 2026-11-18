@@ -96,9 +96,10 @@ public final class ComponentGenerator {
      *                 a generated type with such a name gets a {@code Block}/{@code Item} prefix, so that simple names stay unique
      * @param toggles experiment name as the creator docs write it ({@code Upcoming Creator Features}) to toggle id
      *                ({@code upcoming_creator_features}), as the captured servers name them
+     * @param gating what the captured servers do with each gated component without experiments ({@link Gating}), by component id
      */
-    public record Context(Set<String> reserved, Map<String, String> toggles) {
-        public static final Context NONE = new Context(Set.of(), Map.of());
+    public record Context(Set<String> reserved, Map<String, String> toggles, Map<String, List<Gating.Result>> gating) {
+        public static final Context NONE = new Context(Set.of(), Map.of(), Map.of());
     }
 
     public static final String API_FILE = "api.json";
@@ -389,6 +390,7 @@ public final class ComponentGenerator {
         c.experiments = experiments;
         c.toggles = experiments.stream().map(e -> in.context().toggles().get(e)).filter(java.util.Objects::nonNull).distinct().sorted().toList();
         c.unmappedExperiments = experiments.stream().filter(e -> !in.context().toggles().containsKey(e)).toList();
+        c.gating = in.context().gating().getOrDefault(c.id, List.of());
         if (c.toggles.size() > 1) {
             throw new GenerationException(c.id + " needs several experiment toggles " + c.toggles + ": @BedrockExperiment takes one; make it repeatable");
         }

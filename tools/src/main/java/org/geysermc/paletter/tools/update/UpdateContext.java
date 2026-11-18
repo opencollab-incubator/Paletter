@@ -252,7 +252,7 @@ final class UpdateContext {
             Files.createDirectories(target.getParent());
             Files.write(target, file.getValue());
         }
-        for (String capture : List.of("spec", "spec-format")) {
+        for (String capture : List.of("spec", "spec-format", "spec-gating")) {
             Path spec = work.resolve(capture);
             if (Files.isDirectory(spec)) {
                 Path target = base.resolve(capture);

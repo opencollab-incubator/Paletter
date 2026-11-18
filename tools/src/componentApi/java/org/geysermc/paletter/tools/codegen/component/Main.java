@@ -56,6 +56,8 @@ public final class Main {
         Path model = root.resolve("data/model");
         ComponentGenerator.Inputs inputs = ComponentGenerator.read(model, version(root), context(root));
         Map<String, String> files = ComponentGenerator.generate(inputs);
+        // Reported, not removed: BDS rejects these with the experiments on, in every build with a gating capture
+        Gating.rejectedEverywhere(inputs.context().gating()).forEach(id -> System.out.println("rejected by BDS even with experiments on: " + id));
         Path probe = newestProbe(root);
         files.putAll(BehaviourSource.generate(BehaviourKeys.KEYS, inputs.mappings(), probe == null ? null
             : JsonParser.parseString(Files.readString(probe, StandardCharsets.UTF_8)).getAsJsonObject(),
@@ -131,7 +133,7 @@ public final class Main {
             }
         }
         List<ExperimentToggles.Toggle> toggles = ExperimentToggles.read(root.resolve("paletter/src/main/resources/paletter"), root.resolve("data/bds"));
-        return new ComponentGenerator.Context(reserved, ExperimentToggles.names(toggles));
+        return new ComponentGenerator.Context(reserved, ExperimentToggles.names(toggles), Gating.read(root.resolve("data/bds")));
     }
 
     /** @return the {@code behaviour-probe/capture.json} of the newest BDS build under {@code data/bds}, or null if none has one */

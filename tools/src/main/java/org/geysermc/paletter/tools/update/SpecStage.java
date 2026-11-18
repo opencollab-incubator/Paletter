@@ -7,8 +7,10 @@ import org.geysermc.paletter.tools.Layout;
 import org.geysermc.paletter.tools.model.addon.AddonGenerator;
 import org.geysermc.paletter.tools.model.infer.MappingInference;
 import org.geysermc.paletter.tools.model.infer.SpecDiff;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import org.geysermc.paletter.tools.codegen.component.Gating;
 import org.geysermc.paletter.tools.codegen.component.HandTransforms;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -68,6 +70,8 @@ final class SpecStage {
         // The format sweep: what BDS accepts at older formats of the components it rejects now, on the same server
         if (!ctx.verifyOnly && ctx.against == null) {
             specOptions.put("with-format-sweep", "true");
+            // And a world without experiments, for the gating the creator docs claim (not essential: a missing file is "unverified")
+            specOptions.put("with-gating", "true");
         }
         // The spec add-on world has this build's current toggles on, so it also covers experimental content
         specOptions.put("experiments", String.join(",", runs.experiments.current));
@@ -85,7 +89,7 @@ final class SpecStage {
         SpecCapture spec = new SpecCapture(ctx.root, specOptions);
         try {
             // Only the files whose bytes changed are repository changes: a capture identical to the committed one is none
-            if ((write ? UpdateContext.track(ctx.report, ctx.root, List.of(out, out.resolveSibling("spec-format")), "spec capture", spec::run)
+            if ((write ? UpdateContext.track(ctx.report, ctx.root, List.of(out, out.resolveSibling("spec-format"), out.resolveSibling("spec-gating")), "spec capture", spec::run)
                 : spec.run()) != 0) {
                 ctx.report.check(Report.Status.FAIL, "Spec capture", "failed");
                 return;
@@ -96,6 +100,7 @@ final class SpecStage {
         }
         ctx.report.check(Report.Status.INFO, "Spec capture", "`" + (write ? ctx.root.relativize(out) : out) + "`");
         cutValues(out);
+        gating(out.resolveSibling("spec-gating"), runs);
         specChecks(out, spec.summary(), runs);
         SpecDiff.Pairing pairing = previous == null ? null : SpecDiff.pairing(previous, out);
         if (pairing != null && !pairing.same() && !variantsAlike(pairing, previousBuild)) {
@@ -198,6 +203,44 @@ final class SpecStage {
                     ctx.report.action("update BlockIdOrder and CreativeOrdering.BDS (BDS changed how it numbers or orders custom blocks; docs/wire-notes.md)");
                 }
             }
+        }
+    }
+
+    /**
+     * What BDS does with the experiment-gated components in a world without experiments. Not essential: no file only leaves
+     * {@code @BedrockExperiment} unverified. Components BDS rejects with the experiments on too are listed, not removed.
+     */
+    private void gating(Path dir, Runs runs) {
+        Path file = dir.resolve("gating.json");
+        if (!Files.exists(file)) {
+            ctx.report.check(Report.Status.INFO, "Experiment gating", "not captured: @BedrockExperiment stays unverified against this build");
+            return;
+        }
+        try {
+            JsonObject json = JsonParser.parseString(Files.readString(file, StandardCharsets.UTF_8)).getAsJsonObject();
+            List<String> gated = new ArrayList<>();
+            List<String> open = new ArrayList<>();
+            List<String> never = new ArrayList<>();
+            json.getAsJsonObject("components").entrySet().forEach(e -> {
+                JsonObject value = e.getValue().getAsJsonObject();
+                String without = value.get("without").getAsString();
+                String with = value.has("with") ? value.get("with").getAsString() : null;
+                (Gating.REJECTED.equals(with) ? never : without.equals(Gating.ACCEPTED) ? open : gated).add("- `" + e.getKey() + "`: " + without
+                    + " without experiments" + (with == null ? "" : ", " + with + " with them"));
+            });
+            List<String> echoed = new ArrayList<>(json.getAsJsonArray("experiments").asList().stream().map(JsonElement::getAsString)
+                .filter(toggle -> toggle.endsWith("=true")).map(toggle -> toggle.substring(0, toggle.length() - 5)).toList());
+            echoed.removeAll(runs.experiments.alwaysOn);
+            boolean clean = echoed.isEmpty();
+            ctx.report.check(clean ? Report.Status.INFO : Report.Status.DIFF, "Experiment gating", gated.size() + " components BDS does not take without experiments, "
+                + open.size() + " it takes without them, " + never.size() + " it rejects even with them"
+                + (clean ? "" : "; the world was not experiment-free (start game reports " + echoed + "): discard the capture"));
+            ctx.report.evidence("Experiment gating", Stream.of(gated, open, never).flatMap(List::stream).toList());
+            if (!never.isEmpty()) {
+                ctx.report.action("components BDS rejects even with the experiments on (kept, only reported)", "Components", never);
+            }
+        } catch (IOException | RuntimeException e) {
+            ctx.report.check(Report.Status.INFO, "Experiment gating", "gating.json not readable: " + e);
         }
     }
 
