@@ -31,6 +31,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeMap;
+import java.util.TreeSet;
 
 /**
  * Writes a capture in the layout of CloudburstMC/Data that the generator's importer reads, plus the raw wire data.
@@ -51,6 +53,13 @@ public final class CaptureWriter {
     private final List<NbtMap> palette = new ArrayList<>();
     private final Set<Integer> unresolvedHashes = new LinkedHashSet<>();
     private int resolvedHashes;
+    /**
+     * Blocks with an {@code enabled_states} value the trait state table has no states for yet, to those values: their states
+     * are incomplete here, so their creative block ids are kept apart ({@link #pendingHashes}); the mapping inference checks
+     * them against the states it derives ({@code TraitStateTable#verify}).
+     */
+    private final Map<String, Set<String>> unknownTraitStates = new TreeMap<>();
+    private final Set<Integer> pendingHashes = new LinkedHashSet<>();
     /** Whether the capture ran {@code /give}: then {@link GiveCapture#FILE} is written, with the unanswered blocks unverified. */
     private boolean giveRequested;
 
@@ -71,7 +80,11 @@ public final class CaptureWriter {
         }
         for (BlockPropertyData block : result.startGame.getBlockProperties()) {
             if (!referenceBlocks.contains(block.getName())) {
-                palette.addAll(BlockHashes.customStates(block.getName(), block.getProperties()));
+                Set<String> unknown = new TreeSet<>();
+                palette.addAll(BlockHashes.customStates(block.getName(), block.getProperties(), unknown));
+                if (!unknown.isEmpty()) {
+                    unknownTraitStates.put(block.getName(), unknown);
+                }
             }
         }
         for (NbtMap state : palette) {
@@ -189,8 +202,13 @@ public final class CaptureWriter {
         // network hash; every hash the server sent in the creative inventory is checked in capture.json
         JsonObject customStates = new JsonObject();
         for (BlockPropertyData block : blocks) {
-            List<NbtMap> states = BlockHashes.customStates(block.getName(), block.getProperties());
+            List<NbtMap> states = BlockHashes.customStates(block.getName(), block.getProperties(), new TreeSet<>());
             JsonObject entry = new JsonObject();
+            if (unknownTraitStates.containsKey(block.getName())) {
+                JsonArray unknown = new JsonArray();
+                unknownTraitStates.get(block.getName()).forEach(unknown::add);
+                entry.add("traitStatesUnknown", unknown);
+            }
             entry.addProperty("states", states.size());
             entry.addProperty("defaultHash", Integer.toUnsignedString(BlockHashes.hash(states.getFirst())));
             entry.addProperty("default", Nbt.snbt(states.getFirst().getCompound("states")).replaceAll("\\s+", " "));
@@ -240,6 +258,8 @@ public final class CaptureWriter {
             if (state != null) {
                 resolvedHashes++;
                 json.addProperty("block_state_b64", Nbt.writeLeBase64(state));
+            } else if (unknownTraitStates.containsKey(item.getDefinition().getIdentifier())) {
+                pendingHashes.add(block.getRuntimeId());
             } else {
                 unresolvedHashes.add(block.getRuntimeId());
             }
@@ -274,6 +294,14 @@ public final class CaptureWriter {
         JsonArray unresolved = new JsonArray();
         unresolvedHashes.forEach(hash -> unresolved.add(Integer.toUnsignedString(hash)));
         json.add("creativeBlockIdsUnresolved", unresolved);
+        if (!unknownTraitStates.isEmpty()) {
+            JsonArray pending = new JsonArray();
+            pendingHashes.forEach(hash -> pending.add(Integer.toUnsignedString(hash)));
+            json.add("creativeBlockIdsOfUnknownTraitStates", pending);
+            JsonArray values = new JsonArray();
+            traitStatesUnknown().forEach(values::add);
+            json.add("traitStatesUnknown", values);
+        }
         if (result.packStack != null) {
             JsonArray packs = new JsonArray();
             result.packStack.getBehaviorPacks().forEach(pack -> packs.add("behavior " + pack.getPackId() + " " + pack.getPackVersion()));
@@ -305,6 +333,13 @@ public final class CaptureWriter {
 
     public int unresolvedHashes() {
         return unresolvedHashes.size();
+    }
+
+    /** @return the {@code <trait> <value>}s BDS sent that the trait state table has no states for yet, sorted */
+    List<String> traitStatesUnknown() {
+        Set<String> values = new TreeSet<>();
+        unknownTraitStates.values().forEach(values::addAll);
+        return List.copyOf(values);
     }
 
     private static NbtMap blockPropertiesList(List<BlockPropertyData> blocks) {

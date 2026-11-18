@@ -149,6 +149,13 @@ after the block, which is the usual layout, that equals descending identifier or
 custom blocks by identifier, descending, whatever order the layers register them in. For add-ons whose file names do not
 sort like their identifiers, block items will be ordered differently than on BDS. Item order is unaffected.
 
+The order is per behavior pack: BDS numbers the blocks of a pack after those of the packs before it in the world's pack list.
+In the spec capture of 1.26.36.1 with the engine packs, the main pack's 1338 blocks got 10000 to 11337 in the order above, and
+`paletter:engine_0` and `paletter:engine_1`, each alone in a pack listed after the main pack, got 11338 and 11339, although by
+name they would come first (`BlockIdOrderTest.capturedBdsOrder`). Which of the pack list order, the pack folder names or the
+pack uuids decides is open: all three agree in that capture. Paletter has no packs; the spec capture check numbers the engine
+packs' blocks after the main pack (`CreativeOrderCheck.blockOrder`).
+
 **Where Paletter differs on purpose.** Groups stay in category order in the packet, and a new group gets its first
 stack as icon instead of air. The client shows the same thing either way. A placement with an anchor
 (`CreativePlacement#after`) is an explicit override. `CreativeOrdering.APPEND` is the older behaviour: registration

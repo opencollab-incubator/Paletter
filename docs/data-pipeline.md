@@ -771,5 +771,8 @@ it together with the new data, so the committed captures and the conformance tes
 - The step never blocks an import: no docs, an unreadable layout or one bad component are skipped rows, and the previous
   committed schema (the newest build not after the one being run) is what the model merges. A `schema.json` that cannot be read
   is no schema, with a warning.
-- The trait state table skips (and reports) an `enabled_states` value no docs name a state for, such as
-  `minecraft:sixteen_way_rotation`.
+- An `enabled_states` value no docs name a state for, such as `minecraft:sixteen_way_rotation`, adds the state of its own
+  name with BDS's values (the Script API's `BlockStates.getAll()` in the newest dump that keeps BDS's value order, format 4 on);
+  without one the trait state table skips (and reports) it. Its default is checked against the hash BDS sent, as every other.
+  A spec capture made before the table has it leaves the value's states out, reports it ("Trait states") and keeps those
+  blocks' creative block ids out of the hash check (`traitStatesUnknown` in `capture.json`).

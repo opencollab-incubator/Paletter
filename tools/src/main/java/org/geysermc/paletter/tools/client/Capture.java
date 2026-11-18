@@ -40,9 +40,12 @@ public final class Capture {
      * @param unresolvedHashes creative block ids that matched no palette hash (always all of them in sequential mode)
      * @param experiments experiments start game reported, as {@code name=enabled}
      * @param packStackExperiments experiments the resource pack stack packet reported, as {@code name=enabled}
+     * @param traitStatesUnknown the {@code <trait> <value>}s of {@code enabled_states} BDS sent that the trait state table has no
+     *                           states for yet; the creative block ids of their blocks are in neither count
      */
     public record Summary(int protocol, int codecProtocol, String minecraftVersion, boolean blockNetworkIdsHashed,
-                          int resolvedHashes, int unresolvedHashes, List<String> experiments, List<String> packStackExperiments) {
+                          int resolvedHashes, int unresolvedHashes, List<String> experiments, List<String> packStackExperiments,
+                          List<String> traitStatesUnknown) {
         /** Names of the experiments start game reported as enabled. */
         public List<String> enabledExperiments() {
             return experiments.stream().filter(e -> e.endsWith("=true")).map(e -> e.substring(0, e.length() - 5)).sorted().toList();
@@ -109,7 +112,7 @@ public final class Capture {
         List<String> packStackExperiments = result.packStack == null ? List.of() : result.packStack.getExperiments().stream()
             .map(experiment -> experiment.getName() + "=" + experiment.isEnabled()).toList();
         return new Summary(protocol, codecProtocol, codec.getMinecraftVersion(), result.startGame.isBlockNetworkIdsHashed(),
-            writer.resolvedHashes(), writer.unresolvedHashes(), experiments, packStackExperiments);
+            writer.resolvedHashes(), writer.unresolvedHashes(), experiments, packStackExperiments, writer.traitStatesUnknown());
     }
 
     /**
