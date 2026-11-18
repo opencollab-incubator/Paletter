@@ -150,10 +150,8 @@ public final class ItemWire {
             String v5 = e2.tags();
             if (v5 != null) {
                 n3.put("tags", v5);
-            } else {
-                n3.remove("tags");
             }
-            Transforms.blockDescriptorStates(ctx, n3, e2);
+            Wire.blockDescriptor(ctx, n3, "", e2.name(), e2.states(), e2.tags());
         }
         Transforms.blockName(ctx, out, c);
         Transforms.replaceBlockItem(ctx, out, c);
@@ -221,10 +219,8 @@ public final class ItemWire {
                 String v5 = v3.tags();
                 if (v5 != null) {
                     n2.put("block.tags", v5);
-                } else {
-                    n2.remove("block.tags");
                 }
-                Transforms.blockDescriptorStates(ctx, n2, v3);
+                Wire.blockDescriptor(ctx, n2, "block", v3.name(), v3.states(), v3.tags());
             } else {
                 n2.remove("block.name");
                 n2.remove("block.states");
@@ -293,10 +289,8 @@ public final class ItemWire {
             String v4 = e1.tags();
             if (v4 != null) {
                 n2.put("tags", v4);
-            } else {
-                n2.remove("tags");
             }
-            Transforms.blockDescriptorStates(ctx, n2, e1);
+            Wire.blockDescriptor(ctx, n2, "", e1.name(), e1.states(), e1.tags());
         }
         String v5 = c.entity();
         if (v5 != null) {
@@ -317,10 +311,8 @@ public final class ItemWire {
             String v10 = e7.tags();
             if (v10 != null) {
                 n8.put("tags", v10);
-            } else {
-                n8.remove("tags");
             }
-            Transforms.blockDescriptorStates(ctx, n8, e7);
+            Wire.blockDescriptor(ctx, n8, "", e7.name(), e7.states(), e7.tags());
         }
     }
 

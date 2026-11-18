@@ -16641,42 +16641,16 @@
             "use_on[0]: invalid string",
             "[Item]  Error Parsing Item <id>:"
           ],
-          "transform": "blockDescriptorStates",
-          "status": "hand-rule",
+          "status": "inferred",
           "rules": [
             {
-              "kind": "constant",
-              "value": "minecraft:stone",
-              "nbt": "string",
-              "tags": [
-                "injected-default"
-              ],
-              "wire": "minecraft:block_placer.use_on[].name"
-            },
-            {
-              "kind": "empty-map",
+              "kind": "descriptor",
+              "of": "block",
               "nbt": "compound",
-              "tags": [],
-              "wire": "minecraft:block_placer.use_on[].states"
-            },
-            {
-              "kind": "identity",
-              "mapEntry": true,
-              "nbt": "int",
               "tags": [
-                "renamed",
-                "nested"
+                "registry-resolved"
               ],
-              "wire": "minecraft:block_placer.use_on[].states{}"
-            },
-            {
-              "kind": "constant",
-              "value": "",
-              "nbt": "string",
-              "tags": [
-                "injected-default"
-              ],
-              "wire": "minecraft:block_placer.use_on[].tags"
+              "wire": "minecraft:block_placer.use_on[]"
             }
           ],
           "whenAbsent": {
@@ -16687,19 +16661,7 @@
             "minecraft:block_placer.use_on[].states.paletter:k_2": "omitted",
             "minecraft:block_placer.use_on[].states.paletter_unknown": "omitted",
             "minecraft:block_placer.use_on[].tags": "omitted"
-          },
-          "unexplained": [
-            {
-              "wire": "minecraft:block_placer.use_on",
-              "samples": [
-                "<absent> -> [] (list<void>)",
-                "{} -> -",
-                "{\"paletter:k\":1} -> -",
-                "{\"paletter:k\":1,\"paletter:k_2\":1} -> -",
-                "{\"paletter_unknown\":1} -> -"
-              ]
-            }
-          ]
+          }
         },
         "use_on[].tags": {
           "accepted": 2,
@@ -16767,12 +16729,6 @@
           }
         },
         "replace_block_item": {
-          "verified": {
-            "build": "1.26.36.1",
-            "variants": 4
-          }
-        },
-        "use_on[].states": {
           "verified": {
             "build": "1.26.36.1",
             "variants": 4
@@ -17446,43 +17402,8 @@
             "block: invalid string",
             "[Item]  Error Parsing Item <id>:"
           ],
-          "transform": "blockDescriptorStates",
-          "status": "hand-rule",
+          "status": "inferred",
           "rules": [
-            {
-              "kind": "constant",
-              "value": "minecraft:dirt",
-              "nbt": "string",
-              "tags": [
-                "injected-default"
-              ],
-              "wire": "minecraft:digger.destroy_speeds[].block.name"
-            },
-            {
-              "kind": "empty-map",
-              "nbt": "compound",
-              "tags": [],
-              "wire": "minecraft:digger.destroy_speeds[].block.states"
-            },
-            {
-              "kind": "identity",
-              "mapEntry": true,
-              "nbt": "int",
-              "tags": [
-                "renamed",
-                "nested"
-              ],
-              "wire": "minecraft:digger.destroy_speeds[].block.states{}"
-            },
-            {
-              "kind": "constant",
-              "value": "",
-              "nbt": "string",
-              "tags": [
-                "injected-default"
-              ],
-              "wire": "minecraft:digger.destroy_speeds[].block.tags"
-            },
             {
               "kind": "constant",
               "value": "1",
@@ -17491,6 +17412,15 @@
                 "injected-default"
               ],
               "wire": "minecraft:digger.destroy_speeds[].speed"
+            },
+            {
+              "kind": "descriptor",
+              "of": "block",
+              "nbt": "compound",
+              "tags": [
+                "registry-resolved"
+              ],
+              "wire": "minecraft:digger.destroy_speeds[].block"
             }
           ],
           "whenAbsent": {
@@ -17502,19 +17432,7 @@
             "minecraft:digger.destroy_speeds[].block.states.paletter_unknown": "omitted",
             "minecraft:digger.destroy_speeds[].block.tags": "omitted",
             "minecraft:digger.destroy_speeds[].speed": "omitted"
-          },
-          "unexplained": [
-            {
-              "wire": "minecraft:digger.destroy_speeds",
-              "samples": [
-                "<absent> -> [] (list<void>)",
-                "{} -> -",
-                "{\"paletter:k\":1} -> -",
-                "{\"paletter:k\":1,\"paletter:k_2\":1} -> -",
-                "{\"paletter_unknown\":1} -> -"
-              ]
-            }
-          ]
+          }
         },
         "destroy_speeds[].block.tags": {
           "accepted": 2,
@@ -17657,14 +17575,6 @@
           ],
           "whenAbsent": {
             "minecraft:digger.use_efficiency": "0 (byte)"
-          }
-        }
-      },
-      "transforms": {
-        "destroy_speeds[].block.states": {
-          "verified": {
-            "build": "1.26.36.1",
-            "variants": 4
           }
         }
       },
@@ -18190,42 +18100,16 @@
             "dispense_on[0]: invalid string",
             "[Item]  Error Parsing Item <id>:"
           ],
-          "transform": "blockDescriptorStates",
-          "status": "hand-rule",
+          "status": "inferred",
           "rules": [
             {
-              "kind": "constant",
-              "value": "minecraft:stone",
-              "nbt": "string",
-              "tags": [
-                "injected-default"
-              ],
-              "wire": "minecraft:entity_placer.dispense_on[].name"
-            },
-            {
-              "kind": "empty-map",
+              "kind": "descriptor",
+              "of": "block",
               "nbt": "compound",
-              "tags": [],
-              "wire": "minecraft:entity_placer.dispense_on[].states"
-            },
-            {
-              "kind": "identity",
-              "mapEntry": true,
-              "nbt": "int",
               "tags": [
-                "renamed",
-                "nested"
+                "registry-resolved"
               ],
-              "wire": "minecraft:entity_placer.dispense_on[].states{}"
-            },
-            {
-              "kind": "constant",
-              "value": "",
-              "nbt": "string",
-              "tags": [
-                "injected-default"
-              ],
-              "wire": "minecraft:entity_placer.dispense_on[].tags"
+              "wire": "minecraft:entity_placer.dispense_on[]"
             }
           ],
           "whenAbsent": {
@@ -18236,19 +18120,7 @@
             "minecraft:entity_placer.dispense_on[].states.paletter:k_2": "omitted",
             "minecraft:entity_placer.dispense_on[].states.paletter_unknown": "omitted",
             "minecraft:entity_placer.dispense_on[].tags": "omitted"
-          },
-          "unexplained": [
-            {
-              "wire": "minecraft:entity_placer.dispense_on",
-              "samples": [
-                "<absent> -> [] (list<void>)",
-                "{} -> -",
-                "{\"paletter:k\":1} -> -",
-                "{\"paletter:k\":1,\"paletter:k_2\":1} -> -",
-                "{\"paletter_unknown\":1} -> -"
-              ]
-            }
-          ]
+          }
         },
         "dispense_on[].tags": {
           "accepted": 2,
@@ -18452,42 +18324,16 @@
             "use_on[0]: invalid string",
             "[Item]  Error Parsing Item <id>:"
           ],
-          "transform": "blockDescriptorStates",
-          "status": "hand-rule",
+          "status": "inferred",
           "rules": [
             {
-              "kind": "constant",
-              "value": "minecraft:stone",
-              "nbt": "string",
-              "tags": [
-                "injected-default"
-              ],
-              "wire": "minecraft:entity_placer.use_on[].name"
-            },
-            {
-              "kind": "empty-map",
+              "kind": "descriptor",
+              "of": "block",
               "nbt": "compound",
-              "tags": [],
-              "wire": "minecraft:entity_placer.use_on[].states"
-            },
-            {
-              "kind": "identity",
-              "mapEntry": true,
-              "nbt": "int",
               "tags": [
-                "renamed",
-                "nested"
+                "registry-resolved"
               ],
-              "wire": "minecraft:entity_placer.use_on[].states{}"
-            },
-            {
-              "kind": "constant",
-              "value": "",
-              "nbt": "string",
-              "tags": [
-                "injected-default"
-              ],
-              "wire": "minecraft:entity_placer.use_on[].tags"
+              "wire": "minecraft:entity_placer.use_on[]"
             }
           ],
           "whenAbsent": {
@@ -18498,19 +18344,7 @@
             "minecraft:entity_placer.use_on[].states.paletter:k_2": "omitted",
             "minecraft:entity_placer.use_on[].states.paletter_unknown": "omitted",
             "minecraft:entity_placer.use_on[].tags": "omitted"
-          },
-          "unexplained": [
-            {
-              "wire": "minecraft:entity_placer.use_on",
-              "samples": [
-                "<absent> -> [] (list<void>)",
-                "{} -> -",
-                "{\"paletter:k\":1} -> -",
-                "{\"paletter:k\":1,\"paletter:k_2\":1} -> -",
-                "{\"paletter_unknown\":1} -> -"
-              ]
-            }
-          ]
+          }
         },
         "use_on[].tags": {
           "accepted": 2,
@@ -18568,20 +18402,6 @@
       },
       "constants": {
         "minecraft:publisher_on_use_on.autoSucceedOnClient": "0 (byte)"
-      },
-      "transforms": {
-        "dispense_on[].states": {
-          "verified": {
-            "build": "1.26.36.1",
-            "variants": 4
-          }
-        },
-        "use_on[].states": {
-          "verified": {
-            "build": "1.26.36.1",
-            "variants": 4
-          }
-        }
       },
       "protocols": [
         1001,

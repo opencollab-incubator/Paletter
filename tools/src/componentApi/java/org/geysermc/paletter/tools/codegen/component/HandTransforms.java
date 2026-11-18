@@ -29,21 +29,22 @@ public final class HandTransforms {
         entry("block:minecraft:item_visual:geometry.uv_lock", "itemVisualUvLock"),
         entry("block:minecraft:item_visual:material_instances", "materialInstancesPacked"),
         entry("block:minecraft:material_instances:", "materialInstances"),
+        // states as a list of {state, type, value}: another layout than the descriptor rule's states compound
         entry("block:minecraft:placement_filter:conditions[].block_filter[].states", "blockDescriptorStates"),
         entry("block:minecraft:selection_box:", "selectionBox"),
         entry("block:permutations:[].components", "permutationComponents"),
         entry("block:permutations:[].condition", "permutationComponents"),
         // items
+        // the name is resolved against the registry and sent as "" for a vanilla block this version lacks: the leaf is no function of the value
         entry("item:minecraft:block_placer:block", "blockName"),
+        // follows two fields and the item's own identifier
         entry("item:minecraft:block_placer:replace_block_item", "replaceBlockItem"),
-        entry("item:minecraft:block_placer:use_on[].states", "blockDescriptorStates"),
-        entry("item:minecraft:digger:destroy_speeds[].block.states", "blockDescriptorStates"),
         entry("item:minecraft:dyeable:default_color", "rgbColor"),
-        entry("item:minecraft:entity_placer:dispense_on[].states", "blockDescriptorStates"),
-        entry("item:minecraft:entity_placer:use_on[].states", "blockDescriptorStates"),
         entry("item:minecraft:hover_text_color:value", "formattingCode"),
         entry("item:minecraft:icon:", "iconTextures"),
+        // item descriptors and Molang that change shape with the protocol, in one list the entries of which are dropped by the registry
         entry("item:minecraft:repairable:repair_items", "itemDescriptorList"),
+        // the API holds the item of a map form as null, which BDS sends as {} while an omitted item sends nothing: no rule over null fits both
         entry("item:minecraft:shooter:ammunition[].item", "ammunitionItemDescriptor"),
         entry("item:minecraft:use_animation:value", "useAnimationId"))));
 

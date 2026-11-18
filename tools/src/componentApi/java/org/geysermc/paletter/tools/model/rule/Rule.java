@@ -61,6 +61,14 @@ public abstract sealed class Rule permits Identity, Linear, Table, Affix, Bitset
         return false;
     }
 
+    /**
+     * @return whether the rule is of every element of a list of objects: the encoder writes its leaf in the loop over the
+     *         elements, from each element
+     */
+    public boolean eachElement() {
+        return false;
+    }
+
     /** @return whether several fields write the leaf, each its own part of it (bits): the leaf has no single owner */
     public boolean sharesLeaf() {
         return false;

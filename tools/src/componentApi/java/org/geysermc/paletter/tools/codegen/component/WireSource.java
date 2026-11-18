@@ -27,6 +27,7 @@ import org.geysermc.paletter.tools.codegen.component.ApiModel.Vec3;
 import org.geysermc.paletter.tools.codegen.component.ApiModel.Window;
 import org.geysermc.paletter.tools.codegen.component.ComponentGenerator.GenerationException;
 import org.geysermc.paletter.tools.model.rule.Constant;
+import org.geysermc.paletter.tools.model.rule.Descriptor;
 import org.geysermc.paletter.tools.model.rule.Emitter;
 import org.geysermc.paletter.tools.model.rule.EmptyMap;
 import org.geysermc.paletter.tools.model.rule.Identity;
@@ -346,7 +347,7 @@ final class WireSource {
 
     private void transformedLeaves(ObjType o, Window w, boolean inside, Set<String> leaves) {
         for (Field f : fieldsWithAlternatives(o)) {
-            boolean transformed = inside || f.transform != null;
+            boolean transformed = inside || f.transform != null || ComponentGenerator.writesHolder(w, f);
             if (transformed) {
                 for (Rule rule : Rule.all(ComponentGenerator.mappingOf(w, f))) {
                     // not what only the field's presence switches: such a constant can be another field's leaf
@@ -374,7 +375,7 @@ final class WireSource {
 
     private void collectOwned(ObjType o, boolean transformed) {
         for (Field f : fieldsWithAlternatives(o)) {
-            if (transformed && f.transform != null) {
+            if (transformed && (f.transform != null || ComponentGenerator.writesHolder(window, f))) {
                 for (Rule r : Rule.all(ComponentGenerator.mappingOf(window, f))) {
                     String wire = strip(r.wire);
                     owned.add(wire);
@@ -391,6 +392,12 @@ final class WireSource {
                     if (r.writesValue()) {
                         owned.add(strip(r.wire));
                         ownerOf.putIfAbsent(strip(r.wire), f.alternativeOf != null ? f.alternativeOf : f);
+                        if (r instanceof Descriptor d) {
+                            d.leaves().forEach(leaf -> {
+                                owned.add(strip(leaf));
+                                ownerOf.putIfAbsent(strip(leaf), f);
+                            });
+                        }
                     }
                 }
                 if (child != null && f.type instanceof ListOf) {
@@ -447,7 +454,7 @@ final class WireSource {
     private void fields(ObjType o, String value, String node, String prefix) {
         Set<String> transformsCalled = new LinkedHashSet<>();
         for (Field f : fieldsWithAlternatives(o)) {
-            if (f.transform == null) {
+            if (f.transform == null && !ComponentGenerator.writesHolder(window, f)) {
                 field(f, value, node, prefix);
             }
         }
@@ -455,6 +462,14 @@ final class WireSource {
         for (Field f : fieldsWithAlternatives(o)) {
             if (f.transform != null && transformsCalled.add(f.transform)) {
                 transformCall(f.transform, node, value);
+            }
+        }
+        // so do the descriptors written from the record that holds their field
+        for (Field f : fieldsWithAlternatives(o)) {
+            for (Rule r : rules(f)) {
+                if (r instanceof Descriptor d && d.writesHolder()) {
+                    r.emit(new LeafEmitter(f, f.type, CodeBlock.of("$N", value), node, relative(strip(r.wire), prefix), false));
+                }
             }
         }
     }
@@ -506,7 +521,9 @@ final class WireSource {
                 continue;
             }
             mapped = true;
-            value(f, r, var, node, prefix, wire);
+            if (!r.eachElement()) {
+                value(f, r, var, node, prefix, wire);
+            }
         }
         if (f.type instanceof ObjRef r) {
             fields(r.wire(), var, node, prefix);
@@ -531,6 +548,11 @@ final class WireSource {
                 String path = strip(e.getKey());
                 if (path.startsWith(elementPrefix + ".") && !path.substring(elementPrefix.length() + 1).contains("[]")) {
                     put(elementNode, path.substring(elementPrefix.length() + 1), literal(e.getValue()));
+                }
+            }
+            for (Rule rule : rules) {
+                if (rule.eachElement()) {
+                    rule.emit(new LeafEmitter(f, l.element(), CodeBlock.of("$N", element), elementNode, relative(strip(rule.wire), elementPrefix), false));
                 }
             }
             fields(r.wire(), element, elementNode, elementPrefix);
@@ -619,7 +641,7 @@ final class WireSource {
     }
 
     private String relative(String wire, String prefix) {
-        return prefix.isEmpty() ? wire : wire.substring(prefix.length() + 1);
+        return prefix.isEmpty() ? wire : wire.equals(prefix) ? "" : wire.substring(prefix.length() + 1);
     }
 
     private void value(Field f, Rule r, String var, String node, String prefix, String wire) {
@@ -989,7 +1011,7 @@ final class WireSource {
         ObjType child = f.type instanceof ObjRef r ? r.wire() : null;
         if (child != null) {
             for (Field cf : fieldsWithAlternatives(child)) {
-                if (cf.transform == null) {
+                if (cf.transform == null && !ComponentGenerator.writesHolder(window, cf)) {
                     absentLines(subject, cf, node, prefix, decided);
                 }
             }

@@ -147,8 +147,7 @@ public record BlockPlacer(@BedrockFormat("1.26.10") boolean alignedPlacement, @N
      * allowed. Value must have at most 256 items.
      *
      * @param name Add-on JSON {@code name}. Optional (null: not set).
-     * @param states Add-on JSON {@code states}. Default: <code>&#123;&#125;</code>. Compiled by the hand transform {@code
-     *        Transforms.blockDescriptorStates}.
+     * @param states Add-on JSON {@code states}. Default: <code>&#123;&#125;</code>.
      * @param tags Add-on JSON {@code tags}. Optional (null: not set).
      */
     public record UseOn(@Nullable String name, @NonNull Map<String, Object> states,

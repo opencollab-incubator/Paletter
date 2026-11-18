@@ -8,10 +8,12 @@ import org.geysermc.paletter.tools.codegen.component.HandTransforms;
 import org.geysermc.paletter.tools.model.Fixtures;
 import org.geysermc.paletter.tools.model.Model.Component;
 import org.geysermc.paletter.tools.model.Model.Field;
+import org.geysermc.paletter.tools.model.addon.JsonPath;
 import org.geysermc.paletter.tools.model.infer.SpecCaptures.Capture;
 import org.geysermc.paletter.tools.model.infer.SpecCaptures.Obs;
 import org.geysermc.paletter.tools.model.infer.SpecCaptures.Variant;
 import org.geysermc.paletter.tools.model.rule.CrossField;
+import org.geysermc.paletter.tools.model.rule.Descriptor;
 import org.geysermc.paletter.tools.model.rule.Leaf;
 import org.geysermc.paletter.tools.model.rule.Observation;
 import org.geysermc.paletter.tools.model.rule.Rule;
@@ -452,6 +454,20 @@ final class FieldAnalysis {
             out.remove("linkedTo");
             status = "hand-rule";
         }
+        if (!form && (status.equals("unresolved") || status.equals("partial"))) {
+            Descriptor descriptor = descriptor(path, reference, accepted);
+            if (descriptor != null) {
+                // one rule for the whole descriptor: it replaces the leaf rules below it and explains the leaves that moved
+                rules.removeIf(r -> r.wire.equals(descriptor.wire) || r.wire.startsWith(descriptor.wire + ".") || r.wire.startsWith(descriptor.wire + "{}"));
+                rules.add(descriptor);
+                for (int i = unexplained.size() - 1; i >= 0; i--) {
+                    if (explained(Wire.generic(unexplained.get(i).getAsJsonObject().get("wire").getAsString()), Set.of(descriptor.wire))) {
+                        unexplained.remove(i);
+                    }
+                }
+                status = unexplained.isEmpty() ? "inferred" : "partial";
+            }
+        }
         out.addProperty("status", status);
         if (!rules.isEmpty()) {
             JsonArray array = new JsonArray();
@@ -472,6 +488,42 @@ final class FieldAnalysis {
             }
         }
         return out;
+    }
+
+    /**
+     * The descriptor a field's variants send as a whole ({@link Descriptor}): the field itself (an item), or the object that
+     * holds it (a block: {@code states} varies, {@code name} and {@code tags} are sent with it). The leaves of the
+     * descriptor are found by the {@code name} leaf the variants have; null unless exactly one descriptor fits them. A block
+     * descriptor is fitted on the holder, an item descriptor on the field.
+     */
+    static Descriptor descriptor(String path, Obs reference, List<Obs> accepted) {
+        List<Obs> all = new ArrayList<>(List.of(reference));
+        all.addAll(accepted);
+        List<String> tokens = JsonPath.tokens(path);
+        String holder = String.join(".", tokens.subList(0, tokens.size() - 1)).replace(".[]", "[]").replace(".{}", "{}");
+        Descriptor found = null;
+        for (String at : List.of(path, holder)) {
+            List<Observation> observations = all.stream()
+                .map(o -> new Observation(SpecCaptures.jsonAt(o.variant().json(), at), o.wire(), o.variant().label()))
+                .filter(o -> o.json() != null && !o.json().isJsonNull()).toList();
+            if (observations.isEmpty()) {
+                continue;
+            }
+            Set<String> prefixes = new TreeSet<>();
+            observations.forEach(o -> o.wire().keySet().stream().filter(k -> k.endsWith(".name"))
+                .forEach(k -> prefixes.add(k.substring(0, k.length() - ".name".length()))));
+            for (String prefix : prefixes) {
+                Descriptor fit = Descriptor.fit(observations, prefix);
+                if (fit != null && fit.writesHolder() == at.equals(holder)) {
+                    if (found != null) {
+                        return null;
+                    }
+                    fit.wire = Wire.generic(prefix);
+                    found = fit;
+                }
+            }
+        }
+        return found;
     }
 
     /**
