@@ -87,7 +87,7 @@ public final class AddonGenerator {
         // The schema (if the fixtures have one) is read for the format version the add-on is made for
         this.fixtures = fixtures.forFormat(formatVersion);
         this.model = this.fixtures.apply(model);
-        this.values = new VariantValues(this.fixtures);
+        this.values = new VariantValues(this.fixtures, this.model);
         this.formatVersion = formatVersion;
         this.shrunk = Map.copyOf(shrunk);
         this.standard = standard;
@@ -262,6 +262,13 @@ public final class AddonGenerator {
                             }
                         }
                     }
+                }
+            }
+            // Boxes with the origin and the size varied together
+            for (VariantValues.Joint joint : values.joints(c)) {
+                JsonElement json = values.with(c, base, joint.path(), joint.value().value());
+                if (json != null) {
+                    variant(c, joint.path().isEmpty() ? "form" : "field", joint.path(), "object:" + joint.value().label(), joint.value().value(), json);
                 }
             }
             scriptVariants(c); // the placers: with a script component that has onUseOn

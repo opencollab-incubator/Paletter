@@ -215,6 +215,7 @@ public final class Update {
             // 1. Script API dump
             Path dumpLog = work.resolve("bds-dump.log");
             Path docs = ScriptApiDump.run(ctx.root, server, dumpLog, ctx.timeout, ctx.port);
+            scriptApi.scriptModules(distribution, docs, runs);
             scriptApi.schema(cache, distribution, docs);
             String[] json = BdsDump.json(dumpLog);
             dump = BdsDump.parse(json[1], json[0]);

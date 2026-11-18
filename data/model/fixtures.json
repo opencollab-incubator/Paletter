@@ -72,6 +72,8 @@
     "block:minecraft:map_color:color": "#00ff00",
     "block:minecraft:display_name:": "Paletter Block",
     "block:minecraft:collision_box:": "minecraft:unit_cube",
+    "block:minecraft:collision_box:[].origin": [-8, 0, -8],
+    "block:minecraft:collision_box:[].size": [16, 16, 16],
     "item:minecraft:interact_button:": "Use Paletter",
     "item:minecraft:hover_text_color:": "red",
     "item:minecraft:hover_text_color:value": "dark_purple",
@@ -154,12 +156,21 @@
     "default": "paletter:k"
   },
   "probeValues": {
-    "_comment": "Further strings of a field no enum lists, each tried as a value of its own, by '<component>:<path>'. Probes, not facts: the names of the hand tables of Transforms (FORMATTING, USE_ANIMATIONS) that no BDS message lists; only the ones BDS accepts and sends are evidence.",
+    "_comment": "Further strings of a field no enum lists, each tried as a value of its own, by '<component>:<path>'. Probes, not facts: the names of the hand table of Transforms (FORMATTING) that no BDS message and no schema enum lists (the use_animation names come from the schema enum); only the ones BDS accepts and sends are evidence.",
     "item:minecraft:hover_text_color:": ["black", "dark_blue", "dark_green", "dark_aqua", "dark_red", "dark_purple", "gold", "gray", "dark_gray", "blue", "green", "aqua", "red", "light_purple", "yellow", "white", "minecoin_gold", "material_quartz", "material_iron", "material_netherite", "material_redstone", "material_copper", "material_gold", "material_emerald", "material_diamond", "material_lapis", "material_amethyst", "material_resin"],
-    "item:minecraft:hover_text_color:value": ["black", "dark_blue", "dark_green", "dark_aqua", "dark_red", "dark_purple", "gold", "gray", "dark_gray", "blue", "green", "aqua", "red", "light_purple", "yellow", "white", "minecoin_gold", "material_quartz", "material_iron", "material_netherite", "material_redstone", "material_copper", "material_gold", "material_emerald", "material_diamond", "material_lapis", "material_amethyst", "material_resin"],
-    "item:minecraft:use_animation:": ["none", "eat", "drink", "block", "bow", "camera", "spear", "crossbow", "spyglass", "brush"],
-    "item:minecraft:use_animation:value": ["none", "eat", "drink", "block", "bow", "camera", "spear", "crossbow", "spyglass", "brush"]
+    "item:minecraft:hover_text_color:value": ["black", "dark_blue", "dark_green", "dark_aqua", "dark_red", "dark_purple", "gold", "gray", "dark_gray", "blue", "green", "aqua", "red", "light_purple", "yellow", "white", "minecoin_gold", "material_quartz", "material_iron", "material_netherite", "material_redstone", "material_copper", "material_gold", "material_emerald", "material_diamond", "material_lapis", "material_amethyst", "material_resin"]
   },
+  "unpinnedEnums": {
+    "_comment": "Schema enums whose values the add-on does not all try: it varies every value of the other schema enums (so a table of one is complete), cutting none at MAX_VALUES. By '<component>:<path>', with the reason.",
+    "item:minecraft:record:sound_event": "an open enum: api.json openEnums makes the field a string, so no table of the 571 sound events is built"
+  },
+  "listNames": {
+    "_comment": "Names put in a list of names, by '<component>:<path>': the lists BDS sends as a set ordered by the hash of each name (uv_lock) are written in several orders of them (VariantValues.orderings). Inputs, not facts: any names do; the bone of the other samples comes first.",
+    "block:minecraft:geometry:uv_lock": ["bone_a", "bone_b", "bone_c", "bone_d", "bone_e"],
+    "block:minecraft:item_visual:geometry.uv_lock": ["bone_a", "bone_b", "bone_c", "bone_d", "bone_e"],
+    "block:minecraft:embedded_visual:geometry.uv_lock": ["bone_a", "bone_b", "bone_c", "bone_d", "bone_e"]
+  },
+  "boolCombinations": ["block:minecraft:material_instances"],
   "descriptorValues": {
     "_comment": "Block descriptors tried in every field that is one (name, states and tags members), each as the whole descriptor: real vanilla blocks (Bedrock's state names) with enum values (all of pillar_axis, to see their order on the wire; two of cardinal_direction and lever_direction), an unlisted and an integer one, booleans, strings for a boolean and an integer state, and an integer for contrast. BDS's registry decides which it takes and how it sends them (enum index, state type).",
     "values": [

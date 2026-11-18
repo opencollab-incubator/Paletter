@@ -167,6 +167,57 @@ public final class Schema {
         return key == null ? null : key.isEmpty() ? definition.getAsJsonObject("root") : definition.getAsJsonObject("fields").getAsJsonObject(key);
     }
 
+    /**
+     * The values of the string enum the schema lists at a path of a component: the field's own, else its list elements' ({@code a[]}).
+     * Empty without a schema, a component or a path of it, or when there is no enum.
+     */
+    public List<String> enumValues(String component, String path) {
+        JsonObject definition = definition(component);
+        JsonObject node = definition == null ? null : node(definition, path);
+        if (node == null) {
+            return List.of();
+        }
+        if (!node.has("enum")) {
+            String key = key(definition, path);
+            JsonObject fields = definition.getAsJsonObject("fields");
+            node = !path.isEmpty() && fields.has(key + "[]") ? fields.getAsJsonObject(key + "[]") : null;
+            if (node == null || !node.has("enum")) {
+                return List.of();
+            }
+        }
+        return node.getAsJsonArray("enum").asList().stream().filter(v -> v.getAsJsonPrimitive().isString()).map(JsonElement::getAsString).toList();
+    }
+
+    /** A member of the object alternative of a map's element ({@link #element}): its name, JSON types and whether the schema requires it. */
+    public record Member(String name, List<String> types, boolean required) {
+    }
+
+    /** The JSON types the schema lists for the elements of the map at a path ({@code bone_visibility{}}: string, object, number, boolean). */
+    public List<String> elementTypes(String component, String mapPath) {
+        JsonObject definition = definition(component);
+        JsonObject node = definition == null ? null : node(definition, mapPath + "{}");
+        return node == null || !node.has("types") ? List.of() : node.getAsJsonArray("types").asList().stream().map(JsonElement::getAsString).toList();
+    }
+
+    /** The members of the object alternative of the elements of the map at a path ({@code bone_visibility{}.expression}), in the schema's order. */
+    public List<Member> elementMembers(String component, String mapPath) {
+        JsonObject definition = definition(component);
+        if (definition == null) {
+            return List.of();
+        }
+        List<Member> members = new ArrayList<>();
+        String prefix = mapPath + "{}.";
+        JsonObject fields = definition.getAsJsonObject("fields");
+        for (String path : fields.keySet()) {
+            if (path.startsWith(prefix) && path.indexOf('.', prefix.length()) < 0) {
+                JsonObject node = fields.getAsJsonObject(path);
+                members.add(new Member(path.substring(prefix.length()), node.has("types")
+                    ? node.getAsJsonArray("types").asList().stream().map(JsonElement::getAsString).toList() : List.of(), node.has("required")));
+            }
+        }
+        return members;
+    }
+
     /** The families of facts that say the same thing in different words: a schema fact of a family replaces the log's of it. */
     private static String family(String fact) {
         return switch (fact.split(" ")[0]) {

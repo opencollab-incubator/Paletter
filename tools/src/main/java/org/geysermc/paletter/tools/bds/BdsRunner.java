@@ -53,13 +53,13 @@ public final class BdsRunner {
     /**
      * Runs the add-on with the beta Script API: on a world with the Beta APIs experiment ({@code gametest}; BDS starts
      * once to create the fresh world, stops, and the toggle is set in its {@code level.dat}), and with the add-on's
-     * {@code @minecraft/server} dependency set to the beta of this build ({@link ScriptModules#betaVersion}).
+     * {@code @minecraft/server} dependency set to the beta module of this build ({@link ScriptModules#betaVersion}).
      *
-     * @param bdsVersion the build of the server, e.g. {@code 1.26.63.1}
+     * @param betaModule the dependency version, e.g. {@code 2.12.0-beta}
      */
-    public BdsRunner withBetaApis(String bdsVersion) throws IOException, InterruptedException {
+    public BdsRunner withBetaApis(String betaModule) {
         this.experiments = List.of("gametest");
-        this.betaModule = ScriptModules.betaVersion(bdsVersion);
+        this.betaModule = betaModule;
         return this;
     }
 

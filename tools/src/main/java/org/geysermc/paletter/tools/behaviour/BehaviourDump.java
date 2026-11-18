@@ -49,13 +49,14 @@ public final class BehaviourDump {
      * Runs the add-on and writes the console to {@code log}.
      *
      * @param preview whether {@code bdsVersion} is a preview build
+     * @param betaModule the version of the beta {@code @minecraft/server} module the add-on depends on ({@code ScriptModules})
      * @param server an extracted BDS, or null to use the build's server in the cache (extracted for the run and removed
      *               after it, unless it was there already)
      */
-    public static void run(Path root, String bdsVersion, boolean preview, Path server, Path cache, int port, int timeout, Path log)
+    public static void run(Path root, String bdsVersion, boolean preview, String betaModule, Path server, Path cache, int port, int timeout, Path log)
         throws IOException, InterruptedException {
         Files.createDirectories(log.toAbsolutePath().getParent());
-        BdsRunner runner = new BdsRunner(root.resolve(Layout.BEHAVIOUR_DUMP_ADDON), MARKER, PACK).withBetaApis(bdsVersion);
+        BdsRunner runner = new BdsRunner(root.resolve(Layout.BEHAVIOUR_DUMP_ADDON), MARKER, PACK).withBetaApis(betaModule);
         if (server != null) {
             runner.run(server, log, timeout, port, false);
         } else {

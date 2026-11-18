@@ -3,6 +3,7 @@ package org.geysermc.paletter.tools.update;
 import com.google.gson.JsonObject;
 import org.geysermc.paletter.internal.data.VanillaData;
 import org.geysermc.paletter.tools.bds.BdsDistribution;
+import org.geysermc.paletter.tools.bds.ScriptModules;
 import org.geysermc.paletter.tools.behaviour.BehaviourDump;
 import org.geysermc.paletter.tools.behaviour.BehaviourProbe;
 
@@ -10,6 +11,7 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.List;
 
 /**
  * The captures that were separate commands: the behaviour dump ({@code behaviour-dump}), the behaviour probe
@@ -45,7 +47,7 @@ final class BehaviourStage {
     void behaviour(BdsDistribution distribution, Path server, Path work, Runs runs) {
         String build = distribution.version();
         try {
-            step("Behaviour dump", () -> dump(build, server, work));
+            step("Behaviour dump", () -> dump(build, server, work, runs));
             step("Behaviour probe", () -> probe(build, server, work));
             if (runs.protocol == null) {
                 ctx.report.check(Report.Status.SKIP, "Education capture", "no network capture of this build");
@@ -84,9 +86,11 @@ final class BehaviourStage {
         boolean same(Path committed) throws IOException;
     }
 
-    private void dump(String build, Path server, Path work) throws Exception {
+    private void dump(String build, Path server, Path work, Runs runs) throws Exception {
         Path log = work.resolve("behaviour-dump.log");
-        BehaviourDump.run(ctx.root, build, ctx.preview, server, null, ctx.port, ctx.timeout, log);
+        // This run's docgen output, else the committed file of the build; without either the run fails
+        List<String> modules = runs.scriptModules != null ? runs.scriptModules : ScriptModules.versions(ctx.bdsData, build);
+        BehaviourDump.run(ctx.root, build, ctx.preview, ScriptModules.betaVersion(modules), server, null, ctx.port, ctx.timeout, log);
         BehaviourDump.Rendered rendered = BehaviourDump.render(log);
         requireBuild(build, rendered.version());
         JsonObject captured = BehaviourDump.read(rendered.gzip());

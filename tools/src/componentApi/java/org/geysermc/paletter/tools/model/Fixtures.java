@@ -242,6 +242,47 @@ public final class Fixtures {
     }
 
     /**
+     * Names to put in a list of names (by '<component>:<path>'): the add-on writes the lists BDS orders by the hash of each name
+     * ({@code uv_lock}) in several orders of them, so that the sent order is told from the written one. The names are inputs, not facts.
+     */
+    public List<String> listNames(String component, String path) {
+        JsonObject values = json.has("listNames") ? json.getAsJsonObject("listNames") : new JsonObject();
+        return values.has(component + ":" + path)
+            ? values.getAsJsonArray(component + ":" + path).asList().stream().map(JsonElement::getAsString).toList() : List.of();
+    }
+
+    /**
+     * Whether the booleans of the objects of a component are tried in every combination (the packed bits of
+     * {@code material_instances} share one leaf: each bit alone and in pairs shows which bit is which).
+     */
+    public boolean boolCombinations(String component) {
+        return json.has("boolCombinations") && json.getAsJsonArray("boolCombinations").contains(new com.google.gson.JsonPrimitive(component));
+    }
+
+    /**
+     * Whether the add-on pins the values of the schema's enum at a path (never cuts one): every enum is, but those of
+     * {@code unpinnedEnums}, which no table is built for (an open enum is a string in the API).
+     */
+    public boolean pinsEnum(String component, String path) {
+        return !(json.has("unpinnedEnums") && json.getAsJsonObject("unpinnedEnums").has(component + ":" + path));
+    }
+
+    /** The values of the string enum BDS's schema lists at a path (empty without the schema in the model, or without an enum there). */
+    public List<String> schemaEnum(String component, String path) {
+        return schema.enumValues(component, path);
+    }
+
+    /** The JSON types the schema lists for the elements of the map at a path. */
+    public List<String> schemaElementTypes(String component, String mapPath) {
+        return schema.elementTypes(component, mapPath);
+    }
+
+    /** The members of the object alternative of the elements of the map at a path, as the schema has them. */
+    public List<Schema.Member> schemaElementMembers(String component, String mapPath) {
+        return schema.elementMembers(component, mapPath);
+    }
+
+    /**
      * Whole values of a component the format sweep tries at every format besides its base (by component id): inputs for the
      * components BDS rejects at the current format, whose docs give no usable base. BDS decides what any of them does.
      */
@@ -345,7 +386,7 @@ public final class Fixtures {
 
     /** The sections of fixtures.json and api.json whose keys start with a component id ({@code item:minecraft:food:path}). */
     private static final List<String> FIXTURE_SECTIONS = List.of("requires", "context", "skip", "together", "samples", "alternatives",
-        "mapValues", "mapKeys", "probeOnly", "probeValues", "sweepValues");
+        "mapValues", "mapKeys", "probeOnly", "probeValues", "sweepValues", "listNames", "boolCombinations", "unpinnedEnums");
     private static final List<String> API_SECTIONS = List.of("rootLists", "forms", "types", "unions", "keyedExtras", "descriptors",
         "blockDescriptors", "retired", "fields", "typeNames", "standalone", "standalonePaths", "openEnums", "exclude", "handWritten", "classes",
         "optional", "noDefaults", "enums");

@@ -9,6 +9,8 @@ final class Runs {
     String dumpJson;
     Integer protocol;
     String bdsVersion;
+    /** The Script API module versions of this build's docgen output (null if it wrote none). */
+    java.util.List<String> scriptModules;
     /** The format version of the add-on packs of this build: the model's, or the build's own if it is older. */
     String formatVersion;
     boolean netherNet;
