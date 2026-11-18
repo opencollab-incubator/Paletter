@@ -22,14 +22,15 @@ import java.util.regex.Pattern;
  * conversions and mirrors of the wire are. A single input is a {@link Linear} rule.
  * <p>
  * For a leaf of a list of objects ({@code boxes[].minX}) the rule is of every element: the inputs are the numbers of one
- * element ({@code origin[0]}), and the encoder writes the leaf of each element from its own ({@link #fitElements}).
+ * element ({@code origin[0]}), and the encoder writes the leaf of each element from its own ({@link #fitElements}). No
+ * committed capture uses this yet: the box samples of the recapture need it, and the synthetic tests cover it until then.
  */
 public final class Affine extends Rule {
     static final String KIND = "affine";
     /** More inputs than this make the search for the coefficients too large to be unique. */
     private static final int MAX_INPUTS = 8;
-    /** A leaf directly below an element of a list of objects: the part up to the list, then the leaf name. */
-    private static final Pattern ELEMENT_LEAF = Pattern.compile("(.*)\\[\\d+](\\.[^.\\[\\]]+)");
+    /** A leaf directly below an element of the field's own list (no list before it): the part up to the list, then the leaf name. */
+    private static final Pattern ELEMENT_LEAF = Pattern.compile("([^\\[]*)\\[\\d+](\\.[^.\\[\\]]+)");
 
     /** Input path -> its coefficient (1 or -1), sorted by path. */
     public final Map<String, Integer> terms;
@@ -102,8 +103,14 @@ public final class Affine extends Rule {
             return null;
         }
         List<Observation> rows = new ArrayList<>();
+        Pattern index = Pattern.compile(Pattern.quote(element.group(1)) + "\\[(\\d+)].*");
         for (Observation p : set) {
             JsonArray list = p.json().getAsJsonArray();
+            // the wire has as many elements as the JSON list, else the elements are not the rows of the leaves
+            long sent = p.wire().keySet().stream().map(index::matcher).filter(Matcher::matches).map(m -> m.group(1)).distinct().count();
+            if (sent != list.size()) {
+                return null;
+            }
             for (int i = 0; i < list.size(); i++) {
                 Leaf leaf = p.wire().get(element.group(1) + "[" + i + "]" + element.group(2));
                 if (leaf != null) {

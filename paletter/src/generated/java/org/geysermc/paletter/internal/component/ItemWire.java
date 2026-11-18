@@ -141,16 +141,6 @@ public final class ItemWire {
         out.list("minecraft:block_placer.use_on");
         for (BlockPlacer.UseOn e2 : v1) {
             WireNode n3 = out.element("minecraft:block_placer.use_on");
-            String v4 = e2.name();
-            if (v4 != null) {
-                n3.put("name", v4);
-            } else {
-                n3.remove("name");
-            }
-            String v5 = e2.tags();
-            if (v5 != null) {
-                n3.put("tags", v5);
-            }
             Wire.blockDescriptor(ctx, n3, "", e2.name(), e2.states(), e2.tags());
         }
         Transforms.blockName(ctx, out, c);
@@ -210,31 +200,21 @@ public final class ItemWire {
             WireNode n2 = out.element("minecraft:digger.destroy_speeds");
             Digger.Block v3 = e1.block();
             if (v3 != null) {
-                String v4 = v3.name();
-                if (v4 != null) {
-                    n2.put("block.name", v4);
-                } else {
-                    n2.remove("block.name");
-                }
-                String v5 = v3.tags();
-                if (v5 != null) {
-                    n2.put("block.tags", v5);
-                }
                 Wire.blockDescriptor(ctx, n2, "block", v3.name(), v3.states(), v3.tags());
             } else {
                 n2.remove("block.name");
                 n2.remove("block.states");
                 n2.remove("block.tags");
             }
-            Integer v6 = e1.speed();
-            if (v6 != null) {
-                n2.put("speed", Wire.toInt(v6));
+            Integer v4 = e1.speed();
+            if (v4 != null) {
+                n2.put("speed", Wire.toInt(v4));
             } else {
                 n2.remove("speed");
             }
         }
-        boolean v7 = c.useEfficiency();
-        out.put("minecraft:digger.use_efficiency", Wire.bool(v7));
+        boolean v5 = c.useEfficiency();
+        out.put("minecraft:digger.use_efficiency", Wire.bool(v5));
     }
 
     private static void displayName(DisplayName c, WireContext ctx, WireNode out) {
@@ -280,39 +260,19 @@ public final class ItemWire {
         out.list("minecraft:entity_placer.dispense_on");
         for (EntityPlacer.UseOn e1 : v0) {
             WireNode n2 = out.element("minecraft:entity_placer.dispense_on");
-            String v3 = e1.name();
-            if (v3 != null) {
-                n2.put("name", v3);
-            } else {
-                n2.remove("name");
-            }
-            String v4 = e1.tags();
-            if (v4 != null) {
-                n2.put("tags", v4);
-            }
             Wire.blockDescriptor(ctx, n2, "", e1.name(), e1.states(), e1.tags());
         }
-        String v5 = c.entity();
-        if (v5 != null) {
-            out.put("minecraft:entity_placer.entity", "" + Wire.namespaced(String.valueOf(v5)) + "<>");
+        String v3 = c.entity();
+        if (v3 != null) {
+            out.put("minecraft:entity_placer.entity", "" + Wire.namespaced(String.valueOf(v3)) + "<>");
         } else {
             out.put("minecraft:entity_placer.entity", "minecraft:<>");
         }
-        List<EntityPlacer.UseOn> v6 = c.useOn();
+        List<EntityPlacer.UseOn> v4 = c.useOn();
         out.list("minecraft:entity_placer.use_on");
-        for (EntityPlacer.UseOn e7 : v6) {
-            WireNode n8 = out.element("minecraft:entity_placer.use_on");
-            String v9 = e7.name();
-            if (v9 != null) {
-                n8.put("name", v9);
-            } else {
-                n8.remove("name");
-            }
-            String v10 = e7.tags();
-            if (v10 != null) {
-                n8.put("tags", v10);
-            }
-            Wire.blockDescriptor(ctx, n8, "", e7.name(), e7.states(), e7.tags());
+        for (EntityPlacer.UseOn e5 : v4) {
+            WireNode n6 = out.element("minecraft:entity_placer.use_on");
+            Wire.blockDescriptor(ctx, n6, "", e5.name(), e5.states(), e5.tags());
         }
     }
 

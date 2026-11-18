@@ -458,7 +458,9 @@ final class FieldAnalysis {
             Descriptor descriptor = descriptor(path, reference, accepted);
             if (descriptor != null) {
                 // one rule for the whole descriptor: it replaces the leaf rules below it and explains the leaves that moved
-                rules.removeIf(r -> r.wire.equals(descriptor.wire) || r.wire.startsWith(descriptor.wire + ".") || r.wire.startsWith(descriptor.wire + "{}"));
+                // (only the rules of its own leaves: not those of the list or object that contains it)
+                rules.removeIf(r -> r.wire.equals(descriptor.wire) || r.wire.startsWith(descriptor.wire + ".")
+                    || r.wire.startsWith(descriptor.wire + "{}") || r.wire.startsWith(descriptor.wire + "["));
                 rules.add(descriptor);
                 for (int i = unexplained.size() - 1; i >= 0; i--) {
                     if (explained(Wire.generic(unexplained.get(i).getAsJsonObject().get("wire").getAsString()), Set.of(descriptor.wire))) {
@@ -502,7 +504,8 @@ final class FieldAnalysis {
         List<String> tokens = JsonPath.tokens(path);
         String holder = String.join(".", tokens.subList(0, tokens.size() - 1)).replace(".[]", "[]").replace(".{}", "{}");
         Descriptor found = null;
-        for (String at : List.of(path, holder)) {
+        // the states of a block descriptor are what varies in the holder
+        for (String at : tokens.getLast().equals("states") ? List.of(path, holder) : List.of(path)) {
             List<Observation> observations = all.stream()
                 .map(o -> new Observation(SpecCaptures.jsonAt(o.variant().json(), at), o.wire(), o.variant().label()))
                 .filter(o -> o.json() != null && !o.json().isJsonNull()).toList();
@@ -515,10 +518,11 @@ final class FieldAnalysis {
             for (String prefix : prefixes) {
                 Descriptor fit = Descriptor.fit(observations, prefix);
                 if (fit != null && fit.writesHolder() == at.equals(holder)) {
-                    if (found != null) {
+                    fit.wire = Wire.generic(prefix);
+                    // the same descriptor at another element index is the same rule
+                    if (found != null && !found.wire.equals(fit.wire)) {
                         return null;
                     }
-                    fit.wire = Wire.generic(prefix);
                     found = fit;
                 }
             }

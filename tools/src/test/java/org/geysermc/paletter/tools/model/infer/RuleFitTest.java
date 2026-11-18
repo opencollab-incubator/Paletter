@@ -196,6 +196,14 @@ class RuleFitTest {
         // not a leaf of an element, and not a list
         assertNull(Affine.fitElements(list, W));
         assertNull(Affine.fitElements(List.of(box(1, 2, 0, 5), box(-4, 2, 0, 10)), leaf));
+        // a leaf of a list inside the elements is no leaf of the field's own list
+        assertNull(Affine.fitElements(list, "minecraft:x.groups[0].boxes[0].minX"));
+        // the wire has fewer elements than the JSON list: the leaves cannot be matched to the elements
+        assertNull(Affine.fitElements(List.of(
+            boxes("[{\"origin\": [1, 0, 0], \"size\": [2, 1, 1]}, {\"origin\": [0, 0, 0], \"size\": [3, 1, 1]}]", 5),
+            boxes("[{\"origin\": [-4, 0, 0], \"size\": [2, 1, 1]}]", 10),
+            boxes("[{\"origin\": [0, 0, 0], \"size\": [2, 1, 1]}]", 6),
+            boxes("[{\"origin\": [1, 0, 0], \"size\": [3, 1, 1]}]", 4)), leaf));
     }
 
     @Test

@@ -452,26 +452,38 @@ final class WireSource {
      * @param prefix the generic wire path of that node ("" or {@code ...list[]})
      */
     private void fields(ObjType o, String value, String node, String prefix) {
-        Set<String> transformsCalled = new LinkedHashSet<>();
+        // The leaves a descriptor written from the holder writes: the fields that only write those need no code of their own
+        Set<String> held = new TreeSet<>();
         for (Field f : fieldsWithAlternatives(o)) {
-            if (f.transform == null && !ComponentGenerator.writesHolder(window, f)) {
+            for (Rule r : rules(f)) {
+                if (r instanceof Descriptor d && d.writesHolder()) {
+                    d.leaves().forEach(leaf -> held.add(strip(leaf)));
+                }
+            }
+        }
+        for (Field f : fieldsWithAlternatives(o)) {
+            if (f.transform == null && !ComponentGenerator.writesHolder(window, f) && !writesOnly(f, held)) {
                 field(f, value, node, prefix);
             }
         }
-        // Transforms last: they see what the generic rules of their siblings wrote
+        // Written from the holder last, in field order: they see what the generic rules of their siblings wrote
+        Set<String> transformsCalled = new LinkedHashSet<>();
         for (Field f : fieldsWithAlternatives(o)) {
             if (f.transform != null && transformsCalled.add(f.transform)) {
                 transformCall(f.transform, node, value);
             }
-        }
-        // so do the descriptors written from the record that holds their field
-        for (Field f : fieldsWithAlternatives(o)) {
             for (Rule r : rules(f)) {
                 if (r instanceof Descriptor d && d.writesHolder()) {
                     r.emit(new LeafEmitter(f, f.type, CodeBlock.of("$N", value), node, relative(strip(r.wire), prefix), false));
                 }
             }
         }
+    }
+
+    /** Whether the field's value rules write nothing but the leaves. */
+    private boolean writesOnly(Field f, Set<String> leaves) {
+        List<Rule> written = rules(f).stream().filter(Rule::writesValue).toList();
+        return !written.isEmpty() && written.stream().allMatch(r -> leaves.contains(strip(r.wire)));
     }
 
     private void field(Field f, String owner, String node, String prefix) {

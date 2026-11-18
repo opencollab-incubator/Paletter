@@ -44,7 +44,7 @@ public final class HandTransforms {
         entry("item:minecraft:icon:", "iconTextures"),
         // item descriptors and Molang that change shape with the protocol, in one list the entries of which are dropped by the registry
         entry("item:minecraft:repairable:repair_items", "itemDescriptorList"),
-        // the API holds the item of a map form as null, which BDS sends as {} while an omitted item sends nothing: no rule over null fits both
+        // null-item entry not captured; unverified. TODO: add a sample of an ammunition entry without item before the recapture, then try the descriptor rule
         entry("item:minecraft:shooter:ammunition[].item", "ammunitionItemDescriptor"),
         entry("item:minecraft:use_animation:value", "useAnimationId"))));
 

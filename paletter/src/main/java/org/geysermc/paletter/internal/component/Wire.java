@@ -87,7 +87,8 @@ public final class Wire {
 
     /**
      * An item descriptor at {@code path}: {@code {name}} for an item the registry knows, {@code {}} for any other, which is
-     * reported for the field at {@code fieldPath} of the component. No item is the empty descriptor too.
+     * reported for the field at {@code fieldPath} of the component. No item is the empty descriptor too (unverified: no capture
+     * has an entry without item).
      */
     public static void itemDescriptor(@NonNull WireContext ctx, @NonNull WireNode out, @NonNull String path, @NonNull String component,
                                       @NonNull String fieldPath, @Nullable String item) {
