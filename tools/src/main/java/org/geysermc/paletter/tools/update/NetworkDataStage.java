@@ -48,7 +48,17 @@ final class NetworkDataStage {
             if (!check.mismatches().isEmpty()) {
                 ctx.report.evidence("Blocks that gave another item than the data says", check.mismatches().stream().map(line -> "- " + line).toList());
             }
-            ctx.stageCopy(ctx.bdsData.resolve(distribution.version()).resolve("vanilla").resolve(GiveCapture.FILE), file, "block items " + GiveCapture.FILE);
+            Path committed = ctx.bdsData.resolve(distribution.version()).resolve("vanilla").resolve(GiveCapture.FILE);
+            GiveCapture.Staging staging = GiveCapture.staging(file, committed);
+            if (!staging.stage()) {
+                ctx.report.check(Report.Status.INFO, "Block items (/give) staging", "the gives were cut short (too many without an answer, or the deadline); "
+                    + GiveCapture.FILE + " is not staged and the committed one stays");
+                return;
+            }
+            if (staging.drop() != null) {
+                ctx.report.check(Report.Status.DIFF, "Block items (/give) vs committed", staging.drop());
+            }
+            ctx.stageCopy(committed, file, "block items " + GiveCapture.FILE);
         } catch (Exception e) {
             ctx.report.check(Report.Status.INFO, "Block items (/give)", "not recorded: " + e);
         }

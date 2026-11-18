@@ -140,8 +140,11 @@ public final class BdsRunner {
         if (result == null) {
             String where = lastProgress == null ? "before any " + marker + "-PROGRESS line"
                 : "after " + lastProgress.substring(lastProgress.indexOf(marker + "-PROGRESS")).strip();
-            throw new IOException((exited ? "BDS exited" : "BDS was silent for " + timeoutSeconds + "s") + " without " + marker
-                + "-DONE, " + where + "; see " + log);
+            // The timeout is the longest silence between PROGRESS lines once there is one, and the time to the first without
+            String silence = lastProgress != null ? "no " + marker + "-PROGRESS line for " + timeoutSeconds + "s"
+                : "no " + marker + "-DONE within " + timeoutSeconds + "s";
+            throw new IOException(exited ? "BDS exited without " + marker + "-DONE, " + where + "; see " + log
+                : "BDS was silent: " + silence + ", " + where + "; see " + log);
         }
         if (!result.contains(marker + "-DONE")) {
             throw new IOException("the add-on failed: " + result.substring(result.indexOf(marker + "-FAILED")).strip() + "; see " + log);

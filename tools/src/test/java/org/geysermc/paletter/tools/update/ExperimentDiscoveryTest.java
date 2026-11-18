@@ -194,11 +194,27 @@ class ExperimentDiscoveryTest {
         Files.createDirectories(bds.resolve("no-record"));
         assertEquals(Set.of("old", "a", "b", "c"), ExperimentDiscovery.recorded(bds));
         // Versions compare by number: 1.26.10.1 is newer than 1.26.9.1
-        assertEquals(List.of("b"), ExperimentDiscovery.recordedCurrent(bds, null));
-        assertEquals(List.of("a"), ExperimentDiscovery.recordedCurrent(bds, "1.26.9.5"));
-        assertEquals(List.of(), ExperimentDiscovery.recordedCurrent(bds, "1.26.1.1"));
+        assertEquals(List.of("b"), ExperimentDiscovery.recordedCurrent(bds, null, Set.of()));
+        assertEquals(List.of("a"), ExperimentDiscovery.recordedCurrent(bds, "1.26.9.5", Set.of()));
+        assertEquals(List.of(), ExperimentDiscovery.recordedCurrent(bds, "1.26.1.1", Set.of()));
         assertEquals(Set.of(), ExperimentDiscovery.recorded(bds.resolve("none")));
-        assertEquals(List.of(), ExperimentDiscovery.recordedCurrent(bds.resolve("none"), null));
+        assertEquals(List.of(), ExperimentDiscovery.recordedCurrent(bds.resolve("none"), null, Set.of()));
+    }
+
+    /** A release takes no preview's record: its toggles can be ones the release lacks. */
+    @Test
+    void aReleaseBuildSkipsThePreviewRecords(@TempDir Path root) throws IOException {
+        Path bds = root.resolve("bds");
+        Files.writeString(Files.createDirectories(bds.resolve("1.26.9.1")).resolve("experiments.json"),
+            "{\"protocol\": 100, \"toggles\": {\"a\": {\"status\": \"current\"}}}");
+        Files.writeString(Files.createDirectories(bds.resolve("1.26.10.20")).resolve("experiments.json"),
+            "{\"protocol\": 101, \"toggles\": {\"p\": {\"status\": \"current\"}}}");
+        Path resources = Files.createDirectories(root.resolve("resources"));
+        Files.writeString(resources.resolve("versions.txt"), "1.26.9 100\n1.26.10 101 preview\n");
+        assertEquals(Set.of(101), ExperimentDiscovery.previewProtocols(resources, false));
+        assertEquals(Set.of(), ExperimentDiscovery.previewProtocols(resources, true), "a preview build keeps them");
+        assertEquals(List.of("a"), ExperimentDiscovery.recordedCurrent(bds, "1.26.11.1", ExperimentDiscovery.previewProtocols(resources, false)));
+        assertEquals(List.of("p"), ExperimentDiscovery.recordedCurrent(bds, "1.26.11.1", ExperimentDiscovery.previewProtocols(resources, true)));
     }
 
     @Test

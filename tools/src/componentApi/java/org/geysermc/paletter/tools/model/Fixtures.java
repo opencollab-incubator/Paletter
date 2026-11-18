@@ -93,9 +93,11 @@ public final class Fixtures {
 
     /**
      * The fixtures with exactly this schema: the one an {@code update} run extracted from its own docs, which an add-on of that run
-     * uses instead of any committed file. Given explicitly, so the switch does not apply.
+     * uses instead of any committed file. With the switch off the schema is ignored, so one run never mixes models (inference and
+     * coverage read through the same switch). When the switch is removed, drop the first line of this method.
      */
     public Fixtures withSchema(Schema schema) {
+        if (!schemaOn) return this;
         return new Fixtures(json, feedback, keys, schema, bdsData, true);
     }
 

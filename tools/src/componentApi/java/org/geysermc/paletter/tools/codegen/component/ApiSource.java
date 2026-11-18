@@ -228,11 +228,11 @@ final class ApiSource {
     }
 
     /** What the gating captures verify of a component: where BDS does not take it without experiments, where it does, and where it never does. */
-    static String gatingDoc(List<Gating.Result> results) {
-        List<String> gated = results.stream().filter(Gating.Result::gated).map(Gating.Result::build).toList();
+    static String gatingDoc(List<Gating.Result> results, boolean serverOnly) {
+        List<String> gated = results.stream().filter(r -> r.gated(serverOnly)).map(Gating.Result::build).toList();
         List<String> open = results.stream().filter(r -> r.without().equals(Gating.ACCEPTED)).map(Gating.Result::build).toList();
         List<String> never = results.stream().filter(Gating.Result::rejectedAnyway).map(Gating.Result::build).toList();
-        boolean ignored = results.stream().anyMatch(r -> r.gated() && r.without().equals(Gating.IGNORED));
+        boolean ignored = results.stream().anyMatch(r -> r.gated(serverOnly) && r.without().equals(Gating.IGNORED));
         StringBuilder doc = new StringBuilder();
         if (!gated.isEmpty()) {
             doc.append("BDS-verified: in a world without experiments BDS ").append(ignored ? "rejects or ignores" : "rejects")
@@ -278,7 +278,7 @@ final class ApiSource {
                 doc.append("The creator docs name the experiment").append(c.experiments.size() > 1 ? "s " : " ")
                     .append(String.join(", ", c.experiments.stream().map(Docs::escape).toList()))
                     .append(" for it (in some format versions);")
-                    .append(c.gating.isEmpty() ? " unverified against BDS.\n" : "\n" + gatingDoc(c.gating));
+                    .append(c.gating.isEmpty() ? " unverified against BDS.\n" : "\n" + gatingDoc(c.gating, c.serverOnly != null));
                 for (String name : c.unmappedExperiments) {
                     doc.append("Unverified: the creator docs name experiment \"").append(Docs.escape(name)).append("\", which is in no capture.\n");
                 }

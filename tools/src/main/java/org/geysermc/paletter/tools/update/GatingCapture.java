@@ -81,7 +81,7 @@ final class GatingCapture {
     }
 
     /**
-     * What the spec capture of {@code build} did with the base of each component: accepted or rejected. Empty without a spec capture of
+     * What the spec capture of {@code build} did with the base of each component: accepted, rejected or ignored (see {@link #without}). Empty without a spec capture of
      * that build (a gating capture of another build must not be held against it).
      */
     static Map<String, String> withExperiments(Path spec, String build) throws IOException {
@@ -93,13 +93,25 @@ final class GatingCapture {
         }
         Map<String, Map<String, Leaf>> leaves = SpecCapture.leaves(spec);
         Map<String, List<String>> log = SpecCapture.logByVariant(Files.readAllLines(spec.resolve("content-log.txt"), StandardCharsets.UTF_8));
+        Map<String, JsonObject> bases = new LinkedHashMap<>();
+        Map<String, JsonObject> controls = new LinkedHashMap<>();
         for (JsonElement element : JsonParser.parseString(Files.readString(spec.resolve("variants.json"), StandardCharsets.UTF_8)).getAsJsonArray()) {
             JsonObject v = element.getAsJsonObject();
-            if (v.get("role").getAsString().equals("base")) {
-                result.put(v.get("component").getAsString(), accepted(v.get("kind").getAsString(), v.get("identifier").getAsString(), leaves, log)
-                    ? Gating.ACCEPTED : Gating.REJECTED);
+            String role = v.get("role").getAsString();
+            if (role.equals("base")) {
+                bases.put(v.get("component").getAsString(), v);
+            } else if (role.equals("control")) {
+                controls.putIfAbsent(v.get("component").getAsString(), v);
             }
         }
+        // The same three answers as without experiments: a server-only component is ignored there, which proves nothing for its gating
+        bases.forEach((id, base) -> {
+            String kind = base.get("kind").getAsString();
+            String identifier = base.get("identifier").getAsString();
+            JsonObject control = controls.get(id);
+            result.put(id, without(accepted(kind, identifier, leaves, log), leaves.get(key(kind, identifier)),
+                control == null ? null : leaves.get(key(control.get("kind").getAsString(), control.get("identifier").getAsString()))));
+        });
         return result;
     }
 }

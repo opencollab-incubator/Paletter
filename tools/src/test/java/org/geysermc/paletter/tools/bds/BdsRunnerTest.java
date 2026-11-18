@@ -31,8 +31,14 @@ class BdsRunnerTest {
     void silenceNamesTheLastProgressLine() {
         IOException none = assertThrows(IOException.class, () -> BdsRunner.checkResult(null, "BEHAVIOUR", 300, false,
             "[2026-11-18 14:44:38:927 WARN] [Scripting] BEHAVIOUR-PROGRESS world sample 1800/2144", LOG));
-        assertTrue(none.getMessage().startsWith("BDS was silent for 300s without BEHAVIOUR-DONE, after BEHAVIOUR-PROGRESS world sample 1800/2144;"),
+        assertTrue(none.getMessage().startsWith("BDS was silent: no BEHAVIOUR-PROGRESS line for 300s, after BEHAVIOUR-PROGRESS world sample 1800/2144;"),
             none.getMessage());
+    }
+
+    @Test
+    void silenceWithoutAnyProgressNamesTheMissingDone() {
+        IOException none = assertThrows(IOException.class, () -> BdsRunner.checkResult(null, "PROBE", 3600, false, null, LOG));
+        assertTrue(none.getMessage().startsWith("BDS was silent: no PROBE-DONE within 3600s, before any PROBE-PROGRESS line;"), none.getMessage());
     }
 
     @Test

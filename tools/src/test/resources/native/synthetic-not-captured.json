@@ -1,5 +1,5 @@
 {
-  "_fixture": "SYNTHETIC TEST FIXTURE. Invented values for the reader's tests, not BDS data.",
+  "_generated": "SYNTHETIC TEST FIXTURE. Invented values for the reader's tests, not BDS data.",
   "schema": 1,
   "bdsVersion": "1.0.0.1",
   "campaign": "campaign-synthetic",

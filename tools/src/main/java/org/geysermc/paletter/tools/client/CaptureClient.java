@@ -93,6 +93,8 @@ public final class CaptureClient {
         public volatile int startGameIndex = -1;
         /** What {@code /give} answered per requested identifier ({@link CaptureClient#give}); an identifier the server did not answer for is absent. */
         public final Map<String, GiveCapture.Given> gives = new ConcurrentHashMap<>();
+        /** The gives were cut short (too many gives in a row without an answer, no spawn, or the deadline): the answers are partial. */
+        public volatile boolean givesAborted;
     }
 
     private final BedrockCodec codec;
@@ -109,6 +111,8 @@ public final class CaptureClient {
     private final Deque<String> giveQueue = new ArrayDeque<>();
     private static final int MAX_MISSES = 5;
     private String giving;
+    /** The item the data says for a block identifier, to verify an answer against. */
+    private Map<String, String> dataItems = Map.of();
     private long givingSince;
     private boolean clearing;
     private int misses;
@@ -139,7 +143,16 @@ public final class CaptureClient {
      * (or no spawn) leaves its block unanswered, it never fails the capture. The server must let the player run commands.
      */
     public CaptureClient give(List<String> identifiers) {
+        return give(identifiers, Map.of());
+    }
+
+    /**
+     * {@link #give(List)} with the item the data says for each block identifier: an answer is recorded only if its item is the
+     * identifier given or that item; any other item (a late answer of an earlier give, say) is ignored, so the give stays unverified.
+     */
+    public CaptureClient give(List<String> identifiers, Map<String, String> blockItems) {
         giveQueue.addAll(identifiers);
+        dataItems = blockItems;
         givesDone = identifiers.isEmpty();
         return this;
     }
@@ -220,6 +233,7 @@ public final class CaptureClient {
                     if (readyAt != 0) {
                         // Only the gives are still going: what they answered so far is written, the rest stays unverified
                         System.out.println("  timed out with " + result.gives.size() + " gives answered");
+                        result.givesAborted |= !givesDone;
                         done.complete(result);
                         break;
                     }
@@ -295,8 +309,12 @@ public final class CaptureClient {
     private void inventoryItem(int slot, ItemData item) {
         boolean changed = item.getDefinition() != null && item.getDefinition().getRuntimeId() != 0 && !same(item, inventory.get(slot));
         inventory.put(slot, item);
+        // Slot changes while no give is current (after a timeout, until the clear is done) belong to an earlier give
         if (giving != null && changed) {
-            answered(new GiveCapture.Given(item.getDefinition().getIdentifier(), slot));
+            String identifier = item.getDefinition().getIdentifier();
+            if (identifier.equals(giving) || identifier.equals(dataItems.get(giving))) {
+                answered(new GiveCapture.Given(identifier, slot));
+            }
         }
     }
 
@@ -328,13 +346,18 @@ public final class CaptureClient {
         if (given.rejected()) {
             giveNext();
         } else {
-            clearing = true;
-            givingSince = System.currentTimeMillis();
-            CommandRequestPacket command = new CommandRequestPacket();
-            command.setCommand("/clear @s");
-            command.setCommandOriginData(new CommandOriginData(CommandOriginType.PLAYER, UUID.randomUUID(), "", 0));
-            giveSender.accept(command);
+            sendClear();
         }
+    }
+
+    /** Clears the inventory; the output of the clear ends it ({@link #commandOutput}), and no give is current until then. */
+    private void sendClear() {
+        clearing = true;
+        givingSince = System.currentTimeMillis();
+        CommandRequestPacket command = new CommandRequestPacket();
+        command.setCommand("/clear @s");
+        command.setCommandOriginData(new CommandOriginData(CommandOriginType.PLAYER, UUID.randomUUID(), "", 0));
+        giveSender.accept(command);
     }
 
     /** A command error is the answer to the current give: the server rejected the identifier. The output of the clear ends the clear. */
@@ -357,13 +380,23 @@ public final class CaptureClient {
         }
         if (giveStarted) {
             if (now - givingSince > GIVE_ANSWER_MILLIS) {
-                if (!clearing && ++misses >= MAX_MISSES) {
-                    giveQueue.clear();
+                if (clearing) {
+                    // The clear was not answered either: go on
+                    clearing = false;
+                    giveNext();
+                } else {
+                    // The give stays unanswered; its answer can still come, so clear and wait for the clear's output before the
+                    // next give, with no give current meanwhile (a slot change in between is not recorded against the next one)
+                    giving = null;
+                    if (++misses >= MAX_MISSES) {
+                        giveQueue.clear();
+                        result.givesAborted = true;
+                    }
+                    sendClear();
                 }
-                clearing = false;
-                giveNext();
             }
         } else if (readyAt != 0 && now - readyAt > GIVE_START_MILLIS) {
+            result.givesAborted = true;
             giveQueue.clear();
             givesDone = true;
             checkComplete();
