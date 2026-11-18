@@ -77,7 +77,7 @@ class ComponentNamingTest {
         Map<String, String> files = ComponentGenerator.generate(withBlockWidget(Context.NONE));
         String block = files.get("org/geysermc/paletter/internal/component/BlockWire.java");
         assertTrue(block.contains("BlockWidget"), block);
-        assertTrue(block.contains("private static void widget("), "the encoder method keeps the name the data gives the component");
+        assertTrue(block.contains("case BlockWidget c -> out.put(\"test:block_widget.size\""), "the dispatch case carries the prefixed type name");
         String item = files.get("org/geysermc/paletter/internal/component/ItemWire.java");
         assertTrue(item.contains("ItemWidget"), item);
         assertTrue(files.get(ITEM_PKG + "ItemWidget.java").contains("public record ItemWidget("));

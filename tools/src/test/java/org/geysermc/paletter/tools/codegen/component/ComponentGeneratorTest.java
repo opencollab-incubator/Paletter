@@ -458,7 +458,7 @@ void theModelIsWhatTheGoldenSourcesShow() {
         String wire = ComponentGenerator.generate(in).get(WIDGET_WIRE);
         assertTrue(wire.contains("case \"odd\" -> out.put(\"test:widget.rarity\", \"common\")"), wire);
         assertTrue(wire.contains("case \"odd_too\" -> out.put(\"test:widget.rarity\", \"rare\")"), wire);
-        assertTrue(wire.contains("default -> ctx.drop(Widget.NAME, \"rarity = \" + v16 + \" has no known wire value\")"), wire);
+        assertTrue(wire.matches("(?s).*default -> ctx\\.drop\\(Widget\\.NAME, \"rarity = \" \\+ v\\d+ \\+ \" has no known wire value\"\\).*"), wire);
     }
 
     @Test

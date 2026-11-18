@@ -27,10 +27,10 @@ public final class TraitWire {
     public static void write(@NonNull BlockTrait component, @NonNull WireContext ctx,
             @NonNull WireNode out) {
         switch (component) {
-            case Connection value -> connection(value, ctx, out);
-            case MultiBlock value -> multiBlock(value, ctx, out);
-            case PlacementDirection value -> placementDirection(value, ctx, out);
-            case PlacementPosition value -> placementPosition(value, ctx, out);
+            case Connection c -> connection(c, ctx, out);
+            case MultiBlock c -> multiBlock(c, ctx, out);
+            case PlacementDirection c -> placementDirection(c, ctx, out);
+            case PlacementPosition c -> placementPosition(c, ctx, out);
         }
     }
 
@@ -53,13 +53,12 @@ public final class TraitWire {
     private static void multiBlockUntil2168(MultiBlock c, WireContext ctx, WireNode out) {
         out.put("enabled_states.multi_block", (byte) 1);
         out.put("name", "minecraft:multi_block");
-        int v1 = c.parts();
-        out.put("part_count", Wire.toByte(v1));
-        MultiBlock.MultiBlockDirection v2 = c.direction();
-        switch (v2.value()) {
+        out.put("part_count", Wire.toByte(c.parts()));
+        MultiBlock.MultiBlockDirection v0 = c.direction();
+        switch (v0.value()) {
             case "down" -> out.put("direction", (byte) 0);
             case "up" -> out.put("direction", (byte) 1);
-            default -> ctx.drop(MultiBlock.NAME, "direction = " + v2.value() + " has no known wire value");
+            default -> ctx.drop(MultiBlock.NAME, "direction = " + v0.value() + " has no known wire value");
         }
     }
 
@@ -67,10 +66,8 @@ public final class TraitWire {
         out.put("enabled_states.multi_block", (byte) 1);
         out.put("name", "minecraft:multi_block");
         out.put("place_behavior", (byte) 0);
-        int v1 = c.parts();
-        out.put("part_count", Wire.toByte(v1));
-        MultiBlock.MultiBlockDirection v2 = c.direction();
-        switch (v2) {
+        out.put("part_count", Wire.toByte(c.parts()));
+        switch (c.direction()) {
             case DOWN -> out.put("direction", (byte) 0);
             case EAST -> out.put("direction", (byte) 5);
             case NORTH -> out.put("direction", (byte) 2);

@@ -72,52 +72,52 @@ public final class ItemWire {
     public static void write(@NonNull ItemComponent component, @NonNull WireContext ctx,
             @NonNull WireNode out) {
         switch (component) {
-            case AllowOffHand value -> allowOffHand(value, ctx, out);
-            case BlockPlacer value -> blockPlacer(value, ctx, out);
-            case BundleInteraction value -> bundleInteraction(value, ctx, out);
-            case CanDestroyInCreative value -> canDestroyInCreative(value, ctx, out);
-            case Compostable value -> compostable(value, ctx, out);
-            case Cooldown value -> cooldown(value, ctx, out);
-            case Damage value -> damage(value, ctx, out);
-            case DamageAbsorption value -> damageAbsorption(value, ctx, out);
-            case Digger value -> digger(value, ctx, out);
-            case ItemDisplayName value -> displayName(value, ctx, out);
-            case Durability value -> durability(value, ctx, out);
-            case DurabilitySensor value -> durabilitySensor(value, ctx, out);
-            case Dyeable value -> dyeable(value, ctx, out);
-            case Enchantable value -> enchantable(value, ctx, out);
-            case EntityPlacer value -> entityPlacer(value, ctx, out);
-            case FireResistant value -> fireResistant(value, ctx, out);
-            case Food value -> food(value, ctx, out);
-            case Fuel value -> fuel(value, ctx, out);
-            case Glint value -> glint(value, ctx, out);
-            case HandEquipped value -> handEquipped(value, ctx, out);
-            case HoverTextColor value -> hoverTextColor(value, ctx, out);
-            case Icon value -> icon(value, ctx, out);
-            case InteractButton value -> interactButton(value, ctx, out);
-            case KineticWeapon value -> kineticWeapon(value, ctx, out);
-            case LiquidClipped value -> liquidClipped(value, ctx, out);
-            case MaxStackSize value -> maxStackSize(value, ctx, out);
-            case PiercingWeapon value -> piercingWeapon(value, ctx, out);
-            case Projectile value -> projectile(value, ctx, out);
-            case Rarity value -> rarity(value, ctx, out);
-            case MusicRecord value -> musicRecord(value, ctx, out);
-            case Repairable value -> repairable(value, ctx, out);
-            case Shooter value -> shooter(value, ctx, out);
-            case ShouldDespawn value -> shouldDespawn(value, ctx, out);
-            case StackedByData value -> stackedByData(value, ctx, out);
-            case StorageItem value -> storageItem(value, ctx, out);
-            case StorageWeightLimit value -> storageWeightLimit(value, ctx, out);
-            case StorageWeightModifier value -> storageWeightModifier(value, ctx, out);
-            case SwingDuration value -> swingDuration(value, ctx, out);
-            case SwingSounds value -> swingSounds(value, ctx, out);
-            case Tags value -> tags(value, ctx, out);
-            case ThrowableItem value -> throwableItem(value, ctx, out);
-            case UseAnimation value -> useAnimation(value, ctx, out);
-            case UseDuration value -> useDuration(value, ctx, out);
-            case UseModifiers value -> useModifiers(value, ctx, out);
-            case Wearable value -> wearable(value, ctx, out);
-            case WireOnlyItemComponent value -> WireOnlyWire.write(value, ctx, out);
+            case AllowOffHand c -> allowOffHand(c, ctx, out);
+            case BlockPlacer c -> blockPlacer(c, ctx, out);
+            case BundleInteraction c -> out.put("minecraft:bundle_interaction.num_viewable_slots", Wire.toInt(c.numViewableSlots()));
+            case CanDestroyInCreative c -> canDestroyInCreative(c, ctx, out);
+            case Compostable c -> out.put("minecraft:compostable.composting_chance", Wire.toByte(c.compostingChance()));
+            case Cooldown c -> cooldown(c, ctx, out);
+            case Damage c -> damage(c, ctx, out);
+            case DamageAbsorption c -> { } // server only: BDS sends nothing to clients
+            case Digger c -> digger(c, ctx, out);
+            case ItemDisplayName c -> displayName(c, ctx, out);
+            case Durability c -> durability(c, ctx, out);
+            case DurabilitySensor c -> { } // server only: BDS sends nothing to clients
+            case Dyeable c -> Transforms.rgbColor(ctx, out, c);
+            case Enchantable c -> enchantable(c, ctx, out);
+            case EntityPlacer c -> entityPlacer(c, ctx, out);
+            case FireResistant c -> out.put("minecraft:fire_resistant.value", Wire.bool(c.value()));
+            case Food c -> food(c, ctx, out);
+            case Fuel c -> fuel(c, ctx, out);
+            case Glint c -> glint(c, ctx, out);
+            case HandEquipped c -> handEquipped(c, ctx, out);
+            case HoverTextColor c -> Transforms.formattingCode(ctx, out, c);
+            case Icon c -> Transforms.iconTextures(ctx, out, c);
+            case InteractButton c -> interactButton(c, ctx, out);
+            case KineticWeapon c -> kineticWeapon(c, ctx, out);
+            case LiquidClipped c -> liquidClipped(c, ctx, out);
+            case MaxStackSize c -> maxStackSize(c, ctx, out);
+            case PiercingWeapon c -> piercingWeapon(c, ctx, out);
+            case Projectile c -> projectile(c, ctx, out);
+            case Rarity c -> rarity(c, ctx, out);
+            case MusicRecord c -> musicRecord(c, ctx, out);
+            case Repairable c -> Transforms.itemDescriptorList(ctx, out, c);
+            case Shooter c -> shooter(c, ctx, out);
+            case ShouldDespawn c -> shouldDespawn(c, ctx, out);
+            case StackedByData c -> stackedByData(c, ctx, out);
+            case StorageItem c -> storageItem(c, ctx, out);
+            case StorageWeightLimit c -> out.put("minecraft:storage_weight_limit.max_weight_limit", Wire.toInt(c.maxWeightLimit()));
+            case StorageWeightModifier c -> out.put("minecraft:storage_weight_modifier.weight_in_storage_item", Wire.toInt(c.weightInStorageItem()));
+            case SwingDuration c -> out.put("minecraft:swing_duration.value", Wire.toFloat(c.value()));
+            case SwingSounds c -> swingSounds(c, ctx, out);
+            case Tags c -> tags(c, ctx, out);
+            case ThrowableItem c -> throwableItem(c, ctx, out);
+            case UseAnimation c -> Transforms.useAnimationId(ctx, out, c);
+            case UseDuration c -> ctx.drop(UseDuration.NAME, "is not sent to clients (BDS: rejected)");
+            case UseModifiers c -> useModifiers(c, ctx, out);
+            case Wearable c -> wearable(c, ctx, out);
+            case WireOnlyItemComponent c -> WireOnlyWire.write(c, ctx, out);
         }
     }
 
@@ -135,21 +135,14 @@ public final class ItemWire {
     private static void blockPlacer(BlockPlacer c, WireContext ctx, WireNode out) {
         out.put("minecraft:block_placer.canUseBlockAsIcon", (byte) 1);
         out.put("minecraft:publisher_on_use_on.autoSucceedOnClient", (byte) 0);
-        boolean v0 = c.alignedPlacement();
-        out.put("minecraft:block_placer.alignedPlacement", Wire.bool(v0));
-        List<BlockPlacer.UseOn> v1 = c.useOn();
+        out.put("minecraft:block_placer.alignedPlacement", Wire.bool(c.alignedPlacement()));
         out.list("minecraft:block_placer.use_on");
-        for (BlockPlacer.UseOn e2 : v1) {
-            WireNode n3 = out.element("minecraft:block_placer.use_on");
-            Wire.blockDescriptor(ctx, n3, "", e2.name(), e2.states(), e2.tags());
+        for (BlockPlacer.UseOn e0 : c.useOn()) {
+            WireNode n1 = out.element("minecraft:block_placer.use_on");
+            Wire.blockDescriptor(ctx, n1, "", e0.name(), e0.states(), e0.tags());
         }
         Transforms.blockName(ctx, out, c);
         Transforms.replaceBlockItem(ctx, out, c);
-    }
-
-    private static void bundleInteraction(BundleInteraction c, WireContext ctx, WireNode out) {
-        int v0 = c.numViewableSlots();
-        out.put("minecraft:bundle_interaction.num_viewable_slots", Wire.toInt(v0));
     }
 
     private static void canDestroyInCreative(CanDestroyInCreative c, WireContext ctx,
@@ -164,18 +157,10 @@ public final class ItemWire {
         }
     }
 
-    private static void compostable(Compostable c, WireContext ctx, WireNode out) {
-        int v0 = c.compostingChance();
-        out.put("minecraft:compostable.composting_chance", Wire.toByte(v0));
-    }
-
     private static void cooldown(Cooldown c, WireContext ctx, WireNode out) {
-        String v0 = c.category();
-        out.put("minecraft:cooldown.category", v0);
-        float v1 = c.duration();
-        out.put("minecraft:cooldown.duration", Wire.toFloat(v1));
-        Cooldown.Type v2 = c.type();
-        out.put("minecraft:cooldown.type", v2.value());
+        out.put("minecraft:cooldown.category", c.category());
+        out.put("minecraft:cooldown.duration", Wire.toFloat(c.duration()));
+        out.put("minecraft:cooldown.type", c.type().value());
     }
 
     private static void damage(Damage c, WireContext ctx, WireNode out) {
@@ -189,32 +174,26 @@ public final class ItemWire {
         }
     }
 
-    private static void damageAbsorption(DamageAbsorption c, WireContext ctx, WireNode out) {
-        // server only: BDS sends nothing to clients
-    }
-
     private static void digger(Digger c, WireContext ctx, WireNode out) {
-        List<Digger.DestroySpeeds> v0 = c.destroySpeeds();
         out.list("minecraft:digger.destroy_speeds");
-        for (Digger.DestroySpeeds e1 : v0) {
-            WireNode n2 = out.element("minecraft:digger.destroy_speeds");
-            Digger.Block v3 = e1.block();
-            if (v3 != null) {
-                Wire.blockDescriptor(ctx, n2, "block", v3.name(), v3.states(), v3.tags());
+        for (Digger.DestroySpeeds e0 : c.destroySpeeds()) {
+            WireNode n1 = out.element("minecraft:digger.destroy_speeds");
+            Digger.Block v2 = e0.block();
+            if (v2 != null) {
+                Wire.blockDescriptor(ctx, n1, "block", v2.name(), v2.states(), v2.tags());
             } else {
-                n2.remove("block.name");
-                n2.remove("block.states");
-                n2.remove("block.tags");
+                n1.remove("block.name");
+                n1.remove("block.states");
+                n1.remove("block.tags");
             }
-            Integer v4 = e1.speed();
-            if (v4 != null) {
-                n2.put("speed", Wire.toInt(v4));
+            Integer v3 = e0.speed();
+            if (v3 != null) {
+                n1.put("speed", Wire.toInt(v3));
             } else {
-                n2.remove("speed");
+                n1.remove("speed");
             }
         }
-        boolean v5 = c.useEfficiency();
-        out.put("minecraft:digger.use_efficiency", Wire.bool(v5));
+        out.put("minecraft:digger.use_efficiency", Wire.bool(c.useEfficiency()));
     }
 
     private static void displayName(ItemDisplayName c, WireContext ctx, WireNode out) {
@@ -228,69 +207,47 @@ public final class ItemWire {
 
     private static void durability(Durability c, WireContext ctx, WireNode out) {
         Durability.DamageChance v0 = c.damageChance();
-        int v1 = v0.max();
-        out.put("minecraft:durability.damage_chance.max", Wire.toInt(v1));
-        int v2 = v0.min();
-        out.put("minecraft:durability.damage_chance.min", Wire.toInt(v2));
-        int v3 = c.maxDurability();
-        out.put("minecraft:durability.max_durability", Wire.toInt(v3));
-    }
-
-    private static void durabilitySensor(DurabilitySensor c, WireContext ctx, WireNode out) {
-        // server only: BDS sends nothing to clients
-    }
-
-    private static void dyeable(Dyeable c, WireContext ctx, WireNode out) {
-        Transforms.rgbColor(ctx, out, c);
+        out.put("minecraft:durability.damage_chance.max", Wire.toInt(v0.max()));
+        out.put("minecraft:durability.damage_chance.min", Wire.toInt(v0.min()));
+        out.put("minecraft:durability.max_durability", Wire.toInt(c.maxDurability()));
     }
 
     private static void enchantable(Enchantable c, WireContext ctx, WireNode out) {
         out.put("item_properties.enchantable_slot", "sword");
         out.put("minecraft:enchantable.slot", "sword");
-        String v0 = c.slot();
         ctx.changed(Enchantable.NAME, "slot is sent as a constant, whatever its value");
-        int v1 = c.value();
-        out.put("item_properties.enchantable_value", Wire.toInt(v1));
-        out.put("minecraft:enchantable.value", Wire.toByte(v1));
+        int v0 = c.value();
+        out.put("item_properties.enchantable_value", Wire.toInt(v0));
+        out.put("minecraft:enchantable.value", Wire.toByte(v0));
     }
 
     private static void entityPlacer(EntityPlacer c, WireContext ctx, WireNode out) {
         out.put("minecraft:publisher_on_use_on.autoSucceedOnClient", (byte) 0);
-        List<EntityPlacer.UseOn> v0 = c.dispenseOn();
         out.list("minecraft:entity_placer.dispense_on");
-        for (EntityPlacer.UseOn e1 : v0) {
-            WireNode n2 = out.element("minecraft:entity_placer.dispense_on");
-            Wire.blockDescriptor(ctx, n2, "", e1.name(), e1.states(), e1.tags());
+        for (EntityPlacer.UseOn e0 : c.dispenseOn()) {
+            WireNode n1 = out.element("minecraft:entity_placer.dispense_on");
+            Wire.blockDescriptor(ctx, n1, "", e0.name(), e0.states(), e0.tags());
         }
-        String v3 = c.entity();
-        if (v3 != null) {
-            out.put("minecraft:entity_placer.entity", "" + Wire.namespaced(String.valueOf(v3)) + "<>");
+        String v2 = c.entity();
+        if (v2 != null) {
+            out.put("minecraft:entity_placer.entity", "" + Wire.namespaced(String.valueOf(v2)) + "<>");
         } else {
             out.put("minecraft:entity_placer.entity", "minecraft:<>");
         }
-        List<EntityPlacer.UseOn> v4 = c.useOn();
         out.list("minecraft:entity_placer.use_on");
-        for (EntityPlacer.UseOn e5 : v4) {
-            WireNode n6 = out.element("minecraft:entity_placer.use_on");
-            Wire.blockDescriptor(ctx, n6, "", e5.name(), e5.states(), e5.tags());
+        for (EntityPlacer.UseOn e3 : c.useOn()) {
+            WireNode n4 = out.element("minecraft:entity_placer.use_on");
+            Wire.blockDescriptor(ctx, n4, "", e3.name(), e3.states(), e3.tags());
         }
     }
 
-    private static void fireResistant(FireResistant c, WireContext ctx, WireNode out) {
-        boolean v0 = c.value();
-        out.put("minecraft:fire_resistant.value", Wire.bool(v0));
-    }
-
     private static void food(Food c, WireContext ctx, WireNode out) {
-        boolean v0 = c.canAlwaysEat();
-        out.put("minecraft:food.can_always_eat", Wire.bool(v0));
-        int v1 = c.nutrition();
-        out.put("minecraft:food.nutrition", Wire.toInt(v1));
-        float v2 = c.saturationModifier();
-        out.put("minecraft:food.saturation_modifier", Wire.toFloat(v2));
-        String v3 = c.usingConvertsTo();
-        if (v3 != null) {
-            out.put("minecraft:food.using_converts_to.name", v3);
+        out.put("minecraft:food.can_always_eat", Wire.bool(c.canAlwaysEat()));
+        out.put("minecraft:food.nutrition", Wire.toInt(c.nutrition()));
+        out.put("minecraft:food.saturation_modifier", Wire.toFloat(c.saturationModifier()));
+        String v0 = c.usingConvertsTo();
+        if (v0 != null) {
+            out.put("minecraft:food.using_converts_to.name", v0);
         } else {
             out.put("minecraft:food.using_converts_to", NbtMap.EMPTY);
             out.remove("minecraft:food.using_converts_to.name");
@@ -328,14 +285,6 @@ public final class ItemWire {
         }
     }
 
-    private static void hoverTextColor(HoverTextColor c, WireContext ctx, WireNode out) {
-        Transforms.formattingCode(ctx, out, c);
-    }
-
-    private static void icon(Icon c, WireContext ctx, WireNode out) {
-        Transforms.iconTextures(ctx, out, c);
-    }
-
     private static void interactButton(InteractButton c, WireContext ctx, WireNode out) {
         Boolean v0 = c.enabled();
         if (v0 != null) {
@@ -352,66 +301,49 @@ public final class ItemWire {
     private static void kineticWeapon(KineticWeapon c, WireContext ctx, WireNode out) {
         KineticWeapon.CreativeReach v0 = c.creativeReach();
         if (v0 != null) {
-            float v1 = v0.max();
-            out.put("minecraft:kinetic_weapon.minecraft:kinetic_weapon.creative_reach.max", Wire.toFloat(v1));
-            float v2 = v0.min();
-            out.put("minecraft:kinetic_weapon.minecraft:kinetic_weapon.creative_reach.min", Wire.toFloat(v2));
+            out.put("minecraft:kinetic_weapon.minecraft:kinetic_weapon.creative_reach.max", Wire.toFloat(v0.max()));
+            out.put("minecraft:kinetic_weapon.minecraft:kinetic_weapon.creative_reach.min", Wire.toFloat(v0.min()));
         } else {
             out.remove("minecraft:kinetic_weapon.minecraft:kinetic_weapon.creative_reach.max");
             out.remove("minecraft:kinetic_weapon.minecraft:kinetic_weapon.creative_reach.min");
         }
-        KineticWeapon.Conditions v3 = c.damageConditions();
-        if (v3 != null) {
-            int v4 = v3.maxDuration();
-            out.put("minecraft:kinetic_weapon.minecraft:kinetic_weapon.damage_conditions.max_duration", Wire.toShort(v4));
-            float v5 = v3.minRelativeSpeed();
-            out.put("minecraft:kinetic_weapon.minecraft:kinetic_weapon.damage_conditions.min_relative_speed", Wire.toFloat(v5));
-            float v6 = v3.minSpeed();
-            out.put("minecraft:kinetic_weapon.minecraft:kinetic_weapon.damage_conditions.min_speed", Wire.toFloat(v6));
+        KineticWeapon.Conditions v1 = c.damageConditions();
+        if (v1 != null) {
+            out.put("minecraft:kinetic_weapon.minecraft:kinetic_weapon.damage_conditions.max_duration", Wire.toShort(v1.maxDuration()));
+            out.put("minecraft:kinetic_weapon.minecraft:kinetic_weapon.damage_conditions.min_relative_speed", Wire.toFloat(v1.minRelativeSpeed()));
+            out.put("minecraft:kinetic_weapon.minecraft:kinetic_weapon.damage_conditions.min_speed", Wire.toFloat(v1.minSpeed()));
         } else {
             out.remove("minecraft:kinetic_weapon.minecraft:kinetic_weapon.damage_conditions.max_duration");
             out.remove("minecraft:kinetic_weapon.minecraft:kinetic_weapon.damage_conditions.min_relative_speed");
             out.remove("minecraft:kinetic_weapon.minecraft:kinetic_weapon.damage_conditions.min_speed");
         }
-        float v7 = c.damageModifier();
-        out.put("minecraft:kinetic_weapon.minecraft:kinetic_weapon.damage_modifier", Wire.toFloat(v7));
-        float v8 = c.damageMultiplier();
-        out.put("minecraft:kinetic_weapon.minecraft:kinetic_weapon.damage_multiplier", Wire.toFloat(v8));
-        int v9 = c.delay();
-        out.put("minecraft:kinetic_weapon.minecraft:kinetic_weapon.delay", Wire.toShort(v9));
-        KineticWeapon.Conditions v10 = c.dismountConditions();
-        if (v10 != null) {
-            int v11 = v10.maxDuration();
-            out.put("minecraft:kinetic_weapon.minecraft:kinetic_weapon.dismount_conditions.max_duration", Wire.toShort(v11));
-            float v12 = v10.minRelativeSpeed();
-            out.put("minecraft:kinetic_weapon.minecraft:kinetic_weapon.dismount_conditions.min_relative_speed", Wire.toFloat(v12));
-            float v13 = v10.minSpeed();
-            out.put("minecraft:kinetic_weapon.minecraft:kinetic_weapon.dismount_conditions.min_speed", Wire.toFloat(v13));
+        out.put("minecraft:kinetic_weapon.minecraft:kinetic_weapon.damage_modifier", Wire.toFloat(c.damageModifier()));
+        out.put("minecraft:kinetic_weapon.minecraft:kinetic_weapon.damage_multiplier", Wire.toFloat(c.damageMultiplier()));
+        out.put("minecraft:kinetic_weapon.minecraft:kinetic_weapon.delay", Wire.toShort(c.delay()));
+        KineticWeapon.Conditions v2 = c.dismountConditions();
+        if (v2 != null) {
+            out.put("minecraft:kinetic_weapon.minecraft:kinetic_weapon.dismount_conditions.max_duration", Wire.toShort(v2.maxDuration()));
+            out.put("minecraft:kinetic_weapon.minecraft:kinetic_weapon.dismount_conditions.min_relative_speed", Wire.toFloat(v2.minRelativeSpeed()));
+            out.put("minecraft:kinetic_weapon.minecraft:kinetic_weapon.dismount_conditions.min_speed", Wire.toFloat(v2.minSpeed()));
         } else {
             out.remove("minecraft:kinetic_weapon.minecraft:kinetic_weapon.dismount_conditions.max_duration");
             out.remove("minecraft:kinetic_weapon.minecraft:kinetic_weapon.dismount_conditions.min_relative_speed");
             out.remove("minecraft:kinetic_weapon.minecraft:kinetic_weapon.dismount_conditions.min_speed");
         }
-        float v14 = c.hitboxMargin();
-        out.put("minecraft:kinetic_weapon.minecraft:kinetic_weapon.hitbox_margin", Wire.toFloat(v14));
-        KineticWeapon.Conditions v15 = c.knockbackConditions();
-        if (v15 != null) {
-            int v16 = v15.maxDuration();
-            out.put("minecraft:kinetic_weapon.minecraft:kinetic_weapon.knockback_conditions.max_duration", Wire.toShort(v16));
-            float v17 = v15.minRelativeSpeed();
-            out.put("minecraft:kinetic_weapon.minecraft:kinetic_weapon.knockback_conditions.min_relative_speed", Wire.toFloat(v17));
-            float v18 = v15.minSpeed();
-            out.put("minecraft:kinetic_weapon.minecraft:kinetic_weapon.knockback_conditions.min_speed", Wire.toFloat(v18));
+        out.put("minecraft:kinetic_weapon.minecraft:kinetic_weapon.hitbox_margin", Wire.toFloat(c.hitboxMargin()));
+        KineticWeapon.Conditions v3 = c.knockbackConditions();
+        if (v3 != null) {
+            out.put("minecraft:kinetic_weapon.minecraft:kinetic_weapon.knockback_conditions.max_duration", Wire.toShort(v3.maxDuration()));
+            out.put("minecraft:kinetic_weapon.minecraft:kinetic_weapon.knockback_conditions.min_relative_speed", Wire.toFloat(v3.minRelativeSpeed()));
+            out.put("minecraft:kinetic_weapon.minecraft:kinetic_weapon.knockback_conditions.min_speed", Wire.toFloat(v3.minSpeed()));
         } else {
             out.remove("minecraft:kinetic_weapon.minecraft:kinetic_weapon.knockback_conditions.max_duration");
             out.remove("minecraft:kinetic_weapon.minecraft:kinetic_weapon.knockback_conditions.min_relative_speed");
             out.remove("minecraft:kinetic_weapon.minecraft:kinetic_weapon.knockback_conditions.min_speed");
         }
-        KineticWeapon.Reach v19 = c.reach();
-        float v20 = v19.max();
-        out.put("minecraft:kinetic_weapon.minecraft:kinetic_weapon.reach.max", Wire.toFloat(v20));
-        float v21 = v19.min();
-        out.put("minecraft:kinetic_weapon.minecraft:kinetic_weapon.reach.min", Wire.toFloat(v21));
+        KineticWeapon.Reach v4 = c.reach();
+        out.put("minecraft:kinetic_weapon.minecraft:kinetic_weapon.reach.max", Wire.toFloat(v4.max()));
+        out.put("minecraft:kinetic_weapon.minecraft:kinetic_weapon.reach.min", Wire.toFloat(v4.min()));
     }
 
     private static void liquidClipped(LiquidClipped c, WireContext ctx, WireNode out) {
@@ -439,28 +371,21 @@ public final class ItemWire {
     private static void piercingWeapon(PiercingWeapon c, WireContext ctx, WireNode out) {
         PiercingWeapon.CreativeReach v0 = c.creativeReach();
         if (v0 != null) {
-            float v1 = v0.max();
-            out.put("minecraft:piercing_weapon.creative_reach.max", Wire.toFloat(v1));
-            float v2 = v0.min();
-            out.put("minecraft:piercing_weapon.creative_reach.min", Wire.toFloat(v2));
+            out.put("minecraft:piercing_weapon.creative_reach.max", Wire.toFloat(v0.max()));
+            out.put("minecraft:piercing_weapon.creative_reach.min", Wire.toFloat(v0.min()));
         } else {
             out.remove("minecraft:piercing_weapon.creative_reach.max");
             out.remove("minecraft:piercing_weapon.creative_reach.min");
         }
-        float v3 = c.hitboxMargin();
-        out.put("minecraft:piercing_weapon.hitbox_margin", Wire.toFloat(v3));
-        PiercingWeapon.Reach v4 = c.reach();
-        float v5 = v4.max();
-        out.put("minecraft:piercing_weapon.reach.max", Wire.toFloat(v5));
-        float v6 = v4.min();
-        out.put("minecraft:piercing_weapon.reach.min", Wire.toFloat(v6));
+        out.put("minecraft:piercing_weapon.hitbox_margin", Wire.toFloat(c.hitboxMargin()));
+        PiercingWeapon.Reach v1 = c.reach();
+        out.put("minecraft:piercing_weapon.reach.max", Wire.toFloat(v1.max()));
+        out.put("minecraft:piercing_weapon.reach.min", Wire.toFloat(v1.min()));
     }
 
     private static void projectile(Projectile c, WireContext ctx, WireNode out) {
-        float v0 = c.minimumCriticalPower();
-        out.put("minecraft:projectile.minimum_critical_power", Wire.toFloat(v0));
-        String v1 = c.projectileEntity();
-        out.put("minecraft:projectile.projectile_entity", "" + Wire.namespaced(String.valueOf(v1)) + "<>");
+        out.put("minecraft:projectile.minimum_critical_power", Wire.toFloat(c.minimumCriticalPower()));
+        out.put("minecraft:projectile.projectile_entity", "" + Wire.namespaced(String.valueOf(c.projectileEntity())) + "<>");
     }
 
     private static void rarity(Rarity c, WireContext ctx, WireNode out) {
@@ -479,37 +404,23 @@ public final class ItemWire {
     }
 
     private static void musicRecord(MusicRecord c, WireContext ctx, WireNode out) {
-        int v0 = c.comparatorSignal();
-        out.put("minecraft:record.comparator_signal", Wire.toInt(v0));
-        float v1 = c.duration();
-        out.put("minecraft:record.duration", Wire.toFloat(v1));
-        String v2 = c.soundEvent();
-        out.put("minecraft:record.sound_event", v2);
-    }
-
-    private static void repairable(Repairable c, WireContext ctx, WireNode out) {
-        Transforms.itemDescriptorList(ctx, out, c);
+        out.put("minecraft:record.comparator_signal", Wire.toInt(c.comparatorSignal()));
+        out.put("minecraft:record.duration", Wire.toFloat(c.duration()));
+        out.put("minecraft:record.sound_event", c.soundEvent());
     }
 
     private static void shooter(Shooter c, WireContext ctx, WireNode out) {
-        List<Shooter.Ammunition> v0 = c.ammunition();
         out.list("minecraft:shooter.ammunition");
-        for (Shooter.Ammunition e1 : v0) {
-            WireNode n2 = out.element("minecraft:shooter.ammunition");
-            boolean v3 = e1.searchInventory();
-            n2.put("search_inventory", Wire.bool(v3));
-            boolean v4 = e1.useInCreative();
-            n2.put("use_in_creative", Wire.bool(v4));
-            boolean v5 = e1.useOffhand();
-            n2.put("use_offhand", Wire.bool(v5));
-            Transforms.ammunitionItemDescriptor(ctx, n2, e1);
+        for (Shooter.Ammunition e0 : c.ammunition()) {
+            WireNode n1 = out.element("minecraft:shooter.ammunition");
+            n1.put("search_inventory", Wire.bool(e0.searchInventory()));
+            n1.put("use_in_creative", Wire.bool(e0.useInCreative()));
+            n1.put("use_offhand", Wire.bool(e0.useOffhand()));
+            Transforms.ammunitionItemDescriptor(ctx, n1, e0);
         }
-        boolean v6 = c.chargeOnDraw();
-        out.put("minecraft:shooter.charge_on_draw", Wire.bool(v6));
-        float v7 = c.maxDrawDuration();
-        out.put("minecraft:shooter.max_draw_duration", Wire.toFloat(v7));
-        boolean v8 = c.scalePowerByDrawDuration();
-        out.put("minecraft:shooter.scale_power_by_draw_duration", Wire.bool(v8));
+        out.put("minecraft:shooter.charge_on_draw", Wire.bool(c.chargeOnDraw()));
+        out.put("minecraft:shooter.max_draw_duration", Wire.toFloat(c.maxDrawDuration()));
+        out.put("minecraft:shooter.scale_power_by_draw_duration", Wire.bool(c.scalePowerByDrawDuration()));
     }
 
     private static void shouldDespawn(ShouldDespawn c, WireContext ctx, WireNode out) {
@@ -535,36 +446,16 @@ public final class ItemWire {
     }
 
     private static void storageItem(StorageItem c, WireContext ctx, WireNode out) {
-        boolean v0 = c.allowNestedStorageItems();
-        out.put("minecraft:storage_item.allow_nested_storage_items", Wire.bool(v0));
-        List<String> v1 = c.allowedItems();
+        out.put("minecraft:storage_item.allow_nested_storage_items", Wire.bool(c.allowNestedStorageItems()));
         out.list("minecraft:storage_item.allowed_items");
-        for (String x2 : v1) {
-            out.element("minecraft:storage_item.allowed_items").put("name", x2);
+        for (String x0 : c.allowedItems()) {
+            out.element("minecraft:storage_item.allowed_items").put("name", x0);
         }
-        List<String> v3 = c.bannedItems();
         out.list("minecraft:storage_item.banned_items");
-        for (String x4 : v3) {
-            out.element("minecraft:storage_item.banned_items").put("name", x4);
+        for (String x1 : c.bannedItems()) {
+            out.element("minecraft:storage_item.banned_items").put("name", x1);
         }
-        int v5 = c.maxSlots();
-        out.put("minecraft:storage_item.max_slots", Wire.toInt(v5));
-    }
-
-    private static void storageWeightLimit(StorageWeightLimit c, WireContext ctx, WireNode out) {
-        int v0 = c.maxWeightLimit();
-        out.put("minecraft:storage_weight_limit.max_weight_limit", Wire.toInt(v0));
-    }
-
-    private static void storageWeightModifier(StorageWeightModifier c, WireContext ctx,
-            WireNode out) {
-        int v0 = c.weightInStorageItem();
-        out.put("minecraft:storage_weight_modifier.weight_in_storage_item", Wire.toInt(v0));
-    }
-
-    private static void swingDuration(SwingDuration c, WireContext ctx, WireNode out) {
-        float v0 = c.value();
-        out.put("minecraft:swing_duration.value", Wire.toFloat(v0));
+        out.put("minecraft:storage_item.max_slots", Wire.toInt(c.maxSlots()));
     }
 
     private static void swingSounds(SwingSounds c, WireContext ctx, WireNode out) {
@@ -595,61 +486,44 @@ public final class ItemWire {
     }
 
     private static void throwableItem(ThrowableItem c, WireContext ctx, WireNode out) {
-        boolean v0 = c.doSwingAnimation();
-        out.put("minecraft:throwable.do_swing_animation", Wire.bool(v0));
-        float v1 = c.launchPowerScale();
-        out.put("minecraft:throwable.launch_power_scale", Wire.toFloat(v1));
-        float v2 = c.maxDrawDuration();
-        out.put("minecraft:throwable.max_draw_duration", Wire.toFloat(v2));
-        float v3 = c.maxLaunchPower();
-        out.put("minecraft:throwable.max_launch_power", Wire.toFloat(v3));
-        float v4 = c.minDrawDuration();
-        out.put("minecraft:throwable.min_draw_duration", Wire.toFloat(v4));
-        boolean v5 = c.scalePowerByDrawDuration();
-        out.put("minecraft:throwable.scale_power_by_draw_duration", Wire.bool(v5));
-    }
-
-    private static void useAnimation(UseAnimation c, WireContext ctx, WireNode out) {
-        Transforms.useAnimationId(ctx, out, c);
-    }
-
-    private static void useDuration(UseDuration c, WireContext ctx, WireNode out) {
-        ctx.drop(UseDuration.NAME, "is not sent to clients (BDS: rejected)");
+        out.put("minecraft:throwable.do_swing_animation", Wire.bool(c.doSwingAnimation()));
+        out.put("minecraft:throwable.launch_power_scale", Wire.toFloat(c.launchPowerScale()));
+        out.put("minecraft:throwable.max_draw_duration", Wire.toFloat(c.maxDrawDuration()));
+        out.put("minecraft:throwable.max_launch_power", Wire.toFloat(c.maxLaunchPower()));
+        out.put("minecraft:throwable.min_draw_duration", Wire.toFloat(c.minDrawDuration()));
+        out.put("minecraft:throwable.scale_power_by_draw_duration", Wire.bool(c.scalePowerByDrawDuration()));
     }
 
     private static void useModifiers(UseModifiers c, WireContext ctx, WireNode out) {
-        boolean v0 = c.emitVibrations();
-        out.put("minecraft:use_modifiers.emit_vibrations", Wire.bool(v0));
-        Float v1 = c.movementModifier();
-        if (v1 != null) {
-            out.put("minecraft:use_modifiers.movement_modifier", Wire.toFloat(v1));
+        out.put("minecraft:use_modifiers.emit_vibrations", Wire.bool(c.emitVibrations()));
+        Float v0 = c.movementModifier();
+        if (v0 != null) {
+            out.put("minecraft:use_modifiers.movement_modifier", Wire.toFloat(v0));
         } else {
             out.remove("minecraft:use_modifiers.movement_modifier");
         }
-        String v2 = c.startSound();
-        if (v2 != null) {
-            out.put("minecraft:use_modifiers.start_sound", v2);
+        String v1 = c.startSound();
+        if (v1 != null) {
+            out.put("minecraft:use_modifiers.start_sound", v1);
         } else {
             out.remove("minecraft:use_modifiers.start_sound");
         }
-        UseModifiers.StartUsing v3 = c.startUsing();
-        if (v3 != null) {
-            out.put("minecraft:use_modifiers.start_using", v3.value());
+        UseModifiers.StartUsing v2 = c.startUsing();
+        if (v2 != null) {
+            out.put("minecraft:use_modifiers.start_using", v2.value());
         } else {
             out.put("minecraft:use_modifiers.start_using", "if_first");
         }
-        float v4 = c.useDuration();
-        out.put("item_properties.use_duration", Wire.toInt((20.0 * (double) v4 + 0.0)));
-        out.put("minecraft:use_modifiers.use_duration", Wire.toFloat(v4));
+        float v3 = c.useDuration();
+        out.put("item_properties.use_duration", Wire.toInt((20.0 * (double) v3 + 0.0)));
+        out.put("minecraft:use_modifiers.use_duration", Wire.toFloat(v3));
     }
 
     private static void wearable(Wearable c, WireContext ctx, WireNode out) {
-        boolean v0 = c.hidesPlayerLocation();
-        out.put("minecraft:wearable.hides_player_location", Wire.bool(v0));
-        int v1 = c.protection();
-        out.put("minecraft:wearable.protection", Wire.toInt(v1));
-        Wearable.Slot v2 = c.slot();
-        switch (v2) {
+        out.put("minecraft:wearable.hides_player_location", Wire.bool(c.hidesPlayerLocation()));
+        out.put("minecraft:wearable.protection", Wire.toInt(c.protection()));
+        Wearable.Slot v0 = c.slot();
+        switch (v0) {
             case SLOT_ARMOR_BODY -> out.put("item_properties.allow_off_hand", (byte) 0);
             case SLOT_ARMOR_CHEST -> out.put("item_properties.allow_off_hand", (byte) 0);
             case SLOT_ARMOR_FEET -> out.put("item_properties.allow_off_hand", (byte) 0);
@@ -658,7 +532,7 @@ public final class ItemWire {
             case SLOT_WEAPON_MAINHAND -> out.put("item_properties.allow_off_hand", (byte) 0);
             case SLOT_WEAPON_OFFHAND -> out.put("item_properties.allow_off_hand", (byte) 1);
         }
-        switch (v2) {
+        switch (v0) {
             case SLOT_ARMOR_BODY -> out.put("item_properties.max_stack_size", 1);
             case SLOT_ARMOR_CHEST -> out.put("item_properties.max_stack_size", 1);
             case SLOT_ARMOR_FEET -> out.put("item_properties.max_stack_size", 1);
@@ -667,7 +541,7 @@ public final class ItemWire {
             case SLOT_WEAPON_MAINHAND -> out.put("item_properties.max_stack_size", 64);
             case SLOT_WEAPON_OFFHAND -> out.put("item_properties.max_stack_size", 64);
         }
-        out.put("minecraft:wearable.slot", v2.value());
+        out.put("minecraft:wearable.slot", v0.value());
     }
 
     /**
