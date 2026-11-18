@@ -19,8 +19,9 @@ final class ExperimentRun {
     List<String> accepted = List.of();
     /** Codes of the "Experiment(s) active" line of the discovery start. */
     List<String> activeCodes;
-    /** Toggles start game streamed: what the spec add-on world and the attribution use. */
-    List<String> current = Update.DEFAULT_EXPERIMENTS;
+    /** Toggles start game streamed: what the spec add-on world and the attribution use.
+     * Until discovery has run: the current toggles of the newest committed record ({@link ExperimentDiscovery#recordedCurrent}). */
+    List<String> current = List.of();
     List<String> retired = List.of();
     /** Toggles start game reports for a world without any: part of vanilla, never attributed. */
     List<String> alwaysOn = List.of();

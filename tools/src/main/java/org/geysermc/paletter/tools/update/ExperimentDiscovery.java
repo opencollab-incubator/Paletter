@@ -1,5 +1,8 @@
 package org.geysermc.paletter.tools.update;
 
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+import org.geysermc.paletter.tools.Versions;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.MappedByteBuffer;
@@ -27,7 +30,7 @@ import java.util.stream.Stream;
  *     the suffixes after {@code _} of each (the Windows linker merges a string into the tail of a longer one, e.g.
  *     {@code y_2026_drop_4} only exists inside {@code behavior_packs/experimental_y_2026_drop_4}), plus the ASCII of
  *     x86-64 {@code mov r64, imm64} instructions and overlaps of neighbouring ones (MSVC builds short strings such as
- *     {@code gametest} from immediates), plus the names of the {@code experimental_*} packs, plus known ids.</li>
+ *     {@code gametest} from immediates), plus the names of the {@code experimental_*} packs, plus the ids of the committed records ({@link #recorded}).</li>
  *     <li><b>Oracle</b> ({@link Update}): BDS reads the {@code experiments} compound of {@code level.dat} on start and
  *     writes back only the keys it knows on stop. Writing every candidate in and reading the file back yields exactly
  *     the toggles of the build (current and retired). Start game then reports which of them are current: it only
@@ -151,6 +154,54 @@ public final class ExperimentDiscovery {
             }
         }
         return joined;
+    }
+
+    /**
+     * The toggle ids of the committed records ({@code experiments.json} of every build in {@code bdsData}), whatever their status:
+     * what BDS itself said about earlier builds. They are candidates on every platform, so a toggle the scanner cannot read out of
+     * one platform's binary (the Windows linker merges strings) is still tried.
+     */
+    static Set<String> recorded(Path bdsData) throws IOException {
+        Set<String> ids = new TreeSet<>();
+        for (JsonObject toggles : records(bdsData, null).values()) {
+            ids.addAll(toggles.keySet());
+        }
+        return ids;
+    }
+
+    /**
+     * The toggles of the newest record that is not newer than {@code build} (any record if it is null) that BDS had current: what a
+     * capture of that build enables when discovery did not run. Empty without a record.
+     */
+    static List<String> recordedCurrent(Path bdsData, String build) throws IOException {
+        TreeMap<String, JsonObject> records = records(bdsData, build);
+        if (records.isEmpty()) {
+            return List.of();
+        }
+        JsonObject toggles = records.lastEntry().getValue();
+        return toggles.entrySet().stream().filter(e -> e.getValue().getAsJsonObject().get("status").getAsString().equals("current"))
+            .map(Map.Entry::getKey).sorted().toList();
+    }
+
+    /** The {@code toggles} of each build's {@code experiments.json}, by build in version order. */
+    private static TreeMap<String, JsonObject> records(Path bdsData, String notAfter) throws IOException {
+        TreeMap<String, JsonObject> records = new TreeMap<>(Versions.ORDER);
+        if (!Files.isDirectory(bdsData)) {
+            return records;
+        }
+        try (Stream<Path> dirs = Files.list(bdsData)) {
+            for (Path dir : dirs.toList()) {
+                Path file = dir.resolve("experiments.json");
+                String build = dir.getFileName().toString();
+                if (Files.isRegularFile(file) && (notAfter == null || Versions.compare(build, notAfter) <= 0)) {
+                    JsonObject toggles = JsonParser.parseString(Files.readString(file, StandardCharsets.UTF_8)).getAsJsonObject().getAsJsonObject("toggles");
+                    if (toggles != null) {
+                        records.put(build, toggles);
+                    }
+                }
+            }
+        }
+        return records;
     }
 
     /** Names of the {@code experimental_*} packs BDS ships, with and without the prefix. */

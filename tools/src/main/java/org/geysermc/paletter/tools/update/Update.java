@@ -23,15 +23,6 @@ import java.util.Map;
  * See docs/data-pipeline.md, "Updating for a new BDS build".
  */
 public final class Update {
-    /**
-     * Used only when discovery fails (and always tried as candidates): the current toggles of BDS 1.26.63.1 as
-     * discovered there. {@code experimental_vanilla_shapes}, used before, is not a toggle id (the toggle is
-     * {@code voxel_shapes}); {@code data_driven_biomes} and {@code experimental_molang_features} are retired toggles BDS
-     * still accepts but no longer streams.
-     */
-    static final List<String> DEFAULT_EXPERIMENTS = List.of("experimental_creator_cameras", "gametest", "poi",
-        "upcoming_creator_features", "villager_trades_rebalance", "voxel_shapes", "y_2026_drop_4");
-
     private final UpdateContext ctx;
     /** The build this run captures ({@link #begin}). */
     private BdsDistribution distribution;

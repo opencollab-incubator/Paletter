@@ -182,6 +182,25 @@ class ExperimentDiscoveryTest {
         assertEquals(Map.of(), ExperimentDiscovery.matchUiKeys(List.of("sniffer"), UI_KEYS));
     }
 
+    private static void record(Path bds, String build, String toggles) throws IOException {
+        Files.writeString(Files.createDirectories(bds.resolve(build)).resolve("experiments.json"), "{\"toggles\": " + toggles + "}");
+    }
+
+    @Test
+    void recordedToggles(@TempDir Path bds) throws IOException {
+        record(bds, "1.26.9.1", "{\"old\": {\"status\": \"retired\"}, \"a\": {\"status\": \"current\"}}");
+        record(bds, "1.26.10.1", "{\"old\": {\"status\": \"retired\"}, \"a\": {\"status\": \"retired\"}, \"b\": {\"status\": \"current\"}, "
+            + "\"c\": {\"status\": \"always-on\"}}");
+        Files.createDirectories(bds.resolve("no-record"));
+        assertEquals(Set.of("old", "a", "b", "c"), ExperimentDiscovery.recorded(bds));
+        // Versions compare by number: 1.26.10.1 is newer than 1.26.9.1
+        assertEquals(List.of("b"), ExperimentDiscovery.recordedCurrent(bds, null));
+        assertEquals(List.of("a"), ExperimentDiscovery.recordedCurrent(bds, "1.26.9.5"));
+        assertEquals(List.of(), ExperimentDiscovery.recordedCurrent(bds, "1.26.1.1"));
+        assertEquals(Set.of(), ExperimentDiscovery.recorded(bds.resolve("none")));
+        assertEquals(List.of(), ExperimentDiscovery.recordedCurrent(bds.resolve("none"), null));
+    }
+
     @Test
     void docsNames() {
         assertEquals(ExperimentDiscovery.normalizeName("Upcoming Creator Features"), ExperimentDiscovery.normalizeName("upcoming_creator_features"));

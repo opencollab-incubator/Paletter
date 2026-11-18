@@ -4,30 +4,19 @@ import org.geysermc.paletter.tools.bds.BdsDump;
 import org.geysermc.paletter.tools.bds.BdsRunner;
 import org.geysermc.paletter.tools.bds.BdsServer;
 import org.geysermc.paletter.tools.Layout;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
 import org.geysermc.paletter.tools.client.Capture;
 import org.geysermc.paletter.tools.client.CapturedData;
 import org.geysermc.paletter.tools.client.LevelDat;
 import java.io.IOException;
 import java.net.InetSocketAddress;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
-import java.util.stream.Stream;
 
 /** The experiment toggles of a BDS: discovery, and the attribution of what each toggle adds. */
 final class ExperimentStage {
-    /**
-     * Retired toggles the Linux binary of 1.26.63.1 has as strings but the Windows one only builds from immediates the
-     * scanner cannot join; tried as candidates on every platform so the committed record does not depend on the
-     * platform of the run (the level.dat oracle still decides).
-     */
-    static final List<String> KNOWN_RETIRED = List.of("locator_bar", "scripting", "wild_update", "y_2025_drop_2",
-        "y_2025_drop_3", "y_2026_drop_1", "y_2026_drop_2", "y_2026_drop_3");
     /** Above this many current toggles, only one capture with all of them is made (no per toggle attribution). */
     static final int EACH_LIMIT = 12;
     private static final String EXPERIMENT_WORLD = "paletter_experiments";
@@ -60,8 +49,8 @@ final class ExperimentStage {
             bds.awaitStarted(ctx.timeout);
         }
 
-        // Candidates: the binary (identifiers, '_' suffixes, imm64 immediates), the experimental packs, ids of earlier
-        // records and the built in list
+        // Candidates: the binary (identifiers, '_' suffixes, imm64 immediates), the experimental packs and the ids of the
+        // committed records
         ExperimentDiscovery.Candidates scanned = ExperimentDiscovery.scan(BdsServer.executable(server));
         result.uiKeys = scanned.uiKeys();
         result.displayNames = ExperimentDiscovery.displayNames(server, scanned.uiKeys());
@@ -72,9 +61,7 @@ final class ExperimentStage {
         } else {
             Set<String> candidates = new TreeSet<>(scanned.ids());
             candidates.addAll(ExperimentDiscovery.packCandidates(server));
-            candidates.addAll(Update.DEFAULT_EXPERIMENTS);
-            candidates.addAll(KNOWN_RETIRED);
-            candidates.addAll(recordedToggles());
+            candidates.addAll(ExperimentDiscovery.recorded(ctx.bdsData));
             result.candidates = candidates.size();
             LevelDat.setExperiments(levelDat, candidates);
             try (BdsServer bds = new BdsServer(server, false)) {
@@ -91,7 +78,7 @@ final class ExperimentStage {
             boolean codesMatch = result.activeCodes != null && result.activeCodes.size() == withCode;
             ctx.compared(codesMatch, "Experiments: discovery",
                 result.candidates + " candidates (binary " + BdsServer.executable(server).getFileName() + ", experimental "
-                    + "packs, known ids); BDS kept " + result.accepted.size() + " toggles in level.dat"
+                    + "packs, committed records); BDS kept " + result.accepted.size() + " toggles in level.dat"
                     + (codesMatch ? " and logged as many active" : "; it logged " + (result.activeCodes == null ? "no" : result.activeCodes.size())
                     + " active (Experiment(s) active line)"));
             toggles = result.accepted;
@@ -117,7 +104,7 @@ final class ExperimentStage {
             ctx.compared(notAccepted.isEmpty() && uiMatch, "Experiments: current toggles",
                 streamed.size() + " streamed in start game " + streamed + ", " + result.retired.size() + " retired (kept, not streamed); "
                     + result.uiKeys.size() + " `" + ExperimentDiscovery.UI_PREFIX + "*` UI keys in the binary"
-                    + (uiMatch ? "" : ": a current toggle may be missing from the candidates; pass it with --experiments or add it to DEFAULT_EXPERIMENTS")
+                    + (uiMatch ? "" : ": a current toggle may be missing from the candidates; pass it with --experiments")
                     + (notAccepted.isEmpty() ? "" : "; streamed but not kept in level.dat: " + notAccepted));
         }
         List<String> packStack = all.packStackExperiments().stream().filter(e -> e.endsWith("=true"))
@@ -189,22 +176,5 @@ final class ExperimentStage {
         } catch (Exception e) {
             ctx.report.check(Report.Status.INFO, "Experiments: recipes of " + toggle, "not attributed: " + e);
         }
-    }
-
-    /** Toggle ids of the committed experiment records ({@code experiments.json} of every version in data/bds). */
-    private Set<String> recordedToggles() throws IOException {
-        Set<String> ids = new TreeSet<>();
-        if (!Files.isDirectory(ctx.bdsData)) {
-            return ids;
-        }
-        try (Stream<Path> dirs = Files.list(ctx.bdsData)) {
-            for (Path file : dirs.map(d -> d.resolve("experiments.json")).filter(Files::exists).toList()) {
-                JsonObject toggles = JsonParser.parseString(Files.readString(file)).getAsJsonObject().getAsJsonObject("toggles");
-                if (toggles != null) {
-                    ids.addAll(toggles.keySet());
-                }
-            }
-        }
-        return ids;
     }
 }
