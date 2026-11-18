@@ -35,12 +35,21 @@ public final class Gating {
     /**
      * @param build   the BDS build
      * @param without what BDS did with the component in a world without experiments: accepted, rejected or ignored
-     * @param with    the same in the spec capture, whose world has the experiments on (accepted or rejected), or null if that capture has none
+     * @param with    the same in the spec capture, whose world has the experiments on (accepted, rejected or ignored), or null if that capture has none
      */
     public record Result(String build, String without, String with) {
-        /** Whether the build shows the gating: BDS does not take the component without experiments, but does not reject it with them. */
-        public boolean gated() {
-            return !without.equals(ACCEPTED) && !rejectedAnyway();
+        /**
+         * Whether the build shows the gating: BDS takes the component with the experiments on ({@code with} accepted; a null {@code with}
+         * stays unverified) and rejects it without them, or ignores it. "Ignored" is the same wire as the control, which proves nothing
+         * for a server-only component (it has no wire at all), so those are gated only by a rejection.
+         *
+         * @param serverOnly whether {@code mappings.json} marks the component server-only
+         */
+        public boolean gated(boolean serverOnly) {
+            if (!ACCEPTED.equals(with)) {
+                return false;
+            }
+            return without.equals(REJECTED) || (!serverOnly && without.equals(IGNORED));
         }
 
         /** Whether BDS rejects the component with the experiments on, so the capture says nothing of its gating. */

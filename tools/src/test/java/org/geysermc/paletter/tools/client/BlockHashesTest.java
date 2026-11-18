@@ -33,6 +33,18 @@ class BlockHashesTest {
     private static final Path SPEC = Path.of("../data/bds/1.26.63.1/spec");
 
     @Test
+    void aBlockWithUnknownTraitStatesHasNoStatesNoDefaultHashAndNoDefault() {
+        List<NbtMap> states = List.of(state("minecraft:dirt", Map.of()));
+        JsonObject known = CaptureWriter.customState(states, null);
+        assertEquals(1, known.get("states").getAsInt());
+        assertTrue(known.has("defaultHash") && known.has("default"));
+        assertFalse(known.has("traitStatesUnknown"));
+        JsonObject unknown = CaptureWriter.customState(states, Set.of("minecraft:x y"));
+        assertEquals(List.of("traitStatesUnknown"), List.copyOf(unknown.keySet()), "what is known to be wrong is omitted");
+        assertEquals("minecraft:x y", unknown.getAsJsonArray("traitStatesUnknown").get(0).getAsString());
+    }
+
+    @Test
     void vanillaStates() {
         assertEquals(2186211206L, Integer.toUnsignedLong(BlockHashes.hash(state("minecraft:dirt", Map.of()))));
         assertEquals(4172483059L, Integer.toUnsignedLong(BlockHashes.hash(state("minecraft:oak_stairs", Map.of(

@@ -102,6 +102,10 @@ class WireShapesTest {
         Map<String, List<String>> classified = WireShapes.classify(List.of("block:minecraft:leashable", "block:minecraft:leashable offset[]"),
             MAPPINGS, Model.read(components));
         assertEquals(Map.of(WireShapes.NOT_INFERRED_YET, List.of("block:minecraft:leashable", "block:minecraft:leashable offset[]")), classified);
+        // strict fails on them: after the inference, a component without mappings was never mapped
+        assertEquals(List.of("wire path block:minecraft:leashable of 1.2 is of a documented component the inference never mapped: run `infer` and commit mappings.json",
+            "wire path block:minecraft:leashable offset[] of 1.2 is of a documented component the inference never mapped: run `infer` and commit mappings.json"),
+            WireShapes.unexplained("1.2", classified));
     }
 
     @Test

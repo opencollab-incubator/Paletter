@@ -116,7 +116,8 @@ final class CaptureStage {
         gives(server, work, address, runs, properties);
 
         // Experiments: discover the toggles, verify them, capture what each one adds
-        runs.experiments.current = ExperimentDiscovery.recordedCurrent(ctx.bdsData, ctx.buildDirectory.getFileName().toString());
+        runs.experiments.current = ExperimentDiscovery.recordedCurrent(ctx.bdsData, ctx.buildDirectory.getFileName().toString(),
+            ExperimentDiscovery.previewProtocols(ctx.resources, ctx.preview));
         if (ctx.options.containsKey("experiments")) {
             runs.experiments.source = "--experiments";
             runs.experiments.current = Arrays.stream(ctx.options.get("experiments").split(",")).map(String::strip)

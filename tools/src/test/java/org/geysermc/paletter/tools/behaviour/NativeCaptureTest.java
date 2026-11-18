@@ -91,6 +91,23 @@ class NativeCaptureTest {
         assertTrue(log.getFirst().contains("block types are not in the palette"), log.getFirst());
     }
 
+    /** State hashes are signed ints in the palette and unsigned decimals in the file: 3000000000 is -1294967296. */
+    @Test
+    void aStateHashAboveTwoToThe31IsReadAsUnsigned(@TempDir Path dir) throws IOException {
+        Map<Integer, NbtMap> states = Map.of(-1294967296, block("minecraft:stone"));
+        List<String> log = new ArrayList<>();
+        NativeCapture capture = read(dir, fixtureText(CAPTURED).replace("\"2\": {", "\"3000000000\": {"));
+        Map<Object, Object> values = merged(capture.blocks(states, log));
+        assertEquals(Map.of(-1294967296, 0.25f), values.get(BlockBehaviour.FRICTION));
+        assertEquals(1, log.size(), "only the ladder is missing from this palette's block types, no state is unknown: " + log);
+        assertFalse(log.getFirst().contains("block states"), log.getFirst());
+    }
+
+    @Test
+    void aFileWithoutTheGeneratedMarkerIsRefused(@TempDir Path dir) throws IOException {
+        assertRefused(dir, fixtureText(CAPTURED).replace("\"_generated\"", "\"_other\""), "_generated");
+    }
+
     @Test
     void aFlagIsTrueWhenItsListHasIt(@TempDir Path dir) throws IOException {
         Map<Object, Object> values = merged(read(dir, fixtureText(CAPTURED)).blocks(bundled().states(), new ArrayList<>()));

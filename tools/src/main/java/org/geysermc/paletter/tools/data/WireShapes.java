@@ -224,12 +224,16 @@ public final class WireShapes {
     public static final String UNDOCUMENTED = "the creator docs do not describe the component, so the model has no fields for it";
 
     /**
-     * The lines {@code check-mappings --strict} fails on for one build's classified paths: the unclassified ones and
-     * those of a component the docs do not describe (both are for a human to look at; coverage.md lists the rest, which
-     * have a standing reason).
+     * The lines {@code check-mappings --strict} fails on for one build's classified paths: the unclassified ones, those of a
+     * component the docs do not describe and those of a documented component the inference never mapped
+     * ({@link #NOT_INFERRED_YET}: strict runs after the inference, so nothing is left to infer). All are for a human to look
+     * at; coverage.md lists the rest, which have a standing reason. Only the report paths of the capture-only and verify runs
+     * ({@code ShapesStage}), which do not infer, leave {@link #NOT_INFERRED_YET} out of what they call a change.
      */
     public static List<String> unexplained(String build, Map<String, List<String>> classified) {
         List<String> lines = new ArrayList<>();
+        classified.getOrDefault(NOT_INFERRED_YET, List.of()).forEach(path -> lines.add("wire path " + path + " of " + build
+            + " is of a documented component the inference never mapped: run `infer` and commit mappings.json"));
         classified.getOrDefault(UNCLASSIFIED, List.of()).forEach(path -> lines.add("wire path " + path + " of " + build
             + " is not in mappings.json and no reason of WireShapes.classify fits"));
         classified.getOrDefault(UNDOCUMENTED, List.of()).forEach(path -> lines.add("wire path " + path + " of " + build

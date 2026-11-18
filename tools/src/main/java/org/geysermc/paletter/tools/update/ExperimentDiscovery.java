@@ -3,6 +3,7 @@ package org.geysermc.paletter.tools.update;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import org.geysermc.paletter.tools.Versions;
+import org.geysermc.paletter.tools.data.Importer;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.MappedByteBuffer;
@@ -172,9 +173,12 @@ public final class ExperimentDiscovery {
     /**
      * The toggles of the newest record that is not newer than {@code build} (any record if it is null) that BDS had current: what a
      * capture of that build enables when discovery did not run. Empty without a record.
+     *
+     * @param skipProtocols the protocols whose records do not count: a release build takes no preview's record, which can have
+     *                      toggles the release lacks ({@link #previewProtocols})
      */
-    static List<String> recordedCurrent(Path bdsData, String build) throws IOException {
-        TreeMap<String, JsonObject> records = records(bdsData, build);
+    static List<String> recordedCurrent(Path bdsData, String build, Set<Integer> skipProtocols) throws IOException {
+        TreeMap<String, JsonObject> records = records(bdsData, build, skipProtocols);
         if (records.isEmpty()) {
             return List.of();
         }
@@ -183,8 +187,26 @@ public final class ExperimentDiscovery {
             .map(Map.Entry::getKey).sorted().toList();
     }
 
+    /**
+     * The protocols of the bundled preview versions when the build is a release (their records are skipped), none when it is a
+     * preview.
+     *
+     * @param resources the bundled data directory with its index
+     */
+    static Set<Integer> previewProtocols(Path resources, boolean buildIsPreview) throws IOException {
+        Set<Integer> protocols = new TreeSet<>();
+        if (!buildIsPreview) {
+            Importer.readIndex(resources).stream().filter(Importer.IndexEntry::preview).forEach(e -> protocols.add(e.protocol()));
+        }
+        return protocols;
+    }
+
     /** The {@code toggles} of each build's {@code experiments.json}, by build in version order. */
     private static TreeMap<String, JsonObject> records(Path bdsData, String notAfter) throws IOException {
+        return records(bdsData, notAfter, Set.of());
+    }
+
+    private static TreeMap<String, JsonObject> records(Path bdsData, String notAfter, Set<Integer> skipProtocols) throws IOException {
         TreeMap<String, JsonObject> records = new TreeMap<>(Versions.ORDER);
         if (!Files.isDirectory(bdsData)) {
             return records;
@@ -194,8 +216,10 @@ public final class ExperimentDiscovery {
                 Path file = dir.resolve("experiments.json");
                 String build = dir.getFileName().toString();
                 if (Files.isRegularFile(file) && (notAfter == null || Versions.compare(build, notAfter) <= 0)) {
-                    JsonObject toggles = JsonParser.parseString(Files.readString(file, StandardCharsets.UTF_8)).getAsJsonObject().getAsJsonObject("toggles");
-                    if (toggles != null) {
+                    JsonObject record = JsonParser.parseString(Files.readString(file, StandardCharsets.UTF_8)).getAsJsonObject();
+                    JsonObject toggles = record.getAsJsonObject("toggles");
+                    boolean skipped = record.has("protocol") && skipProtocols.contains(record.get("protocol").getAsInt());
+                    if (toggles != null && !skipped) {
                         records.put(build, toggles);
                     }
                 }
