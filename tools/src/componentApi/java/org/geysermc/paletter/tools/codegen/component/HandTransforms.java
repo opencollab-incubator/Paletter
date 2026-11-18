@@ -1,6 +1,11 @@
 package org.geysermc.paletter.tools.codegen.component;
 
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 import java.util.SortedMap;
 import java.util.TreeMap;
@@ -49,6 +54,33 @@ public final class HandTransforms {
         entry("item:minecraft:use_animation:value", "useAnimationId"))));
 
     private HandTransforms() {
+    }
+
+    /**
+     * The keys of {@code transforms} whose component is not among {@code docs} or whose path is no field of it (nor below or
+     * above one): a rename or removal in the docs would otherwise leave the transform silently unused. The path of the
+     * whole component is empty.
+     *
+     * @param docs the component documents of the model ({@code id}, {@code fields[].path})
+     */
+    public static List<String> stale(Map<String, String> transforms, List<JsonObject> docs) {
+        List<String> stale = new ArrayList<>();
+        for (String key : transforms.keySet()) {
+            JsonObject doc = docs.stream().filter(d -> key.startsWith(d.get("id").getAsString() + ":"))
+                .max((a, b) -> Integer.compare(a.get("id").getAsString().length(), b.get("id").getAsString().length())).orElse(null);
+            if (doc == null) {
+                stale.add(key + " (no such component)");
+                continue;
+            }
+            String path = key.substring(doc.get("id").getAsString().length() + 1);
+            boolean found = path.isEmpty() || doc.getAsJsonArray("fields").asList().stream().map(JsonElement::getAsJsonObject)
+                .map(f -> f.get("path").getAsString()).anyMatch(p -> p.equals(path) || p.startsWith(path + ".") || p.startsWith(path + "[")
+                    || path.startsWith(p + ".") || path.startsWith(p + "["));
+            if (!found) {
+                stale.add(key + " (no such field)");
+            }
+        }
+        return stale;
     }
 
     /**

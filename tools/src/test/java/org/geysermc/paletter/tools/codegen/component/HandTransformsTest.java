@@ -162,6 +162,24 @@ class HandTransformsTest {
         EXPLAINED_BUT_KEPT.keySet().forEach(key -> assertTrue(HandTransforms.BY_PATH.containsKey(key), key + " is no hand transform any more"));
     }
 
+    /** The committed table names only components and fields of the model: a docs rename leaves no transform behind. */
+    @Test
+    void everyHandTransformNamesAComponentAndFieldOfTheModel() throws IOException {
+        // as the generator reads it: with the fixtures applied
+        JsonObject model = org.geysermc.paletter.tools.model.Model.GSON.toJsonTree(org.geysermc.paletter.tools.model.Fixtures.read(ComponentConformanceTest.MODEL)
+            .apply(org.geysermc.paletter.tools.model.Model.read(ComponentConformanceTest.MODEL.resolve("components.json")))).getAsJsonObject();
+        List<JsonObject> docs = model.getAsJsonArray("components").asList().stream().map(e -> e.getAsJsonObject()).toList();
+        assertEquals(List.of(), HandTransforms.stale(HandTransforms.BY_PATH, docs));
+    }
+
+    @Test
+    void aTransformOfAGoneComponentOrFieldIsStale() {
+        JsonObject doc = JsonParser.parseString("{\"id\": \"item:c\", \"fields\": [{\"path\": \"a.b\"}, {\"path\": \"[].size\"}]}").getAsJsonObject();
+        Map<String, String> table = new java.util.TreeMap<>(Map.of("item:c:", "w", "item:c:a", "x", "item:c:a.b.c", "x", "item:c:[]", "y",
+            "item:c:gone", "z", "item:d:", "v"));
+        assertEquals(List.of("item:c:gone (no such field)", "item:d: (no such component)"), HandTransforms.stale(table, List.of(doc)));
+    }
+
     @Test
     void everyTransformIsAPublicStaticMethodOfTransforms() throws ClassNotFoundException {
         Class<?> transforms = Class.forName("org.geysermc.paletter.internal.component.Transforms");

@@ -70,6 +70,26 @@ class WireShapesTest {
         assertEquals(Map.of(WireShapes.UNCLASSIFIED, List.of("item:minecraft:covered extra")), uncovered.get("1.26.36.1"));
     }
 
+    /** {@code check-mappings --strict} fails on the paths of an undocumented component too, not only on unclassified ones. */
+    @Test
+    void strictFlagsTheWirePathsOfUndocumentedComponents(@TempDir Path root) throws IOException {
+        Path bdsData = Files.createDirectories(root.resolve("bds"));
+        spec(bdsData, "1.26.9.1", NbtMap.builder().putInt("x", 1).build(), true);
+        spec(bdsData, "1.26.36.1", NbtMap.builder().putInt("x", 1).putInt("extra", 2).build(), false);
+        Path components = root.resolve("components.json");
+        Files.writeString(components, COMPONENTS);
+        Map<String, Map<String, List<String>>> uncovered = WireShapes.uncoveredByBuild(bdsData, MAPPINGS, Model.read(components));
+
+        assertEquals(List.of(
+            "wire path item:minecraft:mystery of 1.26.9.1 belongs to a component the creator docs do not describe: document it or map it by hand",
+            "wire path item:minecraft:mystery z of 1.26.9.1 belongs to a component the creator docs do not describe: document it or map it by hand"),
+            WireShapes.unexplained("1.26.9.1", uncovered.get("1.26.9.1")));
+        assertEquals(List.of("wire path item:minecraft:covered extra of 1.26.36.1 is not in mappings.json and no reason of WireShapes.classify fits"),
+            WireShapes.unexplained("1.26.36.1", uncovered.get("1.26.36.1")));
+        // a reason with a standing explanation is no failure
+        assertEquals(List.of(), WireShapes.unexplained("b", Map.of("block definition data around the components", List.of("block:block_definition x"))));
+    }
+
     @Test
     void withoutADataDirectoryThereIsNothingToCheck(@TempDir Path root) throws IOException {
         Path components = root.resolve("components.json");
