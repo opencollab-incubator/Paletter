@@ -50,14 +50,14 @@ class RecapturePlanTest {
         Files.writeString(root.resolve("data/bds/builds.json"), """
             {"builds": {"1.26.44.2": {"protocol": 1001, "identicalTo": "1.26.36.1"}}}
             """);
-        var list = new BuildHistory.BuildList("0".repeat(40), "2026-11-01", "1.26.63.1", List.of("1.26.36.1", "1.26.40.8", "1.26.44.2", "1.26.44.3",
-            "1.26.45.1", "1.26.60.6", "1.26.63.1", "1.26.65.1"), List.of());
-        assertEquals(List.of(new RecapturePlan.Leg("1.26.36.1", false, null), new RecapturePlan.Leg("1.26.44.3", false, "1.26.36.1"),
-            new RecapturePlan.Leg("1.26.45.1", false, null), new RecapturePlan.Leg("1.26.60.6", false, "1.26.45.1"),
+        var list = new BuildHistory.BuildList("0".repeat(40), "2026-11-01", "1.26.63.1", List.of("1.26.36.1", "1.26.38.2", "1.26.38.3", "1.26.40.8",
+            "1.26.44.2", "1.26.45.1", "1.26.47.1", "1.26.60.6", "1.26.63.1", "1.26.65.1", "1.26.80.4"), List.of());
+        assertEquals(List.of(new RecapturePlan.Leg("1.26.36.1", false, null), new RecapturePlan.Leg("1.26.38.3", false, "1.26.36.1"),
+            new RecapturePlan.Leg("1.26.45.1", false, null), new RecapturePlan.Leg("1.26.47.1", false, "1.26.45.1"),
             new RecapturePlan.Leg("1.26.63.1", false, null), new RecapturePlan.Leg("1.26.65.1", false, "1.26.63.1")), RecapturePlan.of(root, list),
-            "1.26.44.3 is the newest build between 26.30's newest kept build and the next kept one that the record lacks (1.26.44.2 is "
-                + "recorded); 1.26.60.6 likewise after 26.40's; 1.26.65.1 follows 26.60's; the protocol of an unchecked build is not known, "
-                + "so a build is planned by its place among the kept ones");
+            "the newest build of each line that has a kept build, newer than it, against it: 1.26.38.3 (not 38.2) of 26.30, 1.26.47.1 of 26.40, "
+                + "1.26.65.1 of 26.60 (1.26.60.6 is older than the kept 1.26.63.1); 1.26.44.2 is recorded; 1.26.40.8 is older than 26.40's "
+                + "kept build; 1.26.80.4 is of a line versions.txt lacks");
     }
 
     @Test

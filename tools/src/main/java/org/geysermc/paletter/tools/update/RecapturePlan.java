@@ -42,9 +42,8 @@ public final class RecapturePlan {
     /**
      * The kept release builds, oldest first, then the preview (the newest one, if several have captures).
      * <p>
-     * With the list of release builds, also the newest build of each kept data version that is not recorded and has no
-     * captures yet (the hotfixes after its newest kept build, before the next data version's first kept build): such a
-     * build would otherwise be served with the data of an older build and never looked at, until someone ran {@code builds
+     * With the list of release builds, also the newest build of each line (data version) with a kept build that is newer
+     * than that build, not recorded and without captures: such a build would otherwise be served with the data of an older build and never looked at, until someone ran {@code builds
      * check}. Its leg compares it with that kept build ({@code against}); capture-only keeps what it captures, so the
      * build has captures in data/bds afterwards and the next {@code builds check} verifies it like any build with captures
      * the record lacks. Builds the record already has are never planned again.
@@ -80,28 +79,37 @@ public final class RecapturePlan {
         return legs;
     }
 
-    /** The newest unrecorded build after each data version's newest kept build, as a leg against that kept build. */
+    /**
+     * The newest unrecorded build of each line that has a kept build, as a leg against that line's newest kept build. A
+     * build belongs to the data version of its line, read from versions.txt: data version {@code 26.60} is the line of the
+     * builds {@code 1.26.60.x} to {@code 1.26.69.x}, whatever protocol an unchecked build speaks. A line without a kept
+     * build is a new data version, which {@code update} imports.
+     */
     private static List<Leg> unchecked(Path root, Map<String, BuildHistory.Entry> record, Map<String, BuildHistory.Entry> kept,
                                        BuildHistory.BuildList list) throws IOException {
-        List<Importer.IndexEntry> index = Importer.readIndex(BuildTable.resources(root));
-        Map<String, String> newestOfVersion = new java.util.TreeMap<>();
-        kept.forEach((build, entry) -> {
-            String version = BuildTable.dataVersion(index, entry.protocol());
-            if (version != null) {
-                newestOfVersion.put(version, build);
-            }
-        });
         List<Leg> legs = new ArrayList<>();
-        for (String newest : newestOfVersion.values()) {
-            // The first kept build of another data version after it ends the window
-            String next = kept.keySet().stream().filter(build -> Versions.compare(build, newest) > 0).findFirst().orElse(null);
-            list.releases().stream()
-                .filter(build -> Versions.compare(build, newest) > 0 && (next == null || Versions.compare(build, next) < 0))
-                .filter(build -> !record.containsKey(build) && !kept.containsKey(build))
-                .reduce((a, b) -> b)
-                .ifPresent(build -> legs.add(new Leg(build, false, newest)));
+        for (Importer.IndexEntry entry : Importer.readIndex(BuildTable.resources(root))) {
+            if (entry.preview()) {
+                continue;
+            }
+            String newestKept = kept.keySet().stream().filter(build -> inLine(build, entry.name())).reduce((a, b) -> b).orElse(null);
+            if (newestKept != null) {
+                list.releases().stream()
+                    .filter(build -> inLine(build, entry.name()) && Versions.compare(build, newestKept) > 0)
+                    .filter(build -> !record.containsKey(build) && !kept.containsKey(build))
+                    .reduce((a, b) -> b)
+                    .ifPresent(build -> legs.add(new Leg(build, false, newestKept)));
+            }
         }
         return legs;
+    }
+
+    /** Whether a build is of a data version's line: {@code 1.26.65.1} is of {@code 26.60} (same major, same tens of the minor). */
+    static boolean inLine(String build, String dataVersion) {
+        String[] parts = build.split("\\.");
+        String[] version = dataVersion.split("\\.");
+        return parts.length == 4 && version.length == 2 && ("1." + version[0]).equals(parts[0] + "." + parts[1])
+            && Integer.parseInt(parts[2]) / 10 == Integer.parseInt(version[1]) / 10;
     }
 
     /** The legs as the {@code include} list of a GitHub Actions matrix: {@code build}, {@code channel}, {@code against} ("" for none). */
