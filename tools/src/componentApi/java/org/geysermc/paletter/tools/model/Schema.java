@@ -173,11 +173,7 @@ public final class Schema {
      */
     public List<String> enumValues(String component, String path) {
         JsonObject definition = definition(component);
-        return definition == null ? List.of() : enumValues(definition, path);
-    }
-
-    private static List<String> enumValues(JsonObject definition, String path) {
-        JsonObject node = node(definition, path);
+        JsonObject node = definition == null ? null : node(definition, path);
         if (node == null) {
             return List.of();
         }
@@ -190,46 +186,6 @@ public final class Schema {
             }
         }
         return node.getAsJsonArray("enum").asList().stream().filter(v -> v.getAsJsonPrimitive().isString()).map(JsonElement::getAsString).toList();
-    }
-
-    /** The string enum a stable format older than the newest lists at a path where the newest lists none ({@link #olderEnums}). */
-    public record OlderEnum(String component, String format, String path, List<String> values) {
-    }
-
-    /**
-     * The enums only an older stable format lists: a field the newest stable definition of a component has too, without an enum
-     * (it takes any string there), where an older stable definition has one ({@code swing_sounds}, {@code use_modifiers.start_sound}).
-     * The merge takes the newest definition's facts, so the add-on never varies these values; the format sweep asks BDS for them at
-     * the older format. Derived from the schema alone.
-     */
-    public List<OlderEnum> olderEnums() {
-        List<OlderEnum> found = new ArrayList<>();
-        for (String kind : List.of("item", "block", "trait")) {
-            if (!json.has(kind)) {
-                continue;
-            }
-            for (String name : json.getAsJsonObject(kind).keySet()) {
-                String id = (kind.equals("trait") ? "block:trait:" : kind + ":") + name;
-                JsonObject newest = definition(id);
-                if (newest == null) {
-                    continue;
-                }
-                for (JsonElement f : json.getAsJsonObject("formats").getAsJsonArray(kind)) {
-                    String format = f.getAsString();
-                    JsonObject old = format.equals("beta") ? null : forFormat(format).definition(id);
-                    if (old == null || old == newest) {
-                        continue;
-                    }
-                    for (String path : old.getAsJsonObject("fields").keySet()) {
-                        if (!path.endsWith("[]") && node(newest, path) != null && enumValues(newest, path).isEmpty()
-                            && !enumValues(old, path).isEmpty()) {
-                            found.add(new OlderEnum(id, format, path, enumValues(old, path)));
-                        }
-                    }
-                }
-            }
-        }
-        return found;
     }
 
     /** A member of the object alternative of a map's element ({@link #element}): its name, JSON types and whether the schema requires it. */

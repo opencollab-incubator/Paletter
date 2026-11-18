@@ -49,7 +49,7 @@ public final class AddonGenerator {
      *                   {@code base}, {@code script} (script custom components bound, see {@link #scriptVariants}), {@code form} (a whole value of another JSON type), {@code field} (one field changed),
      *                   {@code omit} (one base field removed), {@code probe} (one key the model does not know added,
      *                   see {@link #probe}), {@code format} (the base or one field at another format version, see
-     *                   {@link #atFormat}), {@code enum} (one value of an enum only an older format lists, see {@link #enumAt})
+     *                   {@link #atFormat})
      * @param path       the field path ("" for the whole value)
      * @param value      the JSON value at the path (null for control and omit)
      * @param component  the component JSON value as written (null for a control without the component)
@@ -529,18 +529,6 @@ public final class AddonGenerator {
      * @return the variant, or null if the component itself needs a newer format or the field cannot be set
      */
     public Variant atFormat(String componentId, String format, String path, JsonElement value) {
-        return atFormat("format", componentId, format, path, value);
-    }
-
-    /**
-     * One value of an enum the schema lists only for an older format (the format sweep, {@link org.geysermc.paletter.tools.model.Schema#olderEnums}):
-     * the base at that format with the field set to the value. Role {@code enum}: it is not compared with the reference.
-     */
-    public Variant enumAt(String componentId, String format, String path, String value) {
-        return atFormat("enum", componentId, format, path, new JsonPrimitive(value));
-    }
-
-    private Variant atFormat(String role, String componentId, String format, String path, JsonElement value) {
         Component c = component(componentId);
         if (c.minFormatVersion() != null && compare(c.minFormatVersion(), format) > 0) {
             return null;
@@ -562,8 +550,7 @@ public final class AddonGenerator {
                 return null;
             }
         }
-        return variant(c, role, path, role.equals("enum") ? "enum " + format + " " + value.getAsString() : "format " + format
-            + (path.isEmpty() && value == null ? "" : " " + kind(value)), value, json, format);
+        return variant(c, "format", path, "format " + format + (path.isEmpty() && value == null ? "" : " " + kind(value)), value, json, format);
     }
 
     /**
