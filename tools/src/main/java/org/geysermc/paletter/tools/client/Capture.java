@@ -101,7 +101,7 @@ public final class Capture {
         System.out.println("Connecting to " + address + (netherNet ? " over NetherNet" : " over RakNet") + " with protocol " + protocol
             + (codecProtocol != protocol ? " (decoded with the " + codecProtocol + " codec)" : ""));
         CaptureClient.Result result = new CaptureClient(codec, address, netherNet)
-            .give(give ? GiveCapture.identifiers(reference.blockItems()) : List.of()).run(timeoutSeconds);
+            .give(give ? GiveCapture.identifiers(reference.blockItems()) : List.of(), reference.blockItems()).run(timeoutSeconds);
         CaptureWriter writer = new CaptureWriter(result, reference, bdsVersion, platform);
         if (give) {
             writer.withGives();

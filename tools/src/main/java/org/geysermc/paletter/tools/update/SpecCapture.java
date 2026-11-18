@@ -83,7 +83,16 @@ public final class SpecCapture {
      * older, or from a reader that read less, and a capture-only run commits nothing), else the newest committed one.
      */
     static Fixtures fixtures(Path modelDir, String build, Schema runSchema) throws IOException {
-        Fixtures fixtures = Fixtures.read(modelDir).forBuild(build);
+        return fixtures(modelDir, build, runSchema, Fixtures.SCHEMA_IN_ADDON);
+    }
+
+    /**
+     * {@link #fixtures(Path, String, Schema)} with the switch given. With it off the run's schema is ignored, like every other reader
+     * of the model. Once the switch is gone, the fallback below (the {@code runSchema == null ?} branch) becomes
+     * {@code throw new IOException("no schema extracted for " + build)}: a leg without its schema must fail.
+     */
+    static Fixtures fixtures(Path modelDir, String build, Schema runSchema, boolean schemaInAddon) throws IOException {
+        Fixtures fixtures = Fixtures.read(modelDir, schemaInAddon).forBuild(build);
         return runSchema == null ? fixtures.withNewestSchema(build) : fixtures.withSchema(runSchema);
     }
 
@@ -292,7 +301,8 @@ public final class SpecCapture {
         }
         List<String> experiments = options.containsKey("experiments")
             ? Arrays.asList(options.get("experiments").split(","))
-            : ExperimentDiscovery.recordedCurrent(root.resolve(Layout.BDS), version);
+            : ExperimentDiscovery.recordedCurrent(root.resolve(Layout.BDS), version,
+                ExperimentDiscovery.previewProtocols(root.resolve("paletter/src/main/resources/paletter"), options.getOrDefault("channel", "release").equals("preview")));
         if (experiments.isEmpty() && !options.containsKey("gating")) {
             throw new IOException("No experiments for the capture: no committed experiments.json at or below " + version + "; pass --experiments");
         }

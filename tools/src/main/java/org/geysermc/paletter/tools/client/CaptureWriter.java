@@ -145,7 +145,7 @@ public final class CaptureWriter {
         new RecipeCapture(itemNames, statesByHash::get).write(directory, result.crafting, result.trim, bdsVersion);
         Files.writeString(directory.resolve("capture.json"), GSON.toJson(summary()));
         if (giveRequested) {
-            Files.writeString(directory.resolve(GiveCapture.FILE), GiveCapture.render(bdsVersion, reference.blockItems(), result.gives));
+            Files.writeString(directory.resolve(GiveCapture.FILE), GiveCapture.render(bdsVersion, reference.blockItems(), result.gives, !result.givesAborted));
         }
 
         if (customDirectory != null) {
@@ -203,18 +203,27 @@ public final class CaptureWriter {
         JsonObject customStates = new JsonObject();
         for (BlockPropertyData block : blocks) {
             List<NbtMap> states = BlockHashes.customStates(block.getName(), block.getProperties(), new TreeSet<>());
-            JsonObject entry = new JsonObject();
-            if (unknownTraitStates.containsKey(block.getName())) {
-                JsonArray unknown = new JsonArray();
-                unknownTraitStates.get(block.getName()).forEach(unknown::add);
-                entry.add("traitStatesUnknown", unknown);
-            }
-            entry.addProperty("states", states.size());
-            entry.addProperty("defaultHash", Integer.toUnsignedString(BlockHashes.hash(states.getFirst())));
-            entry.addProperty("default", Nbt.snbt(states.getFirst().getCompound("states")).replaceAll("\\s+", " "));
-            customStates.add(block.getName(), entry);
+            customStates.add(block.getName(), customState(states, unknownTraitStates.get(block.getName())));
         }
         Files.writeString(directory.resolve("custom_block_states.json"), GSON.toJson(customStates));
+    }
+
+    /**
+     * One block's entry of {@code custom_block_states.json}. For a block with trait states the table does not know
+     * ({@code unknown} not null) the states, the default hash and the default state are known to be wrong, so they are left out.
+     */
+    static JsonObject customState(List<NbtMap> states, Set<String> unknown) {
+        JsonObject entry = new JsonObject();
+        if (unknown != null) {
+            JsonArray values = new JsonArray();
+            unknown.forEach(values::add);
+            entry.add("traitStatesUnknown", values);
+            return entry;
+        }
+        entry.addProperty("states", states.size());
+        entry.addProperty("defaultHash", Integer.toUnsignedString(BlockHashes.hash(states.getFirst())));
+        entry.addProperty("default", Nbt.snbt(states.getFirst().getCompound("states")).replaceAll("\\s+", " "));
+        return entry;
     }
 
     private JsonObject creative() throws IOException {

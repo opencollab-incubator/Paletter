@@ -63,10 +63,12 @@ public final class GiveCapture {
         return List.copyOf(identifiers);
     }
 
-    public static String render(String build, Map<String, String> blockItems, Map<String, Given> gives) {
+    /** @param complete whether the gives ran to the end; a cut short run ({@code false}) is never committed over an earlier file */
+    public static String render(String build, Map<String, String> blockItems, Map<String, Given> gives, boolean complete) {
         JsonObject json = new JsonObject();
         json.addProperty("_generated", GENERATED);
         json.addProperty("bdsVersion", build);
+        json.addProperty("complete", complete);
         JsonArray entries = new JsonArray();
         for (String block : blocks(blockItems)) {
             JsonObject entry = new JsonObject();
@@ -94,6 +96,44 @@ public final class GiveCapture {
         entry.add(name, json);
     }
 
+    /** Whether the file's gives ran to the end; a file without the marker is not complete. */
+    public static boolean isComplete(Path file) throws IOException {
+        JsonObject json = JsonParser.parseString(Files.readString(file, StandardCharsets.UTF_8)).getAsJsonObject();
+        return json.has("complete") && json.get("complete").getAsBoolean();
+    }
+
+    /** The identifiers of the entries that have an answer (an item or a command error), counted per block and per item. */
+    public static int answered(List<Entry> entries) {
+        int count = 0;
+        for (Entry entry : entries) {
+            count += (entry.givenForBlock() != null ? 1 : 0) + (entry.givenForItem() != null ? 1 : 0);
+        }
+        return count;
+    }
+
+    /**
+     * What to do with a captured file against the committed one.
+     * @param stage whether the captured file may be staged: not if the gives were cut short
+     * @param drop a description if fewer identifiers have an answer than in the committed file (a DIFF), else null
+     */
+    public record Staging(boolean stage, String drop) {
+    }
+
+    /** @param committed the committed file, which may not exist */
+    public static Staging staging(Path captured, Path committed) throws IOException {
+        if (!isComplete(captured)) {
+            return new Staging(false, null);
+        }
+        if (Files.exists(committed)) {
+            int before = answered(read(committed));
+            int now = answered(read(captured));
+            if (now < before) {
+                return new Staging(true, "answered gives dropped from " + before + " (committed) to " + now);
+            }
+        }
+        return new Staging(true, null);
+    }
+
     public static List<Entry> read(Path file) throws IOException {
         JsonObject json = JsonParser.parseString(Files.readString(file, StandardCharsets.UTF_8)).getAsJsonObject();
         List<Entry> entries = new ArrayList<>();
@@ -118,9 +158,10 @@ public final class GiveCapture {
     /**
      * The answers checked against an {@code itemOf}: no answer is unverified, a command error is rejected (evidence, no mismatch), an
      * item that differs from the answer is a mismatch. A block identifier that gave the item of the same identifier names an item of
-     * its own ({@code ownItems}, no mismatch): {@code /give} takes the item, and says nothing about the block's item (BDS 1.26.36.1 to
-     * 1.26.70.24: {@code /give @s minecraft:wheat} gives the item {@code minecraft:wheat}, while the block {@code minecraft:wheat}
-     * has the item {@code minecraft:wheat_seeds}; the same for {@code minecraft:beetroot}).
+     * its own ({@code ownItems}, no mismatch): {@code /give} takes the item, and says nothing about the block's item. Observed in a
+     * rehearsal capture, unverified until the recapture commits {@code block-items.json}: {@code /give @s minecraft:wheat} gives the
+     * item {@code minecraft:wheat}, while the block {@code minecraft:wheat} has the item {@code minecraft:wheat_seeds}; the same for
+     * {@code minecraft:beetroot}.
      */
     public record Check(int matched, List<String> mismatches, List<String> unverified, List<String> rejected, List<String> ownItems) {
     }
