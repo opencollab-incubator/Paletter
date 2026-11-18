@@ -1,0 +1,37 @@
+# Native capture (LeviLamina): writes data/bds/<build>/native.json for one build. DISABLED, see docs/native-capture.md,
+# "Workflow". It only runs when started by hand, and every job has `if: false` until the dumper mod exists and a
+# Windows runner has been shown to run it. Nothing starts it on a push or a schedule.
+#
+# To enable: write the dump mod, replace the TODO steps, then delete the `if: false` line (and this paragraph).
+# The file it produces follows tools/.../behaviour/NativeCapture.java; it is uploaded as an artifact only, and a person
+# commits it (the file is independent of the other captures, so no recapture is needed).
+
+name: Native capture
+
+on:
+  workflow_dispatch:
+    inputs:
+      build:
+        description: "BDS build to dump (a directory of data/bds)"
+        required: true
+        type: string
+      campaign:
+        description: "Tag of the campaign the build was captured in"
+        required: true
+        type: string
+
+permissions:
+  contents: read
+
+jobs:
+  dump:
+    if: false # disabled: nothing exists to run yet
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      # TODO: install MSVC and xmake, lip install LeviLamina and the dump mod, start bedrock_server_mod.exe for
+      # ${{ inputs.build }}, and let the mod write native.json (status "captured", or "not captured" with a reason).
+      - run: echo "native capture is not built yet"
+        shell: bash

@@ -1,0 +1,19 @@
+{
+  "_fixture": "SYNTHETIC TEST FIXTURE. Invented values for the reader's tests, not BDS data.",
+  "schema": 1,
+  "bdsVersion": "1.0.0.1",
+  "campaign": "campaign-synthetic",
+  "dumper": {"name": "synthetic-dumper", "version": "0.0.0"},
+  "status": "captured",
+  "blockTypes": {
+    "minecraft:ladder": {"BlockType.mTranslucency": 0.5, "BlockType.mProperties": ["Climbable"]},
+    "minecraft:stone": {"BlockType.mTranslucency": 0.0, "BlockType.mProperties": ["CubeShaped"]},
+    "minecraft:not_in_the_palette": {"BlockType.mTranslucency": 1.0}
+  },
+  "blockStates": {
+    "2": {"BlockComponentDirectData.mFriction": 0.25}
+  },
+  "items": {
+    "minecraft:sword": {"Item.getAttackDamage": 8, "Item.getEnchantValue": 10}
+  }
+}
