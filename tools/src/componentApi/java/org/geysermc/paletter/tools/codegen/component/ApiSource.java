@@ -55,6 +55,7 @@ final class ApiSource {
     static final ClassName BEDROCK_EXPERIMENT = ClassName.get("org.geysermc.paletter.annotation", "BedrockExperiment");
     static final ClassName SERVER_ONLY = ClassName.get("org.geysermc.paletter.annotation", "ServerOnly");
     static final ClassName SINCE_PREVIEW = ClassName.get("org.geysermc.paletter.annotation", "SincePreview");
+    static final ClassName BEDROCK_SINCE = ClassName.get("org.geysermc.paletter.annotation", "BedrockSince");
     static final ClassName REPLACED_BY = ClassName.get("org.geysermc.paletter.annotation", "ReplacedBy");
     static final ClassName CHECK = ClassName.get("org.geysermc.paletter.internal.component", "Check");
     static final ClassName ITEM_TYPE = ClassName.get("org.geysermc.paletter.vanilla", "BedrockItemType");
@@ -262,6 +263,10 @@ final class ApiSource {
         if (top && !c.standalone) {
             doc.append("<p>\nAdd-on JSON: {@code \"").append(c.name).append("\"}")
                 .append(c.page.isEmpty() || Docs.learnUrl(c.page) != null ? "" : ", documented in {@code " + c.page + "}").append(".\n");
+            if (c.bedrockSince != null) {
+                doc.append(String.join("\n", Docs.wrap("Bedrock " + c.bedrockSince + " is the first bundled version with it: the schemas of"
+                    + " older captured BDS builds do not have it, so their palettes leave it out and add a report warning."))).append('\n');
+            }
             if (c.serverOnly != null) {
                 doc.append(serverOnlyDoc());
             }
@@ -313,6 +318,9 @@ final class ApiSource {
         }
         if (top && c.sincePreview != null) {
             type.addAnnotation(AnnotationSpec.builder(SINCE_PREVIEW).addMember("value", "$S", c.sincePreview).build());
+        }
+        if (top && c.bedrockSince != null) {
+            type.addAnnotation(AnnotationSpec.builder(BEDROCK_SINCE).addMember("value", "$S", c.bedrockSince).build());
         }
         if (top && c.serverOnly != null) {
             AnnotationSpec.Builder serverOnly = AnnotationSpec.builder(SERVER_ONLY);

@@ -170,6 +170,11 @@ public final class MappingInference {
             source.addProperty("bdsVersion", capture.bdsVersion());
             source.addProperty("protocol", capture.protocol());
             source.addProperty("windowProtocol", dataProtocol(capture.protocol()));
+            // The bundled data version of the window: what @BedrockSince of a component that older builds do not have names
+            String dataVersion = dataVersion(dataProtocol(capture.protocol()));
+            if (dataVersion != null) {
+                source.addProperty("dataVersion", dataVersion);
+            }
             if (replaced.containsKey(dataProtocol(capture.protocol()))) {
                 // Older kept builds of the same window, whose captures this one replaces
                 JsonArray older = new JsonArray();
@@ -210,9 +215,11 @@ public final class MappingInference {
         // Per capture: component id -> its result there
         List<Map<String, JsonObject>> resultsByCapture = new ArrayList<>();
         captures.forEach(capture -> resultsByCapture.add(new TreeMap<>()));
+        Map<String, org.geysermc.paletter.tools.model.Schema> schemas = schemas();
         for (Component component : model.components()) {
             List<JsonObject> results = new ArrayList<>();
             List<Integer> resultProtocols = new ArrayList<>();
+            List<JsonObject> absent = new ArrayList<>();
             for (int i = 0; i < captures.size(); i++) {
                 Capture capture = captures.get(i);
                 JsonObject result = analysis.analyze(capture, component);
@@ -221,7 +228,19 @@ public final class MappingInference {
                     Findings.collectFindings(findings, component.id(), result, formatBits);
                     results.add(result);
                     resultProtocols.add(dataProtocol(capture.protocol()));
+                } else {
+                    JsonObject none = absent(capture, component.id(), schemas);
+                    if (none != null) {
+                        results.add(none);
+                        resultProtocols.add(dataProtocol(capture.protocol()));
+                        absent.add(none);
+                    }
                 }
+            }
+            if (absent.size() == results.size()) {
+                // Not in any capture: nothing to say where it is missing
+                results.clear();
+                resultProtocols.clear();
             }
             JsonObject merged = MappingWindows.merge(results, resultProtocols);
             if (merged == null) {
@@ -290,6 +309,37 @@ public final class MappingInference {
         }
     }
 
+    /** The committed schemas ({@code data/bds/<build>/schema.json}) by build. */
+    private Map<String, org.geysermc.paletter.tools.model.Schema> schemas() throws IOException {
+        Map<String, org.geysermc.paletter.tools.model.Schema> schemas = new TreeMap<>();
+        Path dir = root.resolve(org.geysermc.paletter.tools.Layout.BDS);
+        if (Files.isDirectory(dir)) {
+            try (Stream<Path> builds = Files.list(dir)) {
+                for (Path file : builds.map(b -> b.resolve(org.geysermc.paletter.tools.model.Schema.FILE)).filter(Files::isRegularFile).toList()) {
+                    schemas.put(file.getParent().getFileName().toString(), org.geysermc.paletter.tools.model.Schema.read(file));
+                }
+            }
+        }
+        return schemas;
+    }
+
+    /**
+     * The result of a capture without a variant of the component when the build does not have the component (status
+     * {@link MappingWindows#ABSENT}): its own schema lacks it while another build's schema names it. Its add-on, made from that
+     * schema, had nothing to vary. Null otherwise: then the capture is missing, and the component API fails on it.
+     */
+    static JsonObject absent(Capture capture, String id, Map<String, org.geysermc.paletter.tools.model.Schema> schemas) {
+        org.geysermc.paletter.tools.model.Schema own = schemas.get(capture.bdsVersion());
+        if (own == null || !own.lacks(id) || schemas.values().stream().noneMatch(s -> s.names(id))
+            || capture.variants().stream().anyMatch(v -> v.component().equals(id))) {
+            return null;
+        }
+        JsonObject result = new JsonObject();
+        result.addProperty("status", MappingWindows.ABSENT);
+        result.addProperty("note", "not in the schema of BDS " + capture.bdsVersion() + ", no variant in its add-on");
+        return result;
+    }
+
     /** The bundled version name of a preview build's capture ({@code capture.json} says {@code preview}), null for a release. */
     private String previewName(Capture capture) throws IOException {
         Path file = root.resolve(org.geysermc.paletter.tools.Layout.BDS).resolve(capture.bdsVersion()).resolve("spec/capture.json");
@@ -330,6 +380,24 @@ public final class MappingInference {
             throw new java.io.UncheckedIOException(e);
         }
         return found;
+    }
+
+    /** The name of the bundled data version that starts at a window protocol ({@code versions.txt}), null if none does. */
+    private String dataVersion(int windowProtocol) {
+        try {
+            Path versions = root.resolve("paletter/src/main/resources/paletter/versions.txt");
+            if (Files.exists(versions)) {
+                for (String line : Files.readAllLines(versions, StandardCharsets.UTF_8)) {
+                    String[] parts = line.trim().split("\\s+");
+                    if (!line.isBlank() && !line.startsWith("#") && Integer.parseInt(parts[1]) == windowProtocol) {
+                        return parts[0];
+                    }
+                }
+            }
+        } catch (IOException e) {
+            throw new java.io.UncheckedIOException(e);
+        }
+        return null;
     }
 
     private static String read(Path file) throws IOException {

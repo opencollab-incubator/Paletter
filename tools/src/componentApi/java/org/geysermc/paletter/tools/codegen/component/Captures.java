@@ -31,6 +31,9 @@ final class Captures {
                 if (capture.has("windowProtocol") && capture.has("bdsVersion")) {
                     model.windowProtocols.put(capture.get("bdsVersion").getAsString(), capture.get("windowProtocol").getAsInt());
                 }
+                if (capture.has("windowProtocol") && capture.has("dataVersion")) {
+                    model.dataVersions.put(capture.get("windowProtocol").getAsInt(), capture.get("dataVersion").getAsString());
+                }
                 if (capture.has("windowProtocol")) {
                     int window = capture.get("windowProtocol").getAsInt();
                     if (capture.has("preview")) {

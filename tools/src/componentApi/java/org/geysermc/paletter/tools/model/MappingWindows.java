@@ -19,6 +19,12 @@ import java.util.regex.Pattern;
 public final class MappingWindows {
     private static final Pattern KEY = Pattern.compile("protocol(\\d+)");
 
+    /**
+     * The status of a window whose builds do not have the component: their own schema lacks it, so their add-on had no
+     * variant of it. Not a missing capture; nothing is sent there.
+     */
+    public static final String ABSENT = "absent";
+
     private MappingWindows() {
     }
 

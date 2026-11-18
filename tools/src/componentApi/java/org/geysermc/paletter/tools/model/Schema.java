@@ -124,13 +124,38 @@ public final class Schema {
         return "(bds-schema " + build + ") ";
     }
 
+    /** Whether the schema lists the component in any format, beta too (a model id: {@code block:minecraft:x}). */
+    public boolean names(String id) {
+        String kind = kind(id);
+        return json.has(kind) && json.getAsJsonObject(kind).has(name(id));
+    }
+
+    /**
+     * Whether the schema says the build does not have the component: it lists components of its kind, not this one, and did
+     * not skip it. False without a schema: no schema says nothing.
+     */
+    public boolean lacks(String id) {
+        String kind = kind(id);
+        String skipped = " " + name(id) + ":";
+        return json.has(kind) && !names(id)
+            && skipped().stream().noneMatch(s -> s.startsWith(kind + " ") && s.contains(skipped));
+    }
+
+    private static String kind(String id) {
+        return id.startsWith("block:trait:") ? "trait" : id.substring(0, id.indexOf(':'));
+    }
+
+    private static String name(String id) {
+        return id.substring(id.startsWith("block:trait:") ? "block:trait:".length() : kind(id).length() + 1);
+    }
+
     // ---------------------------------------------------------------------------------------------------------------
     // Lookup
 
     /** {@code item:minecraft:x}, {@code block:minecraft:x} and {@code block:trait:minecraft:x} are schema components; {@code block:states} is not. */
     JsonObject definition(String id) {
-        String kind = id.startsWith("block:trait:") ? "trait" : id.substring(0, id.indexOf(':'));
-        String name = id.substring(id.startsWith("block:trait:") ? "block:trait:".length() : kind.length() + 1);
+        String kind = kind(id);
+        String name = name(id);
         if (!json.has(kind) || !json.getAsJsonObject(kind).has(name) || !json.getAsJsonObject("formats").has(kind)) {
             return null;
         }

@@ -274,7 +274,9 @@ final class WireSource {
         if (w != null && !w.sent()) {
             // BDS of these protocols does not send the component (server only, or it rejects it): leave it out, say so.
             // Server only in every protocol, it is no error to use: nothing to report
-            if (c.serverOnly != null && !c.serverOnly.bounded()) {
+            if (w.absent()) {
+                b.addStatement("ctx.drop($L, $S)", name(), "does not exist in this Bedrock version");
+            } else if (c.serverOnly != null && !c.serverOnly.bounded()) {
                 b.add("// server only: BDS sends nothing to clients\n");
             } else {
                 b.addStatement("ctx.drop($L, $S)", name(), "is not sent to clients (BDS: " + w.status() + ")");
