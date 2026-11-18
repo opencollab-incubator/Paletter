@@ -195,7 +195,8 @@ class ComponentGeneratorTest {
                 + "\"descriptors\": {\"item:test:widget:fuel\": \"item\"}, "
                 + "\"unions\": {\"item:test:widget:stripes\": " + STRIPES + ", \"item:test:widget:outline\": " + STRIPES + "}, "
                 + "\"rootLists\": {\"block:test:slab\": \"parts\"}, "
-                + "\"forms\": {\"block:test:slab\": {\"object\": {\"listElementOf\": \"parts\"}}}}"), "9.0.0");
+                + "\"forms\": {\"block:test:slab\": {\"object\": {\"listElementOf\": \"parts\"}}}}"), "9.0.0",
+            new ComponentGenerator.Context(Set.of(), Map.of("Test Toggle", "test_toggle")));
     }
 
     // ---- Golden files --------------------------------------------------------------------------------------------
@@ -597,7 +598,7 @@ void theModelIsWhatTheGoldenSourcesShow() {
             shuffled.forEach(reordered::add);
             in.components().add("components", reordered);
             Inputs shuffledInputs = new Inputs(in.components(), in.fixtures(), shuffleKeys(in.feedback(), random),
-                shuffleKeys(in.mappings(), random), in.transforms(), shuffleKeys(in.api(), random), in.since());
+                shuffleKeys(in.mappings(), random), in.transforms(), shuffleKeys(in.api(), random), in.since(), in.context());
             assertEquals(first, ComponentGenerator.generate(shuffledInputs), "seed " + seed);
         }
     }

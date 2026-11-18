@@ -6,7 +6,6 @@ package org.geysermc.paletter.block.component;
 import java.util.Objects;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
-import org.geysermc.paletter.annotation.Experimental;
 import org.geysermc.paletter.annotation.ServerOnly;
 
 /**
@@ -19,7 +18,8 @@ import org.geysermc.paletter.annotation.ServerOnly;
  * Add-on JSON: {@code "minecraft:instrument_sound"}.
  * Server only: BDS accepts it in packs but sends nothing to clients (BDS 1.26.36.1, 1.26.45.1, 1.26.52.3,
  * 1.26.63.1, 1.26.70.24), so it has no client effect. Palettes leave it out without a warning.
- * Bedrock requires the experiment experimental (toggle not named) for it (in some format versions).
+ * The creator docs name the experiment experimental (toggle not named) for it (in some format versions); unverified against BDS.
+ * Unverified: the creator docs name experiment "experimental (toggle not named)", which is in no capture.
  *
  * @param down The instrument sound that plays when the note block is above this block (the block's down face is exposed to
  *        the note block). Use "note.none" to specify no sound for this face. Add-on JSON {@code down}. Default:
@@ -30,7 +30,6 @@ import org.geysermc.paletter.annotation.ServerOnly;
  * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/blockreference/examples/blockcomponents/minecraftblock_instrument_sound?view=minecraft-bedrock-stable">Microsoft Learn: minecraft:instrument_sound</a>
  * @since 1.0.0
  */
-@Experimental
 @ServerOnly
 public record InstrumentSound(InstrumentSound. @NonNull Down down,
         InstrumentSound. @NonNull Up up) implements BlockComponent {

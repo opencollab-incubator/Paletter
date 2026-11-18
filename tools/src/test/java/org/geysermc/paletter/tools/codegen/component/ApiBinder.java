@@ -76,7 +76,7 @@ public final class ApiBinder {
         JsonObject description = item.getAsJsonObject("description");
         CustomItem.Builder builder = CustomItem.builder(description.get("identifier").getAsString());
         if (description.has("menu_category")) {
-            builder.menuCategory((org.geysermc.paletter.item.component.MenuCategory) bind(org.geysermc.paletter.item.component.MenuCategory.class,
+            builder.menuCategory((org.geysermc.paletter.item.component.ItemMenuCategory) bind(org.geysermc.paletter.item.component.ItemMenuCategory.class,
                 description.get("menu_category")));
         }
         Set<String> callbacks = new HashSet<>();
@@ -104,8 +104,8 @@ public final class ApiBinder {
             switch (e.getKey()) {
                 case "identifier" -> {
                 }
-                case "menu_category" -> builder.menuCategory((org.geysermc.paletter.block.component.MenuCategory) bind(
-                    org.geysermc.paletter.block.component.MenuCategory.class, e.getValue()));
+                case "menu_category" -> builder.menuCategory((org.geysermc.paletter.block.component.BlockMenuCategory) bind(
+                    org.geysermc.paletter.block.component.BlockMenuCategory.class, e.getValue()));
                 case "states" -> e.getValue().getAsJsonObject().entrySet().forEach(s -> builder.property(property(s.getKey(), s.getValue())));
                 case "traits" -> {
                     for (Map.Entry<String, JsonElement> t : e.getValue().getAsJsonObject().entrySet()) {

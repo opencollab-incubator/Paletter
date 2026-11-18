@@ -52,7 +52,7 @@ final class ApiSource {
     static final ClassName NON_NULL = ClassName.get("org.checkerframework.checker.nullness.qual", "NonNull");
     static final ClassName NULLABLE = ClassName.get("org.checkerframework.checker.nullness.qual", "Nullable");
     static final ClassName BEDROCK_FORMAT = ClassName.get("org.geysermc.paletter.annotation", "BedrockFormat");
-    static final ClassName EXPERIMENTAL = ClassName.get("org.geysermc.paletter.annotation", "Experimental");
+    static final ClassName BEDROCK_EXPERIMENT = ClassName.get("org.geysermc.paletter.annotation", "BedrockExperiment");
     static final ClassName SERVER_ONLY = ClassName.get("org.geysermc.paletter.annotation", "ServerOnly");
     static final ClassName SINCE_PREVIEW = ClassName.get("org.geysermc.paletter.annotation", "SincePreview");
     static final ClassName REPLACED_BY = ClassName.get("org.geysermc.paletter.annotation", "ReplacedBy");
@@ -250,8 +250,13 @@ final class ApiSource {
                     + ". Its encoder writes nothing and adds a report warning, as BDS would never send it to a client."))).append('\n');
             }
             if (!c.experiments.isEmpty()) {
-                doc.append("Bedrock requires the experiment").append(c.experiments.size() > 1 ? "s " : " ")
-                    .append(String.join(", ", c.experiments.stream().map(Docs::escape).toList())).append(" for it (in some format versions).\n");
+                // TODO: the gating is the creator docs' word; a BDS capture of the component with and without the toggle should verify it
+                doc.append("The creator docs name the experiment").append(c.experiments.size() > 1 ? "s " : " ")
+                    .append(String.join(", ", c.experiments.stream().map(Docs::escape).toList()))
+                    .append(" for it (in some format versions); unverified against BDS.\n");
+                for (String name : c.unmappedExperiments) {
+                    doc.append("Unverified: the creator docs name experiment \"").append(Docs.escape(name)).append("\", which is in no capture.\n");
+                }
             }
             if (c.transform != null) {
                 doc.append("Compiled by the hand transform {@code Transforms.").append(c.transform).append("}.\n");
@@ -283,8 +288,8 @@ final class ApiSource {
         if (top && c.minFormat != null) {
             type.addAnnotation(AnnotationSpec.builder(BEDROCK_FORMAT).addMember("value", "$S", c.minFormat).build());
         }
-        if (top && !c.experiments.isEmpty()) {
-            type.addAnnotation(EXPERIMENTAL);
+        if (top && !c.toggles.isEmpty()) {
+            type.addAnnotation(AnnotationSpec.builder(BEDROCK_EXPERIMENT).addMember("value", "$S", c.toggles.getFirst()).build());
         }
         if (top && c.sincePreview != null) {
             type.addAnnotation(AnnotationSpec.builder(SINCE_PREVIEW).addMember("value", "$S", c.sincePreview).build());

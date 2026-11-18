@@ -7,15 +7,15 @@ import java.util.List;
 import java.util.Objects;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
+import org.geysermc.paletter.annotation.BedrockExperiment;
 import org.geysermc.paletter.annotation.BedrockFormat;
-import org.geysermc.paletter.annotation.Experimental;
 
 /**
  * Defines whether other blocks such as fences, walls, bars, and glass panes are allowed to connect to this
  * block.
  * <p>
  * Add-on JSON: {@code "minecraft:connection_rule"}.
- * Bedrock requires the experiment Upcoming Creator Features for it (in some format versions).
+ * The creator docs name the experiment Upcoming Creator Features for it (in some format versions); unverified against BDS.
  *
  * @param acceptsConnectionsFrom The type of block allowed to connect to this block. Note that the "only_fences" option allows connections from
  *        all Vanilla fences excluding NetherBrick. Add-on JSON {@code accepts_connections_from}. Default:
@@ -27,7 +27,7 @@ import org.geysermc.paletter.annotation.Experimental;
  * @since 1.0.0
  */
 @BedrockFormat("1.21.130")
-@Experimental
+@BedrockExperiment("upcoming_creator_features")
 public record ConnectionRule(ConnectionRule. @NonNull AcceptsConnectionsFrom acceptsConnectionsFrom,
         @NonNull List<ConnectionRule.EnabledDirections> enabledDirections) implements BlockComponent {
     /**

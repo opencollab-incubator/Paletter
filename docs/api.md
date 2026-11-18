@@ -11,14 +11,21 @@ The API is the packages exported by
 `vanilla.state` packages. Cloudburst types that appear in signatures (`NbtMap`, `ItemData`, `StartGamePacket`, ...) are
 part of it too.
 
+Simple names are unique across the public API (a test fails on a duplicate). When two types would share one, the generated
+one gets a `Block` or `Item` prefix: `BlockDisplayName`/`ItemDisplayName`, `BlockMenuCategory`/`ItemMenuCategory`. The
+generator finds those names itself.
+
 Not API:
 
 - anything under `org.geysermc.paletter.internal`;
 - public members marked `@Internal` (plumbing that has to be public, such as the `BlockValues` constructor);
 - the bundled data format and the `tools` module.
 
-`@Experimental` marks API that follows a Bedrock experiment, such as components Bedrock gates behind a toggle.
-It also marks vanilla item overrides (`PaletteLayer.Builder#overrideItem`, `ItemOverride`): BDS replaced the components of
+`@Experimental` means only that the API itself is unstable. `@BedrockExperiment("<toggle>")` is separate: it marks a
+component (or field) Bedrock only accepts with that experiment toggle enabled, as the captured servers call the toggle; the
+ids are the constants of `BedrockExperiments` (`@BedrockSince`/`@BedrockUntil` give the bundled data versions whose captures have the
+toggle current), and `v.experiments(BedrockExperiments.UPCOMING_CREATOR_FEATURES)` enables one. `@Experimental` marks
+vanilla item overrides (`PaletteLayer.Builder#overrideItem`, `ItemOverride`): BDS replaced the components of
 an overridden data driven item (apple), accepted the hard coded feather at format 1.10 as a legacy item and rejected the
 stick at 1.26.60. The client's behaviour for Paletter's overrides is unverified on a client (see
 [wire-notes](wire-notes.md#overriding-vanilla-items)). `replaceComponents` has BDS's shape, `modifyComponents` merges.
@@ -94,7 +101,7 @@ descending order. Read ids from the palette, never keep them across layers.
 ## Vanilla constants
 
 `org.geysermc.paletter.vanilla` has generated constants for the newest bundled release: `BedrockBlocks`, `BedrockStates`,
-`BedrockItems` and `BedrockItemVariants`, plus enums for string states in `vanilla.state`. They are objects, not `int` constants, and load
+`BedrockItems`, `BedrockItemVariants` and `BedrockExperiments` (the experiment toggle ids, as Strings), plus enums for string states in `vanilla.state`. They are objects, not `int` constants, and load
 nothing until used.
 
 ```java

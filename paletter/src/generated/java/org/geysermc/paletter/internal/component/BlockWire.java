@@ -8,9 +8,11 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.cloudburstmc.nbt.NbtMap;
 import org.geysermc.paletter.block.component.BlockComponent;
+import org.geysermc.paletter.block.component.BlockDisplayName;
 import org.geysermc.paletter.block.component.BlockEntity;
 import org.geysermc.paletter.block.component.BlockLightAbsorption;
 import org.geysermc.paletter.block.component.BlockLightEmission;
+import org.geysermc.paletter.block.component.BlockMenuCategory;
 import org.geysermc.paletter.block.component.BoneVisibility;
 import org.geysermc.paletter.block.component.Breathability;
 import org.geysermc.paletter.block.component.ChestObstruction;
@@ -21,7 +23,6 @@ import org.geysermc.paletter.block.component.DestroyTime;
 import org.geysermc.paletter.block.component.DestructibleByExplosion;
 import org.geysermc.paletter.block.component.DestructibleByMining;
 import org.geysermc.paletter.block.component.DestructionParticles;
-import org.geysermc.paletter.block.component.DisplayName;
 import org.geysermc.paletter.block.component.EmbeddedVisual;
 import org.geysermc.paletter.block.component.EntityFallOn;
 import org.geysermc.paletter.block.component.Flammable;
@@ -36,7 +37,6 @@ import org.geysermc.paletter.block.component.LiquidDetection;
 import org.geysermc.paletter.block.component.Loot;
 import org.geysermc.paletter.block.component.MapColor;
 import org.geysermc.paletter.block.component.MaterialInstances;
-import org.geysermc.paletter.block.component.MenuCategory;
 import org.geysermc.paletter.block.component.Movable;
 import org.geysermc.paletter.block.component.PlacementFilter;
 import org.geysermc.paletter.block.component.PrecipitationInteractions;
@@ -81,7 +81,7 @@ public final class BlockWire {
             case DestructibleByExplosion value -> destructibleByExplosion(value, ctx, out);
             case DestructibleByMining value -> destructibleByMining(value, ctx, out);
             case DestructionParticles value -> destructionParticles(value, ctx, out);
-            case DisplayName value -> displayName(value, ctx, out);
+            case BlockDisplayName value -> displayName(value, ctx, out);
             case EmbeddedVisual value -> embeddedVisual(value, ctx, out);
             case EntityFallOn value -> entityFallOn(value, ctx, out);
             case Flammable value -> flammable(value, ctx, out);
@@ -286,7 +286,7 @@ public final class BlockWire {
         out.put("minecraft:destruction_particles.tint_method", v2.value());
     }
 
-    private static void displayName(DisplayName c, WireContext ctx, WireNode out) {
+    private static void displayName(BlockDisplayName c, WireContext ctx, WireNode out) {
         String v0 = c.value();
         out.put("minecraft:display_name.value", v0);
     }
@@ -340,7 +340,7 @@ public final class BlockWire {
         out.put("minecraft:item_visual.geometryDescription.needsLegacyTopRotation", (byte) 0);
         out.put("minecraft:item_visual.geometryDescription.useBlockTypeLightAbsorption", (byte) 0);
         out.put("minecraft:item_visual.materialInstancesDescription.mappings", NbtMap.EMPTY);
-        ItemVisual.Geometry v0 = c.geometry();
+        ItemVisual.VisualGeometry v0 = c.geometry();
         String v1 = v0.culling();
         if (v1 != null) {
             out.put("minecraft:item_visual.geometryDescription.culling", v1);
@@ -376,7 +376,7 @@ public final class BlockWire {
         out.put("minecraft:item_visual.geometryDescription.needsLegacyTopRotation", (byte) 0);
         out.put("minecraft:item_visual.geometryDescription.useBlockTypeLightAbsorption", (byte) 0);
         out.put("minecraft:item_visual.materialInstancesDescription.mappings", NbtMap.EMPTY);
-        ItemVisual.Geometry v0 = c.geometry();
+        ItemVisual.VisualGeometry v0 = c.geometry();
         String v1 = v0.culling();
         if (v1 != null) {
             out.put("minecraft:item_visual.geometryDescription.culling", v1);
@@ -658,9 +658,9 @@ public final class BlockWire {
     }
 
     /**
-     * Writes the {@link MenuCategory} of a definition, or for null what BDS sends for a definition without one.
+     * Writes the {@link BlockMenuCategory} of a definition, or for null what BDS sends for a definition without one.
      */
-    public static void menuCategory(@Nullable MenuCategory c, @NonNull WireContext ctx,
+    public static void menuCategory(@Nullable BlockMenuCategory c, @NonNull WireContext ctx,
             @NonNull WireNode out) {
         if (c == null) {
             out.put("menu_category.category", "none");
@@ -668,7 +668,7 @@ public final class BlockWire {
             out.put("menu_category.is_hidden_in_commands", (byte) 0);
             return;
         }
-        MenuCategory.Category v0 = c.category();
+        BlockMenuCategory.Category v0 = c.category();
         out.put("menu_category.category", v0.value());
         String v1 = c.group();
         if (v1 != null) {

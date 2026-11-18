@@ -7,8 +7,8 @@ import java.util.List;
 import java.util.Objects;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
+import org.geysermc.paletter.annotation.BedrockExperiment;
 import org.geysermc.paletter.annotation.BedrockFormat;
-import org.geysermc.paletter.annotation.Experimental;
 
 /**
  * Defines the area of the block that collides with entities. If set to true, default values are used (a full
@@ -16,7 +16,8 @@ import org.geysermc.paletter.annotation.Experimental;
  * through. If this component is omitted, default values are used.
  * <p>
  * Add-on JSON: {@code "minecraft:collision_box"}.
- * Bedrock requires the experiments Holiday Creator Features, Upcoming Creator Features for it (in some format versions).
+ * The creator docs name the experiments Holiday Creator Features, Upcoming Creator Features for it (in some format versions); unverified against BDS.
+ * Unverified: the creator docs name experiment "Holiday Creator Features", which is in no capture.
  *
  * @param boxes The entries of the component (add-on JSON: the component's value is this list). Default: <code>[]</code>.
  *        Compiled by the hand transform {@code Transforms.collisionBoxes}.
@@ -26,7 +27,7 @@ import org.geysermc.paletter.annotation.Experimental;
  * @since 1.0.0
  */
 @BedrockFormat("1.19.50")
-@Experimental
+@BedrockExperiment("upcoming_creator_features")
 public record CollisionBox(@NonNull List<CollisionBox.Entry> boxes,
         @Nullable Boolean enabled) implements BlockComponent {
     /**

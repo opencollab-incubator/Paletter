@@ -55,7 +55,7 @@ public final class TraitWire {
         out.put("name", "minecraft:multi_block");
         int v1 = c.parts();
         out.put("part_count", Wire.toByte(v1));
-        MultiBlock.Direction v2 = c.direction();
+        MultiBlock.MultiBlockDirection v2 = c.direction();
         switch (v2.value()) {
             case "down" -> out.put("direction", (byte) 0);
             case "up" -> out.put("direction", (byte) 1);
@@ -69,7 +69,7 @@ public final class TraitWire {
         out.put("place_behavior", (byte) 0);
         int v1 = c.parts();
         out.put("part_count", Wire.toByte(v1));
-        MultiBlock.Direction v2 = c.direction();
+        MultiBlock.MultiBlockDirection v2 = c.direction();
         switch (v2) {
             case DOWN -> out.put("direction", (byte) 0);
             case EAST -> out.put("direction", (byte) 5);

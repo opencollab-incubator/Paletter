@@ -25,10 +25,10 @@ import org.checkerframework.checker.nullness.qual.Nullable;
  *        <code>false</code>.
  * @since 1.0.0
  */
-public record MenuCategory(MenuCategory. @NonNull Category category, @Nullable String group,
-        boolean hiddenInCommands) {
-    public MenuCategory {
-        Objects.requireNonNull(category, "MenuCategory.category");
+public record BlockMenuCategory(BlockMenuCategory. @NonNull Category category,
+        @Nullable String group, boolean hiddenInCommands) {
+    public BlockMenuCategory {
+        Objects.requireNonNull(category, "BlockMenuCategory.category");
     }
 
     /**
@@ -50,7 +50,7 @@ public record MenuCategory(MenuCategory. @NonNull Category category, @Nullable S
     }
 
     /**
-     * Builds {@link MenuCategory}: defaults applied, required fields and ranges checked by {@link #build()}.
+     * Builds {@link BlockMenuCategory}: defaults applied, required fields and ranges checked by {@link #build()}.
      */
     public static final class Builder {
         private @Nullable Category category;
@@ -90,11 +90,11 @@ public record MenuCategory(MenuCategory. @NonNull Category category, @Nullable S
          * @throws IllegalStateException if a required field is not set
          * @throws IllegalArgumentException if a value is out of range
          */
-        public @NonNull MenuCategory build() {
+        public @NonNull BlockMenuCategory build() {
             if (category == null) {
-                throw new IllegalStateException("MenuCategory.category is required");
+                throw new IllegalStateException("BlockMenuCategory.category is required");
             }
-            return new MenuCategory(category, group, hiddenInCommands);
+            return new BlockMenuCategory(category, group, hiddenInCommands);
         }
     }
 

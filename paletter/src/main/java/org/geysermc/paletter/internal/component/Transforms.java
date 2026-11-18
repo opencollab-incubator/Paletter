@@ -138,7 +138,7 @@ public final class Transforms {
      * bone visibility of {@link #boneVisibility}. The captures of BDS 1.26.36.1 to 1.26.70.24 bear it out.
      */
     public static void embeddedGeometry(@NonNull WireContext ctx, @NonNull WireNode out, @NonNull EmbeddedVisual c) {
-        EmbeddedVisual.Geometry g = c.geometry();
+        EmbeddedVisual.VisualGeometry g = c.geometry();
         NbtMapBuilder geometry = geometry(g.identifier(), boneVisibility(ctx, EmbeddedVisual.NAME, g.boneVisibility()), g.culling(),
             g.cullingLayer(), g.cullingShape(), g.uvLock()).toBuilder();
         for (String flag : List.of("ignoreGeometryForIsSolid", "isV1Fullblock", "needsLegacyTopRotation", "useBlockTypeLightAbsorption")) {
@@ -155,7 +155,7 @@ public final class Transforms {
      * {@code item_visual.geometry.bone_visibility}: the {@link #boneVisibility} every geometry sends, which no rule over the
      * JSON value fits (BDS parses the expression); the other geometry fields of {@code item_visual} have inferred rules.
      */
-    public static void itemVisualBoneVisibility(@NonNull WireContext ctx, @NonNull WireNode out, ItemVisual.@NonNull Geometry c) {
+    public static void itemVisualBoneVisibility(@NonNull WireContext ctx, @NonNull WireNode out, ItemVisual.@NonNull VisualGeometry c) {
         out.put("minecraft:item_visual.geometryDescription.bone_visibility", boneVisibility(ctx, ItemVisual.NAME, c.boneVisibility()));
     }
 
@@ -249,7 +249,7 @@ public final class Transforms {
      * rule fitted to the captured names would only order those. The captures of BDS 1.26.36.1 to 1.26.70.24 send
      * {@code true} as 1, a list as its bones, and take both for the full block geometry too.
      */
-    public static void itemVisualUvLock(@NonNull WireContext ctx, @NonNull WireNode out, ItemVisual.@NonNull Geometry g) {
+    public static void itemVisualUvLock(@NonNull WireContext ctx, @NonNull WireNode out, ItemVisual.@NonNull VisualGeometry g) {
         out.put("minecraft:item_visual.geometryDescription.uv_lock", uvLock(g.uvLock()));
     }
 

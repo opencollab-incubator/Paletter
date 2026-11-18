@@ -261,7 +261,19 @@ public final class org.geysermc.paletter.VanillaContent {
     public org.geysermc.paletter.VanillaContent remove(org.geysermc.paletter.vanilla.BedrockItemType)
 }
 
+public @interface org.geysermc.paletter.annotation.BedrockExperiment {
+    public abstract java.lang.String value()
+}
+
 public @interface org.geysermc.paletter.annotation.BedrockFormat {
+    public abstract java.lang.String value()
+}
+
+public @interface org.geysermc.paletter.annotation.BedrockSince {
+    public abstract java.lang.String value()
+}
+
+public @interface org.geysermc.paletter.annotation.BedrockUntil {
     public abstract java.lang.String value()
 }
 
@@ -481,7 +493,7 @@ public final class org.geysermc.paletter.block.CustomBlock {
     public java.lang.String identifier()
     public org.geysermc.paletter.block.CustomBlock$BlockItem item()
     public org.geysermc.paletter.vanilla.BedrockItemType itemType()
-    public org.geysermc.paletter.block.component.MenuCategory menuCategory()
+    public org.geysermc.paletter.block.component.BlockMenuCategory menuCategory()
     public java.util.List<org.geysermc.paletter.block.CustomBlock$Permutation> permutations()
     public java.util.List<org.geysermc.paletter.block.BlockProperty<?>> properties()
     public int stateCount()
@@ -528,7 +540,7 @@ public static final class org.geysermc.paletter.block.CustomBlock$Builder {
     public org.geysermc.paletter.block.CustomBlock$Builder creative(org.geysermc.paletter.creative.CreativePlacement)
     public org.geysermc.paletter.block.CustomBlock$Builder defaultState(java.lang.String, java.lang.Object)
     public org.geysermc.paletter.block.CustomBlock$Builder item(org.geysermc.paletter.block.CustomBlock$BlockItem)
-    public org.geysermc.paletter.block.CustomBlock$Builder menuCategory(org.geysermc.paletter.block.component.MenuCategory)
+    public org.geysermc.paletter.block.CustomBlock$Builder menuCategory(org.geysermc.paletter.block.component.BlockMenuCategory)
     public org.geysermc.paletter.block.CustomBlock$Builder permutation(java.lang.String, org.geysermc.paletter.block.component.BlockComponent...)
     public org.geysermc.paletter.block.CustomBlock$Builder permutation(org.geysermc.paletter.block.CustomBlock$Permutation)
     public org.geysermc.paletter.block.CustomBlock$Builder property(org.geysermc.paletter.block.BlockProperty<?>)
@@ -589,8 +601,26 @@ public final class org.geysermc.paletter.block.VoxelShapes {
     public java.lang.String toString()
 }
 
-public sealed interface org.geysermc.paletter.block.component.BlockComponent permits org.geysermc.paletter.block.component.BlockEntity, org.geysermc.paletter.block.component.BlockLightAbsorption, org.geysermc.paletter.block.component.BlockLightEmission, org.geysermc.paletter.block.component.BoneVisibility, org.geysermc.paletter.block.component.Breathability, org.geysermc.paletter.block.component.ChestObstruction, org.geysermc.paletter.block.component.CollisionBox, org.geysermc.paletter.block.component.ConnectionRule, org.geysermc.paletter.block.component.CraftingTable, org.geysermc.paletter.block.component.DestroyTime, org.geysermc.paletter.block.component.DestructibleByExplosion, org.geysermc.paletter.block.component.DestructibleByMining, org.geysermc.paletter.block.component.DestructionParticles, org.geysermc.paletter.block.component.DisplayName, org.geysermc.paletter.block.component.EmbeddedVisual, org.geysermc.paletter.block.component.EntityFallOn, org.geysermc.paletter.block.component.Flammable, org.geysermc.paletter.block.component.FlowerPottable, org.geysermc.paletter.block.component.Friction, org.geysermc.paletter.block.component.Geometry, org.geysermc.paletter.block.component.InstrumentSound, org.geysermc.paletter.block.component.ItemVisual, org.geysermc.paletter.block.component.LightDampening, org.geysermc.paletter.block.component.LightEmission, org.geysermc.paletter.block.component.LiquidDetection, org.geysermc.paletter.block.component.Loot, org.geysermc.paletter.block.component.MapColor, org.geysermc.paletter.block.component.MaterialInstances, org.geysermc.paletter.block.component.Movable, org.geysermc.paletter.block.component.PlacementFilter, org.geysermc.paletter.block.component.PrecipitationInteractions, org.geysermc.paletter.block.component.RandomOffset, org.geysermc.paletter.block.component.RedstoneConductivity, org.geysermc.paletter.block.component.RedstoneConsumer, org.geysermc.paletter.block.component.RedstoneProducer, org.geysermc.paletter.block.component.Replaceable, org.geysermc.paletter.block.component.SelectionBox, org.geysermc.paletter.block.component.Support, org.geysermc.paletter.block.component.Tick, org.geysermc.paletter.block.component.Transformation, org.geysermc.paletter.block.component.UnitCube, org.geysermc.paletter.block.component.WireOnlyBlockComponent {
+public sealed interface org.geysermc.paletter.block.component.BlockComponent permits org.geysermc.paletter.block.component.BlockDisplayName, org.geysermc.paletter.block.component.BlockEntity, org.geysermc.paletter.block.component.BlockLightAbsorption, org.geysermc.paletter.block.component.BlockLightEmission, org.geysermc.paletter.block.component.BoneVisibility, org.geysermc.paletter.block.component.Breathability, org.geysermc.paletter.block.component.ChestObstruction, org.geysermc.paletter.block.component.CollisionBox, org.geysermc.paletter.block.component.ConnectionRule, org.geysermc.paletter.block.component.CraftingTable, org.geysermc.paletter.block.component.DestroyTime, org.geysermc.paletter.block.component.DestructibleByExplosion, org.geysermc.paletter.block.component.DestructibleByMining, org.geysermc.paletter.block.component.DestructionParticles, org.geysermc.paletter.block.component.EmbeddedVisual, org.geysermc.paletter.block.component.EntityFallOn, org.geysermc.paletter.block.component.Flammable, org.geysermc.paletter.block.component.FlowerPottable, org.geysermc.paletter.block.component.Friction, org.geysermc.paletter.block.component.Geometry, org.geysermc.paletter.block.component.InstrumentSound, org.geysermc.paletter.block.component.ItemVisual, org.geysermc.paletter.block.component.LightDampening, org.geysermc.paletter.block.component.LightEmission, org.geysermc.paletter.block.component.LiquidDetection, org.geysermc.paletter.block.component.Loot, org.geysermc.paletter.block.component.MapColor, org.geysermc.paletter.block.component.MaterialInstances, org.geysermc.paletter.block.component.Movable, org.geysermc.paletter.block.component.PlacementFilter, org.geysermc.paletter.block.component.PrecipitationInteractions, org.geysermc.paletter.block.component.RandomOffset, org.geysermc.paletter.block.component.RedstoneConductivity, org.geysermc.paletter.block.component.RedstoneConsumer, org.geysermc.paletter.block.component.RedstoneProducer, org.geysermc.paletter.block.component.Replaceable, org.geysermc.paletter.block.component.SelectionBox, org.geysermc.paletter.block.component.Support, org.geysermc.paletter.block.component.Tick, org.geysermc.paletter.block.component.Transformation, org.geysermc.paletter.block.component.UnitCube, org.geysermc.paletter.block.component.WireOnlyBlockComponent {
     public abstract java.lang.String name()
+}
+
+public record org.geysermc.paletter.block.component.BlockDisplayName implements org.geysermc.paletter.block.component.BlockComponent {
+    public static final java.lang.String NAME = "minecraft:display_name"
+    public <init>(java.lang.String)
+    public static org.geysermc.paletter.block.component.BlockDisplayName$Builder builder()
+    public final boolean equals(java.lang.Object)
+    public final int hashCode()
+    public java.lang.String name()
+    public static org.geysermc.paletter.block.component.BlockDisplayName of(java.lang.String)
+    public org.geysermc.paletter.block.component.BlockDisplayName$Builder toBuilder()
+    public final java.lang.String toString()
+    public java.lang.String value()
+}
+
+public static final class org.geysermc.paletter.block.component.BlockDisplayName$Builder {
+    public org.geysermc.paletter.block.component.BlockDisplayName build()
+    public org.geysermc.paletter.block.component.BlockDisplayName$Builder value(java.lang.String)
 }
 
 public record org.geysermc.paletter.block.component.BlockEntity implements org.geysermc.paletter.block.component.BlockComponent {
@@ -669,6 +699,37 @@ public static final class org.geysermc.paletter.block.component.BlockLightEmissi
     public org.geysermc.paletter.block.component.BlockLightEmission$Builder value(int)
 }
 
+public record org.geysermc.paletter.block.component.BlockMenuCategory {
+    public <init>(org.geysermc.paletter.block.component.BlockMenuCategory$Category, java.lang.String, boolean)
+    public static org.geysermc.paletter.block.component.BlockMenuCategory$Builder builder()
+    public org.geysermc.paletter.block.component.BlockMenuCategory$Category category()
+    public final boolean equals(java.lang.Object)
+    public java.lang.String group()
+    public final int hashCode()
+    public boolean hiddenInCommands()
+    public org.geysermc.paletter.block.component.BlockMenuCategory$Builder toBuilder()
+    public final java.lang.String toString()
+}
+
+public static final class org.geysermc.paletter.block.component.BlockMenuCategory$Builder {
+    public org.geysermc.paletter.block.component.BlockMenuCategory build()
+    public org.geysermc.paletter.block.component.BlockMenuCategory$Builder category(org.geysermc.paletter.block.component.BlockMenuCategory$Category)
+    public org.geysermc.paletter.block.component.BlockMenuCategory$Builder group(java.lang.String)
+    public org.geysermc.paletter.block.component.BlockMenuCategory$Builder hiddenInCommands(boolean)
+}
+
+public enum org.geysermc.paletter.block.component.BlockMenuCategory$Category {
+    public static final org.geysermc.paletter.block.component.BlockMenuCategory$Category CONSTRUCTION
+    public static final org.geysermc.paletter.block.component.BlockMenuCategory$Category EQUIPMENT
+    public static final org.geysermc.paletter.block.component.BlockMenuCategory$Category ITEMS
+    public static final org.geysermc.paletter.block.component.BlockMenuCategory$Category NATURE
+    public static final org.geysermc.paletter.block.component.BlockMenuCategory$Category NONE
+    public static org.geysermc.paletter.block.component.BlockMenuCategory$Category fromValue(java.lang.String)
+    public java.lang.String value()
+    public static org.geysermc.paletter.block.component.BlockMenuCategory$Category valueOf(java.lang.String)
+    public static org.geysermc.paletter.block.component.BlockMenuCategory$Category[] values()
+}
+
 public sealed interface org.geysermc.paletter.block.component.BlockTrait permits org.geysermc.paletter.block.component.Connection, org.geysermc.paletter.block.component.MultiBlock, org.geysermc.paletter.block.component.PlacementDirection, org.geysermc.paletter.block.component.PlacementPosition {
     public abstract java.lang.String name()
 }
@@ -706,7 +767,7 @@ public static final class org.geysermc.paletter.block.component.Breathability$Bu
     public org.geysermc.paletter.block.component.Breathability$Builder value(java.lang.String)
 }
 
-@Experimental public record org.geysermc.paletter.block.component.ChestObstruction implements org.geysermc.paletter.block.component.BlockComponent {
+public record org.geysermc.paletter.block.component.ChestObstruction implements org.geysermc.paletter.block.component.BlockComponent {
     public static final java.lang.String NAME = "minecraft:chest_obstruction"
     public <init>(org.geysermc.paletter.block.component.ChestObstruction$ObstructionRule)
     public static org.geysermc.paletter.block.component.ChestObstruction$Builder builder()
@@ -733,7 +794,7 @@ public enum org.geysermc.paletter.block.component.ChestObstruction$ObstructionRu
     public static org.geysermc.paletter.block.component.ChestObstruction$ObstructionRule[] values()
 }
 
-@Experimental public record org.geysermc.paletter.block.component.CollisionBox implements org.geysermc.paletter.block.component.BlockComponent {
+public record org.geysermc.paletter.block.component.CollisionBox implements org.geysermc.paletter.block.component.BlockComponent {
     public static final java.lang.String NAME = "minecraft:collision_box"
     public <init>(java.util.List<org.geysermc.paletter.block.component.CollisionBox$Entry>, java.lang.Boolean)
     public java.util.List<org.geysermc.paletter.block.component.CollisionBox$Entry> boxes()
@@ -784,7 +845,7 @@ public record org.geysermc.paletter.block.component.CollisionBox$Vec3 {
     public float z()
 }
 
-@Experimental public record org.geysermc.paletter.block.component.Connection implements org.geysermc.paletter.block.component.BlockTrait {
+public record org.geysermc.paletter.block.component.Connection implements org.geysermc.paletter.block.component.BlockTrait {
     public static final java.lang.String NAME = "minecraft:connection"
     public <init>(java.util.List<org.geysermc.paletter.block.component.Connection$EnabledStates>)
     public static org.geysermc.paletter.block.component.Connection$Builder builder()
@@ -810,7 +871,7 @@ public enum org.geysermc.paletter.block.component.Connection$EnabledStates {
     public static org.geysermc.paletter.block.component.Connection$EnabledStates[] values()
 }
 
-@Experimental public record org.geysermc.paletter.block.component.ConnectionRule implements org.geysermc.paletter.block.component.BlockComponent {
+public record org.geysermc.paletter.block.component.ConnectionRule implements org.geysermc.paletter.block.component.BlockComponent {
     public static final java.lang.String NAME = "minecraft:connection_rule"
     public <init>(org.geysermc.paletter.block.component.ConnectionRule$AcceptsConnectionsFrom, java.util.List<org.geysermc.paletter.block.component.ConnectionRule$EnabledDirections>)
     public org.geysermc.paletter.block.component.ConnectionRule$AcceptsConnectionsFrom acceptsConnectionsFrom()
@@ -851,7 +912,7 @@ public enum org.geysermc.paletter.block.component.ConnectionRule$EnabledDirectio
     public static org.geysermc.paletter.block.component.ConnectionRule$EnabledDirections[] values()
 }
 
-@Experimental public record org.geysermc.paletter.block.component.CraftingTable implements org.geysermc.paletter.block.component.BlockComponent {
+public record org.geysermc.paletter.block.component.CraftingTable implements org.geysermc.paletter.block.component.BlockComponent {
     public static final java.lang.String NAME = "minecraft:crafting_table"
     public <init>(java.util.List<java.lang.String>, java.lang.String)
     public static org.geysermc.paletter.block.component.CraftingTable$Builder builder()
@@ -985,30 +1046,12 @@ public enum org.geysermc.paletter.block.component.DestructionParticles$TintMetho
     public static org.geysermc.paletter.block.component.DestructionParticles$TintMethod[] values()
 }
 
-public record org.geysermc.paletter.block.component.DisplayName implements org.geysermc.paletter.block.component.BlockComponent {
-    public static final java.lang.String NAME = "minecraft:display_name"
-    public <init>(java.lang.String)
-    public static org.geysermc.paletter.block.component.DisplayName$Builder builder()
-    public final boolean equals(java.lang.Object)
-    public final int hashCode()
-    public java.lang.String name()
-    public static org.geysermc.paletter.block.component.DisplayName of(java.lang.String)
-    public org.geysermc.paletter.block.component.DisplayName$Builder toBuilder()
-    public final java.lang.String toString()
-    public java.lang.String value()
-}
-
-public static final class org.geysermc.paletter.block.component.DisplayName$Builder {
-    public org.geysermc.paletter.block.component.DisplayName build()
-    public org.geysermc.paletter.block.component.DisplayName$Builder value(java.lang.String)
-}
-
 public record org.geysermc.paletter.block.component.EmbeddedVisual implements org.geysermc.paletter.block.component.BlockComponent {
     public static final java.lang.String NAME = "minecraft:embedded_visual"
-    public <init>(org.geysermc.paletter.block.component.EmbeddedVisual$Geometry, org.geysermc.paletter.block.component.MaterialInstances)
+    public <init>(org.geysermc.paletter.block.component.EmbeddedVisual$VisualGeometry, org.geysermc.paletter.block.component.MaterialInstances)
     public static org.geysermc.paletter.block.component.EmbeddedVisual$Builder builder()
     public final boolean equals(java.lang.Object)
-    public org.geysermc.paletter.block.component.EmbeddedVisual$Geometry geometry()
+    public org.geysermc.paletter.block.component.EmbeddedVisual$VisualGeometry geometry()
     public final int hashCode()
     public org.geysermc.paletter.block.component.MaterialInstances materialInstances()
     public java.lang.String name()
@@ -1018,38 +1061,8 @@ public record org.geysermc.paletter.block.component.EmbeddedVisual implements or
 
 public static final class org.geysermc.paletter.block.component.EmbeddedVisual$Builder {
     public org.geysermc.paletter.block.component.EmbeddedVisual build()
-    public org.geysermc.paletter.block.component.EmbeddedVisual$Builder geometry(org.geysermc.paletter.block.component.EmbeddedVisual$Geometry)
+    public org.geysermc.paletter.block.component.EmbeddedVisual$Builder geometry(org.geysermc.paletter.block.component.EmbeddedVisual$VisualGeometry)
     public org.geysermc.paletter.block.component.EmbeddedVisual$Builder materialInstances(org.geysermc.paletter.block.component.MaterialInstances)
-}
-
-public record org.geysermc.paletter.block.component.EmbeddedVisual$Geometry {
-    public <init>(java.util.Map<java.lang.String, java.lang.String>, java.lang.String, java.lang.String, java.lang.String, java.lang.String, org.geysermc.paletter.block.component.EmbeddedVisual$NWayVisualRotation, org.geysermc.paletter.block.component.UvLock)
-    public java.util.Map<java.lang.String, java.lang.String> boneVisibility()
-    public static org.geysermc.paletter.block.component.EmbeddedVisual$Geometry$Builder builder()
-    public java.lang.String culling()
-    public java.lang.String cullingLayer()
-    public java.lang.String cullingShape()
-    public final boolean equals(java.lang.Object)
-    public final int hashCode()
-    public java.lang.String identifier()
-    public org.geysermc.paletter.block.component.EmbeddedVisual$NWayVisualRotation nWayVisualRotation()
-    public org.geysermc.paletter.block.component.EmbeddedVisual$Geometry$Builder toBuilder()
-    public final java.lang.String toString()
-    public org.geysermc.paletter.block.component.UvLock uvLock()
-}
-
-public static final class org.geysermc.paletter.block.component.EmbeddedVisual$Geometry$Builder {
-    public org.geysermc.paletter.block.component.EmbeddedVisual$Geometry$Builder boneVisibility(java.util.Map<java.lang.String, java.lang.String>)
-    public org.geysermc.paletter.block.component.EmbeddedVisual$Geometry build()
-    public org.geysermc.paletter.block.component.EmbeddedVisual$Geometry$Builder culling(java.lang.String)
-    public org.geysermc.paletter.block.component.EmbeddedVisual$Geometry$Builder cullingLayer(java.lang.String)
-    public org.geysermc.paletter.block.component.EmbeddedVisual$Geometry$Builder cullingShape(java.lang.String)
-    public org.geysermc.paletter.block.component.EmbeddedVisual$Geometry$Builder identifier(java.lang.String)
-    public org.geysermc.paletter.block.component.EmbeddedVisual$Geometry$Builder nWayVisualRotation(org.geysermc.paletter.block.component.EmbeddedVisual$NWayVisualRotation)
-    public org.geysermc.paletter.block.component.EmbeddedVisual$Geometry$Builder uvLock(java.lang.String, java.lang.String...)
-    public org.geysermc.paletter.block.component.EmbeddedVisual$Geometry$Builder uvLock(java.util.List<java.lang.String>)
-    public org.geysermc.paletter.block.component.EmbeddedVisual$Geometry$Builder uvLock(org.geysermc.paletter.block.component.UvLock)
-    public org.geysermc.paletter.block.component.EmbeddedVisual$Geometry$Builder uvLock(boolean)
 }
 
 public record org.geysermc.paletter.block.component.EmbeddedVisual$NWayVisualRotation {
@@ -1069,6 +1082,36 @@ public static final class org.geysermc.paletter.block.component.EmbeddedVisual$N
     public org.geysermc.paletter.block.component.EmbeddedVisual$NWayVisualRotation$Builder x(java.lang.String)
     public org.geysermc.paletter.block.component.EmbeddedVisual$NWayVisualRotation$Builder y(java.lang.String)
     public org.geysermc.paletter.block.component.EmbeddedVisual$NWayVisualRotation$Builder z(java.lang.String)
+}
+
+public record org.geysermc.paletter.block.component.EmbeddedVisual$VisualGeometry {
+    public <init>(java.util.Map<java.lang.String, java.lang.String>, java.lang.String, java.lang.String, java.lang.String, java.lang.String, org.geysermc.paletter.block.component.EmbeddedVisual$NWayVisualRotation, org.geysermc.paletter.block.component.UvLock)
+    public java.util.Map<java.lang.String, java.lang.String> boneVisibility()
+    public static org.geysermc.paletter.block.component.EmbeddedVisual$VisualGeometry$Builder builder()
+    public java.lang.String culling()
+    public java.lang.String cullingLayer()
+    public java.lang.String cullingShape()
+    public final boolean equals(java.lang.Object)
+    public final int hashCode()
+    public java.lang.String identifier()
+    public org.geysermc.paletter.block.component.EmbeddedVisual$NWayVisualRotation nWayVisualRotation()
+    public org.geysermc.paletter.block.component.EmbeddedVisual$VisualGeometry$Builder toBuilder()
+    public final java.lang.String toString()
+    public org.geysermc.paletter.block.component.UvLock uvLock()
+}
+
+public static final class org.geysermc.paletter.block.component.EmbeddedVisual$VisualGeometry$Builder {
+    public org.geysermc.paletter.block.component.EmbeddedVisual$VisualGeometry$Builder boneVisibility(java.util.Map<java.lang.String, java.lang.String>)
+    public org.geysermc.paletter.block.component.EmbeddedVisual$VisualGeometry build()
+    public org.geysermc.paletter.block.component.EmbeddedVisual$VisualGeometry$Builder culling(java.lang.String)
+    public org.geysermc.paletter.block.component.EmbeddedVisual$VisualGeometry$Builder cullingLayer(java.lang.String)
+    public org.geysermc.paletter.block.component.EmbeddedVisual$VisualGeometry$Builder cullingShape(java.lang.String)
+    public org.geysermc.paletter.block.component.EmbeddedVisual$VisualGeometry$Builder identifier(java.lang.String)
+    public org.geysermc.paletter.block.component.EmbeddedVisual$VisualGeometry$Builder nWayVisualRotation(org.geysermc.paletter.block.component.EmbeddedVisual$NWayVisualRotation)
+    public org.geysermc.paletter.block.component.EmbeddedVisual$VisualGeometry$Builder uvLock(java.lang.String, java.lang.String...)
+    public org.geysermc.paletter.block.component.EmbeddedVisual$VisualGeometry$Builder uvLock(java.util.List<java.lang.String>)
+    public org.geysermc.paletter.block.component.EmbeddedVisual$VisualGeometry$Builder uvLock(org.geysermc.paletter.block.component.UvLock)
+    public org.geysermc.paletter.block.component.EmbeddedVisual$VisualGeometry$Builder uvLock(boolean)
 }
 
 public record org.geysermc.paletter.block.component.EntityFallOn implements org.geysermc.paletter.block.component.BlockComponent {
@@ -1197,7 +1240,7 @@ public static final class org.geysermc.paletter.block.component.Geometry$NWayVis
     public org.geysermc.paletter.block.component.Geometry$NWayVisualRotation$Builder z(java.lang.String)
 }
 
-@Experimental public record org.geysermc.paletter.block.component.InstrumentSound implements org.geysermc.paletter.block.component.BlockComponent {
+public record org.geysermc.paletter.block.component.InstrumentSound implements org.geysermc.paletter.block.component.BlockComponent {
     public static final java.lang.String NAME = "minecraft:instrument_sound"
     public <init>(org.geysermc.paletter.block.component.InstrumentSound$Down, org.geysermc.paletter.block.component.InstrumentSound$Up)
     public static org.geysermc.paletter.block.component.InstrumentSound$Builder builder()
@@ -1286,10 +1329,10 @@ public enum org.geysermc.paletter.block.component.InstrumentSound$Up {
 
 public record org.geysermc.paletter.block.component.ItemVisual implements org.geysermc.paletter.block.component.BlockComponent {
     public static final java.lang.String NAME = "minecraft:item_visual"
-    public <init>(org.geysermc.paletter.block.component.ItemVisual$Geometry, org.geysermc.paletter.block.component.MaterialInstances)
+    public <init>(org.geysermc.paletter.block.component.ItemVisual$VisualGeometry, org.geysermc.paletter.block.component.MaterialInstances)
     public static org.geysermc.paletter.block.component.ItemVisual$Builder builder()
     public final boolean equals(java.lang.Object)
-    public org.geysermc.paletter.block.component.ItemVisual$Geometry geometry()
+    public org.geysermc.paletter.block.component.ItemVisual$VisualGeometry geometry()
     public final int hashCode()
     public org.geysermc.paletter.block.component.MaterialInstances materialInstances()
     public java.lang.String name()
@@ -1300,39 +1343,8 @@ public record org.geysermc.paletter.block.component.ItemVisual implements org.ge
 public static final class org.geysermc.paletter.block.component.ItemVisual$Builder {
     public org.geysermc.paletter.block.component.ItemVisual build()
     public org.geysermc.paletter.block.component.ItemVisual$Builder geometry(java.lang.String)
-    public org.geysermc.paletter.block.component.ItemVisual$Builder geometry(org.geysermc.paletter.block.component.ItemVisual$Geometry)
+    public org.geysermc.paletter.block.component.ItemVisual$Builder geometry(org.geysermc.paletter.block.component.ItemVisual$VisualGeometry)
     public org.geysermc.paletter.block.component.ItemVisual$Builder materialInstances(org.geysermc.paletter.block.component.MaterialInstances)
-}
-
-public record org.geysermc.paletter.block.component.ItemVisual$Geometry {
-    public <init>(java.util.Map<java.lang.String, java.lang.String>, java.lang.String, java.lang.String, java.lang.String, java.lang.String, org.geysermc.paletter.block.component.ItemVisual$NWayVisualRotation, org.geysermc.paletter.block.component.UvLock)
-    public java.util.Map<java.lang.String, java.lang.String> boneVisibility()
-    public static org.geysermc.paletter.block.component.ItemVisual$Geometry$Builder builder()
-    public java.lang.String culling()
-    public java.lang.String cullingLayer()
-    public java.lang.String cullingShape()
-    public final boolean equals(java.lang.Object)
-    public final int hashCode()
-    public java.lang.String identifier()
-    public org.geysermc.paletter.block.component.ItemVisual$NWayVisualRotation nWayVisualRotation()
-    public static org.geysermc.paletter.block.component.ItemVisual$Geometry of(java.lang.String)
-    public org.geysermc.paletter.block.component.ItemVisual$Geometry$Builder toBuilder()
-    public final java.lang.String toString()
-    public org.geysermc.paletter.block.component.UvLock uvLock()
-}
-
-public static final class org.geysermc.paletter.block.component.ItemVisual$Geometry$Builder {
-    public org.geysermc.paletter.block.component.ItemVisual$Geometry$Builder boneVisibility(java.util.Map<java.lang.String, java.lang.String>)
-    public org.geysermc.paletter.block.component.ItemVisual$Geometry build()
-    public org.geysermc.paletter.block.component.ItemVisual$Geometry$Builder culling(java.lang.String)
-    public org.geysermc.paletter.block.component.ItemVisual$Geometry$Builder cullingLayer(java.lang.String)
-    public org.geysermc.paletter.block.component.ItemVisual$Geometry$Builder cullingShape(java.lang.String)
-    public org.geysermc.paletter.block.component.ItemVisual$Geometry$Builder identifier(java.lang.String)
-    public org.geysermc.paletter.block.component.ItemVisual$Geometry$Builder nWayVisualRotation(org.geysermc.paletter.block.component.ItemVisual$NWayVisualRotation)
-    public org.geysermc.paletter.block.component.ItemVisual$Geometry$Builder uvLock(java.lang.String, java.lang.String...)
-    public org.geysermc.paletter.block.component.ItemVisual$Geometry$Builder uvLock(java.util.List<java.lang.String>)
-    public org.geysermc.paletter.block.component.ItemVisual$Geometry$Builder uvLock(org.geysermc.paletter.block.component.UvLock)
-    public org.geysermc.paletter.block.component.ItemVisual$Geometry$Builder uvLock(boolean)
 }
 
 public record org.geysermc.paletter.block.component.ItemVisual$NWayVisualRotation {
@@ -1352,6 +1364,37 @@ public static final class org.geysermc.paletter.block.component.ItemVisual$NWayV
     public org.geysermc.paletter.block.component.ItemVisual$NWayVisualRotation$Builder x(java.lang.String)
     public org.geysermc.paletter.block.component.ItemVisual$NWayVisualRotation$Builder y(java.lang.String)
     public org.geysermc.paletter.block.component.ItemVisual$NWayVisualRotation$Builder z(java.lang.String)
+}
+
+public record org.geysermc.paletter.block.component.ItemVisual$VisualGeometry {
+    public <init>(java.util.Map<java.lang.String, java.lang.String>, java.lang.String, java.lang.String, java.lang.String, java.lang.String, org.geysermc.paletter.block.component.ItemVisual$NWayVisualRotation, org.geysermc.paletter.block.component.UvLock)
+    public java.util.Map<java.lang.String, java.lang.String> boneVisibility()
+    public static org.geysermc.paletter.block.component.ItemVisual$VisualGeometry$Builder builder()
+    public java.lang.String culling()
+    public java.lang.String cullingLayer()
+    public java.lang.String cullingShape()
+    public final boolean equals(java.lang.Object)
+    public final int hashCode()
+    public java.lang.String identifier()
+    public org.geysermc.paletter.block.component.ItemVisual$NWayVisualRotation nWayVisualRotation()
+    public static org.geysermc.paletter.block.component.ItemVisual$VisualGeometry of(java.lang.String)
+    public org.geysermc.paletter.block.component.ItemVisual$VisualGeometry$Builder toBuilder()
+    public final java.lang.String toString()
+    public org.geysermc.paletter.block.component.UvLock uvLock()
+}
+
+public static final class org.geysermc.paletter.block.component.ItemVisual$VisualGeometry$Builder {
+    public org.geysermc.paletter.block.component.ItemVisual$VisualGeometry$Builder boneVisibility(java.util.Map<java.lang.String, java.lang.String>)
+    public org.geysermc.paletter.block.component.ItemVisual$VisualGeometry build()
+    public org.geysermc.paletter.block.component.ItemVisual$VisualGeometry$Builder culling(java.lang.String)
+    public org.geysermc.paletter.block.component.ItemVisual$VisualGeometry$Builder cullingLayer(java.lang.String)
+    public org.geysermc.paletter.block.component.ItemVisual$VisualGeometry$Builder cullingShape(java.lang.String)
+    public org.geysermc.paletter.block.component.ItemVisual$VisualGeometry$Builder identifier(java.lang.String)
+    public org.geysermc.paletter.block.component.ItemVisual$VisualGeometry$Builder nWayVisualRotation(org.geysermc.paletter.block.component.ItemVisual$NWayVisualRotation)
+    public org.geysermc.paletter.block.component.ItemVisual$VisualGeometry$Builder uvLock(java.lang.String, java.lang.String...)
+    public org.geysermc.paletter.block.component.ItemVisual$VisualGeometry$Builder uvLock(java.util.List<java.lang.String>)
+    public org.geysermc.paletter.block.component.ItemVisual$VisualGeometry$Builder uvLock(org.geysermc.paletter.block.component.UvLock)
+    public org.geysermc.paletter.block.component.ItemVisual$VisualGeometry$Builder uvLock(boolean)
 }
 
 public record org.geysermc.paletter.block.component.LightDampening implements org.geysermc.paletter.block.component.BlockComponent {
@@ -1589,37 +1632,6 @@ public enum org.geysermc.paletter.block.component.MaterialInstances$RenderMethod
     public static org.geysermc.paletter.block.component.MaterialInstances$RenderMethod[] values()
 }
 
-public record org.geysermc.paletter.block.component.MenuCategory {
-    public <init>(org.geysermc.paletter.block.component.MenuCategory$Category, java.lang.String, boolean)
-    public static org.geysermc.paletter.block.component.MenuCategory$Builder builder()
-    public org.geysermc.paletter.block.component.MenuCategory$Category category()
-    public final boolean equals(java.lang.Object)
-    public java.lang.String group()
-    public final int hashCode()
-    public boolean hiddenInCommands()
-    public org.geysermc.paletter.block.component.MenuCategory$Builder toBuilder()
-    public final java.lang.String toString()
-}
-
-public static final class org.geysermc.paletter.block.component.MenuCategory$Builder {
-    public org.geysermc.paletter.block.component.MenuCategory build()
-    public org.geysermc.paletter.block.component.MenuCategory$Builder category(org.geysermc.paletter.block.component.MenuCategory$Category)
-    public org.geysermc.paletter.block.component.MenuCategory$Builder group(java.lang.String)
-    public org.geysermc.paletter.block.component.MenuCategory$Builder hiddenInCommands(boolean)
-}
-
-public enum org.geysermc.paletter.block.component.MenuCategory$Category {
-    public static final org.geysermc.paletter.block.component.MenuCategory$Category CONSTRUCTION
-    public static final org.geysermc.paletter.block.component.MenuCategory$Category EQUIPMENT
-    public static final org.geysermc.paletter.block.component.MenuCategory$Category ITEMS
-    public static final org.geysermc.paletter.block.component.MenuCategory$Category NATURE
-    public static final org.geysermc.paletter.block.component.MenuCategory$Category NONE
-    public static org.geysermc.paletter.block.component.MenuCategory$Category fromValue(java.lang.String)
-    public java.lang.String value()
-    public static org.geysermc.paletter.block.component.MenuCategory$Category valueOf(java.lang.String)
-    public static org.geysermc.paletter.block.component.MenuCategory$Category[] values()
-}
-
 public record org.geysermc.paletter.block.component.Movable implements org.geysermc.paletter.block.component.BlockComponent {
     public static final java.lang.String NAME = "minecraft:movable"
     public <init>(org.geysermc.paletter.block.component.Movable$MovementType, org.geysermc.paletter.block.component.Movable$Sticky)
@@ -1659,11 +1671,11 @@ public enum org.geysermc.paletter.block.component.Movable$Sticky {
     public static org.geysermc.paletter.block.component.Movable$Sticky[] values()
 }
 
-@Experimental public record org.geysermc.paletter.block.component.MultiBlock implements org.geysermc.paletter.block.component.BlockTrait {
+public record org.geysermc.paletter.block.component.MultiBlock implements org.geysermc.paletter.block.component.BlockTrait {
     public static final java.lang.String NAME = "minecraft:multi_block"
-    public <init>(java.util.List<org.geysermc.paletter.block.component.MultiBlock$EnabledStates>, int, org.geysermc.paletter.block.component.MultiBlock$Direction)
+    public <init>(java.util.List<org.geysermc.paletter.block.component.MultiBlock$EnabledStates>, int, org.geysermc.paletter.block.component.MultiBlock$MultiBlockDirection)
     public static org.geysermc.paletter.block.component.MultiBlock$Builder builder()
-    public org.geysermc.paletter.block.component.MultiBlock$Direction direction()
+    public org.geysermc.paletter.block.component.MultiBlock$MultiBlockDirection direction()
     public java.util.List<org.geysermc.paletter.block.component.MultiBlock$EnabledStates> enabledStates()
     public final boolean equals(java.lang.Object)
     public final int hashCode()
@@ -1675,23 +1687,10 @@ public enum org.geysermc.paletter.block.component.Movable$Sticky {
 
 public static final class org.geysermc.paletter.block.component.MultiBlock$Builder {
     public org.geysermc.paletter.block.component.MultiBlock build()
-    public org.geysermc.paletter.block.component.MultiBlock$Builder direction(org.geysermc.paletter.block.component.MultiBlock$Direction)
+    public org.geysermc.paletter.block.component.MultiBlock$Builder direction(org.geysermc.paletter.block.component.MultiBlock$MultiBlockDirection)
     public org.geysermc.paletter.block.component.MultiBlock$Builder enabledStates(java.util.List<org.geysermc.paletter.block.component.MultiBlock$EnabledStates>)
     public org.geysermc.paletter.block.component.MultiBlock$Builder enabledStates(org.geysermc.paletter.block.component.MultiBlock$EnabledStates...)
     public org.geysermc.paletter.block.component.MultiBlock$Builder parts(int)
-}
-
-public enum org.geysermc.paletter.block.component.MultiBlock$Direction {
-    public static final org.geysermc.paletter.block.component.MultiBlock$Direction DOWN
-    public static final org.geysermc.paletter.block.component.MultiBlock$Direction EAST
-    public static final org.geysermc.paletter.block.component.MultiBlock$Direction NORTH
-    public static final org.geysermc.paletter.block.component.MultiBlock$Direction SOUTH
-    public static final org.geysermc.paletter.block.component.MultiBlock$Direction UP
-    public static final org.geysermc.paletter.block.component.MultiBlock$Direction WEST
-    public static org.geysermc.paletter.block.component.MultiBlock$Direction fromValue(java.lang.String)
-    public java.lang.String value()
-    public static org.geysermc.paletter.block.component.MultiBlock$Direction valueOf(java.lang.String)
-    public static org.geysermc.paletter.block.component.MultiBlock$Direction[] values()
 }
 
 public enum org.geysermc.paletter.block.component.MultiBlock$EnabledStates {
@@ -1700,6 +1699,19 @@ public enum org.geysermc.paletter.block.component.MultiBlock$EnabledStates {
     public java.lang.String value()
     public static org.geysermc.paletter.block.component.MultiBlock$EnabledStates valueOf(java.lang.String)
     public static org.geysermc.paletter.block.component.MultiBlock$EnabledStates[] values()
+}
+
+public enum org.geysermc.paletter.block.component.MultiBlock$MultiBlockDirection {
+    public static final org.geysermc.paletter.block.component.MultiBlock$MultiBlockDirection DOWN
+    public static final org.geysermc.paletter.block.component.MultiBlock$MultiBlockDirection EAST
+    public static final org.geysermc.paletter.block.component.MultiBlock$MultiBlockDirection NORTH
+    public static final org.geysermc.paletter.block.component.MultiBlock$MultiBlockDirection SOUTH
+    public static final org.geysermc.paletter.block.component.MultiBlock$MultiBlockDirection UP
+    public static final org.geysermc.paletter.block.component.MultiBlock$MultiBlockDirection WEST
+    public static org.geysermc.paletter.block.component.MultiBlock$MultiBlockDirection fromValue(java.lang.String)
+    public java.lang.String value()
+    public static org.geysermc.paletter.block.component.MultiBlock$MultiBlockDirection valueOf(java.lang.String)
+    public static org.geysermc.paletter.block.component.MultiBlock$MultiBlockDirection[] values()
 }
 
 @Deprecated public record org.geysermc.paletter.block.component.OnPlayerPlacing implements org.geysermc.paletter.block.component.WireOnlyBlockComponent {
@@ -1847,7 +1859,7 @@ public enum org.geysermc.paletter.block.component.PlacementPosition$EnabledState
     public static org.geysermc.paletter.block.component.PlacementPosition$EnabledStates[] values()
 }
 
-@Experimental public record org.geysermc.paletter.block.component.PrecipitationInteractions implements org.geysermc.paletter.block.component.BlockComponent {
+public record org.geysermc.paletter.block.component.PrecipitationInteractions implements org.geysermc.paletter.block.component.BlockComponent {
     public static final java.lang.String NAME = "minecraft:precipitation_interactions"
     public <init>(org.geysermc.paletter.block.component.PrecipitationInteractions$PrecipitationBehavior)
     public static org.geysermc.paletter.block.component.PrecipitationInteractions$Builder builder()
@@ -1949,7 +1961,7 @@ public static final class org.geysermc.paletter.block.component.RedstoneConducti
     public org.geysermc.paletter.block.component.RedstoneConductivity$Builder redstoneConductor(boolean)
 }
 
-@Experimental public record org.geysermc.paletter.block.component.RedstoneConsumer implements org.geysermc.paletter.block.component.BlockComponent {
+public record org.geysermc.paletter.block.component.RedstoneConsumer implements org.geysermc.paletter.block.component.BlockComponent {
     public static final java.lang.String NAME = "minecraft:redstone_consumer"
     public <init>(int, boolean)
     public static org.geysermc.paletter.block.component.RedstoneConsumer$Builder builder()
@@ -2018,7 +2030,7 @@ public enum org.geysermc.paletter.block.component.RedstoneProducer$StronglyPower
     public static org.geysermc.paletter.block.component.RedstoneProducer$StronglyPoweredFace[] values()
 }
 
-@Experimental public record org.geysermc.paletter.block.component.Replaceable implements org.geysermc.paletter.block.component.BlockComponent {
+public record org.geysermc.paletter.block.component.Replaceable implements org.geysermc.paletter.block.component.BlockComponent {
     public static final java.lang.String NAME = "minecraft:replaceable"
     public <init>()
     public static org.geysermc.paletter.block.component.Replaceable$Builder builder()
@@ -2079,7 +2091,7 @@ public record org.geysermc.paletter.block.component.SelectionBox$Vec3 {
     public float z()
 }
 
-@Experimental public record org.geysermc.paletter.block.component.Support implements org.geysermc.paletter.block.component.BlockComponent {
+public record org.geysermc.paletter.block.component.Support implements org.geysermc.paletter.block.component.BlockComponent {
     public static final java.lang.String NAME = "minecraft:support"
     public <init>(org.geysermc.paletter.block.component.Support$Shape)
     public static org.geysermc.paletter.block.component.Support$Builder builder()
@@ -2408,7 +2420,7 @@ public final class org.geysermc.paletter.item.CustomItem {
     public boolean equals(java.lang.Object)
     public int hashCode()
     public java.lang.String identifier()
-    public org.geysermc.paletter.item.component.MenuCategory menuCategory()
+    public org.geysermc.paletter.item.component.ItemMenuCategory menuCategory()
     public java.util.List<java.lang.String> tags()
     public java.lang.String toString()
     public org.geysermc.paletter.vanilla.BedrockItemType type()
@@ -2420,7 +2432,7 @@ public static final class org.geysermc.paletter.item.CustomItem$Builder {
     public org.geysermc.paletter.item.CustomItem$Builder components(java.util.List<? extends org.geysermc.paletter.item.component.ItemComponent>)
     public org.geysermc.paletter.item.CustomItem$Builder components(org.geysermc.paletter.item.component.ItemComponent...)
     public org.geysermc.paletter.item.CustomItem$Builder creative(org.geysermc.paletter.creative.CreativePlacement)
-    public org.geysermc.paletter.item.CustomItem$Builder menuCategory(org.geysermc.paletter.item.component.MenuCategory)
+    public org.geysermc.paletter.item.CustomItem$Builder menuCategory(org.geysermc.paletter.item.component.ItemMenuCategory)
 }
 
 public record org.geysermc.paletter.item.ItemFallback {
@@ -2735,23 +2747,6 @@ public static final class org.geysermc.paletter.item.component.Digger$DestroySpe
     public org.geysermc.paletter.item.component.Digger$DestroySpeeds$Builder block(org.geysermc.paletter.item.component.Digger$Block)
     public org.geysermc.paletter.item.component.Digger$DestroySpeeds build()
     public org.geysermc.paletter.item.component.Digger$DestroySpeeds$Builder speed(java.lang.Integer)
-}
-
-public record org.geysermc.paletter.item.component.DisplayName implements org.geysermc.paletter.item.component.ItemComponent {
-    public static final java.lang.String NAME = "minecraft:display_name"
-    public <init>(java.lang.String)
-    public static org.geysermc.paletter.item.component.DisplayName$Builder builder()
-    public final boolean equals(java.lang.Object)
-    public final int hashCode()
-    public java.lang.String name()
-    public org.geysermc.paletter.item.component.DisplayName$Builder toBuilder()
-    public final java.lang.String toString()
-    public java.lang.String value()
-}
-
-public static final class org.geysermc.paletter.item.component.DisplayName$Builder {
-    public org.geysermc.paletter.item.component.DisplayName build()
-    public org.geysermc.paletter.item.component.DisplayName$Builder value(java.lang.String)
 }
 
 public record org.geysermc.paletter.item.component.Durability implements org.geysermc.paletter.item.component.ItemComponent {
@@ -3181,8 +3176,56 @@ public static final class org.geysermc.paletter.item.component.InteractButton$Bu
     public org.geysermc.paletter.item.component.InteractButton$Builder text(java.lang.String)
 }
 
-public sealed interface org.geysermc.paletter.item.component.ItemComponent permits org.geysermc.paletter.item.component.AllowOffHand, org.geysermc.paletter.item.component.BlockPlacer, org.geysermc.paletter.item.component.BundleInteraction, org.geysermc.paletter.item.component.CanDestroyInCreative, org.geysermc.paletter.item.component.Compostable, org.geysermc.paletter.item.component.Cooldown, org.geysermc.paletter.item.component.Damage, org.geysermc.paletter.item.component.DamageAbsorption, org.geysermc.paletter.item.component.Digger, org.geysermc.paletter.item.component.DisplayName, org.geysermc.paletter.item.component.Durability, org.geysermc.paletter.item.component.DurabilitySensor, org.geysermc.paletter.item.component.Dyeable, org.geysermc.paletter.item.component.Enchantable, org.geysermc.paletter.item.component.EntityPlacer, org.geysermc.paletter.item.component.FireResistant, org.geysermc.paletter.item.component.Food, org.geysermc.paletter.item.component.Fuel, org.geysermc.paletter.item.component.Glint, org.geysermc.paletter.item.component.HandEquipped, org.geysermc.paletter.item.component.HoverTextColor, org.geysermc.paletter.item.component.Icon, org.geysermc.paletter.item.component.InteractButton, org.geysermc.paletter.item.component.KineticWeapon, org.geysermc.paletter.item.component.LiquidClipped, org.geysermc.paletter.item.component.MaxStackSize, org.geysermc.paletter.item.component.MusicRecord, org.geysermc.paletter.item.component.PiercingWeapon, org.geysermc.paletter.item.component.Projectile, org.geysermc.paletter.item.component.Rarity, org.geysermc.paletter.item.component.Repairable, org.geysermc.paletter.item.component.Shooter, org.geysermc.paletter.item.component.ShouldDespawn, org.geysermc.paletter.item.component.StackedByData, org.geysermc.paletter.item.component.StorageItem, org.geysermc.paletter.item.component.StorageWeightLimit, org.geysermc.paletter.item.component.StorageWeightModifier, org.geysermc.paletter.item.component.SwingDuration, org.geysermc.paletter.item.component.SwingSounds, org.geysermc.paletter.item.component.Tags, org.geysermc.paletter.item.component.ThrowableItem, org.geysermc.paletter.item.component.UseAnimation, org.geysermc.paletter.item.component.UseDuration, org.geysermc.paletter.item.component.UseModifiers, org.geysermc.paletter.item.component.Wearable, org.geysermc.paletter.item.component.WireOnlyItemComponent {
+public sealed interface org.geysermc.paletter.item.component.ItemComponent permits org.geysermc.paletter.item.component.AllowOffHand, org.geysermc.paletter.item.component.BlockPlacer, org.geysermc.paletter.item.component.BundleInteraction, org.geysermc.paletter.item.component.CanDestroyInCreative, org.geysermc.paletter.item.component.Compostable, org.geysermc.paletter.item.component.Cooldown, org.geysermc.paletter.item.component.Damage, org.geysermc.paletter.item.component.DamageAbsorption, org.geysermc.paletter.item.component.Digger, org.geysermc.paletter.item.component.Durability, org.geysermc.paletter.item.component.DurabilitySensor, org.geysermc.paletter.item.component.Dyeable, org.geysermc.paletter.item.component.Enchantable, org.geysermc.paletter.item.component.EntityPlacer, org.geysermc.paletter.item.component.FireResistant, org.geysermc.paletter.item.component.Food, org.geysermc.paletter.item.component.Fuel, org.geysermc.paletter.item.component.Glint, org.geysermc.paletter.item.component.HandEquipped, org.geysermc.paletter.item.component.HoverTextColor, org.geysermc.paletter.item.component.Icon, org.geysermc.paletter.item.component.InteractButton, org.geysermc.paletter.item.component.ItemDisplayName, org.geysermc.paletter.item.component.KineticWeapon, org.geysermc.paletter.item.component.LiquidClipped, org.geysermc.paletter.item.component.MaxStackSize, org.geysermc.paletter.item.component.MusicRecord, org.geysermc.paletter.item.component.PiercingWeapon, org.geysermc.paletter.item.component.Projectile, org.geysermc.paletter.item.component.Rarity, org.geysermc.paletter.item.component.Repairable, org.geysermc.paletter.item.component.Shooter, org.geysermc.paletter.item.component.ShouldDespawn, org.geysermc.paletter.item.component.StackedByData, org.geysermc.paletter.item.component.StorageItem, org.geysermc.paletter.item.component.StorageWeightLimit, org.geysermc.paletter.item.component.StorageWeightModifier, org.geysermc.paletter.item.component.SwingDuration, org.geysermc.paletter.item.component.SwingSounds, org.geysermc.paletter.item.component.Tags, org.geysermc.paletter.item.component.ThrowableItem, org.geysermc.paletter.item.component.UseAnimation, org.geysermc.paletter.item.component.UseDuration, org.geysermc.paletter.item.component.UseModifiers, org.geysermc.paletter.item.component.Wearable, org.geysermc.paletter.item.component.WireOnlyItemComponent {
     public abstract java.lang.String name()
+}
+
+public record org.geysermc.paletter.item.component.ItemDisplayName implements org.geysermc.paletter.item.component.ItemComponent {
+    public static final java.lang.String NAME = "minecraft:display_name"
+    public <init>(java.lang.String)
+    public static org.geysermc.paletter.item.component.ItemDisplayName$Builder builder()
+    public final boolean equals(java.lang.Object)
+    public final int hashCode()
+    public java.lang.String name()
+    public org.geysermc.paletter.item.component.ItemDisplayName$Builder toBuilder()
+    public final java.lang.String toString()
+    public java.lang.String value()
+}
+
+public static final class org.geysermc.paletter.item.component.ItemDisplayName$Builder {
+    public org.geysermc.paletter.item.component.ItemDisplayName build()
+    public org.geysermc.paletter.item.component.ItemDisplayName$Builder value(java.lang.String)
+}
+
+public record org.geysermc.paletter.item.component.ItemMenuCategory {
+    public <init>(org.geysermc.paletter.item.component.ItemMenuCategory$Category, java.lang.String, java.lang.Boolean)
+    public static org.geysermc.paletter.item.component.ItemMenuCategory$Builder builder()
+    public org.geysermc.paletter.item.component.ItemMenuCategory$Category category()
+    public final boolean equals(java.lang.Object)
+    public java.lang.String group()
+    public final int hashCode()
+    public java.lang.Boolean hiddenInCommands()
+    public org.geysermc.paletter.item.component.ItemMenuCategory$Builder toBuilder()
+    public final java.lang.String toString()
+}
+
+public static final class org.geysermc.paletter.item.component.ItemMenuCategory$Builder {
+    public org.geysermc.paletter.item.component.ItemMenuCategory build()
+    public org.geysermc.paletter.item.component.ItemMenuCategory$Builder category(org.geysermc.paletter.item.component.ItemMenuCategory$Category)
+    public org.geysermc.paletter.item.component.ItemMenuCategory$Builder group(java.lang.String)
+    public org.geysermc.paletter.item.component.ItemMenuCategory$Builder hiddenInCommands(java.lang.Boolean)
+}
+
+public enum org.geysermc.paletter.item.component.ItemMenuCategory$Category {
+    public static final org.geysermc.paletter.item.component.ItemMenuCategory$Category CONSTRUCTION
+    public static final org.geysermc.paletter.item.component.ItemMenuCategory$Category EQUIPMENT
+    public static final org.geysermc.paletter.item.component.ItemMenuCategory$Category ITEMS
+    public static final org.geysermc.paletter.item.component.ItemMenuCategory$Category NATURE
+    public static final org.geysermc.paletter.item.component.ItemMenuCategory$Category NONE
+    public static org.geysermc.paletter.item.component.ItemMenuCategory$Category fromValue(java.lang.String)
+    public java.lang.String value()
+    public static org.geysermc.paletter.item.component.ItemMenuCategory$Category valueOf(java.lang.String)
+    public static org.geysermc.paletter.item.component.ItemMenuCategory$Category[] values()
 }
 
 public sealed interface org.geysermc.paletter.item.component.ItemsOrTags permits org.geysermc.paletter.item.component.ItemsOrTags$Items, org.geysermc.paletter.item.component.ItemsOrTags$TagQuery {
@@ -3327,37 +3370,6 @@ public record org.geysermc.paletter.item.component.MaxStackSize implements org.g
 public static final class org.geysermc.paletter.item.component.MaxStackSize$Builder {
     public org.geysermc.paletter.item.component.MaxStackSize build()
     public org.geysermc.paletter.item.component.MaxStackSize$Builder value(java.lang.Integer)
-}
-
-public record org.geysermc.paletter.item.component.MenuCategory {
-    public <init>(org.geysermc.paletter.item.component.MenuCategory$Category, java.lang.String, java.lang.Boolean)
-    public static org.geysermc.paletter.item.component.MenuCategory$Builder builder()
-    public org.geysermc.paletter.item.component.MenuCategory$Category category()
-    public final boolean equals(java.lang.Object)
-    public java.lang.String group()
-    public final int hashCode()
-    public java.lang.Boolean hiddenInCommands()
-    public org.geysermc.paletter.item.component.MenuCategory$Builder toBuilder()
-    public final java.lang.String toString()
-}
-
-public static final class org.geysermc.paletter.item.component.MenuCategory$Builder {
-    public org.geysermc.paletter.item.component.MenuCategory build()
-    public org.geysermc.paletter.item.component.MenuCategory$Builder category(org.geysermc.paletter.item.component.MenuCategory$Category)
-    public org.geysermc.paletter.item.component.MenuCategory$Builder group(java.lang.String)
-    public org.geysermc.paletter.item.component.MenuCategory$Builder hiddenInCommands(java.lang.Boolean)
-}
-
-public enum org.geysermc.paletter.item.component.MenuCategory$Category {
-    public static final org.geysermc.paletter.item.component.MenuCategory$Category CONSTRUCTION
-    public static final org.geysermc.paletter.item.component.MenuCategory$Category EQUIPMENT
-    public static final org.geysermc.paletter.item.component.MenuCategory$Category ITEMS
-    public static final org.geysermc.paletter.item.component.MenuCategory$Category NATURE
-    public static final org.geysermc.paletter.item.component.MenuCategory$Category NONE
-    public static org.geysermc.paletter.item.component.MenuCategory$Category fromValue(java.lang.String)
-    public java.lang.String value()
-    public static org.geysermc.paletter.item.component.MenuCategory$Category valueOf(java.lang.String)
-    public static org.geysermc.paletter.item.component.MenuCategory$Category[] values()
 }
 
 @Experimental public record org.geysermc.paletter.item.component.MiningSpeed implements org.geysermc.paletter.item.component.WireOnlyItemComponent {
@@ -5524,6 +5536,20 @@ public final class org.geysermc.paletter.vanilla.BedrockBlocks {
     public static final org.geysermc.paletter.vanilla.BedrockBlockType YELLOW_WOOL_SLAB
     public static final org.geysermc.paletter.vanilla.BedrockBlockType YELLOW_WOOL_STAIRS
     public static final org.geysermc.paletter.vanilla.BedrockBlockType ZOMBIE_HEAD
+}
+
+public final class org.geysermc.paletter.vanilla.BedrockExperiments {
+    public static final java.lang.String CREATOR_WORLD_CLOCKS = "creator_world_clocks"
+    public static final java.lang.String DEFERRED_TECHNICAL_PREVIEW = "deferred_technical_preview"
+    public static final java.lang.String EXPERIMENTAL_CREATOR_CAMERAS = "experimental_creator_cameras"
+    public static final java.lang.String GAMETEST = "gametest"
+    public static final java.lang.String NETHER_SPAWNING_BALANCE = "nether_spawning_balance"
+    public static final java.lang.String POI = "poi"
+    public static final java.lang.String UPCOMING_CREATOR_FEATURES = "upcoming_creator_features"
+    public static final java.lang.String VILLAGER_TRADES_REBALANCE = "villager_trades_rebalance"
+    public static final java.lang.String VOXEL_SHAPES = "voxel_shapes"
+    public static final java.lang.String Y_2026_DROP_3 = "y_2026_drop_3"
+    public static final java.lang.String Y_2026_DROP_4 = "y_2026_drop_4"
 }
 
 public final class org.geysermc.paletter.vanilla.BedrockItemType implements org.geysermc.paletter.vanilla.ItemKey {

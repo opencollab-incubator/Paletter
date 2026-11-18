@@ -24,7 +24,7 @@ import org.geysermc.paletter.internal.component.Check;
  * @since 1.0.0
  */
 @BedrockFormat("1.21.60")
-public record ItemVisual(ItemVisual. @NonNull Geometry geometry,
+public record ItemVisual(ItemVisual. @NonNull VisualGeometry geometry,
         @NonNull MaterialInstances materialInstances) implements BlockComponent {
     /**
      * The component name in add-on JSON.
@@ -62,7 +62,7 @@ public record ItemVisual(ItemVisual. @NonNull Geometry geometry,
      * Builds {@link ItemVisual}: defaults applied, required fields and ranges checked by {@link #build()}.
      */
     public static final class Builder {
-        private @Nullable Geometry geometry;
+        private @Nullable VisualGeometry geometry;
 
         private @Nullable MaterialInstances materialInstances;
 
@@ -72,7 +72,7 @@ public record ItemVisual(ItemVisual. @NonNull Geometry geometry,
         /**
          * Sets {@code geometry}.
          */
-        public @NonNull Builder geometry(@NonNull Geometry geometry) {
+        public @NonNull Builder geometry(@NonNull VisualGeometry geometry) {
             this.geometry = geometry;
             return this;
         }
@@ -81,7 +81,7 @@ public record ItemVisual(ItemVisual. @NonNull Geometry geometry,
          * Sets {@code geometry} with its shorthand: {@code identifier}.
          */
         public @NonNull Builder geometry(@NonNull String identifier) {
-            return geometry(Geometry.of(identifier));
+            return geometry(VisualGeometry.of(identifier));
         }
 
         /**
@@ -222,14 +222,14 @@ public record ItemVisual(ItemVisual. @NonNull Geometry geometry,
      *        component. For performance reasons it's recommended to use the Boolean. Add-on JSON {@code uv_lock}. Default:
      *        <code>false</code>. Compiled by the hand transform {@code Transforms.itemVisualUvLock}.
      */
-    public record Geometry(@NonNull Map<String, String> boneVisibility, @Nullable String culling,
-            @Nullable String cullingLayer, @Nullable String cullingShape,
+    public record VisualGeometry(@NonNull Map<String, String> boneVisibility,
+            @Nullable String culling, @Nullable String cullingLayer, @Nullable String cullingShape,
             @Nullable String identifier, @Nullable NWayVisualRotation nWayVisualRotation,
             @NonNull UvLock uvLock) {
-        public Geometry {
-            boneVisibility = Check.copy(boneVisibility, "ItemVisual.Geometry.boneVisibility");
-            Check.conflict("ItemVisual.Geometry", "boneVisibility", !boneVisibility.isEmpty(), "identifier", identifier, "minecraft:geometry.full_block");
-            Objects.requireNonNull(uvLock, "ItemVisual.Geometry.uvLock");
+        public VisualGeometry {
+            boneVisibility = Check.copy(boneVisibility, "ItemVisual.VisualGeometry.boneVisibility");
+            Check.conflict("ItemVisual.VisualGeometry", "boneVisibility", !boneVisibility.isEmpty(), "identifier", identifier, "minecraft:geometry.full_block");
+            Objects.requireNonNull(uvLock, "ItemVisual.VisualGeometry.uvLock");
         }
 
         /**
@@ -237,7 +237,7 @@ public record ItemVisual(ItemVisual. @NonNull Geometry geometry,
          *
          * @return the value with everything else at its default
          */
-        public static @NonNull Geometry of(@NonNull String value) {
+        public static @NonNull VisualGeometry of(@NonNull String value) {
             return builder().identifier(value).build();
         }
 
@@ -264,7 +264,7 @@ public record ItemVisual(ItemVisual. @NonNull Geometry geometry,
         }
 
         /**
-         * Builds {@link Geometry}: defaults applied, required fields and ranges checked by {@link #build()}.
+         * Builds {@link VisualGeometry}: defaults applied, required fields and ranges checked by {@link #build()}.
          */
         public static final class Builder {
             private @Nullable Map<String, String> boneVisibility = Map.of();
@@ -371,8 +371,8 @@ public record ItemVisual(ItemVisual. @NonNull Geometry geometry,
              * @throws IllegalStateException if a required field is not set
              * @throws IllegalArgumentException if a value is out of range
              */
-            public @NonNull Geometry build() {
-                return new Geometry(boneVisibility, culling, cullingLayer, cullingShape, identifier, nWayVisualRotation, uvLock);
+            public @NonNull VisualGeometry build() {
+                return new VisualGeometry(boneVisibility, culling, cullingLayer, cullingShape, identifier, nWayVisualRotation, uvLock);
             }
         }
     }

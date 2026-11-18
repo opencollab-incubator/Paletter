@@ -10,6 +10,8 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
@@ -52,7 +54,7 @@ public final class Main {
     /** @return the number of files that differ (written unless {@code check}) */
     static int run(Path root, Path sources, boolean check) throws IOException {
         Path model = root.resolve("data/model");
-        ComponentGenerator.Inputs inputs = ComponentGenerator.read(model, version(root));
+        ComponentGenerator.Inputs inputs = ComponentGenerator.read(model, version(root), context(root));
         Map<String, String> files = ComponentGenerator.generate(inputs);
         Path probe = newestProbe(root);
         files.putAll(BehaviourSource.generate(BehaviourKeys.KEYS, inputs.mappings(), probe == null ? null
@@ -91,6 +93,45 @@ public final class Main {
             }
         }
         return changed;
+    }
+
+    /** A public top level type declaration (nothing indented in front: nested types are not meant). */
+    private static final Pattern PUBLIC_TYPE = Pattern.compile("^public\\s+(?:[\\w-]+\\s+)*?(?:class|interface|enum|record|@interface)\\s+(\\w+)", Pattern.MULTILINE);
+
+    /**
+     * The names the generated API must keep unique and the experiment toggles of the captured servers.
+     * <p>
+     * Order of the generators: {@code :tools:generateConstants} before {@code :tools:generateComponentApi}. The reserved
+     * names include the types the constants generator writes (a new constant class must exist before a component may not
+     * take its name), and the toggles come from the same captures as {@code BedrockExperiments}.
+     *
+     * @return the public top level types next to the generated ones (every source file outside {@code internal} that this
+     *         generator does not write itself: hand-written ones and the constants), and the toggle ids by the experiment
+     *         name the creator docs use
+     */
+    static ComponentGenerator.Context context(Path root) throws IOException {
+        Set<String> reserved = new TreeSet<>();
+        for (String dir : List.of("paletter/src/main/java", "paletter/src/generated/java")) {
+            Path base = root.resolve(dir);
+            if (!Files.isDirectory(base)) {
+                continue;
+            }
+            try (Stream<Path> files = Files.walk(base)) {
+                for (Path file : files.filter(f -> f.toString().endsWith(".java")).toList()) {
+                    String rel = base.relativize(file).toString().replace('\\', '/');
+                    String source = Files.readString(file, StandardCharsets.UTF_8);
+                    if (rel.startsWith("org/geysermc/paletter/internal/") || source.startsWith("// " + GENERATOR)) {
+                        continue;
+                    }
+                    Matcher type = PUBLIC_TYPE.matcher(source);
+                    while (type.find()) {
+                        reserved.add(type.group(1));
+                    }
+                }
+            }
+        }
+        List<ExperimentToggles.Toggle> toggles = ExperimentToggles.read(root.resolve("paletter/src/main/resources/paletter"), root.resolve("data/bds"));
+        return new ComponentGenerator.Context(reserved, ExperimentToggles.names(toggles));
     }
 
     /** @return the {@code behaviour-probe/capture.json} of the newest BDS build under {@code data/bds}, or null if none has one */

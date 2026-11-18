@@ -10,7 +10,7 @@ import org.geysermc.paletter.block.component.Geometry;
 import org.geysermc.paletter.creative.CreativeCategory;
 import org.geysermc.paletter.creative.CreativePlacement;
 import org.geysermc.paletter.item.CustomItem;
-import org.geysermc.paletter.item.component.DisplayName;
+import org.geysermc.paletter.item.component.ItemDisplayName;
 import org.geysermc.paletter.item.component.Icon;
 import org.geysermc.paletter.vanilla.BedrockBlockState;
 import org.geysermc.paletter.item.BedrockItemStack;
@@ -31,7 +31,7 @@ public final class TranslatorExample {
         // The translator's custom content, built with the generated component API
         CustomItem ruby = CustomItem.builder("example:ruby")
             .component(Icon.of("ruby"))
-            .component(DisplayName.builder().value("item.example.ruby.name").build())
+            .component(ItemDisplayName.builder().value("item.example.ruby.name").build())
             .creative(CreativePlacement.loose(CreativeCategory.ITEMS))
             .build();
         CustomBlock lamp = CustomBlock.builder("example:lamp")

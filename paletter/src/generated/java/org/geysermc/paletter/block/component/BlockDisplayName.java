@@ -20,14 +20,14 @@ import org.geysermc.paletter.annotation.BedrockFormat;
  * @since 1.0.0
  */
 @BedrockFormat("1.19.60")
-public record DisplayName(@NonNull String value) implements BlockComponent {
+public record BlockDisplayName(@NonNull String value) implements BlockComponent {
     /**
      * The component name in add-on JSON.
      */
     public static final String NAME = "minecraft:display_name";
 
-    public DisplayName {
-        Objects.requireNonNull(value, "DisplayName.value");
+    public BlockDisplayName {
+        Objects.requireNonNull(value, "BlockDisplayName.value");
     }
 
     @Override
@@ -40,7 +40,7 @@ public record DisplayName(@NonNull String value) implements BlockComponent {
      *
      * @return the value with everything else at its default
      */
-    public static @NonNull DisplayName of(@NonNull String value) {
+    public static @NonNull BlockDisplayName of(@NonNull String value) {
         return builder().value(value).build();
     }
 
@@ -61,7 +61,7 @@ public record DisplayName(@NonNull String value) implements BlockComponent {
     }
 
     /**
-     * Builds {@link DisplayName}: defaults applied, required fields and ranges checked by {@link #build()}.
+     * Builds {@link BlockDisplayName}: defaults applied, required fields and ranges checked by {@link #build()}.
      */
     public static final class Builder {
         private @Nullable String value;
@@ -81,11 +81,11 @@ public record DisplayName(@NonNull String value) implements BlockComponent {
          * @throws IllegalStateException if a required field is not set
          * @throws IllegalArgumentException if a value is out of range
          */
-        public @NonNull DisplayName build() {
+        public @NonNull BlockDisplayName build() {
             if (value == null) {
-                throw new IllegalStateException("DisplayName.value is required");
+                throw new IllegalStateException("BlockDisplayName.value is required");
             }
-            return new DisplayName(value);
+            return new BlockDisplayName(value);
         }
     }
 }

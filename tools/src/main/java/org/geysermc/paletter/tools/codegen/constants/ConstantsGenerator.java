@@ -7,6 +7,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import org.geysermc.paletter.internal.data.PaletteDataCodec;
+import org.geysermc.paletter.tools.codegen.component.ExperimentToggles;
 import org.geysermc.paletter.internal.data.Renames;
 import org.geysermc.paletter.internal.data.VanillaData;
 import org.geysermc.paletter.internal.data.VanillaItem;
@@ -309,6 +310,10 @@ public final class ConstantsGenerator {
         unused.removeAll(usedNames);
         if (!unused.isEmpty()) {
             throw new IllegalStateException(NAMES + " names " + unused + ", which match nothing in the data anymore; remove the lines");
+        }
+        if (!sources.toggles().isEmpty()) {
+            files.put(PACKAGE_DIR + "/BedrockExperiments.java", JavaWriter.experiments(sources.toggles(), oldest));
+            counts.put("BedrockExperiments", sources.toggles().size());
         }
         files.put(HISTORY, historyJson(newHistory));
         return new Result(files, List.copyOf(added), List.copyOf(deprecated), List.copyOf(tableBlocks), counts,
@@ -659,6 +664,7 @@ public final class ConstantsGenerator {
         private final Map<String, Set<String>> blockNames = new HashMap<>();
         private final Map<String, Set<String>> itemNames = new HashMap<>();
         private final Map<String, List<VariantNames.Entry>> variantNames;
+        private final List<ExperimentToggles.Toggle> toggles;
 
         /**
          * @param gatedItems release name to item identifier to the current experiment toggle that adds it in that release
@@ -667,6 +673,16 @@ public final class ConstantsGenerator {
          */
         public Sources(List<VanillaData> releases, Map<String, Map<String, String>> gatedItems, Map<String, Map<String, String>> gatedBlocks,
                        Set<String> educationItems, Set<String> educationBlocks, Map<String, List<VariantNames.Entry>> variantNames) {
+            this(releases, gatedItems, gatedBlocks, educationItems, educationBlocks, variantNames, List.of());
+        }
+
+        /**
+         * @param toggles the experiment toggles that were current in a captured build, sorted by id ({@link #toggles})
+         */
+        public Sources(List<VanillaData> releases, Map<String, Map<String, String>> gatedItems, Map<String, Map<String, String>> gatedBlocks,
+                       Set<String> educationItems, Set<String> educationBlocks, Map<String, List<VariantNames.Entry>> variantNames,
+                       List<ExperimentToggles.Toggle> toggles) {
+            this.toggles = List.copyOf(toggles);
             this.variantNames = variantNames;
             this.releases = List.copyOf(releases);
             this.gatedItems = gatedItems;
@@ -681,6 +697,11 @@ public final class ConstantsGenerator {
                 release.items().forEach(item -> items.add(item.identifier()));
                 itemNames.put(release.version().name(), items);
             }
+        }
+
+        /** @return the experiment toggles that were current in a captured build, sorted by id */
+        public List<ExperimentToggles.Toggle> toggles() {
+            return toggles;
         }
 
         /** @return every bundled release, oldest first */
@@ -755,7 +776,8 @@ public final class ConstantsGenerator {
                     }
                 }
             }
-            return new Sources(releases, gatedItems, gatedBlocks, educationItems, educationBlocks, variantNames);
+            List<ExperimentToggles.Toggle> toggles = ExperimentToggles.read(data, bds);
+            return new Sources(releases, gatedItems, gatedBlocks, educationItems, educationBlocks, variantNames, toggles);
         }
 
         /** The variant names of a bundled version, preview or release; none for a version without. */

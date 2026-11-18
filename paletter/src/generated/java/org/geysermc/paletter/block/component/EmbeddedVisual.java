@@ -27,7 +27,7 @@ import org.geysermc.paletter.internal.component.Check;
  * @since 1.0.0
  */
 @BedrockFormat("1.21.120")
-public record EmbeddedVisual(EmbeddedVisual. @NonNull Geometry geometry,
+public record EmbeddedVisual(EmbeddedVisual. @NonNull VisualGeometry geometry,
         @NonNull MaterialInstances materialInstances) implements BlockComponent {
     /**
      * The component name in add-on JSON.
@@ -65,7 +65,7 @@ public record EmbeddedVisual(EmbeddedVisual. @NonNull Geometry geometry,
      * Builds {@link EmbeddedVisual}: defaults applied, required fields and ranges checked by {@link #build()}.
      */
     public static final class Builder {
-        private @Nullable Geometry geometry;
+        private @Nullable VisualGeometry geometry;
 
         private @Nullable MaterialInstances materialInstances;
 
@@ -75,7 +75,7 @@ public record EmbeddedVisual(EmbeddedVisual. @NonNull Geometry geometry,
         /**
          * Sets {@code geometry}.
          */
-        public @NonNull Builder geometry(@NonNull Geometry geometry) {
+        public @NonNull Builder geometry(@NonNull VisualGeometry geometry) {
             this.geometry = geometry;
             return this;
         }
@@ -218,15 +218,15 @@ public record EmbeddedVisual(EmbeddedVisual. @NonNull Geometry geometry,
      *        component. For performance reasons it's recommended to use the Boolean. Add-on JSON {@code uv_lock}. Default:
      *        <code>false</code>.
      */
-    public record Geometry(@NonNull Map<String, String> boneVisibility, @Nullable String culling,
-            @Nullable String cullingLayer, @Nullable String cullingShape,
+    public record VisualGeometry(@NonNull Map<String, String> boneVisibility,
+            @Nullable String culling, @Nullable String cullingLayer, @Nullable String cullingShape,
             @NonNull String identifier, @Nullable NWayVisualRotation nWayVisualRotation,
             @NonNull UvLock uvLock) {
-        public Geometry {
-            boneVisibility = Check.copy(boneVisibility, "EmbeddedVisual.Geometry.boneVisibility");
-            Check.conflict("EmbeddedVisual.Geometry", "boneVisibility", !boneVisibility.isEmpty(), "identifier", identifier, "minecraft:geometry.full_block");
-            Objects.requireNonNull(identifier, "EmbeddedVisual.Geometry.identifier");
-            Objects.requireNonNull(uvLock, "EmbeddedVisual.Geometry.uvLock");
+        public VisualGeometry {
+            boneVisibility = Check.copy(boneVisibility, "EmbeddedVisual.VisualGeometry.boneVisibility");
+            Check.conflict("EmbeddedVisual.VisualGeometry", "boneVisibility", !boneVisibility.isEmpty(), "identifier", identifier, "minecraft:geometry.full_block");
+            Objects.requireNonNull(identifier, "EmbeddedVisual.VisualGeometry.identifier");
+            Objects.requireNonNull(uvLock, "EmbeddedVisual.VisualGeometry.uvLock");
         }
 
         /**
@@ -252,7 +252,7 @@ public record EmbeddedVisual(EmbeddedVisual. @NonNull Geometry geometry,
         }
 
         /**
-         * Builds {@link Geometry}: defaults applied, required fields and ranges checked by {@link #build()}.
+         * Builds {@link VisualGeometry}: defaults applied, required fields and ranges checked by {@link #build()}.
          */
         public static final class Builder {
             private @Nullable Map<String, String> boneVisibility = Map.of();
@@ -359,11 +359,11 @@ public record EmbeddedVisual(EmbeddedVisual. @NonNull Geometry geometry,
              * @throws IllegalStateException if a required field is not set
              * @throws IllegalArgumentException if a value is out of range
              */
-            public @NonNull Geometry build() {
+            public @NonNull VisualGeometry build() {
                 if (identifier == null) {
-                    throw new IllegalStateException("EmbeddedVisual.Geometry.identifier is required");
+                    throw new IllegalStateException("EmbeddedVisual.VisualGeometry.identifier is required");
                 }
-                return new Geometry(boneVisibility, culling, cullingLayer, cullingShape, identifier, nWayVisualRotation, uvLock);
+                return new VisualGeometry(boneVisibility, culling, cullingLayer, cullingShape, identifier, nWayVisualRotation, uvLock);
             }
         }
     }

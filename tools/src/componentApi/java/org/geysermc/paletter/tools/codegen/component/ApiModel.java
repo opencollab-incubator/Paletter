@@ -81,6 +81,12 @@ final class ApiModel {
         String status;
         String minFormat;
         List<String> experiments = List.of();
+        /** The toggle ids of {@link #experiments}, as far as the captured servers name them. */
+        List<String> toggles = List.of();
+        /** The experiment names of {@link #experiments} that no captured toggle has. */
+        List<String> unmappedExperiments = List.of();
+        /** The name before a {@code Block}/{@code Item} prefix kept names unique, which api.json type overrides use. */
+        String baseName;
         ObjType root;
         /** Non-object value forms: JSON type -> field they set ({@code of(...)} factories). */
         final List<Shorthand> shorthands = new ArrayList<>();

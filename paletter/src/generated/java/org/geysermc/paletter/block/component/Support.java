@@ -6,8 +6,8 @@ package org.geysermc.paletter.block.component;
 import java.util.Objects;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
+import org.geysermc.paletter.annotation.BedrockExperiment;
 import org.geysermc.paletter.annotation.BedrockFormat;
-import org.geysermc.paletter.annotation.Experimental;
 
 /**
  * Defines the support shape of the block. Currently only allows for blocks to have the same shape as a Vanilla
@@ -17,14 +17,14 @@ import org.geysermc.paletter.annotation.Experimental;
  * support. The type of support shape for this block. Currently, the options are: "fence" and "stair".
  * <p>
  * Add-on JSON: {@code "minecraft:support"}.
- * Bedrock requires the experiment Upcoming Creator Features for it (in some format versions).
+ * The creator docs name the experiment Upcoming Creator Features for it (in some format versions); unverified against BDS.
  *
  * @param shape Required field. The type of support shape for this block. Add-on JSON {@code shape}. Required.
  * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/blockreference/examples/blockcomponents/minecraftblock_support?view=minecraft-bedrock-stable">Microsoft Learn: minecraft:support</a>
  * @since 1.0.0
  */
 @BedrockFormat("1.21.130")
-@Experimental
+@BedrockExperiment("upcoming_creator_features")
 public record Support(Support. @NonNull Shape shape) implements BlockComponent {
     /**
      * The component name in add-on JSON.

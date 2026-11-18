@@ -10,7 +10,7 @@ import org.geysermc.paletter.PaletteLayer;
 import org.geysermc.paletter.Paletter;
 import org.geysermc.paletter.item.CustomItem;
 import org.geysermc.paletter.item.RegisteredItem;
-import org.geysermc.paletter.item.component.DisplayName;
+import org.geysermc.paletter.item.component.ItemDisplayName;
 import org.geysermc.paletter.item.component.Icon;
 import org.geysermc.paletter.item.component.MaxStackSize;
 import org.geysermc.paletter.item.BedrockItemStack;
@@ -27,7 +27,7 @@ public final class BedrockServerExample {
         // The server's content, described once, valid for every client version
         CustomItem ruby = CustomItem.builder("example:ruby")
             .component(Icon.of("ruby"))
-            .component(DisplayName.builder().value("item.example.ruby.name").build())
+            .component(ItemDisplayName.builder().value("item.example.ruby.name").build())
             .component(MaxStackSize.of(16))
             .build();
         PaletteLayer server = PaletteLayer.builder("server").item(ruby).build();

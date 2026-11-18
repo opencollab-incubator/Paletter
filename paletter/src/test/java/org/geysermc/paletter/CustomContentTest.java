@@ -18,7 +18,7 @@ import org.geysermc.paletter.creative.CreativePlacement;
 import org.geysermc.paletter.data.DataVersion;
 import org.geysermc.paletter.item.CustomItem;
 import org.geysermc.paletter.item.RegisteredItem;
-import org.geysermc.paletter.item.component.DisplayName;
+import org.geysermc.paletter.item.component.ItemDisplayName;
 import org.geysermc.paletter.item.component.Durability;
 import org.geysermc.paletter.item.component.Food;
 import org.geysermc.paletter.item.component.Icon;
@@ -46,7 +46,7 @@ class CustomContentTest {
     static CustomItem ruby() {
         return CustomItem.builder("example:ruby")
             .component(Icon.of("ruby"))
-            .component(DisplayName.builder().value("item.ruby.name").build())
+            .component(ItemDisplayName.builder().value("item.ruby.name").build())
             .component(MaxStackSize.of(16))
             .component(Durability.builder().maxDurability(250).build())
             .component(Tags.builder().tags("minecraft:gems").build())
@@ -192,12 +192,12 @@ class CustomContentTest {
             .property(BlockProperty.bool("example:lit")).permutation("q.block_state('example:lit')", rejected).build());
         // and likewise in the geometry of item_visual and embedded_visual
         MaterialInstances materials = MaterialInstances.builder().build();
-        ItemVisual.Geometry itemGeometry = ItemVisual.Geometry.builder().identifier("geometry.lamp").uvLock(Collections.nCopies(64, "lid")).build();
+        ItemVisual.VisualGeometry itemGeometry = ItemVisual.VisualGeometry.builder().identifier("geometry.lamp").uvLock(Collections.nCopies(64, "lid")).build();
         CustomBlock.builder("example:lamp").component(ItemVisual.builder().geometry(itemGeometry).materialInstances(materials).build()).build();
         assertThrows(IllegalArgumentException.class, () -> CustomBlock.builder("example:lamp").component(ItemVisual.builder()
             .geometry(itemGeometry.toBuilder().uvLock(Collections.nCopies(65, "lid")).build()).materialInstances(materials).build()).build());
         assertThrows(IllegalArgumentException.class, () -> CustomBlock.builder("example:lamp").component(EmbeddedVisual.builder()
-            .geometry(EmbeddedVisual.Geometry.builder().identifier("geometry.lamp").uvLock(Collections.nCopies(65, "lid")).build())
+            .geometry(EmbeddedVisual.VisualGeometry.builder().identifier("geometry.lamp").uvLock(Collections.nCopies(65, "lid")).build())
             .materialInstances(materials).build()).build());
     }
 

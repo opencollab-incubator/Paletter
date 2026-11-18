@@ -180,7 +180,7 @@ final class WireSource {
     }
 
     static String method(Comp c) {
-        return ComponentGenerator.camel(c.className);
+        return ComponentGenerator.camel(c.baseName != null ? c.baseName : c.className);
     }
 
     // ---- One component -------------------------------------------------------------------------------------------------

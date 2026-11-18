@@ -1,5 +1,5 @@
 {
-  "_comment": "Hand-written Java shaping of the generated component API; never a source of wire behaviour. See docs/data-pipeline.md.",
+  "_comment": "Hand-written Java shaping of the generated component API; never a source of wire behaviour. See docs/data-pipeline.md. Rule: a top level name collision gets a Block/Item prefix automatically; a nested type that would shadow a top level public type fails the generator and is named by hand in typeNames/enums (VisualGeometry, MultiBlockDirection).",
   "rootLists": {
     "block:minecraft:collision_box": "boxes"
   },
@@ -231,7 +231,12 @@
   "typeNames": {
     "block:minecraft:material_instances:*": "Instance",
     "item:minecraft:kinetic_weapon:damage_conditions": "Conditions",
-    "item:minecraft:entity_placer:dispense_on[]": "UseOn"
+    "item:minecraft:entity_placer:dispense_on[]": "UseOn",
+    "block:minecraft:embedded_visual:geometry": "VisualGeometry",
+    "block:minecraft:item_visual:geometry": "VisualGeometry"
+  },
+  "enums": {
+    "block:trait:minecraft:multi_block:Direction": "MultiBlockDirection"
   },
   "standalone": {
     "item:description": "MenuCategory",

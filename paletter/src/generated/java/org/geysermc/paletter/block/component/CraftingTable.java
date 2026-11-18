@@ -8,14 +8,14 @@ import java.util.Objects;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.geysermc.paletter.annotation.BedrockFormat;
-import org.geysermc.paletter.annotation.Experimental;
 
 /**
  * Makes your block into a custom crafting table which enables the crafting table UI and the ability to craft
  * recipes.
  * <p>
  * Add-on JSON: {@code "minecraft:crafting_table"}.
- * Bedrock requires the experiment Holiday Creator Features for it (in some format versions).
+ * The creator docs name the experiment Holiday Creator Features for it (in some format versions); unverified against BDS.
+ * Unverified: the creator docs name experiment "Holiday Creator Features", which is in no capture.
  *
  * @param craftingTags Defines the tags recipes should define to be crafted on this table. Limited to 64 tags. Each tag is limited to
  *        64 characters. Value must have at most 64 items. Add-on JSON {@code crafting_tags}. Required.
@@ -28,7 +28,6 @@ import org.geysermc.paletter.annotation.Experimental;
  * @since 1.0.0
  */
 @BedrockFormat("1.19.50")
-@Experimental
 public record CraftingTable(@NonNull List<String> craftingTags,
         @Nullable String tableName) implements BlockComponent {
     /**
