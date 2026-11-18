@@ -55,6 +55,11 @@ record ProbeLog(String version, String build, Map<String, List<JsonObject>> obse
         return new ProbeLog(version, build, observations, extract);
     }
 
+    /** @return the observations of a tag, none if the probe printed none (a section it could not run) */
+    List<JsonObject> optional(String tag) {
+        return observations.getOrDefault(tag, List.of());
+    }
+
     List<JsonObject> of(String tag) {
         List<JsonObject> found = observations.get(tag);
         if (found == null) {

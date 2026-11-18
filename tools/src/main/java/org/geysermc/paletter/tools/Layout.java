@@ -12,6 +12,7 @@ public final class Layout {
     public static final String CREATIVE_ADDON = ADDONS + "/creative";
     public static final String PROBE_ADDON = ADDONS + "/probe";
     public static final String BEHAVIOUR_DUMP_ADDON = ADDONS + "/behaviour-dump";
+    public static final String FOOD_PROBE_ADDON = ADDONS + "/food-probe";
 
     private Layout() {
     }

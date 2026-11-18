@@ -8,7 +8,7 @@
 
 Values come from BDS directly wherever possible; third-party dumps rank below and are marked (`explain` says "third party"). Strongest first:
 
-1. Paletter's own captures of BDS: native capture (`NATIVE`, none yet), Script API dumps (`SCRIPT_API`), experiments on BDS (`BDS_PROBE`: `behaviour-probe`, the collision of doors and climbing) and what BDS sends clients (`WIRE`, ranked at runtime from the component data of the palette).
+1. Paletter's own captures of BDS: native capture (`NATIVE`, none yet), Script API dumps (`SCRIPT_API`), experiments on BDS (`BDS_PROBE`: `behaviour-probe`: the collision of doors, climbing, light and friction; `food-probe`: food) and what BDS sends clients (`WIRE`, ranked at runtime from the component data of the palette).
 2. `CLOUDBURST_DATA`: CloudburstMC/Data (Apache-2.0), a native BDS dump. Third party. It post-processes some values (see Post-processed values).
 3. `ALLAY_DATA`: AllayMC/Allay `data/` (MIT), the raw Endstone DevTools dump of BDS. Third party. Used only for what CloudburstMC/Data does not have (items: attack damage, armour, toughness, enchant value, furnace fuel and XP; CloudburstMC/Data has no item behaviour file in any commit of its history), and as the other opinion for disputes.
 

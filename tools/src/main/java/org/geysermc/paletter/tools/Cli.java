@@ -65,7 +65,7 @@ import java.util.concurrent.Callable;
     Cli.VerifyCommand.class, Cli.CheckData.class, Cli.DataDiffCommand.class, Cli.CreativeProbeCommand.class, Cli.EducationCaptureCommand.class, Cli.ExperimentMarksCommand.class,
     Cli.CaptureCommand.class, Cli.Experiments.class, Cli.CompareCommand.class,
     Cli.Docs.class, Cli.Addon.class, Cli.Infer.class, Cli.CheckMappings.class,
-    Cli.Constants.class, Cli.Components.class, Cli.InspectCommand.class, Cli.BehaviourCommand.class, Cli.BehaviourProbeCommand.class, Cli.BehaviourDumpCommand.class, Cli.ScriptDumpCommand.class,
+    Cli.Constants.class, Cli.Components.class, Cli.InspectCommand.class, Cli.BehaviourCommand.class, Cli.BehaviourProbeCommand.class, Cli.BehaviourDumpCommand.class, Cli.FoodProbeCommand.class, Cli.ScriptDumpCommand.class,
     Cli.VoxelShapesCommand.class, Cli.RecipesCaptureCommand.class, Cli.RecipesDiffCommand.class, Cli.RecipesImportCommand.class
 })
 public final class Cli implements Runnable {
@@ -887,7 +887,7 @@ public final class Cli implements Runnable {
         @Option(names = "--server", description = "An extracted BDS of that version, instead of the cache") Path server;
         @Option(names = "--cache") Path cache;
         @Option(names = "--port", defaultValue = "19290") int port;
-        @Option(names = "--timeout", defaultValue = "900") int timeout;
+        @Option(names = "--timeout", defaultValue = "3600") int timeout;
         @Option(names = "--log", description = "Where the console of the run goes (default: <cache>/runs/behaviour-probe.log)") Path log;
         @Option(names = "--from-log", description = "Measure this console log, do not start BDS") Path fromLog;
 
@@ -933,6 +933,39 @@ public final class Cli implements Runnable {
                     server, cache, port, timeout, console);
             }
             org.geysermc.paletter.tools.behaviour.BehaviourDump.write(root(), console);
+            return 0;
+        }
+    }
+
+    @Command(name = "food-probe", description = "Runs data/addons/food-probe on BDS (--bds VERSION, extracted into the cache, or --server DIR) with "
+        + "the Beta APIs: a simulated player tries to eat every item, and the result goes to data/bds/<BDS version>/food-probe/ (probe.log, capture.json; "
+        + "input of behaviour import). With --from-log it measures a console log of an earlier run instead of starting BDS. Downloading BDS means "
+        + "accepting the Minecraft EULA.")
+    static final class FoodProbeCommand extends Rooted implements Callable<Integer> {
+        @Option(names = "--bds", description = "BDS version, e.g. 1.26.63.1") String bds;
+        @Option(names = "--preview", description = "--bds is a preview build") boolean preview;
+        @Option(names = "--server", description = "An extracted BDS of that version, instead of the cache") Path server;
+        @Option(names = "--cache") Path cache;
+        @Option(names = "--port", defaultValue = "19298") int port;
+        @Option(names = "--timeout", defaultValue = "3600") int timeout;
+        @Option(names = "--log", description = "Where the console of the run goes (default: <cache>/runs/food-probe-<VERSION>.log)") Path log;
+        @Option(names = "--from-log", description = "Measure this console log, do not start BDS") Path fromLog;
+
+        @Override
+        public Integer call() throws Exception {
+            Path console = fromLog;
+            if (console == null) {
+                if (bds == null) {
+                    throw new IllegalArgumentException("Missing --bds (or --from-log)");
+                }
+                console = log != null ? log : BdsDistribution.defaultCache().resolve("runs").resolve("food-probe-" + bds + ".log");
+                org.geysermc.paletter.tools.behaviour.FoodProbe.run(root(), bds, preview,
+                    org.geysermc.paletter.tools.bds.ScriptModules.betaVersion(org.geysermc.paletter.tools.bds.ScriptModules.versions(root().resolve("data/bds"), bds)),
+                    org.geysermc.paletter.tools.bds.ScriptModules.gametestBetaVersion(
+                        org.geysermc.paletter.tools.bds.ScriptModules.gametestVersions(root().resolve("data/bds"), bds)),
+                    server, cache, port, timeout, console);
+            }
+            org.geysermc.paletter.tools.behaviour.FoodProbe.write(root(), console);
             return 0;
         }
     }
