@@ -9,6 +9,8 @@ final class Runs {
     String dumpJson;
     Integer protocol;
     String bdsVersion;
+    /** The protocol of the codec that decoded the captures when it is not {@link #protocol} (the library has none for it), else null. */
+    Integer codecProtocol;
     /** The Script API module versions of this build's docgen output (null if it wrote none). */
     java.util.List<String> scriptModules;
     /** The schema this run's docgen output gave (null if it gave none): the spec add-ons of this run use it, not the committed file. */
