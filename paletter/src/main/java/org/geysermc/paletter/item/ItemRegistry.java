@@ -265,6 +265,20 @@ public final class ItemRegistry implements DefinitionRegistry<ItemDefinition> {
         return byRuntimeId.size();
     }
 
+    /**
+     * @return the definitions this registry holds itself in runtime id order, see {@link #ownSize()}: {@link #definitions()}
+     * for a registry without parent
+     */
+    @Internal
+    public @NonNull List<RegisteredItem> ownDefinitions() {
+        if (parent == null) {
+            return definitions();
+        }
+        List<RegisteredItem> own = new ArrayList<>(byRuntimeId.values());
+        own.sort(Comparator.comparingInt(RegisteredItem::getRuntimeId));
+        return List.copyOf(own);
+    }
+
     private @Nullable RegisteredBlockState defaultBlockOf(String identifier) {
         ItemRegistry registry = this;
         while (registry != null) {
