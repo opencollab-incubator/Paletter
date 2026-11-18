@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
@@ -21,6 +22,13 @@ class ByIdentifierTest {
         assertNull(BedrockBlockType.byIdentifier("nobody:block"));
         assertThrows(NullPointerException.class, () -> BedrockItemType.byIdentifier(null));
         assertThrows(NullPointerException.class, () -> BedrockBlockType.byIdentifier(null));
+    }
+
+    @Test
+    void variantByIdentifierFindsConstantsAndMintsNothing() {
+        assertEquals(BedrockItems.APPLE.variant(0), BedrockItemVariant.byIdentifier("minecraft:apple", 0));
+        assertNull(BedrockItemVariant.byIdentifier("nobody:item", 3));
+        assertThrows(NullPointerException.class, () -> BedrockItemVariant.byIdentifier(null, 0));
     }
 
     /** The bundled data has no renames yet, so the rename step is checked with renames given to the package private overload. */

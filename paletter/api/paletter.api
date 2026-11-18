@@ -5547,6 +5547,7 @@ public final class org.geysermc.paletter.vanilla.BedrockItemType implements org.
 
 public final class org.geysermc.paletter.vanilla.BedrockItemVariant implements org.geysermc.paletter.vanilla.ItemKey {
     public int aux()
+    public static org.geysermc.paletter.vanilla.BedrockItemVariant byIdentifier(java.lang.String, int)
     public boolean equals(java.lang.Object)
     public int hashCode()
     public java.lang.String toString()

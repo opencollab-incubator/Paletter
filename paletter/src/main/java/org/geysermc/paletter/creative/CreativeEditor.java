@@ -224,7 +224,8 @@ public final class CreativeEditor {
      * @param matcher selects the stacks to replace
      * @param replacement maps a matching stack to its replacement, which must not be null
      * @return the amount of stacks replaced
-     * @throws NullPointerException if the replacement returns null     */
+     * @throws NullPointerException if the replacement returns null
+     */
     public int replace(@NonNull ItemMatcher matcher, @NonNull UnaryOperator<BedrockItemStack> replacement) {
         int replaced = 0;
         for (List<Object> nodes : categories.values()) {

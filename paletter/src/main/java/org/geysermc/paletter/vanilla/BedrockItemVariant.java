@@ -1,6 +1,7 @@
 package org.geysermc.paletter.vanilla;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
 import org.geysermc.paletter.annotation.Internal;
 import org.geysermc.paletter.internal.CanonicalItems;
 import org.geysermc.paletter.internal.data.Renames;
@@ -52,6 +53,23 @@ public final class BedrockItemVariant implements ItemKey {
         }
         ItemVariant variant = canonical.variant(id);
         return BedrockItemType.fromIdentifier(variant.identifier()).variant(variant.damage());
+    }
+
+    /**
+     * Finds the vanilla variant of an identifier and aux value, without making a type for an unknown identifier. Splits
+     * (a legacy variant that became its own type) and renames of the bundled data are applied first. Loads the data.
+     *
+     * @param identifier an item identifier
+     * @param aux the aux (damage) value
+     * @return the variant of a vanilla constant, or null if the identifier (after splits and renames) is not an item of
+     *         the newest bundled data and has no generated constant
+     * @throws NullPointerException if the identifier is null
+     * @since 1.0.0
+     */
+    public static @Nullable BedrockItemVariant byIdentifier(@NonNull String identifier, int aux) {
+        Renames.Split split = VanillaIndex.get().renames.split(identifier, aux);
+        BedrockItemType type = BedrockItemType.byIdentifier(split != null ? split.identifier() : identifier);
+        return type == null ? null : type.variant(split != null ? split.aux() : aux);
     }
 
     /**
