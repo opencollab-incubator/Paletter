@@ -636,6 +636,26 @@ void theModelIsWhatTheGoldenSourcesShow() {
         assertEquals(message, e.getMessage());
     }
 
+    /** A component whose whole value is a list of strings (block:minecraft:tags in BDS's schema): a list field, as the item tags' list. */
+    @Test
+    void aComponentWhoseValueIsAListOfStringsHasAListField() {
+        Inputs in = inputs();
+        in.components().getAsJsonArray("components").add(json("""
+            {"id": "block:test:labels", "kind": "block", "category": "component", "name": "test:labels", "status": "active",
+             "doc": "Labels.", "page": "creator/Reference/Content/BlockReference/Examples/BlockComponents/minecraftBlock_labels.md",
+             "experiments": [], "forms": [{"type": "array", "items": {"type": "string"}}], "fields": [], "notes": []}"""));
+        in.mappings().getAsJsonObject("components").add("block:test:labels", json("""
+            {"status": "sent", "wire": ["test:labels"], "protocols": [100, 200], "fields": {},
+             "forms": {"array<string>": {"status": "inferred",
+               "rules": [{"kind": "ordered-set", "nbt": "string", "tags": [], "wire": "test:labels[]"}]}}}"""));
+        Map<String, String> files = ComponentGenerator.generate(in);
+        String wire = files.get("org/geysermc/paletter/internal/component/BlockWire.java");
+        assertTrue(wire.contains("\"test:labels\""), "the list reaches the encoder: " + wire);
+        String source = files.get("org/geysermc/paletter/block/component/Labels.java");
+        assertTrue(source.contains("public record Labels(@NonNull List<String> value) implements BlockComponent"), source);
+        assertTrue(source.contains("The entries of the component"), source);
+    }
+
     @Test
     void conflictingWindowsFail() {
         fails("conflicting windows: item:test:gadget has two mappings for protocol 100",
