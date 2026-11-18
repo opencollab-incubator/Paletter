@@ -28,19 +28,41 @@ import org.geysermc.paletter.vanilla.ItemKey;
  */
 public record CreativePlacement(@NonNull CreativeCategory category, @Nullable String group, @Nullable ItemMatcher after) {
 
+    /**
+     * Places at the end of a category, outside any group.
+     *
+     * @param category the category
+     * @return the placement
+     */
     public static @NonNull CreativePlacement loose(@NonNull CreativeCategory category) {
         return new CreativePlacement(category, null, null);
     }
 
+    /**
+     * Places at the end of a group of a category.
+     *
+     * @param category the category
+     * @param group the group name, a translation key like {@code itemGroup.name.minecart}
+     * @return the placement
+     */
     public static @NonNull CreativePlacement group(@NonNull CreativeCategory category, @NonNull String group) {
         return new CreativePlacement(category, group, null);
     }
 
+    /**
+     * Returns this placement with an anchor.
+     *
+     * @param anchor the stacks to insert after
+     * @return this placement, right after the first stack the matcher selects, if present
+     */
     public @NonNull CreativePlacement after(@NonNull ItemMatcher anchor) {
         return new CreativePlacement(category, group, anchor);
     }
 
     /**
+     * Returns this placement with an anchor on every variant of an item type.
+     *
+     * @param anchor the item type to insert after
      * @return this placement, right after the stacks of any variant of an item type if present
      * @since 1.0.0
      */
@@ -49,6 +71,9 @@ public record CreativePlacement(@NonNull CreativeCategory category, @Nullable St
     }
 
     /**
+     * Returns this placement with an anchor on one variant.
+     *
+     * @param anchor the variant to insert after, or a type for its base variant
      * @return this placement, right after exactly that variant if present (a type is its base variant)
      * @since 1.0.0
      */
@@ -59,7 +84,12 @@ public record CreativePlacement(@NonNull CreativeCategory category, @Nullable St
     /**
      * Applies this placement to an editor. An anchor ({@link #after}) always wins if it exists; otherwise the
      * stack goes where the ordering policy puts it.
+     * <p>
+     * Internal: called when a layer's content is added to the layout.
      *
+     * @param editor the editor of the layout
+     * @param stack the stack to place
+     * @param ordering the ordering policy of the palette
      * @since 1.0.0
      */
     @Internal

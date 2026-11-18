@@ -17,12 +17,24 @@ public record MiningSpeed(float value) implements WireOnlyItemComponent {
      */
     public static final String NAME = "item_properties.mining_speed";
 
+    /**
+     * Creates a mining speed.
+     *
+     * @throws IllegalArgumentException if the value is not finite
+     */
     public MiningSpeed {
         if (!Float.isFinite(value)) {
             throw new IllegalArgumentException("MiningSpeed.value must be finite: " + value);
         }
     }
 
+    /**
+     * Creates a mining speed.
+     *
+     * @param value the mining speed sent to the client, finite
+     * @return the component
+     * @throws IllegalArgumentException if the value is not finite
+     */
     public static @NonNull MiningSpeed of(float value) {
         return new MiningSpeed(value);
     }

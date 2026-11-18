@@ -51,17 +51,32 @@ public final class ItemOverride {
     }
 
     /**
+     * Returns the item as it was before this override.
+     *
      * @return the definition before this override
      */
     public @NonNull RegisteredItem original() {
         return original;
     }
 
+    /**
+     * Sets the item version of the definition, e.g. {@link ItemVersion#DATA_DRIVEN}.
+     *
+     * @param version the version to send
+     * @return this override
+     */
     public @NonNull ItemOverride version(@NonNull ItemVersion version) {
         this.version = version;
         return this;
     }
 
+    /**
+     * Sets whether the item is sent as component based. {@link #modifyComponents} and {@link #replaceComponents}
+     * set it to true.
+     *
+     * @param componentBased true to send the item as component based
+     * @return this override
+     */
     public @NonNull ItemOverride componentBased(boolean componentBased) {
         this.componentBased = componentBased;
         return this;
@@ -73,6 +88,9 @@ public final class ItemOverride {
      * <p>
      * BDS never produces this shape: an add-on override replaces the vanilla components, see {@link #replaceComponents}.
      * The client's behaviour for a merged vanilla item is unverified.
+     *
+     * @param components the components to merge; a later component replaces an earlier one of the same name
+     * @return this override
      */
     public @NonNull ItemOverride modifyComponents(@NonNull ItemComponent... components) {
         for (ItemComponent component : components) {
@@ -93,6 +111,9 @@ public final class ItemOverride {
      * BDS accepted this for the data driven apple; for a hard coded item it rejected the stick (1.26.60) and accepted
      * the feather only as a legacy item (1.10). Paletter applies it to any item (unverified on a client). Unlike BDS,
      * the runtime id stays the vanilla one.
+     *
+     * @param components the only components the item has, apart from the custom item defaults
+     * @return this override
      */
     public @NonNull ItemOverride replaceComponents(@NonNull ItemComponent... components) {
         version(ItemVersion.DATA_DRIVEN);
@@ -105,6 +126,7 @@ public final class ItemOverride {
      * Sets the block this item is sent with. By default, the block is derived from the creative inventory and the palette.
      *
      * @param state the block state, or null to send the item without a block
+     * @return this override
      */
     public @NonNull ItemOverride block(@Nullable NbtMap state) {
         this.blockSet = true;
@@ -114,6 +136,8 @@ public final class ItemOverride {
 
     /**
      * Sends the item without a block, e.g. structure blocks, which otherwise break recipes.
+     *
+     * @return this override
      */
     public @NonNull ItemOverride noBlock() {
         return block(null);

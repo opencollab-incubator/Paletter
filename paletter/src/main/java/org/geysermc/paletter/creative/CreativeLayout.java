@@ -35,21 +35,41 @@ public final class CreativeLayout {
         this.categories = Collections.unmodifiableMap(copy);
     }
 
+    /**
+     * Returns the layout without any content.
+     *
+     * @return the empty layout
+     */
     public static @NonNull CreativeLayout empty() {
         return EMPTY;
     }
 
+    /**
+     * Creates a layout from nodes per category. The lists are copied; a category that is missing is empty.
+     *
+     * @param categories the nodes of each category, in order
+     * @return the layout
+     */
     public static @NonNull CreativeLayout of(@NonNull Map<CreativeCategory, List<CreativeNode>> categories) {
         return new CreativeLayout(categories);
     }
 
     /**
+     * Returns the nodes of a category.
+     *
+     * @param category the category
      * @return the nodes of a category, in order
      */
     public @NonNull List<CreativeNode> nodes(@NonNull CreativeCategory category) {
         return categories.get(category);
     }
 
+    /**
+     * Finds a group by name, in any category.
+     *
+     * @param name the group name
+     * @return the first group of that name, or empty if there is none
+     */
     public @NonNull Optional<CreativeGroup> group(@NonNull String name) {
         for (List<CreativeNode> nodes : categories.values()) {
             for (CreativeNode node : nodes) {
@@ -62,6 +82,8 @@ public final class CreativeLayout {
     }
 
     /**
+     * Lists the stacks of the layout.
+     *
      * @return every stack in display order, including stacks inside groups. Group icons are not included
      */
     public @NonNull Stream<BedrockItemStack> stacks() {
@@ -70,6 +92,11 @@ public final class CreativeLayout {
         return stacks.stream();
     }
 
+    /**
+     * Visits every stack in display order, including stacks inside groups. Group icons are not visited.
+     *
+     * @param consumer the visitor
+     */
     public void forEachStack(@NonNull Consumer<BedrockItemStack> consumer) {
         for (CreativeCategory category : CreativeCategory.values()) {
             for (CreativeNode node : categories.get(category)) {
@@ -106,6 +133,9 @@ public final class CreativeLayout {
     }
 
     /**
+     * Checks whether a stack is in the layout.
+     *
+     * @param matcher selects the stacks to look for
      * @return true if a stack matching the matcher is in the layout, loose or in a group
      * @since 1.0.0
      */
@@ -114,6 +144,9 @@ public final class CreativeLayout {
     }
 
     /**
+     * Finds the group of a stack.
+     *
+     * @param matcher selects the stacks to look for
      * @return the name of the group holding the first stack matching the matcher, or null if there is none or it is loose
      * @since 1.0.0
      */
@@ -123,6 +156,8 @@ public final class CreativeLayout {
     }
 
     /**
+     * Starts editing.
+     *
      * @return a mutable editor starting from this layout. This layout is not changed
      */
     public @NonNull CreativeEditor edit() {

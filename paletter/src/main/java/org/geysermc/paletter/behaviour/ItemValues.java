@@ -25,7 +25,10 @@ public final class ItemValues {
     private final int index;
 
     /**
-     * Plumbing of {@link org.geysermc.paletter.item.ResolvedItem#behaviour()}: public for it, not part of the API.
+     * Internal: plumbing of {@link org.geysermc.paletter.item.ResolvedItem#behaviour()}: public for it, not part of the API.
+     *
+     * @param behaviour the palette's behaviour values
+     * @param index the position of the item in them
      */
     @Internal
     public ItemValues(@NonNull Behaviour behaviour, int index) {
@@ -34,14 +37,21 @@ public final class ItemValues {
     }
 
     /**
-     * @return the item these values are of
+     * The item these values are of.
+     *
+     * @return the registered item (the definition sent to the client) these values are of
      */
     public @NonNull RegisteredItem item() {
         return behaviour.itemAt(index);
     }
 
     /**
+     * Returns the value of a float key.
+     *
+     * @param key a float key of items
+     * @return the value
      * @throws IllegalStateException if no value is known
+     * @throws IllegalArgumentException if the key is not an item key
      */
     public float get(@NonNull FloatKey key) {
         Column column = behaviour.itemColumn(key);
@@ -52,7 +62,12 @@ public final class ItemValues {
     }
 
     /**
+     * Returns the value of an int key.
+     *
+     * @param key an int key of items
+     * @return the value
      * @throws IllegalStateException if no value is known
+     * @throws IllegalArgumentException if the key is not an item key
      */
     public int get(@NonNull IntKey key) {
         Column column = behaviour.itemColumn(key);
@@ -63,7 +78,12 @@ public final class ItemValues {
     }
 
     /**
+     * Returns the value of a boolean key.
+     *
+     * @param key a boolean key of items
+     * @return the value
      * @throws IllegalStateException if no value is known
+     * @throws IllegalArgumentException if the key is not an item key
      */
     public boolean get(@NonNull BooleanKey key) {
         Column column = behaviour.itemColumn(key);
@@ -74,7 +94,13 @@ public final class ItemValues {
     }
 
     /**
+     * Returns the value of an object key.
+     *
+     * @param <T> the value type of the key
+     * @param key an object key of items
+     * @return the value, never null
      * @throws IllegalStateException if no value is known
+     * @throws IllegalArgumentException if the key is not an item key
      */
     @SuppressWarnings("unchecked")
     public <T> @NonNull T get(@NonNull ObjectKey<T> key) {
@@ -86,7 +112,12 @@ public final class ItemValues {
     }
 
     /**
+     * Returns the value of a float key, or a fallback where none is known.
+     *
+     * @param key a float key of items
+     * @param fallback what to return if no value is known
      * @return the value, or {@code fallback} if no value is known
+     * @throws IllegalArgumentException if the key is not an item key
      */
     public float getOrElse(@NonNull FloatKey key, float fallback) {
         Column column = behaviour.itemColumn(key);
@@ -94,7 +125,12 @@ public final class ItemValues {
     }
 
     /**
+     * Returns the value of an int key, or a fallback where none is known.
+     *
+     * @param key an int key of items
+     * @param fallback what to return if no value is known
      * @return the value, or {@code fallback} if no value is known
+     * @throws IllegalArgumentException if the key is not an item key
      */
     public int getOrElse(@NonNull IntKey key, int fallback) {
         Column column = behaviour.itemColumn(key);
@@ -102,7 +138,12 @@ public final class ItemValues {
     }
 
     /**
+     * Returns the value of a boolean key, or a fallback where none is known.
+     *
+     * @param key a boolean key of items
+     * @param fallback what to return if no value is known
      * @return the value, or {@code fallback} if no value is known
+     * @throws IllegalArgumentException if the key is not an item key
      */
     public boolean getOrElse(@NonNull BooleanKey key, boolean fallback) {
         Column column = behaviour.itemColumn(key);
@@ -110,7 +151,13 @@ public final class ItemValues {
     }
 
     /**
+     * Returns the value of an object key, or a fallback where none is known.
+     *
+     * @param <T> the value type of the key
+     * @param key an object key of items
+     * @param fallback what to return if no value is known; may be null
      * @return the value, or {@code fallback} if no value is known
+     * @throws IllegalArgumentException if the key is not an item key
      */
     @SuppressWarnings("unchecked")
     public <T> T getOrElse(@NonNull ObjectKey<T> key, T fallback) {
@@ -123,6 +170,10 @@ public final class ItemValues {
      * {@code 16 from Paletter data/bds/1.26.63.1/dump.json.gz (SCRIPT_API), 26.60}. Says whether the user set the
      * value, whether it is inherited from an older version's capture, and the other values of a disputed one. Builds the
      * text on each call.
+     *
+     * @param key the key to explain, of items
+     * @return the explanation
+     * @throws IllegalArgumentException if the key is not an item key
      */
     public @NonNull String explain(@NonNull BehaviourKey<?> key) {
         return behaviour.explain(item(), key);

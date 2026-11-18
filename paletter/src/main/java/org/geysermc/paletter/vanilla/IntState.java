@@ -23,7 +23,13 @@ public final class IntState extends BedrockState<Integer> {
     }
 
     /**
+     * Creates a state with a range of values.
+     *
+     * @param name the state name as in the block state NBT
+     * @param min the lowest value, inclusive
+     * @param max the highest value, inclusive
      * @return a state with the values {@code min} to {@code max}, both inclusive
+     * @throws IllegalArgumentException if {@code max} is below {@code min}
      */
     public static @NonNull IntState range(@NonNull String name, int min, int max) {
         if (max < min) {
@@ -36,6 +42,14 @@ public final class IntState extends BedrockState<Integer> {
         return new IntState(name, values);
     }
 
+    /**
+     * Creates a state with a list of values.
+     *
+     * @param name the state name as in the block state NBT
+     * @param values the values the state can have; at least one
+     * @return a new state
+     * @throws IllegalArgumentException if there are no values
+     */
     public static @NonNull IntState of(@NonNull String name, int @NonNull ... values) {
         List<Integer> list = new ArrayList<>(values.length);
         for (int value : values) {
@@ -49,6 +63,11 @@ public final class IntState extends BedrockState<Integer> {
         return values;
     }
 
+    /**
+     * The lowest value.
+     *
+     * @return the lowest value of the state
+     */
     public int min() {
         int min = Integer.MAX_VALUE;
         for (int value : values) {
@@ -57,6 +76,11 @@ public final class IntState extends BedrockState<Integer> {
         return min;
     }
 
+    /**
+     * The highest value.
+     *
+     * @return the highest value of the state
+     */
     public int max() {
         int max = Integer.MIN_VALUE;
         for (int value : values) {

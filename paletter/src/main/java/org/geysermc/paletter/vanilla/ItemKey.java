@@ -20,12 +20,16 @@ import org.checkerframework.checker.nullness.qual.NonNull;
  */
 public sealed interface ItemKey permits BedrockItemType, BedrockItemVariant {
     /**
+     * The variant this key names.
+     *
      * @return the variant this key names: itself for a variant, the base variant (aux 0) for a type. Loads no data
      */
     @NonNull BedrockItemVariant variant();
 
     /**
-     * @return the type of this key: itself for a type
+     * The type this key names.
+     *
+     * @return the type of this key: itself for a type, the type of the variant for a variant
      */
     @NonNull BedrockItemType type();
 }

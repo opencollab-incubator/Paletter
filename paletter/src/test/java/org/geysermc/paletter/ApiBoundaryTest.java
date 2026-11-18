@@ -35,12 +35,30 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 /**
  * Guards the API boundary declared in {@code src/module/java/module-info.java}: no exported type may reference an
  * internal type ({@code org.geysermc.paletter.internal.*}, anything {@link Internal}, or a Paletter package that is not
- * exported) in a public or protected signature, and every exported type documents {@code @since}.
+ * exported) in a public or protected signature, nor a type of a dependency that is not part of the API (see
+ * {@link #ALLOWED_DEPENDENCIES}), and every exported type documents {@code @since}.
+ * <p>
+ * "Signature" covers superclasses and interfaces, type parameters and their bounds, record components, fields, constructor
+ * and method parameters, return types and thrown types, nested generics and arrays included. Public methods that return
+ * or take a non-API type fail the test; fix them or, for a deliberate addition to the API, extend the allow list with a
+ * reason.
  */
 class ApiBoundaryTest {
     private static final Path MODULE_INFO = Path.of("src/module/java/module-info.java");
     private static final List<Path> SOURCES = List.of(Path.of("src/main/java"), Path.of("src/generated/java"));
     private static final String ROOT = "org.geysermc.paletter";
+
+    /**
+     * The packages outside Paletter and the JDK that signatures may use, each with the reason it is API. Everything else (Gson,
+     * Netty, other libraries on the classpath) is an implementation detail that must not leak into a signature.
+     */
+    private static final List<String> ALLOWED_DEPENDENCIES = List.of(
+        // The protocol types are the library's currency: ItemData, definitions, block property data, packets, NbtMap
+        "org.cloudburstmc.",
+        // The specialized collections the API returns (declared as api dependencies of the build)
+        "it.unimi.dsi.fastutil.",
+        // @Nullable and @NonNull
+        "org.checkerframework.");
 
     static Set<String> exportedPackages() throws IOException {
         Matcher matcher = Pattern.compile("^\\s*exports\\s+([\\w.]+)\\s*;", Pattern.MULTILINE)
@@ -233,7 +251,22 @@ class ApiBoundaryTest {
             if (!isApi(type)) {
                 return "@Internal or not public";
             }
+            return null;
         }
-        return null;
+        if (pkg.startsWith("java.") || pkg.startsWith("javax.") || ALLOWED_DEPENDENCIES.stream().anyMatch(pkg::startsWith)) {
+            return null;
+        }
+        return "non-API dependency";
+    }
+
+    /**
+     * Cloudburst's protocol types sit in {@code org.cloudburstmc.protocol...}; the allow list takes the whole group, because
+     * its modules (protocol, nbt, math) are all reached through the one {@code api} dependency of the build.
+     */
+    @Test
+    void allowListMatchesTheBuild() throws IOException {
+        String build = Files.readString(Path.of("build.gradle.kts"), StandardCharsets.UTF_8);
+        assertTrue(build.contains("api(libs.protocol.codec)"), "the Cloudburst allow list expects it to be an api dependency");
+        assertTrue(build.contains("api(libs.fastutil."), "the fastutil allow list expects it to be an api dependency");
     }
 }

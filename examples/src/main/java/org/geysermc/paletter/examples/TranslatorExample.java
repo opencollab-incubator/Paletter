@@ -22,7 +22,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * A Java <-> Bedrock translator: its mappings are int tables written once against the newest Bedrock version, then
+ * A Java {@code <->} Bedrock translator: its mappings are int tables written once against the newest Bedrock version, then
  * turned into runtime ids per client version. Run:
  * {@code ./gradlew :examples:run -PmainClass=org.geysermc.paletter.examples.TranslatorExample}.
  */

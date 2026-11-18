@@ -34,8 +34,10 @@ public final class BedrockItemVariant implements ItemKey {
     }
 
     /**
-     * Plumbing of {@link org.geysermc.paletter.Palette}: the handle of a canonical id.
+     * Internal: the handle of a canonical id, for {@link org.geysermc.paletter.Palette}.
      *
+     * @param canonical the canonical items of a palette lineage
+     * @param id a canonical id
      * @return the variant of a canonical id (not null for an id in range)
      */
     @Internal
@@ -53,8 +55,12 @@ public final class BedrockItemVariant implements ItemKey {
     }
 
     /**
-     * Plumbing: the variant of an identifier and aux value, applying renames and splits (a legacy variant that became its
+     * Internal: the variant of an identifier and aux value, applying renames and splits (a legacy variant that became its
      * own type). Loads the data. Use {@link org.geysermc.paletter.Palette#itemVariant} or {@code type.variant(aux)}.
+     *
+     * @param identifier an item identifier
+     * @param aux the aux (damage) value
+     * @return the variant, a plain value if Paletter does not know the identifier
      */
     @Internal
     public static @NonNull BedrockItemVariant fromIdentifier(@NonNull String identifier, int aux) {
@@ -73,17 +79,29 @@ public final class BedrockItemVariant implements ItemKey {
         return this;
     }
 
+    /**
+     * The type of the variant.
+     *
+     * @return the type this is a variant of
+     */
     public @NonNull BedrockItemType type() {
         return type;
     }
 
     /**
+     * The aux value of the variant.
+     *
      * @return the aux (damage) value
      */
     public int aux() {
         return aux;
     }
 
+    /**
+     * Internal: the variant as an {@link ItemVariant}.
+     *
+     * @return the identifier and aux value of this variant
+     */
     @Internal
     public @NonNull ItemVariant toItemVariant() {
         ItemVariant variant = this.variant;
@@ -95,6 +113,9 @@ public final class BedrockItemVariant implements ItemKey {
     }
 
     /**
+     * Internal: the canonical id of this variant in a palette's canonical items.
+     *
+     * @param canonical the canonical items of a palette
      * @return the canonical id of this variant in a palette's canonical items, or -1
      */
     @Internal

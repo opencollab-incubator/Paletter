@@ -23,6 +23,8 @@ import java.lang.annotation.Target;
 @Target(ElementType.TYPE)
 public @interface BedrockExperiment {
     /**
+     * The experiment toggle of the component.
+     *
      * @return the toggle id, one of the constants of {@code BedrockExperiments}, e.g. {@code upcoming_creator_features}
      */
     String value();

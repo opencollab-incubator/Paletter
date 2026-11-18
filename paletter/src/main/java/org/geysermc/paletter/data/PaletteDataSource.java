@@ -25,6 +25,8 @@ import java.util.List;
 public interface PaletteDataSource {
 
     /**
+     * The versions this source has data for.
+     *
      * @return all available versions, oldest first
      */
     @NonNull List<DataVersion> versions();
@@ -46,14 +48,20 @@ public interface PaletteDataSource {
     }
 
     /**
-     * Loads the data of the given version. Called at most once per version by {@link org.geysermc.paletter.Paletter}.
+     * Internal: loads the data of the given version. Called at most once per version by
+     * {@link org.geysermc.paletter.Paletter}.
+     *
+     * @param version a version of this source
+     * @return the data of the version
+     * @throws IOException if the data cannot be read
      */
     @org.geysermc.paletter.annotation.Internal
     @NonNull VanillaData load(@NonNull DataVersion version) throws IOException;
 
     /**
+     * Internal: the identifiers Bedrock renamed.
+     *
      * @return identifiers Bedrock renamed, which lets content of older versions map forward to the newest one
-     * @since 1.0.0
      */
     @org.geysermc.paletter.annotation.Internal
     default @NonNull Renames renames() {
@@ -61,8 +69,10 @@ public interface PaletteDataSource {
     }
 
     /**
+     * Internal: the versioned properties of items and blocks.
+     *
      * @return the versioned properties of items and blocks; the bundled source reads {@code properties.nbt}, the
-     * default has none
+     *         default has none
      */
     @org.geysermc.paletter.annotation.Internal
     default @NonNull PropertyStore properties() {
@@ -70,8 +80,10 @@ public interface PaletteDataSource {
     }
 
     /**
+     * Internal: the versioned behaviour values of vanilla blocks and items.
+     *
      * @return the versioned behaviour values of vanilla blocks and items; the bundled source reads
-     * {@code behaviour.nbt}, the default has none
+     *         {@code behaviour.nbt}, the default has none
      */
     @org.geysermc.paletter.annotation.Internal
     default @NonNull BehaviourStore behaviour() {
@@ -79,8 +91,10 @@ public interface PaletteDataSource {
     }
 
     /**
+     * Internal: the vanilla voxel shapes of the versions.
+     *
      * @return the vanilla voxel shapes of the versions; the bundled source reads {@code voxel_shapes.nbt}, the default
-     * has none. A palette of a version without them cannot be built
+     *         has none. A palette of a version without them cannot be built
      */
     @org.geysermc.paletter.annotation.Internal
     default @NonNull VoxelShapeStore voxelShapes() {
@@ -88,6 +102,8 @@ public interface PaletteDataSource {
     }
 
     /**
+     * Returns the source of the data bundled in the library jar.
+     *
      * @return a source reading the data bundled in the library jar
      */
     static @NonNull PaletteDataSource bundled() {
@@ -95,6 +111,8 @@ public interface PaletteDataSource {
     }
 
     /**
+     * Returns a source reading a directory in the bundled format, e.g. data refreshed for a newer Bedrock version.
+     *
      * @param directory a directory in the bundled format: {@code versions.txt}, one {@code <name>.nbt} per version,
      *                  {@code voxel_shapes.nbt} with the shapes of every version (a palette without them fails to build),
      *                  and optionally {@code properties.nbt}, {@code behaviour.nbt}, {@code renames.txt} and

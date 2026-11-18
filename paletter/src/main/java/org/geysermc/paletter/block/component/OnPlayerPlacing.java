@@ -24,13 +24,21 @@ public record OnPlayerPlacing(@NonNull String triggerType) implements WireOnlyBl
      */
     public static final String NAME = "minecraft:on_player_placing";
 
+    /**
+     * Creates the component.
+     *
+     * @throws NullPointerException if {@code triggerType} is null
+     */
     public OnPlayerPlacing {
         Objects.requireNonNull(triggerType, "OnPlayerPlacing.triggerType");
     }
 
     /**
+     * Creates the component.
+     *
      * @param triggerType the event name, e.g. {@code geyser:place_event}
      * @return the component
+     * @throws NullPointerException if {@code triggerType} is null
      */
     public static @NonNull OnPlayerPlacing of(@NonNull String triggerType) {
         return new OnPlayerPlacing(triggerType);

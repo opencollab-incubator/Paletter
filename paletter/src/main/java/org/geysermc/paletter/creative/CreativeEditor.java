@@ -48,6 +48,9 @@ public final class CreativeEditor {
     }
 
     /**
+     * Returns the current nodes of a category.
+     *
+     * @param category the category
      * @return a snapshot of the current nodes of a category
      */
     public @NonNull List<CreativeNode> view(@NonNull CreativeCategory category) {
@@ -55,6 +58,9 @@ public final class CreativeEditor {
     }
 
     /**
+     * Checks whether a stack is in the layout being edited.
+     *
+     * @param matcher selects the stacks to look for
      * @return true if a stack matching the matcher is in the layout being edited
      * @since 1.0.0
      */
@@ -63,6 +69,9 @@ public final class CreativeEditor {
     }
 
     /**
+     * Finds the group of a stack in the layout being edited.
+     *
+     * @param matcher selects the stacks to look for
      * @return the name of the group holding the first stack matching the matcher, or null if there is none or it is loose
      * @since 1.0.0
      */
@@ -71,12 +80,22 @@ public final class CreativeEditor {
         return position == null || position.group == null ? null : position.group.name;
     }
 
+    /**
+     * Finds a group by name, in any category.
+     *
+     * @param name the group name
+     * @return an editor of the first group of that name, or empty if there is none
+     */
     public @NonNull Optional<GroupEditor> group(@NonNull String name) {
         MutableGroup group = findGroup(name);
         return group == null ? Optional.empty() : Optional.of(new GroupEditor(group));
     }
 
     /**
+     * Finds or creates a group.
+     *
+     * @param category the category to create the group in
+     * @param name the group name
      * @return the group with this name, or a new empty group at the end of the category if none exists.
      * An existing group is returned as is, even if it lives in another category
      */
@@ -92,6 +111,9 @@ public final class CreativeEditor {
     /**
      * Creates a new empty group at the end of a category.
      *
+     * @param category the category
+     * @param name the group name
+     * @return an editor of the new group
      * @throws IllegalArgumentException if a group with this name already exists
      */
     public @NonNull GroupEditor createGroup(@NonNull CreativeCategory category, @NonNull String name) {
@@ -103,6 +125,9 @@ public final class CreativeEditor {
 
     /**
      * Removes a group and everything in it.
+     *
+     * @param name the group name
+     * @return true if a group of that name existed and was removed
      */
     public boolean removeGroup(@NonNull String name) {
         MutableGroup group = findGroup(name);
@@ -114,7 +139,10 @@ public final class CreativeEditor {
     }
 
     /**
-     * Removes a group, keeping its stacks as loose stacks in its place.
+     * Removes a group, keeping its stacks as loose stacks in its place. The group icon is dropped.
+     *
+     * @param name the group name
+     * @return true if a group of that name existed and was dissolved
      */
     public boolean dissolveGroup(@NonNull String name) {
         MutableGroup group = findGroup(name);
@@ -130,17 +158,29 @@ public final class CreativeEditor {
 
     /**
      * Starts inserting stacks. Nothing happens until a placement method of the returned insertion is called.
+     *
+     * @param stacks the stacks to insert
+     * @return the pending insertion
      */
     public @NonNull Insertion insert(@NonNull BedrockItemStack... stacks) {
         return new Insertion(List.of(stacks), null);
     }
 
+    /**
+     * Starts inserting stacks. Nothing happens until a placement method of the returned insertion is called.
+     *
+     * @param stacks the stacks to insert; the list is copied
+     * @return the pending insertion
+     */
     public @NonNull Insertion insert(@NonNull List<BedrockItemStack> stacks) {
         return new Insertion(List.copyOf(stacks), null);
     }
 
     /**
      * Starts moving all stacks matching a matcher. They are only removed once a placement succeeds.
+     *
+     * @param matcher selects the stacks to move
+     * @return the pending move
      */
     public @NonNull Insertion move(@NonNull ItemMatcher matcher) {
         List<BedrockItemStack> stacks = new ArrayList<>();
@@ -151,6 +191,7 @@ public final class CreativeEditor {
     /**
      * Removes every stack matching the matcher, loose or grouped. Group icons that match are reset to the default.
      *
+     * @param matcher selects the stacks to remove
      * @return the amount of stacks removed
      */
     public int remove(@NonNull ItemMatcher matcher) {
@@ -180,6 +221,8 @@ public final class CreativeEditor {
     /**
      * Replaces every stack matching the matcher, including group icons.
      *
+     * @param matcher selects the stacks to replace
+     * @param replacement maps a matching stack to its replacement, which must not be null
      * @return the amount of stacks replaced
      */
     public int replace(@NonNull ItemMatcher matcher, @NonNull UnaryOperator<BedrockItemStack> replacement) {
@@ -209,6 +252,11 @@ public final class CreativeEditor {
         return replaced;
     }
 
+    /**
+     * Freezes the current state.
+     *
+     * @return an immutable layout of the current state; this editor stays usable
+     */
     public @NonNull CreativeLayout build() {
         Map<CreativeCategory, List<CreativeNode>> frozen = new EnumMap<>(CreativeCategory.class);
         for (Map.Entry<CreativeCategory, List<Object>> entry : categories.entrySet()) {
@@ -233,6 +281,9 @@ public final class CreativeEditor {
 
         /**
          * Places the stacks right after the first stack matching the anchor, inside the same group (or loose, if it is loose).
+         *
+         * @param anchor selects the stack to place after
+         * @return true if the stacks were placed, false if nothing matches the anchor or they were placed already
          */
         public boolean after(@NonNull ItemMatcher anchor) {
             return relative(anchor, 1);
@@ -240,6 +291,9 @@ public final class CreativeEditor {
 
         /**
          * Places the stacks right before the first stack matching the anchor, inside the same group (or loose, if it is loose).
+         *
+         * @param anchor selects the stack to place before
+         * @return true if the stacks were placed, false if nothing matches the anchor or they were placed already
          */
         public boolean before(@NonNull ItemMatcher anchor) {
             return relative(anchor, 0);
@@ -247,11 +301,21 @@ public final class CreativeEditor {
 
         /**
          * Places the stacks at the end of an existing group.
+         *
+         * @param group the group name, in any category
+         * @return true if the stacks were placed, false if there is no such group or they were placed already
          */
         public boolean intoGroup(@NonNull String group) {
             return intoGroup(group, Integer.MAX_VALUE);
         }
 
+        /**
+         * Places the stacks in an existing group, at an index.
+         *
+         * @param group the group name, in any category
+         * @param index the index in the group; an index past the end places at the end
+         * @return true if the stacks were placed, false if there is no such group or they were placed already
+         */
         public boolean intoGroup(@NonNull String group, int index) {
             if (done || findGroup(group) == null) {
                 return false;
@@ -264,6 +328,10 @@ public final class CreativeEditor {
 
         /**
          * Places the stacks at the end of a group, creating the group at the end of the category if it does not exist.
+         *
+         * @param category the category to create the group in
+         * @param group the group name
+         * @return true if the stacks were placed, false if they were placed already
          */
         public boolean intoGroup(@NonNull CreativeCategory category, @NonNull String group) {
             if (done) {
@@ -277,6 +345,10 @@ public final class CreativeEditor {
         /**
          * Places the stacks at the end of the group of that name in the category, creating the group at the end of
          * the category if the category has none (even if another category has a group of that name), as BDS does.
+         *
+         * @param category the category
+         * @param group the group name
+         * @return true if the stacks were placed, false if they were placed already
          */
         boolean intoCategoryGroup(CreativeCategory category, String group) {
             if (done) {
@@ -300,6 +372,9 @@ public final class CreativeEditor {
 
         /**
          * Places the stacks as loose stacks at the end of a category.
+         *
+         * @param category the category
+         * @return true if the stacks were placed, false if they were placed already
          */
         public boolean loose(@NonNull CreativeCategory category) {
             if (done) {
@@ -312,6 +387,9 @@ public final class CreativeEditor {
 
         /**
          * Places the stacks as loose stacks right after a group.
+         *
+         * @param group the group name
+         * @return true if the stacks were placed, false if there is no such group or they were placed already
          */
         public boolean afterGroup(@NonNull String group) {
             return besideGroup(group, 1);
@@ -319,6 +397,9 @@ public final class CreativeEditor {
 
         /**
          * Places the stacks as loose stacks right before a group.
+         *
+         * @param group the group name
+         * @return true if the stacks were placed, false if there is no such group or they were placed already
          */
         public boolean beforeGroup(@NonNull String group) {
             return besideGroup(group, 0);
@@ -367,50 +448,105 @@ public final class CreativeEditor {
             this.group = group;
         }
 
+        /**
+         * Returns the group name.
+         *
+         * @return the group name
+         */
         public @NonNull String name() {
             return group.name;
         }
 
+        /**
+         * Returns the category the group is in.
+         *
+         * @return the category
+         * @throws IllegalStateException if the group was removed
+         */
         public @NonNull CreativeCategory category() {
             return categoryOf(group);
         }
 
+        /**
+         * Returns the icon of the group.
+         *
+         * @return the icon, or null if the first stack that exists in the client's version is used
+         */
         public @Nullable BedrockItemStack icon() {
             return group.icon;
         }
 
         /**
+         * Sets the icon of the group.
+         *
          * @param icon the icon, or null to use the first stack that exists in the client's version
+         * @return this editor
          */
         public @NonNull GroupEditor icon(@Nullable BedrockItemStack icon) {
             group.icon = icon;
             return this;
         }
 
+        /**
+         * Returns the stacks of the group.
+         *
+         * @return a snapshot of the stacks, in order
+         */
         public @NonNull List<BedrockItemStack> stacks() {
             return List.copyOf(group.stacks);
         }
 
+        /**
+         * Returns the number of stacks in the group.
+         *
+         * @return the number of stacks
+         */
         public int size() {
             return group.stacks.size();
         }
 
+        /**
+         * Adds stacks at the end of the group.
+         *
+         * @param stacks the stacks to add
+         * @return this editor
+         */
         public @NonNull GroupEditor add(@NonNull BedrockItemStack... stacks) {
             group.stacks.addAll(Arrays.asList(stacks));
             return this;
         }
 
+        /**
+         * Adds a stack at an index of the group.
+         *
+         * @param index the index, between 0 and {@link #size()}
+         * @param stack the stack to add
+         * @return this editor
+         * @throws IndexOutOfBoundsException if the index is out of range
+         */
         public @NonNull GroupEditor add(int index, @NonNull BedrockItemStack stack) {
             group.stacks.add(index, stack);
             return this;
         }
 
+        /**
+         * Removes the stacks of the group matching the matcher. The icon is not changed.
+         *
+         * @param matcher selects the stacks to remove
+         * @return the amount of stacks removed
+         */
         public int remove(@NonNull ItemMatcher matcher) {
             int before = group.stacks.size();
             group.stacks.removeIf(matcher::matches);
             return before - group.stacks.size();
         }
 
+        /**
+         * Sorts the stacks of the group.
+         *
+         * @param comparator the order
+         * @return this editor
+         */
         public @NonNull GroupEditor sort(@NonNull Comparator<BedrockItemStack> comparator) {
             group.stacks.sort(comparator);
             return this;
@@ -418,6 +554,9 @@ public final class CreativeEditor {
 
         /**
          * Moves this group to the end of a category.
+         *
+         * @param category the category
+         * @return this editor
          */
         public @NonNull GroupEditor moveTo(@NonNull CreativeCategory category) {
             detach();
@@ -428,19 +567,41 @@ public final class CreativeEditor {
         /**
          * Moves this group right after the node containing the first stack matching the anchor: after that stack if
          * it is loose, or after its group otherwise. Fails if the anchor is in this group itself.
+         *
+         * @param anchor selects the stack to place after
+         * @return true if the group was moved, false if nothing matches the anchor or it is in this group
          */
         public boolean placeAfter(@NonNull ItemMatcher anchor) {
             return placeBeside(anchor, 1);
         }
 
+        /**
+         * Moves this group right before the node containing the first stack matching the anchor: before that stack if
+         * it is loose, or before its group otherwise. Fails if the anchor is in this group itself.
+         *
+         * @param anchor selects the stack to place before
+         * @return true if the group was moved, false if nothing matches the anchor or it is in this group
+         */
         public boolean placeBefore(@NonNull ItemMatcher anchor) {
             return placeBeside(anchor, 0);
         }
 
+        /**
+         * Moves this group right after another group.
+         *
+         * @param other the name of the other group
+         * @return true if the group was moved, false if there is no such group or it is this group
+         */
         public boolean placeAfterGroup(@NonNull String other) {
             return placeBesideGroup(other, 1);
         }
 
+        /**
+         * Moves this group right before another group.
+         *
+         * @param other the name of the other group
+         * @return true if the group was moved, false if there is no such group or it is this group
+         */
         public boolean placeBeforeGroup(@NonNull String other) {
             return placeBesideGroup(other, 0);
         }

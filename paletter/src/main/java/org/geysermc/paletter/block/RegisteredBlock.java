@@ -43,6 +43,16 @@ public final class RegisteredBlock {
     private volatile @Nullable BedrockBlockType key;
     private volatile @Nullable Properties propertiesCache;
 
+    /**
+     * Internal: creates the block of a palette, done by the palette compiler.
+     *
+     * @param identifier the block identifier
+     * @param origin where the block comes from
+     * @param states the states, in palette order
+     * @param customBlock the custom block this is made from, or null for a vanilla block
+     * @param propertyData the block property data sent for the block, or null if it has none
+     * @param defaultStateNbt the {@code {name, states}} of the default state, or null to take the first state
+     */
     @Internal
     public RegisteredBlock(String identifier, Origin origin, List<RegisteredBlockState> states, @Nullable CustomBlock customBlock,
                     @Nullable NbtMap propertyData, @Nullable NbtMap defaultStateNbt) {
@@ -54,11 +64,18 @@ public final class RegisteredBlock {
         this.defaultStateNbt = defaultStateNbt;
     }
 
+    /**
+     * Internal: the block identifier.
+     *
+     * @return the identifier, e.g. {@code minecraft:stone}
+     */
     public @NonNull String identifier() {
         return identifier;
     }
 
     /**
+     * Internal: the identity of this block.
+     *
      * @return the key of this block: a vanilla type, or the type of its {@link CustomBlock}
      */
     public @NonNull BedrockBlockType key() {
@@ -71,6 +88,8 @@ public final class RegisteredBlock {
     }
 
     /**
+     * Internal: where this block comes from.
+     *
      * @return {@link Origin#VANILLA}, or for custom blocks the layer id passed as {@code source} when they were added
      */
     public @NonNull Origin origin() {
@@ -78,12 +97,19 @@ public final class RegisteredBlock {
     }
 
     /**
+     * Internal: the states of this block.
+     *
      * @return the states, in palette order
      */
     public @NonNull List<RegisteredBlockState> states() {
         return states;
     }
 
+    /**
+     * Internal: the default state of this block.
+     *
+     * @return the state matching the default state of the block data, else the first state
+     */
     public @NonNull RegisteredBlockState defaultState() {
         RegisteredBlockState result = defaultState;
         if (result == null) {
@@ -102,6 +128,8 @@ public final class RegisteredBlock {
     }
 
     /**
+     * Internal: the state properties of this block.
+     *
      * @return the properties that make up the states. Vanilla: derived from the states, values in palette order;
      * custom: the {@link CustomBlock#stateProperties()}
      */
@@ -139,6 +167,8 @@ public final class RegisteredBlock {
     }
 
     /**
+     * Internal: the type-level components of this block.
+     *
      * @return the components of the type: those of the {@link CustomBlock}, empty for vanilla blocks. See
      * {@link RegisteredBlock#components(RegisteredBlockState)} for what applies to one state
      */
@@ -146,11 +176,18 @@ public final class RegisteredBlock {
         return customBlock != null ? customBlock.components() : List.of();
     }
 
+    /**
+     * Internal: the custom block this was made from.
+     *
+     * @return the custom block, or null for a vanilla block
+     */
     public @Nullable CustomBlock customBlock() {
         return customBlock;
     }
 
     /**
+     * Internal: the properties of the block type.
+     *
      * @return the component and wire properties of this block, from its {@link #propertyData()} (named like the bundled
      * property store: {@code component:}, {@code wire:}); empty for blocks without property data
      * @since 1.0.0
@@ -164,6 +201,9 @@ public final class RegisteredBlock {
     }
 
     /**
+     * Internal: the components that apply to one state.
+     *
+     * @param state a state of this block
      * @return the components in effect for a state of this block: those of the block, plus those of the permutations of
      * its {@link CustomBlock} whose condition matches the state, replacing components of the same name. Empty for
      * vanilla blocks
@@ -184,6 +224,9 @@ public final class RegisteredBlock {
     }
 
     /**
+     * Internal: the properties that apply to one state.
+     *
+     * @param state a state of this block
      * @return the properties in effect for a state of this block: those of the block, with the components of the
      * permutations that apply to the state set on top
      */
@@ -202,6 +245,8 @@ public final class RegisteredBlock {
     }
 
     /**
+     * Internal: the raw block property data.
+     *
      * @return the block property data sent for this block in this palette (data driven vanilla blocks and custom
      * blocks), else null. A palette patched with more custom blocks has a {@code RegisteredBlock} of its own for every
      * custom block, because the numeric block ids inside the data change when blocks are added

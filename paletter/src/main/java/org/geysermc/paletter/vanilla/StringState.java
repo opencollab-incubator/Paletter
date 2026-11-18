@@ -22,10 +22,26 @@ public final class StringState extends BedrockState<String> {
         this.values = List.copyOf(values);
     }
 
+    /**
+     * Creates a string state with the given values.
+     *
+     * @param name the state name as in the block state NBT
+     * @param values the values the state can have; at least one
+     * @return a new state
+     * @throws IllegalArgumentException if there are no values
+     */
     public static @NonNull StringState of(@NonNull String name, @NonNull String @NonNull ... values) {
         return new StringState(name, List.of(values));
     }
 
+    /**
+     * Creates a string state with the given values.
+     *
+     * @param name the state name as in the block state NBT
+     * @param values the values the state can have; at least one
+     * @return a new state
+     * @throws IllegalArgumentException if there are no values
+     */
     public static @NonNull StringState of(@NonNull String name, @NonNull List<String> values) {
         return new StringState(name, values);
     }

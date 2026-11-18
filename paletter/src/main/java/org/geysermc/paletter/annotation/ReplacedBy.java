@@ -18,6 +18,8 @@ import java.lang.annotation.Target;
 @Target(ElementType.TYPE)
 public @interface ReplacedBy {
     /**
+     * The replacing components.
+     *
      * @return the replacing component types, in the order the source names them
      */
     Class<?>[] value();

@@ -21,6 +21,13 @@ public final class RegisteredBlockState implements BlockDefinition {
     private final NbtMap state;
     private final boolean custom;
 
+    /**
+     * Internal: creates the definition of a state, done by the palette compiler.
+     *
+     * @param runtimeId the runtime id, the hash of the state
+     * @param state the state as {@code {name, states}}
+     * @param custom whether the state belongs to a custom block added by a layer
+     */
     @Internal
     public RegisteredBlockState(int runtimeId, NbtMap state, boolean custom) {
         this.runtimeId = runtimeId;
@@ -29,6 +36,8 @@ public final class RegisteredBlockState implements BlockDefinition {
     }
 
     /**
+     * The runtime id of this state.
+     *
      * @return the runtime id: the hash of the state, see {@link BlockHashes#hash}
      */
     @Override
@@ -37,21 +46,35 @@ public final class RegisteredBlockState implements BlockDefinition {
     }
 
     /**
+     * The state as sent to the client.
+     *
      * @return the state as {@code {name, states}}
      */
     public @NonNull NbtMap getState() {
         return state;
     }
 
+    /**
+     * The block identifier of this state.
+     *
+     * @return the {@code name} of the state, e.g. {@code minecraft:stone}
+     */
     public @NonNull String identifier() {
         return state.getString("name");
     }
 
+    /**
+     * The state values of this state.
+     *
+     * @return the {@code states} compound of the state
+     */
     public @NonNull NbtMap states() {
         return state.getCompound("states");
     }
 
     /**
+     * Whether this is a custom state.
+     *
      * @return true if this state belongs to a custom block added by a layer
      */
     public boolean isCustom() {
