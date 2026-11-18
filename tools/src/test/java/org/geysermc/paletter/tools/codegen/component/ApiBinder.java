@@ -259,7 +259,7 @@ public final class ApiBinder {
         return p.getAsDouble() == Math.rint(p.getAsDouble()) ? "integer" : "number";
     }
 
-    /** Sets a field through the builder: the setter of that name (or of one of its union alternatives) that takes the value. */
+    /** Sets a field through the builder: the setter of that name that takes the value (a union field has one per form, and one for the union). */
     private static void set(Object builder, String java, JsonElement value) throws ReflectiveOperationException {
         List<Method> candidates = new ArrayList<>();
         for (Method m : builder.getClass().getMethods()) {
@@ -395,6 +395,20 @@ public final class ApiBinder {
                 out.put(e.getKey(), v == Object.class ? stateValue(entry) : convert(v, entry));
             }
             return out;
+        }
+        if (raw.isInterface() && raw.isSealed()) {
+            // A union: the first form that takes the JSON value
+            for (Class<?> form : raw.getPermittedSubclasses()) {
+                Type component = form.getRecordComponents()[0].getGenericType();
+                try {
+                    Object converted = convert(component, value);
+                    return form.getDeclaredConstructors()[0].newInstance(converted);
+                } catch (Unbindable | IllegalStateException | IllegalArgumentException | UnsupportedOperationException | ClassCastException
+                         | ReflectiveOperationException e) {
+                    // the next form
+                }
+            }
+            throw new Unbindable(raw.getSimpleName() + " has no form for " + value);
         }
         if (raw.isRecord()) {
             if (raw.getSimpleName().equals("Vec3")) {

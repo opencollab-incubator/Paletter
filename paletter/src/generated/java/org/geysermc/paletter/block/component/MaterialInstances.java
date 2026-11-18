@@ -4,6 +4,7 @@
 package org.geysermc.paletter.block.component;
 
 import java.util.Map;
+import java.util.Objects;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.geysermc.paletter.annotation.BedrockFormat;
@@ -18,66 +19,34 @@ import org.geysermc.paletter.internal.component.Check;
  * Compiled by the hand transform {@code Transforms.materialInstances}.
  *
  * @param all Add-on JSON {@code *}. Optional (null: not set).
- * @param allAlias The string form of {@code *} (alias); excludes {@link #all()}. Add-on JSON {@code *}.
  * @param down Add-on JSON {@code down}. Optional (null: not set).
- * @param downAlias The string form of {@code down} (alias); excludes {@link #down()}. Add-on JSON {@code down}.
  * @param east Add-on JSON {@code east}. Optional (null: not set).
- * @param eastAlias The string form of {@code east} (alias); excludes {@link #east()}. Add-on JSON {@code east}.
  * @param north Add-on JSON {@code north}. Optional (null: not set).
- * @param northAlias The string form of {@code north} (alias); excludes {@link #north()}. Add-on JSON {@code north}.
  * @param south Add-on JSON {@code south}. Optional (null: not set).
- * @param southAlias The string form of {@code south} (alias); excludes {@link #south()}. Add-on JSON {@code south}.
  * @param up Add-on JSON {@code up}. Optional (null: not set).
- * @param upAlias The string form of {@code up} (alias); excludes {@link #up()}. Add-on JSON {@code up}.
  * @param west Add-on JSON {@code west}. Optional (null: not set).
- * @param westAlias The string form of {@code west} (alias); excludes {@link #west()}. Add-on JSON {@code west}.
- * @param instances Instances with any other name, which geometry bones refer to (for example {@code "glass"}); the keys {@code
- *        *}, {@code up}, {@code down}, {@code north}, {@code south}, {@code east} and {@code west} have their own
- *        fields. Add-on JSON {@code *}. Default: <code>&#123;&#125;</code>.
- * @param aliases Aliases with any other name: the key is an instance name, the value the instance it points at. Add-on JSON
- *        {@code *}. Default: <code>&#123;&#125;</code>.
+ * @param instances Instances and aliases with any other name, which geometry bones refer to (for example {@code "glass"}); the
+ *        keys {@code *}, {@code up}, {@code down}, {@code north}, {@code south}, {@code east} and {@code west} have
+ *        their own fields. Add-on JSON {@code *}. Default: <code>&#123;&#125;</code>.
  * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/blockreference/examples/blockcomponents/minecraftblock_material_instances?view=minecraft-bedrock-stable">Microsoft Learn: minecraft:material_instances</a>
  * @since 1.0.0
  */
 @BedrockFormat("1.19.40")
-public record MaterialInstances(MaterialInstances. @Nullable Instance all,
-        @Nullable String allAlias, MaterialInstances. @Nullable Instance down,
-        @Nullable String downAlias, MaterialInstances. @Nullable Instance east,
-        @Nullable String eastAlias, MaterialInstances. @Nullable Instance north,
-        @Nullable String northAlias, MaterialInstances. @Nullable Instance south,
-        @Nullable String southAlias, MaterialInstances. @Nullable Instance up,
-        @Nullable String upAlias, MaterialInstances. @Nullable Instance west,
-        @Nullable String westAlias, @NonNull Map<String, MaterialInstances.Instance> instances,
-        @NonNull Map<String, String> aliases) implements BlockComponent {
+public record MaterialInstances(MaterialInstances. @Nullable InstanceOrAlias all,
+        MaterialInstances. @Nullable InstanceOrAlias down,
+        MaterialInstances. @Nullable InstanceOrAlias east,
+        MaterialInstances. @Nullable InstanceOrAlias north,
+        MaterialInstances. @Nullable InstanceOrAlias south,
+        MaterialInstances. @Nullable InstanceOrAlias up,
+        MaterialInstances. @Nullable InstanceOrAlias west,
+        @NonNull Map<String, MaterialInstances.InstanceOrAlias> instances) implements BlockComponent {
     /**
      * The component name in add-on JSON.
      */
     public static final String NAME = "minecraft:material_instances";
 
     public MaterialInstances {
-        if (all != null && allAlias != null) {
-            throw new IllegalArgumentException("MaterialInstances sets both all and allAlias");
-        }
-        if (down != null && downAlias != null) {
-            throw new IllegalArgumentException("MaterialInstances sets both down and downAlias");
-        }
-        if (east != null && eastAlias != null) {
-            throw new IllegalArgumentException("MaterialInstances sets both east and eastAlias");
-        }
-        if (north != null && northAlias != null) {
-            throw new IllegalArgumentException("MaterialInstances sets both north and northAlias");
-        }
-        if (south != null && southAlias != null) {
-            throw new IllegalArgumentException("MaterialInstances sets both south and southAlias");
-        }
-        if (up != null && upAlias != null) {
-            throw new IllegalArgumentException("MaterialInstances sets both up and upAlias");
-        }
-        if (west != null && westAlias != null) {
-            throw new IllegalArgumentException("MaterialInstances sets both west and westAlias");
-        }
         instances = Check.copy(instances, "MaterialInstances.instances");
-        aliases = Check.copy(aliases, "MaterialInstances.aliases");
     }
 
     @Override
@@ -98,21 +67,13 @@ public record MaterialInstances(MaterialInstances. @Nullable Instance all,
     public @NonNull Builder toBuilder() {
         Builder builder = new Builder();
         builder.all = all;
-        builder.allAlias = allAlias;
         builder.down = down;
-        builder.downAlias = downAlias;
         builder.east = east;
-        builder.eastAlias = eastAlias;
         builder.north = north;
-        builder.northAlias = northAlias;
         builder.south = south;
-        builder.southAlias = southAlias;
         builder.up = up;
-        builder.upAlias = upAlias;
         builder.west = west;
-        builder.westAlias = westAlias;
         builder.instances = instances;
-        builder.aliases = aliases;
         return builder;
     }
 
@@ -120,208 +81,184 @@ public record MaterialInstances(MaterialInstances. @Nullable Instance all,
      * Builds {@link MaterialInstances}: defaults applied, required fields and ranges checked by {@link #build()}.
      */
     public static final class Builder {
-        private @Nullable Instance all;
+        private @Nullable InstanceOrAlias all;
 
-        private @Nullable String allAlias;
+        private @Nullable InstanceOrAlias down;
 
-        private @Nullable Instance down;
+        private @Nullable InstanceOrAlias east;
 
-        private @Nullable String downAlias;
+        private @Nullable InstanceOrAlias north;
 
-        private @Nullable Instance east;
+        private @Nullable InstanceOrAlias south;
 
-        private @Nullable String eastAlias;
+        private @Nullable InstanceOrAlias up;
 
-        private @Nullable Instance north;
+        private @Nullable InstanceOrAlias west;
 
-        private @Nullable String northAlias;
-
-        private @Nullable Instance south;
-
-        private @Nullable String southAlias;
-
-        private @Nullable Instance up;
-
-        private @Nullable String upAlias;
-
-        private @Nullable Instance west;
-
-        private @Nullable String westAlias;
-
-        private @Nullable Map<String, Instance> instances = Map.of();
-
-        private @Nullable Map<String, String> aliases = Map.of();
+        private @Nullable Map<String, InstanceOrAlias> instances = Map.of();
 
         private Builder() {
         }
 
         /**
-         * Sets {@code *} (clears the other form).
+         * Sets {@code *}.
          */
-        public @NonNull Builder all(@Nullable Instance all) {
+        public @NonNull Builder all(@Nullable InstanceOrAlias all) {
             this.all = all;
-            if (all != null) {
-                this.allAlias = null;
-            }
             return this;
         }
 
         /**
-         * Sets {@code *} (clears the other form).
+         * Sets {@code *} to its {@link InstanceOrAlias.Alias} form: a string.
          */
-        public @NonNull Builder allAlias(@Nullable String allAlias) {
-            this.allAlias = allAlias;
-            if (allAlias != null) {
-                this.all = null;
-            }
-            return this;
+        public @NonNull Builder all(@NonNull String all) {
+            return all(InstanceOrAlias.of(all));
         }
 
         /**
-         * Sets {@code down} (clears the other form).
+         * Sets {@code *} to its {@link InstanceOrAlias.Define} form: an object.
          */
-        public @NonNull Builder down(@Nullable Instance down) {
+        public @NonNull Builder all(@NonNull Instance all) {
+            return all(InstanceOrAlias.of(all));
+        }
+
+        /**
+         * Sets {@code down}.
+         */
+        public @NonNull Builder down(@Nullable InstanceOrAlias down) {
             this.down = down;
-            if (down != null) {
-                this.downAlias = null;
-            }
             return this;
         }
 
         /**
-         * Sets {@code down} (clears the other form).
+         * Sets {@code down} to its {@link InstanceOrAlias.Alias} form: a string.
          */
-        public @NonNull Builder downAlias(@Nullable String downAlias) {
-            this.downAlias = downAlias;
-            if (downAlias != null) {
-                this.down = null;
-            }
-            return this;
+        public @NonNull Builder down(@NonNull String down) {
+            return down(InstanceOrAlias.of(down));
         }
 
         /**
-         * Sets {@code east} (clears the other form).
+         * Sets {@code down} to its {@link InstanceOrAlias.Define} form: an object.
          */
-        public @NonNull Builder east(@Nullable Instance east) {
+        public @NonNull Builder down(@NonNull Instance down) {
+            return down(InstanceOrAlias.of(down));
+        }
+
+        /**
+         * Sets {@code east}.
+         */
+        public @NonNull Builder east(@Nullable InstanceOrAlias east) {
             this.east = east;
-            if (east != null) {
-                this.eastAlias = null;
-            }
             return this;
         }
 
         /**
-         * Sets {@code east} (clears the other form).
+         * Sets {@code east} to its {@link InstanceOrAlias.Alias} form: a string.
          */
-        public @NonNull Builder eastAlias(@Nullable String eastAlias) {
-            this.eastAlias = eastAlias;
-            if (eastAlias != null) {
-                this.east = null;
-            }
-            return this;
+        public @NonNull Builder east(@NonNull String east) {
+            return east(InstanceOrAlias.of(east));
         }
 
         /**
-         * Sets {@code north} (clears the other form).
+         * Sets {@code east} to its {@link InstanceOrAlias.Define} form: an object.
          */
-        public @NonNull Builder north(@Nullable Instance north) {
+        public @NonNull Builder east(@NonNull Instance east) {
+            return east(InstanceOrAlias.of(east));
+        }
+
+        /**
+         * Sets {@code north}.
+         */
+        public @NonNull Builder north(@Nullable InstanceOrAlias north) {
             this.north = north;
-            if (north != null) {
-                this.northAlias = null;
-            }
             return this;
         }
 
         /**
-         * Sets {@code north} (clears the other form).
+         * Sets {@code north} to its {@link InstanceOrAlias.Alias} form: a string.
          */
-        public @NonNull Builder northAlias(@Nullable String northAlias) {
-            this.northAlias = northAlias;
-            if (northAlias != null) {
-                this.north = null;
-            }
-            return this;
+        public @NonNull Builder north(@NonNull String north) {
+            return north(InstanceOrAlias.of(north));
         }
 
         /**
-         * Sets {@code south} (clears the other form).
+         * Sets {@code north} to its {@link InstanceOrAlias.Define} form: an object.
          */
-        public @NonNull Builder south(@Nullable Instance south) {
+        public @NonNull Builder north(@NonNull Instance north) {
+            return north(InstanceOrAlias.of(north));
+        }
+
+        /**
+         * Sets {@code south}.
+         */
+        public @NonNull Builder south(@Nullable InstanceOrAlias south) {
             this.south = south;
-            if (south != null) {
-                this.southAlias = null;
-            }
             return this;
         }
 
         /**
-         * Sets {@code south} (clears the other form).
+         * Sets {@code south} to its {@link InstanceOrAlias.Alias} form: a string.
          */
-        public @NonNull Builder southAlias(@Nullable String southAlias) {
-            this.southAlias = southAlias;
-            if (southAlias != null) {
-                this.south = null;
-            }
-            return this;
+        public @NonNull Builder south(@NonNull String south) {
+            return south(InstanceOrAlias.of(south));
         }
 
         /**
-         * Sets {@code up} (clears the other form).
+         * Sets {@code south} to its {@link InstanceOrAlias.Define} form: an object.
          */
-        public @NonNull Builder up(@Nullable Instance up) {
+        public @NonNull Builder south(@NonNull Instance south) {
+            return south(InstanceOrAlias.of(south));
+        }
+
+        /**
+         * Sets {@code up}.
+         */
+        public @NonNull Builder up(@Nullable InstanceOrAlias up) {
             this.up = up;
-            if (up != null) {
-                this.upAlias = null;
-            }
             return this;
         }
 
         /**
-         * Sets {@code up} (clears the other form).
+         * Sets {@code up} to its {@link InstanceOrAlias.Alias} form: a string.
          */
-        public @NonNull Builder upAlias(@Nullable String upAlias) {
-            this.upAlias = upAlias;
-            if (upAlias != null) {
-                this.up = null;
-            }
-            return this;
+        public @NonNull Builder up(@NonNull String up) {
+            return up(InstanceOrAlias.of(up));
         }
 
         /**
-         * Sets {@code west} (clears the other form).
+         * Sets {@code up} to its {@link InstanceOrAlias.Define} form: an object.
          */
-        public @NonNull Builder west(@Nullable Instance west) {
+        public @NonNull Builder up(@NonNull Instance up) {
+            return up(InstanceOrAlias.of(up));
+        }
+
+        /**
+         * Sets {@code west}.
+         */
+        public @NonNull Builder west(@Nullable InstanceOrAlias west) {
             this.west = west;
-            if (west != null) {
-                this.westAlias = null;
-            }
             return this;
         }
 
         /**
-         * Sets {@code west} (clears the other form).
+         * Sets {@code west} to its {@link InstanceOrAlias.Alias} form: a string.
          */
-        public @NonNull Builder westAlias(@Nullable String westAlias) {
-            this.westAlias = westAlias;
-            if (westAlias != null) {
-                this.west = null;
-            }
-            return this;
+        public @NonNull Builder west(@NonNull String west) {
+            return west(InstanceOrAlias.of(west));
+        }
+
+        /**
+         * Sets {@code west} to its {@link InstanceOrAlias.Define} form: an object.
+         */
+        public @NonNull Builder west(@NonNull Instance west) {
+            return west(InstanceOrAlias.of(west));
         }
 
         /**
          * Sets {@code *}.
          */
-        public @NonNull Builder instances(@NonNull Map<String, Instance> instances) {
+        public @NonNull Builder instances(@NonNull Map<String, InstanceOrAlias> instances) {
             this.instances = instances;
-            return this;
-        }
-
-        /**
-         * Sets {@code *}.
-         */
-        public @NonNull Builder aliases(@NonNull Map<String, String> aliases) {
-            this.aliases = aliases;
             return this;
         }
 
@@ -330,7 +267,7 @@ public record MaterialInstances(MaterialInstances. @Nullable Instance all,
          * @throws IllegalArgumentException if a value is out of range
          */
         public @NonNull MaterialInstances build() {
-            return new MaterialInstances(all, allAlias, down, downAlias, east, eastAlias, north, northAlias, south, southAlias, up, upAlias, west, westAlias, instances, aliases);
+            return new MaterialInstances(all, down, east, north, south, up, west, instances);
         }
     }
 
@@ -541,6 +478,55 @@ public record MaterialInstances(MaterialInstances. @Nullable Instance all,
                 }
             }
             throw new IllegalArgumentException("Not a RenderMethod: " + value);
+        }
+    }
+
+    /**
+     * The value of an add-on JSON field that takes one of several forms:
+     * <ul>
+     *     <li>{@link Alias}: a string</li>
+     *     <li>{@link Define}: an object</li>
+     * </ul>
+     * <p>
+     * Switch over it without a default: the records below are all its forms.
+     * <p>
+     * Used by: {@code block:minecraft:material_instances:*}, {@code block:minecraft:material_instances:down}, {@code block:minecraft:material_instances:east}, {@code block:minecraft:material_instances:north}, {@code block:minecraft:material_instances:south}, {@code block:minecraft:material_instances:up}, {@code block:minecraft:material_instances:west}.
+     */
+    public sealed interface InstanceOrAlias permits InstanceOrAlias.Alias, InstanceOrAlias.Define {
+        /**
+         * @return the string form
+         */
+        static @NonNull InstanceOrAlias of(@NonNull String value) {
+            return new Alias(value);
+        }
+
+        /**
+         * @return the object form
+         */
+        static @NonNull InstanceOrAlias of(@NonNull Instance value) {
+            return new Define(value);
+        }
+
+        /**
+         * The string form.
+         *
+         * @param value the string
+         */
+        record Alias(@NonNull String value) implements InstanceOrAlias {
+            public Alias {
+                Objects.requireNonNull(value, "InstanceOrAlias.Alias.value");
+            }
+        }
+
+        /**
+         * The object form.
+         *
+         * @param value the object
+         */
+        record Define(@NonNull Instance value) implements InstanceOrAlias {
+            public Define {
+                Objects.requireNonNull(value, "InstanceOrAlias.Define.value");
+            }
         }
     }
 }

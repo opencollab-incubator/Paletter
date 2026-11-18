@@ -101,7 +101,7 @@ public final class ComponentIndex {
         ITEM.put("test:quiet", Quiet.class);
         keys(Quiet.class);
         ITEM.put("test:widget", Widget.class);
-        keys(Widget.class, "count", "count", "label", "label", "mode", "mode", "speed", "speed", "nested", "nested", "tags", "tags", "entries", "entries", "colors", "colors", "shape", "shape", "offset", "offset", "rarity", "rarity", "stripes", "stripes", "fuel", "fuel", "reach", "reach");
+        keys(Widget.class, "count", "count", "label", "label", "mode", "mode", "speed", "speed", "nested", "nested", "tags", "tags", "entries", "entries", "colors", "colors", "shape", "shape", "offset", "offset", "rarity", "rarity", "stripes", "stripes", "outline", "outline", "fuel", "fuel", "reach", "reach");
         keys(Widget.NestedThing.class, "x", "x", "flag", "flag");
         keys(Widget.Entry.class, "name", "name");
         keys(Widget.Shape.class, "id", "id", "size", "size");

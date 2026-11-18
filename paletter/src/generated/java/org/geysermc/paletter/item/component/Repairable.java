@@ -96,23 +96,9 @@ public record Repairable(
      * used for the repair and an optional <code>repair_amount</code> for how much durability is gained.
      *
      * @param items Add-on JSON {@code items}. Optional (null: not set).
-     * @param itemsTags The string form of {@code items} (tags); excludes {@link #items()}. Add-on JSON {@code items}.
      * @param repairAmount Add-on JSON {@code repair_amount}. Optional (null: not set).
-     * @param repairAmountExpression The string form of {@code repair_amount} (expression); excludes {@link #repairAmount()}. Add-on JSON {@code
-     *        repair_amount}.
      */
-    public record RepairItems(@Nullable List<String> items, @Nullable String itemsTags,
-            @Nullable Float repairAmount, @Nullable String repairAmountExpression) {
-        public RepairItems {
-            items = items == null ? null : List.copyOf(items);
-            if (items != null && itemsTags != null) {
-                throw new IllegalArgumentException("Repairable.RepairItems sets both items and itemsTags");
-            }
-            if (repairAmount != null && repairAmountExpression != null) {
-                throw new IllegalArgumentException("Repairable.RepairItems sets both repairAmount and repairAmountExpression");
-            }
-        }
-
+    public record RepairItems(@Nullable ItemsOrTags items, @Nullable RepairAmount repairAmount) {
         /**
          * @return a builder with the defaults applied
          */
@@ -126,9 +112,7 @@ public record Repairable(
         public @NonNull Builder toBuilder() {
             Builder builder = new Builder();
             builder.items = items;
-            builder.itemsTags = itemsTags;
             builder.repairAmount = repairAmount;
-            builder.repairAmountExpression = repairAmountExpression;
             return builder;
         }
 
@@ -136,30 +120,30 @@ public record Repairable(
          * Builds {@link RepairItems}: defaults applied, required fields and ranges checked by {@link #build()}.
          */
         public static final class Builder {
-            private @Nullable List<String> items;
+            private @Nullable ItemsOrTags items;
 
-            private @Nullable String itemsTags;
-
-            private @Nullable Float repairAmount;
-
-            private @Nullable String repairAmountExpression;
+            private @Nullable RepairAmount repairAmount;
 
             private Builder() {
             }
 
             /**
-             * Sets {@code items} (clears the other form).
+             * Sets {@code items}.
              */
-            public @NonNull Builder items(@Nullable List<String> items) {
+            public @NonNull Builder items(@Nullable ItemsOrTags items) {
                 this.items = items;
-                if (items != null) {
-                    this.itemsTags = null;
-                }
                 return this;
             }
 
             /**
-             * Sets {@code items}.
+             * Sets {@code items} to its {@link ItemsOrTags.Items} form: a list of strings.
+             */
+            public @NonNull Builder items(@NonNull List<String> items) {
+                return items(ItemsOrTags.of(items));
+            }
+
+            /**
+             * Sets {@code items} to its {@link ItemsOrTags.Items} form: a list of strings.
              */
             public @NonNull Builder items(@NonNull String... items) {
                 return items(List.of(items));
@@ -177,37 +161,25 @@ public record Repairable(
             }
 
             /**
-             * Sets {@code items} (clears the other form).
+             * Sets {@code repair_amount}.
              */
-            public @NonNull Builder itemsTags(@Nullable String itemsTags) {
-                this.itemsTags = itemsTags;
-                if (itemsTags != null) {
-                    this.items = null;
-                }
-                return this;
-            }
-
-            /**
-             * Sets {@code repair_amount} (clears the other form).
-             */
-            public @NonNull Builder repairAmount(@Nullable Float repairAmount) {
+            public @NonNull Builder repairAmount(@Nullable RepairAmount repairAmount) {
                 this.repairAmount = repairAmount;
-                if (repairAmount != null) {
-                    this.repairAmountExpression = null;
-                }
                 return this;
             }
 
             /**
-             * Sets {@code repair_amount} (clears the other form).
+             * Sets {@code repair_amount} to its {@link RepairAmount.Expression} form: a string.
              */
-            public @NonNull Builder repairAmountExpression(
-                    @Nullable String repairAmountExpression) {
-                this.repairAmountExpression = repairAmountExpression;
-                if (repairAmountExpression != null) {
-                    this.repairAmount = null;
-                }
-                return this;
+            public @NonNull Builder repairAmount(@NonNull String repairAmount) {
+                return repairAmount(RepairAmount.of(repairAmount));
+            }
+
+            /**
+             * Sets {@code repair_amount} to its {@link RepairAmount.Fixed} form: a number.
+             */
+            public @NonNull Builder repairAmount(float repairAmount) {
+                return repairAmount(RepairAmount.of(repairAmount));
             }
 
             /**
@@ -215,7 +187,7 @@ public record Repairable(
              * @throws IllegalArgumentException if a value is out of range
              */
             public @NonNull RepairItems build() {
-                return new RepairItems(items, itemsTags, repairAmount, repairAmountExpression);
+                return new RepairItems(items, repairAmount);
             }
         }
     }

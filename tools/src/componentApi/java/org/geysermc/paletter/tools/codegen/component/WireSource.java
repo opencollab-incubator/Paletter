@@ -390,7 +390,7 @@ final class WireSource {
                 for (Rule r : rules(f)) {
                     if (r.writesValue()) {
                         owned.add(strip(r.wire));
-                        ownerOf.putIfAbsent(strip(r.wire), f.alternativeOf != null ? f.alternativeOf : f);
+                        ownerOf.putIfAbsent(strip(r.wire), f);
                     }
                 }
                 if (child != null && f.type instanceof ListOf) {
@@ -448,6 +448,9 @@ final class WireSource {
         Set<String> transformsCalled = new LinkedHashSet<>();
         for (Field f : fieldsWithAlternatives(o)) {
             if (f.transform == null) {
+                if (f.type instanceof ApiModel.UnionRef) {
+                    throw new GenerationException(c.id + " " + f.path + " takes several forms; name a hand transform for it in HandTransforms");
+                }
                 field(f, value, node, prefix);
             }
         }

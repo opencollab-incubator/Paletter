@@ -569,6 +569,17 @@ Rules the generator follows:
   rejection message, or a `fixtures.json` `replacedBy` entry.
 - Every component in the docs is generated, including ones BDS never sends. Components that cannot be generated are
   listed with the reason in the Javadoc of the sealed interfaces.
+- A field that takes several JSON forms (`uv_lock`: boolean or list of strings; `default_color`: channels or hex;
+  `repair_amount`: number or Molang; `repair_items[].items`: list or tags; a face of `material_instances`: instance or
+  alias) is one value of a sealed type, written from `api.json` `unions`: `name` of the type and `variants` (JSON type to
+  the record name; `{"boolean": "Flag", "array<string>": "Bones"}`). Fields with the same type name share the type, so
+  the three geometries have one `UvLock`; two shapes under one name fail the generation. The type is a file of its
+  own in the package of its components, or nested in the component when a form is one of its types
+  (`MaterialInstances.InstanceOrAlias`). It has one record per form (`value()`), an `of` factory per form, and its
+  builder setter has an overload per form (a lone `String` only where no other form is a list of strings, so that
+  `items("a")` never means tags). The form is told by the type of the value, never a runtime check: a hand transform
+  switches over the type without a `default`, so a new form fails the compilation. A union field still needs a hand
+  transform for its wire encoding (the generator fails otherwise) until the type-dispatched rule kind exists.
 - Generation fails on two mappings for one protocol, name collisions, two fields writing one wire leaf, or an
   ambiguous union.
 

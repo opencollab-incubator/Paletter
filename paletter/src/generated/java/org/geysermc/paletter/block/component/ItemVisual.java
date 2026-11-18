@@ -220,20 +220,15 @@ public record ItemVisual(ItemVisual. @NonNull Geometry geometry,
      *        for all/some bones in the geometry, regardless of how the block is rotated using "minecraft:transformation"
      *        component. For performance reasons it's recommended to use the Boolean. Add-on JSON {@code uv_lock}. Default:
      *        <code>false</code>. Compiled by the hand transform {@code Transforms.itemVisualUvLock}.
-     * @param uvLockBones The list of strings form of {@code uv_lock} (bones); excludes {@link #uvLock()}. Add-on JSON {@code uv_lock}.
-     *        Compiled by the hand transform {@code Transforms.itemVisualUvLock}.
      */
     public record Geometry(@NonNull Map<String, String> boneVisibility, @Nullable String culling,
             @Nullable String cullingLayer, @Nullable String cullingShape,
             @Nullable String identifier, @Nullable NWayVisualRotation nWayVisualRotation,
-            @Nullable Boolean uvLock, @Nullable List<String> uvLockBones) {
+            @NonNull UvLock uvLock) {
         public Geometry {
             boneVisibility = Check.copy(boneVisibility, "ItemVisual.Geometry.boneVisibility");
             Check.conflict("ItemVisual.Geometry", "boneVisibility", !boneVisibility.isEmpty(), "identifier", identifier, "minecraft:geometry.full_block");
-            if (uvLock != null && uvLockBones != null) {
-                throw new IllegalArgumentException("ItemVisual.Geometry sets both uvLock and uvLockBones");
-            }
-            uvLockBones = uvLockBones == null ? null : List.copyOf(uvLockBones);
+            Objects.requireNonNull(uvLock, "ItemVisual.Geometry.uvLock");
         }
 
         /**
@@ -264,7 +259,6 @@ public record ItemVisual(ItemVisual. @NonNull Geometry geometry,
             builder.identifier = identifier;
             builder.nWayVisualRotation = nWayVisualRotation;
             builder.uvLock = uvLock;
-            builder.uvLockBones = uvLockBones;
             return builder;
         }
 
@@ -284,9 +278,7 @@ public record ItemVisual(ItemVisual. @NonNull Geometry geometry,
 
             private @Nullable NWayVisualRotation nWayVisualRotation;
 
-            private @Nullable Boolean uvLock = false;
-
-            private @Nullable List<String> uvLockBones;
+            private @Nullable UvLock uvLock = UvLock.of(false);
 
             private Builder() {
             }
@@ -341,32 +333,32 @@ public record ItemVisual(ItemVisual. @NonNull Geometry geometry,
             }
 
             /**
-             * Sets {@code uv_lock} (clears the other form).
-             */
-            public @NonNull Builder uvLock(@Nullable Boolean uvLock) {
-                this.uvLock = uvLock;
-                if (uvLock != null) {
-                    this.uvLockBones = null;
-                }
-                return this;
-            }
-
-            /**
-             * Sets {@code uv_lock} (clears the other form).
-             */
-            public @NonNull Builder uvLockBones(@Nullable List<String> uvLockBones) {
-                this.uvLockBones = uvLockBones;
-                if (uvLockBones != null) {
-                    this.uvLock = null;
-                }
-                return this;
-            }
-
-            /**
              * Sets {@code uv_lock}.
              */
-            public @NonNull Builder uvLockBones(@NonNull String... uvLockBones) {
-                return uvLockBones(List.of(uvLockBones));
+            public @NonNull Builder uvLock(@NonNull UvLock uvLock) {
+                this.uvLock = uvLock;
+                return this;
+            }
+
+            /**
+             * Sets {@code uv_lock} to its {@link UvLock.Bones} form: a list of strings.
+             */
+            public @NonNull Builder uvLock(@NonNull List<String> uvLock) {
+                return uvLock(UvLock.of(uvLock));
+            }
+
+            /**
+             * Sets {@code uv_lock} to its {@link UvLock.Bones} form: a list of strings.
+             */
+            public @NonNull Builder uvLock(@NonNull String... uvLock) {
+                return uvLock(List.of(uvLock));
+            }
+
+            /**
+             * Sets {@code uv_lock} to its {@link UvLock.Flag} form: a boolean.
+             */
+            public @NonNull Builder uvLock(boolean uvLock) {
+                return uvLock(UvLock.of(uvLock));
             }
 
             /**
@@ -374,7 +366,7 @@ public record ItemVisual(ItemVisual. @NonNull Geometry geometry,
              * @throws IllegalArgumentException if a value is out of range
              */
             public @NonNull Geometry build() {
-                return new Geometry(boneVisibility, culling, cullingLayer, cullingShape, identifier, nWayVisualRotation, uvLock, uvLockBones);
+                return new Geometry(boneVisibility, culling, cullingLayer, cullingShape, identifier, nWayVisualRotation, uvLock);
             }
         }
     }

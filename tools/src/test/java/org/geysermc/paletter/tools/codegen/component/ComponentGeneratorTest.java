@@ -77,6 +77,8 @@ class ComponentGeneratorTest {
                  {"path": "rarity", "types": [{"type": "string"}], "required": false, "enumValues": ["common", "rare"], "examples": [], "doc": "How rare."},
                  {"path": "stripes", "types": [{"type": "boolean"}, {"type": "array", "items": {"type": "string"}}], "required": false,
                   "enumValues": [], "examples": [], "doc": "Stripes on or off, or the striped parts."},
+                 {"path": "outline", "types": [{"type": "boolean"}, {"type": "array", "items": {"type": "string"}}], "required": false,
+                  "enumValues": [], "examples": [], "doc": "The outline on or off, or the outlined parts."},
                  {"path": "fuel", "types": [{"type": "string"}], "required": false, "enumValues": [], "examples": [], "doc": "The item it burns."},
                  {"path": "reach", "types": [{"type": "number"}], "defaultValue": 3, "required": true, "enumValues": [], "examples": [],
                   "doc": "The docs require it; BDS takes it omitted."}
@@ -148,6 +150,7 @@ class ComponentGeneratorTest {
                   "rarity": {"status": "inferred", "rules": [{"kind": "table", "table": {"common": "common", "odd": "common", "rare": "rare"}, "nbt": "string",
                              "tags": [], "wire": "test:widget.rarity"}], "whenAbsent": {"test:widget.rarity": "common (string)"}},
                   "stripes": {"status": "hand-rule"},
+                  "outline": {"status": "hand-rule"},
                   "fuel": {"status": "inferred", "rules": [{"kind": "identity", "nbt": "string", "tags": [], "wire": "test:widget.fuel"}]},
                   "reach": {"status": "inferred", "rules": [{"kind": "identity", "nbt": "float", "tags": [], "wire": "test:widget.reach"}],
                             "whenAbsent": {"test:widget.reach": "3.0 (float)"}},
@@ -178,15 +181,19 @@ class ComponentGeneratorTest {
             }}""");
     }
 
+    /** One union shape for two fields: they share the sealed type. */
+    private static final String STRIPES = "{\"name\": \"Stripes\", \"variants\": {\"boolean\": \"On\", \"array<string>\": \"Names\"}}";
+
     static Inputs inputs() {
         return new Inputs(components(), json("{\"errata\": [], \"replacedBy\": {\"item:test:ancient\": {\"by\": [\"item:test:widget\"], \"evidence\": \"hand evidence\"}}}"),
             json("{\"item:test:widget\": {\"count\": [\"range 1 64\"]}}"), mappings(),
-            Map.of("item:test:widget:colors", "testMap", "item:test:widget:stripes", "testMap", "block:test:slab:[]", "testMap"),
+            Map.of("item:test:widget:colors", "testMap", "item:test:widget:stripes", "testMap", "item:test:widget:outline", "testMap",
+                "block:test:slab:[]", "testMap"),
             json("{\"since\": \"1.0.0\", \"keyedExtras\": {\"item:test:widget\": "
                 + "{\"from\": \"nested\", \"field\": \"moreNested\", \"doc\": \"Nested things under any other key.\"}}, "
                 + "\"openEnums\": [\"item:test:widget:rarity\"], \"optional\": [\"item:test:widget:reach\"], "
                 + "\"descriptors\": {\"item:test:widget:fuel\": \"item\"}, "
-                + "\"unions\": {\"item:test:widget:stripes\": {\"use\": \"boolean\", \"alternative\": {\"array<string>\": \"names\"}}}, "
+                + "\"unions\": {\"item:test:widget:stripes\": " + STRIPES + ", \"item:test:widget:outline\": " + STRIPES + "}, "
                 + "\"rootLists\": {\"block:test:slab\": \"parts\"}, "
                 + "\"forms\": {\"block:test:slab\": {\"object\": {\"listElementOf\": \"parts\"}}}}"), "9.0.0");
     }
@@ -472,14 +479,70 @@ void theModelIsWhatTheGoldenSourcesShow() {
     }
 
     @Test
-    void aUnionAlternativeMayBeAListOfStrings() {
-        String widget = ComponentGenerator.generate(inputs()).get("org/geysermc/paletter/item/component/Widget.java");
-        assertTrue(widget.contains("@Nullable List<String> stripesNames"), widget);
-        assertTrue(widget.contains("public @NonNull Builder stripesNames(@NonNull String... stripesNames)"), widget);
-        assertTrue(widget.contains("Widget sets both stripes and stripesNames"), widget);
+    void aFieldWithSeveralFormsIsASealedTypeSharedByFieldsOfTheSameShape() {
+        Map<String, String> files = ComponentGenerator.generate(inputs());
+        String stripes = files.get("org/geysermc/paletter/item/component/Stripes.java");
+        assertTrue(stripes.contains("public sealed interface Stripes permits Stripes.Names, Stripes.On"), stripes);
+        assertTrue(stripes.contains("static @NonNull Stripes of(boolean value)"), stripes);
+        assertTrue(stripes.contains("static @NonNull Stripes of(@NonNull List<String> value)"), stripes);
+        assertTrue(stripes.contains("record On(boolean value) implements Stripes"), stripes);
+        assertTrue(stripes.contains("record Names(@NonNull List<String> value) implements Stripes"), stripes);
+        assertTrue(stripes.contains("value = List.copyOf(Objects.requireNonNull(value, \"Stripes.Names.value\"))"), stripes);
+        assertTrue(stripes.contains("{@code item:test:widget:outline}, {@code item:test:widget:stripes}"), "both users are listed: " + stripes);
+        String widget = files.get("org/geysermc/paletter/item/component/Widget.java");
+        assertTrue(widget.contains("@Nullable Stripes stripes"), widget);
+        assertTrue(widget.contains("@Nullable Stripes outline"), widget);
+        assertTrue(!widget.contains("stripesNames"), widget);
+        // Each form has its builder overloads, a list also as varargs
+        assertTrue(widget.contains("public @NonNull Builder stripes(boolean stripes)"), widget);
+        assertTrue(widget.contains("public @NonNull Builder stripes(@NonNull List<String> stripes)"), widget);
+        assertTrue(widget.contains("public @NonNull Builder stripes(@NonNull String... stripes)"), widget);
+        assertEquals(1, files.keySet().stream().filter(f -> f.endsWith("/Stripes.java")).count());
     }
 
     @Test
+    void aLoneStringGetsNoOverloadNextToAListOfStrings() {
+        Inputs in = inputs();
+        in.api().getAsJsonObject("unions").add("item:test:widget:stripes", json("{\"name\": \"Stripes\", \"variants\": "
+            + "{\"array<string>\": \"Names\", \"string\": \"Pattern\"}}"));
+        in.api().getAsJsonObject("unions").add("item:test:widget:outline", in.api().getAsJsonObject("unions").get("item:test:widget:stripes"));
+        in.components().getAsJsonArray("components").forEach(c -> c.getAsJsonObject().getAsJsonArray("fields").forEach(f -> {
+            if (f.getAsJsonObject().get("path").getAsString().matches("stripes|outline")) {
+                f.getAsJsonObject().add("types", json("{\"types\": [{\"type\": \"array\", \"items\": {\"type\": \"string\"}}, {\"type\": \"string\"}]}").get("types"));
+            }
+        }));
+        Map<String, String> files = ComponentGenerator.generate(in);
+        String widget = files.get("org/geysermc/paletter/item/component/Widget.java");
+        assertTrue(widget.contains("public @NonNull Builder stripes(@NonNull String... stripes)"), widget);
+        assertFalse(widget.contains("Builder stripes(@NonNull String stripes)"), "stripes(\"a\") would read as one list element: " + widget);
+        assertTrue(files.get("org/geysermc/paletter/item/component/Stripes.java").contains("static @NonNull Stripes of(@NonNull String value)"));
+    }
+
+    @Test
+    void oneUnionNameCannotHaveTwoShapes() {
+        Inputs in = inputs();
+        in.api().getAsJsonObject("unions").add("item:test:widget:outline", json("{\"name\": \"Stripes\", \"variants\": "
+            + "{\"boolean\": \"On\", \"array<string>\": \"Parts\"}}"));
+        GenerationException e = assertThrows(GenerationException.class, () -> ComponentGenerator.generate(in));
+        assertTrue(e.getMessage().contains("the union Stripes has the forms"), e.getMessage());
+    }
+
+    @Test
+    void aUnionNamesAFormTheModelHas() {
+        Inputs in = inputs();
+        in.api().getAsJsonObject("unions").add("item:test:widget:outline", json("{\"name\": \"Other\", \"variants\": {\"integer\": \"Count\"}}"));
+        GenerationException e = assertThrows(GenerationException.class, () -> ComponentGenerator.generate(in));
+        assertTrue(e.getMessage().contains("has none of the forms it names"), e.getMessage());
+    }
+
+    void aUnionFieldNeedsAHandTransformUntilItsEncoderIsGenerated() {
+        Inputs base = inputs();
+        Inputs in = new Inputs(base.components(), base.fixtures(), base.feedback(), base.mappings(), Map.of("item:test:widget:colors", "testMap",
+            "item:test:widget:stripes", "testMap", "block:test:slab:[]", "testMap"), base.api(), base.since());
+        GenerationException e = assertThrows(GenerationException.class, () -> ComponentGenerator.generate(in));
+        assertTrue(e.getMessage().contains("item:test:widget outline takes several forms; name a hand transform"), e.getMessage());
+    }
+
     void anObjectFormThatIsOneEntryOfTheListIsAFactoryAndAnIndexEntry() {
         Map<String, String> files = ComponentGenerator.generate(inputs());
         String slab = files.get("org/geysermc/paletter/block/component/Slab.java");
