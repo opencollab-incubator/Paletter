@@ -355,7 +355,22 @@ generator adds them, and `SamplesTest` checks each against a model of its own an
 - *Packed bits* (`material_instances`, `fixtures.json` `boolCombinations`): the booleans of each face object in every combination
   (`face_dimming`, `isotropic`: 4; with `alpha_masked_tint` and the members it needs: 8), so each bit is seen alone and in pairs.
 - *Boxes*: an object with the vectors `origin` and `size` is also written with both varied together: nine boxes in which each axis takes every
-  combination of three origins and three sizes (never negative), inside BDS's `box` limit of the component (else the tightest of the model's).
+  combination of three origins and three sizes (never negative), inside BDS's `box` limit of the component (`bds-feedback.json`
+  `box origin size ...`, which BDS reports on the component). A component without that fact yet also gets one box past any limit
+  (`(past any limit)`), so that BDS says its limit and the next `infer` records it; until then its boxes stay inside the tightest limit
+  of the other components: **borrowed, unverified** for it (TODO: `collision_box` until the recapture has run; a test checks the fallback).
+- *Vectors* the schema also describes by `x`, `y`, `z` stay vectors in the base (as an object they would have no member without a default).
+
+**Known gap: enums of an old format.** BDS's schema lists some enums only for format 1.26.30 (`swing_sounds`, `use_modifiers.start_sound`,
+`durability_sensor.durability_thresholds[].sound_event`, ...): the add-on's format 1.26.50 definitions do not have them, so their values are
+not varied. The format sweep varies a key at its boundaries only, not its enum values. TODO: vary them in the sweep at 1.26.30 (a generator
+for that format reads the schema's 1.26.30 definitions already, `AddonGenerator(model, fixtures, "1.26.30")`).
+
+**Script API module.** The beta add-ons (`behaviour-dump`) depend on the `@minecraft/server` beta of the build. `update` reads the versions from
+the `script_modules` of BDS's own documentation generator (`ScriptModules.parse`) into `data/bds/<build>/script-modules.json` (marked
+generated); `behaviour-dump` reads that file, and a build without it fails: nothing looks it up on npm. The layout of `script_modules` is
+read as `@minecraft/server/<version>` or `@minecraft/server_<version>` and is unverified against a real tree (none is committed): a run that
+finds no version fails and says what it found. No build has the file yet (`ScriptModulesTest.PENDING`): the recapture writes them.
 
 **Probes.** Values that no docs text or BDS message lists, but that a hand table of `Transforms` holds, are tried too: `fixtures.json`
 `probeValues` gives a field further strings (the formatting colour names of `hover_text_color`, which no schema enum lists), and `descriptorValues` gives every block descriptor field real vanilla blocks with enum, boolean and string

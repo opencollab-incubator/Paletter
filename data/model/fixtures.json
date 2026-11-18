@@ -72,6 +72,8 @@
     "block:minecraft:map_color:color": "#00ff00",
     "block:minecraft:display_name:": "Paletter Block",
     "block:minecraft:collision_box:": "minecraft:unit_cube",
+    "block:minecraft:collision_box:[].origin": [-8, 0, -8],
+    "block:minecraft:collision_box:[].size": [16, 16, 16],
     "item:minecraft:interact_button:": "Use Paletter",
     "item:minecraft:hover_text_color:": "red",
     "item:minecraft:hover_text_color:value": "dark_purple",

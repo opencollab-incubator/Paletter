@@ -133,6 +133,13 @@ final class VariantValues {
                 }
             }
         }
+        // A vector the schema also describes by its members (x, y, z) stays a vector: as an object it would have no member without a default
+        for (JType type : field.types()) {
+            if (type.type().equals("vec3") && c.fields().stream().filter(f -> parentOf(f.path()).equals(path))
+                .allMatch(f -> List.of("x", "y", "z").contains(f.name()))) {
+                return type;
+            }
+        }
         boolean hasChildren = c.fields().stream().anyMatch(f -> f.path().startsWith(path + ".") || f.path().startsWith(path + "[]")
             || f.path().startsWith(path + "{}"));
         if (hasChildren) {
@@ -886,8 +893,9 @@ final class VariantValues {
      * The boxes ({@code origin} and {@code size} vectors of an object) of a component with both members varied together, which one
      * member at a time (the field variants) cannot tell: a number of the wire may follow either. Per axis the origin and the size
      * take every combination of three levels (sizes never below zero), spread over nine boxes, each axis at another level than
-     * the one before. The boxes stay inside the limit BDS gave for the box ({@code box} fact of the component, else the tightest of
-     * the model's), so BDS takes them; a box too small for the levels has none.
+     * the one before. The boxes stay inside the limit BDS gave for the box ({@code box} fact of the component). Without one yet
+     * (BDS says it when a box is past it: one such box is written, and the next run has the fact) they stay inside the tightest limit
+     * of the other components, which is borrowed and unverified for this one. A box too small for the levels has none.
      */
     List<Joint> joints(Component c) {
         List<Joint> joints = new ArrayList<>();
@@ -897,7 +905,15 @@ final class VariantValues {
             if (size == null || !isVector(origin) || !isVector(size) || fixtures.probeOnly(c.id(), origin.path())) {
                 continue;
             }
-            double[][] limits = boxLimits(c, parent);
+            double[][] own = boxFact(c, parent);
+            if (own == null) {
+                // No limit of BDS's yet for this component: a box past any limit makes BDS say it, and the next run has the fact
+                JsonObject past = new JsonObject();
+                past.add("origin", array(0, 0, 0));
+                past.add("size", array(1000, 1000, 1000));
+                joints.add(new Joint(parent, new Labeled("0,0,0 + 1000,1000,1000 (past any limit)", past, true)));
+            }
+            double[][] limits = own != null ? own : boxLimits(c, parent);
             if (limits == null) {
                 continue;
             }
@@ -954,7 +970,13 @@ final class VariantValues {
         return common;
     }
 
+    /** The {@code box} fact BDS gave for the object at the path, else for the component (it reports the limit on the component). */
     private double[][] boxFact(Component c, String parent) {
+        double[][] fact = boxFactAt(c, parent);
+        return fact != null || parent.isEmpty() ? fact : boxFactAt(c, "");
+    }
+
+    private double[][] boxFactAt(Component c, String parent) {
         return fixtures.facts(c.id(), parent).stream().map(f -> f.split(" ")).filter(p -> p[0].equals("box") && p.length == 5
             && List.of(p[1], p[2]).containsAll(List.of("origin", "size"))).map(p -> new double[][]{vec(p[3]), vec(p[4])}).findFirst().orElse(null);
     }

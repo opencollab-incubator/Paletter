@@ -2,6 +2,7 @@ package org.geysermc.paletter.tools.update;
 
 import org.geysermc.paletter.tools.bds.BdsDistribution;
 import org.geysermc.paletter.tools.bds.BdsDump;
+import org.geysermc.paletter.tools.bds.ScriptModules;
 import org.geysermc.paletter.tools.bds.BdsDocGen;
 import org.geysermc.paletter.tools.data.Diff;
 import org.geysermc.paletter.tools.Layout;
@@ -59,6 +60,26 @@ final class ScriptApiStage {
             ctx.report.check(Report.Status.INFO, "Script API value order", "warning: " + differences.size() + " state types list their values in "
                 + "another order than in " + baseline.version() + "; generated blocks may need their value order checked");
             ctx.report.evidence("State types (baseline vs this build)", differences);
+        }
+    }
+
+    /**
+     * The Script API module versions of the build's docgen output, staged as {@code script-modules.json} and kept for the behaviour
+     * dump of this run. No docs or no version in them is a failed check (the beta add-on cannot run without its module).
+     */
+    void scriptModules(BdsDistribution distribution, Path docs, Runs runs) throws IOException {
+        String build = distribution.version();
+        try {
+            if (docs == null) {
+                throw new IOException("BDS's documentation generator wrote no docs (see bds-docgen.log)");
+            }
+            runs.scriptModules = ScriptModules.parse(docs);
+            ctx.stage(ScriptModules.file(ctx.bdsData, build), ScriptModules.render(build, runs.scriptModules).getBytes(StandardCharsets.UTF_8),
+                "Script API modules " + build);
+            ctx.report.check(Report.Status.PASS, "Script API modules", "BDS " + build + " has @minecraft/server " + runs.scriptModules);
+        } catch (IOException e) {
+            ctx.report.check(Report.Status.FAIL, "Script API modules", e.getMessage());
+            ctx.report.action("the behaviour dump needs data/bds/" + build + "/" + ScriptModules.FILE + ": fix the parser or write it by hand");
         }
     }
 

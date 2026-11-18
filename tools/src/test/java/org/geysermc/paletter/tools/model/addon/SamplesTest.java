@@ -58,6 +58,12 @@ class SamplesTest {
            "fields": [
              {"path": "[].origin", "types": [{"type": "vec3"}], "required": true, "enumValues": [], "examples": [], "doc": ""},
              {"path": "[].size", "types": [{"type": "vec3"}], "required": true, "enumValues": [], "examples": [], "doc": ""}
+           ]},
+          {"id": "block:minecraft:listed", "kind": "block", "category": "component", "name": "minecraft:listed", "status": "active",
+           "doc": "", "page": "", "experiments": [], "notes": [], "forms": [{"type": "array", "items": {"type": "object"}}],
+           "fields": [
+             {"path": "[].origin", "types": [{"type": "vec3"}], "required": true, "enumValues": [], "examples": [], "doc": ""},
+             {"path": "[].size", "types": [{"type": "vec3"}], "required": true, "enumValues": [], "examples": [], "doc": ""}
            ]}
         ]}""";
 
@@ -72,7 +78,8 @@ class SamplesTest {
          "samples": {"block:minecraft:geo:bones{}": "q.x"}}""";
 
     private static final String FEEDBACK = """
-        {"block:minecraft:cube": {"": ["box origin size -8,0,-8 8,16,8"]}}""";
+        {"block:minecraft:cube": {"": ["box origin size -8,0,-8 8,16,8"]},
+         "block:minecraft:listed": {"": ["box origin size -10,0,-10 10,20,10"]}}""";
 
     private static final String SCHEMA = """
         {"bdsVersion": "1.26.99.1", "formats": {"block": ["1.26.60"]}, "block": {
@@ -82,7 +89,12 @@ class SamplesTest {
             "bones{}.expression": {"types": ["string"], "required": true},
             "bones{}.version": {"types": ["integer"], "required": true},
             "mode": {"types": ["string"], "enum": [%s]},
-            "mode2": {"types": ["string"], "enum": [%s]}}}]}}""".formatted(ENUM, ENUM);
+            "mode2": {"types": ["string"], "enum": [%s]}}}],
+         "minecraft:cube": [{"formats": ["1.26.60"], "root": {"types": ["object"]}, "fields": {
+            "origin": {"types": ["array", "object"]},
+            "origin.x": {"types": ["number"], "default": 0.0},
+            "origin.y": {"types": ["number"], "default": 0.0},
+            "origin.z": {"types": ["number"], "default": 0.0}}}]}}""".formatted(ENUM, ENUM);
 
     private static AddonGenerator generator(Path root, boolean schema) throws IOException {
         Path model = Files.createDirectories(root.resolve("model"));
@@ -207,7 +219,7 @@ class SamplesTest {
     private static List<JsonObject> boxes(List<AddonGenerator.Variant> variants) {
         List<JsonObject> boxes = new ArrayList<>();
         for (AddonGenerator.Variant v : variants) {
-            if (v.label().startsWith("object:") && v.label().contains(" + ")) {
+            if (v.label().startsWith("object:") && v.label().contains(" + ") && !v.label().contains("past any limit")) {
                 boxes.add(v.value().getAsJsonObject());
             }
         }
@@ -250,6 +262,26 @@ class SamplesTest {
         List<AddonGenerator.Variant> list = variants(generator, "block:minecraft:boxes", "[]");
         assertJointBoxes(boxes(list), new double[]{-8, 0, -8}, new double[]{8, 16, 8});
         list.stream().filter(v -> v.label().contains(" + ")).forEach(v -> assertTrue(v.component().isJsonArray() && v.component().getAsJsonArray().size() == 1));
+    }
+
+    @Test
+    void aBoxWithoutALimitYetHasABoxPastAnyLimitAndOneWithAFactDoesNot(@TempDir Path root) throws IOException {
+        AddonGenerator generator = generator(root, true);
+        assertTrue(variants(generator, "block:minecraft:boxes", "[]").stream().anyMatch(v -> v.label().contains("(past any limit)")),
+            "BDS says its limit when a box is past it");
+        assertTrue(variants(generator, "block:minecraft:cube", "").stream().noneMatch(v -> v.label().contains("(past any limit)")));
+        // The limit BDS reports on the component holds for the elements of its list
+        List<AddonGenerator.Variant> listed = variants(generator, "block:minecraft:listed", "[]");
+        assertTrue(listed.stream().noneMatch(v -> v.label().contains("(past any limit)")));
+        assertJointBoxes(boxes(listed), new double[]{-10, 0, -10}, new double[]{10, 20, 10});
+        assertTrue(boxes(listed).stream().anyMatch(b -> vec(b, "origin")[0] == -10));
+    }
+
+    @Test
+    void aVectorTheSchemaAlsoDescribesByItsMembersStaysAVector(@TempDir Path root) throws IOException {
+        AddonGenerator.Variant base = generator(root, true).variants().stream()
+            .filter(v -> v.componentId().equals("block:minecraft:cube") && v.role().equals("base")).findFirst().orElseThrow();
+        assertTrue(base.component().getAsJsonObject().get("origin").isJsonArray(), base.component().toString());
     }
 
     @Test

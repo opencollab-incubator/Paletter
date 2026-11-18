@@ -906,7 +906,9 @@ public final class Cli implements Runnable {
                     throw new IllegalArgumentException("Missing --bds (or --from-log)");
                 }
                 console = log != null ? log : org.geysermc.paletter.tools.bds.BdsDistribution.defaultCache().resolve("runs").resolve("behaviour-dump-" + bds + ".log");
-                org.geysermc.paletter.tools.behaviour.BehaviourDump.run(root(), bds, preview, server, cache, port, timeout, console);
+                org.geysermc.paletter.tools.behaviour.BehaviourDump.run(root(), bds, preview,
+                    org.geysermc.paletter.tools.bds.ScriptModules.betaVersion(org.geysermc.paletter.tools.bds.ScriptModules.versions(root().resolve("data/bds"), bds)),
+                    server, cache, port, timeout, console);
             }
             org.geysermc.paletter.tools.behaviour.BehaviourDump.write(root(), console);
             return 0;
