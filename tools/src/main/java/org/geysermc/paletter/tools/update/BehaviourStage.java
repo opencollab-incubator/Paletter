@@ -107,6 +107,16 @@ final class BehaviourStage {
         return ScriptModules.betaVersion(modules);
     }
 
+    /** The game test module: this run's docgen output, else the committed file of the build; none recorded fails the step (nothing is guessed). */
+    private String gametestModule(String build, Runs runs) throws IOException {
+        List<String> modules = runs.gametestModules != null ? runs.gametestModules : ScriptModules.gametestVersions(ctx.bdsData, build);
+        try {
+            return ScriptModules.gametestBetaVersion(modules);
+        } catch (IllegalStateException e) {
+            throw new IOException(e.getMessage(), e);
+        }
+    }
+
     private void probe(String build, Path server, Path work) throws Exception {
         Path log = work.resolve("behaviour-probe.log");
         BehaviourProbe.run(ctx.root, build, ctx.preview, server, null, ctx.port, Math.max(ctx.timeout, BehaviourProbe.MIN_TIMEOUT), log);
@@ -123,7 +133,7 @@ final class BehaviourStage {
     /** The food probe: a start of its own, on a world with the Beta APIs (a simulated player needs the game test module). */
     private void food(String build, Path server, Path work, Runs runs) throws Exception {
         Path log = work.resolve("food-probe.log");
-        FoodProbe.run(ctx.root, build, ctx.preview, betaModule(build, runs), server, null, ctx.port, Math.max(ctx.timeout, BehaviourProbe.MIN_TIMEOUT), log);
+        FoodProbe.run(ctx.root, build, ctx.preview, betaModule(build, runs), gametestModule(build, runs), server, null, ctx.port, Math.max(ctx.timeout, BehaviourProbe.MIN_TIMEOUT), log);
         FoodProbe.Measured measured = FoodProbe.fromConsole(log);
         requireBuild(build, measured.version());
         boolean changed = compareAndStage(build, "Food probe", FOOD_PROBE_CAPTURE, "Build ID " + measured.build(),

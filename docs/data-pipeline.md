@@ -717,9 +717,10 @@ Known limits, to settle with the first run: friction does not tell a speed facto
 `use_duration` is what the item-start-use event reports, `nutrition` the food level gained, `saturation_modifier` the saturation gained over twice
 the nutrition (where it stayed below the food level; otherwise the item is `unclear`), `can_always_eat` whether a full player could use it.
 Two custom food items, `probe:control_food` and `probe:control_snack`, have known components and must read back as set, or the capture is
-unverified (which also checks the units: 1.6 s must read 32 ticks). Not tried on a BDS yet: the game test API calls, the
-`@minecraft/server-gametest` version in the manifest (`1.0.0-beta`) and the hunger component names are the first thing the recapture shows; if
-they are wrong the probe fails and the foods stay unverified.
+unverified (which also checks the units: 1.6 s must read 32 ticks). The `@minecraft/server-gametest` version comes from
+`script-modules.json` (`update` records it from the docgen output next to the Script API versions; a build without one skips the step, nothing
+is guessed), and the control items get the `format_version` the spec add-on uses for the build. Not tried on a BDS yet: the game test API calls
+and the hunger component names are the first thing the recapture shows; if they are wrong the probe fails and the foods stay unverified.
 
 ### Captures not made yet
 

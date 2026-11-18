@@ -33,6 +33,7 @@ public final class BdsRunner {
     private final String packDirectory;
     private List<String> experiments = List.of();
     private String betaModule;
+    private String gametestModule;
     private Map<String, String> packFiles = Map.of();
     private Map<String, byte[]> binaryPackFiles = Map.of();
 
@@ -61,6 +62,12 @@ public final class BdsRunner {
     public BdsRunner withBetaApis(String betaModule) {
         this.experiments = List.of("gametest");
         this.betaModule = betaModule;
+        return this;
+    }
+
+    /** Sets the add-on's {@code @minecraft/server-gametest} dependency, e.g. {@code 1.0.0-beta} ({@link ScriptModules#gametestBetaVersion}). */
+    public BdsRunner withGametestModule(String gametestModule) {
+        this.gametestModule = gametestModule;
         return this;
     }
 
@@ -158,8 +165,13 @@ public final class BdsRunner {
             Files.write(target, file.getValue());
         }
         JsonObject manifest = JsonParser.parseString(Files.readString(addon.resolve("manifest.json"))).getAsJsonObject();
-        if (betaModule != null) {
-            ScriptModules.setServerModule(manifest, betaModule);
+        if (betaModule != null || gametestModule != null) {
+            if (betaModule != null) {
+                ScriptModules.setServerModule(manifest, betaModule);
+            }
+            if (gametestModule != null) {
+                ScriptModules.setGametestModule(manifest, gametestModule);
+            }
             Files.writeString(pack.resolve("manifest.json"), manifest.toString());
         }
         JsonObject header = manifest.getAsJsonObject("header");

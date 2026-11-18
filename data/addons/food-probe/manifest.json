@@ -28,7 +28,7 @@
     },
     {
       "module_name": "@minecraft/server-gametest",
-      "version": "1.0.0-beta"
+      "version": "set by food-probe from script-modules.json"
     }
   ]
 }

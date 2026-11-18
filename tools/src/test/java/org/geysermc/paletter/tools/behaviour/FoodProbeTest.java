@@ -160,6 +160,28 @@ class FoodProbeTest {
     }
 
     @Test
+    void theControlItemsGetTheFormatVersionTheSpecAddOnUsesForTheBuild() throws IOException {
+        Path root = Path.of(System.getProperty("paletter.root", ".."));
+        String model = JsonParser.parseString(Files.readString(root.resolve("data/model/fixtures.json"))).getAsJsonObject().get("formatVersion").getAsString();
+        var files = FoodProbe.controlItems(root, "1.26.63.1");
+        assertEquals(Set.of("items/control_food.json", "items/control_snack.json"), files.keySet());
+        JsonObject food = JsonParser.parseString(files.get("items/control_food.json")).getAsJsonObject();
+        assertEquals(org.geysermc.paletter.tools.model.addon.AddonGenerator.formatVersionFor(model, "1.26.63.1"), food.get("format_version").getAsString());
+        assertEquals("format_version", food.keySet().iterator().next());
+        assertEquals("probe:control_food", food.getAsJsonObject("minecraft:item").getAsJsonObject("description").get("identifier").getAsString());
+        // an older build gets a format no newer than itself
+        assertEquals("1.26.31", JsonParser.parseString(FoodProbe.controlItems(root, "1.26.31.1").get("items/control_food.json")).getAsJsonObject()
+            .get("format_version").getAsString());
+    }
+
+    @Test
+    void theFoodPackHasNoVersionsOfItsOwnToGuess() throws IOException {
+        Path pack = Path.of(System.getProperty("paletter.root", "..")).resolve("data/addons/food-probe");
+        assertFalse(Files.readString(pack.resolve("items/control_food.json")).contains("format_version"));
+        assertTrue(Files.readString(pack.resolve("manifest.json")).contains("set by food-probe"));
+    }
+
+    @Test
     void theControlsAreItemsOfTheFoodPackWithTheComponentsTheRulesCheck() throws IOException {
         Path items = Path.of(System.getProperty("paletter.root", "..")).resolve("data/addons/food-probe/items");
         for (var control : FoodProbe.CONTROLS) {

@@ -961,6 +961,8 @@ public final class Cli implements Runnable {
                 console = log != null ? log : BdsDistribution.defaultCache().resolve("runs").resolve("food-probe-" + bds + ".log");
                 org.geysermc.paletter.tools.behaviour.FoodProbe.run(root(), bds, preview,
                     org.geysermc.paletter.tools.bds.ScriptModules.betaVersion(org.geysermc.paletter.tools.bds.ScriptModules.versions(root().resolve("data/bds"), bds)),
+                    org.geysermc.paletter.tools.bds.ScriptModules.gametestBetaVersion(
+                        org.geysermc.paletter.tools.bds.ScriptModules.gametestVersions(root().resolve("data/bds"), bds)),
                     server, cache, port, timeout, console);
             }
             org.geysermc.paletter.tools.behaviour.FoodProbe.write(root(), console);

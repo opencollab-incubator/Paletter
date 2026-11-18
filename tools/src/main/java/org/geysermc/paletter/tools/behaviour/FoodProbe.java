@@ -7,6 +7,8 @@ import org.geysermc.paletter.behaviour.ItemBehaviour;
 import org.geysermc.paletter.tools.Layout;
 import org.geysermc.paletter.tools.bds.BdsDistribution;
 import org.geysermc.paletter.tools.bds.BdsRunner;
+import org.geysermc.paletter.tools.model.Fixtures;
+import org.geysermc.paletter.tools.model.addon.AddonGenerator;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -51,19 +53,38 @@ public final class FoodProbe {
      * Runs the probe and writes the console to {@code log}.
      *
      * @param betaModule the version of the beta {@code @minecraft/server} module the add-on depends on ({@code ScriptModules})
+     * @param gametestModule the version of the {@code @minecraft/server-gametest} module it depends on ({@code ScriptModules})
      * @param server an extracted BDS, or null to use the build's server in the cache
      */
-    public static void run(Path root, String bdsVersion, boolean preview, String betaModule, Path server, Path cache, int port, int timeout, Path log)
-        throws IOException, InterruptedException {
+    public static void run(Path root, String bdsVersion, boolean preview, String betaModule, String gametestModule, Path server, Path cache, int port,
+                           int timeout, Path log) throws IOException, InterruptedException {
         Files.createDirectories(log.toAbsolutePath().getParent());
-        BdsRunner runner = new BdsRunner(root.resolve(Layout.FOOD_PROBE_ADDON), "PROBE", PACK).withBetaApis(betaModule)
-            .withBinaryPackFiles(Map.of(FoodPlatform.PATH, FoodPlatform.bytes()));
+        BdsRunner runner = new BdsRunner(root.resolve(Layout.FOOD_PROBE_ADDON), "PROBE", PACK).withBetaApis(betaModule).withGametestModule(gametestModule)
+            .withPackFiles(controlItems(root, bdsVersion)).withBinaryPackFiles(Map.of(FoodPlatform.PATH, FoodPlatform.bytes()));
         if (server != null) {
             runner.run(server, log, timeout, port, false);
         } else {
             BdsDistribution.resolve(preview, bdsVersion).onServer(cache == null ? BdsDistribution.defaultCache() : cache,
                 extracted -> runner.run(extracted, log, timeout, port, false));
         }
+    }
+
+    /**
+     * The files of the control items with the {@code format_version} the spec add-on uses for the build ({@code fixtures.json}'s,
+     * no newer than the build): the files of the pack have none.
+     */
+    static Map<String, String> controlItems(Path root, String bdsVersion) throws IOException {
+        String format = AddonGenerator.formatVersionFor(Fixtures.read(root.resolve(Layout.MODEL)).formatVersion, bdsVersion);
+        Map<String, String> files = new LinkedHashMap<>();
+        for (Control control : CONTROLS) {
+            String name = "items/" + control.item().substring("probe:".length()) + ".json";
+            JsonObject item = JsonParser.parseString(Files.readString(root.resolve(Layout.FOOD_PROBE_ADDON).resolve(name))).getAsJsonObject();
+            JsonObject file = new JsonObject();
+            file.addProperty("format_version", format);
+            item.entrySet().forEach(entry -> file.add(entry.getKey(), entry.getValue()));
+            files.put(name, file + "\n");
+        }
+        return files;
     }
 
     /**
