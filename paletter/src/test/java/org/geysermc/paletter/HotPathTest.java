@@ -245,6 +245,30 @@ class HotPathTest {
         assertTrue(allocated < 1024, allocated + " bytes allocated by " + states.length + " lookups");
     }
 
+    /** What a chunk or inventory writer asks per block and per stack: ids of states, definitions of ids. */
+    @Test
+    void runtimeIdLookupsDoNotAllocate() {
+        Palette palette = layered();
+        int blocks = palette.blocks().size();
+        BedrockBlockState[] states = new BedrockBlockState[blocks];
+        int[] blockIds = new int[blocks];
+        for (int i = 0; i < blocks; i++) {
+            BedrockBlockState key = palette.blocks().key(palette.blocks().byIndex(i));
+            states[i] = key != null ? key : BedrockBlocks.AIR.defaultState();
+            blockIds[i] = palette.blocks().byIndex(i).getRuntimeId();
+        }
+        long allocated = allocated(blocks, i -> palette.runtimeId(states[i]));
+        assertTrue(allocated < 4096, allocated + " bytes allocated by " + ROUNDS * blocks + " runtimeId lookups");
+        allocated = allocated(blocks, i -> palette.blockDefinition(blockIds[i]) == null ? 0 : 1);
+        assertTrue(allocated < 4096, allocated + " bytes allocated by " + ROUNDS * blocks + " block definition lookups");
+        allocated = allocated(blocks, i -> palette.blockState(blockIds[i]) == null ? 0 : 1);
+        assertTrue(allocated < 4096, allocated + " bytes allocated by " + ROUNDS * blocks + " block state lookups");
+
+        int[] itemIds = palette.items().definitions().stream().mapToInt(item -> item.getRuntimeId()).toArray();
+        allocated = allocated(itemIds.length, i -> palette.itemDefinition(itemIds[i]) == null ? 0 : 1);
+        assertTrue(allocated < 4096, allocated + " bytes allocated by " + ROUNDS * itemIds.length + " item definition lookups");
+    }
+
     @Test
     void resolveVariantBehaviourDoesNotAllocate() {
         Palette palette = layered();
