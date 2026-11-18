@@ -36,4 +36,11 @@ class VersionsTest {
         assertEquals(-1, Integer.signum(Versions.compare("1.26.70-preview", "1.26.70.1")));
         assertEquals(0, Versions.compare("1.26.70-preview", "1.26.70.0"));
     }
+
+    @Test
+    void aPreviewReportsItsLastNumberAsBeta() {
+        assertEquals("1.26.70-beta24", Versions.reported("1.26.70.24", true));
+        assertEquals("1.26.63.1", Versions.reported("1.26.63.1", false));
+        assertThrows(IllegalArgumentException.class, () -> Versions.reported("1.26.70-beta24", true));
+    }
 }

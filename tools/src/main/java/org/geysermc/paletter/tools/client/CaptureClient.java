@@ -31,6 +31,7 @@ import org.cloudburstmc.protocol.bedrock.packet.CommandRequestPacket;
 import org.cloudburstmc.protocol.bedrock.packet.CraftingDataPacket;
 import org.cloudburstmc.protocol.bedrock.packet.CreativeContentPacket;
 import org.cloudburstmc.protocol.bedrock.packet.DisconnectPacket;
+import org.cloudburstmc.protocol.bedrock.packet.InventoryContentPacket;
 import org.cloudburstmc.protocol.bedrock.packet.InventorySlotPacket;
 import org.cloudburstmc.protocol.bedrock.packet.ItemComponentPacket;
 import org.cloudburstmc.protocol.bedrock.packet.NetworkSettingsPacket;
@@ -106,8 +107,13 @@ public final class CaptureClient {
     private static final long GIVE_ANSWER_MILLIS = 3000;
     private static final long GIVE_START_MILLIS = 10_000;
     private final Deque<String> giveQueue = new ArrayDeque<>();
+    private static final int MAX_MISSES = 5;
     private String giving;
     private long givingSince;
+    private boolean clearing;
+    private int misses;
+    /** The items of the player's inventory slots as last seen: an answer is a slot that changed. */
+    private final Map<Integer, ItemData> inventory = new java.util.HashMap<>();
     private boolean giveStarted;
     private Consumer<BedrockPacket> giveSender;
     private volatile boolean givesDone = true;
@@ -211,6 +217,12 @@ public final class CaptureClient {
                     break;
                 }
                 if (System.nanoTime() > deadline) {
+                    if (readyAt != 0) {
+                        // Only the gives are still going: what they answered so far is written, the rest stays unverified
+                        System.out.println("  timed out with " + result.gives.size() + " gives answered");
+                        done.complete(result);
+                        break;
+                    }
                     done.completeExceptionally(new TimeoutException("Timed out; received so far: " + result.packetCounts));
                     break;
                 }
@@ -276,31 +288,79 @@ public final class CaptureClient {
         return result;
     }
 
-    /** An inventory slot: the answer to the current give if it holds an item. */
+    /**
+     * An inventory slot of the player, from a slot packet or from an inventory content packet (BDS answers a give with either): the
+     * answer to the current give if the slot holds an item that differs from what it held before.
+     */
+    private void inventoryItem(int slot, ItemData item) {
+        boolean changed = item.getDefinition() != null && item.getDefinition().getRuntimeId() != 0 && !same(item, inventory.get(slot));
+        inventory.put(slot, item);
+        if (giving != null && changed) {
+            answered(new GiveCapture.Given(item.getDefinition().getIdentifier(), slot));
+        }
+    }
+
+    private static boolean same(ItemData item, ItemData before) {
+        return before != null && before.getDefinition() != null && before.getDefinition().getRuntimeId() == item.getDefinition().getRuntimeId()
+            && before.getCount() == item.getCount();
+    }
+
     synchronized void inventorySlot(InventorySlotPacket packet) {
-        ItemData item = packet.getItem();
-        if (giving != null && packet.getContainerId() == ContainerId.INVENTORY
-            && item.getDefinition() != null && item.getDefinition().getRuntimeId() != 0) {
-            result.gives.put(giving, new GiveCapture.Given(item.getDefinition().getIdentifier(), packet.getSlot()));
-            giveNext();
+        if (packet.getContainerId() == ContainerId.INVENTORY) {
+            inventoryItem(packet.getSlot(), packet.getItem());
         }
     }
 
-    /** A command error is the answer to the current give: the server rejected the identifier. */
+    synchronized void inventoryContent(InventoryContentPacket packet) {
+        if (packet.getContainerId() == ContainerId.INVENTORY) {
+            List<ItemData> contents = packet.getContents();
+            for (int slot = 0; slot < contents.size(); slot++) {
+                inventoryItem(slot, contents.get(slot));
+            }
+        }
+    }
+
+    /** The current give is answered: an item is cleared again (the inventory has 36 slots, there are hundreds of gives), a rejection is not. */
+    private void answered(GiveCapture.Given given) {
+        result.gives.put(giving, given);
+        giving = null;
+        misses = 0;
+        if (given.rejected()) {
+            giveNext();
+        } else {
+            clearing = true;
+            givingSince = System.currentTimeMillis();
+            CommandRequestPacket command = new CommandRequestPacket();
+            command.setCommand("/clear @s");
+            command.setCommandOriginData(new CommandOriginData(CommandOriginType.PLAYER, UUID.randomUUID(), "", 0));
+            giveSender.accept(command);
+        }
+    }
+
+    /** A command error is the answer to the current give: the server rejected the identifier. The output of the clear ends the clear. */
     synchronized void commandOutput(CommandOutputPacket packet) {
-        if (giving != null && packet.getSuccessCount() == 0) {
-            result.gives.put(giving, GiveCapture.Given.REJECTED);
+        if (clearing) {
+            clearing = false;
             giveNext();
+        } else if (giving != null && packet.getSuccessCount() == 0) {
+            answered(GiveCapture.Given.REJECTED);
         }
     }
 
-    /** Gives up on a give that is not answered in time, or on all of them if the player never spawned. */
+    /**
+     * Gives up on a give or a clear that is not answered in time, on all the gives after {@link #MAX_MISSES} gives in a row without an
+     * answer (the server does not answer them in a way this client knows), or on all of them if the player never spawned.
+     */
     synchronized void giveTimeouts(long now) {
         if (givesDone) {
             return;
         }
         if (giveStarted) {
             if (now - givingSince > GIVE_ANSWER_MILLIS) {
+                if (!clearing && ++misses >= MAX_MISSES) {
+                    giveQueue.clear();
+                }
+                clearing = false;
                 giveNext();
             }
         } else if (readyAt != 0 && now - readyAt > GIVE_START_MILLIS) {
@@ -419,6 +479,12 @@ public final class CaptureClient {
         @Override
         public PacketSignal handle(InventorySlotPacket packet) {
             inventorySlot(packet);
+            return PacketSignal.HANDLED;
+        }
+
+        @Override
+        public PacketSignal handle(InventoryContentPacket packet) {
+            inventoryContent(packet);
             return PacketSignal.HANDLED;
         }
 

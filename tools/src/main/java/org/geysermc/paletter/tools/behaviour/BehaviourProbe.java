@@ -7,6 +7,8 @@ import com.google.gson.JsonParser;
 import org.geysermc.paletter.tools.Layout;
 import org.geysermc.paletter.tools.bds.BdsDistribution;
 import org.geysermc.paletter.tools.bds.BdsRunner;
+import org.geysermc.paletter.tools.model.Fixtures;
+import org.geysermc.paletter.tools.model.addon.AddonGenerator;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -18,6 +20,9 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.stream.Stream;
 
 /**
  * {@code behaviour-probe}: runs the probe add-on ({@code data/addons/probe}, hand-written) on a BDS and turns its
@@ -60,13 +65,44 @@ public final class BehaviourProbe {
      */
     public static void run(Path root, String bdsVersion, boolean preview, Path server, Path cache, int port, int timeout, Path log)
         throws IOException, InterruptedException {
-        BdsRunner runner = new BdsRunner(root.resolve(Layout.PROBE_ADDON), "PROBE", PACK);
+        BdsRunner runner = new BdsRunner(root.resolve(Layout.PROBE_ADDON), "PROBE", PACK).withPackFiles(blockFiles(root, bdsVersion));
         if (server != null) {
             runner.run(server, log, timeout, port, false);
         } else {
             BdsDistribution.resolve(preview, bdsVersion).onServer(cache == null ? BdsDistribution.defaultCache() : cache,
                 extracted -> runner.run(extracted, log, timeout, port, false));
         }
+    }
+
+    /**
+     * The format version of the blocks of the pack for a BDS version, as the spec add-on picks it ({@code fixtures.json}'s, no newer
+     * than the build): a build loads no block file of a newer format ({@code unsupported version}). The files of the pack have none.
+     *
+     * @param version a build ({@code 1.26.63.1}) or what BDS reports ({@code 1.26.70-beta24})
+     */
+    static String blockFormat(Path root, String version) throws IOException {
+        Matcher number = Pattern.compile("^\\d+\\.\\d+\\.\\d+").matcher(version);
+        if (!number.find()) {
+            throw new IOException("Not a BDS version: " + version);
+        }
+        return AddonGenerator.formatVersionFor(Fixtures.read(root.resolve(Layout.MODEL)).formatVersion, number.group());
+    }
+
+    /** The block files of the pack (pack path to content) with the {@link #blockFormat format version} of the build. */
+    static Map<String, String> blockFiles(Path root, String bdsVersion) throws IOException {
+        String format = blockFormat(root, bdsVersion);
+        Path blocks = root.resolve(Layout.PROBE_ADDON).resolve("blocks");
+        Map<String, String> files = new LinkedHashMap<>();
+        try (Stream<Path> list = Files.list(blocks)) {
+            for (Path path : list.sorted().toList()) {
+                JsonObject block = JsonParser.parseString(Files.readString(path)).getAsJsonObject();
+                JsonObject file = new JsonObject();
+                file.addProperty("format_version", format);
+                block.entrySet().forEach(entry -> file.add(entry.getKey(), entry.getValue()));
+                files.put("blocks/" + path.getFileName(), file + "\n");
+            }
+        }
+        return files;
     }
 
     /**
@@ -83,8 +119,7 @@ public final class BehaviourProbe {
     /** Measures a console log of the probe. */
     public static Measured fromConsole(Path root, Path console) throws IOException {
         ProbeLog log = ProbeLog.parse(Files.readAllLines(console, StandardCharsets.UTF_8));
-        JsonObject plain = JsonParser.parseString(Files.readString(root.resolve(Layout.PROBE_ADDON).resolve("blocks/plain.json"))).getAsJsonObject();
-        JsonObject capture = measure(log, plain.get("format_version").getAsString());
+        JsonObject capture = measure(log, blockFormat(root, log.version()));
         return new Measured(log.version(), log.build(), String.join("\n", log.extract()) + "\n", Json.pretty(capture));
     }
 

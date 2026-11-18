@@ -10,6 +10,7 @@ import org.cloudburstmc.protocol.bedrock.data.inventory.ItemVersion;
 import org.cloudburstmc.protocol.bedrock.packet.BedrockPacket;
 import org.cloudburstmc.protocol.bedrock.packet.CommandOutputPacket;
 import org.cloudburstmc.protocol.bedrock.packet.CommandRequestPacket;
+import org.cloudburstmc.protocol.bedrock.packet.InventoryContentPacket;
 import org.cloudburstmc.protocol.bedrock.packet.InventorySlotPacket;
 import org.cloudburstmc.protocol.bedrock.packet.SetLocalPlayerAsInitializedPacket;
 import org.junit.jupiter.api.Test;
@@ -97,14 +98,73 @@ class GiveCaptureTest {
         client.commandOutput(output(1));
         assertEquals(3, sent.size());
         client.inventorySlot(slot("minecraft:repeater", 5, 3));
-        assertEquals("/give @s minecraft:wall_sign 1", ((CommandRequestPacket) sent.get(3)).getCommand());
+        // The item is cleared again (the inventory is full after 36 gives); the output of the clear is no answer
+        assertEquals("/clear @s", ((CommandRequestPacket) sent.get(3)).getCommand());
+        client.commandOutput(output(0));
+        assertEquals("/give @s minecraft:wall_sign 1", ((CommandRequestPacket) sent.get(4)).getCommand());
         // No answer in time: it stays unanswered and the gives end
         client.giveTimeouts(Long.MAX_VALUE);
-        assertEquals(4, sent.size());
+        assertEquals(5, sent.size());
 
         Map<String, GiveCapture.Given> gives = client.result().gives;
         assertTrue(gives.get("minecraft:unpowered_repeater").rejected());
         assertEquals(new GiveCapture.Given("minecraft:repeater", 3), gives.get("minecraft:repeater"));
         assertNull(gives.get("minecraft:wall_sign"));
+    }
+
+    /** What BDS sent for a give: a successful command output and the whole inventory in a content packet, never a slot packet. */
+    private static InventoryContentPacket content(String... items) {
+        InventoryContentPacket packet = new InventoryContentPacket();
+        packet.setContainerId(ContainerId.INVENTORY);
+        List<ItemData> contents = new ArrayList<>();
+        for (int i = 0; i < items.length; i++) {
+            contents.add(items[i] == null ? ItemData.AIR : ItemData.builder()
+                .definition(new SimpleItemDefinition(items[i], 100 + i, ItemVersion.DATA_DRIVEN, false, null)).count(1).build());
+        }
+        packet.setContents(contents);
+        return packet;
+    }
+
+    @Test
+    void aGiveAnsweredByTheInventoryContentIsRecordedAndClearedAgain() {
+        CaptureClient client = new CaptureClient(null, null).give(List.of("minecraft:unpowered_repeater", "minecraft:repeater", "minecraft:oak_sign"));
+        List<BedrockPacket> sent = new ArrayList<>();
+        // The join sequence sends the empty inventory
+        client.inventoryContent(content(null, null));
+        client.startGives(7, sent::add);
+        client.commandOutput(output(0));
+        assertEquals("/give @s minecraft:repeater 1", ((CommandRequestPacket) sent.get(2)).getCommand());
+
+        client.commandOutput(output(1));
+        assertEquals(3, sent.size(), "a successful output answers nothing");
+        client.inventoryContent(content(null, "minecraft:repeater"));
+        assertEquals("/clear @s", ((CommandRequestPacket) sent.get(3)).getCommand());
+        // The clear empties the inventory again, and the next give lands in the same slot
+        client.inventoryContent(content(null, null));
+        client.commandOutput(output(1));
+        assertEquals("/give @s minecraft:oak_sign 1", ((CommandRequestPacket) sent.get(4)).getCommand());
+        client.inventoryContent(content(null, "minecraft:oak_sign"));
+
+        Map<String, GiveCapture.Given> gives = client.result().gives;
+        assertTrue(gives.get("minecraft:unpowered_repeater").rejected());
+        assertEquals(new GiveCapture.Given("minecraft:repeater", 1), gives.get("minecraft:repeater"));
+        assertEquals(new GiveCapture.Given("minecraft:oak_sign", 1), gives.get("minecraft:oak_sign"));
+    }
+
+    @Test
+    void anInventoryContentThatChangesNothingIsNoAnswerAndUnansweredGivesEndTheGives() {
+        List<String> identifiers = List.of("a", "b", "c", "d", "e", "f", "g");
+        CaptureClient client = new CaptureClient(null, null).give(identifiers);
+        List<BedrockPacket> sent = new ArrayList<>();
+        client.inventoryContent(content("minecraft:stone"));
+        client.startGives(7, sent::add);
+        client.inventoryContent(content("minecraft:stone"));
+        assertEquals(2, sent.size());
+        for (int i = 0; i < 10; i++) {
+            client.giveTimeouts(Long.MAX_VALUE);
+        }
+        // Five gives in a row without an answer: the server does not answer in a way this client knows, the rest is not sent
+        assertEquals(1 + 5, sent.size());
+        assertTrue(client.result().gives.isEmpty());
     }
 }

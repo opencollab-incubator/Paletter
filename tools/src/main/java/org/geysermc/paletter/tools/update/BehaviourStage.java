@@ -2,6 +2,7 @@ package org.geysermc.paletter.tools.update;
 
 import com.google.gson.JsonObject;
 import org.geysermc.paletter.internal.data.VanillaData;
+import org.geysermc.paletter.tools.Versions;
 import org.geysermc.paletter.tools.bds.BdsDistribution;
 import org.geysermc.paletter.tools.bds.ScriptModules;
 import org.geysermc.paletter.tools.behaviour.BehaviourDump;
@@ -95,7 +96,7 @@ final class BehaviourStage {
         Path log = work.resolve("behaviour-dump.log");
         BehaviourDump.run(ctx.root, build, ctx.preview, betaModule(build, runs), server, null, ctx.port, ctx.timeout, log);
         BehaviourDump.Rendered rendered = BehaviourDump.render(log);
-        requireBuild(build, rendered.version());
+        requireBuild(build, ctx.preview, rendered.version());
         JsonObject captured = BehaviourDump.read(rendered.gzip());
         compareAndStage(build, "Behaviour dump", DUMP, rendered.summary(),
             committed -> BehaviourDump.sameContent(BehaviourDump.read(committed), captured), rendered.gzip());
@@ -121,7 +122,7 @@ final class BehaviourStage {
         Path log = work.resolve("behaviour-probe.log");
         BehaviourProbe.run(ctx.root, build, ctx.preview, server, null, ctx.port, Math.max(ctx.timeout, BehaviourProbe.MIN_TIMEOUT), log);
         BehaviourProbe.Measured measured = BehaviourProbe.fromConsole(ctx.root, log);
-        requireBuild(build, measured.version());
+        requireBuild(build, ctx.preview, measured.version());
         boolean changed = compareAndStage(build, "Behaviour probe", PROBE_CAPTURE, "Build ID " + measured.build(),
             committed -> BehaviourProbe.sameCapture(Files.readString(committed), measured.capture()), measured.capture().getBytes(StandardCharsets.UTF_8));
         // The log carries timestamps: it follows the capture, so an unchanged measurement is no change
@@ -135,7 +136,7 @@ final class BehaviourStage {
         Path log = work.resolve("food-probe.log");
         FoodProbe.run(ctx.root, build, ctx.preview, betaModule(build, runs), gametestModule(build, runs), server, null, ctx.port, Math.max(ctx.timeout, BehaviourProbe.MIN_TIMEOUT), log);
         FoodProbe.Measured measured = FoodProbe.fromConsole(log);
-        requireBuild(build, measured.version());
+        requireBuild(build, ctx.preview, measured.version());
         boolean changed = compareAndStage(build, "Food probe", FOOD_PROBE_CAPTURE, "Build ID " + measured.build(),
             committed -> FoodProbe.sameCapture(Files.readString(committed), measured.capture()), measured.capture().getBytes(StandardCharsets.UTF_8));
         if (changed) {
@@ -154,8 +155,8 @@ final class BehaviourStage {
             committed -> EducationProbe.sameContent(Files.readString(committed), json), json.getBytes(StandardCharsets.UTF_8));
     }
 
-    private static void requireBuild(String build, String reported) throws IOException {
-        if (!build.equals(reported)) {
+    static void requireBuild(String build, boolean preview, String reported) throws IOException {
+        if (!Versions.reported(build, preview).equals(reported)) {
             throw new IOException("the add-on ran on BDS " + reported + ", not " + build);
         }
     }

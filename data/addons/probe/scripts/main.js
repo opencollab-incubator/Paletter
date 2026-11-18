@@ -52,6 +52,10 @@ import { world, system, BlockPermutation, BlockStates, BlockTypes } from "@minec
 
 const out = (tag, data) => console.warn(`PROBE ${tag} ${JSON.stringify(data)}`);
 const wait = (ticks) => new Promise((resolve) => system.runTimeout(resolve, ticks));
+// What main() is doing, and the per-state sections that have not run yet: if main() fails, PROBE-FAILED names the first and
+// every section of the second is reported as failed (the sections need what main() measured first)
+let phase = "setup";
+const pendingSections = new Set(["light", "friction", "around"]);
 const Y = 200; // everything is built in open sky
 
 const FRICTION_FLOORS = ["minecraft:stone", "minecraft:ice", "minecraft:packed_ice", "minecraft:blue_ice", "probe:plain",
@@ -77,6 +81,7 @@ async function main() {
     }
 
     // ---------- light: built first so it has settled when it is read ----------
+    phase = "light cells";
     // lid: a cell of stone with the block as its ceiling; emit: the block on the floor of a cell with a stone ceiling
     const lightCells = [];
     const lightCell = (x, z, ceiling, floor) => {
@@ -115,6 +120,7 @@ async function main() {
     }
 
     // ---------- friction ----------
+    phase = "friction lanes";
     const lanes = FRICTION_FLOORS.map((block, i) => ({ block, z: 4 + 4 * i }));
     for (const lane of lanes) for (let x = 0; x < 90; x++) set(x, Y - 1, lane.z, lane.block);
     await wait(40);
@@ -130,6 +136,7 @@ async function main() {
     bodies.forEach((body) => body.remove());
 
     // ---------- collision cells: the blocks, and every door in every state ----------
+    phase = "collision cells";
     // One block (or door) per cell, 36 cells in a grid, on a stone floor (a door needs one); floating bodies (no gravity: they
     // are level with the block they are asked to be) are pushed at it from its 4 sides. Pushed like this a free body slides
     // about 3 blocks, from where it starts to past the cell's centre
@@ -205,6 +212,7 @@ async function main() {
     for (const t of tunnels) out("tunnel", { block: t.block, behind: dim.getLightLevel(t.behind), inside: dim.getLightLevel(t.inside) });
 
     // ---------- explosion resistance ----------
+    phase = "explosion resistance";
     // each explosion has 6 blocks around it at the same distance, one per direction, rotated every repetition
     const tested = ["minecraft:dirt", "minecraft:sand", "probe:plain", "probe:explosion_resistance_0", "probe:destructible_by_explosion",
         "probe:explosion_resistance_3"];
@@ -234,6 +242,7 @@ async function main() {
     out("explosion", stats);
 
     // ---------- flammability: fire on top of 12 blocks of each kind ----------
+    phase = "flammability";
     const fires = [];
     ["minecraft:oak_planks", "probe:plain", "probe:flammable", "minecraft:stone"].forEach((block, i) => {
         for (let k = 0; k < 12; k++) {
@@ -254,6 +263,7 @@ async function main() {
     }
     out("flammable", burnt);
 
+    phase = "climbing";
     const states = allStates();
     await climbing(dim, states);
     await section("light", () => lightStates(dim, states));
@@ -361,6 +371,7 @@ async function climbing(dim, states) {
 
 // A section that fails prints `failed` and the probe goes on
 async function section(name, run) {
+    pendingSections.delete(name);
     try {
         await run();
     } catch (e) {
@@ -577,5 +588,10 @@ async function aroundRecipes(dim, states) {
 }
 
 world.afterEvents.worldLoad.subscribe(() => {
-    main().catch((e) => console.warn(`PROBE-FAILED ${e} ${e?.stack}`));
+    main().catch((e) => {
+        for (const name of pendingSections) {
+            out("failed", { section: name, error: `not run: the probe failed in ${phase}` });
+        }
+        console.warn(`PROBE-FAILED in ${phase}: ${e} ${e?.stack}`);
+    });
 });

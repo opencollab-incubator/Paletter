@@ -223,4 +223,33 @@ class BehaviourProbeTest {
         assertTrue(text.contains("\"note\": \"It's \\\"quoted\\\" & <tagged>\""), text);
         assertTrue(text.contains("    {\"i\":3},\n"), text);
     }
+
+    private static final java.nio.file.Path ROOT = java.nio.file.Path.of(System.getProperty("paletter.root", ".."));
+
+    @Test
+    void theBlocksOfThePackHaveTheFormatTheBuildLoads() throws java.io.IOException {
+        // 1.26.36.1 has no parser for the newest format ("unsupported version", so probe:plain was not registered)
+        assertEquals("1.26.36", BehaviourProbe.blockFormat(ROOT, "1.26.36.1"));
+        // A preview reports a beta; its format is the model's, as the build is newer than that
+        assertEquals("1.26.60", BehaviourProbe.blockFormat(ROOT, "1.26.70-beta24"));
+        assertThrows(java.io.IOException.class, () -> BehaviourProbe.blockFormat(ROOT, "beta"));
+
+        java.util.Map<String, String> files = BehaviourProbe.blockFiles(ROOT, "1.26.36.1");
+        assertEquals(22, files.size());
+        assertTrue(files.containsKey("blocks/plain.json"));
+        for (String content : files.values()) {
+            JsonObject block = com.google.gson.JsonParser.parseString(content).getAsJsonObject();
+            assertEquals("1.26.36", block.get("format_version").getAsString());
+            assertTrue(block.has("minecraft:block"));
+        }
+    }
+
+    @Test
+    void thePackFilesCarryNoFormatOfTheirOwn() throws java.io.IOException {
+        try (var blocks = java.nio.file.Files.list(ROOT.resolve("data/addons/probe/blocks"))) {
+            for (java.nio.file.Path file : blocks.toList()) {
+                assertTrue(!com.google.gson.JsonParser.parseString(java.nio.file.Files.readString(file)).getAsJsonObject().has("format_version"), file.toString());
+            }
+        }
+    }
 }
