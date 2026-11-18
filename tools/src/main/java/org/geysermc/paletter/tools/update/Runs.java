@@ -20,6 +20,8 @@ final class Runs {
     Path imported;
     Path vanilla;
     Path creative;
+    /** The capture of the {@code /give} start ({@code block-items.json}), null without one. */
+    Path give;
     /** The bundled version this run's network data belongs to (null without a capture). */
     String bundledName;
     /** Whether this run replaced the voxel shape captures of its build: the bundled voxel shapes follow. */

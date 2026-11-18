@@ -33,17 +33,18 @@ final class NetworkDataStage {
      * without an answer is unverified, a different item is evidence for {@code Palette#itemOf}, and a failure here does not fail the run.
      */
     private void stageBlockItems(BdsDistribution distribution, Runs runs) {
-        Path file = runs.vanilla.resolve(GiveCapture.FILE);
+        Path file = runs.give == null ? null : runs.give.resolve(GiveCapture.FILE);
         try {
-            if (!Files.exists(file)) {
-                ctx.report.check(Report.Status.INFO, "Block items (/give)", "no " + GiveCapture.FILE + " in the capture");
+            if (file == null || !Files.exists(file)) {
+                ctx.report.check(Report.Status.INFO, "Block items (/give)", "no " + GiveCapture.FILE + " captured");
                 return;
             }
             List<GiveCapture.Entry> entries = GiveCapture.read(file);
             Map<String, String> expected = entries.stream().collect(java.util.stream.Collectors.toMap(GiveCapture.Entry::block, GiveCapture.Entry::item));
             GiveCapture.Check check = GiveCapture.check(entries, expected::get);
-            ctx.report.check(Report.Status.INFO, "Block items (/give)", check.matched() + " of " + entries.size() + " blocks gave the item the data says, "
-                + check.mismatches().size() + " another, " + check.unverified().size() + " unverified (no answer)");
+            ctx.report.check(Report.Status.INFO, "Block items (/give)", check.matched() + " of " + entries.size() * 2 + " gives gave the item the data says, "
+                + check.mismatches().size() + " another, " + check.rejected().size() + " rejected (command error), " + check.unverified().size()
+                + " unverified (no answer)");
             if (!check.mismatches().isEmpty()) {
                 ctx.report.evidence("Blocks that gave another item than the data says", check.mismatches().stream().map(line -> "- " + line).toList());
             }

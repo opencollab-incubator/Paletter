@@ -26,6 +26,7 @@ import org.cloudburstmc.protocol.bedrock.packet.BedrockPacket;
 import org.cloudburstmc.protocol.bedrock.packet.BedrockPacketHandler;
 import org.cloudburstmc.protocol.bedrock.packet.BiomeDefinitionListPacket;
 import org.cloudburstmc.protocol.bedrock.packet.ClientToServerHandshakePacket;
+import org.cloudburstmc.protocol.bedrock.packet.CommandOutputPacket;
 import org.cloudburstmc.protocol.bedrock.packet.CommandRequestPacket;
 import org.cloudburstmc.protocol.bedrock.packet.CraftingDataPacket;
 import org.cloudburstmc.protocol.bedrock.packet.CreativeContentPacket;
@@ -89,7 +90,7 @@ public final class CaptureClient {
         public final List<String> packetOrder = new java.util.concurrent.CopyOnWriteArrayList<>();
         /** The index of the start game packet in {@link #packetOrder}, or -1. */
         public volatile int startGameIndex = -1;
-        /** What {@code /give} gave per requested block ({@link CaptureClient#give}); a block the server did not answer for is absent. */
+        /** What {@code /give} answered per requested identifier ({@link CaptureClient#give}); an identifier the server did not answer for is absent. */
         public final Map<String, GiveCapture.Given> gives = new ConcurrentHashMap<>();
     }
 
@@ -127,13 +128,13 @@ public final class CaptureClient {
     }
 
     /**
-     * Blocks to {@code /give @s} once the player has spawned, one at a time, recording the item of the inventory slot packet that
-     * answers each ({@link Result#gives}). The capture completes after the last answer; one that does not come within a few seconds
+     * Identifiers (blocks and items) to {@code /give @s} once the player has spawned, one at a time, recording the item of the inventory
+     * slot packet that answers each, or that a command error answered ({@link GiveCapture.Given#rejected}) ({@link Result#gives}). The capture completes after the last answer; one that does not come within a few seconds
      * (or no spawn) leaves its block unanswered, it never fails the capture. The server must let the player run commands.
      */
-    public CaptureClient give(List<String> blocks) {
-        giveQueue.addAll(blocks);
-        givesDone = blocks.isEmpty();
+    public CaptureClient give(List<String> identifiers) {
+        giveQueue.addAll(identifiers);
+        givesDone = identifiers.isEmpty();
         return this;
     }
 
@@ -285,6 +286,14 @@ public final class CaptureClient {
         }
     }
 
+    /** A command error is the answer to the current give: the server rejected the identifier. */
+    synchronized void commandOutput(CommandOutputPacket packet) {
+        if (giving != null && packet.getSuccessCount() == 0) {
+            result.gives.put(giving, GiveCapture.Given.REJECTED);
+            giveNext();
+        }
+    }
+
     /** Gives up on a give that is not answered in time, or on all of them if the player never spawned. */
     synchronized void giveTimeouts(long now) {
         if (givesDone) {
@@ -398,6 +407,12 @@ public final class CaptureClient {
             radius.setMaxRadius(2);
             send(session, radius, false);
             checkComplete();
+            return PacketSignal.HANDLED;
+        }
+
+        @Override
+        public PacketSignal handle(CommandOutputPacket packet) {
+            commandOutput(packet);
             return PacketSignal.HANDLED;
         }
 

@@ -4,6 +4,7 @@ import org.geysermc.paletter.tools.bds.BdsDistribution;
 import org.geysermc.paletter.tools.bds.BdsDump;
 import org.geysermc.paletter.tools.bds.BdsServer;
 import org.geysermc.paletter.tools.bds.CapturePlatform;
+import org.geysermc.paletter.tools.client.GiveCapture;
 import org.geysermc.paletter.tools.client.NetherNet;
 import org.geysermc.paletter.tools.data.OrderingCheck;
 import org.geysermc.paletter.tools.model.addon.FixedAddons;
@@ -28,6 +29,7 @@ import java.util.stream.Stream;
 final class CaptureStage {
     private static final String VANILLA_WORLD = "paletter_vanilla";
     private static final String CAPTURE_PACK = "paletter_capture";
+    private static final String GIVE_WORLD = "paletter_give";
     private static final String CREATIVE_WORLD = "paletter_creative";
 
     private final UpdateContext ctx;
@@ -59,9 +61,6 @@ final class CaptureStage {
         properties.put("level-name", VANILLA_WORLD);
         properties.put("block-network-ids-are-hashes", "true");
         properties.put("enable-lan-visibility", "true"); // otherwise the RakNet pong does not carry the protocol
-        // The hashed start also runs /give (GiveCapture): the player needs to be allowed to run commands there
-        properties.put("default-player-permission-level", "operator");
-        properties.put("allow-cheats", "true");
         BdsServer.configure(server, properties);
         properties.put("enable-lan-visibility", "false");
         List<String> network = null;
@@ -90,7 +89,7 @@ final class CaptureStage {
                     + "self signed identity bound to the login chain)");
                 runs.existing = ctx.against != null ? ctx.containingVersion(runs.protocol) : ctx.bundledName(runs.protocol);
                 runs.reference = palette.reference(runs.existing, dump, runs);
-                Capture.Summary summary = capture(address, runs, work.resolve("vanilla"), null, "vanilla capture", true);
+                Capture.Summary summary = capture(address, runs, work.resolve("vanilla"), null, "vanilla capture");
                 runs.vanilla = work.resolve("vanilla");
                 // Toggles start game reports for a world without any are part of vanilla (1.26.70 previews:
                 // data_driven_vanilla_blocks_and_items), not toggles to attribute
@@ -107,8 +106,6 @@ final class CaptureStage {
             ctx.report.evidence("Network lines of the server", List.of("```", String.join("\n", network), "```"));
             return;
         }
-        properties.put("default-player-permission-level", "member");
-        properties.put("allow-cheats", "false");
         properties.put("block-network-ids-are-hashes", "false");
         BdsServer.configure(server, properties);
         try (BdsServer bds = new BdsServer(server, false)) {
@@ -116,6 +113,7 @@ final class CaptureStage {
             bds.awaitStarted(ctx.timeout);
             capture(address, runs, work.resolve("vanilla-sequential"), null, "vanilla capture (sequential ids)");
         }
+        gives(server, work, address, runs, properties);
 
         // Experiments: discover the toggles, verify them, capture what each one adds
         runs.experiments.current = ExperimentDiscovery.recordedCurrent(ctx.bdsData, ctx.buildDirectory.getFileName().toString());
@@ -176,6 +174,34 @@ final class CaptureStage {
             ctx.report.todo("Block palette: " + ordering.withinBlockOrder.size() + " creative states of generated blocks sit elsewhere "
                 + "within their block than generated; fix the state order of those blocks before importing", "States",
                 ordering.withinBlockOrder.stream().map(state -> "- " + state).toList());
+        }
+    }
+
+    /**
+     * A start of its own for {@code /give} ({@link GiveCapture}): the player has to run commands there, which the vanilla start, the
+     * reference of the palette and of start game, does not allow. The settings stay local to this start; a failure is only INFO.
+     */
+    private void gives(Path server, Path work, InetSocketAddress address, Runs runs, Map<String, String> properties) {
+        Map<String, String> own = new LinkedHashMap<>(properties);
+        own.put("level-name", GIVE_WORLD);
+        own.put("default-player-permission-level", "operator");
+        own.put("allow-cheats", "true");
+        own.put("block-network-ids-are-hashes", "true");
+        try {
+            freshWorld(server, GIVE_WORLD, null);
+            BdsServer.configure(server, own);
+            try (BdsServer bds = new BdsServer(server, false)) {
+                bds.start(work.resolve("bds-give.log"));
+                bds.awaitStarted(ctx.timeout);
+                capture(address, runs, work.resolve("give"), null, "block item capture (/give)", true);
+                runs.give = work.resolve("give");
+            }
+        } catch (Exception e) {
+            ctx.report.check(Report.Status.INFO, "Block items (/give)", "not captured: " + e);
+        } finally {
+            // server.properties keeps what this start wrote: the next starts write the defaults again
+            properties.put("default-player-permission-level", "member");
+            properties.put("allow-cheats", "false");
         }
     }
 

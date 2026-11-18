@@ -83,7 +83,7 @@ public final class Capture {
     }
 
     /**
-     * @param give whether to run {@code /give} for the blocks of the reference whose item has another identifier
+     * @param give whether to run {@code /give} for the blocks of the reference whose item has another identifier, and for their items
      *             ({@link GiveCapture}); the server must let the player run commands
      */
     public static Summary capture(InetSocketAddress address, int protocol, VanillaData reference, String bdsVersion, String platform,
@@ -98,7 +98,7 @@ public final class Capture {
         System.out.println("Connecting to " + address + (netherNet ? " over NetherNet" : " over RakNet") + " with protocol " + protocol
             + (codecProtocol != protocol ? " (decoded with the " + codecProtocol + " codec)" : ""));
         CaptureClient.Result result = new CaptureClient(codec, address, netherNet)
-            .give(give ? GiveCapture.blocks(reference.blockItems()) : List.of()).run(timeoutSeconds);
+            .give(give ? GiveCapture.identifiers(reference.blockItems()) : List.of()).run(timeoutSeconds);
         CaptureWriter writer = new CaptureWriter(result, reference, bdsVersion, platform);
         if (give) {
             writer.withGives();
