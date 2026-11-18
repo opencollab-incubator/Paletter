@@ -32,10 +32,7 @@ public record Icon(@Nullable Map<String, String> textures,
     public static final String NAME = "minecraft:icon";
 
     /**
-     * Checks the components and copies lists and maps, so the value is immutable.
-     *
-     * @throws NullPointerException if a required component is null
-     * @throws IllegalArgumentException if a component is out of its documented range or conflicts with another
+     * Copies lists and maps, so the value is immutable.
      */
     public Icon {
         textures = textures == null ? null : Check.copy(textures, "Icon.textures");

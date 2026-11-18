@@ -29,7 +29,6 @@ public record Tags(@NonNull List<String> tags) implements ItemComponent {
      * Checks the components and copies lists and maps, so the value is immutable.
      *
      * @throws NullPointerException if a required component is null
-     * @throws IllegalArgumentException if a component is out of its documented range or conflicts with another
      */
     public Tags {
         tags = List.copyOf(Objects.requireNonNull(tags, "Tags.tags"));

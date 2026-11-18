@@ -35,10 +35,9 @@ public record RandomOffset(RandomOffset. @NonNull X x, RandomOffset. @NonNull X 
     public static final String NAME = "minecraft:random_offset";
 
     /**
-     * Checks the components and copies lists and maps, so the value is immutable.
+     * Checks the components.
      *
      * @throws NullPointerException if a required component is null
-     * @throws IllegalArgumentException if a component is out of its documented range or conflicts with another
      */
     public RandomOffset {
         Objects.requireNonNull(x, "RandomOffset.x");
@@ -141,9 +140,8 @@ public record RandomOffset(RandomOffset. @NonNull X x, RandomOffset. @NonNull X 
      */
     public record Range(float max, float min) {
         /**
-         * Checks the components and copies lists and maps, so the value is immutable.
+         * Checks the components.
          *
-         * @throws NullPointerException if a required component is null
          * @throws IllegalArgumentException if a component is out of its documented range or conflicts with another
          */
         public Range {
@@ -229,17 +227,17 @@ public record RandomOffset(RandomOffset. @NonNull X x, RandomOffset. @NonNull X 
      */
     public record X(@NonNull Range range, int steps) {
         /**
-         * Checks the components and copies lists and maps, so the value is immutable.
+         * Checks the components.
          *
          * @throws NullPointerException if a required component is null
-         * @throws IllegalArgumentException if a component is out of its documented range or conflicts with another
          */
         public X {
             Objects.requireNonNull(range, "RandomOffset.X.range");
         }
 
         /**
-         * Creates a builder with every field at its default.
+         * Creates a builder with every optional field at its default; required fields must be set before
+         * {@code build()}.
          *
          * @return a builder with the defaults applied
          */

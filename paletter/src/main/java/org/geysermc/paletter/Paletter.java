@@ -42,8 +42,8 @@ import java.util.function.Predicate;
  * Palette sessionPalette = palette.extend(sessionLayer);
  * }</pre>
  * Everything is loaded lazily and cached; instances are thread safe. Block states and item components that are equal
- * across versions are the same instances. Share one instance for the whole application: every palette it compiles is
- * cached in it.
+ * across versions are the same instances. Share one instance for the whole application: every per-version palette it
+ * compiles is cached in it.
  * <p>
  * Null handling: parameters and return values are {@code @NonNull} unless the signature says {@code @Nullable}; passing
  * null where it is not allowed is a bug and throws {@link NullPointerException}. A lookup that finds nothing returns null
@@ -349,6 +349,36 @@ public final class Paletter {
     }
 
     /**
+     * Finds the key of a vanilla item type in the newest data of this instance. The name an older version gave an item
+     * finds it too (see {@link Lookup#RENAMED}). Content of this instance's layers is not found: use the {@code type()} of
+     * the custom item.
+     *
+     * @param identifier an item identifier
+     * @return the item type, or null if the newest data has no such item
+     * @throws NullPointerException if the identifier is null
+     * @throws java.io.UncheckedIOException if the data of the newest version cannot be read
+     * @since 1.0.0
+     */
+    public @Nullable BedrockItemType itemType(@NonNull String identifier) {
+        return vanilla(latest()).itemType(Objects.requireNonNull(identifier), Lookup.RENAMED);
+    }
+
+    /**
+     * Finds the key of a vanilla block type in the newest data of this instance. The name an older version gave a block
+     * finds it too (see {@link Lookup#RENAMED}). Content of this instance's layers is not found: use the {@code type()}
+     * of the custom block.
+     *
+     * @param identifier a block identifier
+     * @return the block type, or null if the newest data has no such block
+     * @throws NullPointerException if the identifier is null
+     * @throws java.io.UncheckedIOException if the data of the newest version cannot be read
+     * @since 1.0.0
+     */
+    public @Nullable BedrockBlockType blockType(@NonNull String identifier) {
+        return vanilla(latest()).blockType(Objects.requireNonNull(identifier), Lookup.RENAMED);
+    }
+
+    /**
      * The palette of a protocol version: vanilla content plus this instance's layers, compiled once per data version
      * and cached. Session content goes on top of it with {@link Palette#extend(PaletteLayer)}. A protocol newer than all
      * data gets the newest data, with an info entry in the report; content the client has that the data lacks is then
@@ -598,7 +628,7 @@ public final class Paletter {
         }
 
         /**
-         * Creates the Paletter. Nothing is loaded or compiled yet, see {@link Paletter#warmUp()}.
+         * Creates the Paletter. Only the version index is read; no palette is compiled yet, see {@link Paletter#warmUp()}.
          *
          * @return the Paletter
          */

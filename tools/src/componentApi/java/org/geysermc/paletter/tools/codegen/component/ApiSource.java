@@ -352,12 +352,10 @@ final class ApiSource {
             }
             params.add(p.build());
         }
-        CodeBlock validation = validation(o);
-        MethodSpec.Builder constructor = validation.isEmpty() ? MethodSpec.constructorBuilder()
-            : MethodSpec.compactConstructorBuilder().addModifiers(Modifier.PUBLIC).addCode(validation)
-                .addJavadoc("Checks the components and copies lists and maps, so the value is immutable.\n\n"
-                    + "@throws NullPointerException if a required component is null\n"
-                    + "@throws IllegalArgumentException if a component is out of its documented range or conflicts with another\n");
+        Validation validation = validation(o);
+        MethodSpec.Builder constructor = validation.code().isEmpty() ? MethodSpec.constructorBuilder()
+            : MethodSpec.compactConstructorBuilder().addModifiers(Modifier.PUBLIC).addCode(validation.code())
+                .addJavadoc(validation.javadoc());
         type.recordConstructor(constructor.addParameters(params).build());
 
         if (top && !c.standalone) {
@@ -369,7 +367,11 @@ final class ApiSource {
         factories(type, o, top);
         ClassName builder = self.nestedClass("Builder");
         type.addMethod(MethodSpec.methodBuilder("builder").addModifiers(Modifier.PUBLIC, Modifier.STATIC)
-            .addJavadoc("Creates a builder with every field at its default.\n\n@return a builder with the defaults applied\n").returns(nonNull(builder)).addStatement("return new Builder()").build());
+            .addJavadoc(allFields(o).stream().anyMatch(f -> f.required)
+                ? "Creates a builder with every optional field at its default; required fields must be set before\n"
+                    + "{@code build()}.\n\n@return a builder with the defaults applied\n"
+                : "Creates a builder with every field at its default.\n\n@return a builder with the defaults applied\n")
+            .returns(nonNull(builder)).addStatement("return new Builder()").build());
         MethodSpec.Builder toBuilder = MethodSpec.methodBuilder("toBuilder").addModifiers(Modifier.PUBLIC)
             .addJavadoc("Creates a builder holding this value's fields, to change some of them.\n\n@return a builder with this value's fields\n").returns(nonNull(builder))
             .addStatement("Builder builder = new Builder()");
@@ -516,29 +518,61 @@ final class ApiSource {
 
     // ---- Validation ----------------------------------------------------------------------------------------------------
 
-    private CodeBlock validation(ObjType o) {
+    /**
+     * The compact constructor of a record: its code and the Javadoc that says what the code does.
+     *
+     * @param code the statements, empty if there is nothing to check or copy
+     * @param nulls whether a required component is checked for null
+     * @param ranges whether a component is checked against a range, an allowed set or another component
+     * @param copies whether a list or map is copied
+     */
+    private record Validation(CodeBlock code, boolean nulls, boolean ranges, boolean copies) {
+        String javadoc() {
+            boolean checks = nulls || ranges;
+            String summary = checks && copies ? "Checks the components and copies lists and maps, so the value is immutable.\n"
+                : checks ? "Checks the components.\n" : "Copies lists and maps, so the value is immutable.\n";
+            StringBuilder doc = new StringBuilder(summary);
+            if (nulls) {
+                doc.append("\n@throws NullPointerException if a required component is null\n");
+            }
+            if (ranges) {
+                doc.append(nulls ? "" : "\n")
+                    .append("@throws IllegalArgumentException if a component is out of its documented range or conflicts with another\n");
+            }
+            return doc.toString();
+        }
+    }
+
+    private Validation validation(ObjType o) {
         CodeBlock.Builder body = CodeBlock.builder();
+        boolean[] flags = new boolean[3];
         String owner = c.className + (o == c.root ? "" : "." + o.name);
         for (Field f : allFields(o)) {
             String name = owner + "." + f.java;
             boolean nullable = nullable(f);
             boolean reference = !(f.type instanceof Scalar s && s.kind() != ScalarKind.STRING) || nullable;
             if (f.type instanceof ListOf) {
+                flags[2] = true;
                 if (nullable) {
                     body.addStatement("$N = $N == null ? null : $T.copyOf($N)", f.java, f.java, LIST, f.java);
                 } else {
+                    flags[0] = true;
                     body.addStatement("$N = $T.copyOf($T.requireNonNull($N, $S))", f.java, LIST, OBJECTS, f.java, name);
                 }
             } else if (f.type instanceof MapOf || f.type instanceof States) {
+                flags[2] = true;
                 if (nullable) {
                     body.addStatement("$N = $N == null ? null : $T.copy($N, $S)", f.java, f.java, CHECK, f.java, name);
                 } else {
+                    flags[0] = true;
                     body.addStatement("$N = $T.copy($N, $S)", f.java, CHECK, f.java, name);
                 }
             } else if (reference && !nullable) {
+                flags[0] = true;
                 body.addStatement("$T.requireNonNull($N, $S)", OBJECTS, f.java, name);
             }
             if (!f.reservedKeys.isEmpty()) {
+                flags[1] = true;
                 body.beginControlFlow("for ($T key : $T.of($L))", STRING, LIST, String.join(", ", f.reservedKeys.stream()
                     .map(k -> "\"" + k + "\"").toList()));
                 body.beginControlFlow("if ($N.containsKey(key))", f.java);
@@ -547,12 +581,14 @@ final class ApiSource {
                 body.endControlFlow().endControlFlow();
             }
             if (f.type instanceof States) {
+                flags[1] = true;
                 body.addStatement("$T.stateValues($N, $S)", CHECK, f.java, name);
             }
             if (f.type instanceof UnionRef && (f.min != null || f.max != null || f.multipleOf != null || f.allowed != null)) {
                 throw new GenerationException(name + " is a union with a limit; a limit of one form needs a check of that variant");
             }
             if (f.min != null || f.max != null) {
+                flags[1] = true;
                 if (nullable) {
                     body.beginControlFlow("if ($N != null)", f.java);
                 }
@@ -562,6 +598,7 @@ final class ApiSource {
                 }
             }
             if (f.multipleOf != null) {
+                flags[1] = true;
                 if (nullable) {
                     body.beginControlFlow("if ($N != null)", f.java);
                 }
@@ -576,6 +613,7 @@ final class ApiSource {
                 }
             }
             if (f.allowed != null) {
+                flags[1] = true;
                 if (nullable) {
                     body.beginControlFlow("if ($N != null)", f.java);
                 }
@@ -585,6 +623,7 @@ final class ApiSource {
                 }
             }
             if (f.notBelow != null) {
+                flags[1] = true;
                 List<String> unset = new ArrayList<>();
                 for (Field side : List.of(f.notBelow, f)) {
                     if (nullable(side)) {
@@ -600,11 +639,12 @@ final class ApiSource {
                 }
             }
             if (f.conflictsWith != null) {
+                flags[1] = true;
                 body.addStatement("$T.conflict($S, $S, $L, $S, $N, $S)", CHECK, owner, f.java,
                     (nullable ? f.java + " != null && " : "") + "!" + f.java + ".isEmpty()", f.conflictsWith.java, f.conflictsWith.java, f.conflictValue);
             }
         }
-        return body.build();
+        return new Validation(body.build(), flags[0], flags[1], flags[2]);
     }
 
     private static String bound(Double d) {

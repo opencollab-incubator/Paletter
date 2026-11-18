@@ -18,7 +18,7 @@ import java.util.Map;
  * registered custom blocks: a {@link org.geysermc.paletter.block.CustomBlock} owns its {@link
  * org.geysermc.paletter.block.CustomBlock#type() type} and states, and a palette it is registered in hands back exactly
  * those ({@code Palette#blockState(NbtMap, Lookup)}, ...). The states
- * of a type made by {@link BedrockBlockType#fromIdentifier(String)} for an unknown identifier are equal by value, not identical.
+ * of a type made for an identifier the bundled data does not know are equal by value, not identical.
  * Equal custom blocks registered by different layers each own their states; those are equal, not identical.
  * <p>
  * Canonical ids come from {@link org.geysermc.paletter.Paletter#canonicalBlocks()} (vanilla states) and

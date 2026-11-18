@@ -29,10 +29,9 @@ public record Loot(@NonNull String value) implements BlockComponent {
     public static final String NAME = "minecraft:loot";
 
     /**
-     * Checks the components and copies lists and maps, so the value is immutable.
+     * Checks the components.
      *
      * @throws NullPointerException if a required component is null
-     * @throws IllegalArgumentException if a component is out of its documented range or conflicts with another
      */
     public Loot {
         Objects.requireNonNull(value, "Loot.value");
@@ -54,7 +53,8 @@ public record Loot(@NonNull String value) implements BlockComponent {
     }
 
     /**
-     * Creates a builder with every field at its default.
+     * Creates a builder with every optional field at its default; required fields must be set before
+     * {@code build()}.
      *
      * @return a builder with the defaults applied
      */

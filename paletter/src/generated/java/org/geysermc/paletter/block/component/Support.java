@@ -32,10 +32,9 @@ public record Support(Support. @NonNull Shape shape) implements BlockComponent {
     public static final String NAME = "minecraft:support";
 
     /**
-     * Checks the components and copies lists and maps, so the value is immutable.
+     * Checks the components.
      *
      * @throws NullPointerException if a required component is null
-     * @throws IllegalArgumentException if a component is out of its documented range or conflicts with another
      */
     public Support {
         Objects.requireNonNull(shape, "Support.shape");
@@ -47,7 +46,8 @@ public record Support(Support. @NonNull Shape shape) implements BlockComponent {
     }
 
     /**
-     * Creates a builder with every field at its default.
+     * Creates a builder with every optional field at its default; required fields must be set before
+     * {@code build()}.
      *
      * @return a builder with the defaults applied
      */

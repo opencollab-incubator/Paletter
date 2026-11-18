@@ -36,9 +36,8 @@ public record Food(boolean canAlwaysEat, int nutrition, float saturationModifier
     public static final String NAME = "minecraft:food";
 
     /**
-     * Checks the components and copies lists and maps, so the value is immutable.
+     * Checks the components.
      *
-     * @throws NullPointerException if a required component is null
      * @throws IllegalArgumentException if a component is out of its documented range or conflicts with another
      */
     public Food {

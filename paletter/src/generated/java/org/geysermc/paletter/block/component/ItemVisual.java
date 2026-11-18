@@ -32,10 +32,9 @@ public record ItemVisual(ItemVisual. @NonNull VisualGeometry geometry,
     public static final String NAME = "minecraft:item_visual";
 
     /**
-     * Checks the components and copies lists and maps, so the value is immutable.
+     * Checks the components.
      *
      * @throws NullPointerException if a required component is null
-     * @throws IllegalArgumentException if a component is out of its documented range or conflicts with another
      */
     public ItemVisual {
         Objects.requireNonNull(geometry, "ItemVisual.geometry");
@@ -48,7 +47,8 @@ public record ItemVisual(ItemVisual. @NonNull VisualGeometry geometry,
     }
 
     /**
-     * Creates a builder with every field at its default.
+     * Creates a builder with every optional field at its default; required fields must be set before
+     * {@code build()}.
      *
      * @return a builder with the defaults applied
      */

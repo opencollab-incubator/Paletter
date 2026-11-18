@@ -311,9 +311,8 @@ public record MaterialInstances(MaterialInstances. @Nullable InstanceOrAlias all
             @Nullable String texture, @BedrockFormat("1.21.80") @Nullable String tintMethod,
             @BedrockFormat("1.21.120") @Nullable Boolean alphaMaskedTint) {
         /**
-         * Checks the components and copies lists and maps, so the value is immutable.
+         * Checks the components.
          *
-         * @throws NullPointerException if a required component is null
          * @throws IllegalArgumentException if a component is out of its documented range or conflicts with another
          */
         public Instance {

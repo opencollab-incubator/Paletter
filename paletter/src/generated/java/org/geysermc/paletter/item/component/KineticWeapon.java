@@ -53,10 +53,9 @@ public record KineticWeapon(KineticWeapon. @Nullable CreativeReach creativeReach
     public static final String NAME = "minecraft:kinetic_weapon";
 
     /**
-     * Checks the components and copies lists and maps, so the value is immutable.
+     * Checks the components.
      *
      * @throws NullPointerException if a required component is null
-     * @throws IllegalArgumentException if a component is out of its documented range or conflicts with another
      */
     public KineticWeapon {
         Objects.requireNonNull(reach, "KineticWeapon.reach");
@@ -318,9 +317,8 @@ public record KineticWeapon(KineticWeapon. @Nullable CreativeReach creativeReach
      */
     public record Conditions(int maxDuration, float minRelativeSpeed, float minSpeed) {
         /**
-         * Checks the components and copies lists and maps, so the value is immutable.
+         * Checks the components.
          *
-         * @throws NullPointerException if a required component is null
          * @throws IllegalArgumentException if a component is out of its documented range or conflicts with another
          */
         public Conditions {

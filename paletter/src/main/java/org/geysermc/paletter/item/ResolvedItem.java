@@ -63,7 +63,8 @@ public final class ResolvedItem {
     /**
      * Whether a replacement was used.
      *
-     * @return true if the variant does not exist in this version and a replacement was used
+     * @return true if an {@code ItemFallback} or the default fallback item was used: the variant has no item of its
+     *         own in this version, or is forcibly replaced
      */
     public boolean fallback() {
         return fallback;

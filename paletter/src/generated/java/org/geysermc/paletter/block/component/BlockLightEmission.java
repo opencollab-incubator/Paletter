@@ -45,7 +45,8 @@ public record BlockLightEmission(int value) implements BlockComponent {
     }
 
     /**
-     * Creates a builder with every field at its default.
+     * Creates a builder with every optional field at its default; required fields must be set before
+     * {@code build()}.
      *
      * @return a builder with the defaults applied
      */

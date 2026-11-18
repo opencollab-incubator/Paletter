@@ -34,10 +34,9 @@ public record SelectionBox(SelectionBox. @NonNull Vec3 origin, SelectionBox. @No
     public static final String NAME = "minecraft:selection_box";
 
     /**
-     * Checks the components and copies lists and maps, so the value is immutable.
+     * Checks the components.
      *
      * @throws NullPointerException if a required component is null
-     * @throws IllegalArgumentException if a component is out of its documented range or conflicts with another
      */
     public SelectionBox {
         Objects.requireNonNull(origin, "SelectionBox.origin");

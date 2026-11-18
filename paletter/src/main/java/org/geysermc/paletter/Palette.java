@@ -72,10 +72,11 @@ import java.util.function.Supplier;
  * Thread safety: a palette is immutable and safe to share between threads and sessions. Its lazily built caches
  * (behaviour, version indexes) and {@link #extend(PaletteLayer)} synchronize internally; no method needs external locking.
  * <p>
- * Null handling: parameters and return values are {@code @NonNull} unless the signature says {@code @Nullable}. Methods that
- * look something up return null (or take an {@code orElse}) where the content is not in the palette; they do not throw for it.
- * Methods throw only for configuration errors: an {@link IllegalArgumentException} for a handle that does not belong to
- * the palette (see {@link #blockDefinition(BedrockBlockState)}), never for data a client sent.
+ * Null handling: parameters and return values are {@code @NonNull} unless the signature says {@code @Nullable}.
+ * Lookups by identifier, NBT or runtime id return null where nothing matches. Methods that take a key
+ * ({@code blockDefinition}, {@code runtimeId}, {@code resolve}) throw {@link IllegalArgumentException} for a key this
+ * palette does not contain (e.g. a custom block of a layer it lacks); their {@code orElse} overloads return the default
+ * instead. Nothing throws for data a client sent.
  * <p>
  * Vocabulary: keys ({@link BedrockBlockState}, {@link BedrockItemVariant}, ...) identify content independent of any version;
  * definitions ({@link RegisteredBlockState}, {@link RegisteredItem}) are what the palette sends to the client; resolutions
@@ -1121,8 +1122,8 @@ public final class Palette {
     }
 
     /**
-     * Compiles one more layer on top of this palette, e.g. for one session. Results are cached per layer
-     * instance for as long as the layer is referenced.
+     * Compiles one more layer on top of this palette, e.g. for one session. Concurrent calls for one layer return the
+     * same palette, though each may compile it. The result is cached while it is reachable.
      * <p>
      * A layer that cannot be compiled (a duplicate identifier or runtime id, across or within layers, a block hash
      * collision, an exception from a component encoder or a callback) throws a {@link PaletteException} naming the layer

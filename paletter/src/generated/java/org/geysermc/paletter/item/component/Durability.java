@@ -33,7 +33,7 @@ public record Durability(Durability. @NonNull DamageChance damageChance,
     public static final String NAME = "minecraft:durability";
 
     /**
-     * Checks the components and copies lists and maps, so the value is immutable.
+     * Checks the components.
      *
      * @throws NullPointerException if a required component is null
      * @throws IllegalArgumentException if a component is out of its documented range or conflicts with another
@@ -49,7 +49,8 @@ public record Durability(Durability. @NonNull DamageChance damageChance,
     }
 
     /**
-     * Creates a builder with every field at its default.
+     * Creates a builder with every optional field at its default; required fields must be set before
+     * {@code build()}.
      *
      * @return a builder with the defaults applied
      */
@@ -128,9 +129,8 @@ public record Durability(Durability. @NonNull DamageChance damageChance,
      */
     public record DamageChance(int max, int min) {
         /**
-         * Checks the components and copies lists and maps, so the value is immutable.
+         * Checks the components.
          *
-         * @throws NullPointerException if a required component is null
          * @throws IllegalArgumentException if a component is out of its documented range or conflicts with another
          */
         public DamageChance {

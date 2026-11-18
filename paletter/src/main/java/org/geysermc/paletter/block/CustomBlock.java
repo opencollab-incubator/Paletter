@@ -84,7 +84,6 @@ public final class CustomBlock {
         this.menuCategory = menuCategory;
         this.item = Objects.requireNonNull(item, "item");
         this.creative = creative;
-        this.defaultStates = Map.copyOf(defaultStates);
         this.tags = List.copyOf(tags);
         checkUvLock(identifier, this.components);
         for (Permutation permutation : this.permutations) {
@@ -98,13 +97,17 @@ public final class CustomBlock {
                 throw new IllegalArgumentException(identifier + " has more than 2^24 state combinations");
             }
         }
-        for (Map.Entry<String, Object> entry : this.defaultStates.entrySet()) {
+        Map<String, Object> converted = new LinkedHashMap<>();
+        for (Map.Entry<String, Object> entry : defaultStates.entrySet()) {
             BlockProperty<?> property = stateProperties.stream().filter(p -> p.name().equals(entry.getKey())).findFirst()
                 .orElseThrow(() -> new IllegalArgumentException(identifier + " has no property " + entry.getKey()));
-            if (!property.values().contains(entry.getValue())) {
+            Object value = valueOf(property, entry.getValue());
+            if (!property.values().contains(value)) {
                 throw new IllegalArgumentException(entry.getValue() + " is not a value of " + identifier + "'s " + entry.getKey());
             }
+            converted.put(entry.getKey(), value);
         }
+        this.defaultStates = Map.copyOf(converted);
         this.type = BedrockBlockType.custom(identifier, stateProperties, this.defaultStates);
         this.itemType = BedrockItemType.custom(identifier);
     }
@@ -215,6 +218,19 @@ public final class CustomBlock {
         List<BlockProperty<?>> all = new ArrayList<>(properties);
         all.addAll(TraitStates.of(traits));
         return all;
+    }
+
+    /** A default state value as the property stores it: a boolean property has the bytes 0 and 1. */
+    private static Object valueOf(BlockProperty<?> property, Object value) {
+        if (property.type() == BlockProperty.Type.BOOLEAN) {
+            if (value instanceof Boolean flag) {
+                return (byte) (flag ? 1 : 0);
+            }
+            if (value instanceof Integer number && (number == 0 || number == 1)) {
+                return number.byteValue();
+            }
+        }
+        return value;
     }
 
     private static void checkUvLock(String identifier, List<BlockComponent> components) {
@@ -584,12 +600,40 @@ public final class CustomBlock {
          * property the block does not have and a value it does not list.
          *
          * @param property the property name
-         * @param value the value, one of the values of the property
+         * @param value the value, one of the values of the property; a {@link Boolean} or the integer 0 or 1 for a boolean
+         *              property, which stores the bytes 0 and 1
          * @return this builder
+         * @throws NullPointerException if the property or the value is null
          */
         public @NonNull Builder defaultState(@NonNull String property, @NonNull Object value) {
-            defaultStates.put(property, value);
+            defaultStates.put(Objects.requireNonNull(property, "property"), Objects.requireNonNull(value, "value"));
             return this;
+        }
+
+        /**
+         * Sets a boolean value of the default state: the value of a boolean property, which stores the bytes 0 and 1.
+         * {@link #build()} rejects a property that is not a boolean one.
+         *
+         * @param property the property name
+         * @param value the value
+         * @return this builder
+         * @throws NullPointerException if the property is null
+         */
+        public @NonNull Builder defaultState(@NonNull String property, boolean value) {
+            return defaultState(property, (Object) value);
+        }
+
+        /**
+         * Sets an integer value of the default state: the value of an integer property, or the 0 or 1 of a boolean
+         * property, which stores the bytes 0 and 1. {@link #build()} rejects a value the property does not list.
+         *
+         * @param property the property name
+         * @param value the value
+         * @return this builder
+         * @throws NullPointerException if the property is null
+         */
+        public @NonNull Builder defaultState(@NonNull String property, int value) {
+            return defaultState(property, (Object) value);
         }
 
         /**
@@ -622,9 +666,8 @@ public final class CustomBlock {
          * Builds the block, creating its type and item type.
          *
          * @return the block
-         * @throws IllegalArgumentException if two components of a permutation or of the block share a name, a
-         *         {@code uv_lock} list has more than 64 bones, the block has more than 2^24 state combinations, or a
-         *         default state names a missing property or value
+         * @throws IllegalArgumentException if a {@code uv_lock} list has more than 64 bones, the block has more than
+         *         2^24 state combinations, or a default state names a missing property or value
          */
         public @NonNull CustomBlock build() {
             return new CustomBlock(identifier, properties, traits, components, permutations, menuCategory, item, creative, defaultStates, tags);

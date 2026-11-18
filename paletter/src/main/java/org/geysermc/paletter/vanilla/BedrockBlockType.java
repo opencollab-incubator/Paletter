@@ -3,6 +3,7 @@ package org.geysermc.paletter.vanilla;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.geysermc.paletter.annotation.Internal;
+import org.geysermc.paletter.internal.data.Renames;
 import org.geysermc.paletter.block.BlockProperty;
 import org.geysermc.paletter.block.CustomBlock;
 
@@ -88,20 +89,45 @@ public final class BedrockBlockType {
     }
 
     /**
-     * Internal: the key of an identifier: the vanilla constant if the identifier is a vanilla block of the newest
-     * bundled data or has a generated constant, else a custom type known by its identifier only (no states). Such types are not
-     * interned: equal for equal identifiers, not identical, so compare them with {@code equals}, and unknown
-     * identifiers never accumulate. The type of a {@link CustomBlock} is {@link CustomBlock#type()}. Loads
-     * the data.
+     * Internal: the key of an identifier: the vanilla constant if the identifier (after renames) is a vanilla block of
+     * the newest bundled data or has a generated constant, else a custom type known by its identifier only (no
+     * states). Such types are not interned: equal for equal identifiers, not identical, so compare them with
+     * {@code equals}, and unknown identifiers never accumulate. Use {@link #byIdentifier(String)}. The type of a
+     * {@link CustomBlock} is {@link CustomBlock#type()}. Loads the data.
      *
      * @param identifier a block identifier
      * @return the type of the identifier
      */
     @Internal
     public static @NonNull BedrockBlockType fromIdentifier(@NonNull String identifier) {
-        Objects.requireNonNull(identifier);
-        BedrockBlockType known = VanillaIndex.get().blockOrConstant(identifier);
+        BedrockBlockType known = byIdentifier(identifier);
         return known != null ? known : new BedrockBlockType(identifier, true);
+    }
+
+    /**
+     * Finds the vanilla type of an identifier, without making a type for an unknown identifier. The identifier is first
+     * mapped through the renames of the bundled data, so the name an older version gave a block finds its type. Loads
+     * the data.
+     *
+     * @param identifier a block identifier
+     * @return the vanilla constant, or null if the identifier (after renames) is not a block of the newest bundled data and
+     *         has no generated constant
+     * @throws NullPointerException if the identifier is null
+     * @since 1.0.0
+     */
+    public static @Nullable BedrockBlockType byIdentifier(@NonNull String identifier) {
+        return byIdentifier(identifier, VanillaIndex.get().renames);
+    }
+
+    /** {@link #byIdentifier(String)} with the renames given, for a test of them. */
+    static @Nullable BedrockBlockType byIdentifier(String identifier, Renames renames) {
+        Objects.requireNonNull(identifier);
+        VanillaIndex index = VanillaIndex.get();
+        String renamed = renames.block(identifier);
+        if (renamed != null && index.blockOrConstant(renamed) != null) {
+            identifier = renamed;
+        }
+        return index.blockOrConstant(identifier);
     }
 
     /**
@@ -204,7 +230,8 @@ public final class BedrockBlockType {
     /**
      * Whether this is a custom type.
      *
-     * @return true for the type of a {@link CustomBlock}
+     * @return true for the type of a {@link CustomBlock}, and for a type made for an identifier the bundled data does
+     *         not know
      */
     public boolean isCustom() {
         return custom;

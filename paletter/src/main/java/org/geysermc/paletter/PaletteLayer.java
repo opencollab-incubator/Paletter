@@ -190,6 +190,15 @@ public final class PaletteLayer {
      * @since 1.0.0
      */
     public record Override(@NonNull String identifier, @NonNull Consumer<ItemOverride> modifier) {
+        /**
+         * Creates the override.
+         *
+         * @throws NullPointerException if the identifier or the modifier is null
+         */
+        public Override {
+            Objects.requireNonNull(identifier, "identifier");
+            Objects.requireNonNull(modifier, "modifier");
+        }
     }
 
     /**
@@ -345,10 +354,13 @@ public final class PaletteLayer {
          * @param tag the tag, e.g. {@code my:gems}
          * @param identifiers the identifiers of the items in the tag
          * @return this builder
+         * @throws NullPointerException if the tag, the array or an identifier is null
          * @since 1.0.0
          */
         public @NonNull Builder tag(@NonNull String tag, @NonNull String... identifiers) {
-            tags.computeIfAbsent(tag, t -> new ArrayList<>()).addAll(List.of(identifiers));
+            Objects.requireNonNull(tag, "tag");
+            List<String> added = List.of(identifiers);
+            tags.computeIfAbsent(tag, t -> new ArrayList<>()).addAll(added);
             return this;
         }
 
@@ -366,10 +378,13 @@ public final class PaletteLayer {
          * @param identifier the name blocks use, e.g. {@code my:half_pipe}
          * @param shape the shape
          * @return this builder
+         * @throws NullPointerException if the identifier or the shape is null
          * @throws IllegalArgumentException if the identifier is refused (see above) or already defined in this layer
          * @since 1.0.0
          */
         public @NonNull Builder voxelShape(@NonNull String identifier, @NonNull VoxelShape shape) {
+            Objects.requireNonNull(identifier, "identifier");
+            Objects.requireNonNull(shape, "shape");
             VoxelShapeRules.checkIdentifier(identifier);
             if (voxelShapes.putIfAbsent(identifier, shape) != null) {
                 throw new IllegalArgumentException("The voxel shape " + identifier + " is defined twice");

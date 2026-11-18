@@ -3,6 +3,7 @@ package org.geysermc.paletter.vanilla;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.geysermc.paletter.annotation.Internal;
+import org.geysermc.paletter.internal.data.Renames;
 import org.geysermc.paletter.internal.CanonicalItems;
 import org.geysermc.paletter.item.CustomItem;
 import org.geysermc.paletter.internal.item.ItemVariant;
@@ -70,24 +71,42 @@ public final class BedrockItemType implements ItemKey {
      * Internal: the type of an identifier: the vanilla constant if the identifier (after renames) is vanilla in the
      * newest bundled data or has a generated constant, else a custom type known by its identifier only (not interned,
      * so unknown identifiers never accumulate; equal, not identical, for equal identifiers). Loads the data. Use
-     * {@link org.geysermc.paletter.Palette#itemType} or the constants of {@link BedrockItems}.
+     * {@link #byIdentifier(String)}, {@link org.geysermc.paletter.Palette#itemType} or the constants of
+     * {@link BedrockItems}.
      *
      * @param identifier an item identifier
      * @return the type of the identifier
      */
     @Internal
     public static @NonNull BedrockItemType fromIdentifier(@NonNull String identifier) {
+        BedrockItemType known = byIdentifier(identifier);
+        return known != null ? known : new BedrockItemType(identifier);
+    }
+
+    /**
+     * Finds the vanilla type of an identifier, without making a type for an unknown identifier. The identifier is first
+     * mapped through the renames of the bundled data, so the name an older version gave an item finds its type. Loads
+     * the data.
+     *
+     * @param identifier an item identifier
+     * @return the vanilla constant, or null if the identifier (after renames) is not an item of the newest bundled data and
+     *         has no generated constant
+     * @throws NullPointerException if the identifier is null
+     * @since 1.0.0
+     */
+    public static @Nullable BedrockItemType byIdentifier(@NonNull String identifier) {
+        return byIdentifier(identifier, VanillaIndex.get().renames);
+    }
+
+    /** {@link #byIdentifier(String)} with the renames given, for a test of them. */
+    static @Nullable BedrockItemType byIdentifier(String identifier, Renames renames) {
         Objects.requireNonNull(identifier);
         VanillaIndex index = VanillaIndex.get();
-        String renamed = index.renames.item(identifier);
+        String renamed = renames.item(identifier);
         if (renamed != null && index.itemOrConstant(renamed) != null) {
             identifier = renamed;
         }
-        BedrockItemType known = index.itemOrConstant(identifier);
-        if (known != null) {
-            return known;
-        }
-        return new BedrockItemType(identifier);
+        return index.itemOrConstant(identifier);
     }
 
     /**
@@ -210,7 +229,8 @@ public final class BedrockItemType implements ItemKey {
     /**
      * Whether this is a custom type.
      *
-     * @return true for the type of a {@link CustomItem} or of a custom block's item
+     * @return true for the type of a {@link CustomItem} or of a custom block's item, and for a type made for an
+     *         identifier the bundled data does not know
      */
     public boolean isCustom() {
         return custom;

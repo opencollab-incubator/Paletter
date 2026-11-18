@@ -38,7 +38,6 @@ public record Digger(@NonNull List<Digger.DestroySpeeds> destroySpeeds,
      * Checks the components and copies lists and maps, so the value is immutable.
      *
      * @throws NullPointerException if a required component is null
-     * @throws IllegalArgumentException if a component is out of its documented range or conflicts with another
      */
     public Digger {
         destroySpeeds = List.copyOf(Objects.requireNonNull(destroySpeeds, "Digger.destroySpeeds"));

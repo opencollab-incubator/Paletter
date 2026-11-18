@@ -37,7 +37,6 @@ public record DurabilitySensor(
      * Checks the components and copies lists and maps, so the value is immutable.
      *
      * @throws NullPointerException if a required component is null
-     * @throws IllegalArgumentException if a component is out of its documented range or conflicts with another
      */
     public DurabilitySensor {
         durabilityThresholds = List.copyOf(Objects.requireNonNull(durabilityThresholds, "DurabilitySensor.durabilityThresholds"));
@@ -49,7 +48,8 @@ public record DurabilitySensor(
     }
 
     /**
-     * Creates a builder with every field at its default.
+     * Creates a builder with every optional field at its default; required fields must be set before
+     * {@code build()}.
      *
      * @return a builder with the defaults applied
      */
@@ -129,10 +129,9 @@ public record DurabilitySensor(
     public record DurabilityThresholds(int durability, @NonNull ParticleType particleType,
             @Nullable String soundEvent) {
         /**
-         * Checks the components and copies lists and maps, so the value is immutable.
+         * Checks the components.
          *
          * @throws NullPointerException if a required component is null
-         * @throws IllegalArgumentException if a component is out of its documented range or conflicts with another
          */
         public DurabilityThresholds {
             Objects.requireNonNull(particleType, "DurabilitySensor.DurabilityThresholds.particleType");

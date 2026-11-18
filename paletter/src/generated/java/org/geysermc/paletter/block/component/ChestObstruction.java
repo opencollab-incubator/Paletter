@@ -38,10 +38,9 @@ public record ChestObstruction(
     public static final String NAME = "minecraft:chest_obstruction";
 
     /**
-     * Checks the components and copies lists and maps, so the value is immutable.
+     * Checks the components.
      *
      * @throws NullPointerException if a required component is null
-     * @throws IllegalArgumentException if a component is out of its documented range or conflicts with another
      */
     public ChestObstruction {
         Objects.requireNonNull(obstructionRule, "ChestObstruction.obstructionRule");

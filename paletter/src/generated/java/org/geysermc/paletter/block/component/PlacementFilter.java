@@ -39,7 +39,6 @@ public record PlacementFilter(
      * Checks the components and copies lists and maps, so the value is immutable.
      *
      * @throws NullPointerException if a required component is null
-     * @throws IllegalArgumentException if a component is out of its documented range or conflicts with another
      */
     public PlacementFilter {
         conditions = List.copyOf(Objects.requireNonNull(conditions, "PlacementFilter.conditions"));
@@ -260,7 +259,6 @@ public record PlacementFilter(
          * Checks the components and copies lists and maps, so the value is immutable.
          *
          * @throws NullPointerException if a required component is null
-         * @throws IllegalArgumentException if a component is out of its documented range or conflicts with another
          */
         public Conditions {
             allowedFaces = List.copyOf(Objects.requireNonNull(allowedFaces, "PlacementFilter.Conditions.allowedFaces"));

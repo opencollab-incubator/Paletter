@@ -32,12 +32,14 @@ public final class org.geysermc.paletter.Fallbacks {
 }
 
 public static final class org.geysermc.paletter.Fallbacks$Builder {
+    public org.geysermc.paletter.Fallbacks$Builder block(java.lang.String, org.geysermc.paletter.block.BlockFallback)
     public org.geysermc.paletter.Fallbacks$Builder block(org.geysermc.paletter.data.DataVersion, org.geysermc.paletter.vanilla.BedrockBlockType, org.geysermc.paletter.block.BlockFallback)
     public org.geysermc.paletter.Fallbacks$Builder block(org.geysermc.paletter.vanilla.BedrockBlockType, org.geysermc.paletter.block.BlockFallback)
     public org.geysermc.paletter.Fallbacks$Builder block(org.geysermc.paletter.vanilla.BedrockBlockType, org.geysermc.paletter.vanilla.BedrockBlockType)
     public org.geysermc.paletter.Fallbacks build()
     public org.geysermc.paletter.Fallbacks$Builder defaultBlock(org.geysermc.paletter.block.BlockFallback)
     public org.geysermc.paletter.Fallbacks$Builder defaultItem(org.geysermc.paletter.item.ItemFallback)
+    public org.geysermc.paletter.Fallbacks$Builder item(java.lang.String, org.geysermc.paletter.item.ItemFallback)
     public org.geysermc.paletter.Fallbacks$Builder item(org.geysermc.paletter.data.DataVersion, org.geysermc.paletter.vanilla.BedrockItemType, org.geysermc.paletter.item.ItemFallback)
     public org.geysermc.paletter.Fallbacks$Builder item(org.geysermc.paletter.vanilla.BedrockItemType, org.geysermc.paletter.item.ItemFallback)
     public org.geysermc.paletter.Fallbacks$Builder item(org.geysermc.paletter.vanilla.BedrockItemType, org.geysermc.paletter.vanilla.BedrockItemType)
@@ -211,8 +213,10 @@ public enum org.geysermc.paletter.PaletteReport$Level {
 }
 
 public final class org.geysermc.paletter.Paletter {
+    public org.geysermc.paletter.vanilla.BedrockBlockType blockType(java.lang.String)
     public static org.geysermc.paletter.Paletter$Builder builder()
     public static org.geysermc.paletter.Paletter bundled()
+    public org.geysermc.paletter.vanilla.BedrockItemType itemType(java.lang.String)
     public org.geysermc.paletter.data.DataVersion latest()
     public org.geysermc.paletter.Palette palette(int)
     public org.geysermc.paletter.Palette palette(org.cloudburstmc.protocol.bedrock.codec.BedrockCodec)
@@ -497,7 +501,9 @@ public static final class org.geysermc.paletter.block.CustomBlock$Builder {
     public org.geysermc.paletter.block.CustomBlock$Builder component(org.geysermc.paletter.block.component.BlockComponent)
     public org.geysermc.paletter.block.CustomBlock$Builder components(org.geysermc.paletter.block.component.BlockComponent...)
     public org.geysermc.paletter.block.CustomBlock$Builder creativePlacement(org.geysermc.paletter.creative.CreativePlacement)
+    public org.geysermc.paletter.block.CustomBlock$Builder defaultState(java.lang.String, int)
     public org.geysermc.paletter.block.CustomBlock$Builder defaultState(java.lang.String, java.lang.Object)
+    public org.geysermc.paletter.block.CustomBlock$Builder defaultState(java.lang.String, boolean)
     public org.geysermc.paletter.block.CustomBlock$Builder item(org.geysermc.paletter.block.CustomBlock$BlockItem)
     public org.geysermc.paletter.block.CustomBlock$Builder menuCategory(org.geysermc.paletter.block.component.BlockMenuCategory)
     public org.geysermc.paletter.block.CustomBlock$Builder menuCategory(org.geysermc.paletter.creative.CreativeCategory)
@@ -3968,6 +3974,7 @@ public final class org.geysermc.paletter.vanilla.BedrockBlockState {
 }
 
 public final class org.geysermc.paletter.vanilla.BedrockBlockType {
+    public static org.geysermc.paletter.vanilla.BedrockBlockType byIdentifier(java.lang.String)
     public java.lang.String constantName()
     public org.geysermc.paletter.vanilla.BedrockBlockState defaultState()
     public boolean equals(java.lang.Object)
@@ -5520,6 +5527,7 @@ public final class org.geysermc.paletter.vanilla.BedrockExperiments {
 }
 
 public final class org.geysermc.paletter.vanilla.BedrockItemType implements org.geysermc.paletter.vanilla.ItemKey {
+    public static org.geysermc.paletter.vanilla.BedrockItemType byIdentifier(java.lang.String)
     public java.lang.String constantName()
     public boolean equals(java.lang.Object)
     public boolean hasVariant(int)

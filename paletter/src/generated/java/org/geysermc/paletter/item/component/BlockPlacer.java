@@ -44,7 +44,6 @@ public record BlockPlacer(@BedrockFormat("1.26.10") boolean alignedPlacement, @N
      * Checks the components and copies lists and maps, so the value is immutable.
      *
      * @throws NullPointerException if a required component is null
-     * @throws IllegalArgumentException if a component is out of its documented range or conflicts with another
      */
     public BlockPlacer {
         Objects.requireNonNull(block, "BlockPlacer.block");
@@ -57,7 +56,8 @@ public record BlockPlacer(@BedrockFormat("1.26.10") boolean alignedPlacement, @N
     }
 
     /**
-     * Creates a builder with every field at its default.
+     * Creates a builder with every optional field at its default; required fields must be set before
+     * {@code build()}.
      *
      * @return a builder with the defaults applied
      */

@@ -153,6 +153,21 @@ public final class Fallbacks {
         }
 
         /**
+         * Like {@link #item(BedrockItemType, ItemFallback)} for an identifier, which needs no type: for an item the bundled
+         * data does not know.
+         *
+         * @param identifier the identifier of the item that may be missing
+         * @param fallback what it becomes
+         * @return this builder
+         * @throws NullPointerException if the identifier or the fallback is null
+         * @since 1.0.0
+         */
+        public @NonNull Builder item(@NonNull String identifier, @NonNull ItemFallback fallback) {
+            items.put(Objects.requireNonNull(identifier), Objects.requireNonNull(fallback));
+            return this;
+        }
+
+        /**
          * Like {@link #item(BedrockItemType, ItemFallback)} with {@link ItemFallback#of} the base variant of {@code replacement}.
          *
          * @param type the item that may be missing
@@ -191,6 +206,21 @@ public final class Fallbacks {
          */
         public @NonNull Builder block(@NonNull BedrockBlockType type, @NonNull BlockFallback fallback) {
             blocks.put(type.identifier(), Objects.requireNonNull(fallback));
+            return this;
+        }
+
+        /**
+         * Like {@link #block(BedrockBlockType, BlockFallback)} for an identifier, which needs no type: for a block the
+         * bundled data does not know.
+         *
+         * @param identifier the identifier of the block that may be missing
+         * @param fallback what it becomes
+         * @return this builder
+         * @throws NullPointerException if the identifier or the fallback is null
+         * @since 1.0.0
+         */
+        public @NonNull Builder block(@NonNull String identifier, @NonNull BlockFallback fallback) {
+            blocks.put(Objects.requireNonNull(identifier), Objects.requireNonNull(fallback));
             return this;
         }
 

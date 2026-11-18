@@ -135,9 +135,8 @@ public record BlockEntity(BlockEntity. @Nullable Container container, boolean dy
     public record Container(@SincePreview("26.70") boolean showUiOnInteraction, int slotCount,
             @Nullable String title) {
         /**
-         * Checks the components and copies lists and maps, so the value is immutable.
+         * Checks the components.
          *
-         * @throws NullPointerException if a required component is null
          * @throws IllegalArgumentException if a component is out of its documented range or conflicts with another
          */
         public Container {
@@ -145,7 +144,8 @@ public record BlockEntity(BlockEntity. @Nullable Container container, boolean dy
         }
 
         /**
-         * Creates a builder with every field at its default.
+         * Creates a builder with every optional field at its default; required fields must be set before
+         * {@code build()}.
          *
          * @return a builder with the defaults applied
          */

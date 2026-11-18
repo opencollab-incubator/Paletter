@@ -41,7 +41,6 @@ public record EntityPlacer(@NonNull List<EntityPlacer.UseOn> dispenseOn, @Nullab
      * Checks the components and copies lists and maps, so the value is immutable.
      *
      * @throws NullPointerException if a required component is null
-     * @throws IllegalArgumentException if a component is out of its documented range or conflicts with another
      */
     public EntityPlacer {
         dispenseOn = List.copyOf(Objects.requireNonNull(dispenseOn, "EntityPlacer.dispenseOn"));

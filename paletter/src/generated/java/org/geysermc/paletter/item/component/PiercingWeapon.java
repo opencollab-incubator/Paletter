@@ -34,10 +34,9 @@ public record PiercingWeapon(PiercingWeapon. @Nullable CreativeReach creativeRea
     public static final String NAME = "minecraft:piercing_weapon";
 
     /**
-     * Checks the components and copies lists and maps, so the value is immutable.
+     * Checks the components.
      *
      * @throws NullPointerException if a required component is null
-     * @throws IllegalArgumentException if a component is out of its documented range or conflicts with another
      */
     public PiercingWeapon {
         Objects.requireNonNull(reach, "PiercingWeapon.reach");
