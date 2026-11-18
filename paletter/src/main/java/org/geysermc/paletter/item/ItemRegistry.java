@@ -652,8 +652,9 @@ public final class ItemRegistry implements DefinitionRegistry<ItemDefinition> {
         int size = canonical.size();
         int from = base == null ? 0 : base.items.length;
         ResolvedItem[] items = base == null ? new ResolvedItem[size] : Arrays.copyOf(base.items, size);
-        List<ItemVariant> missing = new ArrayList<>(base == null ? List.of() : base.missing);
-        Set<String> unresolved = new HashSet<>(base == null ? Set.of() : base.unresolved);
+        // Of the ids built here only
+        List<ItemVariant> missing = new ArrayList<>();
+        Set<String> unresolved = new HashSet<>();
         for (int i = from; i < size; i++) {
             ItemVariant variant = canonical.variant(i);
             // Not through the resolve cache: the table holds the results already
@@ -674,33 +675,73 @@ public final class ItemRegistry implements DefinitionRegistry<ItemDefinition> {
                 }
             }
         }
-        Int2ObjectMap<IntList> indices = base == null ? new Int2ObjectOpenHashMap<>() : new Int2ObjectOpenHashMap<>(base.indices);
-        Int2ObjectMap<Candidate[]> byRuntimeId = base == null ? new Int2ObjectOpenHashMap<>() : new Int2ObjectOpenHashMap<>(base.byRuntimeId);
-        Set<Integer> touched = new HashSet<>();
+        // Over the parent's maps: only the runtime ids of the new ids are held here
+        Layered<IntList> indices = new Layered<>(base == null ? null : base.indices);
+        Layered<Candidate[]> byRuntimeId = new Layered<>(base == null ? null : base.byRuntimeId);
         for (int i = from; i < size; i++) {
             if (items[i] == null) {
                 continue;
             }
             int runtimeId = items[i].definition().getRuntimeId();
-            IntList list = indices.get(runtimeId);
-            if (touched.add(runtimeId)) {
+            IntList list = indices.own.get(runtimeId);
+            if (list == null) {
                 // Copy before writing: the parent's lists are shared
-                list = list == null ? new IntArrayList(1) : new IntArrayList(list);
-                indices.put(runtimeId, list);
+                IntList earlier = base == null ? null : base.indices.get(runtimeId);
+                list = earlier == null ? new IntArrayList(1) : new IntArrayList(earlier);
+                indices.own.put(runtimeId, list);
             }
             list.add(i);
         }
-        if (base == null) {
-            for (Int2ObjectMap.Entry<IntList> entry : indices.int2ObjectEntrySet()) {
-                byRuntimeId.put(entry.getIntKey(), candidates(entry.getValue(), items));
-            }
-            ((Int2ObjectOpenHashMap<Candidate[]>) byRuntimeId).trim();
-        } else {
-            for (int runtimeId : touched) {
-                byRuntimeId.put(runtimeId, candidates(indices.get(runtimeId), items));
-            }
+        for (Int2ObjectMap.Entry<IntList> entry : indices.own.int2ObjectEntrySet()) {
+            byRuntimeId.own.put(entry.getIntKey(), candidates(entry.getValue(), items));
         }
-        return new CanonicalTable(items, byRuntimeId, indices, List.copyOf(missing), Set.copyOf(unresolved));
+        indices.trim();
+        byRuntimeId.trim();
+        return new CanonicalTable(items, byRuntimeId, indices, base == null ? List.copyOf(missing) : joined(base.missing, missing),
+            base == null ? Set.copyOf(unresolved) : joined(base.unresolved, unresolved));
+    }
+
+    /** @return the entries of the base and the added ones, the base itself if nothing is added */
+    private static <T> List<T> joined(List<T> base, List<T> added) {
+        if (added.isEmpty()) {
+            return base;
+        }
+        List<T> all = new ArrayList<>(base);
+        all.addAll(added);
+        return List.copyOf(all);
+    }
+
+    private static <T> Set<T> joined(Set<T> base, Set<T> added) {
+        if (base.containsAll(added)) {
+            return base;
+        }
+        Set<T> all = new HashSet<>(base);
+        all.addAll(added);
+        return Set.copyOf(all);
+    }
+
+    /** An int keyed map over another one: what a layer holds shadows the base's. Not changed once built, so reads need no lock. */
+    private static final class Layered<T> {
+        private final @Nullable Layered<T> base;
+        private final Int2ObjectOpenHashMap<T> own = new Int2ObjectOpenHashMap<>();
+
+        Layered(@Nullable Layered<T> base) {
+            this.base = base;
+        }
+
+        @Nullable T get(int key) {
+            for (Layered<T> layer = this; layer != null; layer = layer.base) {
+                T value = layer.own.get(key);
+                if (value != null) {
+                    return value;
+                }
+            }
+            return null;
+        }
+
+        void trim() {
+            own.trim();
+        }
     }
 
     /** The candidates of one runtime id: direct variants first, so a fallback never shadows an item's own variant. */
@@ -734,7 +775,7 @@ public final class ItemRegistry implements DefinitionRegistry<ItemDefinition> {
     private record Candidate(int damage, int canonical, boolean fallback) {
     }
 
-    private record CanonicalTable(ResolvedItem[] items, Int2ObjectMap<Candidate[]> byRuntimeId, Int2ObjectMap<IntList> indices,
+    private record CanonicalTable(ResolvedItem[] items, Layered<Candidate[]> byRuntimeId, Layered<IntList> indices,
                                   List<ItemVariant> missing, Set<String> unresolved) {
     }
 
@@ -783,6 +824,13 @@ public final class ItemRegistry implements DefinitionRegistry<ItemDefinition> {
         private final Set<String> renumberedBlockItems = new HashSet<>();
         /** Identifiers the layer is about to register: they exist for components compiled before their registration. */
         private final Set<String> declared = new HashSet<>();
+        /**
+         * Identifiers this builder registered, overrode, or gave a block: the items of an extension whose default block can
+         * differ from the parent's, besides those that already had an override or are custom block items.
+         */
+        private final Set<String> touched = new HashSet<>();
+        private boolean creativeStacksOfParent;
+        private @Nullable Set<String> layoutIdentifiers;
 
         private Builder(DataVersion version, BlockRegistry blocks, Map<String, ItemFallback> fallbacks, CanonicalItems canonical) {
             this.parent = null;
@@ -859,6 +907,7 @@ public final class ItemRegistry implements DefinitionRegistry<ItemDefinition> {
         private void put(RegisteredItem item) {
             byRuntimeId.put(item.getRuntimeId(), item);
             byIdentifier.put(item.getIdentifier(), item);
+            touched.add(item.getIdentifier());
             // Plain block items have negative ids: they never move the next sequential id
             nextRuntimeId = Math.max(nextRuntimeId, item.getRuntimeId() + 1);
         }
@@ -942,6 +991,8 @@ public final class ItemRegistry implements DefinitionRegistry<ItemDefinition> {
          * @return the item, or null for {@link CustomBlock.BlockItem#NONE}
          */
         public @Nullable RegisteredItem addBlockItem(@NonNull CustomBlock block, @NonNull PaletteReportBuilder report, @NonNull String source) {
+            // Also without an item: a block named like an item of the parent gives it a default block, where there is no relation
+            touched.add(block.identifier());
             if (block.item() == CustomBlock.BlockItem.NONE) {
                 return null;
             }
@@ -986,33 +1037,63 @@ public final class ItemRegistry implements DefinitionRegistry<ItemDefinition> {
             tagItems(tag).addAll(identifiers);
         }
 
+        /**
+         * Says that the layout {@link #build} gets has the creative stacks of the parent's items as the parent's layout does,
+         * apart from the items this builder registers or overrides (a layer without creative edits): the default blocks of the
+         * other items are the parent's, and are not decided again. Without it every item is decided again.
+         *
+         * @param layoutIdentifiers the identifiers the layout mentions, if it is the parent's and they are known: a layout that
+         *                          mentions none of the changed items is not walked. Null if it is not known
+         */
+        public void keepsCreativeStacksOfParent(@Nullable Set<String> layoutIdentifiers) {
+            creativeStacksOfParent = true;
+            this.layoutIdentifiers = layoutIdentifiers;
+        }
+
         public @NonNull ItemRegistry build(@NonNull CreativeLayout layout, @NonNull PaletteReportBuilder report) {
+            // The items to decide the default block of: all, or what this builder changed (what a block override or a custom
+            // block item names too: they depend on blocks this builder may have changed)
+            Set<String> changed = null;
+            if (parent != null && creativeStacksOfParent) {
+                changed = new TreeSet<>(touched);
+                changed.addAll(blockOverrides.keySet());
+                changed.addAll(customBlockItems);
+            }
+            Set<String> decide = changed;
             Map<String, Set<NbtMap>> creativeStates = new HashMap<>();
             Set<String> creativeWithoutBlock = new HashSet<>();
-            layout.forEachStack(stack -> {
-                String identifier = stack.type().identifier();
-                if (stack.blockState() != null) {
-                    creativeStates.computeIfAbsent(identifier, id -> new LinkedHashSet<>()).add(stack.blockState().toNbt());
-                } else {
-                    creativeWithoutBlock.add(identifier);
-                }
-            });
+            if (decide == null || layoutIdentifiers == null || decide.stream().anyMatch(layoutIdentifiers::contains)) {
+                layout.forEachStack(stack -> {
+                    String identifier = stack.type().identifier();
+                    if (decide != null && !decide.contains(identifier)) {
+                        return;
+                    }
+                    if (stack.blockState() != null) {
+                        creativeStates.computeIfAbsent(identifier, id -> new LinkedHashSet<>()).add(stack.blockState().toNbt());
+                    } else {
+                        creativeWithoutBlock.add(identifier);
+                    }
+                });
+            }
 
             Map<String, RegisteredBlockState> defaultBlocks = new HashMap<>();
             Set<String> multiState = new HashSet<>();
-            Collection<RegisteredItem> all = byIdentifier.values();
-            if (parent != null) {
-                List<RegisteredItem> merged = new ArrayList<>();
-                for (RegisteredItem item : parent.definitions()) {
-                    if (!byIdentifier.containsKey(item.getIdentifier())) {
-                        merged.add(item);
+            Collection<String> identifiers = new ArrayList<>();
+            if (decide != null) {
+                // The others keep the parent's default block, and the parent's say about several block states
+                decide.stream().filter(identifier -> get(identifier) != null).forEach(identifiers::add);
+                parent.multiStateBlockItems.stream().filter(identifier -> !decide.contains(identifier)).forEach(multiState::add);
+            } else {
+                if (parent != null) {
+                    for (RegisteredItem item : parent.definitions()) {
+                        if (!byIdentifier.containsKey(item.getIdentifier())) {
+                            identifiers.add(item.getIdentifier());
+                        }
                     }
                 }
-                merged.addAll(byIdentifier.values());
-                all = merged;
+                identifiers.addAll(byIdentifier.keySet());
             }
-            for (RegisteredItem item : all) {
-                String identifier = item.getIdentifier();
+            for (String identifier : identifiers) {
                 RegisteredBlockState block = null;
                 NbtMap override = blockOverrides.get(identifier);
                 Set<NbtMap> states = creativeStates.get(identifier);
