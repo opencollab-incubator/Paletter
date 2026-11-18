@@ -357,16 +357,17 @@ public final class Cli implements Runnable {
             }
         }
 
-        @Command(name = "plan", description = "The builds a full recapture captures (every kept release build and the preview with captures in "
-            + "data/bds) as a GitHub Actions matrix, written to --output (one line of JSON) and listed on stdout.")
+        @Command(name = "plan", description = "The builds a full recapture captures (every kept release build, the newest unchecked build after "
+            + "each data version's newest kept build, and the preview with captures in data/bds) as a GitHub Actions matrix, written to --output (one line of JSON) and listed on stdout.")
         static final class Plan extends Rooted implements Callable<Integer> {
             @Option(names = "--output", required = true, description = "File for the matrix JSON") Path output;
 
             @Override
             public Integer call() throws Exception {
-                List<RecapturePlan.Leg> legs = RecapturePlan.of(root());
+                List<RecapturePlan.Leg> legs = RecapturePlan.of(root(), BuildHistory.fetchWithCurrentRelease());
                 Files.writeString(output, RecapturePlan.matrix(legs) + "\n");
-                legs.forEach(leg -> System.out.println(leg.build() + (leg.preview() ? " (preview)" : "") + (leg.against() != null ? " (history check)" : "")));
+                legs.forEach(leg -> System.out.println(leg.build() + (leg.preview() ? " (preview)" : "")
+                    + (leg.against() == null ? "" : leg.against().equals(leg.build()) ? " (history check)" : " (not checked yet, compared with " + leg.against() + ")")));
                 return legs.isEmpty() ? 1 : 0;
             }
         }

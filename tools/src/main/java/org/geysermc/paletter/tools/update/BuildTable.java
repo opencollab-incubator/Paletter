@@ -162,7 +162,7 @@ public final class BuildTable {
         return rows(BuildHistory.read(root), BuildHistory.capturedReleases(root), Importer.readIndex(resources(root)));
     }
 
-    private static Path resources(Path root) {
+    static Path resources(Path root) {
         return root.resolve("paletter/src/main/resources/paletter");
     }
 
