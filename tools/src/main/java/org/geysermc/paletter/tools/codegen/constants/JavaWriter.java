@@ -1,12 +1,12 @@
 package org.geysermc.paletter.tools.codegen.constants;
 
-import org.geysermc.paletter.tools.codegen.constants.ConstantsGenerator.Constant;
-import org.geysermc.paletter.tools.codegen.constants.ConstantsGenerator.EnumModel;
-import org.geysermc.paletter.tools.codegen.constants.ConstantsGenerator.EnumValue;
-import org.geysermc.paletter.tools.codegen.constants.ConstantsGenerator.Kind;
-import org.geysermc.paletter.tools.codegen.constants.ConstantsGenerator.StateConstant;
-import org.geysermc.paletter.tools.codegen.constants.ConstantsGenerator.StateModel;
-import org.geysermc.paletter.tools.codegen.constants.ConstantsGenerator.Variant;
+import org.geysermc.paletter.tools.codegen.constants.ContentConstants.Constant;
+import org.geysermc.paletter.tools.codegen.constants.StateConstants.EnumModel;
+import org.geysermc.paletter.tools.codegen.constants.StateConstants.EnumValue;
+import org.geysermc.paletter.tools.codegen.constants.StateConstants.Kind;
+import org.geysermc.paletter.tools.codegen.constants.StateConstants.StateConstant;
+import org.geysermc.paletter.tools.codegen.constants.StateConstants.StateModel;
+import org.geysermc.paletter.tools.codegen.constants.VariantConstants.Variant;
 import org.geysermc.paletter.internal.vanilla.BlockLayout;
 import org.geysermc.paletter.tools.codegen.component.ExperimentToggles;
 

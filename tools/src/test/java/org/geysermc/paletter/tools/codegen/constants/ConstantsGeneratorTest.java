@@ -229,8 +229,8 @@ class ConstantsGeneratorTest {
     void namesAreUnique() {
         assertEquals("ITEM_BED", ConstantsGenerator.constantName("minecraft:item.bed"));
         assertEquals("EXAMPLE_FOO_BAR", ConstantsGenerator.constantName("example:foo-bar"));
-        assertEquals("CardinalDirection", ConstantsGenerator.className("minecraft:cardinal_direction"));
-        assertEquals("WallConnectionType", ConstantsGenerator.className("wall_connection_type_east"));
+        assertEquals("CardinalDirection", StateConstants.className("minecraft:cardinal_direction"));
+        assertEquals("WallConnectionType", StateConstants.className("wall_connection_type_east"));
 
         ConstantsGenerator.Names clash = new ConstantsGenerator.Names(Map.of("minecraft:dirt", "STONE"), names.items(), names.states(),
             names.enums(), names.renames(), java.util.Set.of());
