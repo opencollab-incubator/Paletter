@@ -968,7 +968,7 @@ final class ApiSource {
             case States s -> CodeBlock.of("$T.of()", MAP);
             case ComponentRef r -> CodeBlock.of("null");
             case UnionRef u -> {
-                Variant form = u.union().variants.stream().filter(x -> ComponentGenerator.fits(x.type, v)).findFirst()
+                Variant form = u.union().variants.stream().filter(x -> Defaults.fits(x.type, v)).findFirst()
                     .orElseThrow(() -> new GenerationException("the default " + v + " fits no form of the union " + u.union().name));
                 yield CodeBlock.of("$T.$N($L)", unionName(u.union()), form.factory(), literal(form.type, v));
             }

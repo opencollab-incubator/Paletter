@@ -72,7 +72,7 @@ public final class BdsErrata {
                     refused.addProperty("label", REFUSED);
                     return refused;
                 });
-                first = ComponentGenerator.parseType("object");
+                first = ModelFields.parseType("object");
             } else {
                 types.remove(first);
             }
@@ -103,7 +103,7 @@ public final class BdsErrata {
         if (element == null && !(defaults != null && defaults.isJsonArray())) {
             return; // nothing says the field is a list of anything (uv_lock: false or a list of bones)
         }
-        types.add(0, ComponentGenerator.parseType("array<" + (element == null ? "any" : element) + ">"));
+        types.add(0, ModelFields.parseType("array<" + (element == null ? "any" : element) + ">"));
         JsonArray ordered = new JsonArray();
         types.forEach(ordered::add);
         field.add("types", ordered);
@@ -122,7 +122,7 @@ public final class BdsErrata {
             JsonObject field = new JsonObject();
             field.addProperty("path", key.getKey());
             JsonArray types = new JsonArray();
-            accepted.getAsJsonArray("types").forEach(t -> types.add(ComponentGenerator.parseType(t.getAsString())));
+            accepted.getAsJsonArray("types").forEach(t -> types.add(ModelFields.parseType(t.getAsString())));
             field.add("types", types);
             field.addProperty("required", false);
             field.add("enumValues", new JsonArray());
