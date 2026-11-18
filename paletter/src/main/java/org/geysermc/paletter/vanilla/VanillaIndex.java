@@ -25,7 +25,24 @@ import java.util.Map;
  * constant that needs data (a state, a canonical id). Referencing constants alone loads nothing.
  */
 final class VanillaIndex {
-    private static volatile @Nullable VanillaIndex instance;
+    /** Initialization on demand: the first {@link #get} builds the index, every later one is a plain static read. */
+    private static final class Holder {
+        static final VanillaIndex INSTANCE;
+        /** Why building failed: a failed class initialization only throws NoClassDefFoundError afterwards, which hides the cause. */
+        static final Throwable FAILURE;
+
+        static {
+            VanillaIndex index = null;
+            Throwable failure = null;
+            try {
+                index = new VanillaIndex();
+            } catch (Throwable t) {
+                failure = t;
+            }
+            INSTANCE = index;
+            FAILURE = failure;
+        }
+    }
 
     final CanonicalBlocks blocks;
     final CanonicalItems items;
@@ -143,14 +160,9 @@ final class VanillaIndex {
     }
 
     static @NonNull VanillaIndex get() {
-        VanillaIndex index = instance;
+        VanillaIndex index = Holder.INSTANCE;
         if (index == null) {
-            synchronized (VanillaIndex.class) {
-                index = instance;
-                if (index == null) {
-                    instance = index = new VanillaIndex();
-                }
-            }
+            throw new IllegalStateException("The index of the bundled constants could not be built", Holder.FAILURE);
         }
         return index;
     }

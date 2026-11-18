@@ -18,7 +18,6 @@ import org.geysermc.paletter.block.CustomBlock;
 import org.geysermc.paletter.block.VoxelShape;
 import org.geysermc.paletter.creative.CreativeContent;
 import org.geysermc.paletter.creative.CreativeEditor;
-import org.geysermc.paletter.creative.CreativeGroup;
 import org.geysermc.paletter.creative.CreativeLayout;
 import org.geysermc.paletter.creative.CreativeOrdering;
 import org.geysermc.paletter.creative.CreativeCategory;
@@ -37,7 +36,6 @@ import org.geysermc.paletter.item.ItemRegistry;
 import org.geysermc.paletter.internal.item.ItemVariant;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -49,7 +47,6 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.function.BiConsumer;
 import java.util.function.Supplier;
-import java.util.stream.Stream;
 
 /**
  * Compiles palettes: vanilla data first, then one layer at a time.
@@ -185,12 +182,20 @@ final class PaletteCompiler {
             // registers an item or block the layout mentions
             boolean sameLayout = placed.isEmpty() && layer.creativeEdits().isEmpty();
             CreativeLayout layout = sameLayout ? parent.creativeLayout() : creativeLayout(parent, layer, blocks, placed, report);
+            if (layer.creativeEdits().isEmpty()) {
+                // Placements only add stacks of the items and blocks of the layer
+                if (sameLayout) {
+                    items.keepsCreativeStacksOfParentLayout(parent.creativeIdentifiers());
+                } else {
+                    items.keepsCreativeStacksOfParent();
+                }
+            }
             ItemRegistry itemPalette = items.build(layout, report);
             Set<String> registers = new HashSet<>(registered);
             layer.overrides().forEach(override -> registers.add(override.identifier()));
             layer.blocks().forEach(block -> registers.add(block.identifier()));
             registers.addAll(items.renumberedBlockItems());
-            CreativeContent content = sameLayout && !mentions(layout, registers)
+            CreativeContent content = sameLayout && !parent.creativeMentions(registers)
                 ? parent.creative() : CreativeContent.compile(layout, itemPalette, report);
             prepareCanonical(blocks, parent.blocks(), itemPalette, parent.items(), report);
 
@@ -250,14 +255,6 @@ final class PaletteCompiler {
             edit.accept(creative, data.version());
         }
         return creative.build();
-    }
-
-    /** @return true if a stack of the layout, or the icon of a group, is an item or a block state with one of these identifiers */
-    private static boolean mentions(CreativeLayout layout, Set<String> identifiers) {
-        Stream<BedrockItemStack> icons = Arrays.stream(CreativeCategory.values()).flatMap(category -> layout.nodes(category).stream())
-            .filter(CreativeGroup.class::isInstance).map(node -> ((CreativeGroup) node).icon()).filter(Objects::nonNull);
-        return Stream.concat(layout.stacks(), icons).anyMatch(stack -> identifiers.contains(stack.type().identifier())
-            || stack.blockState() != null && identifiers.contains(stack.blockState().type().identifier()));
     }
 
     private static BedrockItemStack blockItemStack(CustomBlock block, BlockRegistry blocks) {

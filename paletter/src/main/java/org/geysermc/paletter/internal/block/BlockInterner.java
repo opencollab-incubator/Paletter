@@ -39,7 +39,17 @@ public final class BlockInterner {
      * @return the shared hashed definition of a vanilla state; its hash is computed once
      */
     public @NonNull RegisteredBlockState vanillaBlock(@NonNull NbtMap state) {
-        return blocks.computeIfAbsent(state, key -> new RegisteredBlockState(BlockHashes.hash(key), key, false));
+        RegisteredBlockState block = blocks.get(state);
+        if (block == null) {
+            // Hashing allocates and is most of the work: not inside computeIfAbsent, which holds the map's bin while it runs.
+            // Threads that race make equal blocks and agree on the first
+            RegisteredBlockState made = new RegisteredBlockState(BlockHashes.hash(state), state, false);
+            block = blocks.putIfAbsent(state, made);
+            if (block == null) {
+                block = made;
+            }
+        }
+        return block;
     }
 
     /**

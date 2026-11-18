@@ -9,6 +9,7 @@ import org.geysermc.paletter.block.CustomBlock;
 import org.geysermc.paletter.block.RegisteredBlockState;
 import org.geysermc.paletter.data.DataVersion;
 import org.geysermc.paletter.item.BedrockItemStack;
+import org.geysermc.paletter.item.CustomItem;
 import org.geysermc.paletter.vanilla.BedrockBlockState;
 import org.geysermc.paletter.vanilla.BedrockBlocks;
 import org.geysermc.paletter.vanilla.BedrockItemVariant;
@@ -245,10 +246,60 @@ class HotPathTest {
         assertTrue(allocated < 1024, allocated + " bytes allocated by " + states.length + " lookups");
     }
 
+    /** What a chunk or inventory writer asks per block and per stack: ids of states, definitions of ids. */
+    @Test
+    void runtimeIdLookupsDoNotAllocate() {
+        Palette palette = layered();
+        int blocks = palette.blocks().size();
+        BedrockBlockState[] states = new BedrockBlockState[blocks];
+        int[] blockIds = new int[blocks];
+        for (int i = 0; i < blocks; i++) {
+            BedrockBlockState key = palette.blocks().key(palette.blocks().byIndex(i));
+            states[i] = key != null ? key : BedrockBlocks.AIR.defaultState();
+            blockIds[i] = palette.blocks().byIndex(i).getRuntimeId();
+        }
+        long allocated = allocated(blocks, i -> palette.runtimeId(states[i]));
+        assertTrue(allocated < 4096, allocated + " bytes allocated by " + ROUNDS * blocks + " runtimeId lookups");
+        allocated = allocated(blocks, i -> palette.blockDefinition(blockIds[i]) == null ? 0 : 1);
+        assertTrue(allocated < 4096, allocated + " bytes allocated by " + ROUNDS * blocks + " block definition lookups");
+        allocated = allocated(blocks, i -> palette.blockState(blockIds[i]) == null ? 0 : 1);
+        assertTrue(allocated < 4096, allocated + " bytes allocated by " + ROUNDS * blocks + " block state lookups");
+
+        int[] itemIds = palette.items().definitions().stream().mapToInt(item -> item.getRuntimeId()).toArray();
+        allocated = allocated(itemIds.length, i -> palette.itemDefinition(itemIds[i]) == null ? 0 : 1);
+        assertTrue(allocated < 4096, allocated + " bytes allocated by " + ROUNDS * itemIds.length + " item definition lookups");
+    }
+
     @Test
     void resolveVariantBehaviourDoesNotAllocate() {
         Palette palette = layered();
         List<BedrockItemVariant> variants = palette.itemVariants();
+        long allocated = allocated(variants.size(),
+            i -> palette.resolve(variants.get(i)).behaviour().getOrElse(ItemBehaviour.MAX_STACK_SIZE, 0));
+        assertTrue(allocated < 4096, allocated + " bytes allocated by " + ROUNDS * variants.size() + " lookups");
+    }
+
+    /** Six layers: the lookups of the canonical table are merged past four maps, and give what the base gives for vanilla items. */
+    @Test
+    void resolveVariantStaysCorrectAndAllocationFreeAtDepthSix() {
+        Palette base = PALETTER.palette(PALETTER.latest().protocolVersion());
+        Palette deep = base;
+        for (int i = 0; i < 6; i++) {
+            deep = deep.extend(PaletteLayer.builder("deep:" + i)
+                .item(CustomItem.builder("deep:item_" + i).build())
+                .block(CustomBlock.builder("deep:block_" + i).build()).build());
+        }
+        Palette palette = deep;
+        List<BedrockItemVariant> variants = palette.itemVariants();
+        for (BedrockItemVariant variant : base.itemVariants()) {
+            var expected = base.resolve(variant);
+            var actual = palette.resolve(variant);
+            assertEquals(expected == null, actual == null, variant.toString());
+            if (expected != null) {
+                assertEquals(expected.definition().getIdentifier(), actual.definition().getIdentifier(), variant.toString());
+            }
+        }
+        assertEquals(base.itemVariants().size() + 12, variants.size());
         long allocated = allocated(variants.size(),
             i -> palette.resolve(variants.get(i)).behaviour().getOrElse(ItemBehaviour.MAX_STACK_SIZE, 0));
         assertTrue(allocated < 4096, allocated + " bytes allocated by " + ROUNDS * variants.size() + " lookups");

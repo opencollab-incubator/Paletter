@@ -29,8 +29,11 @@ import org.geysermc.paletter.internal.block.BlockStates;
 import org.geysermc.paletter.internal.CanonicalBlocks;
 import org.geysermc.paletter.block.RegisteredBlockState;
 import org.geysermc.paletter.block.ResolvedBlock;
+import org.geysermc.paletter.creative.CreativeCategory;
 import org.geysermc.paletter.creative.CreativeContent;
+import org.geysermc.paletter.creative.CreativeGroup;
 import org.geysermc.paletter.creative.CreativeLayout;
+import org.geysermc.paletter.creative.CreativeNode;
 import org.geysermc.paletter.creative.CreativeOrdering;
 import org.geysermc.paletter.creative.ItemMatcher;
 import org.geysermc.paletter.data.DataVersion;
@@ -114,6 +117,8 @@ public final class Palette {
     private volatile CanonicalBlocks versionBlocks;
     private volatile CanonicalItems versionItems;
     private volatile Map<String, NbtMap> firstStates;
+    /** The identifiers the creative layout mentions, see {@link #creativeMentions}; made on first use. */
+    private volatile @Nullable Set<String> creativeIdentifiers;
     /** The palette this one extends, or is a copy of: its block states are a prefix of this one's. Null for vanilla palettes. */
     private final @Nullable Palette parent;
 
@@ -171,6 +176,44 @@ public final class Palette {
 
     Supplier<BehaviourStore> behaviourStore() {
         return behaviourStore;
+    }
+
+    /**
+     * @return true if a stack of this palette's creative layout, or the icon of a group, is an item or a block state with one
+     *         of these identifiers
+     */
+    boolean creativeMentions(Set<String> identifiers) {
+        Set<String> mentioned = creativeIdentifiers();
+        return identifiers.stream().anyMatch(mentioned::contains);
+    }
+
+    /**
+     * @return the identifiers of the items and blocks the creative layout mentions in a stack or a group icon. Collected once:
+     *         sessions extending this palette ask
+     */
+    Set<String> creativeIdentifiers() {
+        Set<String> mentioned = creativeIdentifiers;
+        if (mentioned == null) {
+            mentioned = new HashSet<>();
+            Set<String> into = mentioned;
+            creativeLayout.forEachStack(stack -> mention(stack, into));
+            for (CreativeCategory category : CreativeCategory.values()) {
+                for (CreativeNode node : creativeLayout.nodes(category)) {
+                    if (node instanceof CreativeGroup group && group.icon() != null) {
+                        mention(group.icon(), mentioned);
+                    }
+                }
+            }
+            creativeIdentifiers = mentioned;
+        }
+        return mentioned;
+    }
+
+    private static void mention(BedrockItemStack stack, Set<String> into) {
+        into.add(stack.type().identifier());
+        if (stack.blockState() != null) {
+            into.add(stack.blockState().type().identifier());
+        }
     }
 
     /**

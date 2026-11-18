@@ -74,15 +74,18 @@ public final class VoxelShapeCompiler {
         customBlocks.sort(Comparator.comparing(block -> BlockRegistry.nameHash(block.identifier()), Long::compareUnsigned));
         int next = 0;
         for (VoxelShapeStore.Entry entry : made) {
-            long first = BlockRegistry.nameHash(entry.block());
-            while (next < customBlocks.size() && Long.compareUnsigned(BlockRegistry.nameHash(customBlocks.get(next).identifier()), first) < 0) {
-                compiler.addBlock(customBlocks.get(next++), report);
-            }
-            if (next < customBlocks.size() && !entry.block().equals(entry.lastBlock())
-                && Long.compareUnsigned(BlockRegistry.nameHash(customBlocks.get(next).identifier()), BlockRegistry.nameHash(entry.lastBlock())) < 0) {
-                report.warn(SOURCE, "The shapes of the block " + customBlocks.get(next).identifier() + " may be numbered differently than BDS "
-                    + "numbers them: its name hash lies between those of " + entry.block() + " and " + entry.lastBlock()
-                    + ", and no capture tells for which of the blocks from one to the other BDS makes a shape");
+            // Once every custom block has its place the hashes of the later blocks do not matter: most entries skip them
+            if (next < customBlocks.size()) {
+                long first = BlockRegistry.nameHash(entry.block());
+                while (next < customBlocks.size() && Long.compareUnsigned(BlockRegistry.nameHash(customBlocks.get(next).identifier()), first) < 0) {
+                    compiler.addBlock(customBlocks.get(next++), report);
+                }
+                if (next < customBlocks.size() && !entry.block().equals(entry.lastBlock())
+                    && Long.compareUnsigned(BlockRegistry.nameHash(customBlocks.get(next).identifier()), BlockRegistry.nameHash(entry.lastBlock())) < 0) {
+                    report.warn(SOURCE, "The shapes of the block " + customBlocks.get(next).identifier() + " may be numbered differently than BDS "
+                        + "numbers them: its name hash lies between those of " + entry.block() + " and " + entry.lastBlock()
+                        + ", and no capture tells for which of the blocks from one to the other BDS makes a shape");
+                }
             }
             compiler.add(entry.grid());
         }
@@ -167,6 +170,8 @@ public final class VoxelShapeCompiler {
         Map<String, Long> hashes = new HashMap<>();
         inserted.forEach(name -> hashes.put(name, BlockRegistry.nameHash(name)));
         List<String> order = new ArrayList<>();
+        // The first element of the list in each bucket: where a new element of that bucket goes
+        Map<Long, String> firstInBucket = new HashMap<>();
         int buckets = 8;
         for (String name : inserted) {
             if (order.size() + 1 > buckets) {
@@ -184,16 +189,15 @@ public final class VoxelShapeCompiler {
                     }
                 }
                 order = grown;
-            }
-            long bucket = hashes.get(name) & (buckets - 1);
-            int at = order.size();
-            for (int i = 0; i < order.size(); i++) {
-                if ((hashes.get(order.get(i)) & (buckets - 1)) == bucket) {
-                    at = i;
-                    break;
+                firstInBucket.clear();
+                for (String element : order) {
+                    firstInBucket.putIfAbsent(hashes.get(element) & (buckets - 1), element);
                 }
             }
-            order.add(at, name);
+            long bucket = hashes.get(name) & (buckets - 1);
+            String first = firstInBucket.get(bucket);
+            order.add(first == null ? order.size() : order.indexOf(first), name);
+            firstInBucket.put(bucket, name);
         }
         return order;
     }

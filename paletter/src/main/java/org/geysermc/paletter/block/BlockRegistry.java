@@ -26,6 +26,7 @@ import org.geysermc.paletter.internal.component.WireContext;
 
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.BitSet;
 import java.util.Collection;
 import java.util.Collections;
@@ -331,7 +332,7 @@ public final class BlockRegistry implements DefinitionRegistry<BlockDefinition> 
 @Internal
     public int canonicalOfRuntimeId(int runtimeId) {
         int index = indexOfRuntimeId(runtimeId);
-        return index == -1 ? -1 : canonicalTable().reverse[index];
+        return index == -1 ? -1 : canonicalTable().reverse[index >>> PAGE_BITS][index & PAGE_MASK];
     }
 
     /**
@@ -379,42 +380,64 @@ public final class BlockRegistry implements DefinitionRegistry<BlockDefinition> 
     private CanonicalTable buildCanonicalTable() {
         int size = canonical.size();
         int pageCount = (size + PAGE_SIZE - 1) >>> PAGE_BITS;
+        int indexPageCount = (table.size() + PAGE_SIZE - 1) >>> PAGE_BITS;
         RegisteredBlockState[][] blocks = new RegisteredBlockState[pageCount][];
         int[][] runtimeIds = new int[pageCount][];
-        int[] reverse = new int[table.size()];
-        Set<NbtMap> missing = new LinkedHashSet<>();
-        BitSet missingIds = new BitSet(size);
-        BitSet fallbackIds = new BitSet(size);
-        int firstPage = 0;
+        int[][] reverse = new int[indexPageCount][];
+        boolean[] sharedReverse = new boolean[indexPageCount];
+        List<NbtMap> missing = new ArrayList<>();
+        BitSet missingIds = new BitSet();
+        BitSet fallbackIds = new BitSet();
+        // The canonical ids and the indices before these are the parent's: they resolve the same way, so their pages are reused
+        int firstId = 0;
         int firstIndex = 0;
-        // A patch over a registry with the same fallbacks resolves the canonical ids below the parent's size the same
-        // way, so it reuses the parent's full pages; only the page the new ids start in, and later ones, are built
+        CanonicalTable parentTable = null;
         BlockRegistry base = parent;
         if (base != null && base.fallbacks.equals(fallbacks) && java.util.Objects.equals(base.defaultFallback, defaultFallback)
             && base.canonical.size() <= size) {
-            CanonicalTable parentTable = base.canonicalTable();
-            firstPage = base.canonical.size() >>> PAGE_BITS;
-            System.arraycopy(parentTable.blocks, 0, blocks, 0, firstPage);
-            System.arraycopy(parentTable.runtimeIds, 0, runtimeIds, 0, firstPage);
+            parentTable = base.canonicalTable();
+            firstId = base.canonical.size();
             firstIndex = table.parentSize;
-            System.arraycopy(parentTable.reverse, 0, reverse, 0, firstIndex);
+            System.arraycopy(parentTable.blocks, 0, blocks, 0, firstId >>> PAGE_BITS);
+            System.arraycopy(parentTable.runtimeIds, 0, runtimeIds, 0, firstId >>> PAGE_BITS);
+            System.arraycopy(parentTable.reverse, 0, reverse, 0, firstIndex >>> PAGE_BITS);
+            Arrays.fill(sharedReverse, 0, firstIndex >>> PAGE_BITS, true);
             missing.addAll(parentTable.missing);
-            missingIds.or(parentTable.missingIds.get(0, firstPage << PAGE_BITS));
-            fallbackIds.or(parentTable.fallbackIds.get(0, firstPage << PAGE_BITS));
+            missingIds.or(parentTable.missingIds);
+            fallbackIds.or(parentTable.fallbackIds);
         }
-        for (int i = firstIndex; i < reverse.length; i++) {
-            reverse[i] = canonical.index(table.byIndex(i).getState());
+        // The page the new indices start in keeps the parent's part
+        for (int page = firstIndex >>> PAGE_BITS; page < indexPageCount; page++) {
+            int start = page << PAGE_BITS;
+            int[] ids = new int[Math.min(PAGE_SIZE, table.size() - start)];
+            int kept = Math.max(0, Math.min(ids.length, firstIndex - start));
+            if (kept > 0) {
+                System.arraycopy(parentTable.reverse[page], 0, ids, 0, kept);
+            }
+            for (int j = kept; j < ids.length; j++) {
+                ids[j] = canonical.index(table.byIndex(start + j).getState());
+            }
+            reverse[page] = ids;
         }
-        for (int page = firstPage; page < pageCount; page++) {
+        for (int page = firstId >>> PAGE_BITS; page < pageCount; page++) {
             int start = page << PAGE_BITS;
             int length = Math.min(PAGE_SIZE, size - start);
             RegisteredBlockState[] pageBlocks = new RegisteredBlockState[length];
             int[] pageIds = new int[length];
             boolean vanillaOnly = true;
-            for (int j = 0; j < length; j++) {
+            int kept = Math.max(0, Math.min(length, firstId - start));
+            if (kept > 0) {
+                System.arraycopy(parentTable.blocks[page], 0, pageBlocks, 0, kept);
+                System.arraycopy(parentTable.runtimeIds[page], 0, pageIds, 0, kept);
+                for (int j = 0; j < kept; j++) {
+                    vanillaOnly &= !pageBlocks[j].isCustom();
+                }
+            }
+            for (int j = kept; j < length; j++) {
                 int id = start + j;
                 NbtMap state = canonical.state(id);
-                BlockResolution resolution = resolve(state);
+                // The table keeps what this resolves: caching it too would hold every adapted state twice
+                BlockResolution resolution = resolve(state, false);
                 RegisteredBlockState block = resolution.block();
                 if (resolution.kind() == BlockResolution.Kind.FALLBACK) {
                     fallbackIds.set(id);
@@ -430,8 +453,14 @@ public final class BlockRegistry implements DefinitionRegistry<BlockDefinition> 
                 pageIds[j] = block.getRuntimeId();
                 vanillaOnly &= !block.isCustom();
                 int index = indexOfRuntimeId(block.getRuntimeId());
-                if (reverse[index] == -1) {
-                    reverse[index] = id;
+                int[] reverseIds = reverse[index >>> PAGE_BITS];
+                if (reverseIds[index & PAGE_MASK] == -1) {
+                    if (sharedReverse[index >>> PAGE_BITS]) {
+                        // Only a custom state that a fallback sends to a block of the parent gets here: the page is the parent's
+                        reverse[index >>> PAGE_BITS] = reverseIds = reverseIds.clone();
+                        sharedReverse[index >>> PAGE_BITS] = false;
+                    }
+                    reverseIds[index & PAGE_MASK] = id;
                 }
             }
             // Vanilla blocks are shared between versions, so most pages are equal between them
@@ -442,10 +471,12 @@ public final class BlockRegistry implements DefinitionRegistry<BlockDefinition> 
             blocks[page] = pageBlocks;
             runtimeIds[page] = pageIds;
         }
-        return new CanonicalTable(blocks, runtimeIds, reverse, List.copyOf(missing), missingIds, fallbackIds);
+        // Nothing new is missing (the usual case for a layer of custom blocks): the parent's list is the same
+        List<NbtMap> allMissing = parentTable != null && missing.size() == parentTable.missing.size() ? parentTable.missing : List.copyOf(missing);
+        return new CanonicalTable(blocks, runtimeIds, reverse, allMissing, missingIds, fallbackIds);
     }
 
-    private record CanonicalTable(RegisteredBlockState[][] blocks, int[][] runtimeIds, int[] reverse, List<NbtMap> missing,
+    private record CanonicalTable(RegisteredBlockState[][] blocks, int[][] runtimeIds, int[][] reverse, List<NbtMap> missing,
                                   BitSet missingIds, BitSet fallbackIds) {
     }
 
@@ -472,6 +503,11 @@ public final class BlockRegistry implements DefinitionRegistry<BlockDefinition> 
      */
     @Internal
     public @NonNull BlockResolution resolve(@NonNull NbtMap state) {
+        return resolve(state, true);
+    }
+
+    /** @param keep whether to remember the resolution of a canonical state: not for the canonical table, which keeps it itself */
+    private BlockResolution resolve(NbtMap state, boolean keep) {
         NbtMap normalized = BlockStates.normalize(state);
         BlockFallback forced = fallbacks.get(BlockStates.name(normalized));
         RegisteredBlockState exact = forced != null && forced.force() || !missing.isEmpty() && missing.contains(BlockStates.name(normalized))
@@ -484,7 +520,7 @@ public final class BlockRegistry implements DefinitionRegistry<BlockDefinition> 
             return cached;
         }
         BlockResolution resolution = adapt(normalized);
-        if (canonical.index(normalized) != -1) {
+        if (keep && canonical.index(normalized) != -1) {
             resolutions.put(normalized, resolution);
         }
         return resolution;
@@ -673,10 +709,22 @@ public final class BlockRegistry implements DefinitionRegistry<BlockDefinition> 
      */
     @Internal
     public static long nameHash(@NonNull String identifier) {
-        byte[] bytes = identifier.getBytes(StandardCharsets.UTF_8);
-        if (bytes.length == 0) {
+        if (identifier.isEmpty()) {
             return 0;
         }
+        long hash = FNV1_64_OFFSET_BASIS;
+        for (int i = 0; i < identifier.length(); i++) {
+            char c = identifier.charAt(i);
+            if (c >= 0x80) {
+                return nameHashOfBytes(identifier.getBytes(StandardCharsets.UTF_8));
+            }
+            // An ASCII character is its own UTF-8 byte: no need to encode the identifiers, which are all ASCII in practice
+            hash = hash * FNV1_64_PRIME ^ c;
+        }
+        return hash;
+    }
+
+    private static long nameHashOfBytes(byte[] bytes) {
         long hash = FNV1_64_OFFSET_BASIS;
         for (byte b : bytes) {
             hash = hash * FNV1_64_PRIME ^ (b & 0xff);
