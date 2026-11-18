@@ -3,6 +3,7 @@ package org.geysermc.paletter.tools.update;
 import org.geysermc.paletter.tools.bds.BdsDistribution;
 import org.geysermc.paletter.tools.bds.BdsDump;
 import org.geysermc.paletter.tools.bds.BdsServer;
+import org.geysermc.paletter.tools.bds.CapturePlatform;
 import org.geysermc.paletter.tools.client.NetherNet;
 import org.geysermc.paletter.tools.data.OrderingCheck;
 import org.geysermc.paletter.tools.model.addon.FixedAddons;
@@ -58,6 +59,9 @@ final class CaptureStage {
         properties.put("level-name", VANILLA_WORLD);
         properties.put("block-network-ids-are-hashes", "true");
         properties.put("enable-lan-visibility", "true"); // otherwise the RakNet pong does not carry the protocol
+        // The hashed start also runs /give (GiveCapture): the player needs to be allowed to run commands there
+        properties.put("default-player-permission-level", "operator");
+        properties.put("allow-cheats", "true");
         BdsServer.configure(server, properties);
         properties.put("enable-lan-visibility", "false");
         List<String> network = null;
@@ -86,7 +90,7 @@ final class CaptureStage {
                     + "self signed identity bound to the login chain)");
                 runs.existing = ctx.against != null ? ctx.containingVersion(runs.protocol) : ctx.bundledName(runs.protocol);
                 runs.reference = palette.reference(runs.existing, dump, runs);
-                Capture.Summary summary = capture(address, runs, work.resolve("vanilla"), null, "vanilla capture");
+                Capture.Summary summary = capture(address, runs, work.resolve("vanilla"), null, "vanilla capture", true);
                 runs.vanilla = work.resolve("vanilla");
                 // Toggles start game reports for a world without any are part of vanilla (1.26.70 previews:
                 // data_driven_vanilla_blocks_and_items), not toggles to attribute
@@ -103,6 +107,8 @@ final class CaptureStage {
             ctx.report.evidence("Network lines of the server", List.of("```", String.join("\n", network), "```"));
             return;
         }
+        properties.put("default-player-permission-level", "member");
+        properties.put("allow-cheats", "false");
         properties.put("block-network-ids-are-hashes", "false");
         BdsServer.configure(server, properties);
         try (BdsServer bds = new BdsServer(server, false)) {
@@ -174,7 +180,12 @@ final class CaptureStage {
     }
 
     Capture.Summary capture(InetSocketAddress address, Runs runs, Path out, Path customOut, String what) throws Exception {
-        Capture.Summary summary = Capture.capture(address, runs.protocol, runs.reference, runs.bdsVersion, out, customOut, 90, runs.netherNet);
+        return capture(address, runs, out, customOut, what, false);
+    }
+
+    Capture.Summary capture(InetSocketAddress address, Runs runs, Path out, Path customOut, String what, boolean give) throws Exception {
+        Capture.Summary summary = Capture.capture(address, runs.protocol, runs.reference, runs.bdsVersion, CapturePlatform.host(), out, customOut,
+            90, runs.netherNet, give);
         ctx.report.check(Report.Status.PASS, what, (summary.blockNetworkIdsHashed() ? "hashed" : "sequential") + " block ids; protocol "
             + summary.protocol() + (summary.nativeCodec() ? "" : ", decoded with the " + summary.codecProtocol() + " codec"));
         if (!summary.nativeCodec() && !codecReported) {

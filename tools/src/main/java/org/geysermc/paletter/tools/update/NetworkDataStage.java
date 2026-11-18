@@ -3,6 +3,7 @@ package org.geysermc.paletter.tools.update;
 import org.geysermc.paletter.tools.data.VariantNames;
 import org.geysermc.paletter.tools.bds.BdsDistribution;
 import org.geysermc.paletter.tools.bds.BdsDump;
+import org.geysermc.paletter.tools.client.GiveCapture;
 import org.geysermc.paletter.tools.data.Checker;
 import org.geysermc.paletter.tools.data.Diff;
 import org.geysermc.paletter.tools.data.Importer;
@@ -27,6 +28,31 @@ final class NetworkDataStage {
         this.recipes = new RecipeStage(ctx);
     }
 
+    /**
+     * Commits what {@code /give} gave per block ({@link GiveCapture}) with the build's vanilla captures. Only ever INFO: a block
+     * without an answer is unverified, a different item is evidence for {@code Palette#itemOf}, and a failure here does not fail the run.
+     */
+    private void stageBlockItems(BdsDistribution distribution, Runs runs) {
+        Path file = runs.vanilla.resolve(GiveCapture.FILE);
+        try {
+            if (!Files.exists(file)) {
+                ctx.report.check(Report.Status.INFO, "Block items (/give)", "no " + GiveCapture.FILE + " in the capture");
+                return;
+            }
+            List<GiveCapture.Entry> entries = GiveCapture.read(file);
+            Map<String, String> expected = entries.stream().collect(java.util.stream.Collectors.toMap(GiveCapture.Entry::block, GiveCapture.Entry::item));
+            GiveCapture.Check check = GiveCapture.check(entries, expected::get);
+            ctx.report.check(Report.Status.INFO, "Block items (/give)", check.matched() + " of " + entries.size() + " blocks gave the item the data says, "
+                + check.mismatches().size() + " another, " + check.unverified().size() + " unverified (no answer)");
+            if (!check.mismatches().isEmpty()) {
+                ctx.report.evidence("Blocks that gave another item than the data says", check.mismatches().stream().map(line -> "- " + line).toList());
+            }
+            ctx.stageCopy(ctx.bdsData.resolve(distribution.version()).resolve("vanilla").resolve(GiveCapture.FILE), file, "block items " + GiveCapture.FILE);
+        } catch (Exception e) {
+            ctx.report.check(Report.Status.INFO, "Block items (/give)", "not recorded: " + e);
+        }
+    }
+
     void networkData(BdsDistribution distribution, BdsDump dump, Runs runs, Staging staging) throws Exception {
         String name = runs.existing != null ? runs.existing : ctx.options.getOrDefault("name", Update.versionName(distribution.version()));
         ctx.report.header.put("Bundled version", runs.existing != null ? name + " (existing, same protocol)" : name + " (new protocol)");
@@ -45,6 +71,7 @@ final class NetworkDataStage {
         } catch (Exception e) {
             ctx.report.fail("Recipes", e);
         }
+        stageBlockItems(distribution, runs);
 
         if (runs.existing != null) {
             VanillaData bundled = BundledFiles.read(ctx.resources.resolve(name + ".nbt"));

@@ -12,9 +12,13 @@ import org.cloudburstmc.netty.channel.raknet.RakChannelFactory;
 import org.cloudburstmc.netty.channel.raknet.config.RakChannelOption;
 import org.cloudburstmc.protocol.bedrock.BedrockClientSession;
 import org.cloudburstmc.protocol.bedrock.codec.BedrockCodec;
+import org.cloudburstmc.protocol.bedrock.data.command.CommandOriginData;
+import org.cloudburstmc.protocol.bedrock.data.command.CommandOriginType;
 import org.cloudburstmc.protocol.bedrock.data.definitions.BlockDefinition;
 import org.cloudburstmc.protocol.bedrock.data.definitions.ItemDefinition;
 import org.cloudburstmc.protocol.bedrock.data.definitions.SimpleItemDefinition;
+import org.cloudburstmc.protocol.bedrock.data.inventory.ContainerId;
+import org.cloudburstmc.protocol.bedrock.data.inventory.ItemData;
 import org.cloudburstmc.protocol.bedrock.data.inventory.ItemVersion;
 import org.cloudburstmc.protocol.bedrock.netty.initializer.BedrockClientInitializer;
 import org.cloudburstmc.protocol.bedrock.packet.AvailableEntityIdentifiersPacket;
@@ -22,13 +26,16 @@ import org.cloudburstmc.protocol.bedrock.packet.BedrockPacket;
 import org.cloudburstmc.protocol.bedrock.packet.BedrockPacketHandler;
 import org.cloudburstmc.protocol.bedrock.packet.BiomeDefinitionListPacket;
 import org.cloudburstmc.protocol.bedrock.packet.ClientToServerHandshakePacket;
+import org.cloudburstmc.protocol.bedrock.packet.CommandRequestPacket;
 import org.cloudburstmc.protocol.bedrock.packet.CraftingDataPacket;
 import org.cloudburstmc.protocol.bedrock.packet.CreativeContentPacket;
 import org.cloudburstmc.protocol.bedrock.packet.DisconnectPacket;
+import org.cloudburstmc.protocol.bedrock.packet.InventorySlotPacket;
 import org.cloudburstmc.protocol.bedrock.packet.ItemComponentPacket;
 import org.cloudburstmc.protocol.bedrock.packet.NetworkSettingsPacket;
 import org.cloudburstmc.protocol.bedrock.packet.PacketViolationWarningPacket;
 import org.cloudburstmc.protocol.bedrock.packet.PlayStatusPacket;
+import org.cloudburstmc.protocol.bedrock.packet.SetLocalPlayerAsInitializedPacket;
 import org.cloudburstmc.protocol.bedrock.packet.RequestChunkRadiusPacket;
 import org.cloudburstmc.protocol.bedrock.packet.RequestNetworkSettingsPacket;
 import org.cloudburstmc.protocol.bedrock.packet.ResourcePackClientResponsePacket;
@@ -42,7 +49,9 @@ import org.cloudburstmc.protocol.common.DefinitionRegistry;
 import org.cloudburstmc.protocol.common.PacketSignal;
 
 import java.net.InetSocketAddress;
+import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.Deque;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -50,6 +59,8 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
+import java.util.function.Consumer;
+import java.util.UUID;
 
 /**
  * A minimal headless Bedrock client: logs in (offline), accepts the resource pack negotiation without downloading
@@ -78,6 +89,8 @@ public final class CaptureClient {
         public final List<String> packetOrder = new java.util.concurrent.CopyOnWriteArrayList<>();
         /** The index of the start game packet in {@link #packetOrder}, or -1. */
         public volatile int startGameIndex = -1;
+        /** What {@code /give} gave per requested block ({@link CaptureClient#give}); a block the server did not answer for is absent. */
+        public final Map<String, GiveCapture.Given> gives = new ConcurrentHashMap<>();
     }
 
     private final BedrockCodec codec;
@@ -87,6 +100,16 @@ public final class CaptureClient {
     private final CompletableFuture<Result> done = new CompletableFuture<>();
     private final Map<Integer, ItemDefinition> itemsById = new ConcurrentHashMap<>();
     private volatile long completeAt = Long.MAX_VALUE;
+    /** When start game, the item registry and the creative content were all there (0 before). */
+    private volatile long readyAt;
+    private static final long GIVE_ANSWER_MILLIS = 3000;
+    private static final long GIVE_START_MILLIS = 10_000;
+    private final Deque<String> giveQueue = new ArrayDeque<>();
+    private String giving;
+    private long givingSince;
+    private boolean giveStarted;
+    private Consumer<BedrockPacket> giveSender;
+    private volatile boolean givesDone = true;
 
     private final boolean netherNet;
 
@@ -101,6 +124,17 @@ public final class CaptureClient {
         this.codec = codec;
         this.address = address;
         this.netherNet = netherNet;
+    }
+
+    /**
+     * Blocks to {@code /give @s} once the player has spawned, one at a time, recording the item of the inventory slot packet that
+     * answers each ({@link Result#gives}). The capture completes after the last answer; one that does not come within a few seconds
+     * (or no spawn) leaves its block unanswered, it never fails the capture. The server must let the player run commands.
+     */
+    public CaptureClient give(List<String> blocks) {
+        giveQueue.addAll(blocks);
+        givesDone = blocks.isEmpty();
+        return this;
     }
 
     public Result run(long timeoutSeconds) throws Exception {
@@ -170,6 +204,7 @@ public final class CaptureClient {
 
             long deadline = System.nanoTime() + TimeUnit.SECONDS.toNanos(timeoutSeconds);
             while (!done.isDone()) {
+                giveTimeouts(System.currentTimeMillis());
                 if (System.currentTimeMillis() >= completeAt) {
                     done.complete(result);
                     break;
@@ -197,9 +232,72 @@ public final class CaptureClient {
     }
 
     private void checkComplete() {
-        if (result.startGame != null && !result.items.isEmpty() && result.creative != null && completeAt == Long.MAX_VALUE) {
-            // Give the server a moment for the remaining packets of the join sequence (biomes, recipes, ...)
-            completeAt = System.currentTimeMillis() + 3000;
+        if (result.startGame != null && !result.items.isEmpty() && result.creative != null) {
+            if (readyAt == 0) {
+                readyAt = System.currentTimeMillis();
+            }
+            if (givesDone && completeAt == Long.MAX_VALUE) {
+                // Give the server a moment for the remaining packets of the join sequence (biomes, recipes, ...)
+                completeAt = System.currentTimeMillis() + 3000;
+            }
+        }
+    }
+
+    /** Sends the next {@code /give}, or ends the gives. */
+    private synchronized void giveNext() {
+        giving = giveQueue.poll();
+        if (giving == null) {
+            givesDone = true;
+            checkComplete();
+            return;
+        }
+        givingSince = System.currentTimeMillis();
+        CommandRequestPacket command = new CommandRequestPacket();
+        command.setCommand("/give @s " + giving + " 1");
+        command.setCommandOriginData(new CommandOriginData(CommandOriginType.PLAYER, UUID.randomUUID(), "", 0));
+        giveSender.accept(command);
+    }
+
+    /** The player spawned: the gives start, with {@code sender} sending the packets. */
+    synchronized void startGives(long runtimeEntityId, Consumer<BedrockPacket> sender) {
+        if (givesDone || giveStarted) {
+            return;
+        }
+        SetLocalPlayerAsInitializedPacket initialized = new SetLocalPlayerAsInitializedPacket();
+        initialized.setRuntimeEntityId(runtimeEntityId);
+        sender.accept(initialized);
+        giveSender = sender;
+        giveStarted = true;
+        giveNext();
+    }
+
+    Result result() {
+        return result;
+    }
+
+    /** An inventory slot: the answer to the current give if it holds an item. */
+    synchronized void inventorySlot(InventorySlotPacket packet) {
+        ItemData item = packet.getItem();
+        if (giving != null && packet.getContainerId() == ContainerId.INVENTORY
+            && item.getDefinition() != null && item.getDefinition().getRuntimeId() != 0) {
+            result.gives.put(giving, new GiveCapture.Given(item.getDefinition().getIdentifier(), packet.getSlot()));
+            giveNext();
+        }
+    }
+
+    /** Gives up on a give that is not answered in time, or on all of them if the player never spawned. */
+    synchronized void giveTimeouts(long now) {
+        if (givesDone) {
+            return;
+        }
+        if (giveStarted) {
+            if (now - givingSince > GIVE_ANSWER_MILLIS) {
+                giveNext();
+            }
+        } else if (readyAt != 0 && now - readyAt > GIVE_START_MILLIS) {
+            giveQueue.clear();
+            givesDone = true;
+            checkComplete();
         }
     }
 
@@ -252,6 +350,9 @@ public final class CaptureClient {
         @Override
         public PacketSignal handle(PlayStatusPacket packet) {
             System.out.println("  play status " + packet.getStatus());
+            if (packet.getStatus() == PlayStatusPacket.Status.PLAYER_SPAWN) {
+                startGives(result.startGame.getRuntimeEntityId(), toSend -> send(session, toSend, false));
+            }
             if (packet.getStatus() != PlayStatusPacket.Status.LOGIN_SUCCESS && packet.getStatus() != PlayStatusPacket.Status.PLAYER_SPAWN) {
                 done.completeExceptionally(new IllegalStateException("Login failed: " + packet.getStatus()));
             }
@@ -297,6 +398,12 @@ public final class CaptureClient {
             radius.setMaxRadius(2);
             send(session, radius, false);
             checkComplete();
+            return PacketSignal.HANDLED;
+        }
+
+        @Override
+        public PacketSignal handle(InventorySlotPacket packet) {
+            inventorySlot(packet);
             return PacketSignal.HANDLED;
         }
 
