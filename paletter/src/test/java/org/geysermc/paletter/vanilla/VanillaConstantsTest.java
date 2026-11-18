@@ -246,7 +246,11 @@ class VanillaConstantsTest {
 
         BedrockItemType removedItem = VanillaTypes.item("minecraft:paletter_test_removed_item");
         assertFalse(removedItem.isAvailable());
-        assertEquals(Ids.item(PALETTER, BedrockItems.UNKNOWN), Ids.item(PALETTER, removedItem));
+        // No canonical id of its own: the palette resolves it by identifier, to the default fallback
+        assertEquals(-1, Ids.item(PALETTER, removedItem));
+        ResolvedItem resolved = PALETTER.vanilla(PALETTER.latest()).items().resolve(removedItem);
+        assertTrue(resolved.fallback());
+        assertEquals("minecraft:unknown", resolved.definition().getIdentifier());
     }
 
     @Test

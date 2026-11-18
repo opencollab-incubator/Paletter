@@ -508,8 +508,10 @@ public final class Paletter {
 
         /**
          * Serves the data of Bedrock preview builds as well, or not. The constants only a preview has
-         * ({@link org.geysermc.paletter.annotation.SincePreview}) exist either way, but are linked to the newest release:
-         * they resolve through {@link #fallbacks(Fallbacks) fallbacks}, with previews or not.
+         * ({@link org.geysermc.paletter.annotation.SincePreview}) exist either way, but are linked to the newest release;
+         * with previews the item constants send the preview's item, without they resolve through
+         * {@link #fallbacks(Fallbacks) fallbacks}; the block constants always send their fallback (see
+         * {@link org.geysermc.paletter.annotation.SincePreview}).
          *
          * @param previews whether preview data is served; default {@code false}
          * @return this builder

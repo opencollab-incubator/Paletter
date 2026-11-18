@@ -31,9 +31,11 @@ import java.util.Objects;
  * bounded by the registered content. Equal custom items registered by different layers each own their type; those
  * types are equal, not identical.
  * <p>
- * Referencing a type loads nothing. A vanilla constant the bundled data does not have (deprecated, or a preview item
- * without the preview loaded) is not {@link #isAvailable() available} and resolves to its fallback, normally
- * {@code minecraft:unknown}.
+ * Referencing a type loads nothing. A vanilla constant the newest bundled release does not have (deprecated, or a
+ * {@link org.geysermc.paletter.annotation.SincePreview @SincePreview} item) is not {@link #isAvailable() available}. A
+ * palette whose newest version has the item (a preview item in a Paletter with previews) sends the item itself; any
+ * other palette resolves it through its {@link org.geysermc.paletter.Fallbacks}, {@code minecraft:unknown} by default. The constant is the one type of its identifier
+ * either way: {@link org.geysermc.paletter.Palette#decode} and the palette's item definitions give back the constant.
  *
  * @since 1.0.0
  */
@@ -60,18 +62,9 @@ public final class BedrockItemType implements ItemKey {
     }
 
     private BedrockItemType(String identifier) {
-        this(identifier, true);
-    }
-
-    /**
-     * A type without a canonical id in the bundled data: its variants find their id by identifier in the palette's own
-     * canonical items. A custom type, or with {@code custom} false the type of an item a preview added (see
-     * {@link PreviewItems}).
-     */
-    private BedrockItemType(String identifier, boolean custom) {
         this.identifier = Objects.requireNonNull(identifier);
         this.fallback = null;
-        this.custom = custom;
+        this.custom = true;
         this.education = false;
         this.linked = new Linked(this, true, List.of(base), new int[] {-1});
     }
@@ -128,11 +121,6 @@ public final class BedrockItemType implements ItemKey {
     @Internal
     public static @NonNull BedrockItemType custom(@NonNull String identifier) {
         return new BedrockItemType(identifier);
-    }
-
-    /** The type of an item a preview added, for {@link PreviewItems} only. */
-    static BedrockItemType preview(String identifier) {
-        return new BedrockItemType(identifier, false);
     }
 
     /**
@@ -263,18 +251,21 @@ public final class BedrockItemType implements ItemKey {
     }
 
     /**
-     * Whether the bundled data has this type.
+     * Whether the newest bundled release has this type. Says nothing about one palette: a palette whose newest version
+     * has the item (a preview item in a Paletter with previews) sends it although it is not available.
      *
-     * @return false for a vanilla constant the bundled data does not have: it resolves to its fallback type
+     * @return false for a vanilla constant the newest bundled release does not have: palettes without the item resolve
+     *         it through their {@link org.geysermc.paletter.Fallbacks}
      */
     public boolean isAvailable() {
         return linked().available;
     }
 
     /**
-     * The type the bundled data resolves this type to.
+     * The type the newest bundled release links this type to. Palettes resolve a type that is not available through
+     * their {@link org.geysermc.paletter.Fallbacks}, not through this.
      *
-     * @return this type, or for a type that is not {@link #isAvailable() available} the type it resolves to
+     * @return this type, or for a type that is not {@link #isAvailable() available} its fallback type
      */
     public @NonNull BedrockItemType resolved() {
         return linked().owner;
