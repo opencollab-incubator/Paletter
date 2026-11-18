@@ -126,10 +126,10 @@ class ItemVariantsTest {
         assertEquals(canonical.index(ItemVariant.of("minecraft:apple", 0)), BedrockItems.APPLE.variant().canonicalIn(canonical));
         // A variant the data does not have has none
         assertEquals(-1, BedrockItems.POTION.variant(9999).canonicalIn(canonical));
-        // An absent type's variants find the id of its fallback
+        // An absent type's variants have no id where the data lacks the item: they resolve through the fallbacks
         BedrockItemType absent = BedrockItems.BRITTLE_ICE;
         assertFalse(absent.isAvailable());
-        assertEquals(absent.resolved().variant().canonicalIn(canonical), absent.variant().canonicalIn(canonical));
+        assertEquals(-1, absent.variant().canonicalIn(canonical));
         assertEquals(absent, absent.variant(3).type());
     }
 

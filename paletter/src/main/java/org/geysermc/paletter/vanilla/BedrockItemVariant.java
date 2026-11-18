@@ -135,8 +135,8 @@ public final class BedrockItemVariant implements ItemKey {
     /**
      * Internal: the canonical id of this variant in a palette's canonical items. A variant of a type that is not
      * {@link BedrockItemType#isAvailable() available} is the palette's own item if the palette's newest version has it
-     * (an {@link org.geysermc.paletter.annotation.SincePreview @SincePreview} item in a palette with previews), else the
-     * id of its fallback.
+     * (an {@link org.geysermc.paletter.annotation.SincePreview @SincePreview} item in a palette with previews), else it
+     * has no id: the palette resolves it by identifier, through the {@link org.geysermc.paletter.Fallbacks}.
      *
      * @param canonical the canonical items of a palette
      * @return the canonical id of this variant in a palette's canonical items, or -1
@@ -145,9 +145,7 @@ public final class BedrockItemVariant implements ItemKey {
     public int canonicalIn(@NonNull CanonicalItems canonical) {
         if (id < 0 && !type.isCustom() && !type.isAvailable()) {
             int own = canonical.index(toItemVariant());
-            if (own >= 0 && own < canonical.vanillaSize()) {
-                return own;
-            }
+            return own < canonical.vanillaSize() ? own : -1;
         }
         int bundledId = id >= 0 ? id : type.bundledId(aux);
         if (bundledId >= 0) {

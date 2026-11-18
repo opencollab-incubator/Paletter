@@ -34,7 +34,7 @@ import java.util.Objects;
  * Referencing a type loads nothing. A vanilla constant the newest bundled release does not have (deprecated, or a
  * {@link org.geysermc.paletter.annotation.SincePreview @SincePreview} item) is not {@link #isAvailable() available}. A
  * palette whose newest version has the item (a preview item in a Paletter with previews) sends the item itself; any
- * other palette sends its fallback, normally {@code minecraft:unknown}. The constant is the one type of its identifier
+ * other palette resolves it through its {@link org.geysermc.paletter.Fallbacks}, {@code minecraft:unknown} by default. The constant is the one type of its identifier
  * either way: {@link org.geysermc.paletter.Palette#decode} and the palette's item definitions give back the constant.
  *
  * @since 1.0.0
@@ -254,15 +254,16 @@ public final class BedrockItemType implements ItemKey {
      * Whether the newest bundled release has this type. Says nothing about one palette: a palette whose newest version
      * has the item (a preview item in a Paletter with previews) sends it although it is not available.
      *
-     * @return false for a vanilla constant the newest bundled release does not have: palettes without the item send
-     *         its fallback type
+     * @return false for a vanilla constant the newest bundled release does not have: palettes without the item resolve
+     *         it through their {@link org.geysermc.paletter.Fallbacks}
      */
     public boolean isAvailable() {
         return linked().available;
     }
 
     /**
-     * The type the newest bundled release resolves this type to: what palettes without the item send.
+     * The type the newest bundled release links this type to. Palettes resolve a type that is not available through
+     * their {@link org.geysermc.paletter.Fallbacks}, not through this.
      *
      * @return this type, or for a type that is not {@link #isAvailable() available} its fallback type
      */

@@ -5,6 +5,7 @@ import org.geysermc.paletter.annotation.SincePreview;
 import org.geysermc.paletter.internal.CanonicalBlocks;
 import org.geysermc.paletter.internal.data.VanillaData;
 import org.geysermc.paletter.internal.data.VanillaItem;
+import org.geysermc.paletter.item.ResolvedItem;
 import org.geysermc.paletter.vanilla.BedrockBlockState;
 import org.geysermc.paletter.vanilla.BedrockBlockType;
 import org.geysermc.paletter.vanilla.BedrockBlocks;
@@ -24,6 +25,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 
 /** In a Paletter with previews, content only the preview has is reached by the public lookups like any other. */
@@ -130,6 +132,23 @@ class PreviewHandlesTest {
             checked++;
         }
         assertTrue(checked > 0);
+    }
+
+    /** Without previews, a preview item constant resolves through the fallback policy like any item a version lacks. */
+    @Test
+    void aReleasePaletteSendsThePolicyFallbackOfAPreviewItem() {
+        Paletter withEntry = Paletter.builder().fallbacks(Fallbacks.builder().item(BedrockItems.BRITTLE_ICE, BedrockItems.ICE).build()).build();
+        ResolvedItem ice = withEntry.vanilla(withEntry.latest()).items().resolve(BedrockItems.BRITTLE_ICE);
+        assertEquals("minecraft:ice", ice.definition().getIdentifier());
+        assertTrue(ice.fallback());
+
+        Paletter withoutEntry = Paletter.builder().build();
+        ResolvedItem unknown = withoutEntry.vanilla(withoutEntry.latest()).items().resolve(BedrockItems.BRITTLE_ICE);
+        assertEquals("minecraft:unknown", unknown.definition().getIdentifier());
+        assertTrue(unknown.fallback());
+
+        Paletter none = Paletter.builder().fallbacks(Fallbacks.NONE).build();
+        assertNull(none.vanilla(none.latest()).items().resolve(BedrockItems.BRITTLE_ICE));
     }
 
     /** With previews, a release that lacks a preview item sends what the fallback policy gives for it. */
