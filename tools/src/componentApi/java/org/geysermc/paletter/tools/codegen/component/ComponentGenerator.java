@@ -99,11 +99,7 @@ public final class ComponentGenerator {
      * @param gating what the captured servers do with each gated component without experiments ({@link Gating}), by component id
      */
     public record Context(Set<String> reserved, Map<String, String> toggles, Map<String, List<Gating.Result>> gating) {
-        public static final Context NONE = new Context(Set.of(), Map.of());
-
-        public Context(Set<String> reserved, Map<String, String> toggles) {
-            this(reserved, toggles, Map.of());
-        }
+        public static final Context NONE = new Context(Set.of(), Map.of(), Map.of());
     }
 
     public static final String API_FILE = "api.json";

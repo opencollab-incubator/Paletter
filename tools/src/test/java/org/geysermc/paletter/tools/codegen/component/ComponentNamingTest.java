@@ -85,7 +85,7 @@ class ComponentNamingTest {
 
     @Test
     void aNameOfAPublicTypeThatIsNotGeneratedHereGetsAPrefixToo() {
-        Map<String, String> files = ComponentGenerator.generate(ComponentGeneratorTest.inputs().withContext(new Context(Set.of("Gadget"), Map.of())));
+        Map<String, String> files = ComponentGenerator.generate(ComponentGeneratorTest.inputs().withContext(new Context(Set.of("Gadget"), Map.of(), Map.of())));
         assertTrue(files.containsKey(ITEM_PKG + "ItemGadget.java"), files.keySet().toString());
         assertFalse(files.containsKey(ITEM_PKG + "Gadget.java"));
         assertTrue(files.containsKey(ITEM_PKG + "Widget.java"));
@@ -94,14 +94,14 @@ class ComponentNamingTest {
     @Test
     void aNestedTypeThatShadowsAPublicTypeIsAnError() {
         // Widget has a nested Entry record
-        Inputs in = ComponentGeneratorTest.inputs().withContext(new Context(Set.of("Entry"), Map.of()));
+        Inputs in = ComponentGeneratorTest.inputs().withContext(new Context(Set.of("Entry"), Map.of(), Map.of()));
         GenerationException e = assertThrows(GenerationException.class, () -> ComponentGenerator.generate(in));
         assertTrue(e.getMessage().contains("nested type Entry") && e.getMessage().contains("typeNames"), e.getMessage());
     }
 
     @Test
     void anExperimentThatTheCapturesNameBecomesBedrockExperimentNotExperimental() {
-        Inputs in = withExperiments(new Context(Set.of(), Map.of("Test Toggle", "test_toggle")), "Test Toggle");
+        Inputs in = withExperiments(new Context(Set.of(), Map.of("Test Toggle", "test_toggle"), Map.of()), "Test Toggle");
         String gadget = ComponentGenerator.generate(in).get(ITEM_PKG + "Gadget.java");
         assertTrue(gadget.contains("@BedrockExperiment(\"test_toggle\")"), gadget);
         assertFalse(gadget.contains("@Experimental"), "Experimental means the API is unstable, nothing else");
@@ -111,7 +111,7 @@ class ComponentNamingTest {
     @Test
     void anExperimentTheCapturesDoNotNameIsOnlyInTheJavadoc() {
         // "Holiday Creator Features" is in no capture: nothing is guessed
-        Inputs in = withExperiments(new Context(Set.of(), Map.of("Test Toggle", "test_toggle")), "Holiday Creator Features");
+        Inputs in = withExperiments(new Context(Set.of(), Map.of("Test Toggle", "test_toggle"), Map.of()), "Holiday Creator Features");
         String gadget = ComponentGenerator.generate(in).get(ITEM_PKG + "Gadget.java");
         assertFalse(gadget.contains("@BedrockExperiment"), gadget);
         assertTrue(gadget.contains("The creator docs name the experiment Holiday Creator Features for it (in some format versions); unverified against BDS."), gadget);
@@ -142,7 +142,7 @@ class ComponentNamingTest {
 
     @Test
     void severalNamedToggleIdsOfOneComponentFailInsteadOfDroppingOne() {
-        Inputs in = withExperiments(new Context(Set.of(), Map.of("A", "toggle_a", "B", "toggle_b")), "A", "B");
+        Inputs in = withExperiments(new Context(Set.of(), Map.of("A", "toggle_a", "B", "toggle_b"), Map.of()), "A", "B");
         GenerationException e = assertThrows(GenerationException.class, () -> ComponentGenerator.generate(in));
         assertTrue(e.getMessage().contains("toggle_a") && e.getMessage().contains("toggle_b"), e.getMessage());
     }
