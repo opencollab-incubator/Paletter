@@ -85,6 +85,8 @@ final class ApiModel {
         List<String> toggles = List.of();
         /** The experiment names of {@link #experiments} that no captured toggle has. */
         List<String> unmappedExperiments = List.of();
+        /** What the captured servers do with the component without experiments, oldest build first (empty: not captured). */
+        List<Gating.Result> gating = List.of();
         /** The name before a {@code Block}/{@code Item} prefix kept names unique, which api.json type overrides use. */
         String baseName;
         ObjType root;

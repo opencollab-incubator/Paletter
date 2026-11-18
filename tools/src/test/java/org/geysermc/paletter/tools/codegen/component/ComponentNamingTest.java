@@ -10,6 +10,7 @@ import org.junit.jupiter.api.io.TempDir;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -116,6 +117,27 @@ class ComponentNamingTest {
         assertTrue(gadget.contains("The creator docs name the experiment Holiday Creator Features for it (in some format versions); unverified against BDS."), gadget);
         assertTrue(gadget.contains("Unverified: the creator docs name experiment \"Holiday Creator Features\", which is in no capture."), gadget);
         assertFalse(gadget.contains("requires"), "the docs are not claimed to be enforced");
+    }
+
+    @Test
+    void aGatingCaptureMakesTheJavadocBdsVerifiedForTheBuildsItCovers() {
+        Context context = new Context(Set.of(), Map.of("Test Toggle", "test_toggle"), Map.of("item:test:gadget", List.of(
+            new Gating.Result("1.26.36.1", Gating.REJECTED, Gating.ACCEPTED), new Gating.Result("1.26.45.1", Gating.IGNORED, Gating.ACCEPTED),
+            new Gating.Result("1.26.52.3", Gating.ACCEPTED, Gating.ACCEPTED), new Gating.Result("1.26.63.1", Gating.REJECTED, Gating.REJECTED))));
+        String gadget = ComponentGenerator.generate(withExperiments(context, "Test Toggle")).get(ITEM_PKG + "Gadget.java");
+        assertTrue(gadget.contains("BDS-verified: in a world without experiments BDS rejects or ignores it in 1.26.36.1, 1.26.45.1."), gadget);
+        assertTrue(gadget.contains("BDS takes it without any experiment in 1.26.52.3: the docs' gating does not hold there."), gadget);
+        assertTrue(gadget.contains("BDS rejects it even with the experiments on in 1.26.63.1."), gadget);
+        assertFalse(gadget.contains("unverified against BDS"), gadget);
+        assertTrue(gadget.contains("@BedrockExperiment(\"test_toggle\")"), gadget);
+    }
+
+    @Test
+    void aGatingCaptureVerifiesAnExperimentNoCaptureNamesToo() {
+        Context context = new Context(Set.of(), Map.of(), Map.of("item:test:gadget", List.of(new Gating.Result("1.26.70.24", Gating.REJECTED, Gating.ACCEPTED))));
+        String gadget = ComponentGenerator.generate(withExperiments(context, "Holiday Creator Features")).get(ITEM_PKG + "Gadget.java");
+        assertTrue(gadget.contains("BDS-verified: in a world without experiments BDS rejects it in 1.26.70.24."), gadget);
+        assertFalse(gadget.contains("@BedrockExperiment"), "the toggle that enables it is still unknown");
     }
 
     @Test

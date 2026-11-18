@@ -397,6 +397,8 @@ public final class Cli implements Runnable {
             + "instead of the spec; writes data/bds/VERSION/spec-keys and data/model/bds-keys.json") boolean probeKeys;
         @Option(names = "--format-sweep", description = "Capture the components at the format versions around their Versioned boundaries "
             + "instead of the spec; writes data/bds/VERSION/spec-format with format-sweep.json") boolean formatSweep;
+        @Option(names = "--gating", description = "Load only the experiment-gated components in a world without experiments, to verify what the creator docs "
+            + "say of their experiments; writes data/bds/VERSION/spec-gating with gating.json") boolean gating;
         @Option(names = "--vanilla-pack", description = "A pack with vanilla block and item files, a source of keys for --probe-keys") String vanillaPack;
 
         @Override
@@ -408,6 +410,7 @@ public final class Cli implements Runnable {
             flag(options, "keep-server", keepServer);
             flag(options, "probe-keys", probeKeys);
             flag(options, "format-sweep", formatSweep);
+            flag(options, "gating", gating);
             put(options, "vanilla-pack", vanillaPack);
             put(options, "cache", cache);
             put(options, "port", port);

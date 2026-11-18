@@ -45,8 +45,9 @@ import java.util.stream.Stream;
  * {@code data/bds/<version>/spec/} (the input of {@code spec infer}). Reuses the {@code update} tooling
  * (download cache, server control, capture client).
  *
- * <p>Two further modes run the same capture on other add-ons and write beside the spec: {@code --probe-keys} ({@link KeyDiscovery}, {@code spec-keys/}, writes {@code data/model/bds-keys.json}, not read by {@code infer}) and
- * {@code --format-sweep} ({@link FormatSweep}, {@code spec-format/}). {@code --with-format-sweep} runs it on the same
+<p>Further modes run the same capture on other add-ons and write beside the spec: {@code --probe-keys} ({@link KeyDiscovery}, {@code spec-keys/}, writes {@code data/model/bds-keys.json}, not read by {@code infer}) and
+ * {@code --format-sweep} ({@link FormatSweep}, {@code spec-format/}) and {@code --gating} ({@link GatingCapture}, {@code spec-gating/}: a world
+ * without experiments). {@code --with-gating} runs the latter on the same server after the spec capture. {@code --with-format-sweep} runs the sweep on the same
  * server after the spec capture; its capture is an input of {@code infer}. {@code --vanilla-pack <dir>} adds a pack of vanilla block and
  * item files as a source of candidate keys.
  */
@@ -84,8 +85,9 @@ public final class SpecCapture {
         Files.createDirectories(work);
         boolean probeKeys = options.containsKey("probe-keys");
         boolean formatSweep = options.containsKey("format-sweep");
+        boolean gating = options.containsKey("gating");
         Path out = options.containsKey("out") ? Path.of(options.get("out"))
-            : root.resolve(Layout.BDS).resolve(distribution.version()).resolve(probeKeys ? "spec-keys" : formatSweep ? "spec-format" : "spec");
+            : root.resolve(Layout.BDS).resolve(distribution.version()).resolve(probeKeys ? "spec-keys" : formatSweep ? "spec-format" : gating ? "spec-gating" : "spec");
 
         // update passes reuse-server: the server its captures ran on is still extracted, and this run removes it
         Path server = distribution.extract(cache, !options.containsKey("keep-server") && !options.containsKey("reuse-server"));
@@ -99,7 +101,10 @@ public final class SpecCapture {
             Model docs = Model.read(modelDir.resolve("components.json"));
             AddonGenerator generator;
             KeyDiscovery.Evidence evidence = null;
-            if (probeKeys || formatSweep) {
+            if (gating) {
+                generator = AddonGenerator.empty(docs, fixtures, formatVersion);
+                GatingCapture.plan(generator, formatVersion);
+            } else if (probeKeys || formatSweep) {
                 generator = AddonGenerator.empty(docs, fixtures, formatVersion);
                 List<Path> packs = new ArrayList<>();
                 try (Stream<Path> behaviorPacks = Files.list(server.resolve("behavior_packs"))) {
@@ -135,7 +140,7 @@ public final class SpecCapture {
                     System.out.println(e.getMessage().lines().findFirst().orElse("") + "; starting it again");
                     run = captureRun(server, addon, work, port, timeout, distribution.version(), generator.scriptMarker());
                 }
-                if (evidence != null || round == SHRINK_ROUNDS) {
+                if (evidence != null || gating || round == SHRINK_ROUNDS) {
                     break;
                 }
                 Map<String, AddonGenerator.Shrunk> more = shrink(generator.variants(), leaves(work.resolve("custom")),
@@ -197,12 +202,33 @@ public final class SpecCapture {
                         FormatSweep.report(generator, distribution.version(), formatVersion, leaves, log)) + "\n", StandardCharsets.UTF_8);
                 }
             }
+            if (gating) {
+                Path spec = out.resolveSibling("spec");
+                Files.writeString(out.resolve("gating.json"), Model.GSON.toJson(GatingCapture.report(generator, distribution.version(), protocol,
+                    summary.experiments(), leaves(out), logByVariant(contentLog), spec)) + "\n", StandardCharsets.UTF_8);
+            }
             System.out.println("Spec capture of BDS " + distribution.version() + " (protocol " + protocol + "): " + generator.variants().size()
                 + " variants, " + contentLog.size() + " content log lines -> " + out);
+            if (options.containsKey("with-gating")) {
+                // The same server once more, in a world without experiments: not essential, so a failure only loses this file
+                Map<String, String> gate = new LinkedHashMap<>(options);
+                gate.remove("with-gating");
+                gate.remove("with-format-sweep");
+                gate.remove("experiments");
+                gate.put("gating", "true");
+                gate.put("reuse-server", "true");
+                gate.put("out", out.resolveSibling("spec-gating").toString());
+                try {
+                    new SpecCapture(root, gate).run();
+                } catch (Exception e) {
+                    System.out.println("The gating capture of BDS " + distribution.version() + " failed, its components stay unverified: " + e);
+                }
+            }
             if (options.containsKey("with-format-sweep")) {
                 // The same server once more, with the add-on of the format sweep: its own capture next to this one
                 Map<String, String> sweep = new LinkedHashMap<>(options);
                 sweep.remove("with-format-sweep");
+                sweep.remove("with-gating");
                 sweep.put("format-sweep", "true");
                 sweep.put("reuse-server", "true");
                 sweep.put("out", out.resolveSibling("spec-format").toString());
@@ -249,7 +275,9 @@ public final class SpecCapture {
         }
         List<String> experiments = options.containsKey("experiments")
             ? Arrays.asList(options.get("experiments").split(",")) : Update.DEFAULT_EXPERIMENTS;
-        Capture.enableExperiments(server.resolve("worlds").resolve(WORLD).resolve("level.dat"), experiments);
+        if (!options.containsKey("gating")) {
+            Capture.enableExperiments(server.resolve("worlds").resolve(WORLD).resolve("level.dat"), experiments);
+        }
 
         InetSocketAddress address = new InetSocketAddress("127.0.0.1", port);
         try (BdsServer bds = new BdsServer(server, false)) {

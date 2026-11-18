@@ -11,8 +11,8 @@ import java.lang.annotation.Target;
  * like), in some format versions. The toggle id is the one the captured Bedrock Dedicated Server gives that name; see
  * the constants of {@code BedrockExperiments}, and enable one with {@code VanillaContent#experiments(String...)}.
  * <p>
- * <b>Unverified against BDS:</b> the gating comes from the docs, not from a capture of the server. TODO: a BDS capture of the
- * component with and without the toggle should verify it (and which format versions it holds for).
+ * The gating comes from the docs. Where a BDS capture of the component in a world without experiments exists, the component's
+ * Javadoc says <b>BDS-verified</b> and for which builds it holds; without one it says <b>unverified against BDS</b>.
  * <p>
  * This is separate from {@link Experimental}: that one means the Paletter API itself may change.
  *

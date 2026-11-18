@@ -278,6 +278,21 @@ The committed records do not have them yet: `content.recipes` appears with the n
 check does not count a toggle's recipes as a difference when the earlier record lacks them. `recipes-capture` refuses a
 build without captures in `data/bds` and a machine of another BDS platform than the committed captures.
 
+### Experiment gating of components
+
+`@BedrockExperiment` and the experiment notes of the generated component Javadoc come from the creator docs (`experiments` in
+`components.json`). `spec-capture --gating` (run by `update` after the spec capture, on the same server) verifies them per build:
+it loads an add-on with only those components (`GatingCapture`: a base and a control without the component each, derived from the same
+model data) in a world **without** experiments, and writes `data/bds/<build>/spec-gating/gating.json` (generated, marked). Per
+component, `without` is `rejected` (an error in the content log, or the file not sent), `ignored` (BDS sent the same as the control) or
+`accepted`; `with` is what the spec capture of the build, whose world has the experiments on, did with the same base. The codegen
+reads the files (`Gating`): the Javadoc says "BDS-verified" for the builds where a component is gated, names the builds where BDS takes it
+without any experiment, and the builds where BDS rejects it even with them on; `generateComponentApi` prints the components rejected with
+experiments on in every captured build (they are kept, only reported; the update report lists them too). The capture is not essential: a build
+without the file leaves the gating "unverified against BDS", never a failure. No build has the file yet (`GatingTest.PENDING`): the recapture
+writes them. The docs name one entry for `collision_box` (Holiday Creator Features and Upcoming Creator Features), which is captured at the
+current format; the Holiday Creator Features form of an older format is not a variant of its own.
+
 ### Previews
 
 Paletter bundles the newest preview next to the releases. `update --channel preview` imports it like a release, marked
