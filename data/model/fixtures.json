@@ -156,7 +156,8 @@
     "default": "paletter:k"
   },
   "probeValues": {
-    "_comment": "Further strings of a field no enum lists, each tried as a value of its own, by '<component>:<path>'. Probes, not facts: the names of the hand table of Transforms (FORMATTING) that no BDS message and no schema enum lists (the use_animation names come from the schema enum); only the ones BDS accepts and sends are evidence.",
+    "_comment": "Further values of a field, each tried as a value of its own, by '<component>:<path>'. Probes, not facts: the names of the hand table of Transforms (FORMATTING) that no BDS message and no schema enum lists (the use_animation names come from the schema enum), and whole lists of objects the minimal entry never writes (an ammunition entry without an item, unverified until captured); only what BDS accepts and sends is evidence.",
+    "item:minecraft:shooter:ammunition": [[{"search_inventory": true}]],
     "item:minecraft:hover_text_color:": ["black", "dark_blue", "dark_green", "dark_aqua", "dark_red", "dark_purple", "gold", "gray", "dark_gray", "blue", "green", "aqua", "red", "light_purple", "yellow", "white", "minecoin_gold", "material_quartz", "material_iron", "material_netherite", "material_redstone", "material_copper", "material_gold", "material_emerald", "material_diamond", "material_lapis", "material_amethyst", "material_resin"],
     "item:minecraft:hover_text_color:value": ["black", "dark_blue", "dark_green", "dark_aqua", "dark_red", "dark_purple", "gold", "gray", "dark_gray", "blue", "green", "aqua", "red", "light_purple", "yellow", "white", "minecoin_gold", "material_quartz", "material_iron", "material_netherite", "material_redstone", "material_copper", "material_gold", "material_emerald", "material_diamond", "material_lapis", "material_amethyst", "material_resin"]
   },

@@ -44,7 +44,7 @@ public final class HandTransforms {
         entry("item:minecraft:icon:", "iconTextures"),
         // item descriptors and Molang that change shape with the protocol, in one list the entries of which are dropped by the registry
         entry("item:minecraft:repairable:repair_items", "itemDescriptorList"),
-        // null-item entry not captured; unverified. TODO: add a sample of an ammunition entry without item before the recapture, then try the descriptor rule
+        // null-item entry not captured yet; unverified. The add-on probes one (fixtures.json probeValues); TODO after the recapture: try the descriptor rule
         entry("item:minecraft:shooter:ammunition[].item", "ammunitionItemDescriptor"),
         entry("item:minecraft:use_animation:value", "useAnimationId"))));
 

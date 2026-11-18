@@ -162,6 +162,8 @@ class ComponentConformanceTest {
         "block:minecraft:geometry", "block:minecraft:item_visual", "block:minecraft:embedded_visual", "block:minecraft:material_instances",
         // the script custom components (control included) are not in the committed captures yet
         "block:minecraft:custom_components", "item:minecraft:custom_components",
+        // the ammunition entry without an item (fixtures.json probeValues) is not in the committed captures yet
+        "item:minecraft:shooter",
         // the blocks with block tags (role tag) are not in the committed captures yet
         "block:minecraft:tag");
 

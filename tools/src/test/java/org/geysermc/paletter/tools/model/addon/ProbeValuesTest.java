@@ -41,7 +41,8 @@ class ProbeValuesTest {
     private static final String FIXTURES = """
         {"formatVersion": "1.26.60", "filler": {}, "errata": [], "mapKeys": {"default": "k"}, "context": {}, "skip": {}, "requires": {},
          "samples": {"item:minecraft:probe:use_on[]": {"name": "minecraft:stone"}, "item:minecraft:probe:picked": {"name": "minecraft:stone"}},
-         "probeValues": {"_comment": "x", "item:minecraft:probe:color": ["gold", "red"], "item:minecraft:probe:mode": ["c"]},
+         "probeValues": {"_comment": "x", "item:minecraft:probe:color": ["gold", "red"], "item:minecraft:probe:mode": ["c"],
+                         "item:minecraft:probe:use_on": [[{"tags": "q.any_tag('x')"}]]},
          "descriptorValues": {"_comment": "x", "values": [{"name": "minecraft:oak_log", "states": {"pillar_axis": "y"}},
                                                           {"name": "minecraft:lever", "states": {"open_bit": true}}]}}""";
 
@@ -61,6 +62,13 @@ class ProbeValuesTest {
         // beside an enum too: the enum's values and the invalid one stay
         assertEquals(List.of("c", "paletter_invalid", "a", "b"), labels(root, "mode"));
         assertFalse(labels(root, "plain").contains("gold"), "only the field the key names");
+    }
+
+    @Test
+    void aListOfObjectsTriesItsProbeListsWhole(@TempDir Path root) throws IOException {
+        List<String> useOn = labels(root, "use_on");
+        assertTrue(useOn.contains("[probe] [{\"tags\":\"q.any_tag('x')\"}]"), useOn.toString());
+        assertTrue(useOn.containsAll(List.of("[1]", "[2]")), "the generated lists stay: " + useOn);
     }
 
     @Test

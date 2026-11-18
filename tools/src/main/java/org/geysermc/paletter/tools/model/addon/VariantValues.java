@@ -602,6 +602,8 @@ final class VariantValues {
                 if (descriptor(c, path + "[]")) {
                     fixtures.descriptorValues().forEach(d -> values.add(new Labeled("[1] " + describe(d), arrayOf(d))));
                 }
+                // Whole lists the minimal entry never writes, such as an entry without one of its fields
+                fixtures.probeValues(c.id(), path).forEach(v -> values.add(new Labeled("[probe] " + v, v.deepCopy(), true)));
             }
             case "number", "integer" -> {
                 values.add(new Labeled("[3]", array(3)));
