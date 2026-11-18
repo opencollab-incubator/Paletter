@@ -391,7 +391,7 @@ final class WireSource {
                 for (Rule r : rules(f)) {
                     if (r.writesValue()) {
                         owned.add(strip(r.wire));
-                        ownerOf.putIfAbsent(strip(r.wire), f.alternativeOf != null ? f.alternativeOf : f);
+                        ownerOf.putIfAbsent(strip(r.wire), f);
                         if (r instanceof Descriptor d) {
                             d.leaves().forEach(leaf -> {
                                 owned.add(strip(leaf));
