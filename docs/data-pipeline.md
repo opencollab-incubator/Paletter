@@ -377,10 +377,12 @@ generator adds them, and `SamplesTest` checks each against a model of its own an
   of the other components: **borrowed, unverified** for it (TODO: `collision_box` until the recapture has run; a test checks the fallback).
 - *Vectors* the schema also describes by `x`, `y`, `z` stay vectors in the base (as an object they would have no member without a default).
 
-**Known gap: enums of an old format.** BDS's schema lists some enums only for format 1.26.30 (`swing_sounds`, `use_modifiers.start_sound`,
-`durability_sensor.durability_thresholds[].sound_event`, ...): the add-on's format 1.26.50 definitions do not have them, so their values are
-not varied. The format sweep varies a key at its boundaries only, not its enum values. TODO: vary them in the sweep at 1.26.30 (a generator
-for that format reads the schema's 1.26.30 definitions already, `AddonGenerator(model, fixtures, "1.26.30")`).
+**Enums of an old format.** BDS's schema lists some enums only for an older format (`swing_sounds`, `use_modifiers.start_sound`,
+`durability_sensor.durability_thresholds[].sound_event`, ...): the newest stable definition the add-on's format uses takes any string there,
+so the main add-on does not vary their values. `Schema.olderEnums` derives these fields from `schema.json` (a field both definitions have,
+with an enum in the older one only; 5 fields and 2855 values in build 1.26.63.1), and the format sweep (`FormatSweep.planOlderEnums`) asks
+BDS for every value at the older format, in variants of role `enum`. They are not compared with a reference: BDS accepting or rejecting
+the value is the evidence. They exist once the schema is in the add-on (`Fixtures.SCHEMA_IN_ADDON`, the recapture).
 
 **Script API module.** The beta add-ons (`behaviour-dump`) depend on the `@minecraft/server` beta of the build. `update` reads the versions from
 the `script_modules` of BDS's own documentation generator (`ScriptModules.parse`) into `data/bds/<build>/script-modules.json` (marked

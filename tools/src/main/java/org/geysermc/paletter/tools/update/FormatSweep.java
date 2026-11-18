@@ -4,6 +4,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import org.geysermc.paletter.tools.model.Fixtures;
 import org.geysermc.paletter.tools.model.Model;
+import org.geysermc.paletter.tools.model.Schema;
 import org.geysermc.paletter.tools.model.Model.Component;
 import org.geysermc.paletter.tools.model.Model.Field;
 import org.geysermc.paletter.tools.model.addon.AddonGenerator;
@@ -25,6 +26,7 @@ import java.util.TreeSet;
  *     wiki's format histories mark Versioned, and the {@code minFormatVersion} of the docs;</li>
  *     <li>per component, the base at every boundary, at the known version just below it, and at the capture's format
  *     (the reference); per key that has a boundary, the same with the key set to its sample;</li>
+ *     <li>every value of the enums only an older schema format lists, at that format ({@link #planOlderEnums});</li>
  *     <li>a component BDS rejects at the capture's format is asked at every known format, with a control of the same format
  *     ({@link #plan}).</li>
  * </ul>
@@ -92,6 +94,27 @@ final class FormatSweep {
                 }
             });
         }
+        planOlderEnums(generator, fixtures);
+    }
+
+    /**
+     * Every value of the enums only an older schema format lists ({@link Fixtures#olderEnums}), at that format: the add-on at the
+     * capture's format has no definition of them, so its values are never varied. Role {@code enum}, not compared with the reference.
+     *
+     * @return the number of variants added
+     */
+    static int planOlderEnums(AddonGenerator generator, Fixtures fixtures) {
+        int added = 0;
+        for (Schema.OlderEnum e : fixtures.olderEnums()) {
+            Component c = generator.model().component(e.component());
+            if (c == null || c.field(e.path()) == null || rejected(fixtures, c)) {
+                continue;
+            }
+            for (String value : e.values()) {
+                added += generator.enumAt(e.component(), e.format(), e.path(), value) == null ? 0 : 1;
+            }
+        }
+        return added;
     }
 
     /** Whether BDS rejected the component at the current format: it does not know it, or calls it deprecated. */
@@ -134,8 +157,8 @@ final class FormatSweep {
                              Map<String, List<String>> log) {
         Map<String, Map<String, Map<String, AddonGenerator.Variant>>> grouped = new TreeMap<>();
         for (AddonGenerator.Variant v : generator.variants()) {
-            if (v.role().equals("control")) {
-                continue; // only compared with, by the mapping inference
+            if (v.role().equals("control") || v.role().equals("enum")) {
+                continue; // control: only compared with, by the mapping inference; enum: BDS's accept or reject is the evidence
             }
             grouped.computeIfAbsent(v.componentId(), k -> new TreeMap<>()).computeIfAbsent(group(v), k -> new TreeMap<>(AddonGenerator::compare))
                 .put(v.format(), v);
