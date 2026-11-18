@@ -109,12 +109,18 @@ final class WireSource {
                 + "hand transforms by name. Not API.\n", iface)
             .addAnnotation(AnnotationSpec.builder(SuppressWarnings.class).addMember("value", "{$S, $S}", "unused", "deprecation").build())
             .addMethod(MethodSpec.constructorBuilder().addModifiers(Modifier.PRIVATE).build());
+        List<MethodSpec> encoders = new ArrayList<>();
         CodeBlock.Builder dispatch = CodeBlock.builder().beginControlFlow("switch (component)");
         for (Comp c : members) {
-            dispatch.addStatement("case $T value -> $N(value, ctx, out)", ApiSource.className(c), method(c));
+            CodeBlock inline = new WireSource(c, model).component(encoders);
+            if (inline == null) {
+                dispatch.addStatement("case $T c -> $N(c, ctx, out)", ApiSource.className(c), method(c));
+            } else {
+                dispatch.add("case $T c -> $L", ApiSource.className(c), inline);
+            }
         }
         if (kind == Kind.ITEM || kind == Kind.BLOCK) {
-            dispatch.addStatement("case $T value -> $T.write(value, ctx, out)", ClassName.get(kind.pkg(), ApiSource.wireOnly(kind)),
+            dispatch.addStatement("case $T c -> $T.write(c, ctx, out)", ClassName.get(kind.pkg(), ApiSource.wireOnly(kind)),
                 ClassName.get(PKG, "WireOnlyWire"));
         }
         if (members.isEmpty()) {
@@ -126,14 +132,12 @@ final class WireSource {
                 + "trait its element of {@code traits}.\n")
             .addParameter(ApiSource.nonNull(iface), "component").addParameter(ApiSource.nonNull(WIRE_CONTEXT), "ctx")
             .addParameter(ApiSource.nonNull(WIRE_NODE), "out").addCode(dispatch.build()).build());
-        for (Comp c : members) {
-            new WireSource(c, model).component(type);
-        }
         for (Comp c : model.components.stream().filter(c -> c.kind == kind && c.standalone).toList()) {
             WireSource source = new WireSource(c, model);
             source.exposed = true;
-            source.component(type);
+            source.component(encoders);
         }
+        encoders.forEach(type::addMethod);
         if (kind == Kind.ITEM || kind == Kind.BLOCK) {
             type.addMethod(envelope(kind, model));
         }
@@ -196,7 +200,13 @@ final class WireSource {
             .addParameter(ApiSource.className(c), "c").addParameter(WIRE_CONTEXT, "ctx").addParameter(WIRE_NODE, "out");
     }
 
-    private void component(TypeSpec.Builder type) {
+    /**
+     * Adds the encoder methods of the component to {@code sink}.
+     *
+     * @return null if the component has an encoder method; else its whole encoder as the arrow body of a {@code case} of the
+     *         dispatch, for an encoder of one statement or none
+     */
+    private CodeBlock component(List<MethodSpec> sink) {
         String name = method(c);
         // The body of each window; neighbours that encode the same (the shapes differ only in what the encoder ignores,
         // or the component is a hand transform that dispatches itself) are one window
@@ -216,8 +226,13 @@ final class WireSource {
             }
         }
         if (windows.size() <= 1) {
-            type.addMethod(encoder(name).addCode(bodies.getFirst()).build());
-            return;
+            String text = bodies.getFirst().toString();
+            if (!exposed && text.lines().count() <= 1 && !text.contains("{")) {
+                // a component that writes one statement (or nothing) is a case of the dispatch
+                return text.isEmpty() ? CodeBlock.of("{ }\n") : text.startsWith("//") ? CodeBlock.of("{ } $L", text) : bodies.getFirst();
+            }
+            sink.add(encoder(name).addCode(bodies.getFirst()).build());
+            return null;
         }
         // The windows must cover every protocol: the last is a plain else, so a gap would be a silent hole
         for (int i = 0; i < windows.size(); i++) {
@@ -241,10 +256,11 @@ final class WireSource {
             dispatch.addStatement("$N$L(c, ctx, out)", name, window(w));
         }
         dispatch.endControlFlow();
-        type.addMethod(encoder(name).addCode(dispatch.build()).build());
+        sink.add(encoder(name).addCode(dispatch.build()).build());
         for (int i = 0; i < windows.size(); i++) {
-            type.addMethod(encoder(name + window(windows.get(i))).addCode(bodies.get(i)).build());
+            sink.add(encoder(name + window(windows.get(i))).addCode(bodies.get(i)).build());
         }
+        return null;
     }
 
     private static String window(Window w) {
@@ -490,12 +506,19 @@ final class WireSource {
     }
 
     private void field(Field f, String owner, String node, String prefix) {
-        String var = "v" + (vars++);
         boolean nullable = ApiSource.nullable(f);
+        String read = owner + "." + f.java + "()";
         CodeBlock.Builder all = b;
-        b = CodeBlock.builder();
-        present(f, var, node, prefix);
-        CodeBlock present = b.build();
+        int start = vars;
+        String var = "v" + (vars++);
+        CodeBlock present = presentBlock(f, var, node, prefix);
+        // A read used once is written where it is used; one not used at all is not made
+        long uses = Pattern.compile("\\b" + var + "\\b").matcher(present.toString()).results().count();
+        boolean inline = uses == 0 || uses == 1 && !nullable;
+        if (inline) {
+            vars = start;
+            present = presentBlock(f, read, node, prefix);
+        }
         b = CodeBlock.builder();
         if (nullable) {
             absentLines(f, f, node, prefix, new TreeSet<>());
@@ -503,11 +526,20 @@ final class WireSource {
         CodeBlock absent = b.build();
         b = all;
         if (present.isEmpty() && absent.isEmpty()) {
+            vars = start;
             return; // the field writes nothing in this window
         }
-        b.addStatement("$T $N = $N.$N()", ApiSource.typeName(c, f.type, nullable), var, owner, f.java);
+        if (!inline) {
+            b.addStatement("$T $N = $L", ApiSource.typeName(c, f.type, nullable), var, read);
+        }
+        if (nullable && present.isEmpty()) {
+            b.beginControlFlow("if ($L == null)", read);
+            b.add(absent);
+            b.endControlFlow();
+            return;
+        }
         if (nullable) {
-            b.beginControlFlow("if ($N != null)", var);
+            b.beginControlFlow("if ($L != null)", inline ? read : var);
         }
         b.add(present);
         if (nullable) {
@@ -517,6 +549,15 @@ final class WireSource {
             }
             b.endControlFlow();
         }
+    }
+
+    private CodeBlock presentBlock(Field f, String var, String node, String prefix) {
+        CodeBlock.Builder all = b;
+        b = CodeBlock.builder();
+        present(f, var, node, prefix);
+        CodeBlock present = b.build();
+        b = all;
+        return present;
     }
 
     private void present(Field f, String var, String node, String prefix) {

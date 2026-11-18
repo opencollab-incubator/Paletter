@@ -31,27 +31,15 @@ public final class ItemWire {
     public static void write(@NonNull ItemComponent component, @NonNull WireContext ctx,
             @NonNull WireNode out) {
         switch (component) {
-            case Ancient value -> ancient(value, ctx, out);
-            case Count value -> count(value, ctx, out);
-            case Former value -> former(value, ctx, out);
-            case Gadget value -> gadget(value, ctx, out);
-            case Old value -> old(value, ctx, out);
-            case Quiet value -> quiet(value, ctx, out);
-            case Widget value -> widget(value, ctx, out);
-            case WireOnlyItemComponent value -> WireOnlyWire.write(value, ctx, out);
+            case Ancient c -> ctx.drop(Ancient.NAME, "is not sent to clients (BDS: rejected)");
+            case Count c -> ctx.drop(Count.NAME, "is not sent to clients (BDS: rejected)");
+            case Former c -> ctx.drop(Former.NAME, "is not sent to clients (BDS: rejected)");
+            case Gadget c -> gadget(c, ctx, out);
+            case Old c -> ctx.drop(Old.NAME, "is not sent to clients (BDS: rejected)");
+            case Quiet c -> { } // server only: BDS sends nothing to clients
+            case Widget c -> widget(c, ctx, out);
+            case WireOnlyItemComponent c -> WireOnlyWire.write(c, ctx, out);
         }
-    }
-
-    private static void ancient(Ancient c, WireContext ctx, WireNode out) {
-        ctx.drop(Ancient.NAME, "is not sent to clients (BDS: rejected)");
-    }
-
-    private static void count(Count c, WireContext ctx, WireNode out) {
-        ctx.drop(Count.NAME, "is not sent to clients (BDS: rejected)");
-    }
-
-    private static void former(Former c, WireContext ctx, WireNode out) {
-        ctx.drop(Former.NAME, "is not sent to clients (BDS: rejected)");
     }
 
     private static void gadget(Gadget c, WireContext ctx, WireNode out) {
@@ -68,8 +56,7 @@ public final class ItemWire {
         if (v0 != null) {
             out.put("test:gadget.value", Wire.bool(v0));
         }
-        Integer v1 = c.level();
-        if (v1 != null) {
+        if (c.level() != null) {
             ctx.drop(Gadget.NAME, "level has no known wire mapping");
         }
     }
@@ -85,71 +72,57 @@ public final class ItemWire {
         }
     }
 
-    private static void old(Old c, WireContext ctx, WireNode out) {
-        ctx.drop(Old.NAME, "is not sent to clients (BDS: rejected)");
-    }
-
-    private static void quiet(Quiet c, WireContext ctx, WireNode out) {
-        // server only: BDS sends nothing to clients
-    }
-
     private static void widget(Widget c, WireContext ctx, WireNode out) {
         out.put("test:widget.version", 2);
-        int v0 = c.count();
-        out.put("test:widget.count", Wire.toInt(v0));
-        String v1 = c.label();
-        out.put("test:widget.label", v1);
-        Widget.Mode v2 = c.mode();
-        switch (v2.value()) {
+        out.put("test:widget.count", Wire.toInt(c.count()));
+        out.put("test:widget.label", c.label());
+        Widget.Mode v0 = c.mode();
+        switch (v0.value()) {
             case "fast" -> out.put("test:widget.mode", (byte) 0);
             case "slow" -> out.put("test:widget.mode", (byte) 1);
-            default -> ctx.drop(Widget.NAME, "mode = " + v2.value() + " has no known wire value");
+            default -> ctx.drop(Widget.NAME, "mode = " + v0.value() + " has no known wire value");
         }
-        Float v3 = c.speed();
-        if (v3 != null) {
-            out.put("test:widget.ticks", Wire.toInt((20.0 * (double) v3 + 0.0)));
+        Float v1 = c.speed();
+        if (v1 != null) {
+            out.put("test:widget.ticks", Wire.toInt((20.0 * (double) v1 + 0.0)));
         } else {
             out.put("test:widget.ticks", 30);
         }
-        Widget.NestedThing v4 = c.nested();
-        if (v4 != null) {
-            float v5 = v4.x();
-            out.put("test:widget.nested.x", Wire.toFloat(v5));
-            boolean v6 = v4.flag();
-            out.put("test:widget.nested.flag", Wire.bool(v6));
+        Widget.NestedThing v2 = c.nested();
+        if (v2 != null) {
+            out.put("test:widget.nested.x", Wire.toFloat(v2.x()));
+            out.put("test:widget.nested.flag", Wire.bool(v2.flag()));
         } else {
             out.remove("test:widget.nested.flag");
             out.remove("test:widget.nested.x");
         }
-        List<String> v7 = c.tags();
-        out.put("test:widget.tags", Wire.strings(v7));
-        List<Widget.Entry> v8 = c.entries();
-        if (v8 != null) {
+        out.put("test:widget.tags", Wire.strings(c.tags()));
+        List<Widget.Entry> v3 = c.entries();
+        if (v3 != null) {
             out.list("test:widget.entries");
-            for (Widget.Entry e9 : v8) {
-                WireNode n10 = out.element("test:widget.entries");
-                String v11 = e9.name();
-                if (v11 != null) {
-                    n10.put("name", v11);
+            for (Widget.Entry e4 : v3) {
+                WireNode n5 = out.element("test:widget.entries");
+                String v6 = e4.name();
+                if (v6 != null) {
+                    n5.put("name", v6);
                 }
             }
         }
-        Widget.Shape v12 = c.shape();
-        if (v12 != null) {
-            String v13 = v12.id();
-            if (v13 != null) {
-                out.put("test:widget.shape.id", v13);
+        Widget.Shape v7 = c.shape();
+        if (v7 != null) {
+            String v8 = v7.id();
+            if (v8 != null) {
+                out.put("test:widget.shape.id", v8);
             }
-            int v14 = v12.size();
-            out.put("test:widget.shape.size", Wire.toShort(v14));
+            out.put("test:widget.shape.size", Wire.toShort(v7.size()));
         }
-        Widget.Vec3 v15 = c.offset();
-        out.put("test:widget.ox", Wire.toFloat(v15.x()));
-        out.put("test:widget.oy", Wire.toFloat(v15.y()));
-        out.put("test:widget.oz", Wire.toFloat(v15.z()));
-        String v16 = c.rarity();
-        if (v16 != null) {
-            switch (v16) {
+        Widget.Vec3 v9 = c.offset();
+        out.put("test:widget.ox", Wire.toFloat(v9.x()));
+        out.put("test:widget.oy", Wire.toFloat(v9.y()));
+        out.put("test:widget.oz", Wire.toFloat(v9.z()));
+        String v10 = c.rarity();
+        if (v10 != null) {
+            switch (v10) {
                 case "common" -> out.put("test:widget.rarity", "common");
                 case "rare" -> out.put("test:widget.rarity", "rare");
                 default -> out.put("test:widget.rarity", "common");
@@ -157,12 +130,11 @@ public final class ItemWire {
         } else {
             out.put("test:widget.rarity", "common");
         }
-        String v17 = c.fuel();
-        if (v17 != null) {
-            out.put("test:widget.fuel", v17);
+        String v11 = c.fuel();
+        if (v11 != null) {
+            out.put("test:widget.fuel", v11);
         }
-        float v18 = c.reach();
-        out.put("test:widget.reach", Wire.toFloat(v18));
+        out.put("test:widget.reach", Wire.toFloat(c.reach()));
         Transforms.testMap(ctx, out, c);
     }
 

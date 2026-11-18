@@ -49,10 +49,10 @@ class PackedMolangHashEncoderTest {
         // the leaf's current value, or the base of the fields at their default; then the bit, whichever order the fields go in
         assertTrue(cube.contains("out.get(\"test:cube.packed\") instanceof Number"), cube);
         assertTrue(cube.contains("? n") && cube.contains(".intValue() : 5;"), cube);
-        assertTrue(cube.contains(" = v0 ? bits") && cube.contains("| 1 : bits") && cube.contains("& ~1"), cube);
+        assertTrue(cube.contains(" = c.dimming() ? bits") && cube.contains("| 1 : bits") && cube.contains("& ~1"), cube);
         assertTrue(cube.contains("| 2 : bits") && cube.contains("& ~2"), cube);
         // a bit that false sets
-        assertTrue(cube.contains(" = !v") && cube.contains("| 4 : bits") && cube.contains("& ~4"), cube);
+        assertTrue(cube.contains(" = !c.culled() ? bits") && cube.contains("| 4 : bits") && cube.contains("& ~4"), cube);
         assertTrue(cube.contains("out.put(\"test:cube.packed\", Wire.toByte(bits"), cube);
     }
 

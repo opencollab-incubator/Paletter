@@ -40,8 +40,11 @@ class ListElementRuleTest {
         String wire = ComponentGenerator.generate(inputs()).get("org/geysermc/paletter/internal/component/ItemWire.java");
         String widget = wire.substring(wire.indexOf("private static void widget("));
         widget = widget.substring(0, widget.indexOf("\n    }\n") + 1);
-        int loop = widget.indexOf("for (Widget.Entry e9 : v8)");
-        int rule = widget.indexOf("n10.put(\"min\", Wire.toFloat((8.0 - (double) e9.origin() - (double) e9.size())))");
+        java.util.regex.Matcher loopAt = java.util.regex.Pattern.compile("for \\(Widget\\.Entry (e\\d+) : v\\d+\\)").matcher(widget);
+        assertTrue(loopAt.find(), widget);
+        String e = loopAt.group(1);
+        int loop = loopAt.start();
+        int rule = widget.indexOf(".put(\"min\", Wire.toFloat((8.0 - (double) " + e + ".origin() - (double) " + e + ".size())))");
         assertTrue(loop > 0, widget);
         assertTrue(rule > loop, widget);
     }

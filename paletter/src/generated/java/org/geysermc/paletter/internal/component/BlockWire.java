@@ -68,48 +68,48 @@ public final class BlockWire {
     public static void write(@NonNull BlockComponent component, @NonNull WireContext ctx,
             @NonNull WireNode out) {
         switch (component) {
-            case BlockEntity value -> blockEntity(value, ctx, out);
-            case BlockLightAbsorption value -> blockLightAbsorption(value, ctx, out);
-            case BlockLightEmission value -> blockLightEmission(value, ctx, out);
-            case BoneVisibility value -> boneVisibility(value, ctx, out);
-            case Breathability value -> breathability(value, ctx, out);
-            case ChestObstruction value -> chestObstruction(value, ctx, out);
-            case CollisionBox value -> collisionBox(value, ctx, out);
-            case ConnectionRule value -> connectionRule(value, ctx, out);
-            case CraftingTable value -> craftingTable(value, ctx, out);
-            case DestroyTime value -> destroyTime(value, ctx, out);
-            case DestructibleByExplosion value -> destructibleByExplosion(value, ctx, out);
-            case DestructibleByMining value -> destructibleByMining(value, ctx, out);
-            case DestructionParticles value -> destructionParticles(value, ctx, out);
-            case BlockDisplayName value -> displayName(value, ctx, out);
-            case EmbeddedVisual value -> embeddedVisual(value, ctx, out);
-            case EntityFallOn value -> entityFallOn(value, ctx, out);
-            case Flammable value -> flammable(value, ctx, out);
-            case FlowerPottable value -> flowerPottable(value, ctx, out);
-            case Friction value -> friction(value, ctx, out);
-            case Geometry value -> geometry(value, ctx, out);
-            case InstrumentSound value -> instrumentSound(value, ctx, out);
-            case ItemVisual value -> itemVisual(value, ctx, out);
-            case LightDampening value -> lightDampening(value, ctx, out);
-            case LightEmission value -> lightEmission(value, ctx, out);
-            case LiquidDetection value -> liquidDetection(value, ctx, out);
-            case Loot value -> loot(value, ctx, out);
-            case MapColor value -> mapColor(value, ctx, out);
-            case MaterialInstances value -> materialInstances(value, ctx, out);
-            case Movable value -> movable(value, ctx, out);
-            case PlacementFilter value -> placementFilter(value, ctx, out);
-            case PrecipitationInteractions value -> precipitationInteractions(value, ctx, out);
-            case RandomOffset value -> randomOffset(value, ctx, out);
-            case RedstoneConductivity value -> redstoneConductivity(value, ctx, out);
-            case RedstoneConsumer value -> redstoneConsumer(value, ctx, out);
-            case RedstoneProducer value -> redstoneProducer(value, ctx, out);
-            case Replaceable value -> replaceable(value, ctx, out);
-            case SelectionBox value -> selectionBox(value, ctx, out);
-            case Support value -> support(value, ctx, out);
-            case Tick value -> tick(value, ctx, out);
-            case Transformation value -> transformation(value, ctx, out);
-            case UnitCube value -> unitCube(value, ctx, out);
-            case WireOnlyBlockComponent value -> WireOnlyWire.write(value, ctx, out);
+            case BlockEntity c -> blockEntity(c, ctx, out);
+            case BlockLightAbsorption c -> ctx.drop(BlockLightAbsorption.NAME, "is not sent to clients (BDS: rejected)");
+            case BlockLightEmission c -> ctx.drop(BlockLightEmission.NAME, "is not sent to clients (BDS: rejected)");
+            case BoneVisibility c -> ctx.drop(BoneVisibility.NAME, "is not sent to clients (BDS: rejected)");
+            case Breathability c -> ctx.drop(Breathability.NAME, "is not sent to clients (BDS: rejected)");
+            case ChestObstruction c -> { } // server only: BDS sends nothing to clients
+            case CollisionBox c -> collisionBox(c, ctx, out);
+            case ConnectionRule c -> connectionRule(c, ctx, out);
+            case CraftingTable c -> craftingTable(c, ctx, out);
+            case DestroyTime c -> ctx.drop(DestroyTime.NAME, "is not sent to clients (BDS: rejected)");
+            case DestructibleByExplosion c -> { } // server only: BDS sends nothing to clients
+            case DestructibleByMining c -> Transforms.destructibleByMining(ctx, out, c);
+            case DestructionParticles c -> destructionParticles(c, ctx, out);
+            case BlockDisplayName c -> out.put("minecraft:display_name.value", c.value());
+            case EmbeddedVisual c -> embeddedVisual(c, ctx, out);
+            case EntityFallOn c -> { } // server only: BDS sends nothing to clients
+            case Flammable c -> { } // server only: BDS sends nothing to clients
+            case FlowerPottable c -> out.put("minecraft:flower_pottable.usePreR26U2FlowerPotOffset", (byte) 0);
+            case Friction c -> out.put("minecraft:friction.value", Wire.toFloat(c.value()));
+            case Geometry c -> geometry(c, ctx, out);
+            case InstrumentSound c -> { } // server only: BDS sends nothing to clients
+            case ItemVisual c -> itemVisual(c, ctx, out);
+            case LightDampening c -> out.put("minecraft:light_dampening.lightLevel", Wire.toByte(c.value()));
+            case LightEmission c -> out.put("minecraft:light_emission.emission", Wire.toByte(c.value()));
+            case LiquidDetection c -> liquidDetection(c, ctx, out);
+            case Loot c -> { } // server only: BDS sends nothing to clients
+            case MapColor c -> { } // server only: BDS sends nothing to clients
+            case MaterialInstances c -> Transforms.materialInstances(ctx, out, c);
+            case Movable c -> { } // server only: BDS sends nothing to clients
+            case PlacementFilter c -> placementFilter(c, ctx, out);
+            case PrecipitationInteractions c -> precipitationInteractions(c, ctx, out);
+            case RandomOffset c -> randomOffset(c, ctx, out);
+            case RedstoneConductivity c -> redstoneConductivity(c, ctx, out);
+            case RedstoneConsumer c -> { } // server only: BDS sends nothing to clients
+            case RedstoneProducer c -> redstoneProducer(c, ctx, out);
+            case Replaceable c -> replaceable(c, ctx, out);
+            case SelectionBox c -> Transforms.selectionBox(ctx, out, c);
+            case Support c -> out.put("minecraft:support.shape", c.shape().value());
+            case Tick c -> { } // server only: BDS sends nothing to clients
+            case Transformation c -> transformation(c, ctx, out);
+            case UnitCube c -> ctx.drop(UnitCube.NAME, "is not sent to clients (BDS: rejected)");
+            case WireOnlyBlockComponent c -> WireOnlyWire.write(c, ctx, out);
         }
     }
 
@@ -133,17 +133,14 @@ public final class BlockWire {
     private static void blockEntityFrom2193Until2225(BlockEntity c, WireContext ctx, WireNode out) {
         BlockEntity.Container v0 = c.container();
         if (v0 != null) {
-            int v2 = v0.slotCount();
-            out.put("minecraft:container.slot_count", Wire.toByte(v2));
-            String v3 = v0.title();
-            if (v3 != null) {
+            out.put("minecraft:container.slot_count", Wire.toByte(v0.slotCount()));
+            if (v0.title() != null) {
                 ctx.drop(BlockEntity.NAME, "container.title has no known wire mapping");
             }
         } else {
             out.remove("minecraft:container.slot_count");
         }
-        Boolean v5 = c.entityStorage();
-        if (v5 != null) {
+        if (c.entityStorage() != null) {
             ctx.drop(BlockEntity.NAME, "entity_storage has no known wire mapping");
         }
     }
@@ -151,11 +148,10 @@ public final class BlockWire {
     private static void blockEntityFrom2225Until2259(BlockEntity c, WireContext ctx, WireNode out) {
         BlockEntity.Container v0 = c.container();
         if (v0 != null) {
-            int v2 = v0.slotCount();
-            out.put("minecraft:container.slot_count", Wire.toByte(v2));
-            String v3 = v0.title();
-            if (v3 != null) {
-                out.put("minecraft:container.title", v3);
+            out.put("minecraft:container.slot_count", Wire.toByte(v0.slotCount()));
+            String v1 = v0.title();
+            if (v1 != null) {
+                out.put("minecraft:container.title", v1);
             } else {
                 out.remove("minecraft:container.title");
             }
@@ -168,13 +164,11 @@ public final class BlockWire {
     private static void blockEntityFrom2259(BlockEntity c, WireContext ctx, WireNode out) {
         BlockEntity.Container v0 = c.container();
         if (v0 != null) {
-            boolean v1 = v0.showUiOnInteraction();
-            out.put("minecraft:container.show_ui_on_interaction", Wire.bool(v1));
-            int v2 = v0.slotCount();
-            out.put("minecraft:container.slot_count", Wire.toByte(v2));
-            String v3 = v0.title();
-            if (v3 != null) {
-                out.put("minecraft:container.title", v3);
+            out.put("minecraft:container.show_ui_on_interaction", Wire.bool(v0.showUiOnInteraction()));
+            out.put("minecraft:container.slot_count", Wire.toByte(v0.slotCount()));
+            String v1 = v0.title();
+            if (v1 != null) {
+                out.put("minecraft:container.title", v1);
             } else {
                 out.remove("minecraft:container.title");
             }
@@ -183,31 +177,9 @@ public final class BlockWire {
             out.remove("minecraft:container.slot_count");
             out.remove("minecraft:container.title");
         }
-        Boolean v5 = c.entityStorage();
-        if (v5 != null) {
+        if (c.entityStorage() != null) {
             ctx.drop(BlockEntity.NAME, "entity_storage has no known wire mapping");
         }
-    }
-
-    private static void blockLightAbsorption(BlockLightAbsorption c, WireContext ctx,
-            WireNode out) {
-        ctx.drop(BlockLightAbsorption.NAME, "is not sent to clients (BDS: rejected)");
-    }
-
-    private static void blockLightEmission(BlockLightEmission c, WireContext ctx, WireNode out) {
-        ctx.drop(BlockLightEmission.NAME, "is not sent to clients (BDS: rejected)");
-    }
-
-    private static void boneVisibility(BoneVisibility c, WireContext ctx, WireNode out) {
-        ctx.drop(BoneVisibility.NAME, "is not sent to clients (BDS: rejected)");
-    }
-
-    private static void breathability(Breathability c, WireContext ctx, WireNode out) {
-        ctx.drop(Breathability.NAME, "is not sent to clients (BDS: rejected)");
-    }
-
-    private static void chestObstruction(ChestObstruction c, WireContext ctx, WireNode out) {
-        // server only: BDS sends nothing to clients
     }
 
     private static void collisionBox(CollisionBox c, WireContext ctx, WireNode out) {
@@ -240,77 +212,36 @@ public final class BlockWire {
     }
 
     private static void connectionRule(ConnectionRule c, WireContext ctx, WireNode out) {
-        ConnectionRule.AcceptsConnectionsFrom v0 = c.acceptsConnectionsFrom();
-        out.put("minecraft:connection_rule.accepts_connections_from", v0.value());
-        List<ConnectionRule.EnabledDirections> v1 = c.enabledDirections();
-        out.put("minecraft:connection_rule.enabled_directions", Wire.strings(v1.stream().map(x -> x.value()).toList()));
+        out.put("minecraft:connection_rule.accepts_connections_from", c.acceptsConnectionsFrom().value());
+        out.put("minecraft:connection_rule.enabled_directions", Wire.strings(c.enabledDirections().stream().map(x -> x.value()).toList()));
     }
 
     private static void craftingTable(CraftingTable c, WireContext ctx, WireNode out) {
         out.put("minecraft:crafting_table.grid_size", 3);
-        List<String> v0 = c.craftingTags();
-        out.put("minecraft:crafting_table.crafting_tags", Wire.strings(v0));
-        String v1 = c.tableName();
-        if (v1 != null) {
-            out.put("minecraft:crafting_table.table_name", v1);
+        out.put("minecraft:crafting_table.crafting_tags", Wire.strings(c.craftingTags()));
+        String v0 = c.tableName();
+        if (v0 != null) {
+            out.put("minecraft:crafting_table.table_name", v0);
         } else {
             out.put("minecraft:crafting_table.table_name", "");
         }
     }
 
-    private static void destroyTime(DestroyTime c, WireContext ctx, WireNode out) {
-        ctx.drop(DestroyTime.NAME, "is not sent to clients (BDS: rejected)");
-    }
-
-    private static void destructibleByExplosion(DestructibleByExplosion c, WireContext ctx,
-            WireNode out) {
-        // server only: BDS sends nothing to clients
-    }
-
-    private static void destructibleByMining(DestructibleByMining c, WireContext ctx,
-            WireNode out) {
-        Transforms.destructibleByMining(ctx, out, c);
-    }
-
     private static void destructionParticles(DestructionParticles c, WireContext ctx,
             WireNode out) {
-        int v0 = c.particleCount();
-        out.put("minecraft:destruction_particles.particle_count", Wire.toInt(v0));
-        String v1 = c.texture();
-        if (v1 != null) {
-            out.put("minecraft:destruction_particles.texture", v1);
+        out.put("minecraft:destruction_particles.particle_count", Wire.toInt(c.particleCount()));
+        String v0 = c.texture();
+        if (v0 != null) {
+            out.put("minecraft:destruction_particles.texture", v0);
         } else {
             out.put("minecraft:destruction_particles.texture", "");
         }
-        DestructionParticles.TintMethod v2 = c.tintMethod();
-        out.put("minecraft:destruction_particles.tint_method", v2.value());
-    }
-
-    private static void displayName(BlockDisplayName c, WireContext ctx, WireNode out) {
-        String v0 = c.value();
-        out.put("minecraft:display_name.value", v0);
+        out.put("minecraft:destruction_particles.tint_method", c.tintMethod().value());
     }
 
     private static void embeddedVisual(EmbeddedVisual c, WireContext ctx, WireNode out) {
         Transforms.embeddedGeometry(ctx, out, c);
         Transforms.materialInstancesInline(ctx, out, c);
-    }
-
-    private static void entityFallOn(EntityFallOn c, WireContext ctx, WireNode out) {
-        // server only: BDS sends nothing to clients
-    }
-
-    private static void flammable(Flammable c, WireContext ctx, WireNode out) {
-        // server only: BDS sends nothing to clients
-    }
-
-    private static void flowerPottable(FlowerPottable c, WireContext ctx, WireNode out) {
-        out.put("minecraft:flower_pottable.usePreR26U2FlowerPotOffset", (byte) 0);
-    }
-
-    private static void friction(Friction c, WireContext ctx, WireNode out) {
-        float v0 = c.value();
-        out.put("minecraft:friction.value", Wire.toFloat(v0));
     }
 
     private static void geometry(Geometry c, WireContext ctx, WireNode out) {
@@ -319,10 +250,6 @@ public final class BlockWire {
         out.put("minecraft:geometry.needsLegacyTopRotation", (byte) 0);
         out.put("minecraft:geometry.useBlockTypeLightAbsorption", (byte) 0);
         Transforms.geometry(ctx, out, c);
-    }
-
-    private static void instrumentSound(InstrumentSound c, WireContext ctx, WireNode out) {
-        // server only: BDS sends nothing to clients
     }
 
     private static void itemVisual(ItemVisual c, WireContext ctx, WireNode out) {
@@ -431,30 +358,16 @@ public final class BlockWire {
         Transforms.materialInstancesPacked(ctx, out, c);
     }
 
-    private static void lightDampening(LightDampening c, WireContext ctx, WireNode out) {
-        int v0 = c.value();
-        out.put("minecraft:light_dampening.lightLevel", Wire.toByte(v0));
-    }
-
-    private static void lightEmission(LightEmission c, WireContext ctx, WireNode out) {
-        int v0 = c.value();
-        out.put("minecraft:light_emission.emission", Wire.toByte(v0));
-    }
-
     private static void liquidDetection(LiquidDetection c, WireContext ctx, WireNode out) {
-        List<LiquidDetection.DetectionRules> v0 = c.detectionRules();
         out.list("minecraft:liquid_detection.detectionRules");
-        for (LiquidDetection.DetectionRules e1 : v0) {
-            WireNode n2 = out.element("minecraft:liquid_detection.detectionRules");
-            n2.put("liquidType", "water");
-            boolean v3 = e1.canContainLiquid();
-            n2.put("canContainLiquid", Wire.bool(v3));
-            LiquidDetection.OnLiquidTouches v5 = e1.onLiquidTouches();
-            n2.put("onLiquidTouches", v5.value());
-            List<String> v6 = e1.stopsLiquidFlowingFromDirection();
-            int bits7 = 0;
-            for (String x8 : v6) {
-                bits7 |= switch (String.valueOf(x8)) {
+        for (LiquidDetection.DetectionRules e0 : c.detectionRules()) {
+            WireNode n1 = out.element("minecraft:liquid_detection.detectionRules");
+            n1.put("liquidType", "water");
+            n1.put("canContainLiquid", Wire.bool(e0.canContainLiquid()));
+            n1.put("onLiquidTouches", e0.onLiquidTouches().value());
+            int bits2 = 0;
+            for (String x3 : e0.stopsLiquidFlowingFromDirection()) {
+                bits2 |= switch (String.valueOf(x3)) {
                             case "down" -> 1;
                             case "east" -> 32;
                             case "north" -> 4;
@@ -464,37 +377,18 @@ public final class BlockWire {
                             default -> 0;
                         };
             }
-            n2.put("stopsLiquidFromDirection", Wire.toByte(bits7));
-            boolean v9 = e1.useLiquidClipping();
-            n2.put("use_liquid_clipping", Wire.bool(v9));
+            n1.put("stopsLiquidFromDirection", Wire.toByte(bits2));
+            n1.put("use_liquid_clipping", Wire.bool(e0.useLiquidClipping()));
         }
     }
 
-    private static void loot(Loot c, WireContext ctx, WireNode out) {
-        // server only: BDS sends nothing to clients
-    }
-
-    private static void mapColor(MapColor c, WireContext ctx, WireNode out) {
-        // server only: BDS sends nothing to clients
-    }
-
-    private static void materialInstances(MaterialInstances c, WireContext ctx, WireNode out) {
-        Transforms.materialInstances(ctx, out, c);
-    }
-
-    private static void movable(Movable c, WireContext ctx, WireNode out) {
-        // server only: BDS sends nothing to clients
-    }
-
     private static void placementFilter(PlacementFilter c, WireContext ctx, WireNode out) {
-        List<PlacementFilter.Conditions> v0 = c.conditions();
         out.list("minecraft:placement_filter.conditions");
-        for (PlacementFilter.Conditions e1 : v0) {
-            WireNode n2 = out.element("minecraft:placement_filter.conditions");
-            List<String> v3 = e1.allowedFaces();
-            int bits4 = 0;
-            for (String x5 : v3) {
-                bits4 |= switch (String.valueOf(x5)) {
+        for (PlacementFilter.Conditions e0 : c.conditions()) {
+            WireNode n1 = out.element("minecraft:placement_filter.conditions");
+            int bits2 = 0;
+            for (String x3 : e0.allowedFaces()) {
+                bits2 |= switch (String.valueOf(x3)) {
                             case "down" -> 1;
                             case "east" -> 32;
                             case "north" -> 4;
@@ -504,27 +398,26 @@ public final class BlockWire {
                             default -> 0;
                         };
             }
-            n2.put("allowed_faces", Wire.toByte(bits4));
-            n2.put("block_filter", Wire.EMPTY_LIST);
-            List<PlacementFilter.BlockFilter> v6 = e1.blockFilter();
-            n2.list("block_filter");
-            for (PlacementFilter.BlockFilter e7 : v6) {
-                WireNode n8 = n2.element("block_filter");
-                String v9 = e7.name();
-                if (v9 != null) {
-                    n8.put("name", v9);
+            n1.put("allowed_faces", Wire.toByte(bits2));
+            n1.put("block_filter", Wire.EMPTY_LIST);
+            n1.list("block_filter");
+            for (PlacementFilter.BlockFilter e4 : e0.blockFilter()) {
+                WireNode n5 = n1.element("block_filter");
+                String v6 = e4.name();
+                if (v6 != null) {
+                    n5.put("name", v6);
                 } else {
-                    n8.remove("name");
+                    n5.remove("name");
                 }
-                String v10 = e7.tags();
-                if (v10 != null) {
-                    n8.put("tags", v10);
-                    n8.put("tags_version", 13);
+                String v7 = e4.tags();
+                if (v7 != null) {
+                    n5.put("tags", v7);
+                    n5.put("tags_version", 13);
                 } else {
-                    n8.remove("tags");
-                    n8.remove("tags_version");
+                    n5.remove("tags");
+                    n5.remove("tags_version");
                 }
-                Transforms.blockDescriptorStates(ctx, n8, e7);
+                Transforms.blockDescriptorStates(ctx, n5, e4);
             }
         }
     }
@@ -542,58 +435,41 @@ public final class BlockWire {
     private static void randomOffset(RandomOffset c, WireContext ctx, WireNode out) {
         RandomOffset.X v0 = c.x();
         RandomOffset.Range v1 = v0.range();
-        float v2 = v1.max();
-        out.put("minecraft:random_offset.x.range.max", Wire.toFloat(v2));
-        float v3 = v1.min();
-        out.put("minecraft:random_offset.x.range.min", Wire.toFloat(v3));
-        int v4 = v0.steps();
-        out.put("minecraft:random_offset.x.steps", Wire.toInt(v4));
-        RandomOffset.X v5 = c.y();
-        RandomOffset.Range v6 = v5.range();
-        float v7 = v6.max();
-        out.put("minecraft:random_offset.y.range.max", Wire.toFloat(v7));
-        float v8 = v6.min();
-        out.put("minecraft:random_offset.y.range.min", Wire.toFloat(v8));
-        int v9 = v5.steps();
-        out.put("minecraft:random_offset.y.steps", Wire.toInt(v9));
-        RandomOffset.X v10 = c.z();
-        RandomOffset.Range v11 = v10.range();
-        float v12 = v11.max();
-        out.put("minecraft:random_offset.z.range.max", Wire.toFloat(v12));
-        float v13 = v11.min();
-        out.put("minecraft:random_offset.z.range.min", Wire.toFloat(v13));
-        int v14 = v10.steps();
-        out.put("minecraft:random_offset.z.steps", Wire.toInt(v14));
+        out.put("minecraft:random_offset.x.range.max", Wire.toFloat(v1.max()));
+        out.put("minecraft:random_offset.x.range.min", Wire.toFloat(v1.min()));
+        out.put("minecraft:random_offset.x.steps", Wire.toInt(v0.steps()));
+        RandomOffset.X v2 = c.y();
+        RandomOffset.Range v3 = v2.range();
+        out.put("minecraft:random_offset.y.range.max", Wire.toFloat(v3.max()));
+        out.put("minecraft:random_offset.y.range.min", Wire.toFloat(v3.min()));
+        out.put("minecraft:random_offset.y.steps", Wire.toInt(v2.steps()));
+        RandomOffset.X v4 = c.z();
+        RandomOffset.Range v5 = v4.range();
+        out.put("minecraft:random_offset.z.range.max", Wire.toFloat(v5.max()));
+        out.put("minecraft:random_offset.z.range.min", Wire.toFloat(v5.min()));
+        out.put("minecraft:random_offset.z.steps", Wire.toInt(v4.steps()));
     }
 
     private static void redstoneConductivity(RedstoneConductivity c, WireContext ctx,
             WireNode out) {
-        boolean v0 = c.allowsWireToStepDown();
-        out.put("minecraft:redstone_conductivity.allowsWireToStepDown", Wire.bool(v0));
-        boolean v1 = c.redstoneConductor();
-        out.put("minecraft:redstone_conductivity.redstoneConductor", Wire.bool(v1));
-    }
-
-    private static void redstoneConsumer(RedstoneConsumer c, WireContext ctx, WireNode out) {
-        // server only: BDS sends nothing to clients
+        out.put("minecraft:redstone_conductivity.allowsWireToStepDown", Wire.bool(c.allowsWireToStepDown()));
+        out.put("minecraft:redstone_conductivity.redstoneConductor", Wire.bool(c.redstoneConductor()));
     }
 
     private static void redstoneProducer(RedstoneProducer c, WireContext ctx, WireNode out) {
         out.put("minecraft:redstone_producer.allowPowerDown", (byte) 1);
         out.put("minecraft:redstone_producer.allowPowerUp", (byte) 0);
-        List<RedstoneProducer.ConnectedFaces> v0 = c.connectedFaces();
-        out.put("minecraft:redstone_producer.connected_faces", Wire.strings(List.of("down", "up", "north", "south", "west", "east").stream().filter(v0.stream().map(x -> x.value()).toList()::contains).toList()));
-        int v1 = c.power();
-        out.put("minecraft:redstone_producer.power", Wire.toByte(v1));
-        RedstoneProducer.StronglyPoweredFace v2 = c.stronglyPoweredFace();
-        if (v2 != null) {
-            out.put("minecraft:redstone_producer.strongly_powered_face", v2.value());
+        out.put("minecraft:redstone_producer.connected_faces", Wire.strings(List.of("down", "up", "north", "south", "west", "east").stream().filter(c.connectedFaces().stream().map(x -> x.value()).toList()::contains).toList()));
+        out.put("minecraft:redstone_producer.power", Wire.toByte(c.power()));
+        RedstoneProducer.StronglyPoweredFace v0 = c.stronglyPoweredFace();
+        if (v0 != null) {
+            out.put("minecraft:redstone_producer.strongly_powered_face", v0.value());
         } else {
             out.remove("minecraft:redstone_producer.strongly_powered_face");
         }
-        Boolean v3 = c.transformRelative();
-        if (v3 != null) {
-            out.put("minecraft:redstone_producer.transform_relative", Wire.bool(v3));
+        Boolean v1 = c.transformRelative();
+        if (v1 != null) {
+            out.put("minecraft:redstone_producer.transform_relative", Wire.bool(v1));
         } else {
             out.put("minecraft:redstone_producer.transform_relative", (byte) 1);
         }
@@ -614,19 +490,6 @@ public final class BlockWire {
 
     private static void replaceableFrom2193(Replaceable c, WireContext ctx, WireNode out) {
         out.put("minecraft:replaceable", NbtMap.EMPTY);
-    }
-
-    private static void selectionBox(SelectionBox c, WireContext ctx, WireNode out) {
-        Transforms.selectionBox(ctx, out, c);
-    }
-
-    private static void support(Support c, WireContext ctx, WireNode out) {
-        Support.Shape v0 = c.shape();
-        out.put("minecraft:support.shape", v0.value());
-    }
-
-    private static void tick(Tick c, WireContext ctx, WireNode out) {
-        // server only: BDS sends nothing to clients
     }
 
     private static void transformation(Transformation c, WireContext ctx, WireNode out) {
@@ -653,10 +516,6 @@ public final class BlockWire {
         out.put("minecraft:transformation.TZ", Wire.toFloat(v4.z()));
     }
 
-    private static void unitCube(UnitCube c, WireContext ctx, WireNode out) {
-        ctx.drop(UnitCube.NAME, "is not sent to clients (BDS: rejected)");
-    }
-
     /**
      * Writes the {@link BlockMenuCategory} of a definition, or for null what BDS sends for a definition without one.
      */
@@ -668,16 +527,14 @@ public final class BlockWire {
             out.put("menu_category.is_hidden_in_commands", (byte) 0);
             return;
         }
-        BlockMenuCategory.Category v0 = c.category();
-        out.put("menu_category.category", v0.value());
-        String v1 = c.group();
-        if (v1 != null) {
-            out.put("menu_category.group", v1);
+        out.put("menu_category.category", c.category().value());
+        String v0 = c.group();
+        if (v0 != null) {
+            out.put("menu_category.group", v0);
         } else {
             out.put("menu_category.group", "");
         }
-        boolean v2 = c.hiddenInCommands();
-        out.put("menu_category.is_hidden_in_commands", Wire.bool(v2));
+        out.put("menu_category.is_hidden_in_commands", Wire.bool(c.hiddenInCommands()));
     }
 
     /**
