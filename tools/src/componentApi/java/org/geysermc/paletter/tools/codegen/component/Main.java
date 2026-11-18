@@ -120,9 +120,9 @@ public final class Main {
     }
 
     static String version(Path root) throws IOException {
-        Matcher m = Pattern.compile("version = \"([^\"]+)\"").matcher(Files.readString(root.resolve("build.gradle.kts")));
+        Matcher m = Pattern.compile("^version=(.+)$", Pattern.MULTILINE).matcher(Files.readString(root.resolve("gradle.properties")));
         if (!m.find()) {
-            throw new IllegalStateException("no version in build.gradle.kts");
+            throw new IllegalStateException("no version in gradle.properties");
         }
         return m.group(1).replace("-SNAPSHOT", "");
     }

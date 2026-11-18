@@ -217,11 +217,11 @@ public final class ConstantsGenerator {
         return JsonParser.parseString(Files.readString(file, StandardCharsets.UTF_8)).getAsJsonObject();
     }
 
-    /** @return the version in the root {@code build.gradle.kts} without {@code -SNAPSHOT} */
+    /** @return the version in the root {@code gradle.properties} without {@code -SNAPSHOT} */
     public static String paletterVersion(Path root) throws IOException {
-        Matcher matcher = Pattern.compile("version\\s*=\\s*\"([^\"]+)\"").matcher(Files.readString(root.resolve("build.gradle.kts")));
+        Matcher matcher = Pattern.compile("^version=(.+)$", Pattern.MULTILINE).matcher(Files.readString(root.resolve("gradle.properties")));
         if (!matcher.find()) {
-            throw new IllegalStateException("No version in build.gradle.kts");
+            throw new IllegalStateException("No version in gradle.properties");
         }
         return matcher.group(1).replace("-SNAPSHOT", "");
     }

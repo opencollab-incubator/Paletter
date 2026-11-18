@@ -34,13 +34,7 @@ tasks.javadoc {
     }
 }
 
-publishing {
-    publications {
-        create<MavenPublication>("maven") {
-            artifactId = "paletter-recipes"
-            from(components["java"])
-        }
-    }
-}
+// Publication, POM metadata and the publishing guards: gradle/publishing.gradle.kts, docs/releasing.md
+apply(from = rootProject.file("gradle/publishing.gradle.kts"))
 
 // No binary compatibility check (japicmp, as in :paletter) until there is a release to compare with.

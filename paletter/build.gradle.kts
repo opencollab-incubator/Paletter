@@ -57,14 +57,8 @@ jmh {
     providers.gradleProperty("jmh.includes").orNull?.let { includes.set(listOf(it)) }
 }
 
-publishing {
-    publications {
-        create<MavenPublication>("maven") {
-            artifactId = "paletter"
-            from(components["java"])
-        }
-    }
-}
+// Publication, POM metadata and the publishing guards: gradle/publishing.gradle.kts, docs/releasing.md
+apply(from = rootProject.file("gradle/publishing.gradle.kts"))
 
 // API boundary and compatibility (module-info, API dump, binary compatibility); shared with the other modules, see
 // gradle/api-boundary.gradle.kts and docs/api.md.
