@@ -87,13 +87,16 @@ final class ScriptApiStage {
      * The schema of the build ({@code schema.json}: the facts of BDS's own JSON schemas, written by its documentation generator)
      * and what changed against the schema of the previous build. Never a failure: whatever goes wrong here (no docs, a schema
      * layout the extract does not read) is a skipped row, and the previous schema stays what the model merges.
+     *
+     * @return the schema extracted from this run's docs, which this run's add-ons use instead of the committed file (it is staged,
+     *         or only written to a capture-only run's output); null if none was extracted
      */
-    void schema(Path cache, BdsDistribution distribution, Path docs) {
+    Schema schema(Path cache, BdsDistribution distribution, Path docs) {
         String build = distribution.version();
         try {
             if (docs == null) {
                 ctx.report.check(Report.Status.SKIP, "BDS schema", "BDS's documentation generator wrote no docs (see bds-docgen.log); the previous schema stays");
-                return;
+                return null;
             }
             Schema previous = Schema.newest(ctx.bdsData, build);
             JsonObject extract = SchemaExtract.extract(BdsDocGen.keep(docs, cache, build), build);
@@ -125,8 +128,10 @@ final class ScriptApiStage {
                 ctx.report.evidence("Schema and content log disagree", disputes.stream().map(line -> "- " + line).toList());
             }
             ctx.stage(ctx.bdsData.resolve(build).resolve(Schema.FILE), SchemaExtract.render(extract).getBytes(StandardCharsets.UTF_8), "BDS schema " + build);
+            return schema;
         } catch (Exception e) {
             ctx.report.check(Report.Status.SKIP, "BDS schema", "not extracted, the previous schema stays: " + e);
+            return null;
         }
     }
 }

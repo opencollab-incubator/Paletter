@@ -91,6 +91,14 @@ public final class Fixtures {
         return schemaOn ? new Fixtures(json, feedback, keys, Schema.newest(bdsData, bdsVersion), bdsData, true) : this;
     }
 
+    /**
+     * The fixtures with exactly this schema: the one an {@code update} run extracted from its own docs, which an add-on of that run
+     * uses instead of any committed file. Given explicitly, so the switch does not apply.
+     */
+    public Fixtures withSchema(Schema schema) {
+        return new Fixtures(json, feedback, keys, schema, bdsData, true);
+    }
+
     /** The same fixtures for an add-on of this format version: the schema's newest format at or below it counts. */
     public Fixtures forFormat(String formatVersion) {
         return new Fixtures(json, feedback, keys, schema.forFormat(formatVersion), bdsData, schemaOn);

@@ -41,6 +41,11 @@ final class Forms {
                 c.root.fields.add(list);
                 continue;
             }
+            if (isScalarList(form)) {
+                // The value is a list of scalars (block:minecraft:tags): one list field holding them, like the item tags' list
+                c.root.fields.add(scalarList(c, form, scalarForms.size() == 1 && !objectForm));
+                continue;
+            }
             JsonObject declared = hand.api("forms").has(c.id) && hand.api("forms").getAsJsonObject(c.id).has(form)
                 ? hand.api("forms").getAsJsonObject(c.id).getAsJsonObject(form) : null;
             if (declared != null && declared.has("field")) {
@@ -193,6 +198,35 @@ final class Forms {
         }
         throw new GenerationException(c.id + ": the " + form + " form moves " + leaves + ", which no single field does; "
             + "declare it in api.json forms");
+    }
+
+    /** Whether a value form is a list of scalars ({@code array<string>}), as opposed to a list of objects or of anything else. */
+    static boolean isScalarList(String form) {
+        return form.startsWith("array<") && form.endsWith(">") && TypeBuilder.isScalar(form.substring("array<".length(), form.length() - 1));
+    }
+
+    /** The field of a component whose value is a list of scalars: api.json {@code rootLists} names it, {@code value} if the list is the only form. */
+    Field scalarList(Comp c, String form, boolean only) {
+        String name = hand.apiString("rootLists", c.id);
+        if (name == null && only) {
+            name = "value";
+        }
+        if (name == null) {
+            throw new GenerationException(c.id + " is a list (" + form + ") next to other value forms; name its list field in api.json rootLists");
+        }
+        Field list = new Field();
+        list.path = "";
+        list.json = null;
+        list.form = form;
+        list.java = name;
+        list.mappingKey = "form:" + form;
+        list.transform = hand.transform(c.id, "[]");
+        list.doc = "The entries of the component (add-on JSON: the component's value is this list).";
+        list.javadoc = true;
+        String element = form.substring("array<".length(), form.length() - 1);
+        list.type = new ListOf(types.scalarType(c, element, name, List.of()));
+        list.defaultValue = new JsonArray();
+        return list;
     }
 
     Field synthetic(Comp c, String form, List<DocField> fields) {
