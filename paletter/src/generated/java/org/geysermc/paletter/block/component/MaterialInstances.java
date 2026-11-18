@@ -46,6 +46,12 @@ public record MaterialInstances(MaterialInstances. @Nullable InstanceOrAlias all
      */
     public static final String NAME = "minecraft:material_instances";
 
+    /**
+     * Checks the components and copies lists and maps, so the value is immutable.
+     *
+     * @throws NullPointerException if a required component is null
+     * @throws IllegalArgumentException if a component is out of its documented range or conflicts with another
+     */
     public MaterialInstances {
         instances = Check.copy(instances, "MaterialInstances.instances");
         for (String key : List.of("*", "down", "east", "north", "south", "up", "west")) {
@@ -61,6 +67,8 @@ public record MaterialInstances(MaterialInstances. @Nullable InstanceOrAlias all
     }
 
     /**
+     * Creates a builder with every field at its default.
+     *
      * @return a builder with the defaults applied
      */
     public static @NonNull Builder builder() {
@@ -68,6 +76,8 @@ public record MaterialInstances(MaterialInstances. @Nullable InstanceOrAlias all
     }
 
     /**
+     * Creates a builder holding this value's fields, to change some of them.
+     *
      * @return a builder with this value's fields
      */
     public @NonNull Builder toBuilder() {
@@ -108,6 +118,9 @@ public record MaterialInstances(MaterialInstances. @Nullable InstanceOrAlias all
 
         /**
          * Sets {@code *}.
+         *
+         * @param all the value
+         * @return this builder
          */
         public @NonNull Builder all(@Nullable InstanceOrAlias all) {
             this.all = all;
@@ -116,6 +129,9 @@ public record MaterialInstances(MaterialInstances. @Nullable InstanceOrAlias all
 
         /**
          * Sets {@code *} to the definition of the instance.
+         *
+         * @param all the value
+         * @return this builder
          */
         public @NonNull Builder all(@NonNull Instance all) {
             return all(InstanceOrAlias.define(all));
@@ -123,6 +139,9 @@ public record MaterialInstances(MaterialInstances. @Nullable InstanceOrAlias all
 
         /**
          * Sets {@code down}.
+         *
+         * @param down the value
+         * @return this builder
          */
         public @NonNull Builder down(@Nullable InstanceOrAlias down) {
             this.down = down;
@@ -131,6 +150,9 @@ public record MaterialInstances(MaterialInstances. @Nullable InstanceOrAlias all
 
         /**
          * Sets {@code down} to the definition of the instance.
+         *
+         * @param down the value
+         * @return this builder
          */
         public @NonNull Builder down(@NonNull Instance down) {
             return down(InstanceOrAlias.define(down));
@@ -138,6 +160,9 @@ public record MaterialInstances(MaterialInstances. @Nullable InstanceOrAlias all
 
         /**
          * Sets {@code east}.
+         *
+         * @param east the value
+         * @return this builder
          */
         public @NonNull Builder east(@Nullable InstanceOrAlias east) {
             this.east = east;
@@ -146,6 +171,9 @@ public record MaterialInstances(MaterialInstances. @Nullable InstanceOrAlias all
 
         /**
          * Sets {@code east} to the definition of the instance.
+         *
+         * @param east the value
+         * @return this builder
          */
         public @NonNull Builder east(@NonNull Instance east) {
             return east(InstanceOrAlias.define(east));
@@ -153,6 +181,9 @@ public record MaterialInstances(MaterialInstances. @Nullable InstanceOrAlias all
 
         /**
          * Sets {@code north}.
+         *
+         * @param north the value
+         * @return this builder
          */
         public @NonNull Builder north(@Nullable InstanceOrAlias north) {
             this.north = north;
@@ -161,6 +192,9 @@ public record MaterialInstances(MaterialInstances. @Nullable InstanceOrAlias all
 
         /**
          * Sets {@code north} to the definition of the instance.
+         *
+         * @param north the value
+         * @return this builder
          */
         public @NonNull Builder north(@NonNull Instance north) {
             return north(InstanceOrAlias.define(north));
@@ -168,6 +202,9 @@ public record MaterialInstances(MaterialInstances. @Nullable InstanceOrAlias all
 
         /**
          * Sets {@code south}.
+         *
+         * @param south the value
+         * @return this builder
          */
         public @NonNull Builder south(@Nullable InstanceOrAlias south) {
             this.south = south;
@@ -176,6 +213,9 @@ public record MaterialInstances(MaterialInstances. @Nullable InstanceOrAlias all
 
         /**
          * Sets {@code south} to the definition of the instance.
+         *
+         * @param south the value
+         * @return this builder
          */
         public @NonNull Builder south(@NonNull Instance south) {
             return south(InstanceOrAlias.define(south));
@@ -183,6 +223,9 @@ public record MaterialInstances(MaterialInstances. @Nullable InstanceOrAlias all
 
         /**
          * Sets {@code up}.
+         *
+         * @param up the value
+         * @return this builder
          */
         public @NonNull Builder up(@Nullable InstanceOrAlias up) {
             this.up = up;
@@ -191,6 +234,9 @@ public record MaterialInstances(MaterialInstances. @Nullable InstanceOrAlias all
 
         /**
          * Sets {@code up} to the definition of the instance.
+         *
+         * @param up the value
+         * @return this builder
          */
         public @NonNull Builder up(@NonNull Instance up) {
             return up(InstanceOrAlias.define(up));
@@ -198,6 +244,9 @@ public record MaterialInstances(MaterialInstances. @Nullable InstanceOrAlias all
 
         /**
          * Sets {@code west}.
+         *
+         * @param west the value
+         * @return this builder
          */
         public @NonNull Builder west(@Nullable InstanceOrAlias west) {
             this.west = west;
@@ -206,6 +255,9 @@ public record MaterialInstances(MaterialInstances. @Nullable InstanceOrAlias all
 
         /**
          * Sets {@code west} to the definition of the instance.
+         *
+         * @param west the value
+         * @return this builder
          */
         public @NonNull Builder west(@NonNull Instance west) {
             return west(InstanceOrAlias.define(west));
@@ -213,6 +265,9 @@ public record MaterialInstances(MaterialInstances. @Nullable InstanceOrAlias all
 
         /**
          * Sets {@code *}.
+         *
+         * @param instances the value
+         * @return this builder
          */
         public @NonNull Builder instances(@NonNull Map<String, InstanceOrAlias> instances) {
             this.instances = instances;
@@ -220,6 +275,9 @@ public record MaterialInstances(MaterialInstances. @Nullable InstanceOrAlias all
         }
 
         /**
+         * Builds the value from the fields set and the defaults.
+         *
+         * @return the value
          * @throws IllegalStateException if a required field is not set
          * @throws IllegalArgumentException if a value is out of range
          */
@@ -252,6 +310,12 @@ public record MaterialInstances(MaterialInstances. @Nullable InstanceOrAlias all
             @BedrockFormat("1.21.80") boolean isotropic, @Nullable RenderMethod renderMethod,
             @Nullable String texture, @BedrockFormat("1.21.80") @Nullable String tintMethod,
             @BedrockFormat("1.21.120") @Nullable Boolean alphaMaskedTint) {
+        /**
+         * Checks the components and copies lists and maps, so the value is immutable.
+         *
+         * @throws NullPointerException if a required component is null
+         * @throws IllegalArgumentException if a component is out of its documented range or conflicts with another
+         */
         public Instance {
             if (ambientOcclusion != null) {
                 Check.range("MaterialInstances.Instance.ambientOcclusion", ambientOcclusion, 0.0, 10.0);
@@ -259,6 +323,8 @@ public record MaterialInstances(MaterialInstances. @Nullable InstanceOrAlias all
         }
 
         /**
+         * Creates a builder with every field at its default.
+         *
          * @return a builder with the defaults applied
          */
         public static @NonNull Builder builder() {
@@ -266,6 +332,8 @@ public record MaterialInstances(MaterialInstances. @Nullable InstanceOrAlias all
         }
 
         /**
+         * Creates a builder holding this value's fields, to change some of them.
+         *
          * @return a builder with this value's fields
          */
         public @NonNull Builder toBuilder() {
@@ -303,6 +371,9 @@ public record MaterialInstances(MaterialInstances. @Nullable InstanceOrAlias all
 
             /**
              * Sets {@code ambient_occlusion}.
+             *
+             * @param ambientOcclusion the value
+             * @return this builder
              */
             public @NonNull Builder ambientOcclusion(@Nullable Float ambientOcclusion) {
                 this.ambientOcclusion = ambientOcclusion;
@@ -311,6 +382,9 @@ public record MaterialInstances(MaterialInstances. @Nullable InstanceOrAlias all
 
             /**
              * Sets {@code face_dimming}.
+             *
+             * @param faceDimming the value
+             * @return this builder
              */
             public @NonNull Builder faceDimming(@Nullable Boolean faceDimming) {
                 this.faceDimming = faceDimming;
@@ -319,6 +393,9 @@ public record MaterialInstances(MaterialInstances. @Nullable InstanceOrAlias all
 
             /**
              * Sets {@code isotropic}.
+             *
+             * @param isotropic the value
+             * @return this builder
              */
             public @NonNull Builder isotropic(boolean isotropic) {
                 this.isotropic = isotropic;
@@ -327,6 +404,9 @@ public record MaterialInstances(MaterialInstances. @Nullable InstanceOrAlias all
 
             /**
              * Sets {@code render_method}.
+             *
+             * @param renderMethod the value
+             * @return this builder
              */
             public @NonNull Builder renderMethod(@Nullable RenderMethod renderMethod) {
                 this.renderMethod = renderMethod;
@@ -335,6 +415,9 @@ public record MaterialInstances(MaterialInstances. @Nullable InstanceOrAlias all
 
             /**
              * Sets {@code texture}.
+             *
+             * @param texture the value
+             * @return this builder
              */
             public @NonNull Builder texture(@Nullable String texture) {
                 this.texture = texture;
@@ -343,6 +426,9 @@ public record MaterialInstances(MaterialInstances. @Nullable InstanceOrAlias all
 
             /**
              * Sets {@code tint_method}.
+             *
+             * @param tintMethod the value
+             * @return this builder
              */
             public @NonNull Builder tintMethod(@Nullable String tintMethod) {
                 this.tintMethod = tintMethod;
@@ -351,6 +437,9 @@ public record MaterialInstances(MaterialInstances. @Nullable InstanceOrAlias all
 
             /**
              * Sets {@code alpha_masked_tint}.
+             *
+             * @param alphaMaskedTint the value
+             * @return this builder
              */
             public @NonNull Builder alphaMaskedTint(@Nullable Boolean alphaMaskedTint) {
                 this.alphaMaskedTint = alphaMaskedTint;
@@ -358,6 +447,9 @@ public record MaterialInstances(MaterialInstances. @Nullable InstanceOrAlias all
             }
 
             /**
+             * Builds the value from the fields set and the defaults.
+             *
+             * @return the value
              * @throws IllegalStateException if a required field is not set
              * @throws IllegalArgumentException if a value is out of range
              */
@@ -418,6 +510,8 @@ public record MaterialInstances(MaterialInstances. @Nullable InstanceOrAlias all
         }
 
         /**
+         * Returns the value in add-on JSON.
+         *
          * @return the value in add-on JSON
          */
         public @NonNull String value() {
@@ -425,7 +519,10 @@ public record MaterialInstances(MaterialInstances. @Nullable InstanceOrAlias all
         }
 
         /**
-         * @return the constant of an add-on JSON value
+         * Finds the constant of an add-on JSON value.
+         *
+         * @param value the value in add-on JSON
+         * @return the constant of the value
          * @throws IllegalArgumentException if the value is not documented
          */
         public static @NonNull RenderMethod fromValue(@NonNull String value) {
@@ -451,6 +548,9 @@ public record MaterialInstances(MaterialInstances. @Nullable InstanceOrAlias all
      */
     public sealed interface InstanceOrAlias permits InstanceOrAlias.Alias, InstanceOrAlias.Define {
         /**
+         * Creates the form that is the name of another instance.
+         *
+         * @param value the name of another instance
          * @return the form that is the name of another instance
          */
         static @NonNull InstanceOrAlias alias(@NonNull String value) {
@@ -458,6 +558,9 @@ public record MaterialInstances(MaterialInstances. @Nullable InstanceOrAlias all
         }
 
         /**
+         * Creates the form that is the definition of the instance.
+         *
+         * @param value the definition of the instance
          * @return the form that is the definition of the instance
          */
         static @NonNull InstanceOrAlias define(@NonNull Instance value) {
@@ -470,6 +573,12 @@ public record MaterialInstances(MaterialInstances. @Nullable InstanceOrAlias all
          * @param value the name of another instance
          */
         record Alias(@NonNull String value) implements InstanceOrAlias {
+            /**
+             * Checks the value and copies a list or map, so the form is immutable.
+             *
+             * @param value the value of the form
+             * @throws NullPointerException if the value is null
+             */
             public Alias {
                 Objects.requireNonNull(value, "InstanceOrAlias.Alias.value");
             }
@@ -481,6 +590,12 @@ public record MaterialInstances(MaterialInstances. @Nullable InstanceOrAlias all
          * @param value the definition of the instance
          */
         record Define(@NonNull Instance value) implements InstanceOrAlias {
+            /**
+             * Checks the value and copies a list or map, so the form is immutable.
+             *
+             * @param value the value of the form
+             * @throws NullPointerException if the value is null
+             */
             public Define {
                 Objects.requireNonNull(value, "InstanceOrAlias.Define.value");
             }

@@ -33,6 +33,12 @@ public record PiercingWeapon(PiercingWeapon. @Nullable CreativeReach creativeRea
      */
     public static final String NAME = "minecraft:piercing_weapon";
 
+    /**
+     * Checks the components and copies lists and maps, so the value is immutable.
+     *
+     * @throws NullPointerException if a required component is null
+     * @throws IllegalArgumentException if a component is out of its documented range or conflicts with another
+     */
     public PiercingWeapon {
         Objects.requireNonNull(reach, "PiercingWeapon.reach");
     }
@@ -43,6 +49,8 @@ public record PiercingWeapon(PiercingWeapon. @Nullable CreativeReach creativeRea
     }
 
     /**
+     * Creates a builder with every field at its default.
+     *
      * @return a builder with the defaults applied
      */
     public static @NonNull Builder builder() {
@@ -50,6 +58,8 @@ public record PiercingWeapon(PiercingWeapon. @Nullable CreativeReach creativeRea
     }
 
     /**
+     * Creates a builder holding this value's fields, to change some of them.
+     *
      * @return a builder with this value's fields
      */
     public @NonNull Builder toBuilder() {
@@ -75,6 +85,9 @@ public record PiercingWeapon(PiercingWeapon. @Nullable CreativeReach creativeRea
 
         /**
          * Sets {@code creative_reach}.
+         *
+         * @param creativeReach the value
+         * @return this builder
          */
         public @NonNull Builder creativeReach(@Nullable CreativeReach creativeReach) {
             this.creativeReach = creativeReach;
@@ -83,6 +96,9 @@ public record PiercingWeapon(PiercingWeapon. @Nullable CreativeReach creativeRea
 
         /**
          * Sets {@code hitbox_margin}.
+         *
+         * @param hitboxMargin the value
+         * @return this builder
          */
         public @NonNull Builder hitboxMargin(float hitboxMargin) {
             this.hitboxMargin = hitboxMargin;
@@ -91,6 +107,9 @@ public record PiercingWeapon(PiercingWeapon. @Nullable CreativeReach creativeRea
 
         /**
          * Sets {@code reach}.
+         *
+         * @param reach the value
+         * @return this builder
          */
         public @NonNull Builder reach(@NonNull Reach reach) {
             this.reach = reach;
@@ -98,6 +117,9 @@ public record PiercingWeapon(PiercingWeapon. @Nullable CreativeReach creativeRea
         }
 
         /**
+         * Builds the value from the fields set and the defaults.
+         *
+         * @return the value
          * @throws IllegalStateException if a required field is not set
          * @throws IllegalArgumentException if a value is out of range
          */
@@ -114,6 +136,8 @@ public record PiercingWeapon(PiercingWeapon. @Nullable CreativeReach creativeRea
      */
     public record CreativeReach(float max, float min) {
         /**
+         * Creates a builder with every field at its default.
+         *
          * @return a builder with the defaults applied
          */
         public static @NonNull Builder builder() {
@@ -121,6 +145,8 @@ public record PiercingWeapon(PiercingWeapon. @Nullable CreativeReach creativeRea
         }
 
         /**
+         * Creates a builder holding this value's fields, to change some of them.
+         *
          * @return a builder with this value's fields
          */
         public @NonNull Builder toBuilder() {
@@ -143,6 +169,9 @@ public record PiercingWeapon(PiercingWeapon. @Nullable CreativeReach creativeRea
 
             /**
              * Sets {@code max}.
+             *
+             * @param max the value
+             * @return this builder
              */
             public @NonNull Builder max(float max) {
                 this.max = max;
@@ -151,6 +180,9 @@ public record PiercingWeapon(PiercingWeapon. @Nullable CreativeReach creativeRea
 
             /**
              * Sets {@code min}.
+             *
+             * @param min the value
+             * @return this builder
              */
             public @NonNull Builder min(float min) {
                 this.min = min;
@@ -158,6 +190,9 @@ public record PiercingWeapon(PiercingWeapon. @Nullable CreativeReach creativeRea
             }
 
             /**
+             * Builds the value from the fields set and the defaults.
+             *
+             * @return the value
              * @throws IllegalStateException if a required field is not set
              * @throws IllegalArgumentException if a value is out of range
              */
@@ -176,6 +211,8 @@ public record PiercingWeapon(PiercingWeapon. @Nullable CreativeReach creativeRea
      */
     public record Reach(float max, float min) {
         /**
+         * Creates a builder with every field at its default.
+         *
          * @return a builder with the defaults applied
          */
         public static @NonNull Builder builder() {
@@ -183,6 +220,8 @@ public record PiercingWeapon(PiercingWeapon. @Nullable CreativeReach creativeRea
         }
 
         /**
+         * Creates a builder holding this value's fields, to change some of them.
+         *
          * @return a builder with this value's fields
          */
         public @NonNull Builder toBuilder() {
@@ -205,6 +244,9 @@ public record PiercingWeapon(PiercingWeapon. @Nullable CreativeReach creativeRea
 
             /**
              * Sets {@code max}.
+             *
+             * @param max the value
+             * @return this builder
              */
             public @NonNull Builder max(float max) {
                 this.max = max;
@@ -213,6 +255,9 @@ public record PiercingWeapon(PiercingWeapon. @Nullable CreativeReach creativeRea
 
             /**
              * Sets {@code min}.
+             *
+             * @param min the value
+             * @return this builder
              */
             public @NonNull Builder min(float min) {
                 this.min = min;
@@ -220,6 +265,9 @@ public record PiercingWeapon(PiercingWeapon. @Nullable CreativeReach creativeRea
             }
 
             /**
+             * Builds the value from the fields set and the defaults.
+             *
+             * @return the value
              * @throws IllegalStateException if a required field is not set
              * @throws IllegalArgumentException if a value is out of range
              */

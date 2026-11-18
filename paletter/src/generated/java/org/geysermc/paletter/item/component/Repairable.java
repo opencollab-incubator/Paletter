@@ -33,6 +33,12 @@ public record Repairable(
      */
     public static final String NAME = "minecraft:repairable";
 
+    /**
+     * Checks the components and copies lists and maps, so the value is immutable.
+     *
+     * @throws NullPointerException if a required component is null
+     * @throws IllegalArgumentException if a component is out of its documented range or conflicts with another
+     */
     public Repairable {
         repairItems = List.copyOf(Objects.requireNonNull(repairItems, "Repairable.repairItems"));
     }
@@ -43,6 +49,8 @@ public record Repairable(
     }
 
     /**
+     * Creates a builder with every field at its default.
+     *
      * @return a builder with the defaults applied
      */
     public static @NonNull Builder builder() {
@@ -50,6 +58,8 @@ public record Repairable(
     }
 
     /**
+     * Creates a builder holding this value's fields, to change some of them.
+     *
      * @return a builder with this value's fields
      */
     public @NonNull Builder toBuilder() {
@@ -69,6 +79,9 @@ public record Repairable(
 
         /**
          * Sets {@code repair_items}.
+         *
+         * @param repairItems the value
+         * @return this builder
          */
         public @NonNull Builder repairItems(@NonNull List<RepairItems> repairItems) {
             this.repairItems = repairItems;
@@ -77,12 +90,18 @@ public record Repairable(
 
         /**
          * Sets {@code repair_items}.
+         *
+         * @param repairItems the value
+         * @return this builder
          */
         public @NonNull Builder repairItems(@NonNull RepairItems... repairItems) {
             return repairItems(List.of(repairItems));
         }
 
         /**
+         * Builds the value from the fields set and the defaults.
+         *
+         * @return the value
          * @throws IllegalStateException if a required field is not set
          * @throws IllegalArgumentException if a value is out of range
          */
@@ -100,6 +119,8 @@ public record Repairable(
      */
     public record RepairItems(@Nullable ItemsOrTags items, @Nullable RepairAmount repairAmount) {
         /**
+         * Creates a builder with every field at its default.
+         *
          * @return a builder with the defaults applied
          */
         public static @NonNull Builder builder() {
@@ -107,6 +128,8 @@ public record Repairable(
         }
 
         /**
+         * Creates a builder holding this value's fields, to change some of them.
+         *
          * @return a builder with this value's fields
          */
         public @NonNull Builder toBuilder() {
@@ -129,6 +152,9 @@ public record Repairable(
 
             /**
              * Sets {@code items}.
+             *
+             * @param items the value
+             * @return this builder
              */
             public @NonNull Builder items(@Nullable ItemsOrTags items) {
                 this.items = items;
@@ -137,6 +163,9 @@ public record Repairable(
 
             /**
              * Sets {@code items} to the identifiers of the items.
+             *
+             * @param items the value
+             * @return this builder
              */
             public @NonNull Builder items(@NonNull List<String> items) {
                 return items(ItemsOrTags.items(items));
@@ -144,6 +173,10 @@ public record Repairable(
 
             /**
              * Sets {@code items} to the identifiers of the items (at least one value).
+             *
+             * @param first the first value
+             * @param rest the other values
+             * @return this builder
              */
             public @NonNull Builder items(@NonNull String first, @NonNull String... rest) {
                 List<String> values = new ArrayList<>();
@@ -156,6 +189,10 @@ public record Repairable(
 
             /**
              * Sets {@code items} to the identifiers of vanilla or custom items (at least one value).
+             *
+             * @param first the first value
+             * @param rest the other values
+             * @return this builder
              */
             public @NonNull Builder items(@NonNull BedrockItemType first,
                     @NonNull BedrockItemType... rest) {
@@ -169,6 +206,9 @@ public record Repairable(
 
             /**
              * Sets {@code repair_amount}.
+             *
+             * @param repairAmount the value
+             * @return this builder
              */
             public @NonNull Builder repairAmount(@Nullable RepairAmount repairAmount) {
                 this.repairAmount = repairAmount;
@@ -177,6 +217,9 @@ public record Repairable(
 
             /**
              * Sets {@code repair_amount} to a Molang expression for the amount.
+             *
+             * @param repairAmount the value
+             * @return this builder
              */
             public @NonNull Builder repairAmount(@NonNull String repairAmount) {
                 return repairAmount(RepairAmount.expression(repairAmount));
@@ -184,12 +227,18 @@ public record Repairable(
 
             /**
              * Sets {@code repair_amount} to a fixed amount of durability.
+             *
+             * @param repairAmount the value
+             * @return this builder
              */
             public @NonNull Builder repairAmount(float repairAmount) {
                 return repairAmount(RepairAmount.fixed(repairAmount));
             }
 
             /**
+             * Builds the value from the fields set and the defaults.
+             *
+             * @return the value
              * @throws IllegalStateException if a required field is not set
              * @throws IllegalArgumentException if a value is out of range
              */

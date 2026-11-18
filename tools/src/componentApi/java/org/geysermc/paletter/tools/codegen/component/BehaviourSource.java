@@ -154,10 +154,10 @@ final class BehaviourSource {
             Modifier.PRIVATE, Modifier.STATIC, Modifier.FINAL).initializer(list.add(")").build()).build());
         type.addMethod(MethodSpec.constructorBuilder().addModifiers(Modifier.PRIVATE).build());
         type.addMethod(MethodSpec.methodBuilder("keys").addModifiers(Modifier.PUBLIC, Modifier.STATIC)
-            .addJavadoc("@return every $L key\n", plural)
+            .addJavadoc("Lists the keys, in declaration order.\n\n@return every $L key\n", plural)
             .returns(ApiSource.nonNull(ParameterizedTypeName.get(ClassName.get(List.class), ANY_KEY))).addStatement("return KEYS").build());
         type.addMethod(MethodSpec.methodBuilder("key").addModifiers(Modifier.PUBLIC, Modifier.STATIC)
-            .addJavadoc("@return the key of a name, or null if there is none\n")
+            .addJavadoc("Finds a key by its name.\n\n@param name the key name, as {@code BehaviourKey.name()} gives it\n@return the key of a name, or null if there is none\n")
             .returns(ApiSource.nullable(ANY_KEY)).addParameter(ApiSource.nonNull(ClassName.get(String.class)), "name")
             .beginControlFlow("for ($T key : KEYS)", ANY_KEY)
             .beginControlFlow("if (key.name().equals(name))").addStatement("return key").endControlFlow()

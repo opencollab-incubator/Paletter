@@ -35,6 +35,8 @@ public record SwingSounds(@Nullable String attackCriticalHit, @Nullable String a
     }
 
     /**
+     * Creates a builder with every field at its default.
+     *
      * @return a builder with the defaults applied
      */
     public static @NonNull Builder builder() {
@@ -42,6 +44,8 @@ public record SwingSounds(@Nullable String attackCriticalHit, @Nullable String a
     }
 
     /**
+     * Creates a builder holding this value's fields, to change some of them.
+     *
      * @return a builder with this value's fields
      */
     public @NonNull Builder toBuilder() {
@@ -67,6 +71,9 @@ public record SwingSounds(@Nullable String attackCriticalHit, @Nullable String a
 
         /**
          * Sets {@code attack_critical_hit}.
+         *
+         * @param attackCriticalHit the value
+         * @return this builder
          */
         public @NonNull Builder attackCriticalHit(@Nullable String attackCriticalHit) {
             this.attackCriticalHit = attackCriticalHit;
@@ -75,6 +82,9 @@ public record SwingSounds(@Nullable String attackCriticalHit, @Nullable String a
 
         /**
          * Sets {@code attack_hit}.
+         *
+         * @param attackHit the value
+         * @return this builder
          */
         public @NonNull Builder attackHit(@Nullable String attackHit) {
             this.attackHit = attackHit;
@@ -83,6 +93,9 @@ public record SwingSounds(@Nullable String attackCriticalHit, @Nullable String a
 
         /**
          * Sets {@code attack_miss}.
+         *
+         * @param attackMiss the value
+         * @return this builder
          */
         public @NonNull Builder attackMiss(@Nullable String attackMiss) {
             this.attackMiss = attackMiss;
@@ -90,6 +103,9 @@ public record SwingSounds(@Nullable String attackCriticalHit, @Nullable String a
         }
 
         /**
+         * Builds the value from the fields set and the defaults.
+         *
+         * @return the value
          * @throws IllegalStateException if a required field is not set
          * @throws IllegalArgumentException if a value is out of range
          */

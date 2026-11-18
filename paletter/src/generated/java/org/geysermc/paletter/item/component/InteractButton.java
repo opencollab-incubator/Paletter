@@ -32,6 +32,7 @@ public record InteractButton(@Nullable Boolean enabled,
     /**
      * The boolean shorthand: sets {@code enabled}.
      *
+     * @param value the value of that field
      * @return the value with everything else at its default
      */
     public static @NonNull InteractButton of(boolean value) {
@@ -41,6 +42,7 @@ public record InteractButton(@Nullable Boolean enabled,
     /**
      * The string shorthand: sets {@code text}.
      *
+     * @param value the value of that field
      * @return the value with everything else at its default
      */
     public static @NonNull InteractButton of(@NonNull String value) {
@@ -48,6 +50,8 @@ public record InteractButton(@Nullable Boolean enabled,
     }
 
     /**
+     * Creates a builder with every field at its default.
+     *
      * @return a builder with the defaults applied
      */
     public static @NonNull Builder builder() {
@@ -55,6 +59,8 @@ public record InteractButton(@Nullable Boolean enabled,
     }
 
     /**
+     * Creates a builder holding this value's fields, to change some of them.
+     *
      * @return a builder with this value's fields
      */
     public @NonNull Builder toBuilder() {
@@ -77,6 +83,9 @@ public record InteractButton(@Nullable Boolean enabled,
 
         /**
          * Sets {@code enabled}.
+         *
+         * @param enabled the value
+         * @return this builder
          */
         public @NonNull Builder enabled(@Nullable Boolean enabled) {
             this.enabled = enabled;
@@ -85,6 +94,9 @@ public record InteractButton(@Nullable Boolean enabled,
 
         /**
          * Sets {@code text}.
+         *
+         * @param text the value
+         * @return this builder
          */
         public @NonNull Builder text(@Nullable String text) {
             this.text = text;
@@ -92,6 +104,9 @@ public record InteractButton(@Nullable Boolean enabled,
         }
 
         /**
+         * Builds the value from the fields set and the defaults.
+         *
+         * @return the value
          * @throws IllegalStateException if a required field is not set
          * @throws IllegalArgumentException if a value is out of range
          */

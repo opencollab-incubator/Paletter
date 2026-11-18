@@ -36,6 +36,12 @@ public record RedstoneConsumer(int minPower, boolean propagatesPower) implements
      */
     public static final String NAME = "minecraft:redstone_consumer";
 
+    /**
+     * Checks the components and copies lists and maps, so the value is immutable.
+     *
+     * @throws NullPointerException if a required component is null
+     * @throws IllegalArgumentException if a component is out of its documented range or conflicts with another
+     */
     public RedstoneConsumer {
         Check.range("RedstoneConsumer.minPower", minPower, null, 15.0);
     }
@@ -46,6 +52,8 @@ public record RedstoneConsumer(int minPower, boolean propagatesPower) implements
     }
 
     /**
+     * Creates a builder with every field at its default.
+     *
      * @return a builder with the defaults applied
      */
     public static @NonNull Builder builder() {
@@ -53,6 +61,8 @@ public record RedstoneConsumer(int minPower, boolean propagatesPower) implements
     }
 
     /**
+     * Creates a builder holding this value's fields, to change some of them.
+     *
      * @return a builder with this value's fields
      */
     public @NonNull Builder toBuilder() {
@@ -75,6 +85,9 @@ public record RedstoneConsumer(int minPower, boolean propagatesPower) implements
 
         /**
          * Sets {@code min_power}.
+         *
+         * @param minPower the value
+         * @return this builder
          */
         public @NonNull Builder minPower(int minPower) {
             this.minPower = minPower;
@@ -83,6 +96,9 @@ public record RedstoneConsumer(int minPower, boolean propagatesPower) implements
 
         /**
          * Sets {@code propagates_power}.
+         *
+         * @param propagatesPower the value
+         * @return this builder
          */
         public @NonNull Builder propagatesPower(boolean propagatesPower) {
             this.propagatesPower = propagatesPower;
@@ -90,6 +106,9 @@ public record RedstoneConsumer(int minPower, boolean propagatesPower) implements
         }
 
         /**
+         * Builds the value from the fields set and the defaults.
+         *
+         * @return the value
          * @throws IllegalStateException if a required field is not set
          * @throws IllegalArgumentException if a value is out of range
          */

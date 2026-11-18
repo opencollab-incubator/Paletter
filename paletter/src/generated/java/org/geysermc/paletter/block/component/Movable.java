@@ -37,6 +37,12 @@ public record Movable(Movable. @NonNull MovementType movementType,
      */
     public static final String NAME = "minecraft:movable";
 
+    /**
+     * Checks the components and copies lists and maps, so the value is immutable.
+     *
+     * @throws NullPointerException if a required component is null
+     * @throws IllegalArgumentException if a component is out of its documented range or conflicts with another
+     */
     public Movable {
         Objects.requireNonNull(movementType, "Movable.movementType");
         Objects.requireNonNull(sticky, "Movable.sticky");
@@ -48,6 +54,8 @@ public record Movable(Movable. @NonNull MovementType movementType,
     }
 
     /**
+     * Creates a builder with every field at its default.
+     *
      * @return a builder with the defaults applied
      */
     public static @NonNull Builder builder() {
@@ -55,6 +63,8 @@ public record Movable(Movable. @NonNull MovementType movementType,
     }
 
     /**
+     * Creates a builder holding this value's fields, to change some of them.
+     *
      * @return a builder with this value's fields
      */
     public @NonNull Builder toBuilder() {
@@ -77,6 +87,9 @@ public record Movable(Movable. @NonNull MovementType movementType,
 
         /**
          * Sets {@code movement_type}.
+         *
+         * @param movementType the value
+         * @return this builder
          */
         public @NonNull Builder movementType(@NonNull MovementType movementType) {
             this.movementType = movementType;
@@ -85,6 +98,9 @@ public record Movable(Movable. @NonNull MovementType movementType,
 
         /**
          * Sets {@code sticky}.
+         *
+         * @param sticky the value
+         * @return this builder
          */
         public @NonNull Builder sticky(@NonNull Sticky sticky) {
             this.sticky = sticky;
@@ -92,6 +108,9 @@ public record Movable(Movable. @NonNull MovementType movementType,
         }
 
         /**
+         * Builds the value from the fields set and the defaults.
+         *
+         * @return the value
          * @throws IllegalStateException if a required field is not set
          * @throws IllegalArgumentException if a value is out of range
          */
@@ -134,6 +153,8 @@ public record Movable(Movable. @NonNull MovementType movementType,
         }
 
         /**
+         * Returns the value in add-on JSON.
+         *
          * @return the value in add-on JSON
          */
         public @NonNull String value() {
@@ -141,7 +162,10 @@ public record Movable(Movable. @NonNull MovementType movementType,
         }
 
         /**
-         * @return the constant of an add-on JSON value
+         * Finds the constant of an add-on JSON value.
+         *
+         * @param value the value in add-on JSON
+         * @return the constant of the value
          * @throws IllegalArgumentException if the value is not documented
          */
         public static @NonNull MovementType fromValue(@NonNull String value) {
@@ -175,6 +199,8 @@ public record Movable(Movable. @NonNull MovementType movementType,
         }
 
         /**
+         * Returns the value in add-on JSON.
+         *
          * @return the value in add-on JSON
          */
         public @NonNull String value() {
@@ -182,7 +208,10 @@ public record Movable(Movable. @NonNull MovementType movementType,
         }
 
         /**
-         * @return the constant of an add-on JSON value
+         * Finds the constant of an add-on JSON value.
+         *
+         * @param value the value in add-on JSON
+         * @return the constant of the value
          * @throws IllegalArgumentException if the value is not documented
          */
         public static @NonNull Sticky fromValue(@NonNull String value) {

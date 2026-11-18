@@ -14,7 +14,7 @@ import java.io.PrintStream;
 import java.util.List;
 
 /**
- * The {@code inspect} command: prints {@link Palette#explain(NbtMap)} / {@link Palette#explain(ItemVariant)} of a block
+ * The {@code inspect} command: prints {@link Palette#explain(NbtMap)} / {@link Palette#explain(String, int, NbtMap)} of a block
  * state or item variant for one or all bundled versions.
  */
 public final class Inspect {

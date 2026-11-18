@@ -29,6 +29,12 @@ public record Dyeable(@NonNull ColorValue defaultColor) implements ItemComponent
      */
     public static final String NAME = "minecraft:dyeable";
 
+    /**
+     * Checks the components and copies lists and maps, so the value is immutable.
+     *
+     * @throws NullPointerException if a required component is null
+     * @throws IllegalArgumentException if a component is out of its documented range or conflicts with another
+     */
     public Dyeable {
         Objects.requireNonNull(defaultColor, "Dyeable.defaultColor");
     }
@@ -39,6 +45,8 @@ public record Dyeable(@NonNull ColorValue defaultColor) implements ItemComponent
     }
 
     /**
+     * Creates a builder with every field at its default.
+     *
      * @return a builder with the defaults applied
      */
     public static @NonNull Builder builder() {
@@ -46,6 +54,8 @@ public record Dyeable(@NonNull ColorValue defaultColor) implements ItemComponent
     }
 
     /**
+     * Creates a builder holding this value's fields, to change some of them.
+     *
      * @return a builder with this value's fields
      */
     public @NonNull Builder toBuilder() {
@@ -65,6 +75,9 @@ public record Dyeable(@NonNull ColorValue defaultColor) implements ItemComponent
 
         /**
          * Sets {@code default_color}.
+         *
+         * @param defaultColor the value
+         * @return this builder
          */
         public @NonNull Builder defaultColor(@NonNull ColorValue defaultColor) {
             this.defaultColor = defaultColor;
@@ -73,6 +86,9 @@ public record Dyeable(@NonNull ColorValue defaultColor) implements ItemComponent
 
         /**
          * Sets {@code default_color} to the red, green and blue channels.
+         *
+         * @param defaultColor the value
+         * @return this builder
          */
         public @NonNull Builder defaultColor(@NonNull List<Integer> defaultColor) {
             return defaultColor(ColorValue.channels(defaultColor));
@@ -80,6 +96,10 @@ public record Dyeable(@NonNull ColorValue defaultColor) implements ItemComponent
 
         /**
          * Sets {@code default_color} to the red, green and blue channels (at least one value).
+         *
+         * @param first the first value
+         * @param rest the other values
+         * @return this builder
          */
         public @NonNull Builder defaultColor(int first, int... rest) {
             List<Integer> values = new ArrayList<>();
@@ -92,12 +112,18 @@ public record Dyeable(@NonNull ColorValue defaultColor) implements ItemComponent
 
         /**
          * Sets {@code default_color} to a hex color of six digits.
+         *
+         * @param defaultColor the value
+         * @return this builder
          */
         public @NonNull Builder defaultColor(@NonNull String defaultColor) {
             return defaultColor(ColorValue.hex(defaultColor));
         }
 
         /**
+         * Builds the value from the fields set and the defaults.
+         *
+         * @return the value
          * @throws IllegalStateException if a required field is not set
          * @throws IllegalArgumentException if a value is out of range
          */

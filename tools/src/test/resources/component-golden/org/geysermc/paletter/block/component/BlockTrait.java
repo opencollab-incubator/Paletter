@@ -14,12 +14,14 @@ import org.checkerframework.checker.nullness.qual.NonNull;
  */
 public sealed interface BlockTrait permits BlockTrait.None {
     /**
-     * @return the component name in add-on JSON, e.g. {@code minecraft:durability}
+     * Returns the component name in add-on JSON.
+     *
+     * @return the name, e.g. {@code minecraft:durability}
      */
     @NonNull String name();
 
     /**
-     * No component is generated.
+     * Placeholder of a kind with no generated component; it has no instances.
      */
     final class None implements BlockTrait {
         private None() {

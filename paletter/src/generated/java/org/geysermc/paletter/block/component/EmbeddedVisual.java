@@ -34,6 +34,12 @@ public record EmbeddedVisual(EmbeddedVisual. @NonNull VisualGeometry geometry,
      */
     public static final String NAME = "minecraft:embedded_visual";
 
+    /**
+     * Checks the components and copies lists and maps, so the value is immutable.
+     *
+     * @throws NullPointerException if a required component is null
+     * @throws IllegalArgumentException if a component is out of its documented range or conflicts with another
+     */
     public EmbeddedVisual {
         Objects.requireNonNull(geometry, "EmbeddedVisual.geometry");
         Objects.requireNonNull(materialInstances, "EmbeddedVisual.materialInstances");
@@ -45,6 +51,8 @@ public record EmbeddedVisual(EmbeddedVisual. @NonNull VisualGeometry geometry,
     }
 
     /**
+     * Creates a builder with every field at its default.
+     *
      * @return a builder with the defaults applied
      */
     public static @NonNull Builder builder() {
@@ -52,6 +60,8 @@ public record EmbeddedVisual(EmbeddedVisual. @NonNull VisualGeometry geometry,
     }
 
     /**
+     * Creates a builder holding this value's fields, to change some of them.
+     *
      * @return a builder with this value's fields
      */
     public @NonNull Builder toBuilder() {
@@ -74,6 +84,9 @@ public record EmbeddedVisual(EmbeddedVisual. @NonNull VisualGeometry geometry,
 
         /**
          * Sets {@code geometry}.
+         *
+         * @param geometry the value
+         * @return this builder
          */
         public @NonNull Builder geometry(@NonNull VisualGeometry geometry) {
             this.geometry = geometry;
@@ -82,6 +95,9 @@ public record EmbeddedVisual(EmbeddedVisual. @NonNull VisualGeometry geometry,
 
         /**
          * Sets {@code material_instances}.
+         *
+         * @param materialInstances the value
+         * @return this builder
          */
         public @NonNull Builder materialInstances(@NonNull MaterialInstances materialInstances) {
             this.materialInstances = materialInstances;
@@ -89,6 +105,9 @@ public record EmbeddedVisual(EmbeddedVisual. @NonNull VisualGeometry geometry,
         }
 
         /**
+         * Builds the value from the fields set and the defaults.
+         *
+         * @return the value
          * @throws IllegalStateException if a required field is not set
          * @throws IllegalArgumentException if a value is out of range
          */
@@ -115,6 +134,8 @@ public record EmbeddedVisual(EmbeddedVisual. @NonNull VisualGeometry geometry,
      */
     public record NWayVisualRotation(@Nullable String x, @Nullable String y, @Nullable String z) {
         /**
+         * Creates a builder with every field at its default.
+         *
          * @return a builder with the defaults applied
          */
         public static @NonNull Builder builder() {
@@ -122,6 +143,8 @@ public record EmbeddedVisual(EmbeddedVisual. @NonNull VisualGeometry geometry,
         }
 
         /**
+         * Creates a builder holding this value's fields, to change some of them.
+         *
          * @return a builder with this value's fields
          */
         public @NonNull Builder toBuilder() {
@@ -147,6 +170,9 @@ public record EmbeddedVisual(EmbeddedVisual. @NonNull VisualGeometry geometry,
 
             /**
              * Sets {@code x}.
+             *
+             * @param x the value
+             * @return this builder
              */
             public @NonNull Builder x(@Nullable String x) {
                 this.x = x;
@@ -155,6 +181,9 @@ public record EmbeddedVisual(EmbeddedVisual. @NonNull VisualGeometry geometry,
 
             /**
              * Sets {@code y}.
+             *
+             * @param y the value
+             * @return this builder
              */
             public @NonNull Builder y(@Nullable String y) {
                 this.y = y;
@@ -163,6 +192,9 @@ public record EmbeddedVisual(EmbeddedVisual. @NonNull VisualGeometry geometry,
 
             /**
              * Sets {@code z}.
+             *
+             * @param z the value
+             * @return this builder
              */
             public @NonNull Builder z(@Nullable String z) {
                 this.z = z;
@@ -170,6 +202,9 @@ public record EmbeddedVisual(EmbeddedVisual. @NonNull VisualGeometry geometry,
             }
 
             /**
+             * Builds the value from the fields set and the defaults.
+             *
+             * @return the value
              * @throws IllegalStateException if a required field is not set
              * @throws IllegalArgumentException if a value is out of range
              */
@@ -222,6 +257,12 @@ public record EmbeddedVisual(EmbeddedVisual. @NonNull VisualGeometry geometry,
             @Nullable String culling, @Nullable String cullingLayer, @Nullable String cullingShape,
             @NonNull String identifier, @Nullable NWayVisualRotation nWayVisualRotation,
             @NonNull UvLock uvLock) {
+        /**
+         * Checks the components and copies lists and maps, so the value is immutable.
+         *
+         * @throws NullPointerException if a required component is null
+         * @throws IllegalArgumentException if a component is out of its documented range or conflicts with another
+         */
         public VisualGeometry {
             boneVisibility = Check.copy(boneVisibility, "EmbeddedVisual.VisualGeometry.boneVisibility");
             Check.conflict("EmbeddedVisual.VisualGeometry", "boneVisibility", !boneVisibility.isEmpty(), "identifier", identifier, "minecraft:geometry.full_block");
@@ -230,6 +271,8 @@ public record EmbeddedVisual(EmbeddedVisual. @NonNull VisualGeometry geometry,
         }
 
         /**
+         * Creates a builder with every field at its default.
+         *
          * @return a builder with the defaults applied
          */
         public static @NonNull Builder builder() {
@@ -237,6 +280,8 @@ public record EmbeddedVisual(EmbeddedVisual. @NonNull VisualGeometry geometry,
         }
 
         /**
+         * Creates a builder holding this value's fields, to change some of them.
+         *
          * @return a builder with this value's fields
          */
         public @NonNull Builder toBuilder() {
@@ -274,6 +319,9 @@ public record EmbeddedVisual(EmbeddedVisual. @NonNull VisualGeometry geometry,
 
             /**
              * Sets {@code bone_visibility}.
+             *
+             * @param boneVisibility the value
+             * @return this builder
              */
             public @NonNull Builder boneVisibility(@NonNull Map<String, String> boneVisibility) {
                 this.boneVisibility = boneVisibility;
@@ -282,6 +330,9 @@ public record EmbeddedVisual(EmbeddedVisual. @NonNull VisualGeometry geometry,
 
             /**
              * Sets {@code culling}.
+             *
+             * @param culling the value
+             * @return this builder
              */
             public @NonNull Builder culling(@Nullable String culling) {
                 this.culling = culling;
@@ -290,6 +341,9 @@ public record EmbeddedVisual(EmbeddedVisual. @NonNull VisualGeometry geometry,
 
             /**
              * Sets {@code culling_layer}.
+             *
+             * @param cullingLayer the value
+             * @return this builder
              */
             public @NonNull Builder cullingLayer(@Nullable String cullingLayer) {
                 this.cullingLayer = cullingLayer;
@@ -298,6 +352,9 @@ public record EmbeddedVisual(EmbeddedVisual. @NonNull VisualGeometry geometry,
 
             /**
              * Sets {@code culling_shape}.
+             *
+             * @param cullingShape the value
+             * @return this builder
              */
             public @NonNull Builder cullingShape(@Nullable String cullingShape) {
                 this.cullingShape = cullingShape;
@@ -306,6 +363,9 @@ public record EmbeddedVisual(EmbeddedVisual. @NonNull VisualGeometry geometry,
 
             /**
              * Sets {@code identifier}.
+             *
+             * @param identifier the value
+             * @return this builder
              */
             public @NonNull Builder identifier(@NonNull String identifier) {
                 this.identifier = identifier;
@@ -314,6 +374,9 @@ public record EmbeddedVisual(EmbeddedVisual. @NonNull VisualGeometry geometry,
 
             /**
              * Sets {@code n_way_visual_rotation}.
+             *
+             * @param nWayVisualRotation the value
+             * @return this builder
              */
             public @NonNull Builder nWayVisualRotation(
                     @Nullable NWayVisualRotation nWayVisualRotation) {
@@ -323,6 +386,9 @@ public record EmbeddedVisual(EmbeddedVisual. @NonNull VisualGeometry geometry,
 
             /**
              * Sets {@code uv_lock}.
+             *
+             * @param uvLock the value
+             * @return this builder
              */
             public @NonNull Builder uvLock(@NonNull UvLock uvLock) {
                 this.uvLock = uvLock;
@@ -331,6 +397,9 @@ public record EmbeddedVisual(EmbeddedVisual. @NonNull VisualGeometry geometry,
 
             /**
              * Sets {@code uv_lock} to the names of the bones to lock.
+             *
+             * @param uvLock the value
+             * @return this builder
              */
             public @NonNull Builder uvLock(@NonNull List<String> uvLock) {
                 return uvLock(UvLock.bones(uvLock));
@@ -338,6 +407,10 @@ public record EmbeddedVisual(EmbeddedVisual. @NonNull VisualGeometry geometry,
 
             /**
              * Sets {@code uv_lock} to the names of the bones to lock (at least one value).
+             *
+             * @param first the first value
+             * @param rest the other values
+             * @return this builder
              */
             public @NonNull Builder uvLock(@NonNull String first, @NonNull String... rest) {
                 List<String> values = new ArrayList<>();
@@ -350,12 +423,18 @@ public record EmbeddedVisual(EmbeddedVisual. @NonNull VisualGeometry geometry,
 
             /**
              * Sets {@code uv_lock} to one flag for every bone.
+             *
+             * @param uvLock the value
+             * @return this builder
              */
             public @NonNull Builder uvLock(boolean uvLock) {
                 return uvLock(UvLock.flag(uvLock));
             }
 
             /**
+             * Builds the value from the fields set and the defaults.
+             *
+             * @return the value
              * @throws IllegalStateException if a required field is not set
              * @throws IllegalArgumentException if a value is out of range
              */

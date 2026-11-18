@@ -26,7 +26,7 @@ import java.util.TreeSet;
  * What components look like on the wire: the NBT paths and types observed in the item component and block property data
  * of a capture or a bundled palette, per component ({@code item:minecraft:foo}, {@code block:minecraft:bar},
  * {@code block:block_definition} for the block property data around the components). Paths are relative to the
- * component ({@code a.b[].c}); a place that held different types is {@code any}. Compared with {@link ShapeDiff}, and
+ * component ({@code a.b[].c}); a place that held different types is {@code any}. Compared with {@code ShapeDiff}, and
  * checked against the wire paths of the component model's {@code mappings.json}.
  */
 public final class WireShapes {

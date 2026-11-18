@@ -22,6 +22,9 @@ import org.checkerframework.checker.nullness.qual.NonNull;
  */
 public sealed interface Stripes permits Stripes.Names, Stripes.On {
     /**
+     * Creates the form that is a list of strings.
+     *
+     * @param value a list of strings
      * @return the form that is a list of strings
      */
     static @NonNull Stripes names(@NonNull List<String> value) {
@@ -29,6 +32,9 @@ public sealed interface Stripes permits Stripes.Names, Stripes.On {
     }
 
     /**
+     * Creates the form that is a boolean.
+     *
+     * @param value a boolean
      * @return the form that is a boolean
      */
     static @NonNull Stripes on(boolean value) {
@@ -41,6 +47,12 @@ public sealed interface Stripes permits Stripes.Names, Stripes.On {
      * @param value a list of strings
      */
     record Names(@NonNull List<String> value) implements Stripes {
+        /**
+         * Checks the value and copies a list or map, so the form is immutable.
+         *
+         * @param value the value of the form
+         * @throws NullPointerException if the value is null
+         */
         public Names {
             value = List.copyOf(Objects.requireNonNull(value, "Stripes.Names.value"));
         }

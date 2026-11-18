@@ -38,6 +38,12 @@ public record InstrumentSound(InstrumentSound. @NonNull Down down,
      */
     public static final String NAME = "minecraft:instrument_sound";
 
+    /**
+     * Checks the components and copies lists and maps, so the value is immutable.
+     *
+     * @throws NullPointerException if a required component is null
+     * @throws IllegalArgumentException if a component is out of its documented range or conflicts with another
+     */
     public InstrumentSound {
         Objects.requireNonNull(down, "InstrumentSound.down");
         Objects.requireNonNull(up, "InstrumentSound.up");
@@ -49,6 +55,8 @@ public record InstrumentSound(InstrumentSound. @NonNull Down down,
     }
 
     /**
+     * Creates a builder with every field at its default.
+     *
      * @return a builder with the defaults applied
      */
     public static @NonNull Builder builder() {
@@ -56,6 +64,8 @@ public record InstrumentSound(InstrumentSound. @NonNull Down down,
     }
 
     /**
+     * Creates a builder holding this value's fields, to change some of them.
+     *
      * @return a builder with this value's fields
      */
     public @NonNull Builder toBuilder() {
@@ -78,6 +88,9 @@ public record InstrumentSound(InstrumentSound. @NonNull Down down,
 
         /**
          * Sets {@code down}.
+         *
+         * @param down the value
+         * @return this builder
          */
         public @NonNull Builder down(@NonNull Down down) {
             this.down = down;
@@ -86,6 +99,9 @@ public record InstrumentSound(InstrumentSound. @NonNull Down down,
 
         /**
          * Sets {@code up}.
+         *
+         * @param up the value
+         * @return this builder
          */
         public @NonNull Builder up(@NonNull Up up) {
             this.up = up;
@@ -93,6 +109,9 @@ public record InstrumentSound(InstrumentSound. @NonNull Down down,
         }
 
         /**
+         * Builds the value from the fields set and the defaults.
+         *
+         * @return the value
          * @throws IllegalStateException if a required field is not set
          * @throws IllegalArgumentException if a value is out of range
          */
@@ -247,6 +266,8 @@ public record InstrumentSound(InstrumentSound. @NonNull Down down,
         }
 
         /**
+         * Returns the value in add-on JSON.
+         *
          * @return the value in add-on JSON
          */
         public @NonNull String value() {
@@ -254,7 +275,10 @@ public record InstrumentSound(InstrumentSound. @NonNull Down down,
         }
 
         /**
-         * @return the constant of an add-on JSON value
+         * Finds the constant of an add-on JSON value.
+         *
+         * @param value the value in add-on JSON
+         * @return the constant of the value
          * @throws IllegalArgumentException if the value is not documented
          */
         public static @NonNull Down fromValue(@NonNull String value) {
@@ -413,6 +437,8 @@ public record InstrumentSound(InstrumentSound. @NonNull Down down,
         }
 
         /**
+         * Returns the value in add-on JSON.
+         *
          * @return the value in add-on JSON
          */
         public @NonNull String value() {
@@ -420,7 +446,10 @@ public record InstrumentSound(InstrumentSound. @NonNull Down down,
         }
 
         /**
-         * @return the constant of an add-on JSON value
+         * Finds the constant of an add-on JSON value.
+         *
+         * @param value the value in add-on JSON
+         * @return the constant of the value
          * @throws IllegalArgumentException if the value is not documented
          */
         public static @NonNull Up fromValue(@NonNull String value) {

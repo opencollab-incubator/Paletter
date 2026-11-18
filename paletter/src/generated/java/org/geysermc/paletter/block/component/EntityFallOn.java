@@ -35,6 +35,8 @@ public record EntityFallOn(float minFallDistance) implements BlockComponent {
     }
 
     /**
+     * Creates a builder with every field at its default.
+     *
      * @return a builder with the defaults applied
      */
     public static @NonNull Builder builder() {
@@ -42,6 +44,8 @@ public record EntityFallOn(float minFallDistance) implements BlockComponent {
     }
 
     /**
+     * Creates a builder holding this value's fields, to change some of them.
+     *
      * @return a builder with this value's fields
      */
     public @NonNull Builder toBuilder() {
@@ -61,6 +65,9 @@ public record EntityFallOn(float minFallDistance) implements BlockComponent {
 
         /**
          * Sets {@code min_fall_distance}.
+         *
+         * @param minFallDistance the value
+         * @return this builder
          */
         public @NonNull Builder minFallDistance(float minFallDistance) {
             this.minFallDistance = minFallDistance;
@@ -68,6 +75,9 @@ public record EntityFallOn(float minFallDistance) implements BlockComponent {
         }
 
         /**
+         * Builds the value from the fields set and the defaults.
+         *
+         * @return the value
          * @throws IllegalStateException if a required field is not set
          * @throws IllegalArgumentException if a value is out of range
          */

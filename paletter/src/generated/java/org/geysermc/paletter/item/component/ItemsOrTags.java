@@ -24,6 +24,9 @@ import org.geysermc.paletter.vanilla.BedrockItemType;
  */
 public sealed interface ItemsOrTags permits ItemsOrTags.Items, ItemsOrTags.TagQuery {
     /**
+     * Creates the form that is the identifiers of the items.
+     *
+     * @param value the identifiers of the items
      * @return the form that is the identifiers of the items
      */
     static @NonNull ItemsOrTags items(@NonNull List<String> value) {
@@ -31,7 +34,11 @@ public sealed interface ItemsOrTags permits ItemsOrTags.Items, ItemsOrTags.TagQu
     }
 
     /**
-     * @return the form that is the identifiers of the items, of vanilla or custom items (at least one)
+     * Creates the form that is the identifiers of the items, of vanilla or custom items (at least one).
+     *
+     * @param first the first one
+     * @param rest the others
+     * @return the form that is the identifiers of the items
      */
     static @NonNull ItemsOrTags items(@NonNull BedrockItemType first,
             @NonNull BedrockItemType... rest) {
@@ -44,6 +51,9 @@ public sealed interface ItemsOrTags permits ItemsOrTags.Items, ItemsOrTags.TagQu
     }
 
     /**
+     * Creates the form that is a Molang {@code query.any_tag} expression that selects items by tag.
+     *
+     * @param value a Molang {@code query.any_tag} expression that selects items by tag
      * @return the form that is a Molang {@code query.any_tag} expression that selects items by tag
      */
     static @NonNull ItemsOrTags tagQuery(@NonNull String value) {
@@ -56,6 +66,12 @@ public sealed interface ItemsOrTags permits ItemsOrTags.Items, ItemsOrTags.TagQu
      * @param value the identifiers of the items
      */
     record Items(@NonNull List<String> value) implements ItemsOrTags {
+        /**
+         * Checks the value and copies a list or map, so the form is immutable.
+         *
+         * @param value the value of the form
+         * @throws NullPointerException if the value is null
+         */
         public Items {
             value = List.copyOf(Objects.requireNonNull(value, "ItemsOrTags.Items.value"));
         }
@@ -67,6 +83,12 @@ public sealed interface ItemsOrTags permits ItemsOrTags.Items, ItemsOrTags.TagQu
      * @param value a Molang {@code query.any_tag} expression that selects items by tag
      */
     record TagQuery(@NonNull String value) implements ItemsOrTags {
+        /**
+         * Checks the value and copies a list or map, so the form is immutable.
+         *
+         * @param value the value of the form
+         * @throws NullPointerException if the value is null
+         */
         public TagQuery {
             Objects.requireNonNull(value, "ItemsOrTags.TagQuery.value");
         }

@@ -56,6 +56,7 @@ public record Flammable(int catchChanceModifier, int destroyChanceModifier,
     /**
      * The boolean shorthand: sets {@code enabled}.
      *
+     * @param value the value of that field
      * @return the value with everything else at its default
      */
     public static @NonNull Flammable of(boolean value) {
@@ -63,6 +64,8 @@ public record Flammable(int catchChanceModifier, int destroyChanceModifier,
     }
 
     /**
+     * Creates a builder with every field at its default.
+     *
      * @return a builder with the defaults applied
      */
     public static @NonNull Builder builder() {
@@ -70,6 +73,8 @@ public record Flammable(int catchChanceModifier, int destroyChanceModifier,
     }
 
     /**
+     * Creates a builder holding this value's fields, to change some of them.
+     *
      * @return a builder with this value's fields
      */
     public @NonNull Builder toBuilder() {
@@ -98,6 +103,9 @@ public record Flammable(int catchChanceModifier, int destroyChanceModifier,
 
         /**
          * Sets {@code catch_chance_modifier}.
+         *
+         * @param catchChanceModifier the value
+         * @return this builder
          */
         public @NonNull Builder catchChanceModifier(int catchChanceModifier) {
             this.catchChanceModifier = catchChanceModifier;
@@ -106,6 +114,9 @@ public record Flammable(int catchChanceModifier, int destroyChanceModifier,
 
         /**
          * Sets {@code destroy_chance_modifier}.
+         *
+         * @param destroyChanceModifier the value
+         * @return this builder
          */
         public @NonNull Builder destroyChanceModifier(int destroyChanceModifier) {
             this.destroyChanceModifier = destroyChanceModifier;
@@ -114,6 +125,9 @@ public record Flammable(int catchChanceModifier, int destroyChanceModifier,
 
         /**
          * Sets {@code lava_flammable}.
+         *
+         * @param lavaFlammable the value
+         * @return this builder
          */
         public @NonNull Builder lavaFlammable(boolean lavaFlammable) {
             this.lavaFlammable = lavaFlammable;
@@ -122,6 +136,9 @@ public record Flammable(int catchChanceModifier, int destroyChanceModifier,
 
         /**
          * Sets {@code enabled}.
+         *
+         * @param enabled the value
+         * @return this builder
          */
         public @NonNull Builder enabled(@Nullable Boolean enabled) {
             this.enabled = enabled;
@@ -129,6 +146,9 @@ public record Flammable(int catchChanceModifier, int destroyChanceModifier,
         }
 
         /**
+         * Builds the value from the fields set and the defaults.
+         *
+         * @return the value
          * @throws IllegalStateException if a required field is not set
          * @throws IllegalArgumentException if a value is out of range
          */

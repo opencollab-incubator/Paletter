@@ -43,6 +43,8 @@ public record ThrowableItem(boolean doSwingAnimation, float launchPowerScale, fl
     }
 
     /**
+     * Creates a builder with every field at its default.
+     *
      * @return a builder with the defaults applied
      */
     public static @NonNull Builder builder() {
@@ -50,6 +52,8 @@ public record ThrowableItem(boolean doSwingAnimation, float launchPowerScale, fl
     }
 
     /**
+     * Creates a builder holding this value's fields, to change some of them.
+     *
      * @return a builder with this value's fields
      */
     public @NonNull Builder toBuilder() {
@@ -84,6 +88,9 @@ public record ThrowableItem(boolean doSwingAnimation, float launchPowerScale, fl
 
         /**
          * Sets {@code do_swing_animation}.
+         *
+         * @param doSwingAnimation the value
+         * @return this builder
          */
         public @NonNull Builder doSwingAnimation(boolean doSwingAnimation) {
             this.doSwingAnimation = doSwingAnimation;
@@ -92,6 +99,9 @@ public record ThrowableItem(boolean doSwingAnimation, float launchPowerScale, fl
 
         /**
          * Sets {@code launch_power_scale}.
+         *
+         * @param launchPowerScale the value
+         * @return this builder
          */
         public @NonNull Builder launchPowerScale(float launchPowerScale) {
             this.launchPowerScale = launchPowerScale;
@@ -100,6 +110,9 @@ public record ThrowableItem(boolean doSwingAnimation, float launchPowerScale, fl
 
         /**
          * Sets {@code max_draw_duration}.
+         *
+         * @param maxDrawDuration the value
+         * @return this builder
          */
         public @NonNull Builder maxDrawDuration(float maxDrawDuration) {
             this.maxDrawDuration = maxDrawDuration;
@@ -108,6 +121,9 @@ public record ThrowableItem(boolean doSwingAnimation, float launchPowerScale, fl
 
         /**
          * Sets {@code max_launch_power}.
+         *
+         * @param maxLaunchPower the value
+         * @return this builder
          */
         public @NonNull Builder maxLaunchPower(float maxLaunchPower) {
             this.maxLaunchPower = maxLaunchPower;
@@ -116,6 +132,9 @@ public record ThrowableItem(boolean doSwingAnimation, float launchPowerScale, fl
 
         /**
          * Sets {@code min_draw_duration}.
+         *
+         * @param minDrawDuration the value
+         * @return this builder
          */
         public @NonNull Builder minDrawDuration(float minDrawDuration) {
             this.minDrawDuration = minDrawDuration;
@@ -124,6 +143,9 @@ public record ThrowableItem(boolean doSwingAnimation, float launchPowerScale, fl
 
         /**
          * Sets {@code scale_power_by_draw_duration}.
+         *
+         * @param scalePowerByDrawDuration the value
+         * @return this builder
          */
         public @NonNull Builder scalePowerByDrawDuration(boolean scalePowerByDrawDuration) {
             this.scalePowerByDrawDuration = scalePowerByDrawDuration;
@@ -131,6 +153,9 @@ public record ThrowableItem(boolean doSwingAnimation, float launchPowerScale, fl
         }
 
         /**
+         * Builds the value from the fields set and the defaults.
+         *
+         * @return the value
          * @throws IllegalStateException if a required field is not set
          * @throws IllegalArgumentException if a value is out of range
          */

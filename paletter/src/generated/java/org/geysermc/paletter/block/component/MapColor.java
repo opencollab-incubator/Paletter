@@ -34,6 +34,12 @@ public record MapColor(@NonNull String color,
      */
     public static final String NAME = "minecraft:map_color";
 
+    /**
+     * Checks the components and copies lists and maps, so the value is immutable.
+     *
+     * @throws NullPointerException if a required component is null
+     * @throws IllegalArgumentException if a component is out of its documented range or conflicts with another
+     */
     public MapColor {
         Objects.requireNonNull(color, "MapColor.color");
     }
@@ -44,6 +50,8 @@ public record MapColor(@NonNull String color,
     }
 
     /**
+     * Creates a builder with every field at its default.
+     *
      * @return a builder with the defaults applied
      */
     public static @NonNull Builder builder() {
@@ -51,6 +59,8 @@ public record MapColor(@NonNull String color,
     }
 
     /**
+     * Creates a builder holding this value's fields, to change some of them.
+     *
      * @return a builder with this value's fields
      */
     public @NonNull Builder toBuilder() {
@@ -73,6 +83,9 @@ public record MapColor(@NonNull String color,
 
         /**
          * Sets {@code color}.
+         *
+         * @param color the value
+         * @return this builder
          */
         public @NonNull Builder color(@NonNull String color) {
             this.color = color;
@@ -81,6 +94,9 @@ public record MapColor(@NonNull String color,
 
         /**
          * Sets {@code tint_method}.
+         *
+         * @param tintMethod the value
+         * @return this builder
          */
         public @NonNull Builder tintMethod(@Nullable String tintMethod) {
             this.tintMethod = tintMethod;
@@ -88,6 +104,9 @@ public record MapColor(@NonNull String color,
         }
 
         /**
+         * Builds the value from the fields set and the defaults.
+         *
+         * @return the value
          * @throws IllegalStateException if a required field is not set
          * @throws IllegalArgumentException if a value is out of range
          */

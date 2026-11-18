@@ -15,7 +15,9 @@ import org.checkerframework.checker.nullness.qual.NonNull;
  */
 public sealed interface BlockComponent permits Glow, Hidden, Slab, WireOnlyBlockComponent {
     /**
-     * @return the component name in add-on JSON, e.g. {@code minecraft:durability}
+     * Returns the component name in add-on JSON.
+     *
+     * @return the name, e.g. {@code minecraft:durability}
      */
     @NonNull String name();
 }

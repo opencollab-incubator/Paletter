@@ -80,6 +80,12 @@ public record Geometry(@BedrockFormat("1.19.80") @Nullable Map<String, String> b
      */
     public static final String NAME = "minecraft:geometry";
 
+    /**
+     * Checks the components and copies lists and maps, so the value is immutable.
+     *
+     * @throws NullPointerException if a required component is null
+     * @throws IllegalArgumentException if a component is out of its documented range or conflicts with another
+     */
     public Geometry {
         boneVisibility = boneVisibility == null ? null : Check.copy(boneVisibility, "Geometry.boneVisibility");
         Check.conflict("Geometry", "boneVisibility", boneVisibility != null && !boneVisibility.isEmpty(), "identifier", identifier, "minecraft:geometry.full_block");
@@ -96,6 +102,7 @@ public record Geometry(@BedrockFormat("1.19.80") @Nullable Map<String, String> b
     /**
      * The string shorthand: sets {@code identifier}.
      *
+     * @param value the value of that field
      * @return the value with everything else at its default
      */
     public static @NonNull Geometry of(@NonNull String value) {
@@ -103,6 +110,8 @@ public record Geometry(@BedrockFormat("1.19.80") @Nullable Map<String, String> b
     }
 
     /**
+     * Creates a builder with every field at its default.
+     *
      * @return a builder with the defaults applied
      */
     public static @NonNull Builder builder() {
@@ -110,6 +119,8 @@ public record Geometry(@BedrockFormat("1.19.80") @Nullable Map<String, String> b
     }
 
     /**
+     * Creates a builder holding this value's fields, to change some of them.
+     *
      * @return a builder with this value's fields
      */
     public @NonNull Builder toBuilder() {
@@ -147,6 +158,9 @@ public record Geometry(@BedrockFormat("1.19.80") @Nullable Map<String, String> b
 
         /**
          * Sets {@code bone_visibility}.
+         *
+         * @param boneVisibility the value
+         * @return this builder
          */
         public @NonNull Builder boneVisibility(@Nullable Map<String, String> boneVisibility) {
             this.boneVisibility = boneVisibility;
@@ -155,6 +169,9 @@ public record Geometry(@BedrockFormat("1.19.80") @Nullable Map<String, String> b
 
         /**
          * Sets {@code culling}.
+         *
+         * @param culling the value
+         * @return this builder
          */
         public @NonNull Builder culling(@Nullable String culling) {
             this.culling = culling;
@@ -163,6 +180,9 @@ public record Geometry(@BedrockFormat("1.19.80") @Nullable Map<String, String> b
 
         /**
          * Sets {@code culling_layer}.
+         *
+         * @param cullingLayer the value
+         * @return this builder
          */
         public @NonNull Builder cullingLayer(@NonNull String cullingLayer) {
             this.cullingLayer = cullingLayer;
@@ -171,6 +191,9 @@ public record Geometry(@BedrockFormat("1.19.80") @Nullable Map<String, String> b
 
         /**
          * Sets {@code culling_shape}.
+         *
+         * @param cullingShape the value
+         * @return this builder
          */
         public @NonNull Builder cullingShape(@NonNull String cullingShape) {
             this.cullingShape = cullingShape;
@@ -179,6 +202,9 @@ public record Geometry(@BedrockFormat("1.19.80") @Nullable Map<String, String> b
 
         /**
          * Sets {@code identifier}.
+         *
+         * @param identifier the value
+         * @return this builder
          */
         public @NonNull Builder identifier(@NonNull String identifier) {
             this.identifier = identifier;
@@ -187,6 +213,9 @@ public record Geometry(@BedrockFormat("1.19.80") @Nullable Map<String, String> b
 
         /**
          * Sets {@code n_way_visual_rotation}.
+         *
+         * @param nWayVisualRotation the value
+         * @return this builder
          */
         public @NonNull Builder nWayVisualRotation(
                 @Nullable NWayVisualRotation nWayVisualRotation) {
@@ -196,6 +225,9 @@ public record Geometry(@BedrockFormat("1.19.80") @Nullable Map<String, String> b
 
         /**
          * Sets {@code uv_lock}.
+         *
+         * @param uvLock the value
+         * @return this builder
          */
         public @NonNull Builder uvLock(@Nullable UvLock uvLock) {
             this.uvLock = uvLock;
@@ -204,6 +236,9 @@ public record Geometry(@BedrockFormat("1.19.80") @Nullable Map<String, String> b
 
         /**
          * Sets {@code uv_lock} to the names of the bones to lock.
+         *
+         * @param uvLock the value
+         * @return this builder
          */
         public @NonNull Builder uvLock(@NonNull List<String> uvLock) {
             return uvLock(UvLock.bones(uvLock));
@@ -211,6 +246,10 @@ public record Geometry(@BedrockFormat("1.19.80") @Nullable Map<String, String> b
 
         /**
          * Sets {@code uv_lock} to the names of the bones to lock (at least one value).
+         *
+         * @param first the first value
+         * @param rest the other values
+         * @return this builder
          */
         public @NonNull Builder uvLock(@NonNull String first, @NonNull String... rest) {
             List<String> values = new ArrayList<>();
@@ -223,12 +262,18 @@ public record Geometry(@BedrockFormat("1.19.80") @Nullable Map<String, String> b
 
         /**
          * Sets {@code uv_lock} to one flag for every bone.
+         *
+         * @param uvLock the value
+         * @return this builder
          */
         public @NonNull Builder uvLock(boolean uvLock) {
             return uvLock(UvLock.flag(uvLock));
         }
 
         /**
+         * Builds the value from the fields set and the defaults.
+         *
+         * @return the value
          * @throws IllegalStateException if a required field is not set
          * @throws IllegalArgumentException if a value is out of range
          */
@@ -255,6 +300,8 @@ public record Geometry(@BedrockFormat("1.19.80") @Nullable Map<String, String> b
      */
     public record NWayVisualRotation(@Nullable String x, @Nullable String y, @Nullable String z) {
         /**
+         * Creates a builder with every field at its default.
+         *
          * @return a builder with the defaults applied
          */
         public static @NonNull Builder builder() {
@@ -262,6 +309,8 @@ public record Geometry(@BedrockFormat("1.19.80") @Nullable Map<String, String> b
         }
 
         /**
+         * Creates a builder holding this value's fields, to change some of them.
+         *
          * @return a builder with this value's fields
          */
         public @NonNull Builder toBuilder() {
@@ -287,6 +336,9 @@ public record Geometry(@BedrockFormat("1.19.80") @Nullable Map<String, String> b
 
             /**
              * Sets {@code x}.
+             *
+             * @param x the value
+             * @return this builder
              */
             public @NonNull Builder x(@Nullable String x) {
                 this.x = x;
@@ -295,6 +347,9 @@ public record Geometry(@BedrockFormat("1.19.80") @Nullable Map<String, String> b
 
             /**
              * Sets {@code y}.
+             *
+             * @param y the value
+             * @return this builder
              */
             public @NonNull Builder y(@Nullable String y) {
                 this.y = y;
@@ -303,6 +358,9 @@ public record Geometry(@BedrockFormat("1.19.80") @Nullable Map<String, String> b
 
             /**
              * Sets {@code z}.
+             *
+             * @param z the value
+             * @return this builder
              */
             public @NonNull Builder z(@Nullable String z) {
                 this.z = z;
@@ -310,6 +368,9 @@ public record Geometry(@BedrockFormat("1.19.80") @Nullable Map<String, String> b
             }
 
             /**
+             * Builds the value from the fields set and the defaults.
+             *
+             * @return the value
              * @throws IllegalStateException if a required field is not set
              * @throws IllegalArgumentException if a value is out of range
              */

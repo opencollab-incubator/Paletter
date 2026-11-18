@@ -27,6 +27,12 @@ public record LiquidDetection(
      */
     public static final String NAME = "minecraft:liquid_detection";
 
+    /**
+     * Checks the components and copies lists and maps, so the value is immutable.
+     *
+     * @throws NullPointerException if a required component is null
+     * @throws IllegalArgumentException if a component is out of its documented range or conflicts with another
+     */
     public LiquidDetection {
         detectionRules = List.copyOf(Objects.requireNonNull(detectionRules, "LiquidDetection.detectionRules"));
     }
@@ -37,6 +43,8 @@ public record LiquidDetection(
     }
 
     /**
+     * Creates a builder with every field at its default.
+     *
      * @return a builder with the defaults applied
      */
     public static @NonNull Builder builder() {
@@ -44,6 +52,8 @@ public record LiquidDetection(
     }
 
     /**
+     * Creates a builder holding this value's fields, to change some of them.
+     *
      * @return a builder with this value's fields
      */
     public @NonNull Builder toBuilder() {
@@ -63,6 +73,9 @@ public record LiquidDetection(
 
         /**
          * Sets {@code detection_rules}.
+         *
+         * @param detectionRules the value
+         * @return this builder
          */
         public @NonNull Builder detectionRules(@NonNull List<DetectionRules> detectionRules) {
             this.detectionRules = detectionRules;
@@ -71,12 +84,18 @@ public record LiquidDetection(
 
         /**
          * Sets {@code detection_rules}.
+         *
+         * @param detectionRules the value
+         * @return this builder
          */
         public @NonNull Builder detectionRules(@NonNull DetectionRules... detectionRules) {
             return detectionRules(List.of(detectionRules));
         }
 
         /**
+         * Builds the value from the fields set and the defaults.
+         *
+         * @return the value
          * @throws IllegalStateException if a required field is not set
          * @throws IllegalArgumentException if a value is out of range
          */
@@ -122,6 +141,12 @@ public record LiquidDetection(
             @NonNull OnLiquidTouches onLiquidTouches,
             @NonNull List<String> stopsLiquidFlowingFromDirection,
             @BedrockFormat("1.26.0") boolean useLiquidClipping) {
+        /**
+         * Checks the components and copies lists and maps, so the value is immutable.
+         *
+         * @throws NullPointerException if a required component is null
+         * @throws IllegalArgumentException if a component is out of its documented range or conflicts with another
+         */
         public DetectionRules {
             Objects.requireNonNull(liquidType, "LiquidDetection.DetectionRules.liquidType");
             Objects.requireNonNull(onLiquidTouches, "LiquidDetection.DetectionRules.onLiquidTouches");
@@ -129,6 +154,8 @@ public record LiquidDetection(
         }
 
         /**
+         * Creates a builder with every field at its default.
+         *
          * @return a builder with the defaults applied
          */
         public static @NonNull Builder builder() {
@@ -136,6 +163,8 @@ public record LiquidDetection(
         }
 
         /**
+         * Creates a builder holding this value's fields, to change some of them.
+         *
          * @return a builder with this value's fields
          */
         public @NonNull Builder toBuilder() {
@@ -167,6 +196,9 @@ public record LiquidDetection(
 
             /**
              * Sets {@code can_contain_liquid}.
+             *
+             * @param canContainLiquid the value
+             * @return this builder
              */
             public @NonNull Builder canContainLiquid(boolean canContainLiquid) {
                 this.canContainLiquid = canContainLiquid;
@@ -175,6 +207,9 @@ public record LiquidDetection(
 
             /**
              * Sets {@code liquid_type}.
+             *
+             * @param liquidType the value
+             * @return this builder
              */
             public @NonNull Builder liquidType(@NonNull LiquidType liquidType) {
                 this.liquidType = liquidType;
@@ -183,6 +218,9 @@ public record LiquidDetection(
 
             /**
              * Sets {@code on_liquid_touches}.
+             *
+             * @param onLiquidTouches the value
+             * @return this builder
              */
             public @NonNull Builder onLiquidTouches(@NonNull OnLiquidTouches onLiquidTouches) {
                 this.onLiquidTouches = onLiquidTouches;
@@ -191,6 +229,9 @@ public record LiquidDetection(
 
             /**
              * Sets {@code stops_liquid_flowing_from_direction}.
+             *
+             * @param stopsLiquidFlowingFromDirection the value
+             * @return this builder
              */
             public @NonNull Builder stopsLiquidFlowingFromDirection(
                     @NonNull List<String> stopsLiquidFlowingFromDirection) {
@@ -200,6 +241,9 @@ public record LiquidDetection(
 
             /**
              * Sets {@code stops_liquid_flowing_from_direction}.
+             *
+             * @param stopsLiquidFlowingFromDirection the value
+             * @return this builder
              */
             public @NonNull Builder stopsLiquidFlowingFromDirection(
                     @NonNull String... stopsLiquidFlowingFromDirection) {
@@ -208,6 +252,9 @@ public record LiquidDetection(
 
             /**
              * Sets {@code use_liquid_clipping}.
+             *
+             * @param useLiquidClipping the value
+             * @return this builder
              */
             public @NonNull Builder useLiquidClipping(boolean useLiquidClipping) {
                 this.useLiquidClipping = useLiquidClipping;
@@ -215,6 +262,9 @@ public record LiquidDetection(
             }
 
             /**
+             * Builds the value from the fields set and the defaults.
+             *
+             * @return the value
              * @throws IllegalStateException if a required field is not set
              * @throws IllegalArgumentException if a value is out of range
              */
@@ -240,6 +290,8 @@ public record LiquidDetection(
         }
 
         /**
+         * Returns the value in add-on JSON.
+         *
          * @return the value in add-on JSON
          */
         public @NonNull String value() {
@@ -247,7 +299,10 @@ public record LiquidDetection(
         }
 
         /**
-         * @return the constant of an add-on JSON value
+         * Finds the constant of an add-on JSON value.
+         *
+         * @param value the value in add-on JSON
+         * @return the constant of the value
          * @throws IllegalArgumentException if the value is not documented
          */
         public static @NonNull LiquidType fromValue(@NonNull String value) {
@@ -291,6 +346,8 @@ public record LiquidDetection(
         }
 
         /**
+         * Returns the value in add-on JSON.
+         *
          * @return the value in add-on JSON
          */
         public @NonNull String value() {
@@ -298,7 +355,10 @@ public record LiquidDetection(
         }
 
         /**
-         * @return the constant of an add-on JSON value
+         * Finds the constant of an add-on JSON value.
+         *
+         * @param value the value in add-on JSON
+         * @return the constant of the value
          * @throws IllegalArgumentException if the value is not documented
          */
         public static @NonNull OnLiquidTouches fromValue(@NonNull String value) {
