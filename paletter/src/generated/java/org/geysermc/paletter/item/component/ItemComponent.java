@@ -27,7 +27,9 @@ import org.checkerframework.checker.nullness.qual.NonNull;
  */
 public sealed interface ItemComponent permits AllowOffHand, BlockPlacer, BundleInteraction, CanDestroyInCreative, Compostable, Cooldown, Damage, DamageAbsorption, Digger, Durability, DurabilitySensor, Dyeable, Enchantable, EntityPlacer, FireResistant, Food, Fuel, Glint, HandEquipped, HoverTextColor, Icon, InteractButton, ItemDisplayName, KineticWeapon, LiquidClipped, MaxStackSize, MusicRecord, PiercingWeapon, Projectile, Rarity, Repairable, Shooter, ShouldDespawn, StackedByData, StorageItem, StorageWeightLimit, StorageWeightModifier, SwingDuration, SwingSounds, Tags, ThrowableItem, UseAnimation, UseDuration, UseModifiers, Wearable, WireOnlyItemComponent {
     /**
-     * @return the component name in add-on JSON, e.g. {@code minecraft:durability}
+     * Returns the component name in add-on JSON.
+     *
+     * @return the name, e.g. {@code minecraft:durability}
      */
     @NonNull String name();
 }

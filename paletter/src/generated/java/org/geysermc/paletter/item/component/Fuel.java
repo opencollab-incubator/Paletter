@@ -25,6 +25,12 @@ public record Fuel(@Nullable Float duration) implements ItemComponent {
      */
     public static final String NAME = "minecraft:fuel";
 
+    /**
+     * Checks the components and copies lists and maps, so the value is immutable.
+     *
+     * @throws NullPointerException if a required component is null
+     * @throws IllegalArgumentException if a component is out of its documented range or conflicts with another
+     */
     public Fuel {
         if (duration != null) {
             Check.range("Fuel.duration", duration, 0.05, null);
@@ -39,6 +45,7 @@ public record Fuel(@Nullable Float duration) implements ItemComponent {
     /**
      * The number shorthand: sets {@code duration}.
      *
+     * @param value the value of that field
      * @return the value with everything else at its default
      */
     public static @NonNull Fuel of(float value) {
@@ -46,6 +53,8 @@ public record Fuel(@Nullable Float duration) implements ItemComponent {
     }
 
     /**
+     * Creates a builder with every field at its default.
+     *
      * @return a builder with the defaults applied
      */
     public static @NonNull Builder builder() {
@@ -53,6 +62,8 @@ public record Fuel(@Nullable Float duration) implements ItemComponent {
     }
 
     /**
+     * Creates a builder holding this value's fields, to change some of them.
+     *
      * @return a builder with this value's fields
      */
     public @NonNull Builder toBuilder() {
@@ -72,6 +83,9 @@ public record Fuel(@Nullable Float duration) implements ItemComponent {
 
         /**
          * Sets {@code duration}.
+         *
+         * @param duration the value
+         * @return this builder
          */
         public @NonNull Builder duration(@Nullable Float duration) {
             this.duration = duration;
@@ -79,6 +93,9 @@ public record Fuel(@Nullable Float duration) implements ItemComponent {
         }
 
         /**
+         * Builds the value from the fields set and the defaults.
+         *
+         * @return the value
          * @throws IllegalStateException if a required field is not set
          * @throws IllegalArgumentException if a value is out of range
          */

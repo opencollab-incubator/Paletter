@@ -21,6 +21,9 @@ import org.checkerframework.checker.nullness.qual.NonNull;
  */
 public sealed interface RepairAmount permits RepairAmount.Expression, RepairAmount.Fixed {
     /**
+     * Creates the form that is a Molang expression for the amount.
+     *
+     * @param value a Molang expression for the amount
      * @return the form that is a Molang expression for the amount
      */
     static @NonNull RepairAmount expression(@NonNull String value) {
@@ -28,6 +31,9 @@ public sealed interface RepairAmount permits RepairAmount.Expression, RepairAmou
     }
 
     /**
+     * Creates the form that is a fixed amount of durability.
+     *
+     * @param value a fixed amount of durability
      * @return the form that is a fixed amount of durability
      */
     static @NonNull RepairAmount fixed(float value) {
@@ -40,6 +46,12 @@ public sealed interface RepairAmount permits RepairAmount.Expression, RepairAmou
      * @param value a Molang expression for the amount
      */
     record Expression(@NonNull String value) implements RepairAmount {
+        /**
+         * Checks the value and copies a list or map, so the form is immutable.
+         *
+         * @param value the value of the form
+         * @throws NullPointerException if the value is null
+         */
         public Expression {
             Objects.requireNonNull(value, "RepairAmount.Expression.value");
         }

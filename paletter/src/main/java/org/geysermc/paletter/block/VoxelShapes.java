@@ -32,6 +32,8 @@ public final class VoxelShapes {
     private final int customShapeCount;
 
     /**
+     * Internal: creates the shapes of a palette, done by the palette compiler.
+     *
      * @param shapes the shapes; the position of a shape is its id
      * @param names name to id, in the order Bedrock sends the names
      * @param customShapeCount how many shapes the palette has more than vanilla
@@ -44,6 +46,8 @@ public final class VoxelShapes {
     }
 
     /**
+     * The names of the shapes.
+     *
      * @return the names of the shapes that have one ({@code minecraft:unit_cube}, {@code minecraft:anvil}, the custom
      * identifiers), in the order Bedrock sends them
      */
@@ -52,6 +56,9 @@ public final class VoxelShapes {
     }
 
     /**
+     * Looks a shape up by name.
+     *
+     * @param name the shape name, e.g. {@code minecraft:unit_cube}
      * @return the shape with this name, or null if there is none
      */
     public @Nullable VoxelShape get(@NonNull String name) {
@@ -60,6 +67,8 @@ public final class VoxelShapes {
     }
 
     /**
+     * The number of shapes.
+     *
      * @return the number of shapes, named or not
      */
     public int size() {
@@ -67,6 +76,8 @@ public final class VoxelShapes {
     }
 
     /**
+     * Internal: builds the packet of these shapes.
+     *
      * @return the packet to send a client before start game, identical to the one BDS sends for the same content
      */
     @Internal

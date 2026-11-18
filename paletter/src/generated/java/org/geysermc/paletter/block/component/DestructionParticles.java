@@ -30,6 +30,12 @@ public record DestructionParticles(int particleCount, @Nullable String texture,
      */
     public static final String NAME = "minecraft:destruction_particles";
 
+    /**
+     * Checks the components and copies lists and maps, so the value is immutable.
+     *
+     * @throws NullPointerException if a required component is null
+     * @throws IllegalArgumentException if a component is out of its documented range or conflicts with another
+     */
     public DestructionParticles {
         Objects.requireNonNull(tintMethod, "DestructionParticles.tintMethod");
     }
@@ -40,6 +46,8 @@ public record DestructionParticles(int particleCount, @Nullable String texture,
     }
 
     /**
+     * Creates a builder with every field at its default.
+     *
      * @return a builder with the defaults applied
      */
     public static @NonNull Builder builder() {
@@ -47,6 +55,8 @@ public record DestructionParticles(int particleCount, @Nullable String texture,
     }
 
     /**
+     * Creates a builder holding this value's fields, to change some of them.
+     *
      * @return a builder with this value's fields
      */
     public @NonNull Builder toBuilder() {
@@ -72,6 +82,9 @@ public record DestructionParticles(int particleCount, @Nullable String texture,
 
         /**
          * Sets {@code particle_count}.
+         *
+         * @param particleCount the value
+         * @return this builder
          */
         public @NonNull Builder particleCount(int particleCount) {
             this.particleCount = particleCount;
@@ -80,6 +93,9 @@ public record DestructionParticles(int particleCount, @Nullable String texture,
 
         /**
          * Sets {@code texture}.
+         *
+         * @param texture the value
+         * @return this builder
          */
         public @NonNull Builder texture(@Nullable String texture) {
             this.texture = texture;
@@ -88,6 +104,9 @@ public record DestructionParticles(int particleCount, @Nullable String texture,
 
         /**
          * Sets {@code tint_method}.
+         *
+         * @param tintMethod the value
+         * @return this builder
          */
         public @NonNull Builder tintMethod(@NonNull TintMethod tintMethod) {
             this.tintMethod = tintMethod;
@@ -95,6 +114,9 @@ public record DestructionParticles(int particleCount, @Nullable String texture,
         }
 
         /**
+         * Builds the value from the fields set and the defaults.
+         *
+         * @return the value
          * @throws IllegalStateException if a required field is not set
          * @throws IllegalArgumentException if a value is out of range
          */
@@ -149,6 +171,8 @@ public record DestructionParticles(int particleCount, @Nullable String texture,
         }
 
         /**
+         * Returns the value in add-on JSON.
+         *
          * @return the value in add-on JSON
          */
         public @NonNull String value() {
@@ -156,7 +180,10 @@ public record DestructionParticles(int particleCount, @Nullable String texture,
         }
 
         /**
-         * @return the constant of an add-on JSON value
+         * Finds the constant of an add-on JSON value.
+         *
+         * @param value the value in add-on JSON
+         * @return the constant of the value
          * @throws IllegalArgumentException if the value is not documented
          */
         public static @NonNull TintMethod fromValue(@NonNull String value) {

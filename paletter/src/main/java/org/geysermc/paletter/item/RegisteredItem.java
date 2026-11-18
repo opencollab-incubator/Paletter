@@ -75,6 +75,8 @@ public final class RegisteredItem implements ItemDefinition {
     }
 
     /**
+     * Tells where the item comes from.
+     *
      * @return where this item comes from: vanilla, or the id of the layer that added it (an override keeps the origin
      * of the item it changes)
      */
@@ -83,6 +85,8 @@ public final class RegisteredItem implements ItemDefinition {
     }
 
     /**
+     * Returns the key of the item.
+     *
      * @return the key of this item: the vanilla constant, or for a custom item or block item the type the
      *         {@link CustomItem} or {@link org.geysermc.paletter.block.CustomBlock} owns ({@link CustomItem#type()},
      *         {@link org.geysermc.paletter.block.CustomBlock#itemType()})
@@ -97,6 +101,8 @@ public final class RegisteredItem implements ItemDefinition {
     }
 
     /**
+     * Returns the components layers gave the item.
+     *
      * @return the components this item was given by a layer: those of a custom item, or the ones overrides set on top.
      * Empty for vanilla items that nothing overrides
      */
@@ -105,6 +111,8 @@ public final class RegisteredItem implements ItemDefinition {
     }
 
     /**
+     * Returns the properties of the item.
+     *
      * @return the properties of this item: its component data split the way the bundled property store names them
      * ({@code component:}, {@code wire:}). For a vanilla item that is what the store holds for the palette's version;
      * for a custom item or an overridden one it reflects the components the layers set
@@ -118,6 +126,8 @@ public final class RegisteredItem implements ItemDefinition {
     }
 
     /**
+     * Returns the custom item the definition was registered from.
+     *
      * @return the custom item this was registered from, or null for vanilla items and items of custom blocks
      */
     public @Nullable CustomItem customItem() {
@@ -125,6 +135,8 @@ public final class RegisteredItem implements ItemDefinition {
     }
 
     /**
+     * Tells whether a layer added the item.
+     *
      * @return true if this item was added by a layer rather than being vanilla
      */
     public boolean isCustom() {

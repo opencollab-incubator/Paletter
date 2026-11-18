@@ -78,6 +78,9 @@ public final class BedrockStates {
     }
 
     /**
+     * Finds a state constant by its name.
+     *
+     * @param name the state name, e.g. {@code weirdo_direction}
      * @return the constant of a vanilla state name, or null if there is none
      */
     public static @Nullable BedrockState<?> byName(@NonNull String name) {

@@ -26,6 +26,12 @@ public record BlockDisplayName(@NonNull String value) implements BlockComponent 
      */
     public static final String NAME = "minecraft:display_name";
 
+    /**
+     * Checks the components and copies lists and maps, so the value is immutable.
+     *
+     * @throws NullPointerException if a required component is null
+     * @throws IllegalArgumentException if a component is out of its documented range or conflicts with another
+     */
     public BlockDisplayName {
         Objects.requireNonNull(value, "BlockDisplayName.value");
     }
@@ -38,6 +44,7 @@ public record BlockDisplayName(@NonNull String value) implements BlockComponent 
     /**
      * The string shorthand: sets {@code value}.
      *
+     * @param value the value of that field
      * @return the value with everything else at its default
      */
     public static @NonNull BlockDisplayName of(@NonNull String value) {
@@ -45,6 +52,8 @@ public record BlockDisplayName(@NonNull String value) implements BlockComponent 
     }
 
     /**
+     * Creates a builder with every field at its default.
+     *
      * @return a builder with the defaults applied
      */
     public static @NonNull Builder builder() {
@@ -52,6 +61,8 @@ public record BlockDisplayName(@NonNull String value) implements BlockComponent 
     }
 
     /**
+     * Creates a builder holding this value's fields, to change some of them.
+     *
      * @return a builder with this value's fields
      */
     public @NonNull Builder toBuilder() {
@@ -71,6 +82,9 @@ public record BlockDisplayName(@NonNull String value) implements BlockComponent 
 
         /**
          * Sets {@code value}.
+         *
+         * @param value the value
+         * @return this builder
          */
         public @NonNull Builder value(@NonNull String value) {
             this.value = value;
@@ -78,6 +92,9 @@ public record BlockDisplayName(@NonNull String value) implements BlockComponent 
         }
 
         /**
+         * Builds the value from the fields set and the defaults.
+         *
+         * @return the value
          * @throws IllegalStateException if a required field is not set
          * @throws IllegalArgumentException if a value is out of range
          */

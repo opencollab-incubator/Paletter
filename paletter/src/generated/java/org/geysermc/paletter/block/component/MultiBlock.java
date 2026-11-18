@@ -39,6 +39,12 @@ public record MultiBlock(@NonNull List<MultiBlock.EnabledStates> enabledStates, 
      */
     public static final String NAME = "minecraft:multi_block";
 
+    /**
+     * Checks the components and copies lists and maps, so the value is immutable.
+     *
+     * @throws NullPointerException if a required component is null
+     * @throws IllegalArgumentException if a component is out of its documented range or conflicts with another
+     */
     public MultiBlock {
         enabledStates = List.copyOf(Objects.requireNonNull(enabledStates, "MultiBlock.enabledStates"));
         Check.range("MultiBlock.parts", parts, 2.0, 4.0);
@@ -52,6 +58,8 @@ public record MultiBlock(@NonNull List<MultiBlock.EnabledStates> enabledStates, 
     }
 
     /**
+     * Creates a builder with every field at its default.
+     *
      * @return a builder with the defaults applied
      */
     public static @NonNull Builder builder() {
@@ -59,6 +67,8 @@ public record MultiBlock(@NonNull List<MultiBlock.EnabledStates> enabledStates, 
     }
 
     /**
+     * Creates a builder holding this value's fields, to change some of them.
+     *
      * @return a builder with this value's fields
      */
     public @NonNull Builder toBuilder() {
@@ -84,6 +94,9 @@ public record MultiBlock(@NonNull List<MultiBlock.EnabledStates> enabledStates, 
 
         /**
          * Sets {@code enabled_states}.
+         *
+         * @param enabledStates the value
+         * @return this builder
          */
         public @NonNull Builder enabledStates(@NonNull List<EnabledStates> enabledStates) {
             this.enabledStates = enabledStates;
@@ -92,6 +105,9 @@ public record MultiBlock(@NonNull List<MultiBlock.EnabledStates> enabledStates, 
 
         /**
          * Sets {@code enabled_states}.
+         *
+         * @param enabledStates the value
+         * @return this builder
          */
         public @NonNull Builder enabledStates(@NonNull EnabledStates... enabledStates) {
             return enabledStates(List.of(enabledStates));
@@ -99,6 +115,9 @@ public record MultiBlock(@NonNull List<MultiBlock.EnabledStates> enabledStates, 
 
         /**
          * Sets {@code parts}.
+         *
+         * @param parts the value
+         * @return this builder
          */
         public @NonNull Builder parts(int parts) {
             this.parts = parts;
@@ -107,6 +126,9 @@ public record MultiBlock(@NonNull List<MultiBlock.EnabledStates> enabledStates, 
 
         /**
          * Sets {@code direction}.
+         *
+         * @param direction the value
+         * @return this builder
          */
         public @NonNull Builder direction(@NonNull MultiBlockDirection direction) {
             this.direction = direction;
@@ -114,6 +136,9 @@ public record MultiBlock(@NonNull List<MultiBlock.EnabledStates> enabledStates, 
         }
 
         /**
+         * Builds the value from the fields set and the defaults.
+         *
+         * @return the value
          * @throws IllegalStateException if a required field is not set
          * @throws IllegalArgumentException if a value is out of range
          */
@@ -144,6 +169,8 @@ public record MultiBlock(@NonNull List<MultiBlock.EnabledStates> enabledStates, 
         }
 
         /**
+         * Returns the value in add-on JSON.
+         *
          * @return the value in add-on JSON
          */
         public @NonNull String value() {
@@ -151,7 +178,10 @@ public record MultiBlock(@NonNull List<MultiBlock.EnabledStates> enabledStates, 
         }
 
         /**
-         * @return the constant of an add-on JSON value
+         * Finds the constant of an add-on JSON value.
+         *
+         * @param value the value in add-on JSON
+         * @return the constant of the value
          * @throws IllegalArgumentException if the value is not documented
          */
         public static @NonNull EnabledStates fromValue(@NonNull String value) {
@@ -205,6 +235,8 @@ public record MultiBlock(@NonNull List<MultiBlock.EnabledStates> enabledStates, 
         }
 
         /**
+         * Returns the value in add-on JSON.
+         *
          * @return the value in add-on JSON
          */
         public @NonNull String value() {
@@ -212,7 +244,10 @@ public record MultiBlock(@NonNull List<MultiBlock.EnabledStates> enabledStates, 
         }
 
         /**
-         * @return the constant of an add-on JSON value
+         * Finds the constant of an add-on JSON value.
+         *
+         * @param value the value in add-on JSON
+         * @return the constant of the value
          * @throws IllegalArgumentException if the value is not documented
          */
         public static @NonNull MultiBlockDirection fromValue(@NonNull String value) {

@@ -41,6 +41,16 @@ import java.util.function.Consumer;
  * it extends, so the per-session palette costs little and its definitions stay {@code ==} to the shared ones.
  * Canonical ids never change: custom content is appended. Block runtime ids are state hashes, so adding custom blocks
  * does not change the ids of other blocks.
+ * <p>
+ * Thread safety: a built layer is immutable and may be shared between threads and compiled by several palettes at once.
+ * Its {@link Builder} is not thread safe. The callbacks given to the builder ({@link Builder#creative(Consumer)},
+ * {@link Builder#overrideItem(String, Consumer)}) are called while a palette is compiled, once per compilation and data
+ * version, possibly from any thread; they must not depend on external mutable state.
+ * <p>
+ * Null handling: everything is {@code @NonNull} unless marked; the builder methods throw {@link NullPointerException} for
+ * null. Problems with the content (a duplicate identifier, a hash collision) are not found here but when a palette
+ * compiles the layer: {@link Paletter} throws {@link PaletteException}, {@link Palette#extend} reports them. Content is
+ * named by keys, custom items and blocks create their own (see {@link CustomItem}, {@link CustomBlock}).
  *
  * @since 1.0.0
  */
@@ -72,21 +82,39 @@ public final class PaletteLayer {
     }
 
     /**
+     * Starts a layer.
+     *
      * @param id a name for diagnostics, e.g. {@code geyser} or {@code session:Steve}
+     * @return a new builder
+     * @since 1.0.0
      */
     public static @NonNull Builder builder(@NonNull String id) {
         return new Builder(id);
     }
 
+    /**
+     * Returns the name this layer was given, which reports and error messages use.
+     *
+     * @return the id
+     * @since 1.0.0
+     */
     public @NonNull String id() {
         return id;
     }
 
+    /**
+     * Lists the custom items of this layer, not the items of custom blocks (see {@link #itemEntries()}).
+     *
+     * @return the custom items, in registration order, unmodifiable
+     * @since 1.0.0
+     */
     public @NonNull List<CustomItem> items() {
         return items;
     }
 
     /**
+     * Lists the items of this layer in registration order.
+     *
      * @return custom items and items of custom blocks registered with {@link Builder#blockItem}, in registration
      * order: the order their runtime and canonical ids are assigned in. Items of blocks registered with
      * {@link Builder#block} follow them
@@ -96,23 +124,49 @@ public final class PaletteLayer {
         return itemEntries;
     }
 
+    /**
+     * Lists the custom blocks of this layer.
+     *
+     * @return the custom blocks, in registration order, unmodifiable
+     * @since 1.0.0
+     */
     public @NonNull List<CustomBlock> blocks() {
         return blocks;
     }
 
+    /**
+     * Lists the vanilla item overrides of this layer (experimental, see {@link Builder#overrideItem(String, Consumer)}).
+     *
+     * @return the overrides, in registration order, unmodifiable
+     * @since 1.0.0
+     */
     public @NonNull List<Override> overrides() {
         return overrides;
     }
 
+    /**
+     * Lists the creative inventory edits of this layer, in registration order.
+     *
+     * @return the edits, unmodifiable
+     * @since 1.0.0
+     */
     public @NonNull List<BiConsumer<CreativeEditor, DataVersion>> creativeEdits() {
         return creativeEdits;
     }
 
+    /**
+     * Lists the item tags this layer defines.
+     *
+     * @return the identifiers of each tag, unmodifiable
+     * @since 1.0.0
+     */
     public @NonNull Map<String, List<String>> tags() {
         return tags;
     }
 
     /**
+     * Internal: the item variants this layer gives canonical ids to.
+     *
      * @return item variants this layer gives canonical ids to, besides its custom items
      */
     @Internal
@@ -121,6 +175,8 @@ public final class PaletteLayer {
     }
 
     /**
+     * Lists the voxel shapes this layer defines.
+     *
      * @return the voxel shapes this layer defines, by identifier, in the order they were registered
      * @since 1.0.0
      */
@@ -129,7 +185,10 @@ public final class PaletteLayer {
     }
 
     /**
+     * Tells whether compiling this layer changes block states.
+     *
      * @return true if compiling this layer changes block states, so the block palette cannot be shared
+     * @since 1.0.0
      */
     public boolean changesBlocks() {
         return !blocks.isEmpty();
@@ -140,6 +199,14 @@ public final class PaletteLayer {
         return "PaletteLayer{" + id + "}";
     }
 
+    /**
+     * A change to a vanilla item, registered with {@link Builder#overrideItem(String, Consumer)}. Experimental, and
+     * unverified on a client.
+     *
+     * @param identifier the identifier of the vanilla item
+     * @param modifier called with the override to configure while a palette is compiled
+     * @since 1.0.0
+     */
     public record Override(@NonNull String identifier, @NonNull Consumer<ItemOverride> modifier) {
     }
 
@@ -150,12 +217,17 @@ public final class PaletteLayer {
      */
     public sealed interface ItemEntry {
         /**
+         * A custom item.
+         *
+         * @param item the custom item
          * @since 1.0.0
          */
         record Custom(@NonNull CustomItem item) implements ItemEntry {
         }
 
         /**
+         * The item of a custom block.
+         *
          * @param block the identifier of a custom block of this layer or an earlier one
          * @param item how the item is registered
          * @param creative where it goes in the creative inventory, or null to leave it out
@@ -165,6 +237,12 @@ public final class PaletteLayer {
         }
     }
 
+    /**
+     * Collects the content of a {@link PaletteLayer}. Not thread safe; every method throws {@link NullPointerException} for
+     * a null argument unless the parameter is marked {@code @Nullable}, and returns this builder.
+     *
+     * @since 1.0.0
+     */
     public static final class Builder {
         private final String id;
         private final List<ItemEntry> itemEntries = new ArrayList<>();
@@ -179,6 +257,14 @@ public final class PaletteLayer {
             this.id = Objects.requireNonNull(id);
         }
 
+        /**
+         * Registers a custom item. Its runtime and canonical ids follow the order of {@code item} and
+         * {@link #blockItem} calls.
+         *
+         * @param item the custom item
+         * @return this builder
+         * @since 1.0.0
+         */
         public @NonNull Builder item(@NonNull CustomItem item) {
             itemEntries.add(new ItemEntry.Custom(Objects.requireNonNull(item)));
             return this;
@@ -189,6 +275,10 @@ public final class PaletteLayer {
          * layer (registered there with {@link CustomBlock.BlockItem#NONE}), or to order block items among custom items:
          * runtime and canonical ids are assigned in the order of {@link #item} and {@code blockItem} calls.
          *
+         * @param block the identifier of a custom block of this layer or an earlier one
+         * @param item how the item is registered
+         * @param creative where it goes in the creative inventory, or null to leave it out
+         * @return this builder
          * @since 1.0.0
          */
         public @NonNull Builder blockItem(@NonNull String block, CustomBlock.@NonNull BlockItem item, @Nullable CreativePlacement creative) {
@@ -196,6 +286,14 @@ public final class PaletteLayer {
             return this;
         }
 
+        /**
+         * Registers a custom block. Its item follows the block's {@link CustomBlock.BlockItem}; items of blocks come
+         * after the entries registered with {@link #item} and {@link #blockItem}.
+         *
+         * @param block the custom block
+         * @return this builder
+         * @since 1.0.0
+         */
         public @NonNull Builder block(@NonNull CustomBlock block) {
             blocks.add(Objects.requireNonNull(block));
             return this;
@@ -208,6 +306,12 @@ public final class PaletteLayer {
          * it accepted the feather at format 1.10 (as a legacy item) and rejected the stick at 1.26.60, and it rejected a
          * legacy bread at 1.16.100 (1.20 and up was never tried). Paletter refuses nothing. The client's behaviour for
          * Paletter's overrides is <b>unverified on a client</b> (no client test exists). The API may change.
+         *
+         * @param identifier the identifier of the vanilla item
+         * @param modifier called with the override to configure while a palette is compiled, once per version; it must
+         *                 not depend on external mutable state
+         * @return this builder
+         * @since 1.0.0
          */
         @Experimental
         public @NonNull Builder overrideItem(@NonNull String identifier, @NonNull Consumer<ItemOverride> modifier) {
@@ -219,6 +323,9 @@ public final class PaletteLayer {
          * Changes an existing item definition, like {@link #overrideItem(String, Consumer)}, with the same caveats:
          * experimental, and unverified on a client.
          *
+         * @param type the vanilla item type
+         * @param modifier called with the override to configure while a palette is compiled, once per version
+         * @return this builder
          * @since 1.0.0
          */
         @Experimental
@@ -229,6 +336,10 @@ public final class PaletteLayer {
         /**
          * Edits the creative inventory. Runs after this layer's custom items and blocks were placed, so it can
          * reference them.
+         *
+         * @param edit called with the editor while a palette is compiled, once per version
+         * @return this builder
+         * @since 1.0.0
          */
         public @NonNull Builder creative(@NonNull Consumer<CreativeEditor> edit) {
             Objects.requireNonNull(edit);
@@ -238,6 +349,10 @@ public final class PaletteLayer {
 
         /**
          * Edits the creative inventory depending on the data version, for the rare edit that only applies to some.
+         *
+         * @param edit called with the editor and the data version while a palette is compiled
+         * @return this builder
+         * @since 1.0.0
          */
         public @NonNull Builder creative(@NonNull BiConsumer<CreativeEditor, DataVersion> edit) {
             creativeEdits.add(Objects.requireNonNull(edit));
@@ -249,6 +364,9 @@ public final class PaletteLayer {
          * in the creative inventory, e.g. a damage value or block state a consumer maps to. Ids are appended after
          * the custom items of this layer, in call order; variants that already have one keep it. Like every canonical id
          * they are the same in every version.
+         *
+         * @param variant the variant
+         * @return this builder
          */
         @Internal
         public @NonNull Builder variant(@NonNull ItemVariant variant) {
@@ -261,18 +379,35 @@ public final class PaletteLayer {
          * neither an item's base variant nor in the creative inventory. A palette hands back a variant equal to this one,
          * not necessarily this object: compare it with {@code equals}.
          *
+         * @param key the item type or variant, as a key
+         * @return this builder
          * @since 1.0.0
          */
         public @NonNull Builder variant(@NonNull ItemKey key) {
             return variant(key.variant().toItemVariant());
         }
 
+        /**
+         * Internal: gives several variants canonical ids, as {@link #variant(ItemVariant)}.
+         *
+         * @param variants the variants
+         * @return this builder
+         */
         @Internal
         public @NonNull Builder variants(@NonNull Collection<ItemVariant> variants) {
             variants.forEach(this::variant);
             return this;
         }
 
+        /**
+         * Adds item identifiers to an item tag, creating the tag if it is new. Identifiers added in several calls
+         * accumulate.
+         *
+         * @param tag the tag, e.g. {@code my:gems}
+         * @param identifiers the identifiers of the items in the tag
+         * @return this builder
+         * @since 1.0.0
+         */
         public @NonNull Builder tag(@NonNull String tag, @NonNull String... identifiers) {
             tags.computeIfAbsent(tag, t -> new ArrayList<>()).addAll(List.of(identifiers));
             return this;
@@ -291,6 +426,8 @@ public final class PaletteLayer {
          *
          * @param identifier the name blocks use, e.g. {@code my:half_pipe}
          * @param shape the shape
+         * @return this builder
+         * @throws IllegalArgumentException if the identifier is refused (see above) or already defined in this layer
          * @since 1.0.0
          */
         public @NonNull Builder voxelShape(@NonNull String identifier, @NonNull VoxelShape shape) {
@@ -301,6 +438,13 @@ public final class PaletteLayer {
             return this;
         }
 
+        /**
+         * Creates the immutable layer. Nothing is checked against a data version yet: that happens when a palette
+         * compiles the layer.
+         *
+         * @return the layer
+         * @since 1.0.0
+         */
         public @NonNull PaletteLayer build() {
             return new PaletteLayer(this);
         }

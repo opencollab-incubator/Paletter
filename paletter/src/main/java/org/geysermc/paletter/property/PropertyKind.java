@@ -20,6 +20,8 @@ public enum PropertyKind {
     }
 
     /**
+     * The prefix of full names of this kind.
+     *
      * @return the prefix of {@link Property#fullName()}, including the colon
      */
     public @NonNull String prefix() {

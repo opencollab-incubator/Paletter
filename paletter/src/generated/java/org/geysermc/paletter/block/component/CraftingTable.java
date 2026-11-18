@@ -35,6 +35,12 @@ public record CraftingTable(@NonNull List<String> craftingTags,
      */
     public static final String NAME = "minecraft:crafting_table";
 
+    /**
+     * Checks the components and copies lists and maps, so the value is immutable.
+     *
+     * @throws NullPointerException if a required component is null
+     * @throws IllegalArgumentException if a component is out of its documented range or conflicts with another
+     */
     public CraftingTable {
         craftingTags = List.copyOf(Objects.requireNonNull(craftingTags, "CraftingTable.craftingTags"));
     }
@@ -45,6 +51,8 @@ public record CraftingTable(@NonNull List<String> craftingTags,
     }
 
     /**
+     * Creates a builder with every field at its default.
+     *
      * @return a builder with the defaults applied
      */
     public static @NonNull Builder builder() {
@@ -52,6 +60,8 @@ public record CraftingTable(@NonNull List<String> craftingTags,
     }
 
     /**
+     * Creates a builder holding this value's fields, to change some of them.
+     *
      * @return a builder with this value's fields
      */
     public @NonNull Builder toBuilder() {
@@ -74,6 +84,9 @@ public record CraftingTable(@NonNull List<String> craftingTags,
 
         /**
          * Sets {@code crafting_tags}.
+         *
+         * @param craftingTags the value
+         * @return this builder
          */
         public @NonNull Builder craftingTags(@NonNull List<String> craftingTags) {
             this.craftingTags = craftingTags;
@@ -82,6 +95,9 @@ public record CraftingTable(@NonNull List<String> craftingTags,
 
         /**
          * Sets {@code crafting_tags}.
+         *
+         * @param craftingTags the value
+         * @return this builder
          */
         public @NonNull Builder craftingTags(@NonNull String... craftingTags) {
             return craftingTags(List.of(craftingTags));
@@ -89,6 +105,9 @@ public record CraftingTable(@NonNull List<String> craftingTags,
 
         /**
          * Sets {@code table_name}.
+         *
+         * @param tableName the value
+         * @return this builder
          */
         public @NonNull Builder tableName(@Nullable String tableName) {
             this.tableName = tableName;
@@ -96,6 +115,9 @@ public record CraftingTable(@NonNull List<String> craftingTags,
         }
 
         /**
+         * Builds the value from the fields set and the defaults.
+         *
+         * @return the value
          * @throws IllegalStateException if a required field is not set
          * @throws IllegalArgumentException if a value is out of range
          */

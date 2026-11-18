@@ -10,6 +10,8 @@ import org.checkerframework.checker.nullness.qual.NonNull;
  */
 public interface StateValue {
     /**
+     * The string stored in the block state NBT.
+     *
      * @return the string stored in the block state NBT, e.g. {@code north}
      */
     @NonNull String value();

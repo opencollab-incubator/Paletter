@@ -41,6 +41,8 @@ public record BlockEntity(BlockEntity. @Nullable Container container, boolean dy
     }
 
     /**
+     * Creates a builder with every field at its default.
+     *
      * @return a builder with the defaults applied
      */
     public static @NonNull Builder builder() {
@@ -48,6 +50,8 @@ public record BlockEntity(BlockEntity. @Nullable Container container, boolean dy
     }
 
     /**
+     * Creates a builder holding this value's fields, to change some of them.
+     *
      * @return a builder with this value's fields
      */
     public @NonNull Builder toBuilder() {
@@ -73,6 +77,9 @@ public record BlockEntity(BlockEntity. @Nullable Container container, boolean dy
 
         /**
          * Sets {@code container}.
+         *
+         * @param container the value
+         * @return this builder
          */
         public @NonNull Builder container(@Nullable Container container) {
             this.container = container;
@@ -81,6 +88,9 @@ public record BlockEntity(BlockEntity. @Nullable Container container, boolean dy
 
         /**
          * Sets {@code dynamic_properties}.
+         *
+         * @param dynamicProperties the value
+         * @return this builder
          */
         public @NonNull Builder dynamicProperties(boolean dynamicProperties) {
             this.dynamicProperties = dynamicProperties;
@@ -89,6 +99,9 @@ public record BlockEntity(BlockEntity. @Nullable Container container, boolean dy
 
         /**
          * Sets {@code entity_storage}.
+         *
+         * @param entityStorage the value
+         * @return this builder
          */
         public @NonNull Builder entityStorage(@Nullable Boolean entityStorage) {
             this.entityStorage = entityStorage;
@@ -96,6 +109,9 @@ public record BlockEntity(BlockEntity. @Nullable Container container, boolean dy
         }
 
         /**
+         * Builds the value from the fields set and the defaults.
+         *
+         * @return the value
          * @throws IllegalStateException if a required field is not set
          * @throws IllegalArgumentException if a value is out of range
          */
@@ -118,11 +134,19 @@ public record BlockEntity(BlockEntity. @Nullable Container container, boolean dy
      */
     public record Container(@SincePreview("26.70") boolean showUiOnInteraction, int slotCount,
             @Nullable String title) {
+        /**
+         * Checks the components and copies lists and maps, so the value is immutable.
+         *
+         * @throws NullPointerException if a required component is null
+         * @throws IllegalArgumentException if a component is out of its documented range or conflicts with another
+         */
         public Container {
             Check.range("BlockEntity.Container.slotCount", slotCount, 1.0, 54.0);
         }
 
         /**
+         * Creates a builder with every field at its default.
+         *
          * @return a builder with the defaults applied
          */
         public static @NonNull Builder builder() {
@@ -130,6 +154,8 @@ public record BlockEntity(BlockEntity. @Nullable Container container, boolean dy
         }
 
         /**
+         * Creates a builder holding this value's fields, to change some of them.
+         *
          * @return a builder with this value's fields
          */
         public @NonNull Builder toBuilder() {
@@ -155,6 +181,9 @@ public record BlockEntity(BlockEntity. @Nullable Container container, boolean dy
 
             /**
              * Sets {@code show_ui_on_interaction}.
+             *
+             * @param showUiOnInteraction the value
+             * @return this builder
              */
             public @NonNull Builder showUiOnInteraction(boolean showUiOnInteraction) {
                 this.showUiOnInteraction = showUiOnInteraction;
@@ -163,6 +192,9 @@ public record BlockEntity(BlockEntity. @Nullable Container container, boolean dy
 
             /**
              * Sets {@code slot_count}.
+             *
+             * @param slotCount the value
+             * @return this builder
              */
             public @NonNull Builder slotCount(int slotCount) {
                 this.slotCount = slotCount;
@@ -171,6 +203,9 @@ public record BlockEntity(BlockEntity. @Nullable Container container, boolean dy
 
             /**
              * Sets {@code title}.
+             *
+             * @param title the value
+             * @return this builder
              */
             public @NonNull Builder title(@Nullable String title) {
                 this.title = title;
@@ -178,6 +213,9 @@ public record BlockEntity(BlockEntity. @Nullable Container container, boolean dy
             }
 
             /**
+             * Builds the value from the fields set and the defaults.
+             *
+             * @return the value
              * @throws IllegalStateException if a required field is not set
              * @throws IllegalArgumentException if a value is out of range
              */

@@ -25,6 +25,12 @@ public record StorageWeightLimit(int maxWeightLimit) implements ItemComponent {
      */
     public static final String NAME = "minecraft:storage_weight_limit";
 
+    /**
+     * Checks the components and copies lists and maps, so the value is immutable.
+     *
+     * @throws NullPointerException if a required component is null
+     * @throws IllegalArgumentException if a component is out of its documented range or conflicts with another
+     */
     public StorageWeightLimit {
         Check.range("StorageWeightLimit.maxWeightLimit", maxWeightLimit, null, 64.0);
     }
@@ -35,6 +41,8 @@ public record StorageWeightLimit(int maxWeightLimit) implements ItemComponent {
     }
 
     /**
+     * Creates a builder with every field at its default.
+     *
      * @return a builder with the defaults applied
      */
     public static @NonNull Builder builder() {
@@ -42,6 +50,8 @@ public record StorageWeightLimit(int maxWeightLimit) implements ItemComponent {
     }
 
     /**
+     * Creates a builder holding this value's fields, to change some of them.
+     *
      * @return a builder with this value's fields
      */
     public @NonNull Builder toBuilder() {
@@ -61,6 +71,9 @@ public record StorageWeightLimit(int maxWeightLimit) implements ItemComponent {
 
         /**
          * Sets {@code max_weight_limit}.
+         *
+         * @param maxWeightLimit the value
+         * @return this builder
          */
         public @NonNull Builder maxWeightLimit(int maxWeightLimit) {
             this.maxWeightLimit = maxWeightLimit;
@@ -68,6 +81,9 @@ public record StorageWeightLimit(int maxWeightLimit) implements ItemComponent {
         }
 
         /**
+         * Builds the value from the fields set and the defaults.
+         *
+         * @return the value
          * @throws IllegalStateException if a required field is not set
          * @throws IllegalArgumentException if a value is out of range
          */

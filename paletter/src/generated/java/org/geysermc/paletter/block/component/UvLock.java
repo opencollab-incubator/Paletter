@@ -22,6 +22,9 @@ import org.checkerframework.checker.nullness.qual.NonNull;
  */
 public sealed interface UvLock permits UvLock.Bones, UvLock.Flag {
     /**
+     * Creates the form that is the names of the bones to lock.
+     *
+     * @param value the names of the bones to lock
      * @return the form that is the names of the bones to lock
      */
     static @NonNull UvLock bones(@NonNull List<String> value) {
@@ -29,6 +32,9 @@ public sealed interface UvLock permits UvLock.Bones, UvLock.Flag {
     }
 
     /**
+     * Creates the form that is one flag for every bone.
+     *
+     * @param value one flag for every bone
      * @return the form that is one flag for every bone
      */
     static @NonNull UvLock flag(boolean value) {
@@ -41,6 +47,12 @@ public sealed interface UvLock permits UvLock.Bones, UvLock.Flag {
      * @param value the names of the bones to lock
      */
     record Bones(@NonNull List<String> value) implements UvLock {
+        /**
+         * Checks the value and copies a list or map, so the form is immutable.
+         *
+         * @param value the value of the form
+         * @throws NullPointerException if the value is null
+         */
         public Bones {
             value = List.copyOf(Objects.requireNonNull(value, "UvLock.Bones.value"));
         }

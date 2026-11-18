@@ -34,6 +34,8 @@ public final class ResolvedItem {
     }
 
     /**
+     * The item definition this resolution sends.
+     *
      * @return the item definition
      */
     public @NonNull RegisteredItem definition() {
@@ -41,6 +43,8 @@ public final class ResolvedItem {
     }
 
     /**
+     * The damage (aux) value to send.
+     *
      * @return the damage value to send
      */
     public int damage() {
@@ -48,6 +52,8 @@ public final class ResolvedItem {
     }
 
     /**
+     * The block the item is sent with.
+     *
      * @return the block to send, or null
      */
     public @Nullable RegisteredBlockState block() {
@@ -55,6 +61,8 @@ public final class ResolvedItem {
     }
 
     /**
+     * Whether a replacement was used.
+     *
      * @return true if the variant does not exist in this version and a replacement was used
      */
     public boolean fallback() {
@@ -68,6 +76,7 @@ public final class ResolvedItem {
      * same item in a palette, whichever variant resolved to it. A palette that extends another one shares the handles
      * of the items it did not change. A handle is made on each call: compare it with {@code equals}, not {@code ==}.
      *
+     * @return the behaviour values of the item sent
      * @throws IllegalStateException if the definition is not an item of the palette, which a resolution never gives
      * @since 1.0.0
      */
@@ -98,6 +107,8 @@ public final class ResolvedItem {
     }
 
     /**
+     * Builds the client item data of this resolution.
+     *
      * @return an item data builder with definition, damage, block and a count of 1 filled in
      */
     public ItemData.@NonNull Builder toItemData() {

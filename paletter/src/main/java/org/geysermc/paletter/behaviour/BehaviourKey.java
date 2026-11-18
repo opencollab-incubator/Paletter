@@ -17,7 +17,13 @@ import java.util.Objects;
 public abstract sealed class BehaviourKey<T> permits FloatKey, IntKey, BooleanKey, ObjectKey {
     /** Whose property a key is. */
     public enum Owner {
+        /**
+         * A property of blocks.
+         */
         BLOCK,
+        /**
+         * A property of items.
+         */
         ITEM
     }
 
@@ -34,23 +40,36 @@ public abstract sealed class BehaviourKey<T> permits FloatKey, IntKey, BooleanKe
     }
 
     /**
+     * The name of the key.
+     *
      * @return the name, unique per owner and the key of the bundled data, e.g. {@code friction}
      */
     public @NonNull String name() {
         return name;
     }
 
+    /**
+     * Whose property the key is.
+     *
+     * @return whether this is a block or an item key
+     */
     public @NonNull Owner owner() {
         return owner;
     }
 
+    /**
+     * The type of the values of the key.
+     *
+     * @return the class of the value type: {@link Float}, {@link Integer}, {@link Boolean}, {@link String} or {@link BlockShape}
+     */
     public @NonNull Class<T> type() {
         return type;
     }
 
     /**
-     * @return the position of the key among every block and item key, {@code 0} to their count - 1: where the values of
-     * the key are kept
+     * The position of the key, which is where its values are kept.
+     *
+     * @return the position of the key among every block and item key, {@code 0} to their count - 1
      */
     public int ordinal() {
         return ordinal;

@@ -33,6 +33,12 @@ public record DurabilitySensor(
      */
     public static final String NAME = "minecraft:durability_sensor";
 
+    /**
+     * Checks the components and copies lists and maps, so the value is immutable.
+     *
+     * @throws NullPointerException if a required component is null
+     * @throws IllegalArgumentException if a component is out of its documented range or conflicts with another
+     */
     public DurabilitySensor {
         durabilityThresholds = List.copyOf(Objects.requireNonNull(durabilityThresholds, "DurabilitySensor.durabilityThresholds"));
     }
@@ -43,6 +49,8 @@ public record DurabilitySensor(
     }
 
     /**
+     * Creates a builder with every field at its default.
+     *
      * @return a builder with the defaults applied
      */
     public static @NonNull Builder builder() {
@@ -50,6 +58,8 @@ public record DurabilitySensor(
     }
 
     /**
+     * Creates a builder holding this value's fields, to change some of them.
+     *
      * @return a builder with this value's fields
      */
     public @NonNull Builder toBuilder() {
@@ -69,6 +79,9 @@ public record DurabilitySensor(
 
         /**
          * Sets {@code durability_thresholds}.
+         *
+         * @param durabilityThresholds the value
+         * @return this builder
          */
         public @NonNull Builder durabilityThresholds(
                 @NonNull List<DurabilityThresholds> durabilityThresholds) {
@@ -78,6 +91,9 @@ public record DurabilitySensor(
 
         /**
          * Sets {@code durability_thresholds}.
+         *
+         * @param durabilityThresholds the value
+         * @return this builder
          */
         public @NonNull Builder durabilityThresholds(
                 @NonNull DurabilityThresholds... durabilityThresholds) {
@@ -85,6 +101,9 @@ public record DurabilitySensor(
         }
 
         /**
+         * Builds the value from the fields set and the defaults.
+         *
+         * @return the value
          * @throws IllegalStateException if a required field is not set
          * @throws IllegalArgumentException if a value is out of range
          */
@@ -109,11 +128,19 @@ public record DurabilitySensor(
      */
     public record DurabilityThresholds(int durability, @NonNull ParticleType particleType,
             @Nullable String soundEvent) {
+        /**
+         * Checks the components and copies lists and maps, so the value is immutable.
+         *
+         * @throws NullPointerException if a required component is null
+         * @throws IllegalArgumentException if a component is out of its documented range or conflicts with another
+         */
         public DurabilityThresholds {
             Objects.requireNonNull(particleType, "DurabilitySensor.DurabilityThresholds.particleType");
         }
 
         /**
+         * Creates a builder with every field at its default.
+         *
          * @return a builder with the defaults applied
          */
         public static @NonNull Builder builder() {
@@ -121,6 +148,8 @@ public record DurabilitySensor(
         }
 
         /**
+         * Creates a builder holding this value's fields, to change some of them.
+         *
          * @return a builder with this value's fields
          */
         public @NonNull Builder toBuilder() {
@@ -146,6 +175,9 @@ public record DurabilitySensor(
 
             /**
              * Sets {@code durability}.
+             *
+             * @param durability the value
+             * @return this builder
              */
             public @NonNull Builder durability(int durability) {
                 this.durability = durability;
@@ -154,6 +186,9 @@ public record DurabilitySensor(
 
             /**
              * Sets {@code particle_type}.
+             *
+             * @param particleType the value
+             * @return this builder
              */
             public @NonNull Builder particleType(@NonNull ParticleType particleType) {
                 this.particleType = particleType;
@@ -162,6 +197,9 @@ public record DurabilitySensor(
 
             /**
              * Sets {@code sound_event}.
+             *
+             * @param soundEvent the value
+             * @return this builder
              */
             public @NonNull Builder soundEvent(@Nullable String soundEvent) {
                 this.soundEvent = soundEvent;
@@ -169,6 +207,9 @@ public record DurabilitySensor(
             }
 
             /**
+             * Builds the value from the fields set and the defaults.
+             *
+             * @return the value
              * @throws IllegalStateException if a required field is not set
              * @throws IllegalArgumentException if a value is out of range
              */
@@ -679,6 +720,8 @@ public record DurabilitySensor(
         }
 
         /**
+         * Returns the value in add-on JSON.
+         *
          * @return the value in add-on JSON
          */
         public @NonNull String value() {
@@ -686,7 +729,10 @@ public record DurabilitySensor(
         }
 
         /**
-         * @return the constant of an add-on JSON value
+         * Finds the constant of an add-on JSON value.
+         *
+         * @param value the value in add-on JSON
+         * @return the constant of the value
          * @throws IllegalArgumentException if the value is not documented
          */
         public static @NonNull ParticleType fromValue(@NonNull String value) {

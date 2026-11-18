@@ -34,6 +34,12 @@ public record DestructibleByExplosion(float explosionResistance,
      */
     public static final String NAME = "minecraft:destructible_by_explosion";
 
+    /**
+     * Checks the components and copies lists and maps, so the value is immutable.
+     *
+     * @throws NullPointerException if a required component is null
+     * @throws IllegalArgumentException if a component is out of its documented range or conflicts with another
+     */
     public DestructibleByExplosion {
         Check.range("DestructibleByExplosion.explosionResistance", explosionResistance, 0.0, null);
     }
@@ -46,6 +52,7 @@ public record DestructibleByExplosion(float explosionResistance,
     /**
      * The boolean shorthand: sets {@code enabled}.
      *
+     * @param value the value of that field
      * @return the value with everything else at its default
      */
     public static @NonNull DestructibleByExplosion of(boolean value) {
@@ -53,6 +60,8 @@ public record DestructibleByExplosion(float explosionResistance,
     }
 
     /**
+     * Creates a builder with every field at its default.
+     *
      * @return a builder with the defaults applied
      */
     public static @NonNull Builder builder() {
@@ -60,6 +69,8 @@ public record DestructibleByExplosion(float explosionResistance,
     }
 
     /**
+     * Creates a builder holding this value's fields, to change some of them.
+     *
      * @return a builder with this value's fields
      */
     public @NonNull Builder toBuilder() {
@@ -82,6 +93,9 @@ public record DestructibleByExplosion(float explosionResistance,
 
         /**
          * Sets {@code explosion_resistance}.
+         *
+         * @param explosionResistance the value
+         * @return this builder
          */
         public @NonNull Builder explosionResistance(float explosionResistance) {
             this.explosionResistance = explosionResistance;
@@ -90,6 +104,9 @@ public record DestructibleByExplosion(float explosionResistance,
 
         /**
          * Sets {@code enabled}.
+         *
+         * @param enabled the value
+         * @return this builder
          */
         public @NonNull Builder enabled(@Nullable Boolean enabled) {
             this.enabled = enabled;
@@ -97,6 +114,9 @@ public record DestructibleByExplosion(float explosionResistance,
         }
 
         /**
+         * Builds the value from the fields set and the defaults.
+         *
+         * @return the value
          * @throws IllegalStateException if a required field is not set
          * @throws IllegalArgumentException if a value is out of range
          */

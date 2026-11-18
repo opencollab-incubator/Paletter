@@ -36,6 +36,8 @@ public record PrecipitationInteractions(
     }
 
     /**
+     * Creates a builder with every field at its default.
+     *
      * @return a builder with the defaults applied
      */
     public static @NonNull Builder builder() {
@@ -43,6 +45,8 @@ public record PrecipitationInteractions(
     }
 
     /**
+     * Creates a builder holding this value's fields, to change some of them.
+     *
      * @return a builder with this value's fields
      */
     public @NonNull Builder toBuilder() {
@@ -62,6 +66,9 @@ public record PrecipitationInteractions(
 
         /**
          * Sets {@code precipitation_behavior}.
+         *
+         * @param precipitationBehavior the value
+         * @return this builder
          */
         public @NonNull Builder precipitationBehavior(
                 @Nullable PrecipitationBehavior precipitationBehavior) {
@@ -70,6 +77,9 @@ public record PrecipitationInteractions(
         }
 
         /**
+         * Builds the value from the fields set and the defaults.
+         *
+         * @return the value
          * @throws IllegalStateException if a required field is not set
          * @throws IllegalArgumentException if a value is out of range
          */
@@ -109,6 +119,8 @@ public record PrecipitationInteractions(
         }
 
         /**
+         * Returns the value in add-on JSON.
+         *
          * @return the value in add-on JSON
          */
         public @NonNull String value() {
@@ -116,7 +128,10 @@ public record PrecipitationInteractions(
         }
 
         /**
-         * @return the constant of an add-on JSON value
+         * Finds the constant of an add-on JSON value.
+         *
+         * @param value the value in add-on JSON
+         * @return the constant of the value
          * @throws IllegalArgumentException if the value is not documented
          */
         public static @NonNull PrecipitationBehavior fromValue(@NonNull String value) {

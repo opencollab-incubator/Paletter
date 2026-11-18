@@ -152,13 +152,13 @@ final class ApiSource {
             type.addPermittedSubclass(ClassName.get(kind.pkg(), wireOnly(kind)));
         }
         type.addMethod(MethodSpec.methodBuilder("name").addModifiers(Modifier.PUBLIC, Modifier.ABSTRACT)
-            .addJavadoc("@return the component name in add-on JSON, e.g. {@code minecraft:durability}\n")
+            .addJavadoc("Returns the component name in add-on JSON.\n\n@return the name, e.g. {@code minecraft:durability}\n")
             .returns(STRING.annotated(AnnotationSpec.builder(NON_NULL).build())).build());
         if (members.isEmpty()) {
             ClassName none = ClassName.get(kind.pkg(), kind.iface(), "None");
             type.addPermittedSubclass(none);
             type.addType(TypeSpec.classBuilder("None").addModifiers(Modifier.PUBLIC, Modifier.STATIC, Modifier.FINAL)
-                .addJavadoc("No component is generated.\n").addSuperinterface(ClassName.get(kind.pkg(), kind.iface()))
+                .addJavadoc("Placeholder of a kind with no generated component; it has no instances.\n").addSuperinterface(ClassName.get(kind.pkg(), kind.iface()))
                 .addMethod(MethodSpec.constructorBuilder().addModifiers(Modifier.PRIVATE).build())
                 .addMethod(MethodSpec.methodBuilder("name").addAnnotation(Override.class).addModifiers(Modifier.PUBLIC)
                     .returns(STRING.annotated(AnnotationSpec.builder(NON_NULL).build())).addStatement("return $S", "").build())
@@ -354,7 +354,10 @@ final class ApiSource {
         }
         CodeBlock validation = validation(o);
         MethodSpec.Builder constructor = validation.isEmpty() ? MethodSpec.constructorBuilder()
-            : MethodSpec.compactConstructorBuilder().addModifiers(Modifier.PUBLIC).addCode(validation);
+            : MethodSpec.compactConstructorBuilder().addModifiers(Modifier.PUBLIC).addCode(validation)
+                .addJavadoc("Checks the components and copies lists and maps, so the value is immutable.\n\n"
+                    + "@throws NullPointerException if a required component is null\n"
+                    + "@throws IllegalArgumentException if a component is out of its documented range or conflicts with another\n");
         type.recordConstructor(constructor.addParameters(params).build());
 
         if (top && !c.standalone) {
@@ -366,9 +369,9 @@ final class ApiSource {
         factories(type, o, top);
         ClassName builder = self.nestedClass("Builder");
         type.addMethod(MethodSpec.methodBuilder("builder").addModifiers(Modifier.PUBLIC, Modifier.STATIC)
-            .addJavadoc("@return a builder with the defaults applied\n").returns(nonNull(builder)).addStatement("return new Builder()").build());
+            .addJavadoc("Creates a builder with every field at its default.\n\n@return a builder with the defaults applied\n").returns(nonNull(builder)).addStatement("return new Builder()").build());
         MethodSpec.Builder toBuilder = MethodSpec.methodBuilder("toBuilder").addModifiers(Modifier.PUBLIC)
-            .addJavadoc("@return a builder with this value's fields\n").returns(nonNull(builder))
+            .addJavadoc("Creates a builder holding this value's fields, to change some of them.\n\n@return a builder with this value's fields\n").returns(nonNull(builder))
             .addStatement("Builder builder = new Builder()");
         for (Field f : allFields(o)) {
             toBuilder.addStatement("builder.$N = $N", f.java, f.java);
@@ -388,7 +391,7 @@ final class ApiSource {
                 }
             }
             if (c.usesVec3) {
-                type.addType(TypeSpec.recordBuilder("Vec3").addModifiers(Modifier.PUBLIC).addJavadoc("An add-on JSON vector {@code [x, y, z]}.\n")
+                type.addType(TypeSpec.recordBuilder("Vec3").addModifiers(Modifier.PUBLIC).addJavadoc("An add-on JSON vector {@code [x, y, z]}.\n\n@param x the x component\n@param y the y component\n@param z the z component\n")
                     .recordConstructor(MethodSpec.constructorBuilder().addParameter(float.class, "x").addParameter(float.class, "y")
                         .addParameter(float.class, "z").build()).build());
             }
@@ -630,12 +633,12 @@ final class ApiSource {
             Field states = o.fields.stream().filter(f -> f.type instanceof States).findFirst().orElse(null);
             if (name != null) {
                 type.addMethod(MethodSpec.methodBuilder("of").addModifiers(Modifier.PUBLIC, Modifier.STATIC)
-                    .addJavadoc("@return a descriptor matching every state of a block\n")
+                    .addJavadoc("Creates a descriptor matching every state of a block.\n\n@param block the vanilla or custom block\n@return a descriptor matching every state of a block\n")
                     .addParameter(nonNull(BLOCK_TYPE), "block").returns(nonNull(name(o)))
                     .addStatement("return builder().$N(block.identifier()).build()", name.java).build());
                 if (states != null) {
                     type.addMethod(MethodSpec.methodBuilder("of").addModifiers(Modifier.PUBLIC, Modifier.STATIC)
-                        .addJavadoc("@return a descriptor matching one block state (its block and every state value)\n")
+                        .addJavadoc("Creates a descriptor matching one block state.\n\n@param state the block state\n@return a descriptor matching one block state (its block and every state value)\n")
                         .addParameter(nonNull(BLOCK_STATE), "state").returns(nonNull(name(o)))
                         .addStatement("return builder().$N(state.type().identifier()).$N($T.states(state)).build()", name.java, states.java, CHECK)
                         .build());
@@ -661,7 +664,7 @@ final class ApiSource {
                 .append("; the list is accepted by every captured BDS.");
         }
         type.addMethod(MethodSpec.methodBuilder("of").addModifiers(Modifier.PUBLIC, Modifier.STATIC)
-            .addJavadoc(doc + "\n\n@return the value with everything else at its default\n", jsonType, target.java)
+            .addJavadoc(doc + "\n\n@param entry the one entry\n@return the value with everything else at its default\n", jsonType, target.java)
             .addParameter(nonNull(entry), "entry").returns(nonNull(name(o)))
             .addStatement("return builder().$N(entry).build()", target.java).build());
     }
@@ -688,11 +691,14 @@ final class ApiSource {
             return;
         }
         type.addMethod(MethodSpec.methodBuilder("of").addModifiers(Modifier.PUBLIC, Modifier.STATIC)
-            .addJavadoc("The $L shorthand: sets {@code $L}.\n\n@return the value with everything else at its default\n", jsonType,
+            .addJavadoc("The $L shorthand: sets {@code $L}.\n\n@param value the value of that field\n@return the value with everything else at its default\n", jsonType,
                 target.json == null ? target.java : target.json)
             .addParameter(param.isPrimitive() ? param : nonNull(param), "value").returns(nonNull(name(o)))
             .addStatement("return builder().$N($L).build()", target.java, value).build());
     }
+
+    /** Javadoc of a builder setter: the summary, then the one parameter and the builder it returns. */
+    private static final String SETTER = "$L\n\n@param $L the value\n@return this builder\n";
 
     // ---- Builders --------------------------------------------------------------------------------------------------------
 
@@ -712,7 +718,7 @@ final class ApiSource {
             setters(type, builder, f);
         }
         MethodSpec.Builder build = MethodSpec.methodBuilder("build").addModifiers(Modifier.PUBLIC).returns(nonNull(self))
-            .addJavadoc("@throws IllegalStateException if a required field is not set\n@throws IllegalArgumentException if a value is out of range\n");
+            .addJavadoc("Builds the value from the fields set and the defaults.\n\n@return the value\n@throws IllegalStateException if a required field is not set\n@throws IllegalArgumentException if a value is out of range\n");
         String owner = c.className + (o == c.root ? "" : "." + o.name);
         for (Field f : allFields(o)) {
             if (f.required) {
@@ -728,7 +734,7 @@ final class ApiSource {
     private void setters(TypeSpec.Builder type, ClassName builder, Field f) {
         String json = f.json == null ? f.java : f.json;
         MethodSpec.Builder main = MethodSpec.methodBuilder(f.java).addModifiers(Modifier.PUBLIC).returns(nonNull(builder))
-            .addJavadoc("Sets {@code $L}.\n", json)
+            .addJavadoc(SETTER, "Sets {@code " + json + "}.", f.java)
             .addParameter(recordType(f), f.java)
             .addStatement("this.$N = $N", f.java, f.java);
         type.addMethod(main.addStatement("return this").build());
@@ -738,12 +744,12 @@ final class ApiSource {
         if (f.type instanceof ListOf l) {
             TypeName element = typeName(l.element(), true);
             type.addMethod(MethodSpec.methodBuilder(f.java).addModifiers(Modifier.PUBLIC).returns(nonNull(builder)).varargs()
-                .addJavadoc("Sets {@code $L}.\n", json).addParameter(com.palantir.javapoet.ArrayTypeName.of(nonNull(element)), f.java)
+                .addJavadoc(SETTER, "Sets {@code " + json + "}.", f.java).addParameter(com.palantir.javapoet.ArrayTypeName.of(nonNull(element)), f.java)
                 .addStatement("return $N($T.of($N))", f.java, LIST, f.java).build());
             if (l.element() instanceof Scalar s && s.kind() == ScalarKind.STRING && f.descriptor != null) {
                 ClassName handle = f.descriptor.equals("item") ? ITEM_TYPE : BLOCK_TYPE;
                 type.addMethod(MethodSpec.methodBuilder(f.java).addModifiers(Modifier.PUBLIC).returns(nonNull(builder)).varargs()
-                    .addJavadoc("Sets {@code $L} to the identifiers of vanilla or custom $Ls.\n", json, f.descriptor)
+                    .addJavadoc(SETTER, "Sets {@code " + json + "} to the identifiers of vanilla or custom " + f.descriptor + "s.", f.java)
                     .addParameter(com.palantir.javapoet.ArrayTypeName.of(nonNull(handle)), f.java)
                     .addStatement("$T<$T> identifiers = new $T<>()", LIST, STRING, ArrayList.class)
                     .beginControlFlow("for ($T type : $N)", handle, f.java).addStatement("identifiers.add(type.identifier())").endControlFlow()
@@ -753,19 +759,19 @@ final class ApiSource {
         if (f.type instanceof Scalar s && s.kind() == ScalarKind.STRING && f.descriptor != null) {
             ClassName handle = f.descriptor.equals("item") ? ITEM_TYPE : BLOCK_TYPE;
             type.addMethod(MethodSpec.methodBuilder(f.java).addModifiers(Modifier.PUBLIC).returns(nonNull(builder))
-                .addJavadoc("Sets {@code $L} to a vanilla or custom $L.\n", json, f.descriptor)
+                .addJavadoc(SETTER, "Sets {@code " + json + "} to a vanilla or custom " + f.descriptor + ".", f.java)
                 .addParameter(nonNull(handle), f.java).addStatement("return $N($N.identifier())", f.java, f.java).build());
         }
         if (f.type instanceof Vec3) {
             type.addMethod(MethodSpec.methodBuilder(f.java).addModifiers(Modifier.PUBLIC).returns(nonNull(builder))
-                .addJavadoc("Sets {@code $L}.\n", json).addParameter(float.class, "x").addParameter(float.class, "y").addParameter(float.class, "z")
+                .addJavadoc("Sets {@code $L}.\n\n@param x the x component\n@param y the y component\n@param z the z component\n@return this builder\n", json).addParameter(float.class, "x").addParameter(float.class, "y").addParameter(float.class, "z")
                 .addStatement("return $N(new $T(x, y, z))", f.java, className(c).nestedClass("Vec3")).build());
         }
         if (f.type instanceof ObjRef r && r.type().shorthand != null) {
             Field target = r.type().shorthand;
             TypeName param = typeName(target.type, false);
             type.addMethod(MethodSpec.methodBuilder(f.java).addModifiers(Modifier.PUBLIC).returns(nonNull(builder))
-                .addJavadoc("Sets {@code $L} with its shorthand: {@code $L}.\n", json, target.json)
+                .addJavadoc(SETTER, "Sets {@code " + json + "} with its shorthand: {@code " + target.json + "}.", target.java)
                 .addParameter(param.isPrimitive() ? param : nonNull(param), target.java)
                 .addStatement("return $N($T.of($N))", f.java, className(c).nestedClass(r.type().name), target.java).build());
         }
@@ -784,7 +790,7 @@ final class ApiSource {
             }
             TypeName param = typeName(v.type, false);
             type.addMethod(MethodSpec.methodBuilder(f.java).addModifiers(Modifier.PUBLIC).returns(nonNull(builder))
-                .addJavadoc("Sets {@code $L} to $L.\n", json, meaning(v))
+                .addJavadoc(SETTER, "Sets {@code " + json + "} to " + meaning(v) + ".", f.java)
                 .addParameter(param.isPrimitive() ? param : nonNull(param), f.java)
                 .addStatement("return $N($T.$N($N))", f.java, unionName(u), v.factory(), f.java).build());
             if (v.type instanceof ListOf l) {
@@ -804,7 +810,7 @@ final class ApiSource {
                          CodeBlock each, String meaning) {
         TypeName param = element.isPrimitive() ? element : nonNull(element);
         type.addMethod(MethodSpec.methodBuilder(f.java).addModifiers(Modifier.PUBLIC).returns(nonNull(builder)).varargs()
-            .addJavadoc("Sets {@code $L} to $L (at least one value).\n", json, meaning)
+            .addJavadoc("Sets {@code $L} to $L (at least one value).\n\n@param first the first value\n@param rest the other values\n@return this builder\n", json, meaning)
             .addParameter(param, "first").addParameter(com.palantir.javapoet.ArrayTypeName.of(param), "rest")
             .addStatement("$T<$T> values = new $T<>()", LIST, stored, ArrayList.class)
             .addStatement(first)
@@ -846,18 +852,19 @@ final class ApiSource {
                 check.addStatement("$T.requireNonNull(value, $S)", OBJECTS, u.name + "." + v.name + ".value");
             }
             MethodSpec.Builder constructor = check.isEmpty() ? MethodSpec.constructorBuilder()
-                : MethodSpec.compactConstructorBuilder().addModifiers(Modifier.PUBLIC).addCode(check.build());
+                : MethodSpec.compactConstructorBuilder().addModifiers(Modifier.PUBLIC).addCode(check.build())
+                    .addJavadoc("Checks the value and copies a list or map, so the form is immutable.\n\n@param value the value of the form\n@throws NullPointerException if the value is null\n");
             type.addType(TypeSpec.recordBuilder(variant).addModifiers(Modifier.PUBLIC, Modifier.STATIC).addSuperinterface(self)
                 .addJavadoc("The form that is $L.\n\n@param value $L\n", meaning(v), meaning(v))
                 .recordConstructor(constructor.addParameter(reference ? nonNull(value) : value, "value").build()).build());
             type.addMethod(MethodSpec.methodBuilder(v.factory()).addModifiers(Modifier.PUBLIC, Modifier.STATIC)
-                .addJavadoc("@return the form that is $L\n", meaning(v))
+                .addJavadoc("Creates the form that is $L.\n\n@param value $L\n@return the form that is $L\n", meaning(v), meaning(v), meaning(v))
                 .addParameter(reference ? nonNull(value) : value, "value").returns(nonNull(self))
                 .addStatement("return new $T(value)", variant).build());
             if (u.descriptor != null && v.type instanceof ListOf l && l.element() instanceof Scalar s && s.kind() == ScalarKind.STRING) {
                 ClassName handle = u.descriptor.equals("item") ? ITEM_TYPE : BLOCK_TYPE;
                 type.addMethod(MethodSpec.methodBuilder(v.factory()).addModifiers(Modifier.PUBLIC, Modifier.STATIC).varargs()
-                    .addJavadoc("@return the form that is $L, of vanilla or custom $Ls (at least one)\n", meaning(v), u.descriptor)
+                    .addJavadoc("Creates the form that is $L, of vanilla or custom $Ls (at least one).\n\n@param first the first one\n@param rest the others\n@return the form that is $L\n", meaning(v), u.descriptor, meaning(v))
                     .addParameter(nonNull(handle), "first")
                     .addParameter(com.palantir.javapoet.ArrayTypeName.of(nonNull(handle)), "rest").returns(nonNull(self))
                     .addStatement("$T<$T> identifiers = new $T<>()", LIST, STRING, ArrayList.class)
@@ -951,9 +958,9 @@ final class ApiSource {
         type.addField(STRING, "value", Modifier.PRIVATE, Modifier.FINAL);
         type.addMethod(MethodSpec.constructorBuilder().addParameter(STRING, "value").addStatement("this.value = value").build());
         type.addMethod(MethodSpec.methodBuilder("value").addModifiers(Modifier.PUBLIC).returns(nonNull(STRING))
-            .addJavadoc("@return the value in add-on JSON\n").addStatement("return value").build());
+            .addJavadoc("Returns the value in add-on JSON.\n\n@return the value in add-on JSON\n").addStatement("return value").build());
         type.addMethod(MethodSpec.methodBuilder("fromValue").addModifiers(Modifier.PUBLIC, Modifier.STATIC).returns(nonNull(self))
-            .addJavadoc("@return the constant of an add-on JSON value\n@throws IllegalArgumentException if the value is not documented\n")
+            .addJavadoc("Finds the constant of an add-on JSON value.\n\n@param value the value in add-on JSON\n@return the constant of the value\n@throws IllegalArgumentException if the value is not documented\n")
             .addParameter(nonNull(STRING), "value")
             .beginControlFlow("for ($T constant : values())", self)
             .beginControlFlow("if (constant.value.equals(value))").addStatement("return constant").endControlFlow()

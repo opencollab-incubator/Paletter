@@ -41,6 +41,12 @@ public record UseModifiers(boolean emitVibrations, @Nullable Float movementModif
      */
     public static final String NAME = "minecraft:use_modifiers";
 
+    /**
+     * Checks the components and copies lists and maps, so the value is immutable.
+     *
+     * @throws NullPointerException if a required component is null
+     * @throws IllegalArgumentException if a component is out of its documented range or conflicts with another
+     */
     public UseModifiers {
         if (movementModifier != null) {
             Check.range("UseModifiers.movementModifier", movementModifier, 0.0, 1.0);
@@ -54,6 +60,8 @@ public record UseModifiers(boolean emitVibrations, @Nullable Float movementModif
     }
 
     /**
+     * Creates a builder with every field at its default.
+     *
      * @return a builder with the defaults applied
      */
     public static @NonNull Builder builder() {
@@ -61,6 +69,8 @@ public record UseModifiers(boolean emitVibrations, @Nullable Float movementModif
     }
 
     /**
+     * Creates a builder holding this value's fields, to change some of them.
+     *
      * @return a builder with this value's fields
      */
     public @NonNull Builder toBuilder() {
@@ -92,6 +102,9 @@ public record UseModifiers(boolean emitVibrations, @Nullable Float movementModif
 
         /**
          * Sets {@code emit_vibrations}.
+         *
+         * @param emitVibrations the value
+         * @return this builder
          */
         public @NonNull Builder emitVibrations(boolean emitVibrations) {
             this.emitVibrations = emitVibrations;
@@ -100,6 +113,9 @@ public record UseModifiers(boolean emitVibrations, @Nullable Float movementModif
 
         /**
          * Sets {@code movement_modifier}.
+         *
+         * @param movementModifier the value
+         * @return this builder
          */
         public @NonNull Builder movementModifier(@Nullable Float movementModifier) {
             this.movementModifier = movementModifier;
@@ -108,6 +124,9 @@ public record UseModifiers(boolean emitVibrations, @Nullable Float movementModif
 
         /**
          * Sets {@code start_sound}.
+         *
+         * @param startSound the value
+         * @return this builder
          */
         public @NonNull Builder startSound(@Nullable String startSound) {
             this.startSound = startSound;
@@ -116,6 +135,9 @@ public record UseModifiers(boolean emitVibrations, @Nullable Float movementModif
 
         /**
          * Sets {@code start_using}.
+         *
+         * @param startUsing the value
+         * @return this builder
          */
         public @NonNull Builder startUsing(@Nullable StartUsing startUsing) {
             this.startUsing = startUsing;
@@ -124,6 +146,9 @@ public record UseModifiers(boolean emitVibrations, @Nullable Float movementModif
 
         /**
          * Sets {@code use_duration}.
+         *
+         * @param useDuration the value
+         * @return this builder
          */
         public @NonNull Builder useDuration(float useDuration) {
             this.useDuration = useDuration;
@@ -131,6 +156,9 @@ public record UseModifiers(boolean emitVibrations, @Nullable Float movementModif
         }
 
         /**
+         * Builds the value from the fields set and the defaults.
+         *
+         * @return the value
          * @throws IllegalStateException if a required field is not set
          * @throws IllegalArgumentException if a value is out of range
          */
@@ -160,6 +188,8 @@ public record UseModifiers(boolean emitVibrations, @Nullable Float movementModif
         }
 
         /**
+         * Returns the value in add-on JSON.
+         *
          * @return the value in add-on JSON
          */
         public @NonNull String value() {
@@ -167,7 +197,10 @@ public record UseModifiers(boolean emitVibrations, @Nullable Float movementModif
         }
 
         /**
-         * @return the constant of an add-on JSON value
+         * Finds the constant of an add-on JSON value.
+         *
+         * @param value the value in add-on JSON
+         * @return the constant of the value
          * @throws IllegalArgumentException if the value is not documented
          */
         public static @NonNull StartUsing fromValue(@NonNull String value) {

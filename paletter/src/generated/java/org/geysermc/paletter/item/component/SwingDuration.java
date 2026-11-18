@@ -27,6 +27,12 @@ public record SwingDuration(float value) implements ItemComponent {
      */
     public static final String NAME = "minecraft:swing_duration";
 
+    /**
+     * Checks the components and copies lists and maps, so the value is immutable.
+     *
+     * @throws NullPointerException if a required component is null
+     * @throws IllegalArgumentException if a component is out of its documented range or conflicts with another
+     */
     public SwingDuration {
         Check.range("SwingDuration.value", value, 0.0, null);
     }
@@ -37,6 +43,8 @@ public record SwingDuration(float value) implements ItemComponent {
     }
 
     /**
+     * Creates a builder with every field at its default.
+     *
      * @return a builder with the defaults applied
      */
     public static @NonNull Builder builder() {
@@ -44,6 +52,8 @@ public record SwingDuration(float value) implements ItemComponent {
     }
 
     /**
+     * Creates a builder holding this value's fields, to change some of them.
+     *
      * @return a builder with this value's fields
      */
     public @NonNull Builder toBuilder() {
@@ -63,6 +73,9 @@ public record SwingDuration(float value) implements ItemComponent {
 
         /**
          * Sets {@code value}.
+         *
+         * @param value the value
+         * @return this builder
          */
         public @NonNull Builder value(float value) {
             this.value = value;
@@ -70,6 +83,9 @@ public record SwingDuration(float value) implements ItemComponent {
         }
 
         /**
+         * Builds the value from the fields set and the defaults.
+         *
+         * @return the value
          * @throws IllegalStateException if a required field is not set
          * @throws IllegalArgumentException if a value is out of range
          */

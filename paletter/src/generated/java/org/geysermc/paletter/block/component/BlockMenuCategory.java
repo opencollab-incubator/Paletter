@@ -27,11 +27,19 @@ import org.checkerframework.checker.nullness.qual.Nullable;
  */
 public record BlockMenuCategory(BlockMenuCategory. @NonNull Category category,
         @Nullable String group, boolean hiddenInCommands) {
+    /**
+     * Checks the components and copies lists and maps, so the value is immutable.
+     *
+     * @throws NullPointerException if a required component is null
+     * @throws IllegalArgumentException if a component is out of its documented range or conflicts with another
+     */
     public BlockMenuCategory {
         Objects.requireNonNull(category, "BlockMenuCategory.category");
     }
 
     /**
+     * Creates a builder with every field at its default.
+     *
      * @return a builder with the defaults applied
      */
     public static @NonNull Builder builder() {
@@ -39,6 +47,8 @@ public record BlockMenuCategory(BlockMenuCategory. @NonNull Category category,
     }
 
     /**
+     * Creates a builder holding this value's fields, to change some of them.
+     *
      * @return a builder with this value's fields
      */
     public @NonNull Builder toBuilder() {
@@ -64,6 +74,9 @@ public record BlockMenuCategory(BlockMenuCategory. @NonNull Category category,
 
         /**
          * Sets {@code category}.
+         *
+         * @param category the value
+         * @return this builder
          */
         public @NonNull Builder category(@NonNull Category category) {
             this.category = category;
@@ -72,6 +85,9 @@ public record BlockMenuCategory(BlockMenuCategory. @NonNull Category category,
 
         /**
          * Sets {@code group}.
+         *
+         * @param group the value
+         * @return this builder
          */
         public @NonNull Builder group(@Nullable String group) {
             this.group = group;
@@ -80,6 +96,9 @@ public record BlockMenuCategory(BlockMenuCategory. @NonNull Category category,
 
         /**
          * Sets {@code is_hidden_in_commands}.
+         *
+         * @param hiddenInCommands the value
+         * @return this builder
          */
         public @NonNull Builder hiddenInCommands(boolean hiddenInCommands) {
             this.hiddenInCommands = hiddenInCommands;
@@ -87,6 +106,9 @@ public record BlockMenuCategory(BlockMenuCategory. @NonNull Category category,
         }
 
         /**
+         * Builds the value from the fields set and the defaults.
+         *
+         * @return the value
          * @throws IllegalStateException if a required field is not set
          * @throws IllegalArgumentException if a value is out of range
          */
@@ -134,6 +156,8 @@ public record BlockMenuCategory(BlockMenuCategory. @NonNull Category category,
         }
 
         /**
+         * Returns the value in add-on JSON.
+         *
          * @return the value in add-on JSON
          */
         public @NonNull String value() {
@@ -141,7 +165,10 @@ public record BlockMenuCategory(BlockMenuCategory. @NonNull Category category,
         }
 
         /**
-         * @return the constant of an add-on JSON value
+         * Finds the constant of an add-on JSON value.
+         *
+         * @param value the value in add-on JSON
+         * @return the constant of the value
          * @throws IllegalArgumentException if the value is not documented
          */
         public static @NonNull Category fromValue(@NonNull String value) {

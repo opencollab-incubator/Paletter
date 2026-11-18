@@ -97,6 +97,8 @@ public final class BlockRegistry implements DefinitionRegistry<BlockDefinition> 
      *
      * @param canonical canonical ids of the newest version's states
      * @param interner shares blocks and tables between hashed palettes; one per Paletter
+     * @param data the vanilla data of the version
+     * @return the vanilla palette of the version
      */
     @Internal
     public static @NonNull BlockRegistry build(@NonNull VanillaData data, @NonNull CanonicalBlocks canonical,
@@ -106,6 +108,8 @@ public final class BlockRegistry implements DefinitionRegistry<BlockDefinition> 
     }
 
     /**
+     * Internal: marks blocks as missing in this palette.
+     *
      * @param blocks blocks of this palette that count as missing although their states are in the palette (a disabled
      *               experiment gates them): they resolve through their fallback like blocks the version lacks
      * @return a palette sharing all states with this one, or this palette if nothing is missing
@@ -119,6 +123,9 @@ public final class BlockRegistry implements DefinitionRegistry<BlockDefinition> 
     }
 
     /**
+     * Internal: adds fallbacks.
+     *
+     * @param extraFallbacks fallbacks by block identifier; they replace fallbacks of the same block
      * @return a palette sharing all states with this one, with additional fallbacks, or this palette if there are none
      */
     @Internal
@@ -132,6 +139,8 @@ public final class BlockRegistry implements DefinitionRegistry<BlockDefinition> 
     }
 
     /**
+     * Internal: sets the default fallback.
+     *
      * @param fallback what canonical states without a block or fallback of their own use, or null for air
      * @return a palette sharing all states with this one, with this default fallback, or this palette if it has it
      */
@@ -144,6 +153,8 @@ public final class BlockRegistry implements DefinitionRegistry<BlockDefinition> 
     }
 
     /**
+     * Internal: the default fallback.
+     *
      * @return what canonical states without a block or fallback of their own use, or null if they are sent as air
      */
     @Internal
@@ -152,10 +163,14 @@ public final class BlockRegistry implements DefinitionRegistry<BlockDefinition> 
     }
 
     /**
+     * Internal: adds custom blocks. Ids of custom blocks already here can change, see the code comments.
+     *
+     * @param data the vanilla data of this palette's version
      * @param key what adds the blocks, typically the layer; canonical ids of custom blocks are cached per key, so
      *            every version compiling the same layer stack shares them
      * @param report receives what the version cannot express of the blocks
      * @param source the layer id, for the report
+     * @param additional the custom blocks to add
      * @return a palette with these custom blocks added, keeping this palette's fallbacks, or this palette if there are none
      */
     @Internal
@@ -194,6 +209,9 @@ public final class BlockRegistry implements DefinitionRegistry<BlockDefinition> 
     }
 
     /**
+     * Internal: whether another palette is a base of this one.
+     *
+     * @param other the registry to compare with
      * @return true if this registry is the other one, or the other one with custom blocks added: every state of the other
      * one is here as the same instance and resolves the same way, unless it names a block that was added
      */
@@ -203,11 +221,18 @@ public final class BlockRegistry implements DefinitionRegistry<BlockDefinition> 
             && java.util.Objects.equals(defaultFallback, other.defaultFallback) && missing.equals(other.missing);
     }
 
+    /**
+     * The data version this palette is compiled for.
+     *
+     * @return the version
+     */
     public @NonNull DataVersion version() {
         return table.version;
     }
 
     /**
+     * Internal: the canonical ids of this palette.
+     *
      * @return the canonical ids this palette resolves: states of the newest version plus custom blocks of its layers
      */
 @Internal
@@ -216,19 +241,30 @@ public final class BlockRegistry implements DefinitionRegistry<BlockDefinition> 
     }
 
     /**
+     * The number of states.
+     *
      * @return the amount of block states
      */
     public int size() {
         return table.size();
     }
 
+    /**
+     * Looks a state up by runtime id.
+     *
+     * @param runtimeId the runtime id, which is the hash of the state
+     * @return the state, or null if this palette has none with this runtime id
+     */
     public @Nullable RegisteredBlockState byRuntimeId(int runtimeId) {
         int index = indexOfRuntimeId(runtimeId);
         return index == -1 ? null : table.byIndex(index);
     }
 
     /**
+     * Looks a state up by dense position.
+     *
      * @param index a dense position, see {@link #indexOf}
+     * @return the state at this position
      * @throws IndexOutOfBoundsException if there is no such position
      */
     public @NonNull RegisteredBlockState byIndex(int index) {
@@ -236,6 +272,9 @@ public final class BlockRegistry implements DefinitionRegistry<BlockDefinition> 
     }
 
     /**
+     * The dense position of a state.
+     *
+     * @param definition the state
      * @return the dense position of a block in this palette, {@code 0} to {@code size() - 1} (not the runtime id, which is the hash), or -1 if it is not registered here
      */
     public int indexOf(@NonNull BlockDefinition definition) {
@@ -244,6 +283,9 @@ public final class BlockRegistry implements DefinitionRegistry<BlockDefinition> 
     }
 
     /**
+     * The dense position of a state by runtime id.
+     *
+     * @param runtimeId the runtime id
      * @return the dense position of the block state with this runtime id, see {@link #indexOf}, or -1 if there is none
      */
     public int indexOfRuntimeId(int runtimeId) {
@@ -267,6 +309,8 @@ public final class BlockRegistry implements DefinitionRegistry<BlockDefinition> 
      * {@link #resolve(NbtMap)}), else air. An array lookup; the table is built on first use and shared by every
      * palette using this block palette.
      *
+     * @param canonical a canonical id
+     * @return the block to send
      * @throws IndexOutOfBoundsException if the id is not one of {@link #canonical()}
      */
 @Internal
@@ -275,6 +319,9 @@ public final class BlockRegistry implements DefinitionRegistry<BlockDefinition> 
     }
 
     /**
+     * Whether a canonical id has no block of its own in this version.
+     *
+     * @param canonical a canonical id
      * @return whether {@link #block(int)} is a stand-in for this canonical id (the default fallback or air) because the
      *         state has no block of its own in this version, see {@link #missingCanonical()}
      */
@@ -284,6 +331,9 @@ public final class BlockRegistry implements DefinitionRegistry<BlockDefinition> 
     }
 
     /**
+     * Whether a canonical id is sent as a replacement.
+     *
+     * @param canonical a canonical id
      * @return whether {@link #block(int)} is a replacement for this canonical id: a fallback (also a forced one) or the
      *         default fallback was used, see {@link #isMissing}; not for a state that is only adapted to this version
      */
@@ -294,6 +344,9 @@ public final class BlockRegistry implements DefinitionRegistry<BlockDefinition> 
 
     /**
      * Like {@link #block(int)}, but only the runtime id. An array lookup.
+     *
+     * @param canonical a canonical id
+     * @return the runtime id of {@code block(canonical)}
      */
 @Internal
     public int runtimeId(int canonical) {
@@ -304,6 +357,7 @@ public final class BlockRegistry implements DefinitionRegistry<BlockDefinition> 
      * Maps a block back to a canonical id: the canonical id of its exact state, else the first canonical id that
      * resolves to it (e.g. a state of an older version that the newest version added a state value to).
      *
+     * @param definition the block, may be null
      * @return the canonical id, or -1 for null, a definition of another palette, or a state nothing resolves to
      */
 @Internal
@@ -316,6 +370,9 @@ public final class BlockRegistry implements DefinitionRegistry<BlockDefinition> 
 
     /**
      * Like {@link #canonical(BlockDefinition)}, by runtime id.
+     *
+     * @param runtimeId the runtime id
+     * @return the canonical id, or -1 if this palette has no state with the runtime id or nothing resolves to it
      */
 @Internal
     public int canonicalOfRuntimeId(int runtimeId) {
@@ -328,6 +385,7 @@ public final class BlockRegistry implements DefinitionRegistry<BlockDefinition> 
      * a layer) the block is sent for, see {@link #canonical(BlockDefinition)}. Follows the data this registry was
      * compiled from, so it also works for palettes of other data sources and older versions.
      *
+     * @param block a state of this registry
      * @return the key, or null for a runtime id this registry lacks, or a block that no state of the newest data resolves to
      * @since 1.0.0
      */
@@ -336,6 +394,8 @@ public final class BlockRegistry implements DefinitionRegistry<BlockDefinition> 
     }
 
     /**
+     * Internal: the canonical states without a block of their own.
+     *
      * @return the canonical states that have no block (or fallback) of their own in this version and use the default
      *         fallback ({@link #defaultFallback()}), or air without one
      */
@@ -441,6 +501,8 @@ public final class BlockRegistry implements DefinitionRegistry<BlockDefinition> 
     // ---- States ----
 
     /**
+     * Internal: looks up exactly one state.
+     *
      * @param state a block state as {@code {name, states}}
      * @return the definition of exactly this state, or null
      */
@@ -458,6 +520,9 @@ public final class BlockRegistry implements DefinitionRegistry<BlockDefinition> 
      *     block's default state values.</li>
      * </ol>
      * Results for canonical states are cached; what is not a canonical state (an arbitrary caller input) is not. On hot paths, prefer canonical ids ({@link #block(int)}).
+     *
+     * @param state a block state as {@code {name, states}}
+     * @return the resolution
      */
     @Internal
     public @NonNull BlockResolution resolve(@NonNull NbtMap state) {
@@ -513,6 +578,11 @@ public final class BlockRegistry implements DefinitionRegistry<BlockDefinition> 
     /**
      * Resolves a list of states at once. States that cannot be resolved at all map to {@code missing}; everything that
      * was not exact is recorded in the report.
+     *
+     * @param states the states to resolve
+     * @param missing the block used for states that cannot be resolved
+     * @param report receives a warning for each such state and a summary
+     * @return the block to send for each state, in the order of {@code states}
      */
     @Internal
     public @NonNull RegisteredBlockState[] table(@NonNull List<NbtMap> states, @NonNull RegisteredBlockState missing, @NonNull PaletteReport report) {
@@ -534,6 +604,9 @@ public final class BlockRegistry implements DefinitionRegistry<BlockDefinition> 
     }
 
     /**
+     * The default state of a block.
+     *
+     * @param identifier the block identifier
      * @return the default state of a block, or null if the block does not exist
      */
     public @Nullable RegisteredBlockState defaultState(@NonNull String identifier) {
@@ -546,12 +619,21 @@ public final class BlockRegistry implements DefinitionRegistry<BlockDefinition> 
         return defaultFallback == null ? null : defaultState(defaultFallback.target().identifier());
     }
 
+    /**
+     * Whether this palette has a block.
+     *
+     * @param identifier the block identifier
+     * @return true if the block exists in this palette
+     */
     public boolean contains(@NonNull String identifier) {
         return table.schema(identifier) != null;
     }
 
     /**
-     * @return every state of a block, in palette order
+     * The states of a block.
+     *
+     * @param identifier the block identifier
+     * @return every state of a block, in palette order, or an empty list if the block does not exist
      */
     public @NonNull List<RegisteredBlockState> states(@NonNull String identifier) {
         Schema schema = table.schema(identifier);
@@ -559,6 +641,9 @@ public final class BlockRegistry implements DefinitionRegistry<BlockDefinition> 
     }
 
     /**
+     * Looks a block up by identifier.
+     *
+     * @param identifier the block identifier
      * @return the block with this identifier in this palette, or null
      */
     public @Nullable RegisteredBlock block(@NonNull String identifier) {
@@ -566,6 +651,9 @@ public final class BlockRegistry implements DefinitionRegistry<BlockDefinition> 
     }
 
     /**
+     * Looks up the block of a state.
+     *
+     * @param state a state of this palette
      * @return the block a state of this palette belongs to
      * @throws IllegalArgumentException if the state is not of this palette
      */
@@ -578,6 +666,8 @@ public final class BlockRegistry implements DefinitionRegistry<BlockDefinition> 
     }
 
     /**
+     * Lists the blocks.
+     *
      * @return every block of this palette: vanilla and custom
      */
     public @NonNull Collection<RegisteredBlock> blocks() {
@@ -595,11 +685,18 @@ public final class BlockRegistry implements DefinitionRegistry<BlockDefinition> 
         return table.own.length;
     }
 
+    /**
+     * The air state.
+     *
+     * @return the state of {@code minecraft:air}
+     */
     public @NonNull RegisteredBlockState air() {
         return table.air;
     }
 
     /**
+     * The block property data of this palette.
+     *
      * @return block property data to send in the start game packet: vanilla data driven blocks and custom blocks
      */
     public @NonNull List<BlockPropertyData> blockProperties() {
@@ -607,6 +704,8 @@ public final class BlockRegistry implements DefinitionRegistry<BlockDefinition> 
     }
 
     /**
+     * Internal: the numeric id of a custom block.
+     *
      * @param identifier a custom block of this palette
      * @return its {@code block_id}, the one in {@link #blockProperties()}; item ids of plain block items derive from it
      * @throws PaletteException if there is no such custom block
@@ -620,15 +719,28 @@ public final class BlockRegistry implements DefinitionRegistry<BlockDefinition> 
         return id;
     }
 
+    /**
+     * The custom blocks registered in this palette.
+     *
+     * @return the custom blocks
+     */
     public @NonNull List<CustomBlock> customBlocks() {
         return table.customBlocks;
     }
 
+    /**
+     * The fallbacks of this palette.
+     *
+     * @return the fallbacks by identifier of the block they replace
+     */
     public @NonNull Map<String, BlockFallback> fallbacks() {
         return fallbacks;
     }
 
     /**
+     * Internal: whether this palette has the same states as another.
+     *
+     * @param other the registry to compare with
      * @return true if this palette has exactly the states (and runtime ids) of the other one
      */
     @Internal
@@ -637,6 +749,9 @@ public final class BlockRegistry implements DefinitionRegistry<BlockDefinition> 
     }
 
     /**
+     * Internal: whether this palette extends the states of another.
+     *
+     * @param other the registry to compare with
      * @return true if this palette has the states of the other one, in the same dense positions ({@link #indexOf}), and
      * possibly more after them: it is the other palette or was built by adding custom blocks to it
      */
@@ -659,6 +774,9 @@ public final class BlockRegistry implements DefinitionRegistry<BlockDefinition> 
      * The hash of BDS's {@code HashedString}: FNV-1 64 bit (multiply, then xor: not FNV-1a) over the zero-extended UTF-8
      * bytes, 0 for the empty string. BDS sends it as a block's {@code name_hash}, and the client orders its palette by it
      * once custom blocks exist.
+     *
+     * @param identifier the block identifier
+     * @return the hash
      */
     @Internal
     public static long nameHash(@NonNull String identifier) {

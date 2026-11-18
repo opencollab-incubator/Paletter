@@ -18,6 +18,8 @@ public record ScriptHooks(boolean playerInteract, boolean playerPlacing) impleme
     public static final String NAME = "minecraft:custom_components";
 
     /**
+     * Creates the component.
+     *
      * @param playerInteract whether any component registers {@code onPlayerInteract}
      * @param playerPlacing  whether any component registers {@code beforeOnPlayerPlace}
      * @return the component

@@ -31,6 +31,12 @@ public record Wearable(boolean hidesPlayerLocation, int protection,
      */
     public static final String NAME = "minecraft:wearable";
 
+    /**
+     * Checks the components and copies lists and maps, so the value is immutable.
+     *
+     * @throws NullPointerException if a required component is null
+     * @throws IllegalArgumentException if a component is out of its documented range or conflicts with another
+     */
     public Wearable {
         Check.range("Wearable.protection", protection, 0.0, null);
         Objects.requireNonNull(slot, "Wearable.slot");
@@ -42,6 +48,8 @@ public record Wearable(boolean hidesPlayerLocation, int protection,
     }
 
     /**
+     * Creates a builder with every field at its default.
+     *
      * @return a builder with the defaults applied
      */
     public static @NonNull Builder builder() {
@@ -49,6 +57,8 @@ public record Wearable(boolean hidesPlayerLocation, int protection,
     }
 
     /**
+     * Creates a builder holding this value's fields, to change some of them.
+     *
      * @return a builder with this value's fields
      */
     public @NonNull Builder toBuilder() {
@@ -74,6 +84,9 @@ public record Wearable(boolean hidesPlayerLocation, int protection,
 
         /**
          * Sets {@code hides_player_location}.
+         *
+         * @param hidesPlayerLocation the value
+         * @return this builder
          */
         public @NonNull Builder hidesPlayerLocation(boolean hidesPlayerLocation) {
             this.hidesPlayerLocation = hidesPlayerLocation;
@@ -82,6 +95,9 @@ public record Wearable(boolean hidesPlayerLocation, int protection,
 
         /**
          * Sets {@code protection}.
+         *
+         * @param protection the value
+         * @return this builder
          */
         public @NonNull Builder protection(int protection) {
             this.protection = protection;
@@ -90,6 +106,9 @@ public record Wearable(boolean hidesPlayerLocation, int protection,
 
         /**
          * Sets {@code slot}.
+         *
+         * @param slot the value
+         * @return this builder
          */
         public @NonNull Builder slot(@NonNull Slot slot) {
             this.slot = slot;
@@ -97,6 +116,9 @@ public record Wearable(boolean hidesPlayerLocation, int protection,
         }
 
         /**
+         * Builds the value from the fields set and the defaults.
+         *
+         * @return the value
          * @throws IllegalStateException if a required field is not set
          * @throws IllegalArgumentException if a value is out of range
          */
@@ -154,6 +176,8 @@ public record Wearable(boolean hidesPlayerLocation, int protection,
         }
 
         /**
+         * Returns the value in add-on JSON.
+         *
          * @return the value in add-on JSON
          */
         public @NonNull String value() {
@@ -161,7 +185,10 @@ public record Wearable(boolean hidesPlayerLocation, int protection,
         }
 
         /**
-         * @return the constant of an add-on JSON value
+         * Finds the constant of an add-on JSON value.
+         *
+         * @param value the value in add-on JSON
+         * @return the constant of the value
          * @throws IllegalArgumentException if the value is not documented
          */
         public static @NonNull Slot fromValue(@NonNull String value) {

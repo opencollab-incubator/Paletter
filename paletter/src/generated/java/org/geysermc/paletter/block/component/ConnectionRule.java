@@ -35,6 +35,12 @@ public record ConnectionRule(ConnectionRule. @NonNull AcceptsConnectionsFrom acc
      */
     public static final String NAME = "minecraft:connection_rule";
 
+    /**
+     * Checks the components and copies lists and maps, so the value is immutable.
+     *
+     * @throws NullPointerException if a required component is null
+     * @throws IllegalArgumentException if a component is out of its documented range or conflicts with another
+     */
     public ConnectionRule {
         Objects.requireNonNull(acceptsConnectionsFrom, "ConnectionRule.acceptsConnectionsFrom");
         enabledDirections = List.copyOf(Objects.requireNonNull(enabledDirections, "ConnectionRule.enabledDirections"));
@@ -46,6 +52,8 @@ public record ConnectionRule(ConnectionRule. @NonNull AcceptsConnectionsFrom acc
     }
 
     /**
+     * Creates a builder with every field at its default.
+     *
      * @return a builder with the defaults applied
      */
     public static @NonNull Builder builder() {
@@ -53,6 +61,8 @@ public record ConnectionRule(ConnectionRule. @NonNull AcceptsConnectionsFrom acc
     }
 
     /**
+     * Creates a builder holding this value's fields, to change some of them.
+     *
      * @return a builder with this value's fields
      */
     public @NonNull Builder toBuilder() {
@@ -75,6 +85,9 @@ public record ConnectionRule(ConnectionRule. @NonNull AcceptsConnectionsFrom acc
 
         /**
          * Sets {@code accepts_connections_from}.
+         *
+         * @param acceptsConnectionsFrom the value
+         * @return this builder
          */
         public @NonNull Builder acceptsConnectionsFrom(
                 @NonNull AcceptsConnectionsFrom acceptsConnectionsFrom) {
@@ -84,6 +97,9 @@ public record ConnectionRule(ConnectionRule. @NonNull AcceptsConnectionsFrom acc
 
         /**
          * Sets {@code enabled_directions}.
+         *
+         * @param enabledDirections the value
+         * @return this builder
          */
         public @NonNull Builder enabledDirections(
                 @NonNull List<EnabledDirections> enabledDirections) {
@@ -93,12 +109,18 @@ public record ConnectionRule(ConnectionRule. @NonNull AcceptsConnectionsFrom acc
 
         /**
          * Sets {@code enabled_directions}.
+         *
+         * @param enabledDirections the value
+         * @return this builder
          */
         public @NonNull Builder enabledDirections(@NonNull EnabledDirections... enabledDirections) {
             return enabledDirections(List.of(enabledDirections));
         }
 
         /**
+         * Builds the value from the fields set and the defaults.
+         *
+         * @return the value
          * @throws IllegalStateException if a required field is not set
          * @throws IllegalArgumentException if a value is out of range
          */
@@ -133,6 +155,8 @@ public record ConnectionRule(ConnectionRule. @NonNull AcceptsConnectionsFrom acc
         }
 
         /**
+         * Returns the value in add-on JSON.
+         *
          * @return the value in add-on JSON
          */
         public @NonNull String value() {
@@ -140,7 +164,10 @@ public record ConnectionRule(ConnectionRule. @NonNull AcceptsConnectionsFrom acc
         }
 
         /**
-         * @return the constant of an add-on JSON value
+         * Finds the constant of an add-on JSON value.
+         *
+         * @param value the value in add-on JSON
+         * @return the constant of the value
          * @throws IllegalArgumentException if the value is not documented
          */
         public static @NonNull AcceptsConnectionsFrom fromValue(@NonNull String value) {
@@ -184,6 +211,8 @@ public record ConnectionRule(ConnectionRule. @NonNull AcceptsConnectionsFrom acc
         }
 
         /**
+         * Returns the value in add-on JSON.
+         *
          * @return the value in add-on JSON
          */
         public @NonNull String value() {
@@ -191,7 +220,10 @@ public record ConnectionRule(ConnectionRule. @NonNull AcceptsConnectionsFrom acc
         }
 
         /**
-         * @return the constant of an add-on JSON value
+         * Finds the constant of an add-on JSON value.
+         *
+         * @param value the value in add-on JSON
+         * @return the constant of the value
          * @throws IllegalArgumentException if the value is not documented
          */
         public static @NonNull EnabledDirections fromValue(@NonNull String value) {

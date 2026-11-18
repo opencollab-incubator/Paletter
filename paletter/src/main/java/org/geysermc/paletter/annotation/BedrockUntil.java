@@ -18,6 +18,8 @@ import java.lang.annotation.Target;
 @Target(ElementType.FIELD)
 public @interface BedrockUntil {
     /**
+     * The first bundled version without the constant.
+     *
      * @return the name of the data version, e.g. {@code 26.50}
      */
     String value();

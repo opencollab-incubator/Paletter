@@ -181,7 +181,7 @@ public final class JavaWriter {
             out.append("    public static final ").append(type).append(' ').append(alias.constant).append(" = ").append(alias.replacement).append(";\n\n");
         }
         out.append("    private BedrockStates() {\n    }\n\n");
-        out.append("    /**\n     * @return the constant of a vanilla state name, or null if there is none\n     */\n");
+        out.append("    /**\n     * Finds a state constant by its name.\n     *\n     * @param name the state name, e.g. {@code weirdo_direction}\n     * @return the constant of a vanilla state name, or null if there is none\n     */\n");
         out.append("    public static @Nullable BedrockState<?> byName(@NonNull String name) {\n");
         out.append("        return VanillaTypes.STATES.get(name);\n    }\n}\n");
         return out.toString();

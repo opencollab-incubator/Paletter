@@ -59,6 +59,8 @@ public final class CustomItem {
     }
 
     /**
+     * Returns the item identifier.
+     *
      * @return the item identifier, e.g. {@code geysermc:furnace_minecart} (description {@code identifier})
      */
     public @NonNull String identifier() {
@@ -66,6 +68,8 @@ public final class CustomItem {
     }
 
     /**
+     * Returns the components of the item.
+     *
      * @return the components (one per component name), in the order they were added
      */
     public @NonNull List<ItemComponent> components() {
@@ -73,6 +77,8 @@ public final class CustomItem {
     }
 
     /**
+     * Returns the explicit menu category of the item.
+     *
      * @return the description's {@code menu_category}, or null: then it follows {@link #creative()} (and without one,
      *         Bedrock's default)
      */
@@ -81,17 +87,30 @@ public final class CustomItem {
     }
 
     /**
+     * Returns the creative inventory placement of the item.
+     *
      * @return where it goes in the creative inventory, or null to leave it out
      */
     public @Nullable CreativePlacement creative() {
         return creative;
     }
 
+    /**
+     * Starts building a custom item.
+     *
+     * @param identifier the item identifier, e.g. {@code geysermc:furnace_minecart}
+     * @return a new builder
+     * @throws NullPointerException if the identifier is null
+     */
     public static @NonNull Builder builder(@NonNull String identifier) {
         return new Builder(identifier);
     }
 
     /**
+     * Finds a component by its class.
+     *
+     * @param type the component class
+     * @param <T> the component type
      * @return the component of a type, or null if the item does not have it
      */
     public <T extends ItemComponent> @Nullable T component(@NonNull Class<T> type) {
@@ -104,7 +123,9 @@ public final class CustomItem {
     }
 
     /**
-     * @return the item tags ({@code minecraft:tags})
+     * Returns the item tags.
+     *
+     * @return the item tags ({@code minecraft:tags}), empty if the item has no {@link Tags} component
      */
     public @NonNull List<String> tags() {
         Tags tags = component(Tags.class);
@@ -126,6 +147,11 @@ public final class CustomItem {
         return type;
     }
 
+    /**
+     * Internal: the internal variant of the item, for its identifier.
+     *
+     * @return the internal variant with aux value 0 and no block state
+     */
     @Internal
     public @NonNull ItemVariant variant() {
         return ItemVariant.of(identifier);
@@ -151,6 +177,11 @@ public final class CustomItem {
             + ", creative=" + creative + "]";
     }
 
+    /**
+     * Builds a {@link CustomItem}.
+     *
+     * @since 1.0.0
+     */
     public static final class Builder {
         private final String identifier;
         private final List<ItemComponent> components = new ArrayList<>();
@@ -163,6 +194,10 @@ public final class CustomItem {
 
         /**
          * Adds a component, replacing one of the same name.
+         *
+         * @param component the component
+         * @return this builder
+         * @throws NullPointerException if the component is null
          */
         public @NonNull Builder component(@NonNull ItemComponent component) {
             components.removeIf(existing -> existing.name().equals(component.name()));
@@ -172,6 +207,10 @@ public final class CustomItem {
 
         /**
          * Adds components, replacing those of the same names.
+         *
+         * @param components the components
+         * @return this builder
+         * @throws NullPointerException if a component is null
          */
         public @NonNull Builder components(@NonNull ItemComponent... components) {
             for (ItemComponent component : components) {
@@ -182,6 +221,10 @@ public final class CustomItem {
 
         /**
          * Adds components, replacing those of the same names.
+         *
+         * @param components the components
+         * @return this builder
+         * @throws NullPointerException if a component is null
          */
         public @NonNull Builder components(@NonNull List<? extends ItemComponent> components) {
             components.forEach(this::component);
@@ -191,17 +234,31 @@ public final class CustomItem {
         /**
          * Sets the description's {@code menu_category} explicitly. Without it, the item's {@link #creative} placement
          * decides it.
+         *
+         * @param menuCategory the menu category, or null to follow the creative placement
+         * @return this builder
          */
         public @NonNull Builder menuCategory(@Nullable ItemMenuCategory menuCategory) {
             this.menuCategory = menuCategory;
             return this;
         }
 
+        /**
+         * Sets where the item goes in the creative inventory. Without it, the item is left out.
+         *
+         * @param creative the placement, or null to leave the item out
+         * @return this builder
+         */
         public @NonNull Builder creative(@Nullable CreativePlacement creative) {
             this.creative = creative;
             return this;
         }
 
+        /**
+         * Builds the item. Each call makes a new item with a type of its own.
+         *
+         * @return the custom item
+         */
         public @NonNull CustomItem build() {
             return new CustomItem(identifier, components, menuCategory, creative);
         }

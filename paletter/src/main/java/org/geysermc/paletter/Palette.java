@@ -61,7 +61,20 @@ import java.util.function.Supplier;
 
 /**
  * Everything a Bedrock client of one version needs to know about items and blocks: vanilla data plus a stack of
- * {@link PaletteLayer}s, compiled. Immutable and thread safe; share it between all sessions it applies to.
+ * {@link PaletteLayer}s, compiled. Build one with {@link Paletter}; {@link #extend(PaletteLayer)} adds a layer.
+ * <p>
+ * Thread safety: a palette is immutable and safe to share between threads and sessions. Its lazily built caches
+ * (behaviour, version indexes) and {@link #extend(PaletteLayer)} synchronize internally; no method needs external locking.
+ * <p>
+ * Null handling: parameters and return values are {@code @NonNull} unless the signature says {@code @Nullable}. Methods that
+ * look something up return null (or take an {@code orElse}) where the content is not in the palette; they do not throw for it.
+ * Methods throw only for configuration errors: an {@link IllegalArgumentException} for a handle that does not belong to
+ * the palette (see {@link #blockDefinition(BedrockBlockState)}), never for data a client sent.
+ * <p>
+ * Vocabulary: keys ({@link BedrockBlockState}, {@link BedrockItemVariant}, ...) identify content independent of any version;
+ * definitions ({@link RegisteredBlockState}, {@link RegisteredItem}) are what the palette sends to the client; resolutions
+ * ({@link ResolvedBlock}, {@link ResolvedItem}) are what a palette makes of a key: the definition, whether a fallback was
+ * used, and the behaviour values.
  * <p>
  * Sending it to a client:
  * <pre>{@code
@@ -121,7 +134,9 @@ public final class Palette {
     }
 
     /**
-     * @return the creative ordering of the Paletter that compiled this palette; extensions use it too
+     * Returns the creative ordering of the Paletter that compiled this palette; extensions use it too.
+     *
+     * @return the ordering
      */
     CreativeOrdering ordering() {
         return ordering;
@@ -132,6 +147,9 @@ public final class Palette {
     }
 
     /**
+     * Copies this palette with another report, sharing everything else.
+     *
+     * @param report the report of the copy
      * @return this palette with another report, sharing everything else
      */
     Palette withReport(PaletteReport report) {
@@ -156,7 +174,10 @@ public final class Palette {
     }
 
     /**
-     * @return the behaviour values of this palette, behind {@link #resolve(BedrockBlockState)} and {@link ResolvedItem#behaviour()}
+     * Internal: returns the behaviour values of this palette, behind {@link #resolve(BedrockBlockState)} and
+     * {@link ResolvedItem#behaviour()}. Built on first use.
+     *
+     * @return the behaviour values
      */
     @Internal
     public @NonNull Behaviour behaviour() {
@@ -182,6 +203,8 @@ public final class Palette {
      * <p>
      * Makes a {@link ResolvedBlock} on each call, which is cheap: the lookups are array reads. Do not compare resolutions with {@code ==}.
      *
+     * @param state the block state, a key
+     * @return the resolution of the state
      * @throws IllegalArgumentException like {@link #blockDefinition(BedrockBlockState)}. Use
      *         {@link #resolve(BedrockBlockState, ResolvedBlock)} for states that may be missing
      * @since 1.0.0
@@ -191,6 +214,9 @@ public final class Palette {
     }
 
     /**
+     * Resolves a block state like {@link #resolve(BedrockBlockState)}, but returns a default where that throws.
+     *
+     * @param state the block state, a key
      * @param orElse what to return where {@link #resolve(BedrockBlockState)} throws, may be null: like
      *         {@link #blockDefinition(BedrockBlockState, RegisteredBlockState)}, not the configured {@code Fallbacks},
      *         which apply before it
@@ -224,29 +250,53 @@ public final class Palette {
         return new ResolvedBlock(block, false, behaviour().block(index));
     }
 
+    /**
+     * Returns the Bedrock data version of this palette: the clients it is for.
+     *
+     * @return the data version
+     * @since 1.0.0
+     */
     public @NonNull DataVersion version() {
         return data.version();
     }
 
+    /**
+     * Internal: returns the bundled vanilla data of this palette's version.
+     *
+     * @return the vanilla data
+     */
     @Internal
     public @NonNull VanillaData vanillaData() {
         return data;
     }
 
     /**
-     * @return the layers this palette was compiled from, in order
+     * Lists the layers this palette was compiled from.
+     *
+     * @return the layers, in order, unmodifiable
+     * @since 1.0.0
      */
     public @NonNull List<PaletteLayer> layers() {
         return layers;
     }
 
-    /** Internal: use {@link #blockDefinition(BedrockBlockState)}, {@link #blockState(BlockDefinition)} and the other methods of this class. */
+    /**
+     * Internal: the block registry. Use {@link #blockDefinition(BedrockBlockState)}, {@link #blockState(BlockDefinition)}
+     * and the other methods of this class.
+     *
+     * @return the block registry
+     */
     @Internal
     public @NonNull BlockRegistry blocks() {
         return blocks;
     }
 
-    /** Internal: use {@link #itemDefinition(String)}, {@link #itemDefinitions()}, {@link #itemTags()} and the other methods of this class. */
+    /**
+     * Internal: the item registry. Use {@link #itemDefinition(String)}, {@link #itemDefinitions()}, {@link #itemTags()}
+     * and the other methods of this class.
+     *
+     * @return the item registry
+     */
     @Internal
     public @NonNull ItemRegistry items() {
         return items;
@@ -255,6 +305,8 @@ public final class Palette {
     // ---- Content handles ----
 
     /**
+     * Finds the key of a block state, the handle used for everything else about blocks.
+     *
      * @param state a block state as {@code {name, states}}; extra keys are ignored
      * @param lookup whether the state must exist as is in this palette's version, see {@link Lookup}
      * @return its handle, or null if the lookup does not accept the state: it is newer than this palette's version,
@@ -278,6 +330,10 @@ public final class Palette {
     }
 
     /**
+     * Finds the key of an item variant (an item type and its aux value).
+     *
+     * @param identifier the item identifier such as {@code minecraft:stick}
+     * @param aux the aux value (damage); 0 is the base variant
      * @param lookup whether the variant must exist as is in this palette's version, see {@link Lookup}
      * @return its handle, or null if the lookup does not accept the variant, for the reasons of
      *         {@link #blockState(NbtMap, Lookup)}. Aux 0 is the base variant, which every item has
@@ -297,6 +353,8 @@ public final class Palette {
     }
 
     /**
+     * Finds the key of an item type.
+     *
      * @param identifier an item identifier
      * @param lookup whether the item must exist as is in this palette's version, see {@link Lookup}
      * @return the item type, or null if the lookup does not accept the identifier
@@ -308,6 +366,8 @@ public final class Palette {
     }
 
     /**
+     * Finds the key of a vanilla block type.
+     *
      * @param identifier a block identifier of a vanilla block
      * @param lookup whether the block must exist as is in this palette's version, see {@link Lookup}
      * @return the block type, or null if the lookup does not accept the identifier. {@link Lookup#RENAMED} also finds
@@ -327,6 +387,10 @@ public final class Palette {
     }
 
     /**
+     * Explains why a block state has no handle, for logs and error messages.
+     *
+     * @param state the block state, as for {@link #blockState(NbtMap, Lookup)}
+     * @param lookup the lookup that refused it
      * @return why a block state has no handle under a lookup (see {@link #blockState(NbtMap, Lookup)}), or null if it has one
      * @since 1.0.0
      */
@@ -339,6 +403,11 @@ public final class Palette {
     }
 
     /**
+     * Explains why an item variant has no handle, for logs and error messages.
+     *
+     * @param identifier the item identifier
+     * @param aux the aux value
+     * @param lookup the lookup that refused it
      * @return why an item has no handle under a lookup (see {@link #itemVariant(String, int, Lookup)}), or null if it has one
      * @since 1.0.0
      */
@@ -404,6 +473,8 @@ public final class Palette {
     }
 
     /**
+     * Lists every item variant this palette knows.
+     *
      * @return every item variant this palette knows, in no particular order: the vanilla ones of the newest data, the
      *         custom items and variants of its layers
      * @since 1.0.0
@@ -418,6 +489,9 @@ public final class Palette {
     }
 
     /**
+     * Returns the definition (what is sent to the client) of a block state in this palette.
+     *
+     * @param state the block state, a key
      * @return the block to send for a state; resolved for this version with its fallbacks, air if nothing fits. A field
      *         read and an array load, it does not allocate
      * @throws IllegalArgumentException if the state is not in this palette: a custom block of a layer it does not have,
@@ -431,6 +505,10 @@ public final class Palette {
     }
 
     /**
+     * Returns the definition of a block state like {@link #blockDefinition(BedrockBlockState)}, but returns a default
+     * where that throws.
+     *
+     * @param state the block state, a key
      * @param orElse what to return where {@link #blockDefinition(BedrockBlockState)} throws, may be null; not the
      *         configured {@code Fallbacks}, which apply before it
      * @return the block to send for a state, or {@code orElse} if the state is not in this palette
@@ -443,6 +521,9 @@ public final class Palette {
     }
 
     /**
+     * Returns the block runtime id of a block state in this palette.
+     *
+     * @param state the block state, a key
      * @return the runtime id to send for a state: its hash, see {@link BlockHashes}. A field read and an array load, it
      *         does not allocate
      * @throws IllegalArgumentException like {@link #blockDefinition(BedrockBlockState)}. Use
@@ -454,6 +535,10 @@ public final class Palette {
     }
 
     /**
+     * Returns the block runtime id of a block state like {@link #runtimeId(BedrockBlockState)}, but returns a default
+     * where that throws.
+     *
+     * @param state the block state, a key
      * @param orElse what to return where {@link #runtimeId(BedrockBlockState)} throws, e.g. the runtime id of air
      * @return the runtime id to send for a state, or {@code orElse} if the state is not in this palette
      * @since 1.0.0
@@ -480,6 +565,7 @@ public final class Palette {
      * fallback's block in an old version, the custom block of a layer. {@link #runtimeId(BedrockBlockState)} gives its
      * runtime id here.
      *
+     * @param key the item type or variant
      * @return the block's key, or null if the item is not a block item here (or no state of the newest data
      *         resolves to the block, see {@link #blockState(BlockDefinition)})
      * @since 1.0.0
@@ -496,6 +582,7 @@ public final class Palette {
      * a stack's own block state, count and NBT are not part of it. {@link ResolvedItem#fallback()} tells whether the
      * variant is sent as another item, {@link ResolvedItem#variant()} which.
      *
+     * @param key the item type or variant
      * @return the resolution, or null if the item does not exist in this version and has no fallback
      * @since 1.0.0
      */
@@ -504,6 +591,9 @@ public final class Palette {
     }
 
     /**
+     * Returns the definition of an item type in this palette.
+     *
+     * @param type the item type, a key
      * @return the item of a type as registered in this palette, or null if it has none (an item of a layer this palette
      *         does not have, or one that does not exist in this version; fallbacks are not applied, see {@link #encode})
      * @since 1.0.0
@@ -513,6 +603,8 @@ public final class Palette {
     }
 
     /**
+     * Returns the definition of an item by identifier.
+     *
      * @param identifier an item identifier such as {@code minecraft:stick}
      * @return the item with this identifier as registered in this palette, or null if it has none; fallbacks are not
      *         applied, see {@link #encode}
@@ -523,6 +615,8 @@ public final class Palette {
     }
 
     /**
+     * Lists the item definitions of this palette.
+     *
      * @return every item registered in this palette, in runtime id order
      * @since 1.0.0
      */
@@ -531,6 +625,8 @@ public final class Palette {
     }
 
     /**
+     * Lists the item tags of this palette.
+     *
      * @return the item tags, tag to item identifiers: the vanilla tags plus the tags of custom items and layers
      * @since 1.0.0
      */
@@ -545,6 +641,7 @@ public final class Palette {
      * gives the key of the block with the same runtime id here, as this palette knows it (a custom block of this
      * palette's own layer).
      *
+     * @param definition a block definition, usually one this palette sent
      * @return the key, or null if this palette has no block with the definition's runtime id, no state resolves to it,
      *         or the definition is not a {@link RegisteredBlockState}
      * @since 1.0.0
@@ -554,6 +651,8 @@ public final class Palette {
     }
 
     /**
+     * Finds the key of the block with a runtime id.
+     *
      * @param runtimeId a block runtime id of this palette (block network ids are always hashes)
      * @return the key of the block with this runtime id, or null if this palette has no such block. For ids decoded from
      *         packets the codec helper already gives definitions; use this for ids a server stores itself, e.g. chunk
@@ -566,6 +665,8 @@ public final class Palette {
     }
 
     /**
+     * Finds the definition of the block with a runtime id.
+     *
      * @param runtimeId a block runtime id of this palette (block network ids are always hashes)
      * @return the block with this runtime id as sent, or null if this palette has no such block. For ids decoded from
      *         packets the codec helper already gives definitions; use this for ids a server stores itself, e.g. chunk
@@ -577,6 +678,8 @@ public final class Palette {
     }
 
     /**
+     * Finds the definition of the item with a runtime id.
+     *
      * @param runtimeId an item runtime id of this palette (negative for the plain item of a custom block)
      * @return the item with this runtime id as registered in this palette, or null if it has none. For ids decoded from
      *         packets the codec helper already gives definitions; use this for ids a server stores itself
@@ -595,6 +698,7 @@ public final class Palette {
      * replaced by the same stand-in: the item's fallback, else the default one of the {@link Fallbacks}
      * ({@code minecraft:unknown} unless configured otherwise), whichever way the item is looked up.
      *
+     * @param stack the stack, built from keys
      * @return the item data, or {@link ItemData#AIR} only if there is neither a fallback for the item nor a default one
      *         ({@link Fallbacks#NONE})
      * @since 1.0.0
@@ -608,6 +712,7 @@ public final class Palette {
      * block. The stack of a fallback shared by several variants, or of an item that is not a variant of the newest
      * version, is not recognized.
      *
+     * @param data the stack as the client sent it
      * @return the stack, or null for air or an item this palette cannot identify
      * @since 1.0.0
      */
@@ -627,6 +732,8 @@ public final class Palette {
      * <p>
      * Stacks that differ only in count, or only in NBT, never match.
      *
+     * @param a the first stack
+     * @param b the second stack
      * @return true if the stacks are the same
      * @since 1.0.0
      */
@@ -690,6 +797,8 @@ public final class Palette {
      * Explains what this palette does with a block state: canonical, runtime and hashed id, how it was resolved for
      * this version and which state is sent. Slow, for debugging only.
      *
+     * @param state the block state, as for {@link #blockState(NbtMap, Lookup)}
+     * @return the explanation
      * @since 1.0.0
      */
     public @NonNull BlockExplanation explain(@NonNull NbtMap state) {
@@ -712,6 +821,10 @@ public final class Palette {
      * Explains what this palette does with an item: canonical and runtime id, how it was resolved for this
      * version, the block it is sent with and its place in the creative inventory. Slow, for debugging only.
      *
+     * @param identifier the item identifier
+     * @param aux the aux value
+     * @param blockState the block state the stack carries, or null if it has none
+     * @return the explanation
      * @since 1.0.0
      */
     public @NonNull ItemExplanation explain(@NonNull String identifier, int aux, @Nullable NbtMap blockState) {
@@ -749,21 +862,30 @@ public final class Palette {
     }
 
     /**
+     * Returns the creative layout, version independent, after all layers.
+     *
      * @return the version independent creative layout after all layers
+     * @since 1.0.0
      */
     public @NonNull CreativeLayout creativeLayout() {
         return creativeLayout;
     }
 
     /**
+     * Returns the creative inventory as compiled for this version.
+     *
      * @return the creative inventory as sent to this version's clients
+     * @since 1.0.0
      */
     public @NonNull CreativeContent creative() {
         return creative;
     }
 
     /**
+     * Returns the report of the compilation: warnings and errors about the content.
+     *
      * @return what happened while compiling this palette (including its parents)
+     * @since 1.0.0
      */
     public @NonNull PaletteReport report() {
         return report;
@@ -777,7 +899,10 @@ public final class Palette {
      * item, an exception from a component encoder or a callback): the palette is returned unchanged, with an
      * {@link PaletteReport.Level#ERROR} entry in its {@link #report()} (a copy of this palette's report, which is not
      * modified) naming the layer, the version and the cause. Check {@link PaletteReport#errors()}.
+     * <p>
+     * Thread safe: concurrent calls for one layer instance share one result.
      *
+     * @param layer the layer to add, not null
      * @return the palette with the layer, or this palette (with the error in its report) if the layer failed
      */
     public @NonNull Palette extend(@NonNull PaletteLayer layer) {
@@ -803,6 +928,9 @@ public final class Palette {
 
     /**
      * Sets the item and block definition registries of a connection's codec.
+     *
+     * @param helper the codec helper of one connection; it is modified
+     * @since 1.0.0
      */
     public void applyTo(@NonNull BedrockCodecHelper helper) {
         helper.setItemDefinitions(items);
@@ -813,6 +941,9 @@ public final class Palette {
      * Adds the block properties (vanilla data driven and custom blocks) to a start game packet, and sets
      * {@code blockNetworkIdsHashed}: block runtime ids are always hashed. Applying a palette again to the same packet
      * changes nothing.
+     *
+     * @param packet the start game packet to send; it is modified
+     * @since 1.0.0
      */
     public void applyTo(@NonNull StartGamePacket packet) {
         List<BlockPropertyData> existing = packet.getBlockProperties();
@@ -830,6 +961,7 @@ public final class Palette {
      * Adds the experiments of {@link #experiments()} to a resource pack stack packet (the client reads the enabled
      * experiments from there as well).
      *
+     * @param packet the packet to send; it is modified
      * @since 1.0.0
      */
     public void applyTo(@NonNull ResourcePackStackPacket packet) {
@@ -858,6 +990,9 @@ public final class Palette {
     }
 
     /**
+     * Finds the experiment an item needs in this palette.
+     *
+     * @param type the item type
      * @return the enabled experiment toggle that makes an item present in this palette, or null if the item needs none.
      *         (Definitions are shared between palettes, so the registered item does not know; ask the palette.)
      * @since 1.0.0
@@ -867,6 +1002,9 @@ public final class Palette {
     }
 
     /**
+     * Finds the experiment a block needs in this palette.
+     *
+     * @param type the block type
      * @return the enabled experiment toggle that makes a block present in this palette, or null if the block needs none
      * @since 1.0.0
      */
@@ -875,8 +1013,10 @@ public final class Palette {
     }
 
     /**
+     * Returns the voxel shapes of this palette.
+     *
      * @return the voxel shapes of this palette (the shapes Bedrock culls block faces with): the vanilla ones BDS of this
-     * version sends, plus the ones the layers define and what Bedrock derives from them for custom blocks
+     *         version sends, plus the ones the layers define and what Bedrock derives from them for custom blocks
      * @since 1.0.0
      */
     public @NonNull VoxelShapes voxelShapes() {
@@ -894,10 +1034,22 @@ public final class Palette {
         return shapes.compiled().toPacket();
     }
 
+    /**
+     * Builds the item component packet: the data driven components of the custom items and vanilla overrides.
+     *
+     * @return the item component packet to send to the client
+     * @since 1.0.0
+     */
     public @NonNull ItemComponentPacket itemComponentPacket() {
         return items.toPacket();
     }
 
+    /**
+     * Builds the creative content packet from {@link #creative()}.
+     *
+     * @return the creative content packet to send to the client
+     * @since 1.0.0
+     */
     public @NonNull CreativeContentPacket creativeContentPacket() {
         return creative.toPacket();
     }

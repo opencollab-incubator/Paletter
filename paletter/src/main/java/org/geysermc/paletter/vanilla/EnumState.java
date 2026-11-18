@@ -33,11 +33,22 @@ public final class EnumState<E extends Enum<E> & StateValue> extends BedrockStat
         this.byValue = Map.copyOf(byValue);
     }
 
+    /**
+     * Creates a state whose values are the constants of an enum.
+     *
+     * @param <E> the enum
+     * @param name the state name as in the block state NBT
+     * @param type the enum of the values; each constant's {@link StateValue#value()} must be unique
+     * @return a new state
+     * @throws IllegalArgumentException if two constants of the enum have the same value
+     */
     public static <E extends Enum<E> & StateValue> @NonNull EnumState<E> of(@NonNull String name, @NonNull Class<E> type) {
         return new EnumState<>(name, type);
     }
 
     /**
+     * The enum of the values.
+     *
      * @return the enum of the values
      */
     public @NonNull Class<E> type() {
@@ -50,7 +61,10 @@ public final class EnumState<E extends Enum<E> & StateValue> extends BedrockStat
     }
 
     /**
-     * @return the constant for a string as stored in the block state NBT, or null if there is none
+     * Looks up a constant by its stored string.
+     *
+     * @param value a string as stored in the block state NBT
+     * @return the constant for the string, or null if there is none
      */
     public @Nullable E value(@NonNull String value) {
         return byValue.get(value);

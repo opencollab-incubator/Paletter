@@ -24,7 +24,9 @@ import org.checkerframework.checker.nullness.qual.NonNull;
  */
 public sealed interface BlockComponent permits BlockDisplayName, BlockEntity, BlockLightAbsorption, BlockLightEmission, BoneVisibility, Breathability, ChestObstruction, CollisionBox, ConnectionRule, CraftingTable, DestroyTime, DestructibleByExplosion, DestructibleByMining, DestructionParticles, EmbeddedVisual, EntityFallOn, Flammable, FlowerPottable, Friction, Geometry, InstrumentSound, ItemVisual, LightDampening, LightEmission, LiquidDetection, Loot, MapColor, MaterialInstances, Movable, PlacementFilter, PrecipitationInteractions, RandomOffset, RedstoneConductivity, RedstoneConsumer, RedstoneProducer, Replaceable, SelectionBox, Support, Tick, Transformation, UnitCube, WireOnlyBlockComponent {
     /**
-     * @return the component name in add-on JSON, e.g. {@code minecraft:durability}
+     * Returns the component name in add-on JSON.
+     *
+     * @return the name, e.g. {@code minecraft:durability}
      */
     @NonNull String name();
 }

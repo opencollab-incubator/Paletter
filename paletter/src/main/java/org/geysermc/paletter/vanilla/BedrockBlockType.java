@@ -72,8 +72,9 @@ public final class BedrockBlockType {
     }
 
     /**
-     * Plumbing of {@link CustomBlock}, which creates its type once and owns it: use {@link CustomBlock#type()}.
+     * Internal: plumbing of {@link CustomBlock}, which creates its type once and owns it: use {@link CustomBlock#type()}.
      *
+     * @param identifier the block identifier
      * @param properties the state properties, in declaration order ({@link CustomBlock#stateProperties()})
      * @param defaultStates the values of the default state; properties not listed use their first value
      * @return a new custom type. Loads no data
@@ -85,11 +86,14 @@ public final class BedrockBlockType {
     }
 
     /**
-     * The key of an identifier: the vanilla constant if the identifier is a vanilla block of the newest bundled data or
+     * Internal: the key of an identifier: the vanilla constant if the identifier is a vanilla block of the newest bundled data or
      * has a generated constant, else a custom type known by its identifier only (no states). Such types are not
      * interned: equal for equal identifiers, not identical, so compare them with {@code equals}, and unknown
      * identifiers never accumulate. The type of a {@link CustomBlock} is {@link CustomBlock#type()}. Loads
      * the data.
+     *
+     * @param identifier a block identifier
+     * @return the type of the identifier
      */
     @Internal
     public static @NonNull BedrockBlockType fromIdentifier(@NonNull String identifier) {
@@ -99,6 +103,8 @@ public final class BedrockBlockType {
     }
 
     /**
+     * The vanilla block types.
+     *
      * @return every vanilla block type of the newest bundled data, in palette order. Loads the data
      */
     public static @NonNull List<BedrockBlockType> vanillaTypes() {
@@ -139,6 +145,8 @@ public final class BedrockBlockType {
     }
 
     /**
+     * The block identifier.
+     *
      * @return the block identifier, e.g. {@code minecraft:wooden_door}
      */
     public @NonNull String identifier() {
@@ -157,6 +165,8 @@ public final class BedrockBlockType {
     }
 
     /**
+     * Whether this is a custom type.
+     *
      * @return true for the type of a {@link CustomBlock}
      */
     public boolean isCustom() {
@@ -168,6 +178,7 @@ public final class BedrockBlockType {
      * constant carries {@link org.geysermc.paletter.annotation.Education @Education} for). Decided from BDS captures when
      * the constants were generated; always false for custom blocks and for types made for an unknown identifier.
      *
+     * @return true if BDS only offers the block with Education Edition features
      * @since 1.0.0
      */
     public boolean isEducation() {
@@ -175,6 +186,8 @@ public final class BedrockBlockType {
     }
 
     /**
+     * Whether the bundled data has this type.
+     *
      * @return false for a vanilla constant the bundled data does not have: its states are those of its fallback type
      *         (see {@link #resolved()})
      */
@@ -186,6 +199,8 @@ public final class BedrockBlockType {
     }
 
     /**
+     * The type the states of this type belong to.
+     *
      * @return this type, or for a type that is not {@link #isAvailable() available} the type its states belong to
      */
     public @NonNull BedrockBlockType resolved() {
@@ -193,6 +208,8 @@ public final class BedrockBlockType {
     }
 
     /**
+     * The state properties of the type.
+     *
      * @return the state properties, sorted by name for vanilla blocks and in declaration order for custom blocks
      */
     public @NonNull List<BedrockState<?>> properties() {
@@ -200,6 +217,9 @@ public final class BedrockBlockType {
     }
 
     /**
+     * Whether the type has a state property.
+     *
+     * @param state a state property; matched by name
      * @return true if the type has a property with the state's name
      */
     public boolean hasProperty(@NonNull BedrockState<?> state) {
@@ -207,6 +227,10 @@ public final class BedrockBlockType {
     }
 
     /**
+     * The values of a state property that this block accepts.
+     *
+     * @param <T> the value type of the state
+     * @param state a state property of this block
      * @return the values of a state this block accepts, in its state order
      * @throws IllegalArgumentException if the block does not have the state
      */
@@ -232,6 +256,8 @@ public final class BedrockBlockType {
     }
 
     /**
+     * The default state of the type.
+     *
      * @return the default state: what the block is placed as without further information
      */
     public @NonNull BedrockBlockState defaultState() {
@@ -239,6 +265,8 @@ public final class BedrockBlockType {
     }
 
     /**
+     * Starts building a state.
+     *
      * @return a builder starting from the default state
      */
     public @NonNull StateBuilder state() {
@@ -246,6 +274,8 @@ public final class BedrockBlockType {
     }
 
     /**
+     * Every state of the type.
+     *
      * @return every state, in palette (canonical id) order
      */
     public @NonNull List<BedrockBlockState> states() {
@@ -257,6 +287,11 @@ public final class BedrockBlockType {
         return Collections.unmodifiableList(states);
     }
 
+    /**
+     * The number of states of the type.
+     *
+     * @return the number of states
+     */
     public int stateCount() {
         return layout().count;
     }
@@ -294,21 +329,51 @@ public final class BedrockBlockType {
             this.state = state;
         }
 
+        /**
+         * Changes the value of a state property.
+         *
+         * @param <T> the value type of the property
+         * @param property the state property to change
+         * @param value the new value
+         * @return this builder
+         * @throws IllegalArgumentException if the block does not have the property or the value
+         */
         public <T> @NonNull StateBuilder with(@NonNull BedrockState<T> property, @NonNull T value) {
             state = state.with(property, value);
             return this;
         }
 
+        /**
+         * Changes the value of a boolean state property.
+         *
+         * @param property the state property to change
+         * @param value the new value
+         * @return this builder
+         * @throws IllegalArgumentException if the block does not have the property
+         */
         public @NonNull StateBuilder with(@NonNull BoolState property, boolean value) {
             state = state.with(property, value);
             return this;
         }
 
+        /**
+         * Changes the value of an integer state property.
+         *
+         * @param property the state property to change
+         * @param value the new value
+         * @return this builder
+         * @throws IllegalArgumentException if the block does not have the property or the value
+         */
         public @NonNull StateBuilder with(@NonNull IntState property, int value) {
             state = state.with(property, value);
             return this;
         }
 
+        /**
+         * Builds the state.
+         *
+         * @return the state with the values set so far
+         */
         public @NonNull BedrockBlockState build() {
             return state;
         }

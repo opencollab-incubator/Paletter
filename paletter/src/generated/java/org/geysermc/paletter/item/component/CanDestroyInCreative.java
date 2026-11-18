@@ -33,6 +33,7 @@ public record CanDestroyInCreative(@Nullable Boolean value) implements ItemCompo
     /**
      * The boolean shorthand: sets {@code value}.
      *
+     * @param value the value of that field
      * @return the value with everything else at its default
      */
     public static @NonNull CanDestroyInCreative of(boolean value) {
@@ -40,6 +41,8 @@ public record CanDestroyInCreative(@Nullable Boolean value) implements ItemCompo
     }
 
     /**
+     * Creates a builder with every field at its default.
+     *
      * @return a builder with the defaults applied
      */
     public static @NonNull Builder builder() {
@@ -47,6 +50,8 @@ public record CanDestroyInCreative(@Nullable Boolean value) implements ItemCompo
     }
 
     /**
+     * Creates a builder holding this value's fields, to change some of them.
+     *
      * @return a builder with this value's fields
      */
     public @NonNull Builder toBuilder() {
@@ -66,6 +71,9 @@ public record CanDestroyInCreative(@Nullable Boolean value) implements ItemCompo
 
         /**
          * Sets {@code value}.
+         *
+         * @param value the value
+         * @return this builder
          */
         public @NonNull Builder value(@Nullable Boolean value) {
             this.value = value;
@@ -73,6 +81,9 @@ public record CanDestroyInCreative(@Nullable Boolean value) implements ItemCompo
         }
 
         /**
+         * Builds the value from the fields set and the defaults.
+         *
+         * @return the value
          * @throws IllegalStateException if a required field is not set
          * @throws IllegalArgumentException if a value is out of range
          */

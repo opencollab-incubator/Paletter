@@ -34,6 +34,12 @@ public record RandomOffset(RandomOffset. @NonNull X x, RandomOffset. @NonNull X 
      */
     public static final String NAME = "minecraft:random_offset";
 
+    /**
+     * Checks the components and copies lists and maps, so the value is immutable.
+     *
+     * @throws NullPointerException if a required component is null
+     * @throws IllegalArgumentException if a component is out of its documented range or conflicts with another
+     */
     public RandomOffset {
         Objects.requireNonNull(x, "RandomOffset.x");
         Objects.requireNonNull(y, "RandomOffset.y");
@@ -46,6 +52,8 @@ public record RandomOffset(RandomOffset. @NonNull X x, RandomOffset. @NonNull X 
     }
 
     /**
+     * Creates a builder with every field at its default.
+     *
      * @return a builder with the defaults applied
      */
     public static @NonNull Builder builder() {
@@ -53,6 +61,8 @@ public record RandomOffset(RandomOffset. @NonNull X x, RandomOffset. @NonNull X 
     }
 
     /**
+     * Creates a builder holding this value's fields, to change some of them.
+     *
      * @return a builder with this value's fields
      */
     public @NonNull Builder toBuilder() {
@@ -78,6 +88,9 @@ public record RandomOffset(RandomOffset. @NonNull X x, RandomOffset. @NonNull X 
 
         /**
          * Sets {@code x}.
+         *
+         * @param x the value
+         * @return this builder
          */
         public @NonNull Builder x(@NonNull X x) {
             this.x = x;
@@ -86,6 +99,9 @@ public record RandomOffset(RandomOffset. @NonNull X x, RandomOffset. @NonNull X 
 
         /**
          * Sets {@code y}.
+         *
+         * @param y the value
+         * @return this builder
          */
         public @NonNull Builder y(@NonNull X y) {
             this.y = y;
@@ -94,6 +110,9 @@ public record RandomOffset(RandomOffset. @NonNull X x, RandomOffset. @NonNull X 
 
         /**
          * Sets {@code z}.
+         *
+         * @param z the value
+         * @return this builder
          */
         public @NonNull Builder z(@NonNull X z) {
             this.z = z;
@@ -101,6 +120,9 @@ public record RandomOffset(RandomOffset. @NonNull X x, RandomOffset. @NonNull X 
         }
 
         /**
+         * Builds the value from the fields set and the defaults.
+         *
+         * @return the value
          * @throws IllegalStateException if a required field is not set
          * @throws IllegalArgumentException if a value is out of range
          */
@@ -118,6 +140,12 @@ public record RandomOffset(RandomOffset. @NonNull X x, RandomOffset. @NonNull X 
      * @param min Add-on JSON {@code min}. Default: <code>0</code>. Range [-8, 8] (BDS 1.26.63.1).
      */
     public record Range(float max, float min) {
+        /**
+         * Checks the components and copies lists and maps, so the value is immutable.
+         *
+         * @throws NullPointerException if a required component is null
+         * @throws IllegalArgumentException if a component is out of its documented range or conflicts with another
+         */
         public Range {
             Check.range("RandomOffset.Range.max", max, -8.0, 8.0);
             Check.order("RandomOffset.Range", "min", min, "max", max);
@@ -125,6 +153,8 @@ public record RandomOffset(RandomOffset. @NonNull X x, RandomOffset. @NonNull X 
         }
 
         /**
+         * Creates a builder with every field at its default.
+         *
          * @return a builder with the defaults applied
          */
         public static @NonNull Builder builder() {
@@ -132,6 +162,8 @@ public record RandomOffset(RandomOffset. @NonNull X x, RandomOffset. @NonNull X 
         }
 
         /**
+         * Creates a builder holding this value's fields, to change some of them.
+         *
          * @return a builder with this value's fields
          */
         public @NonNull Builder toBuilder() {
@@ -154,6 +186,9 @@ public record RandomOffset(RandomOffset. @NonNull X x, RandomOffset. @NonNull X 
 
             /**
              * Sets {@code max}.
+             *
+             * @param max the value
+             * @return this builder
              */
             public @NonNull Builder max(float max) {
                 this.max = max;
@@ -162,6 +197,9 @@ public record RandomOffset(RandomOffset. @NonNull X x, RandomOffset. @NonNull X 
 
             /**
              * Sets {@code min}.
+             *
+             * @param min the value
+             * @return this builder
              */
             public @NonNull Builder min(float min) {
                 this.min = min;
@@ -169,6 +207,9 @@ public record RandomOffset(RandomOffset. @NonNull X x, RandomOffset. @NonNull X 
             }
 
             /**
+             * Builds the value from the fields set and the defaults.
+             *
+             * @return the value
              * @throws IllegalStateException if a required field is not set
              * @throws IllegalArgumentException if a value is out of range
              */
@@ -187,11 +228,19 @@ public record RandomOffset(RandomOffset. @NonNull X x, RandomOffset. @NonNull X 
      *        steps}. Default: <code>0</code>.
      */
     public record X(@NonNull Range range, int steps) {
+        /**
+         * Checks the components and copies lists and maps, so the value is immutable.
+         *
+         * @throws NullPointerException if a required component is null
+         * @throws IllegalArgumentException if a component is out of its documented range or conflicts with another
+         */
         public X {
             Objects.requireNonNull(range, "RandomOffset.X.range");
         }
 
         /**
+         * Creates a builder with every field at its default.
+         *
          * @return a builder with the defaults applied
          */
         public static @NonNull Builder builder() {
@@ -199,6 +248,8 @@ public record RandomOffset(RandomOffset. @NonNull X x, RandomOffset. @NonNull X 
         }
 
         /**
+         * Creates a builder holding this value's fields, to change some of them.
+         *
          * @return a builder with this value's fields
          */
         public @NonNull Builder toBuilder() {
@@ -221,6 +272,9 @@ public record RandomOffset(RandomOffset. @NonNull X x, RandomOffset. @NonNull X 
 
             /**
              * Sets {@code range}.
+             *
+             * @param range the value
+             * @return this builder
              */
             public @NonNull Builder range(@NonNull Range range) {
                 this.range = range;
@@ -229,6 +283,9 @@ public record RandomOffset(RandomOffset. @NonNull X x, RandomOffset. @NonNull X 
 
             /**
              * Sets {@code steps}.
+             *
+             * @param steps the value
+             * @return this builder
              */
             public @NonNull Builder steps(int steps) {
                 this.steps = steps;
@@ -236,6 +293,9 @@ public record RandomOffset(RandomOffset. @NonNull X x, RandomOffset. @NonNull X 
             }
 
             /**
+             * Builds the value from the fields set and the defaults.
+             *
+             * @return the value
              * @throws IllegalStateException if a required field is not set
              * @throws IllegalArgumentException if a value is out of range
              */

@@ -22,6 +22,9 @@ import org.checkerframework.checker.nullness.qual.NonNull;
  */
 public sealed interface ColorValue permits ColorValue.Channels, ColorValue.Hex {
     /**
+     * Creates the form that is the red, green and blue channels.
+     *
+     * @param value the red, green and blue channels
      * @return the form that is the red, green and blue channels
      */
     static @NonNull ColorValue channels(@NonNull List<Integer> value) {
@@ -29,6 +32,9 @@ public sealed interface ColorValue permits ColorValue.Channels, ColorValue.Hex {
     }
 
     /**
+     * Creates the form that is a hex color of six digits.
+     *
+     * @param value a hex color of six digits
      * @return the form that is a hex color of six digits
      */
     static @NonNull ColorValue hex(@NonNull String value) {
@@ -41,6 +47,12 @@ public sealed interface ColorValue permits ColorValue.Channels, ColorValue.Hex {
      * @param value the red, green and blue channels
      */
     record Channels(@NonNull List<Integer> value) implements ColorValue {
+        /**
+         * Checks the value and copies a list or map, so the form is immutable.
+         *
+         * @param value the value of the form
+         * @throws NullPointerException if the value is null
+         */
         public Channels {
             value = List.copyOf(Objects.requireNonNull(value, "ColorValue.Channels.value"));
         }
@@ -52,6 +64,12 @@ public sealed interface ColorValue permits ColorValue.Channels, ColorValue.Hex {
      * @param value a hex color of six digits
      */
     record Hex(@NonNull String value) implements ColorValue {
+        /**
+         * Checks the value and copies a list or map, so the form is immutable.
+         *
+         * @param value the value of the form
+         * @throws NullPointerException if the value is null
+         */
         public Hex {
             Objects.requireNonNull(value, "ColorValue.Hex.value");
         }

@@ -32,6 +32,12 @@ public record Durability(Durability. @NonNull DamageChance damageChance,
      */
     public static final String NAME = "minecraft:durability";
 
+    /**
+     * Checks the components and copies lists and maps, so the value is immutable.
+     *
+     * @throws NullPointerException if a required component is null
+     * @throws IllegalArgumentException if a component is out of its documented range or conflicts with another
+     */
     public Durability {
         Objects.requireNonNull(damageChance, "Durability.damageChance");
         Check.range("Durability.maxDurability", maxDurability, 0.0, null);
@@ -43,6 +49,8 @@ public record Durability(Durability. @NonNull DamageChance damageChance,
     }
 
     /**
+     * Creates a builder with every field at its default.
+     *
      * @return a builder with the defaults applied
      */
     public static @NonNull Builder builder() {
@@ -50,6 +58,8 @@ public record Durability(Durability. @NonNull DamageChance damageChance,
     }
 
     /**
+     * Creates a builder holding this value's fields, to change some of them.
+     *
      * @return a builder with this value's fields
      */
     public @NonNull Builder toBuilder() {
@@ -72,6 +82,9 @@ public record Durability(Durability. @NonNull DamageChance damageChance,
 
         /**
          * Sets {@code damage_chance}.
+         *
+         * @param damageChance the value
+         * @return this builder
          */
         public @NonNull Builder damageChance(@NonNull DamageChance damageChance) {
             this.damageChance = damageChance;
@@ -80,6 +93,9 @@ public record Durability(Durability. @NonNull DamageChance damageChance,
 
         /**
          * Sets {@code max_durability}.
+         *
+         * @param maxDurability the value
+         * @return this builder
          */
         public @NonNull Builder maxDurability(int maxDurability) {
             this.maxDurability = maxDurability;
@@ -87,6 +103,9 @@ public record Durability(Durability. @NonNull DamageChance damageChance,
         }
 
         /**
+         * Builds the value from the fields set and the defaults.
+         *
+         * @return the value
          * @throws IllegalStateException if a required field is not set
          * @throws IllegalArgumentException if a value is out of range
          */
@@ -108,6 +127,12 @@ public record Durability(Durability. @NonNull DamageChance damageChance,
      * @param min Add-on JSON {@code min}. Default: <code>100</code>. Range [0, 100] (BDS 1.26.63.1).
      */
     public record DamageChance(int max, int min) {
+        /**
+         * Checks the components and copies lists and maps, so the value is immutable.
+         *
+         * @throws NullPointerException if a required component is null
+         * @throws IllegalArgumentException if a component is out of its documented range or conflicts with another
+         */
         public DamageChance {
             Check.range("Durability.DamageChance.max", max, 0.0, 100.0);
             Check.order("Durability.DamageChance", "min", min, "max", max);
@@ -115,6 +140,8 @@ public record Durability(Durability. @NonNull DamageChance damageChance,
         }
 
         /**
+         * Creates a builder with every field at its default.
+         *
          * @return a builder with the defaults applied
          */
         public static @NonNull Builder builder() {
@@ -122,6 +149,8 @@ public record Durability(Durability. @NonNull DamageChance damageChance,
         }
 
         /**
+         * Creates a builder holding this value's fields, to change some of them.
+         *
          * @return a builder with this value's fields
          */
         public @NonNull Builder toBuilder() {
@@ -144,6 +173,9 @@ public record Durability(Durability. @NonNull DamageChance damageChance,
 
             /**
              * Sets {@code max}.
+             *
+             * @param max the value
+             * @return this builder
              */
             public @NonNull Builder max(int max) {
                 this.max = max;
@@ -152,6 +184,9 @@ public record Durability(Durability. @NonNull DamageChance damageChance,
 
             /**
              * Sets {@code min}.
+             *
+             * @param min the value
+             * @return this builder
              */
             public @NonNull Builder min(int min) {
                 this.min = min;
@@ -159,6 +194,9 @@ public record Durability(Durability. @NonNull DamageChance damageChance,
             }
 
             /**
+             * Builds the value from the fields set and the defaults.
+             *
+             * @return the value
              * @throws IllegalStateException if a required field is not set
              * @throws IllegalArgumentException if a value is out of range
              */

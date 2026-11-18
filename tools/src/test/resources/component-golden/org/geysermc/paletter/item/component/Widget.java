@@ -56,6 +56,12 @@ public record Widget(int count, @NonNull String label, Widget. @NonNull Mode mod
      */
     public static final String NAME = "test:widget";
 
+    /**
+     * Checks the components and copies lists and maps, so the value is immutable.
+     *
+     * @throws NullPointerException if a required component is null
+     * @throws IllegalArgumentException if a component is out of its documented range or conflicts with another
+     */
     public Widget {
         Check.range("Widget.count", count, 1.0, 64.0);
         Objects.requireNonNull(label, "Widget.label");
@@ -78,6 +84,8 @@ public record Widget(int count, @NonNull String label, Widget. @NonNull Mode mod
     }
 
     /**
+     * Creates a builder with every field at its default.
+     *
      * @return a builder with the defaults applied
      */
     public static @NonNull Builder builder() {
@@ -85,6 +93,8 @@ public record Widget(int count, @NonNull String label, Widget. @NonNull Mode mod
     }
 
     /**
+     * Creates a builder holding this value's fields, to change some of them.
+     *
      * @return a builder with this value's fields
      */
     public @NonNull Builder toBuilder() {
@@ -149,6 +159,9 @@ public record Widget(int count, @NonNull String label, Widget. @NonNull Mode mod
 
         /**
          * Sets {@code count}.
+         *
+         * @param count the value
+         * @return this builder
          */
         public @NonNull Builder count(int count) {
             this.count = count;
@@ -157,6 +170,9 @@ public record Widget(int count, @NonNull String label, Widget. @NonNull Mode mod
 
         /**
          * Sets {@code label}.
+         *
+         * @param label the value
+         * @return this builder
          */
         public @NonNull Builder label(@NonNull String label) {
             this.label = label;
@@ -165,6 +181,9 @@ public record Widget(int count, @NonNull String label, Widget. @NonNull Mode mod
 
         /**
          * Sets {@code mode}.
+         *
+         * @param mode the value
+         * @return this builder
          */
         public @NonNull Builder mode(@NonNull Mode mode) {
             this.mode = mode;
@@ -173,6 +192,9 @@ public record Widget(int count, @NonNull String label, Widget. @NonNull Mode mod
 
         /**
          * Sets {@code speed}.
+         *
+         * @param speed the value
+         * @return this builder
          */
         public @NonNull Builder speed(@Nullable Float speed) {
             this.speed = speed;
@@ -181,6 +203,9 @@ public record Widget(int count, @NonNull String label, Widget. @NonNull Mode mod
 
         /**
          * Sets {@code nested}.
+         *
+         * @param nested the value
+         * @return this builder
          */
         public @NonNull Builder nested(@Nullable NestedThing nested) {
             this.nested = nested;
@@ -189,6 +214,9 @@ public record Widget(int count, @NonNull String label, Widget. @NonNull Mode mod
 
         /**
          * Sets {@code tags}.
+         *
+         * @param tags the value
+         * @return this builder
          */
         public @NonNull Builder tags(@NonNull List<String> tags) {
             this.tags = tags;
@@ -197,6 +225,9 @@ public record Widget(int count, @NonNull String label, Widget. @NonNull Mode mod
 
         /**
          * Sets {@code tags}.
+         *
+         * @param tags the value
+         * @return this builder
          */
         public @NonNull Builder tags(@NonNull String... tags) {
             return tags(List.of(tags));
@@ -204,6 +235,9 @@ public record Widget(int count, @NonNull String label, Widget. @NonNull Mode mod
 
         /**
          * Sets {@code entries}.
+         *
+         * @param entries the value
+         * @return this builder
          */
         public @NonNull Builder entries(@Nullable List<Entry> entries) {
             this.entries = entries;
@@ -212,6 +246,9 @@ public record Widget(int count, @NonNull String label, Widget. @NonNull Mode mod
 
         /**
          * Sets {@code entries}.
+         *
+         * @param entries the value
+         * @return this builder
          */
         public @NonNull Builder entries(@NonNull Entry... entries) {
             return entries(List.of(entries));
@@ -219,6 +256,9 @@ public record Widget(int count, @NonNull String label, Widget. @NonNull Mode mod
 
         /**
          * Sets {@code colors}.
+         *
+         * @param colors the value
+         * @return this builder
          */
         public @NonNull Builder colors(@Nullable Map<String, String> colors) {
             this.colors = colors;
@@ -227,6 +267,9 @@ public record Widget(int count, @NonNull String label, Widget. @NonNull Mode mod
 
         /**
          * Sets {@code shape}.
+         *
+         * @param shape the value
+         * @return this builder
          */
         public @NonNull Builder shape(@Nullable Shape shape) {
             this.shape = shape;
@@ -235,6 +278,9 @@ public record Widget(int count, @NonNull String label, Widget. @NonNull Mode mod
 
         /**
          * Sets {@code shape} with its shorthand: {@code id}.
+         *
+         * @param id the value
+         * @return this builder
          */
         public @NonNull Builder shape(@NonNull String id) {
             return shape(Shape.of(id));
@@ -242,6 +288,9 @@ public record Widget(int count, @NonNull String label, Widget. @NonNull Mode mod
 
         /**
          * Sets {@code offset}.
+         *
+         * @param offset the value
+         * @return this builder
          */
         public @NonNull Builder offset(@NonNull Vec3 offset) {
             this.offset = offset;
@@ -250,6 +299,11 @@ public record Widget(int count, @NonNull String label, Widget. @NonNull Mode mod
 
         /**
          * Sets {@code offset}.
+         *
+         * @param x the x component
+         * @param y the y component
+         * @param z the z component
+         * @return this builder
          */
         public @NonNull Builder offset(float x, float y, float z) {
             return offset(new Vec3(x, y, z));
@@ -257,6 +311,9 @@ public record Widget(int count, @NonNull String label, Widget. @NonNull Mode mod
 
         /**
          * Sets {@code rarity}.
+         *
+         * @param rarity the value
+         * @return this builder
          */
         public @NonNull Builder rarity(@Nullable String rarity) {
             this.rarity = rarity;
@@ -265,6 +322,9 @@ public record Widget(int count, @NonNull String label, Widget. @NonNull Mode mod
 
         /**
          * Sets {@code stripes}.
+         *
+         * @param stripes the value
+         * @return this builder
          */
         public @NonNull Builder stripes(@Nullable Stripes stripes) {
             this.stripes = stripes;
@@ -273,6 +333,9 @@ public record Widget(int count, @NonNull String label, Widget. @NonNull Mode mod
 
         /**
          * Sets {@code stripes} to a list of strings.
+         *
+         * @param stripes the value
+         * @return this builder
          */
         public @NonNull Builder stripes(@NonNull List<String> stripes) {
             return stripes(Stripes.names(stripes));
@@ -280,6 +343,10 @@ public record Widget(int count, @NonNull String label, Widget. @NonNull Mode mod
 
         /**
          * Sets {@code stripes} to a list of strings (at least one value).
+         *
+         * @param first the first value
+         * @param rest the other values
+         * @return this builder
          */
         public @NonNull Builder stripes(@NonNull String first, @NonNull String... rest) {
             List<String> values = new ArrayList<>();
@@ -292,6 +359,9 @@ public record Widget(int count, @NonNull String label, Widget. @NonNull Mode mod
 
         /**
          * Sets {@code stripes} to a boolean.
+         *
+         * @param stripes the value
+         * @return this builder
          */
         public @NonNull Builder stripes(boolean stripes) {
             return stripes(Stripes.on(stripes));
@@ -299,6 +369,9 @@ public record Widget(int count, @NonNull String label, Widget. @NonNull Mode mod
 
         /**
          * Sets {@code outline}.
+         *
+         * @param outline the value
+         * @return this builder
          */
         public @NonNull Builder outline(@Nullable Stripes outline) {
             this.outline = outline;
@@ -307,6 +380,9 @@ public record Widget(int count, @NonNull String label, Widget. @NonNull Mode mod
 
         /**
          * Sets {@code outline} to a list of strings.
+         *
+         * @param outline the value
+         * @return this builder
          */
         public @NonNull Builder outline(@NonNull List<String> outline) {
             return outline(Stripes.names(outline));
@@ -314,6 +390,10 @@ public record Widget(int count, @NonNull String label, Widget. @NonNull Mode mod
 
         /**
          * Sets {@code outline} to a list of strings (at least one value).
+         *
+         * @param first the first value
+         * @param rest the other values
+         * @return this builder
          */
         public @NonNull Builder outline(@NonNull String first, @NonNull String... rest) {
             List<String> values = new ArrayList<>();
@@ -326,6 +406,9 @@ public record Widget(int count, @NonNull String label, Widget. @NonNull Mode mod
 
         /**
          * Sets {@code outline} to a boolean.
+         *
+         * @param outline the value
+         * @return this builder
          */
         public @NonNull Builder outline(boolean outline) {
             return outline(Stripes.on(outline));
@@ -333,6 +416,9 @@ public record Widget(int count, @NonNull String label, Widget. @NonNull Mode mod
 
         /**
          * Sets {@code fuel}.
+         *
+         * @param fuel the value
+         * @return this builder
          */
         public @NonNull Builder fuel(@Nullable String fuel) {
             this.fuel = fuel;
@@ -341,6 +427,9 @@ public record Widget(int count, @NonNull String label, Widget. @NonNull Mode mod
 
         /**
          * Sets {@code fuel} to a vanilla or custom item.
+         *
+         * @param fuel the value
+         * @return this builder
          */
         public @NonNull Builder fuel(@NonNull BedrockItemType fuel) {
             return fuel(fuel.identifier());
@@ -348,6 +437,9 @@ public record Widget(int count, @NonNull String label, Widget. @NonNull Mode mod
 
         /**
          * Sets {@code reach}.
+         *
+         * @param reach the value
+         * @return this builder
          */
         public @NonNull Builder reach(float reach) {
             this.reach = reach;
@@ -356,6 +448,9 @@ public record Widget(int count, @NonNull String label, Widget. @NonNull Mode mod
 
         /**
          * Sets {@code nested}.
+         *
+         * @param moreNested the value
+         * @return this builder
          */
         public @NonNull Builder moreNested(@NonNull Map<String, NestedThing> moreNested) {
             this.moreNested = moreNested;
@@ -363,6 +458,9 @@ public record Widget(int count, @NonNull String label, Widget. @NonNull Mode mod
         }
 
         /**
+         * Builds the value from the fields set and the defaults.
+         *
+         * @return the value
          * @throws IllegalStateException if a required field is not set
          * @throws IllegalArgumentException if a value is out of range
          */
@@ -382,6 +480,8 @@ public record Widget(int count, @NonNull String label, Widget. @NonNull Mode mod
      */
     public record NestedThing(float x, boolean flag) {
         /**
+         * Creates a builder with every field at its default.
+         *
          * @return a builder with the defaults applied
          */
         public static @NonNull Builder builder() {
@@ -389,6 +489,8 @@ public record Widget(int count, @NonNull String label, Widget. @NonNull Mode mod
         }
 
         /**
+         * Creates a builder holding this value's fields, to change some of them.
+         *
          * @return a builder with this value's fields
          */
         public @NonNull Builder toBuilder() {
@@ -411,6 +513,9 @@ public record Widget(int count, @NonNull String label, Widget. @NonNull Mode mod
 
             /**
              * Sets {@code x}.
+             *
+             * @param x the value
+             * @return this builder
              */
             public @NonNull Builder x(float x) {
                 this.x = x;
@@ -419,6 +524,9 @@ public record Widget(int count, @NonNull String label, Widget. @NonNull Mode mod
 
             /**
              * Sets {@code flag}.
+             *
+             * @param flag the value
+             * @return this builder
              */
             public @NonNull Builder flag(boolean flag) {
                 this.flag = flag;
@@ -426,6 +534,9 @@ public record Widget(int count, @NonNull String label, Widget. @NonNull Mode mod
             }
 
             /**
+             * Builds the value from the fields set and the defaults.
+             *
+             * @return the value
              * @throws IllegalStateException if a required field is not set
              * @throws IllegalArgumentException if a value is out of range
              */
@@ -442,6 +553,8 @@ public record Widget(int count, @NonNull String label, Widget. @NonNull Mode mod
      */
     public record Entry(@Nullable String name) {
         /**
+         * Creates a builder with every field at its default.
+         *
          * @return a builder with the defaults applied
          */
         public static @NonNull Builder builder() {
@@ -449,6 +562,8 @@ public record Widget(int count, @NonNull String label, Widget. @NonNull Mode mod
         }
 
         /**
+         * Creates a builder holding this value's fields, to change some of them.
+         *
          * @return a builder with this value's fields
          */
         public @NonNull Builder toBuilder() {
@@ -468,6 +583,9 @@ public record Widget(int count, @NonNull String label, Widget. @NonNull Mode mod
 
             /**
              * Sets {@code name}.
+             *
+             * @param name the value
+             * @return this builder
              */
             public @NonNull Builder name(@Nullable String name) {
                 this.name = name;
@@ -475,6 +593,9 @@ public record Widget(int count, @NonNull String label, Widget. @NonNull Mode mod
             }
 
             /**
+             * Builds the value from the fields set and the defaults.
+             *
+             * @return the value
              * @throws IllegalStateException if a required field is not set
              * @throws IllegalArgumentException if a value is out of range
              */
@@ -494,6 +615,7 @@ public record Widget(int count, @NonNull String label, Widget. @NonNull Mode mod
         /**
          * The string shorthand: sets {@code id}.
          *
+         * @param value the value of that field
          * @return the value with everything else at its default
          */
         public static @NonNull Shape of(@NonNull String value) {
@@ -501,6 +623,8 @@ public record Widget(int count, @NonNull String label, Widget. @NonNull Mode mod
         }
 
         /**
+         * Creates a builder with every field at its default.
+         *
          * @return a builder with the defaults applied
          */
         public static @NonNull Builder builder() {
@@ -508,6 +632,8 @@ public record Widget(int count, @NonNull String label, Widget. @NonNull Mode mod
         }
 
         /**
+         * Creates a builder holding this value's fields, to change some of them.
+         *
          * @return a builder with this value's fields
          */
         public @NonNull Builder toBuilder() {
@@ -530,6 +656,9 @@ public record Widget(int count, @NonNull String label, Widget. @NonNull Mode mod
 
             /**
              * Sets {@code id}.
+             *
+             * @param id the value
+             * @return this builder
              */
             public @NonNull Builder id(@Nullable String id) {
                 this.id = id;
@@ -538,6 +667,9 @@ public record Widget(int count, @NonNull String label, Widget. @NonNull Mode mod
 
             /**
              * Sets {@code size}.
+             *
+             * @param size the value
+             * @return this builder
              */
             public @NonNull Builder size(int size) {
                 this.size = size;
@@ -545,6 +677,9 @@ public record Widget(int count, @NonNull String label, Widget. @NonNull Mode mod
             }
 
             /**
+             * Builds the value from the fields set and the defaults.
+             *
+             * @return the value
              * @throws IllegalStateException if a required field is not set
              * @throws IllegalArgumentException if a value is out of range
              */
@@ -575,6 +710,8 @@ public record Widget(int count, @NonNull String label, Widget. @NonNull Mode mod
         }
 
         /**
+         * Returns the value in add-on JSON.
+         *
          * @return the value in add-on JSON
          */
         public @NonNull String value() {
@@ -582,7 +719,10 @@ public record Widget(int count, @NonNull String label, Widget. @NonNull Mode mod
         }
 
         /**
-         * @return the constant of an add-on JSON value
+         * Finds the constant of an add-on JSON value.
+         *
+         * @param value the value in add-on JSON
+         * @return the constant of the value
          * @throws IllegalArgumentException if the value is not documented
          */
         public static @NonNull Mode fromValue(@NonNull String value) {
@@ -597,6 +737,10 @@ public record Widget(int count, @NonNull String label, Widget. @NonNull Mode mod
 
     /**
      * An add-on JSON vector {@code [x, y, z]}.
+     *
+     * @param x the x component
+     * @param y the y component
+     * @param z the z component
      */
     public record Vec3(float x, float y, float z) {
     }

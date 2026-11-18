@@ -22,13 +22,18 @@ import java.lang.annotation.Target;
 @Target(ElementType.TYPE)
 public @interface ServerOnly {
     /**
+     * The first protocol version of the range.
+     *
      * @return the first protocol version the component is server only in, or {@link Integer#MIN_VALUE} for every protocol
      *         below {@link #until()}
      */
     int since() default Integer.MIN_VALUE;
 
     /**
-     * @return the first protocol version after the range, where Bedrock sends the component, or {@link Integer#MAX_VALUE} if the range has no end
+     * The end of the range.
+     *
+     * @return the first protocol version after the range, where Bedrock sends the component, or {@link Integer#MAX_VALUE}
+     *         if the range has no end
      */
     int until() default Integer.MAX_VALUE;
 }

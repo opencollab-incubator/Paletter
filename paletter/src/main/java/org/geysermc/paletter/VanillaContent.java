@@ -25,6 +25,9 @@ import java.util.TreeSet;
  * <p>
  * Content a version has only behind an experiment toggle (BDS offers it only to worlds with that experiment, see
  * {@link #experiments}) is missing unless the toggle is enabled, so ordinary (non-forced) fallbacks apply to it.
+ * <p>
+ * Only valid inside the consumer of {@link Paletter.Builder#vanilla(java.util.function.Consumer)}: it is copied when the
+ * {@link Paletter} is built and is not thread safe. Methods return this object; arguments must not be null.
  *
  * @since 1.0.0
  */
@@ -49,6 +52,10 @@ public final class VanillaContent {
 
     /**
      * Does not register the item.
+     *
+     * @param item the vanilla item to leave out
+     * @return this
+     * @since 1.0.0
      */
     public @NonNull VanillaContent remove(@NonNull BedrockItemType item) {
         removed.add(item.identifier());
@@ -65,6 +72,8 @@ public final class VanillaContent {
      * every toggle left disabled.
      *
      * @param toggles the toggle ids, as BDS names them
+     * @return this
+     * @since 1.0.0
      */
     public @NonNull VanillaContent experiments(@NonNull String... toggles) {
         this.experiments = new HashSet<>(List.of(toggles));
@@ -76,6 +85,9 @@ public final class VanillaContent {
      * changes how the client treats shapes instead of adding content. The content behind the toggles is present, as in the
      * raw data of the version; the palettes list the toggles in {@link Palette#experiments()}. Lookups with a
      * {@link Lookup} see that content then.
+     *
+     * @return this
+     * @since 1.0.0
      */
     public @NonNull VanillaContent allExperiments() {
         this.allExperiments = true;

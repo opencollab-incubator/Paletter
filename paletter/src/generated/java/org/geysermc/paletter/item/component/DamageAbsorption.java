@@ -32,6 +32,12 @@ public record DamageAbsorption(@NonNull List<String> absorbableCauses) implement
      */
     public static final String NAME = "minecraft:damage_absorption";
 
+    /**
+     * Checks the components and copies lists and maps, so the value is immutable.
+     *
+     * @throws NullPointerException if a required component is null
+     * @throws IllegalArgumentException if a component is out of its documented range or conflicts with another
+     */
     public DamageAbsorption {
         absorbableCauses = List.copyOf(Objects.requireNonNull(absorbableCauses, "DamageAbsorption.absorbableCauses"));
     }
@@ -42,6 +48,8 @@ public record DamageAbsorption(@NonNull List<String> absorbableCauses) implement
     }
 
     /**
+     * Creates a builder with every field at its default.
+     *
      * @return a builder with the defaults applied
      */
     public static @NonNull Builder builder() {
@@ -49,6 +57,8 @@ public record DamageAbsorption(@NonNull List<String> absorbableCauses) implement
     }
 
     /**
+     * Creates a builder holding this value's fields, to change some of them.
+     *
      * @return a builder with this value's fields
      */
     public @NonNull Builder toBuilder() {
@@ -68,6 +78,9 @@ public record DamageAbsorption(@NonNull List<String> absorbableCauses) implement
 
         /**
          * Sets {@code absorbable_causes}.
+         *
+         * @param absorbableCauses the value
+         * @return this builder
          */
         public @NonNull Builder absorbableCauses(@NonNull List<String> absorbableCauses) {
             this.absorbableCauses = absorbableCauses;
@@ -76,12 +89,18 @@ public record DamageAbsorption(@NonNull List<String> absorbableCauses) implement
 
         /**
          * Sets {@code absorbable_causes}.
+         *
+         * @param absorbableCauses the value
+         * @return this builder
          */
         public @NonNull Builder absorbableCauses(@NonNull String... absorbableCauses) {
             return absorbableCauses(List.of(absorbableCauses));
         }
 
         /**
+         * Builds the value from the fields set and the defaults.
+         *
+         * @return the value
          * @throws IllegalStateException if a required field is not set
          * @throws IllegalArgumentException if a value is out of range
          */

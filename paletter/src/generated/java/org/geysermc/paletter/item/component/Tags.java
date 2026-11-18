@@ -25,6 +25,12 @@ public record Tags(@NonNull List<String> tags) implements ItemComponent {
      */
     public static final String NAME = "minecraft:tags";
 
+    /**
+     * Checks the components and copies lists and maps, so the value is immutable.
+     *
+     * @throws NullPointerException if a required component is null
+     * @throws IllegalArgumentException if a component is out of its documented range or conflicts with another
+     */
     public Tags {
         tags = List.copyOf(Objects.requireNonNull(tags, "Tags.tags"));
     }
@@ -35,6 +41,8 @@ public record Tags(@NonNull List<String> tags) implements ItemComponent {
     }
 
     /**
+     * Creates a builder with every field at its default.
+     *
      * @return a builder with the defaults applied
      */
     public static @NonNull Builder builder() {
@@ -42,6 +50,8 @@ public record Tags(@NonNull List<String> tags) implements ItemComponent {
     }
 
     /**
+     * Creates a builder holding this value's fields, to change some of them.
+     *
      * @return a builder with this value's fields
      */
     public @NonNull Builder toBuilder() {
@@ -61,6 +71,9 @@ public record Tags(@NonNull List<String> tags) implements ItemComponent {
 
         /**
          * Sets {@code tags}.
+         *
+         * @param tags the value
+         * @return this builder
          */
         public @NonNull Builder tags(@NonNull List<String> tags) {
             this.tags = tags;
@@ -69,12 +82,18 @@ public record Tags(@NonNull List<String> tags) implements ItemComponent {
 
         /**
          * Sets {@code tags}.
+         *
+         * @param tags the value
+         * @return this builder
          */
         public @NonNull Builder tags(@NonNull String... tags) {
             return tags(List.of(tags));
         }
 
         /**
+         * Builds the value from the fields set and the defaults.
+         *
+         * @return the value
          * @throws IllegalStateException if a required field is not set
          * @throws IllegalArgumentException if a value is out of range
          */

@@ -16,9 +16,13 @@ import java.util.Locale;
  * @since 1.0.0
  */
 public enum CreativeCategory {
+    /** The construction tab. */
     CONSTRUCTION("construction", CreativeItemCategory.CONSTRUCTION),
+    /** The nature tab. */
     NATURE("nature", CreativeItemCategory.NATURE),
+    /** The equipment tab. */
     EQUIPMENT("equipment", CreativeItemCategory.EQUIPMENT),
+    /** The items tab. */
     ITEMS("items", CreativeItemCategory.ITEMS);
 
     /**
@@ -37,6 +41,8 @@ public enum CreativeCategory {
     }
 
     /**
+     * Returns the add-on name of the category.
+     *
      * @return the name used in data, e.g. {@code construction}, and in block {@code menu_category} NBT
      */
     public @NonNull String bedrockName() {
@@ -44,12 +50,21 @@ public enum CreativeCategory {
     }
 
     /**
+     * Returns the protocol enum value of the category.
+     *
      * @return the protocol representation, used in creative groups
      */
     public @NonNull CreativeItemCategory protocol() {
         return protocol;
     }
 
+    /**
+     * Finds a category by its add-on name, ignoring case.
+     *
+     * @param name the name used in data, e.g. {@code construction}
+     * @return the category
+     * @throws IllegalArgumentException if there is no such category ({@link #NONE_NAME} is not one)
+     */
     public static @NonNull CreativeCategory fromBedrockName(@NonNull String name) {
         String lower = name.toLowerCase(Locale.ROOT);
         for (CreativeCategory category : VALUES) {
@@ -60,6 +75,13 @@ public enum CreativeCategory {
         throw new IllegalArgumentException("Unknown creative category: " + name);
     }
 
+    /**
+     * Finds a category by its protocol enum value.
+     *
+     * @param category the protocol category
+     * @return the category
+     * @throws IllegalArgumentException if the protocol category has no creative inventory tab
+     */
     public static @NonNull CreativeCategory fromProtocol(@NonNull CreativeItemCategory category) {
         for (CreativeCategory value : VALUES) {
             if (value.protocol == category) {

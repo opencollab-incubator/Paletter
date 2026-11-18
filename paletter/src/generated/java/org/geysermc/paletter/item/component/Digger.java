@@ -34,6 +34,12 @@ public record Digger(@NonNull List<Digger.DestroySpeeds> destroySpeeds,
      */
     public static final String NAME = "minecraft:digger";
 
+    /**
+     * Checks the components and copies lists and maps, so the value is immutable.
+     *
+     * @throws NullPointerException if a required component is null
+     * @throws IllegalArgumentException if a component is out of its documented range or conflicts with another
+     */
     public Digger {
         destroySpeeds = List.copyOf(Objects.requireNonNull(destroySpeeds, "Digger.destroySpeeds"));
     }
@@ -44,6 +50,8 @@ public record Digger(@NonNull List<Digger.DestroySpeeds> destroySpeeds,
     }
 
     /**
+     * Creates a builder with every field at its default.
+     *
      * @return a builder with the defaults applied
      */
     public static @NonNull Builder builder() {
@@ -51,6 +59,8 @@ public record Digger(@NonNull List<Digger.DestroySpeeds> destroySpeeds,
     }
 
     /**
+     * Creates a builder holding this value's fields, to change some of them.
+     *
      * @return a builder with this value's fields
      */
     public @NonNull Builder toBuilder() {
@@ -73,6 +83,9 @@ public record Digger(@NonNull List<Digger.DestroySpeeds> destroySpeeds,
 
         /**
          * Sets {@code destroy_speeds}.
+         *
+         * @param destroySpeeds the value
+         * @return this builder
          */
         public @NonNull Builder destroySpeeds(@NonNull List<DestroySpeeds> destroySpeeds) {
             this.destroySpeeds = destroySpeeds;
@@ -81,6 +94,9 @@ public record Digger(@NonNull List<Digger.DestroySpeeds> destroySpeeds,
 
         /**
          * Sets {@code destroy_speeds}.
+         *
+         * @param destroySpeeds the value
+         * @return this builder
          */
         public @NonNull Builder destroySpeeds(@NonNull DestroySpeeds... destroySpeeds) {
             return destroySpeeds(List.of(destroySpeeds));
@@ -88,6 +104,9 @@ public record Digger(@NonNull List<Digger.DestroySpeeds> destroySpeeds,
 
         /**
          * Sets {@code use_efficiency}.
+         *
+         * @param useEfficiency the value
+         * @return this builder
          */
         public @NonNull Builder useEfficiency(boolean useEfficiency) {
             this.useEfficiency = useEfficiency;
@@ -95,6 +114,9 @@ public record Digger(@NonNull List<Digger.DestroySpeeds> destroySpeeds,
         }
 
         /**
+         * Builds the value from the fields set and the defaults.
+         *
+         * @return the value
          * @throws IllegalStateException if a required field is not set
          * @throws IllegalArgumentException if a value is out of range
          */
@@ -112,6 +134,12 @@ public record Digger(@NonNull List<Digger.DestroySpeeds> destroySpeeds,
      */
     public record Block(@Nullable String name, @NonNull Map<String, Object> states,
             @Nullable String tags) {
+        /**
+         * Checks the components and copies lists and maps, so the value is immutable.
+         *
+         * @throws NullPointerException if a required component is null
+         * @throws IllegalArgumentException if a component is out of its documented range or conflicts with another
+         */
         public Block {
             states = Check.copy(states, "Digger.Block.states");
             Check.stateValues(states, "Digger.Block.states");
@@ -120,6 +148,7 @@ public record Digger(@NonNull List<Digger.DestroySpeeds> destroySpeeds,
         /**
          * The string shorthand: sets {@code name}.
          *
+         * @param value the value of that field
          * @return the value with everything else at its default
          */
         public static @NonNull Block of(@NonNull String value) {
@@ -127,6 +156,9 @@ public record Digger(@NonNull List<Digger.DestroySpeeds> destroySpeeds,
         }
 
         /**
+         * Creates a descriptor matching every state of a block.
+         *
+         * @param block the vanilla or custom block
          * @return a descriptor matching every state of a block
          */
         public static @NonNull Block of(@NonNull BedrockBlockType block) {
@@ -134,6 +166,9 @@ public record Digger(@NonNull List<Digger.DestroySpeeds> destroySpeeds,
         }
 
         /**
+         * Creates a descriptor matching one block state.
+         *
+         * @param state the block state
          * @return a descriptor matching one block state (its block and every state value)
          */
         public static @NonNull Block of(@NonNull BedrockBlockState state) {
@@ -141,6 +176,8 @@ public record Digger(@NonNull List<Digger.DestroySpeeds> destroySpeeds,
         }
 
         /**
+         * Creates a builder with every field at its default.
+         *
          * @return a builder with the defaults applied
          */
         public static @NonNull Builder builder() {
@@ -148,6 +185,8 @@ public record Digger(@NonNull List<Digger.DestroySpeeds> destroySpeeds,
         }
 
         /**
+         * Creates a builder holding this value's fields, to change some of them.
+         *
          * @return a builder with this value's fields
          */
         public @NonNull Builder toBuilder() {
@@ -173,6 +212,9 @@ public record Digger(@NonNull List<Digger.DestroySpeeds> destroySpeeds,
 
             /**
              * Sets {@code name}.
+             *
+             * @param name the value
+             * @return this builder
              */
             public @NonNull Builder name(@Nullable String name) {
                 this.name = name;
@@ -181,6 +223,9 @@ public record Digger(@NonNull List<Digger.DestroySpeeds> destroySpeeds,
 
             /**
              * Sets {@code name} to a vanilla or custom block.
+             *
+             * @param name the value
+             * @return this builder
              */
             public @NonNull Builder name(@NonNull BedrockBlockType name) {
                 return name(name.identifier());
@@ -188,6 +233,9 @@ public record Digger(@NonNull List<Digger.DestroySpeeds> destroySpeeds,
 
             /**
              * Sets {@code states}.
+             *
+             * @param states the value
+             * @return this builder
              */
             public @NonNull Builder states(@NonNull Map<String, Object> states) {
                 this.states = states;
@@ -196,6 +244,9 @@ public record Digger(@NonNull List<Digger.DestroySpeeds> destroySpeeds,
 
             /**
              * Sets {@code tags}.
+             *
+             * @param tags the value
+             * @return this builder
              */
             public @NonNull Builder tags(@Nullable String tags) {
                 this.tags = tags;
@@ -203,6 +254,9 @@ public record Digger(@NonNull List<Digger.DestroySpeeds> destroySpeeds,
             }
 
             /**
+             * Builds the value from the fields set and the defaults.
+             *
+             * @return the value
              * @throws IllegalStateException if a required field is not set
              * @throws IllegalArgumentException if a value is out of range
              */
@@ -221,6 +275,8 @@ public record Digger(@NonNull List<Digger.DestroySpeeds> destroySpeeds,
      */
     public record DestroySpeeds(@Nullable Block block, @Nullable Integer speed) {
         /**
+         * Creates a builder with every field at its default.
+         *
          * @return a builder with the defaults applied
          */
         public static @NonNull Builder builder() {
@@ -228,6 +284,8 @@ public record Digger(@NonNull List<Digger.DestroySpeeds> destroySpeeds,
         }
 
         /**
+         * Creates a builder holding this value's fields, to change some of them.
+         *
          * @return a builder with this value's fields
          */
         public @NonNull Builder toBuilder() {
@@ -250,6 +308,9 @@ public record Digger(@NonNull List<Digger.DestroySpeeds> destroySpeeds,
 
             /**
              * Sets {@code block}.
+             *
+             * @param block the value
+             * @return this builder
              */
             public @NonNull Builder block(@Nullable Block block) {
                 this.block = block;
@@ -258,6 +319,9 @@ public record Digger(@NonNull List<Digger.DestroySpeeds> destroySpeeds,
 
             /**
              * Sets {@code block} with its shorthand: {@code name}.
+             *
+             * @param name the value
+             * @return this builder
              */
             public @NonNull Builder block(@NonNull String name) {
                 return block(Block.of(name));
@@ -265,6 +329,9 @@ public record Digger(@NonNull List<Digger.DestroySpeeds> destroySpeeds,
 
             /**
              * Sets {@code speed}.
+             *
+             * @param speed the value
+             * @return this builder
              */
             public @NonNull Builder speed(@Nullable Integer speed) {
                 this.speed = speed;
@@ -272,6 +339,9 @@ public record Digger(@NonNull List<Digger.DestroySpeeds> destroySpeeds,
             }
 
             /**
+             * Builds the value from the fields set and the defaults.
+             *
+             * @return the value
              * @throws IllegalStateException if a required field is not set
              * @throws IllegalArgumentException if a value is out of range
              */

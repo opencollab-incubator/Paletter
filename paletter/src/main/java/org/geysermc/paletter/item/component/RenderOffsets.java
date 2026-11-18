@@ -31,6 +31,8 @@ public record RenderOffsets(@Nullable Hand mainHand, @Nullable Hand offHand, @Nu
     public static final String NAME = "minecraft:render_offsets";
 
     /**
+     * Creates render offsets for the hands, without a preset.
+     *
      * @param mainHand the main hand, or null to leave it out
      * @param offHand the off hand, or null to leave it out
      */
@@ -39,6 +41,8 @@ public record RenderOffsets(@Nullable Hand mainHand, @Nullable Hand offHand, @Nu
     }
 
     /**
+     * Creates render offsets that only name a built-in preset.
+     *
      * @param preset the built-in offsets of an armor piece
      * @return render offsets that only name a preset
      */
@@ -68,6 +72,8 @@ public record RenderOffsets(@Nullable Hand mainHand, @Nullable Hand offHand, @Nu
         }
 
         /**
+         * Returns the wire value of the preset.
+         *
          * @return the string that is sent
          */
         public @NonNull String value() {
@@ -100,6 +106,11 @@ public record RenderOffsets(@Nullable Hand mainHand, @Nullable Hand offHand, @Nu
      */
     public record Offset(@Nullable Vec3 position, @Nullable Vec3 rotation, @Nullable Vec3 scale) {
         /**
+         * Creates an offset that only scales.
+         *
+         * @param x the scale on the x axis
+         * @param y the scale on the y axis
+         * @param z the scale on the z axis
          * @return an offset that only scales
          */
         public static @NonNull Offset scale(float x, float y, float z) {
@@ -110,6 +121,9 @@ public record RenderOffsets(@Nullable Hand mainHand, @Nullable Hand offHand, @Nu
     /**
      * Three floats, sent as a list of three.
      *
+     * @param x the first float
+     * @param y the second float
+     * @param z the third float
      * @since 1.0.0
      */
     public record Vec3(float x, float y, float z) {

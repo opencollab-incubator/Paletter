@@ -21,6 +21,8 @@ public record UseOnHook(boolean autoSucceedOnClient) implements WireOnlyItemComp
     public static final String NAME = "minecraft:publisher_on_use_on";
 
     /**
+     * Creates the component.
+     *
      * @param autoSucceedOnClient the {@code autoSucceedOnClient} byte sent to the client
      * @return the component
      */

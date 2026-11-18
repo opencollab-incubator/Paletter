@@ -18,12 +18,24 @@ public record FrameCount(int value) implements WireOnlyItemComponent {
      */
     public static final String NAME = "item_properties.frame_count";
 
+    /**
+     * Creates a frame count.
+     *
+     * @throws IllegalArgumentException if the value is below 1
+     */
     public FrameCount {
         if (value < 1) {
             throw new IllegalArgumentException("FrameCount.value must be at least 1: " + value);
         }
     }
 
+    /**
+     * Creates a frame count.
+     *
+     * @param value the frame count sent to the client, at least 1
+     * @return the component
+     * @throws IllegalArgumentException if the value is below 1
+     */
     public static @NonNull FrameCount of(int value) {
         return new FrameCount(value);
     }

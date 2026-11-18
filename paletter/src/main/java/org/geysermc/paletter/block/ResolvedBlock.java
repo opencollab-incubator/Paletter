@@ -21,7 +21,13 @@ public final class ResolvedBlock {
     private final boolean fallback;
     private final BlockValues behaviour;
 
-    /** Plumbing of the palette's {@code resolve}: not part of the API. */
+    /**
+     * Internal: plumbing of the palette's {@code resolve}, not part of the API.
+     *
+     * @param definition the block to send
+     * @param fallback whether a fallback was used, see {@link #fallback()}
+     * @param behaviour the behaviour values of {@code definition}
+     */
     @Internal
     public ResolvedBlock(@NonNull RegisteredBlockState definition, boolean fallback, @NonNull BlockValues behaviour) {
         this.definition = definition;
@@ -30,6 +36,8 @@ public final class ResolvedBlock {
     }
 
     /**
+     * The block this resolution sends.
+     *
      * @return the block to send, with its fallbacks applied, see {@link org.geysermc.paletter.Palette#blockDefinition(org.geysermc.paletter.vanilla.BedrockBlockState)}
      */
     public @NonNull RegisteredBlockState definition() {
@@ -37,6 +45,8 @@ public final class ResolvedBlock {
     }
 
     /**
+     * Whether the block sent is a replacement.
+     *
      * @return true if a {@code BlockFallback} or the default fallback block was used: the state has no block of its own
      *         in this version, or is forcibly replaced. Not for a state that is only adapted to this version's state
      *         values. False for a block asked for by runtime id
@@ -46,6 +56,8 @@ public final class ResolvedBlock {
     }
 
     /**
+     * The behaviour of the block sent.
+     *
      * @return the behaviour values (friction, destroy time, collision shape, ...) of {@link #definition()} in the palette that resolved it
      */
     public @NonNull BlockValues behaviour() {
