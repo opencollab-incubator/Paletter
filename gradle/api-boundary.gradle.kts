@@ -83,7 +83,7 @@ fun apiDumpTask(name: String, mode: String, text: String) = tasks.register<JavaE
     group = "verification"
     description = text
     classpath = apiDumpTool
-    mainClass.set("org.geysermc.paletter.tools.apidump.Main")
+    mainClass.set("dev.opencollab.paletter.tools.apidump.Main")
     dependsOn(tasks.named("classes"))
     inputs.files(mainClasses)
     inputs.file(moduleInfo)

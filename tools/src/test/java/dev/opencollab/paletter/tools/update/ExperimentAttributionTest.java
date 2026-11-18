@@ -1,0 +1,174 @@
+package dev.opencollab.paletter.tools.update;
+
+import dev.opencollab.paletter.tools.bds.BdsDump;
+import dev.opencollab.paletter.tools.data.Checker;
+import org.cloudburstmc.nbt.NbtMap;
+import dev.opencollab.paletter.internal.block.BlockStates;
+import dev.opencollab.paletter.tools.client.CapturedData;
+import dev.opencollab.paletter.creative.CreativeCategory;
+import dev.opencollab.paletter.internal.creative.RawGroup;
+import dev.opencollab.paletter.internal.creative.RawLayout;
+import dev.opencollab.paletter.internal.creative.RawNode;
+import dev.opencollab.paletter.internal.creative.RawStack;
+import dev.opencollab.paletter.data.DataVersion;
+import dev.opencollab.paletter.internal.data.ExperimentContent;
+import dev.opencollab.paletter.internal.data.VanillaData;
+import dev.opencollab.paletter.internal.data.VanillaItem;
+import dev.opencollab.paletter.internal.data.VersionFallbacks;
+import dev.opencollab.paletter.item.ItemFallback;
+import dev.opencollab.paletter.tools.client.RecipeCapture;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
+
+import java.io.IOException;
+import java.io.OutputStream;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.zip.GZIPOutputStream;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+/** Attribution diffs on synthetic captures shaped like the y_2026_drop_4 one of BDS 1.26.63.1. */
+class ExperimentAttributionTest {
+
+    private static Path crafting(Path directory, String shapeless) throws IOException {
+        try (OutputStream out = new GZIPOutputStream(Files.newOutputStream(directory.resolve(RecipeCapture.CRAFTING)))) {
+            out.write(("{\"shapeless\":[" + shapeless + "]}").getBytes(StandardCharsets.UTF_8));
+        }
+        return directory;
+    }
+
+    @Test
+    void recipesOfAToggleAreItsRecipeDiff(@TempDir Path temp) throws IOException {
+        String torch = "{\"id\":\"minecraft:torch\",\"ingredients\":[],\"results\":[],\"uuid\":\"a\",\"tag\":\"crafting_table\",\"netId\":1}";
+        String fancy = "{\"id\":\"minecraft:fancy\",\"ingredients\":[],\"results\":[],\"uuid\":\"b\",\"tag\":\"crafting_table\",\"netId\":2}";
+        Path base = crafting(Files.createDirectory(temp.resolve("base")), torch);
+        Path with = crafting(Files.createDirectory(temp.resolve("with")), fancy + "," + torch.replace("\"netId\":1", "\"netId\":9"));
+        assertEquals(Map.of("recipes added", List.of("shapeless minecraft:fancy")), ExperimentAttribution.recipes(base, with));
+        assertEquals(Map.of(), ExperimentAttribution.recipes(base, Files.createDirectory(temp.resolve("none"))));
+    }
+
+    @Test
+    void recipesAreOnlyStagedWhenTheyDifferNormalised(@TempDir Path temp) throws IOException {
+        String torch = "{\"id\":\"minecraft:torch\",\"ingredients\":[],\"results\":[],\"uuid\":\"UUID\",\"tag\":\"crafting_table\",\"netId\":NET}";
+        Path committed = crafting(Files.createDirectory(temp.resolve("committed")), torch.replace("UUID", "a").replace("NET", "1"));
+        // Another start of BDS: random UUID, other net id
+        Path again = crafting(Files.createDirectory(temp.resolve("again")), torch.replace("UUID", "b").replace("NET", "7"));
+        Path changed = crafting(Files.createDirectory(temp.resolve("changed")), torch.replace("torch", "lantern").replace("UUID", "c").replace("NET", "1"));
+        assertFalse(RecipeStage.recipesChanged(committed, again));
+        assertTrue(RecipeStage.recipesChanged(committed, changed));
+        assertTrue(RecipeStage.recipesChanged(Files.createDirectory(temp.resolve("none")), again), "nothing committed yet");
+    }
+
+    private static NbtMap item(String name, int id, int version, boolean componentBased) {
+        return NbtMap.builder().putString("name", name).putShort("id", (short) id).putBoolean("componentBased", componentBased)
+            .putInt("version", version).putCompound("data", NbtMap.EMPTY).build();
+    }
+
+    private static CapturedData capture(List<NbtMap> items, Map<String, NbtMap> blocks, List<RawStack> creative) {
+        Map<String, NbtMap> byName = new LinkedHashMap<>();
+        items.forEach(item -> byName.put(item.getString("name"), item));
+        Map<CreativeCategory, List<RawNode>> categories = new java.util.EnumMap<>(CreativeCategory.class);
+        categories.put(CreativeCategory.ITEMS, List.of(new RawGroup("itemGroup.name.test", null, creative)));
+        return new CapturedData(byName, blocks, RawLayout.of(categories));
+    }
+
+    private static RawStack stack(String id, int damage) {
+        return new RawStack(id, damage, 1, null, null);
+    }
+
+    private static BdsDump dump(Set<String> items, Set<String> blocks) {
+        Map<String, BdsDump.Item> itemMap = new LinkedHashMap<>();
+        items.forEach(item -> itemMap.put(item, new BdsDump.Item(64, item, List.of(), 0)));
+        Map<String, Map<String, List<Object>>> blockMap = new LinkedHashMap<>();
+        blocks.forEach(block -> blockMap.put(block, Map.of()));
+        return new BdsDump("1.26.63.1", Map.of(), Map.of(), blockMap, Map.of(), Map.of(), itemMap, Map.of(), Map.of(), List.of());
+    }
+
+    private static final CapturedData BASE = capture(
+        List.of(item("minecraft:stone", 1, 2, false), item("minecraft:icicle", 900, 2, false), item("minecraft:arrow", 300, 2, false)),
+        Map.of("minecraft:old_block", NbtMap.builder().putInt("x", 1).build()),
+        List.of(stack("minecraft:stone", 0), stack("minecraft:arrow", 0)));
+
+    @Test
+    void dropFour() {
+        // Runtime ids shift (ice_ball takes 900): that is no change of icicle
+        CapturedData with = capture(
+            List.of(item("minecraft:stone", 1, 2, false), item("minecraft:ice_ball", 900, 1, true), item("minecraft:icicle", 901, 1, true),
+                item("minecraft:arrow", 300, 2, false)),
+            Map.of("minecraft:old_block", NbtMap.builder().putInt("x", 1).build(), "minecraft:icicle", NbtMap.EMPTY),
+            List.of(stack("minecraft:stone", 0), stack("minecraft:arrow", 0), stack("minecraft:arrow", 48), stack("minecraft:ice_ball", 0),
+                stack("minecraft:frostbite_spawn_egg", 0)));
+        ExperimentAttribution.Diff diff = ExperimentAttribution.diff(BASE, with,
+            dump(Set.of("minecraft:stone"), Set.of("minecraft:stone")),
+            dump(Set.of("minecraft:stone", "minecraft:ice_ball"), Set.of("minecraft:stone", "minecraft:frost_block")));
+        assertEquals(List.of("minecraft:ice_ball"), diff.itemsAdded());
+        assertEquals(List.of("minecraft:icicle"), diff.itemsChanged());
+        assertEquals(List.of("minecraft:ice_ball"), diff.scriptItemsAdded());
+        assertEquals(List.of("minecraft:frost_block"), diff.blocksAdded());
+        assertEquals(List.of("minecraft:icicle"), diff.dataDrivenBlocks());
+        assertEquals(List.of("minecraft:arrow:48", "minecraft:frostbite_spawn_egg", "minecraft:ice_ball"), diff.creativeAdded());
+        assertEquals(List.of(), diff.removed());
+
+        ExperimentContent content = diff.content(ExperimentAttribution.creativeItems(BASE));
+        // arrow:48 is a new variant of an item already in the creative inventory, not a gated item
+        assertEquals(List.of("minecraft:frostbite_spawn_egg", "minecraft:ice_ball", "minecraft:icicle"), content.items());
+        assertEquals(List.of("minecraft:frost_block", "minecraft:icicle"), content.blocks());
+        assertEquals(diff.creativeAdded(), content.creative());
+        assertTrue(diff.lines().stream().anyMatch(line -> line.startsWith("items added (1)")));
+    }
+
+    @Test
+    void sameContentIsEmptyAndRemovalsAreListed() {
+        assertTrue(ExperimentAttribution.diff(BASE, BASE, null, null).isEmpty());
+        CapturedData less = capture(List.of(item("minecraft:stone", 1, 2, false)), Map.of(), List.of(stack("minecraft:stone", 0)));
+        ExperimentAttribution.Diff diff = ExperimentAttribution.diff(BASE, less, null, null);
+        assertEquals(List.of("creative minecraft:arrow", "data driven block minecraft:old_block", "item minecraft:arrow", "item minecraft:icicle"),
+            diff.removed());
+    }
+
+    @Test
+    void interactions() {
+        ExperimentAttribution.Diff a = new ExperimentAttribution.Diff(List.of("x:a"), List.of(), List.of(), List.of(), List.of(), List.of(), List.of());
+        ExperimentAttribution.Diff both = new ExperimentAttribution.Diff(List.of("x:a", "x:ab"), List.of(), List.of(), List.of(), List.of(), List.of(), List.of());
+        assertEquals(List.of("item added x:ab"), ExperimentAttribution.unexplained(both, Map.of("a", a)));
+        assertEquals(List.of(), ExperimentAttribution.unexplained(a, Map.of("a", a)));
+    }
+
+    @Test
+    void checkerListsContentGatedOnlyInOlderVersions() {
+        VanillaData latest = data("27.0", Map.of(), VersionFallbacks.NONE);
+        ExperimentContent drop = new ExperimentContent(List.of("minecraft:icicle"), List.of("minecraft:icicle"), List.of());
+        VanillaData older = data("26.60", Map.of("y_2026_drop_4", drop), VersionFallbacks.NONE);
+        assertEquals(List.of("block minecraft:icicle (y_2026_drop_4)", "item minecraft:icicle (y_2026_drop_4)"), Checker.gatedContent(older, latest));
+
+        // Still gated in the newest version: nothing to do
+        assertEquals(List.of(), Checker.gatedContent(older, data("27.0", Map.of("y_2026_drop_4", drop), VersionFallbacks.NONE)));
+        // No experiment marks: nothing known
+        assertEquals(List.of(), Checker.gatedContent(data("26.60", Map.of(), VersionFallbacks.NONE), latest));
+    }
+
+    @Test
+    void checkerListsContentOlderVersionsLack() {
+        VanillaData latest = data("27.0", Map.of(), VersionFallbacks.NONE);
+        VanillaData older = new VanillaData(new DataVersion("26.50", 1), List.of(BlockStates.of("minecraft:stone", NbtMap.EMPTY)),
+            List.of(new VanillaItem("minecraft:stone", 1, 2, false, null)), List.of(), RawLayout.of(Map.of()), Map.of(),
+            VersionFallbacks.NONE, Map.of(), Map.of());
+        assertEquals(List.of("block minecraft:icicle", "item minecraft:icicle"), Checker.missing(older, latest));
+    }
+
+    private static VanillaData data(String name, Map<String, ExperimentContent> experiments, VersionFallbacks fallbacks) {
+        List<NbtMap> states = List.of(BlockStates.of("minecraft:stone", NbtMap.EMPTY), BlockStates.of("minecraft:icicle", NbtMap.EMPTY));
+        List<VanillaItem> items = List.of(new VanillaItem("minecraft:stone", 1, 2, false, null), new VanillaItem("minecraft:icicle", 2, 2, false, null));
+        return new VanillaData(new DataVersion(name, 1), states, items, List.of(), RawLayout.of(Map.of()), Map.of(), fallbacks, Map.of(),
+            experiments);
+    }
+}

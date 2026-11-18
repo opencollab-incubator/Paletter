@@ -1,14 +1,14 @@
 /**
- * Paletter Recipes: the vanilla crafting recipes of each data version, on top of {@code org.geysermc.paletter}. The
+ * Paletter Recipes: the vanilla crafting recipes of each data version, on top of {@code dev.opencollab.paletter}. The
  * exported packages are the API; like Paletter's, this descriptor is compiled to check the exports but not packaged
- * (the jar declares {@code Automatic-Module-Name: org.geysermc.paletter.recipes}). {@code org.geysermc.paletter} never
+ * (the jar declares {@code Automatic-Module-Name: dev.opencollab.paletter.recipes}). {@code dev.opencollab.paletter} never
  * depends on this module.
  * <p>
  * Exports the one package of the records and the loader.
  */
-module org.geysermc.paletter.recipes {
-    requires transitive org.geysermc.paletter;
+module dev.opencollab.paletter.recipes {
+    requires transitive dev.opencollab.paletter;
     requires static org.checkerframework.checker.qual;
 
-    exports org.geysermc.paletter.recipes;
+    exports dev.opencollab.paletter.recipes;
 }

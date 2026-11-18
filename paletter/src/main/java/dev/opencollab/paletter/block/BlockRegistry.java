@@ -1,0 +1,1070 @@
+package dev.opencollab.paletter.block;
+
+import dev.opencollab.paletter.Origin;
+import dev.opencollab.paletter.internal.block.BlockStates;
+import dev.opencollab.paletter.internal.block.IntIndex;
+
+import dev.opencollab.paletter.internal.CanonicalBlocks;
+import dev.opencollab.paletter.internal.block.BlockInterner;
+import dev.opencollab.paletter.internal.block.BlockResolution;
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
+import org.checkerframework.checker.nullness.qual.NonNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
+import org.cloudburstmc.nbt.NbtMap;
+import org.cloudburstmc.nbt.NbtMapBuilder;
+import org.cloudburstmc.protocol.bedrock.data.BlockPropertyData;
+import org.cloudburstmc.protocol.bedrock.data.definitions.BlockDefinition;
+import org.cloudburstmc.protocol.common.DefinitionRegistry;
+import dev.opencollab.paletter.PaletteException;
+import dev.opencollab.paletter.internal.PaletteReportBuilder;
+import dev.opencollab.paletter.annotation.Internal;
+import dev.opencollab.paletter.data.DataVersion;
+import dev.opencollab.paletter.internal.data.VanillaData;
+import dev.opencollab.paletter.internal.component.BlockCompiler;
+import dev.opencollab.paletter.internal.component.ComponentIndex;
+import dev.opencollab.paletter.internal.component.WireContext;
+
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.BitSet;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import dev.opencollab.paletter.vanilla.BedrockBlockState;
+
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+
+/**
+ * The compiled block palette of one {@link dev.opencollab.paletter.Palette}: vanilla states plus custom blocks of all
+ * layers, with runtime ids assigned the way the client does. It is the block {@link DefinitionRegistry} for the codec.
+ * <p>
+ * Consumers map against the newest Bedrock version, either by state ({@link #resolve(NbtMap)}) or, on hot paths, by
+ * canonical id ({@link #runtimeId(int)}, {@link #block(int)}: array lookups, see {@link CanonicalBlocks}). Differences
+ * to older versions (renamed or missing blocks, added or removed states) are handled here.
+ * <p>
+ * Runtime ids are state hashes ({@link BlockHashes}). Each state also has a dense position, {@link #indexOf}; vanilla
+ * definitions are shared between versions.
+ *
+ * @since 1.0.0
+ */
+@Internal
+public final class BlockRegistry implements DefinitionRegistry<BlockDefinition> {
+    /**
+     * Numeric ids of custom blocks start here, to stay clear of vanilla block ids: where BDS starts them in every spec capture.
+     */
+    public static final int CUSTOM_BLOCK_ID_START = ComponentIndex.CUSTOM_BLOCK_ID_START;
+
+    private static final long FNV1_64_OFFSET_BASIS = 0xcbf29ce484222325L;
+    private static final long FNV1_64_PRIME = 1099511628211L;
+
+    /**
+     * Canonical tables are split in pages of this many entries, so pages with equal content can be shared.
+     */
+    private static final int PAGE_BITS = 10;
+    private static final int PAGE_SIZE = 1 << PAGE_BITS;
+    private static final int PAGE_MASK = PAGE_SIZE - 1;
+
+    private final Table table;
+    private final CanonicalBlocks canonical;
+    private final Map<String, BlockFallback> fallbacks;
+    private final @Nullable BlockFallback defaultFallback;
+    /** Blocks of the palette that count as missing: a disabled experiment gates them. */
+    private final Set<String> missing;
+    private final BlockInterner interner;
+    /** Resolutions of canonical states only (bounded by the canonical ids); anything else a caller asks for is not kept. */
+    private final Map<NbtMap, BlockResolution> resolutions = new ConcurrentHashMap<>();
+    private final @Nullable BlockRegistry parent;
+    private volatile @Nullable CanonicalTable canonicalTable;
+
+    private BlockRegistry(Table table, CanonicalBlocks canonical, Map<String, BlockFallback> fallbacks,
+                         @Nullable BlockFallback defaultFallback, Set<String> missing, BlockInterner interner, @Nullable BlockRegistry parent) {
+        this.parent = parent;
+        this.missing = missing;
+        this.table = table;
+        this.canonical = canonical;
+        this.fallbacks = fallbacks;
+        this.defaultFallback = defaultFallback;
+        this.interner = interner;
+    }
+
+    /**
+     * Builds the vanilla palette of a version.
+     *
+     * @param canonical canonical ids of the newest version's states
+     * @param interner shares blocks and tables between hashed palettes; one per Paletter
+     * @param data the vanilla data of the version
+     * @return the vanilla palette of the version
+     */
+    @Internal
+    public static @NonNull BlockRegistry build(@NonNull VanillaData data, @NonNull CanonicalBlocks canonical,
+                                              @NonNull BlockInterner interner) {
+        return new BlockRegistry(new Table(null, data, List.of(), Map.of(), List.of(), Map.of(), interner), canonical, data.fallbacks().blocks(),
+            BlockFallback.UNKNOWN, Set.of(), interner, null);
+    }
+
+    /**
+     * Internal: marks blocks as missing in this palette.
+     *
+     * @param blocks blocks of this palette that count as missing although their states are in the palette (a disabled
+     *               experiment gates them): they resolve through their fallback like blocks the version lacks
+     * @return a palette sharing all states with this one, or this palette if nothing is missing
+     */
+    @Internal
+    public @NonNull BlockRegistry withMissing(@NonNull Set<String> blocks) {
+        if (blocks.isEmpty()) {
+            return this;
+        }
+        return new BlockRegistry(table, canonical, fallbacks, defaultFallback, Set.copyOf(blocks), interner, parent);
+    }
+
+    /**
+     * Internal: adds fallbacks.
+     *
+     * @param extraFallbacks fallbacks by block identifier; they replace fallbacks of the same block
+     * @return a palette sharing all states with this one, with additional fallbacks, or this palette if there are none
+     */
+    @Internal
+    public @NonNull BlockRegistry withFallbacks(@NonNull Map<String, BlockFallback> extraFallbacks) {
+        if (extraFallbacks.isEmpty()) {
+            return this;
+        }
+        Map<String, BlockFallback> merged = new HashMap<>(fallbacks);
+        merged.putAll(extraFallbacks);
+        return new BlockRegistry(table, canonical, Map.copyOf(merged), defaultFallback, missing, interner, parent);
+    }
+
+    /**
+     * Internal: sets the default fallback.
+     *
+     * @param fallback what canonical states without a block or fallback of their own use, or null for air
+     * @return a palette sharing all states with this one, with this default fallback, or this palette if it has it
+     */
+    @Internal
+    public @NonNull BlockRegistry withDefaultFallback(@Nullable BlockFallback fallback) {
+        if (java.util.Objects.equals(fallback, defaultFallback)) {
+            return this;
+        }
+        return new BlockRegistry(table, canonical, fallbacks, fallback, missing, interner, parent);
+    }
+
+    /**
+     * Internal: the default fallback.
+     *
+     * @return what canonical states without a block or fallback of their own use, or null if they are sent as air
+     */
+    @Internal
+    public @Nullable BlockFallback defaultFallback() {
+        return defaultFallback;
+    }
+
+    /**
+     * Internal: adds custom blocks. Ids of custom blocks already here can change, see the code comments.
+     *
+     * @param data the vanilla data of this palette's version
+     * @param key what adds the blocks, typically the layer; canonical ids of custom blocks are cached per key, so
+     *            every version compiling the same layer stack shares them
+     * @param report receives what the version cannot express of the blocks
+     * @param source the layer id, for the report
+     * @param additional the custom blocks to add
+     * @return a palette with these custom blocks added, keeping this palette's fallbacks, or this palette if there are none
+     */
+    @Internal
+    public @NonNull BlockRegistry withCustomBlocks(@NonNull VanillaData data, @NonNull Object key, @NonNull List<CustomBlock> additional,
+                                                  @NonNull PaletteReportBuilder report, @NonNull String source) {
+        if (additional.isEmpty()) {
+            return this;
+        }
+        List<CustomBlock> all = new ArrayList<>(table.customBlocks);
+        all.addAll(additional);
+        // BDS numbers custom blocks by identifier in descending order (BlockIdOrder), whatever order they were registered in (verified
+        // on 1.26.63.1), so ids of the blocks already here can change: encode all of them again
+        List<String> byIdentifier = new ArrayList<>(all.size());
+        all.forEach(block -> byIdentifier.add(block.identifier()));
+        byIdentifier.sort(dev.opencollab.paletter.internal.BlockIdOrder.DESCENDING);
+        Map<String, Integer> blockIds = new HashMap<>();
+        for (int i = 0; i < byIdentifier.size(); i++) {
+            blockIds.put(byIdentifier.get(i), CUSTOM_BLOCK_ID_START + i);
+        }
+        List<BlockPropertyData> encoded = new ArrayList<>(all.size());
+        WireContext context = WireContext.of(data, report, source);
+        // The blocks already here were reported by their own layers: encode them again into a report nobody reads
+        WireContext earlier = WireContext.of(data, new PaletteReportBuilder(), source);
+        // The blocks already here keep their encoding (the same instance) while their block id is the same: nothing else
+        // that a layer changes goes into it
+        Map<String, BlockPropertyData> earlierEncoded = new HashMap<>();
+        for (BlockPropertyData property : table.blockProperties) {
+            if (table.customBlockIds.containsKey(property.getName())) {
+                earlierEncoded.put(property.getName(), property);
+            }
+        }
+        for (int i = 0; i < all.size(); i++) {
+            CustomBlock block = all.get(i);
+            int blockId = blockIds.get(block.identifier());
+            boolean isEarlier = i < table.customBlocks.size();
+            BlockPropertyData kept = isEarlier && table.customBlockIds.get(block.identifier()) == blockId ? earlierEncoded.get(block.identifier()) : null;
+            encoded.add(kept != null ? kept
+                : new BlockPropertyData(block.identifier(), BlockCompiler.propertyData(block, blockId, isEarlier ? earlier : context)));
+        }
+        // The property list BDS sends follows its block ids too
+        encoded.sort(java.util.Comparator.comparing(BlockPropertyData::getName).reversed());
+        Map<String, Origin> origins = new HashMap<>(table.origins);
+        additional.forEach(block -> origins.put(block.identifier(), Origin.custom(source)));
+        // Hashed ids do not depend on the other states: only the added states get a table, over this one
+        Table extended = new Table(table, data, all, Map.copyOf(origins), encoded, Map.copyOf(blockIds), interner);
+        return new BlockRegistry(extended, canonical.extend(key, additional), fallbacks, defaultFallback, missing, interner, this);
+    }
+
+    /**
+     * Internal: whether another palette is a base of this one.
+     *
+     * @param other the registry to compare with
+     * @return true if this registry is the other one, or the other one with custom blocks added: every state of the other
+     * one is here as the same instance and resolves the same way, unless it names a block that was added
+     */
+    @Internal
+    public boolean extendsWithBlocks(@NonNull BlockRegistry other) {
+        return this == other || parent == other && fallbacks.equals(other.fallbacks)
+            && java.util.Objects.equals(defaultFallback, other.defaultFallback) && missing.equals(other.missing);
+    }
+
+    /**
+     * The data version this palette is compiled for.
+     *
+     * @return the version
+     */
+    public @NonNull DataVersion version() {
+        return table.version;
+    }
+
+    /**
+     * Internal: the canonical ids of this palette.
+     *
+     * @return the canonical ids this palette resolves: states of the newest version plus custom blocks of its layers
+     */
+    @Internal
+    public @NonNull CanonicalBlocks canonical() {
+        return canonical;
+    }
+
+    /**
+     * The number of states.
+     *
+     * @return the amount of block states
+     */
+    public int size() {
+        return table.size();
+    }
+
+    /**
+     * Looks a state up by runtime id.
+     *
+     * @param runtimeId the runtime id, which is the hash of the state
+     * @return the state, or null if this palette has none with this runtime id
+     */
+    public @Nullable RegisteredBlockState byRuntimeId(int runtimeId) {
+        int index = indexOfRuntimeId(runtimeId);
+        return index == -1 ? null : table.byIndex(index);
+    }
+
+    /**
+     * Looks a state up by dense position.
+     *
+     * @param index a dense position, see {@link #indexOf}
+     * @return the state at this position
+     * @throws IndexOutOfBoundsException if there is no such position
+     */
+    public @NonNull RegisteredBlockState byIndex(int index) {
+        return table.byIndex(index);
+    }
+
+    /**
+     * The dense position of a state.
+     *
+     * @param definition the state
+     * @return the dense position of a block in this palette, {@code 0} to {@code size() - 1} (not the runtime id, which is the hash), or -1 if it is not registered here
+     */
+    public int indexOf(@NonNull BlockDefinition definition) {
+        int index = indexOfRuntimeId(definition.getRuntimeId());
+        return index != -1 && table.byIndex(index) == definition ? index : -1;
+    }
+
+    /**
+     * The dense position of a state by runtime id.
+     *
+     * @param runtimeId the runtime id
+     * @return the dense position of the block state with this runtime id, see {@link #indexOf}, or -1 if there is none
+     */
+    public int indexOfRuntimeId(int runtimeId) {
+        return table.indexOfRuntimeId(runtimeId);
+    }
+
+    @Override
+    public @Nullable BlockDefinition getDefinition(int runtimeId) {
+        return byRuntimeId(runtimeId);
+    }
+
+    @Override
+    public boolean isRegistered(@NonNull BlockDefinition definition) {
+        return definition instanceof RegisteredBlockState && indexOf(definition) != -1;
+    }
+
+    // ---- Canonical ids ----
+
+    /**
+     * The block to send for a canonical id: the exact state, else the state resolved for this version (see
+     * {@link #resolve(NbtMap)}), else air. An array lookup; the table is built on first use and shared by every
+     * palette using this block palette.
+     *
+     * @param canonical a canonical id
+     * @return the block to send
+     * @throws IndexOutOfBoundsException if the id is not one of {@link #canonical()}
+     */
+    @Internal
+    public @NonNull RegisteredBlockState block(int canonical) {
+        return canonicalTable().blocks[canonical >>> PAGE_BITS][canonical & PAGE_MASK];
+    }
+
+    /**
+     * Whether a canonical id has no block of its own in this version.
+     *
+     * @param canonical a canonical id
+     * @return whether {@link #block(int)} is a stand-in for this canonical id (the default fallback or air) because the
+     *         state has no block of its own in this version, see {@link #missingCanonical()}
+     */
+    @Internal
+    public boolean isMissing(int canonical) {
+        return canonicalTable().missingIds.get(canonical);
+    }
+
+    /**
+     * Whether a canonical id is sent as a replacement.
+     *
+     * @param canonical a canonical id
+     * @return whether {@link #block(int)} is a replacement for this canonical id: a fallback (also a forced one) or the
+     *         default fallback was used, see {@link #isMissing}; not for a state that is only adapted to this version
+     */
+    @Internal
+    public boolean isFallback(int canonical) {
+        return canonicalTable().fallbackIds.get(canonical);
+    }
+
+    /**
+     * Like {@link #block(int)}, but only the runtime id. An array lookup.
+     *
+     * @param canonical a canonical id
+     * @return the runtime id of {@code block(canonical)}
+     */
+    @Internal
+    public int runtimeId(int canonical) {
+        return canonicalTable().runtimeIds[canonical >>> PAGE_BITS][canonical & PAGE_MASK];
+    }
+
+    /**
+     * Maps a block back to a canonical id: the canonical id of its exact state, else the first canonical id that
+     * resolves to it (e.g. a state of an older version that the newest version added a state value to).
+     *
+     * @param definition the block, may be null
+     * @return the canonical id, or -1 for null, a definition of another palette, or a state nothing resolves to
+     */
+    @Internal
+    public int canonical(@Nullable BlockDefinition definition) {
+        if (definition == null) {
+            return -1;
+        }
+        return canonicalOfRuntimeId(definition.getRuntimeId());
+    }
+
+    /**
+     * Like {@link #canonical(BlockDefinition)}, by runtime id.
+     *
+     * @param runtimeId the runtime id
+     * @return the canonical id, or -1 if this palette has no state with the runtime id or nothing resolves to it
+     */
+    @Internal
+    public int canonicalOfRuntimeId(int runtimeId) {
+        int index = indexOfRuntimeId(runtimeId);
+        return index == -1 ? -1 : canonicalTable().reverse[index >>> PAGE_BITS][index & PAGE_MASK];
+    }
+
+    /**
+     * The version independent key of a block of this registry: the state of the newest data (or of a custom block of
+     * a layer) the block is sent for, see {@link #canonical(BlockDefinition)}. Follows the data this registry was
+     * compiled from, so it also works for palettes of other data sources and older versions.
+     *
+     * @param block a state of this registry
+     * @return the key, or null for a runtime id this registry lacks, or a block that no state of the newest data resolves to
+     * @since 1.0.0
+     */
+    public @Nullable BedrockBlockState key(@NonNull RegisteredBlockState block) {
+        return canonical.handle(canonical(block));
+    }
+
+    /**
+     * Internal: the canonical states without a block of their own.
+     *
+     * @return the canonical states that have no block (or fallback) of their own in this version and use the default
+     *         fallback ({@link #defaultFallback()}), or air without one
+     */
+    @Internal
+    public @NonNull List<NbtMap> missingCanonical() {
+        return canonicalTable().missing;
+    }
+
+    /**
+     * Builds the canonical tables now instead of on first use. Called by the palette compiler.
+     */
+    @Internal
+    public void prepareCanonical() {
+        canonicalTable();
+    }
+
+    private CanonicalTable canonicalTable() {
+        CanonicalTable result = canonicalTable;
+        if (result == null) {
+            synchronized (this) {
+                result = canonicalTable;
+                if (result == null) {
+                    canonicalTable = result = buildCanonicalTable();
+                }
+            }
+        }
+        return result;
+    }
+
+    private CanonicalTable buildCanonicalTable() {
+        int size = canonical.size();
+        int pageCount = (size + PAGE_SIZE - 1) >>> PAGE_BITS;
+        int indexPageCount = (table.size() + PAGE_SIZE - 1) >>> PAGE_BITS;
+        RegisteredBlockState[][] blocks = new RegisteredBlockState[pageCount][];
+        int[][] runtimeIds = new int[pageCount][];
+        int[][] reverse = new int[indexPageCount][];
+        boolean[] sharedReverse = new boolean[indexPageCount];
+        List<NbtMap> missing = new ArrayList<>();
+        BitSet missingIds = new BitSet();
+        BitSet fallbackIds = new BitSet();
+        // The canonical ids and the indices before these are the parent's: they resolve the same way, so their pages are reused
+        int firstId = 0;
+        int firstIndex = 0;
+        CanonicalTable parentTable = null;
+        BlockRegistry base = parent;
+        if (base != null && base.fallbacks.equals(fallbacks) && java.util.Objects.equals(base.defaultFallback, defaultFallback)
+            && base.canonical.size() <= size) {
+            parentTable = base.canonicalTable();
+            firstId = base.canonical.size();
+            firstIndex = table.parentSize;
+            System.arraycopy(parentTable.blocks, 0, blocks, 0, firstId >>> PAGE_BITS);
+            System.arraycopy(parentTable.runtimeIds, 0, runtimeIds, 0, firstId >>> PAGE_BITS);
+            System.arraycopy(parentTable.reverse, 0, reverse, 0, firstIndex >>> PAGE_BITS);
+            Arrays.fill(sharedReverse, 0, firstIndex >>> PAGE_BITS, true);
+            missing.addAll(parentTable.missing);
+            missingIds.or(parentTable.missingIds);
+            fallbackIds.or(parentTable.fallbackIds);
+        }
+        // The page the new indices start in keeps the parent's part
+        for (int page = firstIndex >>> PAGE_BITS; page < indexPageCount; page++) {
+            int start = page << PAGE_BITS;
+            int[] ids = new int[Math.min(PAGE_SIZE, table.size() - start)];
+            int kept = Math.max(0, Math.min(ids.length, firstIndex - start));
+            if (kept > 0) {
+                System.arraycopy(parentTable.reverse[page], 0, ids, 0, kept);
+            }
+            for (int j = kept; j < ids.length; j++) {
+                ids[j] = canonical.index(table.byIndex(start + j).getState());
+            }
+            reverse[page] = ids;
+        }
+        for (int page = firstId >>> PAGE_BITS; page < pageCount; page++) {
+            int start = page << PAGE_BITS;
+            int length = Math.min(PAGE_SIZE, size - start);
+            RegisteredBlockState[] pageBlocks = new RegisteredBlockState[length];
+            int[] pageIds = new int[length];
+            boolean vanillaOnly = true;
+            int kept = Math.max(0, Math.min(length, firstId - start));
+            if (kept > 0) {
+                System.arraycopy(parentTable.blocks[page], 0, pageBlocks, 0, kept);
+                System.arraycopy(parentTable.runtimeIds[page], 0, pageIds, 0, kept);
+                for (int j = 0; j < kept; j++) {
+                    vanillaOnly &= !pageBlocks[j].isCustom();
+                }
+            }
+            for (int j = kept; j < length; j++) {
+                int id = start + j;
+                NbtMap state = canonical.state(id);
+                // The table keeps what this resolves: caching it too would hold every adapted state twice
+                BlockResolution resolution = resolve(state, false);
+                RegisteredBlockState block = resolution.block();
+                if (resolution.kind() == BlockResolution.Kind.FALLBACK) {
+                    fallbackIds.set(id);
+                }
+                if (block == null) {
+                    RegisteredBlockState fallback = defaultBlock();
+                    block = fallback != null ? fallback : table.air;
+                    missing.add(state);
+                    missingIds.set(id);
+                    fallbackIds.set(id);
+                }
+                pageBlocks[j] = block;
+                pageIds[j] = block.getRuntimeId();
+                vanillaOnly &= !block.isCustom();
+                int index = indexOfRuntimeId(block.getRuntimeId());
+                int[] reverseIds = reverse[index >>> PAGE_BITS];
+                if (reverseIds[index & PAGE_MASK] == -1) {
+                    if (sharedReverse[index >>> PAGE_BITS]) {
+                        // Only a custom state that a fallback sends to a block of the parent gets here: the page is the parent's
+                        reverse[index >>> PAGE_BITS] = reverseIds = reverseIds.clone();
+                        sharedReverse[index >>> PAGE_BITS] = false;
+                    }
+                    reverseIds[index & PAGE_MASK] = id;
+                }
+            }
+            // Vanilla blocks are shared between versions, so most pages are equal between them
+            if (vanillaOnly) {
+                pageBlocks = interner.intern(pageBlocks);
+                pageIds = interner.intern(pageIds);
+            }
+            blocks[page] = pageBlocks;
+            runtimeIds[page] = pageIds;
+        }
+        // Nothing new is missing (the usual case for a layer of custom blocks): the parent's list is the same
+        List<NbtMap> allMissing = parentTable != null && missing.size() == parentTable.missing.size() ? parentTable.missing : List.copyOf(missing);
+        return new CanonicalTable(blocks, runtimeIds, reverse, allMissing, missingIds, fallbackIds);
+    }
+
+    private record CanonicalTable(RegisteredBlockState[][] blocks, int[][] runtimeIds, int[][] reverse, List<NbtMap> missing,
+                                  BitSet missingIds, BitSet fallbackIds) {
+    }
+
+    // ---- States ----
+
+    /**
+     * Internal: looks up exactly one state.
+     *
+     * @param state a block state as {@code {name, states}}
+     * @return the definition of exactly this state, or null
+     */
+    @Internal
+    public @Nullable RegisteredBlockState exact(@NonNull NbtMap state) {
+        return table.byState(BlockStates.normalize(state));
+    }
+
+    /**
+     * Resolves a block state that is valid in the newest Bedrock version against this palette's version:
+     * <ol>
+     *     <li>an exact match is used as is;</li>
+     *     <li>a block that does not exist (or is forcibly replaced, e.g. because it is experimental) is replaced by its fallback;</li>
+     *     <li>state values are carried over where the (replacement) block has them; missing or invalid ones use the
+     *     block's default state values.</li>
+     * </ol>
+     * Results for canonical states are cached; what is not a canonical state (an arbitrary caller input) is not. On hot paths, prefer canonical ids ({@link #block(int)}).
+     *
+     * @param state a block state as {@code {name, states}}
+     * @return the resolution
+     */
+    @Internal
+    public @NonNull BlockResolution resolve(@NonNull NbtMap state) {
+        return resolve(state, true);
+    }
+
+    /** @param keep whether to remember the resolution of a canonical state: not for the canonical table, which keeps it itself */
+    private BlockResolution resolve(NbtMap state, boolean keep) {
+        NbtMap normalized = BlockStates.normalize(state);
+        BlockFallback forced = fallbacks.get(BlockStates.name(normalized));
+        RegisteredBlockState exact = forced != null && forced.force() || !missing.isEmpty() && missing.contains(BlockStates.name(normalized))
+            ? null : table.byState(normalized);
+        if (exact != null) {
+            return new BlockResolution(normalized, exact, BlockResolution.Kind.EXACT);
+        }
+        BlockResolution cached = resolutions.get(normalized);
+        if (cached != null) {
+            return cached;
+        }
+        BlockResolution resolution = adapt(normalized);
+        if (keep && canonical.index(normalized) != -1) {
+            resolutions.put(normalized, resolution);
+        }
+        return resolution;
+    }
+
+    private BlockResolution adapt(NbtMap state) {
+        String name = BlockStates.name(state);
+        BlockResolution.Kind kind = BlockResolution.Kind.ADAPTED;
+        BedrockBlockState exactState = null;
+        BlockFallback forced = fallbacks.get(name);
+        if (table.schema(name) == null || (forced != null && forced.force()) || missing.contains(name)) {
+            BlockFallback fallback = forced;
+            if (fallback == null || table.schema(fallback.target().identifier()) == null) {
+                return new BlockResolution(state, null, BlockResolution.Kind.MISSING);
+            }
+            name = fallback.target().identifier();
+            exactState = fallback.state();
+            kind = BlockResolution.Kind.FALLBACK;
+        }
+
+        Schema schema = table.schema(name);
+        if (exactState != null) {
+            RegisteredBlockState exact = table.byState(BlockStates.normalize(exactState.toNbt()));
+            return new BlockResolution(state, exact != null ? exact : schema.defaultState, kind);
+        }
+        NbtMap requested = BlockStates.states(state);
+        NbtMapBuilder adapted = NbtMap.builder();
+        for (Map.Entry<String, Object> entry : schema.defaultState.states().entrySet()) {
+            Object value = requested.get(entry.getKey());
+            Set<Object> allowed = schema.values.get(entry.getKey());
+            adapted.put(entry.getKey(), value != null && allowed.contains(value) ? value : entry.getValue());
+        }
+        RegisteredBlockState block = table.byState(BlockStates.of(name, adapted.build()));
+        return new BlockResolution(state, block != null ? block : schema.defaultState, kind);
+    }
+
+    /**
+     * Resolves a list of states at once. States that cannot be resolved at all map to {@code missing}; everything that
+     * was not exact is recorded in the report.
+     *
+     * @param states the states to resolve
+     * @param missing the block used for states that cannot be resolved
+     * @param report receives a warning for each such state and a summary
+     * @return the block to send for each state, in the order of {@code states}
+     */
+    @Internal
+    public @NonNull RegisteredBlockState[] table(@NonNull List<NbtMap> states, @NonNull RegisteredBlockState missing, @NonNull PaletteReportBuilder report) {
+        RegisteredBlockState[] result = new RegisteredBlockState[states.size()];
+        Map<BlockResolution.Kind, Integer> counts = new LinkedHashMap<>();
+        for (int i = 0; i < result.length; i++) {
+            BlockResolution resolution = resolve(states.get(i));
+            if (resolution.block() == null && defaultBlock() != null) {
+                resolution = new BlockResolution(resolution.requested(), defaultBlock(), BlockResolution.Kind.DEFAULT);
+            }
+            counts.merge(resolution.kind(), 1, Integer::sum);
+            if (resolution.kind() == BlockResolution.Kind.MISSING) {
+                report.warn("blocks", "No " + version() + " block for " + resolution.requested() + ", and no fallback; using " + missing.getState());
+            }
+            result[i] = resolution.block() != null ? resolution.block() : missing;
+        }
+        report.info("blocks", "Resolved " + result.length + " states for " + version() + ": " + counts);
+        return result;
+    }
+
+    /**
+     * The default state of a block.
+     *
+     * @param identifier the block identifier
+     * @return the default state of a block, or null if the block does not exist
+     */
+    public @Nullable RegisteredBlockState defaultState(@NonNull String identifier) {
+        Schema schema = table.schema(identifier);
+        return schema == null ? null : schema.defaultState;
+    }
+
+    /** The default state of the default fallback's target, or null if there is none (or it is not in this version). */
+    private @Nullable RegisteredBlockState defaultBlock() {
+        return defaultFallback == null ? null : defaultState(defaultFallback.target().identifier());
+    }
+
+    /**
+     * Whether this palette has a block.
+     *
+     * @param identifier the block identifier
+     * @return true if the block exists in this palette
+     */
+    public boolean contains(@NonNull String identifier) {
+        return table.schema(identifier) != null;
+    }
+
+    /**
+     * The states of a block.
+     *
+     * @param identifier the block identifier
+     * @return every state of a block, in palette order, or an empty list if the block does not exist
+     */
+    public @NonNull List<RegisteredBlockState> states(@NonNull String identifier) {
+        Schema schema = table.schema(identifier);
+        return schema == null ? List.of() : schema.states;
+    }
+
+    /**
+     * Looks a block up by identifier.
+     *
+     * @param identifier the block identifier
+     * @return the block with this identifier in this palette, or null
+     */
+    public @Nullable RegisteredBlock block(@NonNull String identifier) {
+        return table.block(identifier);
+    }
+
+    /**
+     * Looks up the block of a state.
+     *
+     * @param state a state of this palette
+     * @return the block a state of this palette belongs to
+     * @throws IllegalArgumentException if the state is not of this palette
+     */
+    public @NonNull RegisteredBlock block(@NonNull RegisteredBlockState state) {
+        RegisteredBlock block = table.block(state.identifier());
+        if (block == null || exact(state.getState()) != state) {
+            throw new IllegalArgumentException(state + " is not a state of this palette");
+        }
+        return block;
+    }
+
+    /**
+     * Lists the blocks.
+     *
+     * @return every block of this palette: vanilla and custom
+     */
+    public @NonNull Collection<RegisteredBlock> blocks() {
+        Map<String, RegisteredBlock> blocks = new LinkedHashMap<>();
+        table.collectBlocks(blocks);
+        return List.copyOf(blocks.values());
+    }
+
+    /**
+     * @return the amount of states in this palette's own table: all of them, except in a patch over another palette
+     *         (hashed palettes with added custom blocks), which holds only the added ones
+     */
+    @Internal
+    int ownStateCount() {
+        return table.own.length;
+    }
+
+    /**
+     * The air state.
+     *
+     * @return the state of {@code minecraft:air}
+     */
+    public @NonNull RegisteredBlockState air() {
+        return table.air;
+    }
+
+    /**
+     * The block property data of this palette.
+     *
+     * @return block property data to send in the start game packet: vanilla data driven blocks and custom blocks
+     */
+    public @NonNull List<BlockPropertyData> blockProperties() {
+        return table.blockProperties;
+    }
+
+    /**
+     * Internal: the numeric id of a custom block.
+     *
+     * @param identifier a custom block of this palette
+     * @return its {@code block_id}, the one in {@link #blockProperties()}; item ids of plain block items derive from it
+     * @throws PaletteException if there is no such custom block
+     */
+    @Internal
+    public int customBlockId(@NonNull String identifier) {
+        Integer id = table.customBlockIds.get(identifier);
+        if (id == null) {
+            throw new PaletteException("Custom block " + identifier + " does not exist in " + version(), null, identifier, null);
+        }
+        return id;
+    }
+
+    /**
+     * The custom blocks registered in this palette.
+     *
+     * @return the custom blocks
+     */
+    public @NonNull List<CustomBlock> customBlocks() {
+        return table.customBlocks;
+    }
+
+    /**
+     * The fallbacks of this palette.
+     *
+     * @return the fallbacks by identifier of the block they replace
+     */
+    public @NonNull Map<String, BlockFallback> fallbacks() {
+        return fallbacks;
+    }
+
+    /**
+     * Internal: whether this palette has the same states as another.
+     *
+     * @param other the registry to compare with
+     * @return true if this palette has exactly the states (and runtime ids) of the other one
+     */
+    @Internal
+    public boolean sharesStatesWith(@NonNull BlockRegistry other) {
+        return table == other.table;
+    }
+
+    /**
+     * Internal: whether this palette extends the states of another.
+     *
+     * @param other the registry to compare with
+     * @return true if this palette has the states of the other one, in the same dense positions ({@link #indexOf}), and
+     * possibly more after them: it is the other palette or was built by adding custom blocks to it
+     */
+    @Internal
+    public boolean extendsStatesOf(@NonNull BlockRegistry other) {
+        for (Table t = table; t != null; t = t.parent) {
+            if (t == other.table) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    @Override
+    public String toString() {
+        return "BlockRegistry{" + version() + ", " + size() + " states, " + table.customBlocks.size() + " custom blocks}";
+    }
+
+    /**
+     * The hash of BDS's {@code HashedString}: FNV-1 64 bit (multiply, then xor: not FNV-1a) over the zero-extended UTF-8
+     * bytes, 0 for the empty string. BDS sends it as a block's {@code name_hash}, and the client orders its palette by it
+     * once custom blocks exist.
+     *
+     * @param identifier the block identifier
+     * @return the hash
+     */
+    @Internal
+    public static long nameHash(@NonNull String identifier) {
+        if (identifier.isEmpty()) {
+            return 0;
+        }
+        long hash = FNV1_64_OFFSET_BASIS;
+        for (int i = 0; i < identifier.length(); i++) {
+            char c = identifier.charAt(i);
+            if (c >= 0x80) {
+                return nameHashOfBytes(identifier.getBytes(StandardCharsets.UTF_8));
+            }
+            // An ASCII character is its own UTF-8 byte: no need to encode the identifiers, which are all ASCII in practice
+            hash = hash * FNV1_64_PRIME ^ c;
+        }
+        return hash;
+    }
+
+    private static long nameHashOfBytes(byte[] bytes) {
+        long hash = FNV1_64_OFFSET_BASIS;
+        for (byte b : bytes) {
+            hash = hash * FNV1_64_PRIME ^ (b & 0xff);
+        }
+        return hash;
+    }
+
+    private record HashedState(long hash, NbtMap state) {
+    }
+
+    private record Schema(List<RegisteredBlockState> states, Map<String, Set<Object>> values, RegisteredBlockState defaultState) {
+    }
+
+    /**
+     * Immutable state table, shared between all palettes deriving from the same set of custom blocks. A table over a
+     * parent holds only the states of the custom blocks added to it, and delegates the rest.
+     */
+    private static final class Table {
+        private final @Nullable Table parent;
+        private final int parentSize;
+        private final DataVersion version;
+        /** Own states: all of them without a parent. */
+        private final RegisteredBlockState[] own;
+        private final IntIndex ownByHash;
+        /**
+         * Own custom states by state. Own vanilla states are not kept here: the interner has every one of them (as the
+         * same instances), so {@link #byState} looks them up there and checks that they are in this table.
+         */
+        private final Map<NbtMap, RegisteredBlockState> ownCustomByState;
+        /** Null if this table has no vanilla states (a table over a parent holds only custom ones). */
+        private final @Nullable BlockInterner interner;
+        private final List<BlockPropertyData> blockProperties;
+        /** Every custom block, including the parent's. */
+        private final List<CustomBlock> customBlocks;
+        /** The {@code block_id} of every custom block, including the parent's. */
+        private final Map<String, Integer> customBlockIds;
+        private final Map<String, Origin> origins;
+        private final Map<String, RegisteredBlock> ownBlocks;
+        private final Map<String, Schema> schemas = new ConcurrentHashMap<>();
+        private final RegisteredBlockState air;
+
+        private Table(@Nullable Table parent, VanillaData data, List<CustomBlock> customBlocks, Map<String, Origin> origins,
+                      List<BlockPropertyData> customProperties, Map<String, Integer> customBlockIds, BlockInterner interner) {
+            this.parent = parent;
+            this.customBlockIds = customBlockIds;
+            this.parentSize = parent == null ? 0 : parent.size();
+            this.version = data.version();
+            this.customBlocks = List.copyOf(customBlocks);
+            this.origins = origins;
+            List<CustomBlock> ownCustom = parent == null ? this.customBlocks : this.customBlocks.subList(parent.customBlocks.size(), this.customBlocks.size());
+
+            List<NbtMap> states = new ArrayList<>(parent == null ? data.blockStates() : List.of());
+            Set<NbtMap> customStates = new LinkedHashSet<>();
+            Set<String> vanillaNames = new LinkedHashSet<>();
+            if (parent == null) {
+                for (NbtMap state : data.blockStates()) {
+                    vanillaNames.add(BlockStates.name(state));
+                }
+            }
+            Map<String, CustomBlock> customByName = new HashMap<>();
+            for (CustomBlock block : ownCustom) {
+                if (vanillaNames.contains(block.identifier()) || customByName.containsKey(block.identifier())
+                    || parent != null && parent.block(block.identifier()) != null) {
+                    throw new PaletteException("Custom block " + block.identifier() + " is registered twice, or collides with a vanilla block",
+                        null, block.identifier(), null);
+                }
+                customStates.addAll(block.states());
+                customByName.put(block.identifier(), block);
+            }
+
+            if (!customStates.isEmpty()) {
+                states.addAll(customStates);
+                // The client sorts the whole palette by name hash as soon as custom blocks exist. The sort is stable,
+                // so states of one block keep their order. Hashed ids do not depend on it, but keep one order anyway
+                Map<String, Long> hashes = new HashMap<>();
+                List<HashedState> hashed = new ArrayList<>(states.size());
+                for (NbtMap state : states) {
+                    hashed.add(new HashedState(hashes.computeIfAbsent(BlockStates.name(state), BlockRegistry::nameHash), state));
+                }
+                hashed.sort((a, b) -> Long.compareUnsigned(a.hash(), b.hash()));
+                for (int i = 0; i < states.size(); i++) {
+                    states.set(i, hashed.get(i).state());
+                }
+            }
+
+            this.own = new RegisteredBlockState[states.size()];
+            Object2ObjectOpenHashMap<NbtMap, RegisteredBlockState> customByState = new Object2ObjectOpenHashMap<>(customStates.size());
+            IntIndex byHash = new IntIndex(states.size());
+            for (int i = 0; i < states.size(); i++) {
+                NbtMap state = states.get(i);
+                boolean custom = customStates.contains(state);
+                RegisteredBlockState block;
+                if (custom) {
+                    block = new RegisteredBlockState(BlockHashes.hash(state), state, true);
+                    customByState.put(state, block);
+                } else {
+                    // A vanilla state has the same hash in every version: share the definition
+                    block = interner.vanillaBlock(state);
+                }
+                int collision = byHash.put(block.getRuntimeId(), i);
+                if (collision != -1 && own[collision].getState().equals(state)) {
+                    throw new PaletteException("Duplicate block state in " + version + " palette: " + state, null, BlockStates.name(state), null);
+                }
+                if (collision != -1) {
+                    throw new PaletteException("Block network id hash collision in the " + version + " palette: "
+                        + own[collision].getState() + " and " + state + " both hash to " + block.getRuntimeId(), null, BlockStates.name(state), null);
+                }
+                int inParent = parent == null ? -1 : parent.indexOfRuntimeId(block.getRuntimeId());
+                if (inParent != -1) {
+                    throw new PaletteException("Block network id hash collision in the " + version + " palette: "
+                        + parent.byIndex(inParent).getState() + " and " + state + " both hash to " + block.getRuntimeId(), null, BlockStates.name(state), null);
+                }
+                own[i] = block;
+            }
+            this.ownCustomByState = customByState;
+            this.ownByHash = byHash;
+            this.interner = parent == null ? interner : null;
+
+            List<BlockPropertyData> properties = new ArrayList<>(data.dataDrivenBlocks());
+            properties.addAll(customProperties);
+            this.blockProperties = List.copyOf(properties);
+
+            // Group the states into blocks, in palette order
+            Map<String, List<RegisteredBlockState>> byName = new LinkedHashMap<>();
+            for (RegisteredBlockState state : own) {
+                byName.computeIfAbsent(state.identifier(), name -> new ArrayList<>()).add(state);
+            }
+            Map<String, NbtMap> propertyData = new HashMap<>();
+            for (BlockPropertyData entry : properties) {
+                propertyData.put(entry.getName(), entry.getProperties());
+            }
+            Map<String, RegisteredBlock> blocks = new LinkedHashMap<>(byName.size());
+            for (Map.Entry<String, List<RegisteredBlockState>> entry : byName.entrySet()) {
+                String name = entry.getKey();
+                CustomBlock custom = customByName.get(name);
+                if (custom != null) {
+                    blocks.put(name, new RegisteredBlock(name, origins.get(name), entry.getValue(), custom, propertyData.get(name), custom.defaultState()));
+                } else {
+                    blocks.put(name, interner.vanillaType(name, entry.getValue(), propertyData.get(name), data.blockDefaults().get(name)));
+                }
+            }
+            if (parent != null) {
+                // The numeric block ids inside the property data of the parent's custom blocks change when blocks are
+                // added: the patch has blocks of its own for them, over the same states
+                for (CustomBlock custom : this.customBlocks.subList(0, parent.customBlocks.size())) {
+                    RegisteredBlock earlier = parent.block(custom.identifier());
+                    blocks.put(custom.identifier(), new RegisteredBlock(custom.identifier(), origins.get(custom.identifier()),
+                        earlier.states(), custom, propertyData.get(custom.identifier()), custom.defaultState()));
+                }
+            }
+            this.ownBlocks = Collections.unmodifiableMap(blocks);
+
+            RegisteredBlockState air = parent != null ? parent.air : ownVanilla(BlockStates.of("minecraft:air"));
+            if (air == null) {
+                throw new PaletteException("The " + version + " palette has no air");
+            }
+            this.air = air;
+        }
+
+        int size() {
+            return parentSize + own.length;
+        }
+
+        RegisteredBlockState byIndex(int index) {
+            return index < parentSize ? parent.byIndex(index) : own[index - parentSize];
+        }
+
+        int indexOfRuntimeId(int runtimeId) {
+            int index = ownByHash.get(runtimeId);
+            if (index != -1) {
+                return parentSize + index;
+            }
+            return parent == null ? -1 : parent.indexOfRuntimeId(runtimeId);
+        }
+
+        @Nullable RegisteredBlockState byState(NbtMap state) {
+            RegisteredBlockState found = ownCustomByState.get(state);
+            if (found == null && interner != null) {
+                found = ownVanilla(state);
+            }
+            return found != null || parent == null ? found : parent.byState(state);
+        }
+
+        /** The interner has the vanilla states of every version: only those of this table count. */
+        private @Nullable RegisteredBlockState ownVanilla(NbtMap state) {
+            RegisteredBlockState block = interner.knownVanillaBlock(state);
+            if (block == null) {
+                return null;
+            }
+            int index = ownByHash.get(block.getRuntimeId());
+            return index != -1 && own[index] == block ? block : null;
+        }
+
+        @Nullable RegisteredBlock block(String identifier) {
+            RegisteredBlock found = ownBlocks.get(identifier);
+            return found != null || parent == null ? found : parent.block(identifier);
+        }
+
+        /** Blocks of this table replace those of the parent with the same identifier. */
+        void collectBlocks(Map<String, RegisteredBlock> into) {
+            if (parent != null) {
+                parent.collectBlocks(into);
+            }
+            into.putAll(ownBlocks);
+        }
+
+        @Nullable Schema schema(String identifier) {
+            Schema schema = schemas.get(identifier);
+            if (schema != null) {
+                return schema;
+            }
+            RegisteredBlock block = ownBlocks.get(identifier);
+            if (block == null) {
+                return parent == null ? null : parent.schema(identifier);
+            }
+            Map<String, Set<Object>> values = new HashMap<>();
+            for (RegisteredBlockState state : block.states()) {
+                state.states().forEach((key, value) -> values.computeIfAbsent(key, k -> new LinkedHashSet<>()).add(value));
+            }
+            schema = new Schema(block.states(), Collections.unmodifiableMap(values), block.defaultState());
+            Schema existing = schemas.putIfAbsent(identifier, schema);
+            return existing != null ? existing : schema;
+        }
+    }
+}

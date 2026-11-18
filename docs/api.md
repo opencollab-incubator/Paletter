@@ -6,7 +6,7 @@ This page goes deeper than the [README](../README.md). Method-level details are 
 ## What is API
 
 The API is the packages exported by
-[`module-info.java`](../paletter/src/module/java/module-info.java): `org.geysermc.paletter` and its `annotation`,
+[`module-info.java`](../paletter/src/module/java/module-info.java): `dev.opencollab.paletter` and its `annotation`,
 `behaviour`, `block`, `block.component`, `creative`, `data`, `item`, `item.component`, `property`, `vanilla` and
 `vanilla.state` packages. Cloudburst types that appear in signatures (`NbtMap`, `ItemData`, `StartGamePacket`, ...) are
 part of it too.
@@ -17,7 +17,7 @@ generator finds those names itself.
 
 Not API:
 
-- anything under `org.geysermc.paletter.internal`;
+- anything under `dev.opencollab.paletter.internal`;
 - public members marked `@Internal` (plumbing that has to be public, such as the `BlockValues` constructor);
 - the bundled data format and the `tools` module.
 
@@ -39,7 +39,7 @@ Paletter is at 1.0.0-SNAPSHOT, so any release may change or remove API. The buil
   exist yet, so the check is skipped.
 - `ApiBoundaryTest` checks that no exported signature uses an internal type and that every exported type has `@since`.
 
-The jar declares `Automatic-Module-Name: org.geysermc.paletter`. `module-info.java` is compiled to check the exports but
+The jar declares `Automatic-Module-Name: dev.opencollab.paletter`. `module-info.java` is compiled to check the exports but
 is not packaged, because Cloudburst's dependencies split packages across jars.
 
 ## Keys and lookups
@@ -114,7 +114,7 @@ descending order. Read ids from the palette, never keep them across layers.
 
 ## Vanilla constants
 
-`org.geysermc.paletter.vanilla` has generated constants for the newest bundled release: `BedrockBlocks`, `BedrockStates`,
+`dev.opencollab.paletter.vanilla` has generated constants for the newest bundled release: `BedrockBlocks`, `BedrockStates`,
 `BedrockItems`, `BedrockItemVariants` and `BedrockExperiments` (the experiment toggle ids, as Strings), plus enums for string states in `vanilla.state`. They are objects, not `int` constants, and load
 nothing until used.
 

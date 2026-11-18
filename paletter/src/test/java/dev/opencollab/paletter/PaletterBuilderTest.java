@@ -1,0 +1,267 @@
+package dev.opencollab.paletter;
+
+import dev.opencollab.paletter.block.BlockHashes;
+import dev.opencollab.paletter.block.CustomBlock;
+import dev.opencollab.paletter.creative.CreativeCategory;
+import dev.opencollab.paletter.creative.CreativeOrdering;
+import dev.opencollab.paletter.data.DataVersion;
+import dev.opencollab.paletter.data.PaletteDataSource;
+import dev.opencollab.paletter.internal.data.ExperimentContent;
+import dev.opencollab.paletter.internal.data.VanillaData;
+import dev.opencollab.paletter.internal.shape.VoxelShapeStore;
+import dev.opencollab.paletter.item.CustomItem;
+import dev.opencollab.paletter.item.ItemFallback;
+import dev.opencollab.paletter.internal.item.ItemVariant;
+import dev.opencollab.paletter.vanilla.BedrockItems;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+/**
+ * The global policy of {@link Paletter#builder()}.
+ */
+class PaletterBuilderTest {
+    private static final Paletter PALETTER = Paletter.bundled();
+    private static final int OLDEST = 2168;
+
+    private static List<String> stacks(Palette palette) {
+        List<String> stacks = new ArrayList<>();
+        palette.creativeLayout().forEachStack(stack -> stacks.add(stack.type().identifier() + ":" + stack.variant().aux()));
+        return stacks;
+    }
+
+    @Test
+    void theServedVersionsAreComputedOnce() {
+        assertSame(PALETTER.versions(), PALETTER.versions());
+        assertSame(PALETTER.versions().getLast(), PALETTER.latest());
+    }
+
+    @Test
+    void defaultsEqualTheBundledPalettes() {
+        Paletter built = Paletter.builder().build();
+        assertEquals(PALETTER.versions(), built.versions());
+        for (DataVersion version : PALETTER.versions()) {
+            Palette expected = PALETTER.palette(version.protocolVersion());
+            Palette actual = built.palette(version.protocolVersion());
+            assertEquals(expected.blocks().size(), actual.blocks().size(), version.toString());
+            assertEquals(expected.items().definitions().size(), actual.items().definitions().size(), version.toString());
+            assertEquals(stacks(expected), stacks(actual), version.toString());
+            assertEquals(expected.blocks().defaultFallback(), actual.blocks().defaultFallback());
+            assertEquals(expected.items().defaultFallback(), actual.items().defaultFallback());
+        }
+    }
+
+    @Test
+    void aDirectoryInTheBundledFormatIsADataSource(@TempDir Path directory) throws IOException {
+        for (String file : List.of("versions.txt", "properties.nbt", "voxel_shapes.nbt", "renames.txt")) {
+            copy(file, directory);
+        }
+        for (DataVersion version : PALETTER.versions()) {
+            copy(version.name() + ".nbt", directory);
+        }
+        PaletteDataSource source = PaletteDataSource.directory(directory);
+        assertEquals(PALETTER.versions(), source.versions().stream().filter(version -> !version.isPreview()).toList());
+        Paletter paletter = Paletter.builder().data(source).build();
+        Palette expected = PALETTER.palette(PALETTER.latest().protocolVersion());
+        Palette actual = paletter.palette(PALETTER.latest().protocolVersion());
+        assertEquals(expected.blocks().size(), actual.blocks().size());
+        assertEquals(stacks(expected), stacks(actual));
+        assertEquals(expected.voxelShapesPacket(), actual.voxelShapesPacket());
+        assertThrows(java.io.UncheckedIOException.class,
+            () -> Paletter.builder().data(PaletteDataSource.directory(directory.resolve("missing"))).build().versions());
+    }
+
+    private static void copy(String file, Path directory) throws IOException {
+        try (InputStream stream = PaletterBuilderTest.class.getResourceAsStream("/paletter/" + file)) {
+            Files.copy(stream, directory.resolve(file));
+        }
+    }
+
+    @Test
+    void paletteIsCompiledOncePerVersion() {
+        Paletter built = Paletter.builder().build();
+        int protocol = PALETTER.latest().protocolVersion();
+        assertSame(built.palette(protocol), built.palette(protocol));
+        assertSame(PALETTER.palette(OLDEST), PALETTER.palette(OLDEST));
+    }
+
+    @Test
+    void globalLayersApplyToEveryVersionInOrder() {
+        PaletteLayer first = PaletteLayer.builder("first")
+            .item(CustomItem.builder("test:first").menuCategory(CreativeCategory.ITEMS).build()).build();
+        PaletteLayer second = PaletteLayer.builder("second")
+            .item(CustomItem.builder("test:second").menuCategory(CreativeCategory.ITEMS).build()).build();
+        Paletter paletter = Paletter.builder().layer(first).layer(second).build();
+        for (DataVersion version : paletter.versions()) {
+            Palette palette = paletter.palette(version.protocolVersion());
+            assertEquals(List.of(first, second), palette.layers(), version.toString());
+            assertNotNull(palette.items().getDefinition("test:first"));
+            assertNotNull(palette.items().getDefinition("test:second"));
+            assertTrue(palette.items().getDefinition("test:first").getRuntimeId() < palette.items().getDefinition("test:second").getRuntimeId());
+        }
+        assertNull(PALETTER.palette(OLDEST).items().getDefinition("test:first"));
+    }
+
+    @Test
+    void fallbacksApplyPerVersion() {
+        DataVersion oldest = PALETTER.version(OLDEST);
+        DataVersion newest = PALETTER.latest();
+        Fallbacks fallbacks = Fallbacks.builder()
+            .item(oldest, BedrockItems.POPLAR_BOAT, ItemFallback.of(BedrockItems.STICK).forced())
+            .item(newest, BedrockItems.POPLAR_BOAT, ItemFallback.of(BedrockItems.APPLE).forced())
+            .build();
+        assertEquals(Map.of("minecraft:poplar_boat", ItemFallback.of(BedrockItems.STICK).forced()), fallbacks.items(PALETTER.version(OLDEST)));
+        assertEquals(Map.of("minecraft:poplar_boat", ItemFallback.of(BedrockItems.APPLE).forced()), fallbacks.items(PALETTER.latest()));
+        assertEquals(ItemFallback.UNKNOWN, fallbacks.defaultItem());
+        assertNull(Fallbacks.NONE.defaultItem());
+        assertNull(Fallbacks.NONE.defaultBlock());
+
+        Paletter paletter = Paletter.builder().fallbacks(fallbacks).build();
+        assertEquals("minecraft:stick", paletter.palette(OLDEST).items().resolve(ItemVariant.of("minecraft:poplar_boat")).definition().getIdentifier());
+        assertEquals("minecraft:apple", paletter.palette(PALETTER.latest().protocolVersion()).items().resolve(ItemVariant.of("minecraft:poplar_boat")).definition().getIdentifier());
+    }
+
+    @Test
+    void vanillaContentRemovesItems() {
+        Paletter paletter = Paletter.builder().removeItems(BedrockItems.APPLE).build();
+        for (DataVersion version : paletter.versions()) {
+            Palette palette = paletter.palette(version.protocolVersion());
+            assertNull(palette.items().getDefinition("minecraft:apple"), version.toString());
+            assertFalse(stacks(palette).stream().anyMatch(stack -> stack.startsWith("minecraft:apple:")), version.toString());
+            assertNotNull(palette.items().getDefinition("minecraft:golden_apple"));
+            // Resolves through the fallback policy
+            var resolved = palette.items().resolve(ItemVariant.of("minecraft:apple"));
+            assertNotNull(resolved);
+            assertTrue(resolved.fallback());
+            assertEquals("minecraft:unknown", resolved.definition().getIdentifier());
+        }
+        assertNotNull(PALETTER.palette(OLDEST).items().getDefinition("minecraft:apple"));
+
+        Paletter none = Paletter.builder().fallbacks(Fallbacks.NONE).removeItems(BedrockItems.APPLE).build();
+        assertNull(none.palette(OLDEST).items().resolve(ItemVariant.of("minecraft:apple")));
+    }
+
+    /** The bundled data without experiment marks, plus marks of our own. */
+    private static PaletteDataSource experimental() {
+        PaletteDataSource bundled = PaletteDataSource.bundled();
+        return new PaletteDataSource() {
+            @Override
+            public List<DataVersion> versions() {
+                return bundled.versions();
+            }
+
+            @Override
+            public VanillaData load(DataVersion version) throws IOException {
+                return bundled.load(version).withExperiments(Map.of(
+                    "test_toggle", new ExperimentContent(List.of("minecraft:apple"), List.of(), List.of()),
+                    "other_toggle", new ExperimentContent(List.of("minecraft:golden_apple", "minecraft:carrot"), List.of(), List.of()),
+                    "shared_toggle", new ExperimentContent(List.of("minecraft:carrot"), List.of(), List.of())));
+            }
+
+            @Override
+            public dev.opencollab.paletter.internal.data.Renames renames() {
+                return bundled.renames();
+            }
+
+            @Override
+            public VoxelShapeStore voxelShapes() {
+                return bundled.voxelShapes();
+            }
+        };
+    }
+
+    @Test
+    void experimentsOfOneVersionAreEnabledOnlyThere() {
+        // test_toggle gates the apple in every version; it is enabled for the oldest alone
+        List<DataVersion> versions = Paletter.builder().build().versions();
+        Paletter paletter = Paletter.builder().data(experimental()).experiments(versions.get(0), "test_toggle").build();
+
+        Palette first = paletter.palette(versions.get(0).protocolVersion());
+        assertNotNull(first.items().getDefinition("minecraft:apple"));
+        assertEquals(List.of("test_toggle"), first.experiments());
+        Palette second = paletter.palette(versions.get(1).protocolVersion());
+        assertNull(second.items().getDefinition("minecraft:apple"));
+        assertEquals(List.of(), second.experiments());
+    }
+
+    @Test
+    void experimentsRemoveItemsOfToggles() {
+        // None enabled by default: the content of every toggle is missing
+        Palette byDefault = Paletter.builder().data(experimental()).build().palette(OLDEST);
+        assertNull(byDefault.items().getDefinition("minecraft:apple"));
+        assertNull(byDefault.items().getDefinition("minecraft:golden_apple"));
+        assertEquals(List.of(), byDefault.experiments());
+
+        Palette all = Paletter.builder().data(experimental()).experiments("test_toggle", "other_toggle", "shared_toggle")
+            .build().palette(OLDEST);
+        assertNotNull(all.items().getDefinition("minecraft:apple"));
+        assertNotNull(all.items().getDefinition("minecraft:golden_apple"));
+        assertEquals(List.of("other_toggle", "shared_toggle", "test_toggle"), all.experiments());
+
+        Palette some = Paletter.builder().data(experimental()).experiments("test_toggle", "shared_toggle")
+            .build().palette(OLDEST);
+        assertNotNull(some.items().getDefinition("minecraft:apple"));
+        assertNull(some.items().getDefinition("minecraft:golden_apple"));
+        // Gated by two toggles, one of them enabled
+        assertNotNull(some.items().getDefinition("minecraft:carrot"));
+
+        Palette none = Paletter.builder().data(experimental()).experiments().build().palette(OLDEST);
+        assertNull(none.items().getDefinition("minecraft:apple"));
+        assertNull(none.items().getDefinition("minecraft:golden_apple"));
+        assertNull(none.items().getDefinition("minecraft:carrot"));
+        assertNotNull(none.items().getDefinition("minecraft:stick"));
+    }
+
+    @Test
+    void reportsAreDeliveredOncePerCompiledPalette() {
+        AtomicInteger reports = new AtomicInteger();
+        Paletter paletter = Paletter.builder().reports(report -> reports.incrementAndGet())
+            .layer(PaletteLayer.builder("global").build()).build();
+        assertEquals(0, reports.get());
+        paletter.palette(OLDEST);
+        paletter.palette(OLDEST);
+        assertEquals(1, reports.get());
+        paletter.palette(PALETTER.latest().protocolVersion());
+        assertEquals(2, reports.get());
+    }
+
+    @Test
+    void versionsCanBeFiltered() {
+        DataVersion newest = PALETTER.latest();
+        Paletter paletter = Paletter.builder().versions(version -> version.equals(newest)).build();
+        assertEquals(List.of(newest), paletter.versions());
+        assertEquals(newest, paletter.latest());
+        assertThrows(IllegalArgumentException.class, () -> paletter.palette(OLDEST));
+        assertEquals(newest, paletter.palette(newest.protocolVersion()).version());
+    }
+
+    @Test
+    void creativeOrderingIsGlobal() {
+        PaletteLayer layer = PaletteLayer.builder("blocks").block(CustomBlock.builder("test:block_menu_only").menuCategory(
+            dev.opencollab.paletter.block.component.BlockMenuCategory.builder()
+                .category(dev.opencollab.paletter.block.component.BlockMenuCategory.Category.CONSTRUCTION).build()).build()).build();
+        int protocol = PALETTER.latest().protocolVersion();
+        Palette bds = Paletter.builder().layer(layer).build().palette(protocol);
+        Palette append = Paletter.builder().creativeOrdering(CreativeOrdering.APPEND).layer(layer).build()
+            .palette(protocol);
+        assertTrue(stacks(bds).contains("test:block_menu_only:0"));
+        // The ordering decides the order, never presence
+        assertTrue(stacks(append).contains("test:block_menu_only:0"));
+    }
+}

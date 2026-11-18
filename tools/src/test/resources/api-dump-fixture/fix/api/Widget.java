@@ -1,7 +1,7 @@
 package fix.api;
 
-import org.geysermc.paletter.annotation.Experimental;
-import org.geysermc.paletter.annotation.Internal;
+import dev.opencollab.paletter.annotation.Experimental;
+import dev.opencollab.paletter.annotation.Internal;
 
 import java.io.IOException;
 import java.util.List;

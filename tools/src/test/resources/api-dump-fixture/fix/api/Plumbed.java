@@ -1,6 +1,6 @@
 package fix.api;
 
-import org.geysermc.paletter.annotation.Internal;
+import dev.opencollab.paletter.annotation.Internal;
 
 @Internal
 public class Plumbed {

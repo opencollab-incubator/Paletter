@@ -34,7 +34,7 @@ java {
 
 tasks.javadoc {
     // The implementation is not API; its types are not documented (and not linked: the API never exposes them, ApiBoundaryTest)
-    exclude("org/geysermc/paletter/internal/**")
+    exclude("dev/opencollab/paletter/internal/**")
     options {
         this as StandardJavadocDocletOptions
         // Every doclint group, `missing` included: an undocumented public member, or any other warning, fails the build.
@@ -79,7 +79,7 @@ val releasedApi = configurations.create("releasedApi") {
     isTransitive = false
 }
 if (releasedVersion.isNotEmpty()) {
-    dependencies.add("releasedApi", "org.geysermc.paletter:paletter:$releasedVersion")
+    dependencies.add("releasedApi", "dev.opencollab.paletter:paletter:$releasedVersion")
 }
 
 val apiCompat = tasks.register<JapicmpTask>("apiCompat") {
@@ -91,7 +91,7 @@ val apiCompat = tasks.register<JapicmpTask>("apiCompat") {
     newClasspath.from(tasks.jar, configurations.runtimeClasspath)
     newArchives.from(tasks.jar)
     packageIncludes.set(apiPackages)
-    annotationExcludes.set(listOf("@org.geysermc.paletter.annotation.Internal", "@org.geysermc.paletter.annotation.Experimental"))
+    annotationExcludes.set(listOf("@dev.opencollab.paletter.annotation.Internal", "@dev.opencollab.paletter.annotation.Experimental"))
     onlyBinaryIncompatibleModified.set(true)
     failOnModification.set(true)
     ignoreMissingClasses.set(true)

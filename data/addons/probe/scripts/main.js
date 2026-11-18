@@ -5,7 +5,7 @@
 //   PROBE <tag> <json>      one observation, see the sections below
 //   PROBE-DONE              all done            (PROBE-FAILED <error> if the script failed)
 //
-// The tools parse the lines (org.geysermc.paletter.tools.behaviour.ProbeLog); this script draws no conclusions.
+// The tools parse the lines (dev.opencollab.paletter.tools.behaviour.ProbeLog); this script draws no conclusions.
 //
 //   friction  {block, entity: [[tick, velocityX, x, y], ...]}   a body slid over 90 blocks of the floor; the factor
 //                                                               velocity falls by per tick is the floor's friction * 0.91
