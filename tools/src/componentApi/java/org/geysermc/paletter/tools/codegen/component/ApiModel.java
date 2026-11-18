@@ -57,6 +57,8 @@ final class ApiModel {
     /** The window protocol of every release capture, and of every preview capture with the preview's version name. */
     final java.util.Set<Integer> releaseProtocols = new java.util.TreeSet<>();
     final java.util.TreeMap<Integer, String> previewProtocols = new java.util.TreeMap<>();
+    /** The bundled data version name of every capture's window protocol ({@code dataVersion} of the captures). */
+    final java.util.TreeMap<Integer, String> dataVersions = new java.util.TreeMap<>();
     /** The oldest and the newest protocol a spec capture exists for (the window shapes are observed in between). */
     int oldestCaptured = Integer.MIN_VALUE;
     int newestCaptured = Integer.MAX_VALUE;
@@ -105,6 +107,8 @@ final class ApiModel {
         Window rejected;
         /** The bundled preview that alone has the component (every captured release rejects it), or null. */
         String sincePreview;
+        /** The first bundled release with the component when older captured builds do not have it ({@code absent}), or null. */
+        String bedrockSince;
 
         /** @return the newest window that sends the component (the API follows its shape), or null */
         Window latest() {
@@ -147,6 +151,11 @@ final class ApiModel {
         /** @return what BDS did with the component in this window: sent, untestable, server-only, rejected */
         String status() {
             return mapping.get("status").getAsString();
+        }
+
+        /** @return whether the builds of this window do not have the component at all ({@code absent}) */
+        boolean absent() {
+            return status().equals(org.geysermc.paletter.tools.model.MappingWindows.ABSENT);
         }
 
         /** @return whether the component reaches the wire in this window; else its palettes leave it out and report it */

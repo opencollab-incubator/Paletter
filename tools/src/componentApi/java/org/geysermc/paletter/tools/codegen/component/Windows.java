@@ -48,18 +48,45 @@ final class Windows {
      */
     static String sincePreview(ApiModel model, Comp c, java.util.function.Function<Window, String> status) {
         for (int protocol : model.releaseProtocols) {
-            String s = status.apply(window(c, protocol));
+            String s = statusIn(c, protocol, status);
             if (s != null && !s.equals("rejected")) {
                 return null;
             }
         }
         for (Map.Entry<Integer, String> preview : model.previewProtocols.entrySet()) {
-            String s = status.apply(window(c, preview.getKey()));
+            String s = statusIn(c, preview.getKey(), status);
             if (s != null && !s.equals("rejected")) {
                 return preview.getValue();
             }
         }
         return null;
+    }
+
+    /** What a window says about it, null where the build does not have the component ({@link MappingWindows#ABSENT}). */
+    private static String statusIn(Comp c, int protocol, java.util.function.Function<Window, String> status) {
+        Window w = window(c, protocol);
+        return w.absent() ? null : status.apply(w);
+    }
+
+    /**
+     * The first bundled release with the component, when the oldest window is one of builds that do not have it
+     * ({@link MappingWindows#ABSENT}); null if the oldest builds have it, or only a preview does ({@code @SincePreview}).
+     */
+    static String bedrockSince(ApiModel model, Comp c) {
+        if (c.windows.isEmpty() || !c.windows.getFirst().absent()) {
+            return null;
+        }
+        Window first = c.windows.stream().filter(w -> !w.absent()).findFirst()
+            .orElseThrow(() -> new GenerationException(c.id + " is absent in every window"));
+        if (model.previewProtocols.containsKey(first.since())) {
+            return null;
+        }
+        String name = model.dataVersions.get(first.since());
+        if (name == null) {
+            throw new GenerationException(c.id + ": no data version for protocol " + first.since()
+                + " in the captures of mappings.json (dataVersion), so @BedrockSince cannot name the first one with it");
+        }
+        return name;
     }
 
     static Window window(Comp c, int protocol) {

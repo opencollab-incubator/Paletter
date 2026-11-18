@@ -176,6 +176,58 @@ class ComponentWindowsTest {
         assertTrue(e.getMessage().contains("no result for the captures of protocols [200]"), e.getMessage());
     }
 
+    /** The gadget absent in the build of protocol 100 (its schema lacks it) and sent from 200, with the captures' windows and data versions. */
+    private static Inputs absentThenSent(boolean previewSends) {
+        Inputs in = inputs(g -> {
+            JsonObject absent = new JsonObject();
+            absent.addProperty("status", "absent");
+            absent.addProperty("note", "not in the schema of BDS 8.8.8, no variant in its add-on");
+            JsonArray protocols = new JsonArray();
+            protocols.add(100);
+            absent.add("protocols", protocols);
+            g.asMap().putAll(absent.asMap());
+            g.add("protocol200", window("on", 200));
+        });
+        in.mappings().getAsJsonArray("captures").forEach(capture -> {
+            JsonObject c = capture.getAsJsonObject();
+            int protocol = c.get("protocol").getAsInt();
+            c.addProperty("windowProtocol", protocol);
+            c.addProperty("dataVersion", protocol == 100 ? "8.80" : "9.90");
+            if (previewSends && protocol == 200) {
+                c.addProperty("preview", "9.90");
+            }
+        });
+        return in;
+    }
+
+    @Test
+    void aBuildWithoutTheComponentIsAWindowThatDropsItAndTheApiNamesTheFirstVersionWithIt() {
+        Inputs in = absentThenSent(false);
+        ApiModel.Comp gadget = ComponentGenerator.model(in).component("item:test:gadget");
+        assertEquals(List.of("absent", "sent"), gadget.windows.stream().map(ApiModel.Window::status).toList());
+        assertEquals("9.90", gadget.bedrockSince);
+        assertEquals(null, gadget.sincePreview);
+        Map<String, String> files = ComponentGenerator.generate(in);
+        String api = files.get("org/geysermc/paletter/item/component/Gadget.java");
+        assertTrue(api.contains("@BedrockSince(\"9.90\")\n"), api);
+        assertTrue(api.contains("Bedrock 9.90 is the first bundled version with it"), api);
+        String wire = files.get("org/geysermc/paletter/internal/component/ItemWire.java");
+        // Not sent to protocols before 200: the existing per-window drop, with a report entry
+        assertTrue(wire.matches("(?s).*if \\(protocol < 200\\) \\{\\s*gadgetUntil200\\(c, ctx, out\\);.*"), wire);
+        assertTrue(wire.contains("ctx.drop(Gadget.NAME, \"does not exist in this Bedrock version\")"), wire);
+        assertTrue(wire.contains("out.put(\"test:gadget.on\""), wire);
+    }
+
+    @Test
+    void aComponentOnlyThePreviewHasIsSincePreviewNotBedrockSince() {
+        Inputs in = absentThenSent(true);
+        ApiModel.Comp gadget = ComponentGenerator.model(in).component("item:test:gadget");
+        assertEquals("9.90", gadget.sincePreview, "an absent release does not have it");
+        assertEquals(null, gadget.bedrockSince);
+        String api = ComponentGenerator.generate(in).get("org/geysermc/paletter/item/component/Gadget.java");
+        assertTrue(api.contains("@SincePreview(\"9.90\")") && !api.contains("@BedrockSince"), api);
+    }
+
     @Test
     void windowsThatEncodeTheSameAreOne() {
         // Two windows whose mappings differ only in what the encoder ignores

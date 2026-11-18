@@ -196,7 +196,8 @@ public final class ComponentGenerator {
             // the windows that do not send it leave it out of their palettes with a report entry
             List<Window> observed = mapping == null ? List.of() : Windows.windows(id, mapping);
             if (mapping != null) {
-                // A capture without the component would be absorbed by its neighbour window: no BDS data for that protocol
+                // A capture without the component would be absorbed by its neighbour window: no BDS data for that protocol.
+                // A build that does not have the component has a window of its own (absent): not missing
                 java.util.TreeSet<Integer> missing = new java.util.TreeSet<>(model.windowProtocols.values());
                 java.util.TreeSet<Integer> has = MappingWindows.protocols(mapping);
                 missing.removeAll(has);
@@ -255,6 +256,7 @@ public final class ComponentGenerator {
         c.serverOnly = Windows.serverOnly(c);
         c.rejected = Windows.rejected(c);
         c.sincePreview = Windows.sincePreview(model, c, Window::status);
+        c.bedrockSince = c.sincePreview != null ? null : Windows.bedrockSince(model, c);
         c.replacement = model.replacements.get(c.id);
         c.transform = hand.transform(c.id, "");
         c.standalone = standalone != null;
