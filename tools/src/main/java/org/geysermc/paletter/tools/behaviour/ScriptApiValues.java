@@ -197,31 +197,12 @@ final class ScriptApiValues {
      * alias states (that the palette lacks) are left out, its booleans are the palette's bits
      */
     static Integer[] hashes(JsonArray states, Map<Integer, NbtMap> palette, List<String> log, String where) {
-        Map<String, Set<String>> names = new HashMap<>();
-        Map<String, Integer> byKey = new HashMap<>();
-        palette.forEach((hash, state) -> {
-            String block = state.getString("name");
-            NbtMap values = state.getCompound("states");
-            names.computeIfAbsent(block, b -> new HashSet<>()).addAll(values.keySet());
-            Map<String, String> canonical = new TreeMap<>();
-            values.forEach((name, value) -> canonical.put(name, value.toString()));
-            byKey.put(block + canonical, hash);
-        });
+        Index index = new Index(palette);
         Integer[] hashes = new Integer[states.size()];
         int missing = 0;
         for (int i = 0; i < states.size(); i++) {
             JsonArray state = states.get(i).getAsJsonArray();
-            String block = state.get(0).getAsString();
-            Set<String> known = names.getOrDefault(block, Set.of());
-            Map<String, String> canonical = new TreeMap<>();
-            for (Map.Entry<String, JsonElement> value : state.get(1).getAsJsonObject().entrySet()) {
-                if (known.contains(value.getKey())) {
-                    JsonPrimitive primitive = value.getValue().getAsJsonPrimitive();
-                    canonical.put(value.getKey(), primitive.isBoolean() ? (primitive.getAsBoolean() ? "1" : "0")
-                        : primitive.isNumber() ? String.valueOf(primitive.getAsInt()) : primitive.getAsString());
-                }
-            }
-            hashes[i] = byKey.get(block + canonical);
+            hashes[i] = index.hash(state.get(0).getAsString(), state.get(1).getAsJsonObject());
             if (hashes[i] == null) {
                 missing++;
             }
@@ -230,6 +211,37 @@ final class ScriptApiValues {
             log.add(where + ": " + missing + " Script API states are no state of the palette (blocks it does not have)");
         }
         return hashes;
+    }
+
+    /** The palette states by block and values, to look Script API states up in. */
+    static final class Index {
+        private final Map<String, Set<String>> names = new HashMap<>();
+        private final Map<String, Integer> byKey = new HashMap<>();
+
+        Index(Map<Integer, NbtMap> palette) {
+            palette.forEach((hash, state) -> {
+                String block = state.getString("name");
+                NbtMap values = state.getCompound("states");
+                names.computeIfAbsent(block, b -> new HashSet<>()).addAll(values.keySet());
+                Map<String, String> canonical = new TreeMap<>();
+                values.forEach((name, value) -> canonical.put(name, value.toString()));
+                byKey.put(block + canonical, hash);
+            });
+        }
+
+        /** @return the hash of the palette state, null if there is none; the Script API's legacy alias states are left out */
+        Integer hash(String block, JsonObject state) {
+            Set<String> known = names.getOrDefault(block, Set.of());
+            Map<String, String> canonical = new TreeMap<>();
+            for (Map.Entry<String, JsonElement> value : state.entrySet()) {
+                if (known.contains(value.getKey())) {
+                    JsonPrimitive primitive = value.getValue().getAsJsonPrimitive();
+                    canonical.put(value.getKey(), primitive.isBoolean() ? (primitive.getAsBoolean() ? "1" : "0")
+                        : primitive.isNumber() ? String.valueOf(primitive.getAsInt()) : primitive.getAsString());
+                }
+            }
+            return byKey.get(block + canonical);
+        }
     }
 
     private Integer[] hashes(JsonArray states, Map<Integer, NbtMap> palette, String where) {

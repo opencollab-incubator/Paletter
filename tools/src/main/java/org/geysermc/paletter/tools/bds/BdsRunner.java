@@ -34,6 +34,7 @@ public final class BdsRunner {
     private List<String> experiments = List.of();
     private String betaModule;
     private Map<String, String> packFiles = Map.of();
+    private Map<String, byte[]> binaryPackFiles = Map.of();
 
     /** The dump addon: it prints {@code PALETTER-DONE}. */
     public BdsRunner(Path addon) {
@@ -66,6 +67,12 @@ public final class BdsRunner {
     /** Files the run adds to the installed pack (pack path to content), e.g. loot tables the tool derives from BDS. */
     public BdsRunner withPackFiles(Map<String, String> files) {
         this.packFiles = files;
+        return this;
+    }
+
+    /** Files the run adds to the installed pack that are not text (pack path to bytes), e.g. a structure. */
+    public BdsRunner withBinaryPackFiles(Map<String, byte[]> files) {
+        this.binaryPackFiles = files;
         return this;
     }
 
@@ -144,6 +151,11 @@ public final class BdsRunner {
             Path target = pack.resolve(file.getKey());
             Files.createDirectories(target.getParent());
             Files.writeString(target, file.getValue());
+        }
+        for (Map.Entry<String, byte[]> file : binaryPackFiles.entrySet()) {
+            Path target = pack.resolve(file.getKey());
+            Files.createDirectories(target.getParent());
+            Files.write(target, file.getValue());
         }
         JsonObject manifest = JsonParser.parseString(Files.readString(addon.resolve("manifest.json"))).getAsJsonObject();
         if (betaModule != null) {

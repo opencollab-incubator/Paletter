@@ -6,6 +6,7 @@ import org.geysermc.paletter.tools.bds.BdsDistribution;
 import org.geysermc.paletter.tools.bds.ScriptModules;
 import org.geysermc.paletter.tools.behaviour.BehaviourDump;
 import org.geysermc.paletter.tools.behaviour.BehaviourProbe;
+import org.geysermc.paletter.tools.behaviour.FoodProbe;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -15,8 +16,9 @@ import java.util.List;
 
 /**
  * The captures that were separate commands: the behaviour dump ({@code behaviour-dump}), the behaviour probe
- * ({@code behaviour-probe}) and the Education Edition capture ({@code education-capture}), on the server the other captures
- * ran on. They take six more starts of BDS (the dump two, the probe one, the education world three) and are staged like the
+ * ({@code behaviour-probe}), the food probe ({@code food-probe}) and the Education Edition capture ({@code education-capture}), on
+ * the server the other captures ran on. They take eight more starts of BDS (the dump two, the probe one, the food probe two, the
+ * education world three) and are staged like the
  * other captures, only when they differ from the committed ones of the build.
  * <p>
  * None of them blocks the run: a step that fails is a skipped row with a TODO, and the committed file stays. Their output is
@@ -27,6 +29,8 @@ final class BehaviourStage {
     static final String PROBE_DIRECTORY = "behaviour-probe";
     static final String PROBE_CAPTURE = PROBE_DIRECTORY + "/capture.json";
     static final String PROBE_LOG = PROBE_DIRECTORY + "/probe.log";
+    static final String FOOD_PROBE_CAPTURE = "food-probe/capture.json";
+    static final String FOOD_PROBE_LOG = "food-probe/probe.log";
     static final String EDUCATION = "education.json";
 
     /** A step of the stage: its captures are compared and staged by the step itself. */
@@ -49,13 +53,14 @@ final class BehaviourStage {
         try {
             step("Behaviour dump", () -> dump(build, server, work, runs));
             step("Behaviour probe", () -> probe(build, server, work));
+            step("Food probe", () -> food(build, server, work, runs));
             if (runs.protocol == null) {
                 ctx.report.check(Report.Status.SKIP, "Education capture", "no network capture of this build");
             } else {
                 step("Education capture", () -> education(build, server, work.resolve("education"), runs));
             }
         } finally {
-            for (String pack : new String[] {BehaviourDump.PACK, BehaviourProbe.PACK}) {
+            for (String pack : new String[] {BehaviourDump.PACK, BehaviourProbe.PACK, FoodProbe.PACK}) {
                 try {
                     BdsDistribution.deleteRecursively(server.resolve("behavior_packs").resolve(pack));
                 } catch (IOException e) {
@@ -88,9 +93,7 @@ final class BehaviourStage {
 
     private void dump(String build, Path server, Path work, Runs runs) throws Exception {
         Path log = work.resolve("behaviour-dump.log");
-        // This run's docgen output, else the committed file of the build; without either the run fails
-        List<String> modules = runs.scriptModules != null ? runs.scriptModules : ScriptModules.versions(ctx.bdsData, build);
-        BehaviourDump.run(ctx.root, build, ctx.preview, ScriptModules.betaVersion(modules), server, null, ctx.port, ctx.timeout, log);
+        BehaviourDump.run(ctx.root, build, ctx.preview, betaModule(build, runs), server, null, ctx.port, ctx.timeout, log);
         BehaviourDump.Rendered rendered = BehaviourDump.render(log);
         requireBuild(build, rendered.version());
         JsonObject captured = BehaviourDump.read(rendered.gzip());
@@ -98,9 +101,15 @@ final class BehaviourStage {
             committed -> BehaviourDump.sameContent(BehaviourDump.read(committed), captured), rendered.gzip());
     }
 
+    /** The beta Script API module: this run's docgen output, else the committed file of the build; without either the run fails. */
+    private String betaModule(String build, Runs runs) throws IOException {
+        List<String> modules = runs.scriptModules != null ? runs.scriptModules : ScriptModules.versions(ctx.bdsData, build);
+        return ScriptModules.betaVersion(modules);
+    }
+
     private void probe(String build, Path server, Path work) throws Exception {
         Path log = work.resolve("behaviour-probe.log");
-        BehaviourProbe.run(ctx.root, build, ctx.preview, server, null, ctx.port, ctx.timeout, log);
+        BehaviourProbe.run(ctx.root, build, ctx.preview, server, null, ctx.port, Math.max(ctx.timeout, BehaviourProbe.MIN_TIMEOUT), log);
         BehaviourProbe.Measured measured = BehaviourProbe.fromConsole(ctx.root, log);
         requireBuild(build, measured.version());
         boolean changed = compareAndStage(build, "Behaviour probe", PROBE_CAPTURE, "Build ID " + measured.build(),
@@ -108,6 +117,19 @@ final class BehaviourStage {
         // The log carries timestamps: it follows the capture, so an unchanged measurement is no change
         if (changed) {
             ctx.stage(ctx.buildDirectory.resolve(PROBE_LOG), measured.log().getBytes(StandardCharsets.UTF_8), "behaviour probe log " + build);
+        }
+    }
+
+    /** The food probe: a start of its own, on a world with the Beta APIs (a simulated player needs the game test module). */
+    private void food(String build, Path server, Path work, Runs runs) throws Exception {
+        Path log = work.resolve("food-probe.log");
+        FoodProbe.run(ctx.root, build, ctx.preview, betaModule(build, runs), server, null, ctx.port, Math.max(ctx.timeout, BehaviourProbe.MIN_TIMEOUT), log);
+        FoodProbe.Measured measured = FoodProbe.fromConsole(log);
+        requireBuild(build, measured.version());
+        boolean changed = compareAndStage(build, "Food probe", FOOD_PROBE_CAPTURE, "Build ID " + measured.build(),
+            committed -> FoodProbe.sameCapture(Files.readString(committed), measured.capture()), measured.capture().getBytes(StandardCharsets.UTF_8));
+        if (changed) {
+            ctx.stage(ctx.buildDirectory.resolve(FOOD_PROBE_LOG), measured.log().getBytes(StandardCharsets.UTF_8), "food probe log " + build);
         }
     }
 
