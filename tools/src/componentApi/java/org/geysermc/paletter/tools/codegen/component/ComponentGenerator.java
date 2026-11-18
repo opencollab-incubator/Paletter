@@ -4,7 +4,6 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import com.google.gson.JsonPrimitive;
 import org.geysermc.paletter.tools.codegen.component.ApiModel.Comp;
 import org.geysermc.paletter.tools.codegen.component.ApiModel.EnumRef;
 import org.geysermc.paletter.tools.codegen.component.ApiModel.EnumType;
@@ -40,7 +39,6 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
@@ -1104,10 +1102,6 @@ public final class ComponentGenerator {
         return u.variants.stream().map(v -> v.name + "=" + v.json).toList() + " without overloads for " + u.noOverload;
     }
 
-    private static int countMaps(List<JsonObject> types) {
-        return (int) types.stream().filter(t -> t.get("type").getAsString().equals("map")).count();
-    }
-
     private Field unionShorthand(Comp c, DocField d, ObjType object, JsonObject union) {
         if (union != null && union.has("shorthand")) {
             String name = union.get("shorthand").getAsString();
@@ -1711,9 +1705,5 @@ public final class ComponentGenerator {
 
     private static String text(JsonObject o, String key) {
         return o.has(key) && !o.get(key).isJsonNull() ? o.get(key).getAsString() : "";
-    }
-
-    static JsonPrimitive primitive(Object o) {
-        return o instanceof Boolean b ? new JsonPrimitive(b) : o instanceof Number n ? new JsonPrimitive(n) : new JsonPrimitive(Objects.toString(o));
     }
 }
