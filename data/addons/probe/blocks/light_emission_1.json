@@ -1,6 +1,0 @@
-{
-  "minecraft:block": {
-    "description": {"identifier": "probe:light_emission_1"},
-    "components": {"minecraft:light_emission": 1}
-  }
-}

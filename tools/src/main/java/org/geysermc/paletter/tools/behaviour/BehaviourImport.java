@@ -110,7 +110,6 @@ public final class BehaviourImport {
         importer.scriptApi(root.resolve("data/bds"));
         importer.nativeCaptures(root.resolve("data/bds"));
         importer.probe(root.resolve("data/bds"));
-        importer.foodProbe(root.resolve("data/bds"));
         importer.customDefaults(root.resolve("data/bds"));
         if (cloudburstData != null) {
             importer.cloudburstData(new GitHistory(cloudburstData));
@@ -163,6 +162,10 @@ public final class BehaviourImport {
         JsonObject build = measured.getAsJsonObject("bds");
         String reference = "data/bds/" + newest.getFileName() + "/" + BehaviourProbe.DIRECTORY + "/" + BehaviourProbe.CAPTURE
             + " (BDS " + build.get("version").getAsString() + ", Build ID " + build.get("build").getAsString() + ")";
+        if (measured.has("unverified_defaults")) {
+            measured.getAsJsonObject("unverified_defaults").entrySet().forEach(entry -> log.add(Provenance.Source.BDS_PROBE + " "
+                + build.get("version").getAsString() + ": the default of " + entry.getKey() + " is unverified: " + entry.getValue().getAsString()));
+        }
         for (JsonElement element : measured.getAsJsonArray("defaults")) {
             JsonObject entry = element.getAsJsonObject();
             String name = entry.get("key").getAsString();
@@ -254,28 +257,6 @@ public final class BehaviourImport {
                 captures.add(new Capture(Provenance.Source.BDS_PROBE, reference + " (climbing)", "", entry.getKey(), match,
                     climbing(capture.getAsJsonObject("climbing"), bundled, Provenance.Source.BDS_PROBE + " " + bdsVersion), new Values<>()));
             }
-            Values<Integer> states = StateValues.blocks(capture, bundled.states(), log, Provenance.Source.BDS_PROBE + " " + bdsVersion);
-            if (!states.isEmpty()) {
-                captures.add(new Capture(Provenance.Source.BDS_PROBE, reference + " (light, friction)", "", entry.getKey(), match, states, new Values<>()));
-            }
-        }
-    }
-
-    /**
-     * {@code data/bds/<bds>/food-probe/capture.json}: nutrition, saturation modifier, can always eat and use duration of the items a
-     * simulated player ate on BDS (see {@link FoodProbe}). An unverified capture says so in the log and gives nothing.
-     */
-    void foodProbe(Path bds) throws IOException {
-        for (Map.Entry<DataVersion, Path> entry : newestPerVersion(bds, FoodProbe.DIRECTORY + "/" + FoodProbe.CAPTURE).entrySet()) {
-            String bdsVersion = entry.getValue().getFileName().toString();
-            JsonObject capture = JsonParser.parseString(Files.readString(entry.getValue().resolve(FoodProbe.DIRECTORY).resolve(FoodProbe.CAPTURE))).getAsJsonObject();
-            if (capture.has(StateProbe.UNVERIFIED)) {
-                log.add(Provenance.Source.BDS_PROBE + " " + bdsVersion + ": the food probe is unverified: " + capture.get(StateProbe.UNVERIFIED).getAsString());
-                continue;
-            }
-            Values<String> items = FoodProbe.items(capture);
-            captures.add(new Capture(Provenance.Source.BDS_PROBE, "Paletter data/bds/" + bdsVersion + "/" + FoodProbe.DIRECTORY + "/" + FoodProbe.CAPTURE, "",
-                entry.getKey(), "BDS " + bdsVersion + ", Build ID " + capture.getAsJsonObject("bds").get("build").getAsString(), new Values<>(), items));
         }
     }
 

@@ -66,7 +66,7 @@ final class BehaviourReport {
         out.append("## Ranking\n\nValues come from BDS directly wherever possible; third-party dumps rank below and are marked "
             + "(`explain` says \"third party\"). Strongest first:\n\n"
             + "1. Paletter's own captures of BDS: native capture (`NATIVE`, none yet), Script API dumps (`SCRIPT_API`), experiments on BDS "
-            + "(`BDS_PROBE`: `behaviour-probe`: the collision of doors, climbing, light and friction; `food-probe`: food) and what BDS sends clients (`WIRE`, ranked at runtime from the "
+            + "(`BDS_PROBE`: `behaviour-probe`, the collision of doors and climbing) and what BDS sends clients (`WIRE`, ranked at runtime from the "
             + "component data of the palette).\n"
             + "2. `CLOUDBURST_DATA`: CloudburstMC/Data (Apache-2.0), a native BDS dump. Third party. It post-processes some values "
             + "(see Post-processed values).\n"
