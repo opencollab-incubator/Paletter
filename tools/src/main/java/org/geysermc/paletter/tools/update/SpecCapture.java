@@ -17,6 +17,7 @@ import org.geysermc.paletter.tools.model.addon.AddonGenerator;
 import org.geysermc.paletter.tools.model.addon.JsonPath;
 import org.geysermc.paletter.tools.model.addon.AddonWriter;
 import org.geysermc.paletter.tools.model.Model;
+import org.geysermc.paletter.tools.model.Schema;
 import org.geysermc.paletter.tools.model.infer.Feedback;
 import org.geysermc.paletter.tools.model.infer.Wire;
 import org.geysermc.paletter.tools.model.rule.Leaf;
@@ -64,9 +65,26 @@ public final class SpecCapture {
     private final Map<String, String> options;
     private Capture.Summary summary;
 
+    /** The schema of the run that extracted it (an {@code update}), which the add-ons use instead of the committed file; or null. */
+    private final Schema runSchema;
+
     public SpecCapture(Path root, Map<String, String> options) {
+        this(root, options, null);
+    }
+
+    public SpecCapture(Path root, Map<String, String> options, Schema runSchema) {
         this.root = root;
         this.options = options;
+        this.runSchema = runSchema;
+    }
+
+    /**
+     * The fixtures of the add-on of one build: the run's own schema if it extracted one (the committed {@code schema.json} can be
+     * older, or from a reader that read less, and a capture-only run commits nothing), else the newest committed one.
+     */
+    static Fixtures fixtures(Path modelDir, String build, Schema runSchema) throws IOException {
+        Fixtures fixtures = Fixtures.read(modelDir).forBuild(build);
+        return runSchema == null ? fixtures.withNewestSchema(build) : fixtures.withSchema(runSchema);
     }
 
     /** What the client recorded in the last capture of {@link #run} (block hashes, experiments), null before it. */
@@ -93,9 +111,8 @@ public final class SpecCapture {
         Path server = distribution.extract(cache, !options.containsKey("keep-server") && !options.containsKey("reuse-server"));
         try {
             Path modelDir = root.resolve("data/model");
-            Fixtures fixtures = Fixtures.read(modelDir).forBuild(distribution.version())
-                // The add-on is the one place that takes BDS's schema: full enums and limits to vary
-                .withNewestSchema(distribution.version());
+            // The add-on is the one place that takes BDS's schema: full enums and limits to vary
+            Fixtures fixtures = fixtures(modelDir, distribution.version(), runSchema);
             // The add-on asks for no newer format than the build is: older builds refuse packs of a newer engine version
             String formatVersion = AddonGenerator.formatVersionFor(fixtures.formatVersion, distribution.version());
             Model docs = Model.read(modelDir.resolve("components.json"));
@@ -219,7 +236,7 @@ public final class SpecCapture {
                 gate.put("reuse-server", "true");
                 gate.put("out", out.resolveSibling("spec-gating").toString());
                 try {
-                    new SpecCapture(root, gate).run();
+                    new SpecCapture(root, gate, runSchema).run();
                 } catch (Exception e) {
                     System.out.println("The gating capture of BDS " + distribution.version() + " failed, its components stay unverified: " + e);
                 }
@@ -232,7 +249,7 @@ public final class SpecCapture {
                 sweep.put("format-sweep", "true");
                 sweep.put("reuse-server", "true");
                 sweep.put("out", out.resolveSibling("spec-format").toString());
-                return new SpecCapture(root, sweep).run();
+                return new SpecCapture(root, sweep, runSchema).run();
             }
             return 0;
         } finally {

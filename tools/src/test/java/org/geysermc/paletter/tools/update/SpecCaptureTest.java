@@ -1,5 +1,7 @@
 package org.geysermc.paletter.tools.update;
 
+import com.google.gson.JsonParser;
+import org.geysermc.paletter.tools.model.Schema;
 import org.geysermc.paletter.tools.model.addon.AddonGenerator;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
@@ -37,6 +39,19 @@ class SpecCaptureTest {
         assertEquals(List.of("paletter:a", "paletter:b_one"), List.copyOf(log.keySet()).stream().sorted().toList());
         assertEquals(2, log.get("paletter:a").size(), "the field error carries the item name");
         assertTrue(log.values().stream().flatMap(List::stream).noneMatch(line -> line.contains("Damage Source")));
+    }
+
+    /** A capture-only run commits nothing, and a committed schema can be older than the run's: the add-on takes the run's own. */
+    @Test
+    void theAddonTakesTheSchemaTheRunExtractedNotTheCommittedOne(@TempDir Path root) throws IOException {
+        Path model = Files.createDirectories(root.resolve("data/model"));
+        Files.writeString(model.resolve("fixtures.json"), "{\"formatVersion\": \"1.26.60\", \"filler\": {}}");
+        Files.createDirectories(root.resolve("data/bds/1.26.99.1"));
+        // The committed one, as an older reader wrote it: no components
+        Files.writeString(root.resolve("data/bds/1.26.99.1/schema.json"), "{\"bdsVersion\": \"1.26.99.1\", \"formats\": {}}");
+        Schema extracted = Schema.of(JsonParser.parseString("{\"bdsVersion\": \"1.26.99.2\", \"formats\": {\"block\": [\"1.26.60\"]}, \"block\": "
+            + "{\"minecraft:box\": [{\"formats\": [\"1.26.60\"], \"root\": {\"types\": [\"object\"]}, \"fields\": {}}]}}").getAsJsonObject());
+        assertEquals("1.26.99.2", SpecCapture.fixtures(model, "1.26.99.2", extracted).schemaBuild(), "the run's own schema wins");
     }
 
     private static void pack(Path directory, String uuid) throws IOException {

@@ -11,6 +11,8 @@ final class Runs {
     String bdsVersion;
     /** The Script API module versions of this build's docgen output (null if it wrote none). */
     java.util.List<String> scriptModules;
+    /** The schema this run's docgen output gave (null if it gave none): the spec add-ons of this run use it, not the committed file. */
+    org.geysermc.paletter.tools.model.Schema schema;
     /** The format version of the add-on packs of this build: the model's, or the build's own if it is older. */
     String formatVersion;
     boolean netherNet;

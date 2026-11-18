@@ -87,7 +87,7 @@ final class SpecStage {
             copyRecursively(previous, committed);
             previous = committed;
         }
-        SpecCapture spec = new SpecCapture(ctx.root, specOptions);
+        SpecCapture spec = new SpecCapture(ctx.root, specOptions, runs.schema);
         try {
             // Only the files whose bytes changed are repository changes: a capture identical to the committed one is none
             if ((write ? UpdateContext.track(ctx.report, ctx.root, List.of(out, out.resolveSibling("spec-format"), out.resolveSibling("spec-gating")), "spec capture", spec::run)
