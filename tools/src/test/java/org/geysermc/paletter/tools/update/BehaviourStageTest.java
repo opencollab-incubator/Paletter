@@ -99,4 +99,14 @@ class BehaviourStageTest {
         other.add("unread", JsonParser.parseString("[\"X.y\"]"));
         assertFalse(BehaviourDump.sameContent(dump, other));
     }
+
+    @Test
+    void aPreviewBuildIsTheBetaItReports() throws IOException {
+        BehaviourStage.requireBuild("1.26.70.24", true, "1.26.70-beta24");
+        BehaviourStage.requireBuild("1.26.63.1", false, "1.26.63.1");
+        IOException wrong = org.junit.jupiter.api.Assertions.assertThrows(IOException.class,
+            () -> BehaviourStage.requireBuild("1.26.70.24", true, "1.26.70-beta23"));
+        assertTrue(wrong.getMessage().contains("1.26.70-beta23"), wrong.getMessage());
+        org.junit.jupiter.api.Assertions.assertThrows(IOException.class, () -> BehaviourStage.requireBuild("1.26.63.1", false, "1.26.63.2"));
+    }
 }

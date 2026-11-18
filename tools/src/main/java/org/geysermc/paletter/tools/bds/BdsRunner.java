@@ -136,8 +136,19 @@ public final class BdsRunner {
             bds.start(log);
             result = bds.await(line -> line.contains(marker + "-DONE") || line.contains(marker + "-FAILED"), timeoutSeconds);
         }
-        if (result == null || !result.contains(marker + "-DONE")) {
-            throw new IOException("BDS exited without " + marker + "-DONE (timeout " + timeoutSeconds + "s); see " + log);
+        checkResult(result, marker, timeoutSeconds, log);
+    }
+
+    /**
+     * @param result the line that ended the run ({@code <marker>-DONE} or {@code <marker>-FAILED}, which ends it at once), or null if
+     *               there was none within the timeout or BDS exited
+     */
+    static void checkResult(String result, String marker, int timeoutSeconds, Path log) throws IOException {
+        if (result == null) {
+            throw new IOException("BDS exited or timed out (" + timeoutSeconds + "s) without " + marker + "-DONE; see " + log);
+        }
+        if (!result.contains(marker + "-DONE")) {
+            throw new IOException("the add-on failed: " + result.strip() + "; see " + log);
         }
     }
 

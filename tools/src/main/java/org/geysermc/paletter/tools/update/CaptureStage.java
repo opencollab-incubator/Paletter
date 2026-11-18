@@ -211,7 +211,7 @@ final class CaptureStage {
 
     Capture.Summary capture(InetSocketAddress address, Runs runs, Path out, Path customOut, String what, boolean give) throws Exception {
         Capture.Summary summary = Capture.capture(address, runs.protocol, runs.reference, runs.bdsVersion, CapturePlatform.host(), out, customOut,
-            90, runs.netherNet, give);
+            give ? 300 : 90, runs.netherNet, give);
         ctx.report.check(Report.Status.PASS, what, (summary.blockNetworkIdsHashed() ? "hashed" : "sequential") + " block ids; protocol "
             + summary.protocol() + (summary.nativeCodec() ? "" : ", decoded with the " + summary.codecProtocol() + " codec"));
         if (!summary.nativeCodec() && !codecReported) {

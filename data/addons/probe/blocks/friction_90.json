@@ -1,5 +1,4 @@
 {
-  "format_version": "1.26.60",
   "minecraft:block": {
     "description": {"identifier": "probe:friction_90"},
     "components": {"minecraft:friction": 0.9}
