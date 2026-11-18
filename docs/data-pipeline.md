@@ -264,7 +264,7 @@ leg per 6 builds.
 ### Experiments
 
 Bedrock has no list of its experiment toggles, so `update` discovers them (`ExperimentDiscovery`). Candidates are
-identifier-like strings from the server binary plus known ids. All candidates are written into a fresh world's
+identifier-like strings from the server binary plus the ids of the committed `experiments.json` records (no hand-written list; `spec-capture` without `--experiments` enables the current toggles of the newest record not after its build). All candidates are written into a fresh world's
 `level.dat`; BDS keeps only the keys it knows and logs one code per toggle. Toggles that start game still streams are
 current, the others retired. Each current toggle is then captured on its own to attribute content to it.
 

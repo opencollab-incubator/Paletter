@@ -274,7 +274,11 @@ public final class SpecCapture {
             bds.awaitStarted(timeout);
         }
         List<String> experiments = options.containsKey("experiments")
-            ? Arrays.asList(options.get("experiments").split(",")) : Update.DEFAULT_EXPERIMENTS;
+            ? Arrays.asList(options.get("experiments").split(","))
+            : ExperimentDiscovery.recordedCurrent(root.resolve(Layout.BDS), version);
+        if (experiments.isEmpty() && !options.containsKey("gating")) {
+            throw new IOException("No experiments for the capture: no committed experiments.json at or below " + version + "; pass --experiments");
+        }
         if (!options.containsKey("gating")) {
             Capture.enableExperiments(server.resolve("worlds").resolve(WORLD).resolve("level.dat"), experiments);
         }
