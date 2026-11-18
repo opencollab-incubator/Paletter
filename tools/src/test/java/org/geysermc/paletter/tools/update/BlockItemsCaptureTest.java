@@ -5,12 +5,12 @@ import org.geysermc.paletter.Paletter;
 import org.geysermc.paletter.tools.client.GiveCapture;
 import org.geysermc.paletter.vanilla.BedrockBlockType;
 import org.geysermc.paletter.vanilla.BedrockItemType;
+import com.google.gson.JsonParser;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -36,19 +36,23 @@ class BlockItemsCaptureTest {
         }
         assertEquals(PENDING, without, "the builds without vanilla/block-items.json must be PENDING exactly");
 
-        // The data version of each build is the one that serves its protocol (the spec capture's), as for the other per-build checks
-        Paletter paletter = Paletter.bundled();
-        for (Map.Entry<String, Integer> build : BuildHistory.capturedReleases(root).entrySet()) {
-            Path file = data.resolve(build.getKey()).resolve("vanilla").resolve(GiveCapture.FILE);
-            if (!Files.exists(file)) {
-                continue;
+        // The data version of each build serves its protocol (the spec capture's): the preview build's own preview version, as in the
+        // conformance tests
+        Paletter paletter = Paletter.builder().previews(true).build();
+        try (var builds = Files.list(data)) {
+            for (Path build : (Iterable<Path>) builds.filter(Files::isDirectory).sorted()::iterator) {
+                Path file = build.resolve("vanilla").resolve(GiveCapture.FILE);
+                if (!Files.exists(file)) {
+                    continue;
+                }
+                int protocol = JsonParser.parseString(Files.readString(build.resolve("spec").resolve("capture.json"))).getAsJsonObject().get("protocol").getAsInt();
+                Palette palette = paletter.vanilla(paletter.version(protocol));
+                GiveCapture.Check check = GiveCapture.check(GiveCapture.read(file), block -> {
+                    BedrockItemType item = palette.itemOf(BedrockBlockType.fromIdentifier(block));
+                    return item == null ? null : item.identifier();
+                });
+                assertTrue(check.mismatches().isEmpty(), "BDS " + build.getFileName() + " gave another item than itemOf says: " + check.mismatches());
             }
-            Palette palette = paletter.palette(build.getValue());
-            GiveCapture.Check check = GiveCapture.check(GiveCapture.read(file), block -> {
-                BedrockItemType item = palette.itemOf(BedrockBlockType.fromIdentifier(block));
-                return item == null ? null : item.identifier();
-            });
-            assertTrue(check.mismatches().isEmpty(), "BDS " + build.getKey() + " gave another item than itemOf says: " + check.mismatches());
         }
     }
 }
