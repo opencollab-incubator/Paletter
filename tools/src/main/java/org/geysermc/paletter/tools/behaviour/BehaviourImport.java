@@ -105,6 +105,7 @@ public final class BehaviourImport {
         BehaviourImport importer = new BehaviourImport(bundled(resources));
         importer.behaviourDumps(root.resolve("data/bds"));
         importer.scriptApi(root.resolve("data/bds"));
+        importer.nativeCaptures(root.resolve("data/bds"));
         importer.probe(root.resolve("data/bds"));
         importer.customDefaults(root.resolve("data/bds"));
         if (cloudburstData != null) {
@@ -341,6 +342,31 @@ public final class BehaviourImport {
             }
             for (Values<String> items : values.items(bundled.items(), where)) {
                 captures.add(new Capture(Provenance.Source.SCRIPT_API, reference + " (" + names(items) + ")", "", entry.getKey(),
+                    "BDS " + bdsVersion, new Values<>(), items));
+            }
+        }
+    }
+
+    /**
+     * {@code data/bds/<bds>/native.json} ({@link NativeCapture}) of the newest build of each version. A build the dumper
+     * does not support is logged as not captured, and its keys stay as unverified as before.
+     */
+    void nativeCaptures(Path bds) throws IOException {
+        for (Map.Entry<DataVersion, Path> entry : newestPerVersion(bds, NativeCapture.FILE).entrySet()) {
+            String bdsVersion = entry.getValue().getFileName().toString();
+            NativeCapture capture = NativeCapture.read(entry.getValue().resolve(NativeCapture.FILE), bdsVersion);
+            if (!capture.captured()) {
+                log.add("NATIVE " + bdsVersion + ": not captured (" + capture.notCapturedReason + ")");
+                continue;
+            }
+            Bundled bundled = bundled(entry.getKey());
+            String reference = "Paletter data/bds/" + bdsVersion + "/" + NativeCapture.FILE + " (" + capture.dumper + ", " + capture.campaign + ")";
+            for (Values<Integer> blocks : capture.blocks(bundled.states(), log)) {
+                captures.add(new Capture(Provenance.Source.NATIVE, reference + " (" + names(blocks) + ")", "", entry.getKey(),
+                    "BDS " + bdsVersion, blocks, new Values<>()));
+            }
+            for (Values<String> items : capture.items(bundled.items(), log)) {
+                captures.add(new Capture(Provenance.Source.NATIVE, reference + " (" + names(items) + ")", "", entry.getKey(),
                     "BDS " + bdsVersion, new Values<>(), items));
             }
         }
@@ -760,6 +786,7 @@ public final class BehaviourImport {
         return switch (source) {
             case CLOUDBURST_DATA -> "https://github.com/CloudburstMC/Data (Apache-2.0): native BDS dump; post-processes some values (shapeSource)";
             case ALLAY_DATA -> "https://github.com/AllayMC/Allay data/ (MIT): raw Endstone DevTools dump of BDS";
+            case NATIVE -> "Paletter data/bds: BDS members dumped by a native mod (native.json)";
             case SCRIPT_API -> "Paletter data/bds: BDS Script API dumps (behaviour-dump.json.gz; dump.json.gz before)";
             case BDS_PROBE -> "Paletter data/bds: experiments on BDS (behaviour-probe): door collision, climbing";
             default -> source.name();

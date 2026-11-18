@@ -1,0 +1,227 @@
+package org.geysermc.paletter.tools.behaviour;
+
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+import com.google.gson.JsonPrimitive;
+import org.checkerframework.checker.nullness.qual.Nullable;
+import org.cloudburstmc.nbt.NbtMap;
+import org.geysermc.paletter.behaviour.BlockBehaviour;
+import org.geysermc.paletter.behaviour.ItemBehaviour;
+import org.geysermc.paletter.tools.codegen.component.BehaviourKeys;
+import org.geysermc.paletter.tools.codegen.component.BehaviourKeys.Key;
+import org.geysermc.paletter.tools.codegen.component.BehaviourKeys.Owner;
+
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+/**
+ * {@code data/bds/<build>/native.json}: BDS's own members, dumped by a native mod (LeviLamina; see docs/native-capture.md).
+ * It is an independent capture file: it can be written later for a build that is already captured, without a new
+ * campaign, because it changes nothing else in {@code data/bds/<build>}.
+ * <pre>
+ * {
+ *   "schema": 1,
+ *   "bdsVersion": "1.26.63.1",                    // must be the name of the build's directory
+ *   "campaign": "campaign-2026-12-01",            // the tag of the campaign the build was captured in
+ *   "dumper": {"name": "...", "version": "..."},  // the native mod that wrote the file
+ *   "status": "captured",                         // or "not captured": then "reason" says why, and there are no sections
+ *   "blockTypes":  {"minecraft:stone": {"BlockType.mTranslucency": 0.0, "BlockType.mProperties": ["Climbable"]}},
+ *   "blockStates": {"<state hash>": {"BlockComponentDirectData.mFriction": 0.6}},
+ *   "items":       {"minecraft:diamond_sword": {"Item.getAttackDamage": 8}}
+ * }
+ * </pre>
+ * A member is named as the {@code NATIVE:<Type>.<member>} source of a key in {@link BehaviourKeys} (the part after
+ * {@code NATIVE:}). A source with a third part, {@code BlockType.mProperties.Climbable}, is true when the list
+ * {@code BlockType.mProperties} has {@code Climbable}. A block type's members hold for every state of the block; a state's
+ * own members win. A key without a member in the file has no native value: nothing is guessed.
+ */
+final class NativeCapture {
+    static final String FILE = "native.json";
+    static final int SCHEMA = 1;
+    static final String CAPTURED = "captured";
+    static final String NOT_CAPTURED = "not captured";
+
+    final String build;
+    final String campaign;
+    /** The dumper's name and version. */
+    final String dumper;
+    /** Null when the build was captured; otherwise why it was not. */
+    final @Nullable String notCapturedReason;
+    private final JsonObject blockTypes;
+    private final JsonObject blockStates;
+    private final JsonObject items;
+
+    private NativeCapture(String build, String campaign, String dumper, @Nullable String notCapturedReason,
+                          JsonObject blockTypes, JsonObject blockStates, JsonObject items) {
+        this.build = build;
+        this.campaign = campaign;
+        this.dumper = dumper;
+        this.notCapturedReason = notCapturedReason;
+        this.blockTypes = blockTypes;
+        this.blockStates = blockStates;
+        this.items = items;
+    }
+
+    /**
+     * @param expectedBuild the name of the build directory the file is in
+     * @throws IOException if the file does not follow the schema; a native capture is never half read
+     */
+    static NativeCapture read(Path file, String expectedBuild) throws IOException {
+        JsonObject json = JsonParser.parseString(Files.readString(file)).getAsJsonObject();
+        if (!json.has("schema") || json.get("schema").getAsInt() != SCHEMA) {
+            throw new IOException(file + ": schema must be " + SCHEMA);
+        }
+        String build = text(json, "bdsVersion", file);
+        if (!build.equals(expectedBuild)) {
+            throw new IOException(file + ": bdsVersion " + build + " is not the build directory " + expectedBuild);
+        }
+        String campaign = text(json, "campaign", file);
+        if (!json.has("dumper") || !json.get("dumper").isJsonObject()) {
+            throw new IOException(file + ": missing dumper");
+        }
+        JsonObject dumperJson = json.getAsJsonObject("dumper");
+        String dumper = text(dumperJson, "name", file) + " " + text(dumperJson, "version", file);
+
+        String status = text(json, "status", file);
+        if (status.equals(NOT_CAPTURED)) {
+            return new NativeCapture(build, campaign, dumper, text(json, "reason", file), new JsonObject(), new JsonObject(), new JsonObject());
+        }
+        if (!status.equals(CAPTURED)) {
+            throw new IOException(file + ": status must be \"" + CAPTURED + "\" or \"" + NOT_CAPTURED + "\", not \"" + status + "\"");
+        }
+        return new NativeCapture(build, campaign, dumper, null, section(json, "blockTypes", file),
+            section(json, "blockStates", file), section(json, "items", file));
+    }
+
+    private static String text(JsonObject json, String name, Path file) throws IOException {
+        if (!json.has(name) || !json.get(name).isJsonPrimitive() || json.get(name).getAsString().isBlank()) {
+            throw new IOException(file + ": missing " + name);
+        }
+        return json.get(name).getAsString();
+    }
+
+    private static JsonObject section(JsonObject json, String name, Path file) throws IOException {
+        if (!json.has(name) || !json.get(name).isJsonObject()) {
+            throw new IOException(file + ": missing section " + name);
+        }
+        return json.getAsJsonObject(name);
+    }
+
+    boolean captured() {
+        return notCapturedReason == null;
+    }
+
+    /**
+     * @param palette the bundled version's states by hash
+     * @return the block values, one {@link Values} per set of states the keys cover (as {@link ScriptApiValues#blocks})
+     */
+    List<Values<Integer>> blocks(Map<Integer, NbtMap> palette, List<String> log) {
+        List<String> unknownStates = blockStates.keySet().stream().filter(hash -> !palette.containsKey(Integer.valueOf(hash))).toList();
+        logUnknown(log, "block states", unknownStates);
+        Set<String> names = new java.util.HashSet<>();
+        palette.values().forEach(state -> names.add(state.getString("name")));
+        logUnknown(log, "block types", blockTypes.keySet().stream().filter(block -> !names.contains(block)).toList());
+
+        Map<Key, Map<Integer, Object>> byKey = new LinkedHashMap<>();
+        for (Key key : keys(Owner.BLOCK)) {
+            Map<Integer, Object> values = new LinkedHashMap<>();
+            palette.forEach((hash, state) -> {
+                Object value = value(key, blockStates.getAsJsonObject(String.valueOf(hash)), blockTypes.getAsJsonObject(state.getString("name")));
+                if (value != null) {
+                    values.put(hash, value);
+                }
+            });
+            byKey.put(key, values);
+        }
+        return ScriptApiValues.grouped(byKey, BlockBehaviour::key);
+    }
+
+    /** @return the item values, grouped as {@link #blocks} */
+    List<Values<String>> items(Set<String> palette, List<String> log) {
+        logUnknown(log, "items", items.keySet().stream().filter(item -> !palette.contains(item)).toList());
+        Map<Key, Map<String, Object>> byKey = new LinkedHashMap<>();
+        for (Key key : keys(Owner.ITEM)) {
+            Map<String, Object> values = new LinkedHashMap<>();
+            for (String item : palette) {
+                Object value = value(key, items.getAsJsonObject(item), null);
+                if (value != null) {
+                    values.put(item, value);
+                }
+            }
+            byKey.put(key, values);
+        }
+        return ScriptApiValues.grouped(byKey, ItemBehaviour::key);
+    }
+
+    private void logUnknown(List<String> log, String what, List<String> unknown) {
+        if (!unknown.isEmpty()) {
+            log.add("NATIVE " + build + ": " + unknown.size() + " " + what + " are not in the palette: "
+                + unknown.stream().sorted().limit(5).toList());
+        }
+    }
+
+    /** @return the keys of the owner that have a native source and a type a native member can have (no shapes yet) */
+    private static List<Key> keys(Owner owner) {
+        return BehaviourKeys.KEYS.stream()
+            .filter(key -> key.owner() == owner && !key.sources("NATIVE:").isEmpty() && !key.type().equals("BlockShape"))
+            .toList();
+    }
+
+    /** @return the key's value from the first source that has one in {@code first}, then in {@code second}, or null */
+    private static @Nullable Object value(Key key, @Nullable JsonObject first, @Nullable JsonObject second) {
+        for (JsonObject members : new JsonObject[] {first, second}) {
+            if (members == null) {
+                continue;
+            }
+            for (String source : key.sources("NATIVE:")) {
+                Object value = member(key, source, members);
+                if (value != null) {
+                    return value;
+                }
+            }
+        }
+        return null;
+    }
+
+    private static @Nullable Object member(Key key, String source, JsonObject members) {
+        if (members.has(source)) {
+            return convert(key, source, members.get(source));
+        }
+        // a flag of a list: BlockType.mProperties.Climbable is in the list BlockType.mProperties
+        int dot = source.lastIndexOf('.');
+        if (dot > 0 && source.indexOf('.') != dot && key.type().equals("Boolean")) {
+            String list = source.substring(0, dot);
+            if (members.has(list) && members.get(list).isJsonArray()) {
+                JsonArray flags = members.getAsJsonArray(list);
+                return flags.contains(new JsonPrimitive(source.substring(dot + 1)));
+            }
+        }
+        return null;
+    }
+
+    private static Object convert(Key key, String source, JsonElement element) {
+        if (!element.isJsonPrimitive()) {
+            throw new IllegalStateException(source + " must be a " + key.type() + ", not " + element);
+        }
+        JsonPrimitive primitive = element.getAsJsonPrimitive();
+        return switch (key.type()) {
+            case "Boolean" -> primitive.getAsBoolean();
+            case "Integer" -> {
+                if (primitive.getAsDouble() != Math.rint(primitive.getAsDouble())) {
+                    throw new IllegalStateException(source + " " + primitive + " is not a whole number");
+                }
+                yield primitive.getAsInt();
+            }
+            case "Float" -> primitive.getAsFloat();
+            case "String" -> primitive.getAsString();
+            default -> throw new IllegalStateException(key.name() + ": a native member gives no " + key.type());
+        };
+    }
+}
