@@ -51,6 +51,8 @@ public final class CaptureWriter {
     private final List<NbtMap> palette = new ArrayList<>();
     private final Set<Integer> unresolvedHashes = new LinkedHashSet<>();
     private int resolvedHashes;
+    /** Whether the capture ran {@code /give}: then {@link GiveCapture#FILE} is written, with the unanswered blocks unverified. */
+    private boolean giveRequested;
 
     public CaptureWriter(CaptureClient.Result result, VanillaData reference, String bdsVersion) {
         this(result, reference, bdsVersion, CapturePlatform.host());
@@ -78,6 +80,11 @@ public final class CaptureWriter {
                 throw new IllegalStateException("Block hash collision: " + previous + " and " + state);
             }
         }
+    }
+
+    public CaptureWriter withGives() {
+        giveRequested = true;
+        return this;
     }
 
     public void write(Path directory, Path customDirectory) throws IOException {
@@ -124,6 +131,9 @@ public final class CaptureWriter {
         }
         new RecipeCapture(itemNames, statesByHash::get).write(directory, result.crafting, result.trim, bdsVersion);
         Files.writeString(directory.resolve("capture.json"), GSON.toJson(summary()));
+        if (giveRequested) {
+            Files.writeString(directory.resolve(GiveCapture.FILE), GiveCapture.render(bdsVersion, reference.blockItems(), result.gives));
+        }
 
         if (customDirectory != null) {
             writeCustom(customDirectory);
