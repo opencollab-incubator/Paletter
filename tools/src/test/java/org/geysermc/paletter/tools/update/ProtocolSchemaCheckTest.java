@@ -60,7 +60,6 @@ class ProtocolSchemaCheckTest {
     void reportNamesTheChangedPackets() throws Exception {
         Report report = new Report("t");
         ProtocolSchemaCheck.report(report, fixture("1.26.63.1").getParent(), 2225, 2259);
-        // The one real-world case: the experiment list precedes the changed field, which is the last of ResourcePackStack
         String markdown = report.render();
         assertTrue(markdown.contains("Protocol codec safety"), markdown);
         assertTrue(markdown.contains("NetworkSettingsPacket"), markdown);
@@ -71,7 +70,6 @@ class ProtocolSchemaCheckTest {
     void reportWithoutATreeIsSkippedNotGuessed() throws Exception {
         Report report = new Report("t");
         ProtocolSchemaCheck.report(report, fixture("1.26.63.1").getParent(), 2225, 9999);
-        // (the docgen directory is passed directly)
         String markdown = report.render();
         assertTrue(markdown.contains("no cached BDS docgen tree for protocol 9999"), markdown);
         assertFalse(markdown.contains("safe:"), markdown);
