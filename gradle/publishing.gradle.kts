@@ -8,6 +8,8 @@
 //   - Any publish to a remote repository fails unless -Ppaletter.deploy=true is given.
 //   - A release (non-SNAPSHOT version) goes to the releases repository only with a clean working tree; a SNAPSHOT version
 //     goes to the snapshots repository only. The repository follows the version, it is never chosen by hand.
+//   - A release is signed (keys from properties or environment only) and has no SNAPSHOT runtime dependency
+//     (checkReleaseDependencies).
 
 fun prop(name: String): String = providers.gradleProperty(name).orNull ?: error("gradle.properties has no $name")
 
@@ -74,10 +76,56 @@ extensions.configure<PublishingExtension> {
     }
 }
 
+// Signing: keys come only from Gradle properties or environment variables, never from the repository. The properties are
+// signingKey (ASCII-armored private key) and signingPassword; the environment variables SIGNING_KEY and SIGNING_PASSWORD
+// work too (or ORG_GRADLE_PROJECT_signingKey, which Gradle maps to the property). Signing is optional: without a key
+// the sign tasks are skipped, so publishToMavenLocal and snapshots work. A release publish to a remote repository
+// requires the key (checked in checkPublishAllowed).
+apply(plugin = "signing")
+
+val signingKey = providers.gradleProperty("signingKey").orElse(providers.environmentVariable("SIGNING_KEY"))
+val signingPassword = providers.gradleProperty("signingPassword").orElse(providers.environmentVariable("SIGNING_PASSWORD"))
+
+extensions.configure<SigningExtension> {
+    isRequired = false
+    if (signingKey.isPresent) {
+        useInMemoryPgpKeys(signingKey.get(), signingPassword.orNull)
+    }
+    sign(extensions.getByType<PublishingExtension>().publications["maven"])
+}
+
+// Fails if a published runtime dependency (the POM compile/runtime scope: api, implementation and runtimeOnly, which is
+// the runtimeElements configuration) is a SNAPSHOT. Project dependencies count with this project's version.
+// A pinned snapshot has a timestamped version (3.0.0.Beta15-20261026.210753-2) instead of the -SNAPSHOT suffix; both count.
+val timestampedSnapshot = Regex("-\\d{8}\\.\\d{6}-\\d+$")
+val snapshotDependencies = providers.provider {
+    configurations.getByName("runtimeElements").allDependencies
+        .filter { val v = it.version; v != null && (v.endsWith("-SNAPSHOT") || timestampedSnapshot.containsMatchIn(v)) }
+        .map { "${it.group}:${it.name}:${it.version}" }
+        .distinct()
+}
+val checkReleaseDependencies = tasks.register("checkReleaseDependencies") {
+    group = "publishing"
+    description = "Fails if a published runtime dependency of this module is a SNAPSHOT version"
+    val snapshots = snapshotDependencies
+    val projectPath = project.path
+    doLast {
+        if (snapshots.get().isNotEmpty()) {
+            throw GradleException("A release must not depend on SNAPSHOT versions; $projectPath publishes these runtime " +
+                "dependencies (POM compile/runtime scope):\n" + snapshots.get().joinToString("\n") { "  - $it" })
+        }
+    }
+}
+
 // Runs before the upload; fails the build otherwise
 val checkPublishAllowed = tasks.register("checkPublishAllowed") {
     group = "publishing"
-    description = "Fails a publish to a remote repository unless -Ppaletter.deploy=true, and a release unless the working tree is clean"
+    description = "Fails a publish to a remote repository unless -Ppaletter.deploy=true, and a release unless the working tree is " +
+        "clean, signed and free of SNAPSHOT dependencies"
+    if (!isSnapshot) {
+        dependsOn(checkReleaseDependencies)
+    }
+    val hasSigningKey = signingKey.isPresent
     val gitStatus = providers.exec {
         commandLine("git", "status", "--porcelain", "--untracked-files=no")
         workingDir = rootProject.projectDir
@@ -90,6 +138,10 @@ val checkPublishAllowed = tasks.register("checkPublishAllowed") {
         }
         if (!isSnapshot && gitStatus.get().isNotBlank()) {
             throw GradleException("A release ($moduleVersion) needs a clean working tree; uncommitted changes:\n${gitStatus.get()}")
+        }
+        if (!isSnapshot && !hasSigningKey) {
+            throw GradleException("A release ($moduleVersion) must be signed: set the Gradle properties signingKey and " +
+                "signingPassword (or the environment variables SIGNING_KEY and SIGNING_PASSWORD), see docs/releasing.md.")
         }
     }
 }
