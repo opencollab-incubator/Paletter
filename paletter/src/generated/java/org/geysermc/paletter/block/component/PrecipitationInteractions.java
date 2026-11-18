@@ -5,8 +5,8 @@ package org.geysermc.paletter.block.component;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
+import org.geysermc.paletter.annotation.BedrockExperiment;
 import org.geysermc.paletter.annotation.BedrockFormat;
-import org.geysermc.paletter.annotation.Experimental;
 
 /**
  * Determines interactions the block will have with different precipitations. Three possible values: obrain,
@@ -22,7 +22,7 @@ import org.geysermc.paletter.annotation.Experimental;
  * @since 1.0.0
  */
 @BedrockFormat("1.21.120")
-@Experimental
+@BedrockExperiment("upcoming_creator_features")
 public record PrecipitationInteractions(
         PrecipitationInteractions. @Nullable PrecipitationBehavior precipitationBehavior) implements BlockComponent {
     /**

@@ -163,11 +163,11 @@ class GeneratedApiTest {
         assertEquals(10, Durability.DamageChance.builder().min(10).max(10).build().max(), "equal is in order");
         // and a value of another field BDS refuses a map with ("Cannot use bone visibility feature with: minecraft:geometry.full_block")
         Map<String, String> bone = Map.of("arm", "q.block_state('test:lit')");
-        assertThrows(IllegalArgumentException.class, () -> ItemVisual.Geometry.builder().identifier("minecraft:geometry.full_block").boneVisibility(bone).build());
-        assertThrows(IllegalArgumentException.class, () -> EmbeddedVisual.Geometry.builder().identifier("minecraft:geometry.full_block").boneVisibility(bone).build());
+        assertThrows(IllegalArgumentException.class, () -> ItemVisual.VisualGeometry.builder().identifier("minecraft:geometry.full_block").boneVisibility(bone).build());
+        assertThrows(IllegalArgumentException.class, () -> EmbeddedVisual.VisualGeometry.builder().identifier("minecraft:geometry.full_block").boneVisibility(bone).build());
         assertThrows(IllegalArgumentException.class, () -> Geometry.builder().identifier("minecraft:geometry.full_block").boneVisibility(bone).build());
-        assertEquals(bone, ItemVisual.Geometry.builder().identifier("geometry.lamp").boneVisibility(bone).build().boneVisibility());
-        assertEquals(Map.of(), ItemVisual.Geometry.of("minecraft:geometry.full_block").boneVisibility(), "BDS takes the empty map");
+        assertEquals(bone, ItemVisual.VisualGeometry.builder().identifier("geometry.lamp").boneVisibility(bone).build().boneVisibility());
+        assertEquals(Map.of(), ItemVisual.VisualGeometry.of("minecraft:geometry.full_block").boneVisibility(), "BDS takes the empty map");
     }
 
     /** The JSON BDS accepts that the docs do not model, as the API expresses it (the conformance suite checks each against BDS's NBT). */
@@ -189,7 +189,7 @@ class GeneratedApiTest {
         // uv_lock is a boolean or a list of bones, never both: one value of a sealed type, the last form set wins
         assertEquals(UvLock.bones(List.of("a", "b")), Geometry.builder().identifier("g").uvLock("a", "b").build().uvLock());
         assertEquals(UvLock.flag(true), Geometry.builder().identifier("g").uvLock(true).build().uvLock());
-        assertEquals(UvLock.flag(false), EmbeddedVisual.Geometry.builder().identifier("g").build().uvLock(), "the documented default");
+        assertEquals(UvLock.flag(false), EmbeddedVisual.VisualGeometry.builder().identifier("g").build().uvLock(), "the documented default");
         assertEquals(UvLock.bones(List.of("a")), Geometry.builder().identifier("g").uvLock(true).uvLock("a").build().uvLock());
         assertThrows(NullPointerException.class, () -> UvLock.bones(null));
     }
@@ -214,8 +214,8 @@ class GeneratedApiTest {
         }
         // One type for the three geometries that take uv_lock
         assertEquals(UvLock.class, Geometry.class.getRecordComponents()[Geometry.class.getRecordComponents().length - 1].getType());
-        assertEquals(UvLock.class, ItemVisual.Geometry.class.getRecordComponents()[ItemVisual.Geometry.class.getRecordComponents().length - 1].getType());
-        assertEquals(UvLock.class, EmbeddedVisual.Geometry.class.getRecordComponents()[EmbeddedVisual.Geometry.class.getRecordComponents().length - 1].getType());
+        assertEquals(UvLock.class, ItemVisual.VisualGeometry.class.getRecordComponents()[ItemVisual.VisualGeometry.class.getRecordComponents().length - 1].getType());
+        assertEquals(UvLock.class, EmbeddedVisual.VisualGeometry.class.getRecordComponents()[EmbeddedVisual.VisualGeometry.class.getRecordComponents().length - 1].getType());
         assertEquals(3, model.unions.get("UvLock").users.size());
     }
 

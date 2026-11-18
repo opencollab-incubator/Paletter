@@ -7,8 +7,8 @@ import java.util.List;
 import java.util.Objects;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
+import org.geysermc.paletter.annotation.BedrockExperiment;
 import org.geysermc.paletter.annotation.BedrockFormat;
-import org.geysermc.paletter.annotation.Experimental;
 import org.geysermc.paletter.internal.component.Check;
 
 /**
@@ -31,9 +31,9 @@ import org.geysermc.paletter.internal.component.Check;
  * @since 1.0.0
  */
 @BedrockFormat("1.26.10")
-@Experimental
+@BedrockExperiment("upcoming_creator_features")
 public record MultiBlock(@NonNull List<MultiBlock.EnabledStates> enabledStates, int parts,
-        MultiBlock. @NonNull Direction direction) implements BlockTrait {
+        MultiBlock. @NonNull MultiBlockDirection direction) implements BlockTrait {
     /**
      * The component name in add-on JSON.
      */
@@ -77,7 +77,7 @@ public record MultiBlock(@NonNull List<MultiBlock.EnabledStates> enabledStates, 
 
         private @Nullable Integer parts = 2;
 
-        private @Nullable Direction direction;
+        private @Nullable MultiBlockDirection direction;
 
         private Builder() {
         }
@@ -108,7 +108,7 @@ public record MultiBlock(@NonNull List<MultiBlock.EnabledStates> enabledStates, 
         /**
          * Sets {@code direction}.
          */
-        public @NonNull Builder direction(@NonNull Direction direction) {
+        public @NonNull Builder direction(@NonNull MultiBlockDirection direction) {
             this.direction = direction;
             return this;
         }
@@ -167,7 +167,7 @@ public record MultiBlock(@NonNull List<MultiBlock.EnabledStates> enabledStates, 
     /**
      * The documented values; {@link #value()} is the add-on JSON string.
      */
-    public enum Direction {
+    public enum MultiBlockDirection {
         /**
          * {@code up}
          */
@@ -200,7 +200,7 @@ public record MultiBlock(@NonNull List<MultiBlock.EnabledStates> enabledStates, 
 
         private final String value;
 
-        Direction(String value) {
+        MultiBlockDirection(String value) {
             this.value = value;
         }
 
@@ -215,13 +215,13 @@ public record MultiBlock(@NonNull List<MultiBlock.EnabledStates> enabledStates, 
          * @return the constant of an add-on JSON value
          * @throws IllegalArgumentException if the value is not documented
          */
-        public static @NonNull Direction fromValue(@NonNull String value) {
-            for (Direction constant : values()) {
+        public static @NonNull MultiBlockDirection fromValue(@NonNull String value) {
+            for (MultiBlockDirection constant : values()) {
                 if (constant.value.equals(value)) {
                     return constant;
                 }
             }
-            throw new IllegalArgumentException("Not a Direction: " + value);
+            throw new IllegalArgumentException("Not a MultiBlockDirection: " + value);
         }
     }
 }

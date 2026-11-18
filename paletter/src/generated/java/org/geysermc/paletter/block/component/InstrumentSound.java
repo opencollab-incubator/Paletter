@@ -6,7 +6,6 @@ package org.geysermc.paletter.block.component;
 import java.util.Objects;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
-import org.geysermc.paletter.annotation.Experimental;
 import org.geysermc.paletter.annotation.ServerOnly;
 
 /**
@@ -30,7 +29,6 @@ import org.geysermc.paletter.annotation.ServerOnly;
  * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/blockreference/examples/blockcomponents/minecraftblock_instrument_sound?view=minecraft-bedrock-stable">Microsoft Learn: minecraft:instrument_sound</a>
  * @since 1.0.0
  */
-@Experimental
 @ServerOnly
 public record InstrumentSound(InstrumentSound. @NonNull Down down,
         InstrumentSound. @NonNull Up up) implements BlockComponent {

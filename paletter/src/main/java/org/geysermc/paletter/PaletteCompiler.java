@@ -289,9 +289,9 @@ final class PaletteCompiler {
      * category implies (BDS puts every block with a menu category in the creative inventory).
      */
     private static @Nullable CreativePlacement creativePlacement(CustomBlock block, CreativeOrdering ordering) {
-        org.geysermc.paletter.block.component.MenuCategory menu = block.menuCategory();
+        org.geysermc.paletter.block.component.BlockMenuCategory menu = block.menuCategory();
         if (block.creative() != null || ordering == CreativeOrdering.APPEND || menu == null
-            || menu.category() == org.geysermc.paletter.block.component.MenuCategory.Category.NONE) {
+            || menu.category() == org.geysermc.paletter.block.component.BlockMenuCategory.Category.NONE) {
             return block.creative();
         }
         CreativeCategory category = CreativeCategory.fromBedrockName(menu.category().value());

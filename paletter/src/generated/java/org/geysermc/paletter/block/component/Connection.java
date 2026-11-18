@@ -7,8 +7,8 @@ import java.util.List;
 import java.util.Objects;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
+import org.geysermc.paletter.annotation.BedrockExperiment;
 import org.geysermc.paletter.annotation.BedrockFormat;
-import org.geysermc.paletter.annotation.Experimental;
 
 /**
  * Adds the connection states to a block. The values of these states are updated when the block or neighboring
@@ -24,7 +24,7 @@ import org.geysermc.paletter.annotation.Experimental;
  * @since 1.0.0
  */
 @BedrockFormat("1.21.130")
-@Experimental
+@BedrockExperiment("upcoming_creator_features")
 public record Connection(
         @NonNull List<Connection.EnabledStates> enabledStates) implements BlockTrait {
     /**

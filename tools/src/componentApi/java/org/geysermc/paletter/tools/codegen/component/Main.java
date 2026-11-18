@@ -1,5 +1,7 @@
 package org.geysermc.paletter.tools.codegen.component;
 
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
 import java.io.IOException;
@@ -10,6 +12,9 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.TreeMap;
+import java.util.TreeSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
@@ -52,7 +57,7 @@ public final class Main {
     /** @return the number of files that differ (written unless {@code check}) */
     static int run(Path root, Path sources, boolean check) throws IOException {
         Path model = root.resolve("data/model");
-        ComponentGenerator.Inputs inputs = ComponentGenerator.read(model, version(root));
+        ComponentGenerator.Inputs inputs = ComponentGenerator.read(model, version(root), context(root));
         Map<String, String> files = ComponentGenerator.generate(inputs);
         Path probe = newestProbe(root);
         files.putAll(BehaviourSource.generate(BehaviourKeys.KEYS, inputs.mappings(), probe == null ? null
@@ -91,6 +96,61 @@ public final class Main {
             }
         }
         return changed;
+    }
+
+    /**
+     * The names the generated API must keep unique and the experiment toggles of the captured servers.
+     *
+     * @return the public types next to the generated ones (every source file outside {@code internal} that this generator
+     *         does not write itself: hand-written ones and the constants), and the toggle ids by the experiment name the
+     *         creator docs use
+     */
+    static ComponentGenerator.Context context(Path root) throws IOException {
+        Set<String> reserved = new TreeSet<>();
+        for (String dir : List.of("paletter/src/main/java", "paletter/src/generated/java")) {
+            Path base = root.resolve(dir);
+            if (!Files.isDirectory(base)) {
+                continue;
+            }
+            try (Stream<Path> files = Files.walk(base)) {
+                for (Path file : files.filter(f -> f.toString().endsWith(".java")).toList()) {
+                    String rel = base.relativize(file).toString().replace('\\', '/');
+                    String name = file.getFileName().toString();
+                    if (!rel.startsWith("org/geysermc/paletter/internal/") && !name.equals("package-info.java") && !name.equals("module-info.java")
+                        && !Files.readString(file, StandardCharsets.UTF_8).startsWith("// " + GENERATOR)) {
+                        reserved.add(name.substring(0, name.length() - ".java".length()));
+                    }
+                }
+            }
+        }
+        return new ComponentGenerator.Context(reserved, toggleNames(root.resolve("data/bds")));
+    }
+
+    /**
+     * @return toggle id by name, from every {@code data/bds/<build>/experiments.json}: the names of the current toggles are
+     *         what the creator docs call them. A name of two ids is an error: nothing could decide between them.
+     */
+    static Map<String, String> toggleNames(Path bds) throws IOException {
+        Map<String, String> names = new TreeMap<>();
+        if (!Files.isDirectory(bds)) {
+            return names;
+        }
+        try (Stream<Path> builds = Files.list(bds)) {
+            for (Path file : builds.map(b -> b.resolve("experiments.json")).filter(Files::isRegularFile).sorted().toList()) {
+                JsonObject toggles = JsonParser.parseString(Files.readString(file, StandardCharsets.UTF_8)).getAsJsonObject().getAsJsonObject("toggles");
+                for (Map.Entry<String, JsonElement> toggle : toggles.entrySet()) {
+                    JsonObject value = toggle.getValue().getAsJsonObject();
+                    if (value.has("name")) {
+                        String other = names.put(value.get("name").getAsString(), toggle.getKey());
+                        if (other != null && !other.equals(toggle.getKey())) {
+                            throw new IllegalStateException("The experiment name \"" + value.get("name").getAsString() + "\" is " + other + " and "
+                                + toggle.getKey() + " in the captures");
+                        }
+                    }
+                }
+            }
+        }
+        return names;
     }
 
     /** @return the {@code behaviour-probe/capture.json} of the newest BDS build under {@code data/bds}, or null if none has one */

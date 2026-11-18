@@ -18,7 +18,7 @@ import org.geysermc.paletter.annotation.BedrockFormat;
  * @since 1.0.0
  */
 @BedrockFormat("1.20.0")
-public record DisplayName(@Nullable String value) implements ItemComponent {
+public record ItemDisplayName(@Nullable String value) implements ItemComponent {
     /**
      * The component name in add-on JSON.
      */
@@ -46,7 +46,7 @@ public record DisplayName(@Nullable String value) implements ItemComponent {
     }
 
     /**
-     * Builds {@link DisplayName}: defaults applied, required fields and ranges checked by {@link #build()}.
+     * Builds {@link ItemDisplayName}: defaults applied, required fields and ranges checked by {@link #build()}.
      */
     public static final class Builder {
         private @Nullable String value;
@@ -66,8 +66,8 @@ public record DisplayName(@Nullable String value) implements ItemComponent {
          * @throws IllegalStateException if a required field is not set
          * @throws IllegalArgumentException if a value is out of range
          */
-        public @NonNull DisplayName build() {
-            return new DisplayName(value);
+        public @NonNull ItemDisplayName build() {
+            return new ItemDisplayName(value);
         }
     }
 }

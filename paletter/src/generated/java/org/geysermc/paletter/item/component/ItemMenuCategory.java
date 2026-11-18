@@ -19,8 +19,8 @@ import org.checkerframework.checker.nullness.qual.Nullable;
  *        {@code is_hidden_in_commands}. Optional (null: not set).
  * @since 1.0.0
  */
-public record MenuCategory(MenuCategory. @Nullable Category category, @Nullable String group,
-        @Nullable Boolean hiddenInCommands) {
+public record ItemMenuCategory(ItemMenuCategory. @Nullable Category category,
+        @Nullable String group, @Nullable Boolean hiddenInCommands) {
     /**
      * @return a builder with the defaults applied
      */
@@ -40,7 +40,7 @@ public record MenuCategory(MenuCategory. @Nullable Category category, @Nullable 
     }
 
     /**
-     * Builds {@link MenuCategory}: defaults applied, required fields and ranges checked by {@link #build()}.
+     * Builds {@link ItemMenuCategory}: defaults applied, required fields and ranges checked by {@link #build()}.
      */
     public static final class Builder {
         private @Nullable Category category;
@@ -80,8 +80,8 @@ public record MenuCategory(MenuCategory. @Nullable Category category, @Nullable 
          * @throws IllegalStateException if a required field is not set
          * @throws IllegalArgumentException if a value is out of range
          */
-        public @NonNull MenuCategory build() {
-            return new MenuCategory(category, group, hiddenInCommands);
+        public @NonNull ItemMenuCategory build() {
+            return new ItemMenuCategory(category, group, hiddenInCommands);
         }
     }
 

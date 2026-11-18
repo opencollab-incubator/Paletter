@@ -118,7 +118,7 @@ class TransformsTest {
     @Test
     void embeddedGeometryBefore26_60HasNoRotation() {
         EmbeddedVisual visual = EmbeddedVisual.builder()
-            .geometry(EmbeddedVisual.Geometry.builder().identifier("minecraft:geometry.cross")
+            .geometry(EmbeddedVisual.VisualGeometry.builder().identifier("minecraft:geometry.cross")
                 .nWayVisualRotation(EmbeddedVisual.NWayVisualRotation.builder().x("a").build()).build())
             .materialInstances(MaterialInstances.builder().build()).build();
         WireNode now = new WireNode();
@@ -151,7 +151,7 @@ class TransformsTest {
     @Test
     void boneVisibilityIsMolangTextInEveryGeometry() {
         Map<String, String> bones = Map.of("shade", "true", "bulb", "false", "arm", "q.block_state('lit')", "base", "1.0");
-        ItemVisual.Geometry geometry = ItemVisual.Geometry.builder().identifier("geometry.lamp").boneVisibility(bones).build();
+        ItemVisual.VisualGeometry geometry = ItemVisual.VisualGeometry.builder().identifier("geometry.lamp").boneVisibility(bones).build();
         WireNode out = new WireNode();
         Transforms.itemVisualBoneVisibility(ctx, out, geometry);
         NbtMap description = compound(out, "minecraft:item_visual").getCompound("geometryDescription");
@@ -163,7 +163,7 @@ class TransformsTest {
         assertEquals(sent, compound(block, "minecraft:geometry").getCompound("bone_visibility"));
         WireNode embedded = new WireNode();
         Transforms.embeddedGeometry(ctx, embedded, EmbeddedVisual.builder()
-            .geometry(EmbeddedVisual.Geometry.builder().identifier("geometry.lamp").boneVisibility(bones).build())
+            .geometry(EmbeddedVisual.VisualGeometry.builder().identifier("geometry.lamp").boneVisibility(bones).build())
             .materialInstances(MaterialInstances.builder().build()).build());
         assertEquals(sent, compound(embedded, "minecraft:embedded_visual").getCompound("geometry").getCompound("bone_visibility"));
         assertTrue(report.entries().isEmpty());
@@ -180,7 +180,7 @@ class TransformsTest {
 
         // BDS 1.26.36.1 sends each expression with the Molang version of the block
         WireNode oldest = new WireNode();
-        Transforms.itemVisualBoneVisibility(ctx26_30, oldest, ItemVisual.Geometry.builder().identifier("geometry.lamp").boneVisibility(bones).build());
+        Transforms.itemVisualBoneVisibility(ctx26_30, oldest, ItemVisual.VisualGeometry.builder().identifier("geometry.lamp").boneVisibility(bones).build());
         NbtMap visibility = compound(oldest, "minecraft:item_visual").getCompound("geometryDescription").getCompound("bone_visibility");
         WireNode envelope = new WireNode();
         BlockWire.envelope(ctx26_30, envelope);
@@ -262,7 +262,7 @@ class TransformsTest {
 
         WireNode embedded = new WireNode();
         Transforms.embeddedGeometry(ctx, embedded, EmbeddedVisual.builder()
-            .geometry(EmbeddedVisual.Geometry.builder().identifier("minecraft:geometry.cross").build())
+            .geometry(EmbeddedVisual.VisualGeometry.builder().identifier("minecraft:geometry.cross").build())
             .materialInstances(MaterialInstances.builder().build()).build());
         NbtMap e = compound(embedded, "minecraft:embedded_visual").getCompound("geometry");
         assertEquals("minecraft:geometry.cross", e.getString("identifier"));
@@ -283,13 +283,13 @@ class TransformsTest {
         assertEquals("*", m.getCompound("mappings").getCompound("up").getString("value"));
 
         WireNode visual = new WireNode();
-        Transforms.materialInstancesPacked(ctx, visual, ItemVisual.builder().geometry(ItemVisual.Geometry.of("minecraft:geometry.full_block"))
+        Transforms.materialInstancesPacked(ctx, visual, ItemVisual.builder().geometry(ItemVisual.VisualGeometry.of("minecraft:geometry.full_block"))
             .materialInstances(materials).build());
         assertEquals(m, compound(visual, "minecraft:item_visual").getCompound("materialInstancesDescription"));
 
         WireNode inline = new WireNode();
         Transforms.materialInstancesInline(ctx, inline, EmbeddedVisual.builder()
-            .geometry(EmbeddedVisual.Geometry.builder().identifier("minecraft:geometry.full_block").build()).materialInstances(materials).build());
+            .geometry(EmbeddedVisual.VisualGeometry.builder().identifier("minecraft:geometry.full_block").build()).materialInstances(materials).build());
         NbtMap face = compound(inline, "minecraft:embedded_visual").getCompound("material_instances").getCompound("*");
         assertEquals((byte) 0, face.getByte("face_dimming"));
         assertEquals((byte) 1, face.getByte("isotropic"));
@@ -299,7 +299,7 @@ class TransformsTest {
     void anEmbeddedAlphaMaskedTintIsSentAsZeroAndReported() {
         WireNode inline = new WireNode();
         Transforms.materialInstancesInline(ctx, inline, EmbeddedVisual.builder()
-            .geometry(EmbeddedVisual.Geometry.builder().identifier("minecraft:geometry.full_block").build())
+            .geometry(EmbeddedVisual.VisualGeometry.builder().identifier("minecraft:geometry.full_block").build())
             .materialInstances(MaterialInstances.builder().all(MaterialInstances.Instance.builder().texture("stone").alphaMaskedTint(true).build()).build()).build());
         assertEquals((byte) 0, compound(inline, "minecraft:embedded_visual").getCompound("material_instances").getCompound("*").getByte("alpha_masked_tint"));
         assertEquals(1, report.warnings().size());
@@ -356,7 +356,7 @@ class TransformsTest {
 
         WireNode inline = new WireNode();
         Transforms.materialInstancesInline(ctx, inline, EmbeddedVisual.builder()
-            .geometry(EmbeddedVisual.Geometry.builder().identifier("minecraft:geometry.full_block").build()).materialInstances(materials).build());
+            .geometry(EmbeddedVisual.VisualGeometry.builder().identifier("minecraft:geometry.full_block").build()).materialInstances(materials).build());
         assertEquals("glass", compound(inline, "minecraft:embedded_visual").getCompound("material_instances").getCompound("glass").getString("texture"));
     }
 
@@ -495,16 +495,16 @@ class TransformsTest {
     void itemVisualUvLockIsTheOneOfGeometry() {
         // what BDS 1.26.63.1 sent for item_visual: true as 1, ["bone_a", "paletter_b"] as [paletter_b, bone_a]
         WireNode all = new WireNode();
-        Transforms.itemVisualUvLock(ctx, all, ItemVisual.Geometry.builder().identifier("geometry.lamp").uvLock(true).build());
+        Transforms.itemVisualUvLock(ctx, all, ItemVisual.VisualGeometry.builder().identifier("geometry.lamp").uvLock(true).build());
         assertEquals((byte) 1, compound(all, "minecraft:item_visual").getCompound("geometryDescription").getByte("uv_lock"));
 
         WireNode bones = new WireNode();
-        Transforms.itemVisualUvLock(ctx, bones, ItemVisual.Geometry.builder().identifier("geometry.lamp").uvLock("bone_a", "paletter_b", "bone_a").build());
+        Transforms.itemVisualUvLock(ctx, bones, ItemVisual.VisualGeometry.builder().identifier("geometry.lamp").uvLock("bone_a", "paletter_b", "bone_a").build());
         assertEquals(List.of("paletter_b", "bone_a"),
             compound(bones, "minecraft:item_visual").getCompound("geometryDescription").getList("uv_lock", NbtType.STRING));
 
         WireNode unset = new WireNode();
-        Transforms.itemVisualUvLock(ctx, unset, ItemVisual.Geometry.of("geometry.lamp"));
+        Transforms.itemVisualUvLock(ctx, unset, ItemVisual.VisualGeometry.of("geometry.lamp"));
         assertEquals((byte) 0, compound(unset, "minecraft:item_visual").getCompound("geometryDescription").getByte("uv_lock"));
         assertTrue(report.entries().isEmpty());
     }

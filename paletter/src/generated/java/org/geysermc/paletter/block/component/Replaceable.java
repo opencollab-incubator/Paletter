@@ -4,8 +4,8 @@
 package org.geysermc.paletter.block.component;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
+import org.geysermc.paletter.annotation.BedrockExperiment;
 import org.geysermc.paletter.annotation.BedrockFormat;
-import org.geysermc.paletter.annotation.Experimental;
 import org.geysermc.paletter.annotation.ServerOnly;
 
 /**
@@ -21,7 +21,7 @@ import org.geysermc.paletter.annotation.ServerOnly;
  * @since 1.0.0
  */
 @BedrockFormat("1.21.70")
-@Experimental
+@BedrockExperiment("upcoming_creator_features")
 @ServerOnly(
         until = 2193
 )

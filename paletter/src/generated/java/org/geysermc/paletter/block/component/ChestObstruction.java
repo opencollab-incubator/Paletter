@@ -6,8 +6,8 @@ package org.geysermc.paletter.block.component;
 import java.util.Objects;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
+import org.geysermc.paletter.annotation.BedrockExperiment;
 import org.geysermc.paletter.annotation.BedrockFormat;
-import org.geysermc.paletter.annotation.Experimental;
 import org.geysermc.paletter.annotation.ServerOnly;
 
 /**
@@ -28,7 +28,7 @@ import org.geysermc.paletter.annotation.ServerOnly;
  * @since 1.0.0
  */
 @BedrockFormat("1.26.10")
-@Experimental
+@BedrockExperiment("upcoming_creator_features")
 @ServerOnly
 public record ChestObstruction(
         ChestObstruction. @NonNull ObstructionRule obstructionRule) implements BlockComponent {

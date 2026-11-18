@@ -12,10 +12,6 @@ import java.lang.annotation.Target;
  * <p>
  * It also marks API whose behaviour is not settled or not verified against the Bedrock client, such as vanilla item
  * overrides ({@code PaletteLayer.Builder#overrideItem}).
- * <p>
- * It marks the generated components Bedrock gates behind an experiment ("Upcoming Creator Features" and the like): Bedrock
- * may still change them before releasing them, and Paletter's generated API follows. They graduate, without source
- * changes, once Bedrock releases them.
  *
  * @since 1.0.0
  */

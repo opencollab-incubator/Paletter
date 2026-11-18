@@ -5,8 +5,8 @@ package org.geysermc.paletter.block.component;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
+import org.geysermc.paletter.annotation.BedrockExperiment;
 import org.geysermc.paletter.annotation.BedrockFormat;
-import org.geysermc.paletter.annotation.Experimental;
 import org.geysermc.paletter.annotation.ServerOnly;
 import org.geysermc.paletter.internal.component.Check;
 
@@ -28,7 +28,7 @@ import org.geysermc.paletter.internal.component.Check;
  * @since 1.0.0
  */
 @BedrockFormat("1.21.130")
-@Experimental
+@BedrockExperiment("upcoming_creator_features")
 @ServerOnly
 public record RedstoneConsumer(int minPower, boolean propagatesPower) implements BlockComponent {
     /**

@@ -11,7 +11,7 @@ import org.geysermc.paletter.block.component.BlockTrait;
 import org.geysermc.paletter.block.component.EmbeddedVisual;
 import org.geysermc.paletter.block.component.Geometry;
 import org.geysermc.paletter.block.component.ItemVisual;
-import org.geysermc.paletter.block.component.MenuCategory;
+import org.geysermc.paletter.block.component.BlockMenuCategory;
 import org.geysermc.paletter.block.component.UvLock;
 import org.geysermc.paletter.creative.CreativePlacement;
 import org.geysermc.paletter.internal.component.TraitStates;
@@ -52,7 +52,7 @@ public final class CustomBlock {
     private final List<BlockTrait> traits;
     private final List<BlockComponent> components;
     private final List<Permutation> permutations;
-    private final @Nullable MenuCategory menuCategory;
+    private final @Nullable BlockMenuCategory menuCategory;
     private final BlockItem item;
     private final @Nullable CreativePlacement creative;
     private final Map<String, Object> defaultStates;
@@ -75,7 +75,7 @@ public final class CustomBlock {
      */
     private CustomBlock(@NonNull String identifier, @NonNull List<BlockProperty<?>> properties, @NonNull List<BlockTrait> traits,
                        @NonNull List<BlockComponent> components, @NonNull List<Permutation> permutations,
-                       @Nullable MenuCategory menuCategory, @NonNull BlockItem item, @Nullable CreativePlacement creative,
+                       @Nullable BlockMenuCategory menuCategory, @NonNull BlockItem item, @Nullable CreativePlacement creative,
                        @NonNull Map<String, Object> defaultStates, @NonNull List<String> tags) {
         this.identifier = Objects.requireNonNull(identifier, "identifier");
         this.properties = List.copyOf(properties);
@@ -148,7 +148,7 @@ public final class CustomBlock {
     /**
      * @return the description's {@code menu_category}, or null: then it follows {@link #creative()}, else {@code none}
      */
-    public @Nullable MenuCategory menuCategory() {
+    public @Nullable BlockMenuCategory menuCategory() {
         return menuCategory;
     }
 
@@ -396,7 +396,7 @@ public final class CustomBlock {
         private final List<BlockTrait> traits = new ArrayList<>();
         private final List<BlockComponent> components = new ArrayList<>();
         private final List<Permutation> permutations = new ArrayList<>();
-        private @Nullable MenuCategory menuCategory;
+        private @Nullable BlockMenuCategory menuCategory;
         private BlockItem item = BlockItem.SIMPLE;
         private @Nullable CreativePlacement creative;
         private final Map<String, Object> defaultStates = new LinkedHashMap<>();
@@ -457,7 +457,7 @@ public final class CustomBlock {
         /**
          * Sets the description's {@code menu_category} explicitly. Without it, {@link #creative} decides it.
          */
-        public @NonNull Builder menuCategory(@Nullable MenuCategory menuCategory) {
+        public @NonNull Builder menuCategory(@Nullable BlockMenuCategory menuCategory) {
             this.menuCategory = menuCategory;
             return this;
         }
@@ -498,10 +498,10 @@ public final class CustomBlock {
         }
 
         public @NonNull CustomBlock build() {
-            MenuCategory menu = this.menuCategory;
+            BlockMenuCategory menu = this.menuCategory;
             if (menu == null && creative != null) {
-                menu = MenuCategory.builder()
-                    .category(MenuCategory.Category.fromValue(creative.category().bedrockName()))
+                menu = BlockMenuCategory.builder()
+                    .category(BlockMenuCategory.Category.fromValue(creative.category().bedrockName()))
                     .group(creative.group())
                     .build();
             }

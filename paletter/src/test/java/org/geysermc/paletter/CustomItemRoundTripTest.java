@@ -4,7 +4,7 @@ import org.cloudburstmc.nbt.NbtMap;
 import org.cloudburstmc.protocol.bedrock.data.inventory.ItemData;
 import org.geysermc.paletter.item.BedrockItemStack;
 import org.geysermc.paletter.item.CustomItem;
-import org.geysermc.paletter.item.component.DisplayName;
+import org.geysermc.paletter.item.component.ItemDisplayName;
 import org.geysermc.paletter.item.component.Icon;
 import org.geysermc.paletter.item.component.MaxStackSize;
 import org.geysermc.paletter.vanilla.BedrockItems;
@@ -20,7 +20,7 @@ class CustomItemRoundTripTest {
     void customItemOfALayerRoundTrips() {
         CustomItem ruby = CustomItem.builder("example:ruby")
             .component(Icon.of("ruby"))
-            .component(DisplayName.builder().value("item.example.ruby.name").build())
+            .component(ItemDisplayName.builder().value("item.example.ruby.name").build())
             .component(MaxStackSize.of(16))
             .build();
         Paletter paletter = Paletter.builder()

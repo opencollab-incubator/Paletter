@@ -5,7 +5,7 @@ package org.geysermc.paletter.item.component;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
-import org.geysermc.paletter.annotation.Experimental;
+import org.geysermc.paletter.annotation.BedrockExperiment;
 import org.geysermc.paletter.annotation.ReplacedBy;
 
 /**
@@ -19,7 +19,7 @@ import org.geysermc.paletter.annotation.ReplacedBy;
  * @since 1.0.0
  * @deprecated replaced by {@link Widget} (docs text: "Use test:widget instead.")
  */
-@Experimental
+@BedrockExperiment("test_toggle")
 @Deprecated
 @ReplacedBy(Widget.class)
 public record Gadget(@Nullable Boolean value, @Nullable Integer level) implements ItemComponent {

@@ -5,7 +5,7 @@ import org.checkerframework.checker.nullness.qual.Nullable;
 import org.cloudburstmc.nbt.NbtMap;
 import org.geysermc.paletter.creative.CreativePlacement;
 import org.geysermc.paletter.item.component.ItemComponent;
-import org.geysermc.paletter.item.component.MenuCategory;
+import org.geysermc.paletter.item.component.ItemMenuCategory;
 
 import java.util.List;
 
@@ -23,7 +23,7 @@ public final class ItemCompiler {
      * @return the full component data of a data driven item definition, as sent in the item component packet
      */
     public static @NonNull NbtMap componentData(@NonNull String identifier, int runtimeId, @NonNull List<ItemComponent> components,
-                                                @Nullable MenuCategory menu, @Nullable CreativePlacement creative,
+                                                @Nullable ItemMenuCategory menu, @Nullable CreativePlacement creative,
                                                 @NonNull WireContext ctx) {
         WireContext subject = ctx.subject(identifier);
         WireNode out = new WireNode();
@@ -56,12 +56,12 @@ public final class ItemCompiler {
     }
 
     /** The description's menu category: {@code menu}, else the creative placement's category and group, else none (null). */
-    private static @Nullable MenuCategory menu(@Nullable MenuCategory menu, @Nullable CreativePlacement creative) {
+    private static @Nullable ItemMenuCategory menu(@Nullable ItemMenuCategory menu, @Nullable CreativePlacement creative) {
         if (menu != null) {
             return menu.group() == null ? menu : menu.toBuilder().group(namespaced(menu.group())).build();
         }
         if (creative != null) {
-            return MenuCategory.builder().category(MenuCategory.Category.fromValue(creative.category().bedrockName()))
+            return ItemMenuCategory.builder().category(ItemMenuCategory.Category.fromValue(creative.category().bedrockName()))
                 .group(creative.group() == null ? null : namespaced(creative.group())).build();
         }
         return null;

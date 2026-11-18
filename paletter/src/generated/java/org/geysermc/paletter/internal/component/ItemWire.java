@@ -16,7 +16,6 @@ import org.geysermc.paletter.item.component.Cooldown;
 import org.geysermc.paletter.item.component.Damage;
 import org.geysermc.paletter.item.component.DamageAbsorption;
 import org.geysermc.paletter.item.component.Digger;
-import org.geysermc.paletter.item.component.DisplayName;
 import org.geysermc.paletter.item.component.Durability;
 import org.geysermc.paletter.item.component.DurabilitySensor;
 import org.geysermc.paletter.item.component.Dyeable;
@@ -31,10 +30,11 @@ import org.geysermc.paletter.item.component.HoverTextColor;
 import org.geysermc.paletter.item.component.Icon;
 import org.geysermc.paletter.item.component.InteractButton;
 import org.geysermc.paletter.item.component.ItemComponent;
+import org.geysermc.paletter.item.component.ItemDisplayName;
+import org.geysermc.paletter.item.component.ItemMenuCategory;
 import org.geysermc.paletter.item.component.KineticWeapon;
 import org.geysermc.paletter.item.component.LiquidClipped;
 import org.geysermc.paletter.item.component.MaxStackSize;
-import org.geysermc.paletter.item.component.MenuCategory;
 import org.geysermc.paletter.item.component.MusicRecord;
 import org.geysermc.paletter.item.component.PiercingWeapon;
 import org.geysermc.paletter.item.component.Projectile;
@@ -81,7 +81,7 @@ public final class ItemWire {
             case Damage value -> damage(value, ctx, out);
             case DamageAbsorption value -> damageAbsorption(value, ctx, out);
             case Digger value -> digger(value, ctx, out);
-            case DisplayName value -> displayName(value, ctx, out);
+            case ItemDisplayName value -> displayName(value, ctx, out);
             case Durability value -> durability(value, ctx, out);
             case DurabilitySensor value -> durabilitySensor(value, ctx, out);
             case Dyeable value -> dyeable(value, ctx, out);
@@ -217,7 +217,7 @@ public final class ItemWire {
         out.put("minecraft:digger.use_efficiency", Wire.bool(v5));
     }
 
-    private static void displayName(DisplayName c, WireContext ctx, WireNode out) {
+    private static void displayName(ItemDisplayName c, WireContext ctx, WireNode out) {
         String v0 = c.value();
         if (v0 != null) {
             out.put("minecraft:display_name.value", v0);
@@ -671,9 +671,9 @@ public final class ItemWire {
     }
 
     /**
-     * Writes the {@link MenuCategory} of a definition, or for null what BDS sends for a definition without one.
+     * Writes the {@link ItemMenuCategory} of a definition, or for null what BDS sends for a definition without one.
      */
-    public static void menuCategory(@Nullable MenuCategory c, @NonNull WireContext ctx,
+    public static void menuCategory(@Nullable ItemMenuCategory c, @NonNull WireContext ctx,
             @NonNull WireNode out) {
         if (c == null) {
             out.put("item_properties.creative_category", 5);
@@ -681,7 +681,7 @@ public final class ItemWire {
             out.put("item_properties.hidden_in_commands", (byte) 2);
             return;
         }
-        MenuCategory.Category v0 = c.category();
+        ItemMenuCategory.Category v0 = c.category();
         if (v0 != null) {
             switch (v0) {
                 case CONSTRUCTION -> out.put("item_properties.creative_category", 1);

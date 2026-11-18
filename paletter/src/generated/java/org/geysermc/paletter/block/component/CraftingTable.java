@@ -8,7 +8,6 @@ import java.util.Objects;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.geysermc.paletter.annotation.BedrockFormat;
-import org.geysermc.paletter.annotation.Experimental;
 
 /**
  * Makes your block into a custom crafting table which enables the crafting table UI and the ability to craft
@@ -28,7 +27,6 @@ import org.geysermc.paletter.annotation.Experimental;
  * @since 1.0.0
  */
 @BedrockFormat("1.19.50")
-@Experimental
 public record CraftingTable(@NonNull List<String> craftingTags,
         @Nullable String tableName) implements BlockComponent {
     /**

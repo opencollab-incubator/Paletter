@@ -283,6 +283,42 @@ public final class JavaWriter {
     /**
      * @param itemNames item identifier to the name of its {@code BedrockItems} constant
      */
+    /**
+     * {@code BedrockExperiments}: one String constant per toggle that a captured build had current, with {@code @Since} and
+     * {@code @Until} naming the bundled data versions.
+     */
+    static String experiments(List<ConstantsGenerator.Toggle> toggles, String oldest) {
+        StringBuilder out = new StringBuilder(HEADER);
+        out.append("package ").append(ConstantsGenerator.PACKAGE).append(";\n\n");
+        out.append("import org.geysermc.paletter.annotation.Since;\n");
+        if (toggles.stream().anyMatch(t -> t.until() != null)) {
+            out.append("import org.geysermc.paletter.annotation.Until;\n");
+        }
+        out.append("\n/**\n * The experiment toggles of Bedrock: the ids to give {@code VanillaContent#experiments(String...)} and what\n");
+        out.append(" * {@link org.geysermc.paletter.annotation.BedrockExperiment @BedrockExperiment} names. Every toggle a captured\n");
+        out.append(" * Bedrock Dedicated Server had current is here ({@code data/bds}); toggles retired before the oldest capture are not.\n");
+        out.append(" * {@code @Since} is the first bundled data version whose capture has the toggle ({@code ").append(oldest)
+            .append("} is the oldest, so it may be older),\n");
+        out.append(" * {@code @Until} the first one where it no longer does: Bedrock released or retired the experiment, and the toggle does nothing.\n");
+        out.append(" *\n * @since ").append(CLASS_SINCE).append("\n */\n");
+        out.append("public final class BedrockExperiments {\n");
+        for (ConstantsGenerator.Toggle toggle : toggles) {
+            out.append("    /**\n     * {@code ").append(toggle.id()).append("}");
+            if (toggle.name() != null) {
+                out.append(": ").append(toggle.name()).append('.');
+            }
+            out.append("\n     */\n");
+            out.append("    @Since(\"").append(toggle.since()).append("\")\n");
+            if (toggle.until() != null) {
+                out.append("    @Until(\"").append(toggle.until()).append("\")\n");
+            }
+            out.append("    public static final String ").append(toggle.id().toUpperCase(java.util.Locale.ROOT)).append(" = \"")
+                .append(toggle.id()).append("\";\n\n");
+        }
+        out.append("    private BedrockExperiments() {\n    }\n}\n");
+        return out.toString();
+    }
+
     static String variants(List<Variant> variants, Map<String, String> itemNames, String version) {
         StringBuilder out = new StringBuilder(HEADER);
         out.append("package ").append(ConstantsGenerator.PACKAGE).append(";\n\n");

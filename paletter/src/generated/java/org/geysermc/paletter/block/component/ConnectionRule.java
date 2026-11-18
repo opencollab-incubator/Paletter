@@ -7,8 +7,8 @@ import java.util.List;
 import java.util.Objects;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
+import org.geysermc.paletter.annotation.BedrockExperiment;
 import org.geysermc.paletter.annotation.BedrockFormat;
-import org.geysermc.paletter.annotation.Experimental;
 
 /**
  * Defines whether other blocks such as fences, walls, bars, and glass panes are allowed to connect to this
@@ -27,7 +27,7 @@ import org.geysermc.paletter.annotation.Experimental;
  * @since 1.0.0
  */
 @BedrockFormat("1.21.130")
-@Experimental
+@BedrockExperiment("upcoming_creator_features")
 public record ConnectionRule(ConnectionRule. @NonNull AcceptsConnectionsFrom acceptsConnectionsFrom,
         @NonNull List<ConnectionRule.EnabledDirections> enabledDirections) implements BlockComponent {
     /**

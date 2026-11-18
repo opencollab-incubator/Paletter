@@ -122,6 +122,50 @@ class ConstantsGeneratorTest {
         assertTrue(again.getAsJsonObject("APPLE").get("education").getAsBoolean());
     }
 
+    private static JsonObject toggles(String... idAndStatus) {
+        JsonObject toggles = new JsonObject();
+        for (int i = 0; i < idAndStatus.length; i += 2) {
+            JsonObject toggle = new JsonObject();
+            toggle.addProperty("status", idAndStatus[i + 1]);
+            if (idAndStatus[i + 1].equals("current")) {
+                toggle.addProperty("name", "Name of " + idAndStatus[i]);
+            }
+            toggles.add(idAndStatus[i], toggle);
+        }
+        return toggles;
+    }
+
+    @Test
+    void aToggleIsSinceTheFirstCaptureThatHasItCurrentAndUntilTheFirstOneThatDoesNot() {
+        java.util.Map<String, String[]> history = new java.util.TreeMap<>();
+        ConstantsGenerator.Sources.trackToggles(history, toggles("never", "retired", "drop", "current", "kept", "current"), "1.0");
+        ConstantsGenerator.Sources.trackToggles(history, toggles("never", "retired", "drop", "retired", "kept", "current", "late", "current"), "1.1");
+        ConstantsGenerator.Sources.trackToggles(history, toggles("drop", "retired", "kept", "current", "late", "current"), "1.2");
+        assertEquals(java.util.Set.of("drop", "kept", "late"), history.keySet(), "a toggle that was never current has no constant");
+        assertEquals(List.of("Name of drop", "1.0", "1.1"), List.of(history.get("drop")));
+        assertNull(history.get("kept")[2]);
+        assertEquals("1.1", history.get("late")[1]);
+        // A retired toggle that is current again is open again
+        ConstantsGenerator.Sources.trackToggles(history, toggles("drop", "current"), "1.3");
+        assertNull(history.get("drop")[2]);
+        assertEquals("1.0", history.get("drop")[1]);
+    }
+
+    @Test
+    void theExperimentConstantsAreWrittenFromTheToggles() {
+        ConstantsGenerator.Sources sources = new ConstantsGenerator.Sources(List.of(version("1.0", 100, "minecraft:plain")), Map.of(), Map.of(),
+            java.util.Set.of(), java.util.Set.of(), Map.of(), List.of(new ConstantsGenerator.Toggle("y_2026_drop_3", "Drop 3", "1.0", "1.1"),
+            new ConstantsGenerator.Toggle("gametest", null, "1.0", null)));
+        String source = ConstantsGenerator.generate(sources.releases().getFirst(), null, names(), new JsonObject(), "2.0.0", sources)
+            .files().get(ConstantsGenerator.PACKAGE_DIR + "/BedrockExperiments.java");
+        assertTrue(source.contains("@Since(\"1.0\")\n    @Until(\"1.1\")\n    public static final String Y_2026_DROP_3 = \"y_2026_drop_3\";"), source);
+        assertTrue(source.contains("@Since(\"1.0\")\n    public static final String GAMETEST = \"gametest\";"), source);
+        assertTrue(source.contains("import org.geysermc.paletter.annotation.Until;"));
+        // Without any toggle there is no class
+        assertFalse(ConstantsGenerator.generate(sources(Map.of(), java.util.Set.of(), version("1.0", 100, "minecraft:plain")).releases().getFirst(), null,
+            names(), new JsonObject(), "2.0.0").files().containsKey(ConstantsGenerator.PACKAGE_DIR + "/BedrockExperiments.java"));
+    }
+
     private static ConstantsGenerator.Names names() {
         return ConstantsGenerator.Names.of(Renames.NONE, List.of(), new JsonObject());
     }

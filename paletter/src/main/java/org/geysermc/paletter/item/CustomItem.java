@@ -6,7 +6,7 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.geysermc.paletter.creative.CreativePlacement;
 import org.geysermc.paletter.item.component.ItemComponent;
-import org.geysermc.paletter.item.component.MenuCategory;
+import org.geysermc.paletter.item.component.ItemMenuCategory;
 import org.geysermc.paletter.item.component.Tags;
 import org.geysermc.paletter.vanilla.BedrockItemType;
 
@@ -38,7 +38,7 @@ import java.util.Objects;
 public final class CustomItem {
     private final String identifier;
     private final List<ItemComponent> components;
-    private final @Nullable MenuCategory menuCategory;
+    private final @Nullable ItemMenuCategory menuCategory;
     private final @Nullable CreativePlacement creative;
     private final BedrockItemType type;
 
@@ -49,7 +49,7 @@ public final class CustomItem {
      *                     without one, Bedrock's default)
      * @param creative where it goes in the creative inventory, or null to leave it out
      */
-    private CustomItem(@NonNull String identifier, @NonNull List<ItemComponent> components, @Nullable MenuCategory menuCategory,
+    private CustomItem(@NonNull String identifier, @NonNull List<ItemComponent> components, @Nullable ItemMenuCategory menuCategory,
                       @Nullable CreativePlacement creative) {
         this.identifier = Objects.requireNonNull(identifier, "identifier");
         this.components = List.copyOf(components);
@@ -76,7 +76,7 @@ public final class CustomItem {
      * @return the description's {@code menu_category}, or null: then it follows {@link #creative()} (and without one,
      *         Bedrock's default)
      */
-    public @Nullable MenuCategory menuCategory() {
+    public @Nullable ItemMenuCategory menuCategory() {
         return menuCategory;
     }
 
@@ -154,7 +154,7 @@ public final class CustomItem {
     public static final class Builder {
         private final String identifier;
         private final List<ItemComponent> components = new ArrayList<>();
-        private @Nullable MenuCategory menuCategory;
+        private @Nullable ItemMenuCategory menuCategory;
         private @Nullable CreativePlacement creative;
 
         private Builder(String identifier) {
@@ -192,7 +192,7 @@ public final class CustomItem {
          * Sets the description's {@code menu_category} explicitly. Without it, the item's {@link #creative} placement
          * decides it.
          */
-        public @NonNull Builder menuCategory(@Nullable MenuCategory menuCategory) {
+        public @NonNull Builder menuCategory(@Nullable ItemMenuCategory menuCategory) {
             this.menuCategory = menuCategory;
             return this;
         }

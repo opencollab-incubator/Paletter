@@ -52,7 +52,7 @@ final class ApiSource {
     static final ClassName NON_NULL = ClassName.get("org.checkerframework.checker.nullness.qual", "NonNull");
     static final ClassName NULLABLE = ClassName.get("org.checkerframework.checker.nullness.qual", "Nullable");
     static final ClassName BEDROCK_FORMAT = ClassName.get("org.geysermc.paletter.annotation", "BedrockFormat");
-    static final ClassName EXPERIMENTAL = ClassName.get("org.geysermc.paletter.annotation", "Experimental");
+    static final ClassName BEDROCK_EXPERIMENT = ClassName.get("org.geysermc.paletter.annotation", "BedrockExperiment");
     static final ClassName SERVER_ONLY = ClassName.get("org.geysermc.paletter.annotation", "ServerOnly");
     static final ClassName SINCE_PREVIEW = ClassName.get("org.geysermc.paletter.annotation", "SincePreview");
     static final ClassName REPLACED_BY = ClassName.get("org.geysermc.paletter.annotation", "ReplacedBy");
@@ -283,8 +283,8 @@ final class ApiSource {
         if (top && c.minFormat != null) {
             type.addAnnotation(AnnotationSpec.builder(BEDROCK_FORMAT).addMember("value", "$S", c.minFormat).build());
         }
-        if (top && !c.experiments.isEmpty()) {
-            type.addAnnotation(EXPERIMENTAL);
+        if (top && !c.toggles.isEmpty()) {
+            type.addAnnotation(AnnotationSpec.builder(BEDROCK_EXPERIMENT).addMember("value", "$S", c.toggles.getFirst()).build());
         }
         if (top && c.sincePreview != null) {
             type.addAnnotation(AnnotationSpec.builder(SINCE_PREVIEW).addMember("value", "$S", c.sincePreview).build());

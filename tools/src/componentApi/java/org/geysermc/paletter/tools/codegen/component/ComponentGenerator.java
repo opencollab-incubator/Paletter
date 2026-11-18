@@ -33,6 +33,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -44,6 +46,7 @@ import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Stream;
 
 /**
  * Generates Paletter's custom item and block component API from the component model in {@code data/model}:
@@ -75,7 +78,27 @@ public final class ComponentGenerator {
      * @param since the Paletter version for {@code @since}
      */
     public record Inputs(JsonObject components, JsonObject fixtures, JsonObject feedback, JsonObject mappings, Map<String, String> transforms,
-                         JsonObject api, String since) {
+                         JsonObject api, String since, Context context) {
+        public Inputs(JsonObject components, JsonObject fixtures, JsonObject feedback, JsonObject mappings, Map<String, String> transforms,
+                      JsonObject api, String since) {
+            this(components, fixtures, feedback, mappings, transforms, api, since, Context.NONE);
+        }
+
+        public Inputs withContext(Context context) {
+            return new Inputs(components, fixtures, feedback, mappings, transforms, api, since, context);
+        }
+    }
+
+    /**
+     * What the generated names and annotations depend on besides the model.
+     *
+     * @param reserved the simple names of the public types that are not generated here (hand-written ones, the constants):
+     *                 a generated type with such a name gets a {@code Block}/{@code Item} prefix, so that simple names stay unique
+     * @param toggles experiment name as the creator docs write it ({@code Upcoming Creator Features}) to toggle id
+     *                ({@code upcoming_creator_features}), as the captured servers name them
+     */
+    public record Context(Set<String> reserved, Map<String, String> toggles) {
+        public static final Context NONE = new Context(Set.of(), Map.of());
     }
 
     public static final String API_FILE = "api.json";
@@ -96,10 +119,14 @@ public final class ComponentGenerator {
     }
 
     public static Inputs read(Path modelDir, String since) throws IOException {
+        return read(modelDir, since, Context.NONE);
+    }
+
+    public static Inputs read(Path modelDir, String since, Context context) throws IOException {
         Fixtures fixtures = Fixtures.read(modelDir);
         JsonObject components = Model.GSON.toJsonTree(fixtures.apply(Model.read(modelDir.resolve("components.json")))).getAsJsonObject();
         return new Inputs(components, fixtures.json, fixtures.feedback, json(modelDir.resolve("mappings.json")),
-            HandTransforms.BY_PATH, json(modelDir.resolve(API_FILE)), since);
+            HandTransforms.BY_PATH, json(modelDir.resolve(API_FILE)), since, context);
     }
 
     private static JsonObject json(Path file) throws IOException {
@@ -262,6 +289,48 @@ public final class ComponentGenerator {
                 throw new GenerationException("name collision: " + other + " and " + c.id + " are both " + key + "; set one in api.json classes");
             }
         }
+        prefixCollisions();
+    }
+
+    /**
+     * Simple names are unique across the public API. A generated component whose name another generated component or a
+     * public type that is not generated here ({@link Context#reserved}) also has gets {@code Block} or {@code Item} in front
+     * (traits count as blocks). The set of colliding names is computed, never listed. Nested types are scoped by their
+     * owner, but one that has the name of a top level type would shadow it: that fails and asks for an api.json typeNames entry.
+     */
+    private void prefixCollisions() {
+        Map<String, Integer> counts = new HashMap<>();
+        model.components.forEach(c -> counts.merge(c.className, 1, Integer::sum));
+        for (Comp c : model.components) {
+            c.baseName = c.className;
+            if (counts.get(c.className) > 1 || in.context().reserved().contains(c.className)) {
+                c.className = (c.kind == Kind.ITEM ? "Item" : "Block") + c.className;
+                c.root.name = c.className;
+            }
+        }
+        for (Comp c : model.components) {
+            Map<String, String> renamed = new HashMap<>();
+            model.components.stream().filter(o -> o.kind == c.kind).forEach(o -> renamed.put(o.baseName, o.className));
+            for (ObjType o : Stream.concat(Stream.of(c.root), c.types.values().stream()).toList()) {
+                o.fields.forEach(f -> f.type = renameRefs(f.type, renamed));
+            }
+        }
+        Set<String> top = new HashSet<>(in.context().reserved());
+        for (Comp c : model.components) {
+            if (!top.add(c.className)) {
+                throw new GenerationException("name collision: " + c.id + " is still " + c.className + " after the prefix; set one in api.json classes");
+            }
+        }
+        for (Comp c : model.components) {
+            List<String> nested = new ArrayList<>(c.types.keySet());
+            nested.addAll(c.enums.keySet());
+            for (String name : nested) {
+                if (top.contains(name)) {
+                    throw new GenerationException("name collision: " + c.id + " has a nested type " + name + ", which shadows the public type of that name;"
+                        + " name it in api.json typeNames");
+                }
+            }
+        }
     }
 
     /**
@@ -314,6 +383,10 @@ public final class ComponentGenerator {
         List<String> experiments = new ArrayList<>();
         doc.getAsJsonArray("experiments").forEach(e -> experiments.add(e.getAsString()));
         c.experiments = experiments;
+        c.toggles = experiments.stream().map(e -> in.context().toggles().get(e)).filter(java.util.Objects::nonNull).distinct().sorted().toList();
+        if (c.toggles.size() > 1) {
+            throw new GenerationException(c.id + " needs several experiment toggles " + c.toggles + ": @BedrockExperiment takes one; make it repeatable");
+        }
         String className = apiString("classes", c.id);
         c.className = className != null ? className : standalone != null ? standalone : pascal(c.name.replaceFirst("^[a-z_]+:", ""));
         javaName(c.className, c.id);
@@ -1302,6 +1375,16 @@ public final class ComponentGenerator {
                 }
             }
         }
+    }
+
+    /** References to other components (api.json {@code component:Name}) follow the prefix their target got. */
+    private static Type renameRefs(Type t, Map<String, String> renamed) {
+        return switch (t) {
+            case ApiModel.ComponentRef r -> new ApiModel.ComponentRef(renamed.getOrDefault(r.className(), r.className()));
+            case ListOf l -> new ListOf(renameRefs(l.element(), renamed));
+            case MapOf m -> new MapOf(renameRefs(m.value(), renamed));
+            default -> t;
+        };
     }
 
     private static void rewrite(ObjType o, Map<ObjType, ObjType> replace) {
