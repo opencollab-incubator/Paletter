@@ -43,6 +43,7 @@ public final class BlockHashes {
      * dumps: every state of 26.40, 26.50 and 26.60 matches, e.g. {@code minecraft:air} is {@code -604749536}.
      *
      * @param state a block state as {@code {name, states}}; other keys are ignored
+     * @return the hash, which is the runtime id of the state
      */
     public static int hash(@NonNull NbtMap state) {
         String name = BlockStates.name(state);

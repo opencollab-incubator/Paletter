@@ -2,11 +2,12 @@ package org.geysermc.paletter.tools.update;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
+import org.geysermc.paletter.tools.model.Fixtures;
 import org.geysermc.paletter.tools.model.Model;
 import org.geysermc.paletter.tools.model.Model.Component;
 import org.geysermc.paletter.tools.model.Model.Field;
 import org.geysermc.paletter.tools.model.addon.AddonGenerator;
-import org.geysermc.paletter.tools.model.infer.Wire.Leaf;
+import org.geysermc.paletter.tools.model.rule.Leaf;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,18 +24,26 @@ import java.util.TreeSet;
  *     <li>the boundaries are the versions BDS names for the component or one of its keys in its own texts, those the
  *     wiki's format histories mark Versioned, and the {@code minFormatVersion} of the docs;</li>
  *     <li>per component, the base at every boundary, at the known version just below it, and at the capture's format
- *     (the reference); per key that has a boundary, the same with the key set to its sample.</li>
+ *     (the reference); per key that has a boundary, the same with the key set to its sample;</li>
+ *     <li>a component BDS rejects at the capture's format is asked at every known format, with a control of the same format
+ *     ({@link #plan}).</li>
  * </ul>
  * The report ({@code format-sweep.json} next to the capture) lists, per component and key, what BDS refused and which
- * wire leaves differ from the reference, with the bits that differ for numbers. It is evidence for a hand transform (BDS
- * decides; nothing is inferred from it), not an input of {@code infer}.
+ * wire leaves differ from the reference, with the bits that differ for numbers: evidence for a hand transform (BDS decides).
+ * {@code infer} reads the capture itself for the rejected components ({@code FormatInference}: each variant against the control of its
+ * own format).
  */
 final class FormatSweep {
     private FormatSweep() {
     }
 
-    /** Adds the sweep's variants to a generator made with {@link AddonGenerator#empty}. */
-    static void plan(AddonGenerator generator, KeyDiscovery.Evidence evidence, String top) {
+    /**
+     * Adds the sweep's variants to a generator made with {@link AddonGenerator#empty}. A component BDS rejects at the current
+     * format ({@code unknown} or {@code deprecated} in the feedback) may still be accepted at an older one, so it is asked at every
+     * known format, not only around its boundaries: its base and the fixtures' {@code sweepValues}, each beside a control (the
+     * companions alone) at the same format, as the envelope of the file changes with the format.
+     */
+    static void plan(AddonGenerator generator, Fixtures fixtures, KeyDiscovery.Evidence evidence, String top) {
         Model model = generator.model();
         TreeSet<String> all = new TreeSet<>(AddonGenerator::compare);
         evidence.bdsVersions.values().forEach(all::addAll);
@@ -44,6 +53,7 @@ final class FormatSweep {
             c.fields().forEach(f -> add(all, f.minFormatVersion()));
         });
         all.removeIf(v -> AddonGenerator.compare(v, top) > 0);
+        all.add(top);
         for (Component c : model.components()) {
             TreeSet<String> component = new TreeSet<>(AddonGenerator::compare);
             add(component, c.minFormatVersion());
@@ -61,6 +71,15 @@ final class FormatSweep {
                 }
             }
             component.removeIf(v -> AddonGenerator.compare(v, top) > 0);
+            if (rejected(fixtures, c)) {
+                for (String format : all) {
+                    if (generator.atFormat(c.id(), format, "", null) != null) {
+                        generator.controlAt(c.id(), format);
+                        fixtures.sweepValues(c.id()).forEach(value -> generator.atFormat(c.id(), format, "", value));
+                    }
+                }
+                continue;
+            }
             if (component.isEmpty() && fields.isEmpty()) {
                 continue;
             }
@@ -73,6 +92,11 @@ final class FormatSweep {
                 }
             });
         }
+    }
+
+    /** Whether BDS rejected the component at the current format: it does not know it, or calls it deprecated. */
+    static boolean rejected(Fixtures fixtures, Component c) {
+        return fixtures.fact(c.id(), "", "unknown") || fixtures.fact(c.id(), "", "deprecated");
     }
 
     private static void add(Set<String> into, String version) {
@@ -110,7 +134,10 @@ final class FormatSweep {
                              Map<String, List<String>> log) {
         Map<String, Map<String, Map<String, AddonGenerator.Variant>>> grouped = new TreeMap<>();
         for (AddonGenerator.Variant v : generator.variants()) {
-            grouped.computeIfAbsent(v.componentId(), k -> new TreeMap<>()).computeIfAbsent(v.path(), k -> new TreeMap<>(AddonGenerator::compare))
+            if (v.role().equals("control")) {
+                continue; // only compared with, by the mapping inference
+            }
+            grouped.computeIfAbsent(v.componentId(), k -> new TreeMap<>()).computeIfAbsent(group(v), k -> new TreeMap<>(AddonGenerator::compare))
                 .put(v.format(), v);
         }
         JsonObject components = new JsonObject();
@@ -148,7 +175,7 @@ final class FormatSweep {
                 if (!same.isEmpty()) {
                     result.add("sameAsReference", same);
                 }
-                paths.add(path.isEmpty() ? "(base)" : path, result);
+                paths.add(path, result);
             });
             components.add(component, paths);
         });
@@ -158,6 +185,11 @@ final class FormatSweep {
         json.addProperty("bdsVersion", bdsVersion);
         json.add("components", components);
         return json;
+    }
+
+    /** {@code (base)}, {@code (base) <value>} for a whole value of the fixtures' {@code sweepValues}, or the field path. */
+    private static String group(AddonGenerator.Variant v) {
+        return v.path().isEmpty() ? "(base)" + (v.value() == null ? "" : " " + v.value()) : v.path();
     }
 
     private static JsonObject differences(Map<String, Leaf> reference, Map<String, Leaf> wire) {

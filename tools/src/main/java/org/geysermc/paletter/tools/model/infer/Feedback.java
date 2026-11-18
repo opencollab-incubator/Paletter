@@ -6,8 +6,12 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
 import org.geysermc.paletter.tools.model.Model;
 import org.geysermc.paletter.tools.model.addon.AddonGenerator;
+import org.geysermc.paletter.tools.model.addon.JsonPath;
+import org.geysermc.paletter.tools.model.rule.Linear;
+import org.geysermc.paletter.tools.model.rule.Rule;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -16,6 +20,7 @@ import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 /**
  * {@code data/model/bds-feedback.json}: what the BDS content log says about the JSON schema, per component and
@@ -87,7 +92,7 @@ public final class Feedback {
     /**
      * @param variant the variant the line belongs to, or null if it names none
      */
-    void add(String kind, String line, MappingInference.Variant variant) {
+    void add(String kind, String line, SpecCaptures.Variant variant) {
         if (variant != null) {
             links(line, variant);
         }
@@ -107,6 +112,8 @@ public final class Feedback {
             fact = "nonEmpty";
         } else if (message.contains("not present in the Schema")) {
             fact = "unknown";
+        } else if (message.matches("member \".*\" is deprecated")) {
+            fact = "deprecated"; // the whole component is rejected at the current format
         } else if (message.contains("missing required field")) {
             fact = "required";
         } else if (message.contains("expected an array")) {
@@ -135,11 +142,16 @@ public final class Feedback {
             fact = "constraint " + message.replaceAll("for block: .*", "").trim();
         } else if (message.contains("expects one of the following strings")) {
             fact = "values " + message.replaceAll(".*following strings: ", "").replaceAll("\\.? ?Found:.*", "").trim();
+        } else if ((range = ALTERNATIVES.matcher(message)).find()) {
+            // expected string to match the "none|all|sword" regex: a plain alternation lists the accepted strings
+            fact = "values " + Arrays.stream(range.group(1).split("\\|")).map(v -> "'" + v + "'").collect(Collectors.joining(", "));
         }
         if (fact != null) {
             facts.computeIfAbsent(component, k -> new TreeMap<>()).computeIfAbsent(path, k -> new TreeSet<>()).add(fact);
         }
     }
+
+    private static final Pattern ALTERNATIVES = Pattern.compile("expected string to match the \"\\^?(\\w+(?:\\|\\w+)+)\\$?\" regex");
 
     /**
      * The fields BDS ties to the field a variant varies, where a line of the variant quotes the value another field has in
@@ -152,7 +164,7 @@ public final class Feedback {
      * field the variant sets (the same message for a variant of {@code identifier} whose base has {@code bone_visibility})
      * is a {@code conflicts} fact of that other field.
      */
-    private void links(String line, MappingInference.Variant variant) {
+    private void links(String line, SpecCaptures.Variant variant) {
         if (!variant.role().equals("field") || !variant.linked().isEmpty() || variant.json() == null) {
             return;
         }
@@ -162,22 +174,22 @@ public final class Feedback {
         }
         // a line that quotes what the variant gives its own field is about that value ("Bad expression: +1, for bone visibilities
         // of bone bone_a of geometry geometry.paletter_cube"), wherever it says the value sits
-        JsonElement varied = variant.path().isEmpty() ? variant.json() : MappingInference.jsonAt(variant.json(), variant.path());
+        JsonElement varied = variant.path().isEmpty() ? variant.json() : SpecCaptures.jsonAt(variant.json(), variant.path());
         List<String> ownValues = new ArrayList<>();
         leaves(varied, ownValues);
         boolean aboutOwnValue = ownValues.stream().anyMatch(value -> !value.isBlank()
             && Pattern.compile("(?<![\\w.:])" + Pattern.quote(value) + "(?![\\w:])").matcher(message).find());
         for (String other : aboutOwnValue ? List.<String>of() : quoted(variant.json(), variant.path(), message)) {
-            String value = MappingInference.jsonAt(variant.json(), other).getAsString();
+            String value = SpecCaptures.jsonAt(variant.json(), other).getAsString();
             Matcher identifier = Pattern.compile("([a-z]+) identifier " + Pattern.quote(value)).matcher(message);
             String fact = message.contains(OWN_IDENTIFIER) && identifier.find() ? "identifier " + other + " " + identifier.group(1) : "conflicts " + other + " '" + value + "'";
             facts.computeIfAbsent(variant.component(), k -> new TreeMap<>()).computeIfAbsent(variant.path(), k -> new TreeSet<>()).add(fact);
         }
-        JsonElement own = variant.path().isEmpty() ? null : MappingInference.jsonAt(variant.json(), variant.path());
+        JsonElement own = variant.path().isEmpty() ? null : SpecCaptures.jsonAt(variant.json(), variant.path());
         if (own != null && own.isJsonPrimitive() && own.getAsJsonPrimitive().isString() && !message.contains(OWN_IDENTIFIER)
             && quotes(message, own.getAsString())) {
             members(variant.json(), "", other -> {
-                if (!related(other, variant.path()) && names(message, AddonGenerator.tokens(other).getLast())) {
+                if (!related(other, variant.path()) && names(message, JsonPath.tokens(other).getLast())) {
                     facts.computeIfAbsent(variant.component(), k -> new TreeMap<>()).computeIfAbsent(other, k -> new TreeSet<>())
                         .add("conflicts " + variant.path() + " '" + own.getAsString() + "'");
                 }
@@ -229,7 +241,7 @@ public final class Feedback {
      * name ({@code "minecraft:block_placer":}), the variants' identifiers as {@code <id>}.
      */
     static String message(String line) {
-        return MappingInference.errorText(line).replaceFirst("^\\[[A-Za-z]+]\\s+(\"[^\"]+\"|'[^']+'):\\s*", "");
+        return SpecCaptures.errorText(line).replaceFirst("^\\[[A-Za-z]+]\\s+(\"[^\"]+\"|'[^']+'):\\s*", "");
     }
 
     /**
@@ -257,7 +269,7 @@ public final class Feedback {
         Set<String> words = new java.util.HashSet<>(List.of(text.split("[^a-z0-9_]+")));
         Set<String> out = new LinkedHashSet<>();
         for (Model.Field field : component.fields()) {
-            String last = AddonGenerator.tokens(field.path()).stream().filter(t -> !t.equals("[]") && !t.equals("{}")).reduce((a, b) -> b).orElse("");
+            String last = JsonPath.tokens(field.path()).stream().filter(t -> !t.equals("[]") && !t.equals("{}")).reduce((a, b) -> b).orElse("");
             if (!related(field.path(), varied) && words.contains(last)) {
                 out.add(field.path());
             }
@@ -300,6 +312,11 @@ public final class Feedback {
         facts.computeIfAbsent(component, k -> new TreeMap<>()).computeIfAbsent(path, k -> new TreeSet<>()).add("step " + step);
     }
 
+    /** The component is accepted at an older format ({@code format <F>}), with a wire that differs from the companions alone ({@link FormatInference}). */
+    void format(String component, String format) {
+        facts.computeIfAbsent(component, k -> new TreeMap<>()).computeIfAbsent("", k -> new TreeSet<>()).add("format " + format);
+    }
+
     /** Forgets that a member is unknown where {@code other} (the newest preview's content log) does not say so. */
     void knownIn(Feedback other) {
         facts.forEach((component, paths) -> paths.forEach((path, set) -> {
@@ -331,5 +348,26 @@ public final class Feedback {
             json.add(component, c);
         });
         return json;
+    }
+
+    /**
+     * Feeds the whole steps of a component's newest rules back to the generator ({@link Feedback#step}): a linear rule onto
+     * an integer leaf whose input step ({@code 1 / scale}) is a whole number of at least 2.
+     */
+    void steps(String componentId, JsonObject newest) {
+        if (!newest.has("fields")) {
+            return;
+        }
+        for (Map.Entry<String, JsonElement> field : newest.getAsJsonObject("fields").entrySet()) {
+            JsonObject result = field.getValue().getAsJsonObject();
+            for (Rule rule : Rule.all(result)) {
+                if (rule instanceof Linear linear && "int".equals(rule.nbt)) {
+                    double step = Math.abs(1 / linear.scale);
+                    if (step >= 2 && Math.abs(step - Math.rint(step)) < 1e-3) {
+                        step(componentId, field.getKey(), Math.round(step));
+                    }
+                }
+            }
+        }
     }
 }

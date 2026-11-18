@@ -123,6 +123,25 @@ class FallbackTest {
     }
 
     @Test
+    void identifiersWorkLikeTypes() {
+        Palette vanilla = PALETTER.palette(OLDEST);
+        int block = blockWithoutFallback(vanilla);
+        String name = BlockStates.name(Ids.canonicalBlocks(vanilla).state(block));
+        Palette withBlock = with(Fallbacks.builder().block(name, BlockFallback.of(BedrockBlocks.STONE))).palette(OLDEST);
+        assertEquals("minecraft:stone", BlockStates.name(Ids.blockAt(withBlock, block).getState()));
+
+        int item = missingItem(vanilla);
+        String itemName = Ids.canonicalItems(vanilla).variant(item).identifier();
+        Palette withItem = with(Fallbacks.builder().item(itemName, ItemFallback.of(BedrockItems.STICK))).palette(OLDEST);
+        assertEquals("minecraft:stick", Ids.itemAt(withItem, item).definition().getIdentifier());
+
+        assertThrows(NullPointerException.class, () -> Fallbacks.builder().block((String) null, BlockFallback.of(BedrockBlocks.STONE)));
+        assertThrows(NullPointerException.class, () -> Fallbacks.builder().item((String) null, ItemFallback.of(BedrockItems.STICK)));
+        assertThrows(NullPointerException.class, () -> Fallbacks.builder().block(name, (BlockFallback) null));
+        assertThrows(NullPointerException.class, () -> Fallbacks.builder().item(itemName, (ItemFallback) null));
+    }
+
+    @Test
     void fallbacksApplyPerVersion() {
         Palette vanilla = PALETTER.palette(OLDEST);
         int block = blockWithoutFallback(vanilla);

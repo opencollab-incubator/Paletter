@@ -6,6 +6,7 @@ import org.geysermc.paletter.creative.CreativeCategory;
 import org.geysermc.paletter.data.DataVersion;
 import org.geysermc.paletter.block.CustomBlock;
 import org.geysermc.paletter.block.component.OnPlayerPlacing;
+import org.geysermc.paletter.block.component.ScriptHooks;
 import org.geysermc.paletter.item.CustomItem;
 import org.geysermc.paletter.item.RegisteredItem;
 import org.geysermc.paletter.item.component.FrameCount;
@@ -13,6 +14,7 @@ import org.geysermc.paletter.item.component.Icon;
 import org.geysermc.paletter.item.component.MaxStackSize;
 import org.geysermc.paletter.item.component.MiningSpeed;
 import org.geysermc.paletter.item.component.RenderOffsets;
+import org.geysermc.paletter.item.component.UseOnHook;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -195,6 +197,34 @@ class WireOnlyComponentTest {
         CustomBlock replaced = CustomBlock.builder("example:slab").component(OnPlayerPlacing.of("a:b")).component(OnPlayerPlacing.of("c:d")).build();
         assertEquals("c:d", replaced.component(OnPlayerPlacing.class).triggerType());
         assertEquals("minecraft:on_player_placing", OnPlayerPlacing.of("a:b").name());
+    }
+
+    @Test
+    void scriptHooksAreThreeBytesInTheNewForm() {
+        for (DataVersion version : PALETTER.versions()) {
+            for (boolean interact : new boolean[] {false, true}) {
+                for (boolean placing : new boolean[] {false, true}) {
+                    Palette palette = Palettes.palette(version.protocolVersion(), PaletteLayer.builder("hooks")
+                        .block(CustomBlock.builder("example:door").component(ScriptHooks.of(interact, placing)).build()).build());
+                    NbtMap components = palette.blocks().blockProperties().stream().filter(b -> b.getName().equals("example:door")).findFirst()
+                        .orElseThrow().getProperties().getCompound("components");
+                    assertEquals(NbtMap.builder().putByte("hasPlayerInteract", (byte) (interact ? 1 : 0))
+                        .putByte("hasPlayerPlacing", (byte) (placing ? 1 : 0)).putByte("isV1Component", (byte) 0).build(),
+                        components.getCompound("minecraft:custom_components"), version.toString());
+                }
+            }
+        }
+        assertEquals("minecraft:custom_components", ScriptHooks.of(true, false).name());
+    }
+
+    @Test
+    void useOnHookIsThePublisherByte() {
+        for (DataVersion version : PALETTER.versions()) {
+            NbtMap hook = components(base().component(UseOnHook.of(true)).build(), version).getCompound("minecraft:publisher_on_use_on");
+            assertEquals(NbtMap.builder().putByte("autoSucceedOnClient", (byte) 1).build(), hook, version.toString());
+            assertFalse(components(base().build(), version).containsKey("minecraft:publisher_on_use_on"));
+        }
+        assertEquals("minecraft:publisher_on_use_on", UseOnHook.of(false).name());
     }
 
     @Test

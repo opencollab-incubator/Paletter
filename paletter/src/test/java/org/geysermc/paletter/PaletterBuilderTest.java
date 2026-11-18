@@ -254,8 +254,8 @@ class PaletterBuilderTest {
     @Test
     void creativeOrderingIsGlobal() {
         PaletteLayer layer = PaletteLayer.builder("blocks").block(CustomBlock.builder("test:block_menu_only").menuCategory(
-            org.geysermc.paletter.block.component.MenuCategory.builder()
-                .category(org.geysermc.paletter.block.component.MenuCategory.Category.CONSTRUCTION).build()).build()).build();
+            org.geysermc.paletter.block.component.BlockMenuCategory.builder()
+                .category(org.geysermc.paletter.block.component.BlockMenuCategory.Category.CONSTRUCTION).build()).build()).build();
         int protocol = PALETTER.latest().protocolVersion();
         Palette bds = Paletter.builder().layer(layer).build().palette(protocol);
         Palette append = Paletter.builder().creativeOrdering(CreativeOrdering.APPEND).layer(layer).build()

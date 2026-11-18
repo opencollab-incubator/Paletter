@@ -7,8 +7,8 @@ import java.util.List;
 import java.util.Objects;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
+import org.geysermc.paletter.annotation.BedrockExperiment;
 import org.geysermc.paletter.annotation.BedrockFormat;
-import org.geysermc.paletter.annotation.Experimental;
 import org.geysermc.paletter.internal.component.Check;
 
 /**
@@ -19,7 +19,7 @@ import org.geysermc.paletter.internal.component.Check;
  * experimental toggle "Upcoming Creator Features" is required.
  * <p>
  * Add-on JSON: {@code "minecraft:multi_block"}.
- * Bedrock requires the experiment Upcoming Creator Features for it (in some format versions).
+ * The creator docs name the experiment Upcoming Creator Features for it (in some format versions); unverified against BDS.
  *
  * @param enabledStates Which states to enable. The only valid (and required) value is <code>minecraft:multi_block_part</code>. Add-on
  *        JSON {@code enabled_states}. Required.
@@ -31,14 +31,20 @@ import org.geysermc.paletter.internal.component.Check;
  * @since 1.0.0
  */
 @BedrockFormat("1.26.10")
-@Experimental
+@BedrockExperiment("upcoming_creator_features")
 public record MultiBlock(@NonNull List<MultiBlock.EnabledStates> enabledStates, int parts,
-        MultiBlock. @NonNull Direction direction) implements BlockTrait {
+        MultiBlock. @NonNull MultiBlockDirection direction) implements BlockTrait {
     /**
      * The component name in add-on JSON.
      */
     public static final String NAME = "minecraft:multi_block";
 
+    /**
+     * Checks the components and copies lists and maps, so the value is immutable.
+     *
+     * @throws NullPointerException if a required component is null
+     * @throws IllegalArgumentException if a component is out of its documented range or conflicts with another
+     */
     public MultiBlock {
         enabledStates = List.copyOf(Objects.requireNonNull(enabledStates, "MultiBlock.enabledStates"));
         Check.range("MultiBlock.parts", parts, 2.0, 4.0);
@@ -52,6 +58,9 @@ public record MultiBlock(@NonNull List<MultiBlock.EnabledStates> enabledStates, 
     }
 
     /**
+     * Creates a builder with every optional field at its default; required fields must be set before
+     * {@code build()}.
+     *
      * @return a builder with the defaults applied
      */
     public static @NonNull Builder builder() {
@@ -59,6 +68,8 @@ public record MultiBlock(@NonNull List<MultiBlock.EnabledStates> enabledStates, 
     }
 
     /**
+     * Creates a builder holding this value's fields, to change some of them.
+     *
      * @return a builder with this value's fields
      */
     public @NonNull Builder toBuilder() {
@@ -77,13 +88,16 @@ public record MultiBlock(@NonNull List<MultiBlock.EnabledStates> enabledStates, 
 
         private @Nullable Integer parts = 2;
 
-        private @Nullable Direction direction;
+        private @Nullable MultiBlockDirection direction;
 
         private Builder() {
         }
 
         /**
          * Sets {@code enabled_states}.
+         *
+         * @param enabledStates the value
+         * @return this builder
          */
         public @NonNull Builder enabledStates(@NonNull List<EnabledStates> enabledStates) {
             this.enabledStates = enabledStates;
@@ -92,6 +106,9 @@ public record MultiBlock(@NonNull List<MultiBlock.EnabledStates> enabledStates, 
 
         /**
          * Sets {@code enabled_states}.
+         *
+         * @param enabledStates the value
+         * @return this builder
          */
         public @NonNull Builder enabledStates(@NonNull EnabledStates... enabledStates) {
             return enabledStates(List.of(enabledStates));
@@ -99,6 +116,9 @@ public record MultiBlock(@NonNull List<MultiBlock.EnabledStates> enabledStates, 
 
         /**
          * Sets {@code parts}.
+         *
+         * @param parts the value
+         * @return this builder
          */
         public @NonNull Builder parts(int parts) {
             this.parts = parts;
@@ -107,13 +127,19 @@ public record MultiBlock(@NonNull List<MultiBlock.EnabledStates> enabledStates, 
 
         /**
          * Sets {@code direction}.
+         *
+         * @param direction the value
+         * @return this builder
          */
-        public @NonNull Builder direction(@NonNull Direction direction) {
+        public @NonNull Builder direction(@NonNull MultiBlockDirection direction) {
             this.direction = direction;
             return this;
         }
 
         /**
+         * Builds the value from the fields set and the defaults.
+         *
+         * @return the value
          * @throws IllegalStateException if a required field is not set
          * @throws IllegalArgumentException if a value is out of range
          */
@@ -144,6 +170,8 @@ public record MultiBlock(@NonNull List<MultiBlock.EnabledStates> enabledStates, 
         }
 
         /**
+         * Returns the value in add-on JSON.
+         *
          * @return the value in add-on JSON
          */
         public @NonNull String value() {
@@ -151,7 +179,10 @@ public record MultiBlock(@NonNull List<MultiBlock.EnabledStates> enabledStates, 
         }
 
         /**
-         * @return the constant of an add-on JSON value
+         * Finds the constant of an add-on JSON value.
+         *
+         * @param value the value in add-on JSON
+         * @return the constant of the value
          * @throws IllegalArgumentException if the value is not documented
          */
         public static @NonNull EnabledStates fromValue(@NonNull String value) {
@@ -167,7 +198,7 @@ public record MultiBlock(@NonNull List<MultiBlock.EnabledStates> enabledStates, 
     /**
      * The documented values; {@link #value()} is the add-on JSON string.
      */
-    public enum Direction {
+    public enum MultiBlockDirection {
         /**
          * {@code up}
          */
@@ -200,11 +231,13 @@ public record MultiBlock(@NonNull List<MultiBlock.EnabledStates> enabledStates, 
 
         private final String value;
 
-        Direction(String value) {
+        MultiBlockDirection(String value) {
             this.value = value;
         }
 
         /**
+         * Returns the value in add-on JSON.
+         *
          * @return the value in add-on JSON
          */
         public @NonNull String value() {
@@ -212,16 +245,19 @@ public record MultiBlock(@NonNull List<MultiBlock.EnabledStates> enabledStates, 
         }
 
         /**
-         * @return the constant of an add-on JSON value
+         * Finds the constant of an add-on JSON value.
+         *
+         * @param value the value in add-on JSON
+         * @return the constant of the value
          * @throws IllegalArgumentException if the value is not documented
          */
-        public static @NonNull Direction fromValue(@NonNull String value) {
-            for (Direction constant : values()) {
+        public static @NonNull MultiBlockDirection fromValue(@NonNull String value) {
+            for (MultiBlockDirection constant : values()) {
                 if (constant.value.equals(value)) {
                     return constant;
                 }
             }
-            throw new IllegalArgumentException("Not a Direction: " + value);
+            throw new IllegalArgumentException("Not a MultiBlockDirection: " + value);
         }
     }
 }

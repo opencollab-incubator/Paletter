@@ -25,6 +25,11 @@ public record StorageWeightModifier(int weightInStorageItem) implements ItemComp
      */
     public static final String NAME = "minecraft:storage_weight_modifier";
 
+    /**
+     * Checks the components.
+     *
+     * @throws IllegalArgumentException if a component is out of its documented range or conflicts with another
+     */
     public StorageWeightModifier {
         Check.range("StorageWeightModifier.weightInStorageItem", weightInStorageItem, 0.0, null);
     }
@@ -35,6 +40,8 @@ public record StorageWeightModifier(int weightInStorageItem) implements ItemComp
     }
 
     /**
+     * Creates a builder with every field at its default.
+     *
      * @return a builder with the defaults applied
      */
     public static @NonNull Builder builder() {
@@ -42,6 +49,8 @@ public record StorageWeightModifier(int weightInStorageItem) implements ItemComp
     }
 
     /**
+     * Creates a builder holding this value's fields, to change some of them.
+     *
      * @return a builder with this value's fields
      */
     public @NonNull Builder toBuilder() {
@@ -61,6 +70,9 @@ public record StorageWeightModifier(int weightInStorageItem) implements ItemComp
 
         /**
          * Sets {@code weight_in_storage_item}.
+         *
+         * @param weightInStorageItem the value
+         * @return this builder
          */
         public @NonNull Builder weightInStorageItem(int weightInStorageItem) {
             this.weightInStorageItem = weightInStorageItem;
@@ -68,6 +80,9 @@ public record StorageWeightModifier(int weightInStorageItem) implements ItemComp
         }
 
         /**
+         * Builds the value from the fields set and the defaults.
+         *
+         * @return the value
          * @throws IllegalStateException if a required field is not set
          * @throws IllegalArgumentException if a value is out of range
          */

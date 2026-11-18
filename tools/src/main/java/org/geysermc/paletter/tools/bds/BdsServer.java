@@ -120,6 +120,14 @@ public final class BdsServer implements AutoCloseable {
      * @return the matching line, or null
      */
     String await(Predicate<String> condition, long timeoutSeconds) throws InterruptedException {
+        return await(condition, line -> false, timeoutSeconds);
+    }
+
+    /**
+     * Like {@link #await(Predicate, long)}, but the timeout is the longest the server may be silent: every line that
+     * matches {@code progress} starts it again, so a long run is sized by its work, not by a constant.
+     */
+    String await(Predicate<String> condition, Predicate<String> progress, long timeoutSeconds) throws InterruptedException {
         long deadline = System.nanoTime() + TimeUnit.SECONDS.toNanos(timeoutSeconds);
         int checked = 0;
         synchronized (lines) {
@@ -127,6 +135,9 @@ public final class BdsServer implements AutoCloseable {
                 for (; checked < lines.size(); checked++) {
                     if (condition.test(lines.get(checked))) {
                         return lines.get(checked);
+                    }
+                    if (progress.test(lines.get(checked))) {
+                        deadline = System.nanoTime() + TimeUnit.SECONDS.toNanos(timeoutSeconds);
                     }
                 }
                 long left = deadline - System.nanoTime();
@@ -143,6 +154,11 @@ public final class BdsServer implements AutoCloseable {
         if (await(line -> line.contains("Server started.") || line.contains("PALETTER-DONE"), timeoutSeconds) == null) {
             throw new IOException("BDS did not start within " + timeoutSeconds + "s:\n  " + String.join("\n  ", tail(20)));
         }
+    }
+
+    /** @return whether the server process is still running */
+    public boolean isRunning() {
+        return process != null && process.isAlive();
     }
 
     public boolean sawLine(Predicate<String> condition) {

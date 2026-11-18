@@ -28,6 +28,12 @@ public record BlockFallback(@NonNull BedrockBlockType target, @Nullable BedrockB
      */
     public static final BlockFallback UNKNOWN = new BlockFallback(BedrockBlocks.UNKNOWN, null, false);
 
+    /**
+     * Creates a fallback.
+     *
+     * @throws NullPointerException if {@code target} is null
+     * @throws IllegalArgumentException if {@code state} is given and is not a state of {@code target}
+     */
     public BlockFallback {
         Objects.requireNonNull(target);
         if (state != null && !state.type().equals(target)) {
@@ -36,6 +42,9 @@ public record BlockFallback(@NonNull BedrockBlockType target, @Nullable BedrockB
     }
 
     /**
+     * Creates a fallback to a block type that carries over the state values both blocks have.
+     *
+     * @param target the replacement block type
      * @return a fallback to a block type, carrying over matching state values
      * @since 1.0.0
      */
@@ -44,6 +53,9 @@ public record BlockFallback(@NonNull BedrockBlockType target, @Nullable BedrockB
     }
 
     /**
+     * Creates a fallback to one exact block state.
+     *
+     * @param target the replacement state
      * @return a fallback to exactly one block state
      * @since 1.0.0
      */
@@ -52,6 +64,8 @@ public record BlockFallback(@NonNull BedrockBlockType target, @Nullable BedrockB
     }
 
     /**
+     * Returns the forced variant of this fallback.
+     *
      * @return this fallback, used even in versions that have the block
      * @since 1.0.0
      */

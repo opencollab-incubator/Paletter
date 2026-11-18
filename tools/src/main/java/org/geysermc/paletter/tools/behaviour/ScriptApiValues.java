@@ -247,11 +247,11 @@ final class ScriptApiValues {
         return hashes;
     }
 
-    private interface Keys {
+    interface Keys {
         BehaviourKey<?> key(String name);
     }
 
-    private static <I> List<Values<I>> grouped(Map<Key, Map<I, Object>> byKey, Keys keys) {
+    static <I> List<Values<I>> grouped(Map<Key, Map<I, Object>> byKey, Keys keys) {
         Map<Set<I>, Values<I>> groups = new LinkedHashMap<>();
         byKey.forEach((key, values) -> {
             if (values.isEmpty()) {

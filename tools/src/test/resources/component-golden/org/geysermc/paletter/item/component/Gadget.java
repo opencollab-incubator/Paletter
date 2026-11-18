@@ -5,21 +5,21 @@ package org.geysermc.paletter.item.component;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
-import org.geysermc.paletter.annotation.Experimental;
+import org.geysermc.paletter.annotation.BedrockExperiment;
 import org.geysermc.paletter.annotation.ReplacedBy;
 
 /**
  * Old. Use test:widget instead.
  * <p>
  * Add-on JSON: {@code "test:gadget"}.
- * Bedrock requires the experiment Test Toggle for it (in some format versions).
+ * The creator docs name the experiment Test Toggle for it (in some format versions); unverified against BDS.
  *
  * @param value On. Add-on JSON {@code value}. Optional (null: not set).
  * @param level Only sent from protocol 200 on. Add-on JSON {@code level}. Optional (null: not set).
  * @since 1.0.0
  * @deprecated replaced by {@link Widget} (docs text: "Use test:widget instead.")
  */
-@Experimental
+@BedrockExperiment("test_toggle")
 @Deprecated
 @ReplacedBy(Widget.class)
 public record Gadget(@Nullable Boolean value, @Nullable Integer level) implements ItemComponent {
@@ -36,6 +36,7 @@ public record Gadget(@Nullable Boolean value, @Nullable Integer level) implement
     /**
      * The boolean shorthand: sets {@code value}.
      *
+     * @param value the value of that field
      * @return the value with everything else at its default
      */
     public static @NonNull Gadget of(boolean value) {
@@ -43,6 +44,8 @@ public record Gadget(@Nullable Boolean value, @Nullable Integer level) implement
     }
 
     /**
+     * Creates a builder with every field at its default.
+     *
      * @return a builder with the defaults applied
      */
     public static @NonNull Builder builder() {
@@ -50,6 +53,8 @@ public record Gadget(@Nullable Boolean value, @Nullable Integer level) implement
     }
 
     /**
+     * Creates a builder holding this value's fields, to change some of them.
+     *
      * @return a builder with this value's fields
      */
     public @NonNull Builder toBuilder() {
@@ -72,6 +77,9 @@ public record Gadget(@Nullable Boolean value, @Nullable Integer level) implement
 
         /**
          * Sets {@code value}.
+         *
+         * @param value the value
+         * @return this builder
          */
         public @NonNull Builder value(@Nullable Boolean value) {
             this.value = value;
@@ -80,6 +88,9 @@ public record Gadget(@Nullable Boolean value, @Nullable Integer level) implement
 
         /**
          * Sets {@code level}.
+         *
+         * @param level the value
+         * @return this builder
          */
         public @NonNull Builder level(@Nullable Integer level) {
             this.level = level;
@@ -87,6 +98,9 @@ public record Gadget(@Nullable Boolean value, @Nullable Integer level) implement
         }
 
         /**
+         * Builds the value from the fields set and the defaults.
+         *
+         * @return the value
          * @throws IllegalStateException if a required field is not set
          * @throws IllegalArgumentException if a value is out of range
          */

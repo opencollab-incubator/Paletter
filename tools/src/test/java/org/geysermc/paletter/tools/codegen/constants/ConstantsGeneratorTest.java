@@ -6,6 +6,7 @@ import org.cloudburstmc.nbt.NbtMap;
 import org.geysermc.paletter.internal.block.BlockStates;
 import org.geysermc.paletter.data.DataVersion;
 import org.geysermc.paletter.internal.data.PaletteDataCodec;
+import org.geysermc.paletter.tools.codegen.component.ExperimentToggles;
 import org.geysermc.paletter.internal.data.Renames;
 import org.geysermc.paletter.internal.data.VanillaData;
 import org.geysermc.paletter.internal.data.VanillaItem;
@@ -122,6 +123,23 @@ class ConstantsGeneratorTest {
         assertTrue(again.getAsJsonObject("APPLE").get("education").getAsBoolean());
     }
 
+    @Test
+    void theExperimentConstantsAreWrittenFromTheToggles() {
+        ConstantsGenerator.Sources sources = new ConstantsGenerator.Sources(List.of(version("1.0", 100, "minecraft:plain")), Map.of(), Map.of(),
+            java.util.Set.of(), java.util.Set.of(), Map.of(), List.of(new ExperimentToggles.Toggle("y_2026_drop_3", "Drop 3", "1.0", false, "1.1"),
+            new ExperimentToggles.Toggle("gametest", null, "1.0", false, null), new ExperimentToggles.Toggle("next", "Next", "1.2", true, null)));
+        String source = ConstantsGenerator.generate(sources.releases().getFirst(), null, names(), new JsonObject(), "2.0.0", sources)
+            .files().get(ConstantsGenerator.PACKAGE_DIR + "/BedrockExperiments.java");
+        assertTrue(source.contains("@BedrockSince(\"1.0\")\n    @BedrockUntil(\"1.1\")\n    public static final String Y_2026_DROP_3 = \"y_2026_drop_3\";"), source);
+        assertTrue(source.contains("@BedrockSince(\"1.0\")\n    public static final String GAMETEST = \"gametest\";"), source);
+        assertTrue(source.contains("import org.geysermc.paletter.annotation.BedrockUntil;"));
+        assertTrue(source.contains("@SincePreview(\"1.2\")\n    public static final String NEXT = \"next\";"), "a preview toggle is marked as preview, not @BedrockSince");
+        assertFalse(source.contains("@BedrockSince(\"1.2\")"), source);
+        // Without any toggle there is no class
+        assertFalse(ConstantsGenerator.generate(sources(Map.of(), java.util.Set.of(), version("1.0", 100, "minecraft:plain")).releases().getFirst(), null,
+            names(), new JsonObject(), "2.0.0").files().containsKey(ConstantsGenerator.PACKAGE_DIR + "/BedrockExperiments.java"));
+    }
+
     private static ConstantsGenerator.Names names() {
         return ConstantsGenerator.Names.of(Renames.NONE, List.of(), new JsonObject());
     }
@@ -211,8 +229,8 @@ class ConstantsGeneratorTest {
     void namesAreUnique() {
         assertEquals("ITEM_BED", ConstantsGenerator.constantName("minecraft:item.bed"));
         assertEquals("EXAMPLE_FOO_BAR", ConstantsGenerator.constantName("example:foo-bar"));
-        assertEquals("CardinalDirection", ConstantsGenerator.className("minecraft:cardinal_direction"));
-        assertEquals("WallConnectionType", ConstantsGenerator.className("wall_connection_type_east"));
+        assertEquals("CardinalDirection", StateConstants.className("minecraft:cardinal_direction"));
+        assertEquals("WallConnectionType", StateConstants.className("wall_connection_type_east"));
 
         ConstantsGenerator.Names clash = new ConstantsGenerator.Names(Map.of("minecraft:dirt", "STONE"), names.items(), names.states(),
             names.enums(), names.renames(), java.util.Set.of());

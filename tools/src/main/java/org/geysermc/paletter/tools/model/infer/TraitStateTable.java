@@ -11,8 +11,10 @@ import org.cloudburstmc.nbt.NbtMapBuilder;
 import org.cloudburstmc.nbt.NbtType;
 import org.geysermc.paletter.block.BlockHashes;
 import org.geysermc.paletter.tools.Layout;
+import org.geysermc.paletter.tools.bds.BdsDump;
 import org.geysermc.paletter.tools.data.Nbt;
 import org.geysermc.paletter.tools.model.Model;
+import org.geysermc.paletter.tools.model.Schema;
 import org.geysermc.paletter.tools.update.SpecCapture;
 
 import java.io.IOException;
@@ -41,9 +43,12 @@ import java.util.zip.GZIPInputStream;
  *     name, a value naming states by parts the states of its parts ({@code minecraft:corner_and_cardinal_direction}:
  *     {@code minecraft:corner} and {@code minecraft:cardinal_direction}, as the hash BDS sent says); the one value that
  *     names no state adds the states that no value names ({@code minecraft:cardinal_connections} the four
- *     {@code connection_*}). Anything else fails;</li>
+ *     {@code connection_*}). A value the docs name no state for, when every documented state is taken
+ *     ({@code minecraft:sixteen_way_rotation}, which BDS's schema lists), adds the state of its own name if BDS's block states
+ *     ({@link BdsStates}) have one, else it is skipped and reported. Anything else fails;</li>
  *     <li><b>values</b>: those of the vanilla state of the same name ({@code constants-history.json}, in BDS's palette order),
- *     which must be the docs' values; a state no vanilla block has keeps the docs' values in their order;</li>
+ *     which must be the docs' values; a state no vanilla block has keeps the docs' values in their order; a state the docs do
+ *     not name has BDS's values, in BDS's order;</li>
  *     <li><b>default</b> (the first value): verified where BDS sent the hash of a default state that has the state: the
  *     creative inventory of a spec capture ({@code data/bds/<build>/spec}) holds one block per combination of every
  *     trait's {@code enabled_states}. A hash that differs from the table's default state fails the inference.</li>
@@ -63,6 +68,47 @@ final class TraitStateTable {
         }
     }
 
+    /**
+     * BDS's block states by name with their values in BDS's order ({@code state_types} of the Script API dump,
+     * {@code BlockStates.getAll()}), from the newest committed dump that keeps that order ({@code data/bds/<build>/dump.json.gz},
+     * format 4 on; older dumps sorted the values).
+     */
+    record BdsStates(String build, Map<String, List<Object>> types) {
+        static final BdsStates NONE = new BdsStates(null, Map.of());
+
+        static BdsStates newest(Path root) throws IOException {
+            List<Path> builds;
+            try (Stream<Path> list = Files.list(root.resolve(Layout.BDS))) {
+                builds = list.filter(build -> Files.exists(build.resolve(DUMP)))
+                    .sorted((a, b) -> Schema.compareVersions(b.getFileName().toString(), a.getFileName().toString())).toList();
+            }
+            for (Path build : builds) {
+                BdsDump dump = BdsDump.read(build.resolve(DUMP));
+                if (!dump.stateTypes().isEmpty()) {
+                    return new BdsStates(build.getFileName().toString(), dump.stateTypes());
+                }
+            }
+            return NONE;
+        }
+
+        /** @return the state of this name with BDS's values, or null if BDS has none */
+        State state(String name) {
+            List<Object> values = types.get(name);
+            if (values == null || values.isEmpty()) {
+                return null;
+            }
+            String type = values.getFirst() instanceof Byte ? "bool" : values.getFirst() instanceof Integer ? "int" : "string";
+            List<JsonPrimitive> json = values.stream().map(value -> switch (value) {
+                case Byte b -> new JsonPrimitive(b.intValue());
+                case Integer i -> new JsonPrimitive(i);
+                default -> new JsonPrimitive(value.toString());
+            }).toList();
+            return new State(name, type, json, "BDS " + build + " (Script API BlockStates.getAll(), in its order; the docs name no state for it)");
+        }
+    }
+
+    private static final String DUMP = "dump.json.gz";
+
     private TraitStateTable() {
     }
 
@@ -75,12 +121,13 @@ final class TraitStateTable {
         }
         JsonObject history = JsonParser.parseString(Files.readString(root.resolve(Layout.MODEL).resolve("constants-history.json")))
             .getAsJsonObject();
+        BdsStates bds = BdsStates.newest(root);
         Map<String, Map<String, List<State>>> table = new TreeMap<>();
         for (Model.Component trait : model.components()) {
             if (trait.category().equals("trait")) {
                 List<String> skipped = new ArrayList<>();
-                table.put(trait.name(), statesOf(trait, history, skipped));
-                skipped.forEach(line -> System.out.println("Skipped: " + line + " (no state in the trait state table until a capture shows it)"));
+                table.put(trait.name(), statesOf(trait, history, bds, skipped));
+                skipped.forEach(line -> System.out.println("Skipped: " + line + " (no dump of BDS's block states has a state of its name: not in the trait state table)"));
             }
         }
         Map<String, String> verified = verify(root, table);
@@ -109,14 +156,15 @@ final class TraitStateTable {
     }
 
     static Map<String, List<State>> statesOf(Model.Component trait, JsonObject history) {
-        return statesOf(trait, history, new ArrayList<>());
+        return statesOf(trait, history, BdsStates.NONE, new ArrayList<>());
     }
 
     /**
-     * @param skipped gets an {@code enabled_states} value the docs name no state for ({@code minecraft:sixteen_way_rotation},
-     *                which BDS's schema lists): it is left out of the table and reported, until a capture shows what it adds
+     * @param bds BDS's block states: an {@code enabled_states} value the docs name no state for ({@code minecraft:sixteen_way_rotation},
+     *            which BDS's schema lists) adds the state of its own name, as the documented values do, with BDS's values for it
+     * @param skipped gets such a value that BDS has no state of that name for either: it is left out of the table and reported
      */
-    static Map<String, List<State>> statesOf(Model.Component trait, JsonObject history, List<String> skipped) {
+    static Map<String, List<State>> statesOf(Model.Component trait, JsonObject history, BdsStates bds, List<String> skipped) {
         Map<String, State> documented = new LinkedHashMap<>();
         for (String note : trait.notes()) {
             Matcher m = ADDS_STATE.matcher(note.trim());
@@ -150,7 +198,12 @@ final class TraitStateTable {
         }
         if (unmatched != null) {
             if (unnamed.isEmpty()) {
-                skipped.add(trait.id() + ": enabled_states " + unmatched + " adds no documented state");
+                State state = bds.state(unmatched);
+                if (state != null) {
+                    byValue.put(unmatched, List.of(state));
+                } else {
+                    skipped.add(trait.id() + ": enabled_states " + unmatched + " adds no documented state");
+                }
             } else {
                 byValue.put(unmatched, unnamed.stream().map(documented::get).toList());
             }

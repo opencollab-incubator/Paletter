@@ -24,7 +24,7 @@ import org.geysermc.paletter.data.DataVersion;
 import org.geysermc.paletter.item.BedrockItemStack;
 import org.geysermc.paletter.vanilla.BedrockItemType;
 import org.geysermc.paletter.item.CustomItem;
-import org.geysermc.paletter.item.component.DisplayName;
+import org.geysermc.paletter.item.component.ItemDisplayName;
 import org.geysermc.paletter.item.component.Icon;
 import org.geysermc.paletter.item.component.MaxStackSize;
 import org.geysermc.paletter.item.ItemFallback;
@@ -58,7 +58,7 @@ class LayerTest {
         return PaletteLayer.builder("geyser")
             .item(CustomItem.builder("geysermc:furnace_minecart")
                 .components(Icon.of("minecart_furnace"),
-                    DisplayName.builder().value("item.minecartFurnace.name").build(),
+                    ItemDisplayName.builder().value("item.minecartFurnace.name").build(),
                     MaxStackSize.of(1))
                 .menuCategory(CreativeCategory.ITEMS, "itemGroup.name.minecart")
                 .creativePlacement(CreativePlacement.after(ItemMatcher.id("minecraft:hopper_minecart")))

@@ -24,6 +24,11 @@ public record Slab(@NonNull List<Slab.Entry> parts) implements BlockComponent {
      */
     public static final String NAME = "test:slab";
 
+    /**
+     * Checks the components and copies lists and maps, so the value is immutable.
+     *
+     * @throws NullPointerException if a required component is null
+     */
     public Slab {
         parts = List.copyOf(Objects.requireNonNull(parts, "Slab.parts"));
     }
@@ -36,6 +41,7 @@ public record Slab(@NonNull List<Slab.Entry> parts) implements BlockComponent {
     /**
      * The object form: one entry, the same as a list of that entry in {@code parts}. BDS rejects this form since 9.9.9 (protocol 200); the list is accepted by every captured BDS.
      *
+     * @param entry the one entry
      * @return the value with everything else at its default
      */
     public static @NonNull Slab of(@NonNull Entry entry) {
@@ -43,6 +49,8 @@ public record Slab(@NonNull List<Slab.Entry> parts) implements BlockComponent {
     }
 
     /**
+     * Creates a builder with every field at its default.
+     *
      * @return a builder with the defaults applied
      */
     public static @NonNull Builder builder() {
@@ -50,6 +58,8 @@ public record Slab(@NonNull List<Slab.Entry> parts) implements BlockComponent {
     }
 
     /**
+     * Creates a builder holding this value's fields, to change some of them.
+     *
      * @return a builder with this value's fields
      */
     public @NonNull Builder toBuilder() {
@@ -69,6 +79,9 @@ public record Slab(@NonNull List<Slab.Entry> parts) implements BlockComponent {
 
         /**
          * Sets {@code parts}.
+         *
+         * @param parts the value
+         * @return this builder
          */
         public @NonNull Builder parts(@NonNull List<Entry> parts) {
             this.parts = parts;
@@ -77,12 +90,18 @@ public record Slab(@NonNull List<Slab.Entry> parts) implements BlockComponent {
 
         /**
          * Sets {@code parts}.
+         *
+         * @param parts the value
+         * @return this builder
          */
         public @NonNull Builder parts(@NonNull Entry... parts) {
             return parts(List.of(parts));
         }
 
         /**
+         * Builds the value from the fields set and the defaults.
+         *
+         * @return the value
          * @throws IllegalStateException if a required field is not set
          * @throws IllegalArgumentException if a value is out of range
          */
@@ -98,6 +117,8 @@ public record Slab(@NonNull List<Slab.Entry> parts) implements BlockComponent {
      */
     public record Entry(float size) {
         /**
+         * Creates a builder with every field at its default.
+         *
          * @return a builder with the defaults applied
          */
         public static @NonNull Builder builder() {
@@ -105,6 +126,8 @@ public record Slab(@NonNull List<Slab.Entry> parts) implements BlockComponent {
         }
 
         /**
+         * Creates a builder holding this value's fields, to change some of them.
+         *
          * @return a builder with this value's fields
          */
         public @NonNull Builder toBuilder() {
@@ -124,6 +147,9 @@ public record Slab(@NonNull List<Slab.Entry> parts) implements BlockComponent {
 
             /**
              * Sets {@code size}.
+             *
+             * @param size the value
+             * @return this builder
              */
             public @NonNull Builder size(float size) {
                 this.size = size;
@@ -131,6 +157,9 @@ public record Slab(@NonNull List<Slab.Entry> parts) implements BlockComponent {
             }
 
             /**
+             * Builds the value from the fields set and the defaults.
+             *
+             * @return the value
              * @throws IllegalStateException if a required field is not set
              * @throws IllegalArgumentException if a value is out of range
              */

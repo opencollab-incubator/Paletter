@@ -77,6 +77,8 @@ class ComponentGeneratorTest {
                  {"path": "rarity", "types": [{"type": "string"}], "required": false, "enumValues": ["common", "rare"], "examples": [], "doc": "How rare."},
                  {"path": "stripes", "types": [{"type": "boolean"}, {"type": "array", "items": {"type": "string"}}], "required": false,
                   "enumValues": [], "examples": [], "doc": "Stripes on or off, or the striped parts."},
+                 {"path": "outline", "types": [{"type": "boolean"}, {"type": "array", "items": {"type": "string"}}], "required": false,
+                  "enumValues": [], "examples": [], "doc": "The outline on or off, or the outlined parts."},
                  {"path": "fuel", "types": [{"type": "string"}], "required": false, "enumValues": [], "examples": [], "doc": "The item it burns."},
                  {"path": "reach", "types": [{"type": "number"}], "defaultValue": 3, "required": true, "enumValues": [], "examples": [],
                   "doc": "The docs require it; BDS takes it omitted."}
@@ -148,47 +150,53 @@ class ComponentGeneratorTest {
                   "rarity": {"status": "inferred", "rules": [{"kind": "table", "table": {"common": "common", "odd": "common", "rare": "rare"}, "nbt": "string",
                              "tags": [], "wire": "test:widget.rarity"}], "whenAbsent": {"test:widget.rarity": "common (string)"}},
                   "stripes": {"status": "hand-rule"},
+                  "outline": {"status": "hand-rule"},
                   "fuel": {"status": "inferred", "rules": [{"kind": "identity", "nbt": "string", "tags": [], "wire": "test:widget.fuel"}]},
                   "reach": {"status": "inferred", "rules": [{"kind": "identity", "nbt": "float", "tags": [], "wire": "test:widget.reach"}],
                             "whenAbsent": {"test:widget.reach": "3.0 (float)"}},
                   "offset": {"status": "inferred", "rules": [{"kind": "identity", "element": 0, "nbt": "float", "tags": [], "wire": "test:widget.ox"},
                              {"kind": "identity", "element": 1, "nbt": "float", "tags": [], "wire": "test:widget.oy"},
                              {"kind": "identity", "element": 2, "nbt": "float", "tags": [], "wire": "test:widget.oz"}]}
-                }, "protocols": [100]},
+                }, "protocols": [100, 200]},
               "item:test:gadget": {"status": "sent", "wire": ["test:gadget"],
                 "forms": {"boolean": {"status": "inferred", "rules": [{"kind": "identity", "nbt": "byte", "tags": [], "wire": "test:gadget.value"}]}},
                 "fields": {"value": {"status": "inferred", "rules": [{"kind": "identity", "nbt": "byte", "tags": [], "wire": "test:gadget.value"}]}},
                 "protocols": [100],
-                "protocol200": {"status": "sent", "wire": ["test:gadget"],
+                "protocol200": {"status": "sent", "protocols": [200], "wire": ["test:gadget"],
                   "fields": {"value": {"status": "inferred", "rules": [{"kind": "identity", "nbt": "byte", "tags": [], "wire": "test:gadget.on"}]},
                              "level": {"status": "inferred", "rules": [{"kind": "identity", "nbt": "int", "tags": [], "wire": "test:gadget.level"}]}}}},
               "block:test:hidden": {"status": "server-only", "fields": {}},
               "block:test:slab": {"status": "sent", "wire": ["test:slab"], "fields": {"[].size": {"status": "hand-rule"}}, "protocols": [100],
-                "protocol200": {"status": "sent", "wire": ["test:slab"], "forms": {"object": {"status": "rejected"}},
+                "protocol200": {"status": "sent", "protocols": [200], "wire": ["test:slab"], "forms": {"object": {"status": "rejected"}},
                   "fields": {"[].size": {"status": "hand-rule"}}}},
               "block:test:glow": {"status": "server-only", "fields": {}, "protocols": [100],
-                "protocol200": {"status": "sent", "wire": ["test:glow"],
+                "protocol200": {"status": "sent", "protocols": [200], "wire": ["test:glow"],
                   "forms": {"integer": {"status": "inferred", "rules": [{"kind": "identity", "nbt": "byte", "tags": [], "wire": "test:glow.emission"}]}},
                   "fields": {}}},
-              "item:test:old": {"status": "rejected", "note": "item:test:old has been deprecated. Use test:widget instead", "fields": {}, "protocols": [100]},
-              "item:test:former": {"status": "rejected", "fields": {}, "protocols": [100]},
-              "item:test:count": {"status": "rejected", "fields": {}, "protocols": [100]},
-              "item:test:quiet": {"status": "server-only", "fields": {}, "protocols": [100]},
-              "item:test:ancient": {"status": "rejected", "fields": {}, "protocols": [100]}
+              "item:test:old": {"status": "rejected", "note": "item:test:old has been deprecated. Use test:widget instead", "fields": {}, "protocols": [100, 200]},
+              "item:test:former": {"status": "rejected", "fields": {}, "protocols": [100, 200]},
+              "item:test:count": {"status": "rejected", "fields": {}, "protocols": [100, 200]},
+              "item:test:quiet": {"status": "server-only", "fields": {}, "protocols": [100, 200]},
+              "item:test:ancient": {"status": "rejected", "fields": {}, "protocols": [100, 200]}
             }}""");
     }
+
+    /** One union shape for two fields: they share the sealed type. */
+    private static final String STRIPES = "{\"name\": \"Stripes\", \"variants\": {\"boolean\": \"On\", \"array<string>\": \"Names\"}}";
 
     static Inputs inputs() {
         return new Inputs(components(), json("{\"errata\": [], \"replacedBy\": {\"item:test:ancient\": {\"by\": [\"item:test:widget\"], \"evidence\": \"hand evidence\"}}}"),
             json("{\"item:test:widget\": {\"count\": [\"range 1 64\"]}}"), mappings(),
-            Map.of("item:test:widget:colors", "testMap", "item:test:widget:stripes", "testMap", "block:test:slab:[]", "testMap"),
+            Map.of("item:test:widget:colors", "testMap", "item:test:widget:stripes", "testMap", "item:test:widget:outline", "testMap",
+                "block:test:slab:[]", "testMap"),
             json("{\"since\": \"1.0.0\", \"keyedExtras\": {\"item:test:widget\": "
                 + "{\"from\": \"nested\", \"field\": \"moreNested\", \"doc\": \"Nested things under any other key.\"}}, "
                 + "\"openEnums\": [\"item:test:widget:rarity\"], \"optional\": [\"item:test:widget:reach\"], "
                 + "\"descriptors\": {\"item:test:widget:fuel\": \"item\"}, "
-                + "\"unions\": {\"item:test:widget:stripes\": {\"use\": \"boolean\", \"alternative\": {\"array<string>\": \"names\"}}}, "
+                + "\"unions\": {\"item:test:widget:stripes\": " + STRIPES + ", \"item:test:widget:outline\": " + STRIPES + "}, "
                 + "\"rootLists\": {\"block:test:slab\": \"parts\"}, "
-                + "\"forms\": {\"block:test:slab\": {\"object\": {\"listElementOf\": \"parts\"}}}}"), "9.0.0");
+                + "\"forms\": {\"block:test:slab\": {\"object\": {\"listElementOf\": \"parts\"}}}}"), "9.0.0",
+            new ComponentGenerator.Context(Set.of(), Map.of("Test Toggle", "test_toggle"), Map.of()));
     }
 
     // ---- Golden files --------------------------------------------------------------------------------------------
@@ -199,8 +207,18 @@ class ComponentGeneratorTest {
         Golden.assertDirectory(GOLDEN, files);
     }
 
-    @Test
-    void theModelIsWhatTheGoldenSourcesShow() {
+@Test
+void aRetiredComponentIsOmittedWithItsReasonAndItsReplacement() {
+    Inputs in = inputs();
+    in.api().add("retired", json("{\"item:test:former\": \"BDS sends nothing for it\"}"));
+    ApiModel model = ComponentGenerator.model(in);
+    assertEquals("retired, never on the wire: BDS sends nothing for it", model.omitted.get("item:test:former"));
+    assertTrue(model.components.stream().noneMatch(c -> c.id.equals("item:test:former")));
+    assertTrue(model.components.stream().anyMatch(c -> c.id.equals("item:test:old")), "the others stay generated");
+}
+
+@Test
+void theModelIsWhatTheGoldenSourcesShow() {
         ApiModel model = ComponentGenerator.model(inputs());
         assertEquals(Set.of("item:test:gadget", "block:test:glow", "item:test:widget", "block:test:hidden", "item:test:old", "item:test:former",
                 "item:test:count", "item:test:ancient", "item:test:quiet", "block:test:slab"),
@@ -226,6 +244,28 @@ class ComponentGeneratorTest {
         assertEquals(Integer.MIN_VALUE, gadget.windows.get(0).since());
         assertEquals(200, gadget.windows.get(0).until());
         assertEquals(200, gadget.windows.get(1).since());
+    }
+
+    @Test
+    void aHandTransformOfAGoneComponentOrFieldFailsTheGeneration() {
+        Inputs gone = inputs();
+        Map<String, String> transforms = new java.util.TreeMap<>(gone.transforms());
+        transforms.put("item:test:gone:", "x");
+        transforms.put("item:test:widget:removed.field", "y");
+        GenerationException e = assertThrows(GenerationException.class, () -> ComponentGenerator.generate(
+            new Inputs(gone.components(), gone.fixtures(), gone.feedback(), gone.mappings(), transforms, gone.api(), gone.since(), gone.context())));
+        assertEquals("hand transforms that name no component or field of the model (renamed or removed in the docs?): "
+            + "item:test:gone: (no such component); item:test:widget:removed.field (no such field)", e.getMessage());
+    }
+
+    @Test
+    void handInputThatNamesNoComponentFailsTheGeneration() {
+        Inputs in = inputs();
+        in.fixtures().add("samples", json("{\"item:test:widget:label\": \"x\", \"item:test:gone:x\": 1}"));
+        in.api().add("types", json("{\"block:test:renamed:field\": \"Field\"}"));
+        GenerationException e = assertThrows(GenerationException.class, () -> ComponentGenerator.generate(in));
+        assertTrue(e.getMessage().contains("fixtures.json samples: item:test:gone:x; api.json types: block:test:renamed:field"), e.getMessage());
+        assertFalse(e.getMessage().contains("item:test:widget:label"), "an entry of a component of the model is no orphan: " + e.getMessage());
     }
 
     // ---- Links and annotations -----------------------------------------------------------------------------------
@@ -430,7 +470,7 @@ class ComponentGeneratorTest {
         String wire = ComponentGenerator.generate(in).get(WIDGET_WIRE);
         assertTrue(wire.contains("case \"odd\" -> out.put(\"test:widget.rarity\", \"common\")"), wire);
         assertTrue(wire.contains("case \"odd_too\" -> out.put(\"test:widget.rarity\", \"rare\")"), wire);
-        assertTrue(wire.contains("default -> ctx.drop(Widget.NAME, \"rarity = \" + v16 + \" has no known wire value\")"), wire);
+        assertTrue(wire.matches("(?s).*default -> ctx\\.drop\\(Widget\\.NAME, \"rarity = \" \\+ v\\d+ \\+ \" has no known wire value\"\\).*"), wire);
     }
 
     @Test
@@ -452,14 +492,78 @@ class ComponentGeneratorTest {
     }
 
     @Test
-    void aUnionAlternativeMayBeAListOfStrings() {
-        String widget = ComponentGenerator.generate(inputs()).get("org/geysermc/paletter/item/component/Widget.java");
-        assertTrue(widget.contains("@Nullable List<String> stripesNames"), widget);
-        assertTrue(widget.contains("public @NonNull Builder stripesNames(@NonNull String... stripesNames)"), widget);
-        assertTrue(widget.contains("Widget sets both stripes and stripesNames"), widget);
+    void aFieldWithSeveralFormsIsASealedTypeSharedByFieldsOfTheSameShape() {
+        Map<String, String> files = ComponentGenerator.generate(inputs());
+        String stripes = files.get("org/geysermc/paletter/item/component/Stripes.java");
+        assertTrue(stripes.contains("public sealed interface Stripes permits Stripes.Names, Stripes.On"), stripes);
+        assertTrue(stripes.contains("static @NonNull Stripes on(boolean value)"), stripes);
+        assertTrue(stripes.contains("static @NonNull Stripes names(@NonNull List<String> value)"), stripes);
+        assertTrue(stripes.contains("record On(boolean value) implements Stripes"), stripes);
+        assertTrue(stripes.contains("record Names(@NonNull List<String> value) implements Stripes"), stripes);
+        assertTrue(stripes.contains("value = List.copyOf(Objects.requireNonNull(value, \"Stripes.Names.value\"))"), stripes);
+        assertTrue(stripes.contains("{@code item:test:widget:outline}, {@code item:test:widget:stripes}"), "both users are listed: " + stripes);
+        String widget = files.get("org/geysermc/paletter/item/component/Widget.java");
+        assertTrue(widget.contains("@Nullable Stripes stripes"), widget);
+        assertTrue(widget.contains("@Nullable Stripes outline"), widget);
+        assertTrue(!widget.contains("stripesNames"), widget);
+        // Each form has its builder overloads, a list also as varargs
+        assertTrue(widget.contains("public @NonNull Builder stripes(boolean stripes)"), widget);
+        assertTrue(widget.contains("public @NonNull Builder stripes(@NonNull List<String> stripes)"), widget);
+        assertTrue(widget.contains("public @NonNull Builder stripes(@NonNull String first, @NonNull String... rest)"), "a list of at least one: " + widget);
+        assertFalse(widget.contains("String... stripes"), widget);
+        assertEquals(1, files.keySet().stream().filter(f -> f.endsWith("/Stripes.java")).count());
     }
 
     @Test
+    void aFormListedInNoOverloadIsSetThroughTheFactoryOnly() {
+        Inputs in = inputs();
+        in.api().getAsJsonObject("unions").add("item:test:widget:stripes", json("{\"name\": \"Stripes\", \"variants\": "
+            + "{\"array<string>\": \"Names\", \"string\": \"Pattern\"}, \"noOverload\": [\"Pattern\"]}"));
+        in.api().getAsJsonObject("unions").add("item:test:widget:outline", in.api().getAsJsonObject("unions").get("item:test:widget:stripes"));
+        in.components().getAsJsonArray("components").forEach(c -> c.getAsJsonObject().getAsJsonArray("fields").forEach(f -> {
+            if (f.getAsJsonObject().get("path").getAsString().matches("stripes|outline")) {
+                f.getAsJsonObject().add("types", json("{\"types\": [{\"type\": \"array\", \"items\": {\"type\": \"string\"}}, {\"type\": \"string\"}]}").get("types"));
+            }
+        }));
+        Map<String, String> files = ComponentGenerator.generate(in);
+        String widget = files.get("org/geysermc/paletter/item/component/Widget.java");
+        assertTrue(widget.contains("public @NonNull Builder stripes(@NonNull String first, @NonNull String... rest)"), widget);
+        assertFalse(widget.contains("Builder stripes(@NonNull String stripes)"), "the pattern is no obvious value: " + widget);
+        assertTrue(files.get("org/geysermc/paletter/item/component/Stripes.java").contains("static @NonNull Stripes pattern(@NonNull String value)"));
+    }
+
+    @Test
+    void aKeyedExtraMapRefusesTheKeysThatHaveAFieldOfTheirOwn() {
+        String widget = ComponentGenerator.generate(inputs()).get("org/geysermc/paletter/item/component/Widget.java");
+        assertTrue(widget.contains("for (String key : List.of(\"nested\"))"), widget);
+        assertTrue(widget.contains("Widget.moreNested has the key "), widget);
+    }
+
+    @Test
+    void oneUnionNameCannotHaveTwoShapes() {
+        Inputs in = inputs();
+        in.api().getAsJsonObject("unions").add("item:test:widget:outline", json("{\"name\": \"Stripes\", \"variants\": "
+            + "{\"boolean\": \"On\", \"array<string>\": \"Parts\"}}"));
+        GenerationException e = assertThrows(GenerationException.class, () -> ComponentGenerator.generate(in));
+        assertTrue(e.getMessage().contains("the union Stripes has the forms"), e.getMessage());
+    }
+
+    @Test
+    void aUnionNamesAFormTheModelHas() {
+        Inputs in = inputs();
+        in.api().getAsJsonObject("unions").add("item:test:widget:outline", json("{\"name\": \"Other\", \"variants\": {\"integer\": \"Count\"}}"));
+        GenerationException e = assertThrows(GenerationException.class, () -> ComponentGenerator.generate(in));
+        assertTrue(e.getMessage().contains("has none of the forms it names"), e.getMessage());
+    }
+
+    void aUnionFieldNeedsAHandTransformUntilItsEncoderIsGenerated() {
+        Inputs base = inputs();
+        Inputs in = new Inputs(base.components(), base.fixtures(), base.feedback(), base.mappings(), Map.of("item:test:widget:colors", "testMap",
+            "item:test:widget:stripes", "testMap", "block:test:slab:[]", "testMap"), base.api(), base.since());
+        GenerationException e = assertThrows(GenerationException.class, () -> ComponentGenerator.generate(in));
+        assertTrue(e.getMessage().contains("item:test:widget outline takes several forms; name a hand transform"), e.getMessage());
+    }
+
     void anObjectFormThatIsOneEntryOfTheListIsAFactoryAndAnIndexEntry() {
         Map<String, String> files = ComponentGenerator.generate(inputs());
         String slab = files.get("org/geysermc/paletter/block/component/Slab.java");
@@ -506,7 +610,7 @@ class ComponentGeneratorTest {
             shuffled.forEach(reordered::add);
             in.components().add("components", reordered);
             Inputs shuffledInputs = new Inputs(in.components(), in.fixtures(), shuffleKeys(in.feedback(), random),
-                shuffleKeys(in.mappings(), random), in.transforms(), shuffleKeys(in.api(), random), in.since());
+                shuffleKeys(in.mappings(), random), in.transforms(), shuffleKeys(in.api(), random), in.since(), in.context());
             assertEquals(first, ComponentGenerator.generate(shuffledInputs), "seed " + seed);
         }
     }
@@ -530,6 +634,26 @@ class ComponentGeneratorTest {
         change.accept(in);
         GenerationException e = assertThrows(GenerationException.class, () -> ComponentGenerator.generate(in));
         assertEquals(message, e.getMessage());
+    }
+
+    /** A component whose whole value is a list of strings (block:minecraft:tags in BDS's schema): a list field, as the item tags' list. */
+    @Test
+    void aComponentWhoseValueIsAListOfStringsHasAListField() {
+        Inputs in = inputs();
+        in.components().getAsJsonArray("components").add(json("""
+            {"id": "block:test:labels", "kind": "block", "category": "component", "name": "test:labels", "status": "active",
+             "doc": "Labels.", "page": "creator/Reference/Content/BlockReference/Examples/BlockComponents/minecraftBlock_labels.md",
+             "experiments": [], "forms": [{"type": "array", "items": {"type": "string"}}], "fields": [], "notes": []}"""));
+        in.mappings().getAsJsonObject("components").add("block:test:labels", json("""
+            {"status": "sent", "wire": ["test:labels"], "protocols": [100, 200], "fields": {},
+             "forms": {"array<string>": {"status": "inferred",
+               "rules": [{"kind": "ordered-set", "nbt": "string", "tags": [], "wire": "test:labels[]"}]}}}"""));
+        Map<String, String> files = ComponentGenerator.generate(in);
+        String wire = files.get("org/geysermc/paletter/internal/component/BlockWire.java");
+        assertTrue(wire.contains("\"test:labels\""), "the list reaches the encoder: " + wire);
+        String source = files.get("org/geysermc/paletter/block/component/Labels.java");
+        assertTrue(source.contains("public record Labels(@NonNull List<String> value) implements BlockComponent"), source);
+        assertTrue(source.contains("The entries of the component"), source);
     }
 
     @Test

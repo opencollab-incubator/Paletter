@@ -41,6 +41,12 @@ public record RedstoneProducer(@NonNull List<RedstoneProducer.ConnectedFaces> co
      */
     public static final String NAME = "minecraft:redstone_producer";
 
+    /**
+     * Checks the components and copies lists and maps, so the value is immutable.
+     *
+     * @throws NullPointerException if a required component is null
+     * @throws IllegalArgumentException if a component is out of its documented range or conflicts with another
+     */
     public RedstoneProducer {
         connectedFaces = List.copyOf(Objects.requireNonNull(connectedFaces, "RedstoneProducer.connectedFaces"));
         Check.range("RedstoneProducer.power", power, 0.0, 15.0);
@@ -52,6 +58,9 @@ public record RedstoneProducer(@NonNull List<RedstoneProducer.ConnectedFaces> co
     }
 
     /**
+     * Creates a builder with every optional field at its default; required fields must be set before
+     * {@code build()}.
+     *
      * @return a builder with the defaults applied
      */
     public static @NonNull Builder builder() {
@@ -59,6 +68,8 @@ public record RedstoneProducer(@NonNull List<RedstoneProducer.ConnectedFaces> co
     }
 
     /**
+     * Creates a builder holding this value's fields, to change some of them.
+     *
      * @return a builder with this value's fields
      */
     public @NonNull Builder toBuilder() {
@@ -87,6 +98,9 @@ public record RedstoneProducer(@NonNull List<RedstoneProducer.ConnectedFaces> co
 
         /**
          * Sets {@code connected_faces}.
+         *
+         * @param connectedFaces the value
+         * @return this builder
          */
         public @NonNull Builder connectedFaces(@NonNull List<ConnectedFaces> connectedFaces) {
             this.connectedFaces = connectedFaces;
@@ -95,6 +109,9 @@ public record RedstoneProducer(@NonNull List<RedstoneProducer.ConnectedFaces> co
 
         /**
          * Sets {@code connected_faces}.
+         *
+         * @param connectedFaces the value
+         * @return this builder
          */
         public @NonNull Builder connectedFaces(@NonNull ConnectedFaces... connectedFaces) {
             return connectedFaces(List.of(connectedFaces));
@@ -102,6 +119,9 @@ public record RedstoneProducer(@NonNull List<RedstoneProducer.ConnectedFaces> co
 
         /**
          * Sets {@code power}.
+         *
+         * @param power the value
+         * @return this builder
          */
         public @NonNull Builder power(int power) {
             this.power = power;
@@ -110,6 +130,9 @@ public record RedstoneProducer(@NonNull List<RedstoneProducer.ConnectedFaces> co
 
         /**
          * Sets {@code strongly_powered_face}.
+         *
+         * @param stronglyPoweredFace the value
+         * @return this builder
          */
         public @NonNull Builder stronglyPoweredFace(
                 @Nullable StronglyPoweredFace stronglyPoweredFace) {
@@ -119,6 +142,9 @@ public record RedstoneProducer(@NonNull List<RedstoneProducer.ConnectedFaces> co
 
         /**
          * Sets {@code transform_relative}.
+         *
+         * @param transformRelative the value
+         * @return this builder
          */
         public @NonNull Builder transformRelative(@Nullable Boolean transformRelative) {
             this.transformRelative = transformRelative;
@@ -126,6 +152,9 @@ public record RedstoneProducer(@NonNull List<RedstoneProducer.ConnectedFaces> co
         }
 
         /**
+         * Builds the value from the fields set and the defaults.
+         *
+         * @return the value
          * @throws IllegalStateException if a required field is not set
          * @throws IllegalArgumentException if a value is out of range
          */
@@ -178,6 +207,8 @@ public record RedstoneProducer(@NonNull List<RedstoneProducer.ConnectedFaces> co
         }
 
         /**
+         * Returns the value in add-on JSON.
+         *
          * @return the value in add-on JSON
          */
         public @NonNull String value() {
@@ -185,7 +216,10 @@ public record RedstoneProducer(@NonNull List<RedstoneProducer.ConnectedFaces> co
         }
 
         /**
-         * @return the constant of an add-on JSON value
+         * Finds the constant of an add-on JSON value.
+         *
+         * @param value the value in add-on JSON
+         * @return the constant of the value
          * @throws IllegalArgumentException if the value is not documented
          */
         public static @NonNull ConnectedFaces fromValue(@NonNull String value) {
@@ -239,6 +273,8 @@ public record RedstoneProducer(@NonNull List<RedstoneProducer.ConnectedFaces> co
         }
 
         /**
+         * Returns the value in add-on JSON.
+         *
          * @return the value in add-on JSON
          */
         public @NonNull String value() {
@@ -246,7 +282,10 @@ public record RedstoneProducer(@NonNull List<RedstoneProducer.ConnectedFaces> co
         }
 
         /**
-         * @return the constant of an add-on JSON value
+         * Finds the constant of an add-on JSON value.
+         *
+         * @param value the value in add-on JSON
+         * @return the constant of the value
          * @throws IllegalArgumentException if the value is not documented
          */
         public static @NonNull StronglyPoweredFace fromValue(@NonNull String value) {

@@ -33,6 +33,11 @@ public record SelectionBox(SelectionBox. @NonNull Vec3 origin, SelectionBox. @No
      */
     public static final String NAME = "minecraft:selection_box";
 
+    /**
+     * Checks the components.
+     *
+     * @throws NullPointerException if a required component is null
+     */
     public SelectionBox {
         Objects.requireNonNull(origin, "SelectionBox.origin");
         Objects.requireNonNull(size, "SelectionBox.size");
@@ -46,6 +51,7 @@ public record SelectionBox(SelectionBox. @NonNull Vec3 origin, SelectionBox. @No
     /**
      * The boolean shorthand: sets {@code enabled}.
      *
+     * @param value the value of that field
      * @return the value with everything else at its default
      */
     public static @NonNull SelectionBox of(boolean value) {
@@ -53,6 +59,8 @@ public record SelectionBox(SelectionBox. @NonNull Vec3 origin, SelectionBox. @No
     }
 
     /**
+     * Creates a builder with every field at its default.
+     *
      * @return a builder with the defaults applied
      */
     public static @NonNull Builder builder() {
@@ -60,6 +68,8 @@ public record SelectionBox(SelectionBox. @NonNull Vec3 origin, SelectionBox. @No
     }
 
     /**
+     * Creates a builder holding this value's fields, to change some of them.
+     *
      * @return a builder with this value's fields
      */
     public @NonNull Builder toBuilder() {
@@ -85,6 +95,9 @@ public record SelectionBox(SelectionBox. @NonNull Vec3 origin, SelectionBox. @No
 
         /**
          * Sets {@code origin}.
+         *
+         * @param origin the value
+         * @return this builder
          */
         public @NonNull Builder origin(@NonNull Vec3 origin) {
             this.origin = origin;
@@ -93,6 +106,11 @@ public record SelectionBox(SelectionBox. @NonNull Vec3 origin, SelectionBox. @No
 
         /**
          * Sets {@code origin}.
+         *
+         * @param x the x component
+         * @param y the y component
+         * @param z the z component
+         * @return this builder
          */
         public @NonNull Builder origin(float x, float y, float z) {
             return origin(new Vec3(x, y, z));
@@ -100,6 +118,9 @@ public record SelectionBox(SelectionBox. @NonNull Vec3 origin, SelectionBox. @No
 
         /**
          * Sets {@code size}.
+         *
+         * @param size the value
+         * @return this builder
          */
         public @NonNull Builder size(@NonNull Vec3 size) {
             this.size = size;
@@ -108,6 +129,11 @@ public record SelectionBox(SelectionBox. @NonNull Vec3 origin, SelectionBox. @No
 
         /**
          * Sets {@code size}.
+         *
+         * @param x the x component
+         * @param y the y component
+         * @param z the z component
+         * @return this builder
          */
         public @NonNull Builder size(float x, float y, float z) {
             return size(new Vec3(x, y, z));
@@ -115,6 +141,9 @@ public record SelectionBox(SelectionBox. @NonNull Vec3 origin, SelectionBox. @No
 
         /**
          * Sets {@code enabled}.
+         *
+         * @param enabled the value
+         * @return this builder
          */
         public @NonNull Builder enabled(@Nullable Boolean enabled) {
             this.enabled = enabled;
@@ -122,6 +151,9 @@ public record SelectionBox(SelectionBox. @NonNull Vec3 origin, SelectionBox. @No
         }
 
         /**
+         * Builds the value from the fields set and the defaults.
+         *
+         * @return the value
          * @throws IllegalStateException if a required field is not set
          * @throws IllegalArgumentException if a value is out of range
          */
@@ -132,6 +164,10 @@ public record SelectionBox(SelectionBox. @NonNull Vec3 origin, SelectionBox. @No
 
     /**
      * An add-on JSON vector {@code [x, y, z]}.
+     *
+     * @param x the x component
+     * @param y the y component
+     * @param z the z component
      */
     public record Vec3(float x, float y, float z) {
     }

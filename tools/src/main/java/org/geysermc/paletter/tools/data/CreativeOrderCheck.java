@@ -20,7 +20,7 @@ import org.geysermc.paletter.creative.CreativeCategory;
 import org.geysermc.paletter.creative.CreativeOrdering;
 import org.geysermc.paletter.item.CustomItem;
 import org.geysermc.paletter.item.component.BlockPlacer;
-import org.geysermc.paletter.block.component.MenuCategory;
+import org.geysermc.paletter.block.component.BlockMenuCategory;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -100,6 +100,72 @@ public final class CreativeOrderCheck {
         return new Result(custom, differences(expected, actual), null);
     }
 
+    /**
+     * The block pass without a creative packet: BDS iterates its map of data driven blocks for the start game block
+     * properties as for the block items it adds to the creative inventory, so the custom blocks of a capture are on the
+     * wire in block pass order. Paletter, given the capture's custom content, must number the blocks as BDS did and
+     * order them as the wire does ({@link CreativeOrdering#blockOrder}). Checked on the spec captures, which hold no
+     * creative inventory.
+     * <p>
+     * BDS numbers the blocks of one behavior pack after those of the packs before it in the world's pack list, each pack's
+     * in {@link org.geysermc.paletter.internal.BlockIdOrder} (spec capture of BDS 1.26.36.1: the main pack's 1338 blocks got
+     * 10000 to 11337, the engine packs' {@code paletter:engine_0} and {@code paletter:engine_1}, listed after it, 11338 and 11339,
+     * although by name they come first). Paletter, which has no packs, numbers the main pack; the blocks of the packs after it
+     * are numbered after it, in the order given.
+     *
+     * @param data the bundled data directory, as for {@link #check}
+     * @param customItems {@code custom_item_registry.nbt} of the capture
+     * @param customBlocks {@code custom_block_properties.nbt} of the capture
+     * @param laterPacks the blocks of the behavior packs after the main pack, in block id order (pack by pack, in the
+     *                   world's pack order)
+     * @return the custom blocks compared and the first differences
+     */
+    public static Result blockOrder(int protocol, Path data, Path customItems, Path customBlocks, List<String> laterPacks) throws IOException {
+        List<NbtMap> blocks = readList(customBlocks, "blocks");
+        Set<String> later = Set.copyOf(laterPacks);
+        Paletter capture = withPreviews(data, CreativeOrdering.BDS, layer(
+            readList(customItems, "items").stream().filter(item -> !later.contains(item.getString("name"))).toList(),
+            blocks.stream().filter(block -> !later.contains(block.getString("name"))).toList()));
+        if (capture.versions().stream().noneMatch(v -> v.protocolVersion() == protocol)) {
+            return new Result(0, List.of(), "no bundled data version has protocol " + protocol);
+        }
+        Palette palette = capture.palette(protocol);
+        List<String> differences = new ArrayList<>();
+        Map<String, Integer> paletterIds = new LinkedHashMap<>();
+        palette.blocks().blockProperties().stream().filter(block -> !block.getName().startsWith("minecraft:"))
+            .forEach(block -> paletterIds.put(block.getName(), blockId(block.getProperties())));
+        Set<String> captured = new HashSet<>();
+        blocks.forEach(block -> captured.add(block.getString("name")));
+        for (String block : laterPacks) {
+            if (captured.contains(block)) {
+                paletterIds.put(block, paletterIds.values().stream().mapToInt(Integer::intValue).max().orElseThrow() + 1);
+            }
+        }
+        for (NbtMap block : blocks) {
+            int bds = blockId(block.getCompound("properties"));
+            Integer ours = paletterIds.get(block.getString("name"));
+            if (!Objects.equals(bds, ours) && differences.size() < 20) {
+                differences.add(block.getString("name") + ": block id BDS " + bds + " / Paletter " + ours);
+            }
+        }
+        List<String> wire = blocks.stream().map(block -> block.getString("name")).toList();
+        List<String> byId = paletterIds.entrySet().stream().sorted(Map.Entry.comparingByValue()).map(Map.Entry::getKey).toList();
+        List<String> order = CreativeOrdering.BDS.blockOrder(byId,
+            palette.vanillaData().dataDrivenBlocks().stream().map(block -> block.getName()).toList());
+        for (int i = 0; i < Math.max(wire.size(), order.size()) && differences.size() < 20; i++) {
+            String bds = i < wire.size() ? wire.get(i) : null;
+            String ours = i < order.size() ? order.get(i) : null;
+            if (!Objects.equals(bds, ours)) {
+                differences.add("block " + i + ": BDS " + bds + " / Paletter " + ours);
+            }
+        }
+        return new Result(blocks.size(), differences, null);
+    }
+
+    private static int blockId(NbtMap properties) {
+        return properties.getCompound("vanilla_block_data").getInt("block_id");
+    }
+
     /** The captured build is compared with the data of its own version, which may be a preview. */
     static Paletter withPreviews(Path data, CreativeOrdering ordering, PaletteLayer layer) {
         return Paletter.builder().data(PaletteDataSource.directory(data)).previews(true).creativeOrdering(ordering).layer(layer).build();
@@ -125,7 +191,7 @@ public final class CreativeOrderCheck {
                 CustomBlock.Builder builder = CustomBlock.builder(name);
                 String category = menu.getString("category", "none");
                 if (!category.equals(CreativeCategory.NONE_NAME)) {
-                    builder.menuCategory(MenuCategory.builder().category(MenuCategory.Category.fromValue(category))
+                    builder.menuCategory(BlockMenuCategory.builder().category(BlockMenuCategory.Category.fromValue(category))
                         .group(menu.getString("group", "")).hiddenInCommands(menu.getBoolean("is_hidden_in_commands")).build());
                 }
                 layer.block(builder.build());
@@ -142,15 +208,15 @@ public final class CreativeOrderCheck {
     }
 
     /** @return the item's captured category and group, or null if it is not in the creative inventory */
-    static org.geysermc.paletter.item.component.MenuCategory menuCategory(NbtMap item) {
+    static org.geysermc.paletter.item.component.ItemMenuCategory menuCategory(NbtMap item) {
         NbtMap properties = item.getCompound("data").getCompound("components").getCompound("item_properties");
         int category = properties.getInt("creative_category", 5);
         if (category < 1 || category > 4) {
             return null;
         }
         String group = properties.getString("creative_group", "");
-        return org.geysermc.paletter.item.component.MenuCategory.builder()
-            .category(org.geysermc.paletter.item.component.MenuCategory.Category.fromValue(CreativeCategory.values()[category - 1].bedrockName()))
+        return org.geysermc.paletter.item.component.ItemMenuCategory.builder()
+            .category(org.geysermc.paletter.item.component.ItemMenuCategory.Category.fromValue(CreativeCategory.values()[category - 1].bedrockName()))
             .group(group.isEmpty() ? null : group).build();
     }
 

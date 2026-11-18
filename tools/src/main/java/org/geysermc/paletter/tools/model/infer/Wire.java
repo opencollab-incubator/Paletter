@@ -3,6 +3,7 @@ package org.geysermc.paletter.tools.model.infer;
 import org.cloudburstmc.nbt.NbtList;
 import org.cloudburstmc.nbt.NbtMap;
 import org.cloudburstmc.nbt.NbtType;
+import org.geysermc.paletter.tools.model.rule.Leaf;
 
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -12,21 +13,6 @@ import java.util.zip.GZIPInputStream;
 
 /** Wire NBT flattened to leaves: {@code a.b[0].c -> (type, value)}; empty compounds and lists are leaves too. */
 public final class Wire {
-    public record Leaf(String type, Object value) {
-        boolean numeric() {
-            return value instanceof Number;
-        }
-
-        double number() {
-            return ((Number) value).doubleValue();
-        }
-
-        @Override
-        public String toString() {
-            return value + " (" + type + ")";
-        }
-    }
-
     private Wire() {
     }
 

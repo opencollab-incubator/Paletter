@@ -1,5 +1,5 @@
 {
-  "_comment": "Hand-written Java shaping of the generated component API; never a source of wire behaviour. See docs/data-pipeline.md.",
+  "_comment": "Hand-written Java shaping of the generated component API; never a source of wire behaviour. See docs/data-pipeline.md. Rule: a top level name collision gets a Block/Item prefix automatically; a nested type that would shadow a top level public type fails the generator and is named by hand in typeNames/enums (VisualGeometry, MultiBlockDirection).",
   "rootLists": {
     "block:minecraft:collision_box": "boxes"
   },
@@ -93,76 +93,105 @@
   },
   "unions": {
     "block:minecraft:geometry:uv_lock": {
-      "use": "boolean",
-      "alternative": {
-        "array<string>": "bones"
+      "name": "UvLock",
+      "variants": {
+        "boolean": {"name": "Flag", "doc": "one flag for every bone"},
+        "array<string>": {"name": "Bones", "doc": "the names of the bones to lock"}
       }
     },
     "block:minecraft:embedded_visual:geometry.uv_lock": {
-      "use": "boolean",
-      "alternative": {
-        "array<string>": "bones"
+      "name": "UvLock",
+      "variants": {
+        "boolean": {"name": "Flag", "doc": "one flag for every bone"},
+        "array<string>": {"name": "Bones", "doc": "the names of the bones to lock"}
       }
     },
     "block:minecraft:item_visual:geometry.uv_lock": {
-      "use": "boolean",
-      "alternative": {
-        "array<string>": "bones"
+      "name": "UvLock",
+      "variants": {
+        "boolean": {"name": "Flag", "doc": "one flag for every bone"},
+        "array<string>": {"name": "Bones", "doc": "the names of the bones to lock"}
       }
     },
     "block:minecraft:material_instances:*": {
-      "alternative": {
-        "string": "alias"
+      "name": "InstanceOrAlias",
+      "noOverload": ["Alias"],
+      "variants": {
+        "object": {"name": "Define", "doc": "the definition of the instance"},
+        "string": {"name": "Alias", "doc": "the name of another instance"}
       }
     },
     "block:minecraft:material_instances:up": {
-      "alternative": {
-        "string": "alias"
+      "name": "InstanceOrAlias",
+      "noOverload": ["Alias"],
+      "variants": {
+        "object": {"name": "Define", "doc": "the definition of the instance"},
+        "string": {"name": "Alias", "doc": "the name of another instance"}
       }
     },
     "block:minecraft:material_instances:down": {
-      "alternative": {
-        "string": "alias"
+      "name": "InstanceOrAlias",
+      "noOverload": ["Alias"],
+      "variants": {
+        "object": {"name": "Define", "doc": "the definition of the instance"},
+        "string": {"name": "Alias", "doc": "the name of another instance"}
       }
     },
     "block:minecraft:material_instances:north": {
-      "alternative": {
-        "string": "alias"
+      "name": "InstanceOrAlias",
+      "noOverload": ["Alias"],
+      "variants": {
+        "object": {"name": "Define", "doc": "the definition of the instance"},
+        "string": {"name": "Alias", "doc": "the name of another instance"}
       }
     },
     "block:minecraft:material_instances:south": {
-      "alternative": {
-        "string": "alias"
+      "name": "InstanceOrAlias",
+      "noOverload": ["Alias"],
+      "variants": {
+        "object": {"name": "Define", "doc": "the definition of the instance"},
+        "string": {"name": "Alias", "doc": "the name of another instance"}
       }
     },
     "block:minecraft:material_instances:east": {
-      "alternative": {
-        "string": "alias"
+      "name": "InstanceOrAlias",
+      "noOverload": ["Alias"],
+      "variants": {
+        "object": {"name": "Define", "doc": "the definition of the instance"},
+        "string": {"name": "Alias", "doc": "the name of another instance"}
       }
     },
     "block:minecraft:material_instances:west": {
-      "alternative": {
-        "string": "alias"
+      "name": "InstanceOrAlias",
+      "noOverload": ["Alias"],
+      "variants": {
+        "object": {"name": "Define", "doc": "the definition of the instance"},
+        "string": {"name": "Alias", "doc": "the name of another instance"}
       }
     },
     "block:minecraft:embedded_visual:geometry": {
       "use": "object"
     },
     "item:minecraft:repairable:repair_items[].repair_amount": {
-      "use": "number",
-      "alternative": {
-        "string": "expression"
+      "name": "RepairAmount",
+      "variants": {
+        "number": {"name": "Fixed", "doc": "a fixed amount of durability"},
+        "string": {"name": "Expression", "doc": "a Molang expression for the amount"}
       }
     },
     "item:minecraft:repairable:repair_items[].items": {
-      "alternative": {
-        "string": "tags"
+      "name": "ItemsOrTags",
+      "noOverload": ["TagQuery"],
+      "variants": {
+        "array<string>": {"name": "Items", "doc": "the identifiers of the items"},
+        "string": {"name": "TagQuery", "doc": "a Molang {@code query.any_tag} expression that selects items by tag"}
       }
     },
     "item:minecraft:dyeable:default_color": {
-      "use": "array<integer>",
-      "alternative": {
-        "string": "hex"
+      "name": "ColorValue",
+      "variants": {
+        "array<integer>": {"name": "Channels", "doc": "the red, green and blue channels"},
+        "string": {"name": "Hex", "doc": "a hex color of six digits"}
       }
     }
   },
@@ -170,9 +199,7 @@
     "block:minecraft:material_instances": {
       "from": "all",
       "field": "instances",
-      "doc": "Instances with any other name, which geometry bones refer to (for example {@code \"glass\"}); the keys {@code *}, {@code up}, {@code down}, {@code north}, {@code south}, {@code east} and {@code west} have their own fields.",
-      "aliasField": "aliases",
-      "aliasDoc": "Aliases with any other name: the key is an instance name, the value the instance it points at."
+      "doc": "Instances and aliases with any other name, which geometry bones refer to (for example {@code \"glass\"})."
     }
   },
   "descriptors": {
@@ -204,7 +231,12 @@
   "typeNames": {
     "block:minecraft:material_instances:*": "Instance",
     "item:minecraft:kinetic_weapon:damage_conditions": "Conditions",
-    "item:minecraft:entity_placer:dispense_on[]": "UseOn"
+    "item:minecraft:entity_placer:dispense_on[]": "UseOn",
+    "block:minecraft:embedded_visual:geometry": "VisualGeometry",
+    "block:minecraft:item_visual:geometry": "VisualGeometry"
+  },
+  "enums": {
+    "block:trait:minecraft:multi_block:Direction": "MultiBlockDirection"
   },
   "standalone": {
     "item:description": "MenuCategory",
@@ -229,7 +261,18 @@
     "block:minecraft:collision_box:[].min",
     "block:minecraft:collision_box:[].max"
   ],
+  "retired": {
+    "_comment": "Deprecated components that never reach the wire: BDS either accepts them and sends nothing (server only) or its server does not send them at all. No record is generated; the interface docs list them with their replacement. A deprecated component BDS does send (at any format) keeps its record, @Deprecated and @ReplacedBy.",
+    "item:minecraft:chargeable": "BDS 1.26.63.1 accepts it at formats 1.20.30 and 1.20.40 and sends the same as without it (data/bds/1.26.63.1/spec-format); rejected from 1.20.50",
+    "item:minecraft:seed": "BDS 1.26.63.1 accepts it at formats 1.10.0 and 1.16.0 only inside an old-style item (componentBased 0, data/bds/1.26.63.1/spec-format); Paletter writes no old-style items",
+    "item:minecraft:weapon": "BDS 1.26.63.1 accepts it at formats 1.20.30 and 1.20.40 and sends the same as without it (data/bds/1.26.63.1/spec-format)",
+    "block:minecraft:queued_ticking": "the white-box of BDS 1.26.70.24 has it with network false (not sent)",
+    "block:minecraft:random_ticking": "the white-box of BDS 1.26.70.24 has it with network false (not sent)",
+    "block:minecraft:explosion_resistance": "the white-box of BDS 1.26.70.24 has no component of that name, and its replacement destructible_by_explosion is accepted but server only (data/bds/1.26.63.1/spec)"
+  },
   "handWritten": {
+    "block:minecraft:custom_components": "the wire-only ScriptHooks (the flags BDS sends for script custom components; names and parameters never reach the wire)",
+    "item:minecraft:custom_components": "the wire-only UseOnHook (minecraft:publisher_on_use_on, which BDS adds for a script component with onUseOn)",
     "item:minecraft:render_offsets": "the wire-only RenderOffsets (rejected by BDS, still sent for legacy content)"
   },
   "classes": {

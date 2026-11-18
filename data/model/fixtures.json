@@ -17,7 +17,6 @@
     {"component": "block:minecraft:collision_box", "path": "size", "types": ["vec3"], "why": "Single box form, see forms."},
     {"component": "block:minecraft:geometry", "path": "uv_lock", "types": ["boolean", "array<string>"], "why": "Docs type column says String; the prose says a Boolean or an array of bone names."},
     {"component": "block:minecraft:embedded_visual", "path": "material_instances", "types": ["object"], "why": "Docs: Array of items; BDS takes the minecraft:material_instances object."},
-    {"component": "block:minecraft:item_visual", "path": "geometry", "types": ["string"], "why": "Same shorthand as minecraft:geometry."},
     {"component": "block:minecraft:item_visual", "path": "geometry.uv_lock", "types": ["boolean", "array<string>"], "why": "Docs type column says Object; the prose says a Boolean or an array of strings, as minecraft:geometry's uv_lock."},
     {"component": "block:minecraft:embedded_visual", "path": "geometry.uv_lock", "types": ["boolean", "array<string>"], "why": "See minecraft:item_visual's geometry.uv_lock."},
     {"component": "block:minecraft:item_visual", "path": "geometry.bone_visibility", "types": ["map<string>"], "why": "The docs type column says a map of booleans; the prose of item_visual's geometry says the value is a Molang expression (limited to query.block_state()). BDS 1.26.36.1 to 1.26.52.3 refuse a boolean there."},
@@ -73,6 +72,8 @@
     "block:minecraft:map_color:color": "#00ff00",
     "block:minecraft:display_name:": "Paletter Block",
     "block:minecraft:collision_box:": "minecraft:unit_cube",
+    "block:minecraft:collision_box:[].origin": [-8, 0, -8],
+    "block:minecraft:collision_box:[].size": [16, 16, 16],
     "item:minecraft:interact_button:": "Use Paletter",
     "item:minecraft:hover_text_color:": "red",
     "item:minecraft:hover_text_color:value": "dark_purple",
@@ -154,6 +155,45 @@
     "items": "name",
     "default": "paletter:k"
   },
+  "probeValues": {
+    "_comment": "Further values of a field, each tried as a value of its own, by '<component>:<path>'. Probes, not facts: the names of the hand table of Transforms (FORMATTING) that no BDS message and no schema enum lists (the use_animation names come from the schema enum), and whole lists of objects the minimal entry never writes (an ammunition entry without an item, unverified until captured); only what BDS accepts and sends is evidence.",
+    "item:minecraft:shooter:ammunition": [[{"search_inventory": true}]],
+    "item:minecraft:hover_text_color:": ["black", "dark_blue", "dark_green", "dark_aqua", "dark_red", "dark_purple", "gold", "gray", "dark_gray", "blue", "green", "aqua", "red", "light_purple", "yellow", "white", "minecoin_gold", "material_quartz", "material_iron", "material_netherite", "material_redstone", "material_copper", "material_gold", "material_emerald", "material_diamond", "material_lapis", "material_amethyst", "material_resin"],
+    "item:minecraft:hover_text_color:value": ["black", "dark_blue", "dark_green", "dark_aqua", "dark_red", "dark_purple", "gold", "gray", "dark_gray", "blue", "green", "aqua", "red", "light_purple", "yellow", "white", "minecoin_gold", "material_quartz", "material_iron", "material_netherite", "material_redstone", "material_copper", "material_gold", "material_emerald", "material_diamond", "material_lapis", "material_amethyst", "material_resin"]
+  },
+  "unpinnedEnums": {
+    "_comment": "Schema enums whose values the add-on does not all try: it varies every value of the other schema enums (so a table of one is complete), cutting none at MAX_VALUES. By '<component>:<path>', with the reason.",
+    "item:minecraft:record:sound_event": "an open enum: api.json openEnums makes the field a string, so no table of the 571 sound events is built"
+  },
+  "listNames": {
+    "_comment": "Names put in a list of names, by '<component>:<path>': the lists BDS sends as a set ordered by the hash of each name (uv_lock) are written in several orders of them (VariantValues.orderings). Inputs, not facts: any names do; the bone of the other samples comes first.",
+    "block:minecraft:geometry:uv_lock": ["bone_a", "bone_b", "bone_c", "bone_d", "bone_e"],
+    "block:minecraft:item_visual:geometry.uv_lock": ["bone_a", "bone_b", "bone_c", "bone_d", "bone_e"],
+    "block:minecraft:embedded_visual:geometry.uv_lock": ["bone_a", "bone_b", "bone_c", "bone_d", "bone_e"]
+  },
+  "boolCombinations": ["block:minecraft:material_instances"],
+  "descriptorValues": {
+    "_comment": "Block descriptors tried in every field that is one (name, states and tags members), each as the whole descriptor: real vanilla blocks (Bedrock's state names) with enum values (all of pillar_axis, to see their order on the wire; two of cardinal_direction and lever_direction), an unlisted and an integer one, booleans, strings for a boolean and an integer state, and an integer for contrast. BDS's registry decides which it takes and how it sends them (enum index, state type).",
+    "values": [
+      {"name": "minecraft:oak_log", "states": {"pillar_axis": "y"}},
+      {"name": "minecraft:oak_log", "states": {"pillar_axis": "x"}},
+      {"name": "minecraft:oak_log", "states": {"pillar_axis": "z"}},
+      {"name": "minecraft:oak_log", "states": {"pillar_axis": "w"}},
+      {"name": "minecraft:oak_log", "states": {"pillar_axis": 1}},
+      {"name": "minecraft:oak_log", "states": {"paletter_unknown": 1}},
+      {"name": "minecraft:furnace", "states": {"minecraft:cardinal_direction": "south"}},
+      {"name": "minecraft:furnace", "states": {"minecraft:cardinal_direction": "east"}},
+      {"name": "minecraft:lever", "states": {"lever_direction": "east"}},
+      {"name": "minecraft:lever", "states": {"open_bit": true}},
+      {"name": "minecraft:lever", "states": {"open_bit": false}},
+      {"name": "minecraft:lever", "states": {"lever_direction": "up_east_west", "open_bit": true}},
+      {"name": "minecraft:lever", "states": {"open_bit": "true"}},
+      {"name": "minecraft:white_candle", "states": {"candles": 2}},
+      {"name": "minecraft:white_candle", "states": {"candles": "2"}},
+      {"name": "minecraft:white_candle", "states": {"candles": 4}},
+      {"name": "minecraft:white_candle", "states": {"lit": true}}
+    ]
+  },
   "context": {
     "_comment": "Extra description entries a component's variants need (states its conditions refer to).",
     "block:permutations": {"states": {"paletter:flag": [false, true]}},
@@ -161,14 +201,55 @@
     "block:minecraft:item_visual": {"states": {"paletter:flag": [false, true]}},
     "block:minecraft:embedded_visual": {"states": {"paletter:flag": [false, true]}}
   },
+  "sweepValues": {
+    "_comment": "Whole values the format sweep tries for the components BDS rejects at the current format, at every known format besides their base (inputs, not evidence: BDS decides).",
+    "block:minecraft:breathability": ["solid", "air"],
+    "block:minecraft:random_ticking": [{"on_tick": {"event": "paletter:event", "target": "self"}}],
+    "item:minecraft:render_offsets": [{"main_hand": {"first_person": {"position": [0, 0, 0], "rotation": [0, 0, 0], "scale": [1, 1, 1]}}}, "tools"]
+  },
   "skip": {
-    "item:minecraft:custom_components": "binds script custom components; needs a script module",
-    "block:minecraft:custom_components": "binds script custom components; needs a script module",
     "item:minecraft:hand_equippped": "misspelled duplicate page of minecraft:hand_equipped",
     "block:minecraft:tag": "tag:<name> components; the docs page has no table (probed by hand in capture/addon: rejected by 1.26.60)",
     "item:description:identifier": "the identifier of every variant",
     "block:description:identifier": "the identifier of every variant",
     "block:description:states": "varied by block:states"
+  },
+  "scriptComponents": {
+    "_comment": "Script custom components of the spec add-on: what its script registers (name: callbacks) and the variants that bind them (role script). Callback names are the optional members of BlockCustomComponent and ItemCustomComponent in the index.d.ts of @minecraft/server 2.0.0 (npm), the pinned module version. A variant's json is the custom_components value: an array is the old form (up to format 1.21.80), an object holds components that are keys of their own, and may hold permutations. Under the placers the json is the whole components map.",
+    "module": "2.0.0",
+    "block": {
+      "paletter:none": [],
+      "paletter:interact": ["onPlayerInteract"],
+      "paletter:place": ["beforeOnPlayerPlace"],
+      "paletter:other": ["onEntityFallOn", "onPlace", "onPlayerBreak", "onRandomTick", "onStepOff", "onStepOn", "onTick"]
+    },
+    "item": {
+      "paletter:none": [],
+      "paletter:use_on": ["onUseOn"],
+      "paletter:other": ["onBeforeDurabilityDamage", "onCompleteUse", "onConsume", "onHitEntity", "onMineBlock", "onUse"]
+    },
+    "variants": {
+      "block:minecraft:custom_components": [
+        {"format": "1.21.80", "json": ["paletter:interact"]},
+        {"format": "1.21.80", "json": ["paletter:none"]},
+        {"json": {"paletter:none": {}}},
+        {"json": {"paletter:interact": {}}},
+        {"json": {"paletter:place": {}}},
+        {"json": {"paletter:other": {}}},
+        {"json": {"paletter:interact": {}, "paletter:place": {}}},
+        {"json": {"paletter:interact": {"a": 1, "b": "x"}}},
+        {"json": {"permutations": [{"condition": "true", "components": {"paletter:interact": {}}}]}}
+      ],
+      "item:minecraft:custom_components": [
+        {"format": "1.21.80", "json": ["paletter:use_on"]},
+        {"json": {"paletter:none": {}}},
+        {"json": {"paletter:use_on": {}}},
+        {"json": {"paletter:other": {}}},
+        {"json": {"paletter:use_on": {"a": 1}}}
+      ],
+      "item:minecraft:block_placer": [{"json": {"minecraft:block_placer": {"block": "minecraft:dirt"}, "paletter:use_on": {}}}],
+      "item:minecraft:entity_placer": [{"json": {"minecraft:entity_placer": {"entity": "minecraft:pig"}, "paletter:use_on": {}}}]
+    }
   },
   "replacedBy": {
     "_comment": "Components that replace a deprecated or rejected one when neither the docs text, the docs notes, the BDS message nor a field name says so (see Replacements): by (component ids) and the evidence, both required.",

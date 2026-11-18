@@ -40,6 +40,14 @@ public final class CreativeContent {
         this.entries = entries;
     }
 
+    /**
+     * Internal: compiles a layout for one palette.
+     *
+     * @param layout the layout
+     * @param items the item registry of the palette
+     * @param report where left out stacks and groups are reported
+     * @return the compiled content
+     */
     @Internal
     public static @NonNull CreativeContent compile(@NonNull CreativeLayout layout, @NonNull ItemRegistry items, @NonNull PaletteReportBuilder report) {
         List<CreativeItemGroup> groups = new ArrayList<>();
@@ -64,10 +72,20 @@ public final class CreativeContent {
         return new CreativeContent(groups, contents, entries.toArray(CreativeEntry[]::new));
     }
 
+    /**
+     * Returns the groups of the packet.
+     *
+     * @return the groups, in packet order; unmodifiable
+     */
     public @NonNull List<CreativeItemGroup> groups() {
         return groups;
     }
 
+    /**
+     * Returns the items of the packet.
+     *
+     * @return the items, in network id order; unmodifiable
+     */
     public @NonNull List<CreativeItemData> items() {
         return items;
     }
@@ -83,10 +101,20 @@ public final class CreativeContent {
         return index >= 0 && index < entries.length ? entries[index] : null;
     }
 
+    /**
+     * Returns the number of items.
+     *
+     * @return the number of items, which is the highest network id
+     */
     public int size() {
         return entries.length;
     }
 
+    /**
+     * Internal: builds the packet.
+     *
+     * @return a new packet with the groups and items
+     */
     @Internal
     public @NonNull CreativeContentPacket toPacket() {
         CreativeContentPacket packet = new CreativeContentPacket();

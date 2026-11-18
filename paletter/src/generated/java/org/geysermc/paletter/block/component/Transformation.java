@@ -36,6 +36,12 @@ public record Transformation(Transformation. @NonNull Vec3 rotation,
      */
     public static final String NAME = "minecraft:transformation";
 
+    /**
+     * Checks the components.
+     *
+     * @throws NullPointerException if a required component is null
+     * @throws IllegalArgumentException if a component is out of its documented range or conflicts with another
+     */
     public Transformation {
         Objects.requireNonNull(rotation, "Transformation.rotation");
         Check.multipleOf("Transformation.rotation", rotation.x(), 90.0);
@@ -53,6 +59,8 @@ public record Transformation(Transformation. @NonNull Vec3 rotation,
     }
 
     /**
+     * Creates a builder with every field at its default.
+     *
      * @return a builder with the defaults applied
      */
     public static @NonNull Builder builder() {
@@ -60,6 +68,8 @@ public record Transformation(Transformation. @NonNull Vec3 rotation,
     }
 
     /**
+     * Creates a builder holding this value's fields, to change some of them.
+     *
      * @return a builder with this value's fields
      */
     public @NonNull Builder toBuilder() {
@@ -91,6 +101,9 @@ public record Transformation(Transformation. @NonNull Vec3 rotation,
 
         /**
          * Sets {@code rotation}.
+         *
+         * @param rotation the value
+         * @return this builder
          */
         public @NonNull Builder rotation(@NonNull Vec3 rotation) {
             this.rotation = rotation;
@@ -99,6 +112,11 @@ public record Transformation(Transformation. @NonNull Vec3 rotation,
 
         /**
          * Sets {@code rotation}.
+         *
+         * @param x the x component
+         * @param y the y component
+         * @param z the z component
+         * @return this builder
          */
         public @NonNull Builder rotation(float x, float y, float z) {
             return rotation(new Vec3(x, y, z));
@@ -106,6 +124,9 @@ public record Transformation(Transformation. @NonNull Vec3 rotation,
 
         /**
          * Sets {@code rotation_pivot}.
+         *
+         * @param rotationPivot the value
+         * @return this builder
          */
         public @NonNull Builder rotationPivot(@NonNull Vec3 rotationPivot) {
             this.rotationPivot = rotationPivot;
@@ -114,6 +135,11 @@ public record Transformation(Transformation. @NonNull Vec3 rotation,
 
         /**
          * Sets {@code rotation_pivot}.
+         *
+         * @param x the x component
+         * @param y the y component
+         * @param z the z component
+         * @return this builder
          */
         public @NonNull Builder rotationPivot(float x, float y, float z) {
             return rotationPivot(new Vec3(x, y, z));
@@ -121,6 +147,9 @@ public record Transformation(Transformation. @NonNull Vec3 rotation,
 
         /**
          * Sets {@code scale}.
+         *
+         * @param scale the value
+         * @return this builder
          */
         public @NonNull Builder scale(@NonNull Vec3 scale) {
             this.scale = scale;
@@ -129,6 +158,11 @@ public record Transformation(Transformation. @NonNull Vec3 rotation,
 
         /**
          * Sets {@code scale}.
+         *
+         * @param x the x component
+         * @param y the y component
+         * @param z the z component
+         * @return this builder
          */
         public @NonNull Builder scale(float x, float y, float z) {
             return scale(new Vec3(x, y, z));
@@ -136,6 +170,9 @@ public record Transformation(Transformation. @NonNull Vec3 rotation,
 
         /**
          * Sets {@code scale_pivot}.
+         *
+         * @param scalePivot the value
+         * @return this builder
          */
         public @NonNull Builder scalePivot(@NonNull Vec3 scalePivot) {
             this.scalePivot = scalePivot;
@@ -144,6 +181,11 @@ public record Transformation(Transformation. @NonNull Vec3 rotation,
 
         /**
          * Sets {@code scale_pivot}.
+         *
+         * @param x the x component
+         * @param y the y component
+         * @param z the z component
+         * @return this builder
          */
         public @NonNull Builder scalePivot(float x, float y, float z) {
             return scalePivot(new Vec3(x, y, z));
@@ -151,6 +193,9 @@ public record Transformation(Transformation. @NonNull Vec3 rotation,
 
         /**
          * Sets {@code translation}.
+         *
+         * @param translation the value
+         * @return this builder
          */
         public @NonNull Builder translation(@NonNull Vec3 translation) {
             this.translation = translation;
@@ -159,12 +204,20 @@ public record Transformation(Transformation. @NonNull Vec3 rotation,
 
         /**
          * Sets {@code translation}.
+         *
+         * @param x the x component
+         * @param y the y component
+         * @param z the z component
+         * @return this builder
          */
         public @NonNull Builder translation(float x, float y, float z) {
             return translation(new Vec3(x, y, z));
         }
 
         /**
+         * Builds the value from the fields set and the defaults.
+         *
+         * @return the value
          * @throws IllegalStateException if a required field is not set
          * @throws IllegalArgumentException if a value is out of range
          */
@@ -175,6 +228,10 @@ public record Transformation(Transformation. @NonNull Vec3 rotation,
 
     /**
      * An add-on JSON vector {@code [x, y, z]}.
+     *
+     * @param x the x component
+     * @param y the y component
+     * @param z the z component
      */
     public record Vec3(float x, float y, float z) {
     }

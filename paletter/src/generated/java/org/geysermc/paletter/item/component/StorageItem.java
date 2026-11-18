@@ -37,6 +37,12 @@ public record StorageItem(boolean allowNestedStorageItems, @NonNull List<String>
      */
     public static final String NAME = "minecraft:storage_item";
 
+    /**
+     * Checks the components and copies lists and maps, so the value is immutable.
+     *
+     * @throws NullPointerException if a required component is null
+     * @throws IllegalArgumentException if a component is out of its documented range or conflicts with another
+     */
     public StorageItem {
         allowedItems = List.copyOf(Objects.requireNonNull(allowedItems, "StorageItem.allowedItems"));
         bannedItems = List.copyOf(Objects.requireNonNull(bannedItems, "StorageItem.bannedItems"));
@@ -49,6 +55,8 @@ public record StorageItem(boolean allowNestedStorageItems, @NonNull List<String>
     }
 
     /**
+     * Creates a builder with every field at its default.
+     *
      * @return a builder with the defaults applied
      */
     public static @NonNull Builder builder() {
@@ -56,6 +64,8 @@ public record StorageItem(boolean allowNestedStorageItems, @NonNull List<String>
     }
 
     /**
+     * Creates a builder holding this value's fields, to change some of them.
+     *
      * @return a builder with this value's fields
      */
     public @NonNull Builder toBuilder() {
@@ -84,6 +94,9 @@ public record StorageItem(boolean allowNestedStorageItems, @NonNull List<String>
 
         /**
          * Sets {@code allow_nested_storage_items}.
+         *
+         * @param allowNestedStorageItems the value
+         * @return this builder
          */
         public @NonNull Builder allowNestedStorageItems(boolean allowNestedStorageItems) {
             this.allowNestedStorageItems = allowNestedStorageItems;
@@ -92,6 +105,9 @@ public record StorageItem(boolean allowNestedStorageItems, @NonNull List<String>
 
         /**
          * Sets {@code allowed_items}.
+         *
+         * @param allowedItems the value
+         * @return this builder
          */
         public @NonNull Builder allowedItems(@NonNull List<String> allowedItems) {
             this.allowedItems = allowedItems;
@@ -100,6 +116,9 @@ public record StorageItem(boolean allowNestedStorageItems, @NonNull List<String>
 
         /**
          * Sets {@code allowed_items}.
+         *
+         * @param allowedItems the value
+         * @return this builder
          */
         public @NonNull Builder allowedItems(@NonNull String... allowedItems) {
             return allowedItems(List.of(allowedItems));
@@ -107,6 +126,9 @@ public record StorageItem(boolean allowNestedStorageItems, @NonNull List<String>
 
         /**
          * Sets {@code allowed_items} to the identifiers of vanilla or custom items.
+         *
+         * @param allowedItems the value
+         * @return this builder
          */
         public @NonNull Builder allowedItems(@NonNull BedrockItemType... allowedItems) {
             List<String> identifiers = new ArrayList<>();
@@ -118,6 +140,9 @@ public record StorageItem(boolean allowNestedStorageItems, @NonNull List<String>
 
         /**
          * Sets {@code banned_items}.
+         *
+         * @param bannedItems the value
+         * @return this builder
          */
         public @NonNull Builder bannedItems(@NonNull List<String> bannedItems) {
             this.bannedItems = bannedItems;
@@ -126,6 +151,9 @@ public record StorageItem(boolean allowNestedStorageItems, @NonNull List<String>
 
         /**
          * Sets {@code banned_items}.
+         *
+         * @param bannedItems the value
+         * @return this builder
          */
         public @NonNull Builder bannedItems(@NonNull String... bannedItems) {
             return bannedItems(List.of(bannedItems));
@@ -133,6 +161,9 @@ public record StorageItem(boolean allowNestedStorageItems, @NonNull List<String>
 
         /**
          * Sets {@code banned_items} to the identifiers of vanilla or custom items.
+         *
+         * @param bannedItems the value
+         * @return this builder
          */
         public @NonNull Builder bannedItems(@NonNull BedrockItemType... bannedItems) {
             List<String> identifiers = new ArrayList<>();
@@ -144,6 +175,9 @@ public record StorageItem(boolean allowNestedStorageItems, @NonNull List<String>
 
         /**
          * Sets {@code max_slots}.
+         *
+         * @param maxSlots the value
+         * @return this builder
          */
         public @NonNull Builder maxSlots(int maxSlots) {
             this.maxSlots = maxSlots;
@@ -151,6 +185,9 @@ public record StorageItem(boolean allowNestedStorageItems, @NonNull List<String>
         }
 
         /**
+         * Builds the value from the fields set and the defaults.
+         *
+         * @return the value
          * @throws IllegalStateException if a required field is not set
          * @throws IllegalArgumentException if a value is out of range
          */

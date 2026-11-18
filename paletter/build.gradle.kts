@@ -33,11 +33,13 @@ java {
 }
 
 tasks.javadoc {
+    // The implementation is not API; its types are not documented (and not linked: the API never exposes them, ApiBoundaryTest)
+    exclude("org/geysermc/paletter/internal/**")
     options {
         this as StandardJavadocDocletOptions
-        // Every doclint group but `missing` (undocumented members, 2,775 when this was set); any other warning fails.
+        // Every doclint group, `missing` included: an undocumented public member, or any other warning, fails the build.
         // The JDK is linked by javadoc's built-in platform links (docs.oracle.com, no download).
-        addBooleanOption("Xdoclint:all,-missing", true)
+        addBooleanOption("Xdoclint:all", true)
         addBooleanOption("Werror", true)
         // The default cap of 100 hides the real count
         addStringOption("Xmaxwarns", "10000")

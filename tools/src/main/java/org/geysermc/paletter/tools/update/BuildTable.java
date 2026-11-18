@@ -147,8 +147,14 @@ public final class BuildTable {
             + ", data version " + row.dataVersion() + "): " + row.detail()).toList();
     }
 
+    /** What {@code check-mappings --strict} reports for each gap. */
+    public static List<String> unexplained(List<String> gaps) {
+        return gaps.stream().map(gap -> "build " + gap
+            + ": it sent other data than the build chosen for its data version, which needs a data version of its own").toList();
+    }
+
     /** {@link #gaps(List)} of the repository. */
-    static List<String> gaps(Path root) throws IOException {
+    public static List<String> gaps(Path root) throws IOException {
         return gaps(rows(root));
     }
 
@@ -156,7 +162,7 @@ public final class BuildTable {
         return rows(BuildHistory.read(root), BuildHistory.capturedReleases(root), Importer.readIndex(resources(root)));
     }
 
-    private static Path resources(Path root) {
+    static Path resources(Path root) {
         return root.resolve("paletter/src/main/resources/paletter");
     }
 

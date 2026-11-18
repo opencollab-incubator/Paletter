@@ -6,8 +6,8 @@ package org.geysermc.paletter.block.component;
 import java.util.Objects;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
+import org.geysermc.paletter.annotation.BedrockExperiment;
 import org.geysermc.paletter.annotation.BedrockFormat;
-import org.geysermc.paletter.annotation.Experimental;
 import org.geysermc.paletter.annotation.ServerOnly;
 
 /**
@@ -16,7 +16,7 @@ import org.geysermc.paletter.annotation.ServerOnly;
  * Add-on JSON: {@code "minecraft:chest_obstruction"}.
  * Server only: BDS accepts it in packs but sends nothing to clients (BDS 1.26.36.1, 1.26.45.1, 1.26.52.3,
  * 1.26.63.1, 1.26.70.24), so it has no client effect. Palettes leave it out without a warning.
- * Bedrock requires the experiment Upcoming Creator Features for it (in some format versions).
+ * The creator docs name the experiment Upcoming Creator Features for it (in some format versions); unverified against BDS.
  *
  * @param obstructionRule [optional] How the block should be evaluated by a chest during chest opening. Must be one of the following
  *        options: "always" - Will always oba chest from opening when directly above it. "never" - Will never obstruct a
@@ -28,7 +28,7 @@ import org.geysermc.paletter.annotation.ServerOnly;
  * @since 1.0.0
  */
 @BedrockFormat("1.26.10")
-@Experimental
+@BedrockExperiment("upcoming_creator_features")
 @ServerOnly
 public record ChestObstruction(
         ChestObstruction. @NonNull ObstructionRule obstructionRule) implements BlockComponent {
@@ -37,6 +37,11 @@ public record ChestObstruction(
      */
     public static final String NAME = "minecraft:chest_obstruction";
 
+    /**
+     * Checks the components.
+     *
+     * @throws NullPointerException if a required component is null
+     */
     public ChestObstruction {
         Objects.requireNonNull(obstructionRule, "ChestObstruction.obstructionRule");
     }
@@ -47,6 +52,8 @@ public record ChestObstruction(
     }
 
     /**
+     * Creates a builder with every field at its default.
+     *
      * @return a builder with the defaults applied
      */
     public static @NonNull Builder builder() {
@@ -54,6 +61,8 @@ public record ChestObstruction(
     }
 
     /**
+     * Creates a builder holding this value's fields, to change some of them.
+     *
      * @return a builder with this value's fields
      */
     public @NonNull Builder toBuilder() {
@@ -73,6 +82,9 @@ public record ChestObstruction(
 
         /**
          * Sets {@code obstruction_rule}.
+         *
+         * @param obstructionRule the value
+         * @return this builder
          */
         public @NonNull Builder obstructionRule(@NonNull ObstructionRule obstructionRule) {
             this.obstructionRule = obstructionRule;
@@ -80,6 +92,9 @@ public record ChestObstruction(
         }
 
         /**
+         * Builds the value from the fields set and the defaults.
+         *
+         * @return the value
          * @throws IllegalStateException if a required field is not set
          * @throws IllegalArgumentException if a value is out of range
          */
@@ -114,6 +129,8 @@ public record ChestObstruction(
         }
 
         /**
+         * Returns the value in add-on JSON.
+         *
          * @return the value in add-on JSON
          */
         public @NonNull String value() {
@@ -121,7 +138,10 @@ public record ChestObstruction(
         }
 
         /**
-         * @return the constant of an add-on JSON value
+         * Finds the constant of an add-on JSON value.
+         *
+         * @param value the value in add-on JSON
+         * @return the constant of the value
          * @throws IllegalArgumentException if the value is not documented
          */
         public static @NonNull ObstructionRule fromValue(@NonNull String value) {

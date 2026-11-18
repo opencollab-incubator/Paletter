@@ -91,6 +91,14 @@ public final class Fixtures {
         return schemaOn ? new Fixtures(json, feedback, keys, Schema.newest(bdsData, bdsVersion), bdsData, true) : this;
     }
 
+    /**
+     * The fixtures with exactly this schema: the one an {@code update} run extracted from its own docs, which an add-on of that run
+     * uses instead of any committed file. Given explicitly, so the switch does not apply.
+     */
+    public Fixtures withSchema(Schema schema) {
+        return new Fixtures(json, feedback, keys, schema, bdsData, true);
+    }
+
     /** The same fixtures for an add-on of this format version: the schema's newest format at or below it counts. */
     public Fixtures forFormat(String formatVersion) {
         return new Fixtures(json, feedback, keys, schema.forFormat(formatVersion), bdsData, schemaOn);
@@ -177,6 +185,29 @@ public final class Fixtures {
         return skip.has(key) ? skip.get(key).getAsString() : null;
     }
 
+    /** Whether there is a {@code scriptComponents} table; without one the add-on has no script and no script variants. */
+    public boolean hasScriptComponents() {
+        return json.has("scriptComponents");
+    }
+
+    /** The script custom components of the spec add-on ({@code scriptComponents}): the module version, the components, the variants. */
+    public JsonObject scriptComponents() {
+        return json.getAsJsonObject("scriptComponents");
+    }
+
+    /** The variants that bind script custom components under a component (by id), in file order; empty for most. */
+    public List<JsonObject> scriptVariants(String component) {
+        List<JsonObject> out = new ArrayList<>();
+        if (!hasScriptComponents()) {
+            return out;
+        }
+        JsonObject variants = scriptComponents().getAsJsonObject("variants");
+        if (variants.has(component)) {
+            variants.getAsJsonArray(component).forEach(v -> out.add(v.getAsJsonObject()));
+        }
+        return out;
+    }
+
     /** Fields only set in their own variants, never in a base (a docs name BDS does not take would reject every variant). */
     public boolean probeOnly(String component, String path) {
         return json.has("probeOnly") && json.getAsJsonArray("probeOnly").contains(new com.google.gson.JsonPrimitive(component + ":" + path));
@@ -206,6 +237,78 @@ public final class Fixtures {
         JsonElement list = values.has(component + ":" + path) ? values.get(component + ":" + path)
             : name != null && values.has(name) ? values.get(name) : null;
         return list == null ? List.of() : list.getAsJsonArray().asList();
+    }
+
+    /**
+     * Further strings of a field that no enum lists (by '<component>:<path>'), each tried as a value of its own: names the
+     * hand tables of {@code Transforms} hold, which BDS's messages do not list. Probes, not facts: a name BDS rejects says so
+     * in the content log, and only an accepted one is evidence.
+     */
+    public List<JsonElement> probeValues(String component, String path) {
+        JsonObject values = json.has("probeValues") ? json.getAsJsonObject("probeValues") : new JsonObject();
+        return values.has(component + ":" + path) ? values.getAsJsonArray(component + ":" + path).asList() : List.of();
+    }
+
+    /**
+     * Names to put in a list of names (by '<component>:<path>'): the add-on writes the lists BDS orders by the hash of each name
+     * ({@code uv_lock}) in several orders of them, so that the sent order is told from the written one. The names are inputs, not facts.
+     */
+    public List<String> listNames(String component, String path) {
+        JsonObject values = json.has("listNames") ? json.getAsJsonObject("listNames") : new JsonObject();
+        return values.has(component + ":" + path)
+            ? values.getAsJsonArray(component + ":" + path).asList().stream().map(JsonElement::getAsString).toList() : List.of();
+    }
+
+    /**
+     * Whether the booleans of the objects of a component are tried in every combination (the packed bits of
+     * {@code material_instances} share one leaf: each bit alone and in pairs shows which bit is which).
+     */
+    public boolean boolCombinations(String component) {
+        return json.has("boolCombinations") && json.getAsJsonArray("boolCombinations").contains(new com.google.gson.JsonPrimitive(component));
+    }
+
+    /**
+     * Whether the add-on pins the values of the schema's enum at a path (never cuts one): every enum is, but those of
+     * {@code unpinnedEnums}, which no table is built for (an open enum is a string in the API).
+     */
+    public boolean pinsEnum(String component, String path) {
+        return !(json.has("unpinnedEnums") && json.getAsJsonObject("unpinnedEnums").has(component + ":" + path));
+    }
+
+    /** The values of the string enum BDS's schema lists at a path (empty without the schema in the model, or without an enum there). */
+    public List<String> schemaEnum(String component, String path) {
+        return schema.enumValues(component, path);
+    }
+
+    /** The JSON types the schema lists for the elements of the map at a path. */
+    public List<String> schemaElementTypes(String component, String mapPath) {
+        return schema.elementTypes(component, mapPath);
+    }
+
+    /** The members of the object alternative of the elements of the map at a path, as the schema has them. */
+    public List<Schema.Member> schemaElementMembers(String component, String mapPath) {
+        return schema.elementMembers(component, mapPath);
+    }
+
+    /**
+     * Whole values of a component the format sweep tries at every format besides its base (by component id): inputs for the
+     * components BDS rejects at the current format, whose docs give no usable base. BDS decides what any of them does.
+     */
+    public List<JsonElement> sweepValues(String component) {
+        JsonObject values = json.has("sweepValues") ? json.getAsJsonObject("sweepValues") : new JsonObject();
+        return values.has(component) ? values.getAsJsonArray(component).asList() : List.of();
+    }
+
+    /**
+     * Block descriptors ({@code name}, {@code states}) to try in every field that is one: real vanilla blocks with state
+     * values of each JSON type, so BDS's registry says which it takes and how it sends them.
+     */
+    public List<JsonObject> descriptorValues() {
+        List<JsonObject> values = new ArrayList<>();
+        if (json.has("descriptorValues")) {
+            json.getAsJsonObject("descriptorValues").getAsJsonArray("values").forEach(d -> values.add(d.getAsJsonObject()));
+        }
+        return values;
     }
 
     public String mapKey(String component, String path, String name) {
@@ -242,12 +345,16 @@ public final class Fixtures {
             List<JType> forms = new ArrayList<>(c.forms());
             List<Field> fields = new ArrayList<>(c.fields());
             if (erratum.has("forms")) {
+                int before = forms.size();
                 erratum.getAsJsonArray("forms").forEach(f -> {
                     JType type = parseType(f.getAsString());
                     if (forms.stream().noneMatch(form -> form.toString().equals(type.toString()))) {
                         forms.add(type);
                     }
                 });
+                if (forms.size() == before) {
+                    throw new IllegalStateException("Erratum of " + id + " adds no form the docs lack: it is stale, remove it");
+                }
             }
             if (erratum.has("path")) {
                 String path = erratum.get("path").getAsString();
@@ -255,10 +362,19 @@ public final class Fixtures {
                 erratum.getAsJsonArray("types").forEach(t -> types.add(parseType(t.getAsString())));
                 Field existing = c.field(path);
                 if (existing == null) {
+                    if (!parentExists(path, fields)) {
+                        throw new IllegalStateException("Erratum of " + id + " names " + path + ", whose parent is no field of the component: "
+                            + "a mistyped path would add a new field instead of correcting one");
+                    }
                     fields.add(new Field(path, types, null, false, List.of(), null, null, List.of(), "(erratum) " + erratum.get("why").getAsString()));
                 } else {
                     List<JType> merged = new ArrayList<>(types);
                     existing.types().stream().filter(t -> merged.stream().noneMatch(m -> m.toString().equals(t.toString()))).forEach(merged::add);
+                    // the merge keeps every documented type, so it is longer only if the erratum names one the docs lack: the same
+                    // types in another order are no change
+                    if (merged.size() == existing.types().size()) {
+                        throw new IllegalStateException("Erratum of " + id + " for " + path + " adds no type the docs lack: it is stale, remove it");
+                    }
                     List<JsonElement> values = existing.enumValues();
                     if (values.isEmpty() && types.stream().anyMatch(t -> t.type().equals("string"))) {
                         values = DocValues.valuesIn(existing.doc());
@@ -274,6 +390,53 @@ public final class Fixtures {
         JsonObject json = Model.GSON.toJsonTree(errata).getAsJsonObject();
         BdsErrata.apply(json, feedback, keys);
         return schema.apply(Model.GSON.fromJson(json, Model.class));
+    }
+
+    /** The sections of fixtures.json and api.json whose keys start with a component id ({@code item:minecraft:food:path}). */
+    private static final List<String> FIXTURE_SECTIONS = List.of("requires", "context", "skip", "together", "samples", "alternatives",
+        "mapValues", "mapKeys", "probeOnly", "probeValues", "sweepValues", "listNames", "boolCombinations", "unpinnedEnums");
+    private static final List<String> API_SECTIONS = List.of("rootLists", "forms", "types", "unions", "keyedExtras", "descriptors",
+        "blockDescriptors", "retired", "fields", "typeNames", "standalone", "standalonePaths", "openEnums", "exclude", "handWritten", "classes",
+        "optional", "noDefaults", "enums");
+
+    /**
+     * The hand input entries that name no component of the model, as {@code <file> <section>: <key>}. A renamed or removed
+     * docs page would otherwise leave its entries in fixtures.json and api.json unread, with the generated output changing
+     * silently. Keys that do not start with a component id ({@code block}, a bare field name, {@code default}) are skipped.
+     */
+    public static List<String> orphans(JsonObject fixtures, JsonObject api, java.util.Set<String> componentIds) {
+        List<String> orphans = new ArrayList<>();
+        collectOrphans("fixtures.json", FIXTURE_SECTIONS, fixtures, componentIds, orphans);
+        collectOrphans("api.json", API_SECTIONS, api, componentIds, orphans);
+        return orphans;
+    }
+
+    private static void collectOrphans(String file, List<String> sections, JsonObject json, java.util.Set<String> ids, List<String> out) {
+        for (String section : sections) {
+            if (!json.has(section)) {
+                continue;
+            }
+            List<String> keys = json.get(section).isJsonArray()
+                ? json.getAsJsonArray(section).asList().stream().map(JsonElement::getAsString).toList()
+                : List.copyOf(json.getAsJsonObject(section).keySet());
+            for (String key : keys) {
+                boolean component = key.startsWith("item:") || key.startsWith("block:");
+                if (component && ids.stream().noneMatch(id -> key.equals(id) || key.startsWith(id + ":"))) {
+                    out.add(file + " " + section + ": " + key);
+                }
+            }
+        }
+    }
+
+    /** Whether the parent of a path is a field, or the path is top level or an element of a list ({@code [].origin}). */
+    private static boolean parentExists(String path, List<Field> fields) {
+        int cut = path.lastIndexOf('.');
+        String parent = cut < 0 ? "" : path.substring(0, cut);
+        if (parent.isEmpty() || parent.equals("[]")) {
+            return true;
+        }
+        String field = parent.endsWith("[]") ? parent.substring(0, parent.length() - 2) : parent;
+        return fields.stream().anyMatch(f -> f.path().equals(field));
     }
 
     /** {@code integer}, {@code array<object>}, {@code map<string>}, ... */

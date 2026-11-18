@@ -9,7 +9,7 @@ import org.geysermc.paletter.block.CustomBlock;
 import org.geysermc.paletter.block.component.Geometry;
 import org.geysermc.paletter.creative.CreativeCategory;
 import org.geysermc.paletter.item.CustomItem;
-import org.geysermc.paletter.item.component.DisplayName;
+import org.geysermc.paletter.item.component.ItemDisplayName;
 import org.geysermc.paletter.item.component.Icon;
 import org.geysermc.paletter.vanilla.BedrockBlockState;
 import org.geysermc.paletter.item.BedrockItemStack;
@@ -21,7 +21,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * A Java <-> Bedrock translator: its mappings are int tables written once against the newest Bedrock version, then
+ * A Java {@code <->} Bedrock translator: its mappings are int tables written once against the newest Bedrock version, then
  * turned into runtime ids per client version. Run:
  * {@code ./gradlew :examples:run -PmainClass=org.geysermc.paletter.examples.TranslatorExample}.
  */
@@ -30,7 +30,7 @@ public final class TranslatorExample {
         // The translator's custom content, built with the generated component API
         CustomItem ruby = CustomItem.builder("example:ruby")
             .component(Icon.of("ruby"))
-            .component(DisplayName.builder().value("item.example.ruby.name").build())
+            .component(ItemDisplayName.builder().value("item.example.ruby.name").build())
             .menuCategory(CreativeCategory.ITEMS)
             .build();
         CustomBlock lamp = CustomBlock.builder("example:lamp")

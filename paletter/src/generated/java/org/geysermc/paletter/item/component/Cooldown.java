@@ -32,6 +32,11 @@ public record Cooldown(@NonNull String category, float duration,
      */
     public static final String NAME = "minecraft:cooldown";
 
+    /**
+     * Checks the components.
+     *
+     * @throws NullPointerException if a required component is null
+     */
     public Cooldown {
         Objects.requireNonNull(category, "Cooldown.category");
         Objects.requireNonNull(type, "Cooldown.type");
@@ -43,6 +48,9 @@ public record Cooldown(@NonNull String category, float duration,
     }
 
     /**
+     * Creates a builder with every optional field at its default; required fields must be set before
+     * {@code build()}.
+     *
      * @return a builder with the defaults applied
      */
     public static @NonNull Builder builder() {
@@ -50,6 +58,8 @@ public record Cooldown(@NonNull String category, float duration,
     }
 
     /**
+     * Creates a builder holding this value's fields, to change some of them.
+     *
      * @return a builder with this value's fields
      */
     public @NonNull Builder toBuilder() {
@@ -75,6 +85,9 @@ public record Cooldown(@NonNull String category, float duration,
 
         /**
          * Sets {@code category}.
+         *
+         * @param category the value
+         * @return this builder
          */
         public @NonNull Builder category(@NonNull String category) {
             this.category = category;
@@ -83,6 +96,9 @@ public record Cooldown(@NonNull String category, float duration,
 
         /**
          * Sets {@code duration}.
+         *
+         * @param duration the value
+         * @return this builder
          */
         public @NonNull Builder duration(float duration) {
             this.duration = duration;
@@ -91,6 +107,9 @@ public record Cooldown(@NonNull String category, float duration,
 
         /**
          * Sets {@code type}.
+         *
+         * @param type the value
+         * @return this builder
          */
         public @NonNull Builder type(@NonNull Type type) {
             this.type = type;
@@ -98,6 +117,9 @@ public record Cooldown(@NonNull String category, float duration,
         }
 
         /**
+         * Builds the value from the fields set and the defaults.
+         *
+         * @return the value
          * @throws IllegalStateException if a required field is not set
          * @throws IllegalArgumentException if a value is out of range
          */
@@ -133,6 +155,8 @@ public record Cooldown(@NonNull String category, float duration,
         }
 
         /**
+         * Returns the value in add-on JSON.
+         *
          * @return the value in add-on JSON
          */
         public @NonNull String value() {
@@ -140,7 +164,10 @@ public record Cooldown(@NonNull String category, float duration,
         }
 
         /**
-         * @return the constant of an add-on JSON value
+         * Finds the constant of an add-on JSON value.
+         *
+         * @param value the value in add-on JSON
+         * @return the constant of the value
          * @throws IllegalArgumentException if the value is not documented
          */
         public static @NonNull Type fromValue(@NonNull String value) {

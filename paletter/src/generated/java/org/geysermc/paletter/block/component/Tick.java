@@ -38,6 +38,11 @@ public record Tick(@NonNull List<Float> intervalRange, boolean looping) implemen
      */
     public static final String NAME = "minecraft:tick";
 
+    /**
+     * Checks the components and copies lists and maps, so the value is immutable.
+     *
+     * @throws NullPointerException if a required component is null
+     */
     public Tick {
         intervalRange = List.copyOf(Objects.requireNonNull(intervalRange, "Tick.intervalRange"));
     }
@@ -48,6 +53,9 @@ public record Tick(@NonNull List<Float> intervalRange, boolean looping) implemen
     }
 
     /**
+     * Creates a builder with every optional field at its default; required fields must be set before
+     * {@code build()}.
+     *
      * @return a builder with the defaults applied
      */
     public static @NonNull Builder builder() {
@@ -55,6 +63,8 @@ public record Tick(@NonNull List<Float> intervalRange, boolean looping) implemen
     }
 
     /**
+     * Creates a builder holding this value's fields, to change some of them.
+     *
      * @return a builder with this value's fields
      */
     public @NonNull Builder toBuilder() {
@@ -77,6 +87,9 @@ public record Tick(@NonNull List<Float> intervalRange, boolean looping) implemen
 
         /**
          * Sets {@code interval_range}.
+         *
+         * @param intervalRange the value
+         * @return this builder
          */
         public @NonNull Builder intervalRange(@NonNull List<Float> intervalRange) {
             this.intervalRange = intervalRange;
@@ -85,6 +98,9 @@ public record Tick(@NonNull List<Float> intervalRange, boolean looping) implemen
 
         /**
          * Sets {@code interval_range}.
+         *
+         * @param intervalRange the value
+         * @return this builder
          */
         public @NonNull Builder intervalRange(@NonNull Float... intervalRange) {
             return intervalRange(List.of(intervalRange));
@@ -92,6 +108,9 @@ public record Tick(@NonNull List<Float> intervalRange, boolean looping) implemen
 
         /**
          * Sets {@code looping}.
+         *
+         * @param looping the value
+         * @return this builder
          */
         public @NonNull Builder looping(boolean looping) {
             this.looping = looping;
@@ -99,6 +118,9 @@ public record Tick(@NonNull List<Float> intervalRange, boolean looping) implemen
         }
 
         /**
+         * Builds the value from the fields set and the defaults.
+         *
+         * @return the value
          * @throws IllegalStateException if a required field is not set
          * @throws IllegalArgumentException if a value is out of range
          */

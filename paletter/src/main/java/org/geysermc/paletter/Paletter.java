@@ -42,7 +42,21 @@ import java.util.function.Predicate;
  * Palette sessionPalette = palette.extend(sessionLayer);
  * }</pre>
  * Everything is loaded lazily and cached; instances are thread safe. Block states and item components that are equal
- * across versions are the same instances.
+ * across versions are the same instances. Share one instance for the whole application: every per-version palette it
+ * compiles is cached in it.
+ * <p>
+ * Null handling: parameters and return values are {@code @NonNull} unless the signature says {@code @Nullable}; passing
+ * null where it is not allowed is a bug and throws {@link NullPointerException}. A lookup that finds nothing returns null
+ * ({@link #version(String)}).
+ * <p>
+ * Errors: methods throw only for configuration errors, which are reported by {@link IllegalArgumentException} (a version
+ * that does not exist) or {@link PaletteException} (content that cannot be compiled). Problems with data the
+ * library compiles that do not stop it are entries of the {@link PaletteReport} instead. A data source that cannot load
+ * its files throws {@link java.io.UncheckedIOException}.
+ * <p>
+ * Concepts: a {@link Palette} is the compiled content of one client version. Content is named by keys (version independent
+ * identities, such as {@link BedrockBlockType}); a palette hands out definitions (what is sent) and resolutions (what it
+ * makes of a key). See {@link Palette}.
  * <p>
  * Canonical ids ({@link #canonicalBlocks()}, {@link #canonicalItems()}) are defined by the newest
  * version, and valid in every palette of this instance.
@@ -88,6 +102,8 @@ public final class Paletter {
     }
 
     /**
+     * Starts the configuration of a Paletter.
+     *
      * @return a builder with the defaults: bundled data, all versions,
      *         {@link Fallbacks#UNKNOWN}, all vanilla content, {@link CreativeOrdering#BDS}, no layers
      * @since 1.0.0
@@ -97,19 +113,31 @@ public final class Paletter {
     }
 
     /**
+     * Returns the shared Paletter over the data bundled in the library, with the defaults of {@link #builder()}.
+     *
      * @return a Paletter reading the data bundled in the library
+     * @since 1.0.0
      */
     public static @NonNull Paletter bundled() {
         return Holder.BUNDLED;
     }
 
     /**
-     * @return the data versions this instance serves (those the builder's predicate accepts), oldest first
+     * Lists the data versions this instance serves.
+     *
+     * @return the data versions this instance serves (those the builder's predicate accepts), oldest first, unmodifiable
+     * @since 1.0.0
      */
     public @NonNull List<DataVersion> versions() {
         return versions;
     }
 
+    /**
+     * Returns the newest data version this instance serves.
+     *
+     * @return the newest of {@link #versions()}
+     * @since 1.0.0
+     */
     public @NonNull DataVersion latest() {
         return versions.getLast();
     }
@@ -155,6 +183,8 @@ public final class Paletter {
     }
 
     /**
+     * Finds a data version by name.
+     *
      * @param name a version name, e.g. {@code 26.60}
      * @return the data version of that name this instance serves, or null
      * @since 1.0.0
@@ -169,8 +199,12 @@ public final class Paletter {
     }
 
     /**
+     * Finds the data version serving a protocol version.
+     *
+     * @param protocolVersion a Bedrock protocol version number
      * @return the data version for a protocol version: the newest one not newer than it
      * @throws IllegalArgumentException if the protocol version is older than all data
+     * @since 1.0.0
      */
     public @NonNull DataVersion version(int protocolVersion) {
         DataVersion found = null;
@@ -185,6 +219,13 @@ public final class Paletter {
         return found;
     }
 
+    /**
+     * Internal: loads the bundled data of a version, interned across versions.
+     *
+     * @param version a data version of this instance's data source
+     * @return the vanilla data
+     * @throws java.io.UncheckedIOException if the data cannot be read
+     */
     @Internal
     public @NonNull VanillaData vanillaData(@NonNull DataVersion version) {
         if (sharesBundledData()) {
@@ -241,6 +282,8 @@ public final class Paletter {
     // ---- Lookups ----
 
     /**
+     * Internal: the canonical block ids.
+     *
      * @return canonical block ids: every state of the newest version, in its vanilla palette order
      */
     @Internal
@@ -259,6 +302,8 @@ public final class Paletter {
     }
 
     /**
+     * Internal: the canonical item ids.
+     *
      * @return canonical item ids: every item of the newest version, then its other creative variants
      */
     @Internal
@@ -277,6 +322,8 @@ public final class Paletter {
     }
 
     /**
+     * Internal: the block interner.
+     *
      * @return what hashed palettes of this instance share between versions
      */
     @Internal
@@ -287,8 +334,12 @@ public final class Paletter {
     // ---- Palettes ----
 
     /**
+     * Returns the vanilla palette of a version, compiled once and cached.
+     *
+     * @param version a data version of this instance's data source
      * @return the plain vanilla palette of a data version (with this instance's fallbacks and vanilla content, but
      *         without its layers)
+     * @throws java.io.UncheckedIOException if the data of the version cannot be read
      * @since 1.0.0
      */
     public @NonNull Palette vanilla(@NonNull DataVersion version) {
@@ -298,9 +349,45 @@ public final class Paletter {
     }
 
     /**
-     * The palette of a protocol version: vanilla content plus this instance's layers, compiled once per data version
-     * and cached. Session content goes on top of it with {@link Palette#extend(PaletteLayer)}.
+     * Finds the key of a vanilla item type in the newest data of this instance. The name an older version gave an item
+     * finds it too (see {@link Lookup#RENAMED}). Content of this instance's layers is not found: use the {@code type()} of
+     * the custom item.
      *
+     * @param identifier an item identifier
+     * @return the item type, or null if the newest data has no such item
+     * @throws NullPointerException if the identifier is null
+     * @throws java.io.UncheckedIOException if the data of the newest version cannot be read
+     * @since 1.0.0
+     */
+    public @Nullable BedrockItemType itemType(@NonNull String identifier) {
+        return vanilla(latest()).itemType(Objects.requireNonNull(identifier), Lookup.RENAMED);
+    }
+
+    /**
+     * Finds the key of a vanilla block type in the newest data of this instance. The name an older version gave a block
+     * finds it too (see {@link Lookup#RENAMED}). Content of this instance's layers is not found: use the {@code type()}
+     * of the custom block.
+     *
+     * @param identifier a block identifier
+     * @return the block type, or null if the newest data has no such block
+     * @throws NullPointerException if the identifier is null
+     * @throws java.io.UncheckedIOException if the data of the newest version cannot be read
+     * @since 1.0.0
+     */
+    public @Nullable BedrockBlockType blockType(@NonNull String identifier) {
+        return vanilla(latest()).blockType(Objects.requireNonNull(identifier), Lookup.RENAMED);
+    }
+
+    /**
+     * The palette of a protocol version: vanilla content plus this instance's layers, compiled once per data version
+     * and cached. Session content goes on top of it with {@link Palette#extend(PaletteLayer)}. A protocol newer than all
+     * data gets the newest data, with an info entry in the report; content the client has that the data lacks is then
+     * missing.
+     *
+     * @param protocolVersion a Bedrock protocol version number
+     * @return the palette serving it, never null
+     * @throws IllegalArgumentException if the protocol version is older than all data
+     * @throws PaletteException if a layer of this instance cannot be compiled
      * @since 1.0.0
      */
     public @NonNull Palette palette(int protocolVersion) {
@@ -363,6 +450,12 @@ public final class Paletter {
     }
 
     /**
+     * Returns the palette of a codec's protocol version, as {@link #palette(int)}.
+     *
+     * @param codec the codec of a client's connection
+     * @return the palette serving the codec's protocol version
+     * @throws IllegalArgumentException if the codec's protocol version is older than all data
+     * @throws PaletteException if a layer of this instance cannot be compiled
      * @since 1.0.0
      */
     public @NonNull Palette palette(@NonNull BedrockCodec codec) {
@@ -371,6 +464,9 @@ public final class Paletter {
 
     /**
      * Configures the global policy of a {@link Paletter}: everything that is the same for every palette it compiles.
+     * <p>
+     * Not thread safe: configure on one thread, then share the built {@link Paletter}. Every method throws
+     * {@link NullPointerException} for a null argument and returns this builder.
      *
      * @since 1.0.0
      */
@@ -389,7 +485,10 @@ public final class Paletter {
         }
 
         /**
+         * Sets where the vanilla data comes from.
+         *
          * @param source where the vanilla data comes from; default the data bundled in the library
+         * @return this builder
          */
         public @NonNull Builder data(@NonNull PaletteDataSource source) {
             this.source = Objects.requireNonNull(source);
@@ -397,7 +496,10 @@ public final class Paletter {
         }
 
         /**
+         * Restricts the data versions served.
+         *
          * @param versions which data versions are served; default all
+         * @return this builder
          */
         public @NonNull Builder versions(@NonNull Predicate<DataVersion> versions) {
             this.versions = Objects.requireNonNull(versions);
@@ -405,10 +507,12 @@ public final class Paletter {
         }
 
         /**
-         * @param previews whether the data of Bedrock preview builds is served as well; default {@code false}. The
-         *                 constants only a preview has ({@link org.geysermc.paletter.annotation.SincePreview}) exist either
-         *                 way, but are linked to the newest release: they resolve through {@link #fallbacks(Fallbacks)
-         *                 fallbacks}, with previews or not
+         * Serves the data of Bedrock preview builds as well, or not. The constants only a preview has
+         * ({@link org.geysermc.paletter.annotation.SincePreview}) exist either way, but are linked to the newest release:
+         * they resolve through {@link #fallbacks(Fallbacks) fallbacks}, with previews or not.
+         *
+         * @param previews whether preview data is served; default {@code false}
+         * @return this builder
          */
         public @NonNull Builder previews(boolean previews) {
             this.previews = previews;
@@ -416,7 +520,10 @@ public final class Paletter {
         }
 
         /**
-         * @param fallbacks what content a version lacks becomes; default {@link Fallbacks#UNKNOWN}
+         * Sets what content a version lacks becomes.
+         *
+         * @param fallbacks the fallbacks; default {@link Fallbacks#UNKNOWN}
+         * @return this builder
          */
         public @NonNull Builder fallbacks(@NonNull Fallbacks fallbacks) {
             this.fallbacks = Objects.requireNonNull(fallbacks);
@@ -434,6 +541,7 @@ public final class Paletter {
          * Every call adds to the toggles of the earlier ones.
          *
          * @param toggles the toggle ids, as BDS names them
+         * @return this builder
          */
         public @NonNull Builder experiments(@NonNull String... toggles) {
             vanillaContent.experiments(toggles);
@@ -448,6 +556,7 @@ public final class Paletter {
          *
          * @param version the data version
          * @param toggles the toggle ids, as BDS names them
+         * @return this builder
          */
         public @NonNull Builder experiments(@NonNull DataVersion version, @NonNull String... toggles) {
             vanillaContent.experiments(Objects.requireNonNull(version), toggles);
@@ -460,6 +569,8 @@ public final class Paletter {
          * the raw data of the version; the palettes list the toggles in {@link Palette#experiments()}. Lookups with a
          * {@link Lookup} see that content then. Adds to {@link #experiments(String...)} (the union is enabled). The voxel
          * shape experiment is enabled only by naming it: {@code experiments("voxel_shapes")}.
+         *
+         * @return this builder
          */
         public @NonNull Builder allExperiments() {
             vanillaContent.allExperiments();
@@ -469,6 +580,9 @@ public final class Paletter {
         /**
          * Does not register these vanilla items: they have no definition and no creative entry, and resolve through the
          * {@link Fallbacks}. Blocks are never removed, the client's block palette has to match.
+         *
+         * @param items the vanilla item types to remove
+         * @return this builder
          */
         public @NonNull Builder removeItems(@NonNull BedrockItemType... items) {
             vanillaContent.remove(items);
@@ -476,9 +590,12 @@ public final class Paletter {
         }
 
         /**
+         * Sets how custom content is ordered in the creative inventory.
+         *
          * @param ordering how custom items and blocks without an anchored placement are ordered in the creative
          *                 inventory; {@link CreativeOrdering#BDS} (the default) puts them exactly where BDS puts
          *                 add-on content
+         * @return this builder
          */
         public @NonNull Builder creativeOrdering(@NonNull CreativeOrdering ordering) {
             this.creativeOrdering = Objects.requireNonNull(ordering);
@@ -486,10 +603,13 @@ public final class Paletter {
         }
 
         /**
+         * Sets where the compilation reports go.
+         *
          * @param reports called once for each palette compiled (with this instance's layers applied), with its report, and
          *                once with a one entry report for a palette served for a protocol newer than the newest data (that
          *                note has no {@code unknownBlocks} or {@code unknownItems}).
          *                Called outside any internal lock: it may use this Paletter
+         * @return this builder
          */
         public @NonNull Builder reports(@NonNull Consumer<PaletteReport> reports) {
             this.reports = Objects.requireNonNull(reports);
@@ -498,12 +618,20 @@ public final class Paletter {
 
         /**
          * Adds content applied to every palette, after the layers added before it.
+         *
+         * @param layer the layer to add
+         * @return this builder
          */
         public @NonNull Builder layer(@NonNull PaletteLayer layer) {
             layers.add(Objects.requireNonNull(layer));
             return this;
         }
 
+        /**
+         * Creates the Paletter. Only the version index is read; no palette is compiled yet, see {@link Paletter#warmUp()}.
+         *
+         * @return the Paletter
+         */
         public @NonNull Paletter build() {
             return new Paletter(this);
         }
@@ -517,6 +645,10 @@ public final class Paletter {
     // ---- Properties ----
 
     /**
+     * Reads the properties of a vanilla item without compiling a palette.
+     *
+     * @param type the vanilla item type
+     * @param version the data version
      * @return the properties of a vanilla item in a version, without compiling a palette; empty for custom items and for
      * items the version does not have. Equal to {@code palette.itemDefinition(type).properties()} of a palette of that version
      * @since 1.0.0
@@ -526,6 +658,10 @@ public final class Paletter {
     }
 
     /**
+     * Reads the properties of a vanilla block without compiling a palette.
+     *
+     * @param type the vanilla block type
+     * @param version the data version
      * @return the properties of a vanilla block in a version, without compiling a palette; empty for custom blocks and for
      * blocks the version does not have
      * @since 1.0.0

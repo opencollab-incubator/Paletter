@@ -18,9 +18,14 @@ import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
 import java.util.zip.GZIPInputStream;
 
+import org.geysermc.paletter.tools.model.Schema;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /** Hashes BDS 1.26.63 sent in the creative inventory (block-network-ids-are-hashes=true). */
@@ -61,6 +66,33 @@ class BlockHashesTest {
             traitBlocks += block.getCompound("properties").containsKey("traits") ? 1 : 0;
         }
         assertTrue(traitBlocks >= 7 + 3 + 1 + 1, "a block per combination of every trait's enabled_states: " + traitBlocks);
+    }
+
+    /**
+     * Every {@code enabled_states} value of BDS's committed schema, as BDS sends an accepted one (a flag per value): the client's
+     * states come from the trait state table, and a value it has no states for yet ({@code minecraft:sixteen_way_rotation}, which
+     * BDS 1.26.63.1 accepts) is reported instead of stopping the spec capture.
+     */
+    @Test
+    void everyEnabledStateOfTheSchemaIsReadOrReported() {
+        Schema schema = Schema.newest(SPEC.getParent().getParent(), null);
+        for (String trait : List.of("minecraft:placement_direction", "minecraft:placement_position")) {
+            List<String> values = schema.enumValues("block:trait:" + trait, "enabled_states");
+            assertFalse(values.isEmpty(), trait);
+            for (String value : values) {
+                NbtMap properties = NbtMap.builder().putList("traits", NbtType.COMPOUND, NbtMap.builder().putString("name", trait)
+                    .putCompound("enabled_states", NbtMap.builder().putByte(value.substring(value.indexOf(':') + 1), (byte) 1).build()).build())
+                    .build();
+                Set<String> unknown = new TreeSet<>();
+                List<NbtMap> states = BlockHashes.customStates("test:block", properties, unknown);
+                if (unknown.isEmpty()) {
+                    assertTrue(states.size() > 1, trait + " " + value + " adds no state");
+                } else {
+                    assertEquals(Set.of(trait + " " + value), unknown);
+                    assertEquals(1, states.size());
+                }
+            }
+        }
     }
 
     private static NbtMap state(String name, Map<String, Object> states) {

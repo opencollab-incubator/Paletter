@@ -19,7 +19,7 @@ It is written for projects that talk to Bedrock clients directly:
 PaletteLayer content = PaletteLayer.builder("server")
     .item(CustomItem.builder("example:ruby")
         .component(Icon.of("ruby"))
-        .component(DisplayName.builder().value("item.example.ruby.name").build())
+        .component(ItemDisplayName.builder().value("item.example.ruby.name").build())
         .component(MaxStackSize.of(16))
         .menuCategory(CreativeCategory.ITEMS, "itemGroup.name.minerals")
         .build())

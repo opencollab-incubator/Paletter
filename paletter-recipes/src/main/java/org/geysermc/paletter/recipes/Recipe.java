@@ -30,6 +30,12 @@ public sealed interface Recipe {
      */
     record Shaped(@NonNull String id, int width, int height, @NonNull List<Ingredient> ingredients, @NonNull List<Result> results,
                   @NonNull String station, int priority, boolean assumeSymmetry, @NonNull Unlock unlock) implements Recipe {
+        /**
+         * Creates the recipe, copying the lists.
+         *
+         * @throws IllegalArgumentException if the ingredients do not fill the width and height, or there is no result
+         * @throws NullPointerException if a list is null or has a null element
+         */
         public Shaped {
             ingredients = List.copyOf(ingredients);
             results = List.copyOf(results);
@@ -54,6 +60,12 @@ public sealed interface Recipe {
      */
     record Shapeless(@NonNull String id, @NonNull List<Ingredient> ingredients, @NonNull List<Result> results, @NonNull String station,
                      int priority, boolean shulkerBox, @NonNull Unlock unlock) implements Recipe {
+        /**
+         * Creates the recipe, copying the lists.
+         *
+         * @throws IllegalArgumentException if there is no result
+         * @throws NullPointerException if a list is null or has a null element
+         */
         public Shapeless {
             ingredients = List.copyOf(ingredients);
             results = List.copyOf(results);

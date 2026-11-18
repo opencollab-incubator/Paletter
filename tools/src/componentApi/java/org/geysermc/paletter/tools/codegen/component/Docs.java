@@ -9,7 +9,7 @@ import java.util.Locale;
 /**
  * Javadoc text and Java literals.
  */
-final class Docs {
+public final class Docs {
     private static final int WIDTH = 110;
     private static final String LEARN = "https://learn.microsoft.com/en-us/minecraft/creator/";
     private static final String CONTENT_VIEW = "?view=minecraft-bedrock-stable";
@@ -87,7 +87,7 @@ final class Docs {
             .replace("}", "&#125;").replace("@", "&#64;") + "</code>";
     }
 
-    static String number(double d) {
+    public static String number(double d) {
         return d == Math.rint(d) && Math.abs(d) < 1e15 ? String.valueOf((long) d) : String.valueOf(d);
     }
 

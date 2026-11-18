@@ -22,6 +22,34 @@ class BdsDumpTest {
     private static final String JSON_V2 = """
         {"format":2,"item_tags":{"minecraft:is_food":["minecraft:bread","minecraft:apple"]},        "items":{"minecraft:bread":{"max_stack":64,"localization_key":"item.bread.name","components":["minecraft:food"]},        "minecraft:iron_sword":{"max_stack":1,"localization_key":"item.iron_sword.name","components":["minecraft:durability"],"max_durability":251}},        "block_defaults":{"minecraft:oak_planks":{"wood_type":"oak"},"minecraft:chest":{"minecraft:cardinal_direction":"north","direction":2}},        "block_states":{"minecraft:oak_planks":{"wood_type":["oak"]},"minecraft:chest":{"minecraft:cardinal_direction":["south","west","north","east"],"direction":[0,1,2,3]}},        "block_tags":{"wood":["minecraft:oak_planks"]},"block_items":{"minecraft:chest":"minecraft:chest"},"state_types":{},"errors":["no stack for item minecraft:air"]}""";
 
+    private static String stateTypes(int format, String values) {
+        return "{\"format\":" + format + ",\"item_tags\":{},\"block_defaults\":{},\"state_types\":{\"minecraft:corner\":" + values + ",\"flag\":[true,false]}}";
+    }
+
+    @Test
+    void keepsTheValueOrderOfStateTypesFromFormatFour() {
+        BdsDump dump = BdsDump.parse(stateTypes(4, "[\"none\",\"inner_left\",\"outer_right\"]"), "1.0.0.1");
+        assertEquals(List.of("none", "inner_left", "outer_right"), dump.stateTypes().get("minecraft:corner"));
+        assertEquals(List.of((byte) 1, (byte) 0), dump.stateTypes().get("flag"));
+        // The stored form keeps the order too, other arrays are still sorted
+        assertEquals(dump.stateTypes(), BdsDump.parse(BdsDump.canonicalJson(stateTypes(4, "[\"none\",\"inner_left\",\"outer_right\"]")), "1.0.0.1").stateTypes());
+    }
+
+    @Test
+    void ignoresTheSortedStateTypesOfOlderDumps() {
+        assertEquals(Map.of(), BdsDump.parse(stateTypes(3, "[\"inner_left\",\"none\"]"), "1.0.0.1").stateTypes());
+    }
+
+    @Test
+    void reportsStateTypesWhoseValueOrderDiffers() {
+        BdsDump a = BdsDump.parse(stateTypes(4, "[\"none\",\"inner_left\",\"outer_right\"]"), "1.0.0.1");
+        BdsDump same = BdsDump.parse(stateTypes(4, "[\"none\",\"new\",\"inner_left\",\"outer_right\"]"), "1.0.0.2");
+        BdsDump other = BdsDump.parse(stateTypes(4, "[\"inner_left\",\"none\",\"outer_right\"]"), "1.0.0.3");
+        assertEquals(List.of(), a.valueOrderDifferences(same));
+        assertEquals(1, a.valueOrderDifferences(other).size());
+        assertEquals(List.of(), a.valueOrderDifferences(BdsDump.parse(stateTypes(3, "[\"none\"]"), "old")));
+    }
+
     @Test
     void reassemblesChunksFromABdsLog(@TempDir Path directory) throws IOException {
         Path log = directory.resolve("bds.log");

@@ -357,16 +357,17 @@ public final class Cli implements Runnable {
             }
         }
 
-        @Command(name = "plan", description = "The builds a full recapture captures (every kept release build and the preview with captures in "
-            + "data/bds) as a GitHub Actions matrix, written to --output (one line of JSON) and listed on stdout.")
+        @Command(name = "plan", description = "The builds a full recapture captures (every kept release build, the newest unchecked build after "
+            + "each data version's newest kept build, and the preview with captures in data/bds) as a GitHub Actions matrix, written to --output (one line of JSON) and listed on stdout.")
         static final class Plan extends Rooted implements Callable<Integer> {
             @Option(names = "--output", required = true, description = "File for the matrix JSON") Path output;
 
             @Override
             public Integer call() throws Exception {
-                List<RecapturePlan.Leg> legs = RecapturePlan.of(root());
+                List<RecapturePlan.Leg> legs = RecapturePlan.of(root(), BuildHistory.fetchWithCurrentRelease());
                 Files.writeString(output, RecapturePlan.matrix(legs) + "\n");
-                legs.forEach(leg -> System.out.println(leg.build() + (leg.preview() ? " (preview)" : "") + (leg.against() != null ? " (history check)" : "")));
+                legs.forEach(leg -> System.out.println(leg.build() + (leg.preview() ? " (preview)" : "")
+                    + (leg.against() == null ? "" : leg.against().equals(leg.build()) ? " (history check)" : " (not checked yet, compared with " + leg.against() + ")")));
                 return legs.isEmpty() ? 1 : 0;
             }
         }
@@ -397,6 +398,8 @@ public final class Cli implements Runnable {
             + "instead of the spec; writes data/bds/VERSION/spec-keys and data/model/bds-keys.json") boolean probeKeys;
         @Option(names = "--format-sweep", description = "Capture the components at the format versions around their Versioned boundaries "
             + "instead of the spec; writes data/bds/VERSION/spec-format with format-sweep.json") boolean formatSweep;
+        @Option(names = "--gating", description = "Load only the experiment-gated components in a world without experiments, to verify what the creator docs "
+            + "say of their experiments; writes data/bds/VERSION/spec-gating with gating.json") boolean gating;
         @Option(names = "--vanilla-pack", description = "A pack with vanilla block and item files, a source of keys for --probe-keys") String vanillaPack;
 
         @Override
@@ -408,6 +411,7 @@ public final class Cli implements Runnable {
             flag(options, "keep-server", keepServer);
             flag(options, "probe-keys", probeKeys);
             flag(options, "format-sweep", formatSweep);
+            flag(options, "gating", gating);
             put(options, "vanilla-pack", vanillaPack);
             put(options, "cache", cache);
             put(options, "port", port);
@@ -751,10 +755,10 @@ public final class Cli implements Runnable {
     }
 
     @Command(name = "addon", description = "Generates an add-on. Kinds: spec (data/model -> every documented component + variants.json, "
-        + "the default), capture (data/addons/capture), creative (data/addons/creative), creative-large (the 700 block probe)")
+        + "the default), creative (data/addons/creative), creative-large (the 700 block probe)")
     static final class Addon extends Rooted implements Callable<Integer> {
         @Option(names = "--out", required = true) Path out;
-        @Option(names = "--kind", defaultValue = "spec", description = "spec, capture, creative or creative-large") String kind;
+        @Option(names = "--kind", defaultValue = "spec", description = "spec, creative or creative-large") String kind;
 
         @Override
         public Integer call() throws Exception {
@@ -763,7 +767,6 @@ public final class Cli implements Runnable {
                     Path model = root().resolve(Layout.MODEL);
                     new AddonGenerator(Model.read(model.resolve("components.json")), Fixtures.read(model).withNewestSchema(null)).write(out);
                 }
-                case "capture" -> FixedAddons.writeCapture(out);
                 case "creative" -> FixedAddons.writeCreative(out);
                 case "creative-large" -> FixedAddons.writeCreativeLarge(out);
                 default -> throw new IllegalArgumentException("Unknown --kind " + kind);
@@ -795,14 +798,16 @@ public final class Cli implements Runnable {
             }
             List<String> unexplained = new ArrayList<>(inference.unexplainedBits());
             unexplained.addAll(inference.linkedFields());
+            unexplained.addAll(org.geysermc.paletter.tools.update.BuildTable.unexplained(org.geysermc.paletter.tools.update.BuildTable.gaps(root())));
             Path model = root().resolve(Layout.MODEL);
             JsonObject mappings = JsonParser.parseString(Files.readString(model.resolve("mappings.json"))).getAsJsonObject();
             Model components = Fixtures.read(model).apply(Model.read(model.resolve("components.json")));
-            Path capture = Update.latestAddonCapture(root().resolve(Layout.BDS));
-            Map<String, List<String>> uncovered = WireShapes.classify(WireShapes.ofCapture(capture).uncovered(mappings), mappings, components);
-            uncovered.forEach((reason, paths) -> System.out.println(reason + ":\n  " + String.join("\n  ", paths)));
-            uncovered.getOrDefault(WireShapes.UNCLASSIFIED, List.of()).forEach(path -> unexplained.add("wire path " + path + " of "
-                + root().relativize(capture) + " is not in mappings.json and no reason of WireShapes.classify fits"));
+            // every build's spec capture; the paths with a reason are listed in coverage.md, which is compared above, so a
+            // new one there is a reviewed change
+            WireShapes.uncoveredByBuild(root().resolve(Layout.BDS), mappings, components).forEach((build, uncovered) -> {
+                uncovered.forEach((reason, paths) -> System.out.println(build + ", " + reason + ":\n  " + String.join("\n  ", paths)));
+                unexplained.addAll(WireShapes.unexplained(build, uncovered));
+            });
             unexplained.forEach(line -> System.err.println("UNEXPLAINED: " + line));
             return ok && unexplained.isEmpty() ? 0 : 1;
         }
@@ -923,7 +928,9 @@ public final class Cli implements Runnable {
                     throw new IllegalArgumentException("Missing --bds (or --from-log)");
                 }
                 console = log != null ? log : org.geysermc.paletter.tools.bds.BdsDistribution.defaultCache().resolve("runs").resolve("behaviour-dump-" + bds + ".log");
-                org.geysermc.paletter.tools.behaviour.BehaviourDump.run(root(), bds, preview, server, cache, port, timeout, console);
+                org.geysermc.paletter.tools.behaviour.BehaviourDump.run(root(), bds, preview,
+                    org.geysermc.paletter.tools.bds.ScriptModules.betaVersion(org.geysermc.paletter.tools.bds.ScriptModules.versions(root().resolve("data/bds"), bds)),
+                    server, cache, port, timeout, console);
             }
             org.geysermc.paletter.tools.behaviour.BehaviourDump.write(root(), console);
             return 0;

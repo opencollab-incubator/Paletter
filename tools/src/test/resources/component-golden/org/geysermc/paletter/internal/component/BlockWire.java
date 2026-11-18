@@ -26,10 +26,10 @@ public final class BlockWire {
     public static void write(@NonNull BlockComponent component, @NonNull WireContext ctx,
             @NonNull WireNode out) {
         switch (component) {
-            case Glow value -> glow(value, ctx, out);
-            case Hidden value -> hidden(value, ctx, out);
-            case Slab value -> slab(value, ctx, out);
-            case WireOnlyBlockComponent value -> WireOnlyWire.write(value, ctx, out);
+            case Glow c -> glow(c, ctx, out);
+            case Hidden c -> { } // server only: BDS sends nothing to clients
+            case Slab c -> Transforms.testMap(ctx, out, c);
+            case WireOnlyBlockComponent c -> WireOnlyWire.write(c, ctx, out);
         }
     }
 
@@ -37,7 +37,7 @@ public final class BlockWire {
         int protocol = ctx.protocol();
         if (protocol < 200) {
             glowUntil200(c, ctx, out);
-        } else if (protocol >= 200) {
+        } else {
             glowFrom200(c, ctx, out);
         }
     }
@@ -47,16 +47,7 @@ public final class BlockWire {
     }
 
     private static void glowFrom200(Glow c, WireContext ctx, WireNode out) {
-        int v0 = c.value();
-        out.put("test:glow.emission", Wire.toByte(v0));
-    }
-
-    private static void hidden(Hidden c, WireContext ctx, WireNode out) {
-        // server only: BDS sends nothing to clients
-    }
-
-    private static void slab(Slab c, WireContext ctx, WireNode out) {
-        Transforms.testMap(ctx, out, c);
+        out.put("test:glow.emission", Wire.toByte(c.value()));
     }
 
     /**

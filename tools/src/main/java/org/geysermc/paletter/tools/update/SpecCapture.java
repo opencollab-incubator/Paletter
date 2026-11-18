@@ -14,10 +14,13 @@ import org.geysermc.paletter.internal.data.PaletteDataCodec;
 import org.geysermc.paletter.internal.data.VanillaData;
 import org.geysermc.paletter.tools.model.Fixtures;
 import org.geysermc.paletter.tools.model.addon.AddonGenerator;
+import org.geysermc.paletter.tools.model.addon.JsonPath;
+import org.geysermc.paletter.tools.model.addon.AddonWriter;
 import org.geysermc.paletter.tools.model.Model;
+import org.geysermc.paletter.tools.model.Schema;
 import org.geysermc.paletter.tools.model.infer.Feedback;
 import org.geysermc.paletter.tools.model.infer.Wire;
-import org.geysermc.paletter.tools.model.infer.Wire.Leaf;
+import org.geysermc.paletter.tools.model.rule.Leaf;
 import org.cloudburstmc.nbt.NbtMap;
 import org.cloudburstmc.nbt.NbtType;
 import org.geysermc.paletter.tools.data.Nbt;
@@ -43,24 +46,50 @@ import java.util.stream.Stream;
  * {@code data/bds/<version>/spec/} (the input of {@code spec infer}). Reuses the {@code update} tooling
  * (download cache, server control, capture client).
  *
- * <p>Two further modes run the same capture on other add-ons and write beside the spec, where {@code infer} does not read
- * them: {@code --probe-keys} ({@link KeyDiscovery}, {@code spec-keys/}, writes {@code data/model/bds-keys.json}) and
- * {@code --format-sweep} ({@link FormatSweep}, {@code spec-format/}). {@code --vanilla-pack <dir>} adds a pack of vanilla
- * block and item files as a source of candidate keys.
+<p>Further modes run the same capture on other add-ons and write beside the spec: {@code --probe-keys} ({@link KeyDiscovery}, {@code spec-keys/}, writes {@code data/model/bds-keys.json}, not read by {@code infer}) and
+ * {@code --format-sweep} ({@link FormatSweep}, {@code spec-format/}) and {@code --gating} ({@link GatingCapture}, {@code spec-gating/}: a world
+ * without experiments). {@code --with-gating} runs the latter on the same server after the spec capture. {@code --with-format-sweep} runs the sweep on the same
+ * server after the spec capture; its capture is an input of {@code infer}. {@code --vanilla-pack <dir>} adds a pack of vanilla block and
+ * item files as a source of candidate keys.
  */
 public final class SpecCapture {
     private static final String WORLD = "paletter_spec";
     /** The custom creative inventory BDS sent in a capture ({@code id}, {@code block_runtime_id}: the hash of the default state). */
     public static final String CREATIVE_ITEMS = "custom_creative_items.json.gz";
+    /** The ERROR and WARN lines of the content log in the order BDS wrote them, beside the sorted {@code content-log.txt}. */
+    public static final String RAW_CONTENT_LOG = "content-log.raw.txt";
     /** At most this many captures per build: the first, and the ones of the variants it shrunk. */
     private static final int SHRINK_ROUNDS = 4;
 
     private final Path root;
     private final Map<String, String> options;
+    private Capture.Summary summary;
+
+    /** The schema of the run that extracted it (an {@code update}), which the add-ons use instead of the committed file; or null. */
+    private final Schema runSchema;
 
     public SpecCapture(Path root, Map<String, String> options) {
+        this(root, options, null);
+    }
+
+    public SpecCapture(Path root, Map<String, String> options, Schema runSchema) {
         this.root = root;
         this.options = options;
+        this.runSchema = runSchema;
+    }
+
+    /**
+     * The fixtures of the add-on of one build: the run's own schema if it extracted one (the committed {@code schema.json} can be
+     * older, or from a reader that read less, and a capture-only run commits nothing), else the newest committed one.
+     */
+    static Fixtures fixtures(Path modelDir, String build, Schema runSchema) throws IOException {
+        Fixtures fixtures = Fixtures.read(modelDir).forBuild(build);
+        return runSchema == null ? fixtures.withNewestSchema(build) : fixtures.withSchema(runSchema);
+    }
+
+    /** What the client recorded in the last capture of {@link #run} (block hashes, experiments), null before it. */
+    public Capture.Summary summary() {
+        return summary;
     }
 
     public int run() throws Exception {
@@ -74,26 +103,30 @@ public final class SpecCapture {
         Files.createDirectories(work);
         boolean probeKeys = options.containsKey("probe-keys");
         boolean formatSweep = options.containsKey("format-sweep");
+        boolean gating = options.containsKey("gating");
         Path out = options.containsKey("out") ? Path.of(options.get("out"))
-            : root.resolve(Layout.BDS).resolve(distribution.version()).resolve(probeKeys ? "spec-keys" : formatSweep ? "spec-format" : "spec");
+            : root.resolve(Layout.BDS).resolve(distribution.version()).resolve(probeKeys ? "spec-keys" : formatSweep ? "spec-format" : gating ? "spec-gating" : "spec");
 
         // update passes reuse-server: the server its captures ran on is still extracted, and this run removes it
         Path server = distribution.extract(cache, !options.containsKey("keep-server") && !options.containsKey("reuse-server"));
         try {
             Path modelDir = root.resolve("data/model");
-            Fixtures fixtures = Fixtures.read(modelDir).forBuild(distribution.version())
-                // The add-on is the one place that takes BDS's schema: full enums and limits to vary
-                .withNewestSchema(distribution.version());
+            // The add-on is the one place that takes BDS's schema: full enums and limits to vary
+            Fixtures fixtures = fixtures(modelDir, distribution.version(), runSchema);
             // The add-on asks for no newer format than the build is: older builds refuse packs of a newer engine version
             String formatVersion = AddonGenerator.formatVersionFor(fixtures.formatVersion, distribution.version());
             Model docs = Model.read(modelDir.resolve("components.json"));
             AddonGenerator generator;
             KeyDiscovery.Evidence evidence = null;
-            if (probeKeys || formatSweep) {
+            if (gating) {
+                generator = AddonGenerator.empty(docs, fixtures, formatVersion);
+                GatingCapture.plan(generator, formatVersion);
+            } else if (probeKeys || formatSweep) {
                 generator = AddonGenerator.empty(docs, fixtures, formatVersion);
                 List<Path> packs = new ArrayList<>();
                 try (Stream<Path> behaviorPacks = Files.list(server.resolve("behavior_packs"))) {
-                    behaviorPacks.forEach(packs::add);
+                    // not the add-ons an earlier capture on this server installed: their files are ours, not BDS's
+                    behaviorPacks.filter(pack -> !pack.getFileName().toString().startsWith("paletter_spec")).forEach(packs::add);
                 }
                 if (options.containsKey("vanilla-pack")) {
                     packs.add(Path.of(options.get("vanilla-pack")));
@@ -102,7 +135,7 @@ public final class SpecCapture {
                 if (probeKeys) {
                     KeyDiscovery.plan(generator, evidence, KeyDiscovery.answered(fixtures, distribution.version()));
                 } else {
-                    FormatSweep.plan(generator, evidence, formatVersion);
+                    FormatSweep.plan(generator, fixtures, evidence, formatVersion);
                 }
             } else {
                 generator = new AddonGenerator(docs, fixtures, formatVersion);
@@ -115,16 +148,16 @@ public final class SpecCapture {
             for (int round = 1; ; round++) {
                 generator.write(addon);
                 try {
-                    run = captureRun(server, addon, work, port, timeout, distribution.version());
+                    run = captureRun(server, addon, work, port, timeout, distribution.version(), generator.scriptMarker());
                 } catch (IOException e) {
                     if (!String.valueOf(e.getMessage()).startsWith("BDS did not start")) {
                         throw e;
                     }
                     // BDS now and then hangs while it starts: once more, on the same add-on
                     System.out.println(e.getMessage().lines().findFirst().orElse("") + "; starting it again");
-                    run = captureRun(server, addon, work, port, timeout, distribution.version());
+                    run = captureRun(server, addon, work, port, timeout, distribution.version(), generator.scriptMarker());
                 }
-                if (evidence != null || round == SHRINK_ROUNDS) {
+                if (evidence != null || gating || round == SHRINK_ROUNDS) {
                     break;
                 }
                 Map<String, AddonGenerator.Shrunk> more = shrink(generator.variants(), leaves(work.resolve("custom")),
@@ -138,7 +171,7 @@ public final class SpecCapture {
                 generator = new AddonGenerator(docs, fixtures, formatVersion, shrunk);
             }
             List<String> contentLog = run.contentLog();
-            Capture.Summary summary = run.summary();
+            summary = run.summary();
             int protocol = run.protocol();
             Files.createDirectories(out);
             for (String file : List.of("custom_item_registry.nbt", "custom_block_properties.nbt")) {
@@ -151,6 +184,8 @@ public final class SpecCapture {
                 in.transferTo(gz);
             }
             Files.writeString(out.resolve("content-log.txt"), String.join("\n", contentLog) + "\n", StandardCharsets.UTF_8);
+            // In the order BDS wrote it: what a line follows says what it is about, which the sorted log cannot
+            Files.writeString(out.resolve(RAW_CONTENT_LOG), String.join("\n", run.rawLog()) + "\n", StandardCharsets.UTF_8);
             Files.writeString(out.resolve("variants.json"), Model.GSON.toJson(generator.manifest()) + "\n", StandardCharsets.UTF_8);
             JsonObject metadata = new JsonObject();
             metadata.addProperty("bdsVersion", distribution.version());
@@ -184,8 +219,38 @@ public final class SpecCapture {
                         FormatSweep.report(generator, distribution.version(), formatVersion, leaves, log)) + "\n", StandardCharsets.UTF_8);
                 }
             }
+            if (gating) {
+                Path spec = out.resolveSibling("spec");
+                Files.writeString(out.resolve("gating.json"), Model.GSON.toJson(GatingCapture.report(generator, distribution.version(), protocol,
+                    summary.experiments(), leaves(out), logByVariant(contentLog), spec)) + "\n", StandardCharsets.UTF_8);
+            }
             System.out.println("Spec capture of BDS " + distribution.version() + " (protocol " + protocol + "): " + generator.variants().size()
                 + " variants, " + contentLog.size() + " content log lines -> " + out);
+            if (options.containsKey("with-gating")) {
+                // The same server once more, in a world without experiments: not essential, so a failure only loses this file
+                Map<String, String> gate = new LinkedHashMap<>(options);
+                gate.remove("with-gating");
+                gate.remove("with-format-sweep");
+                gate.remove("experiments");
+                gate.put("gating", "true");
+                gate.put("reuse-server", "true");
+                gate.put("out", out.resolveSibling("spec-gating").toString());
+                try {
+                    new SpecCapture(root, gate, runSchema).run();
+                } catch (Exception e) {
+                    System.out.println("The gating capture of BDS " + distribution.version() + " failed, its components stay unverified: " + e);
+                }
+            }
+            if (options.containsKey("with-format-sweep")) {
+                // The same server once more, with the add-on of the format sweep: its own capture next to this one
+                Map<String, String> sweep = new LinkedHashMap<>(options);
+                sweep.remove("with-format-sweep");
+                sweep.remove("with-gating");
+                sweep.put("format-sweep", "true");
+                sweep.put("reuse-server", "true");
+                sweep.put("out", out.resolveSibling("spec-format").toString());
+                return new SpecCapture(root, sweep, runSchema).run();
+            }
             return 0;
         } finally {
             if (!options.containsKey("keep-server")) {
@@ -198,12 +263,12 @@ public final class SpecCapture {
         }
     }
 
-    /** What one BDS run of an add-on gave: its content log, the capture and the protocol it spoke. */
-    private record Run(List<String> contentLog, Capture.Summary summary, int protocol) {
+    /** What one BDS run of an add-on gave: its content log (sorted, and the ERROR and WARN lines as BDS wrote them), the capture and the protocol it spoke. */
+    private record Run(List<String> contentLog, List<String> rawLog, Capture.Summary summary, int protocol) {
     }
 
     /** Installs the add-on on a fresh world, starts BDS with the experiments on and captures what it sends a client. */
-    private Run captureRun(Path server, Path addon, Path work, int port, int timeout, String version) throws Exception {
+    private Run captureRun(Path server, Path addon, Path work, int port, int timeout, String version, String marker) throws Exception {
         Map<String, String> properties = new LinkedHashMap<>();
         properties.put("level-type", "FLAT");
         properties.put("level-seed", "0");
@@ -226,15 +291,27 @@ public final class SpecCapture {
             bds.awaitStarted(timeout);
         }
         List<String> experiments = options.containsKey("experiments")
-            ? Arrays.asList(options.get("experiments").split(",")) : Update.DEFAULT_EXPERIMENTS;
-        Capture.enableExperiments(server.resolve("worlds").resolve(WORLD).resolve("level.dat"), experiments);
+            ? Arrays.asList(options.get("experiments").split(","))
+            : ExperimentDiscovery.recordedCurrent(root.resolve(Layout.BDS), version);
+        if (experiments.isEmpty() && !options.containsKey("gating")) {
+            throw new IOException("No experiments for the capture: no committed experiments.json at or below " + version + "; pass --experiments");
+        }
+        if (!options.containsKey("gating")) {
+            Capture.enableExperiments(server.resolve("worlds").resolve(WORLD).resolve("level.dat"), experiments);
+        }
 
         InetSocketAddress address = new InetSocketAddress("127.0.0.1", port);
         try (BdsServer bds = new BdsServer(server, false)) {
             bds.start(work.resolve("bds-capture.log"));
             bds.awaitStarted(timeout);
-            List<String> contentLog = attribute(bds.lines(line -> line.matches(".*(ERROR|WARN)\\] \\[.*") && !line.contains("TRANSPORT"))
-                .stream().map(SpecCapture::contentLine).toList());
+            // Without its script the script custom components would look like ones without callbacks: wrong evidence that looks valid
+            if (marker != null && !bds.sawLine(line -> line.matches(".*" + marker + "(\\D.*)?"))) {
+                throw new IOException("The add-on's script did not register all its components (no line with \"" + marker
+                    + "\"); the scripting log:\n  " + String.join("\n  ", bds.lines(line -> line.contains("Scripting"))));
+            }
+            List<String> rawLog = bds.lines(line -> line.matches(".*(ERROR|WARN)\\] \\[.*") && !line.contains("TRANSPORT")
+                && !line.contains(AddonGenerator.SCRIPT_MARKER))
+                .stream().map(SpecCapture::contentLine).toList();
             Capture.Reachable reachable = Capture.reachable(bds, address, 20);
             boolean raknet = reachable == null || !reachable.netherNet();
             int protocol = reachable != null && reachable.protocol() != 0 ? reachable.protocol()
@@ -244,7 +321,7 @@ public final class SpecCapture {
             }
             Capture.Summary summary = Capture.capture(address, protocol, reference(protocol), version, work.resolve("capture"),
                 work.resolve("custom"), 120, !raknet);
-            return new Run(contentLog, summary, protocol);
+            return new Run(attribute(rawLog), rawLog, summary, protocol);
         }
     }
 
@@ -288,7 +365,7 @@ public final class SpecCapture {
                     }
                 }
                 for (String path : named) {
-                    if (!dropped.contains(path) && !(field && related(path, v.path())) && AddonGenerator.remove(json, path)) {
+                    if (!dropped.contains(path) && !(field && related(path, v.path())) && JsonPath.remove(json, path)) {
                         dropped.add(path);
                     }
                 }
@@ -441,22 +518,35 @@ public final class SpecCapture {
         Files.createDirectories(directory);
         Map<String, String> uuids = Map.of("behavior", AddonGenerator.BP_UUID, "resource", AddonGenerator.RP_UUID);
         for (String kind : List.of("behavior", "resource")) {
-            Path source = addon.resolve(kind + "_pack");
-            Path target = server.resolve(kind + "_packs").resolve("paletter_spec");
-            BdsDistribution.deleteRecursively(target);
-            removePacksWithUuid(server.resolve(kind + "_packs"), uuids.get(kind));
-            try (Stream<Path> files = Files.walk(source)) {
-                for (Path file : files.toList()) {
-                    Path copy = target.resolve(source.relativize(file).toString());
-                    if (Files.isDirectory(file)) {
-                        Files.createDirectories(copy);
-                    } else {
-                        Files.copy(file, copy, StandardCopyOption.REPLACE_EXISTING);
+            List<String> ids = new ArrayList<>(List.of(uuids.get(kind)));
+            install(addon.resolve(kind + "_pack"), server.resolve(kind + "_packs"), "paletter_spec", uuids.get(kind));
+            if (kind.equals("behavior")) {
+                for (AddonWriter.EnginePack pack : AddonWriter.enginePacks()) {
+                    if (Files.isDirectory(addon.resolve(pack.directory()))) {
+                        install(addon.resolve(pack.directory()), server.resolve("behavior_packs"), "paletter_spec_" + pack.directory(), pack.uuid());
+                        ids.add(pack.uuid());
                     }
                 }
             }
-            Files.writeString(directory.resolve("world_" + kind + "_packs.json"),
-                "[{\"pack_id\": \"" + uuids.get(kind) + "\", \"version\": [1, 0, 0]}]\n");
+            Files.writeString(directory.resolve("world_" + kind + "_packs.json"), ids.stream()
+                .map(id -> "{\"pack_id\": \"" + id + "\", \"version\": [1, 0, 0]}").collect(java.util.stream.Collectors.joining(", ", "[", "]\n")));
+        }
+    }
+
+    /** Copies a pack into the server's pack folder, replacing an installed pack with the same name or uuid. */
+    private static void install(Path source, Path packs, String name, String uuid) throws IOException {
+        Path target = packs.resolve(name);
+        BdsDistribution.deleteRecursively(target);
+        removePacksWithUuid(packs, uuid);
+        try (Stream<Path> files = Files.walk(source)) {
+            for (Path file : files.toList()) {
+                Path copy = target.resolve(source.relativize(file).toString());
+                if (Files.isDirectory(file)) {
+                    Files.createDirectories(copy);
+                } else {
+                    Files.copy(file, copy, StandardCopyOption.REPLACE_EXISTING);
+                }
+            }
         }
     }
 }

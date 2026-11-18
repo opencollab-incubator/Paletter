@@ -9,6 +9,8 @@ import org.geysermc.paletter.tools.bds.BdsDistribution;
 import org.geysermc.paletter.tools.bds.BdsDump;
 import org.geysermc.paletter.tools.bds.BdsRunner;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -37,6 +39,8 @@ import java.util.zip.GZIPOutputStream;
 public final class BehaviourDump {
     public static final String FILE = "behaviour-dump.json.gz";
     static final String MARKER = "BEHAVIOUR";
+    /** The directory of the add-on in the {@code behavior_packs} of the server it ran on. */
+    public static final String PACK = "paletter_behaviour_dump";
 
     private BehaviourDump() {
     }
@@ -45,13 +49,14 @@ public final class BehaviourDump {
      * Runs the add-on and writes the console to {@code log}.
      *
      * @param preview whether {@code bdsVersion} is a preview build
+     * @param betaModule the version of the beta {@code @minecraft/server} module the add-on depends on ({@code ScriptModules})
      * @param server an extracted BDS, or null to use the build's server in the cache (extracted for the run and removed
      *               after it, unless it was there already)
      */
-    public static void run(Path root, String bdsVersion, boolean preview, Path server, Path cache, int port, int timeout, Path log)
+    public static void run(Path root, String bdsVersion, boolean preview, String betaModule, Path server, Path cache, int port, int timeout, Path log)
         throws IOException, InterruptedException {
         Files.createDirectories(log.toAbsolutePath().getParent());
-        BdsRunner runner = new BdsRunner(root.resolve(Layout.BEHAVIOUR_DUMP_ADDON), MARKER, "paletter_behaviour_dump").withBetaApis(bdsVersion);
+        BdsRunner runner = new BdsRunner(root.resolve(Layout.BEHAVIOUR_DUMP_ADDON), MARKER, PACK).withBetaApis(betaModule);
         if (server != null) {
             runner.run(server, log, timeout, port, false);
         } else {
@@ -61,12 +66,21 @@ public final class BehaviourDump {
     }
 
     /**
-     * Reads a console log of the add-on and writes the dump next to the other captures of its BDS build.
+     * A dump of one BDS build, as it is kept.
      *
-     * @return the file written
+     * @param version the BDS version the add-on reported
+     * @param gzip the file {@link #FILE}
+     * @param summary one line for the console and the report
+     */
+    public record Rendered(String version, byte[] gzip, String summary) {
+    }
+
+    /**
+     * Reads a console log of the add-on and renders the dump of its BDS build.
+     *
      * @throws IllegalStateException if the add-on met members it does not know how to read
      */
-    public static Path write(Path root, Path console) throws IOException {
+    public static Rendered render(Path console) throws IOException {
         String[] json = BdsDump.json(console, MARKER);
         JsonObject dump = JsonParser.parseString(json[1]).getAsJsonObject();
         List<String> unread = new ArrayList<>();
@@ -80,21 +94,54 @@ public final class BehaviourDump {
             + Layout.BEHAVIOUR_DUMP_ADDON + " on BDS " + json[0] + ". Do not edit: run the command again.");
         marked.addProperty("bdsVersion", json[0]);
         dump.entrySet().forEach(entry -> marked.add(entry.getKey(), entry.getValue()));
-        Path file = root.resolve(Layout.BDS).resolve(json[0]).resolve(FILE);
-        Files.createDirectories(file.getParent());
-        try (OutputStream out = new GZIPOutputStream(Files.newOutputStream(file))) {
+        ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+        try (OutputStream out = new GZIPOutputStream(bytes)) {
             out.write(marked.toString().getBytes(StandardCharsets.UTF_8));
         }
         JsonObject world = dump.getAsJsonObject("world");
-        System.out.println("Wrote " + file + ": " + dump.getAsJsonArray("states").size() + " block states, "
+        return new Rendered(json[0], bytes.toByteArray(), dump.getAsJsonArray("states").size() + " block states, "
             + dump.getAsJsonObject("items").size() + " items, " + dump.getAsJsonArray("errors").size() + " add-on errors; world-dependent: "
             + world.getAsJsonObject("dependent").keySet());
+    }
+
+    /**
+     * Reads a console log of the add-on and writes the dump next to the other captures of its BDS build.
+     *
+     * @return the file written
+     * @throws IllegalStateException if the add-on met members it does not know how to read
+     */
+    public static Path write(Path root, Path console) throws IOException {
+        Rendered rendered = render(console);
+        Path file = root.resolve(Layout.BDS).resolve(rendered.version()).resolve(FILE);
+        Files.createDirectories(file.getParent());
+        Files.write(file, rendered.gzip());
+        System.out.println("Wrote " + file + ": " + rendered.summary());
         return file;
+    }
+
+    /**
+     * Whether two dumps (as {@link #read} returns them) say the same about BDS: the build they were taken on and the
+     * generated note are left out.
+     */
+    public static boolean sameContent(JsonObject a, JsonObject b) {
+        return withoutBuild(a).equals(withoutBuild(b));
+    }
+
+    private static JsonObject withoutBuild(JsonObject dump) {
+        JsonObject copy = dump.deepCopy();
+        copy.remove("_generated");
+        copy.remove("bdsVersion");
+        return copy;
     }
 
     /** A dump as written by {@link #write}. */
     public static JsonObject read(Path file) throws IOException {
-        try (InputStream in = new GZIPInputStream(Files.newInputStream(file))) {
+        return read(Files.readAllBytes(file));
+    }
+
+    /** A dump from the bytes of {@link #FILE}. */
+    public static JsonObject read(byte[] gzip) throws IOException {
+        try (InputStream in = new GZIPInputStream(new ByteArrayInputStream(gzip))) {
             return JsonParser.parseString(new String(in.readAllBytes(), StandardCharsets.UTF_8)).getAsJsonObject();
         }
     }

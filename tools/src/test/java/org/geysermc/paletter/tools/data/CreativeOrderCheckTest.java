@@ -12,7 +12,6 @@ import org.geysermc.paletter.Paletter;
 import org.geysermc.paletter.creative.CreativeCategory;
 import org.geysermc.paletter.creative.CreativeOrdering;
 import org.geysermc.paletter.data.DataVersion;
-import org.geysermc.paletter.data.PaletteDataSource;
 import org.junit.jupiter.api.io.TempDir;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -22,47 +21,49 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
- * Paletter's default creative ordering against what BDS 1.26.63.1 sent for three add-ons (see docs/wire-notes.md):
- * the capture add-on (66 blocks, 84 items, with experiments), the creative order probe (every kind of menu category
- * placement) and the large probe (700 blocks, so BDS's block map has more than 512 buckets).
+ * Paletter's default creative ordering against what BDS sent (see docs/wire-notes.md): the creative inventory of the
+ * creative order probe (every kind of menu category placement) of BDS 1.26.63.1 and of the preview 1.26.70.24 (whose
+ * layout has items only the preview has), and of the large probe of 1.26.63.1 (700 blocks, so BDS's block map has more
+ * than 512 buckets), and the block ids and block map order of the spec add-on, which BDS iterates for the start game
+ * block properties and for the block pass alike.
  */
 class CreativeOrderCheckTest {
     private static final Path CAPTURES = Path.of("../data/bds/1.26.63.1");
     private static final Path DATA = Path.of("../paletter/src/main/resources/paletter");
 
     @ParameterizedTest
-    @CsvSource({"addon, 149", "creative-probe, 30", "creative-large, 700"})
-    void bdsOrderingMatchesTheCapture(String capture, int customStacks) throws Exception {
-        Path directory = CAPTURES.resolve(capture);
-        CreativeOrderCheck.Result result = CreativeOrderCheck.check(2225, DATA,
+    @CsvSource({"1.26.63.1, 2225, creative-probe, 30", "1.26.63.1, 2225, creative-large, 700", "1.26.70.24, 2259, creative-probe, 30"})
+    void bdsOrderingMatchesTheCapture(String build, int protocol, String capture, int customStacks) throws Exception {
+        Path directory = Path.of("../data/bds").resolve(build).resolve(capture);
+        CreativeOrderCheck.Result result = CreativeOrderCheck.check(protocol, DATA,
             directory.resolve("creative_items.json.gz"), directory.resolve("custom_item_registry.nbt"),
             directory.resolve("custom_block_properties.nbt"));
         assertTrue(result.matches(), String.join("\n", result.differences()));
         assertTrue(result.customStacks() >= customStacks, "only " + result.customStacks() + " custom stacks compared");
     }
 
-    /**
-     * Data driven items, the ones that replace a block item among them, share one sequence: the addon capture has
-     * paletter:plain 908, paletter:plain_block 909 (replaces the block's item) and paletter:projectile 910. The ids
-     * Paletter gives differ from BDS's by a constant, as custom items do not move vanilla ones.
-     */
+    /** Every spec capture of a build: BDS numbers the custom blocks and puts them in the block pass in Paletter's order. */
+    @ParameterizedTest
+    @CsvSource({"1.26.63.1, 2225", "1.26.70.24, 2259"})
+    void blockMapOrderMatchesTheSpecCaptures(String build, int protocol) throws Exception {
+        Path directory = Path.of("../data/bds").resolve(build).resolve("spec");
+        CreativeOrderCheck.Result result = CreativeOrderCheck.blockOrder(protocol, DATA, directory.resolve("custom_item_registry.nbt"),
+            directory.resolve("custom_block_properties.nbt"), List.of());
+        assertTrue(result.matches(), String.join("\n", result.differences()));
+        assertTrue(result.customStacks() >= 1000, "only " + result.customStacks() + " custom blocks compared");
+    }
+
     @Test
-    void dataDrivenItemsKeepTheirIdDistancesOfTheCapture() throws Exception {
-        Path directory = CAPTURES.resolve("addon");
-        List<NbtMap> captured = CreativeOrderCheck.readList(directory.resolve("custom_item_registry.nbt"), "items").stream()
-            .filter(item -> item.getBoolean("componentBased") && !item.getString("name").startsWith("minecraft:")).toList();
-        PaletteLayer layer = CreativeOrderCheck.layer(captured, CreativeOrderCheck.readList(directory.resolve("custom_block_properties.nbt"), "blocks"));
-        Palette palette = Paletter.builder().data(PaletteDataSource.directory(DATA)).layer(layer).build().palette(2225);
-        int shift = palette.itemDefinition(captured.getFirst().getString("name")).getRuntimeId() - captured.getFirst().getShort("id");
-        for (NbtMap item : captured) {
-            assertEquals(item.getShort("id") + shift, palette.itemDefinition(item.getString("name")).getRuntimeId(), item.getString("name"));
-        }
+    void blockMapOrderOfAnUnbundledProtocolIsSkipped() throws Exception {
+        Path directory = CAPTURES.resolve("spec");
+        CreativeOrderCheck.Result result = CreativeOrderCheck.blockOrder(2226, DATA, directory.resolve("custom_item_registry.nbt"),
+            directory.resolve("custom_block_properties.nbt"), List.of());
+        assertNotNull(result.skipped());
     }
 
     @Test
@@ -90,7 +91,7 @@ class CreativeOrderCheckTest {
 
     @Test
     void unbundledProtocolIsSkipped() throws Exception {
-        Path directory = CAPTURES.resolve("addon");
+        Path directory = CAPTURES.resolve("creative-probe");
         CreativeOrderCheck.Result result = CreativeOrderCheck.check(2226, DATA,
             directory.resolve("creative_items.json.gz"), directory.resolve("custom_item_registry.nbt"),
             directory.resolve("custom_block_properties.nbt"));

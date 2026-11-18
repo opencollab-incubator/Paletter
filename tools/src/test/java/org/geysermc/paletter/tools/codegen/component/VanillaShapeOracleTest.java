@@ -83,7 +83,7 @@ class VanillaShapeOracleTest {
                 continue;
             }
             String component = entry.get("component").getAsString();
-            JsonObject definition = generator.definitionOf(component, identifier, entry.get("json"));
+            JsonObject definition = generator.definitionOf(component, identifier, entry.has("role") ? entry.get("role").getAsString() : "", entry.get("json"));
             WireContext ctx = WireContext.of(data, new PaletteReportBuilder(), "oracle");
             try {
                 if (entry.get("kind").getAsString().equals("block")) {

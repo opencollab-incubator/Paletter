@@ -17,12 +17,19 @@ import org.checkerframework.checker.nullness.qual.NonNull;
  */
 public record DataVersion(@NonNull String name, int protocolVersion, boolean preview) implements Comparable<DataVersion> {
 
-    /** A release version. */
+    /**
+     * Creates a release version.
+     *
+     * @param name the version name, e.g. {@code 26.60}
+     * @param protocolVersion the first protocol version this data is valid for
+     */
     public DataVersion(@NonNull String name, int protocolVersion) {
         this(name, protocolVersion, false);
     }
 
     /**
+     * Tells whether this is the data of a preview build.
+     *
      * @return whether this is the data of a preview build
      */
     public boolean isPreview() {

@@ -35,6 +35,11 @@ public record Food(boolean canAlwaysEat, int nutrition, float saturationModifier
      */
     public static final String NAME = "minecraft:food";
 
+    /**
+     * Checks the components.
+     *
+     * @throws IllegalArgumentException if a component is out of its documented range or conflicts with another
+     */
     public Food {
         Check.range("Food.saturationModifier", saturationModifier, 0.0, null);
     }
@@ -45,6 +50,8 @@ public record Food(boolean canAlwaysEat, int nutrition, float saturationModifier
     }
 
     /**
+     * Creates a builder with every field at its default.
+     *
      * @return a builder with the defaults applied
      */
     public static @NonNull Builder builder() {
@@ -52,6 +59,8 @@ public record Food(boolean canAlwaysEat, int nutrition, float saturationModifier
     }
 
     /**
+     * Creates a builder holding this value's fields, to change some of them.
+     *
      * @return a builder with this value's fields
      */
     public @NonNull Builder toBuilder() {
@@ -80,6 +89,9 @@ public record Food(boolean canAlwaysEat, int nutrition, float saturationModifier
 
         /**
          * Sets {@code can_always_eat}.
+         *
+         * @param canAlwaysEat the value
+         * @return this builder
          */
         public @NonNull Builder canAlwaysEat(boolean canAlwaysEat) {
             this.canAlwaysEat = canAlwaysEat;
@@ -88,6 +100,9 @@ public record Food(boolean canAlwaysEat, int nutrition, float saturationModifier
 
         /**
          * Sets {@code nutrition}.
+         *
+         * @param nutrition the value
+         * @return this builder
          */
         public @NonNull Builder nutrition(int nutrition) {
             this.nutrition = nutrition;
@@ -96,6 +111,9 @@ public record Food(boolean canAlwaysEat, int nutrition, float saturationModifier
 
         /**
          * Sets {@code saturation_modifier}.
+         *
+         * @param saturationModifier the value
+         * @return this builder
          */
         public @NonNull Builder saturationModifier(float saturationModifier) {
             this.saturationModifier = saturationModifier;
@@ -104,6 +122,9 @@ public record Food(boolean canAlwaysEat, int nutrition, float saturationModifier
 
         /**
          * Sets {@code using_converts_to}.
+         *
+         * @param usingConvertsTo the value
+         * @return this builder
          */
         public @NonNull Builder usingConvertsTo(@Nullable String usingConvertsTo) {
             this.usingConvertsTo = usingConvertsTo;
@@ -112,12 +133,18 @@ public record Food(boolean canAlwaysEat, int nutrition, float saturationModifier
 
         /**
          * Sets {@code using_converts_to} to a vanilla or custom item.
+         *
+         * @param usingConvertsTo the value
+         * @return this builder
          */
         public @NonNull Builder usingConvertsTo(@NonNull BedrockItemType usingConvertsTo) {
             return usingConvertsTo(usingConvertsTo.identifier());
         }
 
         /**
+         * Builds the value from the fields set and the defaults.
+         *
+         * @return the value
          * @throws IllegalStateException if a required field is not set
          * @throws IllegalArgumentException if a value is out of range
          */

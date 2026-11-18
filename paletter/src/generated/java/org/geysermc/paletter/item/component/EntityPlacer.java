@@ -37,6 +37,11 @@ public record EntityPlacer(@NonNull List<EntityPlacer.UseOn> dispenseOn, @Nullab
      */
     public static final String NAME = "minecraft:entity_placer";
 
+    /**
+     * Checks the components and copies lists and maps, so the value is immutable.
+     *
+     * @throws NullPointerException if a required component is null
+     */
     public EntityPlacer {
         dispenseOn = List.copyOf(Objects.requireNonNull(dispenseOn, "EntityPlacer.dispenseOn"));
         useOn = List.copyOf(Objects.requireNonNull(useOn, "EntityPlacer.useOn"));
@@ -48,6 +53,8 @@ public record EntityPlacer(@NonNull List<EntityPlacer.UseOn> dispenseOn, @Nullab
     }
 
     /**
+     * Creates a builder with every field at its default.
+     *
      * @return a builder with the defaults applied
      */
     public static @NonNull Builder builder() {
@@ -55,6 +62,8 @@ public record EntityPlacer(@NonNull List<EntityPlacer.UseOn> dispenseOn, @Nullab
     }
 
     /**
+     * Creates a builder holding this value's fields, to change some of them.
+     *
      * @return a builder with this value's fields
      */
     public @NonNull Builder toBuilder() {
@@ -80,6 +89,9 @@ public record EntityPlacer(@NonNull List<EntityPlacer.UseOn> dispenseOn, @Nullab
 
         /**
          * Sets {@code dispense_on}.
+         *
+         * @param dispenseOn the value
+         * @return this builder
          */
         public @NonNull Builder dispenseOn(@NonNull List<UseOn> dispenseOn) {
             this.dispenseOn = dispenseOn;
@@ -88,6 +100,9 @@ public record EntityPlacer(@NonNull List<EntityPlacer.UseOn> dispenseOn, @Nullab
 
         /**
          * Sets {@code dispense_on}.
+         *
+         * @param dispenseOn the value
+         * @return this builder
          */
         public @NonNull Builder dispenseOn(@NonNull UseOn... dispenseOn) {
             return dispenseOn(List.of(dispenseOn));
@@ -95,6 +110,9 @@ public record EntityPlacer(@NonNull List<EntityPlacer.UseOn> dispenseOn, @Nullab
 
         /**
          * Sets {@code entity}.
+         *
+         * @param entity the value
+         * @return this builder
          */
         public @NonNull Builder entity(@Nullable String entity) {
             this.entity = entity;
@@ -103,6 +121,9 @@ public record EntityPlacer(@NonNull List<EntityPlacer.UseOn> dispenseOn, @Nullab
 
         /**
          * Sets {@code use_on}.
+         *
+         * @param useOn the value
+         * @return this builder
          */
         public @NonNull Builder useOn(@NonNull List<UseOn> useOn) {
             this.useOn = useOn;
@@ -111,12 +132,18 @@ public record EntityPlacer(@NonNull List<EntityPlacer.UseOn> dispenseOn, @Nullab
 
         /**
          * Sets {@code use_on}.
+         *
+         * @param useOn the value
+         * @return this builder
          */
         public @NonNull Builder useOn(@NonNull UseOn... useOn) {
             return useOn(List.of(useOn));
         }
 
         /**
+         * Builds the value from the fields set and the defaults.
+         *
+         * @return the value
          * @throws IllegalStateException if a required field is not set
          * @throws IllegalArgumentException if a value is out of range
          */
@@ -130,18 +157,26 @@ public record EntityPlacer(@NonNull List<EntityPlacer.UseOn> dispenseOn, @Nullab
      * allowed.
      *
      * @param name Add-on JSON {@code name}. Optional (null: not set).
-     * @param states Add-on JSON {@code states}. Default: <code>&#123;&#125;</code>. Compiled by the hand transform {@code
-     *        Transforms.blockDescriptorStates}.
+     * @param states Add-on JSON {@code states}. Default: <code>&#123;&#125;</code>.
      * @param tags Add-on JSON {@code tags}. Optional (null: not set).
      */
     public record UseOn(@Nullable String name, @NonNull Map<String, Object> states,
             @Nullable String tags) {
+        /**
+         * Checks the components and copies lists and maps, so the value is immutable.
+         *
+         * @throws NullPointerException if a required component is null
+         * @throws IllegalArgumentException if a component is out of its documented range or conflicts with another
+         */
         public UseOn {
             states = Check.copy(states, "EntityPlacer.UseOn.states");
             Check.stateValues(states, "EntityPlacer.UseOn.states");
         }
 
         /**
+         * Creates a descriptor matching every state of a block.
+         *
+         * @param block the vanilla or custom block
          * @return a descriptor matching every state of a block
          */
         public static @NonNull UseOn of(@NonNull BedrockBlockType block) {
@@ -149,6 +184,9 @@ public record EntityPlacer(@NonNull List<EntityPlacer.UseOn> dispenseOn, @Nullab
         }
 
         /**
+         * Creates a descriptor matching one block state.
+         *
+         * @param state the block state
          * @return a descriptor matching one block state (its block and every state value)
          */
         public static @NonNull UseOn of(@NonNull BedrockBlockState state) {
@@ -156,6 +194,8 @@ public record EntityPlacer(@NonNull List<EntityPlacer.UseOn> dispenseOn, @Nullab
         }
 
         /**
+         * Creates a builder with every field at its default.
+         *
          * @return a builder with the defaults applied
          */
         public static @NonNull Builder builder() {
@@ -163,6 +203,8 @@ public record EntityPlacer(@NonNull List<EntityPlacer.UseOn> dispenseOn, @Nullab
         }
 
         /**
+         * Creates a builder holding this value's fields, to change some of them.
+         *
          * @return a builder with this value's fields
          */
         public @NonNull Builder toBuilder() {
@@ -188,6 +230,9 @@ public record EntityPlacer(@NonNull List<EntityPlacer.UseOn> dispenseOn, @Nullab
 
             /**
              * Sets {@code name}.
+             *
+             * @param name the value
+             * @return this builder
              */
             public @NonNull Builder name(@Nullable String name) {
                 this.name = name;
@@ -196,6 +241,9 @@ public record EntityPlacer(@NonNull List<EntityPlacer.UseOn> dispenseOn, @Nullab
 
             /**
              * Sets {@code name} to a vanilla or custom block.
+             *
+             * @param name the value
+             * @return this builder
              */
             public @NonNull Builder name(@NonNull BedrockBlockType name) {
                 return name(name.identifier());
@@ -203,6 +251,9 @@ public record EntityPlacer(@NonNull List<EntityPlacer.UseOn> dispenseOn, @Nullab
 
             /**
              * Sets {@code states}.
+             *
+             * @param states the value
+             * @return this builder
              */
             public @NonNull Builder states(@NonNull Map<String, Object> states) {
                 this.states = states;
@@ -211,6 +262,9 @@ public record EntityPlacer(@NonNull List<EntityPlacer.UseOn> dispenseOn, @Nullab
 
             /**
              * Sets {@code tags}.
+             *
+             * @param tags the value
+             * @return this builder
              */
             public @NonNull Builder tags(@Nullable String tags) {
                 this.tags = tags;
@@ -218,6 +272,9 @@ public record EntityPlacer(@NonNull List<EntityPlacer.UseOn> dispenseOn, @Nullab
             }
 
             /**
+             * Builds the value from the fields set and the defaults.
+             *
+             * @return the value
              * @throws IllegalStateException if a required field is not set
              * @throws IllegalArgumentException if a value is out of range
              */

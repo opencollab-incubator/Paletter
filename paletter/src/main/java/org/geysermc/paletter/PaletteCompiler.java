@@ -70,7 +70,7 @@ final class PaletteCompiler {
         ItemRegistry.Builder builder = ItemRegistry.vanilla(data, blocks, canonicalItems);
         fallbacks.items(data.version()).forEach(builder::fallback);
         builder.defaultFallback(fallbacks.defaultItem());
-        CreativeLayout layout = RawConverter.convert(data.creative(), blocks, report);
+        CreativeLayout layout = RawConverter.convert(data.creative(), blocks, canonicalItems, report);
         ItemRegistry items = builder.build(layout, report);
         CreativeContent creative = CreativeContent.compile(layout, items, report);
         prepareCanonical(blocks, null, items, null, report);
@@ -277,12 +277,12 @@ final class PaletteCompiler {
     }
 
     /** @return the menu of a block's {@code menu_category}, or null if it is absent or {@code none}: not in creative */
-    private static @Nullable Menu menu(org.geysermc.paletter.block.component.@Nullable MenuCategory menu) {
+    private static @Nullable Menu menu(org.geysermc.paletter.block.component.@Nullable BlockMenuCategory menu) {
         return menu == null ? null : menu(menu.category().value(), menu.group());
     }
 
     /** @return the menu of an item's {@code menu_category}, or null if it is absent or {@code none}: not in creative */
-    private static @Nullable Menu menu(org.geysermc.paletter.item.component.@Nullable MenuCategory menu) {
+    private static @Nullable Menu menu(org.geysermc.paletter.item.component.@Nullable ItemMenuCategory menu) {
         // A menu category without a category is sent as none, so the item is not in creative
         return menu == null || menu.category() == null ? null : menu(menu.category().value(), menu.group());
     }

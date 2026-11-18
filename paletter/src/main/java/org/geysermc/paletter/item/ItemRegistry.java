@@ -106,6 +106,8 @@ public final class ItemRegistry implements DefinitionRegistry<ItemDefinition> {
     /**
      * Internal: binds the palette that owns this registry, unless one is bound: a palette that shares the registry of
      * another (a copy with a report) has the same values. Called by the palette when it is made.
+     *
+     * @param palette the palette that owns this registry
      */
     @Internal
     public synchronized void bind(@NonNull Palette palette) {
@@ -115,6 +117,8 @@ public final class ItemRegistry implements DefinitionRegistry<ItemDefinition> {
     }
 
     /**
+     * Internal: returns the behaviour of the palette that owns this registry.
+     *
      * @return the behaviour of the palette that owns this registry
      * @throws IllegalStateException if no palette owns it yet, which what a palette resolves never sees
      */
@@ -151,6 +155,11 @@ public final class ItemRegistry implements DefinitionRegistry<ItemDefinition> {
 
     /**
      * Starts the item palette of a version from its vanilla items.
+     *
+     * @param data the bundled data of the version
+     * @param blocks the block palette of the version
+     * @param canonical the canonical item ids the palette resolves
+     * @return a builder holding the vanilla items, fallbacks and tags of the version
      */
     @Internal
     public static @NonNull Builder vanilla(@NonNull VanillaData data, @NonNull BlockRegistry blocks, @NonNull CanonicalItems canonical) {
@@ -171,24 +180,37 @@ public final class ItemRegistry implements DefinitionRegistry<ItemDefinition> {
      *
      * @param blocks the block palette of the new palette; may differ from this one's if custom blocks were added
      * @param canonical the canonical ids of the new palette: this palette's, or these with custom items appended
+     * @return a builder that starts from the items of this registry
      */
     @Internal
     public @NonNull Builder extend(@NonNull BlockRegistry blocks, @NonNull CanonicalItems canonical) {
         return new Builder(this, blocks, canonical);
     }
 
+    /**
+     * Internal: returns the data version of the registry.
+     *
+     * @return the data version
+     */
     public @NonNull DataVersion version() {
         return version;
     }
 
+    /**
+     * Internal: returns the block registry the items are resolved against.
+     *
+     * @return the block registry
+     */
     public @NonNull BlockRegistry blocks() {
         return blocks;
     }
 
     /**
+     * Internal: returns the canonical item ids of the palette.
+     *
      * @return the canonical item ids this palette resolves
      */
-@Internal
+    @Internal
     public @NonNull CanonicalItems canonical() {
         return canonical;
     }
@@ -208,6 +230,9 @@ public final class ItemRegistry implements DefinitionRegistry<ItemDefinition> {
     }
 
     /**
+     * Internal: looks up an item by identifier.
+     *
+     * @param identifier the item identifier, e.g. {@code minecraft:apple}
      * @return the item with this identifier, or null; same as {@link #getDefinition(String)}
      */
     public @Nullable RegisteredItem item(@NonNull String identifier) {
@@ -220,6 +245,8 @@ public final class ItemRegistry implements DefinitionRegistry<ItemDefinition> {
     }
 
     /**
+     * Internal: lists the item definitions.
+     *
      * @return all definitions in runtime id order. This is what the item component packet carries
      */
     public @NonNull List<RegisteredItem> definitions() {
@@ -250,6 +277,8 @@ public final class ItemRegistry implements DefinitionRegistry<ItemDefinition> {
     }
 
     /**
+     * Internal: lists the item definitions.
+     *
      * @return all items in runtime id order; same as {@link #definitions()}
      */
     public @NonNull Collection<RegisteredItem> items() {
@@ -257,6 +286,8 @@ public final class ItemRegistry implements DefinitionRegistry<ItemDefinition> {
     }
 
     /**
+     * Internal: counts the definitions this registry holds itself.
+     *
      * @return how many definitions this registry holds itself: all of them for a shared palette, only the added and
      * overridden ones for a session palette extending another
      */
@@ -266,8 +297,9 @@ public final class ItemRegistry implements DefinitionRegistry<ItemDefinition> {
     }
 
     /**
-     * @return the definitions this registry holds itself in runtime id order, see {@link #ownSize()}: {@link #definitions()}
-     * for a registry without parent
+     * Internal: lists the definitions this registry holds itself, see {@link #ownSize()}.
+     *
+     * @return the definitions in runtime id order; {@link #definitions()} for a registry without parent
      */
     @Internal
     public @NonNull List<RegisteredItem> ownDefinitions() {
@@ -290,10 +322,20 @@ public final class ItemRegistry implements DefinitionRegistry<ItemDefinition> {
         return null;
     }
 
+    /**
+     * Internal: lists the custom items registered in this palette.
+     *
+     * @return the custom items, including those of the registry this one extends
+     */
     public @NonNull List<CustomItem> customItems() {
         return customItems;
     }
 
+    /**
+     * Internal: builds the item component packet.
+     *
+     * @return a new packet carrying all {@link #definitions()}
+     */
     public @NonNull ItemComponentPacket toPacket() {
         ItemComponentPacket packet = new ItemComponentPacket();
         packet.getItems().addAll(definitions());
@@ -301,6 +343,8 @@ public final class ItemRegistry implements DefinitionRegistry<ItemDefinition> {
     }
 
     /**
+     * Internal: lists the item tags.
+     *
      * @return item tags, tag to item identifiers: vanilla tags plus tags of custom items and layers
      */
     public @NonNull Map<String, List<String>> tags() {
@@ -342,7 +386,10 @@ public final class ItemRegistry implements DefinitionRegistry<ItemDefinition> {
     }
 
     /**
-     * @return the item of a custom block of a layer of this registry, or null if the block has none
+     * Internal: finds the item of a custom block of a layer of this registry.
+     *
+     * @param identifier the block identifier
+     * @return the item, or null if the block has none
      */
     @Internal
     public @Nullable RegisteredItem customBlockItem(@NonNull String identifier) {
@@ -350,19 +397,31 @@ public final class ItemRegistry implements DefinitionRegistry<ItemDefinition> {
     }
 
     /**
-     * @return the block this item is sent with by default, or null if it is not a block item; see {@link #blockOf}
+     * Internal: finds the block an item is sent with by default; see {@link #blockOf}.
+     *
+     * @param definition the item
+     * @return the block, or null if it is not a block item
      */
     @Internal
     public @Nullable RegisteredBlockState defaultBlock(@NonNull ItemDefinition definition) {
         return defaultBlockOf(definition.getIdentifier());
     }
 
+    /**
+     * Internal: tells whether an item is sent with a default block.
+     *
+     * @param definition the item
+     * @return true if {@link #defaultBlock} gives a block for it
+     */
     @Internal
     public boolean isBlockItem(@NonNull ItemDefinition definition) {
         return defaultBlockOf(definition.getIdentifier()) != null;
     }
 
     /**
+     * Internal: tells whether an item places several blocks.
+     *
+     * @param identifier the item identifier
      * @return true if one item identifier places several different blocks, told apart only by the block state sent
      * with the item. Variants of such items should specify their block state
      */
@@ -393,6 +452,7 @@ public final class ItemRegistry implements DefinitionRegistry<ItemDefinition> {
      * Items that do not exist in this version (or are forcibly replaced, e.g. because they are experimental there)
      * use their version fallback, if any. Results are cached.
      *
+     * @param variant the variant, written against the newest Bedrock version
      * @return the resolved item, or null if the item does not exist and has no fallback
      */
     @Internal
@@ -460,10 +520,11 @@ public final class ItemRegistry implements DefinitionRegistry<ItemDefinition> {
      * What to send for a canonical id: {@link #resolve(ItemVariant)} of its variant. An array lookup; the table is
      * built on first use.
      *
+     * @param canonical the canonical id, an index into {@link #canonical()}
      * @return the resolved item, or null if the item does not exist in this version and has no fallback
      * @throws IndexOutOfBoundsException if the id is not one of {@link #canonical()}
      */
-@Internal
+    @Internal
     public @Nullable ResolvedItem item(int canonical) {
         return canonicalTable().items[canonical];
     }
@@ -478,10 +539,11 @@ public final class ItemRegistry implements DefinitionRegistry<ItemDefinition> {
      * shared {@code minecraft:unknown} of the default fallback) is not matched: any of them would be an arbitrary claim.
      * A fallback reached by exactly one canonical id still matches it.
      *
+     * @param data the item data the client sent
      * @return the canonical id, or -1 for air, an unknown definition, an item that is no variant of the newest version,
      *         or a stack shared by the fallbacks of several canonical ids
      */
-@Internal
+    @Internal
     public int match(@NonNull ItemData data) {
         ItemDefinition definition = data.getDefinition();
         if (definition == null || definition == ItemDefinition.AIR) {
@@ -513,6 +575,7 @@ public final class ItemRegistry implements DefinitionRegistry<ItemDefinition> {
      * and the block the stack places: its own block state if it has one and the item places blocks here, else the item's
      * default block.
      *
+     * @param stack the stack to send
      * @return the item data, or {@link ItemData#AIR} if the item does not exist in this version and neither it nor the
      *         palette has a fallback
      */
@@ -558,6 +621,7 @@ public final class ItemRegistry implements DefinitionRegistry<ItemDefinition> {
      * block differs from the item's default block. If the item matched but not its damage value, the variant is the
      * item's variant for the damage the client sent ({@link BedrockItemType#variant(int)}), so the damage is not lost.
      *
+     * @param data the item data the client sent
      * @return the stack, or null for air or a stack that is no variant of the newest version
      */
     @Internal
@@ -585,15 +649,19 @@ public final class ItemRegistry implements DefinitionRegistry<ItemDefinition> {
     }
 
     /**
+     * Internal: lists the canonical variants that this version lacks.
+     *
      * @return the canonical variants that do not exist in this version and have no fallback of their own: they use the
      *         default fallback ({@link #defaultFallback()}), or {@link #item(int)} is null without one
      */
-@Internal
+    @Internal
     public @NonNull List<ItemVariant> missingCanonical() {
         return canonicalTable().missing;
     }
 
     /**
+     * Internal: returns the default fallback.
+     *
      * @return what canonical variants without an item or fallback of their own use, or null if they have no item
      */
     @Internal
@@ -605,7 +673,7 @@ public final class ItemRegistry implements DefinitionRegistry<ItemDefinition> {
     /**
      * Builds the canonical tables now instead of on first use. Called by the palette compiler.
      */
-@Internal
+    @Internal
     public void prepareCanonical() {
         canonicalTable();
     }
@@ -813,6 +881,7 @@ public final class ItemRegistry implements DefinitionRegistry<ItemDefinition> {
     /**
      * Builds a creative stack for this version: the item itself, never a fallback.
      *
+     * @param stack the creative stack
      * @return the item data, or null if the item does not exist in this version
      */
     @Internal
@@ -928,6 +997,8 @@ public final class ItemRegistry implements DefinitionRegistry<ItemDefinition> {
         }
 
         /**
+         * Internal: lists the custom blocks whose plain item was renumbered.
+         *
          * @return the blocks whose plain item got a new runtime id because this builder's blocks number the parent's blocks differently
          */
         @Internal
@@ -946,11 +1017,19 @@ public final class ItemRegistry implements DefinitionRegistry<ItemDefinition> {
         /**
          * Announces an item the layer is about to register, so components compiled earlier can refer to it
          * (registration order must not decide whether an item exists).
+         *
+         * @param identifier the identifier of the item that will be registered
          */
         public void declare(@NonNull String identifier) {
             declared.add(identifier);
         }
 
+        /**
+         * Internal: looks up an item of this builder or of the registry it extends.
+         *
+         * @param identifier the item identifier
+         * @return the item, or null if there is none
+         */
         public @Nullable RegisteredItem get(@NonNull String identifier) {
             RegisteredItem item = byIdentifier.get(identifier);
             return item != null || parent == null ? item : parent.getDefinition(identifier);
@@ -962,6 +1041,12 @@ public final class ItemRegistry implements DefinitionRegistry<ItemDefinition> {
         }
 
         /**
+         * Internal: applies an item override of a layer.
+         *
+         * @param identifier the identifier of the item to override
+         * @param modifier receives the override to change
+         * @param report where the compilation of the components reports problems
+         * @param source the id of the layer, used as the origin of what is reported
          * @return false if the item does not exist in this version, so there was nothing to override
          */
         public boolean override(@NonNull String identifier, @NonNull Consumer<ItemOverride> modifier, @NonNull PaletteReportBuilder report,
@@ -982,6 +1067,15 @@ public final class ItemRegistry implements DefinitionRegistry<ItemDefinition> {
             return true;
         }
 
+        /**
+         * Registers a custom item with the next runtime id.
+         *
+         * @param custom the custom item
+         * @param report where the compilation of the components reports problems
+         * @param source the id of the layer, used as the origin of the item
+         * @return the registered item
+         * @throws PaletteException if an item with the identifier exists already
+         */
         public @NonNull RegisteredItem addCustom(@NonNull CustomItem custom, @NonNull PaletteReportBuilder report, @NonNull String source) {
             checkUnused(custom.identifier());
             int runtimeId = nextRuntimeId;
@@ -1019,7 +1113,11 @@ public final class ItemRegistry implements DefinitionRegistry<ItemDefinition> {
         /**
          * Registers the item of a custom block, unless the block has none.
          *
+         * @param block the custom block
+         * @param report where the compilation of the components reports problems
+         * @param source the id of the layer, used as the origin of the item
          * @return the item, or null for {@link CustomBlock.BlockItem#NONE}
+         * @throws PaletteException if an item with the identifier of the block exists already
          */
         public @Nullable RegisteredItem addBlockItem(@NonNull CustomBlock block, @NonNull PaletteReportBuilder report, @NonNull String source) {
             // Also without an item: a block named like an item of the parent gives it a default block, where there is no relation
@@ -1038,6 +1136,12 @@ public final class ItemRegistry implements DefinitionRegistry<ItemDefinition> {
         /**
          * Registers a custom item that replaces the item of a custom block ({@code block_placer} with
          * {@code replace_block_item}): an ordinary data driven item with the next sequential id, which is the block's item.
+         *
+         * @param custom the custom item
+         * @param report where the compilation of the components reports problems
+         * @param source the id of the layer, used as the origin of the item
+         * @return the registered item
+         * @throws PaletteException if an item with the identifier exists already
          */
         public @NonNull RegisteredItem addBlockItemReplacement(@NonNull CustomItem custom, @NonNull PaletteReportBuilder report,
                                                                @NonNull String source) {
@@ -1053,6 +1157,8 @@ public final class ItemRegistry implements DefinitionRegistry<ItemDefinition> {
         }
 
         /**
+         * Internal: sets the default fallback.
+         *
          * @param fallback what canonical variants without an item or fallback of their own use, or null for none
          */
         @Internal
@@ -1060,10 +1166,22 @@ public final class ItemRegistry implements DefinitionRegistry<ItemDefinition> {
             this.defaultFallback = fallback;
         }
 
+        /**
+         * Internal: sets the fallback of an item identifier, replacing an earlier one.
+         *
+         * @param identifier the identifier of the item the fallback replaces
+         * @param fallback the fallback
+         */
         public void fallback(@NonNull String identifier, @NonNull ItemFallback fallback) {
             fallbacks.put(identifier, fallback);
         }
 
+        /**
+         * Internal: adds items to an item tag, which is created if it does not exist.
+         *
+         * @param tag the tag name
+         * @param identifiers the identifiers of the items to add
+         */
         public void tag(@NonNull String tag, @NonNull List<String> identifiers) {
             tagItems(tag).addAll(identifiers);
         }
@@ -1090,6 +1208,13 @@ public final class ItemRegistry implements DefinitionRegistry<ItemDefinition> {
             layoutIdentifiers = mentioned;
         }
 
+        /**
+         * Builds the registry.
+         *
+         * @param layout the creative layout of the palette, to decide the default blocks of items from
+         * @param report where problems are reported
+         * @return the registry
+         */
         public @NonNull ItemRegistry build(@NonNull CreativeLayout layout, @NonNull PaletteReportBuilder report) {
             // The items to decide the default block of: all of them, or only those that can differ from the parent's. Those are the
             // ones this builder touched, and every item with a block override or a custom block item, because their default

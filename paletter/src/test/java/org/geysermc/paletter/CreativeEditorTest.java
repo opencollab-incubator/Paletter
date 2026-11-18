@@ -136,6 +136,12 @@ class CreativeEditorTest {
     }
 
     @Test
+    void replaceNullChecksTheReplacementOfGroupIconsToo() {
+        CreativeEditor editor = layout().edit();
+        assertThrows(NullPointerException.class, () -> editor.replace(ItemMatcher.id("test:c"), stack -> null));
+    }
+
+    @Test
     void placementPrefersAnchorThenGroupThenLoose() {
         CreativeEditor editor = layout().edit();
         Placements.apply(CreativePlacement.after(ItemMatcher.id("test:c")), editor, NEW, CreativeCategory.ITEMS, "g1", CreativeOrdering.APPEND);

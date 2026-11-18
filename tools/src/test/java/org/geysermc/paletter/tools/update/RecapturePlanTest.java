@@ -40,6 +40,27 @@ class RecapturePlanTest {
     }
 
     @Test
+    void theNewestUncheckedBuildOfEachKeptDataVersionJoins(@TempDir Path root) throws IOException {
+        Files.createDirectories(root.resolve("paletter/src/main/resources/paletter"));
+        Files.writeString(root.resolve("paletter/src/main/resources/paletter/versions.txt"), "26.30 1001\n26.40 2168\n26.60 2225\n");
+        for (String[] build : new String[][] {{"1.26.36.1", "1001"}, {"1.26.45.1", "2169"}, {"1.26.63.1", "2225"}}) {
+            Path spec = Files.createDirectories(root.resolve("data/bds").resolve(build[0]).resolve("spec"));
+            Files.writeString(spec.resolve("capture.json"), "{\"protocol\": " + build[1] + "}");
+        }
+        Files.writeString(root.resolve("data/bds/builds.json"), """
+            {"builds": {"1.26.44.2": {"protocol": 1001, "identicalTo": "1.26.36.1"}}}
+            """);
+        var list = new BuildHistory.BuildList("0".repeat(40), "2026-11-01", "1.26.63.1", List.of("1.26.36.1", "1.26.38.2", "1.26.38.3", "1.26.40.8",
+            "1.26.44.2", "1.26.45.1", "1.26.47.1", "1.26.60.6", "1.26.63.1", "1.26.65.1", "1.26.80.4"), List.of());
+        assertEquals(List.of(new RecapturePlan.Leg("1.26.36.1", false, null), new RecapturePlan.Leg("1.26.38.3", false, "1.26.36.1"),
+            new RecapturePlan.Leg("1.26.45.1", false, null), new RecapturePlan.Leg("1.26.47.1", false, "1.26.45.1"),
+            new RecapturePlan.Leg("1.26.63.1", false, null), new RecapturePlan.Leg("1.26.65.1", false, "1.26.63.1")), RecapturePlan.of(root, list),
+            "the newest build of each line that has a kept build, newer than it, against it: 1.26.38.3 (not 38.2) of 26.30, 1.26.47.1 of 26.40, "
+                + "1.26.65.1 of 26.60 (1.26.60.6 is older than the kept 1.26.63.1); 1.26.44.2 is recorded; 1.26.40.8 is older than 26.40's "
+                + "kept build; 1.26.80.4 is of a line versions.txt lacks");
+    }
+
+    @Test
     void theMatrixIsAnIncludeListWithOnlyBuildChannelAndAgainst(@TempDir Path root) throws IOException {
         capture(root, "1.26.36.1", false);
         capture(root, "1.26.70.24", true);

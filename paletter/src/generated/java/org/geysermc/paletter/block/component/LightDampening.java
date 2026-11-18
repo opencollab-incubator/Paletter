@@ -25,6 +25,11 @@ public record LightDampening(int value) implements BlockComponent {
      */
     public static final String NAME = "minecraft:light_dampening";
 
+    /**
+     * Checks the components.
+     *
+     * @throws IllegalArgumentException if a component is out of its documented range or conflicts with another
+     */
     public LightDampening {
         Check.range("LightDampening.value", value, null, 15.0);
     }
@@ -37,6 +42,7 @@ public record LightDampening(int value) implements BlockComponent {
     /**
      * The integer shorthand: sets {@code value}.
      *
+     * @param value the value of that field
      * @return the value with everything else at its default
      */
     public static @NonNull LightDampening of(int value) {
@@ -44,6 +50,9 @@ public record LightDampening(int value) implements BlockComponent {
     }
 
     /**
+     * Creates a builder with every optional field at its default; required fields must be set before
+     * {@code build()}.
+     *
      * @return a builder with the defaults applied
      */
     public static @NonNull Builder builder() {
@@ -51,6 +60,8 @@ public record LightDampening(int value) implements BlockComponent {
     }
 
     /**
+     * Creates a builder holding this value's fields, to change some of them.
+     *
      * @return a builder with this value's fields
      */
     public @NonNull Builder toBuilder() {
@@ -70,6 +81,9 @@ public record LightDampening(int value) implements BlockComponent {
 
         /**
          * Sets {@code value}.
+         *
+         * @param value the value
+         * @return this builder
          */
         public @NonNull Builder value(int value) {
             this.value = value;
@@ -77,6 +91,9 @@ public record LightDampening(int value) implements BlockComponent {
         }
 
         /**
+         * Builds the value from the fields set and the defaults.
+         *
+         * @return the value
          * @throws IllegalStateException if a required field is not set
          * @throws IllegalArgumentException if a value is out of range
          */

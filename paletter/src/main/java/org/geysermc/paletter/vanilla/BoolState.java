@@ -19,6 +19,12 @@ public final class BoolState extends BedrockState<Boolean> {
         super(name);
     }
 
+    /**
+     * Creates a boolean state.
+     *
+     * @param name the state name as in the block state NBT
+     * @return a new state
+     */
     public static @NonNull BoolState of(@NonNull String name) {
         return new BoolState(name);
     }

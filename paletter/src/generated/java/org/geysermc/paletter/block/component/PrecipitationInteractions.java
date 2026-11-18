@@ -5,15 +5,15 @@ package org.geysermc.paletter.block.component;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
+import org.geysermc.paletter.annotation.BedrockExperiment;
 import org.geysermc.paletter.annotation.BedrockFormat;
-import org.geysermc.paletter.annotation.Experimental;
 
 /**
  * Determines interactions the block will have with different precipitations. Three possible values: obrain,
  * obstruct_rain_accumulate_snow and none.
  * <p>
  * Add-on JSON: {@code "minecraft:precipitation_interactions"}.
- * Bedrock requires the experiment Upcoming Creator Features for it (in some format versions).
+ * The creator docs name the experiment Upcoming Creator Features for it (in some format versions); unverified against BDS.
  *
  * @param precipitationBehavior What behavior should the block have. Possible values: obrain, obstruct_rain_accumulate_snow, snowlogging, and
  *        none Add-on JSON {@code precipitation_behavior}. Optional (null: not set). The docs give the default
@@ -22,7 +22,7 @@ import org.geysermc.paletter.annotation.Experimental;
  * @since 1.0.0
  */
 @BedrockFormat("1.21.120")
-@Experimental
+@BedrockExperiment("upcoming_creator_features")
 public record PrecipitationInteractions(
         PrecipitationInteractions. @Nullable PrecipitationBehavior precipitationBehavior) implements BlockComponent {
     /**
@@ -36,6 +36,8 @@ public record PrecipitationInteractions(
     }
 
     /**
+     * Creates a builder with every field at its default.
+     *
      * @return a builder with the defaults applied
      */
     public static @NonNull Builder builder() {
@@ -43,6 +45,8 @@ public record PrecipitationInteractions(
     }
 
     /**
+     * Creates a builder holding this value's fields, to change some of them.
+     *
      * @return a builder with this value's fields
      */
     public @NonNull Builder toBuilder() {
@@ -62,6 +66,9 @@ public record PrecipitationInteractions(
 
         /**
          * Sets {@code precipitation_behavior}.
+         *
+         * @param precipitationBehavior the value
+         * @return this builder
          */
         public @NonNull Builder precipitationBehavior(
                 @Nullable PrecipitationBehavior precipitationBehavior) {
@@ -70,6 +77,9 @@ public record PrecipitationInteractions(
         }
 
         /**
+         * Builds the value from the fields set and the defaults.
+         *
+         * @return the value
          * @throws IllegalStateException if a required field is not set
          * @throws IllegalArgumentException if a value is out of range
          */
@@ -109,6 +119,8 @@ public record PrecipitationInteractions(
         }
 
         /**
+         * Returns the value in add-on JSON.
+         *
          * @return the value in add-on JSON
          */
         public @NonNull String value() {
@@ -116,7 +128,10 @@ public record PrecipitationInteractions(
         }
 
         /**
-         * @return the constant of an add-on JSON value
+         * Finds the constant of an add-on JSON value.
+         *
+         * @param value the value in add-on JSON
+         * @return the constant of the value
          * @throws IllegalArgumentException if the value is not documented
          */
         public static @NonNull PrecipitationBehavior fromValue(@NonNull String value) {

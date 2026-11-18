@@ -7,6 +7,8 @@ import com.google.gson.JsonParser;
 import org.geysermc.paletter.tools.Layout;
 import org.geysermc.paletter.tools.bds.BdsDistribution;
 import org.geysermc.paletter.tools.bds.BdsRunner;
+import org.geysermc.paletter.tools.model.Fixtures;
+import org.geysermc.paletter.tools.model.addon.AddonGenerator;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -18,6 +20,9 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.stream.Stream;
 
 /**
  * {@code behaviour-probe}: runs the probe add-on ({@code data/addons/probe}, hand-written) on a BDS and turns its
@@ -33,6 +38,8 @@ public final class BehaviourProbe {
     static final String DIRECTORY = "behaviour-probe";
     static final String CAPTURE = "capture.json";
     static final String LOG = "probe.log";
+    /** The directory of the add-on in the {@code behavior_packs} of the server it ran on. */
+    public static final String PACK = "paletter_probe";
 
     /** A body's horizontal speed falls by this factor times the friction of what it stands on each tick. */
     static final double MOB_DRAG = 0.91;
@@ -56,7 +63,7 @@ public final class BehaviourProbe {
      */
     public static void run(Path root, String bdsVersion, boolean preview, Path server, Path cache, int port, int timeout, Path log)
         throws IOException, InterruptedException {
-        BdsRunner runner = new BdsRunner(root.resolve(Layout.PROBE_ADDON), "PROBE", "paletter_probe");
+        BdsRunner runner = new BdsRunner(root.resolve(Layout.PROBE_ADDON), "PROBE", PACK).withPackFiles(blockFiles(root, bdsVersion));
         if (server != null) {
             runner.run(server, log, timeout, port, false);
         } else {
@@ -66,19 +73,77 @@ public final class BehaviourProbe {
     }
 
     /**
+     * The format version of the blocks of the pack for a BDS version, as the spec add-on picks it ({@code fixtures.json}'s, no newer
+     * than the build): a build loads no block file of a newer format ({@code unsupported version}). The files of the pack have none.
+     *
+     * @param version a build ({@code 1.26.63.1}) or what BDS reports ({@code 1.26.70-beta24})
+     */
+    static String blockFormat(Path root, String version) throws IOException {
+        Matcher number = Pattern.compile("^\\d+\\.\\d+\\.\\d+").matcher(version);
+        if (!number.find()) {
+            throw new IOException("Not a BDS version: " + version);
+        }
+        return AddonGenerator.formatVersionFor(Fixtures.read(root.resolve(Layout.MODEL)).formatVersion, number.group());
+    }
+
+    /** The block files of the pack (pack path to content) with the {@link #blockFormat format version} of the build. */
+    static Map<String, String> blockFiles(Path root, String bdsVersion) throws IOException {
+        String format = blockFormat(root, bdsVersion);
+        Path blocks = root.resolve(Layout.PROBE_ADDON).resolve("blocks");
+        Map<String, String> files = new LinkedHashMap<>();
+        try (Stream<Path> list = Files.list(blocks)) {
+            for (Path path : list.sorted().toList()) {
+                JsonObject block = JsonParser.parseString(Files.readString(path)).getAsJsonObject();
+                JsonObject file = new JsonObject();
+                file.addProperty("format_version", format);
+                block.entrySet().forEach(entry -> file.add(entry.getKey(), entry.getValue()));
+                files.put("blocks/" + path.getFileName(), file + "\n");
+            }
+        }
+        return files;
+    }
+
+    /**
+     * What a run of the probe kept for its BDS build.
+     *
+     * @param version the BDS version the probe reported
+     * @param build its Build ID
+     * @param log the content of {@link #LOG}
+     * @param capture the content of {@link #CAPTURE}
+     */
+    public record Measured(String version, String build, String log, String capture) {
+    }
+
+    /** Measures a console log of the probe. */
+    public static Measured fromConsole(Path root, Path console) throws IOException {
+        ProbeLog log = ProbeLog.parse(Files.readAllLines(console, StandardCharsets.UTF_8));
+        JsonObject capture = measure(log, blockFormat(root, log.version()));
+        return new Measured(log.version(), log.build(), String.join("\n", log.extract()) + "\n", Json.pretty(capture));
+    }
+
+    /** Whether two {@link #CAPTURE} files say the same about BDS: the build they were taken on is left out. */
+    public static boolean sameCapture(String a, String b) {
+        return withoutBuild(a).equals(withoutBuild(b));
+    }
+
+    private static JsonObject withoutBuild(String capture) {
+        JsonObject json = JsonParser.parseString(capture).getAsJsonObject();
+        json.remove("bds");
+        return json;
+    }
+
+    /**
      * Measures a console log of the probe and writes the capture next to the other captures of its BDS build.
      *
      * @return the directory written
      */
     public static Path write(Path root, Path console) throws IOException {
-        ProbeLog log = ProbeLog.parse(Files.readAllLines(console, StandardCharsets.UTF_8));
-        JsonObject plain = JsonParser.parseString(Files.readString(root.resolve(Layout.PROBE_ADDON).resolve("blocks/plain.json"))).getAsJsonObject();
-        JsonObject capture = measure(log, plain.get("format_version").getAsString());
-        Path directory = root.resolve("data/bds").resolve(log.version()).resolve(DIRECTORY);
+        Measured measured = fromConsole(root, console);
+        Path directory = root.resolve("data/bds").resolve(measured.version()).resolve(DIRECTORY);
         Files.createDirectories(directory);
-        Files.writeString(directory.resolve(LOG), String.join("\n", log.extract()) + "\n");
-        Files.writeString(directory.resolve(CAPTURE), Json.pretty(capture));
-        System.out.println("Wrote " + directory.resolve(CAPTURE) + " from BDS " + log.version() + " (Build ID " + log.build() + ")");
+        Files.writeString(directory.resolve(LOG), measured.log());
+        Files.writeString(directory.resolve(CAPTURE), measured.capture());
+        System.out.println("Wrote " + directory.resolve(CAPTURE) + " from BDS " + measured.version() + " (Build ID " + measured.build() + ")");
         return directory;
     }
 
@@ -99,9 +164,19 @@ public final class BehaviourProbe {
         JsonArray defaults = new JsonArray();
         JsonObject friction = friction(log, defaults);
         light(log, defaults);
-        explosion(log, defaults);
+        // not essential: where the explosions do not decide the resistance (BDS 1.26.36.1 destroyed resistance 0 and 3 alike at 7
+        // blocks, p > 0.01 at both distances), the default stays unknown and the reason is kept
+        JsonObject unverified = new JsonObject();
+        try {
+            explosion(log, defaults);
+        } catch (IllegalStateException e) {
+            unverified.addProperty("block:explosion_resistance", e.getMessage());
+        }
         collisionAndFire(log, defaults);
         capture.add("defaults", defaults);
+        if (!unverified.isEmpty()) {
+            capture.add("unverified_defaults", unverified);
+        }
         capture.add("friction", friction);
         capture.add("doors", doors(log));
         capture.add("climbing", climbing(log, defaults));

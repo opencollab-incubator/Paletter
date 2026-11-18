@@ -12,9 +12,13 @@ import org.cloudburstmc.netty.channel.raknet.RakChannelFactory;
 import org.cloudburstmc.netty.channel.raknet.config.RakChannelOption;
 import org.cloudburstmc.protocol.bedrock.BedrockClientSession;
 import org.cloudburstmc.protocol.bedrock.codec.BedrockCodec;
+import org.cloudburstmc.protocol.bedrock.data.command.CommandOriginData;
+import org.cloudburstmc.protocol.bedrock.data.command.CommandOriginType;
 import org.cloudburstmc.protocol.bedrock.data.definitions.BlockDefinition;
 import org.cloudburstmc.protocol.bedrock.data.definitions.ItemDefinition;
 import org.cloudburstmc.protocol.bedrock.data.definitions.SimpleItemDefinition;
+import org.cloudburstmc.protocol.bedrock.data.inventory.ContainerId;
+import org.cloudburstmc.protocol.bedrock.data.inventory.ItemData;
 import org.cloudburstmc.protocol.bedrock.data.inventory.ItemVersion;
 import org.cloudburstmc.protocol.bedrock.netty.initializer.BedrockClientInitializer;
 import org.cloudburstmc.protocol.bedrock.packet.AvailableEntityIdentifiersPacket;
@@ -22,13 +26,18 @@ import org.cloudburstmc.protocol.bedrock.packet.BedrockPacket;
 import org.cloudburstmc.protocol.bedrock.packet.BedrockPacketHandler;
 import org.cloudburstmc.protocol.bedrock.packet.BiomeDefinitionListPacket;
 import org.cloudburstmc.protocol.bedrock.packet.ClientToServerHandshakePacket;
+import org.cloudburstmc.protocol.bedrock.packet.CommandOutputPacket;
+import org.cloudburstmc.protocol.bedrock.packet.CommandRequestPacket;
 import org.cloudburstmc.protocol.bedrock.packet.CraftingDataPacket;
 import org.cloudburstmc.protocol.bedrock.packet.CreativeContentPacket;
 import org.cloudburstmc.protocol.bedrock.packet.DisconnectPacket;
+import org.cloudburstmc.protocol.bedrock.packet.InventoryContentPacket;
+import org.cloudburstmc.protocol.bedrock.packet.InventorySlotPacket;
 import org.cloudburstmc.protocol.bedrock.packet.ItemComponentPacket;
 import org.cloudburstmc.protocol.bedrock.packet.NetworkSettingsPacket;
 import org.cloudburstmc.protocol.bedrock.packet.PacketViolationWarningPacket;
 import org.cloudburstmc.protocol.bedrock.packet.PlayStatusPacket;
+import org.cloudburstmc.protocol.bedrock.packet.SetLocalPlayerAsInitializedPacket;
 import org.cloudburstmc.protocol.bedrock.packet.RequestChunkRadiusPacket;
 import org.cloudburstmc.protocol.bedrock.packet.RequestNetworkSettingsPacket;
 import org.cloudburstmc.protocol.bedrock.packet.ResourcePackClientResponsePacket;
@@ -42,7 +51,9 @@ import org.cloudburstmc.protocol.common.DefinitionRegistry;
 import org.cloudburstmc.protocol.common.PacketSignal;
 
 import java.net.InetSocketAddress;
+import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.Deque;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -50,6 +61,8 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
+import java.util.function.Consumer;
+import java.util.UUID;
 
 /**
  * A minimal headless Bedrock client: logs in (offline), accepts the resource pack negotiation without downloading
@@ -71,6 +84,15 @@ public final class CaptureClient {
         public ResourcePacksInfoPacket packsInfo;
         public ResourcePackStackPacket packStack;
         public final Map<String, Integer> packetCounts = new TreeMap<>();
+        /**
+         * Every packet of the session in the order it was received ({@code <- Name}) or sent ({@code -> Name}); sends are
+         * listed when they are queued. What BDS sent in which order, not what a client requires.
+         */
+        public final List<String> packetOrder = new java.util.concurrent.CopyOnWriteArrayList<>();
+        /** The index of the start game packet in {@link #packetOrder}, or -1. */
+        public volatile int startGameIndex = -1;
+        /** What {@code /give} answered per requested identifier ({@link CaptureClient#give}); an identifier the server did not answer for is absent. */
+        public final Map<String, GiveCapture.Given> gives = new ConcurrentHashMap<>();
     }
 
     private final BedrockCodec codec;
@@ -80,6 +102,21 @@ public final class CaptureClient {
     private final CompletableFuture<Result> done = new CompletableFuture<>();
     private final Map<Integer, ItemDefinition> itemsById = new ConcurrentHashMap<>();
     private volatile long completeAt = Long.MAX_VALUE;
+    /** When start game, the item registry and the creative content were all there (0 before). */
+    private volatile long readyAt;
+    private static final long GIVE_ANSWER_MILLIS = 3000;
+    private static final long GIVE_START_MILLIS = 10_000;
+    private final Deque<String> giveQueue = new ArrayDeque<>();
+    private static final int MAX_MISSES = 5;
+    private String giving;
+    private long givingSince;
+    private boolean clearing;
+    private int misses;
+    /** The items of the player's inventory slots as last seen: an answer is a slot that changed. */
+    private final Map<Integer, ItemData> inventory = new java.util.HashMap<>();
+    private boolean giveStarted;
+    private Consumer<BedrockPacket> giveSender;
+    private volatile boolean givesDone = true;
 
     private final boolean netherNet;
 
@@ -94,6 +131,17 @@ public final class CaptureClient {
         this.codec = codec;
         this.address = address;
         this.netherNet = netherNet;
+    }
+
+    /**
+     * Identifiers (blocks and items) to {@code /give @s} once the player has spawned, one at a time, recording the item of the inventory
+     * slot packet that answers each, or that a command error answered ({@link GiveCapture.Given#rejected}) ({@link Result#gives}). The capture completes after the last answer; one that does not come within a few seconds
+     * (or no spawn) leaves its block unanswered, it never fails the capture. The server must let the player run commands.
+     */
+    public CaptureClient give(List<String> identifiers) {
+        giveQueue.addAll(identifiers);
+        givesDone = identifiers.isEmpty();
+        return this;
     }
 
     public Result run(long timeoutSeconds) throws Exception {
@@ -154,7 +202,7 @@ public final class CaptureClient {
                         session.setPacketHandler(new Handler(session));
                         RequestNetworkSettingsPacket request = new RequestNetworkSettingsPacket();
                         request.setProtocolVersion(codec.getProtocolVersion());
-                        session.sendPacketImmediately(request);
+                        send(session, request, true);
                     }
                 })
                 .connect(address)
@@ -163,11 +211,18 @@ public final class CaptureClient {
 
             long deadline = System.nanoTime() + TimeUnit.SECONDS.toNanos(timeoutSeconds);
             while (!done.isDone()) {
+                giveTimeouts(System.currentTimeMillis());
                 if (System.currentTimeMillis() >= completeAt) {
                     done.complete(result);
                     break;
                 }
                 if (System.nanoTime() > deadline) {
+                    if (readyAt != 0) {
+                        // Only the gives are still going: what they answered so far is written, the rest stays unverified
+                        System.out.println("  timed out with " + result.gives.size() + " gives answered");
+                        done.complete(result);
+                        break;
+                    }
                     done.completeExceptionally(new TimeoutException("Timed out; received so far: " + result.packetCounts));
                     break;
                 }
@@ -180,10 +235,138 @@ public final class CaptureClient {
         }
     }
 
+    private void send(BedrockClientSession session, BedrockPacket packet, boolean immediately) {
+        result.packetOrder.add("-> " + packet.getClass().getSimpleName());
+        if (immediately) {
+            session.sendPacketImmediately(packet);
+        } else {
+            session.sendPacket(packet);
+        }
+    }
+
     private void checkComplete() {
-        if (result.startGame != null && !result.items.isEmpty() && result.creative != null && completeAt == Long.MAX_VALUE) {
-            // Give the server a moment for the remaining packets of the join sequence (biomes, recipes, ...)
-            completeAt = System.currentTimeMillis() + 3000;
+        if (result.startGame != null && !result.items.isEmpty() && result.creative != null) {
+            if (readyAt == 0) {
+                readyAt = System.currentTimeMillis();
+            }
+            if (givesDone && completeAt == Long.MAX_VALUE) {
+                // Give the server a moment for the remaining packets of the join sequence (biomes, recipes, ...)
+                completeAt = System.currentTimeMillis() + 3000;
+            }
+        }
+    }
+
+    /** Sends the next {@code /give}, or ends the gives. */
+    private synchronized void giveNext() {
+        giving = giveQueue.poll();
+        if (giving == null) {
+            givesDone = true;
+            checkComplete();
+            return;
+        }
+        givingSince = System.currentTimeMillis();
+        CommandRequestPacket command = new CommandRequestPacket();
+        command.setCommand("/give @s " + giving + " 1");
+        command.setCommandOriginData(new CommandOriginData(CommandOriginType.PLAYER, UUID.randomUUID(), "", 0));
+        giveSender.accept(command);
+    }
+
+    /** The player spawned: the gives start, with {@code sender} sending the packets. */
+    synchronized void startGives(long runtimeEntityId, Consumer<BedrockPacket> sender) {
+        if (givesDone || giveStarted) {
+            return;
+        }
+        SetLocalPlayerAsInitializedPacket initialized = new SetLocalPlayerAsInitializedPacket();
+        initialized.setRuntimeEntityId(runtimeEntityId);
+        sender.accept(initialized);
+        giveSender = sender;
+        giveStarted = true;
+        giveNext();
+    }
+
+    Result result() {
+        return result;
+    }
+
+    /**
+     * An inventory slot of the player, from a slot packet or from an inventory content packet (BDS answers a give with either): the
+     * answer to the current give if the slot holds an item that differs from what it held before.
+     */
+    private void inventoryItem(int slot, ItemData item) {
+        boolean changed = item.getDefinition() != null && item.getDefinition().getRuntimeId() != 0 && !same(item, inventory.get(slot));
+        inventory.put(slot, item);
+        if (giving != null && changed) {
+            answered(new GiveCapture.Given(item.getDefinition().getIdentifier(), slot));
+        }
+    }
+
+    private static boolean same(ItemData item, ItemData before) {
+        return before != null && before.getDefinition() != null && before.getDefinition().getRuntimeId() == item.getDefinition().getRuntimeId()
+            && before.getCount() == item.getCount();
+    }
+
+    synchronized void inventorySlot(InventorySlotPacket packet) {
+        if (packet.getContainerId() == ContainerId.INVENTORY) {
+            inventoryItem(packet.getSlot(), packet.getItem());
+        }
+    }
+
+    synchronized void inventoryContent(InventoryContentPacket packet) {
+        if (packet.getContainerId() == ContainerId.INVENTORY) {
+            List<ItemData> contents = packet.getContents();
+            for (int slot = 0; slot < contents.size(); slot++) {
+                inventoryItem(slot, contents.get(slot));
+            }
+        }
+    }
+
+    /** The current give is answered: an item is cleared again (the inventory has 36 slots, there are hundreds of gives), a rejection is not. */
+    private void answered(GiveCapture.Given given) {
+        result.gives.put(giving, given);
+        giving = null;
+        misses = 0;
+        if (given.rejected()) {
+            giveNext();
+        } else {
+            clearing = true;
+            givingSince = System.currentTimeMillis();
+            CommandRequestPacket command = new CommandRequestPacket();
+            command.setCommand("/clear @s");
+            command.setCommandOriginData(new CommandOriginData(CommandOriginType.PLAYER, UUID.randomUUID(), "", 0));
+            giveSender.accept(command);
+        }
+    }
+
+    /** A command error is the answer to the current give: the server rejected the identifier. The output of the clear ends the clear. */
+    synchronized void commandOutput(CommandOutputPacket packet) {
+        if (clearing) {
+            clearing = false;
+            giveNext();
+        } else if (giving != null && packet.getSuccessCount() == 0) {
+            answered(GiveCapture.Given.REJECTED);
+        }
+    }
+
+    /**
+     * Gives up on a give or a clear that is not answered in time, on all the gives after {@link #MAX_MISSES} gives in a row without an
+     * answer (the server does not answer them in a way this client knows), or on all of them if the player never spawned.
+     */
+    synchronized void giveTimeouts(long now) {
+        if (givesDone) {
+            return;
+        }
+        if (giveStarted) {
+            if (now - givingSince > GIVE_ANSWER_MILLIS) {
+                if (!clearing && ++misses >= MAX_MISSES) {
+                    giveQueue.clear();
+                }
+                clearing = false;
+                giveNext();
+            }
+        } else if (readyAt != 0 && now - readyAt > GIVE_START_MILLIS) {
+            giveQueue.clear();
+            givesDone = true;
+            checkComplete();
         }
     }
 
@@ -197,6 +380,10 @@ public final class CaptureClient {
         @Override
         public PacketSignal handlePacket(BedrockPacket packet) {
             result.packetCounts.merge(packet.getClass().getSimpleName(), 1, Integer::sum);
+            if (packet instanceof StartGamePacket) {
+                result.startGameIndex = result.packetOrder.size();
+            }
+            result.packetOrder.add("<- " + packet.getClass().getSimpleName());
             try {
                 return packet.handle(this);
             } catch (Exception e) {
@@ -209,8 +396,8 @@ public final class CaptureClient {
         public PacketSignal handle(NetworkSettingsPacket packet) {
             session.setCompression(packet.getCompressionAlgorithm());
             try {
-                session.sendPacketImmediately(login.loginPacket(codec.getProtocolVersion(),
-                    address.getHostString() + ":" + address.getPort(), codec.getMinecraftVersion()));
+                send(session, login.loginPacket(codec.getProtocolVersion(),
+                    address.getHostString() + ":" + address.getPort(), codec.getMinecraftVersion()), true);
             } catch (Exception e) {
                 done.completeExceptionally(e);
             }
@@ -225,13 +412,16 @@ public final class CaptureClient {
                 done.completeExceptionally(e);
                 return PacketSignal.HANDLED;
             }
-            session.sendPacketImmediately(new ClientToServerHandshakePacket());
+            send(session, new ClientToServerHandshakePacket(), true);
             return PacketSignal.HANDLED;
         }
 
         @Override
         public PacketSignal handle(PlayStatusPacket packet) {
             System.out.println("  play status " + packet.getStatus());
+            if (packet.getStatus() == PlayStatusPacket.Status.PLAYER_SPAWN) {
+                startGives(result.startGame.getRuntimeEntityId(), toSend -> send(session, toSend, false));
+            }
             if (packet.getStatus() != PlayStatusPacket.Status.LOGIN_SUCCESS && packet.getStatus() != PlayStatusPacket.Status.PLAYER_SPAWN) {
                 done.completeExceptionally(new IllegalStateException("Login failed: " + packet.getStatus()));
             }
@@ -256,7 +446,7 @@ public final class CaptureClient {
             // We have none of them, but claiming to have all skips the download
             ResourcePackClientResponsePacket response = new ResourcePackClientResponsePacket();
             response.setStatus(ResourcePackClientResponsePacket.Status.HAVE_ALL_PACKS);
-            session.sendPacket(response);
+            send(session, response, false);
             return PacketSignal.HANDLED;
         }
 
@@ -265,7 +455,7 @@ public final class CaptureClient {
             result.packStack = packet;
             ResourcePackClientResponsePacket response = new ResourcePackClientResponsePacket();
             response.setStatus(ResourcePackClientResponsePacket.Status.COMPLETED);
-            session.sendPacket(response);
+            send(session, response, false);
             return PacketSignal.HANDLED;
         }
 
@@ -275,8 +465,26 @@ public final class CaptureClient {
             RequestChunkRadiusPacket radius = new RequestChunkRadiusPacket();
             radius.setRadius(2);
             radius.setMaxRadius(2);
-            session.sendPacket(radius);
+            send(session, radius, false);
             checkComplete();
+            return PacketSignal.HANDLED;
+        }
+
+        @Override
+        public PacketSignal handle(CommandOutputPacket packet) {
+            commandOutput(packet);
+            return PacketSignal.HANDLED;
+        }
+
+        @Override
+        public PacketSignal handle(InventorySlotPacket packet) {
+            inventorySlot(packet);
+            return PacketSignal.HANDLED;
+        }
+
+        @Override
+        public PacketSignal handle(InventoryContentPacket packet) {
+            inventoryContent(packet);
             return PacketSignal.HANDLED;
         }
 

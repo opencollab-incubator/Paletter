@@ -154,7 +154,9 @@ jobs:
           key: bds-zips-windows-${{ matrix.channel }}-${{ matrix.build }}
 
       # The capture half of `update` (--capture-only): the captures of this build, written into a directory of their own;
-      # nothing goes into the checkout. The spec add-on is generated here from the checked-out model
+      # nothing goes into the checkout. The spec add-on is generated here from the checked-out model. The behaviour dump,
+      # the behaviour probe and the education capture run in the same job (about six more starts of BDS; a failure of one
+      # is a skipped row in the report, not a failed leg)
       - name: Capture the build
         id: run
         run: |
@@ -283,11 +285,28 @@ jobs:
             echo "Staged $(wc -l < "$RUNNER_TEMP/files.txt") files into data/bds/$BUILD"
           done
 
+      # The third-party behaviour dumps that `behaviour import` ranks below Paletter's own captures. Public repositories,
+      # read as data (their git history is parsed, nothing in them is run), each at the commit the committed behaviour.nbt
+      # was built from (data/behaviour/REPORT.md, "Captures"): the same sources at the same commits give the same bytes.
+      # Move the commits together with a regenerated behaviour.nbt. A partial clone without a checkout: only the files the
+      # import reads are fetched
+      - name: Fetch the third-party behaviour dumps
+        env:
+          CLOUDBURST_DATA_SHA: 0021592b1a4253528bad1e1d8b537e306e097557
+          ALLAY_SHA: f8c660ed3a7f773aec11536cb958c0433ecef9d6
+        run: |
+          git clone --quiet --filter=blob:none --no-checkout https://github.com/CloudburstMC/Data.git "$RUNNER_TEMP/cloudburst-data"
+          git -C "$RUNNER_TEMP/cloudburst-data" update-ref HEAD "$CLOUDBURST_DATA_SHA"
+          git clone --quiet --filter=blob:none --no-checkout https://github.com/AllayMC/Allay.git "$RUNNER_TEMP/allay"
+          git -C "$RUNNER_TEMP/allay" update-ref HEAD "$ALLAY_SHA"
+
       # The sequential half, with no BDS: what `update` does after the captures. Gradle runs one task at a time, as in
       # the daily check (the API dump compiles what the generator wrote)
       - name: Infer, generate and report
         run: |
           ./gradlew :tools:inferMappings
+          # The behaviour data from the new behaviour dumps, probes and education captures (and the third-party dumps above)
+          ./gradlew :tools:run --args="behaviour import --cloudburst-data $RUNNER_TEMP/cloudburst-data --allay $RUNNER_TEMP/allay"
           # What the captures show of the code of each build (the committed whitebox.json stays: the binary did not change)
           ./gradlew :tools:run --args="whitebox-coverage"
           ./gradlew :tools:generateComponentApi

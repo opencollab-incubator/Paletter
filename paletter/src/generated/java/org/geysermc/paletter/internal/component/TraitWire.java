@@ -27,10 +27,10 @@ public final class TraitWire {
     public static void write(@NonNull BlockTrait component, @NonNull WireContext ctx,
             @NonNull WireNode out) {
         switch (component) {
-            case Connection value -> connection(value, ctx, out);
-            case MultiBlock value -> multiBlock(value, ctx, out);
-            case PlacementDirection value -> placementDirection(value, ctx, out);
-            case PlacementPosition value -> placementPosition(value, ctx, out);
+            case Connection c -> connection(c, ctx, out);
+            case MultiBlock c -> multiBlock(c, ctx, out);
+            case PlacementDirection c -> placementDirection(c, ctx, out);
+            case PlacementPosition c -> placementPosition(c, ctx, out);
         }
     }
 
@@ -39,14 +39,13 @@ public final class TraitWire {
         out.put("name", "minecraft:connection");
         out.put("type", 0);
         out.put("update_flags", 3);
-        List<Connection.EnabledStates> v0 = c.enabledStates();
     }
 
     private static void multiBlock(MultiBlock c, WireContext ctx, WireNode out) {
         int protocol = ctx.protocol();
         if (protocol < 2168) {
             multiBlockUntil2168(c, ctx, out);
-        } else if (protocol >= 2168) {
+        } else {
             multiBlockFrom2168(c, ctx, out);
         }
     }
@@ -54,14 +53,12 @@ public final class TraitWire {
     private static void multiBlockUntil2168(MultiBlock c, WireContext ctx, WireNode out) {
         out.put("enabled_states.multi_block", (byte) 1);
         out.put("name", "minecraft:multi_block");
-        List<MultiBlock.EnabledStates> v0 = c.enabledStates();
-        int v1 = c.parts();
-        out.put("part_count", Wire.toByte(v1));
-        MultiBlock.Direction v2 = c.direction();
-        switch (v2.value()) {
+        out.put("part_count", Wire.toByte(c.parts()));
+        MultiBlock.MultiBlockDirection v0 = c.direction();
+        switch (v0.value()) {
             case "down" -> out.put("direction", (byte) 0);
             case "up" -> out.put("direction", (byte) 1);
-            default -> ctx.drop(MultiBlock.NAME, "direction = " + v2.value() + " has no known wire value");
+            default -> ctx.drop(MultiBlock.NAME, "direction = " + v0.value() + " has no known wire value");
         }
     }
 
@@ -69,18 +66,14 @@ public final class TraitWire {
         out.put("enabled_states.multi_block", (byte) 1);
         out.put("name", "minecraft:multi_block");
         out.put("place_behavior", (byte) 0);
-        List<MultiBlock.EnabledStates> v0 = c.enabledStates();
-        int v1 = c.parts();
-        out.put("part_count", Wire.toByte(v1));
-        MultiBlock.Direction v2 = c.direction();
-        switch (v2.value()) {
-            case "down" -> out.put("direction", (byte) 0);
-            case "east" -> out.put("direction", (byte) 5);
-            case "north" -> out.put("direction", (byte) 2);
-            case "south" -> out.put("direction", (byte) 3);
-            case "up" -> out.put("direction", (byte) 1);
-            case "west" -> out.put("direction", (byte) 4);
-            default -> ctx.drop(MultiBlock.NAME, "direction = " + v2.value() + " has no known wire value");
+        out.put("part_count", Wire.toByte(c.parts()));
+        switch (c.direction()) {
+            case DOWN -> out.put("direction", (byte) 0);
+            case EAST -> out.put("direction", (byte) 5);
+            case NORTH -> out.put("direction", (byte) 2);
+            case SOUTH -> out.put("direction", (byte) 3);
+            case UP -> out.put("direction", (byte) 1);
+            case WEST -> out.put("direction", (byte) 4);
         }
     }
 

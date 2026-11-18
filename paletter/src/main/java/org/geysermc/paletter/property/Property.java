@@ -13,6 +13,8 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 public record Property(@NonNull PropertyKind kind, @NonNull String name, @NonNull Object value) {
 
     /**
+     * The name qualified by the kind.
+     *
      * @return the kind's prefix followed by the name, unique within one item or block
      */
     public @NonNull String fullName() {

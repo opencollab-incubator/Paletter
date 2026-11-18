@@ -26,6 +26,11 @@ public record BundleInteraction(int numViewableSlots) implements ItemComponent {
      */
     public static final String NAME = "minecraft:bundle_interaction";
 
+    /**
+     * Checks the components.
+     *
+     * @throws IllegalArgumentException if a component is out of its documented range or conflicts with another
+     */
     public BundleInteraction {
         Check.range("BundleInteraction.numViewableSlots", numViewableSlots, 1.0, 64.0);
     }
@@ -36,6 +41,8 @@ public record BundleInteraction(int numViewableSlots) implements ItemComponent {
     }
 
     /**
+     * Creates a builder with every field at its default.
+     *
      * @return a builder with the defaults applied
      */
     public static @NonNull Builder builder() {
@@ -43,6 +50,8 @@ public record BundleInteraction(int numViewableSlots) implements ItemComponent {
     }
 
     /**
+     * Creates a builder holding this value's fields, to change some of them.
+     *
      * @return a builder with this value's fields
      */
     public @NonNull Builder toBuilder() {
@@ -62,6 +71,9 @@ public record BundleInteraction(int numViewableSlots) implements ItemComponent {
 
         /**
          * Sets {@code num_viewable_slots}.
+         *
+         * @param numViewableSlots the value
+         * @return this builder
          */
         public @NonNull Builder numViewableSlots(int numViewableSlots) {
             this.numViewableSlots = numViewableSlots;
@@ -69,6 +81,9 @@ public record BundleInteraction(int numViewableSlots) implements ItemComponent {
         }
 
         /**
+         * Builds the value from the fields set and the defaults.
+         *
+         * @return the value
          * @throws IllegalStateException if a required field is not set
          * @throws IllegalArgumentException if a value is out of range
          */

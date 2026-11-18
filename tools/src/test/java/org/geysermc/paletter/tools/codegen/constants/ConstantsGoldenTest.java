@@ -229,7 +229,7 @@ class ConstantsGoldenTest {
             {
               "bdsVersion": "1.0.5", "protocol": 105,
               "toggles": {
-                "drop": {"status": "current", "content": {"itemsAdded": ["minecraft:potion"], "scriptItemsAdded": [],
+                "drop": {"status": "current", "name": "Drop Features", "content": {"itemsAdded": ["minecraft:potion"], "scriptItemsAdded": [],
                   "blocksAdded": ["minecraft:test_sparse"], "dataDrivenBlocks": []}},
                 "old": {"status": "retired"},
                 "other": {"status": "retired", "content": {"itemsAdded": ["minecraft:apple"], "blocksAdded": ["minecraft:test_door"]}}
@@ -237,6 +237,17 @@ class ConstantsGoldenTest {
             }
             """);
         Path newer = Files.createDirectories(bds.resolve("1.1.2"));
+        // Release 1.1 has the toggle retired and a new one: a BedrockExperiments constant with @Until, and one without
+        Files.writeString(newer.resolve("experiments.json"), """
+            {"bdsVersion": "1.1.2", "protocol": 115,
+             "toggles": {"drop": {"status": "retired"}, "fresh": {"status": "current", "name": "Fresh Features"}}}
+            """);
+        // A preview has a toggle of its own (@SincePreview) and retires "fresh", which says nothing of the release yet (no @BedrockUntil)
+        Path preview = Files.createDirectories(bds.resolve("1.2.0"));
+        Files.writeString(preview.resolve("experiments.json"), """
+            {"bdsVersion": "1.2.0", "protocol": 125,
+             "toggles": {"fresh": {"status": "retired"}, "next": {"status": "current", "name": "Next Features"}}}
+            """);
         Files.writeString(newer.resolve("education.json"), """
             {"bdsVersion": "1.1.2", "protocol": 115, "items": ["minecraft:apple"], "blocks": ["minecraft:test_block"]}
             """);

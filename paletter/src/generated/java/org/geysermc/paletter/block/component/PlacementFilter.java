@@ -35,6 +35,11 @@ public record PlacementFilter(
      */
     public static final String NAME = "minecraft:placement_filter";
 
+    /**
+     * Checks the components and copies lists and maps, so the value is immutable.
+     *
+     * @throws NullPointerException if a required component is null
+     */
     public PlacementFilter {
         conditions = List.copyOf(Objects.requireNonNull(conditions, "PlacementFilter.conditions"));
     }
@@ -45,6 +50,8 @@ public record PlacementFilter(
     }
 
     /**
+     * Creates a builder with every field at its default.
+     *
      * @return a builder with the defaults applied
      */
     public static @NonNull Builder builder() {
@@ -52,6 +59,8 @@ public record PlacementFilter(
     }
 
     /**
+     * Creates a builder holding this value's fields, to change some of them.
+     *
      * @return a builder with this value's fields
      */
     public @NonNull Builder toBuilder() {
@@ -71,6 +80,9 @@ public record PlacementFilter(
 
         /**
          * Sets {@code conditions}.
+         *
+         * @param conditions the value
+         * @return this builder
          */
         public @NonNull Builder conditions(@NonNull List<Conditions> conditions) {
             this.conditions = conditions;
@@ -79,12 +91,18 @@ public record PlacementFilter(
 
         /**
          * Sets {@code conditions}.
+         *
+         * @param conditions the value
+         * @return this builder
          */
         public @NonNull Builder conditions(@NonNull Conditions... conditions) {
             return conditions(List.of(conditions));
         }
 
         /**
+         * Builds the value from the fields set and the defaults.
+         *
+         * @return the value
          * @throws IllegalStateException if a required field is not set
          * @throws IllegalArgumentException if a value is out of range
          */
@@ -104,12 +122,21 @@ public record PlacementFilter(
      */
     public record BlockFilter(@Nullable String name, @NonNull Map<String, Object> states,
             @Nullable String tags) {
+        /**
+         * Checks the components and copies lists and maps, so the value is immutable.
+         *
+         * @throws NullPointerException if a required component is null
+         * @throws IllegalArgumentException if a component is out of its documented range or conflicts with another
+         */
         public BlockFilter {
             states = Check.copy(states, "PlacementFilter.BlockFilter.states");
             Check.stateValues(states, "PlacementFilter.BlockFilter.states");
         }
 
         /**
+         * Creates a descriptor matching every state of a block.
+         *
+         * @param block the vanilla or custom block
          * @return a descriptor matching every state of a block
          */
         public static @NonNull BlockFilter of(@NonNull BedrockBlockType block) {
@@ -117,6 +144,9 @@ public record PlacementFilter(
         }
 
         /**
+         * Creates a descriptor matching one block state.
+         *
+         * @param state the block state
          * @return a descriptor matching one block state (its block and every state value)
          */
         public static @NonNull BlockFilter of(@NonNull BedrockBlockState state) {
@@ -124,6 +154,8 @@ public record PlacementFilter(
         }
 
         /**
+         * Creates a builder with every field at its default.
+         *
          * @return a builder with the defaults applied
          */
         public static @NonNull Builder builder() {
@@ -131,6 +163,8 @@ public record PlacementFilter(
         }
 
         /**
+         * Creates a builder holding this value's fields, to change some of them.
+         *
          * @return a builder with this value's fields
          */
         public @NonNull Builder toBuilder() {
@@ -156,6 +190,9 @@ public record PlacementFilter(
 
             /**
              * Sets {@code name}.
+             *
+             * @param name the value
+             * @return this builder
              */
             public @NonNull Builder name(@Nullable String name) {
                 this.name = name;
@@ -164,6 +201,9 @@ public record PlacementFilter(
 
             /**
              * Sets {@code name} to a vanilla or custom block.
+             *
+             * @param name the value
+             * @return this builder
              */
             public @NonNull Builder name(@NonNull BedrockBlockType name) {
                 return name(name.identifier());
@@ -171,6 +211,9 @@ public record PlacementFilter(
 
             /**
              * Sets {@code states}.
+             *
+             * @param states the value
+             * @return this builder
              */
             public @NonNull Builder states(@NonNull Map<String, Object> states) {
                 this.states = states;
@@ -179,6 +222,9 @@ public record PlacementFilter(
 
             /**
              * Sets {@code tags}.
+             *
+             * @param tags the value
+             * @return this builder
              */
             public @NonNull Builder tags(@Nullable String tags) {
                 this.tags = tags;
@@ -186,6 +232,9 @@ public record PlacementFilter(
             }
 
             /**
+             * Builds the value from the fields set and the defaults.
+             *
+             * @return the value
              * @throws IllegalStateException if a required field is not set
              * @throws IllegalArgumentException if a value is out of range
              */
@@ -206,12 +255,19 @@ public record PlacementFilter(
      */
     public record Conditions(@NonNull List<String> allowedFaces,
             @NonNull List<BlockFilter> blockFilter) {
+        /**
+         * Checks the components and copies lists and maps, so the value is immutable.
+         *
+         * @throws NullPointerException if a required component is null
+         */
         public Conditions {
             allowedFaces = List.copyOf(Objects.requireNonNull(allowedFaces, "PlacementFilter.Conditions.allowedFaces"));
             blockFilter = List.copyOf(Objects.requireNonNull(blockFilter, "PlacementFilter.Conditions.blockFilter"));
         }
 
         /**
+         * Creates a builder with every field at its default.
+         *
          * @return a builder with the defaults applied
          */
         public static @NonNull Builder builder() {
@@ -219,6 +275,8 @@ public record PlacementFilter(
         }
 
         /**
+         * Creates a builder holding this value's fields, to change some of them.
+         *
          * @return a builder with this value's fields
          */
         public @NonNull Builder toBuilder() {
@@ -241,6 +299,9 @@ public record PlacementFilter(
 
             /**
              * Sets {@code allowed_faces}.
+             *
+             * @param allowedFaces the value
+             * @return this builder
              */
             public @NonNull Builder allowedFaces(@NonNull List<String> allowedFaces) {
                 this.allowedFaces = allowedFaces;
@@ -249,6 +310,9 @@ public record PlacementFilter(
 
             /**
              * Sets {@code allowed_faces}.
+             *
+             * @param allowedFaces the value
+             * @return this builder
              */
             public @NonNull Builder allowedFaces(@NonNull String... allowedFaces) {
                 return allowedFaces(List.of(allowedFaces));
@@ -256,6 +320,9 @@ public record PlacementFilter(
 
             /**
              * Sets {@code block_filter}.
+             *
+             * @param blockFilter the value
+             * @return this builder
              */
             public @NonNull Builder blockFilter(@NonNull List<BlockFilter> blockFilter) {
                 this.blockFilter = blockFilter;
@@ -264,12 +331,18 @@ public record PlacementFilter(
 
             /**
              * Sets {@code block_filter}.
+             *
+             * @param blockFilter the value
+             * @return this builder
              */
             public @NonNull Builder blockFilter(@NonNull BlockFilter... blockFilter) {
                 return blockFilter(List.of(blockFilter));
             }
 
             /**
+             * Builds the value from the fields set and the defaults.
+             *
+             * @return the value
              * @throws IllegalStateException if a required field is not set
              * @throws IllegalArgumentException if a value is out of range
              */

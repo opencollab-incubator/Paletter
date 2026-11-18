@@ -1,6 +1,7 @@
 package org.geysermc.paletter.vanilla;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
 import org.geysermc.paletter.annotation.Internal;
 import org.geysermc.paletter.internal.CanonicalItems;
 import org.geysermc.paletter.internal.data.Renames;
@@ -34,8 +35,10 @@ public final class BedrockItemVariant implements ItemKey {
     }
 
     /**
-     * Plumbing of {@link org.geysermc.paletter.Palette}: the handle of a canonical id.
+     * Internal: the handle of a canonical id, for {@link org.geysermc.paletter.Palette}.
      *
+     * @param canonical the canonical items of a palette lineage
+     * @param id a canonical id
      * @return the variant of a canonical id (not null for an id in range)
      */
     @Internal
@@ -49,12 +52,38 @@ public final class BedrockItemVariant implements ItemKey {
             }
         }
         ItemVariant variant = canonical.variant(id);
-        return BedrockItemType.fromIdentifier(variant.identifier()).variant(variant.damage());
+        BedrockItemType type = BedrockItemType.fromIdentifier(variant.identifier());
+        if (id < canonical.vanillaSize() && !type.isAvailable()) {
+            // An item only the palette's own newest version (a preview) has: its constant resolves through its fallback
+            type = PreviewItems.type(canonical.root(), variant.identifier());
+        }
+        return type.variant(variant.damage());
     }
 
     /**
-     * Plumbing: the variant of an identifier and aux value, applying renames and splits (a legacy variant that became its
-     * own type). Loads the data. Use {@link org.geysermc.paletter.Palette#itemVariant} or {@code type.variant(aux)}.
+     * Finds the vanilla variant of an identifier and aux value, without making a type for an unknown identifier. Splits
+     * (a legacy variant that became its own type) and renames of the bundled data are applied first. Loads the data.
+     *
+     * @param identifier an item identifier
+     * @param aux the aux (damage) value
+     * @return the variant of a vanilla constant, or null if the identifier (after splits and renames) is not an item of
+     *         the newest bundled data and has no generated constant
+     * @throws NullPointerException if the identifier is null
+     * @since 1.0.0
+     */
+    public static @Nullable BedrockItemVariant byIdentifier(@NonNull String identifier, int aux) {
+        Renames.Split split = VanillaIndex.get().renames.split(identifier, aux);
+        BedrockItemType type = BedrockItemType.byIdentifier(split != null ? split.identifier() : identifier);
+        return type == null ? null : type.variant(split != null ? split.aux() : aux);
+    }
+
+    /**
+     * Internal: the variant of an identifier and aux value, applying renames and splits (a legacy variant that
+     * became its own type). Loads the data. Use {@link org.geysermc.paletter.Palette#itemVariant} or {@code type.variant(aux)}.
+     *
+     * @param identifier an item identifier
+     * @param aux the aux (damage) value
+     * @return the variant, a plain value if Paletter does not know the identifier
      */
     @Internal
     public static @NonNull BedrockItemVariant fromIdentifier(@NonNull String identifier, int aux) {
@@ -73,17 +102,29 @@ public final class BedrockItemVariant implements ItemKey {
         return this;
     }
 
+    /**
+     * The type of the variant.
+     *
+     * @return the type this is a variant of
+     */
     public @NonNull BedrockItemType type() {
         return type;
     }
 
     /**
+     * The aux value of the variant.
+     *
      * @return the aux (damage) value
      */
     public int aux() {
         return aux;
     }
 
+    /**
+     * Internal: the variant as an {@link ItemVariant}.
+     *
+     * @return the identifier and aux value of this variant
+     */
     @Internal
     public @NonNull ItemVariant toItemVariant() {
         ItemVariant variant = this.variant;
@@ -95,6 +136,9 @@ public final class BedrockItemVariant implements ItemKey {
     }
 
     /**
+     * Internal: the canonical id of this variant in a palette's canonical items.
+     *
+     * @param canonical the canonical items of a palette
      * @return the canonical id of this variant in a palette's canonical items, or -1
      */
     @Internal

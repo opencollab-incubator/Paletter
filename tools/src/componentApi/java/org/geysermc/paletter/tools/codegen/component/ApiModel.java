@@ -44,6 +44,9 @@ final class ApiModel {
     final Map<String, com.google.gson.JsonArray> envelope = new LinkedHashMap<>();
     /** Protocol and BDS version of every capture, oldest first (the bounds of the windows are protocols). */
     final java.util.TreeMap<Integer, String> captureVersions = new java.util.TreeMap<>();
+    /** The sealed union types by name (api.json {@code unions}), shared by every field of the same shape. */
+    final Map<String, UnionType> unions = new LinkedHashMap<>();
+
     /** @return the generated component with an id, or null */
     Comp component(String id) {
         return components.stream().filter(c -> c.id.equals(id)).findFirst().orElse(null);
@@ -54,6 +57,8 @@ final class ApiModel {
     /** The window protocol of every release capture, and of every preview capture with the preview's version name. */
     final java.util.Set<Integer> releaseProtocols = new java.util.TreeSet<>();
     final java.util.TreeMap<Integer, String> previewProtocols = new java.util.TreeMap<>();
+    /** The bundled data version name of every capture's window protocol ({@code dataVersion} of the captures). */
+    final java.util.TreeMap<Integer, String> dataVersions = new java.util.TreeMap<>();
     /** The oldest and the newest protocol a spec capture exists for (the window shapes are observed in between). */
     int oldestCaptured = Integer.MIN_VALUE;
     int newestCaptured = Integer.MAX_VALUE;
@@ -78,6 +83,14 @@ final class ApiModel {
         String status;
         String minFormat;
         List<String> experiments = List.of();
+        /** The toggle ids of {@link #experiments}, as far as the captured servers name them. */
+        List<String> toggles = List.of();
+        /** The experiment names of {@link #experiments} that no captured toggle has. */
+        List<String> unmappedExperiments = List.of();
+        /** What the captured servers do with the component without experiments, oldest build first (empty: not captured). */
+        List<Gating.Result> gating = List.of();
+        /** The name before a {@code Block}/{@code Item} prefix kept names unique, which api.json type overrides use. */
+        String baseName;
         ObjType root;
         /** Non-object value forms: JSON type -> field they set ({@code of(...)} factories). */
         final List<Shorthand> shorthands = new ArrayList<>();
@@ -94,6 +107,8 @@ final class ApiModel {
         Window rejected;
         /** The bundled preview that alone has the component (every captured release rejects it), or null. */
         String sincePreview;
+        /** The first bundled release with the component when older captured builds do not have it ({@code absent}), or null. */
+        String bedrockSince;
 
         /** @return the newest window that sends the component (the API follows its shape), or null */
         Window latest() {
@@ -136,6 +151,11 @@ final class ApiModel {
         /** @return what BDS did with the component in this window: sent, untestable, server-only, rejected */
         String status() {
             return mapping.get("status").getAsString();
+        }
+
+        /** @return whether the builds of this window do not have the component at all ({@code absent}) */
+        boolean absent() {
+            return status().equals(org.geysermc.paletter.tools.model.MappingWindows.ABSENT);
         }
 
         /** @return whether the component reaches the wire in this window; else its palettes leave it out and report it */
@@ -184,7 +204,7 @@ final class ApiModel {
         String shorthandType;
     }
 
-    sealed interface Type permits Scalar, EnumRef, ObjRef, Vec3, ListOf, MapOf, States, ComponentRef {
+    sealed interface Type permits Scalar, EnumRef, ObjRef, Vec3, ListOf, MapOf, States, ComponentRef, UnionRef {
     }
 
     enum ScalarKind {
@@ -227,6 +247,54 @@ final class ApiModel {
 
     /** The record of another generated component of the same package (a component nested in another). */
     record ComponentRef(String className) implements Type {
+    }
+
+    /**
+     * A field that takes one of several JSON forms: the sealed type of the union, shared by every field of the same shape.
+     *
+     * @param union the sealed type
+     * @param object the object variant as it occurs at this field (its own JSON paths and rules), or null if there is none
+     */
+    record UnionRef(UnionType union, ObjRef object) implements Type {
+    }
+
+    /** One JSON form of a union: its record's name, the JSON type it stands for ({@code array<string>}) and its Java type. */
+    static final class Variant {
+        final String name;
+        final String json;
+        /** What the form means ("the names of the bones"), for the documentation; null: the JSON type says it. */
+        final String doc;
+        Type type;
+
+        Variant(String name, String json, String doc, Type type) {
+            this.name = name;
+            this.json = json;
+            this.doc = doc;
+            this.type = type;
+        }
+
+        /** @return the factory of the form: its name, first letter lower case */
+        String factory() {
+            return Character.toLowerCase(name.charAt(0)) + name.substring(1);
+        }
+    }
+
+    /**
+     * A sealed interface with one record per JSON form (api.json {@code unions}). It is a file of its own in the package of
+     * its components, or nested in {@link #owner} when a variant is a type of that component.
+     */
+    static final class UnionType {
+        String name;
+        Kind kind;
+        /** The component that declares it (nested there), or null for a type of its own. */
+        Comp owner;
+        final List<Variant> variants = new ArrayList<>();
+        /** Forms that get no builder overload of their own (api.json {@code noOverload}): a string that is no obvious value. */
+        final java.util.Set<String> noOverload = new java.util.TreeSet<>();
+        /** "item" or "block" when the list form is of identifiers: its factory takes the vanilla constants too. */
+        String descriptor;
+        /** Where it is used, for its documentation: component id and JSON path. */
+        final List<String> users = new ArrayList<>();
     }
 
     /** Block descriptor states: state name to an int, string or boolean value. */
@@ -281,9 +349,8 @@ final class ApiModel {
         List<String> documentedValues;
         /** Synthetic field from a value form (no JSON key of its own), with that form's mapping. */
         String form;
-        /** A union alternative kept as its own field next to the main one: the main field's java name. */
-        Field alternativeOf;
-        final List<Field> alternatives = new ArrayList<>();
+        /** The keys of a keyed extra map that have a field of their own, which the record refuses as keys of the map. */
+        List<String> reservedKeys = List.of();
         /** A map of the keys the fixed field {@code keyedExtraOf} does not name (api.json keyedExtras); same wire rules. */
         Field keyedExtraOf;
         /** Paths of the mapping fields whose rules apply to this field (its own path, or a form). */

@@ -9,7 +9,7 @@ import org.geysermc.paletter.creative.CreativePlacement;
 import org.geysermc.paletter.creative.ItemMatcher;
 import org.geysermc.paletter.item.BedrockItemStack;
 import org.geysermc.paletter.item.CustomItem;
-import org.geysermc.paletter.block.component.MenuCategory;
+import org.geysermc.paletter.block.component.BlockMenuCategory;
 import org.geysermc.paletter.item.component.BlockPlacer;
 import org.geysermc.paletter.item.component.Icon;
 import org.geysermc.paletter.vanilla.BedrockBlocks;
@@ -43,13 +43,13 @@ class BlockOwnedItemTest {
         assertThrows(NullPointerException.class, () -> CustomBlock.builder("own:block").creativePlacement(null));
         assertThrows(NullPointerException.class, () -> CreativePlacement.after((ItemMatcher) null));
 
-        MenuCategory none = MenuCategory.builder().category(MenuCategory.Category.NONE).build();
+        BlockMenuCategory none = BlockMenuCategory.builder().category(BlockMenuCategory.Category.NONE).build();
         CustomBlock hidden = CustomBlock.builder("own:hidden").build();
         CustomBlock menuNone = CustomBlock.builder("own:menu_none").menuCategory(none).build();
         CustomBlock shown = CustomBlock.builder("own:shown").menuCategory(CreativeCategory.NATURE).build();
         CustomItem item = CustomItem.builder("own:item").build();
-        CustomItem itemNone = CustomItem.builder("own:item_none").menuCategory(org.geysermc.paletter.item.component.MenuCategory.builder()
-            .category(org.geysermc.paletter.item.component.MenuCategory.Category.NONE).build()).build();
+        CustomItem itemNone = CustomItem.builder("own:item_none").menuCategory(org.geysermc.paletter.item.component.ItemMenuCategory.builder()
+            .category(org.geysermc.paletter.item.component.ItemMenuCategory.Category.NONE).build()).build();
         CustomItem itemShown = CustomItem.builder("own:item_shown").menuCategory(CreativeCategory.ITEMS).build();
         PaletteLayer layer = PaletteLayer.builder("menu").block(hidden).block(menuNone).block(shown)
             .item(item).item(itemNone).item(itemShown).build();
@@ -91,7 +91,7 @@ class BlockOwnedItemTest {
             .menuCategory(CreativeCategory.ITEMS).build();
         CustomBlock plain = CustomBlock.builder("own:plain").menuCategory(CreativeCategory.CONSTRUCTION).build();
         Palette palette = Palettes.palette(PROTOCOL, PaletteLayer.builder("driven").block(block).block(plain).item(item).build());
-        assertEquals(MenuCategory.Category.CONSTRUCTION, block.menuCategory().category(), "the block keeps its own category");
+        assertEquals(BlockMenuCategory.Category.CONSTRUCTION, block.menuCategory().category(), "the block keeps its own category");
         assertNull(stacksOf(palette, "own:driven").getFirst().blockState());
         assertNotNull(stacksOf(palette, "own:plain").getFirst().blockState());
         assertEquals(1, stacksOf(palette, "own:driven").size());
@@ -155,7 +155,7 @@ class BlockOwnedItemTest {
     void aMenuCategoryWithoutACategoryIsNotInCreative() {
         // The wire sends none for it; compiling must not fail
         CustomItem item = CustomItem.builder("own:no_category").menuCategory(
-            org.geysermc.paletter.item.component.MenuCategory.builder().group("itemGroup.name.x").build()).build();
+            org.geysermc.paletter.item.component.ItemMenuCategory.builder().group("itemGroup.name.x").build()).build();
         Palette palette = Palettes.palette(PROTOCOL, PaletteLayer.builder("none").item(item).build());
         assertTrue(stacksOf(palette, "own:no_category").isEmpty());
         assertNotNull(palette.itemDefinition("own:no_category"));

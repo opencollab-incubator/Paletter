@@ -34,6 +34,19 @@ public final class Versions {
         return build;
     }
 
+    /**
+     * The version BDS reports for a build: a release reports its build number, a preview reports its beta ({@code 1.26.70.24} is
+     * {@code 1.26.70-beta24}, the last number of the build is the beta).
+     */
+    public static String reported(String build, boolean preview) {
+        requireBuild(build);
+        if (!preview) {
+            return build;
+        }
+        int last = build.lastIndexOf('.');
+        return build.substring(0, last) + "-beta" + build.substring(last + 1);
+    }
+
     /** A bound of a range of builds, checked: one to four dotted numbers. */
     public static String requireBound(String bound) {
         if (bound == null || !BOUND.matcher(bound).matches()) {

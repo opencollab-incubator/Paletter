@@ -18,6 +18,12 @@ import java.util.Objects;
  * <p>
  * Paletter bundles no replacements: {@link #UNKNOWN} maps everything a version lacks to {@code minecraft:unknown},
  * {@link #NONE} sends air and leaves items out. Consumers add better replacements with {@link #builder()}.
+ * <p>
+ * Immutable and thread safe. A fallback is policy of the {@link Paletter}, configured with
+ * {@link Paletter.Builder#fallbacks(Fallbacks)}; the palette then sends the replacement and flags it in the
+ * {@link org.geysermc.paletter.block.ResolvedBlock} or {@link org.geysermc.paletter.item.ResolvedItem} it resolves.
+ * Replacements are keys ({@link BedrockItemType}, {@link BedrockBlockType}). Nothing here is null unless marked
+ * {@code @Nullable}, and nothing throws except {@link NullPointerException} for a null argument.
  *
  * @since 1.0.0
  */
@@ -53,13 +59,19 @@ public final class Fallbacks {
     }
 
     /**
+     * Starts a policy from the defaults of {@link #UNKNOWN}.
+     *
      * @return a builder starting from {@link #UNKNOWN}
+     * @since 1.0.0
      */
     public static @NonNull Builder builder() {
         return new Builder();
     }
 
     /**
+     * Merges the item fallbacks that apply to a version.
+     *
+     * @param version the data version
      * @return the item fallbacks that apply to a version, by identifier of the replaced item: those for every version,
      * overridden by those for this one
      */
@@ -74,6 +86,9 @@ public final class Fallbacks {
     }
 
     /**
+     * Merges the block fallbacks that apply to a version.
+     *
+     * @param version the data version
      * @return the block fallbacks that apply to a version, by identifier of the replaced block: those for every version,
      * overridden by those for this one
      */
@@ -88,19 +103,30 @@ public final class Fallbacks {
     }
 
     /**
+     * Returns what items without an entry become.
+     *
      * @return what items without an entry become, or null to leave them out
+     * @since 1.0.0
      */
     public @Nullable ItemFallback defaultItem() {
         return defaultItem;
     }
 
     /**
+     * Returns what blocks without an entry become.
+     *
      * @return what blocks without an entry become, or null for air
+     * @since 1.0.0
      */
     public @Nullable BlockFallback defaultBlock() {
         return defaultBlock;
     }
 
+    /**
+     * Collects the replacements of a {@link Fallbacks}. Not thread safe. Every method returns this builder.
+     *
+     * @since 1.0.0
+     */
     public static final class Builder {
         private final Map<String, ItemFallback> items = new LinkedHashMap<>();
         private final Map<String, BlockFallback> blocks = new LinkedHashMap<>();
@@ -115,6 +141,11 @@ public final class Fallbacks {
         /**
          * Uses {@code fallback} for an item in every version that lacks it (or, with {@link ItemFallback#force()},
          * in every version).
+         *
+         * @param type the item that may be missing
+         * @param fallback what it becomes
+         * @return this builder
+         * @since 1.0.0
          */
         public @NonNull Builder item(@NonNull BedrockItemType type, @NonNull ItemFallback fallback) {
             items.put(type.identifier(), Objects.requireNonNull(fallback));
@@ -122,7 +153,27 @@ public final class Fallbacks {
         }
 
         /**
+         * Like {@link #item(BedrockItemType, ItemFallback)} for an identifier, which needs no type: for an item the bundled
+         * data does not know.
+         *
+         * @param identifier the identifier of the item that may be missing
+         * @param fallback what it becomes
+         * @return this builder
+         * @throws NullPointerException if the identifier or the fallback is null
+         * @since 1.0.0
+         */
+        public @NonNull Builder item(@NonNull String identifier, @NonNull ItemFallback fallback) {
+            items.put(Objects.requireNonNull(identifier), Objects.requireNonNull(fallback));
+            return this;
+        }
+
+        /**
          * Like {@link #item(BedrockItemType, ItemFallback)} with {@link ItemFallback#of} the base variant of {@code replacement}.
+         *
+         * @param type the item that may be missing
+         * @param replacement the item it becomes
+         * @return this builder
+         * @since 1.0.0
          */
         public @NonNull Builder item(@NonNull BedrockItemType type, @NonNull BedrockItemType replacement) {
             return item(type, ItemFallback.of(replacement));
@@ -131,6 +182,12 @@ public final class Fallbacks {
         /**
          * Like {@link #item(BedrockItemType, ItemFallback)} for one data version only, overriding the entry for every
          * version.
+         *
+         * @param version the data version the entry is for
+         * @param type the item that may be missing
+         * @param fallback what it becomes
+         * @return this builder
+         * @since 1.0.0
          */
         public @NonNull Builder item(@NonNull DataVersion version, @NonNull BedrockItemType type, @NonNull ItemFallback fallback) {
             versionItems.computeIfAbsent(version.name(), v -> new LinkedHashMap<>())
@@ -141,12 +198,40 @@ public final class Fallbacks {
         /**
          * Uses {@code fallback} for a block in every version that lacks it (or, with {@link BlockFallback#force()},
          * in every version).
+         *
+         * @param type the block that may be missing
+         * @param fallback what it becomes
+         * @return this builder
+         * @since 1.0.0
          */
         public @NonNull Builder block(@NonNull BedrockBlockType type, @NonNull BlockFallback fallback) {
             blocks.put(type.identifier(), Objects.requireNonNull(fallback));
             return this;
         }
 
+        /**
+         * Like {@link #block(BedrockBlockType, BlockFallback)} for an identifier, which needs no type: for a block the
+         * bundled data does not know.
+         *
+         * @param identifier the identifier of the block that may be missing
+         * @param fallback what it becomes
+         * @return this builder
+         * @throws NullPointerException if the identifier or the fallback is null
+         * @since 1.0.0
+         */
+        public @NonNull Builder block(@NonNull String identifier, @NonNull BlockFallback fallback) {
+            blocks.put(Objects.requireNonNull(identifier), Objects.requireNonNull(fallback));
+            return this;
+        }
+
+        /**
+         * Like {@link #block(BedrockBlockType, BlockFallback)} with {@link BlockFallback#of} {@code replacement}.
+         *
+         * @param type the block that may be missing
+         * @param replacement the block it becomes
+         * @return this builder
+         * @since 1.0.0
+         */
         public @NonNull Builder block(@NonNull BedrockBlockType type, @NonNull BedrockBlockType replacement) {
             return block(type, BlockFallback.of(replacement));
         }
@@ -154,6 +239,12 @@ public final class Fallbacks {
         /**
          * Like {@link #block(BedrockBlockType, BlockFallback)} for one data version only, overriding the entry for every
          * version.
+         *
+         * @param version the data version the entry is for
+         * @param type the block that may be missing
+         * @param fallback what it becomes
+         * @return this builder
+         * @since 1.0.0
          */
         public @NonNull Builder block(@NonNull DataVersion version, @NonNull BedrockBlockType type, @NonNull BlockFallback fallback) {
             versionBlocks.computeIfAbsent(version.name(), v -> new LinkedHashMap<>())
@@ -162,7 +253,11 @@ public final class Fallbacks {
         }
 
         /**
+         * Sets what items without an entry become.
+         *
          * @param fallback what items without an entry become; null leaves them out. Default {@link ItemFallback#UNKNOWN}
+         * @return this builder
+         * @since 1.0.0
          */
         public @NonNull Builder defaultItem(@Nullable ItemFallback fallback) {
             this.defaultItem = fallback;
@@ -170,13 +265,23 @@ public final class Fallbacks {
         }
 
         /**
+         * Sets what blocks without an entry become.
+         *
          * @param fallback what blocks without an entry become; null sends air. Default {@link BlockFallback#UNKNOWN}
+         * @return this builder
+         * @since 1.0.0
          */
         public @NonNull Builder defaultBlock(@Nullable BlockFallback fallback) {
             this.defaultBlock = fallback;
             return this;
         }
 
+        /**
+         * Creates the immutable policy.
+         *
+         * @return the policy
+         * @since 1.0.0
+         */
         public @NonNull Fallbacks build() {
             return new Fallbacks(this);
         }

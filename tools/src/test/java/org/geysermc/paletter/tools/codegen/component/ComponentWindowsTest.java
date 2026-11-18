@@ -38,6 +38,8 @@ class ComponentWindowsTest {
         JsonObject g = new JsonObject();
         gadget.accept(g);
         components.add("item:test:gadget", g);
+        // these windows use protocols of their own, not the ones of the captures
+        mappings.getAsJsonArray("captures").forEach(capture -> capture.getAsJsonObject().remove("windowProtocol"));
         Inputs base = ComponentGeneratorTest.inputs();
         return new Inputs(base.components(), base.fixtures(), base.feedback(), mappings, base.transforms(), base.api(), base.since());
     }
@@ -140,6 +142,93 @@ class ComponentWindowsTest {
     }
 
     @Test
+    void theLastWindowIsAPlainElseSoTheDispatchIsExhaustive() {
+        Inputs in = inputs(g -> {
+            g.asMap().putAll(window("on", 100).asMap());
+            g.add("protocol200", window("active", 200));
+            g.add("protocol300", window("on", 300));
+        });
+        String source = itemWire(in);
+        assertTrue(source.contains("if (protocol < 200) {") && source.contains("} else if (protocol < 300) {") && source.contains("} else {"), source);
+        assertTrue(!source.contains("protocol >="), source);
+    }
+
+    @Test
+    void aFieldThatWritesNothingInAWindowGetsNeitherAVariableNorAnEmptyIf() {
+        Inputs in = inputs(g -> {
+            g.asMap().putAll(window("on", 100).asMap());
+            JsonObject second = window("on", 200);
+            second.getAsJsonObject("fields").add("value", ComponentGeneratorTest.json("{\"status\": \"rejected\"}"));
+            second.getAsJsonObject("forms").remove("boolean");
+            g.add("protocol200", second);
+        });
+        String source = itemWire(in);
+        assertTrue(!source.matches("(?s).*if \\(v\\d+ != null\\) \\{\\s*}.*"), source);
+    }
+
+    @Test
+    void aCaptureWithoutTheComponentFailsInsteadOfBeingAbsorbedByItsNeighbourWindow() {
+        Inputs in = inputs(g -> g.asMap().putAll(window("on", 100).asMap()));
+        int[] windows = {100, 200};
+        in.mappings().getAsJsonArray("captures").forEach(capture -> capture.getAsJsonObject().addProperty("windowProtocol", windows[capture.getAsJsonObject().get("protocol").getAsInt() / 100 - 1]));
+        ComponentGenerator.GenerationException e = org.junit.jupiter.api.Assertions.assertThrows(ComponentGenerator.GenerationException.class,
+            () -> ComponentGenerator.generate(in));
+        assertTrue(e.getMessage().contains("no result for the captures of protocols [200]"), e.getMessage());
+    }
+
+    /** The gadget absent in the build of protocol 100 (its schema lacks it) and sent from 200, with the captures' windows and data versions. */
+    private static Inputs absentThenSent(boolean previewSends) {
+        Inputs in = inputs(g -> {
+            JsonObject absent = new JsonObject();
+            absent.addProperty("status", "absent");
+            absent.addProperty("note", "not in the schema of BDS 8.8.8, no variant in its add-on");
+            JsonArray protocols = new JsonArray();
+            protocols.add(100);
+            absent.add("protocols", protocols);
+            g.asMap().putAll(absent.asMap());
+            g.add("protocol200", window("on", 200));
+        });
+        in.mappings().getAsJsonArray("captures").forEach(capture -> {
+            JsonObject c = capture.getAsJsonObject();
+            int protocol = c.get("protocol").getAsInt();
+            c.addProperty("windowProtocol", protocol);
+            c.addProperty("dataVersion", protocol == 100 ? "8.80" : "9.90");
+            if (previewSends && protocol == 200) {
+                c.addProperty("preview", "9.90");
+            }
+        });
+        return in;
+    }
+
+    @Test
+    void aBuildWithoutTheComponentIsAWindowThatDropsItAndTheApiNamesTheFirstVersionWithIt() {
+        Inputs in = absentThenSent(false);
+        ApiModel.Comp gadget = ComponentGenerator.model(in).component("item:test:gadget");
+        assertEquals(List.of("absent", "sent"), gadget.windows.stream().map(ApiModel.Window::status).toList());
+        assertEquals("9.90", gadget.bedrockSince);
+        assertEquals(null, gadget.sincePreview);
+        Map<String, String> files = ComponentGenerator.generate(in);
+        String api = files.get("org/geysermc/paletter/item/component/Gadget.java");
+        assertTrue(api.contains("@BedrockSince(\"9.90\")\n"), api);
+        assertTrue(api.contains("Bedrock 9.90 is the first bundled version with it"), api);
+        String wire = files.get("org/geysermc/paletter/internal/component/ItemWire.java");
+        // Not sent to protocols before 200: the existing per-window drop, with a report entry
+        assertTrue(wire.matches("(?s).*if \\(protocol < 200\\) \\{\\s*gadgetUntil200\\(c, ctx, out\\);.*"), wire);
+        assertTrue(wire.contains("ctx.drop(Gadget.NAME, \"does not exist in this Bedrock version\")"), wire);
+        assertTrue(wire.contains("out.put(\"test:gadget.on\""), wire);
+    }
+
+    @Test
+    void aComponentOnlyThePreviewHasIsSincePreviewNotBedrockSince() {
+        Inputs in = absentThenSent(true);
+        ApiModel.Comp gadget = ComponentGenerator.model(in).component("item:test:gadget");
+        assertEquals("9.90", gadget.sincePreview, "an absent release does not have it");
+        assertEquals(null, gadget.bedrockSince);
+        String api = ComponentGenerator.generate(in).get("org/geysermc/paletter/item/component/Gadget.java");
+        assertTrue(api.contains("@SincePreview(\"9.90\")") && !api.contains("@BedrockSince"), api);
+    }
+
+    @Test
     void windowsThatEncodeTheSameAreOne() {
         // Two windows whose mappings differ only in what the encoder ignores
         Inputs in = inputs(g -> {
@@ -166,6 +255,16 @@ class ComponentWindowsTest {
             captures.add(c);
         }
         mappings.add("captures", captures);
+        // (every component has a result for each of these captures; their windows are not what is tested here)
+        mappings.getAsJsonObject("components").entrySet().forEach(e -> {
+            if (e.getValue().getAsJsonObject().has("protocols")) {
+                JsonArray all = new JsonArray();
+                for (int window : new int[]{99, 149, 199}) {
+                    all.add(window);
+                }
+                e.getValue().getAsJsonObject().add("protocols", all);
+            }
+        });
         Inputs in = new Inputs(base.components(), base.fixtures(), base.feedback(), mappings, base.transforms(), base.api(), base.since());
         String index = ComponentGenerator.generate(in).get("org/geysermc/paletter/internal/component/ComponentIndex.java");
         assertTrue(index.contains("int OLDEST_CAPTURED_PROTOCOL = 100;"), index);
@@ -212,7 +311,7 @@ class ComponentWindowsTest {
                          "examples": [], "doc": ""}]}"""));
         JsonObject mappings = ComponentGeneratorTest.mappings();
         mappings.getAsJsonObject("components").add("item:description", ComponentGeneratorTest.json("""
-            {"status": "sent", "wire": ["props.tab"], "protocols": [100], "fields": {
+            {"status": "sent", "wire": ["props.tab"], "protocols": [100, 200], "fields": {
               "menu": {"status": "inferred", "rules": [], "whenAbsent": {"props.tab": "9 (int)"}},
               "menu.tab": {"status": "inferred", "rules": [{"kind": "table", "table": {"blocks": "1", "none": "9"}, "nbt": "int", "tags": [],
                            "wire": "props.tab"}], "whenAbsent": {"props.tab": "9 (int)"}}}}"""));

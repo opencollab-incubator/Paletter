@@ -22,6 +22,15 @@ class FeedbackTest {
     }
 
     @Test
+    void aDeprecatedMemberRejectsTheWholeComponentAndAFormatIsAFactOfIt() {
+        assertEquals("[\"deprecated\"]", facts("block:minecraft:unit_cube", "",
+            BLOCK + "minecraft:unit_cube: member \"minecraft:unit_cube\" is deprecated"));
+        Feedback feedback = new Feedback();
+        feedback.format("item:minecraft:use_duration", "1.20.40");
+        assertEquals("[\"format 1.20.40\"]", feedback.json().getAsJsonObject("item:minecraft:use_duration").getAsJsonArray("").toString());
+    }
+
+    @Test
     void listLengths() {
         assertEquals("[\"maxItems 1\"]", facts("block:minecraft:liquid_detection", "detection_rules",
             BLOCK + "minecraft:liquid_detection -> detection_rules: too many input elements, expected no more than 1"));
@@ -36,6 +45,22 @@ class FeedbackTest {
         assertEquals("[\"box origin size -8,0,-8 8,24,8\"]", facts("block:minecraft:collision_box", "",
             BLOCK + "minecraft:collision_box: Invalid box sizeThe total of each \"origin\" + \"size\" pair, must be inside the following limit: "
                 + "Vec3(-8,0,-8) and Vec3(8,24,8)"));
+    }
+
+    @Test
+    void aRegexOfPlainAlternativesListsTheAcceptedStrings() {
+        // an item line as BDS writes it (the enchantable slot): the alternation is the list of accepted strings
+        Feedback item = new Feedback();
+        item.add("item", "ERROR [Item]  'paletter:enchantable_5': Failed to parse field ' -> components -> minecraft:enchantable -> slot: "
+            + "expected string to match the \"none|all|sword\" regex'", null);
+        assertEquals("[\"values 'none', 'all', 'sword'\"]", item.json().getAsJsonObject("item:minecraft:enchantable").getAsJsonArray("slot").toString());
+        // the anchors of a regex that is still a plain alternation do not matter
+        assertEquals("[\"values 'a', 'b'\"]", facts("block:minecraft:x", "mode", BLOCK + "minecraft:x -> mode: expected string to match the \"^a|b$\" regex"));
+        // a pattern that is more than an alternation (a character class, a group) lists nothing
+        Feedback pattern = new Feedback();
+        pattern.add("block", "ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_x_1.json |  -> description -> menu_category -> group: "
+            + "expected string to match the \"^\\S+$\" regex", null);
+        assertEquals(1, pattern.json().size(), "only the generated marker");
     }
 
     @Test
@@ -70,8 +95,8 @@ class FeedbackTest {
         assertEquals(1, unnamed.json().size(), "only the generated marker");
     }
 
-    private static MappingInference.Variant variant(String path, String json) {
-        return new MappingInference.Variant("paletter:b_geometry_1", "block", "blocks/b_geometry_1.json", "block:minecraft:geometry", "field", path,
+    private static SpecCaptures.Variant variant(String path, String json) {
+        return new SpecCaptures.Variant("paletter:b_geometry_1", "block", "blocks/b_geometry_1.json", "block:minecraft:geometry", "field", path,
             "label", null, JsonParser.parseString(json), List.of());
     }
 

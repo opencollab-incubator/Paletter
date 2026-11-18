@@ -42,9 +42,9 @@ blocked by the Cloudburst dependencies, which are snapshots.
 that `apply(from = ...)` line). It publishes the jar, the sources jar, the Javadoc jar and a POM (name, description, URL,
 MIT license, organization, developers, SCM, issues). Everything configurable is in the root `gradle.properties`:
 
-- `group` and `version` (`org.geysermc.paletter`, `1.0.0-SNAPSHOT`), the POM metadata (`paletter.pom.*`) and the
+- `group` and `version` (`dev.opencollab.paletter`, `1.0.0-SNAPSHOT`), the POM metadata (`paletter.pom.*`) and the
   repository URLs (`paletter.repo.*`). The artifact id is the Gradle project name: `paletter`, `paletter-recipes`.
-- **The coordinates and metadata are pending the user's confirmation.** Change them only in `gradle.properties`.
+  Change them only in `gradle.properties`.
 - Developers are a generic organization entry; credentials are never in the repository (`paletterRepoUser` and
   `paletterRepoPassword`, from `~/.gradle/gradle.properties`). CI has no publishing job and no secrets for it.
 

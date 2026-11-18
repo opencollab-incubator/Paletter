@@ -7,8 +7,8 @@ import java.util.List;
 import java.util.Objects;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
+import org.geysermc.paletter.annotation.BedrockExperiment;
 import org.geysermc.paletter.annotation.BedrockFormat;
-import org.geysermc.paletter.annotation.Experimental;
 
 /**
  * Defines the area of the block that collides with entities. If set to true, default values are used (a full
@@ -16,7 +16,8 @@ import org.geysermc.paletter.annotation.Experimental;
  * through. If this component is omitted, default values are used.
  * <p>
  * Add-on JSON: {@code "minecraft:collision_box"}.
- * Bedrock requires the experiments Holiday Creator Features, Upcoming Creator Features for it (in some format versions).
+ * The creator docs name the experiments Holiday Creator Features, Upcoming Creator Features for it (in some format versions); unverified against BDS.
+ * Unverified: the creator docs name experiment "Holiday Creator Features", which is in no capture.
  *
  * @param boxes The entries of the component (add-on JSON: the component's value is this list). Default: <code>[]</code>.
  *        Compiled by the hand transform {@code Transforms.collisionBoxes}.
@@ -26,7 +27,7 @@ import org.geysermc.paletter.annotation.Experimental;
  * @since 1.0.0
  */
 @BedrockFormat("1.19.50")
-@Experimental
+@BedrockExperiment("upcoming_creator_features")
 public record CollisionBox(@NonNull List<CollisionBox.Entry> boxes,
         @Nullable Boolean enabled) implements BlockComponent {
     /**
@@ -34,6 +35,11 @@ public record CollisionBox(@NonNull List<CollisionBox.Entry> boxes,
      */
     public static final String NAME = "minecraft:collision_box";
 
+    /**
+     * Checks the components and copies lists and maps, so the value is immutable.
+     *
+     * @throws NullPointerException if a required component is null
+     */
     public CollisionBox {
         boxes = List.copyOf(Objects.requireNonNull(boxes, "CollisionBox.boxes"));
     }
@@ -46,6 +52,7 @@ public record CollisionBox(@NonNull List<CollisionBox.Entry> boxes,
     /**
      * The boolean shorthand: sets {@code enabled}.
      *
+     * @param value the value of that field
      * @return the value with everything else at its default
      */
     public static @NonNull CollisionBox of(boolean value) {
@@ -55,6 +62,7 @@ public record CollisionBox(@NonNull List<CollisionBox.Entry> boxes,
     /**
      * The object form: one entry, the same as a list of that entry in {@code boxes}. BDS rejects this form since 1.26.63.1 (protocol 2225); the list is accepted by every captured BDS.
      *
+     * @param entry the one entry
      * @return the value with everything else at its default
      */
     public static @NonNull CollisionBox of(@NonNull Entry entry) {
@@ -62,6 +70,8 @@ public record CollisionBox(@NonNull List<CollisionBox.Entry> boxes,
     }
 
     /**
+     * Creates a builder with every field at its default.
+     *
      * @return a builder with the defaults applied
      */
     public static @NonNull Builder builder() {
@@ -69,6 +79,8 @@ public record CollisionBox(@NonNull List<CollisionBox.Entry> boxes,
     }
 
     /**
+     * Creates a builder holding this value's fields, to change some of them.
+     *
      * @return a builder with this value's fields
      */
     public @NonNull Builder toBuilder() {
@@ -91,6 +103,9 @@ public record CollisionBox(@NonNull List<CollisionBox.Entry> boxes,
 
         /**
          * Sets {@code boxes}.
+         *
+         * @param boxes the value
+         * @return this builder
          */
         public @NonNull Builder boxes(@NonNull List<Entry> boxes) {
             this.boxes = boxes;
@@ -99,6 +114,9 @@ public record CollisionBox(@NonNull List<CollisionBox.Entry> boxes,
 
         /**
          * Sets {@code boxes}.
+         *
+         * @param boxes the value
+         * @return this builder
          */
         public @NonNull Builder boxes(@NonNull Entry... boxes) {
             return boxes(List.of(boxes));
@@ -106,6 +124,9 @@ public record CollisionBox(@NonNull List<CollisionBox.Entry> boxes,
 
         /**
          * Sets {@code enabled}.
+         *
+         * @param enabled the value
+         * @return this builder
          */
         public @NonNull Builder enabled(@Nullable Boolean enabled) {
             this.enabled = enabled;
@@ -113,6 +134,9 @@ public record CollisionBox(@NonNull List<CollisionBox.Entry> boxes,
         }
 
         /**
+         * Builds the value from the fields set and the defaults.
+         *
+         * @return the value
          * @throws IllegalStateException if a required field is not set
          * @throws IllegalArgumentException if a value is out of range
          */
@@ -129,6 +153,8 @@ public record CollisionBox(@NonNull List<CollisionBox.Entry> boxes,
      */
     public record Entry(@Nullable Vec3 origin, @Nullable Vec3 size) {
         /**
+         * Creates a builder with every field at its default.
+         *
          * @return a builder with the defaults applied
          */
         public static @NonNull Builder builder() {
@@ -136,6 +162,8 @@ public record CollisionBox(@NonNull List<CollisionBox.Entry> boxes,
         }
 
         /**
+         * Creates a builder holding this value's fields, to change some of them.
+         *
          * @return a builder with this value's fields
          */
         public @NonNull Builder toBuilder() {
@@ -158,6 +186,9 @@ public record CollisionBox(@NonNull List<CollisionBox.Entry> boxes,
 
             /**
              * Sets {@code origin}.
+             *
+             * @param origin the value
+             * @return this builder
              */
             public @NonNull Builder origin(@Nullable Vec3 origin) {
                 this.origin = origin;
@@ -166,6 +197,11 @@ public record CollisionBox(@NonNull List<CollisionBox.Entry> boxes,
 
             /**
              * Sets {@code origin}.
+             *
+             * @param x the x component
+             * @param y the y component
+             * @param z the z component
+             * @return this builder
              */
             public @NonNull Builder origin(float x, float y, float z) {
                 return origin(new Vec3(x, y, z));
@@ -173,6 +209,9 @@ public record CollisionBox(@NonNull List<CollisionBox.Entry> boxes,
 
             /**
              * Sets {@code size}.
+             *
+             * @param size the value
+             * @return this builder
              */
             public @NonNull Builder size(@Nullable Vec3 size) {
                 this.size = size;
@@ -181,12 +220,20 @@ public record CollisionBox(@NonNull List<CollisionBox.Entry> boxes,
 
             /**
              * Sets {@code size}.
+             *
+             * @param x the x component
+             * @param y the y component
+             * @param z the z component
+             * @return this builder
              */
             public @NonNull Builder size(float x, float y, float z) {
                 return size(new Vec3(x, y, z));
             }
 
             /**
+             * Builds the value from the fields set and the defaults.
+             *
+             * @return the value
              * @throws IllegalStateException if a required field is not set
              * @throws IllegalArgumentException if a value is out of range
              */
@@ -198,6 +245,10 @@ public record CollisionBox(@NonNull List<CollisionBox.Entry> boxes,
 
     /**
      * An add-on JSON vector {@code [x, y, z]}.
+     *
+     * @param x the x component
+     * @param y the y component
+     * @param z the z component
      */
     public record Vec3(float x, float y, float z) {
     }

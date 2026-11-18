@@ -13,15 +13,30 @@ import java.util.List;
  * @since 1.0.0
  */
 public record BlockShape(@NonNull List<Box> boxes) {
+    /**
+     * No boxes: a shape without collision.
+     */
     public static final BlockShape EMPTY = new BlockShape(List.of());
+    /**
+     * One box that fills the whole block.
+     */
     public static final BlockShape FULL_CUBE = new BlockShape(List.of(new Box(0, 0, 0, 1, 1, 1)));
 
+    /**
+     * Creates a shape.
+     *
+     * @throws NullPointerException if {@code boxes} or one of its elements is null
+     */
     public BlockShape {
         boxes = List.copyOf(boxes);
     }
 
     /**
+     * Creates a shape from raw coordinates.
+     *
      * @param coordinates six floats per box: {@code minX, minY, minZ, maxX, maxY, maxZ}
+     * @return the shape; empty if there are no coordinates
+     * @throws IllegalArgumentException if the number of coordinates is not a multiple of six
      */
     public static @NonNull BlockShape of(float @NonNull ... coordinates) {
         if (coordinates.length % 6 != 0) {
@@ -36,11 +51,18 @@ public record BlockShape(@NonNull List<Box> boxes) {
         return new BlockShape(List.of(boxes));
     }
 
+    /**
+     * Whether the shape has no boxes.
+     *
+     * @return true if there are no boxes
+     */
     public boolean isEmpty() {
         return boxes.isEmpty();
     }
 
     /**
+     * Returns the boxes as raw coordinates.
+     *
      * @return the coordinates, six per box, as {@link #of(float...)} takes them
      */
     public float @NonNull [] coordinates() {
@@ -61,6 +83,12 @@ public record BlockShape(@NonNull List<Box> boxes) {
     /**
      * One axis aligned box.
      *
+     * @param minX the lower x bound
+     * @param minY the lower y bound
+     * @param minZ the lower z bound
+     * @param maxX the upper x bound
+     * @param maxY the upper y bound
+     * @param maxZ the upper z bound
      * @since 1.0.0
      */
     public record Box(float minX, float minY, float minZ, float maxX, float maxY, float maxZ) {

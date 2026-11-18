@@ -8,14 +8,14 @@ import java.util.Objects;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.geysermc.paletter.annotation.BedrockFormat;
-import org.geysermc.paletter.annotation.Experimental;
 
 /**
  * Makes your block into a custom crafting table which enables the crafting table UI and the ability to craft
  * recipes.
  * <p>
  * Add-on JSON: {@code "minecraft:crafting_table"}.
- * Bedrock requires the experiment Holiday Creator Features for it (in some format versions).
+ * The creator docs name the experiment Holiday Creator Features for it (in some format versions); unverified against BDS.
+ * Unverified: the creator docs name experiment "Holiday Creator Features", which is in no capture.
  *
  * @param craftingTags Defines the tags recipes should define to be crafted on this table. Limited to 64 tags. Each tag is limited to
  *        64 characters. Value must have at most 64 items. Add-on JSON {@code crafting_tags}. Required.
@@ -28,7 +28,6 @@ import org.geysermc.paletter.annotation.Experimental;
  * @since 1.0.0
  */
 @BedrockFormat("1.19.50")
-@Experimental
 public record CraftingTable(@NonNull List<String> craftingTags,
         @Nullable String tableName) implements BlockComponent {
     /**
@@ -36,6 +35,11 @@ public record CraftingTable(@NonNull List<String> craftingTags,
      */
     public static final String NAME = "minecraft:crafting_table";
 
+    /**
+     * Checks the components and copies lists and maps, so the value is immutable.
+     *
+     * @throws NullPointerException if a required component is null
+     */
     public CraftingTable {
         craftingTags = List.copyOf(Objects.requireNonNull(craftingTags, "CraftingTable.craftingTags"));
     }
@@ -46,6 +50,9 @@ public record CraftingTable(@NonNull List<String> craftingTags,
     }
 
     /**
+     * Creates a builder with every optional field at its default; required fields must be set before
+     * {@code build()}.
+     *
      * @return a builder with the defaults applied
      */
     public static @NonNull Builder builder() {
@@ -53,6 +60,8 @@ public record CraftingTable(@NonNull List<String> craftingTags,
     }
 
     /**
+     * Creates a builder holding this value's fields, to change some of them.
+     *
      * @return a builder with this value's fields
      */
     public @NonNull Builder toBuilder() {
@@ -75,6 +84,9 @@ public record CraftingTable(@NonNull List<String> craftingTags,
 
         /**
          * Sets {@code crafting_tags}.
+         *
+         * @param craftingTags the value
+         * @return this builder
          */
         public @NonNull Builder craftingTags(@NonNull List<String> craftingTags) {
             this.craftingTags = craftingTags;
@@ -83,6 +95,9 @@ public record CraftingTable(@NonNull List<String> craftingTags,
 
         /**
          * Sets {@code crafting_tags}.
+         *
+         * @param craftingTags the value
+         * @return this builder
          */
         public @NonNull Builder craftingTags(@NonNull String... craftingTags) {
             return craftingTags(List.of(craftingTags));
@@ -90,6 +105,9 @@ public record CraftingTable(@NonNull List<String> craftingTags,
 
         /**
          * Sets {@code table_name}.
+         *
+         * @param tableName the value
+         * @return this builder
          */
         public @NonNull Builder tableName(@Nullable String tableName) {
             this.tableName = tableName;
@@ -97,6 +115,9 @@ public record CraftingTable(@NonNull List<String> craftingTags,
         }
 
         /**
+         * Builds the value from the fields set and the defaults.
+         *
+         * @return the value
          * @throws IllegalStateException if a required field is not set
          * @throws IllegalArgumentException if a value is out of range
          */

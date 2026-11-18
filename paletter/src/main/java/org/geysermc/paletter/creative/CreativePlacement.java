@@ -28,7 +28,11 @@ public sealed interface CreativePlacement permits DefaultPlacement, CreativePlac
     CreativePlacement DEFAULT = new DefaultPlacement();
 
     /**
-     * @return a placement right after the stacks an anchor matches
+     * Places right after the stacks an anchor matches.
+     *
+     * @param anchor the stacks to insert after
+     * @return the placement
+     * @throws NullPointerException if the anchor is null
      * @since 1.0.0
      */
     static @NonNull CreativePlacement after(@NonNull ItemMatcher anchor) {
@@ -36,7 +40,11 @@ public sealed interface CreativePlacement permits DefaultPlacement, CreativePlac
     }
 
     /**
-     * @return a placement right after exactly that variant, if present (a type is its base variant)
+     * Places right after exactly one variant, if present.
+     *
+     * @param anchor the variant to insert after, or a type for its base variant
+     * @return the placement
+     * @throws NullPointerException if the anchor is null
      * @since 1.0.0
      */
     static @NonNull CreativePlacement after(@NonNull ItemKey anchor) {
@@ -44,7 +52,11 @@ public sealed interface CreativePlacement permits DefaultPlacement, CreativePlac
     }
 
     /**
-     * @return a placement right after the stacks of any variant of an item type, if present
+     * Places right after the stacks of any variant of an item type, if present.
+     *
+     * @param anchor the item type to insert after
+     * @return the placement
+     * @throws NullPointerException if the anchor is null
      * @since 1.0.0
      */
     static @NonNull CreativePlacement afterAnyVariantOf(@NonNull BedrockItemType anchor) {
@@ -59,6 +71,11 @@ public sealed interface CreativePlacement permits DefaultPlacement, CreativePlac
      * @since 1.0.0
      */
     record After(@NonNull ItemMatcher anchor) implements CreativePlacement {
+        /**
+         * Creates the placement.
+         *
+         * @throws NullPointerException if the anchor is null
+         */
         public After {
             Objects.requireNonNull(anchor, "anchor");
         }

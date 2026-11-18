@@ -18,7 +18,12 @@ public final class Placements {
      * Inserts a stack: after the anchor if there is one and it matches, else at the end of the group (created at the end of
      * the category if missing), else loose at the end of the category.
      *
+     * @param placement where the stack goes
+     * @param editor the creative editor of the palette being compiled
+     * @param stack the stack to insert
+     * @param category the creative category of the menu category
      * @param group the group of the {@code menu_category}, or null
+     * @param ordering the creative ordering of the palette
      * @return false if an anchor was set but matched nothing, so the default position was used
      */
     public static boolean apply(@NonNull CreativePlacement placement, @NonNull CreativeEditor editor, @NonNull BedrockItemStack stack,

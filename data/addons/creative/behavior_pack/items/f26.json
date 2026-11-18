@@ -1,0 +1,17 @@
+{
+  "format_version": "1.26.60",
+  "minecraft:item": {
+    "description": {
+      "identifier": "paletter:replaced_shown_block",
+      "menu_category": {
+        "category": "none"
+      }
+    },
+    "components": {
+      "minecraft:block_placer": {
+        "block": "paletter:replaced_shown_block",
+        "replace_block_item": true
+      }
+    }
+  }
+}

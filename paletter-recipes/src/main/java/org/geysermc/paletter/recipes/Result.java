@@ -14,6 +14,11 @@ import org.geysermc.paletter.vanilla.BedrockItemVariant;
  * @since 1.0.0
  */
 public record Result(@NonNull BedrockItemVariant item, int count, @NonNull NbtMap blockState, @NonNull NbtMap tag) {
+    /**
+     * Creates the result.
+     *
+     * @throws IllegalArgumentException if the count is below 1
+     */
     public Result {
         if (count < 1) {
             throw new IllegalArgumentException("A result needs a count of at least 1: " + count);

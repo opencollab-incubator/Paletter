@@ -36,6 +36,11 @@ public record Shooter(@NonNull List<Shooter.Ammunition> ammunition, boolean char
      */
     public static final String NAME = "minecraft:shooter";
 
+    /**
+     * Checks the components and copies lists and maps, so the value is immutable.
+     *
+     * @throws NullPointerException if a required component is null
+     */
     public Shooter {
         ammunition = List.copyOf(Objects.requireNonNull(ammunition, "Shooter.ammunition"));
     }
@@ -46,6 +51,8 @@ public record Shooter(@NonNull List<Shooter.Ammunition> ammunition, boolean char
     }
 
     /**
+     * Creates a builder with every field at its default.
+     *
      * @return a builder with the defaults applied
      */
     public static @NonNull Builder builder() {
@@ -53,6 +60,8 @@ public record Shooter(@NonNull List<Shooter.Ammunition> ammunition, boolean char
     }
 
     /**
+     * Creates a builder holding this value's fields, to change some of them.
+     *
      * @return a builder with this value's fields
      */
     public @NonNull Builder toBuilder() {
@@ -81,6 +90,9 @@ public record Shooter(@NonNull List<Shooter.Ammunition> ammunition, boolean char
 
         /**
          * Sets {@code ammunition}.
+         *
+         * @param ammunition the value
+         * @return this builder
          */
         public @NonNull Builder ammunition(@NonNull List<Ammunition> ammunition) {
             this.ammunition = ammunition;
@@ -89,6 +101,9 @@ public record Shooter(@NonNull List<Shooter.Ammunition> ammunition, boolean char
 
         /**
          * Sets {@code ammunition}.
+         *
+         * @param ammunition the value
+         * @return this builder
          */
         public @NonNull Builder ammunition(@NonNull Ammunition... ammunition) {
             return ammunition(List.of(ammunition));
@@ -96,6 +111,9 @@ public record Shooter(@NonNull List<Shooter.Ammunition> ammunition, boolean char
 
         /**
          * Sets {@code charge_on_draw}.
+         *
+         * @param chargeOnDraw the value
+         * @return this builder
          */
         public @NonNull Builder chargeOnDraw(boolean chargeOnDraw) {
             this.chargeOnDraw = chargeOnDraw;
@@ -104,6 +122,9 @@ public record Shooter(@NonNull List<Shooter.Ammunition> ammunition, boolean char
 
         /**
          * Sets {@code max_draw_duration}.
+         *
+         * @param maxDrawDuration the value
+         * @return this builder
          */
         public @NonNull Builder maxDrawDuration(float maxDrawDuration) {
             this.maxDrawDuration = maxDrawDuration;
@@ -112,6 +133,9 @@ public record Shooter(@NonNull List<Shooter.Ammunition> ammunition, boolean char
 
         /**
          * Sets {@code scale_power_by_draw_duration}.
+         *
+         * @param scalePowerByDrawDuration the value
+         * @return this builder
          */
         public @NonNull Builder scalePowerByDrawDuration(boolean scalePowerByDrawDuration) {
             this.scalePowerByDrawDuration = scalePowerByDrawDuration;
@@ -119,6 +143,9 @@ public record Shooter(@NonNull List<Shooter.Ammunition> ammunition, boolean char
         }
 
         /**
+         * Builds the value from the fields set and the defaults.
+         *
+         * @return the value
          * @throws IllegalStateException if a required field is not set
          * @throws IllegalArgumentException if a value is out of range
          */
@@ -142,6 +169,8 @@ public record Shooter(@NonNull List<Shooter.Ammunition> ammunition, boolean char
     public record Ammunition(@Nullable String item, boolean searchInventory, boolean useInCreative,
             boolean useOffhand) {
         /**
+         * Creates a builder with every field at its default.
+         *
          * @return a builder with the defaults applied
          */
         public static @NonNull Builder builder() {
@@ -149,6 +178,8 @@ public record Shooter(@NonNull List<Shooter.Ammunition> ammunition, boolean char
         }
 
         /**
+         * Creates a builder holding this value's fields, to change some of them.
+         *
          * @return a builder with this value's fields
          */
         public @NonNull Builder toBuilder() {
@@ -177,6 +208,9 @@ public record Shooter(@NonNull List<Shooter.Ammunition> ammunition, boolean char
 
             /**
              * Sets {@code item}.
+             *
+             * @param item the value
+             * @return this builder
              */
             public @NonNull Builder item(@Nullable String item) {
                 this.item = item;
@@ -185,6 +219,9 @@ public record Shooter(@NonNull List<Shooter.Ammunition> ammunition, boolean char
 
             /**
              * Sets {@code item} to a vanilla or custom item.
+             *
+             * @param item the value
+             * @return this builder
              */
             public @NonNull Builder item(@NonNull BedrockItemType item) {
                 return item(item.identifier());
@@ -192,6 +229,9 @@ public record Shooter(@NonNull List<Shooter.Ammunition> ammunition, boolean char
 
             /**
              * Sets {@code search_inventory}.
+             *
+             * @param searchInventory the value
+             * @return this builder
              */
             public @NonNull Builder searchInventory(boolean searchInventory) {
                 this.searchInventory = searchInventory;
@@ -200,6 +240,9 @@ public record Shooter(@NonNull List<Shooter.Ammunition> ammunition, boolean char
 
             /**
              * Sets {@code use_in_creative}.
+             *
+             * @param useInCreative the value
+             * @return this builder
              */
             public @NonNull Builder useInCreative(boolean useInCreative) {
                 this.useInCreative = useInCreative;
@@ -208,6 +251,9 @@ public record Shooter(@NonNull List<Shooter.Ammunition> ammunition, boolean char
 
             /**
              * Sets {@code use_offhand}.
+             *
+             * @param useOffhand the value
+             * @return this builder
              */
             public @NonNull Builder useOffhand(boolean useOffhand) {
                 this.useOffhand = useOffhand;
@@ -215,6 +261,9 @@ public record Shooter(@NonNull List<Shooter.Ammunition> ammunition, boolean char
             }
 
             /**
+             * Builds the value from the fields set and the defaults.
+             *
+             * @return the value
              * @throws IllegalStateException if a required field is not set
              * @throws IllegalArgumentException if a value is out of range
              */

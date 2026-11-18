@@ -3,6 +3,7 @@
 // data/model/ATTRIBUTION.md.
 package org.geysermc.paletter.block.component;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -26,13 +27,18 @@ import org.geysermc.paletter.internal.component.Check;
  * @since 1.0.0
  */
 @BedrockFormat("1.21.120")
-public record EmbeddedVisual(EmbeddedVisual. @NonNull Geometry geometry,
+public record EmbeddedVisual(EmbeddedVisual. @NonNull VisualGeometry geometry,
         @NonNull MaterialInstances materialInstances) implements BlockComponent {
     /**
      * The component name in add-on JSON.
      */
     public static final String NAME = "minecraft:embedded_visual";
 
+    /**
+     * Checks the components.
+     *
+     * @throws NullPointerException if a required component is null
+     */
     public EmbeddedVisual {
         Objects.requireNonNull(geometry, "EmbeddedVisual.geometry");
         Objects.requireNonNull(materialInstances, "EmbeddedVisual.materialInstances");
@@ -44,6 +50,9 @@ public record EmbeddedVisual(EmbeddedVisual. @NonNull Geometry geometry,
     }
 
     /**
+     * Creates a builder with every optional field at its default; required fields must be set before
+     * {@code build()}.
+     *
      * @return a builder with the defaults applied
      */
     public static @NonNull Builder builder() {
@@ -51,6 +60,8 @@ public record EmbeddedVisual(EmbeddedVisual. @NonNull Geometry geometry,
     }
 
     /**
+     * Creates a builder holding this value's fields, to change some of them.
+     *
      * @return a builder with this value's fields
      */
     public @NonNull Builder toBuilder() {
@@ -64,7 +75,7 @@ public record EmbeddedVisual(EmbeddedVisual. @NonNull Geometry geometry,
      * Builds {@link EmbeddedVisual}: defaults applied, required fields and ranges checked by {@link #build()}.
      */
     public static final class Builder {
-        private @Nullable Geometry geometry;
+        private @Nullable VisualGeometry geometry;
 
         private @Nullable MaterialInstances materialInstances;
 
@@ -73,14 +84,20 @@ public record EmbeddedVisual(EmbeddedVisual. @NonNull Geometry geometry,
 
         /**
          * Sets {@code geometry}.
+         *
+         * @param geometry the value
+         * @return this builder
          */
-        public @NonNull Builder geometry(@NonNull Geometry geometry) {
+        public @NonNull Builder geometry(@NonNull VisualGeometry geometry) {
             this.geometry = geometry;
             return this;
         }
 
         /**
          * Sets {@code material_instances}.
+         *
+         * @param materialInstances the value
+         * @return this builder
          */
         public @NonNull Builder materialInstances(@NonNull MaterialInstances materialInstances) {
             this.materialInstances = materialInstances;
@@ -88,6 +105,9 @@ public record EmbeddedVisual(EmbeddedVisual. @NonNull Geometry geometry,
         }
 
         /**
+         * Builds the value from the fields set and the defaults.
+         *
+         * @return the value
          * @throws IllegalStateException if a required field is not set
          * @throws IllegalArgumentException if a value is out of range
          */
@@ -114,6 +134,8 @@ public record EmbeddedVisual(EmbeddedVisual. @NonNull Geometry geometry,
      */
     public record NWayVisualRotation(@Nullable String x, @Nullable String y, @Nullable String z) {
         /**
+         * Creates a builder with every field at its default.
+         *
          * @return a builder with the defaults applied
          */
         public static @NonNull Builder builder() {
@@ -121,6 +143,8 @@ public record EmbeddedVisual(EmbeddedVisual. @NonNull Geometry geometry,
         }
 
         /**
+         * Creates a builder holding this value's fields, to change some of them.
+         *
          * @return a builder with this value's fields
          */
         public @NonNull Builder toBuilder() {
@@ -146,6 +170,9 @@ public record EmbeddedVisual(EmbeddedVisual. @NonNull Geometry geometry,
 
             /**
              * Sets {@code x}.
+             *
+             * @param x the value
+             * @return this builder
              */
             public @NonNull Builder x(@Nullable String x) {
                 this.x = x;
@@ -154,6 +181,9 @@ public record EmbeddedVisual(EmbeddedVisual. @NonNull Geometry geometry,
 
             /**
              * Sets {@code y}.
+             *
+             * @param y the value
+             * @return this builder
              */
             public @NonNull Builder y(@Nullable String y) {
                 this.y = y;
@@ -162,6 +192,9 @@ public record EmbeddedVisual(EmbeddedVisual. @NonNull Geometry geometry,
 
             /**
              * Sets {@code z}.
+             *
+             * @param z the value
+             * @return this builder
              */
             public @NonNull Builder z(@Nullable String z) {
                 this.z = z;
@@ -169,6 +202,9 @@ public record EmbeddedVisual(EmbeddedVisual. @NonNull Geometry geometry,
             }
 
             /**
+             * Builds the value from the fields set and the defaults.
+             *
+             * @return the value
              * @throws IllegalStateException if a required field is not set
              * @throws IllegalArgumentException if a value is out of range
              */
@@ -216,23 +252,28 @@ public record EmbeddedVisual(EmbeddedVisual. @NonNull Geometry geometry,
      *        for all/some bones in the geometry, regardless of how the block is rotated using "minecraft:transformation"
      *        component. For performance reasons it's recommended to use the Boolean. Add-on JSON {@code uv_lock}. Default:
      *        <code>false</code>.
-     * @param uvLockBones The list of strings form of {@code uv_lock} (bones); excludes {@link #uvLock()}. Add-on JSON {@code uv_lock}.
      */
-    public record Geometry(@NonNull Map<String, String> boneVisibility, @Nullable String culling,
-            @Nullable String cullingLayer, @Nullable String cullingShape,
+    public record VisualGeometry(@NonNull Map<String, String> boneVisibility,
+            @Nullable String culling, @Nullable String cullingLayer, @Nullable String cullingShape,
             @NonNull String identifier, @Nullable NWayVisualRotation nWayVisualRotation,
-            @Nullable Boolean uvLock, @Nullable List<String> uvLockBones) {
-        public Geometry {
-            boneVisibility = Check.copy(boneVisibility, "EmbeddedVisual.Geometry.boneVisibility");
-            Check.conflict("EmbeddedVisual.Geometry", "boneVisibility", !boneVisibility.isEmpty(), "identifier", identifier, "minecraft:geometry.full_block");
-            Objects.requireNonNull(identifier, "EmbeddedVisual.Geometry.identifier");
-            if (uvLock != null && uvLockBones != null) {
-                throw new IllegalArgumentException("EmbeddedVisual.Geometry sets both uvLock and uvLockBones");
-            }
-            uvLockBones = uvLockBones == null ? null : List.copyOf(uvLockBones);
+            @NonNull UvLock uvLock) {
+        /**
+         * Checks the components and copies lists and maps, so the value is immutable.
+         *
+         * @throws NullPointerException if a required component is null
+         * @throws IllegalArgumentException if a component is out of its documented range or conflicts with another
+         */
+        public VisualGeometry {
+            boneVisibility = Check.copy(boneVisibility, "EmbeddedVisual.VisualGeometry.boneVisibility");
+            Check.conflict("EmbeddedVisual.VisualGeometry", "boneVisibility", !boneVisibility.isEmpty(), "identifier", identifier, "minecraft:geometry.full_block");
+            Objects.requireNonNull(identifier, "EmbeddedVisual.VisualGeometry.identifier");
+            Objects.requireNonNull(uvLock, "EmbeddedVisual.VisualGeometry.uvLock");
         }
 
         /**
+         * Creates a builder with every optional field at its default; required fields must be set before
+         * {@code build()}.
+         *
          * @return a builder with the defaults applied
          */
         public static @NonNull Builder builder() {
@@ -240,6 +281,8 @@ public record EmbeddedVisual(EmbeddedVisual. @NonNull Geometry geometry,
         }
 
         /**
+         * Creates a builder holding this value's fields, to change some of them.
+         *
          * @return a builder with this value's fields
          */
         public @NonNull Builder toBuilder() {
@@ -251,12 +294,11 @@ public record EmbeddedVisual(EmbeddedVisual. @NonNull Geometry geometry,
             builder.identifier = identifier;
             builder.nWayVisualRotation = nWayVisualRotation;
             builder.uvLock = uvLock;
-            builder.uvLockBones = uvLockBones;
             return builder;
         }
 
         /**
-         * Builds {@link Geometry}: defaults applied, required fields and ranges checked by {@link #build()}.
+         * Builds {@link VisualGeometry}: defaults applied, required fields and ranges checked by {@link #build()}.
          */
         public static final class Builder {
             private @Nullable Map<String, String> boneVisibility = Map.of();
@@ -271,15 +313,16 @@ public record EmbeddedVisual(EmbeddedVisual. @NonNull Geometry geometry,
 
             private @Nullable NWayVisualRotation nWayVisualRotation;
 
-            private @Nullable Boolean uvLock = false;
-
-            private @Nullable List<String> uvLockBones;
+            private @Nullable UvLock uvLock = UvLock.flag(false);
 
             private Builder() {
             }
 
             /**
              * Sets {@code bone_visibility}.
+             *
+             * @param boneVisibility the value
+             * @return this builder
              */
             public @NonNull Builder boneVisibility(@NonNull Map<String, String> boneVisibility) {
                 this.boneVisibility = boneVisibility;
@@ -288,6 +331,9 @@ public record EmbeddedVisual(EmbeddedVisual. @NonNull Geometry geometry,
 
             /**
              * Sets {@code culling}.
+             *
+             * @param culling the value
+             * @return this builder
              */
             public @NonNull Builder culling(@Nullable String culling) {
                 this.culling = culling;
@@ -296,6 +342,9 @@ public record EmbeddedVisual(EmbeddedVisual. @NonNull Geometry geometry,
 
             /**
              * Sets {@code culling_layer}.
+             *
+             * @param cullingLayer the value
+             * @return this builder
              */
             public @NonNull Builder cullingLayer(@Nullable String cullingLayer) {
                 this.cullingLayer = cullingLayer;
@@ -304,6 +353,9 @@ public record EmbeddedVisual(EmbeddedVisual. @NonNull Geometry geometry,
 
             /**
              * Sets {@code culling_shape}.
+             *
+             * @param cullingShape the value
+             * @return this builder
              */
             public @NonNull Builder cullingShape(@Nullable String cullingShape) {
                 this.cullingShape = cullingShape;
@@ -312,6 +364,9 @@ public record EmbeddedVisual(EmbeddedVisual. @NonNull Geometry geometry,
 
             /**
              * Sets {@code identifier}.
+             *
+             * @param identifier the value
+             * @return this builder
              */
             public @NonNull Builder identifier(@NonNull String identifier) {
                 this.identifier = identifier;
@@ -320,6 +375,9 @@ public record EmbeddedVisual(EmbeddedVisual. @NonNull Geometry geometry,
 
             /**
              * Sets {@code n_way_visual_rotation}.
+             *
+             * @param nWayVisualRotation the value
+             * @return this builder
              */
             public @NonNull Builder nWayVisualRotation(
                     @Nullable NWayVisualRotation nWayVisualRotation) {
@@ -328,43 +386,64 @@ public record EmbeddedVisual(EmbeddedVisual. @NonNull Geometry geometry,
             }
 
             /**
-             * Sets {@code uv_lock} (clears the other form).
-             */
-            public @NonNull Builder uvLock(@Nullable Boolean uvLock) {
-                this.uvLock = uvLock;
-                if (uvLock != null) {
-                    this.uvLockBones = null;
-                }
-                return this;
-            }
-
-            /**
-             * Sets {@code uv_lock} (clears the other form).
-             */
-            public @NonNull Builder uvLockBones(@Nullable List<String> uvLockBones) {
-                this.uvLockBones = uvLockBones;
-                if (uvLockBones != null) {
-                    this.uvLock = null;
-                }
-                return this;
-            }
-
-            /**
              * Sets {@code uv_lock}.
+             *
+             * @param uvLock the value
+             * @return this builder
              */
-            public @NonNull Builder uvLockBones(@NonNull String... uvLockBones) {
-                return uvLockBones(List.of(uvLockBones));
+            public @NonNull Builder uvLock(@NonNull UvLock uvLock) {
+                this.uvLock = uvLock;
+                return this;
             }
 
             /**
+             * Sets {@code uv_lock} to the names of the bones to lock.
+             *
+             * @param uvLock the value
+             * @return this builder
+             */
+            public @NonNull Builder uvLock(@NonNull List<String> uvLock) {
+                return uvLock(UvLock.bones(uvLock));
+            }
+
+            /**
+             * Sets {@code uv_lock} to the names of the bones to lock (at least one value).
+             *
+             * @param first the first value
+             * @param rest the other values
+             * @return this builder
+             */
+            public @NonNull Builder uvLock(@NonNull String first, @NonNull String... rest) {
+                List<String> values = new ArrayList<>();
+                values.add(first);
+                for (String x : rest) {
+                    values.add(x);
+                }
+                return uvLock(values);
+            }
+
+            /**
+             * Sets {@code uv_lock} to one flag for every bone.
+             *
+             * @param uvLock the value
+             * @return this builder
+             */
+            public @NonNull Builder uvLock(boolean uvLock) {
+                return uvLock(UvLock.flag(uvLock));
+            }
+
+            /**
+             * Builds the value from the fields set and the defaults.
+             *
+             * @return the value
              * @throws IllegalStateException if a required field is not set
              * @throws IllegalArgumentException if a value is out of range
              */
-            public @NonNull Geometry build() {
+            public @NonNull VisualGeometry build() {
                 if (identifier == null) {
-                    throw new IllegalStateException("EmbeddedVisual.Geometry.identifier is required");
+                    throw new IllegalStateException("EmbeddedVisual.VisualGeometry.identifier is required");
                 }
-                return new Geometry(boneVisibility, culling, cullingLayer, cullingShape, identifier, nWayVisualRotation, uvLock, uvLockBones);
+                return new VisualGeometry(boneVisibility, culling, cullingLayer, cullingShape, identifier, nWayVisualRotation, uvLock);
             }
         }
     }

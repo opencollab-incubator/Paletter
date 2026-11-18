@@ -27,6 +27,11 @@
       "unknown"
     ]
   },
+  "block:minecraft:breathability": {
+    "": [
+      "deprecated"
+    ]
+  },
   "block:minecraft:chest_obstruction": {
     "obstruction_rule": [
       "values 'always', 'never', 'shape'"
@@ -321,6 +326,11 @@
       "values 'none', 'obstruct_rain', 'obstruct_rain_accumulate_snow', ... (1 others)"
     ]
   },
+  "block:minecraft:queued_ticking": {
+    "": [
+      "deprecated"
+    ]
+  },
   "block:minecraft:random_offset": {
     "x.range": [
       "order min max",
@@ -351,6 +361,11 @@
     ],
     "z.range.min": [
       "range -8 8"
+    ]
+  },
+  "block:minecraft:random_ticking": {
+    "": [
+      "deprecated"
     ]
   },
   "block:minecraft:redstone_consumer": {
@@ -402,6 +417,11 @@
     ],
     "rotation.z": [
       "step 90"
+    ]
+  },
+  "block:minecraft:unit_cube": {
+    "": [
+      "deprecated"
     ]
   },
   "block:permutations": {
@@ -568,7 +588,8 @@
   },
   "item:minecraft:enchantable": {
     "slot": [
-      "required"
+      "required",
+      "values 'none', 'all', 'g_armor', 'armor_head', 'armor_torso', 'armor_feet', 'armor_legs', 'sword', 'bow', 'spear', 'crossbow', 'melee_spear', 'g_tool', 'hoe', 'shears', 'flintsteel', 'shield', 'g_digging', 'axe', 'pickaxe', 'shovel', 'fishing_rod', 'carrot_stick', 'elytra', 'cosmetic_head'"
     ],
     "value": [
       "min 0",

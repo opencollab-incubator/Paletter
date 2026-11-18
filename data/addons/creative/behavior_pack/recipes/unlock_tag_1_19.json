@@ -1,0 +1,24 @@
+{
+  "format_version": "1.19",
+  "minecraft:recipe_shapeless": {
+    "description": {
+      "identifier": "paletter:unlock_tag_1_19"
+    },
+    "tags": [
+      "crafting_table"
+    ],
+    "ingredients": [
+      {
+        "item": "minecraft:dirt"
+      }
+    ],
+    "result": {
+      "item": "minecraft:stick"
+    },
+    "unlock": [
+      {
+        "tag": "minecraft:planks"
+      }
+    ]
+  }
+}

@@ -1,5 +1,4 @@
 {
-  "format_version": "1.26.60",
   "minecraft:block": {
     "description": {"identifier": "probe:light_emission_15"},
     "components": {"minecraft:light_emission": 15}

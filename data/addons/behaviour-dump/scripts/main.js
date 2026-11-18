@@ -2,6 +2,7 @@
 // Beta APIs experiment (isSolid and getMapColor are beta). It prints what the Script API says about every block state and
 // item type to the console in numbered chunks, as the Script API dump does:
 //   BEHAVIOUR <index>/<total> <slice>
+//   BEHAVIOUR-PROGRESS <phase> <done>/<total>   while it works (the tools wait as long as these come)
 //   BEHAVIOUR-DONE <total> chunks          (BEHAVIOUR-FAILED <error> if the script failed)
 // The script draws no conclusions beyond comparing values; BehaviourDump (tools) reads the JSON.
 //
@@ -168,6 +169,14 @@ const unread = new Set();
 function warn(message) {
     errors.push(message);
     console.warn(`BEHAVIOUR-ERROR ${message}`);
+}
+
+// Tells behaviour-dump (tools) the dump is alive: it waits as long as these keep coming, however long the work is, and the
+// log shows where a dump that never finished stopped. Printed every `every` steps, with what the step works on if given.
+function progress(phase, done, total, every, what) {
+    if (done % every === 0) {
+        console.warn(`BEHAVIOUR-PROGRESS ${phase} ${done}/${total}${what === undefined ? "" : ` ${what}`}`);
+    }
 }
 
 // Native values to JSON: objects with an identity by their id, plain structs (RGBA, NumberRange, Vector3) by their fields
@@ -395,6 +404,7 @@ async function loaded(dimension, area, name) {
     const far = { x: x + area.extent, y, z: z + area.extent };
     dimension.runCommand(`tickingarea add ${x - 2} ${y - 2} ${z - 2} ${far.x + 2} ${y + 2} ${far.z + 2} ${name}`);
     for (let i = 0; i < 200; i++) {
+        progress(`loading ${name}`, i, 200, 20);
         try {
             if (dimension.getBlock(area.corner) && dimension.getBlock(far)) {
                 return;
@@ -410,7 +420,9 @@ async function loaded(dimension, area, name) {
 function* dumpBlocks(out, cells) {
     const states = [];
     // Sorted, so two runs of the same build print the same dump
-    for (const type of toArray(BlockTypes.getAll()).sort((a, b) => (a.id < b.id ? -1 : a.id > b.id ? 1 : 0))) {
+    const types = toArray(BlockTypes.getAll()).sort((a, b) => (a.id < b.id ? -1 : a.id > b.id ? 1 : 0));
+    for (const [n, type] of types.entries()) {
+        progress("block types", n, types.length, 100);
         try {
             for (const permutation of statesOf(type.id)) {
                 states.push(permutation);
@@ -425,6 +437,7 @@ function* dumpBlocks(out, cells) {
     const placedColumns = new Columns();
     out.states = states.map((permutation) => [permutation.type.id, permutation.getAllStates()]);
     for (let i = 0; i < states.length; i++) {
+        progress("block states", i, states.length, 500);
         const without = {};
         readAll(states[i], without);
         for (const [property, value] of Object.entries(without)) permutationColumns.set(property, i, value);
@@ -457,7 +470,11 @@ function* dumpBlocks(out, cells) {
     const checked = new Set();
     const dependent = {};
     const changed = {};
-    for (const i of sample) {
+    for (const [n, i] of sample.entries()) {
+        // Every sample, with its state: BDS 1.26.70.24 (preview) went silent within world samples 1800 to 1849 (from
+        // minecraft:spruce_pressure_plate to minecraft:stripped_jungle_log), a hang the base placement of the same
+        // states did not have, so the line names the state a hang is in
+        progress("world sample", n, sample.length, 1, JSON.stringify(out.states[i]));
         let reference;
         try {
             const block = cells.base.place(states[i]);
@@ -508,7 +525,9 @@ function* dumpBlocks(out, cells) {
 }
 
 function* dumpItems(out) {
-    for (const type of toArray(ItemTypes.getAll()).sort((a, b) => (a.id < b.id ? -1 : a.id > b.id ? 1 : 0))) {
+    const types = toArray(ItemTypes.getAll()).sort((a, b) => (a.id < b.id ? -1 : a.id > b.id ? 1 : 0));
+    for (const [n, type] of types.entries()) {
+        progress("items", n, types.length, 100);
         let stack;
         try {
             stack = new ItemStack(type, 1);
@@ -522,6 +541,17 @@ function* dumpItems(out) {
         readAll(stack, values);
         for (const component of toArray(stack.getComponents())) {
             readAll(component, values);
+        }
+        // getComponents listed ItemFoodComponent for the apple only in the dumps of 1.26.36.1 to 1.26.63.1 (1 of 1623 items).
+        // Asked by name too: whether getComponent finds the food of the other items is not known, the next capture shows it.
+        // The importer reads ItemFoodComponent.* the same way whichever call found it.
+        try {
+            const food = stack.getComponent("minecraft:food");
+            if (food && values["ItemFoodComponent.nutrition"] === undefined) {
+                readAll(food, values);
+            }
+        } catch (error) {
+            warn(`no food component of item ${type.id}: ${error}`);
         }
         out.items[type.id] = values;
         yield;
@@ -541,6 +571,7 @@ function* dump(cells) {
     for (let i = 0; i < total; i++) {
         console.warn(`BEHAVIOUR ${i}/${total} ${json.slice(i * CHUNK_SIZE, (i + 1) * CHUNK_SIZE)}`);
         if (i % 50 === 49) {
+            progress("printing", i + 1, total, 50);
             yield;
         }
     }
@@ -571,6 +602,8 @@ async function setup() {
 // script watchdog.
 world.afterEvents.worldLoad.subscribe(() => {
     console.warn("BEHAVIOUR-START");
+    // A script the watchdog stops would otherwise end silently (the event is not on every build: feature detection)
+    system.beforeEvents?.watchdogTerminate?.subscribe((event) => console.warn(`BEHAVIOUR-FAILED watchdog: ${event.terminateReason}`));
     setup().then((cells) => {
         system.runJob((function* () {
             try {

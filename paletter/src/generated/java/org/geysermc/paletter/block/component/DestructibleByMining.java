@@ -38,6 +38,11 @@ public record DestructibleByMining(
      */
     public static final String NAME = "minecraft:destructible_by_mining";
 
+    /**
+     * Checks the components and copies lists and maps, so the value is immutable.
+     *
+     * @throws IllegalArgumentException if a component is out of its documented range or conflicts with another
+     */
     public DestructibleByMining {
         itemSpecificSpeeds = itemSpecificSpeeds == null ? null : List.copyOf(itemSpecificSpeeds);
         Check.range("DestructibleByMining.secondsToDestroy", secondsToDestroy, 0.0, null);
@@ -51,6 +56,7 @@ public record DestructibleByMining(
     /**
      * The boolean shorthand: sets {@code enabled}.
      *
+     * @param value the value of that field
      * @return the value with everything else at its default
      */
     public static @NonNull DestructibleByMining of(boolean value) {
@@ -58,6 +64,8 @@ public record DestructibleByMining(
     }
 
     /**
+     * Creates a builder with every field at its default.
+     *
      * @return a builder with the defaults applied
      */
     public static @NonNull Builder builder() {
@@ -65,6 +73,8 @@ public record DestructibleByMining(
     }
 
     /**
+     * Creates a builder holding this value's fields, to change some of them.
+     *
      * @return a builder with this value's fields
      */
     public @NonNull Builder toBuilder() {
@@ -90,6 +100,9 @@ public record DestructibleByMining(
 
         /**
          * Sets {@code item_specific_speeds}.
+         *
+         * @param itemSpecificSpeeds the value
+         * @return this builder
          */
         public @NonNull Builder itemSpecificSpeeds(
                 @Nullable List<ItemSpecificSpeeds> itemSpecificSpeeds) {
@@ -99,6 +112,9 @@ public record DestructibleByMining(
 
         /**
          * Sets {@code item_specific_speeds}.
+         *
+         * @param itemSpecificSpeeds the value
+         * @return this builder
          */
         public @NonNull Builder itemSpecificSpeeds(
                 @NonNull ItemSpecificSpeeds... itemSpecificSpeeds) {
@@ -107,6 +123,9 @@ public record DestructibleByMining(
 
         /**
          * Sets {@code seconds_to_destroy}.
+         *
+         * @param secondsToDestroy the value
+         * @return this builder
          */
         public @NonNull Builder secondsToDestroy(float secondsToDestroy) {
             this.secondsToDestroy = secondsToDestroy;
@@ -115,6 +134,9 @@ public record DestructibleByMining(
 
         /**
          * Sets {@code enabled}.
+         *
+         * @param enabled the value
+         * @return this builder
          */
         public @NonNull Builder enabled(@Nullable Boolean enabled) {
             this.enabled = enabled;
@@ -122,6 +144,9 @@ public record DestructibleByMining(
         }
 
         /**
+         * Builds the value from the fields set and the defaults.
+         *
+         * @return the value
          * @throws IllegalStateException if a required field is not set
          * @throws IllegalArgumentException if a value is out of range
          */
@@ -140,6 +165,9 @@ public record DestructibleByMining(
      */
     public record ItemSpecificSpeeds(float destroySpeed, @Nullable String item) {
         /**
+         * Creates a builder with every optional field at its default; required fields must be set before
+         * {@code build()}.
+         *
          * @return a builder with the defaults applied
          */
         public static @NonNull Builder builder() {
@@ -147,6 +175,8 @@ public record DestructibleByMining(
         }
 
         /**
+         * Creates a builder holding this value's fields, to change some of them.
+         *
          * @return a builder with this value's fields
          */
         public @NonNull Builder toBuilder() {
@@ -169,6 +199,9 @@ public record DestructibleByMining(
 
             /**
              * Sets {@code destroy_speed}.
+             *
+             * @param destroySpeed the value
+             * @return this builder
              */
             public @NonNull Builder destroySpeed(float destroySpeed) {
                 this.destroySpeed = destroySpeed;
@@ -177,6 +210,9 @@ public record DestructibleByMining(
 
             /**
              * Sets {@code item}.
+             *
+             * @param item the value
+             * @return this builder
              */
             public @NonNull Builder item(@Nullable String item) {
                 this.item = item;
@@ -185,12 +221,18 @@ public record DestructibleByMining(
 
             /**
              * Sets {@code item} to a vanilla or custom item.
+             *
+             * @param item the value
+             * @return this builder
              */
             public @NonNull Builder item(@NonNull BedrockItemType item) {
                 return item(item.identifier());
             }
 
             /**
+             * Builds the value from the fields set and the defaults.
+             *
+             * @return the value
              * @throws IllegalStateException if a required field is not set
              * @throws IllegalArgumentException if a value is out of range
              */

@@ -38,7 +38,9 @@ public final class VanillaRecipes {
     }
 
     /**
-     * @return the data versions that have recipes: those of the bundled data, oldest first
+     * Lists the data versions that have recipes.
+     *
+     * @return the data versions of the bundled data that have recipes, oldest first
      */
     public static @NonNull List<DataVersion> versions() {
         return PaletteDataSource.bundled().versions().stream().filter(VanillaRecipes::hasBundle).toList();
@@ -62,6 +64,8 @@ public final class VanillaRecipes {
     }
 
     /**
+     * Finds the recipes of a data version, cached.
+     *
      * @param version a data version
      * @param orElse what to return for a version without bundled recipes
      * @return the recipes of the version, or {@code orElse}
@@ -90,6 +94,8 @@ public final class VanillaRecipes {
     }
 
     /**
+     * Returns the data version of these recipes.
+     *
      * @return the data version these recipes belong to
      */
     public @NonNull DataVersion version() {
@@ -97,22 +103,28 @@ public final class VanillaRecipes {
     }
 
     /**
-     * @return the crafting, smelting and smithing recipes in the order BDS sends them: shaped, shapeless, shulker box (in
-     *         {@link Recipe.Shapeless}), multi, smithing transform, smithing trim
+     * Lists the crafting, smelting and smithing recipes.
+     *
+     * @return the recipes in the order BDS sends them: shaped, shapeless, shulker box (in {@link Recipe.Shapeless}),
+     *         multi, smithing transform, smithing trim
      */
     public @NonNull List<Recipe> recipes() {
         return recipes;
     }
 
     /**
-     * @return the brewing stand recipes that change a potion
+     * Lists the brewing stand recipes that change a potion.
+     *
+     * @return the potion mixes
      */
     public @NonNull List<PotionMix> potionMixes() {
         return potionMixes;
     }
 
     /**
-     * @return the brewing stand recipes that change a potion's bottle
+     * Lists the brewing stand recipes that change a potion's bottle.
+     *
+     * @return the container mixes
      */
     public @NonNull List<ContainerMix> containerMixes() {
         return containerMixes;

@@ -30,6 +30,8 @@ public final class VoxelShape {
     private final VoxelGrid grid;
 
     /**
+     * Internal: wraps a grid, which is the shape's content.
+     *
      * @param grid the grid
      */
     @Internal
@@ -44,6 +46,7 @@ public final class VoxelShape {
      *
      * @param identifier the name the shape will have, e.g. {@code my:half_pipe}; used in the messages
      * @param boxes six floats per box: {@code minX, minY, minZ, maxX, maxY, maxZ}, in blocks (a pixel is {@code 1 / 16f})
+     * @return the shape
      * @throws IllegalArgumentException if BDS would not load the shape
      */
     public static @NonNull VoxelShape ofBoxes(@NonNull String identifier, float @NonNull ... boxes) {
@@ -53,12 +56,19 @@ public final class VoxelShape {
 
     /**
      * Same as {@link #ofBoxes(String, float...)}, for the boxes of a {@link BlockShape}.
+     *
+     * @param identifier the name the shape will have, e.g. {@code my:half_pipe}; used in the messages
+     * @param boxes the boxes of the shape
+     * @return the shape
+     * @throws IllegalArgumentException if BDS would not load the shape
      */
     public static @NonNull VoxelShape ofBoxes(@NonNull String identifier, @NonNull BlockShape boxes) {
         return ofBoxes(identifier, boxes.coordinates());
     }
 
     /**
+     * The x plane coordinates.
+     *
      * @return the coordinates of the planes across the x axis, ascending, in blocks
      */
     public float @NonNull [] xCoordinates() {
@@ -66,6 +76,8 @@ public final class VoxelShape {
     }
 
     /**
+     * The y plane coordinates.
+     *
      * @return the coordinates of the planes across the y axis, ascending, in blocks
      */
     public float @NonNull [] yCoordinates() {
@@ -73,6 +85,8 @@ public final class VoxelShape {
     }
 
     /**
+     * The z plane coordinates.
+     *
      * @return the coordinates of the planes across the z axis, ascending, in blocks
      */
     public float @NonNull [] zCoordinates() {
@@ -80,6 +94,8 @@ public final class VoxelShape {
     }
 
     /**
+     * The number of cells along x.
+     *
      * @return the number of cells along x ({@code xCoordinates().length - 1}, none for the empty shape)
      */
     public int xSize() {
@@ -87,6 +103,8 @@ public final class VoxelShape {
     }
 
     /**
+     * The number of cells along y.
+     *
      * @return the number of cells along y
      */
     public int ySize() {
@@ -94,6 +112,8 @@ public final class VoxelShape {
     }
 
     /**
+     * The number of cells along z.
+     *
      * @return the number of cells along z
      */
     public int zSize() {
@@ -101,6 +121,11 @@ public final class VoxelShape {
     }
 
     /**
+     * Whether one cell of the grid is filled.
+     *
+     * @param x the cell index along x
+     * @param y the cell index along y
+     * @param z the cell index along z
      * @return whether the cell between the planes {@code x} and {@code x + 1} (and likewise for y and z) is filled
      * @throws IndexOutOfBoundsException if the cell is not in the grid
      */
@@ -113,6 +138,8 @@ public final class VoxelShape {
     }
 
     /**
+     * Whether the shape is empty.
+     *
      * @return whether the shape has no cells
      */
     public boolean isEmpty() {
@@ -120,6 +147,8 @@ public final class VoxelShape {
     }
 
     /**
+     * The filled cells as boxes.
+     *
      * @return the filled cells as boxes in blocks, one per cell, in cell order. Not the boxes the shape was made of
      */
     public @NonNull List<BlockShape.Box> boxes() {
@@ -127,6 +156,8 @@ public final class VoxelShape {
     }
 
     /**
+     * Internal: the grid this shape wraps.
+     *
      * @return the grid
      */
     @Internal

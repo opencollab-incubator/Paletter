@@ -36,6 +36,12 @@ public record PlacementDirection(@NonNull List<PlacementDirection.EnabledStates>
      */
     public static final String NAME = "minecraft:placement_direction";
 
+    /**
+     * Checks the components and copies lists and maps, so the value is immutable.
+     *
+     * @throws NullPointerException if a required component is null
+     * @throws IllegalArgumentException if a component is out of its documented range or conflicts with another
+     */
     public PlacementDirection {
         enabledStates = List.copyOf(Objects.requireNonNull(enabledStates, "PlacementDirection.enabledStates"));
         if (yRotationOffset != null) {
@@ -50,6 +56,9 @@ public record PlacementDirection(@NonNull List<PlacementDirection.EnabledStates>
     }
 
     /**
+     * Creates a builder with every optional field at its default; required fields must be set before
+     * {@code build()}.
+     *
      * @return a builder with the defaults applied
      */
     public static @NonNull Builder builder() {
@@ -57,6 +66,8 @@ public record PlacementDirection(@NonNull List<PlacementDirection.EnabledStates>
     }
 
     /**
+     * Creates a builder holding this value's fields, to change some of them.
+     *
      * @return a builder with this value's fields
      */
     public @NonNull Builder toBuilder() {
@@ -82,6 +93,9 @@ public record PlacementDirection(@NonNull List<PlacementDirection.EnabledStates>
 
         /**
          * Sets {@code enabled_states}.
+         *
+         * @param enabledStates the value
+         * @return this builder
          */
         public @NonNull Builder enabledStates(@NonNull List<EnabledStates> enabledStates) {
             this.enabledStates = enabledStates;
@@ -90,6 +104,9 @@ public record PlacementDirection(@NonNull List<PlacementDirection.EnabledStates>
 
         /**
          * Sets {@code enabled_states}.
+         *
+         * @param enabledStates the value
+         * @return this builder
          */
         public @NonNull Builder enabledStates(@NonNull EnabledStates... enabledStates) {
             return enabledStates(List.of(enabledStates));
@@ -97,6 +114,9 @@ public record PlacementDirection(@NonNull List<PlacementDirection.EnabledStates>
 
         /**
          * Sets {@code y_rotation_offset}.
+         *
+         * @param yRotationOffset the value
+         * @return this builder
          */
         public @NonNull Builder yRotationOffset(@Nullable Float yRotationOffset) {
             this.yRotationOffset = yRotationOffset;
@@ -105,6 +125,9 @@ public record PlacementDirection(@NonNull List<PlacementDirection.EnabledStates>
 
         /**
          * Sets {@code blocks_to_corner_with}.
+         *
+         * @param blocksToCornerWith the value
+         * @return this builder
          */
         public @NonNull Builder blocksToCornerWith(
                 @Nullable List<BlocksToCornerWith> blocksToCornerWith) {
@@ -114,6 +137,9 @@ public record PlacementDirection(@NonNull List<PlacementDirection.EnabledStates>
 
         /**
          * Sets {@code blocks_to_corner_with}.
+         *
+         * @param blocksToCornerWith the value
+         * @return this builder
          */
         public @NonNull Builder blocksToCornerWith(
                 @NonNull BlocksToCornerWith... blocksToCornerWith) {
@@ -121,6 +147,9 @@ public record PlacementDirection(@NonNull List<PlacementDirection.EnabledStates>
         }
 
         /**
+         * Builds the value from the fields set and the defaults.
+         *
+         * @return the value
          * @throws IllegalStateException if a required field is not set
          * @throws IllegalArgumentException if a value is out of range
          */
@@ -140,6 +169,8 @@ public record PlacementDirection(@NonNull List<PlacementDirection.EnabledStates>
      */
     public record BlocksToCornerWith(@Nullable String tags) {
         /**
+         * Creates a builder with every field at its default.
+         *
          * @return a builder with the defaults applied
          */
         public static @NonNull Builder builder() {
@@ -147,6 +178,8 @@ public record PlacementDirection(@NonNull List<PlacementDirection.EnabledStates>
         }
 
         /**
+         * Creates a builder holding this value's fields, to change some of them.
+         *
          * @return a builder with this value's fields
          */
         public @NonNull Builder toBuilder() {
@@ -166,6 +199,9 @@ public record PlacementDirection(@NonNull List<PlacementDirection.EnabledStates>
 
             /**
              * Sets {@code tags}.
+             *
+             * @param tags the value
+             * @return this builder
              */
             public @NonNull Builder tags(@Nullable String tags) {
                 this.tags = tags;
@@ -173,6 +209,9 @@ public record PlacementDirection(@NonNull List<PlacementDirection.EnabledStates>
             }
 
             /**
+             * Builds the value from the fields set and the defaults.
+             *
+             * @return the value
              * @throws IllegalStateException if a required field is not set
              * @throws IllegalArgumentException if a value is out of range
              */
@@ -208,6 +247,8 @@ public record PlacementDirection(@NonNull List<PlacementDirection.EnabledStates>
         }
 
         /**
+         * Returns the value in add-on JSON.
+         *
          * @return the value in add-on JSON
          */
         public @NonNull String value() {
@@ -215,7 +256,10 @@ public record PlacementDirection(@NonNull List<PlacementDirection.EnabledStates>
         }
 
         /**
-         * @return the constant of an add-on JSON value
+         * Finds the constant of an add-on JSON value.
+         *
+         * @param value the value in add-on JSON
+         * @return the constant of the value
          * @throws IllegalArgumentException if the value is not documented
          */
         public static @NonNull EnabledStates fromValue(@NonNull String value) {

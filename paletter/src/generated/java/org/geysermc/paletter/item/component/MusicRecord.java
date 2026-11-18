@@ -30,6 +30,11 @@ public record MusicRecord(int comparatorSignal, float duration,
      */
     public static final String NAME = "minecraft:record";
 
+    /**
+     * Checks the components.
+     *
+     * @throws NullPointerException if a required component is null
+     */
     public MusicRecord {
         Objects.requireNonNull(soundEvent, "MusicRecord.soundEvent");
     }
@@ -40,6 +45,8 @@ public record MusicRecord(int comparatorSignal, float duration,
     }
 
     /**
+     * Creates a builder with every field at its default.
+     *
      * @return a builder with the defaults applied
      */
     public static @NonNull Builder builder() {
@@ -47,6 +54,8 @@ public record MusicRecord(int comparatorSignal, float duration,
     }
 
     /**
+     * Creates a builder holding this value's fields, to change some of them.
+     *
      * @return a builder with this value's fields
      */
     public @NonNull Builder toBuilder() {
@@ -72,6 +81,9 @@ public record MusicRecord(int comparatorSignal, float duration,
 
         /**
          * Sets {@code comparator_signal}.
+         *
+         * @param comparatorSignal the value
+         * @return this builder
          */
         public @NonNull Builder comparatorSignal(int comparatorSignal) {
             this.comparatorSignal = comparatorSignal;
@@ -80,6 +92,9 @@ public record MusicRecord(int comparatorSignal, float duration,
 
         /**
          * Sets {@code duration}.
+         *
+         * @param duration the value
+         * @return this builder
          */
         public @NonNull Builder duration(float duration) {
             this.duration = duration;
@@ -88,6 +103,9 @@ public record MusicRecord(int comparatorSignal, float duration,
 
         /**
          * Sets {@code sound_event}.
+         *
+         * @param soundEvent the value
+         * @return this builder
          */
         public @NonNull Builder soundEvent(@NonNull String soundEvent) {
             this.soundEvent = soundEvent;
@@ -95,6 +113,9 @@ public record MusicRecord(int comparatorSignal, float duration,
         }
 
         /**
+         * Builds the value from the fields set and the defaults.
+         *
+         * @return the value
          * @throws IllegalStateException if a required field is not set
          * @throws IllegalArgumentException if a value is out of range
          */

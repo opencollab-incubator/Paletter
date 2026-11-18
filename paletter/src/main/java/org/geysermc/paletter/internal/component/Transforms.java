@@ -4,7 +4,6 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.cloudburstmc.nbt.NbtMap;
 import org.cloudburstmc.nbt.NbtMapBuilder;
-import org.geysermc.paletter.block.BlockRegistry;
 import org.geysermc.paletter.block.CustomBlock;
 import org.geysermc.paletter.block.component.BlockComponent;
 import org.geysermc.paletter.block.component.CollisionBox;
@@ -15,21 +14,19 @@ import org.geysermc.paletter.block.component.ItemVisual;
 import org.geysermc.paletter.block.component.MaterialInstances;
 import org.geysermc.paletter.block.component.PlacementFilter;
 import org.geysermc.paletter.block.component.SelectionBox;
+import org.geysermc.paletter.block.component.UvLock;
 import org.geysermc.paletter.item.component.BlockPlacer;
-import org.geysermc.paletter.item.component.Digger;
+import org.geysermc.paletter.item.component.ColorValue;
 import org.geysermc.paletter.item.component.Dyeable;
-import org.geysermc.paletter.item.component.EntityPlacer;
 import org.geysermc.paletter.item.component.HoverTextColor;
 import org.geysermc.paletter.item.component.Icon;
+import org.geysermc.paletter.item.component.ItemsOrTags;
+import org.geysermc.paletter.item.component.RepairAmount;
 import org.geysermc.paletter.item.component.Repairable;
 import org.geysermc.paletter.item.component.Shooter;
 import org.geysermc.paletter.item.component.UseAnimation;
 
-import java.math.BigDecimal;
-import java.math.RoundingMode;
-import java.util.ArrayList;
 import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -127,7 +124,7 @@ public final class Transforms {
      */
     public static void geometry(@NonNull WireContext ctx, @NonNull WireNode out, @NonNull Geometry c) {
         NbtMapBuilder geometry = geometry(c.identifier(), boneVisibility(ctx, Geometry.NAME, c.boneVisibility()), c.culling(), c.cullingLayer(),
-            c.cullingShape(), c.uvLock(), c.uvLockBones()).toBuilder();
+            c.cullingShape(), c.uvLock()).toBuilder();
         Geometry.NWayVisualRotation rotation = c.nWayVisualRotation();
         if (rotation != null && ctx.protocol() >= ComponentIndex.BDS_1_26_63_1) {
             geometry.putCompound("n_way_visual_rotation", rotation(rotation.x(), rotation.y(), rotation.z()));
@@ -137,13 +134,13 @@ public final class Transforms {
 
     /**
      * The geometry of {@code minecraft:embedded_visual}: the shape of {@link #geometry} without its four flags, inline,
-     * with {@code n_way_visual_rotation} from BDS 1.26.63.1 on, the {@code uv_lock} of {@link #uvLock(Boolean, List)} and the
+     * with {@code n_way_visual_rotation} from BDS 1.26.63.1 on, the {@code uv_lock} of {@link #uvLock(UvLock)} and the
      * bone visibility of {@link #boneVisibility}. The captures of BDS 1.26.36.1 to 1.26.70.24 bear it out.
      */
     public static void embeddedGeometry(@NonNull WireContext ctx, @NonNull WireNode out, @NonNull EmbeddedVisual c) {
-        EmbeddedVisual.Geometry g = c.geometry();
+        EmbeddedVisual.VisualGeometry g = c.geometry();
         NbtMapBuilder geometry = geometry(g.identifier(), boneVisibility(ctx, EmbeddedVisual.NAME, g.boneVisibility()), g.culling(),
-            g.cullingLayer(), g.cullingShape(), g.uvLock(), g.uvLockBones()).toBuilder();
+            g.cullingLayer(), g.cullingShape(), g.uvLock()).toBuilder();
         for (String flag : List.of("ignoreGeometryForIsSolid", "isV1Fullblock", "needsLegacyTopRotation", "useBlockTypeLightAbsorption")) {
             geometry.remove(flag);
         }
@@ -158,7 +155,7 @@ public final class Transforms {
      * {@code item_visual.geometry.bone_visibility}: the {@link #boneVisibility} every geometry sends, which no rule over the
      * JSON value fits (BDS parses the expression); the other geometry fields of {@code item_visual} have inferred rules.
      */
-    public static void itemVisualBoneVisibility(@NonNull WireContext ctx, @NonNull WireNode out, ItemVisual.@NonNull Geometry c) {
+    public static void itemVisualBoneVisibility(@NonNull WireContext ctx, @NonNull WireNode out, ItemVisual.@NonNull VisualGeometry c) {
         out.put("minecraft:item_visual.geometryDescription.bone_visibility", boneVisibility(ctx, ItemVisual.NAME, c.boneVisibility()));
     }
 
@@ -172,7 +169,7 @@ public final class Transforms {
      *     <li>A number is sent as the float it is, in six decimals: {@code "1"}, {@code "1.0"}, {@code " 1 "} and
      *     {@code "1."} as {@code "1.000000"}, {@code ".5"} as {@code "0.500000"}, {@code "1e3"} as {@code "1000.000000"},
      *     {@code "16777217"} as {@code "16777216.000000"}, {@code "0.0078125"} as {@code "0.007812"}, {@code "-0"} as
-     *     {@code "-0.000000"} ({@link #molangNumber}).</li>
+     *     {@code "-0.000000"} ({@link Wire#molangNumber}).</li>
      *     <li>{@code "true"} is {@code "1.000000"} and {@code "false"} is {@code "0.000000"}. That is what BDS sends for
      *     the text in every build and for the JSON boolean from 1.26.63.1 on; the older builds refuse the JSON boolean
      *     ("expected an object"), so there the text is what an add-on can write.</li>
@@ -199,7 +196,7 @@ public final class Transforms {
         }
         for (Map.Entry<String, String> bone : bones.entrySet()) {
             String value = bone.getValue();
-            String expression = value.equals("true") ? "1.000000" : value.equals("false") ? "0.000000" : molangNumber(value);
+            String expression = value.equals("true") ? "1.000000" : value.equals("false") ? "0.000000" : Wire.molangNumber(value);
             if (expression == null) {
                 expression = value;
                 if (!MOLANG_QUERY.matcher(value).find()) {
@@ -219,28 +216,6 @@ public final class Transforms {
     /** A query in a Molang expression: BDS sends an expression that has one as written. */
     private static final Pattern MOLANG_QUERY = Pattern.compile("(?<![A-Za-z0-9_.])(q|query)\\.[a-z_]");
 
-    /** The shapes of a Molang number the captures have: digits with or without a fraction or an exponent, spaces around. */
-    private static final Pattern MOLANG_NUMBER = Pattern.compile("\\s*-?(\\d+\\.?\\d*|\\.\\d+)([eE]-?\\d+)?\\s*");
-
-    /**
-     * A Molang number as BDS sends it where it computes an expression (bone visibility, BDS 1.26.36.1 to 1.26.70.24): the
-     * float in six decimals of its exact value, a tie to the even digit ({@code 0.0078125} is {@code "0.007812"}), the
-     * sign kept ({@code "-0.000000"}).
-     *
-     * @return the number, or null if the text is not a number of a captured shape or is beyond a float
-     */
-    static @Nullable String molangNumber(@NonNull String text) {
-        if (!MOLANG_NUMBER.matcher(text).matches()) {
-            return null;
-        }
-        float value = Float.parseFloat(text.trim());
-        if (Float.isInfinite(value)) {
-            return null;
-        }
-        String digits = new BigDecimal(value).setScale(6, RoundingMode.HALF_EVEN).toPlainString();
-        return (Float.floatToRawIntBits(value) < 0 && !digits.startsWith("-") ? "-" : "") + digits;
-    }
-
     /** {@code n_way_visual_rotation}: every axis, an empty string for an axis that is not set. */
     private static NbtMap rotation(@Nullable String x, @Nullable String y, @Nullable String z) {
         return NbtMap.builder()
@@ -251,8 +226,7 @@ public final class Transforms {
     }
 
     static @NonNull NbtMap geometry(String identifier, @NonNull NbtMap boneVisibility, @Nullable String culling,
-                                    @Nullable String cullingLayer, @Nullable String cullingShape, @Nullable Boolean uvLock,
-                                    @Nullable List<String> uvLockBones) {
+                                    @Nullable String cullingLayer, @Nullable String cullingShape, @Nullable UvLock uvLock) {
         NbtMapBuilder geometry = NbtMap.builder()
             .putCompound("bone_visibility", boneVisibility)
             .putString("culling", culling == null ? "" : culling)
@@ -265,41 +239,31 @@ public final class Transforms {
             .putByte("isV1Fullblock", (byte) 0)
             .putByte("needsLegacyTopRotation", (byte) 0)
             .putByte("useBlockTypeLightAbsorption", (byte) 0);
-        geometry.put("uv_lock", uvLock(uvLock, uvLockBones));
+        geometry.put("uv_lock", uvLock(uvLock));
         return geometry.build();
     }
 
     /**
      * {@code geometry.uv_lock} of {@code minecraft:item_visual}: the value {@code minecraft:geometry} sends for its
-     * {@code uv_lock}. The bones are sent in the order of {@link #bdsBoneOrder}, which depends on the hash of each name: a
+     * {@code uv_lock}. The bones are sent in the order of {@link Wire#byNameHash}, which depends on the hash of each name: a
      * rule fitted to the captured names would only order those. The captures of BDS 1.26.36.1 to 1.26.70.24 send
      * {@code true} as 1, a list as its bones, and take both for the full block geometry too.
      */
-    public static void itemVisualUvLock(@NonNull WireContext ctx, @NonNull WireNode out, ItemVisual.@NonNull Geometry g) {
-        out.put("minecraft:item_visual.geometryDescription.uv_lock", uvLock(g.uvLock(), g.uvLockBones()));
+    public static void itemVisualUvLock(@NonNull WireContext ctx, @NonNull WireNode out, ItemVisual.@NonNull VisualGeometry g) {
+        out.put("minecraft:item_visual.geometryDescription.uv_lock", uvLock(g.uvLock()));
     }
 
     /**
      * {@code uv_lock} as BDS sends it for every geometry ({@code minecraft:geometry} and the geometry of {@code item_visual}
      * and {@code embedded_visual}, BDS 1.26.36.1 to 1.26.70.24): a byte for the boolean form, 0 when it is not set; for the
-     * list form the bones as strings in {@link #bdsBoneOrder BDS's order}, an empty list without element type.
+     * list form the bones as strings in {@link Wire#byNameHash BDS's order}, an empty list without element type.
      */
-    static @NonNull Object uvLock(@Nullable Boolean uvLock, @Nullable List<String> bones) {
-        if (bones == null) {
-            return Wire.bool(Boolean.TRUE.equals(uvLock));
-        }
-        return Wire.strings(bdsBoneOrder(bones));
-    }
-
-    /**
-     * The {@code uv_lock} bones in the order BDS sends them. BDS keeps them in a {@code std::set<HashedString>}, so each
-     * bone is sent once, ascending by the unsigned 64 bit hash of its name (captures of BDS 1.26.36.1 to 1.26.63.1).
-     * Bones with equal hashes keep their order; BDS's order for them is not known.
-     */
-    static @NonNull List<String> bdsBoneOrder(@NonNull List<String> bones) {
-        List<String> ordered = new ArrayList<>(new LinkedHashSet<>(bones));
-        ordered.sort((a, b) -> Long.compareUnsigned(BlockRegistry.nameHash(a), BlockRegistry.nameHash(b)));
-        return ordered;
+    static @NonNull Object uvLock(@Nullable UvLock uvLock) {
+        return switch (uvLock) {
+            case null -> Wire.bool(false);
+            case UvLock.Flag flag -> Wire.bool(flag.value());
+            case UvLock.Bones bones -> Wire.strings(Wire.byNameHash(bones.value()));
+        };
     }
 
     // ---- material_instances ----------------------------------------------------------------------------------------
@@ -326,19 +290,26 @@ public final class Transforms {
     /**
      * {@code minecraft:embedded_visual}'s material instances: a whole {@code minecraft:material_instances} object, inline
      * per face with its flags as bytes. Setting it also fills in the sibling geometry's defaults, so correlating one field
-     * at a time cannot separate the two. The captures of BDS 1.26.36.1 to 1.26.70.24 bear out three accepted variants.
+     * at a time cannot separate the two. The captures of BDS 1.26.36.1 to 1.26.70.24 bear out three accepted variants,
+     * none of which sets {@code alpha_masked_tint}: it is sent as 0, and a caller who sets it is told (unverified until a
+     * capture shows what BDS sends).
      */
     public static void materialInstancesInline(@NonNull WireContext ctx, @NonNull WireNode out, @NonNull EmbeddedVisual c) {
         NbtMapBuilder faces = NbtMap.builder();
-        faces(c.materialInstances()).forEach((face, instance) -> faces.putCompound(face, NbtMap.builder()
-            .putString("texture", instance.texture() == null ? "" : instance.texture())
-            .putString("render_method", instance.renderMethod() == null ? "opaque" : instance.renderMethod().value())
-            .putString("tint_method", instance.tintMethod() == null ? "none" : instance.tintMethod())
-            .putFloat("ambient_occlusion", instance.ambientOcclusion() == null ? 1f : instance.ambientOcclusion())
-            .putByte("face_dimming", Wire.bool(instance.faceDimming() == null || instance.faceDimming()))
-            .putByte("isotropic", Wire.bool(instance.isotropic()))
-            .putByte("alpha_masked_tint", (byte) 0)
-            .build()));
+        faces(c.materialInstances()).forEach((face, instance) -> {
+            if (Boolean.TRUE.equals(instance.alphaMaskedTint())) {
+                ctx.changed(EmbeddedVisual.NAME, "material instance " + face + " alpha_masked_tint is sent as 0; no capture shows BDS sending it");
+            }
+            faces.putCompound(face, NbtMap.builder()
+                .putString("texture", instance.texture() == null ? "" : instance.texture())
+                .putString("render_method", instance.renderMethod() == null ? "opaque" : instance.renderMethod().value())
+                .putString("tint_method", instance.tintMethod() == null ? "none" : instance.tintMethod())
+                .putFloat("ambient_occlusion", instance.ambientOcclusion() == null ? 1f : instance.ambientOcclusion())
+                .putByte("face_dimming", Wire.bool(instance.faceDimming() == null || instance.faceDimming()))
+                .putByte("isotropic", Wire.bool(instance.isotropic()))
+                .putByte("alpha_masked_tint", (byte) 0)
+                .build());
+        });
         out.put("minecraft:embedded_visual.material_instances", faces.build());
         // (an empty material_instances object is sent empty)
     }
@@ -361,29 +332,37 @@ public final class Transforms {
         return NbtMap.builder().putCompound("mappings", mappings.build()).putCompound("materials", materials.build()).build();
     }
 
+    /** The faces and instances that are set, in the order they are sent: the fixed faces, then the others. */
+    private static Map<String, MaterialInstances.InstanceOrAlias> entries(MaterialInstances c) {
+        Map<String, MaterialInstances.InstanceOrAlias> entries = new LinkedHashMap<>();
+        putIfSet(entries, "*", c.all());
+        putIfSet(entries, "down", c.down());
+        putIfSet(entries, "east", c.east());
+        putIfSet(entries, "north", c.north());
+        putIfSet(entries, "south", c.south());
+        putIfSet(entries, "up", c.up());
+        putIfSet(entries, "west", c.west());
+        entries.putAll(c.instances());
+        return entries;
+    }
+
     private static Map<String, MaterialInstances.Instance> faces(MaterialInstances c) {
         Map<String, MaterialInstances.Instance> faces = new LinkedHashMap<>();
-        putIfSet(faces, "*", c.all());
-        putIfSet(faces, "down", c.down());
-        putIfSet(faces, "east", c.east());
-        putIfSet(faces, "north", c.north());
-        putIfSet(faces, "south", c.south());
-        putIfSet(faces, "up", c.up());
-        putIfSet(faces, "west", c.west());
-        faces.putAll(c.instances());
+        entries(c).forEach((face, value) -> {
+            if (value instanceof MaterialInstances.InstanceOrAlias.Define define) {
+                faces.put(face, define.value());
+            }
+        });
         return faces;
     }
 
     private static Map<String, String> aliases(MaterialInstances c) {
         Map<String, String> aliases = new LinkedHashMap<>();
-        putIfSet(aliases, "*", c.allAlias());
-        putIfSet(aliases, "down", c.downAlias());
-        putIfSet(aliases, "east", c.eastAlias());
-        putIfSet(aliases, "north", c.northAlias());
-        putIfSet(aliases, "south", c.southAlias());
-        putIfSet(aliases, "up", c.upAlias());
-        putIfSet(aliases, "west", c.westAlias());
-        aliases.putAll(c.aliases());
+        entries(c).forEach((face, value) -> {
+            if (value instanceof MaterialInstances.InstanceOrAlias.Alias alias) {
+                aliases.put(face, alias.value());
+            }
+        });
         return aliases;
     }
 
@@ -396,40 +375,13 @@ public final class Transforms {
     // ---- block_descriptor_states -------------------------------------------------------------------------------------
 
     /**
-     * The {@code states} of a block descriptor ({@code block_placer.use_on}, {@code entity_placer.use_on} and
-     * {@code dispense_on}, {@code digger.destroy_speeds[].block}, {@code placement_filter} block filters): a compound of
-     * state values, typed like the named block's states in the palette's registry (booleans as bytes; {@code pillar_axis}
-     * "y" becomes 0). The registry decides the type and BDS drops a descriptor whose block lacks a state, so no rule over
-     * the JSON value fits, and the capture's sample state names drop the whole entry.
-     */
-    public static void blockDescriptorStates(@NonNull WireContext ctx, @NonNull WireNode out, BlockPlacer.UseOn d) {
-        descriptor(ctx, out, "", d.name(), d.states(), d.tags());
-    }
-
-    public static void blockDescriptorStates(@NonNull WireContext ctx, @NonNull WireNode out, EntityPlacer.UseOn d) {
-        descriptor(ctx, out, "", d.name(), d.states(), d.tags());
-    }
-
-    public static void blockDescriptorStates(@NonNull WireContext ctx, @NonNull WireNode out, Digger.Block d) {
-        descriptor(ctx, out, "block.", d.name(), d.states(), d.tags());
-    }
-
-    /** Item components send block descriptors as the full {name, states, tags} triple, "" for what is not set. */
-    private static void descriptor(WireContext ctx, WireNode out, String prefix, @Nullable String name, Map<String, Object> states,
-                                   @Nullable String tags) {
-        out.put(prefix + "name", name == null ? "" : name);
-        out.put(prefix + "states", states(ctx, name, states));
-        out.put(prefix + "tags", tags == null ? "" : tags);
-    }
-
-    /**
      * Placement filter descriptors send their states as a list of {@code {state, type, value}}, only when there are any.
      */
     public static void blockDescriptorStates(@NonNull WireContext ctx, @NonNull WireNode out, PlacementFilter.BlockFilter d) {
         if (d.states().isEmpty()) {
             return;
         }
-        NbtMap typed = states(ctx, d.name(), d.states());
+        NbtMap typed = Wire.states(ctx, d.name(), d.states());
         out.list("states");
         typed.forEach((state, value) -> {
             WireNode entry = out.element("states");
@@ -441,29 +393,11 @@ public final class Transforms {
 
     /**
      * The {@code type} of a placement filter state: 2 for an int state, as BDS 1.26.63.1 sent it. 1 for a string and 0 for
-     * a boolean state follow the same order but no capture has them (no accepted variant has a string or boolean state),
-     * so the conformance suite does not check them.
+     * a boolean state follow the same order but are unverified: no accepted variant has a string or boolean state, so the
+     * conformance suite does not check them.
      */
     private static int stateType(Object value) {
         return value instanceof Integer ? 2 : value instanceof Byte ? 0 : 1;
-    }
-
-    static @NonNull NbtMap states(WireContext ctx, @Nullable String block, Map<String, Object> states) {
-        NbtMap known = block == null ? null : ctx.registry().blockStates(block);
-        NbtMapBuilder out = NbtMap.builder();
-        states.forEach((name, value) -> {
-            Object type = known == null ? null : known.get(name);
-            Object converted;
-            if (value instanceof Boolean b) {
-                converted = Wire.bool(b);
-            } else if (value instanceof Integer i) {
-                converted = type instanceof Byte ? (Object) i.byteValue() : i;
-            } else {
-                converted = value;
-            }
-            out.put(name, converted);
-        });
-        return out.build();
     }
 
     // ---- block_name ----------------------------------------------------------------------------------------------------
@@ -515,13 +449,7 @@ public final class Transforms {
      * without item is sent with the empty descriptor too.
      */
     public static void ammunitionItemDescriptor(@NonNull WireContext ctx, @NonNull WireNode out, Shooter.@NonNull Ammunition c) {
-        String item = c.item();
-        NbtMap descriptor = item != null && ctx.registry().itemExists(item)
-            ? NbtMap.builder().putString("name", Wire.namespaced(item)).build() : NbtMap.EMPTY;
-        if (item != null && descriptor.isEmpty()) {
-            ctx.drop(Shooter.NAME, "ammunition[].item " + item + " is not an item");
-        }
-        out.put("item", descriptor);
+        Wire.itemDescriptor(ctx, out, "item", Shooter.NAME, "ammunition[].item", c.item());
     }
 
     /**
@@ -535,7 +463,7 @@ public final class Transforms {
         boolean molangCompound = ctx.protocol() < ComponentIndex.BDS_1_26_45_1;
         out.list("minecraft:repairable.repair_items");
         for (Repairable.RepairItems entry : c.repairItems()) {
-            List<String> items = entry.items() == null ? List.of() : entry.items();
+            List<String> items = entry.items() instanceof ItemsOrTags.Items list ? list.value() : List.of();
             for (String item : items) {
                 if (!ctx.registry().itemExists(item)) {
                     ctx.changed(Repairable.NAME, "repair item " + item + " is not an item of this version; sent anyway, as BDS does");
@@ -546,18 +474,19 @@ public final class Transforms {
             for (String item : items) {
                 e.element("items").put("name", item);
             }
-            if (entry.itemsTags() != null) {
+            if (entry.items() instanceof ItemsOrTags.TagQuery tags) {
                 // The string form is a Molang tag query ({tags}), e.g. query.any_tag('minecraft:planks')
-                e.element("items").put("tags", entry.itemsTags());
+                e.element("items").put("tags", tags.value());
             }
-            if (entry.repairAmountExpression() != null && molangCompound) {
-                // version -1 for an empty expression (BDS 1.26.36.1: repair_amount "")
-                e.child("repair_amount").put("expression", entry.repairAmountExpression())
-                    .put("version", (short) (entry.repairAmountExpression().isEmpty() ? -1 : 0));
-            } else if (entry.repairAmountExpression() != null) {
-                e.put("repair_amount", entry.repairAmountExpression());
-            } else if (entry.repairAmount() != null) {
-                e.put("repair_amount", entry.repairAmount());
+            switch (entry.repairAmount()) {
+                case null -> {
+                }
+                case RepairAmount.Fixed fixed -> e.put("repair_amount", fixed.value());
+                case RepairAmount.Expression expression when molangCompound ->
+                    // version -1 for an empty expression (BDS 1.26.36.1: repair_amount "")
+                    e.child("repair_amount").put("expression", expression.value())
+                        .put("version", (short) (expression.value().isEmpty() ? -1 : 0));
+                case RepairAmount.Expression expression -> e.put("repair_amount", expression.value());
             }
         }
     }
@@ -565,8 +494,9 @@ public final class Transforms {
     // ---- formatting_code ---------------------------------------------------------------------------------------------
 
     /**
-     * Color name -> formatting code of {@code item_properties.hover_text_color}: Bedrock's color table. The captures have
-     * only the color names of the accepted {@code hover_text_color} variants, so the conformance suite checks only those.
+     * Color name -> formatting code of {@code item_properties.hover_text_color}: Bedrock's color table, hand-entered. The
+     * captures have only the names of the accepted {@code hover_text_color} variants; HandTransformsTest lists every other
+     * entry as unverified.
      */
     private static final Map<String, Character> FORMATTING = new LinkedHashMap<>();
 
@@ -619,24 +549,38 @@ public final class Transforms {
     // ---- rgb_color ---------------------------------------------------------------------------------------------------
 
     /**
-     * {@code minecraft:dyeable} default_color: hex or [r, g, b] to a list of three ints; white by default. The inference
-     * dropped the field: the varied values of the captures all came out white or were rejected.
+     * {@code minecraft:dyeable} default_color: six hex digits or exactly [r, g, b] to a list of three ints, white by
+     * default. BDS 1.26.x rejects the whole item for any other form ("a hex value with 6 characters"; the captured
+     * {@code []}, {@code [3]} and {@code [3, 7]}), so those are reported and the field is left out rather than sent as a
+     * derived color. Channels outside 0-255 are clamped, as captured ({@code [-90, 450, 720]}). Three or eight hex digits
+     * are uncaptured; they are treated as rejected, like BDS's message says.
      */
     public static void rgbColor(@NonNull WireContext ctx, @NonNull WireNode out, @NonNull Dyeable c) {
         List<Integer> rgb = List.of(255, 255, 255);
-        if (c.defaultColorHex() != null) {
-            String hex = c.defaultColorHex().startsWith("#") ? c.defaultColorHex().substring(1) : c.defaultColorHex();
-            try {
+        switch (c.defaultColor()) {
+            case null -> {
+            }
+            case ColorValue.Hex color -> {
+                String hex = color.value().startsWith("#") ? color.value().substring(1) : color.value();
+                if (!HEX_COLOR.matcher(hex).matches()) {
+                    ctx.drop(Dyeable.NAME, "default_color " + color.value() + " is not a hex color of 6 digits");
+                    return;
+                }
                 int value = Integer.parseInt(hex, 16);
                 rgb = List.of((value >> 16) & 0xff, (value >> 8) & 0xff, value & 0xff);
-            } catch (NumberFormatException e) {
-                ctx.drop(Dyeable.NAME, "default_color " + c.defaultColorHex() + " is not a hex color");
             }
-        } else if (c.defaultColor() != null && c.defaultColor().size() == 3) {
-            rgb = c.defaultColor().stream().map(v -> Math.max(0, Math.min(255, v))).toList();
+            case ColorValue.Channels color -> {
+                if (color.value().size() != 3) {
+                    ctx.drop(Dyeable.NAME, "default_color " + color.value() + " does not have exactly 3 channels");
+                    return;
+                }
+                rgb = color.value().stream().map(v -> Math.max(0, Math.min(255, v))).toList();
+            }
         }
         out.put("minecraft:dyeable.default_color", Wire.ints(rgb));
     }
+
+    private static final Pattern HEX_COLOR = Pattern.compile("[0-9a-fA-F]{6}");
 
     // ---- destructible_by_mining --------------------------------------------------------------------------------------
 
@@ -666,11 +610,13 @@ public final class Transforms {
 
 
     /**
-     * A permutation's Molang condition as BDS sends it: a number constant in the six decimals BDS writes it with
-     * ({@code "1"} -> {@code "1.000000"}, BDS 1.26.36.1 to 1.26.63.1), anything else as written.
+     * A permutation's Molang condition as BDS sends it: a number constant like any Molang number ({@link Wire#molangNumber}),
+     * anything else as written. Only {@code "1"} and {@code "0"} are captured as conditions (BDS 1.26.36.1 to 1.26.70.24);
+     * that BDS prints the other number shapes the same way here is unverified.
      */
     static String condition(String condition) {
-        return condition.matches("-?\\d+(\\.\\d+)?") ? String.format(java.util.Locale.ROOT, "%.6f", Double.parseDouble(condition)) : condition;
+        String number = Wire.molangNumber(condition);
+        return number != null ? number : condition;
     }
 
     // ---- selection_box -----------------------------------------------------------------------------------------------
@@ -691,16 +637,16 @@ public final class Transforms {
     // ---- use_animation_id --------------------------------------------------------------------------------------------
 
     /**
-     * Animation name -> {@code item_properties.use_animation}. eat 1 and spear 6 are captured from BDS 1.26.63.1 (and
-     * checked by the conformance suite); the others are as vanilla items send them.
+     * Animation name -> {@code item_properties.use_animation}, hand-entered. The captures have none, eat, drink and spear;
+     * HandTransformsTest lists every other entry as unverified.
      */
     private static final Map<String, Integer> USE_ANIMATIONS = Map.of("none", 0, "eat", 1, "drink", 2, "block", 3, "bow", 4,
         "camera", 5, "spear", 6, "crossbow", 9, "spyglass", 10, "brush", 12);
 
     /**
      * {@code minecraft:use_animation}: the component keeps the name, {@code item_properties.use_animation} numbers it
-     * (eat 1 and spear 6 captured from BDS 1.26.63.1, the others as vanilla items send them); unknown names are 0. The
-     * docs give no enum for the value, so the inference saw only the two samples and fitted a constant.
+     * (none, eat, drink and spear are captured, see {@link #USE_ANIMATIONS}); unknown names are 0. BDS's error truncates the
+     * enum ("none, eat, drink, ... (7 others)"), so the other names and ids are not BDS data yet.
      */
     public static void useAnimationId(@NonNull WireContext ctx, @NonNull WireNode out, @NonNull UseAnimation c) {
         String value = c.value() == null ? "none" : c.value();

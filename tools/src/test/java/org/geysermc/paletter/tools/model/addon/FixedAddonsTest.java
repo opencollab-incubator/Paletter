@@ -21,23 +21,35 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 class FixedAddonsTest {
     private static final Path ROOT = Path.of(System.getProperty("paletter.root", ".."));
 
+    /**
+     * The format version is kept twice by hand (the fixed packs' constant and fixtures.json): bumping one alone would give the
+     * captures of one build two formats. Every committed spec capture was made with the one the build can load.
+     */
     @Test
-    void captureAddonIsTheCommittedPack(@TempDir Path out) throws IOException {
-        FixedAddons.writeCapture(out);
-        assertSame(out.resolve("behavior_pack"), ROOT.resolve("data/addons/capture/behavior_pack"));
-        assertSame(out.resolve("resource_pack"), ROOT.resolve("data/addons/capture/resource_pack"));
+    void theFormatVersionHasOneValueAndEveryCommittedCaptureUsedIt() throws IOException {
+        org.geysermc.paletter.tools.model.Fixtures fixtures = org.geysermc.paletter.tools.model.Fixtures.read(ROOT.resolve("data/model"));
+        assertEquals(FixedAddons.FORMAT_VERSION, fixtures.formatVersion, "FixedAddons.FORMAT_VERSION and fixtures.json formatVersion differ");
+        try (Stream<Path> builds = Files.list(ROOT.resolve("data/bds"))) {
+            for (Path build : builds.filter(Files::isDirectory).toList()) {
+                Path capture = build.resolve("spec/capture.json");
+                if (Files.exists(capture)) {
+                    String used = com.google.gson.JsonParser.parseString(Files.readString(capture)).getAsJsonObject().get("formatVersion").getAsString();
+                    assertEquals(AddonGenerator.formatVersionFor(fixtures.formatVersion, build.getFileName().toString()), used,
+                        capture + " was made with another format version than the model's (recapture after a bump)");
+                }
+            }
+        }
     }
 
     @Test
     void packsOfAnOlderBuildAskForItsFormatVersion(@TempDir Path out) throws IOException {
-        FixedAddons.writeCapture(out.resolve("capture"), "1.26.30");
         FixedAddons.writeCreative(out.resolve("creative"), "1.26.30");
-        for (String manifest : List.of("capture/behavior_pack/manifest.json", "capture/resource_pack/manifest.json", "creative/behavior_pack/manifest.json")) {
+        for (String manifest : List.of("creative/behavior_pack/manifest.json")) {
             String text = Files.readString(out.resolve(manifest));
             assertTrue(text.replaceAll("\\s", "").contains("\"min_engine_version\":[1,26,30]"), manifest + ": " + text);
         }
         try (Stream<Path> walk = Files.walk(out)) {
-            for (Path file : walk.filter(f -> f.toString().contains("items") || f.toString().contains("blocks")).filter(Files::isRegularFile)
+            for (Path file : walk.filter(f -> List.of("items", "blocks").contains(f.getParent().getFileName().toString())).filter(Files::isRegularFile)
                 .filter(f -> f.toString().endsWith(".json") && !f.toString().contains("block_culling")).toList()) {
                 String text = Files.readString(file);
                 if (text.contains("\"format_version\"") && !file.toString().contains("models") && !file.toString().contains("textures")) {

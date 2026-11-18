@@ -7,8 +7,8 @@ import java.util.List;
 import java.util.Objects;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
+import org.geysermc.paletter.annotation.BedrockExperiment;
 import org.geysermc.paletter.annotation.BedrockFormat;
-import org.geysermc.paletter.annotation.Experimental;
 
 /**
  * Adds the connection states to a block. The values of these states are updated when the block or neighboring
@@ -16,7 +16,7 @@ import org.geysermc.paletter.annotation.Experimental;
  * "Upcoming Creator Features" and Minecraft version 1.21.130.
  * <p>
  * Add-on JSON: {@code "minecraft:connection"}.
- * Bedrock requires the experiment Upcoming Creator Features for it (in some format versions).
+ * The creator docs name the experiment Upcoming Creator Features for it (in some format versions); unverified against BDS.
  *
  * @param enabledStates Which states to enable. Must specify at least one. Valid value is <code>minecraft:cardinal_connections</code>.
  *        Add-on JSON {@code enabled_states}. Required.
@@ -24,7 +24,7 @@ import org.geysermc.paletter.annotation.Experimental;
  * @since 1.0.0
  */
 @BedrockFormat("1.21.130")
-@Experimental
+@BedrockExperiment("upcoming_creator_features")
 public record Connection(
         @NonNull List<Connection.EnabledStates> enabledStates) implements BlockTrait {
     /**
@@ -32,6 +32,11 @@ public record Connection(
      */
     public static final String NAME = "minecraft:connection";
 
+    /**
+     * Checks the components and copies lists and maps, so the value is immutable.
+     *
+     * @throws NullPointerException if a required component is null
+     */
     public Connection {
         enabledStates = List.copyOf(Objects.requireNonNull(enabledStates, "Connection.enabledStates"));
     }
@@ -42,6 +47,9 @@ public record Connection(
     }
 
     /**
+     * Creates a builder with every optional field at its default; required fields must be set before
+     * {@code build()}.
+     *
      * @return a builder with the defaults applied
      */
     public static @NonNull Builder builder() {
@@ -49,6 +57,8 @@ public record Connection(
     }
 
     /**
+     * Creates a builder holding this value's fields, to change some of them.
+     *
      * @return a builder with this value's fields
      */
     public @NonNull Builder toBuilder() {
@@ -68,6 +78,9 @@ public record Connection(
 
         /**
          * Sets {@code enabled_states}.
+         *
+         * @param enabledStates the value
+         * @return this builder
          */
         public @NonNull Builder enabledStates(@NonNull List<EnabledStates> enabledStates) {
             this.enabledStates = enabledStates;
@@ -76,12 +89,18 @@ public record Connection(
 
         /**
          * Sets {@code enabled_states}.
+         *
+         * @param enabledStates the value
+         * @return this builder
          */
         public @NonNull Builder enabledStates(@NonNull EnabledStates... enabledStates) {
             return enabledStates(List.of(enabledStates));
         }
 
         /**
+         * Builds the value from the fields set and the defaults.
+         *
+         * @return the value
          * @throws IllegalStateException if a required field is not set
          * @throws IllegalArgumentException if a value is out of range
          */
@@ -109,6 +128,8 @@ public record Connection(
         }
 
         /**
+         * Returns the value in add-on JSON.
+         *
          * @return the value in add-on JSON
          */
         public @NonNull String value() {
@@ -116,7 +137,10 @@ public record Connection(
         }
 
         /**
-         * @return the constant of an add-on JSON value
+         * Finds the constant of an add-on JSON value.
+         *
+         * @param value the value in add-on JSON
+         * @return the constant of the value
          * @throws IllegalArgumentException if the value is not documented
          */
         public static @NonNull EnabledStates fromValue(@NonNull String value) {

@@ -72,7 +72,7 @@ class LinkedFieldsTest {
         // First capture: one field at a time
         AddonGenerator first = new AddonGenerator(Model.read(model.resolve("components.json")), Fixtures.read(model));
         assertTrue(first.variants().stream().allMatch(v -> v.linked().isEmpty()), "no feedback yet, no links");
-        fakeServer(first, capture);
+        fakeServer(first, capture, false);
         MappingInference inference = new MappingInference(root);
         inference.run(false);
         JsonObject fields = fields(model);
@@ -109,7 +109,7 @@ class LinkedFieldsTest {
         assertEquals(replace.identifier(), replace.companion().getAsJsonObject("minecraft:block").getAsJsonObject("description")
             .get("identifier").getAsString());
 
-        fakeServer(second, capture);
+        fakeServer(second, capture, false);
         inference = new MappingInference(root);
         inference.run(false);
         fields = fields(model);
@@ -128,6 +128,33 @@ class LinkedFieldsTest {
         assertEquals(0, inference.linkedFields().size(), inference.linkedFields().toString());
     }
 
+    /**
+     * Both fields of the pair write one leaf ({@code chance_span}, max less min), so the leaf a linked variant of {@code max}
+     * moves is the one {@code min} moves too, and the linked variant leaves it out by name. The field's own effect on the
+     * leaf is masked, which is not the same as having none: {@code max} stays linked (the second capture does not make it
+     * server only because a linked variant was accepted).
+     */
+    @Test
+    void aFieldWhoseOnlyLeafItsPartnerAlsoWritesStaysLinkedAfterTheLinkedCapture(@TempDir Path root) throws IOException {
+        Path model = Files.createDirectories(root.resolve("data/model"));
+        Files.writeString(model.resolve("components.json"), MODEL);
+        Files.writeString(model.resolve("fixtures.json"), FIXTURES);
+        Path capture = Files.createDirectories(root.resolve("data/bds/9.9.9.9/spec"));
+        fakeServer(new AddonGenerator(Model.read(model.resolve("components.json")), Fixtures.read(model)), capture, true);
+        new MappingInference(root).run(false);
+        assertEquals("linked", fields(model).getAsJsonObject("chance.max").get("status").getAsString(), "no leaf follows max alone");
+
+        AddonGenerator second = new AddonGenerator(Model.read(model.resolve("components.json")), Fixtures.read(model));
+        assertTrue(second.variants().stream().anyMatch(v -> v.path().equals("chance.max") && v.linked().equals(List.of("chance.min"))));
+        fakeServer(second, capture, true);
+        MappingInference inference = new MappingInference(root);
+        inference.run(false);
+        JsonObject max = fields(model).getAsJsonObject("chance.max");
+        assertEquals("linked", max.get("status").getAsString(), "the linked variants moved only the leaf min moves: " + max);
+        assertEquals("[\"chance.min\"]", max.get("linkedTo").toString());
+        assertTrue(inference.linkedFields().stream().anyMatch(field -> field.contains("chance.max")), inference.linkedFields().toString());
+    }
+
     private static JsonObject fields(Path model) throws IOException {
         return JsonParser.parseString(Files.readString(model.resolve("mappings.json"))).getAsJsonObject().getAsJsonObject("components")
             .getAsJsonObject("item:minecraft:test").getAsJsonObject("fields");
@@ -135,10 +162,11 @@ class LinkedFieldsTest {
 
     /**
      * minecraft:test {chance_min, chance_max: identity, 100 when not set; replace: 1 only when block is the item itself;
-     * bones_set: 1 when the map is given; bones: its entries as "1.000000" and "0.000000"}; max below min is refused, a
+     * bones_set: 1 when the map is given; bones: its entries as "1.000000" and "0.000000"}; with {@code span} chance_span
+     * (max less min) is the one leaf of both fields instead; max below min is refused, a
      * replace for another block logged as a warning, and entries of bones are refused for the geo minecraft:full.
      */
-    private static void fakeServer(AddonGenerator generator, Path capture) throws IOException {
+    private static void fakeServer(AddonGenerator generator, Path capture, boolean span) throws IOException {
         List<NbtMap> items = new ArrayList<>();
         List<NbtMap> blocks = new ArrayList<>();
         List<String> log = new ArrayList<>();
@@ -180,8 +208,13 @@ class LinkedFieldsTest {
                         log.add("WARN [Item] \"minecraft:test\": Item identifier " + v.identifier() + " does not match the block identifier "
                             + block + ". Cannot replace the block item.");
                     }
-                    NbtMapBuilder sent = NbtMap.builder().putInt("chance_min", (int) min).putInt("chance_max", (int) max)
+                    NbtMapBuilder sent = NbtMap.builder()
                         .putByte("replace", (byte) (replace && block.equals(v.identifier()) ? 1 : 0)).putString("geo", t.get("geo").getAsString());
+                    if (span) {
+                        sent.putInt("chance_span", (int) (max - min));
+                    } else {
+                        sent.putInt("chance_min", (int) min).putInt("chance_max", (int) max);
+                    }
                     if (t.has("bones")) {
                         NbtMapBuilder bones = NbtMap.builder();
                         t.getAsJsonObject("bones").entrySet().forEach(e -> bones.putString(e.getKey(), e.getValue().getAsBoolean() ? "1.000000" : "0.000000"));

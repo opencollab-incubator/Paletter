@@ -14,7 +14,9 @@ import java.io.UncheckedIOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeMap;
+import java.util.TreeSet;
 
 /**
  * Block network ids as BDS sends them with {@code block-network-ids-are-hashes=true}: FNV-1a 32 of the little endian
@@ -50,8 +52,22 @@ public final class BlockHashes {
      * client enumerates them (first property varies slowest).
      */
     static List<NbtMap> customStates(String name, NbtMap blockProperties) {
+        Set<String> unknown = new TreeSet<>();
+        List<NbtMap> states = customStates(name, blockProperties, unknown);
+        if (!unknown.isEmpty()) {
+            throw new IllegalArgumentException(name + ": the trait state table has no states for " + unknown);
+        }
+        return states;
+    }
+
+    /**
+     * {@link #customStates(String, NbtMap)}, leaving out the states of an {@code enabled_states} value the trait state table does
+     * not have yet (BDS accepts more values than the docs name a state for, such as {@code minecraft:sixteen_way_rotation}; the
+     * mapping inference adds them from BDS's data): the value goes into {@code unknown} as {@code <trait> <value>}.
+     */
+    static List<NbtMap> customStates(String name, NbtMap blockProperties, Set<String> unknown) {
         List<NbtMap> properties = new ArrayList<>(blockProperties.getList("properties", NbtType.COMPOUND, List.of()));
-        properties.addAll(traitProperties(blockProperties));
+        properties.addAll(traitProperties(blockProperties, unknown));
         List<NbtMap> states = new ArrayList<>();
         expand(name, properties, 0, new java.util.LinkedHashMap<>(), states);
         return states;
@@ -64,7 +80,7 @@ public final class BlockHashes {
      * ({@code enabled_states.cardinal_direction: 1b}), the {@code multi_block} flag, or the bit set of
      * {@code minecraft:connection}.
      */
-    static List<NbtMap> traitProperties(NbtMap blockProperties) {
+    static List<NbtMap> traitProperties(NbtMap blockProperties, Set<String> unknown) {
         List<NbtMap> out = new ArrayList<>();
         for (NbtMap trait : blockProperties.getList("traits", NbtType.COMPOUND, List.of())) {
             String name = trait.getString("name");
@@ -79,7 +95,14 @@ public final class BlockHashes {
                 values.add("minecraft:cardinal_connections");
             }
             for (String value : values) {
-                for (BlockProperty<?> state : TraitStateTable.of(name, value)) {
+                List<BlockProperty<?>> added;
+                try {
+                    added = TraitStateTable.of(name, value);
+                } catch (IllegalArgumentException e) { // the table's answer for a value it has no states for
+                    unknown.add(name + " " + value);
+                    continue;
+                }
+                for (BlockProperty<?> state : added) {
                     if (out.stream().anyMatch(p -> p.getString("name").equals(state.name()))) {
                         continue; // added by another value too (cardinal_direction and corner_and_cardinal_direction)
                     }

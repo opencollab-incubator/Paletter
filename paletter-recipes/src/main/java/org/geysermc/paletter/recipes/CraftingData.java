@@ -66,6 +66,8 @@ public final class CraftingData {
     }
 
     /**
+     * Starts collecting recipes for a palette.
+     *
      * @param palette the palette whose items, blocks and tags the recipes use
      * @return a builder
      */
@@ -78,6 +80,7 @@ public final class CraftingData {
      * not replaced, and {@code cleanRecipes} is set (the client forgets its earlier recipes), as BDS does.
      *
      * @param packet the packet to fill
+     * @throws NullPointerException if the packet is null
      */
     public void applyTo(@NonNull CraftingDataPacket packet) {
         packet.getCraftingData().addAll(encoded.getCraftingData());
@@ -93,6 +96,8 @@ public final class CraftingData {
     }
 
     /**
+     * Finds the net id of a recipe.
+     *
      * @param recipe a recipe that was added to the builder
      * @return its net id, or -1 if it was dropped or not added
      */
@@ -101,6 +106,8 @@ public final class CraftingData {
     }
 
     /**
+     * Lists the recipes that were left out.
+     *
      * @return the recipes that were left out because the palette lacks content they need, in the order they were added
      */
     public @NonNull List<Recipe> dropped() {
@@ -108,6 +115,8 @@ public final class CraftingData {
     }
 
     /**
+     * Lists the potion mixes that were left out.
+     *
      * @return the potion mixes that were left out because the palette lacks one of their items, in the order they were added
      */
     public @NonNull List<PotionMix> droppedPotionMixes() {
@@ -115,6 +124,8 @@ public final class CraftingData {
     }
 
     /**
+     * Lists the container mixes that were left out.
+     *
      * @return the container mixes that were left out because the palette lacks one of their items, in the order they were added
      */
     public @NonNull List<ContainerMix> droppedContainerMixes() {
@@ -137,8 +148,11 @@ public final class CraftingData {
         }
 
         /**
+         * Adds recipes.
+         *
          * @param recipes recipes to add, e.g. {@link VanillaRecipes#recipes()}
          * @return this builder
+         * @throws NullPointerException if the list is null
          */
         public @NonNull Builder recipes(@NonNull List<Recipe> recipes) {
             this.recipes.addAll(recipes);
@@ -146,8 +160,11 @@ public final class CraftingData {
         }
 
         /**
+         * Adds brewing stand recipes.
+         *
          * @param mixes brewing stand recipes to add, e.g. {@link VanillaRecipes#potionMixes()}
          * @return this builder
+         * @throws NullPointerException if the list is null
          */
         public @NonNull Builder potionMixes(@NonNull List<PotionMix> mixes) {
             this.potionMixes.addAll(mixes);
@@ -155,8 +172,11 @@ public final class CraftingData {
         }
 
         /**
+         * Adds brewing stand bottle recipes.
+         *
          * @param mixes brewing stand bottle recipes to add, e.g. {@link VanillaRecipes#containerMixes()}
          * @return this builder
+         * @throws NullPointerException if the list is null
          */
         public @NonNull Builder containerMixes(@NonNull List<ContainerMix> mixes) {
             this.containerMixes.addAll(mixes);
@@ -164,7 +184,9 @@ public final class CraftingData {
         }
 
         /**
-         * @return the encoded recipes. Missing content drops a recipe, it never throws
+         * Encodes the recipes for the palette. Missing content drops a recipe, it never throws.
+         *
+         * @return the encoded recipes
          */
         public @NonNull CraftingData build() {
             RecipeEncoder encoder = new RecipeEncoder(palette);

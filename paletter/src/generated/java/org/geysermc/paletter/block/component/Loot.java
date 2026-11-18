@@ -28,6 +28,11 @@ public record Loot(@NonNull String value) implements BlockComponent {
      */
     public static final String NAME = "minecraft:loot";
 
+    /**
+     * Checks the components.
+     *
+     * @throws NullPointerException if a required component is null
+     */
     public Loot {
         Objects.requireNonNull(value, "Loot.value");
     }
@@ -40,6 +45,7 @@ public record Loot(@NonNull String value) implements BlockComponent {
     /**
      * The string shorthand: sets {@code value}.
      *
+     * @param value the value of that field
      * @return the value with everything else at its default
      */
     public static @NonNull Loot of(@NonNull String value) {
@@ -47,6 +53,9 @@ public record Loot(@NonNull String value) implements BlockComponent {
     }
 
     /**
+     * Creates a builder with every optional field at its default; required fields must be set before
+     * {@code build()}.
+     *
      * @return a builder with the defaults applied
      */
     public static @NonNull Builder builder() {
@@ -54,6 +63,8 @@ public record Loot(@NonNull String value) implements BlockComponent {
     }
 
     /**
+     * Creates a builder holding this value's fields, to change some of them.
+     *
      * @return a builder with this value's fields
      */
     public @NonNull Builder toBuilder() {
@@ -73,6 +84,9 @@ public record Loot(@NonNull String value) implements BlockComponent {
 
         /**
          * Sets {@code value}.
+         *
+         * @param value the value
+         * @return this builder
          */
         public @NonNull Builder value(@NonNull String value) {
             this.value = value;
@@ -80,6 +94,9 @@ public record Loot(@NonNull String value) implements BlockComponent {
         }
 
         /**
+         * Builds the value from the fields set and the defaults.
+         *
+         * @return the value
          * @throws IllegalStateException if a required field is not set
          * @throws IllegalArgumentException if a value is out of range
          */

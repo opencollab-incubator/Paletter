@@ -99,8 +99,8 @@ class CreativeOrderingTest {
     void bdsPlacesBlocksBeforeItemsAndBlocksByMenuCategory() {
         PaletteLayer layer = PaletteLayer.builder("blocks")
             .item(item("test:item", CreativeCategory.CONSTRUCTION))
-            .block(CustomBlock.builder("test:block_menu_only").menuCategory(org.geysermc.paletter.block.component.MenuCategory.builder()
-                .category(org.geysermc.paletter.block.component.MenuCategory.Category.CONSTRUCTION).build()).build())
+            .block(CustomBlock.builder("test:block_menu_only").menuCategory(org.geysermc.paletter.block.component.BlockMenuCategory.builder()
+                .category(org.geysermc.paletter.block.component.BlockMenuCategory.Category.CONSTRUCTION).build()).build())
             .build();
         Palette palette = Palettes.palette(LATEST, layer);
         List<CreativeNode> construction = palette.creativeLayout().nodes(CreativeCategory.CONSTRUCTION);
@@ -109,8 +109,8 @@ class CreativeOrderingTest {
 
         Palette append = Paletter.builder().creativeOrdering(CreativeOrdering.APPEND).layer(PaletteLayer.builder("blocks")
             .item(item("test:item", CreativeCategory.CONSTRUCTION))
-            .block(CustomBlock.builder("test:block_menu_only").menuCategory(org.geysermc.paletter.block.component.MenuCategory.builder()
-                .category(org.geysermc.paletter.block.component.MenuCategory.Category.CONSTRUCTION).build()).build())
+            .block(CustomBlock.builder("test:block_menu_only").menuCategory(org.geysermc.paletter.block.component.BlockMenuCategory.builder()
+                .category(org.geysermc.paletter.block.component.BlockMenuCategory.Category.CONSTRUCTION).build()).build())
             .build()).build().palette(LATEST);
         // The ordering decides the order, never presence: the menu category does
         assertTrue(append.creativeLayout().contains(ItemMatcher.id("test:block_menu_only")));

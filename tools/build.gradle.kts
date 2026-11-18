@@ -88,12 +88,17 @@ val checkConstants = cliTask("checkConstants", "verification",
 
 // The custom item/block component API (org.geysermc.paletter.item.component, block.component and the internal encoders)
 // from the component model. Runs on the componentApi source set only, so it works while paletter does not compile.
-tasks.register<JavaExec>("generateComponentApi") {
+val generateComponentApi = tasks.register<JavaExec>("generateComponentApi") {
     group = "codegen"
     description = "Regenerates the component API and its encoders from the component model"
     classpath = componentApi.runtimeClasspath
     mainClass.set("org.geysermc.paletter.tools.codegen.component.Main")
     args = listOf("generate") + root
+    // reads what inferMappings writes: after it when both run
+    mustRunAfter("inferMappings")
+    inputs.dir(rootProject.file("data/model"))
+    outputs.dir(rootProject.file("paletter/src/generated"))
+    outputs.upToDateWhen { false }
 }
 
 val checkComponentApi = tasks.register<JavaExec>("checkComponentApi") {
@@ -103,6 +108,7 @@ val checkComponentApi = tasks.register<JavaExec>("checkComponentApi") {
     mainClass.set("org.geysermc.paletter.tools.codegen.component.Main")
     args = listOf("check") + root
     outputs.upToDateWhen { false }
+    mustRunAfter("inferMappings", generateComponentApi)
 }
 
 // Generates into build/component-api (to look at, or while the committed API is being replaced)
@@ -114,7 +120,7 @@ tasks.register<JavaExec>("generateComponentApiPreview") {
     args = listOf("generate") + root + listOf("--sources", layout.buildDirectory.dir("component-api").get().asFile.absolutePath)
 }
 
-// The component model: the add-on JSON side from Microsoft's creator docs, a capture add-on generated from it, and the
+// The component model: the add-on JSON side from Microsoft's creator docs, the spec capture add-on generated from it, and the
 // JSON -> wire mapping inferred from BDS captures of that add-on.
 // Needs the docs: -Pdocs=DIR (a checkout of MicrosoftDocs/minecraft-creator) or a download of the pinned commit
 tasks.register<JavaExec>("generateModel") {
@@ -135,10 +141,18 @@ tasks.register<JavaExec>("generateAddon") {
     args = listOf("addon") + root + listOf("--out", layout.buildDirectory.dir("spec-addon").get().asFile.absolutePath)
 }
 
-cliTask("inferMappings", "spec", "Infers data/model/mappings.json and coverage.md from the committed captures", "infer")
+val inferMappings = cliTask("inferMappings", "spec", "Infers data/model/mappings.json and coverage.md from the committed captures", "infer")
+inferMappings.configure {
+    outputs.files(rootProject.file("data/model/mappings.json"), rootProject.file("data/model/coverage.md"))
+    // It reads the captures and schemas under data/bds, which are no declared inputs: never up to date
+    outputs.upToDateWhen { false }
+}
 val checkMappings = cliTask("checkMappings", "verification",
     "Fails if inferring the mappings from the committed model and captures yields a diff, or leaves a captured bit or wire path unexplained",
     "check-mappings", "--strict", check = true)
+checkMappings.configure {
+    mustRunAfter(inferMappings, generateComponentApi)
+}
 
 // What older bundled versions lack of the newest one (fallback coverage); fails on problems of the bundled data
 val checkData = cliTask("checkData", "verification",

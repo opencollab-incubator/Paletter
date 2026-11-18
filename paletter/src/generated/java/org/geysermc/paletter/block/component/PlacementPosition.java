@@ -26,6 +26,11 @@ public record PlacementPosition(
      */
     public static final String NAME = "minecraft:placement_position";
 
+    /**
+     * Checks the components and copies lists and maps, so the value is immutable.
+     *
+     * @throws NullPointerException if a required component is null
+     */
     public PlacementPosition {
         enabledStates = List.copyOf(Objects.requireNonNull(enabledStates, "PlacementPosition.enabledStates"));
     }
@@ -36,6 +41,9 @@ public record PlacementPosition(
     }
 
     /**
+     * Creates a builder with every optional field at its default; required fields must be set before
+     * {@code build()}.
+     *
      * @return a builder with the defaults applied
      */
     public static @NonNull Builder builder() {
@@ -43,6 +51,8 @@ public record PlacementPosition(
     }
 
     /**
+     * Creates a builder holding this value's fields, to change some of them.
+     *
      * @return a builder with this value's fields
      */
     public @NonNull Builder toBuilder() {
@@ -62,6 +72,9 @@ public record PlacementPosition(
 
         /**
          * Sets {@code enabled_states}.
+         *
+         * @param enabledStates the value
+         * @return this builder
          */
         public @NonNull Builder enabledStates(@NonNull List<EnabledStates> enabledStates) {
             this.enabledStates = enabledStates;
@@ -70,12 +83,18 @@ public record PlacementPosition(
 
         /**
          * Sets {@code enabled_states}.
+         *
+         * @param enabledStates the value
+         * @return this builder
          */
         public @NonNull Builder enabledStates(@NonNull EnabledStates... enabledStates) {
             return enabledStates(List.of(enabledStates));
         }
 
         /**
+         * Builds the value from the fields set and the defaults.
+         *
+         * @return the value
          * @throws IllegalStateException if a required field is not set
          * @throws IllegalArgumentException if a value is out of range
          */
@@ -108,6 +127,8 @@ public record PlacementPosition(
         }
 
         /**
+         * Returns the value in add-on JSON.
+         *
          * @return the value in add-on JSON
          */
         public @NonNull String value() {
@@ -115,7 +136,10 @@ public record PlacementPosition(
         }
 
         /**
-         * @return the constant of an add-on JSON value
+         * Finds the constant of an add-on JSON value.
+         *
+         * @param value the value in add-on JSON
+         * @return the constant of the value
          * @throws IllegalArgumentException if the value is not documented
          */
         public static @NonNull EnabledStates fromValue(@NonNull String value) {

@@ -34,6 +34,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
@@ -62,31 +63,23 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * the JSON), {@code not-generated} (it uses a component that is not generated), {@code missing} (BDS neither sent it nor
  * logged an error for it). Only {@code pass} is accepted: BDS always wins, so nothing is waived and there is no list of
  * known exceptions. The only variants not compared are those the content log has an ERROR line for (counted in the report),
- * and every component of a capture needs at least one compared variant. The table goes to
+ * and every component of a capture needs at least one compared variant, or an account from the data of the format sweep
+ * ({@link OldFormats}: replaced, old-style item, server-only, rejected at every format; {@link #SWEEP_PENDING} until it is captured). The table goes to
  * {@code build/reports/component-conformance-<protocol>.md}.
  */
 class ComponentConformanceTest {
     /**
-     * Components that no capture has an accepted variant of besides the control one: BDS rejects every other
-     * variant in the content log ("not present in the Schema" = its schema does not know the component at all,
-     * "deprecated" = the member is rejected as deprecated). Their encoding is not verified: gaps to close before the full
-     * recapture. A component that is not listed must have a compared variant, so a new fully rejected one fails.
+     * Components BDS rejects at the current format, whose old-format classification ({@link OldFormats}) waits for the capture with
+     * the format sweep: its {@code formats} are not in {@code mappings.json} yet, so nothing says whether BDS upgrades them, sends them
+     * only in old-style items, never sends them, or rejects them at every format. Explicit until the recapture; a component whose
+     * data is there fails the test until it is removed from this set, and so does one that is not in it and fits none of the
+     * classes. {@code breathability}, {@code unit_cube}, {@code render_offsets}, {@code block_light_emission}, {@code bone_visibility}
+     * and {@code destroy_time} stay generated in the API until the sweep decides.
      */
-    private static final Map<String, String> KNOWN_GAPS = Map.ofEntries(
-        Map.entry("block:minecraft:block_light_absorption", "not present in the Schema"),
-        Map.entry("block:minecraft:block_light_emission", "not present in the Schema"),
-        Map.entry("block:minecraft:bone_visibility", "not present in the Schema"),
-        Map.entry("block:minecraft:breathability", "deprecated"),
-        Map.entry("block:minecraft:destroy_time", "not present in the Schema"),
-        Map.entry("block:minecraft:explosion_resistance", "not present in the Schema"),
-        Map.entry("block:minecraft:queued_ticking", "deprecated"),
-        Map.entry("block:minecraft:random_ticking", "deprecated"),
-        Map.entry("block:minecraft:unit_cube", "deprecated"),
-        Map.entry("item:minecraft:chargeable", "not present in the Schema"),
-        Map.entry("item:minecraft:render_offsets", "not present in the Schema"),
-        Map.entry("item:minecraft:seed", "not present in the Schema"),
-        Map.entry("item:minecraft:use_duration", "not present in the Schema"),
-        Map.entry("item:minecraft:weapon", "not present in the Schema"));
+    private static final Set<String> SWEEP_PENDING = Set.of("block:minecraft:block_light_absorption", "block:minecraft:block_light_emission",
+        "block:minecraft:bone_visibility", "block:minecraft:breathability", "block:minecraft:destroy_time", "block:minecraft:explosion_resistance",
+        "block:minecraft:unit_cube", "item:minecraft:chargeable", "item:minecraft:render_offsets", "item:minecraft:seed",
+        "item:minecraft:use_duration", "item:minecraft:weapon");
     static final Path ROOT = Path.of(System.getProperty("paletter.root", ".."));
     static final Path MODEL = ROOT.resolve("data/model");
 
@@ -143,6 +136,42 @@ class ComponentConformanceTest {
             () -> conformance(capture, capture.equals(captures.getLast()))));
     }
 
+    /**
+     * Components whose variants the generator makes differently from the newest capture, because the add-on changed after it.
+     * Their definitions are compared again once the capture is redone; until then this must name them, each with its reason,
+     * and fails when one matches again.
+     * <ul>
+     *   <li>enchantable: the accepted slot strings are now read from BDS's regex message, so all of them are tried;</li>
+     *   <li>hover_text_color: the names of the hand table of {@code Transforms} are tried ({@code fixtures.json probeValues});</li>
+     *   <li>block_placer, entity_placer, digger, placement_filter: block descriptors with enum, boolean and string states
+     *       on vanilla blocks are tried ({@code fixtures.json descriptorValues});</li>
+     *   <li>collision_box, selection_box, transformation: a vector with a third distinct value of every element is tried, so
+     *       that no linear rule over them is fitted to two points; collision_box and selection_box also get boxes with the origin
+     *       and the size varied together (the affine rule);</li>
+     *   <li>geometry, item_visual, embedded_visual: the Molang of {@code bone_visibility} under several keys (and, with the schema, in the
+     *       object form and as a number), and the names of {@code uv_lock} in several orders (the Molang and hash ordered set rules);</li>
+     *   <li>material_instances: the booleans of each face in every combination (the packed bits rule).</li>
+     * </ul>
+     * With the schema in the model (the recapture), every value of each schema enum is also tried, none cut at {@code MAX_VALUES}
+     * (durability_sensor's particle types, the use animations): the committed captures are of the model without it, so those components
+     * need no entry here.
+     */
+    private static final Set<String> RECAPTURE_PENDING = Set.of("item:minecraft:enchantable", "item:minecraft:hover_text_color",
+        "item:minecraft:block_placer", "item:minecraft:entity_placer", "item:minecraft:digger",
+        "block:minecraft:placement_filter", "block:minecraft:collision_box", "block:minecraft:selection_box", "block:minecraft:transformation",
+        "block:minecraft:geometry", "block:minecraft:item_visual", "block:minecraft:embedded_visual", "block:minecraft:material_instances",
+        // the script custom components (control included) are not in the committed captures yet
+        "block:minecraft:custom_components", "item:minecraft:custom_components",
+        // the ammunition entry without an item (fixtures.json probeValues) is not in the committed captures yet
+        "item:minecraft:shooter",
+        // the blocks with block tags (role tag) are not in the committed captures yet
+        "block:minecraft:tag");
+
+    /** Not in the committed captures yet: the components of {@link #RECAPTURE_PENDING}, and every script variant (the placers' ones too). */
+    private static boolean pending(String component, String role) {
+        return RECAPTURE_PENDING.contains(component) || role.equals("script");
+    }
+
     private void conformance(Path capture, boolean newest) throws IOException {
         JsonObject meta = JsonParser.parseString(Files.readString(capture.resolve("capture.json"))).getAsJsonObject();
         int protocol = meta.get("protocol").getAsInt();
@@ -156,11 +185,18 @@ class ComponentConformanceTest {
         AddonGenerator generator = new AddonGenerator(Model.read(MODEL.resolve("components.json")), fixtures,
             meta.get("formatVersion").getAsString(), AddonGenerator.Shrunk.of(manifest));
         if (newest) {
-            assertEquals(recorded.length, generator.variants().size(), "the add-on generator no longer produces the captured variants");
-            for (int i = 0; i < recorded.length; i++) {
-                AddonGenerator.Variant v = generator.variants().get(i);
-                assertEquals(recorded[i].get("json"), v.component() == null || v.component() == JsonNull.INSTANCE ? null : v.component(),
+            List<JsonObject> captured = Arrays.stream(recorded).filter(r -> !pending(r.get("component").getAsString(), r.has("role") ? r.get("role").getAsString() : "")).toList();
+            List<AddonGenerator.Variant> generated = generator.variants().stream().filter(v -> !pending(v.componentId(), v.role())).toList();
+            assertEquals(captured.size(), generated.size(), "the add-on generator no longer produces the captured variants");
+            for (int i = 0; i < captured.size(); i++) {
+                AddonGenerator.Variant v = generated.get(i);
+                assertEquals(captured.get(i).get("json"), v.component() == null || v.component() == JsonNull.INSTANCE ? null : v.component(),
                     v.identifier() + " differs from the captured variant");
+            }
+            for (String pending : RECAPTURE_PENDING) {
+                assertTrue(Arrays.stream(recorded).filter(r -> r.get("component").getAsString().equals(pending)).count()
+                    != generator.variants().stream().filter(v -> v.componentId().equals(pending)).count(),
+                    pending + " is generated as captured again: remove it from RECAPTURE_PENDING");
             }
         }
 
@@ -184,6 +220,7 @@ class ComponentConformanceTest {
         Set<String> components = new TreeSet<>();
         Set<String> compared = new TreeSet<>();
         int rejected = 0;
+        int oldForm = 0;
         for (JsonObject entry : recorded) {
             String identifier = entry.get("identifier").getAsString();
             boolean block = entry.get("kind").getAsString().equals("block");
@@ -193,12 +230,16 @@ class ComponentConformanceTest {
                 rejected++; // rejected by BDS: nothing to conform to
                 continue;
             }
+            if (component.endsWith(":minecraft:custom_components") && entry.get("json").isJsonArray()) {
+                oldForm++; // accepted, in the old list-of-names form: the API deliberately offers only the new form
+                continue;
+            }
             NbtMap expected = block ? blocks.get(identifier) : items.get(identifier);
             if (expected == null) {
                 outcomes.add(new Outcome(identifier, component, "missing", "BDS neither sent it nor logged an error for it"));
                 continue;
             }
-            outcomes.add(check(identifier, component, block, generator.definitionOf(component, identifier, entry.get("json")), expected, data));
+            outcomes.add(check(identifier, component, block, generator.definitionOf(component, identifier, entry.has("role") ? entry.get("role").getAsString() : "", entry.get("json")), expected, data));
             // The control variant is accepted whatever the component is, so it says nothing of it; the base one sets the component
             String role = entry.has("role") ? entry.get("role").getAsString() : "";
             if (!role.equals("control")) {
@@ -207,9 +248,28 @@ class ComponentConformanceTest {
         }
         Set<String> uncompared = new TreeSet<>(components);
         uncompared.removeAll(compared);
-        uncompared.removeAll(KNOWN_GAPS.keySet());
-        assertTrue(uncompared.isEmpty(), "protocol " + protocol + ": no variant of these components, other than the control one, was both "
-            + "accepted by BDS and found in its data, so their generated encoding is not verified: " + uncompared);
+        List<String> unexplained = new ArrayList<>();
+        Set<String> classifiedNow = new TreeSet<>();
+        JsonObject mappings = JsonParser.parseString(Files.readString(MODEL.resolve("mappings.json"), StandardCharsets.UTF_8)).getAsJsonObject().getAsJsonObject("components");
+        for (String component : uncompared) {
+            String how = OldFormats.classify(mappings.has(component) ? mappings.getAsJsonObject(component) : null, OldFormats.notSent(whitebox(), component), compared);
+            if (how == null || (how.equals(OldFormats.PENDING_SWEEP) && !SWEEP_PENDING.contains(component))) {
+                unexplained.add(component + (how == null ? " (its formats fit no class)" : ""));
+            } else if (!how.equals(OldFormats.PENDING_SWEEP)) {
+                classifiedNow.add(component);
+            }
+        }
+        assertTrue(unexplained.isEmpty(), "protocol " + protocol + ": no variant of these components, other than the control one, was both accepted by BDS "
+            + "and found in its data, and the format sweep does not account for them (replaced, old-style item, server-only, rejected at every format), "
+            + "so their generated encoding is not verified: " + unexplained);
+        checkRetirements(mappings, compared);
+        if (newest) {
+            classifiedNow.retainAll(SWEEP_PENDING);
+            assertTrue(classifiedNow.isEmpty(), "the data classifies these now: remove them from SWEEP_PENDING: " + classifiedNow);
+            Set<String> stale = new TreeSet<>(SWEEP_PENDING);
+            stale.removeAll(uncompared);
+            assertTrue(stale.isEmpty(), "these have a compared variant now: remove them from SWEEP_PENDING: " + stale);
+        }
 
         // Report
         Map<String, int[]> perComponent = new TreeMap<>();
@@ -221,7 +281,7 @@ class ComponentConformanceTest {
         }
         StringBuilder report = new StringBuilder("# Component conformance against " + capture.getParent().getFileName() + " (protocol " + protocol + ")\n\n");
         report.append("Accepted variants: ").append(outcomes.size()).append(". ").append(totals).append(". Rejected by BDS (content log ERROR, not compared): ")
-            .append(rejected).append("\n\n");
+            .append(rejected).append(". Accepted old-form custom_components (not in the API, not compared): ").append(oldForm).append("\n\n");
         report.append("| component | pass | fail | unbindable | not generated | missing |\n|---|---|---|---|---|---|\n");
         perComponent.forEach((c, n) -> report.append("| `").append(c).append("` | ").append(n[0]).append(" | ").append(n[1]).append(" | ")
             .append(n[2]).append(" | ").append(n[3]).append(" | ").append(n[4]).append(" |\n"));
@@ -241,6 +301,49 @@ class ComponentConformanceTest {
             .map(o -> o.identifier() + " " + o.status() + ": " + o.detail()).toList();
         assertTrue(notPassing.isEmpty(), "protocol " + protocol + ": " + notPassing.size() + " variants BDS accepted are not reproduced by the generated API"
             + " (see build/reports/component-conformance-" + protocol + ".md):\n  " + String.join("\n  ", notPassing));
+    }
+
+/**
+ * The retirements against the data: every component of {@code api.json} {@code retired} must be one BDS never sends (server-only or
+ * rejected at every format; {@code seed} only inside an old-style item), and no kept deprecated component may be one. Components
+ * still in {@link #SWEEP_PENDING} are not decided yet.
+ */
+private static void checkRetirements(JsonObject mappings, Set<String> compared) throws IOException {
+    JsonObject api = JsonParser.parseString(Files.readString(MODEL.resolve("api.json"), StandardCharsets.UTF_8)).getAsJsonObject();
+    JsonObject components = JsonParser.parseString(Files.readString(MODEL.resolve("components.json"), StandardCharsets.UTF_8)).getAsJsonObject();
+    Set<String> retired = new TreeSet<>(api.getAsJsonObject("retired").keySet());
+    retired.removeIf(id -> id.startsWith("_"));
+    List<String> wrong = new ArrayList<>();
+    for (String id : retired) {
+        String how = OldFormats.classify(mappings.has(id) ? mappings.getAsJsonObject(id) : null, OldFormats.notSent(whitebox(), id), compared);
+        boolean ok = OldFormats.SERVER_ONLY.equals(how) || OldFormats.REJECTED_EVERYWHERE.equals(how)
+            || (id.equals("item:minecraft:seed") && OldFormats.OLD_STYLE_ITEM.equals(how)) || OldFormats.PENDING_SWEEP.equals(how);
+        if (!ok) {
+            wrong.add(id + " is " + how + ": it reaches the wire, keep its record");
+        }
+    }
+    for (JsonElement e : components.getAsJsonArray("components")) {
+        JsonObject c = e.getAsJsonObject();
+        String id = c.get("id").getAsString();
+        String status = c.get("status").getAsString();
+        if (!c.get("category").getAsString().equals("component") || !(status.equals("deprecated") || status.equals("legacy")) || retired.contains(id)
+            || SWEEP_PENDING.contains(id) || id.endsWith(":minecraft:custom_components")) {
+            continue;
+        }
+        String how = OldFormats.classify(mappings.has(id) ? mappings.getAsJsonObject(id) : null, OldFormats.notSent(whitebox(), id), compared);
+        if (OldFormats.SERVER_ONLY.equals(how) || OldFormats.REJECTED_EVERYWHERE.equals(how)) {
+            wrong.add(id + " is " + how + ": BDS never sends it, retire it in api.json");
+        }
+    }
+    assertTrue(wrong.isEmpty(), "retirements against the data: " + wrong);
+}
+
+/** The white-box of the newest build that has one, or null. */
+    private static JsonObject whitebox() throws IOException {
+        try (Stream<Path> dirs = Files.list(ROOT.resolve("data/bds"))) {
+            Path newest = dirs.filter(d -> Files.exists(d.resolve("whitebox.json"))).max(Comparator.comparing(d -> d.getFileName().toString(), org.geysermc.paletter.tools.Versions.ORDER)).orElse(null);
+            return newest == null ? null : JsonParser.parseString(Files.readString(newest.resolve("whitebox.json"), StandardCharsets.UTF_8)).getAsJsonObject();
+        }
     }
 
     private static Set<String> union(Set<String> a, Set<String> b) {

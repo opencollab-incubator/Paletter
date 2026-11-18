@@ -124,13 +124,38 @@ public final class Schema {
         return "(bds-schema " + build + ") ";
     }
 
+    /** Whether the schema lists the component in any format, beta too (a model id: {@code block:minecraft:x}). */
+    public boolean names(String id) {
+        String kind = kind(id);
+        return json.has(kind) && json.getAsJsonObject(kind).has(name(id));
+    }
+
+    /**
+     * Whether the schema says the build does not have the component: it lists components of its kind, not this one, and did
+     * not skip it. False without a schema: no schema says nothing.
+     */
+    public boolean lacks(String id) {
+        String kind = kind(id);
+        String skipped = " " + name(id) + ":";
+        return json.has(kind) && !names(id)
+            && skipped().stream().noneMatch(s -> s.startsWith(kind + " ") && s.contains(skipped));
+    }
+
+    private static String kind(String id) {
+        return id.startsWith("block:trait:") ? "trait" : id.substring(0, id.indexOf(':'));
+    }
+
+    private static String name(String id) {
+        return id.substring(id.startsWith("block:trait:") ? "block:trait:".length() : kind(id).length() + 1);
+    }
+
     // ---------------------------------------------------------------------------------------------------------------
     // Lookup
 
     /** {@code item:minecraft:x}, {@code block:minecraft:x} and {@code block:trait:minecraft:x} are schema components; {@code block:states} is not. */
     JsonObject definition(String id) {
-        String kind = id.startsWith("block:trait:") ? "trait" : id.substring(0, id.indexOf(':'));
-        String name = id.substring(id.startsWith("block:trait:") ? "block:trait:".length() : kind.length() + 1);
+        String kind = kind(id);
+        String name = name(id);
         if (!json.has(kind) || !json.getAsJsonObject(kind).has(name) || !json.getAsJsonObject("formats").has(kind)) {
             return null;
         }
@@ -165,6 +190,57 @@ public final class Schema {
     private static JsonObject node(JsonObject definition, String path) {
         String key = key(definition, path);
         return key == null ? null : key.isEmpty() ? definition.getAsJsonObject("root") : definition.getAsJsonObject("fields").getAsJsonObject(key);
+    }
+
+    /**
+     * The values of the string enum the schema lists at a path of a component: the field's own, else its list elements' ({@code a[]}).
+     * Empty without a schema, a component or a path of it, or when there is no enum.
+     */
+    public List<String> enumValues(String component, String path) {
+        JsonObject definition = definition(component);
+        JsonObject node = definition == null ? null : node(definition, path);
+        if (node == null) {
+            return List.of();
+        }
+        if (!node.has("enum")) {
+            String key = key(definition, path);
+            JsonObject fields = definition.getAsJsonObject("fields");
+            node = !path.isEmpty() && fields.has(key + "[]") ? fields.getAsJsonObject(key + "[]") : null;
+            if (node == null || !node.has("enum")) {
+                return List.of();
+            }
+        }
+        return node.getAsJsonArray("enum").asList().stream().filter(v -> v.getAsJsonPrimitive().isString()).map(JsonElement::getAsString).toList();
+    }
+
+    /** A member of the object alternative of a map's element ({@link #element}): its name, JSON types and whether the schema requires it. */
+    public record Member(String name, List<String> types, boolean required) {
+    }
+
+    /** The JSON types the schema lists for the elements of the map at a path ({@code bone_visibility{}}: string, object, number, boolean). */
+    public List<String> elementTypes(String component, String mapPath) {
+        JsonObject definition = definition(component);
+        JsonObject node = definition == null ? null : node(definition, mapPath + "{}");
+        return node == null || !node.has("types") ? List.of() : node.getAsJsonArray("types").asList().stream().map(JsonElement::getAsString).toList();
+    }
+
+    /** The members of the object alternative of the elements of the map at a path ({@code bone_visibility{}.expression}), in the schema's order. */
+    public List<Member> elementMembers(String component, String mapPath) {
+        JsonObject definition = definition(component);
+        if (definition == null) {
+            return List.of();
+        }
+        List<Member> members = new ArrayList<>();
+        String prefix = mapPath + "{}.";
+        JsonObject fields = definition.getAsJsonObject("fields");
+        for (String path : fields.keySet()) {
+            if (path.startsWith(prefix) && path.indexOf('.', prefix.length()) < 0) {
+                JsonObject node = fields.getAsJsonObject(path);
+                members.add(new Member(path.substring(prefix.length()), node.has("types")
+                    ? node.getAsJsonArray("types").asList().stream().map(JsonElement::getAsString).toList() : List.of(), node.has("required")));
+            }
+        }
+        return members;
     }
 
     /** The families of facts that say the same thing in different words: a schema fact of a family replaces the log's of it. */

@@ -14,6 +14,12 @@ import java.util.List;
  * @since 1.0.0
  */
 public record Unlock(@NonNull UnlockingContext context, @NonNull List<Ingredient> ingredients) {
+    /**
+     * Creates the unlock, copying the ingredients.
+     *
+     * @throws IllegalArgumentException if there are ingredients and the context is not {@code NONE}
+     * @throws NullPointerException if the list is null or has a null element
+     */
     public Unlock {
         ingredients = List.copyOf(ingredients);
         if (!ingredients.isEmpty() && context != UnlockingContext.NONE) {
@@ -22,16 +28,21 @@ public record Unlock(@NonNull UnlockingContext context, @NonNull List<Ingredient
     }
 
     /**
+     * Makes the unlock of a context, without ingredients.
+     *
      * @param context a context
-     * @return the unlock of a context, without ingredients
+     * @return the unlock
      */
     public static @NonNull Unlock of(@NonNull UnlockingContext context) {
         return new Unlock(context, List.of());
     }
 
     /**
+     * Makes the unlock by items: the context {@code NONE} with them.
+     *
      * @param ingredients the items that unlock the recipe
-     * @return the unlock by these items: the context {@code NONE} with them
+     * @return the unlock
+     * @throws NullPointerException if the list is null or has a null element
      */
     public static @NonNull Unlock byIngredients(@NonNull List<Ingredient> ingredients) {
         return new Unlock(UnlockingContext.NONE, ingredients);

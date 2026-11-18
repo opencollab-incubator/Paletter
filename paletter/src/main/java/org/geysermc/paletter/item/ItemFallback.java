@@ -26,6 +26,12 @@ public record ItemFallback(@NonNull BedrockItemType target, @NonNull BedrockItem
      */
     public static final ItemFallback UNKNOWN = of(BedrockItems.UNKNOWN);
 
+    /**
+     * Creates a fallback.
+     *
+     * @throws NullPointerException if the target or the variant is null
+     * @throws IllegalArgumentException if the variant is not of the target type
+     */
     public ItemFallback {
         Objects.requireNonNull(target);
         Objects.requireNonNull(variant);
@@ -35,6 +41,9 @@ public record ItemFallback(@NonNull BedrockItemType target, @NonNull BedrockItem
     }
 
     /**
+     * Creates a fallback that is not forced.
+     *
+     * @param target the replacement: a variant, or a type for its base variant
      * @return a fallback to exactly this variant (a type is its base variant)
      * @since 1.0.0
      */
@@ -44,6 +53,8 @@ public record ItemFallback(@NonNull BedrockItemType target, @NonNull BedrockItem
     }
 
     /**
+     * Returns this fallback with {@code force} set.
+     *
      * @return this fallback, used even in versions that have the item
      * @since 1.0.0
      */

@@ -4,7 +4,7 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.cloudburstmc.nbt.NbtMap;
 import org.geysermc.paletter.item.component.ItemComponent;
-import org.geysermc.paletter.item.component.MenuCategory;
+import org.geysermc.paletter.item.component.ItemMenuCategory;
 
 import java.util.List;
 
@@ -22,7 +22,7 @@ public final class ItemCompiler {
      * @return the full component data of a data driven item definition, as sent in the item component packet
      */
     public static @NonNull NbtMap componentData(@NonNull String identifier, int runtimeId, @NonNull List<ItemComponent> components,
-                                                @Nullable MenuCategory menu,
+                                                @Nullable ItemMenuCategory menu,
                                                 @NonNull WireContext ctx) {
         WireContext subject = ctx.subject(identifier);
         WireNode out = new WireNode();
@@ -55,7 +55,7 @@ public final class ItemCompiler {
     }
 
     /** The description's menu category with its group namespaced like BDS, or null if there is none. */
-    private static @Nullable MenuCategory menu(@Nullable MenuCategory menu) {
+    private static @Nullable ItemMenuCategory menu(@Nullable ItemMenuCategory menu) {
         return menu == null || menu.group() == null ? menu : menu.toBuilder().group(namespaced(menu.group())).build();
     }
 

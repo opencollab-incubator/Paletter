@@ -162,7 +162,7 @@ public final class WhiteboxCoverage {
         return gaps(Whitebox.parse(build.resolve(Whitebox.FILE)), captured(build), mappings);
     }
 
-    /** Everything the captures of a build show: the add-on captures and the data-driven content of the vanilla capture. */
+    /** Everything the captures of a build show: the spec captures and the data-driven content of the vanilla capture. */
     public static Captured captured(Path build) throws IOException {
         Captured captured = new Captured();
         List<Path> directories;

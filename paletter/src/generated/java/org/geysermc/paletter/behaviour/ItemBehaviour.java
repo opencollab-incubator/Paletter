@@ -141,6 +141,8 @@ public final class ItemBehaviour {
     }
 
     /**
+     * Lists the keys, in declaration order.
+     *
      * @return every item key
      */
     public static @NonNull List<BehaviourKey<?>> keys() {
@@ -148,6 +150,9 @@ public final class ItemBehaviour {
     }
 
     /**
+     * Finds a key by its name.
+     *
+     * @param name the key name, as {@code BehaviourKey.name()} gives it
      * @return the key of a name, or null if there is none
      */
     public static @Nullable BehaviourKey<?> key(@NonNull String name) {

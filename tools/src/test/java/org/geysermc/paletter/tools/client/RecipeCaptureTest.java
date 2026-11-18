@@ -26,6 +26,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
 import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.Map;
@@ -38,6 +39,41 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 class RecipeCaptureTest {
     private static ItemDefinition definition(String name, int id) {
         return new SimpleItemDefinition(name, id, ItemVersion.DATA_DRIVEN, false, null);
+    }
+
+    @Test
+    void onlyKeepsTheRecipesOfAPrefix(@TempDir Path directory) throws IOException {
+        ItemDefinition stick = definition("minecraft:stick", 6);
+        UUID uuid = UUID.fromString("00000000-0000-0000-0000-000000000001");
+        CraftingDataPacket crafting = new CraftingDataPacket();
+        crafting.setCleanRecipes(true);
+        for (String id : List.of("paletter:unlock_a", "minecraft:other")) {
+            crafting.getShapelessData().add(ShapelessRecipeData.shapeless(id,
+                List.of(new ItemDescriptorWithCount(new DefaultDescriptor(stick, 0), 1)),
+                List.of(ItemData.builder().definition(stick).count(1).build()), uuid, "crafting_table", 0, 10,
+                RecipeUnlockingRequirement.INVALID));
+        }
+        crafting.getPotionMixData().add(new PotionMixData(6, 1, 6, 0, 6, 2));
+        new RecipeCapture(Map.of(6, stick.getIdentifier()), hash -> null).write(directory, crafting, null, "1.0.0.0");
+
+        Path only = Files.createDirectories(directory.resolve("only"));
+        Files.write(only.resolve(RecipeCapture.CRAFTING), gzip(RecipeCapture.only(CapturedData.recipes(directory), "paletter:unlock_")));
+        RecipeCapture.Recipes recipes = CapturedData.recipes(only);
+        assertEquals("_generated", recipes.crafting().keySet().iterator().next());
+        assertTrue(recipes.crafting().get("_generated").getAsString().contains("Do not edit"));
+        assertEquals("1.0.0.0", recipes.crafting().get("bdsVersion").getAsString());
+        assertTrue(recipes.crafting().get("cleanRecipes").getAsBoolean());
+        assertEquals(List.of("paletter:unlock_a"), recipes.list("shapeless").asList().stream().map(e -> e.getAsJsonObject().get("id").getAsString()).toList());
+        assertEquals(0, recipes.count("potion_mix"));
+        assertEquals(RecipeCapture.LISTS, recipes.crafting().keySet().stream().filter(RecipeCapture.LISTS::contains).toList());
+    }
+
+    private static byte[] gzip(String text) throws IOException {
+        java.io.ByteArrayOutputStream bytes = new java.io.ByteArrayOutputStream();
+        try (java.util.zip.GZIPOutputStream out = new java.util.zip.GZIPOutputStream(bytes)) {
+            out.write(text.getBytes(java.nio.charset.StandardCharsets.UTF_8));
+        }
+        return bytes.toByteArray();
     }
 
     @Test

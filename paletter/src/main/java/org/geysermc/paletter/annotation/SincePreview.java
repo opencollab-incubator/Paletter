@@ -23,6 +23,8 @@ import java.lang.annotation.Target;
 @Target({ElementType.TYPE, ElementType.METHOD, ElementType.CONSTRUCTOR, ElementType.FIELD})
 public @interface SincePreview {
     /**
+     * The preview that has the content.
+     *
      * @return the bundled preview version that has it, e.g. {@code 26.70}
      */
     String value();

@@ -63,9 +63,9 @@ class ExperimentAttributionTest {
         // Another start of BDS: random UUID, other net id
         Path again = crafting(Files.createDirectory(temp.resolve("again")), torch.replace("UUID", "b").replace("NET", "7"));
         Path changed = crafting(Files.createDirectory(temp.resolve("changed")), torch.replace("torch", "lantern").replace("UUID", "c").replace("NET", "1"));
-        assertFalse(Update.recipesChanged(committed, again));
-        assertTrue(Update.recipesChanged(committed, changed));
-        assertTrue(Update.recipesChanged(Files.createDirectory(temp.resolve("none")), again), "nothing committed yet");
+        assertFalse(RecipeStage.recipesChanged(committed, again));
+        assertTrue(RecipeStage.recipesChanged(committed, changed));
+        assertTrue(RecipeStage.recipesChanged(Files.createDirectory(temp.resolve("none")), again), "nothing committed yet");
     }
 
     private static NbtMap item(String name, int id, int version, boolean componentBased) {
@@ -90,7 +90,7 @@ class ExperimentAttributionTest {
         items.forEach(item -> itemMap.put(item, new BdsDump.Item(64, item, List.of(), 0)));
         Map<String, Map<String, List<Object>>> blockMap = new LinkedHashMap<>();
         blocks.forEach(block -> blockMap.put(block, Map.of()));
-        return new BdsDump("1.26.63.1", Map.of(), Map.of(), blockMap, Map.of(), Map.of(), itemMap, Map.of(), List.of());
+        return new BdsDump("1.26.63.1", Map.of(), Map.of(), blockMap, Map.of(), Map.of(), itemMap, Map.of(), Map.of(), List.of());
     }
 
     private static final CapturedData BASE = capture(

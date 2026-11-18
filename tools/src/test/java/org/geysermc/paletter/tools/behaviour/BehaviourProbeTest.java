@@ -152,8 +152,25 @@ class BehaviourProbeTest {
 
     @Test
     void anExplosionResistanceThatIsNeitherZeroNorFarFromItIsNotDecided() {
-        // Destroyed 2 of 48 where explicit resistance 0 is destroyed 14 times: not the same as resistance 0
-        assertThrows(IllegalStateException.class, () -> measure(console(0.6, 2)));
+        // Destroyed 2 of 48 where explicit resistance 0 is destroyed 14 times: not the same as resistance 0. The default stays
+        // unknown and the rest of the probe is kept.
+        JsonObject capture = measure(console(0.6, 2));
+        assertTrue(capture.getAsJsonObject("unverified_defaults").get("block:explosion_resistance").getAsString().contains("not decided"));
+        assertTrue(capture.getAsJsonArray("defaults").asList().stream()
+            .noneMatch(entry -> entry.getAsJsonObject().get("key").getAsString().equals("block:explosion_resistance")));
+        assertEquals(15, defaultOf(capture, "block:light_dampening").get("value").getAsInt());
+    }
+
+    /** The explosions of BDS 1.26.36.1: resistance 0 and 3 were destroyed 4 and 0 of 48 at 7 blocks, 38 and 30 at 6: no distance tells them apart. */
+    @Test
+    void explosionsThatDistinguishNoResistancesLeaveTheDefaultUnverifiedInsteadOfFailingTheProbe() {
+        List<String> lines = new ArrayList<>(console(0.6, 12));
+        lines.removeIf(line -> line.contains("PROBE explosion "));
+        lines.add(observation("explosion", "{\"minecraft:dirt\":{\"6\":[36,48],\"7\":[0,48]},\"minecraft:sand\":{\"6\":[38,48],\"7\":[0,48]},"
+            + "\"probe:plain\":{\"6\":[38,48],\"7\":[13,48]},\"probe:explosion_resistance_0\":{\"6\":[38,48],\"7\":[4,48]},"
+            + "\"probe:destructible_by_explosion\":{\"6\":[36,48],\"7\":[12,48]},\"probe:explosion_resistance_3\":{\"6\":[30,48],\"7\":[0,48]}}"));
+        JsonObject capture = measure(lines);
+        assertTrue(capture.getAsJsonObject("unverified_defaults").get("block:explosion_resistance").getAsString().contains("distinguish no resistances"));
     }
 
     @Test
@@ -222,5 +239,34 @@ class BehaviourProbeTest {
         String text = Json.pretty(object);
         assertTrue(text.contains("\"note\": \"It's \\\"quoted\\\" & <tagged>\""), text);
         assertTrue(text.contains("    {\"i\":3},\n"), text);
+    }
+
+    private static final java.nio.file.Path ROOT = java.nio.file.Path.of(System.getProperty("paletter.root", ".."));
+
+    @Test
+    void theBlocksOfThePackHaveTheFormatTheBuildLoads() throws java.io.IOException {
+        // 1.26.36.1 has no parser for the newest format ("unsupported version", so probe:plain was not registered)
+        assertEquals("1.26.36", BehaviourProbe.blockFormat(ROOT, "1.26.36.1"));
+        // A preview reports a beta; its format is the model's, as the build is newer than that
+        assertEquals("1.26.60", BehaviourProbe.blockFormat(ROOT, "1.26.70-beta24"));
+        assertThrows(java.io.IOException.class, () -> BehaviourProbe.blockFormat(ROOT, "beta"));
+
+        java.util.Map<String, String> files = BehaviourProbe.blockFiles(ROOT, "1.26.36.1");
+        assertEquals(16, files.size());
+        assertTrue(files.containsKey("blocks/plain.json"));
+        for (String content : files.values()) {
+            JsonObject block = com.google.gson.JsonParser.parseString(content).getAsJsonObject();
+            assertEquals("1.26.36", block.get("format_version").getAsString());
+            assertTrue(block.has("minecraft:block"));
+        }
+    }
+
+    @Test
+    void thePackFilesCarryNoFormatOfTheirOwn() throws java.io.IOException {
+        try (var blocks = java.nio.file.Files.list(ROOT.resolve("data/addons/probe/blocks"))) {
+            for (java.nio.file.Path file : blocks.toList()) {
+                assertTrue(!com.google.gson.JsonParser.parseString(java.nio.file.Files.readString(file)).getAsJsonObject().has("format_version"), file.toString());
+            }
+        }
     }
 }

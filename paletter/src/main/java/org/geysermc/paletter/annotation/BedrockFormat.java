@@ -18,6 +18,8 @@ import java.lang.annotation.Target;
 @Target({ElementType.TYPE, ElementType.METHOD, ElementType.RECORD_COMPONENT, ElementType.FIELD, ElementType.PARAMETER})
 public @interface BedrockFormat {
     /**
+     * The minimum add-on JSON format version.
+     *
      * @return the format version, e.g. {@code 1.20.0}
      */
     String value();

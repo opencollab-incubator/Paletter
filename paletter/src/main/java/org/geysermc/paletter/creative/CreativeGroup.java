@@ -18,6 +18,12 @@ import java.util.List;
  */
 public record CreativeGroup(@NonNull String name, @Nullable BedrockItemStack icon, @NonNull List<BedrockItemStack> stacks) implements CreativeNode {
 
+    /**
+     * Creates a group.
+     *
+     * @throws IllegalArgumentException if the name is empty
+     * @throws NullPointerException if the stacks, or one of them, are null
+     */
     public CreativeGroup {
         if (name.isEmpty()) {
             throw new IllegalArgumentException("Group names cannot be empty; use loose stacks instead");

@@ -5,8 +5,8 @@ package org.geysermc.paletter.block.component;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
+import org.geysermc.paletter.annotation.BedrockExperiment;
 import org.geysermc.paletter.annotation.BedrockFormat;
-import org.geysermc.paletter.annotation.Experimental;
 import org.geysermc.paletter.annotation.ServerOnly;
 import org.geysermc.paletter.internal.component.Check;
 
@@ -17,7 +17,7 @@ import org.geysermc.paletter.internal.component.Check;
  * Add-on JSON: {@code "minecraft:redstone_consumer"}.
  * Server only: BDS accepts it in packs but sends nothing to clients (BDS 1.26.36.1, 1.26.45.1, 1.26.52.3,
  * 1.26.63.1, 1.26.70.24), so it has no client effect. Palettes leave it out without a warning.
- * Bedrock requires the experiment Upcoming Creator Features for it (in some format versions).
+ * The creator docs name the experiment Upcoming Creator Features for it (in some format versions); unverified against BDS.
  *
  * @param minPower Optional minimum value for incoming signal strength. If signal strength is greater than or equal to this value
  *        then the 'onRedstoneUpdate' event is sent to Scripts. Defaults to 0 meaning event is always emitted. Value
@@ -28,7 +28,7 @@ import org.geysermc.paletter.internal.component.Check;
  * @since 1.0.0
  */
 @BedrockFormat("1.21.130")
-@Experimental
+@BedrockExperiment("upcoming_creator_features")
 @ServerOnly
 public record RedstoneConsumer(int minPower, boolean propagatesPower) implements BlockComponent {
     /**
@@ -36,6 +36,11 @@ public record RedstoneConsumer(int minPower, boolean propagatesPower) implements
      */
     public static final String NAME = "minecraft:redstone_consumer";
 
+    /**
+     * Checks the components.
+     *
+     * @throws IllegalArgumentException if a component is out of its documented range or conflicts with another
+     */
     public RedstoneConsumer {
         Check.range("RedstoneConsumer.minPower", minPower, null, 15.0);
     }
@@ -46,6 +51,8 @@ public record RedstoneConsumer(int minPower, boolean propagatesPower) implements
     }
 
     /**
+     * Creates a builder with every field at its default.
+     *
      * @return a builder with the defaults applied
      */
     public static @NonNull Builder builder() {
@@ -53,6 +60,8 @@ public record RedstoneConsumer(int minPower, boolean propagatesPower) implements
     }
 
     /**
+     * Creates a builder holding this value's fields, to change some of them.
+     *
      * @return a builder with this value's fields
      */
     public @NonNull Builder toBuilder() {
@@ -75,6 +84,9 @@ public record RedstoneConsumer(int minPower, boolean propagatesPower) implements
 
         /**
          * Sets {@code min_power}.
+         *
+         * @param minPower the value
+         * @return this builder
          */
         public @NonNull Builder minPower(int minPower) {
             this.minPower = minPower;
@@ -83,6 +95,9 @@ public record RedstoneConsumer(int minPower, boolean propagatesPower) implements
 
         /**
          * Sets {@code propagates_power}.
+         *
+         * @param propagatesPower the value
+         * @return this builder
          */
         public @NonNull Builder propagatesPower(boolean propagatesPower) {
             this.propagatesPower = propagatesPower;
@@ -90,6 +105,9 @@ public record RedstoneConsumer(int minPower, boolean propagatesPower) implements
         }
 
         /**
+         * Builds the value from the fields set and the defaults.
+         *
+         * @return the value
          * @throws IllegalStateException if a required field is not set
          * @throws IllegalArgumentException if a value is out of range
          */

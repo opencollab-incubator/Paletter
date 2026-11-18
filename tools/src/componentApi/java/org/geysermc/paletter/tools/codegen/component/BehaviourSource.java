@@ -18,6 +18,7 @@ import org.geysermc.paletter.tools.codegen.component.BehaviourKeys.Key;
 import org.geysermc.paletter.tools.codegen.component.BehaviourKeys.Leaf;
 import org.geysermc.paletter.tools.codegen.component.BehaviourKeys.Owner;
 import org.geysermc.paletter.tools.codegen.component.ComponentGenerator.GenerationException;
+import org.geysermc.paletter.tools.model.rule.Rule;
 
 import javax.lang.model.element.Modifier;
 import java.util.ArrayList;
@@ -153,10 +154,10 @@ final class BehaviourSource {
             Modifier.PRIVATE, Modifier.STATIC, Modifier.FINAL).initializer(list.add(")").build()).build());
         type.addMethod(MethodSpec.constructorBuilder().addModifiers(Modifier.PRIVATE).build());
         type.addMethod(MethodSpec.methodBuilder("keys").addModifiers(Modifier.PUBLIC, Modifier.STATIC)
-            .addJavadoc("@return every $L key\n", plural)
+            .addJavadoc("Lists the keys, in declaration order.\n\n@return every $L key\n", plural)
             .returns(ApiSource.nonNull(ParameterizedTypeName.get(ClassName.get(List.class), ANY_KEY))).addStatement("return KEYS").build());
         type.addMethod(MethodSpec.methodBuilder("key").addModifiers(Modifier.PUBLIC, Modifier.STATIC)
-            .addJavadoc("@return the key of a name, or null if there is none\n")
+            .addJavadoc("Finds a key by its name.\n\n@param name the key name, as {@code BehaviourKey.name()} gives it\n@return the key of a name, or null if there is none\n")
             .returns(ApiSource.nullable(ANY_KEY)).addParameter(ApiSource.nonNull(ClassName.get(String.class)), "name")
             .beginControlFlow("for ($T key : KEYS)", ANY_KEY)
             .beginControlFlow("if (key.name().equals(name))").addStatement("return key").endControlFlow()
@@ -348,13 +349,7 @@ final class BehaviourSource {
         if (component == null) {
             throw new GenerationException(where + ": mappings.json has no component " + id);
         }
-        List<JsonObject> windows = new ArrayList<>();
-        windows.add(component);
-        for (Map.Entry<String, JsonElement> e : component.entrySet()) {
-            if (e.getKey().startsWith("protocol") && e.getValue().isJsonObject()) {
-                windows.add(e.getValue().getAsJsonObject());
-            }
-        }
+        List<JsonObject> windows = org.geysermc.paletter.tools.model.MappingWindows.of(component);
         JsonObject found = null;
         for (JsonObject window : windows) {
             List<JsonObject> rules = new ArrayList<>();
@@ -367,7 +362,7 @@ final class BehaviourSource {
                 rules.addAll(rules(window.getAsJsonObject("fields").getAsJsonObject(leaf.field())));
             }
             List<JsonObject> onto = rules.stream().filter(r -> r.has("wire") && (leaf.leaf() == null
-                ? ComponentGenerator.VALUE_KINDS.contains(r.get("kind").getAsString()) : r.get("wire").getAsString().equals(leaf.leaf()))).toList();
+                ? Rule.of(r).writesValue() : r.get("wire").getAsString().equals(leaf.leaf()))).toList();
             if (onto.isEmpty()) {
                 throw new GenerationException(where + ": mappings.json has no " + (leaf.leaf() == null ? "value rule" : "rule") + " of " + id + " "
                     + (leaf.field().isEmpty() ? "(value forms)" : leaf.field()) + (leaf.leaf() == null ? "" : " onto " + leaf.leaf())

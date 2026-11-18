@@ -26,6 +26,8 @@ public final class Properties {
     }
 
     /**
+     * Creates a set of properties.
+     *
      * @param properties the properties, in the order {@link #all()} returns them
      * @return the properties
      * @throws IllegalArgumentException if two properties have the same {@link Property#fullName()}
@@ -44,6 +46,10 @@ public final class Properties {
     }
 
     /**
+     * Looks a property up by kind and name.
+     *
+     * @param kind the kind of the property
+     * @param name the name within the kind, e.g. {@code minecraft:max_stack_size} for a component
      * @return the property, or null if there is none
      */
     public @Nullable Property get(@NonNull PropertyKind kind, @NonNull String name) {
@@ -51,6 +57,8 @@ public final class Properties {
     }
 
     /**
+     * Looks up a component property.
+     *
      * @param name the component name, e.g. {@code minecraft:max_stack_size}
      * @return the value of a component property if it is a compound, or null
      */
@@ -60,6 +68,8 @@ public final class Properties {
     }
 
     /**
+     * All properties.
+     *
      * @return all properties
      */
     public @NonNull List<Property> all() {
@@ -67,6 +77,9 @@ public final class Properties {
     }
 
     /**
+     * The properties of one kind.
+     *
+     * @param kind the kind to select
      * @return the properties of one kind
      */
     public @NonNull List<Property> of(@NonNull PropertyKind kind) {
@@ -79,6 +92,11 @@ public final class Properties {
         return result;
     }
 
+    /**
+     * Whether there are no properties.
+     *
+     * @return true if there are no properties
+     */
     public boolean isEmpty() {
         return byName.isEmpty();
     }

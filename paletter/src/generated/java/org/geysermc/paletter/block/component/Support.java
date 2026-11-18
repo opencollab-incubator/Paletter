@@ -6,8 +6,8 @@ package org.geysermc.paletter.block.component;
 import java.util.Objects;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
+import org.geysermc.paletter.annotation.BedrockExperiment;
 import org.geysermc.paletter.annotation.BedrockFormat;
-import org.geysermc.paletter.annotation.Experimental;
 
 /**
  * Defines the support shape of the block. Currently only allows for blocks to have the same shape as a Vanilla
@@ -17,20 +17,25 @@ import org.geysermc.paletter.annotation.Experimental;
  * support. The type of support shape for this block. Currently, the options are: "fence" and "stair".
  * <p>
  * Add-on JSON: {@code "minecraft:support"}.
- * Bedrock requires the experiment Upcoming Creator Features for it (in some format versions).
+ * The creator docs name the experiment Upcoming Creator Features for it (in some format versions); unverified against BDS.
  *
  * @param shape Required field. The type of support shape for this block. Add-on JSON {@code shape}. Required.
  * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/blockreference/examples/blockcomponents/minecraftblock_support?view=minecraft-bedrock-stable">Microsoft Learn: minecraft:support</a>
  * @since 1.0.0
  */
 @BedrockFormat("1.21.130")
-@Experimental
+@BedrockExperiment("upcoming_creator_features")
 public record Support(Support. @NonNull Shape shape) implements BlockComponent {
     /**
      * The component name in add-on JSON.
      */
     public static final String NAME = "minecraft:support";
 
+    /**
+     * Checks the components.
+     *
+     * @throws NullPointerException if a required component is null
+     */
     public Support {
         Objects.requireNonNull(shape, "Support.shape");
     }
@@ -41,6 +46,9 @@ public record Support(Support. @NonNull Shape shape) implements BlockComponent {
     }
 
     /**
+     * Creates a builder with every optional field at its default; required fields must be set before
+     * {@code build()}.
+     *
      * @return a builder with the defaults applied
      */
     public static @NonNull Builder builder() {
@@ -48,6 +56,8 @@ public record Support(Support. @NonNull Shape shape) implements BlockComponent {
     }
 
     /**
+     * Creates a builder holding this value's fields, to change some of them.
+     *
      * @return a builder with this value's fields
      */
     public @NonNull Builder toBuilder() {
@@ -67,6 +77,9 @@ public record Support(Support. @NonNull Shape shape) implements BlockComponent {
 
         /**
          * Sets {@code shape}.
+         *
+         * @param shape the value
+         * @return this builder
          */
         public @NonNull Builder shape(@NonNull Shape shape) {
             this.shape = shape;
@@ -74,6 +87,9 @@ public record Support(Support. @NonNull Shape shape) implements BlockComponent {
         }
 
         /**
+         * Builds the value from the fields set and the defaults.
+         *
+         * @return the value
          * @throws IllegalStateException if a required field is not set
          * @throws IllegalArgumentException if a value is out of range
          */
@@ -106,6 +122,8 @@ public record Support(Support. @NonNull Shape shape) implements BlockComponent {
         }
 
         /**
+         * Returns the value in add-on JSON.
+         *
          * @return the value in add-on JSON
          */
         public @NonNull String value() {
@@ -113,7 +131,10 @@ public record Support(Support. @NonNull Shape shape) implements BlockComponent {
         }
 
         /**
-         * @return the constant of an add-on JSON value
+         * Finds the constant of an add-on JSON value.
+         *
+         * @param value the value in add-on JSON
+         * @return the constant of the value
          * @throws IllegalArgumentException if the value is not documented
          */
         public static @NonNull Shape fromValue(@NonNull String value) {

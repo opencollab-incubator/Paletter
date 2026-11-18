@@ -91,18 +91,43 @@ class TraitStateTableTest {
     void aValueNamingNoDocumentedStateIsSkippedAndReported() {
         List<String> skipped = new java.util.ArrayList<>();
         Map<String, List<TraitStateTable.State>> states = TraitStateTable.statesOf(trait(List.of("test:facing", "test:sixteen_way_rotation"),
-            "adds state test:facing: String north, south"), HISTORY, skipped);
+            "adds state test:facing: String north, south"), HISTORY, TraitStateTable.BdsStates.NONE, skipped);
         assertEquals(List.of("test:facing"), List.copyOf(states.keySet()));
         assertEquals(List.of("block:trait:test:turn: enabled_states test:sixteen_way_rotation adds no documented state"), skipped);
     }
 
-    /** With BDS's schema in the model, the enabled_states it lists beyond the docs (sixteen_way_rotation) do not stop the table. */
+    /** A value the docs name no state for adds the state of its own name where BDS's block states have one, with BDS's values. */
     @Test
-    void withTheSchemaInTheModelTheTableSkipsWhatNoDocsName() throws IOException {
+    void aValueNamingNoDocumentedStateTakesBdsState() {
+        List<String> skipped = new java.util.ArrayList<>();
+        TraitStateTable.BdsStates bds = new TraitStateTable.BdsStates("9.9.9", Map.of("test:sixteen_way_rotation", List.of(0, 1, 2)));
+        Map<String, List<TraitStateTable.State>> states = TraitStateTable.statesOf(trait(List.of("test:facing", "test:sixteen_way_rotation"),
+            "adds state test:facing: String north, south"), HISTORY, bds, skipped);
+        TraitStateTable.State state = states.get("test:sixteen_way_rotation").getFirst();
+        assertEquals("test:sixteen_way_rotation", state.name());
+        assertEquals("int", state.type());
+        assertEquals(List.of(0, 1, 2), state.values().stream().map(JsonPrimitive::getAsInt).toList());
+        assertTrue(state.valuesFrom().startsWith("BDS 9.9.9"), state.valuesFrom());
+        assertEquals(List.of(), skipped);
+    }
+
+    /**
+     * With BDS's schema in the model, the enabled_states it lists beyond the docs (sixteen_way_rotation) do not stop the table:
+     * they add BDS's state of their name where a committed dump keeps BDS's block states, else they are skipped.
+     */
+    @Test
+    void withTheSchemaInTheModelTheTableTakesBdsStatesForWhatNoDocsName() throws IOException {
         Path modelDir = ROOT.resolve("data/model");
         Model model = Fixtures.read(modelDir, true).apply(Model.read(modelDir.resolve("components.json")));
         JsonObject table = TraitStateTable.infer(ROOT, model).getAsJsonObject("minecraft:placement_direction");
         assertTrue(table.has("minecraft:cardinal_direction"));
-        assertFalse(table.has("minecraft:sixteen_way_rotation"));
+        TraitStateTable.State bds = TraitStateTable.BdsStates.newest(ROOT).state("minecraft:sixteen_way_rotation");
+        if (bds == null) {
+            assertFalse(table.has("minecraft:sixteen_way_rotation"));
+        } else if (table.has("minecraft:sixteen_way_rotation")) {
+            JsonObject state = table.getAsJsonArray("minecraft:sixteen_way_rotation").get(0).getAsJsonObject();
+            assertEquals("minecraft:sixteen_way_rotation", state.get("name").getAsString());
+            assertEquals(bds.values(), state.getAsJsonArray("values").asList());
+        }
     }
 }

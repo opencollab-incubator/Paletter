@@ -11,7 +11,9 @@ import org.geysermc.paletter.vanilla.BedrockItemVariant;
  */
 public sealed interface Ingredient {
     /**
-     * @return how many items the slot uses; 0 for {@link Empty}, else at least 1
+     * Returns how many items the slot uses.
+     *
+     * @return the count; 0 for {@link Empty}, else at least 1
      */
     int count();
 
@@ -23,6 +25,11 @@ public sealed interface Ingredient {
      * @since 1.0.0
      */
     record Item(@NonNull BedrockItemVariant item, int count) implements Ingredient {
+        /**
+         * Creates the ingredient.
+         *
+         * @throws IllegalArgumentException if the count is below 1
+         */
         public Item {
             requireCount(count);
         }
@@ -36,6 +43,11 @@ public sealed interface Ingredient {
      * @since 1.0.0
      */
     record AnyVariant(@NonNull BedrockItemType type, int count) implements Ingredient {
+        /**
+         * Creates the ingredient.
+         *
+         * @throws IllegalArgumentException if the count is below 1
+         */
         public AnyVariant {
             requireCount(count);
         }
@@ -49,6 +61,11 @@ public sealed interface Ingredient {
      * @since 1.0.0
      */
     record Tag(@NonNull String tag, int count) implements Ingredient {
+        /**
+         * Creates the ingredient.
+         *
+         * @throws IllegalArgumentException if the count is below 1
+         */
         public Tag {
             requireCount(count);
         }
@@ -65,6 +82,11 @@ public sealed interface Ingredient {
      * @since 1.0.0
      */
     record Alias(@NonNull String name, int count) implements Ingredient {
+        /**
+         * Creates the ingredient.
+         *
+         * @throws IllegalArgumentException if the count is below 1
+         */
         public Alias {
             requireCount(count);
         }

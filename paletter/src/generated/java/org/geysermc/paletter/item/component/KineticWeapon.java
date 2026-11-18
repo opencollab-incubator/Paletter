@@ -52,6 +52,11 @@ public record KineticWeapon(KineticWeapon. @Nullable CreativeReach creativeReach
      */
     public static final String NAME = "minecraft:kinetic_weapon";
 
+    /**
+     * Checks the components.
+     *
+     * @throws NullPointerException if a required component is null
+     */
     public KineticWeapon {
         Objects.requireNonNull(reach, "KineticWeapon.reach");
     }
@@ -62,6 +67,8 @@ public record KineticWeapon(KineticWeapon. @Nullable CreativeReach creativeReach
     }
 
     /**
+     * Creates a builder with every field at its default.
+     *
      * @return a builder with the defaults applied
      */
     public static @NonNull Builder builder() {
@@ -69,6 +76,8 @@ public record KineticWeapon(KineticWeapon. @Nullable CreativeReach creativeReach
     }
 
     /**
+     * Creates a builder holding this value's fields, to change some of them.
+     *
      * @return a builder with this value's fields
      */
     public @NonNull Builder toBuilder() {
@@ -112,6 +121,9 @@ public record KineticWeapon(KineticWeapon. @Nullable CreativeReach creativeReach
 
         /**
          * Sets {@code creative_reach}.
+         *
+         * @param creativeReach the value
+         * @return this builder
          */
         public @NonNull Builder creativeReach(@Nullable CreativeReach creativeReach) {
             this.creativeReach = creativeReach;
@@ -120,6 +132,9 @@ public record KineticWeapon(KineticWeapon. @Nullable CreativeReach creativeReach
 
         /**
          * Sets {@code damage_conditions}.
+         *
+         * @param damageConditions the value
+         * @return this builder
          */
         public @NonNull Builder damageConditions(@Nullable Conditions damageConditions) {
             this.damageConditions = damageConditions;
@@ -128,6 +143,9 @@ public record KineticWeapon(KineticWeapon. @Nullable CreativeReach creativeReach
 
         /**
          * Sets {@code damage_modifier}.
+         *
+         * @param damageModifier the value
+         * @return this builder
          */
         public @NonNull Builder damageModifier(float damageModifier) {
             this.damageModifier = damageModifier;
@@ -136,6 +154,9 @@ public record KineticWeapon(KineticWeapon. @Nullable CreativeReach creativeReach
 
         /**
          * Sets {@code damage_multiplier}.
+         *
+         * @param damageMultiplier the value
+         * @return this builder
          */
         public @NonNull Builder damageMultiplier(float damageMultiplier) {
             this.damageMultiplier = damageMultiplier;
@@ -144,6 +165,9 @@ public record KineticWeapon(KineticWeapon. @Nullable CreativeReach creativeReach
 
         /**
          * Sets {@code delay}.
+         *
+         * @param delay the value
+         * @return this builder
          */
         public @NonNull Builder delay(int delay) {
             this.delay = delay;
@@ -152,6 +176,9 @@ public record KineticWeapon(KineticWeapon. @Nullable CreativeReach creativeReach
 
         /**
          * Sets {@code dismount_conditions}.
+         *
+         * @param dismountConditions the value
+         * @return this builder
          */
         public @NonNull Builder dismountConditions(@Nullable Conditions dismountConditions) {
             this.dismountConditions = dismountConditions;
@@ -160,6 +187,9 @@ public record KineticWeapon(KineticWeapon. @Nullable CreativeReach creativeReach
 
         /**
          * Sets {@code hitbox_margin}.
+         *
+         * @param hitboxMargin the value
+         * @return this builder
          */
         public @NonNull Builder hitboxMargin(float hitboxMargin) {
             this.hitboxMargin = hitboxMargin;
@@ -168,6 +198,9 @@ public record KineticWeapon(KineticWeapon. @Nullable CreativeReach creativeReach
 
         /**
          * Sets {@code knockback_conditions}.
+         *
+         * @param knockbackConditions the value
+         * @return this builder
          */
         public @NonNull Builder knockbackConditions(@Nullable Conditions knockbackConditions) {
             this.knockbackConditions = knockbackConditions;
@@ -176,6 +209,9 @@ public record KineticWeapon(KineticWeapon. @Nullable CreativeReach creativeReach
 
         /**
          * Sets {@code reach}.
+         *
+         * @param reach the value
+         * @return this builder
          */
         public @NonNull Builder reach(@NonNull Reach reach) {
             this.reach = reach;
@@ -183,6 +219,9 @@ public record KineticWeapon(KineticWeapon. @Nullable CreativeReach creativeReach
         }
 
         /**
+         * Builds the value from the fields set and the defaults.
+         *
+         * @return the value
          * @throws IllegalStateException if a required field is not set
          * @throws IllegalArgumentException if a value is out of range
          */
@@ -199,6 +238,8 @@ public record KineticWeapon(KineticWeapon. @Nullable CreativeReach creativeReach
      */
     public record CreativeReach(float max, float min) {
         /**
+         * Creates a builder with every field at its default.
+         *
          * @return a builder with the defaults applied
          */
         public static @NonNull Builder builder() {
@@ -206,6 +247,8 @@ public record KineticWeapon(KineticWeapon. @Nullable CreativeReach creativeReach
         }
 
         /**
+         * Creates a builder holding this value's fields, to change some of them.
+         *
          * @return a builder with this value's fields
          */
         public @NonNull Builder toBuilder() {
@@ -228,6 +271,9 @@ public record KineticWeapon(KineticWeapon. @Nullable CreativeReach creativeReach
 
             /**
              * Sets {@code max}.
+             *
+             * @param max the value
+             * @return this builder
              */
             public @NonNull Builder max(float max) {
                 this.max = max;
@@ -236,6 +282,9 @@ public record KineticWeapon(KineticWeapon. @Nullable CreativeReach creativeReach
 
             /**
              * Sets {@code min}.
+             *
+             * @param min the value
+             * @return this builder
              */
             public @NonNull Builder min(float min) {
                 this.min = min;
@@ -243,6 +292,9 @@ public record KineticWeapon(KineticWeapon. @Nullable CreativeReach creativeReach
             }
 
             /**
+             * Builds the value from the fields set and the defaults.
+             *
+             * @return the value
              * @throws IllegalStateException if a required field is not set
              * @throws IllegalArgumentException if a value is out of range
              */
@@ -264,12 +316,19 @@ public record KineticWeapon(KineticWeapon. @Nullable CreativeReach creativeReach
      *        Add-on JSON {@code min_speed}. Default: <code>0</code>. At least 0 (BDS 1.26.63.1).
      */
     public record Conditions(int maxDuration, float minRelativeSpeed, float minSpeed) {
+        /**
+         * Checks the components.
+         *
+         * @throws IllegalArgumentException if a component is out of its documented range or conflicts with another
+         */
         public Conditions {
             Check.range("KineticWeapon.Conditions.minRelativeSpeed", minRelativeSpeed, 0.0, null);
             Check.range("KineticWeapon.Conditions.minSpeed", minSpeed, 0.0, null);
         }
 
         /**
+         * Creates a builder with every field at its default.
+         *
          * @return a builder with the defaults applied
          */
         public static @NonNull Builder builder() {
@@ -277,6 +336,8 @@ public record KineticWeapon(KineticWeapon. @Nullable CreativeReach creativeReach
         }
 
         /**
+         * Creates a builder holding this value's fields, to change some of them.
+         *
          * @return a builder with this value's fields
          */
         public @NonNull Builder toBuilder() {
@@ -302,6 +363,9 @@ public record KineticWeapon(KineticWeapon. @Nullable CreativeReach creativeReach
 
             /**
              * Sets {@code max_duration}.
+             *
+             * @param maxDuration the value
+             * @return this builder
              */
             public @NonNull Builder maxDuration(int maxDuration) {
                 this.maxDuration = maxDuration;
@@ -310,6 +374,9 @@ public record KineticWeapon(KineticWeapon. @Nullable CreativeReach creativeReach
 
             /**
              * Sets {@code min_relative_speed}.
+             *
+             * @param minRelativeSpeed the value
+             * @return this builder
              */
             public @NonNull Builder minRelativeSpeed(float minRelativeSpeed) {
                 this.minRelativeSpeed = minRelativeSpeed;
@@ -318,6 +385,9 @@ public record KineticWeapon(KineticWeapon. @Nullable CreativeReach creativeReach
 
             /**
              * Sets {@code min_speed}.
+             *
+             * @param minSpeed the value
+             * @return this builder
              */
             public @NonNull Builder minSpeed(float minSpeed) {
                 this.minSpeed = minSpeed;
@@ -325,6 +395,9 @@ public record KineticWeapon(KineticWeapon. @Nullable CreativeReach creativeReach
             }
 
             /**
+             * Builds the value from the fields set and the defaults.
+             *
+             * @return the value
              * @throws IllegalStateException if a required field is not set
              * @throws IllegalArgumentException if a value is out of range
              */
@@ -343,6 +416,8 @@ public record KineticWeapon(KineticWeapon. @Nullable CreativeReach creativeReach
      */
     public record Reach(float max, float min) {
         /**
+         * Creates a builder with every field at its default.
+         *
          * @return a builder with the defaults applied
          */
         public static @NonNull Builder builder() {
@@ -350,6 +425,8 @@ public record KineticWeapon(KineticWeapon. @Nullable CreativeReach creativeReach
         }
 
         /**
+         * Creates a builder holding this value's fields, to change some of them.
+         *
          * @return a builder with this value's fields
          */
         public @NonNull Builder toBuilder() {
@@ -372,6 +449,9 @@ public record KineticWeapon(KineticWeapon. @Nullable CreativeReach creativeReach
 
             /**
              * Sets {@code max}.
+             *
+             * @param max the value
+             * @return this builder
              */
             public @NonNull Builder max(float max) {
                 this.max = max;
@@ -380,6 +460,9 @@ public record KineticWeapon(KineticWeapon. @Nullable CreativeReach creativeReach
 
             /**
              * Sets {@code min}.
+             *
+             * @param min the value
+             * @return this builder
              */
             public @NonNull Builder min(float min) {
                 this.min = min;
@@ -387,6 +470,9 @@ public record KineticWeapon(KineticWeapon. @Nullable CreativeReach creativeReach
             }
 
             /**
+             * Builds the value from the fields set and the defaults.
+             *
+             * @return the value
              * @throws IllegalStateException if a required field is not set
              * @throws IllegalArgumentException if a value is out of range
              */

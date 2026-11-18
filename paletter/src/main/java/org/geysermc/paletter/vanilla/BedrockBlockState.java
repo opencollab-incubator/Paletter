@@ -18,7 +18,7 @@ import java.util.Map;
  * registered custom blocks: a {@link org.geysermc.paletter.block.CustomBlock} owns its {@link
  * org.geysermc.paletter.block.CustomBlock#type() type} and states, and a palette it is registered in hands back exactly
  * those ({@code Palette#blockState(NbtMap, Lookup)}, ...). The states
- * of a type made by {@link BedrockBlockType#fromIdentifier(String)} for an unknown identifier are equal by value, not identical.
+ * of a type made for an identifier the bundled data does not know are equal by value, not identical.
  * Equal custom blocks registered by different layers each own their states; those are equal, not identical.
  * <p>
  * Canonical ids come from {@link org.geysermc.paletter.Paletter#canonicalBlocks()} (vanilla states) and
@@ -43,9 +43,11 @@ public final class BedrockBlockState {
     }
 
     /**
-     * Plumbing of {@link org.geysermc.paletter.Palette}: the handle of a canonical id.
+     * Internal: the handle of a canonical id, for {@link org.geysermc.paletter.Palette}.
      *
-     * @return the state of a canonical id of any palette lineage, or null if there is no such id 
+     * @param canonical the canonical blocks of a palette
+     * @param id the canonical id
+     * @return the state of a canonical id of any palette lineage, or null if there is no such id
      */
     @Internal
     public static @Nullable BedrockBlockState fromCanonical(@NonNull CanonicalBlocks canonical, int id) {
@@ -66,11 +68,20 @@ public final class BedrockBlockState {
         return type == null ? null : type.layout().byOffset(id - canonical.customStartAt(id));
     }
 
+    /**
+     * The type of the state.
+     *
+     * @return the block type this is a state of
+     */
     public @NonNull BedrockBlockType type() {
         return layout.owner;
     }
 
     /**
+     * Reads the value of a state property.
+     *
+     * @param <T> the value type of the state
+     * @param state the state property to read
      * @return the value of a state
      * @throws IllegalArgumentException if the block does not have the state
      * @throws IllegalStateException if the value has no constant in the state's enum (data newer than the constants)
@@ -87,6 +98,11 @@ public final class BedrockBlockState {
     }
 
     /**
+     * Changes the value of a state property.
+     *
+     * @param <T> the value type of the state
+     * @param state the state property to change
+     * @param value the new value
      * @return this state with one value changed
      * @throws IllegalArgumentException if the block does not have the state or the value
      */
@@ -99,10 +115,26 @@ public final class BedrockBlockState {
         return with(property, index);
     }
 
+    /**
+     * Changes the value of a boolean state property.
+     *
+     * @param state the state property to change
+     * @param value the new value
+     * @return this state with one value changed
+     * @throws IllegalArgumentException if the block does not have the state
+     */
     public @NonNull BedrockBlockState with(@NonNull BoolState state, boolean value) {
         return with((BedrockState<Boolean>) state, value);
     }
 
+    /**
+     * Changes the value of an integer state property.
+     *
+     * @param state the state property to change
+     * @param value the new value
+     * @return this state with one value changed
+     * @throws IllegalArgumentException if the block does not have the state or the value
+     */
     public @NonNull BedrockBlockState with(@NonNull IntState state, int value) {
         int property = BedrockBlockType.requireProperty(layout, state);
         int index = layout.valueIndex(property, value);
@@ -126,10 +158,11 @@ public final class BedrockBlockState {
     }
 
     /**
-     * @return the values of the state by state name, in the order of the block's states in Bedrock Dedicated Server's
-     *         data: {@link Boolean}, {@link Integer} or {@link String}. Unmodifiable. Together with
-     *         {@code type().identifier()} it finds this state again:
-     *         {@code palette.blockState(identifier, values(), Lookup.EXACT)}
+     * Returns the values of the state by state name, in the order of the block's states in Bedrock Dedicated Server's
+     * data. Together with {@code type().identifier()} they find this state again:
+     * {@code palette.blockState(identifier, values(), Lookup.EXACT)}
+     *
+     * @return the values: {@link Boolean}, {@link Integer} or {@link String}; unmodifiable
      */
     public @NonNull Map<String, Object> values() {
         Map<String, Object> values = this.values;
@@ -145,6 +178,8 @@ public final class BedrockBlockState {
     }
 
     /**
+     * Returns the state as NBT.
+     *
      * @return the state as {@code {name, states}}
      */
     public @NonNull NbtMap toNbt() {
@@ -157,10 +192,12 @@ public final class BedrockBlockState {
     }
 
     /**
-     * The canonical id of this state in a palette's canonical blocks: the precomputed vanilla id for vanilla states of
+     * Internal: the canonical id of this state in a palette's canonical blocks: the precomputed vanilla id for vanilla
+     * states of
      * palettes of the bundled newest version, an array lookup in the palette's own table for the others, the custom
      * block's id in that lineage, else a hash lookup.
      *
+     * @param canonical the canonical blocks of a palette
      * @return the canonical id, or -1 if the state is not in it
      */
     @Internal

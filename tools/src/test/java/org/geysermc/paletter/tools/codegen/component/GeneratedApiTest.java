@@ -6,6 +6,7 @@ import org.geysermc.paletter.block.component.DestructibleByMining;
 import org.geysermc.paletter.block.component.EmbeddedVisual;
 import org.geysermc.paletter.block.component.Friction;
 import org.geysermc.paletter.block.component.Geometry;
+import org.geysermc.paletter.block.component.UvLock;
 import org.geysermc.paletter.block.component.ItemVisual;
 import org.geysermc.paletter.block.component.LightEmission;
 import org.geysermc.paletter.internal.component.ComponentIndex;
@@ -69,7 +70,7 @@ class GeneratedApiTest {
             for (ApiModel.ObjType o : types(c)) {
                 Class<?> type = recordClass(c, o);
                 List<ApiModel.Field> fields = ApiSource.allFields(o);
-                boolean anyRequired = fields.stream().anyMatch(f -> f.required && f.alternatives.isEmpty());
+                boolean anyRequired = fields.stream().anyMatch(f -> f.required);
                 // An empty builder fails exactly when something is required
                 Object empty = builder(type);
                 try {
@@ -82,7 +83,7 @@ class GeneratedApiTest {
                         if (f.defaultValue != null) {
                             defaults++;
                             assertEquals(normalize(f.defaultValue), normalize(value), c.id + " " + f.path);
-                        } else if (!f.required && f.docsDefault != null && f.defaultNote == null && f.alternativeOf == null) {
+                        } else if (!f.required && f.docsDefault != null && f.defaultNote == null) {
                             fail(c.id + " " + f.path + " drops its documented default without saying why");
                         }
                     }
@@ -162,11 +163,11 @@ class GeneratedApiTest {
         assertEquals(10, Durability.DamageChance.builder().min(10).max(10).build().max(), "equal is in order");
         // and a value of another field BDS refuses a map with ("Cannot use bone visibility feature with: minecraft:geometry.full_block")
         Map<String, String> bone = Map.of("arm", "q.block_state('test:lit')");
-        assertThrows(IllegalArgumentException.class, () -> ItemVisual.Geometry.builder().identifier("minecraft:geometry.full_block").boneVisibility(bone).build());
-        assertThrows(IllegalArgumentException.class, () -> EmbeddedVisual.Geometry.builder().identifier("minecraft:geometry.full_block").boneVisibility(bone).build());
+        assertThrows(IllegalArgumentException.class, () -> ItemVisual.VisualGeometry.builder().identifier("minecraft:geometry.full_block").boneVisibility(bone).build());
+        assertThrows(IllegalArgumentException.class, () -> EmbeddedVisual.VisualGeometry.builder().identifier("minecraft:geometry.full_block").boneVisibility(bone).build());
         assertThrows(IllegalArgumentException.class, () -> Geometry.builder().identifier("minecraft:geometry.full_block").boneVisibility(bone).build());
-        assertEquals(bone, ItemVisual.Geometry.builder().identifier("geometry.lamp").boneVisibility(bone).build().boneVisibility());
-        assertEquals(Map.of(), ItemVisual.Geometry.of("minecraft:geometry.full_block").boneVisibility(), "BDS takes the empty map");
+        assertEquals(bone, ItemVisual.VisualGeometry.builder().identifier("geometry.lamp").boneVisibility(bone).build().boneVisibility());
+        assertEquals(Map.of(), ItemVisual.VisualGeometry.of("minecraft:geometry.full_block").boneVisibility(), "BDS takes the empty map");
     }
 
     /** The JSON BDS accepts that the docs do not model, as the API expresses it (the conformance suite checks each against BDS's NBT). */
@@ -185,11 +186,37 @@ class GeneratedApiTest {
         // A descriptor entry may name no item
         assertNull(DestructibleByMining.ItemSpecificSpeeds.builder().destroySpeed(1f).build().item());
         assertEquals(Map.of("item", "item"), ComponentIndex.DESCRIPTORS.get(DestructibleByMining.ItemSpecificSpeeds.class));
-        // uv_lock is a boolean or a list of bones, never both
-        assertEquals(List.of("a", "b"), Geometry.builder().identifier("g").uvLockBones("a", "b").build().uvLockBones());
-        Geometry both = Geometry.builder().identifier("g").uvLock(true).uvLockBones("a").build();
-        assertNull(both.uvLock(), "the last form set wins");
-        assertThrows(IllegalArgumentException.class, () -> new Geometry(null, null, "x", "y", "g", null, true, List.of("a")));
+        // uv_lock is a boolean or a list of bones, never both: one value of a sealed type, the last form set wins
+        assertEquals(UvLock.bones(List.of("a", "b")), Geometry.builder().identifier("g").uvLock("a", "b").build().uvLock());
+        assertEquals(UvLock.flag(true), Geometry.builder().identifier("g").uvLock(true).build().uvLock());
+        assertEquals(UvLock.flag(false), EmbeddedVisual.VisualGeometry.builder().identifier("g").build().uvLock(), "the documented default");
+        assertEquals(UvLock.bones(List.of("a")), Geometry.builder().identifier("g").uvLock(true).uvLock("a").build().uvLock());
+        assertThrows(NullPointerException.class, () -> UvLock.bones(null));
+    }
+
+    @Test
+    void everyUnionIsASealedTypeOfOneValueRecordsSharedByItsFields() throws Exception {
+        ApiModel model = model();
+        assertTrue(!model.unions.isEmpty());
+        for (ApiModel.UnionType u : model.unions.values()) {
+            Class<?> type = Class.forName((u.owner == null ? u.kind.pkg() + "." : u.kind.pkg() + "." + u.owner.className + "$") + u.name);
+            assertTrue(type.isInterface() && type.isSealed(), u.name);
+            assertEquals(u.variants.size(), type.getPermittedSubclasses().length, u.name);
+            for (Class<?> variant : type.getPermittedSubclasses()) {
+                assertTrue(variant.isRecord() && variant.getRecordComponents().length == 1
+                    && variant.getRecordComponents()[0].getName().equals("value"), u.name + "." + variant.getSimpleName());
+                assertTrue(u.variants.stream().anyMatch(v -> v.name.equals(variant.getSimpleName())), variant.getName());
+            }
+            // A factory named after each form
+            for (ApiModel.Variant v : u.variants) {
+                assertTrue(java.util.Arrays.stream(type.getMethods()).anyMatch(m -> m.getName().equals(v.factory())), u.name + "." + v.factory());
+            }
+        }
+        // One type for the three geometries that take uv_lock
+        assertEquals(UvLock.class, Geometry.class.getRecordComponents()[Geometry.class.getRecordComponents().length - 1].getType());
+        assertEquals(UvLock.class, ItemVisual.VisualGeometry.class.getRecordComponents()[ItemVisual.VisualGeometry.class.getRecordComponents().length - 1].getType());
+        assertEquals(UvLock.class, EmbeddedVisual.VisualGeometry.class.getRecordComponents()[EmbeddedVisual.VisualGeometry.class.getRecordComponents().length - 1].getType());
+        assertEquals(3, model.unions.get("UvLock").users.size());
     }
 
     private static Method setter(Object builder, ApiModel.Field f) throws NoSuchMethodException {
@@ -233,6 +260,11 @@ class GeneratedApiTest {
                 out.add(normalize(e));
             }
             return out;
+        }
+        if (v != null && v.getClass().isRecord() && !ComponentIndex.JSON_KEYS.containsKey(v.getClass())
+            && v.getClass().getRecordComponents().length == 1 && v.getClass().getRecordComponents()[0].getName().equals("value")) {
+            // A form of a union: its value is what the JSON has
+            return normalize(v.getClass().getRecordComponents()[0].getAccessor().invoke(v));
         }
         if (v != null && v.getClass().isRecord()) {
             var components = v.getClass().getRecordComponents();

@@ -6,7 +6,6 @@ package org.geysermc.paletter.block.component;
 import java.util.Objects;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
-import org.geysermc.paletter.annotation.Experimental;
 import org.geysermc.paletter.annotation.ServerOnly;
 
 /**
@@ -19,7 +18,8 @@ import org.geysermc.paletter.annotation.ServerOnly;
  * Add-on JSON: {@code "minecraft:instrument_sound"}.
  * Server only: BDS accepts it in packs but sends nothing to clients (BDS 1.26.36.1, 1.26.45.1, 1.26.52.3,
  * 1.26.63.1, 1.26.70.24), so it has no client effect. Palettes leave it out without a warning.
- * Bedrock requires the experiment experimental (toggle not named) for it (in some format versions).
+ * The creator docs name the experiment experimental (toggle not named) for it (in some format versions); unverified against BDS.
+ * Unverified: the creator docs name experiment "experimental (toggle not named)", which is in no capture.
  *
  * @param down The instrument sound that plays when the note block is above this block (the block's down face is exposed to
  *        the note block). Use "note.none" to specify no sound for this face. Add-on JSON {@code down}. Default:
@@ -30,7 +30,6 @@ import org.geysermc.paletter.annotation.ServerOnly;
  * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/blockreference/examples/blockcomponents/minecraftblock_instrument_sound?view=minecraft-bedrock-stable">Microsoft Learn: minecraft:instrument_sound</a>
  * @since 1.0.0
  */
-@Experimental
 @ServerOnly
 public record InstrumentSound(InstrumentSound. @NonNull Down down,
         InstrumentSound. @NonNull Up up) implements BlockComponent {
@@ -39,6 +38,11 @@ public record InstrumentSound(InstrumentSound. @NonNull Down down,
      */
     public static final String NAME = "minecraft:instrument_sound";
 
+    /**
+     * Checks the components.
+     *
+     * @throws NullPointerException if a required component is null
+     */
     public InstrumentSound {
         Objects.requireNonNull(down, "InstrumentSound.down");
         Objects.requireNonNull(up, "InstrumentSound.up");
@@ -50,6 +54,8 @@ public record InstrumentSound(InstrumentSound. @NonNull Down down,
     }
 
     /**
+     * Creates a builder with every field at its default.
+     *
      * @return a builder with the defaults applied
      */
     public static @NonNull Builder builder() {
@@ -57,6 +63,8 @@ public record InstrumentSound(InstrumentSound. @NonNull Down down,
     }
 
     /**
+     * Creates a builder holding this value's fields, to change some of them.
+     *
      * @return a builder with this value's fields
      */
     public @NonNull Builder toBuilder() {
@@ -79,6 +87,9 @@ public record InstrumentSound(InstrumentSound. @NonNull Down down,
 
         /**
          * Sets {@code down}.
+         *
+         * @param down the value
+         * @return this builder
          */
         public @NonNull Builder down(@NonNull Down down) {
             this.down = down;
@@ -87,6 +98,9 @@ public record InstrumentSound(InstrumentSound. @NonNull Down down,
 
         /**
          * Sets {@code up}.
+         *
+         * @param up the value
+         * @return this builder
          */
         public @NonNull Builder up(@NonNull Up up) {
             this.up = up;
@@ -94,6 +108,9 @@ public record InstrumentSound(InstrumentSound. @NonNull Down down,
         }
 
         /**
+         * Builds the value from the fields set and the defaults.
+         *
+         * @return the value
          * @throws IllegalStateException if a required field is not set
          * @throws IllegalArgumentException if a value is out of range
          */
@@ -248,6 +265,8 @@ public record InstrumentSound(InstrumentSound. @NonNull Down down,
         }
 
         /**
+         * Returns the value in add-on JSON.
+         *
          * @return the value in add-on JSON
          */
         public @NonNull String value() {
@@ -255,7 +274,10 @@ public record InstrumentSound(InstrumentSound. @NonNull Down down,
         }
 
         /**
-         * @return the constant of an add-on JSON value
+         * Finds the constant of an add-on JSON value.
+         *
+         * @param value the value in add-on JSON
+         * @return the constant of the value
          * @throws IllegalArgumentException if the value is not documented
          */
         public static @NonNull Down fromValue(@NonNull String value) {
@@ -414,6 +436,8 @@ public record InstrumentSound(InstrumentSound. @NonNull Down down,
         }
 
         /**
+         * Returns the value in add-on JSON.
+         *
          * @return the value in add-on JSON
          */
         public @NonNull String value() {
@@ -421,7 +445,10 @@ public record InstrumentSound(InstrumentSound. @NonNull Down down,
         }
 
         /**
-         * @return the constant of an add-on JSON value
+         * Finds the constant of an add-on JSON value.
+         *
+         * @param value the value in add-on JSON
+         * @return the constant of the value
          * @throws IllegalArgumentException if the value is not documented
          */
         public static @NonNull Up fromValue(@NonNull String value) {

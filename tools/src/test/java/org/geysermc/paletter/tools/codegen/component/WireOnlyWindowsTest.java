@@ -21,6 +21,19 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  */
 class WireOnlyWindowsTest {
     @Test
+    void everySpecCaptureHasThePublisherLeafTheUseOnHookStartsAt() throws IOException {
+        java.util.List<java.nio.file.Path> captures = ComponentConformanceTest.captures();
+        int oldest = ComponentConformanceTest.protocolOf(captures.getFirst());
+        assertTrue(WireOnlyWire.USE_ON_HOOK_FROM <= oldest, "UseOnHook's window starts after the oldest capture, " + oldest);
+        for (java.nio.file.Path capture : captures) {
+            boolean has = ComponentConformanceTest.read(capture.resolve("custom_item_registry.nbt")).getList("items", org.cloudburstmc.nbt.NbtType.COMPOUND)
+                .stream().anyMatch(item -> item.getCompound("data").getCompound("components").getCompound("minecraft:publisher_on_use_on")
+                    .containsKey("autoSucceedOnClient"));
+            assertTrue(has, capture + " has no item with minecraft:publisher_on_use_on.autoSucceedOnClient");
+        }
+    }
+
+    @Test
     void theItemPropertiesOfWireOnlyComponentsAreInEveryEnvelopeWindow() throws IOException {
         JsonObject mappings = JsonParser.parseString(Files.readString(ComponentConformanceTest.MODEL.resolve("mappings.json"),
             StandardCharsets.UTF_8)).getAsJsonObject();

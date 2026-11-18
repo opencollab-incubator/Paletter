@@ -3,6 +3,7 @@ package org.geysermc.paletter.vanilla;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.geysermc.paletter.annotation.Internal;
+import org.geysermc.paletter.internal.data.Renames;
 import org.geysermc.paletter.internal.CanonicalItems;
 import org.geysermc.paletter.item.CustomItem;
 import org.geysermc.paletter.internal.item.ItemVariant;
@@ -59,38 +60,69 @@ public final class BedrockItemType implements ItemKey {
     }
 
     private BedrockItemType(String identifier) {
+        this(identifier, true);
+    }
+
+    /**
+     * A type without a canonical id in the bundled data: its variants find their id by identifier in the palette's own
+     * canonical items. A custom type, or with {@code custom} false the type of an item a preview added (see
+     * {@link PreviewItems}).
+     */
+    private BedrockItemType(String identifier, boolean custom) {
         this.identifier = Objects.requireNonNull(identifier);
         this.fallback = null;
-        this.custom = true;
+        this.custom = custom;
         this.education = false;
         this.linked = new Linked(this, true, List.of(base), new int[] {-1});
     }
 
     /**
-     * Plumbing: the type of an identifier: the vanilla constant if the identifier (after renames) is vanilla in the newest
-     * bundled data or has a generated constant, else a custom type known by its identifier only (not interned, so unknown
-     * identifiers never accumulate; equal, not identical, for equal identifiers). Loads the data. Use
-     * {@link org.geysermc.paletter.Palette#itemType} or the constants of {@link BedrockItems}.
+     * Internal: the type of an identifier: the vanilla constant if the identifier (after renames) is vanilla in the
+     * newest bundled data or has a generated constant, else a custom type known by its identifier only (not interned,
+     * so unknown identifiers never accumulate; equal, not identical, for equal identifiers). Loads the data. Use
+     * {@link #byIdentifier(String)}, {@link org.geysermc.paletter.Palette#itemType} or the constants of
+     * {@link BedrockItems}.
+     *
+     * @param identifier an item identifier
+     * @return the type of the identifier
      */
     @Internal
     public static @NonNull BedrockItemType fromIdentifier(@NonNull String identifier) {
-        Objects.requireNonNull(identifier);
-        VanillaIndex index = VanillaIndex.get();
-        String renamed = index.renames.item(identifier);
-        if (renamed != null && index.itemOrConstant(renamed) != null) {
-            identifier = renamed;
-        }
-        BedrockItemType known = index.itemOrConstant(identifier);
-        if (known != null) {
-            return known;
-        }
-        return new BedrockItemType(identifier);
+        BedrockItemType known = byIdentifier(identifier);
+        return known != null ? known : new BedrockItemType(identifier);
     }
 
     /**
-     * Plumbing of {@link CustomItem} and {@link org.geysermc.paletter.block.CustomBlock}, which create their type once and
-     * own it: use {@link CustomItem#type()} and {@link org.geysermc.paletter.block.CustomBlock#itemType()}.
+     * Finds the vanilla type of an identifier, without making a type for an unknown identifier. The identifier is first
+     * mapped through the renames of the bundled data, so the name an older version gave an item finds its type. Loads
+     * the data.
      *
+     * @param identifier an item identifier
+     * @return the vanilla constant, or null if the identifier (after renames) is not an item of the newest bundled data and
+     *         has no generated constant
+     * @throws NullPointerException if the identifier is null
+     * @since 1.0.0
+     */
+    public static @Nullable BedrockItemType byIdentifier(@NonNull String identifier) {
+        return byIdentifier(identifier, VanillaIndex.get().renames);
+    }
+
+    /** {@link #byIdentifier(String)} with the renames given, for a test of them. */
+    static @Nullable BedrockItemType byIdentifier(String identifier, Renames renames) {
+        Objects.requireNonNull(identifier);
+        VanillaIndex index = VanillaIndex.get();
+        String renamed = renames.item(identifier);
+        if (renamed != null && index.itemOrConstant(renamed) != null) {
+            identifier = renamed;
+        }
+        return index.itemOrConstant(identifier);
+    }
+
+    /**
+     * Internal: plumbing of {@link CustomItem} and {@link org.geysermc.paletter.block.CustomBlock}, which create their
+     * type once and own it: use {@link CustomItem#type()} and {@link org.geysermc.paletter.block.CustomBlock#itemType()}.
+     *
+     * @param identifier the item identifier
      * @return a new custom type of an identifier, with its base variant. Loads no data
      */
     @Internal
@@ -98,7 +130,14 @@ public final class BedrockItemType implements ItemKey {
         return new BedrockItemType(identifier);
     }
 
+    /** The type of an item a preview added, for {@link PreviewItems} only. */
+    static BedrockItemType preview(String identifier) {
+        return new BedrockItemType(identifier, false);
+    }
+
     /**
+     * The vanilla item types.
+     *
      * @return every vanilla item type of the newest bundled data, in runtime id order. Loads the data
      */
     public static @NonNull List<BedrockItemType> vanillaTypes() {
@@ -181,6 +220,11 @@ public final class BedrockItemType implements ItemKey {
         return fallback;
     }
 
+    /**
+     * The item identifier.
+     *
+     * @return the item identifier, e.g. {@code minecraft:apple}
+     */
     public @NonNull String identifier() {
         return identifier;
     }
@@ -196,6 +240,12 @@ public final class BedrockItemType implements ItemKey {
         return ConstantNames.of(this);
     }
 
+    /**
+     * Whether this is a custom type.
+     *
+     * @return true for the type of a {@link CustomItem} or of a custom block's item, and for a type made for an
+     *         identifier the bundled data does not know
+     */
     public boolean isCustom() {
         return custom;
     }
@@ -205,6 +255,7 @@ public final class BedrockItemType implements ItemKey {
      * constant carries {@link org.geysermc.paletter.annotation.Education @Education} for). Decided from BDS captures when
      * the constants were generated; always false for custom items and for types made for an unknown identifier.
      *
+     * @return true if BDS only offers the item with Education Edition features
      * @since 1.0.0
      */
     public boolean isEducation() {
@@ -212,6 +263,8 @@ public final class BedrockItemType implements ItemKey {
     }
 
     /**
+     * Whether the bundled data has this type.
+     *
      * @return false for a vanilla constant the bundled data does not have: it resolves to its fallback type
      */
     public boolean isAvailable() {
@@ -219,6 +272,8 @@ public final class BedrockItemType implements ItemKey {
     }
 
     /**
+     * The type the bundled data resolves this type to.
+     *
      * @return this type, or for a type that is not {@link #isAvailable() available} the type it resolves to
      */
     public @NonNull BedrockItemType resolved() {
@@ -226,6 +281,8 @@ public final class BedrockItemType implements ItemKey {
     }
 
     /**
+     * The base variant of the type.
+     *
      * @return the base variant: damage 0, no block state. Loads no data
      */
     @Override
@@ -246,6 +303,7 @@ public final class BedrockItemType implements ItemKey {
      * give it one with {@link org.geysermc.paletter.PaletteLayer.Builder#variant(ItemKey)}); those are not kept, so
      * arbitrary auxes cannot grow memory. Loads no bundled data: only the constants of {@link BedrockItemVariants}.
      *
+     * @param damage the aux (damage) value
      * @return the variant of this type with this aux value
      */
     public @NonNull BedrockItemVariant variant(int damage) {
@@ -271,6 +329,9 @@ public final class BedrockItemType implements ItemKey {
     }
 
     /**
+     * Whether the bundled data names a variant with a damage value.
+     *
+     * @param damage the aux (damage) value
      * @return whether the newest bundled data names a variant with this damage value, i.e. it is one of
      *         {@link #variants()}. Loads the data
      * @since 1.0.0
@@ -285,6 +346,8 @@ public final class BedrockItemType implements ItemKey {
     }
 
     /**
+     * The variants of the type that have a canonical id.
+     *
      * @return the variants with a canonical id: the base variant first, then the creative inventory's other variants
      */
     public @NonNull List<BedrockItemVariant> variants() {
@@ -292,6 +355,8 @@ public final class BedrockItemType implements ItemKey {
     }
 
     /**
+     * Internal: the base variant as an {@link ItemVariant}.
+     *
      * @return the base variant as an {@link ItemVariant} (of the {@link #resolved()} type)
      */
     @Internal
@@ -300,6 +365,9 @@ public final class BedrockItemType implements ItemKey {
     }
 
     /**
+     * Internal: the canonical id of the base variant in a palette's canonical items.
+     *
+     * @param canonical the canonical items of a palette
      * @return the canonical id of the base variant in a palette's canonical items, or -1
      */
     @Internal

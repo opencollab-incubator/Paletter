@@ -7,7 +7,7 @@ import org.checkerframework.checker.nullness.qual.Nullable;
 import org.geysermc.paletter.creative.CreativeCategory;
 import org.geysermc.paletter.creative.CreativePlacement;
 import org.geysermc.paletter.item.component.ItemComponent;
-import org.geysermc.paletter.item.component.MenuCategory;
+import org.geysermc.paletter.item.component.ItemMenuCategory;
 import org.geysermc.paletter.item.component.Tags;
 import org.geysermc.paletter.vanilla.BedrockItemType;
 
@@ -39,7 +39,7 @@ import java.util.Objects;
 public final class CustomItem {
     private final String identifier;
     private final List<ItemComponent> components;
-    private final @Nullable MenuCategory menuCategory;
+    private final @Nullable ItemMenuCategory menuCategory;
     private final CreativePlacement creative;
     private final BedrockItemType type;
 
@@ -49,7 +49,7 @@ public final class CustomItem {
      * @param menuCategory the description's {@code menu_category}, or null: not in the creative inventory
      * @param creative the position within the category and group
      */
-    private CustomItem(@NonNull String identifier, @NonNull List<ItemComponent> components, @Nullable MenuCategory menuCategory,
+    private CustomItem(@NonNull String identifier, @NonNull List<ItemComponent> components, @Nullable ItemMenuCategory menuCategory,
                       @NonNull CreativePlacement creative) {
         this.identifier = Objects.requireNonNull(identifier, "identifier");
         this.components = List.copyOf(components);
@@ -59,6 +59,8 @@ public final class CustomItem {
     }
 
     /**
+     * Returns the item identifier.
+     *
      * @return the item identifier, e.g. {@code geysermc:furnace_minecart} (description {@code identifier})
      */
     public @NonNull String identifier() {
@@ -66,6 +68,8 @@ public final class CustomItem {
     }
 
     /**
+     * Returns the components of the item.
+     *
      * @return the components (one per component name), in the order they were added
      */
     public @NonNull List<ItemComponent> components() {
@@ -73,26 +77,40 @@ public final class CustomItem {
     }
 
     /**
-     * @return the description's {@code menu_category}, which alone decides whether the item is in the creative inventory
-     *         and in which category and group, as in BDS; null or category {@code none}: it is not in it
+     * Returns the description's {@code menu_category}, which alone decides whether the item is in the creative inventory
+     * and in which category and group, as in BDS.
+     *
+     * @return the menu category; null or category {@code none}: the item is not in the creative inventory
      */
-    public @Nullable MenuCategory menuCategory() {
+    public @Nullable ItemMenuCategory menuCategory() {
         return menuCategory;
     }
 
     /**
-     * @return the position within the category and group of the {@link #menuCategory()}, {@link CreativePlacement#DEFAULT}
-     *         if not set
+     * Returns where the item goes within the category and group of the {@link #menuCategory()}.
+     *
+     * @return the placement, {@link CreativePlacement#DEFAULT} if not set
      */
     public @NonNull CreativePlacement creativePlacement() {
         return creative;
     }
 
+    /**
+     * Starts building a custom item.
+     *
+     * @param identifier the item identifier, e.g. {@code geysermc:furnace_minecart}
+     * @return a new builder
+     * @throws NullPointerException if the identifier is null
+     */
     public static @NonNull Builder builder(@NonNull String identifier) {
         return new Builder(identifier);
     }
 
     /**
+     * Finds a component by its class.
+     *
+     * @param type the component class
+     * @param <T> the component type
      * @return the component of a type, or null if the item does not have it
      */
     public <T extends ItemComponent> @Nullable T component(@NonNull Class<T> type) {
@@ -105,7 +123,9 @@ public final class CustomItem {
     }
 
     /**
-     * @return the item tags ({@code minecraft:tags})
+     * Returns the item tags.
+     *
+     * @return the item tags ({@code minecraft:tags}), empty if the item has no {@link Tags} component
      */
     public @NonNull List<String> tags() {
         Tags tags = component(Tags.class);
@@ -127,6 +147,11 @@ public final class CustomItem {
         return type;
     }
 
+    /**
+     * Internal: the internal variant of the item, for its identifier.
+     *
+     * @return the internal variant with aux value 0 and no block state
+     */
     @Internal
     public @NonNull ItemVariant variant() {
         return ItemVariant.of(identifier);
@@ -152,10 +177,15 @@ public final class CustomItem {
             + ", creative=" + creative + "]";
     }
 
+    /**
+     * Builds a {@link CustomItem}.
+     *
+     * @since 1.0.0
+     */
     public static final class Builder {
         private final String identifier;
         private final List<ItemComponent> components = new ArrayList<>();
-        private @Nullable MenuCategory menuCategory;
+        private @Nullable ItemMenuCategory menuCategory;
         private CreativePlacement creative = CreativePlacement.DEFAULT;
 
         private Builder(String identifier) {
@@ -164,6 +194,10 @@ public final class CustomItem {
 
         /**
          * Adds a component, replacing one of the same name.
+         *
+         * @param component the component
+         * @return this builder
+         * @throws NullPointerException if the component is null
          */
         public @NonNull Builder component(@NonNull ItemComponent component) {
             components.removeIf(existing -> existing.name().equals(component.name()));
@@ -173,6 +207,10 @@ public final class CustomItem {
 
         /**
          * Adds components, replacing those of the same names.
+         *
+         * @param components the components
+         * @return this builder
+         * @throws NullPointerException if a component is null
          */
         public @NonNull Builder components(@NonNull ItemComponent... components) {
             for (ItemComponent component : components) {
@@ -183,6 +221,10 @@ public final class CustomItem {
 
         /**
          * Adds components, replacing those of the same names.
+         *
+         * @param components the components
+         * @return this builder
+         * @throws NullPointerException if a component is null
          */
         public @NonNull Builder components(@NonNull List<? extends ItemComponent> components) {
             components.forEach(this::component);
@@ -193,37 +235,56 @@ public final class CustomItem {
          * Sets the description's {@code menu_category}: the category, group and {@code is_hidden_in_commands} the add-on
          * JSON gives. It alone decides whether the item is in the creative inventory, as in BDS; without it, or with
          * category {@code none}, it is not.
+         *
+         * @param menuCategory the menu category, or null for none
+         * @return this builder
          */
-        public @NonNull Builder menuCategory(@Nullable MenuCategory menuCategory) {
+        public @NonNull Builder menuCategory(@Nullable ItemMenuCategory menuCategory) {
             this.menuCategory = menuCategory;
             return this;
         }
 
         /**
-         * Puts the item in a creative category: {@link #menuCategory(MenuCategory)} for the common case.
+         * Puts the item in a creative category: {@link #menuCategory(ItemMenuCategory)} for the common case.
+         *
+         * @param category the creative category
+         * @return this builder
+         * @throws NullPointerException if the category is null
          */
         public @NonNull Builder menuCategory(@NonNull CreativeCategory category) {
-            return menuCategory(MenuCategory.builder().category(MenuCategory.Category.fromValue(category.bedrockName())).build());
+            return menuCategory(ItemMenuCategory.builder().category(ItemMenuCategory.Category.fromValue(category.bedrockName())).build());
         }
 
         /**
-         * Puts the item in a group of a creative category: {@link #menuCategory(MenuCategory)} for the common case.
+         * Puts the item in a group of a creative category: {@link #menuCategory(ItemMenuCategory)} for the common case.
          *
-         * @param group the group, e.g. {@code itemGroup.name.minerals}
+         * @param category the creative category
+         * @param group the group, not null, e.g. {@code itemGroup.name.minerals}
+         * @return this builder
+         * @throws NullPointerException if the category is null
          */
         public @NonNull Builder menuCategory(@NonNull CreativeCategory category, @NonNull String group) {
-            return menuCategory(MenuCategory.builder().category(MenuCategory.Category.fromValue(category.bedrockName()))
+            return menuCategory(ItemMenuCategory.builder().category(ItemMenuCategory.Category.fromValue(category.bedrockName()))
                 .group(group).build());
         }
 
         /**
          * Adjusts the position of the item within its category and group, e.g. right after another item.
+         *
+         * @param creative where the item goes
+         * @return this builder
+         * @throws NullPointerException if the placement is null
          */
         public @NonNull Builder creativePlacement(@NonNull CreativePlacement creative) {
             this.creative = Objects.requireNonNull(creative, "creative");
             return this;
         }
 
+        /**
+         * Builds the item. Each call makes a new item with a type of its own.
+         *
+         * @return the custom item
+         */
         public @NonNull CustomItem build() {
             return new CustomItem(identifier, components, menuCategory, creative);
         }

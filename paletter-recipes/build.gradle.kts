@@ -25,11 +25,11 @@ java {
     withJavadocJar()
 }
 
-// As :paletter's: every doclint group but `missing`, any other warning fails
+// As :paletter's: every doclint group, any warning fails
 tasks.javadoc {
     options {
         this as StandardJavadocDocletOptions
-        addBooleanOption("Xdoclint:all,-missing", true)
+        addBooleanOption("Xdoclint:all", true)
         addBooleanOption("Werror", true)
     }
 }

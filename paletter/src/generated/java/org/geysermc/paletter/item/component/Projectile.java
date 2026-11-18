@@ -31,6 +31,11 @@ public record Projectile(float minimumCriticalPower,
      */
     public static final String NAME = "minecraft:projectile";
 
+    /**
+     * Checks the components.
+     *
+     * @throws NullPointerException if a required component is null
+     */
     public Projectile {
         Objects.requireNonNull(projectileEntity, "Projectile.projectileEntity");
     }
@@ -41,6 +46,9 @@ public record Projectile(float minimumCriticalPower,
     }
 
     /**
+     * Creates a builder with every optional field at its default; required fields must be set before
+     * {@code build()}.
+     *
      * @return a builder with the defaults applied
      */
     public static @NonNull Builder builder() {
@@ -48,6 +56,8 @@ public record Projectile(float minimumCriticalPower,
     }
 
     /**
+     * Creates a builder holding this value's fields, to change some of them.
+     *
      * @return a builder with this value's fields
      */
     public @NonNull Builder toBuilder() {
@@ -70,6 +80,9 @@ public record Projectile(float minimumCriticalPower,
 
         /**
          * Sets {@code minimum_critical_power}.
+         *
+         * @param minimumCriticalPower the value
+         * @return this builder
          */
         public @NonNull Builder minimumCriticalPower(float minimumCriticalPower) {
             this.minimumCriticalPower = minimumCriticalPower;
@@ -78,6 +91,9 @@ public record Projectile(float minimumCriticalPower,
 
         /**
          * Sets {@code projectile_entity}.
+         *
+         * @param projectileEntity the value
+         * @return this builder
          */
         public @NonNull Builder projectileEntity(@NonNull String projectileEntity) {
             this.projectileEntity = projectileEntity;
@@ -85,6 +101,9 @@ public record Projectile(float minimumCriticalPower,
         }
 
         /**
+         * Builds the value from the fields set and the defaults.
+         *
+         * @return the value
          * @throws IllegalStateException if a required field is not set
          * @throws IllegalArgumentException if a value is out of range
          */

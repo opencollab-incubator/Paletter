@@ -23,7 +23,8 @@ What the captures show but no field explains:
 | accepted by BDS | 87 |
 | rejected | 14 |
 | server-only | 12 |
-| not tested | 4 |
+| pending capture | 2 |
+| skipped | 2 |
 
 `sent`: the component changes the wire; `server-only`: accepted, nothing on the wire; `rejected`: BDS rejects every variant; `untestable`: its companions were rejected.
 
@@ -34,10 +35,10 @@ What the captures show but no field explains:
 | documented | 366 | 8 |
 | accepted by BDS | 307 | 5 |
 | sent on wire | 265 | 5 |
-| inferred | 245 | 4 |
+| inferred | 249 | 4 |
 | partial | 1 | 0 |
 | unresolved | 0 | 0 |
-| hand-rule | 19 | 1 |
+| hand-rule | 15 | 1 |
 | dropped | 38 | 0 |
 | linked | 0 | 0 |
 | rejected | 41 | 3 |
@@ -57,28 +58,32 @@ together and capture again); `rejected`: every variant setting it was rejected;
 |---|---|
 | affix | 2 |
 | bitset | 7 |
-| constant | 208 |
+| constant | 200 |
+| descriptor | 4 |
 | empty-list | 18 |
-| empty-map | 9 |
-| identity | 234 |
+| empty-map | 5 |
+| enum-table | 4 |
+| identity | 228 |
 | linear | 15 |
 | ordered-set | 2 |
+| packed-bits | 8 |
 | structure | 29 |
-| table | 15 |
+| table | 3 |
 
 | tag | rules |
 |---|---|
-| assumed-by-name | 2 |
-| enum->int | 14 |
+| enum->int | 6 |
 | explained-by-child-fields | 29 |
 | flattened | 18 |
-| injected-default | 209 |
+| injected-default | 201 |
 | item_properties | 19 |
 | list-element | 33 |
-| nested | 84 |
+| nested | 80 |
 | outside-component:* | 3 |
+| packed-bits | 8 |
 | presence | 17 |
-| renamed | 96 |
+| registry-resolved | 4 |
+| renamed | 92 |
 | type:* | 110 |
 | unit-conversion | 15 |
 | value-map | 1 |
@@ -97,7 +102,7 @@ together and capture again); `rejected`: every variant setting it was rejected;
 | `block:minecraft:collision_box` | active (exp.) | sent | minecraft:collision_box | 2 / 0 / 0 / 0 / 4 / 6 |
 | `block:minecraft:connection_rule` | active (exp.) | sent | minecraft:connection_rule | 2 / 0 / 0 / 0 / 0 / 2 |
 | `block:minecraft:crafting_table` | active (exp.) | sent | minecraft:crafting_table | 2 / 0 / 0 / 0 / 0 / 2 |
-| `block:minecraft:custom_components` | deprecated | skipped |  | 0 / 0 / 0 / 0 / 0 / 0 |
+| `block:minecraft:custom_components` | deprecated | pending capture |  | 0 / 0 / 0 / 0 / 0 / 0 |
 | `block:minecraft:destroy_time` | legacy | rejected |  | 0 / 0 / 0 / 0 / 0 / 0 |
 | `block:minecraft:destructible_by_explosion` | active | server-only |  | 0 / 0 / 0 / 1 / 0 / 1 |
 | `block:minecraft:destructible_by_mining` | active | sent | minecraft:destructible_by_mining | 4 / 0 / 0 / 0 / 2 / 6 |
@@ -142,22 +147,22 @@ together and capture again); `rejected`: every variant setting it was rejected;
 | `block:trait:minecraft:placement_position` | active | sent | traits | 1 / 0 / 0 / 0 / 0 / 1 |
 | `item:description` | active | sent | item_properties.creative_category, item_properties.creative_group, item_properti... | 4 / 0 / 0 / 0 / 0 / 5 |
 | `item:minecraft:allow_off_hand` | active | sent | item_properties.allow_off_hand, minecraft:allow_off_hand | 1 / 0 / 0 / 0 / 0 / 1 |
-| `item:minecraft:block_placer` | active | sent | minecraft:block_placer, minecraft:publisher_on_use_on | 4 / 0 / 3 / 0 / 0 / 7 |
+| `item:minecraft:block_placer` | active | sent | minecraft:block_placer, minecraft:publisher_on_use_on | 5 / 0 / 2 / 0 / 0 / 7 |
 | `item:minecraft:bundle_interaction` | active | sent | minecraft:bundle_interaction | 1 / 0 / 0 / 0 / 0 / 1 |
 | `item:minecraft:can_destroy_in_creative` | active | sent | item_properties.can_destroy_in_creative, minecraft:can_destroy_in_creative | 1 / 0 / 0 / 0 / 0 / 1 |
 | `item:minecraft:chargeable` | deprecated | rejected |  | 0 / 0 / 0 / 0 / 2 / 2 |
 | `item:minecraft:compostable` | active | sent | minecraft:compostable | 1 / 0 / 0 / 0 / 0 / 1 |
 | `item:minecraft:cooldown` | active | sent | minecraft:cooldown | 3 / 0 / 0 / 0 / 0 / 3 |
-| `item:minecraft:custom_components` | deprecated | skipped |  | 0 / 0 / 0 / 0 / 0 / 0 |
+| `item:minecraft:custom_components` | deprecated | pending capture |  | 0 / 0 / 0 / 0 / 0 / 0 |
 | `item:minecraft:damage` | active | sent | item_properties.damage, minecraft:damage | 1 / 0 / 0 / 0 / 0 / 1 |
 | `item:minecraft:damage_absorption` | active | server-only |  | 0 / 0 / 0 / 1 / 0 / 1 |
-| `item:minecraft:digger` | active | sent | minecraft:digger | 6 / 0 / 1 / 0 / 0 / 7 |
+| `item:minecraft:digger` | active | sent | minecraft:digger | 7 / 0 / 0 / 0 / 0 / 7 |
 | `item:minecraft:display_name` | active | sent | minecraft:display_name | 1 / 0 / 0 / 0 / 0 / 1 |
 | `item:minecraft:durability` | active | sent | minecraft:durability | 3 / 0 / 0 / 1 / 0 / 4 |
 | `item:minecraft:durability_sensor` | active | server-only |  | 0 / 0 / 0 / 4 / 1 / 5 |
 | `item:minecraft:dyeable` | active | sent | minecraft:dyeable | 0 / 0 / 1 / 0 / 0 / 1 |
 | `item:minecraft:enchantable` | active | sent | item_properties.enchantable_slot, item_properties.enchantable_value, minecraft:e... | 1 / 0 / 0 / 0 / 0 / 2 |
-| `item:minecraft:entity_placer` | active | sent | minecraft:entity_placer, minecraft:publisher_on_use_on | 7 / 0 / 2 / 0 / 0 / 9 |
+| `item:minecraft:entity_placer` | active | sent | minecraft:entity_placer, minecraft:publisher_on_use_on | 9 / 0 / 0 / 0 / 0 / 9 |
 | `item:minecraft:fire_resistant` | active | sent | minecraft:fire_resistant | 1 / 0 / 0 / 0 / 0 / 1 |
 | `item:minecraft:food` | active | sent | minecraft:food | 3 / 1 / 0 / 0 / 1 / 5 |
 | `item:minecraft:fuel` | active | sent | minecraft:fuel | 1 / 0 / 0 / 0 / 0 / 1 |
@@ -208,11 +213,7 @@ together and capture again); `rejected`: every variant setting it was rejected;
 - `block:permutations` `[].components`: hand-rule -> `permutationComponents` (unexplained: `permutations[].condition`)
 - `item:minecraft:block_placer` `block`: hand-rule -> `blockName` (unexplained: `minecraft:block_placer.block`)
 - `item:minecraft:block_placer` `replace_block_item`: hand-rule -> `replaceBlockItem` (unexplained: `minecraft:block_placer.replaceBlockItem`)
-- `item:minecraft:block_placer` `use_on[].states`: hand-rule -> `blockDescriptorStates` (unexplained: `minecraft:block_placer.use_on`)
-- `item:minecraft:digger` `destroy_speeds[].block.states`: hand-rule -> `blockDescriptorStates` (unexplained: `minecraft:digger.destroy_speeds`)
 - `item:minecraft:dyeable` `default_color`: hand-rule -> `rgbColor`
-- `item:minecraft:entity_placer` `dispense_on[].states`: hand-rule -> `blockDescriptorStates` (unexplained: `minecraft:entity_placer.dispense_on`)
-- `item:minecraft:entity_placer` `use_on[].states`: hand-rule -> `blockDescriptorStates` (unexplained: `minecraft:entity_placer.use_on`)
 - `item:minecraft:food` `using_converts_to`: partial (unexplained: `minecraft:food.using_converts_to`)
 - `item:minecraft:hover_text_color` `value`: hand-rule -> `formattingCode` (unexplained: `item_properties.hover_text_color`)
 - `item:minecraft:shooter` `ammunition[].item`: hand-rule -> `ammunitionItemDescriptor` (unexplained: `minecraft:shooter.ammunition[].item`, `minecraft:shooter.ammunition[].item.name`)
@@ -223,7 +224,7 @@ Wire values of `Transforms` that no accepted variant sends, so the conformance s
 
 ## Hand transforms not verified by BDS
 
-25 of 25 transforms have accepted variants that set what they compile (`verified: {build, variants}` in `mappings.json`; the conformance suite reproduces those variants). Not verified:
+21 of 21 transforms have accepted variants that set what they compile (`verified: {build, variants}` in `mappings.json`; the conformance suite reproduces those variants). Not verified:
 
 - `block:minecraft:destructible_by_mining:` (`destructibleByMining`): verified for the other fields, but BDS rejected every variant of `base_time_to_destroy`, `item_specific_speeds[].item[].tags`
 - `block:minecraft:geometry:` (`geometry`): verified for the other fields, but BDS rejected every variant of `n_way_visual_rotation`
@@ -261,33 +262,33 @@ Fields BDS reports as "not present in the Schema" (docs describe them, BDS 1.26.
 - `item:minecraft:weapon` `on_not_hurt_entity`
 - `item:minecraft:wearable` `dispensable`
 
-Numeric ranges BDS enforces (content log "accepted range") vs the docs:
+Numeric ranges BDS enforces (content log "accepted range") vs the docs. A bound the docs state and BDS's differs from is disputed: BDS's bounds beat the docs' in the add-on, which varies both:
 
-| component | field | docs | BDS |
-|---|---|---|---|
-| `block:minecraft:block_entity` | `container.slot_count` | none | [1,54] |
-| `block:minecraft:material_instances` | `*.ambient_occlusion` | none | [0,10] |
-| `block:minecraft:material_instances` | `down.ambient_occlusion` | none | [0,10] |
-| `block:minecraft:material_instances` | `east.ambient_occlusion` | none | [0,10] |
-| `block:minecraft:material_instances` | `north.ambient_occlusion` | none | [0,10] |
-| `block:minecraft:material_instances` | `south.ambient_occlusion` | none | [0,10] |
-| `block:minecraft:material_instances` | `up.ambient_occlusion` | none | [0,10] |
-| `block:minecraft:material_instances` | `west.ambient_occlusion` | none | [0,10] |
-| `block:minecraft:random_offset` | `x.range.max` | none | [-8,8] |
-| `block:minecraft:random_offset` | `x.range.min` | none | [-8,8] |
-| `block:minecraft:random_offset` | `y.range.max` | none | [-8,8] |
-| `block:minecraft:random_offset` | `y.range.min` | none | [-8,8] |
-| `block:minecraft:random_offset` | `z.range.max` | none | [-8,8] |
-| `block:minecraft:random_offset` | `z.range.min` | none | [-8,8] |
-| `block:trait:minecraft:multi_block` | `parts` | none | [2,4] |
-| `block:trait:minecraft:placement_direction` | `y_rotation_offset` | [0.0, 360.0] | [0,360] |
-| `item:minecraft:bundle_interaction` | `num_viewable_slots` | [1.0, 64.0] | [1,64] |
-| `item:minecraft:compostable` | `composting_chance` | none | [1,100] |
-| `item:minecraft:damage` | `value` | none | [0,32767] |
-| `item:minecraft:durability` | `damage_chance.max` | none | [0,100] |
-| `item:minecraft:durability` | `damage_chance.min` | none | [0,100] |
-| `item:minecraft:max_stack_size` | `value` | none | [1,64] |
-| `item:minecraft:use_modifiers` | `movement_modifier` | none | [0,1] |
+| component | field | docs | BDS | disputed |
+|---|---|---|---|---|
+| `block:minecraft:block_entity` | `container.slot_count` | none | [1,54] |  |
+| `block:minecraft:material_instances` | `*.ambient_occlusion` | none | [0,10] |  |
+| `block:minecraft:material_instances` | `down.ambient_occlusion` | none | [0,10] |  |
+| `block:minecraft:material_instances` | `east.ambient_occlusion` | none | [0,10] |  |
+| `block:minecraft:material_instances` | `north.ambient_occlusion` | none | [0,10] |  |
+| `block:minecraft:material_instances` | `south.ambient_occlusion` | none | [0,10] |  |
+| `block:minecraft:material_instances` | `up.ambient_occlusion` | none | [0,10] |  |
+| `block:minecraft:material_instances` | `west.ambient_occlusion` | none | [0,10] |  |
+| `block:minecraft:random_offset` | `x.range.max` | none | [-8,8] |  |
+| `block:minecraft:random_offset` | `x.range.min` | none | [-8,8] |  |
+| `block:minecraft:random_offset` | `y.range.max` | none | [-8,8] |  |
+| `block:minecraft:random_offset` | `y.range.min` | none | [-8,8] |  |
+| `block:minecraft:random_offset` | `z.range.max` | none | [-8,8] |  |
+| `block:minecraft:random_offset` | `z.range.min` | none | [-8,8] |  |
+| `block:trait:minecraft:multi_block` | `parts` | none | [2,4] |  |
+| `block:trait:minecraft:placement_direction` | `y_rotation_offset` | [0.0, 360.0] | [0,360] |  |
+| `item:minecraft:bundle_interaction` | `num_viewable_slots` | [1.0, 64.0] | [1,64] |  |
+| `item:minecraft:compostable` | `composting_chance` | none | [1,100] |  |
+| `item:minecraft:damage` | `value` | none | [0,32767] |  |
+| `item:minecraft:durability` | `damage_chance.max` | none | [0,100] |  |
+| `item:minecraft:durability` | `damage_chance.min` | none | [0,100] |  |
+| `item:minecraft:max_stack_size` | `value` | none | [1,64] |  |
+| `item:minecraft:use_modifiers` | `movement_modifier` | none | [0,1] |  |
 
 ## Format versions in the docs
 
@@ -357,7 +358,113 @@ Statements that change behaviour or shape at a format version:
 - 1.26.50 `block:trait:minecraft:multi_block`: For horizontal directions the experiment is required for `format_version` less than 1.26.50.
 - current `item:definition`: Item definition page minecraft_item.md (Items Documentation - minecraft:item): identical to minecraft_item_v1_26_0.md
 
+## Wire paths no rule covers
+
+In the spec capture of each build, with the reason the model has no rule for them. A new path here is a change to review.
+
+### 1.26.36.1
+
+block definition data around the components: written by BlockCompiler, checked by the conformance suite (1):
+
+- `block:block_definition vanilla_block_data.block_id`
+
+### 1.26.45.1
+
+block definition data around the components: written by BlockCompiler, checked by the conformance suite (1):
+
+- `block:block_definition vanilla_block_data.block_id`
+
+### 1.26.52.3
+
+block definition data around the components: written by BlockCompiler, checked by the conformance suite (1):
+
+- `block:block_definition vanilla_block_data.block_id`
+
+### 1.26.63.1
+
+block definition data around the components: written by BlockCompiler, checked by the conformance suite (1):
+
+- `block:block_definition vanilla_block_data.block_id`
+
+### 1.26.70.24
+
+block definition data around the components: written by BlockCompiler, checked by the conformance suite (1):
+
+- `block:block_definition vanilla_block_data.block_id`
+
 ## Content log lines without a variant
+
+BDS names no variant in these; a variant they belong to is counted as accepted. A new line is a change to review.
+
+### 1.26.36.1
+
+- `ERROR [Components] MaterialInstances can't mix and match opaque and transparent materials.`
+- `ERROR [Item] ItemDescriptor missing key to reconstruct from (expression tags, item name or item tag)`
+- `ERROR [Json] Damage Source not found: paletter_b`
+- `ERROR [Molang] minecraft:paletter_a | Error: unknown token: minecraft:paletter_a`
+- `ERROR [Molang] minecraft:paletter_a | unrecognized token: minecraft:paletter_a`
+- `ERROR [Molang] minecraft:paletter_unknown | Error: unknown token: minecraft:paletter_unknown`
+- `ERROR [Molang] minecraft:paletter_unknown | unrecognized token: minecraft:paletter_unknown`
+- `ERROR [Molang] paletter_a | Error: unknown token: paletter_a`
+- `ERROR [Molang] paletter_a | unrecognized token: paletter_a`
+- `ERROR [Molang] paletter_b | Error: unknown token: paletter_b`
+- `ERROR [Molang] paletter_b | unrecognized token: paletter_b`
+- `ERROR [VoxelShape] Voxel shape with name "paletter_a" doesn't exist in the registry. Defaulting to minecraft:empty for identifier.`
+- `ERROR [VoxelShape] Voxel shape with name "paletter_b" doesn't exist in the registry. Defaulting to minecraft:empty for identifier.`
+- `WARN [Components] All MaterialInstances must use the same render_method for a given block. This may create rendering issues otherwise.`
+
+### 1.26.45.1
+
+- `ERROR [Components] MaterialInstances can't mix and match opaque and transparent materials.`
+- `ERROR [Item] ItemDescriptor missing key to reconstruct from (expression tags, item name or item tag)`
+- `ERROR [Json] Damage Source not found: paletter_b`
+- `ERROR [Molang] minecraft:paletter_a | Error: unknown token: minecraft:paletter_a`
+- `ERROR [Molang] minecraft:paletter_a | unrecognized token: minecraft:paletter_a`
+- `ERROR [Molang] minecraft:paletter_unknown | Error: unknown token: minecraft:paletter_unknown`
+- `ERROR [Molang] minecraft:paletter_unknown | unrecognized token: minecraft:paletter_unknown`
+- `ERROR [Molang] paletter_a | Error: unknown token: paletter_a`
+- `ERROR [Molang] paletter_a | unrecognized token: paletter_a`
+- `ERROR [Molang] paletter_b | Error: unknown token: paletter_b`
+- `ERROR [Molang] paletter_b | unrecognized token: paletter_b`
+- `ERROR [VoxelShape] Voxel shape with name "paletter_a" doesn't exist in the registry. Defaulting to minecraft:empty for identifier.`
+- `ERROR [VoxelShape] Voxel shape with name "paletter_b" doesn't exist in the registry. Defaulting to minecraft:empty for identifier.`
+- `WARN [Components] All MaterialInstances must use the same render_method for a given block. This may create rendering issues otherwise.`
+
+### 1.26.52.3
+
+- `ERROR [Components] MaterialInstances can't mix and match opaque and transparent materials.`
+- `ERROR [Item] ItemDescriptor missing key to reconstruct from (expression tags, item name or item tag)`
+- `ERROR [Json] Damage Source not found: paletter_b`
+- `ERROR [Molang] minecraft:paletter_a | Error: unknown token: minecraft:paletter_a`
+- `ERROR [Molang] minecraft:paletter_a | unrecognized token: minecraft:paletter_a`
+- `ERROR [Molang] minecraft:paletter_unknown | Error: unknown token: minecraft:paletter_unknown`
+- `ERROR [Molang] minecraft:paletter_unknown | unrecognized token: minecraft:paletter_unknown`
+- `ERROR [Molang] paletter_a | Error: unknown token: paletter_a`
+- `ERROR [Molang] paletter_a | unrecognized token: paletter_a`
+- `ERROR [Molang] paletter_b | Error: unknown token: paletter_b`
+- `ERROR [Molang] paletter_b | unrecognized token: paletter_b`
+- `ERROR [VoxelShape] Voxel shape with name "paletter_a" doesn't exist in the registry. Defaulting to minecraft:empty for identifier.`
+- `ERROR [VoxelShape] Voxel shape with name "paletter_b" doesn't exist in the registry. Defaulting to minecraft:empty for identifier.`
+- `WARN [Components] All MaterialInstances must use the same render_method for a given block. This may create rendering issues otherwise.`
+
+### 1.26.63.1
+
+- `ERROR [Components] MaterialInstances can't mix and match opaque and transparent materials.`
+- `ERROR [Item] ItemDescriptor missing key to reconstruct from (expression tags, item name or item tag)`
+- `ERROR [Json] Damage Source not found: paletter_b`
+- `ERROR [Molang] minecraft:paletter_a | Error: unknown token: minecraft:paletter_a`
+- `ERROR [Molang] minecraft:paletter_a | unrecognized token: minecraft:paletter_a`
+- `ERROR [Molang] minecraft:paletter_unknown | Error: unknown token: minecraft:paletter_unknown`
+- `ERROR [Molang] minecraft:paletter_unknown | unrecognized token: minecraft:paletter_unknown`
+- `ERROR [Molang] paletter_a | Error: unknown token: paletter_a`
+- `ERROR [Molang] paletter_a | unrecognized token: paletter_a`
+- `ERROR [Molang] paletter_b | Error: unknown token: paletter_b`
+- `ERROR [Molang] paletter_b | unrecognized token: paletter_b`
+- `ERROR [VoxelShape] Voxel shape with name "paletter_a" doesn't exist in the registry. Defaulting to minecraft:empty for identifier.`
+- `ERROR [VoxelShape] Voxel shape with name "paletter_b" doesn't exist in the registry. Defaulting to minecraft:empty for identifier.`
+- `WARN [Components] All MaterialInstances must use the same render_method for a given block. This may create rendering issues otherwise.`
+
+### 1.26.70.24
 
 - `ERROR [Components] MaterialInstances can't mix and match opaque and transparent materials.`
 - `ERROR [Item] ItemDescriptor missing key to reconstruct from (expression tags, item name or item tag)`
