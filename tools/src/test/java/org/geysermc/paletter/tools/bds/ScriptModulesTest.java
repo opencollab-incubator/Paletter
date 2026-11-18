@@ -47,38 +47,6 @@ class ScriptModulesTest {
     }
 
     @Test
-    void theGametestVersionsAreReadSeparatelyAndMayBeNone(@TempDir Path docs) throws IOException {
-        touch(docs.resolve("script_modules/@minecraft/server/2.12.0-beta/index.d.ts"));
-        assertEquals(List.of(), ScriptModules.parseGametest(docs), "none is not an error: the food probe is skipped");
-        touch(docs.resolve("script_modules/@minecraft/server-gametest/1.0.0-beta/index.d.ts"));
-        touch(docs.resolve("script_modules/@minecraft/server-gametest/1.0.0/index.d.ts"));
-        touch(docs.resolve("script_modules/@minecraft_server-gametest_2.0.0-beta.json"));
-        assertEquals(List.of("1.0.0", "1.0.0-beta", "2.0.0-beta").stream().sorted(ScriptModules::compare).toList(), ScriptModules.parseGametest(docs));
-        assertEquals(List.of("2.12.0-beta"), ScriptModules.parse(docs), "the server module does not take the game test's versions");
-    }
-
-    @Test
-    void theGametestVersionOfTheManifestIsTheNewestBetaAndNeverGuessed() {
-        assertEquals("2.0.0-beta", ScriptModules.gametestBetaVersion(List.of("1.0.0", "1.0.0-beta", "2.0.0-beta")));
-        assertThrows(IllegalStateException.class, () -> ScriptModules.gametestBetaVersion(List.of("1.0.0")));
-        assertThrows(IllegalStateException.class, () -> ScriptModules.gametestBetaVersion(List.of()));
-    }
-
-    @Test
-    void theFileRecordsTheGametestVersionsAndAnOldFileHasNone(@TempDir Path data) throws IOException {
-        Files.createDirectories(data.resolve("1.2.3.4"));
-        Files.writeString(ScriptModules.file(data, "1.2.3.4"), ScriptModules.render("1.2.3.4", List.of("2.0.0-beta"), List.of("1.0.0-beta")));
-        assertEquals(List.of("1.0.0-beta"), ScriptModules.gametestVersions(data, "1.2.3.4"));
-        assertEquals(List.of("2.0.0-beta"), ScriptModules.versions(data, "1.2.3.4"));
-        JsonObject json = JsonParser.parseString(Files.readString(ScriptModules.file(data, "1.2.3.4"))).getAsJsonObject();
-        assertEquals("@minecraft/server-gametest", json.get("gametestModule").getAsString());
-        // a file written without them (the two argument render) lists none
-        Files.writeString(ScriptModules.file(data, "1.2.3.4"), ScriptModules.render("1.2.3.4", List.of("2.0.0-beta")));
-        assertEquals(List.of(), ScriptModules.gametestVersions(data, "1.2.3.4"));
-        assertThrows(IOException.class, () -> ScriptModules.gametestVersions(data, "9.9.9.9"));
-    }
-
-    @Test
     void noVersionFailsAndSaysWhatIsThere(@TempDir Path docs) throws IOException {
         touch(docs.resolve("script_modules/other/readme.txt"));
         IOException e = assertThrows(IOException.class, () -> ScriptModules.parse(docs));

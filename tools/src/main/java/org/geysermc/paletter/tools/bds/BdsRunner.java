@@ -33,9 +33,7 @@ public final class BdsRunner {
     private final String packDirectory;
     private List<String> experiments = List.of();
     private String betaModule;
-    private String gametestModule;
     private Map<String, String> packFiles = Map.of();
-    private Map<String, byte[]> binaryPackFiles = Map.of();
 
     /** The dump addon: it prints {@code PALETTER-DONE}. */
     public BdsRunner(Path addon) {
@@ -65,21 +63,9 @@ public final class BdsRunner {
         return this;
     }
 
-    /** Sets the add-on's {@code @minecraft/server-gametest} dependency, e.g. {@code 1.0.0-beta} ({@link ScriptModules#gametestBetaVersion}). */
-    public BdsRunner withGametestModule(String gametestModule) {
-        this.gametestModule = gametestModule;
-        return this;
-    }
-
     /** Files the run adds to the installed pack (pack path to content), e.g. loot tables the tool derives from BDS. */
     public BdsRunner withPackFiles(Map<String, String> files) {
         this.packFiles = files;
-        return this;
-    }
-
-    /** Files the run adds to the installed pack that are not text (pack path to bytes), e.g. a structure. */
-    public BdsRunner withBinaryPackFiles(Map<String, byte[]> files) {
-        this.binaryPackFiles = files;
         return this;
     }
 
@@ -171,19 +157,9 @@ public final class BdsRunner {
             Files.createDirectories(target.getParent());
             Files.writeString(target, file.getValue());
         }
-        for (Map.Entry<String, byte[]> file : binaryPackFiles.entrySet()) {
-            Path target = pack.resolve(file.getKey());
-            Files.createDirectories(target.getParent());
-            Files.write(target, file.getValue());
-        }
         JsonObject manifest = JsonParser.parseString(Files.readString(addon.resolve("manifest.json"))).getAsJsonObject();
-        if (betaModule != null || gametestModule != null) {
-            if (betaModule != null) {
-                ScriptModules.setServerModule(manifest, betaModule);
-            }
-            if (gametestModule != null) {
-                ScriptModules.setGametestModule(manifest, gametestModule);
-            }
+        if (betaModule != null) {
+            ScriptModules.setServerModule(manifest, betaModule);
             Files.writeString(pack.resolve("manifest.json"), manifest.toString());
         }
         JsonObject header = manifest.getAsJsonObject("header");

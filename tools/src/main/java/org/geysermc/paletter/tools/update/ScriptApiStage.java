@@ -74,11 +74,9 @@ final class ScriptApiStage {
                 throw new IOException("BDS's documentation generator wrote no docs (see bds-docgen.log)");
             }
             runs.scriptModules = ScriptModules.parse(docs);
-            runs.gametestModules = ScriptModules.parseGametest(docs);
-            ctx.stage(ScriptModules.file(ctx.bdsData, build), ScriptModules.render(build, runs.scriptModules, runs.gametestModules).getBytes(StandardCharsets.UTF_8),
+            ctx.stage(ScriptModules.file(ctx.bdsData, build), ScriptModules.render(build, runs.scriptModules).getBytes(StandardCharsets.UTF_8),
                 "Script API modules " + build);
-            ctx.report.check(Report.Status.PASS, "Script API modules", "BDS " + build + " has @minecraft/server " + runs.scriptModules
-                + ", @minecraft/server-gametest " + runs.gametestModules);
+            ctx.report.check(Report.Status.PASS, "Script API modules", "BDS " + build + " has @minecraft/server " + runs.scriptModules);
         } catch (IOException e) {
             ctx.report.check(Report.Status.FAIL, "Script API modules", e.getMessage());
             ctx.report.action("the behaviour dump needs data/bds/" + build + "/" + ScriptModules.FILE + ": fix the parser or write it by hand");

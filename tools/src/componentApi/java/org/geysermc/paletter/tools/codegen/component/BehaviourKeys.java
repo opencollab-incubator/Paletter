@@ -20,11 +20,6 @@ import java.util.TreeMap;
  *     binary has no member names). No Paletter capture reads these yet: a key with only a native source is filled from the
  *     third-party native dumps ({@code behaviour import}: CloudburstMC/Data, AllayMC/Allay), which the report labels.</li>
  * </ul>
- * TODO (after the recapture): add {@code PROBE:light_states}, {@code PROBE:friction_states} and {@code PROBE:around_recipes} as sources of
- * {@code light_emission}, {@code light_dampening} and {@code friction}, and the food probe's capture as a source of {@code nutrition},
- * {@code saturation_modifier}, {@code can_always_eat} and {@code use_duration}. {@code behaviour import} already reads them; the keys name
- * them once a capture has the members, which the check below needs.
- * <p>
  * Generation fails when a source is not in its newest capture, and when a property of the newest behaviour dump has neither a
  * key nor an entry in {@link #IGNORED}: new BDS properties are looked at, not silently dropped.
  * <p>

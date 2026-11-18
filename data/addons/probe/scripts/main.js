@@ -28,34 +28,12 @@
 //                                                               feet; climbing lists the states where Entity.isClimbing was
 //                                                               true after 3 ticks; states is how many states were tried;
 //                                                               lost: states the body was gone after (not measured)
-//
-// The per-state sections below are not essential: each one that fails prints `failed` and the probe goes on (the tools then
-// call the section "unverified"). Each prints one line per block type:
-//
-//   light_state    {block, states, base, differ, changed}        every state in a sealed cell with a stone ceiling and an air cell
-//                                                               below it, then with the ceiling open to the sky; a reading is
-//                                                               [light in the state's cell, light in the air cell below,
-//                                                               sky light in the air cell below]
-//   friction_state {block, states, base, differ, changed}        every state as a floor of 8 blocks, a body slid over it; a
-//                                                               reading is {v: the body's horizontal velocity on 10 ticks,
-//                                                               dy: how far its height moved}
-//   around         {block, state, attempts}                      the states of 4 blocks that BDS turns into another block when
-//                                                               it places them, tried inside a sealed box with the blocks
-//                                                               around them each recipe names; attempts: [{recipe, kept, light}]
-//   failed         {section, error}                              a section that could not run
-//
-// A block's lines say what BDS holds for each state it observed: `base` is the reading most states have, `differ` lists
-// [state, reading] for the others, and `changed` lists [requested state, the block that was there, its state or null] for each
-// state BDS did not keep as requested (a stair's shape follows its neighbours, a flowing liquid becomes still): the reading
-// belongs to the state that was there (and so is in `base` or `differ`), the requested state is not measured by it.
 import { world, system, BlockPermutation, BlockStates, BlockTypes } from "@minecraft/server";
 
 const out = (tag, data) => console.warn(`PROBE ${tag} ${JSON.stringify(data)}`);
 const wait = (ticks) => new Promise((resolve) => system.runTimeout(resolve, ticks));
-// What main() is doing, and the per-state sections that have not run yet: if main() fails, PROBE-FAILED names the first and
-// every section of the second is reported as failed (the sections need what main() measured first)
+// What main() is doing: if it fails, PROBE-FAILED names it
 let phase = "setup";
-const pendingSections = new Set(["light", "friction", "around"]);
 const Y = 200; // everything is built in open sky
 
 const FRICTION_FLOORS = ["minecraft:stone", "minecraft:ice", "minecraft:packed_ice", "minecraft:blue_ice", "probe:plain",
@@ -264,11 +242,7 @@ async function main() {
     out("flammable", burnt);
 
     phase = "climbing";
-    const states = allStates();
-    await climbing(dim, states);
-    await section("light", () => lightStates(dim, states));
-    await section("friction", () => frictionStates(dim, states));
-    await section("around", () => aroundRecipes(dim, states));
+    await climbing(dim);
     console.warn("PROBE-DONE");
 }
 
@@ -313,20 +287,7 @@ function statesOf(id) {
     return [...result.keys()].sort().map((key) => result.get(key));
 }
 
-// Every state of every block type, sorted by block
-function allStates() {
-    const states = [];
-    for (const type of toArray(BlockTypes.getAll()).sort((a, b) => (a.id < b.id ? -1 : 1))) {
-        try {
-            for (const permutation of statesOf(type.id)) states.push(permutation);
-        } catch (e) {
-            console.warn(`PROBE-ERROR no states for ${type.id}: ${e}`);
-        }
-    }
-    return states;
-}
-
-async function climbing(dim, states) {
+async function climbing(dim) {
     // cells every 2 blocks in a slab of barriers, so nothing of one cell (water, falling blocks) reaches another
     const X = 0, Z = 200, CY = 120, ROWS = 16, COLUMNS = 32;
     dim.runCommand(`tickingarea add ${X - 2} ${CY - 2} ${Z - 2} ${X + 2 * COLUMNS + 2} ${CY + 2} ${Z + 2 * ROWS + 2} probe3`);
@@ -339,6 +300,14 @@ async function climbing(dim, states) {
     const feet = (cell) => ({ x: cell.x + 0.5, y: CY + 0.1, z: cell.z + 0.5 });
     const climbers = cells.map((cell) => dim.spawnEntity("probe:climber", feet(cell)));
 
+    const states = [];
+    for (const type of toArray(BlockTypes.getAll()).sort((a, b) => (a.id < b.id ? -1 : 1))) {
+        try {
+            for (const permutation of statesOf(type.id)) states.push(permutation);
+        } catch (e) {
+            console.warn(`PROBE-ERROR no states for ${type.id}: ${e}`);
+        }
+    }
     const results = new Map(); // block -> {states, climbing}
     for (let start = 0; start < states.length; start += cells.length) {
         const wave = states.slice(start, start + cells.length);
@@ -367,231 +336,6 @@ async function climbing(dim, states) {
     for (const [block, result] of results) out("climb", { block, ...result });
 }
 
-// ---------- per-state sections (not essential) ----------
-
-// A section that fails prints `failed` and the probe goes on
-async function section(name, run) {
-    pendingSections.delete(name);
-    try {
-        await run();
-    } catch (e) {
-        out("failed", { section: name, error: `${e} ${e?.stack}` });
-    }
-}
-
-const stateKey = (state) => JSON.stringify(Object.keys(state).sort().map((name) => [name, state[name]]));
-
-// What is in a cell: the block's id and its state
-const placed = (block) => ({ block: block.typeId, state: block.permutation.getAllStates() });
-const samePlaced = (a, b) => a.block === b.block && stateKey(a.state) === stateKey(b.state);
-
-async function loadedArea(dim, from, to, name) {
-    dim.runCommand(`tickingarea add ${from.x} ${from.y} ${from.z} ${to.x} ${to.y} ${to.z} ${name}`);
-    for (let i = 0; i < 200 && !dim.getBlock(to); i++) await wait(10);
-}
-
-// Prints one line per block type (see the header). entries: [{requested: BlockPermutation, actual: {block, state} | null,
-// reading: reading | null}]: the state that was there after the request, null where nothing could be placed, and its reading,
-// null where it could not be read (the cell changed while it was read)
-function printGrouped(tag, entries) {
-    const byBlock = new Map();
-    for (const entry of entries) {
-        const id = entry.requested.type.id;
-        if (!byBlock.has(id)) byBlock.set(id, []);
-        byBlock.get(id).push(entry);
-    }
-    for (const [block, list] of byBlock) {
-        const seen = new Map(); // key of the state that was there -> {state, reading}
-        const changed = [];
-        for (const { requested, actual, reading } of list) {
-            const asked = requested.getAllStates();
-            const kept = actual && actual.block === block;
-            if (kept && reading !== null && !seen.has(stateKey(actual.state))) seen.set(stateKey(actual.state), { state: actual.state, reading });
-            if (reading === null || !kept || stateKey(actual.state) !== stateKey(asked)) {
-                changed.push([asked, actual ? actual.block : null, kept ? actual.state : null]);
-            }
-        }
-        const counts = new Map();
-        for (const { reading } of seen.values()) counts.set(JSON.stringify(reading), (counts.get(JSON.stringify(reading)) ?? 0) + 1);
-        let base = null;
-        let most = 0;
-        for (const [key, count] of counts) if (count > most) { base = key; most = count; }
-        const differ = [...seen.values()].filter(({ reading }) => JSON.stringify(reading) !== base).map(({ state, reading }) => [state, reading]);
-        out(tag, { block, states: list.length, base: base === null ? null : JSON.parse(base), differ, changed });
-    }
-}
-
-// ---------- light, every state ----------
-
-// A column per state, 2 blocks apart in a slab of stone: the air cell, the state above it, a stone ceiling. Sealed (the
-// ceiling is stone) the light in the state's cell and in the cell below it say how much it emits; with the ceiling open to
-// the sky, the sky light in the cell below says how much it dampens (sky light is a channel of its own, so what the state
-// emits does not mix into it).
-async function lightStates(dim, states) {
-    const X = 0, Z = 400, COLUMNS = 16, ROWS = 32;
-    await loadedArea(dim, { x: X - 2, y: Y - 2, z: Z - 2 }, { x: X + 2 * COLUMNS + 2, y: Y + 4, z: Z + 2 * ROWS + 2 }, "probe4");
-    dim.runCommand(`fill ${X - 1} ${Y - 1} ${Z - 1} ${X + 2 * COLUMNS} ${Y + 2} ${Z + 2 * ROWS} stone`);
-    const columns = [];
-    for (let r = 0; r < ROWS; r++) for (let c = 0; c < COLUMNS; c++) columns.push({ x: X + 2 * c, z: Z + 2 * r });
-    const cellOf = (c) => ({ x: c.x, y: Y, z: c.z });
-    const slotOf = (c) => ({ x: c.x, y: Y + 1, z: c.z });
-    const ceilingOf = (c) => ({ x: c.x, y: Y + 2, z: c.z });
-    for (const c of columns) {
-        dim.setBlockType(cellOf(c), "minecraft:air");
-        dim.setBlockType(slotOf(c), "minecraft:air");
-    }
-    const entries = [];
-    for (let start = 0; start < states.length; start += columns.length) {
-        const wave = states.slice(start, start + columns.length).map((requested, i) => ({ requested, column: columns[i], actual: null, reading: null }));
-        for (const w of wave) {
-            try {
-                dim.getBlock(slotOf(w.column)).setPermutation(w.requested);
-                w.actual = placed(dim.getBlock(slotOf(w.column)));
-            } catch {
-                // not placeable: no reading
-            }
-        }
-        await wait(4);
-        for (const w of wave) {
-            if (w.actual) {
-                w.self = dim.getLightLevel(slotOf(w.column));
-                w.adjacent = dim.getLightLevel(cellOf(w.column));
-            }
-        }
-        wave.forEach((w) => dim.setBlockType(ceilingOf(w.column), "minecraft:air"));
-        await wait(4);
-        for (const w of wave) {
-            if (!w.actual) continue;
-            const sky = dim.getSkyLightLevel(cellOf(w.column));
-            // a liquid that flowed into the cell below, or a block that changed itself: the readings are not of the state
-            const still = dim.getBlock(cellOf(w.column)).typeId === "minecraft:air" && samePlaced(placed(dim.getBlock(slotOf(w.column))), w.actual);
-            w.reading = still ? [w.self, w.adjacent, sky] : null;
-        }
-        wave.forEach((w) => {
-            dim.setBlockType(ceilingOf(w.column), "minecraft:stone");
-            dim.setBlockType(slotOf(w.column), "minecraft:air");
-            dim.setBlockType(cellOf(w.column), "minecraft:air");
-        });
-        await wait(1);
-        wave.forEach((w) => entries.push({ requested: w.requested, actual: w.actual, reading: w.reading }));
-    }
-    printGrouped("light_state", entries);
-}
-
-// ---------- friction, every state ----------
-
-// A lane of 8 blocks of the state as a floor, a body dropped on it, pushed, and its speed on 10 ticks
-async function frictionStates(dim, states) {
-    const X = 0, Z = 500, COLUMNS = 8, ROWS = 16, LENGTH = 8, PITCH = 12, TICKS = 10;
-    await loadedArea(dim, { x: X - 2, y: Y - 6, z: Z - 2 }, { x: X + COLUMNS * PITCH, y: Y + 6, z: Z + 2 * ROWS + 2 }, "probe5");
-    const lanes = [];
-    for (let r = 0; r < ROWS; r++) for (let c = 0; c < COLUMNS; c++) lanes.push({ x: X + PITCH * c, z: Z + 2 * r });
-    const round = (value, digits) => Number(value.toPrecision(digits));
-    const entries = [];
-    for (let start = 0; start < states.length; start += lanes.length) {
-        const wave = states.slice(start, start + lanes.length).map((requested, i) => ({ requested, lane: lanes[i], actual: null, reading: null }));
-        for (const w of wave) {
-            try {
-                for (let k = 0; k < LENGTH; k++) dim.getBlock({ x: w.lane.x + k, y: Y - 1, z: w.lane.z }).setPermutation(w.requested);
-                // the block the body is dropped on
-                w.actual = placed(dim.getBlock({ x: w.lane.x + 1, y: Y - 1, z: w.lane.z }));
-            } catch {
-                // not placeable: no reading
-            }
-        }
-        await wait(2);
-        const bodies = wave.map((w) => (w.actual ? dim.spawnEntity("probe:body", { x: w.lane.x + 1.5, y: Y + 2, z: w.lane.z + 0.5 }) : null));
-        await wait(25);
-        const heights = bodies.map((body) => (body && body.isValid ? body.location.y : null));
-        bodies.forEach((body) => body && body.isValid && body.applyImpulse({ x: 0.5, y: 0, z: 0 }));
-        const velocities = bodies.map(() => []);
-        const moved = bodies.map(() => 0);
-        for (let tick = 0; tick < TICKS; tick++) {
-            bodies.forEach((body, i) => {
-                if (body && body.isValid && velocities[i]) {
-                    velocities[i].push(round(body.getVelocity().x, 6));
-                    moved[i] = Math.max(moved[i], Math.abs(body.location.y - heights[i]));
-                } else {
-                    velocities[i] = null;
-                }
-            });
-            await wait(1);
-        }
-        wave.forEach((w, i) => {
-            const still = w.actual && samePlaced(placed(dim.getBlock({ x: w.lane.x + 1, y: Y - 1, z: w.lane.z })), w.actual);
-            w.reading = still && velocities[i] && heights[i] !== null ? { v: velocities[i], dy: round(moved[i] + 1e-9, 3) } : null;
-        });
-        bodies.forEach((body) => body && body.isValid && body.remove());
-        for (const w of wave) for (let k = 0; k < LENGTH; k++) dim.setBlockType({ x: w.lane.x + k, y: Y - 1, z: w.lane.z }, "minecraft:air");
-        await wait(1);
-        wave.forEach((w) => entries.push({ requested: w.requested, actual: w.actual, reading: w.reading }));
-    }
-    printGrouped("friction_state", entries);
-}
-
-// ---------- the states BDS does not keep, tried with the blocks around them ----------
-
-// How each of the 4 blocks might be kept: the block under the state, the blocks filling the cells around it (a sealed 3x3x3
-// box), the block above it and the one beside it. These are recipes to try, nothing is taken from them: a state counts only
-// if BDS kept it.
-const AROUND = {
-    "minecraft:soul_fire": [{ name: "on soul soil", below: "minecraft:soul_soil" }, { name: "on soul sand", below: "minecraft:soul_sand" }],
-    "minecraft:bubble_column": [
-        { name: "in water on soul sand", below: "minecraft:soul_sand", fill: "minecraft:water" },
-        { name: "in water on magma block", below: "minecraft:magma_block", fill: "minecraft:water" },
-    ],
-    "minecraft:flowing_water": [{ name: "beside a source", side: "minecraft:water" }, { name: "under a source", above: "minecraft:water" }],
-    "minecraft:flowing_lava": [{ name: "beside a source", side: "minecraft:lava" }, { name: "under a source", above: "minecraft:lava" }],
-};
-
-async function aroundRecipes(dim, states) {
-    const X = 0, Z = 600, PITCH = 5, PER_ROW = 10, SPOTS = 100;
-    await loadedArea(dim, { x: X - 3, y: Y - 2, z: Z - 3 }, { x: X + PER_ROW * PITCH, y: Y + 5, z: Z + (SPOTS / PER_ROW) * PITCH }, "probe6");
-    const jobs = [];
-    for (const requested of states) {
-        for (const recipe of AROUND[requested.type.id] ?? []) jobs.push({ requested, recipe });
-    }
-    const results = new Map(); // key of the requested state -> {block, state, attempts}
-    for (let start = 0; start < jobs.length; start += SPOTS) {
-        const wave = jobs.slice(start, start + SPOTS);
-        wave.forEach((job, i) => {
-            const x = X + PITCH * (i % PER_ROW), z = Z + PITCH * Math.floor(i / PER_ROW);
-            const { recipe } = job;
-            job.centre = { x, y: Y + 1, z };
-            dim.runCommand(`fill ${x - 2} ${Y - 1} ${z - 2} ${x + 2} ${Y + 3} ${z + 2} stone`);
-            dim.runCommand(`fill ${x - 1} ${Y} ${z - 1} ${x + 1} ${Y + 2} ${z + 1} ${recipe.fill ?? "air"}`);
-            if (recipe.below) dim.setBlockType({ x, y: Y, z }, recipe.below);
-            if (recipe.above) dim.setBlockType({ x, y: Y + 2, z }, recipe.above);
-            if (recipe.side) dim.setBlockType({ x: x + 1, y: Y + 1, z }, recipe.side);
-            try {
-                dim.getBlock(job.centre).setPermutation(job.requested);
-            } catch {
-                // not placeable
-            }
-        });
-        await wait(4);
-        for (const job of wave) {
-            const asked = job.requested.getAllStates();
-            const block = dim.getBlock(job.centre);
-            const attempt = {
-                recipe: job.recipe.name,
-                materials: ["minecraft:stone", job.recipe.below, job.recipe.fill, job.recipe.above, job.recipe.side].filter((m) => m),
-                kept: block.typeId === job.requested.type.id && stateKey(block.permutation.getAllStates()) === stateKey(asked),
-                light: dim.getLightLevel(job.centre),
-            };
-            const key = job.requested.type.id + stateKey(asked);
-            if (!results.has(key)) results.set(key, { block: job.requested.type.id, state: asked, attempts: [] });
-            results.get(key).attempts.push(attempt);
-        }
-    }
-    for (const result of results.values()) out("around", result);
-}
-
 world.afterEvents.worldLoad.subscribe(() => {
-    main().catch((e) => {
-        for (const name of pendingSections) {
-            out("failed", { section: name, error: `not run: the probe failed in ${phase}` });
-        }
-        console.warn(`PROBE-FAILED in ${phase}: ${e} ${e?.stack}`);
-    });
+    main().catch((e) => console.warn(`PROBE-FAILED in ${phase}: ${e} ${e?.stack}`));
 });

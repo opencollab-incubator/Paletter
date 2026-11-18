@@ -1,6 +1,0 @@
-{
-  "minecraft:block": {
-    "description": {"identifier": "probe:light_dampening_1"},
-    "components": {"minecraft:light_dampening": 1}
-  }
-}

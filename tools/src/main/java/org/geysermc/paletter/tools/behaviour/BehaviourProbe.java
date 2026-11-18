@@ -40,8 +40,6 @@ public final class BehaviourProbe {
     static final String LOG = "probe.log";
     /** The directory of the add-on in the {@code behavior_packs} of the server it ran on. */
     public static final String PACK = "paletter_probe";
-    /** Seconds a run may take at least: the states of every block are placed and measured, which takes about 20 minutes of game time. */
-    public static final int MIN_TIMEOUT = 3600;
 
     /** A body's horizontal speed falls by this factor times the friction of what it stands on each tick. */
     static final double MOB_DRAG = 0.91;
@@ -166,13 +164,22 @@ public final class BehaviourProbe {
         JsonArray defaults = new JsonArray();
         JsonObject friction = friction(log, defaults);
         light(log, defaults);
-        explosion(log, defaults);
+        // not essential: where the explosions do not decide the resistance (BDS 1.26.36.1 destroyed resistance 0 and 3 alike at 7
+        // blocks, p > 0.01 at both distances), the default stays unknown and the reason is kept
+        JsonObject unverified = new JsonObject();
+        try {
+            explosion(log, defaults);
+        } catch (IllegalStateException e) {
+            unverified.addProperty("block:explosion_resistance", e.getMessage());
+        }
         collisionAndFire(log, defaults);
         capture.add("defaults", defaults);
+        if (!unverified.isEmpty()) {
+            capture.add("unverified_defaults", unverified);
+        }
         capture.add("friction", friction);
         capture.add("doors", doors(log));
         capture.add("climbing", climbing(log, defaults));
-        StateProbe.addTo(capture, log);
         return capture;
     }
 
@@ -237,10 +244,20 @@ public final class BehaviourProbe {
     }
 
     static double engineFriction(JsonArray track) {
-        List<Double> velocities = new ArrayList<>();
-        track.forEach(tick -> velocities.add(tick.getAsJsonArray().get(1).getAsDouble()));
-        return StateProbe.slideFriction(velocities, Double.MAX_VALUE).orElseThrow(() -> new IllegalStateException("Not enough of a slide to measure friction: "
-            + velocities.size() + " ticks"));
+        List<Double> ratios = new ArrayList<>();
+        for (int i = 0; i + 1 < track.size(); i++) {
+            double before = track.get(i).getAsJsonArray().get(1).getAsDouble();
+            double after = track.get(i + 1).getAsJsonArray().get(1).getAsDouble();
+            if (Math.abs(before) > 1e-4 && Math.abs(after) > 1e-4) {
+                ratios.add(after / before);
+            }
+        }
+        if (ratios.size() < 3) {
+            throw new IllegalStateException("Not enough of a slide to measure friction: " + ratios.size() + " ticks");
+        }
+        ratios.sort(Double::compare);
+        double median = ratios.get(ratios.size() / 2);
+        return Math.round(median / MOB_DRAG * 1000) / 1000.0;
     }
 
     // ---- light ----

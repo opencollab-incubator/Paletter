@@ -11,8 +11,6 @@ final class Runs {
     String bdsVersion;
     /** The Script API module versions of this build's docgen output (null if it wrote none). */
     java.util.List<String> scriptModules;
-    /** The {@code @minecraft/server-gametest} versions of the same docgen output; empty if it has none. */
-    java.util.List<String> gametestModules;
     /** The format version of the add-on packs of this build: the model's, or the build's own if it is older. */
     String formatVersion;
     boolean netherNet;
