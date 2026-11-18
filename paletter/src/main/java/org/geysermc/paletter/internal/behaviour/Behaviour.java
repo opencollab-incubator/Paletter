@@ -281,12 +281,12 @@ public final class Behaviour {
         RegisteredBlock block = palette.blocks().block(state.identifier());
         BehaviourStore.Resolved resolved = store.block(key, state.getRuntimeId(), palette.version());
         Value wire = block == null ? null : vanillaWire(key, block.properties(state));
-        return choose(resolved == null ? null : captured(resolved), wire);
+        return choose(resolved, wire);
     }
 
     private @Nullable Value vanilla(RegisteredItem item, BehaviourKey<?> key) {
         BehaviourStore.Resolved resolved = store.item(key, item.getIdentifier(), palette.version());
-        return choose(resolved == null ? null : captured(resolved), vanillaWire(key, item.properties()));
+        return choose(resolved, vanillaWire(key, item.properties()));
     }
 
     private @Nullable Value customBlock(RegisteredBlockState state, BehaviourKey<?> key) {
@@ -312,15 +312,29 @@ public final class Behaviour {
      * Direct evidence of the version beats a third-party dump and a capture of an older version; among direct sources
      * of the version the stronger kind decides ({@link Provenance.Source}: captures before the wire).
      */
-    private static @Nullable Value choose(@Nullable Value stored, @Nullable Value wire) {
-        if (wire == null) {
-            return stored;
+    private @Nullable Value choose(BehaviourStore.@Nullable Resolved stored, @Nullable Value wire) {
+        return switch (choice(stored == null ? null : stored.capture(), wire != null)) {
+            case NONE -> null;
+            case STORED -> captured(stored);
+            case WIRE -> wire;
+        };
+    }
+
+    private enum Choice { NONE, STORED, WIRE }
+
+    /**
+     * The one decision both paths make: which of the stored capture and the wire value gives the value (or neither). The value
+     * path and the provenance path only differ in what they build from the answer.
+     */
+    private Choice choice(BehaviourStore.@Nullable Capture stored, boolean hasWire) {
+        if (!hasWire) {
+            return stored == null ? Choice.NONE : Choice.STORED;
         }
         if (stored == null) {
-            return wire;
+            return Choice.WIRE;
         }
-        Provenance provenance = stored.provenance;
-        return !provenance.thirdParty() && !provenance.inherited() ? stored : wire;
+        boolean inherited = !stored.version().name().equals(palette.version().name());
+        return !stored.source().thirdParty() && !inherited ? Choice.STORED : Choice.WIRE;
     }
 
     private @Nullable Value vanillaWire(BehaviourKey<?> key, Properties properties) {
@@ -425,15 +439,11 @@ public final class Behaviour {
 
     /** {@link #choose} on values: a capture of this very version from a direct source beats the wire. */
     private @Nullable Object chooseValue(BehaviourStore.@Nullable Hit stored, @Nullable Object wire) {
-        if (wire == null) {
-            return stored == null ? null : stored.value();
-        }
-        if (stored == null) {
-            return wire;
-        }
-        BehaviourStore.Capture capture = stored.capture();
-        boolean inherited = !capture.version().name().equals(palette.version().name());
-        return !capture.source().thirdParty() && !inherited ? stored.value() : wire;
+        return switch (choice(stored == null ? null : stored.capture(), wire != null)) {
+            case NONE -> null;
+            case STORED -> stored.value();
+            case WIRE -> wire;
+        };
     }
 
     private static void require(BehaviourKey<?> key, BehaviourKey.Owner owner) {

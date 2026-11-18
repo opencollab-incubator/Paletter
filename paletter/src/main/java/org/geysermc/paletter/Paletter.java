@@ -203,7 +203,11 @@ public final class Paletter {
         return loaded;
     }
 
-    /** Interning only matters while versions are still to be loaded: once all are, the map (about a megabyte) is not needed. */
+    /**
+     * Interning only matters while versions are still to be loaded: once all are, the map (about a megabyte) is not needed.
+     * A version loaded after that (one outside the versions served) gets a throwaway map instead, so it loses the sharing with
+     * the other versions: its states and components are separate copies. The values stay the same, only the memory is not shared.
+     */
     private void releaseInterned() {
         synchronized (internLock) {
             interned = null;

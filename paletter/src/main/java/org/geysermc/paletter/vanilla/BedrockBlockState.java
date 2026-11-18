@@ -166,7 +166,8 @@ public final class BedrockBlockState {
     @Internal
     public int canonicalIn(@NonNull CanonicalBlocks canonical) {
         if (id >= 0) {
-            // A state of the bundled constants (only those have an id, and none has a root of its own): no other load
+            // A state of the bundled constants (only those have an id). This is checked before the root below because no bundled
+            // constant has a root of its own (BundledLayoutRootTest): only preview constants do, and they have no id.
             CanonicalBlocks bundled = VanillaIndex.get().blocks;
             return canonical.root() == bundled ? id : canonical.vanillaIdsFrom(bundled)[id];
         }

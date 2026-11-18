@@ -27,7 +27,21 @@ import java.util.Map;
 final class VanillaIndex {
     /** Initialization on demand: the first {@link #get} builds the index, every later one is a plain static read. */
     private static final class Holder {
-        static final VanillaIndex INSTANCE = new VanillaIndex();
+        static final VanillaIndex INSTANCE;
+        /** Why building failed: a failed class initialization only throws NoClassDefFoundError afterwards, which hides the cause. */
+        static final Throwable FAILURE;
+
+        static {
+            VanillaIndex index = null;
+            Throwable failure = null;
+            try {
+                index = new VanillaIndex();
+            } catch (Throwable t) {
+                failure = t;
+            }
+            INSTANCE = index;
+            FAILURE = failure;
+        }
     }
 
     final CanonicalBlocks blocks;
@@ -146,7 +160,11 @@ final class VanillaIndex {
     }
 
     static @NonNull VanillaIndex get() {
-        return Holder.INSTANCE;
+        VanillaIndex index = Holder.INSTANCE;
+        if (index == null) {
+            throw new IllegalStateException("The index of the bundled constants could not be built", Holder.FAILURE);
+        }
+        return index;
     }
 
     /**

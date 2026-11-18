@@ -695,6 +695,8 @@ public final class ItemRegistry implements DefinitionRegistry<ItemDefinition> {
         for (Int2ObjectMap.Entry<IntList> entry : indices.own.int2ObjectEntrySet()) {
             byRuntimeId.own.put(entry.getIntKey(), candidates(entry.getValue(), items));
         }
+        indices = indices.flattenedPast(MAX_LAYERS);
+        byRuntimeId = byRuntimeId.flattenedPast(MAX_LAYERS);
         indices.trim();
         byRuntimeId.trim();
         return new CanonicalTable(items, byRuntimeId, indices, base == null ? List.copyOf(missing) : joined(base.missing, missing),
@@ -720,6 +722,9 @@ public final class ItemRegistry implements DefinitionRegistry<ItemDefinition> {
         return Set.copyOf(all);
     }
 
+    /** How many maps a lookup walks at most: deeper chains of extensions are merged into one map. */
+    private static final int MAX_LAYERS = 4;
+
     /** An int keyed map over another one: what a layer holds shadows the base's. Not changed once built, so reads need no lock. */
     private static final class Layered<T> {
         private final @Nullable Layered<T> base;
@@ -727,6 +732,32 @@ public final class ItemRegistry implements DefinitionRegistry<ItemDefinition> {
 
         Layered(@Nullable Layered<T> base) {
             this.base = base;
+        }
+
+        /** The number of maps a lookup may walk, this one included. */
+        private int depth() {
+            int depth = 0;
+            for (Layered<T> layer = this; layer != null; layer = layer.base) {
+                depth++;
+            }
+            return depth;
+        }
+
+        /** @return this, or one map with everything this and its bases hold if that is more than {@code maxDepth} maps */
+        Layered<T> flattenedPast(int maxDepth) {
+            if (depth() <= maxDepth) {
+                return this;
+            }
+            List<Layered<T>> chain = new ArrayList<>();
+            for (Layered<T> layer = this; layer != null; layer = layer.base) {
+                chain.add(layer);
+            }
+            Layered<T> flat = new Layered<>(null);
+            // The base first, so what an upper layer holds shadows it
+            for (int i = chain.size() - 1; i >= 0; i--) {
+                flat.own.putAll(chain.get(i).own);
+            }
+            return flat;
         }
 
         @Nullable T get(int key) {
@@ -825,8 +856,8 @@ public final class ItemRegistry implements DefinitionRegistry<ItemDefinition> {
         /** Identifiers the layer is about to register: they exist for components compiled before their registration. */
         private final Set<String> declared = new HashSet<>();
         /**
-         * Identifiers this builder registered, overrode, or gave a block: the items of an extension whose default block can
-         * differ from the parent's, besides those that already had an override or are custom block items.
+         * Identifiers this builder registered, overrode, or named a block after (even a block without an item). Only these items,
+         * plus those with a block override and the custom block items, can get a default block that differs from the parent's.
          */
         private final Set<String> touched = new HashSet<>();
         private boolean creativeStacksOfParent;
@@ -1040,22 +1071,32 @@ public final class ItemRegistry implements DefinitionRegistry<ItemDefinition> {
         /**
          * Says that the layout {@link #build} gets has the creative stacks of the parent's items as the parent's layout does,
          * apart from the items this builder registers or overrides (a layer without creative edits): the default blocks of the
-         * other items are the parent's, and are not decided again. Without it every item is decided again.
-         *
-         * @param layoutIdentifiers the identifiers the layout mentions, if it is the parent's and they are known: a layout that
-         *                          mentions none of the changed items is not walked. Null if it is not known
+         * other items are the parent's, and are not decided again. Without it every item is decided again. The layout is
+         * walked for the changed items.
          */
-        public void keepsCreativeStacksOfParent(@Nullable Set<String> layoutIdentifiers) {
+        public void keepsCreativeStacksOfParent() {
             creativeStacksOfParent = true;
-            this.layoutIdentifiers = layoutIdentifiers;
+            layoutIdentifiers = null;
+        }
+
+        /**
+         * Like {@link #keepsCreativeStacksOfParent()} for a layout that is the parent's itself, whose identifiers are known: the
+         * layout is not walked at all if it mentions none of the changed items.
+         *
+         * @param mentioned the identifiers the parent's layout mentions
+         */
+        public void keepsCreativeStacksOfParentLayout(@NonNull Set<String> mentioned) {
+            creativeStacksOfParent = true;
+            layoutIdentifiers = mentioned;
         }
 
         public @NonNull ItemRegistry build(@NonNull CreativeLayout layout, @NonNull PaletteReportBuilder report) {
-            // The items to decide the default block of: all, or what this builder changed (what a block override or a custom
-            // block item names too: they depend on blocks this builder may have changed)
+            // The items to decide the default block of: all of them, or only those that can differ from the parent's. Those are the
+            // ones this builder touched, and every item with a block override or a custom block item, because their default
+            // block is looked up among blocks this builder may have changed.
             Set<String> changed = null;
             if (parent != null && creativeStacksOfParent) {
-                changed = new TreeSet<>(touched);
+                changed = new HashSet<>(touched);
                 changed.addAll(blockOverrides.keySet());
                 changed.addAll(customBlockItems);
             }
@@ -1078,10 +1119,16 @@ public final class ItemRegistry implements DefinitionRegistry<ItemDefinition> {
 
             Map<String, RegisteredBlockState> defaultBlocks = new HashMap<>();
             Set<String> multiState = new HashSet<>();
-            Collection<String> identifiers = new ArrayList<>();
+            // Decided in the order the full path walks them, which is the order of the report's warnings: the parent's items
+            // first (by runtime id), then this builder's own
+            Collection<String> identifiers = new LinkedHashSet<>();
             if (decide != null) {
                 // The others keep the parent's default block, and the parent's say about several block states
-                decide.stream().filter(identifier -> get(identifier) != null).forEach(identifiers::add);
+                decide.stream().filter(identifier -> !byIdentifier.containsKey(identifier))
+                    .map(parent::getDefinition).filter(Objects::nonNull)
+                    .sorted(Comparator.comparingInt(RegisteredItem::getRuntimeId))
+                    .forEach(item -> identifiers.add(item.getIdentifier()));
+                byIdentifier.keySet().stream().filter(decide::contains).forEach(identifiers::add);
                 parent.multiStateBlockItems.stream().filter(identifier -> !decide.contains(identifier)).forEach(multiState::add);
             } else {
                 if (parent != null) {

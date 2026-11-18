@@ -10,6 +10,11 @@ import org.junit.jupiter.api.Test;
 import org.openjdk.jol.info.GraphLayout;
 
 import java.io.IOException;
+import java.io.UncheckedIOException;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -26,8 +31,9 @@ import static org.junit.jupiter.api.Assertions.fail;
  * printed as {@code MEMORY} lines, run {@code ./gradlew :paletter:test --tests '*MemoryBaselineTest' -i} to see them.
  * <p>
  * The cost of an extension is what its object graph holds that the base palette's graph does not. JOL tells objects apart by
- * address, so a garbage collection between two walks makes moved objects look new: a measurement is repeated up to
- * {@link #ATTEMPTS} times and passes if one is within the limit.
+ * address, so only a garbage collection during a walk makes moved objects look new (one between two walks changes nothing):
+ * the measurements of an extension are repeated up to {@link #ATTEMPTS} times and pass if one is within the limit. A vanilla
+ * palette is measured once, in a JVM of its own with a pinned heap.
  * <p>
  * The limits are above the measured values, which are noted beside them; raise one only for a reason, and say so in the commit.
  */
@@ -74,17 +80,41 @@ class MemoryBaselineTest {
      * the constants and in the data source (the behaviour captures alone are about 15 MB) would count as the palette's.
      */
     private static long vanillaBytes(boolean latest) {
+        // The object layout decides the size: pinned, so the number does not depend on the JDK or the machine
+        List<String> command = new ArrayList<>(List.of(Path.of(System.getProperty("java.home"), "bin", "java").toString(),
+            "-Xmx1g", "-XX:+UseCompressedOops", "-XX:ObjectAlignmentInBytes=8"));
+        if (Runtime.version().feature() >= 24) {
+            // Compact object headers (experimental in 24, a product flag in 25) make objects smaller: off, whatever the default
+            command.addAll(List.of("-XX:+UnlockExperimentalVMOptions", "-XX:-UseCompactObjectHeaders"));
+        }
+        command.addAll(List.of("-Djol.magicFieldOffset=true", "-cp", System.getProperty("java.class.path"),
+            VanillaMeasure.class.getName(), String.valueOf(latest)));
+        Process process = null;
         try {
-            Process process = new ProcessBuilder(Path.of(System.getProperty("java.home"), "bin", "java").toString(),
-                "-Djol.magicFieldOffset=true", "-cp", System.getProperty("java.class.path"), VanillaMeasure.class.getName(), String.valueOf(latest))
-                .redirectErrorStream(true).start();
-            String output = new String(process.getInputStream().readAllBytes(), StandardCharsets.UTF_8).strip();
-            if (process.waitFor() != 0) {
-                throw new IllegalStateException("the measuring JVM failed: " + output);
+            process = new ProcessBuilder(command).redirectErrorStream(true).start();
+            // Read on, so a full pipe cannot stop the JVM while waiting for it
+            Process started = process;
+            CompletableFuture<String> output = CompletableFuture.supplyAsync(() -> {
+                try {
+                    return new String(started.getInputStream().readAllBytes(), StandardCharsets.UTF_8).strip();
+                } catch (IOException e) {
+                    throw new UncheckedIOException(e);
+                }
+            });
+            if (!process.waitFor(60, TimeUnit.SECONDS)) {
+                throw new IllegalStateException("the measuring JVM did not finish in 60 seconds");
             }
-            return Long.parseLong(output.lines().reduce((first, second) -> second).orElseThrow());
-        } catch (IOException | InterruptedException e) {
+            String text = output.get(10, TimeUnit.SECONDS);
+            if (process.exitValue() != 0) {
+                throw new IllegalStateException("the measuring JVM failed: " + text);
+            }
+            return Long.parseLong(text.lines().reduce((first, second) -> second).orElseThrow());
+        } catch (IOException | InterruptedException | ExecutionException | TimeoutException e) {
             throw new IllegalStateException(e);
+        } finally {
+            if (process != null) {
+                process.destroyForcibly();
+            }
         }
     }
 
@@ -122,7 +152,14 @@ class MemoryBaselineTest {
 
     @Test
     void vanillaPalettesStaySmall() {
-        assertWithin("the newest vanilla palette", MAX_VANILLA_LATEST_BYTES, () -> vanillaBytes(true));
-        assertWithin("the oldest vanilla palette", MAX_VANILLA_OLDEST_BYTES, () -> vanillaBytes(false));
+        assertOnce("the newest vanilla palette", MAX_VANILLA_LATEST_BYTES, vanillaBytes(true));
+        assertOnce("the oldest vanilla palette", MAX_VANILLA_OLDEST_BYTES, vanillaBytes(false));
+    }
+
+    private static void assertOnce(String what, long limit, long bytes) {
+        System.out.println("MEMORY " + what + " bytes=" + bytes + " (limit " + limit + ")");
+        if (bytes > limit) {
+            fail(what + " retains " + bytes + " bytes, limit " + limit);
+        }
     }
 }

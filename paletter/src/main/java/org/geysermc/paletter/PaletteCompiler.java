@@ -184,7 +184,11 @@ final class PaletteCompiler {
             CreativeLayout layout = sameLayout ? parent.creativeLayout() : creativeLayout(parent, layer, blocks, placed, report);
             if (layer.creativeEdits().isEmpty()) {
                 // Placements only add stacks of the items and blocks of the layer
-                items.keepsCreativeStacksOfParent(sameLayout ? parent.creativeIdentifiers() : null);
+                if (sameLayout) {
+                    items.keepsCreativeStacksOfParentLayout(parent.creativeIdentifiers());
+                } else {
+                    items.keepsCreativeStacksOfParent();
+                }
             }
             ItemRegistry itemPalette = items.build(layout, report);
             Set<String> registers = new HashSet<>(registered);
