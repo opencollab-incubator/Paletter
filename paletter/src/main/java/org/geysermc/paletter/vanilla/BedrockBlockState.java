@@ -165,12 +165,13 @@ public final class BedrockBlockState {
      */
     @Internal
     public int canonicalIn(@NonNull CanonicalBlocks canonical) {
-        if (layout.root != null && canonical.root() == layout.root) {
-            return layout.rootBase + layout.offset(combination);
-        }
         if (id >= 0) {
+            // A state of the bundled constants (only those have an id, and none has a root of its own): no other load
             CanonicalBlocks bundled = VanillaIndex.get().blocks;
             return canonical.root() == bundled ? id : canonical.vanillaIdsFrom(bundled)[id];
+        }
+        if (layout.root != null && canonical.root() == layout.root) {
+            return layout.rootBase + layout.offset(combination);
         }
         int base = canonical.customBase(type().identifier(), layout.count);
         return base == -1 ? canonical.index(toNbt()) : base + combination;

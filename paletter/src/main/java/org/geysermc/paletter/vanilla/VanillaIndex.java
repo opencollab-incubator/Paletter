@@ -25,7 +25,10 @@ import java.util.Map;
  * constant that needs data (a state, a canonical id). Referencing constants alone loads nothing.
  */
 final class VanillaIndex {
-    private static volatile @Nullable VanillaIndex instance;
+    /** Initialization on demand: the first {@link #get} builds the index, every later one is a plain static read. */
+    private static final class Holder {
+        static final VanillaIndex INSTANCE = new VanillaIndex();
+    }
 
     final CanonicalBlocks blocks;
     final CanonicalItems items;
@@ -143,16 +146,7 @@ final class VanillaIndex {
     }
 
     static @NonNull VanillaIndex get() {
-        VanillaIndex index = instance;
-        if (index == null) {
-            synchronized (VanillaIndex.class) {
-                index = instance;
-                if (index == null) {
-                    instance = index = new VanillaIndex();
-                }
-            }
-        }
-        return index;
+        return Holder.INSTANCE;
     }
 
     /**
