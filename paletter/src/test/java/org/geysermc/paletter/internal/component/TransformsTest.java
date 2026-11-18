@@ -17,10 +17,8 @@ import org.geysermc.paletter.block.component.PlacementFilter;
 import org.geysermc.paletter.block.component.SelectionBox;
 import org.geysermc.paletter.internal.data.VanillaData;
 import org.geysermc.paletter.item.component.BlockPlacer;
-import org.geysermc.paletter.item.component.Digger;
 import org.geysermc.paletter.item.component.Dyeable;
 import org.geysermc.paletter.item.component.ItemsOrTags;
-import org.geysermc.paletter.item.component.EntityPlacer;
 import org.geysermc.paletter.item.component.HoverTextColor;
 import org.geysermc.paletter.item.component.Icon;
 import org.geysermc.paletter.item.component.Repairable;
@@ -332,11 +330,11 @@ class TransformsTest {
 
     @Test
     void descriptorStatesOfAnUnknownBlockOrStateAreReported() {
-        Transforms.blockDescriptorStates(ctx, new WireNode(), BlockPlacer.UseOn.builder().name("minecraft:oak_log").states(Map.of("paletter_state", 1)).build());
+        Wire.blockDescriptor(ctx, new WireNode(), "", "minecraft:oak_log", Map.of("paletter_state", 1), null);
         assertEquals(1, report.warnings().size());
-        Transforms.blockDescriptorStates(ctx, new WireNode(), BlockPlacer.UseOn.builder().name("minecraft:paletter_unknown").states(Map.of("a", 1)).build());
+        Wire.blockDescriptor(ctx, new WireNode(), "", "minecraft:paletter_unknown", Map.of("a", 1), null);
         assertEquals(2, report.warnings().size());
-        Transforms.blockDescriptorStates(ctx, new WireNode(), BlockPlacer.UseOn.builder().name("minecraft:oak_log").states(Map.of("pillar_axis", "y")).build());
+        Wire.blockDescriptor(ctx, new WireNode(), "", "minecraft:oak_log", Map.of("pillar_axis", "y"), null);
         assertEquals(3, report.warnings().size(), "an enum state is sent as the string until its BDS index can be derived");
     }
 
@@ -363,21 +361,22 @@ class TransformsTest {
     }
 
     @Test
-    void blockDescriptorStatesAreTypedByTheRegistry() {
+    void blockDescriptorsAreTypedByTheRegistry() {
         WireNode placer = new WireNode();
-        Transforms.blockDescriptorStates(ctx, placer, BlockPlacer.UseOn.of(BedrockBlocks.OAK_LOG.defaultState()));
+        BlockPlacer.UseOn use = BlockPlacer.UseOn.of(BedrockBlocks.OAK_LOG.defaultState());
+        Wire.blockDescriptor(ctx, placer, "", use.name(), use.states(), use.tags());
         NbtMap states = placer.build().getCompound("states");
         assertEquals("minecraft:oak_log", placer.build().getString("name"));
         assertEquals("", placer.build().getString("tags"), "item descriptors are always the full triple");
         assertEquals(BedrockBlocks.OAK_LOG.defaultState().toNbt().getCompound("states"), states);
 
         WireNode entity = new WireNode();
-        Transforms.blockDescriptorStates(ctx, entity, EntityPlacer.UseOn.builder().tags("q.any_tag('stone')").build());
+        Wire.blockDescriptor(ctx, entity, "", null, Map.of(), "q.any_tag('stone')");
         assertEquals("", entity.build().getString("name"));
         assertEquals("q.any_tag('stone')", entity.build().getString("tags"));
 
         WireNode digger = new WireNode();
-        Transforms.blockDescriptorStates(ctx, digger, Digger.Block.builder().name("minecraft:stone").build());
+        Wire.blockDescriptor(ctx, digger, "block", "minecraft:stone", Map.of(), null);
         assertEquals(NbtMap.EMPTY, digger.build().getCompound("block").getCompound("states"));
 
         WireNode filter = new WireNode();

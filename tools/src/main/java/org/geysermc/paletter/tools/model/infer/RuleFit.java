@@ -263,7 +263,11 @@ final class RuleFit {
         }
         Rule count = Count.fit(set, wire);
         Rule list = count != null ? count : EmptyList.fit(set, wire);
-        return list != null ? list : Affine.fit(set, wire);
+        if (list != null) {
+            return list;
+        }
+        Rule elements = Affine.fitElements(set, wire);
+        return elements != null ? elements : Affine.fit(set, wire);
     }
 
     /**

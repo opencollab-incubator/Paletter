@@ -17,9 +17,7 @@ import org.geysermc.paletter.block.component.SelectionBox;
 import org.geysermc.paletter.block.component.UvLock;
 import org.geysermc.paletter.item.component.BlockPlacer;
 import org.geysermc.paletter.item.component.ColorValue;
-import org.geysermc.paletter.item.component.Digger;
 import org.geysermc.paletter.item.component.Dyeable;
-import org.geysermc.paletter.item.component.EntityPlacer;
 import org.geysermc.paletter.item.component.HoverTextColor;
 import org.geysermc.paletter.item.component.Icon;
 import org.geysermc.paletter.item.component.ItemsOrTags;
@@ -375,27 +373,6 @@ public final class Transforms {
     }
 
     // ---- block_descriptor_states -------------------------------------------------------------------------------------
-
-    /**
-     * The {@code states} of a block descriptor ({@code block_placer.use_on}, {@code entity_placer.use_on} and
-     * {@code dispense_on}, {@code digger.destroy_speeds[].block}, {@code placement_filter} block filters): a compound of
-     * state values, typed like the named block's states in the palette's registry (booleans as bytes, ints as the
-     * registry's type). BDS 1.26.63.1 sends an enum state as its index ({@code pillar_axis} "y" as 0, see
-     * {@code custom_item_registry.snbt}); that index is not derivable from the registry, so a string state is sent as
-     * given and reported. BDS drops a whole descriptor whose block lacks a state (the capture's invented state names), which
-     * is reported too. No rule over the JSON value fits, because the registry decides the type.
-     */
-    public static void blockDescriptorStates(@NonNull WireContext ctx, @NonNull WireNode out, BlockPlacer.UseOn d) {
-        Wire.blockDescriptor(ctx, out, "", d.name(), d.states(), d.tags());
-    }
-
-    public static void blockDescriptorStates(@NonNull WireContext ctx, @NonNull WireNode out, EntityPlacer.UseOn d) {
-        Wire.blockDescriptor(ctx, out, "", d.name(), d.states(), d.tags());
-    }
-
-    public static void blockDescriptorStates(@NonNull WireContext ctx, @NonNull WireNode out, Digger.Block d) {
-        Wire.blockDescriptor(ctx, out, "block", d.name(), d.states(), d.tags());
-    }
 
     /**
      * Placement filter descriptors send their states as a list of {@code {state, type, value}}, only when there are any.

@@ -162,6 +162,50 @@ class RuleFitTest {
         assertNull(Affine.fit(List.of(box(1, 2, 0, 5), box(-4, 2, 0, 11), box(0, 2, 0, 6), box(1, 3, 0, 4)), W));
     }
 
+    /** A list of boxes and the leaves BDS sent for its elements: {@code boxes[i].minX = leaf i}. */
+    private static Observation boxes(String json, float... minX) {
+        Map<String, Leaf> wire = new java.util.TreeMap<>();
+        for (int i = 0; i < minX.length; i++) {
+            wire.put("minecraft:x.boxes[" + i + "].minX", new Leaf("float", minX[i]));
+        }
+        return new Observation(JsonParser.parseString(json), wire, json);
+    }
+
+    @Test
+    void aLeafOfAListOfObjectsIsAnAffineRuleOfEveryElement() {
+        String leaf = "minecraft:x.boxes[0].minX";
+        // minX = 8 - origin.x - size.x, in every box: the second box of the third observation is another box
+        List<Observation> list = List.of(
+            boxes("[]"),
+            boxes("[{\"origin\": [1, 0, 0], \"size\": [2, 1, 1]}]", 5),
+            boxes("[{\"origin\": [-4, 0, 0], \"size\": [2, 1, 1]}, {\"origin\": [0, 0, 0], \"size\": [3, 1, 1]}]", 10, 5),
+            boxes("[{\"origin\": [0, 0, 0], \"size\": [2, 1, 1]}]", 6),
+            boxes("[{\"origin\": [1, 0, 0], \"size\": [3, 1, 1]}]", 4));
+        Affine rule = Affine.fitElements(list, leaf);
+        assertTrue(rule.elements && rule.eachElement());
+        assertEquals("{\"origin[0]\":-1,\"size[0]\":-1}", json(rule).get("terms").toString());
+        assertEquals(8.0, json(rule).get("constant").getAsDouble());
+        assertTrue(json(rule).get("elements").getAsBoolean());
+        // the rule is then found through the fit of a list
+        assertTrue(RuleFit.array(list, leaf, false).eachElement());
+        // the second box of the list is no other box than the first: a leaf that follows only one element's numbers is no rule of every one
+        assertNull(Affine.fitElements(List.of(
+            boxes("[{\"origin\": [1, 0, 0], \"size\": [2, 1, 1]}, {\"origin\": [0, 0, 0], \"size\": [2, 1, 1]}]", 5, 9),
+            boxes("[{\"origin\": [-4, 0, 0], \"size\": [2, 1, 1]}]", 10),
+            boxes("[{\"origin\": [0, 0, 0], \"size\": [3, 1, 1]}]", 5)), leaf));
+        // not a leaf of an element, and not a list
+        assertNull(Affine.fitElements(list, W));
+        assertNull(Affine.fitElements(List.of(box(1, 2, 0, 5), box(-4, 2, 0, 10)), leaf));
+        // a leaf of a list inside the elements is no leaf of the field's own list
+        assertNull(Affine.fitElements(list, "minecraft:x.groups[0].boxes[0].minX"));
+        // the wire has fewer elements than the JSON list: the leaves cannot be matched to the elements
+        assertNull(Affine.fitElements(List.of(
+            boxes("[{\"origin\": [1, 0, 0], \"size\": [2, 1, 1]}, {\"origin\": [0, 0, 0], \"size\": [3, 1, 1]}]", 5),
+            boxes("[{\"origin\": [-4, 0, 0], \"size\": [2, 1, 1]}]", 10),
+            boxes("[{\"origin\": [0, 0, 0], \"size\": [2, 1, 1]}]", 6),
+            boxes("[{\"origin\": [1, 0, 0], \"size\": [3, 1, 1]}]", 4)), leaf));
+    }
+
     @Test
     void aFieldWhoseJsonTypesLandOnOneLeafGetsARulePerType() {
         // repair_amount-like: a number is scaled into an int, a string is sent as it is

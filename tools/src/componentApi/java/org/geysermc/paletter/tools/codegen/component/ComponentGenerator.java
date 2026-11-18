@@ -24,6 +24,7 @@ import org.geysermc.paletter.tools.codegen.component.ApiModel.Window;
 import org.geysermc.paletter.tools.model.Fixtures;
 import org.geysermc.paletter.tools.model.MappingWindows;
 import org.geysermc.paletter.tools.model.Model;
+import org.geysermc.paletter.tools.model.rule.Descriptor;
 import org.geysermc.paletter.tools.model.rule.Rule;
 
 import java.io.IOException;
@@ -1378,7 +1379,7 @@ public final class ComponentGenerator {
 
     private void collectOwners(Comp c, Window w, ObjType o, Map<String, List<String>> owners, boolean transformed) {
         for (Field f : o.fields) {
-            boolean t = transformed || f.transform != null || c.transform != null;
+            boolean t = transformed || f.transform != null || writesHolder(w, f) || c.transform != null;
             if (!t) {
                 for (String leaf : rulesOf(w, f).stream().filter(Rule::writesValue).filter(r -> !r.sharesLeaf()).map(r -> r.wire).toList()) {
                     owners.computeIfAbsent(leaf, k -> new ArrayList<>()).add(f.path);
@@ -1405,12 +1406,20 @@ public final class ComponentGenerator {
         return null;
     }
 
+    /**
+     * Whether a field's rules include a descriptor written from the record that holds the field. Like a hand transform it
+     * replaces the generic encoding of its field and is called after its siblings.
+     */
+    static boolean writesHolder(Window w, Field f) {
+        return rulesOf(w, f).stream().anyMatch(r -> r instanceof Descriptor d && d.writesHolder());
+    }
+
     /** The rules of a field in a window, without the rules a union's object takes over from its children. */
     static List<Rule> rulesOf(Window w, Field f) {
         List<Rule> rules = Rule.all(mappingOf(w, f));
         if (f.type instanceof ObjRef || (f.type instanceof ListOf l && l.element() instanceof ObjRef)) {
             // An object's own value rules come from its scalar shorthand, which its children explain
-            rules.removeIf(Rule::writesValue);
+            rules.removeIf(r -> r.writesValue() && !r.eachElement());
         }
         if (f.type instanceof ApiModel.UnionRef) {
             rules.removeIf(Rule::writesValue);
@@ -1467,7 +1476,7 @@ public final class ComponentGenerator {
                 f.defaultNote = "The docs give the default " + d + ", which is not a value of this type; unset, BDS's behaviour applies.";
                 continue;
             }
-            String mismatch = w == null || f.transform != null || c.transform != null ? null : defaultMismatch(w, f, d);
+            String mismatch = w == null || f.transform != null || writesHolder(w, f) || c.transform != null ? null : defaultMismatch(w, f, d);
             if (mismatch != null) {
                 f.defaultNote = "The docs give the default " + render(d) + ", but " + mismatch + "; so it is unset by default, and the "
                     + "encoder sends what BDS sends then.";

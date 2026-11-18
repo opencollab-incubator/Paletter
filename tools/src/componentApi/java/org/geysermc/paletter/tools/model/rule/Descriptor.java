@@ -25,6 +25,21 @@ public final class Descriptor extends Rule {
 
     public Descriptor(String of) {
         this.of = of;
+        this.nbt = "compound";
+        this.tags = List.of("registry-resolved");
+    }
+
+    /**
+     * @return whether the rule is written from the record that holds the field, not from the field's value: a block
+     *         descriptor is the {@code name}, {@code states} and {@code tags} of its record, on whose {@code states} it is fitted
+     */
+    public boolean writesHolder() {
+        return of.equals("block");
+    }
+
+    /** @return the leaves the rule writes below its {@code wire}, which no other field's rule owns */
+    public List<String> leaves() {
+        return of.equals("block") ? List.of(wire + ".name", wire + ".states", wire + ".tags") : List.of(wire + ".name");
     }
 
     static Descriptor read(JsonObject json) {
@@ -35,13 +50,16 @@ public final class Descriptor extends Rule {
      * @param prefix the leaf path of the descriptor ({@code a.use_on[0]}): its leaves are {@code prefix.name},
      *               {@code prefix.states.<state>} and {@code prefix.tags}
      * @return the rule if every observation sends the descriptor of its JSON value in one of the two layouts, else null.
-     *         A block descriptor has {@code tags} leaves; an item descriptor must be sent for at least one item
+     *         A block descriptor has {@code tags} leaves; an item descriptor is a string and must be sent for at least one item
      */
     public static Descriptor fit(List<Observation> set, String prefix) {
         boolean block = set.stream().anyMatch(p -> p.wire().containsKey(prefix + ".tags"));
         boolean sent = false;
         for (Observation p : set) {
             JsonElement json = p.json();
+            if (!json.isJsonPrimitive() && !json.isJsonObject()) {
+                return null;
+            }
             String name = json.isJsonPrimitive() ? json.getAsString() : text(json.getAsJsonObject(), "name");
             Leaf leaf = p.wire().get(prefix + ".name");
             if (block) {
@@ -49,6 +67,9 @@ public final class Descriptor extends Rule {
                     || !statesMatch(p, prefix, json.getAsJsonObject())) {
                     return null;
                 }
+            } else if (json.isJsonObject() && (name != null || leaf != null)) {
+                // the encoder writes the item of a string: an object is no descriptor of its own
+                return null;
             } else if (leaf != null) {
                 if (name == null || !leaf.value().equals(namespaced(name))) {
                     return null;

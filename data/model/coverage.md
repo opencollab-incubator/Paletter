@@ -35,10 +35,10 @@ What the captures show but no field explains:
 | documented | 366 | 8 |
 | accepted by BDS | 307 | 5 |
 | sent on wire | 265 | 5 |
-| inferred | 245 | 4 |
+| inferred | 249 | 4 |
 | partial | 1 | 0 |
 | unresolved | 0 | 0 |
-| hand-rule | 19 | 1 |
+| hand-rule | 15 | 1 |
 | dropped | 38 | 0 |
 | linked | 0 | 0 |
 | rejected | 41 | 3 |
@@ -58,11 +58,12 @@ together and capture again); `rejected`: every variant setting it was rejected;
 |---|---|
 | affix | 2 |
 | bitset | 7 |
-| constant | 208 |
+| constant | 200 |
+| descriptor | 4 |
 | empty-list | 18 |
-| empty-map | 9 |
+| empty-map | 5 |
 | enum-table | 4 |
-| identity | 232 |
+| identity | 228 |
 | linear | 15 |
 | ordered-set | 2 |
 | packed-bits | 8 |
@@ -74,14 +75,15 @@ together and capture again); `rejected`: every variant setting it was rejected;
 | enum->int | 6 |
 | explained-by-child-fields | 29 |
 | flattened | 18 |
-| injected-default | 209 |
+| injected-default | 201 |
 | item_properties | 19 |
 | list-element | 33 |
-| nested | 84 |
+| nested | 80 |
 | outside-component:* | 3 |
 | packed-bits | 8 |
 | presence | 17 |
-| renamed | 96 |
+| registry-resolved | 4 |
+| renamed | 92 |
 | type:* | 110 |
 | unit-conversion | 15 |
 | value-map | 1 |
@@ -145,7 +147,7 @@ together and capture again); `rejected`: every variant setting it was rejected;
 | `block:trait:minecraft:placement_position` | active | sent | traits | 1 / 0 / 0 / 0 / 0 / 1 |
 | `item:description` | active | sent | item_properties.creative_category, item_properties.creative_group, item_properti... | 4 / 0 / 0 / 0 / 0 / 5 |
 | `item:minecraft:allow_off_hand` | active | sent | item_properties.allow_off_hand, minecraft:allow_off_hand | 1 / 0 / 0 / 0 / 0 / 1 |
-| `item:minecraft:block_placer` | active | sent | minecraft:block_placer, minecraft:publisher_on_use_on | 4 / 0 / 3 / 0 / 0 / 7 |
+| `item:minecraft:block_placer` | active | sent | minecraft:block_placer, minecraft:publisher_on_use_on | 5 / 0 / 2 / 0 / 0 / 7 |
 | `item:minecraft:bundle_interaction` | active | sent | minecraft:bundle_interaction | 1 / 0 / 0 / 0 / 0 / 1 |
 | `item:minecraft:can_destroy_in_creative` | active | sent | item_properties.can_destroy_in_creative, minecraft:can_destroy_in_creative | 1 / 0 / 0 / 0 / 0 / 1 |
 | `item:minecraft:chargeable` | deprecated | rejected |  | 0 / 0 / 0 / 0 / 2 / 2 |
@@ -154,13 +156,13 @@ together and capture again); `rejected`: every variant setting it was rejected;
 | `item:minecraft:custom_components` | deprecated | pending capture |  | 0 / 0 / 0 / 0 / 0 / 0 |
 | `item:minecraft:damage` | active | sent | item_properties.damage, minecraft:damage | 1 / 0 / 0 / 0 / 0 / 1 |
 | `item:minecraft:damage_absorption` | active | server-only |  | 0 / 0 / 0 / 1 / 0 / 1 |
-| `item:minecraft:digger` | active | sent | minecraft:digger | 6 / 0 / 1 / 0 / 0 / 7 |
+| `item:minecraft:digger` | active | sent | minecraft:digger | 7 / 0 / 0 / 0 / 0 / 7 |
 | `item:minecraft:display_name` | active | sent | minecraft:display_name | 1 / 0 / 0 / 0 / 0 / 1 |
 | `item:minecraft:durability` | active | sent | minecraft:durability | 3 / 0 / 0 / 1 / 0 / 4 |
 | `item:minecraft:durability_sensor` | active | server-only |  | 0 / 0 / 0 / 4 / 1 / 5 |
 | `item:minecraft:dyeable` | active | sent | minecraft:dyeable | 0 / 0 / 1 / 0 / 0 / 1 |
 | `item:minecraft:enchantable` | active | sent | item_properties.enchantable_slot, item_properties.enchantable_value, minecraft:e... | 1 / 0 / 0 / 0 / 0 / 2 |
-| `item:minecraft:entity_placer` | active | sent | minecraft:entity_placer, minecraft:publisher_on_use_on | 7 / 0 / 2 / 0 / 0 / 9 |
+| `item:minecraft:entity_placer` | active | sent | minecraft:entity_placer, minecraft:publisher_on_use_on | 9 / 0 / 0 / 0 / 0 / 9 |
 | `item:minecraft:fire_resistant` | active | sent | minecraft:fire_resistant | 1 / 0 / 0 / 0 / 0 / 1 |
 | `item:minecraft:food` | active | sent | minecraft:food | 3 / 1 / 0 / 0 / 1 / 5 |
 | `item:minecraft:fuel` | active | sent | minecraft:fuel | 1 / 0 / 0 / 0 / 0 / 1 |
@@ -211,11 +213,7 @@ together and capture again); `rejected`: every variant setting it was rejected;
 - `block:permutations` `[].components`: hand-rule -> `permutationComponents` (unexplained: `permutations[].condition`)
 - `item:minecraft:block_placer` `block`: hand-rule -> `blockName` (unexplained: `minecraft:block_placer.block`)
 - `item:minecraft:block_placer` `replace_block_item`: hand-rule -> `replaceBlockItem` (unexplained: `minecraft:block_placer.replaceBlockItem`)
-- `item:minecraft:block_placer` `use_on[].states`: hand-rule -> `blockDescriptorStates` (unexplained: `minecraft:block_placer.use_on`)
-- `item:minecraft:digger` `destroy_speeds[].block.states`: hand-rule -> `blockDescriptorStates` (unexplained: `minecraft:digger.destroy_speeds`)
 - `item:minecraft:dyeable` `default_color`: hand-rule -> `rgbColor`
-- `item:minecraft:entity_placer` `dispense_on[].states`: hand-rule -> `blockDescriptorStates` (unexplained: `minecraft:entity_placer.dispense_on`)
-- `item:minecraft:entity_placer` `use_on[].states`: hand-rule -> `blockDescriptorStates` (unexplained: `minecraft:entity_placer.use_on`)
 - `item:minecraft:food` `using_converts_to`: partial (unexplained: `minecraft:food.using_converts_to`)
 - `item:minecraft:hover_text_color` `value`: hand-rule -> `formattingCode` (unexplained: `item_properties.hover_text_color`)
 - `item:minecraft:shooter` `ammunition[].item`: hand-rule -> `ammunitionItemDescriptor` (unexplained: `minecraft:shooter.ammunition[].item`, `minecraft:shooter.ammunition[].item.name`)
@@ -226,7 +224,7 @@ Wire values of `Transforms` that no accepted variant sends, so the conformance s
 
 ## Hand transforms not verified by BDS
 
-25 of 25 transforms have accepted variants that set what they compile (`verified: {build, variants}` in `mappings.json`; the conformance suite reproduces those variants). Not verified:
+21 of 21 transforms have accepted variants that set what they compile (`verified: {build, variants}` in `mappings.json`; the conformance suite reproduces those variants). Not verified:
 
 - `block:minecraft:destructible_by_mining:` (`destructibleByMining`): verified for the other fields, but BDS rejected every variant of `base_time_to_destroy`, `item_specific_speeds[].item[].tags`
 - `block:minecraft:geometry:` (`geometry`): verified for the other fields, but BDS rejected every variant of `n_way_visual_rotation`
