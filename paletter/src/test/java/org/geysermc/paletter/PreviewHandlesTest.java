@@ -10,11 +10,14 @@ import org.geysermc.paletter.vanilla.BedrockBlocks;
 import org.geysermc.paletter.vanilla.BedrockItemType;
 import org.geysermc.paletter.vanilla.BedrockItemVariant;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
@@ -56,6 +59,26 @@ class PreviewHandlesTest {
             BedrockItemType type = palette.itemType(item.identifier(), Lookup.EXACT);
             assertNotNull(type, item.toString());
         }
+    }
+
+    /** The handles of the preview's items send the item itself, not the fallback of its constant (minecraft:unknown). */
+    @Test
+    void everyItemOfThePreviewResolvesToItself() {
+        for (VanillaItem item : data.items()) {
+            BedrockItemVariant variant = palette.itemVariant(item.identifier(), 0, Lookup.EXACT);
+            assertEquals(item.identifier(), palette.items().resolve(variant).definition().getIdentifier(), item.toString());
+        }
+    }
+
+    /**
+     * The creative inventory sends what the preview's data lists, also the items only the preview has. BDS 1.26.70.24
+     * sends {@code minecraft:polished_calcite_wall} in its creative inventory, an item 26.60 does not have.
+     */
+    @Test
+    void creativeInventorySendsThePreviewItems() {
+        List<String> sent = palette.creative().items().stream().map(item -> item.getItem().getDefinition().getIdentifier()).toList();
+        assertFalse(sent.contains("minecraft:unknown"), "the creative inventory sends minecraft:unknown");
+        assertTrue(sent.contains("minecraft:polished_calcite_wall"));
     }
 
     @Test
