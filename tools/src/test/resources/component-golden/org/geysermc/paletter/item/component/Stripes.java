@@ -22,23 +22,23 @@ import org.checkerframework.checker.nullness.qual.NonNull;
  */
 public sealed interface Stripes permits Stripes.Names, Stripes.On {
     /**
-     * @return the list of strings form
+     * @return the form that is a list of strings
      */
-    static @NonNull Stripes of(@NonNull List<String> value) {
+    static @NonNull Stripes names(@NonNull List<String> value) {
         return new Names(value);
     }
 
     /**
-     * @return the boolean form
+     * @return the form that is a boolean
      */
-    static @NonNull Stripes of(boolean value) {
+    static @NonNull Stripes on(boolean value) {
         return new On(value);
     }
 
     /**
-     * The list of strings form.
+     * The form that is a list of strings.
      *
-     * @param value the list of strings
+     * @param value a list of strings
      */
     record Names(@NonNull List<String> value) implements Stripes {
         public Names {
@@ -47,9 +47,9 @@ public sealed interface Stripes permits Stripes.Names, Stripes.On {
     }
 
     /**
-     * The boolean form.
+     * The form that is a boolean.
      *
-     * @param value the boolean
+     * @param value a boolean
      */
     record On(boolean value) implements Stripes {
     }

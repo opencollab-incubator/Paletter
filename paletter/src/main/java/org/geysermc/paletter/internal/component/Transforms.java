@@ -497,7 +497,7 @@ public final class Transforms {
             for (String item : items) {
                 e.element("items").put("name", item);
             }
-            if (entry.items() instanceof ItemsOrTags.Tags tags) {
+            if (entry.items() instanceof ItemsOrTags.TagQuery tags) {
                 // The string form is a Molang tag query ({tags}), e.g. query.any_tag('minecraft:planks')
                 e.element("items").put("tags", tags.value());
             }

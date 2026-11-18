@@ -3,6 +3,7 @@
 // data/model/ATTRIBUTION.md.
 package org.geysermc.paletter.block.component;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import org.checkerframework.checker.nullness.qual.NonNull;
@@ -25,9 +26,9 @@ import org.geysermc.paletter.internal.component.Check;
  * @param south Add-on JSON {@code south}. Optional (null: not set).
  * @param up Add-on JSON {@code up}. Optional (null: not set).
  * @param west Add-on JSON {@code west}. Optional (null: not set).
- * @param instances Instances and aliases with any other name, which geometry bones refer to (for example {@code "glass"}); the
- *        keys {@code *}, {@code up}, {@code down}, {@code north}, {@code south}, {@code east} and {@code west} have
- *        their own fields. Add-on JSON {@code *}. Default: <code>&#123;&#125;</code>.
+ * @param instances Instances and aliases with any other name, which geometry bones refer to (for example {@code "glass"}).
+ *        Default: <code>&#123;&#125;</code>. A key that has a field of its own ({@code *}, {@code down}, {@code east},
+ *        {@code north}, {@code south}, {@code up}, {@code west}) is refused.
  * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/blockreference/examples/blockcomponents/minecraftblock_material_instances?view=minecraft-bedrock-stable">Microsoft Learn: minecraft:material_instances</a>
  * @since 1.0.0
  */
@@ -47,6 +48,11 @@ public record MaterialInstances(MaterialInstances. @Nullable InstanceOrAlias all
 
     public MaterialInstances {
         instances = Check.copy(instances, "MaterialInstances.instances");
+        for (String key : List.of("*", "down", "east", "north", "south", "up", "west")) {
+            if (instances.containsKey(key)) {
+                throw new IllegalArgumentException("MaterialInstances.instances has the key " + key + ", which has a field of its own");
+            }
+        }
     }
 
     @Override
@@ -109,17 +115,10 @@ public record MaterialInstances(MaterialInstances. @Nullable InstanceOrAlias all
         }
 
         /**
-         * Sets {@code *} to its {@link InstanceOrAlias.Alias} form: a string.
-         */
-        public @NonNull Builder all(@NonNull String all) {
-            return all(InstanceOrAlias.of(all));
-        }
-
-        /**
-         * Sets {@code *} to its {@link InstanceOrAlias.Define} form: an object.
+         * Sets {@code *} to the definition of the instance.
          */
         public @NonNull Builder all(@NonNull Instance all) {
-            return all(InstanceOrAlias.of(all));
+            return all(InstanceOrAlias.define(all));
         }
 
         /**
@@ -131,17 +130,10 @@ public record MaterialInstances(MaterialInstances. @Nullable InstanceOrAlias all
         }
 
         /**
-         * Sets {@code down} to its {@link InstanceOrAlias.Alias} form: a string.
-         */
-        public @NonNull Builder down(@NonNull String down) {
-            return down(InstanceOrAlias.of(down));
-        }
-
-        /**
-         * Sets {@code down} to its {@link InstanceOrAlias.Define} form: an object.
+         * Sets {@code down} to the definition of the instance.
          */
         public @NonNull Builder down(@NonNull Instance down) {
-            return down(InstanceOrAlias.of(down));
+            return down(InstanceOrAlias.define(down));
         }
 
         /**
@@ -153,17 +145,10 @@ public record MaterialInstances(MaterialInstances. @Nullable InstanceOrAlias all
         }
 
         /**
-         * Sets {@code east} to its {@link InstanceOrAlias.Alias} form: a string.
-         */
-        public @NonNull Builder east(@NonNull String east) {
-            return east(InstanceOrAlias.of(east));
-        }
-
-        /**
-         * Sets {@code east} to its {@link InstanceOrAlias.Define} form: an object.
+         * Sets {@code east} to the definition of the instance.
          */
         public @NonNull Builder east(@NonNull Instance east) {
-            return east(InstanceOrAlias.of(east));
+            return east(InstanceOrAlias.define(east));
         }
 
         /**
@@ -175,17 +160,10 @@ public record MaterialInstances(MaterialInstances. @Nullable InstanceOrAlias all
         }
 
         /**
-         * Sets {@code north} to its {@link InstanceOrAlias.Alias} form: a string.
-         */
-        public @NonNull Builder north(@NonNull String north) {
-            return north(InstanceOrAlias.of(north));
-        }
-
-        /**
-         * Sets {@code north} to its {@link InstanceOrAlias.Define} form: an object.
+         * Sets {@code north} to the definition of the instance.
          */
         public @NonNull Builder north(@NonNull Instance north) {
-            return north(InstanceOrAlias.of(north));
+            return north(InstanceOrAlias.define(north));
         }
 
         /**
@@ -197,17 +175,10 @@ public record MaterialInstances(MaterialInstances. @Nullable InstanceOrAlias all
         }
 
         /**
-         * Sets {@code south} to its {@link InstanceOrAlias.Alias} form: a string.
-         */
-        public @NonNull Builder south(@NonNull String south) {
-            return south(InstanceOrAlias.of(south));
-        }
-
-        /**
-         * Sets {@code south} to its {@link InstanceOrAlias.Define} form: an object.
+         * Sets {@code south} to the definition of the instance.
          */
         public @NonNull Builder south(@NonNull Instance south) {
-            return south(InstanceOrAlias.of(south));
+            return south(InstanceOrAlias.define(south));
         }
 
         /**
@@ -219,17 +190,10 @@ public record MaterialInstances(MaterialInstances. @Nullable InstanceOrAlias all
         }
 
         /**
-         * Sets {@code up} to its {@link InstanceOrAlias.Alias} form: a string.
-         */
-        public @NonNull Builder up(@NonNull String up) {
-            return up(InstanceOrAlias.of(up));
-        }
-
-        /**
-         * Sets {@code up} to its {@link InstanceOrAlias.Define} form: an object.
+         * Sets {@code up} to the definition of the instance.
          */
         public @NonNull Builder up(@NonNull Instance up) {
-            return up(InstanceOrAlias.of(up));
+            return up(InstanceOrAlias.define(up));
         }
 
         /**
@@ -241,17 +205,10 @@ public record MaterialInstances(MaterialInstances. @Nullable InstanceOrAlias all
         }
 
         /**
-         * Sets {@code west} to its {@link InstanceOrAlias.Alias} form: a string.
-         */
-        public @NonNull Builder west(@NonNull String west) {
-            return west(InstanceOrAlias.of(west));
-        }
-
-        /**
-         * Sets {@code west} to its {@link InstanceOrAlias.Define} form: an object.
+         * Sets {@code west} to the definition of the instance.
          */
         public @NonNull Builder west(@NonNull Instance west) {
-            return west(InstanceOrAlias.of(west));
+            return west(InstanceOrAlias.define(west));
         }
 
         /**
@@ -484,8 +441,8 @@ public record MaterialInstances(MaterialInstances. @Nullable InstanceOrAlias all
     /**
      * The value of an add-on JSON field that takes one of several forms:
      * <ul>
-     *     <li>{@link Alias}: a string</li>
-     *     <li>{@link Define}: an object</li>
+     *     <li>{@link Alias}: the name of another instance</li>
+     *     <li>{@link Define}: the definition of the instance</li>
      * </ul>
      * <p>
      * Switch over it without a default: the records below are all its forms.
@@ -494,23 +451,23 @@ public record MaterialInstances(MaterialInstances. @Nullable InstanceOrAlias all
      */
     public sealed interface InstanceOrAlias permits InstanceOrAlias.Alias, InstanceOrAlias.Define {
         /**
-         * @return the string form
+         * @return the form that is the name of another instance
          */
-        static @NonNull InstanceOrAlias of(@NonNull String value) {
+        static @NonNull InstanceOrAlias alias(@NonNull String value) {
             return new Alias(value);
         }
 
         /**
-         * @return the object form
+         * @return the form that is the definition of the instance
          */
-        static @NonNull InstanceOrAlias of(@NonNull Instance value) {
+        static @NonNull InstanceOrAlias define(@NonNull Instance value) {
             return new Define(value);
         }
 
         /**
-         * The string form.
+         * The form that is the name of another instance.
          *
-         * @param value the string
+         * @param value the name of another instance
          */
         record Alias(@NonNull String value) implements InstanceOrAlias {
             public Alias {
@@ -519,9 +476,9 @@ public record MaterialInstances(MaterialInstances. @Nullable InstanceOrAlias all
         }
 
         /**
-         * The object form.
+         * The form that is the definition of the instance.
          *
-         * @param value the object
+         * @param value the definition of the instance
          */
         record Define(@NonNull Instance value) implements InstanceOrAlias {
             public Define {

@@ -3,6 +3,7 @@
 // data/model/ATTRIBUTION.md.
 package org.geysermc.paletter.block.component;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -202,24 +203,29 @@ public record Geometry(@BedrockFormat("1.19.80") @Nullable Map<String, String> b
         }
 
         /**
-         * Sets {@code uv_lock} to its {@link UvLock.Bones} form: a list of strings.
+         * Sets {@code uv_lock} to the names of the bones to lock.
          */
         public @NonNull Builder uvLock(@NonNull List<String> uvLock) {
-            return uvLock(UvLock.of(uvLock));
+            return uvLock(UvLock.bones(uvLock));
         }
 
         /**
-         * Sets {@code uv_lock} to its {@link UvLock.Bones} form: a list of strings.
+         * Sets {@code uv_lock} to the names of the bones to lock (at least one value).
          */
-        public @NonNull Builder uvLock(@NonNull String... uvLock) {
-            return uvLock(List.of(uvLock));
+        public @NonNull Builder uvLock(@NonNull String first, @NonNull String... rest) {
+            List<String> values = new ArrayList<>();
+            values.add(first);
+            for (String x : rest) {
+                values.add(x);
+            }
+            return uvLock(values);
         }
 
         /**
-         * Sets {@code uv_lock} to its {@link UvLock.Flag} form: a boolean.
+         * Sets {@code uv_lock} to one flag for every bone.
          */
         public @NonNull Builder uvLock(boolean uvLock) {
-            return uvLock(UvLock.of(uvLock));
+            return uvLock(UvLock.flag(uvLock));
         }
 
         /**

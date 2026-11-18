@@ -3,15 +3,17 @@
 // data/model/ATTRIBUTION.md.
 package org.geysermc.paletter.item.component;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import org.checkerframework.checker.nullness.qual.NonNull;
+import org.geysermc.paletter.vanilla.BedrockItemType;
 
 /**
  * The value of an add-on JSON field that takes one of several forms:
  * <ul>
- *     <li>{@link Items}: a list of strings</li>
- *     <li>{@link Tags}: a string</li>
+ *     <li>{@link Items}: the identifiers of the items</li>
+ *     <li>{@link TagQuery}: a Molang {@code query.any_tag} expression that selects items by tag</li>
  * </ul>
  * <p>
  * Switch over it without a default: the records below are all its forms.
@@ -20,25 +22,38 @@ import org.checkerframework.checker.nullness.qual.NonNull;
  *
  * @since 1.0.0
  */
-public sealed interface ItemsOrTags permits ItemsOrTags.Items, ItemsOrTags.Tags {
+public sealed interface ItemsOrTags permits ItemsOrTags.Items, ItemsOrTags.TagQuery {
     /**
-     * @return the list of strings form
+     * @return the form that is the identifiers of the items
      */
-    static @NonNull ItemsOrTags of(@NonNull List<String> value) {
+    static @NonNull ItemsOrTags items(@NonNull List<String> value) {
         return new Items(value);
     }
 
     /**
-     * @return the string form
+     * @return the form that is the identifiers of the items, of vanilla or custom items (at least one)
      */
-    static @NonNull ItemsOrTags of(@NonNull String value) {
-        return new Tags(value);
+    static @NonNull ItemsOrTags items(@NonNull BedrockItemType first,
+            @NonNull BedrockItemType... rest) {
+        List<String> identifiers = new ArrayList<>();
+        identifiers.add(first.identifier());
+        for (BedrockItemType type : rest) {
+            identifiers.add(type.identifier());
+        }
+        return new Items(identifiers);
     }
 
     /**
-     * The list of strings form.
+     * @return the form that is a Molang {@code query.any_tag} expression that selects items by tag
+     */
+    static @NonNull ItemsOrTags tagQuery(@NonNull String value) {
+        return new TagQuery(value);
+    }
+
+    /**
+     * The form that is the identifiers of the items.
      *
-     * @param value the list of strings
+     * @param value the identifiers of the items
      */
     record Items(@NonNull List<String> value) implements ItemsOrTags {
         public Items {
@@ -47,13 +62,13 @@ public sealed interface ItemsOrTags permits ItemsOrTags.Items, ItemsOrTags.Tags 
     }
 
     /**
-     * The string form.
+     * The form that is a Molang {@code query.any_tag} expression that selects items by tag.
      *
-     * @param value the string
+     * @param value a Molang {@code query.any_tag} expression that selects items by tag
      */
-    record Tags(@NonNull String value) implements ItemsOrTags {
-        public Tags {
-            Objects.requireNonNull(value, "ItemsOrTags.Tags.value");
+    record TagQuery(@NonNull String value) implements ItemsOrTags {
+        public TagQuery {
+            Objects.requireNonNull(value, "ItemsOrTags.TagQuery.value");
         }
     }
 }

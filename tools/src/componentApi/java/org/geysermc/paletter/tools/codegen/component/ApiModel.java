@@ -245,12 +245,20 @@ final class ApiModel {
     static final class Variant {
         final String name;
         final String json;
+        /** What the form means ("the names of the bones"), for the documentation; null: the JSON type says it. */
+        final String doc;
         Type type;
 
-        Variant(String name, String json, Type type) {
+        Variant(String name, String json, String doc, Type type) {
             this.name = name;
             this.json = json;
+            this.doc = doc;
             this.type = type;
+        }
+
+        /** @return the factory of the form: its name, first letter lower case */
+        String factory() {
+            return Character.toLowerCase(name.charAt(0)) + name.substring(1);
         }
     }
 
@@ -264,6 +272,10 @@ final class ApiModel {
         /** The component that declares it (nested there), or null for a type of its own. */
         Comp owner;
         final List<Variant> variants = new ArrayList<>();
+        /** Forms that get no builder overload of their own (api.json {@code noOverload}): a string that is no obvious value. */
+        final java.util.Set<String> noOverload = new java.util.TreeSet<>();
+        /** "item" or "block" when the list form is of identifiers: its factory takes the vanilla constants too. */
+        String descriptor;
         /** Where it is used, for its documentation: component id and JSON path. */
         final List<String> users = new ArrayList<>();
     }
@@ -320,6 +332,8 @@ final class ApiModel {
         List<String> documentedValues;
         /** Synthetic field from a value form (no JSON key of its own), with that form's mapping. */
         String form;
+        /** The keys of a keyed extra map that have a field of their own, which the record refuses as keys of the map. */
+        List<String> reservedKeys = List.of();
         /** A map of the keys the fixed field {@code keyedExtraOf} does not name (api.json keyedExtras); same wire rules. */
         Field keyedExtraOf;
         /** Paths of the mapping fields whose rules apply to this field (its own path, or a form). */

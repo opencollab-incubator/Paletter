@@ -187,11 +187,11 @@ class GeneratedApiTest {
         assertNull(DestructibleByMining.ItemSpecificSpeeds.builder().destroySpeed(1f).build().item());
         assertEquals(Map.of("item", "item"), ComponentIndex.DESCRIPTORS.get(DestructibleByMining.ItemSpecificSpeeds.class));
         // uv_lock is a boolean or a list of bones, never both: one value of a sealed type, the last form set wins
-        assertEquals(UvLock.of(List.of("a", "b")), Geometry.builder().identifier("g").uvLock("a", "b").build().uvLock());
-        assertEquals(UvLock.of(true), Geometry.builder().identifier("g").uvLock(true).build().uvLock());
-        assertEquals(UvLock.of(false), EmbeddedVisual.Geometry.builder().identifier("g").build().uvLock(), "the documented default");
-        assertEquals(UvLock.of(List.of("a")), Geometry.builder().identifier("g").uvLock(true).uvLock("a").build().uvLock());
-        assertThrows(NullPointerException.class, () -> UvLock.of((List<String>) null));
+        assertEquals(UvLock.bones(List.of("a", "b")), Geometry.builder().identifier("g").uvLock("a", "b").build().uvLock());
+        assertEquals(UvLock.flag(true), Geometry.builder().identifier("g").uvLock(true).build().uvLock());
+        assertEquals(UvLock.flag(false), EmbeddedVisual.Geometry.builder().identifier("g").build().uvLock(), "the documented default");
+        assertEquals(UvLock.bones(List.of("a")), Geometry.builder().identifier("g").uvLock(true).uvLock("a").build().uvLock());
+        assertThrows(NullPointerException.class, () -> UvLock.bones(null));
     }
 
     @Test
@@ -207,8 +207,10 @@ class GeneratedApiTest {
                     && variant.getRecordComponents()[0].getName().equals("value"), u.name + "." + variant.getSimpleName());
                 assertTrue(u.variants.stream().anyMatch(v -> v.name.equals(variant.getSimpleName())), variant.getName());
             }
-            // The factories of the forms: one `of` each, none for a form twice
-            assertEquals(u.variants.size(), java.util.Arrays.stream(type.getMethods()).filter(m -> m.getName().equals("of")).count(), u.name);
+            // A factory named after each form
+            for (ApiModel.Variant v : u.variants) {
+                assertTrue(java.util.Arrays.stream(type.getMethods()).anyMatch(m -> m.getName().equals(v.factory())), u.name + "." + v.factory());
+            }
         }
         // One type for the three geometries that take uv_lock
         assertEquals(UvLock.class, Geometry.class.getRecordComponents()[Geometry.class.getRecordComponents().length - 1].getType());

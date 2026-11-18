@@ -9,8 +9,8 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 /**
  * The value of an add-on JSON field that takes one of several forms:
  * <ul>
- *     <li>{@link Expression}: a string</li>
- *     <li>{@link Fixed}: a number</li>
+ *     <li>{@link Expression}: a Molang expression for the amount</li>
+ *     <li>{@link Fixed}: a fixed amount of durability</li>
  * </ul>
  * <p>
  * Switch over it without a default: the records below are all its forms.
@@ -21,23 +21,23 @@ import org.checkerframework.checker.nullness.qual.NonNull;
  */
 public sealed interface RepairAmount permits RepairAmount.Expression, RepairAmount.Fixed {
     /**
-     * @return the string form
+     * @return the form that is a Molang expression for the amount
      */
-    static @NonNull RepairAmount of(@NonNull String value) {
+    static @NonNull RepairAmount expression(@NonNull String value) {
         return new Expression(value);
     }
 
     /**
-     * @return the number form
+     * @return the form that is a fixed amount of durability
      */
-    static @NonNull RepairAmount of(float value) {
+    static @NonNull RepairAmount fixed(float value) {
         return new Fixed(value);
     }
 
     /**
-     * The string form.
+     * The form that is a Molang expression for the amount.
      *
-     * @param value the string
+     * @param value a Molang expression for the amount
      */
     record Expression(@NonNull String value) implements RepairAmount {
         public Expression {
@@ -46,9 +46,9 @@ public sealed interface RepairAmount permits RepairAmount.Expression, RepairAmou
     }
 
     /**
-     * The number form.
+     * The form that is a fixed amount of durability.
      *
-     * @param value the number
+     * @param value a fixed amount of durability
      */
     record Fixed(float value) implements RepairAmount {
     }

@@ -3,6 +3,7 @@
 // data/model/ATTRIBUTION.md.
 package org.geysermc.paletter.item.component;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -38,7 +39,8 @@ import org.geysermc.paletter.vanilla.BedrockItemType;
  *        by the hand transform {@code Transforms.testMap}.
  * @param fuel The item it burns. Add-on JSON {@code fuel}. Optional (null: not set).
  * @param reach The docs require it; BDS takes it omitted. Add-on JSON {@code reach}. Default: <code>3</code>.
- * @param moreNested Nested things under any other key. Add-on JSON {@code nested}. Default: <code>&#123;&#125;</code>.
+ * @param moreNested Nested things under any other key. Default: <code>&#123;&#125;</code>. A key that has a field of its own
+ *        ({@code nested}) is refused.
  * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/itemreference/examples/itemcomponents/test_widget?view=minecraft-bedrock-stable">Microsoft Learn: test:widget</a>
  * @since 1.0.0
  */
@@ -63,6 +65,11 @@ public record Widget(int count, @NonNull String label, Widget. @NonNull Mode mod
         colors = colors == null ? null : Check.copy(colors, "Widget.colors");
         Objects.requireNonNull(offset, "Widget.offset");
         moreNested = Check.copy(moreNested, "Widget.moreNested");
+        for (String key : List.of("nested")) {
+            if (moreNested.containsKey(key)) {
+                throw new IllegalArgumentException("Widget.moreNested has the key " + key + ", which has a field of its own");
+            }
+        }
     }
 
     @Override
@@ -265,24 +272,29 @@ public record Widget(int count, @NonNull String label, Widget. @NonNull Mode mod
         }
 
         /**
-         * Sets {@code stripes} to its {@link Stripes.Names} form: a list of strings.
+         * Sets {@code stripes} to a list of strings.
          */
         public @NonNull Builder stripes(@NonNull List<String> stripes) {
-            return stripes(Stripes.of(stripes));
+            return stripes(Stripes.names(stripes));
         }
 
         /**
-         * Sets {@code stripes} to its {@link Stripes.Names} form: a list of strings.
+         * Sets {@code stripes} to a list of strings (at least one value).
          */
-        public @NonNull Builder stripes(@NonNull String... stripes) {
-            return stripes(List.of(stripes));
+        public @NonNull Builder stripes(@NonNull String first, @NonNull String... rest) {
+            List<String> values = new ArrayList<>();
+            values.add(first);
+            for (String x : rest) {
+                values.add(x);
+            }
+            return stripes(values);
         }
 
         /**
-         * Sets {@code stripes} to its {@link Stripes.On} form: a boolean.
+         * Sets {@code stripes} to a boolean.
          */
         public @NonNull Builder stripes(boolean stripes) {
-            return stripes(Stripes.of(stripes));
+            return stripes(Stripes.on(stripes));
         }
 
         /**
@@ -294,24 +306,29 @@ public record Widget(int count, @NonNull String label, Widget. @NonNull Mode mod
         }
 
         /**
-         * Sets {@code outline} to its {@link Stripes.Names} form: a list of strings.
+         * Sets {@code outline} to a list of strings.
          */
         public @NonNull Builder outline(@NonNull List<String> outline) {
-            return outline(Stripes.of(outline));
+            return outline(Stripes.names(outline));
         }
 
         /**
-         * Sets {@code outline} to its {@link Stripes.Names} form: a list of strings.
+         * Sets {@code outline} to a list of strings (at least one value).
          */
-        public @NonNull Builder outline(@NonNull String... outline) {
-            return outline(List.of(outline));
+        public @NonNull Builder outline(@NonNull String first, @NonNull String... rest) {
+            List<String> values = new ArrayList<>();
+            values.add(first);
+            for (String x : rest) {
+                values.add(x);
+            }
+            return outline(values);
         }
 
         /**
-         * Sets {@code outline} to its {@link Stripes.On} form: a boolean.
+         * Sets {@code outline} to a boolean.
          */
         public @NonNull Builder outline(boolean outline) {
-            return outline(Stripes.of(outline));
+            return outline(Stripes.on(outline));
         }
 
         /**

@@ -275,7 +275,7 @@ class TransformsTest {
     void materialInstancesPackedInlineAndAliases() {
         MaterialInstances materials = MaterialInstances.builder()
             .all(MaterialInstances.Instance.builder().texture("stone").faceDimming(false).isotropic(true).build())
-            .up("*")
+            .up(MaterialInstances.InstanceOrAlias.alias("*"))
             .build();
         WireNode out = new WireNode();
         Transforms.materialInstances(ctx, out, materials);
@@ -344,9 +344,9 @@ class TransformsTest {
     void materialInstancesWithCustomNames() {
         MaterialInstances materials = MaterialInstances.builder()
             .all(MaterialInstances.Instance.builder().texture("stone").build())
-            .instances(Map.of("glass", MaterialInstances.InstanceOrAlias.of(
+            .instances(Map.of("glass", MaterialInstances.InstanceOrAlias.define(
                 MaterialInstances.Instance.builder().texture("glass").renderMethod(MaterialInstances.RenderMethod.BLEND).build()),
-                "pane", MaterialInstances.InstanceOrAlias.of("glass")))
+                "pane", MaterialInstances.InstanceOrAlias.alias("glass")))
             .build();
         WireNode out = new WireNode();
         Transforms.materialInstances(ctx, out, materials);
@@ -397,7 +397,7 @@ class TransformsTest {
         Transforms.itemDescriptorList(ctx, repair, Repairable.builder().repairItems(
             Repairable.RepairItems.builder().items("minecraft:stick").repairAmount(1.5f).build(),
             Repairable.RepairItems.builder().items(List.of()).repairAmount("q.max_durability * 0.25").build(),
-            Repairable.RepairItems.builder().items(ItemsOrTags.of("1")).repairAmount(1f).build()).build());
+            Repairable.RepairItems.builder().items(ItemsOrTags.tagQuery("1")).repairAmount(1f).build()).build());
         NbtList<NbtMap> entries = (NbtList<NbtMap>) compound(repair, "minecraft:repairable").getList("repair_items", NbtType.COMPOUND);
         assertEquals("minecraft:stick", entries.get(0).getList("items", NbtType.COMPOUND).getFirst().getString("name"));
         assertEquals(1.5f, entries.get(0).getFloat("repair_amount"));

@@ -3,6 +3,7 @@
 // data/model/ATTRIBUTION.md.
 package org.geysermc.paletter.item.component;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import org.checkerframework.checker.nullness.qual.NonNull;
@@ -57,7 +58,7 @@ public record Dyeable(@NonNull ColorValue defaultColor) implements ItemComponent
      * Builds {@link Dyeable}: defaults applied, required fields and ranges checked by {@link #build()}.
      */
     public static final class Builder {
-        private @Nullable ColorValue defaultColor = ColorValue.of(List.of(255, 255, 255));
+        private @Nullable ColorValue defaultColor = ColorValue.channels(List.of(255, 255, 255));
 
         private Builder() {
         }
@@ -71,24 +72,29 @@ public record Dyeable(@NonNull ColorValue defaultColor) implements ItemComponent
         }
 
         /**
-         * Sets {@code default_color} to its {@link ColorValue.Channels} form: a list of integers.
+         * Sets {@code default_color} to the red, green and blue channels.
          */
         public @NonNull Builder defaultColor(@NonNull List<Integer> defaultColor) {
-            return defaultColor(ColorValue.of(defaultColor));
+            return defaultColor(ColorValue.channels(defaultColor));
         }
 
         /**
-         * Sets {@code default_color} to its {@link ColorValue.Channels} form: a list of integers.
+         * Sets {@code default_color} to the red, green and blue channels (at least one value).
          */
-        public @NonNull Builder defaultColor(@NonNull Integer... defaultColor) {
-            return defaultColor(List.of(defaultColor));
+        public @NonNull Builder defaultColor(int first, int... rest) {
+            List<Integer> values = new ArrayList<>();
+            values.add(first);
+            for (int x : rest) {
+                values.add(x);
+            }
+            return defaultColor(values);
         }
 
         /**
-         * Sets {@code default_color} to its {@link ColorValue.Hex} form: a string.
+         * Sets {@code default_color} to a hex color of six digits.
          */
         public @NonNull Builder defaultColor(@NonNull String defaultColor) {
-            return defaultColor(ColorValue.of(defaultColor));
+            return defaultColor(ColorValue.hex(defaultColor));
         }
 
         /**

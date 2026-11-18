@@ -483,8 +483,8 @@ void theModelIsWhatTheGoldenSourcesShow() {
         Map<String, String> files = ComponentGenerator.generate(inputs());
         String stripes = files.get("org/geysermc/paletter/item/component/Stripes.java");
         assertTrue(stripes.contains("public sealed interface Stripes permits Stripes.Names, Stripes.On"), stripes);
-        assertTrue(stripes.contains("static @NonNull Stripes of(boolean value)"), stripes);
-        assertTrue(stripes.contains("static @NonNull Stripes of(@NonNull List<String> value)"), stripes);
+        assertTrue(stripes.contains("static @NonNull Stripes on(boolean value)"), stripes);
+        assertTrue(stripes.contains("static @NonNull Stripes names(@NonNull List<String> value)"), stripes);
         assertTrue(stripes.contains("record On(boolean value) implements Stripes"), stripes);
         assertTrue(stripes.contains("record Names(@NonNull List<String> value) implements Stripes"), stripes);
         assertTrue(stripes.contains("value = List.copyOf(Objects.requireNonNull(value, \"Stripes.Names.value\"))"), stripes);
@@ -496,15 +496,16 @@ void theModelIsWhatTheGoldenSourcesShow() {
         // Each form has its builder overloads, a list also as varargs
         assertTrue(widget.contains("public @NonNull Builder stripes(boolean stripes)"), widget);
         assertTrue(widget.contains("public @NonNull Builder stripes(@NonNull List<String> stripes)"), widget);
-        assertTrue(widget.contains("public @NonNull Builder stripes(@NonNull String... stripes)"), widget);
+        assertTrue(widget.contains("public @NonNull Builder stripes(@NonNull String first, @NonNull String... rest)"), "a list of at least one: " + widget);
+        assertFalse(widget.contains("String... stripes"), widget);
         assertEquals(1, files.keySet().stream().filter(f -> f.endsWith("/Stripes.java")).count());
     }
 
     @Test
-    void aLoneStringGetsNoOverloadNextToAListOfStrings() {
+    void aFormListedInNoOverloadIsSetThroughTheFactoryOnly() {
         Inputs in = inputs();
         in.api().getAsJsonObject("unions").add("item:test:widget:stripes", json("{\"name\": \"Stripes\", \"variants\": "
-            + "{\"array<string>\": \"Names\", \"string\": \"Pattern\"}}"));
+            + "{\"array<string>\": \"Names\", \"string\": \"Pattern\"}, \"noOverload\": [\"Pattern\"]}"));
         in.api().getAsJsonObject("unions").add("item:test:widget:outline", in.api().getAsJsonObject("unions").get("item:test:widget:stripes"));
         in.components().getAsJsonArray("components").forEach(c -> c.getAsJsonObject().getAsJsonArray("fields").forEach(f -> {
             if (f.getAsJsonObject().get("path").getAsString().matches("stripes|outline")) {
@@ -513,9 +514,16 @@ void theModelIsWhatTheGoldenSourcesShow() {
         }));
         Map<String, String> files = ComponentGenerator.generate(in);
         String widget = files.get("org/geysermc/paletter/item/component/Widget.java");
-        assertTrue(widget.contains("public @NonNull Builder stripes(@NonNull String... stripes)"), widget);
-        assertFalse(widget.contains("Builder stripes(@NonNull String stripes)"), "stripes(\"a\") would read as one list element: " + widget);
-        assertTrue(files.get("org/geysermc/paletter/item/component/Stripes.java").contains("static @NonNull Stripes of(@NonNull String value)"));
+        assertTrue(widget.contains("public @NonNull Builder stripes(@NonNull String first, @NonNull String... rest)"), widget);
+        assertFalse(widget.contains("Builder stripes(@NonNull String stripes)"), "the pattern is no obvious value: " + widget);
+        assertTrue(files.get("org/geysermc/paletter/item/component/Stripes.java").contains("static @NonNull Stripes pattern(@NonNull String value)"));
+    }
+
+    @Test
+    void aKeyedExtraMapRefusesTheKeysThatHaveAFieldOfTheirOwn() {
+        String widget = ComponentGenerator.generate(inputs()).get("org/geysermc/paletter/item/component/Widget.java");
+        assertTrue(widget.contains("for (String key : List.of(\"nested\"))"), widget);
+        assertTrue(widget.contains("Widget.moreNested has the key "), widget);
     }
 
     @Test

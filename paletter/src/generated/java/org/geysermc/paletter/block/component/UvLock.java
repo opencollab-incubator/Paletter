@@ -10,8 +10,8 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 /**
  * The value of an add-on JSON field that takes one of several forms:
  * <ul>
- *     <li>{@link Bones}: a list of strings</li>
- *     <li>{@link Flag}: a boolean</li>
+ *     <li>{@link Bones}: the names of the bones to lock</li>
+ *     <li>{@link Flag}: one flag for every bone</li>
  * </ul>
  * <p>
  * Switch over it without a default: the records below are all its forms.
@@ -22,23 +22,23 @@ import org.checkerframework.checker.nullness.qual.NonNull;
  */
 public sealed interface UvLock permits UvLock.Bones, UvLock.Flag {
     /**
-     * @return the list of strings form
+     * @return the form that is the names of the bones to lock
      */
-    static @NonNull UvLock of(@NonNull List<String> value) {
+    static @NonNull UvLock bones(@NonNull List<String> value) {
         return new Bones(value);
     }
 
     /**
-     * @return the boolean form
+     * @return the form that is one flag for every bone
      */
-    static @NonNull UvLock of(boolean value) {
+    static @NonNull UvLock flag(boolean value) {
         return new Flag(value);
     }
 
     /**
-     * The list of strings form.
+     * The form that is the names of the bones to lock.
      *
-     * @param value the list of strings
+     * @param value the names of the bones to lock
      */
     record Bones(@NonNull List<String> value) implements UvLock {
         public Bones {
@@ -47,9 +47,9 @@ public sealed interface UvLock permits UvLock.Bones, UvLock.Flag {
     }
 
     /**
-     * The boolean form.
+     * The form that is one flag for every bone.
      *
-     * @param value the boolean
+     * @param value one flag for every bone
      */
     record Flag(boolean value) implements UvLock {
     }

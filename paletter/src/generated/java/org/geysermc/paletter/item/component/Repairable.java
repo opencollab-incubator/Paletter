@@ -136,28 +136,35 @@ public record Repairable(
             }
 
             /**
-             * Sets {@code items} to its {@link ItemsOrTags.Items} form: a list of strings.
+             * Sets {@code items} to the identifiers of the items.
              */
             public @NonNull Builder items(@NonNull List<String> items) {
-                return items(ItemsOrTags.of(items));
+                return items(ItemsOrTags.items(items));
             }
 
             /**
-             * Sets {@code items} to its {@link ItemsOrTags.Items} form: a list of strings.
+             * Sets {@code items} to the identifiers of the items (at least one value).
              */
-            public @NonNull Builder items(@NonNull String... items) {
-                return items(List.of(items));
-            }
-
-            /**
-             * Sets {@code items} to the identifiers of vanilla or custom items.
-             */
-            public @NonNull Builder items(@NonNull BedrockItemType... items) {
-                List<String> identifiers = new ArrayList<>();
-                for (BedrockItemType type : items) {
-                    identifiers.add(type.identifier());
+            public @NonNull Builder items(@NonNull String first, @NonNull String... rest) {
+                List<String> values = new ArrayList<>();
+                values.add(first);
+                for (String x : rest) {
+                    values.add(x);
                 }
-                return items(identifiers);
+                return items(values);
+            }
+
+            /**
+             * Sets {@code items} to the identifiers of vanilla or custom items (at least one value).
+             */
+            public @NonNull Builder items(@NonNull BedrockItemType first,
+                    @NonNull BedrockItemType... rest) {
+                List<String> values = new ArrayList<>();
+                values.add(first.identifier());
+                for (BedrockItemType x : rest) {
+                    values.add(x.identifier());
+                }
+                return items(values);
             }
 
             /**
@@ -169,17 +176,17 @@ public record Repairable(
             }
 
             /**
-             * Sets {@code repair_amount} to its {@link RepairAmount.Expression} form: a string.
+             * Sets {@code repair_amount} to a Molang expression for the amount.
              */
             public @NonNull Builder repairAmount(@NonNull String repairAmount) {
-                return repairAmount(RepairAmount.of(repairAmount));
+                return repairAmount(RepairAmount.expression(repairAmount));
             }
 
             /**
-             * Sets {@code repair_amount} to its {@link RepairAmount.Fixed} form: a number.
+             * Sets {@code repair_amount} to a fixed amount of durability.
              */
             public @NonNull Builder repairAmount(float repairAmount) {
-                return repairAmount(RepairAmount.of(repairAmount));
+                return repairAmount(RepairAmount.fixed(repairAmount));
             }
 
             /**

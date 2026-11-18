@@ -276,6 +276,13 @@ public final class ApiBinder {
             value = name == null ? JsonNull.INSTANCE : name;
         }
         if (value.isJsonNull()) {
+            // Nothing set: the union type if the field has one, else a string
+            for (Method m : candidates) {
+                if (m.getParameterTypes()[0].isSealed()) {
+                    m.invoke(builder, (Object) null);
+                    return;
+                }
+            }
             for (Method m : candidates) {
                 if (m.getParameterTypes()[0] == String.class) {
                     m.invoke(builder, (Object) null);

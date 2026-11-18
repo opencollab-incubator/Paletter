@@ -10,8 +10,8 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 /**
  * The value of an add-on JSON field that takes one of several forms:
  * <ul>
- *     <li>{@link Channels}: a list of integers</li>
- *     <li>{@link Hex}: a string</li>
+ *     <li>{@link Channels}: the red, green and blue channels</li>
+ *     <li>{@link Hex}: a hex color of six digits</li>
  * </ul>
  * <p>
  * Switch over it without a default: the records below are all its forms.
@@ -22,23 +22,23 @@ import org.checkerframework.checker.nullness.qual.NonNull;
  */
 public sealed interface ColorValue permits ColorValue.Channels, ColorValue.Hex {
     /**
-     * @return the list of integers form
+     * @return the form that is the red, green and blue channels
      */
-    static @NonNull ColorValue of(@NonNull List<Integer> value) {
+    static @NonNull ColorValue channels(@NonNull List<Integer> value) {
         return new Channels(value);
     }
 
     /**
-     * @return the string form
+     * @return the form that is a hex color of six digits
      */
-    static @NonNull ColorValue of(@NonNull String value) {
+    static @NonNull ColorValue hex(@NonNull String value) {
         return new Hex(value);
     }
 
     /**
-     * The list of integers form.
+     * The form that is the red, green and blue channels.
      *
-     * @param value the list of integers
+     * @param value the red, green and blue channels
      */
     record Channels(@NonNull List<Integer> value) implements ColorValue {
         public Channels {
@@ -47,9 +47,9 @@ public sealed interface ColorValue permits ColorValue.Channels, ColorValue.Hex {
     }
 
     /**
-     * The string form.
+     * The form that is a hex color of six digits.
      *
-     * @param value the string
+     * @param value a hex color of six digits
      */
     record Hex(@NonNull String value) implements ColorValue {
         public Hex {

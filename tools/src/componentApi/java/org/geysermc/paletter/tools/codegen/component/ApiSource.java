@@ -383,7 +383,7 @@ final class ApiSource {
         StringBuilder s = new StringBuilder();
         String doc = f.javadoc ? f.doc : Docs.escape(f.doc);
         s.append(doc.isEmpty() ? (f.json == null ? "The value." : "Add-on JSON {@code " + f.json + "}.") : doc);
-        if (f.json != null && !doc.isEmpty()) {
+        if (f.json != null && !doc.isEmpty() && f.keyedExtraOf == null) {
             s.append(" Add-on JSON {@code ").append(f.json).append("}.");
         }
         if (f.required) {
@@ -392,6 +392,10 @@ final class ApiSource {
             s.append(" Default: ").append(Docs.literal(f.defaultValue)).append('.');
         } else {
             s.append(" Optional (null: not set).");
+        }
+        if (!f.reservedKeys.isEmpty()) {
+            s.append(" A key that has a field of its own (").append(String.join(", ", f.reservedKeys.stream().map(k -> "{@code " + k + "}").toList()))
+                .append(") is refused.");
         }
         if (f.defaultNote != null) {
             s.append(' ').append(f.defaultNote);
@@ -505,6 +509,14 @@ final class ApiSource {
                 }
             } else if (reference && !nullable) {
                 body.addStatement("$T.requireNonNull($N, $S)", OBJECTS, f.java, name);
+            }
+            if (!f.reservedKeys.isEmpty()) {
+                body.beginControlFlow("for ($T key : $T.of($L))", STRING, LIST, String.join(", ", f.reservedKeys.stream()
+                    .map(k -> "\"" + k + "\"").toList()));
+                body.beginControlFlow("if ($N.containsKey(key))", f.java);
+                body.addStatement("throw new $T($S + key + $S)", IllegalArgumentException.class, name + " has the key ",
+                    ", which has a field of its own");
+                body.endControlFlow().endControlFlow();
             }
             if (f.type instanceof States) {
                 body.addStatement("$T.stateValues($N, $S)", CHECK, f.java, name);
@@ -735,51 +747,56 @@ final class ApiSource {
     }
 
     /**
-     * The overloads of a union field, one set per form: the value as it is ({@code uvLock(true)}), a list also as varargs and,
-     * for item identifiers, as vanilla or custom items. A lone string gets none where another form is a list of strings
-     * ({@code items("a")} would read as one item, not as the tags form): that form is set with the union's {@code of}.
+     * The overloads of a union field, one set per form: the value as it is ({@code uvLock(true)}), a list also as varargs of at
+     * least one value ({@code uvLock()} would mean nothing) and, for item identifiers, as vanilla or custom items. A form
+     * api.json {@code noOverload} lists gets none (a string that is an alias or a query, not the obvious value): it is set
+     * with the factory of the union.
      */
     private void unionSetters(TypeSpec.Builder type, ClassName builder, Field f, UnionType u, String json) {
-        ClassName union = unionName(u);
-        boolean lists = u.variants.stream().anyMatch(v -> v.type instanceof ListOf l && l.element() instanceof Scalar s && s.kind() == ScalarKind.STRING);
         for (Variant v : u.variants) {
-            if (lists && v.type instanceof Scalar s && s.kind() == ScalarKind.STRING) {
+            if (u.noOverload.contains(v.name)) {
                 continue;
             }
             TypeName param = typeName(v.type, false);
             type.addMethod(MethodSpec.methodBuilder(f.java).addModifiers(Modifier.PUBLIC).returns(nonNull(builder))
-                .addJavadoc("Sets {@code $L} to its {@link $T.$L} form: $L.\n", json, union, v.name, formName(v.json))
+                .addJavadoc("Sets {@code $L} to $L.\n", json, meaning(v))
                 .addParameter(param.isPrimitive() ? param : nonNull(param), f.java)
-                .addStatement("return $N($T.of($N))", f.java, union, f.java).build());
+                .addStatement("return $N($T.$N($N))", f.java, unionName(u), v.factory(), f.java).build());
             if (v.type instanceof ListOf l) {
-                TypeName element = typeName(l.element(), true);
-                type.addMethod(MethodSpec.methodBuilder(f.java).addModifiers(Modifier.PUBLIC).returns(nonNull(builder)).varargs()
-                    .addJavadoc("Sets {@code $L} to its {@link $T.$L} form: $L.\n", json, union, v.name, formName(v.json))
-                    .addParameter(com.palantir.javapoet.ArrayTypeName.of(nonNull(element)), f.java)
-                    .addStatement("return $N($T.of($N))", f.java, LIST, f.java).build());
+                varargs(type, builder, f, json, typeName(l.element(), false), typeName(l.element(), true), "values.add(first)",
+                    CodeBlock.of("$N.add(x)", "values"), meaning(v));
                 if (l.element() instanceof Scalar s && s.kind() == ScalarKind.STRING && f.descriptor != null) {
                     ClassName handle = f.descriptor.equals("item") ? ITEM_TYPE : BLOCK_TYPE;
-                    type.addMethod(MethodSpec.methodBuilder(f.java).addModifiers(Modifier.PUBLIC).returns(nonNull(builder)).varargs()
-                        .addJavadoc("Sets {@code $L} to the identifiers of vanilla or custom $Ls.\n", json, f.descriptor)
-                        .addParameter(com.palantir.javapoet.ArrayTypeName.of(nonNull(handle)), f.java)
-                        .addStatement("$T<$T> identifiers = new $T<>()", LIST, STRING, ArrayList.class)
-                        .beginControlFlow("for ($T type : $N)", handle, f.java).addStatement("identifiers.add(type.identifier())").endControlFlow()
-                        .addStatement("return $N(identifiers)", f.java).build());
+                    varargs(type, builder, f, json, handle, STRING, "values.add(first.identifier())",
+                        CodeBlock.of("$N.add(x.identifier())", "values"), "the identifiers of vanilla or custom " + f.descriptor + "s");
                 }
             }
         }
     }
 
+    /** {@code name(T first, T... rest)}: a list of at least one value, passed on as the list. */
+    private void varargs(TypeSpec.Builder type, ClassName builder, Field f, String json, TypeName element, TypeName stored, String first,
+                         CodeBlock each, String meaning) {
+        TypeName param = element.isPrimitive() ? element : nonNull(element);
+        type.addMethod(MethodSpec.methodBuilder(f.java).addModifiers(Modifier.PUBLIC).returns(nonNull(builder)).varargs()
+            .addJavadoc("Sets {@code $L} to $L (at least one value).\n", json, meaning)
+            .addParameter(param, "first").addParameter(com.palantir.javapoet.ArrayTypeName.of(param), "rest")
+            .addStatement("$T<$T> values = new $T<>()", LIST, stored, ArrayList.class)
+            .addStatement(first)
+            .beginControlFlow("for ($T x : rest)", element).addStatement(each).endControlFlow()
+            .addStatement("return $N(values)", f.java).build());
+    }
+
     // ---- Unions ------------------------------------------------------------------------------------------------------
 
-    /** The sealed interface of a union: one record per JSON form, and an {@code of} factory for each. */
+    /** The sealed interface of a union: one record per JSON form, and a factory named after each (and one taking vanilla constants for a list of identifiers). */
     private static TypeSpec union(UnionType u, String since) {
         ClassName self = unionName(u);
         Comp owner = u.owner;
         StringBuilder doc = new StringBuilder("The value of an add-on JSON field that takes one of several forms:\n");
         doc.append("<ul>\n");
         for (Variant v : u.variants) {
-            doc.append("    <li>{@link ").append(v.name).append("}: ").append(formName(v.json)).append("</li>\n");
+            doc.append("    <li>{@link ").append(v.name).append("}: ").append(meaning(v)).append("</li>\n");
         }
         doc.append("</ul>\n<p>\nSwitch over it without a default: the records below are all its forms.\n");
         doc.append("<p>\nUsed by: ").append(String.join(", ", u.users.stream().sorted().map(x -> "{@code " + x + "}").toList())).append(".\n");
@@ -790,14 +807,10 @@ final class ApiSource {
         if (u.owner != null) {
             type.addModifiers(Modifier.STATIC);
         }
-        Set<String> erasures = new LinkedHashSet<>();
         for (Variant v : u.variants) {
             ClassName variant = self.nestedClass(v.name);
             type.addPermittedSubclass(variant);
             TypeName value = typeName(owner, v.type, false);
-            if (!erasures.add(value.withoutAnnotations() instanceof ParameterizedTypeName p ? p.rawType().toString() : value.toString())) {
-                throw new GenerationException("the union " + u.name + " has two forms of the Java type " + value + "; the of factories would clash");
-            }
             boolean reference = !value.isPrimitive();
             CodeBlock.Builder check = CodeBlock.builder();
             if (v.type instanceof ListOf) {
@@ -810,19 +823,30 @@ final class ApiSource {
             MethodSpec.Builder constructor = check.isEmpty() ? MethodSpec.constructorBuilder()
                 : MethodSpec.compactConstructorBuilder().addModifiers(Modifier.PUBLIC).addCode(check.build());
             type.addType(TypeSpec.recordBuilder(variant).addModifiers(Modifier.PUBLIC, Modifier.STATIC).addSuperinterface(self)
-                .addJavadoc("The $L form.\n\n@param value the $L\n", formKind(v.json), formKind(v.json))
+                .addJavadoc("The form that is $L.\n\n@param value $L\n", meaning(v), meaning(v))
                 .recordConstructor(constructor.addParameter(reference ? nonNull(value) : value, "value").build()).build());
-            type.addMethod(MethodSpec.methodBuilder("of").addModifiers(Modifier.PUBLIC, Modifier.STATIC)
-                .addJavadoc("@return the $L form\n", formKind(v.json))
+            type.addMethod(MethodSpec.methodBuilder(v.factory()).addModifiers(Modifier.PUBLIC, Modifier.STATIC)
+                .addJavadoc("@return the form that is $L\n", meaning(v))
                 .addParameter(reference ? nonNull(value) : value, "value").returns(nonNull(self))
                 .addStatement("return new $T(value)", variant).build());
+            if (u.descriptor != null && v.type instanceof ListOf l && l.element() instanceof Scalar s && s.kind() == ScalarKind.STRING) {
+                ClassName handle = u.descriptor.equals("item") ? ITEM_TYPE : BLOCK_TYPE;
+                type.addMethod(MethodSpec.methodBuilder(v.factory()).addModifiers(Modifier.PUBLIC, Modifier.STATIC).varargs()
+                    .addJavadoc("@return the form that is $L, of vanilla or custom $Ls (at least one)\n", meaning(v), u.descriptor)
+                    .addParameter(nonNull(handle), "first")
+                    .addParameter(com.palantir.javapoet.ArrayTypeName.of(nonNull(handle)), "rest").returns(nonNull(self))
+                    .addStatement("$T<$T> identifiers = new $T<>()", LIST, STRING, ArrayList.class)
+                    .addStatement("identifiers.add(first.identifier())")
+                    .beginControlFlow("for ($T type : rest)", handle).addStatement("identifiers.add(type.identifier())").endControlFlow()
+                    .addStatement("return new $T(identifiers)", variant).build());
+            }
         }
         return type.build();
     }
 
-    /** "boolean", "list of strings": how a JSON type names a form. */
-    static String formKind(String json) {
-        return formName(json).replaceFirst("^an? ", "");
+    /** What a form means: the words api.json gives it, else its JSON type ("a list of strings"). */
+    static String meaning(Variant v) {
+        return v.doc != null ? v.doc : formName(v.json);
     }
 
     /** "a boolean", "a list of strings": how a JSON type reads in a sentence. */
@@ -874,7 +898,7 @@ final class ApiSource {
             case UnionRef u -> {
                 Variant form = u.union().variants.stream().filter(x -> ComponentGenerator.fits(x.type, v)).findFirst()
                     .orElseThrow(() -> new GenerationException("the default " + v + " fits no form of the union " + u.union().name));
-                yield CodeBlock.of("$T.of($L)", unionName(u.union()), literal(form.type, v));
+                yield CodeBlock.of("$T.$N($L)", unionName(u.union()), form.factory(), literal(form.type, v));
             }
             case ObjRef r -> {
                 CodeBlock.Builder s = CodeBlock.builder().add("$T.builder()", className(c).nestedClass(r.type().name));

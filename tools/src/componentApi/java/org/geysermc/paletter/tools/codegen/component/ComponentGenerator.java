@@ -459,9 +459,16 @@ public final class ComponentGenerator {
         map.mappingKey = base.mappingKey;
         map.transform = base.transform;
         map.keyedExtraOf = base;
+        // The keys the other fields of the same type are named by have their own fields
+        map.reservedKeys = c.root.fields.stream().filter(f -> f.keyedExtraOf == null && f.json != null && sameKind(f.type, base.type))
+            .map(f -> f.json).toList();
         map.doc = doc;
         map.javadoc = true;
         c.root.fields.add(map);
+    }
+
+    private static boolean sameKind(Type a, Type b) {
+        return a instanceof ApiModel.UnionRef x && b instanceof ApiModel.UnionRef y ? x.union() == y.union() : a.equals(b);
     }
 
     /** The field a scalar component form fills: the one whose value rules move the same leaves. */
@@ -962,7 +969,7 @@ public final class ComponentGenerator {
         union.kind = c.kind;
         ObjRef object = null;
         // By record name: the order of the keys in api.json carries no meaning
-        for (Map.Entry<String, JsonElement> e : named.entrySet().stream().sorted(Comparator.comparing(x -> x.getValue().getAsString())).toList()) {
+        for (Map.Entry<String, JsonElement> e : named.entrySet().stream().sorted(Comparator.comparing(x -> x.getValue().isJsonObject() ? x.getValue().getAsJsonObject().get("name").getAsString() : x.getValue().getAsString())).toList()) {
             JsonObject form = types.stream().filter(t -> family(typeString(t)).equals(family(e.getKey()))).findFirst().orElse(null);
             Type type;
             if (form == null && e.getKey().equals("object")) {
@@ -974,8 +981,18 @@ public final class ComponentGenerator {
             } else {
                 type = variantType(c, e.getKey(), camel(token(d.path)));
             }
-            union.variants.add(new ApiModel.Variant(e.getValue().getAsString(), e.getKey(), type));
+            // A record name, or {name, doc}
+            String variant = e.getValue().isJsonObject() ? e.getValue().getAsJsonObject().get("name").getAsString() : e.getValue().getAsString();
+            String meaning = e.getValue().isJsonObject() ? e.getValue().getAsJsonObject().get("doc").getAsString() : null;
+            union.variants.add(new ApiModel.Variant(variant, e.getKey(), meaning, type));
         }
+        if (spec.has("noOverload")) {
+            spec.getAsJsonArray("noOverload").forEach(n -> union.noOverload.add(n.getAsString()));
+            if (!union.noOverload.stream().allMatch(n -> union.variants.stream().anyMatch(v -> v.name.equals(n)))) {
+                throw new GenerationException("api.json unions: " + where + " noOverload names a form the union does not have");
+            }
+        }
+        union.descriptor = apiString("descriptors", where);
         boolean own = union.variants.stream().anyMatch(v -> v.type instanceof ObjRef || v.type instanceof EnumRef || v.type instanceof Vec3);
         union.owner = own ? c : null;
         ApiModel.UnionType known = model.unions.get(name);
@@ -1003,7 +1020,7 @@ public final class ComponentGenerator {
     }
 
     private static String shape(ApiModel.UnionType u) {
-        return u.variants.stream().map(v -> v.name + "=" + v.json).toList().toString();
+        return u.variants.stream().map(v -> v.name + "=" + v.json).toList() + " without overloads for " + u.noOverload;
     }
 
     private static int countMaps(List<JsonObject> types) {
