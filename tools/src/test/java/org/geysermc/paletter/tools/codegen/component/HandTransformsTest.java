@@ -2,6 +2,7 @@ package org.geysermc.paletter.tools.codegen.component;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import org.geysermc.paletter.tools.model.Schema;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
@@ -87,18 +88,26 @@ class HandTransformsTest {
         assertTrue(colors.size() >= 1 && animations.size() >= 4, "the evidence of mappings.json could not be read");
     }
 
-    /** A recapture only learns an unverified entry if the add-on tries it: each one must be a probe value of its field. */
+    /**
+     * A recapture only learns an unverified entry if the add-on tries it: each one must be a value of the schema's enum of its field
+     * (the add-on tries every value of one) or a probe value of fixtures.json (no schema enum lists the colours).
+     */
     @Test
-    void everyUnverifiedEntryIsAProbeValue() throws Exception {
+    void everyUnverifiedEntryIsTriedByTheAddon() throws Exception {
         JsonObject probes = JsonParser.parseString(Files.readString(ComponentConformanceTest.MODEL.resolve("fixtures.json")))
             .getAsJsonObject().getAsJsonObject("probeValues");
         for (String key : List.of("item:minecraft:use_animation:value", "item:minecraft:hover_text_color:value")) {
             Set<String> listed = new TreeSet<>();
-            probes.getAsJsonArray(key).forEach(e -> listed.add(e.getAsString()));
+            if (key.contains("use_animation")) {
+                listed.addAll(Schema.newest(ComponentConformanceTest.MODEL.resolveSibling("bds"), null).enumValues("item:minecraft:use_animation", "value"));
+                assertTrue(listed.size() >= 10, "the schema lists the use animations");
+            } else {
+                probes.getAsJsonArray(key).forEach(e -> listed.add(e.getAsString()));
+            }
             Set<String> unverified = key.contains("use_animation") ? UNVERIFIED_USE_ANIMATIONS : UNVERIFIED_COLORS;
             Set<String> missing = new TreeSet<>(unverified);
             missing.removeAll(listed);
-            assertEquals(Set.of(), missing, "unverified entries that fixtures.json probeValues " + key + " does not try");
+            assertEquals(Set.of(), missing, "unverified entries that the add-on does not try for " + key);
         }
     }
 

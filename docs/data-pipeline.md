@@ -339,9 +339,26 @@ log said last time; where BDS's bound differs from the docs' it comes first and 
 marks such a range as disputed). `spec-capture` and `infer` are repeated until that file stops changing. When BDS rejects a variant
 for a member it does not vary, `spec-capture` shrinks the variant and captures again.
 
+**Samples for the rules.** The rule kinds of the mapping inference (`rule/`) need samples the one-field-at-a-time variants lack; the
+generator adds them, and `SamplesTest` checks each against a model of its own and against the committed one (schema on):
+
+- *Pinned values.* `MAX_VALUES` cuts only unpinned values. Pinned are every value of a schema enum (so the table of an enum is
+  complete; `Schema#enumValues`; `fixtures.json` `unpinnedEnums` lists the ones left out, with the reason: an open enum is a string in the
+  API, and a test keeps the two lists in step), the probes and the samples below. The `use_animation` names come from the schema enum
+  and are no longer hand-listed.
+- *Molang* (`bone_visibility`): the `mapValues` strings under three keys (`bone`, `bone_2`, `bone_3`), twice shifted so that each string is under
+  two keys; each as the `expression` of the object form `{expression, version}`; and numbers. The element types and members come from the schema
+  (`bone_visibility{}`), the strings from `mapValues`; without the schema the model knows only the string.
+- *Names in a hash ordered list* (`uv_lock`): `fixtures.json` `listNames` gives five names; the list is written in every order of the first
+  three, in two more sets of three (written and reversed) and with all five (written and reversed), so that BDS's order is told from the written
+  one and from a reversal.
+- *Packed bits* (`material_instances`, `fixtures.json` `boolCombinations`): the booleans of each face object in every combination
+  (`face_dimming`, `isotropic`: 4; with `alpha_masked_tint` and the members it needs: 8), so each bit is seen alone and in pairs.
+- *Boxes*: an object with the vectors `origin` and `size` is also written with both varied together: nine boxes in which each axis takes every
+  combination of three origins and three sizes (never negative), inside BDS's `box` limit of the component (else the tightest of the model's).
+
 **Probes.** Values that no docs text or BDS message lists, but that a hand table of `Transforms` holds, are tried too: `fixtures.json`
-`probeValues` gives a field further strings (the formatting colour names of `hover_text_color`, the animation names of
-`use_animation`), and `descriptorValues` gives every block descriptor field real vanilla blocks with enum, boolean and string
+`probeValues` gives a field further strings (the formatting colour names of `hover_text_color`, which no schema enum lists), and `descriptorValues` gives every block descriptor field real vanilla blocks with enum, boolean and string
 state values. They are probes, not facts: only what BDS accepts and sends is evidence. `spec-capture` also keeps the ERROR and WARN lines of the content log
 in the order BDS wrote them (`content-log.raw.txt`) beside the sorted `content-log.txt`, so that a line can later be attributed
 by the lines around it.

@@ -6,6 +6,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
 import org.geysermc.paletter.tools.model.Fixtures;
 import org.geysermc.paletter.tools.model.Model;
+import org.geysermc.paletter.tools.model.Schema;
 import org.geysermc.paletter.tools.model.Model.Component;
 import org.geysermc.paletter.tools.model.Model.Field;
 import org.geysermc.paletter.tools.model.Model.JType;
@@ -31,12 +32,22 @@ import static org.geysermc.paletter.tools.model.addon.JsonPath.tokens;
  */
 final class VariantValues {
     private final Fixtures fixtures;
+    private final Model model;
 
-    VariantValues(Fixtures fixtures) {
+    VariantValues(Fixtures fixtures, Model model) {
         this.fixtures = fixtures;
+        this.model = model;
     }
 
-    record Labeled(String label, JsonElement value) {
+    /**
+     * One value of a variant and its label. A pinned value is one a rule of the mapping inference needs to have seen (every value
+     * of a schema enum, the probes and samples of {@code fixtures.json}, the combinations the packed bits and the hash order
+     * need): {@link #MAX_VALUES} never cuts it.
+     */
+    record Labeled(String label, JsonElement value, boolean pinned) {
+        Labeled(String label, JsonElement value) {
+            this(label, value, false);
+        }
     }
 
     /** The base value: every field without a documented default set to a sample (the object form), else a sample of the first form. */
@@ -229,8 +240,8 @@ final class VariantValues {
     }
 
     /**
-     * At most this many values per field and JSON type. Each generator lists first the values likeliest to change between
-     * builds (limits and one past them, invalid values), then the typical ones.
+     * At most this many unpinned values per field and JSON type ({@link Labeled#pinned} ones are all kept). Each generator lists
+     * first the values likeliest to change between builds (limits and one past them, invalid values), then the typical ones.
      */
     static final int MAX_VALUES = 32;
 
@@ -258,20 +269,31 @@ final class VariantValues {
             case "object" -> objects(c, path, field);
             default -> sampleOnly(c, path);
         };
-        // one variant per value and per label (a value generated twice keeps its first label)
+        // one variant per value and per label (a value generated twice keeps its first label, and is pinned if any copy is)
         Map<String, Labeled> distinct = new LinkedHashMap<>();
         Set<String> labels = new java.util.HashSet<>();
-        values.stream().filter(v -> labels.add(v.label)).forEach(v -> distinct.putIfAbsent(v.value.toString(), v));
+        values.stream().filter(v -> labels.add(v.label)).forEach(v -> distinct.merge(v.value.toString(), v,
+            (first, again) -> again.pinned() && !first.pinned() ? new Labeled(first.label, first.value, true) : first));
         List<Labeled> all = new ArrayList<>(distinct.values());
-        if (all.size() > MAX_VALUES) {
-            List<String> dropped = all.subList(MAX_VALUES, all.size()).stream().map(v -> v.label).toList();
-            cut.put(c.id() + " " + path + " (" + type.type() + ")", "kept " + MAX_VALUES + " of " + all.size() + ", cut: "
+        List<Labeled> kept = new ArrayList<>();
+        List<String> dropped = new ArrayList<>();
+        int unpinned = 0;
+        for (Labeled v : all) {
+            if (v.pinned() || unpinned < MAX_VALUES) {
+                kept.add(v);
+                unpinned += v.pinned() ? 0 : 1;
+            } else {
+                dropped.add(v.label);
+            }
+        }
+        if (!dropped.isEmpty()) {
+            cut.put(c.id() + " " + path + " (" + type.type() + ")", "kept " + kept.size() + " of " + all.size() + ", cut: "
                 + String.join(", ", dropped.subList(0, Math.min(dropped.size(), 12))) + (dropped.size() > 12 ? ", ... (" + (dropped.size() - 12) + " more)" : ""));
         }
-        return all.stream().limit(MAX_VALUES).toList();
+        return kept;
     }
 
-    /** The values cut at {@link #MAX_VALUES} (a field and JSON type, how many were kept of how many, which were cut): no variant has them. */
+    /** The unpinned values cut at {@link #MAX_VALUES} (a field and JSON type, how many were kept of how many, which were cut): no variant has them. */
     public List<String> cutValues() {
         return cut.entrySet().stream().map(e -> e.getKey() + ": " + e.getValue()).toList();
     }
@@ -361,6 +383,11 @@ final class VariantValues {
     private List<Labeled> strings(Component c, String path, JType type, Field field) {
         // The probes come first, so that MAX_VALUES never cuts one
         List<JsonElement> strings = new ArrayList<>(fixtures.probeValues(c.id(), path));
+        Set<JsonElement> pinned = new java.util.HashSet<>(strings);
+        // every value of a schema enum: a rule that tables the enum needs all of them, so none is cut
+        if (fixtures.pinsEnum(c.id(), path)) {
+            fixtures.schemaEnum(c.id(), path).forEach(v -> pinned.add(new JsonPrimitive(v)));
+        }
         JsonElement exact = fixtures.sample(c.id(), path, null);
         if (exact != null && exact.isJsonPrimitive()) {
             strings.add(exact);
@@ -403,7 +430,7 @@ final class VariantValues {
                 strings.add(new JsonPrimitive("0"));
             }
         }
-        return new LinkedHashSet<>(strings).stream().map(s -> new Labeled(s.getAsString(), s)).toList();
+        return new LinkedHashSet<>(strings).stream().map(s -> new Labeled(s.getAsString(), s, pinned.contains(s))).toList();
     }
 
     /**
@@ -609,6 +636,40 @@ final class VariantValues {
             }
         }
         values.add(new Labeled("[2x]", copies(first, 2)));
+        if (items.type().equals("string")) {
+            values.addAll(orderings(fixtures.listNames(c.id(), path)));
+        }
+        return values;
+    }
+
+    /**
+     * A list of names in several orders, for the lists BDS sends as a set ordered by the hash of each name: every order of the first
+     * three names, two more sets of three (in the written order and reversed) and all the names (written and reversed). Whatever the
+     * hash is, some of them are sent in an order other than the written one, and not always the reversed one.
+     */
+    private static List<Labeled> orderings(List<String> names) {
+        List<Labeled> values = new ArrayList<>();
+        if (names.size() < 3) {
+            return values;
+        }
+        List<List<String>> lists = new ArrayList<>();
+        int[][] perms = {{0, 1, 2}, {0, 2, 1}, {1, 0, 2}, {1, 2, 0}, {2, 0, 1}, {2, 1, 0}};
+        for (int[] perm : perms) {
+            lists.add(List.of(names.get(perm[0]), names.get(perm[1]), names.get(perm[2])));
+        }
+        for (int start = 1; start + 3 <= names.size(); start++) {
+            lists.add(names.subList(start, start + 3));
+            lists.add(names.subList(start, start + 3).reversed());
+        }
+        if (names.size() > 3) {
+            lists.add(names);
+            lists.add(names.reversed());
+        }
+        for (List<String> list : lists) {
+            JsonArray array = new JsonArray();
+            list.forEach(array::add);
+            values.add(new Labeled("[" + String.join(",", list) + "]", array, true));
+        }
         return values;
     }
 
@@ -672,11 +733,86 @@ final class VariantValues {
                 if (matches(items, other)) {
                     JsonObject single = new JsonObject();
                     single.add(key, other.deepCopy());
-                    values.add(new Labeled("{1} " + (other.isJsonPrimitive() ? other.getAsString() : other.toString()), single));
+                    values.add(new Labeled("{1} " + (other.isJsonPrimitive() ? other.getAsString() : other.toString()), single, true));
                 }
+            }
+            if (items.type().equals("string")) {
+                values.addAll(moreElements(c, path, key, items, fixtures.mapValues(c.id(), path, field == null ? null : field.name())));
             }
         }
         return values;
+    }
+
+    /** The keys of a map with several entries: the map's key, then {@code <key>_2}, {@code <key>_3}. */
+    private static final int KEYS = 3;
+
+    /**
+     * The entries of a map of Molang strings, to see them under several keys and in the other forms the schema lists for an element
+     * (the elements that are no string do not come from the docs): {@code mapValues} (the strings of {@code fixtures.json}) spread
+     * over {@link #KEYS} keys, twice, so that each string is under two different keys; each as the {@code expression} of the object
+     * form ({@code {expression, version}}); and numbers. Only what the schema lists for the elements is generated.
+     */
+    private List<Labeled> moreElements(Component c, String path, String key, JType items, List<JsonElement> mapValues) {
+        List<Labeled> values = new ArrayList<>();
+        List<JsonElement> pool = mapValues.stream().filter(v -> matches(items, v)).toList();
+        for (int shift = 0; shift < 2 && pool.size() > KEYS; shift++) {
+            for (int group = 0; group * KEYS < pool.size(); group++) {
+                JsonObject map = new JsonObject();
+                List<String> texts = new ArrayList<>();
+                for (int i = 0; i < KEYS; i++) {
+                    JsonElement text = pool.get((group * KEYS + i + shift) % pool.size());
+                    map.add(i == 0 ? key : key + "_" + (i + 1), text.deepCopy());
+                    texts.add(text.getAsString());
+                }
+                values.add(new Labeled("{" + KEYS + " keys} " + String.join(" / ", texts), map, true));
+            }
+        }
+        List<String> types = fixtures.schemaElementTypes(c.id(), path);
+        List<Schema.Member> members = fixtures.schemaElementMembers(c.id(), path);
+        if (types.contains("object") && members.stream().anyMatch(m -> m.types().contains("string"))) {
+            List<JsonElement> expressions = new ArrayList<>();
+            expressions.add(sample(c, path + "{}", items, null));
+            expressions.addAll(pool);
+            boolean required = members.stream().anyMatch(Schema.Member::required);
+            for (JsonElement expression : expressions) {
+                JsonObject element = new JsonObject();
+                for (Schema.Member member : members) {
+                    if (required && !member.required()) {
+                        continue;
+                    }
+                    JsonElement given = member.types().contains("string") ? expression.deepCopy() : memberSample(c, path, member);
+                    if (given != null) {
+                        element.add(member.name(), given);
+                    }
+                }
+                JsonObject single = new JsonObject();
+                single.add(key, element);
+                values.add(new Labeled("{1 object} " + expression.getAsString(), single, true));
+            }
+        }
+        if (types.contains("number") || types.contains("integer")) {
+            for (Labeled number : numbers(c, path + "{}", null, null, false)) {
+                JsonObject single = new JsonObject();
+                single.add(key, number.value());
+                values.add(new Labeled("{1 number} " + number.label(), single, true));
+            }
+        }
+        return values;
+    }
+
+    /** A value for a member of an object element: the sample of {@code fixtures.json}, else one of its first JSON type. */
+    private JsonElement memberSample(Component c, String path, Schema.Member member) {
+        JsonElement given = fixtures.sample(c.id(), path + "{}." + member.name(), member.name());
+        if (given != null) {
+            return given.deepCopy();
+        }
+        return member.types().isEmpty() ? null : switch (member.types().get(0)) {
+            case "integer" -> new JsonPrimitive(1);
+            case "number" -> new JsonPrimitive(1.5);
+            case "boolean" -> new JsonPrimitive(true);
+            case "string" -> new JsonPrimitive("paletter_a");
+            default -> null;
+        };
     }
 
     /**
@@ -704,7 +840,123 @@ final class VariantValues {
             two.add(first.getKey() + "_2", first.getValue().deepCopy());
             values.add(new Labeled("{2}", two));
         }
+        if (fixtures.boolCombinations(c.id())) {
+            values.addAll(boolCombinations(c, path));
+        }
         return values;
+    }
+
+    /**
+     * The booleans of an object in every combination, for the ones that are bits of one leaf: first those a base can hold, then also
+     * those only a variant of their own sets (with the members they need, {@code together}). With every other bit cleared, each bit
+     * is seen alone and the others in pairs.
+     */
+    private List<Labeled> boolCombinations(Component c, String path) {
+        List<Field> booleans = c.fields().stream().filter(f -> parentOf(f.path()).equals(path) && f.types().get(0).type().equals("boolean")).toList();
+        List<Labeled> values = new ArrayList<>();
+        List<Field> baseable = booleans.stream().filter(f -> !fixtures.probeOnly(c.id(), f.path())).toList();
+        for (List<Field> set : List.of(baseable, booleans)) {
+            if (set.size() < 2 || (set == booleans && baseable.size() == booleans.size())) {
+                continue;
+            }
+            for (int mask = 0; mask < 1 << set.size(); mask++) {
+                JsonObject object = minimal(c, path);
+                List<String> names = new ArrayList<>();
+                for (int i = 0; i < set.size(); i++) {
+                    Field field = set.get(i);
+                    object.add(field.name(), new JsonPrimitive((mask & 1 << i) != 0));
+                    fixtures.together(c.id(), field.path()).entrySet().forEach(e -> object.add(e.getKey(), e.getValue().deepCopy()));
+                    names.add(field.name() + "=" + ((mask & 1 << i) != 0));
+                }
+                values.add(new Labeled("{" + String.join(", ", names) + "}", object, true));
+            }
+        }
+        return values;
+    }
+
+    /** An object holding both vectors of a box varied together: where it goes in the component, and the value. */
+    record Joint(String path, Labeled value) {
+    }
+
+    /** The levels the origin (above the lowest point of the box) and the size take, per axis. */
+    private static final double[] ORIGIN_LEVELS = {0, 1, 3};
+    private static final double[] SIZE_LEVELS = {1, 2, 4};
+
+    /**
+     * The boxes ({@code origin} and {@code size} vectors of an object) of a component with both members varied together, which one
+     * member at a time (the field variants) cannot tell: a number of the wire may follow either. Per axis the origin and the size
+     * take every combination of three levels (sizes never below zero), spread over nine boxes, each axis at another level than
+     * the one before. The boxes stay inside the limit BDS gave for the box ({@code box} fact of the component, else the tightest of
+     * the model's), so BDS takes them; a box too small for the levels has none.
+     */
+    List<Joint> joints(Component c) {
+        List<Joint> joints = new ArrayList<>();
+        for (Field origin : c.fields()) {
+            String parent = parentOf(origin.path());
+            Field size = origin.name().equals("origin") ? c.field(parent.isEmpty() ? "size" : parent + ".size") : null;
+            if (size == null || !isVector(origin) || !isVector(size) || fixtures.probeOnly(c.id(), origin.path())) {
+                continue;
+            }
+            double[][] limits = boxLimits(c, parent);
+            if (limits == null) {
+                continue;
+            }
+            double reach = ORIGIN_LEVELS[ORIGIN_LEVELS.length - 1] + SIZE_LEVELS[SIZE_LEVELS.length - 1];
+            if (java.util.stream.IntStream.range(0, 3).anyMatch(i -> limits[1][i] - limits[0][i] < reach)) {
+                continue;
+            }
+            for (int k = 0; k < 9; k++) {
+                double[] o = new double[3];
+                double[] s = new double[3];
+                for (int i = 0; i < 3; i++) {
+                    o[i] = limits[0][i] + ORIGIN_LEVELS[(k + i) % 3];
+                    s[i] = SIZE_LEVELS[(k / 3 + i) % 3];
+                }
+                JsonObject box = new JsonObject();
+                box.add("origin", array(o));
+                box.add("size", array(s));
+                joints.add(new Joint(parent, new Labeled(vector(o).label() + " + " + vector(s).label(), box, true)));
+            }
+        }
+        return joints;
+    }
+
+    private static boolean isVector(Field field) {
+        return field.types().stream().anyMatch(t -> t.type().equals("vec3"));
+    }
+
+    /**
+     * The lowest and highest point a box of the object at a path may reach: BDS's {@code box origin size} fact of the object, else the
+     * intersection of those of every object of the model with an origin and a size; null when no component has one.
+     */
+    private double[][] boxLimits(Component c, String parent) {
+        double[][] own = boxFact(c, parent);
+        if (own != null) {
+            return own;
+        }
+        double[][] common = null;
+        for (Component other : model.components()) {
+            for (Field field : other.fields()) {
+                double[][] fact = field.name().equals("origin") ? boxFact(other, parentOf(field.path())) : null;
+                if (fact == null) {
+                    continue;
+                }
+                if (common == null) {
+                    common = fact;
+                } else {
+                    for (int i = 0; i < 3; i++) {
+                        common[0][i] = Math.max(common[0][i], fact[0][i]);
+                        common[1][i] = Math.min(common[1][i], fact[1][i]);
+                    }
+                }
+            }
+        }
+        return common;
+    }
+
+    private double[][] boxFact(Component c, String parent) {
+        return fixtures.facts(c.id(), parent).stream().map(f -> f.split(" ")).filter(p -> p[0].equals("box") && p.length == 5
+            && List.of(p[1], p[2]).containsAll(List.of("origin", "size"))).map(p -> new double[][]{vec(p[3]), vec(p[4])}).findFirst().orElse(null);
     }
 
     /** Whether the object at the path is a block descriptor: it has the members {@code name}, {@code states} and {@code tags}. */

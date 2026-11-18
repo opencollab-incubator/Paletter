@@ -143,17 +143,24 @@ class ComponentConformanceTest {
      * and fails when one matches again.
      * <ul>
      *   <li>enchantable: the accepted slot strings are now read from BDS's regex message, so all of them are tried;</li>
-     *   <li>hover_text_color, use_animation: the names of the hand tables of {@code Transforms} are tried
-     *       ({@code fixtures.json probeValues});</li>
+     *   <li>hover_text_color: the names of the hand table of {@code Transforms} are tried ({@code fixtures.json probeValues});</li>
      *   <li>block_placer, entity_placer, digger, placement_filter: block descriptors with enum, boolean and string states
      *       on vanilla blocks are tried ({@code fixtures.json descriptorValues});</li>
      *   <li>collision_box, selection_box, transformation: a vector with a third distinct value of every element is tried, so
-     *       that no linear rule over them is fitted to two points.</li>
+     *       that no linear rule over them is fitted to two points; collision_box and selection_box also get boxes with the origin
+     *       and the size varied together (the affine rule);</li>
+     *   <li>geometry, item_visual, embedded_visual: the Molang of {@code bone_visibility} under several keys (and, with the schema, in the
+     *       object form and as a number), and the names of {@code uv_lock} in several orders (the Molang and hash ordered set rules);</li>
+     *   <li>material_instances: the booleans of each face in every combination (the packed bits rule).</li>
      * </ul>
+     * With the schema in the model (the recapture), every value of each schema enum is also tried, none cut at {@code MAX_VALUES}
+     * (durability_sensor's particle types, the use animations): the committed captures are of the model without it, so those components
+     * need no entry here.
      */
     private static final Set<String> RECAPTURE_PENDING = Set.of("item:minecraft:enchantable", "item:minecraft:hover_text_color",
-        "item:minecraft:use_animation", "item:minecraft:block_placer", "item:minecraft:entity_placer", "item:minecraft:digger",
+        "item:minecraft:block_placer", "item:minecraft:entity_placer", "item:minecraft:digger",
         "block:minecraft:placement_filter", "block:minecraft:collision_box", "block:minecraft:selection_box", "block:minecraft:transformation",
+        "block:minecraft:geometry", "block:minecraft:item_visual", "block:minecraft:embedded_visual", "block:minecraft:material_instances",
         // the script custom components (control included) are not in the committed captures yet
         "block:minecraft:custom_components", "item:minecraft:custom_components",
         // the blocks with block tags (role tag) are not in the committed captures yet
