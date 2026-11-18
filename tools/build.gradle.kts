@@ -144,6 +144,8 @@ tasks.register<JavaExec>("generateAddon") {
 val inferMappings = cliTask("inferMappings", "spec", "Infers data/model/mappings.json and coverage.md from the committed captures", "infer")
 inferMappings.configure {
     outputs.files(rootProject.file("data/model/mappings.json"), rootProject.file("data/model/coverage.md"))
+    // It reads the captures and schemas under data/bds, which are no declared inputs: never up to date
+    outputs.upToDateWhen { false }
 }
 val checkMappings = cliTask("checkMappings", "verification",
     "Fails if inferring the mappings from the committed model and captures yields a diff, or leaves a captured bit or wire path unexplained",
