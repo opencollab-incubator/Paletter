@@ -143,6 +143,11 @@ public final class ComponentGenerator {
         if (!orphans.isEmpty()) {
             throw new GenerationException("hand input that names no component of the model (renamed or removed in the docs?): " + String.join("; ", orphans));
         }
+        List<String> staleTransforms = HandTransforms.stale(in.transforms(), docs);
+        if (!staleTransforms.isEmpty()) {
+            throw new GenerationException("hand transforms that name no component or field of the model (renamed or removed in the docs?): "
+                + String.join("; ", staleTransforms));
+        }
         JsonObject mappings = in.mappings().has("components") ? in.mappings().getAsJsonObject("components") : new JsonObject();
         JsonObject skip = in.fixtures().has("skip") ? in.fixtures().getAsJsonObject("skip") : new JsonObject();
         Set<String> excluded = new TreeSet<>();

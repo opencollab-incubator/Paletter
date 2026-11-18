@@ -805,8 +805,7 @@ public final class Cli implements Runnable {
             // new one there is a reviewed change
             WireShapes.uncoveredByBuild(root().resolve(Layout.BDS), mappings, components).forEach((build, uncovered) -> {
                 uncovered.forEach((reason, paths) -> System.out.println(build + ", " + reason + ":\n  " + String.join("\n  ", paths)));
-                uncovered.getOrDefault(WireShapes.UNCLASSIFIED, List.of()).forEach(path -> unexplained.add("wire path " + path + " of "
-                    + build + " is not in mappings.json and no reason of WireShapes.classify fits"));
+                unexplained.addAll(WireShapes.unexplained(build, uncovered));
             });
             unexplained.forEach(line -> System.err.println("UNEXPLAINED: " + line));
             return ok && unexplained.isEmpty() ? 0 : 1;

@@ -247,6 +247,18 @@ void theModelIsWhatTheGoldenSourcesShow() {
     }
 
     @Test
+    void aHandTransformOfAGoneComponentOrFieldFailsTheGeneration() {
+        Inputs gone = inputs();
+        Map<String, String> transforms = new java.util.TreeMap<>(gone.transforms());
+        transforms.put("item:test:gone:", "x");
+        transforms.put("item:test:widget:removed.field", "y");
+        GenerationException e = assertThrows(GenerationException.class, () -> ComponentGenerator.generate(
+            new Inputs(gone.components(), gone.fixtures(), gone.feedback(), gone.mappings(), transforms, gone.api(), gone.since(), gone.context())));
+        assertEquals("hand transforms that name no component or field of the model (renamed or removed in the docs?): "
+            + "item:test:gone: (no such component); item:test:widget:removed.field (no such field)", e.getMessage());
+    }
+
+    @Test
     void handInputThatNamesNoComponentFailsTheGeneration() {
         Inputs in = inputs();
         in.fixtures().add("samples", json("{\"item:test:widget:label\": \"x\", \"item:test:gone:x\": 1}"));

@@ -220,6 +220,23 @@ public final class WireShapes {
     /** What {@link #classify} calls an uncovered path no rule explains: the report lists these for a human to look at. */
     public static final String UNCLASSIFIED = "unclassified";
 
+    /** What {@link #classify} calls a path of a component the creator docs leave without fields. */
+    public static final String UNDOCUMENTED = "the creator docs do not describe the component, so the model has no fields for it";
+
+    /**
+     * The lines {@code check-mappings --strict} fails on for one build's classified paths: the unclassified ones and
+     * those of a component the docs do not describe (both are for a human to look at; coverage.md lists the rest, which
+     * have a standing reason).
+     */
+    public static List<String> unexplained(String build, Map<String, List<String>> classified) {
+        List<String> lines = new ArrayList<>();
+        classified.getOrDefault(UNCLASSIFIED, List.of()).forEach(path -> lines.add("wire path " + path + " of " + build
+            + " is not in mappings.json and no reason of WireShapes.classify fits"));
+        classified.getOrDefault(UNDOCUMENTED, List.of()).forEach(path -> lines.add("wire path " + path + " of " + build
+            + " belongs to a component the creator docs do not describe: document it or map it by hand"));
+        return lines;
+    }
+
     /**
      * Sorts the uncovered paths ({@link #uncovered}) by why the model does not cover them. The reasons:
      * <ul>
@@ -249,7 +266,7 @@ public final class WireShapes {
             } else if (component.equals("item:item_properties")) {
                 reason = "item_properties entry BDS sends for every item and no add-on JSON field sets: written by ItemCompiler and WireOnlyWire";
             } else if (!documented.contains(component)) {
-                reason = "the creator docs do not describe the component, so the model has no fields for it";
+                reason = UNDOCUMENTED;
             } else {
                 reason = UNCLASSIFIED;
             }
