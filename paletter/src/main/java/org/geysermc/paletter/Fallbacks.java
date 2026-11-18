@@ -24,6 +24,12 @@ import java.util.Objects;
  * {@link org.geysermc.paletter.block.ResolvedBlock} or {@link org.geysermc.paletter.item.ResolvedItem} it resolves.
  * Replacements are keys ({@link BedrockItemType}, {@link BedrockBlockType}). Nothing here is null unless marked
  * {@code @Nullable}, and nothing throws except {@link NullPointerException} for a null argument.
+ * <p>
+ * The policy applies to content a version lacks that the Paletter's newest version has. A constant the newest version
+ * does not have (deprecated, or {@link org.geysermc.paletter.annotation.SincePreview @SincePreview} without previews)
+ * is not {@code isAvailable()} and sends its own fallback, {@code minecraft:unknown}, in every version; entries for it
+ * here do not apply. With previews, a preview item is the newest version's own: the preview sends it, older versions
+ * send what this policy gives for it.
  *
  * @since 1.0.0
  */

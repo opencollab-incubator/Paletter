@@ -17,7 +17,7 @@ import java.util.WeakHashMap;
  * constants and {@link VanillaIndex} are linked to: with previews, those of the preview. They are made from the canonical
  * blocks of the palette, once, when the first handle of such a root is asked for. A block that only gained a value or
  * property has all its states here, so each identifier has one type per root. Their types are not the constants (those
- * resolve through their fallback); a type equals the constant if the states are the same. The states know their canonical
+ * resolve through their fallback); a type equals the constant if the constant is available with the same states. The states know their canonical
  * id in their root, and find it by their NBT in others.
  */
 final class PreviewBlocks {

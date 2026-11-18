@@ -51,13 +51,10 @@ public final class BedrockItemVariant implements ItemKey {
                 return index.itemsByCanonical[bundled];
             }
         }
+        // An item the bundled release lacks (one only a preview has: its @SincePreview constant, which canonicalIn finds
+        // in this palette by identifier), or a custom item
         ItemVariant variant = canonical.variant(id);
-        BedrockItemType type = BedrockItemType.fromIdentifier(variant.identifier());
-        if (id < canonical.vanillaSize() && !type.isAvailable()) {
-            // An item only the palette's own newest version (a preview) has: its constant resolves through its fallback
-            type = PreviewItems.type(canonical.root(), variant.identifier());
-        }
-        return type.variant(variant.damage());
+        return BedrockItemType.fromIdentifier(variant.identifier()).variant(variant.damage());
     }
 
     /**
@@ -136,13 +133,22 @@ public final class BedrockItemVariant implements ItemKey {
     }
 
     /**
-     * Internal: the canonical id of this variant in a palette's canonical items.
+     * Internal: the canonical id of this variant in a palette's canonical items. A variant of a type that is not
+     * {@link BedrockItemType#isAvailable() available} is the palette's own item if the palette's newest version has it
+     * (an {@link org.geysermc.paletter.annotation.SincePreview @SincePreview} item in a palette with previews), else the
+     * id of its fallback.
      *
      * @param canonical the canonical items of a palette
      * @return the canonical id of this variant in a palette's canonical items, or -1
      */
     @Internal
     public int canonicalIn(@NonNull CanonicalItems canonical) {
+        if (id < 0 && !type.isCustom() && !type.isAvailable()) {
+            int own = canonical.index(toItemVariant());
+            if (own >= 0 && own < canonical.vanillaSize()) {
+                return own;
+            }
+        }
         int bundledId = id >= 0 ? id : type.bundledId(aux);
         if (bundledId >= 0) {
             CanonicalItems bundled = VanillaIndex.get().items;

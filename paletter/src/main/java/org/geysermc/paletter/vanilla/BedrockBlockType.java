@@ -32,6 +32,10 @@ import java.util.Objects;
  * Equality: like its states (see {@link BedrockBlockState}), {@code equals} always works, and {@code ==} works for the
  * vanilla constants and for the type a registered {@link CustomBlock} owns. Not in a Paletter with previews, for the
  * blocks the preview added or changed: those have types of their own, equal to a constant if the states are the same.
+ * The {@link org.geysermc.paletter.annotation.SincePreview @SincePreview} constant of a block only the preview has is
+ * not available, its states are its fallback's: it is not equal to the preview's own type of the block, and its states
+ * send the fallback in every palette. The preview's blocks are reached by the palette's lookups
+ * ({@link org.geysermc.paletter.Palette#blockType}, {@code Palette#blockState}).
  *
  * @since 1.0.0
  */
@@ -369,8 +373,10 @@ public final class BedrockBlockType {
             return false;
         }
         // Vanilla types are singletons, except those of blocks a preview added or changed (see PreviewBlocks): equal to
-        // the constant of the identifier if they have the same states. Custom types likewise
-        return Arrays.equals(layout().properties, other.layout().properties)
+        // the constant of the identifier if they have the same states. Custom types likewise. A constant that is not
+        // available has its fallback's states, so it never equals the preview's own type of its identifier
+        return isAvailable() == other.isAvailable()
+            && Arrays.equals(layout().properties, other.layout().properties)
             && Arrays.deepEquals(layout().values, other.layout().values);
     }
 
