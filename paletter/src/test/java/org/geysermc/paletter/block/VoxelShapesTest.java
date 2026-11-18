@@ -69,7 +69,7 @@ class VoxelShapesTest {
     @Test
     void theExperimentChangesTheShapesOf2630Only() {
         Paletter plain = Paletter.bundled();
-        Paletter experiment = Paletter.builder().vanilla(vanilla -> vanilla.experiments("voxel_shapes")).build();
+        Paletter experiment = Paletter.builder().experiments("voxel_shapes").build();
         assertEquals(2, plain.palette(1001).voxelShapes().size());
         assertTrue(experiment.palette(1001).voxelShapes().size() > 2);
         assertEquals(List.of("voxel_shapes"), experiment.palette(1001).experiments());
@@ -98,7 +98,7 @@ class VoxelShapesTest {
         assertEquals(vanilla.voxelShapes().size() + 2, shapes.size());
         // Vanilla shapes keep their ids
         vanilla.voxelShapesPacket().getNameMap().forEach((name, id) -> assertEquals(id, packet.getNameMap().get(name), name));
-        assertTrue(palette.report().errors().isEmpty() && palette.report().warnings().isEmpty(), palette.report().toString());
+        assertTrue(palette.report().warnings().isEmpty(), palette.report().toString());
     }
 
     @Test

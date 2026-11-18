@@ -40,6 +40,7 @@ dependencies {
     implementation(libs.libdatachannel)
 
     testImplementation(componentApi.output)
+    testImplementation(project(":paletter-recipes"))
     testImplementation(libs.javapoet)
     // ConstantsGeneratorTest compiles generated sources, which use the nullness annotations
     testImplementation(libs.checker.qual)
@@ -164,8 +165,12 @@ val checkWhitebox = cliTask("checkWhitebox", "verification",
 val checkBuilds = cliTask("checkBuilds", "verification",
     "Fails if builds.txt or data/bds/builds.md is stale against data/bds/builds.json", "builds", "table", "--check", check = true)
 
+// The bundled recipes of paletter-recipes (recipes/<version>.nbt) from the recipe captures in data/bds
+val checkRecipes = cliTask("checkRecipes", "verification",
+    "Fails if the bundled recipes are not what the recipe captures in data/bds give", "recipes-import", "--check", check = true)
+
 tasks.named("check") {
-    dependsOn(checkConstants, checkComponentApi, checkMappings, checkData, checkWhitebox, checkBuilds)
+    dependsOn(checkConstants, checkComponentApi, checkMappings, checkData, checkWhitebox, checkBuilds, checkRecipes)
 }
 
 // The white-box analysis of a cached BDS binary against the committed whitebox.json. Explicit only (not in check or

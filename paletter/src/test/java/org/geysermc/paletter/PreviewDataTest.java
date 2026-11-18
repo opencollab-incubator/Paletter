@@ -1,111 +1,60 @@
 package org.geysermc.paletter;
 
 import org.geysermc.paletter.data.DataVersion;
-import org.geysermc.paletter.data.PaletteDataSource;
+import org.geysermc.paletter.vanilla.BedrockBlocks;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.io.TempDir;
-
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
- * A bundled preview ({@code <name> <protocol> preview} in {@code versions.txt}) is only served with the system property
- * {@code paletter.previews}: then its protocol gets the preview's palette, else the newest release's. When no preview is
- * bundled, the copy of the data marks the newest release as one.
+ * A bundled preview ({@code <name> <protocol> preview} in {@code versions.txt}) is served only by a Paletter built with
+ * {@code previews(true)}: then its protocol gets the preview's palette, else the newest release's. It is a setting of
+ * the instance, so Paletters with different settings coexist.
  */
 class PreviewDataTest {
-    private static final String PROPERTY = "paletter.previews";
+    private final Paletter releases = Paletter.builder().build();
+    private final Paletter withPreviews = Paletter.builder().previews(true).build();
+
+    private DataVersion preview() {
+        return withPreviews.versions().stream().filter(DataVersion::isPreview).findFirst().orElseThrow();
+    }
 
     @Test
-    void previewIsServedOnlyOnRequest(@TempDir Path directory) throws IOException {
-        List<String[]> previews = new ArrayList<>();
-        for (String line : lines(directory)) {
-            String[] parts = line.split("\\s+");
-            if (parts.length > 2 && parts[2].equals("preview")) {
-                previews.add(parts);
-            }
-        }
-        if (previews.isEmpty()) {
-            previews.add(markNewestAsPreview(directory));
-        }
-        String before = System.getProperty(PROPERTY);
-        try {
-            for (String[] preview : previews) {
-                DataVersion version = new DataVersion(preview[0], Integer.parseInt(preview[1]));
-                System.clearProperty(PROPERTY);
-                Paletter releases = Paletter.builder().data(PaletteDataSource.directory(directory)).build();
-                assertFalse(releases.versions().contains(version), "served without " + PROPERTY + ": " + version);
-                assertTrue(releases.palette(version.protocolVersion()).version().protocolVersion() < version.protocolVersion());
-
-                System.setProperty(PROPERTY, "true");
-                Paletter withPreviews = Paletter.builder().data(PaletteDataSource.directory(directory)).build();
-                assertTrue(withPreviews.versions().contains(version), "not served with " + PROPERTY + ": " + version);
-                assertEquals(version, withPreviews.palette(version.protocolVersion()).version());
-                assertEquals(version, withPreviews.latest());
-            }
-        } finally {
-            if (before == null) {
-                System.clearProperty(PROPERTY);
-            } else {
-                System.setProperty(PROPERTY, before);
-            }
-        }
+    void previewsAreOffByDefault() {
+        DataVersion preview = preview();
+        assertFalse(releases.versions().contains(preview));
+        assertTrue(releases.versions().stream().noneMatch(DataVersion::isPreview));
+        assertFalse(Paletter.bundled().versions().contains(preview));
+        assertTrue(releases.palette(preview.protocolVersion()).version().protocolVersion() < preview.protocolVersion());
     }
 
-    /** Appends {@code preview} to the line of the newest version in the copy's {@code versions.txt}, and returns its parts. */
-    private static String[] markNewestAsPreview(Path directory) throws IOException {
-        Path index = directory.resolve("versions.txt");
-        List<String> lines = Files.readAllLines(index, StandardCharsets.UTF_8);
-        int newest = -1;
-        for (int i = 0; i < lines.size(); i++) {
-            String line = lines.get(i).strip();
-            if (!line.isEmpty() && !line.startsWith("#") && (newest < 0 || protocol(line) > protocol(lines.get(newest).strip()))) {
-                newest = i;
-            }
-        }
-        assertTrue(newest >= 0, "no version bundled");
-        String line = lines.get(newest).strip() + " preview";
-        lines.set(newest, line);
-        Files.write(index, lines, StandardCharsets.UTF_8);
-        return line.split("\\s+");
+    @Test
+    void previewsAreServedOnRequest() {
+        DataVersion preview = preview();
+        assertEquals(preview, withPreviews.latest());
+        assertEquals(preview, withPreviews.palette(preview.protocolVersion()).version());
+        assertEquals(releases.versions(), withPreviews.versions().stream().filter(version -> !version.isPreview()).toList());
     }
 
-    private static int protocol(String line) {
-        return Integer.parseInt(line.split("\\s+")[1]);
+    @Test
+    void instancesWithDifferentSettingsCoexist() {
+        DataVersion preview = preview();
+        // Interleaved: neither the other instance nor the order of use changes what an instance serves
+        Paletter first = Paletter.builder().previews(true).build();
+        Paletter second = Paletter.builder().previews(false).build();
+        assertEquals(preview, first.palette(preview.protocolVersion()).version());
+        assertNotEquals(preview, second.palette(preview.protocolVersion()).version());
+        assertEquals(preview, first.latest());
+        assertNotEquals(preview, second.latest());
     }
 
-    /** Copies the bundled files into the directory and returns the lines of {@code versions.txt}. */
-    private static List<String> lines(Path directory) throws IOException {
-        List<String> lines = new ArrayList<>();
-        try (InputStream stream = PreviewDataTest.class.getResourceAsStream("/paletter/versions.txt");
-             BufferedReader reader = new BufferedReader(new InputStreamReader(stream, StandardCharsets.UTF_8))) {
-            String line;
-            while ((line = reader.readLine()) != null) {
-                if (!line.isBlank() && !line.startsWith("#")) {
-                    lines.add(line.strip());
-                }
-            }
-        }
-        List<String> files = new ArrayList<>(List.of("versions.txt", "properties.nbt", "behaviour.nbt", "voxel_shapes.nbt", "renames.txt"));
-        lines.forEach(line -> files.add(line.split("\\s+")[0] + ".nbt"));
-        for (String file : files) {
-            try (InputStream stream = PreviewDataTest.class.getResourceAsStream("/paletter/" + file)) {
-                if (stream != null) {
-                    Files.copy(stream, directory.resolve(file));
-                }
-            }
-        }
-        return lines;
+    @Test
+    void previewConstantsResolveThroughFallbacks() {
+        // BRITTLE_ICE is only in the 26.70 preview, and the constants are linked to the newest release
+        assertFalse(BedrockBlocks.BRITTLE_ICE.isAvailable());
+        assertNotEquals(BedrockBlocks.BRITTLE_ICE, BedrockBlocks.BRITTLE_ICE.resolved());
     }
 }

@@ -172,7 +172,7 @@ public record Digger(@NonNull List<Digger.DestroySpeeds> destroySpeeds,
          * @return a descriptor matching one block state (its block and every state value)
          */
         public static @NonNull Block of(@NonNull BedrockBlockState state) {
-            return builder().name(state.type().identifier()).states(Check.states(state)).build();
+            return builder().name(state.type().identifier()).states(state.values()).build();
         }
 
         /**

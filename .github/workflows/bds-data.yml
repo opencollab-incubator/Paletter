@@ -15,7 +15,7 @@
 #     (dates and paths ignored), so a standing difference does not spam;
 #   - `peter-evans/create-pull-request` opens (or updates) a pull request from branch `bds-data/<channel>` with the new
 #     data. Releases and previews are imported alike: a preview is bundled as a preview version (served with
-#     `paletter.previews`, its API marked `@SincePreview`) and replaces the preview before it; its release drops it. The
+#     `Builder.previews(true)`, its API marked `@SincePreview`) and replaces the preview before it; its release drops it. The
 #     update writes its report to `data/bds/<build>/update-report.md` (committed with the data, and the body of the
 #     pull request). It exits with 2 when the report lists decisions: the pull request is still opened, for a human to
 #     decide them; any other failure fails the run after the issue is updated. Gradle's run task reports every

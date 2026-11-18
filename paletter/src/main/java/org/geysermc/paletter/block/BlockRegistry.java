@@ -16,7 +16,7 @@ import org.cloudburstmc.protocol.bedrock.data.BlockPropertyData;
 import org.cloudburstmc.protocol.bedrock.data.definitions.BlockDefinition;
 import org.cloudburstmc.protocol.common.DefinitionRegistry;
 import org.geysermc.paletter.PaletteException;
-import org.geysermc.paletter.PaletteReport;
+import org.geysermc.paletter.internal.PaletteReportBuilder;
 import org.geysermc.paletter.annotation.Internal;
 import org.geysermc.paletter.data.DataVersion;
 import org.geysermc.paletter.internal.data.VanillaData;
@@ -26,6 +26,7 @@ import org.geysermc.paletter.internal.component.WireContext;
 
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.BitSet;
 import java.util.Collection;
 import java.util.Collections;
@@ -175,7 +176,7 @@ public final class BlockRegistry implements DefinitionRegistry<BlockDefinition> 
      */
     @Internal
     public @NonNull BlockRegistry withCustomBlocks(@NonNull VanillaData data, @NonNull Object key, @NonNull List<CustomBlock> additional,
-                                                  @NonNull PaletteReport report, @NonNull String source) {
+                                                  @NonNull PaletteReportBuilder report, @NonNull String source) {
         if (additional.isEmpty()) {
             return this;
         }
@@ -193,11 +194,22 @@ public final class BlockRegistry implements DefinitionRegistry<BlockDefinition> 
         List<BlockPropertyData> encoded = new ArrayList<>(all.size());
         WireContext context = WireContext.of(data, report, source);
         // The blocks already here were reported by their own layers: encode them again into a report nobody reads
-        WireContext earlier = WireContext.of(data, new PaletteReport(), source);
+        WireContext earlier = WireContext.of(data, new PaletteReportBuilder(), source);
+        // The blocks already here keep their encoding (the same instance) while their block id is the same: nothing else
+        // that a layer changes goes into it
+        Map<String, BlockPropertyData> earlierEncoded = new HashMap<>();
+        for (BlockPropertyData property : table.blockProperties) {
+            if (table.customBlockIds.containsKey(property.getName())) {
+                earlierEncoded.put(property.getName(), property);
+            }
+        }
         for (int i = 0; i < all.size(); i++) {
             CustomBlock block = all.get(i);
-            WireContext blockContext = i < table.customBlocks.size() ? earlier : context;
-            encoded.add(new BlockPropertyData(block.identifier(), BlockCompiler.propertyData(block, blockIds.get(block.identifier()), blockContext)));
+            int blockId = blockIds.get(block.identifier());
+            boolean isEarlier = i < table.customBlocks.size();
+            BlockPropertyData kept = isEarlier && table.customBlockIds.get(block.identifier()) == blockId ? earlierEncoded.get(block.identifier()) : null;
+            encoded.add(kept != null ? kept
+                : new BlockPropertyData(block.identifier(), BlockCompiler.propertyData(block, blockId, isEarlier ? earlier : context)));
         }
         // The property list BDS sends follows its block ids too
         encoded.sort(java.util.Comparator.comparing(BlockPropertyData::getName).reversed());
@@ -235,7 +247,7 @@ public final class BlockRegistry implements DefinitionRegistry<BlockDefinition> 
      *
      * @return the canonical ids this palette resolves: states of the newest version plus custom blocks of its layers
      */
-@Internal
+    @Internal
     public @NonNull CanonicalBlocks canonical() {
         return canonical;
     }
@@ -313,7 +325,7 @@ public final class BlockRegistry implements DefinitionRegistry<BlockDefinition> 
      * @return the block to send
      * @throws IndexOutOfBoundsException if the id is not one of {@link #canonical()}
      */
-@Internal
+    @Internal
     public @NonNull RegisteredBlockState block(int canonical) {
         return canonicalTable().blocks[canonical >>> PAGE_BITS][canonical & PAGE_MASK];
     }
@@ -325,7 +337,7 @@ public final class BlockRegistry implements DefinitionRegistry<BlockDefinition> 
      * @return whether {@link #block(int)} is a stand-in for this canonical id (the default fallback or air) because the
      *         state has no block of its own in this version, see {@link #missingCanonical()}
      */
-@Internal
+    @Internal
     public boolean isMissing(int canonical) {
         return canonicalTable().missingIds.get(canonical);
     }
@@ -337,7 +349,7 @@ public final class BlockRegistry implements DefinitionRegistry<BlockDefinition> 
      * @return whether {@link #block(int)} is a replacement for this canonical id: a fallback (also a forced one) or the
      *         default fallback was used, see {@link #isMissing}; not for a state that is only adapted to this version
      */
-@Internal
+    @Internal
     public boolean isFallback(int canonical) {
         return canonicalTable().fallbackIds.get(canonical);
     }
@@ -348,7 +360,7 @@ public final class BlockRegistry implements DefinitionRegistry<BlockDefinition> 
      * @param canonical a canonical id
      * @return the runtime id of {@code block(canonical)}
      */
-@Internal
+    @Internal
     public int runtimeId(int canonical) {
         return canonicalTable().runtimeIds[canonical >>> PAGE_BITS][canonical & PAGE_MASK];
     }
@@ -360,7 +372,7 @@ public final class BlockRegistry implements DefinitionRegistry<BlockDefinition> 
      * @param definition the block, may be null
      * @return the canonical id, or -1 for null, a definition of another palette, or a state nothing resolves to
      */
-@Internal
+    @Internal
     public int canonical(@Nullable BlockDefinition definition) {
         if (definition == null) {
             return -1;
@@ -374,10 +386,10 @@ public final class BlockRegistry implements DefinitionRegistry<BlockDefinition> 
      * @param runtimeId the runtime id
      * @return the canonical id, or -1 if this palette has no state with the runtime id or nothing resolves to it
      */
-@Internal
+    @Internal
     public int canonicalOfRuntimeId(int runtimeId) {
         int index = indexOfRuntimeId(runtimeId);
-        return index == -1 ? -1 : canonicalTable().reverse[index];
+        return index == -1 ? -1 : canonicalTable().reverse[index >>> PAGE_BITS][index & PAGE_MASK];
     }
 
     /**
@@ -399,7 +411,7 @@ public final class BlockRegistry implements DefinitionRegistry<BlockDefinition> 
      * @return the canonical states that have no block (or fallback) of their own in this version and use the default
      *         fallback ({@link #defaultFallback()}), or air without one
      */
-@Internal
+    @Internal
     public @NonNull List<NbtMap> missingCanonical() {
         return canonicalTable().missing;
     }
@@ -407,7 +419,7 @@ public final class BlockRegistry implements DefinitionRegistry<BlockDefinition> 
     /**
      * Builds the canonical tables now instead of on first use. Called by the palette compiler.
      */
-@Internal
+    @Internal
     public void prepareCanonical() {
         canonicalTable();
     }
@@ -428,42 +440,64 @@ public final class BlockRegistry implements DefinitionRegistry<BlockDefinition> 
     private CanonicalTable buildCanonicalTable() {
         int size = canonical.size();
         int pageCount = (size + PAGE_SIZE - 1) >>> PAGE_BITS;
+        int indexPageCount = (table.size() + PAGE_SIZE - 1) >>> PAGE_BITS;
         RegisteredBlockState[][] blocks = new RegisteredBlockState[pageCount][];
         int[][] runtimeIds = new int[pageCount][];
-        int[] reverse = new int[table.size()];
-        Set<NbtMap> missing = new LinkedHashSet<>();
-        BitSet missingIds = new BitSet(size);
-        BitSet fallbackIds = new BitSet(size);
-        int firstPage = 0;
+        int[][] reverse = new int[indexPageCount][];
+        boolean[] sharedReverse = new boolean[indexPageCount];
+        List<NbtMap> missing = new ArrayList<>();
+        BitSet missingIds = new BitSet();
+        BitSet fallbackIds = new BitSet();
+        // The canonical ids and the indices before these are the parent's: they resolve the same way, so their pages are reused
+        int firstId = 0;
         int firstIndex = 0;
-        // A patch over a registry with the same fallbacks resolves the canonical ids below the parent's size the same
-        // way, so it reuses the parent's full pages; only the page the new ids start in, and later ones, are built
+        CanonicalTable parentTable = null;
         BlockRegistry base = parent;
         if (base != null && base.fallbacks.equals(fallbacks) && java.util.Objects.equals(base.defaultFallback, defaultFallback)
             && base.canonical.size() <= size) {
-            CanonicalTable parentTable = base.canonicalTable();
-            firstPage = base.canonical.size() >>> PAGE_BITS;
-            System.arraycopy(parentTable.blocks, 0, blocks, 0, firstPage);
-            System.arraycopy(parentTable.runtimeIds, 0, runtimeIds, 0, firstPage);
+            parentTable = base.canonicalTable();
+            firstId = base.canonical.size();
             firstIndex = table.parentSize;
-            System.arraycopy(parentTable.reverse, 0, reverse, 0, firstIndex);
+            System.arraycopy(parentTable.blocks, 0, blocks, 0, firstId >>> PAGE_BITS);
+            System.arraycopy(parentTable.runtimeIds, 0, runtimeIds, 0, firstId >>> PAGE_BITS);
+            System.arraycopy(parentTable.reverse, 0, reverse, 0, firstIndex >>> PAGE_BITS);
+            Arrays.fill(sharedReverse, 0, firstIndex >>> PAGE_BITS, true);
             missing.addAll(parentTable.missing);
-            missingIds.or(parentTable.missingIds.get(0, firstPage << PAGE_BITS));
-            fallbackIds.or(parentTable.fallbackIds.get(0, firstPage << PAGE_BITS));
+            missingIds.or(parentTable.missingIds);
+            fallbackIds.or(parentTable.fallbackIds);
         }
-        for (int i = firstIndex; i < reverse.length; i++) {
-            reverse[i] = canonical.index(table.byIndex(i).getState());
+        // The page the new indices start in keeps the parent's part
+        for (int page = firstIndex >>> PAGE_BITS; page < indexPageCount; page++) {
+            int start = page << PAGE_BITS;
+            int[] ids = new int[Math.min(PAGE_SIZE, table.size() - start)];
+            int kept = Math.max(0, Math.min(ids.length, firstIndex - start));
+            if (kept > 0) {
+                System.arraycopy(parentTable.reverse[page], 0, ids, 0, kept);
+            }
+            for (int j = kept; j < ids.length; j++) {
+                ids[j] = canonical.index(table.byIndex(start + j).getState());
+            }
+            reverse[page] = ids;
         }
-        for (int page = firstPage; page < pageCount; page++) {
+        for (int page = firstId >>> PAGE_BITS; page < pageCount; page++) {
             int start = page << PAGE_BITS;
             int length = Math.min(PAGE_SIZE, size - start);
             RegisteredBlockState[] pageBlocks = new RegisteredBlockState[length];
             int[] pageIds = new int[length];
             boolean vanillaOnly = true;
-            for (int j = 0; j < length; j++) {
+            int kept = Math.max(0, Math.min(length, firstId - start));
+            if (kept > 0) {
+                System.arraycopy(parentTable.blocks[page], 0, pageBlocks, 0, kept);
+                System.arraycopy(parentTable.runtimeIds[page], 0, pageIds, 0, kept);
+                for (int j = 0; j < kept; j++) {
+                    vanillaOnly &= !pageBlocks[j].isCustom();
+                }
+            }
+            for (int j = kept; j < length; j++) {
                 int id = start + j;
                 NbtMap state = canonical.state(id);
-                BlockResolution resolution = resolve(state);
+                // The table keeps what this resolves: caching it too would hold every adapted state twice
+                BlockResolution resolution = resolve(state, false);
                 RegisteredBlockState block = resolution.block();
                 if (resolution.kind() == BlockResolution.Kind.FALLBACK) {
                     fallbackIds.set(id);
@@ -479,8 +513,14 @@ public final class BlockRegistry implements DefinitionRegistry<BlockDefinition> 
                 pageIds[j] = block.getRuntimeId();
                 vanillaOnly &= !block.isCustom();
                 int index = indexOfRuntimeId(block.getRuntimeId());
-                if (reverse[index] == -1) {
-                    reverse[index] = id;
+                int[] reverseIds = reverse[index >>> PAGE_BITS];
+                if (reverseIds[index & PAGE_MASK] == -1) {
+                    if (sharedReverse[index >>> PAGE_BITS]) {
+                        // Only a custom state that a fallback sends to a block of the parent gets here: the page is the parent's
+                        reverse[index >>> PAGE_BITS] = reverseIds = reverseIds.clone();
+                        sharedReverse[index >>> PAGE_BITS] = false;
+                    }
+                    reverseIds[index & PAGE_MASK] = id;
                 }
             }
             // Vanilla blocks are shared between versions, so most pages are equal between them
@@ -491,10 +531,12 @@ public final class BlockRegistry implements DefinitionRegistry<BlockDefinition> 
             blocks[page] = pageBlocks;
             runtimeIds[page] = pageIds;
         }
-        return new CanonicalTable(blocks, runtimeIds, reverse, List.copyOf(missing), missingIds, fallbackIds);
+        // Nothing new is missing (the usual case for a layer of custom blocks): the parent's list is the same
+        List<NbtMap> allMissing = parentTable != null && missing.size() == parentTable.missing.size() ? parentTable.missing : List.copyOf(missing);
+        return new CanonicalTable(blocks, runtimeIds, reverse, allMissing, missingIds, fallbackIds);
     }
 
-    private record CanonicalTable(RegisteredBlockState[][] blocks, int[][] runtimeIds, int[] reverse, List<NbtMap> missing,
+    private record CanonicalTable(RegisteredBlockState[][] blocks, int[][] runtimeIds, int[][] reverse, List<NbtMap> missing,
                                   BitSet missingIds, BitSet fallbackIds) {
     }
 
@@ -526,6 +568,11 @@ public final class BlockRegistry implements DefinitionRegistry<BlockDefinition> 
      */
     @Internal
     public @NonNull BlockResolution resolve(@NonNull NbtMap state) {
+        return resolve(state, true);
+    }
+
+    /** @param keep whether to remember the resolution of a canonical state: not for the canonical table, which keeps it itself */
+    private BlockResolution resolve(NbtMap state, boolean keep) {
         NbtMap normalized = BlockStates.normalize(state);
         BlockFallback forced = fallbacks.get(BlockStates.name(normalized));
         RegisteredBlockState exact = forced != null && forced.force() || !missing.isEmpty() && missing.contains(BlockStates.name(normalized))
@@ -538,7 +585,7 @@ public final class BlockRegistry implements DefinitionRegistry<BlockDefinition> 
             return cached;
         }
         BlockResolution resolution = adapt(normalized);
-        if (canonical.index(normalized) != -1) {
+        if (keep && canonical.index(normalized) != -1) {
             resolutions.put(normalized, resolution);
         }
         return resolution;
@@ -585,7 +632,7 @@ public final class BlockRegistry implements DefinitionRegistry<BlockDefinition> 
      * @return the block to send for each state, in the order of {@code states}
      */
     @Internal
-    public @NonNull RegisteredBlockState[] table(@NonNull List<NbtMap> states, @NonNull RegisteredBlockState missing, @NonNull PaletteReport report) {
+    public @NonNull RegisteredBlockState[] table(@NonNull List<NbtMap> states, @NonNull RegisteredBlockState missing, @NonNull PaletteReportBuilder report) {
         RegisteredBlockState[] result = new RegisteredBlockState[states.size()];
         Map<BlockResolution.Kind, Integer> counts = new LinkedHashMap<>();
         for (int i = 0; i < result.length; i++) {
@@ -714,7 +761,7 @@ public final class BlockRegistry implements DefinitionRegistry<BlockDefinition> 
     public int customBlockId(@NonNull String identifier) {
         Integer id = table.customBlockIds.get(identifier);
         if (id == null) {
-            throw new PaletteException("Custom block " + identifier + " does not exist in " + version());
+            throw new PaletteException("Custom block " + identifier + " does not exist in " + version(), null, identifier, null);
         }
         return id;
     }
@@ -780,10 +827,22 @@ public final class BlockRegistry implements DefinitionRegistry<BlockDefinition> 
      */
     @Internal
     public static long nameHash(@NonNull String identifier) {
-        byte[] bytes = identifier.getBytes(StandardCharsets.UTF_8);
-        if (bytes.length == 0) {
+        if (identifier.isEmpty()) {
             return 0;
         }
+        long hash = FNV1_64_OFFSET_BASIS;
+        for (int i = 0; i < identifier.length(); i++) {
+            char c = identifier.charAt(i);
+            if (c >= 0x80) {
+                return nameHashOfBytes(identifier.getBytes(StandardCharsets.UTF_8));
+            }
+            // An ASCII character is its own UTF-8 byte: no need to encode the identifiers, which are all ASCII in practice
+            hash = hash * FNV1_64_PRIME ^ c;
+        }
+        return hash;
+    }
+
+    private static long nameHashOfBytes(byte[] bytes) {
         long hash = FNV1_64_OFFSET_BASIS;
         for (byte b : bytes) {
             hash = hash * FNV1_64_PRIME ^ (b & 0xff);
@@ -847,7 +906,8 @@ public final class BlockRegistry implements DefinitionRegistry<BlockDefinition> 
             for (CustomBlock block : ownCustom) {
                 if (vanillaNames.contains(block.identifier()) || customByName.containsKey(block.identifier())
                     || parent != null && parent.block(block.identifier()) != null) {
-                    throw new PaletteException("Custom block " + block.identifier() + " is registered twice, or collides with a vanilla block");
+                    throw new PaletteException("Custom block " + block.identifier() + " is registered twice, or collides with a vanilla block",
+                        null, block.identifier(), null);
                 }
                 customStates.addAll(block.states());
                 customByName.put(block.identifier(), block);
@@ -884,16 +944,16 @@ public final class BlockRegistry implements DefinitionRegistry<BlockDefinition> 
                 }
                 int collision = byHash.put(block.getRuntimeId(), i);
                 if (collision != -1 && own[collision].getState().equals(state)) {
-                    throw new PaletteException("Duplicate block state in " + version + " palette: " + state);
+                    throw new PaletteException("Duplicate block state in " + version + " palette: " + state, null, BlockStates.name(state), null);
                 }
                 if (collision != -1) {
                     throw new PaletteException("Block network id hash collision in the " + version + " palette: "
-                        + own[collision].getState() + " and " + state + " both hash to " + block.getRuntimeId());
+                        + own[collision].getState() + " and " + state + " both hash to " + block.getRuntimeId(), null, BlockStates.name(state), null);
                 }
                 int inParent = parent == null ? -1 : parent.indexOfRuntimeId(block.getRuntimeId());
                 if (inParent != -1) {
                     throw new PaletteException("Block network id hash collision in the " + version + " palette: "
-                        + parent.byIndex(inParent).getState() + " and " + state + " both hash to " + block.getRuntimeId());
+                        + parent.byIndex(inParent).getState() + " and " + state + " both hash to " + block.getRuntimeId(), null, BlockStates.name(state), null);
                 }
                 own[i] = block;
             }

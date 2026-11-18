@@ -224,7 +224,7 @@ public final class CreativeEditor {
      * @param matcher selects the stacks to replace
      * @param replacement maps a matching stack to its replacement, which must not be null
      * @return the amount of stacks replaced
-     */
+     * @throws NullPointerException if the replacement returns null     */
     public int replace(@NonNull ItemMatcher matcher, @NonNull UnaryOperator<BedrockItemStack> replacement) {
         int replaced = 0;
         for (List<Object> nodes : categories.values()) {
@@ -244,7 +244,7 @@ public final class CreativeEditor {
                         }
                     }
                     if (group.icon != null && matcher.matches(group.icon)) {
-                        group.icon = replacement.apply(group.icon);
+                        group.icon = Objects.requireNonNull(replacement.apply(group.icon));
                     }
                 }
             }

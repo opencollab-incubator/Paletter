@@ -26,6 +26,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
@@ -69,12 +70,12 @@ class ExperimentGatingTest {
             assertNull(gated.itemVariant(cushion, 0, lookup));
         }
         assertTrue(gated.explainUnknown(cushion, 0, Lookup.EXACT).contains("disabled experiment " + TOGGLE));
-        Palette all = Paletter.builder().vanilla(vanilla -> vanilla.allExperiments()).build().palette(OLDEST);
+        Palette all = Paletter.builder().allExperiments().build().palette(OLDEST);
         assertNotNull(all.itemVariant(cushion, 0, Lookup.EXACT));
 
         // The blocks behind a disabled toggle, in any version that has some
         Paletter plain = Paletter.builder().build();
-        Paletter everything = Paletter.builder().vanilla(vanilla -> vanilla.allExperiments()).build();
+        Paletter everything = Paletter.builder().allExperiments().build();
         boolean found = false;
         for (DataVersion version : plain.versions()) {
             for (String block : plain.vanilla(version).gating().missingBlocks()) {
@@ -93,15 +94,15 @@ class ExperimentGatingTest {
 
     @Test
     void removedItemsAreExplained() {
-        Palette palette = Paletter.builder().vanilla(vanilla -> vanilla.remove(BedrockItems.STICK)).build()
+        Palette palette = Paletter.builder().removeItems(BedrockItems.STICK).build()
             .palette(MIDDLE);
         assertNull(palette.itemVariant("minecraft:stick", 0, Lookup.EXACT));
-        assertTrue(palette.explainUnknown("minecraft:stick", 0, Lookup.EXACT).contains("VanillaContent.remove"));
+        assertTrue(palette.explainUnknown("minecraft:stick", 0, Lookup.EXACT).contains("Paletter.Builder.removeItems"));
     }
 
     @Test
     void allExperimentsEnablesTheVersionsToggleButNotVoxelShapes() {
-        Paletter paletter = Paletter.builder().vanilla(vanilla -> vanilla.allExperiments()).build();
+        Paletter paletter = Paletter.builder().allExperiments().build();
 
         Palette all = paletter.palette(OLDEST);
         assertNotNull(all.itemDefinition(BedrockItems.BLACK_CUSHION));
@@ -111,9 +112,38 @@ class ExperimentGatingTest {
     }
 
     @Test
+    void aVersionThatIsNotServedIsRejected() {
+        DataVersion first = Paletter.builder().build().versions().getFirst();
+        DataVersion other = new DataVersion("0.0", 1);
+        PaletteException unknown = assertThrows(PaletteException.class, () -> Paletter.builder().experiments(other, TOGGLE).build());
+        assertTrue(unknown.getMessage().contains(other.toString()), unknown.getMessage());
+        // A version the predicate leaves out is not served either
+        Paletter.Builder narrowed = Paletter.builder().versions(version -> version.equals(first));
+        assertThrows(PaletteException.class, () -> narrowed.experiments(Paletter.builder().build().latest(), TOGGLE).build());
+    }
+
+    @Test
+    void everyExperimentsCallAdds() {
+        assertEquals(List.of(TOGGLE), Paletter.builder().experiments("unrelated").experiments(TOGGLE).build().palette(OLDEST).experiments());
+        assertEquals(List.of(TOGGLE), Paletter.builder().experiments(TOGGLE).experiments("unrelated").build().palette(OLDEST).experiments());
+        Paletter.Builder both = Paletter.builder().experiments("unrelated");
+        both.experiments(Paletter.builder().build().version(OLDEST), TOGGLE);
+        assertEquals(List.of(TOGGLE), both.build().palette(OLDEST).experiments());
+    }
+
+    @Test
+    void allExperimentsAddsToExperimentsAndOnlyNamingTheVoxelShapesEnablesThem() {
+        assertEquals(List.of(), Paletter.builder().allExperiments().build().palette(1001).experiments());
+        assertEquals(List.of(VoxelShapeStore.EXPERIMENT),
+            Paletter.builder().allExperiments().experiments(VoxelShapeStore.EXPERIMENT).build().palette(1001).experiments());
+        Palette both = Paletter.builder().experiments(VoxelShapeStore.EXPERIMENT).allExperiments().build().palette(OLDEST);
+        assertTrue(both.experiments().contains(TOGGLE));
+    }
+
+    @Test
     void enablingTheToggleMakesTheContentPresentAndIsSent() {
         Fallbacks flat = Fallbacks.builder().item(BedrockItems.BLACK_CUSHION, ItemFallback.of(BedrockItems.STICK)).build();
-        Paletter paletter = Paletter.builder().fallbacks(flat).vanilla(vanilla -> vanilla.experiments(TOGGLE)).build();
+        Paletter paletter = Paletter.builder().fallbacks(flat).experiments(TOGGLE).build();
 
         Palette enabled = paletter.palette(OLDEST);
         assertFalse(enabled.resolve(BedrockItems.BLACK_CUSHION).fallback());
@@ -146,11 +176,11 @@ class ExperimentGatingTest {
         PaletteReport report = PALETTER.palette(OLDEST).report();
         List<String> lines = report.entries().stream().filter(e -> e.source().equals("vanilla")).map(PaletteReport.Entry::message).toList();
         assertEquals(1, lines.size(), lines.toString());
-        assertTrue(lines.getFirst().matches("26\\.40: \\d+ items, \\d+ blocks behind `" + TOGGLE + "` use fallbacks; enable with vanilla\\(v -> v\\.experiments\\(\"" + TOGGLE + "\"\\)\\)"),
+        assertTrue(lines.getFirst().matches("26\\.40: \\d+ items, \\d+ blocks behind `" + TOGGLE + "` use fallbacks; enable with experiments\\(\"" + TOGGLE + "\"\\)"),
             lines.getFirst());
         assertTrue(report.entries().stream().anyMatch(e -> e.level() == PaletteReport.Level.INFO && e.message().contains(TOGGLE)));
 
-        Paletter enabled = Paletter.builder().vanilla(vanilla -> vanilla.experiments(TOGGLE)).build();
+        Paletter enabled = Paletter.builder().experiments(TOGGLE).build();
         assertTrue(enabled.palette(OLDEST).report().entries().stream().noneMatch(e -> e.message().contains(TOGGLE)));
         assertTrue(PALETTER.palette(MIDDLE).report().entries().stream().noneMatch(e -> e.message().contains("behind")));
     }
@@ -195,7 +225,7 @@ class ExperimentGatingTest {
         Palette unknown = Paletter.builder().data(gatedBlock()).build().palette(OLDEST);
         assertEquals("minecraft:unknown", unknown.blocks().byRuntimeId(unknown.runtimeId(glass)).identifier());
 
-        Palette present = Paletter.builder().data(gatedBlock()).fallbacks(flat).vanilla(vanilla -> vanilla.experiments("block_toggle")).build().palette(OLDEST);
+        Palette present = Paletter.builder().data(gatedBlock()).fallbacks(flat).experiments("block_toggle").build().palette(OLDEST);
         assertEquals("minecraft:glass", present.blocks().byRuntimeId(present.runtimeId(glass)).identifier());
         assertEquals("block_toggle", present.experimentOf(BedrockBlocks.GLASS));
         assertEquals(List.of("block_toggle"), present.experiments());

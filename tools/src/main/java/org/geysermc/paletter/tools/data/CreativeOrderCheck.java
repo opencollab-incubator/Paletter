@@ -18,8 +18,8 @@ import org.geysermc.paletter.data.DataVersion;
 import org.geysermc.paletter.data.PaletteDataSource;
 import org.geysermc.paletter.creative.CreativeCategory;
 import org.geysermc.paletter.creative.CreativeOrdering;
-import org.geysermc.paletter.creative.CreativePlacement;
 import org.geysermc.paletter.item.CustomItem;
+import org.geysermc.paletter.item.component.BlockPlacer;
 import org.geysermc.paletter.block.component.BlockMenuCategory;
 
 import java.io.ByteArrayInputStream;
@@ -148,22 +148,9 @@ public final class CreativeOrderCheck {
         return properties.getCompound("vanilla_block_data").getInt("block_id");
     }
 
-    /**
-     * The captured build is compared with the data of its own version, which may be a preview. Read from the directory,
-     * since the bundled source has read its version index already.
-     */
+    /** The captured build is compared with the data of its own version, which may be a preview. */
     static Paletter withPreviews(Path data, CreativeOrdering ordering, PaletteLayer layer) {
-        String before = System.getProperty("paletter.previews");
-        System.setProperty("paletter.previews", "true");
-        try {
-            return Paletter.builder().data(PaletteDataSource.directory(data)).creativeOrdering(ordering).layer(layer).build();
-        } finally {
-            if (before == null) {
-                System.clearProperty("paletter.previews");
-            } else {
-                System.setProperty("paletter.previews", before);
-            }
-        }
+        return Paletter.builder().data(PaletteDataSource.directory(data)).previews(true).creativeOrdering(ordering).layer(layer).build();
     }
 
     /**
@@ -181,42 +168,38 @@ public final class CreativeOrderCheck {
             .forEach(block -> {
                 String name = block.getString("name");
                 blockNames.add(name);
+                // The block's own menu category counts, also if an item replaces its item
                 NbtMap menu = block.getCompound("properties").getCompound("menu_category");
                 CustomBlock.Builder builder = CustomBlock.builder(name);
-                NbtMap item = dataDriven.get(name);
-                if (item != null) {
-                    // A data driven item of the same name replaces the block item; its menu category counts
-                    builder.item(CustomBlock.BlockItem.dataDriven());
-                    CreativePlacement placement = placement(item);
-                    if (placement != null) {
-                        builder.creative(placement);
-                    }
-                } else {
-                    String category = menu.getString("category", "none");
-                    if (!category.equals(CreativeCategory.NONE_NAME)) {
-                        builder.menuCategory(BlockMenuCategory.builder().category(BlockMenuCategory.Category.fromValue(category))
-                            .group(menu.getString("group", "")).hiddenInCommands(menu.getBoolean("is_hidden_in_commands")).build());
-                    }
+                String category = menu.getString("category", "none");
+                if (!category.equals(CreativeCategory.NONE_NAME)) {
+                    builder.menuCategory(BlockMenuCategory.builder().category(BlockMenuCategory.Category.fromValue(category))
+                        .group(menu.getString("group", "")).hiddenInCommands(menu.getBoolean("is_hidden_in_commands")).build());
                 }
                 layer.block(builder.build());
             });
+        // Items in BDS's order. One with the identifier of a block replaces the block's item, in the item's own category
         dataDriven.forEach((name, item) -> {
-            if (!blockNames.contains(name)) {
-                layer.item(CustomItem.builder(name).creative(placement(item)).build());
+            CustomItem.Builder builder = CustomItem.builder(name).menuCategory(menuCategory(item));
+            if (blockNames.contains(name)) {
+                builder.component(BlockPlacer.builder().block(name).replaceBlockItem(true).build());
             }
+            layer.item(builder.build());
         });
         return layer.build();
     }
 
-    private static CreativePlacement placement(NbtMap item) {
+    /** @return the item's captured category and group, or null if it is not in the creative inventory */
+    static org.geysermc.paletter.item.component.ItemMenuCategory menuCategory(NbtMap item) {
         NbtMap properties = item.getCompound("data").getCompound("components").getCompound("item_properties");
         int category = properties.getInt("creative_category", 5);
         if (category < 1 || category > 4) {
             return null;
         }
-        CreativeCategory creativeCategory = CreativeCategory.values()[category - 1];
         String group = properties.getString("creative_group", "");
-        return group.isEmpty() ? CreativePlacement.loose(creativeCategory) : CreativePlacement.group(creativeCategory, group);
+        return org.geysermc.paletter.item.component.ItemMenuCategory.builder()
+            .category(org.geysermc.paletter.item.component.ItemMenuCategory.Category.fromValue(CreativeCategory.values()[category - 1].bedrockName()))
+            .group(group.isEmpty() ? null : group).build();
     }
 
     static List<Node> bds(JsonObject creative, Set<String> vanillaStacks) {

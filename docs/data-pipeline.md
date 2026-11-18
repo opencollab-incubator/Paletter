@@ -61,6 +61,7 @@ command takes `--help`. Paths are relative to the repository root (`--root` over
 | `education-capture` | Records what only an Education Edition world adds (`education.json`, used for `@Education`). |
 | `recipes-capture` | Records the crafting and trim data of one build (`vanilla/crafting_data.json.gz`, `vanilla/trim_data.json`); `update` writes them too. |
 | `recipes-diff` | `--from <build> --to <build>`: diffs two committed recipe captures in `data/bds`, normalised (list layout, net ids and random UUIDs ignored): recipes added, removed and changed, mixes, trims. `update` reports the same diff, and checks that recipe items, tags, block states and net ids hold (INFO at most). A run whose own capture has no `crafting_data.json.gz` fails, and so does an unreadable recipe capture; a build without a committed recipe capture is only not compared. |
+| `recipes-import [--check]` | The recipe captures of `data/bds` to the bundled `paletter-recipes/src/main/resources/paletter/recipes/<data version>.nbt` (item identifiers and aux values as BDS sent them, no net ids, no random UUIDs; the trim patterns and materials are in the bundle but not in the API) and `RecipeStations` (a constant per station tag of the captures, in `paletter-recipes/src/generated`). A capture belongs to the data version of the protocol in its build's `experiments.json`; a recipe kind or ingredient descriptor the bundle has no place for fails the import, and so does an item that is not in the palette of its data version, an unknown unlock context, a malformed UUID, a container mix with an aux value or an empty block state or tag. `:tools:checkRecipes` (part of `check`) runs `--check`. |
 | `inspect` | Prints `Palette#explain` for a block state or item in one or all bundled versions. |
 
 Gradle tasks: `generateConstants`, `generateComponentApi`, `generateComponentApiPreview`, `generateModel`,
@@ -296,7 +297,7 @@ current format; the Holiday Creator Features form of an older format is not a va
 ### Previews
 
 Paletter bundles the newest preview next to the releases. `update --channel preview` imports it like a release, marked
-`preview` in `versions.txt`; the library serves it only when `paletter.previews` is `true`. Generated API that only the
+`preview` in `versions.txt`; the library serves it only to a Paletter built with `Paletter.builder().previews(true)`. Generated API that only the
 preview has (constants, states, enum values, components and fields BDS releases reject) is marked
 `@SincePreview("<version>")` and is kept out of `constants-history.json`. Importing a newer preview, or the preview's
 release, drops the bundled preview and its `data/bds/<build>` captures. Release runs never compare against a preview's

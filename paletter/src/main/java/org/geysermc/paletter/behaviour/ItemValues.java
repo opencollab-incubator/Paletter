@@ -25,7 +25,8 @@ public final class ItemValues {
     private final int index;
 
     /**
-     * Internal: plumbing of {@link org.geysermc.paletter.item.ResolvedItem#behaviour()}: public for it, not part of the API.
+     * Internal: plumbing of {@link org.geysermc.paletter.item.ResolvedItem#behaviour()}: public for it, not part of the
+     * API.
      *
      * @param behaviour the palette's behaviour values
      * @param index the position of the item in them

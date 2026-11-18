@@ -7,6 +7,10 @@ import org.geysermc.paletter.annotation.Internal;
 import org.geysermc.paletter.internal.block.BlockStates;
 import org.geysermc.paletter.internal.CanonicalBlocks;
 
+import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.Map;
+
 /**
  * One state of a {@link BedrockBlockType}. A type creates each of its states once, so {@link #with} does not allocate.
  * <p>
@@ -30,6 +34,7 @@ public final class BedrockBlockState {
     private final int combination;
     private final int id;
     private volatile @Nullable NbtMap nbt;
+    private volatile @Nullable Map<String, Object> values;
 
     BedrockBlockState(BlockTypeLayout layout, int combination, int id) {
         this.layout = layout;
@@ -40,10 +45,9 @@ public final class BedrockBlockState {
     /**
      * Internal: the handle of a canonical id, for {@link org.geysermc.paletter.Palette}.
      *
-     * @param canonical the canonical blocks of a palette lineage
-     * @param id a canonical id
-     * @return the state of a canonical id of any palette lineage, or null if there is no such id or the state is not
-     *         known to the constants (a vanilla state of a source that has states the bundled data lacks)
+     * @param canonical the canonical blocks of a palette
+     * @param id the canonical id
+     * @return the state of a canonical id of any palette lineage, or null if there is no such id
      */
     @Internal
     public static @Nullable BedrockBlockState fromCanonical(@NonNull CanonicalBlocks canonical, int id) {
@@ -53,7 +57,12 @@ public final class BedrockBlockState {
         VanillaIndex index = VanillaIndex.get();
         if (id < canonical.vanillaSize()) {
             // The ids belong to the palette's own newest version, which is not necessarily the bundled one
-            return index.state(canonical.root() == index.blocks ? id : canonical.vanillaIdsIn(index.blocks)[id]);
+            if (canonical.root() == index.blocks) {
+                return index.state(id);
+            }
+            // Blocks a preview added or changed: the constants are linked to the release, so the palette's own table makes them
+            BedrockBlockState preview = PreviewBlocks.state(canonical.root(), id);
+            return preview != null ? preview : index.state(canonical.vanillaIdsIn(index.blocks)[id]);
         }
         BedrockBlockType type = canonical.customTypeAt(id);
         return type == null ? null : type.layout().byOffset(id - canonical.customStartAt(id));
@@ -149,7 +158,27 @@ public final class BedrockBlockState {
     }
 
     /**
-     * The state as block state NBT.
+     * Returns the values of the state by state name, in the order of the block's states in Bedrock Dedicated Server's
+     * data. Together with {@code type().identifier()} they find this state again:
+     * {@code palette.blockState(identifier, values(), Lookup.EXACT)}
+     *
+     * @return the values: {@link Boolean}, {@link Integer} or {@link String}; unmodifiable
+     */
+    public @NonNull Map<String, Object> values() {
+        Map<String, Object> values = this.values;
+        if (values == null) {
+            values = new LinkedHashMap<>();
+            for (int p = 0; p < layout.properties.length; p++) {
+                Object value = layout.values[p][layout.valueOf(combination, p)];
+                values.put(layout.properties[p].name(), value instanceof Byte b ? (Object) (b != 0) : value);
+            }
+            this.values = values = Collections.unmodifiableMap(values);
+        }
+        return values;
+    }
+
+    /**
+     * Returns the state as NBT.
      *
      * @return the state as {@code {name, states}}
      */
@@ -163,7 +192,8 @@ public final class BedrockBlockState {
     }
 
     /**
-     * Internal: the canonical id of this state in a palette's canonical blocks: the precomputed vanilla id for vanilla states of
+     * Internal: the canonical id of this state in a palette's canonical blocks: the precomputed vanilla id for vanilla
+     * states of
      * palettes of the bundled newest version, an array lookup in the palette's own table for the others, the custom
      * block's id in that lineage, else a hash lookup.
      *
@@ -173,8 +203,13 @@ public final class BedrockBlockState {
     @Internal
     public int canonicalIn(@NonNull CanonicalBlocks canonical) {
         if (id >= 0) {
+            // A state of the bundled constants (only those have an id). This is checked before the root below because no bundled
+            // constant has a root of its own (BundledLayoutRootTest): only preview constants do, and they have no id.
             CanonicalBlocks bundled = VanillaIndex.get().blocks;
             return canonical.root() == bundled ? id : canonical.vanillaIdsFrom(bundled)[id];
+        }
+        if (layout.root != null && canonical.root() == layout.root) {
+            return layout.rootBase + layout.offset(combination);
         }
         int base = canonical.customBase(type().identifier(), layout.count);
         return base == -1 ? canonical.index(toNbt()) : base + combination;

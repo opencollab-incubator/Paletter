@@ -5,6 +5,7 @@ import org.checkerframework.checker.nullness.qual.Nullable;
 import org.cloudburstmc.nbt.NbtMap;
 import org.cloudburstmc.protocol.bedrock.codec.BedrockCodec;
 import org.geysermc.paletter.annotation.Internal;
+import org.geysermc.paletter.internal.PaletteReportBuilder;
 import org.geysermc.paletter.internal.block.BlockInterner;
 import org.geysermc.paletter.creative.CreativeOrdering;
 import org.geysermc.paletter.internal.CanonicalBlocks;
@@ -64,6 +65,7 @@ import java.util.function.Predicate;
  */
 public final class Paletter {
     private final PaletteDataSource source;
+    private final boolean previews;
     private final List<DataVersion> versions;
     private final Fallbacks fallbacks;
     private final VanillaContent vanillaContent;
@@ -74,16 +76,26 @@ public final class Paletter {
     private final Map<DataVersion, VanillaData> data = new ConcurrentHashMap<>();
     private final Map<DataVersion, Palette> vanilla = new ConcurrentHashMap<>();
     private final Map<Palette, Palette> newerThanData = new ConcurrentHashMap<>();
-    private final Map<NbtMap, NbtMap> interned = new HashMap<>();
+    private final Object internLock = new Object();
+    /** Equal states and component data of the versions loaded so far, see {@link #intern}; dropped when all are loaded. */
+    private @Nullable Map<NbtMap, NbtMap> interned = new HashMap<>();
+    private volatile boolean internedReleased;
     private final BlockInterner blockInterner = new BlockInterner();
     private volatile CanonicalBlocks canonicalBlocks;
     private volatile CanonicalItems canonicalItems;
 
     private Paletter(Builder builder) {
         this.source = builder.source;
-        this.versions = source.versions().stream().filter(builder.versions).toList();
+        this.previews = builder.previews;
+        this.versions = source.versions().stream().filter(this::available).filter(builder.versions).toList();
         this.fallbacks = builder.fallbacks;
         this.vanillaContent = builder.vanillaContent.copy();
+        for (DataVersion version : vanillaContent.experimentVersions()) {
+            if (!versions.contains(version)) {
+                throw new PaletteException("Experiments are enabled for " + version + ", which this Paletter does not serve (served: "
+                    + versions + ")");
+            }
+        }
         this.creativeOrdering = builder.creativeOrdering;
         this.reports = builder.reports;
         this.globalLayers = List.copyOf(builder.layers);
@@ -145,17 +157,29 @@ public final class Paletter {
         return source.verifiedBuilds(version);
     }
 
-    /**
-     * What is loaded from the data source, and the canonical ids derived from it, only depends on the data source: every
-     * Paletter over the bundled data shares those of {@link #bundled()}, which the generated constants are linked to.
-     */
-    private boolean sharesBundledCanonicals() {
+    /** Whether the data of a version is there for this instance: a preview's only with previews. */
+    private boolean available(DataVersion version) {
+        return previews || !version.isPreview();
+    }
+
+    /** What is loaded from the data source only depends on the data source: every Paletter over the bundled data shares it. */
+    private boolean sharesBundledData() {
         return source == PaletteDataSource.bundled() && this != Holder.BUNDLED;
+    }
+
+    /**
+     * The canonical ids derive from the newest version, so they depend on the data source and on previews: every Paletter
+     * over the bundled data and the same previews setting shares them. The generated constants are linked to the newest
+     * release's; the canonical ids of the others are mapped from them.
+     */
+    private @Nullable Paletter sharedCanonicals() {
+        Paletter shared = previews ? Holder.WITH_PREVIEWS : Holder.BUNDLED;
+        return source == PaletteDataSource.bundled() && this != shared ? shared : null;
     }
 
     /** The newest version of the data, whether served or not: canonical ids are defined by it. */
     private DataVersion newest() {
-        return source.versions().getLast();
+        return source.versions().stream().filter(this::available).reduce((older, newer) -> newer).orElseThrow();
     }
 
     /**
@@ -204,23 +228,41 @@ public final class Paletter {
      */
     @Internal
     public @NonNull VanillaData vanillaData(@NonNull DataVersion version) {
-        if (sharesBundledCanonicals()) {
+        if (sharesBundledData()) {
             return Holder.BUNDLED.vanillaData(version);
         }
-        return data.computeIfAbsent(version, v -> {
+        VanillaData loaded = data.computeIfAbsent(version, v -> {
             try {
                 return intern(source.load(v));
             } catch (IOException e) {
                 throw new UncheckedIOException("Unable to load Bedrock data " + v, e);
             }
         });
+        if (!internedReleased && data.keySet().containsAll(versions)) {
+            releaseInterned();
+        }
+        return loaded;
+    }
+
+    /**
+     * Interning only matters while versions are still to be loaded: once all are, the map (about a megabyte) is not needed.
+     * A version loaded after that (one outside the versions served) gets a throwaway map instead, so it loses the sharing with
+     * the other versions: its states and components are separate copies. The values stay the same, only the memory is not shared.
+     */
+    private void releaseInterned() {
+        synchronized (internLock) {
+            interned = null;
+            internedReleased = true;
+        }
     }
 
     /**
      * Makes equal block states and item components of different versions the same instances.
      */
     private VanillaData intern(VanillaData loaded) {
-        synchronized (interned) {
+        synchronized (internLock) {
+            // Dropped once every version served was loaded: a load after that is of a version outside them, which shares nothing
+            Map<NbtMap, NbtMap> interned = this.interned != null ? this.interned : new HashMap<>();
             List<NbtMap> states = new ArrayList<>(loaded.blockStates().size());
             for (NbtMap state : loaded.blockStates()) {
                 states.add(interned.computeIfAbsent(state, s -> s));
@@ -251,7 +293,7 @@ public final class Paletter {
             synchronized (this) {
                 blocks = canonicalBlocks;
                 if (blocks == null) {
-                    canonicalBlocks = blocks = sharesBundledCanonicals() ? Holder.BUNDLED.canonicalBlocks()
+                    canonicalBlocks = blocks = sharedCanonicals() != null ? sharedCanonicals().canonicalBlocks()
                         : CanonicalBlocks.of(vanillaData(newest()), source.renames());
                 }
             }
@@ -271,7 +313,7 @@ public final class Paletter {
             synchronized (this) {
                 items = canonicalItems;
                 if (items == null) {
-                    canonicalItems = items = sharesBundledCanonicals() ? Holder.BUNDLED.canonicalItems()
+                    canonicalItems = items = sharedCanonicals() != null ? sharedCanonicals().canonicalItems()
                         : CanonicalItems.of(vanillaData(newest()), source.renames());
                 }
             }
@@ -328,7 +370,7 @@ public final class Paletter {
             boolean[] created = {false};
             Palette noted = newerThanData.computeIfAbsent(palette, p -> {
                 created[0] = true;
-                PaletteReport report = new PaletteReport();
+                PaletteReportBuilder report = new PaletteReportBuilder();
                 report.addAll(p.report());
                 report.info("paletter", message);
                 return p.withReport(report);
@@ -336,9 +378,9 @@ public final class Paletter {
             if (created[0]) {
                 // Reported outside the computation, so the consumer may use this Paletter; only the note: the rest of
                 // the report went to the consumer with the palette itself
-                PaletteReport note = new PaletteReport();
+                PaletteReportBuilder note = new PaletteReportBuilder();
                 note.info("paletter", message);
-                reports.accept(note);
+                reports.accept(note.build(palette.version()));
             }
             return noted;
         }
@@ -366,7 +408,7 @@ public final class Paletter {
             created[0] = true;
             Palette result = vanilla(v);
             for (PaletteLayer layer : globalLayers) {
-                result = PaletteCompiler.extend(result, layer, false);
+                result = PaletteCompiler.extend(result, layer);
             }
             return result;
         });
@@ -401,6 +443,7 @@ public final class Paletter {
     public static final class Builder {
         private PaletteDataSource source = PaletteDataSource.bundled();
         private Predicate<DataVersion> versions = version -> true;
+        private boolean previews;
         private Fallbacks fallbacks = Fallbacks.UNKNOWN;
         private final VanillaContent vanillaContent = new VanillaContent();
         private CreativeOrdering creativeOrdering = CreativeOrdering.BDS;
@@ -434,9 +477,22 @@ public final class Paletter {
         }
 
         /**
+         * Serves the data of Bedrock preview builds as well, or not. The constants only a preview has
+         * ({@link org.geysermc.paletter.annotation.SincePreview}) exist either way, but are linked to the newest release:
+         * they resolve through {@link #fallbacks(Fallbacks) fallbacks}, with previews or not.
+         *
+         * @param previews whether preview data is served; default {@code false}
+         * @return this builder
+         */
+        public @NonNull Builder previews(boolean previews) {
+            this.previews = previews;
+            return this;
+        }
+
+        /**
          * Sets what content a version lacks becomes.
          *
-         * @param fallbacks what content a version lacks becomes; default {@link Fallbacks#UNKNOWN}
+         * @param fallbacks the fallbacks; default {@link Fallbacks#UNKNOWN}
          * @return this builder
          */
         public @NonNull Builder fallbacks(@NonNull Fallbacks fallbacks) {
@@ -445,13 +501,61 @@ public final class Paletter {
         }
 
         /**
-         * Selects which vanilla content exists. The content is only valid inside the consumer.
+         * Enables experiment toggles (e.g. {@code y_2026_drop_4}) in every version. By default none is enabled: the items
+         * and blocks a version has only behind a toggle are missing in its palette, so the {@link Fallbacks} apply to
+         * them like to content the version lacks altogether (and {@code force} is only for content that is really there).
+         * An enabled toggle makes its content present in the versions that gate it; those palettes list the toggle in
+         * {@link Palette#experiments()} and send it with
+         * {@link Palette#applyTo(org.cloudburstmc.protocol.bedrock.packet.StartGamePacket)}. A palette tells the toggle of a
+         * piece of content with {@code Palette#experimentOf}, and its report has a line for every toggle left disabled.
+         * Every call adds to the toggles of the earlier ones.
          *
-         * @param content called at once with the vanilla content to configure
+         * @param toggles the toggle ids, as BDS names them
          * @return this builder
          */
-        public @NonNull Builder vanilla(@NonNull Consumer<VanillaContent> content) {
-            Objects.requireNonNull(content).accept(vanillaContent);
+        public @NonNull Builder experiments(@NonNull String... toggles) {
+            vanillaContent.experiments(toggles);
+            return this;
+        }
+
+        /**
+         * Enables experiment toggles in one version only, in addition to those of {@link #experiments(String...)}.
+         * The version must be one this instance serves, or {@link #build()} throws a {@link PaletteException}.
+         * Every call adds to the toggles of the earlier ones. Toggles that gate nothing in a version are ignored there; for
+         * a toggle enabled for one version the palette's report says so.
+         *
+         * @param version the data version
+         * @param toggles the toggle ids, as BDS names them
+         * @return this builder
+         */
+        public @NonNull Builder experiments(@NonNull DataVersion version, @NonNull String... toggles) {
+            vanillaContent.experiments(Objects.requireNonNull(version), toggles);
+            return this;
+        }
+
+        /**
+         * Enables every experiment toggle each version gates content with, except the voxel shape experiment, which
+         * changes how the client treats shapes instead of adding content. The content behind the toggles is present, as in
+         * the raw data of the version; the palettes list the toggles in {@link Palette#experiments()}. Lookups with a
+         * {@link Lookup} see that content then. Adds to {@link #experiments(String...)} (the union is enabled). The voxel
+         * shape experiment is enabled only by naming it: {@code experiments("voxel_shapes")}.
+         *
+         * @return this builder
+         */
+        public @NonNull Builder allExperiments() {
+            vanillaContent.allExperiments();
+            return this;
+        }
+
+        /**
+         * Does not register these vanilla items: they have no definition and no creative entry, and resolve through the
+         * {@link Fallbacks}. Blocks are never removed, the client's block palette has to match.
+         *
+         * @param items the vanilla item types to remove
+         * @return this builder
+         */
+        public @NonNull Builder removeItems(@NonNull BedrockItemType... items) {
+            vanillaContent.remove(items);
             return this;
         }
 
@@ -472,7 +576,8 @@ public final class Paletter {
          * Sets where the compilation reports go.
          *
          * @param reports called once for each palette compiled (with this instance's layers applied), with its report, and
-         *                once with a one entry report for a palette served for a protocol newer than the newest data.
+         *                once with a one entry report for a palette served for a protocol newer than the newest data (that
+         *                note has no {@code unknownBlocks} or {@code unknownItems}).
          *                Called outside any internal lock: it may use this Paletter
          * @return this builder
          */
@@ -504,6 +609,7 @@ public final class Paletter {
 
     private static final class Holder {
         private static final Paletter BUNDLED = builder().build();
+        private static final Paletter WITH_PREVIEWS = builder().previews(true).build();
     }
 
     // ---- Properties ----

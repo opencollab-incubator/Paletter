@@ -13,9 +13,9 @@ import org.geysermc.paletter.block.component.Geometry;
 import org.geysermc.paletter.block.component.ItemVisual;
 import org.geysermc.paletter.block.component.BlockMenuCategory;
 import org.geysermc.paletter.block.component.UvLock;
+import org.geysermc.paletter.creative.CreativeCategory;
 import org.geysermc.paletter.creative.CreativePlacement;
 import org.geysermc.paletter.internal.component.TraitStates;
-import org.geysermc.paletter.item.component.ItemComponent;
 import org.geysermc.paletter.vanilla.BedrockBlockType;
 import org.geysermc.paletter.vanilla.BedrockItemType;
 
@@ -36,7 +36,7 @@ import java.util.Objects;
  *     .component(Geometry.of("minecraft:geometry.full_block"))
  *     .component(MaterialInstances.builder().all(MaterialInstances.Instance.builder().texture("lamp").build()).build())
  *     .permutation("q.block_state('example:lit')", LightEmission.of(15))
- *     .creative(CreativePlacement.loose(CreativeCategory.CONSTRUCTION))
+ *     .menuCategory(CreativeCategory.CONSTRUCTION)
  *     .build();
  * }</pre>
  * <p>
@@ -54,7 +54,7 @@ public final class CustomBlock {
     private final List<Permutation> permutations;
     private final @Nullable BlockMenuCategory menuCategory;
     private final BlockItem item;
-    private final @Nullable CreativePlacement creative;
+    private final CreativePlacement creative;
     private final Map<String, Object> defaultStates;
     private final List<String> tags;
     private final BedrockBlockType type;
@@ -66,16 +66,15 @@ public final class CustomBlock {
      * @param traits the traits (description {@code traits}); the states they add are part of {@link #states()}
      * @param components the base components (one per component name)
      * @param permutations components applied when a Molang condition on the state holds
-     * @param menuCategory the description's {@code menu_category}, or null: then it follows {@link #creative()}, else
-     *                     {@code none}
+     * @param menuCategory the description's {@code menu_category}, or null: not in the creative inventory
      * @param item how the block item is registered
-     * @param creative where the block item goes in the creative inventory, or null to leave it out
+     * @param creative the position of the block item within its category and group
      * @param defaultStates state values of the default state; properties not listed use their first value
      * @param tags block tags, queryable with Molang (sent as the block's {@code blockTags})
      */
     private CustomBlock(@NonNull String identifier, @NonNull List<BlockProperty<?>> properties, @NonNull List<BlockTrait> traits,
                        @NonNull List<BlockComponent> components, @NonNull List<Permutation> permutations,
-                       @Nullable BlockMenuCategory menuCategory, @NonNull BlockItem item, @Nullable CreativePlacement creative,
+                       @Nullable BlockMenuCategory menuCategory, @NonNull BlockItem item, @NonNull CreativePlacement creative,
                        @NonNull Map<String, Object> defaultStates, @NonNull List<String> tags) {
         this.identifier = Objects.requireNonNull(identifier, "identifier");
         this.properties = List.copyOf(properties);
@@ -156,9 +155,10 @@ public final class CustomBlock {
     }
 
     /**
-     * The explicit menu category.
+     * Returns the description's {@code menu_category}, which alone decides whether the block item is in the creative
+     * inventory and in which category and group, as in BDS.
      *
-     * @return the description's {@code menu_category}, or null: then it follows {@link #creative()}, else {@code none}
+     * @return the menu category; null or category {@code none}: the block item is not in the creative inventory
      */
     public @Nullable BlockMenuCategory menuCategory() {
         return menuCategory;
@@ -174,11 +174,11 @@ public final class CustomBlock {
     }
 
     /**
-     * The creative inventory placement of the block item.
+     * Returns where the block item goes within the category and group of the {@link #menuCategory()}.
      *
-     * @return where the block item goes in the creative inventory, or null to leave it out
+     * @return the placement, {@link CreativePlacement#DEFAULT} if not set
      */
-    public @Nullable CreativePlacement creative() {
+    public @NonNull CreativePlacement creativePlacement() {
         return creative;
     }
 
@@ -263,58 +263,21 @@ public final class CustomBlock {
     }
 
     /**
-     * How the item of a custom block is registered.
+     * How the item of a custom block is registered. An item of its own that replaces it, e.g. to give the block an icon, is
+     * an ordinary {@link org.geysermc.paletter.item.CustomItem} with the identifier of the block and a
+     * {@code block_placer} with {@code replace_block_item}, registered in the same layer: the block's item is then that item.
      */
-    public sealed interface BlockItem {
+    public enum BlockItem {
         /**
          * No item; the block cannot be held.
          */
-        BlockItem NONE = new None();
+        NONE,
         /**
          * A plain block item. The client renders it as its block. Like BDS, the palette gives it the runtime id
          * {@code 255 - block_id} (negative: block ids start at 10000), so it moves when a later layer adds blocks and
          * the palette numbers all custom blocks again.
          */
-        BlockItem SIMPLE = new Simple();
-
-        /**
-         * A data driven item that places the block, e.g. to give it its own icon. The palette adds the
-         * {@code minecraft:block_placer} component for the block unless the components have one, with
-         * {@code replace_block_item}, which BDS needs for an item named like its block. The item has a sequential
-         * runtime id like any data driven item.
-         *
-         * @param components the components of the item
-         * @return the registration
-         */
-        static @NonNull BlockItem dataDriven(@NonNull ItemComponent... components) {
-            return new DataDriven(List.of(components));
-        }
-
-        /**
-         * The type of {@link BlockItem#NONE}: no item.
-         */
-        record None() implements BlockItem {
-        }
-
-        /**
-         * The type of {@link BlockItem#SIMPLE}: a plain block item.
-         */
-        record Simple() implements BlockItem {
-        }
-
-        /**
-         * A data driven item that places the block, see {@link BlockItem#dataDriven}.
-         *
-         * @param components the components of the item
-         */
-        record DataDriven(@NonNull List<ItemComponent> components) implements BlockItem {
-            /**
-             * Creates the registration; the components are copied.
-             */
-            public DataDriven {
-                components = List.copyOf(components);
-            }
-        }
+        SIMPLE
     }
 
     /**
@@ -409,7 +372,8 @@ public final class CustomBlock {
     /**
      * The type of the block item, owned by the block like {@link #type()}: a palette hands back this type and its base
      * variant for the block item. A palette has the item if it is registered: with the block unless {@link #item()} is
-     * {@link BlockItem#NONE}, or by a later layer ({@link org.geysermc.paletter.PaletteLayer.Builder#blockItem}).
+     * {@link BlockItem#NONE}. When a custom item of the layer replaces the block item, the palette's item has that item's type
+     * instead, not this one: {@link org.geysermc.paletter.Palette#itemOf} always gives the right one.
      *
      * @return the type of the block item
      * @since 1.0.0
@@ -439,7 +403,7 @@ public final class CustomBlock {
     public boolean equals(Object o) {
         return this == o || o instanceof CustomBlock other && identifier.equals(other.identifier) && properties.equals(other.properties)
             && traits.equals(other.traits) && components.equals(other.components) && permutations.equals(other.permutations)
-            && Objects.equals(menuCategory, other.menuCategory) && item.equals(other.item) && Objects.equals(creative, other.creative)
+            && Objects.equals(menuCategory, other.menuCategory) && item.equals(other.item) && creative.equals(other.creative)
             && defaultStates.equals(other.defaultStates) && tags.equals(other.tags);
     }
 
@@ -466,7 +430,7 @@ public final class CustomBlock {
         private final List<Permutation> permutations = new ArrayList<>();
         private @Nullable BlockMenuCategory menuCategory;
         private BlockItem item = BlockItem.SIMPLE;
-        private @Nullable CreativePlacement creative;
+        private CreativePlacement creative = CreativePlacement.DEFAULT;
         private final Map<String, Object> defaultStates = new LinkedHashMap<>();
         private final List<String> tags = new ArrayList<>();
 
@@ -555,9 +519,11 @@ public final class CustomBlock {
         }
 
         /**
-         * Sets the description's {@code menu_category} explicitly. Without it, {@link #creative} decides it.
+         * Sets the description's {@code menu_category}: the category, group and {@code is_hidden_in_commands} the add-on
+         * JSON gives. It alone decides whether the block item is in the creative inventory, as in BDS; without it, or with
+         * category {@code none}, it is not. An item that replaces the block item has a {@code menu_category} of its own.
          *
-         * @param menuCategory the menu category, or null to follow {@link #creative}
+         * @param menuCategory the menu category, or null for none
          * @return this builder
          */
         public @NonNull Builder menuCategory(@Nullable BlockMenuCategory menuCategory) {
@@ -566,25 +532,50 @@ public final class CustomBlock {
         }
 
         /**
-         * Sets how the block item is registered; the default is {@link BlockItem#SIMPLE}.
+         * Puts the block item in a creative category: {@link #menuCategory(BlockMenuCategory)} for the common case.
          *
-         * @param item the registration
+         * @param category the creative category
          * @return this builder
+         * @throws NullPointerException if the category is null
+         */
+        public @NonNull Builder menuCategory(@NonNull CreativeCategory category) {
+            return menuCategory(BlockMenuCategory.builder().category(BlockMenuCategory.Category.fromValue(category.bedrockName())).build());
+        }
+
+        /**
+         * Puts the block item in a group of a creative category: {@link #menuCategory(BlockMenuCategory)} for the common case.
+         *
+         * @param category the creative category
+         * @param group the group, not null, e.g. {@code itemGroup.name.minerals}
+         * @return this builder
+         * @throws NullPointerException if the category is null
+         */
+        public @NonNull Builder menuCategory(@NonNull CreativeCategory category, @NonNull String group) {
+            return menuCategory(BlockMenuCategory.builder().category(BlockMenuCategory.Category.fromValue(category.bedrockName()))
+                .group(group).build());
+        }
+
+        /**
+         * Sets how the block item is registered. The default is {@link BlockItem#SIMPLE}.
+         *
+         * @param item how the block item is registered
+         * @return this builder
+         * @throws NullPointerException if the item is null
          */
         public @NonNull Builder item(@NonNull BlockItem item) {
-            this.item = item;
+            this.item = Objects.requireNonNull(item, "item");
             return this;
         }
 
         /**
-         * Puts the block item in the creative inventory, and uses the same category and group for the block's menu
-         * category unless {@link #menuCategory} was set explicitly.
+         * Adjusts the position of the block item within its category and group, e.g. right after another item.
          *
-         * @param creative where the item goes, or null to leave it out
+         * @param creative where the block item goes
          * @return this builder
+         * @throws NullPointerException if the placement is null
          */
-        public @NonNull Builder creative(@Nullable CreativePlacement creative) {
-            this.creative = creative;
+        public @NonNull Builder creativePlacement(@NonNull CreativePlacement creative) {
+            this.creative = Objects.requireNonNull(creative, "creative");
             return this;
         }
 
@@ -636,14 +627,7 @@ public final class CustomBlock {
          *         default state names a missing property or value
          */
         public @NonNull CustomBlock build() {
-            BlockMenuCategory menu = this.menuCategory;
-            if (menu == null && creative != null) {
-                menu = BlockMenuCategory.builder()
-                    .category(BlockMenuCategory.Category.fromValue(creative.category().bedrockName()))
-                    .group(creative.group())
-                    .build();
-            }
-            return new CustomBlock(identifier, properties, traits, components, permutations, menu, item, creative, defaultStates, tags);
+            return new CustomBlock(identifier, properties, traits, components, permutations, menuCategory, item, creative, defaultStates, tags);
         }
     }
 }

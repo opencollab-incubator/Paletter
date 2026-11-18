@@ -3,7 +3,6 @@ package org.geysermc.paletter;
 import org.geysermc.paletter.block.CustomBlock;
 import org.geysermc.paletter.block.RegisteredBlockState;
 import org.geysermc.paletter.creative.CreativeCategory;
-import org.geysermc.paletter.creative.CreativePlacement;
 import org.geysermc.paletter.vanilla.BedrockBlockState;
 import org.geysermc.paletter.vanilla.BedrockBlocks;
 import org.geysermc.paletter.vanilla.BedrockItemType;
@@ -57,7 +56,7 @@ class VariantBlockTest {
     @Test
     void aCustomBlockItemHasItsBlockKey() {
         CustomBlock lamp = CustomBlock.builder("variant:lamp")
-            .creative(CreativePlacement.loose(CreativeCategory.CONSTRUCTION)).build();
+            .menuCategory(CreativeCategory.CONSTRUCTION).build();
         PaletteLayer layer = PaletteLayer.builder("test:custom").block(lamp).build();
         Palette palette = Palettes.palette(PALETTER.latest().protocolVersion(), layer);
         BedrockItemVariant item = BedrockItemType.fromIdentifier("variant:lamp").variant();
@@ -114,7 +113,7 @@ class VariantBlockTest {
     @Test
     void theBlockKeyOfACustomBlockItemIsTheCustomState() {
         CustomBlock lamp = CustomBlock.builder("variant:keyed")
-            .creative(CreativePlacement.loose(CreativeCategory.CONSTRUCTION)).build();
+            .menuCategory(CreativeCategory.CONSTRUCTION).build();
         Palette palette = Palettes.palette(PALETTER.latest().protocolVersion(), PaletteLayer.builder("test:keyed").block(lamp).build());
         BedrockItemVariant item = BedrockItemType.fromIdentifier("variant:keyed").variant();
         BedrockBlockState key = palette.blockOf(item);

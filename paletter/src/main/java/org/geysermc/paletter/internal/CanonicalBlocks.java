@@ -73,7 +73,7 @@ public final class CanonicalBlocks {
             NbtMap state = BlockStates.normalize(this.states[i]);
             this.states[i] = state;
             if (index.put(state, offset + i) != -1 || (parent != null && parent.index(state) != -1)) {
-                throw new PaletteException("Duplicate canonical block state " + state);
+                throw new PaletteException("Duplicate canonical block state " + state, null, BlockStates.name(state), null);
             }
         }
         index.trim();
@@ -136,6 +136,19 @@ public final class CanonicalBlocks {
             }
             return existing;
         }
+    }
+
+    /**
+     * @return the default state BDS places for a vanilla block of the newest version (normalized), or null if the data has none
+     */
+    @Internal
+    public @Nullable NbtMap defaultState(@NonNull String name) {
+        for (Map.Entry<NbtMap, String> entry : root.defaultStates.entrySet()) {
+            if (entry.getValue().equals(name)) {
+                return entry.getKey();
+            }
+        }
+        return null;
     }
 
     /**
@@ -400,6 +413,20 @@ public final class CanonicalBlocks {
             current = current.parent;
         }
         return -1;
+    }
+
+    /**
+     * @return the type of the custom block of this lineage with an identifier, or null
+     */
+    @Internal
+    public @Nullable BedrockBlockType customType(@NonNull String identifier) {
+        for (CanonicalBlocks current = this; current != null; current = current.parent) {
+            int base = current.customBases.getInt(identifier);
+            if (base != -1) {
+                return current.customTypeAt(base);
+            }
+        }
+        return null;
     }
 
     /**

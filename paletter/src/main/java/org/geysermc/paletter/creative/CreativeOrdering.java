@@ -14,9 +14,11 @@ import java.util.Set;
 import java.util.TreeSet;
 
 /**
- * How a layer places its custom items and block items in the creative inventory when their {@link CreativePlacement}
- * has no anchor ({@link CreativePlacement#after()} is null). A placement with an anchor is an explicit override and
- * goes right after the anchor under every policy.
+ * In which order a layer puts its custom items and block items in the creative inventory, within the category and group
+ * of their {@code menu_category}. The {@code menu_category} alone decides, under every policy, whether an item or block
+ * is in the creative inventory (absent or {@code none}: not) and in which category and group, as in BDS; the policy only
+ * decides the order. A {@link CreativePlacement#after(org.geysermc.paletter.creative.ItemMatcher) placement after an
+ * anchor} is an explicit override and goes right after the anchor under every policy.
  * <p>
  * The rule BDS follows, and the evidence for it, is in {@code docs/wire-notes.md}.
  *
@@ -27,7 +29,7 @@ public enum CreativeOrdering {
      * Exactly where Bedrock Dedicated Server (Windows build, verified on 1.26.63.1) puts add-on content, the default:
      * <ol>
      *     <li>Block items first, in the iteration order of BDS's map of data driven blocks (see {@link #blockOrder}),
-     *     then items in the order the layer defines them.</li>
+     *     then items in the order the layer defines them. An item that replaces a block item counts as a block item.</li>
      *     <li>With a group: at the end of the group of that name <i>in the placement's category</i>; a {@code minecraft:}
      *     prefix of the group name is ignored ({@code minecraft:itemGroup.name.sword} is the vanilla sword group). If the
      *     category has no such group, a new one is created at the end of the category, also when a group of that name
@@ -35,15 +37,13 @@ public enum CreativeOrdering {
      *     first stack).</li>
      *     <li>Without a group: loose, at the end of the category.</li>
      * </ol>
-     * A custom block without a {@link org.geysermc.paletter.block.CustomBlock#creative() creative placement} but with
-     * a {@link org.geysermc.paletter.block.component.BlockMenuCategory menu category} is placed by its menu category, like BDS
-     * does.
+     * An item that replaces a block item is placed with the block items, by its own menu category.
      */
     BDS,
     /**
      * The behaviour before 1.0.0: items, then block items, each in definition order; a group is looked up by name in
      * any category and created at the end of the category if missing; loose stacks go to the end of the category.
-     * Blocks without a creative placement are not placed.
+     * Which items are in the creative inventory is still decided by the menu categories.
      */
     APPEND;
 

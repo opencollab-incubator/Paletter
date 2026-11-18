@@ -2,30 +2,43 @@ package org.geysermc.paletter;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.geysermc.paletter.annotation.Internal;
+import org.geysermc.paletter.data.DataVersion;
+import org.geysermc.paletter.vanilla.BedrockBlockType;
+import org.geysermc.paletter.vanilla.BedrockItemVariant;
 
-import java.util.ArrayList;
 import java.util.Collections;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Everything noteworthy that happened while compiling a palette: content left out for a version, anchors that
  * matched nothing, fallbacks that were used. Compilation never logs by itself; consumers decide what to show.
- * <p>
- * Thread safety: a report may be read from any thread while entries are added; {@link #entries()} and the filtered views
- * return snapshots. A palette's report is complete once the palette is returned. Obtain one with {@link Palette#report()}
- * or the consumer of {@link Paletter.Builder#reports(java.util.function.Consumer)}; errors in a layer that
- * {@link Palette#extend(PaletteLayer)} did not apply are {@link #errors()} here.
+ * A report never changes: a palette extended with a layer has a new report.
  *
  * @since 1.0.0
  */
 public final class PaletteReport {
-    private final List<Entry> entries = Collections.synchronizedList(new ArrayList<>());
+    private final DataVersion version;
+    private final List<Entry> entries;
+    private final Set<BedrockBlockType> unknownBlocks;
+    private final Set<BedrockItemVariant> unknownItems;
 
     /**
-     * Internal: creates an empty report.
+     * Internal: made by the compiler; copies what it is given.
+     *
+     * @param version the data version of the palette the report belongs to
+     * @param entries the entries, in the order they happened
+     * @param unknownBlocks see {@link #unknownBlocks()}
+     * @param unknownItems see {@link #unknownItems()}
      */
     @Internal
-    public PaletteReport() {
+    public PaletteReport(@NonNull DataVersion version, @NonNull List<Entry> entries, @NonNull Set<BedrockBlockType> unknownBlocks,
+                         @NonNull Set<BedrockItemVariant> unknownItems) {
+        this.version = version;
+        this.entries = List.copyOf(entries);
+        this.unknownBlocks = Collections.unmodifiableSet(new LinkedHashSet<>(unknownBlocks));
+        this.unknownItems = Collections.unmodifiableSet(new LinkedHashSet<>(unknownItems));
     }
 
     /**
@@ -41,12 +54,7 @@ public final class PaletteReport {
         /**
          * Likely a mistake in a layer, e.g. a creative anchor that matched nothing.
          */
-        WARNING,
-        /**
-         * Content was not applied: a session layer that failed to compile (see {@link Palette#extend}) leaves the
-         * palette it was applied to unchanged.
-         */
-        ERROR
+        WARNING
     }
 
     /**
@@ -65,71 +73,53 @@ public final class PaletteReport {
     }
 
     /**
-     * Internal: adds an {@link Level#INFO} entry.
+     * Returns the data version of the palette this report belongs to.
      *
-     * @param source what produced the entry
-     * @param message the description
+     * @return the data version
      */
-    @Internal
-    public void info(@NonNull String source, @NonNull String message) {
-        entries.add(new Entry(Level.INFO, source, message));
+    public @NonNull DataVersion version() {
+        return version;
     }
 
     /**
-     * Internal: adds a {@link Level#WARNING} entry.
+     * Lists the blocks this palette's version lacks and no specific fallback covers. A default fallback
+     * ({@code Fallbacks.Builder#defaultBlock}) does not count as covering them: they are what it is sent for. Blocks
+     * behind a disabled experiment are included. Only the palette compiled from the vanilla data and its layers has
+     * them; the one-entry notes handed to the {@code reports} consumer have none.
      *
-     * @param source what produced the entry
-     * @param message the description
+     * @return the blocks of the newest canonical set that are missing, in canonical order
      */
-    @Internal
-    public void warn(@NonNull String source, @NonNull String message) {
-        entries.add(new Entry(Level.WARNING, source, message));
+    public @NonNull Set<BedrockBlockType> unknownBlocks() {
+        return unknownBlocks;
     }
 
     /**
-     * Internal: adds an {@link Level#ERROR} entry.
+     * Lists the item variants this palette's version lacks and no specific fallback covers, so a missing aux variant is
+     * exact. A default fallback ({@code Fallbacks.Builder#defaultItem}) does not count as covering them. Items behind a
+     * disabled experiment and items removed with {@code Paletter.Builder#removeItems} are included. Notes handed to the
+     * {@code reports} consumer have none.
      *
-     * @param source what produced the entry
-     * @param message the description
+     * @return the item variants of the newest canonical set that are missing, in canonical order
      */
-    @Internal
-    public void error(@NonNull String source, @NonNull String message) {
-        entries.add(new Entry(Level.ERROR, source, message));
+    public @NonNull Set<BedrockItemVariant> unknownItems() {
+        return unknownItems;
     }
 
     /**
-     * Lists every entry, in the order they happened.
+     * Lists all entries.
      *
-     * @return a snapshot of all entries
-     * @since 1.0.0
+     * @return all entries, in the order they happened
      */
     public @NonNull List<Entry> entries() {
-        synchronized (entries) {
-            return List.copyOf(entries);
-        }
+        return entries;
     }
 
     /**
      * Lists the entries of level {@link Level#WARNING}.
      *
-     * @return a snapshot of the warnings
-     * @since 1.0.0
+     * @return the warnings, in the order they happened
      */
     public @NonNull List<Entry> warnings() {
-        return entries().stream().filter(entry -> entry.level() == Level.WARNING).toList();
-    }
-
-    /**
-     * Lists the entries of level {@link Level#ERROR}.
-     *
-     * @return a snapshot of the errors
-     * @since 1.0.0
-     */
-    public @NonNull List<Entry> errors() {
-        return entries().stream().filter(entry -> entry.level() == Level.ERROR).toList();
-    }
-
-    void addAll(PaletteReport other) {
-        entries.addAll(other.entries());
+        return entries.stream().filter(entry -> entry.level() == Level.WARNING).toList();
     }
 }

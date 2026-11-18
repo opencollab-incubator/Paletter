@@ -18,8 +18,8 @@ import org.geysermc.paletter.annotation.SincePreview;
  * {@link org.geysermc.paletter.annotation.Education @Education} marks content BDS only offers to worlds with Education
  * Edition features, which {@code isEducation()} of the type answers at runtime.
  * {@link org.geysermc.paletter.annotation.SincePreview @SincePreview} marks content only the bundled Bedrock preview
- * has. It is only {@code isAvailable()} with previews loaded (system property {@code paletter.previews}), else it
- * resolves to {@code minecraft:unknown}. The mark goes when a release has it; the constant goes if a newer preview drops it.
+ * has. The constants are linked to the newest release, so it is never {@code isAvailable()}: it resolves through its
+ * fallbacks, normally to {@code minecraft:unknown}, even in a Paletter built with previews. The mark goes when a release has it; the constant goes if a newer preview drops it.
  *
  * @since 1.0.0
  */

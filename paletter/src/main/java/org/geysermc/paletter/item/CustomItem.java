@@ -4,6 +4,7 @@ import org.geysermc.paletter.annotation.Internal;
 import org.geysermc.paletter.internal.item.ItemVariant;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
+import org.geysermc.paletter.creative.CreativeCategory;
 import org.geysermc.paletter.creative.CreativePlacement;
 import org.geysermc.paletter.item.component.ItemComponent;
 import org.geysermc.paletter.item.component.ItemMenuCategory;
@@ -23,7 +24,7 @@ import java.util.Objects;
  *     .component(Icon.of("ruby"))
  *     .component(MaxStackSize.of(16))
  *     .component(Durability.builder().maxDurability(250).build())
- *     .creative(CreativePlacement.group(CreativeCategory.ITEMS, "itemGroup.name.minerals"))
+ *     .menuCategory(CreativeCategory.ITEMS, "itemGroup.name.minerals")
  *     .build();
  * }</pre>
  * <p>
@@ -39,18 +40,17 @@ public final class CustomItem {
     private final String identifier;
     private final List<ItemComponent> components;
     private final @Nullable ItemMenuCategory menuCategory;
-    private final @Nullable CreativePlacement creative;
+    private final CreativePlacement creative;
     private final BedrockItemType type;
 
     /**
      * @param identifier the item identifier, e.g. {@code geysermc:furnace_minecart} (description {@code identifier})
      * @param components the components (one per component name), in the order they were added
-     * @param menuCategory the description's {@code menu_category}, or null: then it follows {@link #creative()} (and
-     *                     without one, Bedrock's default)
-     * @param creative where it goes in the creative inventory, or null to leave it out
+     * @param menuCategory the description's {@code menu_category}, or null: not in the creative inventory
+     * @param creative the position within the category and group
      */
     private CustomItem(@NonNull String identifier, @NonNull List<ItemComponent> components, @Nullable ItemMenuCategory menuCategory,
-                      @Nullable CreativePlacement creative) {
+                      @NonNull CreativePlacement creative) {
         this.identifier = Objects.requireNonNull(identifier, "identifier");
         this.components = List.copyOf(components);
         this.menuCategory = menuCategory;
@@ -77,21 +77,21 @@ public final class CustomItem {
     }
 
     /**
-     * Returns the explicit menu category of the item.
+     * Returns the description's {@code menu_category}, which alone decides whether the item is in the creative inventory
+     * and in which category and group, as in BDS.
      *
-     * @return the description's {@code menu_category}, or null: then it follows {@link #creative()} (and without one,
-     *         Bedrock's default)
+     * @return the menu category; null or category {@code none}: the item is not in the creative inventory
      */
     public @Nullable ItemMenuCategory menuCategory() {
         return menuCategory;
     }
 
     /**
-     * Returns the creative inventory placement of the item.
+     * Returns where the item goes within the category and group of the {@link #menuCategory()}.
      *
-     * @return where it goes in the creative inventory, or null to leave it out
+     * @return the placement, {@link CreativePlacement#DEFAULT} if not set
      */
-    public @Nullable CreativePlacement creative() {
+    public @NonNull CreativePlacement creativePlacement() {
         return creative;
     }
 
@@ -186,7 +186,7 @@ public final class CustomItem {
         private final String identifier;
         private final List<ItemComponent> components = new ArrayList<>();
         private @Nullable ItemMenuCategory menuCategory;
-        private @Nullable CreativePlacement creative;
+        private CreativePlacement creative = CreativePlacement.DEFAULT;
 
         private Builder(String identifier) {
             this.identifier = Objects.requireNonNull(identifier);
@@ -232,10 +232,11 @@ public final class CustomItem {
         }
 
         /**
-         * Sets the description's {@code menu_category} explicitly. Without it, the item's {@link #creative} placement
-         * decides it.
+         * Sets the description's {@code menu_category}: the category, group and {@code is_hidden_in_commands} the add-on
+         * JSON gives. It alone decides whether the item is in the creative inventory, as in BDS; without it, or with
+         * category {@code none}, it is not.
          *
-         * @param menuCategory the menu category, or null to follow the creative placement
+         * @param menuCategory the menu category, or null for none
          * @return this builder
          */
         public @NonNull Builder menuCategory(@Nullable ItemMenuCategory menuCategory) {
@@ -244,13 +245,38 @@ public final class CustomItem {
         }
 
         /**
-         * Sets where the item goes in the creative inventory. Without it, the item is left out.
+         * Puts the item in a creative category: {@link #menuCategory(ItemMenuCategory)} for the common case.
          *
-         * @param creative the placement, or null to leave the item out
+         * @param category the creative category
          * @return this builder
+         * @throws NullPointerException if the category is null
          */
-        public @NonNull Builder creative(@Nullable CreativePlacement creative) {
-            this.creative = creative;
+        public @NonNull Builder menuCategory(@NonNull CreativeCategory category) {
+            return menuCategory(ItemMenuCategory.builder().category(ItemMenuCategory.Category.fromValue(category.bedrockName())).build());
+        }
+
+        /**
+         * Puts the item in a group of a creative category: {@link #menuCategory(ItemMenuCategory)} for the common case.
+         *
+         * @param category the creative category
+         * @param group the group, not null, e.g. {@code itemGroup.name.minerals}
+         * @return this builder
+         * @throws NullPointerException if the category is null
+         */
+        public @NonNull Builder menuCategory(@NonNull CreativeCategory category, @NonNull String group) {
+            return menuCategory(ItemMenuCategory.builder().category(ItemMenuCategory.Category.fromValue(category.bedrockName()))
+                .group(group).build());
+        }
+
+        /**
+         * Adjusts the position of the item within its category and group, e.g. right after another item.
+         *
+         * @param creative where the item goes
+         * @return this builder
+         * @throws NullPointerException if the placement is null
+         */
+        public @NonNull Builder creativePlacement(@NonNull CreativePlacement creative) {
+            this.creative = Objects.requireNonNull(creative, "creative");
             return this;
         }
 

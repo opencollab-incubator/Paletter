@@ -18,7 +18,7 @@ import org.geysermc.paletter.annotation.SincePreview;
  * {@code @since} is the Paletter version that added a constant, only written if newer than the class. The
  * names come from BDS dumps of the newest builds only, so a variant says nothing of the Bedrock release it is first in: it may be older than the dumps.
  * {@link org.geysermc.paletter.annotation.SincePreview @SincePreview} marks variants only the bundled Bedrock preview
- * has: without previews loaded ({@code paletter.previews}) its type has no such variant, so {@code type.variant(aux)}
+ * has: the constants are linked to the newest release, so its type has no such variant and {@code type.variant(aux)}
  * is a plain variant and the constant stays a plain key. The mark goes when a release has it; the constant goes if a newer
  * preview drops it.
  *

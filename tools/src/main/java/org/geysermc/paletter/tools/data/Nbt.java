@@ -51,6 +51,13 @@ public final class Nbt {
         }
     }
 
+    /** Reads gzipped big endian NBT from bytes. */
+    public static NbtMap readGzip(byte[] bytes) throws IOException {
+        try (NBTInputStream input = NbtUtils.createGZIPReader(new ByteArrayInputStream(bytes))) {
+            return (NbtMap) input.readTag();
+        }
+    }
+
     /** Reads little endian network NBT from {@code length} bytes at {@code offset}. */
     public static NbtMap readLe(byte[] bytes, int offset, int length) throws IOException {
         try (NBTInputStream input = NbtUtils.createReaderLE(new ByteArrayInputStream(bytes, offset, length))) {

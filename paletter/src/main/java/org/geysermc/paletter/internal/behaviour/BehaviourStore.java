@@ -203,8 +203,21 @@ public final class BehaviourStore {
         return -1;
     }
 
+    /**
+     * A value and the capture that decided it, without the post-processing notes and disputes of {@link Resolved}: what
+     * building a column needs, which asks for every state of a palette.
+     */
+    public record Hit(@NonNull Object value, @NonNull Capture capture) {
+    }
+
     /** @return the value of a block state (by state hash) in a version, or null if no capture covers it */
     public @Nullable Resolved block(@NonNull BehaviourKey<?> key, int stateHash, @NonNull DataVersion version) {
+        Hit hit = blockHit(key, stateHash, version);
+        return hit == null ? null : resolved(hit.value(), hit.capture(), blockMarks.get(key), stateHash, (ids, id) -> Arrays.binarySearch(ids, (int) id));
+    }
+
+    /** @return {@link #block} without the notes and disputes */
+    public @Nullable Hit blockHit(@NonNull BehaviourKey<?> key, int stateHash, @NonNull DataVersion version) {
         List<Column<int[]>> columns = blocks.get(key);
         int at = versionIndex(version);
         if (columns == null || at < 0) {
@@ -217,7 +230,7 @@ public final class BehaviourStore {
                     Column<int[]> column = columns.get(j);
                     int found = Arrays.binarySearch(column.ids(), stateHash);
                     if (found >= 0) {
-                        return resolved(column.values()[found], capture, blockMarks.get(key), stateHash, (ids, id) -> Arrays.binarySearch(ids, (int) id));
+                        return new Hit(column.values()[found], capture);
                     }
                 }
                 return null;
@@ -254,6 +267,12 @@ public final class BehaviourStore {
 
     /** @return the value of an item in a version, or null if no capture covers it */
     public @Nullable Resolved item(@NonNull BehaviourKey<?> key, @NonNull String identifier, @NonNull DataVersion version) {
+        Hit hit = itemHit(key, identifier, version);
+        return hit == null ? null : resolved(hit.value(), hit.capture(), itemMarks.get(key), identifier, (ids, id) -> Arrays.binarySearch(ids, (String) id));
+    }
+
+    /** @return {@link #item} without the notes and disputes */
+    public @Nullable Hit itemHit(@NonNull BehaviourKey<?> key, @NonNull String identifier, @NonNull DataVersion version) {
         List<Column<String[]>> columns = items.get(key);
         int at = versionIndex(version);
         if (columns == null || at < 0) {
@@ -266,7 +285,7 @@ public final class BehaviourStore {
                     Column<String[]> column = columns.get(j);
                     int found = Arrays.binarySearch(column.ids(), identifier);
                     if (found >= 0) {
-                        return resolved(column.values()[found], capture, itemMarks.get(key), identifier, (ids, id) -> Arrays.binarySearch(ids, (String) id));
+                        return new Hit(column.values()[found], capture);
                     }
                 }
                 return null;
@@ -550,12 +569,19 @@ public final class BehaviourStore {
                 int[] ids = column.containsKey("mask") ? unmask(column.getByteArray("mask"), covered.length)
                     .map(i -> covered[i]).toArray() : covered;
                 Object[] values = readValues(key, column, ids.length, shapes, pool);
-                // stored in coverage order, looked up sorted
-                Integer[] byId = new Integer[ids.length];
-                Arrays.setAll(byId, i -> i);
-                Arrays.sort(byId, java.util.Comparator.comparingInt(i -> ids[i]));
-                columns.add(new Column<>(capture, Arrays.stream(byId).mapToInt(i -> ids[i]).toArray(),
-                    Arrays.stream(byId).map(i -> values[i]).toArray()));
+                // stored in coverage order, looked up sorted: sort each id packed with its position (ids are distinct)
+                long[] packed = new long[ids.length];
+                for (int i = 0; i < packed.length; i++) {
+                    packed[i] = (long) ids[i] << 32 | i;
+                }
+                Arrays.sort(packed);
+                int[] sortedIds = new int[ids.length];
+                Object[] sortedValues = new Object[ids.length];
+                for (int i = 0; i < packed.length; i++) {
+                    sortedIds[i] = (int) (packed[i] >> 32);
+                    sortedValues[i] = values[(int) packed[i]];
+                }
+                columns.add(new Column<>(capture, sortedIds, sortedValues));
             }
             blocks.put(key, List.copyOf(columns));
         }

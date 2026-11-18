@@ -25,7 +25,8 @@ public final class BlockValues {
     private final int index;
 
     /**
-     * Internal: plumbing of {@link Palette#resolve(org.geysermc.paletter.vanilla.BedrockBlockState)}: public for it, not part of the API.
+     * Internal: plumbing of
+     * {@link Palette#resolve(org.geysermc.paletter.vanilla.BedrockBlockState)}: public for it, not part of the API.
      *
      * @param behaviour the palette's behaviour values
      * @param index the position of the state in them

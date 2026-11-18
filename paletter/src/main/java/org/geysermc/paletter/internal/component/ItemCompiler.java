@@ -3,7 +3,6 @@ package org.geysermc.paletter.internal.component;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.cloudburstmc.nbt.NbtMap;
-import org.geysermc.paletter.creative.CreativePlacement;
 import org.geysermc.paletter.item.component.ItemComponent;
 import org.geysermc.paletter.item.component.ItemMenuCategory;
 
@@ -19,16 +18,16 @@ public final class ItemCompiler {
     }
 
     /**
-     * @param menu the description's menu category, or null to derive it from {@code creative} (else Bedrock's default)
+     * @param menu the description's menu category, or null for none
      * @return the full component data of a data driven item definition, as sent in the item component packet
      */
     public static @NonNull NbtMap componentData(@NonNull String identifier, int runtimeId, @NonNull List<ItemComponent> components,
-                                                @Nullable ItemMenuCategory menu, @Nullable CreativePlacement creative,
+                                                @Nullable ItemMenuCategory menu,
                                                 @NonNull WireContext ctx) {
         WireContext subject = ctx.subject(identifier);
         WireNode out = new WireNode();
         ItemWire.envelope(subject, out);
-        ItemWire.menuCategory(menu(menu, creative), subject, out);
+        ItemWire.menuCategory(menu(menu), subject, out);
         write(out, components, subject);
         return NbtMap.builder()
             .putString("name", identifier)
@@ -55,16 +54,9 @@ public final class ItemCompiler {
         }
     }
 
-    /** The description's menu category: {@code menu}, else the creative placement's category and group, else none (null). */
-    private static @Nullable ItemMenuCategory menu(@Nullable ItemMenuCategory menu, @Nullable CreativePlacement creative) {
-        if (menu != null) {
-            return menu.group() == null ? menu : menu.toBuilder().group(namespaced(menu.group())).build();
-        }
-        if (creative != null) {
-            return ItemMenuCategory.builder().category(ItemMenuCategory.Category.fromValue(creative.category().bedrockName()))
-                .group(creative.group() == null ? null : namespaced(creative.group())).build();
-        }
-        return null;
+    /** The description's menu category with its group namespaced like BDS, or null if there is none. */
+    private static @Nullable ItemMenuCategory menu(@Nullable ItemMenuCategory menu) {
+        return menu == null || menu.group() == null ? menu : menu.toBuilder().group(namespaced(menu.group())).build();
     }
 
     /** Like BDS: the group as add-on JSON names it, always namespaced (vanilla groups are minecraft:). */

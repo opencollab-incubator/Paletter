@@ -3,8 +3,6 @@ package org.geysermc.paletter;
 import org.geysermc.paletter.annotation.Internal;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.geysermc.paletter.internal.shape.VoxelShapeRules;
-import org.checkerframework.checker.nullness.qual.Nullable;
-import org.geysermc.paletter.creative.CreativePlacement;
 import org.geysermc.paletter.block.CustomBlock;
 import org.geysermc.paletter.block.VoxelShape;
 import org.geysermc.paletter.creative.CreativeEditor;
@@ -56,8 +54,6 @@ import java.util.function.Consumer;
  */
 public final class PaletteLayer {
     private final String id;
-    private final List<ItemEntry> itemEntries;
-    /** The custom items among {@link #itemEntries}. */
     private final List<CustomItem> items;
     private final List<CustomBlock> blocks;
     private final List<Override> overrides;
@@ -68,9 +64,7 @@ public final class PaletteLayer {
 
     private PaletteLayer(Builder builder) {
         this.id = builder.id;
-        this.itemEntries = List.copyOf(builder.itemEntries);
-        this.items = itemEntries.stream().filter(ItemEntry.Custom.class::isInstance)
-            .map(entry -> ((ItemEntry.Custom) entry).item()).toList();
+        this.items = List.copyOf(builder.items);
         this.blocks = List.copyOf(builder.blocks);
         this.overrides = List.copyOf(builder.overrides);
         this.creativeEdits = List.copyOf(builder.creativeEdits);
@@ -103,7 +97,7 @@ public final class PaletteLayer {
     }
 
     /**
-     * Lists the custom items of this layer, not the items of custom blocks (see {@link #itemEntries()}).
+     * Lists the custom items of this layer, not the items of custom blocks (see {@link CustomBlock#item()}).
      *
      * @return the custom items, in registration order, unmodifiable
      * @since 1.0.0
@@ -113,19 +107,7 @@ public final class PaletteLayer {
     }
 
     /**
-     * Lists the items of this layer in registration order.
-     *
-     * @return custom items and items of custom blocks registered with {@link Builder#blockItem}, in registration
-     * order: the order their runtime and canonical ids are assigned in. Items of blocks registered with
-     * {@link Builder#block} follow them
-     * @since 1.0.0
-     */
-    public @NonNull List<ItemEntry> itemEntries() {
-        return itemEntries;
-    }
-
-    /**
-     * Lists the custom blocks of this layer.
+     * Lists the custom blocks of this layer. Their items belong to the blocks, see {@link CustomBlock#item()}.
      *
      * @return the custom blocks, in registration order, unmodifiable
      * @since 1.0.0
@@ -211,33 +193,6 @@ public final class PaletteLayer {
     }
 
     /**
-     * An item a layer registers: a custom item, or the item of a custom block.
-     *
-     * @since 1.0.0
-     */
-    public sealed interface ItemEntry {
-        /**
-         * A custom item.
-         *
-         * @param item the custom item
-         * @since 1.0.0
-         */
-        record Custom(@NonNull CustomItem item) implements ItemEntry {
-        }
-
-        /**
-         * The item of a custom block.
-         *
-         * @param block the identifier of a custom block of this layer or an earlier one
-         * @param item how the item is registered
-         * @param creative where it goes in the creative inventory, or null to leave it out
-         * @since 1.0.0
-         */
-        record OfBlock(@NonNull String block, CustomBlock.@NonNull BlockItem item, @Nullable CreativePlacement creative) implements ItemEntry {
-        }
-    }
-
-    /**
      * Collects the content of a {@link PaletteLayer}. Not thread safe; every method throws {@link NullPointerException} for
      * a null argument unless the parameter is marked {@code @Nullable}, and returns this builder.
      *
@@ -245,7 +200,7 @@ public final class PaletteLayer {
      */
     public static final class Builder {
         private final String id;
-        private final List<ItemEntry> itemEntries = new ArrayList<>();
+        private final List<CustomItem> items = new ArrayList<>();
         private final List<CustomBlock> blocks = new ArrayList<>();
         private final List<Override> overrides = new ArrayList<>();
         private final List<BiConsumer<CreativeEditor, DataVersion>> creativeEdits = new ArrayList<>();
@@ -258,37 +213,20 @@ public final class PaletteLayer {
         }
 
         /**
-         * Registers a custom item. Its runtime and canonical ids follow the order of {@code item} and
-         * {@link #blockItem} calls.
+         * Registers a custom item. The item of a custom block belongs to the block: see
+         * {@link CustomBlock.Builder#item} and {@link CustomBlock.Builder#creativePlacement}.
          *
          * @param item the custom item
          * @return this builder
          * @since 1.0.0
          */
         public @NonNull Builder item(@NonNull CustomItem item) {
-            itemEntries.add(new ItemEntry.Custom(Objects.requireNonNull(item)));
+            items.add(Objects.requireNonNull(item));
             return this;
         }
 
         /**
-         * Registers the item of a custom block separately from the block, e.g. when the block comes from an earlier
-         * layer (registered there with {@link CustomBlock.BlockItem#NONE}), or to order block items among custom items:
-         * runtime and canonical ids are assigned in the order of {@link #item} and {@code blockItem} calls.
-         *
-         * @param block the identifier of a custom block of this layer or an earlier one
-         * @param item how the item is registered
-         * @param creative where it goes in the creative inventory, or null to leave it out
-         * @return this builder
-         * @since 1.0.0
-         */
-        public @NonNull Builder blockItem(@NonNull String block, CustomBlock.@NonNull BlockItem item, @Nullable CreativePlacement creative) {
-            itemEntries.add(new ItemEntry.OfBlock(Objects.requireNonNull(block), Objects.requireNonNull(item), creative));
-            return this;
-        }
-
-        /**
-         * Registers a custom block. Its item follows the block's {@link CustomBlock.BlockItem}; items of blocks come
-         * after the entries registered with {@link #item} and {@link #blockItem}.
+         * Registers a custom block. Its item follows the block's {@link CustomBlock.BlockItem}.
          *
          * @param block the custom block
          * @return this builder
@@ -360,10 +298,11 @@ public final class PaletteLayer {
         }
 
         /**
-         * Gives an item variant a canonical id, so that {@link Palette#decode} recognizes it. Needed for variants of the newest version that are neither an item's base variant nor
-         * in the creative inventory, e.g. a damage value or block state a consumer maps to. Ids are appended after
-         * the custom items of this layer, in call order; variants that already have one keep it. Like every canonical id
-         * they are the same in every version.
+         * Internal: gives an item variant a canonical id, so that {@link Palette#decode} recognizes it. Needed for
+         * variants of the newest version that are neither an item's base variant nor in the creative inventory, e.g. a
+         * damage value or block state a consumer maps to. Ids are appended after the custom items of this layer, in
+         * call order; variants that already have one keep it. Like every canonical id they are the same in every
+         * version.
          *
          * @param variant the variant
          * @return this builder

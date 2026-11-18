@@ -4,7 +4,6 @@ import org.cloudburstmc.nbt.NbtMap;
 import org.cloudburstmc.protocol.bedrock.data.definitions.SimpleItemDefinition;
 import org.cloudburstmc.protocol.bedrock.data.inventory.ItemData;
 import org.geysermc.paletter.creative.CreativeCategory;
-import org.geysermc.paletter.creative.CreativePlacement;
 import org.geysermc.paletter.item.BedrockItemStack;
 import org.geysermc.paletter.item.CustomItem;
 import org.geysermc.paletter.item.RegisteredItem;
@@ -110,7 +109,7 @@ class SameStackTest {
     void definitionsOfOtherPalettesAreMappedToThisOne() {
         Palette base = latest();
         PaletteLayer layer = PaletteLayer.builder("override")
-            .item(CustomItem.builder("same:ruby").creative(CreativePlacement.loose(CreativeCategory.ITEMS)).build())
+            .item(CustomItem.builder("same:ruby").menuCategory(CreativeCategory.ITEMS).build())
             .overrideItem("minecraft:diamond_sword", item -> item.modifyComponents(MaxStackSize.of(1)))
             .build();
         Palette session = base.extend(layer);

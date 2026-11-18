@@ -21,11 +21,28 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * The generated constants linked to the newest data of {@link Paletter#bundled()}: built once, on the first use of a
+ * The generated constants linked to the newest bundled release (see {@link Paletter#bundled()}): built once, on the first use of a
  * constant that needs data (a state, a canonical id). Referencing constants alone loads nothing.
  */
 final class VanillaIndex {
-    private static volatile @Nullable VanillaIndex instance;
+    /** Initialization on demand: the first {@link #get} builds the index, every later one is a plain static read. */
+    private static final class Holder {
+        static final VanillaIndex INSTANCE;
+        /** Why building failed: a failed class initialization only throws NoClassDefFoundError afterwards, which hides the cause. */
+        static final Throwable FAILURE;
+
+        static {
+            VanillaIndex index = null;
+            Throwable failure = null;
+            try {
+                index = new VanillaIndex();
+            } catch (Throwable t) {
+                failure = t;
+            }
+            INSTANCE = index;
+            FAILURE = failure;
+        }
+    }
 
     final CanonicalBlocks blocks;
     final CanonicalItems items;
@@ -69,6 +86,7 @@ final class VanillaIndex {
 
         this.itemConstants = constantItems;
         this.blockConstants = constantBlocks;
+        // The constants of a preview are not in the data of a release: they resolve via their fallback
         Paletter paletter = Paletter.bundled();
         VanillaData latest = paletter.vanillaData(paletter.latest());
         this.blocks = paletter.canonicalBlocks();
@@ -142,14 +160,9 @@ final class VanillaIndex {
     }
 
     static @NonNull VanillaIndex get() {
-        VanillaIndex index = instance;
+        VanillaIndex index = Holder.INSTANCE;
         if (index == null) {
-            synchronized (VanillaIndex.class) {
-                index = instance;
-                if (index == null) {
-                    instance = index = new VanillaIndex();
-                }
-            }
+            throw new IllegalStateException("The index of the bundled constants could not be built", Holder.FAILURE);
         }
         return index;
     }

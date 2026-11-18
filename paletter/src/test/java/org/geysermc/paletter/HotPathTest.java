@@ -9,6 +9,7 @@ import org.geysermc.paletter.block.CustomBlock;
 import org.geysermc.paletter.block.RegisteredBlockState;
 import org.geysermc.paletter.data.DataVersion;
 import org.geysermc.paletter.item.BedrockItemStack;
+import org.geysermc.paletter.item.CustomItem;
 import org.geysermc.paletter.vanilla.BedrockBlockState;
 import org.geysermc.paletter.vanilla.BedrockBlocks;
 import org.geysermc.paletter.vanilla.BedrockItemVariant;
@@ -214,17 +215,59 @@ class HotPathTest {
         assertTrue(newer > 0, "the oldest version has every state of the newest");
     }
 
+    /** A plain loop, no lambda: other tests make the shared {@link #allocated} helper megamorphic. */
+    private static long allocatedBy(Runnable once) {
+        ThreadMXBean threads = (ThreadMXBean) ManagementFactory.getThreadMXBean();
+        long thread = Thread.currentThread().threadId();
+        once.run(); // fills the lazy caches
+        long before = threads.getThreadAllocatedBytes(thread);
+        once.run();
+        return threads.getThreadAllocatedBytes(thread) - before;
+    }
+
     @Test
-    void resolveStateBehaviourDoesNotAllocate() {
+    void resolveStateDoesNotAllocate() {
         Palette palette = layered();
         BedrockBlockState[] states = new BedrockBlockState[palette.blocks().size()];
         for (int i = 0; i < states.length; i++) {
             BedrockBlockState key = palette.blocks().key(palette.blocks().byIndex(i));
             states[i] = key != null ? key : BedrockBlocks.AIR.defaultState();
         }
-        long allocated = allocated(states.length,
-            i -> Float.floatToIntBits(palette.resolve(states[i]).behaviour().get(BlockBehaviour.FRICTION)));
-        assertTrue(allocated < 4096, allocated + " bytes allocated by " + ROUNDS * states.length + " lookups");
+        for (BedrockBlockState state : states) {
+            assertSame(palette.resolve(state), palette.resolve(state));
+        }
+        long[] sum = {0};
+        long allocated = allocatedBy(() -> {
+            for (BedrockBlockState state : states) {
+                sum[0] += Float.floatToIntBits(palette.resolve(state).behaviour().get(BlockBehaviour.FRICTION));
+            }
+        });
+        // Holds interpreted too: the resolutions are cached, not scalar-replaced
+        assertTrue(allocated < 1024, allocated + " bytes allocated by " + states.length + " lookups");
+    }
+
+    /** What a chunk or inventory writer asks per block and per stack: ids of states, definitions of ids. */
+    @Test
+    void runtimeIdLookupsDoNotAllocate() {
+        Palette palette = layered();
+        int blocks = palette.blocks().size();
+        BedrockBlockState[] states = new BedrockBlockState[blocks];
+        int[] blockIds = new int[blocks];
+        for (int i = 0; i < blocks; i++) {
+            BedrockBlockState key = palette.blocks().key(palette.blocks().byIndex(i));
+            states[i] = key != null ? key : BedrockBlocks.AIR.defaultState();
+            blockIds[i] = palette.blocks().byIndex(i).getRuntimeId();
+        }
+        long allocated = allocated(blocks, i -> palette.runtimeId(states[i]));
+        assertTrue(allocated < 4096, allocated + " bytes allocated by " + ROUNDS * blocks + " runtimeId lookups");
+        allocated = allocated(blocks, i -> palette.blockDefinition(blockIds[i]) == null ? 0 : 1);
+        assertTrue(allocated < 4096, allocated + " bytes allocated by " + ROUNDS * blocks + " block definition lookups");
+        allocated = allocated(blocks, i -> palette.blockState(blockIds[i]) == null ? 0 : 1);
+        assertTrue(allocated < 4096, allocated + " bytes allocated by " + ROUNDS * blocks + " block state lookups");
+
+        int[] itemIds = palette.items().definitions().stream().mapToInt(item -> item.getRuntimeId()).toArray();
+        allocated = allocated(itemIds.length, i -> palette.itemDefinition(itemIds[i]) == null ? 0 : 1);
+        assertTrue(allocated < 4096, allocated + " bytes allocated by " + ROUNDS * itemIds.length + " item definition lookups");
     }
 
     @Test
@@ -236,15 +279,69 @@ class HotPathTest {
         assertTrue(allocated < 4096, allocated + " bytes allocated by " + ROUNDS * variants.size() + " lookups");
     }
 
+    /** Six layers: the lookups of the canonical table are merged past four maps, and give what the base gives for vanilla items. */
     @Test
-    void blockBehaviourDoesNotAllocate() {
+    void resolveVariantStaysCorrectAndAllocationFreeAtDepthSix() {
+        Palette base = PALETTER.palette(PALETTER.latest().protocolVersion());
+        Palette deep = base;
+        for (int i = 0; i < 6; i++) {
+            deep = deep.extend(PaletteLayer.builder("deep:" + i)
+                .item(CustomItem.builder("deep:item_" + i).build())
+                .block(CustomBlock.builder("deep:block_" + i).build()).build());
+        }
+        Palette palette = deep;
+        List<BedrockItemVariant> variants = palette.itemVariants();
+        for (BedrockItemVariant variant : base.itemVariants()) {
+            var expected = base.resolve(variant);
+            var actual = palette.resolve(variant);
+            assertEquals(expected == null, actual == null, variant.toString());
+            if (expected != null) {
+                assertEquals(expected.definition().getIdentifier(), actual.definition().getIdentifier(), variant.toString());
+            }
+        }
+        assertEquals(base.itemVariants().size() + 12, variants.size());
+        long allocated = allocated(variants.size(),
+            i -> palette.resolve(variants.get(i)).behaviour().getOrElse(ItemBehaviour.MAX_STACK_SIZE, 0));
+        assertTrue(allocated < 4096, allocated + " bytes allocated by " + ROUNDS * variants.size() + " lookups");
+    }
+
+    @Test
+    void resolveBlockDoesNotAllocate() {
         Palette palette = layered();
         int[] runtimeIds = new int[palette.blocks().size()];
         for (int i = 0; i < runtimeIds.length; i++) {
             runtimeIds[i] = palette.blocks().byIndex(i).getRuntimeId();
         }
-        long allocated = allocated(runtimeIds.length,
-            i -> Float.floatToIntBits(palette.resolveBlock(runtimeIds[i]).behaviour().get(BlockBehaviour.FRICTION)));
-        assertTrue(allocated < 4096, allocated + " bytes allocated by " + ROUNDS * runtimeIds.length + " lookups");
+        for (int runtimeId : runtimeIds) {
+            assertSame(palette.resolveBlock(runtimeId), palette.resolveBlock(runtimeId));
+        }
+        long[] sum = {0};
+        long allocated = allocatedBy(() -> {
+            for (int runtimeId : runtimeIds) {
+                sum[0] += Float.floatToIntBits(palette.resolveBlock(runtimeId).behaviour().get(BlockBehaviour.FRICTION));
+            }
+        });
+        assertTrue(allocated < 1024, allocated + " bytes allocated by " + runtimeIds.length + " lookups");
+    }
+
+    @Test
+    void anExtendedPaletteSharesTheResolutionsOfItsParent() {
+        Palette parent = PALETTER.palette(PALETTER.latest().protocolVersion()).extend(layer("parent", 0));
+        Palette child = parent.extend(layer("child", 3));
+        int shared = 0;
+        for (int i = 0; i < parent.blocks().size(); i++) {
+            RegisteredBlockState state = parent.blocks().byIndex(i);
+            assertSame(parent.resolveBlock(state.getRuntimeId()), child.resolveBlock(state.getRuntimeId()), state.toString());
+            BedrockBlockState key = parent.blocks().key(state);
+            if (key != null) {
+                assertSame(parent.resolve(key), child.resolve(key), state.toString());
+                shared++;
+            }
+        }
+        assertTrue(shared > 0);
+        // The child's own blocks are its own, and the parent does not have them
+        RegisteredBlockState own = child.blocks().byIndex(child.blocks().size() - 1);
+        assertNotNull(child.resolveBlock(own.getRuntimeId()));
+        assertNull(parent.resolveBlock(own.getRuntimeId()));
     }
 }

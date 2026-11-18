@@ -25,7 +25,9 @@ import java.util.List;
 public interface PaletteDataSource {
 
     /**
-     * The versions this source has data for.
+     * Lists the versions this source has data for. The {@link DataVersion#isPreview() previews} are among them: a
+     * {@link org.geysermc.paletter.Paletter} serves those only if built with
+     * {@link org.geysermc.paletter.Paletter.Builder#previews(boolean) previews(true)}.
      *
      * @return all available versions, oldest first
      */

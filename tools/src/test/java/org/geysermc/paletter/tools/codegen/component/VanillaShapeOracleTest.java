@@ -5,7 +5,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import org.cloudburstmc.nbt.NbtMap;
 import org.cloudburstmc.nbt.NbtType;
-import org.geysermc.paletter.PaletteReport;
+import org.geysermc.paletter.internal.PaletteReportBuilder;
 import org.geysermc.paletter.Paletter;
 import org.geysermc.paletter.block.CustomBlock;
 import org.geysermc.paletter.data.DataVersion;
@@ -84,14 +84,14 @@ class VanillaShapeOracleTest {
             }
             String component = entry.get("component").getAsString();
             JsonObject definition = generator.definitionOf(component, identifier, entry.has("role") ? entry.get("role").getAsString() : "", entry.get("json"));
-            WireContext ctx = WireContext.of(data, new PaletteReport(), "oracle");
+            WireContext ctx = WireContext.of(data, new PaletteReportBuilder(), "oracle");
             try {
                 if (entry.get("kind").getAsString().equals("block")) {
                     CustomBlock block = ApiBinder.block(definition);
                     compiled.addBlock(BlockCompiler.propertyData(block, 10000, ctx));
                 } else {
                     CustomItem item = ApiBinder.item(definition);
-                    compiled.addItem(ItemCompiler.componentData(item.identifier(), 0, item.components(), item.menuCategory(), item.creative(), ctx));
+                    compiled.addItem(ItemCompiler.componentData(item.identifier(), 0, item.components(), item.menuCategory(), ctx));
                 }
                 encoded++;
             } catch (ApiBinder.Unbindable ignored) {

@@ -67,9 +67,9 @@ public final class BedrockItemType implements ItemKey {
     }
 
     /**
-     * Internal: the type of an identifier: the vanilla constant if the identifier (after renames) is vanilla in the newest
-     * bundled data or has a generated constant, else a custom type known by its identifier only (not interned, so unknown
-     * identifiers never accumulate; equal, not identical, for equal identifiers). Loads the data. Use
+     * Internal: the type of an identifier: the vanilla constant if the identifier (after renames) is vanilla in the
+     * newest bundled data or has a generated constant, else a custom type known by its identifier only (not interned,
+     * so unknown identifiers never accumulate; equal, not identical, for equal identifiers). Loads the data. Use
      * {@link org.geysermc.paletter.Palette#itemType} or the constants of {@link BedrockItems}.
      *
      * @param identifier an item identifier
@@ -91,8 +91,8 @@ public final class BedrockItemType implements ItemKey {
     }
 
     /**
-     * Internal: plumbing of {@link CustomItem} and {@link org.geysermc.paletter.block.CustomBlock}, which create their type once
-     * and own it: use {@link CustomItem#type()} and {@link org.geysermc.paletter.block.CustomBlock#itemType()}.
+     * Internal: plumbing of {@link CustomItem} and {@link org.geysermc.paletter.block.CustomBlock}, which create their
+     * type once and own it: use {@link CustomItem#type()} and {@link org.geysermc.paletter.block.CustomBlock#itemType()}.
      *
      * @param identifier the item identifier
      * @return a new custom type of an identifier, with its base variant. Loads no data

@@ -22,7 +22,7 @@ import org.cloudburstmc.protocol.bedrock.data.inventory.ItemVersion;
 import org.cloudburstmc.protocol.bedrock.packet.ItemComponentPacket;
 import org.cloudburstmc.protocol.common.DefinitionRegistry;
 import org.geysermc.paletter.PaletteException;
-import org.geysermc.paletter.PaletteReport;
+import org.geysermc.paletter.internal.PaletteReportBuilder;
 import org.geysermc.paletter.annotation.Internal;
 import org.geysermc.paletter.block.BlockRegistry;
 import org.geysermc.paletter.internal.block.BlockResolution;
@@ -40,8 +40,6 @@ import org.geysermc.paletter.internal.data.VanillaItem;
 import org.geysermc.paletter.internal.component.ComponentIndex;
 import org.geysermc.paletter.internal.component.ItemCompiler;
 import org.geysermc.paletter.internal.component.WireContext;
-import org.geysermc.paletter.item.component.BlockPlacer;
-import org.geysermc.paletter.item.component.ItemComponent;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -212,7 +210,7 @@ public final class ItemRegistry implements DefinitionRegistry<ItemDefinition> {
      *
      * @return the canonical item ids this palette resolves
      */
-@Internal
+    @Internal
     public @NonNull CanonicalItems canonical() {
         return canonical;
     }
@@ -298,6 +296,21 @@ public final class ItemRegistry implements DefinitionRegistry<ItemDefinition> {
         return byRuntimeId.size();
     }
 
+    /**
+     * Internal: lists the definitions this registry holds itself, see {@link #ownSize()}.
+     *
+     * @return the definitions in runtime id order; {@link #definitions()} for a registry without parent
+     */
+    @Internal
+    public @NonNull List<RegisteredItem> ownDefinitions() {
+        if (parent == null) {
+            return definitions();
+        }
+        List<RegisteredItem> own = new ArrayList<>(byRuntimeId.values());
+        own.sort(Comparator.comparingInt(RegisteredItem::getRuntimeId));
+        return List.copyOf(own);
+    }
+
     private @Nullable RegisteredBlockState defaultBlockOf(String identifier) {
         ItemRegistry registry = this;
         while (registry != null) {
@@ -354,7 +367,7 @@ public final class ItemRegistry implements DefinitionRegistry<ItemDefinition> {
      * places blocks, a block state of the variant wins (adapted to this version), otherwise the item's block, which is
      * decided in this order:
      * <ol>
-     *     <li>an override of a layer ({@code PaletteLayer.Builder#blockItem});</li>
+     *     <li>a block set by an item override of a layer;</li>
      *     <li>the bundled block to item relation of the data ({@code VanillaData#blockItems}): the block whose first
      *     creative stack the item has, else the block named like the item, else the first block that places it
      *     (sorted by identifier), in its default state;</li>
@@ -373,10 +386,21 @@ public final class ItemRegistry implements DefinitionRegistry<ItemDefinition> {
     }
 
     /**
-     * Internal: finds the block an item is sent with by default.
+     * Internal: finds the item of a custom block of a layer of this registry.
+     *
+     * @param identifier the block identifier
+     * @return the item, or null if the block has none
+     */
+    @Internal
+    public @Nullable RegisteredItem customBlockItem(@NonNull String identifier) {
+        return customBlockItems.contains(identifier) ? item(identifier) : null;
+    }
+
+    /**
+     * Internal: finds the block an item is sent with by default; see {@link #blockOf}.
      *
      * @param definition the item
-     * @return the block this item is sent with by default, or null if it is not a block item; see {@link #blockOf}
+     * @return the block, or null if it is not a block item
      */
     @Internal
     public @Nullable RegisteredBlockState defaultBlock(@NonNull ItemDefinition definition) {
@@ -500,7 +524,7 @@ public final class ItemRegistry implements DefinitionRegistry<ItemDefinition> {
      * @return the resolved item, or null if the item does not exist in this version and has no fallback
      * @throws IndexOutOfBoundsException if the id is not one of {@link #canonical()}
      */
-@Internal
+    @Internal
     public @Nullable ResolvedItem item(int canonical) {
         return canonicalTable().items[canonical];
     }
@@ -519,7 +543,7 @@ public final class ItemRegistry implements DefinitionRegistry<ItemDefinition> {
      * @return the canonical id, or -1 for air, an unknown definition, an item that is no variant of the newest version,
      *         or a stack shared by the fallbacks of several canonical ids
      */
-@Internal
+    @Internal
     public int match(@NonNull ItemData data) {
         ItemDefinition definition = data.getDefinition();
         if (definition == null || definition == ItemDefinition.AIR) {
@@ -630,7 +654,7 @@ public final class ItemRegistry implements DefinitionRegistry<ItemDefinition> {
      * @return the canonical variants that do not exist in this version and have no fallback of their own: they use the
      *         default fallback ({@link #defaultFallback()}), or {@link #item(int)} is null without one
      */
-@Internal
+    @Internal
     public @NonNull List<ItemVariant> missingCanonical() {
         return canonicalTable().missing;
     }
@@ -649,7 +673,7 @@ public final class ItemRegistry implements DefinitionRegistry<ItemDefinition> {
     /**
      * Builds the canonical tables now instead of on first use. Called by the palette compiler.
      */
-@Internal
+    @Internal
     public void prepareCanonical() {
         canonicalTable();
     }
@@ -696,8 +720,9 @@ public final class ItemRegistry implements DefinitionRegistry<ItemDefinition> {
         int size = canonical.size();
         int from = base == null ? 0 : base.items.length;
         ResolvedItem[] items = base == null ? new ResolvedItem[size] : Arrays.copyOf(base.items, size);
-        List<ItemVariant> missing = new ArrayList<>(base == null ? List.of() : base.missing);
-        Set<String> unresolved = new HashSet<>(base == null ? Set.of() : base.unresolved);
+        // Of the ids built here only
+        List<ItemVariant> missing = new ArrayList<>();
+        Set<String> unresolved = new HashSet<>();
         for (int i = from; i < size; i++) {
             ItemVariant variant = canonical.variant(i);
             // Not through the resolve cache: the table holds the results already
@@ -718,33 +743,104 @@ public final class ItemRegistry implements DefinitionRegistry<ItemDefinition> {
                 }
             }
         }
-        Int2ObjectMap<IntList> indices = base == null ? new Int2ObjectOpenHashMap<>() : new Int2ObjectOpenHashMap<>(base.indices);
-        Int2ObjectMap<Candidate[]> byRuntimeId = base == null ? new Int2ObjectOpenHashMap<>() : new Int2ObjectOpenHashMap<>(base.byRuntimeId);
-        Set<Integer> touched = new HashSet<>();
+        // Over the parent's maps: only the runtime ids of the new ids are held here
+        Layered<IntList> indices = new Layered<>(base == null ? null : base.indices);
+        Layered<Candidate[]> byRuntimeId = new Layered<>(base == null ? null : base.byRuntimeId);
         for (int i = from; i < size; i++) {
             if (items[i] == null) {
                 continue;
             }
             int runtimeId = items[i].definition().getRuntimeId();
-            IntList list = indices.get(runtimeId);
-            if (touched.add(runtimeId)) {
+            IntList list = indices.own.get(runtimeId);
+            if (list == null) {
                 // Copy before writing: the parent's lists are shared
-                list = list == null ? new IntArrayList(1) : new IntArrayList(list);
-                indices.put(runtimeId, list);
+                IntList earlier = base == null ? null : base.indices.get(runtimeId);
+                list = earlier == null ? new IntArrayList(1) : new IntArrayList(earlier);
+                indices.own.put(runtimeId, list);
             }
             list.add(i);
         }
-        if (base == null) {
-            for (Int2ObjectMap.Entry<IntList> entry : indices.int2ObjectEntrySet()) {
-                byRuntimeId.put(entry.getIntKey(), candidates(entry.getValue(), items));
-            }
-            ((Int2ObjectOpenHashMap<Candidate[]>) byRuntimeId).trim();
-        } else {
-            for (int runtimeId : touched) {
-                byRuntimeId.put(runtimeId, candidates(indices.get(runtimeId), items));
-            }
+        for (Int2ObjectMap.Entry<IntList> entry : indices.own.int2ObjectEntrySet()) {
+            byRuntimeId.own.put(entry.getIntKey(), candidates(entry.getValue(), items));
         }
-        return new CanonicalTable(items, byRuntimeId, indices, List.copyOf(missing), Set.copyOf(unresolved));
+        indices = indices.flattenedPast(MAX_LAYERS);
+        byRuntimeId = byRuntimeId.flattenedPast(MAX_LAYERS);
+        indices.trim();
+        byRuntimeId.trim();
+        return new CanonicalTable(items, byRuntimeId, indices, base == null ? List.copyOf(missing) : joined(base.missing, missing),
+            base == null ? Set.copyOf(unresolved) : joined(base.unresolved, unresolved));
+    }
+
+    /** @return the entries of the base and the added ones, the base itself if nothing is added */
+    private static <T> List<T> joined(List<T> base, List<T> added) {
+        if (added.isEmpty()) {
+            return base;
+        }
+        List<T> all = new ArrayList<>(base);
+        all.addAll(added);
+        return List.copyOf(all);
+    }
+
+    private static <T> Set<T> joined(Set<T> base, Set<T> added) {
+        if (base.containsAll(added)) {
+            return base;
+        }
+        Set<T> all = new HashSet<>(base);
+        all.addAll(added);
+        return Set.copyOf(all);
+    }
+
+    /** How many maps a lookup walks at most: deeper chains of extensions are merged into one map. */
+    private static final int MAX_LAYERS = 4;
+
+    /** An int keyed map over another one: what a layer holds shadows the base's. Not changed once built, so reads need no lock. */
+    private static final class Layered<T> {
+        private final @Nullable Layered<T> base;
+        private final Int2ObjectOpenHashMap<T> own = new Int2ObjectOpenHashMap<>();
+
+        Layered(@Nullable Layered<T> base) {
+            this.base = base;
+        }
+
+        /** The number of maps a lookup may walk, this one included. */
+        private int depth() {
+            int depth = 0;
+            for (Layered<T> layer = this; layer != null; layer = layer.base) {
+                depth++;
+            }
+            return depth;
+        }
+
+        /** @return this, or one map with everything this and its bases hold if that is more than {@code maxDepth} maps */
+        Layered<T> flattenedPast(int maxDepth) {
+            if (depth() <= maxDepth) {
+                return this;
+            }
+            List<Layered<T>> chain = new ArrayList<>();
+            for (Layered<T> layer = this; layer != null; layer = layer.base) {
+                chain.add(layer);
+            }
+            Layered<T> flat = new Layered<>(null);
+            // The base first, so what an upper layer holds shadows it
+            for (int i = chain.size() - 1; i >= 0; i--) {
+                flat.own.putAll(chain.get(i).own);
+            }
+            return flat;
+        }
+
+        @Nullable T get(int key) {
+            for (Layered<T> layer = this; layer != null; layer = layer.base) {
+                T value = layer.own.get(key);
+                if (value != null) {
+                    return value;
+                }
+            }
+            return null;
+        }
+
+        void trim() {
+            own.trim();
+        }
     }
 
     /** The candidates of one runtime id: direct variants first, so a fallback never shadows an item's own variant. */
@@ -778,7 +874,7 @@ public final class ItemRegistry implements DefinitionRegistry<ItemDefinition> {
     private record Candidate(int damage, int canonical, boolean fallback) {
     }
 
-    private record CanonicalTable(ResolvedItem[] items, Int2ObjectMap<Candidate[]> byRuntimeId, Int2ObjectMap<IntList> indices,
+    private record CanonicalTable(ResolvedItem[] items, Layered<Candidate[]> byRuntimeId, Layered<IntList> indices,
                                   List<ItemVariant> missing, Set<String> unresolved) {
     }
 
@@ -828,6 +924,13 @@ public final class ItemRegistry implements DefinitionRegistry<ItemDefinition> {
         private final Set<String> renumberedBlockItems = new HashSet<>();
         /** Identifiers the layer is about to register: they exist for components compiled before their registration. */
         private final Set<String> declared = new HashSet<>();
+        /**
+         * Identifiers this builder registered, overrode, or named a block after (even a block without an item). Only these items,
+         * plus those with a block override and the custom block items, can get a default block that differs from the parent's.
+         */
+        private final Set<String> touched = new HashSet<>();
+        private boolean creativeStacksOfParent;
+        private @Nullable Set<String> layoutIdentifiers;
 
         private Builder(DataVersion version, BlockRegistry blocks, Map<String, ItemFallback> fallbacks, CanonicalItems canonical) {
             this.parent = null;
@@ -906,6 +1009,7 @@ public final class ItemRegistry implements DefinitionRegistry<ItemDefinition> {
         private void put(RegisteredItem item) {
             byRuntimeId.put(item.getRuntimeId(), item);
             byIdentifier.put(item.getIdentifier(), item);
+            touched.add(item.getIdentifier());
             // Plain block items have negative ids: they never move the next sequential id
             nextRuntimeId = Math.max(nextRuntimeId, item.getRuntimeId() + 1);
         }
@@ -945,7 +1049,7 @@ public final class ItemRegistry implements DefinitionRegistry<ItemDefinition> {
          * @param source the id of the layer, used as the origin of what is reported
          * @return false if the item does not exist in this version, so there was nothing to override
          */
-        public boolean override(@NonNull String identifier, @NonNull Consumer<ItemOverride> modifier, @NonNull PaletteReport report,
+        public boolean override(@NonNull String identifier, @NonNull Consumer<ItemOverride> modifier, @NonNull PaletteReportBuilder report,
                                 @NonNull String source) {
             RegisteredItem original = get(identifier);
             if (original == null) {
@@ -964,19 +1068,19 @@ public final class ItemRegistry implements DefinitionRegistry<ItemDefinition> {
         }
 
         /**
-         * Internal: registers a custom item with the next free runtime id.
+         * Registers a custom item with the next runtime id.
          *
-         * @param custom the item
+         * @param custom the custom item
          * @param report where the compilation of the components reports problems
          * @param source the id of the layer, used as the origin of the item
-         * @return the definition that is sent to the client
-         * @throws PaletteException if an item with this identifier exists already
+         * @return the registered item
+         * @throws PaletteException if an item with the identifier exists already
          */
-        public @NonNull RegisteredItem addCustom(@NonNull CustomItem custom, @NonNull PaletteReport report, @NonNull String source) {
+        public @NonNull RegisteredItem addCustom(@NonNull CustomItem custom, @NonNull PaletteReportBuilder report, @NonNull String source) {
             checkUnused(custom.identifier());
             int runtimeId = nextRuntimeId;
             NbtMap componentData = ItemCompiler.componentData(custom.identifier(), runtimeId, custom.components(), custom.menuCategory(),
-                custom.creative(), context(report, source));
+                context(report, source));
             RegisteredItem item = new RegisteredItem(custom.identifier(), runtimeId, ItemVersion.DATA_DRIVEN, true, componentData,
                 Origin.custom(source), custom.components(), custom, custom.type());
             put(item);
@@ -990,7 +1094,7 @@ public final class ItemRegistry implements DefinitionRegistry<ItemDefinition> {
         /**
          * @return the context components of this palette compile in: its version, and its items and blocks for descriptors
          */
-        private WireContext context(PaletteReport report, String source) {
+        private WireContext context(PaletteReportBuilder report, String source) {
             return WireContext.of(version, report, source, new WireContext.Registry() {
                 @Override
                 public boolean itemExists(@NonNull String identifier) {
@@ -1012,55 +1116,43 @@ public final class ItemRegistry implements DefinitionRegistry<ItemDefinition> {
          * @param block the custom block
          * @param report where the compilation of the components reports problems
          * @param source the id of the layer, used as the origin of the item
-         * @return the item, or null if the block has none
-         * @throws PaletteException if an item with the identifier of the block exists already
-         */
-        public @Nullable RegisteredItem addBlockItem(@NonNull CustomBlock block, @NonNull PaletteReport report, @NonNull String source) {
-            return addBlockItem(block, block.item(), report, source);
-        }
-
-        /**
-         * Registers an item for a custom block of this palette, e.g. one registered without item in an earlier layer.
-         *
-         * @param block the custom block
-         * @param blockItem the kind of item to register
-         * @param report where the compilation of the components reports problems
-         * @param source the id of the layer, used as the origin of the item
          * @return the item, or null for {@link CustomBlock.BlockItem#NONE}
          * @throws PaletteException if an item with the identifier of the block exists already
          */
-        public @Nullable RegisteredItem addBlockItem(@NonNull CustomBlock block, CustomBlock.@NonNull BlockItem blockItem,
-                                                  @NonNull PaletteReport report, @NonNull String source) {
-            RegisteredItem item;
-            switch (blockItem) {
-                case CustomBlock.BlockItem.None none -> {
-                    return null;
-                }
-                case CustomBlock.BlockItem.Simple simple -> {
-                    checkUnused(block.identifier());
-                    item = new RegisteredItem(block.identifier(), plainBlockItemId(block.identifier()), ItemVersion.NONE, false, null, Origin.custom(source), List.of(), null,
-                        block.itemType());
-                }
-                case CustomBlock.BlockItem.DataDriven dataDriven -> {
-                    checkUnused(block.identifier());
-                    List<ItemComponent> components = new ArrayList<>(dataDriven.components());
-                    if (components.stream().noneMatch(c -> c instanceof BlockPlacer)) {
-                        components.add(BlockPlacer.builder().block(block.identifier()).replaceBlockItem(true).build());
-                    }
-                    int runtimeId = nextRuntimeId;
-                    item = new RegisteredItem(block.identifier(), runtimeId, ItemVersion.DATA_DRIVEN, true,
-                        ItemCompiler.componentData(block.identifier(), runtimeId, components, null, block.creative(),
-                            context(report, source)), Origin.custom(source), components, null, block.itemType());
-                }
+        public @Nullable RegisteredItem addBlockItem(@NonNull CustomBlock block, @NonNull PaletteReportBuilder report, @NonNull String source) {
+            // Also without an item: a block named like an item of the parent gives it a default block, where there is no relation
+            touched.add(block.identifier());
+            if (block.item() == CustomBlock.BlockItem.NONE) {
+                return null;
             }
+            checkUnused(block.identifier());
+            RegisteredItem item = new RegisteredItem(block.identifier(), plainBlockItemId(block.identifier()), ItemVersion.NONE, false, null,
+                Origin.custom(source), List.of(), null, block.itemType());
             put(item);
             customBlockItems.add(block.identifier());
             return item;
         }
 
+        /**
+         * Registers a custom item that replaces the item of a custom block ({@code block_placer} with
+         * {@code replace_block_item}): an ordinary data driven item with the next sequential id, which is the block's item.
+         *
+         * @param custom the custom item
+         * @param report where the compilation of the components reports problems
+         * @param source the id of the layer, used as the origin of the item
+         * @return the registered item
+         * @throws PaletteException if an item with the identifier exists already
+         */
+        public @NonNull RegisteredItem addBlockItemReplacement(@NonNull CustomItem custom, @NonNull PaletteReportBuilder report,
+                                                               @NonNull String source) {
+            RegisteredItem item = addCustom(custom, report, source);
+            customBlockItems.add(custom.identifier());
+            return item;
+        }
+
         private void checkUnused(String identifier) {
             if (get(identifier) != null) {
-                throw new PaletteException("Item " + identifier + " already exists in " + version);
+                throw new PaletteException("Item " + identifier + " already exists in " + version, null, identifier, null);
             }
         }
 
@@ -1095,39 +1187,85 @@ public final class ItemRegistry implements DefinitionRegistry<ItemDefinition> {
         }
 
         /**
-         * Internal: builds the registry, deciding which block each item is sent with.
+         * Says that the layout {@link #build} gets has the creative stacks of the parent's items as the parent's layout does,
+         * apart from the items this builder registers or overrides (a layer without creative edits): the default blocks of the
+         * other items are the parent's, and are not decided again. Without it every item is decided again. The layout is
+         * walked for the changed items.
+         */
+        public void keepsCreativeStacksOfParent() {
+            creativeStacksOfParent = true;
+            layoutIdentifiers = null;
+        }
+
+        /**
+         * Like {@link #keepsCreativeStacksOfParent()} for a layout that is the parent's itself, whose identifiers are known: the
+         * layout is not walked at all if it mentions none of the changed items.
          *
-         * @param layout the creative layout, whose stacks hint at the blocks of block items
-         * @param report where problems, such as a block override that does not exist, are reported
+         * @param mentioned the identifiers the parent's layout mentions
+         */
+        public void keepsCreativeStacksOfParentLayout(@NonNull Set<String> mentioned) {
+            creativeStacksOfParent = true;
+            layoutIdentifiers = mentioned;
+        }
+
+        /**
+         * Builds the registry.
+         *
+         * @param layout the creative layout of the palette, to decide the default blocks of items from
+         * @param report where problems are reported
          * @return the registry
          */
-        public @NonNull ItemRegistry build(@NonNull CreativeLayout layout, @NonNull PaletteReport report) {
+        public @NonNull ItemRegistry build(@NonNull CreativeLayout layout, @NonNull PaletteReportBuilder report) {
+            // The items to decide the default block of: all of them, or only those that can differ from the parent's. Those are the
+            // ones this builder touched, and every item with a block override or a custom block item, because their default
+            // block is looked up among blocks this builder may have changed.
+            Set<String> changed = null;
+            if (parent != null && creativeStacksOfParent) {
+                changed = new HashSet<>(touched);
+                changed.addAll(blockOverrides.keySet());
+                changed.addAll(customBlockItems);
+            }
+            Set<String> decide = changed;
             Map<String, Set<NbtMap>> creativeStates = new HashMap<>();
             Set<String> creativeWithoutBlock = new HashSet<>();
-            layout.forEachStack(stack -> {
-                String identifier = stack.type().identifier();
-                if (stack.blockState() != null) {
-                    creativeStates.computeIfAbsent(identifier, id -> new LinkedHashSet<>()).add(stack.blockState().toNbt());
-                } else {
-                    creativeWithoutBlock.add(identifier);
-                }
-            });
+            if (decide == null || layoutIdentifiers == null || decide.stream().anyMatch(layoutIdentifiers::contains)) {
+                layout.forEachStack(stack -> {
+                    String identifier = stack.type().identifier();
+                    if (decide != null && !decide.contains(identifier)) {
+                        return;
+                    }
+                    if (stack.blockState() != null) {
+                        creativeStates.computeIfAbsent(identifier, id -> new LinkedHashSet<>()).add(stack.blockState().toNbt());
+                    } else {
+                        creativeWithoutBlock.add(identifier);
+                    }
+                });
+            }
 
             Map<String, RegisteredBlockState> defaultBlocks = new HashMap<>();
             Set<String> multiState = new HashSet<>();
-            Collection<RegisteredItem> all = byIdentifier.values();
-            if (parent != null) {
-                List<RegisteredItem> merged = new ArrayList<>();
-                for (RegisteredItem item : parent.definitions()) {
-                    if (!byIdentifier.containsKey(item.getIdentifier())) {
-                        merged.add(item);
+            // Decided in the order the full path walks them, which is the order of the report's warnings: the parent's items
+            // first (by runtime id), then this builder's own
+            Collection<String> identifiers = new LinkedHashSet<>();
+            if (decide != null) {
+                // The others keep the parent's default block, and the parent's say about several block states
+                decide.stream().filter(identifier -> !byIdentifier.containsKey(identifier))
+                    .map(parent::getDefinition).filter(Objects::nonNull)
+                    .sorted(Comparator.comparingInt(RegisteredItem::getRuntimeId))
+                    .forEach(item -> identifiers.add(item.getIdentifier()));
+                byIdentifier.keySet().stream().filter(decide::contains).forEach(identifiers::add);
+                parent.multiStateBlockItems.stream().filter(identifier -> !decide.contains(identifier)).forEach(multiState::add);
+            } else {
+                if (parent != null) {
+                    for (RegisteredItem item : parent.definitions()) {
+                        if (!byIdentifier.containsKey(item.getIdentifier())) {
+                            identifiers.add(item.getIdentifier());
+                        }
                     }
                 }
-                merged.addAll(byIdentifier.values());
-                all = merged;
+                identifiers.addAll(byIdentifier.keySet());
             }
-            for (RegisteredItem item : all) {
-                String identifier = item.getIdentifier();
+            for (String identifier : identifiers) {
                 RegisteredBlockState block = null;
                 NbtMap override = blockOverrides.get(identifier);
                 Set<NbtMap> states = creativeStates.get(identifier);

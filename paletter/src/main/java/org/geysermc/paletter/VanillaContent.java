@@ -3,6 +3,7 @@ package org.geysermc.paletter;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.cloudburstmc.protocol.bedrock.data.BlockPropertyData;
+import org.geysermc.paletter.data.DataVersion;
 import org.geysermc.paletter.internal.data.ExperimentContent;
 import org.geysermc.paletter.internal.data.VanillaData;
 import org.geysermc.paletter.internal.data.VanillaItem;
@@ -10,6 +11,7 @@ import org.geysermc.paletter.internal.shape.VoxelShapeStore;
 import org.geysermc.paletter.vanilla.BedrockItemType;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -19,21 +21,19 @@ import java.util.TreeMap;
 import java.util.TreeSet;
 
 /**
- * Selects which vanilla content exists, configured in {@code Paletter.Builder#vanilla}. A removed item is not
+ * Selects which vanilla items exist, configured on {@code Paletter.Builder}. A removed item is not
  * registered: it has no definition and no creative entry, and resolves through the {@link Fallbacks}. Blocks are never
  * removed, the client's block palette has to match; a block that is missing resolves through the fallbacks as well.
  * <p>
  * Content a version has only behind an experiment toggle (BDS offers it only to worlds with that experiment, see
- * {@link #experiments}) is missing unless the toggle is enabled, so ordinary (non-forced) fallbacks apply to it.
- * <p>
- * Only valid inside the consumer of {@link Paletter.Builder#vanilla(java.util.function.Consumer)}: it is copied when the
- * {@link Paletter} is built and is not thread safe. Methods return this object; arguments must not be null.
+ * {@code Paletter.Builder#experiments}) is missing unless the toggle is enabled, so ordinary (non-forced) fallbacks apply to it.
  *
  * @since 1.0.0
  */
-public final class VanillaContent {
+final class VanillaContent {
     private final Set<String> removed = new HashSet<>();
-    private Set<String> experiments = Set.of();
+    private final Set<String> experiments = new HashSet<>();
+    private final Map<DataVersion, Set<String>> versionExperiments = new HashMap<>();
     private boolean allExperiments;
 
     VanillaContent() {
@@ -45,58 +45,45 @@ public final class VanillaContent {
     VanillaContent copy() {
         VanillaContent copy = new VanillaContent();
         copy.removed.addAll(removed);
-        copy.experiments = Set.copyOf(experiments);
+        copy.experiments.addAll(experiments);
+        versionExperiments.forEach((version, toggles) -> copy.versionExperiments.put(version, new HashSet<>(toggles)));
         copy.allExperiments = allExperiments;
         return copy;
     }
 
     /**
-     * Does not register the item.
-     *
-     * @param item the vanilla item to leave out
-     * @return this
-     * @since 1.0.0
+     * Does not register the items.
      */
-    public @NonNull VanillaContent remove(@NonNull BedrockItemType item) {
-        removed.add(item.identifier());
-        return this;
+    void remove(BedrockItemType... types) {
+        for (BedrockItemType type : types) {
+            removed.add(type.identifier());
+        }
     }
 
-    /**
-     * Sets the enabled experiment toggles (e.g. {@code y_2026_drop_4}). By default none is enabled: the items and blocks
-     * a version has only behind a toggle are missing in its palette, so the {@link Fallbacks} apply to them like to
-     * content the version lacks altogether (and {@code force} is only for content that is really there). An enabled
-     * toggle makes its content present in the versions that gate it; those palettes list the toggle in
-     * {@link Palette#experiments()} and send it with {@link Palette#applyTo(org.cloudburstmc.protocol.bedrock.packet.StartGamePacket)}.
-     * A palette tells the toggle of a piece of content with {@code Palette#experimentOf}, and its report has a line for
-     * every toggle left disabled.
-     *
-     * @param toggles the toggle ids, as BDS names them
-     * @return this
-     * @since 1.0.0
-     */
-    public @NonNull VanillaContent experiments(@NonNull String... toggles) {
-        this.experiments = new HashSet<>(List.of(toggles));
-        return this;
+    /** Adds toggles enabled in every version, see {@code Paletter.Builder#experiments(String...)}. */
+    void experiments(String... toggles) {
+        experiments.addAll(List.of(toggles));
     }
 
-    /**
-     * Enables every experiment toggle the palette's version gates content with, except the voxel shape experiment, which
-     * changes how the client treats shapes instead of adding content. The content behind the toggles is present, as in the
-     * raw data of the version; the palettes list the toggles in {@link Palette#experiments()}. Lookups with a
-     * {@link Lookup} see that content then.
-     *
-     * @return this
-     * @since 1.0.0
-     */
-    public @NonNull VanillaContent allExperiments() {
+    /** Adds toggles enabled in one version, see {@code Paletter.Builder#experiments(DataVersion, String...)}. */
+    void experiments(DataVersion version, String... toggles) {
+        versionExperiments.computeIfAbsent(version, key -> new HashSet<>()).addAll(List.of(toggles));
+    }
+
+    /** @return the versions that have toggles of their own */
+    Set<DataVersion> experimentVersions() {
+        return versionExperiments.keySet();
+    }
+
+    /** See {@code Paletter.Builder#allExperiments()}. */
+    void allExperiments() {
         this.allExperiments = true;
-        return this;
     }
 
-    /** @return whether the consumer asked for an experiment toggle */
-    boolean requests(String toggle) {
-        return experiments.contains(toggle) || allExperiments && !toggle.equals(VoxelShapeStore.EXPERIMENT);
+    /** @return whether the consumer asked for an experiment toggle in a version */
+    boolean requests(DataVersion version, String toggle) {
+        return experiments.contains(toggle) || versionExperiments.getOrDefault(version, Set.of()).contains(toggle)
+            || allExperiments && !toggle.equals(VoxelShapeStore.EXPERIMENT);
     }
 
     /**
@@ -115,7 +102,7 @@ public final class VanillaContent {
         Map<String, String> enabledItems = new TreeMap<>();
         Map<String, String> enabledBlocks = new TreeMap<>();
         marks.forEach((toggle, content) -> {
-            if (requests(toggle)) {
+            if (requests(data.version(), toggle)) {
                 enabled.add(toggle);
                 content.items().forEach(item -> enabledItems.putIfAbsent(item, toggle));
                 content.blocks().forEach(block -> enabledBlocks.putIfAbsent(block, toggle));
@@ -139,7 +126,7 @@ public final class VanillaContent {
         Map<String, String> disabledBlocks = new TreeMap<>();
         List<String> notes = new ArrayList<>();
         marks.forEach((toggle, content) -> {
-            if (requests(toggle)) {
+            if (requests(data.version(), toggle)) {
                 return;
             }
             List<String> items = content.items().stream().filter(item -> !enabledItems.containsKey(item) && itemsInData.contains(item)).toList();
@@ -157,7 +144,13 @@ public final class VanillaContent {
             blocks.forEach(block -> disabledBlocks.put(block, toggle));
             if (!items.isEmpty() || !blocks.isEmpty()) {
                 notes.add(data.version().name() + ": " + items.size() + " items, " + blocks.size() + " blocks behind `" + toggle
-                    + "` use fallbacks; enable with vanilla(v -> v.experiments(\"" + toggle + "\"))");
+                    + "` use fallbacks; enable with experiments(\"" + toggle + "\")");
+            }
+        });
+        // A toggle enabled for this version alone that gates nothing in it is most likely a mistake
+        new TreeSet<>(versionExperiments.getOrDefault(data.version(), Set.of())).forEach(toggle -> {
+            if (!marks.containsKey(toggle) && !toggle.equals(VoxelShapeStore.EXPERIMENT)) {
+                notes.add(data.version().name() + ": the experiment `" + toggle + "` is enabled for this version, but gates no content in it");
             }
         });
         ExperimentGating gating = new ExperimentGating(List.copyOf(enabled), Map.copyOf(enabledItems), Map.copyOf(enabledBlocks),

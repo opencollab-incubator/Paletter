@@ -21,7 +21,6 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
@@ -248,6 +247,7 @@ public final class ShapeImport {
     /** @return whether the bundled file is what the captures give */
     public static boolean check(Path root) throws IOException {
         Path file = root.resolve(ConstantsGenerator.DATA).resolve(FILE);
-        return Files.exists(file) && Arrays.equals(Files.readAllBytes(file), bytes(root));
+        // Decoded: the compressed bytes depend on the zlib build
+        return Files.exists(file) && org.geysermc.paletter.tools.data.Nbt.readGzip(bytes(root)).equals(org.geysermc.paletter.tools.data.Nbt.readGzip(file));
     }
 }

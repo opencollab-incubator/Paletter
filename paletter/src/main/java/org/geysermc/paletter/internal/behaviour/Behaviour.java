@@ -13,10 +13,10 @@ import org.geysermc.paletter.block.BlockRegistry;
 import org.geysermc.paletter.block.RegisteredBlock;
 import org.geysermc.paletter.block.RegisteredBlockState;
 import org.geysermc.paletter.data.DataVersion;
+import org.geysermc.paletter.internal.block.IntIndex;
 import org.geysermc.paletter.item.RegisteredItem;
 import org.geysermc.paletter.property.Properties;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
@@ -54,11 +54,14 @@ public final class Behaviour {
     private final int base;
     /** The columns of the own states by key ordinal, null until built; written under the lock, read without it. */
     private final @Nullable Column[] blockColumns = new Column[KEYS];
-    /** The items, in the order of their columns: {@link org.geysermc.paletter.item.ItemRegistry#definitions()}. */
+    /**
+     * The own items, in the order of their columns: the items the palette's registry itself defines, which are all of
+     * them for a vanilla palette and the added and overridden ones for an extension (the others are the parent's, with
+     * the parent's columns, see {@link #item}).
+     */
     private final List<RegisteredItem> items;
-    /** {@code positions[runtimeId - minRuntimeId]} is the position of an item, or -1. */
-    private final int minRuntimeId;
-    private final int[] positions;
+    /** The position of an own item in {@link #items} by runtime id, or -1. */
+    private final IntIndex positions;
     private final @Nullable Column[] itemColumns = new Column[KEYS];
 
     private Behaviour(Palette palette, BehaviourStore store, @Nullable Behaviour parent) {
@@ -69,13 +72,10 @@ public final class Behaviour {
         this.parent = extending ? parent : null;
         this.itemParent = parent;
         this.base = extending ? parent.palette.blocks().size() : 0;
-        this.items = palette.items().definitions();
-        this.minRuntimeId = items.stream().mapToInt(RegisteredItem::getRuntimeId).min().orElse(0);
-        int max = items.stream().mapToInt(RegisteredItem::getRuntimeId).max().orElse(-1);
-        this.positions = new int[Math.max(0, max - minRuntimeId + 1)];
-        Arrays.fill(positions, -1);
+        this.items = palette.items().ownDefinitions();
+        this.positions = new IntIndex(items.size());
         for (int i = 0; i < items.size(); i++) {
-            positions[items.get(i).getRuntimeId() - minRuntimeId] = i;
+            positions.put(items.get(i).getRuntimeId(), i);
         }
     }
 
@@ -131,8 +131,7 @@ public final class Behaviour {
     }
 
     private int positionOf(RegisteredItem item) {
-        int at = item.getRuntimeId() - minRuntimeId;
-        int position = at < 0 || at >= positions.length ? -1 : positions[at];
+        int position = positions.get(item.getRuntimeId());
         return position < 0 || items.get(position) != item ? -1 : position;
     }
 
@@ -160,8 +159,7 @@ public final class Behaviour {
             BlockRegistry registry = palette.blocks();
             Object[] values = new Object[registry.size() - base];
             for (int i = 0; i < values.length; i++) {
-                Value value = resolve(registry.byIndex(base + i), key);
-                values[i] = value == null ? null : value.value;
+                values[i] = value(registry.byIndex(base + i), key);
             }
             blockColumns[key.ordinal()] = column = Column.of(key.type(), values);
         }
@@ -183,8 +181,7 @@ public final class Behaviour {
         if (column == null) {
             Object[] values = new Object[items.size()];
             for (int i = 0; i < values.length; i++) {
-                Value value = resolve(items.get(i), key);
-                values[i] = value == null ? null : value.value;
+                values[i] = value(items.get(i), key);
             }
             itemColumns[key.ordinal()] = column = Column.of(key.type(), values);
         }
@@ -284,12 +281,12 @@ public final class Behaviour {
         RegisteredBlock block = palette.blocks().block(state.identifier());
         BehaviourStore.Resolved resolved = store.block(key, state.getRuntimeId(), palette.version());
         Value wire = block == null ? null : vanillaWire(key, block.properties(state));
-        return choose(resolved == null ? null : captured(resolved), wire);
+        return choose(resolved, wire);
     }
 
     private @Nullable Value vanilla(RegisteredItem item, BehaviourKey<?> key) {
         BehaviourStore.Resolved resolved = store.item(key, item.getIdentifier(), palette.version());
-        return choose(resolved == null ? null : captured(resolved), vanillaWire(key, item.properties()));
+        return choose(resolved, vanillaWire(key, item.properties()));
     }
 
     private @Nullable Value customBlock(RegisteredBlockState state, BehaviourKey<?> key) {
@@ -315,15 +312,29 @@ public final class Behaviour {
      * Direct evidence of the version beats a third-party dump and a capture of an older version; among direct sources
      * of the version the stronger kind decides ({@link Provenance.Source}: captures before the wire).
      */
-    private static @Nullable Value choose(@Nullable Value stored, @Nullable Value wire) {
-        if (wire == null) {
-            return stored;
+    private @Nullable Value choose(BehaviourStore.@Nullable Resolved stored, @Nullable Value wire) {
+        return switch (choice(stored == null ? null : stored.capture(), wire != null)) {
+            case NONE -> null;
+            case STORED -> captured(stored);
+            case WIRE -> wire;
+        };
+    }
+
+    private enum Choice { NONE, STORED, WIRE }
+
+    /**
+     * The one decision both paths make: which of the stored capture and the wire value gives the value (or neither). The value
+     * path and the provenance path only differ in what they build from the answer.
+     */
+    private Choice choice(BehaviourStore.@Nullable Capture stored, boolean hasWire) {
+        if (!hasWire) {
+            return stored == null ? Choice.NONE : Choice.STORED;
         }
         if (stored == null) {
-            return wire;
+            return Choice.WIRE;
         }
-        Provenance provenance = stored.provenance;
-        return !provenance.thirdParty() && !provenance.inherited() ? stored : wire;
+        boolean inherited = !stored.version().name().equals(palette.version().name());
+        return !stored.source().thirdParty() && !inherited ? Choice.STORED : Choice.WIRE;
     }
 
     private @Nullable Value vanillaWire(BehaviourKey<?> key, Properties properties) {
@@ -337,15 +348,19 @@ public final class Behaviour {
 
     /** @return the value of a component the user set, or null if the user did not set the key */
     private @Nullable Value userSet(BehaviourKey<?> key, Properties properties, List<String> components, @Nullable String layer) {
-        if (components.stream().noneMatch(WireRules.components(key)::contains)) {
-            return null;
-        }
-        Object value = WireRules.value(key, properties);
+        Object value = userValue(key, properties, components);
         if (value == null) {
             return null;
         }
         DataVersion version = palette.version();
         return new Value(value, new Provenance(Provenance.Source.USER, "layer " + layer, version, version));
+    }
+
+    private static @Nullable Object userValue(BehaviourKey<?> key, Properties properties, List<String> components) {
+        if (components.stream().noneMatch(WireRules.components(key)::contains)) {
+            return null;
+        }
+        return WireRules.value(key, properties);
     }
 
     /**
@@ -378,6 +393,57 @@ public final class Behaviour {
             .toList();
         return new Value(resolved.value(), new Provenance(capture.source(), capture.reference(), capture.version(), palette.version(),
             alternatives, resolved.postProcessing()));
+    }
+
+    // ---- Values only: what the columns are built from. The decisions of the methods above without the provenance, which
+    // costs more than the value and is not needed for a column. BehaviourTest.theHandlesHoldTheValuesOfTheProvenancePath holds the two to the same values. ----
+
+    private @Nullable Object value(RegisteredBlockState state, BehaviourKey<?> key) {
+        RegisteredBlock block = palette.blocks().block(state.identifier());
+        if (state.isCustom()) {
+            return block == null ? null
+                : customValue(key, block.properties(state), block.components(state).stream().map(c -> c.name()).toList());
+        }
+        BehaviourStore.Hit stored = store.blockHit(key, state.getRuntimeId(), palette.version());
+        return chooseValue(stored, block == null ? null : WireRules.value(key, block.properties(state)));
+    }
+
+    private @Nullable Object value(RegisteredItem item, BehaviourKey<?> key) {
+        if (!item.isCustom() && item.components().isEmpty()) {
+            return vanillaValue(item, key);
+        }
+        List<String> names = item.components().stream().map(c -> c.name()).toList();
+        if (item.isCustom()) {
+            return customValue(key, item.properties(), names);
+        }
+        Object user = userValue(key, item.properties(), names);
+        return user != null ? user : vanillaValue(item, key);
+    }
+
+    private @Nullable Object vanillaValue(RegisteredItem item, BehaviourKey<?> key) {
+        return chooseValue(store.itemHit(key, item.getIdentifier(), palette.version()), WireRules.value(key, item.properties()));
+    }
+
+    private @Nullable Object customValue(BehaviourKey<?> key, Properties properties, List<String> components) {
+        Object user = userValue(key, properties, components);
+        if (user != null) {
+            return user;
+        }
+        Object sent = WireRules.value(key, properties);
+        if (sent != null) {
+            return sent;
+        }
+        BehaviourStore.Default fallback = store.defaultOf(key);
+        return fallback == null ? null : fallback.value();
+    }
+
+    /** {@link #choose} on values: a capture of this very version from a direct source beats the wire. */
+    private @Nullable Object chooseValue(BehaviourStore.@Nullable Hit stored, @Nullable Object wire) {
+        return switch (choice(stored == null ? null : stored.capture(), wire != null)) {
+            case NONE -> null;
+            case STORED -> stored.value();
+            case WIRE -> wire;
+        };
     }
 
     private static void require(BehaviourKey<?> key, BehaviourKey.Owner owner) {

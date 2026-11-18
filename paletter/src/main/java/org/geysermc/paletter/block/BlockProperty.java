@@ -88,11 +88,13 @@ public record BlockProperty<T>(@NonNull String name, @NonNull Type type, @NonNul
      * @param fromInclusive the first value, which is the default
      * @param toInclusive the last value
      * @return the property
-     * @throws IllegalArgumentException if the range has no values; a {@code toInclusive} more than one below
-     *         {@code fromInclusive} fails with a {@link NegativeArraySizeException}
+     * @throws IllegalArgumentException if {@code toInclusive} is below {@code fromInclusive}
      * @since 1.0.0
      */
     public static @NonNull BlockProperty<Integer> range(@NonNull String name, int fromInclusive, int toInclusive) {
+        if (toInclusive < fromInclusive) {
+            throw new IllegalArgumentException("The range " + fromInclusive + ".." + toInclusive + " has no values");
+        }
         Integer[] values = new Integer[toInclusive - fromInclusive + 1];
         for (int i = 0; i < values.length; i++) {
             values[i] = fromInclusive + i;

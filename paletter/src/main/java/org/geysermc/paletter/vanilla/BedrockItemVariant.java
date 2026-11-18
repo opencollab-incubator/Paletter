@@ -55,8 +55,8 @@ public final class BedrockItemVariant implements ItemKey {
     }
 
     /**
-     * Internal: the variant of an identifier and aux value, applying renames and splits (a legacy variant that became its
-     * own type). Loads the data. Use {@link org.geysermc.paletter.Palette#itemVariant} or {@code type.variant(aux)}.
+     * Internal: the variant of an identifier and aux value, applying renames and splits (a legacy variant that
+     * became its own type). Loads the data. Use {@link org.geysermc.paletter.Palette#itemVariant} or {@code type.variant(aux)}.
      *
      * @param identifier an item identifier
      * @param aux the aux (damage) value

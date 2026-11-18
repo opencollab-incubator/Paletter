@@ -23,6 +23,19 @@ default state is the first value of every property, then every trait state at it
 **Item runtime ids** depend on the server's content. BDS numbers data driven items after the last legacy item, so custom
 items shift vanilla data driven items up. A custom block item gets `id = 255 - block_id`, with version NONE.
 
+An item that replaces a block's item (same identifier, `block_placer` with `replace_block_item`) is an ordinary data driven
+item with a sequential id. In the `addon` capture `paletter:plain` is 908, `paletter:plain_block` (the replacing item of the
+block of that name) 909 and `paletter:projectile` 910: one sequence with the custom items, not in block order. Its creative
+stack has no block state and sits in the item's category (`items`), while the block's own `menu_category` is `construction`
+(`addon/custom_creative_items.json`, `custom_block_properties.snbt`). `CreativeOrderCheckTest` compares the id distances of all
+data driven items of that capture with Paletter's. The captured ids look alphabetical by identifier; whether BDS numbers by
+identifier or by file name was not told apart, so Paletter numbers items in registration order, which is its own rule, not
+BDS evidence.
+
+Not captured, so **unverified**: a replacing item whose block has no menu category (the block's presence in creative, and
+whether BDS still adds the item in the block pass), and a replacing item for a block that is hidden in the creative inventory.
+Paletter places the item by its own category either way, and by the block's order.
+
 ## Items
 
 Custom items are sent as `{components: {item_properties: {...}, item_tags: [...], <component>: {...}}}`.
@@ -139,7 +152,8 @@ sort like their identifiers, block items will be ordered differently than on BDS
 **Where Paletter differs on purpose.** Groups stay in category order in the packet, and a new group gets its first
 stack as icon instead of air. The client shows the same thing either way. A placement with an anchor
 (`CreativePlacement#after`) is an explicit override. `CreativeOrdering.APPEND` is the older behaviour: registration
-order, groups matched by name in any category.
+order, groups matched by name in any category; which content is in the creative inventory is still decided by the menu
+categories, as in BDS.
 
 **Limits.** The block map order comes from MSVC's standard library. The Linux BDS uses another one, so its block order
 probably differs; it has not been captured. Each layer runs both passes over its own content after earlier layers, so

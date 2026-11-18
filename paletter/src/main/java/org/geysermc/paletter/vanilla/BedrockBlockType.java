@@ -29,7 +29,8 @@ import java.util.Objects;
  * available}: its states are those of its fallback, normally {@code minecraft:unknown}.
  * <p>
  * Equality: like its states (see {@link BedrockBlockState}), {@code equals} always works, and {@code ==} works for the
- * vanilla constants and for the type a registered {@link CustomBlock} owns.
+ * vanilla constants and for the type a registered {@link CustomBlock} owns. Not in a Paletter with previews, for the
+ * blocks the preview added or changed: those have types of their own, equal to a constant if the states are the same.
  *
  * @since 1.0.0
  */
@@ -72,7 +73,8 @@ public final class BedrockBlockType {
     }
 
     /**
-     * Internal: plumbing of {@link CustomBlock}, which creates its type once and owns it: use {@link CustomBlock#type()}.
+     * Internal: plumbing of {@link CustomBlock}, which creates its type once and owns it: use
+     * {@link CustomBlock#type()}.
      *
      * @param identifier the block identifier
      * @param properties the state properties, in declaration order ({@link CustomBlock#stateProperties()})
@@ -86,8 +88,8 @@ public final class BedrockBlockType {
     }
 
     /**
-     * Internal: the key of an identifier: the vanilla constant if the identifier is a vanilla block of the newest bundled data or
-     * has a generated constant, else a custom type known by its identifier only (no states). Such types are not
+     * Internal: the key of an identifier: the vanilla constant if the identifier is a vanilla block of the newest
+     * bundled data or has a generated constant, else a custom type known by its identifier only (no states). Such types are not
      * interned: equal for equal identifiers, not identical, so compare them with {@code equals}, and unknown
      * identifiers never accumulate. The type of a {@link CustomBlock} is {@link CustomBlock#type()}. Loads
      * the data.
@@ -103,9 +105,20 @@ public final class BedrockBlockType {
     }
 
     /**
-     * The vanilla block types.
+     * Plumbing of {@link org.geysermc.paletter.Palette}.
      *
-     * @return every vanilla block type of the newest bundled data, in palette order. Loads the data
+     * @param identifier the block identifier
+     * @return the vanilla type of the newest bundled data with an identifier, or null
+     */
+    @Internal
+    public static @Nullable BedrockBlockType vanillaType(@NonNull String identifier) {
+        return VanillaIndex.get().block(identifier);
+    }
+
+    /**
+     * Lists the vanilla block types of the newest bundled data. Loads the data.
+     *
+     * @return every vanilla block type, in palette order
      */
     public static @NonNull List<BedrockBlockType> vanillaTypes() {
         return VanillaIndex.get().blockTypes;
@@ -122,6 +135,30 @@ public final class BedrockBlockType {
         }
         this.layout = fallbackType.layout();
         this.available = false;
+    }
+
+    /**
+     * Plumbing of {@link org.geysermc.paletter.Palette}.
+     *
+     * @param values the state values by state name
+     * @return the state with exactly these values (see {@link BedrockBlockState#values()}), or null if the block has no
+     *         such state: a missing or extra name, a value of another type or one the block does not have
+     */
+    @Internal
+    public @Nullable BedrockBlockState stateOf(@NonNull Map<String, ?> values) {
+        BlockTypeLayout layout = layout();
+        if (values.size() != layout.properties.length) {
+            return null;
+        }
+        int combination = 0;
+        for (int p = 0; p < layout.properties.length; p++) {
+            int index = layout.indexOfValue(p, values.get(layout.properties[p].name()));
+            if (index == -1) {
+                return null;
+            }
+            combination += index * layout.radix[p];
+        }
+        return layout.byCombination()[combination];
     }
 
     BlockTypeLayout layout() {
@@ -301,9 +338,12 @@ public final class BedrockBlockType {
         if (this == o) {
             return true;
         }
-        // Vanilla types are singletons; custom types are equal if they have the same identifier and states
-        return o instanceof BedrockBlockType other && custom && other.custom && identifier.equals(other.identifier)
-            && Arrays.equals(layout().properties, other.layout().properties)
+        if (!(o instanceof BedrockBlockType other) || custom != other.custom || !identifier.equals(other.identifier)) {
+            return false;
+        }
+        // Vanilla types are singletons, except those of blocks a preview added or changed (see PreviewBlocks): equal to
+        // the constant of the identifier if they have the same states. Custom types likewise
+        return Arrays.equals(layout().properties, other.layout().properties)
             && Arrays.deepEquals(layout().values, other.layout().values);
     }
 

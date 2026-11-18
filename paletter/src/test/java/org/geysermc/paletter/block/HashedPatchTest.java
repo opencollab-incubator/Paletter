@@ -2,6 +2,7 @@ package org.geysermc.paletter.block;
 
 import org.cloudburstmc.nbt.NbtMap;
 import org.geysermc.paletter.Palette;
+import org.geysermc.paletter.PaletteException;
 import org.geysermc.paletter.Palettes;
 import org.geysermc.paletter.PaletteLayer;
 import org.geysermc.paletter.Paletter;
@@ -119,15 +120,15 @@ class HashedPatchTest {
     }
 
     @Test
-    void collisionsLeaveTheBaseUnchangedWithAnErrorInTheReport() {
+    void collisionsThrowAndLeaveTheBaseUnchanged() {
         int protocol = PALETTER.latest().protocolVersion();
         Palette base = HASHED.palette(protocol);
         Palette first = base.extend(PaletteLayer.builder("a").block(LAMP).build());
-        Palette twice = first.extend(PaletteLayer.builder("b").block(LAMP).build());
-        assertEquals(1, twice.report().errors().size());
-        assertSame(first.blocks(), twice.blocks());
-        Palette vanillaName = base.extend(PaletteLayer.builder("a").block(block("minecraft:stone", 2)).build());
-        assertSame(base.blocks(), vanillaName.blocks());
-        assertEquals(1, vanillaName.report().errors().size());
+        PaletteException twice = assertThrows(PaletteException.class, () -> first.extend(PaletteLayer.builder("b").block(LAMP).build()));
+        assertEquals("b", twice.layer());
+        assertEquals(LAMP.identifier(), twice.identifier());
+        PaletteException vanillaName = assertThrows(PaletteException.class,
+            () -> base.extend(PaletteLayer.builder("a").block(block("minecraft:stone", 2)).build()));
+        assertEquals("minecraft:stone", vanillaName.identifier());
     }
 }

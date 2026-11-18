@@ -95,7 +95,7 @@ class EncodeBlockStateTest {
 
     @Test
     void customBlockStatesEncodeLikeTheirResolvedNbt() {
-        PaletteLayer layer = PaletteLayer.builder("session").blockItem(LAMP.identifier(), LAMP.item(), null).block(LAMP).build();
+        PaletteLayer layer = PaletteLayer.builder("session").block(LAMP).build();
         Palette base = PALETTER.palette(PALETTER.latest().protocolVersion());
         Palette session = base.extend(layer);
         BedrockBlockState lit = LAMP.type().states().getLast();

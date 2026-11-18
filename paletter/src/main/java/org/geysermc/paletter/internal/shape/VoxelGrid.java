@@ -28,6 +28,8 @@ public final class VoxelGrid {
 
     private final float[][] coordinates;
     private final boolean[] cells;
+    /** The hash, made on first use (0: not yet; a grid that hashes to 0 is hashed again): the vanilla grids are hashed by every palette. */
+    private int hash;
 
     private VoxelGrid(float[][] coordinates, boolean[] cells) {
         this.coordinates = coordinates;
@@ -297,7 +299,11 @@ public final class VoxelGrid {
 
     @Override
     public int hashCode() {
-        return 31 * Arrays.deepHashCode(coordinates) + Arrays.hashCode(cells);
+        int hash = this.hash;
+        if (hash == 0) {
+            this.hash = hash = 31 * Arrays.deepHashCode(coordinates) + Arrays.hashCode(cells);
+        }
+        return hash;
     }
 
     @Override

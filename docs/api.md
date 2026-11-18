@@ -58,7 +58,8 @@ Methods named `blockState`, `itemVariant` or `...Of` return keys; methods named 
 
 | Lookup | Returns |
 |---|---|
-| `Palette#blockState(NbtMap, Lookup)`, `Palette#itemVariant(identifier, aux, Lookup)`, `Palette#itemType(identifier, Lookup)` | The key (or item type) if the `Lookup` accepts the content in this palette's version, else null. |
+| `Palette#blockState(NbtMap, Lookup)`, `Palette#blockState(identifier, values, Lookup)`, `Palette#itemVariant(identifier, aux, Lookup)`, `Palette#itemType(identifier, Lookup)` | The key (or item type) if the `Lookup` accepts the content in this palette's version, else null. |
+| `Palette#blockState(identifier, values, Lookup)` | The same as the NBT overload, from state values as `Map<String, Object>` of `Boolean`, `Integer` or `String`, without building NBT. All of the block's states must be given; a value of another type is no match. `BedrockBlockState#values()` has the same shape (unmodifiable, in state order), so `palette.blockState(s.type().identifier(), s.values(), Lookup.EXACT)` is `s`. The generated `states` of `PlacementFilter.BlockFilter`, `BlockPlacer.UseOn` and the other block descriptors use it too. |
 | `Palette#runtimeId(BedrockBlockState)` | The runtime id (the state hash). Throws if the palette lacks the state; `runtimeId(state, orElse)` returns `orElse` instead. |
 | `Palette#blockDefinition(BedrockBlockState)` | The `RegisteredBlockState` this version sends, after adapting and fallbacks. Throws if the palette lacks the state. Only a custom block of a layer the palette does not have can be lacking: with the bundled data, every version has each vanilla state. |
 | `Palette#blockDefinition(BedrockBlockState, RegisteredBlockState)` | Like `blockDefinition(state)`, but returns `orElse` (may be null) where that throws; as `runtimeId(state, orElse)` does for the runtime id. |
@@ -73,19 +74,21 @@ Methods named `blockState`, `itemVariant` or `...Of` return keys; methods named 
 | `Palette#itemDefinition(int)` | The `RegisteredItem` with an item runtime id (negative for the plain item of a custom block), or null. |
 | `Palette#resolve(ItemKey)` | What `encode` would send, without building an `ItemData`. `behaviour()` gives the `ItemValues` of the item sent. `variant()` is the variant this palette sends for the requested one: the requested variant itself unless `fallback()`. |
 | `Palette#blockOf(ItemKey)` | The key of the block an item is sent with, or null. `blockDefinition(blockOf(v))` is what is sent. |
+| `Palette#itemOf(BedrockBlockType)` | The item the Script API gives for the block's default permutation: the block's own item for a custom block, else the bundled block to item relation. Null if there is none here. Whether the client's pick block gives this item is unverified. |
 | `Palette#encode(BedrockItemStack)` | The `ItemData` for the client, with fallbacks applied. |
 | `Palette#decode(ItemData)` | The stack a client sent, or null if unknown. |
 | `Palette#explain(...)` | A readable explanation of how a block state or item resolves. |
 
-Lookups are on `Palette`, because the palette is the version. `Palette#blockState(NbtMap, Lookup)`, `itemVariant(identifier, aux, Lookup)`,
+Lookups are on `Palette`, because the palette is the version. `Palette#blockState(NbtMap, Lookup)`, `blockState(identifier, values, Lookup)`, `itemVariant(identifier, aux, Lookup)`,
 `itemType(identifier, Lookup)` and `blockType(identifier, Lookup)` take the `Lookup` explicitly: `Lookup.EXACT` accepts only
 what exists as written in the palette's own version, `Lookup.RENAMED` also content of an older bundled version, mapped
 forward (renamed identifiers following `renames.txt`, changed state keys); only content that is unchanged is checked
 against the palette's version. Each returns null if the lookup does not accept the content, and
-`explainUnknown(..., Lookup)` says why. Content of the palette's layers is always accepted.
+`explainUnknown(..., Lookup)` says why, naming the keys that differ from the closest known state (a block state key or value,
+the aux of an item). Content of the palette's layers is always accepted.
 
 A palette sees exactly what it has: a lookup returns null for content newer than the palette's version, content removed
-with `VanillaContent.remove`, and content behind an experiment the palette does not enable. To get keys that resolve through
+with `Paletter.Builder#removeItems`, and content behind an experiment the palette does not enable. To get keys that resolve through
 fallbacks on every version, look them up on the newest palette, with the experiments you need (`allExperiments()` enables
 all), or use the constants (`BedrockBlocks`, `BedrockItems`). There is no lookup without a `Lookup`: a mapping written
 against 26.50 keeps working when 26.60 becomes the newest version by using `Lookup.RENAMED` on the newest palette.
@@ -93,8 +96,19 @@ against 26.50 keeps working when 26.60 becomes the newest version by using `Look
 Paletter decides which block an item carries (`Palette#blockOf`, a key). A layer override wins, then the block to item relation
 captured from the Script API, then the block states in the creative inventory.
 
-Vanilla items keep the runtime ids of the bundled data in every palette: custom items and data driven block items get
-sequential ids after them. A custom block's plain item (`BlockItem.SIMPLE`) has the runtime id `255 - block_id`, as in
+A custom block owns its item, as in BDS, so a layer never registers it separately: `CustomBlock.Builder#item` chooses
+`BlockItem.SIMPLE` or `NONE`. An item of its own that replaces the block item is an ordinary `CustomItem` with the block's
+identifier and a `block_placer` with `replace_block_item` (BDS takes the flag only for that identifier), registered in the
+same layer with `layer.item(...)` (in another layer, or for a block with `BlockItem.NONE`, compiling throws a `PaletteException`
+naming the cause; a flag for a block that does not exist is reported and the item stays an ordinary one): its category, components and id come from the item, and `Palette#itemOf` gives it for
+the block. In the creative inventory it is a plain stack (no block state) in the item's own category, placed in the block
+pass; the block keeps its own `menu_category`, which is independent of the item's (the `paletter:plain_block` capture: block
+construction, item items). Plain items are numbered by their block (`255 - block_id`) and placed in the order of the
+blocks; replacing items share the sequence of the custom items.
+
+Vanilla items keep the runtime ids of the bundled data in every palette: custom items (replacing items included) get
+sequential ids after them, in registration order (Paletter's rule: the BDS capture's ids look alphabetical, which
+would be the file name order of an add-on, but that is not shown to be the rule). A custom block's plain item (`BlockItem.SIMPLE`) has the runtime id `255 - block_id`, as in
 BDS: negative, and it changes when a later layer adds blocks, because BDS numbers custom blocks by identifier in
 descending order. Read ids from the palette, never keep them across layers.
 
@@ -159,7 +173,7 @@ CustomBlock lamp = CustomBlock.builder("example:lamp")
         .all(MaterialInstances.Instance.builder().texture("example_lamp").build()).build())
     .component(CollisionBox.builder().boxes(CollisionBox.Entry.builder().origin(-8, 0, -8).size(16, 8, 16).build()).build())
     .permutation("q.block_state('example:lit')", LightEmission.of(10))
-    .creative(CreativePlacement.loose(CreativeCategory.CONSTRUCTION))
+    .menuCategory(CreativeCategory.CONSTRUCTION)
     .build();
 ```
 
@@ -226,8 +240,14 @@ PaletteLayer.builder("server").creative(editor -> {
 });
 ```
 
-Custom items and blocks declare a `CreativePlacement`: after an anchor, in a named group, or loose at the end of a
-category. Without an anchor, `CreativeOrdering` (set on `Paletter.Builder`) decides the order. The default, `BDS`, puts
+Custom items and blocks have a `menu_category` (the generated `MenuCategory` record: category, group,
+`hiddenInCommands`), which maps one to one from add-on JSON. As in BDS it alone decides whether the item or block item is in the
+creative inventory and in which category and group, under every ordering: absent or category `none` means not in it.
+`menuCategory(CreativeCategory)` and `menuCategory(CreativeCategory, group)` on both builders are shortcuts. A block and the
+item that replaces its item each have a menu category of their own. A `CreativePlacement` adjusts only the position within
+that category and group: `CreativePlacement.DEFAULT` (the default) or `CreativePlacement.after(ItemMatcher | ItemKey)` /
+`afterAnyVariantOf(type)`, set with `creativePlacement(placement)`. An anchor that matches nothing falls back to the default position
+and adds a warning to the palette report. `CreativeOrdering` (set on `Paletter.Builder`) only decides the order, never presence. The default, `BDS`, puts
 content exactly where BDS puts add-on content; [wire-notes.md](wire-notes.md#creative-inventory-order) has the rule.
 `CreativeContent` turns the layout into a valid packet: categories in client order, items the version lacks dropped,
 empty groups dropped (they crash the client), and network ids numbered from 1.
@@ -253,16 +273,20 @@ An item fallback is an exact variant: `ItemFallback.of(BedrockItems.BIRCH_BOAT)`
 your decision. `./gradlew :tools:run --args="check-data"` lists what each older version lacks.
 
 Content that a Bedrock version only has behind an experiment toggle is missing by default.
-`Paletter.builder().vanilla(v -> v.experiments("y_2026_drop_3"))` enables it; `vanilla(v -> v.remove(...))` hides vanilla
-items. `vanilla(v -> v.allExperiments())` enables every toggle the version gates content with, except the voxel
-shape experiment; the palette lists them in `Palette#experiments()`.
+`Paletter.builder().experiments("y_2026_drop_3")` enables it in every version; `experiments(version, "y_2026_drop_3")`
+enables it in one version (a version that is not served makes `build()` throw a `PaletteException`). Every call adds to
+the earlier ones, like `removeItems(...)`, which hides vanilla items. `allExperiments()` enables every toggle
+the version gates content with, except the voxel shape experiment, which only comes with an explicit
+`experiments("voxel_shapes")`; the palette lists them in `Palette#experiments()`.
 
 ## Previews
 
-Preview versions of Bedrock can be bundled next to releases. They are marked `preview` in `versions.txt` and skipped
-unless the system property `paletter.previews` is `true`. Generated API that only a bundled preview has (constants,
-states, enum values, components and fields) sits with the rest and is marked `@SincePreview("26.70")`; without previews
-enabled those constants resolve to `minecraft:unknown`. The mark goes away when the release has it.
+Preview versions of Bedrock can be bundled next to releases. They are marked `preview` in `versions.txt` (`DataVersion#isPreview()`)
+and served only by a Paletter built with `Paletter.builder().previews(true)`, which is off by default. Previews are a
+setting of the instance: Paletters with different settings coexist in one JVM. Generated API that only a bundled
+preview has (constants, states, enum values, components and fields) sits with the rest and is marked
+`@SincePreview("26.70")`; the constants exist either way, but are linked to the newest release, so they resolve through
+the fallbacks (normally to `minecraft:unknown`) in every Paletter, with previews or not. The mark goes away when the release has it.
 
 ## Behaviour
 
@@ -327,9 +351,44 @@ always. Every palette has it: a palette of a version whose data has no vanilla s
 `PaletteException`. `VoxelShape.ofBoxes` rejects what BDS rejects. In 26.30 the vanilla shapes are behind the
 `voxel_shapes` experiment. How BDS builds the registry is in [wire-notes.md](wire-notes.md#voxel-shapes).
 
+## Recipes
+
+The optional `paletter-recipes` module has the vanilla crafting, smelting, smithing and brewing recipes of each data version
+(`VanillaRecipes.of(version)`) and encodes them for a palette. `:paletter` never depends on it.
+
+```java
+VanillaRecipes vanilla = VanillaRecipes.of(palette.version());
+CraftingData data = CraftingData.builder(palette)
+    .recipes(vanilla.recipes()).potionMixes(vanilla.potionMixes()).containerMixes(vanilla.containerMixes())
+    .build();
+data.applyTo(craftingDataPacket);
+```
+
+`build()` never throws. Items resolve through the palette, layers included, and tags are `palette.itemTags()`. A recipe with an
+item the palette does not have, a tag without items, or a result block state it does not have is dropped, as BDS drops it;
+`data.dropped()` lists them and `data.netId(recipe)` is -1 for them. Net ids are 1, 2, ... in the order the recipes were
+added. UUIDs come from the recipe's id (and station), so they are the same on every run; the multi recipes keep their fixed
+UUIDs. Apart from net ids and UUIDs the packet is what BDS sends for the same palette: a test compares the encoding of every bundled
+data version's recipes with BDS's committed capture of it. `applyTo` sets `cleanRecipes`, as BDS does. Palettes of protocols below 2168 (26.30) read one recipe list instead of one per
+kind, so `applyTo` fills that too, in the order the recipes were added (BDS interleaves the kinds there; the recipes themselves
+are compared with BDS's 26.30 capture, the order is not). Equal recipes added twice are encoded once; different recipes with
+the same id and station get the same UUID.
+
+`Ingredients.tagOf(palette, items, unobtainable)` finds the palette's item tag (layers included) whose members are exactly a set
+of items, for sending an ingredient as one tag instead of one entry per item. Items the palette lacks (an older version) and
+items the predicate calls unobtainable are left out on both sides; with several matches the smallest tag wins, then the first
+by name; no match gives null.
+
 ## Errors and reports
 
 Layers given to `Paletter.builder()` are startup configuration: a problem throws `PaletteException` on the first
-`palette(...)` call, and `Paletter#warmUp()` compiles every version up front. `Palette#extend(layer)` never throws for a
-problem with the layer; it returns the base palette unchanged with an `ERROR` entry in `report()`. `PaletteReport` also
-lists what was adapted, replaced or dropped per version.
+`palette(...)` call, and `Paletter#warmUp()` compiles every version up front. `Palette#extend(layer)` throws a
+`PaletteException` too, and changes nothing: the palette is unchanged, no palette or failure is cached, and the same palette can
+still be extended by another layer. Duplicate identifiers (blocks, items, voxel shapes) and duplicate block runtime ids
+are rejected, across layers and within one. `PaletteException#layer()` is the id of the layer and `#identifier()` the
+content it is about (null when it is not about one). The message names both, and the version. `PaletteReport` also
+lists what was adapted, replaced or dropped per version. A report never changes (a palette extended with a layer has a new
+one) and knows its `version()`; `unknownBlocks()` (block types) and `unknownItems()` (item variants, so a missing aux is
+exact) are the content of the newest data that the
+version lacks and no specific fallback covers (a default fallback does not count; content behind a disabled experiment or
+removed with `removeItems` is included).
