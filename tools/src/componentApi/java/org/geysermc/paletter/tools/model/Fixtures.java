@@ -96,6 +96,11 @@ public final class Fixtures {
         return new Fixtures(json, feedback, keys, schema.forFormat(formatVersion), bdsData, schemaOn);
     }
 
+    /** The enums only an older format of the schema lists ({@link Schema#olderEnums}); none without a schema. */
+    public List<Schema.OlderEnum> olderEnums() {
+        return schema.olderEnums();
+    }
+
     /** The build of the schema these fixtures merge, or null. */
     public String schemaBuild() {
         return schema == Schema.NONE ? null : schema.build();

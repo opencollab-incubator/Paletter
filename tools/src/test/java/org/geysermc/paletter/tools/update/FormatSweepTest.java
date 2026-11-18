@@ -3,6 +3,7 @@ package org.geysermc.paletter.tools.update;
 import com.google.gson.JsonObject;
 import org.geysermc.paletter.tools.model.Fixtures;
 import org.geysermc.paletter.tools.model.Model;
+import org.geysermc.paletter.tools.model.Schema;
 import org.geysermc.paletter.tools.model.addon.AddonGenerator;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
@@ -15,6 +16,7 @@ import java.util.Set;
 import java.util.TreeSet;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /** The plan of the format sweep: a component BDS rejects is asked at every known format, each beside a control of that format. */
@@ -58,5 +60,51 @@ class FormatSweepTest {
             && v.role().equals("format")).findFirst().orElseThrow();
         JsonObject components = custom.definition().getAsJsonObject("minecraft:block").getAsJsonObject("components");
         assertEquals(custom.component(), components.get("minecraft:custom_components"));
+    }
+
+    private static final String OLD_ENUM_MODEL = "{\"source\": \"t\", \"commit\": \"t\", \"license\": \"t\", \"formatNotes\": [], \"components\": ["
+        + "{\"id\": \"item:minecraft:box\", \"kind\": \"item\", \"category\": \"component\", \"name\": \"minecraft:box\", \"status\": \"active\","
+        + " \"doc\": \"\", \"page\": \"\", \"experiments\": [], \"notes\": [], \"forms\": [{\"type\": \"object\"}], \"fields\": ["
+        + "{\"path\": \"sound\", \"types\": [{\"type\": \"string\"}], \"required\": false, \"enumValues\": [], \"examples\": [], \"doc\": \"\"},"
+        + "{\"path\": \"kept\", \"types\": [{\"type\": \"string\"}], \"required\": false, \"enumValues\": [], \"examples\": [], \"doc\": \"\"}]}]}";
+    /** Format 1.26.30 lists enums for {@code sound} and {@code kept}; 1.26.50 only for {@code kept} and has no definition of {@code gone}'s field. */
+    private static final String OLD_ENUM_SCHEMA = "{\"bdsVersion\": \"1.26.99.1\", \"formats\": {\"item\": [\"1.26.30\", \"1.26.50\"]}, \"item\": {\"minecraft:box\": ["
+        + "{\"formats\": [\"1.26.30\"], \"root\": {\"types\": [\"object\"]}, \"fields\": {\"sound\": {\"types\": [\"string\"], \"enum\": [\"a\", \"b\"]},"
+        + " \"kept\": {\"types\": [\"string\"], \"enum\": [\"x\"]}, \"gone\": {\"types\": [\"string\"], \"enum\": [\"y\"]}}},"
+        + "{\"formats\": [\"1.26.50\"], \"root\": {\"types\": [\"object\"]}, \"fields\": {\"sound\": {\"types\": [\"string\"]},"
+        + " \"kept\": {\"types\": [\"string\"], \"enum\": [\"x\"]}}}]}}";
+
+    @Test
+    void everyValueOfAnEnumOnlyAnOlderFormatListsIsAskedAtThatFormat(@TempDir Path root) throws IOException {
+        Path model = Files.createDirectories(root.resolve("model"));
+        Files.writeString(model.resolve("components.json"), OLD_ENUM_MODEL);
+        Files.writeString(model.resolve("fixtures.json"), FIXTURES);
+        Files.createDirectories(root.resolve("bds/1.26.99.1"));
+        Files.writeString(root.resolve("bds/1.26.99.1/schema.json"), OLD_ENUM_SCHEMA);
+        Fixtures fixtures = Fixtures.read(model, true);
+        AddonGenerator generator = AddonGenerator.empty(Model.read(model.resolve("components.json")), fixtures, "1.26.50");
+
+        assertEquals(2, FormatSweep.planOlderEnums(generator, fixtures));
+
+        // not kept (the newest format has the enum too) and not gone (the model has no such field)
+        assertEquals(List.of("a", "b"), generator.variants().stream().map(v -> v.value().getAsString()).toList());
+        assertTrue(generator.variants().stream().allMatch(v -> v.role().equals("enum") && v.path().equals("sound") && "1.26.30".equals(v.format())));
+        assertEquals("a", generator.variants().getFirst().definition().getAsJsonObject("minecraft:item").getAsJsonObject("components")
+            .getAsJsonObject("minecraft:box").get("sound").getAsString());
+    }
+
+    @Test
+    void theCommittedSchemaHasEnumsOnlyAnOlderFormatLists() {
+        Path data = Path.of(System.getProperty("paletter.root", "..")).resolve("data/bds");
+        List<Schema.OlderEnum> found = Schema.newest(data, null).olderEnums();
+        System.out.println("older-format enums: " + found.size() + " fields, " + found.stream().mapToInt(e -> e.values().size()).sum() + " values");
+        assertFalse(found.isEmpty());
+        for (Schema.OlderEnum e : found) {
+            assertFalse(e.values().isEmpty(), e.toString());
+            assertEquals("", Schema.newest(data, null).enumValues(e.component(), e.path()).stream().findAny().orElse(""),
+                e + ": the newest format lists no enum there");
+        }
+        assertTrue(found.stream().anyMatch(e -> e.component().equals("item:minecraft:swing_sounds") && e.path().equals("attack_hit")));
+        assertTrue(found.stream().anyMatch(e -> e.component().equals("item:minecraft:use_modifiers") && e.path().equals("start_sound")));
     }
 }
