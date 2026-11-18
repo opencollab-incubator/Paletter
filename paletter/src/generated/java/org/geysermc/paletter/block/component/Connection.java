@@ -16,7 +16,7 @@ import org.geysermc.paletter.annotation.BedrockFormat;
  * "Upcoming Creator Features" and Minecraft version 1.21.130.
  * <p>
  * Add-on JSON: {@code "minecraft:connection"}.
- * Bedrock requires the experiment Upcoming Creator Features for it (in some format versions).
+ * The creator docs name the experiment Upcoming Creator Features for it (in some format versions); unverified against BDS.
  *
  * @param enabledStates Which states to enable. Must specify at least one. Valid value is <code>minecraft:cardinal_connections</code>.
  *        Add-on JSON {@code enabled_states}. Required.

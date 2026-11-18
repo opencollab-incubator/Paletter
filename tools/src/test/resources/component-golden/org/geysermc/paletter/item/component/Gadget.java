@@ -12,7 +12,7 @@ import org.geysermc.paletter.annotation.ReplacedBy;
  * Old. Use test:widget instead.
  * <p>
  * Add-on JSON: {@code "test:gadget"}.
- * Bedrock requires the experiment Test Toggle for it (in some format versions).
+ * The creator docs name the experiment Test Toggle for it (in some format versions); unverified against BDS.
  *
  * @param value On. Add-on JSON {@code value}. Optional (null: not set).
  * @param level Only sent from protocol 200 on. Add-on JSON {@code level}. Optional (null: not set).

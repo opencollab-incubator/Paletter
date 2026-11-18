@@ -15,7 +15,7 @@ import org.geysermc.paletter.annotation.ServerOnly;
  * Add-on JSON: {@code "minecraft:replaceable"}.
  * Server only below protocol 2193: BDS accepts it in packs but sends nothing to clients there (BDS 1.26.36.1,
  * 1.26.45.1), so those palettes leave it out and add a report warning. Sent from protocol 2193 (BDS 1.26.52.3).
- * Bedrock requires the experiment Upcoming Creator Features for it (in some format versions).
+ * The creator docs name the experiment Upcoming Creator Features for it (in some format versions); unverified against BDS.
  *
  * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/blockreference/examples/blockcomponents/minecraftblock_replaceable?view=minecraft-bedrock-stable">Microsoft Learn: minecraft:replaceable</a>
  * @since 1.0.0

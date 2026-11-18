@@ -19,7 +19,7 @@ import org.geysermc.paletter.internal.component.Check;
  * experimental toggle "Upcoming Creator Features" is required.
  * <p>
  * Add-on JSON: {@code "minecraft:multi_block"}.
- * Bedrock requires the experiment Upcoming Creator Features for it (in some format versions).
+ * The creator docs name the experiment Upcoming Creator Features for it (in some format versions); unverified against BDS.
  *
  * @param enabledStates Which states to enable. The only valid (and required) value is <code>minecraft:multi_block_part</code>. Add-on
  *        JSON {@code enabled_states}. Required.

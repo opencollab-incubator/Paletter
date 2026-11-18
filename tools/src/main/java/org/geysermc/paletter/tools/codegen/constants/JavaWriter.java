@@ -8,6 +8,7 @@ import org.geysermc.paletter.tools.codegen.constants.ConstantsGenerator.StateCon
 import org.geysermc.paletter.tools.codegen.constants.ConstantsGenerator.StateModel;
 import org.geysermc.paletter.tools.codegen.constants.ConstantsGenerator.Variant;
 import org.geysermc.paletter.internal.vanilla.BlockLayout;
+import org.geysermc.paletter.tools.codegen.component.ExperimentToggles;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -281,36 +282,44 @@ public final class JavaWriter {
     }
 
     /**
-     * @param itemNames item identifier to the name of its {@code BedrockItems} constant
+     * {@code BedrockExperiments}: one String constant per toggle that a captured build had current, with {@code @BedrockSince}
+     * and {@code @BedrockUntil} naming the bundled data versions. A toggle first seen in a preview has
+     * {@code @SincePreview} instead (the constant goes if a newer preview drops it); only a release capture ends a toggle.
      */
-    /**
-     * {@code BedrockExperiments}: one String constant per toggle that a captured build had current, with {@code @Since} and
-     * {@code @Until} naming the bundled data versions.
-     */
-    static String experiments(List<ConstantsGenerator.Toggle> toggles, String oldest) {
+    static String experiments(List<ExperimentToggles.Toggle> toggles, String oldest) {
         StringBuilder out = new StringBuilder(HEADER);
         out.append("package ").append(ConstantsGenerator.PACKAGE).append(";\n\n");
-        out.append("import org.geysermc.paletter.annotation.Since;\n");
+        if (toggles.stream().anyMatch(t -> !t.sincePreview())) {
+            out.append("import org.geysermc.paletter.annotation.BedrockSince;\n");
+        }
         if (toggles.stream().anyMatch(t -> t.until() != null)) {
-            out.append("import org.geysermc.paletter.annotation.Until;\n");
+            out.append("import org.geysermc.paletter.annotation.BedrockUntil;\n");
+        }
+        if (toggles.stream().anyMatch(ExperimentToggles.Toggle::sincePreview)) {
+            out.append("import org.geysermc.paletter.annotation.SincePreview;\n");
         }
         out.append("\n/**\n * The experiment toggles of Bedrock: the ids to give {@code VanillaContent#experiments(String...)} and what\n");
         out.append(" * {@link org.geysermc.paletter.annotation.BedrockExperiment @BedrockExperiment} names. Every toggle a captured\n");
         out.append(" * Bedrock Dedicated Server had current is here ({@code data/bds}); toggles retired before the oldest capture are not.\n");
-        out.append(" * {@code @Since} is the first bundled data version whose capture has the toggle ({@code ").append(oldest)
+        out.append(" * {@code @BedrockSince} is the first bundled data version whose capture has the toggle ({@code ").append(oldest)
             .append("} is the oldest, so it may be older),\n");
-        out.append(" * {@code @Until} the first one where it no longer does: Bedrock released or retired the experiment, and the toggle does nothing.\n");
+        out.append(" * {@code @BedrockUntil} the first bundled release where it no longer does: Bedrock released or retired the experiment, and the\n");
+        out.append(" * toggle does nothing. {@link org.geysermc.paletter.annotation.SincePreview @SincePreview} marks a toggle only a bundled preview has.\n");
         out.append(" *\n * @since ").append(CLASS_SINCE).append("\n */\n");
         out.append("public final class BedrockExperiments {\n");
-        for (ConstantsGenerator.Toggle toggle : toggles) {
+        for (ExperimentToggles.Toggle toggle : toggles) {
             out.append("    /**\n     * {@code ").append(toggle.id()).append("}");
             if (toggle.name() != null) {
                 out.append(": ").append(toggle.name()).append('.');
             }
             out.append("\n     */\n");
-            out.append("    @Since(\"").append(toggle.since()).append("\")\n");
+            if (toggle.sincePreview()) {
+                out.append("    @SincePreview(\"").append(toggle.since()).append("\")\n");
+            } else {
+                out.append("    @BedrockSince(\"").append(toggle.since()).append("\")\n");
+            }
             if (toggle.until() != null) {
-                out.append("    @Until(\"").append(toggle.until()).append("\")\n");
+                out.append("    @BedrockUntil(\"").append(toggle.until()).append("\")\n");
             }
             out.append("    public static final String ").append(toggle.id().toUpperCase(java.util.Locale.ROOT)).append(" = \"")
                 .append(toggle.id()).append("\";\n\n");
@@ -319,6 +328,9 @@ public final class JavaWriter {
         return out.toString();
     }
 
+    /**
+     * @param itemNames item identifier to the name of its {@code BedrockItems} constant
+     */
     static String variants(List<Variant> variants, Map<String, String> itemNames, String version) {
         StringBuilder out = new StringBuilder(HEADER);
         out.append("package ").append(ConstantsGenerator.PACKAGE).append(";\n\n");

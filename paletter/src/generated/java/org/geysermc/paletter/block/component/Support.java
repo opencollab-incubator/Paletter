@@ -17,7 +17,7 @@ import org.geysermc.paletter.annotation.BedrockFormat;
  * support. The type of support shape for this block. Currently, the options are: "fence" and "stair".
  * <p>
  * Add-on JSON: {@code "minecraft:support"}.
- * Bedrock requires the experiment Upcoming Creator Features for it (in some format versions).
+ * The creator docs name the experiment Upcoming Creator Features for it (in some format versions); unverified against BDS.
  *
  * @param shape Required field. The type of support shape for this block. Add-on JSON {@code shape}. Required.
  * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/blockreference/examples/blockcomponents/minecraftblock_support?view=minecraft-bedrock-stable">Microsoft Learn: minecraft:support</a>

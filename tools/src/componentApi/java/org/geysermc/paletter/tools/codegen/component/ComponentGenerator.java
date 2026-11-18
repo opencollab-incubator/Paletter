@@ -296,7 +296,11 @@ public final class ComponentGenerator {
      * Simple names are unique across the public API. A generated component whose name another generated component or a
      * public type that is not generated here ({@link Context#reserved}) also has gets {@code Block} or {@code Item} in front
      * (traits count as blocks). The set of colliding names is computed, never listed. Nested types are scoped by their
-     * owner, but one that has the name of a top level type would shadow it: that fails and asks for an api.json typeNames entry.
+     * owner, but one that has the name of a top level type would shadow it: that fails and asks for an api.json typeNames entry
+     * (or enums), which is a hand choice: {@code VisualGeometry} reads better than {@code EmbeddedVisual.EmbeddedVisualGeometry}.
+     * <p>
+     * A prefix is a rename of the API. Before 1.0 nothing but {@code :paletter:apiCheck} stops a new component from silently
+     * giving an existing name a prefix: the dump of {@code paletter/api/paletter.api} shows it in the diff.
      */
     private void prefixCollisions() {
         Map<String, Integer> counts = new HashMap<>();
@@ -384,6 +388,7 @@ public final class ComponentGenerator {
         doc.getAsJsonArray("experiments").forEach(e -> experiments.add(e.getAsString()));
         c.experiments = experiments;
         c.toggles = experiments.stream().map(e -> in.context().toggles().get(e)).filter(java.util.Objects::nonNull).distinct().sorted().toList();
+        c.unmappedExperiments = experiments.stream().filter(e -> !in.context().toggles().containsKey(e)).toList();
         if (c.toggles.size() > 1) {
             throw new GenerationException(c.id + " needs several experiment toggles " + c.toggles + ": @BedrockExperiment takes one; make it repeatable");
         }

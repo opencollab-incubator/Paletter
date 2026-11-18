@@ -13,7 +13,7 @@ import org.geysermc.paletter.annotation.BedrockFormat;
  * obstruct_rain_accumulate_snow and none.
  * <p>
  * Add-on JSON: {@code "minecraft:precipitation_interactions"}.
- * Bedrock requires the experiment Upcoming Creator Features for it (in some format versions).
+ * The creator docs name the experiment Upcoming Creator Features for it (in some format versions); unverified against BDS.
  *
  * @param precipitationBehavior What behavior should the block have. Possible values: obrain, obstruct_rain_accumulate_snow, snowlogging, and
  *        none Add-on JSON {@code precipitation_behavior}. Optional (null: not set). The docs give the default

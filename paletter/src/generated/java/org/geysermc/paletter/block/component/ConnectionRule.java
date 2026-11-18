@@ -15,7 +15,7 @@ import org.geysermc.paletter.annotation.BedrockFormat;
  * block.
  * <p>
  * Add-on JSON: {@code "minecraft:connection_rule"}.
- * Bedrock requires the experiment Upcoming Creator Features for it (in some format versions).
+ * The creator docs name the experiment Upcoming Creator Features for it (in some format versions); unverified against BDS.
  *
  * @param acceptsConnectionsFrom The type of block allowed to connect to this block. Note that the "only_fences" option allows connections from
  *        all Vanilla fences excluding NetherBrick. Add-on JSON {@code accepts_connections_from}. Default:

@@ -242,6 +242,12 @@ class ConstantsGoldenTest {
             {"bdsVersion": "1.1.2", "protocol": 115,
              "toggles": {"drop": {"status": "retired"}, "fresh": {"status": "current", "name": "Fresh Features"}}}
             """);
+        // A preview has a toggle of its own (@SincePreview) and retires "fresh", which says nothing of the release yet (no @BedrockUntil)
+        Path preview = Files.createDirectories(bds.resolve("1.2.0"));
+        Files.writeString(preview.resolve("experiments.json"), """
+            {"bdsVersion": "1.2.0", "protocol": 125,
+             "toggles": {"fresh": {"status": "retired"}, "next": {"status": "current", "name": "Next Features"}}}
+            """);
         Files.writeString(newer.resolve("education.json"), """
             {"bdsVersion": "1.1.2", "protocol": 115, "items": ["minecraft:apple"], "blocks": ["minecraft:test_block"]}
             """);

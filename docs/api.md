@@ -23,7 +23,7 @@ Not API:
 
 `@Experimental` means only that the API itself is unstable. `@BedrockExperiment("<toggle>")` is separate: it marks a
 component (or field) Bedrock only accepts with that experiment toggle enabled, as the captured servers call the toggle; the
-ids are the constants of `BedrockExperiments` (`@Since`/`@Until` give the bundled data versions whose captures have the
+ids are the constants of `BedrockExperiments` (`@BedrockSince`/`@BedrockUntil` give the bundled data versions whose captures have the
 toggle current), and `v.experiments(BedrockExperiments.UPCOMING_CREATOR_FEATURES)` enables one. `@Experimental` marks
 vanilla item overrides (`PaletteLayer.Builder#overrideItem`, `ItemOverride`): BDS replaced the components of
 an overridden data driven item (apple), accepted the hard coded feather at format 1.10 as a legacy item and rejected the

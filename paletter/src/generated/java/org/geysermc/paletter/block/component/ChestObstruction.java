@@ -16,7 +16,7 @@ import org.geysermc.paletter.annotation.ServerOnly;
  * Add-on JSON: {@code "minecraft:chest_obstruction"}.
  * Server only: BDS accepts it in packs but sends nothing to clients (BDS 1.26.36.1, 1.26.45.1, 1.26.52.3,
  * 1.26.63.1, 1.26.70.24), so it has no client effect. Palettes leave it out without a warning.
- * Bedrock requires the experiment Upcoming Creator Features for it (in some format versions).
+ * The creator docs name the experiment Upcoming Creator Features for it (in some format versions); unverified against BDS.
  *
  * @param obstructionRule [optional] How the block should be evaluated by a chest during chest opening. Must be one of the following
  *        options: "always" - Will always oba chest from opening when directly above it. "never" - Will never obstruct a

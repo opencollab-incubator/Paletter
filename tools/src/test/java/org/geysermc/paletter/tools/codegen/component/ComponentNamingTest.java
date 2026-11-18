@@ -104,6 +104,7 @@ class ComponentNamingTest {
         String gadget = ComponentGenerator.generate(in).get(ITEM_PKG + "Gadget.java");
         assertTrue(gadget.contains("@BedrockExperiment(\"test_toggle\")"), gadget);
         assertFalse(gadget.contains("@Experimental"), "Experimental means the API is unstable, nothing else");
+        assertFalse(gadget.contains("Unverified: the creator docs name experiment"), "a named toggle needs no note about the name");
     }
 
     @Test
@@ -112,7 +113,9 @@ class ComponentNamingTest {
         Inputs in = withExperiments(new Context(Set.of(), Map.of("Test Toggle", "test_toggle")), "Holiday Creator Features");
         String gadget = ComponentGenerator.generate(in).get(ITEM_PKG + "Gadget.java");
         assertFalse(gadget.contains("@BedrockExperiment"), gadget);
-        assertTrue(gadget.contains("Holiday Creator Features"), gadget);
+        assertTrue(gadget.contains("The creator docs name the experiment Holiday Creator Features for it (in some format versions); unverified against BDS."), gadget);
+        assertTrue(gadget.contains("Unverified: the creator docs name experiment \"Holiday Creator Features\", which is in no capture."), gadget);
+        assertFalse(gadget.contains("requires"), "the docs are not claimed to be enforced");
     }
 
     @Test
@@ -124,7 +127,10 @@ class ComponentNamingTest {
 
     @Test
     void reservedNamesAreTheTypesThatAreNotGeneratedByTheComponentGenerator(@TempDir Path root) throws IOException {
-        write(root.resolve("paletter/src/main/java/org/geysermc/paletter/Palette.java"));
+        Path palette = root.resolve("paletter/src/main/java/org/geysermc/paletter/Palette.java");
+        Files.createDirectories(palette.getParent());
+        Files.writeString(palette, "package x;\npublic final class Palette {\n    public static class Nested {}\n}\nfinal class Helper {}\n"
+            + "public sealed interface Shape permits Circle {}\npublic @interface Marker {}\n");
         write(root.resolve("paletter/src/main/java/org/geysermc/paletter/internal/Hidden.java"));
         write(root.resolve("paletter/src/main/java/org/geysermc/paletter/item/component/WireOnlyItemComponent.java"));
         write(root.resolve("paletter/src/generated/java/org/geysermc/paletter/vanilla/BedrockBlocks.java"));
@@ -133,28 +139,13 @@ class ComponentNamingTest {
         Files.writeString(generated, "// " + Main.GENERATOR + " from data/model." + System.lineSeparator() + "package x;");
         write(root.resolve("paletter/src/generated/java/org/geysermc/paletter/internal/component/ItemWire.java"));
         Set<String> reserved = Main.context(root).reserved();
-        assertEquals(Set.of("Palette", "WireOnlyItemComponent", "BedrockBlocks"), reserved);
-    }
-
-    @Test
-    void toggleNamesComeFromTheCurrentTogglesOfTheCaptures(@TempDir Path bds) throws IOException {
-        capture(bds.resolve("1.0.0.1"), """
-            {"toggles": {"upcoming": {"status": "current", "name": "Upcoming Creator Features"}, "old": {"status": "retired"}}}""");
-        capture(bds.resolve("1.0.0.2"), """
-            {"toggles": {"upcoming": {"status": "current", "name": "Upcoming Creator Features"}, "cameras": {"status": "current", "name": "Cameras"}}}""");
-        assertEquals(Map.of("Upcoming Creator Features", "upcoming", "Cameras", "cameras"), Main.toggleNames(bds));
-    }
-
-    @Test
-    void aNameOfTwoToggleIdsIsAnError(@TempDir Path bds) throws IOException {
-        capture(bds.resolve("1.0.0.1"), """
-            {"toggles": {"a": {"status": "current", "name": "Same"}, "b": {"status": "current", "name": "Same"}}}""");
-        assertThrows(IllegalStateException.class, () -> Main.toggleNames(bds));
+        assertEquals(Set.of("Palette", "Shape", "Marker", "WireOnlyItemComponent", "BedrockBlocks"), reserved);
     }
 
     private static void write(Path file) throws IOException {
         Files.createDirectories(file.getParent());
-        Files.writeString(file, "package x;\n");
+        String name = file.getFileName().toString().replace(".java", "");
+        Files.writeString(file, "package x;\npublic final class " + name + " {}\n");
     }
 
     private static void capture(Path dir, String json) throws IOException {

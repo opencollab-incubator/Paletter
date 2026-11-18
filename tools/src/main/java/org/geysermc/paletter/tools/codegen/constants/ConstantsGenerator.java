@@ -7,6 +7,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import org.geysermc.paletter.internal.data.PaletteDataCodec;
+import org.geysermc.paletter.tools.codegen.component.ExperimentToggles;
 import org.geysermc.paletter.internal.data.Renames;
 import org.geysermc.paletter.internal.data.VanillaData;
 import org.geysermc.paletter.internal.data.VanillaItem;
@@ -132,17 +133,6 @@ public final class ConstantsGenerator {
      */
     public record Result(Map<String, String> files, List<String> added, List<String> deprecated, List<String> tableBlocks,
                          Map<String, Integer> counts, String release, String preview) {
-    }
-
-    /**
-     * An experiment toggle of the BDS captures.
-     *
-     * @param id the toggle id, e.g. {@code upcoming_creator_features}
-     * @param name the English name of the toggle in the BDS binary, e.g. {@code Upcoming Creator Features}
-     * @param since the first bundled data version whose capture has it current (the oldest bundled one if that capture is the oldest)
-     * @param until the first bundled data version whose capture has it retired after that, or null while the newest still has it
-     */
-    public record Toggle(String id, String name, String since, String until) {
     }
 
     /** One bundled version from {@code versions.txt}. */
@@ -674,7 +664,7 @@ public final class ConstantsGenerator {
         private final Map<String, Set<String>> blockNames = new HashMap<>();
         private final Map<String, Set<String>> itemNames = new HashMap<>();
         private final Map<String, List<VariantNames.Entry>> variantNames;
-        private final List<Toggle> toggles;
+        private final List<ExperimentToggles.Toggle> toggles;
 
         /**
          * @param gatedItems release name to item identifier to the current experiment toggle that adds it in that release
@@ -691,7 +681,7 @@ public final class ConstantsGenerator {
          */
         public Sources(List<VanillaData> releases, Map<String, Map<String, String>> gatedItems, Map<String, Map<String, String>> gatedBlocks,
                        Set<String> educationItems, Set<String> educationBlocks, Map<String, List<VariantNames.Entry>> variantNames,
-                       List<Toggle> toggles) {
+                       List<ExperimentToggles.Toggle> toggles) {
             this.toggles = List.copyOf(toggles);
             this.variantNames = variantNames;
             this.releases = List.copyOf(releases);
@@ -710,7 +700,7 @@ public final class ConstantsGenerator {
         }
 
         /** @return the experiment toggles that were current in a captured build, sorted by id */
-        public List<Toggle> toggles() {
+        public List<ExperimentToggles.Toggle> toggles() {
             return toggles;
         }
 
@@ -748,7 +738,6 @@ public final class ConstantsGenerator {
             Map<String, Map<String, String>> gatedBlocks = new TreeMap<>();
             Set<String> educationItems = new TreeSet<>();
             Set<String> educationBlocks = new TreeSet<>();
-            Map<String, String[]> toggleHistory = new TreeMap<>();
             if (bds != null && Files.isDirectory(bds)) {
                 List<Path> captures;
                 try (var stream = Files.list(bds)) {
@@ -761,9 +750,6 @@ public final class ConstantsGenerator {
                         // A capture of a preview says nothing of the release before it. The capture says whether it is one;
                         // without that, the bundle its protocol belongs to does
                         Bundle bundle = bundleOf(bundles, json.get("protocol").getAsInt());
-                        if (bundle != null) {
-                            trackToggles(toggleHistory, json.getAsJsonObject("toggles"), bundle.name());
-                        }
                         Boolean flagged = previewFlag(capture);
                         boolean isPreview = flagged != null ? flagged : bundle != null && bundle.preview();
                         String release = bundle == null || isPreview ? null : bundle.name();
@@ -790,33 +776,8 @@ public final class ConstantsGenerator {
                     }
                 }
             }
-            List<Toggle> toggles = new ArrayList<>();
-            toggleHistory.forEach((id, h) -> toggles.add(new Toggle(id, h[0], h[1], h[2])));
+            List<ExperimentToggles.Toggle> toggles = ExperimentToggles.read(data, bds);
             return new Sources(releases, gatedItems, gatedBlocks, educationItems, educationBlocks, variantNames, toggles);
-        }
-
-        /**
-         * Folds one capture into the history of the toggles: {@code [name, since, until]} by id. A toggle is in the history
-         * from the first capture that has it current; the first capture after that where it is not current ends it
-         * (until), and a later capture that has it current again reopens it.
-         *
-         * @param bundle the bundled data version the capture belongs to
-         */
-        static void trackToggles(Map<String, String[]> history, JsonObject toggles, String bundle) {
-            for (Map.Entry<String, JsonElement> toggle : toggles.entrySet()) {
-                JsonObject value = toggle.getValue().getAsJsonObject();
-                String[] entry = history.get(toggle.getKey());
-                if (value.get("status").getAsString().equals("current")) {
-                    if (entry == null) {
-                        entry = new String[]{null, bundle, null};
-                        history.put(toggle.getKey(), entry);
-                    }
-                    entry[0] = value.has("name") ? value.get("name").getAsString() : entry[0];
-                    entry[2] = null;
-                } else if (entry != null && entry[2] == null) {
-                    entry[2] = bundle;
-                }
-            }
         }
 
         /** The variant names of a bundled version, preview or release; none for a version without. */

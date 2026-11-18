@@ -269,6 +269,14 @@ public @interface org.geysermc.paletter.annotation.BedrockFormat {
     public abstract java.lang.String value()
 }
 
+public @interface org.geysermc.paletter.annotation.BedrockSince {
+    public abstract java.lang.String value()
+}
+
+public @interface org.geysermc.paletter.annotation.BedrockUntil {
+    public abstract java.lang.String value()
+}
+
 public @interface org.geysermc.paletter.annotation.Education {
 }
 
@@ -287,15 +295,7 @@ public @interface org.geysermc.paletter.annotation.ServerOnly {
     public abstract int until()
 }
 
-public @interface org.geysermc.paletter.annotation.Since {
-    public abstract java.lang.String value()
-}
-
 public @interface org.geysermc.paletter.annotation.SincePreview {
-    public abstract java.lang.String value()
-}
-
-public @interface org.geysermc.paletter.annotation.Until {
     public abstract java.lang.String value()
 }
 

@@ -11,12 +11,12 @@ import java.lang.annotation.Target;
  * annotated constant. For the oldest bundled version it means "at the latest": earlier versions are not bundled.
  *
  * @since 1.0.0
- * @see Until
+ * @see BedrockUntil
  */
 @Documented
 @Retention(RetentionPolicy.RUNTIME)
-@Target({ElementType.TYPE, ElementType.METHOD, ElementType.CONSTRUCTOR, ElementType.FIELD})
-public @interface Since {
+@Target(ElementType.FIELD)
+public @interface BedrockSince {
     /**
      * @return the name of the data version, e.g. {@code 26.40}
      */

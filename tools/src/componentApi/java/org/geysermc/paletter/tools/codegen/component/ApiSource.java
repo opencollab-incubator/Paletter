@@ -250,8 +250,13 @@ final class ApiSource {
                     + ". Its encoder writes nothing and adds a report warning, as BDS would never send it to a client."))).append('\n');
             }
             if (!c.experiments.isEmpty()) {
-                doc.append("Bedrock requires the experiment").append(c.experiments.size() > 1 ? "s " : " ")
-                    .append(String.join(", ", c.experiments.stream().map(Docs::escape).toList())).append(" for it (in some format versions).\n");
+                // TODO: the gating is the creator docs' word; a BDS capture of the component with and without the toggle should verify it
+                doc.append("The creator docs name the experiment").append(c.experiments.size() > 1 ? "s " : " ")
+                    .append(String.join(", ", c.experiments.stream().map(Docs::escape).toList()))
+                    .append(" for it (in some format versions); unverified against BDS.\n");
+                for (String name : c.unmappedExperiments) {
+                    doc.append("Unverified: the creator docs name experiment \"").append(Docs.escape(name)).append("\", which is in no capture.\n");
+                }
             }
             if (c.transform != null) {
                 doc.append("Compiled by the hand transform {@code Transforms.").append(c.transform).append("}.\n");

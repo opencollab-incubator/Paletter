@@ -16,7 +16,8 @@ import org.geysermc.paletter.annotation.BedrockFormat;
  * through. If this component is omitted, default values are used.
  * <p>
  * Add-on JSON: {@code "minecraft:collision_box"}.
- * Bedrock requires the experiments Holiday Creator Features, Upcoming Creator Features for it (in some format versions).
+ * The creator docs name the experiments Holiday Creator Features, Upcoming Creator Features for it (in some format versions); unverified against BDS.
+ * Unverified: the creator docs name experiment "Holiday Creator Features", which is in no capture.
  *
  * @param boxes The entries of the component (add-on JSON: the component's value is this list). Default: <code>[]</code>.
  *        Compiled by the hand transform {@code Transforms.collisionBoxes}.
