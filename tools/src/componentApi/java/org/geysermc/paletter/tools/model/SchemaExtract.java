@@ -136,7 +136,7 @@ public final class SchemaExtract {
             for (var component : properties.entrySet()) {
                 Map<String, JsonObject> fields = new LinkedHashMap<>();
                 try {
-                    visit(component.getValue().getAsJsonObject(), format.getValue(), "", 0, fields, Set.of(format.getValue()));
+                    visit(component.getValue().getAsJsonObject(), format.getValue(), "", 0, fields, Set.of(format.getValue() + "#"));
                 } catch (IOException | RuntimeException e) {
                     // One component the extract cannot read is not the end of the others; it is missing from this format
                     skipped.add(kind + " " + format.getKey() + " " + component.getKey() + ": " + e.getMessage());
@@ -197,7 +197,7 @@ public final class SchemaExtract {
     }
 
     /** Adds what the schema {@code node} says at {@code path}, then goes into its references, alternatives and members. */
-    private void visit(JsonObject node, Path base, String path, int depth, Map<String, JsonObject> fields, Set<Path> stack) throws IOException {
+    private void visit(JsonObject node, Path base, String path, int depth, Map<String, JsonObject> fields, Set<String> stack) throws IOException {
         if (depth > MAX_DEPTH) {
             throw new IOException("schema nesting deeper than " + MAX_DEPTH + " at '" + path + "' in " + rel(base));
         }
@@ -233,12 +233,12 @@ public final class SchemaExtract {
             facets.addProperty("deprecated", true);
         }
         if (node.has("$ref")) {
-            Path target = resolve(base, node.get("$ref").getAsString());
-            // A reference back into a file being read is a recursive type: its members were already added
-            if (!stack.contains(target)) {
-                Set<Path> inner = new HashSet<>(stack);
-                inner.add(target);
-                visit(load(target), target, path, depth + 1, fields, inner);
+            Reference target = resolve(base, node.get("$ref").getAsString());
+            // A reference back into a schema being read is a recursive type: its members were already added
+            if (!stack.contains(target.key())) {
+                Set<String> inner = new HashSet<>(stack);
+                inner.add(target.key());
+                visit(target.node(), target.file(), path, depth + 1, fields, inner);
             }
         }
         List<Map<String, JsonObject>> alternatives = new ArrayList<>();
@@ -337,15 +337,42 @@ public final class SchemaExtract {
         return server.relativize(file).toString().replace('\\', '/');
     }
 
-    private Path resolve(Path base, String ref) throws IOException {
-        if (ref.contains("#")) {
-            throw new IOException("a $ref with a fragment (" + ref + " in " + rel(base) + ") is not followed");
+    /** What a {@code $ref} points to: the schema {@code node}, in {@code file}, named {@code key} (file and fragment). */
+    private record Reference(Path file, JsonObject node, String key) {
+    }
+
+    /**
+     * A {@code $ref} is a file ({@code Collision Box.json}), a fragment of the file it is in ({@code #/definitions/123};
+     * BDS 1.26.36.1 writes all block components into one file this way) or a fragment of another file.
+     */
+    private Reference resolve(Path base, String ref) throws IOException {
+        int hash = ref.indexOf('#');
+        String name = hash < 0 ? ref : ref.substring(0, hash);
+        String fragment = hash < 0 ? "" : ref.substring(hash + 1);
+        Path file = base;
+        if (!name.isEmpty()) {
+            file = base.getParent().resolve(URLDecoder.decode(name.replace("+", "%2B"), StandardCharsets.UTF_8)).normalize();
+            if (!Files.isRegularFile(file)) {
+                throw new IOException("the $ref " + ref + " in " + rel(base) + " points to a file that is not there");
+            }
         }
-        Path target = base.getParent().resolve(URLDecoder.decode(ref.replace("+", "%2B"), StandardCharsets.UTF_8)).normalize();
-        if (!Files.isRegularFile(target)) {
-            throw new IOException("the $ref " + ref + " in " + rel(base) + " points to a file that is not there");
+        JsonElement node = load(file);
+        if (!fragment.isEmpty()) {
+            if (!fragment.startsWith("/")) {
+                throw new IOException("the $ref " + ref + " in " + rel(base) + " is not a JSON pointer");
+            }
+            for (String part : fragment.substring(1).split("/")) {
+                String key = URLDecoder.decode(part.replace("+", "%2B"), StandardCharsets.UTF_8).replace("~1", "/").replace("~0", "~");
+                node = node.isJsonObject() ? node.getAsJsonObject().get(key) : null;
+                if (node == null) {
+                    throw new IOException("the $ref " + ref + " in " + rel(base) + " points to a definition that is not there");
+                }
+            }
         }
-        return target;
+        if (!node.isJsonObject()) {
+            throw new IOException("the $ref " + ref + " in " + rel(base) + " does not point to a schema object");
+        }
+        return new Reference(file, node.getAsJsonObject(), file + "#" + fragment);
     }
 
     private JsonObject load(Path file) throws IOException {

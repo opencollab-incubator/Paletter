@@ -106,6 +106,44 @@ class SchemaTest {
         assertThrows(IOException.class, () -> SchemaExtract.extract(docs.resolve("nowhere"), "1.26.99.1"));
     }
 
+    /**
+     * Fixture: BDS docgen 1.26.36.1, {@code json_schemas/server/block_components/1.26.20/Block Components.json} (cut to two
+     * components). That build writes every block component into this one file as {@code definitions} and refers to them with
+     * {@code #/definitions/<id>}; later builds use a file per component.
+     */
+    @Test
+    void aReferenceToADefinitionOfTheSameFileIsFollowed() throws IOException {
+        file("block_components/1.26.20/Block Components.json", """
+            {"$schema": "http://json-schema.org/draft-07/schema#", "$id": "2556852513", "x-format-version": "1.26.20", "x-minecraft-version": "1.26.36",
+             "definitions": {
+              "202983454": {"title": "Detailed Flammable", "oneOf": [{"type": "boolean"}, {"$ref": "#/definitions/545187925"}]},
+              "545187925": {"title": "Detailed Flammable", "type": "object", "properties": {
+                "catch_chance_modifier": {"type": "integer", "default": 5, "minimum": 0.0},
+                "lava_flammable": {"title": "Lava Flammable", "type": "string", "default": "never", "enum": ["always", "never"]}}},
+              "1514119701": {"title": "Friction", "type": "number", "minimum": 0.0, "maximum": 0.8999999761581421}},
+             "properties": {"minecraft:flammable": {"$ref": "#/definitions/202983454"}, "minecraft:friction": {"$ref": "#/definitions/1514119701"}}}
+            """);
+        JsonObject schema = SchemaExtract.extract(docs, "1.26.36.1");
+        assertNull(schema.get("skipped"));
+        JsonObject friction = definition(schema, "block", "minecraft:friction", 0);
+        assertEquals("{\"types\":[\"number\"],\"minimum\":0.0,\"maximum\":0.8999999761581421}", friction.getAsJsonObject("root").toString());
+        JsonObject flammable = definition(schema, "block", "minecraft:flammable", 0);
+        assertEquals("[\"boolean\",\"object\"]", flammable.getAsJsonObject("root").get("types").toString());
+        assertEquals("[\"always\",\"never\"]", flammable.getAsJsonObject("fields").getAsJsonObject("lava_flammable").get("enum").toString());
+        assertEquals(5, flammable.getAsJsonObject("fields").getAsJsonObject("catch_chance_modifier").get("default").getAsInt());
+    }
+
+    @Test
+    void aReferenceToADefinitionThatIsNotThereSkipsOnlyItsComponent() throws IOException {
+        file("item/1.26.30/Item Components.json", "{\"definitions\": {\"1\": {\"type\": \"boolean\"}}, \"properties\": {"
+            + "\"minecraft:test\": {\"$ref\": \"#/definitions/2\"}, \"minecraft:fine\": {\"$ref\": \"#/definitions/1\"}}}");
+        JsonObject schema = SchemaExtract.extract(docs, "1.26.99.1");
+        assertNotNull(schema.getAsJsonObject("item").get("minecraft:fine"));
+        assertNull(schema.getAsJsonObject("item").get("minecraft:test"));
+        assertEquals("[\"item 1.26.30 minecraft:test: the $ref #/definitions/2 in item/1.26.30/Item Components.json points to a definition that is not there\"]",
+            schema.getAsJsonArray("skipped").toString());
+    }
+
     @Test
     void aRecursiveTypeEndsAndATooDeepOneIsSkipped() throws IOException {
         file("item/1.26.30/rec.json", "{\"type\": \"object\", \"properties\": {\"child\": {\"$ref\": \"./rec.json\"}, \"n\": {\"type\": \"integer\"}}}");
