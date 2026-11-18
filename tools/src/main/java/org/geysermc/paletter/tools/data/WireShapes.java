@@ -221,12 +221,21 @@ public final class WireShapes {
     public static final String UNCLASSIFIED = "unclassified";
 
     /**
+     * What {@link #classify} calls the paths of a documented component that has no mappings at all: new in the schema (BDS
+     * 1.26.63.1, block format 1.26.60: {@code minecraft:leashable} and {@code minecraft:sound} of blocks), so no inference has
+     * mapped it yet. {@code update} checks the coverage before it infers; capture-only and verify runs do not infer.
+     */
+    public static final String NOT_INFERRED_YET = "a documented component the mappings have no entry for yet (new in the schema): "
+        + "the mapping inference maps it, which capture-only and verify runs do not run";
+
+    /**
      * Sorts the uncovered paths ({@link #uncovered}) by why the model does not cover them. The reasons:
      * <ul>
      *   <li>the block definition data around the components that is not in the envelope ({@code blockTags},
      *       {@code vanilla_block_data.block_id}, states): BlockCompiler writes it and the conformance suite checks it;</li>
      *   <li>a component the mappings call {@code untestable}: BDS rejected its companions, so nothing was inferred;</li>
      *   <li>a component without documented fields: the creator docs do not describe it, so the model has nothing to map;</li>
+     *   <li>a documented component without any mappings: {@link #NOT_INFERRED_YET};</li>
      *   <li>an {@code item_properties} entry: BDS sends it for every item, no add-on JSON field sets it, ItemCompiler and
      *       WireOnlyWire write it.</li>
      * </ul>
@@ -250,6 +259,8 @@ public final class WireShapes {
                 reason = "item_properties entry BDS sends for every item and no add-on JSON field sets: written by ItemCompiler and WireOnlyWire";
             } else if (!documented.contains(component)) {
                 reason = "the creator docs do not describe the component, so the model has no fields for it";
+            } else if (!components.has(component)) {
+                reason = NOT_INFERRED_YET;
             } else {
                 reason = UNCLASSIFIED;
             }

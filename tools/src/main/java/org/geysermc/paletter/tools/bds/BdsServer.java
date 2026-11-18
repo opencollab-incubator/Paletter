@@ -156,6 +156,11 @@ public final class BdsServer implements AutoCloseable {
         }
     }
 
+    /** @return whether the server process is still running */
+    public boolean isRunning() {
+        return process != null && process.isAlive();
+    }
+
     public boolean sawLine(Predicate<String> condition) {
         synchronized (lines) {
             return lines.stream().anyMatch(condition);

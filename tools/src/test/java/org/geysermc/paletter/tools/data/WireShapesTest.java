@@ -70,6 +70,20 @@ class WireShapesTest {
         assertEquals(Map.of(WireShapes.UNCLASSIFIED, List.of("item:minecraft:covered extra")), uncovered.get("1.26.36.1"));
     }
 
+    /**
+     * The rehearsal of BDS 1.26.63.1 and 1.26.70.24: the schema's block components {@code minecraft:leashable} and
+     * {@code minecraft:sound} (block format 1.26.60) were captured before any inference mapped them.
+     */
+    @Test
+    void aDocumentedComponentWithoutMappingsIsNotInferredYet(@TempDir Path root) throws IOException {
+        Path components = root.resolve("components.json");
+        Files.writeString(components, COMPONENTS.replace("item:minecraft:covered", "block:minecraft:leashable")
+            .replace("\"kind\": \"item\"", "\"kind\": \"block\"").replace("\"minecraft:covered\"", "\"minecraft:leashable\""));
+        Map<String, List<String>> classified = WireShapes.classify(List.of("block:minecraft:leashable", "block:minecraft:leashable offset[]"),
+            MAPPINGS, Model.read(components));
+        assertEquals(Map.of(WireShapes.NOT_INFERRED_YET, List.of("block:minecraft:leashable", "block:minecraft:leashable offset[]")), classified);
+    }
+
     @Test
     void withoutADataDirectoryThereIsNothingToCheck(@TempDir Path root) throws IOException {
         Path components = root.resolve("components.json");

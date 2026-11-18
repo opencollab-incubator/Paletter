@@ -172,10 +172,10 @@ function warn(message) {
 }
 
 // Tells behaviour-dump (tools) the dump is alive: it waits as long as these keep coming, however long the work is, and the
-// log shows where a dump that never finished stopped. Printed every `every` steps.
-function progress(phase, done, total, every) {
+// log shows where a dump that never finished stopped. Printed every `every` steps, with what the step works on if given.
+function progress(phase, done, total, every, what) {
     if (done % every === 0) {
-        console.warn(`BEHAVIOUR-PROGRESS ${phase} ${done}/${total}`);
+        console.warn(`BEHAVIOUR-PROGRESS ${phase} ${done}/${total}${what === undefined ? "" : ` ${what}`}`);
     }
 }
 
@@ -471,7 +471,10 @@ function* dumpBlocks(out, cells) {
     const dependent = {};
     const changed = {};
     for (const [n, i] of sample.entries()) {
-        progress("world sample", n, sample.length, 50);
+        // Every sample, with its state: BDS 1.26.70.24 (preview) went silent within world samples 1800 to 1849 (from
+        // minecraft:spruce_pressure_plate to minecraft:stripped_jungle_log), a hang the base placement of the same
+        // states did not have, so the line names the state a hang is in
+        progress("world sample", n, sample.length, 1, JSON.stringify(out.states[i]));
         let reference;
         try {
             const block = cells.base.place(states[i]);

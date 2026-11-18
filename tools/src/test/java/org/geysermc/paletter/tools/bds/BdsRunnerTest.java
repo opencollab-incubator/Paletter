@@ -14,20 +14,30 @@ class BdsRunnerTest {
 
     @Test
     void doneIsSuccess() {
-        assertDoesNotThrow(() -> BdsRunner.checkResult("[2026-11-18 06:29:53:349 WARN] [Scripting] PROBE-DONE", "PROBE", 3600, LOG));
+        assertDoesNotThrow(() -> BdsRunner.checkResult("[2026-11-18 06:29:53:349 WARN] [Scripting] PROBE-DONE", "PROBE", 3600, false, null, LOG));
     }
 
     @Test
     void aFailedLineEndsTheRunWithThatLineNotWithATimeout() {
         IOException failed = assertThrows(IOException.class, () -> BdsRunner.checkResult(
-            "[2026-11-18 06:29:53:349 WARN] [Scripting] PROBE-FAILED in light cells: Error: Block type probe:plain not found.\n", "PROBE", 3600, LOG));
+            "[2026-11-18 06:29:53:349 WARN] [Scripting] PROBE-FAILED in light cells: Error: Block type probe:plain not found.\n", "PROBE", 3600,
+            false, null, LOG));
         assertTrue(failed.getMessage().contains("PROBE-FAILED in light cells: Error: Block type probe:plain not found."), failed.getMessage());
         assertTrue(!failed.getMessage().contains("3600"), failed.getMessage());
     }
 
+    /** The behaviour dump of BDS 1.26.70.24 (preview): the last progress line names where it hung. */
     @Test
-    void noLineIsAnExitOrATimeout() {
-        IOException none = assertThrows(IOException.class, () -> BdsRunner.checkResult(null, "PROBE", 3600, LOG));
-        assertTrue(none.getMessage().contains("3600s"), none.getMessage());
+    void silenceNamesTheLastProgressLine() {
+        IOException none = assertThrows(IOException.class, () -> BdsRunner.checkResult(null, "BEHAVIOUR", 300, false,
+            "[2026-11-18 14:44:38:927 WARN] [Scripting] BEHAVIOUR-PROGRESS world sample 1800/2144", LOG));
+        assertTrue(none.getMessage().startsWith("BDS was silent for 300s without BEHAVIOUR-DONE, after BEHAVIOUR-PROGRESS world sample 1800/2144;"),
+            none.getMessage());
+    }
+
+    @Test
+    void anExitIsNotASilence() {
+        IOException none = assertThrows(IOException.class, () -> BdsRunner.checkResult(null, "PROBE", 3600, true, null, LOG));
+        assertTrue(none.getMessage().startsWith("BDS exited without PROBE-DONE, before any PROBE-PROGRESS line;"), none.getMessage());
     }
 }

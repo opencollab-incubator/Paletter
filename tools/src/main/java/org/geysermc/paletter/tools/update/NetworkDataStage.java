@@ -43,8 +43,8 @@ final class NetworkDataStage {
             Map<String, String> expected = entries.stream().collect(java.util.stream.Collectors.toMap(GiveCapture.Entry::block, GiveCapture.Entry::item));
             GiveCapture.Check check = GiveCapture.check(entries, expected::get);
             ctx.report.check(Report.Status.INFO, "Block items (/give)", check.matched() + " of " + entries.size() * 2 + " gives gave the item the data says, "
-                + check.mismatches().size() + " another, " + check.rejected().size() + " rejected (command error), " + check.unverified().size()
-                + " unverified (no answer)");
+                + check.mismatches().size() + " another, " + check.ownItems().size() + " the item of the block's identifier (an item of its own), "
+                + check.rejected().size() + " rejected (command error), " + check.unverified().size() + " unverified (no answer)");
             if (!check.mismatches().isEmpty()) {
                 ctx.report.evidence("Blocks that gave another item than the data says", check.mismatches().stream().map(line -> "- " + line).toList());
             }
