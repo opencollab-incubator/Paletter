@@ -12,6 +12,7 @@ import org.geysermc.paletter.block.component.EmbeddedVisual;
 import org.geysermc.paletter.block.component.Geometry;
 import org.geysermc.paletter.block.component.ItemVisual;
 import org.geysermc.paletter.block.component.MenuCategory;
+import org.geysermc.paletter.block.component.UvLock;
 import org.geysermc.paletter.creative.CreativePlacement;
 import org.geysermc.paletter.internal.component.TraitStates;
 import org.geysermc.paletter.item.component.ItemComponent;
@@ -198,14 +199,14 @@ public final class CustomBlock {
 
     private static void checkUvLock(String identifier, List<BlockComponent> components) {
         for (BlockComponent component : components) {
-            List<String> bones = switch (component) {
-                case Geometry geometry -> geometry.uvLockBones();
-                case ItemVisual visual -> visual.geometry().uvLockBones();
-                case EmbeddedVisual visual -> visual.geometry().uvLockBones();
+            UvLock uvLock = switch (component) {
+                case Geometry geometry -> geometry.uvLock();
+                case ItemVisual visual -> visual.geometry().uvLock();
+                case EmbeddedVisual visual -> visual.geometry().uvLock();
                 default -> null;
             };
-            if (bones != null && bones.size() > MAX_UV_LOCK_BONES) {
-                throw new IllegalArgumentException(identifier + "'s " + component.name() + " lists " + bones.size()
+            if (uvLock instanceof UvLock.Bones bones && bones.value().size() > MAX_UV_LOCK_BONES) {
+                throw new IllegalArgumentException(identifier + "'s " + component.name() + " lists " + bones.value().size()
                     + " uv_lock bones, more than the " + MAX_UV_LOCK_BONES + " BDS allows");
             }
         }

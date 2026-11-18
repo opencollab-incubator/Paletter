@@ -19,6 +19,7 @@ import org.geysermc.paletter.internal.data.VanillaData;
 import org.geysermc.paletter.item.component.BlockPlacer;
 import org.geysermc.paletter.item.component.Digger;
 import org.geysermc.paletter.item.component.Dyeable;
+import org.geysermc.paletter.item.component.ItemsOrTags;
 import org.geysermc.paletter.item.component.EntityPlacer;
 import org.geysermc.paletter.item.component.HoverTextColor;
 import org.geysermc.paletter.item.component.Icon;
@@ -105,7 +106,7 @@ class TransformsTest {
     @Test
     void molangRepairAmountBefore26_40IsACompound() {
         Repairable repairable = Repairable.builder().repairItems(Repairable.RepairItems.builder().items(List.of("minecraft:stick"))
-            .repairAmountExpression("q.max_durability * 0.25").build()).build();
+            .repairAmount("q.max_durability * 0.25").build()).build();
         WireNode now = new WireNode();
         Transforms.itemDescriptorList(ctx, now, repairable);
         assertEquals("q.max_durability * 0.25", now.build().getCompound("minecraft:repairable").getList("repair_items", NbtType.COMPOUND).getFirst().getString("repair_amount"));
@@ -274,7 +275,7 @@ class TransformsTest {
     void materialInstancesPackedInlineAndAliases() {
         MaterialInstances materials = MaterialInstances.builder()
             .all(MaterialInstances.Instance.builder().texture("stone").faceDimming(false).isotropic(true).build())
-            .upAlias("*")
+            .up(MaterialInstances.InstanceOrAlias.alias("*"))
             .build();
         WireNode out = new WireNode();
         Transforms.materialInstances(ctx, out, materials);
@@ -319,8 +320,8 @@ class TransformsTest {
 
     @Test
     void aColorOtherThanSixHexDigitsOrThreeChannelsIsDropped() {
-        for (Dyeable bad : List.of(Dyeable.builder().defaultColorHex("#f00").build(), Dyeable.builder().defaultColorHex("#ffff0000").build(),
-            Dyeable.builder().defaultColorHex("-ff").build(), Dyeable.builder().defaultColor(List.of(3, 7)).build(),
+        for (Dyeable bad : List.of(Dyeable.builder().defaultColor("#f00").build(), Dyeable.builder().defaultColor("#ffff0000").build(),
+            Dyeable.builder().defaultColor("-ff").build(), Dyeable.builder().defaultColor(List.of(3, 7)).build(),
             Dyeable.builder().defaultColor(List.of()).build())) {
             WireNode out = new WireNode();
             Transforms.rgbColor(ctx, out, bad);
@@ -343,8 +344,9 @@ class TransformsTest {
     void materialInstancesWithCustomNames() {
         MaterialInstances materials = MaterialInstances.builder()
             .all(MaterialInstances.Instance.builder().texture("stone").build())
-            .instances(Map.of("glass", MaterialInstances.Instance.builder().texture("glass").renderMethod(MaterialInstances.RenderMethod.BLEND).build()))
-            .aliases(Map.of("pane", "glass"))
+            .instances(Map.of("glass", MaterialInstances.InstanceOrAlias.define(
+                MaterialInstances.Instance.builder().texture("glass").renderMethod(MaterialInstances.RenderMethod.BLEND).build()),
+                "pane", MaterialInstances.InstanceOrAlias.alias("glass")))
             .build();
         WireNode out = new WireNode();
         Transforms.materialInstances(ctx, out, materials);
@@ -394,8 +396,8 @@ class TransformsTest {
         WireNode repair = new WireNode();
         Transforms.itemDescriptorList(ctx, repair, Repairable.builder().repairItems(
             Repairable.RepairItems.builder().items("minecraft:stick").repairAmount(1.5f).build(),
-            Repairable.RepairItems.builder().items(List.of()).repairAmountExpression("q.max_durability * 0.25").build(),
-            Repairable.RepairItems.builder().itemsTags("1").repairAmount(1f).build()).build());
+            Repairable.RepairItems.builder().items(List.of()).repairAmount("q.max_durability * 0.25").build(),
+            Repairable.RepairItems.builder().items(ItemsOrTags.tagQuery("1")).repairAmount(1f).build()).build());
         NbtList<NbtMap> entries = (NbtList<NbtMap>) compound(repair, "minecraft:repairable").getList("repair_items", NbtType.COMPOUND);
         assertEquals("minecraft:stick", entries.get(0).getList("items", NbtType.COMPOUND).getFirst().getString("name"));
         assertEquals(1.5f, entries.get(0).getFloat("repair_amount"));
@@ -436,7 +438,7 @@ class TransformsTest {
         assertEquals("ruby", compound(icon, "item_properties").getCompound("minecraft:icon").getCompound("textures").getString("default"));
 
         WireNode color = new WireNode();
-        Transforms.rgbColor(ctx, color, Dyeable.builder().defaultColorHex("#ff0080").build());
+        Transforms.rgbColor(ctx, color, Dyeable.builder().defaultColor("#ff0080").build());
         assertEquals(List.of(255, 0, 128), compound(color, "minecraft:dyeable").getList("default_color", NbtType.INT));
         WireNode clamped = new WireNode();
         Transforms.rgbColor(ctx, clamped, Dyeable.builder().defaultColor(10, 20, 270).build());
@@ -469,11 +471,11 @@ class TransformsTest {
     @Test
     void uvLockAsAListOfBonesNamesEachBoneOnce() {
         WireNode out = new WireNode();
-        Transforms.geometry(ctx, out, Geometry.builder().identifier("geometry.lamp").uvLockBones("lid", "base", "lid").build());
+        Transforms.geometry(ctx, out, Geometry.builder().identifier("geometry.lamp").uvLock("lid", "base", "lid").build());
         assertEquals(List.of("base", "lid"), compound(out, "minecraft:geometry").getList("uv_lock", NbtType.STRING));
 
         WireNode empty = new WireNode();
-        Transforms.geometry(ctx, empty, Geometry.builder().identifier("geometry.lamp").uvLockBones(List.of()).build());
+        Transforms.geometry(ctx, empty, Geometry.builder().identifier("geometry.lamp").uvLock(List.of()).build());
         assertEquals(Wire.EMPTY_LIST, compound(empty, "minecraft:geometry").get("uv_lock"), "BDS sends [] without element type");
         assertTrue(report.entries().isEmpty());
     }
@@ -498,7 +500,7 @@ class TransformsTest {
         assertEquals((byte) 1, compound(all, "minecraft:item_visual").getCompound("geometryDescription").getByte("uv_lock"));
 
         WireNode bones = new WireNode();
-        Transforms.itemVisualUvLock(ctx, bones, ItemVisual.Geometry.builder().identifier("geometry.lamp").uvLockBones("bone_a", "paletter_b", "bone_a").build());
+        Transforms.itemVisualUvLock(ctx, bones, ItemVisual.Geometry.builder().identifier("geometry.lamp").uvLock("bone_a", "paletter_b", "bone_a").build());
         assertEquals(List.of("paletter_b", "bone_a"),
             compound(bones, "minecraft:item_visual").getCompound("geometryDescription").getList("uv_lock", NbtType.STRING));
 

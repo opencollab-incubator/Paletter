@@ -14,12 +14,16 @@ import org.geysermc.paletter.block.component.ItemVisual;
 import org.geysermc.paletter.block.component.MaterialInstances;
 import org.geysermc.paletter.block.component.PlacementFilter;
 import org.geysermc.paletter.block.component.SelectionBox;
+import org.geysermc.paletter.block.component.UvLock;
 import org.geysermc.paletter.item.component.BlockPlacer;
+import org.geysermc.paletter.item.component.ColorValue;
 import org.geysermc.paletter.item.component.Digger;
 import org.geysermc.paletter.item.component.Dyeable;
 import org.geysermc.paletter.item.component.EntityPlacer;
 import org.geysermc.paletter.item.component.HoverTextColor;
 import org.geysermc.paletter.item.component.Icon;
+import org.geysermc.paletter.item.component.ItemsOrTags;
+import org.geysermc.paletter.item.component.RepairAmount;
 import org.geysermc.paletter.item.component.Repairable;
 import org.geysermc.paletter.item.component.Shooter;
 import org.geysermc.paletter.item.component.UseAnimation;
@@ -122,7 +126,7 @@ public final class Transforms {
      */
     public static void geometry(@NonNull WireContext ctx, @NonNull WireNode out, @NonNull Geometry c) {
         NbtMapBuilder geometry = geometry(c.identifier(), boneVisibility(ctx, Geometry.NAME, c.boneVisibility()), c.culling(), c.cullingLayer(),
-            c.cullingShape(), c.uvLock(), c.uvLockBones()).toBuilder();
+            c.cullingShape(), c.uvLock()).toBuilder();
         Geometry.NWayVisualRotation rotation = c.nWayVisualRotation();
         if (rotation != null && ctx.protocol() >= ComponentIndex.BDS_1_26_63_1) {
             geometry.putCompound("n_way_visual_rotation", rotation(rotation.x(), rotation.y(), rotation.z()));
@@ -132,13 +136,13 @@ public final class Transforms {
 
     /**
      * The geometry of {@code minecraft:embedded_visual}: the shape of {@link #geometry} without its four flags, inline,
-     * with {@code n_way_visual_rotation} from BDS 1.26.63.1 on, the {@code uv_lock} of {@link #uvLock(Boolean, List)} and the
+     * with {@code n_way_visual_rotation} from BDS 1.26.63.1 on, the {@code uv_lock} of {@link #uvLock(UvLock)} and the
      * bone visibility of {@link #boneVisibility}. The captures of BDS 1.26.36.1 to 1.26.70.24 bear it out.
      */
     public static void embeddedGeometry(@NonNull WireContext ctx, @NonNull WireNode out, @NonNull EmbeddedVisual c) {
         EmbeddedVisual.Geometry g = c.geometry();
         NbtMapBuilder geometry = geometry(g.identifier(), boneVisibility(ctx, EmbeddedVisual.NAME, g.boneVisibility()), g.culling(),
-            g.cullingLayer(), g.cullingShape(), g.uvLock(), g.uvLockBones()).toBuilder();
+            g.cullingLayer(), g.cullingShape(), g.uvLock()).toBuilder();
         for (String flag : List.of("ignoreGeometryForIsSolid", "isV1Fullblock", "needsLegacyTopRotation", "useBlockTypeLightAbsorption")) {
             geometry.remove(flag);
         }
@@ -224,8 +228,7 @@ public final class Transforms {
     }
 
     static @NonNull NbtMap geometry(String identifier, @NonNull NbtMap boneVisibility, @Nullable String culling,
-                                    @Nullable String cullingLayer, @Nullable String cullingShape, @Nullable Boolean uvLock,
-                                    @Nullable List<String> uvLockBones) {
+                                    @Nullable String cullingLayer, @Nullable String cullingShape, @Nullable UvLock uvLock) {
         NbtMapBuilder geometry = NbtMap.builder()
             .putCompound("bone_visibility", boneVisibility)
             .putString("culling", culling == null ? "" : culling)
@@ -238,7 +241,7 @@ public final class Transforms {
             .putByte("isV1Fullblock", (byte) 0)
             .putByte("needsLegacyTopRotation", (byte) 0)
             .putByte("useBlockTypeLightAbsorption", (byte) 0);
-        geometry.put("uv_lock", uvLock(uvLock, uvLockBones));
+        geometry.put("uv_lock", uvLock(uvLock));
         return geometry.build();
     }
 
@@ -249,7 +252,7 @@ public final class Transforms {
      * {@code true} as 1, a list as its bones, and take both for the full block geometry too.
      */
     public static void itemVisualUvLock(@NonNull WireContext ctx, @NonNull WireNode out, ItemVisual.@NonNull Geometry g) {
-        out.put("minecraft:item_visual.geometryDescription.uv_lock", uvLock(g.uvLock(), g.uvLockBones()));
+        out.put("minecraft:item_visual.geometryDescription.uv_lock", uvLock(g.uvLock()));
     }
 
     /**
@@ -257,11 +260,12 @@ public final class Transforms {
      * and {@code embedded_visual}, BDS 1.26.36.1 to 1.26.70.24): a byte for the boolean form, 0 when it is not set; for the
      * list form the bones as strings in {@link Wire#byNameHash BDS's order}, an empty list without element type.
      */
-    static @NonNull Object uvLock(@Nullable Boolean uvLock, @Nullable List<String> bones) {
-        if (bones == null) {
-            return Wire.bool(Boolean.TRUE.equals(uvLock));
-        }
-        return Wire.strings(Wire.byNameHash(bones));
+    static @NonNull Object uvLock(@Nullable UvLock uvLock) {
+        return switch (uvLock) {
+            case null -> Wire.bool(false);
+            case UvLock.Flag flag -> Wire.bool(flag.value());
+            case UvLock.Bones bones -> Wire.strings(Wire.byNameHash(bones.value()));
+        };
     }
 
     // ---- material_instances ----------------------------------------------------------------------------------------
@@ -330,29 +334,37 @@ public final class Transforms {
         return NbtMap.builder().putCompound("mappings", mappings.build()).putCompound("materials", materials.build()).build();
     }
 
+    /** The faces and instances that are set, in the order they are sent: the fixed faces, then the others. */
+    private static Map<String, MaterialInstances.InstanceOrAlias> entries(MaterialInstances c) {
+        Map<String, MaterialInstances.InstanceOrAlias> entries = new LinkedHashMap<>();
+        putIfSet(entries, "*", c.all());
+        putIfSet(entries, "down", c.down());
+        putIfSet(entries, "east", c.east());
+        putIfSet(entries, "north", c.north());
+        putIfSet(entries, "south", c.south());
+        putIfSet(entries, "up", c.up());
+        putIfSet(entries, "west", c.west());
+        entries.putAll(c.instances());
+        return entries;
+    }
+
     private static Map<String, MaterialInstances.Instance> faces(MaterialInstances c) {
         Map<String, MaterialInstances.Instance> faces = new LinkedHashMap<>();
-        putIfSet(faces, "*", c.all());
-        putIfSet(faces, "down", c.down());
-        putIfSet(faces, "east", c.east());
-        putIfSet(faces, "north", c.north());
-        putIfSet(faces, "south", c.south());
-        putIfSet(faces, "up", c.up());
-        putIfSet(faces, "west", c.west());
-        faces.putAll(c.instances());
+        entries(c).forEach((face, value) -> {
+            if (value instanceof MaterialInstances.InstanceOrAlias.Define define) {
+                faces.put(face, define.value());
+            }
+        });
         return faces;
     }
 
     private static Map<String, String> aliases(MaterialInstances c) {
         Map<String, String> aliases = new LinkedHashMap<>();
-        putIfSet(aliases, "*", c.allAlias());
-        putIfSet(aliases, "down", c.downAlias());
-        putIfSet(aliases, "east", c.eastAlias());
-        putIfSet(aliases, "north", c.northAlias());
-        putIfSet(aliases, "south", c.southAlias());
-        putIfSet(aliases, "up", c.upAlias());
-        putIfSet(aliases, "west", c.westAlias());
-        aliases.putAll(c.aliases());
+        entries(c).forEach((face, value) -> {
+            if (value instanceof MaterialInstances.InstanceOrAlias.Alias alias) {
+                aliases.put(face, alias.value());
+            }
+        });
         return aliases;
     }
 
@@ -474,7 +486,7 @@ public final class Transforms {
         boolean molangCompound = ctx.protocol() < ComponentIndex.BDS_1_26_45_1;
         out.list("minecraft:repairable.repair_items");
         for (Repairable.RepairItems entry : c.repairItems()) {
-            List<String> items = entry.items() == null ? List.of() : entry.items();
+            List<String> items = entry.items() instanceof ItemsOrTags.Items list ? list.value() : List.of();
             for (String item : items) {
                 if (!ctx.registry().itemExists(item)) {
                     ctx.changed(Repairable.NAME, "repair item " + item + " is not an item of this version; sent anyway, as BDS does");
@@ -485,18 +497,19 @@ public final class Transforms {
             for (String item : items) {
                 e.element("items").put("name", item);
             }
-            if (entry.itemsTags() != null) {
+            if (entry.items() instanceof ItemsOrTags.TagQuery tags) {
                 // The string form is a Molang tag query ({tags}), e.g. query.any_tag('minecraft:planks')
-                e.element("items").put("tags", entry.itemsTags());
+                e.element("items").put("tags", tags.value());
             }
-            if (entry.repairAmountExpression() != null && molangCompound) {
-                // version -1 for an empty expression (BDS 1.26.36.1: repair_amount "")
-                e.child("repair_amount").put("expression", entry.repairAmountExpression())
-                    .put("version", (short) (entry.repairAmountExpression().isEmpty() ? -1 : 0));
-            } else if (entry.repairAmountExpression() != null) {
-                e.put("repair_amount", entry.repairAmountExpression());
-            } else if (entry.repairAmount() != null) {
-                e.put("repair_amount", entry.repairAmount());
+            switch (entry.repairAmount()) {
+                case null -> {
+                }
+                case RepairAmount.Fixed fixed -> e.put("repair_amount", fixed.value());
+                case RepairAmount.Expression expression when molangCompound ->
+                    // version -1 for an empty expression (BDS 1.26.36.1: repair_amount "")
+                    e.child("repair_amount").put("expression", expression.value())
+                        .put("version", (short) (expression.value().isEmpty() ? -1 : 0));
+                case RepairAmount.Expression expression -> e.put("repair_amount", expression.value());
             }
         }
     }
@@ -567,20 +580,25 @@ public final class Transforms {
      */
     public static void rgbColor(@NonNull WireContext ctx, @NonNull WireNode out, @NonNull Dyeable c) {
         List<Integer> rgb = List.of(255, 255, 255);
-        if (c.defaultColorHex() != null) {
-            String hex = c.defaultColorHex().startsWith("#") ? c.defaultColorHex().substring(1) : c.defaultColorHex();
-            if (!HEX_COLOR.matcher(hex).matches()) {
-                ctx.drop(Dyeable.NAME, "default_color " + c.defaultColorHex() + " is not a hex color of 6 digits");
-                return;
+        switch (c.defaultColor()) {
+            case null -> {
             }
-            int value = Integer.parseInt(hex, 16);
-            rgb = List.of((value >> 16) & 0xff, (value >> 8) & 0xff, value & 0xff);
-        } else if (c.defaultColor() != null) {
-            if (c.defaultColor().size() != 3) {
-                ctx.drop(Dyeable.NAME, "default_color " + c.defaultColor() + " does not have exactly 3 channels");
-                return;
+            case ColorValue.Hex color -> {
+                String hex = color.value().startsWith("#") ? color.value().substring(1) : color.value();
+                if (!HEX_COLOR.matcher(hex).matches()) {
+                    ctx.drop(Dyeable.NAME, "default_color " + color.value() + " is not a hex color of 6 digits");
+                    return;
+                }
+                int value = Integer.parseInt(hex, 16);
+                rgb = List.of((value >> 16) & 0xff, (value >> 8) & 0xff, value & 0xff);
             }
-            rgb = c.defaultColor().stream().map(v -> Math.max(0, Math.min(255, v))).toList();
+            case ColorValue.Channels color -> {
+                if (color.value().size() != 3) {
+                    ctx.drop(Dyeable.NAME, "default_color " + color.value() + " does not have exactly 3 channels");
+                    return;
+                }
+                rgb = color.value().stream().map(v -> Math.max(0, Math.min(255, v))).toList();
+            }
         }
         out.put("minecraft:dyeable.default_color", Wire.ints(rgb));
     }

@@ -1023,7 +1023,7 @@ public static final class org.geysermc.paletter.block.component.EmbeddedVisual$B
 }
 
 public record org.geysermc.paletter.block.component.EmbeddedVisual$Geometry {
-    public <init>(java.util.Map<java.lang.String, java.lang.String>, java.lang.String, java.lang.String, java.lang.String, java.lang.String, org.geysermc.paletter.block.component.EmbeddedVisual$NWayVisualRotation, java.lang.Boolean, java.util.List<java.lang.String>)
+    public <init>(java.util.Map<java.lang.String, java.lang.String>, java.lang.String, java.lang.String, java.lang.String, java.lang.String, org.geysermc.paletter.block.component.EmbeddedVisual$NWayVisualRotation, org.geysermc.paletter.block.component.UvLock)
     public java.util.Map<java.lang.String, java.lang.String> boneVisibility()
     public static org.geysermc.paletter.block.component.EmbeddedVisual$Geometry$Builder builder()
     public java.lang.String culling()
@@ -1035,8 +1035,7 @@ public record org.geysermc.paletter.block.component.EmbeddedVisual$Geometry {
     public org.geysermc.paletter.block.component.EmbeddedVisual$NWayVisualRotation nWayVisualRotation()
     public org.geysermc.paletter.block.component.EmbeddedVisual$Geometry$Builder toBuilder()
     public final java.lang.String toString()
-    public java.lang.Boolean uvLock()
-    public java.util.List<java.lang.String> uvLockBones()
+    public org.geysermc.paletter.block.component.UvLock uvLock()
 }
 
 public static final class org.geysermc.paletter.block.component.EmbeddedVisual$Geometry$Builder {
@@ -1047,9 +1046,10 @@ public static final class org.geysermc.paletter.block.component.EmbeddedVisual$G
     public org.geysermc.paletter.block.component.EmbeddedVisual$Geometry$Builder cullingShape(java.lang.String)
     public org.geysermc.paletter.block.component.EmbeddedVisual$Geometry$Builder identifier(java.lang.String)
     public org.geysermc.paletter.block.component.EmbeddedVisual$Geometry$Builder nWayVisualRotation(org.geysermc.paletter.block.component.EmbeddedVisual$NWayVisualRotation)
-    public org.geysermc.paletter.block.component.EmbeddedVisual$Geometry$Builder uvLock(java.lang.Boolean)
-    public org.geysermc.paletter.block.component.EmbeddedVisual$Geometry$Builder uvLockBones(java.util.List<java.lang.String>)
-    public org.geysermc.paletter.block.component.EmbeddedVisual$Geometry$Builder uvLockBones(java.lang.String...)
+    public org.geysermc.paletter.block.component.EmbeddedVisual$Geometry$Builder uvLock(java.lang.String, java.lang.String...)
+    public org.geysermc.paletter.block.component.EmbeddedVisual$Geometry$Builder uvLock(java.util.List<java.lang.String>)
+    public org.geysermc.paletter.block.component.EmbeddedVisual$Geometry$Builder uvLock(org.geysermc.paletter.block.component.UvLock)
+    public org.geysermc.paletter.block.component.EmbeddedVisual$Geometry$Builder uvLock(boolean)
 }
 
 public record org.geysermc.paletter.block.component.EmbeddedVisual$NWayVisualRotation {
@@ -1147,7 +1147,7 @@ public static final class org.geysermc.paletter.block.component.Friction$Builder
 
 public record org.geysermc.paletter.block.component.Geometry implements org.geysermc.paletter.block.component.BlockComponent {
     public static final java.lang.String NAME = "minecraft:geometry"
-    public <init>(java.util.Map<java.lang.String, java.lang.String>, java.lang.String, java.lang.String, java.lang.String, java.lang.String, org.geysermc.paletter.block.component.Geometry$NWayVisualRotation, java.lang.Boolean, java.util.List<java.lang.String>)
+    public <init>(java.util.Map<java.lang.String, java.lang.String>, java.lang.String, java.lang.String, java.lang.String, java.lang.String, org.geysermc.paletter.block.component.Geometry$NWayVisualRotation, org.geysermc.paletter.block.component.UvLock)
     public java.util.Map<java.lang.String, java.lang.String> boneVisibility()
     public static org.geysermc.paletter.block.component.Geometry$Builder builder()
     public java.lang.String culling()
@@ -1161,8 +1161,7 @@ public record org.geysermc.paletter.block.component.Geometry implements org.geys
     public static org.geysermc.paletter.block.component.Geometry of(java.lang.String)
     public org.geysermc.paletter.block.component.Geometry$Builder toBuilder()
     public final java.lang.String toString()
-    public java.lang.Boolean uvLock()
-    public java.util.List<java.lang.String> uvLockBones()
+    public org.geysermc.paletter.block.component.UvLock uvLock()
 }
 
 public static final class org.geysermc.paletter.block.component.Geometry$Builder {
@@ -1173,9 +1172,10 @@ public static final class org.geysermc.paletter.block.component.Geometry$Builder
     public org.geysermc.paletter.block.component.Geometry$Builder cullingShape(java.lang.String)
     public org.geysermc.paletter.block.component.Geometry$Builder identifier(java.lang.String)
     public org.geysermc.paletter.block.component.Geometry$Builder nWayVisualRotation(org.geysermc.paletter.block.component.Geometry$NWayVisualRotation)
-    public org.geysermc.paletter.block.component.Geometry$Builder uvLock(java.lang.Boolean)
-    public org.geysermc.paletter.block.component.Geometry$Builder uvLockBones(java.util.List<java.lang.String>)
-    public org.geysermc.paletter.block.component.Geometry$Builder uvLockBones(java.lang.String...)
+    public org.geysermc.paletter.block.component.Geometry$Builder uvLock(java.lang.String, java.lang.String...)
+    public org.geysermc.paletter.block.component.Geometry$Builder uvLock(java.util.List<java.lang.String>)
+    public org.geysermc.paletter.block.component.Geometry$Builder uvLock(org.geysermc.paletter.block.component.UvLock)
+    public org.geysermc.paletter.block.component.Geometry$Builder uvLock(boolean)
 }
 
 public record org.geysermc.paletter.block.component.Geometry$NWayVisualRotation {
@@ -1305,7 +1305,7 @@ public static final class org.geysermc.paletter.block.component.ItemVisual$Build
 }
 
 public record org.geysermc.paletter.block.component.ItemVisual$Geometry {
-    public <init>(java.util.Map<java.lang.String, java.lang.String>, java.lang.String, java.lang.String, java.lang.String, java.lang.String, org.geysermc.paletter.block.component.ItemVisual$NWayVisualRotation, java.lang.Boolean, java.util.List<java.lang.String>)
+    public <init>(java.util.Map<java.lang.String, java.lang.String>, java.lang.String, java.lang.String, java.lang.String, java.lang.String, org.geysermc.paletter.block.component.ItemVisual$NWayVisualRotation, org.geysermc.paletter.block.component.UvLock)
     public java.util.Map<java.lang.String, java.lang.String> boneVisibility()
     public static org.geysermc.paletter.block.component.ItemVisual$Geometry$Builder builder()
     public java.lang.String culling()
@@ -1318,8 +1318,7 @@ public record org.geysermc.paletter.block.component.ItemVisual$Geometry {
     public static org.geysermc.paletter.block.component.ItemVisual$Geometry of(java.lang.String)
     public org.geysermc.paletter.block.component.ItemVisual$Geometry$Builder toBuilder()
     public final java.lang.String toString()
-    public java.lang.Boolean uvLock()
-    public java.util.List<java.lang.String> uvLockBones()
+    public org.geysermc.paletter.block.component.UvLock uvLock()
 }
 
 public static final class org.geysermc.paletter.block.component.ItemVisual$Geometry$Builder {
@@ -1330,9 +1329,10 @@ public static final class org.geysermc.paletter.block.component.ItemVisual$Geome
     public org.geysermc.paletter.block.component.ItemVisual$Geometry$Builder cullingShape(java.lang.String)
     public org.geysermc.paletter.block.component.ItemVisual$Geometry$Builder identifier(java.lang.String)
     public org.geysermc.paletter.block.component.ItemVisual$Geometry$Builder nWayVisualRotation(org.geysermc.paletter.block.component.ItemVisual$NWayVisualRotation)
-    public org.geysermc.paletter.block.component.ItemVisual$Geometry$Builder uvLock(java.lang.Boolean)
-    public org.geysermc.paletter.block.component.ItemVisual$Geometry$Builder uvLockBones(java.util.List<java.lang.String>)
-    public org.geysermc.paletter.block.component.ItemVisual$Geometry$Builder uvLockBones(java.lang.String...)
+    public org.geysermc.paletter.block.component.ItemVisual$Geometry$Builder uvLock(java.lang.String, java.lang.String...)
+    public org.geysermc.paletter.block.component.ItemVisual$Geometry$Builder uvLock(java.util.List<java.lang.String>)
+    public org.geysermc.paletter.block.component.ItemVisual$Geometry$Builder uvLock(org.geysermc.paletter.block.component.UvLock)
+    public org.geysermc.paletter.block.component.ItemVisual$Geometry$Builder uvLock(boolean)
 }
 
 public record org.geysermc.paletter.block.component.ItemVisual$NWayVisualRotation {
@@ -1490,49 +1490,40 @@ public static final class org.geysermc.paletter.block.component.MapColor$Builder
 
 public record org.geysermc.paletter.block.component.MaterialInstances implements org.geysermc.paletter.block.component.BlockComponent {
     public static final java.lang.String NAME = "minecraft:material_instances"
-    public <init>(org.geysermc.paletter.block.component.MaterialInstances$Instance, java.lang.String, org.geysermc.paletter.block.component.MaterialInstances$Instance, java.lang.String, org.geysermc.paletter.block.component.MaterialInstances$Instance, java.lang.String, org.geysermc.paletter.block.component.MaterialInstances$Instance, java.lang.String, org.geysermc.paletter.block.component.MaterialInstances$Instance, java.lang.String, org.geysermc.paletter.block.component.MaterialInstances$Instance, java.lang.String, org.geysermc.paletter.block.component.MaterialInstances$Instance, java.lang.String, java.util.Map<java.lang.String, org.geysermc.paletter.block.component.MaterialInstances$Instance>, java.util.Map<java.lang.String, java.lang.String>)
-    public java.util.Map<java.lang.String, java.lang.String> aliases()
-    public org.geysermc.paletter.block.component.MaterialInstances$Instance all()
-    public java.lang.String allAlias()
+    public <init>(org.geysermc.paletter.block.component.MaterialInstances$InstanceOrAlias, org.geysermc.paletter.block.component.MaterialInstances$InstanceOrAlias, org.geysermc.paletter.block.component.MaterialInstances$InstanceOrAlias, org.geysermc.paletter.block.component.MaterialInstances$InstanceOrAlias, org.geysermc.paletter.block.component.MaterialInstances$InstanceOrAlias, org.geysermc.paletter.block.component.MaterialInstances$InstanceOrAlias, org.geysermc.paletter.block.component.MaterialInstances$InstanceOrAlias, java.util.Map<java.lang.String, org.geysermc.paletter.block.component.MaterialInstances$InstanceOrAlias>)
+    public org.geysermc.paletter.block.component.MaterialInstances$InstanceOrAlias all()
     public static org.geysermc.paletter.block.component.MaterialInstances$Builder builder()
-    public org.geysermc.paletter.block.component.MaterialInstances$Instance down()
-    public java.lang.String downAlias()
-    public org.geysermc.paletter.block.component.MaterialInstances$Instance east()
-    public java.lang.String eastAlias()
+    public org.geysermc.paletter.block.component.MaterialInstances$InstanceOrAlias down()
+    public org.geysermc.paletter.block.component.MaterialInstances$InstanceOrAlias east()
     public final boolean equals(java.lang.Object)
     public final int hashCode()
-    public java.util.Map<java.lang.String, org.geysermc.paletter.block.component.MaterialInstances$Instance> instances()
+    public java.util.Map<java.lang.String, org.geysermc.paletter.block.component.MaterialInstances$InstanceOrAlias> instances()
     public java.lang.String name()
-    public org.geysermc.paletter.block.component.MaterialInstances$Instance north()
-    public java.lang.String northAlias()
-    public org.geysermc.paletter.block.component.MaterialInstances$Instance south()
-    public java.lang.String southAlias()
+    public org.geysermc.paletter.block.component.MaterialInstances$InstanceOrAlias north()
+    public org.geysermc.paletter.block.component.MaterialInstances$InstanceOrAlias south()
     public org.geysermc.paletter.block.component.MaterialInstances$Builder toBuilder()
     public final java.lang.String toString()
-    public org.geysermc.paletter.block.component.MaterialInstances$Instance up()
-    public java.lang.String upAlias()
-    public org.geysermc.paletter.block.component.MaterialInstances$Instance west()
-    public java.lang.String westAlias()
+    public org.geysermc.paletter.block.component.MaterialInstances$InstanceOrAlias up()
+    public org.geysermc.paletter.block.component.MaterialInstances$InstanceOrAlias west()
 }
 
 public static final class org.geysermc.paletter.block.component.MaterialInstances$Builder {
-    public org.geysermc.paletter.block.component.MaterialInstances$Builder aliases(java.util.Map<java.lang.String, java.lang.String>)
     public org.geysermc.paletter.block.component.MaterialInstances$Builder all(org.geysermc.paletter.block.component.MaterialInstances$Instance)
-    public org.geysermc.paletter.block.component.MaterialInstances$Builder allAlias(java.lang.String)
+    public org.geysermc.paletter.block.component.MaterialInstances$Builder all(org.geysermc.paletter.block.component.MaterialInstances$InstanceOrAlias)
     public org.geysermc.paletter.block.component.MaterialInstances build()
     public org.geysermc.paletter.block.component.MaterialInstances$Builder down(org.geysermc.paletter.block.component.MaterialInstances$Instance)
-    public org.geysermc.paletter.block.component.MaterialInstances$Builder downAlias(java.lang.String)
+    public org.geysermc.paletter.block.component.MaterialInstances$Builder down(org.geysermc.paletter.block.component.MaterialInstances$InstanceOrAlias)
     public org.geysermc.paletter.block.component.MaterialInstances$Builder east(org.geysermc.paletter.block.component.MaterialInstances$Instance)
-    public org.geysermc.paletter.block.component.MaterialInstances$Builder eastAlias(java.lang.String)
-    public org.geysermc.paletter.block.component.MaterialInstances$Builder instances(java.util.Map<java.lang.String, org.geysermc.paletter.block.component.MaterialInstances$Instance>)
+    public org.geysermc.paletter.block.component.MaterialInstances$Builder east(org.geysermc.paletter.block.component.MaterialInstances$InstanceOrAlias)
+    public org.geysermc.paletter.block.component.MaterialInstances$Builder instances(java.util.Map<java.lang.String, org.geysermc.paletter.block.component.MaterialInstances$InstanceOrAlias>)
     public org.geysermc.paletter.block.component.MaterialInstances$Builder north(org.geysermc.paletter.block.component.MaterialInstances$Instance)
-    public org.geysermc.paletter.block.component.MaterialInstances$Builder northAlias(java.lang.String)
+    public org.geysermc.paletter.block.component.MaterialInstances$Builder north(org.geysermc.paletter.block.component.MaterialInstances$InstanceOrAlias)
     public org.geysermc.paletter.block.component.MaterialInstances$Builder south(org.geysermc.paletter.block.component.MaterialInstances$Instance)
-    public org.geysermc.paletter.block.component.MaterialInstances$Builder southAlias(java.lang.String)
+    public org.geysermc.paletter.block.component.MaterialInstances$Builder south(org.geysermc.paletter.block.component.MaterialInstances$InstanceOrAlias)
     public org.geysermc.paletter.block.component.MaterialInstances$Builder up(org.geysermc.paletter.block.component.MaterialInstances$Instance)
-    public org.geysermc.paletter.block.component.MaterialInstances$Builder upAlias(java.lang.String)
+    public org.geysermc.paletter.block.component.MaterialInstances$Builder up(org.geysermc.paletter.block.component.MaterialInstances$InstanceOrAlias)
     public org.geysermc.paletter.block.component.MaterialInstances$Builder west(org.geysermc.paletter.block.component.MaterialInstances$Instance)
-    public org.geysermc.paletter.block.component.MaterialInstances$Builder westAlias(java.lang.String)
+    public org.geysermc.paletter.block.component.MaterialInstances$Builder west(org.geysermc.paletter.block.component.MaterialInstances$InstanceOrAlias)
 }
 
 public record org.geysermc.paletter.block.component.MaterialInstances$Instance {
@@ -1560,6 +1551,27 @@ public static final class org.geysermc.paletter.block.component.MaterialInstance
     public org.geysermc.paletter.block.component.MaterialInstances$Instance$Builder renderMethod(org.geysermc.paletter.block.component.MaterialInstances$RenderMethod)
     public org.geysermc.paletter.block.component.MaterialInstances$Instance$Builder texture(java.lang.String)
     public org.geysermc.paletter.block.component.MaterialInstances$Instance$Builder tintMethod(java.lang.String)
+}
+
+public sealed interface org.geysermc.paletter.block.component.MaterialInstances$InstanceOrAlias permits org.geysermc.paletter.block.component.MaterialInstances$InstanceOrAlias$Alias, org.geysermc.paletter.block.component.MaterialInstances$InstanceOrAlias$Define {
+    public static org.geysermc.paletter.block.component.MaterialInstances$InstanceOrAlias alias(java.lang.String)
+    public static org.geysermc.paletter.block.component.MaterialInstances$InstanceOrAlias define(org.geysermc.paletter.block.component.MaterialInstances$Instance)
+}
+
+public record org.geysermc.paletter.block.component.MaterialInstances$InstanceOrAlias$Alias implements org.geysermc.paletter.block.component.MaterialInstances$InstanceOrAlias {
+    public <init>(java.lang.String)
+    public final boolean equals(java.lang.Object)
+    public final int hashCode()
+    public final java.lang.String toString()
+    public java.lang.String value()
+}
+
+public record org.geysermc.paletter.block.component.MaterialInstances$InstanceOrAlias$Define implements org.geysermc.paletter.block.component.MaterialInstances$InstanceOrAlias {
+    public <init>(org.geysermc.paletter.block.component.MaterialInstances$Instance)
+    public final boolean equals(java.lang.Object)
+    public final int hashCode()
+    public final java.lang.String toString()
+    public org.geysermc.paletter.block.component.MaterialInstances$Instance value()
 }
 
 public enum org.geysermc.paletter.block.component.MaterialInstances$RenderMethod {
@@ -2168,6 +2180,27 @@ public static final class org.geysermc.paletter.block.component.UnitCube$Builder
     public org.geysermc.paletter.block.component.UnitCube build()
 }
 
+public sealed interface org.geysermc.paletter.block.component.UvLock permits org.geysermc.paletter.block.component.UvLock$Bones, org.geysermc.paletter.block.component.UvLock$Flag {
+    public static org.geysermc.paletter.block.component.UvLock bones(java.util.List<java.lang.String>)
+    public static org.geysermc.paletter.block.component.UvLock flag(boolean)
+}
+
+public record org.geysermc.paletter.block.component.UvLock$Bones implements org.geysermc.paletter.block.component.UvLock {
+    public <init>(java.util.List<java.lang.String>)
+    public final boolean equals(java.lang.Object)
+    public final int hashCode()
+    public final java.lang.String toString()
+    public java.util.List<java.lang.String> value()
+}
+
+public record org.geysermc.paletter.block.component.UvLock$Flag implements org.geysermc.paletter.block.component.UvLock {
+    public <init>(boolean)
+    public final boolean equals(java.lang.Object)
+    public final int hashCode()
+    public final java.lang.String toString()
+    public boolean value()
+}
+
 public sealed interface org.geysermc.paletter.block.component.WireOnlyBlockComponent extends org.geysermc.paletter.block.component.BlockComponent permits org.geysermc.paletter.block.component.OnPlayerPlacing, org.geysermc.paletter.block.component.ScriptHooks {
 }
 
@@ -2539,6 +2572,27 @@ public static final class org.geysermc.paletter.item.component.CanDestroyInCreat
     public org.geysermc.paletter.item.component.CanDestroyInCreative$Builder value(java.lang.Boolean)
 }
 
+public sealed interface org.geysermc.paletter.item.component.ColorValue permits org.geysermc.paletter.item.component.ColorValue$Channels, org.geysermc.paletter.item.component.ColorValue$Hex {
+    public static org.geysermc.paletter.item.component.ColorValue channels(java.util.List<java.lang.Integer>)
+    public static org.geysermc.paletter.item.component.ColorValue hex(java.lang.String)
+}
+
+public record org.geysermc.paletter.item.component.ColorValue$Channels implements org.geysermc.paletter.item.component.ColorValue {
+    public <init>(java.util.List<java.lang.Integer>)
+    public final boolean equals(java.lang.Object)
+    public final int hashCode()
+    public final java.lang.String toString()
+    public java.util.List<java.lang.Integer> value()
+}
+
+public record org.geysermc.paletter.item.component.ColorValue$Hex implements org.geysermc.paletter.item.component.ColorValue {
+    public <init>(java.lang.String)
+    public final boolean equals(java.lang.Object)
+    public final int hashCode()
+    public final java.lang.String toString()
+    public java.lang.String value()
+}
+
 public record org.geysermc.paletter.item.component.Compostable implements org.geysermc.paletter.item.component.ItemComponent {
     public static final java.lang.String NAME = "minecraft:compostable"
     public <init>(int)
@@ -2880,10 +2934,9 @@ public enum org.geysermc.paletter.item.component.DurabilitySensor$ParticleType {
 
 public record org.geysermc.paletter.item.component.Dyeable implements org.geysermc.paletter.item.component.ItemComponent {
     public static final java.lang.String NAME = "minecraft:dyeable"
-    public <init>(java.util.List<java.lang.Integer>, java.lang.String)
+    public <init>(org.geysermc.paletter.item.component.ColorValue)
     public static org.geysermc.paletter.item.component.Dyeable$Builder builder()
-    public java.util.List<java.lang.Integer> defaultColor()
-    public java.lang.String defaultColorHex()
+    public org.geysermc.paletter.item.component.ColorValue defaultColor()
     public final boolean equals(java.lang.Object)
     public final int hashCode()
     public java.lang.String name()
@@ -2893,9 +2946,10 @@ public record org.geysermc.paletter.item.component.Dyeable implements org.geyser
 
 public static final class org.geysermc.paletter.item.component.Dyeable$Builder {
     public org.geysermc.paletter.item.component.Dyeable build()
+    public org.geysermc.paletter.item.component.Dyeable$Builder defaultColor(int, int...)
+    public org.geysermc.paletter.item.component.Dyeable$Builder defaultColor(java.lang.String)
     public org.geysermc.paletter.item.component.Dyeable$Builder defaultColor(java.util.List<java.lang.Integer>)
-    public org.geysermc.paletter.item.component.Dyeable$Builder defaultColor(java.lang.Integer...)
-    public org.geysermc.paletter.item.component.Dyeable$Builder defaultColorHex(java.lang.String)
+    public org.geysermc.paletter.item.component.Dyeable$Builder defaultColor(org.geysermc.paletter.item.component.ColorValue)
 }
 
 public record org.geysermc.paletter.item.component.Enchantable implements org.geysermc.paletter.item.component.ItemComponent {
@@ -3129,6 +3183,28 @@ public static final class org.geysermc.paletter.item.component.InteractButton$Bu
 
 public sealed interface org.geysermc.paletter.item.component.ItemComponent permits org.geysermc.paletter.item.component.AllowOffHand, org.geysermc.paletter.item.component.BlockPlacer, org.geysermc.paletter.item.component.BundleInteraction, org.geysermc.paletter.item.component.CanDestroyInCreative, org.geysermc.paletter.item.component.Compostable, org.geysermc.paletter.item.component.Cooldown, org.geysermc.paletter.item.component.Damage, org.geysermc.paletter.item.component.DamageAbsorption, org.geysermc.paletter.item.component.Digger, org.geysermc.paletter.item.component.DisplayName, org.geysermc.paletter.item.component.Durability, org.geysermc.paletter.item.component.DurabilitySensor, org.geysermc.paletter.item.component.Dyeable, org.geysermc.paletter.item.component.Enchantable, org.geysermc.paletter.item.component.EntityPlacer, org.geysermc.paletter.item.component.FireResistant, org.geysermc.paletter.item.component.Food, org.geysermc.paletter.item.component.Fuel, org.geysermc.paletter.item.component.Glint, org.geysermc.paletter.item.component.HandEquipped, org.geysermc.paletter.item.component.HoverTextColor, org.geysermc.paletter.item.component.Icon, org.geysermc.paletter.item.component.InteractButton, org.geysermc.paletter.item.component.KineticWeapon, org.geysermc.paletter.item.component.LiquidClipped, org.geysermc.paletter.item.component.MaxStackSize, org.geysermc.paletter.item.component.MusicRecord, org.geysermc.paletter.item.component.PiercingWeapon, org.geysermc.paletter.item.component.Projectile, org.geysermc.paletter.item.component.Rarity, org.geysermc.paletter.item.component.Repairable, org.geysermc.paletter.item.component.Shooter, org.geysermc.paletter.item.component.ShouldDespawn, org.geysermc.paletter.item.component.StackedByData, org.geysermc.paletter.item.component.StorageItem, org.geysermc.paletter.item.component.StorageWeightLimit, org.geysermc.paletter.item.component.StorageWeightModifier, org.geysermc.paletter.item.component.SwingDuration, org.geysermc.paletter.item.component.SwingSounds, org.geysermc.paletter.item.component.Tags, org.geysermc.paletter.item.component.ThrowableItem, org.geysermc.paletter.item.component.UseAnimation, org.geysermc.paletter.item.component.UseDuration, org.geysermc.paletter.item.component.UseModifiers, org.geysermc.paletter.item.component.Wearable, org.geysermc.paletter.item.component.WireOnlyItemComponent {
     public abstract java.lang.String name()
+}
+
+public sealed interface org.geysermc.paletter.item.component.ItemsOrTags permits org.geysermc.paletter.item.component.ItemsOrTags$Items, org.geysermc.paletter.item.component.ItemsOrTags$TagQuery {
+    public static org.geysermc.paletter.item.component.ItemsOrTags items(java.util.List<java.lang.String>)
+    public static org.geysermc.paletter.item.component.ItemsOrTags items(org.geysermc.paletter.vanilla.BedrockItemType, org.geysermc.paletter.vanilla.BedrockItemType...)
+    public static org.geysermc.paletter.item.component.ItemsOrTags tagQuery(java.lang.String)
+}
+
+public record org.geysermc.paletter.item.component.ItemsOrTags$Items implements org.geysermc.paletter.item.component.ItemsOrTags {
+    public <init>(java.util.List<java.lang.String>)
+    public final boolean equals(java.lang.Object)
+    public final int hashCode()
+    public final java.lang.String toString()
+    public java.util.List<java.lang.String> value()
+}
+
+public record org.geysermc.paletter.item.component.ItemsOrTags$TagQuery implements org.geysermc.paletter.item.component.ItemsOrTags {
+    public <init>(java.lang.String)
+    public final boolean equals(java.lang.Object)
+    public final int hashCode()
+    public final java.lang.String toString()
+    public java.lang.String value()
 }
 
 public record org.geysermc.paletter.item.component.KineticWeapon implements org.geysermc.paletter.item.component.ItemComponent {
@@ -3462,6 +3538,27 @@ public record org.geysermc.paletter.item.component.RenderOffsets$Vec3 {
     public float z()
 }
 
+public sealed interface org.geysermc.paletter.item.component.RepairAmount permits org.geysermc.paletter.item.component.RepairAmount$Expression, org.geysermc.paletter.item.component.RepairAmount$Fixed {
+    public static org.geysermc.paletter.item.component.RepairAmount expression(java.lang.String)
+    public static org.geysermc.paletter.item.component.RepairAmount fixed(float)
+}
+
+public record org.geysermc.paletter.item.component.RepairAmount$Expression implements org.geysermc.paletter.item.component.RepairAmount {
+    public <init>(java.lang.String)
+    public final boolean equals(java.lang.Object)
+    public final int hashCode()
+    public final java.lang.String toString()
+    public java.lang.String value()
+}
+
+public record org.geysermc.paletter.item.component.RepairAmount$Fixed implements org.geysermc.paletter.item.component.RepairAmount {
+    public <init>(float)
+    public final boolean equals(java.lang.Object)
+    public final int hashCode()
+    public final java.lang.String toString()
+    public float value()
+}
+
 public record org.geysermc.paletter.item.component.Repairable implements org.geysermc.paletter.item.component.ItemComponent {
     public static final java.lang.String NAME = "minecraft:repairable"
     public <init>(java.util.List<org.geysermc.paletter.item.component.Repairable$RepairItems>)
@@ -3481,26 +3578,25 @@ public static final class org.geysermc.paletter.item.component.Repairable$Builde
 }
 
 public record org.geysermc.paletter.item.component.Repairable$RepairItems {
-    public <init>(java.util.List<java.lang.String>, java.lang.String, java.lang.Float, java.lang.String)
+    public <init>(org.geysermc.paletter.item.component.ItemsOrTags, org.geysermc.paletter.item.component.RepairAmount)
     public static org.geysermc.paletter.item.component.Repairable$RepairItems$Builder builder()
     public final boolean equals(java.lang.Object)
     public final int hashCode()
-    public java.util.List<java.lang.String> items()
-    public java.lang.String itemsTags()
-    public java.lang.Float repairAmount()
-    public java.lang.String repairAmountExpression()
+    public org.geysermc.paletter.item.component.ItemsOrTags items()
+    public org.geysermc.paletter.item.component.RepairAmount repairAmount()
     public org.geysermc.paletter.item.component.Repairable$RepairItems$Builder toBuilder()
     public final java.lang.String toString()
 }
 
 public static final class org.geysermc.paletter.item.component.Repairable$RepairItems$Builder {
     public org.geysermc.paletter.item.component.Repairable$RepairItems build()
+    public org.geysermc.paletter.item.component.Repairable$RepairItems$Builder items(java.lang.String, java.lang.String...)
     public org.geysermc.paletter.item.component.Repairable$RepairItems$Builder items(java.util.List<java.lang.String>)
-    public org.geysermc.paletter.item.component.Repairable$RepairItems$Builder items(java.lang.String...)
-    public org.geysermc.paletter.item.component.Repairable$RepairItems$Builder items(org.geysermc.paletter.vanilla.BedrockItemType...)
-    public org.geysermc.paletter.item.component.Repairable$RepairItems$Builder itemsTags(java.lang.String)
-    public org.geysermc.paletter.item.component.Repairable$RepairItems$Builder repairAmount(java.lang.Float)
-    public org.geysermc.paletter.item.component.Repairable$RepairItems$Builder repairAmountExpression(java.lang.String)
+    public org.geysermc.paletter.item.component.Repairable$RepairItems$Builder items(org.geysermc.paletter.item.component.ItemsOrTags)
+    public org.geysermc.paletter.item.component.Repairable$RepairItems$Builder items(org.geysermc.paletter.vanilla.BedrockItemType, org.geysermc.paletter.vanilla.BedrockItemType...)
+    public org.geysermc.paletter.item.component.Repairable$RepairItems$Builder repairAmount(float)
+    public org.geysermc.paletter.item.component.Repairable$RepairItems$Builder repairAmount(java.lang.String)
+    public org.geysermc.paletter.item.component.Repairable$RepairItems$Builder repairAmount(org.geysermc.paletter.item.component.RepairAmount)
 }
 
 public record org.geysermc.paletter.item.component.Shooter implements org.geysermc.paletter.item.component.ItemComponent {

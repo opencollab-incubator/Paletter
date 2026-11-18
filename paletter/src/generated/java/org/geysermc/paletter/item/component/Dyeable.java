@@ -3,7 +3,9 @@
 // data/model/ATTRIBUTION.md.
 package org.geysermc.paletter.item.component;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.geysermc.paletter.annotation.BedrockFormat;
@@ -17,24 +19,18 @@ import org.geysermc.paletter.annotation.BedrockFormat;
  *
  * @param defaultColor Add-on JSON {@code default_color}. Default: <code>[255,255,255]</code>. Compiled by the hand transform {@code
  *        Transforms.rgbColor}.
- * @param defaultColorHex The string form of {@code default_color} (hex); excludes {@link #defaultColor()}. Add-on JSON {@code
- *        default_color}. Compiled by the hand transform {@code Transforms.rgbColor}.
  * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/itemreference/examples/itemcomponents/minecraft_dyeable?view=minecraft-bedrock-stable">Microsoft Learn: minecraft:dyeable</a>
  * @since 1.0.0
  */
 @BedrockFormat("1.21.30")
-public record Dyeable(@Nullable List<Integer> defaultColor,
-        @Nullable String defaultColorHex) implements ItemComponent {
+public record Dyeable(@NonNull ColorValue defaultColor) implements ItemComponent {
     /**
      * The component name in add-on JSON.
      */
     public static final String NAME = "minecraft:dyeable";
 
     public Dyeable {
-        defaultColor = defaultColor == null ? null : List.copyOf(defaultColor);
-        if (defaultColor != null && defaultColorHex != null) {
-            throw new IllegalArgumentException("Dyeable sets both defaultColor and defaultColorHex");
-        }
+        Objects.requireNonNull(defaultColor, "Dyeable.defaultColor");
     }
 
     @Override
@@ -55,7 +51,6 @@ public record Dyeable(@Nullable List<Integer> defaultColor,
     public @NonNull Builder toBuilder() {
         Builder builder = new Builder();
         builder.defaultColor = defaultColor;
-        builder.defaultColorHex = defaultColorHex;
         return builder;
     }
 
@@ -63,40 +58,43 @@ public record Dyeable(@Nullable List<Integer> defaultColor,
      * Builds {@link Dyeable}: defaults applied, required fields and ranges checked by {@link #build()}.
      */
     public static final class Builder {
-        private @Nullable List<Integer> defaultColor = List.of(255, 255, 255);
-
-        private @Nullable String defaultColorHex;
+        private @Nullable ColorValue defaultColor = ColorValue.channels(List.of(255, 255, 255));
 
         private Builder() {
         }
 
         /**
-         * Sets {@code default_color} (clears the other form).
-         */
-        public @NonNull Builder defaultColor(@Nullable List<Integer> defaultColor) {
-            this.defaultColor = defaultColor;
-            if (defaultColor != null) {
-                this.defaultColorHex = null;
-            }
-            return this;
-        }
-
-        /**
          * Sets {@code default_color}.
          */
-        public @NonNull Builder defaultColor(@NonNull Integer... defaultColor) {
-            return defaultColor(List.of(defaultColor));
+        public @NonNull Builder defaultColor(@NonNull ColorValue defaultColor) {
+            this.defaultColor = defaultColor;
+            return this;
         }
 
         /**
-         * Sets {@code default_color} (clears the other form).
+         * Sets {@code default_color} to the red, green and blue channels.
          */
-        public @NonNull Builder defaultColorHex(@Nullable String defaultColorHex) {
-            this.defaultColorHex = defaultColorHex;
-            if (defaultColorHex != null) {
-                this.defaultColor = null;
+        public @NonNull Builder defaultColor(@NonNull List<Integer> defaultColor) {
+            return defaultColor(ColorValue.channels(defaultColor));
+        }
+
+        /**
+         * Sets {@code default_color} to the red, green and blue channels (at least one value).
+         */
+        public @NonNull Builder defaultColor(int first, int... rest) {
+            List<Integer> values = new ArrayList<>();
+            values.add(first);
+            for (int x : rest) {
+                values.add(x);
             }
-            return this;
+            return defaultColor(values);
+        }
+
+        /**
+         * Sets {@code default_color} to a hex color of six digits.
+         */
+        public @NonNull Builder defaultColor(@NonNull String defaultColor) {
+            return defaultColor(ColorValue.hex(defaultColor));
         }
 
         /**
@@ -104,7 +102,7 @@ public record Dyeable(@Nullable List<Integer> defaultColor,
          * @throws IllegalArgumentException if a value is out of range
          */
         public @NonNull Dyeable build() {
-            return new Dyeable(defaultColor, defaultColorHex);
+            return new Dyeable(defaultColor);
         }
     }
 }

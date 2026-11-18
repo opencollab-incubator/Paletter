@@ -184,20 +184,20 @@ class CustomContentTest {
     @Test
     void moreThan64UvLockBonesRejectTheBlock() {
         // BDS 1.26.63.1 accepts 64 bones and rejects the block above, counting duplicates
-        Geometry accepted = Geometry.builder().identifier("geometry.lamp").uvLockBones(Collections.nCopies(64, "lid")).build();
+        Geometry accepted = Geometry.builder().identifier("geometry.lamp").uvLock(Collections.nCopies(64, "lid")).build();
         CustomBlock.builder("example:lamp").component(accepted).build();
-        Geometry rejected = Geometry.builder().identifier("geometry.lamp").uvLockBones(Collections.nCopies(65, "lid")).build();
+        Geometry rejected = Geometry.builder().identifier("geometry.lamp").uvLock(Collections.nCopies(65, "lid")).build();
         assertThrows(IllegalArgumentException.class, () -> CustomBlock.builder("example:lamp").component(rejected).build());
         assertThrows(IllegalArgumentException.class, () -> CustomBlock.builder("example:lamp")
             .property(BlockProperty.bool("example:lit")).permutation("q.block_state('example:lit')", rejected).build());
         // and likewise in the geometry of item_visual and embedded_visual
         MaterialInstances materials = MaterialInstances.builder().build();
-        ItemVisual.Geometry itemGeometry = ItemVisual.Geometry.builder().identifier("geometry.lamp").uvLockBones(Collections.nCopies(64, "lid")).build();
+        ItemVisual.Geometry itemGeometry = ItemVisual.Geometry.builder().identifier("geometry.lamp").uvLock(Collections.nCopies(64, "lid")).build();
         CustomBlock.builder("example:lamp").component(ItemVisual.builder().geometry(itemGeometry).materialInstances(materials).build()).build();
         assertThrows(IllegalArgumentException.class, () -> CustomBlock.builder("example:lamp").component(ItemVisual.builder()
-            .geometry(itemGeometry.toBuilder().uvLockBones(Collections.nCopies(65, "lid")).build()).materialInstances(materials).build()).build());
+            .geometry(itemGeometry.toBuilder().uvLock(Collections.nCopies(65, "lid")).build()).materialInstances(materials).build()).build());
         assertThrows(IllegalArgumentException.class, () -> CustomBlock.builder("example:lamp").component(EmbeddedVisual.builder()
-            .geometry(EmbeddedVisual.Geometry.builder().identifier("geometry.lamp").uvLockBones(Collections.nCopies(65, "lid")).build())
+            .geometry(EmbeddedVisual.Geometry.builder().identifier("geometry.lamp").uvLock(Collections.nCopies(65, "lid")).build())
             .materialInstances(materials).build()).build());
     }
 

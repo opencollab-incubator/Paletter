@@ -439,8 +439,8 @@ public final class ComponentGenerator {
 
     /**
      * api.json {@code keyedExtras}: the fields of a keyed set ({@code *} in the docs) are named by the caller, so next to the
-     * fixed fields the docs list (here {@code all}, {@code up}, ...) the component gets a map for any other key, and a map
-     * of its aliases when the field has an alias form.
+     * fixed fields the docs list (here {@code all}, {@code up}, ...) the component gets a map for any other key (of
+     * every form of the field, when it is a union).
      */
     private void keyedExtras(Comp c) {
         if (!api("keyedExtras").has(c.id)) {
@@ -459,24 +459,16 @@ public final class ComponentGenerator {
         map.mappingKey = base.mappingKey;
         map.transform = base.transform;
         map.keyedExtraOf = base;
+        // The keys the other fields of the same type are named by have their own fields
+        map.reservedKeys = c.root.fields.stream().filter(f -> f.keyedExtraOf == null && f.json != null && sameKind(f.type, base.type))
+            .map(f -> f.json).toList();
         map.doc = doc;
         map.javadoc = true;
         c.root.fields.add(map);
-        if (!base.alternatives.isEmpty()) {
-            Field alias = base.alternatives.getFirst();
-            Field aliases = new Field();
-            aliases.path = alias.path;
-            aliases.json = alias.json;
-            aliases.java = extra.get("aliasField").getAsString();
-            aliases.type = new MapOf(alias.type);
-            aliases.defaultValue = new JsonObject();
-            aliases.mappingKey = alias.mappingKey;
-            aliases.transform = alias.transform;
-            aliases.keyedExtraOf = alias;
-            aliases.doc = extra.get("aliasDoc").getAsString();
-            aliases.javadoc = true;
-            c.root.fields.add(aliases);
-        }
+    }
+
+    private static boolean sameKind(Type a, Type b) {
+        return a instanceof ApiModel.UnionRef x && b instanceof ApiModel.UnionRef y ? x.union() == y.union() : a.equals(b);
     }
 
     /** The field a scalar component form fills: the one whose value rules move the same leaves. */
@@ -882,29 +874,11 @@ public final class ComponentGenerator {
             .anyMatch(e -> e.getAsString().equals(c.id + ":" + d.path));
         f.required = !optional && (d.required || (notes.contains("required") && !omissionAccepted));
         limits(c, f, feedbackPath, d.range, d.enumValues, observed);
-        // The alternative of a union kept as a field of its own
-        JsonObject union = api("unions").has(c.id + ":" + d.path) ? api("unions").getAsJsonObject(c.id + ":" + d.path) : null;
-        if (union != null && union.has("alternative")) {
-            JsonObject alt = union.getAsJsonObject("alternative");
-            for (String type : alt.keySet()) {
-                Field a = new Field();
-                a.path = d.path;
-                a.json = f.json;
-                a.java = f.java + pascal(alt.get(type).getAsString());
-                a.type = alternativeType(c, type, a.java);
-                a.mappingKey = d.path;
-                a.alternativeOf = f;
-                a.transform = f.transform;
-                a.doc = "The " + (type.startsWith("array<") ? "list of " + type.substring(6, type.length() - 1) + "s" : type) + " form of {@code " + f.json + "} (" + alt.get(type).getAsString() + "); excludes {@link #" + f.java + "()}.";
-                a.javadoc = true;
-                f.alternatives.add(a);
-            }
-        }
         return f;
     }
 
-    /** The type of a union alternative: a scalar ({@code string}) or a list of scalars ({@code array<string>}). */
-    private Type alternativeType(Comp c, String type, String fieldName) {
+    /** The type of a union variant that is no object: a scalar ({@code string}) or a list of scalars ({@code array<string>}). */
+    private Type variantType(Comp c, String type, String fieldName) {
         JsonObject parsed = parseType(type);
         if (parsed.get("type").getAsString().equals("array")) {
             return new ListOf(scalarType(c, parsed.getAsJsonObject("items").get("type").getAsString(), fieldName, List.of()));
@@ -925,12 +899,11 @@ public final class ComponentGenerator {
             types = List.of(parseType(override));
         }
         JsonObject union = api("unions").has(c.id + ":" + d.path) ? api("unions").getAsJsonObject(c.id + ":" + d.path) : null;
+        if (union != null && union.has("name")) {
+            return unionType(c, d, fields, types, union);
+        }
         if (union != null && union.has("use")) {
             types = List.of(parseType(union.get("use").getAsString()));
-        }
-        if (union != null && union.has("alternative")) {
-            Set<String> alternatives = union.getAsJsonObject("alternative").keySet();
-            types = types.stream().filter(t -> !alternatives.contains(typeString(t))).toList();
         }
         if (override != null && override.startsWith("component:")) {
             return new ApiModel.ComponentRef(override.substring("component:".length()));
@@ -973,6 +946,81 @@ public final class ComponentGenerator {
                 + "; settle it in api.json unions");
         }
         return single(c, d, types.getFirst(), fields);
+    }
+
+    /**
+     * A field that takes several JSON forms (api.json {@code unions}: {@code name} of the sealed type, {@code variants} the
+     * record name of each JSON type, sorted by it): the forms named must be forms the model has
+     * (the others it lists are left out, as api.json {@code use} did), an integer standing for a number; a form the docs
+     * leave out (the tags of a list of items) can be named too, unless it is an object, every field of the same type name
+     * must have the same forms, and the type is nested in the component when a form is one of its own types.
+     */
+    private Type unionType(Comp c, DocField d, List<DocField> fields, List<JsonObject> types, JsonObject spec) {
+        String where = c.id + ":" + d.path;
+        String name = spec.get("name").getAsString();
+        JsonObject named = spec.getAsJsonObject("variants");
+        Set<String> documented = new LinkedHashSet<>(types.stream().map(t -> family(typeString(t))).toList());
+        if (named.keySet().stream().noneMatch(k -> documented.contains(family(k)))) {
+            throw new GenerationException("api.json unions: " + where + " is " + String.join(" | ", documented) + " in the model, which "
+                + "has none of the forms it names (" + String.join(" | ", named.keySet()) + ")");
+        }
+        ApiModel.UnionType union = new ApiModel.UnionType();
+        union.name = name;
+        union.kind = c.kind;
+        ObjRef object = null;
+        // By record name: the order of the keys in api.json carries no meaning
+        for (Map.Entry<String, JsonElement> e : named.entrySet().stream().sorted(Comparator.comparing(x -> x.getValue().isJsonObject() ? x.getValue().getAsJsonObject().get("name").getAsString() : x.getValue().getAsString())).toList()) {
+            JsonObject form = types.stream().filter(t -> family(typeString(t)).equals(family(e.getKey()))).findFirst().orElse(null);
+            Type type;
+            if (form == null && e.getKey().equals("object")) {
+                throw new GenerationException("api.json unions: " + where + " names an object form, which the model does not have");
+            }
+            if (form != null && form.get("type").getAsString().equals("object")) {
+                object = (ObjRef) single(c, d, form, fields);
+                type = object;
+            } else {
+                type = variantType(c, e.getKey(), camel(token(d.path)));
+            }
+            // A record name, or {name, doc}
+            String variant = e.getValue().isJsonObject() ? e.getValue().getAsJsonObject().get("name").getAsString() : e.getValue().getAsString();
+            String meaning = e.getValue().isJsonObject() ? e.getValue().getAsJsonObject().get("doc").getAsString() : null;
+            union.variants.add(new ApiModel.Variant(variant, e.getKey(), meaning, type));
+        }
+        if (spec.has("noOverload")) {
+            spec.getAsJsonArray("noOverload").forEach(n -> union.noOverload.add(n.getAsString()));
+            if (!union.noOverload.stream().allMatch(n -> union.variants.stream().anyMatch(v -> v.name.equals(n)))) {
+                throw new GenerationException("api.json unions: " + where + " noOverload names a form the union does not have");
+            }
+        }
+        union.descriptor = apiString("descriptors", where);
+        boolean own = union.variants.stream().anyMatch(v -> v.type instanceof ObjRef || v.type instanceof EnumRef || v.type instanceof Vec3);
+        union.owner = own ? c : null;
+        ApiModel.UnionType known = model.unions.get(name);
+        if (known == null) {
+            model.unions.put(name, union);
+            known = union;
+        } else {
+            if (!shape(known).equals(shape(union))) {
+                throw new GenerationException("name collision: the union " + name + " has the forms " + shape(known) + " and, at " + where + ", "
+                    + shape(union) + "; give one of them another name in api.json unions");
+            }
+            if (known.kind != c.kind || known.owner != union.owner && (known.owner != null || union.owner != null)
+                || known.owner != null && known.owner != c) {
+                throw new GenerationException("the union " + name + " is declared in " + (known.owner == null ? known.kind : known.owner.id)
+                    + " and used at " + where + "; a union with a type of its component cannot be shared, name it differently");
+            }
+        }
+        known.users.add(where);
+        return new ApiModel.UnionRef(known, object);
+    }
+
+    /** A JSON type for comparing forms: an integer is a number (the model says {@code array<number>}, a color has integers). */
+    static String family(String type) {
+        return type.replace("integer", "number");
+    }
+
+    private static String shape(ApiModel.UnionType u) {
+        return u.variants.stream().map(v -> v.name + "=" + v.json).toList() + " without overloads for " + u.noOverload;
     }
 
     private static int countMaps(List<JsonObject> types) {
@@ -1245,6 +1293,14 @@ public final class ComponentGenerator {
         for (ObjType o : c.types.values()) {
             rewrite(o, replace);
         }
+        for (ApiModel.UnionType u : model.unions.values()) {
+            if (u.owner == c) {
+                u.variants.forEach(v -> v.type = rewrite(v.type, replace));
+                if (u.name.equals(c.className) || c.types.containsKey(u.name) || c.enums.containsKey(u.name)) {
+                    throw new GenerationException("name collision: " + c.id + " union " + u.name + " clashes with another nested name; name it in api.json unions");
+                }
+            }
+        }
     }
 
     private static void rewrite(ObjType o, Map<ObjType, ObjType> replace) {
@@ -1258,6 +1314,7 @@ public final class ComponentGenerator {
             case ObjRef r -> replace.containsKey(r.type()) ? new ObjRef(replace.get(r.type()), r.wire()) : r;
             case ListOf l -> new ListOf(rewrite(l.element(), replace));
             case MapOf m -> new MapOf(rewrite(m.value(), replace));
+            case ApiModel.UnionRef u -> u.object() == null ? u : new ApiModel.UnionRef(u.union(), (ObjRef) rewrite(u.object(), replace));
             default -> t;
         };
     }
@@ -1288,11 +1345,6 @@ public final class ComponentGenerator {
             if (!names.add(f.java)) {
                 throw new GenerationException("name collision: " + c.id + " " + (o.path.isEmpty() ? "" : o.path + " ") + "has two fields named " + f.java);
             }
-            for (Field a : f.alternatives) {
-                if (!names.add(a.java)) {
-                    throw new GenerationException("name collision: " + c.id + " has two fields named " + a.java);
-                }
-            }
             if (f.type instanceof ObjRef r) {
                 checkFieldNames(c, r.type());
             } else if (f.type instanceof ListOf l && l.element() instanceof ObjRef r) {
@@ -1304,7 +1356,7 @@ public final class ComponentGenerator {
     // ---- Wire rules: conflicts and defaults ----------------------------------------------------------------------------
 
     /**
-     * Every wire leaf must be moved by at most one field (shorthands and union alternatives aside): two fields deciding
+     * Every wire leaf must be moved by at most one field (shorthands aside): two fields deciding
      * the same leaf need a hand transform. Then each default is checked against what BDS sends when the field is omitted.
      */
     private void checkConflicts(Comp c) {
@@ -1329,11 +1381,7 @@ public final class ComponentGenerator {
             boolean t = transformed || f.transform != null || c.transform != null;
             if (!t) {
                 for (String leaf : rulesOf(w, f).stream().filter(Rule::writesValue).filter(r -> !r.sharesLeaf()).map(r -> r.wire).toList()) {
-                    owners.computeIfAbsent(leaf, k -> new ArrayList<>()).add(f.alternativeOf != null ? f.alternativeOf.path : f.path);
-                }
-                for (Field a : f.alternatives) {
-                    rulesOf(w, a).stream().filter(Rule::writesValue).filter(r -> !r.sharesLeaf())
-                        .forEach(r -> owners.computeIfAbsent(r.wire, k -> new ArrayList<>()).add(f.path));
+                    owners.computeIfAbsent(leaf, k -> new ArrayList<>()).add(f.path);
                 }
             }
             ObjType child = objectOf(f.type);
@@ -1351,6 +1399,9 @@ public final class ComponentGenerator {
         if (t instanceof ListOf l && l.element() instanceof ObjRef r) {
             return r.wire();
         }
+        if (t instanceof ApiModel.UnionRef u && u.object() != null) {
+            return u.object().wire();
+        }
         return null;
     }
 
@@ -1361,7 +1412,7 @@ public final class ComponentGenerator {
             // An object's own value rules come from its scalar shorthand, which its children explain
             rules.removeIf(Rule::writesValue);
         }
-        if (!f.alternatives.isEmpty()) {
+        if (f.type instanceof ApiModel.UnionRef) {
             rules.removeIf(Rule::writesValue);
         }
         return rules;
@@ -1449,7 +1500,7 @@ public final class ComponentGenerator {
         return Docs.literal(d);
     }
 
-    private static boolean fits(Type t, JsonElement d) {
+    static boolean fits(Type t, JsonElement d) {
         return switch (t) {
             case Scalar s -> d.isJsonPrimitive() && switch (s.kind()) {
                 case BOOL -> d.getAsJsonPrimitive().isBoolean();
@@ -1462,6 +1513,7 @@ public final class ComponentGenerator {
             case MapOf m -> d.isJsonObject() && d.getAsJsonObject().entrySet().stream().allMatch(e -> fits(m.value(), e.getValue()));
             case ObjRef r -> d.isJsonObject() && d.getAsJsonObject().keySet().stream().allMatch(k -> r.type().fields.stream().anyMatch(f -> k.equals(f.json)));
             case States s -> d.isJsonObject();
+            case ApiModel.UnionRef u -> u.union().variants.stream().anyMatch(v -> fits(v.type, d));
             case ApiModel.ComponentRef r -> false;
         };
     }

@@ -3,6 +3,7 @@
 // data/model/ATTRIBUTION.md.
 package org.geysermc.paletter.item.component;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -34,11 +35,12 @@ import org.geysermc.paletter.vanilla.BedrockItemType;
  *        rare}; BDS takes other strings too.
  * @param stripes Stripes on or off, or the striped parts. Add-on JSON {@code stripes}. Optional (null: not set). Compiled by
  *        the hand transform {@code Transforms.testMap}.
- * @param stripesNames The list of strings form of {@code stripes} (names); excludes {@link #stripes()}. Add-on JSON {@code stripes}.
- *        Compiled by the hand transform {@code Transforms.testMap}.
+ * @param outline The outline on or off, or the outlined parts. Add-on JSON {@code outline}. Optional (null: not set). Compiled
+ *        by the hand transform {@code Transforms.testMap}.
  * @param fuel The item it burns. Add-on JSON {@code fuel}. Optional (null: not set).
  * @param reach The docs require it; BDS takes it omitted. Add-on JSON {@code reach}. Default: <code>3</code>.
- * @param moreNested Nested things under any other key. Add-on JSON {@code nested}. Default: <code>&#123;&#125;</code>.
+ * @param moreNested Nested things under any other key. Default: <code>&#123;&#125;</code>. A key that has a field of its own
+ *        ({@code nested}) is refused.
  * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/itemreference/examples/itemcomponents/test_widget?view=minecraft-bedrock-stable">Microsoft Learn: test:widget</a>
  * @since 1.0.0
  */
@@ -47,8 +49,8 @@ public record Widget(int count, @NonNull String label, Widget. @NonNull Mode mod
         @Nullable Float speed, Widget. @Nullable NestedThing nested, @NonNull List<String> tags,
         @Nullable List<Widget.Entry> entries, @Nullable Map<String, String> colors,
         Widget. @Nullable Shape shape, Widget. @NonNull Vec3 offset, @Nullable String rarity,
-        @Nullable Boolean stripes, @Nullable List<String> stripesNames, @Nullable String fuel,
-        float reach, @NonNull Map<String, Widget.NestedThing> moreNested) implements ItemComponent {
+        @Nullable Stripes stripes, @Nullable Stripes outline, @Nullable String fuel, float reach,
+        @NonNull Map<String, Widget.NestedThing> moreNested) implements ItemComponent {
     /**
      * The component name in add-on JSON.
      */
@@ -62,11 +64,12 @@ public record Widget(int count, @NonNull String label, Widget. @NonNull Mode mod
         entries = entries == null ? null : List.copyOf(entries);
         colors = colors == null ? null : Check.copy(colors, "Widget.colors");
         Objects.requireNonNull(offset, "Widget.offset");
-        if (stripes != null && stripesNames != null) {
-            throw new IllegalArgumentException("Widget sets both stripes and stripesNames");
-        }
-        stripesNames = stripesNames == null ? null : List.copyOf(stripesNames);
         moreNested = Check.copy(moreNested, "Widget.moreNested");
+        for (String key : List.of("nested")) {
+            if (moreNested.containsKey(key)) {
+                throw new IllegalArgumentException("Widget.moreNested has the key " + key + ", which has a field of its own");
+            }
+        }
     }
 
     @Override
@@ -98,7 +101,7 @@ public record Widget(int count, @NonNull String label, Widget. @NonNull Mode mod
         builder.offset = offset;
         builder.rarity = rarity;
         builder.stripes = stripes;
-        builder.stripesNames = stripesNames;
+        builder.outline = outline;
         builder.fuel = fuel;
         builder.reach = reach;
         builder.moreNested = moreNested;
@@ -131,9 +134,9 @@ public record Widget(int count, @NonNull String label, Widget. @NonNull Mode mod
 
         private @Nullable String rarity;
 
-        private @Nullable Boolean stripes;
+        private @Nullable Stripes stripes;
 
-        private @Nullable List<String> stripesNames;
+        private @Nullable Stripes outline;
 
         private @Nullable String fuel;
 
@@ -261,32 +264,71 @@ public record Widget(int count, @NonNull String label, Widget. @NonNull Mode mod
         }
 
         /**
-         * Sets {@code stripes} (clears the other form).
-         */
-        public @NonNull Builder stripes(@Nullable Boolean stripes) {
-            this.stripes = stripes;
-            if (stripes != null) {
-                this.stripesNames = null;
-            }
-            return this;
-        }
-
-        /**
-         * Sets {@code stripes} (clears the other form).
-         */
-        public @NonNull Builder stripesNames(@Nullable List<String> stripesNames) {
-            this.stripesNames = stripesNames;
-            if (stripesNames != null) {
-                this.stripes = null;
-            }
-            return this;
-        }
-
-        /**
          * Sets {@code stripes}.
          */
-        public @NonNull Builder stripesNames(@NonNull String... stripesNames) {
-            return stripesNames(List.of(stripesNames));
+        public @NonNull Builder stripes(@Nullable Stripes stripes) {
+            this.stripes = stripes;
+            return this;
+        }
+
+        /**
+         * Sets {@code stripes} to a list of strings.
+         */
+        public @NonNull Builder stripes(@NonNull List<String> stripes) {
+            return stripes(Stripes.names(stripes));
+        }
+
+        /**
+         * Sets {@code stripes} to a list of strings (at least one value).
+         */
+        public @NonNull Builder stripes(@NonNull String first, @NonNull String... rest) {
+            List<String> values = new ArrayList<>();
+            values.add(first);
+            for (String x : rest) {
+                values.add(x);
+            }
+            return stripes(values);
+        }
+
+        /**
+         * Sets {@code stripes} to a boolean.
+         */
+        public @NonNull Builder stripes(boolean stripes) {
+            return stripes(Stripes.on(stripes));
+        }
+
+        /**
+         * Sets {@code outline}.
+         */
+        public @NonNull Builder outline(@Nullable Stripes outline) {
+            this.outline = outline;
+            return this;
+        }
+
+        /**
+         * Sets {@code outline} to a list of strings.
+         */
+        public @NonNull Builder outline(@NonNull List<String> outline) {
+            return outline(Stripes.names(outline));
+        }
+
+        /**
+         * Sets {@code outline} to a list of strings (at least one value).
+         */
+        public @NonNull Builder outline(@NonNull String first, @NonNull String... rest) {
+            List<String> values = new ArrayList<>();
+            values.add(first);
+            for (String x : rest) {
+                values.add(x);
+            }
+            return outline(values);
+        }
+
+        /**
+         * Sets {@code outline} to a boolean.
+         */
+        public @NonNull Builder outline(boolean outline) {
+            return outline(Stripes.on(outline));
         }
 
         /**
@@ -328,7 +370,7 @@ public record Widget(int count, @NonNull String label, Widget. @NonNull Mode mod
             if (label == null) {
                 throw new IllegalStateException("Widget.label is required");
             }
-            return new Widget(count, label, mode, speed, nested, tags, entries, colors, shape, offset, rarity, stripes, stripesNames, fuel, reach, moreNested);
+            return new Widget(count, label, mode, speed, nested, tags, entries, colors, shape, offset, rarity, stripes, outline, fuel, reach, moreNested);
         }
     }
 
