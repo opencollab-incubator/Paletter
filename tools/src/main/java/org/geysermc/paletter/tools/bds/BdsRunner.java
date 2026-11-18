@@ -134,10 +134,14 @@ public final class BdsRunner {
         String result;
         try (BdsServer bds = new BdsServer(server, echo)) {
             bds.start(log);
-            result = bds.await(line -> line.contains(marker + "-DONE") || line.contains(marker + "-FAILED"), timeoutSeconds);
+            result = bds.await(line -> line.contains(marker + "-DONE") || line.contains(marker + "-FAILED"),
+                line -> line.contains(marker + "-PROGRESS"), timeoutSeconds);
         }
-        if (result == null || !result.contains(marker + "-DONE")) {
-            throw new IOException("BDS exited without " + marker + "-DONE (timeout " + timeoutSeconds + "s); see " + log);
+        if (result != null && result.contains(marker + "-FAILED")) {
+            throw new IOException("The add-on reported " + result.substring(result.indexOf(marker + "-FAILED")) + "; see " + log);
+        }
+        if (result == null) {
+            throw new IOException("BDS exited without " + marker + "-DONE (silent for " + timeoutSeconds + "s, or exited); see " + log);
         }
     }
 
