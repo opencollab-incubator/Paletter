@@ -60,9 +60,18 @@ public final class BedrockItemType implements ItemKey {
     }
 
     private BedrockItemType(String identifier) {
+        this(identifier, true);
+    }
+
+    /**
+     * A type without a canonical id in the bundled data: its variants find their id by identifier in the palette's own
+     * canonical items. A custom type, or with {@code custom} false the type of an item a preview added (see
+     * {@link PreviewItems}).
+     */
+    private BedrockItemType(String identifier, boolean custom) {
         this.identifier = Objects.requireNonNull(identifier);
         this.fallback = null;
-        this.custom = true;
+        this.custom = custom;
         this.education = false;
         this.linked = new Linked(this, true, List.of(base), new int[] {-1});
     }
@@ -119,6 +128,11 @@ public final class BedrockItemType implements ItemKey {
     @Internal
     public static @NonNull BedrockItemType custom(@NonNull String identifier) {
         return new BedrockItemType(identifier);
+    }
+
+    /** The type of an item a preview added, for {@link PreviewItems} only. */
+    static BedrockItemType preview(String identifier) {
+        return new BedrockItemType(identifier, false);
     }
 
     /**

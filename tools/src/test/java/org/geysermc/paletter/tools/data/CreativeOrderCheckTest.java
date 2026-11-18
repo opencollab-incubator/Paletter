@@ -26,20 +26,21 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
- * Paletter's default creative ordering against what BDS 1.26.63.1 sent (see docs/wire-notes.md): the creative inventory
- * of the creative order probe (every kind of menu category placement) and of the large probe (700 blocks, so BDS's block
- * map has more than 512 buckets), and the block ids and block map order of the spec add-on, which BDS iterates for the start
- * game block properties and for the block pass alike.
+ * Paletter's default creative ordering against what BDS sent (see docs/wire-notes.md): the creative inventory of the
+ * creative order probe (every kind of menu category placement) of BDS 1.26.63.1 and of the preview 1.26.70.24 (whose
+ * layout has items only the preview has), and of the large probe of 1.26.63.1 (700 blocks, so BDS's block map has more
+ * than 512 buckets), and the block ids and block map order of the spec add-on, which BDS iterates for the start game
+ * block properties and for the block pass alike.
  */
 class CreativeOrderCheckTest {
     private static final Path CAPTURES = Path.of("../data/bds/1.26.63.1");
     private static final Path DATA = Path.of("../paletter/src/main/resources/paletter");
 
     @ParameterizedTest
-    @CsvSource({"creative-probe, 30", "creative-large, 700"})
-    void bdsOrderingMatchesTheCapture(String capture, int customStacks) throws Exception {
-        Path directory = CAPTURES.resolve(capture);
-        CreativeOrderCheck.Result result = CreativeOrderCheck.check(2225, DATA,
+    @CsvSource({"1.26.63.1, 2225, creative-probe, 30", "1.26.63.1, 2225, creative-large, 700", "1.26.70.24, 2259, creative-probe, 30"})
+    void bdsOrderingMatchesTheCapture(String build, int protocol, String capture, int customStacks) throws Exception {
+        Path directory = Path.of("../data/bds").resolve(build).resolve(capture);
+        CreativeOrderCheck.Result result = CreativeOrderCheck.check(protocol, DATA,
             directory.resolve("creative_items.json.gz"), directory.resolve("custom_item_registry.nbt"),
             directory.resolve("custom_block_properties.nbt"));
         assertTrue(result.matches(), String.join("\n", result.differences()));

@@ -70,7 +70,7 @@ final class PaletteCompiler {
         ItemRegistry.Builder builder = ItemRegistry.vanilla(data, blocks, canonicalItems);
         fallbacks.items(data.version()).forEach(builder::fallback);
         builder.defaultFallback(fallbacks.defaultItem());
-        CreativeLayout layout = RawConverter.convert(data.creative(), blocks, report);
+        CreativeLayout layout = RawConverter.convert(data.creative(), blocks, canonicalItems, report);
         ItemRegistry items = builder.build(layout, report);
         CreativeContent creative = CreativeContent.compile(layout, items, report);
         prepareCanonical(blocks, null, items, null, report);

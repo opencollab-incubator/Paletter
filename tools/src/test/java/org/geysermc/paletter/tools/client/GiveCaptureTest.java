@@ -81,6 +81,17 @@ class GiveCaptureTest {
         assertTrue(check.mismatches().getFirst().contains("minecraft:spruce_sign (slot 5)"), check.mismatches().toString());
     }
 
+    /** BDS 1.26.36.1 to 1.26.70.24: the wheat block's identifier is also an item's, and /give takes the item. */
+    @Test
+    void aBlockIdentifierThatIsAnItemOfItsOwnIsNoMismatch() {
+        List<GiveCapture.Entry> entries = List.of(new GiveCapture.Entry("minecraft:wheat", "minecraft:wheat_seeds",
+            new GiveCapture.Given("minecraft:wheat", 0), new GiveCapture.Given("minecraft:wheat_seeds", 0)));
+        GiveCapture.Check check = GiveCapture.check(entries, Map.of("minecraft:wheat", "minecraft:wheat_seeds")::get);
+        assertEquals(1, check.matched());
+        assertEquals(List.of("minecraft:wheat (block of minecraft:wheat)"), check.ownItems());
+        assertTrue(check.mismatches().isEmpty(), check.mismatches().toString());
+    }
+
     @Test
     void theClientGivesOneIdentifierAtATimeAndRecordsTheSlotOrTheError() {
         CaptureClient client = new CaptureClient(null, null).give(List.of("minecraft:unpowered_repeater", "minecraft:repeater", "minecraft:wall_sign"));

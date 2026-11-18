@@ -117,9 +117,12 @@ public final class GiveCapture {
 
     /**
      * The answers checked against an {@code itemOf}: no answer is unverified, a command error is rejected (evidence, no mismatch), an
-     * item that differs from the answer is a mismatch.
+     * item that differs from the answer is a mismatch. A block identifier that gave the item of the same identifier names an item of
+     * its own ({@code ownItems}, no mismatch): {@code /give} takes the item, and says nothing about the block's item (BDS 1.26.36.1 to
+     * 1.26.70.24: {@code /give @s minecraft:wheat} gives the item {@code minecraft:wheat}, while the block {@code minecraft:wheat}
+     * has the item {@code minecraft:wheat_seeds}; the same for {@code minecraft:beetroot}).
      */
-    public record Check(int matched, List<String> mismatches, List<String> unverified, List<String> rejected) {
+    public record Check(int matched, List<String> mismatches, List<String> unverified, List<String> rejected, List<String> ownItems) {
     }
 
     /** @param itemOf the identifier of the item for a block identifier, or null */
@@ -128,6 +131,7 @@ public final class GiveCapture {
         List<String> mismatches = new ArrayList<>();
         List<String> unverified = new ArrayList<>();
         List<String> rejected = new ArrayList<>();
+        List<String> ownItems = new ArrayList<>();
         for (Entry entry : entries) {
             String expected = itemOf.apply(entry.block());
             for (String kind : List.of("block", "item")) {
@@ -140,11 +144,13 @@ public final class GiveCapture {
                     rejected.add(name);
                 } else if (given.item().equals(expected)) {
                     matched[0]++;
+                } else if (kind.equals("block") && given.item().equals(entry.block())) {
+                    ownItems.add(name);
                 } else {
                     mismatches.add(name + ": the client got " + given.item() + " (slot " + given.slot() + "), expected " + expected);
                 }
             }
         }
-        return new Check(matched[0], mismatches, unverified, rejected);
+        return new Check(matched[0], mismatches, unverified, rejected, ownItems);
     }
 }

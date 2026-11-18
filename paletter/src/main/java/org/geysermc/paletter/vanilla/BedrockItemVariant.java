@@ -52,7 +52,12 @@ public final class BedrockItemVariant implements ItemKey {
             }
         }
         ItemVariant variant = canonical.variant(id);
-        return BedrockItemType.fromIdentifier(variant.identifier()).variant(variant.damage());
+        BedrockItemType type = BedrockItemType.fromIdentifier(variant.identifier());
+        if (id < canonical.vanillaSize() && !type.isAvailable()) {
+            // An item only the palette's own newest version (a preview) has: its constant resolves through its fallback
+            type = PreviewItems.type(canonical.root(), variant.identifier());
+        }
+        return type.variant(variant.damage());
     }
 
     /**

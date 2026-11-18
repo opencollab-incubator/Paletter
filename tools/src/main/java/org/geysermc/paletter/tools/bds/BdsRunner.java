@@ -118,21 +118,30 @@ public final class BdsRunner {
 
     private void dump(Path server, Path log, int timeoutSeconds, boolean echo) throws IOException, InterruptedException {
         String result;
+        boolean exited;
+        List<String> progress;
         try (BdsServer bds = new BdsServer(server, echo)) {
             bds.start(log);
             result = bds.await(line -> line.contains(marker + "-DONE") || line.contains(marker + "-FAILED"),
                 line -> line.contains(marker + "-PROGRESS"), timeoutSeconds);
+            exited = !bds.isRunning();
+            progress = bds.lines(line -> line.contains(marker + "-PROGRESS"));
         }
-        checkResult(result, marker, timeoutSeconds, log);
+        checkResult(result, marker, timeoutSeconds, exited, progress.isEmpty() ? null : progress.getLast(), log);
     }
 
     /**
      * @param result the line that ended the run ({@code <marker>-DONE} or {@code <marker>-FAILED}, which ends it at once), or null if
      *               BDS exited or printed no {@code <marker>-PROGRESS} line for the timeout
+     * @param exited whether BDS had exited when the run ended
+     * @param lastProgress the last {@code <marker>-PROGRESS} line, or null: where a run without a result stopped
      */
-    static void checkResult(String result, String marker, int timeoutSeconds, Path log) throws IOException {
+    static void checkResult(String result, String marker, int timeoutSeconds, boolean exited, String lastProgress, Path log) throws IOException {
         if (result == null) {
-            throw new IOException("BDS exited, or was silent for " + timeoutSeconds + "s, without " + marker + "-DONE; see " + log);
+            String where = lastProgress == null ? "before any " + marker + "-PROGRESS line"
+                : "after " + lastProgress.substring(lastProgress.indexOf(marker + "-PROGRESS")).strip();
+            throw new IOException((exited ? "BDS exited" : "BDS was silent for " + timeoutSeconds + "s") + " without " + marker
+                + "-DONE, " + where + "; see " + log);
         }
         if (!result.contains(marker + "-DONE")) {
             throw new IOException("the add-on failed: " + result.substring(result.indexOf(marker + "-FAILED")).strip() + "; see " + log);
