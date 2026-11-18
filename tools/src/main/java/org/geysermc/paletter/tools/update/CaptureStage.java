@@ -227,6 +227,15 @@ final class CaptureStage {
     private boolean codecReported;
 
     void hashCheck(String label, Capture.Summary summary) {
+        if (!summary.traitStatesUnknown().isEmpty()) {
+            // BDS accepts enabled_states values the docs name no state for; the inference derives their states from BDS's
+            // block states and checks them against the hashes BDS sent for these blocks
+            ctx.report.check(Report.Status.INFO, "Trait states (" + label + ")", "BDS accepts enabled_states the trait state table "
+                + "has no states for yet, " + summary.traitStatesUnknown() + ": their blocks' creative block ids are checked by the mapping "
+                + "inference (TraitStateTable), not here");
+            ctx.report.action("infer the mappings and run :tools:generateComponentApi (the trait state table gains "
+                + summary.traitStatesUnknown() + ")");
+        }
         if (summary.unresolvedHashes() == 0) {
             ctx.report.check(Report.Status.PASS, "Block hashes (" + label + ")", "all " + summary.resolvedHashes()
                 + " creative block ids are FNV-1a 32 hashes of palette states");
