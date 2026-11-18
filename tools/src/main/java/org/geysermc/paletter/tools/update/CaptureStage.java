@@ -217,6 +217,7 @@ final class CaptureStage {
         if (!summary.nativeCodec() && !codecReported) {
             // Once: every capture of the run decodes with the same codec
             codecReported = true;
+            runs.codecProtocol = summary.codecProtocol();
             ctx.report.check(Report.Status.DIFF, "Protocol codec", "no codec for " + summary.protocol() + " in the protocol library, "
                 + "captures decoded with the " + summary.codecProtocol() + " codec: update it and rerun");
         }

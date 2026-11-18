@@ -220,6 +220,10 @@ public final class Update {
             // 2. Network captures (vanilla, experiments and the creative order probe, hashed and sequential block ids)
             captures.captures(server, work, dump, runs);
             protocol = runs.protocol;
+            if (runs.codecProtocol != null && runs.protocol != null) {
+                // The captures were decoded with another protocol's codec: BDS's own packet schemas say whether that is safe
+                ProtocolSchemaCheck.report(ctx.report, cache.resolve("docgen"),runs.codecProtocol, runs.protocol);
+            }
 
             // 3. Voxel shapes: the packet of the vanilla world, of the probe add-on and of the anchors
             if (runs.vanilla != null) {
