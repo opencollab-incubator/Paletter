@@ -1,8 +1,4 @@
-allprojects {
-    group = "org.geysermc.paletter"
-    version = "1.0.0-SNAPSHOT"
-}
-
+// group and version come from gradle.properties
 subprojects {
     apply(plugin = "java")
 
