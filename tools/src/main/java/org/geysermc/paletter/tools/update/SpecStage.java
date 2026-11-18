@@ -5,6 +5,7 @@ import org.geysermc.paletter.tools.client.Capture;
 import org.geysermc.paletter.tools.data.CreativeOrderCheck;
 import org.geysermc.paletter.tools.Layout;
 import org.geysermc.paletter.tools.model.addon.AddonGenerator;
+import org.geysermc.paletter.tools.model.addon.AddonWriter;
 import org.geysermc.paletter.tools.model.infer.MappingInference;
 import org.geysermc.paletter.tools.model.infer.SpecDiff;
 import com.google.gson.JsonElement;
@@ -189,8 +190,10 @@ final class SpecStage {
         captures.appliedCheck(runs.experiments, "spec add-on world", runs.experiments.current, summary);
         new ShapesStage(ctx).coverage(capture);
         if (runs.existing != null) {
+            // The engine packs follow the main pack in the world's pack list (SpecCapture#freshWorld), one block each
             CreativeOrderCheck.Result order = CreativeOrderCheck.blockOrder(runs.protocol, ctx.resources,
-                capture.resolve("custom_item_registry.nbt"), capture.resolve("custom_block_properties.nbt"));
+                capture.resolve("custom_item_registry.nbt"), capture.resolve("custom_block_properties.nbt"),
+                AddonWriter.enginePacks().stream().map(AddonWriter.EnginePack::identifier).toList());
             if (order.skipped() != null) {
                 ctx.report.check(Report.Status.SKIP, "Block map order (spec add-on)", order.skipped());
             } else {

@@ -19,6 +19,7 @@ import org.junit.jupiter.params.provider.CsvSource;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -51,7 +52,7 @@ class CreativeOrderCheckTest {
     void blockMapOrderMatchesTheSpecCaptures(String build, int protocol) throws Exception {
         Path directory = Path.of("../data/bds").resolve(build).resolve("spec");
         CreativeOrderCheck.Result result = CreativeOrderCheck.blockOrder(protocol, DATA, directory.resolve("custom_item_registry.nbt"),
-            directory.resolve("custom_block_properties.nbt"));
+            directory.resolve("custom_block_properties.nbt"), List.of());
         assertTrue(result.matches(), String.join("\n", result.differences()));
         assertTrue(result.customStacks() >= 1000, "only " + result.customStacks() + " custom blocks compared");
     }
@@ -60,7 +61,7 @@ class CreativeOrderCheckTest {
     void blockMapOrderOfAnUnbundledProtocolIsSkipped() throws Exception {
         Path directory = CAPTURES.resolve("spec");
         CreativeOrderCheck.Result result = CreativeOrderCheck.blockOrder(2226, DATA, directory.resolve("custom_item_registry.nbt"),
-            directory.resolve("custom_block_properties.nbt"));
+            directory.resolve("custom_block_properties.nbt"), List.of());
         assertNotNull(result.skipped());
     }
 

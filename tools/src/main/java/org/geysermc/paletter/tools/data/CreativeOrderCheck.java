@@ -106,15 +106,26 @@ public final class CreativeOrderCheck {
      * wire in block pass order. Paletter, given the capture's custom content, must number the blocks as BDS did and
      * order them as the wire does ({@link CreativeOrdering#blockOrder}). Checked on the spec captures, which hold no
      * creative inventory.
+     * <p>
+     * BDS numbers the blocks of one behavior pack after those of the packs before it in the world's pack list, each pack's
+     * in {@link org.geysermc.paletter.internal.BlockIdOrder} (spec capture of BDS 1.26.36.1: the main pack's 1338 blocks got
+     * 10000 to 11337, the engine packs' {@code paletter:engine_0} and {@code paletter:engine_1}, listed after it, 11338 and 11339,
+     * although by name they come first). Paletter, which has no packs, numbers the main pack; the blocks of the packs after it
+     * are numbered after it, in the order given.
      *
      * @param data the bundled data directory, as for {@link #check}
      * @param customItems {@code custom_item_registry.nbt} of the capture
      * @param customBlocks {@code custom_block_properties.nbt} of the capture
+     * @param laterPacks the blocks of the behavior packs after the main pack, in block id order (pack by pack, in the
+     *                   world's pack order)
      * @return the custom blocks compared and the first differences
      */
-    public static Result blockOrder(int protocol, Path data, Path customItems, Path customBlocks) throws IOException {
+    public static Result blockOrder(int protocol, Path data, Path customItems, Path customBlocks, List<String> laterPacks) throws IOException {
         List<NbtMap> blocks = readList(customBlocks, "blocks");
-        Paletter capture = withPreviews(data, CreativeOrdering.BDS, layer(readList(customItems, "items"), blocks));
+        Set<String> later = Set.copyOf(laterPacks);
+        Paletter capture = withPreviews(data, CreativeOrdering.BDS, layer(
+            readList(customItems, "items").stream().filter(item -> !later.contains(item.getString("name"))).toList(),
+            blocks.stream().filter(block -> !later.contains(block.getString("name"))).toList()));
         if (capture.versions().stream().noneMatch(v -> v.protocolVersion() == protocol)) {
             return new Result(0, List.of(), "no bundled data version has protocol " + protocol);
         }
@@ -123,6 +134,13 @@ public final class CreativeOrderCheck {
         Map<String, Integer> paletterIds = new LinkedHashMap<>();
         palette.blocks().blockProperties().stream().filter(block -> !block.getName().startsWith("minecraft:"))
             .forEach(block -> paletterIds.put(block.getName(), blockId(block.getProperties())));
+        Set<String> captured = new HashSet<>();
+        blocks.forEach(block -> captured.add(block.getString("name")));
+        for (String block : laterPacks) {
+            if (captured.contains(block)) {
+                paletterIds.put(block, paletterIds.values().stream().mapToInt(Integer::intValue).max().orElseThrow() + 1);
+            }
+        }
         for (NbtMap block : blocks) {
             int bds = blockId(block.getCompound("properties"));
             Integer ours = paletterIds.get(block.getString("name"));
