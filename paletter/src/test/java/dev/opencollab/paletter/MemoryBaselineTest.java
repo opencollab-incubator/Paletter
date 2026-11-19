@@ -20,7 +20,6 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
-import java.util.function.LongSupplier;
 
 import static org.junit.jupiter.api.Assertions.fail;
 
@@ -31,18 +30,17 @@ import static org.junit.jupiter.api.Assertions.fail;
  * printed as {@code MEMORY} lines, run {@code ./gradlew :paletter:test --tests '*MemoryBaselineTest' -i} to see them.
  * <p>
  * The cost of an extension is what its object graph holds that the base palette's graph does not. JOL tells objects apart by
- * address, so only a garbage collection during a walk makes moved objects look new (one between two walks changes nothing):
- * the measurements of an extension are repeated up to {@link #ATTEMPTS} times and pass if one is within the limit. A vanilla
- * palette is measured once, in a JVM of its own with a pinned heap.
+ * address, so a garbage collection between two walks makes moved objects look new (or hides new ones): every measurement
+ * runs once, in a JVM of its own with pinned flags (a serial collector and a young generation that holds the whole run), so
+ * what other tests of the test JVM did does not count and no collection comes between the walks.
  * <p>
  * The limits are above the measured values, which are noted beside them; raise one only for a reason, and say so in the commit.
  */
 class MemoryBaselineTest {
-    private static final int ATTEMPTS = 3;
-    /** A session layer of two blocks and three properties: no creative placement, so the creative content is the parent's. Measured 40 to 53 KB. */
-    private static final long MAX_EXTEND_BYTES = 100_000;
-    /** A layer with an item and a block in creative: the creative content is compiled again. Measured 290 KB. */
-    private static final long MAX_EXTEND_WITH_CREATIVE_BYTES = 450_000;
+    /** A session layer of two blocks and three properties: no creative placement, so the creative content is the parent's. Measured 50,808 bytes, the same in every run. */
+    private static final long MAX_EXTEND_BYTES = 56_000;
+    /** A layer with an item and a block in creative: the creative content is compiled again. Measured 299,144 bytes, the same in every run. */
+    private static final long MAX_EXTEND_WITH_CREATIVE_BYTES = 330_000;
     /** A vanilla palette with everything it reaches, of the newest and of the oldest version. Measured 14.4 and 14.8 MB. */
     private static final long MAX_VANILLA_LATEST_BYTES = 15_900_000;
     private static final long MAX_VANILLA_OLDEST_BYTES = 16_300_000;
@@ -69,6 +67,7 @@ class MemoryBaselineTest {
     /**
      * What one extension adds: its graph (which holds the base) minus the graph of the base alone. The base is walked
      * after a throwaway extension warmed its lazily built parts and a GC dropped it, so the difference is the layer's own.
+     * Runs in the measuring JVM ({@link VanillaMeasure}).
      */
     private static long extendBytes(Function<String, PaletteLayer> layer) {
         Paletter paletter = Paletter.builder().build();
@@ -85,9 +84,11 @@ class MemoryBaselineTest {
      * the constants and in the data source (the behaviour captures alone are about 15 MB) would count as the palette's.
      */
     private static long vanillaBytes(String mode) {
-        // The object layout decides the size: pinned, so the number does not depend on the JDK or the machine
+        // The object layout decides the size: pinned, so the number does not depend on the JDK or the machine.
+        // Serial collector, and a young generation of 600 MB that holds the allocations of a whole run: no collection
+        // moves objects between two JOL walks (the measurement collects once itself, before the walk it compares with).
         List<String> command = new ArrayList<>(List.of(Path.of(System.getProperty("java.home"), "bin", "java").toString(),
-            "-Xmx1g", "-XX:+UseCompressedOops", "-XX:ObjectAlignmentInBytes=8"));
+            "-Xms1g", "-Xmx1g", "-Xmn600m", "-XX:+UseSerialGC", "-XX:+UseCompressedOops", "-XX:ObjectAlignmentInBytes=8"));
         if (Runtime.version().feature() >= 24) {
             // Compact object headers (experimental in 24, a product flag in 25) make objects smaller: off, whatever the default
             command.addAll(List.of("-XX:+UnlockExperimentalVMOptions", "-XX:-UseCompactObjectHeaders"));
@@ -130,6 +131,14 @@ class MemoryBaselineTest {
      */
     public static final class VanillaMeasure {
         public static void main(String[] args) {
+            if (args[0].equals("extend")) {
+                System.out.println(extendBytes(MemoryBaselineTest::sessionLayer));
+                return;
+            }
+            if (args[0].equals("extendCreative")) {
+                System.out.println(extendBytes(MemoryBaselineTest::creativeLayer));
+                return;
+            }
             if (args[0].equals("served")) {
                 DataVersion oldest = Paletter.bundled().versions().getFirst();
                 Paletter paletter = Paletter.builder().versions(version -> !version.equals(oldest)).build();
@@ -145,27 +154,14 @@ class MemoryBaselineTest {
         }
     }
 
-    private static void assertWithin(String what, long limit, LongSupplier measure) {
-        List<Long> measured = new ArrayList<>();
-        for (int attempt = 0; attempt < ATTEMPTS; attempt++) {
-            long bytes = measure.getAsLong();
-            System.out.println("MEMORY " + what + " bytes=" + bytes + " (limit " + limit + ")");
-            if (bytes <= limit) {
-                return;
-            }
-            measured.add(bytes);
-        }
-        fail(what + " retains " + measured + " bytes in " + ATTEMPTS + " attempts, limit " + limit);
-    }
-
     @Test
     void extendStaysSmall() {
-        assertWithin("an extension", MAX_EXTEND_BYTES, () -> extendBytes(MemoryBaselineTest::sessionLayer));
+        assertOnce("an extension", MAX_EXTEND_BYTES, vanillaBytes("extend"));
     }
 
     @Test
     void extendWithCreativeContentStaysSmall() {
-        assertWithin("an extension with creative content", MAX_EXTEND_WITH_CREATIVE_BYTES, () -> extendBytes(MemoryBaselineTest::creativeLayer));
+        assertOnce("an extension with creative content", MAX_EXTEND_WITH_CREATIVE_BYTES, vanillaBytes("extendCreative"));
     }
 
     @Test

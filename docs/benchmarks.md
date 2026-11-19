@@ -22,17 +22,22 @@ The table is from the quick run (2 warm-ups, 4 iterations, one fork) on a shared
 `extend` as "a few hundred microseconds", not as a precise figure. Before is the code before the runtime scaling work
 (`073d43f9`), after is the code with it.
 
-| Benchmark | Before | After |
-|-----------|--------|-------|
-| `ExtendBenchmark.extend` (a layer of one block) | 1,335 us | 186 us |
-| `ExtendBenchmark.extendStacked` (a layer over 20 custom blocks) | 1,894 us | 295 us |
-| `HotPathBenchmark.resolveState` | 79 ns (error 162) | 19 ns |
-| `HotPathBenchmark.resolve` (an item) | 28 ns | 27 ns |
-| `HotPathBenchmark.resolveItemBehaviour` | 172 ns (error 217) | 105 ns |
-| `HotPathBenchmark.blockBehaviour` | 114 ns (error 149) | 72 ns |
-| `ContentionBenchmark.extend` (eight threads, per call) | not measured | 532 us |
-| `ContentionBenchmark.resolveStateBehaviour` (eight threads) | not measured | 37 ns |
-| `ContentionBenchmark.resolveItemBehaviour` (eight threads) | not measured | 195 ns |
+| Benchmark | Before | After | After memory cuts |
+|-----------|--------|-------|-------------------|
+| `ExtendBenchmark.extend` (a layer of one block) | 1,335 us | 186 us | 121 us |
+| `ExtendBenchmark.extendStacked` (a layer over 20 custom blocks) | 1,894 us | 295 us | 173 us |
+| `HotPathBenchmark.resolveState` | 79 ns (error 162) | 19 ns | 13 ns |
+| `HotPathBenchmark.resolve` (an item) | 28 ns | 27 ns | 23 ns |
+| `HotPathBenchmark.resolveItemBehaviour` | 172 ns (error 217) | 105 ns | 83 ns |
+| `HotPathBenchmark.blockBehaviour` | 114 ns (error 149) | 72 ns | 56 ns |
+| `ContentionBenchmark.extend` (eight threads, per call) | not measured | 532 us | 195 us (error 283) |
+| `ContentionBenchmark.resolveStateBehaviour` (eight threads) | not measured | 37 ns | 20 ns |
+| `ContentionBenchmark.resolveItemBehaviour` (eight threads) | not measured | 195 ns | 57 ns |
+
+"After memory cuts" is the code at `7899a97e` (the memory cuts merged), the same quick run on the same machine. Other lookups of
+the run: `runtimeIdOfState` 8 ns, `byRuntimeId` 51 ns, `encode` 53 ns, `decode` 60 ns, `itemVariantExact` 117 ns,
+`blockStateExactValues` 226 ns, `blockStateExact` 2.5 us, `vanillaKey` 174 ns, `customKey` 34 ns, `customRuntimeId` 26 ns,
+`sameStack` 7 ns.
 
 The lookups changed little: the differences are inside the errors. These are warm figures; the first `extend` of a JVM, before
 the code is compiled, takes several milliseconds (5.7 ms was noted for the code before).
@@ -50,13 +55,19 @@ one `extend` adds, which is the cost a server pays per player with content of it
 and read the `MEMORY` lines. The same test fails when something retains more than its limit (a constant in the test, with the
 measured value noted beside it). Raise one only for a reason, and say so in the commit.
 
-| What | Before | After | Limit |
-|------|--------|-------|-------|
-| `extend` by a layer of two blocks (no creative placement) | 206 to 601 KB | 40 to 53 KB | 100 KB |
-| `extend` by a layer with an item and a block in creative | not measured | about 290 KB | 450 KB |
-| vanilla palette, newest version | 17.8 MB | 14.4 MB | 15.9 MB |
-| vanilla palette, oldest version | 18.3 MB | 14.8 MB | 16.3 MB |
-| a Paletter serving all versions but the oldest, every palette compiled | 27.0 MB | 20.9 MB | 23.0 MB |
+| What | Before | After | After memory cuts | Limit |
+|------|--------|-------|-------------------|-------|
+| `extend` by a layer of two blocks (no creative placement) | 206 to 601 KB | 40 to 53 KB | 50.8 KB | 56 KB |
+| `extend` by a layer with an item and a block in creative | not measured | about 290 KB | 299 KB | 330 KB |
+| vanilla palette, newest version | 17.8 MB | 14.4 MB | 14.4 MB | 15.9 MB |
+| vanilla palette, oldest version | 18.3 MB | 14.8 MB | 14.8 MB | 16.3 MB |
+| a Paletter serving all versions but the oldest, every palette compiled | 27.0 MB | 20.9 MB | 20.9 MB | 23.0 MB |
+
+Every measurement runs once in a JVM of its own with pinned flags (serial collector, a young generation that holds the whole
+run), so no collection comes between the two JOL walks of an extension. In the shared test JVM the same walks gave anything
+from -981 KB to +946 KB; in the forked JVM three runs gave 50,808 and 299,144 bytes every time (spread 0). The limits are the
+measured value plus about 10%. The "After" figures of the vanilla and served rows were taken after the memory cuts already, so
+the new column repeats them (re-measured, equal to the byte).
 
 The last row is what an application serving a few versions holds (the shared bundled instance it loads through included).
 From before to after:
@@ -67,8 +78,26 @@ From before to after:
 | the block states of the creative stacks are the version's own instances; identifiers are shared strings | -2.1 MB | -0.7 MB |
 | a block state's `NbtMap` holds its two entries in two fields (`StateMap`), not in a `LinkedHashMap` | -2.8 MB | -2.7 MB |
 
+## Startup (JMH, cold)
+
+`StartupBenchmark` is one cold shot per fork: build a `Paletter` and compile the palette of every bundled release version, the
+way Geyser does at startup (`BlockRegistryPopulator.registerBedrockBlocks`). `withCustomLayer` adds one layer of 20 blocks and
+20 items. It is left out of the other runs (a warm-up would defeat it); run it with
+
+```
+./gradlew :paletter:jmh -Pjmh.includes=Startup -Pjmh.warmups=0 -Pjmh.iterations=1 -Pjmh.forks=5
+```
+
+| Benchmark | Five cold JVMs (ms) | Median |
+|-----------|---------------------|--------|
+| `vanilla` | 2,598, 2,714, 2,483, 2,526, 2,534 | 2,534 ms |
+| `withCustomLayer` | 2,695, 2,683, 3,024, 2,873, 2,920 | 2,873 ms |
+
+The JVMs run with `-Xmx2g` on the same shared laptop; the spread is about 10%, so read the custom layer's cost (about 0.3 s)
+as an estimate.
+
 An extension that places nothing in creative shares the creative content, the item table and the pages of the canonical
-block table with its parent; one that does compiles the creative content again, which is what its 290 KB are. The
+block table with its parent; one that does compiles the creative content again, which is what its 299 KB are. The
 `NbtMap`s of the block states are still a good part of a vanilla palette (about 130 bytes each, a `NbtMap` over an
 unmodifiable map over the `StateMap`, about 25,000 of them), which is the library's representation.
 
