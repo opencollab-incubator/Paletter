@@ -102,7 +102,7 @@ public final class Capture {
             + (codecProtocol != protocol ? " (decoded with the " + codecProtocol + " codec)" : ""));
         CaptureClient.Result result = new CaptureClient(codec, address, netherNet)
             .give(give ? GiveCapture.identifiers(reference.blockItems()) : List.of(), reference.blockItems()).run(timeoutSeconds);
-        CaptureWriter writer = new CaptureWriter(result, reference, bdsVersion, platform);
+        CaptureWriter writer = new CaptureWriter(result, reference, bdsVersion, platform).withProtocol(protocol, codecProtocol);
         if (give) {
             writer.withGives();
         }

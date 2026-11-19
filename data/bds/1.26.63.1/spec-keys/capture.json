@@ -4,8 +4,6 @@
   "protocol": 2225,
   "preview": false,
   "formatVersion": "1.26.60",
-  "nativeCodec": true,
-  "codecProtocol": 2225,
   "experiments": [
     "upcoming_creator_features\u003dtrue",
     "gametest\u003dtrue",

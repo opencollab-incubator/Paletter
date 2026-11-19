@@ -62,6 +62,9 @@ public final class CaptureWriter {
     private final Set<Integer> pendingHashes = new LinkedHashSet<>();
     /** Whether the capture ran {@code /give}: then {@link GiveCapture#FILE} is written, with the unanswered blocks unverified. */
     private boolean giveRequested;
+    /** The protocol the client announced and that of the codec that decoded the packets; 0 until {@link #withProtocol}. */
+    private int protocol;
+    private int codecProtocol;
 
     public CaptureWriter(CaptureClient.Result result, VanillaData reference, String bdsVersion) {
         this(result, reference, bdsVersion, CapturePlatform.host());
@@ -92,6 +95,24 @@ public final class CaptureWriter {
             if (previous != null) {
                 throw new IllegalStateException("Block hash collision: " + previous + " and " + state);
             }
+        }
+    }
+
+    /**
+     * Records the protocol in {@code capture.json}, and {@code codecProtocol} next to it when another codec decoded the
+     * packets than the protocol's own (the library has none for it yet, so the decoding may be wrong).
+     */
+    public CaptureWriter withProtocol(int protocol, int codecProtocol) {
+        this.protocol = protocol;
+        this.codecProtocol = codecProtocol;
+        return this;
+    }
+
+    /** Adds {@code protocol}, and {@code codecProtocol} only when it differs: a native codec leaves it out. */
+    public static void addProtocol(JsonObject json, int protocol, int codecProtocol) {
+        json.addProperty("protocol", protocol);
+        if (codecProtocol != protocol) {
+            json.addProperty("codecProtocol", codecProtocol);
         }
     }
 
@@ -284,6 +305,9 @@ public final class CaptureWriter {
         JsonObject json = new JsonObject();
         json.addProperty("bdsVersion", bdsVersion);
         json.addProperty(CapturePlatform.KEY, platform);
+        if (protocol != 0) {
+            addProtocol(json, protocol, codecProtocol);
+        }
         json.addProperty("serverEngine", startGame.getServerEngine());
         json.addProperty("vanillaVersion", startGame.getVanillaVersion());
         json.addProperty("blockNetworkIdsHashed", startGame.isBlockNetworkIdsHashed());
