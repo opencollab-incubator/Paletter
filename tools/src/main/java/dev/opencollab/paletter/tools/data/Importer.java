@@ -89,7 +89,11 @@ public final class Importer {
         VanillaData data = new VanillaData(version, blocks, items, dataDriven, creative, tags, VersionFallbacks.NONE, defaults, Map.of(), blockItems);
         // The version file has no components; properties.nbt gets them, next to those of the other versions
         BundledFiles.write(output, data);
-        updateIndex(version, preview);
+        Integer codecProtocol = Files.isDirectory(source) ? codecProtocol(source) : null;
+        if (codecProtocol != null) {
+            System.out.println("  the capture was decoded with the " + codecProtocol + " codec: recorded in versions.txt");
+        }
+        updateIndex(version, preview, codecProtocol);
         System.out.printf("Wrote %s: %d block states, %d items, %d data driven blocks, %d creative stacks, %d item tags, %d block defaults, %d blocks with an item%n",
             version, blocks.size(), items.size(), dataDriven.size(), creative.stacks().count(), tags.size(),
             defaults.size(), blockItems.size());
@@ -275,9 +279,42 @@ public final class Importer {
     }
 
     /**
-     * A line of {@code versions.txt}: {@code <name> <protocol> [preview]}.
+     * A line of {@code versions.txt}: {@code <name> <protocol> [preview] [codec=<protocol>]}.
+     *
+     * @param codecProtocol the protocol of the codec that decoded the capture the version was imported from, where that
+     *                      was another protocol's; null for the version's own
      */
-    public record IndexEntry(String name, int protocol, boolean preview) {
+    public record IndexEntry(String name, int protocol, boolean preview, Integer codecProtocol) {
+        public IndexEntry(String name, int protocol, boolean preview) {
+            this(name, protocol, preview, null);
+        }
+
+        /** The line in {@code versions.txt}. */
+        String line() {
+            return name + " " + protocol + (preview ? " preview" : "") + (codecProtocol != null ? " codec=" + codecProtocol : "");
+        }
+
+        /**
+         * @throws IllegalArgumentException for a line with fewer fields, a number that is none, or a field it does not know
+         */
+        static IndexEntry parse(String line) {
+            String[] parts = line.strip().split("\\s+");
+            if (parts.length < 2) {
+                throw new IllegalArgumentException("versions.txt: expected `<name> <protocol> [preview] [codec=<protocol>]`, got `" + line + "`");
+            }
+            boolean preview = false;
+            Integer codec = null;
+            for (int i = 2; i < parts.length; i++) {
+                if (parts[i].equals("preview") && !preview) {
+                    preview = true;
+                } else if (parts[i].startsWith("codec=") && codec == null) {
+                    codec = Integer.parseInt(parts[i].substring("codec=".length()));
+                } else {
+                    throw new IllegalArgumentException("versions.txt: unknown or repeated field `" + parts[i] + "` in `" + line + "`");
+                }
+            }
+            return new IndexEntry(parts[0], Integer.parseInt(parts[1]), preview, codec);
+        }
     }
 
     public static List<IndexEntry> readIndex(Path directory) throws IOException {
@@ -287,8 +324,7 @@ public final class Importer {
             for (String line : Files.readAllLines(index)) {
                 line = line.strip();
                 if (!line.isEmpty() && !line.startsWith("#")) {
-                    String[] parts = line.split("\\s+");
-                    entries.add(new IndexEntry(parts[0], Integer.parseInt(parts[1]), parts.length > 2 && parts[2].equals("preview")));
+                    entries.add(IndexEntry.parse(line));
                 }
             }
         }
@@ -296,11 +332,28 @@ public final class Importer {
         return entries;
     }
 
-    private void updateIndex(DataVersion version, boolean preview) throws IOException {
+    private void updateIndex(DataVersion version, boolean preview, Integer codecProtocol) throws IOException {
         Map<String, IndexEntry> versions = new TreeMap<>();
         readIndex(output).forEach(entry -> versions.put(entry.name(), entry));
-        versions.put(version.name(), new IndexEntry(version.name(), version.protocolVersion(), preview));
+        versions.put(version.name(), new IndexEntry(version.name(), version.protocolVersion(), preview, codecProtocol));
         writeIndex(output, versions.values());
+    }
+
+    /**
+     * The protocol of the codec that decoded a capture, where that was not the capture's own: {@code codecProtocol} of
+     * the {@code capture.json} the capture client writes next to the captured files (left out for its own codec).
+     *
+     * @param source the captured files, as {@code import --source} takes them
+     * @return the codec's protocol, or null if the capture was decoded with its own codec or the source has no
+     *         {@code capture.json} (a palette dump of another origin)
+     */
+    public static Integer codecProtocol(Path source) throws IOException {
+        Path capture = source.resolve("capture.json");
+        if (!Files.isRegularFile(capture)) {
+            return null;
+        }
+        JsonObject json = readJson(capture).getAsJsonObject();
+        return json.has("codecProtocol") ? json.get("codecProtocol").getAsInt() : null;
     }
 
     /**
@@ -313,10 +366,11 @@ public final class Importer {
 
     private static void writeIndex(Path directory, java.util.Collection<IndexEntry> entries) throws IOException {
         List<String> lines = new ArrayList<>();
-        lines.add("# <data version> <first protocol version> [preview]. Generated by `import` / `update` (:tools:run); do not edit by hand.");
+        lines.add("# <data version> <first protocol version> [preview] [codec=<protocol of the codec that decoded the capture, if another's>]."
+            + " Generated by `import` / `update` (:tools:run); do not edit by hand.");
         entries.stream()
             .sorted(java.util.Comparator.comparingInt(IndexEntry::protocol))
-            .forEach(entry -> lines.add(entry.name() + " " + entry.protocol() + (entry.preview() ? " preview" : "")));
+            .forEach(entry -> lines.add(entry.line()));
         Files.writeString(directory.resolve("versions.txt"), String.join("\n", lines) + "\n");
     }
 
