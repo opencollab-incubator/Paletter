@@ -27,7 +27,7 @@ import static dev.opencollab.paletter.tools.model.addon.AddonGenerator.minEngine
 
 /**
  * Writes the variants of an {@link AddonGenerator} to disk as the spec capture add-on: the item and block files, the
- * behavior and resource pack manifests, the script of the script components, the engine packs and the
+ * behavior and resource pack manifests, the script of the script components, the hash collision pair, the engine packs and the
  * {@code variants.json} that says what each identifier tests. It adds no variants and decides no values.
  */
 public final class AddonWriter {
@@ -60,6 +60,11 @@ public final class AddonWriter {
             if (variant.companion() != null) {
                 String folder = variant.companion().has("minecraft:block") ? "blocks/" : "items/";
                 json(bp.resolve(folder + variant.identifier().substring(NAMESPACE.length() + 1) + ".json"), variant.companion());
+            }
+        }
+        if (generator.standard) {
+            for (String identifier : fixtures.hashCollision()) {
+                json(bp.resolve("blocks/" + identifier.substring(NAMESPACE.length() + 1) + ".json"), HashCollisions.block(identifier, formatVersion));
             }
         }
         FixedAddons.writeLootTable(bp);

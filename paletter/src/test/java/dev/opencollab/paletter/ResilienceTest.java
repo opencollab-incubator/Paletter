@@ -90,7 +90,7 @@ class ResilienceTest {
     }
 
     @Test
-    void aHashCollisionThrows() {
+    void aHashCollisionThatWouldChangeAnEarlierLayersIdThrows() {
         Map<Integer, String> seen = new HashMap<>();
         String first = null;
         String second = null;
@@ -102,9 +102,11 @@ class ResilienceTest {
                 second = name;
             }
         }
-        Palette base = PALETTER.palette(LATEST.protocolVersion());
-        PaletteLayer layer = PaletteLayer.builder("colliding").block(CustomBlock.builder(first).build()).block(CustomBlock.builder(second).build()).build();
-        assertRejected(base, layer, "collision", first + "|" + second);
+        // BDS gives the hash to the block it numbers first: added by a later layer, that block would take the earlier one's id
+        List<String> bdsOrder = java.util.stream.Stream.of(first, second).sorted(dev.opencollab.paletter.internal.BlockIdOrder.DESCENDING).toList();
+        Palette base = PALETTER.palette(LATEST.protocolVersion()).extend(PaletteLayer.builder("earlier").block(CustomBlock.builder(bdsOrder.get(1)).build()).build());
+        PaletteLayer layer = PaletteLayer.builder("colliding").block(CustomBlock.builder(bdsOrder.get(0)).build()).build();
+        assertRejected(base, layer, "collision", bdsOrder.get(0));
     }
 
     @Test

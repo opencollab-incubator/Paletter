@@ -9,7 +9,9 @@ import org.cloudburstmc.protocol.bedrock.data.inventory.ItemData;
 import org.cloudburstmc.protocol.bedrock.packet.StartGamePacket;
 import dev.opencollab.paletter.block.BlockHashes;
 import dev.opencollab.paletter.block.BlockProperty;
+import dev.opencollab.paletter.internal.BlockIdOrder;
 import dev.opencollab.paletter.internal.block.BlockStates;
+import dev.opencollab.paletter.internal.block.HashedIds;
 import dev.opencollab.paletter.block.CustomBlock;
 import dev.opencollab.paletter.block.RegisteredBlockState;
 import dev.opencollab.paletter.creative.CreativeCategory;
@@ -18,7 +20,9 @@ import dev.opencollab.paletter.internal.item.ItemVariant;
 import dev.opencollab.paletter.item.RegisteredItem;
 import org.junit.jupiter.api.Test;
 
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -147,7 +151,7 @@ class CanonicalTest {
     }
 
     @Test
-    void hashCollisionsFailCompilation() {
+    void hashCollisionsGiveTheBlockBdsNumbersSecondTheNextId() {
         // Birthday search for two block names with the same hash; ~2^16 tries on average
         Int2ObjectMap<String> seen = new Int2ObjectOpenHashMap<>();
         String first = null;
@@ -164,8 +168,11 @@ class CanonicalTest {
             .block(CustomBlock.builder(first).build())
             .block(CustomBlock.builder(second).build())
             .build();
-        PaletteException exception = assertThrows(PaletteException.class, () -> Palettes.palette(LATEST, layer));
-        assertTrue(exception.getMessage().contains("collision"), exception.getMessage());
+        int hash = BlockHashes.hash(BlockStates.of(first));
+        List<String> bdsOrder = Stream.of(first, second).sorted(BlockIdOrder.DESCENDING).toList();
+        Palette palette = Palettes.palette(LATEST, layer);
+        assertEquals(hash, palette.blocks().defaultState(bdsOrder.get(0)).getRuntimeId());
+        assertEquals(HashedIds.next(hash), palette.blocks().defaultState(bdsOrder.get(1)).getRuntimeId());
     }
 
     @Test

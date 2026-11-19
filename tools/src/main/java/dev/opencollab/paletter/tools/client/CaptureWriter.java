@@ -60,6 +60,12 @@ public final class CaptureWriter {
      */
     private final Map<String, Set<String>> unknownTraitStates = new TreeMap<>();
     private final Set<Integer> pendingHashes = new LinkedHashSet<>();
+    /**
+     * Blocks with a state whose hash a state of another block has: BDS gives one of them another id (docs/wire-notes.md, hash
+     * collisions), so their creative block ids are kept apart ({@link #collidingHashes}) and not resolved to a state.
+     */
+    private final Set<String> collidingBlocks = new TreeSet<>();
+    private final Set<Integer> collidingHashes = new LinkedHashSet<>();
     /** Whether the capture ran {@code /give}: then {@link GiveCapture#FILE} is written, with the unanswered blocks unverified. */
     private boolean giveRequested;
     /** The protocol the client announced and that of the codec that decoded the packets; 0 until {@link #withProtocol}. */
@@ -91,11 +97,14 @@ public final class CaptureWriter {
             }
         }
         for (NbtMap state : palette) {
-            NbtMap previous = statesByHash.put(BlockHashes.hash(state), state);
+            NbtMap previous = statesByHash.putIfAbsent(BlockHashes.hash(state), state);
             if (previous != null) {
-                throw new IllegalStateException("Block hash collision: " + previous + " and " + state);
+                collidingBlocks.add(previous.getString("name"));
+                collidingBlocks.add(state.getString("name"));
             }
         }
+        // Which of them BDS gave the hash is what the capture shows (HashCollisionCaptureTest): resolve none of their ids
+        statesByHash.values().removeIf(state -> collidingBlocks.contains(state.getString("name")));
     }
 
     /**
@@ -290,6 +299,8 @@ public final class CaptureWriter {
                 json.addProperty("block_state_b64", Nbt.writeLeBase64(state));
             } else if (unknownTraitStates.containsKey(item.getDefinition().getIdentifier())) {
                 pendingHashes.add(block.getRuntimeId());
+            } else if (collidingBlocks.contains(item.getDefinition().getIdentifier())) {
+                collidingHashes.add(block.getRuntimeId());
             } else {
                 unresolvedHashes.add(block.getRuntimeId());
             }
@@ -327,6 +338,14 @@ public final class CaptureWriter {
         JsonArray unresolved = new JsonArray();
         unresolvedHashes.forEach(hash -> unresolved.add(Integer.toUnsignedString(hash)));
         json.add("creativeBlockIdsUnresolved", unresolved);
+        if (!collidingBlocks.isEmpty()) {
+            JsonArray blocks = new JsonArray();
+            collidingBlocks.forEach(blocks::add);
+            json.add("hashCollisionBlocks", blocks);
+            JsonArray ids = new JsonArray();
+            collidingHashes.forEach(hash -> ids.add(Integer.toUnsignedString(hash)));
+            json.add("creativeBlockIdsOfHashCollisions", ids);
+        }
         if (!unknownTraitStates.isEmpty()) {
             JsonArray pending = new JsonArray();
             pendingHashes.forEach(hash -> pending.add(Integer.toUnsignedString(hash)));

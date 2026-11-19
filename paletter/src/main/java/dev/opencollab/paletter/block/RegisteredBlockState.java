@@ -24,7 +24,7 @@ public final class RegisteredBlockState implements BlockDefinition {
     /**
      * Internal: creates the definition of a state, done by the palette compiler.
      *
-     * @param runtimeId the runtime id, the hash of the state
+     * @param runtimeId the runtime id, the hash of the state or the next free id after it
      * @param state the state as {@code {name, states}}
      * @param custom whether the state belongs to a custom block added by a layer
      */
@@ -38,7 +38,8 @@ public final class RegisteredBlockState implements BlockDefinition {
     /**
      * The runtime id of this state.
      *
-     * @return the runtime id: the hash of the state, see {@link BlockHashes#hash}
+     * @return the runtime id: the hash of the state, see {@link BlockHashes#hash}, or for a custom state whose hash a state of
+     * another block has, the next free id after it
      */
     @Override
     public int getRuntimeId() {

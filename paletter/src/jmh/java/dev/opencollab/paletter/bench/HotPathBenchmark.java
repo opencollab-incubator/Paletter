@@ -1,6 +1,10 @@
 package dev.opencollab.paletter.bench;
 
 import org.cloudburstmc.nbt.NbtMap;
+import org.cloudburstmc.protocol.bedrock.codec.BedrockCodecHelper;
+import org.cloudburstmc.protocol.bedrock.codec.v2225.Bedrock_v2225;
+import org.cloudburstmc.protocol.bedrock.data.definitions.BlockDefinition;
+import org.cloudburstmc.protocol.common.DefinitionRegistry;
 import org.cloudburstmc.protocol.bedrock.data.inventory.ItemData;
 import dev.opencollab.paletter.Lookup;
 import dev.opencollab.paletter.Palette;
@@ -44,6 +48,8 @@ public class HotPathBenchmark {
     private static final int SEED = 42;
 
     private Palette palette;
+    /** The block definitions a codec helper gets from {@link Palette#applyTo}. */
+    private DefinitionRegistry<BlockDefinition> blockDefinitions;
     private BedrockItemVariant[] variants;
     private BedrockItemStack[] stacks;
     private ItemData[] encoded;
@@ -68,6 +74,9 @@ public class HotPathBenchmark {
         palette = paletter.palette(paletter.latest().protocolVersion())
             .extend(layer("session", 8, 8))
             .extend(layer("session-2", 16, 8));
+        BedrockCodecHelper helper = Bedrock_v2225.CODEC.createHelper();
+        palette.applyTo(helper);
+        blockDefinitions = helper.getBlockDefinitions();
         Random random = new Random(SEED);
 
         List<BedrockItemVariant> variantList = new ArrayList<>(palette.itemVariants());
@@ -170,6 +179,12 @@ public class HotPathBenchmark {
     @Benchmark
     public RegisteredBlockState byRuntimeId() {
         return palette.blocks().byRuntimeId(runtimeIds[nextBlock()]);
+    }
+
+    /** A block runtime id to its definition through the registry the codec decodes with ({@link Palette#applyTo}). */
+    @Benchmark
+    public BlockDefinition decodeRuntimeId() {
+        return blockDefinitions.getDefinition(runtimeIds[nextBlock()]);
     }
 
     /** A block by runtime id to its values, what a chunk palette read does. */
