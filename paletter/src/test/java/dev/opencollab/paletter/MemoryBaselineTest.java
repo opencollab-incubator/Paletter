@@ -43,14 +43,14 @@ class MemoryBaselineTest {
     private static final long MAX_EXTEND_BYTES = 100_000;
     /** A layer with an item and a block in creative: the creative content is compiled again. Measured 290 KB. */
     private static final long MAX_EXTEND_WITH_CREATIVE_BYTES = 450_000;
-    /** A vanilla palette with everything it reaches, of the newest and of the oldest version. Measured 17.8 and 18.3 MB. */
-    private static final long MAX_VANILLA_LATEST_BYTES = 19_600_000;
-    private static final long MAX_VANILLA_OLDEST_BYTES = 19_900_000;
+    /** A vanilla palette with everything it reaches, of the newest and of the oldest version. Measured 17.1 and 17.6 MB. */
+    private static final long MAX_VANILLA_LATEST_BYTES = 18_800_000;
+    private static final long MAX_VANILLA_OLDEST_BYTES = 19_400_000;
     /**
      * A Paletter serving every bundled version but the oldest, with all its palettes compiled, and the shared bundled
-     * instance it loads through. Measured 25.8 MB.
+     * instance it loads through. Measured 23.7 MB.
      */
-    private static final long MAX_SERVED_BYTES = 28_400_000;
+    private static final long MAX_SERVED_BYTES = 26_000_000;
 
     private static PaletteLayer sessionLayer(String id) {
         return PaletteLayer.builder(id)

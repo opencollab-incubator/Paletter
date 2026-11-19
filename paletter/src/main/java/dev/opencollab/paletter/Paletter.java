@@ -12,6 +12,8 @@ import dev.opencollab.paletter.internal.CanonicalBlocks;
 import dev.opencollab.paletter.data.DataVersion;
 import dev.opencollab.paletter.data.PaletteDataSource;
 import dev.opencollab.paletter.data.VerifiedBuild;
+import dev.opencollab.paletter.internal.creative.RawLayout;
+import dev.opencollab.paletter.internal.creative.RawStack;
 import dev.opencollab.paletter.internal.data.VanillaData;
 import dev.opencollab.paletter.internal.data.VanillaItem;
 import dev.opencollab.paletter.internal.CanonicalItems;
@@ -267,7 +269,8 @@ public final class Paletter {
     }
 
     /**
-     * Makes equal block states and item components of different versions the same instances.
+     * Makes equal block states (those of the creative stacks too) and item components of different versions the same
+     * instances, and the identifiers of items, creative stacks, item tags and block items shared strings.
      */
     private VanillaData intern(VanillaData loaded) {
         synchronized (internLock) {
@@ -284,8 +287,15 @@ public final class Paletter {
             }
             Map<String, NbtMap> defaults = new HashMap<>();
             loaded.blockDefaults().forEach((name, state) -> defaults.put(name, interned.computeIfAbsent(state, s -> s)));
-            return new VanillaData(loaded.version(), states, items, loaded.dataDrivenBlocks(), loaded.creative(),
-                loaded.itemTags(), loaded.fallbacks(), defaults, loaded.experiments(), loaded.blockItems());
+            // Creative stacks name their block state: the same instance as the version's own, and identifiers shared with the items
+            RawLayout creative = loaded.creative().mapStacks(stack -> new RawStack(stack.identifier().intern(), stack.damage(),
+                stack.count(), stack.blockState() == null ? null : interned.computeIfAbsent(stack.blockState(), s -> s), stack.tag()));
+            Map<String, List<String>> itemTags = new HashMap<>();
+            loaded.itemTags().forEach((tag, identifiers) -> itemTags.put(tag.intern(), identifiers.stream().map(String::intern).toList()));
+            Map<String, String> blockItems = new HashMap<>();
+            loaded.blockItems().forEach((block, item) -> blockItems.put(block.intern(), item.intern()));
+            return new VanillaData(loaded.version(), states, items, loaded.dataDrivenBlocks(), creative,
+                itemTags, loaded.fallbacks(), defaults, loaded.experiments(), blockItems);
         }
     }
 
