@@ -56,6 +56,11 @@ measured value noted beside it). Raise one only for a reason, and say so in the 
 | `extend` by a layer with an item and a block in creative | not measured | about 290 KB | 450 KB |
 | vanilla palette, newest version | 21.1 MB | 17.8 MB | 19.6 MB |
 | vanilla palette, oldest version | not measured | 18.3 MB | 19.9 MB |
+| a Paletter serving all versions but the oldest, every palette compiled | 27.0 MB | 25.8 MB | 28.4 MB |
+
+The last row is what an application serving a few versions holds (the shared bundled instance it loads through included):
+before, the map that interns states across versions was kept for good, because the bundled instance waited for a version
+nobody loaded.
 
 An extension that places nothing in creative shares the creative content, the item table and the pages of the canonical
 block table with its parent; one that does compiles the creative content again, which is what its 290 KB are. A vanilla
