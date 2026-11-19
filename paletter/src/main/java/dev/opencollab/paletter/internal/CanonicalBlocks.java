@@ -353,6 +353,22 @@ public final class CanonicalBlocks {
     private record Schema(Map<String, Set<Object>> values, NbtMap defaultState) {
     }
 
+    /**
+     * Drops the value sets {@link #forward} adapts states with (about 0.8 MB), built again on the next forward. Compiling
+     * a palette forwards the creative stack states of older versions; once every palette is compiled, only a lookup of
+     * a state that is not canonical does (and then keeps them again).
+     */
+    @Internal
+    public void releaseSchemas() {
+        root.schemas = null;
+    }
+
+    /** For tests: whether the value sets are built. */
+    @Internal
+    public boolean hasSchemas() {
+        return root.schemas != null;
+    }
+
     private Map<String, Schema> schemas() {
         Map<String, Schema> schemas = this.schemas;
         if (schemas == null) {

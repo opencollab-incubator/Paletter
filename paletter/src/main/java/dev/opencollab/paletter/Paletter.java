@@ -82,6 +82,8 @@ public final class Paletter {
     /** Equal states and component data of the versions loaded so far, see {@link #intern}; dropped when all are loaded. */
     private @Nullable Map<NbtMap, NbtMap> interned = new HashMap<>();
     private volatile boolean internedReleased;
+    /** Whether {@link #releaseCompileData} ran. */
+    private volatile boolean compileDataReleased;
     private final BlockInterner blockInterner = new BlockInterner();
     private volatile CanonicalBlocks canonicalBlocks;
     private volatile CanonicalItems canonicalItems;
@@ -465,8 +467,42 @@ public final class Paletter {
         if (created[0]) {
             // Outside computeIfAbsent: a consumer that asks for another palette would update the map recursively
             reports.accept(palette.report());
+            if (!compileDataReleased && compiled.keySet().containsAll(versions)) {
+                releaseCompileData();
+            }
         }
         return palette;
+    }
+
+    /**
+     * Once every palette this instance serves is compiled, drops what only compiling them uses (about 2.8 MB with the
+     * bundled data): the properties the data source put into the data of each version, the value sets that forward
+     * and resolve states of other versions, and the maps that share blocks and pages between versions. What a palette
+     * compiled later needs is built again: a version not served ({@link #vanilla(DataVersion)}) loads and compiles as
+     * before, only its blocks and pages are copies of its own (see {@link BlockInterner#releaseCompileMaps()}).
+     * {@link Palette#extend} does not use any of it. The data source and the canonical ids may be shared with other
+     * Paletters over the bundled data: they read or build what they need again.
+     */
+    private void releaseCompileData() {
+        compileDataReleased = true;
+        blockInterner.releaseCompileMaps();
+        CanonicalBlocks blocks = canonicalBlocks;
+        if (blocks != null) {
+            blocks.releaseSchemas();
+        }
+        // A compiled palette's block tables are over those of its vanilla palette: both are cleared
+        for (Palette palette : compiled.values()) {
+            palette.blocks().releaseSchemas();
+        }
+        for (Palette palette : vanilla.values()) {
+            palette.blocks().releaseSchemas();
+        }
+        source.releaseProperties();
+    }
+
+    /** For tests: whether what only compiling uses was dropped. */
+    boolean compileDataReleased() {
+        return compileDataReleased;
     }
 
     /**

@@ -82,6 +82,14 @@ public interface PaletteDataSource {
     }
 
     /**
+     * Internal: drops what was read for {@link #properties()}, once the versions in use are loaded. A later call reads
+     * it again.
+     */
+    @dev.opencollab.paletter.annotation.Internal
+    default void releaseProperties() {
+    }
+
+    /**
      * Internal: the versioned behaviour values of vanilla blocks and items.
      *
      * @return the versioned behaviour values of vanilla blocks and items; the bundled source reads

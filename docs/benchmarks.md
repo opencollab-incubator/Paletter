@@ -55,13 +55,13 @@ one `extend` adds, which is the cost a server pays per player with content of it
 and read the `MEMORY` lines. The same test fails when something retains more than its limit (a constant in the test, with the
 measured value noted beside it). Raise one only for a reason, and say so in the commit.
 
-| What | Before | After | After memory cuts | Limit |
-|------|--------|-------|-------------------|-------|
-| `extend` by a layer of two blocks (no creative placement) | 206 to 601 KB | 40 to 53 KB | 50.8 KB | 56 KB |
-| `extend` by a layer with an item and a block in creative | not measured | about 290 KB | 299 KB | 330 KB |
-| vanilla palette, newest version | 17.8 MB | 14.4 MB | 14.4 MB | 15.9 MB |
-| vanilla palette, oldest version | 18.3 MB | 14.8 MB | 14.8 MB | 16.3 MB |
-| a Paletter serving all versions but the oldest, every palette compiled | 27.0 MB | 20.9 MB | 20.9 MB | 23.0 MB |
+| What | Before | After | After memory cuts | After compile release | Limit |
+|------|--------|-------|-------------------|-----------------------|-------|
+| `extend` by a layer of two blocks (no creative placement) | 206 to 601 KB | 40 to 53 KB | 50.8 KB | 50.8 KB | 56 KB |
+| `extend` by a layer with an item and a block in creative | not measured | about 290 KB | 299 KB | 299 KB | 330 KB |
+| vanilla palette, newest version | 17.8 MB | 14.4 MB | 14.4 MB | 14.4 MB | 15.9 MB |
+| vanilla palette, oldest version | 18.3 MB | 14.8 MB | 14.8 MB | 14.8 MB | 16.3 MB |
+| a Paletter serving all versions but the oldest, every palette compiled | 27.0 MB | 20.9 MB | 20.9 MB | 18.1 MB | 19.9 MB |
 
 Every measurement runs once in a JVM of its own with pinned flags (serial collector, a young generation that holds the whole
 run), so no collection comes between the two JOL walks of an extension. In the shared test JVM the same walks gave anything
@@ -77,6 +77,10 @@ From before to after:
 | the map that interns states across versions is released once the served versions are loaded (it was kept for good: the bundled instance waited for a version nobody loaded) | -1.2 MB | none |
 | the block states of the creative stacks are the version's own instances; identifiers are shared strings | -2.1 MB | -0.7 MB |
 | a block state's `NbtMap` holds its two entries in two fields (`StateMap`), not in a `LinkedHashMap` | -2.8 MB | -2.7 MB |
+| what only compiling uses is released once every served palette is compiled: the data source's property store (1.1 MB), the value sets that forward states of other versions (0.8 MB) and those that resolve states per version (0.6 MB), the interner's block and page maps (0.4 MB). A palette compiled later builds what it needs again; `extend` uses none of it | -2.8 MB (20,907,864 to 18,109,600 bytes) | none |
+
+"After compile release" is the code with that last change, measured the same way; the other rows did not change (equal to
+the byte).
 
 ## Startup (JMH, cold)
 

@@ -29,9 +29,10 @@ import java.util.concurrent.ConcurrentHashMap;
 public final class BlockInterner {
     /** Concurrent: palettes look their vanilla states up here, see {@link #knownVanillaBlock}. */
     private final Map<NbtMap, RegisteredBlockState> blocks = new ConcurrentHashMap<>();
-    private final Map<VanillaBlockKey, RegisteredBlock> vanillaTypes = new HashMap<>();
-    private final Map<IntPage, int[]> intPages = new HashMap<>();
-    private final Map<BlockPage, RegisteredBlockState[]> blockPages = new HashMap<>();
+    /** The maps below share between the versions of a Paletter while they compile; null once {@link #releaseCompileMaps released}. */
+    private @Nullable Map<VanillaBlockKey, RegisteredBlock> vanillaTypes = new HashMap<>();
+    private @Nullable Map<IntPage, int[]> intPages = new HashMap<>();
+    private @Nullable Map<BlockPage, RegisteredBlockState[]> blockPages = new HashMap<>();
     private int sharedPages;
     private int pages;
 
@@ -64,12 +65,38 @@ public final class BlockInterner {
      */
     public synchronized @NonNull RegisteredBlock vanillaType(@NonNull String identifier, @NonNull List<RegisteredBlockState> states,
                                                       @Nullable NbtMap propertyData, @Nullable NbtMap defaultState) {
+        if (vanillaTypes == null) {
+            // Released: a version compiled after that has blocks of its own, with the same values
+            return new RegisteredBlock(identifier, Origin.VANILLA, states, null, propertyData, defaultState);
+        }
         return vanillaTypes.computeIfAbsent(new VanillaBlockKey(identifier, states, propertyData, defaultState),
             key -> new RegisteredBlock(identifier, Origin.VANILLA, states, null, propertyData, defaultState));
     }
 
+    /**
+     * Drops the maps that share blocks and pages between versions (about 0.4 MB with every bundled version). Called once
+     * every palette a Paletter serves is compiled: only the compilation of another vanilla palette uses them. A palette
+     * compiled after that (a version not served) works the same, but its blocks and pages are copies of its own, like
+     * the states of a version loaded after the intern map of {@code Paletter} was dropped. {@code extend} keeps
+     * the canonical pages of its parent and builds only pages that hold custom blocks, which are not interned anyway.
+     * The states ({@link #vanillaBlock}) stay: every palette looks its vanilla states up here.
+     */
+    public synchronized void releaseCompileMaps() {
+        vanillaTypes = null;
+        intPages = null;
+        blockPages = null;
+    }
+
+    /** For tests: whether {@link #releaseCompileMaps} ran. */
+    public synchronized boolean compileMapsReleased() {
+        return vanillaTypes == null;
+    }
+
     public synchronized int @NonNull [] intern(int @NonNull [] page) {
         pages++;
+        if (intPages == null) {
+            return page;
+        }
         int[] existing = intPages.putIfAbsent(new IntPage(page), page);
         if (existing != null) {
             sharedPages++;
@@ -80,6 +107,9 @@ public final class BlockInterner {
 
     public synchronized @NonNull RegisteredBlockState @NonNull [] intern(@NonNull RegisteredBlockState @NonNull [] page) {
         pages++;
+        if (blockPages == null) {
+            return page;
+        }
         RegisteredBlockState[] existing = blockPages.putIfAbsent(new BlockPage(page), page);
         if (existing != null) {
             sharedPages++;

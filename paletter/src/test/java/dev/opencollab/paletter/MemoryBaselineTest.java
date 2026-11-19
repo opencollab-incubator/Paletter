@@ -46,9 +46,10 @@ class MemoryBaselineTest {
     private static final long MAX_VANILLA_OLDEST_BYTES = 16_300_000;
     /**
      * A Paletter serving every bundled version but the oldest, with all its palettes compiled, and the shared bundled
-     * instance it loads through. Measured 20.9 MB.
+     * instance it loads through. Measured 18.1 MB (18,109,600 bytes) since what only compiling uses is dropped once all are
+     * compiled; 20.9 MB before.
      */
-    private static final long MAX_SERVED_BYTES = 23_000_000;
+    private static final long MAX_SERVED_BYTES = 19_900_000;
 
     private static PaletteLayer sessionLayer(String id) {
         return PaletteLayer.builder(id)

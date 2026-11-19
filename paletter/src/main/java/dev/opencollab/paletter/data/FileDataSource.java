@@ -169,13 +169,30 @@ final class FileDataSource implements PaletteDataSource {
     public @NonNull PropertyStore properties() {
         PropertyStore properties = this.properties;
         if (properties == null) {
-            try (InputStream stream = opener.open("properties.nbt")) {
-                this.properties = properties = stream == null ? PropertyStore.empty() : PropertyStore.read(stream);
-            } catch (IOException e) {
-                throw new UncheckedIOException("Unable to read the Paletter properties in " + origin, e);
+            // Read once: versions may load on several threads at the same time
+            synchronized (this) {
+                properties = this.properties;
+                if (properties == null) {
+                    try (InputStream stream = opener.open("properties.nbt")) {
+                        this.properties = properties = stream == null ? PropertyStore.empty() : PropertyStore.read(stream);
+                    } catch (IOException e) {
+                        throw new UncheckedIOException("Unable to read the Paletter properties in " + origin, e);
+                    }
+                }
             }
         }
         return properties;
+    }
+
+    /**
+     * The properties (about 1.1 MB for the bundled data) are put into the data of each version as it loads; once the
+     * versions in use are loaded only {@code Paletter#properties} reads them, and reads the file again.
+     */
+    @Override
+    public void releaseProperties() {
+        synchronized (this) {
+            properties = null;
+        }
     }
 
     @Override
