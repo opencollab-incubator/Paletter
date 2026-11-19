@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
+import java.util.function.UnaryOperator;
 import java.util.stream.Stream;
 
 /**
@@ -57,6 +58,25 @@ public final class RawLayout {
                 }
             }
         }
+    }
+
+    /**
+     * @return this layout with every stack, group icons included, replaced by what the function makes of it
+     */
+    public @NonNull RawLayout mapStacks(@NonNull UnaryOperator<RawStack> function) {
+        Map<CreativeCategory, List<RawNode>> result = new EnumMap<>(CreativeCategory.class);
+        for (CreativeCategory category : CreativeCategory.values()) {
+            List<RawNode> nodes = new ArrayList<>();
+            for (RawNode node : categories.get(category)) {
+                nodes.add(switch (node) {
+                    case RawStack stack -> function.apply(stack);
+                    case RawGroup group -> new RawGroup(group.name(), group.icon() == null ? null : function.apply(group.icon()),
+                        group.stacks().stream().map(function).toList());
+                });
+            }
+            result.put(category, nodes);
+        }
+        return new RawLayout(result);
     }
 
     /**

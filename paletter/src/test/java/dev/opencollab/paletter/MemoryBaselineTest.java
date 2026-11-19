@@ -43,9 +43,14 @@ class MemoryBaselineTest {
     private static final long MAX_EXTEND_BYTES = 100_000;
     /** A layer with an item and a block in creative: the creative content is compiled again. Measured 290 KB. */
     private static final long MAX_EXTEND_WITH_CREATIVE_BYTES = 450_000;
-    /** A vanilla palette with everything it reaches, of the newest and of the oldest version. Measured 17.8 and 18.3 MB. */
-    private static final long MAX_VANILLA_LATEST_BYTES = 19_600_000;
-    private static final long MAX_VANILLA_OLDEST_BYTES = 19_900_000;
+    /** A vanilla palette with everything it reaches, of the newest and of the oldest version. Measured 14.4 and 14.8 MB. */
+    private static final long MAX_VANILLA_LATEST_BYTES = 15_900_000;
+    private static final long MAX_VANILLA_OLDEST_BYTES = 16_300_000;
+    /**
+     * A Paletter serving every bundled version but the oldest, with all its palettes compiled, and the shared bundled
+     * instance it loads through. Measured 20.9 MB.
+     */
+    private static final long MAX_SERVED_BYTES = 23_000_000;
 
     private static PaletteLayer sessionLayer(String id) {
         return PaletteLayer.builder(id)
@@ -79,7 +84,7 @@ class MemoryBaselineTest {
      * What a vanilla palette reaches, measured in a JVM of its own: what other tests of this JVM have filled in the handles of
      * the constants and in the data source (the behaviour captures alone are about 15 MB) would count as the palette's.
      */
-    private static long vanillaBytes(boolean latest) {
+    private static long vanillaBytes(String mode) {
         // The object layout decides the size: pinned, so the number does not depend on the JDK or the machine
         List<String> command = new ArrayList<>(List.of(Path.of(System.getProperty("java.home"), "bin", "java").toString(),
             "-Xmx1g", "-XX:+UseCompressedOops", "-XX:ObjectAlignmentInBytes=8"));
@@ -88,7 +93,7 @@ class MemoryBaselineTest {
             command.addAll(List.of("-XX:+UnlockExperimentalVMOptions", "-XX:-UseCompactObjectHeaders"));
         }
         command.addAll(List.of("-Djol.magicFieldOffset=true", "-cp", System.getProperty("java.class.path"),
-            VanillaMeasure.class.getName(), String.valueOf(latest)));
+            VanillaMeasure.class.getName(), mode));
         Process process = null;
         try {
             process = new ProcessBuilder(command).redirectErrorStream(true).start();
@@ -101,8 +106,8 @@ class MemoryBaselineTest {
                     throw new UncheckedIOException(e);
                 }
             });
-            if (!process.waitFor(60, TimeUnit.SECONDS)) {
-                throw new IllegalStateException("the measuring JVM did not finish in 60 seconds");
+            if (!process.waitFor(120, TimeUnit.SECONDS)) {
+                throw new IllegalStateException("the measuring JVM did not finish in 120 seconds");
             }
             String text = output.get(10, TimeUnit.SECONDS);
             if (process.exitValue() != 0) {
@@ -118,9 +123,22 @@ class MemoryBaselineTest {
         }
     }
 
-    /** The measuring JVM: prints the bytes a vanilla palette (newest or oldest version) retains. */
+    /**
+     * The measuring JVM: prints the bytes a vanilla palette (newest or oldest version) retains, or with {@code served}, what a
+     * Paletter serving every version but the oldest retains once each of its palettes is compiled (as an application serving
+     * a few versions has it), the shared bundled instance it loads through included.
+     */
     public static final class VanillaMeasure {
         public static void main(String[] args) {
+            if (args[0].equals("served")) {
+                DataVersion oldest = Paletter.bundled().versions().getFirst();
+                Paletter paletter = Paletter.builder().versions(version -> !version.equals(oldest)).build();
+                for (DataVersion version : paletter.versions()) {
+                    paletter.palette(version.protocolVersion());
+                }
+                System.out.println(GraphLayout.parseInstance(paletter, Paletter.bundled()).totalSize());
+                return;
+            }
             Paletter paletter = Paletter.builder().build();
             DataVersion version = Boolean.parseBoolean(args[0]) ? paletter.latest() : paletter.versions().getFirst();
             System.out.println(GraphLayout.parseInstance(paletter.vanilla(version)).totalSize());
@@ -152,8 +170,13 @@ class MemoryBaselineTest {
 
     @Test
     void vanillaPalettesStaySmall() {
-        assertOnce("the newest vanilla palette", MAX_VANILLA_LATEST_BYTES, vanillaBytes(true));
-        assertOnce("the oldest vanilla palette", MAX_VANILLA_OLDEST_BYTES, vanillaBytes(false));
+        assertOnce("the newest vanilla palette", MAX_VANILLA_LATEST_BYTES, vanillaBytes("true"));
+        assertOnce("the oldest vanilla palette", MAX_VANILLA_OLDEST_BYTES, vanillaBytes("false"));
+    }
+
+    @Test
+    void servedVersionsStaySmall() {
+        assertOnce("the served versions", MAX_SERVED_BYTES, vanillaBytes("served"));
     }
 
     private static void assertOnce(String what, long limit, long bytes) {

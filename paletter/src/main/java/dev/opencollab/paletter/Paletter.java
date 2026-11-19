@@ -12,6 +12,8 @@ import dev.opencollab.paletter.internal.CanonicalBlocks;
 import dev.opencollab.paletter.data.DataVersion;
 import dev.opencollab.paletter.data.PaletteDataSource;
 import dev.opencollab.paletter.data.VerifiedBuild;
+import dev.opencollab.paletter.internal.creative.RawLayout;
+import dev.opencollab.paletter.internal.creative.RawStack;
 import dev.opencollab.paletter.internal.data.VanillaData;
 import dev.opencollab.paletter.internal.data.VanillaItem;
 import dev.opencollab.paletter.internal.CanonicalItems;
@@ -228,26 +230,28 @@ public final class Paletter {
      */
     @Internal
     public @NonNull VanillaData vanillaData(@NonNull DataVersion version) {
-        if (sharesBundledData()) {
-            return Holder.BUNDLED.vanillaData(version);
-        }
-        VanillaData loaded = data.computeIfAbsent(version, v -> {
+        // A Paletter over the bundled data loads through the shared one, but only its own versions decide when interning ends
+        Paletter loader = sharesBundledData() ? Holder.BUNDLED : this;
+        VanillaData loaded = loader.data.computeIfAbsent(version, v -> {
             try {
-                return intern(source.load(v));
+                return loader.intern(loader.source.load(v));
             } catch (IOException e) {
                 throw new UncheckedIOException("Unable to load Bedrock data " + v, e);
             }
         });
-        if (!internedReleased && data.keySet().containsAll(versions)) {
-            releaseInterned();
+        if (!loader.internedReleased && loader.data.keySet().containsAll(versions)) {
+            loader.releaseInterned();
         }
         return loaded;
     }
 
     /**
-     * Interning only matters while versions are still to be loaded: once all are, the map (about a megabyte) is not needed.
-     * A version loaded after that (one outside the versions served) gets a throwaway map instead, so it loses the sharing with
-     * the other versions: its states and components are separate copies. The values stay the same, only the memory is not shared.
+     * Interning only matters while versions are still to be loaded: once all versions the asking Paletter serves are, the map
+     * (about a megabyte) is not needed. For a Paletter over the bundled data that is its own versions, not every bundled one:
+     * an application that serves a few versions releases it once those are loaded.
+     * A version loaded after that (one outside the versions served, or one another Paletter over the bundled data serves)
+     * gets a throwaway map instead, so it loses the sharing with the other versions: its states and components are separate
+     * copies. The values stay the same, only the memory is not shared.
      */
     private void releaseInterned() {
         synchronized (internLock) {
@@ -256,8 +260,17 @@ public final class Paletter {
         }
     }
 
+    /** For tests: whether the intern map this instance loads through was dropped. */
+    boolean internReleased() {
+        Paletter loader = sharesBundledData() ? Holder.BUNDLED : this;
+        synchronized (loader.internLock) {
+            return loader.interned == null;
+        }
+    }
+
     /**
-     * Makes equal block states and item components of different versions the same instances.
+     * Makes equal block states (those of the creative stacks too) and item components of different versions the same
+     * instances, and the identifiers of items, creative stacks, item tags and block items shared strings.
      */
     private VanillaData intern(VanillaData loaded) {
         synchronized (internLock) {
@@ -274,8 +287,15 @@ public final class Paletter {
             }
             Map<String, NbtMap> defaults = new HashMap<>();
             loaded.blockDefaults().forEach((name, state) -> defaults.put(name, interned.computeIfAbsent(state, s -> s)));
-            return new VanillaData(loaded.version(), states, items, loaded.dataDrivenBlocks(), loaded.creative(),
-                loaded.itemTags(), loaded.fallbacks(), defaults, loaded.experiments(), loaded.blockItems());
+            // Creative stacks name their block state: the same instance as the version's own, and identifiers shared with the items
+            RawLayout creative = loaded.creative().mapStacks(stack -> new RawStack(stack.identifier().intern(), stack.damage(),
+                stack.count(), stack.blockState() == null ? null : interned.computeIfAbsent(stack.blockState(), s -> s), stack.tag()));
+            Map<String, List<String>> itemTags = new HashMap<>();
+            loaded.itemTags().forEach((tag, identifiers) -> itemTags.put(tag.intern(), identifiers.stream().map(String::intern).toList()));
+            Map<String, String> blockItems = new HashMap<>();
+            loaded.blockItems().forEach((block, item) -> blockItems.put(block.intern(), item.intern()));
+            return new VanillaData(loaded.version(), states, items, loaded.dataDrivenBlocks(), creative,
+                itemTags, loaded.fallbacks(), defaults, loaded.experiments(), blockItems);
         }
     }
 

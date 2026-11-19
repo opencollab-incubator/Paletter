@@ -4,6 +4,7 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.cloudburstmc.nbt.NbtMap;
 import org.cloudburstmc.nbt.NbtMapBuilder;
+import dev.opencollab.paletter.internal.block.BlockStates;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -68,7 +69,7 @@ final class VanillaTypes {
                     values.put(property.name(), property.values()[rest % property.values().length]);
                     rest /= property.values().length;
                 }
-                states.add(NbtMap.builder().putString("name", identifier).putCompound("states", values.build()).build());
+                states.add(BlockStates.of(identifier, values.build()));
             }
             return states;
         }

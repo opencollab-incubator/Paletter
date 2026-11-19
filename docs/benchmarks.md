@@ -54,11 +54,22 @@ measured value noted beside it). Raise one only for a reason, and say so in the 
 |------|--------|-------|-------|
 | `extend` by a layer of two blocks (no creative placement) | 206 to 601 KB | 40 to 53 KB | 100 KB |
 | `extend` by a layer with an item and a block in creative | not measured | about 290 KB | 450 KB |
-| vanilla palette, newest version | 21.1 MB | 17.8 MB | 19.6 MB |
-| vanilla palette, oldest version | not measured | 18.3 MB | 19.9 MB |
+| vanilla palette, newest version | 17.8 MB | 14.4 MB | 15.9 MB |
+| vanilla palette, oldest version | 18.3 MB | 14.8 MB | 16.3 MB |
+| a Paletter serving all versions but the oldest, every palette compiled | 27.0 MB | 20.9 MB | 23.0 MB |
+
+The last row is what an application serving a few versions holds (the shared bundled instance it loads through included).
+From before to after:
+
+| Change | Served versions | One palette |
+|--------|-----------------|-------------|
+| the map that interns states across versions is released once the served versions are loaded (it was kept for good: the bundled instance waited for a version nobody loaded) | -1.2 MB | none |
+| the block states of the creative stacks are the version's own instances; identifiers are shared strings | -2.1 MB | -0.7 MB |
+| a block state's `NbtMap` holds its two entries in two fields (`StateMap`), not in a `LinkedHashMap` | -2.8 MB | -2.7 MB |
 
 An extension that places nothing in creative shares the creative content, the item table and the pages of the canonical
-block table with its parent; one that does compiles the creative content again, which is what its 290 KB are. A vanilla
-palette is mostly the `NbtMap`s of its block states (about half of the 17.8 MB), which is the library's representation.
+block table with its parent; one that does compiles the creative content again, which is what its 290 KB are. The
+`NbtMap`s of the block states are still a good part of a vanilla palette (about 130 bytes each, a `NbtMap` over an
+unmodifiable map over the `StateMap`, about 25,000 of them), which is the library's representation.
 
 The lookups themselves allocate nothing, except the item data that `encode` returns: `HotPathTest` counts the bytes of each.
