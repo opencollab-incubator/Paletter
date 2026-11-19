@@ -29,6 +29,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 
@@ -82,6 +87,8 @@ public final class Paletter {
     /** Equal states and component data of the versions loaded so far, see {@link #intern}; dropped when all are loaded. */
     private @Nullable Map<NbtMap, NbtMap> interned = new HashMap<>();
     private volatile boolean internedReleased;
+    /** Whether {@link #releaseCompileData} ran. */
+    private volatile boolean compileDataReleased;
     private final BlockInterner blockInterner = new BlockInterner();
     private volatile CanonicalBlocks canonicalBlocks;
     private volatile CanonicalItems canonicalItems;
@@ -438,21 +445,89 @@ public final class Paletter {
     }
 
     /**
-     * Compiles the palettes of all served versions now, instead of on first use, so no session pays for it. Each is
-     * passed to the {@link Builder#reports reports} consumer as usual.
+     * Compiles the palettes of all served versions now, instead of on first use, so no session pays for it. The versions
+     * compile at the same time, on a few threads of their own (at most one per processor) that end with this call; the
+     * palettes are the same as compiled one after another. Each is passed to the {@link Builder#reports reports}
+     * consumer as usual, on the calling thread and oldest version first.
      *
      * @return this instance
-     * @throws PaletteException if a global layer cannot be compiled
+     * @throws PaletteException if a global layer cannot be compiled: the first version's failure, after the palettes
+     *                          that compiled were reported
      * @since 1.0.0
      */
     public @NonNull Paletter warmUp() {
-        for (DataVersion version : versions()) {
-            compiled(version);
+        List<DataVersion> pending = versions.stream().filter(version -> !compiled.containsKey(version)).toList();
+        int threads = Math.min(pending.size(), Runtime.getRuntime().availableProcessors());
+        if (threads <= 1) {
+            for (DataVersion version : pending) {
+                compiled(version);
+            }
+            return this;
+        }
+        // The versions share only what is thread safe: the maps of this instance, the interners (their maps are
+        // concurrent or locked, and equal content gives the same instance whichever version comes first) and the
+        // lazily built lookups of the data source and the canonical ids (built once, under a lock)
+        AtomicInteger count = new AtomicInteger();
+        ExecutorService pool = Executors.newFixedThreadPool(threads, task -> {
+            Thread thread = new Thread(task, "Paletter warm-up " + count.incrementAndGet());
+            thread.setDaemon(true);
+            return thread;
+        });
+        try {
+            List<Future<Compiled>> futures = new ArrayList<>(pending.size());
+            for (DataVersion version : pending) {
+                futures.add(pool.submit(() -> compiledUnreported(version)));
+            }
+            RuntimeException failure = null;
+            boolean interrupted = false;
+            // In version order: every palette that compiled is reported, also after a version failed
+            for (Future<Compiled> future : futures) {
+                while (true) {
+                    try {
+                        Compiled result = future.get();
+                        if (result.created()) {
+                            reported(result.palette());
+                        }
+                        break;
+                    } catch (InterruptedException e) {
+                        // The compilations finish anyway: wait for them, and keep the interrupt for the caller
+                        interrupted = true;
+                    } catch (ExecutionException e) {
+                        if (e.getCause() instanceof Error error) {
+                            throw error;
+                        }
+                        if (failure == null) {
+                            failure = (RuntimeException) e.getCause();
+                        }
+                        break;
+                    }
+                }
+            }
+            if (interrupted) {
+                Thread.currentThread().interrupt();
+            }
+            if (failure != null) {
+                throw failure;
+            }
+        } finally {
+            pool.shutdown();
         }
         return this;
     }
 
+    /** A palette, and whether the call that returned it compiled it (and so reports it). */
+    private record Compiled(Palette palette, boolean created) {
+    }
+
     private Palette compiled(DataVersion version) {
+        Compiled result = compiledUnreported(version);
+        if (result.created()) {
+            reported(result.palette());
+        }
+        return result.palette();
+    }
+
+    private Compiled compiledUnreported(DataVersion version) {
         boolean[] created = {false};
         Palette palette = compiled.computeIfAbsent(version, v -> {
             created[0] = true;
@@ -462,11 +537,46 @@ public final class Paletter {
             }
             return result;
         });
-        if (created[0]) {
-            // Outside computeIfAbsent: a consumer that asks for another palette would update the map recursively
-            reports.accept(palette.report());
+        return new Compiled(palette, created[0]);
+    }
+
+    /** Outside computeIfAbsent: a consumer that asks for another palette would update the map recursively. */
+    private void reported(Palette palette) {
+        reports.accept(palette.report());
+        if (!compileDataReleased && compiled.keySet().containsAll(versions)) {
+            releaseCompileData();
         }
-        return palette;
+    }
+
+    /**
+     * Once every palette this instance serves is compiled, drops what only compiling them uses (about 2.8 MB with the
+     * bundled data): the properties the data source put into the data of each version, the value sets that forward
+     * and resolve states of other versions, and the maps that share blocks and pages between versions. What a palette
+     * compiled later needs is built again: a version not served ({@link #vanilla(DataVersion)}) loads and compiles as
+     * before, only its blocks and pages are copies of its own (see {@link BlockInterner#releaseCompileMaps()}).
+     * {@link Palette#extend} does not use any of it. The data source and the canonical ids may be shared with other
+     * Paletters over the bundled data: they read or build what they need again.
+     */
+    private void releaseCompileData() {
+        compileDataReleased = true;
+        blockInterner.releaseCompileMaps();
+        CanonicalBlocks blocks = canonicalBlocks;
+        if (blocks != null) {
+            blocks.releaseSchemas();
+        }
+        // A compiled palette's block tables are over those of its vanilla palette: both are cleared
+        for (Palette palette : compiled.values()) {
+            palette.blocks().releaseSchemas();
+        }
+        for (Palette palette : vanilla.values()) {
+            palette.blocks().releaseSchemas();
+        }
+        source.releaseProperties();
+    }
+
+    /** For tests: whether what only compiling uses was dropped. */
+    boolean compileDataReleased() {
+        return compileDataReleased;
     }
 
     /**

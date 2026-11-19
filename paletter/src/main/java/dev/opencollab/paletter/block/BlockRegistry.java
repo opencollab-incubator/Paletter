@@ -424,6 +424,31 @@ public final class BlockRegistry implements DefinitionRegistry<BlockDefinition> 
         canonicalTable();
     }
 
+    /**
+     * Internal: drops the value sets of the blocks that resolving states built (about 0.2 MB per version), here and in
+     * the tables this one is over. Mostly the compilation needs them; a later lookup builds those of its block again.
+     */
+    @Internal
+    public void releaseSchemas() {
+        for (Table current = table; current != null; current = current.parent) {
+            current.schemas.clear();
+        }
+    }
+
+    /**
+     * Internal, for tests.
+     *
+     * @return how many blocks have value sets built, here and in the tables this one is over
+     */
+    @Internal
+    public int schemaCount() {
+        int count = 0;
+        for (Table current = table; current != null; current = current.parent) {
+            count += current.schemas.size();
+        }
+        return count;
+    }
+
     private CanonicalTable canonicalTable() {
         CanonicalTable result = canonicalTable;
         if (result == null) {
