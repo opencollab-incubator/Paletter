@@ -6,6 +6,8 @@ import dev.opencollab.paletter.internal.item.ItemVariant;
 import dev.opencollab.paletter.vanilla.BedrockItems;
 import org.junit.jupiter.api.Test;
 
+import java.util.Locale;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -42,7 +44,7 @@ class ExplainTest {
                 assertNotNull(explanation.handle());
                 assertEquals(Ids.runtimeId(oldest, i), explanation.runtimeId());
                 assertNotNull(explanation.sent());
-                assertTrue(explanation.toString().contains(explanation.kind().name().toLowerCase()));
+                assertTrue(explanation.toString().contains(explanation.kind().name().toLowerCase(Locale.ROOT)));
                 if (explanation.kind() == BlockExplanation.Kind.FALLBACK) {
                     assertEquals(2, explanation.chain().size());
                     assertTrue(explanation.toString().contains(" -> "));

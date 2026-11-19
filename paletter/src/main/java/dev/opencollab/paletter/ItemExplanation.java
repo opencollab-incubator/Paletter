@@ -7,6 +7,7 @@ import dev.opencollab.paletter.annotation.Experimental;
 import dev.opencollab.paletter.vanilla.BedrockItemVariant;
 
 import java.util.List;
+import java.util.Locale;
 
 /**
  * What a palette does with an item variant, for debugging: {@link Palette#explain(String, int, NbtMap)}.
@@ -72,7 +73,7 @@ public record ItemExplanation(@NonNull String identifier, int aux, @Nullable Nbt
         }
         out.append('\n');
         out.append("  handle:       ").append(handle == null ? "none" : handle).append('\n');
-        out.append("  resolution:   ").append(kind.name().toLowerCase());
+        out.append("  resolution:   ").append(kind.name().toLowerCase(Locale.ROOT));
         if (chain.size() > 1) {
             out.append(" (").append(String.join(" -> ", chain)).append(')');
         }
