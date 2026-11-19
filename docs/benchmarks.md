@@ -13,6 +13,7 @@ on one palette: a number far above the single threaded one means a lock or a wri
 ```
 ./gradlew :paletter:jmh                                  # full run, slow and memory-heavy
 ./gradlew :paletter:jmh -Pjmh.includes=HotPath -Pjmh.warmups=1 -Pjmh.iterations=2 -Pjmh.forks=1   # quick
+./gradlew :paletter:jmh -Pjmh.includes=HotPath -Pjmh.profilers=gc   # with the bytes allocated per operation
 ```
 
 Results go to `paletter/build/results/jmh`. Inputs are visited in a shuffled order, so the numbers include cache misses.
@@ -38,6 +39,22 @@ The table is from the quick run (2 warm-ups, 4 iterations, one fork) on a shared
 the run: `runtimeIdOfState` 8 ns, `byRuntimeId` 51 ns, `encode` 53 ns, `decode` 60 ns, `itemVariantExact` 117 ns,
 `blockStateExactValues` 226 ns, `blockStateExact` 2.5 us, `vanillaKey` 174 ns, `customKey` 34 ns, `customRuntimeId` 26 ns,
 `sameStack` 7 ns.
+
+**Runtime id decode.** `decodeRuntimeId` is a block runtime id to its definition through the registry the codec decodes with
+(`Palette#applyTo`). Each block table keeps the definition next to the key (`RuntimeIdTable`: parallel key, definition and
+position arrays, a power of two in size, at most half full), so the decode reads the key and the definition of one slot,
+independent reads, instead of the position and then the definition at it. A layered palette still asks its layers' small
+tables first. Quick run (2 warm-ups, 4 iterations, one fork, `-Pjmh.profilers=gc`), same machine, before and after:
+
+| Benchmark | Before | After | Allocation |
+|-----------|--------|-------|------------|
+| `HotPathBenchmark.decodeRuntimeId` | 52.5 ns (error 10.6) | 45.9 ns (error 1.8) | 0 B/op before and after |
+| `HotPathBenchmark.byRuntimeId` | 54.8 ns (error 10.2) | 46.6 ns (error 9.4) | 0 B/op before and after |
+| `HotPathBenchmark.blockBehaviour` (by position, unchanged path) | 59.7 ns (error 11.5) | 63.6 ns (error 9.6) | 0 B/op before and after |
+
+The definitions cost memory: a vanilla palette's table has 65,536 slots, and the definition array adds 256 KB to it (newest
+version 14,415,160 to 14,677,344 bytes, oldest 14,843,072 to 15,105,256, the served versions 20,907,864 to 21,694,416; an
+extension 50,808 to 51,104 bytes, the creative one 299,144 to 299,216). All within the limits.
 
 The lookups changed little: the differences are inside the errors. These are warm figures; the first `extend` of a JVM, before
 the code is compiled, takes several milliseconds (5.7 ms was noted for the code before).

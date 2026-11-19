@@ -3,7 +3,7 @@ package dev.opencollab.paletter.internal.block;
 import java.util.Arrays;
 
 /**
- * Minimal open addressing int to non negative int map, for hashed runtime id to palette position. Immutable after
+ * Minimal open addressing int to non negative int map (block runtime ids have {@link RuntimeIdTable}). Immutable after
  * construction, so reads need no synchronization and never allocate.
  * <p>
  * Keys and values are interleaved in one array ({@code slots[2 * i]} is a key, {@code slots[2 * i + 1]} its value, -1 for

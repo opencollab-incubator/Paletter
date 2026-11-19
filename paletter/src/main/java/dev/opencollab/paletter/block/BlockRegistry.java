@@ -3,7 +3,7 @@ package dev.opencollab.paletter.block;
 import dev.opencollab.paletter.Origin;
 import dev.opencollab.paletter.internal.block.BlockStates;
 import dev.opencollab.paletter.internal.block.HashedIds;
-import dev.opencollab.paletter.internal.block.IntIndex;
+import dev.opencollab.paletter.internal.block.RuntimeIdTable;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 
 import dev.opencollab.paletter.internal.CanonicalBlocks;
@@ -271,8 +271,7 @@ public final class BlockRegistry implements DefinitionRegistry<BlockDefinition> 
      * @return the state, or null if this palette has none with this runtime id
      */
     public @Nullable RegisteredBlockState byRuntimeId(int runtimeId) {
-        int index = indexOfRuntimeId(runtimeId);
-        return index == -1 ? null : table.byIndex(index);
+        return table.byRuntimeId(runtimeId);
     }
 
     /**
@@ -309,12 +308,12 @@ public final class BlockRegistry implements DefinitionRegistry<BlockDefinition> 
 
     @Override
     public @Nullable BlockDefinition getDefinition(int runtimeId) {
-        return byRuntimeId(runtimeId);
+        return table.byRuntimeId(runtimeId);
     }
 
     @Override
     public boolean isRegistered(@NonNull BlockDefinition definition) {
-        return definition instanceof RegisteredBlockState && indexOf(definition) != -1;
+        return definition instanceof RegisteredBlockState && table.byRuntimeId(definition.getRuntimeId()) == definition;
     }
 
     // ---- Canonical ids ----
@@ -886,7 +885,7 @@ public final class BlockRegistry implements DefinitionRegistry<BlockDefinition> 
         private final DataVersion version;
         /** Own states: all of them without a parent. */
         private final RegisteredBlockState[] own;
-        private final IntIndex ownByHash;
+        private final RuntimeIdTable ownByHash;
         /**
          * Own custom states by state. Own vanilla states are not kept here: the interner has every one of them (as the
          * same instances), so {@link #byState} looks them up there and checks that they are in this table.
@@ -951,7 +950,7 @@ public final class BlockRegistry implements DefinitionRegistry<BlockDefinition> 
             this.own = new RegisteredBlockState[states.size()];
             Object2ObjectOpenHashMap<NbtMap, RegisteredBlockState> customByState = new Object2ObjectOpenHashMap<>(customStates.size());
             Object2IntOpenHashMap<NbtMap> customIndex = new Object2IntOpenHashMap<>(customStates.size());
-            IntIndex byHash = new IntIndex(states.size());
+            RuntimeIdTable byHash = new RuntimeIdTable(states.size());
             // BDS registers the vanilla blocks before the custom ones, and no two vanilla states hash alike: a vanilla state
             // keeps its hash, the same in every version, so the definition is shared
             for (int i = 0; i < states.size(); i++) {
@@ -961,14 +960,15 @@ public final class BlockRegistry implements DefinitionRegistry<BlockDefinition> 
                     continue;
                 }
                 RegisteredBlockState block = interner.vanillaBlock(state);
-                int collision = byHash.put(block.getRuntimeId(), i);
-                if (collision != -1 && own[collision].getState().equals(state)) {
+                RegisteredBlockState collision = byHash.get(block.getRuntimeId());
+                if (collision != null && collision.getState().equals(state)) {
                     throw new PaletteException("Duplicate block state in " + version + " palette: " + state, null, BlockStates.name(state), null);
                 }
-                if (collision != -1) {
+                if (collision != null) {
                     throw new PaletteException("Block network id hash collision between vanilla states in the " + version + " palette: "
-                        + own[collision].getState() + " and " + state + " both hash to " + block.getRuntimeId(), null, BlockStates.name(state), null);
+                        + collision.getState() + " and " + state + " both hash to " + block.getRuntimeId(), null, BlockStates.name(state), null);
                 }
+                byHash.put(block.getRuntimeId(), i, block);
                 own[i] = block;
             }
             // Custom states in the order BDS gives them ids: by block id (BlockIdOrder), each block's states in order. A state
@@ -982,7 +982,7 @@ public final class BlockRegistry implements DefinitionRegistry<BlockDefinition> 
                     int id = HashedIds.assign(BlockHashes.hash(state), candidate -> isFree(candidate, state, blockId, byHash));
                     RegisteredBlockState block = new RegisteredBlockState(id, state, true);
                     customByState.put(state, block);
-                    byHash.put(id, index);
+                    byHash.put(id, index, block);
                     own[index] = block;
                 }
             }
@@ -1037,12 +1037,10 @@ public final class BlockRegistry implements DefinitionRegistry<BlockDefinition> 
          * (unverified what it does then), and an earlier layer's block that BDS gives an id after this one, which would take this
          * id first and change the earlier layer's ids, throw.
          */
-        private boolean isFree(int id, NbtMap state, int blockId, IntIndex byHash) {
-            int index = byHash.get(id);
-            RegisteredBlockState taken = index != -1 ? own[index] : null;
+        private boolean isFree(int id, NbtMap state, int blockId, RuntimeIdTable byHash) {
+            RegisteredBlockState taken = byHash.get(id);
             if (taken == null && parent != null) {
-                int inParent = parent.indexOfRuntimeId(id);
-                taken = inParent == -1 ? null : parent.byIndex(inParent);
+                taken = parent.byRuntimeId(id);
             }
             if (taken == null) {
                 return true;
@@ -1068,11 +1066,24 @@ public final class BlockRegistry implements DefinitionRegistry<BlockDefinition> 
         }
 
         int indexOfRuntimeId(int runtimeId) {
-            int index = ownByHash.get(runtimeId);
-            if (index != -1) {
-                return parentSize + index;
+            for (Table table = this; table != null; table = table.parent) {
+                int index = table.ownByHash.index(runtimeId);
+                if (index != -1) {
+                    return table.parentSize + index;
+                }
             }
-            return parent == null ? -1 : parent.indexOfRuntimeId(runtimeId);
+            return -1;
+        }
+
+        /** The decode path: one probe per table, the definition read with the key, no position in between. */
+        @Nullable RegisteredBlockState byRuntimeId(int runtimeId) {
+            for (Table table = this; table != null; table = table.parent) {
+                RegisteredBlockState found = table.ownByHash.get(runtimeId);
+                if (found != null) {
+                    return found;
+                }
+            }
+            return null;
         }
 
         @Nullable RegisteredBlockState byState(NbtMap state) {
@@ -1089,8 +1100,7 @@ public final class BlockRegistry implements DefinitionRegistry<BlockDefinition> 
             if (block == null) {
                 return null;
             }
-            int index = ownByHash.get(block.getRuntimeId());
-            return index != -1 && own[index] == block ? block : null;
+            return ownByHash.get(block.getRuntimeId()) == block ? block : null;
         }
 
         @Nullable RegisteredBlock block(String identifier) {

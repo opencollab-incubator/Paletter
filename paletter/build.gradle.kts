@@ -59,6 +59,8 @@ jmh {
     // StartupBenchmark is one cold shot per fork: it only runs when asked for, with no warm-up
     includes.set(listOf(providers.gradleProperty("jmh.includes").getOrElse("HotPath|Extend|Contention")))
     jvmArgs.set(listOf("-Xmx2g"))
+    // -Pjmh.profilers=gc for the bytes allocated per operation (gc.alloc.rate.norm)
+    profilers.set(providers.gradleProperty("jmh.profilers").map { it.split(",") }.orElse(listOf()))
 }
 
 // Publication, POM metadata and the publishing guards: gradle/publishing.gradle.kts, docs/releasing.md

@@ -262,6 +262,10 @@ class HotPathTest {
         assertTrue(allocated < 4096, allocated + " bytes allocated by " + ROUNDS * blocks + " runtimeId lookups");
         allocated = allocated(blocks, i -> palette.blockDefinition(blockIds[i]) == null ? 0 : 1);
         assertTrue(allocated < 4096, allocated + " bytes allocated by " + ROUNDS * blocks + " block definition lookups");
+        // What the codec decodes with (Palette#applyTo)
+        org.cloudburstmc.protocol.common.DefinitionRegistry<org.cloudburstmc.protocol.bedrock.data.definitions.BlockDefinition> registry = palette.blocks();
+        allocated = allocated(blocks, i -> registry.getDefinition(blockIds[i]) == null ? 0 : 1);
+        assertTrue(allocated < 4096, allocated + " bytes allocated by " + ROUNDS * blocks + " codec block definition lookups");
         allocated = allocated(blocks, i -> palette.blockState(blockIds[i]) == null ? 0 : 1);
         assertTrue(allocated < 4096, allocated + " bytes allocated by " + ROUNDS * blocks + " block state lookups");
 
