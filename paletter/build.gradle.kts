@@ -56,7 +56,9 @@ jmh {
     warmup.set("1s")
     iterations.set(providers.gradleProperty("jmh.iterations").map(String::toInt).orElse(5))
     timeOnIteration.set("1s")
-    providers.gradleProperty("jmh.includes").orNull?.let { includes.set(listOf(it)) }
+    // StartupBenchmark is one cold shot per fork: it only runs when asked for, with no warm-up
+    includes.set(listOf(providers.gradleProperty("jmh.includes").getOrElse("HotPath|Extend|Contention")))
+    jvmArgs.set(listOf("-Xmx2g"))
 }
 
 // Publication, POM metadata and the publishing guards: gradle/publishing.gradle.kts, docs/releasing.md
