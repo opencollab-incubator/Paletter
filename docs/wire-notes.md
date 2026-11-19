@@ -25,9 +25,14 @@ of a different block type, BDS takes the hash + 1, and again until the id is fre
 (unsigned `>= 0xFFFFFFFD`) it goes on from 0. `minecraft:unknown` is always `0xFFFFFFFE`. Which state gets the hash and
 which the + 1 follows the order BDS assigns ids in. Paletter (`HashedIds`, `BlockRegistry`) assigns vanilla states first
 (no two collide, so each keeps its hash), then custom blocks in block id order (`BlockIdOrder`, 10000 up), each block's
-states in order. That ids are assigned in block id order is an assumption from the registration order, not yet checked
-against a capture.
+states in order. That ids are assigned in block id order is an assumption from the registration order, until the
+recapture checks the pair below.
 
+- The spec add-on carries `paletter:hash_368468` and `paletter:hash_2193012`, the first pair of `paletter:hash_<n>` whose
+  single states hash alike (578938111; `hashCollision` in `data/model/fixtures.json`, found by `HashCollisions.firstPair`).
+  Paletter gives `hash_368468`, which BDS numbers first, 578938111 and `hash_2193012` 578938112. `HashCollisionCaptureTest`
+  compares that with the ids BDS sends in the creative inventory; every build is PENDING until a recapture carries the pair.
+  The capture writer resolves neither id to a state (`creativeBlockIdsOfHashCollisions` in `capture.json`).
 - Two states of the same block type colliding: what BDS does is not determined; Paletter throws.
 - Layers: the states of an earlier layer keep their ids. A later layer's block that BDS numbers before a colliding block of
   an earlier layer would take its id on BDS, so Paletter throws and the blocks have to be in one layer.

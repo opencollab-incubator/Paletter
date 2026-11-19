@@ -22,6 +22,7 @@ import java.util.Set;
 import java.util.TreeSet;
 import java.util.zip.GZIPInputStream;
 
+import dev.opencollab.paletter.tools.model.Fixtures;
 import dev.opencollab.paletter.tools.model.Schema;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -66,10 +67,12 @@ class BlockHashesTest {
                 }
             }
         }
+        // The pair chosen to collide: one of them has the next id, which HashCollisionCaptureTest checks
+        List<String> colliding = Fixtures.read(SPEC.getParent().getParent().resolveSibling("model")).hashCollision();
         int traitBlocks = 0;
         for (NbtMap block : Nbt.readGzip(SPEC.resolve("custom_block_properties.nbt")).getList("blocks", NbtType.COMPOUND)) {
             String name = block.getString("name");
-            if (!sent.containsKey(name)) {
+            if (!sent.containsKey(name) || colliding.contains(name)) {
                 continue;
             }
             List<NbtMap> states = BlockHashes.customStates(name, block.getCompound("properties"));

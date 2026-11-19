@@ -187,6 +187,15 @@ public final class Fixtures {
         return skip.has(key) ? skip.get(key).getAsString() : null;
     }
 
+    /** The custom blocks of {@code hashCollision}, chosen so their network hashes collide; empty without the table. */
+    public List<String> hashCollision() {
+        List<String> blocks = new ArrayList<>();
+        if (json.has("hashCollision")) {
+            json.getAsJsonObject("hashCollision").getAsJsonArray("blocks").forEach(b -> blocks.add(b.getAsString()));
+        }
+        return blocks;
+    }
+
     /** Whether there is a {@code scriptComponents} table; without one the add-on has no script and no script variants. */
     public boolean hasScriptComponents() {
         return json.has("scriptComponents");
