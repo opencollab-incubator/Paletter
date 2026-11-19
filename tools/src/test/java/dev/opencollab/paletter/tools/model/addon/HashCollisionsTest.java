@@ -6,6 +6,7 @@ import dev.opencollab.paletter.block.BlockHashes;
 import dev.opencollab.paletter.internal.block.BlockStates;
 import dev.opencollab.paletter.tools.model.Fixtures;
 import dev.opencollab.paletter.tools.model.Model;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
@@ -25,13 +26,23 @@ class HashCollisionsTest {
     private static final Path MODEL = Path.of(System.getProperty("paletter.root", "..")).resolve("data").resolve("model");
 
     @Test
-    void theFixturesHoldTheFirstCollidingPair() throws IOException {
-        List<String> pair = HashCollisions.firstPair(HashCollisions.PREFIX);
-        assertEquals(pair, Fixtures.read(MODEL).hashCollision(), "data/model/fixtures.json hashCollision is the pair the search finds");
+    void theFixturePairCollides() throws IOException {
+        List<String> pair = Fixtures.read(MODEL).hashCollision();
+        assertEquals(2, pair.size());
+        assertTrue(pair.get(0).startsWith(HashCollisions.PREFIX) && pair.get(1).startsWith(HashCollisions.PREFIX));
         assertEquals(BlockHashes.hash(BlockStates.of(pair.get(0))), BlockHashes.hash(BlockStates.of(pair.get(1))));
     }
 
+    /** The search behind the fixtures, about 2.2 million hashes: {@code ./gradlew :tools:slowTests}. */
     @Test
+    @Tag("slow")
+    void theFixturesHoldTheFirstCollidingPair() throws IOException {
+        assertEquals(HashCollisions.firstPair(HashCollisions.PREFIX), Fixtures.read(MODEL).hashCollision(),
+            "data/model/fixtures.json hashCollision is the pair the search finds");
+    }
+
+    @Test
+    @Tag("slow")
     void theSearchStopsAtTheFirstCollision() {
         List<String> pair = HashCollisions.firstPair("test:x_");
         int last = Integer.parseInt(pair.get(1).substring("test:x_".length()));

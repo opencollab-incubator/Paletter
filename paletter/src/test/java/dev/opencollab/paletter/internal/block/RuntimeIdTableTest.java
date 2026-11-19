@@ -32,6 +32,20 @@ class RuntimeIdTableTest {
     }
 
     @Test
+    void positionsAboveACharNeedALargeTable() {
+        RuntimeIdTable small = new RuntimeIdTable(RuntimeIdTable.SMALL_LIMIT - 1);
+        small.put(1, RuntimeIdTable.SMALL_LIMIT - 2, state(1));
+        assertEquals(RuntimeIdTable.SMALL_LIMIT - 2, small.index(1));
+        assertThrows(IllegalArgumentException.class, () -> small.put(2, RuntimeIdTable.SMALL_LIMIT, state(2)));
+
+        RuntimeIdTable large = new RuntimeIdTable(RuntimeIdTable.SMALL_LIMIT);
+        large.put(1, RuntimeIdTable.SMALL_LIMIT, state(1));
+        large.put(2, Integer.MAX_VALUE, state(2));
+        assertEquals(RuntimeIdTable.SMALL_LIMIT, large.index(1));
+        assertEquals(Integer.MAX_VALUE, large.index(2));
+    }
+
+    @Test
     void anyIntIsAKeyAndMissingKeysAreNotFound() {
         RuntimeIdTable table = new RuntimeIdTable(4);
         int[] keys = {-1, 0, Integer.MIN_VALUE, Integer.MAX_VALUE};

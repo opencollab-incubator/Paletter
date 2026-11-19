@@ -48,7 +48,8 @@ dependencies {
 
 tasks.test {
     // Tests of the "binary" tag read a BDS binary from the cache: ./gradlew :tools:whiteboxRegression
-    useJUnitPlatform { excludeTags("binary") }
+    // Tests of the "slow" tag recompute what a fast test checks a committed result of: ./gradlew :tools:slowTests
+    useJUnitPlatform { excludeTags("binary", "slow") }
     // ./gradlew :tools:test -PupdateGolden=true rewrites the generator tests' golden files (Golden; review the diff)
     systemProperty("paletter.updateGolden", (findProperty("updateGolden") as String?) ?: "false")
     // -PupdateShapeDisagreements=true rewrites data/model/vanilla-shapes-known-<protocol>.txt (VanillaShapeOracleTest)
@@ -183,5 +184,14 @@ tasks.register<Test>("whiteboxRegression") {
     testClassesDirs = sourceSets.test.get().output.classesDirs
     classpath = sourceSets.test.get().runtimeClasspath
     useJUnitPlatform { includeTags("binary") }
+    outputs.upToDateWhen { false }
+}
+
+tasks.register<Test>("slowTests") {
+    group = "verification"
+    description = "Runs the slow tests, which recompute committed results (the hash collision pair of the spec add-on)"
+    testClassesDirs = sourceSets.test.get().output.classesDirs
+    classpath = sourceSets.test.get().runtimeClasspath
+    useJUnitPlatform { includeTags("slow") }
     outputs.upToDateWhen { false }
 }

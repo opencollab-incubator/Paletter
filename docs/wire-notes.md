@@ -29,7 +29,8 @@ states in order. That ids are assigned in block id order is an assumption from t
 recapture checks the pair below.
 
 - The spec add-on carries `paletter:hash_368468` and `paletter:hash_2193012`, the first pair of `paletter:hash_<n>` whose
-  single states hash alike (578938111; `hashCollision` in `data/model/fixtures.json`, found by `HashCollisions.firstPair`).
+  single states hash alike (578938111; `hashCollision` in `data/model/fixtures.json`, found by `HashCollisions.firstPair`; the build checks only that the pair collides, the search runs in
+  `./gradlew :tools:slowTests`, about 10 s).
   Paletter gives `hash_368468`, which BDS numbers first, 578938111 and `hash_2193012` 578938112. `HashCollisionCaptureTest`
   compares that with the ids BDS sends in the creative inventory; every build is PENDING until a recapture carries the pair.
   The capture writer resolves neither id to a state (`creativeBlockIdsOfHashCollisions` in `capture.json`).

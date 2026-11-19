@@ -215,7 +215,7 @@
     "block:description:states": "varied by block:states"
   },
   "hashCollision": {
-    "_comment": "Two custom blocks chosen to collide: the first pair of paletter:hash_<n> whose single states (no properties) have the same network hash (HashCollisions.firstPair, checked by HashCollisionsTest). The add-on writes them as plain blocks in the creative inventory, so the capture shows which of them BDS gives the hash and which the next id (HashCollisionCaptureTest, docs/wire-notes.md).",
+    "_comment": "Two custom blocks chosen to collide: the first pair of paletter:hash_<n> whose single states (no properties) have the same network hash (HashCollisions.firstPair; HashCollisionsTest checks they collide, ./gradlew :tools:slowTests that the search gives them). The add-on writes them as plain blocks in the creative inventory, so the capture shows which of them BDS gives the hash and which the next id (HashCollisionCaptureTest, docs/wire-notes.md).",
     "blocks": ["paletter:hash_368468", "paletter:hash_2193012"]
   },
   "scriptComponents": {

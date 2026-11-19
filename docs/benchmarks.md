@@ -52,9 +52,12 @@ tables first. Quick run (2 warm-ups, 4 iterations, one fork, `-Pjmh.profilers=gc
 | `HotPathBenchmark.byRuntimeId` | 54.8 ns (error 10.2) | 46.6 ns (error 9.4) | 0 B/op before and after |
 | `HotPathBenchmark.blockBehaviour` (by position, unchanged path) | 59.7 ns (error 11.5) | 63.6 ns (error 9.6) | 0 B/op before and after |
 
-The definitions cost memory: a vanilla palette's table has 65,536 slots, and the definition array adds 256 KB to it (newest
-version 14,415,160 to 14,677,344 bytes, oldest 14,843,072 to 15,105,256, the served versions 20,907,864 to 21,694,416; an
-extension 50,808 to 51,104 bytes, the creative one 299,144 to 299,216). All within the limits.
+The definitions cost memory: a vanilla palette's table has 65,536 slots. With int positions the definition array added
+256 KB; positions are chars in a table of fewer than 65,536 states (every vanilla table), which halves that to 128 KB (newest
+version 14,415,160 to 14,546,272 bytes, oldest 14,843,072 to 14,974,184, the served versions 20,907,864 to 21,301,200; an
+extension 50,808 to 50,976 bytes, the creative one 299,144 to 299,200). All within the limits. With char positions, the same
+quick run gave `decodeRuntimeId` 48.0 ns (error 9.5) and `blockBehaviour` 61.5 ns (error 13.9), 0 B/op: within the errors of
+the int version.
 
 The lookups changed little: the differences are inside the errors. These are warm figures; the first `extend` of a JVM, before
 the code is compiled, takes several milliseconds (5.7 ms was noted for the code before).
