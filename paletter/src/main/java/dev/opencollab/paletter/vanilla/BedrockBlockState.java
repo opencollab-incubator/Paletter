@@ -211,7 +211,20 @@ public final class BedrockBlockState {
         if (layout.root != null && canonical.root() == layout.root) {
             return layout.rootBase + layout.offset(combination);
         }
-        int base = canonical.customBase(type().identifier(), layout.count);
+        BedrockBlockType type = layout.owner;
+        if (!type.isCustom() && !type.isAvailable()) {
+            // A constant the bundled release lacks: not in its palettes, which resolve it through their fallbacks. A
+            // root that has the block (the preview's) knows where
+            CanonicalBlocks root = canonical.root();
+            if (root == VanillaIndex.get().blocks) {
+                return -1;
+            }
+            int first = PreviewBlocks.first(root, type);
+            if (first >= 0) {
+                return first + layout.offset(combination);
+            }
+        }
+        int base = canonical.customBase(type.identifier(), layout.count);
         return base == -1 ? canonical.index(toNbt()) : base + combination;
     }
 

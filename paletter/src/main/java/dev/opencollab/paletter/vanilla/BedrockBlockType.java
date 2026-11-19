@@ -25,17 +25,19 @@ import java.util.Objects;
  * int runtimeId = palette.runtimeId(door);
  * }</pre>
  * Referencing a type loads nothing; its states are resolved against the newest data of {@link
- * dev.opencollab.paletter.Paletter#bundled()} on first use. A vanilla constant the data does not have (deprecated
- * because Bedrock removed the block, or a preview block without the preview loaded) is not {@link #isAvailable()
- * available}: its states are those of its fallback, normally {@code minecraft:unknown}.
+ * dev.opencollab.paletter.Paletter#bundled()} on first use. A vanilla constant the newest bundled release does not have
+ * (deprecated because Bedrock removed the block, or a
+ * {@link dev.opencollab.paletter.annotation.SincePreview @SincePreview} block) is not {@link #isAvailable() available},
+ * but has states of its own, like an item constant: a preview block those of the preview, written into the constant
+ * when it was generated (no preview data is loaded for them), a removed block one state without properties. A palette
+ * whose newest version has the block (a preview block in a Paletter with previews) sends the block itself; any other
+ * palette resolves its states through its {@link dev.opencollab.paletter.Fallbacks}, {@code minecraft:unknown} by
+ * default.
  * <p>
  * Equality: like its states (see {@link BedrockBlockState}), {@code equals} always works, and {@code ==} works for the
- * vanilla constants and for the type a registered {@link CustomBlock} owns. Not in a Paletter with previews, for the
- * blocks the preview added or changed: those have types of their own, equal to a constant if the states are the same.
- * The {@link dev.opencollab.paletter.annotation.SincePreview @SincePreview} constant of a block only the preview has is
- * not available, its states are its fallback's: it is not equal to the preview's own type of the block, and its states
- * send the fallback in every palette. The preview's blocks are reached by the palette's lookups
- * ({@link dev.opencollab.paletter.Palette#blockType}, {@code Palette#blockState}).
+ * vanilla constants, the preview's blocks among them, and for the type a registered {@link CustomBlock} owns. Not in a
+ * Paletter with previews, for the blocks of the release the preview changed: those have types of their own, equal to the
+ * constant if the states are the same.
  *
  * @since 1.0.0
  */
@@ -46,6 +48,8 @@ public final class BedrockBlockType {
     private volatile @Nullable BlockTypeLayout layout;
     private volatile boolean available;
     private final boolean education;
+    /** The states of a block only the bundled preview has, as generated; null for any other type. */
+    private final VanillaTypes.@Nullable PreviewStates previewStates;
 
     /** A vanilla type, linked by {@link VanillaIndex}. */
     BedrockBlockType(String identifier, String fallback) {
@@ -57,6 +61,15 @@ public final class BedrockBlockType {
         this.fallback = fallback;
         this.custom = false;
         this.education = education;
+        this.previewStates = null;
+    }
+
+    BedrockBlockType(String identifier, String fallback, VanillaTypes.PreviewStates previewStates) {
+        this.identifier = Objects.requireNonNull(identifier);
+        this.fallback = fallback;
+        this.custom = false;
+        this.education = false;
+        this.previewStates = Objects.requireNonNull(previewStates);
     }
 
     private BedrockBlockType(String identifier, boolean bare) {
@@ -64,6 +77,7 @@ public final class BedrockBlockType {
         this.fallback = null;
         this.custom = true;
         this.education = false;
+        this.previewStates = null;
         this.layout = BlockTypeLayout.bare(this);
         this.available = true;
     }
@@ -73,6 +87,7 @@ public final class BedrockBlockType {
         this.fallback = null;
         this.custom = true;
         this.education = false;
+        this.previewStates = null;
         this.layout = BlockTypeLayout.custom(this, properties, defaultStates);
         this.available = true;
     }
@@ -159,11 +174,14 @@ public final class BedrockBlockType {
         this.available = true;
     }
 
-    void linkAbsent(@Nullable BedrockBlockType fallbackType) {
-        if (fallbackType == null) {
-            throw new IllegalStateException("Neither " + identifier + " nor its fallback " + fallback + " is in the bundled data");
-        }
-        this.layout = fallbackType.layout();
+    /**
+     * Links a vanilla type the newest bundled release does not have to states of its own: those the generator wrote
+     * for a preview block, else (a removed block, whose properties no data has anymore) a single state without
+     * properties. Palettes that lack the block resolve them through their {@link dev.opencollab.paletter.Fallbacks}.
+     */
+    void linkUnavailable() {
+        VanillaTypes.PreviewStates preview = previewStates;
+        this.layout = preview == null ? BlockTypeLayout.bare(this) : BlockTypeLayout.previewConstant(this, preview);
         this.available = false;
     }
 
@@ -194,12 +212,12 @@ public final class BedrockBlockType {
     BlockTypeLayout layout() {
         BlockTypeLayout layout = this.layout;
         if (layout == null) {
-            VanillaIndex index = VanillaIndex.get();
+            VanillaIndex.get();
             synchronized (this) {
                 layout = this.layout;
                 if (layout == null) {
                     // Registered after the index was built: not in the data
-                    linkAbsent(index.block(fallback));
+                    linkUnavailable();
                     layout = this.layout;
                 }
             }
@@ -254,10 +272,11 @@ public final class BedrockBlockType {
     }
 
     /**
-     * Whether the bundled data has this type.
+     * Whether the newest bundled release has this type. Says nothing about one palette: a palette whose newest version
+     * has the block (a preview block in a Paletter with previews) sends it although it is not available.
      *
-     * @return false for a vanilla constant the bundled data does not have: its states are those of its fallback type
-     *         (see {@link #resolved()})
+     * @return false for a vanilla constant the newest bundled release does not have: palettes without the block resolve
+     *         its states through their {@link dev.opencollab.paletter.Fallbacks}
      */
     public boolean isAvailable() {
         if (!custom) {
@@ -267,12 +286,17 @@ public final class BedrockBlockType {
     }
 
     /**
-     * The type the states of this type belong to.
+     * The type the newest bundled release links this type to. Palettes resolve a type that is not available through
+     * their {@link dev.opencollab.paletter.Fallbacks}, not through this.
      *
-     * @return this type, or for a type that is not {@link #isAvailable() available} the type its states belong to
+     * @return this type, or for a type that is not {@link #isAvailable() available} its fallback type
      */
     public @NonNull BedrockBlockType resolved() {
-        return layout().owner;
+        if (isAvailable() || custom) {
+            return this;
+        }
+        BedrockBlockType target = VanillaIndex.get().block(fallback);
+        return target != null ? target : this;
     }
 
     /**
@@ -372,11 +396,10 @@ public final class BedrockBlockType {
         if (!(o instanceof BedrockBlockType other) || custom != other.custom || !identifier.equals(other.identifier)) {
             return false;
         }
-        // Vanilla types are singletons, except those of blocks a preview added or changed (see PreviewBlocks): equal to
-        // the constant of the identifier if they have the same states. Custom types likewise. A constant that is not
-        // available has its fallback's states, so it never equals the preview's own type of its identifier
-        return isAvailable() == other.isAvailable()
-            && Arrays.equals(layout().properties, other.layout().properties)
+        // Vanilla types are singletons, except those of blocks a preview changed (see PreviewBlocks): equal to the
+        // constant of the identifier if they have the same states. Custom types likewise. A block only a preview has is
+        // its constant in every palette, so it has no second type
+        return Arrays.equals(layout().properties, other.layout().properties)
             && Arrays.deepEquals(layout().values, other.layout().values);
     }
 

@@ -242,7 +242,27 @@ class VanillaConstantsTest {
         assertFalse(removed.isAvailable());
         assertEquals("minecraft:paletter_test_removed_block", removed.identifier());
         assertSame(BedrockBlocks.UNKNOWN, removed.resolved());
-        assertSame(BedrockBlocks.UNKNOWN.defaultState(), removed.defaultState());
+        // States of its own, like an item: one state without properties (no data has them), not those of its fallback
+        BedrockBlockState own = removed.defaultState();
+        assertSame(removed, own.type());
+        assertEquals(List.of(own), removed.states());
+        assertEquals(List.of(), removed.properties());
+        assertFalse(own.equals(BedrockBlocks.UNKNOWN.defaultState()));
+        // No canonical id of its own: the palette resolves it by identifier, to the default fallback
+        Palette palette = PALETTER.vanilla(PALETTER.latest());
+        assertEquals(-1, own.canonicalIn(palette.blocks().canonical()));
+        assertTrue(palette.resolve(own).fallback());
+        assertEquals("minecraft:unknown", palette.blockDefinition(own).getState().getString("name"));
+        Paletter withEntry = Paletter.builder().fallbacks(Fallbacks.builder().block(removed, BedrockBlocks.STONE).build()).build();
+        assertEquals("minecraft:stone", withEntry.vanilla(withEntry.latest()).blockDefinition(own).getState().getString("name"));
+
+        // A preview block constant has the preview's properties, generated into it, and states of its own
+        BedrockBlockType preview = BedrockBlocks.BRITTLE_ICE;
+        assertFalse(preview.isAvailable());
+        assertEquals(List.of(BedrockStates.AGE), preview.properties());
+        assertEquals(4, preview.stateCount());
+        assertSame(preview, preview.defaultState().type());
+        assertSame(preview.defaultState(), preview.state().with(BedrockStates.AGE, preview.defaultState().get(BedrockStates.AGE)).build());
 
         BedrockItemType removedItem = VanillaTypes.item("minecraft:paletter_test_removed_item");
         assertFalse(removedItem.isAvailable());

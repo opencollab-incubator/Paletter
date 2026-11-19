@@ -77,7 +77,8 @@ public final class BedrockBlocks {
      * Only in the bundled preview 1.2.
      */
     @SincePreview("1.2")
-    public static final BedrockBlockType TEST_PREVIEW = VanillaTypes.block("minecraft:test_preview");
+    public static final BedrockBlockType TEST_PREVIEW = VanillaTypes.previewBlock("minecraft:test_preview", 0,
+        VanillaTypes.property("minecraft:preview_bit", (byte) 0, (byte) 1));
 
     /**
      * {@code minecraft:test_sparse}: {@link BedrockStates#AGE}, {@link BedrockStates#LIT}; 3 states (3 states, but its values have 6 combinations: not a full product: resolved with a lookup table).

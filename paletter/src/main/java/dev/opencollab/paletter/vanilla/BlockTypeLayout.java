@@ -70,6 +70,31 @@ final class BlockTypeLayout {
     }
 
     /**
+     * The layout of the constant of a block only the bundled preview has, from the states the generator wrote into it:
+     * the preview's states in the preview's order, with no canonical id of the bundled release.
+     */
+    static BlockTypeLayout previewConstant(BedrockBlockType owner, VanillaTypes.PreviewStates states) {
+        BlockLayout source = BlockLayout.of(states.states(owner.identifier())).getFirst();
+        return vanilla(owner, source, -1, states.defaultOffset());
+    }
+
+    /**
+     * @return whether a block of some canonical blocks has exactly the states of this layout, at the same offsets
+     */
+    boolean sameStates(BlockLayout other) {
+        if (source == null || other.count() != count || !other.properties().equals(source.properties())
+            || !other.values().equals(source.values())) {
+            return false;
+        }
+        for (int c = 0; c < combinations; c++) {
+            if (other.offset(c) != source.offset(c)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
      * The layout of a custom block's type, from the block's state properties and default state values (copied, so the
      * layout holds nothing of the block).
      */
