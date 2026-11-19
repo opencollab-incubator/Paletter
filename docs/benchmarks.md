@@ -84,8 +84,8 @@ the byte).
 
 ## Startup (JMH, cold)
 
-`StartupBenchmark` is one cold shot per fork: build a `Paletter` and compile the palette of every bundled release version, the
-way Geyser does at startup (`BlockRegistryPopulator.registerBedrockBlocks`). `withCustomLayer` adds one layer of 20 blocks and
+`StartupBenchmark` is one cold shot per fork: build a `Paletter` and compile the palette of every bundled release version
+with `warmUp()`, then look each one up. `withCustomLayer` adds one layer of 20 blocks and
 20 items. It is left out of the other runs (a warm-up would defeat it); run it with
 
 ```
@@ -99,6 +99,18 @@ way Geyser does at startup (`BlockRegistryPopulator.registerBedrockBlocks`). `wi
 
 The JVMs run with `-Xmx2g` on the same shared laptop; the spread is about 10%, so read the custom layer's cost (about 0.3 s)
 as an estimate.
+
+`warmUp()` compiles the versions in parallel (one thread per version, at most one per processor; 16 here). Two runs of
+sequential (before) and parallel (after) on the same laptop, five cold JVMs each, median:
+
+| Benchmark | Before, run 1 | After, run 1 | Before, run 2 | After, run 2 |
+|-----------|---------------|--------------|---------------|--------------|
+| `vanilla` | 3,839 ms | 2,423 ms | 2,736 ms | 2,475 ms |
+| `withCustomLayer` | 3,873 ms | 3,548 ms | 6,379 ms | 2,667 ms |
+
+The laptop was shared with other builds: the forks of a run range up to 2x (run 2 before, `withCustomLayer`: 3,679 to
+7,455 ms), so these are not precise. The steadiest pair, `vanilla` of run 2, gives -261 ms (-10%); the Geyser study
+measured -485 ms (-13%) of its `bedrockTotal` for the same change.
 
 An extension that places nothing in creative shares the creative content, the item table and the pages of the canonical
 block table with its parent; one that does compiles the creative content again, which is what its 299 KB are. The
