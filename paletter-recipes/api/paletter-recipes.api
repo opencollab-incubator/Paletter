@@ -74,7 +74,7 @@ public record dev.opencollab.paletter.recipes.Ingredient$Tag implements dev.open
 }
 
 public final class dev.opencollab.paletter.recipes.Ingredients {
-    public static dev.opencollab.paletter.recipes.Ingredient$Tag tagOf(dev.opencollab.paletter.Palette, java.util.Set<dev.opencollab.paletter.vanilla.BedrockItemType>, java.util.function.Predicate<dev.opencollab.paletter.vanilla.BedrockItemType>)
+    public static dev.opencollab.paletter.recipes.Ingredient$Tag tagOf(dev.opencollab.paletter.Palette, java.util.Set<? extends dev.opencollab.paletter.vanilla.ItemKey>, java.util.function.Predicate<dev.opencollab.paletter.vanilla.BedrockItemType>)
 }
 
 public record dev.opencollab.paletter.recipes.PotionMix {
