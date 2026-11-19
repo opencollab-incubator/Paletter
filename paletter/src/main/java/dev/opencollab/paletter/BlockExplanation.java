@@ -7,6 +7,7 @@ import dev.opencollab.paletter.annotation.Experimental;
 import dev.opencollab.paletter.vanilla.BedrockBlockState;
 
 import java.util.List;
+import java.util.Locale;
 
 /**
  * What a palette does with a block state, for debugging: {@link Palette#explain(NbtMap)}.
@@ -57,7 +58,7 @@ public record BlockExplanation(@NonNull NbtMap requested, @Nullable BedrockBlock
         StringBuilder out = new StringBuilder();
         out.append("block ").append(describe(requested)).append('\n');
         out.append("  handle:       ").append(handle == null ? "none" : handle).append('\n');
-        out.append("  resolution:   ").append(kind.name().toLowerCase());
+        out.append("  resolution:   ").append(kind.name().toLowerCase(Locale.ROOT));
         if (chain.size() > 1) {
             out.append(" (").append(String.join(" -> ", chain)).append(')');
         }

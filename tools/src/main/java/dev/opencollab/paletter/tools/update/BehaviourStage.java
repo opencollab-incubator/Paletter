@@ -13,6 +13,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * The captures that were separate commands: the behaviour dump ({@code behaviour-dump}), the behaviour probe
@@ -79,7 +80,7 @@ final class BehaviourStage {
 
     private void skipped(String name, Exception error) {
         ctx.report.check(Report.Status.SKIP, name, "failed, the committed data stays: " + error);
-        ctx.report.action("run `" + name.toLowerCase().replace(' ', '-') + "` by hand for this build (see the log in the work directory)");
+        ctx.report.action("run `" + name.toLowerCase(Locale.ROOT).replace(' ', '-') + "` by hand for this build (see the log in the work directory)");
     }
 
     /** Whether a committed file says the same as what this run captured. */
@@ -150,7 +151,7 @@ final class BehaviourStage {
             unchanged = from.equals(build) ? alike : Files.exists(own) && same.same(own);
         }
         if (!unchanged) {
-            ctx.stage(own, content, name.toLowerCase() + " " + build);
+            ctx.stage(own, content, name.toLowerCase(Locale.ROOT) + " " + build);
         }
         return !unchanged;
     }
