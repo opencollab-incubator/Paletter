@@ -9,7 +9,9 @@ import dev.opencollab.paletter.Palette;
 import dev.opencollab.paletter.Paletter;
 import dev.opencollab.paletter.data.DataVersion;
 import dev.opencollab.paletter.vanilla.BedrockItemType;
+import dev.opencollab.paletter.vanilla.BedrockItemVariant;
 import dev.opencollab.paletter.vanilla.BedrockItems;
+import dev.opencollab.paletter.vanilla.ItemKey;
 import org.junit.jupiter.api.Test;
 
 import java.util.HashSet;
@@ -57,6 +59,41 @@ class IngredientsTest {
         Set<BedrockItemType> foundMembers = members(NEWEST, found.tag());
         foundMembers.remove(left);
         assertEquals(items, foundMembers);
+    }
+
+    /** The first tag by name that has the banner type (which has many variants) as a member. */
+    private static String bannerTag() {
+        return NEWEST.itemTags().entrySet().stream().filter(entry -> entry.getValue().contains("minecraft:banner")).map(Map.Entry::getKey).sorted().findFirst().orElseThrow();
+    }
+
+    @Test
+    void someVariantsOfATypeMatchNoTagOfThatType() {
+        Set<BedrockItemVariant> some = Set.of(BedrockItems.BANNER.variants().get(0), BedrockItems.BANNER.variants().get(1));
+        assertNull(Ingredients.tagOf(NEWEST, some, item -> false));
+        Set<ItemKey> mixed = new HashSet<>(members(NEWEST, bannerTag()));
+        mixed.remove(BedrockItems.BANNER);
+        mixed.addAll(some);
+        assertNull(Ingredients.tagOf(NEWEST, mixed, item -> false));
+    }
+
+    @Test
+    void allVariantsOfATypeOrTheTypeMatchLikeTheType() {
+        String tag = bannerTag();
+        Set<BedrockItemType> expected = members(NEWEST, tag);
+        Set<ItemKey> allVariants = new HashSet<>(expected);
+        allVariants.remove(BedrockItems.BANNER);
+        allVariants.addAll(BedrockItems.BANNER.variants());
+        Ingredient.Tag byVariants = Ingredients.tagOf(NEWEST, allVariants, item -> false);
+        assertNotNull(byVariants);
+        assertEquals(Ingredients.tagOf(NEWEST, expected, item -> false), byVariants);
+        assertEquals(expected, members(NEWEST, byVariants.tag()));
+    }
+
+    @Test
+    void fullTypesMixWithTypesGivenAsTheirVariants() {
+        String tag = someTag(NEWEST);
+        Set<ItemKey> items = new HashSet<>(members(NEWEST, tag));
+        assertEquals(Ingredients.tagOf(NEWEST, members(NEWEST, tag), item -> false), Ingredients.tagOf(NEWEST, items, item -> false));
     }
 
     @Test
