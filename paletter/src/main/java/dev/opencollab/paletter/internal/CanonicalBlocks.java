@@ -7,6 +7,7 @@ import org.checkerframework.checker.nullness.qual.Nullable;
 import org.cloudburstmc.nbt.NbtMap;
 import dev.opencollab.paletter.PaletteException;
 import dev.opencollab.paletter.internal.block.BlockStates;
+import dev.opencollab.paletter.internal.block.StateIndex;
 import dev.opencollab.paletter.block.CustomBlock;
 import dev.opencollab.paletter.annotation.Internal;
 import dev.opencollab.paletter.internal.data.Renames;
@@ -47,19 +48,21 @@ public final class CanonicalBlocks {
     private final BedrockBlockType[] customTypes;
     /** The canonical id of the first state of each of {@link #customs}, ascending. */
     private final int[] customStarts;
-    private final Object2IntMap<NbtMap> index;
+    /** Own states by state, keyed by {@link BlockStates#hash}. */
+    private final StateIndex index;
     private final Object2IntMap<String> customBases;
     private final Object2IntMap<String> customCounts;
     private final Map<Object, CanonicalBlocks> extensions = new WeakHashMap<>();
     private final Renames renames;
     private final String version;
-    private final Map<NbtMap, String> defaultStates;
+    /** The default state of each block of the newest version, by block (normalized). */
+    private final Map<String, NbtMap> defaultStates;
     private volatile @Nullable Map<String, Schema> schemas;
     /** Of a root only: its vanilla ids and those of the one other root asked about last. */
     private volatile @Nullable Translation translation;
 
     private CanonicalBlocks(@Nullable CanonicalBlocks parent, List<NbtMap> states, List<CustomBlock> blocks,
-                            Renames renames, String version, Map<NbtMap, String> defaultStates) {
+                            Renames renames, String version, Map<String, NbtMap> defaultStates) {
         this.parent = parent;
         this.root = parent == null ? this : parent.root;
         this.renames = renames;
@@ -67,17 +70,16 @@ public final class CanonicalBlocks {
         this.defaultStates = defaultStates;
         this.offset = parent == null ? 0 : parent.size();
         this.states = states.toArray(NbtMap[]::new);
-        Object2IntOpenHashMap<NbtMap> index = new Object2IntOpenHashMap<>(states.size());
-        index.defaultReturnValue(-1);
         for (int i = 0; i < this.states.length; i++) {
-            NbtMap state = BlockStates.normalize(this.states[i]);
-            this.states[i] = state;
-            if (index.put(state, offset + i) != -1 || (parent != null && parent.index(state) != -1)) {
+            this.states[i] = BlockStates.normalize(this.states[i]);
+        }
+        this.index = new StateIndex(this.states);
+        for (int i = 0; i < this.states.length; i++) {
+            NbtMap state = this.states[i];
+            if (index.add(i) != -1 || (parent != null && parent.index(state) != -1)) {
                 throw new PaletteException("Duplicate canonical block state " + state, null, BlockStates.name(state), null);
             }
         }
-        index.trim();
-        this.index = index;
         this.customBases = new Object2IntOpenHashMap<>(blocks.size());
         this.customBases.defaultReturnValue(-1);
         this.customCounts = new Object2IntOpenHashMap<>(blocks.size());
@@ -110,8 +112,8 @@ public final class CanonicalBlocks {
      */
     @Internal
     public static @NonNull CanonicalBlocks of(@NonNull VanillaData newest, @NonNull Renames renames) {
-        Map<NbtMap, String> defaults = new HashMap<>();
-        newest.blockDefaults().forEach((name, state) -> defaults.put(BlockStates.normalize(state), name));
+        Map<String, NbtMap> defaults = new HashMap<>();
+        newest.blockDefaults().forEach((name, state) -> defaults.put(name, BlockStates.normalize(state)));
         return new CanonicalBlocks(null, newest.blockStates(), List.of(), renames, newest.version().toString(), defaults);
     }
 
@@ -143,12 +145,7 @@ public final class CanonicalBlocks {
      */
     @Internal
     public @Nullable NbtMap defaultState(@NonNull String name) {
-        for (Map.Entry<NbtMap, String> entry : root.defaultStates.entrySet()) {
-            if (entry.getValue().equals(name)) {
-                return entry.getKey();
-            }
-        }
-        return null;
+        return root.defaultStates.get(name);
     }
 
     /**
@@ -173,9 +170,9 @@ public final class CanonicalBlocks {
         NbtMap normalized = BlockStates.normalize(state);
         CanonicalBlocks current = this;
         while (current != null) {
-            int found = current.index.getInt(normalized);
+            int found = current.index.indexOf(normalized);
             if (found != -1) {
-                return found;
+                return current.offset + found;
             }
             current = current.parent;
         }
@@ -241,7 +238,7 @@ public final class CanonicalBlocks {
                 current = root.translation;
                 if (current == null || current.reference() != other) {
                     root.translation = current = Translation.of(other, root.states.length, other.states.length,
-                        id -> other.index.getInt(root.states[id]));
+                        id -> other.index.indexOf(root.states[id]));
                 }
             }
         }
@@ -385,8 +382,8 @@ public final class CanonicalBlocks {
                     }
                     Map<String, Schema> built = new HashMap<>();
                     values.forEach((name, perKey) -> built.put(name, new Schema(perKey, firsts.get(name))));
-                    defaultStates.forEach((state, name) -> {
-                        if (index.containsKey(state) && built.containsKey(name)) {
+                    defaultStates.forEach((name, state) -> {
+                        if (index.indexOf(state) != -1 && built.containsKey(name)) {
                             built.put(name, new Schema(built.get(name).values, state));
                         }
                     });

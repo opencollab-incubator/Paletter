@@ -13,7 +13,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.Objects;
 
 /**
  * Shares what hashed palettes of different versions have in common: vanilla
@@ -27,8 +27,11 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 @Internal
 public final class BlockInterner {
-    /** Concurrent: palettes look their vanilla states up here, see {@link #knownVanillaBlock}. */
-    private final Map<NbtMap, RegisteredBlockState> blocks = new ConcurrentHashMap<>();
+    /**
+     * The vanilla states, by {@link BlockStates#hash}: palettes look their vanilla states up here, see {@link #knownVanillaBlock}.
+     * Lookups read without a lock; states are added under the lock of this interner and published by writing this field.
+     */
+    private volatile Slots blocks = new Slots(64);
     /** The maps below share between the versions of a Paletter while they compile; null once {@link #releaseCompileMaps released}. */
     private @Nullable Map<VanillaBlockKey, RegisteredBlock> vanillaTypes = new HashMap<>();
     private @Nullable Map<IntPage, int[]> intPages = new HashMap<>();
@@ -40,24 +43,35 @@ public final class BlockInterner {
      * @return the shared hashed definition of a vanilla state; its hash is computed once
      */
     public @NonNull RegisteredBlockState vanillaBlock(@NonNull NbtMap state) {
-        RegisteredBlockState block = blocks.get(state);
-        if (block == null) {
-            // Hashing allocates and is most of the work: not inside computeIfAbsent, which holds the map's bin while it runs.
-            // Threads that race make equal blocks and agree on the first
-            RegisteredBlockState made = new RegisteredBlockState(BlockHashes.hash(state), state, false);
-            block = blocks.putIfAbsent(state, made);
-            if (block == null) {
-                block = made;
-            }
+        int hash = BlockStates.hash(state);
+        RegisteredBlockState block = blocks.find(state, hash);
+        if (block != null) {
+            return block;
         }
-        return block;
+        // The network hash allocates and is most of the work: not under the lock. Threads that race make equal blocks and
+        // agree on the first
+        RegisteredBlockState made = new RegisteredBlockState(BlockHashes.hash(state), state, false);
+        synchronized (this) {
+            Slots current = blocks;
+            block = current.find(state, hash);
+            if (block != null) {
+                return block;
+            }
+            if (current.size * 2 >= current.blocks.length) {
+                current = current.grown();
+            }
+            current.add(hash, made);
+            // Publishes the added state (and a grown table) to lookups, which read this field first
+            blocks = current;
+        }
+        return made;
     }
 
     /**
      * @return the shared definition of a vanilla state if one was made, else null. Takes no lock and does not allocate
      */
     public @Nullable RegisteredBlockState knownVanillaBlock(@NonNull NbtMap state) {
-        return blocks.get(state);
+        return blocks.find(state, BlockStates.hash(state));
     }
 
     /**
@@ -125,8 +139,80 @@ public final class BlockInterner {
         return new int[] {pages, sharedPages};
     }
 
+    /**
+     * Open addressing over {@link BlockStates#hash}, like {@link StateIndex}, with the definitions in the slots. Only grows:
+     * a lookup that reads it while a state is added may miss that state, never another one.
+     */
+    private static final class Slots {
+        private final int[] hashes;
+        /** Null for an empty slot. */
+        private final RegisteredBlockState[] blocks;
+        private final int mask;
+        private int size;
+
+        Slots(int capacity) {
+            this.hashes = new int[capacity];
+            this.blocks = new RegisteredBlockState[capacity];
+            this.mask = capacity - 1;
+        }
+
+        private static int mix(int hash) {
+            int h = hash * 0x9E3779B9;
+            return h ^ (h >>> 16);
+        }
+
+        @Nullable RegisteredBlockState find(NbtMap state, int hash) {
+            int start = mix(hash) & mask;
+            RegisteredBlockState block;
+            // Mostly looked up as the kept instance itself: by identity first, see StateIndex
+            for (int slot = start; (block = blocks[slot]) != null; slot = (slot + 1) & mask) {
+                if (hashes[slot] == hash && block.getState() == state) {
+                    return block;
+                }
+            }
+            for (int slot = start; (block = blocks[slot]) != null; slot = (slot + 1) & mask) {
+                if (hashes[slot] == hash && BlockStates.same(state, block.getState())) {
+                    return block;
+                }
+            }
+            return null;
+        }
+
+        void add(int hash, RegisteredBlockState block) {
+            int slot = mix(hash) & mask;
+            while (blocks[slot] != null) {
+                slot = (slot + 1) & mask;
+            }
+            // The hash first: a lookup that sees the block compares its hash
+            hashes[slot] = hash;
+            blocks[slot] = block;
+            size++;
+        }
+
+        Slots grown() {
+            Slots grown = new Slots(blocks.length * 2);
+            for (int slot = 0; slot < blocks.length; slot++) {
+                if (blocks[slot] != null) {
+                    grown.add(hashes[slot], blocks[slot]);
+                }
+            }
+            return grown;
+        }
+    }
+
+    /** The default state, a kept state, is compared by {@link BlockStates#STRATEGY}: it is not iterated. */
     private record VanillaBlockKey(String identifier, List<RegisteredBlockState> states, @Nullable NbtMap propertyData,
                                    @Nullable NbtMap defaultState) {
+        @Override
+        public boolean equals(Object o) {
+            return o instanceof VanillaBlockKey other && identifier.equals(other.identifier) && states.equals(other.states)
+                && Objects.equals(propertyData, other.propertyData) && BlockStates.STRATEGY.equals(defaultState, other.defaultState);
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(identifier, states, propertyData, BlockStates.STRATEGY.hashCode(defaultState));
+        }
     }
 
     private record IntPage(int[] values) {

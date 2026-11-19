@@ -128,14 +128,12 @@ class LookupTest {
         CustomBlock lamp = CustomBlock.builder("lookup:shared").build();
         for (Palette base : new Palette[] {LATEST, OLDEST}) {
             Palette extended = base.extend(PaletteLayer.builder("shared").block(lamp).build());
-            assertSame(base.versionBlocks(), extended.versionBlocks());
+            assertTrue(extended.blocks().extendsStatesOf(base.blocks()));
             assertSame(base.versionItems(), extended.versionItems());
             NbtMap stone = BedrockBlocks.STONE.defaultState().toNbt();
             assertSame(base.blockState(stone, Lookup.EXACT), extended.blockState(stone, Lookup.EXACT));
             assertSame(base.itemVariant("minecraft:apple", 0, Lookup.EXACT), extended.itemVariant("minecraft:apple", 0, Lookup.EXACT));
         }
-        // The newest palette reuses the table of the canonical ids
-        assertSame(LATEST.blocks().canonical().root(), LATEST.versionBlocks());
     }
 
     @Test

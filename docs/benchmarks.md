@@ -75,13 +75,13 @@ one `extend` adds, which is the cost a server pays per player with content of it
 and read the `MEMORY` lines. The same test fails when something retains more than its limit (a constant in the test, with the
 measured value noted beside it). Raise one only for a reason, and say so in the commit.
 
-| What | Before | After | After memory cuts | After compile release | Limit |
-|------|--------|-------|-------------------|-----------------------|-------|
-| `extend` by a layer of two blocks (no creative placement) | 206 to 601 KB | 40 to 53 KB | 50.8 KB | 50.8 KB | 56 KB |
-| `extend` by a layer with an item and a block in creative | not measured | about 290 KB | 299 KB | 299 KB | 330 KB |
-| vanilla palette, newest version | 17.8 MB | 14.4 MB | 14.4 MB | 14.4 MB | 15.9 MB |
-| vanilla palette, oldest version | 18.3 MB | 14.8 MB | 14.8 MB | 14.8 MB | 16.3 MB |
-| a Paletter serving all versions but the oldest, every palette compiled | 27.0 MB | 20.9 MB | 20.9 MB | 18.1 MB | 19.9 MB |
+| What | Before | After | After memory cuts | After compile release | After state hashes | Limit |
+|------|--------|-------|-------------------|-----------------------|--------------------|-------|
+| `extend` by a layer of two blocks (no creative placement) | 206 to 601 KB | 40 to 53 KB | 50.8 KB | 50.8 KB | 51.0 KB | 56 KB |
+| `extend` by a layer with an item and a block in creative | not measured | about 290 KB | 299 KB | 299 KB | 299 KB | 330 KB |
+| vanilla palette, newest version | 17.8 MB | 14.4 MB | 14.4 MB | 14.4 MB | 12.9 MB | 14.2 MB |
+| vanilla palette, oldest version | 18.3 MB | 14.8 MB | 14.8 MB | 14.8 MB | 13.6 MB | 14.9 MB |
+| a Paletter serving all versions but the oldest, every palette compiled | 27.0 MB | 20.9 MB | 20.9 MB | 18.1 MB | 16.7 MB | 18.4 MB |
 
 Every measurement runs once in a JVM of its own with pinned flags (serial collector, a young generation that holds the whole
 run), so no collection comes between the two JOL walks of an extension. In the shared test JVM the same walks gave anything
@@ -100,7 +100,33 @@ From before to after:
 | what only compiling uses is released once every served palette is compiled: the data source's property store (1.1 MB), the value sets that forward states of other versions (0.8 MB) and those that resolve states per version (0.6 MB), the interner's block and page maps (0.4 MB). A palette compiled later builds what it needs again; `extend` uses none of it | -2.8 MB (20,907,864 to 18,109,600 bytes) | none |
 
 "After compile release" is the code with that last change, measured the same way; the other rows did not change (equal to
-the byte).
+the byte). The definitions the runtime id tables gained after that (see "Runtime id decode") raised the served versions to
+18,502,936 bytes and the palettes to 14,546,272 and 14,974,184.
+
+**State hashes.** The indexes of block states (the interner's states of every version, the canonical ids, the per-version
+check of `blockState` lookups) used to be hash maps keyed by the `NbtMap`s. `NbtMap#hashCode` and `equals` iterate the map,
+and iterating makes the `NbtMap` and the unmodifiable map inside it keep an entry set view each: about 48 bytes on every kept
+state, once anything hashed it. The indexes are now open addressing tables over a hash of the state's two values
+(`BlockStates#hash`: the name's and the `states` compound's cached hash codes), compared by identity first and then by those
+two values, so a kept state is never iterated; the per-version check asks the palette's block table. Measured before and
+after the change (bytes):
+
+| What | Before | After |
+|------|--------|-------|
+| served versions | 18,502,936 | 16,697,128 (-1.8 MB) |
+| vanilla palette, newest version | 14,546,272 | 12,918,680 (-1.6 MB) |
+| vanilla palette, oldest version | 14,974,184 | 13,566,112 (-1.4 MB) |
+| `extend`, two blocks / creative | 50,976 / 299,200 | 50,984 / 299,208 |
+
+Of the 1.8 MB, the entry set views are 1.2 MB and the interner's map 0.6 MB (a `ConcurrentHashMap` of 1.15 MB, now two
+arrays of 0.5 MB). The hash of a state's values is weak: states of one block whose values differ in two places often share it
+(23,960 states, 14,982 hashes, up to 70 alike), which is why a lookup tries identity before comparing values.
+
+HotPath quick run (3 warm-ups, 5 iterations, two forks), same machine, before and after: `blockStateExact` (a state's
+`NbtMap` to its handle) 3,262 ns (error 370) to 371 ns (error 48). The other lookups do not touch these indexes and stayed
+within their errors, except the item lookups `resolve` (19.5 ns to 25.1 ns) and `resolveItemBehaviour` (85.9 to 97.3 ns);
+three forks each again gave 22.3 and 86.7 ns before, 24.7 and 94.8 ns after. Their path (`ItemRegistry#resolve` by canonical
+id) did not change, so this is the layout of the heap rather than code, but it is there in every run.
 
 ## Startup (JMH, cold)
 

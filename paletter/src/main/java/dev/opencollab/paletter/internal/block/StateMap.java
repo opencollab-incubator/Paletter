@@ -26,6 +26,9 @@ final class StateMap implements Map<String, Object> {
     /** The keys are the same for every state: one set for all. */
     private static final Set<String> KEYS = Collections.unmodifiableSet(new LinkedHashSet<>(List.of(NAME, STATES)));
 
+    /** A key that is no string, so no NBT key: only {@link #backs} asks for it. */
+    private static final Object MARKER = new Object();
+
     private final String name;
     private final NbtMap states;
 
@@ -56,7 +59,16 @@ final class StateMap implements Map<String, Object> {
 
     @Override
     public Object get(Object key) {
-        return NAME.equals(key) ? name : STATES.equals(key) ? states : null;
+        return key == MARKER ? Boolean.TRUE : NAME.equals(key) ? name : STATES.equals(key) ? states : null;
+    }
+
+    /**
+     * Whether a state is over this map, and so has exactly its two entries. Asks through {@code get}, the one method
+     * {@code NbtMap} hands to its map as is: its {@code size()} and {@code containsKey} iterate the map, which makes it keep
+     * entry set views (see {@link BlockStates#hash}).
+     */
+    static boolean backs(NbtMap state) {
+        return state.get(MARKER) == Boolean.TRUE;
     }
 
     @Override
