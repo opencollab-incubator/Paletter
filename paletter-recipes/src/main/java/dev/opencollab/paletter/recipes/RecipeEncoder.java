@@ -153,7 +153,7 @@ final class RecipeEncoder {
 
     private @Nullable ItemDescriptorWithCount counted(BedrockItemType type, int aux, int count) {
         ItemDefinition definition = definition(type);
-        return definition == null ? null : new ItemDescriptorWithCount(new DefaultDescriptor(definition, aux), count);
+        return definition == null ? null : new ItemDescriptorWithCount(new DefaultDescriptor(definition, aux, definition.getIdentifier()), count);
     }
 
     private @Nullable List<ItemData> results(List<Result> results) {

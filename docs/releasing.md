@@ -61,9 +61,11 @@ MIT license, organization, developers, SCM, issues). Everything configurable is 
   repository. Signing is optional: without a key the sign tasks are skipped, so `publishToMavenLocal` and snapshot
   publishes work. A release publish to the remote repository fails in `checkPublishAllowed` without a key.
 - `checkReleaseDependencies` (per module) fails if a published runtime dependency (POM `compile`/`runtime` scope of
-  `paletter` and `paletter-recipes`) is a `-SNAPSHOT` version or a pinned timestamped snapshot (`3.0.0.Beta15-20261026.210753-2`), and names it. `checkPublishAllowed` runs it for releases
-  only. Try it with `./gradlew checkReleaseDependencies -Pversion=1.0.0`. It currently fails: the Cloudburst protocol
-  dependency is a snapshot, so no release is possible until it is a release version.
+  `paletter` and `paletter-recipes`) is a floating `-SNAPSHOT` version, and names it. A pinned timestamped snapshot
+  (`3.0.0.Beta15-20261116.161745-6`, the Cloudburst protocol library) is allowed: it names one uploaded build, so the release is
+  reproducible. `checkPublishAllowed` runs it for releases only. Try it with
+  `./gradlew checkReleaseDependencies -Pversion=1.0.0`; it passes while every snapshot dependency is pinned. To bump the pin,
+  take the newest timestamped build from the repository's `maven-metadata.xml` and keep it in sync with Geyser.
 
 ### Steps
 

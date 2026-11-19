@@ -223,7 +223,7 @@ public final class RecipeCapture {
         json.addProperty("width", recipe.getWidth());
         json.addProperty("height", recipe.getHeight());
         crafting(json, recipe);
-        json.addProperty("assumeSymmetry", recipe.isAssumeSymetry());
+        json.addProperty("assumeSymmetry", recipe.isAssumeSymmetry());
         json.add("unlock", unlock(recipe.getRequirement()));
         return json;
     }

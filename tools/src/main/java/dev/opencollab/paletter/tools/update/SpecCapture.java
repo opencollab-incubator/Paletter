@@ -10,6 +10,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import dev.opencollab.paletter.tools.client.Capture;
+import dev.opencollab.paletter.tools.client.CaptureWriter;
 import dev.opencollab.paletter.internal.data.PaletteDataCodec;
 import dev.opencollab.paletter.internal.data.VanillaData;
 import dev.opencollab.paletter.tools.model.Fixtures;
@@ -199,7 +200,7 @@ public final class SpecCapture {
             JsonObject metadata = new JsonObject();
             metadata.addProperty("bdsVersion", distribution.version());
             metadata.addProperty(CapturePlatform.KEY, CapturePlatform.host());
-            metadata.addProperty("protocol", protocol);
+            CaptureWriter.addProtocol(metadata, protocol, summary.codecProtocol());
             metadata.addProperty("preview", preview);
             metadata.addProperty("formatVersion", formatVersion);
             // Values the generator cut at AddonGenerator.MAX_VALUES, which no capture of this add-on varies
@@ -208,8 +209,6 @@ public final class SpecCapture {
             if (!cut.isEmpty()) {
                 metadata.add("valuesCut", cut);
             }
-            metadata.addProperty("nativeCodec", summary.nativeCodec());
-            metadata.addProperty("codecProtocol", summary.codecProtocol());
             // creative block hashes that the client's palette (traits from the generated TraitStateTable) did and did not match
             metadata.addProperty("resolvedHashes", summary.resolvedHashes());
             metadata.addProperty("unresolvedHashes", summary.unresolvedHashes());

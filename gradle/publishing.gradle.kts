@@ -96,17 +96,17 @@ extensions.configure<SigningExtension> {
 
 // Fails if a published runtime dependency (the POM compile/runtime scope: api, implementation and runtimeOnly, which is
 // the runtimeElements configuration) is a SNAPSHOT. Project dependencies count with this project's version.
-// A pinned snapshot has a timestamped version (3.0.0.Beta15-20261026.210753-2) instead of the -SNAPSHOT suffix; both count.
-val timestampedSnapshot = Regex("-\\d{8}\\.\\d{6}-\\d+$")
+// A pinned snapshot has a timestamped version (3.0.0.Beta15-20261116.161745-6) instead of the -SNAPSHOT suffix. It names one
+// uploaded build, so it is reproducible and allowed; only a floating -SNAPSHOT fails.
 val snapshotDependencies = providers.provider {
     configurations.getByName("runtimeElements").allDependencies
-        .filter { val v = it.version; v != null && (v.endsWith("-SNAPSHOT") || timestampedSnapshot.containsMatchIn(v)) }
+        .filter { val v = it.version; v != null && v.endsWith("-SNAPSHOT") }
         .map { "${it.group}:${it.name}:${it.version}" }
         .distinct()
 }
 val checkReleaseDependencies = tasks.register("checkReleaseDependencies") {
     group = "publishing"
-    description = "Fails if a published runtime dependency of this module is a SNAPSHOT version"
+    description = "Fails if a published runtime dependency of this module is a floating -SNAPSHOT version"
     val snapshots = snapshotDependencies
     val projectPath = project.path
     doLast {

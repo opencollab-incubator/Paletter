@@ -219,10 +219,16 @@ final class CaptureStage {
             // Once: every capture of the run decodes with the same codec
             codecReported = true;
             runs.codecProtocol = summary.codecProtocol();
+            ctx.report.header.put("Protocol codec", codecNote(summary.protocol(), summary.codecProtocol()));
             ctx.report.check(Report.Status.DIFF, "Protocol codec", "no codec for " + summary.protocol() + " in the protocol library, "
                 + "captures decoded with the " + summary.codecProtocol() + " codec: update it and rerun");
         }
         return summary;
+    }
+
+    /** The report header for a capture decoded with another protocol's codec, null for the native one. */
+    static String codecNote(int protocol, int codecProtocol) {
+        return protocol == codecProtocol ? null : "captures of protocol " + protocol + " decoded with the " + codecProtocol + " codec (codecProtocol in capture.json)";
     }
 
     /** Whether the missing protocol codec is reported already. */

@@ -49,7 +49,7 @@ class RecipeCaptureTest {
         crafting.setCleanRecipes(true);
         for (String id : List.of("paletter:unlock_a", "minecraft:other")) {
             crafting.getShapelessData().add(ShapelessRecipeData.shapeless(id,
-                List.of(new ItemDescriptorWithCount(new DefaultDescriptor(stick, 0), 1)),
+                List.of(new ItemDescriptorWithCount(new DefaultDescriptor(stick, 0, stick.getIdentifier()), 1)),
                 List.of(ItemData.builder().definition(stick).count(1).build()), uuid, "crafting_table", 0, 10,
                 RecipeUnlockingRequirement.INVALID));
         }
@@ -85,7 +85,7 @@ class RecipeCaptureTest {
         CraftingDataPacket crafting = new CraftingDataPacket();
         crafting.setCleanRecipes(true);
         crafting.getShapedData().add(ShapedRecipeData.shaped("minecraft:table", 2, 1,
-            List.of(new ItemDescriptorWithCount(new DefaultDescriptor(plank, 32767), 1),
+            List.of(new ItemDescriptorWithCount(new DefaultDescriptor(plank, 32767, plank.getIdentifier()), 1),
                 new ItemDescriptorWithCount(new ItemTagDescriptor("minecraft:planks"), 1)),
             List.of(ItemData.builder().definition(table).count(1).blockDefinition(new CaptureClient.RawBlock(42)).build()),
             uuid, "crafting_table", 50, 9, true, RecipeUnlockingRequirement.INVALID));
@@ -94,7 +94,7 @@ class RecipeCaptureTest {
             List.of(ItemData.builder().definition(stick).count(4).damage(1).build()), uuid, "crafting_table", 0, 10,
             RecipeUnlockingRequirement.INVALID));
         crafting.getCraftingData().add(ShapelessRecipeData.shapeless("minecraft:legacy",
-            List.of(new ItemDescriptorWithCount(new DefaultDescriptor(plank, 0), 1)),
+            List.of(new ItemDescriptorWithCount(new DefaultDescriptor(plank, 0, plank.getIdentifier()), 1)),
             List.of(ItemData.builder().definition(stick).count(1).build()), uuid, "crafting_table", 0, 12,
             RecipeUnlockingRequirement.INVALID));
         crafting.getMultiData().add(MultiRecipeData.of(uuid, 11));

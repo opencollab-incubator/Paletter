@@ -11,6 +11,7 @@ import dev.opencollab.paletter.tools.Layout;
 import dev.opencollab.paletter.tools.bds.BdsDistribution;
 import dev.opencollab.paletter.tools.bds.BdsServer;
 import dev.opencollab.paletter.tools.client.Capture;
+import dev.opencollab.paletter.tools.client.CaptureWriter;
 import dev.opencollab.paletter.tools.client.LevelDat;
 import dev.opencollab.paletter.tools.client.VoxelShapeCapture;
 import dev.opencollab.paletter.tools.model.addon.AddonGenerator;
@@ -190,7 +191,7 @@ public final class ShapeProbe {
         metadata.addProperty("_generated", GENERATED);
         metadata.addProperty("bdsVersion", bdsVersion);
         metadata.addProperty(CapturePlatform.KEY, CapturePlatform.host());
-        metadata.addProperty("protocol", protocol);
+        CaptureWriter.addProtocol(metadata, protocol, Capture.codecFor(protocol).getProtocolVersion());
         metadata.addProperty("formatVersion", formatVersion);
         metadata.addProperty("experimentChangesPacket", experimentChanges);
         Files.writeString(out.resolve("capture.json"), new GsonBuilder().setPrettyPrinting().create().toJson(metadata) + "\n");
