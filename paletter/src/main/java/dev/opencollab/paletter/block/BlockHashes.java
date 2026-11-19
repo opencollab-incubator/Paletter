@@ -18,6 +18,9 @@ import java.util.TreeMap;
  * {@link dev.opencollab.paletter.Palette#applyTo(org.cloudburstmc.protocol.bedrock.packet.StartGamePacket)} does). A state
  * has the same id in every version and in every palette, custom blocks included, so tables and encoded chunks can be
  * shared between client versions.
+ * <p>
+ * The exception is a custom state whose hash a state of another block has: like BDS, the palette gives it the next free
+ * id (see docs/wire-notes.md), so its id depends on the other blocks of the palette.
  *
  * @since 1.0.0
  */
