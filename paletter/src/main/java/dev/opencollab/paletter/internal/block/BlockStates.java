@@ -5,6 +5,7 @@ import org.cloudburstmc.nbt.NbtMap;
 import org.cloudburstmc.nbt.NbtMapBuilder;
 
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * Helpers for block state NBT. Paletter always represents a block state as a compound with exactly two keys:
@@ -22,12 +23,12 @@ public final class BlockStates {
         return of(name, NbtMap.EMPTY);
     }
 
+    /**
+     * @return the state as {@code {name, states}}, over a {@link StateMap}: it is the form palettes keep, so it is compact
+     */
     public static @NonNull NbtMap of(@NonNull String name, @NonNull Map<String, ?> states) {
         NbtMap stateMap = states instanceof NbtMap nbt ? nbt : NbtMap.fromMap(Map.copyOf(states));
-        return NbtMap.builder()
-            .putString("name", name)
-            .putCompound("states", stateMap)
-            .build();
+        return NbtMap.fromMap(new StateMap(Objects.requireNonNull(name), stateMap));
     }
 
     /**
