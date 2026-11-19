@@ -2338,6 +2338,8 @@ public sealed interface dev.opencollab.paletter.creative.ItemMatcher permits dev
 public record dev.opencollab.paletter.data.DataVersion extends java.lang.Record implements java.lang.Comparable<dev.opencollab.paletter.data.DataVersion> {
     public <init>(java.lang.String, int)
     public <init>(java.lang.String, int, boolean)
+    public <init>(java.lang.String, int, boolean, java.lang.Integer)
+    public java.lang.Integer codecProtocol()
     public int compareTo(dev.opencollab.paletter.data.DataVersion)
     public boolean equals(java.lang.Object)
     public int hashCode()

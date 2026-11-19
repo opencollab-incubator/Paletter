@@ -28,7 +28,8 @@ import java.util.Map;
 
 /**
  * Reads data in the bundled format from a set of files: {@code versions.txt} lists one
- * {@code <name> <protocol> [preview]} line per version (a {@link DataVersion#isPreview() preview}), and each version is stored in {@code <name>.nbt}
+ * {@code <name> <protocol> [preview] [codec=<protocol>]} line per version (a {@link DataVersion#isPreview() preview}; the
+ * {@link DataVersion#codecProtocol() codec} that decoded its captures where that was another protocol's), and each version is stored in {@code <name>.nbt}
  * (written by the generator, see {@link PaletteDataCodec}). Item components and data driven blocks are stored once with
  * their version ranges in {@code properties.nbt} (see {@link PropertyStore}), behaviour values in
  * {@code behaviour.nbt} (see {@link BehaviourStore}), the vanilla voxel shapes in {@code voxel_shapes.nbt} (see
@@ -86,15 +87,43 @@ final class FileDataSource implements PaletteDataSource {
                 if (line.isEmpty() || line.startsWith("#")) {
                     continue;
                 }
-                String[] parts = line.split("\\s+");
-                // "<name> <protocol> preview": data of a preview build
-                versions.add(new DataVersion(parts[0], Integer.parseInt(parts[1]), parts.length > 2 && parts[2].equals("preview")));
+                try {
+                    versions.add(indexLine(line));
+                } catch (IllegalArgumentException e) {
+                    throw new IllegalStateException("Invalid line in the Paletter version index in " + origin + ": " + e.getMessage(), e);
+                }
             }
             Collections.sort(versions);
             return List.copyOf(versions);
         } catch (IOException e) {
             throw new UncheckedIOException("Unable to read the Paletter version index in " + origin, e);
         }
+    }
+
+    /**
+     * Reads a line of {@code versions.txt}: {@code <name> <protocol> [preview] [codec=<protocol>]}. {@code preview} marks
+     * the data of a preview build, {@code codec=} the protocol of the codec that decoded its captures where that was not
+     * its own.
+     *
+     * @throws IllegalArgumentException for a line with fewer fields, a number that is none, or a field it does not know
+     */
+    static DataVersion indexLine(String line) {
+        String[] parts = line.strip().split("\\s+");
+        if (parts.length < 2) {
+            throw new IllegalArgumentException("expected `<name> <protocol> [preview] [codec=<protocol>]`, got `" + line + "`");
+        }
+        boolean preview = false;
+        Integer codec = null;
+        for (int i = 2; i < parts.length; i++) {
+            if (parts[i].equals("preview") && !preview) {
+                preview = true;
+            } else if (parts[i].startsWith("codec=") && codec == null) {
+                codec = Integer.parseInt(parts[i].substring("codec=".length()));
+            } else {
+                throw new IllegalArgumentException("unknown or repeated field `" + parts[i] + "` in `" + line + "`");
+            }
+        }
+        return new DataVersion(parts[0], Integer.parseInt(parts[1]), preview, codec);
     }
 
     @Override

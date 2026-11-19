@@ -2,6 +2,7 @@ package dev.opencollab.paletter;
 
 import org.cloudburstmc.nbt.NbtMap;
 import dev.opencollab.paletter.annotation.SincePreview;
+import dev.opencollab.paletter.block.ResolvedBlock;
 import dev.opencollab.paletter.internal.CanonicalBlocks;
 import dev.opencollab.paletter.internal.data.VanillaData;
 import dev.opencollab.paletter.internal.data.VanillaItem;
@@ -14,9 +15,13 @@ import dev.opencollab.paletter.vanilla.BedrockItemVariant;
 import dev.opencollab.paletter.vanilla.BedrockItems;
 
 import java.lang.reflect.Field;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
 
 import org.junit.jupiter.api.Test;
 
@@ -162,20 +167,114 @@ class PreviewHandlesTest {
             .definition().getIdentifier());
     }
 
-    /** A block only the preview has: its constant has the fallback's states, so it is not the preview's type. */
+    /** The {@code @SincePreview} block constants: one for each block of the preview that the newest release lacks. */
+    private List<BedrockBlockType> previewBlockConstants() throws IllegalAccessException {
+        List<BedrockBlockType> constants = new ArrayList<>();
+        for (Field field : BedrockBlocks.class.getFields()) {
+            if (field.isAnnotationPresent(SincePreview.class)) {
+                constants.add((BedrockBlockType) field.get(null));
+            }
+        }
+        Paletter releases = Paletter.builder().build();
+        Set<String> release = new HashSet<>();
+        releases.vanillaData(releases.latest()).blockStates().forEach(state -> release.add(state.getString("name")));
+        Set<String> previewOnly = new TreeSet<>();
+        data.blockStates().forEach(state -> previewOnly.add(state.getString("name")));
+        previewOnly.removeAll(release);
+        assertEquals(previewOnly, new TreeSet<>(constants.stream().map(BedrockBlockType::identifier).toList()));
+        return constants;
+    }
+
+    /**
+     * A block only the preview has is its constant: the constant has the preview's states, in the preview's order, and
+     * every one of them is the palette's handle of that state and sends the preview's block itself. One block and one
+     * set of values is one state object, so constant and palette type are the same.
+     */
     @Test
-    void anUnavailableBlockConstantIsNotThePreviewType() {
+    void everyStateOfAPreviewBlockIsItsConstantsState() throws IllegalAccessException {
+        CanonicalBlocks canonical = palette.blocks().canonical();
         int checked = 0;
-        for (NbtMap state : data.blockStates()) {
-            BedrockBlockType type = palette.blockState(state, Lookup.EXACT).type();
-            BedrockBlockType constant = BedrockBlockType.byIdentifier(type.identifier());
-            if (constant != null && !constant.isAvailable()) {
-                assertNotEquals(constant, type, type.identifier());
-                assertNotEquals(type, constant, type.identifier());
+        for (BedrockBlockType constant : previewBlockConstants()) {
+            assertFalse(constant.isAvailable(), constant.identifier());
+            assertSame(constant, palette.blockType(constant.identifier(), Lookup.EXACT), constant.identifier());
+            List<NbtMap> expected = data.blockStates().stream().filter(s -> s.getString("name").equals(constant.identifier())).toList();
+            List<BedrockBlockState> states = constant.states();
+            assertEquals(expected.size(), states.size(), constant.identifier());
+            for (int i = 0; i < states.size(); i++) {
+                BedrockBlockState state = states.get(i);
+                NbtMap nbt = expected.get(i);
+                assertEquals(canonical.index(nbt), canonical.index(state.toNbt()), state.toString());
+                assertSame(state, palette.blockState(nbt, Lookup.EXACT), state.toString());
+                assertSame(state, palette.blockState(constant.identifier(), state.values(), Lookup.EXACT), state.toString());
+                assertEquals(canonical.index(nbt), state.canonicalIn(canonical), state.toString());
+                ResolvedBlock resolved = palette.resolve(state);
+                assertFalse(resolved.fallback(), state.toString());
+                assertEquals(canonical.index(nbt), canonical.index(resolved.definition().getState()), state.toString());
+                assertEquals(resolved.definition().getRuntimeId(), palette.runtimeId(state), state.toString());
+                assertEquals(state, palette.blockState(resolved.definition()), state.toString());
+                checked++;
+            }
+            NbtMap defaultState = data.blockDefaults().get(constant.identifier());
+            if (defaultState != null) {
+                assertSame(constant.defaultState(), palette.blockState(defaultState, Lookup.EXACT), constant.identifier());
+            }
+        }
+        assertTrue(checked > 0);
+    }
+
+    /**
+     * Without previews, every state of every preview block resolves through the fallback policy: the block's entry, else
+     * the default fallback, else air. Each is resolved once per palette.
+     */
+    @Test
+    void aReleasePaletteSendsThePolicyFallbackOfEveryPreviewBlockState() throws IllegalAccessException {
+        Paletter withEntry = Paletter.builder().fallbacks(Fallbacks.builder().block(BedrockBlocks.BRITTLE_ICE, BedrockBlocks.ICE).build()).build();
+        Palette entry = withEntry.vanilla(withEntry.latest());
+        Palette unknown = Paletter.builder().build().vanilla(withEntry.latest());
+        Paletter none = Paletter.builder().fallbacks(Fallbacks.NONE).build();
+        Palette air = none.vanilla(none.latest());
+        int checked = 0;
+        for (BedrockBlockType constant : previewBlockConstants()) {
+            String expected = constant == BedrockBlocks.BRITTLE_ICE ? "minecraft:ice" : "minecraft:unknown";
+            for (BedrockBlockState state : constant.states()) {
+                assertEquals(-1, state.canonicalIn(entry.blocks().canonical()), state.toString());
+                ResolvedBlock resolved = entry.resolve(state);
+                assertTrue(resolved.fallback(), state.toString());
+                assertEquals(expected, resolved.definition().getState().getString("name"), state.toString());
+                assertSame(resolved, entry.resolve(state), "resolved once: " + state);
+                assertSame(resolved.definition(), entry.blockDefinition(state), state.toString());
+                assertEquals(resolved.definition().getRuntimeId(), entry.runtimeId(state), state.toString());
+                assertSame(resolved, entry.resolve(state, null), state.toString());
+
+                assertEquals("minecraft:unknown", unknown.resolve(state).definition().getState().getString("name"), state.toString());
+                assertTrue(unknown.resolve(state).fallback(), state.toString());
+                assertEquals("minecraft:air", air.resolve(state).definition().getState().getString("name"), state.toString());
                 checked++;
             }
         }
         assertTrue(checked > 0);
+    }
+
+    /** With previews, a release that lacks a preview block sends what the fallback policy gives for it. */
+    @Test
+    void anOlderVersionSendsThePolicyFallbackOfAPreviewBlock() {
+        Paletter previews = Paletter.builder().previews(true)
+            .fallbacks(Fallbacks.builder().block(BedrockBlocks.BRITTLE_ICE, BedrockBlocks.ICE).build()).build();
+        Palette newestRelease = previews.vanilla(Paletter.builder().build().latest());
+        BedrockBlockState state = BedrockBlocks.BRITTLE_ICE.defaultState();
+        assertEquals("minecraft:ice", newestRelease.resolve(state).definition().getState().getString("name"));
+        assertTrue(newestRelease.resolve(state).fallback());
+        assertEquals("minecraft:brittle_ice", previews.vanilla(previews.latest()).resolve(state).definition().getState().getString("name"));
+    }
+
+    /** The resolution of a preview item constant a palette lacks is made once per palette, like those of its own items. */
+    @Test
+    void aReleasePaletteResolvesAPreviewItemOnce() {
+        Paletter withEntry = Paletter.builder().fallbacks(Fallbacks.builder().item(BedrockItems.BRITTLE_ICE, BedrockItems.ICE).build()).build();
+        Palette release = withEntry.vanilla(withEntry.latest());
+        ResolvedItem first = release.items().resolve(BedrockItems.BRITTLE_ICE);
+        assertSame(first, release.items().resolve(BedrockItems.BRITTLE_ICE));
+        assertSame(first, release.items().resolve(BedrockItems.BRITTLE_ICE.variant()));
     }
 
     /**

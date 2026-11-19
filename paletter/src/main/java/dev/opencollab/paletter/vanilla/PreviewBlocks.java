@@ -8,6 +8,7 @@ import dev.opencollab.paletter.internal.vanilla.BlockLayout;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.WeakHashMap;
@@ -15,24 +16,38 @@ import java.util.WeakHashMap;
 /**
  * The handles of the blocks a palette's newest version added or changed since the newest release, which the generated
  * constants and {@link VanillaIndex} are linked to: with previews, those of the preview. They are made from the canonical
- * blocks of the palette, once, when the first handle of such a root is asked for. A block that only gained a value or
- * property has all its states here, so each identifier has one type per root. Their types are not the constants (those
- * resolve through their fallback); a type equals the constant if the constant is available with the same states. The states know their canonical
- * id in their root, and find it by their NBT in others.
+ * blocks of the palette, once, when the first handle of such a root is asked for. A block only the preview has is its
+ * constant, which carries the preview's states ({@code @SincePreview}): its handles here are the constant's states. A
+ * block of the release that only gained a value or property has all its states here, so each identifier has one type
+ * per root; that type equals the constant if the states are the same. The states know their canonical id in their
+ * root, and find it by their NBT in others.
  */
 final class PreviewBlocks {
     private static final Map<CanonicalBlocks, PreviewBlocks> BY_ROOT = Collections.synchronizedMap(new WeakHashMap<>());
 
     private final Int2ObjectMap<BedrockBlockState> states = new Int2ObjectOpenHashMap<>();
+    /** The constants of blocks the bundled release lacks that this root has, to the canonical id of their first state. */
+    private final Map<BedrockBlockType, Integer> firsts = new IdentityHashMap<>();
 
     private PreviewBlocks(CanonicalBlocks root) {
-        int[] bundled = root.vanillaIdsIn(VanillaIndex.get().blocks);
+        VanillaIndex index = VanillaIndex.get();
+        int[] bundled = root.vanillaIdsIn(index.blocks);
         List<NbtMap> all = new ArrayList<>(root.vanillaSize());
         for (int id = 0; id < root.vanillaSize(); id++) {
             all.add(root.state(id));
         }
         for (BlockLayout source : BlockLayout.of(all)) {
             if (!hasNewState(source, bundled)) {
+                continue;
+            }
+            // A block only the preview has: its states are those of its constant, one object for one state everywhere
+            BedrockBlockType constant = index.blockOrConstant(source.identifier());
+            if (constant != null && !constant.isAvailable() && constant.layout().sameStates(source)) {
+                BlockTypeLayout layout = constant.layout();
+                firsts.put(constant, source.first());
+                for (int offset = 0; offset < source.count(); offset++) {
+                    states.put(source.first() + offset, layout.byOffset(offset));
+                }
                 continue;
             }
             BedrockBlockType type = new BedrockBlockType(source.identifier(), VanillaTypes.UNKNOWN);
@@ -65,5 +80,15 @@ final class PreviewBlocks {
      */
     static BedrockBlockState state(CanonicalBlocks root, int id) {
         return BY_ROOT.computeIfAbsent(root, PreviewBlocks::new).states.get(id);
+    }
+
+    /**
+     * @param root the canonical blocks of a palette lineage, not those of the bundled release
+     * @param constant a constant the bundled release lacks
+     * @return the canonical id of its first state in the root, or -1 if the root lacks the block (or has other states)
+     */
+    static int first(CanonicalBlocks root, BedrockBlockType constant) {
+        Integer first = BY_ROOT.computeIfAbsent(root, PreviewBlocks::new).firsts.get(constant);
+        return first == null ? -1 : first;
     }
 }

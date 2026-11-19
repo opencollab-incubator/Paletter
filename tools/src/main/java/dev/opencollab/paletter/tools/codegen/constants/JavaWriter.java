@@ -187,7 +187,11 @@ public final class JavaWriter {
         return out.toString();
     }
 
-    static String blocks(List<Constant> constants, Map<String, BlockLayout> layouts, StateModel states, String version, String oldest) {
+    /**
+     * @param previewStates the states of each block only the preview has, which its constant carries
+     */
+    static String blocks(List<Constant> constants, Map<String, BlockLayout> layouts, Map<String, ConstantsGenerator.PreviewStates> previewStates,
+                         StateModel states, String version, String oldest) {
         StringBuilder out = new StringBuilder(HEADER);
         out.append("package ").append(ConstantsGenerator.PACKAGE).append(";\n\n");
         appendImports(out, constants.stream().anyMatch(Constant::education), constants.stream().anyMatch(c -> c.preview() != null));
@@ -230,8 +234,22 @@ public final class JavaWriter {
             }
             out.append("\n     */\n");
             appendAnnotations(out, constant);
-            out.append("    public static final BedrockBlockType ").append(constant.name()).append(" = VanillaTypes.")
-                .append(constant.education() ? "educationBlock" : "block").append("(\"").append(constant.identifier()).append("\");\n\n");
+            out.append("    public static final BedrockBlockType ").append(constant.name()).append(" = VanillaTypes.");
+            ConstantsGenerator.PreviewStates preview = constant.preview() == null ? null : previewStates.get(constant.identifier());
+            if (preview != null) {
+                // No release has the block: the constant carries the preview's states, so a release palette needs no preview data
+                out.append("previewBlock(\"").append(constant.identifier()).append("\", ").append(preview.defaultOffset());
+                for (int p = 0; p < preview.properties().size(); p++) {
+                    out.append(",\n        VanillaTypes.property(\"").append(preview.properties().get(p)).append('"');
+                    for (Object value : preview.values().get(p)) {
+                        out.append(", ").append(literal(value));
+                    }
+                    out.append(')');
+                }
+                out.append(");\n\n");
+            } else {
+                out.append(constant.education() ? "educationBlock" : "block").append("(\"").append(constant.identifier()).append("\");\n\n");
+            }
         }
         appendAliases(out, aliases, constants, "BedrockBlockType");
         out.append("    private BedrockBlocks() {\n    }\n}\n");
@@ -401,6 +419,16 @@ public final class JavaWriter {
         }
         out.append("    private BedrockItemVariants() {\n    }\n}\n");
         return out.toString();
+    }
+
+    /** A block state value as a Java literal of its NBT type: {@code (byte) 1}, {@code 3} or {@code "north"}. */
+    static String literal(Object value) {
+        return switch (value) {
+            case Byte b -> "(byte) " + b;
+            case Integer i -> i.toString();
+            case String s -> '"' + s.replace("\\", "\\\\").replace("\"", "\\\"") + '"';
+            default -> throw new IllegalStateException("A block state value of type " + value.getClass().getSimpleName() + ": " + value);
+        };
     }
 
     private static String itemName(Map<String, String> itemNames, String identifier) {

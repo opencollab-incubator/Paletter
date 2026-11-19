@@ -285,8 +285,11 @@ Preview versions of Bedrock can be bundled next to releases. They are marked `pr
 and served only by a Paletter built with `Paletter.builder().previews(true)`, which is off by default. Previews are a
 setting of the instance: Paletters with different settings coexist in one JVM. Generated API that only a bundled
 preview has (constants, states, enum values, components and fields) sits with the rest and is marked
-`@SincePreview("26.70")`; the constants exist either way, but are linked to the newest release, so they resolve through
-the fallbacks (normally to `minecraft:unknown`) in every Paletter, with previews or not. The mark goes away when the release has it.
+`@SincePreview("26.70")`; the constants exist either way, but are linked to the newest release, so they are never
+`isAvailable()`. Items and blocks behave alike: the preview's palette sends the item or block itself, and every palette
+that lacks it (all of them without previews) resolves it through the fallbacks (normally to `minecraft:unknown`). A
+preview block constant carries the preview's states, generated into it, so no preview data is loaded for it. The mark
+goes away when the release has it.
 
 ## Behaviour
 

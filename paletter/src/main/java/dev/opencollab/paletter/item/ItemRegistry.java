@@ -53,7 +53,9 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.TreeSet;
 import java.util.function.Consumer;
 
@@ -100,6 +102,8 @@ public final class ItemRegistry implements DefinitionRegistry<ItemDefinition> {
     private final IntSet renumbered;
     private volatile @Nullable CanonicalTable canonicalTable;
     private volatile @Nullable ResolvedItem defaultResolved;
+    /** The resolutions of variants of constants the bundled release lacks and this registry too, made on first use. */
+    private volatile @Nullable Map<BedrockItemVariant, Optional<ResolvedItem>> unavailableItems;
     /** The palette that owns this registry, for the behaviour of what it resolves; null until the palette is made. */
     private volatile @Nullable Palette owner;
 
@@ -444,7 +448,39 @@ public final class ItemRegistry implements DefinitionRegistry<ItemDefinition> {
     public @Nullable ResolvedItem resolve(@NonNull ItemKey key) {
         BedrockItemVariant variant = key.variant();
         int id = variant.canonicalIn(canonical);
-        return id != -1 ? item(id) : resolve(variant.toItemVariant());
+        if (id != -1) {
+            return item(id);
+        }
+        BedrockItemType type = variant.type();
+        // Only the interned variants of such a constant are kept (the base and the named ones): any other aux is the caller's
+        return type.isCustom() || type.isAvailable() || type.variant(variant.aux()) != variant
+            ? resolve(variant.toItemVariant()) : unavailable(variant);
+    }
+
+    /**
+     * What this version sends for an interned variant of a constant the newest bundled release lacks and this
+     * registry's canonical items too: resolved by identifier through the fallbacks once per variant and kept. The
+     * constants are few, so this stays small.
+     */
+    private @Nullable ResolvedItem unavailable(BedrockItemVariant variant) {
+        Map<BedrockItemVariant, Optional<ResolvedItem>> cache = unavailableItems;
+        if (cache == null) {
+            synchronized (this) {
+                cache = unavailableItems;
+                if (cache == null) {
+                    unavailableItems = cache = new ConcurrentHashMap<>();
+                }
+            }
+        }
+        Optional<ResolvedItem> resolved = cache.get(variant);
+        if (resolved == null) {
+            resolved = Optional.ofNullable(resolve(variant.toItemVariant()));
+            Optional<ResolvedItem> raced = cache.putIfAbsent(variant, resolved);
+            if (raced != null) {
+                resolved = raced;
+            }
+        }
+        return resolved.orElse(null);
     }
 
     /**

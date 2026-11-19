@@ -302,7 +302,10 @@ current format; the Holiday Creator Features form of an older format is not a va
 ### Previews
 
 Paletter bundles the newest preview next to the releases. `update --channel preview` imports it like a release, marked
-`preview` in `versions.txt`; the library serves it only to a Paletter built with `Paletter.builder().previews(true)`. Generated API that only the
+`preview` in `versions.txt`; the library serves it only to a Paletter built with `Paletter.builder().previews(true)`. A
+preview newer than every codec of the protocol library is captured with the newest codec: `import` then reads its
+`codecProtocol` from the capture's `capture.json` and writes it as `codec=<protocol>` on the version's line
+(`DataVersion#codecProtocol()`), e.g. `26.70 2259 preview codec=2225`. Generated API that only the
 preview has (constants, states, enum values, components and fields BDS releases reject) is marked
 `@SincePreview("<version>")` and is kept out of `constants-history.json`. Importing a newer preview, or the preview's
 release, drops the bundled preview and its `data/bds/<build>` captures. Release runs never compare against a preview's

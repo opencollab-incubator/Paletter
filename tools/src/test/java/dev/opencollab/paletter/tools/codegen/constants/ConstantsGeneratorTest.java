@@ -261,8 +261,9 @@ class ConstantsGeneratorTest {
         ConstantsGenerator.Result result = ConstantsGenerator.generate(release, preview, names, new JsonObject(), "1.0.0");
         // In the same classes as the release, marked with the preview
         assertFalse(result.files().containsKey(ConstantsGenerator.PACKAGE_DIR + "/BedrockPreviewBlocks.java"));
+        // The constant carries the preview's states: a release palette has no data for the block
         assertTrue(result.files().get(BLOCKS).contains("    @SincePreview(\"26.70\")\n    public static final BedrockBlockType PREVIEW_BLOCK = "
-            + "VanillaTypes.block(\"minecraft:preview_block\");"));
+            + "VanillaTypes.previewBlock(\"minecraft:preview_block\", 0,\n        VanillaTypes.property(\"preview_bit\", (byte) 0, (byte) 1));"));
         assertTrue(result.files().get(ConstantsGenerator.PACKAGE_DIR + "/BedrockItems.java")
             .contains("    @SincePreview(\"26.70\")\n    public static final BedrockItemType PREVIEW_ITEM = VanillaTypes.item(\"minecraft:preview_item\");"));
         assertTrue(result.files().get(ConstantsGenerator.PACKAGE_DIR + "/BedrockStates.java")
@@ -272,6 +273,59 @@ class ConstantsGeneratorTest {
         assertNull(history(result).getAsJsonObject("items").get("PREVIEW_ITEM"));
         assertNull(history(result).getAsJsonObject("states").get("PREVIEW_BIT"));
         compile(result, temp);
+    }
+
+    /**
+     * A preview block's constant lists its properties in the preview's state order (the fastest varying first, not by
+     * name), each with its values in order of first appearance, and the position of its default state: enumerated, they
+     * are the preview's states in the preview's order.
+     */
+    @Test
+    void previewBlockStatesFollowThePreviewsOrder(@TempDir Path temp) throws IOException {
+        List<NbtMap> states = new ArrayList<>(release.blockStates());
+        List<NbtMap> block = new ArrayList<>();
+        // "b_size" varies fastest although "a_facing" sorts first; values in the preview's order, not sorted
+        for (String facing : List.of("south", "north")) {
+            for (int size : List.of(2, 0, 1)) {
+                block.add(BlockStates.of("minecraft:preview_block", Map.of("a_facing", facing, "b_size", size)));
+            }
+        }
+        states.addAll(block);
+        Map<String, NbtMap> defaults = new java.util.HashMap<>(release.blockDefaults());
+        defaults.put("minecraft:preview_block", block.get(4));
+        VanillaData preview = new VanillaData(new DataVersion("26.70", 9999), states, release.items(), release.dataDrivenBlocks(),
+            release.creative(), release.itemTags(), release.fallbacks(), defaults);
+
+        ConstantsGenerator.Result result = ConstantsGenerator.generate(release, preview, names, new JsonObject(), "1.0.0");
+        assertTrue(result.files().get(BLOCKS).contains("VanillaTypes.previewBlock(\"minecraft:preview_block\", 4,\n"
+            + "        VanillaTypes.property(\"b_size\", 2, 0, 1),\n"
+            + "        VanillaTypes.property(\"a_facing\", \"south\", \"north\"));"), result.files().get(BLOCKS));
+        ConstantsGenerator.PreviewStates read = ConstantsGenerator.previewStates(preview,
+            dev.opencollab.paletter.internal.vanilla.BlockLayout.of(states).getLast());
+        assertEquals(4, read.defaultOffset());
+        assertEquals(block.stream().map(state -> state.getCompound("states")).toList(), read.enumerate());
+        compile(result, temp);
+    }
+
+    /** A preview block whose states are no full product cannot be described by its constant: generation fails. */
+    @Test
+    void aPreviewBlockThatNeedsATableFails() {
+        List<NbtMap> states = new ArrayList<>(release.blockStates());
+        states.add(BlockStates.of("minecraft:preview_block", Map.of("a", 0, "b", 0)));
+        states.add(BlockStates.of("minecraft:preview_block", Map.of("a", 1, "b", 0)));
+        states.add(BlockStates.of("minecraft:preview_block", Map.of("a", 0, "b", 1)));
+        VanillaData preview = new VanillaData(new DataVersion("26.70", 9999), states, release.items(), release.dataDrivenBlocks(),
+            release.creative(), release.itemTags(), release.fallbacks(), release.blockDefaults());
+        IllegalStateException e = assertThrows(IllegalStateException.class,
+            () -> ConstantsGenerator.generate(release, preview, names, new JsonObject(), "1.0.0"));
+        assertTrue(e.getMessage().contains("minecraft:preview_block"), e.getMessage());
+    }
+
+    @Test
+    void stateValuesAreJavaLiteralsOfTheirNbtType() {
+        assertEquals("(byte) 1", JavaWriter.literal((byte) 1));
+        assertEquals("-3", JavaWriter.literal(-3));
+        assertEquals("\"say \\\"hi\\\" \\\\\"", JavaWriter.literal("say \"hi\" \\"));
     }
 
     private static JsonObject itemsOf(ConstantsGenerator.Result result) {

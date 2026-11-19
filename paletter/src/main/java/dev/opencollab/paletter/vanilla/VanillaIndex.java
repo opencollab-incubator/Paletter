@@ -86,7 +86,7 @@ final class VanillaIndex {
 
         this.itemConstants = constantItems;
         this.blockConstants = constantBlocks;
-        // The constants of a preview are not in the data of a release: they resolve via their fallback
+        // The constants of a preview are not in the data of the release: they carry their states (see VanillaTypes.previewBlock)
         Paletter paletter = Paletter.bundled();
         VanillaData latest = paletter.vanillaData(paletter.latest());
         this.blocks = paletter.canonicalBlocks();
@@ -138,10 +138,11 @@ final class VanillaIndex {
         this.itemsById = itemsById;
         this.itemTypes = List.copyOf(itemsById.values());
 
-        // What the data no longer has (deprecated constants) or does not have yet (previews) resolves via its fallback
+        // What the data no longer has (deprecated constants) or does not have yet (previews) has states of its own, which
+        // palettes without the block resolve through their fallbacks; an item likewise, by identifier
         constantBlocks.values().forEach(type -> {
             if (!blocksById.containsKey(type.identifier())) {
-                type.linkAbsent(blocksById.get(type.fallback()));
+                type.linkUnavailable();
             }
         });
         constantItems.values().forEach(type -> {

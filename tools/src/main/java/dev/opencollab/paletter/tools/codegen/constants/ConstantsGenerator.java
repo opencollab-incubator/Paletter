@@ -14,6 +14,8 @@ import dev.opencollab.paletter.tools.codegen.constants.ContentConstants.Constant
 import dev.opencollab.paletter.tools.codegen.constants.StateConstants.StateModel;
 import dev.opencollab.paletter.tools.codegen.constants.VariantConstants.Variant;
 import dev.opencollab.paletter.tools.data.VariantNames;
+import org.cloudburstmc.nbt.NbtMap;
+import org.cloudburstmc.nbt.NbtMapBuilder;
 
 
 import java.io.IOException;
@@ -262,9 +264,13 @@ public final class ConstantsGenerator {
                 previewBlocks.add(layout.identifier());
             }
         }
+        Map<String, PreviewStates> previewStates = new HashMap<>();
+        for (String identifier : previewBlocks) {
+            previewStates.put(identifier, previewStates(g.preview, byId.get(identifier)));
+        }
         ContentConstants content = new ContentConstants(g);
         List<Constant> blocks = content.constants("blocks", releaseBlocks, previewBlocks, "BedrockBlocks");
-        files.put(PACKAGE_DIR + "/BedrockBlocks.java", JavaWriter.blocks(blocks, byId, states, g.release.version().name(), oldest));
+        files.put(PACKAGE_DIR + "/BedrockBlocks.java", JavaWriter.blocks(blocks, byId, previewStates, states, g.release.version().name(), oldest));
         counts.put("BedrockBlocks", blocks.size());
 
         List<String> itemIds = new ArrayList<>();
@@ -304,6 +310,74 @@ public final class ConstantsGenerator {
         files.put(HISTORY, ConstantsHistory.toJson(g.newHistory));
         return new Result(files, List.copyOf(g.added), List.copyOf(g.deprecated), List.copyOf(tableBlocks), counts,
             g.release.version().name(), g.preview == null ? null : g.preview.version().name());
+    }
+
+    /**
+     * The states of a block only the preview has, as its constant carries them: no release has the block, so a palette
+     * without previews has no data for it.
+     *
+     * @param properties the property names in the preview's state order: the first one varies fastest
+     * @param values the values of each property, as NBT, in order of first appearance
+     * @param defaultOffset the position of the default state among the states
+     */
+    record PreviewStates(List<String> properties, List<List<Object>> values, int defaultOffset) {
+        /** @return the {@code states} compound of each state, in the order of the properties' product, the first fastest */
+        List<NbtMap> enumerate() {
+            int count = 1;
+            for (List<Object> list : values) {
+                count *= list.size();
+            }
+            List<NbtMap> states = new ArrayList<>(count);
+            for (int offset = 0; offset < count; offset++) {
+                NbtMapBuilder builder = NbtMap.builder();
+                int rest = offset;
+                for (int p = 0; p < properties.size(); p++) {
+                    builder.put(properties.get(p), values.get(p).get(rest % values.get(p).size()));
+                    rest /= values.get(p).size();
+                }
+                states.add(builder.build());
+            }
+            return states;
+        }
+    }
+
+    /**
+     * Reads a preview block's states from the preview's data, and checks that its constant, enumerating them, gives
+     * the preview's states in the preview's order.
+     *
+     * @throws IllegalStateException if the block's states are no full product in a stride order, which a constant
+     *                               cannot describe
+     */
+    static PreviewStates previewStates(VanillaData preview, BlockLayout layout) {
+        String identifier = layout.identifier();
+        int[] strides = layout.strides();
+        if (strides == null) {
+            throw new IllegalStateException("The preview block " + identifier + " needs a lookup table (" + layout.problem()
+                + "), which its constant cannot describe");
+        }
+        List<Integer> order = new ArrayList<>();
+        for (int p = 0; p < strides.length; p++) {
+            order.add(p);
+        }
+        order.sort(Comparator.comparingInt(p -> strides[p]));
+        List<String> properties = new ArrayList<>();
+        List<List<Object>> values = new ArrayList<>();
+        for (int p : order) {
+            properties.add(layout.properties().get(p));
+            values.add(layout.values().get(p));
+        }
+        List<NbtMap> data = new ArrayList<>();
+        for (NbtMap state : preview.blockStates().subList(layout.first(), layout.first() + layout.count())) {
+            data.add(state.getCompound("states", NbtMap.EMPTY));
+        }
+        NbtMap defaultState = preview.blockDefaults().get(identifier);
+        int defaultOffset = defaultState == null ? 0 : data.indexOf(defaultState.getCompound("states", NbtMap.EMPTY));
+        PreviewStates states = new PreviewStates(List.copyOf(properties), List.copyOf(values), Math.max(defaultOffset, 0));
+        if (!states.enumerate().equals(data)) {
+            throw new IllegalStateException("The states of the preview block " + identifier + " are not the product of its properties "
+                + properties + " in that order");
+        }
+        return states;
     }
 
     private static List<BlockLayout> layouts(VanillaData data) {

@@ -571,6 +571,23 @@ public final class BlockRegistry implements DefinitionRegistry<BlockDefinition> 
         return resolve(state, true);
     }
 
+    /**
+     * Internal: resolves a state like {@link #resolve(NbtMap)}, and where that finds no block, sends what the canonical
+     * table sends for a state without a block: the default fallback, else air.
+     *
+     * @param state a block state as {@code {name, states}}
+     * @return the resolution, with a block
+     */
+    @Internal
+    public @NonNull BlockResolution resolveOrDefault(@NonNull NbtMap state) {
+        BlockResolution resolution = resolve(state, true);
+        if (resolution.block() != null) {
+            return resolution;
+        }
+        RegisteredBlockState fallback = defaultBlock();
+        return new BlockResolution(resolution.requested(), fallback != null ? fallback : table.air, BlockResolution.Kind.DEFAULT);
+    }
+
     /** @param keep whether to remember the resolution of a canonical state: not for the canonical table, which keeps it itself */
     private BlockResolution resolve(NbtMap state, boolean keep) {
         NbtMap normalized = BlockStates.normalize(state);

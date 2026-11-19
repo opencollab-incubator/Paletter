@@ -63,6 +63,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.WeakHashMap;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Supplier;
 
 /**
@@ -126,6 +127,8 @@ public final class Palette {
      */
     private volatile ResolvedBlock[] resolvedByCanonical;
     private volatile ResolvedBlock[] resolvedByIndex;
+    /** The resolutions of states of constants the bundled release lacks and this palette too, made on first use. */
+    private volatile @Nullable Map<BedrockBlockState, ResolvedBlock> unavailableBlocks;
     private final int parentCanonicalSize;
     private final int parentSize;
     private volatile CanonicalBlocks versionBlocks;
@@ -272,7 +275,8 @@ public final class Palette {
      * @since 1.0.0
      */
     public @NonNull ResolvedBlock resolve(@NonNull BedrockBlockState state) {
-        return resolveCanonical(requireCanonical(state));
+        int canonical = state.canonicalIn(blocks.canonical());
+        return canonical != -1 ? resolveCanonical(canonical) : requireUnavailable(state);
     }
 
     /**
@@ -287,7 +291,54 @@ public final class Palette {
      */
     public @Nullable ResolvedBlock resolve(@NonNull BedrockBlockState state, @Nullable ResolvedBlock orElse) {
         int canonical = state.canonicalIn(blocks.canonical());
-        return canonical == -1 ? orElse : resolveCanonical(canonical);
+        if (canonical != -1) {
+            return resolveCanonical(canonical);
+        }
+        ResolvedBlock unavailable = unavailable(state);
+        return unavailable != null ? unavailable : orElse;
+    }
+
+    /**
+     * What this palette sends for a state of a vanilla constant the newest bundled release lacks
+     * ({@link BedrockBlockType#isAvailable()}) and this palette's canonical blocks lack too: like a block a version
+     * lacks, its {@link Fallbacks} entry, else the default fallback, else air. Resolved once per state and kept.
+     *
+     * @return the resolution, or null for any other state that is not in this palette
+     */
+    private @Nullable ResolvedBlock unavailable(BedrockBlockState state) {
+        BedrockBlockType type = state.type();
+        if (type.isCustom() || type.isAvailable()) {
+            return null;
+        }
+        Map<BedrockBlockState, ResolvedBlock> cache = unavailableBlocks;
+        if (cache == null) {
+            synchronized (this) {
+                cache = unavailableBlocks;
+                if (cache == null) {
+                    unavailableBlocks = cache = new ConcurrentHashMap<>();
+                }
+            }
+        }
+        ResolvedBlock resolved = cache.get(state);
+        if (resolved == null) {
+            BlockResolution resolution = blocks.resolveOrDefault(state.toNbt());
+            RegisteredBlockState block = resolution.block();
+            resolved = new ResolvedBlock(block, !resolution.isExact() && resolution.kind() != BlockResolution.Kind.ADAPTED,
+                behaviour().block(blocks.indexOfRuntimeId(block.getRuntimeId())));
+            ResolvedBlock raced = cache.putIfAbsent(state, resolved);
+            if (raced != null) {
+                resolved = raced;
+            }
+        }
+        return resolved;
+    }
+
+    private ResolvedBlock requireUnavailable(BedrockBlockState state) {
+        ResolvedBlock resolved = unavailable(state);
+        if (resolved == null) {
+            throw new IllegalArgumentException(state + " is not in " + this);
+        }
+        return resolved;
     }
 
     private ResolvedBlock resolveCanonical(int canonical) {
@@ -711,7 +762,8 @@ public final class Palette {
      * @since 1.0.0
      */
     public @NonNull RegisteredBlockState blockDefinition(@NonNull BedrockBlockState state) {
-        return blocks.block(requireCanonical(state));
+        int canonical = state.canonicalIn(blocks.canonical());
+        return canonical != -1 ? blocks.block(canonical) : requireUnavailable(state).definition();
     }
 
     /**
@@ -727,7 +779,11 @@ public final class Palette {
     public @Nullable RegisteredBlockState blockDefinition(@NonNull BedrockBlockState state,
                                                           @Nullable RegisteredBlockState orElse) {
         int canonical = state.canonicalIn(blocks.canonical());
-        return canonical == -1 ? orElse : blocks.block(canonical);
+        if (canonical != -1) {
+            return blocks.block(canonical);
+        }
+        ResolvedBlock unavailable = unavailable(state);
+        return unavailable != null ? unavailable.definition() : orElse;
     }
 
     /**
@@ -741,7 +797,8 @@ public final class Palette {
      * @since 1.0.0
      */
     public int runtimeId(@NonNull BedrockBlockState state) {
-        return blocks.runtimeId(requireCanonical(state));
+        int canonical = state.canonicalIn(blocks.canonical());
+        return canonical != -1 ? blocks.runtimeId(canonical) : requireUnavailable(state).definition().getRuntimeId();
     }
 
     /**
@@ -755,15 +812,11 @@ public final class Palette {
      */
     public int runtimeId(@NonNull BedrockBlockState state, int orElse) {
         int canonical = state.canonicalIn(blocks.canonical());
-        return canonical == -1 ? orElse : blocks.runtimeId(canonical);
-    }
-
-    private int requireCanonical(BedrockBlockState state) {
-        int canonical = state.canonicalIn(blocks.canonical());
-        if (canonical == -1) {
-            throw new IllegalArgumentException(state + " is not in " + this);
+        if (canonical != -1) {
+            return blocks.runtimeId(canonical);
         }
-        return canonical;
+        ResolvedBlock unavailable = unavailable(state);
+        return unavailable != null ? unavailable.definition().getRuntimeId() : orElse;
     }
 
     /**
