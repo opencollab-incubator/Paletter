@@ -285,11 +285,15 @@ public final class Diff {
      * @param bundledLabel what {@code bundled} is, for the report
      */
     public static Diff source(Path source, String name, VanillaData bundled, String bundledLabel) throws IOException {
+        return source(source, name, Importer.readSource(source, name), bundled, bundledLabel);
+    }
+
+    /** {@link #source(Path, String, VanillaData, String)} for a source directory that is read already. */
+    private static Diff source(Path source, String name, Importer.Source read, VanillaData bundled, String bundledLabel) {
         Diff diff = new Diff();
         diff.sourceLabel = source.toString();
         diff.bundledLabel = bundledLabel;
         diff.name = name;
-        Importer.Source read = Importer.readSource(source, name);
         diff.sourceBlocks(read, bundled);
         diff.sourceHashes(read, bundled);
         diff.sourceItems(read, bundled);
@@ -309,8 +313,9 @@ public final class Diff {
      */
     public static Diff against(Path source, String name, Path export) throws IOException {
         Export.Read exported = Export.read(export, name);
-        Diff diff = source(source, name, exported.data(), export.toString());
-        diff.exportNetworkIds(exported.source(), Importer.readSource(source, name));
+        Importer.Source read = Importer.readSource(source, name);
+        Diff diff = source(source, name, read, exported.data(), export.toString());
+        diff.exportNetworkIds(exported.source(), read);
         return diff;
     }
 

@@ -78,8 +78,7 @@ class SpecCaptureTest {
         int[] starts = {0};
         assertEquals("ok", BdsServer.retryOnHang(() -> {
             if (starts[0]++ == 0) {
-                throw new IOException("BDS did not start within 1s:
-  log");
+                throw new IOException("BDS did not start within 1s:\n  log");
             }
             return "ok";
         }));

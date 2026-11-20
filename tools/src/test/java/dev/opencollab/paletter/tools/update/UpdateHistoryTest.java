@@ -133,7 +133,7 @@ class UpdateHistoryTest {
         stage.scriptModules(build, null, new Runs());
         stage.schema(cache, build, null);
         String report = update.report().render();
-        assertEquals(1, report.split("wrote no docs", -1).length - 1, report);
+        assertEquals(1, report.split("\\| Failed \\|", -1).length - 1, "one FAIL row: " + report);
     }
 
     @Test

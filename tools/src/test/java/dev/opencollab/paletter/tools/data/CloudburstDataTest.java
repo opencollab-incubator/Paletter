@@ -1,8 +1,8 @@
 package dev.opencollab.paletter.tools.data;
 
 import dev.opencollab.paletter.Palette;
-import dev.opencollab.paletter.DataVersion;
 import dev.opencollab.paletter.Paletter;
+import dev.opencollab.paletter.data.DataVersion;
 import dev.opencollab.paletter.data.VerifiedBuild;
 import dev.opencollab.paletter.tools.behaviour.BehaviourSources;
 import org.junit.jupiter.api.DynamicTest;
