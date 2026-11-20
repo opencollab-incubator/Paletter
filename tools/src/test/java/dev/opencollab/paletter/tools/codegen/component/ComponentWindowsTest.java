@@ -108,6 +108,18 @@ class ComponentWindowsTest {
         assertTrue(source.contains("@deprecated replaced by {@link Widget}"), source);
         assertTrue(files.get("dev/opencollab/paletter/internal/component/ItemWire.java")
             .contains("ctx.drop(Gadget.NAME, \"is not sent to clients (BDS: rejected)\")"));
+        assertFalse(source.contains("@BedrockUntil"), "no data version names the window: " + source);
+
+        // With the captures' windows and data versions, the first version that rejects it is @BedrockUntil
+        in.mappings().getAsJsonArray("captures").forEach(capture -> {
+            JsonObject c = capture.getAsJsonObject();
+            int protocol = c.get("protocol").getAsInt();
+            c.addProperty("windowProtocol", protocol);
+            c.addProperty("dataVersion", protocol == 100 ? "8.80" : "9.90");
+        });
+        String named = ComponentGenerator.generate(in).get("dev/opencollab/paletter/item/component/Gadget.java");
+        assertTrue(named.contains("@BedrockUntil(\"9.90\")\n"), named);
+        assertTrue(named.contains("rejected by BDS since Bedrock 9.90 (protocol 200): test:gadget: gone"), named);
     }
 
     @Test

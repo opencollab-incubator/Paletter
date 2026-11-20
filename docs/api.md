@@ -77,6 +77,34 @@ deprecation warnings, not compile errors. The API is shaped so that the compiler
   `BedrockBlockState#raw(BedrockState)` reads a state's value as Bedrock sends it and never throws.
   Paletter's own enums (`Lookup`, `PaletteReport.Level`, `CreativeCategory`, whose ids are fixed by the protocol) are closed.
 
+Tests hold the generator to this: `ApiEvolutionTest` (no public record in the component packages but the vectors and the
+union forms, no enum of documented values, a sentinel on every sealed type Bedrock extends), `RecipesEvolutionTest` (the
+same for `Recipe` and `Ingredient`) and `ApiHistoryTest` (the committed `api-history.json` loses no entry).
+
+### The promise
+
+From 1.0, a minor release is binary and source compatible, with two exceptions that users handle with a `default`, which
+the compiler enforces for the sealed types: a new variant of a sealed type Bedrock extends, and a new constant of a
+vanilla state enum. API marked `@SincePreview`, `@Experimental` or `@Internal` is outside the promise. Once
+`paletter/api/released.version` names a release, `:paletter:apiCompat` (japicmp) checks it with the same exclusions.
+
+### Lifecycle of versioned content
+
+Annotations describe where Bedrock has something; `@Deprecated` and the Paletter version describe the Java API.
+
+| Event | Java API | Runtime |
+|---|---|---|
+| Content appears in a preview | `@SincePreview("26.70")`, outside the promise | served only with `previews(true)` |
+| It ships in a release | `@SincePreview` goes, `@BedrockSince("26.70")` where older bundled versions lack it | served from 26.70 |
+| Bedrock removes or renames it | `@Deprecated` and `@BedrockUntil("26.90")` (a renamed field: a delegate, a renamed component: `@ReplacedBy`) | older palettes still serve it; newer ones leave it out (or resolve a constant to unknown) with a report warning |
+| The last bundled version that has it is retired | `@Deprecated(forRemoval = true)` | as above |
+| Next major Paletter release | removed | - |
+
+`@BedrockUntil` annotates constants, components (generated for a component BDS rejects from a bundled version on) and
+members. Setting `forRemoval` when the last bundled version that has the content is retired is a follow-up: a `tools
+retire` command will do it, so users get a `javac` warning at every use well before the major release. Until then it is
+set by hand.
+
 ## Keys and lookups
 
 Keys (`BedrockBlockType`, `BedrockBlockState`, `BedrockItemType`, `BedrockItemVariant`) are identities. `equals` always

@@ -55,7 +55,8 @@ final class ApiSource {
     static final ClassName BEDROCK_EXPERIMENT = ClassName.get("dev.opencollab.paletter.annotation", "BedrockExperiment");
     static final ClassName SERVER_ONLY = ClassName.get("dev.opencollab.paletter.annotation", "ServerOnly");
     static final ClassName SINCE_PREVIEW = ClassName.get("dev.opencollab.paletter.annotation", "SincePreview");
-    static final ClassName BEDROCK_SINCE = ClassName.get("dev.opencollab.paletter.annotation", "BedrockSince");    static final ClassName REPLACED_BY = ClassName.get("dev.opencollab.paletter.annotation", "ReplacedBy");
+    static final ClassName BEDROCK_SINCE = ClassName.get("dev.opencollab.paletter.annotation", "BedrockSince");
+    static final ClassName BEDROCK_UNTIL = ClassName.get("dev.opencollab.paletter.annotation", "BedrockUntil");    static final ClassName REPLACED_BY = ClassName.get("dev.opencollab.paletter.annotation", "ReplacedBy");
     static final ClassName CHECK = ClassName.get("dev.opencollab.paletter.internal.component", "Check");
     static final ClassName ITEM_TYPE = ClassName.get("dev.opencollab.paletter.vanilla", "BedrockItemType");
     static final ClassName BLOCK_TYPE = ClassName.get("dev.opencollab.paletter.vanilla", "BedrockBlockType");
@@ -349,6 +350,11 @@ final class ApiSource {
         }
         if (top && c.bedrockSince != null) {
             type.addAnnotation(AnnotationSpec.builder(BEDROCK_SINCE).addMember("value", "$S", c.bedrockSince).build());
+        }
+        // The first bundled version whose BDS rejects it, when an older one still took it (it is @Deprecated already)
+        String until = top && c.rejected != null && c.rejected.since() != Integer.MIN_VALUE ? model.dataVersions.get(c.rejected.since()) : null;
+        if (until != null) {
+            type.addAnnotation(AnnotationSpec.builder(BEDROCK_UNTIL).addMember("value", "$S", until).build());
         }        if (top && c.serverOnly != null) {
             AnnotationSpec.Builder serverOnly = AnnotationSpec.builder(SERVER_ONLY);
             if (c.serverOnly.since() != Integer.MIN_VALUE) {

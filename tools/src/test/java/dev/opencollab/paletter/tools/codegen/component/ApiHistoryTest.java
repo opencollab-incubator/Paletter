@@ -8,7 +8,12 @@ import dev.opencollab.paletter.tools.codegen.component.ComponentGenerator.Inputs
 import dev.opencollab.paletter.tools.codegen.component.ComponentGenerator.Output;
 import org.junit.jupiter.api.Test;
 
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Map;
+import java.util.Set;
 
 import static dev.opencollab.paletter.tools.codegen.component.ComponentGeneratorTest.json;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -97,5 +102,19 @@ class ApiHistoryTest {
         String second = ComponentGenerator.generateAll(ComponentGeneratorTest.inputs().withHistory(recorded)).history();
         assertTrue(json(second).getAsJsonObject("classes").has("item:test:removed"), "a component that left the model keeps its entry");
         assertEquals(second, ComponentGenerator.generateAll(ComponentGeneratorTest.inputs().withHistory(json(second))).history(), "stable");
+    }
+
+    /** The committed history loses no entry when the committed model is generated: every recorded identity is still there. */
+    @Test
+    void theCommittedHistoryLosesNoEntry() throws IOException {
+        Path root = Path.of(System.getProperty("paletter.root", ".."));
+        JsonObject committed = json(Files.readString(root.resolve("data/model/" + ApiHistory.FILE), StandardCharsets.UTF_8));
+        Inputs in = ComponentGenerator.read(root.resolve("data/model"), Main.version(root), Main.context(root));
+        JsonObject generated = json(ComponentGenerator.generateAll(in).history());
+        for (String section : ApiHistory.SECTIONS) {
+            Set<String> before = committed.getAsJsonObject(section).keySet();
+            Set<String> after = generated.getAsJsonObject(section).keySet();
+            assertTrue(after.containsAll(before), section + " lost " + before.stream().filter(k -> !after.contains(k)).toList());
+        }
     }
 }
