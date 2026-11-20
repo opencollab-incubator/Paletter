@@ -70,8 +70,10 @@ Gradle tasks: `generateConstants`, `generateComponentApi`, `generateComponentApi
 `generateAddon` and `inferMappings` write; `checkConstants`, `checkComponentApi`, `checkMappings` (strict) and `checkWhitebox` are part
 of `./gradlew build` and fail when committed output is stale, `checkData` fails on problems of the bundled data.
 
-Generator tests compare against golden files. After an intended change of generator output, run
-`./gradlew :tools:test -PupdateGolden=true` and review the diff.
+The generator tests assert on fragments of what they generate from small synthetic fixtures and compile the output (the component
+and the constants generators), and the committed output is held up to date by `checkConstants` and `checkComponentApi`, so a change
+of real output shows as a diff of the generated sources. Only two small golden files remain, for the synthetic variants and the API
+dump of a fixture (`./gradlew :tools:test -PupdateGolden=true` rewrites them; review the diff).
 
 ## Updating for a new BDS build
 

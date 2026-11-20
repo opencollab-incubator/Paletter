@@ -71,8 +71,8 @@ diff, then `./gradlew build`. New components show up as gaps in `data/model/cove
 
 1. Fix the model: hand corrections go in `data/model/fixtures.json` (errata) or `data/model/api.json` (Java shape).
 2. Capture and infer: `spec-capture`, then `./gradlew :tools:inferMappings`.
-3. Regenerate: `./gradlew :tools:generateComponentApi`. If generator output changed on purpose, also run
-   `./gradlew :tools:test -PupdateGolden=true` and review the golden diff.
+3. Regenerate: `./gradlew :tools:generateComponentApi` and review the diff of `paletter/src/generated`; the generator tests
+   assert on fragments and compile their synthetic output.
 4. Only when no inferred rule can describe the wire shape: add a public static method to
    `internal.component.Transforms`, with the reason and evidence in its Javadoc, and name it in the tools'
    `HandTransforms`.

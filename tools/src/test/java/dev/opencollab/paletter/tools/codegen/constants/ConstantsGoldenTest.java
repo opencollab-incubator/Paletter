@@ -15,7 +15,6 @@ import dev.opencollab.paletter.internal.data.Renames;
 import dev.opencollab.paletter.internal.data.VanillaData;
 import dev.opencollab.paletter.internal.data.VanillaItem;
 import dev.opencollab.paletter.internal.data.VersionFallbacks;
-import dev.opencollab.paletter.tools.Golden;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
@@ -30,7 +29,6 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
-import java.util.TreeMap;
 import java.util.function.UnaryOperator;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -39,17 +37,12 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
- * The constants generator on a small synthetic bundle, compared byte for byte with the committed expected sources in
- * {@code src/test/resources/constants-golden}. The fixture has bool, int (range and list) and string states, a value set
+ * The constants generator on a small synthetic bundle. The fixture has bool, int (range and list) and string states, a value set
  * shared by two states, a name collision settled by a name override, a block that needs a lookup table, a removed block, a
  * renamed block, a removed item, and a preview-only block and item. Item variants: two named
  * potion variants of the release (one already in the history, one new), a removed one, and one only the preview has.
- * <p>
- * After an intended change of the output: {@code ./gradlew :tools:test -PupdateGolden=true}, then review the diff.
  */
 class ConstantsGoldenTest {
-    private static final Path GOLDEN = Path.of("src/test/resources/constants-golden");
-    private static final String PREFIX = ConstantsGenerator.PACKAGE_DIR + "/";
 
     // ---- Fixture -------------------------------------------------------------------------------------------------
 
@@ -256,19 +249,12 @@ class ConstantsGoldenTest {
         return generate(temp, UnaryOperator.identity(), UnaryOperator.identity(), UnaryOperator.identity());
     }
 
-    private static String golden(String path) {
-        return path.equals(ConstantsGenerator.HISTORY) ? "constants-history.json" : path.substring(PREFIX.length());
-    }
-
     // ---- Tests ---------------------------------------------------------------------------------------------------
 
     @Test
-    void outputMatchesTheGoldenFiles(@TempDir Path temp) throws IOException {
+    void theFixtureOutputCompilesAndReportsItsChanges(@TempDir Path temp) throws IOException {
         ConstantsGenerator.Result result = generate(temp);
-        Map<String, String> expected = new TreeMap<>();
-        result.files().forEach((path, content) -> expected.put(golden(path), content));
-
-        Golden.assertDirectory(GOLDEN, expected);
+        ConstantsGeneratorTest.compile(result, temp.resolve("compiled"));
 
         assertEquals(List.of("minecraft:test_sparse: 3 states, but its values have 6 combinations: not a full product"), result.tableBlocks());
         assertEquals(List.of("BedrockBlocks.OLD_DOOR (minecraft:old_door, now TEST_DOOR)",

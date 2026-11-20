@@ -4,12 +4,15 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import dev.opencollab.paletter.tools.Golden;
 import dev.opencollab.paletter.tools.codegen.component.ComponentGenerator.GenerationException;
 import dev.opencollab.paletter.tools.codegen.component.ComponentGenerator.Inputs;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
+
+import javax.tools.ToolProvider;
 
 import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -25,18 +28,14 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
- * The component API generator on a small synthetic model, compared file by file with the committed expected sources in
- * {@code src/test/resources/component-golden}. The model has every field kind the generator handles: a scalar with a
+ * The component API generator on a small synthetic model, whose output is compiled. The model has every field kind the generator handles: a scalar with a
  * default and a BDS range, a required string, an enum written through a value table, a default BDS contradicts (left
  * unset), a nested object, a list of scalars, a list of objects, a map compiled by a hand transform, a union with a
  * scalar shorthand, a map for the keys of a keyed set, a vector, a boolean value form, a component constant, a protocol split (a field only the newer window
  * sends is dropped with a report warning in the older one), and deprecated and
  * experiment-gated components; a server-only component is left out.
- * <p>
- * After an intended change of the output: {@code ./gradlew :tools:test -PupdateGolden=true}, then review the diff.
  */
 class ComponentGeneratorTest {
-    private static final Path GOLDEN = Path.of("src/test/resources/component-golden");
 
     // ---- Fixture -------------------------------------------------------------------------------------------------
 
@@ -202,9 +201,38 @@ class ComponentGeneratorTest {
     // ---- Golden files --------------------------------------------------------------------------------------------
 
     @Test
-    void generatesTheGoldenSources() throws IOException {
-        Map<String, String> files = ComponentGenerator.generate(inputs());
-        Golden.assertDirectory(GOLDEN, files);
+    void theSyntheticOutputCompiles(@TempDir Path temp) throws IOException {
+        compile(ComponentGenerator.generate(inputs()), temp.resolve("main"));
+        compile(ComponentGenerator.generate(lamp()), temp.resolve("lamp"));
+    }
+
+    /** Compiles generated sources against the paletter classes, as they are compiled in the paletter module. */
+    private static void compile(Map<String, String> files, Path dir) throws IOException {
+        // The fixture's hand transform testMap is no real one: a stub of Transforms (used in place of the real class) has it
+        Map<String, String> all = new java.util.TreeMap<>(files);
+        all.put("dev/opencollab/paletter/internal/component/Transforms.java", """
+            package dev.opencollab.paletter.internal.component;
+
+            final class Transforms {
+                static void testMap(WireContext ctx, WireNode out, Object owner) {
+                }
+            }
+            """);
+        List<String> sources = new ArrayList<>();
+        for (Map.Entry<String, String> file : all.entrySet()) {
+            if (file.getKey().endsWith(".java")) {
+                Path path = dir.resolve("src").resolve(file.getKey());
+                Files.createDirectories(path.getParent());
+                Files.writeString(path, file.getValue());
+                sources.add(path.toString());
+            }
+        }
+        List<String> args = new ArrayList<>(List.of("-d", dir.resolve("classes").toString(), "-classpath", System.getProperty("java.class.path"),
+            "-proc:none", "-Xlint:-options"));
+        args.addAll(sources);
+        java.io.ByteArrayOutputStream errors = new java.io.ByteArrayOutputStream();
+        assertEquals(0, ToolProvider.getSystemJavaCompiler().run(null, errors, errors, args.toArray(String[]::new)),
+            "generated sources do not compile: " + errors);
     }
 
 @Test
@@ -218,7 +246,7 @@ void aRetiredComponentIsOmittedWithItsReasonAndItsReplacement() {
 }
 
 @Test
-void theModelIsWhatTheGoldenSourcesShow() {
+void theModelHasTheComponentsOfTheFixture() {
         ApiModel model = ComponentGenerator.model(inputs());
         assertEquals(Set.of("item:test:gadget", "block:test:glow", "item:test:widget", "block:test:hidden", "item:test:old", "item:test:former",
                 "item:test:count", "item:test:ancient", "item:test:quiet", "block:test:slab"),

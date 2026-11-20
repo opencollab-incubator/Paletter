@@ -499,7 +499,7 @@ class ConstantsGeneratorTest {
     }
 
     /** Compiles the generated sources against Paletter's classes (the package private factory included). */
-    private static void compile(ConstantsGenerator.Result result, Path temp) throws IOException {
+    static void compile(ConstantsGenerator.Result result, Path temp) throws IOException {
         List<String> sources = new ArrayList<>();
         for (Map.Entry<String, String> file : result.files().entrySet()) {
             if (file.getKey().endsWith(".java")) {
