@@ -292,11 +292,4 @@ public final class Update {
         Files.writeString(work.resolve(EXIT_CODE), code + "\n");
         return code;
     }
-
-    /** {@code 1.26.70.23} -> {@code 26.70}, {@code 1.26.63.1} -> {@code 26.60}: hotfixes share their release's name. */
-    public static String versionName(String bdsVersion) {
-        String[] parts = bdsVersion.split("[.-]");
-        int offset = parts[0].equals("1") ? 1 : 0;
-        return parts[offset] + "." + (Integer.parseInt(parts[offset + 1]) / 10 * 10);
-    }
 }

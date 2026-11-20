@@ -1,5 +1,6 @@
 package dev.opencollab.paletter.tools.data;
 
+import dev.opencollab.paletter.tools.BuildNumber;
 import dev.opencollab.paletter.tools.bds.BdsDump;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
@@ -75,7 +76,7 @@ public final class Importer {
         Map<String, NbtMap> defaults = Map.of();
         if (bdsDump != null) {
             BdsDump dump = BdsDump.read(bdsDump);
-            if (!dump.version().startsWith("1." + name.substring(0, name.length() - 1))) {
+            if (!BuildNumber.isReported(dump.version()) || !BuildNumber.parseReported(dump.version()).inLine(name)) {
                 System.out.println("  warning: the dump is of BDS " + dump.version() + ", not of " + name);
             }
             tags = dump.itemTags();

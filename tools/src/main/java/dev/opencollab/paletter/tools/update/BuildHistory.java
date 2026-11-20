@@ -6,6 +6,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.gson.JsonSyntaxException;
+import dev.opencollab.paletter.tools.BuildNumber;
 import dev.opencollab.paletter.tools.Http;
 import dev.opencollab.paletter.tools.Layout;
 import dev.opencollab.paletter.tools.Versions;
@@ -145,7 +146,7 @@ public final class BuildHistory {
                 return this;
             }
             List<String> builds = new ArrayList<>(releases);
-            builds.add(Versions.requireBuild(current));
+            builds.add(BuildNumber.require(current));
             List<String> api = new ArrayList<>(fromLinksApi);
             api.add(current);
             return new BuildList(commit, date, stable, List.copyOf(builds), List.copyOf(api));
@@ -202,7 +203,7 @@ public final class BuildHistory {
 
     /**
      * The list from its text. Its build numbers name directories and files, so every one must be a build number
-     * ({@link Versions#requireBuild}).
+     * ({@link BuildNumber}).
      *
      * @throws IllegalArgumentException when the list names anything else
      */
@@ -219,7 +220,7 @@ public final class BuildHistory {
 
     private static String listed(String build) {
         try {
-            return Versions.requireBuild(build);
+            return BuildNumber.require(build);
         } catch (IllegalArgumentException e) {
             throw new IllegalArgumentException(REPOSITORY + " lists a build that is no build number: `" + build + "`", e);
         }
@@ -275,12 +276,12 @@ public final class BuildHistory {
             JsonObject entries = JsonParser.parseString(Files.readString(file)).getAsJsonObject().getAsJsonObject("builds");
             entries.entrySet().forEach(entry -> {
                 JsonObject value = entry.getValue().getAsJsonObject();
-                String identicalTo = value.has("identicalTo") ? Versions.requireBuild(value.get("identicalTo").getAsString()) : null;
+                String identicalTo = value.has("identicalTo") ? BuildNumber.require(value.get("identicalTo").getAsString()) : null;
                 List<String> notCompared = new ArrayList<>();
                 if (value.has("notCompared")) {
                     value.getAsJsonArray("notCompared").forEach(line -> notCompared.add(line.getAsString()));
                 }
-                builds.put(Versions.requireBuild(entry.getKey()), new Entry(value.get("protocol").getAsInt(), identicalTo,
+                builds.put(BuildNumber.require(entry.getKey()), new Entry(value.get("protocol").getAsInt(), identicalTo,
                     value.has("source") ? value.get("source").getAsString() : FROM_LIST,
                     identicalTo != null ? null : value.has("keptBy") ? value.get("keptBy").getAsString() : KEPT_BY_UPDATE, notCompared));
             });

@@ -2,6 +2,7 @@ package dev.opencollab.paletter.tools.update;
 
 import dev.opencollab.paletter.tools.bds.BdsDistribution;
 import dev.opencollab.paletter.tools.data.Importer;
+import dev.opencollab.paletter.tools.BuildNumber;
 import dev.opencollab.paletter.tools.Layout;
 import dev.opencollab.paletter.tools.Versions;
 import dev.opencollab.paletter.tools.client.Capture;
@@ -80,7 +81,7 @@ final class UpdateContext {
         this.keepServer = options.containsKey("keep-server");
         this.port = Integer.parseInt(options.getOrDefault("port", "19260"));
         this.timeout = Integer.parseInt(options.getOrDefault("timeout", "300"));
-        this.against = options.containsKey("against") ? Versions.requireBuild(options.get("against")) : null;
+        this.against = options.containsKey("against") ? BuildNumber.require(options.get("against")) : null;
         if (against != null && preview) {
             throw new IllegalArgumentException("--against checks release builds only");
         }
@@ -306,7 +307,7 @@ final class UpdateContext {
         Set<String> names = new TreeSet<>();
         Importer.readIndex(resources).stream().filter(Importer.IndexEntry::preview).forEach(entry -> names.add(entry.name()));
         try (Stream<Path> dirs = Files.list(bdsData)) {
-            return dirs.map(d -> d.getFileName().toString()).filter(build -> build.matches("\\d+\\..*") && names.contains(Update.versionName(build)))
+            return dirs.map(d -> d.getFileName().toString()).filter(build -> BuildNumber.isBuild(build) && names.contains(BuildNumber.parse(build).dataVersion()))
                 .collect(java.util.stream.Collectors.toSet());
         }
     }

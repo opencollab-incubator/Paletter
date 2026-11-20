@@ -46,6 +46,10 @@ on:
 
 permissions: {}
 
+env:
+  # A BDS build number: the format of `BuildNumber` (tools), whose test keeps this regex equal to BuildNumber.REGEX
+  BUILD_RE: '^1(\.[0-9]{1,9}){3}$'
+
 concurrency:
   group: recapture
   cancel-in-progress: false
@@ -88,8 +92,8 @@ jobs:
           ./gradlew :tools:run --args="builds plan --output $RUNNER_TEMP/matrix.json"
           MATRIX=$(cat "$RUNNER_TEMP/matrix.json")
           # Every value that a later job puts into a command line is checked here and again there
-          echo "$MATRIX" | jq -e '(.include | length) > 0 and ([.include[] | (.build | test("^[0-9]{1,9}(\\.[0-9]{1,9}){3}$"))
-            and (.channel | IN("release", "preview")) and (.against | test("^([0-9]{1,9}(\\.[0-9]{1,9}){3})?$"))] | all)' > /dev/null \
+          echo "$MATRIX" | jq -e --arg re "$BUILD_RE" '(.include | length) > 0 and ([.include[] | (.build | test($re))
+            and (.channel | IN("release", "preview")) and (.against | . == "" or test($re))] | all)' > /dev/null \
             || { echo "The build plan is not valid: $MATRIX"; exit 1; }
           {
             echo "matrix=$MATRIX"
@@ -120,8 +124,8 @@ jobs:
     steps:
       - name: Check the matrix values
         run: |
-          echo "$BUILD" | grep -Eq '^[0-9]{1,9}(\.[0-9]{1,9}){3}$' || { echo "Bad build"; exit 1; }
-          echo "$AGAINST" | grep -Eq '^([0-9]{1,9}(\.[0-9]{1,9}){3})?$' || { echo "Bad against"; exit 1; }
+          echo "$BUILD" | grep -Eq "$BUILD_RE" || { echo "Bad build"; exit 1; }
+          [ -z "$AGAINST" ] || echo "$AGAINST" | grep -Eq "$BUILD_RE" || { echo "Bad against"; exit 1; }
           echo "$CHANNEL" | grep -Eqx 'release|preview' || { echo "Bad channel"; exit 1; }
       # Everything temporary lives in the runner's temp directory, never in the checkout (see bds-data.yml)
       - name: Set the temp and BDS cache directories
@@ -256,7 +260,6 @@ jobs:
       - name: Stage the captures
         run: |
           IN="$RUNNER_TEMP/in"
-          BUILD_RE='^[0-9]{1,9}(\.[0-9]{1,9}){3}$'
           EXPECTED=$(printf '%s' "$MATRIX" | jq -r '.include[].build' | sort)
           FOUND=$(ls "$IN" | sed -n 's/^captures-//p' | sort)
           if [ "$EXPECTED" != "$FOUND" ]; then

@@ -3,6 +3,7 @@ package dev.opencollab.paletter.tools.update;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import dev.opencollab.paletter.tools.BuildNumber;
 import dev.opencollab.paletter.tools.Layout;
 import dev.opencollab.paletter.tools.Versions;
 import dev.opencollab.paletter.tools.data.Importer;
@@ -27,7 +28,7 @@ public final class RecapturePlan {
      */
     public record Leg(String build, boolean preview, String against) {
         public Leg {
-            Versions.requireBuild(build);
+            BuildNumber.require(build);
         }
     }
 
@@ -68,7 +69,7 @@ public final class RecapturePlan {
                     String build = capture.getParent().getParent().getFileName().toString();
                     if (meta.has("preview") && meta.get("preview").getAsBoolean()
                         && (preview == null || Versions.compare(build, preview) > 0)) {
-                        preview = Versions.requireBuild(build);
+                        preview = BuildNumber.require(build);
                     }
                 }
             }
@@ -104,12 +105,9 @@ public final class RecapturePlan {
         return legs;
     }
 
-    /** Whether a build is of a data version's line: {@code 1.26.65.1} is of {@code 26.60} (same major, same tens of the minor). */
+    /** Whether a build is of a data version's line ({@link BuildNumber#inLine}); a name that is no build number is of none. */
     static boolean inLine(String build, String dataVersion) {
-        String[] parts = build.split("\\.");
-        String[] version = dataVersion.split("\\.");
-        return parts.length == 4 && version.length == 2 && ("1." + version[0]).equals(parts[0] + "." + parts[1])
-            && Integer.parseInt(parts[2]) / 10 == Integer.parseInt(version[1]) / 10;
+        return BuildNumber.isBuild(build) && BuildNumber.parse(build).inLine(dataVersion);
     }
 
     /** The legs as the {@code include} list of a GitHub Actions matrix: {@code build}, {@code channel}, {@code against} ("" for none). */

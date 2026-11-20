@@ -3,7 +3,7 @@ package dev.opencollab.paletter.tools.bds;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 import dev.opencollab.paletter.tools.Http;
-import dev.opencollab.paletter.tools.Versions;
+import dev.opencollab.paletter.tools.BuildNumber;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -41,7 +41,7 @@ public record BdsDistribution(String version, boolean preview, String platform, 
      * @param version a BDS version such as {@code 1.26.51.1}, or {@code null} for the newest one of the channel. Older
      *                builds stay downloadable under the same url scheme, but are not listed anywhere: the exact version
      *                (including the patch) has to be known. It names files and directories of the cache, so it must be four
-     *                dotted numbers ({@link Versions#requireBuild}), as must the newest one the links API names
+     *                dotted numbers ({@link BuildNumber}), as must the newest one the links API names
      */
     public static BdsDistribution resolve(boolean preview, String version) throws IOException, InterruptedException {
         return resolve(!BdsServer.WINDOWS, preview, version);
@@ -51,13 +51,13 @@ public record BdsDistribution(String version, boolean preview, String platform, 
     public static BdsDistribution resolve(boolean linux, boolean preview, String version) throws IOException, InterruptedException {
         String platform = (linux ? "linux" : "win") + (preview ? "-preview" : "");
         if (version != null) {
-            Versions.requireBuild(version);
+            BuildNumber.require(version);
         }
         String url = version != null
             ? "https://www.minecraft.net/bedrockdedicatedserver/bin-" + platform + "/bedrock-server-" + version + ".zip"
             : newest(linux, preview);
         String file = url.substring(url.lastIndexOf('/') + 1);
-        return new BdsDistribution(Versions.requireBuild(file.replace("bedrock-server-", "").replace(".zip", "")), preview, platform, url);
+        return new BdsDistribution(BuildNumber.require(file.replace("bedrock-server-", "").replace(".zip", "")), preview, platform, url);
     }
 
     private static String newest(boolean linux, boolean preview) throws IOException, InterruptedException {

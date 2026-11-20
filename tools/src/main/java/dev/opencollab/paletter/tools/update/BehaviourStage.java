@@ -2,7 +2,7 @@ package dev.opencollab.paletter.tools.update;
 
 import com.google.gson.JsonObject;
 import dev.opencollab.paletter.internal.data.VanillaData;
-import dev.opencollab.paletter.tools.Versions;
+import dev.opencollab.paletter.tools.BuildNumber;
 import dev.opencollab.paletter.tools.bds.BdsDistribution;
 import dev.opencollab.paletter.tools.bds.ScriptModules;
 import dev.opencollab.paletter.tools.behaviour.BehaviourDump;
@@ -125,7 +125,7 @@ final class BehaviourStage {
     }
 
     static void requireBuild(String build, boolean preview, String reported) throws IOException {
-        if (!Versions.reported(build, preview).equals(reported)) {
+        if (!BuildNumber.parse(build).reported(preview).equals(reported)) {
             throw new IOException("the add-on ran on BDS " + reported + ", not " + build);
         }
     }

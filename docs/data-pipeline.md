@@ -143,8 +143,14 @@ newest commit that changed it and records that commit (`listCommit`, `listDate`)
 current release of the download links API (Mojang's own, so authoritative for the newest build) joins the list when the
 list lacks it and it is newer than every listed build; the run notes that, and warns when the two disagree otherwise.
 Each recorded build says where its number came from (`source`: `BDS-Versions` or `links API`). Every build number of the list, and every
-`--from`, `--to` and `--against`, must be four (a bound: one to four) dotted numbers, since build numbers name
+`--from`, `--to` and `--against`, must be a build number (a bound: one to four dotted numbers), since build numbers name
 directories that are deleted; paths built from them are checked to stay in their directory as well.
+
+**Build numbers.** `1.<minor>.<patch>.<revision>`: four dotted numbers of at most nine digits, the first `1`
+(`1.26.63.1`; leading zeros stay, `1.21.73.01`). The data version of a build is its line, the minor and the patch rounded
+down to tens (`1.26.63.1` is `26.60`), and a preview reports its revision as a beta (`1.26.70.24` reports
+`1.26.70-beta24`). `BuildNumber` (tools) is the only code that parses, rounds or reports them; the workflows check them
+with its regex (`BUILD_RE`, kept equal to `BuildNumber.REGEX` by `BuildNumberTest`). A new format from Mojang fails there.
 
 `builds check` takes the builds of the range that the record lacks, oldest first, and runs `update --against <kept
 build>` on Windows BDS for each: the previous kept build, or the next one when nothing older is kept (the first builds

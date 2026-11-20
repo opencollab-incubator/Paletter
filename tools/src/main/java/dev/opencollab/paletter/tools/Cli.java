@@ -954,7 +954,7 @@ public final class Cli implements Runnable {
             Path log = cacheDirectory.resolve("runs").resolve("script-dump-" + bds + ".log");
             BdsDistribution.resolve(preview, bds).onServer(cacheDirectory,
                 server -> ScriptApiDump.run(root(), server, log, timeout, port));
-            System.out.println("Wrote " + ScriptApiDump.write(root(), log, bds, Update.versionName(bds)));
+            System.out.println("Wrote " + ScriptApiDump.write(root(), log, bds, BuildNumber.parse(bds).dataVersion()));
             return 0;
         }
     }

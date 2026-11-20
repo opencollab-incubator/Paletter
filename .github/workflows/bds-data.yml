@@ -60,6 +60,10 @@ on:
 
 permissions: {}
 
+env:
+  # A BDS build number: the format of `BuildNumber` (tools), whose test keeps this regex equal to BuildNumber.REGEX
+  BUILD_RE: '^1(\.[0-9]{1,9}){3}$'
+
 concurrency:
   group: bds-data
   cancel-in-progress: false
@@ -108,7 +112,7 @@ jobs:
               | jq -r --arg type "$TYPE" '.result.links[] | select(.downloadType == $type) | .downloadUrl')
             VERSION=$(basename "$URL" .zip | sed 's/^bedrock-server-//')
           fi
-          if ! echo "$VERSION" | grep -Eq '^[0-9]+(\.[0-9]+)+$'; then echo "No BDS version: '$VERSION'"; exit 1; fi
+          if ! echo "$VERSION" | grep -Eq "$BUILD_RE"; then echo "No BDS version: '$VERSION'"; exit 1; fi
           echo "version=$VERSION" >> "$GITHUB_OUTPUT"
           echo "BDS_VERSION=$VERSION" >> "$GITHUB_ENV"
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -266,7 +270,7 @@ jobs:
           IN="$RUNNER_TEMP/in"
           value() { grep -m1 "^$1=" "$IN/result.txt" | cut -d= -f2-; }
           VERSION=$(value version); UPDATE=$(value update); DIFFERS=$(value differs); HASH=$(value hash)
-          echo "$VERSION" | grep -Eq '^[0-9]+(\.[0-9]+)+$' || { echo "Bad version"; exit 1; }
+          echo "$VERSION" | grep -Eq "$BUILD_RE" || { echo "Bad version"; exit 1; }
           echo "$UPDATE" | grep -Eq '^[0-9]+$' || { echo "Bad update exit code"; exit 1; }
           echo "$DIFFERS" | grep -Eq '^(true|false)$' || { echo "Bad differs"; exit 1; }
           echo "$HASH" | grep -Eq '^[0-9a-f]+$' || { echo "Bad hash"; exit 1; }

@@ -4,6 +4,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import dev.opencollab.paletter.tools.BuildNumber;
 import dev.opencollab.paletter.tools.Layout;
 import dev.opencollab.paletter.tools.bds.BdsDistribution;
 import dev.opencollab.paletter.tools.bds.BdsRunner;
@@ -20,8 +21,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.TreeMap;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
 /**
@@ -79,11 +78,10 @@ public final class BehaviourProbe {
      * @param version a build ({@code 1.26.63.1}) or what BDS reports ({@code 1.26.70-beta24})
      */
     static String blockFormat(Path root, String version) throws IOException {
-        Matcher number = Pattern.compile("^\\d+\\.\\d+\\.\\d+").matcher(version);
-        if (!number.find()) {
+        if (!BuildNumber.isReported(version)) {
             throw new IOException("Not a BDS version: " + version);
         }
-        return AddonGenerator.formatVersionFor(Fixtures.read(root.resolve(Layout.MODEL)).formatVersion, number.group());
+        return AddonGenerator.formatVersionFor(Fixtures.read(root.resolve(Layout.MODEL)).formatVersion, BuildNumber.parseReported(version).text());
     }
 
     /** The block files of the pack (pack path to content) with the {@link #blockFormat format version} of the build. */

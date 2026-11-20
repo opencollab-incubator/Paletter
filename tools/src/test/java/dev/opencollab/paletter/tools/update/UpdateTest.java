@@ -27,13 +27,6 @@ class UpdateTest {
     private static final Path ROOT = Path.of("..");
 
     @Test
-    void versionNames() {
-        assertEquals("26.70", Update.versionName("1.26.70.23"));
-        assertEquals("26.60", Update.versionName("1.26.63.1"));
-        assertEquals("26.40", Update.versionName("1.26.45.1"));
-    }
-
-    @Test
     void theConstantsOfAnUpdateHaveTheVariantNamesItStages() throws Exception {
         // update regenerates the constants from the names it stages: the committed ones give the committed constants
         Path resources = ROOT.resolve(ConstantsGenerator.DATA);

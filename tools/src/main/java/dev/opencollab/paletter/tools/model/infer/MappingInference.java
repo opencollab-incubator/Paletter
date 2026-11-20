@@ -348,7 +348,7 @@ public final class MappingInference {
         }
         JsonObject meta = JsonParser.parseString(Files.readString(file)).getAsJsonObject();
         boolean preview = meta.has("preview") && meta.get("preview").getAsBoolean();
-        return preview ? dev.opencollab.paletter.tools.update.Update.versionName(capture.bdsVersion()) : null;
+        return preview ? dev.opencollab.paletter.tools.BuildNumber.parse(capture.bdsVersion()).dataVersion() : null;
     }
 
     /**
