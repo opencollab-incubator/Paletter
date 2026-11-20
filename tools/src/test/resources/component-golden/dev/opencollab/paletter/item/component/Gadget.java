@@ -5,6 +5,7 @@ package dev.opencollab.paletter.item.component;
 
 import dev.opencollab.paletter.annotation.BedrockExperiment;
 import dev.opencollab.paletter.annotation.ReplacedBy;
+import java.util.Objects;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
@@ -14,19 +15,63 @@ import org.checkerframework.checker.nullness.qual.Nullable;
  * Add-on JSON: {@code "test:gadget"}.
  * The creator docs name the experiment Test Toggle for it (in some format versions); unverified against BDS.
  *
- * @param value On. Add-on JSON {@code value}. Optional (null: not set).
- * @param level Only sent from protocol 200 on. Add-on JSON {@code level}. Optional (null: not set).
  * @since 1.0.0
  * @deprecated replaced by {@link Widget} (docs text: "Use test:widget instead.")
  */
 @BedrockExperiment("test_toggle")
 @Deprecated
 @ReplacedBy(Widget.class)
-public record Gadget(@Nullable Boolean value, @Nullable Integer level) implements ItemComponent {
+public final class Gadget implements ItemComponent {
     /**
      * The component name in add-on JSON.
      */
     public static final String NAME = "test:gadget";
+
+    private final @Nullable Boolean value;
+
+    private final @Nullable Integer level;
+
+    private Gadget(@Nullable Boolean value, @Nullable Integer level) {
+        this.value = value;
+        this.level = level;
+    }
+
+    /**
+     * On. Add-on JSON {@code value}. Optional (null: not set).
+     *
+     * @return the value
+     */
+    public @Nullable Boolean value() {
+        return value;
+    }
+
+    /**
+     * Only sent from protocol 200 on. Add-on JSON {@code level}. Optional (null: not set).
+     *
+     * @return the value
+     */
+    public @Nullable Integer level() {
+        return level;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        return this == o || o instanceof Gadget other
+                && Objects.equals(value, other.value)
+                && Objects.equals(level, other.level);
+    }
+
+    @Override
+    public int hashCode() {
+        int h = Objects.hashCode(value);
+        h = 31 * h + Objects.hashCode(level);
+        return h;
+    }
+
+    @Override
+    public String toString() {
+        return "Gadget[value=" + value + ", level=" + level + "]";
+    }
 
     @Override
     public @NonNull String name() {

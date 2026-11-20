@@ -18,35 +18,96 @@ import org.checkerframework.checker.nullness.qual.Nullable;
  * <p>
  * Add-on JSON: {@code "minecraft:storage_item"}.
  *
- * @param allowNestedStorageItems Determines whether another Storage Item is allowed inside of this item. Default is true. Add-on JSON {@code
- *        allow_nested_storage_items}. Default: <code>true</code>.
- * @param allowedItems List of items that are exclusively allowed in this Storage Item. If empty all items are allowed. Add-on JSON
- *        {@code allowed_items}. Default: <code>[]</code>.
- * @param bannedItems List of items that are not allowed in this Storage Item. Add-on JSON {@code banned_items}. Default:
- *        <code>[]</code>.
- * @param maxSlots The maximum allowed weight of the sum of all contained items. Maximum is 64. Default is 64. Value must be
- *        &lt;= 64. Add-on JSON {@code max_slots}. Default: <code>64</code>. At most 64 (BDS 1.26.63.1).
  * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/itemreference/examples/itemcomponents/minecraft_storage_item?view=minecraft-bedrock-stable">Microsoft Learn: minecraft:storage_item</a>
  * @since 1.0.0
  */
 @BedrockFormat("1.21.40")
-public record StorageItem(boolean allowNestedStorageItems, @NonNull List<String> allowedItems,
-        @NonNull List<String> bannedItems, int maxSlots) implements ItemComponent {
+public final class StorageItem implements ItemComponent {
     /**
      * The component name in add-on JSON.
      */
     public static final String NAME = "minecraft:storage_item";
 
-    /**
-     * Checks the components and copies lists and maps, so the value is immutable.
-     *
-     * @throws NullPointerException if a required component is null
-     * @throws IllegalArgumentException if a component is out of its documented range or conflicts with another
-     */
-    public StorageItem {
+    private final boolean allowNestedStorageItems;
+
+    private final @NonNull List<String> allowedItems;
+
+    private final @NonNull List<String> bannedItems;
+
+    private final int maxSlots;
+
+    private StorageItem(boolean allowNestedStorageItems, @NonNull List<String> allowedItems,
+            @NonNull List<String> bannedItems, int maxSlots) {
         allowedItems = List.copyOf(Objects.requireNonNull(allowedItems, "StorageItem.allowedItems"));
         bannedItems = List.copyOf(Objects.requireNonNull(bannedItems, "StorageItem.bannedItems"));
         Check.range("StorageItem.maxSlots", maxSlots, null, 64.0);
+        this.allowNestedStorageItems = allowNestedStorageItems;
+        this.allowedItems = allowedItems;
+        this.bannedItems = bannedItems;
+        this.maxSlots = maxSlots;
+    }
+
+    /**
+     * Determines whether another Storage Item is allowed inside of this item. Default is true. Add-on JSON {@code
+     * allow_nested_storage_items}. Default: <code>true</code>.
+     *
+     * @return the value
+     */
+    public boolean allowNestedStorageItems() {
+        return allowNestedStorageItems;
+    }
+
+    /**
+     * List of items that are exclusively allowed in this Storage Item. If empty all items are allowed. Add-on JSON
+     * {@code allowed_items}. Default: <code>[]</code>.
+     *
+     * @return the value
+     */
+    public @NonNull List<String> allowedItems() {
+        return allowedItems;
+    }
+
+    /**
+     * List of items that are not allowed in this Storage Item. Add-on JSON {@code banned_items}. Default:
+     * <code>[]</code>.
+     *
+     * @return the value
+     */
+    public @NonNull List<String> bannedItems() {
+        return bannedItems;
+    }
+
+    /**
+     * The maximum allowed weight of the sum of all contained items. Maximum is 64. Default is 64. Value must be
+     * &lt;= 64. Add-on JSON {@code max_slots}. Default: <code>64</code>. At most 64 (BDS 1.26.63.1).
+     *
+     * @return the value
+     */
+    public int maxSlots() {
+        return maxSlots;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        return this == o || o instanceof StorageItem other
+                && allowNestedStorageItems == other.allowNestedStorageItems
+                && Objects.equals(allowedItems, other.allowedItems)
+                && Objects.equals(bannedItems, other.bannedItems)
+                && maxSlots == other.maxSlots;
+    }
+
+    @Override
+    public int hashCode() {
+        int h = Boolean.hashCode(allowNestedStorageItems);
+        h = 31 * h + Objects.hashCode(allowedItems);
+        h = 31 * h + Objects.hashCode(bannedItems);
+        h = 31 * h + maxSlots;
+        return h;
+    }
+
+    @Override
+    public String toString() {
+        return "StorageItem[allowNestedStorageItems=" + allowNestedStorageItems + ", allowedItems=" + allowedItems + ", bannedItems=" + bannedItems + ", maxSlots=" + maxSlots + "]";
     }
 
     @Override

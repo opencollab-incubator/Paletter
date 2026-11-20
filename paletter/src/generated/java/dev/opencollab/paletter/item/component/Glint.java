@@ -4,6 +4,7 @@
 package dev.opencollab.paletter.item.component;
 
 import dev.opencollab.paletter.annotation.BedrockFormat;
+import java.util.Objects;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
@@ -12,16 +13,47 @@ import org.checkerframework.checker.nullness.qual.Nullable;
  * <p>
  * Add-on JSON: {@code "minecraft:glint"}.
  *
- * @param value Whether the item has the enchanted glint render effect. Add-on JSON {@code value}. Optional (null: not set).
  * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/itemreference/examples/itemcomponents/minecraft_glint?view=minecraft-bedrock-stable">Microsoft Learn: minecraft:glint</a>
  * @since 1.0.0
  */
 @BedrockFormat("1.20.30")
-public record Glint(@Nullable Boolean value) implements ItemComponent {
+public final class Glint implements ItemComponent {
     /**
      * The component name in add-on JSON.
      */
     public static final String NAME = "minecraft:glint";
+
+    private final @Nullable Boolean value;
+
+    private Glint(@Nullable Boolean value) {
+        this.value = value;
+    }
+
+    /**
+     * Whether the item has the enchanted glint render effect. Add-on JSON {@code value}. Optional (null: not set).
+     *
+     * @return the value
+     */
+    public @Nullable Boolean value() {
+        return value;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        return this == o || o instanceof Glint other
+                && Objects.equals(value, other.value);
+    }
+
+    @Override
+    public int hashCode() {
+        int h = Objects.hashCode(value);
+        return h;
+    }
+
+    @Override
+    public String toString() {
+        return "Glint[value=" + value + "]";
+    }
 
     @Override
     public @NonNull String name() {

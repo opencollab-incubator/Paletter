@@ -12,20 +12,63 @@ import org.checkerframework.checker.nullness.qual.Nullable;
  * <p>
  * Add-on JSON: {@code "minecraft:redstone_conductivity"}.
  *
- * @param allowsWireToStepDown Specifies if redstone wire can stair-step downward on the block. Add-on JSON {@code allows_wire_to_step_down}.
- *        Default: <code>true</code>.
- * @param redstoneConductor Specifies if the block can be powered by redstone. Add-on JSON {@code redstone_conductor}. Default:
- *        <code>false</code>.
  * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/blockreference/examples/blockcomponents/minecraftblock_redstone_conductivity?view=minecraft-bedrock-stable">Microsoft Learn: minecraft:redstone_conductivity</a>
  * @since 1.0.0
  */
 @BedrockFormat("1.21.40")
-public record RedstoneConductivity(boolean allowsWireToStepDown,
-        boolean redstoneConductor) implements BlockComponent {
+public final class RedstoneConductivity implements BlockComponent {
     /**
      * The component name in add-on JSON.
      */
     public static final String NAME = "minecraft:redstone_conductivity";
+
+    private final boolean allowsWireToStepDown;
+
+    private final boolean redstoneConductor;
+
+    private RedstoneConductivity(boolean allowsWireToStepDown, boolean redstoneConductor) {
+        this.allowsWireToStepDown = allowsWireToStepDown;
+        this.redstoneConductor = redstoneConductor;
+    }
+
+    /**
+     * Specifies if redstone wire can stair-step downward on the block. Add-on JSON {@code allows_wire_to_step_down}.
+     * Default: <code>true</code>.
+     *
+     * @return the value
+     */
+    public boolean allowsWireToStepDown() {
+        return allowsWireToStepDown;
+    }
+
+    /**
+     * Specifies if the block can be powered by redstone. Add-on JSON {@code redstone_conductor}. Default:
+     * <code>false</code>.
+     *
+     * @return the value
+     */
+    public boolean redstoneConductor() {
+        return redstoneConductor;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        return this == o || o instanceof RedstoneConductivity other
+                && allowsWireToStepDown == other.allowsWireToStepDown
+                && redstoneConductor == other.redstoneConductor;
+    }
+
+    @Override
+    public int hashCode() {
+        int h = Boolean.hashCode(allowsWireToStepDown);
+        h = 31 * h + Boolean.hashCode(redstoneConductor);
+        return h;
+    }
+
+    @Override
+    public String toString() {
+        return "RedstoneConductivity[allowsWireToStepDown=" + allowsWireToStepDown + ", redstoneConductor=" + redstoneConductor + "]";
+    }
 
     @Override
     public @NonNull String name() {

@@ -281,14 +281,15 @@ void theModelIsWhatTheGoldenSourcesShow() {
     }
 
     @Test
-    void theRecordConstructorChecksTheLimitsOfAValueForm() {
+    void theConstructorChecksTheLimitsOfAValueForm() {
         // What BDS says about the component's value itself (path "") limits the field of its value form
         Inputs in = inputs();
         in.feedback().add("block:test:glow", json("{\"\": [\"max 15\"]}"));
         String glow = ComponentGenerator.generate(in).get("dev/opencollab/paletter/block/component/Glow.java");
         assertTrue(glow.contains("""
-                public Glow {
+                private Glow(int value) {
                     Check.range("Glow.value", value, null, 15.0);
+                    this.value = value;
                 }
             """), glow);
         // Text the generator writes keeps its Javadoc tags
@@ -458,7 +459,7 @@ void theModelIsWhatTheGoldenSourcesShow() {
         assertTrue(!wire.contains("case \"odd\""), "the undocumented sample is the default, not a case");
         String widget = ComponentGenerator.generate(inputs()).get("dev/opencollab/paletter/item/component/Widget.java");
         assertTrue(widget.contains("@Nullable String rarity"), widget);
-        assertTrue(widget.contains("Documented values: {@code common}, {@code\n *        rare}; BDS takes other strings too."), widget);
+        assertTrue(widget.contains("Documented values: {@code common}, {@code\n     * rare}; BDS takes other strings too."), widget);
         assertTrue(!widget.contains("enum Rarity"), "an open enum has no constants");
     }
 
@@ -652,7 +653,8 @@ void theModelIsWhatTheGoldenSourcesShow() {
         String wire = files.get("dev/opencollab/paletter/internal/component/BlockWire.java");
         assertTrue(wire.contains("\"test:labels\""), "the list reaches the encoder: " + wire);
         String source = files.get("dev/opencollab/paletter/block/component/Labels.java");
-        assertTrue(source.contains("public record Labels(@NonNull List<String> value) implements BlockComponent"), source);
+        assertTrue(source.contains("public final class Labels implements BlockComponent"), source);
+        assertTrue(source.contains("public @NonNull List<String> value()"), source);
         assertTrue(source.contains("The entries of the component"), source);
     }
 

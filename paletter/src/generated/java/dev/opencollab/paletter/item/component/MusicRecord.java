@@ -13,30 +13,78 @@ import org.checkerframework.checker.nullness.qual.Nullable;
  * <p>
  * Add-on JSON: {@code "minecraft:record"}.
  *
- * @param comparatorSignal Specifies signal strength for comparator blocks to use, from 1 - 13. Add-on JSON {@code comparator_signal}.
- *        Default: <code>1</code>.
- * @param duration Specifies duration of sound event in seconds, float value. Add-on JSON {@code duration}. Default:
- *        <code>0</code>.
- * @param soundEvent Sound event type: 13, cat, blocks, chirp, far, mall, mellohi, stal, strad, ward, 11, wait, pigstep, otherside,
- *        5, relic. Add-on JSON {@code sound_event}. Default: <code>"undefined"</code>.
  * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/itemreference/examples/itemcomponents/minecraft_record?view=minecraft-bedrock-stable">Microsoft Learn: minecraft:record</a>
  * @since 1.0.0
  */
 @BedrockFormat("1.20.10")
-public record MusicRecord(int comparatorSignal, float duration,
-        @NonNull String soundEvent) implements ItemComponent {
+public final class MusicRecord implements ItemComponent {
     /**
      * The component name in add-on JSON.
      */
     public static final String NAME = "minecraft:record";
 
-    /**
-     * Checks the components.
-     *
-     * @throws NullPointerException if a required component is null
-     */
-    public MusicRecord {
+    private final int comparatorSignal;
+
+    private final float duration;
+
+    private final @NonNull String soundEvent;
+
+    private MusicRecord(int comparatorSignal, float duration, @NonNull String soundEvent) {
         Objects.requireNonNull(soundEvent, "MusicRecord.soundEvent");
+        this.comparatorSignal = comparatorSignal;
+        this.duration = duration;
+        this.soundEvent = soundEvent;
+    }
+
+    /**
+     * Specifies signal strength for comparator blocks to use, from 1 - 13. Add-on JSON {@code comparator_signal}.
+     * Default: <code>1</code>.
+     *
+     * @return the value
+     */
+    public int comparatorSignal() {
+        return comparatorSignal;
+    }
+
+    /**
+     * Specifies duration of sound event in seconds, float value. Add-on JSON {@code duration}. Default:
+     * <code>0</code>.
+     *
+     * @return the value
+     */
+    public float duration() {
+        return duration;
+    }
+
+    /**
+     * Sound event type: 13, cat, blocks, chirp, far, mall, mellohi, stal, strad, ward, 11, wait, pigstep, otherside,
+     * 5, relic. Add-on JSON {@code sound_event}. Default: <code>"undefined"</code>.
+     *
+     * @return the value
+     */
+    public @NonNull String soundEvent() {
+        return soundEvent;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        return this == o || o instanceof MusicRecord other
+                && comparatorSignal == other.comparatorSignal
+                && Float.compare(duration, other.duration) == 0
+                && Objects.equals(soundEvent, other.soundEvent);
+    }
+
+    @Override
+    public int hashCode() {
+        int h = comparatorSignal;
+        h = 31 * h + Float.hashCode(duration);
+        h = 31 * h + Objects.hashCode(soundEvent);
+        return h;
+    }
+
+    @Override
+    public String toString() {
+        return "MusicRecord[comparatorSignal=" + comparatorSignal + ", duration=" + duration + ", soundEvent=" + soundEvent + "]";
     }
 
     @Override

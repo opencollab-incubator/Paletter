@@ -15,11 +15,29 @@ import org.checkerframework.checker.nullness.qual.NonNull;
  * @since 1.0.0
  */
 @BedrockFormat("1.21.120")
-public record FlowerPottable() implements BlockComponent {
+public final class FlowerPottable implements BlockComponent {
     /**
      * The component name in add-on JSON.
      */
     public static final String NAME = "minecraft:flower_pottable";
+
+    private FlowerPottable() {
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        return o instanceof FlowerPottable;
+    }
+
+    @Override
+    public int hashCode() {
+        return 0;
+    }
+
+    @Override
+    public String toString() {
+        return "FlowerPottable[]";
+    }
 
     @Override
     public @NonNull String name() {

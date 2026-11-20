@@ -5,6 +5,9 @@ package dev.opencollab.paletter.block.component;
 
 import dev.opencollab.paletter.annotation.BedrockExperiment;
 import dev.opencollab.paletter.annotation.BedrockFormat;
+import dev.opencollab.paletter.internal.component.Check;
+import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
@@ -19,25 +22,48 @@ import org.checkerframework.checker.nullness.qual.Nullable;
  * Add-on JSON: {@code "minecraft:support"}.
  * The creator docs name the experiment Upcoming Creator Features for it (in some format versions); unverified against BDS.
  *
- * @param shape Required field. The type of support shape for this block. Add-on JSON {@code shape}. Required.
  * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/blockreference/examples/blockcomponents/minecraftblock_support?view=minecraft-bedrock-stable">Microsoft Learn: minecraft:support</a>
  * @since 1.0.0
  */
 @BedrockFormat("1.21.130")
 @BedrockExperiment("upcoming_creator_features")
-public record Support(Support. @NonNull Shape shape) implements BlockComponent {
+public final class Support implements BlockComponent {
     /**
      * The component name in add-on JSON.
      */
     public static final String NAME = "minecraft:support";
 
-    /**
-     * Checks the components.
-     *
-     * @throws NullPointerException if a required component is null
-     */
-    public Support {
+    private final @NonNull Shape shape;
+
+    private Support(@NonNull Shape shape) {
         Objects.requireNonNull(shape, "Support.shape");
+        this.shape = shape;
+    }
+
+    /**
+     * Required field. The type of support shape for this block. Add-on JSON {@code shape}. Required.
+     *
+     * @return the value
+     */
+    public @NonNull Shape shape() {
+        return shape;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        return this == o || o instanceof Support other
+                && Objects.equals(shape, other.shape);
+    }
+
+    @Override
+    public int hashCode() {
+        int h = Objects.hashCode(shape);
+        return h;
+    }
+
+    @Override
+    public String toString() {
+        return "Support[shape=" + shape + "]";
     }
 
     @Override
@@ -102,23 +128,49 @@ public record Support(Support. @NonNull Shape shape) implements BlockComponent {
     }
 
     /**
-     * The documented values; {@link #value()} is the add-on JSON string.
+     * A value of an add-on JSON string: a constant per documented value, {@link #of} for any other.
+     * {@link #value()} is the add-on JSON string. Not an enum: Bedrock adds values, so a {@code switch} over
+     * {@link #value()} needs a {@code default}.
      */
-    public enum Shape {
+    public static final class Shape {
         /**
          * {@code fence}
          */
-        FENCE("fence"),
+        public static final Shape FENCE = new Shape("fence");
 
         /**
          * {@code stair}
          */
-        STAIR("stair");
+        public static final Shape STAIR = new Shape("stair");
+
+        private static final List<Shape> KNOWN = List.of(FENCE, STAIR);
+
+        private static final Map<String, Shape> BY_VALUE = Check.index(KNOWN, Shape::value);
 
         private final String value;
 
-        Shape(String value) {
+        private Shape(String value) {
             this.value = value;
+        }
+
+        /**
+         * Returns the value of an add-on JSON string: the constant of a documented value, else a new value.
+         *
+         * @param value the value in add-on JSON
+         * @return the constant of the value, or a value Paletter does not know
+         */
+        public static @NonNull Shape of(@NonNull String value) {
+            Shape known = BY_VALUE.get(Objects.requireNonNull(value, "Shape.value"));
+            return known != null ? known : new Shape(value);
+        }
+
+        /**
+         * Returns the documented values, the constants of this class.
+         *
+         * @return the constants, in the order of the documentation
+         */
+        public static @NonNull List<Shape> known() {
+            return KNOWN;
         }
 
         /**
@@ -131,19 +183,27 @@ public record Support(Support. @NonNull Shape shape) implements BlockComponent {
         }
 
         /**
-         * Finds the constant of an add-on JSON value.
+         * Returns whether the value is documented, one of the constants.
          *
-         * @param value the value in add-on JSON
-         * @return the constant of the value
-         * @throws IllegalArgumentException if the value is not documented
+         * @return whether this is one of {@link #known()}
          */
-        public static @NonNull Shape fromValue(@NonNull String value) {
-            for (Shape constant : values()) {
-                if (constant.value.equals(value)) {
-                    return constant;
-                }
-            }
-            throw new IllegalArgumentException("Not a Shape: " + value);
+        public boolean isKnown() {
+            return BY_VALUE.get(value) == this;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            return this == o || o instanceof Shape other && value.equals(other.value);
+        }
+
+        @Override
+        public int hashCode() {
+            return value.hashCode();
+        }
+
+        @Override
+        public String toString() {
+            return value;
         }
     }
 }

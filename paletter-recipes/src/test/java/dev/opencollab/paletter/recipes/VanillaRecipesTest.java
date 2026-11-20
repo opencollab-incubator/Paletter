@@ -71,15 +71,20 @@ class VanillaRecipesTest {
     @Test
     void recipesCheckTheirOwnShape() {
         Ingredient stick = new Ingredient.AnyVariant(BedrockItems.STICK, 1);
-        Result result = new Result(BedrockItems.TORCH.variant(), 4, NbtMap.EMPTY, NbtMap.EMPTY);
-        Unlock none = Unlock.of(UnlockingContext.NONE);
-        assertThrows(IllegalArgumentException.class, () -> new Recipe.Shaped("x", 1, 2, List.of(stick), List.of(result), RecipeStations.CRAFTING_TABLE, 0, true, none));
-        assertThrows(IllegalArgumentException.class, () -> new Recipe.Shaped("x", 1, 1, List.of(stick), List.of(), RecipeStations.CRAFTING_TABLE, 0, true, none));
-        assertThrows(IllegalArgumentException.class, () -> new Recipe.Shapeless("x", List.of(stick), List.of(), RecipeStations.CRAFTING_TABLE, 0, false, none));
+        Result result = Result.builder().item(BedrockItems.TORCH.variant()).count(4).build();
+        Recipe.Shaped.Builder shaped = Recipe.Shaped.builder().id("x").ingredients(List.of(stick)).results(List.of(result))
+            .station(RecipeStations.CRAFTING_TABLE).assumeSymmetry(true);
+        assertThrows(IllegalArgumentException.class, () -> shaped.grid(1, 2).build());
+        assertThrows(IllegalArgumentException.class, () -> shaped.grid(1, 1).results(List.of()).build());
+        assertThrows(IllegalArgumentException.class, () -> Recipe.Shapeless.builder().id("x").ingredients(List.of(stick))
+            .station(RecipeStations.CRAFTING_TABLE).build());
         assertThrows(IllegalArgumentException.class, () -> new Ingredient.Tag("minecraft:planks", 0));
         assertThrows(IllegalArgumentException.class, () -> new Ingredient.AnyVariant(BedrockItems.STICK, 0));
-        assertThrows(IllegalArgumentException.class, () -> new Result(BedrockItems.TORCH.variant(), 0, NbtMap.EMPTY, NbtMap.EMPTY));
-        new Recipe.Shaped("x", 1, 1, List.of(stick), List.of(result), RecipeStations.CRAFTING_TABLE, 0, true, none);
+        assertThrows(IllegalArgumentException.class, () -> Result.builder().item(BedrockItems.TORCH.variant()).count(0).build());
+        assertThrows(NullPointerException.class, () -> Result.builder().build());
+        Recipe.Shaped built = shaped.grid(1, 1).results(List.of(result)).build();
+        assertEquals(built, built.toBuilder().build());
+        assertEquals(Unlock.of(UnlockingContext.NONE), built.unlock(), "the default unlock");
     }
 
     @Test
@@ -88,6 +93,6 @@ class VanillaRecipesTest {
         assertEquals(UnlockingContext.NONE, Unlock.byIngredients(List.of(stick)).context());
         assertEquals(List.of(stick), Unlock.byIngredients(List.of(stick)).ingredients());
         assertTrue(Unlock.of(UnlockingContext.PLAYER_IN_WATER).ingredients().isEmpty());
-        assertThrows(IllegalArgumentException.class, () -> new Unlock(UnlockingContext.ALWAYS_UNLOCKED, List.of(stick)));
+        assertThrows(IllegalArgumentException.class, () -> Unlock.read(UnlockingContext.ALWAYS_UNLOCKED, List.of(stick)));
     }
 }

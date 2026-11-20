@@ -252,7 +252,7 @@ public final class CustomItem {
          * @throws NullPointerException if the category is null
          */
         public @NonNull Builder menuCategory(@NonNull CreativeCategory category) {
-            return menuCategory(ItemMenuCategory.builder().category(ItemMenuCategory.Category.fromValue(category.bedrockName())).build());
+            return menuCategory(ItemMenuCategory.builder().category(ItemMenuCategory.Category.of(category.bedrockName())).build());
         }
 
         /**
@@ -264,7 +264,7 @@ public final class CustomItem {
          * @throws NullPointerException if the category is null
          */
         public @NonNull Builder menuCategory(@NonNull CreativeCategory category, @NonNull String group) {
-            return menuCategory(ItemMenuCategory.builder().category(ItemMenuCategory.Category.fromValue(category.bedrockName()))
+            return menuCategory(ItemMenuCategory.builder().category(ItemMenuCategory.Category.of(category.bedrockName()))
                 .group(group).build());
         }
 

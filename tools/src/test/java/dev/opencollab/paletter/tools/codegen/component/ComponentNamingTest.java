@@ -80,7 +80,7 @@ class ComponentNamingTest {
         assertTrue(block.contains("case BlockWidget c -> out.put(\"test:block_widget.size\""), "the dispatch case carries the prefixed type name");
         String item = files.get("dev/opencollab/paletter/internal/component/ItemWire.java");
         assertTrue(item.contains("ItemWidget"), item);
-        assertTrue(files.get(ITEM_PKG + "ItemWidget.java").contains("public record ItemWidget("));
+        assertTrue(files.get(ITEM_PKG + "ItemWidget.java").contains("public final class ItemWidget implements ItemComponent"));
     }
 
     @Test

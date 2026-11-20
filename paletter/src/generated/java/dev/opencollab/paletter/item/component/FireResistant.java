@@ -11,16 +11,47 @@ import org.checkerframework.checker.nullness.qual.Nullable;
  * <p>
  * Add-on JSON: {@code "minecraft:fire_resistant"}.
  *
- * @param value Determines whether the item is immune to burning when dropped in fire or lava. Add-on JSON {@code value}.
- *        Default: <code>true</code>.
  * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/itemreference/examples/itemcomponents/minecraft_fire_resistant?view=minecraft-bedrock-stable">Microsoft Learn: minecraft:fire_resistant</a>
  * @since 1.0.0
  */
-public record FireResistant(boolean value) implements ItemComponent {
+public final class FireResistant implements ItemComponent {
     /**
      * The component name in add-on JSON.
      */
     public static final String NAME = "minecraft:fire_resistant";
+
+    private final boolean value;
+
+    private FireResistant(boolean value) {
+        this.value = value;
+    }
+
+    /**
+     * Determines whether the item is immune to burning when dropped in fire or lava. Add-on JSON {@code value}.
+     * Default: <code>true</code>.
+     *
+     * @return the value
+     */
+    public boolean value() {
+        return value;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        return this == o || o instanceof FireResistant other
+                && value == other.value;
+    }
+
+    @Override
+    public int hashCode() {
+        int h = Boolean.hashCode(value);
+        return h;
+    }
+
+    @Override
+    public String toString() {
+        return "FireResistant[value=" + value + "]";
+    }
 
     @Override
     public @NonNull String name() {

@@ -6,6 +6,7 @@ package dev.opencollab.paletter.item.component;
 import dev.opencollab.paletter.annotation.BedrockFormat;
 import dev.opencollab.paletter.internal.component.Check;
 import dev.opencollab.paletter.vanilla.BedrockItemType;
+import java.util.Objects;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
@@ -14,34 +15,96 @@ import org.checkerframework.checker.nullness.qual.Nullable;
  * <p>
  * Add-on JSON: {@code "minecraft:food"}.
  *
- * @param canAlwaysEat If true you can always eat this item (even when not hungry). Default is set to false. Add-on JSON {@code
- *        can_always_eat}. Default: <code>false</code>.
- * @param nutrition Value that is added to the entity's nutrition when the item is used. Default is set to 0. Add-on JSON {@code
- *        nutrition}. Default: <code>0</code>.
- * @param saturationModifier saturation_modifier is used in this formula: (nutrition * saturation_modifier * 2) when applying the
- *        saturation buff. Default is set to 0.6. Add-on JSON {@code saturation_modifier}. Default:
- *        <code>0.6000000238418579</code>. At least 0 (BDS 1.26.63.1).
- * @param usingConvertsTo When used, converts to the item specified by the string in this field. Default does not convert item. Add-on
- *        JSON {@code using_converts_to}. Optional (null: not set). The docs give the default {}, which is not a value
- *        of this type; unset, BDS's behaviour applies.
  * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/itemreference/examples/itemcomponents/minecraft_food?view=minecraft-bedrock-stable">Microsoft Learn: minecraft:food</a>
  * @since 1.0.0
  */
 @BedrockFormat("1.20.30")
-public record Food(boolean canAlwaysEat, int nutrition, float saturationModifier,
-        @Nullable String usingConvertsTo) implements ItemComponent {
+public final class Food implements ItemComponent {
     /**
      * The component name in add-on JSON.
      */
     public static final String NAME = "minecraft:food";
 
-    /**
-     * Checks the components.
-     *
-     * @throws IllegalArgumentException if a component is out of its documented range or conflicts with another
-     */
-    public Food {
+    private final boolean canAlwaysEat;
+
+    private final int nutrition;
+
+    private final float saturationModifier;
+
+    private final @Nullable String usingConvertsTo;
+
+    private Food(boolean canAlwaysEat, int nutrition, float saturationModifier,
+            @Nullable String usingConvertsTo) {
         Check.range("Food.saturationModifier", saturationModifier, 0.0, null);
+        this.canAlwaysEat = canAlwaysEat;
+        this.nutrition = nutrition;
+        this.saturationModifier = saturationModifier;
+        this.usingConvertsTo = usingConvertsTo;
+    }
+
+    /**
+     * If true you can always eat this item (even when not hungry). Default is set to false. Add-on JSON {@code
+     * can_always_eat}. Default: <code>false</code>.
+     *
+     * @return the value
+     */
+    public boolean canAlwaysEat() {
+        return canAlwaysEat;
+    }
+
+    /**
+     * Value that is added to the entity's nutrition when the item is used. Default is set to 0. Add-on JSON {@code
+     * nutrition}. Default: <code>0</code>.
+     *
+     * @return the value
+     */
+    public int nutrition() {
+        return nutrition;
+    }
+
+    /**
+     * saturation_modifier is used in this formula: (nutrition * saturation_modifier * 2) when applying the
+     * saturation buff. Default is set to 0.6. Add-on JSON {@code saturation_modifier}. Default:
+     * <code>0.6000000238418579</code>. At least 0 (BDS 1.26.63.1).
+     *
+     * @return the value
+     */
+    public float saturationModifier() {
+        return saturationModifier;
+    }
+
+    /**
+     * When used, converts to the item specified by the string in this field. Default does not convert item. Add-on
+     * JSON {@code using_converts_to}. Optional (null: not set). The docs give the default {}, which is not a value
+     * of this type; unset, BDS's behaviour applies.
+     *
+     * @return the value
+     */
+    public @Nullable String usingConvertsTo() {
+        return usingConvertsTo;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        return this == o || o instanceof Food other
+                && canAlwaysEat == other.canAlwaysEat
+                && nutrition == other.nutrition
+                && Float.compare(saturationModifier, other.saturationModifier) == 0
+                && Objects.equals(usingConvertsTo, other.usingConvertsTo);
+    }
+
+    @Override
+    public int hashCode() {
+        int h = Boolean.hashCode(canAlwaysEat);
+        h = 31 * h + nutrition;
+        h = 31 * h + Float.hashCode(saturationModifier);
+        h = 31 * h + Objects.hashCode(usingConvertsTo);
+        return h;
+    }
+
+    @Override
+    public String toString() {
+        return "Food[canAlwaysEat=" + canAlwaysEat + ", nutrition=" + nutrition + ", saturationModifier=" + saturationModifier + ", usingConvertsTo=" + usingConvertsTo + "]";
     }
 
     @Override

@@ -3,6 +3,9 @@
 // data/model/ATTRIBUTION.md.
 package dev.opencollab.paletter.block.component;
 
+import dev.opencollab.paletter.internal.component.Check;
+import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
@@ -13,27 +16,76 @@ import org.checkerframework.checker.nullness.qual.Nullable;
  * permutations of the block. The description MUST contain an identifier to identify the block by; the other
  * fields are optional.
  *
- * @param category Determines which category this block will be placed under in the inventory and crafting table container
- *        screens. Options are "construction", "nature", "equipment", "items", and "none". If omitted or "none" is
- *        specified, the block will not appear in the inventory or crafting table container screens. Add-on JSON {@code
- *        category}. Required.
- * @param group Specifies the language file key that maps to which expandable/collapsible group this block will be a part of
- *        within a category. If this field is omitted, or there is no group whose name matches the loc string, this
- *        block will be placed standalone in the given category. Add-on JSON {@code group}. Optional (null: not set).
- * @param hiddenInCommands Determines whether or not this block can be used with commands. Commands can use blocks by default, but you
- *        may use this to disable that functionality. Add-on JSON {@code is_hidden_in_commands}. Default:
- *        <code>false</code>.
  * @since 1.0.0
  */
-public record BlockMenuCategory(BlockMenuCategory. @NonNull Category category,
-        @Nullable String group, boolean hiddenInCommands) {
-    /**
-     * Checks the components.
-     *
-     * @throws NullPointerException if a required component is null
-     */
-    public BlockMenuCategory {
+public final class BlockMenuCategory {
+    private final @NonNull Category category;
+
+    private final @Nullable String group;
+
+    private final boolean hiddenInCommands;
+
+    private BlockMenuCategory(@NonNull Category category, @Nullable String group,
+            boolean hiddenInCommands) {
         Objects.requireNonNull(category, "BlockMenuCategory.category");
+        this.category = category;
+        this.group = group;
+        this.hiddenInCommands = hiddenInCommands;
+    }
+
+    /**
+     * Determines which category this block will be placed under in the inventory and crafting table container
+     * screens. Options are "construction", "nature", "equipment", "items", and "none". If omitted or "none" is
+     * specified, the block will not appear in the inventory or crafting table container screens. Add-on JSON {@code
+     * category}. Required.
+     *
+     * @return the value
+     */
+    public @NonNull Category category() {
+        return category;
+    }
+
+    /**
+     * Specifies the language file key that maps to which expandable/collapsible group this block will be a part of
+     * within a category. If this field is omitted, or there is no group whose name matches the loc string, this
+     * block will be placed standalone in the given category. Add-on JSON {@code group}. Optional (null: not set).
+     *
+     * @return the value
+     */
+    public @Nullable String group() {
+        return group;
+    }
+
+    /**
+     * Determines whether or not this block can be used with commands. Commands can use blocks by default, but you
+     * may use this to disable that functionality. Add-on JSON {@code is_hidden_in_commands}. Default:
+     * <code>false</code>.
+     *
+     * @return the value
+     */
+    public boolean hiddenInCommands() {
+        return hiddenInCommands;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        return this == o || o instanceof BlockMenuCategory other
+                && Objects.equals(category, other.category)
+                && Objects.equals(group, other.group)
+                && hiddenInCommands == other.hiddenInCommands;
+    }
+
+    @Override
+    public int hashCode() {
+        int h = Objects.hashCode(category);
+        h = 31 * h + Objects.hashCode(group);
+        h = 31 * h + Boolean.hashCode(hiddenInCommands);
+        return h;
+    }
+
+    @Override
+    public String toString() {
+        return "BlockMenuCategory[category=" + category + ", group=" + group + ", hiddenInCommands=" + hiddenInCommands + "]";
     }
 
     /**
@@ -121,38 +173,64 @@ public record BlockMenuCategory(BlockMenuCategory. @NonNull Category category,
     }
 
     /**
-     * The documented values; {@link #value()} is the add-on JSON string.
+     * A value of an add-on JSON string: a constant per documented value, {@link #of} for any other.
+     * {@link #value()} is the add-on JSON string. Not an enum: Bedrock adds values, so a {@code switch} over
+     * {@link #value()} needs a {@code default}.
      */
-    public enum Category {
+    public static final class Category {
         /**
          * {@code construction}
          */
-        CONSTRUCTION("construction"),
+        public static final Category CONSTRUCTION = new Category("construction");
 
         /**
          * {@code nature}
          */
-        NATURE("nature"),
+        public static final Category NATURE = new Category("nature");
 
         /**
          * {@code equipment}
          */
-        EQUIPMENT("equipment"),
+        public static final Category EQUIPMENT = new Category("equipment");
 
         /**
          * {@code items}
          */
-        ITEMS("items"),
+        public static final Category ITEMS = new Category("items");
 
         /**
          * {@code none}
          */
-        NONE("none");
+        public static final Category NONE = new Category("none");
+
+        private static final List<Category> KNOWN = List.of(CONSTRUCTION, NATURE, EQUIPMENT, ITEMS, NONE);
+
+        private static final Map<String, Category> BY_VALUE = Check.index(KNOWN, Category::value);
 
         private final String value;
 
-        Category(String value) {
+        private Category(String value) {
             this.value = value;
+        }
+
+        /**
+         * Returns the value of an add-on JSON string: the constant of a documented value, else a new value.
+         *
+         * @param value the value in add-on JSON
+         * @return the constant of the value, or a value Paletter does not know
+         */
+        public static @NonNull Category of(@NonNull String value) {
+            Category known = BY_VALUE.get(Objects.requireNonNull(value, "Category.value"));
+            return known != null ? known : new Category(value);
+        }
+
+        /**
+         * Returns the documented values, the constants of this class.
+         *
+         * @return the constants, in the order of the documentation
+         */
+        public static @NonNull List<Category> known() {
+            return KNOWN;
         }
 
         /**
@@ -165,19 +243,27 @@ public record BlockMenuCategory(BlockMenuCategory. @NonNull Category category,
         }
 
         /**
-         * Finds the constant of an add-on JSON value.
+         * Returns whether the value is documented, one of the constants.
          *
-         * @param value the value in add-on JSON
-         * @return the constant of the value
-         * @throws IllegalArgumentException if the value is not documented
+         * @return whether this is one of {@link #known()}
          */
-        public static @NonNull Category fromValue(@NonNull String value) {
-            for (Category constant : values()) {
-                if (constant.value.equals(value)) {
-                    return constant;
-                }
-            }
-            throw new IllegalArgumentException("Not a Category: " + value);
+        public boolean isKnown() {
+            return BY_VALUE.get(value) == this;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            return this == o || o instanceof Category other && value.equals(other.value);
+        }
+
+        @Override
+        public int hashCode() {
+            return value.hashCode();
+        }
+
+        @Override
+        public String toString() {
+            return value;
         }
     }
 }

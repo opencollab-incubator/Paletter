@@ -5,7 +5,9 @@ package dev.opencollab.paletter.block.component;
 
 import dev.opencollab.paletter.annotation.BedrockExperiment;
 import dev.opencollab.paletter.annotation.BedrockFormat;
+import dev.opencollab.paletter.internal.component.Check;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
@@ -17,32 +19,68 @@ import org.checkerframework.checker.nullness.qual.Nullable;
  * Add-on JSON: {@code "minecraft:connection_rule"}.
  * The creator docs name the experiment Upcoming Creator Features for it (in some format versions); unverified against BDS.
  *
- * @param acceptsConnectionsFrom The type of block allowed to connect to this block. Note that the "only_fences" option allows connections from
- *        all Vanilla fences excluding NetherBrick. Add-on JSON {@code accepts_connections_from}. Default:
- *        <code>"all"</code>.
- * @param enabledDirections The cardinal directions that connection is enabled for. Note that if "none" is specified for
- *        "accepts_connections_from", this field will not be used. Add-on JSON {@code enabled_directions}. Default:
- *        <code>["south","north","east","west"]</code>.
  * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/blockreference/examples/blockcomponents/minecraftblock_connection_rule?view=minecraft-bedrock-stable">Microsoft Learn: minecraft:connection_rule</a>
  * @since 1.0.0
  */
 @BedrockFormat("1.21.130")
 @BedrockExperiment("upcoming_creator_features")
-public record ConnectionRule(ConnectionRule. @NonNull AcceptsConnectionsFrom acceptsConnectionsFrom,
-        @NonNull List<ConnectionRule.EnabledDirections> enabledDirections) implements BlockComponent {
+public final class ConnectionRule implements BlockComponent {
     /**
      * The component name in add-on JSON.
      */
     public static final String NAME = "minecraft:connection_rule";
 
-    /**
-     * Checks the components and copies lists and maps, so the value is immutable.
-     *
-     * @throws NullPointerException if a required component is null
-     */
-    public ConnectionRule {
+    private final @NonNull AcceptsConnectionsFrom acceptsConnectionsFrom;
+
+    private final @NonNull List<EnabledDirections> enabledDirections;
+
+    private ConnectionRule(@NonNull AcceptsConnectionsFrom acceptsConnectionsFrom,
+            @NonNull List<EnabledDirections> enabledDirections) {
         Objects.requireNonNull(acceptsConnectionsFrom, "ConnectionRule.acceptsConnectionsFrom");
         enabledDirections = List.copyOf(Objects.requireNonNull(enabledDirections, "ConnectionRule.enabledDirections"));
+        this.acceptsConnectionsFrom = acceptsConnectionsFrom;
+        this.enabledDirections = enabledDirections;
+    }
+
+    /**
+     * The type of block allowed to connect to this block. Note that the "only_fences" option allows connections from
+     * all Vanilla fences excluding NetherBrick. Add-on JSON {@code accepts_connections_from}. Default:
+     * <code>"all"</code>.
+     *
+     * @return the value
+     */
+    public @NonNull AcceptsConnectionsFrom acceptsConnectionsFrom() {
+        return acceptsConnectionsFrom;
+    }
+
+    /**
+     * The cardinal directions that connection is enabled for. Note that if "none" is specified for
+     * "accepts_connections_from", this field will not be used. Add-on JSON {@code enabled_directions}. Default:
+     * <code>["south","north","east","west"]</code>.
+     *
+     * @return the value
+     */
+    public @NonNull List<EnabledDirections> enabledDirections() {
+        return enabledDirections;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        return this == o || o instanceof ConnectionRule other
+                && Objects.equals(acceptsConnectionsFrom, other.acceptsConnectionsFrom)
+                && Objects.equals(enabledDirections, other.enabledDirections);
+    }
+
+    @Override
+    public int hashCode() {
+        int h = Objects.hashCode(acceptsConnectionsFrom);
+        h = 31 * h + Objects.hashCode(enabledDirections);
+        return h;
+    }
+
+    @Override
+    public String toString() {
+        return "ConnectionRule[acceptsConnectionsFrom=" + acceptsConnectionsFrom + ", enabledDirections=" + enabledDirections + "]";
     }
 
     @Override
@@ -129,28 +167,54 @@ public record ConnectionRule(ConnectionRule. @NonNull AcceptsConnectionsFrom acc
     }
 
     /**
-     * The documented values; {@link #value()} is the add-on JSON string.
+     * A value of an add-on JSON string: a constant per documented value, {@link #of} for any other.
+     * {@link #value()} is the add-on JSON string. Not an enum: Bedrock adds values, so a {@code switch} over
+     * {@link #value()} needs a {@code default}.
      */
-    public enum AcceptsConnectionsFrom {
+    public static final class AcceptsConnectionsFrom {
         /**
          * {@code all}
          */
-        ALL("all"),
+        public static final AcceptsConnectionsFrom ALL = new AcceptsConnectionsFrom("all");
 
         /**
          * {@code none}
          */
-        NONE("none"),
+        public static final AcceptsConnectionsFrom NONE = new AcceptsConnectionsFrom("none");
 
         /**
          * {@code only_fences}
          */
-        ONLY_FENCES("only_fences");
+        public static final AcceptsConnectionsFrom ONLY_FENCES = new AcceptsConnectionsFrom("only_fences");
+
+        private static final List<AcceptsConnectionsFrom> KNOWN = List.of(ALL, NONE, ONLY_FENCES);
+
+        private static final Map<String, AcceptsConnectionsFrom> BY_VALUE = Check.index(KNOWN, AcceptsConnectionsFrom::value);
 
         private final String value;
 
-        AcceptsConnectionsFrom(String value) {
+        private AcceptsConnectionsFrom(String value) {
             this.value = value;
+        }
+
+        /**
+         * Returns the value of an add-on JSON string: the constant of a documented value, else a new value.
+         *
+         * @param value the value in add-on JSON
+         * @return the constant of the value, or a value Paletter does not know
+         */
+        public static @NonNull AcceptsConnectionsFrom of(@NonNull String value) {
+            AcceptsConnectionsFrom known = BY_VALUE.get(Objects.requireNonNull(value, "AcceptsConnectionsFrom.value"));
+            return known != null ? known : new AcceptsConnectionsFrom(value);
+        }
+
+        /**
+         * Returns the documented values, the constants of this class.
+         *
+         * @return the constants, in the order of the documentation
+         */
+        public static @NonNull List<AcceptsConnectionsFrom> known() {
+            return KNOWN;
         }
 
         /**
@@ -163,50 +227,84 @@ public record ConnectionRule(ConnectionRule. @NonNull AcceptsConnectionsFrom acc
         }
 
         /**
-         * Finds the constant of an add-on JSON value.
+         * Returns whether the value is documented, one of the constants.
          *
-         * @param value the value in add-on JSON
-         * @return the constant of the value
-         * @throws IllegalArgumentException if the value is not documented
+         * @return whether this is one of {@link #known()}
          */
-        public static @NonNull AcceptsConnectionsFrom fromValue(@NonNull String value) {
-            for (AcceptsConnectionsFrom constant : values()) {
-                if (constant.value.equals(value)) {
-                    return constant;
-                }
-            }
-            throw new IllegalArgumentException("Not a AcceptsConnectionsFrom: " + value);
+        public boolean isKnown() {
+            return BY_VALUE.get(value) == this;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            return this == o || o instanceof AcceptsConnectionsFrom other && value.equals(other.value);
+        }
+
+        @Override
+        public int hashCode() {
+            return value.hashCode();
+        }
+
+        @Override
+        public String toString() {
+            return value;
         }
     }
 
     /**
-     * The documented values; {@link #value()} is the add-on JSON string.
+     * A value of an add-on JSON string: a constant per documented value, {@link #of} for any other.
+     * {@link #value()} is the add-on JSON string. Not an enum: Bedrock adds values, so a {@code switch} over
+     * {@link #value()} needs a {@code default}.
      */
-    public enum EnabledDirections {
+    public static final class EnabledDirections {
         /**
          * {@code east}
          */
-        EAST("east"),
+        public static final EnabledDirections EAST = new EnabledDirections("east");
 
         /**
          * {@code north}
          */
-        NORTH("north"),
+        public static final EnabledDirections NORTH = new EnabledDirections("north");
 
         /**
          * {@code south}
          */
-        SOUTH("south"),
+        public static final EnabledDirections SOUTH = new EnabledDirections("south");
 
         /**
          * {@code west}
          */
-        WEST("west");
+        public static final EnabledDirections WEST = new EnabledDirections("west");
+
+        private static final List<EnabledDirections> KNOWN = List.of(EAST, NORTH, SOUTH, WEST);
+
+        private static final Map<String, EnabledDirections> BY_VALUE = Check.index(KNOWN, EnabledDirections::value);
 
         private final String value;
 
-        EnabledDirections(String value) {
+        private EnabledDirections(String value) {
             this.value = value;
+        }
+
+        /**
+         * Returns the value of an add-on JSON string: the constant of a documented value, else a new value.
+         *
+         * @param value the value in add-on JSON
+         * @return the constant of the value, or a value Paletter does not know
+         */
+        public static @NonNull EnabledDirections of(@NonNull String value) {
+            EnabledDirections known = BY_VALUE.get(Objects.requireNonNull(value, "EnabledDirections.value"));
+            return known != null ? known : new EnabledDirections(value);
+        }
+
+        /**
+         * Returns the documented values, the constants of this class.
+         *
+         * @return the constants, in the order of the documentation
+         */
+        public static @NonNull List<EnabledDirections> known() {
+            return KNOWN;
         }
 
         /**
@@ -219,19 +317,27 @@ public record ConnectionRule(ConnectionRule. @NonNull AcceptsConnectionsFrom acc
         }
 
         /**
-         * Finds the constant of an add-on JSON value.
+         * Returns whether the value is documented, one of the constants.
          *
-         * @param value the value in add-on JSON
-         * @return the constant of the value
-         * @throws IllegalArgumentException if the value is not documented
+         * @return whether this is one of {@link #known()}
          */
-        public static @NonNull EnabledDirections fromValue(@NonNull String value) {
-            for (EnabledDirections constant : values()) {
-                if (constant.value.equals(value)) {
-                    return constant;
-                }
-            }
-            throw new IllegalArgumentException("Not a EnabledDirections: " + value);
+        public boolean isKnown() {
+            return BY_VALUE.get(value) == this;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            return this == o || o instanceof EnabledDirections other && value.equals(other.value);
+        }
+
+        @Override
+        public int hashCode() {
+            return value.hashCode();
+        }
+
+        @Override
+        public String toString() {
+            return value;
         }
     }
 }

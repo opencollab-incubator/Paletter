@@ -602,7 +602,7 @@ versions at which behaviour changes (the format sweep); everything `mappings.jso
 
 ### Component API
 
-`./gradlew :tools:generateComponentApi` writes the component records in `item.component` and `block.component`, the
+`./gradlew :tools:generateComponentApi` writes the component classes in `item.component` and `block.component`, the
 sealed `ItemComponent`, `BlockComponent` and `BlockTrait`, and the encoders in `internal.component` (`ItemWire`,
 `BlockWire`, `TraitWire`, `ComponentIndex`, `TraitStateTable`). The generator lives in its own `componentApi` source set,
 so it runs even when `paletter` does not compile.
@@ -624,8 +624,12 @@ Rules the generator follows:
 
 - Defaults are the documented ones, unless BDS sends something else for an omitted field; then the field stays unset
   and the encoder writes BDS's value.
-- Required fields are checked in `build()`; ranges and step sizes in the record's constructor, so with or without a
-  builder.
+- Components and their objects are final classes with a private constructor, record-style accessors and a builder, not
+  records; documented string values are open value classes (constants, `of(String)`, `isKnown()`), not enums
+  (docs/api.md, "Evolution"). An exhaustive value table of the encoder switches over `value()` and leaves a newer value out
+  with a report warning.
+- Required fields are checked in `build()`; ranges and step sizes in the private constructor, which every factory and
+  builder goes through.
 - A field with no rule in a protocol window is dropped there with a report warning.
 - `@ServerOnly`, `@Deprecated` and `@ReplacedBy` come from the data: the windows' status, the docs status, BDS's
   rejection message, or a `fixtures.json` `replacedBy` entry.

@@ -17,11 +17,29 @@ import org.checkerframework.checker.nullness.qual.NonNull;
  * @since 1.0.0
  */
 @ServerOnly
-public record Hidden() implements BlockComponent {
+public final class Hidden implements BlockComponent {
     /**
      * The component name in add-on JSON.
      */
     public static final String NAME = "test:hidden";
+
+    private Hidden() {
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        return o instanceof Hidden;
+    }
+
+    @Override
+    public int hashCode() {
+        return 0;
+    }
+
+    @Override
+    public String toString() {
+        return "Hidden[]";
+    }
 
     @Override
     public @NonNull String name() {

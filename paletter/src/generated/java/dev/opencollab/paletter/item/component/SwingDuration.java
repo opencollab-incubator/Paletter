@@ -14,26 +14,49 @@ import org.checkerframework.checker.nullness.qual.Nullable;
  * <p>
  * Add-on JSON: {@code "minecraft:swing_duration"}.
  *
- * @param value Duration, in seconds, of the item's swing animation played when mining or attacking. Affects visuals only and
- *        does not impact attack frequency or other gameplay mechanics. Add-on JSON {@code value}. Default:
- *        <code>0.30000001192092896</code>. At least 0 (BDS 1.26.63.1).
  * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/itemreference/examples/itemcomponents/minecraft_swing_duration?view=minecraft-bedrock-stable">Microsoft Learn: minecraft:swing_duration</a>
  * @since 1.0.0
  */
 @BedrockFormat("1.21.120")
-public record SwingDuration(float value) implements ItemComponent {
+public final class SwingDuration implements ItemComponent {
     /**
      * The component name in add-on JSON.
      */
     public static final String NAME = "minecraft:swing_duration";
 
-    /**
-     * Checks the components.
-     *
-     * @throws IllegalArgumentException if a component is out of its documented range or conflicts with another
-     */
-    public SwingDuration {
+    private final float value;
+
+    private SwingDuration(float value) {
         Check.range("SwingDuration.value", value, 0.0, null);
+        this.value = value;
+    }
+
+    /**
+     * Duration, in seconds, of the item's swing animation played when mining or attacking. Affects visuals only and
+     * does not impact attack frequency or other gameplay mechanics. Add-on JSON {@code value}. Default:
+     * <code>0.30000001192092896</code>. At least 0 (BDS 1.26.63.1).
+     *
+     * @return the value
+     */
+    public float value() {
+        return value;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        return this == o || o instanceof SwingDuration other
+                && Float.compare(value, other.value) == 0;
+    }
+
+    @Override
+    public int hashCode() {
+        int h = Float.hashCode(value);
+        return h;
+    }
+
+    @Override
+    public String toString() {
+        return "SwingDuration[value=" + value + "]";
     }
 
     @Override

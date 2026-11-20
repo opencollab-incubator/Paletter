@@ -4,6 +4,9 @@
 package dev.opencollab.paletter.item.component;
 
 import dev.opencollab.paletter.annotation.BedrockFormat;
+import dev.opencollab.paletter.internal.component.Check;
+import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
@@ -14,32 +17,81 @@ import org.checkerframework.checker.nullness.qual.Nullable;
  * <p>
  * Add-on JSON: {@code "minecraft:cooldown"}.
  *
- * @param category A string identifier that groups items together. When an item with a cooldown is used, all items sharing the
- *        same category also enter cooldown. Add-on JSON {@code category}. Required.
- * @param duration The duration of time in seconds that items with the matching category will spend cooling down before becoming
- *        usable again. Add-on JSON {@code duration}. Required.
- * @param type The type of action that triggers the cooldown. Use 'use' for items consumed on use, or 'attack' for weapons.
- *        Default is 'use'. This item requires a format version of at least 1.21.130. Add-on JSON {@code type}. Default:
- *        <code>"use"</code>.
  * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/itemreference/examples/itemcomponents/minecraft_cooldown?view=minecraft-bedrock-stable">Microsoft Learn: minecraft:cooldown</a>
  * @since 1.0.0
  */
 @BedrockFormat("1.20.10")
-public record Cooldown(@NonNull String category, float duration,
-        @BedrockFormat("1.21.130") Cooldown. @NonNull Type type) implements ItemComponent {
+public final class Cooldown implements ItemComponent {
     /**
      * The component name in add-on JSON.
      */
     public static final String NAME = "minecraft:cooldown";
 
-    /**
-     * Checks the components.
-     *
-     * @throws NullPointerException if a required component is null
-     */
-    public Cooldown {
+    private final @NonNull String category;
+
+    private final float duration;
+
+    private final @NonNull Type type;
+
+    private Cooldown(@NonNull String category, float duration, @NonNull Type type) {
         Objects.requireNonNull(category, "Cooldown.category");
         Objects.requireNonNull(type, "Cooldown.type");
+        this.category = category;
+        this.duration = duration;
+        this.type = type;
+    }
+
+    /**
+     * A string identifier that groups items together. When an item with a cooldown is used, all items sharing the
+     * same category also enter cooldown. Add-on JSON {@code category}. Required.
+     *
+     * @return the value
+     */
+    public @NonNull String category() {
+        return category;
+    }
+
+    /**
+     * The duration of time in seconds that items with the matching category will spend cooling down before becoming
+     * usable again. Add-on JSON {@code duration}. Required.
+     *
+     * @return the value
+     */
+    public float duration() {
+        return duration;
+    }
+
+    /**
+     * The type of action that triggers the cooldown. Use 'use' for items consumed on use, or 'attack' for weapons.
+     * Default is 'use'. This item requires a format version of at least 1.21.130. Add-on JSON {@code type}. Default:
+     * <code>"use"</code>.
+     *
+     * @return the value
+     */
+    @BedrockFormat("1.21.130")
+    public @NonNull Type type() {
+        return type;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        return this == o || o instanceof Cooldown other
+                && Objects.equals(category, other.category)
+                && Float.compare(duration, other.duration) == 0
+                && Objects.equals(type, other.type);
+    }
+
+    @Override
+    public int hashCode() {
+        int h = Objects.hashCode(category);
+        h = 31 * h + Float.hashCode(duration);
+        h = 31 * h + Objects.hashCode(type);
+        return h;
+    }
+
+    @Override
+    public String toString() {
+        return "Cooldown[category=" + category + ", duration=" + duration + ", type=" + type + "]";
     }
 
     @Override
@@ -135,23 +187,49 @@ public record Cooldown(@NonNull String category, float duration,
     }
 
     /**
-     * The documented values; {@link #value()} is the add-on JSON string.
+     * A value of an add-on JSON string: a constant per documented value, {@link #of} for any other.
+     * {@link #value()} is the add-on JSON string. Not an enum: Bedrock adds values, so a {@code switch} over
+     * {@link #value()} needs a {@code default}.
      */
-    public enum Type {
+    public static final class Type {
         /**
          * {@code attack}
          */
-        ATTACK("attack"),
+        public static final Type ATTACK = new Type("attack");
 
         /**
          * {@code use}
          */
-        USE("use");
+        public static final Type USE = new Type("use");
+
+        private static final List<Type> KNOWN = List.of(ATTACK, USE);
+
+        private static final Map<String, Type> BY_VALUE = Check.index(KNOWN, Type::value);
 
         private final String value;
 
-        Type(String value) {
+        private Type(String value) {
             this.value = value;
+        }
+
+        /**
+         * Returns the value of an add-on JSON string: the constant of a documented value, else a new value.
+         *
+         * @param value the value in add-on JSON
+         * @return the constant of the value, or a value Paletter does not know
+         */
+        public static @NonNull Type of(@NonNull String value) {
+            Type known = BY_VALUE.get(Objects.requireNonNull(value, "Type.value"));
+            return known != null ? known : new Type(value);
+        }
+
+        /**
+         * Returns the documented values, the constants of this class.
+         *
+         * @return the constants, in the order of the documentation
+         */
+        public static @NonNull List<Type> known() {
+            return KNOWN;
         }
 
         /**
@@ -164,19 +242,27 @@ public record Cooldown(@NonNull String category, float duration,
         }
 
         /**
-         * Finds the constant of an add-on JSON value.
+         * Returns whether the value is documented, one of the constants.
          *
-         * @param value the value in add-on JSON
-         * @return the constant of the value
-         * @throws IllegalArgumentException if the value is not documented
+         * @return whether this is one of {@link #known()}
          */
-        public static @NonNull Type fromValue(@NonNull String value) {
-            for (Type constant : values()) {
-                if (constant.value.equals(value)) {
-                    return constant;
-                }
-            }
-            throw new IllegalArgumentException("Not a Type: " + value);
+        public boolean isKnown() {
+            return BY_VALUE.get(value) == this;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            return this == o || o instanceof Type other && value.equals(other.value);
+        }
+
+        @Override
+        public int hashCode() {
+            return value.hashCode();
+        }
+
+        @Override
+        public String toString() {
+            return value;
         }
     }
 }

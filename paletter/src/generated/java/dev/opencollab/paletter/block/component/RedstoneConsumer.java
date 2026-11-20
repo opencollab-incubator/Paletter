@@ -19,30 +19,66 @@ import org.checkerframework.checker.nullness.qual.Nullable;
  * 1.26.63.1, 1.26.70.24), so it has no client effect. Palettes leave it out without a warning.
  * The creator docs name the experiment Upcoming Creator Features for it (in some format versions); unverified against BDS.
  *
- * @param minPower Optional minimum value for incoming signal strength. If signal strength is greater than or equal to this value
- *        then the 'onRedstoneUpdate' event is sent to Scripts. Defaults to 0 meaning event is always emitted. Value
- *        must be &lt;= 15. Add-on JSON {@code min_power}. Default: <code>0</code>. At most 15 (BDS 1.26.63.1).
- * @param propagatesPower Optional Boolean to control whether a signal can pass through this block or not, defaults to false. Add-on
- *        JSON {@code propagates_power}. Default: <code>false</code>.
  * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/blockreference/examples/blockcomponents/minecraftblock_redstone_consumer?view=minecraft-bedrock-stable">Microsoft Learn: minecraft:redstone_consumer</a>
  * @since 1.0.0
  */
 @BedrockFormat("1.21.130")
 @BedrockExperiment("upcoming_creator_features")
 @ServerOnly
-public record RedstoneConsumer(int minPower, boolean propagatesPower) implements BlockComponent {
+public final class RedstoneConsumer implements BlockComponent {
     /**
      * The component name in add-on JSON.
      */
     public static final String NAME = "minecraft:redstone_consumer";
 
-    /**
-     * Checks the components.
-     *
-     * @throws IllegalArgumentException if a component is out of its documented range or conflicts with another
-     */
-    public RedstoneConsumer {
+    private final int minPower;
+
+    private final boolean propagatesPower;
+
+    private RedstoneConsumer(int minPower, boolean propagatesPower) {
         Check.range("RedstoneConsumer.minPower", minPower, null, 15.0);
+        this.minPower = minPower;
+        this.propagatesPower = propagatesPower;
+    }
+
+    /**
+     * Optional minimum value for incoming signal strength. If signal strength is greater than or equal to this value
+     * then the 'onRedstoneUpdate' event is sent to Scripts. Defaults to 0 meaning event is always emitted. Value
+     * must be &lt;= 15. Add-on JSON {@code min_power}. Default: <code>0</code>. At most 15 (BDS 1.26.63.1).
+     *
+     * @return the value
+     */
+    public int minPower() {
+        return minPower;
+    }
+
+    /**
+     * Optional Boolean to control whether a signal can pass through this block or not, defaults to false. Add-on
+     * JSON {@code propagates_power}. Default: <code>false</code>.
+     *
+     * @return the value
+     */
+    public boolean propagatesPower() {
+        return propagatesPower;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        return this == o || o instanceof RedstoneConsumer other
+                && minPower == other.minPower
+                && propagatesPower == other.propagatesPower;
+    }
+
+    @Override
+    public int hashCode() {
+        int h = minPower;
+        h = 31 * h + Boolean.hashCode(propagatesPower);
+        return h;
+    }
+
+    @Override
+    public String toString() {
+        return "RedstoneConsumer[minPower=" + minPower + ", propagatesPower=" + propagatesPower + "]";
     }
 
     @Override

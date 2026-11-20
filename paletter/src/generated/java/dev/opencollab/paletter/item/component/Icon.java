@@ -6,6 +6,7 @@ package dev.opencollab.paletter.item.component;
 import dev.opencollab.paletter.annotation.BedrockFormat;
 import dev.opencollab.paletter.internal.component.Check;
 import java.util.Map;
+import java.util.Objects;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
@@ -15,27 +16,64 @@ import org.checkerframework.checker.nullness.qual.Nullable;
  * Add-on JSON: {@code "minecraft:icon"}.
  * Compiled by the hand transform {@code Transforms.iconTextures}.
  *
- * @param textures This map contains the different textures that can be used for the item's icon. Default will contain the actual
- *        icon texture. Armor trim textures and palettes can be specified here as well. The icon textures are the keys
- *        from the resource_pack/textures/item_texture.json 'texture_data' object associated with the texture file.
- *        Add-on JSON {@code textures}. Optional (null: not set).
- * @param texture The string form: the icon's default texture (item_texture.json short name). Optional (null: not set).
  * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/itemreference/examples/itemcomponents/minecraft_icon?view=minecraft-bedrock-stable">Microsoft Learn: minecraft:icon</a>
  * @since 1.0.0
  */
 @BedrockFormat("1.20.0")
-public record Icon(@Nullable Map<String, String> textures,
-        @Nullable String texture) implements ItemComponent {
+public final class Icon implements ItemComponent {
     /**
      * The component name in add-on JSON.
      */
     public static final String NAME = "minecraft:icon";
 
-    /**
-     * Copies lists and maps, so the value is immutable.
-     */
-    public Icon {
+    private final @Nullable Map<String, String> textures;
+
+    private final @Nullable String texture;
+
+    private Icon(@Nullable Map<String, String> textures, @Nullable String texture) {
         textures = textures == null ? null : Check.copy(textures, "Icon.textures");
+        this.textures = textures;
+        this.texture = texture;
+    }
+
+    /**
+     * This map contains the different textures that can be used for the item's icon. Default will contain the actual
+     * icon texture. Armor trim textures and palettes can be specified here as well. The icon textures are the keys
+     * from the resource_pack/textures/item_texture.json 'texture_data' object associated with the texture file.
+     * Add-on JSON {@code textures}. Optional (null: not set).
+     *
+     * @return the value
+     */
+    public @Nullable Map<String, String> textures() {
+        return textures;
+    }
+
+    /**
+     * The string form: the icon's default texture (item_texture.json short name). Optional (null: not set).
+     *
+     * @return the value
+     */
+    public @Nullable String texture() {
+        return texture;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        return this == o || o instanceof Icon other
+                && Objects.equals(textures, other.textures)
+                && Objects.equals(texture, other.texture);
+    }
+
+    @Override
+    public int hashCode() {
+        int h = Objects.hashCode(textures);
+        h = 31 * h + Objects.hashCode(texture);
+        return h;
+    }
+
+    @Override
+    public String toString() {
+        return "Icon[textures=" + textures + ", texture=" + texture + "]";
     }
 
     @Override

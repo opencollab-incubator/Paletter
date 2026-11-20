@@ -4,6 +4,9 @@
 package dev.opencollab.paletter.block.component;
 
 import dev.opencollab.paletter.annotation.ServerOnly;
+import dev.opencollab.paletter.internal.component.Check;
+import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
@@ -21,31 +24,66 @@ import org.checkerframework.checker.nullness.qual.Nullable;
  * The creator docs name the experiment experimental (toggle not named) for it (in some format versions); unverified against BDS.
  * Unverified: the creator docs name experiment "experimental (toggle not named)", which is in no capture.
  *
- * @param down The instrument sound that plays when the note block is above this block (the block's down face is exposed to
- *        the note block). Use "note.none" to specify no sound for this face. Add-on JSON {@code down}. Default:
- *        <code>"note.none"</code>.
- * @param up The instrument sound that plays when the note block is below this block (the block's up face is exposed to the
- *        note block). Use "note.none" to specify no sound for this face. Add-on JSON {@code up}. Default:
- *        <code>"note.harp"</code>.
  * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/blockreference/examples/blockcomponents/minecraftblock_instrument_sound?view=minecraft-bedrock-stable">Microsoft Learn: minecraft:instrument_sound</a>
  * @since 1.0.0
  */
 @ServerOnly
-public record InstrumentSound(InstrumentSound. @NonNull Down down,
-        InstrumentSound. @NonNull Up up) implements BlockComponent {
+public final class InstrumentSound implements BlockComponent {
     /**
      * The component name in add-on JSON.
      */
     public static final String NAME = "minecraft:instrument_sound";
 
-    /**
-     * Checks the components.
-     *
-     * @throws NullPointerException if a required component is null
-     */
-    public InstrumentSound {
+    private final @NonNull Down down;
+
+    private final @NonNull Up up;
+
+    private InstrumentSound(@NonNull Down down, @NonNull Up up) {
         Objects.requireNonNull(down, "InstrumentSound.down");
         Objects.requireNonNull(up, "InstrumentSound.up");
+        this.down = down;
+        this.up = up;
+    }
+
+    /**
+     * The instrument sound that plays when the note block is above this block (the block's down face is exposed to
+     * the note block). Use "note.none" to specify no sound for this face. Add-on JSON {@code down}. Default:
+     * <code>"note.none"</code>.
+     *
+     * @return the value
+     */
+    public @NonNull Down down() {
+        return down;
+    }
+
+    /**
+     * The instrument sound that plays when the note block is below this block (the block's up face is exposed to the
+     * note block). Use "note.none" to specify no sound for this face. Add-on JSON {@code up}. Default:
+     * <code>"note.harp"</code>.
+     *
+     * @return the value
+     */
+    public @NonNull Up up() {
+        return up;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        return this == o || o instanceof InstrumentSound other
+                && Objects.equals(down, other.down)
+                && Objects.equals(up, other.up);
+    }
+
+    @Override
+    public int hashCode() {
+        int h = Objects.hashCode(down);
+        h = 31 * h + Objects.hashCode(up);
+        return h;
+    }
+
+    @Override
+    public String toString() {
+        return "InstrumentSound[down=" + down + ", up=" + up + "]";
     }
 
     @Override
@@ -120,148 +158,174 @@ public record InstrumentSound(InstrumentSound. @NonNull Down down,
     }
 
     /**
-     * The documented values; {@link #value()} is the add-on JSON string.
+     * A value of an add-on JSON string: a constant per documented value, {@link #of} for any other.
+     * {@link #value()} is the add-on JSON string. Not an enum: Bedrock adds values, so a {@code switch} over
+     * {@link #value()} needs a {@code default}.
      */
-    public enum Down {
+    public static final class Down {
         /**
          * {@code note.harp}
          */
-        NOTE_HARP("note.harp"),
+        public static final Down NOTE_HARP = new Down("note.harp");
 
         /**
          * {@code note.bd}
          */
-        NOTE_BD("note.bd"),
+        public static final Down NOTE_BD = new Down("note.bd");
 
         /**
          * {@code note.snare}
          */
-        NOTE_SNARE("note.snare"),
+        public static final Down NOTE_SNARE = new Down("note.snare");
 
         /**
          * {@code note.hat}
          */
-        NOTE_HAT("note.hat"),
+        public static final Down NOTE_HAT = new Down("note.hat");
 
         /**
          * {@code note.bassattack}
          */
-        NOTE_BASSATTACK("note.bassattack"),
+        public static final Down NOTE_BASSATTACK = new Down("note.bassattack");
 
         /**
          * {@code note.flute}
          */
-        NOTE_FLUTE("note.flute"),
+        public static final Down NOTE_FLUTE = new Down("note.flute");
 
         /**
          * {@code note.bell}
          */
-        NOTE_BELL("note.bell"),
+        public static final Down NOTE_BELL = new Down("note.bell");
 
         /**
          * {@code note.guitar}
          */
-        NOTE_GUITAR("note.guitar"),
+        public static final Down NOTE_GUITAR = new Down("note.guitar");
 
         /**
          * {@code note.chime}
          */
-        NOTE_CHIME("note.chime"),
+        public static final Down NOTE_CHIME = new Down("note.chime");
 
         /**
          * {@code note.xylophone}
          */
-        NOTE_XYLOPHONE("note.xylophone"),
+        public static final Down NOTE_XYLOPHONE = new Down("note.xylophone");
 
         /**
          * {@code note.iron_xylophone}
          */
-        NOTE_IRON_XYLOPHONE("note.iron_xylophone"),
+        public static final Down NOTE_IRON_XYLOPHONE = new Down("note.iron_xylophone");
 
         /**
          * {@code note.cow_bell}
          */
-        NOTE_COW_BELL("note.cow_bell"),
+        public static final Down NOTE_COW_BELL = new Down("note.cow_bell");
 
         /**
          * {@code note.didgeridoo}
          */
-        NOTE_DIDGERIDOO("note.didgeridoo"),
+        public static final Down NOTE_DIDGERIDOO = new Down("note.didgeridoo");
 
         /**
          * {@code note.bit}
          */
-        NOTE_BIT("note.bit"),
+        public static final Down NOTE_BIT = new Down("note.bit");
 
         /**
          * {@code note.banjo}
          */
-        NOTE_BANJO("note.banjo"),
+        public static final Down NOTE_BANJO = new Down("note.banjo");
 
         /**
          * {@code note.pling}
          */
-        NOTE_PLING("note.pling"),
+        public static final Down NOTE_PLING = new Down("note.pling");
 
         /**
          * {@code note.trumpet}
          */
-        NOTE_TRUMPET("note.trumpet"),
+        public static final Down NOTE_TRUMPET = new Down("note.trumpet");
 
         /**
          * {@code note.trumpet_exposed}
          */
-        NOTE_TRUMPET_EXPOSED("note.trumpet_exposed"),
+        public static final Down NOTE_TRUMPET_EXPOSED = new Down("note.trumpet_exposed");
 
         /**
          * {@code note.trumpet_weathered}
          */
-        NOTE_TRUMPET_WEATHERED("note.trumpet_weathered"),
+        public static final Down NOTE_TRUMPET_WEATHERED = new Down("note.trumpet_weathered");
 
         /**
          * {@code note.trumpet_oxidized}
          */
-        NOTE_TRUMPET_OXIDIZED("note.trumpet_oxidized"),
+        public static final Down NOTE_TRUMPET_OXIDIZED = new Down("note.trumpet_oxidized");
 
         /**
          * {@code note.zombie}
          */
-        NOTE_ZOMBIE("note.zombie"),
+        public static final Down NOTE_ZOMBIE = new Down("note.zombie");
 
         /**
          * {@code note.skeleton}
          */
-        NOTE_SKELETON("note.skeleton"),
+        public static final Down NOTE_SKELETON = new Down("note.skeleton");
 
         /**
          * {@code note.creeper}
          */
-        NOTE_CREEPER("note.creeper"),
+        public static final Down NOTE_CREEPER = new Down("note.creeper");
 
         /**
          * {@code note.enderdragon}
          */
-        NOTE_ENDERDRAGON("note.enderdragon"),
+        public static final Down NOTE_ENDERDRAGON = new Down("note.enderdragon");
 
         /**
          * {@code note.witherskeleton}
          */
-        NOTE_WITHERSKELETON("note.witherskeleton"),
+        public static final Down NOTE_WITHERSKELETON = new Down("note.witherskeleton");
 
         /**
          * {@code note.piglin}
          */
-        NOTE_PIGLIN("note.piglin"),
+        public static final Down NOTE_PIGLIN = new Down("note.piglin");
 
         /**
          * {@code note.none}
          */
-        NOTE_NONE("note.none");
+        public static final Down NOTE_NONE = new Down("note.none");
+
+        private static final List<Down> KNOWN = List.of(NOTE_HARP, NOTE_BD, NOTE_SNARE, NOTE_HAT, NOTE_BASSATTACK, NOTE_FLUTE, NOTE_BELL, NOTE_GUITAR, NOTE_CHIME, NOTE_XYLOPHONE, NOTE_IRON_XYLOPHONE, NOTE_COW_BELL, NOTE_DIDGERIDOO, NOTE_BIT, NOTE_BANJO, NOTE_PLING, NOTE_TRUMPET, NOTE_TRUMPET_EXPOSED, NOTE_TRUMPET_WEATHERED, NOTE_TRUMPET_OXIDIZED, NOTE_ZOMBIE, NOTE_SKELETON, NOTE_CREEPER, NOTE_ENDERDRAGON, NOTE_WITHERSKELETON, NOTE_PIGLIN, NOTE_NONE);
+
+        private static final Map<String, Down> BY_VALUE = Check.index(KNOWN, Down::value);
 
         private final String value;
 
-        Down(String value) {
+        private Down(String value) {
             this.value = value;
+        }
+
+        /**
+         * Returns the value of an add-on JSON string: the constant of a documented value, else a new value.
+         *
+         * @param value the value in add-on JSON
+         * @return the constant of the value, or a value Paletter does not know
+         */
+        public static @NonNull Down of(@NonNull String value) {
+            Down known = BY_VALUE.get(Objects.requireNonNull(value, "Down.value"));
+            return known != null ? known : new Down(value);
+        }
+
+        /**
+         * Returns the documented values, the constants of this class.
+         *
+         * @return the constants, in the order of the documentation
+         */
+        public static @NonNull List<Down> known() {
+            return KNOWN;
         }
 
         /**
@@ -274,165 +338,199 @@ public record InstrumentSound(InstrumentSound. @NonNull Down down,
         }
 
         /**
-         * Finds the constant of an add-on JSON value.
+         * Returns whether the value is documented, one of the constants.
          *
-         * @param value the value in add-on JSON
-         * @return the constant of the value
-         * @throws IllegalArgumentException if the value is not documented
+         * @return whether this is one of {@link #known()}
          */
-        public static @NonNull Down fromValue(@NonNull String value) {
-            for (Down constant : values()) {
-                if (constant.value.equals(value)) {
-                    return constant;
-                }
-            }
-            throw new IllegalArgumentException("Not a Down: " + value);
+        public boolean isKnown() {
+            return BY_VALUE.get(value) == this;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            return this == o || o instanceof Down other && value.equals(other.value);
+        }
+
+        @Override
+        public int hashCode() {
+            return value.hashCode();
+        }
+
+        @Override
+        public String toString() {
+            return value;
         }
     }
 
     /**
-     * The documented values; {@link #value()} is the add-on JSON string.
+     * A value of an add-on JSON string: a constant per documented value, {@link #of} for any other.
+     * {@link #value()} is the add-on JSON string. Not an enum: Bedrock adds values, so a {@code switch} over
+     * {@link #value()} needs a {@code default}.
      */
-    public enum Up {
+    public static final class Up {
         /**
          * {@code note.harp}
          */
-        NOTE_HARP("note.harp"),
+        public static final Up NOTE_HARP = new Up("note.harp");
 
         /**
          * {@code note.bd}
          */
-        NOTE_BD("note.bd"),
+        public static final Up NOTE_BD = new Up("note.bd");
 
         /**
          * {@code note.snare}
          */
-        NOTE_SNARE("note.snare"),
+        public static final Up NOTE_SNARE = new Up("note.snare");
 
         /**
          * {@code note.hat}
          */
-        NOTE_HAT("note.hat"),
+        public static final Up NOTE_HAT = new Up("note.hat");
 
         /**
          * {@code note.bassattack}
          */
-        NOTE_BASSATTACK("note.bassattack"),
+        public static final Up NOTE_BASSATTACK = new Up("note.bassattack");
 
         /**
          * {@code note.flute}
          */
-        NOTE_FLUTE("note.flute"),
+        public static final Up NOTE_FLUTE = new Up("note.flute");
 
         /**
          * {@code note.bell}
          */
-        NOTE_BELL("note.bell"),
+        public static final Up NOTE_BELL = new Up("note.bell");
 
         /**
          * {@code note.guitar}
          */
-        NOTE_GUITAR("note.guitar"),
+        public static final Up NOTE_GUITAR = new Up("note.guitar");
 
         /**
          * {@code note.chime}
          */
-        NOTE_CHIME("note.chime"),
+        public static final Up NOTE_CHIME = new Up("note.chime");
 
         /**
          * {@code note.xylophone}
          */
-        NOTE_XYLOPHONE("note.xylophone"),
+        public static final Up NOTE_XYLOPHONE = new Up("note.xylophone");
 
         /**
          * {@code note.iron_xylophone}
          */
-        NOTE_IRON_XYLOPHONE("note.iron_xylophone"),
+        public static final Up NOTE_IRON_XYLOPHONE = new Up("note.iron_xylophone");
 
         /**
          * {@code note.cow_bell}
          */
-        NOTE_COW_BELL("note.cow_bell"),
+        public static final Up NOTE_COW_BELL = new Up("note.cow_bell");
 
         /**
          * {@code note.didgeridoo}
          */
-        NOTE_DIDGERIDOO("note.didgeridoo"),
+        public static final Up NOTE_DIDGERIDOO = new Up("note.didgeridoo");
 
         /**
          * {@code note.bit}
          */
-        NOTE_BIT("note.bit"),
+        public static final Up NOTE_BIT = new Up("note.bit");
 
         /**
          * {@code note.banjo}
          */
-        NOTE_BANJO("note.banjo"),
+        public static final Up NOTE_BANJO = new Up("note.banjo");
 
         /**
          * {@code note.pling}
          */
-        NOTE_PLING("note.pling"),
+        public static final Up NOTE_PLING = new Up("note.pling");
 
         /**
          * {@code note.trumpet}
          */
-        NOTE_TRUMPET("note.trumpet"),
+        public static final Up NOTE_TRUMPET = new Up("note.trumpet");
 
         /**
          * {@code note.trumpet_exposed}
          */
-        NOTE_TRUMPET_EXPOSED("note.trumpet_exposed"),
+        public static final Up NOTE_TRUMPET_EXPOSED = new Up("note.trumpet_exposed");
 
         /**
          * {@code note.trumpet_weathered}
          */
-        NOTE_TRUMPET_WEATHERED("note.trumpet_weathered"),
+        public static final Up NOTE_TRUMPET_WEATHERED = new Up("note.trumpet_weathered");
 
         /**
          * {@code note.trumpet_oxidized}
          */
-        NOTE_TRUMPET_OXIDIZED("note.trumpet_oxidized"),
+        public static final Up NOTE_TRUMPET_OXIDIZED = new Up("note.trumpet_oxidized");
 
         /**
          * {@code note.zombie}
          */
-        NOTE_ZOMBIE("note.zombie"),
+        public static final Up NOTE_ZOMBIE = new Up("note.zombie");
 
         /**
          * {@code note.skeleton}
          */
-        NOTE_SKELETON("note.skeleton"),
+        public static final Up NOTE_SKELETON = new Up("note.skeleton");
 
         /**
          * {@code note.creeper}
          */
-        NOTE_CREEPER("note.creeper"),
+        public static final Up NOTE_CREEPER = new Up("note.creeper");
 
         /**
          * {@code note.enderdragon}
          */
-        NOTE_ENDERDRAGON("note.enderdragon"),
+        public static final Up NOTE_ENDERDRAGON = new Up("note.enderdragon");
 
         /**
          * {@code note.witherskeleton}
          */
-        NOTE_WITHERSKELETON("note.witherskeleton"),
+        public static final Up NOTE_WITHERSKELETON = new Up("note.witherskeleton");
 
         /**
          * {@code note.piglin}
          */
-        NOTE_PIGLIN("note.piglin"),
+        public static final Up NOTE_PIGLIN = new Up("note.piglin");
 
         /**
          * {@code note.none}
          */
-        NOTE_NONE("note.none");
+        public static final Up NOTE_NONE = new Up("note.none");
+
+        private static final List<Up> KNOWN = List.of(NOTE_HARP, NOTE_BD, NOTE_SNARE, NOTE_HAT, NOTE_BASSATTACK, NOTE_FLUTE, NOTE_BELL, NOTE_GUITAR, NOTE_CHIME, NOTE_XYLOPHONE, NOTE_IRON_XYLOPHONE, NOTE_COW_BELL, NOTE_DIDGERIDOO, NOTE_BIT, NOTE_BANJO, NOTE_PLING, NOTE_TRUMPET, NOTE_TRUMPET_EXPOSED, NOTE_TRUMPET_WEATHERED, NOTE_TRUMPET_OXIDIZED, NOTE_ZOMBIE, NOTE_SKELETON, NOTE_CREEPER, NOTE_ENDERDRAGON, NOTE_WITHERSKELETON, NOTE_PIGLIN, NOTE_NONE);
+
+        private static final Map<String, Up> BY_VALUE = Check.index(KNOWN, Up::value);
 
         private final String value;
 
-        Up(String value) {
+        private Up(String value) {
             this.value = value;
+        }
+
+        /**
+         * Returns the value of an add-on JSON string: the constant of a documented value, else a new value.
+         *
+         * @param value the value in add-on JSON
+         * @return the constant of the value, or a value Paletter does not know
+         */
+        public static @NonNull Up of(@NonNull String value) {
+            Up known = BY_VALUE.get(Objects.requireNonNull(value, "Up.value"));
+            return known != null ? known : new Up(value);
+        }
+
+        /**
+         * Returns the documented values, the constants of this class.
+         *
+         * @return the constants, in the order of the documentation
+         */
+        public static @NonNull List<Up> known() {
+            return KNOWN;
         }
 
         /**
@@ -445,19 +543,27 @@ public record InstrumentSound(InstrumentSound. @NonNull Down down,
         }
 
         /**
-         * Finds the constant of an add-on JSON value.
+         * Returns whether the value is documented, one of the constants.
          *
-         * @param value the value in add-on JSON
-         * @return the constant of the value
-         * @throws IllegalArgumentException if the value is not documented
+         * @return whether this is one of {@link #known()}
          */
-        public static @NonNull Up fromValue(@NonNull String value) {
-            for (Up constant : values()) {
-                if (constant.value.equals(value)) {
-                    return constant;
-                }
-            }
-            throw new IllegalArgumentException("Not a Up: " + value);
+        public boolean isKnown() {
+            return BY_VALUE.get(value) == this;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            return this == o || o instanceof Up other && value.equals(other.value);
+        }
+
+        @Override
+        public int hashCode() {
+            return value.hashCode();
+        }
+
+        @Override
+        public String toString() {
+            return value;
         }
     }
 }

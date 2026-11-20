@@ -19,32 +19,68 @@ import org.checkerframework.checker.nullness.qual.Nullable;
  * Server only: BDS accepts it in packs but sends nothing to clients (BDS 1.26.36.1, 1.26.45.1, 1.26.52.3,
  * 1.26.63.1, 1.26.70.24), so it has no client effect. Palettes leave it out without a warning.
  *
- * @param intervalRange A range of values, specified in ticks, to decide the next tick interval for a block. After each block tick, a
- *        new value will be chosen from within the range to determine the next tick interval. If the values in the
- *        interval_range are the same, the block will always be ticked after that number of ticks. The first value must
- *        be lower or equal to the second value in the array. Value must have at least 2 items. Value must have at most
- *        2 items. Add-on JSON {@code interval_range}. Required.
- * @param looping If false, the block will only be ticked once after a delay equal to a number of ticks randomly chosen from the
- *        interval_range and no further ticking will occur. If true, after the block ticks, a new random value will be
- *        chosen from the interval_range for when the block will tick again. Add-on JSON {@code looping}. Default:
- *        <code>true</code>.
  * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/blockreference/examples/blockcomponents/minecraftblock_tick?view=minecraft-bedrock-stable">Microsoft Learn: minecraft:tick</a>
  * @since 1.0.0
  */
 @ServerOnly
-public record Tick(@NonNull List<Float> intervalRange, boolean looping) implements BlockComponent {
+public final class Tick implements BlockComponent {
     /**
      * The component name in add-on JSON.
      */
     public static final String NAME = "minecraft:tick";
 
-    /**
-     * Checks the components and copies lists and maps, so the value is immutable.
-     *
-     * @throws NullPointerException if a required component is null
-     */
-    public Tick {
+    private final @NonNull List<Float> intervalRange;
+
+    private final boolean looping;
+
+    private Tick(@NonNull List<Float> intervalRange, boolean looping) {
         intervalRange = List.copyOf(Objects.requireNonNull(intervalRange, "Tick.intervalRange"));
+        this.intervalRange = intervalRange;
+        this.looping = looping;
+    }
+
+    /**
+     * A range of values, specified in ticks, to decide the next tick interval for a block. After each block tick, a
+     * new value will be chosen from within the range to determine the next tick interval. If the values in the
+     * interval_range are the same, the block will always be ticked after that number of ticks. The first value must
+     * be lower or equal to the second value in the array. Value must have at least 2 items. Value must have at most
+     * 2 items. Add-on JSON {@code interval_range}. Required.
+     *
+     * @return the value
+     */
+    public @NonNull List<Float> intervalRange() {
+        return intervalRange;
+    }
+
+    /**
+     * If false, the block will only be ticked once after a delay equal to a number of ticks randomly chosen from the
+     * interval_range and no further ticking will occur. If true, after the block ticks, a new random value will be
+     * chosen from the interval_range for when the block will tick again. Add-on JSON {@code looping}. Default:
+     * <code>true</code>.
+     *
+     * @return the value
+     */
+    public boolean looping() {
+        return looping;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        return this == o || o instanceof Tick other
+                && Objects.equals(intervalRange, other.intervalRange)
+                && looping == other.looping;
+    }
+
+    @Override
+    public int hashCode() {
+        int h = Objects.hashCode(intervalRange);
+        h = 31 * h + Boolean.hashCode(looping);
+        return h;
+    }
+
+    @Override
+    public String toString() {
+        return "Tick[intervalRange=" + intervalRange + ", looping=" + looping + "]";
     }
 
     @Override

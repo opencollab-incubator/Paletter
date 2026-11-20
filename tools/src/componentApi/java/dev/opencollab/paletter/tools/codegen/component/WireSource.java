@@ -1123,15 +1123,15 @@ final class WireSource {
             ParameterizedTypeName.get(ApiSource.MAP, ApiSource.STRING, ApiSource.STRING));
         ClassName linked = ClassName.get(LinkedHashMap.class);
         TypeSpec.Builder type = TypeSpec.classBuilder("ComponentIndex").addModifiers(Modifier.PUBLIC, Modifier.FINAL)
-            .addJavadoc("Every generated component type by add-on JSON name, and the JSON key of every field of every generated record\n"
-                + "(record class -> JSON key -> record component). For tests and tooling; not API.\n");
+            .addJavadoc("Every generated component type by add-on JSON name, and the JSON key of every field of every generated class\n"
+                + "(class -> JSON key -> accessor, in the order of the builder's fields). For tests and tooling; not API.\n");
         for (String name : List.of("ITEM", "BLOCK", "TRAIT", "STANDALONE")) {
             type.addField(FieldSpec.builder(classMap, name, Modifier.PUBLIC, Modifier.STATIC, Modifier.FINAL).initializer("new $T<>()", linked).build());
         }
         type.addField(FieldSpec.builder(keyMap, "JSON_KEYS", Modifier.PUBLIC, Modifier.STATIC, Modifier.FINAL).initializer("new $T<>()", linked).build());
         type.addField(FieldSpec.builder(keyMap, "FORMS", Modifier.PUBLIC, Modifier.STATIC, Modifier.FINAL)
-            .addJavadoc("Synthetic fields of value forms: record class -> JSON type (boolean, string, ...) -> record component. A record\n"
-                + "component ending in {@code []} is the list field the value form is one entry of (the object form of a list).\n")
+            .addJavadoc("Synthetic fields of value forms: class -> JSON type (boolean, string, ...) -> accessor. An accessor\n"
+                + "ending in {@code []} is the list field the value form is one entry of (the object form of a list).\n")
             .initializer("new $T<>()", linked).build());
         type.addField(FieldSpec.builder(keyMap, "DESCRIPTORS", Modifier.PUBLIC, Modifier.STATIC, Modifier.FINAL)
             .addJavadoc("The item and block descriptor fields (api.json {@code descriptors}) that are a name: record class -> record component ->\n"

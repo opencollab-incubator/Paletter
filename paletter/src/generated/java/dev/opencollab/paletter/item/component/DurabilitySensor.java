@@ -5,7 +5,9 @@ package dev.opencollab.paletter.item.component;
 
 import dev.opencollab.paletter.annotation.BedrockFormat;
 import dev.opencollab.paletter.annotation.ServerOnly;
+import dev.opencollab.paletter.internal.component.Check;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
@@ -18,28 +20,50 @@ import org.checkerframework.checker.nullness.qual.Nullable;
  * Server only: BDS accepts it in packs but sends nothing to clients (BDS 1.26.36.1, 1.26.45.1, 1.26.52.3,
  * 1.26.63.1, 1.26.70.24), so it has no client effect. Palettes leave it out without a warning.
  *
- * @param durabilityThresholds The list of both durability thresholds and effects emitted when each threshold is met. When multiple
- *        thresholds are met, only the threshold with the lowest durability after applying the damage is considered.
- *        Value must have at least 1 items. Add-on JSON {@code durability_thresholds}. Required.
  * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/itemreference/examples/itemcomponents/minecraft_durability_sensor?view=minecraft-bedrock-stable">Microsoft Learn: minecraft:durability_sensor</a>
  * @since 1.0.0
  */
 @BedrockFormat("1.21.20")
 @ServerOnly
-public record DurabilitySensor(
-        @NonNull List<DurabilitySensor.DurabilityThresholds> durabilityThresholds) implements ItemComponent {
+public final class DurabilitySensor implements ItemComponent {
     /**
      * The component name in add-on JSON.
      */
     public static final String NAME = "minecraft:durability_sensor";
 
-    /**
-     * Checks the components and copies lists and maps, so the value is immutable.
-     *
-     * @throws NullPointerException if a required component is null
-     */
-    public DurabilitySensor {
+    private final @NonNull List<DurabilityThresholds> durabilityThresholds;
+
+    private DurabilitySensor(@NonNull List<DurabilityThresholds> durabilityThresholds) {
         durabilityThresholds = List.copyOf(Objects.requireNonNull(durabilityThresholds, "DurabilitySensor.durabilityThresholds"));
+        this.durabilityThresholds = durabilityThresholds;
+    }
+
+    /**
+     * The list of both durability thresholds and effects emitted when each threshold is met. When multiple
+     * thresholds are met, only the threshold with the lowest durability after applying the damage is considered.
+     * Value must have at least 1 items. Add-on JSON {@code durability_thresholds}. Required.
+     *
+     * @return the value
+     */
+    public @NonNull List<DurabilityThresholds> durabilityThresholds() {
+        return durabilityThresholds;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        return this == o || o instanceof DurabilitySensor other
+                && Objects.equals(durabilityThresholds, other.durabilityThresholds);
+    }
+
+    @Override
+    public int hashCode() {
+        int h = Objects.hashCode(durabilityThresholds);
+        return h;
+    }
+
+    @Override
+    public String toString() {
+        return "DurabilitySensor[durabilityThresholds=" + durabilityThresholds + "]";
     }
 
     @Override
@@ -120,21 +144,70 @@ public record DurabilitySensor(
      * thresholds are met, only the threshold with the lowest durability after applying the damage is considered.
      * Value must have at least 1 items.
      *
-     * @param durability The effects are emitted when the item durability value is less than or equal to this value. Add-on JSON {@code
-     *        durability}. Default: <code>0</code>.
-     * @param particleType Particle effect to emit when the threshold is met. Add-on JSON {@code particle_type}. Default:
-     *        <code>"none"</code>.
-     * @param soundEvent Sound effect to emit when the threshold is met. Add-on JSON {@code sound_event}. Optional (null: not set).
      */
-    public record DurabilityThresholds(int durability, @NonNull ParticleType particleType,
-            @Nullable String soundEvent) {
-        /**
-         * Checks the components.
-         *
-         * @throws NullPointerException if a required component is null
-         */
-        public DurabilityThresholds {
+    public static final class DurabilityThresholds {
+        private final int durability;
+
+        private final @NonNull ParticleType particleType;
+
+        private final @Nullable String soundEvent;
+
+        private DurabilityThresholds(int durability, @NonNull ParticleType particleType,
+                @Nullable String soundEvent) {
             Objects.requireNonNull(particleType, "DurabilitySensor.DurabilityThresholds.particleType");
+            this.durability = durability;
+            this.particleType = particleType;
+            this.soundEvent = soundEvent;
+        }
+
+        /**
+         * The effects are emitted when the item durability value is less than or equal to this value. Add-on JSON {@code
+         * durability}. Default: <code>0</code>.
+         *
+         * @return the value
+         */
+        public int durability() {
+            return durability;
+        }
+
+        /**
+         * Particle effect to emit when the threshold is met. Add-on JSON {@code particle_type}. Default:
+         * <code>"none"</code>.
+         *
+         * @return the value
+         */
+        public @NonNull ParticleType particleType() {
+            return particleType;
+        }
+
+        /**
+         * Sound effect to emit when the threshold is met. Add-on JSON {@code sound_event}. Optional (null: not set).
+         *
+         * @return the value
+         */
+        public @Nullable String soundEvent() {
+            return soundEvent;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            return this == o || o instanceof DurabilityThresholds other
+                    && durability == other.durability
+                    && Objects.equals(particleType, other.particleType)
+                    && Objects.equals(soundEvent, other.soundEvent);
+        }
+
+        @Override
+        public int hashCode() {
+            int h = durability;
+            h = 31 * h + Objects.hashCode(particleType);
+            h = 31 * h + Objects.hashCode(soundEvent);
+            return h;
+        }
+
+        @Override
+        public String toString() {
+            return "DurabilityThresholds[durability=" + durability + ", particleType=" + particleType + ", soundEvent=" + soundEvent + "]";
         }
 
         /**
@@ -219,503 +292,529 @@ public record DurabilitySensor(
     }
 
     /**
-     * The documented values; {@link #value()} is the add-on JSON string.
+     * A value of an add-on JSON string: a constant per documented value, {@link #of} for any other.
+     * {@link #value()} is the add-on JSON string. Not an enum: Bedrock adds values, so a {@code switch} over
+     * {@link #value()} needs a {@code default}.
      */
-    public enum ParticleType {
+    public static final class ParticleType {
         /**
          * {@code balloongas}
          */
-        BALLOONGAS("balloongas"),
+        public static final ParticleType BALLOONGAS = new ParticleType("balloongas");
 
         /**
          * {@code bleach}
          */
-        BLEACH("bleach"),
+        public static final ParticleType BLEACH = new ParticleType("bleach");
 
         /**
          * {@code blockforcefield}
          */
-        BLOCKFORCEFIELD("blockforcefield"),
+        public static final ParticleType BLOCKFORCEFIELD = new ParticleType("blockforcefield");
 
         /**
          * {@code blueflame}
          */
-        BLUEFLAME("blueflame"),
+        public static final ParticleType BLUEFLAME = new ParticleType("blueflame");
 
         /**
          * {@code breezewindexplosion}
          */
-        BREEZEWINDEXPLOSION("breezewindexplosion"),
+        public static final ParticleType BREEZEWINDEXPLOSION = new ParticleType("breezewindexplosion");
 
         /**
          * {@code bubble}
          */
-        BUBBLE("bubble"),
+        public static final ParticleType BUBBLE = new ParticleType("bubble");
 
         /**
          * {@code bubblecolumndown}
          */
-        BUBBLECOLUMNDOWN("bubblecolumndown"),
+        public static final ParticleType BUBBLECOLUMNDOWN = new ParticleType("bubblecolumndown");
 
         /**
          * {@code bubblecolumnup}
          */
-        BUBBLECOLUMNUP("bubblecolumnup"),
+        public static final ParticleType BUBBLECOLUMNUP = new ParticleType("bubblecolumnup");
 
         /**
          * {@code bubblemanual}
          */
-        BUBBLEMANUAL("bubblemanual"),
+        public static final ParticleType BUBBLEMANUAL = new ParticleType("bubblemanual");
 
         /**
          * {@code campfiresmoke}
          */
-        CAMPFIRESMOKE("campfiresmoke"),
+        public static final ParticleType CAMPFIRESMOKE = new ParticleType("campfiresmoke");
 
         /**
          * {@code campfiresmoketall}
          */
-        CAMPFIRESMOKETALL("campfiresmoketall"),
+        public static final ParticleType CAMPFIRESMOKETALL = new ParticleType("campfiresmoketall");
 
         /**
          * {@code candleflame}
          */
-        CANDLEFLAME("candleflame"),
+        public static final ParticleType CANDLEFLAME = new ParticleType("candleflame");
 
         /**
          * {@code carrotboost}
          */
-        CARROTBOOST("carrotboost"),
+        public static final ParticleType CARROTBOOST = new ParticleType("carrotboost");
 
         /**
          * {@code coloredflame}
          */
-        COLOREDFLAME("coloredflame"),
+        public static final ParticleType COLOREDFLAME = new ParticleType("coloredflame");
 
         /**
          * {@code conduit}
          */
-        CONDUIT("conduit"),
+        public static final ParticleType CONDUIT = new ParticleType("conduit");
 
         /**
          * {@code creakingcrumble}
          */
-        CREAKINGCRUMBLE("creakingcrumble"),
+        public static final ParticleType CREAKINGCRUMBLE = new ParticleType("creakingcrumble");
 
         /**
          * {@code crit}
          */
-        CRIT("crit"),
+        public static final ParticleType CRIT = new ParticleType("crit");
 
         /**
          * {@code dragonbreath}
          */
-        DRAGONBREATH("dragonbreath"),
+        public static final ParticleType DRAGONBREATH = new ParticleType("dragonbreath");
 
         /**
          * {@code dragonbreathfire}
          */
-        DRAGONBREATHFIRE("dragonbreathfire"),
+        public static final ParticleType DRAGONBREATHFIRE = new ParticleType("dragonbreathfire");
 
         /**
          * {@code dragonbreathtrail}
          */
-        DRAGONBREATHTRAIL("dragonbreathtrail"),
+        public static final ParticleType DRAGONBREATHTRAIL = new ParticleType("dragonbreathtrail");
 
         /**
          * {@code dragondestroyblock}
          */
-        DRAGONDESTROYBLOCK("dragondestroyblock"),
+        public static final ParticleType DRAGONDESTROYBLOCK = new ParticleType("dragondestroyblock");
 
         /**
          * {@code driphoney}
          */
-        DRIPHONEY("driphoney"),
+        public static final ParticleType DRIPHONEY = new ParticleType("driphoney");
 
         /**
          * {@code driplava}
          */
-        DRIPLAVA("driplava"),
+        public static final ParticleType DRIPLAVA = new ParticleType("driplava");
 
         /**
          * {@code dripwater}
          */
-        DRIPWATER("dripwater"),
+        public static final ParticleType DRIPWATER = new ParticleType("dripwater");
 
         /**
          * {@code dustplume}
          */
-        DUSTPLUME("dustplume"),
+        public static final ParticleType DUSTPLUME = new ParticleType("dustplume");
 
         /**
          * {@code electricspark}
          */
-        ELECTRICSPARK("electricspark"),
+        public static final ParticleType ELECTRICSPARK = new ParticleType("electricspark");
 
         /**
          * {@code enchantingtable}
          */
-        ENCHANTINGTABLE("enchantingtable"),
+        public static final ParticleType ENCHANTINGTABLE = new ParticleType("enchantingtable");
 
         /**
          * {@code endrod}
          */
-        ENDROD("endrod"),
+        public static final ParticleType ENDROD = new ParticleType("endrod");
 
         /**
          * {@code evaporation}
          */
-        EVAPORATION("evaporation"),
+        public static final ParticleType EVAPORATION = new ParticleType("evaporation");
 
         /**
          * {@code explode}
          */
-        EXPLODE("explode"),
+        public static final ParticleType EXPLODE = new ParticleType("explode");
 
         /**
          * {@code eyeblossomclose}
          */
-        EYEBLOSSOMCLOSE("eyeblossomclose"),
+        public static final ParticleType EYEBLOSSOMCLOSE = new ParticleType("eyeblossomclose");
 
         /**
          * {@code eyeblossomopen}
          */
-        EYEBLOSSOMOPEN("eyeblossomopen"),
+        public static final ParticleType EYEBLOSSOMOPEN = new ParticleType("eyeblossomopen");
 
         /**
          * {@code fallingborderdust}
          */
-        FALLINGBORDERDUST("fallingborderdust"),
+        public static final ParticleType FALLINGBORDERDUST = new ParticleType("fallingborderdust");
 
         /**
          * {@code fallingdust}
          */
-        FALLINGDUST("fallingdust"),
+        public static final ParticleType FALLINGDUST = new ParticleType("fallingdust");
 
         /**
          * {@code fireworks}
          */
-        FIREWORKS("fireworks"),
+        public static final ParticleType FIREWORKS = new ParticleType("fireworks");
 
         /**
          * {@code fireworksoverlay}
          */
-        FIREWORKSOVERLAY("fireworksoverlay"),
+        public static final ParticleType FIREWORKSOVERLAY = new ParticleType("fireworksoverlay");
 
         /**
          * {@code fireworksstarter}
          */
-        FIREWORKSSTARTER("fireworksstarter"),
+        public static final ParticleType FIREWORKSSTARTER = new ParticleType("fireworksstarter");
 
         /**
          * {@code flame}
          */
-        FLAME("flame"),
+        public static final ParticleType FLAME = new ParticleType("flame");
 
         /**
          * {@code food}
          */
-        FOOD("food"),
+        public static final ParticleType FOOD = new ParticleType("food");
 
         /**
          * {@code greenflame}
          */
-        GREENFLAME("greenflame"),
+        public static final ParticleType GREENFLAME = new ParticleType("greenflame");
 
         /**
          * {@code heart}
          */
-        HEART("heart"),
+        public static final ParticleType HEART = new ParticleType("heart");
 
         /**
          * {@code hugeexplosion}
          */
-        HUGEEXPLOSION("hugeexplosion"),
+        public static final ParticleType HUGEEXPLOSION = new ParticleType("hugeexplosion");
 
         /**
          * {@code iceballbreak}
          */
-        ICEBALLBREAK("iceballbreak"),
+        public static final ParticleType ICEBALLBREAK = new ParticleType("iceballbreak");
 
         /**
          * {@code iconcrack}
          */
-        ICONCRACK("iconcrack"),
+        public static final ParticleType ICONCRACK = new ParticleType("iconcrack");
 
         /**
          * {@code ink}
          */
-        INK("ink"),
+        public static final ParticleType INK = new ParticleType("ink");
 
         /**
          * {@code largeexplode}
          */
-        LARGEEXPLODE("largeexplode"),
+        public static final ParticleType LARGEEXPLODE = new ParticleType("largeexplode");
 
         /**
          * {@code largesmoke}
          */
-        LARGESMOKE("largesmoke"),
+        public static final ParticleType LARGESMOKE = new ParticleType("largesmoke");
 
         /**
          * {@code lava}
          */
-        LAVA("lava"),
+        public static final ParticleType LAVA = new ParticleType("lava");
 
         /**
          * {@code mobappearance}
          */
-        MOBAPPEARANCE("mobappearance"),
+        public static final ParticleType MOBAPPEARANCE = new ParticleType("mobappearance");
 
         /**
          * {@code mobflame}
          */
-        MOBFLAME("mobflame"),
+        public static final ParticleType MOBFLAME = new ParticleType("mobflame");
 
         /**
          * {@code mobspell}
          */
-        MOBSPELL("mobspell"),
+        public static final ParticleType MOBSPELL = new ParticleType("mobspell");
 
         /**
          * {@code mobspellambient}
          */
-        MOBSPELLAMBIENT("mobspellambient"),
+        public static final ParticleType MOBSPELLAMBIENT = new ParticleType("mobspellambient");
 
         /**
          * {@code mobspellinstantaneous}
          */
-        MOBSPELLINSTANTANEOUS("mobspellinstantaneous"),
+        public static final ParticleType MOBSPELLINSTANTANEOUS = new ParticleType("mobspellinstantaneous");
 
         /**
          * {@code myceliumdust}
          */
-        MYCELIUMDUST("myceliumdust"),
+        public static final ParticleType MYCELIUMDUST = new ParticleType("myceliumdust");
 
         /**
          * {@code none}
          */
-        NONE("none"),
+        public static final ParticleType NONE = new ParticleType("none");
 
         /**
          * {@code note}
          */
-        NOTE("note"),
+        public static final ParticleType NOTE = new ParticleType("note");
 
         /**
          * {@code obsidiantear}
          */
-        OBSIDIANTEAR("obsidiantear"),
+        public static final ParticleType OBSIDIANTEAR = new ParticleType("obsidiantear");
 
         /**
          * {@code orangepoplarleaves}
          */
-        ORANGEPOPLARLEAVES("orangepoplarleaves"),
+        public static final ParticleType ORANGEPOPLARLEAVES = new ParticleType("orangepoplarleaves");
 
         /**
          * {@code paleoakleaves}
          */
-        PALEOAKLEAVES("paleoakleaves"),
+        public static final ParticleType PALEOAKLEAVES = new ParticleType("paleoakleaves");
 
         /**
          * {@code pausemobgrowth}
          */
-        PAUSEMOBGROWTH("pausemobgrowth"),
+        public static final ParticleType PAUSEMOBGROWTH = new ParticleType("pausemobgrowth");
 
         /**
          * {@code portal}
          */
-        PORTAL("portal"),
+        public static final ParticleType PORTAL = new ParticleType("portal");
 
         /**
          * {@code portalreverse}
          */
-        PORTALREVERSE("portalreverse"),
+        public static final ParticleType PORTALREVERSE = new ParticleType("portalreverse");
 
         /**
          * {@code rainsplash}
          */
-        RAINSPLASH("rainsplash"),
+        public static final ParticleType RAINSPLASH = new ParticleType("rainsplash");
 
         /**
          * {@code reddust}
          */
-        REDDUST("reddust"),
+        public static final ParticleType REDDUST = new ParticleType("reddust");
 
         /**
          * {@code redpoplarleaves}
          */
-        REDPOPLARLEAVES("redpoplarleaves"),
+        public static final ParticleType REDPOPLARLEAVES = new ParticleType("redpoplarleaves");
 
         /**
          * {@code resetmobgrowth}
          */
-        RESETMOBGROWTH("resetmobgrowth"),
+        public static final ParticleType RESETMOBGROWTH = new ParticleType("resetmobgrowth");
 
         /**
          * {@code risingborderdust}
          */
-        RISINGBORDERDUST("risingborderdust"),
+        public static final ParticleType RISINGBORDERDUST = new ParticleType("risingborderdust");
 
         /**
          * {@code sculksoul}
          */
-        SCULKSOUL("sculksoul"),
+        public static final ParticleType SCULKSOUL = new ParticleType("sculksoul");
 
         /**
          * {@code shriek}
          */
-        SHRIEK("shriek"),
+        public static final ParticleType SHRIEK = new ParticleType("shriek");
 
         /**
          * {@code shulkerbullet}
          */
-        SHULKERBULLET("shulkerbullet"),
+        public static final ParticleType SHULKERBULLET = new ParticleType("shulkerbullet");
 
         /**
          * {@code slime}
          */
-        SLIME("slime"),
+        public static final ParticleType SLIME = new ParticleType("slime");
 
         /**
          * {@code smoke}
          */
-        SMOKE("smoke"),
+        public static final ParticleType SMOKE = new ParticleType("smoke");
 
         /**
          * {@code sneeze}
          */
-        SNEEZE("sneeze"),
+        public static final ParticleType SNEEZE = new ParticleType("sneeze");
 
         /**
          * {@code snowballpoof}
          */
-        SNOWBALLPOOF("snowballpoof"),
+        public static final ParticleType SNOWBALLPOOF = new ParticleType("snowballpoof");
 
         /**
          * {@code snowflake}
          */
-        SNOWFLAKE("snowflake"),
+        public static final ParticleType SNOWFLAKE = new ParticleType("snowflake");
 
         /**
          * {@code sonicexplosion}
          */
-        SONICEXPLOSION("sonicexplosion"),
+        public static final ParticleType SONICEXPLOSION = new ParticleType("sonicexplosion");
 
         /**
          * {@code soul}
          */
-        SOUL("soul"),
+        public static final ParticleType SOUL = new ParticleType("soul");
 
         /**
          * {@code sparkler}
          */
-        SPARKLER("sparkler"),
+        public static final ParticleType SPARKLER = new ParticleType("sparkler");
 
         /**
          * {@code spit}
          */
-        SPIT("spit"),
+        public static final ParticleType SPIT = new ParticleType("spit");
 
         /**
          * {@code stalactitedriplava}
          */
-        STALACTITEDRIPLAVA("stalactitedriplava"),
+        public static final ParticleType STALACTITEDRIPLAVA = new ParticleType("stalactitedriplava");
 
         /**
          * {@code stalactitedripwater}
          */
-        STALACTITEDRIPWATER("stalactitedripwater"),
+        public static final ParticleType STALACTITEDRIPWATER = new ParticleType("stalactitedripwater");
 
         /**
          * {@code sulfurcube}
          */
-        SULFURCUBE("sulfurcube"),
+        public static final ParticleType SULFURCUBE = new ParticleType("sulfurcube");
 
         /**
          * {@code terrain}
          */
-        TERRAIN("terrain"),
+        public static final ParticleType TERRAIN = new ParticleType("terrain");
 
         /**
          * {@code totem}
          */
-        TOTEM("totem"),
+        public static final ParticleType TOTEM = new ParticleType("totem");
 
         /**
          * {@code townaura}
          */
-        TOWNAURA("townaura"),
+        public static final ParticleType TOWNAURA = new ParticleType("townaura");
 
         /**
          * {@code trackingemitter}
          */
-        TRACKINGEMITTER("trackingemitter"),
+        public static final ParticleType TRACKINGEMITTER = new ParticleType("trackingemitter");
 
         /**
          * {@code vaultconnection}
          */
-        VAULTCONNECTION("vaultconnection"),
+        public static final ParticleType VAULTCONNECTION = new ParticleType("vaultconnection");
 
         /**
          * {@code villagerangry}
          */
-        VILLAGERANGRY("villagerangry"),
+        public static final ParticleType VILLAGERANGRY = new ParticleType("villagerangry");
 
         /**
          * {@code villagerhappy}
          */
-        VILLAGERHAPPY("villagerhappy"),
+        public static final ParticleType VILLAGERHAPPY = new ParticleType("villagerhappy");
 
         /**
          * {@code watersplash}
          */
-        WATERSPLASH("watersplash"),
+        public static final ParticleType WATERSPLASH = new ParticleType("watersplash");
 
         /**
          * {@code watersplashmanual}
          */
-        WATERSPLASHMANUAL("watersplashmanual"),
+        public static final ParticleType WATERSPLASHMANUAL = new ParticleType("watersplashmanual");
 
         /**
          * {@code waterwake}
          */
-        WATERWAKE("waterwake"),
+        public static final ParticleType WATERWAKE = new ParticleType("waterwake");
 
         /**
          * {@code wax}
          */
-        WAX("wax"),
+        public static final ParticleType WAX = new ParticleType("wax");
 
         /**
          * {@code whitesmoke}
          */
-        WHITESMOKE("whitesmoke"),
+        public static final ParticleType WHITESMOKE = new ParticleType("whitesmoke");
 
         /**
          * {@code windexplosion}
          */
-        WINDEXPLOSION("windexplosion"),
+        public static final ParticleType WINDEXPLOSION = new ParticleType("windexplosion");
 
         /**
          * {@code witchspell}
          */
-        WITCHSPELL("witchspell"),
+        public static final ParticleType WITCHSPELL = new ParticleType("witchspell");
 
         /**
          * {@code wolfarmorcrack}
          */
-        WOLFARMORCRACK("wolfarmorcrack"),
+        public static final ParticleType WOLFARMORCRACK = new ParticleType("wolfarmorcrack");
 
         /**
          * {@code yellowpoplarleaves}
          */
-        YELLOWPOPLARLEAVES("yellowpoplarleaves");
+        public static final ParticleType YELLOWPOPLARLEAVES = new ParticleType("yellowpoplarleaves");
+
+        private static final List<ParticleType> KNOWN = List.of(BALLOONGAS, BLEACH, BLOCKFORCEFIELD, BLUEFLAME, BREEZEWINDEXPLOSION, BUBBLE, BUBBLECOLUMNDOWN, BUBBLECOLUMNUP, BUBBLEMANUAL, CAMPFIRESMOKE, CAMPFIRESMOKETALL, CANDLEFLAME, CARROTBOOST, COLOREDFLAME, CONDUIT, CREAKINGCRUMBLE, CRIT, DRAGONBREATH, DRAGONBREATHFIRE, DRAGONBREATHTRAIL, DRAGONDESTROYBLOCK, DRIPHONEY, DRIPLAVA, DRIPWATER, DUSTPLUME, ELECTRICSPARK, ENCHANTINGTABLE, ENDROD, EVAPORATION, EXPLODE, EYEBLOSSOMCLOSE, EYEBLOSSOMOPEN, FALLINGBORDERDUST, FALLINGDUST, FIREWORKS, FIREWORKSOVERLAY, FIREWORKSSTARTER, FLAME, FOOD, GREENFLAME, HEART, HUGEEXPLOSION, ICEBALLBREAK, ICONCRACK, INK, LARGEEXPLODE, LARGESMOKE, LAVA, MOBAPPEARANCE, MOBFLAME, MOBSPELL, MOBSPELLAMBIENT, MOBSPELLINSTANTANEOUS, MYCELIUMDUST, NONE, NOTE, OBSIDIANTEAR, ORANGEPOPLARLEAVES, PALEOAKLEAVES, PAUSEMOBGROWTH, PORTAL, PORTALREVERSE, RAINSPLASH, REDDUST, REDPOPLARLEAVES, RESETMOBGROWTH, RISINGBORDERDUST, SCULKSOUL, SHRIEK, SHULKERBULLET, SLIME, SMOKE, SNEEZE, SNOWBALLPOOF, SNOWFLAKE, SONICEXPLOSION, SOUL, SPARKLER, SPIT, STALACTITEDRIPLAVA, STALACTITEDRIPWATER, SULFURCUBE, TERRAIN, TOTEM, TOWNAURA, TRACKINGEMITTER, VAULTCONNECTION, VILLAGERANGRY, VILLAGERHAPPY, WATERSPLASH, WATERSPLASHMANUAL, WATERWAKE, WAX, WHITESMOKE, WINDEXPLOSION, WITCHSPELL, WOLFARMORCRACK, YELLOWPOPLARLEAVES);
+
+        private static final Map<String, ParticleType> BY_VALUE = Check.index(KNOWN, ParticleType::value);
 
         private final String value;
 
-        ParticleType(String value) {
+        private ParticleType(String value) {
             this.value = value;
+        }
+
+        /**
+         * Returns the value of an add-on JSON string: the constant of a documented value, else a new value.
+         *
+         * @param value the value in add-on JSON
+         * @return the constant of the value, or a value Paletter does not know
+         */
+        public static @NonNull ParticleType of(@NonNull String value) {
+            ParticleType known = BY_VALUE.get(Objects.requireNonNull(value, "ParticleType.value"));
+            return known != null ? known : new ParticleType(value);
+        }
+
+        /**
+         * Returns the documented values, the constants of this class.
+         *
+         * @return the constants, in the order of the documentation
+         */
+        public static @NonNull List<ParticleType> known() {
+            return KNOWN;
         }
 
         /**
@@ -728,19 +827,27 @@ public record DurabilitySensor(
         }
 
         /**
-         * Finds the constant of an add-on JSON value.
+         * Returns whether the value is documented, one of the constants.
          *
-         * @param value the value in add-on JSON
-         * @return the constant of the value
-         * @throws IllegalArgumentException if the value is not documented
+         * @return whether this is one of {@link #known()}
          */
-        public static @NonNull ParticleType fromValue(@NonNull String value) {
-            for (ParticleType constant : values()) {
-                if (constant.value.equals(value)) {
-                    return constant;
-                }
-            }
-            throw new IllegalArgumentException("Not a ParticleType: " + value);
+        public boolean isKnown() {
+            return BY_VALUE.get(value) == this;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            return this == o || o instanceof ParticleType other && value.equals(other.value);
+        }
+
+        @Override
+        public int hashCode() {
+            return value.hashCode();
+        }
+
+        @Override
+        public String toString() {
+            return value;
         }
     }
 }

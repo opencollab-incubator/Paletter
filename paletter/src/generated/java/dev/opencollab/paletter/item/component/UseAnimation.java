@@ -4,6 +4,7 @@
 package dev.opencollab.paletter.item.component;
 
 import dev.opencollab.paletter.annotation.BedrockFormat;
+import java.util.Objects;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
@@ -12,17 +13,48 @@ import org.checkerframework.checker.nullness.qual.Nullable;
  * <p>
  * Add-on JSON: {@code "minecraft:use_animation"}.
  *
- * @param value Specifies which animation to play when the item is used. Add-on JSON {@code value}. Optional (null: not set).
- *        Compiled by the hand transform {@code Transforms.useAnimationId}.
  * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/itemreference/examples/itemcomponents/minecraft_use_animation?view=minecraft-bedrock-stable">Microsoft Learn: minecraft:use_animation</a>
  * @since 1.0.0
  */
 @BedrockFormat("1.20.30")
-public record UseAnimation(@Nullable String value) implements ItemComponent {
+public final class UseAnimation implements ItemComponent {
     /**
      * The component name in add-on JSON.
      */
     public static final String NAME = "minecraft:use_animation";
+
+    private final @Nullable String value;
+
+    private UseAnimation(@Nullable String value) {
+        this.value = value;
+    }
+
+    /**
+     * Specifies which animation to play when the item is used. Add-on JSON {@code value}. Optional (null: not set).
+     * Compiled by the hand transform {@code Transforms.useAnimationId}.
+     *
+     * @return the value
+     */
+    public @Nullable String value() {
+        return value;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        return this == o || o instanceof UseAnimation other
+                && Objects.equals(value, other.value);
+    }
+
+    @Override
+    public int hashCode() {
+        int h = Objects.hashCode(value);
+        return h;
+    }
+
+    @Override
+    public String toString() {
+        return "UseAnimation[value=" + value + "]";
+    }
 
     @Override
     public @NonNull String name() {

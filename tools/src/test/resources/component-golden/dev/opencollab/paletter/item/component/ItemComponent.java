@@ -6,7 +6,7 @@ package dev.opencollab.paletter.item.component;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 /**
- * A custom item component, mirroring Bedrock's add-on JSON: one record per component, generated
+ * A custom item component, mirroring Bedrock's add-on JSON: one class per component, generated
  * from the component model in {@code data/model} (creator docs plus what Bedrock Dedicated Server sends). Paletter
  * compiles them to the wire format of each palette's protocol.
  * <p>

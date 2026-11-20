@@ -4,6 +4,7 @@
 package dev.opencollab.paletter.item.component;
 
 import dev.opencollab.paletter.annotation.BedrockFormat;
+import java.util.Objects;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
@@ -13,21 +14,78 @@ import org.checkerframework.checker.nullness.qual.Nullable;
  * <p>
  * Add-on JSON: {@code "minecraft:swing_sounds"}.
  *
- * @param attackCriticalHit Sound played when an attack hits and deals critical damage. Add-on JSON {@code attack_critical_hit}. Optional
- *        (null: not set).
- * @param attackHit Sound played when an attack hits. Add-on JSON {@code attack_hit}. Optional (null: not set).
- * @param attackMiss Sound played when an attack misses or deals no damage due to invulnerability. Add-on JSON {@code attack_miss}.
- *        Optional (null: not set).
  * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/itemreference/examples/itemcomponents/minecraft_swing_sounds?view=minecraft-bedrock-stable">Microsoft Learn: minecraft:swing_sounds</a>
  * @since 1.0.0
  */
 @BedrockFormat("1.21.130")
-public record SwingSounds(@Nullable String attackCriticalHit, @Nullable String attackHit,
-        @Nullable String attackMiss) implements ItemComponent {
+public final class SwingSounds implements ItemComponent {
     /**
      * The component name in add-on JSON.
      */
     public static final String NAME = "minecraft:swing_sounds";
+
+    private final @Nullable String attackCriticalHit;
+
+    private final @Nullable String attackHit;
+
+    private final @Nullable String attackMiss;
+
+    private SwingSounds(@Nullable String attackCriticalHit, @Nullable String attackHit,
+            @Nullable String attackMiss) {
+        this.attackCriticalHit = attackCriticalHit;
+        this.attackHit = attackHit;
+        this.attackMiss = attackMiss;
+    }
+
+    /**
+     * Sound played when an attack hits and deals critical damage. Add-on JSON {@code attack_critical_hit}. Optional
+     * (null: not set).
+     *
+     * @return the value
+     */
+    public @Nullable String attackCriticalHit() {
+        return attackCriticalHit;
+    }
+
+    /**
+     * Sound played when an attack hits. Add-on JSON {@code attack_hit}. Optional (null: not set).
+     *
+     * @return the value
+     */
+    public @Nullable String attackHit() {
+        return attackHit;
+    }
+
+    /**
+     * Sound played when an attack misses or deals no damage due to invulnerability. Add-on JSON {@code attack_miss}.
+     * Optional (null: not set).
+     *
+     * @return the value
+     */
+    public @Nullable String attackMiss() {
+        return attackMiss;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        return this == o || o instanceof SwingSounds other
+                && Objects.equals(attackCriticalHit, other.attackCriticalHit)
+                && Objects.equals(attackHit, other.attackHit)
+                && Objects.equals(attackMiss, other.attackMiss);
+    }
+
+    @Override
+    public int hashCode() {
+        int h = Objects.hashCode(attackCriticalHit);
+        h = 31 * h + Objects.hashCode(attackHit);
+        h = 31 * h + Objects.hashCode(attackMiss);
+        return h;
+    }
+
+    @Override
+    public String toString() {
+        return "SwingSounds[attackCriticalHit=" + attackCriticalHit + ", attackHit=" + attackHit + ", attackMiss=" + attackMiss + "]";
+    }
 
     @Override
     public @NonNull String name() {

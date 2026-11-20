@@ -17,28 +17,64 @@ import org.checkerframework.checker.nullness.qual.Nullable;
  * <p>
  * Add-on JSON: {@code "minecraft:item_visual"}.
  *
- * @param geometry The "minecraft:geometry" component of the item. Add-on JSON {@code geometry}. Required.
- * @param materialInstances The "minecraft:material_instances" component of the item. Value must have at most 64 items. Add-on JSON {@code
- *        material_instances}. Required. Compiled by the hand transform {@code Transforms.materialInstancesPacked}.
  * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/blockreference/examples/blockcomponents/minecraftblock_item_visual?view=minecraft-bedrock-stable">Microsoft Learn: minecraft:item_visual</a>
  * @since 1.0.0
  */
 @BedrockFormat("1.21.60")
-public record ItemVisual(ItemVisual. @NonNull VisualGeometry geometry,
-        @NonNull MaterialInstances materialInstances) implements BlockComponent {
+public final class ItemVisual implements BlockComponent {
     /**
      * The component name in add-on JSON.
      */
     public static final String NAME = "minecraft:item_visual";
 
-    /**
-     * Checks the components.
-     *
-     * @throws NullPointerException if a required component is null
-     */
-    public ItemVisual {
+    private final @NonNull VisualGeometry geometry;
+
+    private final @NonNull MaterialInstances materialInstances;
+
+    private ItemVisual(@NonNull VisualGeometry geometry,
+            @NonNull MaterialInstances materialInstances) {
         Objects.requireNonNull(geometry, "ItemVisual.geometry");
         Objects.requireNonNull(materialInstances, "ItemVisual.materialInstances");
+        this.geometry = geometry;
+        this.materialInstances = materialInstances;
+    }
+
+    /**
+     * The "minecraft:geometry" component of the item. Add-on JSON {@code geometry}. Required.
+     *
+     * @return the value
+     */
+    public @NonNull VisualGeometry geometry() {
+        return geometry;
+    }
+
+    /**
+     * The "minecraft:material_instances" component of the item. Value must have at most 64 items. Add-on JSON {@code
+     * material_instances}. Required. Compiled by the hand transform {@code Transforms.materialInstancesPacked}.
+     *
+     * @return the value
+     */
+    public @NonNull MaterialInstances materialInstances() {
+        return materialInstances;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        return this == o || o instanceof ItemVisual other
+                && Objects.equals(geometry, other.geometry)
+                && Objects.equals(materialInstances, other.materialInstances);
+    }
+
+    @Override
+    public int hashCode() {
+        int h = Objects.hashCode(geometry);
+        h = 31 * h + Objects.hashCode(materialInstances);
+        return h;
+    }
+
+    @Override
+    public String toString() {
+        return "ItemVisual[geometry=" + geometry + ", materialInstances=" + materialInstances + "]";
     }
 
     @Override
@@ -132,14 +168,71 @@ public record ItemVisual(ItemVisual. @NonNull VisualGeometry geometry,
     /**
      * Optional object that maps x/y/z axes to block state names that drive visual-only geometry rotation.
      *
-     * @param x Block state name that controls visual rotation around the x axis. Value must have at most 256 items. Add-on
-     *        JSON {@code x}. Optional (null: not set).
-     * @param y Block state name that controls visual rotation around the y axis. Value must have at most 256 items. Add-on
-     *        JSON {@code y}. Optional (null: not set).
-     * @param z Block state name that controls visual rotation around the z axis. Value must have at most 256 items. Add-on
-     *        JSON {@code z}. Optional (null: not set).
      */
-    public record NWayVisualRotation(@Nullable String x, @Nullable String y, @Nullable String z) {
+    public static final class NWayVisualRotation {
+        private final @Nullable String x;
+
+        private final @Nullable String y;
+
+        private final @Nullable String z;
+
+        private NWayVisualRotation(@Nullable String x, @Nullable String y, @Nullable String z) {
+            this.x = x;
+            this.y = y;
+            this.z = z;
+        }
+
+        /**
+         * Block state name that controls visual rotation around the x axis. Value must have at most 256 items. Add-on
+         * JSON {@code x}. Optional (null: not set).
+         *
+         * @return the value
+         */
+        public @Nullable String x() {
+            return x;
+        }
+
+        /**
+         * Block state name that controls visual rotation around the y axis. Value must have at most 256 items. Add-on
+         * JSON {@code y}. Optional (null: not set).
+         *
+         * @return the value
+         */
+        public @Nullable String y() {
+            return y;
+        }
+
+        /**
+         * Block state name that controls visual rotation around the z axis. Value must have at most 256 items. Add-on
+         * JSON {@code z}. Optional (null: not set).
+         *
+         * @return the value
+         */
+        public @Nullable String z() {
+            return z;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            return this == o || o instanceof NWayVisualRotation other
+                    && Objects.equals(x, other.x)
+                    && Objects.equals(y, other.y)
+                    && Objects.equals(z, other.z);
+        }
+
+        @Override
+        public int hashCode() {
+            int h = Objects.hashCode(x);
+            h = 31 * h + Objects.hashCode(y);
+            h = 31 * h + Objects.hashCode(z);
+            return h;
+        }
+
+        @Override
+        public String toString() {
+            return "NWayVisualRotation[x=" + x + ", y=" + y + ", z=" + z + "]";
+        }
+
         /**
          * Creates a builder with every field at its default.
          *
@@ -224,56 +317,156 @@ public record ItemVisual(ItemVisual. @NonNull VisualGeometry geometry,
     /**
      * The "minecraft:geometry" component of the item.
      *
-     * @param boneVisibility A JSON object that contains a list of key/value pairs that map from bone name in the specified geometry file
-     *        (key) to a Molang expression that tells whether the bone should be visible or not (value). The expression is
-     *        limited to using the "query.block_state()" query. When using "bone_visibility" in geometry components in the
-     *        "permutations" section, you must also have a default version of the geometry component with "bone_visibility"
-     *        in the "components" section. Value must have at most 64 items. Add-on JSON {@code bone_visibility}. Default:
-     *        <code>&#123;&#125;</code>. Empty while {@code identifier} is {@code minecraft:geometry.full_block} (BDS
-     *        1.26.63.1). Compiled by the hand transform {@code Transforms.itemVisualBoneVisibility}.
-     * @param culling Which block_culling .json file to use when rendering this block. Value must have at most 256 items. Add-on
-     *        JSON {@code culling}. Optional (null: not set).
-     * @param cullingLayer A string that allows culling rule to group multiple blocks together when comparing them. When using the
-     *        minecraft namespace, the only allowed culling layer identifiers are : "minecraft:culling_layer.undefined" or
-     *        "minecraft:culling_layer.leaves". When using no namespaces or a custom one, the names must start and end with
-     *        an alpha-numeric character. Value must have at least 1 items. Value must have at most 256 items. Value must
-     *        match a regular expression pattern of
-     *        "^(?:minecraft:culling_layer.undefined|minecraft:culling_layer.leaves|(?!minecraft:)[a-z0-9].*[a-z0-9])$".
-     *        Add-on JSON {@code culling_layer}. Optional (null: not set).
-     * @param cullingShape Currently only available with the VoxelShape experiment on. The voxel shape used for culling adjacent block
-     *        faces. Voxel shapes work together with culling rules and will not function if there is no culling rule defined
-     *        for the block. Only adjacent blocks with voxel shapes will occlude using this shape. Blocks using
-     *        &#92;"minecraft:geometry.full_block&#92;" always use the unit cube shape and will ignore custom shapes if
-     *        specified. When using the minecraft namespace, the only currently available culling shape identifiers are :
-     *        &#92;"minecraft:empty&#92;" or &#92;"minecraft:unit_cube&#92;". When using no namespaces or a custom one, the
-     *        names must start and end with an alpha-numeric character. Value must have at most 256 items. Value must match
-     *        a regular expression pattern of "^(?:minecraft:empty|minecraft:unit_cube|(?!minecraft:)[a-z0-9].*[a-z0-9])$".
-     *        Add-on JSON {@code culling_shape}. Optional (null: not set).
-     * @param identifier The description identifier of the geometry to use to render this block. This identifier must either match an
-     *        existing geometry identifier in any of the loaded resource packs or be one of the currently supported Vanilla
-     *        identifiers: "minecraft:geometry.full_block" or "minecraft:geometry.cross". Value must have at most 256 items.
-     *        Add-on JSON {@code identifier}. Optional (null: not set).
-     * @param nWayVisualRotation Optional object that maps x/y/z axes to block state names that drive visual-only geometry rotation. Add-on
-     *        JSON {@code n_way_visual_rotation}. Optional (null: not set).
-     * @param uvLock A field that is either a Boolean or an array of strings, max size 64 strings. This field locks UV orientation
-     *        for all/some bones in the geometry, regardless of how the block is rotated using "minecraft:transformation"
-     *        component. For performance reasons it's recommended to use the Boolean. Add-on JSON {@code uv_lock}. Default:
-     *        <code>false</code>. Compiled by the hand transform {@code Transforms.itemVisualUvLock}.
      */
-    public record VisualGeometry(@NonNull Map<String, String> boneVisibility,
-            @Nullable String culling, @Nullable String cullingLayer, @Nullable String cullingShape,
-            @Nullable String identifier, @Nullable NWayVisualRotation nWayVisualRotation,
-            @NonNull UvLock uvLock) {
-        /**
-         * Checks the components and copies lists and maps, so the value is immutable.
-         *
-         * @throws NullPointerException if a required component is null
-         * @throws IllegalArgumentException if a component is out of its documented range or conflicts with another
-         */
-        public VisualGeometry {
+    public static final class VisualGeometry {
+        private final @NonNull Map<String, String> boneVisibility;
+
+        private final @Nullable String culling;
+
+        private final @Nullable String cullingLayer;
+
+        private final @Nullable String cullingShape;
+
+        private final @Nullable String identifier;
+
+        private final @Nullable NWayVisualRotation nWayVisualRotation;
+
+        private final @NonNull UvLock uvLock;
+
+        private VisualGeometry(@NonNull Map<String, String> boneVisibility,
+                @Nullable String culling, @Nullable String cullingLayer,
+                @Nullable String cullingShape, @Nullable String identifier,
+                @Nullable NWayVisualRotation nWayVisualRotation, @NonNull UvLock uvLock) {
             boneVisibility = Check.copy(boneVisibility, "ItemVisual.VisualGeometry.boneVisibility");
             Check.conflict("ItemVisual.VisualGeometry", "boneVisibility", !boneVisibility.isEmpty(), "identifier", identifier, "minecraft:geometry.full_block");
             Objects.requireNonNull(uvLock, "ItemVisual.VisualGeometry.uvLock");
+            this.boneVisibility = boneVisibility;
+            this.culling = culling;
+            this.cullingLayer = cullingLayer;
+            this.cullingShape = cullingShape;
+            this.identifier = identifier;
+            this.nWayVisualRotation = nWayVisualRotation;
+            this.uvLock = uvLock;
+        }
+
+        /**
+         * A JSON object that contains a list of key/value pairs that map from bone name in the specified geometry file
+         * (key) to a Molang expression that tells whether the bone should be visible or not (value). The expression is
+         * limited to using the "query.block_state()" query. When using "bone_visibility" in geometry components in the
+         * "permutations" section, you must also have a default version of the geometry component with "bone_visibility"
+         * in the "components" section. Value must have at most 64 items. Add-on JSON {@code bone_visibility}. Default:
+         * <code>&#123;&#125;</code>. Empty while {@code identifier} is {@code minecraft:geometry.full_block} (BDS
+         * 1.26.63.1). Compiled by the hand transform {@code Transforms.itemVisualBoneVisibility}.
+         *
+         * @return the value
+         */
+        public @NonNull Map<String, String> boneVisibility() {
+            return boneVisibility;
+        }
+
+        /**
+         * Which block_culling .json file to use when rendering this block. Value must have at most 256 items. Add-on
+         * JSON {@code culling}. Optional (null: not set).
+         *
+         * @return the value
+         */
+        public @Nullable String culling() {
+            return culling;
+        }
+
+        /**
+         * A string that allows culling rule to group multiple blocks together when comparing them. When using the
+         * minecraft namespace, the only allowed culling layer identifiers are : "minecraft:culling_layer.undefined" or
+         * "minecraft:culling_layer.leaves". When using no namespaces or a custom one, the names must start and end with
+         * an alpha-numeric character. Value must have at least 1 items. Value must have at most 256 items. Value must
+         * match a regular expression pattern of
+         * "^(?:minecraft:culling_layer.undefined|minecraft:culling_layer.leaves|(?!minecraft:)[a-z0-9].*[a-z0-9])$".
+         * Add-on JSON {@code culling_layer}. Optional (null: not set).
+         *
+         * @return the value
+         */
+        public @Nullable String cullingLayer() {
+            return cullingLayer;
+        }
+
+        /**
+         * Currently only available with the VoxelShape experiment on. The voxel shape used for culling adjacent block
+         * faces. Voxel shapes work together with culling rules and will not function if there is no culling rule defined
+         * for the block. Only adjacent blocks with voxel shapes will occlude using this shape. Blocks using
+         * &#92;"minecraft:geometry.full_block&#92;" always use the unit cube shape and will ignore custom shapes if
+         * specified. When using the minecraft namespace, the only currently available culling shape identifiers are :
+         * &#92;"minecraft:empty&#92;" or &#92;"minecraft:unit_cube&#92;". When using no namespaces or a custom one, the
+         * names must start and end with an alpha-numeric character. Value must have at most 256 items. Value must match
+         * a regular expression pattern of "^(?:minecraft:empty|minecraft:unit_cube|(?!minecraft:)[a-z0-9].*[a-z0-9])$".
+         * Add-on JSON {@code culling_shape}. Optional (null: not set).
+         *
+         * @return the value
+         */
+        public @Nullable String cullingShape() {
+            return cullingShape;
+        }
+
+        /**
+         * The description identifier of the geometry to use to render this block. This identifier must either match an
+         * existing geometry identifier in any of the loaded resource packs or be one of the currently supported Vanilla
+         * identifiers: "minecraft:geometry.full_block" or "minecraft:geometry.cross". Value must have at most 256 items.
+         * Add-on JSON {@code identifier}. Optional (null: not set).
+         *
+         * @return the value
+         */
+        public @Nullable String identifier() {
+            return identifier;
+        }
+
+        /**
+         * Optional object that maps x/y/z axes to block state names that drive visual-only geometry rotation. Add-on
+         * JSON {@code n_way_visual_rotation}. Optional (null: not set).
+         *
+         * @return the value
+         */
+        public @Nullable NWayVisualRotation nWayVisualRotation() {
+            return nWayVisualRotation;
+        }
+
+        /**
+         * A field that is either a Boolean or an array of strings, max size 64 strings. This field locks UV orientation
+         * for all/some bones in the geometry, regardless of how the block is rotated using "minecraft:transformation"
+         * component. For performance reasons it's recommended to use the Boolean. Add-on JSON {@code uv_lock}. Default:
+         * <code>false</code>. Compiled by the hand transform {@code Transforms.itemVisualUvLock}.
+         *
+         * @return the value
+         */
+        public @NonNull UvLock uvLock() {
+            return uvLock;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            return this == o || o instanceof VisualGeometry other
+                    && Objects.equals(boneVisibility, other.boneVisibility)
+                    && Objects.equals(culling, other.culling)
+                    && Objects.equals(cullingLayer, other.cullingLayer)
+                    && Objects.equals(cullingShape, other.cullingShape)
+                    && Objects.equals(identifier, other.identifier)
+                    && Objects.equals(nWayVisualRotation, other.nWayVisualRotation)
+                    && Objects.equals(uvLock, other.uvLock);
+        }
+
+        @Override
+        public int hashCode() {
+            int h = Objects.hashCode(boneVisibility);
+            h = 31 * h + Objects.hashCode(culling);
+            h = 31 * h + Objects.hashCode(cullingLayer);
+            h = 31 * h + Objects.hashCode(cullingShape);
+            h = 31 * h + Objects.hashCode(identifier);
+            h = 31 * h + Objects.hashCode(nWayVisualRotation);
+            h = 31 * h + Objects.hashCode(uvLock);
+            return h;
+        }
+
+        @Override
+        public String toString() {
+            return "VisualGeometry[boneVisibility=" + boneVisibility + ", culling=" + culling + ", cullingLayer=" + cullingLayer + ", cullingShape=" + cullingShape + ", identifier=" + identifier + ", nWayVisualRotation=" + nWayVisualRotation + ", uvLock=" + uvLock + "]";
         }
 
         /**

@@ -17,11 +17,29 @@ import org.checkerframework.checker.nullness.qual.NonNull;
  * @since 1.0.0
  */
 @ServerOnly
-public record Quiet() implements ItemComponent {
+public final class Quiet implements ItemComponent {
     /**
      * The component name in add-on JSON.
      */
     public static final String NAME = "test:quiet";
+
+    private Quiet() {
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        return o instanceof Quiet;
+    }
+
+    @Override
+    public int hashCode() {
+        return 0;
+    }
+
+    @Override
+    public String toString() {
+        return "Quiet[]";
+    }
 
     @Override
     public @NonNull String name() {

@@ -16,19 +16,50 @@ import org.checkerframework.checker.nullness.qual.Nullable;
  * this component was found in the input, but is not present in the Schema. Its encoder writes nothing and adds a
  * report warning, as BDS would never send it to a client.
  *
- * @param value The integer form of the component (add-on JSON {@code "minecraft:block_light_absorption": <integer>}).
- *        Required.
  * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/blockreference/examples/blockcomponents/minecraftblock_block_light_absorption?view=minecraft-bedrock-stable">Microsoft Learn: minecraft:block_light_absorption</a>
  * @since 1.0.0
  * @deprecated replaced by {@link LightDampening} (docs text: "Use minecraft:light_dampening in newer format versions.")
  */
 @Deprecated
 @ReplacedBy(LightDampening.class)
-public record BlockLightAbsorption(int value) implements BlockComponent {
+public final class BlockLightAbsorption implements BlockComponent {
     /**
      * The component name in add-on JSON.
      */
     public static final String NAME = "minecraft:block_light_absorption";
+
+    private final int value;
+
+    private BlockLightAbsorption(int value) {
+        this.value = value;
+    }
+
+    /**
+     * The integer form of the component (add-on JSON {@code "minecraft:block_light_absorption": <integer>}).
+     * Required.
+     *
+     * @return the value
+     */
+    public int value() {
+        return value;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        return this == o || o instanceof BlockLightAbsorption other
+                && value == other.value;
+    }
+
+    @Override
+    public int hashCode() {
+        int h = value;
+        return h;
+    }
+
+    @Override
+    public String toString() {
+        return "BlockLightAbsorption[value=" + value + "]";
+    }
 
     @Override
     public @NonNull String name() {

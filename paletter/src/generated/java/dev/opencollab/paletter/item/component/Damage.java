@@ -5,6 +5,7 @@ package dev.opencollab.paletter.item.component;
 
 import dev.opencollab.paletter.annotation.BedrockFormat;
 import dev.opencollab.paletter.internal.component.Check;
+import java.util.Objects;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
@@ -13,27 +14,50 @@ import org.checkerframework.checker.nullness.qual.Nullable;
  * <p>
  * Add-on JSON: {@code "minecraft:damage"}.
  *
- * @param value The amount of extra damage this item deals when attacking. This value is added to the base attack damage. Must
- *        be a positive integer. Add-on JSON {@code value}. Optional (null: not set). Range [0, 32767] (BDS 1.26.63.1).
  * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/itemreference/examples/itemcomponents/minecraft_damage?view=minecraft-bedrock-stable">Microsoft Learn: minecraft:damage</a>
  * @since 1.0.0
  */
 @BedrockFormat("1.20.30")
-public record Damage(@Nullable Integer value) implements ItemComponent {
+public final class Damage implements ItemComponent {
     /**
      * The component name in add-on JSON.
      */
     public static final String NAME = "minecraft:damage";
 
-    /**
-     * Checks the components.
-     *
-     * @throws IllegalArgumentException if a component is out of its documented range or conflicts with another
-     */
-    public Damage {
+    private final @Nullable Integer value;
+
+    private Damage(@Nullable Integer value) {
         if (value != null) {
             Check.range("Damage.value", value, 0.0, 32767.0);
         }
+        this.value = value;
+    }
+
+    /**
+     * The amount of extra damage this item deals when attacking. This value is added to the base attack damage. Must
+     * be a positive integer. Add-on JSON {@code value}. Optional (null: not set). Range [0, 32767] (BDS 1.26.63.1).
+     *
+     * @return the value
+     */
+    public @Nullable Integer value() {
+        return value;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        return this == o || o instanceof Damage other
+                && Objects.equals(value, other.value);
+    }
+
+    @Override
+    public int hashCode() {
+        int h = Objects.hashCode(value);
+        return h;
+    }
+
+    @Override
+    public String toString() {
+        return "Damage[value=" + value + "]";
     }
 
     @Override

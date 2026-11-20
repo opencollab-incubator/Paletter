@@ -18,28 +18,50 @@ import org.checkerframework.checker.nullness.qual.Nullable;
  * <p>
  * Add-on JSON: {@code "minecraft:repairable"}.
  *
- * @param repairItems List of repair item entries. Each entry needs to define a list of strings for <code>items</code> that can be
- *        used for the repair and an optional <code>repair_amount</code> for how much durability is gained. Add-on JSON
- *        {@code repair_items}. Default: <code>[]</code>. Compiled by the hand transform {@code
- *        Transforms.itemDescriptorList}.
  * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/itemreference/examples/itemcomponents/minecraft_repairable?view=minecraft-bedrock-stable">Microsoft Learn: minecraft:repairable</a>
  * @since 1.0.0
  */
 @BedrockFormat("1.20.10")
-public record Repairable(
-        @NonNull List<Repairable.RepairItems> repairItems) implements ItemComponent {
+public final class Repairable implements ItemComponent {
     /**
      * The component name in add-on JSON.
      */
     public static final String NAME = "minecraft:repairable";
 
-    /**
-     * Checks the components and copies lists and maps, so the value is immutable.
-     *
-     * @throws NullPointerException if a required component is null
-     */
-    public Repairable {
+    private final @NonNull List<RepairItems> repairItems;
+
+    private Repairable(@NonNull List<RepairItems> repairItems) {
         repairItems = List.copyOf(Objects.requireNonNull(repairItems, "Repairable.repairItems"));
+        this.repairItems = repairItems;
+    }
+
+    /**
+     * List of repair item entries. Each entry needs to define a list of strings for <code>items</code> that can be
+     * used for the repair and an optional <code>repair_amount</code> for how much durability is gained. Add-on JSON
+     * {@code repair_items}. Default: <code>[]</code>. Compiled by the hand transform {@code
+     * Transforms.itemDescriptorList}.
+     *
+     * @return the value
+     */
+    public @NonNull List<RepairItems> repairItems() {
+        return repairItems;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        return this == o || o instanceof Repairable other
+                && Objects.equals(repairItems, other.repairItems);
+    }
+
+    @Override
+    public int hashCode() {
+        int h = Objects.hashCode(repairItems);
+        return h;
+    }
+
+    @Override
+    public String toString() {
+        return "Repairable[repairItems=" + repairItems + "]";
     }
 
     @Override
@@ -113,10 +135,54 @@ public record Repairable(
      * List of repair item entries. Each entry needs to define a list of strings for <code>items</code> that can be
      * used for the repair and an optional <code>repair_amount</code> for how much durability is gained.
      *
-     * @param items Add-on JSON {@code items}. Optional (null: not set).
-     * @param repairAmount Add-on JSON {@code repair_amount}. Optional (null: not set).
      */
-    public record RepairItems(@Nullable ItemsOrTags items, @Nullable RepairAmount repairAmount) {
+    public static final class RepairItems {
+        private final @Nullable ItemsOrTags items;
+
+        private final @Nullable RepairAmount repairAmount;
+
+        private RepairItems(@Nullable ItemsOrTags items, @Nullable RepairAmount repairAmount) {
+            this.items = items;
+            this.repairAmount = repairAmount;
+        }
+
+        /**
+         * Add-on JSON {@code items}. Optional (null: not set).
+         *
+         * @return the value
+         */
+        public @Nullable ItemsOrTags items() {
+            return items;
+        }
+
+        /**
+         * Add-on JSON {@code repair_amount}. Optional (null: not set).
+         *
+         * @return the value
+         */
+        public @Nullable RepairAmount repairAmount() {
+            return repairAmount;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            return this == o || o instanceof RepairItems other
+                    && Objects.equals(items, other.items)
+                    && Objects.equals(repairAmount, other.repairAmount);
+        }
+
+        @Override
+        public int hashCode() {
+            int h = Objects.hashCode(items);
+            h = 31 * h + Objects.hashCode(repairAmount);
+            return h;
+        }
+
+        @Override
+        public String toString() {
+            return "RepairItems[items=" + items + ", repairAmount=" + repairAmount + "]";
+        }
+
         /**
          * Creates a builder with every field at its default.
          *

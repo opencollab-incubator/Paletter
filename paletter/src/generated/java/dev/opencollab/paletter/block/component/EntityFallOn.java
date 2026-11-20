@@ -17,17 +17,48 @@ import org.checkerframework.checker.nullness.qual.Nullable;
  * Server only: BDS accepts it in packs but sends nothing to clients (BDS 1.26.36.1, 1.26.45.1, 1.26.52.3,
  * 1.26.63.1, 1.26.70.24), so it has no client effect. Palettes leave it out without a warning.
  *
- * @param minFallDistance The minimum distance in blocks that an actor needs to fall before events are triggered. Add-on JSON {@code
- *        min_fall_distance}. Default: <code>0</code>.
  * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/blockreference/examples/blockcomponents/minecraftblock_entity_fall_on?view=minecraft-bedrock-stable">Microsoft Learn: minecraft:entity_fall_on</a>
  * @since 1.0.0
  */
 @ServerOnly
-public record EntityFallOn(float minFallDistance) implements BlockComponent {
+public final class EntityFallOn implements BlockComponent {
     /**
      * The component name in add-on JSON.
      */
     public static final String NAME = "minecraft:entity_fall_on";
+
+    private final float minFallDistance;
+
+    private EntityFallOn(float minFallDistance) {
+        this.minFallDistance = minFallDistance;
+    }
+
+    /**
+     * The minimum distance in blocks that an actor needs to fall before events are triggered. Add-on JSON {@code
+     * min_fall_distance}. Default: <code>0</code>.
+     *
+     * @return the value
+     */
+    public float minFallDistance() {
+        return minFallDistance;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        return this == o || o instanceof EntityFallOn other
+                && Float.compare(minFallDistance, other.minFallDistance) == 0;
+    }
+
+    @Override
+    public int hashCode() {
+        int h = Float.hashCode(minFallDistance);
+        return h;
+    }
+
+    @Override
+    public String toString() {
+        return "EntityFallOn[minFallDistance=" + minFallDistance + "]";
+    }
 
     @Override
     public @NonNull String name() {

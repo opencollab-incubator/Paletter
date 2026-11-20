@@ -13,24 +13,29 @@ import java.util.Objects;
  * assumes current clients still honour it on the wire and keeps sending it for legacy content; it will be removed if
  * clients stop honouring it. Sent as {@code {triggerType: <string>}}.
  *
- * @param triggerType the event name, e.g. {@code geyser:place_event}
  * @since 1.0.0
  * @deprecated retired from the add-on format, still sent for legacy content; will be removed if clients stop honouring it
  */
 @Deprecated
-public record OnPlayerPlacing(@NonNull String triggerType) implements WireOnlyBlockComponent {
+public final class OnPlayerPlacing implements WireOnlyBlockComponent {
     /**
      * The component name.
      */
     public static final String NAME = "minecraft:on_player_placing";
 
+    private final @NonNull String triggerType;
+
+    private OnPlayerPlacing(@NonNull String triggerType) {
+        this.triggerType = Objects.requireNonNull(triggerType, "OnPlayerPlacing.triggerType");
+    }
+
     /**
-     * Creates the component.
+     * Returns the event the client triggers.
      *
-     * @throws NullPointerException if {@code triggerType} is null
+     * @return the event name, e.g. {@code geyser:place_event}
      */
-    public OnPlayerPlacing {
-        Objects.requireNonNull(triggerType, "OnPlayerPlacing.triggerType");
+    public @NonNull String triggerType() {
+        return triggerType;
     }
 
     /**
@@ -47,5 +52,20 @@ public record OnPlayerPlacing(@NonNull String triggerType) implements WireOnlyBl
     @Override
     public @NonNull String name() {
         return NAME;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        return this == o || o instanceof OnPlayerPlacing other && triggerType.equals(other.triggerType);
+    }
+
+    @Override
+    public int hashCode() {
+        return triggerType.hashCode();
+    }
+
+    @Override
+    public String toString() {
+        return "OnPlayerPlacing[triggerType=" + triggerType + "]";
     }
 }

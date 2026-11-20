@@ -56,8 +56,9 @@ block states, the block to item relation and experiment marks.
 
 ## Wire-only components
 
-Wire fields without an add-on JSON source are hand-written records implementing the sealed `WireOnlyItemComponent` or
-`WireOnlyBlockComponent`, encoded by `internal.component.WireOnlyWire`. To add one: write the record, add it to the
+Wire fields without an add-on JSON source are hand-written final classes (private constructor, `of` or a builder,
+accessors, `equals`/`hashCode`/`toString`, as the generated ones; docs/api.md "Evolution") implementing the sealed
+`WireOnlyItemComponent` or `WireOnlyBlockComponent`, encoded by `internal.component.WireOnlyWire`. To add one: write the class, add it to the
 `permits` clause, add a case to `WireOnlyWire` and a test to `WireOnlyComponentTest`.
 
 ## Recipes

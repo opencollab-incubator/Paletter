@@ -191,7 +191,7 @@ public final class CreativeOrderCheck {
                 CustomBlock.Builder builder = CustomBlock.builder(name);
                 String category = menu.getString("category", "none");
                 if (!category.equals(CreativeCategory.NONE_NAME)) {
-                    builder.menuCategory(BlockMenuCategory.builder().category(BlockMenuCategory.Category.fromValue(category))
+                    builder.menuCategory(BlockMenuCategory.builder().category(BlockMenuCategory.Category.of(category))
                         .group(menu.getString("group", "")).hiddenInCommands(menu.getBoolean("is_hidden_in_commands")).build());
                 }
                 layer.block(builder.build());
@@ -216,7 +216,7 @@ public final class CreativeOrderCheck {
         }
         String group = properties.getString("creative_group", "");
         return dev.opencollab.paletter.item.component.ItemMenuCategory.builder()
-            .category(dev.opencollab.paletter.item.component.ItemMenuCategory.Category.fromValue(CreativeCategory.values()[category - 1].bedrockName()))
+            .category(dev.opencollab.paletter.item.component.ItemMenuCategory.Category.of(CreativeCategory.values()[category - 1].bedrockName()))
             .group(group.isEmpty() ? null : group).build();
     }
 

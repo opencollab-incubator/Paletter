@@ -71,9 +71,9 @@ class WireOnlyComponentTest {
     void renderOffsetsWriteTheShapeGeyserWrites() {
         // Geyser's converted-item default: scale only, main hand first person and the other three views
         RenderOffsets.Offset hand = RenderOffsets.Offset.scale(0.075f, 0.125f, 0.075f);
-        RenderOffsets offsets = new RenderOffsets(
-            new RenderOffsets.Hand(RenderOffsets.Offset.scale(0.03f, 0.03f, 0.03f), hand),
-            new RenderOffsets.Hand(hand, hand));
+        RenderOffsets offsets = RenderOffsets.builder()
+            .mainHand(RenderOffsets.Hand.builder().firstPerson(RenderOffsets.Offset.scale(0.03f, 0.03f, 0.03f)).thirdPerson(hand).build())
+            .offHand(RenderOffsets.Hand.builder().firstPerson(hand).thirdPerson(hand).build()).build();
         NbtMap expected = NbtMap.builder()
             .putCompound("main_hand", NbtMap.builder()
                 .putCompound("first_person", scale(0.03f, 0.03f, 0.03f))
@@ -94,21 +94,28 @@ class WireOnlyComponentTest {
             assertEquals("chestplates", only.getString("render_offsets"));
             assertFalse(only.containsKey("minecraft:render_offsets"));
 
-            NbtMap both = components(base().component(new RenderOffsets(
-                new RenderOffsets.Hand(RenderOffsets.Offset.scale(1, 1, 1), null), null, RenderOffsets.Preset.BOOTS)).build(), version);
+            NbtMap both = components(base().component(RenderOffsets.builder().mainHand(scaledFirstPerson())
+                .preset(RenderOffsets.Preset.BOOTS).build()).build(), version);
             assertEquals("boots", both.getString("render_offsets"));
             assertTrue(both.getCompound("minecraft:render_offsets").containsKey("main_hand"));
         }
         assertEquals("helmets", RenderOffsets.Preset.HELMETS.value());
-        assertNull(new RenderOffsets(null, null).preset());
+        assertNull(RenderOffsets.builder().build().preset());
+    }
+
+    /** A hand with a first person view that scales by 1. */
+    private static RenderOffsets.Hand scaledFirstPerson() {
+        return RenderOffsets.Hand.builder().firstPerson(RenderOffsets.Offset.scale(1, 1, 1)).build();
     }
 
     @Test
     void renderOffsetsWritePositionRotationScaleAndLeaveOutEmptyParts() {
-        RenderOffsets offsets = new RenderOffsets(
-            new RenderOffsets.Hand(new RenderOffsets.Offset(new RenderOffsets.Vec3(1, 2, 3), new RenderOffsets.Vec3(4, 5, 6),
-                new RenderOffsets.Vec3(7, 8, 9)), new RenderOffsets.Offset(null, null, null)),
-            new RenderOffsets.Hand(null, null));
+        RenderOffsets offsets = RenderOffsets.builder()
+            .mainHand(RenderOffsets.Hand.builder()
+                .firstPerson(RenderOffsets.Offset.builder().position(RenderOffsets.Vec3.of(1, 2, 3)).rotation(RenderOffsets.Vec3.of(4, 5, 6))
+                    .scale(RenderOffsets.Vec3.of(7, 8, 9)).build())
+                .thirdPerson(RenderOffsets.Offset.builder().build()).build())
+            .offHand(RenderOffsets.Hand.builder().build()).build();
         NbtMap node = components(base().component(offsets).build(), PALETTER.latest()).getCompound("minecraft:render_offsets");
         NbtMap expected = NbtMap.builder().putCompound("main_hand", NbtMap.builder().putCompound("first_person", NbtMap.builder()
             .putList("position", NbtType.FLOAT, List.of(1f, 2f, 3f))
@@ -117,7 +124,7 @@ class WireOnlyComponentTest {
         assertEquals(expected, node);
         assertFalse(node.containsKey("off_hand"));
 
-        NbtMap empty = components(base().component(new RenderOffsets(null, null)).build(), PALETTER.latest());
+        NbtMap empty = components(base().component(RenderOffsets.builder().build()).build(), PALETTER.latest());
         assertTrue(empty.getCompound("minecraft:render_offsets").isEmpty());
         assertTrue(empty.containsKey("minecraft:render_offsets"));
     }
@@ -132,7 +139,7 @@ class WireOnlyComponentTest {
     void combineWithGeneratedComponentsWithoutDuplicatesOrConflicts() {
         CustomItem plain = base().component(MaxStackSize.of(16)).build();
         CustomItem both = base().component(MaxStackSize.of(16)).component(MiningSpeed.of(3f)).component(FrameCount.of(4))
-            .component(new RenderOffsets(new RenderOffsets.Hand(RenderOffsets.Offset.scale(1, 1, 1), null), null)).build();
+            .component(RenderOffsets.builder().mainHand(scaledFirstPerson()).build()).build();
         NbtMap before = components(plain, PALETTER.latest());
         NbtMap after = components(both, PALETTER.latest());
         // only the three wire-only keys differ; the generated component's keys are untouched
@@ -152,7 +159,7 @@ class WireOnlyComponentTest {
         assertEquals((byte) 16, after.getCompound("minecraft:max_stack_size").getByte("value"));
 
         // order does not matter
-        CustomItem reversed = base().component(new RenderOffsets(new RenderOffsets.Hand(RenderOffsets.Offset.scale(1, 1, 1), null), null))
+        CustomItem reversed = base().component(RenderOffsets.builder().mainHand(scaledFirstPerson()).build())
             .component(FrameCount.of(4)).component(MiningSpeed.of(3f)).component(MaxStackSize.of(16)).build();
         assertEquals(after, components(reversed, PALETTER.latest()));
     }
@@ -180,7 +187,7 @@ class WireOnlyComponentTest {
         assertThrows(IllegalArgumentException.class, () -> FrameCount.of(0));
         assertThrows(IllegalArgumentException.class, () -> MiningSpeed.of(Float.NaN));
         assertEquals("item_properties.frame_count", FrameCount.of(1).name());
-        assertEquals("minecraft:render_offsets", new RenderOffsets(null, null).name());
+        assertEquals("minecraft:render_offsets", RenderOffsets.builder().build().name());
     }
 
     @Test

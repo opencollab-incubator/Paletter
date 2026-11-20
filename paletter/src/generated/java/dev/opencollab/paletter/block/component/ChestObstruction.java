@@ -6,6 +6,9 @@ package dev.opencollab.paletter.block.component;
 import dev.opencollab.paletter.annotation.BedrockExperiment;
 import dev.opencollab.paletter.annotation.BedrockFormat;
 import dev.opencollab.paletter.annotation.ServerOnly;
+import dev.opencollab.paletter.internal.component.Check;
+import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
@@ -18,32 +21,54 @@ import org.checkerframework.checker.nullness.qual.Nullable;
  * 1.26.63.1, 1.26.70.24), so it has no client effect. Palettes leave it out without a warning.
  * The creator docs name the experiment Upcoming Creator Features for it (in some format versions); unverified against BDS.
  *
- * @param obstructionRule [optional] How the block should be evaluated by a chest during chest opening. Must be one of the following
- *        options: "always" - Will always oba chest from opening when directly above it. "never" - Will never obstruct a
- *        chest from opening when directly above it. "shape" - Will use the Blocks collision shape to determine if the
- *        chest is obstructed from opening when directly above it; this is the default value if no rule is provided. A
- *        Block can define its collision shape by adding a collision component. Add-on JSON {@code obstruction_rule}.
- *        Default: <code>"shape"</code>.
  * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/blockreference/examples/blockcomponents/minecraftblock_chest_obstruction?view=minecraft-bedrock-stable">Microsoft Learn: minecraft:chest_obstruction</a>
  * @since 1.0.0
  */
 @BedrockFormat("1.26.10")
 @BedrockExperiment("upcoming_creator_features")
 @ServerOnly
-public record ChestObstruction(
-        ChestObstruction. @NonNull ObstructionRule obstructionRule) implements BlockComponent {
+public final class ChestObstruction implements BlockComponent {
     /**
      * The component name in add-on JSON.
      */
     public static final String NAME = "minecraft:chest_obstruction";
 
-    /**
-     * Checks the components.
-     *
-     * @throws NullPointerException if a required component is null
-     */
-    public ChestObstruction {
+    private final @NonNull ObstructionRule obstructionRule;
+
+    private ChestObstruction(@NonNull ObstructionRule obstructionRule) {
         Objects.requireNonNull(obstructionRule, "ChestObstruction.obstructionRule");
+        this.obstructionRule = obstructionRule;
+    }
+
+    /**
+     * [optional] How the block should be evaluated by a chest during chest opening. Must be one of the following
+     * options: "always" - Will always oba chest from opening when directly above it. "never" - Will never obstruct a
+     * chest from opening when directly above it. "shape" - Will use the Blocks collision shape to determine if the
+     * chest is obstructed from opening when directly above it; this is the default value if no rule is provided. A
+     * Block can define its collision shape by adding a collision component. Add-on JSON {@code obstruction_rule}.
+     * Default: <code>"shape"</code>.
+     *
+     * @return the value
+     */
+    public @NonNull ObstructionRule obstructionRule() {
+        return obstructionRule;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        return this == o || o instanceof ChestObstruction other
+                && Objects.equals(obstructionRule, other.obstructionRule);
+    }
+
+    @Override
+    public int hashCode() {
+        int h = Objects.hashCode(obstructionRule);
+        return h;
+    }
+
+    @Override
+    public String toString() {
+        return "ChestObstruction[obstructionRule=" + obstructionRule + "]";
     }
 
     @Override
@@ -104,28 +129,54 @@ public record ChestObstruction(
     }
 
     /**
-     * The documented values; {@link #value()} is the add-on JSON string.
+     * A value of an add-on JSON string: a constant per documented value, {@link #of} for any other.
+     * {@link #value()} is the add-on JSON string. Not an enum: Bedrock adds values, so a {@code switch} over
+     * {@link #value()} needs a {@code default}.
      */
-    public enum ObstructionRule {
+    public static final class ObstructionRule {
         /**
          * {@code always}
          */
-        ALWAYS("always"),
+        public static final ObstructionRule ALWAYS = new ObstructionRule("always");
 
         /**
          * {@code never}
          */
-        NEVER("never"),
+        public static final ObstructionRule NEVER = new ObstructionRule("never");
 
         /**
          * {@code shape}
          */
-        SHAPE("shape");
+        public static final ObstructionRule SHAPE = new ObstructionRule("shape");
+
+        private static final List<ObstructionRule> KNOWN = List.of(ALWAYS, NEVER, SHAPE);
+
+        private static final Map<String, ObstructionRule> BY_VALUE = Check.index(KNOWN, ObstructionRule::value);
 
         private final String value;
 
-        ObstructionRule(String value) {
+        private ObstructionRule(String value) {
             this.value = value;
+        }
+
+        /**
+         * Returns the value of an add-on JSON string: the constant of a documented value, else a new value.
+         *
+         * @param value the value in add-on JSON
+         * @return the constant of the value, or a value Paletter does not know
+         */
+        public static @NonNull ObstructionRule of(@NonNull String value) {
+            ObstructionRule known = BY_VALUE.get(Objects.requireNonNull(value, "ObstructionRule.value"));
+            return known != null ? known : new ObstructionRule(value);
+        }
+
+        /**
+         * Returns the documented values, the constants of this class.
+         *
+         * @return the constants, in the order of the documentation
+         */
+        public static @NonNull List<ObstructionRule> known() {
+            return KNOWN;
         }
 
         /**
@@ -138,19 +189,27 @@ public record ChestObstruction(
         }
 
         /**
-         * Finds the constant of an add-on JSON value.
+         * Returns whether the value is documented, one of the constants.
          *
-         * @param value the value in add-on JSON
-         * @return the constant of the value
-         * @throws IllegalArgumentException if the value is not documented
+         * @return whether this is one of {@link #known()}
          */
-        public static @NonNull ObstructionRule fromValue(@NonNull String value) {
-            for (ObstructionRule constant : values()) {
-                if (constant.value.equals(value)) {
-                    return constant;
-                }
-            }
-            throw new IllegalArgumentException("Not a ObstructionRule: " + value);
+        public boolean isKnown() {
+            return BY_VALUE.get(value) == this;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            return this == o || o instanceof ObstructionRule other && value.equals(other.value);
+        }
+
+        @Override
+        public int hashCode() {
+            return value.hashCode();
+        }
+
+        @Override
+        public String toString() {
+            return value;
         }
     }
 }

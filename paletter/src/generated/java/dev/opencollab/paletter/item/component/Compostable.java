@@ -13,26 +13,49 @@ import org.checkerframework.checker.nullness.qual.Nullable;
  * <p>
  * Add-on JSON: {@code "minecraft:compostable"}.
  *
- * @param compostingChance The chance of this item to create a layer upon composting with the composter. Valid value range is 1 - 100
- *        inclusive Value must be &gt;= 1. Value must be &lt;= 100. Add-on JSON {@code composting_chance}. Required.
- *        Range [1, 100] (BDS 1.26.63.1).
  * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/itemreference/examples/itemcomponents/minecraft_compostable?view=minecraft-bedrock-stable">Microsoft Learn: minecraft:compostable</a>
  * @since 1.0.0
  */
 @BedrockFormat("1.21.60")
-public record Compostable(int compostingChance) implements ItemComponent {
+public final class Compostable implements ItemComponent {
     /**
      * The component name in add-on JSON.
      */
     public static final String NAME = "minecraft:compostable";
 
-    /**
-     * Checks the components.
-     *
-     * @throws IllegalArgumentException if a component is out of its documented range or conflicts with another
-     */
-    public Compostable {
+    private final int compostingChance;
+
+    private Compostable(int compostingChance) {
         Check.range("Compostable.compostingChance", compostingChance, 1.0, 100.0);
+        this.compostingChance = compostingChance;
+    }
+
+    /**
+     * The chance of this item to create a layer upon composting with the composter. Valid value range is 1 - 100
+     * inclusive Value must be &gt;= 1. Value must be &lt;= 100. Add-on JSON {@code composting_chance}. Required.
+     * Range [1, 100] (BDS 1.26.63.1).
+     *
+     * @return the value
+     */
+    public int compostingChance() {
+        return compostingChance;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        return this == o || o instanceof Compostable other
+                && compostingChance == other.compostingChance;
+    }
+
+    @Override
+    public int hashCode() {
+        int h = compostingChance;
+        return h;
+    }
+
+    @Override
+    public String toString() {
+        return "Compostable[compostingChance=" + compostingChance + "]";
     }
 
     @Override

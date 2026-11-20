@@ -555,7 +555,7 @@ public final class CustomBlock {
          * @throws NullPointerException if the category is null
          */
         public @NonNull Builder menuCategory(@NonNull CreativeCategory category) {
-            return menuCategory(BlockMenuCategory.builder().category(BlockMenuCategory.Category.fromValue(category.bedrockName())).build());
+            return menuCategory(BlockMenuCategory.builder().category(BlockMenuCategory.Category.of(category.bedrockName())).build());
         }
 
         /**
@@ -567,7 +567,7 @@ public final class CustomBlock {
          * @throws NullPointerException if the category is null
          */
         public @NonNull Builder menuCategory(@NonNull CreativeCategory category, @NonNull String group) {
-            return menuCategory(BlockMenuCategory.builder().category(BlockMenuCategory.Category.fromValue(category.bedrockName()))
+            return menuCategory(BlockMenuCategory.builder().category(BlockMenuCategory.Category.of(category.bedrockName()))
                 .group(group).build());
         }
 

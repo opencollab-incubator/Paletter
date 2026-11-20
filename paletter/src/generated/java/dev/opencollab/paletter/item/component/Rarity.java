@@ -4,6 +4,7 @@
 package dev.opencollab.paletter.item.component;
 
 import dev.opencollab.paletter.annotation.BedrockFormat;
+import java.util.Objects;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
@@ -13,19 +14,50 @@ import org.checkerframework.checker.nullness.qual.Nullable;
  * <p>
  * Add-on JSON: {@code "minecraft:rarity"}.
  *
- * @param value Sets the base rarity of the item. The rarity of an item automatically increases when enchanted, either to Rare
- *        when the base rarity is Common or Uncommon, or Epic when the base rarity is Rare. Add-on JSON {@code value}.
- *        Optional (null: not set). Documented values: {@code common}, {@code uncommon}, {@code rare}, {@code epic}; BDS
- *        takes other strings too.
  * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/itemreference/examples/itemcomponents/minecraft_rarity?view=minecraft-bedrock-stable">Microsoft Learn: minecraft:rarity</a>
  * @since 1.0.0
  */
 @BedrockFormat("1.21.30")
-public record Rarity(@Nullable String value) implements ItemComponent {
+public final class Rarity implements ItemComponent {
     /**
      * The component name in add-on JSON.
      */
     public static final String NAME = "minecraft:rarity";
+
+    private final @Nullable String value;
+
+    private Rarity(@Nullable String value) {
+        this.value = value;
+    }
+
+    /**
+     * Sets the base rarity of the item. The rarity of an item automatically increases when enchanted, either to Rare
+     * when the base rarity is Common or Uncommon, or Epic when the base rarity is Rare. Add-on JSON {@code value}.
+     * Optional (null: not set). Documented values: {@code common}, {@code uncommon}, {@code rare}, {@code epic}; BDS
+     * takes other strings too.
+     *
+     * @return the value
+     */
+    public @Nullable String value() {
+        return value;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        return this == o || o instanceof Rarity other
+                && Objects.equals(value, other.value);
+    }
+
+    @Override
+    public int hashCode() {
+        int h = Objects.hashCode(value);
+        return h;
+    }
+
+    @Override
+    public String toString() {
+        return "Rarity[value=" + value + "]";
+    }
 
     @Override
     public @NonNull String name() {

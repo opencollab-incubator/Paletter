@@ -68,14 +68,15 @@ class RuleTest {
     }
 
     @Test
-    void anEnumTableSwitchesOverTheEnumWithoutADefault() {
+    void anEnumTableSwitchesOverTheValueWithADefaultForNewerValues() {
         RecordingEmitter e = new RecordingEmitter();
         rule("{\"kind\": \"enum-table\", \"table\": {\"eat\": \"1\", \"none\": \"0\", \"hide\": \"<not sent>\"}, \"nbt\": \"int\"}").emit(e);
         assertEquals("""
-            switch (key) {
-              case EAT -> write("1 (int)");
-              case HIDE -> write("<not sent>");
-              case NONE -> write("0 (int)");
+            switch (key.value()) {
+              case "eat" -> write("1 (int)");
+              case "hide" -> write("<not sent>");
+              case "none" -> write("0 (int)");
+              default -> ctx.drop(component, "path = " + key.value() + " has no known wire value");
             }""", e.written());
     }
 

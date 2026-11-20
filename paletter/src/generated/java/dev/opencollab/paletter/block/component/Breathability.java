@@ -16,26 +16,49 @@ import org.checkerframework.checker.nullness.qual.Nullable;
  * "minecraft:breathability" is deprecated. Its encoder writes nothing and adds a report warning, as BDS would
  * never send it to a client.
  *
- * @param value The string form of the component (add-on JSON {@code "minecraft:breathability": <string>}). Required.
  * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/blockreference/examples/blockcomponents/minecraftblock_breathability?view=minecraft-bedrock-stable">Microsoft Learn: minecraft:breathability</a>
  * @since 1.0.0
  * @deprecated rejected by every captured BDS (oldest: 1.26.36.1, protocol 1001): minecraft:breathability: member
  *        "minecraft:breathability" is deprecated
  */
 @Deprecated
-public record Breathability(@NonNull String value) implements BlockComponent {
+public final class Breathability implements BlockComponent {
     /**
      * The component name in add-on JSON.
      */
     public static final String NAME = "minecraft:breathability";
 
-    /**
-     * Checks the components.
-     *
-     * @throws NullPointerException if a required component is null
-     */
-    public Breathability {
+    private final @NonNull String value;
+
+    private Breathability(@NonNull String value) {
         Objects.requireNonNull(value, "Breathability.value");
+        this.value = value;
+    }
+
+    /**
+     * The string form of the component (add-on JSON {@code "minecraft:breathability": <string>}). Required.
+     *
+     * @return the value
+     */
+    public @NonNull String value() {
+        return value;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        return this == o || o instanceof Breathability other
+                && Objects.equals(value, other.value);
+    }
+
+    @Override
+    public int hashCode() {
+        int h = Objects.hashCode(value);
+        return h;
+    }
+
+    @Override
+    public String toString() {
+        return "Breathability[value=" + value + "]";
     }
 
     @Override

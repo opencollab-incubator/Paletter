@@ -18,11 +18,29 @@ import org.checkerframework.checker.nullness.qual.NonNull;
  */
 @Deprecated
 @ReplacedBy(Widget.class)
-public record Ancient() implements ItemComponent {
+public final class Ancient implements ItemComponent {
     /**
      * The component name in add-on JSON.
      */
     public static final String NAME = "test:ancient";
+
+    private Ancient() {
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        return o instanceof Ancient;
+    }
+
+    @Override
+    public int hashCode() {
+        return 0;
+    }
+
+    @Override
+    public String toString() {
+        return "Ancient[]";
+    }
 
     @Override
     public @NonNull String name() {

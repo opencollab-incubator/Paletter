@@ -17,24 +17,47 @@ import org.checkerframework.checker.nullness.qual.Nullable;
  * Server only: BDS accepts it in packs but sends nothing to clients (BDS 1.26.36.1, 1.26.45.1, 1.26.52.3,
  * 1.26.63.1, 1.26.70.24), so it has no client effect. Palettes leave it out without a warning.
  *
- * @param value The string form of the component (add-on JSON {@code "minecraft:loot": <string>}). Required.
  * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/blockreference/examples/blockcomponents/minecraftblock_loot?view=minecraft-bedrock-stable">Microsoft Learn: minecraft:loot</a>
  * @since 1.0.0
  */
 @ServerOnly
-public record Loot(@NonNull String value) implements BlockComponent {
+public final class Loot implements BlockComponent {
     /**
      * The component name in add-on JSON.
      */
     public static final String NAME = "minecraft:loot";
 
-    /**
-     * Checks the components.
-     *
-     * @throws NullPointerException if a required component is null
-     */
-    public Loot {
+    private final @NonNull String value;
+
+    private Loot(@NonNull String value) {
         Objects.requireNonNull(value, "Loot.value");
+        this.value = value;
+    }
+
+    /**
+     * The string form of the component (add-on JSON {@code "minecraft:loot": <string>}). Required.
+     *
+     * @return the value
+     */
+    public @NonNull String value() {
+        return value;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        return this == o || o instanceof Loot other
+                && Objects.equals(value, other.value);
+    }
+
+    @Override
+    public int hashCode() {
+        int h = Objects.hashCode(value);
+        return h;
+    }
+
+    @Override
+    public String toString() {
+        return "Loot[value=" + value + "]";
     }
 
     @Override

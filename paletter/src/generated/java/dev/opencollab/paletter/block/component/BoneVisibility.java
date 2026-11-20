@@ -21,11 +21,29 @@ import org.checkerframework.checker.nullness.qual.NonNull;
  */
 @Deprecated
 @ReplacedBy(Geometry.class)
-public record BoneVisibility() implements BlockComponent {
+public final class BoneVisibility implements BlockComponent {
     /**
      * The component name in add-on JSON.
      */
     public static final String NAME = "minecraft:bone_visibility";
+
+    private BoneVisibility() {
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        return o instanceof BoneVisibility;
+    }
+
+    @Override
+    public int hashCode() {
+        return 0;
+    }
+
+    @Override
+    public String toString() {
+        return "BoneVisibility[]";
+    }
 
     @Override
     public @NonNull String name() {

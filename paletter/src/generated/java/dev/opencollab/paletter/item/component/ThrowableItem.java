@@ -13,29 +13,124 @@ import org.checkerframework.checker.nullness.qual.Nullable;
  * <p>
  * Add-on JSON: {@code "minecraft:throwable"}.
  *
- * @param doSwingAnimation Determines whether the item should use the swing animation when thrown. Default is set to false. Add-on JSON
- *        {@code do_swing_animation}. Default: <code>false</code>.
- * @param launchPowerScale The scale at which the power of the throw increases. Default is set to 1.0. Add-on JSON {@code
- *        launch_power_scale}. Default: <code>1</code>.
- * @param maxDrawDuration The maximum duration to draw a throwable item. Default is set to 0.0. Add-on JSON {@code max_draw_duration}.
- *        Default: <code>0</code>.
- * @param maxLaunchPower The maximum power to launch the throwable item. Default is set to 1.0. Add-on JSON {@code max_launch_power}.
- *        Default: <code>1</code>.
- * @param minDrawDuration The minimum duration to draw a throwable item. Default is set to 0.0. Add-on JSON {@code min_draw_duration}.
- *        Default: <code>0</code>.
- * @param scalePowerByDrawDuration Whether or not the power of the throw increases with duration charged. Default is set to false. Add-on JSON
- *        {@code scale_power_by_draw_duration}. Default: <code>false</code>.
  * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/itemreference/examples/itemcomponents/minecraft_throwable?view=minecraft-bedrock-stable">Microsoft Learn: minecraft:throwable</a>
  * @since 1.0.0
  */
 @BedrockFormat("1.20.10")
-public record ThrowableItem(boolean doSwingAnimation, float launchPowerScale, float maxDrawDuration,
-        float maxLaunchPower, float minDrawDuration,
-        boolean scalePowerByDrawDuration) implements ItemComponent {
+public final class ThrowableItem implements ItemComponent {
     /**
      * The component name in add-on JSON.
      */
     public static final String NAME = "minecraft:throwable";
+
+    private final boolean doSwingAnimation;
+
+    private final float launchPowerScale;
+
+    private final float maxDrawDuration;
+
+    private final float maxLaunchPower;
+
+    private final float minDrawDuration;
+
+    private final boolean scalePowerByDrawDuration;
+
+    private ThrowableItem(boolean doSwingAnimation, float launchPowerScale, float maxDrawDuration,
+            float maxLaunchPower, float minDrawDuration, boolean scalePowerByDrawDuration) {
+        this.doSwingAnimation = doSwingAnimation;
+        this.launchPowerScale = launchPowerScale;
+        this.maxDrawDuration = maxDrawDuration;
+        this.maxLaunchPower = maxLaunchPower;
+        this.minDrawDuration = minDrawDuration;
+        this.scalePowerByDrawDuration = scalePowerByDrawDuration;
+    }
+
+    /**
+     * Determines whether the item should use the swing animation when thrown. Default is set to false. Add-on JSON
+     * {@code do_swing_animation}. Default: <code>false</code>.
+     *
+     * @return the value
+     */
+    public boolean doSwingAnimation() {
+        return doSwingAnimation;
+    }
+
+    /**
+     * The scale at which the power of the throw increases. Default is set to 1.0. Add-on JSON {@code
+     * launch_power_scale}. Default: <code>1</code>.
+     *
+     * @return the value
+     */
+    public float launchPowerScale() {
+        return launchPowerScale;
+    }
+
+    /**
+     * The maximum duration to draw a throwable item. Default is set to 0.0. Add-on JSON {@code max_draw_duration}.
+     * Default: <code>0</code>.
+     *
+     * @return the value
+     */
+    public float maxDrawDuration() {
+        return maxDrawDuration;
+    }
+
+    /**
+     * The maximum power to launch the throwable item. Default is set to 1.0. Add-on JSON {@code max_launch_power}.
+     * Default: <code>1</code>.
+     *
+     * @return the value
+     */
+    public float maxLaunchPower() {
+        return maxLaunchPower;
+    }
+
+    /**
+     * The minimum duration to draw a throwable item. Default is set to 0.0. Add-on JSON {@code min_draw_duration}.
+     * Default: <code>0</code>.
+     *
+     * @return the value
+     */
+    public float minDrawDuration() {
+        return minDrawDuration;
+    }
+
+    /**
+     * Whether or not the power of the throw increases with duration charged. Default is set to false. Add-on JSON
+     * {@code scale_power_by_draw_duration}. Default: <code>false</code>.
+     *
+     * @return the value
+     */
+    public boolean scalePowerByDrawDuration() {
+        return scalePowerByDrawDuration;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        return this == o || o instanceof ThrowableItem other
+                && doSwingAnimation == other.doSwingAnimation
+                && Float.compare(launchPowerScale, other.launchPowerScale) == 0
+                && Float.compare(maxDrawDuration, other.maxDrawDuration) == 0
+                && Float.compare(maxLaunchPower, other.maxLaunchPower) == 0
+                && Float.compare(minDrawDuration, other.minDrawDuration) == 0
+                && scalePowerByDrawDuration == other.scalePowerByDrawDuration;
+    }
+
+    @Override
+    public int hashCode() {
+        int h = Boolean.hashCode(doSwingAnimation);
+        h = 31 * h + Float.hashCode(launchPowerScale);
+        h = 31 * h + Float.hashCode(maxDrawDuration);
+        h = 31 * h + Float.hashCode(maxLaunchPower);
+        h = 31 * h + Float.hashCode(minDrawDuration);
+        h = 31 * h + Boolean.hashCode(scalePowerByDrawDuration);
+        return h;
+    }
+
+    @Override
+    public String toString() {
+        return "ThrowableItem[doSwingAnimation=" + doSwingAnimation + ", launchPowerScale=" + launchPowerScale + ", maxDrawDuration=" + maxDrawDuration + ", maxLaunchPower=" + maxLaunchPower + ", minDrawDuration=" + minDrawDuration + ", scalePowerByDrawDuration=" + scalePowerByDrawDuration + "]";
+    }
 
     @Override
     public @NonNull String name() {

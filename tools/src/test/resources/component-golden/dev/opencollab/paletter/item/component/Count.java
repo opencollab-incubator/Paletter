@@ -19,11 +19,29 @@ import org.checkerframework.checker.nullness.qual.NonNull;
  */
 @Deprecated
 @ReplacedBy(Widget.class)
-public record Count() implements ItemComponent {
+public final class Count implements ItemComponent {
     /**
      * The component name in add-on JSON.
      */
     public static final String NAME = "test:count";
+
+    private Count() {
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        return o instanceof Count;
+    }
+
+    @Override
+    public int hashCode() {
+        return 0;
+    }
+
+    @Override
+    public String toString() {
+        return "Count[]";
+    }
 
     @Override
     public @NonNull String name() {

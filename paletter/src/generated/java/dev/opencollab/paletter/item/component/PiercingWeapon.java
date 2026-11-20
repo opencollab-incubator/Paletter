@@ -15,31 +15,80 @@ import org.checkerframework.checker.nullness.qual.Nullable;
  * <p>
  * Add-on JSON: {@code "minecraft:piercing_weapon"}.
  *
- * @param creativeReach Defines the reach used when the user is in Creative Mode. Defaults to "reach" if unspecified. Add-on JSON
- *        {@code creative_reach}. Optional (null: not set).
- * @param hitboxMargin Added tolerance to the view vector raycast for detecting entity collisions. Add-on JSON {@code hitbox_margin}.
- *        Default: <code>0</code>.
- * @param reach Defines the range (in blocks) along the user's view vector where entities can be hit. Only targets within this
- *        distance are considered. Block collisions between the user and target block damage and its effects. Add-on
- *        JSON {@code reach}. Default: <code>&#123;"max":3,"min":0&#125;</code>.
  * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/itemreference/examples/itemcomponents/minecraft_piercing_weapon?view=minecraft-bedrock-stable">Microsoft Learn: minecraft:piercing_weapon</a>
  * @since 1.0.0
  */
 @BedrockFormat("1.21.130")
-public record PiercingWeapon(PiercingWeapon. @Nullable CreativeReach creativeReach,
-        float hitboxMargin, PiercingWeapon. @NonNull Reach reach) implements ItemComponent {
+public final class PiercingWeapon implements ItemComponent {
     /**
      * The component name in add-on JSON.
      */
     public static final String NAME = "minecraft:piercing_weapon";
 
-    /**
-     * Checks the components.
-     *
-     * @throws NullPointerException if a required component is null
-     */
-    public PiercingWeapon {
+    private final @Nullable CreativeReach creativeReach;
+
+    private final float hitboxMargin;
+
+    private final @NonNull Reach reach;
+
+    private PiercingWeapon(@Nullable CreativeReach creativeReach, float hitboxMargin,
+            @NonNull Reach reach) {
         Objects.requireNonNull(reach, "PiercingWeapon.reach");
+        this.creativeReach = creativeReach;
+        this.hitboxMargin = hitboxMargin;
+        this.reach = reach;
+    }
+
+    /**
+     * Defines the reach used when the user is in Creative Mode. Defaults to "reach" if unspecified. Add-on JSON
+     * {@code creative_reach}. Optional (null: not set).
+     *
+     * @return the value
+     */
+    public @Nullable CreativeReach creativeReach() {
+        return creativeReach;
+    }
+
+    /**
+     * Added tolerance to the view vector raycast for detecting entity collisions. Add-on JSON {@code hitbox_margin}.
+     * Default: <code>0</code>.
+     *
+     * @return the value
+     */
+    public float hitboxMargin() {
+        return hitboxMargin;
+    }
+
+    /**
+     * Defines the range (in blocks) along the user's view vector where entities can be hit. Only targets within this
+     * distance are considered. Block collisions between the user and target block damage and its effects. Add-on
+     * JSON {@code reach}. Default: <code>&#123;"max":3,"min":0&#125;</code>.
+     *
+     * @return the value
+     */
+    public @NonNull Reach reach() {
+        return reach;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        return this == o || o instanceof PiercingWeapon other
+                && Objects.equals(creativeReach, other.creativeReach)
+                && Float.compare(hitboxMargin, other.hitboxMargin) == 0
+                && Objects.equals(reach, other.reach);
+    }
+
+    @Override
+    public int hashCode() {
+        int h = Objects.hashCode(creativeReach);
+        h = 31 * h + Float.hashCode(hitboxMargin);
+        h = 31 * h + Objects.hashCode(reach);
+        return h;
+    }
+
+    @Override
+    public String toString() {
+        return "PiercingWeapon[creativeReach=" + creativeReach + ", hitboxMargin=" + hitboxMargin + ", reach=" + reach + "]";
     }
 
     @Override
@@ -130,10 +179,54 @@ public record PiercingWeapon(PiercingWeapon. @Nullable CreativeReach creativeRea
     /**
      * Defines the reach used when the user is in Creative Mode. Defaults to "reach" if unspecified.
      *
-     * @param max Add-on JSON {@code max}. Default: <code>0</code>.
-     * @param min Add-on JSON {@code min}. Default: <code>0</code>.
      */
-    public record CreativeReach(float max, float min) {
+    public static final class CreativeReach {
+        private final float max;
+
+        private final float min;
+
+        private CreativeReach(float max, float min) {
+            this.max = max;
+            this.min = min;
+        }
+
+        /**
+         * Add-on JSON {@code max}. Default: <code>0</code>.
+         *
+         * @return the value
+         */
+        public float max() {
+            return max;
+        }
+
+        /**
+         * Add-on JSON {@code min}. Default: <code>0</code>.
+         *
+         * @return the value
+         */
+        public float min() {
+            return min;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            return this == o || o instanceof CreativeReach other
+                    && Float.compare(max, other.max) == 0
+                    && Float.compare(min, other.min) == 0;
+        }
+
+        @Override
+        public int hashCode() {
+            int h = Float.hashCode(max);
+            h = 31 * h + Float.hashCode(min);
+            return h;
+        }
+
+        @Override
+        public String toString() {
+            return "CreativeReach[max=" + max + ", min=" + min + "]";
+        }
+
         /**
          * Creates a builder with every field at its default.
          *
@@ -205,10 +298,54 @@ public record PiercingWeapon(PiercingWeapon. @Nullable CreativeReach creativeRea
      * Defines the range (in blocks) along the user's view vector where entities can be hit. Only targets within this
      * distance are considered. Block collisions between the user and target block damage and its effects.
      *
-     * @param max Add-on JSON {@code max}. Default: <code>3</code>.
-     * @param min Add-on JSON {@code min}. Default: <code>0</code>.
      */
-    public record Reach(float max, float min) {
+    public static final class Reach {
+        private final float max;
+
+        private final float min;
+
+        private Reach(float max, float min) {
+            this.max = max;
+            this.min = min;
+        }
+
+        /**
+         * Add-on JSON {@code max}. Default: <code>3</code>.
+         *
+         * @return the value
+         */
+        public float max() {
+            return max;
+        }
+
+        /**
+         * Add-on JSON {@code min}. Default: <code>0</code>.
+         *
+         * @return the value
+         */
+        public float min() {
+            return min;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            return this == o || o instanceof Reach other
+                    && Float.compare(max, other.max) == 0
+                    && Float.compare(min, other.min) == 0;
+        }
+
+        @Override
+        public int hashCode() {
+            int h = Float.hashCode(max);
+            h = 31 * h + Float.hashCode(min);
+            return h;
+        }
+
+        @Override
+        public String toString() {
+            return "Reach[max=" + max + ", min=" + min + "]";
+        }
+
         /**
          * Creates a builder with every field at its default.
          *

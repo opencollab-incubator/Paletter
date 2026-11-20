@@ -14,24 +14,47 @@ import org.checkerframework.checker.nullness.qual.Nullable;
  * <p>
  * Add-on JSON: {@code "minecraft:light_emission"}.
  *
- * @param value The integer form of the component (add-on JSON {@code "minecraft:light_emission": <integer>}). Required. At
- *        most 15 (BDS 1.26.63.1).
  * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/blockreference/examples/blockcomponents/minecraftblock_light_emission?view=minecraft-bedrock-stable">Microsoft Learn: minecraft:light_emission</a>
  * @since 1.0.0
  */
-public record LightEmission(int value) implements BlockComponent {
+public final class LightEmission implements BlockComponent {
     /**
      * The component name in add-on JSON.
      */
     public static final String NAME = "minecraft:light_emission";
 
-    /**
-     * Checks the components.
-     *
-     * @throws IllegalArgumentException if a component is out of its documented range or conflicts with another
-     */
-    public LightEmission {
+    private final int value;
+
+    private LightEmission(int value) {
         Check.range("LightEmission.value", value, null, 15.0);
+        this.value = value;
+    }
+
+    /**
+     * The integer form of the component (add-on JSON {@code "minecraft:light_emission": <integer>}). Required. At
+     * most 15 (BDS 1.26.63.1).
+     *
+     * @return the value
+     */
+    public int value() {
+        return value;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        return this == o || o instanceof LightEmission other
+                && value == other.value;
+    }
+
+    @Override
+    public int hashCode() {
+        int h = value;
+        return h;
+    }
+
+    @Override
+    public String toString() {
+        return "LightEmission[value=" + value + "]";
     }
 
     @Override

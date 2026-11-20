@@ -15,24 +15,47 @@ import org.checkerframework.checker.nullness.qual.Nullable;
  * <p>
  * Add-on JSON: {@code "minecraft:display_name"}.
  *
- * @param value The string form of the component (add-on JSON {@code "minecraft:display_name": <string>}). Required.
  * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/blockreference/examples/blockcomponents/minecraftblock_display_name?view=minecraft-bedrock-stable">Microsoft Learn: minecraft:display_name</a>
  * @since 1.0.0
  */
 @BedrockFormat("1.19.60")
-public record BlockDisplayName(@NonNull String value) implements BlockComponent {
+public final class BlockDisplayName implements BlockComponent {
     /**
      * The component name in add-on JSON.
      */
     public static final String NAME = "minecraft:display_name";
 
-    /**
-     * Checks the components.
-     *
-     * @throws NullPointerException if a required component is null
-     */
-    public BlockDisplayName {
+    private final @NonNull String value;
+
+    private BlockDisplayName(@NonNull String value) {
         Objects.requireNonNull(value, "BlockDisplayName.value");
+        this.value = value;
+    }
+
+    /**
+     * The string form of the component (add-on JSON {@code "minecraft:display_name": <string>}). Required.
+     *
+     * @return the value
+     */
+    public @NonNull String value() {
+        return value;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        return this == o || o instanceof BlockDisplayName other
+                && Objects.equals(value, other.value);
+    }
+
+    @Override
+    public int hashCode() {
+        int h = Objects.hashCode(value);
+        return h;
+    }
+
+    @Override
+    public String toString() {
+        return "BlockDisplayName[value=" + value + "]";
     }
 
     @Override

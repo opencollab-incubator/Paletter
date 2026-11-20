@@ -457,7 +457,9 @@ public final class ApiDump {
         private static String method(String signature, int access) {
             TraceSignatureVisitor visitor = new TraceSignatureVisitor(access);
             new SignatureReader(signature).accept(visitor);
-            return visitor.getDeclaration() + "\u0000" + visitor.getReturnType();
+            // ASM's trace leaves out a plain Object it reads as an implied bound, a return type included
+            String returns = visitor.getReturnType();
+            return visitor.getDeclaration() + "\u0000" + (returns.isEmpty() ? "java.lang.Object" : returns);
         }
 
         private static String constant(Object value, String descriptor) {

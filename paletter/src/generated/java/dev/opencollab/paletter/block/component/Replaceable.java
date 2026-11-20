@@ -25,11 +25,29 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 @ServerOnly(
         until = 2193
 )
-public record Replaceable() implements BlockComponent {
+public final class Replaceable implements BlockComponent {
     /**
      * The component name in add-on JSON.
      */
     public static final String NAME = "minecraft:replaceable";
+
+    private Replaceable() {
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        return o instanceof Replaceable;
+    }
+
+    @Override
+    public int hashCode() {
+        return 0;
+    }
+
+    @Override
+    public String toString() {
+        return "Replaceable[]";
+    }
 
     @Override
     public @NonNull String name() {

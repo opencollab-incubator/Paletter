@@ -7,25 +7,31 @@ import dev.opencollab.paletter.annotation.Experimental;
  * {@code item_properties.mining_speed}: a wire-only float Bedrock Dedicated Server always sends (default 1.0) but add-on
  * JSON cannot set. Not an add-on component; the name is the wire path.
  *
- * @param value the mining speed sent to the client
  * @since 1.0.0
  */
 @Experimental
-public record MiningSpeed(float value) implements WireOnlyItemComponent {
+public final class MiningSpeed implements WireOnlyItemComponent {
     /**
      * The wire path (there is no add-on JSON name).
      */
     public static final String NAME = "item_properties.mining_speed";
 
-    /**
-     * Creates a mining speed.
-     *
-     * @throws IllegalArgumentException if the value is not finite
-     */
-    public MiningSpeed {
+    private final float value;
+
+    private MiningSpeed(float value) {
         if (!Float.isFinite(value)) {
             throw new IllegalArgumentException("MiningSpeed.value must be finite: " + value);
         }
+        this.value = value;
+    }
+
+    /**
+     * Returns the mining speed.
+     *
+     * @return the mining speed sent to the client
+     */
+    public float value() {
+        return value;
     }
 
     /**
@@ -42,5 +48,20 @@ public record MiningSpeed(float value) implements WireOnlyItemComponent {
     @Override
     public @NonNull String name() {
         return NAME;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        return this == o || o instanceof MiningSpeed other && Float.compare(value, other.value) == 0;
+    }
+
+    @Override
+    public int hashCode() {
+        return Float.hashCode(value);
+    }
+
+    @Override
+    public String toString() {
+        return "MiningSpeed[value=" + value + "]";
     }
 }

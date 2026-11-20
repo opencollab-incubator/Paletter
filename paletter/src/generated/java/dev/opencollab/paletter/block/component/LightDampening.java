@@ -14,24 +14,47 @@ import org.checkerframework.checker.nullness.qual.Nullable;
  * <p>
  * Add-on JSON: {@code "minecraft:light_dampening"}.
  *
- * @param value The integer form of the component (add-on JSON {@code "minecraft:light_dampening": <integer>}). Required. At
- *        most 15 (BDS 1.26.63.1).
  * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/blockreference/examples/blockcomponents/minecraftblock_light_dampening?view=minecraft-bedrock-stable">Microsoft Learn: minecraft:light_dampening</a>
  * @since 1.0.0
  */
-public record LightDampening(int value) implements BlockComponent {
+public final class LightDampening implements BlockComponent {
     /**
      * The component name in add-on JSON.
      */
     public static final String NAME = "minecraft:light_dampening";
 
-    /**
-     * Checks the components.
-     *
-     * @throws IllegalArgumentException if a component is out of its documented range or conflicts with another
-     */
-    public LightDampening {
+    private final int value;
+
+    private LightDampening(int value) {
         Check.range("LightDampening.value", value, null, 15.0);
+        this.value = value;
+    }
+
+    /**
+     * The integer form of the component (add-on JSON {@code "minecraft:light_dampening": <integer>}). Required. At
+     * most 15 (BDS 1.26.63.1).
+     *
+     * @return the value
+     */
+    public int value() {
+        return value;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        return this == o || o instanceof LightDampening other
+                && value == other.value;
+    }
+
+    @Override
+    public int hashCode() {
+        int h = value;
+        return h;
+    }
+
+    @Override
+    public String toString() {
+        return "LightDampening[value=" + value + "]";
     }
 
     @Override

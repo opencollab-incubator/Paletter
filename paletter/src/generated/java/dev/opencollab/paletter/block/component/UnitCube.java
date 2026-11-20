@@ -19,11 +19,29 @@ import org.checkerframework.checker.nullness.qual.NonNull;
  *        "minecraft:unit_cube" is deprecated
  */
 @Deprecated
-public record UnitCube() implements BlockComponent {
+public final class UnitCube implements BlockComponent {
     /**
      * The component name in add-on JSON.
      */
     public static final String NAME = "minecraft:unit_cube";
+
+    private UnitCube() {
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        return o instanceof UnitCube;
+    }
+
+    @Override
+    public int hashCode() {
+        return 0;
+    }
+
+    @Override
+    public String toString() {
+        return "UnitCube[]";
+    }
 
     @Override
     public @NonNull String name() {

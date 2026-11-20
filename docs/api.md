@@ -42,6 +42,28 @@ Paletter is at 1.0.0-SNAPSHOT, so any release may change or remove API. The buil
 The jar declares `Automatic-Module-Name: dev.opencollab.paletter`. `module-info.java` is compiled to check the exports but
 is not packaged, because Cloudburst's dependencies split packages across jars.
 
+## Evolution
+
+One rule: **what Bedrock defines is open, and what Paletter defines is closed.** A Bedrock update should cost a user
+deprecation warnings, not compile errors. The API is shaped so that the compiler holds users to that:
+
+- **Components and recipes are final classes, not records.** A record's canonical constructor is public and its
+  components are its deconstruction pattern, so a field Bedrock adds would break both. The generated components, their
+  objects, the hand-written wire-only components and the recipes (`Recipe.*`, `Result`, `Unlock`) have a private
+  constructor, a `builder()` (or `of(...)`), record-style accessors, `toBuilder()` and value `equals`/`hashCode`/`toString`.
+  A new field is a new accessor and builder setter. Records stay only where the shape is fixed by definition, not by
+  Bedrock: the vectors (`Vec3`, with `Vec3.of`), `BlockShape.Box`, `DataVersion`, `PotionMix`, `ContainerMix`, the
+  one-value forms of a union and the `Ingredient` forms.
+- **Documented string values are open value classes, not enums.** `Wearable.Slot`, `ItemMenuCategory.Category` and
+  every other generated one have a constant per documented value, `of(String)` for any value (a known one returns its constant, so `==`
+  works for those), `value()`, `isKnown()` and `known()`. A value Bedrock adds can be built and sent before Paletter has a
+  constant for it; Paletter's encoder leaves a value it has no wire mapping for out, with a report warning. There are no
+  switch labels: switch over `value()` with a `default`.
+- **Vanilla state enums stay Java enums** (`vanilla.state`): they are read and switched, and the bundled data always
+  matches them. They gain constants in minor releases, so a switch over one needs a `default`.
+  `BedrockBlockState#raw(BedrockState)` reads a state's value as Bedrock sends it and never throws.
+  Paletter's own enums (`Lookup`, `PaletteReport.Level`, `CreativeCategory`, whose ids are fixed by the protocol) are closed.
+
 ## Keys and lookups
 
 Keys (`BedrockBlockType`, `BedrockBlockState`, `BedrockItemType`, `BedrockItemVariant`) are identities. `equals` always
@@ -160,9 +182,12 @@ boolean same = BedrockItemVariants.BED_SILVER == BedrockItems.BED.variant(8); //
 
 ## Components
 
-Custom items and blocks use Bedrock's add-on component model as generated Java: one record per component
-(`minecraft:durability` is `Durability`), nested records for objects, enums for documented enums, and builders that apply
-documented defaults and check the ranges BDS enforces.
+Custom items and blocks use Bedrock's add-on component model as generated Java: one final class per component
+(`minecraft:durability` is `Durability`), nested classes for objects, open value classes for documented string values,
+and builders that apply documented defaults and check the ranges BDS enforces. A component is made with its `builder()`
+or an `of(...)` shorthand, never a constructor, and read with record-style accessors (`durability.maxDurability()`).
+A documented value is a constant (`Wearable.Slot.SLOT_ARMOR_HEAD`); `Slot.of("slot.armor.new")` takes a value newer than
+Paletter, and `isKnown()` tells the two apart. See [Evolution](#evolution) for why these are not records and enums.
 
 ```java
 CustomBlock lamp = CustomBlock.builder("example:lamp")
@@ -191,14 +216,14 @@ Compiling a palette never fails because of the Bedrock version.
 ### Deprecated components
 
 Bedrock deprecates components and BDS rejects them at the current `format_version`. A deprecated component keeps its
-generated record (`@Deprecated`, `@ReplacedBy` where there is a replacement, the replacement in the Javadoc) only if BDS
-sends something for it at some format. A component that never reaches the wire has no record: the Javadoc of
+generated class (`@Deprecated`, `@ReplacedBy` where there is a replacement, the replacement in the Javadoc) only if BDS
+sends something for it at some format. A component that never reaches the wire has no class: the Javadoc of
 `BlockComponent` and `ItemComponent` lists it as retired, with its replacement and why. BDS decides, so the formats are
 asked from BDS: the format sweep of `update` (`spec-format/`) puts each rejected component at every known format beside a
-control of the same format. `Pending` rows wait for the capture with that sweep: until then the record stays and the
+control of the same format. `Pending` rows wait for the capture with that sweep: until then the class stays and the
 conformance test lists them (`SWEEP_PENDING`).
 
-| Component | Replacement | Record | State |
+| Component | Replacement | Class | State |
 |---|---|---|---|
 | block `minecraft:block_light_absorption` | `light_dampening` | kept | pending sweep (the committed sweep has BDS accept it at 1.16.100) |
 | block `minecraft:block_light_emission` | `light_emission` | kept | pending sweep |
@@ -217,7 +242,7 @@ conformance test lists them (`SWEEP_PENDING`).
 | item `minecraft:weapon` | `damage`, `cooldown`, `durability` | retired | BDS accepts it at formats 1.20.30 and 1.20.40 and sends nothing for it |
 
 The sweep decides `breathability`, `unit_cube`, `render_offsets`, `block_light_emission`, `bone_visibility` and
-`destroy_time`: a record stays only if BDS sends something for the component, and one the sweep proves silent is
+`destroy_time`: a class stays only if BDS sends something for the component, and one the sweep proves silent is
 removed like the retired ones.
 
 `MiningSpeed`, `FrameCount`, `RenderOffsets` and `OnPlayerPlacing` are hand-written, not generated. They are wire fields
@@ -240,7 +265,7 @@ PaletteLayer.builder("server").creative(editor -> {
 });
 ```
 
-Custom items and blocks have a `menu_category` (the generated `MenuCategory` record: category, group,
+Custom items and blocks have a `menu_category` (the generated `ItemMenuCategory` and `BlockMenuCategory`: category, group,
 `hiddenInCommands`), which maps one to one from add-on JSON. As in BDS it alone decides whether the item or block item is in the
 creative inventory and in which category and group, under every ordering: absent or category `none` means not in it.
 `menuCategory(CreativeCategory)` and `menuCategory(CreativeCategory, group)` on both builders are shortcuts. A block and the

@@ -11,9 +11,9 @@ import java.util.TreeSet;
 
 /**
  * The table of a closed enum BDS's schema lists, with a leaf observed for every one of its values. Unlike a {@link Table},
- * which holds the values a capture happened to try, this one is complete: the encoder is a switch over the API's Java enum
- * with a case for each constant and no default, so the compiler enforces that every value is covered and no error path
- * exists at runtime. A table that misses a value
+ * which holds the values a capture happened to try, this one is complete: the encoder is a switch over the value with a
+ * case for each constant of the API's value class (generation fails if the class lacks one). The class is open, so a value
+ * newer than Paletter falls to the default, which leaves the leaf out with a report warning. A table that misses a value
  * stays a {@link Table} (or a hand transform) until a capture shows it.
  */
 public final class EnumTable extends Rule {
@@ -66,11 +66,13 @@ public final class EnumTable extends Rule {
 
     @Override
     public void emit(Emitter e) {
-        e.code().beginControlFlow("switch ($L)", e.enumValue());
+        e.code().beginControlFlow("switch ($L.value())", e.enumValue());
         for (String k : new TreeSet<>(table.keySet())) {
             String v = table.get(k);
-            e.code().addStatement("case $L -> $L", e.enumConstant(k), e.write(v.equals(NOT_SENT) ? v : v + " (" + nbt + ")"));
+            e.enumConstant(k);
+            e.code().addStatement("case $S -> $L", k, e.write(v.equals(NOT_SENT) ? v : v + " (" + nbt + ")"));
         }
+        e.code().addStatement("default -> ctx.drop($L, $S + $L.value() + $S)", e.component(), e.path() + " = ", e.enumValue(), " has no known wire value");
         e.code().endControlFlow();
     }
 

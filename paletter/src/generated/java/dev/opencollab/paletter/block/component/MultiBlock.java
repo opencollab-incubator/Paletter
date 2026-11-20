@@ -7,6 +7,7 @@ import dev.opencollab.paletter.annotation.BedrockExperiment;
 import dev.opencollab.paletter.annotation.BedrockFormat;
 import dev.opencollab.paletter.internal.component.Check;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
@@ -21,35 +22,83 @@ import org.checkerframework.checker.nullness.qual.Nullable;
  * Add-on JSON: {@code "minecraft:multi_block"}.
  * The creator docs name the experiment Upcoming Creator Features for it (in some format versions); unverified against BDS.
  *
- * @param enabledStates Which states to enable. The only valid (and required) value is <code>minecraft:multi_block_part</code>. Add-on
- *        JSON {@code enabled_states}. Required.
- * @param parts Optional property to define number of block parts. Valid values are <code>2, 3, 4</code>. Add-on JSON {@code
- *        parts}. Default: <code>2</code>. Range [2, 4] (BDS 1.26.63.1). One of [2, 3, 4].
- * @param direction Required property to define direction to place the block parts. Valid values are <code>"up", "down", "north",
- *        "south", "west", "east"</code>. Add-on JSON {@code direction}. Required.
  * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/blockreference/examples/traits/multi_block?view=minecraft-bedrock-stable">Microsoft Learn: minecraft:multi_block</a>
  * @since 1.0.0
  */
 @BedrockFormat("1.26.10")
 @BedrockExperiment("upcoming_creator_features")
-public record MultiBlock(@NonNull List<MultiBlock.EnabledStates> enabledStates, int parts,
-        MultiBlock. @NonNull MultiBlockDirection direction) implements BlockTrait {
+public final class MultiBlock implements BlockTrait {
     /**
      * The component name in add-on JSON.
      */
     public static final String NAME = "minecraft:multi_block";
 
-    /**
-     * Checks the components and copies lists and maps, so the value is immutable.
-     *
-     * @throws NullPointerException if a required component is null
-     * @throws IllegalArgumentException if a component is out of its documented range or conflicts with another
-     */
-    public MultiBlock {
+    private final @NonNull List<EnabledStates> enabledStates;
+
+    private final int parts;
+
+    private final @NonNull MultiBlockDirection direction;
+
+    private MultiBlock(@NonNull List<EnabledStates> enabledStates, int parts,
+            @NonNull MultiBlockDirection direction) {
         enabledStates = List.copyOf(Objects.requireNonNull(enabledStates, "MultiBlock.enabledStates"));
         Check.range("MultiBlock.parts", parts, 2.0, 4.0);
         Check.oneOf("MultiBlock.parts", parts, 2, 3, 4);
         Objects.requireNonNull(direction, "MultiBlock.direction");
+        this.enabledStates = enabledStates;
+        this.parts = parts;
+        this.direction = direction;
+    }
+
+    /**
+     * Which states to enable. The only valid (and required) value is <code>minecraft:multi_block_part</code>. Add-on
+     * JSON {@code enabled_states}. Required.
+     *
+     * @return the value
+     */
+    public @NonNull List<EnabledStates> enabledStates() {
+        return enabledStates;
+    }
+
+    /**
+     * Optional property to define number of block parts. Valid values are <code>2, 3, 4</code>. Add-on JSON {@code
+     * parts}. Default: <code>2</code>. Range [2, 4] (BDS 1.26.63.1). One of [2, 3, 4].
+     *
+     * @return the value
+     */
+    public int parts() {
+        return parts;
+    }
+
+    /**
+     * Required property to define direction to place the block parts. Valid values are <code>"up", "down", "north",
+     * "south", "west", "east"</code>. Add-on JSON {@code direction}. Required.
+     *
+     * @return the value
+     */
+    public @NonNull MultiBlockDirection direction() {
+        return direction;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        return this == o || o instanceof MultiBlock other
+                && Objects.equals(enabledStates, other.enabledStates)
+                && parts == other.parts
+                && Objects.equals(direction, other.direction);
+    }
+
+    @Override
+    public int hashCode() {
+        int h = Objects.hashCode(enabledStates);
+        h = 31 * h + parts;
+        h = 31 * h + Objects.hashCode(direction);
+        return h;
+    }
+
+    @Override
+    public String toString() {
+        return "MultiBlock[enabledStates=" + enabledStates + ", parts=" + parts + ", direction=" + direction + "]";
     }
 
     @Override
@@ -155,18 +204,44 @@ public record MultiBlock(@NonNull List<MultiBlock.EnabledStates> enabledStates, 
     }
 
     /**
-     * The documented values; {@link #value()} is the add-on JSON string.
+     * A value of an add-on JSON string: a constant per documented value, {@link #of} for any other.
+     * {@link #value()} is the add-on JSON string. Not an enum: Bedrock adds values, so a {@code switch} over
+     * {@link #value()} needs a {@code default}.
      */
-    public enum EnabledStates {
+    public static final class EnabledStates {
         /**
          * {@code minecraft:multi_block_part}
          */
-        MULTI_BLOCK_PART("minecraft:multi_block_part");
+        public static final EnabledStates MULTI_BLOCK_PART = new EnabledStates("minecraft:multi_block_part");
+
+        private static final List<EnabledStates> KNOWN = List.of(MULTI_BLOCK_PART);
+
+        private static final Map<String, EnabledStates> BY_VALUE = Check.index(KNOWN, EnabledStates::value);
 
         private final String value;
 
-        EnabledStates(String value) {
+        private EnabledStates(String value) {
             this.value = value;
+        }
+
+        /**
+         * Returns the value of an add-on JSON string: the constant of a documented value, else a new value.
+         *
+         * @param value the value in add-on JSON
+         * @return the constant of the value, or a value Paletter does not know
+         */
+        public static @NonNull EnabledStates of(@NonNull String value) {
+            EnabledStates known = BY_VALUE.get(Objects.requireNonNull(value, "EnabledStates.value"));
+            return known != null ? known : new EnabledStates(value);
+        }
+
+        /**
+         * Returns the documented values, the constants of this class.
+         *
+         * @return the constants, in the order of the documentation
+         */
+        public static @NonNull List<EnabledStates> known() {
+            return KNOWN;
         }
 
         /**
@@ -179,60 +254,94 @@ public record MultiBlock(@NonNull List<MultiBlock.EnabledStates> enabledStates, 
         }
 
         /**
-         * Finds the constant of an add-on JSON value.
+         * Returns whether the value is documented, one of the constants.
          *
-         * @param value the value in add-on JSON
-         * @return the constant of the value
-         * @throws IllegalArgumentException if the value is not documented
+         * @return whether this is one of {@link #known()}
          */
-        public static @NonNull EnabledStates fromValue(@NonNull String value) {
-            for (EnabledStates constant : values()) {
-                if (constant.value.equals(value)) {
-                    return constant;
-                }
-            }
-            throw new IllegalArgumentException("Not a EnabledStates: " + value);
+        public boolean isKnown() {
+            return BY_VALUE.get(value) == this;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            return this == o || o instanceof EnabledStates other && value.equals(other.value);
+        }
+
+        @Override
+        public int hashCode() {
+            return value.hashCode();
+        }
+
+        @Override
+        public String toString() {
+            return value;
         }
     }
 
     /**
-     * The documented values; {@link #value()} is the add-on JSON string.
+     * A value of an add-on JSON string: a constant per documented value, {@link #of} for any other.
+     * {@link #value()} is the add-on JSON string. Not an enum: Bedrock adds values, so a {@code switch} over
+     * {@link #value()} needs a {@code default}.
      */
-    public enum MultiBlockDirection {
+    public static final class MultiBlockDirection {
         /**
          * {@code up}
          */
-        UP("up"),
+        public static final MultiBlockDirection UP = new MultiBlockDirection("up");
 
         /**
          * {@code down}
          */
-        DOWN("down"),
+        public static final MultiBlockDirection DOWN = new MultiBlockDirection("down");
 
         /**
          * {@code north}
          */
-        NORTH("north"),
+        public static final MultiBlockDirection NORTH = new MultiBlockDirection("north");
 
         /**
          * {@code south}
          */
-        SOUTH("south"),
+        public static final MultiBlockDirection SOUTH = new MultiBlockDirection("south");
 
         /**
          * {@code west}
          */
-        WEST("west"),
+        public static final MultiBlockDirection WEST = new MultiBlockDirection("west");
 
         /**
          * {@code east}
          */
-        EAST("east");
+        public static final MultiBlockDirection EAST = new MultiBlockDirection("east");
+
+        private static final List<MultiBlockDirection> KNOWN = List.of(UP, DOWN, NORTH, SOUTH, WEST, EAST);
+
+        private static final Map<String, MultiBlockDirection> BY_VALUE = Check.index(KNOWN, MultiBlockDirection::value);
 
         private final String value;
 
-        MultiBlockDirection(String value) {
+        private MultiBlockDirection(String value) {
             this.value = value;
+        }
+
+        /**
+         * Returns the value of an add-on JSON string: the constant of a documented value, else a new value.
+         *
+         * @param value the value in add-on JSON
+         * @return the constant of the value, or a value Paletter does not know
+         */
+        public static @NonNull MultiBlockDirection of(@NonNull String value) {
+            MultiBlockDirection known = BY_VALUE.get(Objects.requireNonNull(value, "MultiBlockDirection.value"));
+            return known != null ? known : new MultiBlockDirection(value);
+        }
+
+        /**
+         * Returns the documented values, the constants of this class.
+         *
+         * @return the constants, in the order of the documentation
+         */
+        public static @NonNull List<MultiBlockDirection> known() {
+            return KNOWN;
         }
 
         /**
@@ -245,19 +354,27 @@ public record MultiBlock(@NonNull List<MultiBlock.EnabledStates> enabledStates, 
         }
 
         /**
-         * Finds the constant of an add-on JSON value.
+         * Returns whether the value is documented, one of the constants.
          *
-         * @param value the value in add-on JSON
-         * @return the constant of the value
-         * @throws IllegalArgumentException if the value is not documented
+         * @return whether this is one of {@link #known()}
          */
-        public static @NonNull MultiBlockDirection fromValue(@NonNull String value) {
-            for (MultiBlockDirection constant : values()) {
-                if (constant.value.equals(value)) {
-                    return constant;
-                }
-            }
-            throw new IllegalArgumentException("Not a MultiBlockDirection: " + value);
+        public boolean isKnown() {
+            return BY_VALUE.get(value) == this;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            return this == o || o instanceof MultiBlockDirection other && value.equals(other.value);
+        }
+
+        @Override
+        public int hashCode() {
+            return value.hashCode();
+        }
+
+        @Override
+        public String toString() {
+            return value;
         }
     }
 }

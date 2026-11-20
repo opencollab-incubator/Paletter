@@ -17,31 +17,66 @@ import org.checkerframework.checker.nullness.qual.Nullable;
  * The creator docs name the experiment Holiday Creator Features for it (in some format versions); unverified against BDS.
  * Unverified: the creator docs name experiment "Holiday Creator Features", which is in no capture.
  *
- * @param craftingTags Defines the tags recipes should define to be crafted on this table. Limited to 64 tags. Each tag is limited to
- *        64 characters. Value must have at most 64 items. Add-on JSON {@code crafting_tags}. Required.
- * @param tableName Specifies the language file key that maps to what text will be displayed in the UI of this table. If the
- *        string given can not be resolved as a loc string, the raw string given will be displayed. If this field is
- *        omitted, the name displayed will default to the name specified in the "display_name" component. If this block
- *        has no "display_name" component, the name displayed will default to the name of the block. Value must have at
- *        most 256 items. Add-on JSON {@code table_name}. Optional (null: not set).
  * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/blockreference/examples/blockcomponents/minecraftblock_crafting_table?view=minecraft-bedrock-stable">Microsoft Learn: minecraft:crafting_table</a>
  * @since 1.0.0
  */
 @BedrockFormat("1.19.50")
-public record CraftingTable(@NonNull List<String> craftingTags,
-        @Nullable String tableName) implements BlockComponent {
+public final class CraftingTable implements BlockComponent {
     /**
      * The component name in add-on JSON.
      */
     public static final String NAME = "minecraft:crafting_table";
 
-    /**
-     * Checks the components and copies lists and maps, so the value is immutable.
-     *
-     * @throws NullPointerException if a required component is null
-     */
-    public CraftingTable {
+    private final @NonNull List<String> craftingTags;
+
+    private final @Nullable String tableName;
+
+    private CraftingTable(@NonNull List<String> craftingTags, @Nullable String tableName) {
         craftingTags = List.copyOf(Objects.requireNonNull(craftingTags, "CraftingTable.craftingTags"));
+        this.craftingTags = craftingTags;
+        this.tableName = tableName;
+    }
+
+    /**
+     * Defines the tags recipes should define to be crafted on this table. Limited to 64 tags. Each tag is limited to
+     * 64 characters. Value must have at most 64 items. Add-on JSON {@code crafting_tags}. Required.
+     *
+     * @return the value
+     */
+    public @NonNull List<String> craftingTags() {
+        return craftingTags;
+    }
+
+    /**
+     * Specifies the language file key that maps to what text will be displayed in the UI of this table. If the
+     * string given can not be resolved as a loc string, the raw string given will be displayed. If this field is
+     * omitted, the name displayed will default to the name specified in the "display_name" component. If this block
+     * has no "display_name" component, the name displayed will default to the name of the block. Value must have at
+     * most 256 items. Add-on JSON {@code table_name}. Optional (null: not set).
+     *
+     * @return the value
+     */
+    public @Nullable String tableName() {
+        return tableName;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        return this == o || o instanceof CraftingTable other
+                && Objects.equals(craftingTags, other.craftingTags)
+                && Objects.equals(tableName, other.tableName);
+    }
+
+    @Override
+    public int hashCode() {
+        int h = Objects.hashCode(craftingTags);
+        h = 31 * h + Objects.hashCode(tableName);
+        return h;
+    }
+
+    @Override
+    public String toString() {
+        return "CraftingTable[craftingTags=" + craftingTags + ", tableName=" + tableName + "]";
     }
 
     @Override

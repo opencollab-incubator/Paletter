@@ -5,6 +5,7 @@ package dev.opencollab.paletter.item.component;
 
 import dev.opencollab.paletter.annotation.BedrockFormat;
 import dev.opencollab.paletter.internal.component.Check;
+import java.util.Objects;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
@@ -13,28 +14,51 @@ import org.checkerframework.checker.nullness.qual.Nullable;
  * <p>
  * Add-on JSON: {@code "minecraft:max_stack_size"}.
  *
- * @param value How many of an item that can be stacked together. Add-on JSON {@code value}. Optional (null: not set). The
- *        docs give the default <code>64</code>, but BDS sends item_properties.max_stack_size = 1 (int) when it is
- *        omitted; so it is unset by default, and the encoder sends what BDS sends then. Range [1, 64] (BDS 1.26.63.1).
  * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/itemreference/examples/itemcomponents/minecraft_max_stack_size?view=minecraft-bedrock-stable">Microsoft Learn: minecraft:max_stack_size</a>
  * @since 1.0.0
  */
 @BedrockFormat("1.20.10")
-public record MaxStackSize(@Nullable Integer value) implements ItemComponent {
+public final class MaxStackSize implements ItemComponent {
     /**
      * The component name in add-on JSON.
      */
     public static final String NAME = "minecraft:max_stack_size";
 
-    /**
-     * Checks the components.
-     *
-     * @throws IllegalArgumentException if a component is out of its documented range or conflicts with another
-     */
-    public MaxStackSize {
+    private final @Nullable Integer value;
+
+    private MaxStackSize(@Nullable Integer value) {
         if (value != null) {
             Check.range("MaxStackSize.value", value, 1.0, 64.0);
         }
+        this.value = value;
+    }
+
+    /**
+     * How many of an item that can be stacked together. Add-on JSON {@code value}. Optional (null: not set). The
+     * docs give the default <code>64</code>, but BDS sends item_properties.max_stack_size = 1 (int) when it is
+     * omitted; so it is unset by default, and the encoder sends what BDS sends then. Range [1, 64] (BDS 1.26.63.1).
+     *
+     * @return the value
+     */
+    public @Nullable Integer value() {
+        return value;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        return this == o || o instanceof MaxStackSize other
+                && Objects.equals(value, other.value);
+    }
+
+    @Override
+    public int hashCode() {
+        int h = Objects.hashCode(value);
+        return h;
+    }
+
+    @Override
+    public String toString() {
+        return "MaxStackSize[value=" + value + "]";
     }
 
     @Override

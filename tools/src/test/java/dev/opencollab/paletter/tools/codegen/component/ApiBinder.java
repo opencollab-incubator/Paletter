@@ -365,12 +365,17 @@ public final class ApiBinder {
             }
             return value.getAsString();
         }
-        if (raw.isEnum()) {
+        if (openValueClass(raw)) {
             if (!value.isJsonPrimitive() || !value.getAsJsonPrimitive().isString()) {
                 throw new Unbindable("not an enum value");
             }
             try {
-                return raw.getMethod("fromValue", String.class).invoke(null, value.getAsString());
+                Object constant = raw.getMethod("of", String.class).invoke(null, value.getAsString());
+                // A documented value only, as the docs' enum: another string is a different form of the field
+                if (!(boolean) raw.getMethod("isKnown").invoke(constant)) {
+                    throw new Unbindable("not a documented value of " + raw.getSimpleName() + ": " + value);
+                }
+                return constant;
             } catch (InvocationTargetException e) {
                 throw new Unbindable(String.valueOf(e.getCause()));
             } catch (ReflectiveOperationException e) {
@@ -406,6 +411,9 @@ public final class ApiBinder {
         if (raw.isInterface() && raw.isSealed()) {
             // A union: the first form that takes the JSON value
             for (Class<?> form : raw.getPermittedSubclasses()) {
+                if (!form.isRecord()) {
+                    continue; // the sentinel that keeps the union open (docs/api.md, "Evolution")
+                }
                 Type component = form.getRecordComponents()[0].getGenericType();
                 try {
                     Object converted = convert(component, value);
@@ -417,8 +425,8 @@ public final class ApiBinder {
             }
             throw new Unbindable(raw.getSimpleName() + " has no form for " + value);
         }
-        if (raw.isRecord()) {
-            if (raw.getSimpleName().equals("Vec3")) {
+        if (raw.isRecord() || ComponentIndex.JSON_KEYS.containsKey(raw) || ComponentIndex.FORMS.containsKey(raw)) {
+            if (raw.isRecord() && raw.getSimpleName().equals("Vec3")) {
                 if (value.isJsonArray() && value.getAsJsonArray().size() == 3) {
                     JsonArray a = value.getAsJsonArray();
                     try {
@@ -446,6 +454,15 @@ public final class ApiBinder {
             return bind(raw, value.isJsonArray() && value.getAsJsonArray().isEmpty() ? new JsonObject() : value);
         }
         throw new Unbindable("unsupported parameter " + type);
+    }
+
+    /** A generated open value class of documented strings: {@code of(String)} and {@code isKnown()}. */
+    static boolean openValueClass(Class<?> type) {
+        try {
+            return type.getMethod("of", String.class).getReturnType() == type && type.getMethod("isKnown") != null;
+        } catch (NoSuchMethodException e) {
+            return false;
+        }
     }
 
     private static Object stateValue(JsonElement value) {

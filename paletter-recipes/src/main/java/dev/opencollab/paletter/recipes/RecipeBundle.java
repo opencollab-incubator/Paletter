@@ -72,21 +72,24 @@ final class RecipeBundle {
     private static Recipe recipe(NbtMap recipe) throws IOException {
         String type = recipe.getString("type");
         return switch (type) {
-            case "shaped" -> new Recipe.Shaped(recipe.getString("id"), recipe.getInt("width"), recipe.getInt("height"), ingredients(recipe, "ingredients"),
-                results(recipe), recipe.getString("station"), recipe.getInt("priority"), recipe.getBoolean("symmetry"), unlock(recipe.getCompound("unlock")));
-            case "shapeless", "shulker_box" -> new Recipe.Shapeless(recipe.getString("id"), ingredients(recipe, "ingredients"), results(recipe),
-                recipe.getString("station"), recipe.getInt("priority"), type.equals("shulker_box"), unlock(recipe.getCompound("unlock")));
-            case "multi" -> new Recipe.Multi(UUID.fromString(recipe.getString("id")));
-            case "smithing_transform" -> new Recipe.SmithingTransform(recipe.getString("id"), ingredient(recipe.getCompound("template")),
-                ingredient(recipe.getCompound("base")), ingredient(recipe.getCompound("addition")), result(recipe.getCompound("result")), recipe.getString("station"));
-            case "smithing_trim" -> new Recipe.SmithingTrim(recipe.getString("id"), ingredient(recipe.getCompound("template")),
-                ingredient(recipe.getCompound("base")), ingredient(recipe.getCompound("addition")), recipe.getString("station"));
+            case "shaped" -> Recipe.Shaped.builder().id(recipe.getString("id")).grid(recipe.getInt("width"), recipe.getInt("height"))
+                .ingredients(ingredients(recipe, "ingredients")).results(results(recipe)).station(recipe.getString("station"))
+                .priority(recipe.getInt("priority")).assumeSymmetry(recipe.getBoolean("symmetry")).unlock(unlock(recipe.getCompound("unlock"))).build();
+            case "shapeless", "shulker_box" -> Recipe.Shapeless.builder().id(recipe.getString("id")).ingredients(ingredients(recipe, "ingredients"))
+                .results(results(recipe)).station(recipe.getString("station")).priority(recipe.getInt("priority")).shulkerBox(type.equals("shulker_box"))
+                .unlock(unlock(recipe.getCompound("unlock"))).build();
+            case "multi" -> Recipe.Multi.of(UUID.fromString(recipe.getString("id")));
+            case "smithing_transform" -> Recipe.SmithingTransform.builder().id(recipe.getString("id")).template(ingredient(recipe.getCompound("template")))
+                .base(ingredient(recipe.getCompound("base"))).addition(ingredient(recipe.getCompound("addition")))
+                .result(result(recipe.getCompound("result"))).station(recipe.getString("station")).build();
+            case "smithing_trim" -> Recipe.SmithingTrim.builder().id(recipe.getString("id")).template(ingredient(recipe.getCompound("template")))
+                .base(ingredient(recipe.getCompound("base"))).addition(ingredient(recipe.getCompound("addition"))).station(recipe.getString("station")).build();
             default -> throw new IOException("Unknown recipe type " + type + " in the recipe bundle");
         };
     }
 
     private static Unlock unlock(NbtMap unlock) {
-        return new Unlock(UnlockingContext.valueOf(unlock.getString("context").toUpperCase(Locale.ROOT)), ingredients(unlock, "ingredients"));
+        return Unlock.read(UnlockingContext.valueOf(unlock.getString("context").toUpperCase(Locale.ROOT)), ingredients(unlock, "ingredients"));
     }
 
     private static List<Ingredient> ingredients(NbtMap parent, String key) {
@@ -122,7 +125,8 @@ final class RecipeBundle {
     }
 
     private static Result result(NbtMap result) {
-        return new Result(variant(result), result.getInt("count"), result.getCompound("block", NbtMap.EMPTY), result.getCompound("nbt", NbtMap.EMPTY));
+        return Result.builder().item(variant(result)).count(result.getInt("count")).blockState(result.getCompound("block", NbtMap.EMPTY))
+            .tag(result.getCompound("nbt", NbtMap.EMPTY)).build();
     }
 
     /** The variant of an {@code {id, aux}} compound. */
