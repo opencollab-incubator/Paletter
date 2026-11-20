@@ -46,7 +46,7 @@ public final class Main {
         if (Files.isDirectory(dir)) {
             try (Stream<Path> list = Files.list(dir)) {
                 for (Path file : list.filter(f -> !files.containsKey(ConstantsGenerator.STATE_DIR + "/" + f.getFileName())).toList()) {
-                    if (Files.readString(file, StandardCharsets.UTF_8).startsWith(JavaWriter.GENERATOR)) {
+                    if (Files.readString(file, StandardCharsets.UTF_8).startsWith(ConstantsSource.GENERATOR)) {
                         stale.add(file);
                     }
                 }

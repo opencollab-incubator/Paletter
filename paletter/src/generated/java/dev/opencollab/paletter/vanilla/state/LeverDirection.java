@@ -2,8 +2,8 @@
 // data/model/constants-history.json. Do not edit; see docs/data-pipeline.md.
 package dev.opencollab.paletter.vanilla.state;
 
-import org.checkerframework.checker.nullness.qual.NonNull;
 import dev.opencollab.paletter.vanilla.StateValue;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 /**
  * Values of {@code lever_direction}.
@@ -15,30 +15,37 @@ public enum LeverDirection implements StateValue {
      * {@code down_east_west}
      */
     DOWN_EAST_WEST("down_east_west"),
+
     /**
      * {@code east}
      */
     EAST("east"),
+
     /**
      * {@code west}
      */
     WEST("west"),
+
     /**
      * {@code south}
      */
     SOUTH("south"),
+
     /**
      * {@code north}
      */
     NORTH("north"),
+
     /**
      * {@code up_north_south}
      */
     UP_NORTH_SOUTH("up_north_south"),
+
     /**
      * {@code up_east_west}
      */
     UP_EAST_WEST("up_east_west"),
+
     /**
      * {@code down_north_south}
      */

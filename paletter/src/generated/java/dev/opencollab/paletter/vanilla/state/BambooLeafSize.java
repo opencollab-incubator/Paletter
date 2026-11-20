@@ -2,8 +2,8 @@
 // data/model/constants-history.json. Do not edit; see docs/data-pipeline.md.
 package dev.opencollab.paletter.vanilla.state;
 
-import org.checkerframework.checker.nullness.qual.NonNull;
 import dev.opencollab.paletter.vanilla.StateValue;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 /**
  * Values of {@code bamboo_leaf_size}.
@@ -15,10 +15,12 @@ public enum BambooLeafSize implements StateValue {
      * {@code no_leaves}
      */
     NO_LEAVES("no_leaves"),
+
     /**
      * {@code small_leaves}
      */
     SMALL_LEAVES("small_leaves"),
+
     /**
      * {@code large_leaves}
      */

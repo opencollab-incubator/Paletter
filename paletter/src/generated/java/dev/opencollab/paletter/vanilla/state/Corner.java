@@ -2,8 +2,8 @@
 // data/model/constants-history.json. Do not edit; see docs/data-pipeline.md.
 package dev.opencollab.paletter.vanilla.state;
 
-import org.checkerframework.checker.nullness.qual.NonNull;
 import dev.opencollab.paletter.vanilla.StateValue;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 /**
  * Values of {@code minecraft:corner}.
@@ -15,18 +15,22 @@ public enum Corner implements StateValue {
      * {@code none}
      */
     NONE("none"),
+
     /**
      * {@code inner_left}
      */
     INNER_LEFT("inner_left"),
+
     /**
      * {@code inner_right}
      */
     INNER_RIGHT("inner_right"),
+
     /**
      * {@code outer_left}
      */
     OUTER_LEFT("outer_left"),
+
     /**
      * {@code outer_right}
      */

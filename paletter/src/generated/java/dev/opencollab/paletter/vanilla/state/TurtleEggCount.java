@@ -2,8 +2,8 @@
 // data/model/constants-history.json. Do not edit; see docs/data-pipeline.md.
 package dev.opencollab.paletter.vanilla.state;
 
-import org.checkerframework.checker.nullness.qual.NonNull;
 import dev.opencollab.paletter.vanilla.StateValue;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 /**
  * Values of {@code turtle_egg_count}.
@@ -15,14 +15,17 @@ public enum TurtleEggCount implements StateValue {
      * {@code one_egg}
      */
     ONE_EGG("one_egg"),
+
     /**
      * {@code two_egg}
      */
     TWO_EGG("two_egg"),
+
     /**
      * {@code three_egg}
      */
     THREE_EGG("three_egg"),
+
     /**
      * {@code four_egg}
      */

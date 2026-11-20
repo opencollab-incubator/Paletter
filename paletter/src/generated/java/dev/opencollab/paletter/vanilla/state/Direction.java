@@ -2,8 +2,8 @@
 // data/model/constants-history.json. Do not edit; see docs/data-pipeline.md.
 package dev.opencollab.paletter.vanilla.state;
 
-import org.checkerframework.checker.nullness.qual.NonNull;
 import dev.opencollab.paletter.vanilla.StateValue;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 /**
  * Values of {@code minecraft:block_face}, {@code minecraft:facing_direction}.
@@ -15,22 +15,27 @@ public enum Direction implements StateValue {
      * {@code down}
      */
     DOWN("down"),
+
     /**
      * {@code up}
      */
     UP("up"),
+
     /**
      * {@code north}
      */
     NORTH("north"),
+
     /**
      * {@code south}
      */
     SOUTH("south"),
+
     /**
      * {@code west}
      */
     WEST("west"),
+
     /**
      * {@code east}
      */

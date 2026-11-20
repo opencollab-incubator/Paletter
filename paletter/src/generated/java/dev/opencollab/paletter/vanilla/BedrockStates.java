@@ -2,8 +2,6 @@
 // data/model/constants-history.json. Do not edit; see docs/data-pipeline.md.
 package dev.opencollab.paletter.vanilla;
 
-import org.checkerframework.checker.nullness.qual.NonNull;
-import org.checkerframework.checker.nullness.qual.Nullable;
 import dev.opencollab.paletter.annotation.SincePreview;
 import dev.opencollab.paletter.vanilla.state.Attachment;
 import dev.opencollab.paletter.vanilla.state.BambooLeafSize;
@@ -29,6 +27,8 @@ import dev.opencollab.paletter.vanilla.state.TurtleEggCount;
 import dev.opencollab.paletter.vanilla.state.VaultState;
 import dev.opencollab.paletter.vanilla.state.VerticalHalf;
 import dev.opencollab.paletter.vanilla.state.WallConnectionType;
+import org.checkerframework.checker.nullness.qual.NonNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 /**
  * Every block state name of Bedrock 26.60, the newest bundled release, typed: {@link BoolState} for byte

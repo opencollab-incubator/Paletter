@@ -2,8 +2,8 @@
 // data/model/constants-history.json. Do not edit; see docs/data-pipeline.md.
 package dev.opencollab.paletter.vanilla.state;
 
-import org.checkerframework.checker.nullness.qual.NonNull;
 import dev.opencollab.paletter.vanilla.StateValue;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 /**
  * Values of {@code attachment}.
@@ -15,14 +15,17 @@ public enum Attachment implements StateValue {
      * {@code standing}
      */
     STANDING("standing"),
+
     /**
      * {@code hanging}
      */
     HANGING("hanging"),
+
     /**
      * {@code side}
      */
     SIDE("side"),
+
     /**
      * {@code multiple}
      */

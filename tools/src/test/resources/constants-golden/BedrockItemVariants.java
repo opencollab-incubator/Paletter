@@ -28,7 +28,9 @@ public final class BedrockItemVariants {
      * {@code minecraft:potion} with aux 9, no longer in the bundled data.
      * @deprecated Bedrock removed the variant
      */
-    @Deprecated(since = "2.1.0")
+    @Deprecated(
+            since = "2.1.0"
+    )
     public static final BedrockItemVariant OLD_POTION = VanillaTypes.variant(BedrockItems.POTION, 9);
 
     /**
@@ -54,7 +56,9 @@ public final class BedrockItemVariants {
      * {@code minecraft:potion} with aux 5.
      * @deprecated renamed to {@link #POTION_NIGHTVISION}
      */
-    @Deprecated(since = "2.1.0")
+    @Deprecated(
+            since = "2.1.0"
+    )
     public static final BedrockItemVariant NIGHT_VISION = POTION_NIGHTVISION;
 
     private BedrockItemVariants() {

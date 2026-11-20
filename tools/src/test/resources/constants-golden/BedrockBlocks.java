@@ -35,7 +35,9 @@ public final class BedrockBlocks {
      * First in Bedrock 1.0.
      * @deprecated Bedrock removed the block; resolves to {@code minecraft:unknown}
      */
-    @Deprecated(since = "2.1.0")
+    @Deprecated(
+            since = "2.1.0"
+    )
     public static final BedrockBlockType REMOVED_BLOCK = VanillaTypes.block("minecraft:removed_block");
 
     /**
@@ -104,7 +106,9 @@ public final class BedrockBlocks {
      * First in Bedrock 1.0.
      * @deprecated Bedrock renamed it to {@link #TEST_DOOR}
      */
-    @Deprecated(since = "2.1.0")
+    @Deprecated(
+            since = "2.1.0"
+    )
     public static final BedrockBlockType OLD_DOOR = TEST_DOOR;
 
     private BedrockBlocks() {
