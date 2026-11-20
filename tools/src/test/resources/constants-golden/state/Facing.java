@@ -2,8 +2,8 @@
 // data/model/constants-history.json. Do not edit; see docs/data-pipeline.md.
 package dev.opencollab.paletter.vanilla.state;
 
-import org.checkerframework.checker.nullness.qual.NonNull;
 import dev.opencollab.paletter.vanilla.StateValue;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 /**
  * Values of {@code minecraft:facing}.
@@ -15,6 +15,7 @@ public enum Facing implements StateValue {
      * {@code up}
      */
     UP("up"),
+
     /**
      * {@code down}
      */

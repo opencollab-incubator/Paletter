@@ -2,8 +2,8 @@
 // data/model/constants-history.json. Do not edit; see docs/data-pipeline.md.
 package dev.opencollab.paletter.vanilla.state;
 
-import org.checkerframework.checker.nullness.qual.NonNull;
 import dev.opencollab.paletter.vanilla.StateValue;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 /**
  * Values of {@code cauldron_liquid}.
@@ -15,10 +15,12 @@ public enum CauldronLiquid implements StateValue {
      * {@code water}
      */
     WATER("water"),
+
     /**
      * {@code lava}
      */
     LAVA("lava"),
+
     /**
      * {@code powder_snow}
      */

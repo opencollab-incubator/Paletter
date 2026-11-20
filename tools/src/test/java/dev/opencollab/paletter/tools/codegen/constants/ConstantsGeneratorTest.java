@@ -182,12 +182,16 @@ class ConstantsGeneratorTest {
         ConstantsGenerator.Result second = ConstantsGenerator.generate(release, null, names, first, "2.1.0");
         String blocks = second.files().get(BLOCKS);
         assertTrue(blocks.contains("""
-                @Deprecated(since = "2.1.0")
+                @Deprecated(
+                        since = "2.1.0"
+                )
                 public static final BedrockBlockType REMOVED_BLOCK = VanillaTypes.block("minecraft:removed_block");
             """), blocks.substring(0, 200));
         assertTrue(blocks.contains("@deprecated Bedrock removed the block; resolves to {@code minecraft:unknown}"));
         assertTrue(blocks.contains("""
-                @Deprecated(since = "2.1.0")
+                @Deprecated(
+                        since = "2.1.0"
+                )
                 public static final BedrockBlockType OLD_STONE_NAME = STONE;
             """));
         // New in Paletter 2.1.0 (the @since), in the newest release (the line of the Bedrock release)
@@ -205,11 +209,13 @@ class ConstantsGeneratorTest {
         assertFalse(blocks.contains("forRemoval") || items.contains("forRemoval"), "names are never removed");
         String states = second.files().get(STATES);
         assertTrue(states.contains("""
-                @Deprecated(since = "2.1.0")
+                @Deprecated(
+                        since = "2.1.0"
+                )
                 public static final BoolState REMOVED_STATE = VanillaTypes.state(BoolState.of("removed_state"));
             """));
         String cardinal = second.files().get(ConstantsGenerator.STATE_DIR + "/CardinalDirection.java");
-        assertTrue(cardinal.contains("    @Deprecated(since = \"2.1.0\")\n    UPWARDS(\"upwards\")"), cardinal);
+        assertTrue(cardinal.contains("    @Deprecated(\n            since = \"2.1.0\"\n    )\n    UPWARDS(\"upwards\")"), cardinal);
 
         assertTrue(second.added().contains("BedrockBlocks.STONE = minecraft:stone"));
         assertEquals(6, second.deprecated().size(), second.deprecated().toString());
@@ -323,9 +329,9 @@ class ConstantsGeneratorTest {
 
     @Test
     void stateValuesAreJavaLiteralsOfTheirNbtType() {
-        assertEquals("(byte) 1", JavaWriter.literal((byte) 1));
-        assertEquals("-3", JavaWriter.literal(-3));
-        assertEquals("\"say \\\"hi\\\" \\\\\"", JavaWriter.literal("say \"hi\" \\"));
+        assertEquals("(byte) 1", ConstantsSource.literal((byte) 1));
+        assertEquals("-3", ConstantsSource.literal(-3));
+        assertEquals("\"say \\\"hi\\\" \\\\\"", ConstantsSource.literal("say \"hi\" \\"));
     }
 
     private static JsonObject itemsOf(ConstantsGenerator.Result result) {

@@ -2,8 +2,8 @@
 // data/model/constants-history.json. Do not edit; see docs/data-pipeline.md.
 package dev.opencollab.paletter.vanilla.state;
 
-import org.checkerframework.checker.nullness.qual.NonNull;
 import dev.opencollab.paletter.vanilla.StateValue;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 /**
  * Values of {@code redstone_east}, {@code redstone_north}, {@code redstone_south}, {@code redstone_west}.
@@ -15,10 +15,12 @@ public enum RedstoneConnection implements StateValue {
      * {@code none}
      */
     NONE("none"),
+
     /**
      * {@code side}
      */
     SIDE("side"),
+
     /**
      * {@code up}
      */

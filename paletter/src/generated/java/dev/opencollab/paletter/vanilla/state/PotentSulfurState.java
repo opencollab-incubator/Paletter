@@ -2,8 +2,8 @@
 // data/model/constants-history.json. Do not edit; see docs/data-pipeline.md.
 package dev.opencollab.paletter.vanilla.state;
 
-import org.checkerframework.checker.nullness.qual.NonNull;
 import dev.opencollab.paletter.vanilla.StateValue;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 /**
  * Values of {@code potent_sulfur_state}.
@@ -15,18 +15,22 @@ public enum PotentSulfurState implements StateValue {
      * {@code dry}
      */
     DRY("dry"),
+
     /**
      * {@code wet}
      */
     WET("wet"),
+
     /**
      * {@code dormant}
      */
     DORMANT("dormant"),
+
     /**
      * {@code erupting}
      */
     ERUPTING("erupting"),
+
     /**
      * {@code continuous}
      */

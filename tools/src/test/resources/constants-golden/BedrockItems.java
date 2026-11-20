@@ -45,7 +45,9 @@ public final class BedrockItems {
      * First in Bedrock 1.0.
      * @deprecated Bedrock removed the item; resolves to {@code minecraft:unknown}
      */
-    @Deprecated(since = "2.1.0")
+    @Deprecated(
+            since = "2.1.0"
+    )
     public static final BedrockItemType OLD_STICK = VanillaTypes.item("minecraft:old_stick");
 
     /**

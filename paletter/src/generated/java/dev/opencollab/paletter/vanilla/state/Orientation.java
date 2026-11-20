@@ -2,8 +2,8 @@
 // data/model/constants-history.json. Do not edit; see docs/data-pipeline.md.
 package dev.opencollab.paletter.vanilla.state;
 
-import org.checkerframework.checker.nullness.qual.NonNull;
 import dev.opencollab.paletter.vanilla.StateValue;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 /**
  * Values of {@code orientation}.
@@ -15,46 +15,57 @@ public enum Orientation implements StateValue {
      * {@code down_east}
      */
     DOWN_EAST("down_east"),
+
     /**
      * {@code down_north}
      */
     DOWN_NORTH("down_north"),
+
     /**
      * {@code down_south}
      */
     DOWN_SOUTH("down_south"),
+
     /**
      * {@code down_west}
      */
     DOWN_WEST("down_west"),
+
     /**
      * {@code up_east}
      */
     UP_EAST("up_east"),
+
     /**
      * {@code up_north}
      */
     UP_NORTH("up_north"),
+
     /**
      * {@code up_south}
      */
     UP_SOUTH("up_south"),
+
     /**
      * {@code up_west}
      */
     UP_WEST("up_west"),
+
     /**
      * {@code west_up}
      */
     WEST_UP("west_up"),
+
     /**
      * {@code east_up}
      */
     EAST_UP("east_up"),
+
     /**
      * {@code north_up}
      */
     NORTH_UP("north_up"),
+
     /**
      * {@code south_up}
      */

@@ -125,13 +125,14 @@ final class NetworkDataStage {
             new Checker(staging.resources).problems(ctx.preview);
             updateVariantNames(variantNames, name, dump, captured);
         }
-        stageVariantNames(variantNames);
+        stageVariantNames(variantNames, staging.resources);
     }
 
     /** The variant names go to the repository; a history check stages only into its build's directory and keeps none. */
-    void stageVariantNames(Map<String, List<VariantNames.Entry>> variantNames) throws IOException {
+    void stageVariantNames(Map<String, List<VariantNames.Entry>> variantNames, Path resources) throws IOException {
         if (ctx.against == null) {
-            ctx.stage(ctx.root.resolve(VariantNames.FILE), VariantNames.render(variantNames).getBytes(StandardCharsets.UTF_8), "item variant names");
+            ctx.stage(ctx.root.resolve(VariantNames.FILE), VariantNames.render(variantNames, VariantNames.versions(resources)).getBytes(StandardCharsets.UTF_8),
+                "item variant names");
         }
     }
 

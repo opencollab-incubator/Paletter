@@ -31,6 +31,7 @@ dependencies {
     implementation(componentApi.output)
     implementation(project(":paletter"))
     implementation(libs.gson)
+    implementation(libs.javapoet)
     implementation(libs.picocli)
     implementation(libs.iced.x86)
     // The capture client: BDS 1.26.70+ only speaks NetherNet (WebRTC, HTTP signaling on server-port); RakNet from the same build

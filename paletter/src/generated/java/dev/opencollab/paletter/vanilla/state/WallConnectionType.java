@@ -2,8 +2,8 @@
 // data/model/constants-history.json. Do not edit; see docs/data-pipeline.md.
 package dev.opencollab.paletter.vanilla.state;
 
-import org.checkerframework.checker.nullness.qual.NonNull;
 import dev.opencollab.paletter.vanilla.StateValue;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 /**
  * Values of {@code pale_moss_carpet_side_east}, {@code pale_moss_carpet_side_north}, {@code pale_moss_carpet_side_south}, {@code pale_moss_carpet_side_west}, {@code wall_connection_type_east}, {@code wall_connection_type_north}, {@code wall_connection_type_south}, {@code wall_connection_type_west}.
@@ -15,10 +15,12 @@ public enum WallConnectionType implements StateValue {
      * {@code none}
      */
     NONE("none"),
+
     /**
      * {@code short}
      */
     SHORT("short"),
+
     /**
      * {@code tall}
      */

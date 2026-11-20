@@ -249,8 +249,8 @@ public final class ConstantsGenerator {
         // Content only the bundled preview has goes into the same classes, marked @SincePreview and kept out of the history
         List<BlockLayout> previewLayouts = g.preview == null ? List.of() : layouts(g.preview);
         StateModel states = new StateConstants(g).states(layouts, previewLayouts);
-        states.enums.values().forEach(e -> files.put(STATE_DIR + "/" + e.name + ".java", JavaWriter.enumClass(e, g.version)));
-        files.put(PACKAGE_DIR + "/BedrockStates.java", JavaWriter.states(states, g.release.version().name()));
+        states.enums.values().forEach(e -> files.put(STATE_DIR + "/" + e.name + ".java", ConstantsSource.enumClass(e, g.version)));
+        files.put(PACKAGE_DIR + "/BedrockStates.java", ConstantsSource.states(states, g.release.version().name()));
         counts.put("BedrockStates", states.constants.size());
         counts.put("state enums", states.enums.size());
 
@@ -270,7 +270,7 @@ public final class ConstantsGenerator {
         }
         ContentConstants content = new ContentConstants(g);
         List<Constant> blocks = content.constants("blocks", releaseBlocks, previewBlocks, "BedrockBlocks");
-        files.put(PACKAGE_DIR + "/BedrockBlocks.java", JavaWriter.blocks(blocks, byId, previewStates, states, g.release.version().name(), oldest));
+        files.put(PACKAGE_DIR + "/BedrockBlocks.java", ConstantsSource.blocks(blocks, byId, previewStates, states, g.release.version().name(), oldest));
         counts.put("BedrockBlocks", blocks.size());
 
         List<String> itemIds = new ArrayList<>();
@@ -284,7 +284,7 @@ public final class ConstantsGenerator {
             variantCounts(g.preview).forEach(variantCounts::putIfAbsent);
         }
         List<Constant> items = content.constants("items", itemIds, previewItemIds, "BedrockItems");
-        files.put(PACKAGE_DIR + "/BedrockItems.java", JavaWriter.items(items, variantCounts, g.release.version().name(), oldest));
+        files.put(PACKAGE_DIR + "/BedrockItems.java", ConstantsSource.items(items, variantCounts, g.release.version().name(), oldest));
         counts.put("BedrockItems", items.size());
         if (g.preview != null) {
             counts.put("preview only", (int) (blocks.stream().filter(c -> c.preview() != null).count()
@@ -295,7 +295,7 @@ public final class ConstantsGenerator {
         List<Variant> variants = new VariantConstants(g).variants();
         Map<String, String> itemNames = new HashMap<>();
         items.stream().filter(c -> c.replacement() == null).forEach(c -> itemNames.putIfAbsent(c.identifier(), c.name()));
-        files.put(PACKAGE_DIR + "/BedrockItemVariants.java", JavaWriter.variants(variants, itemNames, g.release.version().name()));
+        files.put(PACKAGE_DIR + "/BedrockItemVariants.java", ConstantsSource.variants(variants, itemNames, g.release.version().name()));
         counts.put("BedrockItemVariants", variants.size());
 
         Set<String> unused = new TreeSet<>(g.names.hand());
@@ -304,7 +304,7 @@ public final class ConstantsGenerator {
             throw new IllegalStateException(NAMES + " names " + unused + ", which match nothing in the data anymore; remove the lines");
         }
         if (!g.sources.toggles().isEmpty()) {
-            files.put(PACKAGE_DIR + "/BedrockExperiments.java", JavaWriter.experiments(g.sources.toggles(), oldest));
+            files.put(PACKAGE_DIR + "/BedrockExperiments.java", ConstantsSource.experiments(g.sources.toggles(), oldest));
             counts.put("BedrockExperiments", g.sources.toggles().size());
         }
         files.put(HISTORY, ConstantsHistory.toJson(g.newHistory));
@@ -491,7 +491,7 @@ public final class ConstantsGenerator {
          * @param variantNames the {@code variant_names.txt}, or null for none
          */
         public static Sources read(Path data, Path bds, Path variantNames) throws IOException {
-            return read(data, bds, VariantNames.read(variantNames));
+            return read(data, bds, VariantNames.read(variantNames, VariantNames.versions(data)));
         }
 
         /**

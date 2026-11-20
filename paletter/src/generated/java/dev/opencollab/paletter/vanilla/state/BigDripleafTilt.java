@@ -2,8 +2,8 @@
 // data/model/constants-history.json. Do not edit; see docs/data-pipeline.md.
 package dev.opencollab.paletter.vanilla.state;
 
-import org.checkerframework.checker.nullness.qual.NonNull;
 import dev.opencollab.paletter.vanilla.StateValue;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 /**
  * Values of {@code big_dripleaf_tilt}.
@@ -15,14 +15,17 @@ public enum BigDripleafTilt implements StateValue {
      * {@code none}
      */
     NONE("none"),
+
     /**
      * {@code unstable}
      */
     UNSTABLE("unstable"),
+
     /**
      * {@code partial_tilt}
      */
     PARTIAL_TILT("partial_tilt"),
+
     /**
      * {@code full_tilt}
      */

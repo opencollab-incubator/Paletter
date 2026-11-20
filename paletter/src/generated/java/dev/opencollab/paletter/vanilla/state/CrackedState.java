@@ -2,8 +2,8 @@
 // data/model/constants-history.json. Do not edit; see docs/data-pipeline.md.
 package dev.opencollab.paletter.vanilla.state;
 
-import org.checkerframework.checker.nullness.qual.NonNull;
 import dev.opencollab.paletter.vanilla.StateValue;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 /**
  * Values of {@code cracked_state}.
@@ -15,10 +15,12 @@ public enum CrackedState implements StateValue {
      * {@code no_cracks}
      */
     NO_CRACKS("no_cracks"),
+
     /**
      * {@code cracked}
      */
     CRACKED("cracked"),
+
     /**
      * {@code max_cracked}
      */

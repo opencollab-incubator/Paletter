@@ -2,8 +2,8 @@
 // data/model/constants-history.json. Do not edit; see docs/data-pipeline.md.
 package dev.opencollab.paletter.vanilla.state;
 
-import org.checkerframework.checker.nullness.qual.NonNull;
 import dev.opencollab.paletter.vanilla.StateValue;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 /**
  * Values of {@code sea_grass_type}.
@@ -15,10 +15,12 @@ public enum SeaGrassType implements StateValue {
      * {@code default}
      */
     DEFAULT("default"),
+
     /**
      * {@code double_top}
      */
     DOUBLE_TOP("double_top"),
+
     /**
      * {@code double_bot}
      */

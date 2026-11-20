@@ -157,11 +157,9 @@ class ConstantsGoldenTest {
     /** {@code variant_names.txt} of the second generation: the release names two potion variants, the preview one more. */
     private static final String VARIANT_NAMES = """
         # test
-        1.1 minecraft:potion 5 POTION_NIGHTVISION
-        1.1 minecraft:potion 7 POTION_LONG_NIGHTVISION
-        1.2 minecraft:potion 0 POTION_WATER
-        1.2 minecraft:potion 5 POTION_NIGHTVISION
-        1.2 minecraft:potion 7 POTION_LONG_NIGHTVISION
+        1.1.. minecraft:potion 5 POTION_NIGHTVISION
+        1.1.. minecraft:potion 7 POTION_LONG_NIGHTVISION
+        1.2.. minecraft:potion 0 POTION_WATER
         """;
 
     private static JsonObject variantEntry(String identifier, int aux) {
@@ -407,11 +405,11 @@ class ConstantsGoldenTest {
 
     @Test
     void variantsAreKeptAcrossReleases(@TempDir Path temp) throws IOException {
-        JsonObject first = JsonParser.parseString(variants(temp.resolve("a"), "1.1 minecraft:potion 1 POTION_A\n1.1 minecraft:potion 2 POTION_B\n",
+        JsonObject first = JsonParser.parseString(variants(temp.resolve("a"), "1.1.. minecraft:potion 1 POTION_A\n1.1.. minecraft:potion 2 POTION_B\n",
             new JsonObject(), "1.0.0").files().get(ConstantsGenerator.HISTORY)).getAsJsonObject();
 
         // Release 1.1 drops B, renames aux 3 and adds C: A keeps its since, B is deprecated, C is new
-        ConstantsGenerator.Result second = variants(temp.resolve("b"), "1.1 minecraft:potion 1 POTION_A\n1.1 minecraft:potion 3 POTION_C\n", first, "2.1.0");
+        ConstantsGenerator.Result second = variants(temp.resolve("b"), "1.1.. minecraft:potion 1 POTION_A\n1.1.. minecraft:potion 3 POTION_C\n", first, "2.1.0");
         JsonObject history = historyOf(second);
         assertEquals("{\"identifier\":\"minecraft:potion\",\"aux\":1,\"since\":\"1.0.0\"}", history.get("POTION_A").toString());
         assertEquals("{\"identifier\":\"minecraft:potion\",\"aux\":2,\"since\":\"1.0.0\",\"deprecated\":\"2.1.0\"}", history.get("POTION_B").toString());
@@ -421,26 +419,26 @@ class ConstantsGoldenTest {
 
         // A later generation of the same data changes nothing, and the deprecation stays as it was
         JsonObject secondHistory = JsonParser.parseString(second.files().get(ConstantsGenerator.HISTORY)).getAsJsonObject();
-        ConstantsGenerator.Result third = variants(temp.resolve("c"), "1.1 minecraft:potion 1 POTION_A\n1.1 minecraft:potion 3 POTION_C\n", secondHistory, "3.0.0");
+        ConstantsGenerator.Result third = variants(temp.resolve("c"), "1.1.. minecraft:potion 1 POTION_A\n1.1.. minecraft:potion 3 POTION_C\n", secondHistory, "3.0.0");
         assertEquals(second.files(), third.files());
         assertEquals(List.of(), third.deprecated());
 
         // BDS names aux 3 differently: the old name becomes an alias of the new one, and stays one
-        ConstantsGenerator.Result renamed = variants(temp.resolve("d"), "1.1 minecraft:potion 1 POTION_A\n1.1 minecraft:potion 3 POTION_D\n", secondHistory, "3.0.0");
+        ConstantsGenerator.Result renamed = variants(temp.resolve("d"), "1.1.. minecraft:potion 1 POTION_A\n1.1.. minecraft:potion 3 POTION_D\n", secondHistory, "3.0.0");
         assertEquals(List.of("BedrockItemVariants.POTION_C (minecraft:potion@3, now POTION_D)"), renamed.deprecated());
         assertEquals("{\"identifier\":\"minecraft:potion\",\"aux\":3,\"since\":\"2.1.0\",\"deprecated\":\"3.0.0\",\"replacement\":\"POTION_D\"}",
             historyOf(renamed).get("POTION_C").toString());
         String source = renamed.files().get(ConstantsGenerator.PACKAGE_DIR + "/BedrockItemVariants.java");
         assertTrue(source.contains("public static final BedrockItemVariant POTION_C = POTION_D;"), source);
         assertTrue(source.indexOf("POTION_D = VanillaTypes") < source.indexOf("POTION_C = POTION_D"), "an alias comes after its target");
-        ConstantsGenerator.Result again = variants(temp.resolve("e"), "1.1 minecraft:potion 1 POTION_A\n1.1 minecraft:potion 3 POTION_D\n",
+        ConstantsGenerator.Result again = variants(temp.resolve("e"), "1.1.. minecraft:potion 1 POTION_A\n1.1.. minecraft:potion 3 POTION_D\n",
             JsonParser.parseString(renamed.files().get(ConstantsGenerator.HISTORY)).getAsJsonObject(), "4.0.0");
         assertEquals(renamed.files(), again.files());
     }
 
     @Test
     void aReleaseWithoutVariantNamesDoesNotDeprecateThem(@TempDir Path temp) throws IOException {
-        JsonObject history = JsonParser.parseString(variants(temp.resolve("a"), "1.1 minecraft:potion 1 POTION_A\n", new JsonObject(), "1.0.0")
+        JsonObject history = JsonParser.parseString(variants(temp.resolve("a"), "1.1.. minecraft:potion 1 POTION_A\n", new JsonObject(), "1.0.0")
             .files().get(ConstantsGenerator.HISTORY)).getAsJsonObject();
         assertEquals("The newest release 1.1 has no variant names in data/model/variant_names.txt, but data/model/constants-history.json has 1: "
             + "that would deprecate them all. Run script-dump on a build of it; names are not carried forward",
@@ -452,7 +450,7 @@ class ConstantsGoldenTest {
     @Test
     void aVariantNameKeepsItsMeaning(@TempDir Path temp) throws IOException {
         Path data = temp.resolve("data");
-        write(data, List.of(data("1.1", 110, releaseBlocks(false), releaseItems(false))), List.of(false));
+        write(data, List.of(data("1.1", 110, releaseBlocks(false), releaseItems(false)), data("1.2", 120, releaseBlocks(false), releaseItems(false))), List.of(false, true));
         Files.writeString(data.resolve("variant_names.txt"), VARIANT_NAMES);
         ConstantsGenerator.Sources sources = ConstantsGenerator.Sources.read(data, null, data.resolve("variant_names.txt"));
         JsonObject history = JsonParser.parseString(ConstantsGenerator.generate(data, names(), new JsonObject(), "1.0.0", sources)
