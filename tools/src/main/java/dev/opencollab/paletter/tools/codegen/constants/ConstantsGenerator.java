@@ -491,7 +491,7 @@ public final class ConstantsGenerator {
          * @param variantNames the {@code variant_names.txt}, or null for none
          */
         public static Sources read(Path data, Path bds, Path variantNames) throws IOException {
-            return read(data, bds, VariantNames.read(variantNames));
+            return read(data, bds, VariantNames.read(variantNames, VariantNames.versions(data)));
         }
 
         /**

@@ -20,7 +20,7 @@ final class Staging {
         this.ctx = ctx;
         this.directory = directory;
         this.resources = directory.resolve("resources");
-        this.variantNames = VariantNames.read(ctx.root.resolve(VariantNames.FILE));
+        this.variantNames = VariantNames.read(ctx.root.resolve(VariantNames.FILE), VariantNames.versions(ctx.resources));
         Files.createDirectories(resources);
         try (Stream<Path> files = Files.list(ctx.resources)) {
             for (Path file : files.toList()) {

@@ -37,7 +37,7 @@ class UpdateTest {
     void theConstantsOfAnUpdateHaveTheVariantNamesItStages() throws Exception {
         // update regenerates the constants from the names it stages: the committed ones give the committed constants
         Path resources = ROOT.resolve(ConstantsGenerator.DATA);
-        ConstantsGenerator.Result result = ConstantsStage.generateConstants(ROOT, resources, VariantNames.read(ROOT.resolve(VariantNames.FILE)));
+        ConstantsGenerator.Result result = ConstantsStage.generateConstants(ROOT, resources, VariantNames.read(ROOT.resolve(VariantNames.FILE), VariantNames.versions(resources)));
         assertEquals(ConstantsGenerator.generate(ROOT).files(), result.files());
         assertEquals(List.of(), result.deprecated());
         // Without names the newest release would lose every variant constant: that fails instead

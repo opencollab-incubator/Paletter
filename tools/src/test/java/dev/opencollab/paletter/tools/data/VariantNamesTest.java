@@ -137,23 +137,67 @@ class VariantNamesTest {
         assertEquals(List.of(new VariantNames.Entry("minecraft:potion", 5, "POTION_NIGHTVISION")), all.get("1.0"));
     }
 
+    private static final List<String> VERSIONS = List.of("26.50", "26.60", "26.70");
+
     @Test
-    void theFileKeepsEveryVersion(@TempDir Path directory) throws IOException {
+    void theFileKeepsEachVariantOnceWithItsRange(@TempDir Path directory) throws IOException {
         Path file = directory.resolve("variant_names.txt");
+        VariantNames.Entry white = new VariantNames.Entry("minecraft:bed", 0, "BED_WHITE");
+        VariantNames.Entry nightvision = new VariantNames.Entry("minecraft:potion", 6, "POTION_LONG_NIGHTVISION");
+        VariantNames.Entry freezing = new VariantNames.Entry("minecraft:potion", 49, "POTION_FREEZING");
+        VariantNames.Entry gap = new VariantNames.Entry("minecraft:potion", 50, "POTION_GAP");
         Map<String, List<VariantNames.Entry>> all = new TreeMap<>();
-        all.put("26.70", List.of(new VariantNames.Entry("minecraft:potion", 49, "POTION_FREEZING")));
-        // In the order the file keeps them: by identifier
-        all.put("26.60", List.of(new VariantNames.Entry("minecraft:bed", 0, "BED_WHITE"), new VariantNames.Entry("minecraft:potion", 6, "POTION_LONG_NIGHTVISION")));
-        Files.writeString(file, VariantNames.render(all));
-        assertEquals(all, VariantNames.read(file));
-        assertTrue(Files.readString(file).startsWith("# "));
-        assertEquals(Map.of(), VariantNames.read(directory.resolve("missing.txt")));
+        all.put("26.50", List.of(gap, white));
+        all.put("26.60", List.of(white, nightvision));
+        all.put("26.70", List.of(freezing, white, nightvision, gap));
+        String text = VariantNames.render(all, VERSIONS);
+        Files.writeString(file, text);
+        // One line per variant: through the newest version is open, the others close; a gap splits a range
+        assertEquals(List.of(
+            "26.50.. minecraft:bed 0 BED_WHITE",
+            "26.60.. minecraft:potion 6 POTION_LONG_NIGHTVISION",
+            "26.70.. minecraft:potion 49 POTION_FREEZING",
+            "26.50..26.50 minecraft:potion 50 POTION_GAP",
+            "26.70.. minecraft:potion 50 POTION_GAP"), text.lines().filter(l -> !l.startsWith("#")).toList());
+        assertTrue(text.startsWith("# "));
+        Map<String, List<VariantNames.Entry>> read = VariantNames.read(file, VERSIONS);
+        assertEquals(all.keySet(), read.keySet());
+        all.forEach((version, entries) -> assertEquals(new java.util.HashSet<>(entries), new java.util.HashSet<>(read.get(version)), version));
+        assertEquals(text, VariantNames.render(VariantNames.read(file, VERSIONS), VERSIONS));
+        assertEquals(Map.of(), VariantNames.read(directory.resolve("missing.txt"), VERSIONS));
+    }
+
+    @Test
+    void aNewVersionThatKeepsAVariantChangesNoLine() {
+        VariantNames.Entry white = new VariantNames.Entry("minecraft:bed", 0, "BED_WHITE");
+        Map<String, List<VariantNames.Entry>> all = new TreeMap<>();
+        all.put("26.60", List.of(white));
+        String before = VariantNames.render(all, List.of("26.60"));
+        all.put("26.70", List.of(white));
+        assertEquals(before, VariantNames.render(all, List.of("26.60", "26.70")));
+        // A new version without it closes the range
+        all.remove("26.70");
+        assertTrue(VariantNames.render(all, List.of("26.60", "26.70")).contains("26.60..26.60 minecraft:bed 0 BED_WHITE"));
+    }
+
+    @Test
+    void rangesOfTheFileAreChecked(@TempDir Path directory) throws IOException {
+        Path file = directory.resolve("variant_names.txt");
+        Files.writeString(file, "26.70..26.60 minecraft:bed 0 BED_WHITE\n");
+        assertTrue(assertThrows(IllegalStateException.class, () -> VariantNames.read(file, VERSIONS)).getMessage().contains("ends before it starts"));
+        Files.writeString(file, "26.99.. minecraft:bed 0 BED_WHITE\n");
+        assertTrue(assertThrows(IllegalStateException.class, () -> VariantNames.read(file, VERSIONS)).getMessage().contains("26.99"));
+        // The old format, one line per version, is not read
+        Files.writeString(file, "26.60 minecraft:bed 0 BED_WHITE\n");
+        assertThrows(IllegalStateException.class, () -> VariantNames.read(file, VERSIONS));
+        Map<String, List<VariantNames.Entry>> stray = Map.of("26.80", List.of());
+        assertThrows(IllegalStateException.class, () -> VariantNames.render(stray, VERSIONS));
     }
 
     /** The committed names are what the committed dumps and bundled data give: nothing was edited or lost. */
     @Test
     void theCommittedNamesComeFromTheCommittedDumps() throws IOException {
-        Map<String, List<VariantNames.Entry>> committed = VariantNames.read(ROOT.resolve(VariantNames.FILE));
+        Map<String, List<VariantNames.Entry>> committed = VariantNames.read(ROOT.resolve(VariantNames.FILE), VariantNames.versions(ROOT.resolve("paletter/src/main/resources/paletter")));
         assertTrue(!committed.isEmpty());
         try (Stream<Path> builds = Files.list(ROOT.resolve("data/bds"))) {
             for (Path build : builds.sorted().toList()) {

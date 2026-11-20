@@ -42,7 +42,7 @@ class UpdateHistoryTest {
     @Test
     void aHistoryCheckStagesNoVariantNames(@TempDir Path root) throws IOException {
         Update update = historyCheck(root);
-        new NetworkDataStage(update.context()).stageVariantNames(Map.of());
+        new NetworkDataStage(update.context()).stageVariantNames(Map.of(), update.context().resources);
         assertTrue(update.report().repoChanges.isEmpty());
     }
 

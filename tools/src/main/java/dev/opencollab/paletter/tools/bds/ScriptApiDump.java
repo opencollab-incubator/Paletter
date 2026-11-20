@@ -66,9 +66,10 @@ public final class ScriptApiDump {
         Path data = root.resolve("paletter/src/main/resources/paletter");
         if (Files.exists(data.resolve(dataVersion + ".nbt"))) {
             Path names = root.resolve(VariantNames.FILE);
-            Map<String, List<VariantNames.Entry>> all = VariantNames.read(names);
+            List<String> versions = VariantNames.versions(data);
+            Map<String, List<VariantNames.Entry>> all = VariantNames.read(names, versions);
             VariantNames.update(all, dataVersion, dump, BundledFiles.read(data.resolve(dataVersion + ".nbt")));
-            Files.writeString(names, VariantNames.render(all));
+            Files.writeString(names, VariantNames.render(all, versions));
         }
         return file;
     }
