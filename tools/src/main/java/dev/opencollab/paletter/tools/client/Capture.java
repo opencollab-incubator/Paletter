@@ -3,7 +3,6 @@ package dev.opencollab.paletter.tools.client;
 import dev.opencollab.paletter.tools.bds.BdsServer;
 import dev.opencollab.paletter.tools.bds.CapturePlatform;
 import org.cloudburstmc.protocol.bedrock.codec.BedrockCodec;
-import org.cloudburstmc.protocol.bedrock.codec.v2225.Bedrock_v2225;
 import org.cloudburstmc.protocol.bedrock.codec.v407.serializer.PacketViolationWarningSerializer_v407;
 import org.cloudburstmc.protocol.bedrock.data.PacketRecipient;
 import org.cloudburstmc.protocol.bedrock.packet.LoginPacket;
@@ -14,20 +13,99 @@ import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetSocketAddress;
+import java.net.JarURLConnection;
 import java.net.SocketTimeoutException;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.Enumeration;
 import java.util.List;
+import java.util.SortedSet;
+import java.util.TreeSet;
+import java.util.jar.JarEntry;
+import java.util.jar.JarFile;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.stream.Stream;
 
 /**
  * Programmatic entry point of the capture module, used by the generator's {@code update} pipeline.
  */
 public final class Capture {
-    /** The newest codec this build of the protocol library has; used to probe servers with unknown protocols. */
-    public static final BedrockCodec NEWEST = Bedrock_v2225.CODEC;
+    /** The package of the protocol library's codecs, one {@code vNNNN.Bedrock_vNNNN} per protocol. */
+    private static final String CODEC_PACKAGE = "org/cloudburstmc/protocol/bedrock/codec/";
+    private static final Pattern CODEC_CLASS = Pattern.compile("v([0-9]+)/Bedrock_v\\1\\.class");
+
+    /**
+     * The newest codec the protocol library on the class path ships ({@link #codecProtocols}); used to probe servers with
+     * unknown protocols. A protocol library bump moves it without a code change.
+     */
+    public static final BedrockCodec NEWEST = newestCodec();
 
     private Capture() {
+    }
+
+    /**
+     * The protocols the library has a codec for, from the class files of its codec package.
+     *
+     * @throws IllegalStateException when the class path has none (the library's layout changed)
+     */
+    static SortedSet<Integer> codecProtocols() {
+        SortedSet<Integer> protocols = new TreeSet<>();
+        try {
+            Enumeration<URL> roots = Capture.class.getClassLoader().getResources(CODEC_PACKAGE);
+            while (roots.hasMoreElements()) {
+                URL root = roots.nextElement();
+                List<String> names = new ArrayList<>();
+                if (root.openConnection() instanceof JarURLConnection connection) {
+                    connection.setUseCaches(false);
+                    try (JarFile jar = connection.getJarFile()) {
+                        jar.stream().map(JarEntry::getName).filter(name -> name.startsWith(CODEC_PACKAGE))
+                            .forEach(name -> names.add(name.substring(CODEC_PACKAGE.length())));
+                    }
+                } else if (root.getProtocol().equals("file")) {
+                    Path directory = Path.of(root.toURI());
+                    try (Stream<Path> files = Files.walk(directory, 2)) {
+                        files.forEach(file -> names.add(directory.relativize(file).toString().replace('\\', '/')));
+                    }
+                }
+                for (String name : names) {
+                    Matcher m = CODEC_CLASS.matcher(name);
+                    if (m.matches()) {
+                        protocols.add(Integer.parseInt(m.group(1)));
+                    }
+                }
+            }
+        } catch (IOException | URISyntaxException e) {
+            throw new IllegalStateException("Could not list the codecs of the protocol library (" + CODEC_PACKAGE + "): " + e, e);
+        }
+        if (protocols.isEmpty()) {
+            throw new IllegalStateException("No codec (" + CODEC_PACKAGE + "vNNNN/Bedrock_vNNNN) on the class path: the protocol library's "
+                + "layout changed; update Capture.codecProtocols");
+        }
+        return protocols;
+    }
+
+    private static BedrockCodec newestCodec() {
+        int newest = codecProtocols().last();
+        BedrockCodec codec = loadCodec(newest);
+        if (codec == null || codec.getProtocolVersion() != newest) {
+            throw new IllegalStateException("The protocol library's newest codec Bedrock_v" + newest + " has no CODEC of protocol " + newest);
+        }
+        return codec;
+    }
+
+    private static BedrockCodec loadCodec(int protocol) {
+        try {
+            Class<?> type = Class.forName("org.cloudburstmc.protocol.bedrock.codec.v" + protocol + ".Bedrock_v" + protocol);
+            return (BedrockCodec) type.getField("CODEC").get(null);
+        } catch (ReflectiveOperationException e) {
+            return null;
+        }
     }
 
     /**
@@ -123,12 +201,8 @@ public final class Capture {
      * a protocol library bump makes new versions capturable without code changes. Falls back to the newest one known.
      */
     public static BedrockCodec codecFor(int protocol) {
-        try {
-            Class<?> type = Class.forName("org.cloudburstmc.protocol.bedrock.codec.v" + protocol + ".Bedrock_v" + protocol);
-            return (BedrockCodec) type.getField("CODEC").get(null);
-        } catch (ReflectiveOperationException e) {
-            return NEWEST;
-        }
+        BedrockCodec codec = loadCodec(protocol);
+        return codec != null ? codec : NEWEST;
     }
 
     /** The codecs are written for servers; let the client encode logins and decode the violation warnings BDS sends. */

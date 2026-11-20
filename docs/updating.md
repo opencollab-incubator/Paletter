@@ -87,8 +87,9 @@ add-ons. After a change to the model, fixtures, `bds-feedback.json` or the add-o
 ## e. The Cloudburst protocol needs a new codec
 
 A build with a protocol newer than the newest codec is captured with the newest one (recorded as `codec=`). To get its
-own codec, bump `protocol` in `gradle/libs.versions.toml` to a build that has it, update `Capture.NEWEST`
-(`tools/.../client/Capture.java`), then `update` again so the capture is decoded natively. A pinned timestamped
+own codec, bump `protocol` in `gradle/libs.versions.toml` to a build that has it, then `update` again so the capture is
+decoded natively. `Capture.NEWEST` follows by itself: it is the highest `Bedrock_vNNNN` codec the library ships, and the
+tools fail at start-up with a clear message if the library's codec package moves. A pinned timestamped
 snapshot is allowed for releases; keep it in sync with Geyser ([releasing.md](releasing.md)). The codec itself
 is added in CloudburstMC/Protocol, not here.
 
