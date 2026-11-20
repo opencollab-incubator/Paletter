@@ -7,6 +7,8 @@ import org.cloudburstmc.protocol.bedrock.codec.BedrockCodec;
 import dev.opencollab.paletter.annotation.Internal;
 import dev.opencollab.paletter.internal.PaletteReportBuilder;
 import dev.opencollab.paletter.internal.block.BlockInterner;
+import dev.opencollab.paletter.internal.block.BlockStates;
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenCustomHashMap;
 import dev.opencollab.paletter.creative.CreativeOrdering;
 import dev.opencollab.paletter.internal.CanonicalBlocks;
 import dev.opencollab.paletter.data.DataVersion;
@@ -86,6 +88,8 @@ public final class Paletter {
     private final Object internLock = new Object();
     /** Equal states and component data of the versions loaded so far, see {@link #intern}; dropped when all are loaded. */
     private @Nullable Map<NbtMap, NbtMap> interned = new HashMap<>();
+    /** The same for block states, compared by their two values ({@link BlockStates#STRATEGY}): the states themselves are not iterated. */
+    private @Nullable Map<NbtMap, NbtMap> internedStates = new Object2ObjectOpenCustomHashMap<>(BlockStates.STRATEGY);
     private volatile boolean internedReleased;
     /** Whether {@link #releaseCompileData} ran. */
     private volatile boolean compileDataReleased;
@@ -263,6 +267,7 @@ public final class Paletter {
     private void releaseInterned() {
         synchronized (internLock) {
             interned = null;
+            internedStates = null;
             internedReleased = true;
         }
     }
@@ -283,9 +288,11 @@ public final class Paletter {
         synchronized (internLock) {
             // Dropped once every version served was loaded: a load after that is of a version outside them, which shares nothing
             Map<NbtMap, NbtMap> interned = this.interned != null ? this.interned : new HashMap<>();
+            Map<NbtMap, NbtMap> internedStates = this.internedStates != null ? this.internedStates
+                : new Object2ObjectOpenCustomHashMap<>(BlockStates.STRATEGY);
             List<NbtMap> states = new ArrayList<>(loaded.blockStates().size());
             for (NbtMap state : loaded.blockStates()) {
-                states.add(interned.computeIfAbsent(state, s -> s));
+                states.add(internedStates.computeIfAbsent(state, s -> s));
             }
             List<VanillaItem> items = new ArrayList<>(loaded.items().size());
             for (VanillaItem item : loaded.items()) {
@@ -293,10 +300,10 @@ public final class Paletter {
                 items.add(new VanillaItem(item.identifier().intern(), item.runtimeId(), item.version(), item.componentBased(), components));
             }
             Map<String, NbtMap> defaults = new HashMap<>();
-            loaded.blockDefaults().forEach((name, state) -> defaults.put(name, interned.computeIfAbsent(state, s -> s)));
+            loaded.blockDefaults().forEach((name, state) -> defaults.put(name, internedStates.computeIfAbsent(state, s -> s)));
             // Creative stacks name their block state: the same instance as the version's own, and identifiers shared with the items
             RawLayout creative = loaded.creative().mapStacks(stack -> new RawStack(stack.identifier().intern(), stack.damage(),
-                stack.count(), stack.blockState() == null ? null : interned.computeIfAbsent(stack.blockState(), s -> s), stack.tag()));
+                stack.count(), stack.blockState() == null ? null : internedStates.computeIfAbsent(stack.blockState(), s -> s), stack.tag()));
             Map<String, List<String>> itemTags = new HashMap<>();
             loaded.itemTags().forEach((tag, identifiers) -> itemTags.put(tag.intern(), identifiers.stream().map(String::intern).toList()));
             Map<String, String> blockItems = new HashMap<>();

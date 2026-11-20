@@ -9,7 +9,7 @@ import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import dev.opencollab.paletter.internal.CanonicalBlocks;
 import dev.opencollab.paletter.internal.block.BlockInterner;
 import dev.opencollab.paletter.internal.block.BlockResolution;
-import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenCustomHashMap;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.cloudburstmc.nbt.NbtMap;
@@ -80,7 +80,8 @@ public final class BlockRegistry implements DefinitionRegistry<BlockDefinition> 
     private final Set<String> missing;
     private final BlockInterner interner;
     /** Resolutions of canonical states only (bounded by the canonical ids); anything else a caller asks for is not kept. */
-    private final Map<NbtMap, BlockResolution> resolutions = new ConcurrentHashMap<>();
+    /** The resolutions {@link #resolve(NbtMap)} made of canonical states that are not exact, by canonical id. */
+    private final Map<Integer, BlockResolution> resolutions = new ConcurrentHashMap<>();
     private final @Nullable BlockRegistry parent;
     private volatile @Nullable CanonicalTable canonicalTable;
 
@@ -624,14 +625,16 @@ public final class BlockRegistry implements DefinitionRegistry<BlockDefinition> 
         if (exact != null) {
             return new BlockResolution(normalized, exact, BlockResolution.Kind.EXACT);
         }
-        BlockResolution cached = resolutions.get(normalized);
+        int id = keep ? canonical.index(normalized) : -1;
+        if (id == -1) {
+            return adapt(normalized);
+        }
+        BlockResolution cached = resolutions.get(id);
         if (cached != null) {
             return cached;
         }
         BlockResolution resolution = adapt(normalized);
-        if (keep && canonical.index(normalized) != -1) {
-            resolutions.put(normalized, resolution);
-        }
+        resolutions.put(id, resolution);
         return resolution;
     }
 
@@ -750,7 +753,7 @@ public final class BlockRegistry implements DefinitionRegistry<BlockDefinition> 
      */
     public @NonNull RegisteredBlock block(@NonNull RegisteredBlockState state) {
         RegisteredBlock block = table.block(state.identifier());
-        if (block == null || exact(state.getState()) != state) {
+        if (block == null || !isRegistered(state)) {
             throw new IllegalArgumentException(state + " is not a state of this palette");
         }
         return block;
@@ -906,6 +909,8 @@ public final class BlockRegistry implements DefinitionRegistry<BlockDefinition> 
      */
     private static final class Table {
         private final @Nullable Table parent;
+        /** The table without a parent: it has the vanilla states. */
+        private final Table root;
         private final int parentSize;
         private final DataVersion version;
         /** Own states: all of them without a parent. */
@@ -931,6 +936,7 @@ public final class BlockRegistry implements DefinitionRegistry<BlockDefinition> 
         private Table(@Nullable Table parent, VanillaData data, List<CustomBlock> customBlocks, Map<String, Origin> origins,
                       List<BlockPropertyData> customProperties, Map<String, Integer> customBlockIds, BlockInterner interner) {
             this.parent = parent;
+            this.root = parent == null ? this : parent.root;
             this.customBlockIds = customBlockIds;
             this.parentSize = parent == null ? 0 : parent.size();
             this.version = data.version();
@@ -973,7 +979,8 @@ public final class BlockRegistry implements DefinitionRegistry<BlockDefinition> 
             }
 
             this.own = new RegisteredBlockState[states.size()];
-            Object2ObjectOpenHashMap<NbtMap, RegisteredBlockState> customByState = new Object2ObjectOpenHashMap<>(customStates.size());
+            Object2ObjectOpenCustomHashMap<NbtMap, RegisteredBlockState> customByState =
+                new Object2ObjectOpenCustomHashMap<>(customStates.size(), BlockStates.STRATEGY);
             Object2IntOpenHashMap<NbtMap> customIndex = new Object2IntOpenHashMap<>(customStates.size());
             RuntimeIdTable byHash = new RuntimeIdTable(states.size());
             // BDS registers the vanilla blocks before the custom ones, and no two vanilla states hash alike: a vanilla state
@@ -986,7 +993,7 @@ public final class BlockRegistry implements DefinitionRegistry<BlockDefinition> 
                 }
                 RegisteredBlockState block = interner.vanillaBlock(state);
                 RegisteredBlockState collision = byHash.get(block.getRuntimeId());
-                if (collision != null && collision.getState().equals(state)) {
+                if (collision != null && BlockStates.same(state, collision.getState())) {
                     throw new PaletteException("Duplicate block state in " + version + " palette: " + state, null, BlockStates.name(state), null);
                 }
                 if (collision != null) {
@@ -1112,14 +1119,17 @@ public final class BlockRegistry implements DefinitionRegistry<BlockDefinition> 
         }
 
         @Nullable RegisteredBlockState byState(NbtMap state) {
-            RegisteredBlockState found = ownCustomByState.get(state);
-            if (found == null && interner != null) {
-                found = ownVanilla(state);
+            RegisteredBlockState found = root.ownVanilla(state);
+            for (Table table = this; found == null && table != null; table = table.parent) {
+                found = table.ownCustomByState.get(state);
             }
-            return found != null || parent == null ? found : parent.byState(state);
+            return found;
         }
 
-        /** The interner has the vanilla states of every version: only those of this table count. */
+        /**
+         * The interner has the vanilla states of every version: only those of this table count. It is found there and its
+         * definition checked here by runtime id, so the state's map is neither hashed nor compared here.
+         */
         private @Nullable RegisteredBlockState ownVanilla(NbtMap state) {
             RegisteredBlockState block = interner.knownVanillaBlock(state);
             if (block == null) {

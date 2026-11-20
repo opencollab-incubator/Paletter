@@ -131,7 +131,8 @@ public final class Palette {
     private volatile @Nullable Map<BedrockBlockState, ResolvedBlock> unavailableBlocks;
     private final int parentCanonicalSize;
     private final int parentSize;
-    private volatile CanonicalBlocks versionBlocks;
+    /** Whether the newest version, which defines the canonical ids, is this palette's: then every vanilla canonical state is in it. */
+    private final boolean newestVersion;
     private volatile CanonicalItems versionItems;
     private volatile Map<String, NbtMap> firstStates;
     /** The identifiers the creative layout mentions, see {@link #creativeMentions}; made on first use. */
@@ -143,6 +144,7 @@ public final class Palette {
             CreativeLayout creativeLayout, CreativeContent creative, PaletteReportBuilder report, CreativeOrdering ordering,
             VanillaContent.ExperimentGating gating, Supplier<BehaviourStore> behaviourStore, Shapes shapes, @Nullable Palette parent) {
         this.parent = parent;
+        this.newestVersion = blocks.canonical().root().version().equals(data.version().toString());
         this.parentCanonicalSize = parent == null ? 0 : parent.blocks.canonical().size();
         this.parentSize = parent == null ? 0 : parent.blocks.size();
         this.behaviourStore = behaviourStore;
@@ -480,7 +482,7 @@ public final class Palette {
         if (gating.missingBlocks().contains(BlockStates.name(state))) {
             return null;
         }
-        if (versionBlocks().index(state) == -1 && (lookup == Lookup.EXACT || id != -1)) {
+        if (!(newestVersion ? id != -1 : inVersion(state)) && (lookup == Lookup.EXACT || id != -1)) {
             return null;
         }
         return canonical.handle(Canonicals.block(canonical, state));
@@ -513,7 +515,7 @@ public final class Palette {
             return nbt == null ? null : blockState(BlockStates.of(identifier, nbt), lookup);
         }
         if (gating.missingBlocks().contains(identifier)
-            || versionBlocks() != canonical.root() && versionBlocks().index(state.toNbt()) == -1) {
+            || !newestVersion && !inVersion(state.toNbt())) {
             return null;
         }
         return state;
@@ -696,15 +698,12 @@ public final class Palette {
         return result;
     }
 
-    /** The block states of this palette's version, as written in its data. Shared with the palette this one extends. */
-    CanonicalBlocks versionBlocks() {
-        CanonicalBlocks result = versionBlocks;
-        if (result == null) {
-            CanonicalBlocks root = blocks.canonical().root();
-            versionBlocks = result = parent != null ? parent.versionBlocks()
-                : root.version().equals(data.version().toString()) ? root : CanonicalBlocks.of(data.blockStates());
-        }
-        return result;
+    /**
+     * Whether a vanilla state is one of this palette's version, as written in its data: its block table has those (and the
+     * custom states of the layers, which canonical ids find before this is asked).
+     */
+    private boolean inVersion(NbtMap state) {
+        return blocks.exact(state) != null;
     }
 
     /** The item variants of this palette's version, as written in its data. Shared with the palette this one extends. */

@@ -37,19 +37,22 @@ import static org.junit.jupiter.api.Assertions.fail;
  * The limits are above the measured values, which are noted beside them; raise one only for a reason, and say so in the commit.
  */
 class MemoryBaselineTest {
-    /** A session layer of two blocks and three properties: no creative placement, so the creative content is the parent's. Measured 50,808 bytes, the same in every run. */
+    /** A session layer of two blocks and three properties: no creative placement, so the creative content is the parent's. Measured 50,984 bytes, the same in every run. */
     private static final long MAX_EXTEND_BYTES = 56_000;
-    /** A layer with an item and a block in creative: the creative content is compiled again. Measured 299,144 bytes, the same in every run. */
+    /** A layer with an item and a block in creative: the creative content is compiled again. Measured 299,208 bytes, the same in every run. */
     private static final long MAX_EXTEND_WITH_CREATIVE_BYTES = 330_000;
-    /** A vanilla palette with everything it reaches, of the newest and of the oldest version. Measured 14.4 and 14.8 MB. */
-    private static final long MAX_VANILLA_LATEST_BYTES = 15_900_000;
-    private static final long MAX_VANILLA_OLDEST_BYTES = 16_300_000;
+    /**
+     * A vanilla palette with everything it reaches, of the newest and of the oldest version. Measured 12.9 and 13.6 MB
+     * (12,918,680 and 13,566,112 bytes) since the state indexes are keyed by state hashes; 14.5 and 15.0 MB before.
+     */
+    private static final long MAX_VANILLA_LATEST_BYTES = 14_200_000;
+    private static final long MAX_VANILLA_OLDEST_BYTES = 14_900_000;
     /**
      * A Paletter serving every bundled version but the oldest, with all its palettes compiled, and the shared bundled
-     * instance it loads through. Measured 18.1 MB (18,109,600 bytes) since what only compiling uses is dropped once all are
-     * compiled; 20.9 MB before.
+     * instance it loads through. Measured 16.7 MB (16,697,128 bytes) since the state indexes are keyed by state hashes;
+     * 18.5 MB before, 20.9 MB before what only compiling uses was dropped once all are compiled.
      */
-    private static final long MAX_SERVED_BYTES = 19_900_000;
+    private static final long MAX_SERVED_BYTES = 18_400_000;
 
     private static PaletteLayer sessionLayer(String id) {
         return PaletteLayer.builder(id)

@@ -12,6 +12,7 @@ import it.unimi.dsi.fastutil.ints.IntOpenHashSet;
 import it.unimi.dsi.fastutil.ints.IntSet;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
+import it.unimi.dsi.fastutil.objects.Object2ObjectLinkedOpenCustomHashMap;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.cloudburstmc.nbt.NbtMap;
@@ -1271,7 +1272,9 @@ public final class ItemRegistry implements DefinitionRegistry<ItemDefinition> {
                         return;
                     }
                     if (stack.blockState() != null) {
-                        creativeStates.computeIfAbsent(identifier, id -> new LinkedHashSet<>()).add(stack.blockState().toNbt());
+                        // Kept states: compared by their values, without iterating them (BlockStates.hash)
+                        creativeStates.computeIfAbsent(identifier, id -> Collections.newSetFromMap(
+                            new Object2ObjectLinkedOpenCustomHashMap<>(BlockStates.STRATEGY))).add(stack.blockState().toNbt());
                     } else {
                         creativeWithoutBlock.add(identifier);
                     }
