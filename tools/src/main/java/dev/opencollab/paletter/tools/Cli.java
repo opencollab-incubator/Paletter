@@ -48,6 +48,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.InetSocketAddress;
 import java.nio.file.Files;
+import dev.opencollab.paletter.tools.codegen.constants.Baseline;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -63,7 +64,7 @@ import java.util.concurrent.Callable;
  */
 @Command(name = "paletter-tools", mixinStandardHelpOptions = true, subcommands = {
     Cli.Import.class, Cli.BdsInventoryCommand.class, Cli.BdsSchemaCommand.class, Cli.WhiteboxCommand.class, Cli.WhiteboxCoverageCommand.class, Cli.BdsCompareCommand.class, Cli.UpdateCommand.class, Cli.Builds.class, Cli.SpecCaptureCommand.class,
-    Cli.VerifyCommand.class, Cli.ExportCommand.class, Cli.CheckData.class, Cli.DataDiffCommand.class, Cli.CreativeProbeCommand.class, Cli.EducationCaptureCommand.class, Cli.ExperimentMarksCommand.class,
+    Cli.VerifyCommand.class, Cli.ExportCommand.class, Cli.BaselineCommand.class, Cli.CheckData.class, Cli.DataDiffCommand.class, Cli.CreativeProbeCommand.class, Cli.EducationCaptureCommand.class, Cli.ExperimentMarksCommand.class,
     Cli.CaptureCommand.class, Cli.Experiments.class, Cli.CompareCommand.class,
     Cli.Docs.class, Cli.Addon.class, Cli.Infer.class, Cli.CheckMappings.class,
     Cli.Constants.class, Cli.Components.class, Cli.InspectCommand.class, Cli.BehaviourCommand.class, Cli.BehaviourProbeCommand.class, Cli.BehaviourDumpCommand.class, Cli.ScriptDumpCommand.class,
@@ -485,6 +486,22 @@ public final class Cli implements Runnable {
                 verify.write(report, lines);
             }
             return verify.identical() ? 0 : 1;
+        }
+    }
+
+    @Command(name = "baseline", description = "Writes the block and item identifiers of a CloudburstMC/Data checkout (at the commit of the release "
+        + "before the oldest bundled one) to data/model/baseline-<name>.txt. The constants generator gives no First in Bedrock line to content in it.")
+    static final class BaselineCommand extends Rooted implements Callable<Integer> {
+        @Option(names = "--source", required = true, description = "The CloudburstMC/Data checkout") Path source;
+        @Option(names = "--name", required = true, description = "The release of the checkout, e.g. 26.20") String name;
+        @Option(names = "--commit", required = true, description = "The CloudburstMC/Data commit of the checkout") String commit;
+
+        @Override
+        public Integer call() throws Exception {
+            Path out = root().resolve("data/model/baseline-" + name + ".txt");
+            Baseline.write(source, name, commit, out);
+            System.out.println("Wrote " + out + "; " + Baseline.FILE + " is the file the generator reads");
+            return 0;
         }
     }
 

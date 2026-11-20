@@ -97,7 +97,8 @@ add-ons. After a change to the model, fixtures, `bds-feedback.json` or the add-o
    the sources: it keeps the existing Java names (docs/data-pipeline.md); a field it reports `removed from the model` is a
    breaking change to review. `ComponentConformanceTest` rebuilds every
    accepted variant through the generated API and has no exceptions: close gaps in the model or a transform.
-6. Generator golden files: `./gradlew :tools:test -PupdateGolden=true`, then review the diff. Any model change that
+6. The two remaining golden files (synthetic variants, API dump fixture): `./gradlew :tools:test -PupdateGolden=true`
+   if their tests fail on an intended change, then review the diff. Any model change that
    alters the add-on needs a recapture (section b).
 
 ## e. The Cloudburst protocol needs a new codec

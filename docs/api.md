@@ -197,7 +197,7 @@ the same name.
 
 When Bedrock removes content, its constant stays, deprecated, and resolves to `minecraft:unknown` (`isAvailable()` is
 false). A renamed identifier keeps its old constant as a deprecated alias. `@since` on a constant is the Paletter version that
-added it; the line `First in Bedrock` names the first Bedrock release that has the content without an experiment. `@Education` marks Education Edition content.
+added it; the line `First in Bedrock` names the first bundled Bedrock release that has the content without an experiment (none for content older than the oldest bundled release). `@Education` marks Education Edition content.
 
 An `ItemKey` is a `BedrockItemType` or a `BedrockItemVariant`, and the methods that take a variant (`Palette#resolve`,
 `blockOf`, `BedrockItemStack.of`, `PaletteLayer.Builder#variant`) take one: a type stands for its base variant, so

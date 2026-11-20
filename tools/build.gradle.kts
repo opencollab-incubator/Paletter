@@ -51,7 +51,7 @@ tasks.test {
     // Tests of the "binary" tag read a BDS binary from the cache: ./gradlew :tools:whiteboxRegression
     // Tests of the "slow" tag recompute what a fast test checks a committed result of: ./gradlew :tools:slowTests
     useJUnitPlatform { excludeTags("binary", "slow") }
-    // ./gradlew :tools:test -PupdateGolden=true rewrites the generator tests' golden files (Golden; review the diff)
+    // ./gradlew :tools:test -PupdateGolden=true rewrites the golden files of the synthetic variants and the API dump (Golden; review the diff)
     systemProperty("paletter.updateGolden", (findProperty("updateGolden") as String?) ?: "false")
     // -PupdateShapeDisagreements=true rewrites data/model/vanilla-shapes-known-<protocol>.txt (VanillaShapeOracleTest)
     systemProperty("paletter.updateShapeDisagreements", (findProperty("updateShapeDisagreements") as String?) ?: "false")

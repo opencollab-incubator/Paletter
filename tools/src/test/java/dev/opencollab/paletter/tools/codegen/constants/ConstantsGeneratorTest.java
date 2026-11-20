@@ -358,7 +358,7 @@ class ConstantsGeneratorTest {
         ConstantsGenerator.Result second = generate(sources(gated, java.util.Set.of(), v10, v11, v12), history(first), "2.0.0");
         assertEquals("1.2", itemsOf(second).getAsJsonObject("EGG").get("bedrock").getAsString());
         assertEquals("1.0", itemsOf(second).getAsJsonObject("APPLE").get("bedrock").getAsString());
-        assertTrue(second.files().get(ITEMS).contains("{@code 1.0} is the oldest bundled release"));
+        assertTrue(second.files().get(ITEMS).contains("existed before the oldest bundled release ({@code 1.0})"));
         assertTrue(second.files().get(ITEMS).contains("First in Bedrock 1.2."));
         assertTrue(second.files().get(ITEMS).contains("Behind the experiment {@code drop} in 1.1"));
 
@@ -366,6 +366,39 @@ class ConstantsGeneratorTest {
         ConstantsGenerator.Result third = generate(sources(Map.of(), java.util.Set.of(), v12), history(second), "3.0.0");
         assertEquals("1.0", itemsOf(third).getAsJsonObject("APPLE").get("bedrock").getAsString());
         assertEquals("1.2", itemsOf(third).getAsJsonObject("EGG").get("bedrock").getAsString());
+    }
+
+    @Test
+    void contentOfTheBaselineHasNoBedrockReleaseWhenTheOldestBundledOneHasIt(@TempDir Path temp) throws IOException {
+        Path file = temp.resolve("baseline.txt");
+        Files.writeString(file, "# a comment\nitems minecraft:apple\nblocks minecraft:egg\n");
+        VanillaData v10 = version("1.0", 100, "minecraft:apple", "minecraft:egg", "minecraft:pear");
+        VanillaData v11 = version("1.1", 110, "minecraft:apple", "minecraft:egg", "minecraft:pear", "minecraft:plum");
+
+        ConstantsGenerator.Result result = generate(sources(Map.of(), java.util.Set.of(), v10, v11).withBaseline(file), new JsonObject(), "1.0.0");
+        String source = result.files().get(ITEMS);
+        // The apple was in the baseline: older than the bundle, so no line and no recorded release
+        assertTrue(source.contains("     * {@code minecraft:apple}.\n     */\n    public static final BedrockItemType APPLE"), source);
+        assertFalse(itemsOf(result).getAsJsonObject("APPLE").has("bedrock"));
+        // The baseline lists blocks and items apart: a block of that name says nothing of the item
+        assertEquals("1.0", itemsOf(result).getAsJsonObject("EGG").get("bedrock").getAsString());
+        assertTrue(source.contains("First in Bedrock 1.0."));
+        // Content the baseline lacks keeps its release, new or not
+        assertEquals("1.1", itemsOf(result).getAsJsonObject("PLUM").get("bedrock").getAsString());
+
+        // Regenerating from that history gives the same
+        ConstantsGenerator.Result again = generate(sources(Map.of(), java.util.Set.of(), v10, v11).withBaseline(file), history(result), "1.0.0");
+        assertEquals(source, again.files().get(ITEMS));
+        compile(result, temp);
+    }
+
+    @Test
+    void theCommittedBaselineNamesItsSource() throws IOException {
+        List<String> lines = Files.readAllLines(ROOT.resolve(Baseline.FILE));
+        assertTrue(lines.stream().anyMatch(line -> line.startsWith("#") && line.contains("CloudburstMC/Data commit eb77f9f")), lines.getFirst());
+        assertTrue(lines.stream().anyMatch(line -> line.startsWith("#") && line.contains("Apache License 2.0")));
+        assertTrue(lines.contains("blocks minecraft:stone"));
+        assertTrue(lines.contains("items minecraft:apple"));
     }
 
     @Test
@@ -466,7 +499,7 @@ class ConstantsGeneratorTest {
     }
 
     /** Compiles the generated sources against Paletter's classes (the package private factory included). */
-    private static void compile(ConstantsGenerator.Result result, Path temp) throws IOException {
+    static void compile(ConstantsGenerator.Result result, Path temp) throws IOException {
         List<String> sources = new ArrayList<>();
         for (Map.Entry<String, String> file : result.files().entrySet()) {
             if (file.getKey().endsWith(".java")) {

@@ -24,5 +24,9 @@ The list of Bedrock Dedicated Server release builds that `builds list|check` wal
   (`listCommit`, `listDate`). The repository states no license; only the build numbers are used, never its download
   links: the servers themselves are downloaded from minecraft.net.
 
+`baseline-26.20.txt` lists block and item identifiers of Bedrock 26.20 taken from **CloudburstMC/Data**
+(https://github.com/CloudburstMC/Data, commit `eb77f9f`, v975), which is under the **Apache License 2.0**; only the identifiers are
+kept, extracted by the `baseline` command.
+
 `mappings.json`, `bds-feedback.json` and `bds-keys.json` are generated from Bedrock Dedicated Server runs of the
 generated add-on; `fixtures.json` and `api.json` are written by hand.
