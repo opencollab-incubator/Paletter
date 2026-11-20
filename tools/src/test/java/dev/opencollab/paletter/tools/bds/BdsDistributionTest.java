@@ -87,6 +87,19 @@ class BdsDistributionTest {
         }
     }
 
+    /** The links API is parsed here only; another shape or a missing type fails with the answer quoted. */
+    @Test
+    void theLinksApiAnswerIsReadOrQuoted() throws IOException {
+        String answer = "{\"result\": {\"links\": [{\"downloadType\": \"serverBedrockWindows\", "
+            + "\"downloadUrl\": \"https://www.minecraft.net/bedrockdedicatedserver/bin-win/bedrock-server-1.26.63.1.zip\"}]}}";
+        assertEquals("https://www.minecraft.net/bedrockdedicatedserver/bin-win/bedrock-server-1.26.63.1.zip",
+            BdsDistribution.downloadUrl(answer, "serverBedrockWindows"));
+        IOException missing = assertThrows(IOException.class, () -> BdsDistribution.downloadUrl(answer, "serverBedrockPreviewWindows"));
+        assertTrue(missing.getMessage().contains("serverBedrockPreviewWindows") && missing.getMessage().contains("bedrock-server-1.26.63.1"));
+        IOException shape = assertThrows(IOException.class, () -> BdsDistribution.downloadUrl("{\"data\": {\"downloads\": []}}", "serverBedrockWindows"));
+        assertTrue(shape.getMessage().contains("unknown shape") && shape.getMessage().contains("downloads"), shape.getMessage());
+    }
+
     @Test
     void aVersionNamesNothingButABuild() {
         // Resolving a given version reads no network; a version that is no build number never reaches a path

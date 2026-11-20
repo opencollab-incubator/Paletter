@@ -99,22 +99,6 @@ jobs:
       # The data is compared byte for byte: keep the checkout's line endings as committed (LF)
       - name: Check out with LF line endings
         run: git config --global core.autocrlf false
-      # The build every step uses, also the key of the download cache
-      - name: Resolve the BDS version
-        id: bds
-        run: |
-          if [ -n "$INPUT_VERSION" ]; then
-            VERSION="$INPUT_VERSION"
-          else
-            TYPE=serverBedrockWindows
-            if [ "$CHANNEL" = preview ]; then TYPE=serverBedrockPreviewWindows; fi
-            URL=$(curl -sf -A Paletter https://net-secondary.web.minecraft-services.net/api/v1.0/download/links \
-              | jq -r --arg type "$TYPE" '.result.links[] | select(.downloadType == $type) | .downloadUrl')
-            VERSION=$(basename "$URL" .zip | sed 's/^bedrock-server-//')
-          fi
-          if ! echo "$VERSION" | grep -Eq "$BUILD_RE"; then echo "No BDS version: '$VERSION'"; exit 1; fi
-          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
-          echo "BDS_VERSION=$VERSION" >> "$GITHUB_ENV"
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
@@ -126,6 +110,20 @@ jobs:
         with:
           # Untrusted code runs here: it must not write the Gradle cache that other jobs restore
           cache-read-only: true
+      # The build every step uses, also the key of the download cache. Only the tools read the download links API
+      # (`builds resolve`), so a change of the API fails in one place, with the answer quoted
+      - name: Resolve the BDS version
+        id: bds
+        run: |
+          if [ -n "$INPUT_VERSION" ]; then
+            VERSION="$INPUT_VERSION"
+          else
+            ./gradlew :tools:run --args="builds resolve --channel $CHANNEL --output $CI_TEMP/bds-version.txt" || exit 1
+            VERSION=$(head -n1 "$CI_TEMP/bds-version.txt")
+          fi
+          if ! echo "$VERSION" | grep -Eq "$BUILD_RE"; then echo "No BDS version: '$VERSION'"; exit 1; fi
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+          echo "BDS_VERSION=$VERSION" >> "$GITHUB_ENV"
       - name: Cache BDS downloads
         uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         with:

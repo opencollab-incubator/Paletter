@@ -135,7 +135,11 @@ checked one by one:
 ```
 ./gradlew :tools:run --args="builds list --from 1.26.30"            # the builds, and what data/bds/builds.json says of each
 ./gradlew :tools:run --args="builds check --from 1.26.30 --limit 1"  # check the next unchecked build
+./gradlew :tools:run --args="builds resolve --channel preview"        # the newest build the download links API names
 ```
+
+The download links API is parsed in one place, `BdsDistribution.downloadUrl`; the BDS data workflow asks `builds resolve`
+for the build it checks, so an API change fails there with the answer quoted.
 
 The list of builds comes from [Bedrock-OSS/BDS-Versions](https://github.com/Bedrock-OSS/BDS-Versions), since the
 download links API only names the newest build; the zips still come from minecraft.net. Each run reads the list at the

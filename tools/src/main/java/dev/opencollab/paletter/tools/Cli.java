@@ -306,7 +306,8 @@ public final class Cli implements Runnable {
     }
 
     @Command(name = "builds", description = "Every BDS release build, one by one: list them, or check the ones data/bds/builds.json lacks "
-        + "against the previous kept build (captures kept only when they differ).", subcommands = {Builds.ListBuilds.class, Builds.Check.class, Builds.Table.class, Builds.Plan.class})
+        + "against the previous kept build (captures kept only when they differ).",
+        subcommands = {Builds.ListBuilds.class, Builds.Check.class, Builds.Table.class, Builds.Plan.class, Builds.Resolve.class})
     static final class Builds implements Runnable {
         @Override
         public void run() {
@@ -369,6 +370,26 @@ public final class Cli implements Runnable {
                 legs.forEach(leg -> System.out.println(leg.build() + (leg.preview() ? " (preview)" : "")
                     + (leg.against() == null ? "" : leg.against().equals(leg.build()) ? " (history check)" : " (not checked yet, compared with " + leg.against() + ")")));
                 return legs.isEmpty() ? 1 : 0;
+            }
+        }
+
+        @Command(name = "resolve", description = "Prints the newest Windows build of a channel that the download links API names "
+            + "(the build the BDS data workflow checks), and writes it to --output.")
+        static final class Resolve implements Callable<Integer> {
+            @Option(names = "--channel", required = true, description = "release or preview") String channel;
+            @Option(names = "--output", description = "File for the build number") Path output;
+
+            @Override
+            public Integer call() throws Exception {
+                if (!channel.equals("release") && !channel.equals("preview")) {
+                    throw new CommandLine.ParameterException(new CommandLine(this), "--channel must be release or preview: " + channel);
+                }
+                String version = BdsDistribution.resolve(false, channel.equals("preview"), null).version();
+                if (output != null) {
+                    Files.writeString(output, version + "\n");
+                }
+                System.out.println(version);
+                return 0;
             }
         }
 

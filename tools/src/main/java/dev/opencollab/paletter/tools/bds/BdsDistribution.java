@@ -61,14 +61,30 @@ public record BdsDistribution(String version, boolean preview, String platform, 
     }
 
     private static String newest(boolean linux, boolean preview) throws IOException, InterruptedException {
-        String type = "serverBedrock" + (preview ? "Preview" : "") + (linux ? "Linux" : "Windows");
-        String links = Http.DEFAULT.get(LINKS);
-        for (JsonElement link : JsonParser.parseString(links).getAsJsonObject().getAsJsonObject("result").getAsJsonArray("links")) {
-            if (link.getAsJsonObject().get("downloadType").getAsString().equals(type)) {
-                return link.getAsJsonObject().get("downloadUrl").getAsString();
+        return downloadUrl(Http.DEFAULT.get(LINKS), "serverBedrock" + (preview ? "Preview" : "") + (linux ? "Linux" : "Windows"));
+    }
+
+    /**
+     * The download url of a type in an answer of the links API ({@code result.links[]} of {@code downloadType} and
+     * {@code downloadUrl}). The one parser of that API: the BDS data workflow calls {@code builds resolve}, which uses it.
+     *
+     * @throws IOException when the answer has another shape or no such type, quoting the answer
+     */
+    static String downloadUrl(String links, String type) throws IOException {
+        try {
+            for (JsonElement link : JsonParser.parseString(links).getAsJsonObject().getAsJsonObject("result").getAsJsonArray("links")) {
+                if (link.getAsJsonObject().get("downloadType").getAsString().equals(type)) {
+                    return link.getAsJsonObject().get("downloadUrl").getAsString();
+                }
             }
+        } catch (RuntimeException e) {
+            throw new IOException("The download links API (" + LINKS + ") answered in an unknown shape (" + e + "): " + abbreviated(links), e);
         }
-        throw new IOException("No " + type + " download in " + links);
+        throw new IOException("No " + type + " download in the answer of " + LINKS + ": " + abbreviated(links));
+    }
+
+    private static String abbreviated(String text) {
+        return text.length() > 2000 ? text.substring(0, 2000) + "..." : text;
     }
 
     /**
