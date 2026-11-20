@@ -156,7 +156,7 @@ public final class ConstantsGenerator {
      */
     public static Result generate(Path root) throws IOException {
         return generate(root.resolve(DATA), names(root), readJson(root.resolve(HISTORY)), paletterVersion(root),
-            Sources.read(root.resolve(DATA), root.resolve(BDS), root.resolve(VariantNames.FILE)));
+            Sources.read(root.resolve(DATA), root.resolve(BDS), root.resolve(VariantNames.FILE)).withBaseline(root.resolve(Baseline.FILE)));
     }
 
     /**
@@ -436,6 +436,7 @@ public final class ConstantsGenerator {
         private final Map<String, Set<String>> itemNames = new HashMap<>();
         private final Map<String, List<VariantNames.Entry>> variantNames;
         private final List<ExperimentToggles.Toggle> toggles;
+        private Baseline baseline = Baseline.NONE;
 
         /**
          * @param gatedItems release name to item identifier to the current experiment toggle that adds it in that release
@@ -468,6 +469,28 @@ public final class ConstantsGenerator {
                 release.items().forEach(item -> items.add(item.identifier()));
                 itemNames.put(release.version().name(), items);
             }
+        }
+
+        /**
+         * Content of the baseline, the release before the oldest bundled one, is not marked with the Bedrock release it is first
+         * in: it is older than any bundled data says.
+         *
+         * @param file the baseline file ({@link Baseline#FILE}); none if it does not exist
+         * @return these sources
+         */
+        public Sources withBaseline(Path file) throws IOException {
+            baseline = Files.exists(file) ? Baseline.read(file) : Baseline.NONE;
+            return this;
+        }
+
+        /** Whether the baseline release already had the block ({@code blocks}) or item ({@code items}). */
+        boolean inBaseline(String kind, String identifier) {
+            return baseline.has(kind, identifier);
+        }
+
+        /** @return the name of the oldest bundled release */
+        String oldest() {
+            return releases.getFirst().version().name();
         }
 
         /** @return the experiment toggles that were current in a captured build, sorted by id */

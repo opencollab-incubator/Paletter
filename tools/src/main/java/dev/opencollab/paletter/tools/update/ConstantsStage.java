@@ -56,6 +56,7 @@ final class ConstantsStage {
      */
     static ConstantsGenerator.Result generateConstants(Path root, Path resources, Map<String, List<VariantNames.Entry>> variantNames) throws IOException {
         return ConstantsGenerator.generate(resources, ConstantsGenerator.names(root), ConstantsGenerator.readJson(root.resolve(ConstantsGenerator.HISTORY)),
-            ConstantsGenerator.paletterVersion(root), ConstantsGenerator.Sources.read(resources, root.resolve(ConstantsGenerator.BDS), variantNames));
+            ConstantsGenerator.paletterVersion(root), ConstantsGenerator.Sources.read(resources, root.resolve(ConstantsGenerator.BDS), variantNames)
+                .withBaseline(root.resolve(dev.opencollab.paletter.tools.codegen.constants.Baseline.FILE)));
     }
 }

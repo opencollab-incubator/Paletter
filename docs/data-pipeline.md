@@ -50,7 +50,7 @@ command takes `--help`. Paths are relative to the repository root (`--root` over
 | `update` | The whole BDS pipeline (below). |
 | `builds list\|check\|plan` | Every release build, one by one, against the previous kept build ([below](#every-release-build)); `plan` lists the builds of a [full recapture](#full-recapture). |
 | `capture`, `compare`, `experiments` | The headless client: record what a server sends, diff a capture with a bundled version, toggle experiments in a `level.dat`. |
-| `import`, `bds-compare`, `verify`, `check-data` | Import and check bundled data. `check-data` lists what older versions lack. |
+| `import`, `bds-compare`, `verify`, `baseline`, `check-data` | Import and check bundled data. `check-data` lists what older versions lack. |
 | `data-diff`, `experiment-marks` | Maintain bundled data without a new capture. |
 | `bds-inventory` | Reads the strings of the Linux `bedrock_server` without running it: block and item components, Script API classes. |
 | `whitebox`, `whitebox-coverage` | Reads the code of the server binary without running it: what each component can send, and what no capture shows of it ([below](#white-box-discovery)). |
@@ -726,7 +726,11 @@ regeneration cannot drop one. Commit the history together with the classes.
 - `@since` is the Paletter version that added the constant, in every class. The Bedrock release is the line
   `First in Bedrock <release>`: the first bundled release that has the content without an experiment, from
   `data/bds/<build>/experiments.json` (captures of a preview do not count for a release). It is derived on every
-  generation; the history keeps one only if its release is no longer bundled.
+  generation; the history keeps one only if its release is no longer bundled. Content that already existed before the oldest
+  bundled release (26.30) has no such line (and no `bedrock` in the history): `data/model/baseline-26.20.txt` lists the block and
+  item identifiers of the release before it, from CloudburstMC/Data commit `eb77f9f` (v975; Apache-2.0, only identifiers kept).
+  `baseline --source <checkout at that commit> --name 26.20 --commit eb77f9f` writes it. Content gated by an experiment in 26.30
+  that a later release ungated keeps the later release.
 - `internal.vanilla.BlockLayout` checks that each block's states are the full cartesian product of its values, so state
   ids can be computed from strides.
 

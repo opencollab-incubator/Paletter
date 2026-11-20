@@ -397,7 +397,8 @@ public final class ConstantsSource {
         return List.of("<p>",
             "{@code @since} is the Paletter version that added a constant, and only written if newer than the class. The line",
             "{@code First in Bedrock} is the bundled Bedrock release it first appears in, without an experiment toggle (decided from",
-            "the captures of the Bedrock Dedicated Server); {@code " + oldest + "} is the oldest bundled release, so it may be older.",
+            "the captures of the Bedrock Dedicated Server). Content that already existed before the oldest bundled release ({@code " + oldest + "})",
+            "has no such line.",
             "{@link dev.opencollab.paletter.annotation.Education @Education} marks content BDS only offers to worlds with Education",
             "Edition features, which {@code isEducation()} of the type answers at runtime.");
     }
@@ -454,7 +455,9 @@ public final class ConstantsSource {
         if (constant.gating() != null) {
             doc.add("Behind the experiment " + constant.gating() + ": without it the version does not have it.");
         }
-        doc.add("First in Bedrock " + constant.bedrock() + ".");
+        if (constant.bedrock() != null) {
+            doc.add("First in Bedrock " + constant.bedrock() + ".");
+        }
         since(doc, constant.since());
         return doc;
     }

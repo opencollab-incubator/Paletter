@@ -177,6 +177,18 @@ public final class Importer {
     }
 
     /**
+     * The identifiers of a source directory, for the baseline of the constants ({@code codegen.constants.Baseline}).
+     *
+     * @return {@code blocks} and {@code items} to their identifiers, sorted and without duplicates
+     */
+    public static Map<String, List<String>> identifiers(Path source, String name) throws IOException {
+        Source read = readSource(source, name);
+        return Map.of(
+            "blocks", read.blocks().stream().map(state -> state.getString("name")).distinct().sorted().toList(),
+            "items", read.items().stream().map(VanillaItem::identifier).distinct().sorted().toList());
+    }
+
+    /**
      * Files are either named plainly (CloudburstMC/Data) or with the version, as Geyser ships them
      * ({@code block_palette.26_60.nbt}).
      */

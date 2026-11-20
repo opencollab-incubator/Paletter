@@ -31,7 +31,8 @@ final class ContentConstants {
      * @param identifier the identifier it resolves to (for a removed one: the one it had)
      * @param replacement for a deprecated alias: the constant it points to (never another alias)
      * @param deprecated the version it was deprecated in, or null
-     * @param bedrock the bundled Bedrock release it first appears in without an experiment, or null (preview constants)
+     * @param bedrock the bundled Bedrock release it first appears in without an experiment, or null (preview constants, and
+     *                content of the baseline that the oldest bundled release has: it is older than any bundled release)
      * @param education whether BDS only offers it with Education Edition features on
      * @param gating the experiment toggles that gate it in bundled releases, e.g. {@code `y_2026_drop_3` in 26.40}, or null
      * @param preview the bundled preview that alone has it ({@code @SincePreview}; not in the history), or null
@@ -138,7 +139,9 @@ final class ContentConstants {
             JsonObject entry = new JsonObject();
             entry.addProperty("identifier", constant.identifier());
             entry.addProperty("since", constant.since());
-            entry.addProperty("bedrock", constant.bedrock());
+            if (constant.bedrock() != null) {
+                entry.addProperty("bedrock", constant.bedrock());
+            }
             if (constant.education()) {
                 entry.addProperty("education", true);
             }
@@ -171,13 +174,15 @@ final class ContentConstants {
     /**
      * The bundled release a constant first appears in. It is derived on every generation, so it follows the data (a release
      * back-filled or ungating the content moves it); only a recorded one stays that cannot be derived anymore: its release
-     * is no longer bundled, or no bundled release has the identifier.
+     * is no longer bundled, or no bundled release has the identifier. Null for content of the baseline (see
+     * {@link ConstantsGenerator.Sources#withBaseline}) that the oldest bundled release has: it is older than the bundled data says.
      */
     private String bedrock(JsonObject old, String kind, String identifier) {
         String recorded = old != null && old.has("bedrock") ? old.get("bedrock").getAsString() : null;
         if (recorded != null && !(g.sources.isRelease(recorded) && g.sources.has(kind, identifier))) {
             return recorded;
         }
-        return g.sources.firstVersion(kind, identifier);
+        String first = g.sources.firstVersion(kind, identifier);
+        return g.sources.inBaseline(kind, identifier) && first.equals(g.sources.oldest()) ? null : first;
     }
 }
