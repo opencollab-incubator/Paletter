@@ -42,10 +42,12 @@ public final class Capture {
      * @param packStackExperiments experiments the resource pack stack packet reported, as {@code name=enabled}
      * @param traitStatesUnknown the {@code <trait> <value>}s of {@code enabled_states} BDS sent that the trait state table has no
      *                           states for yet; the creative block ids of their blocks are in neither count
+     * @param experimentBlocksUnverified blocks the reference marks as experiment content without having states for them
+     *                                   that the server sent creative block ids for; those ids are in neither count
      */
     public record Summary(int protocol, int codecProtocol, String minecraftVersion, boolean blockNetworkIdsHashed,
                           int resolvedHashes, int unresolvedHashes, List<String> experiments, List<String> packStackExperiments,
-                          List<String> traitStatesUnknown) {
+                          List<String> traitStatesUnknown, List<String> experimentBlocksUnverified) {
         /** Names of the experiments start game reported as enabled. */
         public List<String> enabledExperiments() {
             return experiments.stream().filter(e -> e.endsWith("=true")).map(e -> e.substring(0, e.length() - 5)).sorted().toList();
@@ -112,7 +114,8 @@ public final class Capture {
         List<String> packStackExperiments = result.packStack == null ? List.of() : result.packStack.getExperiments().stream()
             .map(experiment -> experiment.getName() + "=" + experiment.isEnabled()).toList();
         return new Summary(protocol, codecProtocol, codec.getMinecraftVersion(), result.startGame.isBlockNetworkIdsHashed(),
-            writer.resolvedHashes(), writer.unresolvedHashes(), experiments, packStackExperiments, writer.traitStatesUnknown());
+            writer.resolvedHashes(), writer.unresolvedHashes(), experiments, packStackExperiments, writer.traitStatesUnknown(),
+            writer.experimentBlocksUnverified());
     }
 
     /**
