@@ -13,8 +13,9 @@
 #             (an allow-list of characters, no `..`), copies them into `data/bds/<build>/` and runs the sequential half
 #             (inference, white-box coverage, code generation). It runs Gradle over data from the capture jobs, so it has
 #             no write permission and no secret either; it hands over a patch of the data paths and a report.
-#   publish   the only job with write permissions and BDS_DATA_TOKEN. Runs no Gradle, BDS or repository script, and
-#             applies only a patch confined to the data paths (the checks of bds-data.yml, word for word).
+#   publish   the only job with write permissions and BDS_DATA_TOKEN. Runs no Gradle or BDS and no repository code but
+#             the patch checks of .github/actions/apply-data-patch (shared with bds-data.yml, from the pinned checkout of
+#             the branch), and applies only a patch confined to the data paths.
 # No script of an artifact is ever run, and no value of an artifact reaches a shell as code: values are read as data
 # and matched against strict patterns.
 #
@@ -106,7 +107,8 @@ jobs:
 
   capture:
     needs: plan
-    runs-on: windows-latest
+    # The image of the daily check (bds-data.yml), fixed for the same reason
+    runs-on: windows-2025
     timeout-minutes: 120
     permissions:
       contents: read
@@ -161,8 +163,8 @@ jobs:
 
       # The capture half of `update` (--capture-only): the captures of this build, written into a directory of their own;
       # nothing goes into the checkout. The spec add-on is generated here from the checked-out model. The behaviour dump,
-      # the behaviour probe and the education capture run in the same job (about six more starts of BDS; a failure of one
-      # is a skipped row in the report, not a failed leg)
+      # the behaviour probe and the education capture run in the same job (about six more starts of BDS; only a failure of
+      # the optional behaviour probe is a skipped row in the report instead of a failed leg)
       - name: Capture the build
         id: run
         run: |
@@ -170,17 +172,14 @@ jobs:
           OUT="$CI_TEMP/out"
           ARGS="update --channel $CHANNEL --version $BUILD --capture-only $OUT/captures"
           if [ -n "$AGAINST" ]; then ARGS="$ARGS --against $AGAINST"; fi
-          ./gradlew :tools:run --args="$ARGS"
+          # The launcher passes the tool's own exit code on (Gradle's run task reports every non-zero exit as 1)
+          ./gradlew :tools:installDist || exit 1
+          tools/build/install/tools/bin/tools $ARGS
           CODE=$?
-          # The work directory of the run holds its report and its exit code (Gradle exits with 1 on any non-zero exit)
+          # The work directory of the run holds its report
           for f in "$PALETTER_BDS_CACHE"/runs/*-"$BUILD"/report.md; do
             if [ -f "$f" ]; then cp "$f" "$OUT/report.md"; head -c 60000 "$f" >> "$GITHUB_STEP_SUMMARY"; fi
           done
-          if [ "$CODE" != 0 ]; then
-            for f in "$PALETTER_BDS_CACHE"/runs/*-"$BUILD"/exit-code; do
-              if [ -f "$f" ] && grep -Eqx '[1-9][0-9]*' "$f"; then CODE=$(grep -Exm1 '[1-9][0-9]*' "$f"); fi
-            done
-          fi
           # A capture that wrote no spec capture is no capture
           if [ "$CODE" = 0 ] && [ ! -f "$OUT/captures/spec/capture.json" ]; then
             echo "::error::The run wrote no spec capture"; CODE=1
@@ -424,45 +423,20 @@ jobs:
           path: ${{ runner.temp }}/in
           merge-multiple: true
 
-      # Only patches confined to the data paths; anything else fails the job before the working tree changes
+      # Only patches confined to the data paths (the checks shared with bds-data.yml); anything else fails the job before
+      # the working tree changes
       - name: Apply the data
         id: apply
-        env:
+        uses: ./.github/actions/apply-data-patch
+        with:
+          patch: ${{ runner.temp }}/in/data.patch
           # Whether the token that makes the build run on the pull request is set (never the token itself)
-          HAS_TOKEN: ${{ secrets.BDS_DATA_TOKEN != '' }}
-        run: |
-          PATCH="$RUNNER_TEMP/in/data.patch"
-          if [ ! -s "$PATCH" ]; then echo "No data changes"; echo "changed=false" >> "$GITHUB_OUTPUT"; exit 0; fi
-          # One path per file (renames are rejected below); a quoted path with unusual characters fails the check below
-          git apply --numstat "$PATCH" | cut -f3 > "$RUNNER_TEMP/paths.txt"
-          if grep -Ev '^(data/|paletter/src/main/resources/paletter/|paletter/src/generated/|paletter/api/)' "$RUNNER_TEMP/paths.txt" \
-              || grep -E '(^|/)\.' "$RUNNER_TEMP/paths.txt"; then
-            echo "The patch touches paths outside the data paths or a hidden path"; exit 1
-          fi
-          # No renames or copies: --numstat lists only their new path, so the old one would go unchecked
-          if grep -Eq '^(rename|copy) (from|to) ' "$PATCH"; then
-            echo "The patch renames or copies a file"; exit 1
-          fi
-          # No symlinks or submodules: a link inside data/ could point anywhere
-          if grep -Eq '^(new file|new|old|deleted file) mode (120000|160000)' "$PATCH"; then
-            echo "The patch adds a symlink or submodule"; exit 1
-          fi
-          # Generated code is reviewed only after the build ran on it, and a pull request opened with GITHUB_TOKEN gets no build
-          if [ "$HAS_TOKEN" != true ] && grep -q '^paletter/src/generated/' "$RUNNER_TEMP/paths.txt"; then
-            echo "::error::The data changes generated code, and no BDS_DATA_TOKEN secret is set, so the build would not run on the pull request. Set BDS_DATA_TOKEN (see docs/releasing.md) and run this workflow again."
-            exit 1
-          fi
-          git apply --check "$PATCH"
-          git apply "$PATCH"
-          # Check what the patch did, not only its headers: a patch whose --- and +++ paths differ moves a file without
-          # rename lines, so every changed path of the working tree must be a data path
-          git status --porcelain --untracked-files=all | cut -c4- | sed 's/^.* -> //' > "$RUNNER_TEMP/changed.txt"
-          if grep -Ev '^"?(data/|paletter/src/main/resources/paletter/|paletter/src/generated/|paletter/api/)' "$RUNNER_TEMP/changed.txt"; then
-            echo "The patch changed paths outside the data paths"; exit 1
-          fi
-          # The report of the run (written by assemble from the reports of the captures) is the pull request body
-          head -c 60000 "$RUNNER_TEMP/in/report.md" > "$RUNNER_TEMP/pr-body.md"
-          echo "changed=true" >> "$GITHUB_OUTPUT"
+          has-token: ${{ secrets.BDS_DATA_TOKEN != '' }}
+
+      # The report of the run (written by assemble from the reports of the captures) is the pull request body
+      - name: Write the pull request body
+        if: steps.apply.outputs.changed == 'true'
+        run: head -c 60000 "$RUNNER_TEMP/in/report.md" > "$RUNNER_TEMP/pr-body.md"
 
       # create-pull-request needs the label to exist (the daily workflow creates it when it opens an issue)
       - name: Create the label

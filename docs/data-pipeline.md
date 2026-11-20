@@ -115,14 +115,16 @@ each with what to do), then what the build changed; every check, the run's metad
 below. An update writes it to
 `data/bds/<build>/update-report.md` (generated, committed with the data, so a later run can be diffed against it; a run
 that changed no data file leaves the committed report and writes its own only into its work directory) and
-exits with 2 while decisions are open. As `./gradlew :tools:run` turns every non-zero exit into exit code 1, a run also
-writes its exit code to `exit-code` in its work directory. Things that stay manual:
+exits with 2 while decisions are open. `./gradlew :tools:run` turns every non-zero exit into exit code 1; the launcher of
+`./gradlew :tools:installDist` (`tools/build/install/tools/bin/tools`), which the workflows run, passes the code on. Things
+that stay manual:
 
 - reviewing wire format changes in `data/model` and the regenerated component API;
 - re-importing a protocol whose network data changed in a hotfix;
 - the order of states inside newly generated blocks, which BDS does not expose (`ReferencePalette#keyOrder` infers it from the
   previous release; check against CloudburstMC/Data with `verify` once it has the version);
-- adding a codec for a new protocol to the Cloudburst protocol library.
+- adding a codec for a new protocol to the Cloudburst protocol library;
+- the version pins and the `BDS_DATA_TOKEN` rotation, all listed in [updating.md](updating.md#pins).
 
 The capture client uses RakNet when the server answers a RakNet ping and NetherNet otherwise (1.26.70 previews only
 speak NetherNet). With `online-mode=false` no Xbox sign-in is involved.

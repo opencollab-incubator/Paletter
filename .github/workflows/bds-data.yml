@@ -1,7 +1,8 @@
 # Security: the job that runs untrusted code (the downloaded BDS binary, Gradle and its dependencies, the tools) is
 # `capture`. It can only read the repository, keeps no credentials in the checkout and sees no secrets. It hands over the
 # report and a patch of the data paths as artifacts. `publish` holds the write permissions and BDS_DATA_TOKEN, runs no
-# Gradle, BDS or repository script, applies only patches confined to the data paths and passes report text as files.
+# Gradle or BDS and no repository code but the patch checks of .github/actions/apply-data-patch (from its own checkout
+# of the branch, never from an artifact), applies only patches confined to the data paths and passes report text as files.
 #
 # Daily check of the newest Bedrock Dedicated Server release and preview against the committed data.
 #
@@ -18,8 +19,8 @@
 #     `Builder.previews(true)`, its API marked `@SincePreview`) and replaces the preview before it; its release drops it. The
 #     update writes its report to `data/bds/<build>/update-report.md` (committed with the data, and the body of the
 #     pull request). It exits with 2 when the report lists decisions: the pull request is still opened, for a human to
-#     decide them; any other failure fails the run after the issue is updated. Gradle's run task reports every
-#     non-zero exit as 1, so the step reads the tool's own exit code from `exit-code` in its work directory.
+#     decide them; any other failure fails the run after the issue is updated. The tools run through the launcher of
+#     `./gradlew :tools:installDist`, which passes their exit code on (Gradle's run task reports every non-zero exit as 1).
 # When a run is clean (no failure, no difference, no data file changed), the open issue of its channel that this workflow
 # opened (author github-actions, its exact title) is closed with a comment; a manual run of an explicit `version` closes
 # nothing. An update that changes no data file does not write its report into the data, so a clean run has no patch.
@@ -70,7 +71,9 @@ concurrency:
 
 jobs:
   capture:
-    runs-on: windows-latest
+    # A fixed image: the captures are compared byte for byte with captures from earlier runs, so a runner image bump
+    # (file listing order, locale) must be a deliberate change (docs/updating.md, "Pins")
+    runs-on: windows-2025
     timeout-minutes: 120
     permissions:
       contents: read
@@ -85,6 +88,8 @@ jobs:
     env:
       CHANNEL: ${{ matrix.channel }}
       INPUT_VERSION: ${{ inputs.version }}
+      # The launcher of `./gradlew :tools:installDist`
+      TOOLS: tools/build/install/tools/bin/tools
       # Scheduled runs have no inputs: false
       VERIFY_ONLY: ${{ inputs.verify-only == true }}
     steps:
@@ -110,6 +115,10 @@ jobs:
         with:
           # Untrusted code runs here: it must not write the Gradle cache that other jobs restore
           cache-read-only: true
+      # The tools as a launcher, which passes their exit code on (2: decisions open); `./gradlew :tools:run` turns every
+      # non-zero exit into 1
+      - name: Build the tools
+        run: ./gradlew :tools:installDist
       # The build every step uses, also the key of the download cache. Only the tools read the download links API
       # (`builds resolve`), so a change of the API fails in one place, with the answer quoted
       - name: Resolve the BDS version
@@ -118,7 +127,7 @@ jobs:
           if [ -n "$INPUT_VERSION" ]; then
             VERSION="$INPUT_VERSION"
           else
-            ./gradlew :tools:run --args="builds resolve --channel $CHANNEL --output $CI_TEMP/bds-version.txt" || exit 1
+            "$TOOLS" builds resolve --channel "$CHANNEL" --output "$CI_TEMP/bds-version.txt" || exit 1
             VERSION=$(head -n1 "$CI_TEMP/bds-version.txt")
           fi
           if ! echo "$VERSION" | grep -Eq "$BUILD_RE"; then echo "No BDS version: '$VERSION'"; exit 1; fi
@@ -140,21 +149,16 @@ jobs:
           OUT="$CI_TEMP/out"
           DATA_PATHS="data paletter/src/main/resources/paletter paletter/src/generated paletter/api"
           if [ "$VERIFY_ONLY" = true ]; then
-            ./gradlew :tools:run --args="update --channel $CHANNEL --version $BDS_VERSION --verify-only"
+            "$TOOLS" update --channel "$CHANNEL" --version "$BDS_VERSION" --verify-only
           else
-            ./gradlew :tools:run --args="update --channel $CHANNEL --version $BDS_VERSION"
+            "$TOOLS" update --channel "$CHANNEL" --version "$BDS_VERSION"
           fi
+          # The tool's own exit code: 2 tells decisions from failures
           CODE=$?
-          # Every run also writes its report and its exit code into its work directory, which starts empty. Gradle exits
-          # with 1 on any non-zero exit of the tool; the file tells decisions (2) from failures
+          # Every run also writes its report into its work directory, which starts empty
           for f in "$PALETTER_BDS_CACHE"/runs/*-"$BDS_VERSION"/report.md; do
             if [ -f "$f" ]; then cp "$f" "$OUT/report.md"; fi
           done
-          if [ "$CODE" != 0 ]; then
-            for f in "$PALETTER_BDS_CACHE"/runs/*-"$BDS_VERSION"/exit-code; do
-              if [ -f "$f" ] && grep -Eqx '[1-9][0-9]*' "$f"; then CODE=$(grep -Exm1 '[1-9][0-9]*' "$f"); fi
-            done
-          fi
           VERDICT=""
           if [ -f "$OUT/report.md" ]; then
             # The report without the lines that change every run (date, paths)
@@ -319,50 +323,27 @@ jobs:
             gh issue close "$NUMBER" --comment "BDS $VERSION matches the committed data. Run: $RUN_URL"
           fi
 
-      # Only patches confined to the data paths; anything else fails the job before the working tree changes
+      # Only patches confined to the data paths (the checks shared with recapture.yml); anything else fails the job before
+      # the working tree changes
       - name: Apply the data
         id: apply
         if: steps.result.outputs.differs == 'true' && (steps.result.outputs.update == '0' || steps.result.outputs.update == '2')
+        uses: ./.github/actions/apply-data-patch
+        with:
+          patch: ${{ runner.temp }}/in/data.patch
+          # Whether the token that makes the build run on the pull request is set (never the token itself)
+          has-token: ${{ secrets.BDS_DATA_TOKEN != '' }}
+
+      # The versioned report, committed with the data, is the pull request body; when the patch has none (only
+      # regenerated code changed), the run's own copy of it
+      - name: Write the pull request body
+        if: steps.apply.outputs.changed == 'true'
         env:
           VERSION: ${{ steps.result.outputs.version }}
-          # Whether the token that makes the build run on the pull request is set (never the token itself)
-          HAS_TOKEN: ${{ secrets.BDS_DATA_TOKEN != '' }}
         run: |
-          PATCH="$RUNNER_TEMP/in/data.patch"
-          if [ ! -s "$PATCH" ]; then echo "No data changes"; echo "changed=false" >> "$GITHUB_OUTPUT"; exit 0; fi
-          # One path per file (renames are rejected below); a quoted path with unusual characters fails the check below
-          git apply --numstat "$PATCH" | cut -f3 > "$RUNNER_TEMP/paths.txt"
-          if grep -Ev '^(data/|paletter/src/main/resources/paletter/|paletter/src/generated/|paletter/api/)' "$RUNNER_TEMP/paths.txt" \
-              || grep -E '(^|/)\.' "$RUNNER_TEMP/paths.txt"; then
-            echo "The patch touches paths outside the data paths or a hidden path"; exit 1
-          fi
-          # No renames or copies: --numstat lists only their new path, so the old one would go unchecked
-          if grep -Eq '^(rename|copy) (from|to) ' "$PATCH"; then
-            echo "The patch renames or copies a file"; exit 1
-          fi
-          # No symlinks or submodules: a link inside data/ could point anywhere
-          if grep -Eq '^(new file|new|old|deleted file) mode (120000|160000)' "$PATCH"; then
-            echo "The patch adds a symlink or submodule"; exit 1
-          fi
-          # Generated code is reviewed only after the build ran on it, and a pull request opened with GITHUB_TOKEN gets no build
-          if [ "$HAS_TOKEN" != true ] && grep -q '^paletter/src/generated/' "$RUNNER_TEMP/paths.txt"; then
-            echo "::error::The data changes generated code, and no BDS_DATA_TOKEN secret is set, so the build would not run on the pull request. Set BDS_DATA_TOKEN (see docs/releasing.md) and run this workflow again."
-            exit 1
-          fi
-          git apply --check "$PATCH"
-          git apply "$PATCH"
-          # Check what the patch did, not only its headers: a patch whose --- and +++ paths differ moves a file without
-          # rename lines, so every changed path of the working tree must be a data path
-          git status --porcelain --untracked-files=all | cut -c4- | sed 's/^.* -> //' > "$RUNNER_TEMP/changed.txt"
-          if grep -Ev '^"?(data/|paletter/src/main/resources/paletter/|paletter/src/generated/|paletter/api/)' "$RUNNER_TEMP/changed.txt"; then
-            echo "The patch changed paths outside the data paths"; exit 1
-          fi
-          # The versioned report, committed with the data, is the pull request body; when the patch has none (only
-          # regenerated code changed), the run's own copy of it
           BODY="data/bds/$VERSION/update-report.md"
           grep -qxF "$BODY" "$RUNNER_TEMP/paths.txt" || BODY="$RUNNER_TEMP/in/report.md"
           head -c 60000 "$BODY" > "$RUNNER_TEMP/pr-body.md"
-          echo "changed=true" >> "$GITHUB_OUTPUT"
 
       - name: Open or update the pull request
         if: steps.apply.outputs.changed == 'true'

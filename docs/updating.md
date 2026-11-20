@@ -112,4 +112,30 @@ See [releasing.md](releasing.md): guards, `checkReleaseDependencies`, tag `vX.Y.
 | "linked", "residual bits", "unclassified wire paths" | `check-mappings --strict`; see section d, step 4. |
 | Spec captures differ between builds | Different add-ons; recapture (section b). |
 | `checkConstants` / `checkComponentApi` / `checkBuilds` stale | Run the matching `generate` or `builds table`; commit. |
-| Exit code 1 from Gradle on a run with decisions | Gradle maps every non-zero code to 1; read `exit-code` in the run's work directory (2 = decisions open). |
+| Exit code 1 from Gradle on a run with decisions | Gradle maps every non-zero code to 1. Run the launcher instead, `./gradlew :tools:installDist` then `tools/build/install/tools/bin/tools update ...`: it exits with the tool's own code (2 = decisions open), as the workflows do. |
+
+## Pins
+
+Every version, commit or credential that someone bumps by hand. Nothing else moves without a code change; what moves by
+itself is listed below the table.
+
+| Pin | Where | When and how to bump |
+|---|---|---|
+| Cloudburst protocol snapshot (`protocol`) | `gradle/libs.versions.toml` | A BDS protocol without its own codec (section e). Follow Geyser's `gradle/libs.versions.toml`; then `update` again. |
+| CloudburstMC/Network snapshot (`network`, NetherNet) | `gradle/libs.versions.toml` | With Geyser, or when the capture client cannot reach a new BDS over NetherNet. |
+| libdatachannel snapshot (`libdatachannel`) | `gradle/libs.versions.toml` | With `network`, whose NetherNet transport needs it. |
+| MicrosoftDocs/minecraft-creator commit (`Cli.DEFAULT_COMMIT`) | `tools/.../Cli.java` | When the creator docs document new components: run `docs --commit <sha>` (without it the commit already in `components.json` is used, and `DEFAULT_COMMIT` only when there is none), set `DEFAULT_COMMIT` to the same commit, review `data/model`, recapture (section b). |
+| CloudburstMC/Data and AllayMC/Allay commits | `data/behaviour/sources.json` | When they have dumps of a newer version: move both pins, run `behaviour import` on checkouts at them, commit `behaviour.nbt` and `data/behaviour/REPORT.md` with the pins. The import fails on a checkout at another commit. |
+| Format version of the fixed add-ons (`FixedAddons.FORMAT_VERSION`) | `tools/.../model/addon/FixedAddons.java` and `data/model/fixtures.json` `formatVersion` | When BDS retires the format: change both (a test ties them), then recapture (section b). |
+| Recipe unlock formats (`UnlockProbe.FORMATS`) | `tools/.../model/addon/UnlockProbe.java` | Copied from the vanilla packs of 1.26.63.1: add the formats a new build's `behavior_packs/**/recipes` use. |
+| Engine versions of the extra spec packs (`AddonWriter.ENGINE_VERSIONS`) | `tools/.../model/addon/AddonWriter.java` | When BDS refuses a `min_engine_version`: drop it, recapture (section b). |
+| `@minecraft/server` of the Script API dump add-on | `data/addons/dump/manifest.json` | When BDS no longer ships `2.4.0` (the dump fails to load): set a stable version the build's `script-modules.json` lists. The behaviour dump add-on's beta version is set per run from that file. |
+| Script module of the script custom components (`scriptComponents.module`) | `data/model/fixtures.json` | Like the dump add-on's: a stable version the build ships. |
+| Windows runner image (`windows-2025`) | `.github/workflows/bds-data.yml`, `recapture.yml`, `native-capture.yml` | Deliberately, when GitHub retires the image: bump all three, then run `bds-data.yml` with `verify-only` on the newest kept build; any difference is the image's, not BDS's. |
+| GitHub Actions (`uses: ...@<sha>`) and Gradle dependencies | `.github/workflows/*.yml`, `gradle/libs.versions.toml` | Dependabot proposes them weekly; the Cloudburst and opencollab snapshots above are left out. |
+| `BDS_DATA_TOKEN` | Repository secret | Before it expires (a fine-grained token lasts at most a year): [releasing.md](releasing.md#repository-setup), "Rotation". |
+
+What follows by itself: `Capture.NEWEST` (the highest codec of the protocol library), the newest build of each channel
+(the download links API, `builds resolve`), the list of release builds (Bedrock-OSS/BDS-Versions at its newest commit,
+recorded in `data/bds/builds.json`), the zip checksums of kept builds (`builds check`, `builds record`) and the community
+wiki pages `KeyDiscovery` reads (`WikiSource`, the moving `wiki` branch of Bedrock-OSS/bedrock-wiki; not pinned).

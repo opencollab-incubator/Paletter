@@ -1,0 +1,60 @@
+# Applies a data patch from a job that ran untrusted code, in a job that holds write permissions: the one copy of the
+# checks the publish jobs of bds-data.yml and recapture.yml share. Runs no Gradle, BDS or repository code, only git and
+# grep on the patch. Only patches confined to the data paths are applied; anything else fails before the working tree
+# changes. Writes the paths of the patch to $RUNNER_TEMP/paths.txt.
+
+name: Apply a data patch
+description: Checks a patch against the data paths and applies it to the checkout
+
+inputs:
+  patch:
+    description: The patch file (an empty or missing file is no change)
+    required: true
+  has-token:
+    description: Whether BDS_DATA_TOKEN is set ("true"), which a patch that changes generated code needs
+    required: true
+
+outputs:
+  changed:
+    description: Whether the patch changed the checkout ("true" or "false")
+    value: ${{ steps.apply.outputs.changed }}
+
+runs:
+  using: composite
+  steps:
+    - name: Apply the data
+      id: apply
+      shell: bash
+      env:
+        PATCH: ${{ inputs.patch }}
+        HAS_TOKEN: ${{ inputs.has-token }}
+      run: |
+        if [ ! -s "$PATCH" ]; then echo "No data changes"; echo "changed=false" >> "$GITHUB_OUTPUT"; exit 0; fi
+        # One path per file (renames are rejected below); a quoted path with unusual characters fails the check below
+        git apply --numstat "$PATCH" | cut -f3 > "$RUNNER_TEMP/paths.txt"
+        if grep -Ev '^(data/|paletter/src/main/resources/paletter/|paletter/src/generated/|paletter/api/)' "$RUNNER_TEMP/paths.txt" \
+            || grep -E '(^|/)\.' "$RUNNER_TEMP/paths.txt"; then
+          echo "The patch touches paths outside the data paths or a hidden path"; exit 1
+        fi
+        # No renames or copies: --numstat lists only their new path, so the old one would go unchecked
+        if grep -Eq '^(rename|copy) (from|to) ' "$PATCH"; then
+          echo "The patch renames or copies a file"; exit 1
+        fi
+        # No symlinks or submodules: a link inside data/ could point anywhere
+        if grep -Eq '^(new file|new|old|deleted file) mode (120000|160000)' "$PATCH"; then
+          echo "The patch adds a symlink or submodule"; exit 1
+        fi
+        # Generated code is reviewed only after the build ran on it, and a pull request opened with GITHUB_TOKEN gets no build
+        if [ "$HAS_TOKEN" != true ] && grep -q '^paletter/src/generated/' "$RUNNER_TEMP/paths.txt"; then
+          echo "::error::The data changes generated code, and no BDS_DATA_TOKEN secret is set, so the build would not run on the pull request. Set BDS_DATA_TOKEN (see docs/releasing.md) and run this workflow again."
+          exit 1
+        fi
+        git apply --check "$PATCH"
+        git apply "$PATCH"
+        # Check what the patch did, not only its headers: a patch whose --- and +++ paths differ moves a file without
+        # rename lines, so every changed path of the working tree must be a data path
+        git status --porcelain --untracked-files=all | cut -c4- | sed 's/^.* -> //' > "$RUNNER_TEMP/changed.txt"
+        if grep -Ev '^"?(data/|paletter/src/main/resources/paletter/|paletter/src/generated/|paletter/api/)' "$RUNNER_TEMP/changed.txt"; then
+          echo "The patch changed paths outside the data paths"; exit 1
+        fi
+        echo "changed=true" >> "$GITHUB_OUTPUT"

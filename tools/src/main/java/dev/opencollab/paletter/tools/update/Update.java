@@ -32,8 +32,6 @@ public final class Update {
     public static final String REPORT = "update-report.md";
     /** The exit code of an update that wrote everything but left decisions (the report's TODO list). */
     public static final int EXIT_TODOS = 2;
-    /** The file in the work directory that holds the exit code of the run, as plain text. */
-    public static final String EXIT_CODE = "exit-code";
 
     public Update(Path root, Map<String, String> options) {
         this.ctx = new UpdateContext(root, options);
@@ -150,7 +148,6 @@ public final class Update {
         if (ctx.captureOnly != null) {
             // Differences from the committed captures are the point of a recapture, never a failure; decisions are the gathering job's
             int code = ctx.report.failed() ? 1 : 0;
-            Files.writeString(work.resolve(EXIT_CODE), code + "\n");
             System.out.println(ctx.report.failed() ? "FAILED" : "CAPTURED into " + ctx.captureOnly);
             return code;
         }
@@ -159,7 +156,7 @@ public final class Update {
             return ctx.report.failed() || (ctx.verifyOnly && changed()) ? 1 : 0;
         }
         System.out.println(ctx.report.failed() ? "FAILED" : ctx.report.differs() ? (ctx.verifyOnly ? "DIFFERENCES (verify failed)" : "UPDATED") : "IDENTICAL");
-        return exitCode(ctx.report, ctx.verifyOnly, work);
+        return exitCode(ctx.report, ctx.verifyOnly);
     }
 
     /**
@@ -283,13 +280,11 @@ public final class Update {
     }
 
     /**
-     * The process exit code of a run with {@code report}, also written to {@link #EXIT_CODE} in its work directory:
-     * {@code ./gradlew :tools:run} turns every non-zero exit into a build failure with exit code 1, so a caller that
-     * needs to tell {@link #EXIT_TODOS} from a failure (the BDS data workflow) reads the file.
+     * The process exit code of a run with {@code report}: 1 for a failure (or a difference in a verification), {@link #EXIT_TODOS}
+     * for decisions left, else 0. {@code ./gradlew :tools:run} turns every non-zero exit into 1; the launcher of
+     * {@code ./gradlew :tools:installDist} ({@code tools/build/install/tools/bin/tools}) passes it on, which the workflows use.
      */
-    static int exitCode(Report report, boolean verifyOnly, Path work) throws IOException {
-        int code = report.failed() || (verifyOnly && report.differs()) ? 1 : !verifyOnly && report.hasTodos() ? EXIT_TODOS : 0;
-        Files.writeString(work.resolve(EXIT_CODE), code + "\n");
-        return code;
+    static int exitCode(Report report, boolean verifyOnly) {
+        return report.failed() || (verifyOnly && report.differs()) ? 1 : !verifyOnly && report.hasTodos() ? EXIT_TODOS : 0;
     }
 }
