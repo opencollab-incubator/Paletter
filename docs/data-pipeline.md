@@ -319,8 +319,9 @@ captures.
 against a bundled version: block states and order, hashes, items, components, data driven blocks and the creative
 layout. It writes only a report.
 
-`export --name 26.60 --out DIR [--previews]` writes what a compiled palette (`Paletter.bundled().vanilla(version)`)
-sends, in the file formats of CloudburstMC/Data: `block_palette.nbt` (states in registry index order, each with its
+`export --name 26.60 --out DIR [--previews] [--all-experiments]` writes what a compiled palette
+(`Paletter.bundled().vanilla(version)`, or with `--all-experiments` the palette with every experiment toggle on, which is
+what CloudburstMC/Data dumps) sends, in the file formats of CloudburstMC/Data: `block_palette.nbt` (states in registry index order, each with its
 runtime id as `network_id`), `runtime_item_states.json` and `item_components.nbt` (the item registry),
 `creative_items.json` (the creative content) and `data_driven_blocks.nbt`. A `_generated` file marks the directory as
 generated. The files are not byte-comparable with cb/data (gzip, key order, JSON layout, item order); compare with

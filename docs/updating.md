@@ -41,7 +41,7 @@ When it reports decisions or FAILs:
   ```
   git clone --filter=blob:none --no-checkout https://github.com/CloudburstMC/Data.git cb-data
   git -C cb-data checkout 0021592b1a4253528bad1e1d8b537e306e097557
-  ./gradlew :tools:run --args="export --name 26.60 --out build/export-26.60"
+  ./gradlew :tools:run --args="export --name 26.60 --out build/export-26.60 --all-experiments"
   ./gradlew :tools:run --args="verify --source cb-data --name 26.60 --against build/export-26.60 --report build/verify-26.60.md"
   ```
 

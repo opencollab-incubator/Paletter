@@ -30,16 +30,10 @@ class CloudburstDataTest {
 
     /**
      * What the comparison found and nobody has resolved, per version: the sections that differ. Any other section differing, or
-     * one of these no longer differing, fails the test.
-     * <ul>
-     *     <li>26.40: 39 items only cb/data has (the cushions, straw_bed and the poplar wood set), no block states.</li>
-     *     <li>26.60: three items only cb/data has (frostbite_spawn_egg, ice_crystal, icicle).</li>
-     * </ul>
-     * TODO: settle which side is right with the BDS captures of those builds (data/bds), then fix the data.
+     * one of these no longer differing, fails the test. Nothing is known at the moment: with every experiment on (as cb/data
+     * dumps) blocks, hashes, items and components agree for all four versions; only the creative layout differs.
      */
-    private static final Map<String, Set<String>> KNOWN_FINDINGS = Map.of(
-        "26.40", Set.of("Items"),
-        "26.60", Set.of("Items"));
+    private static final Map<String, Set<String>> KNOWN_FINDINGS = Map.of();
 
     @TempDir
     Path directory;
@@ -51,7 +45,8 @@ class CloudburstDataTest {
 
     private void compare(String version) throws Exception {
         Path source = Path.of(getClass().getResource("/test-data/" + version + "/block_palette.nbt").toURI()).getParent();
-        Paletter paletter = Paletter.bundled();
+        // CloudburstMC/Data dumps BDS with every experiment on
+        Paletter paletter = Paletter.builder().allExperiments().build();
         Palette palette = paletter.vanilla(paletter.version(version));
         Path export = Files.createDirectory(directory.resolve("export-" + version));
         Export.write(palette, export);

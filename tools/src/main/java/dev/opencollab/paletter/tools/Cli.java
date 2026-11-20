@@ -457,12 +457,17 @@ public final class Cli implements Runnable {
         @Option(names = "--name", required = true, description = "The data version, e.g. 26.60") String name;
         @Option(names = "--out", required = true) Path out;
         @Option(names = "--previews", description = "Also offer the preview versions") boolean previews;
+        @Option(names = "--all-experiments", description = "Enable every experiment toggle, as CloudburstMC/Data dumps") boolean allExperiments;
 
         @Override
         public Integer call() throws Exception {
-            dev.opencollab.paletter.Paletter paletter = previews
-                ? dev.opencollab.paletter.Paletter.builder().previews(true).build()
-                : dev.opencollab.paletter.Paletter.bundled();
+            dev.opencollab.paletter.Paletter paletter;
+            if (previews || allExperiments) {
+                dev.opencollab.paletter.Paletter.Builder builder = dev.opencollab.paletter.Paletter.builder().previews(previews);
+                paletter = (allExperiments ? builder.allExperiments() : builder).build();
+            } else {
+                paletter = dev.opencollab.paletter.Paletter.bundled();
+            }
             dev.opencollab.paletter.data.DataVersion version = paletter.version(name);
             if (version == null) {
                 System.err.println("No data version " + name + " (--previews offers the preview versions)");
