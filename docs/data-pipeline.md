@@ -16,6 +16,8 @@ data/bds + third party     -> behaviour import                   -> behaviour.nb
 data/bds/<build>/voxel-shapes -> voxel-shapes import             -> voxel_shapes.nbt
 ```
 
+Maintainers: [updating.md](updating.md) is the short runbook for the recurring jobs.
+
 Downloading BDS means accepting the [Minecraft EULA](https://minecraft.net/eula).
 
 ## Layout and markers
