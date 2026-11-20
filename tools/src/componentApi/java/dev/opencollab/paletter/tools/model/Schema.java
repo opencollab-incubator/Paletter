@@ -423,8 +423,15 @@ public final class Schema {
             merged.add(key == null ? f : merge(f, node(definition, f.path()), fields, key));
         }
         addMissing(merged, definition);
+        // The forms the schema's root has and the docs lack (interact_button: a boolean or a string), after the documented ones;
+        // none of a deprecated component
+        List<JType> forms = new ArrayList<>(c.forms());
+        JsonObject root = definition.getAsJsonObject("root");
+        if (!root.has("deprecated")) {
+            types(root, "", fields).stream().filter(t -> forms.stream().noneMatch(f -> kindOf(f).equals(kindOf(t)))).forEach(forms::add);
+        }
         return new Component(c.id(), c.kind(), c.category(), c.name(), c.status(), c.doc(), c.page(), c.minFormatVersion(), c.experiments(),
-            c.forms(), merged, c.notes());
+            forms, merged, c.notes());
     }
 
     private Field merge(Field f, JsonObject node, JsonObject fields, String path) {
@@ -456,7 +463,8 @@ public final class Schema {
             JsonObject node = fields.getAsJsonObject(path);
             int dot = path.lastIndexOf('.');
             String parent = dot < 0 ? "" : path.substring(0, dot);
-            boolean parentKnown = parent.isEmpty() || known.contains(parent) || (parent.endsWith("[]") && known.contains(parent.substring(0, parent.length() - 2)));
+            // [] is the component's own list (the boxes of collision_box)
+            boolean parentKnown = parent.isEmpty() || parent.equals("[]") || known.contains(parent) || (parent.endsWith("[]") && known.contains(parent.substring(0, parent.length() - 2)));
             if (known.contains(path) || path.endsWith("[]") || path.contains("{}") || node.has("deprecated") || !parentKnown) {
                 continue;
             }
@@ -485,7 +493,7 @@ public final class Schema {
         String prefix = path.isEmpty() ? "" : path;
         for (JsonElement type : node.getAsJsonArray("types")) {
             switch (type.getAsString()) {
-                case "array" -> types.add(new JType("array", element(prefix + "[]", fields), null, null));
+                case "array" -> types.add(isVec3(node, prefix + "[]", fields) ? JType.of("vec3") : new JType("array", element(prefix + "[]", fields), null, null));
                 case "object" -> {
                     boolean members = fields.keySet().stream().anyMatch(k -> path.isEmpty() ? !k.startsWith("[") && !k.startsWith("{") : k.startsWith(path + "."));
                     types.add(fields.has(prefix + "{}") && !members ? new JType("map", element(prefix + "{}", fields), null, null) : JType.of("object"));
@@ -494,6 +502,13 @@ public final class Schema {
             }
         }
         return types;
+    }
+
+    /** A list of exactly three numbers is the model's {@code vec3} ({@code [].origin} of {@code collision_box}). */
+    private static boolean isVec3(JsonObject node, String elementPath, JsonObject fields) {
+        return node.has("minItems") && node.has("maxItems") && node.get("minItems").getAsInt() == 3 && node.get("maxItems").getAsInt() == 3
+            && fields.has(elementPath) && fields.getAsJsonObject(elementPath).has("types")
+            && fields.getAsJsonObject(elementPath).getAsJsonArray("types").asList().stream().map(JsonElement::getAsString).toList().equals(List.of("number"));
     }
 
     private static JType element(String path, JsonObject fields) {

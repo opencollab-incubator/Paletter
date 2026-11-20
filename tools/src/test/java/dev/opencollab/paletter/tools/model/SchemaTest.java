@@ -320,6 +320,42 @@ class SchemaTest {
         assertSame(docs, Schema.NONE.apply(docs));
     }
 
+    /** The forms of the root, the members of the component's own list and lists of three numbers, as the schema has them. */
+    @Test
+    void theSchemaGivesFormsListMembersAndVectors() {
+        Model docs = Model.GSON.fromJson("""
+            {"source": "test", "commit": "test", "license": "test", "formatNotes": [], "components": [
+              {"id": "block:minecraft:boxes", "kind": "block", "category": "component", "name": "minecraft:boxes", "status": "active",
+               "doc": "", "page": "", "experiments": [], "notes": [], "forms": [{"type": "boolean"}, {"type": "array", "items": {"type": "object"}}],
+               "fields": [{"path": "[].min", "types": [{"type": "vec3"}], "required": false, "enumValues": [], "examples": [], "doc": ""}]},
+              {"id": "item:minecraft:button", "kind": "item", "category": "component", "name": "minecraft:button", "status": "active",
+               "doc": "", "page": "", "experiments": [], "notes": [], "forms": [{"type": "object"}], "fields": []},
+              {"id": "block:minecraft:gone", "kind": "block", "category": "component", "name": "minecraft:gone", "status": "active",
+               "doc": "", "page": "", "experiments": [], "notes": [], "forms": [{"type": "string"}], "fields": []}
+            ]}""", Model.class);
+        String vector = "{\"types\": [\"array\", \"object\"], \"minItems\": 3, \"maxItems\": 3}";
+        Schema schema = Schema.of(JsonParser.parseString("""
+            {"bdsVersion": "1.26.99.1", "formats": {"block": ["1.26.60"], "item": ["1.26.50"]},
+             "block": {"minecraft:boxes": [{"formats": ["1.26.60"], "root": {"types": ["boolean", "array"], "maxItems": 16},
+                         "fields": {"[]": {"types": ["object"]}, "[].min": %s, "[].min[]": {"types": ["number"]}, "[].min.x": {"types": ["number"]},
+                                    "[].origin": %s, "[].origin[]": {"types": ["number"]}, "[].origin.x": {"types": ["number"]},
+                                    "[].pair": {"types": ["array"], "minItems": 2, "maxItems": 2}, "[].pair[]": {"types": ["number"]}}}],
+                       "minecraft:gone": [{"formats": ["1.26.60"], "root": {"deprecated": true, "types": ["object"]}, "fields": {}}]},
+             "item": {"minecraft:button": [{"formats": ["1.26.50"], "root": {"types": ["boolean", "string"]}, "fields": {}}]}}"""
+            .formatted(vector, vector)).getAsJsonObject());
+        Model merged = schema.apply(docs);
+        Component boxes = merged.component("block:minecraft:boxes");
+        // A member of the component's own list the docs lack; three numbers are a vector, two are a list
+        assertEquals(List.of("vec3", "object"), boxes.field("[].origin").types().stream().map(Object::toString).toList());
+        assertEquals("[].origin.x", boxes.field("[].origin.x").path());
+        assertEquals("array<number>", boxes.field("[].pair").types().getFirst().toString());
+        assertEquals(List.of("vec3", "object"), boxes.field("[].min").types().stream().map(Object::toString).toList());
+        // The root's types the forms lack, after the documented forms; nothing of a deprecated root
+        assertEquals(List.of("object", "boolean", "string"), merged.component("item:minecraft:button").forms().stream().map(Object::toString).toList());
+        assertEquals(List.of("boolean", "array<object>"), boxes.forms().stream().map(Object::toString).toList());
+        assertEquals(List.of("string"), merged.component("block:minecraft:gone").forms().stream().map(Object::toString).toList());
+    }
+
     @Test
     void theSchemasFactsReplaceTheContentLogsOfTheSameKind() throws IOException {
         Schema schema = Schema.of(extract());
@@ -383,6 +419,11 @@ class SchemaTest {
         assertTrue(with.component("item:minecraft:use_animation").field("value").enumValues().size() >= 10);
         assertEquals(15.0, with.component("block:minecraft:redstone_producer").field("power").range().max());
         assertTrue(fixtures.facts("block:minecraft:liquid_detection", "detection_rules").contains("maxItems 1"));
+        // Formerly errata: the origin and size boxes of collision_box, the boolean or string of interact_button
+        for (String box : List.of("[].origin", "[].size")) {
+            assertEquals("vec3", with.component("block:minecraft:collision_box").field(box).types().getFirst().toString(), box);
+        }
+        assertTrue(with.component("item:minecraft:interact_button").forms().stream().map(Object::toString).toList().containsAll(List.of("boolean", "string")));
         // The docs' fields and components all stay
         assertTrue(with.components().size() >= without.components().size());
         for (Component c : without.components()) {
