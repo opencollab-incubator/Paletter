@@ -1,6 +1,7 @@
 package dev.opencollab.paletter.tools.update;
 
 import com.google.gson.JsonParser;
+import dev.opencollab.paletter.tools.bds.BdsServer;
 import dev.opencollab.paletter.tools.model.Schema;
 import dev.opencollab.paletter.tools.model.addon.AddonGenerator;
 import org.junit.jupiter.api.Test;
@@ -59,6 +60,42 @@ class SpecCaptureTest {
         // A line about an identifier that is no variant of the add-on
         e = assertThrows(SpecCapture.UnattributedLog.class, () -> SpecCapture.logByVariant(List.of("ERROR [Components] failed in blocks/c.json"), variants));
         assertTrue(e.getMessage().contains("blocks/c.json"));
+    }
+
+    /** The capture does not fail on an unknown line: the line is handed to the report, and the variants' lines are still attributed. */
+    @Test
+    void anUnknownLineIsCollectedForTheReportNotThrown() {
+        List<String> unknown = new ArrayList<>();
+        Map<String, List<String>> log = SpecCapture.logByVariant(
+            List.of("WARN [Scripting] something new", "ERROR [Components] failed in blocks/a.json"), List.of("paletter:a"), unknown);
+        assertEquals(List.of("WARN [Scripting] something new"), unknown);
+        assertEquals(List.of("paletter:a"), List.copyOf(log.keySet()));
+    }
+
+    /** A BDS start hang is retried once; another failure, or a second hang, is not. */
+    @Test
+    void aStartHangIsRetriedOnce() throws Exception {
+        int[] starts = {0};
+        assertEquals("ok", BdsServer.retryOnHang(() -> {
+            if (starts[0]++ == 0) {
+                throw new IOException("BDS did not start within 1s:
+  log");
+            }
+            return "ok";
+        }));
+        assertEquals(2, starts[0]);
+        starts[0] = 0;
+        assertThrows(IOException.class, () -> BdsServer.retryOnHang(() -> {
+            starts[0]++;
+            throw new IOException("BDS did not start within 1s");
+        }));
+        assertEquals(2, starts[0]);
+        starts[0] = 0;
+        assertThrows(IOException.class, () -> BdsServer.retryOnHang(() -> {
+            starts[0]++;
+            throw new IOException("other");
+        }));
+        assertEquals(1, starts[0]);
     }
 
     /** Every committed spec capture's content log is attributed in full: the known phrasings come from these logs. */

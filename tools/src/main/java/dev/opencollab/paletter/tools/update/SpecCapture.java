@@ -65,6 +65,7 @@ public final class SpecCapture {
     private final Path root;
     private final Map<String, String> options;
     private Capture.Summary summary;
+    private final List<String> unattributed = new ArrayList<>();
 
     /** The schema of the run that extracted it (an {@code update}), which the add-ons use instead of the committed file; or null. */
     private final Schema runSchema;
@@ -95,6 +96,14 @@ public final class SpecCapture {
     static Fixtures fixtures(Path modelDir, String build, Schema runSchema, boolean schemaInAddon) throws IOException {
         Fixtures fixtures = Fixtures.read(modelDir, schemaInAddon).forBuild(build);
         return runSchema == null ? fixtures.withNewestSchema(build) : fixtures.withSchema(runSchema);
+    }
+
+    /**
+     * The content log lines of the captures of {@link #run} (this one and the format sweep's) that name no variant and are no
+     * {@link #UNATTRIBUTED} phrasing. The capture is written all the same: the report shows them, for a human.
+     */
+    public List<String> unattributedLines() {
+        return List.copyOf(unattributed);
     }
 
     /** What the client recorded in the last capture of {@link #run} (block hashes, experiments), null before it. */
@@ -157,21 +166,14 @@ public final class SpecCapture {
             Run run;
             for (int round = 1; ; round++) {
                 generator.write(addon);
-                try {
-                    run = captureRun(server, addon, work, port, timeout, distribution.version(), generator.scriptMarker());
-                } catch (IOException e) {
-                    if (!String.valueOf(e.getMessage()).startsWith("BDS did not start")) {
-                        throw e;
-                    }
-                    // BDS now and then hangs while it starts: once more, on the same add-on
-                    System.out.println(e.getMessage().lines().findFirst().orElse("") + "; starting it again");
-                    run = captureRun(server, addon, work, port, timeout, distribution.version(), generator.scriptMarker());
-                }
+                String marker = generator.scriptMarker();
+                // BDS now and then hangs while it starts: once more, on the same add-on
+                run = BdsServer.retryOnHang(() -> captureRun(server, addon, work, port, timeout, distribution.version(), marker));
                 if (evidence != null || gating || round == SHRINK_ROUNDS) {
                     break;
                 }
                 Map<String, AddonGenerator.Shrunk> more = shrink(generator.variants(), leaves(work.resolve("custom")),
-                    logByVariant(run.contentLog(), generator), shrunk);
+                    logByVariant(run.contentLog(), generator, new ArrayList<>()), shrunk);
                 if (more.isEmpty()) {
                     break;
                 }
@@ -181,8 +183,8 @@ public final class SpecCapture {
                 generator = new AddonGenerator(docs, fixtures, formatVersion, shrunk);
             }
             List<String> contentLog = run.contentLog();
-            // Every mode: a line no variant claims fails the capture before anything is written
-            logByVariant(contentLog, generator);
+            // Every mode: a line no variant claims is kept for the report; the capture is written all the same
+            logByVariant(contentLog, generator, unattributed);
             summary = run.summary();
             int protocol = run.protocol();
             Files.createDirectories(out);
@@ -220,7 +222,7 @@ public final class SpecCapture {
             Files.writeString(out.resolve("capture.json"), new GsonBuilder().setPrettyPrinting().create().toJson(metadata) + "\n");
             if (evidence != null) {
                 Map<String, Map<String, Leaf>> leaves = leaves(out);
-                Map<String, List<String>> log = logByVariant(contentLog, generator);
+                Map<String, List<String>> log = logByVariant(contentLog, generator, new ArrayList<>());
                 if (probeKeys) {
                     JsonObject keys = KeyDiscovery.results(generator, evidence, distribution.version(), leaves, log, fixtures.keys);
                     Files.writeString(modelDir.resolve(Fixtures.KEYS_FILE), Model.GSON.toJson(keys) + "\n", StandardCharsets.UTF_8);
@@ -232,7 +234,7 @@ public final class SpecCapture {
             if (gating) {
                 Path spec = out.resolveSibling("spec");
                 Files.writeString(out.resolve("gating.json"), Model.GSON.toJson(GatingCapture.report(generator, distribution.version(), protocol,
-                    summary.experiments(), leaves(out), logByVariant(contentLog, generator), spec)) + "\n", StandardCharsets.UTF_8);
+                    summary.experiments(), leaves(out), logByVariant(contentLog, generator, new ArrayList<>()), spec)) + "\n", StandardCharsets.UTF_8);
             }
             System.out.println("Spec capture of BDS " + distribution.version() + " (protocol " + protocol + "): " + generator.variants().size()
                 + " variants, " + contentLog.size() + " content log lines -> " + out);
@@ -247,9 +249,6 @@ public final class SpecCapture {
                 gate.put("out", out.resolveSibling("spec-gating").toString());
                 try {
                     new SpecCapture(root, gate, runSchema).run();
-                } catch (UnattributedLog e) {
-                    // not a lost file: the log of this build has a line the capture cannot place
-                    throw e;
                 } catch (Exception e) {
                     System.out.println("The gating capture of BDS " + distribution.version() + " failed, its components stay unverified: " + e);
                 }
@@ -262,7 +261,10 @@ public final class SpecCapture {
                 sweep.put("format-sweep", "true");
                 sweep.put("reuse-server", "true");
                 sweep.put("out", out.resolveSibling("spec-format").toString());
-                return new SpecCapture(root, sweep, runSchema).run();
+                SpecCapture sweepCapture = new SpecCapture(root, sweep, runSchema);
+                int code = sweepCapture.run();
+                unattributed.addAll(sweepCapture.unattributed);
+                return code;
             }
             return 0;
         } finally {
@@ -498,9 +500,21 @@ public final class SpecCapture {
      * @throws UnattributedLog when a line names none of them and is not one of the {@link #UNATTRIBUTED} phrasings
      */
     static Map<String, List<String>> logByVariant(List<String> lines, java.util.Collection<String> identifiers) {
+        List<String> unattributed = new ArrayList<>();
+        Map<String, List<String>> log = logByVariant(lines, identifiers, unattributed);
+        if (!unattributed.isEmpty()) {
+            throw new UnattributedLog(unattributed);
+        }
+        return log;
+    }
+
+    /**
+     * {@link #logByVariant(List, java.util.Collection)} that does not throw: the lines that name no variant and are no known
+     * phrasing are added to {@code unattributed}, and the capture goes on.
+     */
+    static Map<String, List<String>> logByVariant(List<String> lines, java.util.Collection<String> identifiers, List<String> unattributed) {
         java.util.Set<String> known = java.util.Set.copyOf(identifiers);
         Map<String, List<String>> log = new LinkedHashMap<>();
-        List<String> unattributed = new ArrayList<>();
         for (String line : lines) {
             java.util.regex.Matcher m = VARIANT_FILE.matcher(line);
             String id = m.find() ? "paletter:" + m.group(1) : (m = VARIANT_NAME.matcher(line)).find() ? m.group(1) : null;
@@ -510,15 +524,12 @@ public final class SpecCapture {
                 unattributed.add(line);
             }
         }
-        if (!unattributed.isEmpty()) {
-            throw new UnattributedLog(unattributed);
-        }
         return log;
     }
 
-    /** {@link #logByVariant(List, java.util.Collection)} of the variants of a generator. */
-    private static Map<String, List<String>> logByVariant(List<String> lines, AddonGenerator generator) {
-        return logByVariant(lines, generator.variants().stream().map(AddonGenerator.Variant::identifier).toList());
+    /** {@link #logByVariant(List, java.util.Collection, List)} of the variants of a generator. */
+    private static Map<String, List<String>> logByVariant(List<String> lines, AddonGenerator generator, List<String> unattributed) {
+        return logByVariant(lines, generator.variants().stream().map(AddonGenerator.Variant::identifier).toList(), unattributed);
     }
 
     /** The wire leaves of every item and block BDS sent, by {@code item <id>} / {@code block <id>}, from a capture's NBT files. */

@@ -100,6 +100,13 @@ final class SpecStage {
             return;
         }
         ctx.report.check(Report.Status.INFO, "Spec capture", "`" + (write ? ctx.root.relativize(out) : out) + "`");
+        List<String> unattributed = spec.unattributedLines();
+        if (!unattributed.isEmpty()) {
+            // The capture is written and the data goes on: a human classifies the lines
+            ctx.report.check(Report.Status.FAIL, "Spec capture content log", unattributed.size() + " content log line(s) name no variant of the add-on and are no known phrasing");
+            ctx.report.evidence("Lines", unattributed.stream().map(line -> "- `" + line.replace("`", "'") + "`").toList());
+            ctx.report.action("classify these lines in `SpecCapture.UNATTRIBUTED` or the variant matcher");
+        }
         cutValues(out);
         gating(out.resolveSibling("spec-gating"), runs);
         specChecks(out, spec.summary(), runs);
