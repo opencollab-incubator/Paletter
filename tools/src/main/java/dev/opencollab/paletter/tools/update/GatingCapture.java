@@ -1,5 +1,6 @@
 package dev.opencollab.paletter.tools.update;
 
+import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -92,10 +93,13 @@ final class GatingCapture {
             return result;
         }
         Map<String, Map<String, Leaf>> leaves = SpecCapture.leaves(spec);
-        Map<String, List<String>> log = SpecCapture.logByVariant(Files.readAllLines(spec.resolve("content-log.txt"), StandardCharsets.UTF_8));
+        JsonArray variants = JsonParser.parseString(Files.readString(spec.resolve("variants.json"), StandardCharsets.UTF_8)).getAsJsonArray();
+        List<String> identifiers = new ArrayList<>();
+        variants.forEach(v -> identifiers.add(v.getAsJsonObject().get("identifier").getAsString()));
+        Map<String, List<String>> log = SpecCapture.logByVariant(Files.readAllLines(spec.resolve("content-log.txt"), StandardCharsets.UTF_8), identifiers);
         Map<String, JsonObject> bases = new LinkedHashMap<>();
         Map<String, JsonObject> controls = new LinkedHashMap<>();
-        for (JsonElement element : JsonParser.parseString(Files.readString(spec.resolve("variants.json"), StandardCharsets.UTF_8)).getAsJsonArray()) {
+        for (JsonElement element : variants) {
             JsonObject v = element.getAsJsonObject();
             String role = v.get("role").getAsString();
             if (role.equals("base")) {

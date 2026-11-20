@@ -406,7 +406,9 @@ finds no version fails and says what it found. No build has the file yet (`Scrip
 `probeValues` gives a field further strings (the formatting colour names of `hover_text_color`, which no schema enum lists), and `descriptorValues` gives every block descriptor field real vanilla blocks with enum, boolean and string
 state values. They are probes, not facts: only what BDS accepts and sends is evidence. `spec-capture` also keeps the ERROR and WARN lines of the content log
 in the order BDS wrote them (`content-log.raw.txt`) beside the sorted `content-log.txt`, so that a line can later be attributed
-by the lines around it.
+by the lines around it. Every line must name a variant of the add-on (its file, or its quoted identifier) or be one of the phrasings
+in `SpecCapture.UNATTRIBUTED`, which lists the lines committed captures recorded about no single variant. Any other line fails the
+capture with the line quoted: a reworded error would otherwise name no variant and count it as accepted.
 
 **Linked fields.** One field at a time is not enough where BDS ties two fields: `damage_chance.max` below the default
 `min` is refused, `replace_block_item` is ignored unless `block` is the item itself. The content log says so, and

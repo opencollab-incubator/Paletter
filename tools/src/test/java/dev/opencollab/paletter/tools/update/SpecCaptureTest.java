@@ -9,11 +9,14 @@ import org.junit.jupiter.api.io.TempDir;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class SpecCaptureTest {
@@ -35,10 +38,49 @@ class SpecCaptureTest {
             "ERROR [Item] Failed to parse field x",
             "ERROR [Json] Damage Source not found: paletter_b",
             "ERROR [Components] failed in blocks/b_one.json");
-        Map<String, List<String>> log = SpecCapture.logByVariant(SpecCapture.attribute(console));
+        Map<String, List<String>> log = SpecCapture.logByVariant(SpecCapture.attribute(console), List.of("paletter:a", "paletter:b_one"));
         assertEquals(List.of("paletter:a", "paletter:b_one"), List.copyOf(log.keySet()).stream().sorted().toList());
         assertEquals(2, log.get("paletter:a").size(), "the field error carries the item name");
         assertTrue(log.values().stream().flatMap(List::stream).noneMatch(line -> line.contains("Damage Source")));
+    }
+
+    /** A reworded error that names no variant, or one about a name the add-on lacks, fails the capture with the line quoted. */
+    @Test
+    void anUnknownOrUnattributedLineFailsTheCapture() {
+        List<String> variants = List.of("paletter:a", "paletter:b_one");
+        // BDS reworded the item header: the field error after it names no item any more
+        List<String> reworded = SpecCapture.attribute(List.of("ERROR [Item] Could not read item 'paletter:a'",
+            "ERROR [Item] Failed to parse field ' -> components -> minecraft:icon: invalid string'"));
+        SpecCapture.UnattributedLog e = assertThrows(SpecCapture.UnattributedLog.class, () -> SpecCapture.logByVariant(reworded, variants));
+        assertTrue(e.getMessage().contains("ERROR [Item] Failed to parse field ' -> components -> minecraft:icon: invalid string'"), e.getMessage());
+        assertFalse(e.getMessage().contains("Could not read item"), "the line that names a variant is attributed");
+        // A warning in no known phrasing
+        assertThrows(SpecCapture.UnattributedLog.class, () -> SpecCapture.logByVariant(List.of("WARN [Blocks] something new"), variants));
+        // A line about an identifier that is no variant of the add-on
+        e = assertThrows(SpecCapture.UnattributedLog.class, () -> SpecCapture.logByVariant(List.of("ERROR [Components] failed in blocks/c.json"), variants));
+        assertTrue(e.getMessage().contains("blocks/c.json"));
+    }
+
+    /** Every committed spec capture's content log is attributed in full: the known phrasings come from these logs. */
+    @Test
+    void everyCommittedContentLogIsAttributed() throws IOException {
+        Path bds = Path.of("..", "data", "bds");
+        int checked = 0;
+        try (Stream<Path> logs = Files.walk(bds)) {
+            for (Path log : logs.filter(p -> p.getFileName().toString().equals("content-log.txt")
+                && p.getParent().getFileName().toString().startsWith("spec")).toList()) {
+                List<String> identifiers = new ArrayList<>();
+                JsonParser.parseString(Files.readString(log.resolveSibling("variants.json"))).getAsJsonArray()
+                    .forEach(v -> identifiers.add(v.getAsJsonObject().get("identifier").getAsString()));
+                try {
+                    SpecCapture.logByVariant(Files.readAllLines(log), identifiers);
+                } catch (SpecCapture.UnattributedLog e) {
+                    throw new AssertionError(log + ": " + e.getMessage(), e);
+                }
+                checked++;
+            }
+        }
+        assertTrue(checked > 0, "no committed spec capture under " + bds.toAbsolutePath());
     }
 
     /** A capture-only run commits nothing, and a committed schema can be older than the run's: the add-on takes the run's own. */
