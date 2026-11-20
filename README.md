@@ -137,6 +137,7 @@ the 26.70 preview (served only with `Paletter.builder().previews(true)`). Known 
 - [docs/api.md](docs/api.md): using the library, and what counts as API.
 - [docs/architecture.md](docs/architecture.md): how the library is put together, for contributors.
 - [docs/data-pipeline.md](docs/data-pipeline.md): the tools, BDS captures, code generation and CI.
+- [docs/updating.md](docs/updating.md): the maintainer runbook for new BDS builds, recaptures, components and codecs.
 - [docs/wire-notes.md](docs/wire-notes.md): what BDS sends and how it orders custom content.
 - [docs/native-capture.md](docs/native-capture.md): design notes for capturing BDS internals.
 - [docs/releasing.md](docs/releasing.md): repository settings and secrets the workflows need, and the release steps.
