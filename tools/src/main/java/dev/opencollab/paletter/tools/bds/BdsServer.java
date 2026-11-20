@@ -11,6 +11,7 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
@@ -23,7 +24,7 @@ import java.util.function.Predicate;
  * JVM exits, so no server outlives a failed run.
  */
 public final class BdsServer implements AutoCloseable {
-    static final boolean WINDOWS = System.getProperty("os.name").toLowerCase().contains("win");
+    static final boolean WINDOWS = System.getProperty("os.name").toLowerCase(Locale.ROOT).contains("win");
     private static final Set<Process> RUNNING = ConcurrentHashMap.newKeySet();
 
     static {

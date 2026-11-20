@@ -10,6 +10,7 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
@@ -177,7 +178,7 @@ final class StateConstants {
             }
             constantOf.put(constant, name);
             JsonObject old = previousStates.has(constant) ? previousStates.getAsJsonObject(constant) : null;
-            if (old != null && !ConstantsHistory.required(old, "kind", "states." + constant).equals(kind.name().toLowerCase())) {
+            if (old != null && !ConstantsHistory.required(old, "kind", "states." + constant).equals(kind.name().toLowerCase(Locale.ROOT))) {
                 throw new IllegalStateException("BedrockStates." + constant + " (" + name + ") changed from " + old.get("kind").getAsString()
                     + " to " + kind + ", which would change the type of the constant; give the state a new name: " + addName("states", name, "<NAME>"));
             }
@@ -346,7 +347,7 @@ final class StateConstants {
             }
             JsonObject entry = new JsonObject();
             entry.addProperty("name", state.name);
-            entry.addProperty("kind", state.kind.name().toLowerCase());
+            entry.addProperty("kind", state.kind.name().toLowerCase(Locale.ROOT));
             entry.addProperty("since", state.since);
             if (state.kind == Kind.INT) {
                 List<String> ints = new ArrayList<>();

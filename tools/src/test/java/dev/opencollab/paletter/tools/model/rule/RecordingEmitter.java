@@ -5,6 +5,7 @@ import com.palantir.javapoet.TypeName;
 import dev.opencollab.paletter.tools.codegen.component.ComponentGenerator.GenerationException;
 
 import java.util.List;
+import java.util.Locale;
 
 /** An {@link Emitter} whose expressions are named after what they stand for, to read what a rule's {@code emit} writes. */
 final class RecordingEmitter implements Emitter {
@@ -74,7 +75,7 @@ final class RecordingEmitter implements Emitter {
 
     @Override
     public String enumConstant(String value) {
-        return value.toUpperCase();
+        return value.toUpperCase(Locale.ROOT);
     }
 
     @Override

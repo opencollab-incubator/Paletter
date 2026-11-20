@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Stream;
@@ -81,7 +82,7 @@ class RecipeBundleLoadTest {
             RecipeData.each(capture(version), (kind, entry) -> {
                 JsonObject unlock = entry.has("unlock") ? entry.getAsJsonObject("unlock") : null;
                 if (unlock != null) {
-                    expected.merge(UnlockingContext.valueOf(unlock.get("context").getAsString().toUpperCase()), 1, Integer::sum);
+                    expected.merge(UnlockingContext.valueOf(unlock.get("context").getAsString().toUpperCase(Locale.ROOT)), 1, Integer::sum);
                 }
             });
             Map<UnlockingContext, Integer> loaded = new EnumMap<>(UnlockingContext.class);

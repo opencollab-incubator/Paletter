@@ -16,6 +16,7 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
@@ -102,7 +103,7 @@ class BehaviourImportTest {
     }
 
     private static BehaviourImport.Capture capture(Provenance.Source source, DataVersion version, Values<Integer> blocks) {
-        return new BehaviourImport.Capture(source, source.name().toLowerCase() + "@" + version.name(), "2026-01-01", version, "test", blocks, new Values<>());
+        return new BehaviourImport.Capture(source, source.name().toLowerCase(Locale.ROOT) + "@" + version.name(), "2026-01-01", version, "test", blocks, new Values<>());
     }
 
     private static Values<Integer> friction(float... values) {

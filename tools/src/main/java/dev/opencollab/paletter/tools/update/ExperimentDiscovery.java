@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
@@ -319,7 +320,7 @@ public final class ExperimentDiscovery {
         Set<String> words = new TreeSet<>();
         String spaced = text.replaceAll("([a-z])([A-Z0-9])", "$1 $2").replaceAll("([0-9])([A-Za-z])", "$1 $2").replace('_', ' ');
         StringBuilder joined = new StringBuilder();
-        for (String word : spaced.toLowerCase().split("\\s+")) {
+        for (String word : spaced.toLowerCase(Locale.ROOT).split("\\s+")) {
             if (word.isEmpty() || word.equals("experimental") || word.equals("features")) {
                 continue;
             }
@@ -338,7 +339,7 @@ public final class ExperimentDiscovery {
      * for matching the creator docs to toggles.
      */
     static String normalizeName(String name) {
-        return name.toLowerCase().replaceAll("[^a-z0-9]+", "");
+        return name.toLowerCase(Locale.ROOT).replaceAll("[^a-z0-9]+", "");
     }
 
     private static boolean identifierChar(int b) {
