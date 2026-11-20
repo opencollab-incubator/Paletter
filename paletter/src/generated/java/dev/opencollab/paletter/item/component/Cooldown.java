@@ -140,9 +140,10 @@ public final class Cooldown implements ItemComponent {
          *
          * @param category the value
          * @return this builder
+         * @throws NullPointerException if the value is null
          */
         public @NonNull Builder category(@NonNull String category) {
-            this.category = category;
+            this.category = Objects.requireNonNull(category, "Cooldown.category");
             return this;
         }
 
@@ -162,9 +163,10 @@ public final class Cooldown implements ItemComponent {
          *
          * @param type the value
          * @return this builder
+         * @throws NullPointerException if the value is null
          */
         public @NonNull Builder type(@NonNull Type type) {
-            this.type = type;
+            this.type = Objects.requireNonNull(type, "Cooldown.type");
             return this;
         }
 

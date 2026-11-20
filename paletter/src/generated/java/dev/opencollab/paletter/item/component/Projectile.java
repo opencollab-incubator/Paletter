@@ -129,9 +129,10 @@ public final class Projectile implements ItemComponent {
          *
          * @param projectileEntity the value
          * @return this builder
+         * @throws NullPointerException if the value is null
          */
         public @NonNull Builder projectileEntity(@NonNull String projectileEntity) {
-            this.projectileEntity = projectileEntity;
+            this.projectileEntity = Objects.requireNonNull(projectileEntity, "Projectile.projectileEntity");
             return this;
         }
 

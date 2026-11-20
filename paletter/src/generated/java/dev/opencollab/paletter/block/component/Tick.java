@@ -4,6 +4,7 @@
 package dev.opencollab.paletter.block.component;
 
 import dev.opencollab.paletter.annotation.ServerOnly;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import org.checkerframework.checker.nullness.qual.NonNull;
@@ -126,20 +127,27 @@ public final class Tick implements BlockComponent {
          *
          * @param intervalRange the value
          * @return this builder
+         * @throws NullPointerException if the value is null
          */
         public @NonNull Builder intervalRange(@NonNull List<Float> intervalRange) {
-            this.intervalRange = intervalRange;
+            this.intervalRange = Objects.requireNonNull(intervalRange, "Tick.intervalRange");
             return this;
         }
 
         /**
-         * Sets {@code interval_range}.
+         * Sets {@code interval_range} to the values (at least one value).
          *
-         * @param intervalRange the value
+         * @param first the first value
+         * @param rest the other values
          * @return this builder
          */
-        public @NonNull Builder intervalRange(@NonNull Float... intervalRange) {
-            return intervalRange(List.of(intervalRange));
+        public @NonNull Builder intervalRange(float first, float... rest) {
+            List<Float> values = new ArrayList<>();
+            values.add(first);
+            for (float x : rest) {
+                values.add(x);
+            }
+            return intervalRange(values);
         }
 
         /**

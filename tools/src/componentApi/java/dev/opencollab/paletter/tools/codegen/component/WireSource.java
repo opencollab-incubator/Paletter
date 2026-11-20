@@ -107,7 +107,9 @@ final class WireSource {
         TypeSpec.Builder type = TypeSpec.classBuilder(wireClass(kind)).addModifiers(Modifier.PUBLIC, Modifier.FINAL)
             .addJavadoc("Encoders of the generated {@link $T} types: the rules of {@code data/model/mappings.json} per\nprotocol window, "
                 + "hand transforms by name. Not API.\n", iface)
-            .addAnnotation(AnnotationSpec.builder(SuppressWarnings.class).addMember("value", "{$S, $S}", "unused", "deprecation").build())
+            .addAnnotation(model.removedComponents.stream().anyMatch(c -> c.kind == kind)
+                ? AnnotationSpec.builder(SuppressWarnings.class).addMember("value", "{$S, $S, $S}", "unused", "deprecation", "removal").build()
+                : AnnotationSpec.builder(SuppressWarnings.class).addMember("value", "{$S, $S}", "unused", "deprecation").build())
             .addMethod(MethodSpec.constructorBuilder().addModifiers(Modifier.PRIVATE).build());
         List<MethodSpec> encoders = new ArrayList<>();
         CodeBlock.Builder dispatch = CodeBlock.builder().beginControlFlow("switch (component)");
@@ -118,6 +120,11 @@ final class WireSource {
             } else {
                 dispatch.add("case $T c -> $L", ApiSource.className(c), inline);
             }
+        }
+        // A component that left the model (StandIns): every palette leaves its stand-in out, with a report warning
+        for (Comp c : model.removedComponents.stream().filter(c -> c.kind == kind).toList()) {
+            dispatch.addStatement("case $T c -> ctx.drop($T.NAME, $S)", ApiSource.className(c), ApiSource.className(c),
+                "was removed from Bedrock (a deprecated stand-in)");
         }
         if (kind == Kind.ITEM || kind == Kind.BLOCK) {
             dispatch.addStatement("case $T c -> $T.write(c, ctx, out)", ClassName.get(kind.pkg(), ApiSource.wireOnly(kind)),
@@ -337,9 +344,9 @@ final class WireSource {
         b.endControlFlow();
     }
 
-    /** What a report entry names: the component's {@code NAME}, or a standalone type's object ({@code menu_category}). */
+    /** What a report entry names: the {@code NAME} of the component, or of a standalone type ({@code menu_category}). */
     private CodeBlock name() {
-        return c.standalone ? CodeBlock.of("$S", c.standalonePath) : CodeBlock.of("$T.NAME", ApiSource.className(c));
+        return CodeBlock.of("$T.NAME", ApiSource.className(c));
     }
 
     /** A call of a hand transform; it checks the protocol itself where BDS builds differ. */
@@ -938,6 +945,31 @@ final class WireSource {
         @Override
         public CodeBlock component() {
             return name();
+        }
+
+        @Override
+        public CodeBlock unknown(Rule rule, CodeBlock value) {
+            List<Rule> all = rules(f).stream().filter(Rule::writesValue).toList();
+            Set<String> known = rule.knownValues(f.documentedValues);
+            // The rules of the field that know the same values, written in the same place: the first of them reports
+            List<Rule> group = all.stream().filter(r -> r.eachElement() == rule.eachElement() && known.equals(r.knownValues(f.documentedValues)))
+                .toList();
+            if (!group.isEmpty() && !identity(group.getFirst()).equals(identity(rule))) {
+                return null;
+            }
+            // Leaves any value is written to: through them the value still reaches the wire
+            List<String> sent = all.stream().filter(r -> r.knownValues(f.documentedValues) == null).map(r -> strip(r.wire)).distinct().toList();
+            if (sent.isEmpty()) {
+                return CodeBlock.of("ctx.drop($L, $S + $L + $S)", name(), f.path + " = ", value, " has no known wire value");
+            }
+            List<String> derived = group.stream().map(r -> strip(r.wire)).distinct().toList();
+            return CodeBlock.of("ctx.changed($L, $S + $L + $S)", name(), f.path + " = ", value, " is sent as " + String.join(", ", sent)
+                + ", but " + String.join(", ", derived) + (derived.size() == 1 ? " has" : " have") + " no known wire value for it and keep"
+                + (derived.size() == 1 ? "s its" : " their") + " default");
+        }
+
+        private static String identity(Rule r) {
+            return r.kind() + " " + r.wire + " " + r.element;
         }
 
         @Override

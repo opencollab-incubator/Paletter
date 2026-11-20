@@ -6,6 +6,7 @@ package dev.opencollab.paletter.block.component;
 import dev.opencollab.paletter.annotation.BedrockFormat;
 import dev.opencollab.paletter.internal.component.Check;
 import dev.opencollab.paletter.vanilla.BedrockItemType;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import org.checkerframework.checker.nullness.qual.NonNull;
@@ -160,14 +161,20 @@ public final class DestructibleByMining implements BlockComponent {
         }
 
         /**
-         * Sets {@code item_specific_speeds}.
+         * Sets {@code item_specific_speeds} to the values (at least one value).
          *
-         * @param itemSpecificSpeeds the value
+         * @param first the first value
+         * @param rest the other values
          * @return this builder
          */
-        public @NonNull Builder itemSpecificSpeeds(
-                @NonNull ItemSpecificSpeeds... itemSpecificSpeeds) {
-            return itemSpecificSpeeds(List.of(itemSpecificSpeeds));
+        public @NonNull Builder itemSpecificSpeeds(@NonNull ItemSpecificSpeeds first,
+                @NonNull ItemSpecificSpeeds... rest) {
+            List<ItemSpecificSpeeds> values = new ArrayList<>();
+            values.add(first);
+            for (ItemSpecificSpeeds x : rest) {
+                values.add(x);
+            }
+            return itemSpecificSpeeds(values);
         }
 
         /**

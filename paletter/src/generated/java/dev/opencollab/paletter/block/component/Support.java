@@ -106,9 +106,10 @@ public final class Support implements BlockComponent {
          *
          * @param shape the value
          * @return this builder
+         * @throws NullPointerException if the value is null
          */
         public @NonNull Builder shape(@NonNull Shape shape) {
-            this.shape = shape;
+            this.shape = Objects.requireNonNull(shape, "Support.shape");
             return this;
         }
 

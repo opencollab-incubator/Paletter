@@ -81,7 +81,7 @@ final class ApiSource {
     }
 
     static void write(ApiModel model, String since, Map<String, String> files) {
-        for (Comp c : model.components) {
+        for (Comp c : allComponents(model)) {
             files.put(c.kind.pkg().replace('.', '/') + "/" + c.className + ".java", file(c.kind.pkg(), new ApiSource(c, model, since).valueClass(c.root, true)));
         }
         for (UnionType u : model.unions.values()) {
@@ -92,12 +92,22 @@ final class ApiSource {
             }
         }
         for (Kind kind : Kind.values()) {
-            List<Comp> members = model.components.stream().filter(c -> c.kind == kind && !c.standalone).toList();
+            List<Comp> members = allComponents(model).stream().filter(c -> c.kind == kind && !c.standalone).toList();
             files.put(kind.pkg().replace('.', '/') + "/" + kind.iface() + ".java", file(kind.pkg(), iface(kind, members, model, since)));
             ClassName iface = ClassName.get(kind.pkg(), kind.iface());
             files.put(kind.pkg().replace('.', '/') + "/" + sentinelName(iface).simpleName() + ".java", file(kind.pkg(), sentinel(sentinelName(iface), iface, true)));
         }
     }
+
+    /** @return the generated components and the stand-ins of those that left the model ({@link StandIns}) */
+    static List<Comp> allComponents(ApiModel model) {
+        List<Comp> all = new ArrayList<>(model.components);
+        all.addAll(model.removedComponents);
+        return all;
+    }
+
+    /** {@code @Deprecated(forRemoval = true)}: what left the model, until its history entry is deleted in a major release. */
+    static final AnnotationSpec FOR_REMOVAL = AnnotationSpec.builder(Deprecated.class).addMember("forRemoval", "true").build();
 
     /**
      * The class that keeps a sealed type open: a sealed type Bedrock can add variants to also permits it. It is not
@@ -295,8 +305,17 @@ final class ApiSource {
         // Javadoc
         StringBuilder doc = new StringBuilder();
         String text = top ? c.doc : o.doc;
-        doc.append(lines(text.isEmpty() ? "The {@code " + o.path + "} object." : !top && o.javadoc ? text : Docs.escape(text)));
-        if (top && !c.standalone) {
+        if (top && c.removed) {
+            doc.append(lines("Removed: Bedrock no longer has {@code " + c.name + "}. This stand-in keeps code that uses it compiling until the"
+                + " next major release; its fields return their defaults, its builder ignores what it is given, and every palette leaves it"
+                + " out with a report warning."));
+        } else {
+            doc.append(lines(text.isEmpty() ? "The {@code " + o.path + "} object." : !top && o.javadoc ? text : Docs.escape(text)));
+        }
+        if (!top && o.removed) {
+            doc.append(lines("Removed from Bedrock with the field that held it: a stand-in until the next major release."));
+        }
+        if (top && !c.standalone && !c.removed) {
             doc.append("<p>\nAdd-on JSON: {@code \"").append(c.name).append("\"}")
                 .append(c.page.isEmpty() || Docs.learnUrl(c.page) != null ? "" : ", documented in {@code " + c.page + "}").append(".\n");
             if (c.bedrockSince != null) {
@@ -330,7 +349,9 @@ final class ApiSource {
                 doc.append("@see <a href=\"").append(url).append("\">Microsoft Learn: ").append(Docs.escape(c.name)).append("</a>\n");
             }
             doc.append("@since ").append(since).append('\n');
-            if (c.replacement != null) {
+            if (c.removed) {
+                doc.append("@deprecated Bedrock no longer has it; it goes in the next major release\n");
+            } else if (c.replacement != null) {
                 doc.append("@deprecated ").append(replacementDoc(c.replacement)).append('\n');
             } else if (c.rejected != null) {
                 doc.append("@deprecated ").append(String.join("\n       ", Docs.wrap(Docs.escape(rejectedText())))).append('\n');
@@ -365,7 +386,9 @@ final class ApiSource {
             }
             type.addAnnotation(serverOnly.build());
         }
-        if (top && (c.deprecated() || c.replacement != null || c.rejected != null)) {
+        if (o.removed) {
+            type.addAnnotation(FOR_REMOVAL);
+        } else if (top && (c.deprecated() || c.replacement != null || c.rejected != null)) {
             type.addAnnotation(Deprecated.class);
         }
         if (top && c.replacement != null) {
@@ -385,6 +408,10 @@ final class ApiSource {
         if (top && !c.standalone) {
             type.addField(FieldSpec.builder(STRING, "NAME", Modifier.PUBLIC, Modifier.STATIC, Modifier.FINAL)
                 .addJavadoc("The component name in add-on JSON.\n").initializer("$S", c.name).build());
+        } else if (top) {
+            type.addField(FieldSpec.builder(STRING, "NAME", Modifier.PUBLIC, Modifier.STATIC, Modifier.FINAL)
+                .addJavadoc("The key of this object in the add-on JSON {@code description}; report entries name it.\n")
+                .initializer("$S", c.standalonePath).build());
         }
         MethodSpec.Builder constructor = MethodSpec.constructorBuilder().addModifiers(Modifier.PRIVATE);
         for (Field f : allFields(o)) {
@@ -413,6 +440,13 @@ final class ApiSource {
                 .addJavadoc("Returns {@link #$L()}: this is its name from before Bedrock renamed its add-on JSON key to {@code $L}.\n\n"
                     + "@return the value of {@link #$L()}\n@deprecated renamed to {@link #$L()}\n", r.now().java, r.now().json, r.now().java, r.now().java)
                 .addStatement("return $N()", r.now().java).build());
+        }
+        for (Field f : o.removedFields) {
+            type.addMethod(MethodSpec.methodBuilder(f.java).addModifiers(Modifier.PUBLIC).addAnnotation(FOR_REMOVAL).returns(standInType(f))
+                .addJavadoc("Bedrock no longer has add-on JSON {@code $L}: this stand-in returns $L, and its builder setter does nothing.\n\n"
+                    + "@return $L\n@deprecated Bedrock no longer has it; it goes in the next major release\n",
+                    f.json, standInWhat(f), standInWhat(f))
+                .addStatement("return $L", standInValue(f)).build());
         }
         valueMethods(type, self, allFields(o));
 
@@ -478,6 +512,30 @@ final class ApiSource {
             }
         }
         return out;
+    }
+
+    /** The type of a removed field's stand-in: the field's own, nullable where it had neither a default nor a primitive type. */
+    private TypeName standInType(Field f) {
+        return primitive(f) || f.defaultValue != null ? recordType(f) : nullable(typeName(f.type, true));
+    }
+
+    /** What a removed field's stand-in returns: its default, else the zero of a primitive, else null. */
+    private CodeBlock standInValue(Field f) {
+        if (f.defaultValue != null) {
+            return literal(f.type, f.defaultValue);
+        }
+        if (primitive(f)) {
+            return switch (((Scalar) f.type).kind()) {
+                case BOOL -> CodeBlock.of("false");
+                case FLOAT -> CodeBlock.of("0.0f");
+                default -> CodeBlock.of("0");
+            };
+        }
+        return CodeBlock.of("null");
+    }
+
+    private static String standInWhat(Field f) {
+        return f.defaultValue != null ? "its default, " + Docs.literal(f.defaultValue) : primitive(f) ? "the zero value" : "null";
     }
 
     /** {@code equals}, {@code hashCode} and {@code toString} with the semantics of a record of the same fields. */
@@ -842,7 +900,14 @@ final class ApiSource {
                     + "@param $L the value\n@return this builder\n@deprecated renamed to {@link #$L}\n", r.now().java, r.now().json, r.oldName(), r.now().java)
                 .addStatement("return $N($N)", r.now().java, r.oldName()).build());
         }
-        MethodSpec.Builder build = MethodSpec.methodBuilder("build").addModifiers(Modifier.PUBLIC).returns(nonNull(self))
+        for (Field f : o.removedFields) {
+            type.addMethod(MethodSpec.methodBuilder(f.java).addModifiers(Modifier.PUBLIC).addAnnotation(FOR_REMOVAL)
+                .returns(nonNull(builder)).addParameter(standInType(f), f.java)
+                .addJavadoc("Does nothing: Bedrock no longer has add-on JSON {@code $L}.\n\n@param $L ignored\n@return this builder\n"
+                    + "@deprecated Bedrock no longer has it; it goes in the next major release\n", f.json, f.java)
+                .addStatement("return this").build());
+        }
+        MethodSpec.Builder build =MethodSpec.methodBuilder("build").addModifiers(Modifier.PUBLIC).returns(nonNull(self))
             .addJavadoc("Builds the value from the fields set and the defaults.\n\n@return the value\n@throws IllegalStateException if a required field is not set\n@throws IllegalArgumentException if a value is out of range\n");
         String owner = c.className + (o == c.root ? "" : "." + o.name);
         for (Field f : allFields(o)) {
@@ -858,27 +923,29 @@ final class ApiSource {
 
     private void setters(TypeSpec.Builder type, ClassName builder, Field f) {
         String json = f.json == null ? f.java : f.json;
+        // A null for a @NonNull field fails here, not later in build(); a null for a nullable one unsets it
+        boolean nonNull = !primitive(f) && !nullable(f);
         MethodSpec.Builder main = MethodSpec.methodBuilder(f.java).addModifiers(Modifier.PUBLIC).returns(nonNull(builder))
-            .addJavadoc(SETTER, "Sets {@code " + json + "}.", f.java)
-            .addParameter(recordType(f), f.java)
-            .addStatement("this.$N = $N", f.java, f.java);
+            .addJavadoc(nonNull ? SETTER + "@throws NullPointerException if the value is null\n" : SETTER, "Sets {@code " + json + "}.", f.java)
+            .addParameter(recordType(f), f.java);
+        if (nonNull) {
+            main.addStatement("this.$N = $T.requireNonNull($N, $S)", f.java, OBJECTS, f.java,
+                String.join(".", builder.enclosingClassName().simpleNames()) + "." + f.java);
+        } else {
+            main.addStatement("this.$N = $N", f.java, f.java);
+        }
         type.addMethod(main.addStatement("return this").build());
         if (f.type instanceof UnionRef u) {
             unionSetters(type, builder, f, u.union(), json);
         }
         if (f.type instanceof ListOf l) {
-            TypeName element = typeName(l.element(), true);
-            type.addMethod(MethodSpec.methodBuilder(f.java).addModifiers(Modifier.PUBLIC).returns(nonNull(builder)).varargs()
-                .addJavadoc(SETTER, "Sets {@code " + json + "}.", f.java).addParameter(com.palantir.javapoet.ArrayTypeName.of(nonNull(element)), f.java)
-                .addStatement("return $N($T.of($N))", f.java, LIST, f.java).build());
+            // At least one value, so that a null or an empty list goes to the List overload: no ambiguous call
+            varargs(type, builder, f, json, typeName(l.element(), false), typeName(l.element(), true), "values.add(first)",
+                CodeBlock.of("$N.add(x)", "values"), "the values");
             if (l.element() instanceof Scalar s && s.kind() == ScalarKind.STRING && f.descriptor != null) {
                 ClassName handle = f.descriptor.equals("item") ? ITEM_TYPE : BLOCK_TYPE;
-                type.addMethod(MethodSpec.methodBuilder(f.java).addModifiers(Modifier.PUBLIC).returns(nonNull(builder)).varargs()
-                    .addJavadoc(SETTER, "Sets {@code " + json + "} to the identifiers of vanilla or custom " + f.descriptor + "s.", f.java)
-                    .addParameter(com.palantir.javapoet.ArrayTypeName.of(nonNull(handle)), f.java)
-                    .addStatement("$T<$T> identifiers = new $T<>()", LIST, STRING, ArrayList.class)
-                    .beginControlFlow("for ($T type : $N)", handle, f.java).addStatement("identifiers.add(type.identifier())").endControlFlow()
-                    .addStatement("return $N(identifiers)", f.java).build());
+                varargs(type, builder, f, json, handle, STRING, "values.add(first.identifier())",
+                    CodeBlock.of("$N.add(x.identifier())", "values"), "the identifiers of vanilla or custom " + f.descriptor + "s");
             }
         }
         if (f.type instanceof Scalar s && s.kind() == ScalarKind.STRING && f.descriptor != null) {
@@ -930,7 +997,10 @@ final class ApiSource {
         }
     }
 
-    /** {@code name(T first, T... rest)}: a list of at least one value, passed on as the list. */
+    /**
+     * {@code name(T first, T... rest)}: a list of at least one value, passed on as the list. Not {@code name(T...)}: then
+     * {@code name(null)} would be ambiguous with the {@code List} overload, which takes an empty list and a null.
+     */
     private void varargs(TypeSpec.Builder type, ClassName builder, Field f, String json, TypeName element, TypeName stored, String first,
                          CodeBlock each, String meaning) {
         TypeName param = element.isPrimitive() ? element : nonNull(element);

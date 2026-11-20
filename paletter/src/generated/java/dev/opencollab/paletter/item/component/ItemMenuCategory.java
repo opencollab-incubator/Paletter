@@ -17,6 +17,11 @@ import org.checkerframework.checker.nullness.qual.Nullable;
  * @since 1.0.0
  */
 public final class ItemMenuCategory {
+    /**
+     * The key of this object in the add-on JSON {@code description}; report entries name it.
+     */
+    public static final String NAME = "menu_category";
+
     private final @Nullable Category category;
 
     private final @Nullable String group;

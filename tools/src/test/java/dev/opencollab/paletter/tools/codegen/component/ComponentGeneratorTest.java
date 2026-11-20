@@ -511,6 +511,60 @@ void theModelHasTheComponentsOfTheFixture() {
         assertTrue(ComponentGenerator.generate(in).get(WIDGET_WIRE).contains("default -> ctx.drop(Widget.NAME, \"rarity = \""));
     }
 
+    private static JsonObject widgetField(Inputs in, String field) {
+        return in.mappings().getAsJsonObject("components").getAsJsonObject("item:test:widget").getAsJsonObject("fields").getAsJsonObject(field);
+    }
+
+    private static int count(String text, String part) {
+        return text.split(java.util.regex.Pattern.quote(part), -1).length - 1;
+    }
+
+    @Test
+    void anUnknownValueThatDecidesSeveralLeavesWarnsOnce() {
+        // Two tables of the same values: one warning per unknown value, from the first; the value itself is sent too
+        Inputs in = inputs();
+        widgetField(in, "mode").add("rules", JsonParser.parseString("""
+            [{"kind": "table", "table": {"fast": "0", "slow": "1"}, "nbt": "byte", "tags": [], "wire": "test:widget.mode"},
+             {"kind": "table", "table": {"fast": "2", "slow": "3"}, "nbt": "byte", "tags": [], "wire": "test:widget.mode_bits"},
+             {"kind": "identity", "nbt": "string", "tags": [], "wire": "test:widget.mode_name"}]""").getAsJsonArray());
+        String wire = ComponentGenerator.generate(in).get(WIDGET_WIRE);
+        assertEquals(1, count(wire, "\"mode = \""), wire);
+        assertTrue(wire.contains("ctx.changed(Widget.NAME, \"mode = \" + v0.value() + \" is sent as test:widget.mode_name, but "
+            + "test:widget.mode, test:widget.mode_bits have no known wire value for it and keep their default\")"), wire);
+        // Without the leaf that sends the value, the value is left out: still one warning
+        widgetField(in, "mode").getAsJsonArray("rules").remove(2);
+        wire = ComponentGenerator.generate(in).get(WIDGET_WIRE);
+        assertEquals(1, count(wire, "\"mode = \""), wire);
+        assertTrue(wire.contains("ctx.drop(Widget.NAME, \"mode = \" + v0.value() + \" has no known wire value\")"), wire);
+    }
+
+    @Test
+    void anUnknownValueOfBitFlagsWarnsOncePerValue() {
+        Inputs in = inputs();
+        widgetField(in, "tags").add("rules", JsonParser.parseString("""
+            [{"kind": "bitset", "bits": {"a": 1, "b": 2}, "nbt": "int", "tags": [], "wire": "test:widget.low"},
+             {"kind": "bitset", "bits": {"a": 4, "b": 8}, "nbt": "int", "tags": [], "wire": "test:widget.high"}]""").getAsJsonArray());
+        String wire = ComponentGenerator.generate(in).get(WIDGET_WIRE);
+        assertEquals(1, count(wire, "\"tags = \""), wire);
+        assertTrue(wire.matches("(?s).*default -> \\{\\s*ctx\\.drop\\(Widget\\.NAME, \"tags = \" \\+ String\\.valueOf\\(x\\d+\\) \\+ \" has no known wire value\"\\);\\s*yield 0;\\s*}.*"),
+            wire);
+        assertEquals(1, count(wire, "default -> 0;"), "the second bitset sets no bits for it and does not warn again: " + wire);
+    }
+
+    @Test
+    void buildersRejectNullAtOnceAndTheirListVarargsTakeAtLeastOneValue() {
+        String widget = ComponentGenerator.generate(inputs()).get("dev/opencollab/paletter/item/component/Widget.java");
+        // A @NonNull field: the setter throws; a nullable one: null unsets it
+        assertTrue(widget.contains("this.label = Objects.requireNonNull(label, \"Widget.label\");"), widget);
+        assertTrue(widget.contains("this.speed = speed;"), widget);
+        assertTrue(widget.contains("throw new IllegalStateException(\"Widget.label is required\");"), widget);
+        // name(first, rest...): name(null) and name(List.of()) are the List overload, never ambiguous
+        assertTrue(widget.contains("public @NonNull Builder tags(@NonNull String first, @NonNull String... rest)"), widget);
+        assertTrue(widget.contains("public @NonNull Builder entries(@NonNull Entry first, @NonNull Entry... rest)"), widget);
+        assertFalse(widget.contains("Builder tags(@NonNull String... tags)"), widget);
+        assertTrue(widget.contains("public @NonNull Builder entries(@Nullable List<Entry> entries)"), widget);
+    }
+
     @Test
     void anOptionalFieldIsNotRequiredWhateverTheDocsSay() {
         String widget = ComponentGenerator.generate(inputs()).get("dev/opencollab/paletter/item/component/Widget.java");

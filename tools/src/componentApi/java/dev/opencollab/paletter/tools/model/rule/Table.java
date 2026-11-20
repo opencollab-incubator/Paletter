@@ -103,9 +103,17 @@ public final class Table extends Rule {
         if (fallback != null) {
             e.code().addStatement("default -> $L", e.write(typed(fallback)));
         } else {
-            e.code().addStatement("default -> ctx.drop($L, $S + $L + $S)", e.component(), e.path() + " = ", key, " has no known wire value");
+            CodeBlock unknown = e.unknown(this, key);
+            if (unknown != null) {
+                e.code().addStatement("default -> $L", unknown);
+            }
         }
         e.code().endControlFlow();
+    }
+
+    @Override
+    public Set<String> knownValues(List<String> documented) {
+        return openFallback(documented) != null ? null : new TreeSet<>(table.keySet());
     }
 
     private String typed(String value) {

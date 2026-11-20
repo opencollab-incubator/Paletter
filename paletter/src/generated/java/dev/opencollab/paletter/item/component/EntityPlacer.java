@@ -7,6 +7,7 @@ import dev.opencollab.paletter.annotation.BedrockFormat;
 import dev.opencollab.paletter.internal.component.Check;
 import dev.opencollab.paletter.vanilla.BedrockBlockState;
 import dev.opencollab.paletter.vanilla.BedrockBlockType;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -141,20 +142,27 @@ public final class EntityPlacer implements ItemComponent {
          *
          * @param dispenseOn the value
          * @return this builder
+         * @throws NullPointerException if the value is null
          */
         public @NonNull Builder dispenseOn(@NonNull List<UseOn> dispenseOn) {
-            this.dispenseOn = dispenseOn;
+            this.dispenseOn = Objects.requireNonNull(dispenseOn, "EntityPlacer.dispenseOn");
             return this;
         }
 
         /**
-         * Sets {@code dispense_on}.
+         * Sets {@code dispense_on} to the values (at least one value).
          *
-         * @param dispenseOn the value
+         * @param first the first value
+         * @param rest the other values
          * @return this builder
          */
-        public @NonNull Builder dispenseOn(@NonNull UseOn... dispenseOn) {
-            return dispenseOn(List.of(dispenseOn));
+        public @NonNull Builder dispenseOn(@NonNull UseOn first, @NonNull UseOn... rest) {
+            List<UseOn> values = new ArrayList<>();
+            values.add(first);
+            for (UseOn x : rest) {
+                values.add(x);
+            }
+            return dispenseOn(values);
         }
 
         /**
@@ -173,20 +181,27 @@ public final class EntityPlacer implements ItemComponent {
          *
          * @param useOn the value
          * @return this builder
+         * @throws NullPointerException if the value is null
          */
         public @NonNull Builder useOn(@NonNull List<UseOn> useOn) {
-            this.useOn = useOn;
+            this.useOn = Objects.requireNonNull(useOn, "EntityPlacer.useOn");
             return this;
         }
 
         /**
-         * Sets {@code use_on}.
+         * Sets {@code use_on} to the values (at least one value).
          *
-         * @param useOn the value
+         * @param first the first value
+         * @param rest the other values
          * @return this builder
          */
-        public @NonNull Builder useOn(@NonNull UseOn... useOn) {
-            return useOn(List.of(useOn));
+        public @NonNull Builder useOn(@NonNull UseOn first, @NonNull UseOn... rest) {
+            List<UseOn> values = new ArrayList<>();
+            values.add(first);
+            for (UseOn x : rest) {
+                values.add(x);
+            }
+            return useOn(values);
         }
 
         /**
@@ -351,9 +366,10 @@ public final class EntityPlacer implements ItemComponent {
              *
              * @param states the value
              * @return this builder
+             * @throws NullPointerException if the value is null
              */
             public @NonNull Builder states(@NonNull Map<String, Object> states) {
-                this.states = states;
+                this.states = Objects.requireNonNull(states, "EntityPlacer.UseOn.states");
                 return this;
             }
 

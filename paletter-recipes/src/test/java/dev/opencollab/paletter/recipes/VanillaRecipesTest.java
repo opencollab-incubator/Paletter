@@ -81,7 +81,12 @@ class VanillaRecipesTest {
         assertThrows(IllegalArgumentException.class, () -> new Ingredient.Tag("minecraft:planks", 0));
         assertThrows(IllegalArgumentException.class, () -> new Ingredient.AnyVariant(BedrockItems.STICK, 0));
         assertThrows(IllegalArgumentException.class, () -> Result.builder().item(BedrockItems.TORCH.variant()).count(0).build());
-        assertThrows(NullPointerException.class, () -> Result.builder().build());
+        // The builder convention: a missing required field fails build(), a null fails its setter at once
+        assertThrows(IllegalStateException.class, () -> Result.builder().build());
+        assertThrows(IllegalStateException.class, () -> Recipe.Shapeless.builder().id("x").build());
+        assertThrows(IllegalStateException.class, () -> Recipe.SmithingTrim.builder().build());
+        assertThrows(NullPointerException.class, () -> Result.builder().item(null));
+        assertThrows(NullPointerException.class, () -> shaped.station(null));
         Recipe.Shaped built = shaped.grid(1, 1).results(List.of(result)).build();
         assertEquals(built, built.toBuilder().build());
         assertEquals(Unlock.of(UnlockingContext.NONE), built.unlock(), "the default unlock");

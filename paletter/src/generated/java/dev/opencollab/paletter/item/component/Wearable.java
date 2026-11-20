@@ -159,9 +159,10 @@ public final class Wearable implements ItemComponent {
          *
          * @param slot the value
          * @return this builder
+         * @throws NullPointerException if the value is null
          */
         public @NonNull Builder slot(@NonNull Slot slot) {
-            this.slot = slot;
+            this.slot = Objects.requireNonNull(slot, "Wearable.slot");
             return this;
         }
 

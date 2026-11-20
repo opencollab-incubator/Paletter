@@ -5,6 +5,7 @@ package dev.opencollab.paletter.item.component;
 
 import dev.opencollab.paletter.annotation.BedrockFormat;
 import dev.opencollab.paletter.vanilla.BedrockItemType;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import org.checkerframework.checker.nullness.qual.NonNull;
@@ -155,20 +156,27 @@ public final class Shooter implements ItemComponent {
          *
          * @param ammunition the value
          * @return this builder
+         * @throws NullPointerException if the value is null
          */
         public @NonNull Builder ammunition(@NonNull List<Ammunition> ammunition) {
-            this.ammunition = ammunition;
+            this.ammunition = Objects.requireNonNull(ammunition, "Shooter.ammunition");
             return this;
         }
 
         /**
-         * Sets {@code ammunition}.
+         * Sets {@code ammunition} to the values (at least one value).
          *
-         * @param ammunition the value
+         * @param first the first value
+         * @param rest the other values
          * @return this builder
          */
-        public @NonNull Builder ammunition(@NonNull Ammunition... ammunition) {
-            return ammunition(List.of(ammunition));
+        public @NonNull Builder ammunition(@NonNull Ammunition first, @NonNull Ammunition... rest) {
+            List<Ammunition> values = new ArrayList<>();
+            values.add(first);
+            for (Ammunition x : rest) {
+                values.add(x);
+            }
+            return ammunition(values);
         }
 
         /**

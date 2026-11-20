@@ -6,6 +6,7 @@ package dev.opencollab.paletter.block.component;
 import dev.opencollab.paletter.annotation.BedrockExperiment;
 import dev.opencollab.paletter.annotation.BedrockFormat;
 import dev.opencollab.paletter.internal.component.Check;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -125,10 +126,11 @@ public final class ConnectionRule implements BlockComponent {
          *
          * @param acceptsConnectionsFrom the value
          * @return this builder
+         * @throws NullPointerException if the value is null
          */
         public @NonNull Builder acceptsConnectionsFrom(
                 @NonNull AcceptsConnectionsFrom acceptsConnectionsFrom) {
-            this.acceptsConnectionsFrom = acceptsConnectionsFrom;
+            this.acceptsConnectionsFrom = Objects.requireNonNull(acceptsConnectionsFrom, "ConnectionRule.acceptsConnectionsFrom");
             return this;
         }
 
@@ -137,21 +139,29 @@ public final class ConnectionRule implements BlockComponent {
          *
          * @param enabledDirections the value
          * @return this builder
+         * @throws NullPointerException if the value is null
          */
         public @NonNull Builder enabledDirections(
                 @NonNull List<EnabledDirections> enabledDirections) {
-            this.enabledDirections = enabledDirections;
+            this.enabledDirections = Objects.requireNonNull(enabledDirections, "ConnectionRule.enabledDirections");
             return this;
         }
 
         /**
-         * Sets {@code enabled_directions}.
+         * Sets {@code enabled_directions} to the values (at least one value).
          *
-         * @param enabledDirections the value
+         * @param first the first value
+         * @param rest the other values
          * @return this builder
          */
-        public @NonNull Builder enabledDirections(@NonNull EnabledDirections... enabledDirections) {
-            return enabledDirections(List.of(enabledDirections));
+        public @NonNull Builder enabledDirections(@NonNull EnabledDirections first,
+                @NonNull EnabledDirections... rest) {
+            List<EnabledDirections> values = new ArrayList<>();
+            values.add(first);
+            for (EnabledDirections x : rest) {
+                values.add(x);
+            }
+            return enabledDirections(values);
         }
 
         /**

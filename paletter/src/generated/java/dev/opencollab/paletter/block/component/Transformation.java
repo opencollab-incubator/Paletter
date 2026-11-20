@@ -177,9 +177,10 @@ public final class Transformation implements BlockComponent {
          *
          * @param rotation the value
          * @return this builder
+         * @throws NullPointerException if the value is null
          */
         public @NonNull Builder rotation(@NonNull Vec3 rotation) {
-            this.rotation = rotation;
+            this.rotation = Objects.requireNonNull(rotation, "Transformation.rotation");
             return this;
         }
 
@@ -200,9 +201,10 @@ public final class Transformation implements BlockComponent {
          *
          * @param rotationPivot the value
          * @return this builder
+         * @throws NullPointerException if the value is null
          */
         public @NonNull Builder rotationPivot(@NonNull Vec3 rotationPivot) {
-            this.rotationPivot = rotationPivot;
+            this.rotationPivot = Objects.requireNonNull(rotationPivot, "Transformation.rotationPivot");
             return this;
         }
 
@@ -223,9 +225,10 @@ public final class Transformation implements BlockComponent {
          *
          * @param scale the value
          * @return this builder
+         * @throws NullPointerException if the value is null
          */
         public @NonNull Builder scale(@NonNull Vec3 scale) {
-            this.scale = scale;
+            this.scale = Objects.requireNonNull(scale, "Transformation.scale");
             return this;
         }
 
@@ -246,9 +249,10 @@ public final class Transformation implements BlockComponent {
          *
          * @param scalePivot the value
          * @return this builder
+         * @throws NullPointerException if the value is null
          */
         public @NonNull Builder scalePivot(@NonNull Vec3 scalePivot) {
-            this.scalePivot = scalePivot;
+            this.scalePivot = Objects.requireNonNull(scalePivot, "Transformation.scalePivot");
             return this;
         }
 
@@ -269,9 +273,10 @@ public final class Transformation implements BlockComponent {
          *
          * @param translation the value
          * @return this builder
+         * @throws NullPointerException if the value is null
          */
         public @NonNull Builder translation(@NonNull Vec3 translation) {
-            this.translation = translation;
+            this.translation = Objects.requireNonNull(translation, "Transformation.translation");
             return this;
         }
 

@@ -532,7 +532,7 @@ public final class ItemWire {
             case "slot.armor.legs" -> out.put("item_properties.allow_off_hand", (byte) 0);
             case "slot.weapon.mainhand" -> out.put("item_properties.allow_off_hand", (byte) 0);
             case "slot.weapon.offhand" -> out.put("item_properties.allow_off_hand", (byte) 1);
-            default -> ctx.drop(Wearable.NAME, "slot = " + v0.value() + " has no known wire value");
+            default -> ctx.changed(Wearable.NAME, "slot = " + v0.value() + " is sent as minecraft:wearable.slot, but item_properties.allow_off_hand, item_properties.max_stack_size have no known wire value for it and keep their default");
         }
         switch (v0.value()) {
             case "slot.armor.body" -> out.put("item_properties.max_stack_size", 1);
@@ -542,7 +542,6 @@ public final class ItemWire {
             case "slot.armor.legs" -> out.put("item_properties.max_stack_size", 1);
             case "slot.weapon.mainhand" -> out.put("item_properties.max_stack_size", 64);
             case "slot.weapon.offhand" -> out.put("item_properties.max_stack_size", 64);
-            default -> ctx.drop(Wearable.NAME, "slot = " + v0.value() + " has no known wire value");
         }
         out.put("minecraft:wearable.slot", v0.value());
     }
@@ -566,7 +565,7 @@ public final class ItemWire {
                 case "items" -> out.put("item_properties.creative_category", 4);
                 case "nature" -> out.put("item_properties.creative_category", 2);
                 case "none" -> out.put("item_properties.creative_category", 5);
-                default -> ctx.drop("menu_category", "category = " + v0.value() + " has no known wire value");
+                default -> ctx.drop(ItemMenuCategory.NAME, "category = " + v0.value() + " has no known wire value");
             }
         } else {
             out.put("item_properties.creative_category", 5);
@@ -582,7 +581,7 @@ public final class ItemWire {
             switch (String.valueOf(v2)) {
                 case "false" -> out.put("item_properties.hidden_in_commands", (byte) 2);
                 case "true" -> out.put("item_properties.hidden_in_commands", (byte) 1);
-                default -> ctx.drop("menu_category", "is_hidden_in_commands = " + String.valueOf(v2) + " has no known wire value");
+                default -> ctx.drop(ItemMenuCategory.NAME, "is_hidden_in_commands = " + String.valueOf(v2) + " has no known wire value");
             }
         } else {
             out.put("item_properties.hidden_in_commands", (byte) 2);

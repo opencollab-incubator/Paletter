@@ -128,9 +128,10 @@ public final class Movable implements BlockComponent {
          *
          * @param movementType the value
          * @return this builder
+         * @throws NullPointerException if the value is null
          */
         public @NonNull Builder movementType(@NonNull MovementType movementType) {
-            this.movementType = movementType;
+            this.movementType = Objects.requireNonNull(movementType, "Movable.movementType");
             return this;
         }
 
@@ -139,9 +140,10 @@ public final class Movable implements BlockComponent {
          *
          * @param sticky the value
          * @return this builder
+         * @throws NullPointerException if the value is null
          */
         public @NonNull Builder sticky(@NonNull Sticky sticky) {
-            this.sticky = sticky;
+            this.sticky = Objects.requireNonNull(sticky, "Movable.sticky");
             return this;
         }
 

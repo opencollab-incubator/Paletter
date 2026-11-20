@@ -122,7 +122,7 @@ class IngredientsTest {
     }
 
     private static CustomItem item(String name, String... tags) {
-        return CustomItem.builder("example:" + name).component(Icon.of(name)).component(Tags.builder().tags(tags).build()).menuCategory(CreativeCategory.ITEMS).build();
+        return CustomItem.builder("example:" + name).component(Icon.of(name)).component(Tags.builder().tags(List.of(tags)).build()).menuCategory(CreativeCategory.ITEMS).build();
     }
 
     @Test

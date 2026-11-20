@@ -4,6 +4,7 @@
 package dev.opencollab.paletter.block.component;
 
 import dev.opencollab.paletter.annotation.BedrockFormat;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import org.checkerframework.checker.nullness.qual.NonNull;
@@ -122,20 +123,27 @@ public final class CraftingTable implements BlockComponent {
          *
          * @param craftingTags the value
          * @return this builder
+         * @throws NullPointerException if the value is null
          */
         public @NonNull Builder craftingTags(@NonNull List<String> craftingTags) {
-            this.craftingTags = craftingTags;
+            this.craftingTags = Objects.requireNonNull(craftingTags, "CraftingTable.craftingTags");
             return this;
         }
 
         /**
-         * Sets {@code crafting_tags}.
+         * Sets {@code crafting_tags} to the values (at least one value).
          *
-         * @param craftingTags the value
+         * @param first the first value
+         * @param rest the other values
          * @return this builder
          */
-        public @NonNull Builder craftingTags(@NonNull String... craftingTags) {
-            return craftingTags(List.of(craftingTags));
+        public @NonNull Builder craftingTags(@NonNull String first, @NonNull String... rest) {
+            List<String> values = new ArrayList<>();
+            values.add(first);
+            for (String x : rest) {
+                values.add(x);
+            }
+            return craftingTags(values);
         }
 
         /**

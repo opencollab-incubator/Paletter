@@ -287,9 +287,10 @@ public final class Geometry implements BlockComponent {
          *
          * @param cullingLayer the value
          * @return this builder
+         * @throws NullPointerException if the value is null
          */
         public @NonNull Builder cullingLayer(@NonNull String cullingLayer) {
-            this.cullingLayer = cullingLayer;
+            this.cullingLayer = Objects.requireNonNull(cullingLayer, "Geometry.cullingLayer");
             return this;
         }
 
@@ -298,9 +299,10 @@ public final class Geometry implements BlockComponent {
          *
          * @param cullingShape the value
          * @return this builder
+         * @throws NullPointerException if the value is null
          */
         public @NonNull Builder cullingShape(@NonNull String cullingShape) {
-            this.cullingShape = cullingShape;
+            this.cullingShape = Objects.requireNonNull(cullingShape, "Geometry.cullingShape");
             return this;
         }
 
@@ -309,9 +311,10 @@ public final class Geometry implements BlockComponent {
          *
          * @param identifier the value
          * @return this builder
+         * @throws NullPointerException if the value is null
          */
         public @NonNull Builder identifier(@NonNull String identifier) {
-            this.identifier = identifier;
+            this.identifier = Objects.requireNonNull(identifier, "Geometry.identifier");
             return this;
         }
 

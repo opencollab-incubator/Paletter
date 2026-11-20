@@ -138,9 +138,10 @@ public final class RandomOffset implements BlockComponent {
          *
          * @param x the value
          * @return this builder
+         * @throws NullPointerException if the value is null
          */
         public @NonNull Builder x(@NonNull X x) {
-            this.x = x;
+            this.x = Objects.requireNonNull(x, "RandomOffset.x");
             return this;
         }
 
@@ -149,9 +150,10 @@ public final class RandomOffset implements BlockComponent {
          *
          * @param y the value
          * @return this builder
+         * @throws NullPointerException if the value is null
          */
         public @NonNull Builder y(@NonNull X y) {
-            this.y = y;
+            this.y = Objects.requireNonNull(y, "RandomOffset.y");
             return this;
         }
 
@@ -160,9 +162,10 @@ public final class RandomOffset implements BlockComponent {
          *
          * @param z the value
          * @return this builder
+         * @throws NullPointerException if the value is null
          */
         public @NonNull Builder z(@NonNull X z) {
-            this.z = z;
+            this.z = Objects.requireNonNull(z, "RandomOffset.z");
             return this;
         }
 
@@ -393,9 +396,10 @@ public final class RandomOffset implements BlockComponent {
              *
              * @param range the value
              * @return this builder
+             * @throws NullPointerException if the value is null
              */
             public @NonNull Builder range(@NonNull Range range) {
-                this.range = range;
+                this.range = Objects.requireNonNull(range, "RandomOffset.X.range");
                 return this;
             }
 

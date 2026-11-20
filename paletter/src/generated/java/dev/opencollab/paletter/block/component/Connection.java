@@ -6,6 +6,7 @@ package dev.opencollab.paletter.block.component;
 import dev.opencollab.paletter.annotation.BedrockExperiment;
 import dev.opencollab.paletter.annotation.BedrockFormat;
 import dev.opencollab.paletter.internal.component.Check;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -105,20 +106,28 @@ public final class Connection implements BlockTrait {
          *
          * @param enabledStates the value
          * @return this builder
+         * @throws NullPointerException if the value is null
          */
         public @NonNull Builder enabledStates(@NonNull List<EnabledStates> enabledStates) {
-            this.enabledStates = enabledStates;
+            this.enabledStates = Objects.requireNonNull(enabledStates, "Connection.enabledStates");
             return this;
         }
 
         /**
-         * Sets {@code enabled_states}.
+         * Sets {@code enabled_states} to the values (at least one value).
          *
-         * @param enabledStates the value
+         * @param first the first value
+         * @param rest the other values
          * @return this builder
          */
-        public @NonNull Builder enabledStates(@NonNull EnabledStates... enabledStates) {
-            return enabledStates(List.of(enabledStates));
+        public @NonNull Builder enabledStates(@NonNull EnabledStates first,
+                @NonNull EnabledStates... rest) {
+            List<EnabledStates> values = new ArrayList<>();
+            values.add(first);
+            for (EnabledStates x : rest) {
+                values.add(x);
+            }
+            return enabledStates(values);
         }
 
         /**

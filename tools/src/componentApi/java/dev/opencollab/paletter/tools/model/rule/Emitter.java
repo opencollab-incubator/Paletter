@@ -82,6 +82,18 @@ public interface Emitter {
     /** @return how a report ({@code ctx.drop}) names the component */
     CodeBlock component();
 
+    /**
+     * The report of a value a switching rule ({@link Rule#knownValues}) has no leaf for. A field's rules that know the same
+     * values report once per value: the first of them gets the statement, the others null, so that one unknown value is
+     * one warning, however many leaves it decides. The statement says whether the value still reaches the wire through
+     * another rule of the field ({@code ctx.changed}) or not at all ({@code ctx.drop}).
+     *
+     * @param rule  the rule being written
+     * @param value the value as a string expression
+     * @return the statement (no semicolon) for the rule's {@code default}, or null if another rule reports it
+     */
+    CodeBlock unknown(Rule rule, CodeBlock value);
+
     /** @return the field's JSON path */
     String path();
 

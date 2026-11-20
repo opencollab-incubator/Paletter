@@ -6,6 +6,7 @@ package dev.opencollab.paletter.item.component;
 import dev.opencollab.paletter.annotation.BedrockFormat;
 import dev.opencollab.paletter.annotation.ServerOnly;
 import dev.opencollab.paletter.internal.component.Check;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -106,22 +107,29 @@ public final class DurabilitySensor implements ItemComponent {
          *
          * @param durabilityThresholds the value
          * @return this builder
+         * @throws NullPointerException if the value is null
          */
         public @NonNull Builder durabilityThresholds(
                 @NonNull List<DurabilityThresholds> durabilityThresholds) {
-            this.durabilityThresholds = durabilityThresholds;
+            this.durabilityThresholds = Objects.requireNonNull(durabilityThresholds, "DurabilitySensor.durabilityThresholds");
             return this;
         }
 
         /**
-         * Sets {@code durability_thresholds}.
+         * Sets {@code durability_thresholds} to the values (at least one value).
          *
-         * @param durabilityThresholds the value
+         * @param first the first value
+         * @param rest the other values
          * @return this builder
          */
-        public @NonNull Builder durabilityThresholds(
-                @NonNull DurabilityThresholds... durabilityThresholds) {
-            return durabilityThresholds(List.of(durabilityThresholds));
+        public @NonNull Builder durabilityThresholds(@NonNull DurabilityThresholds first,
+                @NonNull DurabilityThresholds... rest) {
+            List<DurabilityThresholds> values = new ArrayList<>();
+            values.add(first);
+            for (DurabilityThresholds x : rest) {
+                values.add(x);
+            }
+            return durabilityThresholds(values);
         }
 
         /**
@@ -261,9 +269,10 @@ public final class DurabilitySensor implements ItemComponent {
              *
              * @param particleType the value
              * @return this builder
+             * @throws NullPointerException if the value is null
              */
             public @NonNull Builder particleType(@NonNull ParticleType particleType) {
-                this.particleType = particleType;
+                this.particleType = Objects.requireNonNull(particleType, "DurabilitySensor.DurabilityThresholds.particleType");
                 return this;
             }
 

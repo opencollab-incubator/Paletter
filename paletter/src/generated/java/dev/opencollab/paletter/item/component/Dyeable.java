@@ -100,9 +100,10 @@ public final class Dyeable implements ItemComponent {
          *
          * @param defaultColor the value
          * @return this builder
+         * @throws NullPointerException if the value is null
          */
         public @NonNull Builder defaultColor(@NonNull ColorValue defaultColor) {
-            this.defaultColor = defaultColor;
+            this.defaultColor = Objects.requireNonNull(defaultColor, "Dyeable.defaultColor");
             return this;
         }
 

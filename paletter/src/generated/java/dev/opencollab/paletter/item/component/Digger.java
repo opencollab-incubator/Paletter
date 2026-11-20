@@ -7,6 +7,7 @@ import dev.opencollab.paletter.annotation.BedrockFormat;
 import dev.opencollab.paletter.internal.component.Check;
 import dev.opencollab.paletter.vanilla.BedrockBlockState;
 import dev.opencollab.paletter.vanilla.BedrockBlockType;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -120,20 +121,28 @@ public final class Digger implements ItemComponent {
          *
          * @param destroySpeeds the value
          * @return this builder
+         * @throws NullPointerException if the value is null
          */
         public @NonNull Builder destroySpeeds(@NonNull List<DestroySpeeds> destroySpeeds) {
-            this.destroySpeeds = destroySpeeds;
+            this.destroySpeeds = Objects.requireNonNull(destroySpeeds, "Digger.destroySpeeds");
             return this;
         }
 
         /**
-         * Sets {@code destroy_speeds}.
+         * Sets {@code destroy_speeds} to the values (at least one value).
          *
-         * @param destroySpeeds the value
+         * @param first the first value
+         * @param rest the other values
          * @return this builder
          */
-        public @NonNull Builder destroySpeeds(@NonNull DestroySpeeds... destroySpeeds) {
-            return destroySpeeds(List.of(destroySpeeds));
+        public @NonNull Builder destroySpeeds(@NonNull DestroySpeeds first,
+                @NonNull DestroySpeeds... rest) {
+            List<DestroySpeeds> values = new ArrayList<>();
+            values.add(first);
+            for (DestroySpeeds x : rest) {
+                values.add(x);
+            }
+            return destroySpeeds(values);
         }
 
         /**
@@ -318,9 +327,10 @@ public final class Digger implements ItemComponent {
              *
              * @param states the value
              * @return this builder
+             * @throws NullPointerException if the value is null
              */
             public @NonNull Builder states(@NonNull Map<String, Object> states) {
-                this.states = states;
+                this.states = Objects.requireNonNull(states, "Digger.Block.states");
                 return this;
             }
 

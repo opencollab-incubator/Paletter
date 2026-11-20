@@ -5,6 +5,7 @@ package dev.opencollab.paletter.block.component;
 
 import dev.opencollab.paletter.annotation.BedrockFormat;
 import dev.opencollab.paletter.internal.component.Check;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -100,20 +101,28 @@ public final class LiquidDetection implements BlockComponent {
          *
          * @param detectionRules the value
          * @return this builder
+         * @throws NullPointerException if the value is null
          */
         public @NonNull Builder detectionRules(@NonNull List<DetectionRules> detectionRules) {
-            this.detectionRules = detectionRules;
+            this.detectionRules = Objects.requireNonNull(detectionRules, "LiquidDetection.detectionRules");
             return this;
         }
 
         /**
-         * Sets {@code detection_rules}.
+         * Sets {@code detection_rules} to the values (at least one value).
          *
-         * @param detectionRules the value
+         * @param first the first value
+         * @param rest the other values
          * @return this builder
          */
-        public @NonNull Builder detectionRules(@NonNull DetectionRules... detectionRules) {
-            return detectionRules(List.of(detectionRules));
+        public @NonNull Builder detectionRules(@NonNull DetectionRules first,
+                @NonNull DetectionRules... rest) {
+            List<DetectionRules> values = new ArrayList<>();
+            values.add(first);
+            for (DetectionRules x : rest) {
+                values.add(x);
+            }
+            return detectionRules(values);
         }
 
         /**
@@ -308,9 +317,10 @@ public final class LiquidDetection implements BlockComponent {
              *
              * @param liquidType the value
              * @return this builder
+             * @throws NullPointerException if the value is null
              */
             public @NonNull Builder liquidType(@NonNull LiquidType liquidType) {
-                this.liquidType = liquidType;
+                this.liquidType = Objects.requireNonNull(liquidType, "LiquidDetection.DetectionRules.liquidType");
                 return this;
             }
 
@@ -319,9 +329,10 @@ public final class LiquidDetection implements BlockComponent {
              *
              * @param onLiquidTouches the value
              * @return this builder
+             * @throws NullPointerException if the value is null
              */
             public @NonNull Builder onLiquidTouches(@NonNull OnLiquidTouches onLiquidTouches) {
-                this.onLiquidTouches = onLiquidTouches;
+                this.onLiquidTouches = Objects.requireNonNull(onLiquidTouches, "LiquidDetection.DetectionRules.onLiquidTouches");
                 return this;
             }
 
@@ -330,22 +341,29 @@ public final class LiquidDetection implements BlockComponent {
              *
              * @param stopsLiquidFlowingFromDirection the value
              * @return this builder
+             * @throws NullPointerException if the value is null
              */
             public @NonNull Builder stopsLiquidFlowingFromDirection(
                     @NonNull List<String> stopsLiquidFlowingFromDirection) {
-                this.stopsLiquidFlowingFromDirection = stopsLiquidFlowingFromDirection;
+                this.stopsLiquidFlowingFromDirection = Objects.requireNonNull(stopsLiquidFlowingFromDirection, "LiquidDetection.DetectionRules.stopsLiquidFlowingFromDirection");
                 return this;
             }
 
             /**
-             * Sets {@code stops_liquid_flowing_from_direction}.
+             * Sets {@code stops_liquid_flowing_from_direction} to the values (at least one value).
              *
-             * @param stopsLiquidFlowingFromDirection the value
+             * @param first the first value
+             * @param rest the other values
              * @return this builder
              */
-            public @NonNull Builder stopsLiquidFlowingFromDirection(
-                    @NonNull String... stopsLiquidFlowingFromDirection) {
-                return stopsLiquidFlowingFromDirection(List.of(stopsLiquidFlowingFromDirection));
+            public @NonNull Builder stopsLiquidFlowingFromDirection(@NonNull String first,
+                    @NonNull String... rest) {
+                List<String> values = new ArrayList<>();
+                values.add(first);
+                for (String x : rest) {
+                    values.add(x);
+                }
+                return stopsLiquidFlowingFromDirection(values);
             }
 
             /**

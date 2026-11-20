@@ -658,13 +658,17 @@ Inputs, all in `data/model` except the last:
   Each method's Javadoc says why no inferred rule fits and what evidence backs it.
 - `api-history.json` (generated, read and rewritten by every run): every Java name the generator has emitted, by a stable
   identity: component id for a class, `<component id>:<JSON path>` for a nested class, value class or field (with the
-  wire leaves the newest capture writes from it), `<id>:<path>=<value>` for a constant. A recorded name is reused, never
-  recomputed: a docs restructure or a new component renames nothing (a new collision gives the `Block`/`Item` prefix to
-  the newcomer). When a field's path leaves the model and exactly one new field of the same object writes the same wire
-  leaves, the JSON key was renamed: the old accessor and builder setter stay as `@Deprecated` delegates (`renamedTo`).
-  Without such a field the entry stays (`removed from the model` in the output) and the member goes; two such fields fail.
-  Entries are never dropped (a test holds the committed file to that). A name in `api.json` must agree with the recorded
-  one, so a deliberate rename edits both.
+  wire leaves the newest capture writes from it, and its model `type`, `nullable` and `default`), `<id>:<path>=<value>`
+  for a constant. A recorded name is reused, never recomputed: a docs restructure or a new component renames nothing (a
+  new collision gives the `Block`/`Item` prefix to the newcomer). When a field's path leaves the model and exactly one
+  new field of the same object writes the same wire leaves, the JSON key was renamed: the old accessor and builder setter
+  stay as `@Deprecated` delegates, and the entry records `renamedTo`, which every later run follows directly. Without
+  such a field the entry is marked `removed` and keeps a `@Deprecated(forRemoval = true)` stand-in (`StandIns`): an
+  accessor that returns the field's default and a builder setter that does nothing. A component that leaves the model
+  is marked `removed` the same way and keeps a stand-in class, which every palette leaves out with a report warning.
+  Generation prints a `warning:` line for each stand-in; two candidate successors fail. Entries are never dropped (a
+  test holds the committed file to that): a stand-in goes only when its entries are deleted deliberately, in a major
+  release. A name in `api.json` must agree with the recorded one, so a deliberate rename edits both.
 
 Rules the generator follows:
 

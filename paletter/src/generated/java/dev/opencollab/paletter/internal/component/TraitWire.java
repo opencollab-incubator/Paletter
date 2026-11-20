@@ -91,7 +91,10 @@ public final class TraitWire {
                         case "minecraft:cardinal_direction" -> 1;
                         case "minecraft:corner_and_cardinal_direction" -> 0;
                         case "minecraft:facing_direction" -> 0;
-                        default -> 0;
+                        default -> {
+                            ctx.drop(PlacementDirection.NAME, "enabled_states = " + x2.value() + " has no known wire value");
+                            yield 0;
+                        }
                     };
         }
         out.put("enabled_states.cardinal_direction", Wire.toByte(bits1));
@@ -137,7 +140,10 @@ public final class TraitWire {
             bits1 |= switch (x2.value()) {
                         case "minecraft:block_face" -> 1;
                         case "minecraft:vertical_half" -> 0;
-                        default -> 0;
+                        default -> {
+                            ctx.drop(PlacementPosition.NAME, "enabled_states = " + x2.value() + " has no known wire value");
+                            yield 0;
+                        }
                     };
         }
         out.put("enabled_states.block_face", Wire.toByte(bits1));

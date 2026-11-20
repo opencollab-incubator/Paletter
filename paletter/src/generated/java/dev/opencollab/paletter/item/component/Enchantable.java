@@ -120,9 +120,10 @@ public final class Enchantable implements ItemComponent {
          *
          * @param slot the value
          * @return this builder
+         * @throws NullPointerException if the value is null
          */
         public @NonNull Builder slot(@NonNull String slot) {
-            this.slot = slot;
+            this.slot = Objects.requireNonNull(slot, "Enchantable.slot");
             return this;
         }
 

@@ -5,6 +5,7 @@ package dev.opencollab.paletter.block.component;
 
 import dev.opencollab.paletter.annotation.BedrockExperiment;
 import dev.opencollab.paletter.annotation.BedrockFormat;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import org.checkerframework.checker.nullness.qual.NonNull;
@@ -141,20 +142,27 @@ public final class CollisionBox implements BlockComponent {
          *
          * @param boxes the value
          * @return this builder
+         * @throws NullPointerException if the value is null
          */
         public @NonNull Builder boxes(@NonNull List<Entry> boxes) {
-            this.boxes = boxes;
+            this.boxes = Objects.requireNonNull(boxes, "CollisionBox.boxes");
             return this;
         }
 
         /**
-         * Sets {@code boxes}.
+         * Sets {@code boxes} to the values (at least one value).
          *
-         * @param boxes the value
+         * @param first the first value
+         * @param rest the other values
          * @return this builder
          */
-        public @NonNull Builder boxes(@NonNull Entry... boxes) {
-            return boxes(List.of(boxes));
+        public @NonNull Builder boxes(@NonNull Entry first, @NonNull Entry... rest) {
+            List<Entry> values = new ArrayList<>();
+            values.add(first);
+            for (Entry x : rest) {
+                values.add(x);
+            }
+            return boxes(values);
         }
 
         /**

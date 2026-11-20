@@ -36,15 +36,15 @@ public sealed interface Recipe permits Recipe.Shaped, Recipe.Shapeless, Recipe.M
         private final Unlock unlock;
 
         private Shaped(Builder b) {
-            this.id = Objects.requireNonNull(b.id, "Recipe.Shaped.id");
+            this.id = Required.of(b.id, "Recipe.Shaped.id");
             this.width = b.width;
             this.height = b.height;
             this.ingredients = List.copyOf(b.ingredients);
             this.results = List.copyOf(b.results);
-            this.station = Objects.requireNonNull(b.station, "Recipe.Shaped.station");
+            this.station = Required.of(b.station, "Recipe.Shaped.station");
             this.priority = b.priority;
             this.assumeSymmetry = b.assumeSymmetry;
-            this.unlock = Objects.requireNonNull(b.unlock, "Recipe.Shaped.unlock");
+            this.unlock = b.unlock;
             if (width < 1 || height < 1 || width * height != ingredients.size()) {
                 throw new IllegalArgumentException("A " + width + "x" + height + " recipe needs " + width * height + " ingredients, not " + ingredients.size());
             }
@@ -195,7 +195,7 @@ public sealed interface Recipe permits Recipe.Shaped, Recipe.Shapeless, Recipe.M
              * @return this builder
              */
             public @NonNull Builder id(@NonNull String id) {
-                this.id = id;
+                this.id = Objects.requireNonNull(id, "id");
                 return this;
             }
 
@@ -219,7 +219,7 @@ public sealed interface Recipe permits Recipe.Shaped, Recipe.Shapeless, Recipe.M
              * @return this builder
              */
             public @NonNull Builder ingredients(@NonNull List<Ingredient> ingredients) {
-                this.ingredients = ingredients;
+                this.ingredients = Objects.requireNonNull(ingredients, "ingredients");
                 return this;
             }
 
@@ -230,7 +230,7 @@ public sealed interface Recipe permits Recipe.Shaped, Recipe.Shapeless, Recipe.M
              * @return this builder
              */
             public @NonNull Builder results(@NonNull List<Result> results) {
-                this.results = results;
+                this.results = Objects.requireNonNull(results, "results");
                 return this;
             }
 
@@ -241,7 +241,7 @@ public sealed interface Recipe permits Recipe.Shaped, Recipe.Shapeless, Recipe.M
              * @return this builder
              */
             public @NonNull Builder station(@NonNull String station) {
-                this.station = station;
+                this.station = Objects.requireNonNull(station, "station");
                 return this;
             }
 
@@ -274,7 +274,7 @@ public sealed interface Recipe permits Recipe.Shaped, Recipe.Shapeless, Recipe.M
              * @return this builder
              */
             public @NonNull Builder unlock(@NonNull Unlock unlock) {
-                this.unlock = unlock;
+                this.unlock = Objects.requireNonNull(unlock, "unlock");
                 return this;
             }
 
@@ -283,7 +283,8 @@ public sealed interface Recipe permits Recipe.Shaped, Recipe.Shapeless, Recipe.M
              *
              * @return the recipe
              * @throws IllegalArgumentException if the ingredients do not fill the width and height, or there is no result
-             * @throws NullPointerException if the id, the station or the unlock is not set, or a list has a null element
+             * @throws IllegalStateException if the id or the station is not set
+             * @throws NullPointerException if a list has a null element
              */
             public @NonNull Shaped build() {
                 return new Shaped(this);
@@ -306,13 +307,13 @@ public sealed interface Recipe permits Recipe.Shaped, Recipe.Shapeless, Recipe.M
         private final Unlock unlock;
 
         private Shapeless(Builder b) {
-            this.id = Objects.requireNonNull(b.id, "Recipe.Shapeless.id");
+            this.id = Required.of(b.id, "Recipe.Shapeless.id");
             this.ingredients = List.copyOf(b.ingredients);
             this.results = List.copyOf(b.results);
-            this.station = Objects.requireNonNull(b.station, "Recipe.Shapeless.station");
+            this.station = Required.of(b.station, "Recipe.Shapeless.station");
             this.priority = b.priority;
             this.shulkerBox = b.shulkerBox;
-            this.unlock = Objects.requireNonNull(b.unlock, "Recipe.Shapeless.unlock");
+            this.unlock = b.unlock;
             requireResults(results);
         }
 
@@ -440,7 +441,7 @@ public sealed interface Recipe permits Recipe.Shaped, Recipe.Shapeless, Recipe.M
              * @return this builder
              */
             public @NonNull Builder id(@NonNull String id) {
-                this.id = id;
+                this.id = Objects.requireNonNull(id, "id");
                 return this;
             }
 
@@ -451,7 +452,7 @@ public sealed interface Recipe permits Recipe.Shaped, Recipe.Shapeless, Recipe.M
              * @return this builder
              */
             public @NonNull Builder ingredients(@NonNull List<Ingredient> ingredients) {
-                this.ingredients = ingredients;
+                this.ingredients = Objects.requireNonNull(ingredients, "ingredients");
                 return this;
             }
 
@@ -462,7 +463,7 @@ public sealed interface Recipe permits Recipe.Shaped, Recipe.Shapeless, Recipe.M
              * @return this builder
              */
             public @NonNull Builder results(@NonNull List<Result> results) {
-                this.results = results;
+                this.results = Objects.requireNonNull(results, "results");
                 return this;
             }
 
@@ -473,7 +474,7 @@ public sealed interface Recipe permits Recipe.Shaped, Recipe.Shapeless, Recipe.M
              * @return this builder
              */
             public @NonNull Builder station(@NonNull String station) {
-                this.station = station;
+                this.station = Objects.requireNonNull(station, "station");
                 return this;
             }
 
@@ -506,7 +507,7 @@ public sealed interface Recipe permits Recipe.Shaped, Recipe.Shapeless, Recipe.M
              * @return this builder
              */
             public @NonNull Builder unlock(@NonNull Unlock unlock) {
-                this.unlock = unlock;
+                this.unlock = Objects.requireNonNull(unlock, "unlock");
                 return this;
             }
 
@@ -515,7 +516,8 @@ public sealed interface Recipe permits Recipe.Shaped, Recipe.Shapeless, Recipe.M
              *
              * @return the recipe
              * @throws IllegalArgumentException if there is no result
-             * @throws NullPointerException if the id, the station or the unlock is not set, or a list has a null element
+             * @throws IllegalStateException if the id or the station is not set
+             * @throws NullPointerException if a list has a null element
              */
             public @NonNull Shapeless build() {
                 return new Shapeless(this);
@@ -584,12 +586,12 @@ public sealed interface Recipe permits Recipe.Shaped, Recipe.Shapeless, Recipe.M
         private final String station;
 
         private SmithingTransform(Builder b) {
-            this.id = Objects.requireNonNull(b.id, "Recipe.SmithingTransform.id");
-            this.template = Objects.requireNonNull(b.template, "Recipe.SmithingTransform.template");
-            this.base = Objects.requireNonNull(b.base, "Recipe.SmithingTransform.base");
-            this.addition = Objects.requireNonNull(b.addition, "Recipe.SmithingTransform.addition");
-            this.result = Objects.requireNonNull(b.result, "Recipe.SmithingTransform.result");
-            this.station = Objects.requireNonNull(b.station, "Recipe.SmithingTransform.station");
+            this.id = Required.of(b.id, "Recipe.SmithingTransform.id");
+            this.template = Required.of(b.template, "Recipe.SmithingTransform.template");
+            this.base = Required.of(b.base, "Recipe.SmithingTransform.base");
+            this.addition = Required.of(b.addition, "Recipe.SmithingTransform.addition");
+            this.result = Required.of(b.result, "Recipe.SmithingTransform.result");
+            this.station = Required.of(b.station, "Recipe.SmithingTransform.station");
         }
 
         /**
@@ -695,7 +697,7 @@ public sealed interface Recipe permits Recipe.Shaped, Recipe.Shapeless, Recipe.M
              * @return this builder
              */
             public @NonNull Builder id(@NonNull String id) {
-                this.id = id;
+                this.id = Objects.requireNonNull(id, "id");
                 return this;
             }
 
@@ -706,7 +708,7 @@ public sealed interface Recipe permits Recipe.Shaped, Recipe.Shapeless, Recipe.M
              * @return this builder
              */
             public @NonNull Builder template(@NonNull Ingredient template) {
-                this.template = template;
+                this.template = Objects.requireNonNull(template, "template");
                 return this;
             }
 
@@ -717,7 +719,7 @@ public sealed interface Recipe permits Recipe.Shaped, Recipe.Shapeless, Recipe.M
              * @return this builder
              */
             public @NonNull Builder base(@NonNull Ingredient base) {
-                this.base = base;
+                this.base = Objects.requireNonNull(base, "base");
                 return this;
             }
 
@@ -728,7 +730,7 @@ public sealed interface Recipe permits Recipe.Shaped, Recipe.Shapeless, Recipe.M
              * @return this builder
              */
             public @NonNull Builder addition(@NonNull Ingredient addition) {
-                this.addition = addition;
+                this.addition = Objects.requireNonNull(addition, "addition");
                 return this;
             }
 
@@ -739,7 +741,7 @@ public sealed interface Recipe permits Recipe.Shaped, Recipe.Shapeless, Recipe.M
              * @return this builder
              */
             public @NonNull Builder result(@NonNull Result result) {
-                this.result = result;
+                this.result = Objects.requireNonNull(result, "result");
                 return this;
             }
 
@@ -750,7 +752,7 @@ public sealed interface Recipe permits Recipe.Shaped, Recipe.Shapeless, Recipe.M
              * @return this builder
              */
             public @NonNull Builder station(@NonNull String station) {
-                this.station = station;
+                this.station = Objects.requireNonNull(station, "station");
                 return this;
             }
 
@@ -758,7 +760,7 @@ public sealed interface Recipe permits Recipe.Shaped, Recipe.Shapeless, Recipe.M
              * Builds the recipe.
              *
              * @return the recipe
-             * @throws NullPointerException if a field is not set
+             * @throws IllegalStateException if a field is not set
              */
             public @NonNull SmithingTransform build() {
                 return new SmithingTransform(this);
@@ -780,11 +782,11 @@ public sealed interface Recipe permits Recipe.Shaped, Recipe.Shapeless, Recipe.M
         private final String station;
 
         private SmithingTrim(Builder b) {
-            this.id = Objects.requireNonNull(b.id, "Recipe.SmithingTrim.id");
-            this.template = Objects.requireNonNull(b.template, "Recipe.SmithingTrim.template");
-            this.base = Objects.requireNonNull(b.base, "Recipe.SmithingTrim.base");
-            this.addition = Objects.requireNonNull(b.addition, "Recipe.SmithingTrim.addition");
-            this.station = Objects.requireNonNull(b.station, "Recipe.SmithingTrim.station");
+            this.id = Required.of(b.id, "Recipe.SmithingTrim.id");
+            this.template = Required.of(b.template, "Recipe.SmithingTrim.template");
+            this.base = Required.of(b.base, "Recipe.SmithingTrim.base");
+            this.addition = Required.of(b.addition, "Recipe.SmithingTrim.addition");
+            this.station = Required.of(b.station, "Recipe.SmithingTrim.station");
         }
 
         /**
@@ -879,7 +881,7 @@ public sealed interface Recipe permits Recipe.Shaped, Recipe.Shapeless, Recipe.M
              * @return this builder
              */
             public @NonNull Builder id(@NonNull String id) {
-                this.id = id;
+                this.id = Objects.requireNonNull(id, "id");
                 return this;
             }
 
@@ -890,7 +892,7 @@ public sealed interface Recipe permits Recipe.Shaped, Recipe.Shapeless, Recipe.M
              * @return this builder
              */
             public @NonNull Builder template(@NonNull Ingredient template) {
-                this.template = template;
+                this.template = Objects.requireNonNull(template, "template");
                 return this;
             }
 
@@ -901,7 +903,7 @@ public sealed interface Recipe permits Recipe.Shaped, Recipe.Shapeless, Recipe.M
              * @return this builder
              */
             public @NonNull Builder base(@NonNull Ingredient base) {
-                this.base = base;
+                this.base = Objects.requireNonNull(base, "base");
                 return this;
             }
 
@@ -912,7 +914,7 @@ public sealed interface Recipe permits Recipe.Shaped, Recipe.Shapeless, Recipe.M
              * @return this builder
              */
             public @NonNull Builder addition(@NonNull Ingredient addition) {
-                this.addition = addition;
+                this.addition = Objects.requireNonNull(addition, "addition");
                 return this;
             }
 
@@ -923,7 +925,7 @@ public sealed interface Recipe permits Recipe.Shaped, Recipe.Shapeless, Recipe.M
              * @return this builder
              */
             public @NonNull Builder station(@NonNull String station) {
-                this.station = station;
+                this.station = Objects.requireNonNull(station, "station");
                 return this;
             }
 
@@ -931,7 +933,7 @@ public sealed interface Recipe permits Recipe.Shaped, Recipe.Shapeless, Recipe.M
              * Builds the recipe.
              *
              * @return the recipe
-             * @throws NullPointerException if a field is not set
+             * @throws IllegalStateException if a field is not set
              */
             public @NonNull SmithingTrim build() {
                 return new SmithingTrim(this);

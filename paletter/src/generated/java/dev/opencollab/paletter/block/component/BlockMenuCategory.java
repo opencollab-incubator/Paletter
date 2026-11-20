@@ -19,6 +19,11 @@ import org.checkerframework.checker.nullness.qual.Nullable;
  * @since 1.0.0
  */
 public final class BlockMenuCategory {
+    /**
+     * The key of this object in the add-on JSON {@code description}; report entries name it.
+     */
+    public static final String NAME = "menu_category";
+
     private final @NonNull Category category;
 
     private final @Nullable String group;
@@ -129,9 +134,10 @@ public final class BlockMenuCategory {
          *
          * @param category the value
          * @return this builder
+         * @throws NullPointerException if the value is null
          */
         public @NonNull Builder category(@NonNull Category category) {
-            this.category = category;
+            this.category = Objects.requireNonNull(category, "BlockMenuCategory.category");
             return this;
         }
 

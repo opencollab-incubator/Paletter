@@ -79,6 +79,15 @@ public abstract sealed class Rule permits Identity, Linear, Table, Affix, Bitset
         return false;
     }
 
+    /**
+     * @param documented the values the docs list for the field, an open enum; null if they list none
+     * @return the values the rule has a leaf for, when it switches over the field's value and leaves every other value
+     *         out ({@link Emitter#unknown}); null if it handles every value
+     */
+    public java.util.Set<String> knownValues(List<String> documented) {
+        return null;
+    }
+
     /** @return the tags the kind itself adds for readers */
     public List<String> kindTags() {
         return List.of();

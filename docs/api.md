@@ -72,6 +72,10 @@ deprecation warnings, not compile errors. The API is shaped so that the compiler
   docs or a new component renames nothing, and a new name collision gives the `Block`/`Item` prefix to the newcomer. A
   field whose add-on JSON key Bedrock renames keeps its old accessor and builder setter as `@Deprecated` delegates.
   Vanilla constants have the same in `constants-history.json`: a removed one stays, deprecated.
+- **Removed components and fields stay as stand-ins.** A field Bedrock removes keeps a `@Deprecated(forRemoval = true)`
+  accessor that returns its default and a builder setter that does nothing; a removed component keeps a
+  `@Deprecated(forRemoval = true)` class of the same shape, which every palette leaves out with a report warning. They go
+  only in a major release, when their `api-history.json` entries are deleted.
 - **Vanilla state enums stay Java enums** (`vanilla.state`): they are read and switched, and the bundled data always
   matches them. They gain constants in minor releases, so a switch over one needs a `default`.
   `BedrockBlockState#raw(BedrockState)` reads a state's value as Bedrock sends it and never throws.
@@ -79,7 +83,20 @@ deprecation warnings, not compile errors. The API is shaped so that the compiler
 
 Tests hold the generator to this: `ApiEvolutionTest` (no public record in the component packages but the vectors and the
 union forms, no enum of documented values, a sentinel on every sealed type Bedrock extends), `RecipesEvolutionTest` (the
-same for `Recipe` and `Ingredient`) and `ApiHistoryTest` (the committed `api-history.json` loses no entry).
+same for `Recipe` and `Ingredient`) and `ApiHistoryTest` (the committed `api-history.json` loses no entry, renames keep
+their delegates over later runs, and stand-ins compile).
+
+### Builders
+
+Every builder, generated or hand-written (`Recipe.*`, `Result`), follows the same rules:
+
+- A setter of a `@NonNull` field throws `NullPointerException` at once when given null. A setter of a `@Nullable` field
+  takes null to unset it.
+- `build()` throws `IllegalStateException` ("X is required") for a required field that was never set, and
+  `IllegalArgumentException` for a value out of range.
+- A list field has a `List` setter and a varargs setter of at least one value (`first, rest...`). `setter(null)` and
+  `setter(List.of())` therefore always mean the `List` overload: no cast is needed to clear an optional list after
+  `toBuilder()`.
 
 ### The promise
 
@@ -97,6 +114,7 @@ Annotations describe where Bedrock has something; `@Deprecated` and the Paletter
 | Content appears in a preview | `@SincePreview("26.70")`, outside the promise | served only with `previews(true)` |
 | It ships in a release | `@SincePreview` goes, `@BedrockSince("26.70")` where older bundled versions lack it | served from 26.70 |
 | Bedrock removes or renames it | `@Deprecated` and `@BedrockUntil("26.90")` (a renamed field: a delegate, a renamed component: `@ReplacedBy`) | older palettes still serve it; newer ones leave it out (or resolve a constant to unknown) with a report warning |
+| It leaves the component model (no bundled version has it) | `@Deprecated(forRemoval = true)` stand-in: a field returns its default and ignores its setter, a component keeps its class with such fields | every palette leaves a stand-in component out with a report warning |
 | The last bundled version that has it is retired | `@Deprecated(forRemoval = true)` | as above |
 | Next major Paletter release | removed | - |
 

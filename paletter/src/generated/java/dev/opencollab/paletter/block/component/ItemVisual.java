@@ -120,9 +120,10 @@ public final class ItemVisual implements BlockComponent {
          *
          * @param geometry the value
          * @return this builder
+         * @throws NullPointerException if the value is null
          */
         public @NonNull Builder geometry(@NonNull VisualGeometry geometry) {
-            this.geometry = geometry;
+            this.geometry = Objects.requireNonNull(geometry, "ItemVisual.geometry");
             return this;
         }
 
@@ -141,9 +142,10 @@ public final class ItemVisual implements BlockComponent {
          *
          * @param materialInstances the value
          * @return this builder
+         * @throws NullPointerException if the value is null
          */
         public @NonNull Builder materialInstances(@NonNull MaterialInstances materialInstances) {
-            this.materialInstances = materialInstances;
+            this.materialInstances = Objects.requireNonNull(materialInstances, "ItemVisual.materialInstances");
             return this;
         }
 
@@ -531,9 +533,10 @@ public final class ItemVisual implements BlockComponent {
              *
              * @param boneVisibility the value
              * @return this builder
+             * @throws NullPointerException if the value is null
              */
             public @NonNull Builder boneVisibility(@NonNull Map<String, String> boneVisibility) {
-                this.boneVisibility = boneVisibility;
+                this.boneVisibility = Objects.requireNonNull(boneVisibility, "ItemVisual.VisualGeometry.boneVisibility");
                 return this;
             }
 
@@ -598,9 +601,10 @@ public final class ItemVisual implements BlockComponent {
              *
              * @param uvLock the value
              * @return this builder
+             * @throws NullPointerException if the value is null
              */
             public @NonNull Builder uvLock(@NonNull UvLock uvLock) {
-                this.uvLock = uvLock;
+                this.uvLock = Objects.requireNonNull(uvLock, "ItemVisual.VisualGeometry.uvLock");
                 return this;
             }
 

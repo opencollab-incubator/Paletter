@@ -103,20 +103,28 @@ public final class Repairable implements ItemComponent {
          *
          * @param repairItems the value
          * @return this builder
+         * @throws NullPointerException if the value is null
          */
         public @NonNull Builder repairItems(@NonNull List<RepairItems> repairItems) {
-            this.repairItems = repairItems;
+            this.repairItems = Objects.requireNonNull(repairItems, "Repairable.repairItems");
             return this;
         }
 
         /**
-         * Sets {@code repair_items}.
+         * Sets {@code repair_items} to the values (at least one value).
          *
-         * @param repairItems the value
+         * @param first the first value
+         * @param rest the other values
          * @return this builder
          */
-        public @NonNull Builder repairItems(@NonNull RepairItems... repairItems) {
-            return repairItems(List.of(repairItems));
+        public @NonNull Builder repairItems(@NonNull RepairItems first,
+                @NonNull RepairItems... rest) {
+            List<RepairItems> values = new ArrayList<>();
+            values.add(first);
+            for (RepairItems x : rest) {
+                values.add(x);
+            }
+            return repairItems(values);
         }
 
         /**

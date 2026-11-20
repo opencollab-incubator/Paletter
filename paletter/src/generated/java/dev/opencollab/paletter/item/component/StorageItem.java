@@ -169,34 +169,44 @@ public final class StorageItem implements ItemComponent {
          *
          * @param allowedItems the value
          * @return this builder
+         * @throws NullPointerException if the value is null
          */
         public @NonNull Builder allowedItems(@NonNull List<String> allowedItems) {
-            this.allowedItems = allowedItems;
+            this.allowedItems = Objects.requireNonNull(allowedItems, "StorageItem.allowedItems");
             return this;
         }
 
         /**
-         * Sets {@code allowed_items}.
+         * Sets {@code allowed_items} to the values (at least one value).
          *
-         * @param allowedItems the value
+         * @param first the first value
+         * @param rest the other values
          * @return this builder
          */
-        public @NonNull Builder allowedItems(@NonNull String... allowedItems) {
-            return allowedItems(List.of(allowedItems));
+        public @NonNull Builder allowedItems(@NonNull String first, @NonNull String... rest) {
+            List<String> values = new ArrayList<>();
+            values.add(first);
+            for (String x : rest) {
+                values.add(x);
+            }
+            return allowedItems(values);
         }
 
         /**
-         * Sets {@code allowed_items} to the identifiers of vanilla or custom items.
+         * Sets {@code allowed_items} to the identifiers of vanilla or custom items (at least one value).
          *
-         * @param allowedItems the value
+         * @param first the first value
+         * @param rest the other values
          * @return this builder
          */
-        public @NonNull Builder allowedItems(@NonNull BedrockItemType... allowedItems) {
-            List<String> identifiers = new ArrayList<>();
-            for (BedrockItemType type : allowedItems) {
-                identifiers.add(type.identifier());
+        public @NonNull Builder allowedItems(@NonNull BedrockItemType first,
+                @NonNull BedrockItemType... rest) {
+            List<String> values = new ArrayList<>();
+            values.add(first.identifier());
+            for (BedrockItemType x : rest) {
+                values.add(x.identifier());
             }
-            return allowedItems(identifiers);
+            return allowedItems(values);
         }
 
         /**
@@ -204,34 +214,44 @@ public final class StorageItem implements ItemComponent {
          *
          * @param bannedItems the value
          * @return this builder
+         * @throws NullPointerException if the value is null
          */
         public @NonNull Builder bannedItems(@NonNull List<String> bannedItems) {
-            this.bannedItems = bannedItems;
+            this.bannedItems = Objects.requireNonNull(bannedItems, "StorageItem.bannedItems");
             return this;
         }
 
         /**
-         * Sets {@code banned_items}.
+         * Sets {@code banned_items} to the values (at least one value).
          *
-         * @param bannedItems the value
+         * @param first the first value
+         * @param rest the other values
          * @return this builder
          */
-        public @NonNull Builder bannedItems(@NonNull String... bannedItems) {
-            return bannedItems(List.of(bannedItems));
+        public @NonNull Builder bannedItems(@NonNull String first, @NonNull String... rest) {
+            List<String> values = new ArrayList<>();
+            values.add(first);
+            for (String x : rest) {
+                values.add(x);
+            }
+            return bannedItems(values);
         }
 
         /**
-         * Sets {@code banned_items} to the identifiers of vanilla or custom items.
+         * Sets {@code banned_items} to the identifiers of vanilla or custom items (at least one value).
          *
-         * @param bannedItems the value
+         * @param first the first value
+         * @param rest the other values
          * @return this builder
          */
-        public @NonNull Builder bannedItems(@NonNull BedrockItemType... bannedItems) {
-            List<String> identifiers = new ArrayList<>();
-            for (BedrockItemType type : bannedItems) {
-                identifiers.add(type.identifier());
+        public @NonNull Builder bannedItems(@NonNull BedrockItemType first,
+                @NonNull BedrockItemType... rest) {
+            List<String> values = new ArrayList<>();
+            values.add(first.identifier());
+            for (BedrockItemType x : rest) {
+                values.add(x.identifier());
             }
-            return bannedItems(identifiers);
+            return bannedItems(values);
         }
 
         /**
