@@ -141,6 +141,15 @@ checked one by one:
 The download links API is parsed in one place, `BdsDistribution.downloadUrl`; the BDS data workflow asks `builds resolve`
 for the build it checks, so an API change fails there with the answer quoted.
 
+**Zip checksums and frozen builds.** `data/bds/builds.json` records, per kept build and platform (`win`, `linux`), the
+sha256 and size of its zip from minecraft.net (`zips`), computed from a downloaded zip and `unknown` when none was at hand;
+nothing is guessed. `BdsDistribution.zip` checks a download, and a cached zip, against it: a zip minecraft.net serves
+differently under the same name fails instead of being captured. `builds check` records them for the builds it keeps;
+`builds record` brings the record up to date with the committed data without BDS or the network (release builds with
+captures it lacks, checksums from the cache). A kept build whose zip can no longer be downloaded is frozen with the reason
+(`builds record --freeze <build>=<reason>`, `--unfreeze <build>`): its captures stay, and `builds plan` leaves it out of a
+full recapture with a `SKIPPED` line in the plan's summary.
+
 The list of builds comes from [Bedrock-OSS/BDS-Versions](https://github.com/Bedrock-OSS/BDS-Versions), since the
 download links API only names the newest build; the zips still come from minecraft.net. Each run reads the list at the
 newest commit that changed it and records that commit (`listCommit`, `listDate`) in `data/bds/builds.json`. The

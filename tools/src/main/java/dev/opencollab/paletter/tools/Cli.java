@@ -307,7 +307,7 @@ public final class Cli implements Runnable {
 
     @Command(name = "builds", description = "Every BDS release build, one by one: list them, or check the ones data/bds/builds.json lacks "
         + "against the previous kept build (captures kept only when they differ).",
-        subcommands = {Builds.ListBuilds.class, Builds.Check.class, Builds.Table.class, Builds.Plan.class, Builds.Resolve.class})
+        subcommands = {Builds.ListBuilds.class, Builds.Check.class, Builds.Table.class, Builds.Plan.class, Builds.Resolve.class, Builds.Record.class})
     static final class Builds implements Runnable {
         @Override
         public void run() {
@@ -367,9 +367,26 @@ public final class Cli implements Runnable {
             public Integer call() throws Exception {
                 List<RecapturePlan.Leg> legs = RecapturePlan.of(root(), BuildHistory.fetchWithCurrentRelease());
                 Files.writeString(output, RecapturePlan.matrix(legs) + "\n");
+                RecapturePlan.frozen(root()).forEach(line -> System.out.println("SKIPPED " + line));
                 legs.forEach(leg -> System.out.println(leg.build() + (leg.preview() ? " (preview)" : "")
                     + (leg.against() == null ? "" : leg.against().equals(leg.build()) ? " (history check)" : " (not checked yet, compared with " + leg.against() + ")")));
                 return legs.isEmpty() ? 1 : 0;
+            }
+        }
+
+        @Command(name = "record", description = "Brings data/bds/builds.json up to date with the committed data, without BDS or the "
+            + "network: records release builds with captures it lacks, and the sha256 of every kept build's zips from the cache "
+            + "(unknown without a zip); freezes builds whose zip can no longer be downloaded. Writes the build table too.")
+        static final class Record extends Rooted implements Callable<Integer> {
+            @Option(names = "--cache", description = "The BDS cache (default: $PALETTER_BDS_CACHE or the Gradle user home's)") Path cache;
+            @Option(names = "--freeze", description = "BUILD=REASON: a kept build whose zip minecraft.net no longer serves; a recapture skips it")
+            Map<String, String> freeze;
+            @Option(names = "--unfreeze", description = "A frozen build whose zip can be downloaded again") List<String> unfreeze;
+
+            @Override
+            public Integer call() throws Exception {
+                return BuildHistory.record(root(), cache != null ? cache : BdsDistribution.defaultCache(),
+                    freeze == null ? Map.of() : freeze, unfreeze == null ? List.of() : unfreeze);
             }
         }
 

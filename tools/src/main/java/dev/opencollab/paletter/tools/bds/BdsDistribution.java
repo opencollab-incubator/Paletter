@@ -88,22 +88,38 @@ public record BdsDistribution(String version, boolean preview, String platform, 
     }
 
     /**
-     * Downloads the zip into the cache unless a readable one is there. A download only replaces the cached zip once its
-     * central directory reads ({@link #checkZip}); a cached zip that does not read is downloaded again.
+     * {@link #zip(Path, String)} checked against the sha256 that the repository's build record has for this build and
+     * platform ({@link ZipChecksums#recorded}, read from the working directory), if any.
      */
     public Path zip(Path cache) throws IOException, InterruptedException {
+        return zip(cache, ZipChecksums.recorded(Path.of("").toAbsolutePath(), platform, version));
+    }
+
+    /**
+     * Downloads the zip into the cache unless a readable one with the expected checksum is there. A download only replaces
+     * the cached zip once its central directory reads ({@link #checkZip}) and its sha256 is the expected one; a cached zip
+     * that does not read, or has another checksum, is downloaded again.
+     *
+     * @param sha256 the expected sha256, null when none is recorded
+     * @throws IOException when the downloaded zip has another sha256 than the expected one
+     */
+    public Path zip(Path cache, String sha256) throws IOException, InterruptedException {
         Path zip = zipFile(cache);
         if (Files.exists(zip)) {
             try {
                 checkZip(zip);
+                ZipChecksums.verify(zip, sha256, "The cached " + zip.getFileName());
                 return zip;
             } catch (IOException e) {
-                System.out.println("The cached " + zip + " does not read (" + e.getMessage() + "), downloading it again");
+                System.out.println("The cached " + zip + " is not usable (" + e.getMessage() + "), downloading it again");
             }
         }
         Files.createDirectories(zip.getParent());
-        System.out.println("Downloading " + url);
-        Http.DEFAULT.download(url, zip, ZIP_HEADERS, BdsDistribution::checkZip);
+        System.out.println("Downloading " + url + (sha256 == null ? " (no recorded sha256 to check it against)" : ""));
+        Http.DEFAULT.download(url, zip, ZIP_HEADERS, part -> {
+            checkZip(part);
+            ZipChecksums.verify(part, sha256, "The download of " + url);
+        });
         return zip;
     }
 
@@ -136,7 +152,7 @@ public record BdsDistribution(String version, boolean preview, String platform, 
     }
 
     /** Throws unless the zip's central directory reads and lists at least one entry: a truncated download does not. */
-    static void checkZip(Path zip) throws IOException {
+    public static void checkZip(Path zip) throws IOException {
         try (ZipFile file = new ZipFile(zip.toFile())) {
             if (file.size() == 0) {
                 throw new IOException(zip.getFileName() + " has no entries");

@@ -11,6 +11,7 @@ import dev.opencollab.paletter.tools.Http;
 import dev.opencollab.paletter.tools.Layout;
 import dev.opencollab.paletter.tools.Versions;
 import dev.opencollab.paletter.tools.bds.BdsDistribution;
+import dev.opencollab.paletter.tools.bds.ZipChecksums;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -69,6 +70,29 @@ public final class BuildHistory {
     public static final String FROM_LIST = "BDS-Versions";
     /** Where a build number came from: the download links API of minecraft.net, which names the current release only. */
     public static final String FROM_LINKS_API = "links API";
+    /** Where a build number came from: the name of its directory of captures in data/bds (recorded by {@code builds record}). */
+    public static final String FROM_CAPTURES = "captures in data/bds";
+    /** The platforms whose zips a kept release build records: Windows (the captures) and Linux (the inventory and white-box reads). */
+    public static final List<String> ZIP_PLATFORMS = List.of("win", "linux");
+
+    /**
+     * The zip of a kept build on one platform, as downloaded from minecraft.net.
+     *
+     * @param sha256 its sha256, null when it is not known (no zip was at hand when the build was recorded)
+     * @param size its size in bytes, 0 when not known
+     */
+    public record Zip(String sha256, long size) {
+        static final Zip UNKNOWN = new Zip(null, 0);
+
+        public boolean known() {
+            return sha256 != null;
+        }
+
+        /** The zip of a file. */
+        static Zip of(Path file) throws IOException {
+            return new Zip(ZipChecksums.sha256(file), Files.size(file));
+        }
+    }
     /** How a build was kept: {@code update} captured it, the source of a bundled data version that other files refer to. */
     public static final String KEPT_BY_UPDATE = "update";
     /** How a build was kept: a history check found it different from the build it was compared with; only the record refers to it. */
@@ -82,16 +106,41 @@ public final class BuildHistory {
      * @param keptBy for a kept build, {@link #KEPT_BY_UPDATE} or {@link #KEPT_BY_HISTORY_CHECK}; null for an identical one
      * @param notCompared what the run that recorded it could not compare with the other build (it lacked the capture,
      *                    or the check is against the bundled data only), as the report listed it
+     * @param zips for a kept build, its zip per platform of {@link #ZIP_PLATFORMS}; empty for an identical one
+     * @param frozen for a kept build whose zip minecraft.net no longer serves, why (its captures stay, a recapture skips it);
+     *               null otherwise
      */
-    public record Entry(int protocol, String identicalTo, String source, String keptBy, List<String> notCompared) {
+    public record Entry(int protocol, String identicalTo, String source, String keptBy, List<String> notCompared,
+                        Map<String, Zip> zips, String frozen) {
         public Entry {
             notCompared = notCompared == null ? List.of() : List.copyOf(notCompared);
+            zips = zips == null || identicalTo != null ? Map.of() : Map.copyOf(zips);
             if (identicalTo == null && !KEPT_BY_UPDATE.equals(keptBy) && !KEPT_BY_HISTORY_CHECK.equals(keptBy)) {
                 throw new IllegalArgumentException("A kept build is kept by " + KEPT_BY_UPDATE + " or " + KEPT_BY_HISTORY_CHECK + ": " + keptBy);
             }
             if (identicalTo != null) {
                 keptBy = null;
+                frozen = null;
             }
+        }
+
+        /** A build without zips, not frozen. */
+        public Entry(int protocol, String identicalTo, String source, String keptBy, List<String> notCompared) {
+            this(protocol, identicalTo, source, keptBy, notCompared, Map.of(), null);
+        }
+
+        /** This entry with these zips. */
+        Entry withZips(Map<String, Zip> zips) {
+            return new Entry(protocol, identicalTo, source, keptBy, notCompared, zips, frozen);
+        }
+
+        /** This entry frozen for the reason given (null: no longer frozen). */
+        Entry frozen(String reason) {
+            return new Entry(protocol, identicalTo, source, keptBy, notCompared, zips, reason);
+        }
+
+        public boolean isFrozen() {
+            return frozen != null;
         }
 
         /** A build of the list: identical to {@code identicalTo}, or kept by {@code update} when that is null. */
@@ -281,9 +330,19 @@ public final class BuildHistory {
                 if (value.has("notCompared")) {
                     value.getAsJsonArray("notCompared").forEach(line -> notCompared.add(line.getAsString()));
                 }
+                Map<String, Zip> zips = new TreeMap<>();
+                if (value.has("zips")) {
+                    value.getAsJsonObject("zips").entrySet().forEach(zip -> {
+                        JsonObject z = zip.getValue().getAsJsonObject();
+                        String sha256 = z.get("sha256").getAsString();
+                        zips.put(zip.getKey(), sha256.equals(ZipChecksums.UNKNOWN) ? Zip.UNKNOWN
+                            : new Zip(sha256, z.has("size") ? z.get("size").getAsLong() : 0));
+                    });
+                }
                 builds.put(BuildNumber.require(entry.getKey()), new Entry(value.get("protocol").getAsInt(), identicalTo,
                     value.has("source") ? value.get("source").getAsString() : FROM_LIST,
-                    identicalTo != null ? null : value.has("keptBy") ? value.get("keptBy").getAsString() : KEPT_BY_UPDATE, notCompared));
+                    identicalTo != null ? null : value.has("keptBy") ? value.get("keptBy").getAsString() : KEPT_BY_UPDATE, notCompared,
+                    zips, value.has("frozen") ? value.get("frozen").getAsString() : null));
             });
         }
         return builds;
@@ -291,12 +350,15 @@ public final class BuildHistory {
 
     public static void write(Path root, Map<String, Entry> builds, BuildList list) throws IOException {
         JsonObject json = new JsonObject();
-        json.addProperty("_generated", "Generated by `./gradlew :tools:run --args=\"builds check\"` (tools BuildHistory): every BDS "
+        json.addProperty("_generated", "Generated by `./gradlew :tools:run --args=\"builds check\"` and `builds record` (tools BuildHistory): every BDS "
             + "release build checked, with its protocol. A kept build has its captures in data/bds/<build> (keptBy: update, the "
             + "source of a bundled data version, or history check); any other equals the kept build named (identicalToProtocol: "
             + "that build's protocol, where it differs). notCompared: what its run could not compare with the other build. "
-            + "source: where the build number came from, BDS-Versions (listCommit: the list at the latest run) or the download "
-            + "links API of minecraft.net. Do not edit by hand.");
+            + "source: where the build number came from, BDS-Versions (listCommit: the list at the latest run), the download "
+            + "links API of minecraft.net, or the captures in data/bds. zips: per platform the sha256 and size of a kept build's zip "
+            + "from minecraft.net, computed from a downloaded zip (unknown: none was at hand); downloads are checked against it. "
+            + "frozen: why a kept build's zip can no longer be downloaded; its captures stay and a recapture skips it. "
+            + "Do not edit by hand.");
         json.addProperty("list", VERSIONS);
         if (list != null) {
             json.addProperty("listCommit", list.commit());
@@ -311,6 +373,21 @@ public final class BuildHistory {
             if (entry.kept()) {
                 value.addProperty("kept", true);
                 value.addProperty("keptBy", entry.keptBy());
+                if (entry.isFrozen()) {
+                    value.addProperty("frozen", entry.frozen());
+                }
+                if (!entry.zips().isEmpty()) {
+                    JsonObject zips = new JsonObject();
+                    new TreeMap<>(entry.zips()).forEach((platform, zip) -> {
+                        JsonObject z = new JsonObject();
+                        z.addProperty("sha256", zip.known() ? zip.sha256() : ZipChecksums.UNKNOWN);
+                        if (zip.known()) {
+                            z.addProperty("size", zip.size());
+                        }
+                        zips.add(platform, z);
+                    });
+                    value.add("zips", zips);
+                }
             } else {
                 String target = entry.identicalTo();
                 value.addProperty("identicalTo", target);
@@ -415,6 +492,80 @@ public final class BuildHistory {
             }
         }
         return problems;
+    }
+
+    /**
+     * The zips of a kept build, per platform of {@link #ZIP_PLATFORMS}: a recorded checksum stays; a platform without one takes
+     * the cached zip's ({@code <cache>/zips/<platform>/...}, if it reads), else stays unknown. Nothing is downloaded.
+     *
+     * @throws IllegalStateException when a cached zip has another checksum than the recorded one
+     */
+    static Map<String, Zip> zips(Path cache, String build, Map<String, Zip> recorded) throws IOException, InterruptedException {
+        Map<String, Zip> zips = new TreeMap<>();
+        for (String platform : ZIP_PLATFORMS) {
+            Zip known = recorded.getOrDefault(platform, Zip.UNKNOWN);
+            Path file = BdsDistribution.resolve(platform.equals("linux"), false, build).zipFile(cache);
+            Zip cached = null;
+            if (Files.isRegularFile(file)) {
+                try {
+                    BdsDistribution.checkZip(file);
+                    cached = Zip.of(file);
+                } catch (IOException e) {
+                    System.out.println("The cached " + file + " does not read, its checksum is not recorded: " + e.getMessage());
+                }
+            }
+            if (known.known() && cached != null && !known.sha256().equals(cached.sha256())) {
+                throw new IllegalStateException("The cached " + file + " has sha256 " + cached.sha256() + ", but " + Layout.BDS + "/" + RECORD
+                    + " records " + known.sha256() + " for " + build + " " + platform);
+            }
+            zips.put(platform, known.known() ? known : cached != null ? cached : Zip.UNKNOWN);
+        }
+        return zips;
+    }
+
+    /**
+     * {@code builds record}: brings the record up to date with the committed data, without BDS or the network. Release builds
+     * with captures that the record lacks are recorded as kept by {@code update} (their number from {@link #FROM_CAPTURES}),
+     * every kept build gets the checksums of its zips from the cache ({@link #zips}), and the builds named are frozen (with
+     * the reason) or no longer frozen. Writes the record and the build table.
+     *
+     * @return the process exit code
+     */
+    public static int record(Path root, Path cache, Map<String, String> freeze, List<String> unfreeze) throws Exception {
+        Map<String, Entry> record = read(root);
+        Map<String, Integer> captured = capturedReleases(root);
+        List<String> problems = problems(root, record, captured);
+        if (!problems.isEmpty()) {
+            problems.forEach(problem -> System.out.println("ERROR: " + problem));
+            return 1;
+        }
+        captured.forEach((build, protocol) -> record.putIfAbsent(build, new Entry(protocol, null, FROM_CAPTURES, KEPT_BY_UPDATE, List.of())));
+        for (Map.Entry<String, Entry> entry : record.entrySet()) {
+            if (entry.getValue().kept()) {
+                entry.setValue(entry.getValue().withZips(zips(cache, entry.getKey(), entry.getValue().zips())));
+            }
+        }
+        for (Map.Entry<String, String> frozen : freeze.entrySet()) {
+            Entry entry = record.get(BuildNumber.require(frozen.getKey()));
+            if (entry == null || !entry.kept()) {
+                System.out.println("ERROR: " + frozen.getKey() + " is no kept build of the record; only a kept build is frozen");
+                return 1;
+            }
+            record.put(frozen.getKey(), entry.frozen(frozen.getValue()));
+        }
+        for (String build : unfreeze) {
+            record.computeIfPresent(BuildNumber.require(build), (b, entry) -> entry.frozen(null));
+        }
+        write(root, record, null);
+        record.forEach((build, entry) -> {
+            if (entry.kept()) {
+                System.out.println(build + ": " + String.join(", ", entry.zips().entrySet().stream()
+                    .map(zip -> zip.getKey() + " " + (zip.getValue().known() ? zip.getValue().sha256() : ZipChecksums.UNKNOWN)).toList())
+                    + (entry.isFrozen() ? "; frozen: " + entry.frozen() : ""));
+            }
+        });
+        BuildTable.run(root, false);
+        return 0;
     }
 
     /** The kept builds: those of the record, and builds with captures that the record lacks (kept by {@code update}). */
@@ -605,6 +756,7 @@ public final class BuildHistory {
             }
             if (step.kind() == Kind.FIRST) {
                 apply(record, captured, step, null, list.source(build));
+                record.put(build, record.get(build).withZips(zips(cache, build, Map.of())));
                 write(root, record, list);
                 BuildTable.run(root, false);
                 System.out.println(build + " (protocol " + record.get(build).protocol() + "): kept, the oldest kept build of the record");
@@ -631,6 +783,10 @@ public final class BuildHistory {
             String replaced = apply(record, captured, step, outcome, list.source(build));
             if (step.kind() == Kind.CHECK && record.get(build).kept()) {
                 captured.put(build, outcome.protocol());
+            }
+            if (record.get(build).kept()) {
+                // The zips the run used, before cleanUp removes the Linux one
+                record.put(build, record.get(build).withZips(zips(cache, build, Map.of())));
             }
             // The record first: a run that stops before the removal leaves captures the record no longer needs, never a
             // record that names removed captures

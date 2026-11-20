@@ -55,7 +55,12 @@ public final class RecapturePlan {
         List<Leg> legs = new ArrayList<>();
         Map<String, BuildHistory.Entry> record = BuildHistory.read(root);
         Map<String, BuildHistory.Entry> kept = BuildHistory.keptView(record, BuildHistory.capturedReleases(root));
-        kept.forEach((build, entry) -> legs.add(new Leg(build, false, entry.keptByHistoryCheck() ? build : null)));
+        // A frozen build's zip can no longer be downloaded: its captures stay as they are ({@link #frozen} says so)
+        kept.forEach((build, entry) -> {
+            if (!entry.isFrozen()) {
+                legs.add(new Leg(build, false, entry.keptByHistoryCheck() ? build : null));
+            }
+        });
         if (list != null) {
             legs.addAll(unchecked(root, record, kept, list));
             legs.sort(java.util.Comparator.comparing(Leg::build, Versions.ORDER));
@@ -103,6 +108,20 @@ public final class RecapturePlan {
             }
         }
         return legs;
+    }
+
+    /**
+     * The kept builds a recapture leaves out because they are frozen (their zip can no longer be downloaded), one report line
+     * each: their captures stay those of the add-on they were made with.
+     */
+    public static List<String> frozen(Path root) throws IOException {
+        List<String> lines = new ArrayList<>();
+        BuildHistory.read(root).forEach((build, entry) -> {
+            if (entry.kept() && entry.isFrozen()) {
+                lines.add(build + " is frozen (" + entry.frozen() + "): not recaptured, its captures stay those of the add-on they were made with");
+            }
+        });
+        return lines;
     }
 
     /** Whether a build is of a data version's line ({@link BuildNumber#inLine}); a name that is no build number is of none. */

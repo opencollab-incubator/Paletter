@@ -131,6 +131,43 @@ class BuildHistoryTest {
         }
     }
 
+    /** A kept build records its zips per platform (unknown without one) and whether it is frozen; both round-trip. */
+    @Test
+    void theRecordKeepsZipChecksumsAndTheFrozenState(@TempDir Path root) throws IOException {
+        Files.createDirectories(root.resolve("data/bds"));
+        Map<String, BuildHistory.Entry> builds = new TreeMap<>(Versions.ORDER);
+        builds.put("1.26.36.1", new BuildHistory.Entry(1001, null, BuildHistory.FROM_CAPTURES, BuildHistory.KEPT_BY_UPDATE, List.of(),
+            Map.of("win", new BuildHistory.Zip("ab".repeat(32), 83725211), "linux", new BuildHistory.Zip(null, 0)), "gone from minecraft.net"));
+        builds.put("1.26.40.8", new BuildHistory.Entry(1001, "1.26.36.1"));
+        BuildHistory.write(root, builds, null);
+        JsonObject entry = JsonParser.parseString(Files.readString(root.resolve("data/bds/builds.json"))).getAsJsonObject()
+            .getAsJsonObject("builds").getAsJsonObject("1.26.36.1");
+        assertEquals("ab".repeat(32), entry.getAsJsonObject("zips").getAsJsonObject("win").get("sha256").getAsString());
+        assertEquals("unknown", entry.getAsJsonObject("zips").getAsJsonObject("linux").get("sha256").getAsString());
+        assertEquals("gone from minecraft.net", entry.get("frozen").getAsString());
+        assertEquals(builds, BuildHistory.read(root));
+        assertEquals("ab".repeat(32), dev.opencollab.paletter.tools.bds.ZipChecksums.recorded(root, "win", "1.26.36.1"));
+        assertEquals(null, dev.opencollab.paletter.tools.bds.ZipChecksums.recorded(root, "linux", "1.26.36.1"), "unknown is no checksum");
+    }
+
+    /** Checksums come from the cached zips only: a missing zip stays unknown, and a cached zip that disagrees with the record fails. */
+    @Test
+    void zipChecksumsComeFromTheCacheOnly(@TempDir Path cache) throws Exception {
+        Path win = Files.createDirectories(cache.resolve("zips/win")).resolve("bedrock-server-1.26.36.1.zip");
+        try (java.util.zip.ZipOutputStream zip = new java.util.zip.ZipOutputStream(Files.newOutputStream(win))) {
+            zip.putNextEntry(new java.util.zip.ZipEntry("bedrock_server.exe"));
+            zip.write(new byte[] {1, 2, 3});
+            zip.closeEntry();
+        }
+        Map<String, BuildHistory.Zip> zips = BuildHistory.zips(cache, "1.26.36.1", Map.of());
+        assertEquals(dev.opencollab.paletter.tools.bds.ZipChecksums.sha256(win), zips.get("win").sha256());
+        assertEquals(Files.size(win), zips.get("win").size());
+        assertFalse(zips.get("linux").known(), "no Linux zip in the cache: unknown, never guessed");
+        IllegalStateException e = assertThrows(IllegalStateException.class,
+            () -> BuildHistory.zips(cache, "1.26.36.1", Map.of("win", new BuildHistory.Zip("00".repeat(32), 1))));
+        assertTrue(e.getMessage().contains("00".repeat(32)), e.getMessage());
+    }
+
     @Test
     void theRecordNamesOnlyBuilds(@TempDir Path root) throws IOException {
         Files.createDirectories(root.resolve("data/bds"));
@@ -275,10 +312,12 @@ class BuildHistoryTest {
         Map<String, BuildHistory.Entry> expected = new TreeMap<>(Versions.ORDER);
         expected.put("1.26.30.5", new BuildHistory.Entry(1001, "1.26.36.1"));
         expected.put("1.26.31.1", new BuildHistory.Entry(1001, "1.26.36.1"));
-        expected.put("1.26.36.1", new BuildHistory.Entry(1001, null));
+        // Kept builds record their zips; the runner downloaded none, so their checksums are unknown
+        Map<String, BuildHistory.Zip> noZips = Map.of("win", new BuildHistory.Zip(null, 0), "linux", new BuildHistory.Zip(null, 0));
+        expected.put("1.26.36.1", new BuildHistory.Entry(1001, null).withZips(noZips));
         expected.put("1.26.40.8", new BuildHistory.Entry(2168, "1.26.45.1"));
         expected.put("1.26.42.1", new BuildHistory.Entry(2168, "1.26.45.1"));
-        expected.put("1.26.45.1", new BuildHistory.Entry(2169, null));
+        expected.put("1.26.45.1", new BuildHistory.Entry(2169, null).withZips(noZips));
         assertEquals(expected, record);
         assertFalse(Files.exists(root.resolve("data/bds/1.26.40.8")), "the replaced captures are removed");
         assertTrue(Files.exists(root.resolve("data/bds/1.26.45.1/spec/capture.json")));

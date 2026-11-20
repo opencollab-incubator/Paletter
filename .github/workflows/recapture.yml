@@ -89,8 +89,10 @@ jobs:
       - name: List the builds
         id: plan
         run: |
-          ./gradlew :tools:run --args="builds plan --output $RUNNER_TEMP/matrix.json"
+          ./gradlew :tools:run --args="builds plan --output $RUNNER_TEMP/matrix.json" | tee "$RUNNER_TEMP/plan.log"
           MATRIX=$(cat "$RUNNER_TEMP/matrix.json")
+          # Frozen builds (their zip is gone from minecraft.net) are left out of the plan, and said so
+          grep '^SKIPPED ' "$RUNNER_TEMP/plan.log" | sed 's/^/- /' >> "$GITHUB_STEP_SUMMARY" || true
           # Every value that a later job puts into a command line is checked here and again there
           echo "$MATRIX" | jq -e --arg re "$BUILD_RE" '(.include | length) > 0 and ([.include[] | (.build | test($re))
             and (.channel | IN("release", "preview")) and (.against | . == "" or test($re))] | all)' > /dev/null \

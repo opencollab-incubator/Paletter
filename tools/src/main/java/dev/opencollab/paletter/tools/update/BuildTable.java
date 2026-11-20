@@ -69,7 +69,7 @@ public final class BuildTable {
         Map<String, BuildHistory.Entry> builds = new TreeMap<>(Versions.ORDER);
         builds.putAll(record);
         captured.forEach((build, protocol) -> builds.putIfAbsent(build, new BuildHistory.Entry(protocol, null,
-            "captures in data/bds", BuildHistory.KEPT_BY_UPDATE, List.of())));
+            BuildHistory.FROM_CAPTURES, BuildHistory.KEPT_BY_UPDATE, List.of())));
         // The build each data version was imported from: the newest kept build of its window that update captured
         Map<String, String> imported = new TreeMap<>();
         builds.forEach((build, entry) -> {
