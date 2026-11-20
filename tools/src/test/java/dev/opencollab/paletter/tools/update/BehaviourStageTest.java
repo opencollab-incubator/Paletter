@@ -72,7 +72,7 @@ class BehaviourStageTest {
     }
 
     @Test
-    void aFailedStepIsASkippedRowWithATodoNotAFailure() {
+    void aFailedOptionalProbeIsASkippedRowWithATodoNotAFailure() {
         Update update = update(BUILD);
         BehaviourStage stage = new BehaviourStage(update.context());
         stage.step("Behaviour probe", () -> {
@@ -80,6 +80,17 @@ class BehaviourStageTest {
         });
         assertFalse(update.report().failed());
         assertTrue(update.report().hasTodos());
+    }
+
+    @Test
+    void aFailedEssentialStepIsAFailure() {
+        for (String name : java.util.List.of("Behaviour dump", "Education capture")) {
+            Update update = update(BUILD);
+            new BehaviourStage(update.context()).step(name, () -> {
+                throw new IOException("BDS exited");
+            });
+            assertTrue(update.report().failed(), name);
+        }
     }
 
     @Test

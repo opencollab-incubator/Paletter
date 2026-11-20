@@ -14,6 +14,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.Locale;
+import java.util.Set;
 
 /**
  * The captures that were separate commands: the behaviour dump ({@code behaviour-dump}), the behaviour probe
@@ -21,10 +22,16 @@ import java.util.Locale;
  * ran on. They take six more starts of BDS (the dump two, the probe one, the education world three) and are staged like the
  * other captures, only when they differ from the committed ones of the build.
  * <p>
- * None of them blocks the run: a step that fails is a skipped row with a TODO, and the committed file stays. Their output is
- * the input of {@code behaviour import} and of the constants generator, which the job that gathers a recapture runs.
+ * Their output is the input of {@code behaviour import} and of the constants generator, which the job that gathers a recapture
+ * runs, so a step that fails is a FAIL. Only the {@link #OPTIONAL} probes are a skipped row with a TODO (the committed file
+ * stays); the report header lists them.
  */
 final class BehaviourStage {
+    /**
+     * The steps whose failure is a SKIP: the behaviour probe, whose measurements {@code behaviour import} reads from one reference
+     * build ({@code data/bds/1.26.63.1/behaviour-probe}); a build without its own probe loses nothing the import needs.
+     */
+    static final Set<String> OPTIONAL = Set.of("Behaviour probe");
     static final String DUMP = BehaviourDump.FILE;
     static final String PROBE_DIRECTORY = "behaviour-probe";
     static final String PROBE_CAPTURE = PROBE_DIRECTORY + "/capture.json";
@@ -48,11 +55,12 @@ final class BehaviourStage {
      */
     void behaviour(BdsDistribution distribution, Path server, Path work, Runs runs) {
         String build = distribution.version();
+        ctx.report.header.put("Optional probes", String.join(", ", new java.util.TreeSet<>(OPTIONAL)) + " (a failure is a skipped row, the committed file stays)");
         try {
             step("Behaviour dump", () -> dump(build, server, work, runs));
             step("Behaviour probe", () -> probe(build, server, work));
             if (runs.protocol == null) {
-                ctx.report.check(Report.Status.SKIP, "Education capture", "no network capture of this build");
+                ctx.report.check(Report.Status.FAIL, "Education capture", "no network capture of this build");
             } else {
                 step("Education capture", () -> education(build, server, work.resolve("education"), runs));
             }
@@ -79,7 +87,11 @@ final class BehaviourStage {
     }
 
     private void skipped(String name, Exception error) {
-        ctx.report.check(Report.Status.SKIP, name, "failed, the committed data stays: " + error);
+        if (OPTIONAL.contains(name)) {
+            ctx.report.check(Report.Status.SKIP, name, "failed (optional), the committed data stays: " + error);
+        } else {
+            ctx.report.fail(name, error);
+        }
         ctx.report.action("run `" + name.toLowerCase(Locale.ROOT).replace(' ', '-') + "` by hand for this build (see the log in the work directory)");
     }
 

@@ -62,7 +62,7 @@ command takes `--help`. Paths are relative to the repository root (`--root` over
 | `creative-probe` | Runs an add-on on BDS and records the creative inventory order. |
 | `education-capture` | Records what only an Education Edition world adds (`education.json`, used for `@Education`). |
 | `recipes-capture` | Records the crafting and trim data of one build (`vanilla/crafting_data.json.gz`, `vanilla/trim_data.json`); `update` writes them too. |
-| `recipes-diff` | `--from <build> --to <build>`: diffs two committed recipe captures in `data/bds`, normalised (list layout, net ids and random UUIDs ignored): recipes added, removed and changed, mixes, trims. `update` reports the same diff, and checks that recipe items, tags, block states and net ids hold (INFO at most). A run whose own capture has no `crafting_data.json.gz` fails, and so does an unreadable recipe capture; a build without a committed recipe capture is only not compared. |
+| `recipes-diff` | `--from <build> --to <build>`: diffs two committed recipe captures in `data/bds`, normalised (list layout, net ids and random UUIDs ignored): recipes added, removed and changed, mixes, trims. `update` reports the same diff, and checks that recipe items, tags, block states and net ids hold (a FAIL when one does not). A run whose own capture has no `crafting_data.json.gz` fails, and so does an unreadable recipe capture; a build without a committed recipe capture is only not compared. |
 | `recipes-import [--check]` | The recipe captures of `data/bds` to the bundled `paletter-recipes/src/main/resources/paletter/recipes/<data version>.nbt` (item identifiers and aux values as BDS sent them, no net ids, no random UUIDs; the trim patterns and materials are in the bundle but not in the API) and `RecipeStations` (a constant per station tag of the captures, in `paletter-recipes/src/generated`). A capture belongs to the data version of the protocol in its build's `experiments.json`; a recipe kind or ingredient descriptor the bundle has no place for fails the import, and so does an item that is not in the palette of its data version, an unknown unlock context, a malformed UUID, a container mix with an aux value or an empty block state or tag. `:tools:checkRecipes` (part of `check`) runs `--check`. |
 | `inspect` | Prints `Palette#explain` for a block state or item in one or all bundled versions. |
 
@@ -700,8 +700,9 @@ writes `behaviour.nbt` and `data/behaviour/REPORT.md` from:
 
 `update` (and `update --capture-only`, the capture half of a full recapture) runs `behaviour-dump`, `behaviour-probe` and
 `education-capture` on the server of its other captures, six more starts of BDS, and stages their files like the other
-captures: only when they differ from the committed ones of the build. A step that fails is a skipped row and a TODO, never
-a failed run. The recapture's assemble job then runs `behaviour import` on the staged captures and on CloudburstMC/Data and
+captures: only when they differ from the committed ones of the build. A step that fails is a FAIL, except the optional
+probes (`BehaviourStage.OPTIONAL`, listed in the report header: the behaviour probe, whose measurements come from one
+reference build), which are a skipped row and a TODO. The recapture's assemble job then runs `behaviour import` on the staged captures and on CloudburstMC/Data and
 AllayMC/Allay at the commits pinned in `.github/workflows/recapture.yml` (the ones `data/behaviour/REPORT.md` lists).
 
 The report lists the ranking, which source decides each key in each version, disputes and post-processed values. The
@@ -741,9 +742,10 @@ it together with the new data, so the committed captures and the conformance tes
   `Fixtures#facts` and the add-on varies both (`Fixtures#disputed`: boundaries of each, values of each). `update` reports the
   disputes ("BDS schema vs content log"), the components it could not read, the keywords it does not know, and the values the
   add-on generator cut at `MAX_VALUES` ("Add-on values cut", also `valuesCut` in `capture.json`).
-- The step never blocks an import: no docs, an unreadable layout or one bad component are skipped rows, and the previous
-  committed schema (the newest build not after the one being run) is what the model merges. A `schema.json` that cannot be read
-  is no schema, with a warning.
+- In an `update` run, no docs, a layout the extract cannot read or a schema keyword it does not know is a FAIL: that is how a
+  change of the documentation generator shows, and the add-on would otherwise be generated from an older schema in silence.
+  Components it could not read are a DIFF, and the previous committed schema (the newest build not after the one being run) is
+  what the model merges for them. A committed `schema.json` that cannot be read is no schema, with a warning.
 - An `enabled_states` value no docs name a state for, such as `minecraft:sixteen_way_rotation`, adds the state of its own
   name with BDS's values (the Script API's `BlockStates.getAll()` in the newest dump that keeps BDS's value order, format 4 on);
   without one the trait state table skips (and reports) it. Its default is checked against the hash BDS sent, as every other.
