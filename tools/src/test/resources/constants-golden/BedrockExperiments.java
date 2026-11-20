@@ -9,7 +9,7 @@ import dev.opencollab.paletter.annotation.SincePreview;
 /**
  * The experiment toggles of Bedrock: the ids to give {@code VanillaContent#experiments(String...)} and what
  * {@link dev.opencollab.paletter.annotation.BedrockExperiment @BedrockExperiment} names. Every toggle a captured
- * Bedrock Dedicated Server had current is here ({@code data/bds}); toggles retired before the oldest capture are not.
+ * Bedrock Dedicated Server had current is here; toggles retired before the oldest capture are not.
  * {@code @BedrockSince} is the first bundled data version whose capture has the toggle ({@code 1.0} is the oldest, so it may be older),
  * {@code @BedrockUntil} the first bundled release where it no longer does: Bedrock released or retired the experiment, and the
  * toggle does nothing. {@link dev.opencollab.paletter.annotation.SincePreview @SincePreview} marks a toggle only a bundled preview has.

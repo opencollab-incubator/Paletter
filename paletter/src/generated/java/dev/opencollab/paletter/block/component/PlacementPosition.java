@@ -3,7 +3,9 @@
 // data/model/ATTRIBUTION.md.
 package dev.opencollab.paletter.block.component;
 
+import dev.opencollab.paletter.internal.component.Check;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
@@ -14,25 +16,47 @@ import org.checkerframework.checker.nullness.qual.Nullable;
  * <p>
  * Add-on JSON: {@code "minecraft:placement_position"}.
  *
- * @param enabledStates Which states to enable. Must specify at least one. Valid values are <code>minecraft:block_face</code> and
- *        <code>minecraft:vertical_half</code>. Add-on JSON {@code enabled_states}. Required.
  * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/blockreference/examples/traits/placement_position?view=minecraft-bedrock-stable">Microsoft Learn: minecraft:placement_position</a>
  * @since 1.0.0
  */
-public record PlacementPosition(
-        @NonNull List<PlacementPosition.EnabledStates> enabledStates) implements BlockTrait {
+public final class PlacementPosition implements BlockTrait {
     /**
      * The component name in add-on JSON.
      */
     public static final String NAME = "minecraft:placement_position";
 
-    /**
-     * Checks the components and copies lists and maps, so the value is immutable.
-     *
-     * @throws NullPointerException if a required component is null
-     */
-    public PlacementPosition {
+    private final @NonNull List<EnabledStates> enabledStates;
+
+    private PlacementPosition(@NonNull List<EnabledStates> enabledStates) {
         enabledStates = List.copyOf(Objects.requireNonNull(enabledStates, "PlacementPosition.enabledStates"));
+        this.enabledStates = enabledStates;
+    }
+
+    /**
+     * Which states to enable. Must specify at least one. Valid values are <code>minecraft:block_face</code> and
+     * <code>minecraft:vertical_half</code>. Add-on JSON {@code enabled_states}. Required.
+     *
+     * @return the value
+     */
+    public @NonNull List<EnabledStates> enabledStates() {
+        return enabledStates;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        return this == o || o instanceof PlacementPosition other
+                && Objects.equals(enabledStates, other.enabledStates);
+    }
+
+    @Override
+    public int hashCode() {
+        int h = Objects.hashCode(enabledStates);
+        return h;
+    }
+
+    @Override
+    public String toString() {
+        return "PlacementPosition[enabledStates=" + enabledStates + "]";
     }
 
     @Override
@@ -107,23 +131,49 @@ public record PlacementPosition(
     }
 
     /**
-     * The documented values; {@link #value()} is the add-on JSON string.
+     * A value of an add-on JSON string: a constant per documented value, {@link #of} for any other.
+     * {@link #value()} is the add-on JSON string. Not an enum: Bedrock adds values, so a {@code switch} over
+     * {@link #value()} needs a {@code default}.
      */
-    public enum EnabledStates {
+    public static final class EnabledStates {
         /**
          * {@code minecraft:block_face}
          */
-        BLOCK_FACE("minecraft:block_face"),
+        public static final EnabledStates BLOCK_FACE = new EnabledStates("minecraft:block_face");
 
         /**
          * {@code minecraft:vertical_half}
          */
-        VERTICAL_HALF("minecraft:vertical_half");
+        public static final EnabledStates VERTICAL_HALF = new EnabledStates("minecraft:vertical_half");
+
+        private static final List<EnabledStates> KNOWN = List.of(BLOCK_FACE, VERTICAL_HALF);
+
+        private static final Map<String, EnabledStates> BY_VALUE = Check.index(KNOWN, EnabledStates::value);
 
         private final String value;
 
-        EnabledStates(String value) {
+        private EnabledStates(String value) {
             this.value = value;
+        }
+
+        /**
+         * Returns the value of an add-on JSON string: the constant of a documented value, else a new value.
+         *
+         * @param value the value in add-on JSON
+         * @return the constant of the value, or a value Paletter does not know
+         */
+        public static @NonNull EnabledStates of(@NonNull String value) {
+            EnabledStates known = BY_VALUE.get(Objects.requireNonNull(value, "EnabledStates.value"));
+            return known != null ? known : new EnabledStates(value);
+        }
+
+        /**
+         * Returns the documented values, the constants of this class.
+         *
+         * @return the constants, in the order of the documentation
+         */
+        public static @NonNull List<EnabledStates> known() {
+            return KNOWN;
         }
 
         /**
@@ -136,19 +186,27 @@ public record PlacementPosition(
         }
 
         /**
-         * Finds the constant of an add-on JSON value.
+         * Returns whether the value is documented, one of the constants.
          *
-         * @param value the value in add-on JSON
-         * @return the constant of the value
-         * @throws IllegalArgumentException if the value is not documented
+         * @return whether this is one of {@link #known()}
          */
-        public static @NonNull EnabledStates fromValue(@NonNull String value) {
-            for (EnabledStates constant : values()) {
-                if (constant.value.equals(value)) {
-                    return constant;
-                }
-            }
-            throw new IllegalArgumentException("Not a EnabledStates: " + value);
+        public boolean isKnown() {
+            return BY_VALUE.get(value) == this;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            return this == o || o instanceof EnabledStates other && value.equals(other.value);
+        }
+
+        @Override
+        public int hashCode() {
+            return value.hashCode();
+        }
+
+        @Override
+        public String toString() {
+            return value;
         }
     }
 }

@@ -8,25 +8,31 @@ import dev.opencollab.paletter.annotation.Experimental;
  * JSON cannot set; clients use it for the item's use animation frames (e.g. a bow's draw stages). Not an add-on
  * component; the name is the wire path.
  *
- * @param value the frame count sent to the client, at least 1
  * @since 1.0.0
  */
 @Experimental
-public record FrameCount(int value) implements WireOnlyItemComponent {
+public final class FrameCount implements WireOnlyItemComponent {
     /**
      * The wire path (there is no add-on JSON name).
      */
     public static final String NAME = "item_properties.frame_count";
 
-    /**
-     * Creates a frame count.
-     *
-     * @throws IllegalArgumentException if the value is below 1
-     */
-    public FrameCount {
+    private final int value;
+
+    private FrameCount(int value) {
         if (value < 1) {
             throw new IllegalArgumentException("FrameCount.value must be at least 1: " + value);
         }
+        this.value = value;
+    }
+
+    /**
+     * Returns the frame count.
+     *
+     * @return the frame count sent to the client, at least 1
+     */
+    public int value() {
+        return value;
     }
 
     /**
@@ -43,5 +49,20 @@ public record FrameCount(int value) implements WireOnlyItemComponent {
     @Override
     public @NonNull String name() {
         return NAME;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        return this == o || o instanceof FrameCount other && value == other.value;
+    }
+
+    @Override
+    public int hashCode() {
+        return value;
+    }
+
+    @Override
+    public String toString() {
+        return "FrameCount[value=" + value + "]";
     }
 }

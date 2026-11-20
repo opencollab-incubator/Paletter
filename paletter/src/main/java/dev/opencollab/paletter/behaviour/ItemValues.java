@@ -168,7 +168,7 @@ public final class ItemValues {
 
     /**
      * For debugging: the value and where it comes from, e.g.
-     * {@code 16 from Paletter data/bds/1.26.63.1/dump.json.gz (SCRIPT_API), 26.60}. Says whether the user set the
+     * {@code 16 from Paletter <capture file> (SCRIPT_API), 26.60}. Says whether the user set the
      * value, whether it is inherited from an older version's capture, and the other values of a disputed one. Builds the
      * text on each call.
      *

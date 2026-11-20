@@ -30,6 +30,7 @@ public final class BlockWire {
             case Hidden c -> { } // server only: BDS sends nothing to clients
             case Slab c -> Transforms.testMap(ctx, out, c);
             case WireOnlyBlockComponent c -> WireOnlyWire.write(c, ctx, out);
+            default -> throw new IllegalArgumentException(component.toString());
         }
     }
 

@@ -117,9 +117,9 @@ class ComponentGeneratorTest {
 
     static JsonObject mappings() {
         return json("""
-            {"captures": [{"capture": "data/bds/8.8.8/spec", "bdsVersion": "8.8.8", "protocol": 100, "windowProtocol": 100,
+            {"captures": [{"capture": "data/bds/8.8.8/spec", "bdsVersion": "8.8.8", "dataVersion": "8.8", "protocol": 100, "windowProtocol": 100,
                            "firstCustomBlockId": 10000, "blockItemIdPlusBlockId": 255},
-                         {"capture": "data/bds/9.9.9/spec", "bdsVersion": "9.9.9", "protocol": 200, "windowProtocol": 200,
+                         {"capture": "data/bds/9.9.9/spec", "bdsVersion": "9.9.9", "dataVersion": "9.9", "protocol": 200, "windowProtocol": 200,
                            "firstCustomBlockId": 10000, "blockItemIdPlusBlockId": 255}],
              "traitStates": {"test:turn": {
                "test:facing": [{"name": "test:facing", "type": "string", "values": ["south", "north"],
@@ -196,7 +196,7 @@ class ComponentGeneratorTest {
                 + "\"unions\": {\"item:test:widget:stripes\": " + STRIPES + ", \"item:test:widget:outline\": " + STRIPES + "}, "
                 + "\"rootLists\": {\"block:test:slab\": \"parts\"}, "
                 + "\"forms\": {\"block:test:slab\": {\"object\": {\"listElementOf\": \"parts\"}}}}"), "9.0.0",
-            new ComponentGenerator.Context(Set.of(), Map.of("Test Toggle", "test_toggle"), Map.of()));
+            new ComponentGenerator.Context(Set.of(), Map.of("Test Toggle", "test_toggle"), Map.of()), new JsonObject());
     }
 
     // ---- Golden files --------------------------------------------------------------------------------------------
@@ -253,7 +253,8 @@ void theModelIsWhatTheGoldenSourcesShow() {
         transforms.put("item:test:gone:", "x");
         transforms.put("item:test:widget:removed.field", "y");
         GenerationException e = assertThrows(GenerationException.class, () -> ComponentGenerator.generate(
-            new Inputs(gone.components(), gone.fixtures(), gone.feedback(), gone.mappings(), transforms, gone.api(), gone.since(), gone.context())));
+            new Inputs(gone.components(), gone.fixtures(), gone.feedback(), gone.mappings(), transforms, gone.api(), gone.since(), gone.context(),
+                gone.history())));
         assertEquals("hand transforms that name no component or field of the model (renamed or removed in the docs?): "
             + "item:test:gone: (no such component); item:test:widget:removed.field (no such field)", e.getMessage());
     }
@@ -281,14 +282,15 @@ void theModelIsWhatTheGoldenSourcesShow() {
     }
 
     @Test
-    void theRecordConstructorChecksTheLimitsOfAValueForm() {
+    void theConstructorChecksTheLimitsOfAValueForm() {
         // What BDS says about the component's value itself (path "") limits the field of its value form
         Inputs in = inputs();
         in.feedback().add("block:test:glow", json("{\"\": [\"max 15\"]}"));
         String glow = ComponentGenerator.generate(in).get("dev/opencollab/paletter/block/component/Glow.java");
         assertTrue(glow.contains("""
-                public Glow {
+                private Glow(int value) {
                     Check.range("Glow.value", value, null, 15.0);
+                    this.value = value;
                 }
             """), glow);
         // Text the generator writes keeps its Javadoc tags
@@ -367,7 +369,7 @@ void theModelIsWhatTheGoldenSourcesShow() {
                             Check.order("Lamp.Span", "min", min, "max", max);
                         }
             """), lamp);
-        assertTrue(lamp.contains("Not below {@code min} (BDS "), lamp);
+        assertTrue(lamp.contains("Not below {@code min} (Bedrock 9.9)"), lamp);
     }
 
     @Test
@@ -458,7 +460,7 @@ void theModelIsWhatTheGoldenSourcesShow() {
         assertTrue(!wire.contains("case \"odd\""), "the undocumented sample is the default, not a case");
         String widget = ComponentGenerator.generate(inputs()).get("dev/opencollab/paletter/item/component/Widget.java");
         assertTrue(widget.contains("@Nullable String rarity"), widget);
-        assertTrue(widget.contains("Documented values: {@code common}, {@code\n *        rare}; BDS takes other strings too."), widget);
+        assertTrue(widget.contains("Documented values: {@code common}, {@code\n     * rare}; BDS takes other strings too."), widget);
         assertTrue(!widget.contains("enum Rarity"), "an open enum has no constants");
     }
 
@@ -569,7 +571,7 @@ void theModelIsWhatTheGoldenSourcesShow() {
         String slab = files.get("dev/opencollab/paletter/block/component/Slab.java");
         assertTrue(slab.contains("public static @NonNull Slab of(@NonNull Entry entry)"), slab);
         assertTrue(slab.contains("return builder().parts(entry).build();"), slab);
-        assertTrue(slab.contains("BDS rejects this form since 9.9.9 (protocol 200); the list is accepted by every captured BDS."), slab);
+        assertTrue(slab.contains("BDS rejects this form since Bedrock 9.9 (protocol 200); the list is accepted by every captured BDS."), slab);
         assertTrue(files.get("dev/opencollab/paletter/internal/component/ComponentIndex.java")
             .contains("FORMS.put(Slab.class, Map.of(\"array<object>\", \"parts\", \"object\", \"parts[]\"))"));
         // Without the declaration the object form is not offered
@@ -610,7 +612,7 @@ void theModelIsWhatTheGoldenSourcesShow() {
             shuffled.forEach(reordered::add);
             in.components().add("components", reordered);
             Inputs shuffledInputs = new Inputs(in.components(), in.fixtures(), shuffleKeys(in.feedback(), random),
-                shuffleKeys(in.mappings(), random), in.transforms(), shuffleKeys(in.api(), random), in.since(), in.context());
+                shuffleKeys(in.mappings(), random), in.transforms(), shuffleKeys(in.api(), random), in.since(), in.context(), in.history());
             assertEquals(first, ComponentGenerator.generate(shuffledInputs), "seed " + seed);
         }
     }
@@ -652,7 +654,8 @@ void theModelIsWhatTheGoldenSourcesShow() {
         String wire = files.get("dev/opencollab/paletter/internal/component/BlockWire.java");
         assertTrue(wire.contains("\"test:labels\""), "the list reaches the encoder: " + wire);
         String source = files.get("dev/opencollab/paletter/block/component/Labels.java");
-        assertTrue(source.contains("public record Labels(@NonNull List<String> value) implements BlockComponent"), source);
+        assertTrue(source.contains("public final class Labels implements BlockComponent"), source);
+        assertTrue(source.contains("public @NonNull List<String> value()"), source);
         assertTrue(source.contains("The entries of the component"), source);
     }
 

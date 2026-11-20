@@ -15,32 +15,66 @@ import org.checkerframework.checker.nullness.qual.Nullable;
  * <p>
  * Add-on JSON: {@code "minecraft:durability"}.
  *
- * @param damageChance Specifies the percentage chance of this item losing durability. Default is set to 100. Defined as an int range
- *        with min and max value. Check that the limits imposed on the range (minimum, maximum and maximum distance
- *        between values) are respected. Add-on JSON {@code damage_chance}. Default:
- *        <code>&#123;"max":100,"min":100&#125;</code>.
- * @param maxDurability Max durability is the amount of damage that this item can take before breaking. This is a required parameter
- *        and has a minimum of 0. Add-on JSON {@code max_durability}. Required. At least 0 (BDS 1.26.63.1).
  * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/itemreference/examples/itemcomponents/minecraft_durability?view=minecraft-bedrock-stable">Microsoft Learn: minecraft:durability</a>
  * @since 1.0.0
  */
 @BedrockFormat("1.20.0")
-public record Durability(Durability. @NonNull DamageChance damageChance,
-        int maxDurability) implements ItemComponent {
+public final class Durability implements ItemComponent {
     /**
      * The component name in add-on JSON.
      */
     public static final String NAME = "minecraft:durability";
 
-    /**
-     * Checks the components.
-     *
-     * @throws NullPointerException if a required component is null
-     * @throws IllegalArgumentException if a component is out of its documented range or conflicts with another
-     */
-    public Durability {
+    private final @NonNull DamageChance damageChance;
+
+    private final int maxDurability;
+
+    private Durability(@NonNull DamageChance damageChance, int maxDurability) {
         Objects.requireNonNull(damageChance, "Durability.damageChance");
         Check.range("Durability.maxDurability", maxDurability, 0.0, null);
+        this.damageChance = damageChance;
+        this.maxDurability = maxDurability;
+    }
+
+    /**
+     * Specifies the percentage chance of this item losing durability. Default is set to 100. Defined as an int range
+     * with min and max value. Check that the limits imposed on the range (minimum, maximum and maximum distance
+     * between values) are respected. Add-on JSON {@code damage_chance}. Default:
+     * <code>&#123;"max":100,"min":100&#125;</code>.
+     *
+     * @return the value
+     */
+    public @NonNull DamageChance damageChance() {
+        return damageChance;
+    }
+
+    /**
+     * Max durability is the amount of damage that this item can take before breaking. This is a required parameter
+     * and has a minimum of 0. Add-on JSON {@code max_durability}. Required. At least 0 (Bedrock 26.60).
+     *
+     * @return the value
+     */
+    public int maxDurability() {
+        return maxDurability;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        return this == o || o instanceof Durability other
+                && Objects.equals(damageChance, other.damageChance)
+                && maxDurability == other.maxDurability;
+    }
+
+    @Override
+    public int hashCode() {
+        int h = Objects.hashCode(damageChance);
+        h = 31 * h + maxDurability;
+        return h;
+    }
+
+    @Override
+    public String toString() {
+        return "Durability[damageChance=" + damageChance + ", maxDurability=" + maxDurability + "]";
     }
 
     @Override
@@ -123,20 +157,56 @@ public record Durability(Durability. @NonNull DamageChance damageChance,
      * with min and max value. Check that the limits imposed on the range (minimum, maximum and maximum distance
      * between values) are respected.
      *
-     * @param max Add-on JSON {@code max}. Default: <code>100</code>. Range [0, 100] (BDS 1.26.63.1). Not below {@code min} (BDS
-     *        1.26.63.1).
-     * @param min Add-on JSON {@code min}. Default: <code>100</code>. Range [0, 100] (BDS 1.26.63.1).
      */
-    public record DamageChance(int max, int min) {
-        /**
-         * Checks the components.
-         *
-         * @throws IllegalArgumentException if a component is out of its documented range or conflicts with another
-         */
-        public DamageChance {
+    public static final class DamageChance {
+        private final int max;
+
+        private final int min;
+
+        private DamageChance(int max, int min) {
             Check.range("Durability.DamageChance.max", max, 0.0, 100.0);
             Check.order("Durability.DamageChance", "min", min, "max", max);
             Check.range("Durability.DamageChance.min", min, 0.0, 100.0);
+            this.max = max;
+            this.min = min;
+        }
+
+        /**
+         * Add-on JSON {@code max}. Default: <code>100</code>. Range [0, 100] (Bedrock 26.60). Not below {@code min}
+         * (Bedrock 26.60).
+         *
+         * @return the value
+         */
+        public int max() {
+            return max;
+        }
+
+        /**
+         * Add-on JSON {@code min}. Default: <code>100</code>. Range [0, 100] (Bedrock 26.60).
+         *
+         * @return the value
+         */
+        public int min() {
+            return min;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            return this == o || o instanceof DamageChance other
+                    && max == other.max
+                    && min == other.min;
+        }
+
+        @Override
+        public int hashCode() {
+            int h = max;
+            h = 31 * h + min;
+            return h;
+        }
+
+        @Override
+        public String toString() {
+            return "DamageChance[max=" + max + ", min=" + min + "]";
         }
 
         /**

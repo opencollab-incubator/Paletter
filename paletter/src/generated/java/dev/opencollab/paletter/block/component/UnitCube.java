@@ -9,21 +9,39 @@ import org.checkerframework.checker.nullness.qual.NonNull;
  * Specifies that a unit cube is to be used with tessellation.
  * <p>
  * Add-on JSON: {@code "minecraft:unit_cube"}.
- * Retired: rejected by every captured BDS (oldest: 1.26.36.1, protocol 1001): minecraft:unit_cube: member
+ * Retired: rejected by every captured BDS (oldest: Bedrock 26.30, protocol 1001): minecraft:unit_cube: member
  * "minecraft:unit_cube" is deprecated. Its encoder writes nothing and adds a report warning, as BDS would never
  * send it to a client.
  *
  * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/blockreference/examples/blockcomponents/minecraftblock_unit_cube?view=minecraft-bedrock-stable">Microsoft Learn: minecraft:unit_cube</a>
  * @since 1.0.0
- * @deprecated rejected by every captured BDS (oldest: 1.26.36.1, protocol 1001): minecraft:unit_cube: member
+ * @deprecated rejected by every captured BDS (oldest: Bedrock 26.30, protocol 1001): minecraft:unit_cube: member
  *        "minecraft:unit_cube" is deprecated
  */
 @Deprecated
-public record UnitCube() implements BlockComponent {
+public final class UnitCube implements BlockComponent {
     /**
      * The component name in add-on JSON.
      */
     public static final String NAME = "minecraft:unit_cube";
+
+    private UnitCube() {
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        return o instanceof UnitCube;
+    }
+
+    @Override
+    public int hashCode() {
+        return 0;
+    }
+
+    @Override
+    public String toString() {
+        return "UnitCube[]";
+    }
 
     @Override
     public @NonNull String name() {

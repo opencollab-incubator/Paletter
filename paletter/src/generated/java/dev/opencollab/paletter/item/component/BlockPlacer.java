@@ -18,36 +18,99 @@ import org.checkerframework.checker.nullness.qual.Nullable;
  * <p>
  * Add-on JSON: {@code "minecraft:block_placer"}.
  *
- * @param alignedPlacement When true, block placement through this item is aligned while the interaction button is held down. Supported
- *        from <code>format_version</code> 1.26.0 onward. This item requires a format version of at least 1.26.10.
- *        Add-on JSON {@code aligned_placement}. Default: <code>false</code>.
- * @param block Defines the block that will be placed. Add-on JSON {@code block}. Required. Compiled by the hand transform
- *        {@code Transforms.blockName}.
- * @param replaceBlockItem If true, the item will be registered as the item for this block. This item will be returned by default when
- *        the block is broken/picked. Note: the identifier for this item must match the block's identifier for this
- *        field to be valid. Defaults to false. Add-on JSON {@code replace_block_item}. Default: <code>false</code>.
- *        Compiled by the hand transform {@code Transforms.replaceBlockItem}.
- * @param useOn List of block descriptors of the blocks that this item can be used on. If left empty, all blocks will be
- *        allowed. Value must have at most 256 items. Add-on JSON {@code use_on}. Default: <code>[]</code>.
  * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/itemreference/examples/itemcomponents/minecraft_block_placer?view=minecraft-bedrock-stable">Microsoft Learn: minecraft:block_placer</a>
  * @since 1.0.0
  */
 @BedrockFormat("1.21.50")
-public record BlockPlacer(@BedrockFormat("1.26.10") boolean alignedPlacement, @NonNull String block,
-        boolean replaceBlockItem, @NonNull List<BlockPlacer.UseOn> useOn) implements ItemComponent {
+public final class BlockPlacer implements ItemComponent {
     /**
      * The component name in add-on JSON.
      */
     public static final String NAME = "minecraft:block_placer";
 
-    /**
-     * Checks the components and copies lists and maps, so the value is immutable.
-     *
-     * @throws NullPointerException if a required component is null
-     */
-    public BlockPlacer {
+    private final boolean alignedPlacement;
+
+    private final @NonNull String block;
+
+    private final boolean replaceBlockItem;
+
+    private final @NonNull List<UseOn> useOn;
+
+    private BlockPlacer(boolean alignedPlacement, @NonNull String block, boolean replaceBlockItem,
+            @NonNull List<UseOn> useOn) {
         Objects.requireNonNull(block, "BlockPlacer.block");
         useOn = List.copyOf(Objects.requireNonNull(useOn, "BlockPlacer.useOn"));
+        this.alignedPlacement = alignedPlacement;
+        this.block = block;
+        this.replaceBlockItem = replaceBlockItem;
+        this.useOn = useOn;
+    }
+
+    /**
+     * When true, block placement through this item is aligned while the interaction button is held down. Supported
+     * from <code>format_version</code> 1.26.0 onward. This item requires a format version of at least 1.26.10.
+     * Add-on JSON {@code aligned_placement}. Default: <code>false</code>.
+     *
+     * @return the value
+     */
+    @BedrockFormat("1.26.10")
+    public boolean alignedPlacement() {
+        return alignedPlacement;
+    }
+
+    /**
+     * Defines the block that will be placed. Add-on JSON {@code block}. Required. Compiled by the hand transform
+     * {@code Transforms.blockName}.
+     *
+     * @return the value
+     */
+    public @NonNull String block() {
+        return block;
+    }
+
+    /**
+     * If true, the item will be registered as the item for this block. This item will be returned by default when
+     * the block is broken/picked. Note: the identifier for this item must match the block's identifier for this
+     * field to be valid. Defaults to false. Add-on JSON {@code replace_block_item}. Default: <code>false</code>.
+     * Compiled by the hand transform {@code Transforms.replaceBlockItem}.
+     *
+     * @return the value
+     */
+    public boolean replaceBlockItem() {
+        return replaceBlockItem;
+    }
+
+    /**
+     * List of block descriptors of the blocks that this item can be used on. If left empty, all blocks will be
+     * allowed. Value must have at most 256 items. Add-on JSON {@code use_on}. Default: <code>[]</code>.
+     *
+     * @return the value
+     */
+    public @NonNull List<UseOn> useOn() {
+        return useOn;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        return this == o || o instanceof BlockPlacer other
+                && alignedPlacement == other.alignedPlacement
+                && Objects.equals(block, other.block)
+                && replaceBlockItem == other.replaceBlockItem
+                && Objects.equals(useOn, other.useOn);
+    }
+
+    @Override
+    public int hashCode() {
+        int h = Boolean.hashCode(alignedPlacement);
+        h = 31 * h + Objects.hashCode(block);
+        h = 31 * h + Boolean.hashCode(replaceBlockItem);
+        h = 31 * h + Objects.hashCode(useOn);
+        return h;
+    }
+
+    @Override
+    public String toString() {
+        return "BlockPlacer[alignedPlacement=" + alignedPlacement + ", block=" + block + ", replaceBlockItem=" + replaceBlockItem + ", useOn=" + useOn + "]";
     }
 
     @Override
@@ -177,21 +240,69 @@ public record BlockPlacer(@BedrockFormat("1.26.10") boolean alignedPlacement, @N
      * List of block descriptors of the blocks that this item can be used on. If left empty, all blocks will be
      * allowed. Value must have at most 256 items.
      *
-     * @param name Add-on JSON {@code name}. Optional (null: not set).
-     * @param states Add-on JSON {@code states}. Default: <code>&#123;&#125;</code>.
-     * @param tags Add-on JSON {@code tags}. Optional (null: not set).
      */
-    public record UseOn(@Nullable String name, @NonNull Map<String, Object> states,
-            @Nullable String tags) {
-        /**
-         * Checks the components and copies lists and maps, so the value is immutable.
-         *
-         * @throws NullPointerException if a required component is null
-         * @throws IllegalArgumentException if a component is out of its documented range or conflicts with another
-         */
-        public UseOn {
+    public static final class UseOn {
+        private final @Nullable String name;
+
+        private final @NonNull Map<String, Object> states;
+
+        private final @Nullable String tags;
+
+        private UseOn(@Nullable String name, @NonNull Map<String, Object> states,
+                @Nullable String tags) {
             states = Check.copy(states, "BlockPlacer.UseOn.states");
             Check.stateValues(states, "BlockPlacer.UseOn.states");
+            this.name = name;
+            this.states = states;
+            this.tags = tags;
+        }
+
+        /**
+         * Add-on JSON {@code name}. Optional (null: not set).
+         *
+         * @return the value
+         */
+        public @Nullable String name() {
+            return name;
+        }
+
+        /**
+         * Add-on JSON {@code states}. Default: <code>&#123;&#125;</code>.
+         *
+         * @return the value
+         */
+        public @NonNull Map<String, Object> states() {
+            return states;
+        }
+
+        /**
+         * Add-on JSON {@code tags}. Optional (null: not set).
+         *
+         * @return the value
+         */
+        public @Nullable String tags() {
+            return tags;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            return this == o || o instanceof UseOn other
+                    && Objects.equals(name, other.name)
+                    && Objects.equals(states, other.states)
+                    && Objects.equals(tags, other.tags);
+        }
+
+        @Override
+        public int hashCode() {
+            int h = Objects.hashCode(name);
+            h = 31 * h + Objects.hashCode(states);
+            h = 31 * h + Objects.hashCode(tags);
+            return h;
+        }
+
+        @Override
+        public String toString() {
+            return "UseOn[name=" + name + ", states=" + states + ", tags=" + tags + "]";
         }
 
         /**

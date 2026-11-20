@@ -15,31 +15,66 @@ import org.checkerframework.checker.nullness.qual.Nullable;
  * <p>
  * Add-on JSON: {@code "minecraft:enchantable"}.
  *
- * @param slot Specifies which types of enchantments can be applied. For example, <code>bow</code> would allow this item to
- *        be enchanted as if it were a bow. Value must match a regular expression pattern of
- *        "none|all|g_armor|armor_head|armor_torso|armor_feet|armor_legs|sword|bow|spear|crossbow|melee_spear|g_tool|hoe|shears|flintsteel|shield|g_digging|axe|pickaxe|shovel|fishing_rod|carrot_stick|elytra|cosmetic_head".
- *        Add-on JSON {@code slot}. Required.
- * @param value Specifies the value of the enchantment (minimum of 0). Add-on JSON {@code value}. Required. At least 0 (BDS
- *        1.26.63.1).
  * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/itemreference/examples/itemcomponents/minecraft_enchantable?view=minecraft-bedrock-stable">Microsoft Learn: minecraft:enchantable</a>
  * @since 1.0.0
  */
 @BedrockFormat("1.20.30")
-public record Enchantable(@NonNull String slot, int value) implements ItemComponent {
+public final class Enchantable implements ItemComponent {
     /**
      * The component name in add-on JSON.
      */
     public static final String NAME = "minecraft:enchantable";
 
-    /**
-     * Checks the components.
-     *
-     * @throws NullPointerException if a required component is null
-     * @throws IllegalArgumentException if a component is out of its documented range or conflicts with another
-     */
-    public Enchantable {
+    private final @NonNull String slot;
+
+    private final int value;
+
+    private Enchantable(@NonNull String slot, int value) {
         Objects.requireNonNull(slot, "Enchantable.slot");
         Check.range("Enchantable.value", value, 0.0, null);
+        this.slot = slot;
+        this.value = value;
+    }
+
+    /**
+     * Specifies which types of enchantments can be applied. For example, <code>bow</code> would allow this item to
+     * be enchanted as if it were a bow. Value must match a regular expression pattern of
+     * "none|all|g_armor|armor_head|armor_torso|armor_feet|armor_legs|sword|bow|spear|crossbow|melee_spear|g_tool|hoe|shears|flintsteel|shield|g_digging|axe|pickaxe|shovel|fishing_rod|carrot_stick|elytra|cosmetic_head".
+     * Add-on JSON {@code slot}. Required.
+     *
+     * @return the value
+     */
+    public @NonNull String slot() {
+        return slot;
+    }
+
+    /**
+     * Specifies the value of the enchantment (minimum of 0). Add-on JSON {@code value}. Required. At least 0
+     * (Bedrock 26.60).
+     *
+     * @return the value
+     */
+    public int value() {
+        return value;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        return this == o || o instanceof Enchantable other
+                && Objects.equals(slot, other.slot)
+                && value == other.value;
+    }
+
+    @Override
+    public int hashCode() {
+        int h = Objects.hashCode(slot);
+        h = 31 * h + value;
+        return h;
+    }
+
+    @Override
+    public String toString() {
+        return "Enchantable[slot=" + slot + ", value=" + value + "]";
     }
 
     @Override

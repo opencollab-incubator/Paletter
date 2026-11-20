@@ -19,29 +19,64 @@ import org.checkerframework.checker.nullness.qual.Nullable;
  * The creator docs name the experiments Holiday Creator Features, Upcoming Creator Features for it (in some format versions); unverified against BDS.
  * Unverified: the creator docs name experiment "Holiday Creator Features", which is in no capture.
  *
- * @param boxes The entries of the component (add-on JSON: the component's value is this list). Default: <code>[]</code>.
- *        Compiled by the hand transform {@code Transforms.collisionBoxes}.
- * @param enabled The boolean form of the component (add-on JSON {@code "minecraft:collision_box": <boolean>}). Optional (null:
- *        not set).
  * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/blockreference/examples/blockcomponents/minecraftblock_collision_box?view=minecraft-bedrock-stable">Microsoft Learn: minecraft:collision_box</a>
  * @since 1.0.0
  */
 @BedrockFormat("1.19.50")
 @BedrockExperiment("upcoming_creator_features")
-public record CollisionBox(@NonNull List<CollisionBox.Entry> boxes,
-        @Nullable Boolean enabled) implements BlockComponent {
+public final class CollisionBox implements BlockComponent {
     /**
      * The component name in add-on JSON.
      */
     public static final String NAME = "minecraft:collision_box";
 
-    /**
-     * Checks the components and copies lists and maps, so the value is immutable.
-     *
-     * @throws NullPointerException if a required component is null
-     */
-    public CollisionBox {
+    private final @NonNull List<Entry> boxes;
+
+    private final @Nullable Boolean enabled;
+
+    private CollisionBox(@NonNull List<Entry> boxes, @Nullable Boolean enabled) {
         boxes = List.copyOf(Objects.requireNonNull(boxes, "CollisionBox.boxes"));
+        this.boxes = boxes;
+        this.enabled = enabled;
+    }
+
+    /**
+     * The entries of the component (add-on JSON: the component's value is this list). Default: <code>[]</code>.
+     * Compiled by the hand transform {@code Transforms.collisionBoxes}.
+     *
+     * @return the value
+     */
+    public @NonNull List<Entry> boxes() {
+        return boxes;
+    }
+
+    /**
+     * The boolean form of the component (add-on JSON {@code "minecraft:collision_box": <boolean>}). Optional (null:
+     * not set).
+     *
+     * @return the value
+     */
+    public @Nullable Boolean enabled() {
+        return enabled;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        return this == o || o instanceof CollisionBox other
+                && Objects.equals(boxes, other.boxes)
+                && Objects.equals(enabled, other.enabled);
+    }
+
+    @Override
+    public int hashCode() {
+        int h = Objects.hashCode(boxes);
+        h = 31 * h + Objects.hashCode(enabled);
+        return h;
+    }
+
+    @Override
+    public String toString() {
+        return "CollisionBox[boxes=" + boxes + ", enabled=" + enabled + "]";
     }
 
     @Override
@@ -60,7 +95,7 @@ public record CollisionBox(@NonNull List<CollisionBox.Entry> boxes,
     }
 
     /**
-     * The object form: one entry, the same as a list of that entry in {@code boxes}. BDS rejects this form since 1.26.63.1 (protocol 2225); the list is accepted by every captured BDS.
+     * The object form: one entry, the same as a list of that entry in {@code boxes}. BDS rejects this form since Bedrock 26.60 (protocol 2225); the list is accepted by every captured BDS.
      *
      * @param entry the one entry
      * @return the value with everything else at its default
@@ -148,10 +183,54 @@ public record CollisionBox(@NonNull List<CollisionBox.Entry> boxes,
     /**
      * An entry of {@code minecraft:collision_box}.
      *
-     * @param origin Add-on JSON {@code origin}. Optional (null: not set).
-     * @param size Add-on JSON {@code size}. Optional (null: not set).
      */
-    public record Entry(@Nullable Vec3 origin, @Nullable Vec3 size) {
+    public static final class Entry {
+        private final @Nullable Vec3 origin;
+
+        private final @Nullable Vec3 size;
+
+        private Entry(@Nullable Vec3 origin, @Nullable Vec3 size) {
+            this.origin = origin;
+            this.size = size;
+        }
+
+        /**
+         * Add-on JSON {@code origin}. Optional (null: not set).
+         *
+         * @return the value
+         */
+        public @Nullable Vec3 origin() {
+            return origin;
+        }
+
+        /**
+         * Add-on JSON {@code size}. Optional (null: not set).
+         *
+         * @return the value
+         */
+        public @Nullable Vec3 size() {
+            return size;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            return this == o || o instanceof Entry other
+                    && Objects.equals(origin, other.origin)
+                    && Objects.equals(size, other.size);
+        }
+
+        @Override
+        public int hashCode() {
+            int h = Objects.hashCode(origin);
+            h = 31 * h + Objects.hashCode(size);
+            return h;
+        }
+
+        @Override
+        public String toString() {
+            return "Entry[origin=" + origin + ", size=" + size + "]";
+        }
+
         /**
          * Creates a builder with every field at its default.
          *
@@ -251,5 +330,16 @@ public record CollisionBox(@NonNull List<CollisionBox.Entry> boxes,
      * @param z the z component
      */
     public record Vec3(float x, float y, float z) {
+        /**
+         * Creates a vector.
+         *
+         * @param x the x component
+         * @param y the y component
+         * @param z the z component
+         * @return the vector
+         */
+        public static @NonNull Vec3 of(float x, float y, float z) {
+            return new Vec3(x, y, z);
+        }
     }
 }

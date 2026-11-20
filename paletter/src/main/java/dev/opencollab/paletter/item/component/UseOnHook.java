@@ -11,14 +11,28 @@ import org.checkerframework.checker.nullness.qual.NonNull;
  * (today the later component wins). What BDS sends for a placer together with an {@code onUseOn} component is unverified; the
  * next recapture settles it.
  *
- * @param autoSucceedOnClient the {@code autoSucceedOnClient} byte sent to the client
  * @since 1.0.0
  */
-public record UseOnHook(boolean autoSucceedOnClient) implements WireOnlyItemComponent {
+public final class UseOnHook implements WireOnlyItemComponent {
     /**
      * The component name.
      */
     public static final String NAME = "minecraft:publisher_on_use_on";
+
+    private final boolean autoSucceedOnClient;
+
+    private UseOnHook(boolean autoSucceedOnClient) {
+        this.autoSucceedOnClient = autoSucceedOnClient;
+    }
+
+    /**
+     * Returns whether the client succeeds the use on its own.
+     *
+     * @return the {@code autoSucceedOnClient} byte sent to the client
+     */
+    public boolean autoSucceedOnClient() {
+        return autoSucceedOnClient;
+    }
 
     /**
      * Creates the component.
@@ -33,5 +47,20 @@ public record UseOnHook(boolean autoSucceedOnClient) implements WireOnlyItemComp
     @Override
     public @NonNull String name() {
         return NAME;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        return this == o || o instanceof UseOnHook other && autoSucceedOnClient == other.autoSucceedOnClient;
+    }
+
+    @Override
+    public int hashCode() {
+        return Boolean.hashCode(autoSucceedOnClient);
+    }
+
+    @Override
+    public String toString() {
+        return "UseOnHook[autoSucceedOnClient=" + autoSucceedOnClient + "]";
     }
 }

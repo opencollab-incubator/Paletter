@@ -6,16 +6,19 @@ package dev.opencollab.paletter.item.component;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 /**
- * A custom item component, mirroring Bedrock's add-on JSON: one record per component, generated
+ * A custom item component, mirroring Bedrock's add-on JSON: one class per component, generated
  * from the component model in {@code data/model} (creator docs plus what Bedrock Dedicated Server sends). Paletter
  * compiles them to the wire format of each palette's protocol.
  * <p>
  * Hand-written wire-only components, for fields with no add-on JSON source: see {@link WireOnlyItemComponent}.
+ * <p>
+ * Bedrock adds components in minor releases, so a {@code switch} over it needs a {@code default}; the compiler
+ * enforces it (docs/api.md, "Evolution").
  *
  * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/itemreference/examples/itemcomponentlist?view=minecraft-bedrock-stable">Microsoft Learn: item components</a>
  * @since 1.0.0
  */
-public sealed interface ItemComponent permits Ancient, Count, Former, Gadget, Old, Quiet, Widget, WireOnlyItemComponent {
+public sealed interface ItemComponent permits Ancient, Count, Former, Gadget, Old, Quiet, Widget, WireOnlyItemComponent, FutureItemComponent {
     /**
      * Returns the component name in add-on JSON.
      *

@@ -15,29 +15,64 @@ import org.checkerframework.checker.nullness.qual.Nullable;
  * <p>
  * Add-on JSON: {@code "minecraft:projectile"}.
  *
- * @param minimumCriticalPower Specifies how long a player must charge a projectile for it to critically hit. Add-on JSON {@code
- *        minimum_critical_power}. Default: <code>0</code>.
- * @param projectileEntity Which entity is to be fired as a projectile. Value must match a regular expression pattern of
- *        "^(?:&#92;w+(?:&#92;.&#92;w+)*:(?=&#92;w))?(?:&#92;w+(?:&#92;.&#92;w+)*)(?:&lt;((?:&#92;w+(?:&#92;.&#92;w+)*:(?=&#92;w))?&#92;w+(?:&#92;.&#92;w+)*)*&gt;)?$".
- *        Add-on JSON {@code projectile_entity}. Required.
  * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/itemreference/examples/itemcomponents/minecraft_projectile?view=minecraft-bedrock-stable">Microsoft Learn: minecraft:projectile</a>
  * @since 1.0.0
  */
 @BedrockFormat("1.20.10")
-public record Projectile(float minimumCriticalPower,
-        @NonNull String projectileEntity) implements ItemComponent {
+public final class Projectile implements ItemComponent {
     /**
      * The component name in add-on JSON.
      */
     public static final String NAME = "minecraft:projectile";
 
-    /**
-     * Checks the components.
-     *
-     * @throws NullPointerException if a required component is null
-     */
-    public Projectile {
+    private final float minimumCriticalPower;
+
+    private final @NonNull String projectileEntity;
+
+    private Projectile(float minimumCriticalPower, @NonNull String projectileEntity) {
         Objects.requireNonNull(projectileEntity, "Projectile.projectileEntity");
+        this.minimumCriticalPower = minimumCriticalPower;
+        this.projectileEntity = projectileEntity;
+    }
+
+    /**
+     * Specifies how long a player must charge a projectile for it to critically hit. Add-on JSON {@code
+     * minimum_critical_power}. Default: <code>0</code>.
+     *
+     * @return the value
+     */
+    public float minimumCriticalPower() {
+        return minimumCriticalPower;
+    }
+
+    /**
+     * Which entity is to be fired as a projectile. Value must match a regular expression pattern of
+     * "^(?:&#92;w+(?:&#92;.&#92;w+)*:(?=&#92;w))?(?:&#92;w+(?:&#92;.&#92;w+)*)(?:&lt;((?:&#92;w+(?:&#92;.&#92;w+)*:(?=&#92;w))?&#92;w+(?:&#92;.&#92;w+)*)*&gt;)?$".
+     * Add-on JSON {@code projectile_entity}. Required.
+     *
+     * @return the value
+     */
+    public @NonNull String projectileEntity() {
+        return projectileEntity;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        return this == o || o instanceof Projectile other
+                && Float.compare(minimumCriticalPower, other.minimumCriticalPower) == 0
+                && Objects.equals(projectileEntity, other.projectileEntity);
+    }
+
+    @Override
+    public int hashCode() {
+        int h = Float.hashCode(minimumCriticalPower);
+        h = 31 * h + Objects.hashCode(projectileEntity);
+        return h;
+    }
+
+    @Override
+    public String toString() {
+        return "Projectile[minimumCriticalPower=" + minimumCriticalPower + ", projectileEntity=" + projectileEntity + "]";
     }
 
     @Override

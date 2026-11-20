@@ -16,33 +16,95 @@ import org.checkerframework.checker.nullness.qual.Nullable;
  * <p>
  * Add-on JSON: {@code "minecraft:shooter"}.
  *
- * @param ammunition A list of ammunition entries that define which items can be used as projectiles for this shooter. Each entry
- *        specifies the item, whether to search the offhand, inventory, and whether to use in creative mode. Add-on JSON
- *        {@code ammunition}. Default: <code>[]</code>.
- * @param chargeOnDraw When true, the shooter begins charging when the player starts drawing, similar to a crossbow. Default is
- *        false. Add-on JSON {@code charge_on_draw}. Default: <code>false</code>.
- * @param maxDrawDuration The maximum time in seconds that a player can draw the shooter before it automatically fires or reaches
- *        maximum power. Default is 0. Add-on JSON {@code max_draw_duration}. Default: <code>0</code>.
- * @param scalePowerByDrawDuration When true, the projectile's launch power increases based on how long the player holds the use button before
- *        releasing. Default is false. Add-on JSON {@code scale_power_by_draw_duration}. Default: <code>false</code>.
  * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/itemreference/examples/itemcomponents/minecraft_shooter?view=minecraft-bedrock-stable">Microsoft Learn: minecraft:shooter</a>
  * @since 1.0.0
  */
 @BedrockFormat("1.20.10")
-public record Shooter(@NonNull List<Shooter.Ammunition> ammunition, boolean chargeOnDraw,
-        float maxDrawDuration, boolean scalePowerByDrawDuration) implements ItemComponent {
+public final class Shooter implements ItemComponent {
     /**
      * The component name in add-on JSON.
      */
     public static final String NAME = "minecraft:shooter";
 
-    /**
-     * Checks the components and copies lists and maps, so the value is immutable.
-     *
-     * @throws NullPointerException if a required component is null
-     */
-    public Shooter {
+    private final @NonNull List<Ammunition> ammunition;
+
+    private final boolean chargeOnDraw;
+
+    private final float maxDrawDuration;
+
+    private final boolean scalePowerByDrawDuration;
+
+    private Shooter(@NonNull List<Ammunition> ammunition, boolean chargeOnDraw,
+            float maxDrawDuration, boolean scalePowerByDrawDuration) {
         ammunition = List.copyOf(Objects.requireNonNull(ammunition, "Shooter.ammunition"));
+        this.ammunition = ammunition;
+        this.chargeOnDraw = chargeOnDraw;
+        this.maxDrawDuration = maxDrawDuration;
+        this.scalePowerByDrawDuration = scalePowerByDrawDuration;
+    }
+
+    /**
+     * A list of ammunition entries that define which items can be used as projectiles for this shooter. Each entry
+     * specifies the item, whether to search the offhand, inventory, and whether to use in creative mode. Add-on JSON
+     * {@code ammunition}. Default: <code>[]</code>.
+     *
+     * @return the value
+     */
+    public @NonNull List<Ammunition> ammunition() {
+        return ammunition;
+    }
+
+    /**
+     * When true, the shooter begins charging when the player starts drawing, similar to a crossbow. Default is
+     * false. Add-on JSON {@code charge_on_draw}. Default: <code>false</code>.
+     *
+     * @return the value
+     */
+    public boolean chargeOnDraw() {
+        return chargeOnDraw;
+    }
+
+    /**
+     * The maximum time in seconds that a player can draw the shooter before it automatically fires or reaches
+     * maximum power. Default is 0. Add-on JSON {@code max_draw_duration}. Default: <code>0</code>.
+     *
+     * @return the value
+     */
+    public float maxDrawDuration() {
+        return maxDrawDuration;
+    }
+
+    /**
+     * When true, the projectile's launch power increases based on how long the player holds the use button before
+     * releasing. Default is false. Add-on JSON {@code scale_power_by_draw_duration}. Default: <code>false</code>.
+     *
+     * @return the value
+     */
+    public boolean scalePowerByDrawDuration() {
+        return scalePowerByDrawDuration;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        return this == o || o instanceof Shooter other
+                && Objects.equals(ammunition, other.ammunition)
+                && chargeOnDraw == other.chargeOnDraw
+                && Float.compare(maxDrawDuration, other.maxDrawDuration) == 0
+                && scalePowerByDrawDuration == other.scalePowerByDrawDuration;
+    }
+
+    @Override
+    public int hashCode() {
+        int h = Objects.hashCode(ammunition);
+        h = 31 * h + Boolean.hashCode(chargeOnDraw);
+        h = 31 * h + Float.hashCode(maxDrawDuration);
+        h = 31 * h + Boolean.hashCode(scalePowerByDrawDuration);
+        return h;
+    }
+
+    @Override
+    public String toString() {
+        return "Shooter[ammunition=" + ammunition + ", chargeOnDraw=" + chargeOnDraw + ", maxDrawDuration=" + maxDrawDuration + ", scalePowerByDrawDuration=" + scalePowerByDrawDuration + "]";
     }
 
     @Override
@@ -158,16 +220,86 @@ public record Shooter(@NonNull List<Shooter.Ammunition> ammunition, boolean char
      * A list of ammunition entries that define which items can be used as projectiles for this shooter. Each entry
      * specifies the item, whether to search the offhand, inventory, and whether to use in creative mode.
      *
-     * @param item Ammunition item description identifier. Add-on JSON {@code item}. Optional (null: not set). Compiled by the
-     *        hand transform {@code Transforms.ammunitionItemDescriptor}.
-     * @param searchInventory Can search inventory? Default is set to false. Add-on JSON {@code search_inventory}. Default:
-     *        <code>false</code>.
-     * @param useInCreative Can use in creative mode? Default is set to false. Add-on JSON {@code use_in_creative}. Default:
-     *        <code>false</code>.
-     * @param useOffhand Can use off-hand? Default is set to false. Add-on JSON {@code use_offhand}. Default: <code>false</code>.
      */
-    public record Ammunition(@Nullable String item, boolean searchInventory, boolean useInCreative,
-            boolean useOffhand) {
+    public static final class Ammunition {
+        private final @Nullable String item;
+
+        private final boolean searchInventory;
+
+        private final boolean useInCreative;
+
+        private final boolean useOffhand;
+
+        private Ammunition(@Nullable String item, boolean searchInventory, boolean useInCreative,
+                boolean useOffhand) {
+            this.item = item;
+            this.searchInventory = searchInventory;
+            this.useInCreative = useInCreative;
+            this.useOffhand = useOffhand;
+        }
+
+        /**
+         * Ammunition item description identifier. Add-on JSON {@code item}. Optional (null: not set). Compiled by the
+         * hand transform {@code Transforms.ammunitionItemDescriptor}.
+         *
+         * @return the value
+         */
+        public @Nullable String item() {
+            return item;
+        }
+
+        /**
+         * Can search inventory? Default is set to false. Add-on JSON {@code search_inventory}. Default:
+         * <code>false</code>.
+         *
+         * @return the value
+         */
+        public boolean searchInventory() {
+            return searchInventory;
+        }
+
+        /**
+         * Can use in creative mode? Default is set to false. Add-on JSON {@code use_in_creative}. Default:
+         * <code>false</code>.
+         *
+         * @return the value
+         */
+        public boolean useInCreative() {
+            return useInCreative;
+        }
+
+        /**
+         * Can use off-hand? Default is set to false. Add-on JSON {@code use_offhand}. Default: <code>false</code>.
+         *
+         * @return the value
+         */
+        public boolean useOffhand() {
+            return useOffhand;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            return this == o || o instanceof Ammunition other
+                    && Objects.equals(item, other.item)
+                    && searchInventory == other.searchInventory
+                    && useInCreative == other.useInCreative
+                    && useOffhand == other.useOffhand;
+        }
+
+        @Override
+        public int hashCode() {
+            int h = Objects.hashCode(item);
+            h = 31 * h + Boolean.hashCode(searchInventory);
+            h = 31 * h + Boolean.hashCode(useInCreative);
+            h = 31 * h + Boolean.hashCode(useOffhand);
+            return h;
+        }
+
+        @Override
+        public String toString() {
+            return "Ammunition[item=" + item + ", searchInventory=" + searchInventory + ", useInCreative=" + useInCreative + ", useOffhand=" + useOffhand + "]";
+        }
+
         /**
          * Creates a builder with every field at its default.
          *

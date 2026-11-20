@@ -5,6 +5,7 @@ package dev.opencollab.paletter.block.component;
 
 import dev.opencollab.paletter.internal.component.Check;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
@@ -16,38 +17,86 @@ import org.checkerframework.checker.nullness.qual.Nullable;
  * <p>
  * Add-on JSON: {@code "minecraft:placement_direction"}.
  *
- * @param enabledStates Which states to enable. Must specify at least one. Valid values are <code>minecraft:cardinal_direction</code>,
- *        <code>minecraft:corner_and_cardinal_direction</code>, and <code>minecraft:facing_direction</code>. Add-on JSON
- *        {@code enabled_states}. Required.
- * @param yRotationOffset The y rotation offset to apply to the block. Must be [0.0, 90.0, 180.0, 270.0]. Default is 0, meaning if the
- *        player is facing north, the "minecraft:cardinal_direction" and/or minecraft:facing_direction state will be
- *        north. Add-on JSON {@code y_rotation_offset}. Optional (null: not set). Range [0, 360] (BDS 1.26.63.1).
- * @param blocksToCornerWith A list of block descriptors that define the blocks to connect with the corner shape. Requires
- *        <code>minecraft:corner_and_cardinal_direction</code> to be enabled. Add-on JSON {@code blocks_to_corner_with}.
- *        Optional (null: not set).
  * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/blockreference/examples/traits/placement_direction?view=minecraft-bedrock-stable">Microsoft Learn: minecraft:placement_direction</a>
  * @since 1.0.0
  */
-public record PlacementDirection(@NonNull List<PlacementDirection.EnabledStates> enabledStates,
-        @Nullable Float yRotationOffset,
-        @Nullable List<PlacementDirection.BlocksToCornerWith> blocksToCornerWith) implements BlockTrait {
+public final class PlacementDirection implements BlockTrait {
     /**
      * The component name in add-on JSON.
      */
     public static final String NAME = "minecraft:placement_direction";
 
-    /**
-     * Checks the components and copies lists and maps, so the value is immutable.
-     *
-     * @throws NullPointerException if a required component is null
-     * @throws IllegalArgumentException if a component is out of its documented range or conflicts with another
-     */
-    public PlacementDirection {
+    private final @NonNull List<EnabledStates> enabledStates;
+
+    private final @Nullable Float yRotationOffset;
+
+    private final @Nullable List<BlocksToCornerWith> blocksToCornerWith;
+
+    private PlacementDirection(@NonNull List<EnabledStates> enabledStates,
+            @Nullable Float yRotationOffset,
+            @Nullable List<BlocksToCornerWith> blocksToCornerWith) {
         enabledStates = List.copyOf(Objects.requireNonNull(enabledStates, "PlacementDirection.enabledStates"));
         if (yRotationOffset != null) {
             Check.range("PlacementDirection.yRotationOffset", yRotationOffset, 0.0, 360.0);
         }
         blocksToCornerWith = blocksToCornerWith == null ? null : List.copyOf(blocksToCornerWith);
+        this.enabledStates = enabledStates;
+        this.yRotationOffset = yRotationOffset;
+        this.blocksToCornerWith = blocksToCornerWith;
+    }
+
+    /**
+     * Which states to enable. Must specify at least one. Valid values are <code>minecraft:cardinal_direction</code>,
+     * <code>minecraft:corner_and_cardinal_direction</code>, and <code>minecraft:facing_direction</code>. Add-on JSON
+     * {@code enabled_states}. Required.
+     *
+     * @return the value
+     */
+    public @NonNull List<EnabledStates> enabledStates() {
+        return enabledStates;
+    }
+
+    /**
+     * The y rotation offset to apply to the block. Must be [0.0, 90.0, 180.0, 270.0]. Default is 0, meaning if the
+     * player is facing north, the "minecraft:cardinal_direction" and/or minecraft:facing_direction state will be
+     * north. Add-on JSON {@code y_rotation_offset}. Optional (null: not set). Range [0, 360] (Bedrock 26.60).
+     *
+     * @return the value
+     */
+    public @Nullable Float yRotationOffset() {
+        return yRotationOffset;
+    }
+
+    /**
+     * A list of block descriptors that define the blocks to connect with the corner shape. Requires
+     * <code>minecraft:corner_and_cardinal_direction</code> to be enabled. Add-on JSON {@code blocks_to_corner_with}.
+     * Optional (null: not set).
+     *
+     * @return the value
+     */
+    public @Nullable List<BlocksToCornerWith> blocksToCornerWith() {
+        return blocksToCornerWith;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        return this == o || o instanceof PlacementDirection other
+                && Objects.equals(enabledStates, other.enabledStates)
+                && Objects.equals(yRotationOffset, other.yRotationOffset)
+                && Objects.equals(blocksToCornerWith, other.blocksToCornerWith);
+    }
+
+    @Override
+    public int hashCode() {
+        int h = Objects.hashCode(enabledStates);
+        h = 31 * h + Objects.hashCode(yRotationOffset);
+        h = 31 * h + Objects.hashCode(blocksToCornerWith);
+        return h;
+    }
+
+    @Override
+    public String toString() {
+        return "PlacementDirection[enabledStates=" + enabledStates + ", yRotationOffset=" + yRotationOffset + ", blocksToCornerWith=" + blocksToCornerWith + "]";
     }
 
     @Override
@@ -165,9 +214,40 @@ public record PlacementDirection(@NonNull List<PlacementDirection.EnabledStates>
      * A list of block descriptors that define the blocks to connect with the corner shape. Requires
      * <code>minecraft:corner_and_cardinal_direction</code> to be enabled.
      *
-     * @param tags Add-on JSON {@code tags}. Optional (null: not set).
      */
-    public record BlocksToCornerWith(@Nullable String tags) {
+    public static final class BlocksToCornerWith {
+        private final @Nullable String tags;
+
+        private BlocksToCornerWith(@Nullable String tags) {
+            this.tags = tags;
+        }
+
+        /**
+         * Add-on JSON {@code tags}. Optional (null: not set).
+         *
+         * @return the value
+         */
+        public @Nullable String tags() {
+            return tags;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            return this == o || o instanceof BlocksToCornerWith other
+                    && Objects.equals(tags, other.tags);
+        }
+
+        @Override
+        public int hashCode() {
+            int h = Objects.hashCode(tags);
+            return h;
+        }
+
+        @Override
+        public String toString() {
+            return "BlocksToCornerWith[tags=" + tags + "]";
+        }
+
         /**
          * Creates a builder with every field at its default.
          *
@@ -222,28 +302,54 @@ public record PlacementDirection(@NonNull List<PlacementDirection.EnabledStates>
     }
 
     /**
-     * The documented values; {@link #value()} is the add-on JSON string.
+     * A value of an add-on JSON string: a constant per documented value, {@link #of} for any other.
+     * {@link #value()} is the add-on JSON string. Not an enum: Bedrock adds values, so a {@code switch} over
+     * {@link #value()} needs a {@code default}.
      */
-    public enum EnabledStates {
+    public static final class EnabledStates {
         /**
          * {@code minecraft:cardinal_direction}
          */
-        CARDINAL_DIRECTION("minecraft:cardinal_direction"),
+        public static final EnabledStates CARDINAL_DIRECTION = new EnabledStates("minecraft:cardinal_direction");
 
         /**
          * {@code minecraft:corner_and_cardinal_direction}
          */
-        CORNER_AND_CARDINAL_DIRECTION("minecraft:corner_and_cardinal_direction"),
+        public static final EnabledStates CORNER_AND_CARDINAL_DIRECTION = new EnabledStates("minecraft:corner_and_cardinal_direction");
 
         /**
          * {@code minecraft:facing_direction}
          */
-        FACING_DIRECTION("minecraft:facing_direction");
+        public static final EnabledStates FACING_DIRECTION = new EnabledStates("minecraft:facing_direction");
+
+        private static final List<EnabledStates> KNOWN = List.of(CARDINAL_DIRECTION, CORNER_AND_CARDINAL_DIRECTION, FACING_DIRECTION);
+
+        private static final Map<String, EnabledStates> BY_VALUE = Check.index(KNOWN, EnabledStates::value);
 
         private final String value;
 
-        EnabledStates(String value) {
+        private EnabledStates(String value) {
             this.value = value;
+        }
+
+        /**
+         * Returns the value of an add-on JSON string: the constant of a documented value, else a new value.
+         *
+         * @param value the value in add-on JSON
+         * @return the constant of the value, or a value Paletter does not know
+         */
+        public static @NonNull EnabledStates of(@NonNull String value) {
+            EnabledStates known = BY_VALUE.get(Objects.requireNonNull(value, "EnabledStates.value"));
+            return known != null ? known : new EnabledStates(value);
+        }
+
+        /**
+         * Returns the documented values, the constants of this class.
+         *
+         * @return the constants, in the order of the documentation
+         */
+        public static @NonNull List<EnabledStates> known() {
+            return KNOWN;
         }
 
         /**
@@ -256,19 +362,27 @@ public record PlacementDirection(@NonNull List<PlacementDirection.EnabledStates>
         }
 
         /**
-         * Finds the constant of an add-on JSON value.
+         * Returns whether the value is documented, one of the constants.
          *
-         * @param value the value in add-on JSON
-         * @return the constant of the value
-         * @throws IllegalArgumentException if the value is not documented
+         * @return whether this is one of {@link #known()}
          */
-        public static @NonNull EnabledStates fromValue(@NonNull String value) {
-            for (EnabledStates constant : values()) {
-                if (constant.value.equals(value)) {
-                    return constant;
-                }
-            }
-            throw new IllegalArgumentException("Not a EnabledStates: " + value);
+        public boolean isKnown() {
+            return BY_VALUE.get(value) == this;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            return this == o || o instanceof EnabledStates other && value.equals(other.value);
+        }
+
+        @Override
+        public int hashCode() {
+            return value.hashCode();
+        }
+
+        @Override
+        public String toString() {
+            return value;
         }
     }
 }

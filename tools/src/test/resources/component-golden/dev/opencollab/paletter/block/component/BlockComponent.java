@@ -6,14 +6,17 @@ package dev.opencollab.paletter.block.component;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 /**
- * A custom block component, mirroring Bedrock's add-on JSON: one record per component, generated
+ * A custom block component, mirroring Bedrock's add-on JSON: one class per component, generated
  * from the component model in {@code data/model} (creator docs plus what Bedrock Dedicated Server sends). Paletter
  * compiles them to the wire format of each palette's protocol.
+ * <p>
+ * Bedrock adds components in minor releases, so a {@code switch} over it needs a {@code default}; the compiler
+ * enforces it (docs/api.md, "Evolution").
  *
  * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/blockreference/examples/blockcomponents/blockcomponentslist?view=minecraft-bedrock-stable">Microsoft Learn: block components</a>
  * @since 1.0.0
  */
-public sealed interface BlockComponent permits Glow, Hidden, Slab, WireOnlyBlockComponent {
+public sealed interface BlockComponent permits Glow, Hidden, Slab, WireOnlyBlockComponent, FutureBlockComponent {
     /**
      * Returns the component name in add-on JSON.
      *

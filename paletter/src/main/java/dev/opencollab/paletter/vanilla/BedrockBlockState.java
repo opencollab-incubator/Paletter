@@ -84,7 +84,8 @@ public final class BedrockBlockState {
      * @param state the state property to read
      * @return the value of a state
      * @throws IllegalArgumentException if the block does not have the state
-     * @throws IllegalStateException if the value has no constant in the state's enum (data newer than the constants)
+     * @throws IllegalStateException if the value has no constant in the state's enum (data newer than the constants);
+     *         {@link #raw} reads such a value
      */
     public <T> @NonNull T get(@NonNull BedrockState<T> state) {
         int property = BedrockBlockType.requireProperty(layout, state);
@@ -95,6 +96,24 @@ public final class BedrockBlockState {
                 + " " + state.name() + " has no value for");
         }
         return value;
+    }
+
+    /**
+     * Reads the value of a state property as Bedrock sends it, without converting it to the state's Java type. Unlike
+     * {@link #get}, it never throws: a value of a newer Bedrock version that a state enum has no constant for is still
+     * read here.
+     *
+     * @param state the state property to read
+     * @return the value as in {@link #values()} ({@link Boolean}, {@link Integer} or {@link String}), or null if the block
+     *         does not have the state
+     */
+    public @Nullable Object raw(@NonNull BedrockState<?> state) {
+        int property = layout.property(state);
+        if (property == -1) {
+            return null;
+        }
+        Object value = layout.values[property][layout.valueOf(combination, property)];
+        return value instanceof Byte b ? (Object) (b != 0) : value;
     }
 
     /**

@@ -5,6 +5,9 @@ package dev.opencollab.paletter.block.component;
 
 import dev.opencollab.paletter.annotation.BedrockFormat;
 import dev.opencollab.paletter.annotation.ServerOnly;
+import dev.opencollab.paletter.internal.component.Check;
+import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
@@ -14,37 +17,72 @@ import org.checkerframework.checker.nullness.qual.Nullable;
  * push_pull, push, popped, or immovable; use sticky to opt into same-block grouping similar to slime blocks.
  * <p>
  * Add-on JSON: {@code "minecraft:movable"}.
- * Server only: BDS accepts it in packs but sends nothing to clients (BDS 1.26.36.1, 1.26.45.1, 1.26.52.3,
- * 1.26.63.1, 1.26.70.24), so it has no client effect. Palettes leave it out without a warning.
+ * Server only: BDS accepts it in packs but sends nothing to clients (Bedrock 26.30, 26.40, 26.50, 26.60, 26.70),
+ * so it has no client effect. Palettes leave it out without a warning.
  *
- * @param movementType How the block reacts to being pushed by another block like a piston. The options are: "push_pull" - The
- *        default value for this field. The block will be pushed and pulled by a piston. "push" - The block will only be
- *        pulled by a piston and will ignore a sticky piston. "popped" - The block is destroyed when moved by a piston.
- *        "immovable" - The block is unaffected by a piston. Add-on JSON {@code movement_type}. Required.
- * @param sticky How the block should handle adjacent blocks around it when being pushed by another block like a piston. The
- *        options are: "same" - Adjacent blocks to this block will be moved when moved. This excludes other blocks with
- *        the "same" property. This will only work with the movement_type: "push_pull". "none" - The default and will
- *        not move adjacent blocks. Add-on JSON {@code sticky}. Default: <code>"none"</code>.
  * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/blockreference/examples/blockcomponents/minecraftblock_movable?view=minecraft-bedrock-stable">Microsoft Learn: minecraft:movable</a>
  * @since 1.0.0
  */
 @BedrockFormat("1.21.100")
 @ServerOnly
-public record Movable(Movable. @NonNull MovementType movementType,
-        Movable. @NonNull Sticky sticky) implements BlockComponent {
+public final class Movable implements BlockComponent {
     /**
      * The component name in add-on JSON.
      */
     public static final String NAME = "minecraft:movable";
 
-    /**
-     * Checks the components.
-     *
-     * @throws NullPointerException if a required component is null
-     */
-    public Movable {
+    private final @NonNull MovementType movementType;
+
+    private final @NonNull Sticky sticky;
+
+    private Movable(@NonNull MovementType movementType, @NonNull Sticky sticky) {
         Objects.requireNonNull(movementType, "Movable.movementType");
         Objects.requireNonNull(sticky, "Movable.sticky");
+        this.movementType = movementType;
+        this.sticky = sticky;
+    }
+
+    /**
+     * How the block reacts to being pushed by another block like a piston. The options are: "push_pull" - The
+     * default value for this field. The block will be pushed and pulled by a piston. "push" - The block will only be
+     * pulled by a piston and will ignore a sticky piston. "popped" - The block is destroyed when moved by a piston.
+     * "immovable" - The block is unaffected by a piston. Add-on JSON {@code movement_type}. Required.
+     *
+     * @return the value
+     */
+    public @NonNull MovementType movementType() {
+        return movementType;
+    }
+
+    /**
+     * How the block should handle adjacent blocks around it when being pushed by another block like a piston. The
+     * options are: "same" - Adjacent blocks to this block will be moved when moved. This excludes other blocks with
+     * the "same" property. This will only work with the movement_type: "push_pull". "none" - The default and will
+     * not move adjacent blocks. Add-on JSON {@code sticky}. Default: <code>"none"</code>.
+     *
+     * @return the value
+     */
+    public @NonNull Sticky sticky() {
+        return sticky;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        return this == o || o instanceof Movable other
+                && Objects.equals(movementType, other.movementType)
+                && Objects.equals(sticky, other.sticky);
+    }
+
+    @Override
+    public int hashCode() {
+        int h = Objects.hashCode(movementType);
+        h = 31 * h + Objects.hashCode(sticky);
+        return h;
+    }
+
+    @Override
+    public String toString() {
+        return "Movable[movementType=" + movementType + ", sticky=" + sticky + "]";
     }
 
     @Override
@@ -123,33 +161,59 @@ public record Movable(Movable. @NonNull MovementType movementType,
     }
 
     /**
-     * The documented values; {@link #value()} is the add-on JSON string.
+     * A value of an add-on JSON string: a constant per documented value, {@link #of} for any other.
+     * {@link #value()} is the add-on JSON string. Not an enum: Bedrock adds values, so a {@code switch} over
+     * {@link #value()} needs a {@code default}.
      */
-    public enum MovementType {
+    public static final class MovementType {
         /**
          * {@code immovable}
          */
-        IMMOVABLE("immovable"),
+        public static final MovementType IMMOVABLE = new MovementType("immovable");
 
         /**
          * {@code popped}
          */
-        POPPED("popped"),
+        public static final MovementType POPPED = new MovementType("popped");
 
         /**
          * {@code push}
          */
-        PUSH("push"),
+        public static final MovementType PUSH = new MovementType("push");
 
         /**
          * {@code push_pull}
          */
-        PUSH_PULL("push_pull");
+        public static final MovementType PUSH_PULL = new MovementType("push_pull");
+
+        private static final List<MovementType> KNOWN = List.of(IMMOVABLE, POPPED, PUSH, PUSH_PULL);
+
+        private static final Map<String, MovementType> BY_VALUE = Check.index(KNOWN, MovementType::value);
 
         private final String value;
 
-        MovementType(String value) {
+        private MovementType(String value) {
             this.value = value;
+        }
+
+        /**
+         * Returns the value of an add-on JSON string: the constant of a documented value, else a new value.
+         *
+         * @param value the value in add-on JSON
+         * @return the constant of the value, or a value Paletter does not know
+         */
+        public static @NonNull MovementType of(@NonNull String value) {
+            MovementType known = BY_VALUE.get(Objects.requireNonNull(value, "MovementType.value"));
+            return known != null ? known : new MovementType(value);
+        }
+
+        /**
+         * Returns the documented values, the constants of this class.
+         *
+         * @return the constants, in the order of the documentation
+         */
+        public static @NonNull List<MovementType> known() {
+            return KNOWN;
         }
 
         /**
@@ -162,40 +226,74 @@ public record Movable(Movable. @NonNull MovementType movementType,
         }
 
         /**
-         * Finds the constant of an add-on JSON value.
+         * Returns whether the value is documented, one of the constants.
          *
-         * @param value the value in add-on JSON
-         * @return the constant of the value
-         * @throws IllegalArgumentException if the value is not documented
+         * @return whether this is one of {@link #known()}
          */
-        public static @NonNull MovementType fromValue(@NonNull String value) {
-            for (MovementType constant : values()) {
-                if (constant.value.equals(value)) {
-                    return constant;
-                }
-            }
-            throw new IllegalArgumentException("Not a MovementType: " + value);
+        public boolean isKnown() {
+            return BY_VALUE.get(value) == this;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            return this == o || o instanceof MovementType other && value.equals(other.value);
+        }
+
+        @Override
+        public int hashCode() {
+            return value.hashCode();
+        }
+
+        @Override
+        public String toString() {
+            return value;
         }
     }
 
     /**
-     * The documented values; {@link #value()} is the add-on JSON string.
+     * A value of an add-on JSON string: a constant per documented value, {@link #of} for any other.
+     * {@link #value()} is the add-on JSON string. Not an enum: Bedrock adds values, so a {@code switch} over
+     * {@link #value()} needs a {@code default}.
      */
-    public enum Sticky {
+    public static final class Sticky {
         /**
          * {@code none}
          */
-        NONE("none"),
+        public static final Sticky NONE = new Sticky("none");
 
         /**
          * {@code same}
          */
-        SAME("same");
+        public static final Sticky SAME = new Sticky("same");
+
+        private static final List<Sticky> KNOWN = List.of(NONE, SAME);
+
+        private static final Map<String, Sticky> BY_VALUE = Check.index(KNOWN, Sticky::value);
 
         private final String value;
 
-        Sticky(String value) {
+        private Sticky(String value) {
             this.value = value;
+        }
+
+        /**
+         * Returns the value of an add-on JSON string: the constant of a documented value, else a new value.
+         *
+         * @param value the value in add-on JSON
+         * @return the constant of the value, or a value Paletter does not know
+         */
+        public static @NonNull Sticky of(@NonNull String value) {
+            Sticky known = BY_VALUE.get(Objects.requireNonNull(value, "Sticky.value"));
+            return known != null ? known : new Sticky(value);
+        }
+
+        /**
+         * Returns the documented values, the constants of this class.
+         *
+         * @return the constants, in the order of the documentation
+         */
+        public static @NonNull List<Sticky> known() {
+            return KNOWN;
         }
 
         /**
@@ -208,19 +306,27 @@ public record Movable(Movable. @NonNull MovementType movementType,
         }
 
         /**
-         * Finds the constant of an add-on JSON value.
+         * Returns whether the value is documented, one of the constants.
          *
-         * @param value the value in add-on JSON
-         * @return the constant of the value
-         * @throws IllegalArgumentException if the value is not documented
+         * @return whether this is one of {@link #known()}
          */
-        public static @NonNull Sticky fromValue(@NonNull String value) {
-            for (Sticky constant : values()) {
-                if (constant.value.equals(value)) {
-                    return constant;
-                }
-            }
-            throw new IllegalArgumentException("Not a Sticky: " + value);
+        public boolean isKnown() {
+            return BY_VALUE.get(value) == this;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            return this == o || o instanceof Sticky other && value.equals(other.value);
+        }
+
+        @Override
+        public int hashCode() {
+            return value.hashCode();
+        }
+
+        @Override
+        public String toString() {
+            return value;
         }
     }
 }

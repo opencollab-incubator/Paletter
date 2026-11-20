@@ -13,25 +13,48 @@ import org.checkerframework.checker.nullness.qual.Nullable;
  * <p>
  * Add-on JSON: {@code "minecraft:storage_weight_limit"}.
  *
- * @param maxWeightLimit The maximum allowed weight of the sum of all contained items. Maximum is 64. Default is 64. Value must be
- *        &lt;= 64. Add-on JSON {@code max_weight_limit}. Default: <code>64</code>. At most 64 (BDS 1.26.63.1).
  * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/itemreference/examples/itemcomponents/minecraft_storage_weight_limit?view=minecraft-bedrock-stable">Microsoft Learn: minecraft:storage_weight_limit</a>
  * @since 1.0.0
  */
 @BedrockFormat("1.21.110")
-public record StorageWeightLimit(int maxWeightLimit) implements ItemComponent {
+public final class StorageWeightLimit implements ItemComponent {
     /**
      * The component name in add-on JSON.
      */
     public static final String NAME = "minecraft:storage_weight_limit";
 
-    /**
-     * Checks the components.
-     *
-     * @throws IllegalArgumentException if a component is out of its documented range or conflicts with another
-     */
-    public StorageWeightLimit {
+    private final int maxWeightLimit;
+
+    private StorageWeightLimit(int maxWeightLimit) {
         Check.range("StorageWeightLimit.maxWeightLimit", maxWeightLimit, null, 64.0);
+        this.maxWeightLimit = maxWeightLimit;
+    }
+
+    /**
+     * The maximum allowed weight of the sum of all contained items. Maximum is 64. Default is 64. Value must be
+     * &lt;= 64. Add-on JSON {@code max_weight_limit}. Default: <code>64</code>. At most 64 (Bedrock 26.60).
+     *
+     * @return the value
+     */
+    public int maxWeightLimit() {
+        return maxWeightLimit;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        return this == o || o instanceof StorageWeightLimit other
+                && maxWeightLimit == other.maxWeightLimit;
+    }
+
+    @Override
+    public int hashCode() {
+        int h = maxWeightLimit;
+        return h;
+    }
+
+    @Override
+    public String toString() {
+        return "StorageWeightLimit[maxWeightLimit=" + maxWeightLimit + "]";
     }
 
     @Override

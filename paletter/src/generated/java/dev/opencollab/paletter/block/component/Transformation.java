@@ -14,35 +14,28 @@ import org.checkerframework.checker.nullness.qual.Nullable;
  * <p>
  * Add-on JSON: {@code "minecraft:transformation"}.
  *
- * @param rotation The block's rotation in increments of 90 degrees Add-on JSON {@code rotation}. Default: <code>[0,0,0]</code>.
- *        Multiples of 90 only (BDS refuses the others).
- * @param rotationPivot The point to apply rotation around. This item requires a format version of at least 1.21.0. Add-on JSON {@code
- *        rotation_pivot}. Default: <code>[0,0,0]</code>.
- * @param scale The block's scale Add-on JSON {@code scale}. Default: <code>[1,1,1]</code>.
- * @param scalePivot The point to apply scale around. This item requires a format version of at least 1.21.0. Add-on JSON {@code
- *        scale_pivot}. Default: <code>[0,0,0]</code>.
- * @param translation The block's translation Add-on JSON {@code translation}. Default: <code>[0,0,0]</code>.
  * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/blockreference/examples/blockcomponents/minecraftblock_transformation?view=minecraft-bedrock-stable">Microsoft Learn: minecraft:transformation</a>
  * @since 1.0.0
  */
 @BedrockFormat("1.19.80")
-public record Transformation(Transformation. @NonNull Vec3 rotation,
-        @BedrockFormat("1.21.0") Transformation. @NonNull Vec3 rotationPivot,
-        Transformation. @NonNull Vec3 scale,
-        @BedrockFormat("1.21.0") Transformation. @NonNull Vec3 scalePivot,
-        Transformation. @NonNull Vec3 translation) implements BlockComponent {
+public final class Transformation implements BlockComponent {
     /**
      * The component name in add-on JSON.
      */
     public static final String NAME = "minecraft:transformation";
 
-    /**
-     * Checks the components.
-     *
-     * @throws NullPointerException if a required component is null
-     * @throws IllegalArgumentException if a component is out of its documented range or conflicts with another
-     */
-    public Transformation {
+    private final @NonNull Vec3 rotation;
+
+    private final @NonNull Vec3 rotationPivot;
+
+    private final @NonNull Vec3 scale;
+
+    private final @NonNull Vec3 scalePivot;
+
+    private final @NonNull Vec3 translation;
+
+    private Transformation(@NonNull Vec3 rotation, @NonNull Vec3 rotationPivot, @NonNull Vec3 scale,
+            @NonNull Vec3 scalePivot, @NonNull Vec3 translation) {
         Objects.requireNonNull(rotation, "Transformation.rotation");
         Check.multipleOf("Transformation.rotation", rotation.x(), 90.0);
         Check.multipleOf("Transformation.rotation", rotation.y(), 90.0);
@@ -51,6 +44,86 @@ public record Transformation(Transformation. @NonNull Vec3 rotation,
         Objects.requireNonNull(scale, "Transformation.scale");
         Objects.requireNonNull(scalePivot, "Transformation.scalePivot");
         Objects.requireNonNull(translation, "Transformation.translation");
+        this.rotation = rotation;
+        this.rotationPivot = rotationPivot;
+        this.scale = scale;
+        this.scalePivot = scalePivot;
+        this.translation = translation;
+    }
+
+    /**
+     * The block's rotation in increments of 90 degrees Add-on JSON {@code rotation}. Default: <code>[0,0,0]</code>.
+     * Multiples of 90 only (BDS refuses the others).
+     *
+     * @return the value
+     */
+    public @NonNull Vec3 rotation() {
+        return rotation;
+    }
+
+    /**
+     * The point to apply rotation around. This item requires a format version of at least 1.21.0. Add-on JSON {@code
+     * rotation_pivot}. Default: <code>[0,0,0]</code>.
+     *
+     * @return the value
+     */
+    @BedrockFormat("1.21.0")
+    public @NonNull Vec3 rotationPivot() {
+        return rotationPivot;
+    }
+
+    /**
+     * The block's scale Add-on JSON {@code scale}. Default: <code>[1,1,1]</code>.
+     *
+     * @return the value
+     */
+    public @NonNull Vec3 scale() {
+        return scale;
+    }
+
+    /**
+     * The point to apply scale around. This item requires a format version of at least 1.21.0. Add-on JSON {@code
+     * scale_pivot}. Default: <code>[0,0,0]</code>.
+     *
+     * @return the value
+     */
+    @BedrockFormat("1.21.0")
+    public @NonNull Vec3 scalePivot() {
+        return scalePivot;
+    }
+
+    /**
+     * The block's translation Add-on JSON {@code translation}. Default: <code>[0,0,0]</code>.
+     *
+     * @return the value
+     */
+    public @NonNull Vec3 translation() {
+        return translation;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        return this == o || o instanceof Transformation other
+                && Objects.equals(rotation, other.rotation)
+                && Objects.equals(rotationPivot, other.rotationPivot)
+                && Objects.equals(scale, other.scale)
+                && Objects.equals(scalePivot, other.scalePivot)
+                && Objects.equals(translation, other.translation);
+    }
+
+    @Override
+    public int hashCode() {
+        int h = Objects.hashCode(rotation);
+        h = 31 * h + Objects.hashCode(rotationPivot);
+        h = 31 * h + Objects.hashCode(scale);
+        h = 31 * h + Objects.hashCode(scalePivot);
+        h = 31 * h + Objects.hashCode(translation);
+        return h;
+    }
+
+    @Override
+    public String toString() {
+        return "Transformation[rotation=" + rotation + ", rotationPivot=" + rotationPivot + ", scale=" + scale + ", scalePivot=" + scalePivot + ", translation=" + translation + "]";
     }
 
     @Override
@@ -234,5 +307,16 @@ public record Transformation(Transformation. @NonNull Vec3 rotation,
      * @param z the z component
      */
     public record Vec3(float x, float y, float z) {
+        /**
+         * Creates a vector.
+         *
+         * @param x the x component
+         * @param y the y component
+         * @param z the z component
+         * @return the vector
+         */
+        public static @NonNull Vec3 of(float x, float y, float z) {
+            return new Vec3(x, y, z);
+        }
     }
 }

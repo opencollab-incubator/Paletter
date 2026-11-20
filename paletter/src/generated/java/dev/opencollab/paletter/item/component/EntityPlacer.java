@@ -19,32 +19,81 @@ import org.checkerframework.checker.nullness.qual.Nullable;
  * <p>
  * Add-on JSON: {@code "minecraft:entity_placer"}.
  *
- * @param dispenseOn List of block descriptors of the blocks that this item can be dispensed on. If left empty, all blocks will be
- *        allowed. Add-on JSON {@code dispense_on}. Default: <code>[]</code>.
- * @param entity The entity to be placed in the world. Value must match a regular expression pattern of
- *        "^(?:&#92;w+(?:&#92;.&#92;w+)*:(?=&#92;w))?(?:&#92;w+(?:&#92;.&#92;w+)*)(?:&lt;((?:&#92;w+(?:&#92;.&#92;w+)*:(?=&#92;w))?&#92;w+(?:&#92;.&#92;w+)*)*&gt;)?$".
- *        Add-on JSON {@code entity}. Optional (null: not set).
- * @param useOn List of block descriptors of the blocks that this item can be used on. If left empty, all blocks will be
- *        allowed. Add-on JSON {@code use_on}. Default: <code>[]</code>.
  * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/itemreference/examples/itemcomponents/minecraft_entity_placer?view=minecraft-bedrock-stable">Microsoft Learn: minecraft:entity_placer</a>
  * @since 1.0.0
  */
 @BedrockFormat("1.20.10")
-public record EntityPlacer(@NonNull List<EntityPlacer.UseOn> dispenseOn, @Nullable String entity,
-        @NonNull List<EntityPlacer.UseOn> useOn) implements ItemComponent {
+public final class EntityPlacer implements ItemComponent {
     /**
      * The component name in add-on JSON.
      */
     public static final String NAME = "minecraft:entity_placer";
 
-    /**
-     * Checks the components and copies lists and maps, so the value is immutable.
-     *
-     * @throws NullPointerException if a required component is null
-     */
-    public EntityPlacer {
+    private final @NonNull List<UseOn> dispenseOn;
+
+    private final @Nullable String entity;
+
+    private final @NonNull List<UseOn> useOn;
+
+    private EntityPlacer(@NonNull List<UseOn> dispenseOn, @Nullable String entity,
+            @NonNull List<UseOn> useOn) {
         dispenseOn = List.copyOf(Objects.requireNonNull(dispenseOn, "EntityPlacer.dispenseOn"));
         useOn = List.copyOf(Objects.requireNonNull(useOn, "EntityPlacer.useOn"));
+        this.dispenseOn = dispenseOn;
+        this.entity = entity;
+        this.useOn = useOn;
+    }
+
+    /**
+     * List of block descriptors of the blocks that this item can be dispensed on. If left empty, all blocks will be
+     * allowed. Add-on JSON {@code dispense_on}. Default: <code>[]</code>.
+     *
+     * @return the value
+     */
+    public @NonNull List<UseOn> dispenseOn() {
+        return dispenseOn;
+    }
+
+    /**
+     * The entity to be placed in the world. Value must match a regular expression pattern of
+     * "^(?:&#92;w+(?:&#92;.&#92;w+)*:(?=&#92;w))?(?:&#92;w+(?:&#92;.&#92;w+)*)(?:&lt;((?:&#92;w+(?:&#92;.&#92;w+)*:(?=&#92;w))?&#92;w+(?:&#92;.&#92;w+)*)*&gt;)?$".
+     * Add-on JSON {@code entity}. Optional (null: not set).
+     *
+     * @return the value
+     */
+    public @Nullable String entity() {
+        return entity;
+    }
+
+    /**
+     * List of block descriptors of the blocks that this item can be used on. If left empty, all blocks will be
+     * allowed. Add-on JSON {@code use_on}. Default: <code>[]</code>.
+     *
+     * @return the value
+     */
+    public @NonNull List<UseOn> useOn() {
+        return useOn;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        return this == o || o instanceof EntityPlacer other
+                && Objects.equals(dispenseOn, other.dispenseOn)
+                && Objects.equals(entity, other.entity)
+                && Objects.equals(useOn, other.useOn);
+    }
+
+    @Override
+    public int hashCode() {
+        int h = Objects.hashCode(dispenseOn);
+        h = 31 * h + Objects.hashCode(entity);
+        h = 31 * h + Objects.hashCode(useOn);
+        return h;
+    }
+
+    @Override
+    public String toString() {
+        return "EntityPlacer[dispenseOn=" + dispenseOn + ", entity=" + entity + ", useOn=" + useOn + "]";
     }
 
     @Override
@@ -156,21 +205,69 @@ public record EntityPlacer(@NonNull List<EntityPlacer.UseOn> dispenseOn, @Nullab
      * List of block descriptors of the blocks that this item can be dispensed on. If left empty, all blocks will be
      * allowed.
      *
-     * @param name Add-on JSON {@code name}. Optional (null: not set).
-     * @param states Add-on JSON {@code states}. Default: <code>&#123;&#125;</code>.
-     * @param tags Add-on JSON {@code tags}. Optional (null: not set).
      */
-    public record UseOn(@Nullable String name, @NonNull Map<String, Object> states,
-            @Nullable String tags) {
-        /**
-         * Checks the components and copies lists and maps, so the value is immutable.
-         *
-         * @throws NullPointerException if a required component is null
-         * @throws IllegalArgumentException if a component is out of its documented range or conflicts with another
-         */
-        public UseOn {
+    public static final class UseOn {
+        private final @Nullable String name;
+
+        private final @NonNull Map<String, Object> states;
+
+        private final @Nullable String tags;
+
+        private UseOn(@Nullable String name, @NonNull Map<String, Object> states,
+                @Nullable String tags) {
             states = Check.copy(states, "EntityPlacer.UseOn.states");
             Check.stateValues(states, "EntityPlacer.UseOn.states");
+            this.name = name;
+            this.states = states;
+            this.tags = tags;
+        }
+
+        /**
+         * Add-on JSON {@code name}. Optional (null: not set).
+         *
+         * @return the value
+         */
+        public @Nullable String name() {
+            return name;
+        }
+
+        /**
+         * Add-on JSON {@code states}. Default: <code>&#123;&#125;</code>.
+         *
+         * @return the value
+         */
+        public @NonNull Map<String, Object> states() {
+            return states;
+        }
+
+        /**
+         * Add-on JSON {@code tags}. Optional (null: not set).
+         *
+         * @return the value
+         */
+        public @Nullable String tags() {
+            return tags;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            return this == o || o instanceof UseOn other
+                    && Objects.equals(name, other.name)
+                    && Objects.equals(states, other.states)
+                    && Objects.equals(tags, other.tags);
+        }
+
+        @Override
+        public int hashCode() {
+            int h = Objects.hashCode(name);
+            h = 31 * h + Objects.hashCode(states);
+            h = 31 * h + Objects.hashCode(tags);
+            return h;
+        }
+
+        @Override
+        public String toString() {
+            return "UseOn[name=" + name + ", states=" + states + ", tags=" + tags + "]";
         }
 
         /**

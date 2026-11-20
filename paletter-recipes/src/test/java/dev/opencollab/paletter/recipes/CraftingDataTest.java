@@ -33,8 +33,8 @@ class CraftingDataTest {
     private static final Palette PALETTE = Paletter.builder().build().palette(VERSION.protocolVersion());
 
     private static Recipe.Shapeless shapeless(String id, Ingredient ingredient) {
-        Result result = new Result(BedrockItems.TORCH.variant(), 4, NbtMap.EMPTY, NbtMap.EMPTY);
-        return new Recipe.Shapeless(id, List.of(ingredient), List.of(result), RecipeStations.CRAFTING_TABLE, 0, false, Unlock.of(UnlockingContext.NONE));
+        Result result = Result.builder().item(BedrockItems.TORCH.variant()).count(4).build();
+        return Recipe.Shapeless.builder().id(id).ingredients(List.of(ingredient)).results(List.of(result)).station(RecipeStations.CRAFTING_TABLE).build();
     }
 
     @Test
@@ -97,8 +97,8 @@ class CraftingDataTest {
     @Test
     void aMissingResultBlockStateDropsTheRecipe() {
         NbtMap state = NbtMap.builder().putString("name", "test:no_such_block").putCompound("states", NbtMap.EMPTY).build();
-        Recipe.Shapeless recipe = new Recipe.Shapeless("test:block", List.of(new Ingredient.AnyVariant(BedrockItems.STICK, 1)),
-            List.of(new Result(BedrockItems.TORCH.variant(), 1, state, NbtMap.EMPTY)), RecipeStations.CRAFTING_TABLE, 0, false, Unlock.of(UnlockingContext.NONE));
+        Recipe.Shapeless recipe = Recipe.Shapeless.builder().id("test:block").ingredients(List.of(new Ingredient.AnyVariant(BedrockItems.STICK, 1)))
+            .results(List.of(Result.builder().item(BedrockItems.TORCH.variant()).blockState(state).build())).station(RecipeStations.CRAFTING_TABLE).build();
         CraftingData data = CraftingData.builder(PALETTE).recipes(List.of(recipe)).build();
         assertEquals(List.of(recipe), data.dropped());
         assertEquals(-1, data.netId(recipe));
@@ -146,9 +146,10 @@ class CraftingDataTest {
             .menuCategory(CreativeCategory.CONSTRUCTION)
             .build();
         Palette palette = PALETTE.extend(PaletteLayer.builder("content").item(ruby).block(lamp).build());
-        Result lampResult = new Result(BedrockItemType.fromIdentifier("example:lamp").variant(), 1, lamp.defaultState(), NbtMap.EMPTY);
-        Recipe.Shapeless recipe = new Recipe.Shapeless("test:lamp", List.of(new Ingredient.AnyVariant(BedrockItemType.fromIdentifier("example:ruby"), 1)),
-            List.of(lampResult), RecipeStations.CRAFTING_TABLE, 0, false, Unlock.of(UnlockingContext.NONE));
+        Result lampResult = Result.builder().item(BedrockItemType.fromIdentifier("example:lamp").variant()).blockState(lamp.defaultState()).build();
+        Recipe.Shapeless recipe = Recipe.Shapeless.builder().id("test:lamp")
+            .ingredients(List.of(new Ingredient.AnyVariant(BedrockItemType.fromIdentifier("example:ruby"), 1))).results(List.of(lampResult))
+            .station(RecipeStations.CRAFTING_TABLE).build();
 
         CraftingData data = CraftingData.builder(palette).recipes(List.of(recipe)).build();
         assertEquals(List.of(), data.dropped());

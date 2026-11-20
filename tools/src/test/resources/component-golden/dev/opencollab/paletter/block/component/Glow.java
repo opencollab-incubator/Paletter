@@ -11,21 +11,52 @@ import org.checkerframework.checker.nullness.qual.Nullable;
  * Light.
  * <p>
  * Add-on JSON: {@code "test:glow"}.
- * Server only below protocol 200: BDS accepts it in packs but sends nothing to clients there (BDS 8.8.8), so
- * those palettes leave it out and add a report warning. Sent from protocol 200 (BDS 9.9.9).
+ * Server only below protocol 200: BDS accepts it in packs but sends nothing to clients there (Bedrock 8.8), so
+ * those palettes leave it out and add a report warning. Sent from protocol 200 (Bedrock 9.9).
  *
- * @param value The integer form of the component (add-on JSON {@code "test:glow": <integer>}). Required.
  * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/blockreference/examples/blockcomponents/minecraftblock_glow?view=minecraft-bedrock-stable">Microsoft Learn: test:glow</a>
  * @since 1.0.0
  */
 @ServerOnly(
         until = 200
 )
-public record Glow(int value) implements BlockComponent {
+public final class Glow implements BlockComponent {
     /**
      * The component name in add-on JSON.
      */
     public static final String NAME = "test:glow";
+
+    private final int value;
+
+    private Glow(int value) {
+        this.value = value;
+    }
+
+    /**
+     * The integer form of the component (add-on JSON {@code "test:glow": <integer>}). Required.
+     *
+     * @return the value
+     */
+    public int value() {
+        return value;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        return this == o || o instanceof Glow other
+                && value == other.value;
+    }
+
+    @Override
+    public int hashCode() {
+        int h = value;
+        return h;
+    }
+
+    @Override
+    public String toString() {
+        return "Glow[value=" + value + "]";
+    }
 
     @Override
     public @NonNull String name() {

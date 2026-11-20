@@ -58,15 +58,27 @@ public final class ComponentGenerator {
      * @param since the Paletter version for {@code @since}
      */
     public record Inputs(JsonObject components, JsonObject fixtures, JsonObject feedback, JsonObject mappings, Map<String, String> transforms,
-                         JsonObject api, String since, Context context) {
+                         JsonObject api, String since, Context context, JsonObject history) {
         public Inputs(JsonObject components, JsonObject fixtures, JsonObject feedback, JsonObject mappings, Map<String, String> transforms,
                       JsonObject api, String since) {
-            this(components, fixtures, feedback, mappings, transforms, api, since, Context.NONE);
+            this(components, fixtures, feedback, mappings, transforms, api, since, Context.NONE, new JsonObject());
         }
 
         public Inputs withContext(Context context) {
-            return new Inputs(components, fixtures, feedback, mappings, transforms, api, since, context);
+            return new Inputs(components, fixtures, feedback, mappings, transforms, api, since, context, history);
         }
+
+        /** @param history {@code api-history.json} ({@link ApiHistory}): the names to keep */
+        public Inputs withHistory(JsonObject history) {
+            return new Inputs(components, fixtures, feedback, mappings, transforms, api, since, context, history);
+        }
+    }
+
+    /**
+     * @param sources the generated sources by path relative to the source root, sorted
+     * @param history the new {@code api-history.json}
+     */
+    public record Output(Map<String, String> sources, String history) {
     }
 
     /**
@@ -108,7 +120,7 @@ public final class ComponentGenerator {
         Fixtures fixtures = Fixtures.read(modelDir);
         JsonObject components = Model.GSON.toJsonTree(fixtures.apply(Model.read(modelDir.resolve("components.json")))).getAsJsonObject();
         return new Inputs(components, fixtures.json, fixtures.feedback, json(modelDir.resolve("mappings.json")),
-            HandTransforms.BY_PATH, json(modelDir.resolve(API_FILE)), since, context);
+            HandTransforms.BY_PATH, json(modelDir.resolve(API_FILE)), since, context, json(modelDir.resolve(ApiHistory.FILE)));
     }
 
     private static JsonObject json(Path file) throws IOException {
@@ -119,14 +131,21 @@ public final class ComponentGenerator {
      * @return generated sources by path relative to the source root ({@code org/geysermc/...java}), sorted
      */
     public static Map<String, String> generate(Inputs in) {
+        return generateAll(in).sources();
+    }
+
+    /** @return the generated sources and the new {@code api-history.json} */
+    public static Output generateAll(Inputs in) {
         ComponentGenerator generator = new ComponentGenerator(in);
         generator.build();
+        List<ApiHistory.Renamed> renames = generator.hand.history.renames(generator.model);
+        generator.model.renames.addAll(renames);
         Map<String, String> out = new TreeMap<>();
         // api.json "since" overrides the build version (the Paletter version the generated API first shipped in)
         String since = in.api().has("since") ? in.api().get("since").getAsString() : in.since();
         ApiSource.write(generator.model, since, out);
         WireSource.write(generator.model, out);
-        return out;
+        return new Output(out, generator.hand.history.write(generator.model, renames));
     }
 
     static ApiModel model(Inputs in) {
@@ -224,7 +243,7 @@ public final class ComponentGenerator {
             model.components.add(component(doc, mapping, standalone));
         }
         NameCollisions.check(model);
-        NameCollisions.prefix(model, hand.in.context().reserved());
+        NameCollisions.prefix(model, hand.in.context().reserved(), hand.history);
     }
 
     private Comp component(JsonObject doc, JsonObject mapping, String standalone) {
@@ -247,6 +266,7 @@ public final class ComponentGenerator {
             throw new GenerationException(c.id + " needs several experiment toggles " + c.toggles + ": @BedrockExperiment takes one; make it repeatable");
         }
         String className = hand.apiString("classes", c.id);
+        // The name before NameCollisions; a recorded name (api-history.json) replaces it there
         c.className = className != null ? className : standalone != null ? standalone : JavaNames.pascal(c.name.replaceFirst("^[a-z_]+:", ""));
         JavaNames.javaName(c.className, c.id);
         c.windows.addAll(Windows.windows(c.id, mapping));

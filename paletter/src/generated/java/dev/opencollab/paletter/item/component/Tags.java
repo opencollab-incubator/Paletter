@@ -14,24 +14,47 @@ import org.checkerframework.checker.nullness.qual.Nullable;
  * <p>
  * Add-on JSON: {@code "minecraft:tags"}.
  *
- * @param tags An array that can contain multiple item tags. Add-on JSON {@code tags}. Default: <code>[]</code>.
  * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/itemreference/examples/itemcomponents/minecraft_tags?view=minecraft-bedrock-stable">Microsoft Learn: minecraft:tags</a>
  * @since 1.0.0
  */
 @BedrockFormat("1.20.50")
-public record Tags(@NonNull List<String> tags) implements ItemComponent {
+public final class Tags implements ItemComponent {
     /**
      * The component name in add-on JSON.
      */
     public static final String NAME = "minecraft:tags";
 
-    /**
-     * Checks the components and copies lists and maps, so the value is immutable.
-     *
-     * @throws NullPointerException if a required component is null
-     */
-    public Tags {
+    private final @NonNull List<String> tags;
+
+    private Tags(@NonNull List<String> tags) {
         tags = List.copyOf(Objects.requireNonNull(tags, "Tags.tags"));
+        this.tags = tags;
+    }
+
+    /**
+     * An array that can contain multiple item tags. Add-on JSON {@code tags}. Default: <code>[]</code>.
+     *
+     * @return the value
+     */
+    public @NonNull List<String> tags() {
+        return tags;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        return this == o || o instanceof Tags other
+                && Objects.equals(tags, other.tags);
+    }
+
+    @Override
+    public int hashCode() {
+        int h = Objects.hashCode(tags);
+        return h;
+    }
+
+    @Override
+    public String toString() {
+        return "Tags[tags=" + tags + "]";
     }
 
     @Override

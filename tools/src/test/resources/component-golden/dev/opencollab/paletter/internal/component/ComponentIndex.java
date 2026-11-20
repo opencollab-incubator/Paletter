@@ -18,8 +18,8 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
- * Every generated component type by add-on JSON name, and the JSON key of every field of every generated record
- * (record class -> JSON key -> record component). For tests and tooling; not API.
+ * Every generated component type by add-on JSON name, and the JSON key of every field of every generated class
+ * (class -> JSON key -> accessor, in the order of the builder's fields). For tests and tooling; not API.
  */
 public final class ComponentIndex {
     public static final Map<String, Class<?>> ITEM = new LinkedHashMap<>();
@@ -33,8 +33,8 @@ public final class ComponentIndex {
     public static final Map<Class<?>, Map<String, String>> JSON_KEYS = new LinkedHashMap<>();
 
     /**
-     * Synthetic fields of value forms: record class -> JSON type (boolean, string, ...) -> record component. A record
-     * component ending in {@code []} is the list field the value form is one entry of (the object form of a list).
+     * Synthetic fields of value forms: class -> JSON type (boolean, string, ...) -> accessor. An accessor
+     * ending in {@code []} is the list field the value form is one entry of (the object form of a list).
      */
     public static final Map<Class<?>, Map<String, String>> FORMS = new LinkedHashMap<>();
 
@@ -55,16 +55,16 @@ public final class ComponentIndex {
     public static final int NEWEST_CAPTURED_PROTOCOL = 200;
 
     /**
-     * The first protocol of the window of the spec capture of BDS 8.8.8 ({@code data/bds/8.8.8/spec}): what the hand
-     * transforms compare {@code WireContext.protocol()} with where that build changed the wire.
+     * The first protocol of data version 8.8, the window of its spec capture of BDS 8.8.8 ({@code data/bds/8.8.8/spec}): what
+     * the hand transforms compare {@code WireContext.protocol()} with where that version changed the wire.
      */
-    public static final int BDS_8_8_8 = 100;
+    public static final int V8_8 = 100;
 
     /**
-     * The first protocol of the window of the spec capture of BDS 9.9.9 ({@code data/bds/9.9.9/spec}): what the hand
-     * transforms compare {@code WireContext.protocol()} with where that build changed the wire.
+     * The first protocol of data version 9.9, the window of its spec capture of BDS 9.9.9 ({@code data/bds/9.9.9/spec}): what
+     * the hand transforms compare {@code WireContext.protocol()} with where that version changed the wire.
      */
-    public static final int BDS_9_9_9 = 200;
+    public static final int V9_9 = 200;
 
     /**
      * The {@code vanilla_block_data.block_id} of the first custom block: BDS numbers custom blocks from here, in

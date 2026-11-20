@@ -110,6 +110,7 @@ public final class BlockWire {
             case Transformation c -> transformation(c, ctx, out);
             case UnitCube c -> ctx.drop(UnitCube.NAME, "is not sent to clients (BDS: rejected)");
             case WireOnlyBlockComponent c -> WireOnlyWire.write(c, ctx, out);
+            default -> throw new IllegalArgumentException(component.toString());
         }
     }
 

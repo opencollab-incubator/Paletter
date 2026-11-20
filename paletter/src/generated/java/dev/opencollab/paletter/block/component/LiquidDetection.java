@@ -4,7 +4,9 @@
 package dev.opencollab.paletter.block.component;
 
 import dev.opencollab.paletter.annotation.BedrockFormat;
+import dev.opencollab.paletter.internal.component.Check;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
@@ -15,25 +17,47 @@ import org.checkerframework.checker.nullness.qual.Nullable;
  * <p>
  * Add-on JSON: {@code "minecraft:liquid_detection"}.
  *
- * @param detectionRules Add-on JSON {@code detection_rules}. Required.
  * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/blockreference/examples/blockcomponents/minecraftblock_liquid_detection?view=minecraft-bedrock-stable">Microsoft Learn: minecraft:liquid_detection</a>
  * @since 1.0.0
  */
 @BedrockFormat("1.21.60")
-public record LiquidDetection(
-        @NonNull List<LiquidDetection.DetectionRules> detectionRules) implements BlockComponent {
+public final class LiquidDetection implements BlockComponent {
     /**
      * The component name in add-on JSON.
      */
     public static final String NAME = "minecraft:liquid_detection";
 
-    /**
-     * Checks the components and copies lists and maps, so the value is immutable.
-     *
-     * @throws NullPointerException if a required component is null
-     */
-    public LiquidDetection {
+    private final @NonNull List<DetectionRules> detectionRules;
+
+    private LiquidDetection(@NonNull List<DetectionRules> detectionRules) {
         detectionRules = List.copyOf(Objects.requireNonNull(detectionRules, "LiquidDetection.detectionRules"));
+        this.detectionRules = detectionRules;
+    }
+
+    /**
+     * Add-on JSON {@code detection_rules}. Required.
+     *
+     * @return the value
+     */
+    public @NonNull List<DetectionRules> detectionRules() {
+        return detectionRules;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        return this == o || o instanceof LiquidDetection other
+                && Objects.equals(detectionRules, other.detectionRules);
+    }
+
+    @Override
+    public int hashCode() {
+        int h = Objects.hashCode(detectionRules);
+        return h;
+    }
+
+    @Override
+    public String toString() {
+        return "LiquidDetection[detectionRules=" + detectionRules + "]";
     }
 
     @Override
@@ -110,46 +134,121 @@ public record LiquidDetection(
     /**
      * The {@code detection_rules[]} object.
      *
-     * @param canContainLiquid Whether this block can contain the liquid. For example, if the liquid type is <code>water</code>, this means
-     *        the block can be waterlogged. Add-on JSON {@code can_contain_liquid}. Default: <code>false</code>.
-     * @param liquidType The type of liquid this detection rule is for. Currently, <code>water</code> is the only supported liquid
-     *        type. If this field is omitted, <code>water</code> will be the liquid type by default. Add-on JSON {@code
-     *        liquid_type}. Default: <code>"water"</code>.
-     * @param onLiquidTouches How the block reacts to flowing water. Must be one of the following options: "blocking" - The default value
-     *        for this field. The block stops the liquid from flowing. "broken" - The block is destroyed completely.
-     *        "popped" - The block is destroyed and its item is spawned. "no_reaction" - The block is unaffected; visually,
-     *        the liquid will flow through the block. Add-on JSON {@code on_liquid_touches}. Default:
-     *        <code>"blocking"</code>.
-     * @param stopsLiquidFlowingFromDirection When a block contains a liquid, controls the directions in which the liquid can't flow out from the block.
-     *        Also controls the directions in which a block can stop liquid flowing into it if <code>no_reaction</code> is
-     *        set for the <code>on_liquid_touches</code> field. Can be a list of the following directions: "up", "down",
-     *        "north", "south", "east", "west". The default is an empty list; this means that liquid can flow out of all
-     *        directions by default. Add-on JSON {@code stops_liquid_flowing_from_direction}. Default: <code>[]</code>.
-     * @param useLiquidClipping If true, the block uses its collision box to visually clip the liquid (reducing the visible water volume to
-     *        match the block's shape). Whether this block uses the encompassing collider to visually clip the liquid. The
-     *        encompassing collider is the smallest single AABB that contains all of the block's colliders. A liquid's base
-     *        visual shape is ALWAYS a quad, they do not have more subdivisions. When use_liquid_clipping is TRUE, the game
-     *        will attempt to reduce the visible volume of water if the collision shape allows it. Eg. a wall will turn the
-     *        water base shape into a rectangle on the side of the incoming water. When use_liquid_clipping is FALSE, the
-     *        game will preserve the water base shape as a full square, no matter what the collision shape of the block they
-     *        share space with is. If false, the liquid renders as a full square across the whole block regardless of the
-     *        collision shape. This item requires a format version of at least 1.26.0. Added to <code>detection_rules</code>
-     *        entries in 1.26.0. Defaults to <code>true</code> for format_version older than 1.26.0 and to
-     *        <code>false</code> for 1.26.0 and newer. Add-on JSON {@code use_liquid_clipping}. Default: <code>false</code>.
      */
-    public record DetectionRules(boolean canContainLiquid, @NonNull LiquidType liquidType,
-            @NonNull OnLiquidTouches onLiquidTouches,
-            @NonNull List<String> stopsLiquidFlowingFromDirection,
-            @BedrockFormat("1.26.0") boolean useLiquidClipping) {
-        /**
-         * Checks the components and copies lists and maps, so the value is immutable.
-         *
-         * @throws NullPointerException if a required component is null
-         */
-        public DetectionRules {
+    public static final class DetectionRules {
+        private final boolean canContainLiquid;
+
+        private final @NonNull LiquidType liquidType;
+
+        private final @NonNull OnLiquidTouches onLiquidTouches;
+
+        private final @NonNull List<String> stopsLiquidFlowingFromDirection;
+
+        private final boolean useLiquidClipping;
+
+        private DetectionRules(boolean canContainLiquid, @NonNull LiquidType liquidType,
+                @NonNull OnLiquidTouches onLiquidTouches,
+                @NonNull List<String> stopsLiquidFlowingFromDirection, boolean useLiquidClipping) {
             Objects.requireNonNull(liquidType, "LiquidDetection.DetectionRules.liquidType");
             Objects.requireNonNull(onLiquidTouches, "LiquidDetection.DetectionRules.onLiquidTouches");
             stopsLiquidFlowingFromDirection = List.copyOf(Objects.requireNonNull(stopsLiquidFlowingFromDirection, "LiquidDetection.DetectionRules.stopsLiquidFlowingFromDirection"));
+            this.canContainLiquid = canContainLiquid;
+            this.liquidType = liquidType;
+            this.onLiquidTouches = onLiquidTouches;
+            this.stopsLiquidFlowingFromDirection = stopsLiquidFlowingFromDirection;
+            this.useLiquidClipping = useLiquidClipping;
+        }
+
+        /**
+         * Whether this block can contain the liquid. For example, if the liquid type is <code>water</code>, this means
+         * the block can be waterlogged. Add-on JSON {@code can_contain_liquid}. Default: <code>false</code>.
+         *
+         * @return the value
+         */
+        public boolean canContainLiquid() {
+            return canContainLiquid;
+        }
+
+        /**
+         * The type of liquid this detection rule is for. Currently, <code>water</code> is the only supported liquid
+         * type. If this field is omitted, <code>water</code> will be the liquid type by default. Add-on JSON {@code
+         * liquid_type}. Default: <code>"water"</code>.
+         *
+         * @return the value
+         */
+        public @NonNull LiquidType liquidType() {
+            return liquidType;
+        }
+
+        /**
+         * How the block reacts to flowing water. Must be one of the following options: "blocking" - The default value
+         * for this field. The block stops the liquid from flowing. "broken" - The block is destroyed completely.
+         * "popped" - The block is destroyed and its item is spawned. "no_reaction" - The block is unaffected; visually,
+         * the liquid will flow through the block. Add-on JSON {@code on_liquid_touches}. Default:
+         * <code>"blocking"</code>.
+         *
+         * @return the value
+         */
+        public @NonNull OnLiquidTouches onLiquidTouches() {
+            return onLiquidTouches;
+        }
+
+        /**
+         * When a block contains a liquid, controls the directions in which the liquid can't flow out from the block.
+         * Also controls the directions in which a block can stop liquid flowing into it if <code>no_reaction</code> is
+         * set for the <code>on_liquid_touches</code> field. Can be a list of the following directions: "up", "down",
+         * "north", "south", "east", "west". The default is an empty list; this means that liquid can flow out of all
+         * directions by default. Add-on JSON {@code stops_liquid_flowing_from_direction}. Default: <code>[]</code>.
+         *
+         * @return the value
+         */
+        public @NonNull List<String> stopsLiquidFlowingFromDirection() {
+            return stopsLiquidFlowingFromDirection;
+        }
+
+        /**
+         * If true, the block uses its collision box to visually clip the liquid (reducing the visible water volume to
+         * match the block's shape). Whether this block uses the encompassing collider to visually clip the liquid. The
+         * encompassing collider is the smallest single AABB that contains all of the block's colliders. A liquid's base
+         * visual shape is ALWAYS a quad, they do not have more subdivisions. When use_liquid_clipping is TRUE, the game
+         * will attempt to reduce the visible volume of water if the collision shape allows it. Eg. a wall will turn the
+         * water base shape into a rectangle on the side of the incoming water. When use_liquid_clipping is FALSE, the
+         * game will preserve the water base shape as a full square, no matter what the collision shape of the block they
+         * share space with is. If false, the liquid renders as a full square across the whole block regardless of the
+         * collision shape. This item requires a format version of at least 1.26.0. Added to <code>detection_rules</code>
+         * entries in 1.26.0. Defaults to <code>true</code> for format_version older than 1.26.0 and to
+         * <code>false</code> for 1.26.0 and newer. Add-on JSON {@code use_liquid_clipping}. Default: <code>false</code>.
+         *
+         * @return the value
+         */
+        @BedrockFormat("1.26.0")
+        public boolean useLiquidClipping() {
+            return useLiquidClipping;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            return this == o || o instanceof DetectionRules other
+                    && canContainLiquid == other.canContainLiquid
+                    && Objects.equals(liquidType, other.liquidType)
+                    && Objects.equals(onLiquidTouches, other.onLiquidTouches)
+                    && Objects.equals(stopsLiquidFlowingFromDirection, other.stopsLiquidFlowingFromDirection)
+                    && useLiquidClipping == other.useLiquidClipping;
+        }
+
+        @Override
+        public int hashCode() {
+            int h = Boolean.hashCode(canContainLiquid);
+            h = 31 * h + Objects.hashCode(liquidType);
+            h = 31 * h + Objects.hashCode(onLiquidTouches);
+            h = 31 * h + Objects.hashCode(stopsLiquidFlowingFromDirection);
+            h = 31 * h + Boolean.hashCode(useLiquidClipping);
+            return h;
+        }
+
+        @Override
+        public String toString() {
+            return "DetectionRules[canContainLiquid=" + canContainLiquid + ", liquidType=" + liquidType + ", onLiquidTouches=" + onLiquidTouches + ", stopsLiquidFlowingFromDirection=" + stopsLiquidFlowingFromDirection + ", useLiquidClipping=" + useLiquidClipping + "]";
         }
 
         /**
@@ -274,18 +373,44 @@ public record LiquidDetection(
     }
 
     /**
-     * The documented values; {@link #value()} is the add-on JSON string.
+     * A value of an add-on JSON string: a constant per documented value, {@link #of} for any other.
+     * {@link #value()} is the add-on JSON string. Not an enum: Bedrock adds values, so a {@code switch} over
+     * {@link #value()} needs a {@code default}.
      */
-    public enum LiquidType {
+    public static final class LiquidType {
         /**
          * {@code water}
          */
-        WATER("water");
+        public static final LiquidType WATER = new LiquidType("water");
+
+        private static final List<LiquidType> KNOWN = List.of(WATER);
+
+        private static final Map<String, LiquidType> BY_VALUE = Check.index(KNOWN, LiquidType::value);
 
         private final String value;
 
-        LiquidType(String value) {
+        private LiquidType(String value) {
             this.value = value;
+        }
+
+        /**
+         * Returns the value of an add-on JSON string: the constant of a documented value, else a new value.
+         *
+         * @param value the value in add-on JSON
+         * @return the constant of the value, or a value Paletter does not know
+         */
+        public static @NonNull LiquidType of(@NonNull String value) {
+            LiquidType known = BY_VALUE.get(Objects.requireNonNull(value, "LiquidType.value"));
+            return known != null ? known : new LiquidType(value);
+        }
+
+        /**
+         * Returns the documented values, the constants of this class.
+         *
+         * @return the constants, in the order of the documentation
+         */
+        public static @NonNull List<LiquidType> known() {
+            return KNOWN;
         }
 
         /**
@@ -298,50 +423,84 @@ public record LiquidDetection(
         }
 
         /**
-         * Finds the constant of an add-on JSON value.
+         * Returns whether the value is documented, one of the constants.
          *
-         * @param value the value in add-on JSON
-         * @return the constant of the value
-         * @throws IllegalArgumentException if the value is not documented
+         * @return whether this is one of {@link #known()}
          */
-        public static @NonNull LiquidType fromValue(@NonNull String value) {
-            for (LiquidType constant : values()) {
-                if (constant.value.equals(value)) {
-                    return constant;
-                }
-            }
-            throw new IllegalArgumentException("Not a LiquidType: " + value);
+        public boolean isKnown() {
+            return BY_VALUE.get(value) == this;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            return this == o || o instanceof LiquidType other && value.equals(other.value);
+        }
+
+        @Override
+        public int hashCode() {
+            return value.hashCode();
+        }
+
+        @Override
+        public String toString() {
+            return value;
         }
     }
 
     /**
-     * The documented values; {@link #value()} is the add-on JSON string.
+     * A value of an add-on JSON string: a constant per documented value, {@link #of} for any other.
+     * {@link #value()} is the add-on JSON string. Not an enum: Bedrock adds values, so a {@code switch} over
+     * {@link #value()} needs a {@code default}.
      */
-    public enum OnLiquidTouches {
+    public static final class OnLiquidTouches {
         /**
          * {@code blocking}
          */
-        BLOCKING("blocking"),
+        public static final OnLiquidTouches BLOCKING = new OnLiquidTouches("blocking");
 
         /**
          * {@code broken}
          */
-        BROKEN("broken"),
+        public static final OnLiquidTouches BROKEN = new OnLiquidTouches("broken");
 
         /**
          * {@code no_reaction}
          */
-        NO_REACTION("no_reaction"),
+        public static final OnLiquidTouches NO_REACTION = new OnLiquidTouches("no_reaction");
 
         /**
          * {@code popped}
          */
-        POPPED("popped");
+        public static final OnLiquidTouches POPPED = new OnLiquidTouches("popped");
+
+        private static final List<OnLiquidTouches> KNOWN = List.of(BLOCKING, BROKEN, NO_REACTION, POPPED);
+
+        private static final Map<String, OnLiquidTouches> BY_VALUE = Check.index(KNOWN, OnLiquidTouches::value);
 
         private final String value;
 
-        OnLiquidTouches(String value) {
+        private OnLiquidTouches(String value) {
             this.value = value;
+        }
+
+        /**
+         * Returns the value of an add-on JSON string: the constant of a documented value, else a new value.
+         *
+         * @param value the value in add-on JSON
+         * @return the constant of the value, or a value Paletter does not know
+         */
+        public static @NonNull OnLiquidTouches of(@NonNull String value) {
+            OnLiquidTouches known = BY_VALUE.get(Objects.requireNonNull(value, "OnLiquidTouches.value"));
+            return known != null ? known : new OnLiquidTouches(value);
+        }
+
+        /**
+         * Returns the documented values, the constants of this class.
+         *
+         * @return the constants, in the order of the documentation
+         */
+        public static @NonNull List<OnLiquidTouches> known() {
+            return KNOWN;
         }
 
         /**
@@ -354,19 +513,27 @@ public record LiquidDetection(
         }
 
         /**
-         * Finds the constant of an add-on JSON value.
+         * Returns whether the value is documented, one of the constants.
          *
-         * @param value the value in add-on JSON
-         * @return the constant of the value
-         * @throws IllegalArgumentException if the value is not documented
+         * @return whether this is one of {@link #known()}
          */
-        public static @NonNull OnLiquidTouches fromValue(@NonNull String value) {
-            for (OnLiquidTouches constant : values()) {
-                if (constant.value.equals(value)) {
-                    return constant;
-                }
-            }
-            throw new IllegalArgumentException("Not a OnLiquidTouches: " + value);
+        public boolean isKnown() {
+            return BY_VALUE.get(value) == this;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            return this == o || o instanceof OnLiquidTouches other && value.equals(other.value);
+        }
+
+        @Override
+        public int hashCode() {
+            return value.hashCode();
+        }
+
+        @Override
+        public String toString() {
+            return value;
         }
     }
 }

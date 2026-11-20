@@ -12,22 +12,53 @@ import org.checkerframework.checker.nullness.qual.Nullable;
  * minecraft:light_emission in newer format versions.
  * <p>
  * Add-on JSON: {@code "minecraft:block_light_emission"}.
- * Retired: rejected by every captured BDS (oldest: 1.26.36.1, protocol 1001): minecraft:block_light_emission:
- * this component was found in the input, but is not present in the Schema. Its encoder writes nothing and adds a
- * report warning, as BDS would never send it to a client.
+ * Retired: rejected by every captured BDS (oldest: Bedrock 26.30, protocol 1001):
+ * minecraft:block_light_emission: this component was found in the input, but is not present in the Schema. Its
+ * encoder writes nothing and adds a report warning, as BDS would never send it to a client.
  *
- * @param value The integer form of the component (add-on JSON {@code "minecraft:block_light_emission": <integer>}). Required.
  * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/blockreference/examples/blockcomponents/minecraftblock_block_light_emission?view=minecraft-bedrock-stable">Microsoft Learn: minecraft:block_light_emission</a>
  * @since 1.0.0
  * @deprecated replaced by {@link LightEmission} (docs text: "Use minecraft:light_emission in newer format versions.")
  */
 @Deprecated
 @ReplacedBy(LightEmission.class)
-public record BlockLightEmission(int value) implements BlockComponent {
+public final class BlockLightEmission implements BlockComponent {
     /**
      * The component name in add-on JSON.
      */
     public static final String NAME = "minecraft:block_light_emission";
+
+    private final int value;
+
+    private BlockLightEmission(int value) {
+        this.value = value;
+    }
+
+    /**
+     * The integer form of the component (add-on JSON {@code "minecraft:block_light_emission": <integer>}). Required.
+     *
+     * @return the value
+     */
+    public int value() {
+        return value;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        return this == o || o instanceof BlockLightEmission other
+                && value == other.value;
+    }
+
+    @Override
+    public int hashCode() {
+        int h = value;
+        return h;
+    }
+
+    @Override
+    public String toString() {
+        return "BlockLightEmission[value=" + value + "]";
+    }
 
     @Override
     public @NonNull String name() {

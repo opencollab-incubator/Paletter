@@ -19,46 +19,155 @@ import org.checkerframework.checker.nullness.qual.Nullable;
  * Add-on JSON: {@code "minecraft:material_instances"}.
  * Compiled by the hand transform {@code Transforms.materialInstances}.
  *
- * @param all Add-on JSON {@code *}. Optional (null: not set).
- * @param down Add-on JSON {@code down}. Optional (null: not set).
- * @param east Add-on JSON {@code east}. Optional (null: not set).
- * @param north Add-on JSON {@code north}. Optional (null: not set).
- * @param south Add-on JSON {@code south}. Optional (null: not set).
- * @param up Add-on JSON {@code up}. Optional (null: not set).
- * @param west Add-on JSON {@code west}. Optional (null: not set).
- * @param instances Instances and aliases with any other name, which geometry bones refer to (for example {@code "glass"}).
- *        Default: <code>&#123;&#125;</code>. A key that has a field of its own ({@code *}, {@code down}, {@code east},
- *        {@code north}, {@code south}, {@code up}, {@code west}) is refused.
  * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/blockreference/examples/blockcomponents/minecraftblock_material_instances?view=minecraft-bedrock-stable">Microsoft Learn: minecraft:material_instances</a>
  * @since 1.0.0
  */
 @BedrockFormat("1.19.40")
-public record MaterialInstances(MaterialInstances. @Nullable InstanceOrAlias all,
-        MaterialInstances. @Nullable InstanceOrAlias down,
-        MaterialInstances. @Nullable InstanceOrAlias east,
-        MaterialInstances. @Nullable InstanceOrAlias north,
-        MaterialInstances. @Nullable InstanceOrAlias south,
-        MaterialInstances. @Nullable InstanceOrAlias up,
-        MaterialInstances. @Nullable InstanceOrAlias west,
-        @NonNull Map<String, MaterialInstances.InstanceOrAlias> instances) implements BlockComponent {
+public final class MaterialInstances implements BlockComponent {
     /**
      * The component name in add-on JSON.
      */
     public static final String NAME = "minecraft:material_instances";
 
-    /**
-     * Checks the components and copies lists and maps, so the value is immutable.
-     *
-     * @throws NullPointerException if a required component is null
-     * @throws IllegalArgumentException if a component is out of its documented range or conflicts with another
-     */
-    public MaterialInstances {
+    private final @Nullable InstanceOrAlias all;
+
+    private final @Nullable InstanceOrAlias down;
+
+    private final @Nullable InstanceOrAlias east;
+
+    private final @Nullable InstanceOrAlias north;
+
+    private final @Nullable InstanceOrAlias south;
+
+    private final @Nullable InstanceOrAlias up;
+
+    private final @Nullable InstanceOrAlias west;
+
+    private final @NonNull Map<String, InstanceOrAlias> instances;
+
+    private MaterialInstances(@Nullable InstanceOrAlias all, @Nullable InstanceOrAlias down,
+            @Nullable InstanceOrAlias east, @Nullable InstanceOrAlias north,
+            @Nullable InstanceOrAlias south, @Nullable InstanceOrAlias up,
+            @Nullable InstanceOrAlias west, @NonNull Map<String, InstanceOrAlias> instances) {
         instances = Check.copy(instances, "MaterialInstances.instances");
         for (String key : List.of("*", "down", "east", "north", "south", "up", "west")) {
             if (instances.containsKey(key)) {
                 throw new IllegalArgumentException("MaterialInstances.instances has the key " + key + ", which has a field of its own");
             }
         }
+        this.all = all;
+        this.down = down;
+        this.east = east;
+        this.north = north;
+        this.south = south;
+        this.up = up;
+        this.west = west;
+        this.instances = instances;
+    }
+
+    /**
+     * Add-on JSON {@code *}. Optional (null: not set).
+     *
+     * @return the value
+     */
+    public @Nullable InstanceOrAlias all() {
+        return all;
+    }
+
+    /**
+     * Add-on JSON {@code down}. Optional (null: not set).
+     *
+     * @return the value
+     */
+    public @Nullable InstanceOrAlias down() {
+        return down;
+    }
+
+    /**
+     * Add-on JSON {@code east}. Optional (null: not set).
+     *
+     * @return the value
+     */
+    public @Nullable InstanceOrAlias east() {
+        return east;
+    }
+
+    /**
+     * Add-on JSON {@code north}. Optional (null: not set).
+     *
+     * @return the value
+     */
+    public @Nullable InstanceOrAlias north() {
+        return north;
+    }
+
+    /**
+     * Add-on JSON {@code south}. Optional (null: not set).
+     *
+     * @return the value
+     */
+    public @Nullable InstanceOrAlias south() {
+        return south;
+    }
+
+    /**
+     * Add-on JSON {@code up}. Optional (null: not set).
+     *
+     * @return the value
+     */
+    public @Nullable InstanceOrAlias up() {
+        return up;
+    }
+
+    /**
+     * Add-on JSON {@code west}. Optional (null: not set).
+     *
+     * @return the value
+     */
+    public @Nullable InstanceOrAlias west() {
+        return west;
+    }
+
+    /**
+     * Instances and aliases with any other name, which geometry bones refer to (for example {@code "glass"}).
+     * Default: <code>&#123;&#125;</code>. A key that has a field of its own ({@code *}, {@code down}, {@code east},
+     * {@code north}, {@code south}, {@code up}, {@code west}) is refused.
+     *
+     * @return the value
+     */
+    public @NonNull Map<String, InstanceOrAlias> instances() {
+        return instances;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        return this == o || o instanceof MaterialInstances other
+                && Objects.equals(all, other.all)
+                && Objects.equals(down, other.down)
+                && Objects.equals(east, other.east)
+                && Objects.equals(north, other.north)
+                && Objects.equals(south, other.south)
+                && Objects.equals(up, other.up)
+                && Objects.equals(west, other.west)
+                && Objects.equals(instances, other.instances);
+    }
+
+    @Override
+    public int hashCode() {
+        int h = Objects.hashCode(all);
+        h = 31 * h + Objects.hashCode(down);
+        h = 31 * h + Objects.hashCode(east);
+        h = 31 * h + Objects.hashCode(north);
+        h = 31 * h + Objects.hashCode(south);
+        h = 31 * h + Objects.hashCode(up);
+        h = 31 * h + Objects.hashCode(west);
+        h = 31 * h + Objects.hashCode(instances);
+        return h;
+    }
+
+    @Override
+    public String toString() {
+        return "MaterialInstances[all=" + all + ", down=" + down + ", east=" + east + ", north=" + north + ", south=" + south + ", up=" + up + ", west=" + west + ", instances=" + instances + "]";
     }
 
     @Override
@@ -289,36 +398,139 @@ public record MaterialInstances(MaterialInstances. @Nullable InstanceOrAlias all
     /**
      * The {@code *} object.
      *
-     * @param ambientOcclusion If this material has ambient occlusion applied when lighting, shadows will be created around and underneath
-     *        the block. Decimal value controls exponent applied to a value after lighting. Add-on JSON {@code
-     *        ambient_occlusion}. Optional (null: not set). Range [0, 10] (BDS 1.26.63.1).
-     * @param faceDimming This material should be dimmed by the direction its facing. Add-on JSON {@code face_dimming}. Optional (null:
-     *        not set).
-     * @param isotropic Should the faces that this material is applied to randomize their UVs? This item requires a format version of
-     *        at least 1.21.80. Add-on JSON {@code isotropic}. Default: <code>false</code>.
-     * @param renderMethod The render method to use. Add-on JSON {@code render_method}. Optional (null: not set).
-     * @param texture Texture name for the material. Add-on JSON {@code texture}. Optional (null: not set).
-     * @param tintMethod Tint multiplied to the color. Tint method logic varies, but often refers to the "rain" and "temperature" of
-     *        the biome the block is placed in to compute the tint. Supported tint methods are "none", "default_foliage",
-     *        "birch_foliage", "evergreen_foliage", "dry_foliage", "grass" and "water" This item requires a format version
-     *        of at least 1.21.80. Add-on JSON {@code tint_method}. Optional (null: not set). The docs give the default
-     *        false, which is not a value of this type; unset, BDS's behaviour applies.
-     * @param alphaMaskedTint (bds-schema 1.26.63.1) BDS accepts this key; the creator docs do not list it. BDS names the format version
-     *        1.21.120 for it. Add-on JSON {@code alpha_masked_tint}. Optional (null: not set).
      */
-    public record Instance(@Nullable Float ambientOcclusion, @Nullable Boolean faceDimming,
-            @BedrockFormat("1.21.80") boolean isotropic, @Nullable RenderMethod renderMethod,
-            @Nullable String texture, @BedrockFormat("1.21.80") @Nullable String tintMethod,
-            @BedrockFormat("1.21.120") @Nullable Boolean alphaMaskedTint) {
-        /**
-         * Checks the components.
-         *
-         * @throws IllegalArgumentException if a component is out of its documented range or conflicts with another
-         */
-        public Instance {
+    public static final class Instance {
+        private final @Nullable Float ambientOcclusion;
+
+        private final @Nullable Boolean faceDimming;
+
+        private final boolean isotropic;
+
+        private final @Nullable RenderMethod renderMethod;
+
+        private final @Nullable String texture;
+
+        private final @Nullable String tintMethod;
+
+        private final @Nullable Boolean alphaMaskedTint;
+
+        private Instance(@Nullable Float ambientOcclusion, @Nullable Boolean faceDimming,
+                boolean isotropic, @Nullable RenderMethod renderMethod, @Nullable String texture,
+                @Nullable String tintMethod, @Nullable Boolean alphaMaskedTint) {
             if (ambientOcclusion != null) {
                 Check.range("MaterialInstances.Instance.ambientOcclusion", ambientOcclusion, 0.0, 10.0);
             }
+            this.ambientOcclusion = ambientOcclusion;
+            this.faceDimming = faceDimming;
+            this.isotropic = isotropic;
+            this.renderMethod = renderMethod;
+            this.texture = texture;
+            this.tintMethod = tintMethod;
+            this.alphaMaskedTint = alphaMaskedTint;
+        }
+
+        /**
+         * If this material has ambient occlusion applied when lighting, shadows will be created around and underneath
+         * the block. Decimal value controls exponent applied to a value after lighting. Add-on JSON {@code
+         * ambient_occlusion}. Optional (null: not set). Range [0, 10] (Bedrock 26.60).
+         *
+         * @return the value
+         */
+        public @Nullable Float ambientOcclusion() {
+            return ambientOcclusion;
+        }
+
+        /**
+         * This material should be dimmed by the direction its facing. Add-on JSON {@code face_dimming}. Optional (null:
+         * not set).
+         *
+         * @return the value
+         */
+        public @Nullable Boolean faceDimming() {
+            return faceDimming;
+        }
+
+        /**
+         * Should the faces that this material is applied to randomize their UVs? This item requires a format version of
+         * at least 1.21.80. Add-on JSON {@code isotropic}. Default: <code>false</code>.
+         *
+         * @return the value
+         */
+        @BedrockFormat("1.21.80")
+        public boolean isotropic() {
+            return isotropic;
+        }
+
+        /**
+         * The render method to use. Add-on JSON {@code render_method}. Optional (null: not set).
+         *
+         * @return the value
+         */
+        public @Nullable RenderMethod renderMethod() {
+            return renderMethod;
+        }
+
+        /**
+         * Texture name for the material. Add-on JSON {@code texture}. Optional (null: not set).
+         *
+         * @return the value
+         */
+        public @Nullable String texture() {
+            return texture;
+        }
+
+        /**
+         * Tint multiplied to the color. Tint method logic varies, but often refers to the "rain" and "temperature" of
+         * the biome the block is placed in to compute the tint. Supported tint methods are "none", "default_foliage",
+         * "birch_foliage", "evergreen_foliage", "dry_foliage", "grass" and "water" This item requires a format version
+         * of at least 1.21.80. Add-on JSON {@code tint_method}. Optional (null: not set). The docs give the default
+         * false, which is not a value of this type; unset, BDS's behaviour applies.
+         *
+         * @return the value
+         */
+        @BedrockFormat("1.21.80")
+        public @Nullable String tintMethod() {
+            return tintMethod;
+        }
+
+        /**
+         * (bds-schema 26.60) BDS accepts this key; the creator docs do not list it. BDS names the format version
+         * 1.21.120 for it. Add-on JSON {@code alpha_masked_tint}. Optional (null: not set).
+         *
+         * @return the value
+         */
+        @BedrockFormat("1.21.120")
+        public @Nullable Boolean alphaMaskedTint() {
+            return alphaMaskedTint;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            return this == o || o instanceof Instance other
+                    && Objects.equals(ambientOcclusion, other.ambientOcclusion)
+                    && Objects.equals(faceDimming, other.faceDimming)
+                    && isotropic == other.isotropic
+                    && Objects.equals(renderMethod, other.renderMethod)
+                    && Objects.equals(texture, other.texture)
+                    && Objects.equals(tintMethod, other.tintMethod)
+                    && Objects.equals(alphaMaskedTint, other.alphaMaskedTint);
+        }
+
+        @Override
+        public int hashCode() {
+            int h = Objects.hashCode(ambientOcclusion);
+            h = 31 * h + Objects.hashCode(faceDimming);
+            h = 31 * h + Boolean.hashCode(isotropic);
+            h = 31 * h + Objects.hashCode(renderMethod);
+            h = 31 * h + Objects.hashCode(texture);
+            h = 31 * h + Objects.hashCode(tintMethod);
+            h = 31 * h + Objects.hashCode(alphaMaskedTint);
+            return h;
+        }
+
+        @Override
+        public String toString() {
+            return "Instance[ambientOcclusion=" + ambientOcclusion + ", faceDimming=" + faceDimming + ", isotropic=" + isotropic + ", renderMethod=" + renderMethod + ", texture=" + texture + ", tintMethod=" + tintMethod + ", alphaMaskedTint=" + alphaMaskedTint + "]";
         }
 
         /**
@@ -459,53 +671,79 @@ public record MaterialInstances(MaterialInstances. @Nullable InstanceOrAlias all
     }
 
     /**
-     * The documented values; {@link #value()} is the add-on JSON string.
+     * A value of an add-on JSON string: a constant per documented value, {@link #of} for any other.
+     * {@link #value()} is the add-on JSON string. Not an enum: Bedrock adds values, so a {@code switch} over
+     * {@link #value()} needs a {@code default}.
      */
-    public enum RenderMethod {
+    public static final class RenderMethod {
         /**
          * {@code opaque}
          */
-        OPAQUE("opaque"),
+        public static final RenderMethod OPAQUE = new RenderMethod("opaque");
 
         /**
          * {@code double_sided}
          */
-        DOUBLE_SIDED("double_sided"),
+        public static final RenderMethod DOUBLE_SIDED = new RenderMethod("double_sided");
 
         /**
          * {@code blend}
          */
-        BLEND("blend"),
+        public static final RenderMethod BLEND = new RenderMethod("blend");
 
         /**
          * {@code alpha_test}
          */
-        ALPHA_TEST("alpha_test"),
+        public static final RenderMethod ALPHA_TEST = new RenderMethod("alpha_test");
 
         /**
          * {@code alpha_test_single_sided}
          */
-        ALPHA_TEST_SINGLE_SIDED("alpha_test_single_sided"),
+        public static final RenderMethod ALPHA_TEST_SINGLE_SIDED = new RenderMethod("alpha_test_single_sided");
 
         /**
          * {@code blend_to_opaque}
          */
-        BLEND_TO_OPAQUE("blend_to_opaque"),
+        public static final RenderMethod BLEND_TO_OPAQUE = new RenderMethod("blend_to_opaque");
 
         /**
          * {@code alpha_test_to_opaque}
          */
-        ALPHA_TEST_TO_OPAQUE("alpha_test_to_opaque"),
+        public static final RenderMethod ALPHA_TEST_TO_OPAQUE = new RenderMethod("alpha_test_to_opaque");
 
         /**
          * {@code alpha_test_single_sided_to_opaque}
          */
-        ALPHA_TEST_SINGLE_SIDED_TO_OPAQUE("alpha_test_single_sided_to_opaque");
+        public static final RenderMethod ALPHA_TEST_SINGLE_SIDED_TO_OPAQUE = new RenderMethod("alpha_test_single_sided_to_opaque");
+
+        private static final List<RenderMethod> KNOWN = List.of(OPAQUE, DOUBLE_SIDED, BLEND, ALPHA_TEST, ALPHA_TEST_SINGLE_SIDED, BLEND_TO_OPAQUE, ALPHA_TEST_TO_OPAQUE, ALPHA_TEST_SINGLE_SIDED_TO_OPAQUE);
+
+        private static final Map<String, RenderMethod> BY_VALUE = Check.index(KNOWN, RenderMethod::value);
 
         private final String value;
 
-        RenderMethod(String value) {
+        private RenderMethod(String value) {
             this.value = value;
+        }
+
+        /**
+         * Returns the value of an add-on JSON string: the constant of a documented value, else a new value.
+         *
+         * @param value the value in add-on JSON
+         * @return the constant of the value, or a value Paletter does not know
+         */
+        public static @NonNull RenderMethod of(@NonNull String value) {
+            RenderMethod known = BY_VALUE.get(Objects.requireNonNull(value, "RenderMethod.value"));
+            return known != null ? known : new RenderMethod(value);
+        }
+
+        /**
+         * Returns the documented values, the constants of this class.
+         *
+         * @return the constants, in the order of the documentation
+         */
+        public static @NonNull List<RenderMethod> known() {
+            return KNOWN;
         }
 
         /**
@@ -518,19 +756,27 @@ public record MaterialInstances(MaterialInstances. @Nullable InstanceOrAlias all
         }
 
         /**
-         * Finds the constant of an add-on JSON value.
+         * Returns whether the value is documented, one of the constants.
          *
-         * @param value the value in add-on JSON
-         * @return the constant of the value
-         * @throws IllegalArgumentException if the value is not documented
+         * @return whether this is one of {@link #known()}
          */
-        public static @NonNull RenderMethod fromValue(@NonNull String value) {
-            for (RenderMethod constant : values()) {
-                if (constant.value.equals(value)) {
-                    return constant;
-                }
-            }
-            throw new IllegalArgumentException("Not a RenderMethod: " + value);
+        public boolean isKnown() {
+            return BY_VALUE.get(value) == this;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            return this == o || o instanceof RenderMethod other && value.equals(other.value);
+        }
+
+        @Override
+        public int hashCode() {
+            return value.hashCode();
+        }
+
+        @Override
+        public String toString() {
+            return value;
         }
     }
 
@@ -541,11 +787,12 @@ public record MaterialInstances(MaterialInstances. @Nullable InstanceOrAlias all
      *     <li>{@link Define}: the definition of the instance</li>
      * </ul>
      * <p>
-     * Switch over it without a default: the records below are all its forms.
+     * Bedrock may add forms, so a {@code switch} over it needs a {@code default}; the compiler enforces it
+     * (docs/api.md, "Evolution").
      * <p>
      * Used by: {@code block:minecraft:material_instances:*}, {@code block:minecraft:material_instances:down}, {@code block:minecraft:material_instances:east}, {@code block:minecraft:material_instances:north}, {@code block:minecraft:material_instances:south}, {@code block:minecraft:material_instances:up}, {@code block:minecraft:material_instances:west}.
      */
-    public sealed interface InstanceOrAlias permits InstanceOrAlias.Alias, InstanceOrAlias.Define {
+    public sealed interface InstanceOrAlias permits InstanceOrAlias.Alias, InstanceOrAlias.Define, FutureInstanceOrAlias {
         /**
          * Creates the form that is the name of another instance.
          *
@@ -598,6 +845,15 @@ public record MaterialInstances(MaterialInstances. @Nullable InstanceOrAlias all
             public Define {
                 Objects.requireNonNull(value, "InstanceOrAlias.Define.value");
             }
+        }
+    }
+
+    /**
+     * Never instantiated: it makes a switch over {@code MaterialInstances.InstanceOrAlias} need a {@code default}, as Bedrock adds
+     * variants in minor releases (docs/api.md, "Evolution").
+     */
+    private static final class FutureInstanceOrAlias implements InstanceOrAlias {
+        private FutureInstanceOrAlias() {
         }
     }
 }

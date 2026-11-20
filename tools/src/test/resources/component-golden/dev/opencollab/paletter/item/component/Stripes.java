@@ -14,13 +14,14 @@ import org.checkerframework.checker.nullness.qual.NonNull;
  *     <li>{@link On}: a boolean</li>
  * </ul>
  * <p>
- * Switch over it without a default: the records below are all its forms.
+ * Bedrock may add forms, so a {@code switch} over it needs a {@code default}; the compiler enforces it
+ * (docs/api.md, "Evolution").
  * <p>
  * Used by: {@code item:test:widget:outline}, {@code item:test:widget:stripes}.
  *
  * @since 1.0.0
  */
-public sealed interface Stripes permits Stripes.Names, Stripes.On {
+public sealed interface Stripes permits Stripes.Names, Stripes.On, FutureStripes {
     /**
      * Creates the form that is a list of strings.
      *

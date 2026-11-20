@@ -19,46 +19,172 @@ import org.checkerframework.checker.nullness.qual.Nullable;
  * <p>
  * Add-on JSON: {@code "minecraft:kinetic_weapon"}.
  *
- * @param creativeReach Defines the reach used when the user is in Creative Mode. Defaults to "reach" if unspecified. Add-on JSON
- *        {@code creative_reach}. Optional (null: not set).
- * @param damageConditions Conditions that need to be satisfied for damage to be applied. If not specified, damage is not applied. Add-on
- *        JSON {@code damage_conditions}. Optional (null: not set).
- * @param damageModifier Value added to the the scaled dot product (after applying "damage_multiplier"). Add-on JSON {@code
- *        damage_modifier}. Default: <code>0</code>.
- * @param damageMultiplier Value multiplied to sum of the dot products of the user and target's velocity vectors projected onto the view
- *        vector. Add-on JSON {@code damage_multiplier}. Default: <code>1</code>.
- * @param delay Time, in ticks, after which kinetic damage and its effects start being applied. Add-on JSON {@code delay}.
- *        Default: <code>0</code>.
- * @param dismountConditions Conditions that need to be satisfied for riders to be dismounted. If not specified, riders cannot be
- *        dismounted. Add-on JSON {@code dismount_conditions}. Optional (null: not set).
- * @param hitboxMargin Added tolerance to the view vector raycast for detecting entity collisions. Add-on JSON {@code hitbox_margin}.
- *        Default: <code>0</code>.
- * @param knockbackConditions Conditions that need to be satisfied for knockback to be applied. If not specified, knockback is not applied.
- *        Add-on JSON {@code knockback_conditions}. Optional (null: not set).
- * @param reach Defines the range (in blocks) along the user's view vector where entities can be hit. Only targets within this
- *        distance are considered. Block collisions between the user and target block damage and its effects. Add-on
- *        JSON {@code reach}. Default: <code>&#123;"max":3,"min":0&#125;</code>.
  * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/itemreference/examples/itemcomponents/minecraft_kinetic_weapon?view=minecraft-bedrock-stable">Microsoft Learn: minecraft:kinetic_weapon</a>
  * @since 1.0.0
  */
 @BedrockFormat("1.21.130")
-public record KineticWeapon(KineticWeapon. @Nullable CreativeReach creativeReach,
-        KineticWeapon. @Nullable Conditions damageConditions, float damageModifier,
-        float damageMultiplier, int delay, KineticWeapon. @Nullable Conditions dismountConditions,
-        float hitboxMargin, KineticWeapon. @Nullable Conditions knockbackConditions,
-        KineticWeapon. @NonNull Reach reach) implements ItemComponent {
+public final class KineticWeapon implements ItemComponent {
     /**
      * The component name in add-on JSON.
      */
     public static final String NAME = "minecraft:kinetic_weapon";
 
-    /**
-     * Checks the components.
-     *
-     * @throws NullPointerException if a required component is null
-     */
-    public KineticWeapon {
+    private final @Nullable CreativeReach creativeReach;
+
+    private final @Nullable Conditions damageConditions;
+
+    private final float damageModifier;
+
+    private final float damageMultiplier;
+
+    private final int delay;
+
+    private final @Nullable Conditions dismountConditions;
+
+    private final float hitboxMargin;
+
+    private final @Nullable Conditions knockbackConditions;
+
+    private final @NonNull Reach reach;
+
+    private KineticWeapon(@Nullable CreativeReach creativeReach,
+            @Nullable Conditions damageConditions, float damageModifier, float damageMultiplier,
+            int delay, @Nullable Conditions dismountConditions, float hitboxMargin,
+            @Nullable Conditions knockbackConditions, @NonNull Reach reach) {
         Objects.requireNonNull(reach, "KineticWeapon.reach");
+        this.creativeReach = creativeReach;
+        this.damageConditions = damageConditions;
+        this.damageModifier = damageModifier;
+        this.damageMultiplier = damageMultiplier;
+        this.delay = delay;
+        this.dismountConditions = dismountConditions;
+        this.hitboxMargin = hitboxMargin;
+        this.knockbackConditions = knockbackConditions;
+        this.reach = reach;
+    }
+
+    /**
+     * Defines the reach used when the user is in Creative Mode. Defaults to "reach" if unspecified. Add-on JSON
+     * {@code creative_reach}. Optional (null: not set).
+     *
+     * @return the value
+     */
+    public @Nullable CreativeReach creativeReach() {
+        return creativeReach;
+    }
+
+    /**
+     * Conditions that need to be satisfied for damage to be applied. If not specified, damage is not applied. Add-on
+     * JSON {@code damage_conditions}. Optional (null: not set).
+     *
+     * @return the value
+     */
+    public @Nullable Conditions damageConditions() {
+        return damageConditions;
+    }
+
+    /**
+     * Value added to the the scaled dot product (after applying "damage_multiplier"). Add-on JSON {@code
+     * damage_modifier}. Default: <code>0</code>.
+     *
+     * @return the value
+     */
+    public float damageModifier() {
+        return damageModifier;
+    }
+
+    /**
+     * Value multiplied to sum of the dot products of the user and target's velocity vectors projected onto the view
+     * vector. Add-on JSON {@code damage_multiplier}. Default: <code>1</code>.
+     *
+     * @return the value
+     */
+    public float damageMultiplier() {
+        return damageMultiplier;
+    }
+
+    /**
+     * Time, in ticks, after which kinetic damage and its effects start being applied. Add-on JSON {@code delay}.
+     * Default: <code>0</code>.
+     *
+     * @return the value
+     */
+    public int delay() {
+        return delay;
+    }
+
+    /**
+     * Conditions that need to be satisfied for riders to be dismounted. If not specified, riders cannot be
+     * dismounted. Add-on JSON {@code dismount_conditions}. Optional (null: not set).
+     *
+     * @return the value
+     */
+    public @Nullable Conditions dismountConditions() {
+        return dismountConditions;
+    }
+
+    /**
+     * Added tolerance to the view vector raycast for detecting entity collisions. Add-on JSON {@code hitbox_margin}.
+     * Default: <code>0</code>.
+     *
+     * @return the value
+     */
+    public float hitboxMargin() {
+        return hitboxMargin;
+    }
+
+    /**
+     * Conditions that need to be satisfied for knockback to be applied. If not specified, knockback is not applied.
+     * Add-on JSON {@code knockback_conditions}. Optional (null: not set).
+     *
+     * @return the value
+     */
+    public @Nullable Conditions knockbackConditions() {
+        return knockbackConditions;
+    }
+
+    /**
+     * Defines the range (in blocks) along the user's view vector where entities can be hit. Only targets within this
+     * distance are considered. Block collisions between the user and target block damage and its effects. Add-on
+     * JSON {@code reach}. Default: <code>&#123;"max":3,"min":0&#125;</code>.
+     *
+     * @return the value
+     */
+    public @NonNull Reach reach() {
+        return reach;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        return this == o || o instanceof KineticWeapon other
+                && Objects.equals(creativeReach, other.creativeReach)
+                && Objects.equals(damageConditions, other.damageConditions)
+                && Float.compare(damageModifier, other.damageModifier) == 0
+                && Float.compare(damageMultiplier, other.damageMultiplier) == 0
+                && delay == other.delay
+                && Objects.equals(dismountConditions, other.dismountConditions)
+                && Float.compare(hitboxMargin, other.hitboxMargin) == 0
+                && Objects.equals(knockbackConditions, other.knockbackConditions)
+                && Objects.equals(reach, other.reach);
+    }
+
+    @Override
+    public int hashCode() {
+        int h = Objects.hashCode(creativeReach);
+        h = 31 * h + Objects.hashCode(damageConditions);
+        h = 31 * h + Float.hashCode(damageModifier);
+        h = 31 * h + Float.hashCode(damageMultiplier);
+        h = 31 * h + delay;
+        h = 31 * h + Objects.hashCode(dismountConditions);
+        h = 31 * h + Float.hashCode(hitboxMargin);
+        h = 31 * h + Objects.hashCode(knockbackConditions);
+        h = 31 * h + Objects.hashCode(reach);
+        return h;
+    }
+
+    @Override
+    public String toString() {
+        return "KineticWeapon[creativeReach=" + creativeReach + ", damageConditions=" + damageConditions + ", damageModifier=" + damageModifier + ", damageMultiplier=" + damageMultiplier + ", delay=" + delay + ", dismountConditions=" + dismountConditions + ", hitboxMargin=" + hitboxMargin + ", knockbackConditions=" + knockbackConditions + ", reach=" + reach + "]";
     }
 
     @Override
@@ -233,10 +359,54 @@ public record KineticWeapon(KineticWeapon. @Nullable CreativeReach creativeReach
     /**
      * Defines the reach used when the user is in Creative Mode. Defaults to "reach" if unspecified.
      *
-     * @param max Add-on JSON {@code max}. Default: <code>0</code>.
-     * @param min Add-on JSON {@code min}. Default: <code>0</code>.
      */
-    public record CreativeReach(float max, float min) {
+    public static final class CreativeReach {
+        private final float max;
+
+        private final float min;
+
+        private CreativeReach(float max, float min) {
+            this.max = max;
+            this.min = min;
+        }
+
+        /**
+         * Add-on JSON {@code max}. Default: <code>0</code>.
+         *
+         * @return the value
+         */
+        public float max() {
+            return max;
+        }
+
+        /**
+         * Add-on JSON {@code min}. Default: <code>0</code>.
+         *
+         * @return the value
+         */
+        public float min() {
+            return min;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            return this == o || o instanceof CreativeReach other
+                    && Float.compare(max, other.max) == 0
+                    && Float.compare(min, other.min) == 0;
+        }
+
+        @Override
+        public int hashCode() {
+            int h = Float.hashCode(max);
+            h = 31 * h + Float.hashCode(min);
+            return h;
+        }
+
+        @Override
+        public String toString() {
+            return "CreativeReach[max=" + max + ", min=" + min + "]";
+        }
+
         /**
          * Creates a builder with every field at its default.
          *
@@ -307,23 +477,72 @@ public record KineticWeapon(KineticWeapon. @Nullable CreativeReach creativeReach
     /**
      * Conditions that need to be satisfied for damage to be applied. If not specified, damage is not applied.
      *
-     * @param maxDuration Time, in ticks, during which the effect can be applied after "delay" elapses. If negative, the effect is
-     *        applied indefinitely. Add-on JSON {@code max_duration}. Default: <code>-1</code>.
-     * @param minRelativeSpeed Minimum relative speed of the user with respect to the target (projected onto the view vector via a dot
-     *        product) required for the effect to be applied. Add-on JSON {@code min_relative_speed}. Default:
-     *        <code>0</code>. At least 0 (BDS 1.26.63.1).
-     * @param minSpeed Minimum user's speed (projected onto the view vector via a dot product) required for the effect to be applied.
-     *        Add-on JSON {@code min_speed}. Default: <code>0</code>. At least 0 (BDS 1.26.63.1).
      */
-    public record Conditions(int maxDuration, float minRelativeSpeed, float minSpeed) {
-        /**
-         * Checks the components.
-         *
-         * @throws IllegalArgumentException if a component is out of its documented range or conflicts with another
-         */
-        public Conditions {
+    public static final class Conditions {
+        private final int maxDuration;
+
+        private final float minRelativeSpeed;
+
+        private final float minSpeed;
+
+        private Conditions(int maxDuration, float minRelativeSpeed, float minSpeed) {
             Check.range("KineticWeapon.Conditions.minRelativeSpeed", minRelativeSpeed, 0.0, null);
             Check.range("KineticWeapon.Conditions.minSpeed", minSpeed, 0.0, null);
+            this.maxDuration = maxDuration;
+            this.minRelativeSpeed = minRelativeSpeed;
+            this.minSpeed = minSpeed;
+        }
+
+        /**
+         * Time, in ticks, during which the effect can be applied after "delay" elapses. If negative, the effect is
+         * applied indefinitely. Add-on JSON {@code max_duration}. Default: <code>-1</code>.
+         *
+         * @return the value
+         */
+        public int maxDuration() {
+            return maxDuration;
+        }
+
+        /**
+         * Minimum relative speed of the user with respect to the target (projected onto the view vector via a dot
+         * product) required for the effect to be applied. Add-on JSON {@code min_relative_speed}. Default:
+         * <code>0</code>. At least 0 (Bedrock 26.60).
+         *
+         * @return the value
+         */
+        public float minRelativeSpeed() {
+            return minRelativeSpeed;
+        }
+
+        /**
+         * Minimum user's speed (projected onto the view vector via a dot product) required for the effect to be applied.
+         * Add-on JSON {@code min_speed}. Default: <code>0</code>. At least 0 (Bedrock 26.60).
+         *
+         * @return the value
+         */
+        public float minSpeed() {
+            return minSpeed;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            return this == o || o instanceof Conditions other
+                    && maxDuration == other.maxDuration
+                    && Float.compare(minRelativeSpeed, other.minRelativeSpeed) == 0
+                    && Float.compare(minSpeed, other.minSpeed) == 0;
+        }
+
+        @Override
+        public int hashCode() {
+            int h = maxDuration;
+            h = 31 * h + Float.hashCode(minRelativeSpeed);
+            h = 31 * h + Float.hashCode(minSpeed);
+            return h;
+        }
+
+        @Override
+        public String toString() {
+            return "Conditions[maxDuration=" + maxDuration + ", minRelativeSpeed=" + minRelativeSpeed + ", minSpeed=" + minSpeed + "]";
         }
 
         /**
@@ -411,10 +630,54 @@ public record KineticWeapon(KineticWeapon. @Nullable CreativeReach creativeReach
      * Defines the range (in blocks) along the user's view vector where entities can be hit. Only targets within this
      * distance are considered. Block collisions between the user and target block damage and its effects.
      *
-     * @param max Add-on JSON {@code max}. Default: <code>3</code>.
-     * @param min Add-on JSON {@code min}. Default: <code>0</code>.
      */
-    public record Reach(float max, float min) {
+    public static final class Reach {
+        private final float max;
+
+        private final float min;
+
+        private Reach(float max, float min) {
+            this.max = max;
+            this.min = min;
+        }
+
+        /**
+         * Add-on JSON {@code max}. Default: <code>3</code>.
+         *
+         * @return the value
+         */
+        public float max() {
+            return max;
+        }
+
+        /**
+         * Add-on JSON {@code min}. Default: <code>0</code>.
+         *
+         * @return the value
+         */
+        public float min() {
+            return min;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            return this == o || o instanceof Reach other
+                    && Float.compare(max, other.max) == 0
+                    && Float.compare(min, other.min) == 0;
+        }
+
+        @Override
+        public int hashCode() {
+            int h = Float.hashCode(max);
+            h = 31 * h + Float.hashCode(min);
+            return h;
+        }
+
+        @Override
+        public String toString() {
+            return "Reach[max=" + max + ", min=" + min + "]";
+        }
+
         /**
          * Creates a builder with every field at its default.
          *

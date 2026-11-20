@@ -11,9 +11,12 @@ import java.util.List;
 /** The hand input of the generator: what {@code api.json}, {@code bds-feedback.json} and the hand transforms say about a component or field. */
 final class Hand {
     final Inputs in;
+    /** The names to keep ({@code api-history.json}); it also collects the names of this run. */
+    final ApiHistory history;
 
     Hand(Inputs in) {
         this.in = in;
+        this.history = new ApiHistory(in.history());
     }
 
     JsonObject api(String section) {

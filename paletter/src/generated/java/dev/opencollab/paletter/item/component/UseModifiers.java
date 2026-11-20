@@ -5,6 +5,9 @@ package dev.opencollab.paletter.item.component;
 
 import dev.opencollab.paletter.annotation.BedrockFormat;
 import dev.opencollab.paletter.internal.component.Check;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
@@ -13,44 +16,118 @@ import org.checkerframework.checker.nullness.qual.Nullable;
  * <p>
  * Add-on JSON: {@code "minecraft:use_modifiers"}.
  *
- * @param emitVibrations Whether vibrations are emitted when the item starts or stops being used. Add-on JSON {@code emit_vibrations}.
- *        Default: <code>true</code>.
- * @param movementModifier Multiplier applied to the player's movement speed while the item is in use. Value must be &lt;= 1. Add-on JSON
- *        {@code movement_modifier}. Optional (null: not set). Range [0, 1] (BDS 1.26.63.1).
- * @param startSound Sound played when the item starts being used. Accepts the name of any sound event defined in
- *        <code>sound_definitions.json</code>, including the built-in vanilla sound events. Add-on JSON {@code
- *        start_sound}. Optional (null: not set).
- * @param startUsing When the player begins using the item. Use <code>always</code> to start as soon as the use action is triggered
- *        (default), or <code>on_attack</code> to start using only when an attack input is received while the item is
- *        selected. This item requires a format version of at least 1.26.30. Add-on JSON {@code start_using}. Optional
- *        (null: not set). The docs give the default <code>"always"</code>, but BDS sends
- *        minecraft:use_modifiers.start_using = if_first (string) when it is omitted; so it is unset by default, and the
- *        encoder sends what BDS sends then.
- * @param useDuration Time, in seconds, that the item takes to use. Add-on JSON {@code use_duration}. Default: <code>0</code>. At
- *        least 0 (BDS 1.26.63.1).
  * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/itemreference/examples/itemcomponents/minecraft_use_modifiers?view=minecraft-bedrock-stable">Microsoft Learn: minecraft:use_modifiers</a>
  * @since 1.0.0
  */
 @BedrockFormat("1.20.50")
-public record UseModifiers(boolean emitVibrations, @Nullable Float movementModifier,
-        @Nullable String startSound,
-        @BedrockFormat("1.26.30") UseModifiers. @Nullable StartUsing startUsing,
-        float useDuration) implements ItemComponent {
+public final class UseModifiers implements ItemComponent {
     /**
      * The component name in add-on JSON.
      */
     public static final String NAME = "minecraft:use_modifiers";
 
-    /**
-     * Checks the components.
-     *
-     * @throws IllegalArgumentException if a component is out of its documented range or conflicts with another
-     */
-    public UseModifiers {
+    private final boolean emitVibrations;
+
+    private final @Nullable Float movementModifier;
+
+    private final @Nullable String startSound;
+
+    private final @Nullable StartUsing startUsing;
+
+    private final float useDuration;
+
+    private UseModifiers(boolean emitVibrations, @Nullable Float movementModifier,
+            @Nullable String startSound, @Nullable StartUsing startUsing, float useDuration) {
         if (movementModifier != null) {
             Check.range("UseModifiers.movementModifier", movementModifier, 0.0, 1.0);
         }
         Check.range("UseModifiers.useDuration", useDuration, 0.0, null);
+        this.emitVibrations = emitVibrations;
+        this.movementModifier = movementModifier;
+        this.startSound = startSound;
+        this.startUsing = startUsing;
+        this.useDuration = useDuration;
+    }
+
+    /**
+     * Whether vibrations are emitted when the item starts or stops being used. Add-on JSON {@code emit_vibrations}.
+     * Default: <code>true</code>.
+     *
+     * @return the value
+     */
+    public boolean emitVibrations() {
+        return emitVibrations;
+    }
+
+    /**
+     * Multiplier applied to the player's movement speed while the item is in use. Value must be &lt;= 1. Add-on JSON
+     * {@code movement_modifier}. Optional (null: not set). Range [0, 1] (Bedrock 26.60).
+     *
+     * @return the value
+     */
+    public @Nullable Float movementModifier() {
+        return movementModifier;
+    }
+
+    /**
+     * Sound played when the item starts being used. Accepts the name of any sound event defined in
+     * <code>sound_definitions.json</code>, including the built-in vanilla sound events. Add-on JSON {@code
+     * start_sound}. Optional (null: not set).
+     *
+     * @return the value
+     */
+    public @Nullable String startSound() {
+        return startSound;
+    }
+
+    /**
+     * When the player begins using the item. Use <code>always</code> to start as soon as the use action is triggered
+     * (default), or <code>on_attack</code> to start using only when an attack input is received while the item is
+     * selected. This item requires a format version of at least 1.26.30. Add-on JSON {@code start_using}. Optional
+     * (null: not set). The docs give the default <code>"always"</code>, but BDS sends
+     * minecraft:use_modifiers.start_using = if_first (string) when it is omitted; so it is unset by default, and the
+     * encoder sends what BDS sends then.
+     *
+     * @return the value
+     */
+    @BedrockFormat("1.26.30")
+    public @Nullable StartUsing startUsing() {
+        return startUsing;
+    }
+
+    /**
+     * Time, in seconds, that the item takes to use. Add-on JSON {@code use_duration}. Default: <code>0</code>. At
+     * least 0 (Bedrock 26.60).
+     *
+     * @return the value
+     */
+    public float useDuration() {
+        return useDuration;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        return this == o || o instanceof UseModifiers other
+                && emitVibrations == other.emitVibrations
+                && Objects.equals(movementModifier, other.movementModifier)
+                && Objects.equals(startSound, other.startSound)
+                && Objects.equals(startUsing, other.startUsing)
+                && Float.compare(useDuration, other.useDuration) == 0;
+    }
+
+    @Override
+    public int hashCode() {
+        int h = Boolean.hashCode(emitVibrations);
+        h = 31 * h + Objects.hashCode(movementModifier);
+        h = 31 * h + Objects.hashCode(startSound);
+        h = 31 * h + Objects.hashCode(startUsing);
+        h = 31 * h + Float.hashCode(useDuration);
+        return h;
+    }
+
+    @Override
+    public String toString() {
+        return "UseModifiers[emitVibrations=" + emitVibrations + ", movementModifier=" + movementModifier + ", startSound=" + startSound + ", startUsing=" + startUsing + ", useDuration=" + useDuration + "]";
     }
 
     @Override
@@ -167,23 +244,49 @@ public record UseModifiers(boolean emitVibrations, @Nullable Float movementModif
     }
 
     /**
-     * The documented values; {@link #value()} is the add-on JSON string.
+     * A value of an add-on JSON string: a constant per documented value, {@link #of} for any other.
+     * {@link #value()} is the add-on JSON string. Not an enum: Bedrock adds values, so a {@code switch} over
+     * {@link #value()} needs a {@code default}.
      */
-    public enum StartUsing {
+    public static final class StartUsing {
         /**
          * {@code always}
          */
-        ALWAYS("always"),
+        public static final StartUsing ALWAYS = new StartUsing("always");
 
         /**
          * {@code if_first}
          */
-        IF_FIRST("if_first");
+        public static final StartUsing IF_FIRST = new StartUsing("if_first");
+
+        private static final List<StartUsing> KNOWN = List.of(ALWAYS, IF_FIRST);
+
+        private static final Map<String, StartUsing> BY_VALUE = Check.index(KNOWN, StartUsing::value);
 
         private final String value;
 
-        StartUsing(String value) {
+        private StartUsing(String value) {
             this.value = value;
+        }
+
+        /**
+         * Returns the value of an add-on JSON string: the constant of a documented value, else a new value.
+         *
+         * @param value the value in add-on JSON
+         * @return the constant of the value, or a value Paletter does not know
+         */
+        public static @NonNull StartUsing of(@NonNull String value) {
+            StartUsing known = BY_VALUE.get(Objects.requireNonNull(value, "StartUsing.value"));
+            return known != null ? known : new StartUsing(value);
+        }
+
+        /**
+         * Returns the documented values, the constants of this class.
+         *
+         * @return the constants, in the order of the documentation
+         */
+        public static @NonNull List<StartUsing> known() {
+            return KNOWN;
         }
 
         /**
@@ -196,19 +299,27 @@ public record UseModifiers(boolean emitVibrations, @Nullable Float movementModif
         }
 
         /**
-         * Finds the constant of an add-on JSON value.
+         * Returns whether the value is documented, one of the constants.
          *
-         * @param value the value in add-on JSON
-         * @return the constant of the value
-         * @throws IllegalArgumentException if the value is not documented
+         * @return whether this is one of {@link #known()}
          */
-        public static @NonNull StartUsing fromValue(@NonNull String value) {
-            for (StartUsing constant : values()) {
-                if (constant.value.equals(value)) {
-                    return constant;
-                }
-            }
-            throw new IllegalArgumentException("Not a StartUsing: " + value);
+        public boolean isKnown() {
+            return BY_VALUE.get(value) == this;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            return this == o || o instanceof StartUsing other && value.equals(other.value);
+        }
+
+        @Override
+        public int hashCode() {
+            return value.hashCode();
+        }
+
+        @Override
+        public String toString() {
+            return value;
         }
     }
 }

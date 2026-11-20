@@ -5,7 +5,9 @@ package dev.opencollab.paletter.block.component;
 
 import dev.opencollab.paletter.annotation.BedrockExperiment;
 import dev.opencollab.paletter.annotation.BedrockFormat;
+import dev.opencollab.paletter.internal.component.Check;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
@@ -18,27 +20,49 @@ import org.checkerframework.checker.nullness.qual.Nullable;
  * Add-on JSON: {@code "minecraft:connection"}.
  * The creator docs name the experiment Upcoming Creator Features for it (in some format versions); unverified against BDS.
  *
- * @param enabledStates Which states to enable. Must specify at least one. Valid value is <code>minecraft:cardinal_connections</code>.
- *        Add-on JSON {@code enabled_states}. Required.
  * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/blockreference/examples/traits/connection?view=minecraft-bedrock-stable">Microsoft Learn: minecraft:connection</a>
  * @since 1.0.0
  */
 @BedrockFormat("1.21.130")
 @BedrockExperiment("upcoming_creator_features")
-public record Connection(
-        @NonNull List<Connection.EnabledStates> enabledStates) implements BlockTrait {
+public final class Connection implements BlockTrait {
     /**
      * The component name in add-on JSON.
      */
     public static final String NAME = "minecraft:connection";
 
-    /**
-     * Checks the components and copies lists and maps, so the value is immutable.
-     *
-     * @throws NullPointerException if a required component is null
-     */
-    public Connection {
+    private final @NonNull List<EnabledStates> enabledStates;
+
+    private Connection(@NonNull List<EnabledStates> enabledStates) {
         enabledStates = List.copyOf(Objects.requireNonNull(enabledStates, "Connection.enabledStates"));
+        this.enabledStates = enabledStates;
+    }
+
+    /**
+     * Which states to enable. Must specify at least one. Valid value is <code>minecraft:cardinal_connections</code>.
+     * Add-on JSON {@code enabled_states}. Required.
+     *
+     * @return the value
+     */
+    public @NonNull List<EnabledStates> enabledStates() {
+        return enabledStates;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        return this == o || o instanceof Connection other
+                && Objects.equals(enabledStates, other.enabledStates);
+    }
+
+    @Override
+    public int hashCode() {
+        int h = Objects.hashCode(enabledStates);
+        return h;
+    }
+
+    @Override
+    public String toString() {
+        return "Connection[enabledStates=" + enabledStates + "]";
     }
 
     @Override
@@ -113,18 +137,44 @@ public record Connection(
     }
 
     /**
-     * The documented values; {@link #value()} is the add-on JSON string.
+     * A value of an add-on JSON string: a constant per documented value, {@link #of} for any other.
+     * {@link #value()} is the add-on JSON string. Not an enum: Bedrock adds values, so a {@code switch} over
+     * {@link #value()} needs a {@code default}.
      */
-    public enum EnabledStates {
+    public static final class EnabledStates {
         /**
          * {@code minecraft:cardinal_connections}
          */
-        CARDINAL_CONNECTIONS("minecraft:cardinal_connections");
+        public static final EnabledStates CARDINAL_CONNECTIONS = new EnabledStates("minecraft:cardinal_connections");
+
+        private static final List<EnabledStates> KNOWN = List.of(CARDINAL_CONNECTIONS);
+
+        private static final Map<String, EnabledStates> BY_VALUE = Check.index(KNOWN, EnabledStates::value);
 
         private final String value;
 
-        EnabledStates(String value) {
+        private EnabledStates(String value) {
             this.value = value;
+        }
+
+        /**
+         * Returns the value of an add-on JSON string: the constant of a documented value, else a new value.
+         *
+         * @param value the value in add-on JSON
+         * @return the constant of the value, or a value Paletter does not know
+         */
+        public static @NonNull EnabledStates of(@NonNull String value) {
+            EnabledStates known = BY_VALUE.get(Objects.requireNonNull(value, "EnabledStates.value"));
+            return known != null ? known : new EnabledStates(value);
+        }
+
+        /**
+         * Returns the documented values, the constants of this class.
+         *
+         * @return the constants, in the order of the documentation
+         */
+        public static @NonNull List<EnabledStates> known() {
+            return KNOWN;
         }
 
         /**
@@ -137,19 +187,27 @@ public record Connection(
         }
 
         /**
-         * Finds the constant of an add-on JSON value.
+         * Returns whether the value is documented, one of the constants.
          *
-         * @param value the value in add-on JSON
-         * @return the constant of the value
-         * @throws IllegalArgumentException if the value is not documented
+         * @return whether this is one of {@link #known()}
          */
-        public static @NonNull EnabledStates fromValue(@NonNull String value) {
-            for (EnabledStates constant : values()) {
-                if (constant.value.equals(value)) {
-                    return constant;
-                }
-            }
-            throw new IllegalArgumentException("Not a EnabledStates: " + value);
+        public boolean isKnown() {
+            return BY_VALUE.get(value) == this;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            return this == o || o instanceof EnabledStates other && value.equals(other.value);
+        }
+
+        @Override
+        public int hashCode() {
+            return value.hashCode();
+        }
+
+        @Override
+        public String toString() {
+            return value;
         }
     }
 }

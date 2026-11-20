@@ -20,78 +20,181 @@ import org.checkerframework.checker.nullness.qual.Nullable;
  * Add-on JSON: {@code "minecraft:geometry"}.
  * Compiled by the hand transform {@code Transforms.geometry}.
  *
- * @param boneVisibility An optional list of true/false values that define the visibility of individual bones in the geometry file. In
- *        order to set up 'bone_visibility', the geometry file name must be entered as an identifier. After the
- *        identifier has been specified, bone_visibility can be defined based on the names of the bones in the specified
- *        geometry file on a true/false basis. Note that all bones default to 'true,' so bones should only be defined if
- *        they are being set to 'false.' Including bones set to 'true' will work the same as the default. This item
- *        requires a format version of at least 1.19.80. Added to the geometry component in 1.19.80 as a replacement for
- *        the previous part_visibility component. As of 1.20.10, bone visibility values support Molang expressions,
- *        restoring functionality closer to the original experimental part_visibility component. Add-on JSON {@code
- *        bone_visibility}. Optional (null: not set). Empty while {@code identifier} is {@code
- *        minecraft:geometry.full_block} (BDS 1.26.63.1).
- * @param culling An optional identifer of a culling definition. The culling definition is used to determine which faces of the
- *        block should be culled when rendering. The culling definition can be used to optimize rendering performance by
- *        reducing the number of faces that need to be rendered. This identifier must match an existing culling
- *        definition in any of the currently loaded resource packs. This item requires a format version of at least
- *        1.20.60. Data-driven culling rules are referenced by this identifier and were added in 1.20.60. Add-on JSON
- *        {@code culling}. Optional (null: not set).
- * @param cullingLayer [Experimental] - A string that allows culling rule to group multiple blocks together when comparing them. When
- *        using the minecraft namespace, the only allowed culling layer identifiers are :
- *        "minecraft:culling_layer.undefined" or "minecraft:culling_layer.leaves". Additionally, the feature is
- *        currently only usable behind the "upcoming creator features" toggle. When using no namespaces or a custom one,
- *        the names must start and end with an alpha-numeric character. Add-on JSON {@code culling_layer}. Default:
- *        <code>"minecraft:culling_layer.undefined"</code>.
- * @param cullingShape The voxel shape used for culling adjacent block faces. Voxel shapes work together with culling rules and will
- *        not function if there is no culling rule defined for the block. Only adjacent blocks with voxel shapes will
- *        occlude using this shape. Blocks using "minecraft:geometry.full_block" always use the unit cube shape and will
- *        ignore custom shapes if specified. This item requires a format version of at least 1.26.30. Available for
- *        custom blocks in format version 1.26.30. Applying non-unit-cube culling shapes to Vanilla blocks (fences,
- *        bells, slabs, etc.) still requires the Voxel Shapes experimental toggle. When using the minecraft namespace,
- *        only <code>minecraft:empty</code> and <code>minecraft:unit_cube</code> are available; custom namespaces must
- *        start and end with an alpha-numeric character. Add-on JSON {@code culling_shape}. Default:
- *        <code>"minecraft:empty"</code>.
- * @param identifier Specifies the geometry description identifier to use to render this block. This identifier must match an
- *        existing geometry identifier in any of the currently loaded resource packs. The reserved identifier
- *        <code>minecraft:geometry.full_cube</code> was added in 1.20.60 to provide the most efficient rendering path
- *        for 1x1x1 blocks. Add-on JSON {@code identifier}. Required.
- * @param nWayVisualRotation The name of a block state that drives visual-only rotation of this block. The renderer reads the current value
- *        of the named state at runtime and rotates the geometry accordingly without changing collision or interaction.
- *        Supported states are <code>minecraft:cardinal_direction</code>, <code>minecraft:sixteen_way_rotation</code>,
- *        and any custom integer state. This item requires a format version of at least 1.26.30. Add-on JSON {@code
- *        n_way_visual_rotation}. Optional (null: not set).
- * @param uvLock A Boolean locking UV orientation of all bones in the geometry, or an array of strings locking UV orientation
- *        of specific bones in the geometry. For performance reasons it is recommended to use the Boolean. Note that for
- *        cubes using Box UVs, rather than Per-face UVs, uv_lock is only supported if the cube faces are square. This
- *        item requires a format version of at least 1.21.100. With UV locking, a single geometry can be reused for
- *        multiple texture rotations without authoring a new geometry per rotation. Add-on JSON {@code uv_lock}.
- *        Optional (null: not set).
  * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/blockreference/examples/blockcomponents/minecraftblock_geometry?view=minecraft-bedrock-stable">Microsoft Learn: minecraft:geometry</a>
  * @since 1.0.0
  */
 @BedrockFormat("1.19.40")
-public record Geometry(@BedrockFormat("1.19.80") @Nullable Map<String, String> boneVisibility,
-        @BedrockFormat("1.20.60") @Nullable String culling, @NonNull String cullingLayer,
-        @BedrockFormat("1.26.30") @NonNull String cullingShape, @NonNull String identifier,
-        @BedrockFormat("1.26.30") Geometry. @Nullable NWayVisualRotation nWayVisualRotation,
-        @BedrockFormat("1.21.100") @Nullable UvLock uvLock) implements BlockComponent {
+public final class Geometry implements BlockComponent {
     /**
      * The component name in add-on JSON.
      */
     public static final String NAME = "minecraft:geometry";
 
-    /**
-     * Checks the components and copies lists and maps, so the value is immutable.
-     *
-     * @throws NullPointerException if a required component is null
-     * @throws IllegalArgumentException if a component is out of its documented range or conflicts with another
-     */
-    public Geometry {
+    private final @Nullable Map<String, String> boneVisibility;
+
+    private final @Nullable String culling;
+
+    private final @NonNull String cullingLayer;
+
+    private final @NonNull String cullingShape;
+
+    private final @NonNull String identifier;
+
+    private final @Nullable NWayVisualRotation nWayVisualRotation;
+
+    private final @Nullable UvLock uvLock;
+
+    private Geometry(@Nullable Map<String, String> boneVisibility, @Nullable String culling,
+            @NonNull String cullingLayer, @NonNull String cullingShape, @NonNull String identifier,
+            @Nullable NWayVisualRotation nWayVisualRotation, @Nullable UvLock uvLock) {
         boneVisibility = boneVisibility == null ? null : Check.copy(boneVisibility, "Geometry.boneVisibility");
         Check.conflict("Geometry", "boneVisibility", boneVisibility != null && !boneVisibility.isEmpty(), "identifier", identifier, "minecraft:geometry.full_block");
         Objects.requireNonNull(cullingLayer, "Geometry.cullingLayer");
         Objects.requireNonNull(cullingShape, "Geometry.cullingShape");
         Objects.requireNonNull(identifier, "Geometry.identifier");
+        this.boneVisibility = boneVisibility;
+        this.culling = culling;
+        this.cullingLayer = cullingLayer;
+        this.cullingShape = cullingShape;
+        this.identifier = identifier;
+        this.nWayVisualRotation = nWayVisualRotation;
+        this.uvLock = uvLock;
+    }
+
+    /**
+     * An optional list of true/false values that define the visibility of individual bones in the geometry file. In
+     * order to set up 'bone_visibility', the geometry file name must be entered as an identifier. After the
+     * identifier has been specified, bone_visibility can be defined based on the names of the bones in the specified
+     * geometry file on a true/false basis. Note that all bones default to 'true,' so bones should only be defined if
+     * they are being set to 'false.' Including bones set to 'true' will work the same as the default. This item
+     * requires a format version of at least 1.19.80. Added to the geometry component in 1.19.80 as a replacement for
+     * the previous part_visibility component. As of 1.20.10, bone visibility values support Molang expressions,
+     * restoring functionality closer to the original experimental part_visibility component. Add-on JSON {@code
+     * bone_visibility}. Optional (null: not set). Empty while {@code identifier} is {@code
+     * minecraft:geometry.full_block} (Bedrock 26.60).
+     *
+     * @return the value
+     */
+    @BedrockFormat("1.19.80")
+    public @Nullable Map<String, String> boneVisibility() {
+        return boneVisibility;
+    }
+
+    /**
+     * An optional identifer of a culling definition. The culling definition is used to determine which faces of the
+     * block should be culled when rendering. The culling definition can be used to optimize rendering performance by
+     * reducing the number of faces that need to be rendered. This identifier must match an existing culling
+     * definition in any of the currently loaded resource packs. This item requires a format version of at least
+     * 1.20.60. Data-driven culling rules are referenced by this identifier and were added in 1.20.60. Add-on JSON
+     * {@code culling}. Optional (null: not set).
+     *
+     * @return the value
+     */
+    @BedrockFormat("1.20.60")
+    public @Nullable String culling() {
+        return culling;
+    }
+
+    /**
+     * [Experimental] - A string that allows culling rule to group multiple blocks together when comparing them. When
+     * using the minecraft namespace, the only allowed culling layer identifiers are :
+     * "minecraft:culling_layer.undefined" or "minecraft:culling_layer.leaves". Additionally, the feature is
+     * currently only usable behind the "upcoming creator features" toggle. When using no namespaces or a custom one,
+     * the names must start and end with an alpha-numeric character. Add-on JSON {@code culling_layer}. Default:
+     * <code>"minecraft:culling_layer.undefined"</code>.
+     *
+     * @return the value
+     */
+    public @NonNull String cullingLayer() {
+        return cullingLayer;
+    }
+
+    /**
+     * The voxel shape used for culling adjacent block faces. Voxel shapes work together with culling rules and will
+     * not function if there is no culling rule defined for the block. Only adjacent blocks with voxel shapes will
+     * occlude using this shape. Blocks using "minecraft:geometry.full_block" always use the unit cube shape and will
+     * ignore custom shapes if specified. This item requires a format version of at least 1.26.30. Available for
+     * custom blocks in format version 1.26.30. Applying non-unit-cube culling shapes to Vanilla blocks (fences,
+     * bells, slabs, etc.) still requires the Voxel Shapes experimental toggle. When using the minecraft namespace,
+     * only <code>minecraft:empty</code> and <code>minecraft:unit_cube</code> are available; custom namespaces must
+     * start and end with an alpha-numeric character. Add-on JSON {@code culling_shape}. Default:
+     * <code>"minecraft:empty"</code>.
+     *
+     * @return the value
+     */
+    @BedrockFormat("1.26.30")
+    public @NonNull String cullingShape() {
+        return cullingShape;
+    }
+
+    /**
+     * Specifies the geometry description identifier to use to render this block. This identifier must match an
+     * existing geometry identifier in any of the currently loaded resource packs. The reserved identifier
+     * <code>minecraft:geometry.full_cube</code> was added in 1.20.60 to provide the most efficient rendering path
+     * for 1x1x1 blocks. Add-on JSON {@code identifier}. Required.
+     *
+     * @return the value
+     */
+    public @NonNull String identifier() {
+        return identifier;
+    }
+
+    /**
+     * The name of a block state that drives visual-only rotation of this block. The renderer reads the current value
+     * of the named state at runtime and rotates the geometry accordingly without changing collision or interaction.
+     * Supported states are <code>minecraft:cardinal_direction</code>, <code>minecraft:sixteen_way_rotation</code>,
+     * and any custom integer state. This item requires a format version of at least 1.26.30. Add-on JSON {@code
+     * n_way_visual_rotation}. Optional (null: not set).
+     *
+     * @return the value
+     */
+    @BedrockFormat("1.26.30")
+    public @Nullable NWayVisualRotation nWayVisualRotation() {
+        return nWayVisualRotation;
+    }
+
+    /**
+     * A Boolean locking UV orientation of all bones in the geometry, or an array of strings locking UV orientation
+     * of specific bones in the geometry. For performance reasons it is recommended to use the Boolean. Note that for
+     * cubes using Box UVs, rather than Per-face UVs, uv_lock is only supported if the cube faces are square. This
+     * item requires a format version of at least 1.21.100. With UV locking, a single geometry can be reused for
+     * multiple texture rotations without authoring a new geometry per rotation. Add-on JSON {@code uv_lock}.
+     * Optional (null: not set).
+     *
+     * @return the value
+     */
+    @BedrockFormat("1.21.100")
+    public @Nullable UvLock uvLock() {
+        return uvLock;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        return this == o || o instanceof Geometry other
+                && Objects.equals(boneVisibility, other.boneVisibility)
+                && Objects.equals(culling, other.culling)
+                && Objects.equals(cullingLayer, other.cullingLayer)
+                && Objects.equals(cullingShape, other.cullingShape)
+                && Objects.equals(identifier, other.identifier)
+                && Objects.equals(nWayVisualRotation, other.nWayVisualRotation)
+                && Objects.equals(uvLock, other.uvLock);
+    }
+
+    @Override
+    public int hashCode() {
+        int h = Objects.hashCode(boneVisibility);
+        h = 31 * h + Objects.hashCode(culling);
+        h = 31 * h + Objects.hashCode(cullingLayer);
+        h = 31 * h + Objects.hashCode(cullingShape);
+        h = 31 * h + Objects.hashCode(identifier);
+        h = 31 * h + Objects.hashCode(nWayVisualRotation);
+        h = 31 * h + Objects.hashCode(uvLock);
+        return h;
+    }
+
+    @Override
+    public String toString() {
+        return "Geometry[boneVisibility=" + boneVisibility + ", culling=" + culling + ", cullingLayer=" + cullingLayer + ", cullingShape=" + cullingShape + ", identifier=" + identifier + ", nWayVisualRotation=" + nWayVisualRotation + ", uvLock=" + uvLock + "]";
     }
 
     @Override
@@ -292,14 +395,71 @@ public record Geometry(@BedrockFormat("1.19.80") @Nullable Map<String, String> b
      * Supported states are <code>minecraft:cardinal_direction</code>, <code>minecraft:sixteen_way_rotation</code>,
      * and any custom integer state. This item requires a format version of at least 1.26.30.
      *
-     * @param x (bds-schema 1.26.63.1) BDS accepts this key; the creator docs do not list it. Add-on JSON {@code x}. Optional
-     *        (null: not set).
-     * @param y (bds-schema 1.26.63.1) BDS accepts this key; the creator docs do not list it. Add-on JSON {@code y}. Optional
-     *        (null: not set).
-     * @param z (bds-schema 1.26.63.1) BDS accepts this key; the creator docs do not list it. Add-on JSON {@code z}. Optional
-     *        (null: not set).
      */
-    public record NWayVisualRotation(@Nullable String x, @Nullable String y, @Nullable String z) {
+    public static final class NWayVisualRotation {
+        private final @Nullable String x;
+
+        private final @Nullable String y;
+
+        private final @Nullable String z;
+
+        private NWayVisualRotation(@Nullable String x, @Nullable String y, @Nullable String z) {
+            this.x = x;
+            this.y = y;
+            this.z = z;
+        }
+
+        /**
+         * (bds-schema 26.60) BDS accepts this key; the creator docs do not list it. Add-on JSON {@code x}. Optional
+         * (null: not set).
+         *
+         * @return the value
+         */
+        public @Nullable String x() {
+            return x;
+        }
+
+        /**
+         * (bds-schema 26.60) BDS accepts this key; the creator docs do not list it. Add-on JSON {@code y}. Optional
+         * (null: not set).
+         *
+         * @return the value
+         */
+        public @Nullable String y() {
+            return y;
+        }
+
+        /**
+         * (bds-schema 26.60) BDS accepts this key; the creator docs do not list it. Add-on JSON {@code z}. Optional
+         * (null: not set).
+         *
+         * @return the value
+         */
+        public @Nullable String z() {
+            return z;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            return this == o || o instanceof NWayVisualRotation other
+                    && Objects.equals(x, other.x)
+                    && Objects.equals(y, other.y)
+                    && Objects.equals(z, other.z);
+        }
+
+        @Override
+        public int hashCode() {
+            int h = Objects.hashCode(x);
+            h = 31 * h + Objects.hashCode(y);
+            h = 31 * h + Objects.hashCode(z);
+            return h;
+        }
+
+        @Override
+        public String toString() {
+            return "NWayVisualRotation[x=" + x + ", y=" + y + ", z=" + z + "]";
+        }
+
         /**
          * Creates a builder with every field at its default.
          *

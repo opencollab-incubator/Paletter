@@ -4,6 +4,7 @@
 package dev.opencollab.paletter.item.component;
 
 import dev.opencollab.paletter.annotation.BedrockFormat;
+import java.util.Objects;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
@@ -13,17 +14,48 @@ import org.checkerframework.checker.nullness.qual.Nullable;
  * <p>
  * Add-on JSON: {@code "minecraft:can_destroy_in_creative"}.
  *
- * @param value Determines whether the item can be used to destroy blocks while in creative mode. Add-on JSON {@code value}.
- *        Optional (null: not set).
  * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/itemreference/examples/itemcomponents/minecraft_can_destroy_in_creative?view=minecraft-bedrock-stable">Microsoft Learn: minecraft:can_destroy_in_creative</a>
  * @since 1.0.0
  */
 @BedrockFormat("1.20.10")
-public record CanDestroyInCreative(@Nullable Boolean value) implements ItemComponent {
+public final class CanDestroyInCreative implements ItemComponent {
     /**
      * The component name in add-on JSON.
      */
     public static final String NAME = "minecraft:can_destroy_in_creative";
+
+    private final @Nullable Boolean value;
+
+    private CanDestroyInCreative(@Nullable Boolean value) {
+        this.value = value;
+    }
+
+    /**
+     * Determines whether the item can be used to destroy blocks while in creative mode. Add-on JSON {@code value}.
+     * Optional (null: not set).
+     *
+     * @return the value
+     */
+    public @Nullable Boolean value() {
+        return value;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        return this == o || o instanceof CanDestroyInCreative other
+                && Objects.equals(value, other.value);
+    }
+
+    @Override
+    public int hashCode() {
+        int h = Objects.hashCode(value);
+        return h;
+    }
+
+    @Override
+    public String toString() {
+        return "CanDestroyInCreative[value=" + value + "]";
+    }
 
     @Override
     public @NonNull String name() {

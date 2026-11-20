@@ -19,28 +19,63 @@ import org.checkerframework.checker.nullness.qual.Nullable;
  * <p>
  * Add-on JSON: {@code "minecraft:digger"}.
  *
- * @param destroySpeeds An array of objects that define which blocks this item can dig and at what speed. Each entry specifies a block
- *        (by ID or tag query) and a speed multiplier. Add-on JSON {@code destroy_speeds}. Default: <code>[]</code>.
- * @param useEfficiency When true, the Efficiency enchantment will increase the dig speed of this item. Default is false. Add-on JSON
- *        {@code use_efficiency}. Default: <code>false</code>.
  * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/itemreference/examples/itemcomponents/minecraft_digger?view=minecraft-bedrock-stable">Microsoft Learn: minecraft:digger</a>
  * @since 1.0.0
  */
 @BedrockFormat("1.20.30")
-public record Digger(@NonNull List<Digger.DestroySpeeds> destroySpeeds,
-        boolean useEfficiency) implements ItemComponent {
+public final class Digger implements ItemComponent {
     /**
      * The component name in add-on JSON.
      */
     public static final String NAME = "minecraft:digger";
 
-    /**
-     * Checks the components and copies lists and maps, so the value is immutable.
-     *
-     * @throws NullPointerException if a required component is null
-     */
-    public Digger {
+    private final @NonNull List<DestroySpeeds> destroySpeeds;
+
+    private final boolean useEfficiency;
+
+    private Digger(@NonNull List<DestroySpeeds> destroySpeeds, boolean useEfficiency) {
         destroySpeeds = List.copyOf(Objects.requireNonNull(destroySpeeds, "Digger.destroySpeeds"));
+        this.destroySpeeds = destroySpeeds;
+        this.useEfficiency = useEfficiency;
+    }
+
+    /**
+     * An array of objects that define which blocks this item can dig and at what speed. Each entry specifies a block
+     * (by ID or tag query) and a speed multiplier. Add-on JSON {@code destroy_speeds}. Default: <code>[]</code>.
+     *
+     * @return the value
+     */
+    public @NonNull List<DestroySpeeds> destroySpeeds() {
+        return destroySpeeds;
+    }
+
+    /**
+     * When true, the Efficiency enchantment will increase the dig speed of this item. Default is false. Add-on JSON
+     * {@code use_efficiency}. Default: <code>false</code>.
+     *
+     * @return the value
+     */
+    public boolean useEfficiency() {
+        return useEfficiency;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        return this == o || o instanceof Digger other
+                && Objects.equals(destroySpeeds, other.destroySpeeds)
+                && useEfficiency == other.useEfficiency;
+    }
+
+    @Override
+    public int hashCode() {
+        int h = Objects.hashCode(destroySpeeds);
+        h = 31 * h + Boolean.hashCode(useEfficiency);
+        return h;
+    }
+
+    @Override
+    public String toString() {
+        return "Digger[destroySpeeds=" + destroySpeeds + ", useEfficiency=" + useEfficiency + "]";
     }
 
     @Override
@@ -127,21 +162,69 @@ public record Digger(@NonNull List<Digger.DestroySpeeds> destroySpeeds,
     /**
      * Block to be dug.
      *
-     * @param name Add-on JSON {@code name}. Optional (null: not set).
-     * @param states Add-on JSON {@code states}. Default: <code>&#123;&#125;</code>.
-     * @param tags Add-on JSON {@code tags}. Optional (null: not set).
      */
-    public record Block(@Nullable String name, @NonNull Map<String, Object> states,
-            @Nullable String tags) {
-        /**
-         * Checks the components and copies lists and maps, so the value is immutable.
-         *
-         * @throws NullPointerException if a required component is null
-         * @throws IllegalArgumentException if a component is out of its documented range or conflicts with another
-         */
-        public Block {
+    public static final class Block {
+        private final @Nullable String name;
+
+        private final @NonNull Map<String, Object> states;
+
+        private final @Nullable String tags;
+
+        private Block(@Nullable String name, @NonNull Map<String, Object> states,
+                @Nullable String tags) {
             states = Check.copy(states, "Digger.Block.states");
             Check.stateValues(states, "Digger.Block.states");
+            this.name = name;
+            this.states = states;
+            this.tags = tags;
+        }
+
+        /**
+         * Add-on JSON {@code name}. Optional (null: not set).
+         *
+         * @return the value
+         */
+        public @Nullable String name() {
+            return name;
+        }
+
+        /**
+         * Add-on JSON {@code states}. Default: <code>&#123;&#125;</code>.
+         *
+         * @return the value
+         */
+        public @NonNull Map<String, Object> states() {
+            return states;
+        }
+
+        /**
+         * Add-on JSON {@code tags}. Optional (null: not set).
+         *
+         * @return the value
+         */
+        public @Nullable String tags() {
+            return tags;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            return this == o || o instanceof Block other
+                    && Objects.equals(name, other.name)
+                    && Objects.equals(states, other.states)
+                    && Objects.equals(tags, other.tags);
+        }
+
+        @Override
+        public int hashCode() {
+            int h = Objects.hashCode(name);
+            h = 31 * h + Objects.hashCode(states);
+            h = 31 * h + Objects.hashCode(tags);
+            return h;
+        }
+
+        @Override
+        public String toString() {
+            return "Block[name=" + name + ", states=" + states + ", tags=" + tags + "]";
         }
 
         /**
@@ -269,10 +352,54 @@ public record Digger(@NonNull List<Digger.DestroySpeeds> destroySpeeds,
      * An array of objects that define which blocks this item can dig and at what speed. Each entry specifies a block
      * (by ID or tag query) and a speed multiplier.
      *
-     * @param block Block to be dug. Add-on JSON {@code block}. Optional (null: not set).
-     * @param speed Digging speed for the correlating block(s). Add-on JSON {@code speed}. Optional (null: not set).
      */
-    public record DestroySpeeds(@Nullable Block block, @Nullable Integer speed) {
+    public static final class DestroySpeeds {
+        private final @Nullable Block block;
+
+        private final @Nullable Integer speed;
+
+        private DestroySpeeds(@Nullable Block block, @Nullable Integer speed) {
+            this.block = block;
+            this.speed = speed;
+        }
+
+        /**
+         * Block to be dug. Add-on JSON {@code block}. Optional (null: not set).
+         *
+         * @return the value
+         */
+        public @Nullable Block block() {
+            return block;
+        }
+
+        /**
+         * Digging speed for the correlating block(s). Add-on JSON {@code speed}. Optional (null: not set).
+         *
+         * @return the value
+         */
+        public @Nullable Integer speed() {
+            return speed;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            return this == o || o instanceof DestroySpeeds other
+                    && Objects.equals(block, other.block)
+                    && Objects.equals(speed, other.speed);
+        }
+
+        @Override
+        public int hashCode() {
+            int h = Objects.hashCode(block);
+            h = 31 * h + Objects.hashCode(speed);
+            return h;
+        }
+
+        @Override
+        public String toString() {
+            return "DestroySpeeds[block=" + block + ", speed=" + speed + "]";
+        }
+
         /**
          * Creates a builder with every field at its default.
          *

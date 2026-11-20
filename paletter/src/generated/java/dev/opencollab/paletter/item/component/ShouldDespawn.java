@@ -4,6 +4,7 @@
 package dev.opencollab.paletter.item.component;
 
 import dev.opencollab.paletter.annotation.BedrockFormat;
+import java.util.Objects;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
@@ -12,17 +13,48 @@ import org.checkerframework.checker.nullness.qual.Nullable;
  * <p>
  * Add-on JSON: {@code "minecraft:should_despawn"}.
  *
- * @param value Determines whether the item should eventually despawn while floating in the world. Add-on JSON {@code value}.
- *        Optional (null: not set).
  * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/itemreference/examples/itemcomponents/minecraft_should_despawn?view=minecraft-bedrock-stable">Microsoft Learn: minecraft:should_despawn</a>
  * @since 1.0.0
  */
 @BedrockFormat("1.20.30")
-public record ShouldDespawn(@Nullable Boolean value) implements ItemComponent {
+public final class ShouldDespawn implements ItemComponent {
     /**
      * The component name in add-on JSON.
      */
     public static final String NAME = "minecraft:should_despawn";
+
+    private final @Nullable Boolean value;
+
+    private ShouldDespawn(@Nullable Boolean value) {
+        this.value = value;
+    }
+
+    /**
+     * Determines whether the item should eventually despawn while floating in the world. Add-on JSON {@code value}.
+     * Optional (null: not set).
+     *
+     * @return the value
+     */
+    public @Nullable Boolean value() {
+        return value;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        return this == o || o instanceof ShouldDespawn other
+                && Objects.equals(value, other.value);
+    }
+
+    @Override
+    public int hashCode() {
+        int h = Objects.hashCode(value);
+        return h;
+    }
+
+    @Override
+    public String toString() {
+        return "ShouldDespawn[value=" + value + "]";
+    }
 
     @Override
     public @NonNull String name() {

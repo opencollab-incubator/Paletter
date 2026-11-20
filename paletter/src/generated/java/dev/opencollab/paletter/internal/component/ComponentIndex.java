@@ -100,8 +100,8 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
- * Every generated component type by add-on JSON name, and the JSON key of every field of every generated record
- * (record class -> JSON key -> record component). For tests and tooling; not API.
+ * Every generated component type by add-on JSON name, and the JSON key of every field of every generated class
+ * (class -> JSON key -> accessor, in the order of the builder's fields). For tests and tooling; not API.
  */
 public final class ComponentIndex {
     public static final Map<String, Class<?>> ITEM = new LinkedHashMap<>();
@@ -115,8 +115,8 @@ public final class ComponentIndex {
     public static final Map<Class<?>, Map<String, String>> JSON_KEYS = new LinkedHashMap<>();
 
     /**
-     * Synthetic fields of value forms: record class -> JSON type (boolean, string, ...) -> record component. A record
-     * component ending in {@code []} is the list field the value form is one entry of (the object form of a list).
+     * Synthetic fields of value forms: class -> JSON type (boolean, string, ...) -> accessor. An accessor
+     * ending in {@code []} is the list field the value form is one entry of (the object form of a list).
      */
     public static final Map<Class<?>, Map<String, String>> FORMS = new LinkedHashMap<>();
 
@@ -137,34 +137,34 @@ public final class ComponentIndex {
     public static final int NEWEST_CAPTURED_PROTOCOL = 2259;
 
     /**
-     * The first protocol of the window of the spec capture of BDS 1.26.36.1 ({@code data/bds/1.26.36.1/spec}): what the hand
-     * transforms compare {@code WireContext.protocol()} with where that build changed the wire.
+     * The first protocol of data version 26.30, the window of its spec capture of BDS 1.26.36.1 ({@code data/bds/1.26.36.1/spec}): what
+     * the hand transforms compare {@code WireContext.protocol()} with where that version changed the wire.
      */
-    public static final int BDS_1_26_36_1 = 1001;
+    public static final int V26_30 = 1001;
 
     /**
-     * The first protocol of the window of the spec capture of BDS 1.26.45.1 ({@code data/bds/1.26.45.1/spec}): what the hand
-     * transforms compare {@code WireContext.protocol()} with where that build changed the wire.
+     * The first protocol of data version 26.40, the window of its spec capture of BDS 1.26.45.1 ({@code data/bds/1.26.45.1/spec}): what
+     * the hand transforms compare {@code WireContext.protocol()} with where that version changed the wire.
      */
-    public static final int BDS_1_26_45_1 = 2168;
+    public static final int V26_40 = 2168;
 
     /**
-     * The first protocol of the window of the spec capture of BDS 1.26.52.3 ({@code data/bds/1.26.52.3/spec}): what the hand
-     * transforms compare {@code WireContext.protocol()} with where that build changed the wire.
+     * The first protocol of data version 26.50, the window of its spec capture of BDS 1.26.52.3 ({@code data/bds/1.26.52.3/spec}): what
+     * the hand transforms compare {@code WireContext.protocol()} with where that version changed the wire.
      */
-    public static final int BDS_1_26_52_3 = 2193;
+    public static final int V26_50 = 2193;
 
     /**
-     * The first protocol of the window of the spec capture of BDS 1.26.63.1 ({@code data/bds/1.26.63.1/spec}): what the hand
-     * transforms compare {@code WireContext.protocol()} with where that build changed the wire.
+     * The first protocol of data version 26.60, the window of its spec capture of BDS 1.26.63.1 ({@code data/bds/1.26.63.1/spec}): what
+     * the hand transforms compare {@code WireContext.protocol()} with where that version changed the wire.
      */
-    public static final int BDS_1_26_63_1 = 2225;
+    public static final int V26_60 = 2225;
 
     /**
-     * The first protocol of the window of the spec capture of BDS 1.26.70.24 ({@code data/bds/1.26.70.24/spec}): what the hand
-     * transforms compare {@code WireContext.protocol()} with where that build changed the wire.
+     * The first protocol of data version 26.70, the window of its spec capture of BDS 1.26.70.24 ({@code data/bds/1.26.70.24/spec}): what
+     * the hand transforms compare {@code WireContext.protocol()} with where that version changed the wire.
      */
-    public static final int BDS_1_26_70_24 = 2259;
+    public static final int V26_70 = 2259;
 
     /**
      * The {@code vanilla_block_data.block_id} of the first custom block: BDS numbers custom blocks from here, in

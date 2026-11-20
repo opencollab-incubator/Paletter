@@ -31,6 +31,7 @@ public final class TraitWire {
             case MultiBlock c -> multiBlock(c, ctx, out);
             case PlacementDirection c -> placementDirection(c, ctx, out);
             case PlacementPosition c -> placementPosition(c, ctx, out);
+            default -> throw new IllegalArgumentException(component.toString());
         }
     }
 
@@ -67,13 +68,15 @@ public final class TraitWire {
         out.put("name", "minecraft:multi_block");
         out.put("place_behavior", (byte) 0);
         out.put("part_count", Wire.toByte(c.parts()));
-        switch (c.direction()) {
-            case DOWN -> out.put("direction", (byte) 0);
-            case EAST -> out.put("direction", (byte) 5);
-            case NORTH -> out.put("direction", (byte) 2);
-            case SOUTH -> out.put("direction", (byte) 3);
-            case UP -> out.put("direction", (byte) 1);
-            case WEST -> out.put("direction", (byte) 4);
+        MultiBlock.MultiBlockDirection v0 = c.direction();
+        switch (v0.value()) {
+            case "down" -> out.put("direction", (byte) 0);
+            case "east" -> out.put("direction", (byte) 5);
+            case "north" -> out.put("direction", (byte) 2);
+            case "south" -> out.put("direction", (byte) 3);
+            case "up" -> out.put("direction", (byte) 1);
+            case "west" -> out.put("direction", (byte) 4);
+            default -> ctx.drop(MultiBlock.NAME, "direction = " + v0.value() + " has no known wire value");
         }
     }
 

@@ -11,8 +11,8 @@ import org.checkerframework.checker.nullness.qual.NonNull;
  * (key) to a boolean that tells whether the bone should be visible or not (value).
  * <p>
  * Add-on JSON: {@code "minecraft:bone_visibility"}.
- * Retired: rejected by every captured BDS (oldest: 1.26.36.1, protocol 1001): minecraft:bone_visibility: this
- * component was found in the input, but is not present in the Schema. Its encoder writes nothing and adds a
+ * Retired: rejected by every captured BDS (oldest: Bedrock 26.30, protocol 1001): minecraft:bone_visibility:
+ * this component was found in the input, but is not present in the Schema. Its encoder writes nothing and adds a
  * report warning, as BDS would never send it to a client.
  *
  * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/blockreference/examples/blockcomponents/minecraftblock_bone_visibility?view=minecraft-bedrock-stable">Microsoft Learn: minecraft:bone_visibility</a>
@@ -21,11 +21,29 @@ import org.checkerframework.checker.nullness.qual.NonNull;
  */
 @Deprecated
 @ReplacedBy(Geometry.class)
-public record BoneVisibility() implements BlockComponent {
+public final class BoneVisibility implements BlockComponent {
     /**
      * The component name in add-on JSON.
      */
     public static final String NAME = "minecraft:bone_visibility";
+
+    private BoneVisibility() {
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        return o instanceof BoneVisibility;
+    }
+
+    @Override
+    public int hashCode() {
+        return 0;
+    }
+
+    @Override
+    public String toString() {
+        return "BoneVisibility[]";
+    }
 
     @Override
     public @NonNull String name() {

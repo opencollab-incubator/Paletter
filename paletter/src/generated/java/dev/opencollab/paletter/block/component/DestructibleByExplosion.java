@@ -5,6 +5,7 @@ package dev.opencollab.paletter.block.component;
 
 import dev.opencollab.paletter.annotation.ServerOnly;
 import dev.opencollab.paletter.internal.component.Check;
+import java.util.Objects;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
@@ -14,33 +15,68 @@ import org.checkerframework.checker.nullness.qual.Nullable;
  * omitted, the block will have the default explosion resistance.
  * <p>
  * Add-on JSON: {@code "minecraft:destructible_by_explosion"}.
- * Server only: BDS accepts it in packs but sends nothing to clients (BDS 1.26.36.1, 1.26.45.1, 1.26.52.3,
- * 1.26.63.1, 1.26.70.24), so it has no client effect. Palettes leave it out without a warning.
+ * Server only: BDS accepts it in packs but sends nothing to clients (Bedrock 26.30, 26.40, 26.50, 26.60, 26.70),
+ * so it has no client effect. Palettes leave it out without a warning.
  *
- * @param explosionResistance Sets the explosion resistance for the block. Greater values result in greater resistance to explosions. The
- *        scale will be different for different explosion power levels. A value of 0 means it will easily explode;
- *        larger numbers increase level of resistance. Add-on JSON {@code explosion_resistance}. Default:
- *        <code>0</code>. At least 0 (BDS 1.26.63.1).
- * @param enabled The boolean form of the component (add-on JSON {@code "minecraft:destructible_by_explosion": <boolean>}).
- *        Optional (null: not set).
  * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/blockreference/examples/blockcomponents/minecraftblock_destructible_by_explosion?view=minecraft-bedrock-stable">Microsoft Learn: minecraft:destructible_by_explosion</a>
  * @since 1.0.0
  */
 @ServerOnly
-public record DestructibleByExplosion(float explosionResistance,
-        @Nullable Boolean enabled) implements BlockComponent {
+public final class DestructibleByExplosion implements BlockComponent {
     /**
      * The component name in add-on JSON.
      */
     public static final String NAME = "minecraft:destructible_by_explosion";
 
-    /**
-     * Checks the components.
-     *
-     * @throws IllegalArgumentException if a component is out of its documented range or conflicts with another
-     */
-    public DestructibleByExplosion {
+    private final float explosionResistance;
+
+    private final @Nullable Boolean enabled;
+
+    private DestructibleByExplosion(float explosionResistance, @Nullable Boolean enabled) {
         Check.range("DestructibleByExplosion.explosionResistance", explosionResistance, 0.0, null);
+        this.explosionResistance = explosionResistance;
+        this.enabled = enabled;
+    }
+
+    /**
+     * Sets the explosion resistance for the block. Greater values result in greater resistance to explosions. The
+     * scale will be different for different explosion power levels. A value of 0 means it will easily explode;
+     * larger numbers increase level of resistance. Add-on JSON {@code explosion_resistance}. Default:
+     * <code>0</code>. At least 0 (Bedrock 26.60).
+     *
+     * @return the value
+     */
+    public float explosionResistance() {
+        return explosionResistance;
+    }
+
+    /**
+     * The boolean form of the component (add-on JSON {@code "minecraft:destructible_by_explosion": <boolean>}).
+     * Optional (null: not set).
+     *
+     * @return the value
+     */
+    public @Nullable Boolean enabled() {
+        return enabled;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        return this == o || o instanceof DestructibleByExplosion other
+                && Float.compare(explosionResistance, other.explosionResistance) == 0
+                && Objects.equals(enabled, other.enabled);
+    }
+
+    @Override
+    public int hashCode() {
+        int h = Float.hashCode(explosionResistance);
+        h = 31 * h + Objects.hashCode(enabled);
+        return h;
+    }
+
+    @Override
+    public String toString() {
+        return "DestructibleByExplosion[explosionResistance=" + explosionResistance + ", enabled=" + enabled + "]";
     }
 
     @Override

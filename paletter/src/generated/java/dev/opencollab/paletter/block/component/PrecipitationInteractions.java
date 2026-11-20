@@ -5,6 +5,10 @@ package dev.opencollab.paletter.block.component;
 
 import dev.opencollab.paletter.annotation.BedrockExperiment;
 import dev.opencollab.paletter.annotation.BedrockFormat;
+import dev.opencollab.paletter.internal.component.Check;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
@@ -15,20 +19,50 @@ import org.checkerframework.checker.nullness.qual.Nullable;
  * Add-on JSON: {@code "minecraft:precipitation_interactions"}.
  * The creator docs name the experiment Upcoming Creator Features for it (in some format versions); unverified against BDS.
  *
- * @param precipitationBehavior What behavior should the block have. Possible values: obrain, obstruct_rain_accumulate_snow, snowlogging, and
- *        none Add-on JSON {@code precipitation_behavior}. Optional (null: not set). The docs give the default
- *        "accumulate snow", which is not a value of this type; unset, BDS's behaviour applies.
  * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/blockreference/examples/blockcomponents/minecraftblock_precipitation_interactions?view=minecraft-bedrock-stable">Microsoft Learn: minecraft:precipitation_interactions</a>
  * @since 1.0.0
  */
 @BedrockFormat("1.21.120")
 @BedrockExperiment("upcoming_creator_features")
-public record PrecipitationInteractions(
-        PrecipitationInteractions. @Nullable PrecipitationBehavior precipitationBehavior) implements BlockComponent {
+public final class PrecipitationInteractions implements BlockComponent {
     /**
      * The component name in add-on JSON.
      */
     public static final String NAME = "minecraft:precipitation_interactions";
+
+    private final @Nullable PrecipitationBehavior precipitationBehavior;
+
+    private PrecipitationInteractions(@Nullable PrecipitationBehavior precipitationBehavior) {
+        this.precipitationBehavior = precipitationBehavior;
+    }
+
+    /**
+     * What behavior should the block have. Possible values: obrain, obstruct_rain_accumulate_snow, snowlogging, and
+     * none Add-on JSON {@code precipitation_behavior}. Optional (null: not set). The docs give the default
+     * "accumulate snow", which is not a value of this type; unset, BDS's behaviour applies.
+     *
+     * @return the value
+     */
+    public @Nullable PrecipitationBehavior precipitationBehavior() {
+        return precipitationBehavior;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        return this == o || o instanceof PrecipitationInteractions other
+                && Objects.equals(precipitationBehavior, other.precipitationBehavior);
+    }
+
+    @Override
+    public int hashCode() {
+        int h = Objects.hashCode(precipitationBehavior);
+        return h;
+    }
+
+    @Override
+    public String toString() {
+        return "PrecipitationInteractions[precipitationBehavior=" + precipitationBehavior + "]";
+    }
 
     @Override
     public @NonNull String name() {
@@ -89,33 +123,59 @@ public record PrecipitationInteractions(
     }
 
     /**
-     * The documented values; {@link #value()} is the add-on JSON string.
+     * A value of an add-on JSON string: a constant per documented value, {@link #of} for any other.
+     * {@link #value()} is the add-on JSON string. Not an enum: Bedrock adds values, so a {@code switch} over
+     * {@link #value()} needs a {@code default}.
      */
-    public enum PrecipitationBehavior {
+    public static final class PrecipitationBehavior {
         /**
          * {@code none}
          */
-        NONE("none"),
+        public static final PrecipitationBehavior NONE = new PrecipitationBehavior("none");
 
         /**
          * {@code obstruct_rain}
          */
-        OBSTRUCT_RAIN("obstruct_rain"),
+        public static final PrecipitationBehavior OBSTRUCT_RAIN = new PrecipitationBehavior("obstruct_rain");
 
         /**
          * {@code obstruct_rain_accumulate_snow}
          */
-        OBSTRUCT_RAIN_ACCUMULATE_SNOW("obstruct_rain_accumulate_snow"),
+        public static final PrecipitationBehavior OBSTRUCT_RAIN_ACCUMULATE_SNOW = new PrecipitationBehavior("obstruct_rain_accumulate_snow");
 
         /**
          * {@code snowlogging}
          */
-        SNOWLOGGING("snowlogging");
+        public static final PrecipitationBehavior SNOWLOGGING = new PrecipitationBehavior("snowlogging");
+
+        private static final List<PrecipitationBehavior> KNOWN = List.of(NONE, OBSTRUCT_RAIN, OBSTRUCT_RAIN_ACCUMULATE_SNOW, SNOWLOGGING);
+
+        private static final Map<String, PrecipitationBehavior> BY_VALUE = Check.index(KNOWN, PrecipitationBehavior::value);
 
         private final String value;
 
-        PrecipitationBehavior(String value) {
+        private PrecipitationBehavior(String value) {
             this.value = value;
+        }
+
+        /**
+         * Returns the value of an add-on JSON string: the constant of a documented value, else a new value.
+         *
+         * @param value the value in add-on JSON
+         * @return the constant of the value, or a value Paletter does not know
+         */
+        public static @NonNull PrecipitationBehavior of(@NonNull String value) {
+            PrecipitationBehavior known = BY_VALUE.get(Objects.requireNonNull(value, "PrecipitationBehavior.value"));
+            return known != null ? known : new PrecipitationBehavior(value);
+        }
+
+        /**
+         * Returns the documented values, the constants of this class.
+         *
+         * @return the constants, in the order of the documentation
+         */
+        public static @NonNull List<PrecipitationBehavior> known() {
+            return KNOWN;
         }
 
         /**
@@ -128,19 +188,27 @@ public record PrecipitationInteractions(
         }
 
         /**
-         * Finds the constant of an add-on JSON value.
+         * Returns whether the value is documented, one of the constants.
          *
-         * @param value the value in add-on JSON
-         * @return the constant of the value
-         * @throws IllegalArgumentException if the value is not documented
+         * @return whether this is one of {@link #known()}
          */
-        public static @NonNull PrecipitationBehavior fromValue(@NonNull String value) {
-            for (PrecipitationBehavior constant : values()) {
-                if (constant.value.equals(value)) {
-                    return constant;
-                }
-            }
-            throw new IllegalArgumentException("Not a PrecipitationBehavior: " + value);
+        public boolean isKnown() {
+            return BY_VALUE.get(value) == this;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            return this == o || o instanceof PrecipitationBehavior other && value.equals(other.value);
+        }
+
+        @Override
+        public int hashCode() {
+            return value.hashCode();
+        }
+
+        @Override
+        public String toString() {
+            return value;
         }
     }
 }

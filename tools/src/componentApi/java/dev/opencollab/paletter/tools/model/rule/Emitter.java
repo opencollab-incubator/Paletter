@@ -43,10 +43,10 @@ public interface Emitter {
     /** @return the number at a path of the value, a list or object ({@code origin[0]}), as a {@code double} */
     CodeBlock input(String path);
 
-    /** @return the value, an enum of the API, as that enum (the selector of an exhaustive switch) */
+    /** @return the value, an open value class of the API ({@code value()} is its string) */
     CodeBlock enumValue();
 
-    /** @return the name of the constant of the API's enum for an enum value of the schema (a case label of {@link #enumValue()}) */
+    /** @return the name of the constant of the API's value class for an enum value of the schema; fails if it has none */
     String enumConstant(String value);
 
     /** @return the value as a string (an enum's own value) */

@@ -12,22 +12,53 @@ import org.checkerframework.checker.nullness.qual.Nullable;
  * minecraft:destructible_by_mining in newer format versions.
  * <p>
  * Add-on JSON: {@code "minecraft:destroy_time"}.
- * Retired: rejected by every captured BDS (oldest: 1.26.36.1, protocol 1001): minecraft:destroy_time: this
+ * Retired: rejected by every captured BDS (oldest: Bedrock 26.30, protocol 1001): minecraft:destroy_time: this
  * component was found in the input, but is not present in the Schema. Its encoder writes nothing and adds a
  * report warning, as BDS would never send it to a client.
  *
- * @param value The boolean form of the component (add-on JSON {@code "minecraft:destroy_time": <boolean>}). Required.
  * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/blockreference/examples/blockcomponents/minecraftblock_destroy_time?view=minecraft-bedrock-stable">Microsoft Learn: minecraft:destroy_time</a>
  * @since 1.0.0
  * @deprecated replaced by {@link DestructibleByMining} (docs text: "Use minecraft:destructible_by_mining in newer format versions.")
  */
 @Deprecated
 @ReplacedBy(DestructibleByMining.class)
-public record DestroyTime(boolean value) implements BlockComponent {
+public final class DestroyTime implements BlockComponent {
     /**
      * The component name in add-on JSON.
      */
     public static final String NAME = "minecraft:destroy_time";
+
+    private final boolean value;
+
+    private DestroyTime(boolean value) {
+        this.value = value;
+    }
+
+    /**
+     * The boolean form of the component (add-on JSON {@code "minecraft:destroy_time": <boolean>}). Required.
+     *
+     * @return the value
+     */
+    public boolean value() {
+        return value;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        return this == o || o instanceof DestroyTime other
+                && value == other.value;
+    }
+
+    @Override
+    public int hashCode() {
+        int h = Boolean.hashCode(value);
+        return h;
+    }
+
+    @Override
+    public String toString() {
+        return "DestroyTime[value=" + value + "]";
+    }
 
     @Override
     public @NonNull String name() {

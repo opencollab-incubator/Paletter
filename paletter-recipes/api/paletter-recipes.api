@@ -25,7 +25,7 @@ public static final class dev.opencollab.paletter.recipes.CraftingData$Builder {
     public dev.opencollab.paletter.recipes.CraftingData$Builder recipes(java.util.List<dev.opencollab.paletter.recipes.Recipe>)
 }
 
-public sealed interface dev.opencollab.paletter.recipes.Ingredient permits dev.opencollab.paletter.recipes.Ingredient$Alias, dev.opencollab.paletter.recipes.Ingredient$AnyVariant, dev.opencollab.paletter.recipes.Ingredient$Empty, dev.opencollab.paletter.recipes.Ingredient$Item, dev.opencollab.paletter.recipes.Ingredient$Tag {
+public sealed interface dev.opencollab.paletter.recipes.Ingredient permits dev.opencollab.paletter.recipes.FutureIngredient, dev.opencollab.paletter.recipes.Ingredient$Alias, dev.opencollab.paletter.recipes.Ingredient$AnyVariant, dev.opencollab.paletter.recipes.Ingredient$Empty, dev.opencollab.paletter.recipes.Ingredient$Item, dev.opencollab.paletter.recipes.Ingredient$Tag {
     public abstract int count()
 }
 
@@ -87,70 +87,114 @@ public record dev.opencollab.paletter.recipes.PotionMix {
     public final java.lang.String toString()
 }
 
-public sealed interface dev.opencollab.paletter.recipes.Recipe permits dev.opencollab.paletter.recipes.Recipe$Multi, dev.opencollab.paletter.recipes.Recipe$Shaped, dev.opencollab.paletter.recipes.Recipe$Shapeless, dev.opencollab.paletter.recipes.Recipe$SmithingTransform, dev.opencollab.paletter.recipes.Recipe$SmithingTrim {
+public sealed interface dev.opencollab.paletter.recipes.Recipe permits dev.opencollab.paletter.recipes.FutureRecipe, dev.opencollab.paletter.recipes.Recipe$Multi, dev.opencollab.paletter.recipes.Recipe$Shaped, dev.opencollab.paletter.recipes.Recipe$Shapeless, dev.opencollab.paletter.recipes.Recipe$SmithingTransform, dev.opencollab.paletter.recipes.Recipe$SmithingTrim {
 }
 
-public record dev.opencollab.paletter.recipes.Recipe$Multi implements dev.opencollab.paletter.recipes.Recipe {
-    public <init>(java.util.UUID)
-    public final boolean equals(java.lang.Object)
-    public final int hashCode()
+public static final class dev.opencollab.paletter.recipes.Recipe$Multi implements dev.opencollab.paletter.recipes.Recipe {
+    public boolean equals(java.lang.Object)
+    public int hashCode()
     public java.util.UUID id()
-    public final java.lang.String toString()
+    public static dev.opencollab.paletter.recipes.Recipe$Multi of(java.util.UUID)
+    public java.lang.String toString()
 }
 
-public record dev.opencollab.paletter.recipes.Recipe$Shaped implements dev.opencollab.paletter.recipes.Recipe {
-    public <init>(java.lang.String, int, int, java.util.List<dev.opencollab.paletter.recipes.Ingredient>, java.util.List<dev.opencollab.paletter.recipes.Result>, java.lang.String, int, boolean, dev.opencollab.paletter.recipes.Unlock)
+public static final class dev.opencollab.paletter.recipes.Recipe$Shaped implements dev.opencollab.paletter.recipes.Recipe {
     public boolean assumeSymmetry()
-    public final boolean equals(java.lang.Object)
-    public final int hashCode()
+    public static dev.opencollab.paletter.recipes.Recipe$Shaped$Builder builder()
+    public boolean equals(java.lang.Object)
+    public int hashCode()
     public int height()
     public java.lang.String id()
     public java.util.List<dev.opencollab.paletter.recipes.Ingredient> ingredients()
     public int priority()
     public java.util.List<dev.opencollab.paletter.recipes.Result> results()
     public java.lang.String station()
-    public final java.lang.String toString()
+    public dev.opencollab.paletter.recipes.Recipe$Shaped$Builder toBuilder()
+    public java.lang.String toString()
     public dev.opencollab.paletter.recipes.Unlock unlock()
     public int width()
 }
 
-public record dev.opencollab.paletter.recipes.Recipe$Shapeless implements dev.opencollab.paletter.recipes.Recipe {
-    public <init>(java.lang.String, java.util.List<dev.opencollab.paletter.recipes.Ingredient>, java.util.List<dev.opencollab.paletter.recipes.Result>, java.lang.String, int, boolean, dev.opencollab.paletter.recipes.Unlock)
-    public final boolean equals(java.lang.Object)
-    public final int hashCode()
+public static final class dev.opencollab.paletter.recipes.Recipe$Shaped$Builder {
+    public dev.opencollab.paletter.recipes.Recipe$Shaped$Builder assumeSymmetry(boolean)
+    public dev.opencollab.paletter.recipes.Recipe$Shaped build()
+    public dev.opencollab.paletter.recipes.Recipe$Shaped$Builder grid(int, int)
+    public dev.opencollab.paletter.recipes.Recipe$Shaped$Builder id(java.lang.String)
+    public dev.opencollab.paletter.recipes.Recipe$Shaped$Builder ingredients(java.util.List<dev.opencollab.paletter.recipes.Ingredient>)
+    public dev.opencollab.paletter.recipes.Recipe$Shaped$Builder priority(int)
+    public dev.opencollab.paletter.recipes.Recipe$Shaped$Builder results(java.util.List<dev.opencollab.paletter.recipes.Result>)
+    public dev.opencollab.paletter.recipes.Recipe$Shaped$Builder station(java.lang.String)
+    public dev.opencollab.paletter.recipes.Recipe$Shaped$Builder unlock(dev.opencollab.paletter.recipes.Unlock)
+}
+
+public static final class dev.opencollab.paletter.recipes.Recipe$Shapeless implements dev.opencollab.paletter.recipes.Recipe {
+    public static dev.opencollab.paletter.recipes.Recipe$Shapeless$Builder builder()
+    public boolean equals(java.lang.Object)
+    public int hashCode()
     public java.lang.String id()
     public java.util.List<dev.opencollab.paletter.recipes.Ingredient> ingredients()
     public int priority()
     public java.util.List<dev.opencollab.paletter.recipes.Result> results()
     public boolean shulkerBox()
     public java.lang.String station()
-    public final java.lang.String toString()
+    public dev.opencollab.paletter.recipes.Recipe$Shapeless$Builder toBuilder()
+    public java.lang.String toString()
     public dev.opencollab.paletter.recipes.Unlock unlock()
 }
 
-public record dev.opencollab.paletter.recipes.Recipe$SmithingTransform implements dev.opencollab.paletter.recipes.Recipe {
-    public <init>(java.lang.String, dev.opencollab.paletter.recipes.Ingredient, dev.opencollab.paletter.recipes.Ingredient, dev.opencollab.paletter.recipes.Ingredient, dev.opencollab.paletter.recipes.Result, java.lang.String)
+public static final class dev.opencollab.paletter.recipes.Recipe$Shapeless$Builder {
+    public dev.opencollab.paletter.recipes.Recipe$Shapeless build()
+    public dev.opencollab.paletter.recipes.Recipe$Shapeless$Builder id(java.lang.String)
+    public dev.opencollab.paletter.recipes.Recipe$Shapeless$Builder ingredients(java.util.List<dev.opencollab.paletter.recipes.Ingredient>)
+    public dev.opencollab.paletter.recipes.Recipe$Shapeless$Builder priority(int)
+    public dev.opencollab.paletter.recipes.Recipe$Shapeless$Builder results(java.util.List<dev.opencollab.paletter.recipes.Result>)
+    public dev.opencollab.paletter.recipes.Recipe$Shapeless$Builder shulkerBox(boolean)
+    public dev.opencollab.paletter.recipes.Recipe$Shapeless$Builder station(java.lang.String)
+    public dev.opencollab.paletter.recipes.Recipe$Shapeless$Builder unlock(dev.opencollab.paletter.recipes.Unlock)
+}
+
+public static final class dev.opencollab.paletter.recipes.Recipe$SmithingTransform implements dev.opencollab.paletter.recipes.Recipe {
     public dev.opencollab.paletter.recipes.Ingredient addition()
     public dev.opencollab.paletter.recipes.Ingredient base()
-    public final boolean equals(java.lang.Object)
-    public final int hashCode()
+    public static dev.opencollab.paletter.recipes.Recipe$SmithingTransform$Builder builder()
+    public boolean equals(java.lang.Object)
+    public int hashCode()
     public java.lang.String id()
     public dev.opencollab.paletter.recipes.Result result()
     public java.lang.String station()
     public dev.opencollab.paletter.recipes.Ingredient template()
-    public final java.lang.String toString()
+    public java.lang.String toString()
 }
 
-public record dev.opencollab.paletter.recipes.Recipe$SmithingTrim implements dev.opencollab.paletter.recipes.Recipe {
-    public <init>(java.lang.String, dev.opencollab.paletter.recipes.Ingredient, dev.opencollab.paletter.recipes.Ingredient, dev.opencollab.paletter.recipes.Ingredient, java.lang.String)
+public static final class dev.opencollab.paletter.recipes.Recipe$SmithingTransform$Builder {
+    public dev.opencollab.paletter.recipes.Recipe$SmithingTransform$Builder addition(dev.opencollab.paletter.recipes.Ingredient)
+    public dev.opencollab.paletter.recipes.Recipe$SmithingTransform$Builder base(dev.opencollab.paletter.recipes.Ingredient)
+    public dev.opencollab.paletter.recipes.Recipe$SmithingTransform build()
+    public dev.opencollab.paletter.recipes.Recipe$SmithingTransform$Builder id(java.lang.String)
+    public dev.opencollab.paletter.recipes.Recipe$SmithingTransform$Builder result(dev.opencollab.paletter.recipes.Result)
+    public dev.opencollab.paletter.recipes.Recipe$SmithingTransform$Builder station(java.lang.String)
+    public dev.opencollab.paletter.recipes.Recipe$SmithingTransform$Builder template(dev.opencollab.paletter.recipes.Ingredient)
+}
+
+public static final class dev.opencollab.paletter.recipes.Recipe$SmithingTrim implements dev.opencollab.paletter.recipes.Recipe {
     public dev.opencollab.paletter.recipes.Ingredient addition()
     public dev.opencollab.paletter.recipes.Ingredient base()
-    public final boolean equals(java.lang.Object)
-    public final int hashCode()
+    public static dev.opencollab.paletter.recipes.Recipe$SmithingTrim$Builder builder()
+    public boolean equals(java.lang.Object)
+    public int hashCode()
     public java.lang.String id()
     public java.lang.String station()
     public dev.opencollab.paletter.recipes.Ingredient template()
-    public final java.lang.String toString()
+    public java.lang.String toString()
+}
+
+public static final class dev.opencollab.paletter.recipes.Recipe$SmithingTrim$Builder {
+    public dev.opencollab.paletter.recipes.Recipe$SmithingTrim$Builder addition(dev.opencollab.paletter.recipes.Ingredient)
+    public dev.opencollab.paletter.recipes.Recipe$SmithingTrim$Builder base(dev.opencollab.paletter.recipes.Ingredient)
+    public dev.opencollab.paletter.recipes.Recipe$SmithingTrim build()
+    public dev.opencollab.paletter.recipes.Recipe$SmithingTrim$Builder id(java.lang.String)
+    public dev.opencollab.paletter.recipes.Recipe$SmithingTrim$Builder station(java.lang.String)
+    public dev.opencollab.paletter.recipes.Recipe$SmithingTrim$Builder template(dev.opencollab.paletter.recipes.Ingredient)
 }
 
 public final class dev.opencollab.paletter.recipes.RecipeStations {
@@ -166,26 +210,34 @@ public final class dev.opencollab.paletter.recipes.RecipeStations {
     public static final java.lang.String STONECUTTER = "stonecutter"
 }
 
-public record dev.opencollab.paletter.recipes.Result {
-    public <init>(dev.opencollab.paletter.vanilla.BedrockItemVariant, int, org.cloudburstmc.nbt.NbtMap, org.cloudburstmc.nbt.NbtMap)
+public final class dev.opencollab.paletter.recipes.Result {
     public org.cloudburstmc.nbt.NbtMap blockState()
+    public static dev.opencollab.paletter.recipes.Result$Builder builder()
     public int count()
-    public final boolean equals(java.lang.Object)
-    public final int hashCode()
+    public boolean equals(java.lang.Object)
+    public int hashCode()
     public dev.opencollab.paletter.vanilla.BedrockItemVariant item()
     public org.cloudburstmc.nbt.NbtMap tag()
-    public final java.lang.String toString()
+    public dev.opencollab.paletter.recipes.Result$Builder toBuilder()
+    public java.lang.String toString()
 }
 
-public record dev.opencollab.paletter.recipes.Unlock {
-    public <init>(org.cloudburstmc.protocol.bedrock.data.inventory.crafting.RecipeUnlockingRequirement$UnlockingContext, java.util.List<dev.opencollab.paletter.recipes.Ingredient>)
+public static final class dev.opencollab.paletter.recipes.Result$Builder {
+    public dev.opencollab.paletter.recipes.Result$Builder blockState(org.cloudburstmc.nbt.NbtMap)
+    public dev.opencollab.paletter.recipes.Result build()
+    public dev.opencollab.paletter.recipes.Result$Builder count(int)
+    public dev.opencollab.paletter.recipes.Result$Builder item(dev.opencollab.paletter.vanilla.BedrockItemVariant)
+    public dev.opencollab.paletter.recipes.Result$Builder tag(org.cloudburstmc.nbt.NbtMap)
+}
+
+public final class dev.opencollab.paletter.recipes.Unlock {
     public static dev.opencollab.paletter.recipes.Unlock byIngredients(java.util.List<dev.opencollab.paletter.recipes.Ingredient>)
     public org.cloudburstmc.protocol.bedrock.data.inventory.crafting.RecipeUnlockingRequirement$UnlockingContext context()
-    public final boolean equals(java.lang.Object)
-    public final int hashCode()
+    public boolean equals(java.lang.Object)
+    public int hashCode()
     public java.util.List<dev.opencollab.paletter.recipes.Ingredient> ingredients()
     public static dev.opencollab.paletter.recipes.Unlock of(org.cloudburstmc.protocol.bedrock.data.inventory.crafting.RecipeUnlockingRequirement$UnlockingContext)
-    public final java.lang.String toString()
+    public java.lang.String toString()
 }
 
 public final class dev.opencollab.paletter.recipes.VanillaRecipes {

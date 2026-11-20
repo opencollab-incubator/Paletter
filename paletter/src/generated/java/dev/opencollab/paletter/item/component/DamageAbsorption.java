@@ -16,29 +16,52 @@ import org.checkerframework.checker.nullness.qual.Nullable;
  * damage being ignored. Because of this, the item also needs a <code>minecraft:durability</code> component.
  * <p>
  * Add-on JSON: {@code "minecraft:damage_absorption"}.
- * Server only: BDS accepts it in packs but sends nothing to clients (BDS 1.26.36.1, 1.26.45.1, 1.26.52.3,
- * 1.26.63.1, 1.26.70.24), so it has no client effect. Palettes leave it out without a warning.
+ * Server only: BDS accepts it in packs but sends nothing to clients (Bedrock 26.30, 26.40, 26.50, 26.60, 26.70),
+ * so it has no client effect. Palettes leave it out without a warning.
  *
- * @param absorbableCauses List of damage causes that can be absorbed by the item. By default, no damage cause is absorbed. Value must
- *        have at least 1 items. Add-on JSON {@code absorbable_causes}. Required.
  * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/itemreference/examples/itemcomponents/minecraft_damage_absorption?view=minecraft-bedrock-stable">Microsoft Learn: minecraft:damage_absorption</a>
  * @since 1.0.0
  */
 @BedrockFormat("1.21.20")
 @ServerOnly
-public record DamageAbsorption(@NonNull List<String> absorbableCauses) implements ItemComponent {
+public final class DamageAbsorption implements ItemComponent {
     /**
      * The component name in add-on JSON.
      */
     public static final String NAME = "minecraft:damage_absorption";
 
-    /**
-     * Checks the components and copies lists and maps, so the value is immutable.
-     *
-     * @throws NullPointerException if a required component is null
-     */
-    public DamageAbsorption {
+    private final @NonNull List<String> absorbableCauses;
+
+    private DamageAbsorption(@NonNull List<String> absorbableCauses) {
         absorbableCauses = List.copyOf(Objects.requireNonNull(absorbableCauses, "DamageAbsorption.absorbableCauses"));
+        this.absorbableCauses = absorbableCauses;
+    }
+
+    /**
+     * List of damage causes that can be absorbed by the item. By default, no damage cause is absorbed. Value must
+     * have at least 1 items. Add-on JSON {@code absorbable_causes}. Required.
+     *
+     * @return the value
+     */
+    public @NonNull List<String> absorbableCauses() {
+        return absorbableCauses;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        return this == o || o instanceof DamageAbsorption other
+                && Objects.equals(absorbableCauses, other.absorbableCauses);
+    }
+
+    @Override
+    public int hashCode() {
+        int h = Objects.hashCode(absorbableCauses);
+        return h;
+    }
+
+    @Override
+    public String toString() {
+        return "DamageAbsorption[absorbableCauses=" + absorbableCauses + "]";
     }
 
     @Override

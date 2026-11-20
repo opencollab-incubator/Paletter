@@ -14,13 +14,14 @@ import org.checkerframework.checker.nullness.qual.NonNull;
  *     <li>{@link Flag}: one flag for every bone</li>
  * </ul>
  * <p>
- * Switch over it without a default: the records below are all its forms.
+ * Bedrock may add forms, so a {@code switch} over it needs a {@code default}; the compiler enforces it
+ * (docs/api.md, "Evolution").
  * <p>
  * Used by: {@code block:minecraft:embedded_visual:geometry.uv_lock}, {@code block:minecraft:geometry:uv_lock}, {@code block:minecraft:item_visual:geometry.uv_lock}.
  *
  * @since 1.0.0
  */
-public sealed interface UvLock permits UvLock.Bones, UvLock.Flag {
+public sealed interface UvLock permits UvLock.Bones, UvLock.Flag, FutureUvLock {
     /**
      * Creates the form that is the names of the bones to lock.
      *

@@ -5,6 +5,8 @@ package dev.opencollab.paletter.item.component;
 
 import dev.opencollab.paletter.annotation.BedrockFormat;
 import dev.opencollab.paletter.internal.component.Check;
+import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
@@ -14,32 +16,79 @@ import org.checkerframework.checker.nullness.qual.Nullable;
  * <p>
  * Add-on JSON: {@code "minecraft:wearable"}.
  *
- * @param hidesPlayerLocation Determines whether the Player's location is hidden on Locator Maps and the Locator Bar when the wearable item
- *        is worn. Default is false. Add-on JSON {@code hides_player_location}. Default: <code>false</code>.
- * @param protection How much protection the wearable item provides. Default is set to 0. Add-on JSON {@code protection}. Default:
- *        <code>0</code>. At least 0 (BDS 1.26.63.1).
- * @param slot Specifies where the item can be worn. If any non-hand slot is chosen, the max stack size is set to 1. Add-on
- *        JSON {@code slot}. Required.
  * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/itemreference/examples/itemcomponents/minecraft_wearable?view=minecraft-bedrock-stable">Microsoft Learn: minecraft:wearable</a>
  * @since 1.0.0
  */
 @BedrockFormat("1.20.30")
-public record Wearable(boolean hidesPlayerLocation, int protection,
-        Wearable. @NonNull Slot slot) implements ItemComponent {
+public final class Wearable implements ItemComponent {
     /**
      * The component name in add-on JSON.
      */
     public static final String NAME = "minecraft:wearable";
 
-    /**
-     * Checks the components.
-     *
-     * @throws NullPointerException if a required component is null
-     * @throws IllegalArgumentException if a component is out of its documented range or conflicts with another
-     */
-    public Wearable {
+    private final boolean hidesPlayerLocation;
+
+    private final int protection;
+
+    private final @NonNull Slot slot;
+
+    private Wearable(boolean hidesPlayerLocation, int protection, @NonNull Slot slot) {
         Check.range("Wearable.protection", protection, 0.0, null);
         Objects.requireNonNull(slot, "Wearable.slot");
+        this.hidesPlayerLocation = hidesPlayerLocation;
+        this.protection = protection;
+        this.slot = slot;
+    }
+
+    /**
+     * Determines whether the Player's location is hidden on Locator Maps and the Locator Bar when the wearable item
+     * is worn. Default is false. Add-on JSON {@code hides_player_location}. Default: <code>false</code>.
+     *
+     * @return the value
+     */
+    public boolean hidesPlayerLocation() {
+        return hidesPlayerLocation;
+    }
+
+    /**
+     * How much protection the wearable item provides. Default is set to 0. Add-on JSON {@code protection}. Default:
+     * <code>0</code>. At least 0 (Bedrock 26.60).
+     *
+     * @return the value
+     */
+    public int protection() {
+        return protection;
+    }
+
+    /**
+     * Specifies where the item can be worn. If any non-hand slot is chosen, the max stack size is set to 1. Add-on
+     * JSON {@code slot}. Required.
+     *
+     * @return the value
+     */
+    public @NonNull Slot slot() {
+        return slot;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        return this == o || o instanceof Wearable other
+                && hidesPlayerLocation == other.hidesPlayerLocation
+                && protection == other.protection
+                && Objects.equals(slot, other.slot);
+    }
+
+    @Override
+    public int hashCode() {
+        int h = Boolean.hashCode(hidesPlayerLocation);
+        h = 31 * h + protection;
+        h = 31 * h + Objects.hashCode(slot);
+        return h;
+    }
+
+    @Override
+    public String toString() {
+        return "Wearable[hidesPlayerLocation=" + hidesPlayerLocation + ", protection=" + protection + ", slot=" + slot + "]";
     }
 
     @Override
@@ -132,48 +181,74 @@ public record Wearable(boolean hidesPlayerLocation, int protection,
     }
 
     /**
-     * The documented values; {@link #value()} is the add-on JSON string.
+     * A value of an add-on JSON string: a constant per documented value, {@link #of} for any other.
+     * {@link #value()} is the add-on JSON string. Not an enum: Bedrock adds values, so a {@code switch} over
+     * {@link #value()} needs a {@code default}.
      */
-    public enum Slot {
+    public static final class Slot {
         /**
          * {@code slot.armor.body}
          */
-        SLOT_ARMOR_BODY("slot.armor.body"),
+        public static final Slot SLOT_ARMOR_BODY = new Slot("slot.armor.body");
 
         /**
          * {@code slot.armor.chest}
          */
-        SLOT_ARMOR_CHEST("slot.armor.chest"),
+        public static final Slot SLOT_ARMOR_CHEST = new Slot("slot.armor.chest");
 
         /**
          * {@code slot.armor.feet}
          */
-        SLOT_ARMOR_FEET("slot.armor.feet"),
+        public static final Slot SLOT_ARMOR_FEET = new Slot("slot.armor.feet");
 
         /**
          * {@code slot.armor.head}
          */
-        SLOT_ARMOR_HEAD("slot.armor.head"),
+        public static final Slot SLOT_ARMOR_HEAD = new Slot("slot.armor.head");
 
         /**
          * {@code slot.armor.legs}
          */
-        SLOT_ARMOR_LEGS("slot.armor.legs"),
+        public static final Slot SLOT_ARMOR_LEGS = new Slot("slot.armor.legs");
 
         /**
          * {@code slot.weapon.mainhand}
          */
-        SLOT_WEAPON_MAINHAND("slot.weapon.mainhand"),
+        public static final Slot SLOT_WEAPON_MAINHAND = new Slot("slot.weapon.mainhand");
 
         /**
          * {@code slot.weapon.offhand}
          */
-        SLOT_WEAPON_OFFHAND("slot.weapon.offhand");
+        public static final Slot SLOT_WEAPON_OFFHAND = new Slot("slot.weapon.offhand");
+
+        private static final List<Slot> KNOWN = List.of(SLOT_ARMOR_BODY, SLOT_ARMOR_CHEST, SLOT_ARMOR_FEET, SLOT_ARMOR_HEAD, SLOT_ARMOR_LEGS, SLOT_WEAPON_MAINHAND, SLOT_WEAPON_OFFHAND);
+
+        private static final Map<String, Slot> BY_VALUE = Check.index(KNOWN, Slot::value);
 
         private final String value;
 
-        Slot(String value) {
+        private Slot(String value) {
             this.value = value;
+        }
+
+        /**
+         * Returns the value of an add-on JSON string: the constant of a documented value, else a new value.
+         *
+         * @param value the value in add-on JSON
+         * @return the constant of the value, or a value Paletter does not know
+         */
+        public static @NonNull Slot of(@NonNull String value) {
+            Slot known = BY_VALUE.get(Objects.requireNonNull(value, "Slot.value"));
+            return known != null ? known : new Slot(value);
+        }
+
+        /**
+         * Returns the documented values, the constants of this class.
+         *
+         * @return the constants, in the order of the documentation
+         */
+        public static @NonNull List<Slot> known() {
+            return KNOWN;
         }
 
         /**
@@ -186,19 +261,27 @@ public record Wearable(boolean hidesPlayerLocation, int protection,
         }
 
         /**
-         * Finds the constant of an add-on JSON value.
+         * Returns whether the value is documented, one of the constants.
          *
-         * @param value the value in add-on JSON
-         * @return the constant of the value
-         * @throws IllegalArgumentException if the value is not documented
+         * @return whether this is one of {@link #known()}
          */
-        public static @NonNull Slot fromValue(@NonNull String value) {
-            for (Slot constant : values()) {
-                if (constant.value.equals(value)) {
-                    return constant;
-                }
-            }
-            throw new IllegalArgumentException("Not a Slot: " + value);
+        public boolean isKnown() {
+            return BY_VALUE.get(value) == this;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            return this == o || o instanceof Slot other && value.equals(other.value);
+        }
+
+        @Override
+        public int hashCode() {
+            return value.hashCode();
+        }
+
+        @Override
+        public String toString() {
+            return value;
         }
     }
 }

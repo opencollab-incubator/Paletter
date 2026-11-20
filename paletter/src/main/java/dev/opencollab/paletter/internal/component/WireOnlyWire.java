@@ -68,6 +68,7 @@ public final class WireOnlyWire {
                     out.put("minecraft:publisher_on_use_on.autoSucceedOnClient", Wire.bool(c.autoSucceedOnClient()));
                 }
             }
+            default -> throw new IllegalArgumentException(component.toString());
         }
     }
 
@@ -90,6 +91,7 @@ public final class WireOnlyWire {
                     hooks.put("isV1Component", (byte) 0);
                 }
             }
+            default -> throw new IllegalArgumentException(component.toString());
         }
     }
 

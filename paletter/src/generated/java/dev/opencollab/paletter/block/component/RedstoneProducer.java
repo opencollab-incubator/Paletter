@@ -6,6 +6,7 @@ package dev.opencollab.paletter.block.component;
 import dev.opencollab.paletter.annotation.BedrockFormat;
 import dev.opencollab.paletter.internal.component.Check;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
@@ -15,41 +16,102 @@ import org.checkerframework.checker.nullness.qual.Nullable;
  * <p>
  * Add-on JSON: {@code "minecraft:redstone_producer"}.
  *
- * @param connectedFaces The list of faces that are considered connected to the circuit. If a face is not connected, it will not
- *        provide power to the block touching that face. By default, all faces are connected. Add-on JSON {@code
- *        connected_faces}. Default: <code>["down","up","north","south","west","east"]</code>.
- * @param power The strength of the redstone signal produced by this block. Valid values are from 0 to 15, where 0 means no
- *        signal and 15 is the maximum signal strength. Value must be &lt;= 15. Add-on JSON {@code power}. Required. At
- *        least 0 (docs). At most 15 (BDS 1.26.63.1).
- * @param stronglyPoweredFace The block touching this face will become strongly powered with the signal level strength of 'power'. Strongly
- *        powered blocks will power adjacent blocks. By default, the block will not strongly power any face. Add-on JSON
- *        {@code strongly_powered_face}. Optional (null: not set).
- * @param transformRelative If true, the <code>strongly_powered_face</code> and <code>connected_faces</code> properties will be rotated
- *        according to the 'minecraft:transformation' component. Add-on JSON {@code transform_relative}. Optional (null:
- *        not set). The docs give the default <code>false</code>, but BDS sends
- *        minecraft:redstone_producer.transform_relative = 1 (byte) when it is omitted; so it is unset by default, and
- *        the encoder sends what BDS sends then.
  * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/blockreference/examples/blockcomponents/minecraftblock_redstone_producer?view=minecraft-bedrock-stable">Microsoft Learn: minecraft:redstone_producer</a>
  * @since 1.0.0
  */
 @BedrockFormat("1.21.120")
-public record RedstoneProducer(@NonNull List<RedstoneProducer.ConnectedFaces> connectedFaces,
-        int power, RedstoneProducer. @Nullable StronglyPoweredFace stronglyPoweredFace,
-        @Nullable Boolean transformRelative) implements BlockComponent {
+public final class RedstoneProducer implements BlockComponent {
     /**
      * The component name in add-on JSON.
      */
     public static final String NAME = "minecraft:redstone_producer";
 
-    /**
-     * Checks the components and copies lists and maps, so the value is immutable.
-     *
-     * @throws NullPointerException if a required component is null
-     * @throws IllegalArgumentException if a component is out of its documented range or conflicts with another
-     */
-    public RedstoneProducer {
+    private final @NonNull List<ConnectedFaces> connectedFaces;
+
+    private final int power;
+
+    private final @Nullable StronglyPoweredFace stronglyPoweredFace;
+
+    private final @Nullable Boolean transformRelative;
+
+    private RedstoneProducer(@NonNull List<ConnectedFaces> connectedFaces, int power,
+            @Nullable StronglyPoweredFace stronglyPoweredFace,
+            @Nullable Boolean transformRelative) {
         connectedFaces = List.copyOf(Objects.requireNonNull(connectedFaces, "RedstoneProducer.connectedFaces"));
         Check.range("RedstoneProducer.power", power, 0.0, 15.0);
+        this.connectedFaces = connectedFaces;
+        this.power = power;
+        this.stronglyPoweredFace = stronglyPoweredFace;
+        this.transformRelative = transformRelative;
+    }
+
+    /**
+     * The list of faces that are considered connected to the circuit. If a face is not connected, it will not
+     * provide power to the block touching that face. By default, all faces are connected. Add-on JSON {@code
+     * connected_faces}. Default: <code>["down","up","north","south","west","east"]</code>.
+     *
+     * @return the value
+     */
+    public @NonNull List<ConnectedFaces> connectedFaces() {
+        return connectedFaces;
+    }
+
+    /**
+     * The strength of the redstone signal produced by this block. Valid values are from 0 to 15, where 0 means no
+     * signal and 15 is the maximum signal strength. Value must be &lt;= 15. Add-on JSON {@code power}. Required. At
+     * least 0 (docs). At most 15 (Bedrock 26.60).
+     *
+     * @return the value
+     */
+    public int power() {
+        return power;
+    }
+
+    /**
+     * The block touching this face will become strongly powered with the signal level strength of 'power'. Strongly
+     * powered blocks will power adjacent blocks. By default, the block will not strongly power any face. Add-on JSON
+     * {@code strongly_powered_face}. Optional (null: not set).
+     *
+     * @return the value
+     */
+    public @Nullable StronglyPoweredFace stronglyPoweredFace() {
+        return stronglyPoweredFace;
+    }
+
+    /**
+     * If true, the <code>strongly_powered_face</code> and <code>connected_faces</code> properties will be rotated
+     * according to the 'minecraft:transformation' component. Add-on JSON {@code transform_relative}. Optional (null:
+     * not set). The docs give the default <code>false</code>, but BDS sends
+     * minecraft:redstone_producer.transform_relative = 1 (byte) when it is omitted; so it is unset by default, and
+     * the encoder sends what BDS sends then.
+     *
+     * @return the value
+     */
+    public @Nullable Boolean transformRelative() {
+        return transformRelative;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        return this == o || o instanceof RedstoneProducer other
+                && Objects.equals(connectedFaces, other.connectedFaces)
+                && power == other.power
+                && Objects.equals(stronglyPoweredFace, other.stronglyPoweredFace)
+                && Objects.equals(transformRelative, other.transformRelative);
+    }
+
+    @Override
+    public int hashCode() {
+        int h = Objects.hashCode(connectedFaces);
+        h = 31 * h + power;
+        h = 31 * h + Objects.hashCode(stronglyPoweredFace);
+        h = 31 * h + Objects.hashCode(transformRelative);
+        return h;
+    }
+
+    @Override
+    public String toString() {
+        return "RedstoneProducer[connectedFaces=" + connectedFaces + ", power=" + power + ", stronglyPoweredFace=" + stronglyPoweredFace + ", transformRelative=" + transformRelative + "]";
     }
 
     @Override
@@ -167,43 +229,69 @@ public record RedstoneProducer(@NonNull List<RedstoneProducer.ConnectedFaces> co
     }
 
     /**
-     * The documented values; {@link #value()} is the add-on JSON string.
+     * A value of an add-on JSON string: a constant per documented value, {@link #of} for any other.
+     * {@link #value()} is the add-on JSON string. Not an enum: Bedrock adds values, so a {@code switch} over
+     * {@link #value()} needs a {@code default}.
      */
-    public enum ConnectedFaces {
+    public static final class ConnectedFaces {
         /**
          * {@code north}
          */
-        NORTH("north"),
+        public static final ConnectedFaces NORTH = new ConnectedFaces("north");
 
         /**
          * {@code east}
          */
-        EAST("east"),
+        public static final ConnectedFaces EAST = new ConnectedFaces("east");
 
         /**
          * {@code south}
          */
-        SOUTH("south"),
+        public static final ConnectedFaces SOUTH = new ConnectedFaces("south");
 
         /**
          * {@code west}
          */
-        WEST("west"),
+        public static final ConnectedFaces WEST = new ConnectedFaces("west");
 
         /**
          * {@code up}
          */
-        UP("up"),
+        public static final ConnectedFaces UP = new ConnectedFaces("up");
 
         /**
          * {@code down}
          */
-        DOWN("down");
+        public static final ConnectedFaces DOWN = new ConnectedFaces("down");
+
+        private static final List<ConnectedFaces> KNOWN = List.of(NORTH, EAST, SOUTH, WEST, UP, DOWN);
+
+        private static final Map<String, ConnectedFaces> BY_VALUE = Check.index(KNOWN, ConnectedFaces::value);
 
         private final String value;
 
-        ConnectedFaces(String value) {
+        private ConnectedFaces(String value) {
             this.value = value;
+        }
+
+        /**
+         * Returns the value of an add-on JSON string: the constant of a documented value, else a new value.
+         *
+         * @param value the value in add-on JSON
+         * @return the constant of the value, or a value Paletter does not know
+         */
+        public static @NonNull ConnectedFaces of(@NonNull String value) {
+            ConnectedFaces known = BY_VALUE.get(Objects.requireNonNull(value, "ConnectedFaces.value"));
+            return known != null ? known : new ConnectedFaces(value);
+        }
+
+        /**
+         * Returns the documented values, the constants of this class.
+         *
+         * @return the constants, in the order of the documentation
+         */
+        public static @NonNull List<ConnectedFaces> known() {
+            return KNOWN;
         }
 
         /**
@@ -216,60 +304,94 @@ public record RedstoneProducer(@NonNull List<RedstoneProducer.ConnectedFaces> co
         }
 
         /**
-         * Finds the constant of an add-on JSON value.
+         * Returns whether the value is documented, one of the constants.
          *
-         * @param value the value in add-on JSON
-         * @return the constant of the value
-         * @throws IllegalArgumentException if the value is not documented
+         * @return whether this is one of {@link #known()}
          */
-        public static @NonNull ConnectedFaces fromValue(@NonNull String value) {
-            for (ConnectedFaces constant : values()) {
-                if (constant.value.equals(value)) {
-                    return constant;
-                }
-            }
-            throw new IllegalArgumentException("Not a ConnectedFaces: " + value);
+        public boolean isKnown() {
+            return BY_VALUE.get(value) == this;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            return this == o || o instanceof ConnectedFaces other && value.equals(other.value);
+        }
+
+        @Override
+        public int hashCode() {
+            return value.hashCode();
+        }
+
+        @Override
+        public String toString() {
+            return value;
         }
     }
 
     /**
-     * The documented values; {@link #value()} is the add-on JSON string.
+     * A value of an add-on JSON string: a constant per documented value, {@link #of} for any other.
+     * {@link #value()} is the add-on JSON string. Not an enum: Bedrock adds values, so a {@code switch} over
+     * {@link #value()} needs a {@code default}.
      */
-    public enum StronglyPoweredFace {
+    public static final class StronglyPoweredFace {
         /**
          * {@code north}
          */
-        NORTH("north"),
+        public static final StronglyPoweredFace NORTH = new StronglyPoweredFace("north");
 
         /**
          * {@code east}
          */
-        EAST("east"),
+        public static final StronglyPoweredFace EAST = new StronglyPoweredFace("east");
 
         /**
          * {@code south}
          */
-        SOUTH("south"),
+        public static final StronglyPoweredFace SOUTH = new StronglyPoweredFace("south");
 
         /**
          * {@code west}
          */
-        WEST("west"),
+        public static final StronglyPoweredFace WEST = new StronglyPoweredFace("west");
 
         /**
          * {@code up}
          */
-        UP("up"),
+        public static final StronglyPoweredFace UP = new StronglyPoweredFace("up");
 
         /**
          * {@code down}
          */
-        DOWN("down");
+        public static final StronglyPoweredFace DOWN = new StronglyPoweredFace("down");
+
+        private static final List<StronglyPoweredFace> KNOWN = List.of(NORTH, EAST, SOUTH, WEST, UP, DOWN);
+
+        private static final Map<String, StronglyPoweredFace> BY_VALUE = Check.index(KNOWN, StronglyPoweredFace::value);
 
         private final String value;
 
-        StronglyPoweredFace(String value) {
+        private StronglyPoweredFace(String value) {
             this.value = value;
+        }
+
+        /**
+         * Returns the value of an add-on JSON string: the constant of a documented value, else a new value.
+         *
+         * @param value the value in add-on JSON
+         * @return the constant of the value, or a value Paletter does not know
+         */
+        public static @NonNull StronglyPoweredFace of(@NonNull String value) {
+            StronglyPoweredFace known = BY_VALUE.get(Objects.requireNonNull(value, "StronglyPoweredFace.value"));
+            return known != null ? known : new StronglyPoweredFace(value);
+        }
+
+        /**
+         * Returns the documented values, the constants of this class.
+         *
+         * @return the constants, in the order of the documentation
+         */
+        public static @NonNull List<StronglyPoweredFace> known() {
+            return KNOWN;
         }
 
         /**
@@ -282,19 +404,27 @@ public record RedstoneProducer(@NonNull List<RedstoneProducer.ConnectedFaces> co
         }
 
         /**
-         * Finds the constant of an add-on JSON value.
+         * Returns whether the value is documented, one of the constants.
          *
-         * @param value the value in add-on JSON
-         * @return the constant of the value
-         * @throws IllegalArgumentException if the value is not documented
+         * @return whether this is one of {@link #known()}
          */
-        public static @NonNull StronglyPoweredFace fromValue(@NonNull String value) {
-            for (StronglyPoweredFace constant : values()) {
-                if (constant.value.equals(value)) {
-                    return constant;
-                }
-            }
-            throw new IllegalArgumentException("Not a StronglyPoweredFace: " + value);
+        public boolean isKnown() {
+            return BY_VALUE.get(value) == this;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            return this == o || o instanceof StronglyPoweredFace other && value.equals(other.value);
+        }
+
+        @Override
+        public int hashCode() {
+            return value.hashCode();
+        }
+
+        @Override
+        public String toString() {
+            return value;
         }
     }
 }

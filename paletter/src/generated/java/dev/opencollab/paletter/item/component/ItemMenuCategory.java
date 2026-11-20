@@ -3,6 +3,10 @@
 // data/model/ATTRIBUTION.md.
 package dev.opencollab.paletter.item.component;
 
+import dev.opencollab.paletter.internal.component.Check;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
@@ -10,17 +14,74 @@ import org.checkerframework.checker.nullness.qual.Nullable;
  * <code>description</code> is a list of characters representing an item. The description MUST contain an
  * identifier; other fields are optional.
  *
- * @param category The creative category that this item belongs to. Options include "construction", "nature", "equipment",
- *        "items", and "none" Add-on JSON {@code category}. Optional (null: not set). The docs give the default
- *        <code>"items"</code>; unset, BDS behaves differently (see api.json noDefaults).
- * @param group The creative group that this item belongs to. Group name is limited to 256 characters. Add-on JSON {@code
- *        group}. Optional (null: not set).
- * @param hiddenInCommands Determines whether or not this item can be used with commands. Commands can use items by default. Add-on JSON
- *        {@code is_hidden_in_commands}. Optional (null: not set).
  * @since 1.0.0
  */
-public record ItemMenuCategory(ItemMenuCategory. @Nullable Category category,
-        @Nullable String group, @Nullable Boolean hiddenInCommands) {
+public final class ItemMenuCategory {
+    private final @Nullable Category category;
+
+    private final @Nullable String group;
+
+    private final @Nullable Boolean hiddenInCommands;
+
+    private ItemMenuCategory(@Nullable Category category, @Nullable String group,
+            @Nullable Boolean hiddenInCommands) {
+        this.category = category;
+        this.group = group;
+        this.hiddenInCommands = hiddenInCommands;
+    }
+
+    /**
+     * The creative category that this item belongs to. Options include "construction", "nature", "equipment",
+     * "items", and "none" Add-on JSON {@code category}. Optional (null: not set). The docs give the default
+     * <code>"items"</code>; unset, BDS behaves differently (see api.json noDefaults).
+     *
+     * @return the value
+     */
+    public @Nullable Category category() {
+        return category;
+    }
+
+    /**
+     * The creative group that this item belongs to. Group name is limited to 256 characters. Add-on JSON {@code
+     * group}. Optional (null: not set).
+     *
+     * @return the value
+     */
+    public @Nullable String group() {
+        return group;
+    }
+
+    /**
+     * Determines whether or not this item can be used with commands. Commands can use items by default. Add-on JSON
+     * {@code is_hidden_in_commands}. Optional (null: not set).
+     *
+     * @return the value
+     */
+    public @Nullable Boolean hiddenInCommands() {
+        return hiddenInCommands;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        return this == o || o instanceof ItemMenuCategory other
+                && Objects.equals(category, other.category)
+                && Objects.equals(group, other.group)
+                && Objects.equals(hiddenInCommands, other.hiddenInCommands);
+    }
+
+    @Override
+    public int hashCode() {
+        int h = Objects.hashCode(category);
+        h = 31 * h + Objects.hashCode(group);
+        h = 31 * h + Objects.hashCode(hiddenInCommands);
+        return h;
+    }
+
+    @Override
+    public String toString() {
+        return "ItemMenuCategory[category=" + category + ", group=" + group + ", hiddenInCommands=" + hiddenInCommands + "]";
+    }
+
     /**
      * Creates a builder with every field at its default.
      *
@@ -102,38 +163,64 @@ public record ItemMenuCategory(ItemMenuCategory. @Nullable Category category,
     }
 
     /**
-     * The documented values; {@link #value()} is the add-on JSON string.
+     * A value of an add-on JSON string: a constant per documented value, {@link #of} for any other.
+     * {@link #value()} is the add-on JSON string. Not an enum: Bedrock adds values, so a {@code switch} over
+     * {@link #value()} needs a {@code default}.
      */
-    public enum Category {
+    public static final class Category {
         /**
          * {@code construction}
          */
-        CONSTRUCTION("construction"),
+        public static final Category CONSTRUCTION = new Category("construction");
 
         /**
          * {@code nature}
          */
-        NATURE("nature"),
+        public static final Category NATURE = new Category("nature");
 
         /**
          * {@code equipment}
          */
-        EQUIPMENT("equipment"),
+        public static final Category EQUIPMENT = new Category("equipment");
 
         /**
          * {@code items}
          */
-        ITEMS("items"),
+        public static final Category ITEMS = new Category("items");
 
         /**
          * {@code none}
          */
-        NONE("none");
+        public static final Category NONE = new Category("none");
+
+        private static final List<Category> KNOWN = List.of(CONSTRUCTION, NATURE, EQUIPMENT, ITEMS, NONE);
+
+        private static final Map<String, Category> BY_VALUE = Check.index(KNOWN, Category::value);
 
         private final String value;
 
-        Category(String value) {
+        private Category(String value) {
             this.value = value;
+        }
+
+        /**
+         * Returns the value of an add-on JSON string: the constant of a documented value, else a new value.
+         *
+         * @param value the value in add-on JSON
+         * @return the constant of the value, or a value Paletter does not know
+         */
+        public static @NonNull Category of(@NonNull String value) {
+            Category known = BY_VALUE.get(Objects.requireNonNull(value, "Category.value"));
+            return known != null ? known : new Category(value);
+        }
+
+        /**
+         * Returns the documented values, the constants of this class.
+         *
+         * @return the constants, in the order of the documentation
+         */
+        public static @NonNull List<Category> known() {
+            return KNOWN;
         }
 
         /**
@@ -146,19 +233,27 @@ public record ItemMenuCategory(ItemMenuCategory. @Nullable Category category,
         }
 
         /**
-         * Finds the constant of an add-on JSON value.
+         * Returns whether the value is documented, one of the constants.
          *
-         * @param value the value in add-on JSON
-         * @return the constant of the value
-         * @throws IllegalArgumentException if the value is not documented
+         * @return whether this is one of {@link #known()}
          */
-        public static @NonNull Category fromValue(@NonNull String value) {
-            for (Category constant : values()) {
-                if (constant.value.equals(value)) {
-                    return constant;
-                }
-            }
-            throw new IllegalArgumentException("Not a Category: " + value);
+        public boolean isKnown() {
+            return BY_VALUE.get(value) == this;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            return this == o || o instanceof Category other && value.equals(other.value);
+        }
+
+        @Override
+        public int hashCode() {
+            return value.hashCode();
+        }
+
+        @Override
+        public String toString() {
+            return value;
         }
     }
 }

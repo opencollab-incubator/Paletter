@@ -6,6 +6,7 @@ package dev.opencollab.paletter.block.component;
 import dev.opencollab.paletter.annotation.ServerOnly;
 import dev.opencollab.paletter.annotation.SincePreview;
 import dev.opencollab.paletter.internal.component.Check;
+import java.util.Objects;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
@@ -13,27 +14,84 @@ import org.checkerframework.checker.nullness.qual.Nullable;
  * Adds per-instance metadata for this block.
  * <p>
  * Add-on JSON: {@code "minecraft:block_entity"}.
- * Server only below protocol 2193: BDS accepts it in packs but sends nothing to clients there (BDS 1.26.36.1,
- * 1.26.45.1), so those palettes leave it out and add a report warning. Sent from protocol 2193 (BDS 1.26.52.3).
+ * Server only below protocol 2193: BDS accepts it in packs but sends nothing to clients there (Bedrock 26.30,
+ * 26.40), so those palettes leave it out and add a report warning. Sent from protocol 2193 (Bedrock 26.50).
  *
- * @param container Adds a container to this block. Add-on JSON {@code container}. Optional (null: not set).
- * @param dynamicProperties Dynamic-properties can store and retrieve variables on a block via scripting, more at
- *        https://learn.microsoft.com/en-us/minecraft/creator/scriptapi/minecraft/server/blockdynamicpropertiescomponent.
- *        Add-on JSON {@code dynamic_properties}. Default: <code>false</code>.
- * @param entityStorage (bds-schema 1.26.63.1) BDS accepts this key; the creator docs do not list it. Add-on JSON {@code
- *        entity_storage}. Optional (null: not set).
  * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/blockreference/examples/blockcomponents/minecraftblock_block_entity?view=minecraft-bedrock-stable">Microsoft Learn: minecraft:block_entity</a>
  * @since 1.0.0
  */
 @ServerOnly(
         until = 2193
 )
-public record BlockEntity(BlockEntity. @Nullable Container container, boolean dynamicProperties,
-        @Nullable Boolean entityStorage) implements BlockComponent {
+public final class BlockEntity implements BlockComponent {
     /**
      * The component name in add-on JSON.
      */
     public static final String NAME = "minecraft:block_entity";
+
+    private final @Nullable Container container;
+
+    private final boolean dynamicProperties;
+
+    private final @Nullable Boolean entityStorage;
+
+    private BlockEntity(@Nullable Container container, boolean dynamicProperties,
+            @Nullable Boolean entityStorage) {
+        this.container = container;
+        this.dynamicProperties = dynamicProperties;
+        this.entityStorage = entityStorage;
+    }
+
+    /**
+     * Adds a container to this block. Add-on JSON {@code container}. Optional (null: not set).
+     *
+     * @return the value
+     */
+    public @Nullable Container container() {
+        return container;
+    }
+
+    /**
+     * Dynamic-properties can store and retrieve variables on a block via scripting, more at
+     * https://learn.microsoft.com/en-us/minecraft/creator/scriptapi/minecraft/server/blockdynamicpropertiescomponent.
+     * Add-on JSON {@code dynamic_properties}. Default: <code>false</code>.
+     *
+     * @return the value
+     */
+    public boolean dynamicProperties() {
+        return dynamicProperties;
+    }
+
+    /**
+     * (bds-schema 26.60) BDS accepts this key; the creator docs do not list it. Add-on JSON {@code entity_storage}.
+     * Optional (null: not set).
+     *
+     * @return the value
+     */
+    public @Nullable Boolean entityStorage() {
+        return entityStorage;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        return this == o || o instanceof BlockEntity other
+                && Objects.equals(container, other.container)
+                && dynamicProperties == other.dynamicProperties
+                && Objects.equals(entityStorage, other.entityStorage);
+    }
+
+    @Override
+    public int hashCode() {
+        int h = Objects.hashCode(container);
+        h = 31 * h + Boolean.hashCode(dynamicProperties);
+        h = 31 * h + Objects.hashCode(entityStorage);
+        return h;
+    }
+
+    @Override
+    public String toString() {
+        return "BlockEntity[container=" + container + ", dynamicProperties=" + dynamicProperties + ", entityStorage=" + entityStorage + "]";
+    }
 
     @Override
     public @NonNull String name() {
@@ -123,24 +181,73 @@ public record BlockEntity(BlockEntity. @Nullable Container container, boolean dy
     /**
      * Adds a container to this block.
      *
-     * @param showUiOnInteraction Determines whether interacting with this block opens its container UI. Defaults to true. When false, normal
-     *        block interaction events can run instead. Add-on JSON {@code show_ui_on_interaction}. Default:
-     *        <code>true</code>.
-     * @param slotCount Sets the number of slots in the container. Value must be &gt;= 1. Value must be &lt;= 54. Add-on JSON {@code
-     *        slot_count}. Required. Range [1, 54] (BDS 1.26.63.1).
-     * @param title Optional container title, stored as a language file key or raw text. Must be nonempty and at most 256
-     *        characters. Value must have at least 1 items. Value must have at most 256 items. Add-on JSON {@code title}.
-     *        Optional (null: not set).
      */
-    public record Container(@SincePreview("26.70") boolean showUiOnInteraction, int slotCount,
-            @Nullable String title) {
-        /**
-         * Checks the components.
-         *
-         * @throws IllegalArgumentException if a component is out of its documented range or conflicts with another
-         */
-        public Container {
+    public static final class Container {
+        private final boolean showUiOnInteraction;
+
+        private final int slotCount;
+
+        private final @Nullable String title;
+
+        private Container(boolean showUiOnInteraction, int slotCount, @Nullable String title) {
             Check.range("BlockEntity.Container.slotCount", slotCount, 1.0, 54.0);
+            this.showUiOnInteraction = showUiOnInteraction;
+            this.slotCount = slotCount;
+            this.title = title;
+        }
+
+        /**
+         * Determines whether interacting with this block opens its container UI. Defaults to true. When false, normal
+         * block interaction events can run instead. Add-on JSON {@code show_ui_on_interaction}. Default:
+         * <code>true</code>.
+         *
+         * @return the value
+         */
+        @SincePreview("26.70")
+        public boolean showUiOnInteraction() {
+            return showUiOnInteraction;
+        }
+
+        /**
+         * Sets the number of slots in the container. Value must be &gt;= 1. Value must be &lt;= 54. Add-on JSON {@code
+         * slot_count}. Required. Range [1, 54] (Bedrock 26.60).
+         *
+         * @return the value
+         */
+        public int slotCount() {
+            return slotCount;
+        }
+
+        /**
+         * Optional container title, stored as a language file key or raw text. Must be nonempty and at most 256
+         * characters. Value must have at least 1 items. Value must have at most 256 items. Add-on JSON {@code title}.
+         * Optional (null: not set).
+         *
+         * @return the value
+         */
+        public @Nullable String title() {
+            return title;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            return this == o || o instanceof Container other
+                    && showUiOnInteraction == other.showUiOnInteraction
+                    && slotCount == other.slotCount
+                    && Objects.equals(title, other.title);
+        }
+
+        @Override
+        public int hashCode() {
+            int h = Boolean.hashCode(showUiOnInteraction);
+            h = 31 * h + slotCount;
+            h = 31 * h + Objects.hashCode(title);
+            return h;
+        }
+
+        @Override
+        public String toString() {
+            return "Container[showUiOnInteraction=" + showUiOnInteraction + ", slotCount=" + slotCount + ", title=" + title + "]";
         }
 
         /**

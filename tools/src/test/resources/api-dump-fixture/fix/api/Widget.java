@@ -48,6 +48,11 @@ public class Widget<T extends Comparable<T>> extends Base<T> implements Comparab
         return null;
     }
 
+    /** A plain Object returned by a method whose signature is generic (its parameter). */
+    public Object raw(List<?> values) {
+        return null;
+    }
+
     @Deprecated
     public void old() {
     }

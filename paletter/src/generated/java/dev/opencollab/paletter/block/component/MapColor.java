@@ -14,33 +14,69 @@ import org.checkerframework.checker.nullness.qual.Nullable;
  * on the map.
  * <p>
  * Add-on JSON: {@code "minecraft:map_color"}.
- * Server only: BDS accepts it in packs but sends nothing to clients (BDS 1.26.36.1, 1.26.45.1, 1.26.52.3,
- * 1.26.63.1, 1.26.70.24), so it has no client effect. Palettes leave it out without a warning.
+ * Server only: BDS accepts it in packs but sends nothing to clients (Bedrock 26.30, 26.40, 26.50, 26.60, 26.70),
+ * so it has no client effect. Palettes leave it out without a warning.
  *
- * @param color The color is represented as a hex value in the format "#RRGGBB". May also be expressed as an array of [R, G,
- *        B] from 0 to 255. Add-on JSON {@code color}. Required.
- * @param tintMethod Tint multiplier applied to the map color. Typically references the biome's "rain" and "temperature" to compute
- *        the tint. Supported values: "none", "default_foliage", "birch_foliage", "evergreen_foliage", "dry_foliage",
- *        "grass", "water". This item requires a format version of at least 1.21.80. Add-on JSON {@code tint_method}.
- *        Optional (null: not set).
  * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/blockreference/examples/blockcomponents/minecraftblock_map_color?view=minecraft-bedrock-stable">Microsoft Learn: minecraft:map_color</a>
  * @since 1.0.0
  */
 @ServerOnly
-public record MapColor(@NonNull String color,
-        @BedrockFormat("1.21.80") @Nullable String tintMethod) implements BlockComponent {
+public final class MapColor implements BlockComponent {
     /**
      * The component name in add-on JSON.
      */
     public static final String NAME = "minecraft:map_color";
 
-    /**
-     * Checks the components.
-     *
-     * @throws NullPointerException if a required component is null
-     */
-    public MapColor {
+    private final @NonNull String color;
+
+    private final @Nullable String tintMethod;
+
+    private MapColor(@NonNull String color, @Nullable String tintMethod) {
         Objects.requireNonNull(color, "MapColor.color");
+        this.color = color;
+        this.tintMethod = tintMethod;
+    }
+
+    /**
+     * The color is represented as a hex value in the format "#RRGGBB". May also be expressed as an array of [R, G,
+     * B] from 0 to 255. Add-on JSON {@code color}. Required.
+     *
+     * @return the value
+     */
+    public @NonNull String color() {
+        return color;
+    }
+
+    /**
+     * Tint multiplier applied to the map color. Typically references the biome's "rain" and "temperature" to compute
+     * the tint. Supported values: "none", "default_foliage", "birch_foliage", "evergreen_foliage", "dry_foliage",
+     * "grass", "water". This item requires a format version of at least 1.21.80. Add-on JSON {@code tint_method}.
+     * Optional (null: not set).
+     *
+     * @return the value
+     */
+    @BedrockFormat("1.21.80")
+    public @Nullable String tintMethod() {
+        return tintMethod;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        return this == o || o instanceof MapColor other
+                && Objects.equals(color, other.color)
+                && Objects.equals(tintMethod, other.tintMethod);
+    }
+
+    @Override
+    public int hashCode() {
+        int h = Objects.hashCode(color);
+        h = 31 * h + Objects.hashCode(tintMethod);
+        return h;
+    }
+
+    @Override
+    public String toString() {
+        return "MapColor[color=" + color + ", tintMethod=" + tintMethod + "]";
     }
 
     @Override

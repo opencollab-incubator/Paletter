@@ -48,9 +48,9 @@ class TransformsTest {
     private final PaletteReportBuilder report = new PaletteReportBuilder();
     private final WireContext ctx = WireContext.of(DATA, report, "test").subject("test:thing");
     /** The data version of the capture of BDS 1.26.52.3 (26.50), before the shapes that changed in 1.26.63.1. */
-    private final WireContext ctx26_50 = at(ComponentIndex.BDS_1_26_52_3);
+    private final WireContext ctx26_50 = at(ComponentIndex.V26_50);
     /** The data version of the capture of BDS 1.26.36.1 (26.30). */
-    private final WireContext ctx26_30 = at(ComponentIndex.BDS_1_26_36_1);
+    private final WireContext ctx26_30 = at(ComponentIndex.V26_30);
 
     private WireContext at(int protocol) {
         return WireContext.of(PALETTER.vanillaData(PALETTER.version(protocol)), report, "test").subject("test:thing");

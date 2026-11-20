@@ -17,32 +17,80 @@ import org.checkerframework.checker.nullness.qual.Nullable;
  * <p>
  * Add-on JSON: {@code "minecraft:random_offset"}.
  *
- * @param x X coordinate Add-on JSON {@code x}. Default:
- *        <code>&#123;"range":&#123;"max":0,"min":0&#125;,"steps":0&#125;</code>.
- * @param y Y coordinate Add-on JSON {@code y}. Default:
- *        <code>&#123;"range":&#123;"max":0,"min":0&#125;,"steps":0&#125;</code>.
- * @param z Z coordinate Add-on JSON {@code z}. Default:
- *        <code>&#123;"range":&#123;"max":0,"min":0&#125;,"steps":0&#125;</code>.
  * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/blockreference/examples/blockcomponents/minecraftblock_random_offset?view=minecraft-bedrock-stable">Microsoft Learn: minecraft:random_offset</a>
  * @since 1.0.0
  */
 @BedrockFormat("1.21.100")
-public record RandomOffset(RandomOffset. @NonNull X x, RandomOffset. @NonNull X y,
-        RandomOffset. @NonNull X z) implements BlockComponent {
+public final class RandomOffset implements BlockComponent {
     /**
      * The component name in add-on JSON.
      */
     public static final String NAME = "minecraft:random_offset";
 
-    /**
-     * Checks the components.
-     *
-     * @throws NullPointerException if a required component is null
-     */
-    public RandomOffset {
+    private final @NonNull X x;
+
+    private final @NonNull X y;
+
+    private final @NonNull X z;
+
+    private RandomOffset(@NonNull X x, @NonNull X y, @NonNull X z) {
         Objects.requireNonNull(x, "RandomOffset.x");
         Objects.requireNonNull(y, "RandomOffset.y");
         Objects.requireNonNull(z, "RandomOffset.z");
+        this.x = x;
+        this.y = y;
+        this.z = z;
+    }
+
+    /**
+     * X coordinate Add-on JSON {@code x}. Default:
+     * <code>&#123;"range":&#123;"max":0,"min":0&#125;,"steps":0&#125;</code>.
+     *
+     * @return the value
+     */
+    public @NonNull X x() {
+        return x;
+    }
+
+    /**
+     * Y coordinate Add-on JSON {@code y}. Default:
+     * <code>&#123;"range":&#123;"max":0,"min":0&#125;,"steps":0&#125;</code>.
+     *
+     * @return the value
+     */
+    public @NonNull X y() {
+        return y;
+    }
+
+    /**
+     * Z coordinate Add-on JSON {@code z}. Default:
+     * <code>&#123;"range":&#123;"max":0,"min":0&#125;,"steps":0&#125;</code>.
+     *
+     * @return the value
+     */
+    public @NonNull X z() {
+        return z;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        return this == o || o instanceof RandomOffset other
+                && Objects.equals(x, other.x)
+                && Objects.equals(y, other.y)
+                && Objects.equals(z, other.z);
+    }
+
+    @Override
+    public int hashCode() {
+        int h = Objects.hashCode(x);
+        h = 31 * h + Objects.hashCode(y);
+        h = 31 * h + Objects.hashCode(z);
+        return h;
+    }
+
+    @Override
+    public String toString() {
+        return "RandomOffset[x=" + x + ", y=" + y + ", z=" + z + "]";
     }
 
     @Override
@@ -134,20 +182,56 @@ public record RandomOffset(RandomOffset. @NonNull X x, RandomOffset. @NonNull X 
      * The range of the random offset. Check that the limits imposed on the range (minimum, maximum and maximum
      * distance between values) are respected
      *
-     * @param max Add-on JSON {@code max}. Default: <code>0</code>. Range [-8, 8] (BDS 1.26.63.1). Not below {@code min} (BDS
-     *        1.26.63.1).
-     * @param min Add-on JSON {@code min}. Default: <code>0</code>. Range [-8, 8] (BDS 1.26.63.1).
      */
-    public record Range(float max, float min) {
-        /**
-         * Checks the components.
-         *
-         * @throws IllegalArgumentException if a component is out of its documented range or conflicts with another
-         */
-        public Range {
+    public static final class Range {
+        private final float max;
+
+        private final float min;
+
+        private Range(float max, float min) {
             Check.range("RandomOffset.Range.max", max, -8.0, 8.0);
             Check.order("RandomOffset.Range", "min", min, "max", max);
             Check.range("RandomOffset.Range.min", min, -8.0, 8.0);
+            this.max = max;
+            this.min = min;
+        }
+
+        /**
+         * Add-on JSON {@code max}. Default: <code>0</code>. Range [-8, 8] (Bedrock 26.60). Not below {@code min}
+         * (Bedrock 26.60).
+         *
+         * @return the value
+         */
+        public float max() {
+            return max;
+        }
+
+        /**
+         * Add-on JSON {@code min}. Default: <code>0</code>. Range [-8, 8] (Bedrock 26.60).
+         *
+         * @return the value
+         */
+        public float min() {
+            return min;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            return this == o || o instanceof Range other
+                    && Float.compare(max, other.max) == 0
+                    && Float.compare(min, other.min) == 0;
+        }
+
+        @Override
+        public int hashCode() {
+            int h = Float.hashCode(max);
+            h = 31 * h + Float.hashCode(min);
+            return h;
+        }
+
+        @Override
+        public String toString() {
+            return "Range[max=" + max + ", min=" + min + "]";
         }
 
         /**
@@ -220,19 +304,55 @@ public record RandomOffset(RandomOffset. @NonNull X x, RandomOffset. @NonNull X 
     /**
      * X coordinate
      *
-     * @param range The range of the random offset. Check that the limits imposed on the range (minimum, maximum and maximum
-     *        distance between values) are respected Add-on JSON {@code range}. Required.
-     * @param steps The number of steps between the range. Specify 0 for all possible values between the range. Add-on JSON {@code
-     *        steps}. Default: <code>0</code>.
      */
-    public record X(@NonNull Range range, int steps) {
-        /**
-         * Checks the components.
-         *
-         * @throws NullPointerException if a required component is null
-         */
-        public X {
+    public static final class X {
+        private final @NonNull Range range;
+
+        private final int steps;
+
+        private X(@NonNull Range range, int steps) {
             Objects.requireNonNull(range, "RandomOffset.X.range");
+            this.range = range;
+            this.steps = steps;
+        }
+
+        /**
+         * The range of the random offset. Check that the limits imposed on the range (minimum, maximum and maximum
+         * distance between values) are respected Add-on JSON {@code range}. Required.
+         *
+         * @return the value
+         */
+        public @NonNull Range range() {
+            return range;
+        }
+
+        /**
+         * The number of steps between the range. Specify 0 for all possible values between the range. Add-on JSON {@code
+         * steps}. Default: <code>0</code>.
+         *
+         * @return the value
+         */
+        public int steps() {
+            return steps;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            return this == o || o instanceof X other
+                    && Objects.equals(range, other.range)
+                    && steps == other.steps;
+        }
+
+        @Override
+        public int hashCode() {
+            int h = Objects.hashCode(range);
+            h = 31 * h + steps;
+            return h;
+        }
+
+        @Override
+        public String toString() {
+            return "X[range=" + range + ", steps=" + steps + "]";
         }
 
         /**

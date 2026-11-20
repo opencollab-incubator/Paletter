@@ -6,26 +6,29 @@ package dev.opencollab.paletter.item.component;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 /**
- * A custom item component, mirroring Bedrock's add-on JSON: one record per component, generated
+ * A custom item component, mirroring Bedrock's add-on JSON: one class per component, generated
  * from the component model in {@code data/model} (creator docs plus what Bedrock Dedicated Server sends). Paletter
  * compiles them to the wire format of each palette's protocol.
  * <p>
  * Documented but not generated:
  * <ul>
- *     <li>{@code minecraft:chargeable}: retired, never on the wire: BDS 1.26.63.1 accepts it at formats 1.20.30 and 1.20.40 and sends the same as without it (data/bds/1.26.63.1/spec-format); rejected from 1.20.50; replaced by {@link UseModifiers} (docs note: "Released without an experimental toggle in 1.20.30; renamed to <code>minecraft:use_modifiers</code> in 1.20.50.") (<a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/itemreference/examples/itemcomponents/minecraft_chargeable?view=minecraft-bedrock-stable">Microsoft Learn</a>)</li>
+ *     <li>{@code minecraft:chargeable}: retired, never on the wire: Bedrock 26.60 accepts it at formats 1.20.30 and 1.20.40 and sends the same as without it; rejected from 1.20.50; replaced by {@link UseModifiers} (docs note: "Released without an experimental toggle in 1.20.30; renamed to <code>minecraft:use_modifiers</code> in 1.20.50.") (<a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/itemreference/examples/itemcomponents/minecraft_chargeable?view=minecraft-bedrock-stable">Microsoft Learn</a>)</li>
  *     <li>{@code minecraft:custom_components}: hand-written: the wire-only UseOnHook (minecraft:publisher_on_use_on, which BDS adds for a script component with onUseOn) (<a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/itemreference/examples/itemcomponents/minecraft_custom_components?view=minecraft-bedrock-stable">Microsoft Learn</a>)</li>
  *     <li>{@code minecraft:hand_equippped}: not modelled: misspelled duplicate page of minecraft:hand_equipped (<a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/itemreference/examples/itemcomponents/minecraft_hand_equippped?view=minecraft-bedrock-stable">Microsoft Learn</a>)</li>
  *     <li>{@code minecraft:render_offsets}: hand-written: the wire-only RenderOffsets (rejected by BDS, still sent for legacy content) (<a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/itemreference/examples/itemcomponents/minecraft_render_offsets?view=minecraft-bedrock-stable">Microsoft Learn</a>)</li>
- *     <li>{@code minecraft:seed}: retired, never on the wire: BDS 1.26.63.1 accepts it at formats 1.10.0 and 1.16.0 only inside an old-style item (componentBased 0, data/bds/1.26.63.1/spec-format); Paletter writes no old-style items; replaced by {@link BlockPlacer} (BDS message (data/bds/1.26.70.24/spec): "Use minecraft:block_placer instead") (<a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/itemreference/examples/itemcomponents/minecraft_seed?view=minecraft-bedrock-stable">Microsoft Learn</a>)</li>
- *     <li>{@code minecraft:weapon}: retired, never on the wire: BDS 1.26.63.1 accepts it at formats 1.20.30 and 1.20.40 and sends the same as without it (data/bds/1.26.63.1/spec-format); replaced by {@link Damage}, {@link Cooldown}, {@link Durability} (docs note: "use minecraft:damage to set attack damage, minecraft:cooldown for attack speed, and minecraft:durability for durability.") (<a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/itemreference/examples/itemcomponents/minecraft_weapon?view=minecraft-bedrock-stable">Microsoft Learn</a>)</li>
+ *     <li>{@code minecraft:seed}: retired, never on the wire: Bedrock 26.60 accepts it at formats 1.10.0 and 1.16.0 only inside an old-style item (componentBased 0); Paletter writes no old-style items; replaced by {@link BlockPlacer} (BDS message: "Use minecraft:block_placer instead") (<a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/itemreference/examples/itemcomponents/minecraft_seed?view=minecraft-bedrock-stable">Microsoft Learn</a>)</li>
+ *     <li>{@code minecraft:weapon}: retired, never on the wire: Bedrock 26.60 accepts it at formats 1.20.30 and 1.20.40 and sends the same as without it; replaced by {@link Damage}, {@link Cooldown}, {@link Durability} (docs note: "use minecraft:damage to set attack damage, minecraft:cooldown for attack speed, and minecraft:durability for durability.") (<a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/itemreference/examples/itemcomponents/minecraft_weapon?view=minecraft-bedrock-stable">Microsoft Learn</a>)</li>
  * </ul>
  * <p>
  * Hand-written wire-only components, for fields with no add-on JSON source: see {@link WireOnlyItemComponent}.
+ * <p>
+ * Bedrock adds components in minor releases, so a {@code switch} over it needs a {@code default}; the compiler
+ * enforces it (docs/api.md, "Evolution").
  *
  * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/itemreference/examples/itemcomponentlist?view=minecraft-bedrock-stable">Microsoft Learn: item components</a>
  * @since 1.0.0
  */
-public sealed interface ItemComponent permits AllowOffHand, BlockPlacer, BundleInteraction, CanDestroyInCreative, Compostable, Cooldown, Damage, DamageAbsorption, Digger, Durability, DurabilitySensor, Dyeable, Enchantable, EntityPlacer, FireResistant, Food, Fuel, Glint, HandEquipped, HoverTextColor, Icon, InteractButton, ItemDisplayName, KineticWeapon, LiquidClipped, MaxStackSize, MusicRecord, PiercingWeapon, Projectile, Rarity, Repairable, Shooter, ShouldDespawn, StackedByData, StorageItem, StorageWeightLimit, StorageWeightModifier, SwingDuration, SwingSounds, Tags, ThrowableItem, UseAnimation, UseDuration, UseModifiers, Wearable, WireOnlyItemComponent {
+public sealed interface ItemComponent permits AllowOffHand, BlockPlacer, BundleInteraction, CanDestroyInCreative, Compostable, Cooldown, Damage, DamageAbsorption, Digger, Durability, DurabilitySensor, Dyeable, Enchantable, EntityPlacer, FireResistant, Food, Fuel, Glint, HandEquipped, HoverTextColor, Icon, InteractButton, ItemDisplayName, KineticWeapon, LiquidClipped, MaxStackSize, MusicRecord, PiercingWeapon, Projectile, Rarity, Repairable, Shooter, ShouldDespawn, StackedByData, StorageItem, StorageWeightLimit, StorageWeightModifier, SwingDuration, SwingSounds, Tags, ThrowableItem, UseAnimation, UseDuration, UseModifiers, Wearable, WireOnlyItemComponent, FutureItemComponent {
     /**
      * Returns the component name in add-on JSON.
      *

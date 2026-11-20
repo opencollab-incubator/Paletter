@@ -24,6 +24,7 @@ import java.util.Map;
 import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -119,30 +120,33 @@ class GeneratedApiTest {
         assertTrue(required > 0 && ranges > 0 && defaults > 0);
     }
 
-    /** A record refuses a value outside its range in its constructor, not only when a builder makes it ({@code new Friction(5f)}). */
+    /** A class refuses a value outside its range in its constructor, which every factory and builder goes through ({@code Friction.of(5f)}). */
     @Test
-    void theRecordConstructorChecksRanges() throws Exception {
+    void theConstructorChecksRanges() throws Exception {
         int checked = 0;
         for (ApiModel.Comp c : model().components) {
             for (ApiModel.ObjType o : types(c)) {
                 Class<?> type = recordClass(c, o);
-                var components = type.getRecordComponents();
-                if (!java.util.Arrays.stream(components).allMatch(rc -> rc.getType().isPrimitive())) {
+                // The one private constructor takes the fields in their order
+                assertEquals(1, type.getDeclaredConstructors().length, type.getName());
+                var constructor = type.getDeclaredConstructors()[0];
+                assertTrue(java.lang.reflect.Modifier.isPrivate(constructor.getModifiers()), type.getName());
+                Class<?>[] kinds = constructor.getParameterTypes();
+                if (!java.util.Arrays.stream(kinds).allMatch(Class::isPrimitive)) {
                     continue; // only numbers and booleans: every other argument can be given a valid value here
                 }
-                var constructor = type.getDeclaredConstructor(java.util.Arrays.stream(components).map(java.lang.reflect.RecordComponent::getType)
-                    .toArray(Class<?>[]::new));
+                constructor.setAccessible(true);
                 List<ApiModel.Field> fields = ApiSource.allFields(o);
+                assertEquals(fields.size(), kinds.length, type.getName());
                 for (ApiModel.Field ranged : fields) {
                     if (ranged.min == null && ranged.max == null) {
                         continue;
                     }
-                    Object[] arguments = new Object[components.length];
-                    for (int i = 0; i < components.length; i++) {
-                        String name = components[i].getName();
-                        ApiModel.Field f = fields.stream().filter(x -> x.java.equals(name)).findFirst().orElseThrow();
+                    Object[] arguments = new Object[kinds.length];
+                    for (int i = 0; i < kinds.length; i++) {
+                        ApiModel.Field f = fields.get(i);
                         double value = f == ranged ? (f.min != null ? f.min - 1 : f.max + 1) : f.min != null ? f.min : f.max != null ? f.max : 0;
-                        Class<?> kind = components[i].getType();
+                        Class<?> kind = kinds[i];
                         arguments[i] = kind == boolean.class ? (Object) false : kind == int.class ? (Object) (int) value : (Object) (float) value;
                     }
                     try {
@@ -156,8 +160,8 @@ class GeneratedApiTest {
             }
         }
         assertTrue(checked > 0);
-        assertThrows(IllegalArgumentException.class, () -> new Friction(5f), "BDS takes 0 to 0.9");
-        assertThrows(IllegalArgumentException.class, () -> new LightEmission(16), "BDS takes at most 15");
+        assertThrows(IllegalArgumentException.class, () -> Friction.of(5f), "BDS takes 0 to 0.9");
+        assertThrows(IllegalArgumentException.class, () -> LightEmission.of(16), "BDS takes at most 15");
         // and an order between two fields BDS demands ("max value cannot be lower than min value")
         assertThrows(IllegalArgumentException.class, () -> Durability.DamageChance.builder().min(50).max(10).build());
         assertEquals(10, Durability.DamageChance.builder().min(10).max(10).build().max(), "equal is in order");
@@ -201,8 +205,13 @@ class GeneratedApiTest {
         for (ApiModel.UnionType u : model.unions.values()) {
             Class<?> type = Class.forName((u.owner == null ? u.kind.pkg() + "." : u.kind.pkg() + "." + u.owner.className + "$") + u.name);
             assertTrue(type.isInterface() && type.isSealed(), u.name);
-            assertEquals(u.variants.size(), type.getPermittedSubclasses().length, u.name);
+            // the forms and the sentinel that keeps the union open
+            assertEquals(u.variants.size() + 1, type.getPermittedSubclasses().length, u.name);
             for (Class<?> variant : type.getPermittedSubclasses()) {
+                if (variant.getSimpleName().equals("Future" + u.name)) {
+                    assertFalse(java.lang.reflect.Modifier.isPublic(variant.getModifiers()), variant.getName());
+                    continue;
+                }
                 assertTrue(variant.isRecord() && variant.getRecordComponents().length == 1
                     && variant.getRecordComponents()[0].getName().equals("value"), u.name + "." + variant.getSimpleName());
                 assertTrue(u.variants.stream().anyMatch(v -> v.name.equals(variant.getSimpleName())), variant.getName());
@@ -213,9 +222,9 @@ class GeneratedApiTest {
             }
         }
         // One type for the three geometries that take uv_lock
-        assertEquals(UvLock.class, Geometry.class.getRecordComponents()[Geometry.class.getRecordComponents().length - 1].getType());
-        assertEquals(UvLock.class, ItemVisual.VisualGeometry.class.getRecordComponents()[ItemVisual.VisualGeometry.class.getRecordComponents().length - 1].getType());
-        assertEquals(UvLock.class, EmbeddedVisual.VisualGeometry.class.getRecordComponents()[EmbeddedVisual.VisualGeometry.class.getRecordComponents().length - 1].getType());
+        assertEquals(UvLock.class, Geometry.class.getMethod("uvLock").getReturnType());
+        assertEquals(UvLock.class, ItemVisual.VisualGeometry.class.getMethod("uvLock").getReturnType());
+        assertEquals(UvLock.class, EmbeddedVisual.VisualGeometry.class.getMethod("uvLock").getReturnType());
         assertEquals(3, model.unions.get("UvLock").users.size());
     }
 
@@ -251,8 +260,8 @@ class GeneratedApiTest {
         if (v instanceof Number n) {
             return n.doubleValue();
         }
-        if (v instanceof Enum<?> e) {
-            return e.getClass().getMethod("value").invoke(e);
+        if (v != null && ApiBinder.openValueClass(v.getClass())) {
+            return v.getClass().getMethod("value").invoke(v);
         }
         if (v instanceof List<?> l) {
             List<Object> out = new ArrayList<>();
@@ -266,15 +275,14 @@ class GeneratedApiTest {
             // A form of a union: its value is what the JSON has
             return normalize(v.getClass().getRecordComponents()[0].getAccessor().invoke(v));
         }
-        if (v != null && v.getClass().isRecord()) {
-            var components = v.getClass().getRecordComponents();
-            if (v.getClass().getSimpleName().equals("Vec3")) {
-                List<Object> out = new ArrayList<>();
-                for (var rc : components) {
-                    out.add(normalize(rc.getAccessor().invoke(v)));
-                }
-                return out;
+        if (v != null && v.getClass().isRecord() && v.getClass().getSimpleName().equals("Vec3")) {
+            List<Object> out = new ArrayList<>();
+            for (var rc : v.getClass().getRecordComponents()) {
+                out.add(normalize(rc.getAccessor().invoke(v)));
             }
+            return out;
+        }
+        if (v != null && ComponentIndex.JSON_KEYS.containsKey(v.getClass())) {
             java.util.Map<String, Object> out = new java.util.TreeMap<>();
             java.util.Map<String, String> keys = ComponentIndex.JSON_KEYS.get(v.getClass());
             for (var e : keys.entrySet()) {

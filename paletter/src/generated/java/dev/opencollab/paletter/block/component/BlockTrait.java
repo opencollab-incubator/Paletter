@@ -6,14 +6,17 @@ package dev.opencollab.paletter.block.component;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 /**
- * A custom block trait, mirroring Bedrock's add-on JSON: one record per component, generated
+ * A custom block trait, mirroring Bedrock's add-on JSON: one class per component, generated
  * from the component model in {@code data/model} (creator docs plus what Bedrock Dedicated Server sends). Paletter
  * compiles them to the wire format of each palette's protocol.
+ * <p>
+ * Bedrock adds components in minor releases, so a {@code switch} over it needs a {@code default}; the compiler
+ * enforces it (docs/api.md, "Evolution").
  *
  * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/blockreference/examples/blockstateandtraitlistings?view=minecraft-bedrock-stable">Microsoft Learn: block states and traits</a>
  * @since 1.0.0
  */
-public sealed interface BlockTrait permits Connection, MultiBlock, PlacementDirection, PlacementPosition {
+public sealed interface BlockTrait permits Connection, MultiBlock, PlacementDirection, PlacementPosition, FutureBlockTrait {
     /**
      * Returns the component name in add-on JSON.
      *

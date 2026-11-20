@@ -14,8 +14,8 @@ import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * The vanilla recipes of one data version, as the Bedrock Dedicated Server sends them, bundled in the library: crafting,
- * smelting and smithing recipes and the brewing stand mixes. They are generated from the BDS captures in the repository's
- * {@code data/bds}, without experiments. Items are {@link dev.opencollab.paletter.vanilla.ItemKey}s, so they resolve through
+ * smelting and smithing recipes and the brewing stand mixes. They are generated from captures of the Bedrock Dedicated
+ * Server of each version, without experiments. Items are {@link dev.opencollab.paletter.vanilla.ItemKey}s, so they resolve through
  * a palette ({@code Palette#resolve}) like any other.
  * <p>
  * There is a bundle for every data version of {@code Paletter#versions()} of the bundled data, previews included.

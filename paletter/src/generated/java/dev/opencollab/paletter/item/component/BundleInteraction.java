@@ -13,26 +13,49 @@ import org.checkerframework.checker.nullness.qual.Nullable;
  * <p>
  * Add-on JSON: {@code "minecraft:bundle_interaction"}.
  *
- * @param numViewableSlots The maximum number of slots in the bundle viewable by the plater. Can be from 1 to 64. Default is 12. Value
- *        must be &gt;= 1. Value must be &lt;= 64. Add-on JSON {@code num_viewable_slots}. Default: <code>12</code>.
- *        Range [1, 64] (BDS 1.26.63.1).
  * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/itemreference/examples/itemcomponents/minecraft_bundle_interaction?view=minecraft-bedrock-stable">Microsoft Learn: minecraft:bundle_interaction</a>
  * @since 1.0.0
  */
 @BedrockFormat("1.21.40")
-public record BundleInteraction(int numViewableSlots) implements ItemComponent {
+public final class BundleInteraction implements ItemComponent {
     /**
      * The component name in add-on JSON.
      */
     public static final String NAME = "minecraft:bundle_interaction";
 
-    /**
-     * Checks the components.
-     *
-     * @throws IllegalArgumentException if a component is out of its documented range or conflicts with another
-     */
-    public BundleInteraction {
+    private final int numViewableSlots;
+
+    private BundleInteraction(int numViewableSlots) {
         Check.range("BundleInteraction.numViewableSlots", numViewableSlots, 1.0, 64.0);
+        this.numViewableSlots = numViewableSlots;
+    }
+
+    /**
+     * The maximum number of slots in the bundle viewable by the plater. Can be from 1 to 64. Default is 12. Value
+     * must be &gt;= 1. Value must be &lt;= 64. Add-on JSON {@code num_viewable_slots}. Default: <code>12</code>.
+     * Range [1, 64] (Bedrock 26.60).
+     *
+     * @return the value
+     */
+    public int numViewableSlots() {
+        return numViewableSlots;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        return this == o || o instanceof BundleInteraction other
+                && numViewableSlots == other.numViewableSlots;
+    }
+
+    @Override
+    public int hashCode() {
+        int h = numViewableSlots;
+        return h;
+    }
+
+    @Override
+    public String toString() {
+        return "BundleInteraction[numViewableSlots=" + numViewableSlots + "]";
     }
 
     @Override

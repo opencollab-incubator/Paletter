@@ -7,6 +7,7 @@ import dev.opencollab.paletter.annotation.BedrockFormat;
 import dev.opencollab.paletter.internal.component.Check;
 import dev.opencollab.paletter.vanilla.BedrockItemType;
 import java.util.List;
+import java.util.Objects;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
@@ -18,34 +19,82 @@ import org.checkerframework.checker.nullness.qual.Nullable;
  * Add-on JSON: {@code "minecraft:destructible_by_mining"}.
  * Compiled by the hand transform {@code Transforms.destructibleByMining}.
  *
- * @param itemSpecificSpeeds Optional array of objects to describe item specific block destroy speeds, each object contains an 'item'
- *        ItemDescriptor and a 'destroy_speed' float. This array currently requires UpcomingFeatures experiment to be
- *        enabled. Add-on JSON {@code item_specific_speeds}. Optional (null: not set).
- * @param secondsToDestroy Sets the number of seconds it takes to destroy the block with base equipment. Greater numbers result in
- *        greater mining times. Add-on JSON {@code seconds_to_destroy}. Default: <code>0</code>. At least 0 (BDS
- *        1.26.63.1).
- * @param enabled The boolean form of the component (add-on JSON {@code "minecraft:destructible_by_mining": <boolean>}).
- *        Optional (null: not set).
  * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/blockreference/examples/blockcomponents/minecraftblock_destructible_by_mining?view=minecraft-bedrock-stable">Microsoft Learn: minecraft:destructible_by_mining</a>
  * @since 1.0.0
  */
 @BedrockFormat("1.21.50")
-public record DestructibleByMining(
-        @Nullable List<DestructibleByMining.ItemSpecificSpeeds> itemSpecificSpeeds,
-        float secondsToDestroy, @Nullable Boolean enabled) implements BlockComponent {
+public final class DestructibleByMining implements BlockComponent {
     /**
      * The component name in add-on JSON.
      */
     public static final String NAME = "minecraft:destructible_by_mining";
 
-    /**
-     * Checks the components and copies lists and maps, so the value is immutable.
-     *
-     * @throws IllegalArgumentException if a component is out of its documented range or conflicts with another
-     */
-    public DestructibleByMining {
+    private final @Nullable List<ItemSpecificSpeeds> itemSpecificSpeeds;
+
+    private final float secondsToDestroy;
+
+    private final @Nullable Boolean enabled;
+
+    private DestructibleByMining(@Nullable List<ItemSpecificSpeeds> itemSpecificSpeeds,
+            float secondsToDestroy, @Nullable Boolean enabled) {
         itemSpecificSpeeds = itemSpecificSpeeds == null ? null : List.copyOf(itemSpecificSpeeds);
         Check.range("DestructibleByMining.secondsToDestroy", secondsToDestroy, 0.0, null);
+        this.itemSpecificSpeeds = itemSpecificSpeeds;
+        this.secondsToDestroy = secondsToDestroy;
+        this.enabled = enabled;
+    }
+
+    /**
+     * Optional array of objects to describe item specific block destroy speeds, each object contains an 'item'
+     * ItemDescriptor and a 'destroy_speed' float. This array currently requires UpcomingFeatures experiment to be
+     * enabled. Add-on JSON {@code item_specific_speeds}. Optional (null: not set).
+     *
+     * @return the value
+     */
+    public @Nullable List<ItemSpecificSpeeds> itemSpecificSpeeds() {
+        return itemSpecificSpeeds;
+    }
+
+    /**
+     * Sets the number of seconds it takes to destroy the block with base equipment. Greater numbers result in
+     * greater mining times. Add-on JSON {@code seconds_to_destroy}. Default: <code>0</code>. At least 0 (Bedrock
+     * 26.60).
+     *
+     * @return the value
+     */
+    public float secondsToDestroy() {
+        return secondsToDestroy;
+    }
+
+    /**
+     * The boolean form of the component (add-on JSON {@code "minecraft:destructible_by_mining": <boolean>}).
+     * Optional (null: not set).
+     *
+     * @return the value
+     */
+    public @Nullable Boolean enabled() {
+        return enabled;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        return this == o || o instanceof DestructibleByMining other
+                && Objects.equals(itemSpecificSpeeds, other.itemSpecificSpeeds)
+                && Float.compare(secondsToDestroy, other.secondsToDestroy) == 0
+                && Objects.equals(enabled, other.enabled);
+    }
+
+    @Override
+    public int hashCode() {
+        int h = Objects.hashCode(itemSpecificSpeeds);
+        h = 31 * h + Float.hashCode(secondsToDestroy);
+        h = 31 * h + Objects.hashCode(enabled);
+        return h;
+    }
+
+    @Override
+    public String toString() {
+        return "DestructibleByMining[itemSpecificSpeeds=" + itemSpecificSpeeds + ", secondsToDestroy=" + secondsToDestroy + ", enabled=" + enabled + "]";
     }
 
     @Override
@@ -160,10 +209,54 @@ public record DestructibleByMining(
      * ItemDescriptor and a 'destroy_speed' float. This array currently requires UpcomingFeatures experiment to be
      * enabled.
      *
-     * @param destroySpeed Required. A destroy speed applied while using the defined 'item'. Add-on JSON {@code destroy_speed}. Required.
-     * @param item Required. A filter for the item used while mining. Add-on JSON {@code item}. Optional (null: not set).
      */
-    public record ItemSpecificSpeeds(float destroySpeed, @Nullable String item) {
+    public static final class ItemSpecificSpeeds {
+        private final float destroySpeed;
+
+        private final @Nullable String item;
+
+        private ItemSpecificSpeeds(float destroySpeed, @Nullable String item) {
+            this.destroySpeed = destroySpeed;
+            this.item = item;
+        }
+
+        /**
+         * Required. A destroy speed applied while using the defined 'item'. Add-on JSON {@code destroy_speed}. Required.
+         *
+         * @return the value
+         */
+        public float destroySpeed() {
+            return destroySpeed;
+        }
+
+        /**
+         * Required. A filter for the item used while mining. Add-on JSON {@code item}. Optional (null: not set).
+         *
+         * @return the value
+         */
+        public @Nullable String item() {
+            return item;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            return this == o || o instanceof ItemSpecificSpeeds other
+                    && Float.compare(destroySpeed, other.destroySpeed) == 0
+                    && Objects.equals(item, other.item);
+        }
+
+        @Override
+        public int hashCode() {
+            int h = Float.hashCode(destroySpeed);
+            h = 31 * h + Objects.hashCode(item);
+            return h;
+        }
+
+        @Override
+        public String toString() {
+            return "ItemSpecificSpeeds[destroySpeed=" + destroySpeed + ", item=" + item + "]";
+        }
+
         /**
          * Creates a builder with every optional field at its default; required fields must be set before
          * {@code build()}.

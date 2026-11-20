@@ -4,6 +4,9 @@
 package dev.opencollab.paletter.block.component;
 
 import dev.opencollab.paletter.annotation.BedrockFormat;
+import dev.opencollab.paletter.internal.component.Check;
+import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
@@ -13,30 +16,79 @@ import org.checkerframework.checker.nullness.qual.Nullable;
  * <p>
  * Add-on JSON: {@code "minecraft:destruction_particles"}.
  *
- * @param particleCount Sets number of particles to spawn on block destruction. Value must be &lt;= 255. Add-on JSON {@code
- *        particle_count}. Default: <code>100</code>.
- * @param texture The texture name used for the particle. Add-on JSON {@code texture}. Optional (null: not set).
- * @param tintMethod Tint multiplied to the color. Tint method logic varies, but often refers to the "rain" and "temperature" of
- *        the biome the block is placed in to compute the tint. Add-on JSON {@code tint_method}. Default:
- *        <code>"none"</code>.
  * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/blockreference/examples/blockcomponents/minecraftblock_destruction_particles?view=minecraft-bedrock-stable">Microsoft Learn: minecraft:destruction_particles</a>
  * @since 1.0.0
  */
 @BedrockFormat("1.21.80")
-public record DestructionParticles(int particleCount, @Nullable String texture,
-        DestructionParticles. @NonNull TintMethod tintMethod) implements BlockComponent {
+public final class DestructionParticles implements BlockComponent {
     /**
      * The component name in add-on JSON.
      */
     public static final String NAME = "minecraft:destruction_particles";
 
-    /**
-     * Checks the components.
-     *
-     * @throws NullPointerException if a required component is null
-     */
-    public DestructionParticles {
+    private final int particleCount;
+
+    private final @Nullable String texture;
+
+    private final @NonNull TintMethod tintMethod;
+
+    private DestructionParticles(int particleCount, @Nullable String texture,
+            @NonNull TintMethod tintMethod) {
         Objects.requireNonNull(tintMethod, "DestructionParticles.tintMethod");
+        this.particleCount = particleCount;
+        this.texture = texture;
+        this.tintMethod = tintMethod;
+    }
+
+    /**
+     * Sets number of particles to spawn on block destruction. Value must be &lt;= 255. Add-on JSON {@code
+     * particle_count}. Default: <code>100</code>.
+     *
+     * @return the value
+     */
+    public int particleCount() {
+        return particleCount;
+    }
+
+    /**
+     * The texture name used for the particle. Add-on JSON {@code texture}. Optional (null: not set).
+     *
+     * @return the value
+     */
+    public @Nullable String texture() {
+        return texture;
+    }
+
+    /**
+     * Tint multiplied to the color. Tint method logic varies, but often refers to the "rain" and "temperature" of
+     * the biome the block is placed in to compute the tint. Add-on JSON {@code tint_method}. Default:
+     * <code>"none"</code>.
+     *
+     * @return the value
+     */
+    public @NonNull TintMethod tintMethod() {
+        return tintMethod;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        return this == o || o instanceof DestructionParticles other
+                && particleCount == other.particleCount
+                && Objects.equals(texture, other.texture)
+                && Objects.equals(tintMethod, other.tintMethod);
+    }
+
+    @Override
+    public int hashCode() {
+        int h = particleCount;
+        h = 31 * h + Objects.hashCode(texture);
+        h = 31 * h + Objects.hashCode(tintMethod);
+        return h;
+    }
+
+    @Override
+    public String toString() {
+        return "DestructionParticles[particleCount=" + particleCount + ", texture=" + texture + ", tintMethod=" + tintMethod + "]";
     }
 
     @Override
@@ -125,48 +177,74 @@ public record DestructionParticles(int particleCount, @Nullable String texture,
     }
 
     /**
-     * The documented values; {@link #value()} is the add-on JSON string.
+     * A value of an add-on JSON string: a constant per documented value, {@link #of} for any other.
+     * {@link #value()} is the add-on JSON string. Not an enum: Bedrock adds values, so a {@code switch} over
+     * {@link #value()} needs a {@code default}.
      */
-    public enum TintMethod {
+    public static final class TintMethod {
         /**
          * {@code none}
          */
-        NONE("none"),
+        public static final TintMethod NONE = new TintMethod("none");
 
         /**
          * {@code default_foliage}
          */
-        DEFAULT_FOLIAGE("default_foliage"),
+        public static final TintMethod DEFAULT_FOLIAGE = new TintMethod("default_foliage");
 
         /**
          * {@code birch_foliage}
          */
-        BIRCH_FOLIAGE("birch_foliage"),
+        public static final TintMethod BIRCH_FOLIAGE = new TintMethod("birch_foliage");
 
         /**
          * {@code evergreen_foliage}
          */
-        EVERGREEN_FOLIAGE("evergreen_foliage"),
+        public static final TintMethod EVERGREEN_FOLIAGE = new TintMethod("evergreen_foliage");
 
         /**
          * {@code dry_foliage}
          */
-        DRY_FOLIAGE("dry_foliage"),
+        public static final TintMethod DRY_FOLIAGE = new TintMethod("dry_foliage");
 
         /**
          * {@code grass}
          */
-        GRASS("grass"),
+        public static final TintMethod GRASS = new TintMethod("grass");
 
         /**
          * {@code water}
          */
-        WATER("water");
+        public static final TintMethod WATER = new TintMethod("water");
+
+        private static final List<TintMethod> KNOWN = List.of(NONE, DEFAULT_FOLIAGE, BIRCH_FOLIAGE, EVERGREEN_FOLIAGE, DRY_FOLIAGE, GRASS, WATER);
+
+        private static final Map<String, TintMethod> BY_VALUE = Check.index(KNOWN, TintMethod::value);
 
         private final String value;
 
-        TintMethod(String value) {
+        private TintMethod(String value) {
             this.value = value;
+        }
+
+        /**
+         * Returns the value of an add-on JSON string: the constant of a documented value, else a new value.
+         *
+         * @param value the value in add-on JSON
+         * @return the constant of the value, or a value Paletter does not know
+         */
+        public static @NonNull TintMethod of(@NonNull String value) {
+            TintMethod known = BY_VALUE.get(Objects.requireNonNull(value, "TintMethod.value"));
+            return known != null ? known : new TintMethod(value);
+        }
+
+        /**
+         * Returns the documented values, the constants of this class.
+         *
+         * @return the constants, in the order of the documentation
+         */
+        public static @NonNull List<TintMethod> known() {
+            return KNOWN;
         }
 
         /**
@@ -179,19 +257,27 @@ public record DestructionParticles(int particleCount, @Nullable String texture,
         }
 
         /**
-         * Finds the constant of an add-on JSON value.
+         * Returns whether the value is documented, one of the constants.
          *
-         * @param value the value in add-on JSON
-         * @return the constant of the value
-         * @throws IllegalArgumentException if the value is not documented
+         * @return whether this is one of {@link #known()}
          */
-        public static @NonNull TintMethod fromValue(@NonNull String value) {
-            for (TintMethod constant : values()) {
-                if (constant.value.equals(value)) {
-                    return constant;
-                }
-            }
-            throw new IllegalArgumentException("Not a TintMethod: " + value);
+        public boolean isKnown() {
+            return BY_VALUE.get(value) == this;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            return this == o || o instanceof TintMethod other && value.equals(other.value);
+        }
+
+        @Override
+        public int hashCode() {
+            return value.hashCode();
+        }
+
+        @Override
+        public String toString() {
+            return value;
         }
     }
 }

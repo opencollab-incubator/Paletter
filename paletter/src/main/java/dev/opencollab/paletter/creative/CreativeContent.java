@@ -65,6 +65,7 @@ public final class CreativeContent {
                         loose.clear();
                         compiler.emit(category, group.name(), group.icon(), group.stacks());
                     }
+                    default -> throw new IllegalStateException("not a creative node: " + node);
                 }
             }
             compiler.emit(category, "", null, loose);

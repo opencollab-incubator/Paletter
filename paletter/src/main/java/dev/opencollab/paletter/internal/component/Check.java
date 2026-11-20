@@ -6,12 +6,15 @@ import org.cloudburstmc.nbt.NbtMap;
 import dev.opencollab.paletter.vanilla.BedrockBlockState;
 
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.function.Function;
 
 /**
- * Validation the generated component records run in their constructors.
+ * Validation the generated component classes run in their constructors.
  */
 public final class Check {
     private Check() {
@@ -76,6 +79,19 @@ public final class Check {
         Map<String, V> copy = new LinkedHashMap<>();
         map.forEach((key, value) -> copy.put(Objects.requireNonNull(key, field), Objects.requireNonNull(value, field)));
         return Collections.unmodifiableMap(copy);
+    }
+
+    /**
+     * The constants of a generated open value class by their add-on JSON value, for its {@code of}.
+     */
+    public static <V> @NonNull Map<String, V> index(@NonNull List<V> constants, @NonNull Function<V, String> value) {
+        Map<String, V> index = new HashMap<>();
+        for (V constant : constants) {
+            if (index.put(value.apply(constant), constant) != null) {
+                throw new IllegalStateException("two constants of the value " + value.apply(constant));
+            }
+        }
+        return Collections.unmodifiableMap(index);
     }
 
     /**

@@ -39,6 +39,7 @@ public final class ItemWire {
             case Quiet c -> { } // server only: BDS sends nothing to clients
             case Widget c -> widget(c, ctx, out);
             case WireOnlyItemComponent c -> WireOnlyWire.write(c, ctx, out);
+            default -> throw new IllegalArgumentException(component.toString());
         }
     }
 

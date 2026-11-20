@@ -13,13 +13,14 @@ import org.checkerframework.checker.nullness.qual.NonNull;
  *     <li>{@link Fixed}: a fixed amount of durability</li>
  * </ul>
  * <p>
- * Switch over it without a default: the records below are all its forms.
+ * Bedrock may add forms, so a {@code switch} over it needs a {@code default}; the compiler enforces it
+ * (docs/api.md, "Evolution").
  * <p>
  * Used by: {@code item:minecraft:repairable:repair_items[].repair_amount}.
  *
  * @since 1.0.0
  */
-public sealed interface RepairAmount permits RepairAmount.Expression, RepairAmount.Fixed {
+public sealed interface RepairAmount permits RepairAmount.Expression, RepairAmount.Fixed, FutureRepairAmount {
     /**
      * Creates the form that is a Molang expression for the amount.
      *

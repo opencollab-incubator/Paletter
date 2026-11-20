@@ -13,25 +13,48 @@ import org.checkerframework.checker.nullness.qual.Nullable;
  * <p>
  * Add-on JSON: {@code "minecraft:storage_weight_modifier"}.
  *
- * @param weightInStorageItem The weight of this item when inside another Storage Item. Default is 4. 0 means item is not allowed in another
- *        Storage Item. Add-on JSON {@code weight_in_storage_item}. Default: <code>4</code>. At least 0 (BDS 1.26.63.1).
  * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/itemreference/examples/itemcomponents/minecraft_storage_weight_modifier?view=minecraft-bedrock-stable">Microsoft Learn: minecraft:storage_weight_modifier</a>
  * @since 1.0.0
  */
 @BedrockFormat("1.21.110")
-public record StorageWeightModifier(int weightInStorageItem) implements ItemComponent {
+public final class StorageWeightModifier implements ItemComponent {
     /**
      * The component name in add-on JSON.
      */
     public static final String NAME = "minecraft:storage_weight_modifier";
 
-    /**
-     * Checks the components.
-     *
-     * @throws IllegalArgumentException if a component is out of its documented range or conflicts with another
-     */
-    public StorageWeightModifier {
+    private final int weightInStorageItem;
+
+    private StorageWeightModifier(int weightInStorageItem) {
         Check.range("StorageWeightModifier.weightInStorageItem", weightInStorageItem, 0.0, null);
+        this.weightInStorageItem = weightInStorageItem;
+    }
+
+    /**
+     * The weight of this item when inside another Storage Item. Default is 4. 0 means item is not allowed in another
+     * Storage Item. Add-on JSON {@code weight_in_storage_item}. Default: <code>4</code>. At least 0 (Bedrock 26.60).
+     *
+     * @return the value
+     */
+    public int weightInStorageItem() {
+        return weightInStorageItem;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        return this == o || o instanceof StorageWeightModifier other
+                && weightInStorageItem == other.weightInStorageItem;
+    }
+
+    @Override
+    public int hashCode() {
+        int h = weightInStorageItem;
+        return h;
+    }
+
+    @Override
+    public String toString() {
+        return "StorageWeightModifier[weightInStorageItem=" + weightInStorageItem + "]";
     }
 
     @Override

@@ -5,6 +5,7 @@ package dev.opencollab.paletter.item.component;
 
 import dev.opencollab.paletter.annotation.BedrockFormat;
 import dev.opencollab.paletter.internal.component.Check;
+import java.util.Objects;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
@@ -13,27 +14,50 @@ import org.checkerframework.checker.nullness.qual.Nullable;
  * <p>
  * Add-on JSON: {@code "minecraft:fuel"}.
  *
- * @param duration How long in seconds will this fuel cook items for. Value must be &gt;= 0.05. Add-on JSON {@code duration}.
- *        Optional (null: not set). At least 0.05 (BDS 1.26.63.1).
  * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/itemreference/examples/itemcomponents/minecraft_fuel?view=minecraft-bedrock-stable">Microsoft Learn: minecraft:fuel</a>
  * @since 1.0.0
  */
 @BedrockFormat("1.20.0")
-public record Fuel(@Nullable Float duration) implements ItemComponent {
+public final class Fuel implements ItemComponent {
     /**
      * The component name in add-on JSON.
      */
     public static final String NAME = "minecraft:fuel";
 
-    /**
-     * Checks the components.
-     *
-     * @throws IllegalArgumentException if a component is out of its documented range or conflicts with another
-     */
-    public Fuel {
+    private final @Nullable Float duration;
+
+    private Fuel(@Nullable Float duration) {
         if (duration != null) {
             Check.range("Fuel.duration", duration, 0.05, null);
         }
+        this.duration = duration;
+    }
+
+    /**
+     * How long in seconds will this fuel cook items for. Value must be &gt;= 0.05. Add-on JSON {@code duration}.
+     * Optional (null: not set). At least 0.05 (Bedrock 26.60).
+     *
+     * @return the value
+     */
+    public @Nullable Float duration() {
+        return duration;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        return this == o || o instanceof Fuel other
+                && Objects.equals(duration, other.duration);
+    }
+
+    @Override
+    public int hashCode() {
+        int h = Objects.hashCode(duration);
+        return h;
+    }
+
+    @Override
+    public String toString() {
+        return "Fuel[duration=" + duration + "]";
     }
 
     @Override

@@ -22,26 +22,48 @@ import org.checkerframework.checker.nullness.qual.Nullable;
  * <p>
  * Add-on JSON: {@code "minecraft:placement_filter"}.
  *
- * @param conditions List of conditions where the block can be placed/survive Value must have at most 64 items. Add-on JSON {@code
- *        conditions}. Default: <code>[]</code>.
  * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/blockreference/examples/blockcomponents/minecraftblock_placement_filter?view=minecraft-bedrock-stable">Microsoft Learn: minecraft:placement_filter</a>
  * @since 1.0.0
  */
 @BedrockFormat("1.19.60")
-public record PlacementFilter(
-        @NonNull List<PlacementFilter.Conditions> conditions) implements BlockComponent {
+public final class PlacementFilter implements BlockComponent {
     /**
      * The component name in add-on JSON.
      */
     public static final String NAME = "minecraft:placement_filter";
 
-    /**
-     * Checks the components and copies lists and maps, so the value is immutable.
-     *
-     * @throws NullPointerException if a required component is null
-     */
-    public PlacementFilter {
+    private final @NonNull List<Conditions> conditions;
+
+    private PlacementFilter(@NonNull List<Conditions> conditions) {
         conditions = List.copyOf(Objects.requireNonNull(conditions, "PlacementFilter.conditions"));
+        this.conditions = conditions;
+    }
+
+    /**
+     * List of conditions where the block can be placed/survive Value must have at most 64 items. Add-on JSON {@code
+     * conditions}. Default: <code>[]</code>.
+     *
+     * @return the value
+     */
+    public @NonNull List<Conditions> conditions() {
+        return conditions;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        return this == o || o instanceof PlacementFilter other
+                && Objects.equals(conditions, other.conditions);
+    }
+
+    @Override
+    public int hashCode() {
+        int h = Objects.hashCode(conditions);
+        return h;
+    }
+
+    @Override
+    public String toString() {
+        return "PlacementFilter[conditions=" + conditions + "]";
     }
 
     @Override
@@ -115,22 +137,70 @@ public record PlacementFilter(
      * List of blocks that this block can be placed against in the "allowed_faces" direction. Each block in this list
      * can either be specified as a String (block name) or as a BlockDescriptor. Value must have at most 64 items.
      *
-     * @param name Add-on JSON {@code name}. Optional (null: not set).
-     * @param states Add-on JSON {@code states}. Default: <code>&#123;&#125;</code>. Compiled by the hand transform {@code
-     *        Transforms.blockDescriptorStates}.
-     * @param tags Add-on JSON {@code tags}. Optional (null: not set).
      */
-    public record BlockFilter(@Nullable String name, @NonNull Map<String, Object> states,
-            @Nullable String tags) {
-        /**
-         * Checks the components and copies lists and maps, so the value is immutable.
-         *
-         * @throws NullPointerException if a required component is null
-         * @throws IllegalArgumentException if a component is out of its documented range or conflicts with another
-         */
-        public BlockFilter {
+    public static final class BlockFilter {
+        private final @Nullable String name;
+
+        private final @NonNull Map<String, Object> states;
+
+        private final @Nullable String tags;
+
+        private BlockFilter(@Nullable String name, @NonNull Map<String, Object> states,
+                @Nullable String tags) {
             states = Check.copy(states, "PlacementFilter.BlockFilter.states");
             Check.stateValues(states, "PlacementFilter.BlockFilter.states");
+            this.name = name;
+            this.states = states;
+            this.tags = tags;
+        }
+
+        /**
+         * Add-on JSON {@code name}. Optional (null: not set).
+         *
+         * @return the value
+         */
+        public @Nullable String name() {
+            return name;
+        }
+
+        /**
+         * Add-on JSON {@code states}. Default: <code>&#123;&#125;</code>. Compiled by the hand transform {@code
+         * Transforms.blockDescriptorStates}.
+         *
+         * @return the value
+         */
+        public @NonNull Map<String, Object> states() {
+            return states;
+        }
+
+        /**
+         * Add-on JSON {@code tags}. Optional (null: not set).
+         *
+         * @return the value
+         */
+        public @Nullable String tags() {
+            return tags;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            return this == o || o instanceof BlockFilter other
+                    && Objects.equals(name, other.name)
+                    && Objects.equals(states, other.states)
+                    && Objects.equals(tags, other.tags);
+        }
+
+        @Override
+        public int hashCode() {
+            int h = Objects.hashCode(name);
+            h = 31 * h + Objects.hashCode(states);
+            h = 31 * h + Objects.hashCode(tags);
+            return h;
+        }
+
+        @Override
+        public String toString() {
+            return "BlockFilter[name=" + name + ", states=" + states + ", tags=" + tags + "]";
         }
 
         /**
@@ -247,22 +317,58 @@ public record PlacementFilter(
     /**
      * List of conditions where the block can be placed/survive Value must have at most 64 items.
      *
-     * @param allowedFaces List of any of the following strings describing which face(s) this block can be placed on Add-on JSON {@code
-     *        allowed_faces}. Default: <code>["down","up","north","south","west","east"]</code>.
-     * @param blockFilter List of blocks that this block can be placed against in the "allowed_faces" direction. Each block in this list
-     *        can either be specified as a String (block name) or as a BlockDescriptor. Value must have at most 64 items.
-     *        Add-on JSON {@code block_filter}. Default: <code>[]</code>.
      */
-    public record Conditions(@NonNull List<String> allowedFaces,
-            @NonNull List<BlockFilter> blockFilter) {
-        /**
-         * Checks the components and copies lists and maps, so the value is immutable.
-         *
-         * @throws NullPointerException if a required component is null
-         */
-        public Conditions {
+    public static final class Conditions {
+        private final @NonNull List<String> allowedFaces;
+
+        private final @NonNull List<BlockFilter> blockFilter;
+
+        private Conditions(@NonNull List<String> allowedFaces,
+                @NonNull List<BlockFilter> blockFilter) {
             allowedFaces = List.copyOf(Objects.requireNonNull(allowedFaces, "PlacementFilter.Conditions.allowedFaces"));
             blockFilter = List.copyOf(Objects.requireNonNull(blockFilter, "PlacementFilter.Conditions.blockFilter"));
+            this.allowedFaces = allowedFaces;
+            this.blockFilter = blockFilter;
+        }
+
+        /**
+         * List of any of the following strings describing which face(s) this block can be placed on Add-on JSON {@code
+         * allowed_faces}. Default: <code>["down","up","north","south","west","east"]</code>.
+         *
+         * @return the value
+         */
+        public @NonNull List<String> allowedFaces() {
+            return allowedFaces;
+        }
+
+        /**
+         * List of blocks that this block can be placed against in the "allowed_faces" direction. Each block in this list
+         * can either be specified as a String (block name) or as a BlockDescriptor. Value must have at most 64 items.
+         * Add-on JSON {@code block_filter}. Default: <code>[]</code>.
+         *
+         * @return the value
+         */
+        public @NonNull List<BlockFilter> blockFilter() {
+            return blockFilter;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            return this == o || o instanceof Conditions other
+                    && Objects.equals(allowedFaces, other.allowedFaces)
+                    && Objects.equals(blockFilter, other.blockFilter);
+        }
+
+        @Override
+        public int hashCode() {
+            int h = Objects.hashCode(allowedFaces);
+            h = 31 * h + Objects.hashCode(blockFilter);
+            return h;
+        }
+
+        @Override
+        public String toString() {
+            return "Conditions[allowedFaces=" + allowedFaces + ", blockFilter=" + blockFilter + "]";
         }
 
         /**

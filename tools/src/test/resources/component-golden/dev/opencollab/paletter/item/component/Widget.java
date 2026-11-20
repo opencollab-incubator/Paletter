@@ -18,51 +18,53 @@ import org.checkerframework.checker.nullness.qual.Nullable;
  * <p>
  * Add-on JSON: {@code "test:widget"}.
  *
- * @param count How many. Add-on JSON {@code count}. Default: <code>1</code>. Range [1, 64] (BDS 9.9.9).
- * @param label The label. Add-on JSON {@code label}. Required.
- * @param mode The mode. Add-on JSON {@code mode}. Default: <code>"fast"</code>.
- * @param speed The docs say 2; BDS sends 1.5 when omitted. Add-on JSON {@code speed}. Optional (null: not set). The docs give
- *        the default <code>2</code>, but BDS sends test:widget.ticks = 30 (int) when it is omitted; so it is unset by
- *        default, and the encoder sends what BDS sends then.
- * @param nested An object. Add-on JSON {@code nested}. Optional (null: not set).
- * @param tags Tags. Add-on JSON {@code tags}. Default: <code>[]</code>.
- * @param entries Entries. Add-on JSON {@code entries}. Optional (null: not set).
- * @param colors Colors by part. Add-on JSON {@code colors}. Optional (null: not set). Compiled by the hand transform {@code
- *        Transforms.testMap}.
- * @param shape A shape or its id. Add-on JSON {@code shape}. Optional (null: not set).
- * @param offset Add-on JSON {@code offset}. Default: <code>[0,1,0]</code>.
- * @param rarity How rare. Add-on JSON {@code rarity}. Optional (null: not set). Documented values: {@code common}, {@code
- *        rare}; BDS takes other strings too.
- * @param stripes Stripes on or off, or the striped parts. Add-on JSON {@code stripes}. Optional (null: not set). Compiled by
- *        the hand transform {@code Transforms.testMap}.
- * @param outline The outline on or off, or the outlined parts. Add-on JSON {@code outline}. Optional (null: not set). Compiled
- *        by the hand transform {@code Transforms.testMap}.
- * @param fuel The item it burns. Add-on JSON {@code fuel}. Optional (null: not set).
- * @param reach The docs require it; BDS takes it omitted. Add-on JSON {@code reach}. Default: <code>3</code>.
- * @param moreNested Nested things under any other key. Default: <code>&#123;&#125;</code>. A key that has a field of its own
- *        ({@code nested}) is refused.
  * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/itemreference/examples/itemcomponents/test_widget?view=minecraft-bedrock-stable">Microsoft Learn: test:widget</a>
  * @since 1.0.0
  */
 @BedrockFormat("1.20.0")
-public record Widget(int count, @NonNull String label, Widget. @NonNull Mode mode,
-        @Nullable Float speed, Widget. @Nullable NestedThing nested, @NonNull List<String> tags,
-        @Nullable List<Widget.Entry> entries, @Nullable Map<String, String> colors,
-        Widget. @Nullable Shape shape, Widget. @NonNull Vec3 offset, @Nullable String rarity,
-        @Nullable Stripes stripes, @Nullable Stripes outline, @Nullable String fuel, float reach,
-        @NonNull Map<String, Widget.NestedThing> moreNested) implements ItemComponent {
+public final class Widget implements ItemComponent {
     /**
      * The component name in add-on JSON.
      */
     public static final String NAME = "test:widget";
 
-    /**
-     * Checks the components and copies lists and maps, so the value is immutable.
-     *
-     * @throws NullPointerException if a required component is null
-     * @throws IllegalArgumentException if a component is out of its documented range or conflicts with another
-     */
-    public Widget {
+    private final int count;
+
+    private final @NonNull String label;
+
+    private final @NonNull Mode mode;
+
+    private final @Nullable Float speed;
+
+    private final @Nullable NestedThing nested;
+
+    private final @NonNull List<String> tags;
+
+    private final @Nullable List<Entry> entries;
+
+    private final @Nullable Map<String, String> colors;
+
+    private final @Nullable Shape shape;
+
+    private final @NonNull Vec3 offset;
+
+    private final @Nullable String rarity;
+
+    private final @Nullable Stripes stripes;
+
+    private final @Nullable Stripes outline;
+
+    private final @Nullable String fuel;
+
+    private final float reach;
+
+    private final @NonNull Map<String, NestedThing> moreNested;
+
+    private Widget(int count, @NonNull String label, @NonNull Mode mode, @Nullable Float speed,
+            @Nullable NestedThing nested, @NonNull List<String> tags, @Nullable List<Entry> entries,
+            @Nullable Map<String, String> colors, @Nullable Shape shape, @NonNull Vec3 offset,
+            @Nullable String rarity, @Nullable Stripes stripes, @Nullable Stripes outline,
+            @Nullable String fuel, float reach, @NonNull Map<String, NestedThing> moreNested) {
         Check.range("Widget.count", count, 1.0, 64.0);
         Objects.requireNonNull(label, "Widget.label");
         Objects.requireNonNull(mode, "Widget.mode");
@@ -76,6 +78,220 @@ public record Widget(int count, @NonNull String label, Widget. @NonNull Mode mod
                 throw new IllegalArgumentException("Widget.moreNested has the key " + key + ", which has a field of its own");
             }
         }
+        this.count = count;
+        this.label = label;
+        this.mode = mode;
+        this.speed = speed;
+        this.nested = nested;
+        this.tags = tags;
+        this.entries = entries;
+        this.colors = colors;
+        this.shape = shape;
+        this.offset = offset;
+        this.rarity = rarity;
+        this.stripes = stripes;
+        this.outline = outline;
+        this.fuel = fuel;
+        this.reach = reach;
+        this.moreNested = moreNested;
+    }
+
+    /**
+     * How many. Add-on JSON {@code count}. Default: <code>1</code>. Range [1, 64] (Bedrock 9.9).
+     *
+     * @return the value
+     */
+    public int count() {
+        return count;
+    }
+
+    /**
+     * The label. Add-on JSON {@code label}. Required.
+     *
+     * @return the value
+     */
+    public @NonNull String label() {
+        return label;
+    }
+
+    /**
+     * The mode. Add-on JSON {@code mode}. Default: <code>"fast"</code>.
+     *
+     * @return the value
+     */
+    public @NonNull Mode mode() {
+        return mode;
+    }
+
+    /**
+     * The docs say 2; BDS sends 1.5 when omitted. Add-on JSON {@code speed}. Optional (null: not set). The docs give
+     * the default <code>2</code>, but BDS sends test:widget.ticks = 30 (int) when it is omitted; so it is unset by
+     * default, and the encoder sends what BDS sends then.
+     *
+     * @return the value
+     */
+    public @Nullable Float speed() {
+        return speed;
+    }
+
+    /**
+     * An object. Add-on JSON {@code nested}. Optional (null: not set).
+     *
+     * @return the value
+     */
+    public @Nullable NestedThing nested() {
+        return nested;
+    }
+
+    /**
+     * Tags. Add-on JSON {@code tags}. Default: <code>[]</code>.
+     *
+     * @return the value
+     */
+    public @NonNull List<String> tags() {
+        return tags;
+    }
+
+    /**
+     * Entries. Add-on JSON {@code entries}. Optional (null: not set).
+     *
+     * @return the value
+     */
+    public @Nullable List<Entry> entries() {
+        return entries;
+    }
+
+    /**
+     * Colors by part. Add-on JSON {@code colors}. Optional (null: not set). Compiled by the hand transform {@code
+     * Transforms.testMap}.
+     *
+     * @return the value
+     */
+    public @Nullable Map<String, String> colors() {
+        return colors;
+    }
+
+    /**
+     * A shape or its id. Add-on JSON {@code shape}. Optional (null: not set).
+     *
+     * @return the value
+     */
+    public @Nullable Shape shape() {
+        return shape;
+    }
+
+    /**
+     * Add-on JSON {@code offset}. Default: <code>[0,1,0]</code>.
+     *
+     * @return the value
+     */
+    public @NonNull Vec3 offset() {
+        return offset;
+    }
+
+    /**
+     * How rare. Add-on JSON {@code rarity}. Optional (null: not set). Documented values: {@code common}, {@code
+     * rare}; BDS takes other strings too.
+     *
+     * @return the value
+     */
+    public @Nullable String rarity() {
+        return rarity;
+    }
+
+    /**
+     * Stripes on or off, or the striped parts. Add-on JSON {@code stripes}. Optional (null: not set). Compiled by
+     * the hand transform {@code Transforms.testMap}.
+     *
+     * @return the value
+     */
+    public @Nullable Stripes stripes() {
+        return stripes;
+    }
+
+    /**
+     * The outline on or off, or the outlined parts. Add-on JSON {@code outline}. Optional (null: not set). Compiled
+     * by the hand transform {@code Transforms.testMap}.
+     *
+     * @return the value
+     */
+    public @Nullable Stripes outline() {
+        return outline;
+    }
+
+    /**
+     * The item it burns. Add-on JSON {@code fuel}. Optional (null: not set).
+     *
+     * @return the value
+     */
+    public @Nullable String fuel() {
+        return fuel;
+    }
+
+    /**
+     * The docs require it; BDS takes it omitted. Add-on JSON {@code reach}. Default: <code>3</code>.
+     *
+     * @return the value
+     */
+    public float reach() {
+        return reach;
+    }
+
+    /**
+     * Nested things under any other key. Default: <code>&#123;&#125;</code>. A key that has a field of its own
+     * ({@code nested}) is refused.
+     *
+     * @return the value
+     */
+    public @NonNull Map<String, NestedThing> moreNested() {
+        return moreNested;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        return this == o || o instanceof Widget other
+                && count == other.count
+                && Objects.equals(label, other.label)
+                && Objects.equals(mode, other.mode)
+                && Objects.equals(speed, other.speed)
+                && Objects.equals(nested, other.nested)
+                && Objects.equals(tags, other.tags)
+                && Objects.equals(entries, other.entries)
+                && Objects.equals(colors, other.colors)
+                && Objects.equals(shape, other.shape)
+                && Objects.equals(offset, other.offset)
+                && Objects.equals(rarity, other.rarity)
+                && Objects.equals(stripes, other.stripes)
+                && Objects.equals(outline, other.outline)
+                && Objects.equals(fuel, other.fuel)
+                && Float.compare(reach, other.reach) == 0
+                && Objects.equals(moreNested, other.moreNested);
+    }
+
+    @Override
+    public int hashCode() {
+        int h = count;
+        h = 31 * h + Objects.hashCode(label);
+        h = 31 * h + Objects.hashCode(mode);
+        h = 31 * h + Objects.hashCode(speed);
+        h = 31 * h + Objects.hashCode(nested);
+        h = 31 * h + Objects.hashCode(tags);
+        h = 31 * h + Objects.hashCode(entries);
+        h = 31 * h + Objects.hashCode(colors);
+        h = 31 * h + Objects.hashCode(shape);
+        h = 31 * h + Objects.hashCode(offset);
+        h = 31 * h + Objects.hashCode(rarity);
+        h = 31 * h + Objects.hashCode(stripes);
+        h = 31 * h + Objects.hashCode(outline);
+        h = 31 * h + Objects.hashCode(fuel);
+        h = 31 * h + Float.hashCode(reach);
+        h = 31 * h + Objects.hashCode(moreNested);
+        return h;
+    }
+
+    @Override
+    public String toString() {
+        return "Widget[count=" + count + ", label=" + label + ", mode=" + mode + ", speed=" + speed + ", nested=" + nested + ", tags=" + tags + ", entries=" + entries + ", colors=" + colors + ", shape=" + shape + ", offset=" + offset + ", rarity=" + rarity + ", stripes=" + stripes + ", outline=" + outline + ", fuel=" + fuel + ", reach=" + reach + ", moreNested=" + moreNested + "]";
     }
 
     @Override
@@ -476,10 +692,54 @@ public record Widget(int count, @NonNull String label, Widget. @NonNull Mode mod
     /**
      * An object.
      *
-     * @param x Add-on JSON {@code x}. Default: <code>0</code>.
-     * @param flag Add-on JSON {@code flag}. Default: <code>false</code>.
      */
-    public record NestedThing(float x, boolean flag) {
+    public static final class NestedThing {
+        private final float x;
+
+        private final boolean flag;
+
+        private NestedThing(float x, boolean flag) {
+            this.x = x;
+            this.flag = flag;
+        }
+
+        /**
+         * Add-on JSON {@code x}. Default: <code>0</code>.
+         *
+         * @return the value
+         */
+        public float x() {
+            return x;
+        }
+
+        /**
+         * Add-on JSON {@code flag}. Default: <code>false</code>.
+         *
+         * @return the value
+         */
+        public boolean flag() {
+            return flag;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            return this == o || o instanceof NestedThing other
+                    && Float.compare(x, other.x) == 0
+                    && flag == other.flag;
+        }
+
+        @Override
+        public int hashCode() {
+            int h = Float.hashCode(x);
+            h = 31 * h + Boolean.hashCode(flag);
+            return h;
+        }
+
+        @Override
+        public String toString() {
+            return "NestedThing[x=" + x + ", flag=" + flag + "]";
+        }
+
         /**
          * Creates a builder with every field at its default.
          *
@@ -550,9 +810,40 @@ public record Widget(int count, @NonNull String label, Widget. @NonNull Mode mod
     /**
      * Entries.
      *
-     * @param name Add-on JSON {@code name}. Optional (null: not set).
      */
-    public record Entry(@Nullable String name) {
+    public static final class Entry {
+        private final @Nullable String name;
+
+        private Entry(@Nullable String name) {
+            this.name = name;
+        }
+
+        /**
+         * Add-on JSON {@code name}. Optional (null: not set).
+         *
+         * @return the value
+         */
+        public @Nullable String name() {
+            return name;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            return this == o || o instanceof Entry other
+                    && Objects.equals(name, other.name);
+        }
+
+        @Override
+        public int hashCode() {
+            int h = Objects.hashCode(name);
+            return h;
+        }
+
+        @Override
+        public String toString() {
+            return "Entry[name=" + name + "]";
+        }
+
         /**
          * Creates a builder with every field at its default.
          *
@@ -609,10 +900,54 @@ public record Widget(int count, @NonNull String label, Widget. @NonNull Mode mod
     /**
      * A shape or its id.
      *
-     * @param id Add-on JSON {@code id}. Optional (null: not set).
-     * @param size Add-on JSON {@code size}. Default: <code>1</code>.
      */
-    public record Shape(@Nullable String id, int size) {
+    public static final class Shape {
+        private final @Nullable String id;
+
+        private final int size;
+
+        private Shape(@Nullable String id, int size) {
+            this.id = id;
+            this.size = size;
+        }
+
+        /**
+         * Add-on JSON {@code id}. Optional (null: not set).
+         *
+         * @return the value
+         */
+        public @Nullable String id() {
+            return id;
+        }
+
+        /**
+         * Add-on JSON {@code size}. Default: <code>1</code>.
+         *
+         * @return the value
+         */
+        public int size() {
+            return size;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            return this == o || o instanceof Shape other
+                    && Objects.equals(id, other.id)
+                    && size == other.size;
+        }
+
+        @Override
+        public int hashCode() {
+            int h = Objects.hashCode(id);
+            h = 31 * h + size;
+            return h;
+        }
+
+        @Override
+        public String toString() {
+            return "Shape[id=" + id + ", size=" + size + "]";
+        }
+
         /**
          * The string shorthand: sets {@code id}.
          *
@@ -691,23 +1026,49 @@ public record Widget(int count, @NonNull String label, Widget. @NonNull Mode mod
     }
 
     /**
-     * The documented values; {@link #value()} is the add-on JSON string.
+     * A value of an add-on JSON string: a constant per documented value, {@link #of} for any other.
+     * {@link #value()} is the add-on JSON string. Not an enum: Bedrock adds values, so a {@code switch} over
+     * {@link #value()} needs a {@code default}.
      */
-    public enum Mode {
+    public static final class Mode {
         /**
          * {@code fast}
          */
-        FAST("fast"),
+        public static final Mode FAST = new Mode("fast");
 
         /**
          * {@code slow}
          */
-        SLOW("slow");
+        public static final Mode SLOW = new Mode("slow");
+
+        private static final List<Mode> KNOWN = List.of(FAST, SLOW);
+
+        private static final Map<String, Mode> BY_VALUE = Check.index(KNOWN, Mode::value);
 
         private final String value;
 
-        Mode(String value) {
+        private Mode(String value) {
             this.value = value;
+        }
+
+        /**
+         * Returns the value of an add-on JSON string: the constant of a documented value, else a new value.
+         *
+         * @param value the value in add-on JSON
+         * @return the constant of the value, or a value Paletter does not know
+         */
+        public static @NonNull Mode of(@NonNull String value) {
+            Mode known = BY_VALUE.get(Objects.requireNonNull(value, "Mode.value"));
+            return known != null ? known : new Mode(value);
+        }
+
+        /**
+         * Returns the documented values, the constants of this class.
+         *
+         * @return the constants, in the order of the documentation
+         */
+        public static @NonNull List<Mode> known() {
+            return KNOWN;
         }
 
         /**
@@ -720,19 +1081,27 @@ public record Widget(int count, @NonNull String label, Widget. @NonNull Mode mod
         }
 
         /**
-         * Finds the constant of an add-on JSON value.
+         * Returns whether the value is documented, one of the constants.
          *
-         * @param value the value in add-on JSON
-         * @return the constant of the value
-         * @throws IllegalArgumentException if the value is not documented
+         * @return whether this is one of {@link #known()}
          */
-        public static @NonNull Mode fromValue(@NonNull String value) {
-            for (Mode constant : values()) {
-                if (constant.value.equals(value)) {
-                    return constant;
-                }
-            }
-            throw new IllegalArgumentException("Not a Mode: " + value);
+        public boolean isKnown() {
+            return BY_VALUE.get(value) == this;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            return this == o || o instanceof Mode other && value.equals(other.value);
+        }
+
+        @Override
+        public int hashCode() {
+            return value.hashCode();
+        }
+
+        @Override
+        public String toString() {
+            return value;
         }
     }
 
@@ -744,5 +1113,16 @@ public record Widget(int count, @NonNull String label, Widget. @NonNull Mode mod
      * @param z the z component
      */
     public record Vec3(float x, float y, float z) {
+        /**
+         * Creates a vector.
+         *
+         * @param x the x component
+         * @param y the y component
+         * @param z the z component
+         * @return the vector
+         */
+        public static @NonNull Vec3 of(float x, float y, float z) {
+            return new Vec3(x, y, z);
+        }
     }
 }

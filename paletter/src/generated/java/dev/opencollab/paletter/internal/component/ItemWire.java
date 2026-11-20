@@ -118,6 +118,7 @@ public final class ItemWire {
             case UseModifiers c -> useModifiers(c, ctx, out);
             case Wearable c -> wearable(c, ctx, out);
             case WireOnlyItemComponent c -> WireOnlyWire.write(c, ctx, out);
+            default -> throw new IllegalArgumentException(component.toString());
         }
     }
 
@@ -523,23 +524,25 @@ public final class ItemWire {
         out.put("minecraft:wearable.hides_player_location", Wire.bool(c.hidesPlayerLocation()));
         out.put("minecraft:wearable.protection", Wire.toInt(c.protection()));
         Wearable.Slot v0 = c.slot();
-        switch (v0) {
-            case SLOT_ARMOR_BODY -> out.put("item_properties.allow_off_hand", (byte) 0);
-            case SLOT_ARMOR_CHEST -> out.put("item_properties.allow_off_hand", (byte) 0);
-            case SLOT_ARMOR_FEET -> out.put("item_properties.allow_off_hand", (byte) 0);
-            case SLOT_ARMOR_HEAD -> out.put("item_properties.allow_off_hand", (byte) 0);
-            case SLOT_ARMOR_LEGS -> out.put("item_properties.allow_off_hand", (byte) 0);
-            case SLOT_WEAPON_MAINHAND -> out.put("item_properties.allow_off_hand", (byte) 0);
-            case SLOT_WEAPON_OFFHAND -> out.put("item_properties.allow_off_hand", (byte) 1);
+        switch (v0.value()) {
+            case "slot.armor.body" -> out.put("item_properties.allow_off_hand", (byte) 0);
+            case "slot.armor.chest" -> out.put("item_properties.allow_off_hand", (byte) 0);
+            case "slot.armor.feet" -> out.put("item_properties.allow_off_hand", (byte) 0);
+            case "slot.armor.head" -> out.put("item_properties.allow_off_hand", (byte) 0);
+            case "slot.armor.legs" -> out.put("item_properties.allow_off_hand", (byte) 0);
+            case "slot.weapon.mainhand" -> out.put("item_properties.allow_off_hand", (byte) 0);
+            case "slot.weapon.offhand" -> out.put("item_properties.allow_off_hand", (byte) 1);
+            default -> ctx.drop(Wearable.NAME, "slot = " + v0.value() + " has no known wire value");
         }
-        switch (v0) {
-            case SLOT_ARMOR_BODY -> out.put("item_properties.max_stack_size", 1);
-            case SLOT_ARMOR_CHEST -> out.put("item_properties.max_stack_size", 1);
-            case SLOT_ARMOR_FEET -> out.put("item_properties.max_stack_size", 1);
-            case SLOT_ARMOR_HEAD -> out.put("item_properties.max_stack_size", 1);
-            case SLOT_ARMOR_LEGS -> out.put("item_properties.max_stack_size", 1);
-            case SLOT_WEAPON_MAINHAND -> out.put("item_properties.max_stack_size", 64);
-            case SLOT_WEAPON_OFFHAND -> out.put("item_properties.max_stack_size", 64);
+        switch (v0.value()) {
+            case "slot.armor.body" -> out.put("item_properties.max_stack_size", 1);
+            case "slot.armor.chest" -> out.put("item_properties.max_stack_size", 1);
+            case "slot.armor.feet" -> out.put("item_properties.max_stack_size", 1);
+            case "slot.armor.head" -> out.put("item_properties.max_stack_size", 1);
+            case "slot.armor.legs" -> out.put("item_properties.max_stack_size", 1);
+            case "slot.weapon.mainhand" -> out.put("item_properties.max_stack_size", 64);
+            case "slot.weapon.offhand" -> out.put("item_properties.max_stack_size", 64);
+            default -> ctx.drop(Wearable.NAME, "slot = " + v0.value() + " has no known wire value");
         }
         out.put("minecraft:wearable.slot", v0.value());
     }
@@ -557,12 +560,13 @@ public final class ItemWire {
         }
         ItemMenuCategory.Category v0 = c.category();
         if (v0 != null) {
-            switch (v0) {
-                case CONSTRUCTION -> out.put("item_properties.creative_category", 1);
-                case EQUIPMENT -> out.put("item_properties.creative_category", 3);
-                case ITEMS -> out.put("item_properties.creative_category", 4);
-                case NATURE -> out.put("item_properties.creative_category", 2);
-                case NONE -> out.put("item_properties.creative_category", 5);
+            switch (v0.value()) {
+                case "construction" -> out.put("item_properties.creative_category", 1);
+                case "equipment" -> out.put("item_properties.creative_category", 3);
+                case "items" -> out.put("item_properties.creative_category", 4);
+                case "nature" -> out.put("item_properties.creative_category", 2);
+                case "none" -> out.put("item_properties.creative_category", 5);
+                default -> ctx.drop("menu_category", "category = " + v0.value() + " has no known wire value");
             }
         } else {
             out.put("item_properties.creative_category", 5);

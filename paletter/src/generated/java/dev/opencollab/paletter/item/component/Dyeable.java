@@ -17,25 +17,48 @@ import org.checkerframework.checker.nullness.qual.Nullable;
  * <p>
  * Add-on JSON: {@code "minecraft:dyeable"}.
  *
- * @param defaultColor Add-on JSON {@code default_color}. Default: <code>[255,255,255]</code>. Compiled by the hand transform {@code
- *        Transforms.rgbColor}.
  * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/itemreference/examples/itemcomponents/minecraft_dyeable?view=minecraft-bedrock-stable">Microsoft Learn: minecraft:dyeable</a>
  * @since 1.0.0
  */
 @BedrockFormat("1.21.30")
-public record Dyeable(@NonNull ColorValue defaultColor) implements ItemComponent {
+public final class Dyeable implements ItemComponent {
     /**
      * The component name in add-on JSON.
      */
     public static final String NAME = "minecraft:dyeable";
 
-    /**
-     * Checks the components.
-     *
-     * @throws NullPointerException if a required component is null
-     */
-    public Dyeable {
+    private final @NonNull ColorValue defaultColor;
+
+    private Dyeable(@NonNull ColorValue defaultColor) {
         Objects.requireNonNull(defaultColor, "Dyeable.defaultColor");
+        this.defaultColor = defaultColor;
+    }
+
+    /**
+     * Add-on JSON {@code default_color}. Default: <code>[255,255,255]</code>. Compiled by the hand transform {@code
+     * Transforms.rgbColor}.
+     *
+     * @return the value
+     */
+    public @NonNull ColorValue defaultColor() {
+        return defaultColor;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        return this == o || o instanceof Dyeable other
+                && Objects.equals(defaultColor, other.defaultColor);
+    }
+
+    @Override
+    public int hashCode() {
+        int h = Objects.hashCode(defaultColor);
+        return h;
+    }
+
+    @Override
+    public String toString() {
+        return "Dyeable[defaultColor=" + defaultColor + "]";
     }
 
     @Override

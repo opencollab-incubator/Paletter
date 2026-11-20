@@ -13,24 +13,47 @@ import org.checkerframework.checker.nullness.qual.Nullable;
  * <p>
  * Add-on JSON: {@code "test:slab"}.
  *
- * @param parts The entries of the component (add-on JSON: the component's value is this list). Default: <code>[]</code>.
- *        Compiled by the hand transform {@code Transforms.testMap}.
  * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/blockreference/examples/blockcomponents/minecraftblock_slab?view=minecraft-bedrock-stable">Microsoft Learn: test:slab</a>
  * @since 1.0.0
  */
-public record Slab(@NonNull List<Slab.Entry> parts) implements BlockComponent {
+public final class Slab implements BlockComponent {
     /**
      * The component name in add-on JSON.
      */
     public static final String NAME = "test:slab";
 
-    /**
-     * Checks the components and copies lists and maps, so the value is immutable.
-     *
-     * @throws NullPointerException if a required component is null
-     */
-    public Slab {
+    private final @NonNull List<Entry> parts;
+
+    private Slab(@NonNull List<Entry> parts) {
         parts = List.copyOf(Objects.requireNonNull(parts, "Slab.parts"));
+        this.parts = parts;
+    }
+
+    /**
+     * The entries of the component (add-on JSON: the component's value is this list). Default: <code>[]</code>.
+     * Compiled by the hand transform {@code Transforms.testMap}.
+     *
+     * @return the value
+     */
+    public @NonNull List<Entry> parts() {
+        return parts;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        return this == o || o instanceof Slab other
+                && Objects.equals(parts, other.parts);
+    }
+
+    @Override
+    public int hashCode() {
+        int h = Objects.hashCode(parts);
+        return h;
+    }
+
+    @Override
+    public String toString() {
+        return "Slab[parts=" + parts + "]";
     }
 
     @Override
@@ -39,7 +62,7 @@ public record Slab(@NonNull List<Slab.Entry> parts) implements BlockComponent {
     }
 
     /**
-     * The object form: one entry, the same as a list of that entry in {@code parts}. BDS rejects this form since 9.9.9 (protocol 200); the list is accepted by every captured BDS.
+     * The object form: one entry, the same as a list of that entry in {@code parts}. BDS rejects this form since Bedrock 9.9 (protocol 200); the list is accepted by every captured BDS.
      *
      * @param entry the one entry
      * @return the value with everything else at its default
@@ -113,9 +136,40 @@ public record Slab(@NonNull List<Slab.Entry> parts) implements BlockComponent {
     /**
      * An entry of {@code test:slab}.
      *
-     * @param size Size. Add-on JSON {@code size}. Default: <code>16</code>.
      */
-    public record Entry(float size) {
+    public static final class Entry {
+        private final float size;
+
+        private Entry(float size) {
+            this.size = size;
+        }
+
+        /**
+         * Size. Add-on JSON {@code size}. Default: <code>16</code>.
+         *
+         * @return the value
+         */
+        public float size() {
+            return size;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            return this == o || o instanceof Entry other
+                    && Float.compare(size, other.size) == 0;
+        }
+
+        @Override
+        public int hashCode() {
+            int h = Float.hashCode(size);
+            return h;
+        }
+
+        @Override
+        public String toString() {
+            return "Entry[size=" + size + "]";
+        }
+
         /**
          * Creates a builder with every field at its default.
          *

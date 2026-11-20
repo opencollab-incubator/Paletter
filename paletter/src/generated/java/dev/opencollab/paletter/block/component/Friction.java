@@ -14,24 +14,47 @@ import org.checkerframework.checker.nullness.qual.Nullable;
  * <p>
  * Add-on JSON: {@code "minecraft:friction"}.
  *
- * @param value The number form of the component (add-on JSON {@code "minecraft:friction": <number>}). Required. Range [0,
- *        0.9] (BDS 1.26.63.1).
  * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/blockreference/examples/blockcomponents/minecraftblock_friction?view=minecraft-bedrock-stable">Microsoft Learn: minecraft:friction</a>
  * @since 1.0.0
  */
-public record Friction(float value) implements BlockComponent {
+public final class Friction implements BlockComponent {
     /**
      * The component name in add-on JSON.
      */
     public static final String NAME = "minecraft:friction";
 
-    /**
-     * Checks the components.
-     *
-     * @throws IllegalArgumentException if a component is out of its documented range or conflicts with another
-     */
-    public Friction {
+    private final float value;
+
+    private Friction(float value) {
         Check.range("Friction.value", value, 0.0, 0.9);
+        this.value = value;
+    }
+
+    /**
+     * The number form of the component (add-on JSON {@code "minecraft:friction": <number>}). Required. Range [0,
+     * 0.9] (Bedrock 26.60).
+     *
+     * @return the value
+     */
+    public float value() {
+        return value;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        return this == o || o instanceof Friction other
+                && Float.compare(value, other.value) == 0;
+    }
+
+    @Override
+    public int hashCode() {
+        int h = Float.hashCode(value);
+        return h;
+    }
+
+    @Override
+    public String toString() {
+        return "Friction[value=" + value + "]";
     }
 
     @Override

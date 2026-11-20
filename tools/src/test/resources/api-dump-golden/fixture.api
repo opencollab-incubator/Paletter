@@ -65,6 +65,7 @@ public class fix.api.Widget<T extends java.lang.Comparable<T>> extends fix.api.B
     protected void hook()
     public <R> R map(java.util.function.Function<? super T, ? extends R>, R) throws java.io.IOException
     @Deprecated public void old()
+    public java.lang.Object raw(java.util.List<?>)
     public void run()
     public void sync()
 }

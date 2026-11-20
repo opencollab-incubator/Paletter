@@ -4,6 +4,7 @@
 package dev.opencollab.paletter.item.component;
 
 import dev.opencollab.paletter.annotation.ReplacedBy;
+import java.util.Objects;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
@@ -12,22 +13,53 @@ import org.checkerframework.checker.nullness.qual.Nullable;
  * "shooter", "throwable", or "food".
  * <p>
  * Add-on JSON: {@code "minecraft:use_duration"}.
- * Retired: rejected by every captured BDS (oldest: 1.26.36.1, protocol 1001): minecraft:use_duration: this
+ * Retired: rejected by every captured BDS (oldest: Bedrock 26.30, protocol 1001): minecraft:use_duration: this
  * component was found in the input, but is not present in the Schema; [Item] Error Parsing Item &lt;id&gt;:. Its
  * encoder writes nothing and adds a report warning, as BDS would never send it to a client.
  *
- * @param value How long the item takes to use in seconds. Add-on JSON {@code value}. Optional (null: not set).
  * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/itemreference/examples/itemcomponents/minecraft_use_duration?view=minecraft-bedrock-stable">Microsoft Learn: minecraft:use_duration</a>
  * @since 1.0.0
  * @deprecated replaced by {@link UseModifiers} (the docs of minecraft:use_modifiers list a field use_duration)
  */
 @Deprecated
 @ReplacedBy(UseModifiers.class)
-public record UseDuration(@Nullable Float value) implements ItemComponent {
+public final class UseDuration implements ItemComponent {
     /**
      * The component name in add-on JSON.
      */
     public static final String NAME = "minecraft:use_duration";
+
+    private final @Nullable Float value;
+
+    private UseDuration(@Nullable Float value) {
+        this.value = value;
+    }
+
+    /**
+     * How long the item takes to use in seconds. Add-on JSON {@code value}. Optional (null: not set).
+     *
+     * @return the value
+     */
+    public @Nullable Float value() {
+        return value;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        return this == o || o instanceof UseDuration other
+                && Objects.equals(value, other.value);
+    }
+
+    @Override
+    public int hashCode() {
+        int h = Objects.hashCode(value);
+        return h;
+    }
+
+    @Override
+    public String toString() {
+        return "UseDuration[value=" + value + "]";
+    }
 
     @Override
     public @NonNull String name() {

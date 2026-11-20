@@ -148,6 +148,7 @@ final class RecipeEncoder {
                 : new ItemDescriptorWithCount(new ItemTagDescriptor(tag.tag()), tag.count());
             case Ingredient.Alias alias -> new ItemDescriptorWithCount(new ComplexAliasDescriptor(alias.name()), alias.count());
             case Ingredient.Empty empty -> ItemDescriptorWithCount.EMPTY;
+            default -> throw new IllegalArgumentException(ingredient.toString());
         };
     }
 

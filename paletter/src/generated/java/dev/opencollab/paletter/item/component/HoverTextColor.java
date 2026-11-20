@@ -4,6 +4,7 @@
 package dev.opencollab.paletter.item.component;
 
 import dev.opencollab.paletter.annotation.BedrockFormat;
+import java.util.Objects;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
@@ -12,17 +13,48 @@ import org.checkerframework.checker.nullness.qual.Nullable;
  * <p>
  * Add-on JSON: {@code "minecraft:hover_text_color"}.
  *
- * @param value The color of the item hover text. Add-on JSON {@code value}. Optional (null: not set). Compiled by the hand
- *        transform {@code Transforms.formattingCode}.
  * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/itemreference/examples/itemcomponents/minecraft_hover_text_color?view=minecraft-bedrock-stable">Microsoft Learn: minecraft:hover_text_color</a>
  * @since 1.0.0
  */
 @BedrockFormat("1.20.10")
-public record HoverTextColor(@Nullable String value) implements ItemComponent {
+public final class HoverTextColor implements ItemComponent {
     /**
      * The component name in add-on JSON.
      */
     public static final String NAME = "minecraft:hover_text_color";
+
+    private final @Nullable String value;
+
+    private HoverTextColor(@Nullable String value) {
+        this.value = value;
+    }
+
+    /**
+     * The color of the item hover text. Add-on JSON {@code value}. Optional (null: not set). Compiled by the hand
+     * transform {@code Transforms.formattingCode}.
+     *
+     * @return the value
+     */
+    public @Nullable String value() {
+        return value;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        return this == o || o instanceof HoverTextColor other
+                && Objects.equals(value, other.value);
+    }
+
+    @Override
+    public int hashCode() {
+        int h = Objects.hashCode(value);
+        return h;
+    }
+
+    @Override
+    public String toString() {
+        return "HoverTextColor[value=" + value + "]";
+    }
 
     @Override
     public @NonNull String name() {

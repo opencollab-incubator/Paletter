@@ -3,6 +3,7 @@
 // data/model/ATTRIBUTION.md.
 package dev.opencollab.paletter.item.component;
 
+import java.util.Objects;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
@@ -12,17 +13,60 @@ import org.checkerframework.checker.nullness.qual.Nullable;
  * <p>
  * Add-on JSON: {@code "minecraft:interact_button"}.
  *
- * @param enabled The boolean form: {@code true} shows the interact button with the default text. Optional (null: not set).
- * @param text The string form: the button text (a localization key or literal). Optional (null: not set).
  * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/itemreference/examples/itemcomponents/minecraft_interact_button?view=minecraft-bedrock-stable">Microsoft Learn: minecraft:interact_button</a>
  * @since 1.0.0
  */
-public record InteractButton(@Nullable Boolean enabled,
-        @Nullable String text) implements ItemComponent {
+public final class InteractButton implements ItemComponent {
     /**
      * The component name in add-on JSON.
      */
     public static final String NAME = "minecraft:interact_button";
+
+    private final @Nullable Boolean enabled;
+
+    private final @Nullable String text;
+
+    private InteractButton(@Nullable Boolean enabled, @Nullable String text) {
+        this.enabled = enabled;
+        this.text = text;
+    }
+
+    /**
+     * The boolean form: {@code true} shows the interact button with the default text. Optional (null: not set).
+     *
+     * @return the value
+     */
+    public @Nullable Boolean enabled() {
+        return enabled;
+    }
+
+    /**
+     * The string form: the button text (a localization key or literal). Optional (null: not set).
+     *
+     * @return the value
+     */
+    public @Nullable String text() {
+        return text;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        return this == o || o instanceof InteractButton other
+                && Objects.equals(enabled, other.enabled)
+                && Objects.equals(text, other.text);
+    }
+
+    @Override
+    public int hashCode() {
+        int h = Objects.hashCode(enabled);
+        h = 31 * h + Objects.hashCode(text);
+        return h;
+    }
+
+    @Override
+    public String toString() {
+        return "InteractButton[enabled=" + enabled + ", text=" + text + "]";
+    }
 
     @Override
     public @NonNull String name() {

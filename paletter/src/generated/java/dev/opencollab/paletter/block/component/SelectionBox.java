@@ -16,31 +16,79 @@ import org.checkerframework.checker.nullness.qual.Nullable;
  * Add-on JSON: {@code "minecraft:selection_box"}.
  * Compiled by the hand transform {@code Transforms.selectionBox}.
  *
- * @param origin Minimal position of the bounds of the selection box. "origin" is specified as [x, y, z] and must be in the
- *        range (-8, 0, -8) to (8, 16, 8), inclusive. Add-on JSON {@code origin}. Default: <code>[-8,0,-8]</code>.
- * @param size Size of each side of the selection box. Size is specified as [x, y, z]. "origin" + "size" must be in the range
- *        (-8, 0, -8) to (8, 16, 8), inclusive. Add-on JSON {@code size}. Default: <code>[16,16,16]</code>.
- * @param enabled The boolean form of the component (add-on JSON {@code "minecraft:selection_box": <boolean>}). Optional (null:
- *        not set).
  * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/blockreference/examples/blockcomponents/minecraftblock_selection_box?view=minecraft-bedrock-stable">Microsoft Learn: minecraft:selection_box</a>
  * @since 1.0.0
  */
 @BedrockFormat("1.19.60")
-public record SelectionBox(SelectionBox. @NonNull Vec3 origin, SelectionBox. @NonNull Vec3 size,
-        @Nullable Boolean enabled) implements BlockComponent {
+public final class SelectionBox implements BlockComponent {
     /**
      * The component name in add-on JSON.
      */
     public static final String NAME = "minecraft:selection_box";
 
-    /**
-     * Checks the components.
-     *
-     * @throws NullPointerException if a required component is null
-     */
-    public SelectionBox {
+    private final @NonNull Vec3 origin;
+
+    private final @NonNull Vec3 size;
+
+    private final @Nullable Boolean enabled;
+
+    private SelectionBox(@NonNull Vec3 origin, @NonNull Vec3 size, @Nullable Boolean enabled) {
         Objects.requireNonNull(origin, "SelectionBox.origin");
         Objects.requireNonNull(size, "SelectionBox.size");
+        this.origin = origin;
+        this.size = size;
+        this.enabled = enabled;
+    }
+
+    /**
+     * Minimal position of the bounds of the selection box. "origin" is specified as [x, y, z] and must be in the
+     * range (-8, 0, -8) to (8, 16, 8), inclusive. Add-on JSON {@code origin}. Default: <code>[-8,0,-8]</code>.
+     *
+     * @return the value
+     */
+    public @NonNull Vec3 origin() {
+        return origin;
+    }
+
+    /**
+     * Size of each side of the selection box. Size is specified as [x, y, z]. "origin" + "size" must be in the range
+     * (-8, 0, -8) to (8, 16, 8), inclusive. Add-on JSON {@code size}. Default: <code>[16,16,16]</code>.
+     *
+     * @return the value
+     */
+    public @NonNull Vec3 size() {
+        return size;
+    }
+
+    /**
+     * The boolean form of the component (add-on JSON {@code "minecraft:selection_box": <boolean>}). Optional (null:
+     * not set).
+     *
+     * @return the value
+     */
+    public @Nullable Boolean enabled() {
+        return enabled;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        return this == o || o instanceof SelectionBox other
+                && Objects.equals(origin, other.origin)
+                && Objects.equals(size, other.size)
+                && Objects.equals(enabled, other.enabled);
+    }
+
+    @Override
+    public int hashCode() {
+        int h = Objects.hashCode(origin);
+        h = 31 * h + Objects.hashCode(size);
+        h = 31 * h + Objects.hashCode(enabled);
+        return h;
+    }
+
+    @Override
+    public String toString() {
+        return "SelectionBox[origin=" + origin + ", size=" + size + ", enabled=" + enabled + "]";
     }
 
     @Override
@@ -170,5 +218,16 @@ public record SelectionBox(SelectionBox. @NonNull Vec3 origin, SelectionBox. @No
      * @param z the z component
      */
     public record Vec3(float x, float y, float z) {
+        /**
+         * Creates a vector.
+         *
+         * @param x the x component
+         * @param y the y component
+         * @param z the z component
+         * @return the vector
+         */
+        public static @NonNull Vec3 of(float x, float y, float z) {
+            return new Vec3(x, y, z);
+        }
     }
 }

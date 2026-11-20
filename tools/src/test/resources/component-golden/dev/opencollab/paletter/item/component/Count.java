@@ -10,8 +10,8 @@ import org.checkerframework.checker.nullness.qual.NonNull;
  * Gone.
  * <p>
  * Add-on JSON: {@code "test:count"}.
- * Retired: rejected by every captured BDS (oldest: 8.8.8, protocol 100). Its encoder writes nothing and adds a
- * report warning, as BDS would never send it to a client.
+ * Retired: rejected by every captured BDS (oldest: Bedrock 8.8, protocol 100). Its encoder writes nothing and
+ * adds a report warning, as BDS would never send it to a client.
  *
  * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/itemreference/examples/itemcomponents/test_count?view=minecraft-bedrock-stable">Microsoft Learn: test:count</a>
  * @since 1.0.0
@@ -19,11 +19,29 @@ import org.checkerframework.checker.nullness.qual.NonNull;
  */
 @Deprecated
 @ReplacedBy(Widget.class)
-public record Count() implements ItemComponent {
+public final class Count implements ItemComponent {
     /**
      * The component name in add-on JSON.
      */
     public static final String NAME = "test:count";
+
+    private Count() {
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        return o instanceof Count;
+    }
+
+    @Override
+    public int hashCode() {
+        return 0;
+    }
+
+    @Override
+    public String toString() {
+        return "Count[]";
+    }
 
     @Override
     public @NonNull String name() {
