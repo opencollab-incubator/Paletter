@@ -41,6 +41,7 @@ public final class CreativeEditor {
                 switch (node) {
                     case CreativeItem item -> nodes.add(item);
                     case CreativeGroup group -> nodes.add(new MutableGroup(group.name(), group.icon(), new ArrayList<>(group.stacks())));
+                    default -> throw new IllegalStateException("not a creative node: " + node);
                 }
             }
             categories.put(category, nodes);

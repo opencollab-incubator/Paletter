@@ -112,6 +112,7 @@ class RecipeBundleLoadTest {
                     case Recipe.SmithingTransform transform -> transform.station();
                     case Recipe.SmithingTrim trim -> trim.station();
                     case Recipe.Multi multi -> null;
+                    default -> throw new AssertionError(recipe);
                 };
                 assertTrue(station == null || constants.contains(station), station + " in " + version);
             }
@@ -144,6 +145,7 @@ class RecipeBundleLoadTest {
                 case Recipe.SmithingTransform transform -> all.addAll(List.of(transform.template(), transform.base(), transform.addition()));
                 case Recipe.SmithingTrim trim -> all.addAll(List.of(trim.template(), trim.base(), trim.addition()));
                 case Recipe.Multi multi -> { }
+                default -> throw new AssertionError(recipe);
             }
         }
         return all.stream();

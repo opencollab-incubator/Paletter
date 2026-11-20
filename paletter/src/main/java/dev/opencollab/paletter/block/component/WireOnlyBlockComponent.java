@@ -12,5 +12,5 @@ package dev.opencollab.paletter.block.component;
  * @since 1.0.0
  */
 @SuppressWarnings("deprecation")
-public sealed interface WireOnlyBlockComponent extends BlockComponent permits OnPlayerPlacing, ScriptHooks {
+public sealed interface WireOnlyBlockComponent extends BlockComponent permits OnPlayerPlacing, ScriptHooks, FutureWireOnlyBlockComponent {
 }

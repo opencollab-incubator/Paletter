@@ -118,6 +118,7 @@ public final class ItemWire {
             case UseModifiers c -> useModifiers(c, ctx, out);
             case Wearable c -> wearable(c, ctx, out);
             case WireOnlyItemComponent c -> WireOnlyWire.write(c, ctx, out);
+            default -> throw new IllegalArgumentException(component.toString());
         }
     }
 

@@ -24,6 +24,7 @@ import java.util.Map;
 import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -204,8 +205,13 @@ class GeneratedApiTest {
         for (ApiModel.UnionType u : model.unions.values()) {
             Class<?> type = Class.forName((u.owner == null ? u.kind.pkg() + "." : u.kind.pkg() + "." + u.owner.className + "$") + u.name);
             assertTrue(type.isInterface() && type.isSealed(), u.name);
-            assertEquals(u.variants.size(), type.getPermittedSubclasses().length, u.name);
+            // the forms and the sentinel that keeps the union open
+            assertEquals(u.variants.size() + 1, type.getPermittedSubclasses().length, u.name);
             for (Class<?> variant : type.getPermittedSubclasses()) {
+                if (variant.getSimpleName().equals("Future" + u.name)) {
+                    assertFalse(java.lang.reflect.Modifier.isPublic(variant.getModifiers()), variant.getName());
+                    continue;
+                }
                 assertTrue(variant.isRecord() && variant.getRecordComponents().length == 1
                     && variant.getRecordComponents()[0].getName().equals("value"), u.name + "." + variant.getSimpleName());
                 assertTrue(u.variants.stream().anyMatch(v -> v.name.equals(variant.getSimpleName())), variant.getName());

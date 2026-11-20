@@ -14,13 +14,14 @@ import org.checkerframework.checker.nullness.qual.NonNull;
  *     <li>{@link Hex}: a hex color of six digits</li>
  * </ul>
  * <p>
- * Switch over it without a default: the records below are all its forms.
+ * Bedrock may add forms, so a {@code switch} over it needs a {@code default}; the compiler enforces it
+ * (docs/api.md, "Evolution").
  * <p>
  * Used by: {@code item:minecraft:dyeable:default_color}.
  *
  * @since 1.0.0
  */
-public sealed interface ColorValue permits ColorValue.Channels, ColorValue.Hex {
+public sealed interface ColorValue permits ColorValue.Channels, ColorValue.Hex, FutureColorValue {
     /**
      * Creates the form that is the red, green and blue channels.
      *

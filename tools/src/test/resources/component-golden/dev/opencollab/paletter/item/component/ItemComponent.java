@@ -11,11 +11,14 @@ import org.checkerframework.checker.nullness.qual.NonNull;
  * compiles them to the wire format of each palette's protocol.
  * <p>
  * Hand-written wire-only components, for fields with no add-on JSON source: see {@link WireOnlyItemComponent}.
+ * <p>
+ * Bedrock adds components in minor releases, so a {@code switch} over it needs a {@code default}; the compiler
+ * enforces it (docs/api.md, "Evolution").
  *
  * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/itemreference/examples/itemcomponentlist?view=minecraft-bedrock-stable">Microsoft Learn: item components</a>
  * @since 1.0.0
  */
-public sealed interface ItemComponent permits Ancient, Count, Former, Gadget, Old, Quiet, Widget, WireOnlyItemComponent {
+public sealed interface ItemComponent permits Ancient, Count, Former, Gadget, Old, Quiet, Widget, WireOnlyItemComponent, FutureItemComponent {
     /**
      * Returns the component name in add-on JSON.
      *

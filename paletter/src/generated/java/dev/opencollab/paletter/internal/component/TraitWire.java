@@ -31,6 +31,7 @@ public final class TraitWire {
             case MultiBlock c -> multiBlock(c, ctx, out);
             case PlacementDirection c -> placementDirection(c, ctx, out);
             case PlacementPosition c -> placementPosition(c, ctx, out);
+            default -> throw new IllegalArgumentException(component.toString());
         }
     }
 

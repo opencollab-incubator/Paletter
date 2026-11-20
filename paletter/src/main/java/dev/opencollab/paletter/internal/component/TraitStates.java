@@ -25,15 +25,20 @@ public final class TraitStates {
     public static @NonNull List<BlockProperty<?>> of(@NonNull List<BlockTrait> traits) {
         List<BlockProperty<?>> states = new ArrayList<>();
         for (BlockTrait trait : traits) {
+            // An enabled state newer than Paletter (not isKnown) has no table entry: it adds no state, as the encoder sends no bit for it
             switch (trait) {
-                case PlacementDirection t -> t.enabledStates().forEach(s -> states.addAll(TraitStateTable.of(PlacementDirection.NAME, s.value())));
-                case PlacementPosition t -> t.enabledStates().forEach(s -> states.addAll(TraitStateTable.of(PlacementPosition.NAME, s.value())));
-                case Connection t -> t.enabledStates().forEach(s -> states.addAll(TraitStateTable.of(Connection.NAME, s.value())));
-                case MultiBlock t -> t.enabledStates().forEach(s -> {
+                case PlacementDirection t -> t.enabledStates().stream().filter(s -> s.isKnown())
+                    .forEach(s -> states.addAll(TraitStateTable.of(PlacementDirection.NAME, s.value())));
+                case PlacementPosition t -> t.enabledStates().stream().filter(s -> s.isKnown())
+                    .forEach(s -> states.addAll(TraitStateTable.of(PlacementPosition.NAME, s.value())));
+                case Connection t -> t.enabledStates().stream().filter(s -> s.isKnown())
+                    .forEach(s -> states.addAll(TraitStateTable.of(Connection.NAME, s.value())));
+                case MultiBlock t -> t.enabledStates().stream().filter(s -> s.isKnown()).forEach(s -> {
                     for (BlockProperty<?> state : TraitStateTable.of(MultiBlock.NAME, s.value())) {
                         states.add(firstParts(state, t.parts()));
                     }
                 });
+                default -> throw new IllegalArgumentException(trait.toString());
             }
         }
         // a state two values add (minecraft:cardinal_direction and minecraft:corner_and_cardinal_direction) is one state

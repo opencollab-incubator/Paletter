@@ -87,12 +87,44 @@ final class ApiSource {
         for (UnionType u : model.unions.values()) {
             if (u.owner == null) {
                 files.put(u.kind.pkg().replace('.', '/') + "/" + u.name + ".java", file(u.kind.pkg(), union(u, since)));
+                ClassName future = sentinelName(unionName(u));
+                files.put(u.kind.pkg().replace('.', '/') + "/" + future.simpleName() + ".java", file(u.kind.pkg(), sentinel(future, unionName(u), false)));
             }
         }
         for (Kind kind : Kind.values()) {
             List<Comp> members = model.components.stream().filter(c -> c.kind == kind && !c.standalone).toList();
             files.put(kind.pkg().replace('.', '/') + "/" + kind.iface() + ".java", file(kind.pkg(), iface(kind, members, model, since)));
+            ClassName iface = ClassName.get(kind.pkg(), kind.iface());
+            files.put(kind.pkg().replace('.', '/') + "/" + sentinelName(iface).simpleName() + ".java", file(kind.pkg(), sentinel(sentinelName(iface), iface, true)));
         }
+    }
+
+    /**
+     * The class that keeps a sealed type open: a sealed type Bedrock can add variants to also permits it. It is not
+     * public, so no {@code case} can name it, and a switch over the sealed type outside its package needs a
+     * {@code default}, which the compiler enforces (docs/api.md, "Evolution"). It has no instances.
+     */
+    static ClassName sentinelName(ClassName sealed) {
+        String name = "Future" + sealed.simpleName();
+        return sealed.enclosingClassName() == null ? ClassName.get(sealed.packageName(), name)
+            : sealed.topLevelClassName().nestedClass(name);
+    }
+
+    private static TypeSpec sentinel(ClassName self, ClassName sealed, boolean named) {
+        boolean nested = self.enclosingClassName() != null;
+        TypeSpec.Builder type = TypeSpec.classBuilder(self).addModifiers(Modifier.FINAL).addSuperinterface(sealed)
+            .addJavadoc("Never instantiated: it makes a switch over {@code $L} need a {@code default}, as Bedrock adds\n"
+                + "variants in minor releases (docs/api.md, \"Evolution\").\n", String.join(".", sealed.simpleNames()))
+            .addMethod(MethodSpec.constructorBuilder().addModifiers(Modifier.PRIVATE).build());
+        if (nested) {
+            type.addModifiers(Modifier.PRIVATE, Modifier.STATIC);
+        }
+        if (named) {
+            type.addMethod(MethodSpec.methodBuilder("name").addAnnotation(Override.class).addModifiers(Modifier.PUBLIC)
+                .returns(STRING.annotated(AnnotationSpec.builder(NON_NULL).build()))
+                .addStatement("throw new $T()", AssertionError.class).build());
+        }
+        return type.build();
     }
 
     /** The sealed sub-interface of the hand-written wire-only components of a kind (items and blocks have them). */
@@ -139,6 +171,8 @@ final class ApiSource {
         if (kind == Kind.ITEM) {
             doc.append("<p>\nHand-written wire-only components, for fields with no add-on JSON source: see {@link WireOnlyItemComponent}.\n");
         }
+        doc.append("<p>\nBedrock adds components in minor releases, so a {@code switch} over it needs a {@code default}; the compiler\n"
+            + "enforces it (docs/api.md, \"Evolution\").\n");
         String list = Docs.learnUrl(model.lists.get(kind == Kind.ITEM ? "item" : kind == Kind.BLOCK ? "block" : "trait"));
         if (list != null) {
             doc.append("\n@see <a href=\"").append(list).append("\">Microsoft Learn: ")
@@ -152,19 +186,10 @@ final class ApiSource {
         if (kind == Kind.ITEM || kind == Kind.BLOCK) {
             type.addPermittedSubclass(ClassName.get(kind.pkg(), wireOnly(kind)));
         }
+        type.addPermittedSubclass(sentinelName(ClassName.get(kind.pkg(), kind.iface())));
         type.addMethod(MethodSpec.methodBuilder("name").addModifiers(Modifier.PUBLIC, Modifier.ABSTRACT)
             .addJavadoc("Returns the component name in add-on JSON.\n\n@return the name, e.g. {@code minecraft:durability}\n")
             .returns(STRING.annotated(AnnotationSpec.builder(NON_NULL).build())).build());
-        if (members.isEmpty()) {
-            ClassName none = ClassName.get(kind.pkg(), kind.iface(), "None");
-            type.addPermittedSubclass(none);
-            type.addType(TypeSpec.classBuilder("None").addModifiers(Modifier.PUBLIC, Modifier.STATIC, Modifier.FINAL)
-                .addJavadoc("Placeholder of a kind with no generated component; it has no instances.\n").addSuperinterface(ClassName.get(kind.pkg(), kind.iface()))
-                .addMethod(MethodSpec.constructorBuilder().addModifiers(Modifier.PRIVATE).build())
-                .addMethod(MethodSpec.methodBuilder("name").addAnnotation(Override.class).addModifiers(Modifier.PUBLIC)
-                    .returns(STRING.annotated(AnnotationSpec.builder(NON_NULL).build())).addStatement("return $S", "").build())
-                .build());
-        }
         return type.build();
     }
 
@@ -407,6 +432,7 @@ final class ApiSource {
             for (UnionType u : model.unions.values()) {
                 if (u.owner == c) {
                     type.addType(union(u, since));
+                    type.addType(sentinel(sentinelName(unionName(u)), unionName(u), false));
                 }
             }
             if (c.usesVec3) {
@@ -892,7 +918,8 @@ final class ApiSource {
         for (Variant v : u.variants) {
             doc.append("    <li>{@link ").append(v.name).append("}: ").append(meaning(v)).append("</li>\n");
         }
-        doc.append("</ul>\n<p>\nSwitch over it without a default: the records below are all its forms.\n");
+        doc.append("</ul>\n<p>\nBedrock may add forms, so a {@code switch} over it needs a {@code default}; the compiler enforces it\n"
+            + "(docs/api.md, \"Evolution\").\n");
         doc.append("<p>\nUsed by: ").append(String.join(", ", u.users.stream().sorted().map(x -> "{@code " + x + "}").toList())).append(".\n");
         if (u.owner == null) {
             doc.append("\n@since ").append(since).append('\n');
@@ -902,8 +929,11 @@ final class ApiSource {
             type.addModifiers(Modifier.STATIC);
         }
         for (Variant v : u.variants) {
+            type.addPermittedSubclass(self.nestedClass(v.name));
+        }
+        type.addPermittedSubclass(sentinelName(self));
+        for (Variant v : u.variants) {
             ClassName variant = self.nestedClass(v.name);
-            type.addPermittedSubclass(variant);
             TypeName value = typeName(owner, v.type, false);
             boolean reference = !value.isPrimitive();
             CodeBlock.Builder check = CodeBlock.builder();

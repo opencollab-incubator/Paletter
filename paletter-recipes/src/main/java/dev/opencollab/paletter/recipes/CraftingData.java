@@ -205,6 +205,7 @@ public final class CraftingData {
                     case Recipe.Multi multi -> RecipeEncoder.multi(multi, netId);
                     case Recipe.SmithingTransform transform -> encoder.smithingTransform(transform, netId);
                     case Recipe.SmithingTrim trim -> encoder.smithingTrim(trim, netId);
+                    default -> throw new IllegalArgumentException(recipe.toString());
                 };
                 if (data == null) {
                     dropped.add(recipe);

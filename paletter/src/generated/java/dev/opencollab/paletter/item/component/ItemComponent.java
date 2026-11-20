@@ -21,11 +21,14 @@ import org.checkerframework.checker.nullness.qual.NonNull;
  * </ul>
  * <p>
  * Hand-written wire-only components, for fields with no add-on JSON source: see {@link WireOnlyItemComponent}.
+ * <p>
+ * Bedrock adds components in minor releases, so a {@code switch} over it needs a {@code default}; the compiler
+ * enforces it (docs/api.md, "Evolution").
  *
  * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/itemreference/examples/itemcomponentlist?view=minecraft-bedrock-stable">Microsoft Learn: item components</a>
  * @since 1.0.0
  */
-public sealed interface ItemComponent permits AllowOffHand, BlockPlacer, BundleInteraction, CanDestroyInCreative, Compostable, Cooldown, Damage, DamageAbsorption, Digger, Durability, DurabilitySensor, Dyeable, Enchantable, EntityPlacer, FireResistant, Food, Fuel, Glint, HandEquipped, HoverTextColor, Icon, InteractButton, ItemDisplayName, KineticWeapon, LiquidClipped, MaxStackSize, MusicRecord, PiercingWeapon, Projectile, Rarity, Repairable, Shooter, ShouldDespawn, StackedByData, StorageItem, StorageWeightLimit, StorageWeightModifier, SwingDuration, SwingSounds, Tags, ThrowableItem, UseAnimation, UseDuration, UseModifiers, Wearable, WireOnlyItemComponent {
+public sealed interface ItemComponent permits AllowOffHand, BlockPlacer, BundleInteraction, CanDestroyInCreative, Compostable, Cooldown, Damage, DamageAbsorption, Digger, Durability, DurabilitySensor, Dyeable, Enchantable, EntityPlacer, FireResistant, Food, Fuel, Glint, HandEquipped, HoverTextColor, Icon, InteractButton, ItemDisplayName, KineticWeapon, LiquidClipped, MaxStackSize, MusicRecord, PiercingWeapon, Projectile, Rarity, Repairable, Shooter, ShouldDespawn, StackedByData, StorageItem, StorageWeightLimit, StorageWeightModifier, SwingDuration, SwingSounds, Tags, ThrowableItem, UseAnimation, UseDuration, UseModifiers, Wearable, WireOnlyItemComponent, FutureItemComponent {
     /**
      * Returns the component name in add-on JSON.
      *

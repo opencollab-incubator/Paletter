@@ -123,9 +123,8 @@ final class WireSource {
             dispatch.addStatement("case $T c -> $T.write(c, ctx, out)", ClassName.get(kind.pkg(), ApiSource.wireOnly(kind)),
                 ClassName.get(PKG, "WireOnlyWire"));
         }
-        if (members.isEmpty()) {
-            dispatch.addStatement("default -> throw new $T(component.toString())", IllegalArgumentException.class);
-        }
+        // The sealed type's sentinel (ApiSource#sentinelName) has no instances
+        dispatch.addStatement("default -> throw new $T(component.toString())", IllegalArgumentException.class);
         dispatch.endControlFlow();
         type.addMethod(MethodSpec.methodBuilder("write").addModifiers(Modifier.PUBLIC, Modifier.STATIC)
             .addJavadoc("Writes a component into {@code out}: the item components compound, the block's {@code components}, or for a\n"

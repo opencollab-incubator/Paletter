@@ -16,13 +16,14 @@ import org.checkerframework.checker.nullness.qual.NonNull;
  *     <li>{@link TagQuery}: a Molang {@code query.any_tag} expression that selects items by tag</li>
  * </ul>
  * <p>
- * Switch over it without a default: the records below are all its forms.
+ * Bedrock may add forms, so a {@code switch} over it needs a {@code default}; the compiler enforces it
+ * (docs/api.md, "Evolution").
  * <p>
  * Used by: {@code item:minecraft:repairable:repair_items[].items}.
  *
  * @since 1.0.0
  */
-public sealed interface ItemsOrTags permits ItemsOrTags.Items, ItemsOrTags.TagQuery {
+public sealed interface ItemsOrTags permits ItemsOrTags.Items, ItemsOrTags.TagQuery, FutureItemsOrTags {
     /**
      * Creates the form that is the identifiers of the items.
      *

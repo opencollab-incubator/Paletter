@@ -6,10 +6,12 @@ import dev.opencollab.paletter.vanilla.BedrockItemVariant;
 
 /**
  * What a recipe slot takes, as BDS sends it. Every ingredient has a {@link #count()}: how many items the slot uses.
+ * Bedrock adds kinds of ingredients, so a {@code switch} over one needs a {@code default}; the compiler enforces it
+ * (docs/api.md, "Evolution").
  *
  * @since 1.0.0
  */
-public sealed interface Ingredient {
+public sealed interface Ingredient permits Ingredient.Item, Ingredient.AnyVariant, Ingredient.Tag, Ingredient.Alias, Ingredient.Empty, FutureIngredient {
     /**
      * Returns how many items the slot uses.
      *

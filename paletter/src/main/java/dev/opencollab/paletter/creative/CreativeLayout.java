@@ -103,6 +103,7 @@ public final class CreativeLayout {
                 switch (node) {
                     case CreativeItem item -> consumer.accept(item.stack());
                     case CreativeGroup group -> group.stacks().forEach(consumer);
+                    default -> throw new IllegalStateException("not a creative node: " + node);
                 }
             }
         }
@@ -126,6 +127,7 @@ public final class CreativeLayout {
                             }
                         }
                     }
+                    default -> throw new IllegalStateException("not a creative node: " + nodes.get(i));
                 }
             }
         }

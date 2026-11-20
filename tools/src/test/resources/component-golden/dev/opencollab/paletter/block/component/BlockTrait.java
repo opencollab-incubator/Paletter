@@ -9,27 +9,17 @@ import org.checkerframework.checker.nullness.qual.NonNull;
  * A custom block trait, mirroring Bedrock's add-on JSON: one class per component, generated
  * from the component model in {@code data/model} (creator docs plus what Bedrock Dedicated Server sends). Paletter
  * compiles them to the wire format of each palette's protocol.
+ * <p>
+ * Bedrock adds components in minor releases, so a {@code switch} over it needs a {@code default}; the compiler
+ * enforces it (docs/api.md, "Evolution").
  *
  * @since 1.0.0
  */
-public sealed interface BlockTrait permits BlockTrait.None {
+public sealed interface BlockTrait permits FutureBlockTrait {
     /**
      * Returns the component name in add-on JSON.
      *
      * @return the name, e.g. {@code minecraft:durability}
      */
     @NonNull String name();
-
-    /**
-     * Placeholder of a kind with no generated component; it has no instances.
-     */
-    final class None implements BlockTrait {
-        private None() {
-        }
-
-        @Override
-        public @NonNull String name() {
-            return "";
-        }
-    }
 }

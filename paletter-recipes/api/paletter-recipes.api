@@ -25,7 +25,7 @@ public static final class dev.opencollab.paletter.recipes.CraftingData$Builder {
     public dev.opencollab.paletter.recipes.CraftingData$Builder recipes(java.util.List<dev.opencollab.paletter.recipes.Recipe>)
 }
 
-public sealed interface dev.opencollab.paletter.recipes.Ingredient permits dev.opencollab.paletter.recipes.Ingredient$Alias, dev.opencollab.paletter.recipes.Ingredient$AnyVariant, dev.opencollab.paletter.recipes.Ingredient$Empty, dev.opencollab.paletter.recipes.Ingredient$Item, dev.opencollab.paletter.recipes.Ingredient$Tag {
+public sealed interface dev.opencollab.paletter.recipes.Ingredient permits dev.opencollab.paletter.recipes.FutureIngredient, dev.opencollab.paletter.recipes.Ingredient$Alias, dev.opencollab.paletter.recipes.Ingredient$AnyVariant, dev.opencollab.paletter.recipes.Ingredient$Empty, dev.opencollab.paletter.recipes.Ingredient$Item, dev.opencollab.paletter.recipes.Ingredient$Tag {
     public abstract int count()
 }
 
@@ -87,7 +87,7 @@ public record dev.opencollab.paletter.recipes.PotionMix {
     public final java.lang.String toString()
 }
 
-public sealed interface dev.opencollab.paletter.recipes.Recipe permits dev.opencollab.paletter.recipes.Recipe$Multi, dev.opencollab.paletter.recipes.Recipe$Shaped, dev.opencollab.paletter.recipes.Recipe$Shapeless, dev.opencollab.paletter.recipes.Recipe$SmithingTransform, dev.opencollab.paletter.recipes.Recipe$SmithingTrim {
+public sealed interface dev.opencollab.paletter.recipes.Recipe permits dev.opencollab.paletter.recipes.FutureRecipe, dev.opencollab.paletter.recipes.Recipe$Multi, dev.opencollab.paletter.recipes.Recipe$Shaped, dev.opencollab.paletter.recipes.Recipe$Shapeless, dev.opencollab.paletter.recipes.Recipe$SmithingTransform, dev.opencollab.paletter.recipes.Recipe$SmithingTrim {
 }
 
 public static final class dev.opencollab.paletter.recipes.Recipe$Multi implements dev.opencollab.paletter.recipes.Recipe {

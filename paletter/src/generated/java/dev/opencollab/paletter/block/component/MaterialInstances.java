@@ -787,11 +787,12 @@ public final class MaterialInstances implements BlockComponent {
      *     <li>{@link Define}: the definition of the instance</li>
      * </ul>
      * <p>
-     * Switch over it without a default: the records below are all its forms.
+     * Bedrock may add forms, so a {@code switch} over it needs a {@code default}; the compiler enforces it
+     * (docs/api.md, "Evolution").
      * <p>
      * Used by: {@code block:minecraft:material_instances:*}, {@code block:minecraft:material_instances:down}, {@code block:minecraft:material_instances:east}, {@code block:minecraft:material_instances:north}, {@code block:minecraft:material_instances:south}, {@code block:minecraft:material_instances:up}, {@code block:minecraft:material_instances:west}.
      */
-    public sealed interface InstanceOrAlias permits InstanceOrAlias.Alias, InstanceOrAlias.Define {
+    public sealed interface InstanceOrAlias permits InstanceOrAlias.Alias, InstanceOrAlias.Define, FutureInstanceOrAlias {
         /**
          * Creates the form that is the name of another instance.
          *
@@ -844,6 +845,15 @@ public final class MaterialInstances implements BlockComponent {
             public Define {
                 Objects.requireNonNull(value, "InstanceOrAlias.Define.value");
             }
+        }
+    }
+
+    /**
+     * Never instantiated: it makes a switch over {@code MaterialInstances.InstanceOrAlias} need a {@code default}, as Bedrock adds
+     * variants in minor releases (docs/api.md, "Evolution").
+     */
+    private static final class FutureInstanceOrAlias implements InstanceOrAlias {
+        private FutureInstanceOrAlias() {
         }
     }
 }

@@ -568,7 +568,7 @@ public final class dev.opencollab.paletter.block.VoxelShapes {
     public java.lang.String toString()
 }
 
-public sealed interface dev.opencollab.paletter.block.component.BlockComponent permits dev.opencollab.paletter.block.component.BlockDisplayName, dev.opencollab.paletter.block.component.BlockEntity, dev.opencollab.paletter.block.component.BlockLightAbsorption, dev.opencollab.paletter.block.component.BlockLightEmission, dev.opencollab.paletter.block.component.BoneVisibility, dev.opencollab.paletter.block.component.Breathability, dev.opencollab.paletter.block.component.ChestObstruction, dev.opencollab.paletter.block.component.CollisionBox, dev.opencollab.paletter.block.component.ConnectionRule, dev.opencollab.paletter.block.component.CraftingTable, dev.opencollab.paletter.block.component.DestroyTime, dev.opencollab.paletter.block.component.DestructibleByExplosion, dev.opencollab.paletter.block.component.DestructibleByMining, dev.opencollab.paletter.block.component.DestructionParticles, dev.opencollab.paletter.block.component.EmbeddedVisual, dev.opencollab.paletter.block.component.EntityFallOn, dev.opencollab.paletter.block.component.Flammable, dev.opencollab.paletter.block.component.FlowerPottable, dev.opencollab.paletter.block.component.Friction, dev.opencollab.paletter.block.component.Geometry, dev.opencollab.paletter.block.component.InstrumentSound, dev.opencollab.paletter.block.component.ItemVisual, dev.opencollab.paletter.block.component.LightDampening, dev.opencollab.paletter.block.component.LightEmission, dev.opencollab.paletter.block.component.LiquidDetection, dev.opencollab.paletter.block.component.Loot, dev.opencollab.paletter.block.component.MapColor, dev.opencollab.paletter.block.component.MaterialInstances, dev.opencollab.paletter.block.component.Movable, dev.opencollab.paletter.block.component.PlacementFilter, dev.opencollab.paletter.block.component.PrecipitationInteractions, dev.opencollab.paletter.block.component.RandomOffset, dev.opencollab.paletter.block.component.RedstoneConductivity, dev.opencollab.paletter.block.component.RedstoneConsumer, dev.opencollab.paletter.block.component.RedstoneProducer, dev.opencollab.paletter.block.component.Replaceable, dev.opencollab.paletter.block.component.SelectionBox, dev.opencollab.paletter.block.component.Support, dev.opencollab.paletter.block.component.Tick, dev.opencollab.paletter.block.component.Transformation, dev.opencollab.paletter.block.component.UnitCube, dev.opencollab.paletter.block.component.WireOnlyBlockComponent {
+public sealed interface dev.opencollab.paletter.block.component.BlockComponent permits dev.opencollab.paletter.block.component.BlockDisplayName, dev.opencollab.paletter.block.component.BlockEntity, dev.opencollab.paletter.block.component.BlockLightAbsorption, dev.opencollab.paletter.block.component.BlockLightEmission, dev.opencollab.paletter.block.component.BoneVisibility, dev.opencollab.paletter.block.component.Breathability, dev.opencollab.paletter.block.component.ChestObstruction, dev.opencollab.paletter.block.component.CollisionBox, dev.opencollab.paletter.block.component.ConnectionRule, dev.opencollab.paletter.block.component.CraftingTable, dev.opencollab.paletter.block.component.DestroyTime, dev.opencollab.paletter.block.component.DestructibleByExplosion, dev.opencollab.paletter.block.component.DestructibleByMining, dev.opencollab.paletter.block.component.DestructionParticles, dev.opencollab.paletter.block.component.EmbeddedVisual, dev.opencollab.paletter.block.component.EntityFallOn, dev.opencollab.paletter.block.component.Flammable, dev.opencollab.paletter.block.component.FlowerPottable, dev.opencollab.paletter.block.component.Friction, dev.opencollab.paletter.block.component.FutureBlockComponent, dev.opencollab.paletter.block.component.Geometry, dev.opencollab.paletter.block.component.InstrumentSound, dev.opencollab.paletter.block.component.ItemVisual, dev.opencollab.paletter.block.component.LightDampening, dev.opencollab.paletter.block.component.LightEmission, dev.opencollab.paletter.block.component.LiquidDetection, dev.opencollab.paletter.block.component.Loot, dev.opencollab.paletter.block.component.MapColor, dev.opencollab.paletter.block.component.MaterialInstances, dev.opencollab.paletter.block.component.Movable, dev.opencollab.paletter.block.component.PlacementFilter, dev.opencollab.paletter.block.component.PrecipitationInteractions, dev.opencollab.paletter.block.component.RandomOffset, dev.opencollab.paletter.block.component.RedstoneConductivity, dev.opencollab.paletter.block.component.RedstoneConsumer, dev.opencollab.paletter.block.component.RedstoneProducer, dev.opencollab.paletter.block.component.Replaceable, dev.opencollab.paletter.block.component.SelectionBox, dev.opencollab.paletter.block.component.Support, dev.opencollab.paletter.block.component.Tick, dev.opencollab.paletter.block.component.Transformation, dev.opencollab.paletter.block.component.UnitCube, dev.opencollab.paletter.block.component.WireOnlyBlockComponent {
     public abstract java.lang.String name()
 }
 
@@ -694,7 +694,7 @@ public static final class dev.opencollab.paletter.block.component.BlockMenuCateg
     public java.lang.String value()
 }
 
-public sealed interface dev.opencollab.paletter.block.component.BlockTrait permits dev.opencollab.paletter.block.component.Connection, dev.opencollab.paletter.block.component.MultiBlock, dev.opencollab.paletter.block.component.PlacementDirection, dev.opencollab.paletter.block.component.PlacementPosition {
+public sealed interface dev.opencollab.paletter.block.component.BlockTrait permits dev.opencollab.paletter.block.component.Connection, dev.opencollab.paletter.block.component.FutureBlockTrait, dev.opencollab.paletter.block.component.MultiBlock, dev.opencollab.paletter.block.component.PlacementDirection, dev.opencollab.paletter.block.component.PlacementPosition {
     public abstract java.lang.String name()
 }
 
@@ -1554,7 +1554,7 @@ public static final class dev.opencollab.paletter.block.component.MaterialInstan
     public dev.opencollab.paletter.block.component.MaterialInstances$Instance$Builder tintMethod(java.lang.String)
 }
 
-public sealed interface dev.opencollab.paletter.block.component.MaterialInstances$InstanceOrAlias permits dev.opencollab.paletter.block.component.MaterialInstances$InstanceOrAlias$Alias, dev.opencollab.paletter.block.component.MaterialInstances$InstanceOrAlias$Define {
+public sealed interface dev.opencollab.paletter.block.component.MaterialInstances$InstanceOrAlias permits dev.opencollab.paletter.block.component.MaterialInstances$FutureInstanceOrAlias, dev.opencollab.paletter.block.component.MaterialInstances$InstanceOrAlias$Alias, dev.opencollab.paletter.block.component.MaterialInstances$InstanceOrAlias$Define {
     public static dev.opencollab.paletter.block.component.MaterialInstances$InstanceOrAlias alias(java.lang.String)
     public static dev.opencollab.paletter.block.component.MaterialInstances$InstanceOrAlias define(dev.opencollab.paletter.block.component.MaterialInstances$Instance)
 }
@@ -2162,7 +2162,7 @@ public static final class dev.opencollab.paletter.block.component.UnitCube$Build
     public dev.opencollab.paletter.block.component.UnitCube build()
 }
 
-public sealed interface dev.opencollab.paletter.block.component.UvLock permits dev.opencollab.paletter.block.component.UvLock$Bones, dev.opencollab.paletter.block.component.UvLock$Flag {
+public sealed interface dev.opencollab.paletter.block.component.UvLock permits dev.opencollab.paletter.block.component.FutureUvLock, dev.opencollab.paletter.block.component.UvLock$Bones, dev.opencollab.paletter.block.component.UvLock$Flag {
     public static dev.opencollab.paletter.block.component.UvLock bones(java.util.List<java.lang.String>)
     public static dev.opencollab.paletter.block.component.UvLock flag(boolean)
 }
@@ -2183,7 +2183,7 @@ public record dev.opencollab.paletter.block.component.UvLock$Flag implements dev
     public boolean value()
 }
 
-public sealed interface dev.opencollab.paletter.block.component.WireOnlyBlockComponent extends dev.opencollab.paletter.block.component.BlockComponent permits dev.opencollab.paletter.block.component.OnPlayerPlacing, dev.opencollab.paletter.block.component.ScriptHooks {
+public sealed interface dev.opencollab.paletter.block.component.WireOnlyBlockComponent extends dev.opencollab.paletter.block.component.BlockComponent permits dev.opencollab.paletter.block.component.FutureWireOnlyBlockComponent, dev.opencollab.paletter.block.component.OnPlayerPlacing, dev.opencollab.paletter.block.component.ScriptHooks {
 }
 
 public enum dev.opencollab.paletter.creative.CreativeCategory {
@@ -2298,7 +2298,7 @@ public final class dev.opencollab.paletter.creative.CreativeLayout {
     public java.lang.String toString()
 }
 
-public sealed interface dev.opencollab.paletter.creative.CreativeNode permits dev.opencollab.paletter.creative.CreativeGroup, dev.opencollab.paletter.creative.CreativeItem {
+public sealed interface dev.opencollab.paletter.creative.CreativeNode permits dev.opencollab.paletter.creative.CreativeGroup, dev.opencollab.paletter.creative.CreativeItem, dev.opencollab.paletter.creative.FutureCreativeNode {
 }
 
 public enum dev.opencollab.paletter.creative.CreativeOrdering {
@@ -2556,7 +2556,7 @@ public static final class dev.opencollab.paletter.item.component.CanDestroyInCre
     public dev.opencollab.paletter.item.component.CanDestroyInCreative$Builder value(java.lang.Boolean)
 }
 
-public sealed interface dev.opencollab.paletter.item.component.ColorValue permits dev.opencollab.paletter.item.component.ColorValue$Channels, dev.opencollab.paletter.item.component.ColorValue$Hex {
+public sealed interface dev.opencollab.paletter.item.component.ColorValue permits dev.opencollab.paletter.item.component.ColorValue$Channels, dev.opencollab.paletter.item.component.ColorValue$Hex, dev.opencollab.paletter.item.component.FutureColorValue {
     public static dev.opencollab.paletter.item.component.ColorValue channels(java.util.List<java.lang.Integer>)
     public static dev.opencollab.paletter.item.component.ColorValue hex(java.lang.String)
 }
@@ -3130,7 +3130,7 @@ public static final class dev.opencollab.paletter.item.component.InteractButton$
     public dev.opencollab.paletter.item.component.InteractButton$Builder text(java.lang.String)
 }
 
-public sealed interface dev.opencollab.paletter.item.component.ItemComponent permits dev.opencollab.paletter.item.component.AllowOffHand, dev.opencollab.paletter.item.component.BlockPlacer, dev.opencollab.paletter.item.component.BundleInteraction, dev.opencollab.paletter.item.component.CanDestroyInCreative, dev.opencollab.paletter.item.component.Compostable, dev.opencollab.paletter.item.component.Cooldown, dev.opencollab.paletter.item.component.Damage, dev.opencollab.paletter.item.component.DamageAbsorption, dev.opencollab.paletter.item.component.Digger, dev.opencollab.paletter.item.component.Durability, dev.opencollab.paletter.item.component.DurabilitySensor, dev.opencollab.paletter.item.component.Dyeable, dev.opencollab.paletter.item.component.Enchantable, dev.opencollab.paletter.item.component.EntityPlacer, dev.opencollab.paletter.item.component.FireResistant, dev.opencollab.paletter.item.component.Food, dev.opencollab.paletter.item.component.Fuel, dev.opencollab.paletter.item.component.Glint, dev.opencollab.paletter.item.component.HandEquipped, dev.opencollab.paletter.item.component.HoverTextColor, dev.opencollab.paletter.item.component.Icon, dev.opencollab.paletter.item.component.InteractButton, dev.opencollab.paletter.item.component.ItemDisplayName, dev.opencollab.paletter.item.component.KineticWeapon, dev.opencollab.paletter.item.component.LiquidClipped, dev.opencollab.paletter.item.component.MaxStackSize, dev.opencollab.paletter.item.component.MusicRecord, dev.opencollab.paletter.item.component.PiercingWeapon, dev.opencollab.paletter.item.component.Projectile, dev.opencollab.paletter.item.component.Rarity, dev.opencollab.paletter.item.component.Repairable, dev.opencollab.paletter.item.component.Shooter, dev.opencollab.paletter.item.component.ShouldDespawn, dev.opencollab.paletter.item.component.StackedByData, dev.opencollab.paletter.item.component.StorageItem, dev.opencollab.paletter.item.component.StorageWeightLimit, dev.opencollab.paletter.item.component.StorageWeightModifier, dev.opencollab.paletter.item.component.SwingDuration, dev.opencollab.paletter.item.component.SwingSounds, dev.opencollab.paletter.item.component.Tags, dev.opencollab.paletter.item.component.ThrowableItem, dev.opencollab.paletter.item.component.UseAnimation, dev.opencollab.paletter.item.component.UseDuration, dev.opencollab.paletter.item.component.UseModifiers, dev.opencollab.paletter.item.component.Wearable, dev.opencollab.paletter.item.component.WireOnlyItemComponent {
+public sealed interface dev.opencollab.paletter.item.component.ItemComponent permits dev.opencollab.paletter.item.component.AllowOffHand, dev.opencollab.paletter.item.component.BlockPlacer, dev.opencollab.paletter.item.component.BundleInteraction, dev.opencollab.paletter.item.component.CanDestroyInCreative, dev.opencollab.paletter.item.component.Compostable, dev.opencollab.paletter.item.component.Cooldown, dev.opencollab.paletter.item.component.Damage, dev.opencollab.paletter.item.component.DamageAbsorption, dev.opencollab.paletter.item.component.Digger, dev.opencollab.paletter.item.component.Durability, dev.opencollab.paletter.item.component.DurabilitySensor, dev.opencollab.paletter.item.component.Dyeable, dev.opencollab.paletter.item.component.Enchantable, dev.opencollab.paletter.item.component.EntityPlacer, dev.opencollab.paletter.item.component.FireResistant, dev.opencollab.paletter.item.component.Food, dev.opencollab.paletter.item.component.Fuel, dev.opencollab.paletter.item.component.FutureItemComponent, dev.opencollab.paletter.item.component.Glint, dev.opencollab.paletter.item.component.HandEquipped, dev.opencollab.paletter.item.component.HoverTextColor, dev.opencollab.paletter.item.component.Icon, dev.opencollab.paletter.item.component.InteractButton, dev.opencollab.paletter.item.component.ItemDisplayName, dev.opencollab.paletter.item.component.KineticWeapon, dev.opencollab.paletter.item.component.LiquidClipped, dev.opencollab.paletter.item.component.MaxStackSize, dev.opencollab.paletter.item.component.MusicRecord, dev.opencollab.paletter.item.component.PiercingWeapon, dev.opencollab.paletter.item.component.Projectile, dev.opencollab.paletter.item.component.Rarity, dev.opencollab.paletter.item.component.Repairable, dev.opencollab.paletter.item.component.Shooter, dev.opencollab.paletter.item.component.ShouldDespawn, dev.opencollab.paletter.item.component.StackedByData, dev.opencollab.paletter.item.component.StorageItem, dev.opencollab.paletter.item.component.StorageWeightLimit, dev.opencollab.paletter.item.component.StorageWeightModifier, dev.opencollab.paletter.item.component.SwingDuration, dev.opencollab.paletter.item.component.SwingSounds, dev.opencollab.paletter.item.component.Tags, dev.opencollab.paletter.item.component.ThrowableItem, dev.opencollab.paletter.item.component.UseAnimation, dev.opencollab.paletter.item.component.UseDuration, dev.opencollab.paletter.item.component.UseModifiers, dev.opencollab.paletter.item.component.Wearable, dev.opencollab.paletter.item.component.WireOnlyItemComponent {
     public abstract java.lang.String name()
 }
 
@@ -3183,7 +3183,7 @@ public static final class dev.opencollab.paletter.item.component.ItemMenuCategor
     public java.lang.String value()
 }
 
-public sealed interface dev.opencollab.paletter.item.component.ItemsOrTags permits dev.opencollab.paletter.item.component.ItemsOrTags$Items, dev.opencollab.paletter.item.component.ItemsOrTags$TagQuery {
+public sealed interface dev.opencollab.paletter.item.component.ItemsOrTags permits dev.opencollab.paletter.item.component.FutureItemsOrTags, dev.opencollab.paletter.item.component.ItemsOrTags$Items, dev.opencollab.paletter.item.component.ItemsOrTags$TagQuery {
     public static dev.opencollab.paletter.item.component.ItemsOrTags items(dev.opencollab.paletter.vanilla.BedrockItemType, dev.opencollab.paletter.vanilla.BedrockItemType...)
     public static dev.opencollab.paletter.item.component.ItemsOrTags items(java.util.List<java.lang.String>)
     public static dev.opencollab.paletter.item.component.ItemsOrTags tagQuery(java.lang.String)
@@ -3515,7 +3515,7 @@ public record dev.opencollab.paletter.item.component.RenderOffsets$Vec3 {
     public float z()
 }
 
-public sealed interface dev.opencollab.paletter.item.component.RepairAmount permits dev.opencollab.paletter.item.component.RepairAmount$Expression, dev.opencollab.paletter.item.component.RepairAmount$Fixed {
+public sealed interface dev.opencollab.paletter.item.component.RepairAmount permits dev.opencollab.paletter.item.component.FutureRepairAmount, dev.opencollab.paletter.item.component.RepairAmount$Expression, dev.opencollab.paletter.item.component.RepairAmount$Fixed {
     public static dev.opencollab.paletter.item.component.RepairAmount expression(java.lang.String)
     public static dev.opencollab.paletter.item.component.RepairAmount fixed(float)
 }
@@ -3906,7 +3906,7 @@ public static final class dev.opencollab.paletter.item.component.Wearable$Slot {
     public java.lang.String value()
 }
 
-public sealed interface dev.opencollab.paletter.item.component.WireOnlyItemComponent extends dev.opencollab.paletter.item.component.ItemComponent permits dev.opencollab.paletter.item.component.FrameCount, dev.opencollab.paletter.item.component.MiningSpeed, dev.opencollab.paletter.item.component.RenderOffsets, dev.opencollab.paletter.item.component.UseOnHook {
+public sealed interface dev.opencollab.paletter.item.component.WireOnlyItemComponent extends dev.opencollab.paletter.item.component.ItemComponent permits dev.opencollab.paletter.item.component.FrameCount, dev.opencollab.paletter.item.component.FutureWireOnlyItemComponent, dev.opencollab.paletter.item.component.MiningSpeed, dev.opencollab.paletter.item.component.RenderOffsets, dev.opencollab.paletter.item.component.UseOnHook {
 }
 
 public final class dev.opencollab.paletter.property.Properties {

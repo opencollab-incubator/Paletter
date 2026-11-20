@@ -263,6 +263,7 @@ public final class Transforms {
             case null -> Wire.bool(false);
             case UvLock.Flag flag -> Wire.bool(flag.value());
             case UvLock.Bones bones -> Wire.strings(Wire.byNameHash(bones.value()));
+            default -> throw new IllegalArgumentException(uvLock.toString());
         };
     }
 
@@ -487,6 +488,7 @@ public final class Transforms {
                     e.child("repair_amount").put("expression", expression.value())
                         .put("version", (short) (expression.value().isEmpty() ? -1 : 0));
                 case RepairAmount.Expression expression -> e.put("repair_amount", expression.value());
+                default -> throw new IllegalArgumentException(entry.repairAmount().toString());
             }
         }
     }
@@ -576,6 +578,7 @@ public final class Transforms {
                 }
                 rgb = color.value().stream().map(v -> Math.max(0, Math.min(255, v))).toList();
             }
+            default -> throw new IllegalArgumentException(c.defaultColor().toString());
         }
         out.put("minecraft:dyeable.default_color", Wire.ints(rgb));
     }

@@ -18,11 +18,14 @@ import org.checkerframework.checker.nullness.qual.NonNull;
  *     <li>{@code minecraft:random_ticking}: retired, never on the wire: the white-box of BDS 1.26.70.24 has it with network false (not sent) (<a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/blockreference/examples/blockcomponents/minecraftblock_random_ticking?view=minecraft-bedrock-stable">Microsoft Learn</a>)</li>
  *     <li>{@code minecraft:tag}: not modelled: tag:&lt;name&gt; components; the docs page has no table (probed by hand in capture/addon: rejected by 1.26.60) (<a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/blockreference/examples/blockcomponents/minecraftblock_tag?view=minecraft-bedrock-stable">Microsoft Learn</a>)</li>
  * </ul>
+ * <p>
+ * Bedrock adds components in minor releases, so a {@code switch} over it needs a {@code default}; the compiler
+ * enforces it (docs/api.md, "Evolution").
  *
  * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/blockreference/examples/blockcomponents/blockcomponentslist?view=minecraft-bedrock-stable">Microsoft Learn: block components</a>
  * @since 1.0.0
  */
-public sealed interface BlockComponent permits BlockDisplayName, BlockEntity, BlockLightAbsorption, BlockLightEmission, BoneVisibility, Breathability, ChestObstruction, CollisionBox, ConnectionRule, CraftingTable, DestroyTime, DestructibleByExplosion, DestructibleByMining, DestructionParticles, EmbeddedVisual, EntityFallOn, Flammable, FlowerPottable, Friction, Geometry, InstrumentSound, ItemVisual, LightDampening, LightEmission, LiquidDetection, Loot, MapColor, MaterialInstances, Movable, PlacementFilter, PrecipitationInteractions, RandomOffset, RedstoneConductivity, RedstoneConsumer, RedstoneProducer, Replaceable, SelectionBox, Support, Tick, Transformation, UnitCube, WireOnlyBlockComponent {
+public sealed interface BlockComponent permits BlockDisplayName, BlockEntity, BlockLightAbsorption, BlockLightEmission, BoneVisibility, Breathability, ChestObstruction, CollisionBox, ConnectionRule, CraftingTable, DestroyTime, DestructibleByExplosion, DestructibleByMining, DestructionParticles, EmbeddedVisual, EntityFallOn, Flammable, FlowerPottable, Friction, Geometry, InstrumentSound, ItemVisual, LightDampening, LightEmission, LiquidDetection, Loot, MapColor, MaterialInstances, Movable, PlacementFilter, PrecipitationInteractions, RandomOffset, RedstoneConductivity, RedstoneConsumer, RedstoneProducer, Replaceable, SelectionBox, Support, Tick, Transformation, UnitCube, WireOnlyBlockComponent, FutureBlockComponent {
     /**
      * Returns the component name in add-on JSON.
      *

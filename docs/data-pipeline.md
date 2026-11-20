@@ -646,8 +646,10 @@ Rules the generator follows:
   per form, a list as `(first, rest...)` (never empty, primitives stay primitive), except for the forms `noOverload`
   lists: a string that is an alias or a query is no obvious value (`all("x")` would read as a texture), so it is set as
   `all(InstanceOrAlias.alias("x"))`. The keyed extra map of a component refuses the keys that have a field of their own.
-  The form is told by the type of the value, never a runtime check: a hand transform switches over the type without a
-  `default`, so a new form fails the compilation. A union field still needs a hand transform for its wire encoding (the
+  The form is told by the type of the value, never a runtime check: a hand transform switches over the type. The union
+  also permits a sentinel class that is not public (`FutureUvLock`), so every switch over it needs a `default`, users'
+  included (docs/api.md, "Evolution"); a new form is found by the conformance test, not the compiler. The sealed
+  component interfaces have one too (`FutureItemComponent`). A union field still needs a hand transform for its wire encoding (the
   generator fails otherwise) until the type-dispatched rule kind exists.
 - Generation fails on two mappings for one protocol, name collisions, two fields writing one wire leaf, or an
   ambiguous union.

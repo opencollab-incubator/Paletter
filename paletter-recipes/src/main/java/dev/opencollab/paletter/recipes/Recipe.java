@@ -13,10 +13,12 @@ import java.util.UUID;
  * check their own shape: the ingredients of a {@link Shaped} fill its grid, and a recipe has results. Net ids are not
  * part of it (they number the recipes a server sends, whatever it adds), and neither are the random UUIDs BDS gives
  * crafting recipes: only the {@link Multi} recipes have fixed ones.
+ * <p>
+ * Bedrock adds kinds of recipes, so a {@code switch} over a recipe needs a {@code default}; the compiler enforces it.
  *
  * @since 1.0.0
  */
-public sealed interface Recipe {
+public sealed interface Recipe permits Recipe.Shaped, Recipe.Shapeless, Recipe.Multi, Recipe.SmithingTransform, Recipe.SmithingTrim, FutureRecipe {
     /**
      * A recipe on a grid, ingredients row by row ({@code width * height} of them). Made with {@link #builder()}.
      *

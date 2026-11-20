@@ -59,6 +59,13 @@ deprecation warnings, not compile errors. The API is shaped so that the compiler
   works for those), `value()`, `isKnown()` and `known()`. A value Bedrock adds can be built and sent before Paletter has a
   constant for it; Paletter's encoder leaves a value it has no wire mapping for out, with a report warning. There are no
   switch labels: switch over `value()` with a `default`.
+- **Sealed types Bedrock adds variants to need a `default`.** `ItemComponent`, `BlockComponent`, `BlockTrait`,
+  `WireOnlyItemComponent`, `WireOnlyBlockComponent`, every generated union (`UvLock`, `ColorValue`, `ItemsOrTags`, ...),
+  `Recipe`, `Ingredient` and `CreativeNode` each permit a class that is not public and has no instances
+  (`FutureItemComponent`, ...). No `case` can name it, so `javac` rejects a `switch` over one of them without a `default`;
+  a new variant in a minor release then lands in that `default` instead of failing the build or throwing
+  `MatchException`. Pattern matching and `instanceof` work as before. The types Paletter defines (`ItemKey`,
+  `BedrockState`, `ItemMatcher`, `CreativePlacement`, ...) stay plainly sealed: they are closed by definition.
 - **Vanilla state enums stay Java enums** (`vanilla.state`): they are read and switched, and the bundled data always
   matches them. They gain constants in minor releases, so a switch over one needs a `default`.
   `BedrockBlockState#raw(BedrockState)` reads a state's value as Bedrock sends it and never throws.
