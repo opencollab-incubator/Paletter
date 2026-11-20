@@ -122,9 +122,10 @@ public final class MapColor implements BlockComponent {
          *
          * @param color the value
          * @return this builder
+         * @throws NullPointerException if the value is null
          */
         public @NonNull Builder color(@NonNull String color) {
-            this.color = color;
+            this.color = Objects.requireNonNull(color, "MapColor.color");
             return this;
         }
 

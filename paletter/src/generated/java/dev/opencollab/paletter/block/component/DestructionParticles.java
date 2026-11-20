@@ -158,9 +158,10 @@ public final class DestructionParticles implements BlockComponent {
          *
          * @param tintMethod the value
          * @return this builder
+         * @throws NullPointerException if the value is null
          */
         public @NonNull Builder tintMethod(@NonNull TintMethod tintMethod) {
-            this.tintMethod = tintMethod;
+            this.tintMethod = Objects.requireNonNull(tintMethod, "DestructionParticles.tintMethod");
             return this;
         }
 

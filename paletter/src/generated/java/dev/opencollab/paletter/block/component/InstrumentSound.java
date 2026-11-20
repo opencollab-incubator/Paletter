@@ -128,9 +128,10 @@ public final class InstrumentSound implements BlockComponent {
          *
          * @param down the value
          * @return this builder
+         * @throws NullPointerException if the value is null
          */
         public @NonNull Builder down(@NonNull Down down) {
-            this.down = down;
+            this.down = Objects.requireNonNull(down, "InstrumentSound.down");
             return this;
         }
 
@@ -139,9 +140,10 @@ public final class InstrumentSound implements BlockComponent {
          *
          * @param up the value
          * @return this builder
+         * @throws NullPointerException if the value is null
          */
         public @NonNull Builder up(@NonNull Up up) {
-            this.up = up;
+            this.up = Objects.requireNonNull(up, "InstrumentSound.up");
             return this;
         }
 

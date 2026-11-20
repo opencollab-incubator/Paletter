@@ -120,9 +120,10 @@ public final class Durability implements ItemComponent {
          *
          * @param damageChance the value
          * @return this builder
+         * @throws NullPointerException if the value is null
          */
         public @NonNull Builder damageChance(@NonNull DamageChance damageChance) {
-            this.damageChance = damageChance;
+            this.damageChance = Objects.requireNonNull(damageChance, "Durability.damageChance");
             return this;
         }
 

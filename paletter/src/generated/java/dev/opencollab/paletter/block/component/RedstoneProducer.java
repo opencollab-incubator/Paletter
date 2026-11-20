@@ -5,6 +5,7 @@ package dev.opencollab.paletter.block.component;
 
 import dev.opencollab.paletter.annotation.BedrockFormat;
 import dev.opencollab.paletter.internal.component.Check;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -163,20 +164,28 @@ public final class RedstoneProducer implements BlockComponent {
          *
          * @param connectedFaces the value
          * @return this builder
+         * @throws NullPointerException if the value is null
          */
         public @NonNull Builder connectedFaces(@NonNull List<ConnectedFaces> connectedFaces) {
-            this.connectedFaces = connectedFaces;
+            this.connectedFaces = Objects.requireNonNull(connectedFaces, "RedstoneProducer.connectedFaces");
             return this;
         }
 
         /**
-         * Sets {@code connected_faces}.
+         * Sets {@code connected_faces} to the values (at least one value).
          *
-         * @param connectedFaces the value
+         * @param first the first value
+         * @param rest the other values
          * @return this builder
          */
-        public @NonNull Builder connectedFaces(@NonNull ConnectedFaces... connectedFaces) {
-            return connectedFaces(List.of(connectedFaces));
+        public @NonNull Builder connectedFaces(@NonNull ConnectedFaces first,
+                @NonNull ConnectedFaces... rest) {
+            List<ConnectedFaces> values = new ArrayList<>();
+            values.add(first);
+            for (ConnectedFaces x : rest) {
+                values.add(x);
+            }
+            return connectedFaces(values);
         }
 
         /**

@@ -375,7 +375,10 @@ public final class BlockWire {
                             case "south" -> 8;
                             case "up" -> 2;
                             case "west" -> 16;
-                            default -> 0;
+                            default -> {
+                                ctx.drop(LiquidDetection.NAME, "detection_rules[].stops_liquid_flowing_from_direction = " + String.valueOf(x3) + " has no known wire value");
+                                yield 0;
+                            }
                         };
             }
             n1.put("stopsLiquidFromDirection", Wire.toByte(bits2));
@@ -396,7 +399,10 @@ public final class BlockWire {
                             case "south" -> 8;
                             case "up" -> 2;
                             case "west" -> 16;
-                            default -> 0;
+                            default -> {
+                                ctx.drop(PlacementFilter.NAME, "conditions[].allowed_faces = " + String.valueOf(x3) + " has no known wire value");
+                                yield 0;
+                            }
                         };
             }
             n1.put("allowed_faces", Wire.toByte(bits2));

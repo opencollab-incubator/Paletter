@@ -662,6 +662,7 @@ public static final class dev.opencollab.paletter.block.component.BlockLightEmis
 }
 
 public final class dev.opencollab.paletter.block.component.BlockMenuCategory {
+    public static final java.lang.String NAME = "menu_category"
     public static dev.opencollab.paletter.block.component.BlockMenuCategory$Builder builder()
     public dev.opencollab.paletter.block.component.BlockMenuCategory$Category category()
     public boolean equals(java.lang.Object)
@@ -773,8 +774,8 @@ public final class dev.opencollab.paletter.block.component.CollisionBox implemen
 }
 
 public static final class dev.opencollab.paletter.block.component.CollisionBox$Builder {
+    public dev.opencollab.paletter.block.component.CollisionBox$Builder boxes(dev.opencollab.paletter.block.component.CollisionBox$Entry, dev.opencollab.paletter.block.component.CollisionBox$Entry...)
     public dev.opencollab.paletter.block.component.CollisionBox$Builder boxes(java.util.List<dev.opencollab.paletter.block.component.CollisionBox$Entry>)
-    public dev.opencollab.paletter.block.component.CollisionBox$Builder boxes(dev.opencollab.paletter.block.component.CollisionBox$Entry...)
     public dev.opencollab.paletter.block.component.CollisionBox build()
     public dev.opencollab.paletter.block.component.CollisionBox$Builder enabled(java.lang.Boolean)
 }
@@ -821,8 +822,8 @@ public final class dev.opencollab.paletter.block.component.Connection implements
 
 public static final class dev.opencollab.paletter.block.component.Connection$Builder {
     public dev.opencollab.paletter.block.component.Connection build()
+    public dev.opencollab.paletter.block.component.Connection$Builder enabledStates(dev.opencollab.paletter.block.component.Connection$EnabledStates, dev.opencollab.paletter.block.component.Connection$EnabledStates...)
     public dev.opencollab.paletter.block.component.Connection$Builder enabledStates(java.util.List<dev.opencollab.paletter.block.component.Connection$EnabledStates>)
-    public dev.opencollab.paletter.block.component.Connection$Builder enabledStates(dev.opencollab.paletter.block.component.Connection$EnabledStates...)
 }
 
 public static final class dev.opencollab.paletter.block.component.Connection$EnabledStates {
@@ -864,8 +865,8 @@ public static final class dev.opencollab.paletter.block.component.ConnectionRule
 public static final class dev.opencollab.paletter.block.component.ConnectionRule$Builder {
     public dev.opencollab.paletter.block.component.ConnectionRule$Builder acceptsConnectionsFrom(dev.opencollab.paletter.block.component.ConnectionRule$AcceptsConnectionsFrom)
     public dev.opencollab.paletter.block.component.ConnectionRule build()
+    public dev.opencollab.paletter.block.component.ConnectionRule$Builder enabledDirections(dev.opencollab.paletter.block.component.ConnectionRule$EnabledDirections, dev.opencollab.paletter.block.component.ConnectionRule$EnabledDirections...)
     public dev.opencollab.paletter.block.component.ConnectionRule$Builder enabledDirections(java.util.List<dev.opencollab.paletter.block.component.ConnectionRule$EnabledDirections>)
-    public dev.opencollab.paletter.block.component.ConnectionRule$Builder enabledDirections(dev.opencollab.paletter.block.component.ConnectionRule$EnabledDirections...)
 }
 
 public static final class dev.opencollab.paletter.block.component.ConnectionRule$EnabledDirections {
@@ -896,8 +897,8 @@ public final class dev.opencollab.paletter.block.component.CraftingTable impleme
 
 public static final class dev.opencollab.paletter.block.component.CraftingTable$Builder {
     public dev.opencollab.paletter.block.component.CraftingTable build()
+    public dev.opencollab.paletter.block.component.CraftingTable$Builder craftingTags(java.lang.String, java.lang.String...)
     public dev.opencollab.paletter.block.component.CraftingTable$Builder craftingTags(java.util.List<java.lang.String>)
-    public dev.opencollab.paletter.block.component.CraftingTable$Builder craftingTags(java.lang.String...)
     public dev.opencollab.paletter.block.component.CraftingTable$Builder tableName(java.lang.String)
 }
 
@@ -954,8 +955,8 @@ public final class dev.opencollab.paletter.block.component.DestructibleByMining 
 public static final class dev.opencollab.paletter.block.component.DestructibleByMining$Builder {
     public dev.opencollab.paletter.block.component.DestructibleByMining build()
     public dev.opencollab.paletter.block.component.DestructibleByMining$Builder enabled(java.lang.Boolean)
+    public dev.opencollab.paletter.block.component.DestructibleByMining$Builder itemSpecificSpeeds(dev.opencollab.paletter.block.component.DestructibleByMining$ItemSpecificSpeeds, dev.opencollab.paletter.block.component.DestructibleByMining$ItemSpecificSpeeds...)
     public dev.opencollab.paletter.block.component.DestructibleByMining$Builder itemSpecificSpeeds(java.util.List<dev.opencollab.paletter.block.component.DestructibleByMining$ItemSpecificSpeeds>)
-    public dev.opencollab.paletter.block.component.DestructibleByMining$Builder itemSpecificSpeeds(dev.opencollab.paletter.block.component.DestructibleByMining$ItemSpecificSpeeds...)
     public dev.opencollab.paletter.block.component.DestructibleByMining$Builder secondsToDestroy(float)
 }
 
@@ -1404,8 +1405,8 @@ public final class dev.opencollab.paletter.block.component.LiquidDetection imple
 
 public static final class dev.opencollab.paletter.block.component.LiquidDetection$Builder {
     public dev.opencollab.paletter.block.component.LiquidDetection build()
+    public dev.opencollab.paletter.block.component.LiquidDetection$Builder detectionRules(dev.opencollab.paletter.block.component.LiquidDetection$DetectionRules, dev.opencollab.paletter.block.component.LiquidDetection$DetectionRules...)
     public dev.opencollab.paletter.block.component.LiquidDetection$Builder detectionRules(java.util.List<dev.opencollab.paletter.block.component.LiquidDetection$DetectionRules>)
-    public dev.opencollab.paletter.block.component.LiquidDetection$Builder detectionRules(dev.opencollab.paletter.block.component.LiquidDetection$DetectionRules...)
 }
 
 public static final class dev.opencollab.paletter.block.component.LiquidDetection$DetectionRules {
@@ -1426,8 +1427,8 @@ public static final class dev.opencollab.paletter.block.component.LiquidDetectio
     public dev.opencollab.paletter.block.component.LiquidDetection$DetectionRules$Builder canContainLiquid(boolean)
     public dev.opencollab.paletter.block.component.LiquidDetection$DetectionRules$Builder liquidType(dev.opencollab.paletter.block.component.LiquidDetection$LiquidType)
     public dev.opencollab.paletter.block.component.LiquidDetection$DetectionRules$Builder onLiquidTouches(dev.opencollab.paletter.block.component.LiquidDetection$OnLiquidTouches)
+    public dev.opencollab.paletter.block.component.LiquidDetection$DetectionRules$Builder stopsLiquidFlowingFromDirection(java.lang.String, java.lang.String...)
     public dev.opencollab.paletter.block.component.LiquidDetection$DetectionRules$Builder stopsLiquidFlowingFromDirection(java.util.List<java.lang.String>)
-    public dev.opencollab.paletter.block.component.LiquidDetection$DetectionRules$Builder stopsLiquidFlowingFromDirection(java.lang.String...)
     public dev.opencollab.paletter.block.component.LiquidDetection$DetectionRules$Builder useLiquidClipping(boolean)
 }
 
@@ -1653,8 +1654,8 @@ public final class dev.opencollab.paletter.block.component.MultiBlock implements
 public static final class dev.opencollab.paletter.block.component.MultiBlock$Builder {
     public dev.opencollab.paletter.block.component.MultiBlock build()
     public dev.opencollab.paletter.block.component.MultiBlock$Builder direction(dev.opencollab.paletter.block.component.MultiBlock$MultiBlockDirection)
+    public dev.opencollab.paletter.block.component.MultiBlock$Builder enabledStates(dev.opencollab.paletter.block.component.MultiBlock$EnabledStates, dev.opencollab.paletter.block.component.MultiBlock$EnabledStates...)
     public dev.opencollab.paletter.block.component.MultiBlock$Builder enabledStates(java.util.List<dev.opencollab.paletter.block.component.MultiBlock$EnabledStates>)
-    public dev.opencollab.paletter.block.component.MultiBlock$Builder enabledStates(dev.opencollab.paletter.block.component.MultiBlock$EnabledStates...)
     public dev.opencollab.paletter.block.component.MultiBlock$Builder parts(int)
 }
 
@@ -1723,11 +1724,11 @@ public static final class dev.opencollab.paletter.block.component.PlacementDirec
 }
 
 public static final class dev.opencollab.paletter.block.component.PlacementDirection$Builder {
+    public dev.opencollab.paletter.block.component.PlacementDirection$Builder blocksToCornerWith(dev.opencollab.paletter.block.component.PlacementDirection$BlocksToCornerWith, dev.opencollab.paletter.block.component.PlacementDirection$BlocksToCornerWith...)
     public dev.opencollab.paletter.block.component.PlacementDirection$Builder blocksToCornerWith(java.util.List<dev.opencollab.paletter.block.component.PlacementDirection$BlocksToCornerWith>)
-    public dev.opencollab.paletter.block.component.PlacementDirection$Builder blocksToCornerWith(dev.opencollab.paletter.block.component.PlacementDirection$BlocksToCornerWith...)
     public dev.opencollab.paletter.block.component.PlacementDirection build()
+    public dev.opencollab.paletter.block.component.PlacementDirection$Builder enabledStates(dev.opencollab.paletter.block.component.PlacementDirection$EnabledStates, dev.opencollab.paletter.block.component.PlacementDirection$EnabledStates...)
     public dev.opencollab.paletter.block.component.PlacementDirection$Builder enabledStates(java.util.List<dev.opencollab.paletter.block.component.PlacementDirection$EnabledStates>)
-    public dev.opencollab.paletter.block.component.PlacementDirection$Builder enabledStates(dev.opencollab.paletter.block.component.PlacementDirection$EnabledStates...)
     public dev.opencollab.paletter.block.component.PlacementDirection$Builder yRotationOffset(java.lang.Float)
 }
 
@@ -1778,8 +1779,8 @@ public static final class dev.opencollab.paletter.block.component.PlacementFilte
 
 public static final class dev.opencollab.paletter.block.component.PlacementFilter$Builder {
     public dev.opencollab.paletter.block.component.PlacementFilter build()
+    public dev.opencollab.paletter.block.component.PlacementFilter$Builder conditions(dev.opencollab.paletter.block.component.PlacementFilter$Conditions, dev.opencollab.paletter.block.component.PlacementFilter$Conditions...)
     public dev.opencollab.paletter.block.component.PlacementFilter$Builder conditions(java.util.List<dev.opencollab.paletter.block.component.PlacementFilter$Conditions>)
-    public dev.opencollab.paletter.block.component.PlacementFilter$Builder conditions(dev.opencollab.paletter.block.component.PlacementFilter$Conditions...)
 }
 
 public static final class dev.opencollab.paletter.block.component.PlacementFilter$Conditions {
@@ -1793,10 +1794,10 @@ public static final class dev.opencollab.paletter.block.component.PlacementFilte
 }
 
 public static final class dev.opencollab.paletter.block.component.PlacementFilter$Conditions$Builder {
+    public dev.opencollab.paletter.block.component.PlacementFilter$Conditions$Builder allowedFaces(java.lang.String, java.lang.String...)
     public dev.opencollab.paletter.block.component.PlacementFilter$Conditions$Builder allowedFaces(java.util.List<java.lang.String>)
-    public dev.opencollab.paletter.block.component.PlacementFilter$Conditions$Builder allowedFaces(java.lang.String...)
+    public dev.opencollab.paletter.block.component.PlacementFilter$Conditions$Builder blockFilter(dev.opencollab.paletter.block.component.PlacementFilter$BlockFilter, dev.opencollab.paletter.block.component.PlacementFilter$BlockFilter...)
     public dev.opencollab.paletter.block.component.PlacementFilter$Conditions$Builder blockFilter(java.util.List<dev.opencollab.paletter.block.component.PlacementFilter$BlockFilter>)
-    public dev.opencollab.paletter.block.component.PlacementFilter$Conditions$Builder blockFilter(dev.opencollab.paletter.block.component.PlacementFilter$BlockFilter...)
     public dev.opencollab.paletter.block.component.PlacementFilter$Conditions build()
 }
 
@@ -1813,8 +1814,8 @@ public final class dev.opencollab.paletter.block.component.PlacementPosition imp
 
 public static final class dev.opencollab.paletter.block.component.PlacementPosition$Builder {
     public dev.opencollab.paletter.block.component.PlacementPosition build()
+    public dev.opencollab.paletter.block.component.PlacementPosition$Builder enabledStates(dev.opencollab.paletter.block.component.PlacementPosition$EnabledStates, dev.opencollab.paletter.block.component.PlacementPosition$EnabledStates...)
     public dev.opencollab.paletter.block.component.PlacementPosition$Builder enabledStates(java.util.List<dev.opencollab.paletter.block.component.PlacementPosition$EnabledStates>)
-    public dev.opencollab.paletter.block.component.PlacementPosition$Builder enabledStates(dev.opencollab.paletter.block.component.PlacementPosition$EnabledStates...)
 }
 
 public static final class dev.opencollab.paletter.block.component.PlacementPosition$EnabledStates {
@@ -1963,8 +1964,8 @@ public final class dev.opencollab.paletter.block.component.RedstoneProducer impl
 
 public static final class dev.opencollab.paletter.block.component.RedstoneProducer$Builder {
     public dev.opencollab.paletter.block.component.RedstoneProducer build()
+    public dev.opencollab.paletter.block.component.RedstoneProducer$Builder connectedFaces(dev.opencollab.paletter.block.component.RedstoneProducer$ConnectedFaces, dev.opencollab.paletter.block.component.RedstoneProducer$ConnectedFaces...)
     public dev.opencollab.paletter.block.component.RedstoneProducer$Builder connectedFaces(java.util.List<dev.opencollab.paletter.block.component.RedstoneProducer$ConnectedFaces>)
-    public dev.opencollab.paletter.block.component.RedstoneProducer$Builder connectedFaces(dev.opencollab.paletter.block.component.RedstoneProducer$ConnectedFaces...)
     public dev.opencollab.paletter.block.component.RedstoneProducer$Builder power(int)
     public dev.opencollab.paletter.block.component.RedstoneProducer$Builder stronglyPoweredFace(dev.opencollab.paletter.block.component.RedstoneProducer$StronglyPoweredFace)
     public dev.opencollab.paletter.block.component.RedstoneProducer$Builder transformRelative(java.lang.Boolean)
@@ -2103,8 +2104,8 @@ public final class dev.opencollab.paletter.block.component.Tick implements dev.o
 
 public static final class dev.opencollab.paletter.block.component.Tick$Builder {
     public dev.opencollab.paletter.block.component.Tick build()
+    public dev.opencollab.paletter.block.component.Tick$Builder intervalRange(float, float...)
     public dev.opencollab.paletter.block.component.Tick$Builder intervalRange(java.util.List<java.lang.Float>)
-    public dev.opencollab.paletter.block.component.Tick$Builder intervalRange(java.lang.Float...)
     public dev.opencollab.paletter.block.component.Tick$Builder looping(boolean)
 }
 
@@ -2498,8 +2499,8 @@ public static final class dev.opencollab.paletter.item.component.BlockPlacer$Bui
     public dev.opencollab.paletter.item.component.BlockPlacer$Builder block(java.lang.String)
     public dev.opencollab.paletter.item.component.BlockPlacer build()
     public dev.opencollab.paletter.item.component.BlockPlacer$Builder replaceBlockItem(boolean)
+    public dev.opencollab.paletter.item.component.BlockPlacer$Builder useOn(dev.opencollab.paletter.item.component.BlockPlacer$UseOn, dev.opencollab.paletter.item.component.BlockPlacer$UseOn...)
     public dev.opencollab.paletter.item.component.BlockPlacer$Builder useOn(java.util.List<dev.opencollab.paletter.item.component.BlockPlacer$UseOn>)
-    public dev.opencollab.paletter.item.component.BlockPlacer$Builder useOn(dev.opencollab.paletter.item.component.BlockPlacer$UseOn...)
 }
 
 public static final class dev.opencollab.paletter.item.component.BlockPlacer$UseOn {
@@ -2654,8 +2655,8 @@ public final class dev.opencollab.paletter.item.component.DamageAbsorption imple
 }
 
 public static final class dev.opencollab.paletter.item.component.DamageAbsorption$Builder {
+    public dev.opencollab.paletter.item.component.DamageAbsorption$Builder absorbableCauses(java.lang.String, java.lang.String...)
     public dev.opencollab.paletter.item.component.DamageAbsorption$Builder absorbableCauses(java.util.List<java.lang.String>)
-    public dev.opencollab.paletter.item.component.DamageAbsorption$Builder absorbableCauses(java.lang.String...)
     public dev.opencollab.paletter.item.component.DamageAbsorption build()
 }
 
@@ -2695,8 +2696,8 @@ public static final class dev.opencollab.paletter.item.component.Digger$Block$Bu
 
 public static final class dev.opencollab.paletter.item.component.Digger$Builder {
     public dev.opencollab.paletter.item.component.Digger build()
+    public dev.opencollab.paletter.item.component.Digger$Builder destroySpeeds(dev.opencollab.paletter.item.component.Digger$DestroySpeeds, dev.opencollab.paletter.item.component.Digger$DestroySpeeds...)
     public dev.opencollab.paletter.item.component.Digger$Builder destroySpeeds(java.util.List<dev.opencollab.paletter.item.component.Digger$DestroySpeeds>)
-    public dev.opencollab.paletter.item.component.Digger$Builder destroySpeeds(dev.opencollab.paletter.item.component.Digger$DestroySpeeds...)
     public dev.opencollab.paletter.item.component.Digger$Builder useEfficiency(boolean)
 }
 
@@ -2764,8 +2765,8 @@ public final class dev.opencollab.paletter.item.component.DurabilitySensor imple
 
 public static final class dev.opencollab.paletter.item.component.DurabilitySensor$Builder {
     public dev.opencollab.paletter.item.component.DurabilitySensor build()
+    public dev.opencollab.paletter.item.component.DurabilitySensor$Builder durabilityThresholds(dev.opencollab.paletter.item.component.DurabilitySensor$DurabilityThresholds, dev.opencollab.paletter.item.component.DurabilitySensor$DurabilityThresholds...)
     public dev.opencollab.paletter.item.component.DurabilitySensor$Builder durabilityThresholds(java.util.List<dev.opencollab.paletter.item.component.DurabilitySensor$DurabilityThresholds>)
-    public dev.opencollab.paletter.item.component.DurabilitySensor$Builder durabilityThresholds(dev.opencollab.paletter.item.component.DurabilitySensor$DurabilityThresholds...)
 }
 
 public static final class dev.opencollab.paletter.item.component.DurabilitySensor$DurabilityThresholds {
@@ -2946,11 +2947,11 @@ public final class dev.opencollab.paletter.item.component.EntityPlacer implement
 
 public static final class dev.opencollab.paletter.item.component.EntityPlacer$Builder {
     public dev.opencollab.paletter.item.component.EntityPlacer build()
+    public dev.opencollab.paletter.item.component.EntityPlacer$Builder dispenseOn(dev.opencollab.paletter.item.component.EntityPlacer$UseOn, dev.opencollab.paletter.item.component.EntityPlacer$UseOn...)
     public dev.opencollab.paletter.item.component.EntityPlacer$Builder dispenseOn(java.util.List<dev.opencollab.paletter.item.component.EntityPlacer$UseOn>)
-    public dev.opencollab.paletter.item.component.EntityPlacer$Builder dispenseOn(dev.opencollab.paletter.item.component.EntityPlacer$UseOn...)
     public dev.opencollab.paletter.item.component.EntityPlacer$Builder entity(java.lang.String)
+    public dev.opencollab.paletter.item.component.EntityPlacer$Builder useOn(dev.opencollab.paletter.item.component.EntityPlacer$UseOn, dev.opencollab.paletter.item.component.EntityPlacer$UseOn...)
     public dev.opencollab.paletter.item.component.EntityPlacer$Builder useOn(java.util.List<dev.opencollab.paletter.item.component.EntityPlacer$UseOn>)
-    public dev.opencollab.paletter.item.component.EntityPlacer$Builder useOn(dev.opencollab.paletter.item.component.EntityPlacer$UseOn...)
 }
 
 public static final class dev.opencollab.paletter.item.component.EntityPlacer$UseOn {
@@ -3151,6 +3152,7 @@ public static final class dev.opencollab.paletter.item.component.ItemDisplayName
 }
 
 public final class dev.opencollab.paletter.item.component.ItemMenuCategory {
+    public static final java.lang.String NAME = "menu_category"
     public static dev.opencollab.paletter.item.component.ItemMenuCategory$Builder builder()
     public dev.opencollab.paletter.item.component.ItemMenuCategory$Category category()
     public boolean equals(java.lang.Object)
@@ -3549,8 +3551,8 @@ public final class dev.opencollab.paletter.item.component.Repairable implements 
 
 public static final class dev.opencollab.paletter.item.component.Repairable$Builder {
     public dev.opencollab.paletter.item.component.Repairable build()
+    public dev.opencollab.paletter.item.component.Repairable$Builder repairItems(dev.opencollab.paletter.item.component.Repairable$RepairItems, dev.opencollab.paletter.item.component.Repairable$RepairItems...)
     public dev.opencollab.paletter.item.component.Repairable$Builder repairItems(java.util.List<dev.opencollab.paletter.item.component.Repairable$RepairItems>)
-    public dev.opencollab.paletter.item.component.Repairable$Builder repairItems(dev.opencollab.paletter.item.component.Repairable$RepairItems...)
 }
 
 public static final class dev.opencollab.paletter.item.component.Repairable$RepairItems {
@@ -3610,8 +3612,8 @@ public static final class dev.opencollab.paletter.item.component.Shooter$Ammunit
 }
 
 public static final class dev.opencollab.paletter.item.component.Shooter$Builder {
+    public dev.opencollab.paletter.item.component.Shooter$Builder ammunition(dev.opencollab.paletter.item.component.Shooter$Ammunition, dev.opencollab.paletter.item.component.Shooter$Ammunition...)
     public dev.opencollab.paletter.item.component.Shooter$Builder ammunition(java.util.List<dev.opencollab.paletter.item.component.Shooter$Ammunition>)
-    public dev.opencollab.paletter.item.component.Shooter$Builder ammunition(dev.opencollab.paletter.item.component.Shooter$Ammunition...)
     public dev.opencollab.paletter.item.component.Shooter build()
     public dev.opencollab.paletter.item.component.Shooter$Builder chargeOnDraw(boolean)
     public dev.opencollab.paletter.item.component.Shooter$Builder maxDrawDuration(float)
@@ -3668,12 +3670,12 @@ public final class dev.opencollab.paletter.item.component.StorageItem implements
 
 public static final class dev.opencollab.paletter.item.component.StorageItem$Builder {
     public dev.opencollab.paletter.item.component.StorageItem$Builder allowNestedStorageItems(boolean)
+    public dev.opencollab.paletter.item.component.StorageItem$Builder allowedItems(dev.opencollab.paletter.vanilla.BedrockItemType, dev.opencollab.paletter.vanilla.BedrockItemType...)
+    public dev.opencollab.paletter.item.component.StorageItem$Builder allowedItems(java.lang.String, java.lang.String...)
     public dev.opencollab.paletter.item.component.StorageItem$Builder allowedItems(java.util.List<java.lang.String>)
-    public dev.opencollab.paletter.item.component.StorageItem$Builder allowedItems(dev.opencollab.paletter.vanilla.BedrockItemType...)
-    public dev.opencollab.paletter.item.component.StorageItem$Builder allowedItems(java.lang.String...)
+    public dev.opencollab.paletter.item.component.StorageItem$Builder bannedItems(dev.opencollab.paletter.vanilla.BedrockItemType, dev.opencollab.paletter.vanilla.BedrockItemType...)
+    public dev.opencollab.paletter.item.component.StorageItem$Builder bannedItems(java.lang.String, java.lang.String...)
     public dev.opencollab.paletter.item.component.StorageItem$Builder bannedItems(java.util.List<java.lang.String>)
-    public dev.opencollab.paletter.item.component.StorageItem$Builder bannedItems(dev.opencollab.paletter.vanilla.BedrockItemType...)
-    public dev.opencollab.paletter.item.component.StorageItem$Builder bannedItems(java.lang.String...)
     public dev.opencollab.paletter.item.component.StorageItem build()
     public dev.opencollab.paletter.item.component.StorageItem$Builder maxSlots(int)
 }
@@ -3759,8 +3761,8 @@ public final class dev.opencollab.paletter.item.component.Tags implements dev.op
 
 public static final class dev.opencollab.paletter.item.component.Tags$Builder {
     public dev.opencollab.paletter.item.component.Tags build()
+    public dev.opencollab.paletter.item.component.Tags$Builder tags(java.lang.String, java.lang.String...)
     public dev.opencollab.paletter.item.component.Tags$Builder tags(java.util.List<java.lang.String>)
-    public dev.opencollab.paletter.item.component.Tags$Builder tags(java.lang.String...)
 }
 
 public final class dev.opencollab.paletter.item.component.ThrowableItem implements dev.opencollab.paletter.item.component.ItemComponent {

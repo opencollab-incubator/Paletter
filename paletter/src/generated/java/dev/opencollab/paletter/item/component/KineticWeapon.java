@@ -338,9 +338,10 @@ public final class KineticWeapon implements ItemComponent {
          *
          * @param reach the value
          * @return this builder
+         * @throws NullPointerException if the value is null
          */
         public @NonNull Builder reach(@NonNull Reach reach) {
-            this.reach = reach;
+            this.reach = Objects.requireNonNull(reach, "KineticWeapon.reach");
             return this;
         }
 

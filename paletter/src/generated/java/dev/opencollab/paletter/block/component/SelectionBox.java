@@ -146,9 +146,10 @@ public final class SelectionBox implements BlockComponent {
          *
          * @param origin the value
          * @return this builder
+         * @throws NullPointerException if the value is null
          */
         public @NonNull Builder origin(@NonNull Vec3 origin) {
-            this.origin = origin;
+            this.origin = Objects.requireNonNull(origin, "SelectionBox.origin");
             return this;
         }
 
@@ -169,9 +170,10 @@ public final class SelectionBox implements BlockComponent {
          *
          * @param size the value
          * @return this builder
+         * @throws NullPointerException if the value is null
          */
         public @NonNull Builder size(@NonNull Vec3 size) {
-            this.size = size;
+            this.size = Objects.requireNonNull(size, "SelectionBox.size");
             return this;
         }
 

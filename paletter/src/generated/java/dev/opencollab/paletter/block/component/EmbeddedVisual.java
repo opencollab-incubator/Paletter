@@ -123,9 +123,10 @@ public final class EmbeddedVisual implements BlockComponent {
          *
          * @param geometry the value
          * @return this builder
+         * @throws NullPointerException if the value is null
          */
         public @NonNull Builder geometry(@NonNull VisualGeometry geometry) {
-            this.geometry = geometry;
+            this.geometry = Objects.requireNonNull(geometry, "EmbeddedVisual.geometry");
             return this;
         }
 
@@ -134,9 +135,10 @@ public final class EmbeddedVisual implements BlockComponent {
          *
          * @param materialInstances the value
          * @return this builder
+         * @throws NullPointerException if the value is null
          */
         public @NonNull Builder materialInstances(@NonNull MaterialInstances materialInstances) {
-            this.materialInstances = materialInstances;
+            this.materialInstances = Objects.requireNonNull(materialInstances, "EmbeddedVisual.materialInstances");
             return this;
         }
 
@@ -516,9 +518,10 @@ public final class EmbeddedVisual implements BlockComponent {
              *
              * @param boneVisibility the value
              * @return this builder
+             * @throws NullPointerException if the value is null
              */
             public @NonNull Builder boneVisibility(@NonNull Map<String, String> boneVisibility) {
-                this.boneVisibility = boneVisibility;
+                this.boneVisibility = Objects.requireNonNull(boneVisibility, "EmbeddedVisual.VisualGeometry.boneVisibility");
                 return this;
             }
 
@@ -560,9 +563,10 @@ public final class EmbeddedVisual implements BlockComponent {
              *
              * @param identifier the value
              * @return this builder
+             * @throws NullPointerException if the value is null
              */
             public @NonNull Builder identifier(@NonNull String identifier) {
-                this.identifier = identifier;
+                this.identifier = Objects.requireNonNull(identifier, "EmbeddedVisual.VisualGeometry.identifier");
                 return this;
             }
 
@@ -583,9 +587,10 @@ public final class EmbeddedVisual implements BlockComponent {
              *
              * @param uvLock the value
              * @return this builder
+             * @throws NullPointerException if the value is null
              */
             public @NonNull Builder uvLock(@NonNull UvLock uvLock) {
-                this.uvLock = uvLock;
+                this.uvLock = Objects.requireNonNull(uvLock, "EmbeddedVisual.VisualGeometry.uvLock");
                 return this;
             }
 

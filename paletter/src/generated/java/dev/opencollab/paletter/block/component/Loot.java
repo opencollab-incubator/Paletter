@@ -110,9 +110,10 @@ public final class Loot implements BlockComponent {
          *
          * @param value the value
          * @return this builder
+         * @throws NullPointerException if the value is null
          */
         public @NonNull Builder value(@NonNull String value) {
-            this.value = value;
+            this.value = Objects.requireNonNull(value, "Loot.value");
             return this;
         }
 

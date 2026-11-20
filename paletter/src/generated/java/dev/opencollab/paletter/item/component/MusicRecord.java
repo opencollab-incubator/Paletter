@@ -154,9 +154,10 @@ public final class MusicRecord implements ItemComponent {
          *
          * @param soundEvent the value
          * @return this builder
+         * @throws NullPointerException if the value is null
          */
         public @NonNull Builder soundEvent(@NonNull String soundEvent) {
-            this.soundEvent = soundEvent;
+            this.soundEvent = Objects.requireNonNull(soundEvent, "MusicRecord.soundEvent");
             return this;
         }
 

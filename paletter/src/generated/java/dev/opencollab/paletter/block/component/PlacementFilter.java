@@ -7,6 +7,7 @@ import dev.opencollab.paletter.annotation.BedrockFormat;
 import dev.opencollab.paletter.internal.component.Check;
 import dev.opencollab.paletter.vanilla.BedrockBlockState;
 import dev.opencollab.paletter.vanilla.BedrockBlockType;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -105,20 +106,27 @@ public final class PlacementFilter implements BlockComponent {
          *
          * @param conditions the value
          * @return this builder
+         * @throws NullPointerException if the value is null
          */
         public @NonNull Builder conditions(@NonNull List<Conditions> conditions) {
-            this.conditions = conditions;
+            this.conditions = Objects.requireNonNull(conditions, "PlacementFilter.conditions");
             return this;
         }
 
         /**
-         * Sets {@code conditions}.
+         * Sets {@code conditions} to the values (at least one value).
          *
-         * @param conditions the value
+         * @param first the first value
+         * @param rest the other values
          * @return this builder
          */
-        public @NonNull Builder conditions(@NonNull Conditions... conditions) {
-            return conditions(List.of(conditions));
+        public @NonNull Builder conditions(@NonNull Conditions first, @NonNull Conditions... rest) {
+            List<Conditions> values = new ArrayList<>();
+            values.add(first);
+            for (Conditions x : rest) {
+                values.add(x);
+            }
+            return conditions(values);
         }
 
         /**
@@ -284,9 +292,10 @@ public final class PlacementFilter implements BlockComponent {
              *
              * @param states the value
              * @return this builder
+             * @throws NullPointerException if the value is null
              */
             public @NonNull Builder states(@NonNull Map<String, Object> states) {
-                this.states = states;
+                this.states = Objects.requireNonNull(states, "PlacementFilter.BlockFilter.states");
                 return this;
             }
 
@@ -408,20 +417,27 @@ public final class PlacementFilter implements BlockComponent {
              *
              * @param allowedFaces the value
              * @return this builder
+             * @throws NullPointerException if the value is null
              */
             public @NonNull Builder allowedFaces(@NonNull List<String> allowedFaces) {
-                this.allowedFaces = allowedFaces;
+                this.allowedFaces = Objects.requireNonNull(allowedFaces, "PlacementFilter.Conditions.allowedFaces");
                 return this;
             }
 
             /**
-             * Sets {@code allowed_faces}.
+             * Sets {@code allowed_faces} to the values (at least one value).
              *
-             * @param allowedFaces the value
+             * @param first the first value
+             * @param rest the other values
              * @return this builder
              */
-            public @NonNull Builder allowedFaces(@NonNull String... allowedFaces) {
-                return allowedFaces(List.of(allowedFaces));
+            public @NonNull Builder allowedFaces(@NonNull String first, @NonNull String... rest) {
+                List<String> values = new ArrayList<>();
+                values.add(first);
+                for (String x : rest) {
+                    values.add(x);
+                }
+                return allowedFaces(values);
             }
 
             /**
@@ -429,20 +445,28 @@ public final class PlacementFilter implements BlockComponent {
              *
              * @param blockFilter the value
              * @return this builder
+             * @throws NullPointerException if the value is null
              */
             public @NonNull Builder blockFilter(@NonNull List<BlockFilter> blockFilter) {
-                this.blockFilter = blockFilter;
+                this.blockFilter = Objects.requireNonNull(blockFilter, "PlacementFilter.Conditions.blockFilter");
                 return this;
             }
 
             /**
-             * Sets {@code block_filter}.
+             * Sets {@code block_filter} to the values (at least one value).
              *
-             * @param blockFilter the value
+             * @param first the first value
+             * @param rest the other values
              * @return this builder
              */
-            public @NonNull Builder blockFilter(@NonNull BlockFilter... blockFilter) {
-                return blockFilter(List.of(blockFilter));
+            public @NonNull Builder blockFilter(@NonNull BlockFilter first,
+                    @NonNull BlockFilter... rest) {
+                List<BlockFilter> values = new ArrayList<>();
+                values.add(first);
+                for (BlockFilter x : rest) {
+                    values.add(x);
+                }
+                return blockFilter(values);
             }
 
             /**

@@ -418,19 +418,24 @@
       "name": "category",
       "wire": [
         "menu_category.category"
-      ]
+      ],
+      "type": "enum:Category"
     },
     "block:description:group": {
       "name": "group",
       "wire": [
         "menu_category.group"
-      ]
+      ],
+      "type": "string",
+      "nullable": true
     },
     "block:description:is_hidden_in_commands": {
       "name": "hiddenInCommands",
       "wire": [
         "menu_category.is_hidden_in_commands"
-      ]
+      ],
+      "type": "boolean",
+      "default": false
     },
     "block:minecraft:block_entity:container": {
       "name": "container",
@@ -438,37 +443,50 @@
         "minecraft:container.show_ui_on_interaction",
         "minecraft:container.slot_count",
         "minecraft:container.title"
-      ]
+      ],
+      "type": "object:Container",
+      "nullable": true
     },
     "block:minecraft:block_entity:container.show_ui_on_interaction": {
       "name": "showUiOnInteraction",
       "wire": [
         "minecraft:container.show_ui_on_interaction"
-      ]
+      ],
+      "type": "boolean",
+      "default": true
     },
     "block:minecraft:block_entity:container.slot_count": {
       "name": "slotCount",
       "wire": [
         "minecraft:container.slot_count"
-      ]
+      ],
+      "type": "int"
     },
     "block:minecraft:block_entity:container.title": {
       "name": "title",
       "wire": [
         "minecraft:container.title"
-      ]
+      ],
+      "type": "string",
+      "nullable": true
     },
     "block:minecraft:block_entity:dynamic_properties": {
       "name": "dynamicProperties",
-      "wire": []
+      "wire": [],
+      "type": "boolean",
+      "default": false
     },
     "block:minecraft:block_entity:entity_storage": {
       "name": "entityStorage",
-      "wire": []
+      "wire": [],
+      "type": "boolean",
+      "nullable": true
     },
     "block:minecraft:chest_obstruction:obstruction_rule": {
       "name": "obstructionRule",
-      "wire": []
+      "wire": [],
+      "type": "enum:ObstructionRule",
+      "default": "shape"
     },
     "block:minecraft:collision_box:[].origin": {
       "name": "origin",
@@ -482,7 +500,9 @@
         "minecraft:collision_box.enabled",
         "minecraft:collision_box.shape",
         "minecraft:collision_box.useVoxelShapes"
-      ]
+      ],
+      "type": "vec3",
+      "nullable": true
     },
     "block:minecraft:collision_box:[].size": {
       "name": "size",
@@ -496,19 +516,30 @@
         "minecraft:collision_box.enabled",
         "minecraft:collision_box.shape",
         "minecraft:collision_box.useVoxelShapes"
-      ]
+      ],
+      "type": "vec3",
+      "nullable": true
     },
     "block:minecraft:connection_rule:accepts_connections_from": {
       "name": "acceptsConnectionsFrom",
       "wire": [
         "minecraft:connection_rule.accepts_connections_from"
-      ]
+      ],
+      "type": "enum:AcceptsConnectionsFrom",
+      "default": "all"
     },
     "block:minecraft:connection_rule:enabled_directions": {
       "name": "enabledDirections",
       "wire": [
         "minecraft:connection_rule.enabled_directions",
         "minecraft:connection_rule.enabled_directions[]"
+      ],
+      "type": "list<enum:EnabledDirections>",
+      "default": [
+        "south",
+        "north",
+        "east",
+        "west"
       ]
     },
     "block:minecraft:crafting_table:crafting_tags": {
@@ -516,17 +547,22 @@
       "wire": [
         "minecraft:crafting_table.crafting_tags",
         "minecraft:crafting_table.crafting_tags[]"
-      ]
+      ],
+      "type": "list<string>"
     },
     "block:minecraft:crafting_table:table_name": {
       "name": "tableName",
       "wire": [
         "minecraft:crafting_table.table_name"
-      ]
+      ],
+      "type": "string",
+      "nullable": true
     },
     "block:minecraft:destructible_by_explosion:explosion_resistance": {
       "name": "explosionResistance",
-      "wire": []
+      "wire": [],
+      "type": "float",
+      "default": 0
     },
     "block:minecraft:destructible_by_mining:item_specific_speeds": {
       "name": "itemSpecificSpeeds",
@@ -534,13 +570,16 @@
         "minecraft:destructible_by_mining.item_specific_speeds[].destroy_speed",
         "minecraft:destructible_by_mining.item_specific_speeds[].item.Aux",
         "minecraft:destructible_by_mining.item_specific_speeds[].item.Name"
-      ]
+      ],
+      "type": "list<object:ItemSpecificSpeeds>",
+      "nullable": true
     },
     "block:minecraft:destructible_by_mining:item_specific_speeds[].destroy_speed": {
       "name": "destroySpeed",
       "wire": [
         "minecraft:destructible_by_mining.item_specific_speeds[].destroy_speed"
-      ]
+      ],
+      "type": "float"
     },
     "block:minecraft:destructible_by_mining:item_specific_speeds[].item": {
       "name": "item",
@@ -549,65 +588,85 @@
         "minecraft:destructible_by_mining.item_specific_speeds[].destroy_speed",
         "minecraft:destructible_by_mining.item_specific_speeds[].item.Aux",
         "minecraft:destructible_by_mining.item_specific_speeds[].item.Name"
-      ]
+      ],
+      "type": "string",
+      "nullable": true
     },
     "block:minecraft:destructible_by_mining:seconds_to_destroy": {
       "name": "secondsToDestroy",
       "wire": [
         "minecraft:destructible_by_mining.value"
-      ]
+      ],
+      "type": "float",
+      "default": 0
     },
     "block:minecraft:destruction_particles:particle_count": {
       "name": "particleCount",
       "wire": [
         "minecraft:destruction_particles.particle_count"
-      ]
+      ],
+      "type": "int",
+      "default": 100
     },
     "block:minecraft:destruction_particles:texture": {
       "name": "texture",
       "wire": [
         "minecraft:destruction_particles.texture"
-      ]
+      ],
+      "type": "string",
+      "nullable": true
     },
     "block:minecraft:destruction_particles:tint_method": {
       "name": "tintMethod",
       "wire": [
         "minecraft:destruction_particles.tint_method"
-      ]
+      ],
+      "type": "enum:TintMethod",
+      "default": "none"
     },
     "block:minecraft:embedded_visual:geometry": {
       "name": "geometry",
-      "wire": []
+      "wire": [],
+      "type": "object:VisualGeometry"
     },
     "block:minecraft:embedded_visual:geometry.bone_visibility": {
       "name": "boneVisibility",
       "wire": [
         "minecraft:embedded_visual.geometry.bone_visibility"
-      ]
+      ],
+      "type": "map<string>",
+      "default": {}
     },
     "block:minecraft:embedded_visual:geometry.culling": {
       "name": "culling",
       "wire": [
         "minecraft:embedded_visual.geometry.culling"
-      ]
+      ],
+      "type": "string",
+      "nullable": true
     },
     "block:minecraft:embedded_visual:geometry.culling_layer": {
       "name": "cullingLayer",
       "wire": [
         "minecraft:embedded_visual.geometry.culling_layer"
-      ]
+      ],
+      "type": "string",
+      "nullable": true
     },
     "block:minecraft:embedded_visual:geometry.culling_shape": {
       "name": "cullingShape",
       "wire": [
         "minecraft:embedded_visual.geometry.culling_shape"
-      ]
+      ],
+      "type": "string",
+      "nullable": true
     },
     "block:minecraft:embedded_visual:geometry.identifier": {
       "name": "identifier",
       "wire": [
         "minecraft:embedded_visual.geometry.identifier"
-      ]
+      ],
+      "type": "string"
     },
     "block:minecraft:embedded_visual:geometry.n_way_visual_rotation": {
       "name": "nWayVisualRotation",
@@ -615,31 +674,41 @@
         "minecraft:embedded_visual.geometry.n_way_visual_rotation.x",
         "minecraft:embedded_visual.geometry.n_way_visual_rotation.y",
         "minecraft:embedded_visual.geometry.n_way_visual_rotation.z"
-      ]
+      ],
+      "type": "object:NWayVisualRotation",
+      "nullable": true
     },
     "block:minecraft:embedded_visual:geometry.n_way_visual_rotation.x": {
       "name": "x",
       "wire": [
         "minecraft:embedded_visual.geometry.n_way_visual_rotation.x"
-      ]
+      ],
+      "type": "string",
+      "nullable": true
     },
     "block:minecraft:embedded_visual:geometry.n_way_visual_rotation.y": {
       "name": "y",
       "wire": [
         "minecraft:embedded_visual.geometry.n_way_visual_rotation.y"
-      ]
+      ],
+      "type": "string",
+      "nullable": true
     },
     "block:minecraft:embedded_visual:geometry.n_way_visual_rotation.z": {
       "name": "z",
       "wire": [
         "minecraft:embedded_visual.geometry.n_way_visual_rotation.z"
-      ]
+      ],
+      "type": "string",
+      "nullable": true
     },
     "block:minecraft:embedded_visual:geometry.uv_lock": {
       "name": "uvLock",
       "wire": [
         "minecraft:embedded_visual.geometry.uv_lock"
-      ]
+      ],
+      "type": "union:UvLock",
+      "default": false
     },
     "block:minecraft:embedded_visual:material_instances": {
       "name": "materialInstances",
@@ -652,83 +721,115 @@
         "minecraft:embedded_visual.material_instances.*.render_method",
         "minecraft:embedded_visual.material_instances.*.texture",
         "minecraft:embedded_visual.material_instances.*.tint_method"
-      ]
+      ],
+      "type": "component:MaterialInstances"
     },
     "block:minecraft:entity_fall_on:min_fall_distance": {
       "name": "minFallDistance",
-      "wire": []
+      "wire": [],
+      "type": "float",
+      "default": 0
     },
     "block:minecraft:flammable:catch_chance_modifier": {
       "name": "catchChanceModifier",
-      "wire": []
+      "wire": [],
+      "type": "int",
+      "default": 5
     },
     "block:minecraft:flammable:destroy_chance_modifier": {
       "name": "destroyChanceModifier",
-      "wire": []
+      "wire": [],
+      "type": "int",
+      "default": 20
     },
     "block:minecraft:flammable:lava_flammable": {
       "name": "lavaFlammable",
-      "wire": []
+      "wire": [],
+      "type": "boolean",
+      "default": false
     },
     "block:minecraft:geometry:bone_visibility": {
       "name": "boneVisibility",
       "wire": [
         "minecraft:geometry.bone_visibility"
-      ]
+      ],
+      "type": "map<string>",
+      "nullable": true
     },
     "block:minecraft:geometry:culling": {
       "name": "culling",
       "wire": [
         "minecraft:geometry.culling"
-      ]
+      ],
+      "type": "string",
+      "nullable": true
     },
     "block:minecraft:geometry:culling_layer": {
       "name": "cullingLayer",
       "wire": [
         "minecraft:geometry.culling_layer"
-      ]
+      ],
+      "type": "string",
+      "default": "minecraft:culling_layer.undefined"
     },
     "block:minecraft:geometry:culling_shape": {
       "name": "cullingShape",
       "wire": [
         "minecraft:geometry.culling_shape"
-      ]
+      ],
+      "type": "string",
+      "default": "minecraft:empty"
     },
     "block:minecraft:geometry:identifier": {
       "name": "identifier",
       "wire": [
         "minecraft:geometry.identifier"
-      ]
+      ],
+      "type": "string"
     },
     "block:minecraft:geometry:n_way_visual_rotation": {
       "name": "nWayVisualRotation",
-      "wire": []
+      "wire": [],
+      "type": "object:NWayVisualRotation",
+      "nullable": true
     },
     "block:minecraft:geometry:n_way_visual_rotation.x": {
       "name": "x",
-      "wire": []
+      "wire": [],
+      "type": "string",
+      "nullable": true
     },
     "block:minecraft:geometry:n_way_visual_rotation.y": {
       "name": "y",
-      "wire": []
+      "wire": [],
+      "type": "string",
+      "nullable": true
     },
     "block:minecraft:geometry:n_way_visual_rotation.z": {
       "name": "z",
-      "wire": []
+      "wire": [],
+      "type": "string",
+      "nullable": true
     },
     "block:minecraft:geometry:uv_lock": {
       "name": "uvLock",
       "wire": [
         "minecraft:geometry.uv_lock"
-      ]
+      ],
+      "type": "union:UvLock",
+      "nullable": true
     },
     "block:minecraft:instrument_sound:down": {
       "name": "down",
-      "wire": []
+      "wire": [],
+      "type": "enum:Down",
+      "default": "note.none"
     },
     "block:minecraft:instrument_sound:up": {
       "name": "up",
-      "wire": []
+      "wire": [],
+      "type": "enum:Up",
+      "default": "note.harp"
     },
     "block:minecraft:item_visual:geometry": {
       "name": "geometry",
@@ -739,7 +840,8 @@
         "minecraft:item_visual.geometryDescription.n_way_visual_rotation.x",
         "minecraft:item_visual.geometryDescription.n_way_visual_rotation.y",
         "minecraft:item_visual.geometryDescription.n_way_visual_rotation.z"
-      ]
+      ],
+      "type": "object:VisualGeometry"
     },
     "block:minecraft:item_visual:geometry.bone_visibility": {
       "name": "boneVisibility",
@@ -750,7 +852,9 @@
         "minecraft:item_visual.geometryDescription.n_way_visual_rotation.x",
         "minecraft:item_visual.geometryDescription.n_way_visual_rotation.y",
         "minecraft:item_visual.geometryDescription.n_way_visual_rotation.z"
-      ]
+      ],
+      "type": "map<string>",
+      "default": {}
     },
     "block:minecraft:item_visual:geometry.culling": {
       "name": "culling",
@@ -760,7 +864,9 @@
         "minecraft:item_visual.geometryDescription.n_way_visual_rotation.x",
         "minecraft:item_visual.geometryDescription.n_way_visual_rotation.y",
         "minecraft:item_visual.geometryDescription.n_way_visual_rotation.z"
-      ]
+      ],
+      "type": "string",
+      "nullable": true
     },
     "block:minecraft:item_visual:geometry.culling_layer": {
       "name": "cullingLayer",
@@ -771,7 +877,9 @@
         "minecraft:item_visual.geometryDescription.n_way_visual_rotation.x",
         "minecraft:item_visual.geometryDescription.n_way_visual_rotation.y",
         "minecraft:item_visual.geometryDescription.n_way_visual_rotation.z"
-      ]
+      ],
+      "type": "string",
+      "nullable": true
     },
     "block:minecraft:item_visual:geometry.culling_shape": {
       "name": "cullingShape",
@@ -781,7 +889,9 @@
         "minecraft:item_visual.geometryDescription.n_way_visual_rotation.x",
         "minecraft:item_visual.geometryDescription.n_way_visual_rotation.y",
         "minecraft:item_visual.geometryDescription.n_way_visual_rotation.z"
-      ]
+      ],
+      "type": "string",
+      "nullable": true
     },
     "block:minecraft:item_visual:geometry.identifier": {
       "name": "identifier",
@@ -792,7 +902,9 @@
         "minecraft:item_visual.geometryDescription.n_way_visual_rotation.x",
         "minecraft:item_visual.geometryDescription.n_way_visual_rotation.y",
         "minecraft:item_visual.geometryDescription.n_way_visual_rotation.z"
-      ]
+      ],
+      "type": "string",
+      "nullable": true
     },
     "block:minecraft:item_visual:geometry.n_way_visual_rotation": {
       "name": "nWayVisualRotation",
@@ -802,7 +914,9 @@
         "minecraft:item_visual.geometryDescription.n_way_visual_rotation.x",
         "minecraft:item_visual.geometryDescription.n_way_visual_rotation.y",
         "minecraft:item_visual.geometryDescription.n_way_visual_rotation.z"
-      ]
+      ],
+      "type": "object:NWayVisualRotation",
+      "nullable": true
     },
     "block:minecraft:item_visual:geometry.n_way_visual_rotation.x": {
       "name": "x",
@@ -812,7 +926,9 @@
         "minecraft:item_visual.geometryDescription.n_way_visual_rotation.x",
         "minecraft:item_visual.geometryDescription.n_way_visual_rotation.y",
         "minecraft:item_visual.geometryDescription.n_way_visual_rotation.z"
-      ]
+      ],
+      "type": "string",
+      "nullable": true
     },
     "block:minecraft:item_visual:geometry.n_way_visual_rotation.y": {
       "name": "y",
@@ -822,7 +938,9 @@
         "minecraft:item_visual.geometryDescription.n_way_visual_rotation.x",
         "minecraft:item_visual.geometryDescription.n_way_visual_rotation.y",
         "minecraft:item_visual.geometryDescription.n_way_visual_rotation.z"
-      ]
+      ],
+      "type": "string",
+      "nullable": true
     },
     "block:minecraft:item_visual:geometry.n_way_visual_rotation.z": {
       "name": "z",
@@ -832,7 +950,9 @@
         "minecraft:item_visual.geometryDescription.n_way_visual_rotation.x",
         "minecraft:item_visual.geometryDescription.n_way_visual_rotation.y",
         "minecraft:item_visual.geometryDescription.n_way_visual_rotation.z"
-      ]
+      ],
+      "type": "string",
+      "nullable": true
     },
     "block:minecraft:item_visual:geometry.uv_lock": {
       "name": "uvLock",
@@ -843,53 +963,70 @@
         "minecraft:item_visual.geometryDescription.n_way_visual_rotation.y",
         "minecraft:item_visual.geometryDescription.n_way_visual_rotation.z",
         "minecraft:item_visual.geometryDescription.uv_lock"
-      ]
+      ],
+      "type": "union:UvLock",
+      "default": false
     },
     "block:minecraft:item_visual:material_instances": {
       "name": "materialInstances",
       "wire": [
         "minecraft:item_visual.materialInstancesDescription.materials"
-      ]
+      ],
+      "type": "component:MaterialInstances"
     },
     "block:minecraft:liquid_detection:detection_rules": {
       "name": "detectionRules",
-      "wire": []
+      "wire": [],
+      "type": "list<object:DetectionRules>"
     },
     "block:minecraft:liquid_detection:detection_rules[].can_contain_liquid": {
       "name": "canContainLiquid",
       "wire": [
         "minecraft:liquid_detection.detectionRules[].canContainLiquid"
-      ]
+      ],
+      "type": "boolean",
+      "default": false
     },
     "block:minecraft:liquid_detection:detection_rules[].liquid_type": {
       "name": "liquidType",
-      "wire": []
+      "wire": [],
+      "type": "enum:LiquidType",
+      "default": "water"
     },
     "block:minecraft:liquid_detection:detection_rules[].on_liquid_touches": {
       "name": "onLiquidTouches",
       "wire": [
         "minecraft:liquid_detection.detectionRules[].onLiquidTouches"
-      ]
+      ],
+      "type": "enum:OnLiquidTouches",
+      "default": "blocking"
     },
     "block:minecraft:liquid_detection:detection_rules[].stops_liquid_flowing_from_direction": {
       "name": "stopsLiquidFlowingFromDirection",
       "wire": [
         "minecraft:liquid_detection.detectionRules[].stopsLiquidFromDirection"
-      ]
+      ],
+      "type": "list<string>",
+      "default": []
     },
     "block:minecraft:liquid_detection:detection_rules[].use_liquid_clipping": {
       "name": "useLiquidClipping",
       "wire": [
         "minecraft:liquid_detection.detectionRules[].use_liquid_clipping"
-      ]
+      ],
+      "type": "boolean",
+      "default": false
     },
     "block:minecraft:map_color:color": {
       "name": "color",
-      "wire": []
+      "wire": [],
+      "type": "string"
     },
     "block:minecraft:map_color:tint_method": {
       "name": "tintMethod",
-      "wire": []
+      "wire": [],
+      "type": "string",
+      "nullable": true
     },
     "block:minecraft:material_instances:*": {
       "name": "all",
@@ -901,47 +1038,63 @@
         "minecraft:material_instances.materials.*.render_method",
         "minecraft:material_instances.materials.*.texture",
         "minecraft:material_instances.materials.*.tint_method"
-      ]
+      ],
+      "type": "union:InstanceOrAlias",
+      "nullable": true
     },
     "block:minecraft:material_instances:*.alpha_masked_tint": {
       "name": "alphaMaskedTint",
-      "wire": []
+      "wire": [],
+      "type": "boolean",
+      "nullable": true
     },
     "block:minecraft:material_instances:*.ambient_occlusion": {
       "name": "ambientOcclusion",
       "wire": [
         "minecraft:material_instances.materials.*.ambient_occlusion"
-      ]
+      ],
+      "type": "float",
+      "nullable": true
     },
     "block:minecraft:material_instances:*.face_dimming": {
       "name": "faceDimming",
       "wire": [
         "minecraft:material_instances.materials.*.packed_bools"
-      ]
+      ],
+      "type": "boolean",
+      "nullable": true
     },
     "block:minecraft:material_instances:*.isotropic": {
       "name": "isotropic",
       "wire": [
         "minecraft:material_instances.materials.*.packed_bools"
-      ]
+      ],
+      "type": "boolean",
+      "default": false
     },
     "block:minecraft:material_instances:*.render_method": {
       "name": "renderMethod",
       "wire": [
         "minecraft:material_instances.materials.*.render_method"
-      ]
+      ],
+      "type": "enum:RenderMethod",
+      "nullable": true
     },
     "block:minecraft:material_instances:*.texture": {
       "name": "texture",
       "wire": [
         "minecraft:material_instances.materials.*.texture"
-      ]
+      ],
+      "type": "string",
+      "nullable": true
     },
     "block:minecraft:material_instances:*.tint_method": {
       "name": "tintMethod",
       "wire": [
         "minecraft:material_instances.materials.*.tint_method"
-      ]
+      ],
+      "type": "string",
+      "nullable": true
     },
     "block:minecraft:material_instances:down": {
       "name": "down",
@@ -953,43 +1106,59 @@
         "minecraft:material_instances.materials.down.render_method",
         "minecraft:material_instances.materials.down.texture",
         "minecraft:material_instances.materials.down.tint_method"
-      ]
+      ],
+      "type": "union:InstanceOrAlias",
+      "nullable": true
     },
     "block:minecraft:material_instances:down.alpha_masked_tint": {
       "name": "alphaMaskedTint",
-      "wire": []
+      "wire": [],
+      "type": "boolean",
+      "nullable": true
     },
     "block:minecraft:material_instances:down.ambient_occlusion": {
       "name": "ambientOcclusion",
       "wire": [
         "minecraft:material_instances.materials.down.ambient_occlusion"
-      ]
+      ],
+      "type": "float",
+      "nullable": true
     },
     "block:minecraft:material_instances:down.face_dimming": {
       "name": "faceDimming",
-      "wire": []
+      "wire": [],
+      "type": "boolean",
+      "nullable": true
     },
     "block:minecraft:material_instances:down.isotropic": {
       "name": "isotropic",
       "wire": [
         "minecraft:material_instances.materials.down.packed_bools"
-      ]
+      ],
+      "type": "boolean",
+      "default": false
     },
     "block:minecraft:material_instances:down.render_method": {
       "name": "renderMethod",
       "wire": [
         "minecraft:material_instances.materials.down.render_method"
-      ]
+      ],
+      "type": "enum:RenderMethod",
+      "nullable": true
     },
     "block:minecraft:material_instances:down.texture": {
       "name": "texture",
       "wire": [
         "minecraft:material_instances.materials.down.texture"
-      ]
+      ],
+      "type": "string",
+      "nullable": true
     },
     "block:minecraft:material_instances:down.tint_method": {
       "name": "tintMethod",
-      "wire": []
+      "wire": [],
+      "type": "string",
+      "nullable": true
     },
     "block:minecraft:material_instances:east": {
       "name": "east",
@@ -1001,43 +1170,59 @@
         "minecraft:material_instances.materials.east.render_method",
         "minecraft:material_instances.materials.east.texture",
         "minecraft:material_instances.materials.east.tint_method"
-      ]
+      ],
+      "type": "union:InstanceOrAlias",
+      "nullable": true
     },
     "block:minecraft:material_instances:east.alpha_masked_tint": {
       "name": "alphaMaskedTint",
-      "wire": []
+      "wire": [],
+      "type": "boolean",
+      "nullable": true
     },
     "block:minecraft:material_instances:east.ambient_occlusion": {
       "name": "ambientOcclusion",
       "wire": [
         "minecraft:material_instances.materials.east.ambient_occlusion"
-      ]
+      ],
+      "type": "float",
+      "nullable": true
     },
     "block:minecraft:material_instances:east.face_dimming": {
       "name": "faceDimming",
-      "wire": []
+      "wire": [],
+      "type": "boolean",
+      "nullable": true
     },
     "block:minecraft:material_instances:east.isotropic": {
       "name": "isotropic",
       "wire": [
         "minecraft:material_instances.materials.east.packed_bools"
-      ]
+      ],
+      "type": "boolean",
+      "default": false
     },
     "block:minecraft:material_instances:east.render_method": {
       "name": "renderMethod",
       "wire": [
         "minecraft:material_instances.materials.east.render_method"
-      ]
+      ],
+      "type": "enum:RenderMethod",
+      "nullable": true
     },
     "block:minecraft:material_instances:east.texture": {
       "name": "texture",
       "wire": [
         "minecraft:material_instances.materials.east.texture"
-      ]
+      ],
+      "type": "string",
+      "nullable": true
     },
     "block:minecraft:material_instances:east.tint_method": {
       "name": "tintMethod",
-      "wire": []
+      "wire": [],
+      "type": "string",
+      "nullable": true
     },
     "block:minecraft:material_instances:north": {
       "name": "north",
@@ -1049,43 +1234,59 @@
         "minecraft:material_instances.materials.north.render_method",
         "minecraft:material_instances.materials.north.texture",
         "minecraft:material_instances.materials.north.tint_method"
-      ]
+      ],
+      "type": "union:InstanceOrAlias",
+      "nullable": true
     },
     "block:minecraft:material_instances:north.alpha_masked_tint": {
       "name": "alphaMaskedTint",
-      "wire": []
+      "wire": [],
+      "type": "boolean",
+      "nullable": true
     },
     "block:minecraft:material_instances:north.ambient_occlusion": {
       "name": "ambientOcclusion",
       "wire": [
         "minecraft:material_instances.materials.north.ambient_occlusion"
-      ]
+      ],
+      "type": "float",
+      "nullable": true
     },
     "block:minecraft:material_instances:north.face_dimming": {
       "name": "faceDimming",
-      "wire": []
+      "wire": [],
+      "type": "boolean",
+      "nullable": true
     },
     "block:minecraft:material_instances:north.isotropic": {
       "name": "isotropic",
       "wire": [
         "minecraft:material_instances.materials.north.packed_bools"
-      ]
+      ],
+      "type": "boolean",
+      "default": false
     },
     "block:minecraft:material_instances:north.render_method": {
       "name": "renderMethod",
       "wire": [
         "minecraft:material_instances.materials.north.render_method"
-      ]
+      ],
+      "type": "enum:RenderMethod",
+      "nullable": true
     },
     "block:minecraft:material_instances:north.texture": {
       "name": "texture",
       "wire": [
         "minecraft:material_instances.materials.north.texture"
-      ]
+      ],
+      "type": "string",
+      "nullable": true
     },
     "block:minecraft:material_instances:north.tint_method": {
       "name": "tintMethod",
-      "wire": []
+      "wire": [],
+      "type": "string",
+      "nullable": true
     },
     "block:minecraft:material_instances:south": {
       "name": "south",
@@ -1097,43 +1298,59 @@
         "minecraft:material_instances.materials.south.render_method",
         "minecraft:material_instances.materials.south.texture",
         "minecraft:material_instances.materials.south.tint_method"
-      ]
+      ],
+      "type": "union:InstanceOrAlias",
+      "nullable": true
     },
     "block:minecraft:material_instances:south.alpha_masked_tint": {
       "name": "alphaMaskedTint",
-      "wire": []
+      "wire": [],
+      "type": "boolean",
+      "nullable": true
     },
     "block:minecraft:material_instances:south.ambient_occlusion": {
       "name": "ambientOcclusion",
       "wire": [
         "minecraft:material_instances.materials.south.ambient_occlusion"
-      ]
+      ],
+      "type": "float",
+      "nullable": true
     },
     "block:minecraft:material_instances:south.face_dimming": {
       "name": "faceDimming",
-      "wire": []
+      "wire": [],
+      "type": "boolean",
+      "nullable": true
     },
     "block:minecraft:material_instances:south.isotropic": {
       "name": "isotropic",
       "wire": [
         "minecraft:material_instances.materials.south.packed_bools"
-      ]
+      ],
+      "type": "boolean",
+      "default": false
     },
     "block:minecraft:material_instances:south.render_method": {
       "name": "renderMethod",
       "wire": [
         "minecraft:material_instances.materials.south.render_method"
-      ]
+      ],
+      "type": "enum:RenderMethod",
+      "nullable": true
     },
     "block:minecraft:material_instances:south.texture": {
       "name": "texture",
       "wire": [
         "minecraft:material_instances.materials.south.texture"
-      ]
+      ],
+      "type": "string",
+      "nullable": true
     },
     "block:minecraft:material_instances:south.tint_method": {
       "name": "tintMethod",
-      "wire": []
+      "wire": [],
+      "type": "string",
+      "nullable": true
     },
     "block:minecraft:material_instances:up": {
       "name": "up",
@@ -1145,43 +1362,59 @@
         "minecraft:material_instances.materials.up.render_method",
         "minecraft:material_instances.materials.up.texture",
         "minecraft:material_instances.materials.up.tint_method"
-      ]
+      ],
+      "type": "union:InstanceOrAlias",
+      "nullable": true
     },
     "block:minecraft:material_instances:up.alpha_masked_tint": {
       "name": "alphaMaskedTint",
-      "wire": []
+      "wire": [],
+      "type": "boolean",
+      "nullable": true
     },
     "block:minecraft:material_instances:up.ambient_occlusion": {
       "name": "ambientOcclusion",
       "wire": [
         "minecraft:material_instances.materials.up.ambient_occlusion"
-      ]
+      ],
+      "type": "float",
+      "nullable": true
     },
     "block:minecraft:material_instances:up.face_dimming": {
       "name": "faceDimming",
-      "wire": []
+      "wire": [],
+      "type": "boolean",
+      "nullable": true
     },
     "block:minecraft:material_instances:up.isotropic": {
       "name": "isotropic",
       "wire": [
         "minecraft:material_instances.materials.up.packed_bools"
-      ]
+      ],
+      "type": "boolean",
+      "default": false
     },
     "block:minecraft:material_instances:up.render_method": {
       "name": "renderMethod",
       "wire": [
         "minecraft:material_instances.materials.up.render_method"
-      ]
+      ],
+      "type": "enum:RenderMethod",
+      "nullable": true
     },
     "block:minecraft:material_instances:up.texture": {
       "name": "texture",
       "wire": [
         "minecraft:material_instances.materials.up.texture"
-      ]
+      ],
+      "type": "string",
+      "nullable": true
     },
     "block:minecraft:material_instances:up.tint_method": {
       "name": "tintMethod",
-      "wire": []
+      "wire": [],
+      "type": "string",
+      "nullable": true
     },
     "block:minecraft:material_instances:west": {
       "name": "west",
@@ -1193,51 +1426,70 @@
         "minecraft:material_instances.materials.west.render_method",
         "minecraft:material_instances.materials.west.texture",
         "minecraft:material_instances.materials.west.tint_method"
-      ]
+      ],
+      "type": "union:InstanceOrAlias",
+      "nullable": true
     },
     "block:minecraft:material_instances:west.alpha_masked_tint": {
       "name": "alphaMaskedTint",
-      "wire": []
+      "wire": [],
+      "type": "boolean",
+      "nullable": true
     },
     "block:minecraft:material_instances:west.ambient_occlusion": {
       "name": "ambientOcclusion",
       "wire": [
         "minecraft:material_instances.materials.west.ambient_occlusion"
-      ]
+      ],
+      "type": "float",
+      "nullable": true
     },
     "block:minecraft:material_instances:west.face_dimming": {
       "name": "faceDimming",
-      "wire": []
+      "wire": [],
+      "type": "boolean",
+      "nullable": true
     },
     "block:minecraft:material_instances:west.isotropic": {
       "name": "isotropic",
       "wire": [
         "minecraft:material_instances.materials.west.packed_bools"
-      ]
+      ],
+      "type": "boolean",
+      "default": false
     },
     "block:minecraft:material_instances:west.render_method": {
       "name": "renderMethod",
       "wire": [
         "minecraft:material_instances.materials.west.render_method"
-      ]
+      ],
+      "type": "enum:RenderMethod",
+      "nullable": true
     },
     "block:minecraft:material_instances:west.texture": {
       "name": "texture",
       "wire": [
         "minecraft:material_instances.materials.west.texture"
-      ]
+      ],
+      "type": "string",
+      "nullable": true
     },
     "block:minecraft:material_instances:west.tint_method": {
       "name": "tintMethod",
-      "wire": []
+      "wire": [],
+      "type": "string",
+      "nullable": true
     },
     "block:minecraft:movable:movement_type": {
       "name": "movementType",
-      "wire": []
+      "wire": [],
+      "type": "enum:MovementType"
     },
     "block:minecraft:movable:sticky": {
       "name": "sticky",
-      "wire": []
+      "wire": [],
+      "type": "enum:Sticky",
+      "default": "none"
     },
     "block:minecraft:placement_filter:conditions": {
       "name": "conditions",
@@ -1245,7 +1497,9 @@
         "minecraft:placement_filter.conditions",
         "minecraft:placement_filter.conditions[].allowed_faces",
         "minecraft:placement_filter.conditions[].block_filter"
-      ]
+      ],
+      "type": "list<object:Conditions>",
+      "default": []
     },
     "block:minecraft:placement_filter:conditions[].allowed_faces": {
       "name": "allowedFaces",
@@ -1253,6 +1507,15 @@
         "minecraft:placement_filter.conditions",
         "minecraft:placement_filter.conditions[].allowed_faces",
         "minecraft:placement_filter.conditions[].block_filter"
+      ],
+      "type": "list<string>",
+      "default": [
+        "down",
+        "up",
+        "north",
+        "south",
+        "west",
+        "east"
       ]
     },
     "block:minecraft:placement_filter:conditions[].block_filter": {
@@ -1262,7 +1525,9 @@
         "minecraft:placement_filter.conditions[].allowed_faces",
         "minecraft:placement_filter.conditions[].block_filter",
         "minecraft:placement_filter.conditions[].block_filter[].name"
-      ]
+      ],
+      "type": "list<object:BlockFilter>",
+      "default": []
     },
     "block:minecraft:placement_filter:conditions[].block_filter[].name": {
       "name": "name",
@@ -1270,14 +1535,18 @@
         "minecraft:placement_filter.conditions",
         "minecraft:placement_filter.conditions[].allowed_faces",
         "minecraft:placement_filter.conditions[].block_filter[].name"
-      ]
+      ],
+      "type": "string",
+      "nullable": true
     },
     "block:minecraft:placement_filter:conditions[].block_filter[].states": {
       "name": "states",
       "wire": [
         "minecraft:placement_filter.conditions[].allowed_faces",
         "minecraft:placement_filter.conditions[].block_filter[].name"
-      ]
+      ],
+      "type": "states",
+      "default": {}
     },
     "block:minecraft:placement_filter:conditions[].block_filter[].tags": {
       "name": "tags",
@@ -1286,163 +1555,250 @@
         "minecraft:placement_filter.conditions[].allowed_faces",
         "minecraft:placement_filter.conditions[].block_filter[].tags",
         "minecraft:placement_filter.conditions[].block_filter[].tags_version"
-      ]
+      ],
+      "type": "string",
+      "nullable": true
     },
     "block:minecraft:precipitation_interactions:precipitation_behavior": {
       "name": "precipitationBehavior",
       "wire": [
         "minecraft:precipitation_interactions.precipitation_behavior"
-      ]
+      ],
+      "type": "enum:PrecipitationBehavior",
+      "nullable": true
     },
     "block:minecraft:random_offset:x": {
       "name": "x",
-      "wire": []
+      "wire": [],
+      "type": "object:X",
+      "default": {
+        "range": {
+          "max": 0,
+          "min": 0
+        },
+        "steps": 0
+      }
     },
     "block:minecraft:random_offset:x.range": {
       "name": "range",
-      "wire": []
+      "wire": [],
+      "type": "object:Range"
     },
     "block:minecraft:random_offset:x.range.max": {
       "name": "max",
       "wire": [
         "minecraft:random_offset.x.range.max"
-      ]
+      ],
+      "type": "float",
+      "default": 0
     },
     "block:minecraft:random_offset:x.range.min": {
       "name": "min",
       "wire": [
         "minecraft:random_offset.x.range.min"
-      ]
+      ],
+      "type": "float",
+      "default": 0
     },
     "block:minecraft:random_offset:x.steps": {
       "name": "steps",
       "wire": [
         "minecraft:random_offset.x.steps"
-      ]
+      ],
+      "type": "int",
+      "default": 0
     },
     "block:minecraft:random_offset:y": {
       "name": "y",
-      "wire": []
+      "wire": [],
+      "type": "object:X",
+      "default": {
+        "range": {
+          "max": 0,
+          "min": 0
+        },
+        "steps": 0
+      }
     },
     "block:minecraft:random_offset:y.range": {
       "name": "range",
-      "wire": []
+      "wire": [],
+      "type": "object:Range"
     },
     "block:minecraft:random_offset:y.range.max": {
       "name": "max",
       "wire": [
         "minecraft:random_offset.y.range.max"
-      ]
+      ],
+      "type": "float",
+      "default": 0
     },
     "block:minecraft:random_offset:y.range.min": {
       "name": "min",
       "wire": [
         "minecraft:random_offset.y.range.min"
-      ]
+      ],
+      "type": "float",
+      "default": 0
     },
     "block:minecraft:random_offset:y.steps": {
       "name": "steps",
       "wire": [
         "minecraft:random_offset.y.steps"
-      ]
+      ],
+      "type": "int",
+      "default": 0
     },
     "block:minecraft:random_offset:z": {
       "name": "z",
-      "wire": []
+      "wire": [],
+      "type": "object:X",
+      "default": {
+        "range": {
+          "max": 0,
+          "min": 0
+        },
+        "steps": 0
+      }
     },
     "block:minecraft:random_offset:z.range": {
       "name": "range",
-      "wire": []
+      "wire": [],
+      "type": "object:Range"
     },
     "block:minecraft:random_offset:z.range.max": {
       "name": "max",
       "wire": [
         "minecraft:random_offset.z.range.max"
-      ]
+      ],
+      "type": "float",
+      "default": 0
     },
     "block:minecraft:random_offset:z.range.min": {
       "name": "min",
       "wire": [
         "minecraft:random_offset.z.range.min"
-      ]
+      ],
+      "type": "float",
+      "default": 0
     },
     "block:minecraft:random_offset:z.steps": {
       "name": "steps",
       "wire": [
         "minecraft:random_offset.z.steps"
-      ]
+      ],
+      "type": "int",
+      "default": 0
     },
     "block:minecraft:redstone_conductivity:allows_wire_to_step_down": {
       "name": "allowsWireToStepDown",
       "wire": [
         "minecraft:redstone_conductivity.allowsWireToStepDown"
-      ]
+      ],
+      "type": "boolean",
+      "default": true
     },
     "block:minecraft:redstone_conductivity:redstone_conductor": {
       "name": "redstoneConductor",
       "wire": [
         "minecraft:redstone_conductivity.redstoneConductor"
-      ]
+      ],
+      "type": "boolean",
+      "default": false
     },
     "block:minecraft:redstone_consumer:min_power": {
       "name": "minPower",
-      "wire": []
+      "wire": [],
+      "type": "int",
+      "default": 0
     },
     "block:minecraft:redstone_consumer:propagates_power": {
       "name": "propagatesPower",
-      "wire": []
+      "wire": [],
+      "type": "boolean",
+      "default": false
     },
     "block:minecraft:redstone_producer:connected_faces": {
       "name": "connectedFaces",
       "wire": [
         "minecraft:redstone_producer.connected_faces",
         "minecraft:redstone_producer.connected_faces[]"
+      ],
+      "type": "list<enum:ConnectedFaces>",
+      "default": [
+        "down",
+        "up",
+        "north",
+        "south",
+        "west",
+        "east"
       ]
     },
     "block:minecraft:redstone_producer:power": {
       "name": "power",
       "wire": [
         "minecraft:redstone_producer.power"
-      ]
+      ],
+      "type": "int"
     },
     "block:minecraft:redstone_producer:strongly_powered_face": {
       "name": "stronglyPoweredFace",
       "wire": [
         "minecraft:redstone_producer.strongly_powered_face"
-      ]
+      ],
+      "type": "enum:StronglyPoweredFace",
+      "nullable": true
     },
     "block:minecraft:redstone_producer:transform_relative": {
       "name": "transformRelative",
       "wire": [
         "minecraft:redstone_producer.transform_relative"
-      ]
+      ],
+      "type": "boolean",
+      "nullable": true
     },
     "block:minecraft:selection_box:origin": {
       "name": "origin",
       "wire": [
         "minecraft:selection_box.origin[]",
         "minecraft:selection_box.size[]"
+      ],
+      "type": "vec3",
+      "default": [
+        -8,
+        0,
+        -8
       ]
     },
     "block:minecraft:selection_box:size": {
       "name": "size",
       "wire": [
         "minecraft:selection_box.size[]"
+      ],
+      "type": "vec3",
+      "default": [
+        16,
+        16,
+        16
       ]
     },
     "block:minecraft:support:shape": {
       "name": "shape",
       "wire": [
         "minecraft:support.shape"
-      ]
+      ],
+      "type": "enum:Shape"
     },
     "block:minecraft:tick:interval_range": {
       "name": "intervalRange",
-      "wire": []
+      "wire": [],
+      "type": "list<float>"
     },
     "block:minecraft:tick:looping": {
       "name": "looping",
-      "wire": []
+      "wire": [],
+      "type": "boolean",
+      "default": true
     },
     "block:minecraft:transformation:rotation": {
       "name": "rotation",
@@ -1450,6 +1806,12 @@
         "minecraft:transformation.RX",
         "minecraft:transformation.RY",
         "minecraft:transformation.RZ"
+      ],
+      "type": "vec3",
+      "default": [
+        0,
+        0,
+        0
       ]
     },
     "block:minecraft:transformation:rotation_pivot": {
@@ -1458,6 +1820,12 @@
         "minecraft:transformation.RXP",
         "minecraft:transformation.RYP",
         "minecraft:transformation.RZP"
+      ],
+      "type": "vec3",
+      "default": [
+        0,
+        0,
+        0
       ]
     },
     "block:minecraft:transformation:scale": {
@@ -1466,6 +1834,12 @@
         "minecraft:transformation.SX",
         "minecraft:transformation.SY",
         "minecraft:transformation.SZ"
+      ],
+      "type": "vec3",
+      "default": [
+        1,
+        1,
+        1
       ]
     },
     "block:minecraft:transformation:scale_pivot": {
@@ -1474,6 +1848,12 @@
         "minecraft:transformation.SXP",
         "minecraft:transformation.SYP",
         "minecraft:transformation.SZP"
+      ],
+      "type": "vec3",
+      "default": [
+        0,
+        0,
+        0
       ]
     },
     "block:minecraft:transformation:translation": {
@@ -1482,38 +1862,53 @@
         "minecraft:transformation.TX",
         "minecraft:transformation.TY",
         "minecraft:transformation.TZ"
+      ],
+      "type": "vec3",
+      "default": [
+        0,
+        0,
+        0
       ]
     },
     "block:trait:minecraft:connection:enabled_states": {
       "name": "enabledStates",
-      "wire": []
+      "wire": [],
+      "type": "list<enum:EnabledStates>"
     },
     "block:trait:minecraft:multi_block:direction": {
       "name": "direction",
       "wire": [
         "traits[].direction"
-      ]
+      ],
+      "type": "enum:MultiBlockDirection"
     },
     "block:trait:minecraft:multi_block:enabled_states": {
       "name": "enabledStates",
-      "wire": []
+      "wire": [],
+      "type": "list<enum:EnabledStates>"
     },
     "block:trait:minecraft:multi_block:parts": {
       "name": "parts",
       "wire": [
         "traits[].part_count"
-      ]
+      ],
+      "type": "int",
+      "default": 2
     },
     "block:trait:minecraft:placement_direction:blocks_to_corner_with": {
       "name": "blocksToCornerWith",
       "wire": [
         "traits[].enabled_states.cardinal_direction",
         "traits[].enabled_states.corner_and_cardinal_direction"
-      ]
+      ],
+      "type": "list<object:BlocksToCornerWith>",
+      "nullable": true
     },
     "block:trait:minecraft:placement_direction:blocks_to_corner_with[].tags": {
       "name": "tags",
-      "wire": []
+      "wire": [],
+      "type": "string",
+      "nullable": true
     },
     "block:trait:minecraft:placement_direction:enabled_states": {
       "name": "enabledStates",
@@ -1521,59 +1916,76 @@
         "traits[].enabled_states.cardinal_direction",
         "traits[].enabled_states.corner_and_cardinal_direction",
         "traits[].enabled_states.facing_direction"
-      ]
+      ],
+      "type": "list<enum:EnabledStates>"
     },
     "block:trait:minecraft:placement_direction:y_rotation_offset": {
       "name": "yRotationOffset",
       "wire": [
         "traits[].y_rotation_offset"
-      ]
+      ],
+      "type": "float",
+      "nullable": true
     },
     "block:trait:minecraft:placement_position:enabled_states": {
       "name": "enabledStates",
       "wire": [
         "traits[].enabled_states.block_face",
         "traits[].enabled_states.vertical_half"
-      ]
+      ],
+      "type": "list<enum:EnabledStates>"
     },
     "item:description:category": {
       "name": "category",
       "wire": [
         "item_properties.creative_category"
-      ]
+      ],
+      "type": "enum:Category",
+      "nullable": true
     },
     "item:description:group": {
       "name": "group",
       "wire": [
         "item_properties.creative_group"
-      ]
+      ],
+      "type": "string",
+      "nullable": true
     },
     "item:description:is_hidden_in_commands": {
       "name": "hiddenInCommands",
       "wire": [
         "item_properties.hidden_in_commands"
-      ]
+      ],
+      "type": "boolean",
+      "nullable": true
     },
     "item:minecraft:allow_off_hand:value": {
       "name": "value",
       "wire": [
         "item_properties.allow_off_hand",
         "minecraft:allow_off_hand.value"
-      ]
+      ],
+      "type": "boolean",
+      "nullable": true
     },
     "item:minecraft:block_placer:aligned_placement": {
       "name": "alignedPlacement",
       "wire": [
         "minecraft:block_placer.alignedPlacement"
-      ]
+      ],
+      "type": "boolean",
+      "default": false
     },
     "item:minecraft:block_placer:block": {
       "name": "block",
-      "wire": []
+      "wire": [],
+      "type": "string"
     },
     "item:minecraft:block_placer:replace_block_item": {
       "name": "replaceBlockItem",
-      "wire": []
+      "wire": [],
+      "type": "boolean",
+      "default": false
     },
     "item:minecraft:block_placer:use_on": {
       "name": "useOn",
@@ -1582,7 +1994,9 @@
         "minecraft:block_placer.use_on[].name",
         "minecraft:block_placer.use_on[].states",
         "minecraft:block_placer.use_on[].tags"
-      ]
+      ],
+      "type": "list<object:UseOn>",
+      "default": []
     },
     "item:minecraft:block_placer:use_on[].name": {
       "name": "name",
@@ -1591,13 +2005,17 @@
         "minecraft:block_placer.use_on[].name",
         "minecraft:block_placer.use_on[].states",
         "minecraft:block_placer.use_on[].tags"
-      ]
+      ],
+      "type": "string",
+      "nullable": true
     },
     "item:minecraft:block_placer:use_on[].states": {
       "name": "states",
       "wire": [
         "minecraft:block_placer.use_on[]"
-      ]
+      ],
+      "type": "states",
+      "default": {}
     },
     "item:minecraft:block_placer:use_on[].tags": {
       "name": "tags",
@@ -1606,55 +2024,69 @@
         "minecraft:block_placer.use_on[].name",
         "minecraft:block_placer.use_on[].states",
         "minecraft:block_placer.use_on[].tags"
-      ]
+      ],
+      "type": "string",
+      "nullable": true
     },
     "item:minecraft:bundle_interaction:num_viewable_slots": {
       "name": "numViewableSlots",
       "wire": [
         "minecraft:bundle_interaction.num_viewable_slots"
-      ]
+      ],
+      "type": "int",
+      "default": 12
     },
     "item:minecraft:can_destroy_in_creative:value": {
       "name": "value",
       "wire": [
         "item_properties.can_destroy_in_creative",
         "minecraft:can_destroy_in_creative.value"
-      ]
+      ],
+      "type": "boolean",
+      "nullable": true
     },
     "item:minecraft:compostable:composting_chance": {
       "name": "compostingChance",
       "wire": [
         "minecraft:compostable.composting_chance"
-      ]
+      ],
+      "type": "int"
     },
     "item:minecraft:cooldown:category": {
       "name": "category",
       "wire": [
         "minecraft:cooldown.category"
-      ]
+      ],
+      "type": "string"
     },
     "item:minecraft:cooldown:duration": {
       "name": "duration",
       "wire": [
         "minecraft:cooldown.duration"
-      ]
+      ],
+      "type": "float"
     },
     "item:minecraft:cooldown:type": {
       "name": "type",
       "wire": [
         "minecraft:cooldown.type"
-      ]
+      ],
+      "type": "enum:Type",
+      "default": "use"
     },
     "item:minecraft:damage:value": {
       "name": "value",
       "wire": [
         "item_properties.damage",
         "minecraft:damage.value"
-      ]
+      ],
+      "type": "int",
+      "nullable": true
     },
     "item:minecraft:damage_absorption:absorbable_causes": {
       "name": "absorbableCauses",
-      "wire": []
+      "wire": [],
+      "type": "list<string>"
     },
     "item:minecraft:digger:destroy_speeds": {
       "name": "destroySpeeds",
@@ -1664,7 +2096,9 @@
         "minecraft:digger.destroy_speeds[].block.states",
         "minecraft:digger.destroy_speeds[].block.tags",
         "minecraft:digger.destroy_speeds[].speed"
-      ]
+      ],
+      "type": "list<object:DestroySpeeds>",
+      "default": []
     },
     "item:minecraft:digger:destroy_speeds[].block": {
       "name": "block",
@@ -1674,7 +2108,9 @@
         "minecraft:digger.destroy_speeds[].block.states",
         "minecraft:digger.destroy_speeds[].block.tags",
         "minecraft:digger.destroy_speeds[].speed"
-      ]
+      ],
+      "type": "object:Block",
+      "nullable": true
     },
     "item:minecraft:digger:destroy_speeds[].block.name": {
       "name": "name",
@@ -1684,14 +2120,18 @@
         "minecraft:digger.destroy_speeds[].block.states",
         "minecraft:digger.destroy_speeds[].block.tags",
         "minecraft:digger.destroy_speeds[].speed"
-      ]
+      ],
+      "type": "string",
+      "nullable": true
     },
     "item:minecraft:digger:destroy_speeds[].block.states": {
       "name": "states",
       "wire": [
         "minecraft:digger.destroy_speeds[].block",
         "minecraft:digger.destroy_speeds[].speed"
-      ]
+      ],
+      "type": "states",
+      "default": {}
     },
     "item:minecraft:digger:destroy_speeds[].block.tags": {
       "name": "tags",
@@ -1701,7 +2141,9 @@
         "minecraft:digger.destroy_speeds[].block.states",
         "minecraft:digger.destroy_speeds[].block.tags",
         "minecraft:digger.destroy_speeds[].speed"
-      ]
+      ],
+      "type": "string",
+      "nullable": true
     },
     "item:minecraft:digger:destroy_speeds[].speed": {
       "name": "speed",
@@ -1711,74 +2153,105 @@
         "minecraft:digger.destroy_speeds[].block.states",
         "minecraft:digger.destroy_speeds[].block.tags",
         "minecraft:digger.destroy_speeds[].speed"
-      ]
+      ],
+      "type": "int",
+      "nullable": true
     },
     "item:minecraft:digger:use_efficiency": {
       "name": "useEfficiency",
       "wire": [
         "minecraft:digger.use_efficiency"
-      ]
+      ],
+      "type": "boolean",
+      "default": false
     },
     "item:minecraft:display_name:value": {
       "name": "value",
       "wire": [
         "minecraft:display_name.value"
-      ]
+      ],
+      "type": "string",
+      "nullable": true
     },
     "item:minecraft:durability:damage_chance": {
       "name": "damageChance",
-      "wire": []
+      "wire": [],
+      "type": "object:DamageChance",
+      "default": {
+        "max": 100,
+        "min": 100
+      }
     },
     "item:minecraft:durability:damage_chance.max": {
       "name": "max",
       "wire": [
         "minecraft:durability.damage_chance.max"
-      ]
+      ],
+      "type": "int",
+      "default": 100
     },
     "item:minecraft:durability:damage_chance.min": {
       "name": "min",
       "wire": [
         "minecraft:durability.damage_chance.min"
-      ]
+      ],
+      "type": "int",
+      "default": 100
     },
     "item:minecraft:durability:max_durability": {
       "name": "maxDurability",
       "wire": [
         "minecraft:durability.max_durability"
-      ]
+      ],
+      "type": "int"
     },
     "item:minecraft:durability_sensor:durability_thresholds": {
       "name": "durabilityThresholds",
-      "wire": []
+      "wire": [],
+      "type": "list<object:DurabilityThresholds>"
     },
     "item:minecraft:durability_sensor:durability_thresholds[].durability": {
       "name": "durability",
-      "wire": []
+      "wire": [],
+      "type": "int",
+      "default": 0
     },
     "item:minecraft:durability_sensor:durability_thresholds[].particle_type": {
       "name": "particleType",
-      "wire": []
+      "wire": [],
+      "type": "enum:ParticleType",
+      "default": "none"
     },
     "item:minecraft:durability_sensor:durability_thresholds[].sound_event": {
       "name": "soundEvent",
-      "wire": []
+      "wire": [],
+      "type": "string",
+      "nullable": true
     },
     "item:minecraft:dyeable:default_color": {
       "name": "defaultColor",
       "wire": [
         "minecraft:dyeable.default_color[]"
+      ],
+      "type": "union:ColorValue",
+      "default": [
+        255,
+        255,
+        255
       ]
     },
     "item:minecraft:enchantable:slot": {
       "name": "slot",
-      "wire": []
+      "wire": [],
+      "type": "string"
     },
     "item:minecraft:enchantable:value": {
       "name": "value",
       "wire": [
         "item_properties.enchantable_value",
         "minecraft:enchantable.value"
-      ]
+      ],
+      "type": "int"
     },
     "item:minecraft:entity_placer:dispense_on": {
       "name": "dispenseOn",
@@ -1787,7 +2260,9 @@
         "minecraft:entity_placer.dispense_on[].name",
         "minecraft:entity_placer.dispense_on[].states",
         "minecraft:entity_placer.dispense_on[].tags"
-      ]
+      ],
+      "type": "list<object:UseOn>",
+      "default": []
     },
     "item:minecraft:entity_placer:dispense_on[].name": {
       "name": "name",
@@ -1796,13 +2271,17 @@
         "minecraft:entity_placer.dispense_on[].name",
         "minecraft:entity_placer.dispense_on[].states",
         "minecraft:entity_placer.dispense_on[].tags"
-      ]
+      ],
+      "type": "string",
+      "nullable": true
     },
     "item:minecraft:entity_placer:dispense_on[].states": {
       "name": "states",
       "wire": [
         "minecraft:entity_placer.dispense_on[]"
-      ]
+      ],
+      "type": "states",
+      "default": {}
     },
     "item:minecraft:entity_placer:dispense_on[].tags": {
       "name": "tags",
@@ -1811,13 +2290,17 @@
         "minecraft:entity_placer.dispense_on[].name",
         "minecraft:entity_placer.dispense_on[].states",
         "minecraft:entity_placer.dispense_on[].tags"
-      ]
+      ],
+      "type": "string",
+      "nullable": true
     },
     "item:minecraft:entity_placer:entity": {
       "name": "entity",
       "wire": [
         "minecraft:entity_placer.entity"
-      ]
+      ],
+      "type": "string",
+      "nullable": true
     },
     "item:minecraft:entity_placer:use_on": {
       "name": "useOn",
@@ -1826,7 +2309,9 @@
         "minecraft:entity_placer.use_on[].name",
         "minecraft:entity_placer.use_on[].states",
         "minecraft:entity_placer.use_on[].tags"
-      ]
+      ],
+      "type": "list<object:UseOn>",
+      "default": []
     },
     "item:minecraft:entity_placer:use_on[].name": {
       "name": "name",
@@ -1835,13 +2320,17 @@
         "minecraft:entity_placer.use_on[].name",
         "minecraft:entity_placer.use_on[].states",
         "minecraft:entity_placer.use_on[].tags"
-      ]
+      ],
+      "type": "string",
+      "nullable": true
     },
     "item:minecraft:entity_placer:use_on[].states": {
       "name": "states",
       "wire": [
         "minecraft:entity_placer.use_on[]"
-      ]
+      ],
+      "type": "states",
+      "default": {}
     },
     "item:minecraft:entity_placer:use_on[].tags": {
       "name": "tags",
@@ -1850,89 +2339,117 @@
         "minecraft:entity_placer.use_on[].name",
         "minecraft:entity_placer.use_on[].states",
         "minecraft:entity_placer.use_on[].tags"
-      ]
+      ],
+      "type": "string",
+      "nullable": true
     },
     "item:minecraft:fire_resistant:value": {
       "name": "value",
       "wire": [
         "minecraft:fire_resistant.value"
-      ]
+      ],
+      "type": "boolean",
+      "default": true
     },
     "item:minecraft:food:can_always_eat": {
       "name": "canAlwaysEat",
       "wire": [
         "minecraft:food.can_always_eat"
-      ]
+      ],
+      "type": "boolean",
+      "default": false
     },
     "item:minecraft:food:nutrition": {
       "name": "nutrition",
       "wire": [
         "minecraft:food.nutrition"
-      ]
+      ],
+      "type": "int",
+      "default": 0
     },
     "item:minecraft:food:saturation_modifier": {
       "name": "saturationModifier",
       "wire": [
         "minecraft:food.saturation_modifier"
-      ]
+      ],
+      "type": "float",
+      "default": 0.6000000238418579
     },
     "item:minecraft:food:using_converts_to": {
       "name": "usingConvertsTo",
       "wire": [
         "minecraft:food.using_converts_to.name"
-      ]
+      ],
+      "type": "string",
+      "nullable": true
     },
     "item:minecraft:fuel:duration": {
       "name": "duration",
       "wire": [
         "minecraft:fuel.duration"
-      ]
+      ],
+      "type": "float",
+      "nullable": true
     },
     "item:minecraft:glint:value": {
       "name": "value",
       "wire": [
         "item_properties.foil",
         "minecraft:glint.value"
-      ]
+      ],
+      "type": "boolean",
+      "nullable": true
     },
     "item:minecraft:hand_equipped:value": {
       "name": "value",
       "wire": [
         "item_properties.hand_equipped",
         "minecraft:hand_equipped.value"
-      ]
+      ],
+      "type": "boolean",
+      "nullable": true
     },
     "item:minecraft:hover_text_color:value": {
       "name": "value",
       "wire": [
         "minecraft:hover_text_color.value"
-      ]
+      ],
+      "type": "string",
+      "nullable": true
     },
     "item:minecraft:icon:textures": {
       "name": "textures",
       "wire": [
         "item_properties.minecraft:icon.textures",
         "item_properties.minecraft:icon.textures{}"
-      ]
+      ],
+      "type": "map<string>",
+      "nullable": true
     },
     "item:minecraft:kinetic_weapon:creative_reach": {
       "name": "creativeReach",
       "wire": [
         "minecraft:kinetic_weapon.minecraft:kinetic_weapon.creative_reach.max",
         "minecraft:kinetic_weapon.minecraft:kinetic_weapon.creative_reach.min"
-      ]
+      ],
+      "type": "object:CreativeReach",
+      "nullable": true
     },
     "item:minecraft:kinetic_weapon:creative_reach.max": {
       "name": "max",
       "wire": [
         "minecraft:kinetic_weapon.minecraft:kinetic_weapon.creative_reach.max"
-      ]
+      ],
+      "type": "float",
+      "default": 0
     },
     "item:minecraft:kinetic_weapon:creative_reach.min": {
       "name": "min",
       "wire": [
         "minecraft:kinetic_weapon.minecraft:kinetic_weapon.creative_reach.min"
-      ]
+      ],
+      "type": "float",
+      "default": 0
     },
     "item:minecraft:kinetic_weapon:damage_conditions": {
       "name": "damageConditions",
@@ -1940,43 +2457,57 @@
         "minecraft:kinetic_weapon.minecraft:kinetic_weapon.damage_conditions.max_duration",
         "minecraft:kinetic_weapon.minecraft:kinetic_weapon.damage_conditions.min_relative_speed",
         "minecraft:kinetic_weapon.minecraft:kinetic_weapon.damage_conditions.min_speed"
-      ]
+      ],
+      "type": "object:Conditions",
+      "nullable": true
     },
     "item:minecraft:kinetic_weapon:damage_conditions.max_duration": {
       "name": "maxDuration",
       "wire": [
         "minecraft:kinetic_weapon.minecraft:kinetic_weapon.damage_conditions.max_duration"
-      ]
+      ],
+      "type": "int",
+      "default": -1
     },
     "item:minecraft:kinetic_weapon:damage_conditions.min_relative_speed": {
       "name": "minRelativeSpeed",
       "wire": [
         "minecraft:kinetic_weapon.minecraft:kinetic_weapon.damage_conditions.min_relative_speed"
-      ]
+      ],
+      "type": "float",
+      "default": 0
     },
     "item:minecraft:kinetic_weapon:damage_conditions.min_speed": {
       "name": "minSpeed",
       "wire": [
         "minecraft:kinetic_weapon.minecraft:kinetic_weapon.damage_conditions.min_speed"
-      ]
+      ],
+      "type": "float",
+      "default": 0
     },
     "item:minecraft:kinetic_weapon:damage_modifier": {
       "name": "damageModifier",
       "wire": [
         "minecraft:kinetic_weapon.minecraft:kinetic_weapon.damage_modifier"
-      ]
+      ],
+      "type": "float",
+      "default": 0
     },
     "item:minecraft:kinetic_weapon:damage_multiplier": {
       "name": "damageMultiplier",
       "wire": [
         "minecraft:kinetic_weapon.minecraft:kinetic_weapon.damage_multiplier"
-      ]
+      ],
+      "type": "float",
+      "default": 1
     },
     "item:minecraft:kinetic_weapon:delay": {
       "name": "delay",
       "wire": [
         "minecraft:kinetic_weapon.minecraft:kinetic_weapon.delay"
-      ]
+      ],
+      "type": "int",
+      "default": 0
     },
     "item:minecraft:kinetic_weapon:dismount_conditions": {
       "name": "dismountConditions",
@@ -1984,31 +2515,41 @@
         "minecraft:kinetic_weapon.minecraft:kinetic_weapon.dismount_conditions.max_duration",
         "minecraft:kinetic_weapon.minecraft:kinetic_weapon.dismount_conditions.min_relative_speed",
         "minecraft:kinetic_weapon.minecraft:kinetic_weapon.dismount_conditions.min_speed"
-      ]
+      ],
+      "type": "object:Conditions",
+      "nullable": true
     },
     "item:minecraft:kinetic_weapon:dismount_conditions.max_duration": {
       "name": "maxDuration",
       "wire": [
         "minecraft:kinetic_weapon.minecraft:kinetic_weapon.dismount_conditions.max_duration"
-      ]
+      ],
+      "type": "int",
+      "default": -1
     },
     "item:minecraft:kinetic_weapon:dismount_conditions.min_relative_speed": {
       "name": "minRelativeSpeed",
       "wire": [
         "minecraft:kinetic_weapon.minecraft:kinetic_weapon.dismount_conditions.min_relative_speed"
-      ]
+      ],
+      "type": "float",
+      "default": 0
     },
     "item:minecraft:kinetic_weapon:dismount_conditions.min_speed": {
       "name": "minSpeed",
       "wire": [
         "minecraft:kinetic_weapon.minecraft:kinetic_weapon.dismount_conditions.min_speed"
-      ]
+      ],
+      "type": "float",
+      "default": 0
     },
     "item:minecraft:kinetic_weapon:hitbox_margin": {
       "name": "hitboxMargin",
       "wire": [
         "minecraft:kinetic_weapon.minecraft:kinetic_weapon.hitbox_margin"
-      ]
+      ],
+      "type": "float",
+      "default": 0
     },
     "item:minecraft:kinetic_weapon:knockback_conditions": {
       "name": "knockbackConditions",
@@ -2016,132 +2557,181 @@
         "minecraft:kinetic_weapon.minecraft:kinetic_weapon.knockback_conditions.max_duration",
         "minecraft:kinetic_weapon.minecraft:kinetic_weapon.knockback_conditions.min_relative_speed",
         "minecraft:kinetic_weapon.minecraft:kinetic_weapon.knockback_conditions.min_speed"
-      ]
+      ],
+      "type": "object:Conditions",
+      "nullable": true
     },
     "item:minecraft:kinetic_weapon:knockback_conditions.max_duration": {
       "name": "maxDuration",
       "wire": [
         "minecraft:kinetic_weapon.minecraft:kinetic_weapon.knockback_conditions.max_duration"
-      ]
+      ],
+      "type": "int",
+      "default": -1
     },
     "item:minecraft:kinetic_weapon:knockback_conditions.min_relative_speed": {
       "name": "minRelativeSpeed",
       "wire": [
         "minecraft:kinetic_weapon.minecraft:kinetic_weapon.knockback_conditions.min_relative_speed"
-      ]
+      ],
+      "type": "float",
+      "default": 0
     },
     "item:minecraft:kinetic_weapon:knockback_conditions.min_speed": {
       "name": "minSpeed",
       "wire": [
         "minecraft:kinetic_weapon.minecraft:kinetic_weapon.knockback_conditions.min_speed"
-      ]
+      ],
+      "type": "float",
+      "default": 0
     },
     "item:minecraft:kinetic_weapon:reach": {
       "name": "reach",
-      "wire": []
+      "wire": [],
+      "type": "object:Reach",
+      "default": {
+        "max": 3,
+        "min": 0
+      }
     },
     "item:minecraft:kinetic_weapon:reach.max": {
       "name": "max",
       "wire": [
         "minecraft:kinetic_weapon.minecraft:kinetic_weapon.reach.max"
-      ]
+      ],
+      "type": "float",
+      "default": 3
     },
     "item:minecraft:kinetic_weapon:reach.min": {
       "name": "min",
       "wire": [
         "minecraft:kinetic_weapon.minecraft:kinetic_weapon.reach.min"
-      ]
+      ],
+      "type": "float",
+      "default": 0
     },
     "item:minecraft:liquid_clipped:value": {
       "name": "value",
       "wire": [
         "item_properties.liquid_clipped",
         "minecraft:liquid_clipped.value"
-      ]
+      ],
+      "type": "boolean",
+      "nullable": true
     },
     "item:minecraft:max_stack_size:value": {
       "name": "value",
       "wire": [
         "item_properties.max_stack_size",
         "minecraft:max_stack_size.value"
-      ]
+      ],
+      "type": "int",
+      "nullable": true
     },
     "item:minecraft:piercing_weapon:creative_reach": {
       "name": "creativeReach",
       "wire": [
         "minecraft:piercing_weapon.creative_reach.max",
         "minecraft:piercing_weapon.creative_reach.min"
-      ]
+      ],
+      "type": "object:CreativeReach",
+      "nullable": true
     },
     "item:minecraft:piercing_weapon:creative_reach.max": {
       "name": "max",
       "wire": [
         "minecraft:piercing_weapon.creative_reach.max"
-      ]
+      ],
+      "type": "float",
+      "default": 0
     },
     "item:minecraft:piercing_weapon:creative_reach.min": {
       "name": "min",
       "wire": [
         "minecraft:piercing_weapon.creative_reach.min"
-      ]
+      ],
+      "type": "float",
+      "default": 0
     },
     "item:minecraft:piercing_weapon:hitbox_margin": {
       "name": "hitboxMargin",
       "wire": [
         "minecraft:piercing_weapon.hitbox_margin"
-      ]
+      ],
+      "type": "float",
+      "default": 0
     },
     "item:minecraft:piercing_weapon:reach": {
       "name": "reach",
-      "wire": []
+      "wire": [],
+      "type": "object:Reach",
+      "default": {
+        "max": 3,
+        "min": 0
+      }
     },
     "item:minecraft:piercing_weapon:reach.max": {
       "name": "max",
       "wire": [
         "minecraft:piercing_weapon.reach.max"
-      ]
+      ],
+      "type": "float",
+      "default": 3
     },
     "item:minecraft:piercing_weapon:reach.min": {
       "name": "min",
       "wire": [
         "minecraft:piercing_weapon.reach.min"
-      ]
+      ],
+      "type": "float",
+      "default": 0
     },
     "item:minecraft:projectile:minimum_critical_power": {
       "name": "minimumCriticalPower",
       "wire": [
         "minecraft:projectile.minimum_critical_power"
-      ]
+      ],
+      "type": "float",
+      "default": 0
     },
     "item:minecraft:projectile:projectile_entity": {
       "name": "projectileEntity",
       "wire": [
         "minecraft:projectile.projectile_entity"
-      ]
+      ],
+      "type": "string"
     },
     "item:minecraft:rarity:value": {
       "name": "value",
       "wire": [
         "minecraft:rarity.value"
-      ]
+      ],
+      "type": "string",
+      "nullable": true
     },
     "item:minecraft:record:comparator_signal": {
       "name": "comparatorSignal",
       "wire": [
         "minecraft:record.comparator_signal"
-      ]
+      ],
+      "type": "int",
+      "default": 1
     },
     "item:minecraft:record:duration": {
       "name": "duration",
       "wire": [
         "minecraft:record.duration"
-      ]
+      ],
+      "type": "float",
+      "default": 0
     },
     "item:minecraft:record:sound_event": {
       "name": "soundEvent",
       "wire": [
         "minecraft:record.sound_event"
-      ]
+      ],
+      "type": "string",
+      "default": "undefined"
     },
     "item:minecraft:repairable:repair_items": {
       "name": "repairItems",
@@ -2149,7 +2739,9 @@
         "minecraft:repairable.repair_items",
         "minecraft:repairable.repair_items[].items[].name",
         "minecraft:repairable.repair_items[].repair_amount"
-      ]
+      ],
+      "type": "list<object:RepairItems>",
+      "default": []
     },
     "item:minecraft:repairable:repair_items[].items": {
       "name": "items",
@@ -2158,7 +2750,9 @@
         "minecraft:repairable.repair_items[].items",
         "minecraft:repairable.repair_items[].items[].name",
         "minecraft:repairable.repair_items[].repair_amount"
-      ]
+      ],
+      "type": "union:ItemsOrTags",
+      "nullable": true
     },
     "item:minecraft:repairable:repair_items[].repair_amount": {
       "name": "repairAmount",
@@ -2166,7 +2760,9 @@
         "minecraft:repairable.repair_items",
         "minecraft:repairable.repair_items[].items[].name",
         "minecraft:repairable.repair_items[].repair_amount"
-      ]
+      ],
+      "type": "union:RepairAmount",
+      "nullable": true
     },
     "item:minecraft:shooter:ammunition": {
       "name": "ammunition",
@@ -2176,7 +2772,9 @@
         "minecraft:shooter.ammunition[].search_inventory",
         "minecraft:shooter.ammunition[].use_in_creative",
         "minecraft:shooter.ammunition[].use_offhand"
-      ]
+      ],
+      "type": "list<object:Ammunition>",
+      "default": []
     },
     "item:minecraft:shooter:ammunition[].item": {
       "name": "item",
@@ -2185,7 +2783,9 @@
         "minecraft:shooter.ammunition[].search_inventory",
         "minecraft:shooter.ammunition[].use_in_creative",
         "minecraft:shooter.ammunition[].use_offhand"
-      ]
+      ],
+      "type": "string",
+      "nullable": true
     },
     "item:minecraft:shooter:ammunition[].search_inventory": {
       "name": "searchInventory",
@@ -2195,7 +2795,9 @@
         "minecraft:shooter.ammunition[].search_inventory",
         "minecraft:shooter.ammunition[].use_in_creative",
         "minecraft:shooter.ammunition[].use_offhand"
-      ]
+      ],
+      "type": "boolean",
+      "default": false
     },
     "item:minecraft:shooter:ammunition[].use_in_creative": {
       "name": "useInCreative",
@@ -2205,7 +2807,9 @@
         "minecraft:shooter.ammunition[].search_inventory",
         "minecraft:shooter.ammunition[].use_in_creative",
         "minecraft:shooter.ammunition[].use_offhand"
-      ]
+      ],
+      "type": "boolean",
+      "default": false
     },
     "item:minecraft:shooter:ammunition[].use_offhand": {
       "name": "useOffhand",
@@ -2215,101 +2819,133 @@
         "minecraft:shooter.ammunition[].search_inventory",
         "minecraft:shooter.ammunition[].use_in_creative",
         "minecraft:shooter.ammunition[].use_offhand"
-      ]
+      ],
+      "type": "boolean",
+      "default": false
     },
     "item:minecraft:shooter:charge_on_draw": {
       "name": "chargeOnDraw",
       "wire": [
         "minecraft:shooter.charge_on_draw"
-      ]
+      ],
+      "type": "boolean",
+      "default": false
     },
     "item:minecraft:shooter:max_draw_duration": {
       "name": "maxDrawDuration",
       "wire": [
         "minecraft:shooter.max_draw_duration"
-      ]
+      ],
+      "type": "float",
+      "default": 0
     },
     "item:minecraft:shooter:scale_power_by_draw_duration": {
       "name": "scalePowerByDrawDuration",
       "wire": [
         "minecraft:shooter.scale_power_by_draw_duration"
-      ]
+      ],
+      "type": "boolean",
+      "default": false
     },
     "item:minecraft:should_despawn:value": {
       "name": "value",
       "wire": [
         "item_properties.should_despawn",
         "minecraft:should_despawn.value"
-      ]
+      ],
+      "type": "boolean",
+      "nullable": true
     },
     "item:minecraft:stacked_by_data:value": {
       "name": "value",
       "wire": [
         "item_properties.stacked_by_data",
         "minecraft:stacked_by_data.value"
-      ]
+      ],
+      "type": "boolean",
+      "nullable": true
     },
     "item:minecraft:storage_item:allow_nested_storage_items": {
       "name": "allowNestedStorageItems",
       "wire": [
         "minecraft:storage_item.allow_nested_storage_items"
-      ]
+      ],
+      "type": "boolean",
+      "default": true
     },
     "item:minecraft:storage_item:allowed_items": {
       "name": "allowedItems",
       "wire": [
         "minecraft:storage_item.allowed_items",
         "minecraft:storage_item.allowed_items[].name"
-      ]
+      ],
+      "type": "list<string>",
+      "default": []
     },
     "item:minecraft:storage_item:banned_items": {
       "name": "bannedItems",
       "wire": [
         "minecraft:storage_item.banned_items",
         "minecraft:storage_item.banned_items[].name"
-      ]
+      ],
+      "type": "list<string>",
+      "default": []
     },
     "item:minecraft:storage_item:max_slots": {
       "name": "maxSlots",
       "wire": [
         "minecraft:storage_item.max_slots"
-      ]
+      ],
+      "type": "int",
+      "default": 64
     },
     "item:minecraft:storage_weight_limit:max_weight_limit": {
       "name": "maxWeightLimit",
       "wire": [
         "minecraft:storage_weight_limit.max_weight_limit"
-      ]
+      ],
+      "type": "int",
+      "default": 64
     },
     "item:minecraft:storage_weight_modifier:weight_in_storage_item": {
       "name": "weightInStorageItem",
       "wire": [
         "minecraft:storage_weight_modifier.weight_in_storage_item"
-      ]
+      ],
+      "type": "int",
+      "default": 4
     },
     "item:minecraft:swing_duration:value": {
       "name": "value",
       "wire": [
         "minecraft:swing_duration.value"
-      ]
+      ],
+      "type": "float",
+      "default": 0.30000001192092896
     },
     "item:minecraft:swing_sounds:attack_critical_hit": {
       "name": "attackCriticalHit",
       "wire": [
         "minecraft:swing_sounds.attack_critical_hit"
-      ]
+      ],
+      "type": "string",
+      "nullable": true
     },
     "item:minecraft:swing_sounds:attack_hit": {
       "name": "attackHit",
       "wire": [
         "minecraft:swing_sounds.attack_hit"
-      ]
+      ],
+      "type": "string",
+      "nullable": true
     },
     "item:minecraft:swing_sounds:attack_miss": {
       "name": "attackMiss",
       "wire": [
         "minecraft:swing_sounds.attack_miss"
-      ]
+      ],
+      "type": "string",
+      "nullable": true
     },
     "item:minecraft:tags:tags": {
       "name": "tags",
@@ -2318,97 +2954,129 @@
         "item_tags[]",
         "minecraft:tags.tags",
         "minecraft:tags.tags[]"
-      ]
+      ],
+      "type": "list<string>",
+      "default": []
     },
     "item:minecraft:throwable:do_swing_animation": {
       "name": "doSwingAnimation",
       "wire": [
         "minecraft:throwable.do_swing_animation"
-      ]
+      ],
+      "type": "boolean",
+      "default": false
     },
     "item:minecraft:throwable:launch_power_scale": {
       "name": "launchPowerScale",
       "wire": [
         "minecraft:throwable.launch_power_scale"
-      ]
+      ],
+      "type": "float",
+      "default": 1
     },
     "item:minecraft:throwable:max_draw_duration": {
       "name": "maxDrawDuration",
       "wire": [
         "minecraft:throwable.max_draw_duration"
-      ]
+      ],
+      "type": "float",
+      "default": 0
     },
     "item:minecraft:throwable:max_launch_power": {
       "name": "maxLaunchPower",
       "wire": [
         "minecraft:throwable.max_launch_power"
-      ]
+      ],
+      "type": "float",
+      "default": 1
     },
     "item:minecraft:throwable:min_draw_duration": {
       "name": "minDrawDuration",
       "wire": [
         "minecraft:throwable.min_draw_duration"
-      ]
+      ],
+      "type": "float",
+      "default": 0
     },
     "item:minecraft:throwable:scale_power_by_draw_duration": {
       "name": "scalePowerByDrawDuration",
       "wire": [
         "minecraft:throwable.scale_power_by_draw_duration"
-      ]
+      ],
+      "type": "boolean",
+      "default": false
     },
     "item:minecraft:use_animation:value": {
       "name": "value",
       "wire": [
         "item_properties.use_animation",
         "minecraft:use_animation.value"
-      ]
+      ],
+      "type": "string",
+      "nullable": true
     },
     "item:minecraft:use_duration:value": {
       "name": "value",
-      "wire": []
+      "wire": [],
+      "type": "float",
+      "nullable": true
     },
     "item:minecraft:use_modifiers:emit_vibrations": {
       "name": "emitVibrations",
       "wire": [
         "minecraft:use_modifiers.emit_vibrations"
-      ]
+      ],
+      "type": "boolean",
+      "default": true
     },
     "item:minecraft:use_modifiers:movement_modifier": {
       "name": "movementModifier",
       "wire": [
         "minecraft:use_modifiers.movement_modifier"
-      ]
+      ],
+      "type": "float",
+      "nullable": true
     },
     "item:minecraft:use_modifiers:start_sound": {
       "name": "startSound",
       "wire": [
         "minecraft:use_modifiers.start_sound"
-      ]
+      ],
+      "type": "string",
+      "nullable": true
     },
     "item:minecraft:use_modifiers:start_using": {
       "name": "startUsing",
       "wire": [
         "minecraft:use_modifiers.start_using"
-      ]
+      ],
+      "type": "enum:StartUsing",
+      "nullable": true
     },
     "item:minecraft:use_modifiers:use_duration": {
       "name": "useDuration",
       "wire": [
         "item_properties.use_duration",
         "minecraft:use_modifiers.use_duration"
-      ]
+      ],
+      "type": "float",
+      "default": 0
     },
     "item:minecraft:wearable:hides_player_location": {
       "name": "hidesPlayerLocation",
       "wire": [
         "minecraft:wearable.hides_player_location"
-      ]
+      ],
+      "type": "boolean",
+      "default": false
     },
     "item:minecraft:wearable:protection": {
       "name": "protection",
       "wire": [
         "minecraft:wearable.protection"
-      ]
+      ],
+      "type": "int",
+      "default": 0
     },
     "item:minecraft:wearable:slot": {
       "name": "slot",
@@ -2416,7 +3084,8 @@
         "item_properties.allow_off_hand",
         "item_properties.max_stack_size",
         "minecraft:wearable.slot"
-      ]
+      ],
+      "type": "enum:Slot"
     }
   }
 }

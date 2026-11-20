@@ -377,9 +377,10 @@ public final class MaterialInstances implements BlockComponent {
          *
          * @param instances the value
          * @return this builder
+         * @throws NullPointerException if the value is null
          */
         public @NonNull Builder instances(@NonNull Map<String, InstanceOrAlias> instances) {
-            this.instances = instances;
+            this.instances = Objects.requireNonNull(instances, "MaterialInstances.instances");
             return this;
         }
 

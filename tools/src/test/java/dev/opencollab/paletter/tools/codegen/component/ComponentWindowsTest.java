@@ -344,6 +344,7 @@ class ComponentWindowsTest {
                     }
             """), item);
         assertTrue(item.contains("case \"blocks\" -> out.put(\"props.tab\", 1);"), item);
-        assertTrue(item.contains("default -> ctx.drop(\"menu\", "), item);
+        // A report entry names the standalone type by its NAME, the key in the description
+        assertTrue(item.contains("default -> ctx.drop(Menu.NAME, "), item);
     }
 }

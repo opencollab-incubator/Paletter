@@ -110,9 +110,10 @@ public final class ChestObstruction implements BlockComponent {
          *
          * @param obstructionRule the value
          * @return this builder
+         * @throws NullPointerException if the value is null
          */
         public @NonNull Builder obstructionRule(@NonNull ObstructionRule obstructionRule) {
-            this.obstructionRule = obstructionRule;
+            this.obstructionRule = Objects.requireNonNull(obstructionRule, "ChestObstruction.obstructionRule");
             return this;
         }
 
