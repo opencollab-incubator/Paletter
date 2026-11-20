@@ -60,7 +60,7 @@ class BdsDistributionTest {
         Path cached = cache.resolve("zips/linux/bedrock-server-1.0.0.1.zip");
         Files.createDirectories(cached.getParent());
         byte[] bytes = Files.readAllBytes(zip(cached));
-        assertArrayEquals(bytes, Files.readAllBytes(distribution.zip(cache)));
+        assertArrayEquals(bytes, Files.readAllBytes(distribution.zip(cache, cache)));
     }
 
     @Test
@@ -80,7 +80,7 @@ class BdsDistributionTest {
             Path cached = cache.resolve("zips/linux/bedrock-server-1.0.0.1.zip");
             Files.createDirectories(cached.getParent());
             Files.write(cached, Arrays.copyOf(whole, whole.length / 2));
-            assertArrayEquals(whole, Files.readAllBytes(distribution.zip(cache)));
+            assertArrayEquals(whole, Files.readAllBytes(distribution.zip(cache, cache)));
             assertFalse(Files.exists(cached.resolveSibling(cached.getFileName() + ".part")));
         } finally {
             server.stop(0);

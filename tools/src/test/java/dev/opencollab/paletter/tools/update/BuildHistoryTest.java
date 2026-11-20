@@ -150,6 +150,27 @@ class BuildHistoryTest {
         assertEquals(null, dev.opencollab.paletter.tools.bds.ZipChecksums.recorded(root, "linux", "1.26.36.1"), "unknown is no checksum");
     }
 
+    /** A malformed record is a clear error naming the entry, not a ClassCastException; a preview zip is recorded when it is cached. */
+    @Test
+    void aMalformedRecordIsAClearErrorAndPreviewZipsAreRecorded(@TempDir Path root, @TempDir Path cache) throws Exception {
+        Files.createDirectories(root.resolve("data/bds"));
+        Files.writeString(root.resolve("data/bds/builds.json"), "{\"builds\": {\"1.26.36.1\": {\"zips\": {\"win\": \"abc\"}}}}");
+        IOException e = assertThrows(IOException.class, () -> dev.opencollab.paletter.tools.bds.ZipChecksums.recorded(root, "win", "1.26.36.1"));
+        assertTrue(e.getMessage().contains("builds.1.26.36.1.zips.win must be a JSON object"), e.getMessage());
+        Files.writeString(root.resolve("data/bds/builds.json"), "{\"builds\": {\"1.26.36.1\": {\"zips\": []}}}");
+        assertThrows(IOException.class, () -> dev.opencollab.paletter.tools.bds.ZipChecksums.recorded(root, "win", "1.26.36.1"));
+
+        Path preview = Files.createDirectories(cache.resolve("zips/win-preview")).resolve("bedrock-server-1.26.36.1.zip");
+        try (java.util.zip.ZipOutputStream zip = new java.util.zip.ZipOutputStream(Files.newOutputStream(preview))) {
+            zip.putNextEntry(new java.util.zip.ZipEntry("bedrock_server.exe"));
+            zip.write(new byte[] {4, 5});
+            zip.closeEntry();
+        }
+        Map<String, BuildHistory.Zip> zips = BuildHistory.zips(cache, "1.26.36.1", Map.of());
+        assertEquals(dev.opencollab.paletter.tools.bds.ZipChecksums.sha256(preview), zips.get("win-preview").sha256());
+        assertFalse(zips.containsKey("linux-preview"), "no preview zip of that platform: nothing recorded");
+    }
+
     /** Checksums come from the cached zips only: a missing zip stays unknown, and a cached zip that disagrees with the record fails. */
     @Test
     void zipChecksumsComeFromTheCacheOnly(@TempDir Path cache) throws Exception {

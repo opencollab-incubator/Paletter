@@ -24,7 +24,7 @@ final class WhiteboxStage {
     void whitebox(Path cache, BdsDistribution distribution) {
         String build = distribution.version();
         try {
-            WhiteboxRun run = WhiteboxRun.of(BdsDistribution.resolve(true, ctx.preview, build).zip(cache), ctx.root, build);
+            WhiteboxRun run = WhiteboxRun.of(BdsDistribution.resolve(true, ctx.preview, build).zip(cache, ctx.root), ctx.root, build);
             if (!run.problems().isEmpty()) {
                 ctx.report.check(Report.Status.FAIL, "White-box", "white-box unavailable for this build: " + String.join("; ", run.problems()));
                 return;

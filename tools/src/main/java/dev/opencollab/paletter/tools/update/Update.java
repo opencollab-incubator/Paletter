@@ -190,7 +190,7 @@ public final class Update {
     }
 
     private void pipeline(Path cache, BdsDistribution distribution, Path work) throws Exception {
-        Path server = distribution.extract(cache, !ctx.keepServer);
+        Path server = distribution.extract(cache, ctx.root, !ctx.keepServer);
         ctx.report.header.put("Server", "`" + server + "`" + (ctx.keepServer ? " (kept)" : " (removed after the run)"));
         ScriptApiStage scriptApi = new ScriptApiStage(ctx);
         AddonChecksStage addonChecks = new AddonChecksStage(ctx);

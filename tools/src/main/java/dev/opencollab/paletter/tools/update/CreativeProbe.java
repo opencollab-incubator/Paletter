@@ -41,7 +41,7 @@ public final class CreativeProbe {
         BdsDistribution distribution = BdsDistribution.resolve(false, options.getOrDefault("version", "1.26.63.1"));
         Path server = distribution.serverDirectory(cache, "creative-probe-");
         if (!Files.exists(BdsServer.executable(server))) {
-            BdsDistribution.extract(distribution.zip(cache), server);
+            BdsDistribution.extract(distribution.zip(cache, root), server);
         }
         int port = Integer.parseInt(options.getOrDefault("port", "19290"));
         int starts = Integer.parseInt(options.getOrDefault("starts", "2"));

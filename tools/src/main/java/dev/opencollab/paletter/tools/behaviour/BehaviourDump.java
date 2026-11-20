@@ -60,7 +60,7 @@ public final class BehaviourDump {
         if (server != null) {
             runner.run(server, log, timeout, port, false);
         } else {
-            BdsDistribution.resolve(preview, bdsVersion).onServer(cache == null ? BdsDistribution.defaultCache() : cache,
+            BdsDistribution.resolve(preview, bdsVersion).onServer(cache == null ? BdsDistribution.defaultCache() : cache, root,
                 extracted -> runner.run(extracted, log, timeout, port, false));
         }
     }

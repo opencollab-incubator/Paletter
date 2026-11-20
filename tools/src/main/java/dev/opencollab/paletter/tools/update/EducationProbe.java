@@ -115,7 +115,7 @@ public final class EducationProbe {
         BdsDistribution.deleteRecursively(out);
         Files.createDirectories(out);
         if (!Files.exists(BdsServer.executable(server))) {
-            BdsDistribution.extract(distribution.zip(cache), server);
+            BdsDistribution.extract(distribution.zip(cache, root), server);
         }
         try {
             Result result = capture(root, options, distribution, server, out, port, timeout);

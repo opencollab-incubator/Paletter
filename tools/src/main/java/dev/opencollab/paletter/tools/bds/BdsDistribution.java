@@ -89,10 +89,12 @@ public record BdsDistribution(String version, boolean preview, String platform, 
 
     /**
      * {@link #zip(Path, String)} checked against the sha256 that the repository's build record has for this build and
-     * platform ({@link ZipChecksums#recorded}, read from the working directory), if any.
+     * platform ({@link ZipChecksums#recorded}, read from the repository root), if any.
+     *
+     * @param root the repository root, whatever the working directory is
      */
-    public Path zip(Path cache) throws IOException, InterruptedException {
-        return zip(cache, ZipChecksums.recorded(Path.of("").toAbsolutePath(), platform, version));
+    public Path zip(Path cache, Path root) throws IOException, InterruptedException {
+        return zip(cache, ZipChecksums.recorded(root, platform, version));
     }
 
     /**
@@ -123,7 +125,7 @@ public record BdsDistribution(String version, boolean preview, String platform, 
         return zip;
     }
 
-    /** Where {@link #zip(Path)} keeps the zip: {@code <cache>/zips/<platform>/bedrock-server-<version>.zip}. */
+    /** Where {@link #zip(Path, Path)} keeps the zip: {@code <cache>/zips/<platform>/bedrock-server-<version>.zip}. */
     public Path zipFile(Path cache) {
         return inside(cache.resolve("zips").resolve(platform), "bedrock-server-" + version + ".zip");
     }
@@ -163,21 +165,22 @@ public record BdsDistribution(String version, boolean preview, String platform, 
     /**
      * Extracts the server into {@code <cache>/servers/<platform>-<version>}, or reuses an extracted one.
      *
+     * @param root the repository root, which holds the zip checksums ({@link #zip(Path, Path)})
      * @param fresh extract again even if the directory exists
      */
-    public Path extract(Path cache, boolean fresh) throws IOException, InterruptedException {
+    public Path extract(Path cache, Path root, boolean fresh) throws IOException, InterruptedException {
         Path server = server(cache);
         if (!fresh && Files.exists(BdsServer.executable(server))) {
             System.out.println("Using the extracted BDS " + version + " in " + server);
             return server;
         }
-        Path zip = zip(cache);
+        Path zip = zip(cache, root);
         deleteRecursively(server);
         extract(zip, server);
         return server;
     }
 
-    /** Where {@link #extract(Path, boolean)} puts the server: {@code <cache>/servers/<platform>-<version>}. */
+    /** Where {@link #extract(Path, Path, boolean)} puts the server: {@code <cache>/servers/<platform>-<version>}. */
     public Path server(Path cache) {
         return serverDirectory(cache, "");
     }
@@ -197,9 +200,9 @@ public record BdsDistribution(String version, boolean preview, String platform, 
      * Runs the task on the extracted server of this build in the cache. A server that is already there (one kept with
      * {@code --keep-server}) is used and kept; one extracted for the task is removed afterwards.
      */
-    public void onServer(Path cache, ServerTask task) throws IOException, InterruptedException {
+    public void onServer(Path cache, Path root, ServerTask task) throws IOException, InterruptedException {
         boolean extracted = Files.notExists(BdsServer.executable(server(cache)));
-        Path server = extract(cache, false);
+        Path server = extract(cache, root, false);
         try {
             task.run(server);
         } finally {

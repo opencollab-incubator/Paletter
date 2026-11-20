@@ -127,7 +127,7 @@ public final class SpecCapture {
             : root.resolve(Layout.BDS).resolve(distribution.version()).resolve(probeKeys ? "spec-keys" : formatSweep ? "spec-format" : gating ? "spec-gating" : "spec");
 
         // update passes reuse-server: the server its captures ran on is still extracted, and this run removes it
-        Path server = distribution.extract(cache, !options.containsKey("keep-server") && !options.containsKey("reuse-server"));
+        Path server = distribution.extract(cache, root, !options.containsKey("keep-server") && !options.containsKey("reuse-server"));
         try {
             Path modelDir = root.resolve("data/model");
             // The add-on is the one place that takes BDS's schema: full enums and limits to vary
