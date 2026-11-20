@@ -17,6 +17,7 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.stream.Stream;
@@ -90,7 +91,7 @@ public final class FixedAddons {
             JsonObject body = new JsonObject();
             body.add("description", description);
             body.add("components", new JsonObject());
-            write(bp.resolve("blocks/" + String.format("b%02d", rank + 1) + ".json"), versioned(formatVersion, "minecraft:block", body));
+            write(bp.resolve("blocks/" + String.format(Locale.ROOT, "b%02d", rank + 1) + ".json"), versioned(formatVersion, "minecraft:block", body));
         }
         UnlockProbe.write(bp);
         write(bp.resolve("manifest.json"), manifest("Paletter creative order probe", "Custom items and blocks with every menu_category placement, and recipes with every unlock form",
@@ -138,7 +139,7 @@ public final class FixedAddons {
             JsonObject body = new JsonObject();
             body.add("description", description);
             body.add("components", new JsonObject());
-            writeCompact(bp.resolve(String.format("blocks/x%04d.json", rank.get(name))), versioned(FORMAT_VERSION, "minecraft:block", body));
+            writeCompact(bp.resolve(String.format(Locale.ROOT, "blocks/x%04d.json", rank.get(name))), versioned(FORMAT_VERSION, "minecraft:block", body));
         }
         for (int i = 0; i < 40; i++) {
             JsonObject menu = object("category", categories[random.below(categories.length)]);
@@ -151,7 +152,7 @@ public final class FixedAddons {
             JsonObject body = new JsonObject();
             body.add("description", description);
             body.add("components", object("minecraft:max_stack_size", 64));
-            writeCompact(bp.resolve(String.format("items/y%05d_%d.json", random.randint(0, 99999), i)),
+            writeCompact(bp.resolve(String.format(Locale.ROOT, "items/y%05d_%d.json", random.randint(0, 99999), i)),
                 versioned(FORMAT_VERSION, "minecraft:item", body));
         }
         writeCompact(bp.resolve("manifest.json"), json("""

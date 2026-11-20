@@ -96,7 +96,7 @@ final class GatingCapture {
         JsonArray variants = JsonParser.parseString(Files.readString(spec.resolve("variants.json"), StandardCharsets.UTF_8)).getAsJsonArray();
         List<String> identifiers = new ArrayList<>();
         variants.forEach(v -> identifiers.add(v.getAsJsonObject().get("identifier").getAsString()));
-        Map<String, List<String>> log = SpecCapture.logByVariant(Files.readAllLines(spec.resolve("content-log.txt"), StandardCharsets.UTF_8), identifiers);
+        Map<String, List<String>> log = SpecCapture.logByVariant(Files.readAllLines(spec.resolve("content-log.txt"), StandardCharsets.UTF_8), identifiers, new ArrayList<>());
         Map<String, JsonObject> bases = new LinkedHashMap<>();
         Map<String, JsonObject> controls = new LinkedHashMap<>();
         for (JsonElement element : variants) {

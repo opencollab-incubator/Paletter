@@ -698,7 +698,7 @@ public final class DocsParser {
     static String versionKey(String version) {
         StringBuilder key = new StringBuilder();
         for (String part : version.split("\\.")) {
-            key.append(String.format("%06d", part.matches("\\d+") ? Integer.parseInt(part) : 999999));
+            key.append(String.format(Locale.ROOT, "%06d", part.matches("\\d+") ? Integer.parseInt(part) : 999999));
         }
         return key.toString();
     }

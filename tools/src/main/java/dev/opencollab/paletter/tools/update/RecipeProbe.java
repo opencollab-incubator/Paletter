@@ -55,7 +55,7 @@ public final class RecipeProbe {
         BdsDistribution.deleteRecursively(work);
         Files.createDirectories(work);
         if (!Files.exists(BdsServer.executable(server))) {
-            BdsDistribution.extract(distribution.zip(cache), server);
+            BdsDistribution.extract(distribution.zip(cache, root), server);
         }
         try {
             capture(build.resolve("vanilla"), root, distribution.version(), server, work, port, timeout);

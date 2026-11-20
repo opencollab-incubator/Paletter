@@ -55,12 +55,35 @@ public final class ZipChecksums {
         if (!Files.isRegularFile(file)) {
             return null;
         }
-        JsonObject builds = JsonParser.parseString(Files.readString(file)).getAsJsonObject().getAsJsonObject("builds");
-        JsonElement build = builds == null ? null : builds.get(version);
-        JsonObject zips = build != null && build.isJsonObject() ? build.getAsJsonObject().getAsJsonObject("zips") : null;
-        JsonElement zip = zips == null ? null : zips.get(platform);
-        JsonElement sha256 = zip != null && zip.isJsonObject() ? zip.getAsJsonObject().get("sha256") : null;
-        return sha256 == null || sha256.getAsString().equals(UNKNOWN) ? null : sha256.getAsString();
+        JsonElement builds = object(JsonParser.parseString(Files.readString(file)), "the file").get("builds");
+        if (builds == null) {
+            return null;
+        }
+        JsonElement build = object(builds, "builds").get(version);
+        if (build == null) {
+            return null;
+        }
+        JsonElement zips = object(build, "builds." + version).get("zips");
+        if (zips == null) {
+            return null;
+        }
+        JsonElement zip = object(zips, "builds." + version + ".zips").get(platform);
+        if (zip == null) {
+            return null;
+        }
+        String where = "builds." + version + ".zips." + platform;
+        JsonElement sha256 = object(zip, where).get("sha256");
+        if (sha256 == null || !sha256.isJsonPrimitive() || !sha256.getAsJsonPrimitive().isString()) {
+            throw new IOException(RECORD + ": " + where + " has no \"sha256\" string");
+        }
+        return sha256.getAsString().equals(UNKNOWN) ? null : sha256.getAsString();
+    }
+
+    private static JsonObject object(JsonElement element, String where) throws IOException {
+        if (!element.isJsonObject()) {
+            throw new IOException(RECORD + ": " + where + " must be a JSON object, not " + element);
+        }
+        return element.getAsJsonObject();
     }
 
     /** Throws unless the zip has the expected sha256 (no check when {@code expected} is null). */

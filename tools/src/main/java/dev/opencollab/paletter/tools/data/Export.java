@@ -1,6 +1,5 @@
 package dev.opencollab.paletter.tools.data;
 
-import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import dev.opencollab.paletter.Palette;
@@ -15,25 +14,21 @@ import dev.opencollab.paletter.internal.data.VanillaData;
 import dev.opencollab.paletter.internal.data.VanillaItem;
 import dev.opencollab.paletter.internal.data.VersionFallbacks;
 import dev.opencollab.paletter.item.RegisteredItem;
+import dev.opencollab.paletter.tools.client.CaptureWriter;
 import org.checkerframework.checker.nullness.qual.Nullable;
-import org.cloudburstmc.nbt.NBTOutputStream;
 import org.cloudburstmc.nbt.NbtMap;
 import org.cloudburstmc.nbt.NbtMapBuilder;
 import org.cloudburstmc.nbt.NbtType;
-import org.cloudburstmc.nbt.NbtUtils;
 import org.cloudburstmc.protocol.bedrock.data.BlockPropertyData;
 import org.cloudburstmc.protocol.bedrock.data.definitions.BlockDefinition;
 import org.cloudburstmc.protocol.bedrock.data.inventory.CreativeItemData;
 import org.cloudburstmc.protocol.bedrock.data.inventory.CreativeItemGroup;
 import org.cloudburstmc.protocol.bedrock.data.inventory.ItemData;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
-import java.util.Base64;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
@@ -51,7 +46,23 @@ public final class Export {
     }
 
     /** The palette as {@link VanillaData}, with the runtime id of each block state in the same order. */
-    public record Compiled(VanillaData data, int[] networkIds) {
+    static final class Compiled {
+        private final VanillaData data;
+        private final int[] networkIds;
+
+        Compiled(VanillaData data, int[] networkIds) {
+            this.data = data;
+            this.networkIds = networkIds;
+        }
+
+        VanillaData data() {
+            return data;
+        }
+
+        /** Not copied: nobody compares or keeps a Compiled, it only carries the ids from {@link #compiled} to {@link #write}. */
+        int[] networkIds() {
+            return networkIds;
+        }
     }
 
     /** Writes the palette's block palette, item registry and creative content into the directory. */
@@ -66,7 +77,7 @@ public final class Export {
     }
 
     /** What the palette sends, as data: states in registry index order, items by definition, the creative packet's layout. */
-    public static Compiled compiled(Palette palette) {
+    static Compiled compiled(Palette palette) {
         int size = palette.blocks().size();
         List<NbtMap> states = new ArrayList<>(size);
         int[] networkIds = new int[size];
@@ -150,27 +161,22 @@ public final class Export {
             NbtMap state = data.blockStates().get(i);
             blocks.add(networkIds == null ? state : state.toBuilder().putInt("network_id", networkIds[i]).build());
         }
-        writeGzip(directory.resolve("block_palette.nbt"), NbtMap.builder().putList("blocks", NbtType.COMPOUND, blocks).build());
+        Nbt.writeGzip(directory.resolve("block_palette.nbt"), NbtMap.builder().putList("blocks", NbtType.COMPOUND, blocks).build());
 
         JsonArray states = new JsonArray();
         NbtMapBuilder components = NbtMap.builder();
         for (VanillaItem item : data.items()) {
-            JsonObject json = new JsonObject();
-            json.addProperty("name", item.identifier());
-            json.addProperty("id", item.runtimeId());
-            json.addProperty("version", item.version());
-            json.addProperty("componentBased", item.componentBased());
-            states.add(json);
+            states.add(CaptureWriter.itemState(item.identifier(), item.runtimeId(), item.version(), item.componentBased()));
             if (item.componentData() != null) {
                 components.putCompound(item.identifier(), item.componentData());
             }
         }
-        Files.writeString(directory.resolve("runtime_item_states.json"), new Gson().toJson(states));
-        writeGzip(directory.resolve("item_components.nbt"), components.build());
+        CaptureWriter.writeItemStates(directory, states);
+        Nbt.writeGzip(directory.resolve("item_components.nbt"), components.build());
 
         NbtMapBuilder dataDriven = NbtMap.builder();
         data.dataDrivenBlocks().forEach(block -> dataDriven.putCompound(block.getName(), block.getProperties()));
-        writeGzip(directory.resolve("data_driven_blocks.nbt"), dataDriven.build());
+        Nbt.writeGzip(directory.resolve("data_driven_blocks.nbt"), dataDriven.build());
 
         JsonArray groups = new JsonArray();
         JsonArray items = new JsonArray();
@@ -195,7 +201,7 @@ public final class Export {
         JsonObject creative = new JsonObject();
         creative.add("groups", groups);
         creative.add("items", items);
-        Files.writeString(directory.resolve("creative_items.json"), new Gson().toJson(creative));
+        CaptureWriter.writeCreativeItems(directory, creative);
     }
 
     private static JsonObject group(String name, CreativeCategory category, @Nullable RawStack icon) throws IOException {
@@ -222,10 +228,10 @@ public final class Export {
             json.addProperty("count", stack.count());
         }
         if (stack.blockState() != null) {
-            json.addProperty("block_state_b64", base64(stack.blockState()));
+            json.addProperty("block_state_b64", Nbt.writeLeBase64(stack.blockState()));
         }
         if (stack.tag() != null) {
-            json.addProperty("nbt_b64", base64(stack.tag()));
+            json.addProperty("nbt_b64", Nbt.writeLeBase64(stack.tag()));
         }
         if (groupId >= 0) {
             json.addProperty("groupId", groupId);
@@ -233,17 +239,4 @@ public final class Export {
         return json;
     }
 
-    private static String base64(NbtMap tag) throws IOException {
-        ByteArrayOutputStream bytes = new ByteArrayOutputStream();
-        try (NBTOutputStream output = NbtUtils.createWriterLE(bytes)) {
-            output.writeTag(tag);
-        }
-        return Base64.getEncoder().encodeToString(bytes.toByteArray());
-    }
-
-    private static void writeGzip(Path file, NbtMap tag) throws IOException {
-        try (OutputStream stream = Files.newOutputStream(file); NBTOutputStream output = NbtUtils.createGZIPWriter(stream)) {
-            output.writeTag(tag);
-        }
-    }
 }

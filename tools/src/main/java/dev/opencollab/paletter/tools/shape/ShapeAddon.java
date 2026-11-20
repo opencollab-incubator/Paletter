@@ -16,6 +16,7 @@ import java.util.Collection;
 import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.TreeSet;
 
@@ -135,10 +136,11 @@ public final class ShapeAddon {
     static Map<String, String> blocks() {
         Map<String, String> blocks = new LinkedHashMap<>();
         for (String axis : List.of("x", "y", "z")) {
-            blocks.put("turn_" + axis, """
+            // String.format with the root locale: %d would write another locale's digits
+            blocks.put("turn_" + axis, String.format(Locale.ROOT, """
                 {"description": {"identifier": "paletter:turn_%s"},
                  "components": {%s, "minecraft:transformation": {"rotation": [%d, %d, %d]}}}
-                """.formatted(axis, GEOMETRY.formatted("turn_" + axis), axis.equals("x") ? 90 : 0, axis.equals("y") ? 90 : 0, axis.equals("z") ? 90 : 0));
+                """, axis, GEOMETRY.formatted("turn_" + axis), axis.equals("x") ? 90 : 0, axis.equals("y") ? 90 : 0, axis.equals("z") ? 90 : 0));
         }
         // More than one axis, and the transformations that are no rotation
         Map<String, String> transformations = new LinkedHashMap<>();

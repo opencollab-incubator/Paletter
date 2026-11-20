@@ -150,19 +150,14 @@ public final class CaptureWriter {
         JsonArray itemStates = new JsonArray();
         NbtMapBuilder components = NbtMap.builder();
         for (ItemDefinition item : result.items) {
-            JsonObject json = new JsonObject();
-            json.addProperty("name", item.getIdentifier());
-            json.addProperty("id", item.getRuntimeId());
-            json.addProperty("version", item.getVersion().ordinal());
-            json.addProperty("componentBased", item.isComponentBased());
-            itemStates.add(json);
+            itemStates.add(itemState(item.getIdentifier(), item.getRuntimeId(), item.getVersion().ordinal(), item.isComponentBased()));
             if (item.getComponentData() != null && !item.getComponentData().isEmpty()) {
                 components.putCompound(item.getIdentifier(), item.getComponentData());
             }
         }
-        Files.writeString(directory.resolve("runtime_item_states.json"), GSON.toJson(itemStates));
+        writeItemStates(directory, itemStates);
         Nbt.writeGzip(directory.resolve("item_components.nbt"), components.build());
-        Files.writeString(directory.resolve("creative_items.json"), GSON.toJson(creative()));
+        writeCreativeItems(directory, creative());
         NbtMapBuilder dataDriven = NbtMap.builder();
         for (BlockPropertyData block : startGame.getBlockProperties()) {
             dataDriven.putCompound(block.getName(), block.getProperties());
@@ -264,6 +259,25 @@ public final class CaptureWriter {
         entry.addProperty("defaultHash", Integer.toUnsignedString(BlockHashes.hash(states.getFirst())));
         entry.addProperty("default", Nbt.snbt(states.getFirst().getCompound("states")).replaceAll("\\s+", " "));
         return entry;
+    }
+
+    /** An entry of {@code runtime_item_states.json} (the layout of CloudburstMC/Data, also written by {@code Export}). */
+    public static JsonObject itemState(String name, int runtimeId, int version, boolean componentBased) {
+        JsonObject json = new JsonObject();
+        json.addProperty("name", name);
+        json.addProperty("id", runtimeId);
+        json.addProperty("version", version);
+        json.addProperty("componentBased", componentBased);
+        return json;
+    }
+
+    public static void writeItemStates(Path directory, JsonArray itemStates) throws IOException {
+        Files.writeString(directory.resolve("runtime_item_states.json"), GSON.toJson(itemStates));
+    }
+
+    /** {@code creative_items.json}: {@code groups} and {@code items}. */
+    public static void writeCreativeItems(Path directory, JsonObject creative) throws IOException {
+        Files.writeString(directory.resolve("creative_items.json"), GSON.toJson(creative));
     }
 
     private JsonObject creative() throws IOException {

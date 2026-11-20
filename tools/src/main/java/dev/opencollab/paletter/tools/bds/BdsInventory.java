@@ -103,7 +103,7 @@ public final class BdsInventory {
 
     /** @return the inventory of a build (see {@link #write}) */
     public static JsonObject read(Path root, String version, boolean preview, Path cache) throws IOException, InterruptedException {
-        Path zip = BdsDistribution.resolve(true, preview, version).zip(cache == null ? BdsDistribution.defaultCache() : cache);
+        Path zip = BdsDistribution.resolve(true, preview, version).zip(cache == null ? BdsDistribution.defaultCache() : cache, root);
         Strings strings = new Strings(new TreeSet<>(), new TreeSet<>(), new TreeSet<>(), new TreeSet<>());
         try (InputStream file = Files.newInputStream(zip); ZipInputStream input = new ZipInputStream(file)) {
             ZipEntry entry;

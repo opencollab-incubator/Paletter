@@ -74,6 +74,11 @@ public final class BuildHistory {
     public static final String FROM_CAPTURES = "captures in data/bds";
     /** The platforms whose zips a kept release build records: Windows (the captures) and Linux (the inventory and white-box reads). */
     public static final List<String> ZIP_PLATFORMS = List.of("win", "linux");
+    /**
+     * {@link #ZIP_PLATFORMS} and the preview zips ({@code win-preview}, {@code linux-preview}, the platform names of
+     * {@code BdsDistribution}): a preview zip is recorded when it is in the cache or already recorded, and checked like the others.
+     */
+    static final List<String> PLATFORMS = List.of("win", "linux", "win-preview", "linux-preview");
 
     /**
      * The zip of a kept build on one platform, as downloaded from minecraft.net.
@@ -106,7 +111,7 @@ public final class BuildHistory {
      * @param keptBy for a kept build, {@link #KEPT_BY_UPDATE} or {@link #KEPT_BY_HISTORY_CHECK}; null for an identical one
      * @param notCompared what the run that recorded it could not compare with the other build (it lacked the capture,
      *                    or the check is against the bundled data only), as the report listed it
-     * @param zips for a kept build, its zip per platform of {@link #ZIP_PLATFORMS}; empty for an identical one
+     * @param zips for a kept build, its zip per platform of {@link #PLATFORMS}; empty for an identical one
      * @param frozen for a kept build whose zip minecraft.net no longer serves, why (its captures stay, a recapture skips it);
      *               null otherwise
      */
@@ -495,16 +500,21 @@ public final class BuildHistory {
     }
 
     /**
-     * The zips of a kept build, per platform of {@link #ZIP_PLATFORMS}: a recorded checksum stays; a platform without one takes
+     * The zips of a kept build, per platform of {@link #PLATFORMS}: a recorded checksum stays; a platform without one takes
      * the cached zip's ({@code <cache>/zips/<platform>/...}, if it reads), else stays unknown. Nothing is downloaded.
      *
      * @throws IllegalStateException when a cached zip has another checksum than the recorded one
      */
     static Map<String, Zip> zips(Path cache, String build, Map<String, Zip> recorded) throws IOException, InterruptedException {
         Map<String, Zip> zips = new TreeMap<>();
-        for (String platform : ZIP_PLATFORMS) {
+        for (String platform : PLATFORMS) {
+            boolean preview = platform.endsWith("-preview");
             Zip known = recorded.getOrDefault(platform, Zip.UNKNOWN);
-            Path file = BdsDistribution.resolve(platform.equals("linux"), false, build).zipFile(cache);
+            Path file = BdsDistribution.resolve(platform.startsWith("linux"), preview, build).zipFile(cache);
+            if (preview && !known.known() && !Files.isRegularFile(file)) {
+                // A release build has no preview zip: nothing to record, not an unknown one
+                continue;
+            }
             Zip cached = null;
             if (Files.isRegularFile(file)) {
                 try {

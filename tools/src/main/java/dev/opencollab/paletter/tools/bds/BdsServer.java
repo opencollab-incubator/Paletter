@@ -150,6 +150,28 @@ public final class BdsServer implements AutoCloseable {
         }
     }
 
+    /** Something that starts BDS: a capture. */
+    @FunctionalInterface
+    public interface Start<T> {
+        T run() throws Exception;
+    }
+
+    /**
+     * Runs {@code start}, once more when BDS hung while it started ({@link #awaitStarted}): it now and then does, and a second
+     * start is not that. Any other failure, and a second hang, is thrown.
+     */
+    public static <T> T retryOnHang(Start<T> start) throws Exception {
+        try {
+            return start.run();
+        } catch (IOException e) {
+            if (!String.valueOf(e.getMessage()).startsWith("BDS did not start")) {
+                throw e;
+            }
+            System.out.println(e.getMessage().lines().findFirst().orElse("") + "; starting it again");
+            return start.run();
+        }
+    }
+
     /** Waits for {@code Server started.}; fails if the server does not get there. */
     public void awaitStarted(long timeoutSeconds) throws InterruptedException, IOException {
         if (await(line -> line.contains("Server started.") || line.contains("PALETTER-DONE"), timeoutSeconds) == null) {

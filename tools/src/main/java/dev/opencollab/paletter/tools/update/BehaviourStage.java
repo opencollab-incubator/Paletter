@@ -4,6 +4,7 @@ import com.google.gson.JsonObject;
 import dev.opencollab.paletter.internal.data.VanillaData;
 import dev.opencollab.paletter.tools.BuildNumber;
 import dev.opencollab.paletter.tools.bds.BdsDistribution;
+import dev.opencollab.paletter.tools.bds.BdsServer;
 import dev.opencollab.paletter.tools.bds.ScriptModules;
 import dev.opencollab.paletter.tools.behaviour.BehaviourDump;
 import dev.opencollab.paletter.tools.behaviour.BehaviourProbe;
@@ -77,7 +78,11 @@ final class BehaviourStage {
 
     void step(String name, Step step) {
         try {
-            step.run();
+            // BDS now and then hangs while it starts (each step starts it): once more before the step fails
+            BdsServer.retryOnHang(() -> {
+                step.run();
+                return null;
+            });
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
             skipped(name, e);

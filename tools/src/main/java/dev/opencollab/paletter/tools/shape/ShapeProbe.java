@@ -69,7 +69,7 @@ public final class ShapeProbe {
         BdsDistribution.deleteRecursively(work);
         Files.createDirectories(work);
         if (!Files.exists(BdsServer.executable(server))) {
-            BdsDistribution.extract(distribution.zip(cache), server);
+            BdsDistribution.extract(distribution.zip(cache, root), server);
         }
         try {
             capture(root.resolve(Layout.BDS).resolve(distribution.version()).resolve(DIRECTORY), root, distribution.version(), server, work,

@@ -126,6 +126,17 @@ class UpdateHistoryTest {
     }
 
     @Test
+    void missingDocgenOutputIsOneFailRow(@TempDir Path root, @TempDir Path cache) throws IOException {
+        BdsDistribution build = new BdsDistribution("1.26.31.1", false, "win", "https://example.invalid/bedrock-server-1.26.31.1.zip");
+        Update update = historyCheck(root);
+        ScriptApiStage stage = new ScriptApiStage(update.context());
+        stage.scriptModules(build, null, new Runs());
+        stage.schema(cache, build, null);
+        String report = update.report().render();
+        assertEquals(1, report.split("\\| Failed \\|", -1).length - 1, "one FAIL row: " + report);
+    }
+
+    @Test
     void aCaptureOnlyRunWritesItsCapturesIntoItsOwnDirectoryAndNothingElse(@TempDir Path root, @TempDir Path out, @TempDir Path work) throws IOException {
         // The build is committed already (a recapture): its directory is neither deleted nor an obstacle
         Files.createDirectories(root.resolve("data/bds/1.26.36.1/spec"));

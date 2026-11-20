@@ -190,7 +190,7 @@ public final class Cli implements Runnable {
         public Integer call() throws Exception {
             boolean linux = !platform.equals("windows");
             Path source = binary != null ? binary
-                : BdsDistribution.resolve(linux, preview, bds).zip(cache == null ? BdsDistribution.defaultCache() : cache);
+                : BdsDistribution.resolve(linux, preview, bds).zip(cache == null ? BdsDistribution.defaultCache() : cache, root());
             JsonObject facts = Whitebox.discover(source, bds);
             String name = Whitebox.file(facts.get("platform").getAsString());
             Path file = root().resolve(Layout.BDS).resolve(bds).resolve(name);
@@ -1046,7 +1046,7 @@ public final class Cli implements Runnable {
         public Integer call() throws Exception {
             Path cacheDirectory = cache != null ? cache : BdsDistribution.defaultCache();
             Path log = cacheDirectory.resolve("runs").resolve("script-dump-" + bds + ".log");
-            BdsDistribution.resolve(preview, bds).onServer(cacheDirectory,
+            BdsDistribution.resolve(preview, bds).onServer(cacheDirectory, root(),
                 server -> ScriptApiDump.run(root(), server, log, timeout, port));
             System.out.println("Wrote " + ScriptApiDump.write(root(), log, bds, BuildNumber.parse(bds).dataVersion()));
             return 0;

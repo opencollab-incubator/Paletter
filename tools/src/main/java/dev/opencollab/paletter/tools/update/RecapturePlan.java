@@ -98,10 +98,10 @@ public final class RecapturePlan {
             if (entry.preview()) {
                 continue;
             }
-            String newestKept = kept.keySet().stream().filter(build -> inLine(build, entry.name())).reduce((a, b) -> b).orElse(null);
+            String newestKept = kept.keySet().stream().filter(build -> BuildNumber.parse(build).inLine(entry.name())).reduce((a, b) -> b).orElse(null);
             if (newestKept != null) {
                 list.releases().stream()
-                    .filter(build -> inLine(build, entry.name()) && Versions.compare(build, newestKept) > 0)
+                    .filter(build -> BuildNumber.parse(build).inLine(entry.name()) && Versions.compare(build, newestKept) > 0)
                     .filter(build -> !record.containsKey(build) && !kept.containsKey(build))
                     .reduce((a, b) -> b)
                     .ifPresent(build -> legs.add(new Leg(build, false, newestKept)));
@@ -122,11 +122,6 @@ public final class RecapturePlan {
             }
         });
         return lines;
-    }
-
-    /** Whether a build is of a data version's line ({@link BuildNumber#inLine}); a name that is no build number is of none. */
-    static boolean inLine(String build, String dataVersion) {
-        return BuildNumber.isBuild(build) && BuildNumber.parse(build).inLine(dataVersion);
     }
 
     /** The legs as the {@code include} list of a GitHub Actions matrix: {@code build}, {@code channel}, {@code against} ("" for none). */
