@@ -129,6 +129,11 @@ final class RecordingEmitter implements Emitter {
     }
 
     @Override
+    public CodeBlock unknown(Rule rule, CodeBlock value) {
+        return CodeBlock.of("ctx.drop(component, $S + $L + $S)", "path = ", value, " has no known wire value");
+    }
+
+    @Override
     public String path() {
         return "path";
     }

@@ -94,8 +94,8 @@ add-ons. After a change to the model, fixtures, `bds-feedback.json` or the add-o
 4. Run `check-mappings --strict` (Gradle `checkMappings`): integer bits no field explains, unmapped wire paths and
    `linked` fields fail. Capture again so the generator links them; if that is done, add a rule or hand transform.
 5. `components generate`, then `:paletter:apiDump` for an intended API change. Commit `data/model/api-history.json` with
-   the sources: it keeps the existing Java names (docs/data-pipeline.md); a field it reports `removed from the model` is a
-   breaking change to review. `ComponentConformanceTest` rebuilds every
+   the sources: it keeps the existing Java names (docs/data-pipeline.md); a component or field it reports with a
+   `warning:` line left the model and keeps a deprecated stand-in, to review. `ComponentConformanceTest` rebuilds every
    accepted variant through the generated API and has no exceptions: close gaps in the model or a transform.
 6. The two remaining golden files (synthetic variants, API dump fixture): `./gradlew :tools:test -PupdateGolden=true`
    if their tests fail on an intended change, then review the diff. Any model change that

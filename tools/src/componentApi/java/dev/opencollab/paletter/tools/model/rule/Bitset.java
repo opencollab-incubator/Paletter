@@ -93,9 +93,21 @@ public final class Bitset extends Rule {
         for (String k : new TreeSet<>(this.bits.keySet())) {
             sw.add("case $S -> $L;\n", k, this.bits.get(k));
         }
-        sw.add("default -> 0;\n").unindent().add("}");
+        // A value without bits sets none; the first bitset of the field reports it (Emitter#unknown)
+        CodeBlock unknown = e.unknown(this, e.elementString(CodeBlock.of("$N", x)));
+        if (unknown != null) {
+            sw.add("default -> {\n").indent().add("$L;\n", unknown).add("yield 0;\n").unindent().add("}\n");
+        } else {
+            sw.add("default -> 0;\n");
+        }
+        sw.unindent().add("}");
         e.code().addStatement("$L", sw.build());
         e.code().endControlFlow();
         e.put(e.fromNumber(nbt, CodeBlock.of("$N", bits)));
+    }
+
+    @Override
+    public java.util.Set<String> knownValues(List<String> documented) {
+        return new TreeSet<>(bits.keySet());
     }
 }

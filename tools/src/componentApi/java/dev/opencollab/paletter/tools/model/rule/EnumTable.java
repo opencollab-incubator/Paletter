@@ -2,6 +2,7 @@ package dev.opencollab.paletter.tools.model.rule;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
+import com.palantir.javapoet.CodeBlock;
 
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -72,8 +73,16 @@ public final class EnumTable extends Rule {
             e.enumConstant(k);
             e.code().addStatement("case $S -> $L", k, e.write(v.equals(NOT_SENT) ? v : v + " (" + nbt + ")"));
         }
-        e.code().addStatement("default -> ctx.drop($L, $S + $L.value() + $S)", e.component(), e.path() + " = ", e.enumValue(), " has no known wire value");
+        CodeBlock unknown = e.unknown(this, CodeBlock.of("$L.value()", e.enumValue()));
+        if (unknown != null) {
+            e.code().addStatement("default -> $L", unknown);
+        }
         e.code().endControlFlow();
+    }
+
+    @Override
+    public Set<String> knownValues(List<String> documented) {
+        return new TreeSet<>(table.keySet());
     }
 
     @Override

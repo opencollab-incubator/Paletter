@@ -48,6 +48,12 @@ final class ApiModel {
     final Map<String, UnionType> unions = new LinkedHashMap<>();
     /** Fields whose JSON key Bedrock renamed ({@link ApiHistory#renames}): their old accessor and setter delegate. */
     final List<ApiHistory.Renamed> renames = new ArrayList<>();
+    /**
+     * Components {@code api-history.json} records that left the model ({@link StandIns}): each is a
+     * {@code @Deprecated(forRemoval = true)} class without fields of its own, which the encoder leaves out with a report
+     * warning, until its entry is deleted deliberately (a major release).
+     */
+    final List<Comp> removedComponents = new ArrayList<>();
 
     /** @return the generated component with an id, or null */
     Comp component(String id) {
@@ -138,6 +144,9 @@ final class ApiModel {
         /** Every object type created, before merging the identical ones. */
         final List<ObjType> allTypes = new ArrayList<>();
 
+        /** Left the model: a stand-in from {@code api-history.json} ({@link StandIns}), not generated from the model. */
+        boolean removed;
+
         boolean deprecated() {
             return "deprecated".equals(status);
         }
@@ -204,6 +213,14 @@ final class ApiModel {
         /** Shorthand of the object (a scalar alternative of the field that holds it): child it sets. */
         Field shorthand;
         String shorthandType;
+        /**
+         * Fields {@code api-history.json} records that left the model ({@link StandIns}): a
+         * {@code @Deprecated(forRemoval = true)} accessor that returns the default and a setter that does nothing. Not
+         * stored, compared or encoded.
+         */
+        final List<Field> removedFields = new ArrayList<>();
+        /** A stand-in type rebuilt from {@code api-history.json}: the type left the model with the field that held it. */
+        boolean removed;
     }
 
     sealed interface Type permits Scalar, EnumRef, ObjRef, Vec3, ListOf, MapOf, States, ComponentRef, UnionRef {

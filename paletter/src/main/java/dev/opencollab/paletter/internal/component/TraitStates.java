@@ -25,7 +25,9 @@ public final class TraitStates {
     public static @NonNull List<BlockProperty<?>> of(@NonNull List<BlockTrait> traits) {
         List<BlockProperty<?>> states = new ArrayList<>();
         for (BlockTrait trait : traits) {
-            // An enabled state newer than Paletter (not isKnown) has no table entry: it adds no state, as the encoder sends no bit for it
+            // An enabled state newer than Paletter (not isKnown) has no table entry: it adds no state, as the encoder sends no bit
+            // for it. The trait's encoder (TraitWire) reports it, once per value and palette: the warning is not repeated here,
+            // where no palette is known yet
             switch (trait) {
                 case PlacementDirection t -> t.enabledStates().stream().filter(s -> s.isKnown())
                     .forEach(s -> states.addAll(TraitStateTable.of(PlacementDirection.NAME, s.value())));

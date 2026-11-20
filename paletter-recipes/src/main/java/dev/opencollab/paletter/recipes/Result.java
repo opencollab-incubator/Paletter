@@ -18,10 +18,10 @@ public final class Result {
     private final NbtMap tag;
 
     private Result(Builder b) {
-        this.item = Objects.requireNonNull(b.item, "Result.item");
+        this.item = Required.of(b.item, "Result.item");
         this.count = b.count;
-        this.blockState = Objects.requireNonNull(b.blockState, "Result.blockState");
-        this.tag = Objects.requireNonNull(b.tag, "Result.tag");
+        this.blockState = b.blockState;
+        this.tag = b.tag;
         if (count < 1) {
             throw new IllegalArgumentException("A result needs a count of at least 1: " + count);
         }
@@ -116,9 +116,10 @@ public final class Result {
          *
          * @param item the item variant
          * @return this builder
+         * @throws NullPointerException if the item is null
          */
         public @NonNull Builder item(@NonNull BedrockItemVariant item) {
-            this.item = item;
+            this.item = Objects.requireNonNull(item, "Result.item");
             return this;
         }
 
@@ -138,9 +139,10 @@ public final class Result {
          *
          * @param blockState the block state (compound with {@code name} and {@code states}), or an empty map for none in particular
          * @return this builder
+         * @throws NullPointerException if the block state is null
          */
         public @NonNull Builder blockState(@NonNull NbtMap blockState) {
-            this.blockState = blockState;
+            this.blockState = Objects.requireNonNull(blockState, "Result.blockState");
             return this;
         }
 
@@ -149,9 +151,10 @@ public final class Result {
          *
          * @param tag the item's NBT, or an empty map for none
          * @return this builder
+         * @throws NullPointerException if the NBT is null
          */
         public @NonNull Builder tag(@NonNull NbtMap tag) {
-            this.tag = tag;
+            this.tag = Objects.requireNonNull(tag, "Result.tag");
             return this;
         }
 
@@ -160,7 +163,7 @@ public final class Result {
          *
          * @return the result
          * @throws IllegalArgumentException if the count is below 1
-         * @throws NullPointerException if the item is not set
+         * @throws IllegalStateException if the item is not set
          */
         public @NonNull Result build() {
             return new Result(this);
