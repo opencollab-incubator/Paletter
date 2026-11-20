@@ -66,6 +66,15 @@ public final class CaptureWriter {
      */
     private final Set<String> collidingBlocks = new TreeSet<>();
     private final Set<Integer> collidingHashes = new LinkedHashSet<>();
+    /**
+     * Blocks the reference marks as experiment content but has no states for (its data was imported from a world without that
+     * experiment: 26.40 has no states for the {@code y_2026_drop_3} wool slabs and stairs). In a world with the experiment on
+     * BDS sends creative block ids for them that nothing here can resolve or disprove, so they are kept apart
+     * ({@link #experimentHashes}), unverified.
+     */
+    private final Set<String> statelessExperimentBlocks;
+    private final Set<Integer> experimentHashes = new LinkedHashSet<>();
+    private final Set<String> experimentBlocksSent = new TreeSet<>();
     /** Whether the capture ran {@code /give}: then {@link GiveCapture#FILE} is written, with the unanswered blocks unverified. */
     private boolean giveRequested;
     /** The protocol the client announced and that of the codec that decoded the packets; 0 until {@link #withProtocol}. */
@@ -87,6 +96,7 @@ public final class CaptureWriter {
             palette.add(state);
             referenceBlocks.add(state.getString("name"));
         }
+        statelessExperimentBlocks = experimentBlocksWithoutStates(reference);
         for (BlockPropertyData block : result.startGame.getBlockProperties()) {
             if (!referenceBlocks.contains(block.getName())) {
                 Set<String> unknown = new TreeSet<>();
@@ -301,6 +311,9 @@ public final class CaptureWriter {
                 pendingHashes.add(block.getRuntimeId());
             } else if (collidingBlocks.contains(item.getDefinition().getIdentifier())) {
                 collidingHashes.add(block.getRuntimeId());
+            } else if (statelessExperimentBlocks.contains(item.getDefinition().getIdentifier())) {
+                experimentHashes.add(block.getRuntimeId());
+                experimentBlocksSent.add(item.getDefinition().getIdentifier());
             } else {
                 unresolvedHashes.add(block.getRuntimeId());
             }
@@ -346,6 +359,14 @@ public final class CaptureWriter {
             collidingHashes.forEach(hash -> ids.add(Integer.toUnsignedString(hash)));
             json.add("creativeBlockIdsOfHashCollisions", ids);
         }
+        if (!experimentHashes.isEmpty()) {
+            JsonArray blocks = new JsonArray();
+            experimentBlocksSent.forEach(blocks::add);
+            json.add("experimentBlocksWithoutStates", blocks);
+            JsonArray ids = new JsonArray();
+            experimentHashes.forEach(hash -> ids.add(Integer.toUnsignedString(hash)));
+            json.add("creativeBlockIdsOfExperimentBlocks", ids);
+        }
         if (!unknownTraitStates.isEmpty()) {
             JsonArray pending = new JsonArray();
             pendingHashes.forEach(hash -> pending.add(Integer.toUnsignedString(hash)));
@@ -385,6 +406,21 @@ public final class CaptureWriter {
 
     public int unresolvedHashes() {
         return unresolvedHashes.size();
+    }
+
+    /** The blocks {@code reference} marks as experiment content that it has no states for, sorted. */
+    public static Set<String> experimentBlocksWithoutStates(VanillaData reference) {
+        Set<String> withStates = new java.util.HashSet<>();
+        reference.blockStates().forEach(state -> withStates.add(state.getString("name")));
+        Set<String> blocks = new TreeSet<>();
+        reference.experiments().values().forEach(content -> content.blocks().stream().filter(block -> !withStates.contains(block))
+            .forEach(blocks::add));
+        return blocks;
+    }
+
+    /** @return the experiment blocks without reference states whose creative block ids were kept apart, sorted */
+    List<String> experimentBlocksUnverified() {
+        return List.copyOf(experimentBlocksSent);
     }
 
     /** @return the {@code <trait> <value>}s BDS sent that the trait state table has no states for yet, sorted */

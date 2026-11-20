@@ -4,7 +4,7 @@ import dev.opencollab.paletter.tools.bds.CapturePlatform;
 import dev.opencollab.paletter.tools.Layout;
 import dev.opencollab.paletter.tools.bds.BdsDistribution;
 import dev.opencollab.paletter.tools.bds.BdsServer;
-import dev.opencollab.paletter.tools.data.Importer;
+import dev.opencollab.paletter.tools.codegen.constants.ConstantsGenerator;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
@@ -328,7 +328,7 @@ public final class SpecCapture {
             if (protocol == 0) {
                 throw new IOException("No protocol from the server status; pass --protocol");
             }
-            Capture.Summary summary = Capture.capture(address, protocol, reference(protocol), version, work.resolve("capture"),
+            Capture.Summary summary = Capture.capture(address, protocol, reference(root, protocol), version, work.resolve("capture"),
                 work.resolve("custom"), 120, !raknet);
             return new Run(attribute(rawLog), rawLog, summary, protocol);
         }
@@ -484,12 +484,17 @@ public final class SpecCapture {
         return leaves;
     }
 
-    private VanillaData reference(int protocol) throws IOException {
-        Path resources = root.resolve("paletter/src/main/resources/paletter");
-        List<Importer.IndexEntry> index = Importer.readIndex(resources);
-        Importer.IndexEntry entry = index.stream().filter(e -> e.protocol() == protocol).findFirst()
-            .orElse(index.stream().filter(e -> !e.preview()).reduce((a, b) -> b).orElseThrow());
-        return dev.opencollab.paletter.tools.data.BundledFiles.read(resources.resolve(entry.name() + ".nbt"));
+    /**
+     * The bundled version the spec capture resolves block hashes with, chosen like every other capture's
+     * ({@link EducationProbe#reference}): the one of this protocol, else the newest release not above it. A build can
+     * speak a later protocol than the first of its data version (BDS 1.26.45.1 speaks 2169, 26.40 starts at 2168); the
+     * newest release instead would lack the states of blocks that changed since (stairs, fences, panes), so their
+     * creative block ids would resolve to nothing.
+     */
+    static VanillaData reference(Path root, int protocol) throws IOException {
+        Path resources = root.resolve(ConstantsGenerator.DATA);
+        String name = EducationProbe.reference(ConstantsGenerator.readIndex(resources), protocol).name();
+        return dev.opencollab.paletter.tools.data.BundledFiles.read(resources.resolve(name + ".nbt"));
     }
 
     /**

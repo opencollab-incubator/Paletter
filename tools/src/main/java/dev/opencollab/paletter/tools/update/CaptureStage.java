@@ -244,6 +244,14 @@ final class CaptureStage {
             ctx.report.action("infer the mappings and run :tools:generateComponentApi (the trait state table gains "
                 + summary.traitStatesUnknown() + ")");
         }
+        if (!summary.experimentBlocksUnverified().isEmpty()) {
+            // The bundled data version marks these blocks as experiment content but has no states for them
+            ctx.report.check(Report.Status.INFO, "Experiment block hashes (" + label + ")", "the creative block ids of "
+                + summary.experimentBlocksUnverified().size() + " experiment blocks are unverified: the reference palette marks them "
+                + "as experiment content without states: " + summary.experimentBlocksUnverified());
+            ctx.report.notCompared.add("Block hashes (" + label + "): the creative block ids of " + summary.experimentBlocksUnverified().size()
+                + " experiment blocks the reference palette has no states for");
+        }
         if (summary.unresolvedHashes() == 0) {
             ctx.report.check(Report.Status.PASS, "Block hashes (" + label + ")", "all " + summary.resolvedHashes()
                 + " creative block ids are FNV-1a 32 hashes of palette states");
