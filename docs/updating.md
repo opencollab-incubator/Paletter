@@ -35,6 +35,20 @@ When it reports decisions or FAILs:
   A kept build with data its data version lacks is a gap and needs a data version of its own (an `import`).
 - Manual after an import: the state order of newly generated blocks (check with `verify` once CloudburstMC/Data has the
   version), re-importing a protocol whose network data changed in a hotfix, a codec (section e).
+- Compare the compiled palette with a CloudburstMC/Data checkout (cb/data keeps one version at HEAD, so check out the
+  commit of the wanted version; the one pinned in `recapture.yml` is `0021592b1a4253528bad1e1d8b537e306e097557`, 26.60):
+
+  ```
+  git clone --filter=blob:none --no-checkout https://github.com/CloudburstMC/Data.git cb-data
+  git -C cb-data checkout 0021592b1a4253528bad1e1d8b537e306e097557
+  ./gradlew :tools:run --args="export --name 26.60 --out build/export-26.60"
+  ./gradlew :tools:run --args="verify --source cb-data --name 26.60 --against build/export-26.60 --report build/verify-26.60.md"
+  ```
+
+  Exit code 1 on any difference. `CloudburstDataTest` does both steps for every bundled release in the normal build, against
+  the cb/data files committed in `tools/src/test/resources/test-data/<version>/` (commits in its `SOURCE.md`), and writes
+  `tools/build/cbdata-report-<version>.md`. A mismatch is a finding about the data, not a test to loosen: unresolved ones
+  are listed in the test (`KNOWN_FINDINGS`, and the creative layout, reported and not asserted).
 
 ## b. A full recapture (add-on or capture code changed)
 

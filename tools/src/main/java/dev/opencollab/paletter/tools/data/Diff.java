@@ -300,6 +300,46 @@ public final class Diff {
     }
 
     /**
+     * An export of a compiled palette ({@link Export}) against a source directory (a CloudburstMC/Data checkout), with the
+     * rules of {@link #source}: the export plays the bundled side. On top, the export's own {@code network_id}s: each must be
+     * the hash of its state, and equal to the source's where the source carries one for the same state at the same position.
+     *
+     * @param source the CloudburstMC/Data checkout
+     * @param export a directory written by {@link Export#write(dev.opencollab.paletter.Palette, Path)}
+     */
+    public static Diff against(Path source, String name, Path export) throws IOException {
+        Export.Read exported = Export.read(export, name);
+        Diff diff = source(source, name, exported.data(), export.toString());
+        diff.exportNetworkIds(exported.source(), Importer.readSource(source, name));
+        return diff;
+    }
+
+    private void exportNetworkIds(Importer.Source exported, Importer.Source read) {
+        Section section = section("Export network ids");
+        List<NbtMap> a = exported.rawBlocks();
+        List<NbtMap> b = read.rawBlocks();
+        int carried = 0;
+        for (int i = 0; i < a.size(); i++) {
+            NbtMap state = BlockStates.normalize(a.get(i));
+            if (!(a.get(i).get("network_id") instanceof Number id)) {
+                continue;
+            }
+            carried++;
+            int hash = BlockHashes.hash(state);
+            if (id.intValue() != hash) {
+                section.differences.add("#" + i + " " + describe(state) + ": the export's network_id " + id.intValue() + ", computed " + hash);
+            }
+            if (i < b.size() && b.get(i).get("network_id") instanceof Number other && BlockStates.normalize(b.get(i)).equals(state)
+                && other.intValue() != id.intValue()) {
+                section.differences.add("#" + i + " " + describe(state) + ": network_id " + id.intValue() + " in the export, "
+                    + other.intValue() + " in the source");
+            }
+        }
+        section.bundled = carried + " states carry `network_id`";
+        section.source = b.stream().filter(raw -> raw.get("network_id") instanceof Number).count() + " states carry `network_id`";
+    }
+
+    /**
      * Component wire shapes of two sets of captures, per component (see {@link WireShapes}): an added, removed or retyped
      * field, or a component that is no longer sent, is a wire format change; a component not sent before is new.
      *

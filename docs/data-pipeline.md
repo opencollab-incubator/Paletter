@@ -319,6 +319,17 @@ captures.
 against a bundled version: block states and order, hashes, items, components, data driven blocks and the creative
 layout. It writes only a report.
 
+`export --name 26.60 --out DIR [--previews]` writes what a compiled palette (`Paletter.bundled().vanilla(version)`)
+sends, in the file formats of CloudburstMC/Data: `block_palette.nbt` (states in registry index order, each with its
+runtime id as `network_id`), `runtime_item_states.json` and `item_components.nbt` (the item registry),
+`creative_items.json` (the creative content) and `data_driven_blocks.nbt`. A `_generated` file marks the directory as
+generated. The files are not byte-comparable with cb/data (gzip, key order, JSON layout, item order); compare with
+`verify --source <cb/data> --name 26.60 --against DIR`, which runs the engine of `verify --source` with the export as the
+compared side: positions exact, items by identifier, `version` tags ignored, plus a section checking the export's
+`network_id`s against the hash of each state and against cb/data's. `CloudburstDataTest` runs the same
+comparison in the normal build for every bundled release, against cb/data files committed in
+`tools/src/test/resources/test-data/` (see `docs/updating.md`).
+
 Vanilla block palette order cannot be observed from the Script API or the network, which is why bundled palettes still
 descend from CloudburstMC/Data and Geyser files and are verified against BDS rather than generated from it. The
 bedrock-samples metadata and the BDS `definitions/` folder are not used: they miss items, lack defaults or order, or
