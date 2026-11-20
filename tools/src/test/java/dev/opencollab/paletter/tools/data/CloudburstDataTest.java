@@ -32,16 +32,13 @@ class CloudburstDataTest {
      * What the comparison found and nobody has resolved, per version: the sections that differ. Any other section differing, or
      * one of these no longer differing, fails the test.
      * <ul>
-     *     <li>26.40, 26.50: the cb/data commit REPORT.md lists holds a newer palette than Paletter's version of that name
-     *     (26.40: 22091 states, Paletter's 26.50 has 22091 and its 26.40 17499; 26.50: 23960 states, Paletter's 26.60), so
-     *     blocks and items are only in the source. The commits are of the version after, or Paletter's versions lag.</li>
+     *     <li>26.40: 39 items only cb/data has (the cushions, straw_bed and the poplar wood set), no block states.</li>
      *     <li>26.60: three items only cb/data has (frostbite_spawn_egg, ice_crystal, icicle).</li>
      * </ul>
-     * TODO: settle which side is right with the BDS captures of those builds (data/bds), then fix the data or the commit.
+     * TODO: settle which side is right with the BDS captures of those builds (data/bds), then fix the data.
      */
     private static final Map<String, Set<String>> KNOWN_FINDINGS = Map.of(
-        "26.40", Set.of("Block states", "Items"),
-        "26.50", Set.of("Block states", "Items"),
+        "26.40", Set.of("Items"),
         "26.60", Set.of("Items"));
 
     @TempDir
