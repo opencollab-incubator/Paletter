@@ -10,6 +10,7 @@ import dev.opencollab.paletter.tools.model.Model.FormatNote;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.TreeSet;
@@ -370,7 +371,7 @@ public final class Coverage {
     private static String key(String version) {
         StringBuilder key = new StringBuilder();
         for (String part : version.split("\\.")) {
-            key.append(String.format("%06d", part.matches("\\d+") ? Integer.parseInt(part) : 999999));
+            key.append(String.format(Locale.ROOT, "%06d", part.matches("\\d+") ? Integer.parseInt(part) : 999999));
         }
         return key.toString();
     }
