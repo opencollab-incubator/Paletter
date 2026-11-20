@@ -13,7 +13,7 @@ import org.checkerframework.checker.nullness.qual.Nullable;
  * "shooter", "throwable", or "food".
  * <p>
  * Add-on JSON: {@code "minecraft:use_duration"}.
- * Retired: rejected by every captured BDS (oldest: 1.26.36.1, protocol 1001): minecraft:use_duration: this
+ * Retired: rejected by every captured BDS (oldest: Bedrock 26.30, protocol 1001): minecraft:use_duration: this
  * component was found in the input, but is not present in the Schema; [Item] Error Parsing Item &lt;id&gt;:. Its
  * encoder writes nothing and adds a report warning, as BDS would never send it to a client.
  *

@@ -12,13 +12,13 @@ import org.checkerframework.checker.nullness.qual.Nullable;
  * <code>air</code>. The default is <code>solid</code> if this component is omitted.
  * <p>
  * Add-on JSON: {@code "minecraft:breathability"}.
- * Retired: rejected by every captured BDS (oldest: 1.26.36.1, protocol 1001): minecraft:breathability: member
- * "minecraft:breathability" is deprecated. Its encoder writes nothing and adds a report warning, as BDS would
- * never send it to a client.
+ * Retired: rejected by every captured BDS (oldest: Bedrock 26.30, protocol 1001): minecraft:breathability:
+ * member "minecraft:breathability" is deprecated. Its encoder writes nothing and adds a report warning, as BDS
+ * would never send it to a client.
  *
  * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/blockreference/examples/blockcomponents/minecraftblock_breathability?view=minecraft-bedrock-stable">Microsoft Learn: minecraft:breathability</a>
  * @since 1.0.0
- * @deprecated rejected by every captured BDS (oldest: 1.26.36.1, protocol 1001): minecraft:breathability: member
+ * @deprecated rejected by every captured BDS (oldest: Bedrock 26.30, protocol 1001): minecraft:breathability: member
  *        "minecraft:breathability" is deprecated
  */
 @Deprecated

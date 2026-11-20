@@ -13,8 +13,8 @@ import org.checkerframework.checker.nullness.qual.NonNull;
  * Experimental toggles required: Upcoming Creator Features (in format versions before 1.21.60).
  * <p>
  * Add-on JSON: {@code "minecraft:replaceable"}.
- * Server only below protocol 2193: BDS accepts it in packs but sends nothing to clients there (BDS 1.26.36.1,
- * 1.26.45.1), so those palettes leave it out and add a report warning. Sent from protocol 2193 (BDS 1.26.52.3).
+ * Server only below protocol 2193: BDS accepts it in packs but sends nothing to clients there (Bedrock 26.30,
+ * 26.40), so those palettes leave it out and add a report warning. Sent from protocol 2193 (Bedrock 26.50).
  * The creator docs name the experiment Upcoming Creator Features for it (in some format versions); unverified against BDS.
  *
  * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/blockreference/examples/blockcomponents/minecraftblock_replaceable?view=minecraft-bedrock-stable">Microsoft Learn: minecraft:replaceable</a>

@@ -62,7 +62,7 @@ public final class MultiBlock implements BlockTrait {
 
     /**
      * Optional property to define number of block parts. Valid values are <code>2, 3, 4</code>. Add-on JSON {@code
-     * parts}. Default: <code>2</code>. Range [2, 4] (BDS 1.26.63.1). One of [2, 3, 4].
+     * parts}. Default: <code>2</code>. Range [2, 4] (Bedrock 26.60). One of [2, 3, 4].
      *
      * @return the value
      */

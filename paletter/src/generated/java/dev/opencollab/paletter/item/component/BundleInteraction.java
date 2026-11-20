@@ -33,7 +33,7 @@ public final class BundleInteraction implements ItemComponent {
     /**
      * The maximum number of slots in the bundle viewable by the plater. Can be from 1 to 64. Default is 12. Value
      * must be &gt;= 1. Value must be &lt;= 64. Add-on JSON {@code num_viewable_slots}. Default: <code>12</code>.
-     * Range [1, 64] (BDS 1.26.63.1).
+     * Range [1, 64] (Bedrock 26.60).
      *
      * @return the value
      */

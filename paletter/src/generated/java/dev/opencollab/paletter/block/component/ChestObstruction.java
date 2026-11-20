@@ -17,8 +17,8 @@ import org.checkerframework.checker.nullness.qual.Nullable;
  * This defines how a block reacts to a chest being opened underneath it.
  * <p>
  * Add-on JSON: {@code "minecraft:chest_obstruction"}.
- * Server only: BDS accepts it in packs but sends nothing to clients (BDS 1.26.36.1, 1.26.45.1, 1.26.52.3,
- * 1.26.63.1, 1.26.70.24), so it has no client effect. Palettes leave it out without a warning.
+ * Server only: BDS accepts it in packs but sends nothing to clients (Bedrock 26.30, 26.40, 26.50, 26.60, 26.70),
+ * so it has no client effect. Palettes leave it out without a warning.
  * The creator docs name the experiment Upcoming Creator Features for it (in some format versions); unverified against BDS.
  *
  * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/blockreference/examples/blockcomponents/minecraftblock_chest_obstruction?view=minecraft-bedrock-stable">Microsoft Learn: minecraft:chest_obstruction</a>

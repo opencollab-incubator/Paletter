@@ -8,7 +8,7 @@ import java.util.Objects;
 /**
  * {@code minecraft:render_offsets}: where the item is drawn in each hand, per view.
  * <p>
- * Retired from the add-on format (Bedrock Dedicated Server 1.26.63.1 rejects it at every {@code format_version}). Paletter
+ * Retired from the add-on format (the Bedrock Dedicated Server of Bedrock 26.60 rejects it at every {@code format_version}). Paletter
  * assumes current clients still honour it on the wire and keeps sending it for legacy content; it will be removed if
  * clients stop honouring it.
  *

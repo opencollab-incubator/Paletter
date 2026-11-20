@@ -32,7 +32,7 @@ public final class Friction implements BlockComponent {
 
     /**
      * The number form of the component (add-on JSON {@code "minecraft:friction": <number>}). Required. Range [0,
-     * 0.9] (BDS 1.26.63.1).
+     * 0.9] (Bedrock 26.60).
      *
      * @return the value
      */

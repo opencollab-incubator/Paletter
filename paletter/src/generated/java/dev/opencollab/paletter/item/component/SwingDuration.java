@@ -34,7 +34,7 @@ public final class SwingDuration implements ItemComponent {
     /**
      * Duration, in seconds, of the item's swing animation played when mining or attacking. Affects visuals only and
      * does not impact attack frequency or other gameplay mechanics. Add-on JSON {@code value}. Default:
-     * <code>0.30000001192092896</code>. At least 0 (BDS 1.26.63.1).
+     * <code>0.30000001192092896</code>. At least 0 (Bedrock 26.60).
      *
      * @return the value
      */

@@ -506,7 +506,7 @@ public final class KineticWeapon implements ItemComponent {
         /**
          * Minimum relative speed of the user with respect to the target (projected onto the view vector via a dot
          * product) required for the effect to be applied. Add-on JSON {@code min_relative_speed}. Default:
-         * <code>0</code>. At least 0 (BDS 1.26.63.1).
+         * <code>0</code>. At least 0 (Bedrock 26.60).
          *
          * @return the value
          */
@@ -516,7 +516,7 @@ public final class KineticWeapon implements ItemComponent {
 
         /**
          * Minimum user's speed (projected onto the view vector via a dot product) required for the effect to be applied.
-         * Add-on JSON {@code min_speed}. Default: <code>0</code>. At least 0 (BDS 1.26.63.1).
+         * Add-on JSON {@code min_speed}. Default: <code>0</code>. At least 0 (Bedrock 26.60).
          *
          * @return the value
          */

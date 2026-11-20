@@ -46,6 +46,8 @@ final class ApiModel {
     final java.util.TreeMap<Integer, String> captureVersions = new java.util.TreeMap<>();
     /** The sealed union types by name (api.json {@code unions}), shared by every field of the same shape. */
     final Map<String, UnionType> unions = new LinkedHashMap<>();
+    /** Fields whose JSON key Bedrock renamed ({@link ApiHistory#renames}): their old accessor and setter delegate. */
+    final List<ApiHistory.Renamed> renames = new ArrayList<>();
 
     /** @return the generated component with an id, or null */
     Comp component(String id) {

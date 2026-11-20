@@ -35,7 +35,7 @@ public final class Fuel implements ItemComponent {
 
     /**
      * How long in seconds will this fuel cook items for. Value must be &gt;= 0.05. Add-on JSON {@code duration}.
-     * Optional (null: not set). At least 0.05 (BDS 1.26.63.1).
+     * Optional (null: not set). At least 0.05 (Bedrock 26.60).
      *
      * @return the value
      */

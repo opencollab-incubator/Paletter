@@ -11,8 +11,8 @@ import org.checkerframework.checker.nullness.qual.Nullable;
  * Light.
  * <p>
  * Add-on JSON: {@code "test:glow"}.
- * Server only below protocol 200: BDS accepts it in packs but sends nothing to clients there (BDS 8.8.8), so
- * those palettes leave it out and add a report warning. Sent from protocol 200 (BDS 9.9.9).
+ * Server only below protocol 200: BDS accepts it in packs but sends nothing to clients there (Bedrock 8.8), so
+ * those palettes leave it out and add a report warning. Sent from protocol 200 (Bedrock 9.9).
  *
  * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/blockreference/examples/blockcomponents/minecraftblock_glow?view=minecraft-bedrock-stable">Microsoft Learn: test:glow</a>
  * @since 1.0.0

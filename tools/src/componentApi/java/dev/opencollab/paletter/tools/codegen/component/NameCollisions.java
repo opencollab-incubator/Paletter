@@ -40,25 +40,39 @@ final class NameCollisions {
     }
 
     /**
-     * Simple names are unique across the public API. A generated component whose name another generated component or a
-     * public type that is not generated here ({@link Context#reserved}) also has gets {@code Block} or {@code Item} in front
-     * (traits count as blocks). The set of colliding names is computed, never listed. Nested types are scoped by their
-     * owner, but one that has the name of a top level type would shadow it: that fails and asks for an api.json typeNames entry
-     * (or enums), which is a hand choice: {@code VisualGeometry} reads better than {@code EmbeddedVisual.EmbeddedVisualGeometry}.
-     * <p>
-     * A prefix is a rename of the API. Before 1.0 nothing but {@code :paletter:apiCheck} stops a new component from silently
-     * giving an existing name a prefix: the dump of {@code paletter/api/paletter.api} shows it in the diff.
+     * Simple names are unique across the public API. A component the history records ({@link ApiHistory}) keeps its
+     * recorded name. A new one whose name a recorded component, another new one or a public type that is not generated here
+     * ({@link Context#reserved}) also has gets {@code Block} or {@code Item} in front (traits count as blocks): the
+     * newcomer takes the prefix, an existing name never changes. The set of colliding names is computed, never listed.
+     * Nested types are scoped by their owner, but one that has the name of a top level type would shadow it: that fails and
+     * asks for an api.json typeNames entry (or enums), which is a hand choice: {@code VisualGeometry} reads better than
+     * {@code EmbeddedVisual.EmbeddedVisualGeometry}.
      */
-    static void prefix(ApiModel model, Set<String> reserved) {
+    static void prefix(ApiModel model, Set<String> reserved, ApiHistory history) {
         Map<String, Integer> counts = new HashMap<>();
-        model.components.forEach(c -> counts.merge(c.className, 1, Integer::sum));
+        Set<String> kept = new HashSet<>();
         for (Comp c : model.components) {
             c.baseName = c.className;
-            if (counts.get(c.className) > 1 || reserved.contains(c.className)) {
+            String recorded = history.recordedName("classes", c.id);
+            if (recorded != null) {
+                if (!recorded.equals(c.className) && !recorded.equals("Item" + c.className) && !recorded.equals("Block" + c.className)) {
+                    throw new GenerationException(c.id + " would be " + c.className + ", but data/model/" + ApiHistory.FILE + " records "
+                        + recorded + "; a deliberate rename changes both");
+                }
+                c.className = recorded;
+                c.root.name = recorded;
+                kept.add(recorded);
+            }
+        }
+        model.components.stream().filter(c -> history.recordedName("classes", c.id) == null).forEach(c -> counts.merge(c.className, 1, Integer::sum));
+        for (Comp c : model.components) {
+            if (history.recordedName("classes", c.id) == null
+                && (counts.get(c.className) > 1 || kept.contains(c.className) || reserved.contains(c.className))) {
                 c.className = (c.kind == Kind.ITEM ? "Item" : "Block") + c.className;
                 c.root.name = c.className;
             }
         }
+        model.components.forEach(history::className);
         for (Comp c : model.components) {
             Map<String, String> renamed = new HashMap<>();
             model.components.stream().filter(o -> o.kind == c.kind).forEach(o -> renamed.put(o.baseName, o.className));

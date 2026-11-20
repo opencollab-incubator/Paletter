@@ -207,7 +207,7 @@ public final class CustomBlock {
     private static final int MAX_STATES = 1 << 24;
     /**
      * The most {@code uv_lock} bones of a geometry ({@code minecraft:geometry} and the geometry of {@code item_visual} and
-     * {@code embedded_visual}); BDS 1.26.63.1 rejects the whole block above it, counting duplicates.
+     * {@code embedded_visual}); the BDS of Bedrock 26.60 rejects the whole block above it, counting duplicates.
      */
     private static final int MAX_UV_LOCK_BONES = 64;
 

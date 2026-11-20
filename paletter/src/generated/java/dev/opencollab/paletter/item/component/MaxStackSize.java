@@ -36,7 +36,7 @@ public final class MaxStackSize implements ItemComponent {
     /**
      * How many of an item that can be stacked together. Add-on JSON {@code value}. Optional (null: not set). The
      * docs give the default <code>64</code>, but BDS sends item_properties.max_stack_size = 1 (int) when it is
-     * omitted; so it is unset by default, and the encoder sends what BDS sends then. Range [1, 64] (BDS 1.26.63.1).
+     * omitted; so it is unset by default, and the encoder sends what BDS sends then. Range [1, 64] (Bedrock 26.60).
      *
      * @return the value
      */

@@ -197,8 +197,8 @@ public final class RandomOffset implements BlockComponent {
         }
 
         /**
-         * Add-on JSON {@code max}. Default: <code>0</code>. Range [-8, 8] (BDS 1.26.63.1). Not below {@code min} (BDS
-         * 1.26.63.1).
+         * Add-on JSON {@code max}. Default: <code>0</code>. Range [-8, 8] (Bedrock 26.60). Not below {@code min}
+         * (Bedrock 26.60).
          *
          * @return the value
          */
@@ -207,7 +207,7 @@ public final class RandomOffset implements BlockComponent {
         }
 
         /**
-         * Add-on JSON {@code min}. Default: <code>0</code>. Range [-8, 8] (BDS 1.26.63.1).
+         * Add-on JSON {@code min}. Default: <code>0</code>. Range [-8, 8] (Bedrock 26.60).
          *
          * @return the value
          */

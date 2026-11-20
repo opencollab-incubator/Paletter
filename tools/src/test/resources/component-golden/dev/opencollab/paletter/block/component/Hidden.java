@@ -10,7 +10,7 @@ import org.checkerframework.checker.nullness.qual.NonNull;
  * Server side.
  * <p>
  * Add-on JSON: {@code "test:hidden"}.
- * Server only: BDS accepts it in packs but sends nothing to clients (BDS 8.8.8, 9.9.9), so it has no client
+ * Server only: BDS accepts it in packs but sends nothing to clients (Bedrock 8.8, 9.9), so it has no client
  * effect. Palettes leave it out without a warning.
  *
  * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/blockreference/examples/blockcomponents/minecraftblock_hidden?view=minecraft-bedrock-stable">Microsoft Learn: test:hidden</a>

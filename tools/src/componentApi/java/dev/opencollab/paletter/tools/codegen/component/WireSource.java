@@ -1168,11 +1168,17 @@ final class WireSource {
         type.addField(FieldSpec.builder(int.class, "NEWEST_CAPTURED_PROTOCOL", Modifier.PUBLIC, Modifier.STATIC, Modifier.FINAL)
             .addJavadoc("The newest protocol a spec capture of BDS exists for: a palette of a newer protocol is encoded with the shape observed here.\n")
             .initializer("$L", model.newestCaptured == Integer.MAX_VALUE ? "Integer.MAX_VALUE" : String.valueOf(model.newestCaptured)).build());
-        model.windowProtocols.forEach((bds, protocol) -> type.addField(FieldSpec.builder(int.class, "BDS_" + bds.replace('.', '_'),
-                Modifier.PUBLIC, Modifier.STATIC, Modifier.FINAL)
-            .addJavadoc("The first protocol of the window of the spec capture of BDS $L ({@code data/bds/$L/spec}): what the hand\n"
-                + "transforms compare {@code WireContext.protocol()} with where that build changed the wire.\n", bds, bds)
-            .initializer("$L", protocol).build()));
+        // Named by the data version, not the BDS build: a recapture of the same version with another build keeps the name
+        model.windowProtocols.forEach((bds, protocol) -> {
+            String version = model.dataVersions.get(protocol);
+            if (version == null) {
+                throw new GenerationException("the capture of BDS " + bds + " (window protocol " + protocol + ") names no data version");
+            }
+            type.addField(FieldSpec.builder(int.class, "V" + version.replace('.', '_'), Modifier.PUBLIC, Modifier.STATIC, Modifier.FINAL)
+                .addJavadoc("The first protocol of data version $L, the window of its spec capture of BDS $L ({@code data/bds/$L/spec}): what\n"
+                    + "the hand transforms compare {@code WireContext.protocol()} with where that version changed the wire.\n", version, bds, bds)
+                .initializer("$L", protocol).build());
+        });
         String captures = String.join(", ", model.windowProtocols.keySet());
         if (model.firstCustomBlockId != null) {
             type.addField(FieldSpec.builder(int.class, "CUSTOM_BLOCK_ID_START", Modifier.PUBLIC, Modifier.STATIC, Modifier.FINAL)

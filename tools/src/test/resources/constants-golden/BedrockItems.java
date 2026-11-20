@@ -16,7 +16,7 @@ import dev.opencollab.paletter.annotation.SincePreview;
  * <p>
  * {@code @since} is the Paletter version that added a constant, and only written if newer than the class. The line
  * {@code First in Bedrock} is the bundled Bedrock release it first appears in, without an experiment toggle (decided from
- * the BDS captures in {@code data/bds}); {@code 1.0} is the oldest bundled release, so it may be older.
+ * the captures of the Bedrock Dedicated Server); {@code 1.0} is the oldest bundled release, so it may be older.
  * {@link dev.opencollab.paletter.annotation.Education @Education} marks content BDS only offers to worlds with Education
  * Edition features, which {@code isEducation()} of the type answers at runtime.
  * {@link dev.opencollab.paletter.annotation.SincePreview @SincePreview} marks content only the bundled Bedrock preview

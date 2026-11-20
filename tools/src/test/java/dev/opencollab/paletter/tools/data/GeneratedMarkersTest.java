@@ -31,7 +31,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  */
 class GeneratedMarkersTest {
     private static final Path ROOT = Path.of(System.getProperty("paletter.root", ".."));
-    private static final Set<String> GENERATED_MODEL = Set.of("components.json", "mappings.json", "constants-history.json",
+    private static final Set<String> GENERATED_MODEL = Set.of("components.json", "mappings.json", "constants-history.json", "api-history.json",
         "bds-feedback.json", "bds-keys.json", "coverage.md", "variant_names.txt");
     private static final Set<String> HAND_MODEL = Set.of("api.json", "fixtures.json", "constant-names.txt", "ATTRIBUTION.md");
     private static final Set<String> GENERATED_BDS = Set.of("builds.md");

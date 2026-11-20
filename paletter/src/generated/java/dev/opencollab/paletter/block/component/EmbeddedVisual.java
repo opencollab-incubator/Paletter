@@ -349,8 +349,8 @@ public final class EmbeddedVisual implements BlockComponent {
          * limited to using the "query.block_state()" query. When using "bone_visibility" in geometry components in the
          * "permutations" section, you must also have a default version of the geometry component with "bone_visibility"
          * in the "components" section. Value must have at most 64 items. Add-on JSON {@code bone_visibility}. Default:
-         * <code>&#123;&#125;</code>. Empty while {@code identifier} is {@code minecraft:geometry.full_block} (BDS
-         * 1.26.63.1).
+         * <code>&#123;&#125;</code>. Empty while {@code identifier} is {@code minecraft:geometry.full_block} (Bedrock
+         * 26.60).
          *
          * @return the value
          */

@@ -14,8 +14,8 @@ import org.checkerframework.checker.nullness.qual.Nullable;
  * Adds per-instance metadata for this block.
  * <p>
  * Add-on JSON: {@code "minecraft:block_entity"}.
- * Server only below protocol 2193: BDS accepts it in packs but sends nothing to clients there (BDS 1.26.36.1,
- * 1.26.45.1), so those palettes leave it out and add a report warning. Sent from protocol 2193 (BDS 1.26.52.3).
+ * Server only below protocol 2193: BDS accepts it in packs but sends nothing to clients there (Bedrock 26.30,
+ * 26.40), so those palettes leave it out and add a report warning. Sent from protocol 2193 (Bedrock 26.50).
  *
  * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/blockreference/examples/blockcomponents/minecraftblock_block_entity?view=minecraft-bedrock-stable">Microsoft Learn: minecraft:block_entity</a>
  * @since 1.0.0
@@ -63,8 +63,8 @@ public final class BlockEntity implements BlockComponent {
     }
 
     /**
-     * (bds-schema 1.26.63.1) BDS accepts this key; the creator docs do not list it. Add-on JSON {@code
-     * entity_storage}. Optional (null: not set).
+     * (bds-schema 26.60) BDS accepts this key; the creator docs do not list it. Add-on JSON {@code entity_storage}.
+     * Optional (null: not set).
      *
      * @return the value
      */
@@ -210,7 +210,7 @@ public final class BlockEntity implements BlockComponent {
 
         /**
          * Sets the number of slots in the container. Value must be &gt;= 1. Value must be &lt;= 54. Add-on JSON {@code
-         * slot_count}. Required. Range [1, 54] (BDS 1.26.63.1).
+         * slot_count}. Required. Range [1, 54] (Bedrock 26.60).
          *
          * @return the value
          */

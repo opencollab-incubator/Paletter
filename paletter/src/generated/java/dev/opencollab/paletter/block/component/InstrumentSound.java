@@ -19,8 +19,8 @@ import org.checkerframework.checker.nullness.qual.Nullable;
  * component to be valid. "note.none" can be used to specify no sound for a face.
  * <p>
  * Add-on JSON: {@code "minecraft:instrument_sound"}.
- * Server only: BDS accepts it in packs but sends nothing to clients (BDS 1.26.36.1, 1.26.45.1, 1.26.52.3,
- * 1.26.63.1, 1.26.70.24), so it has no client effect. Palettes leave it out without a warning.
+ * Server only: BDS accepts it in packs but sends nothing to clients (Bedrock 26.30, 26.40, 26.50, 26.60, 26.70),
+ * so it has no client effect. Palettes leave it out without a warning.
  * The creator docs name the experiment experimental (toggle not named) for it (in some format versions); unverified against BDS.
  * Unverified: the creator docs name experiment "experimental (toggle not named)", which is in no capture.
  *

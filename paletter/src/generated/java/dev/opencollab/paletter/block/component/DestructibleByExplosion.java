@@ -15,8 +15,8 @@ import org.checkerframework.checker.nullness.qual.Nullable;
  * omitted, the block will have the default explosion resistance.
  * <p>
  * Add-on JSON: {@code "minecraft:destructible_by_explosion"}.
- * Server only: BDS accepts it in packs but sends nothing to clients (BDS 1.26.36.1, 1.26.45.1, 1.26.52.3,
- * 1.26.63.1, 1.26.70.24), so it has no client effect. Palettes leave it out without a warning.
+ * Server only: BDS accepts it in packs but sends nothing to clients (Bedrock 26.30, 26.40, 26.50, 26.60, 26.70),
+ * so it has no client effect. Palettes leave it out without a warning.
  *
  * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/blockreference/examples/blockcomponents/minecraftblock_destructible_by_explosion?view=minecraft-bedrock-stable">Microsoft Learn: minecraft:destructible_by_explosion</a>
  * @since 1.0.0
@@ -42,7 +42,7 @@ public final class DestructibleByExplosion implements BlockComponent {
      * Sets the explosion resistance for the block. Greater values result in greater resistance to explosions. The
      * scale will be different for different explosion power levels. A value of 0 means it will easily explode;
      * larger numbers increase level of resistance. Add-on JSON {@code explosion_resistance}. Default:
-     * <code>0</code>. At least 0 (BDS 1.26.63.1).
+     * <code>0</code>. At least 0 (Bedrock 26.60).
      *
      * @return the value
      */

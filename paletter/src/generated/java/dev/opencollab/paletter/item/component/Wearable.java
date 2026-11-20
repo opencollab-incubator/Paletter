@@ -52,7 +52,7 @@ public final class Wearable implements ItemComponent {
 
     /**
      * How much protection the wearable item provides. Default is set to 0. Add-on JSON {@code protection}. Default:
-     * <code>0</code>. At least 0 (BDS 1.26.63.1).
+     * <code>0</code>. At least 0 (Bedrock 26.60).
      *
      * @return the value
      */

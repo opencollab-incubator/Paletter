@@ -33,7 +33,7 @@ public final class Compostable implements ItemComponent {
     /**
      * The chance of this item to create a layer upon composting with the composter. Valid value range is 1 - 100
      * inclusive Value must be &gt;= 1. Value must be &lt;= 100. Add-on JSON {@code composting_chance}. Required.
-     * Range [1, 100] (BDS 1.26.63.1).
+     * Range [1, 100] (Bedrock 26.60).
      *
      * @return the value
      */

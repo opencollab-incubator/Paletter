@@ -32,7 +32,7 @@ public final class StorageWeightLimit implements ItemComponent {
 
     /**
      * The maximum allowed weight of the sum of all contained items. Maximum is 64. Default is 64. Value must be
-     * &lt;= 64. Add-on JSON {@code max_weight_limit}. Default: <code>64</code>. At most 64 (BDS 1.26.63.1).
+     * &lt;= 64. Add-on JSON {@code max_weight_limit}. Default: <code>64</code>. At most 64 (Bedrock 26.60).
      *
      * @return the value
      */

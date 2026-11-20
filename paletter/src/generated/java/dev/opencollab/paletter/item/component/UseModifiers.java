@@ -61,7 +61,7 @@ public final class UseModifiers implements ItemComponent {
 
     /**
      * Multiplier applied to the player's movement speed while the item is in use. Value must be &lt;= 1. Add-on JSON
-     * {@code movement_modifier}. Optional (null: not set). Range [0, 1] (BDS 1.26.63.1).
+     * {@code movement_modifier}. Optional (null: not set). Range [0, 1] (Bedrock 26.60).
      *
      * @return the value
      */
@@ -97,7 +97,7 @@ public final class UseModifiers implements ItemComponent {
 
     /**
      * Time, in seconds, that the item takes to use. Add-on JSON {@code use_duration}. Default: <code>0</code>. At
-     * least 0 (BDS 1.26.63.1).
+     * least 0 (Bedrock 26.60).
      *
      * @return the value
      */

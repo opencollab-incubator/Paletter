@@ -35,7 +35,7 @@ public final class Damage implements ItemComponent {
 
     /**
      * The amount of extra damage this item deals when attacking. This value is added to the base attack damage. Must
-     * be a positive integer. Add-on JSON {@code value}. Optional (null: not set). Range [0, 32767] (BDS 1.26.63.1).
+     * be a positive integer. Add-on JSON {@code value}. Optional (null: not set). Range [0, 32767] (Bedrock 26.60).
      *
      * @return the value
      */

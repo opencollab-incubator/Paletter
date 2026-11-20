@@ -59,7 +59,7 @@ public final class PlacementDirection implements BlockTrait {
     /**
      * The y rotation offset to apply to the block. Must be [0.0, 90.0, 180.0, 270.0]. Default is 0, meaning if the
      * player is facing north, the "minecraft:cardinal_direction" and/or minecraft:facing_direction state will be
-     * north. Add-on JSON {@code y_rotation_offset}. Optional (null: not set). Range [0, 360] (BDS 1.26.63.1).
+     * north. Add-on JSON {@code y_rotation_offset}. Optional (null: not set). Range [0, 360] (Bedrock 26.60).
      *
      * @return the value
      */

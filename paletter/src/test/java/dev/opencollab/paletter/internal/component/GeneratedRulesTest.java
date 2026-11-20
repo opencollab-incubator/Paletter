@@ -77,7 +77,7 @@ class GeneratedRulesTest {
         assertEquals((byte) 9, now.getByte("slot_count"));
         assertEquals("Box", now.getString("title"));
 
-        NbtMap before = block(titled, at(ComponentIndex.BDS_1_26_52_3)).getCompound("minecraft:container");
+        NbtMap before = block(titled, at(ComponentIndex.V26_50)).getCompound("minecraft:container");
         assertEquals((byte) 9, before.getByte("slot_count"));
         assertFalse(before.containsKey("title"), "BDS 1.26.52.3 rejects the title");
     }

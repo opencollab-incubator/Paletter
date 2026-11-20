@@ -432,7 +432,7 @@ public final class MaterialInstances implements BlockComponent {
         /**
          * If this material has ambient occlusion applied when lighting, shadows will be created around and underneath
          * the block. Decimal value controls exponent applied to a value after lighting. Add-on JSON {@code
-         * ambient_occlusion}. Optional (null: not set). Range [0, 10] (BDS 1.26.63.1).
+         * ambient_occlusion}. Optional (null: not set). Range [0, 10] (Bedrock 26.60).
          *
          * @return the value
          */
@@ -494,7 +494,7 @@ public final class MaterialInstances implements BlockComponent {
         }
 
         /**
-         * (bds-schema 1.26.63.1) BDS accepts this key; the creator docs do not list it. BDS names the format version
+         * (bds-schema 26.60) BDS accepts this key; the creator docs do not list it. BDS names the format version
          * 1.21.120 for it. Add-on JSON {@code alpha_masked_tint}. Optional (null: not set).
          *
          * @return the value

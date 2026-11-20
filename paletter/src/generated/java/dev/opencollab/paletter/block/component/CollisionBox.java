@@ -95,7 +95,7 @@ public final class CollisionBox implements BlockComponent {
     }
 
     /**
-     * The object form: one entry, the same as a list of that entry in {@code boxes}. BDS rejects this form since 1.26.63.1 (protocol 2225); the list is accepted by every captured BDS.
+     * The object form: one entry, the same as a list of that entry in {@code boxes}. BDS rejects this form since Bedrock 26.60 (protocol 2225); the list is accepted by every captured BDS.
      *
      * @param entry the one entry
      * @return the value with everything else at its default

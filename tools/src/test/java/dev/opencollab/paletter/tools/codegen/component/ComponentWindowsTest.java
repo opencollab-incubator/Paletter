@@ -10,6 +10,7 @@ import java.util.Map;
 import java.util.function.Consumer;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
@@ -102,7 +103,8 @@ class ComponentWindowsTest {
         Map<String, String> files = ComponentGenerator.generate(in);
         String source = files.get("dev/opencollab/paletter/item/component/Gadget.java");
         assertTrue(source.contains("@Deprecated"), source);
-        assertTrue(source.contains("rejected by BDS since 9.9.9 (protocol 200): test:gadget: gone"), source);
+        // no data version for the capture here: the protocol alone (public Javadoc names no BDS build)
+        assertTrue(source.contains("rejected by BDS since protocol 200: test:gadget: gone"), source);
         assertTrue(source.contains("@deprecated replaced by {@link Widget}"), source);
         assertTrue(files.get("dev/opencollab/paletter/internal/component/ItemWire.java")
             .contains("ctx.drop(Gadget.NAME, \"is not sent to clients (BDS: rejected)\")"));
@@ -250,6 +252,7 @@ class ComponentWindowsTest {
         for (int p : new int[]{200, 100, 150}) {
             JsonObject c = new JsonObject();
             c.addProperty("bdsVersion", "1." + p);
+            c.addProperty("dataVersion", "0." + p);
             c.addProperty("protocol", p);
             c.addProperty("windowProtocol", p - 1);
             captures.add(c);
@@ -269,8 +272,9 @@ class ComponentWindowsTest {
         String index = ComponentGenerator.generate(in).get("dev/opencollab/paletter/internal/component/ComponentIndex.java");
         assertTrue(index.contains("int OLDEST_CAPTURED_PROTOCOL = 100;"), index);
         assertTrue(index.contains("int NEWEST_CAPTURED_PROTOCOL = 200;"), index);
-        // the window of each capture, for the protocol checks of the hand transforms
-        assertTrue(index.contains("int BDS_1_150 = 149;"), index);
+        // the window of each capture, for the protocol checks of the hand transforms, named by its data version
+        assertTrue(index.contains("int V0_150 = 149;"), index);
+        assertFalse(index.contains("BDS_1_150"), index);
     }
 
     @Test

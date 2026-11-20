@@ -88,7 +88,7 @@ public final class Transforms {
         if (c.enabled() != null) {
             return;
         }
-        boolean mirrorX = ctx.protocol() >= ComponentIndex.BDS_1_26_63_1;
+        boolean mirrorX = ctx.protocol() >= ComponentIndex.V26_60;
         out.put("minecraft:collision_box.enabled", (byte) 1);
         out.list("minecraft:collision_box.boxes");
         for (CollisionBox.Entry box : c.boxes()) {
@@ -105,7 +105,7 @@ public final class Transforms {
             b.put("minY", Math.min(y1, y2)).put("maxY", Math.max(y1, y2));
             b.put("minZ", Math.min(z1, z2)).put("maxZ", Math.max(z1, z2));
         }
-        if (ctx.protocol() >= ComponentIndex.BDS_1_26_70_24) {
+        if (ctx.protocol() >= ComponentIndex.V26_70) {
             out.put("minecraft:collision_box.shape", "");
             out.put("minecraft:collision_box.useVoxelShapes", (byte) 0);
         }
@@ -126,7 +126,7 @@ public final class Transforms {
         NbtMapBuilder geometry = geometry(c.identifier(), boneVisibility(ctx, Geometry.NAME, c.boneVisibility()), c.culling(), c.cullingLayer(),
             c.cullingShape(), c.uvLock()).toBuilder();
         Geometry.NWayVisualRotation rotation = c.nWayVisualRotation();
-        if (rotation != null && ctx.protocol() >= ComponentIndex.BDS_1_26_63_1) {
+        if (rotation != null && ctx.protocol() >= ComponentIndex.V26_60) {
             geometry.putCompound("n_way_visual_rotation", rotation(rotation.x(), rotation.y(), rotation.z()));
         }
         out.put("minecraft:geometry", geometry.build());
@@ -145,7 +145,7 @@ public final class Transforms {
             geometry.remove(flag);
         }
         EmbeddedVisual.NWayVisualRotation rotation = g.nWayVisualRotation();
-        if (rotation != null && ctx.protocol() >= ComponentIndex.BDS_1_26_63_1) {
+        if (rotation != null && ctx.protocol() >= ComponentIndex.V26_60) {
             geometry.putCompound("n_way_visual_rotation", rotation(rotation.x(), rotation.y(), rotation.z()));
         }
         out.put("minecraft:embedded_visual.geometry", geometry.build());
@@ -187,7 +187,7 @@ public final class Transforms {
         if (bones == null || bones.isEmpty()) {
             return visibility.build();
         }
-        boolean compound = ctx.protocol() < ComponentIndex.BDS_1_26_45_1;
+        boolean compound = ctx.protocol() < ComponentIndex.V26_40;
         short version = 0;
         if (compound) {
             WireNode envelope = new WireNode();
@@ -461,7 +461,7 @@ public final class Transforms {
      * 1.26.45.1 and later as a string.
      */
     public static void itemDescriptorList(@NonNull WireContext ctx, @NonNull WireNode out, @NonNull Repairable c) {
-        boolean molangCompound = ctx.protocol() < ComponentIndex.BDS_1_26_45_1;
+        boolean molangCompound = ctx.protocol() < ComponentIndex.V26_40;
         out.list("minecraft:repairable.repair_items");
         for (Repairable.RepairItems entry : c.repairItems()) {
             List<String> items = entry.items() instanceof ItemsOrTags.Items list ? list.value() : List.of();

@@ -15,8 +15,8 @@ import org.checkerframework.checker.nullness.qual.Nullable;
  * not available for block permutations.
  * <p>
  * Add-on JSON: {@code "minecraft:redstone_consumer"}.
- * Server only: BDS accepts it in packs but sends nothing to clients (BDS 1.26.36.1, 1.26.45.1, 1.26.52.3,
- * 1.26.63.1, 1.26.70.24), so it has no client effect. Palettes leave it out without a warning.
+ * Server only: BDS accepts it in packs but sends nothing to clients (Bedrock 26.30, 26.40, 26.50, 26.60, 26.70),
+ * so it has no client effect. Palettes leave it out without a warning.
  * The creator docs name the experiment Upcoming Creator Features for it (in some format versions); unverified against BDS.
  *
  * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/blockreference/examples/blockcomponents/minecraftblock_redstone_consumer?view=minecraft-bedrock-stable">Microsoft Learn: minecraft:redstone_consumer</a>
@@ -44,7 +44,7 @@ public final class RedstoneConsumer implements BlockComponent {
     /**
      * Optional minimum value for incoming signal strength. If signal strength is greater than or equal to this value
      * then the 'onRedstoneUpdate' event is sent to Scripts. Defaults to 0 meaning event is always emitted. Value
-     * must be &lt;= 15. Add-on JSON {@code min_power}. Default: <code>0</code>. At most 15 (BDS 1.26.63.1).
+     * must be &lt;= 15. Add-on JSON {@code min_power}. Default: <code>0</code>. At most 15 (Bedrock 26.60).
      *
      * @return the value
      */

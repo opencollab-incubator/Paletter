@@ -50,7 +50,7 @@ public final class Durability implements ItemComponent {
 
     /**
      * Max durability is the amount of damage that this item can take before breaking. This is a required parameter
-     * and has a minimum of 0. Add-on JSON {@code max_durability}. Required. At least 0 (BDS 1.26.63.1).
+     * and has a minimum of 0. Add-on JSON {@code max_durability}. Required. At least 0 (Bedrock 26.60).
      *
      * @return the value
      */
@@ -172,8 +172,8 @@ public final class Durability implements ItemComponent {
         }
 
         /**
-         * Add-on JSON {@code max}. Default: <code>100</code>. Range [0, 100] (BDS 1.26.63.1). Not below {@code min} (BDS
-         * 1.26.63.1).
+         * Add-on JSON {@code max}. Default: <code>100</code>. Range [0, 100] (Bedrock 26.60). Not below {@code min}
+         * (Bedrock 26.60).
          *
          * @return the value
          */
@@ -182,7 +182,7 @@ public final class Durability implements ItemComponent {
         }
 
         /**
-         * Add-on JSON {@code min}. Default: <code>100</code>. Range [0, 100] (BDS 1.26.63.1).
+         * Add-on JSON {@code min}. Default: <code>100</code>. Range [0, 100] (Bedrock 26.60).
          *
          * @return the value
          */

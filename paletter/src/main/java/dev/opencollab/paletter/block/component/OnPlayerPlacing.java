@@ -9,7 +9,7 @@ import java.util.Objects;
  * no behavior pack handles makes the client not predict the placement itself, which stops it from sometimes placing a
  * block twice (what Geyser uses it for).
  * <p>
- * Retired from the add-on format (Bedrock Dedicated Server 1.26.63.1 rejects it at every {@code format_version}). Paletter
+ * Retired from the add-on format (the Bedrock Dedicated Server of Bedrock 26.60 rejects it at every {@code format_version}). Paletter
  * assumes current clients still honour it on the wire and keeps sending it for legacy content; it will be removed if
  * clients stop honouring it. Sent as {@code {triggerType: <string>}}.
  *

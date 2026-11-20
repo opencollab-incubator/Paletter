@@ -55,16 +55,16 @@ public final class ComponentIndex {
     public static final int NEWEST_CAPTURED_PROTOCOL = 200;
 
     /**
-     * The first protocol of the window of the spec capture of BDS 8.8.8 ({@code data/bds/8.8.8/spec}): what the hand
-     * transforms compare {@code WireContext.protocol()} with where that build changed the wire.
+     * The first protocol of data version 8.8, the window of its spec capture of BDS 8.8.8 ({@code data/bds/8.8.8/spec}): what
+     * the hand transforms compare {@code WireContext.protocol()} with where that version changed the wire.
      */
-    public static final int BDS_8_8_8 = 100;
+    public static final int V8_8 = 100;
 
     /**
-     * The first protocol of the window of the spec capture of BDS 9.9.9 ({@code data/bds/9.9.9/spec}): what the hand
-     * transforms compare {@code WireContext.protocol()} with where that build changed the wire.
+     * The first protocol of data version 9.9, the window of its spec capture of BDS 9.9.9 ({@code data/bds/9.9.9/spec}): what
+     * the hand transforms compare {@code WireContext.protocol()} with where that version changed the wire.
      */
-    public static final int BDS_9_9_9 = 200;
+    public static final int V9_9 = 200;
 
     /**
      * The {@code vanilla_block_data.block_id} of the first custom block: BDS numbers custom blocks from here, in

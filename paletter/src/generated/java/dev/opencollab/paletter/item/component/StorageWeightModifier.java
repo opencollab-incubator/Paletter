@@ -32,7 +32,7 @@ public final class StorageWeightModifier implements ItemComponent {
 
     /**
      * The weight of this item when inside another Storage Item. Default is 4. 0 means item is not allowed in another
-     * Storage Item. Add-on JSON {@code weight_in_storage_item}. Default: <code>4</code>. At least 0 (BDS 1.26.63.1).
+     * Storage Item. Add-on JSON {@code weight_in_storage_item}. Default: <code>4</code>. At least 0 (Bedrock 26.60).
      *
      * @return the value
      */

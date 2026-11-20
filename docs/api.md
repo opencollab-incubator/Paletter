@@ -13,7 +13,8 @@ part of it too.
 
 Simple names are unique across the public API (a test fails on a duplicate). When two types would share one, the generated
 one gets a `Block` or `Item` prefix: `BlockDisplayName`/`ItemDisplayName`, `BlockMenuCategory`/`ItemMenuCategory`. The
-generator finds those names itself.
+generator finds those names itself, and never renames an existing type for a new one: the newcomer gets the prefix
+([Evolution](#evolution)).
 
 Not API:
 
@@ -66,6 +67,11 @@ deprecation warnings, not compile errors. The API is shaped so that the compiler
   a new variant in a minor release then lands in that `default` instead of failing the build or throwing
   `MatchException`. Pattern matching and `instanceof` work as before. The types Paletter defines (`ItemKey`,
   `BedrockState`, `ItemMatcher`, `CreativePlacement`, ...) stay plainly sealed: they are closed by definition.
+- **Generated names are locked.** `data/model/api-history.json` records every Java name of the component API by a stable
+  identity (component id, JSON path, value). A recorded name is reused, never recomputed: a restructure of the creator
+  docs or a new component renames nothing, and a new name collision gives the `Block`/`Item` prefix to the newcomer. A
+  field whose add-on JSON key Bedrock renames keeps its old accessor and builder setter as `@Deprecated` delegates.
+  Vanilla constants have the same in `constants-history.json`: a removed one stays, deprecated.
 - **Vanilla state enums stay Java enums** (`vanilla.state`): they are read and switched, and the bundled data always
   matches them. They gain constants in minor releases, so a switch over one needs a `default`.
   `BedrockBlockState#raw(BedrockState)` reads a state's value as Bedrock sends it and never throws.

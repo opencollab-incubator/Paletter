@@ -58,8 +58,7 @@ final class TypeBuilder {
         Field f = new Field();
         f.path = d.path;
         f.json = ModelFields.token(d.path);
-        String renamed = hand.apiString("fields", c.id + ":" + d.path);
-        f.java = renamed != null ? renamed : JavaNames.camel(f.json);
+        f.java = hand.history.name("fields", c.id + ":" + d.path, JavaNames.camel(f.json), hand.apiString("fields", c.id + ":" + d.path));
         JavaNames.javaName(f.java, c.id + " " + d.path);
         f.doc = d.doc;
         f.minFormat = d.minFormat;
@@ -142,7 +141,7 @@ final class TypeBuilder {
                 return single(c, d, map, fields);
             }
             if (kinds.contains("string") && kinds.stream().allMatch(k -> k.equals("string") || k.startsWith("map<string"))) {
-                return scalarType(c, "string", JavaNames.camel(ModelFields.token(d.path)), d.enumValues);
+                return scalarType(c, "string", JavaNames.camel(ModelFields.token(d.path)), d.enumValues, d.path);
             }
             throw new GenerationException("ambiguous union: " + c.id + " " + d.path + " is " + String.join(" | ", kinds)
                 + "; settle it in api.json unions");
@@ -161,7 +160,7 @@ final class TypeBuilder {
         String type = t.get("type").getAsString();
         String name = JavaNames.camel(ModelFields.token(d.path));
         return switch (type) {
-            case "boolean", "integer", "number", "string" -> scalarType(c, type, name, enumValuesOf(c, d));
+            case "boolean", "integer", "number", "string" -> scalarType(c, type, name, enumValuesOf(c, d), d.path);
             case "vec3" -> {
                 c.usesVec3 = true;
                 yield new Vec3();
@@ -199,7 +198,7 @@ final class TypeBuilder {
                 if (itemType.equals("any") || itemType.equals("array")) {
                     throw new GenerationException("unsupported type: " + c.id + " " + d.path + " is " + ModelFields.typeString(t) + "; exclude or type it in api.json");
                 }
-                yield new ListOf(scalarType(c, itemType, name, enumValuesOf(c, d)));
+                yield new ListOf(scalarType(c, itemType, name, enumValuesOf(c, d), d.path));
             }
             case "map" -> {
                 JsonObject items = t.getAsJsonObject("items");
@@ -231,7 +230,16 @@ final class TypeBuilder {
         return hand.listed("openEnums", c.id + ":" + d.path);
     }
 
+    /** A scalar type without documented values (a value form, a union's form). */
     Type scalarType(Comp c, String type, String fieldName, List<JsonElement> enumValues) {
+        if (!enumValues.isEmpty()) {
+            throw new GenerationException(c.id + " " + fieldName + ": documented values need the field's path");
+        }
+        return scalarType(c, type, fieldName, enumValues, null);
+    }
+
+    /** @param path the JSON path of the field, the identity of its value class in {@code api-history.json} */
+    Type scalarType(Comp c, String type, String fieldName, List<JsonElement> enumValues, String path) {
         return switch (type) {
             case "boolean" -> new Scalar(ScalarKind.BOOL);
             case "integer" -> new Scalar(ScalarKind.INT);
@@ -240,17 +248,15 @@ final class TypeBuilder {
                 if (enumValues.isEmpty()) {
                     yield new Scalar(ScalarKind.STRING);
                 }
-                yield new EnumRef(enumType(c, JavaNames.pascal(fieldName), enumValues));
+                yield new EnumRef(enumType(c, JavaNames.pascal(fieldName), enumValues, path));
             }
             default -> throw new GenerationException("unsupported type: " + c.id + " " + fieldName + " is " + type);
         };
     }
 
-    EnumType enumType(Comp c, String name, List<JsonElement> values) {
-        String renamed = hand.apiString("enums", c.id + ":" + name);
-        if (renamed != null) {
-            name = renamed;
-        }
+    EnumType enumType(Comp c, String computed, List<JsonElement> values, String path) {
+        String key = c.id + ":" + path;
+        String name = hand.history.name("enums", key, computed, hand.apiString("enums", c.id + ":" + computed));
         List<String> strings = values.stream().map(JsonElement::getAsString).toList();
         EnumType existing = c.enums.get(name);
         if (existing != null) {
@@ -263,7 +269,7 @@ final class TypeBuilder {
         e.name = name;
         Set<String> constants = new LinkedHashSet<>();
         for (String value : strings) {
-            String constant = JavaNames.constant(value);
+            String constant = hand.history.name("constants", key + "=" + value, JavaNames.constant(value), null);
             if (!constants.add(constant)) {
                 throw new GenerationException("name collision: " + c.id + " enum " + name + " has two values named " + constant);
             }
@@ -279,9 +285,10 @@ final class TypeBuilder {
         if (renamed == null && hand.in.api().has("typeNames") && hand.in.api().getAsJsonObject("typeNames").has(c.id + ":" + path)) {
             renamed = hand.in.api().getAsJsonObject("typeNames").get(c.id + ":" + path).getAsString();
         }
-        if (renamed != null) {
-            return renamed;
-        }
+        return hand.history.name("types", c.id + ":" + path, renamed != null ? renamed : computedTypeName(c, path, ref), renamed);
+    }
+
+    private static String computedTypeName(Comp c, String path, String ref) {
         if (ref != null) {
             String cleaned = ref.replaceAll("\\s*\\(.*\\)", "").trim();
             if (!cleaned.isEmpty() && cleaned.matches("[A-Za-z][A-Za-z0-9 ]*")) {

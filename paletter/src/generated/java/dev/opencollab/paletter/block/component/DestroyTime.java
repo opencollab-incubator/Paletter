@@ -12,7 +12,7 @@ import org.checkerframework.checker.nullness.qual.Nullable;
  * minecraft:destructible_by_mining in newer format versions.
  * <p>
  * Add-on JSON: {@code "minecraft:destroy_time"}.
- * Retired: rejected by every captured BDS (oldest: 1.26.36.1, protocol 1001): minecraft:destroy_time: this
+ * Retired: rejected by every captured BDS (oldest: Bedrock 26.30, protocol 1001): minecraft:destroy_time: this
  * component was found in the input, but is not present in the Schema. Its encoder writes nothing and adds a
  * report warning, as BDS would never send it to a client.
  *

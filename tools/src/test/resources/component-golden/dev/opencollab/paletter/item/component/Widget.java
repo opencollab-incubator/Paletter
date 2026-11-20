@@ -97,7 +97,7 @@ public final class Widget implements ItemComponent {
     }
 
     /**
-     * How many. Add-on JSON {@code count}. Default: <code>1</code>. Range [1, 64] (BDS 9.9.9).
+     * How many. Add-on JSON {@code count}. Default: <code>1</code>. Range [1, 64] (Bedrock 9.9).
      *
      * @return the value
      */

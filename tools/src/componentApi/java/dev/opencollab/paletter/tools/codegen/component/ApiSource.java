@@ -55,8 +55,7 @@ final class ApiSource {
     static final ClassName BEDROCK_EXPERIMENT = ClassName.get("dev.opencollab.paletter.annotation", "BedrockExperiment");
     static final ClassName SERVER_ONLY = ClassName.get("dev.opencollab.paletter.annotation", "ServerOnly");
     static final ClassName SINCE_PREVIEW = ClassName.get("dev.opencollab.paletter.annotation", "SincePreview");
-    static final ClassName BEDROCK_SINCE = ClassName.get("dev.opencollab.paletter.annotation", "BedrockSince");
-    static final ClassName REPLACED_BY = ClassName.get("dev.opencollab.paletter.annotation", "ReplacedBy");
+    static final ClassName BEDROCK_SINCE = ClassName.get("dev.opencollab.paletter.annotation", "BedrockSince");    static final ClassName REPLACED_BY = ClassName.get("dev.opencollab.paletter.annotation", "ReplacedBy");
     static final ClassName CHECK = ClassName.get("dev.opencollab.paletter.internal.component", "Check");
     static final ClassName ITEM_TYPE = ClassName.get("dev.opencollab.paletter.vanilla", "BedrockItemType");
     static final ClassName BLOCK_TYPE = ClassName.get("dev.opencollab.paletter.vanilla", "BedrockBlockType");
@@ -181,7 +180,7 @@ final class ApiSource {
         }
         doc.append("\n@since ").append(since).append('\n');
         TypeSpec.Builder type = TypeSpec.interfaceBuilder(kind.iface()).addModifiers(Modifier.PUBLIC, Modifier.SEALED)
-            .addJavadoc("$L", doc.toString());
+            .addJavadoc("$L", Docs.bedrock(model, doc.toString()));
         members.stream().map(ApiSource::className).sorted((a, b) -> a.simpleName().compareTo(b.simpleName())).forEach(type::addPermittedSubclass);
         if (kind == Kind.ITEM || kind == Kind.BLOCK) {
             type.addPermittedSubclass(ClassName.get(kind.pkg(), wireOnly(kind)));
@@ -212,9 +211,9 @@ final class ApiSource {
     private String serverOnlyDoc() {
         ApiModel.Window w = c.serverOnly;
         if (!w.bounded()) {
-            String versions = String.join(", ", model.captureVersions.values());
+            String versions = Docs.releases(model, List.copyOf(model.captureVersions.values()));
             return String.join("\n", Docs.wrap("Server only: BDS accepts it in packs but sends nothing to clients"
-                + (versions.isEmpty() ? "" : " (BDS " + versions + ")") + ", so it has no client effect. Palettes leave it out without a warning.")) + "\n";
+                + (versions.isEmpty() ? "" : " (" + versions + ")") + ", so it has no client effect. Palettes leave it out without a warning.")) + "\n";
         }
         String range = w.since() == Integer.MIN_VALUE ? "below protocol " + w.until()
             : w.until() == Integer.MAX_VALUE ? "from protocol " + w.since() : "from protocol " + w.since() + " below " + w.until();
@@ -225,13 +224,15 @@ final class ApiSource {
             }
         });
         StringBuilder text = new StringBuilder("Server only ").append(range).append(": BDS accepts it in packs but sends nothing to clients there");
-        if (!captured.isEmpty()) {
-            text.append(" (BDS ").append(String.join(", ", captured)).append(")");
+        String versions = Docs.releases(model, captured);
+        if (!versions.isEmpty()) {
+            text.append(" (").append(versions).append(")");
         }
         text.append(", so those palettes leave it out and add a report warning.");
         Map.Entry<Integer, String> sent = w.until() == Integer.MAX_VALUE ? null : model.captureVersions.ceilingEntry(w.until());
         if (sent != null) {
-            text.append(" Sent from protocol ").append(w.until()).append(" (BDS ").append(sent.getValue()).append(").");
+            String version = Docs.releases(model, List.of(sent.getValue()));
+            text.append(" Sent from protocol ").append(w.until()).append(version.isEmpty() ? "" : " (" + version + ")").append(".");
         }
         return String.join("\n", Docs.wrap(text.toString())) + "\n";
     }
@@ -244,10 +245,11 @@ final class ApiSource {
             since = "rejected by BDS";
         } else if (w.since() == Integer.MIN_VALUE) {
             Map.Entry<Integer, String> oldest = model.captureVersions.firstEntry();
-            since = "rejected by every captured BDS (oldest: " + oldest.getValue() + ", protocol " + oldest.getKey() + ")";
+            String version = Docs.releases(model, List.of(oldest.getValue()));
+            since = "rejected by every captured BDS (oldest: " + (version.isEmpty() ? "" : version + ", ") + "protocol " + oldest.getKey() + ")";
         } else {
             Map.Entry<Integer, String> first = model.captureVersions.floorEntry(w.since());
-            since = "rejected by BDS since " + (first == null ? "protocol " + w.since() : first.getValue() + " (protocol " + first.getKey() + ")");
+            since = "rejected by BDS since " + (first == null ? "protocol " + w.since() : Docs.release(model, first));
         }
         return since + (w.mapping().has("note") ? ": " + w.mapping().get("note").getAsString() : "");
     }
@@ -335,7 +337,7 @@ final class ApiSource {
                 doc.append("@deprecated marked deprecated by the Minecraft creator documentation\n");
             }
         }
-        type.addJavadoc("$L", doc.toString());
+        type.addJavadoc("$L", Docs.bedrock(model, doc.toString()));
         if (top && c.minFormat != null) {
             type.addAnnotation(AnnotationSpec.builder(BEDROCK_FORMAT).addMember("value", "$S", c.minFormat).build());
         }
@@ -347,8 +349,7 @@ final class ApiSource {
         }
         if (top && c.bedrockSince != null) {
             type.addAnnotation(AnnotationSpec.builder(BEDROCK_SINCE).addMember("value", "$S", c.bedrockSince).build());
-        }
-        if (top && c.serverOnly != null) {
+        }        if (top && c.serverOnly != null) {
             AnnotationSpec.Builder serverOnly = AnnotationSpec.builder(SERVER_ONLY);
             if (c.serverOnly.since() != Integer.MIN_VALUE) {
                 serverOnly.addMember("since", "$L", c.serverOnly.since());
@@ -391,7 +392,7 @@ final class ApiSource {
         type.addMethod(constructor.build());
         for (Field f : allFields(o)) {
             MethodSpec.Builder accessor = MethodSpec.methodBuilder(f.java).addModifiers(Modifier.PUBLIC).returns(recordType(f))
-                .addJavadoc("$L\n@return the value\n", lines(fieldDoc(f))).addStatement("return $N", f.java);
+                .addJavadoc("$L\n@return the value\n", lines(Docs.bedrock(model, fieldDoc(f)))).addStatement("return $N", f.java);
             if (f.minFormat != null) {
                 accessor.addAnnotation(AnnotationSpec.builder(BEDROCK_FORMAT).addMember("value", "$S", f.minFormat).build());
             }
@@ -399,6 +400,13 @@ final class ApiSource {
                 accessor.addAnnotation(AnnotationSpec.builder(SINCE_PREVIEW).addMember("value", "$S", f.sincePreview).build());
             }
             type.addMethod(accessor.build());
+        }
+        for (ApiHistory.Renamed r : renames(o)) {
+            type.addMethod(MethodSpec.methodBuilder(r.oldName()).addModifiers(Modifier.PUBLIC).addAnnotation(Deprecated.class)
+                .returns(recordType(r.now()))
+                .addJavadoc("Returns {@link #$L()}: this is its name from before Bedrock renamed its add-on JSON key to {@code $L}.\n\n"
+                    + "@return the value of {@link #$L()}\n@deprecated renamed to {@link #$L()}\n", r.now().java, r.now().json, r.now().java, r.now().java)
+                .addStatement("return $N()", r.now().java).build());
         }
         valueMethods(type, self, allFields(o));
 
@@ -449,6 +457,21 @@ final class ApiSource {
             }
         }
         return type.build();
+    }
+
+    /** The renamed fields of an object of this component ({@link ApiHistory#renames}): their old names delegate. */
+    private List<ApiHistory.Renamed> renames(ObjType o) {
+        List<ApiHistory.Renamed> out = new ArrayList<>();
+        for (ApiHistory.Renamed r : model.renames) {
+            if (r.c() == c && r.owner().path.equals(o.path)) {
+                if (allFields(o).stream().anyMatch(f -> f.java.equals(r.oldName()))) {
+                    throw new GenerationException(r.oldKey() + " was renamed to " + r.now().path + ", but its old name " + r.oldName()
+                        + " is a field of " + o.name + " now; name one of them in api.json fields");
+                }
+                out.add(r);
+            }
+        }
+        return out;
     }
 
     /** {@code equals}, {@code hashCode} and {@code toString} with the semantics of a record of the same fields. */
@@ -749,11 +772,11 @@ final class ApiSource {
         if (rejecting != null) {
             Map.Entry<Integer, String> first = rejecting.since() == Integer.MIN_VALUE ? null : model.captureVersions.floorEntry(rejecting.since());
             doc.append(" BDS rejects this form since ")
-                .append(first == null ? "protocol " + rejecting.since() : first.getValue() + " (protocol " + first.getKey() + ")")
+                .append(first == null ? "protocol " + rejecting.since() : Docs.release(model, first))
                 .append("; the list is accepted by every captured BDS.");
         }
         type.addMethod(MethodSpec.methodBuilder("of").addModifiers(Modifier.PUBLIC, Modifier.STATIC)
-            .addJavadoc(doc + "\n\n@param entry the one entry\n@return the value with everything else at its default\n", jsonType, target.java)
+            .addJavadoc(Docs.bedrock(model, doc.toString()) + "\n\n@param entry the one entry\n@return the value with everything else at its default\n", jsonType, target.java)
             .addParameter(nonNull(entry), "entry").returns(nonNull(name(o)))
             .addStatement("return builder().$N(entry).build()", target.java).build());
     }
@@ -805,6 +828,13 @@ final class ApiSource {
         type.addMethod(MethodSpec.constructorBuilder().addModifiers(Modifier.PRIVATE).build());
         for (Field f : allFields(o)) {
             setters(type, builder, f);
+        }
+        for (ApiHistory.Renamed r : renames(o)) {
+            type.addMethod(MethodSpec.methodBuilder(r.oldName()).addModifiers(Modifier.PUBLIC).addAnnotation(Deprecated.class)
+                .returns(nonNull(builder)).addParameter(recordType(r.now()), r.oldName())
+                .addJavadoc("Sets {@link #$L}: this is its name from before Bedrock renamed its add-on JSON key to {@code $L}.\n\n"
+                    + "@param $L the value\n@return this builder\n@deprecated renamed to {@link #$L}\n", r.now().java, r.now().json, r.oldName(), r.now().java)
+                .addStatement("return $N($N)", r.now().java, r.oldName()).build());
         }
         MethodSpec.Builder build = MethodSpec.methodBuilder("build").addModifiers(Modifier.PUBLIC).returns(nonNull(self))
             .addJavadoc("Builds the value from the fields set and the defaults.\n\n@return the value\n@throws IllegalStateException if a required field is not set\n@throws IllegalArgumentException if a value is out of range\n");

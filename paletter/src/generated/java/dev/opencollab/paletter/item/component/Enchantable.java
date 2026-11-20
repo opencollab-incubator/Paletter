@@ -49,8 +49,8 @@ public final class Enchantable implements ItemComponent {
     }
 
     /**
-     * Specifies the value of the enchantment (minimum of 0). Add-on JSON {@code value}. Required. At least 0 (BDS
-     * 1.26.63.1).
+     * Specifies the value of the enchantment (minimum of 0). Add-on JSON {@code value}. Required. At least 0
+     * (Bedrock 26.60).
      *
      * @return the value
      */

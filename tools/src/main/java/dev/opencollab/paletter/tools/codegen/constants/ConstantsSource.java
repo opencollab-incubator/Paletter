@@ -280,7 +280,7 @@ public final class ConstantsSource {
         List<String> doc = List.of(
             "The experiment toggles of Bedrock: the ids to give {@code VanillaContent#experiments(String...)} and what",
             "{@link dev.opencollab.paletter.annotation.BedrockExperiment @BedrockExperiment} names. Every toggle a captured",
-            "Bedrock Dedicated Server had current is here ({@code data/bds}); toggles retired before the oldest capture are not.",
+            "Bedrock Dedicated Server had current is here; toggles retired before the oldest capture are not.",
             "{@code @BedrockSince} is the first bundled data version whose capture has the toggle ({@code " + oldest + "} is the oldest, so it may be older),",
             "{@code @BedrockUntil} the first bundled release where it no longer does: Bedrock released or retired the experiment, and the",
             "toggle does nothing. {@link dev.opencollab.paletter.annotation.SincePreview @SincePreview} marks a toggle only a bundled preview has.",
@@ -397,7 +397,7 @@ public final class ConstantsSource {
         return List.of("<p>",
             "{@code @since} is the Paletter version that added a constant, and only written if newer than the class. The line",
             "{@code First in Bedrock} is the bundled Bedrock release it first appears in, without an experiment toggle (decided from",
-            "the BDS captures in {@code data/bds}); {@code " + oldest + "} is the oldest bundled release, so it may be older.",
+            "the captures of the Bedrock Dedicated Server); {@code " + oldest + "} is the oldest bundled release, so it may be older.",
             "{@link dev.opencollab.paletter.annotation.Education @Education} marks content BDS only offers to worlds with Education",
             "Edition features, which {@code isEducation()} of the type answers at runtime.");
     }

@@ -32,7 +32,7 @@ public final class LightDampening implements BlockComponent {
 
     /**
      * The integer form of the component (add-on JSON {@code "minecraft:light_dampening": <integer>}). Required. At
-     * most 15 (BDS 1.26.63.1).
+     * most 15 (Bedrock 26.60).
      *
      * @return the value
      */

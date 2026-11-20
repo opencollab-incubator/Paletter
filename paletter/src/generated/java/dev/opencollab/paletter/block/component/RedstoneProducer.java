@@ -59,7 +59,7 @@ public final class RedstoneProducer implements BlockComponent {
     /**
      * The strength of the redstone signal produced by this block. Valid values are from 0 to 15, where 0 means no
      * signal and 15 is the maximum signal strength. Value must be &lt;= 15. Add-on JSON {@code power}. Required. At
-     * least 0 (docs). At most 15 (BDS 1.26.63.1).
+     * least 0 (docs). At most 15 (Bedrock 26.60).
      *
      * @return the value
      */

@@ -62,7 +62,7 @@ public final class Slab implements BlockComponent {
     }
 
     /**
-     * The object form: one entry, the same as a list of that entry in {@code parts}. BDS rejects this form since 9.9.9 (protocol 200); the list is accepted by every captured BDS.
+     * The object form: one entry, the same as a list of that entry in {@code parts}. BDS rejects this form since Bedrock 9.9 (protocol 200); the list is accepted by every captured BDS.
      *
      * @param entry the one entry
      * @return the value with everything else at its default

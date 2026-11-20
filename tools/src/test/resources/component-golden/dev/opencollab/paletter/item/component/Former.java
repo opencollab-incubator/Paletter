@@ -10,8 +10,8 @@ import org.checkerframework.checker.nullness.qual.NonNull;
  * Gone.
  * <p>
  * Add-on JSON: {@code "test:former"}.
- * Retired: rejected by every captured BDS (oldest: 8.8.8, protocol 100). Its encoder writes nothing and adds a
- * report warning, as BDS would never send it to a client.
+ * Retired: rejected by every captured BDS (oldest: Bedrock 8.8, protocol 100). Its encoder writes nothing and
+ * adds a report warning, as BDS would never send it to a client.
  *
  * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/itemreference/examples/itemcomponents/test_former?view=minecraft-bedrock-stable">Microsoft Learn: test:former</a>
  * @since 1.0.0

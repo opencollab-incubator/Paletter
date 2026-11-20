@@ -28,7 +28,7 @@ class ComponentNamingTest {
     private static final String BLOCK_PKG = "dev/opencollab/paletter/block/component/";
 
     /** The synthetic model plus a block that is also called {@code widget}. */
-    private static Inputs withBlockWidget(Context context) {
+    static Inputs withBlockWidget(Context context) {
         Inputs base = ComponentGeneratorTest.inputs();
         JsonObject components = base.components();
         components.getAsJsonArray("components").add(ComponentGeneratorTest.json("""
@@ -42,7 +42,7 @@ class ComponentNamingTest {
             {"status": "sent", "wire": ["test:block_widget"], "protocols": [100, 200],
              "fields": {"size": {"status": "inferred", "rules": [{"kind": "identity", "nbt": "int", "tags": [], "wire": "test:block_widget.size"}],
                                  "whenAbsent": {"test:block_widget.size": "1 (int)"}}}}"""));
-        return new Inputs(components, base.fixtures(), base.feedback(), mappings, base.transforms(), base.api(), base.since(), context);
+        return new Inputs(components, base.fixtures(), base.feedback(), mappings, base.transforms(), base.api(), base.since()).withContext(context);
     }
 
     private static Inputs withExperiments(Context context, String... names) {
@@ -58,7 +58,8 @@ class ComponentNamingTest {
                 }
             }
         }
-        return new Inputs(base.components(), base.fixtures(), base.feedback(), base.mappings(), base.transforms(), base.api(), base.since(), context);
+        return new Inputs(base.components(), base.fixtures(), base.feedback(), base.mappings(), base.transforms(), base.api(), base.since())
+            .withContext(context);
     }
 
     @Test
