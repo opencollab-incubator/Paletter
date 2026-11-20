@@ -16,6 +16,7 @@ import dev.opencollab.paletter.tools.client.CapturedData;
 import dev.opencollab.paletter.tools.client.LevelDat;
 import dev.opencollab.paletter.tools.data.BundledFiles;
 import dev.opencollab.paletter.tools.data.Diff;
+import dev.opencollab.paletter.tools.data.Export;
 import dev.opencollab.paletter.tools.data.Checker;
 import dev.opencollab.paletter.tools.data.Importer;
 import dev.opencollab.paletter.tools.data.WireShapes;
@@ -62,7 +63,7 @@ import java.util.concurrent.Callable;
  */
 @Command(name = "paletter-tools", mixinStandardHelpOptions = true, subcommands = {
     Cli.Import.class, Cli.BdsInventoryCommand.class, Cli.BdsSchemaCommand.class, Cli.WhiteboxCommand.class, Cli.WhiteboxCoverageCommand.class, Cli.BdsCompareCommand.class, Cli.UpdateCommand.class, Cli.Builds.class, Cli.SpecCaptureCommand.class,
-    Cli.VerifyCommand.class, Cli.CheckData.class, Cli.DataDiffCommand.class, Cli.CreativeProbeCommand.class, Cli.EducationCaptureCommand.class, Cli.ExperimentMarksCommand.class,
+    Cli.VerifyCommand.class, Cli.ExportCommand.class, Cli.CheckData.class, Cli.DataDiffCommand.class, Cli.CreativeProbeCommand.class, Cli.EducationCaptureCommand.class, Cli.ExperimentMarksCommand.class,
     Cli.CaptureCommand.class, Cli.Experiments.class, Cli.CompareCommand.class,
     Cli.Docs.class, Cli.Addon.class, Cli.Infer.class, Cli.CheckMappings.class,
     Cli.Constants.class, Cli.Components.class, Cli.InspectCommand.class, Cli.BehaviourCommand.class, Cli.BehaviourProbeCommand.class, Cli.BehaviourDumpCommand.class, Cli.ScriptDumpCommand.class,
@@ -426,19 +427,57 @@ public final class Cli implements Runnable {
         @Option(names = "--source", required = true) Path source;
         @Option(names = "--name", required = true) String name;
         @Option(names = "--bundled") Path bundled;
+        @Option(names = "--against", description = "A directory written by export (what a compiled palette sends) in place of the bundled version")
+        Path against;
         @Option(names = "--report") Path report;
         @Option(names = "--max") Integer max;
 
         @Override
         public Integer call() throws Exception {
-            Path file = bundled != null ? bundled : resources().resolve(name + ".nbt");
-            Diff verify = Diff.source(source, name, readPalette(file), file.toString());
+            Diff verify;
+            if (against != null) {
+                verify = Diff.against(source, name, against);
+            } else {
+                Path file = bundled != null ? bundled : resources().resolve(name + ".nbt");
+                verify = Diff.source(source, name, readPalette(file), file.toString());
+            }
             int lines = max != null ? max : Diff.DEFAULT_MAX_LINES;
             System.out.print(verify.markdown(lines));
             if (report != null) {
                 verify.write(report, lines);
             }
             return verify.identical() ? 0 : 1;
+        }
+    }
+
+    @Command(name = "export", description = "Writes what a compiled palette of a data version sends (the block palette with each runtime id as network_id, "
+        + "the item registry, the creative content) in the file formats of CloudburstMC/Data, with a _generated marker. Compare it with a "
+        + "cb/data checkout: verify --source <cb/data> --name <version> --against <directory>.")
+    static final class ExportCommand implements Callable<Integer> {
+        @Option(names = "--name", required = true, description = "The data version, e.g. 26.60") String name;
+        @Option(names = "--out", required = true) Path out;
+        @Option(names = "--previews", description = "Also offer the preview versions") boolean previews;
+        @Option(names = "--all-experiments", description = "Enable every experiment toggle, as CloudburstMC/Data dumps") boolean allExperiments;
+
+        @Override
+        public Integer call() throws Exception {
+            dev.opencollab.paletter.Paletter paletter;
+            if (previews || allExperiments) {
+                dev.opencollab.paletter.Paletter.Builder builder = dev.opencollab.paletter.Paletter.builder().previews(previews);
+                paletter = (allExperiments ? builder.allExperiments() : builder).build();
+            } else {
+                paletter = dev.opencollab.paletter.Paletter.bundled();
+            }
+            dev.opencollab.paletter.data.DataVersion version = paletter.version(name);
+            if (version == null) {
+                System.err.println("No data version " + name + " (--previews offers the preview versions)");
+                return 1;
+            }
+            dev.opencollab.paletter.Palette palette = paletter.vanilla(version);
+            Export.write(palette, out);
+            System.out.println("Wrote " + palette.blocks().size() + " block states, " + palette.itemDefinitions().size() + " items and "
+                + palette.creative().size() + " creative entries of " + name + " to " + out);
+            return 0;
         }
     }
 

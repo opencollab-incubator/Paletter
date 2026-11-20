@@ -283,99 +283,11 @@ class DiffSourceTest {
     // Export into the CloudburstMC/Data layout (what ProxyPass and the capture client write)
 
     static void write(VanillaData data, Path directory, boolean networkIds) throws IOException {
-        List<NbtMap> blocks = new ArrayList<>();
-        for (NbtMap state : data.blockStates()) {
-            blocks.add(networkIds ? state.toBuilder().putInt("network_id", BlockHashes.hash(state)).putInt("version", 18168865).build() : state);
+        int[] ids = null;
+        if (networkIds) {
+            ids = data.blockStates().stream().mapToInt(BlockHashes::hash).toArray();
         }
-        writeGzip(directory.resolve("block_palette.nbt"), NbtMap.builder().putList("blocks", NbtType.COMPOUND, blocks).build());
-
-        JsonArray states = new JsonArray();
-        NbtMapBuilder components = NbtMap.builder();
-        for (VanillaItem item : data.items()) {
-            JsonObject json = new JsonObject();
-            json.addProperty("name", item.identifier());
-            json.addProperty("id", item.runtimeId());
-            json.addProperty("version", item.version());
-            json.addProperty("componentBased", item.componentBased());
-            states.add(json);
-            if (item.componentData() != null) {
-                components.putCompound(item.identifier(), item.componentData());
-            }
-        }
-        Files.writeString(directory.resolve("runtime_item_states.json"), new Gson().toJson(states));
-        writeGzip(directory.resolve("item_components.nbt"), components.build());
-
-        NbtMapBuilder dataDriven = NbtMap.builder();
-        data.dataDrivenBlocks().forEach(block -> dataDriven.putCompound(block.getName(), block.getProperties()));
-        writeGzip(directory.resolve("data_driven_blocks.nbt"), dataDriven.build());
-
-        JsonArray groups = new JsonArray();
-        JsonArray items = new JsonArray();
-        for (CreativeCategory category : CreativeCategory.values()) {
-            boolean looseGroupOpen = false;
-            for (RawNode node : data.creative().nodes(category)) {
-                if (node instanceof RawGroup group) {
-                    groups.add(group(group.name(), category, group.icon()));
-                    for (RawStack stack : group.stacks()) {
-                        items.add(stack(stack, groups.size() - 1));
-                    }
-                    looseGroupOpen = false;
-                } else {
-                    if (!looseGroupOpen) {
-                        groups.add(group("", category, null));
-                        looseGroupOpen = true;
-                    }
-                    items.add(stack((RawStack) node, groups.size() - 1));
-                }
-            }
-        }
-        JsonObject creative = new JsonObject();
-        creative.add("groups", groups);
-        creative.add("items", items);
-        Files.writeString(directory.resolve("creative_items.json"), new Gson().toJson(creative));
-    }
-
-    private static JsonObject group(String name, CreativeCategory category, RawStack icon) throws IOException {
-        JsonObject json = new JsonObject();
-        json.addProperty("name", name);
-        json.addProperty("category", category.bedrockName());
-        json.add("icon", icon == null ? air() : stack(icon, -1));
-        return json;
-    }
-
-    private static JsonObject air() {
-        JsonObject json = new JsonObject();
-        json.addProperty("id", "minecraft:air");
-        return json;
-    }
-
-    private static JsonObject stack(RawStack stack, int groupId) throws IOException {
-        JsonObject json = new JsonObject();
-        json.addProperty("id", stack.identifier());
-        if (stack.damage() != 0) {
-            json.addProperty("damage", stack.damage());
-        }
-        if (stack.count() != 1) {
-            json.addProperty("count", stack.count());
-        }
-        if (stack.blockState() != null) {
-            json.addProperty("block_state_b64", base64(stack.blockState()));
-        }
-        if (stack.tag() != null) {
-            json.addProperty("nbt_b64", base64(stack.tag()));
-        }
-        if (groupId >= 0) {
-            json.addProperty("groupId", groupId);
-        }
-        return json;
-    }
-
-    private static String base64(NbtMap tag) throws IOException {
-        ByteArrayOutputStream bytes = new ByteArrayOutputStream();
-        try (NBTOutputStream output = NbtUtils.createWriterLE(bytes)) {
-            output.writeTag(tag);
-        }
-        return Base64.getEncoder().encodeToString(bytes.toByteArray());
+        Export.write(data, directory, ids);
     }
 
     private static void writeGzip(Path file, NbtMap tag) throws IOException {
