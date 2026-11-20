@@ -1,0 +1,13 @@
+{
+  "_comment": "The third-party behaviour dumps `behaviour import` reads, each pinned to the commit the committed behaviour.nbt was built from. Read by `behaviour import` (BehaviourSources: a checkout at another commit fails) and by .github/workflows/recapture.yml (which fetches exactly these commits). Move a pin together with a regenerated behaviour.nbt and data/behaviour/REPORT.md.",
+  "sources": {
+    "CloudburstMC/Data": {
+      "repository": "https://github.com/CloudburstMC/Data.git",
+      "commit": "0021592b1a4253528bad1e1d8b537e306e097557"
+    },
+    "AllayMC/Allay": {
+      "repository": "https://github.com/AllayMC/Allay.git",
+      "commit": "f8c660ed3a7f773aec11536cb958c0433ecef9d6"
+    }
+  }
+}

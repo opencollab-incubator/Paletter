@@ -716,7 +716,9 @@ writes `behaviour.nbt` and `data/behaviour/REPORT.md` from:
 captures: only when they differ from the committed ones of the build. A step that fails is a FAIL, except the optional
 probes (`BehaviourStage.OPTIONAL`, listed in the report header: the behaviour probe, whose measurements come from one
 reference build), which are a skipped row and a TODO. The recapture's assemble job then runs `behaviour import` on the staged captures and on CloudburstMC/Data and
-AllayMC/Allay at the commits pinned in `.github/workflows/recapture.yml` (the ones `data/behaviour/REPORT.md` lists).
+AllayMC/Allay at the commits pinned in `data/behaviour/sources.json`. That file is the one place of the pins: the workflow
+fetches those commits, `behaviour import` fails when a checkout is at another one, and `BehaviourSourcesTest` fails when the
+workflow writes a commit of its own. Move a pin together with the regenerated `behaviour.nbt` and `REPORT.md`.
 
 The report lists the ranking, which source decides each key in each version, disputes and post-processed values. The
 same sources at the same commits give the same bytes. Keys that only have third-party sources are the `NATIVE:` ones in

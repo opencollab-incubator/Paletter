@@ -292,18 +292,21 @@ jobs:
 
       # The third-party behaviour dumps that `behaviour import` ranks below Paletter's own captures. Public repositories,
       # read as data (their git history is parsed, nothing in them is run), each at the commit the committed behaviour.nbt
-      # was built from (data/behaviour/REPORT.md, "Captures"): the same sources at the same commits give the same bytes.
-      # Move the commits together with a regenerated behaviour.nbt. A partial clone without a checkout: only the files the
-      # import reads are fetched
+      # was built from: the pins of data/behaviour/sources.json, which `behaviour import` checks the checkouts against
+      # (BehaviourSourcesTest keeps this step reading them). The same sources at the same commits give the same bytes. A
+      # partial clone without a checkout: only the files the import reads are fetched
       - name: Fetch the third-party behaviour dumps
-        env:
-          CLOUDBURST_DATA_SHA: 0021592b1a4253528bad1e1d8b537e306e097557
-          ALLAY_SHA: f8c660ed3a7f773aec11536cb958c0433ecef9d6
         run: |
-          git clone --quiet --filter=blob:none --no-checkout https://github.com/CloudburstMC/Data.git "$RUNNER_TEMP/cloudburst-data"
-          git -C "$RUNNER_TEMP/cloudburst-data" update-ref HEAD "$CLOUDBURST_DATA_SHA"
-          git clone --quiet --filter=blob:none --no-checkout https://github.com/AllayMC/Allay.git "$RUNNER_TEMP/allay"
-          git -C "$RUNNER_TEMP/allay" update-ref HEAD "$ALLAY_SHA"
+          fetch() {
+            REPO=$(jq -r --arg s "$1" '.sources[$s].repository' data/behaviour/sources.json)
+            SHA=$(jq -r --arg s "$1" '.sources[$s].commit' data/behaviour/sources.json)
+            echo "$REPO" | grep -Eq '^https://github\.com/[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+\.git$' || { echo "Bad repository for $1: '$REPO'"; exit 1; }
+            echo "$SHA" | grep -Eq '^[0-9a-f]{40}$' || { echo "Bad commit for $1: '$SHA'"; exit 1; }
+            git clone --quiet --filter=blob:none --no-checkout "$REPO" "$2"
+            git -C "$2" update-ref HEAD "$SHA"
+          }
+          fetch CloudburstMC/Data "$RUNNER_TEMP/cloudburst-data"
+          fetch AllayMC/Allay "$RUNNER_TEMP/allay"
 
       # The sequential half, with no BDS: what `update` does after the captures. Gradle runs one task at a time, as in
       # the daily check (the API dump compiles what the generator wrote)
