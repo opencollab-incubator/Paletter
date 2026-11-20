@@ -1,5 +1,6 @@
 package dev.opencollab.paletter.tools.model;
 
+import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -385,6 +386,50 @@ public final class Fixtures {
         JsonObject json = Model.GSON.toJsonTree(errata).getAsJsonObject();
         BdsErrata.apply(json, feedback, keys);
         return schema.apply(Model.GSON.fromJson(json, Model.class));
+    }
+
+    /**
+     * The errata BDS's schema makes redundant, as {@code <component> <path or forms>}: without one of them {@link #apply} gives the
+     * same component (its forms, and its fields in order with their types, default, required, values and limits; not the docs
+     * text). Such an erratum duplicates the schema and is removed from fixtures.json. Without a schema there are none: the
+     * stale check of {@link #apply} already refuses an erratum that changes nothing the docs say.
+     */
+    public List<String> redundantErrata(Model docs) {
+        List<String> redundant = new ArrayList<>();
+        if (schema == Schema.NONE) {
+            return redundant;
+        }
+        Model with = apply(docs);
+        JsonArray errata = json.getAsJsonArray("errata");
+        for (int i = 0; i < errata.size(); i++) {
+            JsonObject erratum = errata.get(i).getAsJsonObject();
+            JsonObject without = json.deepCopy();
+            without.getAsJsonArray("errata").remove(i);
+            String id = erratum.get("component").getAsString();
+            Model model = new Fixtures(without, feedback, keys, schema, bdsData).apply(docs);
+            if (same(with.component(id), model.component(id))) {
+                redundant.add(id + " " + (erratum.has("path") ? erratum.get("path").getAsString() : "forms"));
+            }
+        }
+        return redundant;
+    }
+
+    /** Whether two versions of a component say the same, but for the docs text. */
+    private static boolean same(Component a, Component b) {
+        if (!a.forms().toString().equals(b.forms().toString()) || a.fields().size() != b.fields().size()) {
+            return false;
+        }
+        for (int i = 0; i < a.fields().size(); i++) {
+            Field x = a.fields().get(i);
+            Field y = b.fields().get(i);
+            if (!x.path().equals(y.path()) || !x.types().toString().equals(y.types().toString()) || !java.util.Objects.equals(x.defaultValue(), y.defaultValue())
+                || x.required() != y.required() || !x.enumValues().equals(y.enumValues()) || !java.util.Objects.equals(x.minFormatVersion(), y.minFormatVersion())
+                || !java.util.Objects.equals(x.range() == null ? null : List.of(String.valueOf(x.range().min()), String.valueOf(x.range().max())),
+                    y.range() == null ? null : List.of(String.valueOf(y.range().min()), String.valueOf(y.range().max())))) {
+                return false;
+            }
+        }
+        return true;
     }
 
     /** The sections of fixtures.json and api.json whose keys start with a component id ({@code item:minecraft:food:path}). */

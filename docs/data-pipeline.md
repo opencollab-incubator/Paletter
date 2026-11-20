@@ -732,7 +732,8 @@ so it runs even when `paletter` does not compile.
 Inputs, all in `data/model` except the last:
 
 - `components.json`: components, fields, defaults, docs text.
-- `fixtures.json` (hand): errata, samples, `replacedBy` with evidence.
+- `fixtures.json` (hand): errata, samples, `replacedBy` with evidence. An erratum holds only what BDS's schema does not give
+  (its `schema` member says why): `HandInputTest` fails on one without which the merged model is the same (`Fixtures#redundantErrata`).
 - `bds-feedback.json`: required fields and ranges BDS enforces, which win over the docs.
 
   These three and `bds-keys.json` are read as one model, built once (`Fixtures#apply`) for the add-on generator, the
