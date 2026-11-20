@@ -5,6 +5,7 @@ import dev.opencollab.paletter.internal.PaletteReportBuilder;
 import dev.opencollab.paletter.internal.behaviour.Behaviour;
 import dev.opencollab.paletter.internal.behaviour.BehaviourStore;
 import dev.opencollab.paletter.internal.Canonicals;
+import dev.opencollab.paletter.internal.Lazy;
 import dev.opencollab.paletter.internal.Forwarding;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
@@ -128,15 +129,15 @@ public final class Palette {
     private volatile ResolvedBlock[] resolvedByCanonical;
     private volatile ResolvedBlock[] resolvedByIndex;
     /** The resolutions of states of constants the bundled release lacks and this palette too, made on first use. */
-    private volatile @Nullable Map<BedrockBlockState, ResolvedBlock> unavailableBlocks;
+    private final Lazy<Map<BedrockBlockState, ResolvedBlock>> unavailableBlocks = new Lazy<>(ConcurrentHashMap::new);
     private final int parentCanonicalSize;
     private final int parentSize;
     /** Whether the newest version, which defines the canonical ids, is this palette's: then every vanilla canonical state is in it. */
     private final boolean newestVersion;
-    private volatile CanonicalItems versionItems;
-    private volatile Map<String, NbtMap> firstStates;
+    private final Lazy<CanonicalItems> versionItems;
+    private final Lazy<Map<String, NbtMap>> firstStates;
     /** The identifiers the creative layout mentions, see {@link #creativeMentions}; made on first use. */
-    private volatile @Nullable Set<String> creativeIdentifiers;
+    private final Lazy<Set<String>> creativeIdentifiers;
     /** The palette this one extends, or is a copy of: its block states are a prefix of this one's. Null for vanilla palettes. */
     private final @Nullable Palette parent;
 
@@ -158,6 +159,18 @@ public final class Palette {
         this.creative = creative;
         this.report = report.build(data.version());
         this.ordering = ordering;
+        this.versionItems = new Lazy<>(() -> parent != null ? parent.versionItems() : CanonicalItems.of(data));
+        this.firstStates = new Lazy<>(() -> {
+            if (parent != null) {
+                return parent.firstStates();
+            }
+            Map<String, NbtMap> firsts = new HashMap<>();
+            for (NbtMap state : data.blockStates()) {
+                firsts.putIfAbsent(BlockStates.name(state), state);
+            }
+            return firsts;
+        });
+        this.creativeIdentifiers = new Lazy<>(this::collectCreativeIdentifiers);
         // Last: the registry may be asked for the behaviour of this palette from now on
         items.bind(this);
     }
@@ -216,19 +229,18 @@ public final class Palette {
      *         sessions extending this palette ask
      */
     Set<String> creativeIdentifiers() {
-        Set<String> mentioned = creativeIdentifiers;
-        if (mentioned == null) {
-            mentioned = new HashSet<>();
-            Set<String> into = mentioned;
-            creativeLayout.forEachStack(stack -> mention(stack, into));
-            for (CreativeCategory category : CreativeCategory.values()) {
-                for (CreativeNode node : creativeLayout.nodes(category)) {
-                    if (node instanceof CreativeGroup group && group.icon() != null) {
-                        mention(group.icon(), mentioned);
-                    }
+        return creativeIdentifiers.get();
+    }
+
+    private Set<String> collectCreativeIdentifiers() {
+        Set<String> mentioned = new HashSet<>();
+        creativeLayout.forEachStack(stack -> mention(stack, mentioned));
+        for (CreativeCategory category : CreativeCategory.values()) {
+            for (CreativeNode node : creativeLayout.nodes(category)) {
+                if (node instanceof CreativeGroup group && group.icon() != null) {
+                    mention(group.icon(), mentioned);
                 }
             }
-            creativeIdentifiers = mentioned;
         }
         return mentioned;
     }
@@ -312,15 +324,7 @@ public final class Palette {
         if (type.isCustom() || type.isAvailable()) {
             return null;
         }
-        Map<BedrockBlockState, ResolvedBlock> cache = unavailableBlocks;
-        if (cache == null) {
-            synchronized (this) {
-                cache = unavailableBlocks;
-                if (cache == null) {
-                    unavailableBlocks = cache = new ConcurrentHashMap<>();
-                }
-            }
-        }
+        Map<BedrockBlockState, ResolvedBlock> cache = unavailableBlocks.get();
         ResolvedBlock resolved = cache.get(state);
         if (resolved == null) {
             BlockResolution resolution = blocks.resolveOrDefault(state.toNbt());
@@ -708,28 +712,12 @@ public final class Palette {
 
     /** The item variants of this palette's version, as written in its data. Shared with the palette this one extends. */
     CanonicalItems versionItems() {
-        CanonicalItems result = versionItems;
-        if (result == null) {
-            versionItems = result = parent != null ? parent.versionItems() : CanonicalItems.of(data);
-        }
-        return result;
+        return versionItems.get();
     }
 
     /** The first state of each block of this palette's version. Shared with the palette this one extends. */
     private Map<String, NbtMap> firstStates() {
-        Map<String, NbtMap> result = firstStates;
-        if (result == null) {
-            if (parent != null) {
-                result = parent.firstStates();
-            } else {
-                result = new HashMap<>();
-                for (NbtMap state : data.blockStates()) {
-                    result.putIfAbsent(BlockStates.name(state), state);
-                }
-            }
-            firstStates = result;
-        }
-        return result;
+        return firstStates.get();
     }
 
     /**

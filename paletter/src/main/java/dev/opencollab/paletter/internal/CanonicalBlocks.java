@@ -57,7 +57,7 @@ public final class CanonicalBlocks {
     private final String version;
     /** The default state of each block of the newest version, by block (normalized). */
     private final Map<String, NbtMap> defaultStates;
-    private volatile @Nullable Map<String, Schema> schemas;
+    private final Lazy<Map<String, Schema>> schemas = new Lazy<>(this::buildSchemas);
     /** Of a root only: its vanilla ids and those of the one other root asked about last. */
     private volatile @Nullable Translation translation;
 
@@ -357,41 +357,36 @@ public final class CanonicalBlocks {
      */
     @Internal
     public void releaseSchemas() {
-        root.schemas = null;
+        root.schemas.release();
     }
 
     /** For tests: whether the value sets are built. */
     @Internal
     public boolean hasSchemas() {
-        return root.schemas != null;
+        return root.schemas.peek() != null;
     }
 
     private Map<String, Schema> schemas() {
-        Map<String, Schema> schemas = this.schemas;
-        if (schemas == null) {
-            synchronized (this) {
-                schemas = this.schemas;
-                if (schemas == null) {
-                    Map<String, Map<String, Set<Object>>> values = new HashMap<>();
-                    Map<String, NbtMap> firsts = new HashMap<>();
-                    for (NbtMap state : this.states) {
-                        String name = BlockStates.name(state);
-                        firsts.putIfAbsent(name, state);
-                        Map<String, Set<Object>> perKey = values.computeIfAbsent(name, n -> new HashMap<>());
-                        BlockStates.states(state).forEach((key, value) -> perKey.computeIfAbsent(key, k -> new LinkedHashSet<>()).add(value));
-                    }
-                    Map<String, Schema> built = new HashMap<>();
-                    values.forEach((name, perKey) -> built.put(name, new Schema(perKey, firsts.get(name))));
-                    defaultStates.forEach((name, state) -> {
-                        if (index.indexOf(state) != -1 && built.containsKey(name)) {
-                            built.put(name, new Schema(built.get(name).values, state));
-                        }
-                    });
-                    this.schemas = schemas = Map.copyOf(built);
-                }
-            }
+        return schemas.get();
+    }
+
+    private Map<String, Schema> buildSchemas() {
+        Map<String, Map<String, Set<Object>>> values = new HashMap<>();
+        Map<String, NbtMap> firsts = new HashMap<>();
+        for (NbtMap state : this.states) {
+            String name = BlockStates.name(state);
+            firsts.putIfAbsent(name, state);
+            Map<String, Set<Object>> perKey = values.computeIfAbsent(name, n -> new HashMap<>());
+            BlockStates.states(state).forEach((key, value) -> perKey.computeIfAbsent(key, k -> new LinkedHashSet<>()).add(value));
         }
-        return schemas;
+        Map<String, Schema> built = new HashMap<>();
+        values.forEach((name, perKey) -> built.put(name, new Schema(perKey, firsts.get(name))));
+        defaultStates.forEach((name, state) -> {
+            if (index.indexOf(state) != -1 && built.containsKey(name)) {
+                built.put(name, new Schema(built.get(name).values, state));
+            }
+        });
+        return Map.copyOf(built);
     }
 
     /**

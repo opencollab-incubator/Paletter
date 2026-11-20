@@ -4,6 +4,7 @@ import dev.opencollab.paletter.Origin;
 import dev.opencollab.paletter.Palette;
 import dev.opencollab.paletter.internal.behaviour.Behaviour;
 import dev.opencollab.paletter.internal.CanonicalItems;
+import dev.opencollab.paletter.internal.Lazy;
 import dev.opencollab.paletter.internal.item.ItemInterner;
 import dev.opencollab.paletter.internal.item.ItemVariant;
 import it.unimi.dsi.fastutil.ints.IntArrayList;
@@ -84,7 +85,7 @@ public final class ItemRegistry implements DefinitionRegistry<ItemDefinition> {
     /** The definitions this registry adds or overrides; all of them for a registry without parent. */
     private final Int2ObjectMap<RegisteredItem> byRuntimeId;
     private final Map<String, RegisteredItem> byIdentifier;
-    private volatile @Nullable List<RegisteredItem> definitions;
+    private final Lazy<List<RegisteredItem>> definitions;
     private final Map<String, NbtMap> blockOverrides;
     private final Set<String> customBlockItems;
     private final Map<String, Set<String>> itemBlocks;
@@ -96,15 +97,16 @@ public final class ItemRegistry implements DefinitionRegistry<ItemDefinition> {
     private final CanonicalItems canonical;
     /** The tags this registry changes, with all their items; all tags without parent. */
     private final Map<String, List<String>> tags;
-    private volatile @Nullable Map<String, List<String>> mergedTags;
+    /** Of a registry with a parent only: the parent's tags with this registry's changes. */
+    private final Lazy<Map<String, List<String>>> mergedTags;
     private final List<CustomItem> customItems;
     private final int nextRuntimeId;
     /** Runtime ids of the parent's items that this registry renumbered: the parent's item with such an id no longer exists here. */
     private final IntSet renumbered;
-    private volatile @Nullable CanonicalTable canonicalTable;
+    private final Lazy<CanonicalTable> canonicalTable;
     private volatile @Nullable ResolvedItem defaultResolved;
     /** The resolutions of variants of constants the bundled release lacks and this registry too, made on first use. */
-    private volatile @Nullable Map<BedrockItemVariant, Optional<ResolvedItem>> unavailableItems;
+    private final Lazy<Map<BedrockItemVariant, Optional<ResolvedItem>>> unavailableItems = new Lazy<>(ConcurrentHashMap::new);
     /** The palette that owns this registry, for the behaviour of what it resolves; null until the palette is made. */
     private volatile @Nullable Palette owner;
 
@@ -156,6 +158,13 @@ public final class ItemRegistry implements DefinitionRegistry<ItemDefinition> {
         this.customItems = List.copyOf(builder.customItems);
         this.nextRuntimeId = builder.nextRuntimeId;
         this.renumbered = builder.renumbered;
+        this.definitions = new Lazy<>(this::mergeDefinitions);
+        this.mergedTags = new Lazy<>(() -> {
+            Map<String, List<String>> merged = new HashMap<>(parent.tags());
+            merged.putAll(this.tags);
+            return Collections.unmodifiableMap(merged);
+        });
+        this.canonicalTable = new Lazy<>(() -> buildCanonicalTable(null));
     }
 
     /**
@@ -255,30 +264,25 @@ public final class ItemRegistry implements DefinitionRegistry<ItemDefinition> {
      * @return all definitions in runtime id order. This is what the item component packet carries
      */
     public @NonNull List<RegisteredItem> definitions() {
-        List<RegisteredItem> result = definitions;
-        if (result == null) {
-            synchronized (this) {
-                result = definitions;
-                if (result == null) {
-                    List<RegisteredItem> merged;
-                    if (parent == null) {
-                        merged = new ArrayList<>(byRuntimeId.values());
-                    } else {
-                        Int2ObjectMap<RegisteredItem> all = new Int2ObjectOpenHashMap<>();
-                        for (RegisteredItem item : parent.definitions()) {
-                            if (!renumbered.contains(item.getRuntimeId())) {
-                                all.put(item.getRuntimeId(), item);
-                            }
-                        }
-                        all.putAll(byRuntimeId);
-                        merged = new ArrayList<>(all.values());
-                    }
-                    merged.sort(Comparator.comparingInt(RegisteredItem::getRuntimeId));
-                    definitions = result = List.copyOf(merged);
+        return definitions.get();
+    }
+
+    private List<RegisteredItem> mergeDefinitions() {
+        List<RegisteredItem> merged;
+        if (parent == null) {
+            merged = new ArrayList<>(byRuntimeId.values());
+        } else {
+            Int2ObjectMap<RegisteredItem> all = new Int2ObjectOpenHashMap<>();
+            for (RegisteredItem item : parent.definitions()) {
+                if (!renumbered.contains(item.getRuntimeId())) {
+                    all.put(item.getRuntimeId(), item);
                 }
             }
+            all.putAll(byRuntimeId);
+            merged = new ArrayList<>(all.values());
         }
-        return result;
+        merged.sort(Comparator.comparingInt(RegisteredItem::getRuntimeId));
+        return List.copyOf(merged);
     }
 
     /**
@@ -356,13 +360,7 @@ public final class ItemRegistry implements DefinitionRegistry<ItemDefinition> {
         if (parent == null) {
             return tags;
         }
-        Map<String, List<String>> result = mergedTags;
-        if (result == null) {
-            Map<String, List<String>> merged = new HashMap<>(parent.tags());
-            merged.putAll(tags);
-            mergedTags = result = Collections.unmodifiableMap(merged);
-        }
-        return result;
+        return mergedTags.get();
     }
 
     // ---- Blocks of block items ----
@@ -464,15 +462,7 @@ public final class ItemRegistry implements DefinitionRegistry<ItemDefinition> {
      * constants are few, so this stays small.
      */
     private @Nullable ResolvedItem unavailable(BedrockItemVariant variant) {
-        Map<BedrockItemVariant, Optional<ResolvedItem>> cache = unavailableItems;
-        if (cache == null) {
-            synchronized (this) {
-                cache = unavailableItems;
-                if (cache == null) {
-                    unavailableItems = cache = new ConcurrentHashMap<>();
-                }
-            }
-        }
+        Map<BedrockItemVariant, Optional<ResolvedItem>> cache = unavailableItems.get();
         Optional<ResolvedItem> resolved = cache.get(variant);
         if (resolved == null) {
             resolved = Optional.ofNullable(resolve(variant.toItemVariant()));
@@ -494,7 +484,7 @@ public final class ItemRegistry implements DefinitionRegistry<ItemDefinition> {
      */
     @Internal
     public @Nullable ResolvedItem resolve(@NonNull ItemVariant variant) {
-        CanonicalTable table = canonicalTable;
+        CanonicalTable table = canonicalTable.peek();
         if (table != null) {
             int canonicalId = canonical.index(variant);
             if (canonicalId != -1) {
@@ -716,16 +706,7 @@ public final class ItemRegistry implements DefinitionRegistry<ItemDefinition> {
     }
 
     private CanonicalTable canonicalTable() {
-        CanonicalTable result = canonicalTable;
-        if (result == null) {
-            synchronized (this) {
-                result = canonicalTable;
-                if (result == null) {
-                    canonicalTable = result = buildCanonicalTable(null);
-                }
-            }
-        }
-        return result;
+        return canonicalTable.get();
     }
 
     private static boolean sameResolution(@Nullable ResolvedItem a, @Nullable ResolvedItem b) {
@@ -1343,7 +1324,7 @@ public final class ItemRegistry implements DefinitionRegistry<ItemDefinition> {
             boolean reuse = parent != null && canReuseTable(defaultBlocks);
             ItemRegistry built = new ItemRegistry(this, defaultBlocks, multiState);
             if (reuse && built.resolvesBlockStatesAsBefore(parent.canonicalTable())) {
-                built.canonicalTable = built.buildCanonicalTable(parent.canonicalTable());
+                built.canonicalTable.preset(built.buildCanonicalTable(parent.canonicalTable()));
             }
             return built;
         }

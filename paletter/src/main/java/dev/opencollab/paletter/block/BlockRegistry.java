@@ -7,6 +7,7 @@ import dev.opencollab.paletter.internal.block.RuntimeIdTable;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 
 import dev.opencollab.paletter.internal.CanonicalBlocks;
+import dev.opencollab.paletter.internal.Lazy;
 import dev.opencollab.paletter.internal.block.BlockInterner;
 import dev.opencollab.paletter.internal.block.BlockResolution;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenCustomHashMap;
@@ -83,7 +84,7 @@ public final class BlockRegistry implements DefinitionRegistry<BlockDefinition> 
     /** The resolutions {@link #resolve(NbtMap)} made of canonical states that are not exact, by canonical id. */
     private final Map<Integer, BlockResolution> resolutions = new ConcurrentHashMap<>();
     private final @Nullable BlockRegistry parent;
-    private volatile @Nullable CanonicalTable canonicalTable;
+    private final Lazy<CanonicalTable> canonicalTable = new Lazy<>(this::buildCanonicalTable);
 
     private BlockRegistry(Table table, CanonicalBlocks canonical, Map<String, BlockFallback> fallbacks,
                          @Nullable BlockFallback defaultFallback, Set<String> missing, BlockInterner interner, @Nullable BlockRegistry parent) {
@@ -453,16 +454,7 @@ public final class BlockRegistry implements DefinitionRegistry<BlockDefinition> 
     }
 
     private CanonicalTable canonicalTable() {
-        CanonicalTable result = canonicalTable;
-        if (result == null) {
-            synchronized (this) {
-                result = canonicalTable;
-                if (result == null) {
-                    canonicalTable = result = buildCanonicalTable();
-                }
-            }
-        }
-        return result;
+        return canonicalTable.get();
     }
 
     private CanonicalTable buildCanonicalTable() {
