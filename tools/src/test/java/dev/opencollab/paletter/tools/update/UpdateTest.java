@@ -27,13 +27,6 @@ class UpdateTest {
     private static final Path ROOT = Path.of("..");
 
     @Test
-    void versionNames() {
-        assertEquals("26.70", Update.versionName("1.26.70.23"));
-        assertEquals("26.60", Update.versionName("1.26.63.1"));
-        assertEquals("26.40", Update.versionName("1.26.45.1"));
-    }
-
-    @Test
     void theConstantsOfAnUpdateHaveTheVariantNamesItStages() throws Exception {
         // update regenerates the constants from the names it stages: the committed ones give the committed constants
         Path resources = ROOT.resolve(ConstantsGenerator.DATA);
@@ -137,23 +130,19 @@ class UpdateTest {
     }
 
     @Test
-    void theExitCodeIsWrittenToTheWorkDirectory(@TempDir Path work) throws Exception {
-        // Gradle's run task reports every non-zero exit as 1: the workflow reads the file to tell decisions from failures
+    void theExitCodeTellsDecisionsFromFailures() {
+        // The workflows run the installDist launcher, which passes the code on (Gradle's run task reports any non-zero as 1)
         Report report = new Report("t");
-        assertEquals(0, Update.exitCode(report, false, work));
-        assertEquals("0\n", Files.readString(work.resolve(Update.EXIT_CODE)));
+        assertEquals(0, Update.exitCode(report, false));
 
         report.check(Report.Status.DIFF, "Blocks", "1 new");
         report.action("decide it");
-        assertEquals(Update.EXIT_TODOS, Update.exitCode(report, false, work));
-        assertEquals(Update.EXIT_TODOS + "\n", Files.readString(work.resolve(Update.EXIT_CODE)));
+        assertEquals(Update.EXIT_TODOS, Update.exitCode(report, false));
         // A verification has no decisions, only differences
-        assertEquals(1, Update.exitCode(report, true, work));
-        assertEquals("1\n", Files.readString(work.resolve(Update.EXIT_CODE)));
+        assertEquals(1, Update.exitCode(report, true));
 
         report.check(Report.Status.FAIL, "Network capture", "no answer");
-        assertEquals(1, Update.exitCode(report, false, work));
-        assertEquals("1\n", Files.readString(work.resolve(Update.EXIT_CODE)));
+        assertEquals(1, Update.exitCode(report, false));
     }
 
     @Test
@@ -161,7 +150,7 @@ class UpdateTest {
         Report report = new Report("t");
         assertFalse(RecipeStage.requireRecipeCapture(report, work));
         assertTrue(report.failed());
-        assertEquals(1, Update.exitCode(report, false, work));
+        assertEquals(1, Update.exitCode(report, false));
 
         Files.write(work.resolve(RecipeCapture.CRAFTING), new byte[0]);
         Report present = new Report("t");

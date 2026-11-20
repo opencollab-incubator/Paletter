@@ -24,6 +24,19 @@ class CaptureCodecTest {
         assertFalse(json.has("codecProtocol"));
     }
 
+    /** NEWEST is the highest codec the library ships, found without naming it: a bump of the library moves it. */
+    @Test
+    void theNewestCodecIsTheHighestTheLibraryShips() {
+        java.util.SortedSet<Integer> protocols = Capture.codecProtocols();
+        assertEquals(protocols.last().intValue(), Capture.NEWEST.getProtocolVersion());
+        // The committed captures were decoded with 2225, so the library has at least that one, and older ones besides
+        assertTrue(protocols.contains(2225), protocols.toString());
+        assertTrue(protocols.size() > 10, protocols.toString());
+        for (int protocol : protocols.tailSet(protocols.last() - 100)) {
+            assertEquals(protocol, Capture.codecFor(protocol).getProtocolVersion(), "Bedrock_v" + protocol);
+        }
+    }
+
     @Test
     void theCodecOfAProtocolTheLibraryHasIsNative() {
         int newest = Capture.NEWEST.getProtocolVersion();

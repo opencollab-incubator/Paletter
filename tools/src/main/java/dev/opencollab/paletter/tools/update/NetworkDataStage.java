@@ -1,5 +1,6 @@
 package dev.opencollab.paletter.tools.update;
 
+import dev.opencollab.paletter.tools.BuildNumber;
 import dev.opencollab.paletter.tools.data.VariantNames;
 import dev.opencollab.paletter.tools.bds.BdsDistribution;
 import dev.opencollab.paletter.tools.bds.BdsDump;
@@ -65,7 +66,7 @@ final class NetworkDataStage {
     }
 
     void networkData(BdsDistribution distribution, BdsDump dump, Runs runs, Staging staging) throws Exception {
-        String name = runs.existing != null ? runs.existing : ctx.options.getOrDefault("name", Update.versionName(distribution.version()));
+        String name = runs.existing != null ? runs.existing : ctx.options.getOrDefault("name", BuildNumber.parse(distribution.version()).dataVersion());
         ctx.report.header.put("Bundled version", runs.existing != null ? name + " (existing, same protocol)" : name + " (new protocol)");
         runs.bundledName = name;
         // The capture in the bundled format, imported into a scratch directory
@@ -162,9 +163,9 @@ final class NetworkDataStage {
             ctx.report.check(Report.Status.INFO, "Import", "dropped preview " + entry.name() + " (" + entry.protocol() + "): "
                 + (ctx.preview ? "a newer preview replaces it" : "its release is imported"));
             try (Stream<Path> dirs = Files.list(ctx.bdsData)) {
-                for (Path dir : dirs.filter(d -> d.getFileName().toString().matches("\\d+\\..*")).toList()) {
+                for (Path dir : dirs.filter(d -> BuildNumber.isBuild(d.getFileName().toString())).toList()) {
                     String build = dir.getFileName().toString();
-                    if (!build.equals(distribution.version()) && Update.versionName(build).equals(entry.name())) {
+                    if (!build.equals(distribution.version()) && BuildNumber.parse(build).inLine(entry.name())) {
                         ctx.report.repoChanges.add((ctx.verifyOnly ? "would " : "") + "remove `" + ctx.root.relativize(dir).toString().replace('\\', '/')
                             + "` (captures of the dropped preview)");
                         if (!ctx.verifyOnly) {
@@ -178,7 +179,7 @@ final class NetworkDataStage {
 
     void missingNetworkData(BdsDistribution distribution, BdsDump dump) throws IOException {
         Importer.IndexEntry latest = Importer.readIndex(ctx.resources).stream().filter(e -> !e.preview()).reduce((a, b) -> b).orElseThrow();
-        ctx.report.header.put("Bundled version", Update.versionName(distribution.version()) + " (protocol unknown: no network capture)");
+        ctx.report.header.put("Bundled version", BuildNumber.parse(distribution.version()).dataVersion() +" (protocol unknown: no network capture)");
         VanillaData previous = BundledFiles.read(ctx.resources.resolve(latest.name() + ".nbt"));
         // Item tags and block defaults are Script API data, so they can still be compared with the bundled newest release
         Map<String, NbtMap> defaults = Importer.defaults(dump, previous.blockStates());

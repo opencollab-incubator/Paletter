@@ -62,7 +62,7 @@ command takes `--help`. Paths are relative to the repository root (`--root` over
 | `creative-probe` | Runs an add-on on BDS and records the creative inventory order. |
 | `education-capture` | Records what only an Education Edition world adds (`education.json`, used for `@Education`). |
 | `recipes-capture` | Records the crafting and trim data of one build (`vanilla/crafting_data.json.gz`, `vanilla/trim_data.json`); `update` writes them too. |
-| `recipes-diff` | `--from <build> --to <build>`: diffs two committed recipe captures in `data/bds`, normalised (list layout, net ids and random UUIDs ignored): recipes added, removed and changed, mixes, trims. `update` reports the same diff, and checks that recipe items, tags, block states and net ids hold (INFO at most). A run whose own capture has no `crafting_data.json.gz` fails, and so does an unreadable recipe capture; a build without a committed recipe capture is only not compared. |
+| `recipes-diff` | `--from <build> --to <build>`: diffs two committed recipe captures in `data/bds`, normalised (list layout, net ids and random UUIDs ignored): recipes added, removed and changed, mixes, trims. `update` reports the same diff, and checks that recipe items, tags, block states and net ids hold (a FAIL when one does not). A run whose own capture has no `crafting_data.json.gz` fails, and so does an unreadable recipe capture; a build without a committed recipe capture is only not compared. |
 | `recipes-import [--check]` | The recipe captures of `data/bds` to the bundled `paletter-recipes/src/main/resources/paletter/recipes/<data version>.nbt` (item identifiers and aux values as BDS sent them, no net ids, no random UUIDs; the trim patterns and materials are in the bundle but not in the API) and `RecipeStations` (a constant per station tag of the captures, in `paletter-recipes/src/generated`). A capture belongs to the data version of the protocol in its build's `experiments.json`; a recipe kind or ingredient descriptor the bundle has no place for fails the import, and so does an item that is not in the palette of its data version, an unknown unlock context, a malformed UUID, a container mix with an aux value or an empty block state or tag. `:tools:checkRecipes` (part of `check`) runs `--check`. |
 | `inspect` | Prints `Palette#explain` for a block state or item in one or all bundled versions. |
 
@@ -115,14 +115,16 @@ each with what to do), then what the build changed; every check, the run's metad
 below. An update writes it to
 `data/bds/<build>/update-report.md` (generated, committed with the data, so a later run can be diffed against it; a run
 that changed no data file leaves the committed report and writes its own only into its work directory) and
-exits with 2 while decisions are open. As `./gradlew :tools:run` turns every non-zero exit into exit code 1, a run also
-writes its exit code to `exit-code` in its work directory. Things that stay manual:
+exits with 2 while decisions are open. `./gradlew :tools:run` turns every non-zero exit into exit code 1; the launcher of
+`./gradlew :tools:installDist` (`tools/build/install/tools/bin/tools`), which the workflows run, passes the code on. Things
+that stay manual:
 
 - reviewing wire format changes in `data/model` and the regenerated component API;
 - re-importing a protocol whose network data changed in a hotfix;
 - the order of states inside newly generated blocks, which BDS does not expose (`ReferencePalette#keyOrder` infers it from the
   previous release; check against CloudburstMC/Data with `verify` once it has the version);
-- adding a codec for a new protocol to the Cloudburst protocol library.
+- adding a codec for a new protocol to the Cloudburst protocol library;
+- the version pins and the `BDS_DATA_TOKEN` rotation, all listed in [updating.md](updating.md#pins).
 
 The capture client uses RakNet when the server answers a RakNet ping and NetherNet otherwise (1.26.70 previews only
 speak NetherNet). With `online-mode=false` no Xbox sign-in is involved.
@@ -135,7 +137,20 @@ checked one by one:
 ```
 ./gradlew :tools:run --args="builds list --from 1.26.30"            # the builds, and what data/bds/builds.json says of each
 ./gradlew :tools:run --args="builds check --from 1.26.30 --limit 1"  # check the next unchecked build
+./gradlew :tools:run --args="builds resolve --channel preview"        # the newest build the download links API names
 ```
+
+The download links API is parsed in one place, `BdsDistribution.downloadUrl`; the BDS data workflow asks `builds resolve`
+for the build it checks, so an API change fails there with the answer quoted.
+
+**Zip checksums and frozen builds.** `data/bds/builds.json` records, per kept build and platform (`win`, `linux`), the
+sha256 and size of its zip from minecraft.net (`zips`), computed from a downloaded zip and `unknown` when none was at hand;
+nothing is guessed. `BdsDistribution.zip` checks a download, and a cached zip, against it: a zip minecraft.net serves
+differently under the same name fails instead of being captured. `builds check` records them for the builds it keeps;
+`builds record` brings the record up to date with the committed data without BDS or the network (release builds with
+captures it lacks, checksums from the cache). A kept build whose zip can no longer be downloaded is frozen with the reason
+(`builds record --freeze <build>=<reason>`, `--unfreeze <build>`): its captures stay, and `builds plan` leaves it out of a
+full recapture with a `SKIPPED` line in the plan's summary.
 
 The list of builds comes from [Bedrock-OSS/BDS-Versions](https://github.com/Bedrock-OSS/BDS-Versions), since the
 download links API only names the newest build; the zips still come from minecraft.net. Each run reads the list at the
@@ -143,8 +158,14 @@ newest commit that changed it and records that commit (`listCommit`, `listDate`)
 current release of the download links API (Mojang's own, so authoritative for the newest build) joins the list when the
 list lacks it and it is newer than every listed build; the run notes that, and warns when the two disagree otherwise.
 Each recorded build says where its number came from (`source`: `BDS-Versions` or `links API`). Every build number of the list, and every
-`--from`, `--to` and `--against`, must be four (a bound: one to four) dotted numbers, since build numbers name
+`--from`, `--to` and `--against`, must be a build number (a bound: one to four dotted numbers), since build numbers name
 directories that are deleted; paths built from them are checked to stay in their directory as well.
+
+**Build numbers.** `1.<minor>.<patch>.<revision>`: four dotted numbers of at most nine digits, the first `1`
+(`1.26.63.1`; leading zeros stay, `1.21.73.01`). The data version of a build is its line, the minor and the patch rounded
+down to tens (`1.26.63.1` is `26.60`), and a preview reports its revision as a beta (`1.26.70.24` reports
+`1.26.70-beta24`). `BuildNumber` (tools) is the only code that parses, rounds or reports them; the workflows check them
+with its regex (`BUILD_RE`, kept equal to `BuildNumber.REGEX` by `BuildNumberTest`). A new format from Mojang fails there.
 
 `builds check` takes the builds of the range that the record lacks, oldest first, and runs `update --against <kept
 build>` on Windows BDS for each: the previous kept build, or the next one when nothing older is kept (the first builds
@@ -418,7 +439,9 @@ finds no version fails and says what it found. No build has the file yet (`Scrip
 `probeValues` gives a field further strings (the formatting colour names of `hover_text_color`, which no schema enum lists), and `descriptorValues` gives every block descriptor field real vanilla blocks with enum, boolean and string
 state values. They are probes, not facts: only what BDS accepts and sends is evidence. `spec-capture` also keeps the ERROR and WARN lines of the content log
 in the order BDS wrote them (`content-log.raw.txt`) beside the sorted `content-log.txt`, so that a line can later be attributed
-by the lines around it.
+by the lines around it. Every line must name a variant of the add-on (its file, or its quoted identifier) or be one of the phrasings
+in `SpecCapture.UNATTRIBUTED`, which lists the lines committed captures recorded about no single variant. Any other line fails the
+capture with the line quoted: a reworded error would otherwise name no variant and count it as accepted.
 
 **Linked fields.** One field at a time is not enough where BDS ties two fields: `damage_chance.max` below the default
 `min` is refused, `replace_block_item` is ignored unless `block` is the item itself. The content log says so, and
@@ -704,9 +727,12 @@ writes `behaviour.nbt` and `data/behaviour/REPORT.md` from:
 
 `update` (and `update --capture-only`, the capture half of a full recapture) runs `behaviour-dump`, `behaviour-probe` and
 `education-capture` on the server of its other captures, six more starts of BDS, and stages their files like the other
-captures: only when they differ from the committed ones of the build. A step that fails is a skipped row and a TODO, never
-a failed run. The recapture's assemble job then runs `behaviour import` on the staged captures and on CloudburstMC/Data and
-AllayMC/Allay at the commits pinned in `.github/workflows/recapture.yml` (the ones `data/behaviour/REPORT.md` lists).
+captures: only when they differ from the committed ones of the build. A step that fails is a FAIL, except the optional
+probes (`BehaviourStage.OPTIONAL`, listed in the report header: the behaviour probe, whose measurements come from one
+reference build), which are a skipped row and a TODO. The recapture's assemble job then runs `behaviour import` on the staged captures and on CloudburstMC/Data and
+AllayMC/Allay at the commits pinned in `data/behaviour/sources.json`. That file is the one place of the pins: the workflow
+fetches those commits, `behaviour import` fails when a checkout is at another one, and `BehaviourSourcesTest` fails when the
+workflow writes a commit of its own. Move a pin together with the regenerated `behaviour.nbt` and `REPORT.md`.
 
 The report lists the ranking, which source decides each key in each version, disputes and post-processed values. The
 same sources at the same commits give the same bytes. Keys that only have third-party sources are the `NATIVE:` ones in
@@ -745,9 +771,10 @@ it together with the new data, so the committed captures and the conformance tes
   `Fixtures#facts` and the add-on varies both (`Fixtures#disputed`: boundaries of each, values of each). `update` reports the
   disputes ("BDS schema vs content log"), the components it could not read, the keywords it does not know, and the values the
   add-on generator cut at `MAX_VALUES` ("Add-on values cut", also `valuesCut` in `capture.json`).
-- The step never blocks an import: no docs, an unreadable layout or one bad component are skipped rows, and the previous
-  committed schema (the newest build not after the one being run) is what the model merges. A `schema.json` that cannot be read
-  is no schema, with a warning.
+- In an `update` run, no docs, a layout the extract cannot read or a schema keyword it does not know is a FAIL: that is how a
+  change of the documentation generator shows, and the add-on would otherwise be generated from an older schema in silence.
+  Components it could not read are a DIFF, and the previous committed schema (the newest build not after the one being run) is
+  what the model merges for them. A committed `schema.json` that cannot be read is no schema, with a warning.
 - An `enabled_states` value no docs name a state for, such as `minecraft:sixteen_way_rotation`, adds the state of its own
   name with BDS's values (the Script API's `BlockStates.getAll()` in the newest dump that keeps BDS's value order, format 4 on);
   without one the trait state table skips (and reports) it. Its default is checked against the hash BDS sent, as every other.

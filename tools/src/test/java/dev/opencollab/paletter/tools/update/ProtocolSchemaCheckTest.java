@@ -75,6 +75,20 @@ class ProtocolSchemaCheckTest {
         assertFalse(markdown.contains("safe:"), markdown);
     }
 
+    /** Trees that name none of the decoded packets (BDS renamed its schema files) fail the check instead of passing vacuously. */
+    @Test
+    void treesWithoutAnyDecodedPacketFail(@org.junit.jupiter.api.io.TempDir Path cache) throws Exception {
+        for (int protocol : new int[] {1, 2}) {
+            Path dir = Files.createDirectories(cache.resolve("tree" + protocol).resolve("json_schemas/protocol"));
+            Files.writeString(dir.resolve("RenamedStartGame.json"), "{\"x-protocol-version\": " + protocol + "}");
+        }
+        assertEquals(2, ProtocolSchemaCheck.protocolOf(cache.resolve("tree2")), "the tree is found by any stamped file");
+        Report report = new Report("t");
+        ProtocolSchemaCheck.report(report, cache, 1, 2);
+        assertTrue(report.failed(), report.render());
+        assertTrue(report.render().contains("none of the " + ProtocolSchemaCheck.DECODED.size() + " decoded packets"), report.render());
+    }
+
     /** The real cached trees: prints what the check says for 2225 to 2259. Skipped without both trees; run with {@code :tools:whiteboxRegression --tests ProtocolSchemaCheckTest}. */
     @Test
     @Tag("binary")

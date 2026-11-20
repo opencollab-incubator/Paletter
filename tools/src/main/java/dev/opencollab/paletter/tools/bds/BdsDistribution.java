@@ -3,7 +3,7 @@ package dev.opencollab.paletter.tools.bds;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 import dev.opencollab.paletter.tools.Http;
-import dev.opencollab.paletter.tools.Versions;
+import dev.opencollab.paletter.tools.BuildNumber;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -41,7 +41,7 @@ public record BdsDistribution(String version, boolean preview, String platform, 
      * @param version a BDS version such as {@code 1.26.51.1}, or {@code null} for the newest one of the channel. Older
      *                builds stay downloadable under the same url scheme, but are not listed anywhere: the exact version
      *                (including the patch) has to be known. It names files and directories of the cache, so it must be four
-     *                dotted numbers ({@link Versions#requireBuild}), as must the newest one the links API names
+     *                dotted numbers ({@link BuildNumber}), as must the newest one the links API names
      */
     public static BdsDistribution resolve(boolean preview, String version) throws IOException, InterruptedException {
         return resolve(!BdsServer.WINDOWS, preview, version);
@@ -51,43 +51,75 @@ public record BdsDistribution(String version, boolean preview, String platform, 
     public static BdsDistribution resolve(boolean linux, boolean preview, String version) throws IOException, InterruptedException {
         String platform = (linux ? "linux" : "win") + (preview ? "-preview" : "");
         if (version != null) {
-            Versions.requireBuild(version);
+            BuildNumber.require(version);
         }
         String url = version != null
             ? "https://www.minecraft.net/bedrockdedicatedserver/bin-" + platform + "/bedrock-server-" + version + ".zip"
             : newest(linux, preview);
         String file = url.substring(url.lastIndexOf('/') + 1);
-        return new BdsDistribution(Versions.requireBuild(file.replace("bedrock-server-", "").replace(".zip", "")), preview, platform, url);
+        return new BdsDistribution(BuildNumber.require(file.replace("bedrock-server-", "").replace(".zip", "")), preview, platform, url);
     }
 
     private static String newest(boolean linux, boolean preview) throws IOException, InterruptedException {
-        String type = "serverBedrock" + (preview ? "Preview" : "") + (linux ? "Linux" : "Windows");
-        String links = Http.DEFAULT.get(LINKS);
-        for (JsonElement link : JsonParser.parseString(links).getAsJsonObject().getAsJsonObject("result").getAsJsonArray("links")) {
-            if (link.getAsJsonObject().get("downloadType").getAsString().equals(type)) {
-                return link.getAsJsonObject().get("downloadUrl").getAsString();
-            }
-        }
-        throw new IOException("No " + type + " download in " + links);
+        return downloadUrl(Http.DEFAULT.get(LINKS), "serverBedrock" + (preview ? "Preview" : "") + (linux ? "Linux" : "Windows"));
     }
 
     /**
-     * Downloads the zip into the cache unless a readable one is there. A download only replaces the cached zip once its
-     * central directory reads ({@link #checkZip}); a cached zip that does not read is downloaded again.
+     * The download url of a type in an answer of the links API ({@code result.links[]} of {@code downloadType} and
+     * {@code downloadUrl}). The one parser of that API: the BDS data workflow calls {@code builds resolve}, which uses it.
+     *
+     * @throws IOException when the answer has another shape or no such type, quoting the answer
+     */
+    static String downloadUrl(String links, String type) throws IOException {
+        try {
+            for (JsonElement link : JsonParser.parseString(links).getAsJsonObject().getAsJsonObject("result").getAsJsonArray("links")) {
+                if (link.getAsJsonObject().get("downloadType").getAsString().equals(type)) {
+                    return link.getAsJsonObject().get("downloadUrl").getAsString();
+                }
+            }
+        } catch (RuntimeException e) {
+            throw new IOException("The download links API (" + LINKS + ") answered in an unknown shape (" + e + "): " + abbreviated(links), e);
+        }
+        throw new IOException("No " + type + " download in the answer of " + LINKS + ": " + abbreviated(links));
+    }
+
+    private static String abbreviated(String text) {
+        return text.length() > 2000 ? text.substring(0, 2000) + "..." : text;
+    }
+
+    /**
+     * {@link #zip(Path, String)} checked against the sha256 that the repository's build record has for this build and
+     * platform ({@link ZipChecksums#recorded}, read from the working directory), if any.
      */
     public Path zip(Path cache) throws IOException, InterruptedException {
+        return zip(cache, ZipChecksums.recorded(Path.of("").toAbsolutePath(), platform, version));
+    }
+
+    /**
+     * Downloads the zip into the cache unless a readable one with the expected checksum is there. A download only replaces
+     * the cached zip once its central directory reads ({@link #checkZip}) and its sha256 is the expected one; a cached zip
+     * that does not read, or has another checksum, is downloaded again.
+     *
+     * @param sha256 the expected sha256, null when none is recorded
+     * @throws IOException when the downloaded zip has another sha256 than the expected one
+     */
+    public Path zip(Path cache, String sha256) throws IOException, InterruptedException {
         Path zip = zipFile(cache);
         if (Files.exists(zip)) {
             try {
                 checkZip(zip);
+                ZipChecksums.verify(zip, sha256, "The cached " + zip.getFileName());
                 return zip;
             } catch (IOException e) {
-                System.out.println("The cached " + zip + " does not read (" + e.getMessage() + "), downloading it again");
+                System.out.println("The cached " + zip + " is not usable (" + e.getMessage() + "), downloading it again");
             }
         }
         Files.createDirectories(zip.getParent());
-        System.out.println("Downloading " + url);
-        Http.DEFAULT.download(url, zip, ZIP_HEADERS, BdsDistribution::checkZip);
+        System.out.println("Downloading " + url + (sha256 == null ? " (no recorded sha256 to check it against)" : ""));
+        Http.DEFAULT.download(url, zip, ZIP_HEADERS, part -> {
+            checkZip(part);
+            ZipChecksums.verify(part, sha256, "The download of " + url);
+        });
         return zip;
     }
 
@@ -120,7 +152,7 @@ public record BdsDistribution(String version, boolean preview, String platform, 
     }
 
     /** Throws unless the zip's central directory reads and lists at least one entry: a truncated download does not. */
-    static void checkZip(Path zip) throws IOException {
+    public static void checkZip(Path zip) throws IOException {
         try (ZipFile file = new ZipFile(zip.toFile())) {
             if (file.size() == 0) {
                 throw new IOException(zip.getFileName() + " has no entries");

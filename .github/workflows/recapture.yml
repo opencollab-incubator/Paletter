@@ -13,8 +13,9 @@
 #             (an allow-list of characters, no `..`), copies them into `data/bds/<build>/` and runs the sequential half
 #             (inference, white-box coverage, code generation). It runs Gradle over data from the capture jobs, so it has
 #             no write permission and no secret either; it hands over a patch of the data paths and a report.
-#   publish   the only job with write permissions and BDS_DATA_TOKEN. Runs no Gradle, BDS or repository script, and
-#             applies only a patch confined to the data paths (the checks of bds-data.yml, word for word).
+#   publish   the only job with write permissions and BDS_DATA_TOKEN. Runs no Gradle or BDS and no repository code but
+#             the patch checks of .github/actions/apply-data-patch (shared with bds-data.yml, from the pinned checkout of
+#             the branch), and applies only a patch confined to the data paths.
 # No script of an artifact is ever run, and no value of an artifact reaches a shell as code: values are read as data
 # and matched against strict patterns.
 #
@@ -45,6 +46,10 @@ on:
         required: false
 
 permissions: {}
+
+env:
+  # A BDS build number: the format of `BuildNumber` (tools), whose test keeps this regex equal to BuildNumber.REGEX
+  BUILD_RE: '^1(\.[0-9]{1,9}){3}$'
 
 concurrency:
   group: recapture
@@ -85,11 +90,13 @@ jobs:
       - name: List the builds
         id: plan
         run: |
-          ./gradlew :tools:run --args="builds plan --output $RUNNER_TEMP/matrix.json"
+          ./gradlew :tools:run --args="builds plan --output $RUNNER_TEMP/matrix.json" | tee "$RUNNER_TEMP/plan.log"
           MATRIX=$(cat "$RUNNER_TEMP/matrix.json")
+          # Frozen builds (their zip is gone from minecraft.net) are left out of the plan, and said so
+          grep '^SKIPPED ' "$RUNNER_TEMP/plan.log" | sed 's/^/- /' >> "$GITHUB_STEP_SUMMARY" || true
           # Every value that a later job puts into a command line is checked here and again there
-          echo "$MATRIX" | jq -e '(.include | length) > 0 and ([.include[] | (.build | test("^[0-9]{1,9}(\\.[0-9]{1,9}){3}$"))
-            and (.channel | IN("release", "preview")) and (.against | test("^([0-9]{1,9}(\\.[0-9]{1,9}){3})?$"))] | all)' > /dev/null \
+          echo "$MATRIX" | jq -e --arg re "$BUILD_RE" '(.include | length) > 0 and ([.include[] | (.build | test($re))
+            and (.channel | IN("release", "preview")) and (.against | . == "" or test($re))] | all)' > /dev/null \
             || { echo "The build plan is not valid: $MATRIX"; exit 1; }
           {
             echo "matrix=$MATRIX"
@@ -100,7 +107,8 @@ jobs:
 
   capture:
     needs: plan
-    runs-on: windows-latest
+    # The image of the daily check (bds-data.yml), fixed for the same reason
+    runs-on: windows-2025
     timeout-minutes: 120
     permissions:
       contents: read
@@ -120,8 +128,8 @@ jobs:
     steps:
       - name: Check the matrix values
         run: |
-          echo "$BUILD" | grep -Eq '^[0-9]{1,9}(\.[0-9]{1,9}){3}$' || { echo "Bad build"; exit 1; }
-          echo "$AGAINST" | grep -Eq '^([0-9]{1,9}(\.[0-9]{1,9}){3})?$' || { echo "Bad against"; exit 1; }
+          echo "$BUILD" | grep -Eq "$BUILD_RE" || { echo "Bad build"; exit 1; }
+          [ -z "$AGAINST" ] || echo "$AGAINST" | grep -Eq "$BUILD_RE" || { echo "Bad against"; exit 1; }
           echo "$CHANNEL" | grep -Eqx 'release|preview' || { echo "Bad channel"; exit 1; }
       # Everything temporary lives in the runner's temp directory, never in the checkout (see bds-data.yml)
       - name: Set the temp and BDS cache directories
@@ -155,8 +163,8 @@ jobs:
 
       # The capture half of `update` (--capture-only): the captures of this build, written into a directory of their own;
       # nothing goes into the checkout. The spec add-on is generated here from the checked-out model. The behaviour dump,
-      # the behaviour probe and the education capture run in the same job (about six more starts of BDS; a failure of one
-      # is a skipped row in the report, not a failed leg)
+      # the behaviour probe and the education capture run in the same job (about six more starts of BDS; only a failure of
+      # the optional behaviour probe is a skipped row in the report instead of a failed leg)
       - name: Capture the build
         id: run
         run: |
@@ -164,17 +172,14 @@ jobs:
           OUT="$CI_TEMP/out"
           ARGS="update --channel $CHANNEL --version $BUILD --capture-only $OUT/captures"
           if [ -n "$AGAINST" ]; then ARGS="$ARGS --against $AGAINST"; fi
-          ./gradlew :tools:run --args="$ARGS"
+          # The launcher passes the tool's own exit code on (Gradle's run task reports every non-zero exit as 1)
+          ./gradlew :tools:installDist || exit 1
+          tools/build/install/tools/bin/tools $ARGS
           CODE=$?
-          # The work directory of the run holds its report and its exit code (Gradle exits with 1 on any non-zero exit)
+          # The work directory of the run holds its report
           for f in "$PALETTER_BDS_CACHE"/runs/*-"$BUILD"/report.md; do
             if [ -f "$f" ]; then cp "$f" "$OUT/report.md"; head -c 60000 "$f" >> "$GITHUB_STEP_SUMMARY"; fi
           done
-          if [ "$CODE" != 0 ]; then
-            for f in "$PALETTER_BDS_CACHE"/runs/*-"$BUILD"/exit-code; do
-              if [ -f "$f" ] && grep -Eqx '[1-9][0-9]*' "$f"; then CODE=$(grep -Exm1 '[1-9][0-9]*' "$f"); fi
-            done
-          fi
           # A capture that wrote no spec capture is no capture
           if [ "$CODE" = 0 ] && [ ! -f "$OUT/captures/spec/capture.json" ]; then
             echo "::error::The run wrote no spec capture"; CODE=1
@@ -256,7 +261,6 @@ jobs:
       - name: Stage the captures
         run: |
           IN="$RUNNER_TEMP/in"
-          BUILD_RE='^[0-9]{1,9}(\.[0-9]{1,9}){3}$'
           EXPECTED=$(printf '%s' "$MATRIX" | jq -r '.include[].build' | sort)
           FOUND=$(ls "$IN" | sed -n 's/^captures-//p' | sort)
           if [ "$EXPECTED" != "$FOUND" ]; then
@@ -287,18 +291,21 @@ jobs:
 
       # The third-party behaviour dumps that `behaviour import` ranks below Paletter's own captures. Public repositories,
       # read as data (their git history is parsed, nothing in them is run), each at the commit the committed behaviour.nbt
-      # was built from (data/behaviour/REPORT.md, "Captures"): the same sources at the same commits give the same bytes.
-      # Move the commits together with a regenerated behaviour.nbt. A partial clone without a checkout: only the files the
-      # import reads are fetched
+      # was built from: the pins of data/behaviour/sources.json, which `behaviour import` checks the checkouts against
+      # (BehaviourSourcesTest keeps this step reading them). The same sources at the same commits give the same bytes. A
+      # partial clone without a checkout: only the files the import reads are fetched
       - name: Fetch the third-party behaviour dumps
-        env:
-          CLOUDBURST_DATA_SHA: 0021592b1a4253528bad1e1d8b537e306e097557
-          ALLAY_SHA: f8c660ed3a7f773aec11536cb958c0433ecef9d6
         run: |
-          git clone --quiet --filter=blob:none --no-checkout https://github.com/CloudburstMC/Data.git "$RUNNER_TEMP/cloudburst-data"
-          git -C "$RUNNER_TEMP/cloudburst-data" update-ref HEAD "$CLOUDBURST_DATA_SHA"
-          git clone --quiet --filter=blob:none --no-checkout https://github.com/AllayMC/Allay.git "$RUNNER_TEMP/allay"
-          git -C "$RUNNER_TEMP/allay" update-ref HEAD "$ALLAY_SHA"
+          fetch() {
+            REPO=$(jq -r --arg s "$1" '.sources[$s].repository' data/behaviour/sources.json)
+            SHA=$(jq -r --arg s "$1" '.sources[$s].commit' data/behaviour/sources.json)
+            echo "$REPO" | grep -Eq '^https://github\.com/[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+\.git$' || { echo "Bad repository for $1: '$REPO'"; exit 1; }
+            echo "$SHA" | grep -Eq '^[0-9a-f]{40}$' || { echo "Bad commit for $1: '$SHA'"; exit 1; }
+            git clone --quiet --filter=blob:none --no-checkout "$REPO" "$2"
+            git -C "$2" update-ref HEAD "$SHA"
+          }
+          fetch CloudburstMC/Data "$RUNNER_TEMP/cloudburst-data"
+          fetch AllayMC/Allay "$RUNNER_TEMP/allay"
 
       # The sequential half, with no BDS: what `update` does after the captures. Gradle runs one task at a time, as in
       # the daily check (the API dump compiles what the generator wrote)
@@ -416,45 +423,20 @@ jobs:
           path: ${{ runner.temp }}/in
           merge-multiple: true
 
-      # Only patches confined to the data paths; anything else fails the job before the working tree changes
+      # Only patches confined to the data paths (the checks shared with bds-data.yml); anything else fails the job before
+      # the working tree changes
       - name: Apply the data
         id: apply
-        env:
+        uses: ./.github/actions/apply-data-patch
+        with:
+          patch: ${{ runner.temp }}/in/data.patch
           # Whether the token that makes the build run on the pull request is set (never the token itself)
-          HAS_TOKEN: ${{ secrets.BDS_DATA_TOKEN != '' }}
-        run: |
-          PATCH="$RUNNER_TEMP/in/data.patch"
-          if [ ! -s "$PATCH" ]; then echo "No data changes"; echo "changed=false" >> "$GITHUB_OUTPUT"; exit 0; fi
-          # One path per file (renames are rejected below); a quoted path with unusual characters fails the check below
-          git apply --numstat "$PATCH" | cut -f3 > "$RUNNER_TEMP/paths.txt"
-          if grep -Ev '^(data/|paletter/src/main/resources/paletter/|paletter/src/generated/|paletter/api/)' "$RUNNER_TEMP/paths.txt" \
-              || grep -E '(^|/)\.' "$RUNNER_TEMP/paths.txt"; then
-            echo "The patch touches paths outside the data paths or a hidden path"; exit 1
-          fi
-          # No renames or copies: --numstat lists only their new path, so the old one would go unchecked
-          if grep -Eq '^(rename|copy) (from|to) ' "$PATCH"; then
-            echo "The patch renames or copies a file"; exit 1
-          fi
-          # No symlinks or submodules: a link inside data/ could point anywhere
-          if grep -Eq '^(new file|new|old|deleted file) mode (120000|160000)' "$PATCH"; then
-            echo "The patch adds a symlink or submodule"; exit 1
-          fi
-          # Generated code is reviewed only after the build ran on it, and a pull request opened with GITHUB_TOKEN gets no build
-          if [ "$HAS_TOKEN" != true ] && grep -q '^paletter/src/generated/' "$RUNNER_TEMP/paths.txt"; then
-            echo "::error::The data changes generated code, and no BDS_DATA_TOKEN secret is set, so the build would not run on the pull request. Set BDS_DATA_TOKEN (see docs/releasing.md) and run this workflow again."
-            exit 1
-          fi
-          git apply --check "$PATCH"
-          git apply "$PATCH"
-          # Check what the patch did, not only its headers: a patch whose --- and +++ paths differ moves a file without
-          # rename lines, so every changed path of the working tree must be a data path
-          git status --porcelain --untracked-files=all | cut -c4- | sed 's/^.* -> //' > "$RUNNER_TEMP/changed.txt"
-          if grep -Ev '^"?(data/|paletter/src/main/resources/paletter/|paletter/src/generated/|paletter/api/)' "$RUNNER_TEMP/changed.txt"; then
-            echo "The patch changed paths outside the data paths"; exit 1
-          fi
-          # The report of the run (written by assemble from the reports of the captures) is the pull request body
-          head -c 60000 "$RUNNER_TEMP/in/report.md" > "$RUNNER_TEMP/pr-body.md"
-          echo "changed=true" >> "$GITHUB_OUTPUT"
+          has-token: ${{ secrets.BDS_DATA_TOKEN != '' }}
+
+      # The report of the run (written by assemble from the reports of the captures) is the pull request body
+      - name: Write the pull request body
+        if: steps.apply.outputs.changed == 'true'
+        run: head -c 60000 "$RUNNER_TEMP/in/report.md" > "$RUNNER_TEMP/pr-body.md"
 
       # create-pull-request needs the label to exist (the daily workflow creates it when it opens an issue)
       - name: Create the label

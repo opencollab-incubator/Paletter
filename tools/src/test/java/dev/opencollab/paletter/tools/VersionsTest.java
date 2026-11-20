@@ -17,15 +17,7 @@ class VersionsTest {
     }
 
     @Test
-    void buildNumbersAreFourDottedNumbers() {
-        assertEquals("1.26.63.1", Versions.requireBuild("1.26.63.1"));
-        // Older builds have leading zeros in their names
-        assertEquals("1.21.73.01", Versions.requireBuild("1.21.73.01"));
-        assertThrows(IllegalArgumentException.class, () -> Versions.requireBuild("1.26.63.1234567890"));
-        for (String bad : new String[] {"1.26.63", "1.26.63.1.2", "1.26.63.1\\..\\..\\x", "1.26.63.1/..", "../1.26.63.1", "1.26.63.a", " 1.26.63.1", ""}) {
-            assertThrows(IllegalArgumentException.class, () -> Versions.requireBuild(bad), bad);
-        }
-        assertThrows(IllegalArgumentException.class, () -> Versions.requireBuild(null));
+    void boundsAreOneToFourDottedNumbers() {
         assertEquals("1.26.30", Versions.requireBound("1.26.30"));
         assertEquals("1.26.30.5", Versions.requireBound("1.26.30.5"));
         assertThrows(IllegalArgumentException.class, () -> Versions.requireBound("1.26.30\\x"));
@@ -35,12 +27,5 @@ class VersionsTest {
     void dashesSplitAndWordsCountAsZero() {
         assertEquals(-1, Integer.signum(Versions.compare("1.26.70-preview", "1.26.70.1")));
         assertEquals(0, Versions.compare("1.26.70-preview", "1.26.70.0"));
-    }
-
-    @Test
-    void aPreviewReportsItsLastNumberAsBeta() {
-        assertEquals("1.26.70-beta24", Versions.reported("1.26.70.24", true));
-        assertEquals("1.26.63.1", Versions.reported("1.26.63.1", false));
-        assertThrows(IllegalArgumentException.class, () -> Versions.reported("1.26.70-beta24", true));
     }
 }

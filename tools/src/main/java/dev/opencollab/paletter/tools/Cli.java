@@ -307,7 +307,8 @@ public final class Cli implements Runnable {
     }
 
     @Command(name = "builds", description = "Every BDS release build, one by one: list them, or check the ones data/bds/builds.json lacks "
-        + "against the previous kept build (captures kept only when they differ).", subcommands = {Builds.ListBuilds.class, Builds.Check.class, Builds.Table.class, Builds.Plan.class})
+        + "against the previous kept build (captures kept only when they differ).",
+        subcommands = {Builds.ListBuilds.class, Builds.Check.class, Builds.Table.class, Builds.Plan.class, Builds.Resolve.class, Builds.Record.class})
     static final class Builds implements Runnable {
         @Override
         public void run() {
@@ -367,9 +368,46 @@ public final class Cli implements Runnable {
             public Integer call() throws Exception {
                 List<RecapturePlan.Leg> legs = RecapturePlan.of(root(), BuildHistory.fetchWithCurrentRelease());
                 Files.writeString(output, RecapturePlan.matrix(legs) + "\n");
+                RecapturePlan.frozen(root()).forEach(line -> System.out.println("SKIPPED " + line));
                 legs.forEach(leg -> System.out.println(leg.build() + (leg.preview() ? " (preview)" : "")
                     + (leg.against() == null ? "" : leg.against().equals(leg.build()) ? " (history check)" : " (not checked yet, compared with " + leg.against() + ")")));
                 return legs.isEmpty() ? 1 : 0;
+            }
+        }
+
+        @Command(name = "record", description = "Brings data/bds/builds.json up to date with the committed data, without BDS or the "
+            + "network: records release builds with captures it lacks, and the sha256 of every kept build's zips from the cache "
+            + "(unknown without a zip); freezes builds whose zip can no longer be downloaded. Writes the build table too.")
+        static final class Record extends Rooted implements Callable<Integer> {
+            @Option(names = "--cache", description = "The BDS cache (default: $PALETTER_BDS_CACHE or the Gradle user home's)") Path cache;
+            @Option(names = "--freeze", description = "BUILD=REASON: a kept build whose zip minecraft.net no longer serves; a recapture skips it")
+            Map<String, String> freeze;
+            @Option(names = "--unfreeze", description = "A frozen build whose zip can be downloaded again") List<String> unfreeze;
+
+            @Override
+            public Integer call() throws Exception {
+                return BuildHistory.record(root(), cache != null ? cache : BdsDistribution.defaultCache(),
+                    freeze == null ? Map.of() : freeze, unfreeze == null ? List.of() : unfreeze);
+            }
+        }
+
+        @Command(name = "resolve", description = "Prints the newest Windows build of a channel that the download links API names "
+            + "(the build the BDS data workflow checks), and writes it to --output.")
+        static final class Resolve implements Callable<Integer> {
+            @Option(names = "--channel", required = true, description = "release or preview") String channel;
+            @Option(names = "--output", description = "File for the build number") Path output;
+
+            @Override
+            public Integer call() throws Exception {
+                if (!channel.equals("release") && !channel.equals("preview")) {
+                    throw new CommandLine.ParameterException(new CommandLine(this), "--channel must be release or preview: " + channel);
+                }
+                String version = BdsDistribution.resolve(false, channel.equals("preview"), null).version();
+                if (output != null) {
+                    Files.writeString(output, version + "\n");
+                }
+                System.out.println(version);
+                return 0;
             }
         }
 
@@ -993,7 +1031,7 @@ public final class Cli implements Runnable {
             Path log = cacheDirectory.resolve("runs").resolve("script-dump-" + bds + ".log");
             BdsDistribution.resolve(preview, bds).onServer(cacheDirectory,
                 server -> ScriptApiDump.run(root(), server, log, timeout, port));
-            System.out.println("Wrote " + ScriptApiDump.write(root(), log, bds, Update.versionName(bds)));
+            System.out.println("Wrote " + ScriptApiDump.write(root(), log, bds, BuildNumber.parse(bds).dataVersion()));
             return 0;
         }
     }

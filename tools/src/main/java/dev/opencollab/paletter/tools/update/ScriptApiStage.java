@@ -85,8 +85,9 @@ final class ScriptApiStage {
 
     /**
      * The schema of the build ({@code schema.json}: the facts of BDS's own JSON schemas, written by its documentation generator)
-     * and what changed against the schema of the previous build. Never a failure: whatever goes wrong here (no docs, a schema
-     * layout the extract does not read) is a skipped row, and the previous schema stays what the model merges.
+     * and what changed against the schema of the previous build. No docs, a schema layout the extract cannot read, or a schema
+     * keyword it does not know is a FAIL: that is how a change of BDS's documentation generator shows, and the add-on of this
+     * build would otherwise be generated from an older schema without anyone being told. Components it could not read are a DIFF.
      *
      * @return the schema extracted from this run's docs, which this run's add-ons use instead of the committed file (it is staged,
      *         or only written to a capture-only run's output); null if none was extracted
@@ -95,7 +96,7 @@ final class ScriptApiStage {
         String build = distribution.version();
         try {
             if (docs == null) {
-                ctx.report.check(Report.Status.SKIP, "BDS schema", "BDS's documentation generator wrote no docs (see bds-docgen.log); the previous schema stays");
+                ctx.report.check(Report.Status.FAIL, "BDS schema", "BDS's documentation generator wrote no docs (see bds-docgen.log)");
                 return null;
             }
             Schema previous = Schema.newest(ctx.bdsData, build);
@@ -116,7 +117,9 @@ final class ScriptApiStage {
                 ctx.report.evidence("Schema components skipped", schema.skipped().stream().map(line -> "- " + line).toList());
             }
             if (!schema.unhandledKeywords().isEmpty()) {
-                ctx.report.check(Report.Status.INFO, "BDS schema keywords", "the extract does not know " + schema.unhandledKeywords());
+                ctx.report.check(Report.Status.FAIL, "BDS schema keywords", "the extract does not know " + schema.unhandledKeywords()
+                    + ": teach SchemaExtract what they mean (or list them as known with a reason) before the schema is used");
+                ctx.report.action("BDS's schemas use keywords SchemaExtract does not read: " + schema.unhandledKeywords());
             }
             // What the content log said that the schema contradicts: the add-on tests both until a capture settles it
             Path feedback = ctx.root.resolve(Layout.MODEL).resolve("bds-feedback.json");
@@ -130,7 +133,7 @@ final class ScriptApiStage {
             ctx.stage(ctx.bdsData.resolve(build).resolve(Schema.FILE), SchemaExtract.render(extract).getBytes(StandardCharsets.UTF_8), "BDS schema " + build);
             return schema;
         } catch (Exception e) {
-            ctx.report.check(Report.Status.SKIP, "BDS schema", "not extracted, the previous schema stays: " + e);
+            ctx.report.fail("BDS schema", e);
             return null;
         }
     }

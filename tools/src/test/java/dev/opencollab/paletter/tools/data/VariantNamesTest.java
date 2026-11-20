@@ -9,7 +9,7 @@ import dev.opencollab.paletter.internal.data.PaletteDataCodec;
 import dev.opencollab.paletter.internal.data.VanillaData;
 import dev.opencollab.paletter.internal.data.VersionFallbacks;
 import dev.opencollab.paletter.tools.bds.BdsDump;
-import dev.opencollab.paletter.tools.update.Update;
+import dev.opencollab.paletter.tools.BuildNumber;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
@@ -210,7 +210,7 @@ class VariantNamesTest {
                     text = new String(in.readAllBytes(), java.nio.charset.StandardCharsets.UTF_8);
                 }
                 BdsDump dump = BdsDump.parse(text, build.getFileName().toString());
-                String version = Update.versionName(build.getFileName().toString());
+                String version = BuildNumber.parse(build.getFileName().toString()).dataVersion();
                 Path data = ROOT.resolve("paletter/src/main/resources/paletter/" + version + ".nbt");
                 if (dump.itemVariants().isEmpty() || !Files.exists(data)) {
                     continue;

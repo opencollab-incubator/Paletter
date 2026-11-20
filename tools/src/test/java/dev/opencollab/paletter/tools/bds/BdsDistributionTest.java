@@ -87,6 +87,48 @@ class BdsDistributionTest {
         }
     }
 
+    /** A download whose sha256 is not the recorded one fails and is not kept; a cached zip with another sha256 is not used. */
+    @Test
+    void aZipIsCheckedAgainstItsRecordedChecksum(@TempDir Path cache) throws Exception {
+        byte[] whole = Files.readAllBytes(zip(Files.createTempFile(cache, "whole", ".zip")));
+        Path served = Files.write(cache.resolve("served.zip"), whole);
+        String sha256 = ZipChecksums.sha256(served);
+        HttpServer server = HttpServer.create(new InetSocketAddress(InetAddress.getLoopbackAddress(), 0), 0);
+        server.createContext("/", exchange -> {
+            exchange.sendResponseHeaders(200, whole.length);
+            try (OutputStream out = exchange.getResponseBody()) {
+                out.write(whole);
+            }
+        });
+        server.start();
+        try {
+            String url = "http://" + server.getAddress().getHostString() + ":" + server.getAddress().getPort() + "/bedrock-server-1.0.0.1.zip";
+            BdsDistribution distribution = new BdsDistribution("1.0.0.1", false, "linux", url);
+            Path cached = distribution.zipFile(cache);
+            IOException wrong = assertThrows(IOException.class, () -> distribution.zip(cache, "00".repeat(32)));
+            assertTrue(wrong.getMessage().contains(sha256) && wrong.getMessage().contains("00".repeat(32)), wrong.getMessage());
+            assertFalse(Files.exists(cached), "a zip with another checksum is never kept");
+            assertArrayEquals(whole, Files.readAllBytes(distribution.zip(cache, sha256)));
+            // Cached with the right checksum: used as it is
+            assertArrayEquals(whole, Files.readAllBytes(distribution.zip(cache, sha256)));
+        } finally {
+            server.stop(0);
+        }
+    }
+
+    /** The links API is parsed here only; another shape or a missing type fails with the answer quoted. */
+    @Test
+    void theLinksApiAnswerIsReadOrQuoted() throws IOException {
+        String answer = "{\"result\": {\"links\": [{\"downloadType\": \"serverBedrockWindows\", "
+            + "\"downloadUrl\": \"https://www.minecraft.net/bedrockdedicatedserver/bin-win/bedrock-server-1.26.63.1.zip\"}]}}";
+        assertEquals("https://www.minecraft.net/bedrockdedicatedserver/bin-win/bedrock-server-1.26.63.1.zip",
+            BdsDistribution.downloadUrl(answer, "serverBedrockWindows"));
+        IOException missing = assertThrows(IOException.class, () -> BdsDistribution.downloadUrl(answer, "serverBedrockPreviewWindows"));
+        assertTrue(missing.getMessage().contains("serverBedrockPreviewWindows") && missing.getMessage().contains("bedrock-server-1.26.63.1"));
+        IOException shape = assertThrows(IOException.class, () -> BdsDistribution.downloadUrl("{\"data\": {\"downloads\": []}}", "serverBedrockWindows"));
+        assertTrue(shape.getMessage().contains("unknown shape") && shape.getMessage().contains("downloads"), shape.getMessage());
+    }
+
     @Test
     void aVersionNamesNothingButABuild() {
         // Resolving a given version reads no network; a version that is no build number never reaches a path

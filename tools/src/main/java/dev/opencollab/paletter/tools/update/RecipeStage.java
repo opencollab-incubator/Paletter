@@ -25,7 +25,7 @@ final class RecipeStage {
      * The recipe capture against the committed one of this build, or of the build before ({@link #baseline}), and the
      * assumptions the recipe data rests on (items and tags exist in the imported palette, results have their block state,
      * net ids are 1..n). Runs before the capture is committed, so it still sees the old one. A missing or unreadable
-     * capture is a FAIL; the assumptions are only ever INFO.
+     * capture is a FAIL, and so is a broken assumption.
      */
     void recipes(BdsDistribution distribution, Runs runs, VanillaData captured) throws IOException {
         if (!requireRecipeCapture(ctx.report, runs.vanilla)) {
@@ -57,11 +57,12 @@ final class RecipeStage {
     }
 
 
-    /** A broken assumption is information about the recipe data, never a difference of the build. */
+    /** A broken assumption is a FAIL: the recipe import and the library rest on it, so the build needs a decision first. */
     private void assumption(String name, List<String> problems) {
-        ctx.report.check(problems.isEmpty() ? Report.Status.PASS : Report.Status.INFO, name, problems.isEmpty() ? "holds" : problems.size() + " problems");
+        ctx.report.check(problems.isEmpty() ? Report.Status.PASS : Report.Status.FAIL, name, problems.isEmpty() ? "holds" : problems.size() + " problems");
         if (!problems.isEmpty()) {
             ctx.report.evidence("Problems", problems.stream().map(problem -> "- " + problem).toList());
+            ctx.report.action("the recipe data no longer holds \"" + name + "\": fix the import or the assumption before importing this build");
             if (ctx.against != null) {
                 ctx.report.notCompared.add(name + ": " + problems.size() + " problems");
             }

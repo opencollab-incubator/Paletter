@@ -148,6 +148,39 @@ class RecipeDataTest {
         assertEquals(List.of("minecraft:a block 5 (shaped minecraft:a)"), RecipeData.missingBlockStates(recipes));
     }
 
+    /**
+     * The assumptions {@code update} fails on hold for every committed release recipe capture against the bundled data of its
+     * version. TODO: the 1.26.70.24 preview capture breaks "Recipe results have their block state" (results of blocks new in
+     * 26.70 whose runtime id the capture did not resolve); the next preview update reports that as a FAIL.
+     */
+    @Test
+    void theCommittedCapturesHoldTheRecipeAssumptions() throws java.io.IOException {
+        java.nio.file.Path root = java.nio.file.Path.of("..");
+        int checked = 0;
+        try (java.util.stream.Stream<java.nio.file.Path> builds = java.nio.file.Files.list(root.resolve("data/bds"))) {
+            for (java.nio.file.Path build : builds.filter(b -> java.nio.file.Files.exists(b.resolve("vanilla").resolve(RecipeCapture.CRAFTING))
+                && !b.getFileName().toString().equals("1.26.70.24")).toList()) {
+                String name = dev.opencollab.paletter.tools.BuildNumber.parse(build.getFileName().toString()).dataVersion();
+                java.nio.file.Path bundled = root.resolve("paletter/src/main/resources/paletter").resolve(name + ".nbt");
+                if (!java.nio.file.Files.exists(bundled)) {
+                    continue;
+                }
+                dev.opencollab.paletter.internal.data.VanillaData data = BundledFiles.read(bundled);
+                RecipeCapture.Recipes recipes = RecipeCapture.read(build.resolve("vanilla"));
+                Set<String> items = new java.util.HashSet<>();
+                data.items().forEach(item -> items.add(item.identifier()));
+                List<String> problems = new java.util.ArrayList<>();
+                problems.addAll(RecipeData.missingItems(recipes, items));
+                problems.addAll(RecipeData.emptyTags(recipes, data.itemTags()));
+                problems.addAll(RecipeData.missingBlockStates(recipes));
+                problems.addAll(RecipeData.netIdProblems(recipes));
+                assertEquals(List.of(), problems, build.getFileName().toString());
+                checked++;
+            }
+        }
+        assertTrue(checked > 0);
+    }
+
     @Test
     void trimWithoutPatternsIsFine() {
         assertTrue(Diff.recipes(new RecipeCapture.Recipes(json("{}"), json("{}")), new RecipeCapture.Recipes(json("{}"), json("{\"bdsVersion\":\"x\"}"))).identical());

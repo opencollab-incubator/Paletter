@@ -18,6 +18,20 @@ What the workflows in `.github/workflows` need from the GitHub repository settin
   generated code (`paletter/src/generated`) fails the publish job instead of opening a pull request nobody built. Only
   the publish job sees the secret, never the job that runs BDS and Gradle.
 
+  **Rotation.** A fine-grained token expires after at most a year, and the workflows cannot tell: an expired token still
+  counts as set, and the publish job then fails in `create-pull-request` with an authentication error (HTTP 401 or "Bad
+  credentials"). Give the token an expiry date, put a reminder a few weeks before it, and rotate it then:
+
+  1. GitHub > Settings > Developer settings > Fine-grained tokens > Generate new token: resource owner the repository's
+     owner, only this repository, permissions Contents and Pull requests read and write, an expiry date.
+  2. Repository Settings > Secrets and variables > Actions > `BDS_DATA_TOKEN` > Update secret, paste the new token.
+  3. Run `bds-data.yml` by hand (Actions > BDS data > Run workflow, `verify-only` off) or wait for the next daily run, and
+     check that the publish job opens or updates its pull request.
+  4. Revoke the old token.
+
+  A failed publish with an authentication error means this step is due. It is listed with the other manual bumps in
+  [updating.md](updating.md#pins).
+
 No other secrets are used: `javadoc.yml` pushes with `GITHUB_TOKEN`.
 
 **Pages** (Settings > Pages): source "Deploy from a branch", branch `gh-pages`, folder `/ (root)`. The branch is

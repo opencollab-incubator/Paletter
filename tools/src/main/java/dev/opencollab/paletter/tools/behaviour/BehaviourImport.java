@@ -105,6 +105,14 @@ public final class BehaviourImport {
      */
     public static void run(Path root, @Nullable Path cloudburstData, @Nullable Path allay) throws IOException {
         Path resources = root.resolve("paletter/src/main/resources/paletter");
+        // The checkouts must be at the pins of data/behaviour/sources.json, which the recapture workflow fetches too
+        Map<String, BehaviourSources.Source> pins = BehaviourSources.read(root);
+        if (cloudburstData != null) {
+            BehaviourSources.requirePinned(pins.get(BehaviourSources.CLOUDBURST_DATA), new GitHistory(cloudburstData).head());
+        }
+        if (allay != null) {
+            BehaviourSources.requirePinned(pins.get(BehaviourSources.ALLAY), new GitHistory(allay).head());
+        }
         BehaviourImport importer = new BehaviourImport(bundled(resources));
         importer.behaviourDumps(root.resolve("data/bds"));
         importer.scriptApi(root.resolve("data/bds"));

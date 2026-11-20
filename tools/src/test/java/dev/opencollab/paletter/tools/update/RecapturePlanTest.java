@@ -60,6 +60,22 @@ class RecapturePlanTest {
                 + "kept build; 1.26.80.4 is of a line versions.txt lacks");
     }
 
+    /** A frozen build's zip is gone: the plan leaves it out and says so. */
+    @Test
+    void aFrozenBuildIsSkippedWithAReportLine(@TempDir Path root) throws IOException {
+        capture(root, "1.26.36.1", false);
+        capture(root, "1.26.63.1", false);
+        Files.writeString(root.resolve("data/bds/builds.json"), """
+            {"builds": {
+              "1.26.36.1": {"protocol": 1001, "keptBy": "update", "frozen": "minecraft.net answers 404 since 2027-01-01"},
+              "1.26.63.1": {"protocol": 2225, "keptBy": "update"}
+            }}
+            """);
+        assertEquals(List.of(new RecapturePlan.Leg("1.26.63.1", false, null)), RecapturePlan.of(root));
+        assertEquals(List.of("1.26.36.1 is frozen (minecraft.net answers 404 since 2027-01-01): not recaptured, its captures stay those of "
+            + "the add-on they were made with"), RecapturePlan.frozen(root));
+    }
+
     @Test
     void theMatrixIsAnIncludeListWithOnlyBuildChannelAndAgainst(@TempDir Path root) throws IOException {
         capture(root, "1.26.36.1", false);

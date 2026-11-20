@@ -52,14 +52,26 @@ final class ProtocolSchemaCheck {
         }
     }
 
-    /** The protocol stamped in a docgen tree, or -1 if the tree has no protocol schema. */
+    /**
+     * The protocol stamped in a docgen tree, or -1 if the tree has no protocol schema. Read from {@code StartGamePacket.json}, else
+     * from the first stamped file of the directory: a tree whose packets were renamed is still found, and then fails the check.
+     */
     static int protocolOf(Path docgen) throws IOException {
-        Path start = docgen.resolve(PROTOCOL_DIR).resolve("StartGamePacket.json");
-        if (!Files.isRegularFile(start)) {
+        Path protocol = docgen.resolve(PROTOCOL_DIR);
+        if (!Files.isDirectory(protocol)) {
             return -1;
         }
-        JsonElement stamp = read(start).get("x-protocol-version");
-        return stamp == null ? -1 : stamp.getAsInt();
+        List<Path> files = new ArrayList<>(List.of(protocol.resolve("StartGamePacket.json")));
+        try (Stream<Path> list = Files.list(protocol)) {
+            list.filter(file -> file.getFileName().toString().endsWith(".json")).sorted().forEach(files::add);
+        }
+        for (Path file : files) {
+            JsonElement stamp = Files.isRegularFile(file) ? read(file).get("x-protocol-version") : null;
+            if (stamp != null) {
+                return stamp.getAsInt();
+            }
+        }
+        return -1;
     }
 
     /** The cached docgen tree stamped with the protocol, or null. */
@@ -154,7 +166,8 @@ final class ProtocolSchemaCheck {
 
     /**
      * The report rows of a run whose captures were decoded with another protocol's codec: "safe" or the packets that changed.
-     * Never a failure; a protocol without a cached docgen tree is a skipped check (no guessing).
+     * A protocol without a cached docgen tree is a skipped check (no guessing); trees that have a schema file for none of the
+     * {@link #DECODED} packets are a FAIL (BDS renamed or moved its protocol schemas: a PASS would be vacuous).
      *
      * @param docgen the directory of the docgen trees ({@code <cache>/docgen}), one per build
      */
@@ -170,6 +183,12 @@ final class ProtocolSchemaCheck {
             }
             Result result = compare(codecTree, buildTree);
             String versions = "BDS docgen " + codecTree.getFileName() + " (" + codecProtocol + ") vs " + buildTree.getFileName() + " (" + protocol + ")";
+            if (result.notInSchema().size() == DECODED.size()) {
+                report.check(Report.Status.FAIL, name, "none of the " + DECODED.size() + " decoded packets has a schema file in " + PROTOCOL_DIR
+                    + " (" + versions + "): BDS renamed or moved its protocol schemas");
+                report.action("map ProtocolSchemaCheck.DECODED to the schema file names of BDS's protocol schemas");
+                return;
+            }
             if (result.safe()) {
                 report.check(Report.Status.PASS, name, "safe: none of the " + (DECODED.size() - result.notInSchema().size())
                     + " decoded packets changed between the " + codecProtocol + " codec and protocol " + protocol + " (" + versions + ")");

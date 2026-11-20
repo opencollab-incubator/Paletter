@@ -50,6 +50,11 @@ final class GitHistory {
         return new String(run(List.of("show", commit.hash() + ":" + path)), StandardCharsets.UTF_8);
     }
 
+    /** @return the full hash of the checkout's HEAD */
+    String head() {
+        return new String(run(List.of("rev-parse", "HEAD")), StandardCharsets.UTF_8).strip();
+    }
+
     /** @return {@code owner/name@hash} for a GitHub remote, else the path and hash */
     String reference(Commit commit) {
         String url = new String(run(List.of("config", "--get", "remote.origin.url")), StandardCharsets.UTF_8).strip();

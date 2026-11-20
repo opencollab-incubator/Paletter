@@ -171,7 +171,7 @@ public final class SpecCapture {
                     break;
                 }
                 Map<String, AddonGenerator.Shrunk> more = shrink(generator.variants(), leaves(work.resolve("custom")),
-                    logByVariant(run.contentLog()), shrunk);
+                    logByVariant(run.contentLog(), generator), shrunk);
                 if (more.isEmpty()) {
                     break;
                 }
@@ -181,6 +181,8 @@ public final class SpecCapture {
                 generator = new AddonGenerator(docs, fixtures, formatVersion, shrunk);
             }
             List<String> contentLog = run.contentLog();
+            // Every mode: a line no variant claims fails the capture before anything is written
+            logByVariant(contentLog, generator);
             summary = run.summary();
             int protocol = run.protocol();
             Files.createDirectories(out);
@@ -218,7 +220,7 @@ public final class SpecCapture {
             Files.writeString(out.resolve("capture.json"), new GsonBuilder().setPrettyPrinting().create().toJson(metadata) + "\n");
             if (evidence != null) {
                 Map<String, Map<String, Leaf>> leaves = leaves(out);
-                Map<String, List<String>> log = logByVariant(contentLog);
+                Map<String, List<String>> log = logByVariant(contentLog, generator);
                 if (probeKeys) {
                     JsonObject keys = KeyDiscovery.results(generator, evidence, distribution.version(), leaves, log, fixtures.keys);
                     Files.writeString(modelDir.resolve(Fixtures.KEYS_FILE), Model.GSON.toJson(keys) + "\n", StandardCharsets.UTF_8);
@@ -230,7 +232,7 @@ public final class SpecCapture {
             if (gating) {
                 Path spec = out.resolveSibling("spec");
                 Files.writeString(out.resolve("gating.json"), Model.GSON.toJson(GatingCapture.report(generator, distribution.version(), protocol,
-                    summary.experiments(), leaves(out), logByVariant(contentLog), spec)) + "\n", StandardCharsets.UTF_8);
+                    summary.experiments(), leaves(out), logByVariant(contentLog, generator), spec)) + "\n", StandardCharsets.UTF_8);
             }
             System.out.println("Spec capture of BDS " + distribution.version() + " (protocol " + protocol + "): " + generator.variants().size()
                 + " variants, " + contentLog.size() + " content log lines -> " + out);
@@ -245,6 +247,9 @@ public final class SpecCapture {
                 gate.put("out", out.resolveSibling("spec-gating").toString());
                 try {
                     new SpecCapture(root, gate, runSchema).run();
+                } catch (UnattributedLog e) {
+                    // not a lost file: the log of this build has a line the capture cannot place
+                    throw e;
                 } catch (Exception e) {
                     System.out.println("The gating capture of BDS " + distribution.version() + " failed, its components stay unverified: " + e);
                 }
@@ -453,19 +458,67 @@ public final class SpecCapture {
         return List.copyOf(out);
     }
 
-    /** The content log lines per variant identifier (the file name or the quoted item name says which variant a line is about). */
-    static Map<String, List<String>> logByVariant(List<String> lines) {
+    private static final java.util.regex.Pattern VARIANT_FILE = java.util.regex.Pattern.compile("(?:blocks|items)/([a-z0-9_]+)\\.json");
+    private static final java.util.regex.Pattern VARIANT_NAME = java.util.regex.Pattern.compile("(paletter:[a-z0-9_]+)");
+
+    /**
+     * The content log lines BDS writes about no single variant, each in the phrasing a committed capture recorded (the spec
+     * captures of 1.26.36.1 to 1.26.70.24, and the format sweep of 1.26.63.1). Every other line must name a variant of the
+     * add-on ({@link #logByVariant}): a reworded error that named none would be lost, and its variant counted as accepted.
+     */
+    static final List<java.util.regex.Pattern> UNATTRIBUTED = Stream.of(
+        // The add-on references names that do not exist on purpose (a voxel shape, a Molang token, a damage source)
+        "WARN \\[Components\\] All MaterialInstances must use the same render_method for a given block\\. This may create rendering issues otherwise\\.",
+        "ERROR \\[Components\\] MaterialInstances can't mix and match opaque and transparent materials\\.",
+        "ERROR \\[VoxelShape\\] Voxel shape with name \"paletter_[a-z0-9_]+\" doesn't exist in the registry\\. Defaulting to minecraft:empty for identifier\\.",
+        "ERROR \\[Molang\\] (?:minecraft:)?paletter_[a-z0-9_]+ \\| (?:unrecognized token|Error: unknown token): (?:minecraft:)?paletter_[a-z0-9_]+",
+        "ERROR \\[Json\\] Damage Source not found: paletter_[a-z0-9_]+",
+        "ERROR \\[Item\\] ItemDescriptor missing key to reconstruct from \\(expression tags, item name or item tag\\)",
+        // A state is named, not the block that declares it
+        "ERROR \\[Blocks\\] The bits to store state paletter:[a-z0-9_]+ are out of range\\. This state may not be applied properly\\.",
+        // Format sweep: details BDS writes without the item's name; the item's own "Error Parsing Item" line rejects it
+        "WARN \\[Item\\] The \"minecraft:[a-z_]+\" component requires \"minecraft:use_duration > use_duration\" to be set with a non-zero value\\.",
+        "ERROR \\[Item\\] minecraft:[a-z_]+ has been deprecated and is not available in json format [0-9.]+",
+        "ERROR \\[Item\\] The \"minecraft:[a-z_]+\" component requires a \"minecraft:[a-z_]+\" component( set to [0-9]+)?\\.",
+        "ERROR \\[Item\\]  -> components -> [a-z_:>\\- ]+: failed to copy/move from source type '[^']+' to destination type '[^']+'")
+        .map(java.util.regex.Pattern::compile).toList();
+
+    /** Content log lines that name no variant of the add-on, or are in a phrasing {@link #UNATTRIBUTED} does not know. */
+    static final class UnattributedLog extends IllegalStateException {
+        UnattributedLog(List<String> lines) {
+            super(lines.size() + " content log line(s) name no variant of the add-on, or are in a phrasing SpecCapture.UNATTRIBUTED does not know "
+                + "(BDS may have reworded an error, which would otherwise count its variant as accepted):\n  " + String.join("\n  ", lines));
+        }
+    }
+
+    /**
+     * The content log lines per variant identifier (the file name or the quoted item name says which variant a line is about).
+     *
+     * @param identifiers the identifiers of the add-on's variants
+     * @throws UnattributedLog when a line names none of them and is not one of the {@link #UNATTRIBUTED} phrasings
+     */
+    static Map<String, List<String>> logByVariant(List<String> lines, java.util.Collection<String> identifiers) {
+        java.util.Set<String> known = java.util.Set.copyOf(identifiers);
         Map<String, List<String>> log = new LinkedHashMap<>();
-        java.util.regex.Pattern file = java.util.regex.Pattern.compile("(?:blocks|items)/([a-z0-9_]+)\\.json");
-        java.util.regex.Pattern name = java.util.regex.Pattern.compile("(paletter:[a-z0-9_]+)");
+        List<String> unattributed = new ArrayList<>();
         for (String line : lines) {
-            java.util.regex.Matcher m = file.matcher(line);
-            String id = m.find() ? "paletter:" + m.group(1) : (m = name.matcher(line)).find() ? m.group(1) : null;
-            if (id != null) {
-                log.computeIfAbsent(id, k -> new java.util.ArrayList<>()).add(line);
+            java.util.regex.Matcher m = VARIANT_FILE.matcher(line);
+            String id = m.find() ? "paletter:" + m.group(1) : (m = VARIANT_NAME.matcher(line)).find() ? m.group(1) : null;
+            if (id != null && known.contains(id)) {
+                log.computeIfAbsent(id, k -> new ArrayList<>()).add(line);
+            } else if (UNATTRIBUTED.stream().noneMatch(p -> p.matcher(line).matches())) {
+                unattributed.add(line);
             }
         }
+        if (!unattributed.isEmpty()) {
+            throw new UnattributedLog(unattributed);
+        }
         return log;
+    }
+
+    /** {@link #logByVariant(List, java.util.Collection)} of the variants of a generator. */
+    private static Map<String, List<String>> logByVariant(List<String> lines, AddonGenerator generator) {
+        return logByVariant(lines, generator.variants().stream().map(AddonGenerator.Variant::identifier).toList());
     }
 
     /** The wire leaves of every item and block BDS sent, by {@code item <id>} / {@code block <id>}, from a capture's NBT files. */

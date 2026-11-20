@@ -110,7 +110,7 @@ class UpdateHistoryTest {
     }
 
     @Test
-    void aFailedSchemaStepIsASkippedRowAndNeverAFailure(@TempDir Path root, @TempDir Path cache, @TempDir Path docs) throws IOException {
+    void aFailedSchemaStepIsAFailure(@TempDir Path root, @TempDir Path cache, @TempDir Path docs) throws IOException {
         BdsDistribution build = new BdsDistribution("1.26.31.1", false, "win", "https://example.invalid/bedrock-server-1.26.31.1.zip");
         Update update = historyCheck(root);
         // BDS's documentation generator wrote nothing
@@ -120,8 +120,8 @@ class UpdateHistoryTest {
         new ScriptApiStage(update.context()).schema(cache, build, docs);
         String report = update.report().render();
         assertTrue(report.contains("BDS's documentation generator wrote no docs"), report);
-        assertTrue(report.contains("not extracted, the previous schema stays: java.io.IOException: No component schemas"), report);
-        assertFalse(update.report().failed());
+        assertTrue(report.contains("java.io.IOException: No component schemas"), report);
+        assertTrue(update.report().failed(), "a change of the documentation generator is never silent");
         assertTrue(update.report().repoChanges.isEmpty(), "no schema.json from a failed step");
     }
 
