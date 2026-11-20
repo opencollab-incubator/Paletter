@@ -209,7 +209,9 @@ public final class CaptureClient {
                     @Override
                     protected void initSession(BedrockClientSession session) {
                         session.setCodec(codec);
-                        session.getPeer().getCodecHelper().setEncodingSettings(org.cloudburstmc.protocol.bedrock.data.EncodingSettings.CLIENT);
+                        // A local BDS the tools started: no list or size limits, so a large add-on world (e.g. 10k+ command enum
+                        // values) never fails a packet's decode
+                        session.getPeer().getCodecHelper().setEncodingSettings(org.cloudburstmc.protocol.bedrock.data.EncodingSettings.UNLIMITED);
                         session.getPeer().getCodecHelper().setItemDefinitions(new ItemRegistry());
                         session.getPeer().getCodecHelper().setBlockDefinitions(new AnyBlockRegistry());
                         session.setPacketHandler(new Handler(session));
