@@ -65,14 +65,16 @@ final class ScriptApiStage {
 
     /**
      * The Script API module versions of the build's docgen output, staged as {@code script-modules.json} and kept for the behaviour
-     * dump of this run. No docs or no version in them is a failed check (the beta add-on cannot run without its module).
+     * dump of this run. No version in the docs is a failed check (the beta add-on cannot run without its module); no docs at all
+     * is the failed "BDS schema" row of {@link #schema}, not a second one.
      */
     void scriptModules(BdsDistribution distribution, Path docs, Runs runs) throws IOException {
         String build = distribution.version();
+        if (docs == null) {
+            // The one FAIL of the missing docgen output is the "BDS schema" row of schema()
+            return;
+        }
         try {
-            if (docs == null) {
-                throw new IOException("BDS's documentation generator wrote no docs (see bds-docgen.log)");
-            }
             runs.scriptModules = ScriptModules.parse(docs);
             ctx.stage(ScriptModules.file(ctx.bdsData, build), ScriptModules.render(build, runs.scriptModules).getBytes(StandardCharsets.UTF_8),
                 "Script API modules " + build);
@@ -85,9 +87,10 @@ final class ScriptApiStage {
 
     /**
      * The schema of the build ({@code schema.json}: the facts of BDS's own JSON schemas, written by its documentation generator)
-     * and what changed against the schema of the previous build. No docs, a schema layout the extract cannot read, or a schema
-     * keyword it does not know is a FAIL: that is how a change of BDS's documentation generator shows, and the add-on of this
-     * build would otherwise be generated from an older schema without anyone being told. Components it could not read are a DIFF.
+     * and what changed against the schema of the previous build. No docs (one FAIL row) or a schema layout the extract cannot read
+     * is a FAIL: that is how a change of BDS's documentation generator shows, and the add-on of this build would otherwise be
+     * generated from an older schema without anyone being told. Components it could not read are a DIFF, a keyword it does not
+     * know an INFO with an action.
      *
      * @return the schema extracted from this run's docs, which this run's add-ons use instead of the committed file (it is staged,
      *         or only written to a capture-only run's output); null if none was extracted
@@ -97,6 +100,7 @@ final class ScriptApiStage {
         try {
             if (docs == null) {
                 ctx.report.check(Report.Status.FAIL, "BDS schema", "BDS's documentation generator wrote no docs (see bds-docgen.log)");
+                ctx.report.action("run the documentation generator by hand for this build (see bds-docgen.log)");
                 return null;
             }
             Schema previous = Schema.newest(ctx.bdsData, build);
@@ -117,9 +121,10 @@ final class ScriptApiStage {
                 ctx.report.evidence("Schema components skipped", schema.skipped().stream().map(line -> "- " + line).toList());
             }
             if (!schema.unhandledKeywords().isEmpty()) {
-                ctx.report.check(Report.Status.FAIL, "BDS schema keywords", "the extract does not know " + schema.unhandledKeywords()
-                    + ": teach SchemaExtract what they mean (or list them as known with a reason) before the schema is used");
-                ctx.report.action("BDS's schemas use keywords SchemaExtract does not read: " + schema.unhandledKeywords());
+                // Data in, a human decides: a keyword that only documents something changes no constraint
+                ctx.report.check(Report.Status.INFO, "BDS schema keywords", "the extract does not read " + schema.unhandledKeywords());
+                ctx.report.action("check whether the BDS schema keywords " + schema.unhandledKeywords()
+                    + " carry constraints; if so teach SchemaExtract what they mean, else list them as known and ignored");
             }
             // What the content log said that the schema contradicts: the add-on tests both until a capture settles it
             Path feedback = ctx.root.resolve(Layout.MODEL).resolve("bds-feedback.json");

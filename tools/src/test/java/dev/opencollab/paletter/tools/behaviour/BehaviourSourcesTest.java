@@ -39,6 +39,15 @@ class BehaviourSourcesTest {
     }
 
     @Test
+    void aMissingPinIsAClearError(@org.junit.jupiter.api.io.TempDir Path root) throws IOException {
+        Files.createDirectories(root.resolve("data/behaviour"));
+        Files.writeString(root.resolve(BehaviourSources.FILE), "{\"sources\": {\"CloudburstMC/Data\": {\"repository\": "
+            + "\"https://github.com/CloudburstMC/Data.git\", \"commit\": \"" + "a".repeat(40) + "\"}}}");
+        IOException e = assertThrows(IOException.class, () -> BehaviourSources.read(root));
+        assertTrue(e.getMessage().contains("no pin for " + BehaviourSources.ALLAY), e.getMessage());
+    }
+
+    @Test
     void aCheckoutAtAnotherCommitFails() {
         BehaviourSources.Source pin = new BehaviourSources.Source("CloudburstMC/Data", "https://github.com/CloudburstMC/Data.git", "a".repeat(40));
         assertDoesNotThrow(() -> BehaviourSources.requirePinned(pin, "a".repeat(40)));

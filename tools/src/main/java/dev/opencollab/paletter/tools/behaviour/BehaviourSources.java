@@ -41,6 +41,12 @@ public final class BehaviourSources {
             }
             result.put(source.name(), source);
         }
+        for (String required : new String[] {CLOUDBURST_DATA, ALLAY}) {
+            if (!result.containsKey(required)) {
+                throw new IOException(FILE + " has no pin for " + required + ": `behaviour import` needs one for each of "
+                    + CLOUDBURST_DATA + " and " + ALLAY + " (a repository url and a full commit hash)");
+            }
+        }
         return result;
     }
 
