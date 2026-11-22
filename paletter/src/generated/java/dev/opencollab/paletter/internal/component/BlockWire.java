@@ -134,9 +134,12 @@ public final class BlockWire {
     private static void blockEntityFrom2193Until2225(BlockEntity c, WireContext ctx, WireNode out) {
         BlockEntity.Container v0 = c.container();
         if (v0 != null) {
+            if (v0.showUiOnInteraction() != true) {
+                ctx.drop(BlockEntity.NAME, "container.show_ui_on_interaction does not exist in this Bedrock version");
+            }
             out.put("minecraft:container.slot_count", Wire.toByte(v0.slotCount()));
             if (v0.title() != null) {
-                ctx.drop(BlockEntity.NAME, "container.title has no known wire mapping");
+                ctx.drop(BlockEntity.NAME, "container.title does not exist in this Bedrock version");
             }
         } else {
             out.remove("minecraft:container.slot_count");
@@ -149,6 +152,9 @@ public final class BlockWire {
     private static void blockEntityFrom2225Until2259(BlockEntity c, WireContext ctx, WireNode out) {
         BlockEntity.Container v0 = c.container();
         if (v0 != null) {
+            if (v0.showUiOnInteraction() != true) {
+                ctx.drop(BlockEntity.NAME, "container.show_ui_on_interaction does not exist in this Bedrock version");
+            }
             out.put("minecraft:container.slot_count", Wire.toByte(v0.slotCount()));
             String v1 = v0.title();
             if (v1 != null) {
@@ -466,17 +472,23 @@ public final class BlockWire {
     private static void redstoneProducer(RedstoneProducer c, WireContext ctx, WireNode out) {
         out.put("minecraft:redstone_producer.allowPowerDown", (byte) 1);
         out.put("minecraft:redstone_producer.allowPowerUp", (byte) 0);
-        out.put("minecraft:redstone_producer.connected_faces", Wire.strings(List.of("down", "up", "north", "south", "west", "east").stream().filter(c.connectedFaces().stream().map(x -> x.value()).toList()::contains).toList()));
+        List<RedstoneProducer.ConnectedFaces> v0 = c.connectedFaces();
+        for (String x1 : v0.stream().map(x -> x.value()).toList()) {
+            if (!List.of("down", "up", "north", "south", "west", "east").contains(x1)) {
+                ctx.drop(RedstoneProducer.NAME, "connected_faces = " + x1 + " has no known wire value");
+            }
+        }
+        out.put("minecraft:redstone_producer.connected_faces", Wire.strings(List.of("down", "up", "north", "south", "west", "east").stream().filter(v0.stream().map(x -> x.value()).toList()::contains).toList()));
         out.put("minecraft:redstone_producer.power", Wire.toByte(c.power()));
-        RedstoneProducer.StronglyPoweredFace v0 = c.stronglyPoweredFace();
-        if (v0 != null) {
-            out.put("minecraft:redstone_producer.strongly_powered_face", v0.value());
+        RedstoneProducer.StronglyPoweredFace v2 = c.stronglyPoweredFace();
+        if (v2 != null) {
+            out.put("minecraft:redstone_producer.strongly_powered_face", v2.value());
         } else {
             out.remove("minecraft:redstone_producer.strongly_powered_face");
         }
-        Boolean v1 = c.transformRelative();
-        if (v1 != null) {
-            out.put("minecraft:redstone_producer.transform_relative", Wire.bool(v1));
+        Boolean v3 = c.transformRelative();
+        if (v3 != null) {
+            out.put("minecraft:redstone_producer.transform_relative", Wire.bool(v3));
         } else {
             out.put("minecraft:redstone_producer.transform_relative", (byte) 1);
         }

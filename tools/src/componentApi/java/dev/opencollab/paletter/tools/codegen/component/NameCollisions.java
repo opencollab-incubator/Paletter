@@ -65,9 +65,15 @@ final class NameCollisions {
             }
         }
         model.components.stream().filter(c -> history.recordedName("classes", c.id) == null).forEach(c -> counts.merge(c.className, 1, Integer::sum));
+        // A nested type of an existing component is taken too: the new component takes the prefix, the nested type keeps its name
+        Set<String> nested = new HashSet<>();
+        model.components.forEach(c -> {
+            nested.addAll(c.types.keySet());
+            nested.addAll(c.enums.keySet());
+        });
         for (Comp c : model.components) {
             if (history.recordedName("classes", c.id) == null
-                && (counts.get(c.className) > 1 || kept.contains(c.className) || reserved.contains(c.className))) {
+                && (counts.get(c.className) > 1 || kept.contains(c.className) || reserved.contains(c.className) || nested.contains(c.className))) {
                 c.className = (c.kind == Kind.ITEM ? "Item" : "Block") + c.className;
                 c.root.name = c.className;
             }
@@ -80,19 +86,22 @@ final class NameCollisions {
                 o.fields.forEach(f -> f.type = renameRefs(f.type, renamed));
             }
         }
-        Set<String> top = new HashSet<>(reserved);
+        Map<String, String> top = new HashMap<>();
+        reserved.forEach(name -> top.put(name, "a hand-written public type"));
         for (Comp c : model.components) {
-            if (!top.add(c.className)) {
+            if (top.putIfAbsent(c.className, "the component " + c.id) != null) {
                 throw new GenerationException("name collision: " + c.id + " is still " + c.className + " after the prefix; set one in api.json classes");
             }
         }
         for (Comp c : model.components) {
-            List<String> nested = new ArrayList<>(c.types.keySet());
-            nested.addAll(c.enums.keySet());
-            for (String name : nested) {
-                if (top.contains(name)) {
-                    throw new GenerationException("name collision: " + c.id + " has a nested type " + name + ", which shadows the public type of that name;"
-                        + " name it in api.json typeNames");
+            List<String> names = new ArrayList<>(c.types.keySet());
+            names.addAll(c.enums.keySet());
+            for (String name : names) {
+                if (top.containsKey(name)) {
+                    // A new component got the prefix above, so the public type is a recorded or hand-written one
+                    throw new GenerationException("name collision: " + c.id + " has a nested type " + name + ", which would shadow "
+                        + top.get(name) + " of that name inside " + c.className + "; name the nested type in api.json typeNames (or enums)"
+                        + " if it is the newer one, else the other in api.json classes, and the history entry with it");
                 }
             }
         }

@@ -131,7 +131,8 @@ class ApiHistoryTest {
             {"fields": {"item:test:widget:gone": {"name": "gone", "wire": ["test:widget.gone"], "type": "int", "default": 5},
                         "item:test:widget:gear": {"name": "gear", "wire": [], "type": "enum:Mode", "default": "slow"},
                         "item:test:widget:hint": {"name": "hint", "wire": [], "type": "list<string>", "nullable": true}}}""";
-        Output out = ComponentGenerator.generateAll(inputs(history));
+        // The history records none of the live fields, so all of them look new: the removal is declared
+        Output out = ComponentGenerator.generateAll(removed(inputs(history), "item:test:widget:gone", "item:test:widget:gear", "item:test:widget:hint"));
         String widget = flat(out.sources().get(WIDGET));
         assertTrue(widget.contains("    @Deprecated(forRemoval = true)\n    public int gone() {\n        return 5;\n    }"), widget);
         assertTrue(widget.contains("    @Deprecated(forRemoval = true)\n    public @NonNull Mode gear() {\n        return Mode.SLOW;\n    }"), widget);
@@ -150,10 +151,38 @@ class ApiHistoryTest {
         assertEquals(1, count.get("default").getAsInt());
     }
 
+    /** The inputs with api.json {@code removedFields}: the maintainer's word that these left the model without a successor. */
+    private static Inputs removed(Inputs in, String... keys) {
+        com.google.gson.JsonArray list = new com.google.gson.JsonArray();
+        for (String key : keys) {
+            list.add(key);
+        }
+        in.api().add("removedFields", list);
+        return in;
+    }
+
+    /** A recorded field without wire leaves left the model while the same object gained fields: renamed or removed is asked. */
+    private static final String GONE = "{\"fields\": {\"item:test:widget:gone\": {\"name\": \"gone\", \"wire\": [], \"type\": \"string\", \"nullable\": true}}}";
+
+    @Test
+    void aFieldThatLeftWithoutWireLeavesWhileOthersJoinedAsksForADecision() {
+        GenerationException e = assertThrows(GenerationException.class, () -> ComponentGenerator.generateAll(inputs(GONE)));
+        assertTrue(e.getMessage().startsWith("item:test:widget:gone (gone) left the model while [") && e.getMessage().contains("item:test:widget:fuel")
+            && e.getMessage().contains("api.json renamedFields"), e.getMessage());
+        // Declared removed: a stand-in
+        assertTrue(ComponentGenerator.generateAll(removed(inputs(GONE), "item:test:widget:gone")).sources().get(WIDGET).contains(" gone()"));
+        // Declared renamed: delegates to the successor, recorded as renamedTo
+        Inputs renamed = inputs(GONE);
+        renamed.api().add("renamedFields", json("{\"item:test:widget:gone\": \"item:test:widget:fuel\"}"));
+        Output out = ComponentGenerator.generateAll(renamed);
+        assertTrue(out.sources().get(WIDGET).contains("return fuel(gone);"), out.sources().get(WIDGET));
+        assertEquals("item:test:widget:fuel", fields(out).getAsJsonObject("item:test:widget:gone").get("renamedTo").getAsString());
+    }
+
     @Test
     void aRemovedFieldWithoutARecordedTypeFails() {
-        GenerationException e = assertThrows(GenerationException.class, () -> ComponentGenerator.generateAll(inputs("""
-            {"fields": {"item:test:widget:gone": {"name": "gone", "wire": ["test:widget.gone"]}}}""")));
+        GenerationException e = assertThrows(GenerationException.class, () -> ComponentGenerator.generateAll(removed(inputs("""
+            {"fields": {"item:test:widget:gone": {"name": "gone", "wire": ["test:widget.gone"]}}}"""), "item:test:widget:gone")));
         assertTrue(e.getMessage().contains("item:test:widget:gone") && e.getMessage().contains("no type"), e.getMessage());
     }
 

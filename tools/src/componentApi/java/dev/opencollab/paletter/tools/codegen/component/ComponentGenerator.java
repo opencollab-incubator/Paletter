@@ -139,7 +139,7 @@ public final class ComponentGenerator {
         ComponentGenerator generator = new ComponentGenerator(in);
         generator.build();
         generator.hand.history.checkShapes(generator.model);
-        generator.model.renames.addAll(generator.hand.history.renames(generator.model));
+        generator.model.renames.addAll(generator.hand.history.renames(generator.model, in.api()));
         StandIns.apply(generator.model, generator.hand.history, in.context().reserved());
         Map<String, String> out = new TreeMap<>();
         // api.json "since" overrides the build version (the Paletter version the generated API first shipped in)

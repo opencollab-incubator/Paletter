@@ -685,8 +685,10 @@ Inputs, all in `data/model` except the last:
   for a constant. A recorded name is reused, never recomputed: a docs restructure or a new component renames nothing (a
   new collision gives the `Block`/`Item` prefix to the newcomer). When a field's path leaves the model and exactly one
   new field of the same object writes the same wire leaves, the JSON key was renamed: the old accessor and builder setter
-  stay as `@Deprecated` delegates, and the entry records `renamedTo`, which every later run follows directly. Without
-  such a field the entry is marked `removed` and keeps a `@Deprecated(forRemoval = true)` stand-in (`StandIns`): an
+  stay as `@Deprecated` delegates, and the entry records `renamedTo`, which every later run follows directly. When no
+  field matches by wire leaves (the entry has none, or Bedrock renamed the NBT key too) and the same object gained a
+  field, generation fails until `api.json` decides: `renamedFields` (`{"<old identity>": "<new identity>"}`) or
+  `removedFields` (a list of old identities). Without such a field the entry is marked `removed` and keeps a `@Deprecated(forRemoval = true)` stand-in (`StandIns`): an
   accessor that returns the field's default and a builder setter that does nothing. A component that leaves the model
   is marked `removed` the same way and keeps a stand-in class, which every palette leaves out with a report warning.
   Generation prints a `warning:` line for each stand-in; two candidate successors fail. Entries are never dropped (a

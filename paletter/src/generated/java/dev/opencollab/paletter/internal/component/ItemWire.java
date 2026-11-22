@@ -216,7 +216,9 @@ public final class ItemWire {
     private static void enchantable(Enchantable c, WireContext ctx, WireNode out) {
         out.put("item_properties.enchantable_slot", "sword");
         out.put("minecraft:enchantable.slot", "sword");
-        ctx.changed(Enchantable.NAME, "slot is sent as a constant, whatever its value");
+        if (!"sword".equals(c.slot())) {
+            ctx.changed(Enchantable.NAME, "slot is sent as a constant, whatever its value");
+        }
         int v0 = c.value();
         out.put("item_properties.enchantable_value", Wire.toInt(v0));
         out.put("minecraft:enchantable.value", Wire.toByte(v0));

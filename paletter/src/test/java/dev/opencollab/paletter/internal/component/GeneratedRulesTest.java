@@ -85,6 +85,17 @@ class GeneratedRulesTest {
     }
 
     @Test
+    void anIntegralLeafRefusesAValueItsBitsCannotHold() {
+        assertEquals((byte) 100, Wire.toByte(100.9));
+        assertEquals((byte) -1, Wire.toByte(255)); // an unsigned bit pattern fits
+        assertThrows(IllegalArgumentException.class, () -> Wire.toByte(300)); // would wrap to 44
+        assertThrows(IllegalArgumentException.class, () -> Wire.toShort(70000));
+        assertThrows(IllegalArgumentException.class, () -> Wire.toInt(1e12));
+        assertThrows(IllegalArgumentException.class, () -> Wire.toInt(Double.NaN));
+        assertEquals(13, Wire.toInt(20.0 * (double) 0.7f)); // truncated: unverified against BDS (docs/data-pipeline.md)
+    }
+
+    @Test
     void enabledStatesAreOneFlagPerState() {
         WireNode out = new WireNode();
         TraitWire.write(PlacementDirection.builder().enabledStates(PlacementDirection.EnabledStates.CORNER_AND_CARDINAL_DIRECTION).build(), ctx, out);

@@ -151,16 +151,36 @@ public final class Linear extends Rule {
         }
     }
 
+    /**
+     * The divisor of a scale of 1/n (degrees / 90 -> quarter turns), which divides by n: the rounded scale times a multiple
+     * of n would fall just short of the integer an integral leaf truncates to. Null for a scale that multiplies.
+     */
+    private Double divisor() {
+        double divisor = 1 / scale;
+        return Math.abs(scale) < 1 && Math.abs(divisor - Math.rint(divisor)) < 1e-3 ? Math.rint(divisor) : null;
+    }
+
+    /**
+     * The leaf of a value before its NBT type, computed as the encoder ({@link #emit}) computes it: the evaluation and the
+     * encoder are one function.
+     * <p>
+     * TODO(recapture): an integral leaf truncates the result ({@code Wire.toInt}), so {@code 20 * 0.7f} sends 13 where BDS
+     * may send 14; the captures only hold values exact in binary (docs/data-pipeline.md, "Recapture to-do").
+     */
+    double apply(double x) {
+        Double divisor = divisor();
+        double v = divisor != null ? x / divisor + offset : scale * x + offset;
+        // wrapped into [0, modulo): BDS sends -90 degrees as 3 quarter turns
+        return modulo == null ? v : Math.floorMod(Math.round(v), modulo);
+    }
+
     @Override
     public void emit(Emitter e) {
-        // A scale of 1/n (degrees / 90 -> quarter turns) divides by n: the rounded scale times a multiple of n would fall
-        // just short of the integer an integral leaf truncates to
-        double divisor = 1 / scale;
-        CodeBlock number = Math.abs(scale) < 1 && Math.abs(divisor - Math.rint(divisor)) < 1e-3
-            ? CodeBlock.of("($L / $L + $L)", e.number(), decimal(Math.rint(divisor)), decimal(offset))
+        Double divisor = divisor();
+        CodeBlock number = divisor != null
+            ? CodeBlock.of("($L / $L + $L)", e.number(), decimal(divisor), decimal(offset))
             : CodeBlock.of("($L * $L + $L)", decimal(scale), e.number(), decimal(offset));
         if (modulo != null) {
-            // wrapped into [0, modulo): BDS sends -90 degrees as 3 quarter turns
             number = CodeBlock.of("$T.floorMod($T.round($L), $LL)", Math.class, Math.class, number, modulo);
         }
         e.put(e.fromNumber(nbt, number));
@@ -176,6 +196,6 @@ public final class Linear extends Rule {
             return null;
         }
         double x = p.isBoolean() ? (p.getAsBoolean() ? 1 : 0) : p.getAsDouble();
-        return typed(scale * x + offset, nbt);
+        return typed(apply(x), nbt);
     }
 }

@@ -137,6 +137,19 @@ public final class OrderedSet extends Rule {
             return;
         }
         CodeBlock values = CodeBlock.join(order.stream().map(v -> CodeBlock.of("$S", v)).toList(), ", ");
+        // A value outside BDS's order has no place in it: left out, with a report entry
+        String x = e.local("x");
+        CodeBlock unknown = e.unknown(this, CodeBlock.of("$N", x));
+        if (unknown != null) {
+            e.code().beginControlFlow("for ($T $N : $L)", String.class, x, e.strings());
+            e.code().beginControlFlow("if (!$T.of($L).contains($N))", List.class, values, x).addStatement(unknown).endControlFlow();
+            e.code().endControlFlow();
+        }
         e.put(CodeBlock.of("$T.strings($T.of($L).stream().filter($L::contains).toList())", Emitter.WIRE, List.class, values, e.strings()));
+    }
+
+    @Override
+    public Set<String> knownValues(List<String> documented) {
+        return order == null ? null : new TreeSet<>(order);
     }
 }

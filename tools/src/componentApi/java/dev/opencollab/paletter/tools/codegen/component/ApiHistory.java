@@ -33,7 +33,9 @@ import java.util.stream.Stream;
  *     the model and exactly one new field of the same object writes the same leaves, the JSON key was renamed: the old
  *     accessor and setter stay as {@code @Deprecated} delegates, and the entry names its successor ({@code renamedTo}),
  *     which later runs resolve directly. Without such a field the entry is marked {@code removed} and keeps a stand-in
- *     ({@link StandIns}); two such fields fail. The recorded {@code type} and {@code nullable} of a live field are its
+ *     ({@link StandIns}); two such fields fail. When no field matches by wire leaves (none recorded, or Bedrock renamed
+ *     the NBT key too) while the object gained fields, the maintainer decides: api.json {@code renamedFields}
+ *     (old identity -> new identity) or {@code removedFields}; generation fails until then. The recorded {@code type} and {@code nullable} of a live field are its
  *     locked Java shape ({@link #checkShapes}).</li>
  * </ul>
  * Entries are never dropped, so the file only grows, and nothing generated from it disappears: a stand-in goes only when
@@ -118,7 +120,9 @@ final class ApiHistory {
      *
      * @return the renamed fields, for {@link ApiSource}
      */
-    List<Renamed> renames(ApiModel model) {
+    List<Renamed> renames(ApiModel model, JsonObject api) {
+        JsonObject renamedFields = api.has("renamedFields") ? api.getAsJsonObject("renamedFields") : new JsonObject();
+        Set<String> declaredRemoved = api.has("removedFields") ? strings(api.getAsJsonArray("removedFields")) : Set.of();
         List<Renamed> out = new ArrayList<>();
         removedFields.clear();
         renamedTo.clear();
@@ -140,8 +144,23 @@ final class ApiHistory {
             Field successor;
             if (entry.has("renamedTo")) {
                 successor = successor(c, key);
+            } else if (renamedFields.has(key)) {
+                String target = renamedFields.get(key).getAsString();
+                successor = objects(c).flatMap(o -> o.fields.stream()).filter(f -> f.path != null && target.equals(c.id + ":" + f.path))
+                    .findFirst().orElseThrow(() -> new GenerationException("api.json renamedFields: " + key + " -> " + target + ", which is no field"));
             } else {
                 successor = wireSuccessor(c, owner, key, entry);
+                if (successor == null && owner != null && !declaredRemoved.contains(key) && !entry.has("removed")) {
+                    // Without equal wire leaves (an object or list field, a server only one, or Bedrock renamed the NBT key
+                    // too) a new field of the same object may be the renamed one: the maintainer decides
+                    List<String> newcomers = owner.fields.stream().filter(f -> f.path != null && !fields.has(c.id + ":" + f.path))
+                        .map(f -> c.id + ":" + f.path).toList();
+                    if (!newcomers.isEmpty()) {
+                        throw new GenerationException(key + " (" + oldName + ") left the model while " + newcomers + " joined it: renamed or"
+                            + " removed? Name the successor in api.json renamedFields {\"" + key + "\": \"<identity>\"}, or list it in"
+                            + " removedFields to keep it as a stand-in");
+                    }
+                }
             }
             if (successor == null) {
                 if (owner != null) {

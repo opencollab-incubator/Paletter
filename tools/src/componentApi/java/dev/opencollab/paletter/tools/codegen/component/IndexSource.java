@@ -66,7 +66,7 @@ final class IndexSource {
             }
             c.elementForms.forEach((form, list) -> forms.add(CodeBlock.of("$S, $S", form, list + "[]")));
             if (!forms.isEmpty()) {
-                init.addStatement("FORMS.put($T.class, $T.of($L))", cls, ApiSource.MAP, CodeBlock.join(forms, ", "));
+                init.addStatement("FORMS.put($T.class, $L)", cls, mapOf(forms));
             }
             descriptors(init, cls, c.root);
             for (ObjType o : c.types.values()) {
@@ -122,8 +122,17 @@ final class IndexSource {
             }
         }
         if (!pairs.isEmpty()) {
-            init.addStatement("DESCRIPTORS.put($T.class, $T.of($L))", cls, ApiSource.MAP, CodeBlock.join(pairs, ", "));
+            init.addStatement("DESCRIPTORS.put($T.class, $L)", cls, mapOf(pairs));
         }
+    }
+
+    /** {@code Map.of(k, v, ...)}, which takes at most ten pairs; {@code Map.ofEntries(Map.entry(k, v), ...)} past that. */
+    static CodeBlock mapOf(List<CodeBlock> pairs) {
+        if (pairs.size() <= 10) {
+            return CodeBlock.of("$T.of($L)", ApiSource.MAP, CodeBlock.join(pairs, ", "));
+        }
+        List<CodeBlock> entries = pairs.stream().map(p -> CodeBlock.of("$T.entry($L)", ApiSource.MAP, p)).toList();
+        return CodeBlock.of("$T.ofEntries($L)", ApiSource.MAP, CodeBlock.join(entries, ", "));
     }
 
     private static void keys(CodeBlock.Builder init, ClassName cls, ObjType o) {
