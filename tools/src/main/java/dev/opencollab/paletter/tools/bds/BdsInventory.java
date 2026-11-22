@@ -196,9 +196,11 @@ public final class BdsInventory {
     }
 
     /** The JSON keys (last path segment) of the fields of a component in mappings.json that BDS did not reject as unknown. */
-    private static Set<String> jsonKeys(JsonObject mappings, String component) {
+    private static Set<String> jsonKeys(JsonObject mappings, String componentId) {
         Set<String> keys = new TreeSet<>();
-        JsonObject json = mappings.getAsJsonObject("components").getAsJsonObject(component);
+        JsonObject component = mappings.getAsJsonObject("components").getAsJsonObject(componentId);
+        // the window of the newest capture: the BDS the inventory is compared with
+        JsonObject json = component == null ? null : dev.opencollab.paletter.tools.model.MappingWindows.newest(component);
         if (json == null || !json.has("fields")) {
             return keys;
         }

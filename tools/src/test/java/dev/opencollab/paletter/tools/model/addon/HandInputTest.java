@@ -87,15 +87,19 @@ class HandInputTest {
     }
 
     @Test
-    void theWindowsOfAComponentAreItsOwnObjectAndTheNestedProtocolMembers() {
+    void theWindowsOfAComponentAreItsWindowList() {
         JsonObject component = JsonParser.parseString("""
-            {"status": "sent", "protocols": [1, 2], "protocol3": {"protocols": [3, 4], "status": "sent"},
-             "protocol5": {"protocols": [5]}, "protocolsNote": {}}""").getAsJsonObject();
+            {"windows": [{"protocols": [1, 2], "status": "sent"}, {"protocols": [3, 4], "status": "sent"}, {"protocols": [5]}],
+             "formats": {}}""").getAsJsonObject();
         assertEquals(3, MappingWindows.of(component).size());
-        assertEquals(5, MappingWindows.protocolOfKey("protocol5"));
-        assertEquals(-1, MappingWindows.protocolOfKey("protocols"));
         assertEquals(java.util.TreeSet.class, MappingWindows.protocols(component).getClass());
         assertEquals(List.of(1, 2, 3, 4, 5), List.copyOf(MappingWindows.protocols(component)));
+        assertEquals(List.of(1, 2), MappingWindows.oldest(component).getAsJsonArray("protocols").asList().stream().map(e -> e.getAsInt()).toList());
         assertEquals(List.of(5), MappingWindows.newest(component).getAsJsonArray("protocols").asList().stream().map(e -> e.getAsInt()).toList());
+        // a component without windows, or a window without protocols, is no mapping
+        org.junit.jupiter.api.Assertions.assertThrows(IllegalArgumentException.class,
+            () -> MappingWindows.of(JsonParser.parseString("{\"status\": \"sent\"}").getAsJsonObject()));
+        org.junit.jupiter.api.Assertions.assertThrows(IllegalArgumentException.class,
+            () -> MappingWindows.of(JsonParser.parseString("{\"windows\": [{\"status\": \"sent\"}]}").getAsJsonObject()));
     }
 }

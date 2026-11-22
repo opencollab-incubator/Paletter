@@ -183,13 +183,16 @@ public final class ComponentGenerator {
         if (in.components().has("lists")) {
             in.components().getAsJsonObject("lists").entrySet().forEach(e -> model.lists.put(e.getKey(), e.getValue().getAsString()));
         }
+        // Every component's windows well formed before anything reads them
+        mappings.entrySet().forEach(e -> Windows.windows(e.getKey(), e.getValue().getAsJsonObject()));
         model.replacements.putAll(Replacements.derive(in.components(), in.mappings(), in.fixtures(), Captures.captureReference(in.mappings())));
         for (JsonObject doc : docs) {
             String id = doc.get("id").getAsString();
             model.pages.put(id, ModelFields.text(doc, "page"));
             String category = doc.get("category").getAsString();
             JsonObject mapping = mappings.has(id) ? mappings.getAsJsonObject(id) : null;
-            String status = mapping == null ? "not captured" : mapping.get("status").getAsString();
+            // the newest window's, below, when the component has a mapping
+            String status = "not captured";
             String standalone = hand.apiString("standalone", id);
             if (skip.has(id)) {
                 model.omitted.put(id, "not modelled: " + skip.get(id).getAsString());

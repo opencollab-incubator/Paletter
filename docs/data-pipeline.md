@@ -652,7 +652,10 @@ Inputs, all in `data/model` except the last:
 
   These three and `bds-keys.json` are read as one model, built once (`Fixtures#apply`) for the add-on generator, the
   inference and this generator: the docs, then the errata (an erratum's types first), then what BDS said.
-- `mappings.json`: per component and protocol window, how each field reaches the wire.
+- `mappings.json`: per component and protocol window, how each field reaches the wire. A component is
+  `{"windows": [{"protocols": [...], "status": ..., "fields": ..., ...}, ...]}`, oldest window first, read only through
+  `MappingWindows`. Every window protocol of the captures must be in some window of a captured component (a capture
+  without it fails generation); the oldest window also holds below the oldest capture.
 - `api.json` (hand): Java shape only (names, unions, value forms, open enums).
 - `HandTransforms` (hand, in the tools): which fields are compiled by a method of `internal.component.Transforms`.
   Each method's Javadoc says why no inferred rule fits and what evidence backs it.

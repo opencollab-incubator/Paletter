@@ -27,8 +27,12 @@ class WindowMergeTest {
             result("sent", "test:a.x", 5, "message of the old build"),
             result("sent", "test:a.x", 7, "message of the new build"),
             result("sent", "test:a.x", 9, "message of the newest build")), List.of(100, 200, 300));
-        assertEquals("[100,200,300]", merged.getAsJsonArray("protocols").toString());
-        assertTrue(merged.keySet().stream().noneMatch(k -> k.startsWith("protocol") && !k.equals("protocols")), merged.keySet().toString());
+        assertEquals(List.of("windows"), List.copyOf(merged.keySet()), "the component holds only its window list");
+        List<JsonObject> windows = MappingWindows.of(merged);
+        assertEquals(1, windows.size());
+        assertEquals("[100,200,300]", windows.getFirst().getAsJsonArray("protocols").toString());
+        assertEquals("message of the old build", windows.getFirst().getAsJsonObject("fields").getAsJsonObject("x").getAsJsonArray("bdsErrors").get(0).getAsString(),
+            "the first capture of the window speaks for it");
     }
 
     @Test
@@ -36,11 +40,18 @@ class WindowMergeTest {
         JsonObject merged = MappingWindows.merge(List.of(
             result("sent", "test:a.x", 5, "e"), result("sent", "test:a.y", 5, "e"), result("sent", "test:a.x", 5, "e"),
             result("sent", "test:a.x", 6, "f")), List.of(100, 200, 300, 400));
-        assertEquals("[100]", merged.getAsJsonArray("protocols").toString());
-        assertEquals("[200]", merged.getAsJsonObject("protocol200").getAsJsonArray("protocols").toString());
-        assertEquals("[300,400]", merged.getAsJsonObject("protocol300").getAsJsonArray("protocols").toString(),
+        List<JsonObject> windows = MappingWindows.of(merged);
+        assertEquals(List.of("[100]", "[200]", "[300,400]"), windows.stream().map(w -> w.getAsJsonArray("protocols").toString()).toList(),
             "the third equals the first, but it follows the second: a window of its own, which the fourth joins");
-        assertNull(merged.get("protocol400"));
+        assertEquals(List.of(100, 200, 300, 400), List.copyOf(MappingWindows.protocols(merged)));
+    }
+
+    @Test
+    void theProtocolsComeFirstInEachWindow() {
+        JsonObject merged = MappingWindows.merge(List.of(result("sent", "test:a.x", 5, "e"), result("sent", "test:a.y", 5, "e")), List.of(100, 200));
+        for (JsonObject window : MappingWindows.of(merged)) {
+            assertEquals("protocols", window.keySet().iterator().next(), window.keySet().toString());
+        }
     }
 
     @Test
@@ -49,8 +60,21 @@ class WindowMergeTest {
         gone.add("wire", new com.google.gson.JsonArray());
         gone.add("fields", new JsonObject());
         JsonObject merged = MappingWindows.merge(List.of(result("sent", "test:a.x", 5, "e"), gone), List.of(100, 200));
-        assertEquals("rejected", merged.getAsJsonObject("protocol200").get("status").getAsString());
-        assertEquals(merged.getAsJsonObject("protocol200"), MappingWindows.newest(merged));
+        assertEquals(2, MappingWindows.of(merged).size());
+        assertEquals("rejected", MappingWindows.newest(merged).get("status").getAsString());
+        assertEquals("[200]", MappingWindows.newest(merged).getAsJsonArray("protocols").toString());
+        assertEquals("sent", MappingWindows.oldest(merged).get("status").getAsString());
+    }
+
+    @Test
+    void aBuildWithoutTheComponentIsAWindowOfItsOwnNotPartOfItsNeighbour() {
+        // the absent result of a build whose schema lacks the component (MappingInference.absent) between two that send it
+        JsonObject absent = new JsonObject();
+        absent.addProperty("status", MappingWindows.ABSENT);
+        JsonObject merged = MappingWindows.merge(List.of(result("sent", "test:a.x", 5, "e"), absent, result("sent", "test:a.x", 5, "e")),
+            List.of(100, 200, 300));
+        assertEquals(List.of("sent", MappingWindows.ABSENT, "sent"), MappingWindows.of(merged).stream().map(w -> w.get("status").getAsString()).toList());
+        assertEquals(List.of("[100]", "[200]", "[300]"), MappingWindows.of(merged).stream().map(w -> w.getAsJsonArray("protocols").toString()).toList());
     }
 
     @Test

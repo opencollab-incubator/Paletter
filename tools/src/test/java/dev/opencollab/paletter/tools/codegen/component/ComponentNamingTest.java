@@ -39,9 +39,9 @@ class ComponentNamingTest {
              "notes": []}"""));
         JsonObject mappings = base.mappings();
         mappings.getAsJsonObject("components").add("block:test:widget", ComponentGeneratorTest.json("""
-            {"status": "sent", "wire": ["test:block_widget"], "protocols": [100, 200],
+            {"windows": [{"status": "sent", "wire": ["test:block_widget"], "protocols": [100, 200],
              "fields": {"size": {"status": "inferred", "rules": [{"kind": "identity", "nbt": "int", "tags": [], "wire": "test:block_widget.size"}],
-                                 "whenAbsent": {"test:block_widget.size": "1 (int)"}}}}"""));
+                                 "whenAbsent": {"test:block_widget.size": "1 (int)"}}}}]}"""));
         return new Inputs(components, base.fixtures(), base.feedback(), mappings, base.transforms(), base.api(), base.since()).withContext(context);
     }
 

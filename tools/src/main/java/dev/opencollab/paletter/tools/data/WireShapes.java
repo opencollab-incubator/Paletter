@@ -292,11 +292,8 @@ public final class WireShapes {
 
     /** Whether a window of the component's mappings is {@code untestable}. */
     private static boolean untestable(JsonObject mapping) {
-        if (mapping.has("status") && mapping.get("status").getAsString().equals("untestable")) {
-            return true;
-        }
         return dev.opencollab.paletter.tools.model.MappingWindows.of(mapping).stream()
-            .anyMatch(window -> window != mapping && untestable(window));
+            .anyMatch(window -> window.has("status") && window.get("status").getAsString().equals("untestable"));
     }
 
     private static boolean covered(String path, Set<String> wire) {

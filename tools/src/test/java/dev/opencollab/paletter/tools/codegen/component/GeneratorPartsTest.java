@@ -35,11 +35,12 @@ class GeneratorPartsTest {
     }
 
     @Test
-    void windowsOfAMappingWithoutProtocolsIsOneUnboundedWindow() {
+    void oneWindowOfAMappingHoldsForEveryProtocol() {
         assertEquals(List.of(), Windows.windows("item:a", null));
-        List<Window> windows = Windows.windows("item:a", json("{\"status\": \"sent\"}"));
+        List<Window> windows = Windows.windows("item:a", json("{\"windows\": [{\"protocols\": [100], \"status\": \"sent\"}]}"));
         assertEquals(1, windows.size());
-        assertFalse(windows.getFirst().bounded());
+        assertFalse(windows.getFirst().bounded(), "the oldest window also holds below its capture, the newest above");
+        assertThrows(GenerationException.class, () -> Windows.windows("item:a", json("{\"status\": \"sent\"}")));
     }
 
     @Test
