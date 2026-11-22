@@ -54,7 +54,7 @@ class ExtendReuseTest {
         assertNotSame(parent.blocks(), child.blocks());
         assertSame(parent.creative(), child.creative());
         assertSameCanonicalItems(parent, child);
-        assertNotNull(child.items().item("reuse:lamp"));
+        assertNotNull(child.items().getDefinition("reuse:lamp"));
     }
 
     @Test
@@ -73,10 +73,10 @@ class ExtendReuseTest {
         Palette child = parent.extend(PaletteLayer.builder("override")
             .overrideItem("minecraft:cake", item -> item.modifyComponents(MaxStackSize.of(1))).build());
         assertNotSame(parent.creative(), child.creative());
-        assertNotSame(parent.items().item("minecraft:cake"), child.items().item("minecraft:cake"));
+        assertNotSame(parent.items().getDefinition("minecraft:cake"), child.items().getDefinition("minecraft:cake"));
         CreativeEntry cake = child.creative().items().stream().map(data -> child.creative().entry(data.getNetId()))
             .filter(entry -> entry.stack().type().identifier().equals("minecraft:cake")).findFirst().orElseThrow();
-        assertSame(child.items().item("minecraft:cake"), cake.item().getDefinition());
+        assertSame(child.items().getDefinition("minecraft:cake"), cake.item().getDefinition());
     }
 
     private static org.cloudburstmc.protocol.bedrock.data.BlockPropertyData properties(Palette palette, String identifier) {

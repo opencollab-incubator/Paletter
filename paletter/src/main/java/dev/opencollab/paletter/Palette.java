@@ -842,7 +842,7 @@ public final class Palette {
             return custom.key();
         }
         String item = data.blockItems().get(block.identifier());
-        return item == null || items.item(item) == null ? null : BedrockItemType.fromIdentifier(item);
+        return item == null || items.getDefinition(item) == null ? null : BedrockItemType.fromIdentifier(item);
     }
 
     /**
@@ -869,7 +869,7 @@ public final class Palette {
      * @since 1.0.0
      */
     public @Nullable RegisteredItem itemDefinition(@NonNull BedrockItemType type) {
-        return items.item(type.identifier());
+        return items.getDefinition(type.identifier());
     }
 
     /**
@@ -881,7 +881,7 @@ public final class Palette {
      * @since 1.0.0
      */
     public @Nullable RegisteredItem itemDefinition(@NonNull String identifier) {
-        return items.item(identifier);
+        return items.getDefinition(identifier);
     }
 
     /**

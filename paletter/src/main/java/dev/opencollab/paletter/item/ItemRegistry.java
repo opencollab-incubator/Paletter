@@ -243,16 +243,6 @@ public final class ItemRegistry implements DefinitionRegistry<ItemDefinition> {
         return item != null || parent == null ? item : parent.getDefinition(identifier);
     }
 
-    /**
-     * Internal: looks up an item by identifier.
-     *
-     * @param identifier the item identifier, e.g. {@code minecraft:apple}
-     * @return the item with this identifier, or null; same as {@link #getDefinition(String)}
-     */
-    public @Nullable RegisteredItem item(@NonNull String identifier) {
-        return getDefinition(identifier);
-    }
-
     @Override
     public boolean isRegistered(@NonNull ItemDefinition definition) {
         return getDefinition(definition.getRuntimeId()) == definition;
@@ -396,7 +386,7 @@ public final class ItemRegistry implements DefinitionRegistry<ItemDefinition> {
      */
     @Internal
     public @Nullable RegisteredItem customBlockItem(@NonNull String identifier) {
-        return customBlockItems.contains(identifier) ? item(identifier) : null;
+        return customBlockItems.contains(identifier) ? getDefinition(identifier) : null;
     }
 
     /**
