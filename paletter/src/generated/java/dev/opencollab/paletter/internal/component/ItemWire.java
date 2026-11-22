@@ -125,10 +125,10 @@ public final class ItemWire {
     private static void allowOffHand(AllowOffHand c, WireContext ctx, WireNode out) {
         Boolean v0 = c.value();
         if (v0 != null) {
-            out.put("item_properties.allow_off_hand", Wire.bool(v0));
+            out.own("item_properties.allow_off_hand", Wire.bool(v0));
             out.put("minecraft:allow_off_hand.value", Wire.bool(v0));
         } else {
-            out.put("item_properties.allow_off_hand", (byte) 0);
+            out.own("item_properties.allow_off_hand", (byte) 0);
             out.put("minecraft:allow_off_hand.value", (byte) 0);
         }
     }
@@ -361,10 +361,10 @@ public final class ItemWire {
     private static void maxStackSize(MaxStackSize c, WireContext ctx, WireNode out) {
         Integer v0 = c.value();
         if (v0 != null) {
-            out.put("item_properties.max_stack_size", Wire.toInt(v0));
+            out.own("item_properties.max_stack_size", Wire.toInt(v0));
             out.put("minecraft:max_stack_size.value", Wire.toByte(v0));
         } else {
-            out.put("item_properties.max_stack_size", 1);
+            out.own("item_properties.max_stack_size", 1);
             out.put("minecraft:max_stack_size.value", (byte) 1);
         }
     }
@@ -525,23 +525,23 @@ public final class ItemWire {
         out.put("minecraft:wearable.protection", Wire.toInt(c.protection()));
         Wearable.Slot v0 = c.slot();
         switch (v0.value()) {
-            case "slot.armor.body" -> out.put("item_properties.allow_off_hand", (byte) 0);
-            case "slot.armor.chest" -> out.put("item_properties.allow_off_hand", (byte) 0);
-            case "slot.armor.feet" -> out.put("item_properties.allow_off_hand", (byte) 0);
-            case "slot.armor.head" -> out.put("item_properties.allow_off_hand", (byte) 0);
-            case "slot.armor.legs" -> out.put("item_properties.allow_off_hand", (byte) 0);
-            case "slot.weapon.mainhand" -> out.put("item_properties.allow_off_hand", (byte) 0);
-            case "slot.weapon.offhand" -> out.put("item_properties.allow_off_hand", (byte) 1);
+            case "slot.armor.body" -> out.putUnowned("item_properties.allow_off_hand", (byte) 0);
+            case "slot.armor.chest" -> out.putUnowned("item_properties.allow_off_hand", (byte) 0);
+            case "slot.armor.feet" -> out.putUnowned("item_properties.allow_off_hand", (byte) 0);
+            case "slot.armor.head" -> out.putUnowned("item_properties.allow_off_hand", (byte) 0);
+            case "slot.armor.legs" -> out.putUnowned("item_properties.allow_off_hand", (byte) 0);
+            case "slot.weapon.mainhand" -> out.putUnowned("item_properties.allow_off_hand", (byte) 0);
+            case "slot.weapon.offhand" -> out.putUnowned("item_properties.allow_off_hand", (byte) 1);
             default -> ctx.changed(Wearable.NAME, "slot = " + v0.value() + " is sent as minecraft:wearable.slot, but item_properties.allow_off_hand, item_properties.max_stack_size have no known wire value for it and keep their default");
         }
         switch (v0.value()) {
-            case "slot.armor.body" -> out.put("item_properties.max_stack_size", 1);
-            case "slot.armor.chest" -> out.put("item_properties.max_stack_size", 1);
-            case "slot.armor.feet" -> out.put("item_properties.max_stack_size", 1);
-            case "slot.armor.head" -> out.put("item_properties.max_stack_size", 1);
-            case "slot.armor.legs" -> out.put("item_properties.max_stack_size", 1);
-            case "slot.weapon.mainhand" -> out.put("item_properties.max_stack_size", 64);
-            case "slot.weapon.offhand" -> out.put("item_properties.max_stack_size", 64);
+            case "slot.armor.body" -> out.putUnowned("item_properties.max_stack_size", 1);
+            case "slot.armor.chest" -> out.putUnowned("item_properties.max_stack_size", 1);
+            case "slot.armor.feet" -> out.putUnowned("item_properties.max_stack_size", 1);
+            case "slot.armor.head" -> out.putUnowned("item_properties.max_stack_size", 1);
+            case "slot.armor.legs" -> out.putUnowned("item_properties.max_stack_size", 1);
+            case "slot.weapon.mainhand" -> out.putUnowned("item_properties.max_stack_size", 64);
+            case "slot.weapon.offhand" -> out.putUnowned("item_properties.max_stack_size", 64);
         }
         out.put("minecraft:wearable.slot", v0.value());
     }

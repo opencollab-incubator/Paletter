@@ -55,15 +55,18 @@ final class WindowWire {
     /** Value leaves of the window (owned leaves), and the field owning each. */
     private final Set<String> owned = new TreeSet<>();
     private final Map<String, Field> ownerOf = new LinkedHashMap<>();
+    /** The owning component of each leaf several components of the kind write ({@link SharedLeaves}). */
+    private final Map<String, String> sharedOwners;
 
     private CodeBlock.Builder b = CodeBlock.builder();
     private int vars;
 
-    WindowWire(Comp c, Window window, boolean exposed, Set<String> transformed) {
+    WindowWire(Comp c, Window window, boolean exposed, Set<String> transformed, Map<String, String> sharedOwners) {
         this.c = c;
         this.window = window;
         this.exposed = exposed;
         this.transformed = transformed;
+        this.sharedOwners = sharedOwners;
         if (window != null && window.sent()) {
             collectOwned(c.root, false);
             collectOwned(c.root, true);
@@ -583,7 +586,7 @@ final class WindowWire {
             }
             String rel = relative(wire, prefix);
             if (e.getValue().equals("omitted")) {
-                b.addStatement("$N.remove($S)", node, rel);
+                b.addStatement("$L", removeCode(node, rel));
             } else {
                 put(node, rel, literal(e.getValue()));
             }
@@ -599,6 +602,30 @@ final class WindowWire {
     }
 
     void put(String node, String path, CodeBlock value) {
-        b.addStatement("$N.put($S, $L)", node, path, value);
+        b.addStatement("$L", putCode(node, path, value));
+    }
+
+    /**
+     * The expression that writes a leaf: {@code own} or {@code putUnowned} for a leaf several components write
+     * ({@link SharedLeaves}), so the owner's value wins whatever the order of the components; else {@code put}.
+     */
+    CodeBlock putCode(String node, String path, CodeBlock value) {
+        String owner = shared(node, path);
+        String method = owner == null ? "put" : owner.equals(c.id) ? "own" : "putUnowned";
+        return CodeBlock.of("$N.$N($S, $L)", node, method, path, value);
+    }
+
+    /** The expression that removes a leaf; fails for a leaf several components write, whose removal has no owner rule. */
+    CodeBlock removeCode(String node, String path) {
+        if (shared(node, path) != null) {
+            throw new GenerationException(c.id + " removes " + path + ", a leaf several components write (SharedLeaves): which"
+                + " of them wins is open");
+        }
+        return CodeBlock.of("$N.remove($S)", node, path);
+    }
+
+    /** @return the owner of a leaf several components write, or null; leaves are shared only at the component's top node */
+    private String shared(String node, String path) {
+        return node.equals("out") ? sharedOwners.get(path) : null;
     }
 }

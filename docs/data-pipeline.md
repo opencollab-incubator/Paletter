@@ -296,6 +296,22 @@ leg per 6 builds.
 
 **The trade-off and the merge order.** A change to the model that changes the add-on is complete only with its recapture: merging the model change alone leaves captures of the old add-on next to the new model. So the recapture pull request targets the branch of the data pull request: merge the recapture into `bds-data/<channel>` first (it adds its commit to the data pull request, which then carries model and recapture together), then merge the data pull request into the base branch. Nothing of the model change reaches the base without its recapture, and there is one review of the whole, in the data pull request. In exchange nobody recaptures by hand. If the daily run updates the data pull request between the two merges, it force-pushes the branch and the merged recapture is gone from it; the run then also starts a new recapture, so merge both on the same day.
 
+### Recapture to-do
+
+What the generated code assumes without a capture, each marked `TODO(recapture)` where it is used. The spec add-on has to
+gain these variants (`fixtures.json` probe values or the add-on generator), then the next recapture settles them; besides
+the components of `ComponentConformanceTest.RECAPTURE_PENDING`:
+
+- **Two components onto one leaf** (`SharedLeaves`, `WireNode.own`): `minecraft:wearable` with `minecraft:max_stack_size`
+  (`item_properties.max_stack_size`) and with `minecraft:allow_off_hand` (`item_properties.allow_off_hand`). The encoders
+  keep the value of the component the leaf carries unchanged, whatever the order; which one BDS keeps is unverified.
+- **Linear rules onto integral leaves** (`Linear`, `Wire.toInt`): the captures only hold values exact in binary
+  (`use_modifiers.use_duration` 0, -1, 0.5, 1, 2.25, 30), so how BDS rounds `20 * 0.7` is unknown; the encoder truncates
+  the double product (`0.7` -> 13, where 14 is as likely). Capture non-exact values (0.35, 0.7, 0.95) and fit the rounding.
+- **`minecraft:enchantable` slots**: one accepted value (`sword`) is captured, so `slot` is sent as that constant
+  whatever it says. Capture the 25 slots BDS's error lists; the field will most likely become a value class, a type
+  change the history check then reports (record it in `api-history.json` before 1.0).
+
 ### Experiments
 
 Bedrock has no list of its experiment toggles, so `update` discovers them (`ExperimentDiscovery`). Candidates are

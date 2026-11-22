@@ -14,6 +14,7 @@ import javax.lang.model.element.Modifier;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -29,10 +30,13 @@ final class ComponentWire {
     private final Comp c;
     /** Whether the encoder is called from outside (a standalone type of the definition core, e.g. the menu category). */
     private final boolean exposed;
+    /** The owner of each leaf several components of the kind write ({@link SharedLeaves}). */
+    private final Map<String, String> owners;
 
-    ComponentWire(Comp c, boolean exposed) {
+    ComponentWire(Comp c, boolean exposed, Map<String, String> owners) {
         this.c = c;
         this.exposed = exposed;
+        this.owners = owners;
     }
 
     private MethodSpec.Builder encoder(String name) {
@@ -60,7 +64,7 @@ final class ComponentWire {
         List<Window> windows = new ArrayList<>();
         List<CodeBlock> bodies = new ArrayList<>();
         for (Window w : c.windows.isEmpty() ? Collections.<Window>singletonList(null) : c.windows) {
-            CodeBlock body = new WindowWire(c, w, exposed, transformed).body();
+            CodeBlock body = new WindowWire(c, w, exposed, transformed, owners).body();
             if (!bodies.isEmpty() && bodies.getLast().toString().equals(body.toString())) {
                 Window last = windows.removeLast();
                 windows.add(new Window(last.since(), w.until(), last.mapping()));

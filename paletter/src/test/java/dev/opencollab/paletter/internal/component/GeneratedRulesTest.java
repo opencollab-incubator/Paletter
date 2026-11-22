@@ -60,6 +60,30 @@ class GeneratedRulesTest {
             .getByte("stopsLiquidFromDirection"));
     }
 
+    private NbtMap item(List<dev.opencollab.paletter.item.component.ItemComponent> components) {
+        WireNode out = new WireNode();
+        ItemWire.envelope(ctx, out);
+        components.forEach(component -> ItemWire.write(component, ctx, out));
+        return out.build().getCompound("item_properties");
+    }
+
+    @Test
+    void aLeafSeveralComponentsWriteKeepsItsOwnersValueInEitherOrder() {
+        // Unverified against BDS (no capture has both): the component the leaf carries the value of owns it
+        var stack = dev.opencollab.paletter.item.component.MaxStackSize.of(16);
+        var weapon = dev.opencollab.paletter.item.component.Wearable.builder()
+            .slot(dev.opencollab.paletter.item.component.Wearable.Slot.SLOT_WEAPON_OFFHAND).build();
+        assertEquals(16, item(List.of(stack, weapon)).getInt("max_stack_size"));
+        assertEquals(16, item(List.of(weapon, stack)).getInt("max_stack_size"));
+        var offHand = dev.opencollab.paletter.item.component.AllowOffHand.of(true);
+        var head = dev.opencollab.paletter.item.component.Wearable.builder()
+            .slot(dev.opencollab.paletter.item.component.Wearable.Slot.SLOT_ARMOR_HEAD).build();
+        assertEquals((byte) 1, item(List.of(offHand, head)).getByte("allow_off_hand"));
+        assertEquals((byte) 1, item(List.of(head, offHand)).getByte("allow_off_hand"));
+        // Alone, the wearable's slot table still writes the leaf
+        assertEquals(1, item(List.of(head)).getInt("max_stack_size"));
+    }
+
     @Test
     void enabledStatesAreOneFlagPerState() {
         WireNode out = new WireNode();

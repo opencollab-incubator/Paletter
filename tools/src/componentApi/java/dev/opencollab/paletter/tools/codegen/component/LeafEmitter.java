@@ -163,7 +163,7 @@ final class LeafEmitter implements Emitter {
 
     @Override
     public CodeBlock write(String typed) {
-        return typed.equals(Rule.NOT_SENT) ? CodeBlock.of("$N.remove($S)", node, rel) : CodeBlock.of("$N.put($S, $L)", node, rel, WireValues.literal(typed));
+        return typed.equals(Rule.NOT_SENT) ? window.removeCode(node, rel) : window.putCode(node, rel, WireValues.literal(typed));
     }
 
     @Override
