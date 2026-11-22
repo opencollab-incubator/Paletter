@@ -142,7 +142,7 @@ class CraftingDataTest {
         CustomItem ruby = CustomItem.builder("example:ruby").component(Icon.of("ruby")).menuCategory(CreativeCategory.ITEMS).build();
         CustomBlock lamp = CustomBlock.builder("example:lamp")
             .component(Geometry.of("minecraft:geometry.full_block"))
-            .component(MaterialInstances.builder().all(MaterialInstances.Instance.builder().texture("lamp").build()).build())
+            .component(MaterialInstances.builder().all(MaterialInstances.InstanceOrAlias.define(MaterialInstances.Instance.builder().texture("lamp").build())).build())
             .menuCategory(CreativeCategory.CONSTRUCTION)
             .build();
         Palette palette = PALETTE.extend(PaletteLayer.builder("content").item(ruby).block(lamp).build());

@@ -61,7 +61,7 @@ class HandTransformsTest {
     /**
      * The tables of Transforms are typed by hand: every entry must equal what a capture shows, or be listed as unverified
      * above. The evidence is what {@code mappings.json} records: the table rule the inference fitted for use_animation,
-     * and the captured name to code pairs of hover_text_color. A recapture that covers an unverified entry fails this test
+     * and the captured name to code pairs of hover_text_color ({@code mappings-evidence.json}). A recapture that covers an unverified entry fails this test
      * until the entry leaves the list.
      */
     @Test
@@ -80,8 +80,12 @@ class HandTransformsTest {
         }
         checkTable(table(transforms, "USE_ANIMATIONS"), animations, UNVERIFIED_USE_ANIMATIONS);
 
+        // the captured pairs are samples of the unexplained leaves: evidence, in mappings-evidence.json
+        JsonObject evidence = JsonParser.parseString(Files.readString(ComponentConformanceTest.MODEL.resolve(
+            dev.opencollab.paletter.tools.model.infer.MappingEvidence.FILE))).getAsJsonObject().getAsJsonObject("components");
         Map<String, String> colors = new java.util.HashMap<>();
-        Matcher color = Pattern.compile("\\\\\"(\\w+)\\\\\" -> §(.) \\(string\\)").matcher(components.get("item:minecraft:hover_text_color").toString());
+        Matcher color = Pattern.compile("\\\\\"(\\w+)\\\\\" -> §(.) \\(string\\)").matcher(components.get("item:minecraft:hover_text_color").toString()
+            + evidence.get("item:minecraft:hover_text_color").toString());
         while (color.find()) {
             colors.put(color.group(1), color.group(2));
         }
