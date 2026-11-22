@@ -239,7 +239,7 @@ class LayerTest {
 
         // A block that does not exist in 26.40: nothing is bundled, the palette sends minecraft:unknown
         NbtMap concreteStairs = latest.blocks().states("minecraft:white_concrete_stairs").getFirst().getState();
-        assertEquals(BlockExplanation.Kind.DEFAULT, oldest.explain(concreteStairs).kind());
+        assertEquals(ResolutionKind.DEFAULT, oldest.explain(concreteStairs).kind());
         assertEquals("minecraft:unknown", oldest.explain(concreteStairs).sent().get("name"));
         // ... unless the consumer defines a fallback
         Palette withFallback = Paletter.builder().fallbacks(Fallbacks.builder()
@@ -254,7 +254,7 @@ class LayerTest {
         NbtMap poplar = latest.blocks().states("minecraft:poplar_planks").getFirst().getState();
         assertNotNull(oldest.blocks().exact(poplar));
         assertNull(oldest.blocks().resolve(poplar).block());
-        assertEquals(BlockExplanation.Kind.DEFAULT, oldest.explain(poplar).kind());
+        assertEquals(ResolutionKind.DEFAULT, oldest.explain(poplar).kind());
         Palette flat = Paletter.builder().fallbacks(Fallbacks.builder()
             .block(BedrockBlocks.POPLAR_PLANKS, BlockFallback.of(BedrockBlocks.PALE_OAK_PLANKS))
             .item(BedrockItems.POPLAR_BOAT, ItemFallback.of(BedrockItems.PALE_OAK_BOAT)).build())

@@ -29,38 +29,10 @@ import java.util.Locale;
  */
 @Experimental
 public record ItemExplanation(@NonNull String identifier, int aux, @Nullable NbtMap blockState,
-                              @Nullable BedrockItemVariant handle, @NonNull Kind kind,
+                              @Nullable BedrockItemVariant handle, @NonNull ResolutionKind kind,
                               @NonNull List<String> chain, @Nullable String item, int runtimeId, int damage,
                               @Nullable String block, int blockRuntimeId, boolean creative, @Nullable String creativeGroup) {
 
-    /**
-     * How a {@link Palette} resolved something for its version.
-     *
-     * @since 1.0.0
-     */
-    public enum Kind {
-        /**
-         * It exists exactly.
-         */
-        EXACT,
-        /**
-         * The same block with state values added, removed or reset to fit this version, e.g. stairs before
-         * {@code minecraft:corner} existed. Does not occur for items.
-         */
-        ADAPTED,
-        /**
-         * It does not exist in this version; a fallback was used.
-         */
-        FALLBACK,
-        /**
-         * It does not exist in this version and has no fallback of its own; the default fallback was used.
-         */
-        DEFAULT,
-        /**
-         * Nothing suitable exists: blocks are sent as air, items have no definition.
-         */
-        MISSING
-    }
     @Override
     public String toString() {
         StringBuilder out = new StringBuilder();

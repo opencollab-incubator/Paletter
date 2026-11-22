@@ -46,10 +46,10 @@ class PropertiesTest {
         assertTrue(PALETTER.properties(shrub, older).isEmpty());
         Properties current = PALETTER.properties(shrub, newer);
         assertFalse(current.isEmpty());
-        RegisteredItem item = PALETTER.vanilla(newer).items().item("minecraft:red_shrub");
+        RegisteredItem item = PALETTER.vanilla(newer).items().getDefinition("minecraft:red_shrub");
         assertNotNull(item);
         assertEquals(current, item.properties());
-        assertNull(PALETTER.vanilla(older).items().item("minecraft:red_shrub"));
+        assertNull(PALETTER.vanilla(older).items().getDefinition("minecraft:red_shrub"));
     }
 
     @Test
@@ -73,7 +73,7 @@ class PropertiesTest {
     @Test
     void customItemsCarryTheirComponents() {
         Palette palette = PALETTER.vanilla(PALETTER.latest()).extend(PaletteLayer.builder("server").item(ruby()).build());
-        RegisteredItem item = palette.items().item("server:ruby");
+        RegisteredItem item = palette.items().getDefinition("server:ruby");
         assertNotNull(item);
         assertTrue(item.properties().get(PropertyKind.COMPONENT, "minecraft:max_stack_size") != null);
         assertEquals(Properties.EMPTY, PALETTER.properties(BedrockItemType.fromIdentifier("server:ruby"), PALETTER.latest()));
@@ -82,10 +82,10 @@ class PropertiesTest {
     @Test
     void overridesEditCustomItemsOfEarlierLayers() {
         Palette base = PALETTER.vanilla(PALETTER.latest()).extend(PaletteLayer.builder("server").item(ruby()).build());
-        RegisteredItem before = base.items().item("server:ruby");
+        RegisteredItem before = base.items().getDefinition("server:ruby");
         Palette session = base.extend(PaletteLayer.builder("override")
             .overrideItem("server:ruby", item -> item.modifyComponents(MaxStackSize.of(1))).build());
-        RegisteredItem after = session.items().item("server:ruby");
+        RegisteredItem after = session.items().getDefinition("server:ruby");
         assertNotNull(after);
         assertNotEquals(before.properties(), after.properties());
         assertEquals((byte) 1, after.properties().component("minecraft:max_stack_size").getByte("value"));
@@ -97,8 +97,8 @@ class PropertiesTest {
         Palette base = PALETTER.vanilla(PALETTER.latest());
         Palette session = base.extend(PaletteLayer.builder("override")
             .overrideItem("minecraft:cake", item -> item.modifyComponents(MaxStackSize.of(3))).build());
-        assertEquals((byte) 3, session.items().item("minecraft:cake").properties().component("minecraft:max_stack_size").getByte("value"));
-        assertNotEquals(base.items().item("minecraft:cake").properties(), session.items().item("minecraft:cake").properties());
+        assertEquals((byte) 3, session.items().getDefinition("minecraft:cake").properties().component("minecraft:max_stack_size").getByte("value"));
+        assertNotEquals(base.items().getDefinition("minecraft:cake").properties(), session.items().getDefinition("minecraft:cake").properties());
     }
 
     @Test

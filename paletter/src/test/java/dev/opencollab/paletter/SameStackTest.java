@@ -115,8 +115,8 @@ class SameStackTest {
         Palette session = base.extend(layer);
         ItemData fromBase = base.encode(sword(1, null));
         ItemData fromSession = session.encode(sword(1, null));
-        RegisteredItem baseSword = base.items().item("minecraft:diamond_sword");
-        RegisteredItem sessionSword = session.items().item("minecraft:diamond_sword");
+        RegisteredItem baseSword = base.items().getDefinition("minecraft:diamond_sword");
+        RegisteredItem sessionSword = session.items().getDefinition("minecraft:diamond_sword");
         assertNotSame(baseSword, sessionSword);
         assertNotSame(fromBase.getDefinition(), fromSession.getDefinition());
         // Not equal for Cloudburst (another definition), the same stack for the palette that knows both

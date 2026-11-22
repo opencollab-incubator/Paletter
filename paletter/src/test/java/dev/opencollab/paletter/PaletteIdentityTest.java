@@ -49,7 +49,7 @@ class PaletteIdentityTest {
         Map<String, RegisteredItem> byName = new HashMap<>();
         for (RegisteredItem item : items.definitions()) {
             assertSame(item, items.getDefinition(item.getRuntimeId()), item.toString());
-            assertSame(item, items.item(item.getIdentifier()), item.toString());
+            assertSame(item, items.getDefinition(item.getIdentifier()), item.toString());
             assertTrue(items.isRegistered(item));
             assertNull(seen.put(item, true), "listed twice: " + item);
             assertNull(byId.put(item.getRuntimeId(), item), "runtime id of " + item + " is shared");
@@ -106,7 +106,7 @@ class PaletteIdentityTest {
 
             // Items: all of the base, except what the layer overrides
             assertOneInstancePerItem(session.items());
-            RegisteredItem cake = base.items().item("minecraft:cake");
+            RegisteredItem cake = base.items().getDefinition("minecraft:cake");
             int changed = 0;
             for (RegisteredItem item : base.items().definitions()) {
                 RegisteredItem own = session.items().getDefinition(item.getRuntimeId());
@@ -116,11 +116,11 @@ class PaletteIdentityTest {
                     changed++;
                 } else {
                     assertSame(item, own, item.toString());
-                    assertSame(item, session.items().item(item.getIdentifier()));
+                    assertSame(item, session.items().getDefinition(item.getIdentifier()));
                 }
             }
             assertEquals(cake == null ? 0 : 1, changed);
-            RegisteredItem ruby = session.items().item("identity:ruby");
+            RegisteredItem ruby = session.items().getDefinition("identity:ruby");
             assertNotNull(ruby);
             assertTrue(ruby.isCustom());
 
@@ -152,7 +152,7 @@ class PaletteIdentityTest {
         for (RegisteredItem item : base.items().definitions()) {
             assertSame(item, second.items().getDefinition(item.getRuntimeId()));
         }
-        assertSame(first.items().item("identity:ruby"), second.items().item("identity:ruby"));
+        assertSame(first.items().getDefinition("identity:ruby"), second.items().getDefinition("identity:ruby"));
         for (int i = 0; i < base.blocks().size(); i++) {
             assertSame(base.blocks().byIndex(i), second.blocks().byIndex(i));
         }

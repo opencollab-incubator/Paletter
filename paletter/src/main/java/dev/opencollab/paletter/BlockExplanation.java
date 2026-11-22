@@ -16,43 +16,15 @@ import java.util.Locale;
  * @param handle its handle, or null if it has none in this palette
  * @param kind how it was resolved for this palette's version
  * @param chain the identifiers involved: the requested block, then the block it resolved to if that is another one
- * @param sent the state that is sent to the client, or null if nothing fits ({@link Kind#MISSING})
+ * @param sent the state that is sent to the client, or null if nothing fits ({@link ResolutionKind#MISSING})
  * @param runtimeId the runtime id of the sent state in this palette's network id mode, or -1
  * @param hashedId the hashed network id of the sent state, whatever the palette's mode, or -1
  * @since 1.0.0
  */
 @Experimental
-public record BlockExplanation(@NonNull NbtMap requested, @Nullable BedrockBlockState handle, @NonNull Kind kind,
+public record BlockExplanation(@NonNull NbtMap requested, @Nullable BedrockBlockState handle, @NonNull ResolutionKind kind,
                                @NonNull List<String> chain, @Nullable NbtMap sent, int runtimeId, int hashedId) {
 
-    /**
-     * How a {@link Palette} resolved something for its version.
-     *
-     * @since 1.0.0
-     */
-    public enum Kind {
-        /**
-         * It exists exactly.
-         */
-        EXACT,
-        /**
-         * The same block with state values added, removed or reset to fit this version, e.g. stairs before
-         * {@code minecraft:corner} existed. Does not occur for items.
-         */
-        ADAPTED,
-        /**
-         * It does not exist in this version; a fallback was used.
-         */
-        FALLBACK,
-        /**
-         * It does not exist in this version and has no fallback of its own; the default fallback was used.
-         */
-        DEFAULT,
-        /**
-         * Nothing suitable exists: blocks are sent as air, items have no definition.
-         */
-        MISSING
-    }
     @Override
     public String toString() {
         StringBuilder out = new StringBuilder();

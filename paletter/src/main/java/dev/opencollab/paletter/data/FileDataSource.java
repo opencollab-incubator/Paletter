@@ -1,5 +1,6 @@
 package dev.opencollab.paletter.data;
 
+import dev.opencollab.paletter.internal.Lazy;
 import dev.opencollab.paletter.internal.data.Renames;
 
 import dev.opencollab.paletter.internal.data.VanillaData;
@@ -44,15 +45,34 @@ final class FileDataSource implements PaletteDataSource {
     private final Opener opener;
     private final String origin;
 
-    private volatile List<DataVersion> versions;
-    private volatile Map<String, List<VerifiedBuild>> verifiedBuilds;
-    private volatile PropertyStore properties;
-    private volatile BehaviourStore behaviour;
-    private volatile VoxelShapeStore voxelShapes;
+    private final Lazy<List<DataVersion>> versions = new Lazy<>(this::readIndex);
+    private final Lazy<Map<String, List<VerifiedBuild>>> verifiedBuilds = new Lazy<>(this::readBuilds);
+    // Read once: versions may load on several threads at the same time
+    private final Lazy<PropertyStore> properties = new Lazy<>(
+        () -> readOrEmpty("properties.nbt", "properties", PropertyStore::read, PropertyStore.empty()));
+    // behaviour.nbt is large, and Paletters of several threads may ask at the same time
+    private final Lazy<BehaviourStore> behaviour = new Lazy<>(
+        () -> readOrEmpty("behaviour.nbt", "behaviour data", BehaviourStore::read, BehaviourStore.empty()));
+    private final Lazy<VoxelShapeStore> voxelShapes = new Lazy<>(
+        () -> readOrEmpty("voxel_shapes.nbt", "voxel shapes", VoxelShapeStore::read, VoxelShapeStore.empty()));
 
     private FileDataSource(Opener opener, String origin) {
         this.opener = opener;
         this.origin = origin;
+    }
+
+    /** Reads a file of the set with {@code reader}, or returns {@code empty} if there is none. */
+    private <T> T readOrEmpty(String file, String what, Reader<T> reader, T empty) {
+        try (InputStream stream = opener.open(file)) {
+            return stream == null ? empty : reader.read(stream);
+        } catch (IOException e) {
+            throw new UncheckedIOException("Unable to read the Paletter " + what + " in " + origin, e);
+        }
+    }
+
+    @FunctionalInterface
+    private interface Reader<T> {
+        T read(InputStream stream) throws IOException;
     }
 
     static FileDataSource directory(Path directory) {
@@ -70,11 +90,7 @@ final class FileDataSource implements PaletteDataSource {
 
     @Override
     public @NonNull List<DataVersion> versions() {
-        List<DataVersion> versions = this.versions;
-        if (versions == null) {
-            this.versions = versions = readIndex();
-        }
-        return versions;
+        return versions.get();
     }
 
     private List<DataVersion> readIndex() {
@@ -128,11 +144,7 @@ final class FileDataSource implements PaletteDataSource {
 
     @Override
     public @NonNull List<VerifiedBuild> verifiedBuilds(@NonNull DataVersion version) {
-        Map<String, List<VerifiedBuild>> builds = this.verifiedBuilds;
-        if (builds == null) {
-            this.verifiedBuilds = builds = readBuilds();
-        }
-        return builds.getOrDefault(version.name(), List.of());
+        return verifiedBuilds.get().getOrDefault(version.name(), List.of());
     }
 
     private Map<String, List<VerifiedBuild>> readBuilds() {
@@ -167,21 +179,7 @@ final class FileDataSource implements PaletteDataSource {
 
     @Override
     public @NonNull PropertyStore properties() {
-        PropertyStore properties = this.properties;
-        if (properties == null) {
-            // Read once: versions may load on several threads at the same time
-            synchronized (this) {
-                properties = this.properties;
-                if (properties == null) {
-                    try (InputStream stream = opener.open("properties.nbt")) {
-                        this.properties = properties = stream == null ? PropertyStore.empty() : PropertyStore.read(stream);
-                    } catch (IOException e) {
-                        throw new UncheckedIOException("Unable to read the Paletter properties in " + origin, e);
-                    }
-                }
-            }
-        }
-        return properties;
+        return properties.get();
     }
 
     /**
@@ -190,46 +188,17 @@ final class FileDataSource implements PaletteDataSource {
      */
     @Override
     public void releaseProperties() {
-        synchronized (this) {
-            properties = null;
-        }
+        properties.release();
     }
 
     @Override
     public @NonNull VoxelShapeStore voxelShapes() {
-        VoxelShapeStore result = voxelShapes;
-        if (result == null) {
-            synchronized (this) {
-                result = voxelShapes;
-                if (result == null) {
-                    try (InputStream stream = opener.open("voxel_shapes.nbt")) {
-                        voxelShapes = result = stream == null ? VoxelShapeStore.empty() : VoxelShapeStore.read(stream);
-                    } catch (IOException e) {
-                        throw new UncheckedIOException("Unable to read the Paletter voxel shapes in " + origin, e);
-                    }
-                }
-            }
-        }
-        return result;
+        return voxelShapes.get();
     }
 
     @Override
     public @NonNull BehaviourStore behaviour() {
-        BehaviourStore result = behaviour;
-        if (result == null) {
-            // Parsed once: behaviour.nbt is large, and Paletters of several threads may ask at the same time
-            synchronized (this) {
-                result = behaviour;
-                if (result == null) {
-                    try (InputStream stream = opener.open("behaviour.nbt")) {
-                        behaviour = result = stream == null ? BehaviourStore.empty() : BehaviourStore.read(stream);
-                    } catch (IOException e) {
-                        throw new UncheckedIOException("Unable to read the Paletter behaviour data in " + origin, e);
-                    }
-                }
-            }
-        }
-        return result;
+        return behaviour.get();
     }
 
     @Override

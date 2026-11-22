@@ -102,120 +102,7 @@ final class PaletteCompiler {
         report.addAll(parent.report());
 
         try {
-            // Blocks first: items need to know which blocks exist, and custom blocks re-number all states.
-            // Without custom blocks or block fallbacks the parent's block palette (and its canonical table) is shared
-            BlockRegistry blocks = parent.blocks()
-                .withCustomBlocks(data, layer, layer.blocks(), report, source);
-
-            // Items of the layer that replace the item of one of its blocks: they are the blocks' items
-            Map<String, CustomItem> replacements = new LinkedHashMap<>();
-            for (CustomItem item : layer.items()) {
-                if (replacesBlockItem(item, blocks, layer, report, source)) {
-                    replacements.put(item.identifier(), item);
-                }
-            }
-
-            List<ItemVariant> newVariants = new ArrayList<>();
-            // The handles of the new variants are the types the custom items and blocks own
-            List<BedrockItemType> customTypes = new ArrayList<>();
-            blocks.customBlocks().forEach(block -> customTypes.add(block.itemType()));
-            for (CustomItem item : layer.items()) {
-                newVariants.add(item.variant());
-                customTypes.add(item.type());
-            }
-            for (CustomBlock block : layer.blocks()) {
-                if (block.item() != CustomBlock.BlockItem.NONE && !replacements.containsKey(block.identifier())) {
-                    newVariants.add(ItemVariant.of(block.identifier()));
-                }
-            }
-            List<String> registered = newVariants.stream().map(ItemVariant::identifier).toList();
-            newVariants.addAll(layer.variants());
-            CanonicalItems canonicalItems = parent.items().canonical().extend(layer, newVariants, customTypes);
-
-            ItemRegistry.Builder items = parent.items().extend(blocks, canonicalItems);
-            // Components refer to items of this layer registered later: declare them all first
-            registered.forEach(items::declare);
-            for (PaletteLayer.Override override : layer.overrides()) {
-                if (!items.override(override.identifier(), override.modifier(), report, source)) {
-                    report.info(source, "Not overriding " + override.identifier() + ": the item does not exist in " + data.version());
-                }
-            }
-
-            CreativeOrdering ordering = parent.ordering();
-            // Placements in registration order: custom items, then items of blocks. Items get sequential ids in the order they
-            // are registered in, the ones that replace a block item among them (the addon capture: plain 908, plain_block 909,
-            // projectile 910)
-            List<Placed> placed = new ArrayList<>();
-            for (CustomItem custom : layer.items()) {
-                if (replacements.containsKey(custom.identifier())) {
-                    items.addBlockItemReplacement(custom, report, source);
-                    continue;
-                }
-                items.addCustom(custom, report, source);
-                Menu menu = menu(custom.menuCategory());
-                if (menu != null) {
-                    placed.add(new Placed(null, BedrockItemStack.of(custom.type()), custom.creativePlacement(), menu));
-                }
-            }
-            // BDS registers block items in the order of the block files, identifier descending without files, whatever
-            // order the layer lists them in
-            List<CustomBlock> blocksByItemOrder = new ArrayList<>(layer.blocks());
-            blocksByItemOrder.sort(Comparator.comparing(CustomBlock::identifier, dev.opencollab.paletter.internal.BlockIdOrder.DESCENDING));
-            for (CustomBlock block : blocksByItemOrder) {
-                CustomItem replacement = replacements.get(block.identifier());
-                if (replacement != null) {
-                    // BDS adds the replacing item in the block pass, in the item's own category, as a plain stack
-                    Menu menu = menu(replacement.menuCategory());
-                    if (menu != null) {
-                        placed.add(new Placed(block.identifier(), BedrockItemStack.of(replacement.type()), replacement.creativePlacement(), menu));
-                    }
-                    continue;
-                }
-                Menu menu = menu(block.menuCategory());
-                if (items.addBlockItem(block, report, source) != null && menu != null) {
-                    placed.add(new Placed(block.identifier(), blockItemStack(block, blocks), block.creativePlacement(), menu));
-                }
-            }
-            layer.tags().forEach(items::tag);
-
-            // Without placements and edits the layout is the parent's, and so is what is compiled from it unless the layer
-            // registers an item or block the layout mentions
-            boolean sameLayout = placed.isEmpty() && layer.creativeEdits().isEmpty();
-            CreativeLayout layout = sameLayout ? parent.creativeLayout() : creativeLayout(parent, layer, blocks, placed, report);
-            if (layer.creativeEdits().isEmpty()) {
-                // Placements only add stacks of the items and blocks of the layer
-                if (sameLayout) {
-                    items.keepsCreativeStacksOfParentLayout(parent.creativeIdentifiers());
-                } else {
-                    items.keepsCreativeStacksOfParent();
-                }
-            }
-            ItemRegistry itemPalette = items.build(layout, report);
-            Set<String> registers = new HashSet<>(registered);
-            layer.overrides().forEach(override -> registers.add(override.identifier()));
-            layer.blocks().forEach(block -> registers.add(block.identifier()));
-            registers.addAll(items.renumberedBlockItems());
-            CreativeContent content = sameLayout && !parent.creativeMentions(registers)
-                ? parent.creative() : CreativeContent.compile(layout, itemPalette, report);
-            prepareCanonical(blocks, parent.blocks(), itemPalette, parent.items(), report);
-
-            List<PaletteLayer> layers = new ArrayList<>(parent.layers());
-            layers.add(layer);
-            // The voxel shapes are the parent's unless the layer defines shapes or blocks (which may name shapes)
-            Palette.Shapes shapes = parent.shapes();
-            if (!layer.voxelShapes().isEmpty() || !layer.blocks().isEmpty()) {
-                Map<String, VoxelShape> custom = new LinkedHashMap<>();
-                for (PaletteLayer each : layers) {
-                    each.voxelShapes().forEach((identifier, shape) -> {
-                        if (custom.putIfAbsent(identifier, shape) != null) {
-                            throw new PaletteException("The voxel shape " + identifier + " is defined twice", null, identifier, null);
-                        }
-                    });
-                }
-                shapes = new Palette.Shapes(shapes.vanilla(), VoxelShapeCompiler.compile(shapes.vanilla(), custom, blocks, report));
-            }
-            return new Palette(data, layers, blocks, itemPalette, layout, content, report, parent.ordering(), parent.gating(),
-                parent.behaviourStore(), shapes, parent);
+            return extendLayer(parent, layer, report, source);
         } catch (PaletteException e) {
             throw new PaletteException("Unable to compile layer " + source + " for " + data.version() + ": " + e.getMessage(),
                 source, e.identifier(), e);
@@ -224,6 +111,150 @@ final class PaletteCompiler {
             throw new PaletteException("Unable to compile layer " + source + " for " + data.version() + ": "
                 + e.getClass().getSimpleName() + (e.getMessage() == null ? "" : ": " + e.getMessage()), source, null, e);
         }
+    }
+
+    /** Compiles the layer in steps: blocks, new item variants, registrations and placements, creative content, shapes. */
+    private static Palette extendLayer(Palette parent, PaletteLayer layer, PaletteReportBuilder report, String source) {
+        VanillaData data = parent.vanillaData();
+        // Blocks first: items need to know which blocks exist, and custom blocks re-number all states.
+        // Without custom blocks or block fallbacks the parent's block palette (and its canonical table) is shared
+        BlockRegistry blocks = parent.blocks()
+            .withCustomBlocks(data, layer, layer.blocks(), report, source);
+
+        // Items of the layer that replace the item of one of its blocks: they are the blocks' items
+        Map<String, CustomItem> replacements = new LinkedHashMap<>();
+        for (CustomItem item : layer.items()) {
+            if (replacesBlockItem(item, blocks, layer, report, source)) {
+                replacements.put(item.identifier(), item);
+            }
+        }
+
+        NewItems newItems = newItems(parent, layer, blocks, replacements);
+        ItemRegistry.Builder items = parent.items().extend(blocks, newItems.canonical());
+        // Components refer to items of this layer registered later: declare them all first
+        newItems.registered().forEach(items::declare);
+        for (PaletteLayer.Override override : layer.overrides()) {
+            if (!items.override(override.identifier(), override.modifier(), report, source)) {
+                report.info(source, "Not overriding " + override.identifier() + ": the item does not exist in " + data.version());
+            }
+        }
+        List<Placed> placed = registerItems(layer, blocks, replacements, items, report, source);
+        layer.tags().forEach(items::tag);
+
+        // Without placements and edits the layout is the parent's, and so is what is compiled from it unless the layer
+        // registers an item or block the layout mentions
+        boolean sameLayout = placed.isEmpty() && layer.creativeEdits().isEmpty();
+        CreativeLayout layout = sameLayout ? parent.creativeLayout() : creativeLayout(parent, layer, blocks, placed, report);
+        if (layer.creativeEdits().isEmpty()) {
+            // Placements only add stacks of the items and blocks of the layer
+            if (sameLayout) {
+                items.keepsCreativeStacksOfParentLayout(parent.creativeIdentifiers());
+            } else {
+                items.keepsCreativeStacksOfParent();
+            }
+        }
+        ItemRegistry itemPalette = items.build(layout, report);
+        Set<String> registers = new HashSet<>(newItems.registered());
+        layer.overrides().forEach(override -> registers.add(override.identifier()));
+        layer.blocks().forEach(block -> registers.add(block.identifier()));
+        registers.addAll(items.renumberedBlockItems());
+        CreativeContent content = sameLayout && !parent.creativeMentions(registers)
+            ? parent.creative() : CreativeContent.compile(layout, itemPalette, report);
+        prepareCanonical(blocks, parent.blocks(), itemPalette, parent.items(), report);
+
+        List<PaletteLayer> layers = new ArrayList<>(parent.layers());
+        layers.add(layer);
+        Palette.Shapes shapes = shapes(parent, layer, layers, blocks, report);
+        return new Palette(data, layers, blocks, itemPalette, layout, content, report, parent.ordering(), parent.gating(),
+            parent.behaviourStore(), shapes, parent);
+    }
+
+    /**
+     * The canonical items of the layer's palette, and the identifiers of the items it registers itself.
+     *
+     * @param registered the identifiers of the custom items and of the items of custom blocks, declared before components
+     *         refer to them
+     */
+    private record NewItems(CanonicalItems canonical, List<String> registered) {
+    }
+
+    private static NewItems newItems(Palette parent, PaletteLayer layer, BlockRegistry blocks, Map<String, CustomItem> replacements) {
+        List<ItemVariant> newVariants = new ArrayList<>();
+        // The handles of the new variants are the types the custom items and blocks own
+        List<BedrockItemType> customTypes = new ArrayList<>();
+        blocks.customBlocks().forEach(block -> customTypes.add(block.itemType()));
+        for (CustomItem item : layer.items()) {
+            newVariants.add(item.variant());
+            customTypes.add(item.type());
+        }
+        for (CustomBlock block : layer.blocks()) {
+            if (block.item() != CustomBlock.BlockItem.NONE && !replacements.containsKey(block.identifier())) {
+                newVariants.add(ItemVariant.of(block.identifier()));
+            }
+        }
+        List<String> registered = newVariants.stream().map(ItemVariant::identifier).toList();
+        newVariants.addAll(layer.variants());
+        return new NewItems(parent.items().canonical().extend(layer, newVariants, customTypes), registered);
+    }
+
+    /**
+     * Registers the custom items and the items of the custom blocks, and collects their creative placements.
+     * Placements in registration order: custom items, then items of blocks. Items get sequential ids in the order they
+     * are registered in, the ones that replace a block item among them (the addon capture: plain 908, plain_block 909,
+     * projectile 910)
+     */
+    private static List<Placed> registerItems(PaletteLayer layer, BlockRegistry blocks, Map<String, CustomItem> replacements,
+                                              ItemRegistry.Builder items, PaletteReportBuilder report, String source) {
+        List<Placed> placed = new ArrayList<>();
+        for (CustomItem custom : layer.items()) {
+            if (replacements.containsKey(custom.identifier())) {
+                items.addBlockItemReplacement(custom, report, source);
+                continue;
+            }
+            items.addCustom(custom, report, source);
+            Menu menu = menu(custom.menuCategory());
+            if (menu != null) {
+                placed.add(new Placed(null, BedrockItemStack.of(custom.type()), custom.creativePlacement(), menu));
+            }
+        }
+        // BDS registers block items in the order of the block files, identifier descending without files, whatever
+        // order the layer lists them in
+        List<CustomBlock> blocksByItemOrder = new ArrayList<>(layer.blocks());
+        blocksByItemOrder.sort(Comparator.comparing(CustomBlock::identifier, dev.opencollab.paletter.internal.BlockIdOrder.DESCENDING));
+        for (CustomBlock block : blocksByItemOrder) {
+            CustomItem replacement = replacements.get(block.identifier());
+            if (replacement != null) {
+                // BDS adds the replacing item in the block pass, in the item's own category, as a plain stack
+                Menu menu = menu(replacement.menuCategory());
+                if (menu != null) {
+                    placed.add(new Placed(block.identifier(), BedrockItemStack.of(replacement.type()), replacement.creativePlacement(), menu));
+                }
+                continue;
+            }
+            Menu menu = menu(block.menuCategory());
+            if (items.addBlockItem(block, report, source) != null && menu != null) {
+                placed.add(new Placed(block.identifier(), blockItemStack(block, blocks), block.creativePlacement(), menu));
+            }
+        }
+        return placed;
+    }
+
+    /** The voxel shapes are the parent's unless the layer defines shapes or blocks (which may name shapes). */
+    private static Palette.Shapes shapes(Palette parent, PaletteLayer layer, List<PaletteLayer> layers, BlockRegistry blocks,
+                                         PaletteReportBuilder report) {
+        Palette.Shapes shapes = parent.shapes();
+        if (!layer.voxelShapes().isEmpty() || !layer.blocks().isEmpty()) {
+            Map<String, VoxelShape> custom = new LinkedHashMap<>();
+            for (PaletteLayer each : layers) {
+                each.voxelShapes().forEach((identifier, shape) -> {
+                    if (custom.putIfAbsent(identifier, shape) != null) {
+                        throw new PaletteException("The voxel shape " + identifier + " is defined twice", null, identifier, null);
+                    }
+                });
+            }
+            shapes = new Palette.Shapes(shapes.vanilla(), VoxelShapeCompiler.compile(shapes.vanilla(), custom, blocks, report));
+        }
+        return shapes;
     }
 
     /** The layout of the parent with the creative placements and edits of the layer applied. */

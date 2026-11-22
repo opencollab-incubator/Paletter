@@ -178,7 +178,7 @@ class ExtendIncrementalTest {
         List<RegisteredItem> items = new ArrayList<>(expected.items().definitions());
         assertEquals(items.size(), actual.items().definitions().size(), message);
         for (RegisteredItem item : items) {
-            RegisteredItem other = actual.items().item(item.getIdentifier());
+            RegisteredItem other = actual.items().getDefinition(item.getIdentifier());
             assertEquals(expected.items().isMultiStateBlockItem(item.getIdentifier()), actual.items().isMultiStateBlockItem(item.getIdentifier()),
                 message + " " + item.getIdentifier());
             assertEquals(describe(expected, item), describe(actual, other), message + " " + item.getIdentifier());
