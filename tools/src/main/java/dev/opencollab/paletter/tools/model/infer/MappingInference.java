@@ -78,7 +78,7 @@ public final class MappingInference {
     }
 
     /** The generated texts. */
-    private record Output(String mappings, String coverage, String feedback, Coverage coverageModel) {
+    private record Output(String mappings, String evidence, String coverage, String feedback, Coverage coverageModel) {
     }
 
     /**
@@ -92,13 +92,15 @@ public final class MappingInference {
         String feedbackText = output.feedback();
         if (check) {
             boolean same = mappingsText.equals(read(modelDir.resolve("mappings.json")))
+                && output.evidence().equals(read(modelDir.resolve(MappingEvidence.FILE)))
                 && feedbackText.equals(read(modelDir.resolve("bds-feedback.json")))
                 && coverageText.equals(read(modelDir.resolve("coverage.md")));
-            System.out.println(same ? "data/model/mappings.json and coverage.md are up to date"
-                : "data/model/mappings.json or coverage.md is stale: run ./gradlew :tools:inferMappings");
+            System.out.println(same ? "data/model/mappings.json, " + MappingEvidence.FILE + " and coverage.md are up to date"
+                : "data/model/mappings.json, " + MappingEvidence.FILE + " or coverage.md is stale: run ./gradlew :tools:inferMappings");
             return same;
         }
         Files.writeString(modelDir.resolve("mappings.json"), mappingsText, StandardCharsets.UTF_8);
+        Files.writeString(modelDir.resolve(MappingEvidence.FILE), output.evidence(), StandardCharsets.UTF_8);
         Files.writeString(modelDir.resolve("coverage.md"), coverageText, StandardCharsets.UTF_8);
         Files.writeString(modelDir.resolve("bds-feedback.json"), feedbackText, StandardCharsets.UTF_8);
         System.out.println(output.coverageModel().summary());
@@ -260,7 +262,11 @@ public final class MappingInference {
                 unexplainedBits.add(id + ": " + description);
             }
         });
-        return new Output(Model.GSON.toJson(mappings) + "\n", coverage.markdown(captures), Model.GSON.toJson(feedback.json()) + "\n", coverage);
+        // Coverage and the feedback read the evidence of the result: their texts first, then the evidence leaves mappings.json
+        String coverageText = coverage.markdown(captures);
+        String feedbackText = Model.GSON.toJson(feedback.json()) + "\n";
+        JsonObject evidence = MappingEvidence.split(mappings);
+        return new Output(Model.GSON.toJson(mappings) + "\n", Model.GSON.toJson(evidence) + "\n", coverageText, feedbackText, coverage);
     }
 
     /**

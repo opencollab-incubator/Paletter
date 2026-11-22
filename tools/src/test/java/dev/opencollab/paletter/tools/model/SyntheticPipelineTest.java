@@ -26,6 +26,7 @@ import java.util.List;
 import java.util.zip.GZIPOutputStream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
@@ -123,7 +124,11 @@ class SyntheticPipelineTest {
         assertEquals("linear", ticks.get("kind").getAsString());
         assertEquals(20.0, ticks.get("scale").getAsDouble());
         assertEquals("int", ticks.get("nbt").getAsString());
-        assertTrue(seconds.getAsJsonArray("rejectedValues").size() > 0, "negative seconds are rejected by the fake server");
+        JsonObject evidence = dev.opencollab.paletter.tools.model.MappingWindows.newest(JsonParser.parseString(Files.readString(model.resolve(
+            dev.opencollab.paletter.tools.model.infer.MappingEvidence.FILE))).getAsJsonObject().getAsJsonObject("components")
+            .getAsJsonObject("item:minecraft:test")).getAsJsonObject("fields");
+        assertTrue(evidence.getAsJsonObject("seconds").getAsJsonArray("rejectedValues").size() > 0, "negative seconds are rejected by the fake server");
+        assertFalse(seconds.has("rejectedValues"), "evidence only: not in mappings.json");
 
         JsonObject mode = fields.getAsJsonObject("mode");
         assertEquals("inferred", mode.get("status").getAsString());

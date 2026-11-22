@@ -125,7 +125,10 @@ class LinkedFieldsTest {
             && !v.value().getAsJsonObject().isEmpty()).findFirst().orElseThrow();
         assertEquals("custom:geo", bones.component().getAsJsonObject().get("geo").getAsString());
         assertEquals("partial", fields.getAsJsonObject("bones").get("status").getAsString(), fields.getAsJsonObject("bones").toString());
-        assertTrue(fields.getAsJsonObject("bones").getAsJsonArray("unexplained").toString().contains("minecraft:test.bones.k"));
+        JsonObject evidence = MappingWindows.newest(JsonParser.parseString(Files.readString(model.resolve(
+            dev.opencollab.paletter.tools.model.infer.MappingEvidence.FILE))).getAsJsonObject().getAsJsonObject("components")
+            .getAsJsonObject("item:minecraft:test")).getAsJsonObject("fields");
+        assertTrue(evidence.getAsJsonObject("bones").getAsJsonArray("unexplained").toString().contains("minecraft:test.bones.k"));
         assertEquals(0, inference.linkedFields().size(), inference.linkedFields().toString());
     }
 

@@ -162,7 +162,8 @@ final class SpecStage {
         if (write) {
             MappingInference inference = new MappingInference(ctx.root);
             Path model = ctx.root.resolve(Layout.MODEL);
-            UpdateContext.track(ctx.report, ctx.root, List.of(model.resolve("mappings.json"), model.resolve("coverage.md"), model.resolve("bds-feedback.json")),
+            UpdateContext.track(ctx.report, ctx.root, List.of(model.resolve("mappings.json"),
+                    model.resolve(dev.opencollab.paletter.tools.model.infer.MappingEvidence.FILE), model.resolve("coverage.md"), model.resolve("bds-feedback.json")),
                 "inferred from the spec captures", () -> {
                     inference.run(false);
                     return null;
