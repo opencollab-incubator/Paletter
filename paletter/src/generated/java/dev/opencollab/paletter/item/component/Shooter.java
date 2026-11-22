@@ -4,7 +4,6 @@
 package dev.opencollab.paletter.item.component;
 
 import dev.opencollab.paletter.annotation.BedrockFormat;
-import dev.opencollab.paletter.vanilla.BedrockItemType;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -355,16 +354,6 @@ public final class Shooter implements ItemComponent {
             public @NonNull Builder item(@Nullable String item) {
                 this.item = item;
                 return this;
-            }
-
-            /**
-             * Sets {@code item} to a vanilla or custom item.
-             *
-             * @param item the value
-             * @return this builder
-             */
-            public @NonNull Builder item(@NonNull BedrockItemType item) {
-                return item(item.identifier());
             }
 
             /**

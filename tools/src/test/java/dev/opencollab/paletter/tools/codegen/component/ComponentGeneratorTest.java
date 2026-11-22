@@ -608,10 +608,12 @@ void theModelHasTheComponentsOfTheFixture() {
         assertTrue(widget.contains("@Nullable Stripes stripes"), widget);
         assertTrue(widget.contains("@Nullable Stripes outline"), widget);
         assertTrue(!widget.contains("stripesNames"), widget);
-        // Each form has its builder overloads, a list also as varargs
+        // Each form has its builder overloads, a list also as varargs; the field is nullable, so no form gets an overload of
+        // one reference parameter: stripes(null) unsets it unambiguously, the list goes through the factory
         assertTrue(widget.contains("public @NonNull Builder stripes(boolean stripes)"), widget);
-        assertTrue(widget.contains("public @NonNull Builder stripes(@NonNull List<String> stripes)"), widget);
+        assertFalse(widget.contains("public @NonNull Builder stripes(@NonNull List<String> stripes)"), widget);
         assertTrue(widget.contains("public @NonNull Builder stripes(@NonNull String first, @NonNull String... rest)"), "a list of at least one: " + widget);
+        assertTrue(widget.contains("return stripes(Stripes.names(values));"), widget);
         assertFalse(widget.contains("String... stripes"), widget);
         assertEquals(1, files.keySet().stream().filter(f -> f.endsWith("/Stripes.java")).count());
     }

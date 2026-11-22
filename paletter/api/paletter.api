@@ -963,7 +963,6 @@ public static final class dev.opencollab.paletter.block.component.DestructibleBy
 public static final class dev.opencollab.paletter.block.component.DestructibleByMining$ItemSpecificSpeeds$Builder {
     public dev.opencollab.paletter.block.component.DestructibleByMining$ItemSpecificSpeeds build()
     public dev.opencollab.paletter.block.component.DestructibleByMining$ItemSpecificSpeeds$Builder destroySpeed(float)
-    public dev.opencollab.paletter.block.component.DestructibleByMining$ItemSpecificSpeeds$Builder item(dev.opencollab.paletter.vanilla.BedrockItemType)
     public dev.opencollab.paletter.block.component.DestructibleByMining$ItemSpecificSpeeds$Builder item(java.lang.String)
 }
 
@@ -1167,7 +1166,6 @@ public static final class dev.opencollab.paletter.block.component.Geometry$Build
     public dev.opencollab.paletter.block.component.Geometry$Builder nWayVisualRotation(dev.opencollab.paletter.block.component.Geometry$NWayVisualRotation)
     public dev.opencollab.paletter.block.component.Geometry$Builder uvLock(dev.opencollab.paletter.block.component.UvLock)
     public dev.opencollab.paletter.block.component.Geometry$Builder uvLock(java.lang.String, java.lang.String...)
-    public dev.opencollab.paletter.block.component.Geometry$Builder uvLock(java.util.List<java.lang.String>)
     public dev.opencollab.paletter.block.component.Geometry$Builder uvLock(boolean)
 }
 
@@ -1501,21 +1499,14 @@ public final class dev.opencollab.paletter.block.component.MaterialInstances imp
 }
 
 public static final class dev.opencollab.paletter.block.component.MaterialInstances$Builder {
-    public dev.opencollab.paletter.block.component.MaterialInstances$Builder all(dev.opencollab.paletter.block.component.MaterialInstances$Instance)
     public dev.opencollab.paletter.block.component.MaterialInstances$Builder all(dev.opencollab.paletter.block.component.MaterialInstances$InstanceOrAlias)
     public dev.opencollab.paletter.block.component.MaterialInstances build()
-    public dev.opencollab.paletter.block.component.MaterialInstances$Builder down(dev.opencollab.paletter.block.component.MaterialInstances$Instance)
     public dev.opencollab.paletter.block.component.MaterialInstances$Builder down(dev.opencollab.paletter.block.component.MaterialInstances$InstanceOrAlias)
-    public dev.opencollab.paletter.block.component.MaterialInstances$Builder east(dev.opencollab.paletter.block.component.MaterialInstances$Instance)
     public dev.opencollab.paletter.block.component.MaterialInstances$Builder east(dev.opencollab.paletter.block.component.MaterialInstances$InstanceOrAlias)
     public dev.opencollab.paletter.block.component.MaterialInstances$Builder instances(java.util.Map<java.lang.String, dev.opencollab.paletter.block.component.MaterialInstances$InstanceOrAlias>)
-    public dev.opencollab.paletter.block.component.MaterialInstances$Builder north(dev.opencollab.paletter.block.component.MaterialInstances$Instance)
     public dev.opencollab.paletter.block.component.MaterialInstances$Builder north(dev.opencollab.paletter.block.component.MaterialInstances$InstanceOrAlias)
-    public dev.opencollab.paletter.block.component.MaterialInstances$Builder south(dev.opencollab.paletter.block.component.MaterialInstances$Instance)
     public dev.opencollab.paletter.block.component.MaterialInstances$Builder south(dev.opencollab.paletter.block.component.MaterialInstances$InstanceOrAlias)
-    public dev.opencollab.paletter.block.component.MaterialInstances$Builder up(dev.opencollab.paletter.block.component.MaterialInstances$Instance)
     public dev.opencollab.paletter.block.component.MaterialInstances$Builder up(dev.opencollab.paletter.block.component.MaterialInstances$InstanceOrAlias)
-    public dev.opencollab.paletter.block.component.MaterialInstances$Builder west(dev.opencollab.paletter.block.component.MaterialInstances$Instance)
     public dev.opencollab.paletter.block.component.MaterialInstances$Builder west(dev.opencollab.paletter.block.component.MaterialInstances$InstanceOrAlias)
 }
 
@@ -1761,7 +1752,6 @@ public static final class dev.opencollab.paletter.block.component.PlacementFilte
 
 public static final class dev.opencollab.paletter.block.component.PlacementFilter$BlockFilter$Builder {
     public dev.opencollab.paletter.block.component.PlacementFilter$BlockFilter build()
-    public dev.opencollab.paletter.block.component.PlacementFilter$BlockFilter$Builder name(dev.opencollab.paletter.vanilla.BedrockBlockType)
     public dev.opencollab.paletter.block.component.PlacementFilter$BlockFilter$Builder name(java.lang.String)
     public dev.opencollab.paletter.block.component.PlacementFilter$BlockFilter$Builder states(java.util.Map<java.lang.String, java.lang.Object>)
     public dev.opencollab.paletter.block.component.PlacementFilter$BlockFilter$Builder tags(java.lang.String)
@@ -2508,7 +2498,6 @@ public static final class dev.opencollab.paletter.item.component.BlockPlacer$Use
 
 public static final class dev.opencollab.paletter.item.component.BlockPlacer$UseOn$Builder {
     public dev.opencollab.paletter.item.component.BlockPlacer$UseOn build()
-    public dev.opencollab.paletter.item.component.BlockPlacer$UseOn$Builder name(dev.opencollab.paletter.vanilla.BedrockBlockType)
     public dev.opencollab.paletter.item.component.BlockPlacer$UseOn$Builder name(java.lang.String)
     public dev.opencollab.paletter.item.component.BlockPlacer$UseOn$Builder states(java.util.Map<java.lang.String, java.lang.Object>)
     public dev.opencollab.paletter.item.component.BlockPlacer$UseOn$Builder tags(java.lang.String)
@@ -2678,7 +2667,6 @@ public static final class dev.opencollab.paletter.item.component.Digger$Block {
 
 public static final class dev.opencollab.paletter.item.component.Digger$Block$Builder {
     public dev.opencollab.paletter.item.component.Digger$Block build()
-    public dev.opencollab.paletter.item.component.Digger$Block$Builder name(dev.opencollab.paletter.vanilla.BedrockBlockType)
     public dev.opencollab.paletter.item.component.Digger$Block$Builder name(java.lang.String)
     public dev.opencollab.paletter.item.component.Digger$Block$Builder states(java.util.Map<java.lang.String, java.lang.Object>)
     public dev.opencollab.paletter.item.component.Digger$Block$Builder tags(java.lang.String)
@@ -2703,7 +2691,6 @@ public static final class dev.opencollab.paletter.item.component.Digger$DestroyS
 
 public static final class dev.opencollab.paletter.item.component.Digger$DestroySpeeds$Builder {
     public dev.opencollab.paletter.item.component.Digger$DestroySpeeds$Builder block(dev.opencollab.paletter.item.component.Digger$Block)
-    public dev.opencollab.paletter.item.component.Digger$DestroySpeeds$Builder block(java.lang.String)
     public dev.opencollab.paletter.item.component.Digger$DestroySpeeds build()
     public dev.opencollab.paletter.item.component.Digger$DestroySpeeds$Builder speed(java.lang.Integer)
 }
@@ -2959,7 +2946,6 @@ public static final class dev.opencollab.paletter.item.component.EntityPlacer$Us
 
 public static final class dev.opencollab.paletter.item.component.EntityPlacer$UseOn$Builder {
     public dev.opencollab.paletter.item.component.EntityPlacer$UseOn build()
-    public dev.opencollab.paletter.item.component.EntityPlacer$UseOn$Builder name(dev.opencollab.paletter.vanilla.BedrockBlockType)
     public dev.opencollab.paletter.item.component.EntityPlacer$UseOn$Builder name(java.lang.String)
     public dev.opencollab.paletter.item.component.EntityPlacer$UseOn$Builder states(java.util.Map<java.lang.String, java.lang.Object>)
     public dev.opencollab.paletter.item.component.EntityPlacer$UseOn$Builder tags(java.lang.String)
@@ -3000,7 +2986,6 @@ public static final class dev.opencollab.paletter.item.component.Food$Builder {
     public dev.opencollab.paletter.item.component.Food$Builder canAlwaysEat(boolean)
     public dev.opencollab.paletter.item.component.Food$Builder nutrition(int)
     public dev.opencollab.paletter.item.component.Food$Builder saturationModifier(float)
-    public dev.opencollab.paletter.item.component.Food$Builder usingConvertsTo(dev.opencollab.paletter.vanilla.BedrockItemType)
     public dev.opencollab.paletter.item.component.Food$Builder usingConvertsTo(java.lang.String)
 }
 
@@ -3560,10 +3545,8 @@ public static final class dev.opencollab.paletter.item.component.Repairable$Repa
     public dev.opencollab.paletter.item.component.Repairable$RepairItems$Builder items(dev.opencollab.paletter.item.component.ItemsOrTags)
     public dev.opencollab.paletter.item.component.Repairable$RepairItems$Builder items(dev.opencollab.paletter.vanilla.BedrockItemType, dev.opencollab.paletter.vanilla.BedrockItemType...)
     public dev.opencollab.paletter.item.component.Repairable$RepairItems$Builder items(java.lang.String, java.lang.String...)
-    public dev.opencollab.paletter.item.component.Repairable$RepairItems$Builder items(java.util.List<java.lang.String>)
     public dev.opencollab.paletter.item.component.Repairable$RepairItems$Builder repairAmount(float)
     public dev.opencollab.paletter.item.component.Repairable$RepairItems$Builder repairAmount(dev.opencollab.paletter.item.component.RepairAmount)
-    public dev.opencollab.paletter.item.component.Repairable$RepairItems$Builder repairAmount(java.lang.String)
 }
 
 public final class dev.opencollab.paletter.item.component.Shooter implements dev.opencollab.paletter.item.component.ItemComponent {
@@ -3594,7 +3577,6 @@ public static final class dev.opencollab.paletter.item.component.Shooter$Ammunit
 
 public static final class dev.opencollab.paletter.item.component.Shooter$Ammunition$Builder {
     public dev.opencollab.paletter.item.component.Shooter$Ammunition build()
-    public dev.opencollab.paletter.item.component.Shooter$Ammunition$Builder item(dev.opencollab.paletter.vanilla.BedrockItemType)
     public dev.opencollab.paletter.item.component.Shooter$Ammunition$Builder item(java.lang.String)
     public dev.opencollab.paletter.item.component.Shooter$Ammunition$Builder searchInventory(boolean)
     public dev.opencollab.paletter.item.component.Shooter$Ammunition$Builder useInCreative(boolean)

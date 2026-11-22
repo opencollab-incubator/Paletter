@@ -352,16 +352,6 @@ public final class EntityPlacer implements ItemComponent {
             }
 
             /**
-             * Sets {@code name} to a vanilla or custom block.
-             *
-             * @param name the value
-             * @return this builder
-             */
-            public @NonNull Builder name(@NonNull BedrockBlockType name) {
-                return name(name.identifier());
-            }
-
-            /**
              * Sets {@code states}.
              *
              * @param states the value

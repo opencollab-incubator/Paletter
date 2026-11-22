@@ -34,7 +34,7 @@ import java.util.Objects;
  *     .property(BlockProperty.bool("example:lit"))
  *     .trait(PlacementDirection.builder().enabledStates(PlacementDirection.EnabledStates.CARDINAL_DIRECTION).build())
  *     .component(Geometry.of("minecraft:geometry.full_block"))
- *     .component(MaterialInstances.builder().all(MaterialInstances.Instance.builder().texture("lamp").build()).build())
+ *     .component(MaterialInstances.builder().all(MaterialInstances.InstanceOrAlias.define(MaterialInstances.Instance.builder().texture("lamp").build())).build())
  *     .permutation("q.block_state('example:lit')", LightEmission.of(15))
  *     .menuCategory(CreativeCategory.CONSTRUCTION)
  *     .build();

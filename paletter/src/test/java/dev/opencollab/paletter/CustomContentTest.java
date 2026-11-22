@@ -13,6 +13,7 @@ import dev.opencollab.paletter.block.component.LightEmission;
 import dev.opencollab.paletter.block.component.MaterialInstances;
 import dev.opencollab.paletter.block.component.PlacementDirection;
 import dev.opencollab.paletter.block.component.UnitCube;
+import dev.opencollab.paletter.block.component.UvLock;
 import dev.opencollab.paletter.creative.CreativeCategory;
 import dev.opencollab.paletter.data.DataVersion;
 import dev.opencollab.paletter.item.CustomItem;
@@ -59,7 +60,7 @@ class CustomContentTest {
             .property(BlockProperty.bool("example:lit"))
             .trait(PlacementDirection.builder().enabledStates(PlacementDirection.EnabledStates.CARDINAL_DIRECTION).build())
             .component(Geometry.of("minecraft:geometry.full_block"))
-            .component(MaterialInstances.builder().all(MaterialInstances.Instance.builder().texture("lamp").build()).build())
+            .component(MaterialInstances.builder().all(MaterialInstances.InstanceOrAlias.define(MaterialInstances.Instance.builder().texture("lamp").build())).build())
             .permutation("q.block_state('example:lit')", LightEmission.of(15))
             .tags("minecraft:stone")
             .menuCategory(CreativeCategory.CONSTRUCTION)
@@ -183,9 +184,9 @@ class CustomContentTest {
     @Test
     void moreThan64UvLockBonesRejectTheBlock() {
         // BDS 1.26.63.1 accepts 64 bones and rejects the block above, counting duplicates
-        Geometry accepted = Geometry.builder().identifier("geometry.lamp").uvLock(Collections.nCopies(64, "lid")).build();
+        Geometry accepted = Geometry.builder().identifier("geometry.lamp").uvLock(UvLock.bones(Collections.nCopies(64, "lid"))).build();
         CustomBlock.builder("example:lamp").component(accepted).build();
-        Geometry rejected = Geometry.builder().identifier("geometry.lamp").uvLock(Collections.nCopies(65, "lid")).build();
+        Geometry rejected = Geometry.builder().identifier("geometry.lamp").uvLock(UvLock.bones(Collections.nCopies(65, "lid"))).build();
         assertThrows(IllegalArgumentException.class, () -> CustomBlock.builder("example:lamp").component(rejected).build());
         assertThrows(IllegalArgumentException.class, () -> CustomBlock.builder("example:lamp")
             .property(BlockProperty.bool("example:lit")).permutation("q.block_state('example:lit')", rejected).build());

@@ -41,7 +41,7 @@ class VoxelShapesTest {
     private static CustomBlock block(String identifier, String cullingShape, Transformation transformation) {
         CustomBlock.Builder block = CustomBlock.builder(identifier)
             .component(Geometry.builder().identifier("geometry.example").cullingShape(cullingShape).build())
-            .component(MaterialInstances.builder().all(MaterialInstances.Instance.builder().texture("lamp").build()).build());
+            .component(MaterialInstances.builder().all(MaterialInstances.InstanceOrAlias.define(MaterialInstances.Instance.builder().texture("lamp").build())).build());
         if (transformation != null) {
             block.component(transformation);
         }

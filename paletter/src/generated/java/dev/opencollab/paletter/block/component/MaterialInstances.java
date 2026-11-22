@@ -237,16 +237,6 @@ public final class MaterialInstances implements BlockComponent {
         }
 
         /**
-         * Sets {@code *} to the definition of the instance.
-         *
-         * @param all the value
-         * @return this builder
-         */
-        public @NonNull Builder all(@NonNull Instance all) {
-            return all(InstanceOrAlias.define(all));
-        }
-
-        /**
          * Sets {@code down}.
          *
          * @param down the value
@@ -255,16 +245,6 @@ public final class MaterialInstances implements BlockComponent {
         public @NonNull Builder down(@Nullable InstanceOrAlias down) {
             this.down = down;
             return this;
-        }
-
-        /**
-         * Sets {@code down} to the definition of the instance.
-         *
-         * @param down the value
-         * @return this builder
-         */
-        public @NonNull Builder down(@NonNull Instance down) {
-            return down(InstanceOrAlias.define(down));
         }
 
         /**
@@ -279,16 +259,6 @@ public final class MaterialInstances implements BlockComponent {
         }
 
         /**
-         * Sets {@code east} to the definition of the instance.
-         *
-         * @param east the value
-         * @return this builder
-         */
-        public @NonNull Builder east(@NonNull Instance east) {
-            return east(InstanceOrAlias.define(east));
-        }
-
-        /**
          * Sets {@code north}.
          *
          * @param north the value
@@ -297,16 +267,6 @@ public final class MaterialInstances implements BlockComponent {
         public @NonNull Builder north(@Nullable InstanceOrAlias north) {
             this.north = north;
             return this;
-        }
-
-        /**
-         * Sets {@code north} to the definition of the instance.
-         *
-         * @param north the value
-         * @return this builder
-         */
-        public @NonNull Builder north(@NonNull Instance north) {
-            return north(InstanceOrAlias.define(north));
         }
 
         /**
@@ -321,16 +281,6 @@ public final class MaterialInstances implements BlockComponent {
         }
 
         /**
-         * Sets {@code south} to the definition of the instance.
-         *
-         * @param south the value
-         * @return this builder
-         */
-        public @NonNull Builder south(@NonNull Instance south) {
-            return south(InstanceOrAlias.define(south));
-        }
-
-        /**
          * Sets {@code up}.
          *
          * @param up the value
@@ -342,16 +292,6 @@ public final class MaterialInstances implements BlockComponent {
         }
 
         /**
-         * Sets {@code up} to the definition of the instance.
-         *
-         * @param up the value
-         * @return this builder
-         */
-        public @NonNull Builder up(@NonNull Instance up) {
-            return up(InstanceOrAlias.define(up));
-        }
-
-        /**
          * Sets {@code west}.
          *
          * @param west the value
@@ -360,16 +300,6 @@ public final class MaterialInstances implements BlockComponent {
         public @NonNull Builder west(@Nullable InstanceOrAlias west) {
             this.west = west;
             return this;
-        }
-
-        /**
-         * Sets {@code west} to the definition of the instance.
-         *
-         * @param west the value
-         * @return this builder
-         */
-        public @NonNull Builder west(@NonNull Instance west) {
-            return west(InstanceOrAlias.define(west));
         }
 
         /**

@@ -342,16 +342,6 @@ public final class Geometry implements BlockComponent {
         }
 
         /**
-         * Sets {@code uv_lock} to the names of the bones to lock.
-         *
-         * @param uvLock the value
-         * @return this builder
-         */
-        public @NonNull Builder uvLock(@NonNull List<String> uvLock) {
-            return uvLock(UvLock.bones(uvLock));
-        }
-
-        /**
          * Sets {@code uv_lock} to the names of the bones to lock (at least one value).
          *
          * @param first the first value
@@ -364,7 +354,7 @@ public final class Geometry implements BlockComponent {
             for (String x : rest) {
                 values.add(x);
             }
-            return uvLock(values);
+            return uvLock(UvLock.bones(values));
         }
 
         /**
