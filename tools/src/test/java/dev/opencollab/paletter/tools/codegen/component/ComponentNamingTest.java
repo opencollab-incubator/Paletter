@@ -101,6 +101,26 @@ class ComponentNamingTest {
     }
 
     @Test
+    void aNewComponentNamedLikeANestedTypeTakesThePrefix() {
+        // Widget has a nested Entry record; a new item component test:entry arrives: it is ItemEntry, Widget.Entry stays
+        Inputs base = ComponentGeneratorTest.inputs();
+        base.components().getAsJsonArray("components").add(ComponentGeneratorTest.json("""
+            {"id": "item:test:entry", "kind": "item", "category": "component", "name": "test:entry", "status": "active",
+             "doc": "An entry.", "page": "", "experiments": [], "forms": [{"type": "object"}],
+             "fields": [{"path": "size", "types": [{"type": "integer"}], "defaultValue": 1, "required": false, "enumValues": [], "examples": [],
+                         "doc": "The size."}],
+             "notes": []}"""));
+        base.mappings().getAsJsonObject("components").add("item:test:entry", ComponentGeneratorTest.json("""
+            {"windows": [{"status": "sent", "wire": ["test:entry"], "protocols": [100, 200],
+             "fields": {"size": {"status": "inferred", "rules": [{"kind": "identity", "nbt": "int", "tags": [], "wire": "test:entry.size"}],
+                                 "whenAbsent": {"test:entry.size": "1 (int)"}}}}]}"""));
+        Map<String, String> files = ComponentGenerator.generate(base);
+        assertTrue(files.containsKey(ITEM_PKG + "ItemEntry.java"), files.keySet().toString());
+        assertFalse(files.containsKey(ITEM_PKG + "Entry.java"));
+        assertTrue(files.get(ITEM_PKG + "Widget.java").contains("public static final class Entry"));
+    }
+
+    @Test
     void anExperimentThatTheCapturesNameBecomesBedrockExperimentNotExperimental() {
         Inputs in = withExperiments(new Context(Set.of(), Map.of("Test Toggle", "test_toggle"), Map.of()), "Test Toggle");
         String gadget = ComponentGenerator.generate(in).get(ITEM_PKG + "Gadget.java");

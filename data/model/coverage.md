@@ -35,10 +35,10 @@ What the captures show but no field explains:
 | documented | 366 | 8 |
 | accepted by BDS | 307 | 5 |
 | sent on wire | 265 | 5 |
-| inferred | 249 | 4 |
+| inferred | 191 | 0 |
 | partial | 1 | 0 |
 | unresolved | 0 | 0 |
-| hand-rule | 15 | 1 |
+| hand-rule | 73 | 5 |
 | dropped | 38 | 0 |
 | linked | 0 | 0 |
 | rejected | 41 | 3 |
@@ -60,11 +60,11 @@ together and capture again); `rejected`: every variant setting it was rejected;
 | bitset | 7 |
 | constant | 200 |
 | descriptor | 4 |
-| empty-list | 21 |
+| empty-list | 16 |
 | empty-map | 5 |
 | enum-table | 4 |
 | identity | 228 |
-| linear | 12 |
+| linear | 11 |
 | ordered-set | 2 |
 | packed-bits | 8 |
 | structure | 29 |
@@ -75,17 +75,17 @@ together and capture again); `rejected`: every variant setting it was rejected;
 | enum->int | 6 |
 | explained-by-child-fields | 29 |
 | flattened | 18 |
-| injected-default | 204 |
+| injected-default | 200 |
 | item_properties | 19 |
-| list-element | 30 |
-| nested | 77 |
+| list-element | 29 |
+| nested | 76 |
 | outside-component:* | 3 |
 | packed-bits | 8 |
-| presence | 17 |
+| presence | 16 |
 | registry-resolved | 4 |
-| renamed | 89 |
+| renamed | 88 |
 | type:* | 110 |
-| unit-conversion | 12 |
+| unit-conversion | 11 |
 | value-map | 1 |
 
 ## Per component
@@ -99,22 +99,22 @@ together and capture again); `rejected`: every variant setting it was rejected;
 | `block:minecraft:bone_visibility` | deprecated | rejected |  | 0 / 0 / 0 / 0 / 0 / 0 |
 | `block:minecraft:breathability` | deprecated | rejected |  | 0 / 0 / 0 / 0 / 0 / 0 |
 | `block:minecraft:chest_obstruction` | active (exp.) | server-only |  | 0 / 0 / 0 / 1 / 0 / 1 |
-| `block:minecraft:collision_box` | active (exp.) | sent | minecraft:collision_box | 2 / 0 / 0 / 0 / 4 / 6 |
+| `block:minecraft:collision_box` | active (exp.) | sent | minecraft:collision_box | 0 / 0 / 2 / 0 / 4 / 6 |
 | `block:minecraft:connection_rule` | active (exp.) | sent | minecraft:connection_rule | 2 / 0 / 0 / 0 / 0 / 2 |
 | `block:minecraft:crafting_table` | active (exp.) | sent | minecraft:crafting_table | 2 / 0 / 0 / 0 / 0 / 2 |
 | `block:minecraft:custom_components` | deprecated | pending capture |  | 0 / 0 / 0 / 0 / 0 / 0 |
 | `block:minecraft:destroy_time` | legacy | rejected |  | 0 / 0 / 0 / 0 / 0 / 0 |
 | `block:minecraft:destructible_by_explosion` | active | server-only |  | 0 / 0 / 0 / 1 / 0 / 1 |
-| `block:minecraft:destructible_by_mining` | active | sent | minecraft:destructible_by_mining | 4 / 0 / 0 / 0 / 2 / 6 |
+| `block:minecraft:destructible_by_mining` | active | sent | minecraft:destructible_by_mining | 0 / 0 / 4 / 0 / 2 / 6 |
 | `block:minecraft:destruction_particles` | active | sent | minecraft:destruction_particles | 3 / 0 / 0 / 0 / 0 / 3 |
 | `block:minecraft:display_name` | active | sent | minecraft:display_name | 0 / 0 / 0 / 0 / 0 / 0 |
-| `block:minecraft:embedded_visual` | active | sent | minecraft:embedded_visual | 8 / 0 / 3 / 0 / 0 / 12 |
+| `block:minecraft:embedded_visual` | active | sent | minecraft:embedded_visual | 0 / 0 / 11 / 0 / 0 / 12 |
 | `block:minecraft:entity_fall_on` | active | server-only |  | 0 / 0 / 0 / 1 / 1 / 2 |
 | `block:minecraft:explosion_resistance` | legacy | rejected |  | 0 / 0 / 0 / 0 / 0 / 0 |
 | `block:minecraft:flammable` | active | server-only |  | 0 / 0 / 0 / 2 / 1 / 3 |
 | `block:minecraft:flower_pottable` | active | sent | minecraft:flower_pottable | 0 / 0 / 0 / 0 / 0 / 0 |
 | `block:minecraft:friction` | active | sent | minecraft:friction | 0 / 0 / 0 / 0 / 0 / 0 |
-| `block:minecraft:geometry` | active | sent | minecraft:geometry | 4 / 0 / 2 / 0 / 1 / 10 |
+| `block:minecraft:geometry` | active | sent | minecraft:geometry | 0 / 0 / 6 / 0 / 1 / 10 |
 | `block:minecraft:instrument_sound` | active (exp.) | server-only |  | 0 / 0 / 0 / 2 / 0 / 2 |
 | `block:minecraft:item_visual` | active | sent | minecraft:item_visual | 9 / 0 / 3 / 0 / 0 / 12 |
 | `block:minecraft:light_dampening` | active | sent | minecraft:light_dampening | 0 / 0 / 0 / 0 / 0 / 0 |
@@ -122,7 +122,7 @@ together and capture again); `rejected`: every variant setting it was rejected;
 | `block:minecraft:liquid_detection` | active | sent | minecraft:liquid_detection | 4 / 0 / 0 / 1 / 5 / 11 |
 | `block:minecraft:loot` | active | server-only |  | 0 / 0 / 0 / 0 / 0 / 0 |
 | `block:minecraft:map_color` | active | server-only |  | 0 / 0 / 0 / 1 / 0 / 2 |
-| `block:minecraft:material_instances` | active | sent | minecraft:material_instances | 37 / 0 / 0 / 6 / 6 / 56 |
+| `block:minecraft:material_instances` | active | sent | minecraft:material_instances | 0 / 0 / 37 / 6 / 6 / 56 |
 | `block:minecraft:movable` | active | server-only |  | 0 / 0 / 0 / 2 / 0 / 2 |
 | `block:minecraft:placement_filter` | active | sent | minecraft:placement_filter | 5 / 0 / 1 / 0 / 0 / 6 |
 | `block:minecraft:precipitation_interactions` | active (exp.) | sent | minecraft:precipitation_interactions | 1 / 0 / 0 / 0 / 0 / 1 |
@@ -133,7 +133,7 @@ together and capture again); `rejected`: every variant setting it was rejected;
 | `block:minecraft:redstone_consumer` | active (exp.) | server-only |  | 0 / 0 / 0 / 2 / 0 / 2 |
 | `block:minecraft:redstone_producer` | active | sent | minecraft:redstone_producer | 4 / 0 / 0 / 0 / 0 / 4 |
 | `block:minecraft:replaceable` | active (exp.) | sent | minecraft:replaceable | 0 / 0 / 0 / 0 / 0 / 0 |
-| `block:minecraft:selection_box` | active | sent | minecraft:selection_box | 2 / 0 / 0 / 0 / 0 / 2 |
+| `block:minecraft:selection_box` | active | sent | minecraft:selection_box | 0 / 0 / 2 / 0 / 0 / 2 |
 | `block:minecraft:support` | active (exp.) | sent | minecraft:support | 1 / 0 / 0 / 0 / 0 / 1 |
 | `block:minecraft:tag` | unlisted | skipped |  | 0 / 0 / 0 / 0 / 0 / 0 |
 | `block:minecraft:tick` | active | server-only |  | 0 / 0 / 0 / 2 / 0 / 2 |
@@ -170,7 +170,7 @@ together and capture again); `rejected`: every variant setting it was rejected;
 | `item:minecraft:hand_equipped` | active | sent | item_properties.hand_equipped, minecraft:hand_equipped | 1 / 0 / 0 / 0 / 0 / 1 |
 | `item:minecraft:hand_equippped` | unlisted | skipped |  | 0 / 0 / 0 / 0 / 0 / 1 |
 | `item:minecraft:hover_text_color` | active | sent | item_properties.hover_text_color, minecraft:hover_text_color | 0 / 0 / 1 / 0 / 0 / 1 |
-| `item:minecraft:icon` | active | sent | item_properties.minecraft:icon | 1 / 0 / 0 / 0 / 1 / 2 |
+| `item:minecraft:icon` | active | sent | item_properties.minecraft:icon | 0 / 0 / 1 / 0 / 1 / 2 |
 | `item:minecraft:interact_button` | active | sent | minecraft:interact_button | 0 / 0 / 0 / 0 / 0 / 0 |
 | `item:minecraft:kinetic_weapon` | active | sent | minecraft:kinetic_weapon | 21 / 0 / 0 / 1 / 0 / 22 |
 | `item:minecraft:liquid_clipped` | active | sent | item_properties.liquid_clipped, minecraft:liquid_clipped | 1 / 0 / 0 / 0 / 0 / 1 |
@@ -180,7 +180,7 @@ together and capture again); `rejected`: every variant setting it was rejected;
 | `item:minecraft:rarity` | active | sent | minecraft:rarity | 1 / 0 / 0 / 0 / 0 / 1 |
 | `item:minecraft:record` | active | sent | minecraft:record | 3 / 0 / 0 / 0 / 0 / 3 |
 | `item:minecraft:render_offsets` | deprecated | rejected |  | 0 / 0 / 0 / 0 / 2 / 2 |
-| `item:minecraft:repairable` | active | sent | minecraft:repairable | 3 / 0 / 0 / 0 / 2 / 5 |
+| `item:minecraft:repairable` | active | sent | minecraft:repairable | 0 / 0 / 3 / 0 / 2 / 5 |
 | `item:minecraft:seed` | active | rejected |  | 0 / 0 / 0 / 0 / 4 / 4 |
 | `item:minecraft:shooter` | active | sent | minecraft:shooter | 7 / 0 / 1 / 0 / 0 / 8 |
 | `item:minecraft:should_despawn` | active | sent | item_properties.should_despawn, minecraft:should_despawn | 1 / 0 / 0 / 0 / 0 / 1 |
@@ -192,7 +192,7 @@ together and capture again); `rejected`: every variant setting it was rejected;
 | `item:minecraft:swing_sounds` | active | sent | minecraft:swing_sounds | 3 / 0 / 0 / 0 / 0 / 3 |
 | `item:minecraft:tags` | active | sent | item_tags, minecraft:tags | 1 / 0 / 0 / 0 / 0 / 1 |
 | `item:minecraft:throwable` | active | sent | minecraft:throwable | 6 / 0 / 0 / 0 / 0 / 6 |
-| `item:minecraft:use_animation` | active | sent | item_properties.use_animation, minecraft:use_animation | 1 / 0 / 0 / 0 / 0 / 1 |
+| `item:minecraft:use_animation` | active | sent | item_properties.use_animation, minecraft:use_animation | 0 / 0 / 1 / 0 / 0 / 1 |
 | `item:minecraft:use_duration` | deprecated | rejected |  | 0 / 0 / 0 / 0 / 1 / 1 |
 | `item:minecraft:use_modifiers` | active | sent | item_properties.use_duration, minecraft:use_modifiers | 5 / 0 / 0 / 0 / 0 / 5 |
 | `item:minecraft:weapon` | deprecated | rejected |  | 0 / 0 / 0 / 0 / 3 / 3 |
@@ -200,23 +200,89 @@ together and capture again); `rejected`: every variant setting it was rejected;
 
 ## Fields that need a hand rule
 
+- `block:minecraft:collision_box` `[].origin`: hand-rule -> `collisionBoxes` (unexplained: `minecraft:collision_box.boxes[].maxZ`, `minecraft:collision_box.boxes[].minZ`)
+- `block:minecraft:collision_box` `[].size`: hand-rule -> `collisionBoxes` (unexplained: `minecraft:collision_box.boxes[].maxX`, `minecraft:collision_box.boxes[].maxZ`, `minecraft:collision_box.boxes[].minX`)
+- `block:minecraft:destructible_by_mining` `item_specific_speeds`: hand-rule -> `destructibleByMining`
+- `block:minecraft:destructible_by_mining` `item_specific_speeds[].destroy_speed`: hand-rule -> `destructibleByMining`
+- `block:minecraft:destructible_by_mining` `item_specific_speeds[].item`: hand-rule -> `destructibleByMining`
+- `block:minecraft:destructible_by_mining` `seconds_to_destroy`: hand-rule -> `destructibleByMining`
+- `block:minecraft:destructible_by_mining` form `boolean`: hand-rule -> `destructibleByMining`
 - `block:minecraft:embedded_visual` `geometry.bone_visibility`: hand-rule -> `embeddedGeometry` (unexplained: `minecraft:embedded_visual.geometry.bone_visibility.bone_a`, `minecraft:embedded_visual.geometry.bone_visibility.bone_a_2`, `minecraft:embedded_visual.geometry.bone_visibility.paletter_unknown`)
+- `block:minecraft:embedded_visual` `geometry.culling`: hand-rule -> `embeddedGeometry`
+- `block:minecraft:embedded_visual` `geometry.culling_layer`: hand-rule -> `embeddedGeometry`
+- `block:minecraft:embedded_visual` `geometry.culling_shape`: hand-rule -> `embeddedGeometry`
+- `block:minecraft:embedded_visual` `geometry.identifier`: hand-rule -> `embeddedGeometry`
+- `block:minecraft:embedded_visual` `geometry.n_way_visual_rotation`: hand-rule -> `embeddedGeometry`
+- `block:minecraft:embedded_visual` `geometry.n_way_visual_rotation.x`: hand-rule -> `embeddedGeometry`
+- `block:minecraft:embedded_visual` `geometry.n_way_visual_rotation.y`: hand-rule -> `embeddedGeometry`
+- `block:minecraft:embedded_visual` `geometry.n_way_visual_rotation.z`: hand-rule -> `embeddedGeometry`
 - `block:minecraft:embedded_visual` `geometry.uv_lock`: hand-rule -> `embeddedGeometry` (unexplained: `minecraft:embedded_visual.geometry.uv_lock[]`)
 - `block:minecraft:embedded_visual` `material_instances`: hand-rule -> `materialInstancesInline`
 - `block:minecraft:geometry` `bone_visibility`: hand-rule -> `geometry` (unexplained: `minecraft:geometry.bone_visibility.bone_a`, `minecraft:geometry.bone_visibility.bone_a_2`, `minecraft:geometry.bone_visibility.paletter_unknown`)
+- `block:minecraft:geometry` `culling`: hand-rule -> `geometry`
+- `block:minecraft:geometry` `culling_layer`: hand-rule -> `geometry`
+- `block:minecraft:geometry` `culling_shape`: hand-rule -> `geometry`
+- `block:minecraft:geometry` `identifier`: hand-rule -> `geometry`
 - `block:minecraft:geometry` `uv_lock`: hand-rule -> `geometry` (unexplained: `minecraft:geometry.uv_lock[]`)
+- `block:minecraft:geometry` form `string`: hand-rule -> `geometry`
 - `block:minecraft:item_visual` `geometry.bone_visibility`: hand-rule -> `itemVisualBoneVisibility` (unexplained: `minecraft:item_visual.geometryDescription.bone_visibility.bone_a`, `minecraft:item_visual.geometryDescription.bone_visibility.bone_a_2`, `minecraft:item_visual.geometryDescription.bone_visibility.paletter_unknown`)
 - `block:minecraft:item_visual` `geometry.uv_lock`: hand-rule -> `itemVisualUvLock` (unexplained: `minecraft:item_visual.geometryDescription.uv_lock[]`)
 - `block:minecraft:item_visual` `material_instances`: hand-rule -> `materialInstancesPacked` (unexplained: `minecraft:item_visual.materialInstancesDescription.materials.*.ambient_occlusion`, `minecraft:item_visual.materialInstancesDescription.materials.*.packed_bools`, `minecraft:item_visual.materialInstancesDescription.materials.*.render_method`, `minecraft:item_visual.materialInstancesDescription.materials.*.texture`)
+- `block:minecraft:material_instances` `*`: hand-rule -> `materialInstances`
+- `block:minecraft:material_instances` `*.ambient_occlusion`: hand-rule -> `materialInstances`
+- `block:minecraft:material_instances` `*.face_dimming`: hand-rule -> `materialInstances`
+- `block:minecraft:material_instances` `*.isotropic`: hand-rule -> `materialInstances`
+- `block:minecraft:material_instances` `*.render_method`: hand-rule -> `materialInstances`
+- `block:minecraft:material_instances` `*.texture`: hand-rule -> `materialInstances`
+- `block:minecraft:material_instances` `*.tint_method`: hand-rule -> `materialInstances`
+- `block:minecraft:material_instances` `down`: hand-rule -> `materialInstances`
+- `block:minecraft:material_instances` `down.ambient_occlusion`: hand-rule -> `materialInstances`
+- `block:minecraft:material_instances` `down.isotropic`: hand-rule -> `materialInstances`
+- `block:minecraft:material_instances` `down.render_method`: hand-rule -> `materialInstances`
+- `block:minecraft:material_instances` `down.texture`: hand-rule -> `materialInstances`
+- `block:minecraft:material_instances` `east`: hand-rule -> `materialInstances`
+- `block:minecraft:material_instances` `east.ambient_occlusion`: hand-rule -> `materialInstances`
+- `block:minecraft:material_instances` `east.isotropic`: hand-rule -> `materialInstances`
+- `block:minecraft:material_instances` `east.render_method`: hand-rule -> `materialInstances`
+- `block:minecraft:material_instances` `east.texture`: hand-rule -> `materialInstances`
+- `block:minecraft:material_instances` `north`: hand-rule -> `materialInstances`
+- `block:minecraft:material_instances` `north.ambient_occlusion`: hand-rule -> `materialInstances`
+- `block:minecraft:material_instances` `north.isotropic`: hand-rule -> `materialInstances`
+- `block:minecraft:material_instances` `north.render_method`: hand-rule -> `materialInstances`
+- `block:minecraft:material_instances` `north.texture`: hand-rule -> `materialInstances`
+- `block:minecraft:material_instances` `south`: hand-rule -> `materialInstances`
+- `block:minecraft:material_instances` `south.ambient_occlusion`: hand-rule -> `materialInstances`
+- `block:minecraft:material_instances` `south.isotropic`: hand-rule -> `materialInstances`
+- `block:minecraft:material_instances` `south.render_method`: hand-rule -> `materialInstances`
+- `block:minecraft:material_instances` `south.texture`: hand-rule -> `materialInstances`
+- `block:minecraft:material_instances` `up`: hand-rule -> `materialInstances`
+- `block:minecraft:material_instances` `up.ambient_occlusion`: hand-rule -> `materialInstances`
+- `block:minecraft:material_instances` `up.isotropic`: hand-rule -> `materialInstances`
+- `block:minecraft:material_instances` `up.render_method`: hand-rule -> `materialInstances`
+- `block:minecraft:material_instances` `up.texture`: hand-rule -> `materialInstances`
+- `block:minecraft:material_instances` `west`: hand-rule -> `materialInstances`
+- `block:minecraft:material_instances` `west.ambient_occlusion`: hand-rule -> `materialInstances`
+- `block:minecraft:material_instances` `west.isotropic`: hand-rule -> `materialInstances`
+- `block:minecraft:material_instances` `west.render_method`: hand-rule -> `materialInstances`
+- `block:minecraft:material_instances` `west.texture`: hand-rule -> `materialInstances`
 - `block:minecraft:placement_filter` `conditions[].block_filter[].states`: hand-rule -> `blockDescriptorStates` (unexplained: `minecraft:placement_filter.conditions`, `minecraft:placement_filter.conditions[].block_filter[].states[].state`, `minecraft:placement_filter.conditions[].block_filter[].states[].type`, `minecraft:placement_filter.conditions[].block_filter[].states[].value`)
+- `block:minecraft:selection_box` `origin`: hand-rule -> `selectionBox`
+- `block:minecraft:selection_box` `size`: hand-rule -> `selectionBox`
+- `block:minecraft:selection_box` form `boolean`: hand-rule -> `selectionBox`
 - `block:permutations` `[].condition`: hand-rule -> `permutationComponents` (unexplained: `permutations[].condition`)
 - `block:permutations` `[].components`: hand-rule -> `permutationComponents` (unexplained: `permutations[].condition`)
 - `item:minecraft:block_placer` `block`: hand-rule -> `blockName` (unexplained: `minecraft:block_placer.block`)
 - `item:minecraft:block_placer` `replace_block_item`: hand-rule -> `replaceBlockItem` (unexplained: `minecraft:block_placer.replaceBlockItem`)
-- `item:minecraft:dyeable` `default_color`: hand-rule -> `rgbColor`
+- `item:minecraft:dyeable` `default_color`: hand-rule -> `rgbColor` (unexplained: `minecraft:dyeable.default_color[]`)
 - `item:minecraft:food` `using_converts_to`: partial (unexplained: `minecraft:food.using_converts_to`)
 - `item:minecraft:hover_text_color` `value`: hand-rule -> `formattingCode` (unexplained: `item_properties.hover_text_color`)
+- `item:minecraft:icon` `textures`: hand-rule -> `iconTextures`
+- `item:minecraft:icon` form `string`: hand-rule -> `iconTextures`
+- `item:minecraft:repairable` `repair_items`: hand-rule -> `itemDescriptorList`
+- `item:minecraft:repairable` `repair_items[].items`: hand-rule -> `itemDescriptorList`
+- `item:minecraft:repairable` `repair_items[].repair_amount`: hand-rule -> `itemDescriptorList`
 - `item:minecraft:shooter` `ammunition[].item`: hand-rule -> `ammunitionItemDescriptor` (unexplained: `minecraft:shooter.ammunition[].item`, `minecraft:shooter.ammunition[].item.name`)
+- `item:minecraft:use_animation` `value`: hand-rule -> `useAnimationId`
 
 ## Constants no capture reaches
 

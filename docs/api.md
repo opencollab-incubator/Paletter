@@ -71,7 +71,9 @@ deprecation warnings, not compile errors. The API is shaped so that the compiler
   identity (component id, JSON path, value). A recorded name is reused, never recomputed: a restructure of the creator
   docs or a new component renames nothing, and a new name collision gives the `Block`/`Item` prefix to the newcomer. A
   field whose add-on JSON key Bedrock renames keeps its old accessor and builder setter as `@Deprecated` delegates.
-  Vanilla constants have the same in `constants-history.json`: a removed one stays, deprecated.
+  The Java type and nullability of a recorded field are locked too: a change fails generation until it is undone or,
+  in a major release, recorded deliberately. A documented value that leaves the docs keeps its constant in the value
+  class, `@Deprecated` and out of `known()`. Vanilla constants have the same in `constants-history.json`: a removed one stays, deprecated.
 - **Removed components and fields stay as stand-ins.** A field Bedrock removes keeps a `@Deprecated(forRemoval = true)`
   accessor that returns its default and a builder setter that does nothing; a removed component keeps a
   `@Deprecated(forRemoval = true)` class of the same shape, which every palette leaves out with a report warning. They go
@@ -91,7 +93,10 @@ their delegates over later runs, and stand-ins compile).
 Every builder, generated or hand-written (`Recipe.*`, `Result`), follows the same rules:
 
 - A setter of a `@NonNull` field throws `NullPointerException` at once when given null. A setter of a `@Nullable` field
-  takes null to unset it.
+  takes null to unset it, and `setter(null)` never needs a cast: a nullable field has no other overload of one reference
+  parameter, now or in a later release. Its other forms are set through the value type's factories
+  (`uvLock(UvLock.bones(bones))`, `all(InstanceOrAlias.define(instance))`, `usingConvertsTo(BedrockItems.BOWL.identifier())`); overloads of a primitive
+  (`uvLock(true)`) or of several parameters (`uvLock("a", "b")`) stay.
 - `build()` throws `IllegalStateException` ("X is required") for a required field that was never set, and
   `IllegalArgumentException` for a value out of range.
 - A list field has a `List` setter and a varargs setter of at least one value (`first, rest...`). `setter(null)` and
@@ -254,7 +259,7 @@ CustomBlock lamp = CustomBlock.builder("example:lamp")
     .trait(PlacementDirection.builder().enabledStates(PlacementDirection.EnabledStates.CARDINAL_DIRECTION).build())
     .component(Geometry.of("minecraft:geometry.full_block"))
     .component(MaterialInstances.builder()
-        .all(MaterialInstances.Instance.builder().texture("example_lamp").build()).build())
+        .all(MaterialInstances.InstanceOrAlias.define(MaterialInstances.Instance.builder().texture("example_lamp").build())).build())
     .component(CollisionBox.builder().boxes(CollisionBox.Entry.builder().origin(-8, 0, -8).size(16, 8, 16).build()).build())
     .permutation("q.block_state('example:lit')", LightEmission.of(10))
     .menuCategory(CreativeCategory.CONSTRUCTION)

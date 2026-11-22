@@ -49,6 +49,10 @@ class RuleTest {
         JsonElement half = JsonParser.parseString("1.5");
         assertEquals("30 (int)", rule("{\"kind\": \"linear\", \"scale\": 20.0, \"offset\": 0.0, \"nbt\": \"int\"}").evaluate(half));
         assertEquals("1 (byte)", rule("{\"kind\": \"identity\", \"nbt\": \"byte\"}").evaluate(JsonParser.parseString("true")));
+        // a wrapped 1/n line divides and wraps as its encoder does: 90 degrees is 1 quarter turn, -90 is 3
+        Rule turns = rule("{\"kind\": \"linear\", \"scale\": 0.011111, \"offset\": 0.0, \"modulo\": 4, \"nbt\": \"int\"}");
+        assertEquals("1 (int)", turns.evaluate(JsonParser.parseString("90")));
+        assertEquals("3 (int)", turns.evaluate(JsonParser.parseString("-90")));
         assertEquals("2 (int)", rule("{\"kind\": \"table\", \"table\": {\"drink\": \"2\"}, \"nbt\": \"int\"}").evaluate(JsonParser.parseString("\"drink\"")));
         assertEquals("minecraft:pig<> (string)", rule("{\"kind\": \"affix\", \"prefix\": \"\", \"suffix\": \"<>\", \"nbt\": \"string\"}")
             .evaluate(JsonParser.parseString("\"pig\"")));

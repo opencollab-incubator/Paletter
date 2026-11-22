@@ -30,16 +30,31 @@ public final class Wire {
         return (byte) (value ? 1 : 0);
     }
 
+    /*
+     * The integral conversions truncate toward zero (TODO(recapture): unverified that BDS does, docs/data-pipeline.md,
+     * "Recapture to-do") and refuse a value whose whole part does not fit the leaf's bits: a value past a limit the
+     * builder does not check would otherwise wrap silently (300 as a byte is 44). An unsigned bit pattern (255 as a byte)
+     * fits.
+     */
+
     public static byte toByte(double value) {
-        return (byte) (long) value;
+        return (byte) checked(value, Byte.MIN_VALUE, 0xFF, "byte");
     }
 
     public static short toShort(double value) {
-        return (short) (long) value;
+        return (short) checked(value, Short.MIN_VALUE, 0xFFFF, "short");
     }
 
     public static int toInt(double value) {
-        return (int) (long) value;
+        return (int) checked(value, Integer.MIN_VALUE, 0xFFFFFFFFL, "int");
+    }
+
+    private static long checked(double value, long min, long max, String type) {
+        long whole = (long) value;
+        if (whole < min || whole > max || Double.isNaN(value) || Double.isInfinite(value)) {
+            throw new IllegalArgumentException(value + " does not fit an NBT " + type + " leaf: a range check of the builder is missing");
+        }
+        return whole;
     }
 
     public static float toFloat(double value) {

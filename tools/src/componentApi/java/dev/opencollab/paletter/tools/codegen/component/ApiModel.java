@@ -128,6 +128,22 @@ final class ApiModel {
             return null;
         }
 
+        /**
+         * The newest window that sends the component and has a result for a field (any status but {@code not-generated}):
+         * what the API takes from the captures about the field (required, limits, the history's wire leaves). A capture
+         * without the field's variants ({@link Windows#gaps}) does not decide it; the newest sending window if none has one.
+         */
+        Window evidence(String mappingKey) {
+            for (int i = windows.size() - 1; i >= 0; i--) {
+                Window w = windows.get(i);
+                JsonObject field = mappingKey == null ? null : w.field(mappingKey);
+                if (w.sent() && field != null && !Windows.NOT_GENERATED.equals(field.get("status").getAsString())) {
+                    return w;
+                }
+            }
+            return latest();
+        }
+
         /** Enums declared in the component, by name. */
         final Map<String, EnumType> enums = new LinkedHashMap<>();
         /** Nested record types, by name (root excluded). */
@@ -324,6 +340,12 @@ final class ApiModel {
         String name;
         final List<String> values = new ArrayList<>();
         final List<String> constants = new ArrayList<>();
+        /**
+         * Values {@code api-history.json} records a constant for that the docs no longer list, and those constants: kept
+         * {@code @Deprecated} so that callers compile, left out of the known values.
+         */
+        final List<String> removedValues = new ArrayList<>();
+        final List<String> removedConstants = new ArrayList<>();
     }
 
     static final class Field {

@@ -74,6 +74,28 @@ class ComponentWindowsTest {
     }
 
     @Test
+    void aFieldWithoutAResultInTheNewestWindowFollowsTheOlderWindowAndIsReported() {
+        // value has a result at 100, none at 200 (that capture lacks its variants)
+        Inputs in = inputs(g -> {
+            g.add(window("on", 100));
+            JsonObject newest = window("on", 200);
+            newest.getAsJsonObject("fields").add("value", ComponentGeneratorTest.json("{\"status\": \"not-generated\"}"));
+            newest.remove("forms");
+            g.add(newest);
+        });
+        ApiModel.Comp gadget = ComponentGenerator.model(in).component("item:test:gadget");
+        assertEquals(gadget.windows.get(0), gadget.evidence("value"), "the API facts of value come from the window with a result");
+        assertEquals(gadget.windows.get(1), gadget.evidence("level"), "a field without any result follows the newest window");
+        List<String> gaps = Windows.gaps(gadget);
+        assertEquals(1, gaps.size(), gaps.toString());
+        assertTrue(gaps.getFirst().startsWith("item:test:gadget value has no result in the newest capture window (from protocol 200)"), gaps.getFirst());
+        // The history records the leaves of the window with a result, and newer protocols drop the field with a report entry
+        assertEquals(java.util.Set.of("test:gadget.on"), ApiHistory.wire(gadget,
+            gadget.root.fields.stream().filter(f -> "value".equals(f.path)).findFirst().orElseThrow()));
+        assertTrue(itemWire(in).contains("value has no known wire mapping"));
+    }
+
+    @Test
     void aComponentNoWindowSendsIsGeneratedAndEncodesNothing() {
         Inputs in = inputs(g -> {
             JsonObject w = window("on", 100);

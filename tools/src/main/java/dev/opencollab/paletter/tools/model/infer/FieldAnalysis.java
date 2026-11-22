@@ -447,9 +447,11 @@ final class FieldAnalysis {
         }
         // A transform of the field, of an object or list containing it, or of the whole component covers it
         String transformKey = HandTransforms.covering(transforms, component.id(), path);
-        // (a field whose leaves only follow its presence, under a transform, is the transform's too)
-        if ((status.equals("unresolved") || status.equals("partial") || ((status.equals("dropped") || status.equals("linked")) && !rules.isEmpty()))
-            && transformKey != null) {
+        // (a field whose leaves only follow its presence, under a transform, is the transform's too). A fit that explains
+        // every leaf is the transform's as well: the encoder calls the transform, not the rules, so the field is recorded
+        // the same whether the fit happened to succeed or not
+        if ((status.equals("inferred") || status.equals("unresolved") || status.equals("partial")
+            || ((status.equals("dropped") || status.equals("linked")) && !rules.isEmpty())) && transformKey != null) {
             out.addProperty("transform", transforms.get(transformKey));
             out.remove("linkedTo");
             status = "hand-rule";

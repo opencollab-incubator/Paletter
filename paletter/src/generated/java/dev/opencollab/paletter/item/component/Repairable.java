@@ -235,16 +235,6 @@ public final class Repairable implements ItemComponent {
             }
 
             /**
-             * Sets {@code items} to the identifiers of the items.
-             *
-             * @param items the value
-             * @return this builder
-             */
-            public @NonNull Builder items(@NonNull List<String> items) {
-                return items(ItemsOrTags.items(items));
-            }
-
-            /**
              * Sets {@code items} to the identifiers of the items (at least one value).
              *
              * @param first the first value
@@ -257,7 +247,7 @@ public final class Repairable implements ItemComponent {
                 for (String x : rest) {
                     values.add(x);
                 }
-                return items(values);
+                return items(ItemsOrTags.items(values));
             }
 
             /**
@@ -274,7 +264,7 @@ public final class Repairable implements ItemComponent {
                 for (BedrockItemType x : rest) {
                     values.add(x.identifier());
                 }
-                return items(values);
+                return items(ItemsOrTags.items(values));
             }
 
             /**
@@ -286,16 +276,6 @@ public final class Repairable implements ItemComponent {
             public @NonNull Builder repairAmount(@Nullable RepairAmount repairAmount) {
                 this.repairAmount = repairAmount;
                 return this;
-            }
-
-            /**
-             * Sets {@code repair_amount} to a Molang expression for the amount.
-             *
-             * @param repairAmount the value
-             * @return this builder
-             */
-            public @NonNull Builder repairAmount(@NonNull String repairAmount) {
-                return repairAmount(RepairAmount.expression(repairAmount));
             }
 
             /**

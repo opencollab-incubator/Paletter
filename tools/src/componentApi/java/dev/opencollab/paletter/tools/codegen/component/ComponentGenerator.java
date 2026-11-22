@@ -138,7 +138,8 @@ public final class ComponentGenerator {
     public static Output generateAll(Inputs in) {
         ComponentGenerator generator = new ComponentGenerator(in);
         generator.build();
-        generator.model.renames.addAll(generator.hand.history.renames(generator.model));
+        generator.hand.history.checkShapes(generator.model);
+        generator.model.renames.addAll(generator.hand.history.renames(generator.model, in.api()));
         StandIns.apply(generator.model, generator.hand.history, in.context().reserved());
         Map<String, String> out = new TreeMap<>();
         // api.json "since" overrides the build version (the Paletter version the generated API first shipped in)
@@ -276,6 +277,7 @@ public final class ComponentGenerator {
         if (c.windows.isEmpty()) {
             throw new GenerationException(c.id + " has no window that sends it");
         }
+        Windows.gaps(c).forEach(gap -> System.out.println("warning: " + gap));
         c.serverOnly = Windows.serverOnly(c);
         c.rejected = Windows.rejected(c);
         c.sincePreview = Windows.sincePreview(model, c, Window::status);

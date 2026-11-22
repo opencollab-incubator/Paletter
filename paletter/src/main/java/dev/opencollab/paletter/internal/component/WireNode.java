@@ -8,9 +8,11 @@ import org.cloudburstmc.nbt.NbtMapBuilder;
 import org.cloudburstmc.nbt.NbtType;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * A mutable NBT compound the component encoders write into by dotted path ({@code minecraft:durability.damage_chance.min}).
@@ -19,6 +21,8 @@ import java.util.Map;
  */
 public final class WireNode {
     private final Map<String, Object> entries = new LinkedHashMap<>();
+    /** The paths of the leaves an owning component wrote ({@link #own}); null until one does. */
+    private Set<String> owned;
 
     public WireNode() {
     }
@@ -59,6 +63,29 @@ public final class WireNode {
             child(path.substring(0, dot)).put(path.substring(dot + 1), value);
         }
         return this;
+    }
+
+    /**
+     * Sets a leaf that several components write and this one owns: a later {@link #putUnowned} of the leaf keeps this
+     * value, so the owner's value wins whatever the order of the components.
+     * <p>
+     * Unverified: no capture has the owner together with a component that also writes the leaf, so which value BDS keeps
+     * is not known; the owner is the component the leaf carries the value of. TODO(recapture): capture the combinations
+     * (docs/data-pipeline.md, "Recapture to-do") and follow what BDS sends.
+     */
+    public @NonNull WireNode own(@NonNull String path, @NonNull Object value) {
+        if (owned == null) {
+            owned = new HashSet<>();
+        }
+        owned.add(path);
+        return put(path, value);
+    }
+
+    /**
+     * Sets a leaf another component owns ({@link #own}) unless that component wrote it already.
+     */
+    public @NonNull WireNode putUnowned(@NonNull String path, @NonNull Object value) {
+        return owned != null && owned.contains(path) ? this : put(path, value);
     }
 
     /**

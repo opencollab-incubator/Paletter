@@ -15,12 +15,14 @@ import dev.opencollab.paletter.block.component.LightEmission;
 import dev.opencollab.paletter.block.component.MaterialInstances;
 import dev.opencollab.paletter.block.component.PlacementFilter;
 import dev.opencollab.paletter.block.component.SelectionBox;
+import dev.opencollab.paletter.block.component.UvLock;
 import dev.opencollab.paletter.internal.data.VanillaData;
 import dev.opencollab.paletter.item.component.BlockPlacer;
 import dev.opencollab.paletter.item.component.Dyeable;
 import dev.opencollab.paletter.item.component.ItemsOrTags;
 import dev.opencollab.paletter.item.component.HoverTextColor;
 import dev.opencollab.paletter.item.component.Icon;
+import dev.opencollab.paletter.item.component.RepairAmount;
 import dev.opencollab.paletter.item.component.Repairable;
 import dev.opencollab.paletter.item.component.Shooter;
 import dev.opencollab.paletter.item.component.UseAnimation;
@@ -103,8 +105,8 @@ class TransformsTest {
 
     @Test
     void molangRepairAmountBefore26_40IsACompound() {
-        Repairable repairable = Repairable.builder().repairItems(Repairable.RepairItems.builder().items(List.of("minecraft:stick"))
-            .repairAmount("q.max_durability * 0.25").build()).build();
+        Repairable repairable = Repairable.builder().repairItems(Repairable.RepairItems.builder().items(ItemsOrTags.items(List.of("minecraft:stick")))
+            .repairAmount(RepairAmount.expression("q.max_durability * 0.25")).build()).build();
         WireNode now = new WireNode();
         Transforms.itemDescriptorList(ctx, now, repairable);
         assertEquals("q.max_durability * 0.25", now.build().getCompound("minecraft:repairable").getList("repair_items", NbtType.COMPOUND).getFirst().getString("repair_amount"));
@@ -272,7 +274,7 @@ class TransformsTest {
     @Test
     void materialInstancesPackedInlineAndAliases() {
         MaterialInstances materials = MaterialInstances.builder()
-            .all(MaterialInstances.Instance.builder().texture("stone").faceDimming(false).isotropic(true).build())
+            .all(MaterialInstances.InstanceOrAlias.define(MaterialInstances.Instance.builder().texture("stone").faceDimming(false).isotropic(true).build()))
             .up(MaterialInstances.InstanceOrAlias.alias("*"))
             .build();
         WireNode out = new WireNode();
@@ -300,7 +302,8 @@ class TransformsTest {
         WireNode inline = new WireNode();
         Transforms.materialInstancesInline(ctx, inline, EmbeddedVisual.builder()
             .geometry(EmbeddedVisual.VisualGeometry.builder().identifier("minecraft:geometry.full_block").build())
-            .materialInstances(MaterialInstances.builder().all(MaterialInstances.Instance.builder().texture("stone").alphaMaskedTint(true).build()).build()).build());
+            .materialInstances(MaterialInstances.builder().all(MaterialInstances.InstanceOrAlias.define(
+                MaterialInstances.Instance.builder().texture("stone").alphaMaskedTint(true).build())).build()).build());
         assertEquals((byte) 0, compound(inline, "minecraft:embedded_visual").getCompound("material_instances").getCompound("*").getByte("alpha_masked_tint"));
         assertEquals(1, report.warnings().size());
         assertTrue(report.warnings().getFirst().message().contains("alpha_masked_tint"));
@@ -341,7 +344,7 @@ class TransformsTest {
     @Test
     void materialInstancesWithCustomNames() {
         MaterialInstances materials = MaterialInstances.builder()
-            .all(MaterialInstances.Instance.builder().texture("stone").build())
+            .all(MaterialInstances.InstanceOrAlias.define(MaterialInstances.Instance.builder().texture("stone").build()))
             .instances(Map.of("glass", MaterialInstances.InstanceOrAlias.define(
                 MaterialInstances.Instance.builder().texture("glass").renderMethod(MaterialInstances.RenderMethod.BLEND).build()),
                 "pane", MaterialInstances.InstanceOrAlias.alias("glass")))
@@ -395,7 +398,7 @@ class TransformsTest {
         WireNode repair = new WireNode();
         Transforms.itemDescriptorList(ctx, repair, Repairable.builder().repairItems(
             Repairable.RepairItems.builder().items("minecraft:stick").repairAmount(1.5f).build(),
-            Repairable.RepairItems.builder().items(List.of()).repairAmount("q.max_durability * 0.25").build(),
+            Repairable.RepairItems.builder().items(ItemsOrTags.items(List.of())).repairAmount(RepairAmount.expression("q.max_durability * 0.25")).build(),
             Repairable.RepairItems.builder().items(ItemsOrTags.tagQuery("1")).repairAmount(1f).build()).build());
         NbtList<NbtMap> entries = (NbtList<NbtMap>) compound(repair, "minecraft:repairable").getList("repair_items", NbtType.COMPOUND);
         assertEquals("minecraft:stick", entries.get(0).getList("items", NbtType.COMPOUND).getFirst().getString("name"));
@@ -474,7 +477,7 @@ class TransformsTest {
         assertEquals(List.of("base", "lid"), compound(out, "minecraft:geometry").getList("uv_lock", NbtType.STRING));
 
         WireNode empty = new WireNode();
-        Transforms.geometry(ctx, empty, Geometry.builder().identifier("geometry.lamp").uvLock(List.of()).build());
+        Transforms.geometry(ctx, empty, Geometry.builder().identifier("geometry.lamp").uvLock(UvLock.bones(List.of())).build());
         assertEquals(Wire.EMPTY_LIST, compound(empty, "minecraft:geometry").get("uv_lock"), "BDS sends [] without element type");
         assertTrue(report.entries().isEmpty());
     }

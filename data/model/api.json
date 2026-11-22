@@ -231,6 +231,7 @@
   "typeNames": {
     "block:minecraft:material_instances:*": "Instance",
     "item:minecraft:kinetic_weapon:damage_conditions": "Conditions",
+    "block:minecraft:random_offset:x": "Axis",
     "item:minecraft:entity_placer:dispense_on[]": "UseOn",
     "block:minecraft:embedded_visual:geometry": "VisualGeometry",
     "block:minecraft:item_visual:geometry": "VisualGeometry"

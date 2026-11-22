@@ -16,7 +16,40 @@ import java.util.TreeMap;
  * the component (server only, rejected, since which preview).
  */
 final class Windows {
+    /** The status of a field none of whose variants the capture of a window has: no result, not a finding about BDS. */
+    static final String NOT_GENERATED = "not-generated";
+
     private Windows() {
+    }
+
+    /**
+     * The fields with no result in the newest window that sends the component ({@link #NOT_GENERATED}) while an older one
+     * has one: the newest capture lacks their variants (it was made with an older add-on). The newest window is the
+     * encoder of every later protocol, so such a field is left out there with a report entry, and its API facts come
+     * from the older window ({@link Comp#evidence}). Reported, not failed: the gap is the capture's, and the fix is a
+     * capture with the current add-on, which the generator cannot make; failing would stop every generation until then.
+     *
+     * @return one line per such field, for the generation output
+     */
+    static List<String> gaps(Comp c) {
+        Window latest = c.latest();
+        List<String> out = new ArrayList<>();
+        if (latest == null || !latest.mapping().has("fields")) {
+            return out;
+        }
+        for (Map.Entry<String, JsonElement> e : latest.mapping().getAsJsonObject("fields").entrySet()) {
+            if (!NOT_GENERATED.equals(e.getValue().getAsJsonObject().get("status").getAsString())) {
+                continue;
+            }
+            Window evidence = c.evidence(e.getKey());
+            if (evidence != latest) {
+                out.add(c.id + " " + e.getKey() + " has no result in the newest capture window (from protocol " + latest.since()
+                    + ") but has one from protocol " + evidence.since() + " (" + evidence.field(e.getKey()).get("status").getAsString()
+                    + "): its API follows that window, newer protocols leave it out with a report entry; capture again with the"
+                    + " current add-on");
+            }
+        }
+        return out;
     }
 
     /** @return the window in which BDS only accepts the component, or null; one is all the annotation can state */

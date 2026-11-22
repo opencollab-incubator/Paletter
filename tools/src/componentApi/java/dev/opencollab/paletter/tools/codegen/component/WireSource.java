@@ -72,9 +72,10 @@ final class WireSource {
                 : AnnotationSpec.builder(SuppressWarnings.class).addMember("value", "{$S, $S}", "unused", "deprecation").build())
             .addMethod(MethodSpec.constructorBuilder().addModifiers(Modifier.PRIVATE).build());
         List<MethodSpec> encoders = new ArrayList<>();
+        Map<String, String> owners = SharedLeaves.owners(model, kind);
         CodeBlock.Builder dispatch = CodeBlock.builder().beginControlFlow("switch (component)");
         for (Comp c : members) {
-            CodeBlock inline = new ComponentWire(c, false).component(encoders);
+            CodeBlock inline = new ComponentWire(c, false, owners).component(encoders);
             if (inline == null) {
                 dispatch.addStatement("case $T c -> $N(c, ctx, out)", ApiSource.className(c), method(c));
             } else {
@@ -99,7 +100,7 @@ final class WireSource {
             .addParameter(ApiSource.nonNull(iface), "component").addParameter(ApiSource.nonNull(WIRE_CONTEXT), "ctx")
             .addParameter(ApiSource.nonNull(WIRE_NODE), "out").addCode(dispatch.build()).build());
         for (Comp c : model.components.stream().filter(c -> c.kind == kind && c.standalone).toList()) {
-            new ComponentWire(c, true).component(encoders);
+            new ComponentWire(c, true, owners).component(encoders);
         }
         encoders.forEach(type::addMethod);
         if (kind == Kind.ITEM || kind == Kind.BLOCK) {

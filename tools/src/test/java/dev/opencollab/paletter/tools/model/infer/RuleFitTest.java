@@ -302,4 +302,17 @@ class RuleFitTest {
     private static double round(double d) {
         return Math.round(d * 1e6) / 1e6;
     }
+
+    @Test
+    void anEmptyListRuleNeedsAnEmptyList() {
+        Leaf empty = new Leaf("list", "[]");
+        Leaf one = new Leaf("float", 1.0f);
+        // no empty list observed: "only the empty lists send []" holds vacuously, so it is no rule
+        List<Observation> none = List.of(new Observation(JsonParser.parseString("[1]"), Map.of(W, one), "a"),
+            new Observation(JsonParser.parseString("[2]"), Map.of(W, one), "b"));
+        assertNull(dev.opencollab.paletter.tools.model.rule.EmptyList.fit(none, W));
+        List<Observation> both = List.of(new Observation(JsonParser.parseString("[]"), Map.of(W, empty), "a"),
+            new Observation(JsonParser.parseString("[2]"), Map.of(W, one), "b"));
+        assertTrue(dev.opencollab.paletter.tools.model.rule.EmptyList.fit(both, W) != null);
+    }
 }

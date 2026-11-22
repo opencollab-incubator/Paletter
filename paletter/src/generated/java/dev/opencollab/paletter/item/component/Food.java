@@ -5,7 +5,6 @@ package dev.opencollab.paletter.item.component;
 
 import dev.opencollab.paletter.annotation.BedrockFormat;
 import dev.opencollab.paletter.internal.component.Check;
-import dev.opencollab.paletter.vanilla.BedrockItemType;
 import java.util.Objects;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
@@ -192,16 +191,6 @@ public final class Food implements ItemComponent {
         public @NonNull Builder usingConvertsTo(@Nullable String usingConvertsTo) {
             this.usingConvertsTo = usingConvertsTo;
             return this;
-        }
-
-        /**
-         * Sets {@code using_converts_to} to a vanilla or custom item.
-         *
-         * @param usingConvertsTo the value
-         * @return this builder
-         */
-        public @NonNull Builder usingConvertsTo(@NonNull BedrockItemType usingConvertsTo) {
-            return usingConvertsTo(usingConvertsTo.identifier());
         }
 
         /**

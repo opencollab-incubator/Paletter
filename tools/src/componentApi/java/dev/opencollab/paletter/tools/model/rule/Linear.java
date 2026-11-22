@@ -79,9 +79,14 @@ public final class Linear extends Rule {
      * A line wrapped into {@code [0, m)}: whole steps on an integer leaf that start again past the largest one BDS sends
      * ({@code -90 -> 3}, {@code 450 -> 1} quarter turns). The modulus is the largest leaf plus one, and an observation
      * outside the line's range must show the wrap; null otherwise.
+     * <p>
+     * With few observations some pair of them and a third agree modulo m by chance (about 3 in m), so the leaf must have
+     * an integral NBT type and the scale must be whole steps, n or 1/n: {@code (3 * origin.x + 8) mod 12} onto a float
+     * leaf is no rule.
      */
     static Linear wrapped(List<JsonElement> xs, List<Leaf> ys) {
-        if (ys.stream().anyMatch(y -> y == null || !y.numeric() || y.number() < 0 || y.number() != Math.rint(y.number()))) {
+        if (ys.stream().anyMatch(y -> y == null || !y.numeric() || !INTEGRAL.contains(y.type()) || y.number() < 0
+            || y.number() != Math.rint(y.number()))) {
             return null;
         }
         long modulus = (long) ys.stream().mapToDouble(Leaf::number).max().orElse(0) + 1;
@@ -96,7 +101,7 @@ public final class Linear extends Rule {
                 }
                 double a = (ys.get(j).number() - ys.get(i).number()) / dx;
                 double b = ys.get(i).number() - a * xs.get(i).getAsDouble();
-                if (Math.abs(a) < 1e-9) {
+                if (Math.abs(a) < 1e-9 || !wholeSteps(a)) {
                     continue;
                 }
                 boolean fits = true;
@@ -112,6 +117,14 @@ public final class Linear extends Rule {
             }
         }
         return null;
+    }
+
+    private static final Set<String> INTEGRAL = Set.of("byte", "short", "int", "long");
+
+    /** @return whether a scale is a whole number of steps, n or 1/n */
+    static boolean wholeSteps(double scale) {
+        double s = Math.abs(scale);
+        return s >= 1 ? Math.abs(s - Math.rint(s)) < 1e-9 : Math.abs(1 / s - Math.rint(1 / s)) < 1e-6;
     }
 
     @Override
@@ -138,16 +151,36 @@ public final class Linear extends Rule {
         }
     }
 
+    /**
+     * The divisor of a scale of 1/n (degrees / 90 -> quarter turns), which divides by n: the rounded scale times a multiple
+     * of n would fall just short of the integer an integral leaf truncates to. Null for a scale that multiplies.
+     */
+    private Double divisor() {
+        double divisor = 1 / scale;
+        return Math.abs(scale) < 1 && Math.abs(divisor - Math.rint(divisor)) < 1e-3 ? Math.rint(divisor) : null;
+    }
+
+    /**
+     * The leaf of a value before its NBT type, computed as the encoder ({@link #emit}) computes it: the evaluation and the
+     * encoder are one function.
+     * <p>
+     * TODO(recapture): an integral leaf truncates the result ({@code Wire.toInt}), so {@code 20 * 0.7f} sends 13 where BDS
+     * may send 14; the captures only hold values exact in binary (docs/data-pipeline.md, "Recapture to-do").
+     */
+    double apply(double x) {
+        Double divisor = divisor();
+        double v = divisor != null ? x / divisor + offset : scale * x + offset;
+        // wrapped into [0, modulo): BDS sends -90 degrees as 3 quarter turns
+        return modulo == null ? v : Math.floorMod(Math.round(v), modulo);
+    }
+
     @Override
     public void emit(Emitter e) {
-        // A scale of 1/n (degrees / 90 -> quarter turns) divides by n: the rounded scale times a multiple of n would fall
-        // just short of the integer an integral leaf truncates to
-        double divisor = 1 / scale;
-        CodeBlock number = Math.abs(scale) < 1 && Math.abs(divisor - Math.rint(divisor)) < 1e-3
-            ? CodeBlock.of("($L / $L + $L)", e.number(), decimal(Math.rint(divisor)), decimal(offset))
+        Double divisor = divisor();
+        CodeBlock number = divisor != null
+            ? CodeBlock.of("($L / $L + $L)", e.number(), decimal(divisor), decimal(offset))
             : CodeBlock.of("($L * $L + $L)", decimal(scale), e.number(), decimal(offset));
         if (modulo != null) {
-            // wrapped into [0, modulo): BDS sends -90 degrees as 3 quarter turns
             number = CodeBlock.of("$T.floorMod($T.round($L), $LL)", Math.class, Math.class, number, modulo);
         }
         e.put(e.fromNumber(nbt, number));
@@ -163,6 +196,6 @@ public final class Linear extends Rule {
             return null;
         }
         double x = p.isBoolean() ? (p.getAsBoolean() ? 1 : 0) : p.getAsDouble();
-        return typed(scale * x + offset, nbt);
+        return typed(apply(x), nbt);
     }
 }

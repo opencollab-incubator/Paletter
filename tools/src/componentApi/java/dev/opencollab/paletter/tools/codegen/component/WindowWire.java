@@ -28,6 +28,7 @@ import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
@@ -55,15 +56,18 @@ final class WindowWire {
     /** Value leaves of the window (owned leaves), and the field owning each. */
     private final Set<String> owned = new TreeSet<>();
     private final Map<String, Field> ownerOf = new LinkedHashMap<>();
+    /** The owning component of each leaf several components of the kind write ({@link SharedLeaves}). */
+    private final Map<String, String> sharedOwners;
 
     private CodeBlock.Builder b = CodeBlock.builder();
     private int vars;
 
-    WindowWire(Comp c, Window window, boolean exposed, Set<String> transformed) {
+    WindowWire(Comp c, Window window, boolean exposed, Set<String> transformed, Map<String, String> sharedOwners) {
         this.c = c;
         this.window = window;
         this.exposed = exposed;
         this.transformed = transformed;
+        this.sharedOwners = sharedOwners;
         if (window != null && window.sent()) {
             collectOwned(c.root, false);
             collectOwned(c.root, true);
@@ -374,7 +378,7 @@ final class WindowWire {
             String list = listPath(r.wire(), prefix);
             if (list == null) {
                 if (!mapped) {
-                    unmapped(f, var + ".isEmpty()");
+                    unmapped(f, var + ".isEmpty()", var, WireRules.mappingOf(window, f));
                 }
                 return;
             }
@@ -400,9 +404,9 @@ final class WindowWire {
             String status = m == null ? "none" : m.get("status").getAsString();
             if (!status.equals("dropped")) {
                 if (!replacedByConstant(f, prefix)) {
-                    unmapped(f, null);
-                } else if (f.defaultValue == null) {
-                    b.addStatement("ctx.changed($L, $S)", name(), (f.json == null ? f.java : f.path) + " is sent as a constant, whatever its value");
+                    unmapped(f, null, var, m);
+                } else {
+                    replaced(f, var, prefix);
                 }
             }
         }
@@ -417,16 +421,59 @@ final class WindowWire {
         return prefix.isEmpty() && window.constants().keySet().stream().anyMatch(leaf -> strip(leaf).equals(c.name + "." + f.path));
     }
 
-    private void unmapped(Field f, String emptyCheck) {
+    /**
+     * The report of a field the window cannot send: always for a value without a default, else for a value other than the
+     * default (the default is what the record holds when nothing was set) or a non-empty list.
+     *
+     * @param var     the field's value (a local or the accessor call)
+     * @param mapping the field's mapping in the window, or null
+     */
+    /**
+     * The report of a field the window sends as a constant ({@link #replacedByConstant}): for a value other than the
+     * constant (a string field and a string constant: {@code slot("sword")} is no change), else for a value other than the
+     * default, else always.
+     * <p>
+     * TODO(recapture): {@code minecraft:enchantable.slot} is the one such field, with one accepted value captured
+     * (docs/data-pipeline.md, "Recapture to-do"); with its slots captured it becomes a value rule.
+     */
+    private void replaced(Field f, String var, String prefix) {
+        String constant = window.constants().entrySet().stream().filter(e -> strip(e.getKey()).equals(c.name + "." + f.path))
+            .map(Map.Entry::getValue).findFirst().orElseThrow();
+        java.util.regex.Matcher typed = Pattern.compile("^(.*) \\(string\\)$").matcher(constant);
+        CodeBlock condition = null;
+        if (f.type instanceof Scalar s && s.kind() == ScalarKind.STRING && typed.matches()) {
+            condition = CodeBlock.of("!$S.equals($L)", typed.group(1), var);
+        } else if (f.defaultValue != null) {
+            CodeBlock literal = ApiSource.literal(c, f.type, f.defaultValue);
+            condition = ApiSource.primitive(f) ? CodeBlock.of("$L != $L", var, literal) : CodeBlock.of("!$T.equals($L, $L)", Objects.class, var, literal);
+        }
+        if (condition != null) {
+            b.beginControlFlow("if ($L)", condition);
+        }
+        b.addStatement("ctx.changed($L, $S)", name(), (f.json == null ? f.java : f.path) + " is sent as a constant, whatever its value");
+        if (condition != null) {
+            b.endControlFlow();
+        }
+    }
+
+    private void unmapped(Field f, String emptyCheck, String var, JsonObject mapping) {
         String json = f.json == null ? f.java : f.path;
-        if (f.defaultValue != null && emptyCheck == null) {
-            return;
-        }
+        // BDS of this window does not know the member (it rejects a definition with it), as opposed to no capture showing it
+        boolean unknown = mapping != null && "rejected".equals(mapping.get("status").getAsString()) && mapping.has("unknownToBds")
+            && mapping.get("unknownToBds").getAsBoolean();
+        String message = json + (unknown ? " does not exist in this Bedrock version" : " has no known wire mapping");
+        CodeBlock condition = null;
         if (emptyCheck != null) {
-            b.beginControlFlow("if (!$L)", emptyCheck);
+            condition = CodeBlock.of("!$L", emptyCheck);
+        } else if (f.defaultValue != null) {
+            CodeBlock literal = ApiSource.literal(c, f.type, f.defaultValue);
+            condition = ApiSource.primitive(f) ? CodeBlock.of("$L != $L", var, literal) : CodeBlock.of("!$T.equals($L, $L)", Objects.class, var, literal);
         }
-        b.addStatement("ctx.drop($L, $S)", name(), json + " has no known wire mapping");
-        if (emptyCheck != null) {
+        if (condition != null) {
+            b.beginControlFlow("if ($L)", condition);
+        }
+        b.addStatement("ctx.drop($L, $S)", name(), message);
+        if (condition != null) {
             b.endControlFlow();
         }
     }
@@ -583,7 +630,7 @@ final class WindowWire {
             }
             String rel = relative(wire, prefix);
             if (e.getValue().equals("omitted")) {
-                b.addStatement("$N.remove($S)", node, rel);
+                b.addStatement("$L", removeCode(node, rel));
             } else {
                 put(node, rel, literal(e.getValue()));
             }
@@ -599,6 +646,30 @@ final class WindowWire {
     }
 
     void put(String node, String path, CodeBlock value) {
-        b.addStatement("$N.put($S, $L)", node, path, value);
+        b.addStatement("$L", putCode(node, path, value));
+    }
+
+    /**
+     * The expression that writes a leaf: {@code own} or {@code putUnowned} for a leaf several components write
+     * ({@link SharedLeaves}), so the owner's value wins whatever the order of the components; else {@code put}.
+     */
+    CodeBlock putCode(String node, String path, CodeBlock value) {
+        String owner = shared(node, path);
+        String method = owner == null ? "put" : owner.equals(c.id) ? "own" : "putUnowned";
+        return CodeBlock.of("$N.$N($S, $L)", node, method, path, value);
+    }
+
+    /** The expression that removes a leaf; fails for a leaf several components write, whose removal has no owner rule. */
+    CodeBlock removeCode(String node, String path) {
+        if (shared(node, path) != null) {
+            throw new GenerationException(c.id + " removes " + path + ", a leaf several components write (SharedLeaves): which"
+                + " of them wins is open");
+        }
+        return CodeBlock.of("$N.remove($S)", node, path);
+    }
+
+    /** @return the owner of a leaf several components write, or null; leaves are shared only at the component's top node */
+    private String shared(String node, String path) {
+        return node.equals("out") ? sharedOwners.get(path) : null;
     }
 }

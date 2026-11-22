@@ -47,6 +47,16 @@ final class OpenValueSource {
             type.addField(FieldSpec.builder(self, e.constants.get(i), Modifier.PUBLIC, Modifier.STATIC, Modifier.FINAL)
                 .addJavadoc("{@code $L}\n", Docs.escape(e.values.get(i))).initializer("new $T($S)", self, e.values.get(i)).build());
         }
+        for (int i = 0; i < e.removedValues.size(); i++) {
+            if (VALUE_CLASS_FIELDS.contains(e.removedConstants.get(i))) {
+                throw new GenerationException(c.id + " enum " + e.name + " has a value named " + e.removedConstants.get(i) + ", a name its class uses; rename it in api.json");
+            }
+            type.addField(FieldSpec.builder(self, e.removedConstants.get(i), Modifier.PUBLIC, Modifier.STATIC, Modifier.FINAL)
+                .addAnnotation(Deprecated.class)
+                .addJavadoc("{@code $L}\n\n@deprecated Bedrock no longer documents this value; the constant stays so that callers compile,\n"
+                    + "and the value is sent like any value of {@link #of} the encoders do not know.\n", Docs.escape(e.removedValues.get(i)))
+                .initializer("new $T($S)", self, e.removedValues.get(i)).build());
+        }
         type.addField(FieldSpec.builder(list, "KNOWN", Modifier.PRIVATE, Modifier.STATIC, Modifier.FINAL)
             .initializer("$T.of($L)", LIST, String.join(", ", e.constants)).build());
         type.addField(FieldSpec.builder(ParameterizedTypeName.get(MAP, STRING, self), "BY_VALUE", Modifier.PRIVATE, Modifier.STATIC, Modifier.FINAL)

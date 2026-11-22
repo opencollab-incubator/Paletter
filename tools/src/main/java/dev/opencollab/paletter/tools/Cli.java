@@ -24,7 +24,7 @@ import java.util.Map;
     DataCommands.DataDiffCommand.class, UpdateCommands.CreativeProbeCommand.class, UpdateCommands.EducationCaptureCommand.class,
     DataCommands.ExperimentMarksCommand.class,
     CaptureCommands.CaptureCommand.class, CaptureCommands.Experiments.class, CaptureCommands.CompareCommand.class,
-    ModelCommands.Docs.class, ModelCommands.Addon.class, ModelCommands.Infer.class, ModelCommands.CheckMappings.class,
+    ModelCommands.Docs.class, ModelCommands.Addon.class, ModelCommands.Infer.class, ModelCommands.CheckMappings.class, ModelCommands.Retire.class,
     GeneratorCommands.Constants.class, GeneratorCommands.Components.class, GeneratorCommands.InspectCommand.class,
     BdsCommands.BehaviourCommand.class, BdsCommands.BehaviourProbeCommand.class, BdsCommands.BehaviourDumpCommand.class,
     BdsCommands.ScriptDumpCommand.class,

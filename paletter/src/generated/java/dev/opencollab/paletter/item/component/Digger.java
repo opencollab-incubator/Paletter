@@ -313,16 +313,6 @@ public final class Digger implements ItemComponent {
             }
 
             /**
-             * Sets {@code name} to a vanilla or custom block.
-             *
-             * @param name the value
-             * @return this builder
-             */
-            public @NonNull Builder name(@NonNull BedrockBlockType name) {
-                return name(name.identifier());
-            }
-
-            /**
              * Sets {@code states}.
              *
              * @param states the value
@@ -451,16 +441,6 @@ public final class Digger implements ItemComponent {
             public @NonNull Builder block(@Nullable Block block) {
                 this.block = block;
                 return this;
-            }
-
-            /**
-             * Sets {@code block} with its shorthand: {@code name}.
-             *
-             * @param name the value
-             * @return this builder
-             */
-            public @NonNull Builder block(@NonNull String name) {
-                return block(Block.of(name));
             }
 
             /**

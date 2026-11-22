@@ -258,8 +258,14 @@ final class ApiSource {
                 case FLOAT -> CodeBlock.of("$L", Docs.floatLiteral(v.getAsDouble()));
                 case STRING -> CodeBlock.of("$S", v.getAsString());
             };
-            case EnumRef e -> CodeBlock.of("$T.$L", className(c).nestedClass(e.type().name),
-                e.type().constants.get(e.type().values.indexOf(v.getAsString())));
+            case EnumRef e -> {
+                int i = e.type().values.indexOf(v.getAsString());
+                if (i < 0) {
+                    throw new GenerationException(c.id + ": the default " + v + " is no documented value of " + e.type().name + " "
+                        + e.type().values + "; fix the docs default with an erratum (fixtures.json) or api.json noDefaults");
+                }
+                yield CodeBlock.of("$T.$L", className(c).nestedClass(e.type().name), e.type().constants.get(i));
+            }
             case Vec3 vec -> {
                 List<String> xyz = new ArrayList<>();
                 if (v.isJsonArray()) {
@@ -279,7 +285,7 @@ final class ApiSource {
             case MapOf m -> {
                 List<CodeBlock> items = new ArrayList<>();
                 v.getAsJsonObject().entrySet().forEach(e -> items.add(CodeBlock.of("$S, $L", e.getKey(), literal(c, m.value(), e.getValue()))));
-                yield CodeBlock.of("$T.of($L)", MAP, CodeBlock.join(items, ", "));
+                yield IndexSource.mapOf(items);
             }
             case States s -> CodeBlock.of("$T.of()", MAP);
             case ComponentRef r -> CodeBlock.of("null");
