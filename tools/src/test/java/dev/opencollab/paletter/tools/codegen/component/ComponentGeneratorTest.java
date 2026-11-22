@@ -127,7 +127,7 @@ class ComponentGeneratorTest {
                                "default": "unverified: no hash"},
                               {"name": "test:part", "type": "int", "values": [0, 1, 2], "valuesFrom": "the docs", "default": "unverified: no hash"}]}},
              "components": {
-              "item:test:widget": {"status": "sent", "wire": ["test:widget"], "constants": {"test:widget.version": "2 (int)"},
+              "item:test:widget": {"windows": [{"protocols": [100, 200], "status": "sent", "wire": ["test:widget"], "constants": {"test:widget.version": "2 (int)"},
                 "fields": {
                   "count": {"status": "inferred", "rules": [{"kind": "identity", "nbt": "int", "tags": [], "wire": "test:widget.count"}],
                             "whenAbsent": {"test:widget.count": "1 (int)"}},
@@ -156,28 +156,46 @@ class ComponentGeneratorTest {
                   "offset": {"status": "inferred", "rules": [{"kind": "identity", "element": 0, "nbt": "float", "tags": [], "wire": "test:widget.ox"},
                              {"kind": "identity", "element": 1, "nbt": "float", "tags": [], "wire": "test:widget.oy"},
                              {"kind": "identity", "element": 2, "nbt": "float", "tags": [], "wire": "test:widget.oz"}]}
-                }, "protocols": [100, 200]},
-              "item:test:gadget": {"status": "sent", "wire": ["test:gadget"],
+                }}]},
+              "item:test:gadget": {"windows": [{"protocols": [100], "status": "sent", "wire": ["test:gadget"],
                 "forms": {"boolean": {"status": "inferred", "rules": [{"kind": "identity", "nbt": "byte", "tags": [], "wire": "test:gadget.value"}]}},
-                "fields": {"value": {"status": "inferred", "rules": [{"kind": "identity", "nbt": "byte", "tags": [], "wire": "test:gadget.value"}]}},
-                "protocols": [100],
-                "protocol200": {"status": "sent", "protocols": [200], "wire": ["test:gadget"],
+                "fields": {"value": {"status": "inferred", "rules": [{"kind": "identity", "nbt": "byte", "tags": [], "wire": "test:gadget.value"}]}}},
+                {"protocols": [200], "status": "sent", "wire": ["test:gadget"],
                   "fields": {"value": {"status": "inferred", "rules": [{"kind": "identity", "nbt": "byte", "tags": [], "wire": "test:gadget.on"}]},
-                             "level": {"status": "inferred", "rules": [{"kind": "identity", "nbt": "int", "tags": [], "wire": "test:gadget.level"}]}}}},
-              "block:test:hidden": {"status": "server-only", "fields": {}},
-              "block:test:slab": {"status": "sent", "wire": ["test:slab"], "fields": {"[].size": {"status": "hand-rule"}}, "protocols": [100],
-                "protocol200": {"status": "sent", "protocols": [200], "wire": ["test:slab"], "forms": {"object": {"status": "rejected"}},
-                  "fields": {"[].size": {"status": "hand-rule"}}}},
-              "block:test:glow": {"status": "server-only", "fields": {}, "protocols": [100],
-                "protocol200": {"status": "sent", "protocols": [200], "wire": ["test:glow"],
+                             "level": {"status": "inferred", "rules": [{"kind": "identity", "nbt": "int", "tags": [], "wire": "test:gadget.level"}]}}}]},
+              "block:test:hidden": {"windows": [{"protocols": [100, 200], "status": "server-only", "fields": {}}]},
+              "block:test:slab": {"windows": [{"protocols": [100], "status": "sent", "wire": ["test:slab"], "fields": {"[].size": {"status": "hand-rule"}}},
+                {"protocols": [200], "status": "sent", "wire": ["test:slab"], "forms": {"object": {"status": "rejected"}},
+                  "fields": {"[].size": {"status": "hand-rule"}}}]},
+              "block:test:glow": {"windows": [{"protocols": [100], "status": "server-only", "fields": {}},
+                {"protocols": [200], "status": "sent", "wire": ["test:glow"],
                   "forms": {"integer": {"status": "inferred", "rules": [{"kind": "identity", "nbt": "byte", "tags": [], "wire": "test:glow.emission"}]}},
-                  "fields": {}}},
-              "item:test:old": {"status": "rejected", "note": "item:test:old has been deprecated. Use test:widget instead", "fields": {}, "protocols": [100, 200]},
-              "item:test:former": {"status": "rejected", "fields": {}, "protocols": [100, 200]},
-              "item:test:count": {"status": "rejected", "fields": {}, "protocols": [100, 200]},
-              "item:test:quiet": {"status": "server-only", "fields": {}, "protocols": [100, 200]},
-              "item:test:ancient": {"status": "rejected", "fields": {}, "protocols": [100, 200]}
+                  "fields": {}}]},
+              "item:test:old": {"windows": [{"protocols": [100, 200], "status": "rejected", "note": "item:test:old has been deprecated. Use test:widget instead", "fields": {}}]},
+              "item:test:former": {"windows": [{"protocols": [100, 200], "status": "rejected", "fields": {}}]},
+              "item:test:count": {"windows": [{"protocols": [100, 200], "status": "rejected", "fields": {}}]},
+              "item:test:quiet": {"windows": [{"protocols": [100, 200], "status": "server-only", "fields": {}}]},
+              "item:test:ancient": {"windows": [{"protocols": [100, 200], "status": "rejected", "fields": {}}]}
             }}""");
+    }
+
+    /** The window of a fixture component that holds for every protocol (the fixture's components with one window). */
+    static JsonObject window(JsonObject mappings, String id) {
+        return dev.opencollab.paletter.tools.model.MappingWindows.oldest(mappings.getAsJsonObject("components").getAsJsonObject(id));
+    }
+
+    /** A component of one window for the given protocols. */
+    static JsonObject oneWindow(JsonObject window, int... protocols) {
+        JsonArray list = new JsonArray();
+        for (int p : protocols) {
+            list.add(p);
+        }
+        window.add("protocols", list);
+        JsonArray windows = new JsonArray();
+        windows.add(window);
+        JsonObject component = new JsonObject();
+        component.add("windows", windows);
+        return component;
     }
 
     /** One union shape for two fields: they share the sealed type. */
@@ -303,7 +321,7 @@ void theModelHasTheComponentsOfTheFixture() {
     void aScaleOfOneOverNDivides() {
         // degrees -> quarter turns: 90 * 0.011111 would truncate to 0 in an int leaf, 90 / 90.0 does not
         Inputs in = inputs();
-        in.mappings().getAsJsonObject("components").getAsJsonObject("item:test:widget").getAsJsonObject("fields").getAsJsonObject("speed")
+        window(in.mappings(), "item:test:widget").getAsJsonObject("fields").getAsJsonObject("speed")
             .getAsJsonArray("rules").get(0).getAsJsonObject().addProperty("scale", 0.011111);
         String source = ComponentGenerator.generate(in).get("dev/opencollab/paletter/internal/component/ItemWire.java");
         assertTrue(source.contains(" / 90.0 + 0.0)"), source);
@@ -345,17 +363,17 @@ void theModelHasTheComponentsOfTheFixture() {
             "geo.id": {"status": "inferred", "rules": [{"kind": "identity", "nbt": "string", "tags": [], "wire": "test:lamp.geo.id"}],
                        "whenAbsent": {"test:lamp.geo.id": "none (string)"}}""";
         in.mappings().getAsJsonObject("components").add("block:test:lamp", json("""
-            {"status": "sent", "wire": ["test:lamp"], "protocols": [100],
+            {"windows": [{"status": "sent", "wire": ["test:lamp"], "protocols": [100],
              "constants": {"test:lamp.geo.bones": "{} (compound)", "test:lamp.geo.solid": "0 (byte)"},
-             "fields": {"geo": {"status": "inferred", "rules": []}, %s, "geo.bones": {"status": "dropped"}},
-             "protocol200": {"status": "sent", "wire": ["test:lamp"], "protocols": [200],
+             "fields": {"geo": {"status": "inferred", "rules": []}, %s, "geo.bones": {"status": "dropped"}}},
+             {"status": "sent", "wire": ["test:lamp"], "protocols": [200],
                "constants": {"test:lamp.geo.solid": "0 (byte)"},
                "fields": {"geo": {"status": "inferred", "rules": []}, %s,
                  "geo.bones": {"status": "hand-rule", "transform": "testMap",
                    "rules": [{"kind": "empty-map", "nbt": "compound", "tags": [], "wire": "test:lamp.geo.bones"},
                              {"kind": "constant", "value": "1.000000", "mapEntry": true, "nbt": "string", "tags": [], "wire": "test:lamp.geo.bones.arm"},
                              {"kind": "constant", "value": "paletter", "nbt": "string", "tags": ["injected-default"], "wire": "test:lamp.geo.id"}],
-                   "whenAbsent": {"test:lamp.geo.bones": "{} (compound)", "test:lamp.geo.id": "none (string)"}}}}}""".formatted(id, id)));
+                   "whenAbsent": {"test:lamp.geo.bones": "{} (compound)", "test:lamp.geo.id": "none (string)"}}}}]}""".formatted(id, id)));
         Map<String, String> transforms = new java.util.TreeMap<>(in.transforms());
         transforms.put("block:test:lamp:geo.bones", "testMap");
         return new Inputs(in.components(), in.fixtures(), in.feedback(), in.mappings(), transforms, in.api(), in.since());
@@ -438,8 +456,8 @@ void theModelHasTheComponentsOfTheFixture() {
     @Test
     void twoServerOnlyWindowsFail() {
         fails("block:test:glow is server only in 2 protocol windows; @ServerOnly states one range",
-            in -> in.mappings().getAsJsonObject("components").getAsJsonObject("block:test:glow")
-                .add("protocol300", json("{\"status\": \"server-only\", \"fields\": {}}")));
+            in -> in.mappings().getAsJsonObject("components").getAsJsonObject("block:test:glow").getAsJsonArray("windows")
+                .add(json("{\"protocols\": [300], \"status\": \"server-only\", \"fields\": {}}")));
     }
 
     @Test
@@ -495,7 +513,7 @@ void theModelHasTheComponentsOfTheFixture() {
     @Test
     void anOpenEnumWhoseUndocumentedSamplesDisagreeKeepsTheirCasesAndDropsTheRest() {
         Inputs in = inputs();
-        in.mappings().getAsJsonObject("components").getAsJsonObject("item:test:widget").getAsJsonObject("fields").getAsJsonObject("rarity")
+        window(in.mappings(), "item:test:widget").getAsJsonObject("fields").getAsJsonObject("rarity")
             .getAsJsonArray("rules").get(0).getAsJsonObject().getAsJsonObject("table").addProperty("odd_too", "rare");
         String wire = ComponentGenerator.generate(in).get(WIDGET_WIRE);
         assertTrue(wire.contains("case \"odd\" -> out.put(\"test:widget.rarity\", \"common\")"), wire);
@@ -506,13 +524,13 @@ void theModelHasTheComponentsOfTheFixture() {
     @Test
     void anOpenEnumWithoutUndocumentedSamplesDropsUnknownValues() {
         Inputs in = inputs();
-        in.mappings().getAsJsonObject("components").getAsJsonObject("item:test:widget").getAsJsonObject("fields").getAsJsonObject("rarity")
+        window(in.mappings(), "item:test:widget").getAsJsonObject("fields").getAsJsonObject("rarity")
             .getAsJsonArray("rules").get(0).getAsJsonObject().getAsJsonObject("table").remove("odd");
         assertTrue(ComponentGenerator.generate(in).get(WIDGET_WIRE).contains("default -> ctx.drop(Widget.NAME, \"rarity = \""));
     }
 
     private static JsonObject widgetField(Inputs in, String field) {
-        return in.mappings().getAsJsonObject("components").getAsJsonObject("item:test:widget").getAsJsonObject("fields").getAsJsonObject(field);
+        return window(in.mappings(), "item:test:widget").getAsJsonObject("fields").getAsJsonObject(field);
     }
 
     private static int count(String text, String part) {
@@ -729,9 +747,9 @@ void theModelHasTheComponentsOfTheFixture() {
              "doc": "Labels.", "page": "creator/Reference/Content/BlockReference/Examples/BlockComponents/minecraftBlock_labels.md",
              "experiments": [], "forms": [{"type": "array", "items": {"type": "string"}}], "fields": [], "notes": []}"""));
         in.mappings().getAsJsonObject("components").add("block:test:labels", json("""
-            {"status": "sent", "wire": ["test:labels"], "protocols": [100, 200], "fields": {},
+            {"windows": [{"status": "sent", "wire": ["test:labels"], "protocols": [100, 200], "fields": {},
              "forms": {"array<string>": {"status": "inferred",
-               "rules": [{"kind": "ordered-set", "nbt": "string", "tags": [], "wire": "test:labels[]"}]}}}"""));
+               "rules": [{"kind": "ordered-set", "nbt": "string", "tags": [], "wire": "test:labels[]"}]}}}]}"""));
         Map<String, String> files = ComponentGenerator.generate(in);
         String wire = files.get("dev/opencollab/paletter/internal/component/BlockWire.java");
         assertTrue(wire.contains("\"test:labels\""), "the list reaches the encoder: " + wire);
@@ -744,8 +762,17 @@ void theModelHasTheComponentsOfTheFixture() {
     @Test
     void conflictingWindowsFail() {
         fails("conflicting windows: item:test:gadget has two mappings for protocol 100",
-            in -> in.mappings().getAsJsonObject("components").getAsJsonObject("item:test:gadget")
-                .add("protocol100", json("{\"status\": \"sent\", \"fields\": {}}")));
+            in -> in.mappings().getAsJsonObject("components").getAsJsonObject("item:test:gadget").getAsJsonArray("windows")
+                .add(json("{\"protocols\": [100], \"status\": \"sent\", \"fields\": {}}")));
+    }
+
+    @Test
+    void aComponentWithoutWindowsOrAWindowWithoutProtocolsFails() {
+        fails("item:test:gadget: a component of mappings.json without \"windows\": [status, fields]",
+            in -> in.mappings().getAsJsonObject("components").add("item:test:gadget", json("{\"status\": \"sent\", \"fields\": {}}")));
+        fails("item:test:gadget: a window of mappings.json lists no protocols: [status, fields]",
+            in -> in.mappings().getAsJsonObject("components").add("item:test:gadget",
+                json("{\"windows\": [{\"status\": \"sent\", \"fields\": {}}]}")));
     }
 
     @Test
@@ -761,7 +788,7 @@ void theModelHasTheComponentsOfTheFixture() {
     @Test
     void twoFieldsDecidingOneLeafFail() {
         fails("conflicting rules: item:test:widget [count, label] all decide the wire leaf test:widget.count; name a transform for one of them in HandTransforms",
-            in -> in.mappings().getAsJsonObject("components").getAsJsonObject("item:test:widget").getAsJsonObject("fields")
+            in -> window(in.mappings(), "item:test:widget").getAsJsonObject("fields")
                 .getAsJsonObject("label").getAsJsonArray("rules").get(0).getAsJsonObject().addProperty("wire", "test:widget.count"));
     }
 
@@ -776,10 +803,10 @@ void theModelHasTheComponentsOfTheFixture() {
         fails("ambiguous union: item:test:widget shape has a scalar form that fills no single field of Shape; settle it in api.json unions", in -> {
             JsonArray fields = in.components().getAsJsonArray("components").get(0).getAsJsonObject().getAsJsonArray("fields");
             fields.asList().removeIf(f -> f.getAsJsonObject().get("path").getAsString().equals("shape.id"));
-            in.mappings().getAsJsonObject("components").getAsJsonObject("item:test:widget").getAsJsonObject("fields").remove("shape");
+            window(in.mappings(), "item:test:widget").getAsJsonObject("fields").remove("shape");
         });
         fails("list depth mismatch: item:test:widget label writes test:widget.list[].label from the component; name a transform for it in HandTransforms",
-            in -> in.mappings().getAsJsonObject("components").getAsJsonObject("item:test:widget").getAsJsonObject("fields")
+            in -> window(in.mappings(), "item:test:widget").getAsJsonObject("fields")
                 .getAsJsonObject("label").getAsJsonArray("rules").get(0).getAsJsonObject().addProperty("wire", "test:widget.list[].label"));
     }
 }

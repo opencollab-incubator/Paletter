@@ -85,7 +85,7 @@ class WhiteboxReportsTest {
                 .putCompound("minecraft:publisher_on_use_on", NbtMap.builder().putByte("autoSucceedOnClient", (byte) 1).build())
                 .build()).build());
         }
-        JsonObject mappings = JsonParser.parseString("{\"components\": {\"item:minecraft:block_placer\": {\"status\": \"sent\"}}}").getAsJsonObject();
+        JsonObject mappings = JsonParser.parseString("{\"components\": {\"item:minecraft:block_placer\": {\"windows\": [{\"protocols\": [1], \"status\": \"sent\"}]}}}").getAsJsonObject();
 
         List<Gap> gaps = WhiteboxCoverage.gaps(JsonParser.parseString(BEFORE).getAsJsonObject(), captured, mappings);
         assertEquals(List.of(

@@ -39,7 +39,8 @@ class HandTransformsTest {
             String key = transform.getKey();
             String component = components.keySet().stream().filter(name -> key.startsWith(name + ":"))
                 .max((a, b) -> Integer.compare(a.length(), b.length())).orElse(null);
-            JsonObject transforms = component == null ? null : components.getAsJsonObject(component).getAsJsonObject("transforms");
+            JsonObject transforms = component == null ? null
+                : dev.opencollab.paletter.tools.model.MappingWindows.oldest(components.getAsJsonObject(component)).getAsJsonObject("transforms");
             String path = component == null ? null : key.substring(component.length() + 1);
             JsonObject entry = transforms == null || !transforms.has(path) ? null : transforms.getAsJsonObject(path);
             if (entry == null || !entry.has("verified") || entry.getAsJsonObject("verified").get("variants").getAsInt() == 0) {

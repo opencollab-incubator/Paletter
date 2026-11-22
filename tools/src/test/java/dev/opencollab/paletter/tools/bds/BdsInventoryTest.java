@@ -37,8 +37,8 @@ class BdsInventoryTest {
             + "25MaxStackSizeItemComponent\0" + "N9Scripting10Reflection20MemberPropertyGetterIN21ScriptModuleMinecraft11ScriptBlockELNS0_12"
             + "ReturnPolicyE0EXadL_ZNKS3_7isSolidEvEEEE\0").getBytes(StandardCharsets.US_ASCII);
         BdsInventory.scan(new ByteArrayInputStream(binary), found::add);
-        JsonObject mappings = JsonParser.parseString("{\"components\": {\"block:minecraft:friction\": {\"fields\": {\"value\": {}, "
-            + "\"gone\": {\"unknownToBds\": true}}}}}").getAsJsonObject();
+        JsonObject mappings = JsonParser.parseString("{\"components\": {\"block:minecraft:friction\": {\"windows\": [{\"protocols\": [1], "
+            + "\"fields\": {\"value\": {}, \"gone\": {\"unknownToBds\": true}}}]}}}").getAsJsonObject();
         JsonObject after = BdsInventory.inventory("1.0.0.1", BdsInventory.Strings.of(found), mappings);
         assertEquals("minecraft:friction", after.getAsJsonObject("blockComponents").getAsJsonObject("BlockFrictionDescription").get("name").getAsString());
         assertEquals("[\"value\"]", after.getAsJsonObject("blockComponents").getAsJsonObject("BlockFrictionDescription").get("keys").toString());

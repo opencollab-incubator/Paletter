@@ -25,9 +25,9 @@ class BehaviourSourceTest {
     private static JsonObject mappings(String glowRule, String useRule) {
         return JsonParser.parseString("""
             {"components": {
-              "block:minecraft:glow": {"forms": {"base": {"status": "rejected"}, "number": {"rules": [%s]}}},
-              "item:minecraft:use": {"fields": {"seconds": {"rules": [%s,
-                {"kind": "identity", "wire": "minecraft:use.seconds"}]}}}
+              "block:minecraft:glow": {"windows": [{"protocols": [100], "forms": {"base": {"status": "rejected"}, "number": {"rules": [%s]}}}]},
+              "item:minecraft:use": {"windows": [{"protocols": [100], "fields": {"seconds": {"rules": [%s,
+                {"kind": "identity", "wire": "minecraft:use.seconds"}]}}}]}
             }}""".formatted(glowRule, useRule)).getAsJsonObject();
     }
 
@@ -127,7 +127,7 @@ class BehaviourSourceTest {
     void protocolWindowsMustAgree() {
         JsonObject mappings = mappings(IDENTITY, TICKS);
         JsonObject glow = mappings.getAsJsonObject("components").getAsJsonObject("block:minecraft:glow");
-        glow.add("protocol900", JsonParser.parseString("{\"forms\": {\"number\": {\"rules\": [{\"kind\": \"linear\", \"scale\": 2.0, "
+        glow.getAsJsonArray("windows").add(JsonParser.parseString("{\"protocols\": [900], \"forms\": {\"number\": {\"rules\": [{\"kind\": \"linear\", \"scale\": 2.0, "
             + "\"offset\": 0.0, \"wire\": \"minecraft:glow.value\"}]}}}"));
         GenerationException e = assertThrows(GenerationException.class, () -> BehaviourSource.generate(keys("Float"), mappings, null, ""));
         assertTrue(e.getMessage().contains("differ"), e.getMessage());

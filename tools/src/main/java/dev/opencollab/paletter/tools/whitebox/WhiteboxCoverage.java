@@ -293,10 +293,12 @@ public final class WhiteboxCoverage {
 
     /** What the component model says about a component. */
     private static String model(JsonObject mappings, String component) {
-        JsonObject known = mappings.getAsJsonObject("components").getAsJsonObject(component);
-        if (known == null) {
+        JsonObject mapped = mappings.getAsJsonObject("components").getAsJsonObject(component);
+        if (mapped == null) {
             return "not in the component model";
         }
+        // the window of the newest capture
+        JsonObject known = dev.opencollab.paletter.tools.model.MappingWindows.newest(mapped);
         String status = known.has("status") ? known.get("status").getAsString() : "unknown";
         return "component model: " + status + (known.has("baseRejected") ? ", BDS says: " + known.get("baseRejected").getAsString() : "");
     }

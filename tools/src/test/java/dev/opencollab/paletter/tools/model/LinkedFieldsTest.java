@@ -11,6 +11,7 @@ import org.cloudburstmc.nbt.NbtMapBuilder;
 import org.cloudburstmc.nbt.NbtType;
 import org.cloudburstmc.nbt.NbtUtils;
 import dev.opencollab.paletter.tools.model.addon.AddonGenerator;
+import dev.opencollab.paletter.tools.model.MappingWindows;
 import dev.opencollab.paletter.tools.model.infer.MappingInference;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
@@ -156,8 +157,8 @@ class LinkedFieldsTest {
     }
 
     private static JsonObject fields(Path model) throws IOException {
-        return JsonParser.parseString(Files.readString(model.resolve("mappings.json"))).getAsJsonObject().getAsJsonObject("components")
-            .getAsJsonObject("item:minecraft:test").getAsJsonObject("fields");
+        return MappingWindows.newest(JsonParser.parseString(Files.readString(model.resolve("mappings.json"))).getAsJsonObject()
+            .getAsJsonObject("components").getAsJsonObject("item:minecraft:test")).getAsJsonObject("fields");
     }
 
     /**

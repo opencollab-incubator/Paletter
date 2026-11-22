@@ -8,16 +8,16 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeSet;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
- * The one reader and writer of a component's windows in {@code mappings.json}: the first window is the component's own
- * object, the windows after it hang inside it as {@code protocol<N>} members (N: the window's first protocol). Every window
- * lists the protocols of the captures it stands for as {@code protocols}.
+ * The one reader and writer of a component's windows in {@code mappings.json}: the component is
+ * {@code {"windows": [{"protocols": [...], "status": ..., "fields": ..., ...}, ...]}}, oldest window first. Every window
+ * lists the protocols of the captures it stands for as {@code protocols}; inference, coverage and the generator read them
+ * here.
  */
 public final class MappingWindows {
-    private static final Pattern KEY = Pattern.compile("protocol(\\d+)");
+    /** The key of a component's window list. */
+    public static final String WINDOWS = "windows";
 
     /**
      * The status of a window whose builds do not have the component: their own schema lacks it, so their add-on had no
@@ -28,45 +28,40 @@ public final class MappingWindows {
     private MappingWindows() {
     }
 
-    /** @return the first protocol of a window's key ({@code protocol2193}), or -1 if the key is not a window */
-    public static int protocolOfKey(String key) {
-        Matcher m = KEY.matcher(key);
-        return m.matches() ? Integer.parseInt(m.group(1)) : -1;
-    }
-
-    /** @return the windows of a merged component, the first (the component's object) and then the nested ones */
+    /**
+     * @return the windows of a component, oldest first
+     * @throws IllegalArgumentException if it has none, or a window lists no protocol
+     */
     public static List<JsonObject> of(JsonObject component) {
+        if (!component.has(WINDOWS) || component.getAsJsonArray(WINDOWS).isEmpty()) {
+            throw new IllegalArgumentException("a component of mappings.json without \"" + WINDOWS + "\": " + component.keySet());
+        }
         List<JsonObject> windows = new ArrayList<>();
-        windows.add(component);
-        for (Map.Entry<String, JsonElement> e : component.entrySet()) {
-            if (protocolOfKey(e.getKey()) >= 0 && e.getValue().isJsonObject()) {
-                windows.add(e.getValue().getAsJsonObject());
+        for (JsonElement e : component.getAsJsonArray(WINDOWS)) {
+            JsonObject window = e.getAsJsonObject();
+            if (!window.has("protocols") || window.getAsJsonArray("protocols").isEmpty()) {
+                throw new IllegalArgumentException("a window of mappings.json lists no protocols: " + window.keySet());
             }
+            windows.add(window);
         }
         return windows;
     }
 
-    /** @return the window of the newest capture of a merged component */
+    /** @return the window of the oldest capture of a component */
+    public static JsonObject oldest(JsonObject component) {
+        return of(component).getFirst();
+    }
+
+    /** @return the window of the newest capture of a component */
     public static JsonObject newest(JsonObject component) {
-        JsonObject newest = component;
-        int newestProtocol = component.getAsJsonArray("protocols").get(0).getAsInt();
-        for (Map.Entry<String, JsonElement> e : component.entrySet()) {
-            int protocol = protocolOfKey(e.getKey());
-            if (protocol > newestProtocol && e.getValue().isJsonObject()) {
-                newestProtocol = protocol;
-                newest = e.getValue().getAsJsonObject();
-            }
-        }
-        return newest;
+        return of(component).getLast();
     }
 
     /** @return every protocol some window of the component stands for */
     public static TreeSet<Integer> protocols(JsonObject component) {
         TreeSet<Integer> protocols = new TreeSet<>();
         for (JsonObject window : of(component)) {
-            if (window.has("protocols")) {
-                window.getAsJsonArray("protocols").forEach(p -> protocols.add(p.getAsInt()));
-            }
+            window.getAsJsonArray("protocols").forEach(p -> protocols.add(p.getAsInt()));
         }
         return protocols;
     }
@@ -74,35 +69,38 @@ public final class MappingWindows {
     /**
      * One result per capture (oldest first) into the component's windows: a capture whose wire relevant part
      * ({@link #wireShape}) equals the previous window's joins that window ({@code protocols}); a different one starts a
-     * new window, kept beside the first as {@code protocol<N>} (N: its first protocol). A window whose status is not
-     * {@code sent} (rejected, server only) records that the component is not on the wire there.
+     * new window. A window whose status is not {@code sent} (rejected, server only, absent) records that the component is
+     * not on the wire there.
      *
-     * @return the first window with the others attached, or null without results
+     * @return the component with its windows, or null without results
      */
     public static JsonObject merge(List<JsonObject> results, List<Integer> protocols) {
-        JsonObject first = null;
+        if (results.isEmpty()) {
+            return null;
+        }
+        JsonArray windows = new JsonArray();
         JsonObject current = null;
         JsonElement currentShape = null;
-        JsonArray currentProtocols = null;
         for (int i = 0; i < results.size(); i++) {
             JsonObject result = results.get(i);
             JsonElement shape = wireShape(result);
             if (current != null && shape.equals(currentShape)) {
-                currentProtocols.add(protocols.get(i));
+                current.getAsJsonArray("protocols").add(protocols.get(i));
                 continue;
             }
-            current = result;
+            // the protocols first: what a reader of the file looks for
+            JsonObject window = new JsonObject();
+            JsonArray own = new JsonArray();
+            own.add(protocols.get(i));
+            window.add("protocols", own);
+            result.entrySet().stream().filter(e -> !e.getKey().equals("protocols")).forEach(e -> window.add(e.getKey(), e.getValue()));
+            current = window;
             currentShape = shape;
-            currentProtocols = new JsonArray();
-            currentProtocols.add(protocols.get(i));
-            current.add("protocols", currentProtocols);
-            if (first == null) {
-                first = current;
-            } else {
-                first.add("protocol" + protocols.get(i), current);
-            }
+            windows.add(current);
         }
-        return first;
+        JsonObject component = new JsonObject();
+        component.add(WINDOWS, windows);
+        return component;
     }
 
     /**

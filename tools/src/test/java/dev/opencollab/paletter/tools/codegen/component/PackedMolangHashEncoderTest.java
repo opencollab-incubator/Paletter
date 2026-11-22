@@ -26,7 +26,7 @@ class PackedMolangHashEncoderTest {
                {"path": "locked", "types": [{"type": "array", "items": {"type": "string"}}], "required": false, "enumValues": [], "examples": [], "doc": "Bones."}
              ]}"""));
         in.mappings().getAsJsonObject("components").add("block:test:cube", json("""
-            {"status": "sent", "wire": ["test:cube"], "protocols": [100, 200],
+            {"windows": [{"status": "sent", "wire": ["test:cube"], "protocols": [100, 200],
              "fields": {
                "dimming": {"status": "inferred", "rules": [{"kind": "packed-bits", "mask": 1, "base": 5, "nbt": "byte", "tags": [], "wire": "test:cube.packed"}],
                            "whenAbsent": {"test:cube.packed": "5 (byte)"}},
@@ -37,7 +37,7 @@ class PackedMolangHashEncoderTest {
                "visible": {"status": "inferred", "rules": [{"kind": "molang", "nbt": "string", "tags": [], "wire": "test:cube.visible"}]},
                "bones": {"status": "inferred", "rules": [{"kind": "molang", "nbt": "string", "tags": [], "wire": "test:cube.bones{}"}]},
                "locked": {"status": "inferred", "rules": [{"kind": "hash-ordered-set", "nbt": "string", "tags": [], "wire": "test:cube.locked[]"}]}
-             }}"""));
+             }}]}"""));
         String wire = ComponentGenerator.generate(in).get("dev/opencollab/paletter/internal/component/BlockWire.java");
         String cube = wire.substring(wire.indexOf("private static void cube("));
         return cube.substring(0, cube.indexOf("\n    }\n") + 1);

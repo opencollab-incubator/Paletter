@@ -33,11 +33,14 @@ class ComponentWindowsTest {
         return w;
     }
 
-    private static Inputs inputs(Consumer<JsonObject> gadget) {
+    /** The gadget with the windows {@code gadget} adds, oldest first. */
+    private static Inputs inputs(Consumer<JsonArray> gadget) {
         JsonObject mappings = ComponentGeneratorTest.mappings();
         JsonObject components = mappings.getAsJsonObject("components");
+        JsonArray windows = new JsonArray();
+        gadget.accept(windows);
         JsonObject g = new JsonObject();
-        gadget.accept(g);
+        g.add("windows", windows);
         components.add("item:test:gadget", g);
         // these windows use protocols of their own, not the ones of the captures
         mappings.getAsJsonArray("captures").forEach(capture -> capture.getAsJsonObject().remove("windowProtocol"));
@@ -57,8 +60,8 @@ class ComponentWindowsTest {
             old.addProperty("status", "server-only");
             old.add("wire", new JsonArray());
             old.add("fields", new JsonObject());
-            g.asMap().putAll(old.asMap());
-            g.add("protocol200", window("on", 200));
+            g.add(old);
+            g.add(window("on", 200));
         });
         ApiModel model = ComponentGenerator.model(in);
         ApiModel.Comp gadget = model.components.stream().filter(c -> c.id.equals("item:test:gadget")).findFirst().orElseThrow();
@@ -75,9 +78,9 @@ class ComponentWindowsTest {
         Inputs in = inputs(g -> {
             JsonObject w = window("on", 100);
             w.addProperty("status", "rejected");
-            g.asMap().putAll(w.asMap());
-            g.add("protocol200", window("on", 200));
-            g.getAsJsonObject("protocol200").addProperty("status", "server-only");
+            g.add(w);
+            g.add(window("on", 200));
+            g.get(1).getAsJsonObject().addProperty("status", "server-only");
         });
         ApiModel model = ComponentGenerator.model(in);
         ApiModel.Comp gadget = model.component("item:test:gadget");
@@ -92,11 +95,11 @@ class ComponentWindowsTest {
     @Test
     void aRejectedComponentStatesSinceWhenAndWarns() {
         Inputs in = inputs(g -> {
-            g.asMap().putAll(window("on", 100).asMap());
+            g.add(window("on", 100));
             JsonObject rejected = window("on", 200);
             rejected.addProperty("status", "rejected");
             rejected.addProperty("note", "test:gadget: gone");
-            g.add("protocol200", rejected);
+            g.add(rejected);
         });
         ApiModel.Comp gadget = ComponentGenerator.model(in).component("item:test:gadget");
         assertEquals(200, gadget.rejected.since());
@@ -127,7 +130,7 @@ class ComponentWindowsTest {
         Inputs in = inputs(g -> {
             JsonObject w = window("on", 100);
             w.addProperty("status", "rejected");
-            g.asMap().putAll(w.asMap());
+            g.add(w);
         });
         JsonObject gadget = in.components().getAsJsonArray("components").asList().stream().map(e -> e.getAsJsonObject())
             .filter(c -> c.get("id").getAsString().equals("item:test:gadget")).findFirst().orElseThrow();
@@ -142,9 +145,9 @@ class ComponentWindowsTest {
     @Test
     void aMappingMayComeBackInALaterWindow() {
         Inputs in = inputs(g -> {
-            g.asMap().putAll(window("on", 100, 150).asMap());
-            g.add("protocol200", window("active", 200));
-            g.add("protocol300", window("on", 300));
+            g.add(window("on", 100, 150));
+            g.add(window("active", 200));
+            g.add(window("on", 300));
         });
         ApiModel.Comp gadget = ComponentGenerator.model(in).components.stream().filter(c -> c.id.equals("item:test:gadget")).findFirst().orElseThrow();
         assertEquals(List.of(Integer.MIN_VALUE, 200, 300), gadget.windows.stream().map(ApiModel.Window::since).toList());
@@ -158,9 +161,9 @@ class ComponentWindowsTest {
     @Test
     void theLastWindowIsAPlainElseSoTheDispatchIsExhaustive() {
         Inputs in = inputs(g -> {
-            g.asMap().putAll(window("on", 100).asMap());
-            g.add("protocol200", window("active", 200));
-            g.add("protocol300", window("on", 300));
+            g.add(window("on", 100));
+            g.add(window("active", 200));
+            g.add(window("on", 300));
         });
         String source = itemWire(in);
         assertTrue(source.contains("if (protocol < 200) {") && source.contains("} else if (protocol < 300) {") && source.contains("} else {"), source);
@@ -170,11 +173,11 @@ class ComponentWindowsTest {
     @Test
     void aFieldThatWritesNothingInAWindowGetsNeitherAVariableNorAnEmptyIf() {
         Inputs in = inputs(g -> {
-            g.asMap().putAll(window("on", 100).asMap());
+            g.add(window("on", 100));
             JsonObject second = window("on", 200);
             second.getAsJsonObject("fields").add("value", ComponentGeneratorTest.json("{\"status\": \"rejected\"}"));
             second.getAsJsonObject("forms").remove("boolean");
-            g.add("protocol200", second);
+            g.add(second);
         });
         String source = itemWire(in);
         assertTrue(!source.matches("(?s).*if \\(v\\d+ != null\\) \\{\\s*}.*"), source);
@@ -182,7 +185,7 @@ class ComponentWindowsTest {
 
     @Test
     void aCaptureWithoutTheComponentFailsInsteadOfBeingAbsorbedByItsNeighbourWindow() {
-        Inputs in = inputs(g -> g.asMap().putAll(window("on", 100).asMap()));
+        Inputs in = inputs(g -> g.add(window("on", 100)));
         int[] windows = {100, 200};
         in.mappings().getAsJsonArray("captures").forEach(capture -> capture.getAsJsonObject().addProperty("windowProtocol", windows[capture.getAsJsonObject().get("protocol").getAsInt() / 100 - 1]));
         ComponentGenerator.GenerationException e = org.junit.jupiter.api.Assertions.assertThrows(ComponentGenerator.GenerationException.class,
@@ -199,8 +202,8 @@ class ComponentWindowsTest {
             JsonArray protocols = new JsonArray();
             protocols.add(100);
             absent.add("protocols", protocols);
-            g.asMap().putAll(absent.asMap());
-            g.add("protocol200", window("on", 200));
+            g.add(absent);
+            g.add(window("on", 200));
         });
         in.mappings().getAsJsonArray("captures").forEach(capture -> {
             JsonObject c = capture.getAsJsonObject();
@@ -246,10 +249,10 @@ class ComponentWindowsTest {
     void windowsThatEncodeTheSameAreOne() {
         // Two windows whose mappings differ only in what the encoder ignores
         Inputs in = inputs(g -> {
-            g.asMap().putAll(window("on", 100).asMap());
+            g.add(window("on", 100));
             JsonObject second = window("on", 200);
             second.addProperty("note", "another message of another build");
-            g.add("protocol200", second);
+            g.add(second);
         });
         String source = itemWire(in);
         assertTrue(source.contains("private static void gadget(Gadget c, WireContext ctx, WireNode out) {\n        Boolean"), source);
@@ -272,13 +275,11 @@ class ComponentWindowsTest {
         mappings.add("captures", captures);
         // (every component has a result for each of these captures; their windows are not what is tested here)
         mappings.getAsJsonObject("components").entrySet().forEach(e -> {
-            if (e.getValue().getAsJsonObject().has("protocols")) {
-                JsonArray all = new JsonArray();
-                for (int window : new int[]{99, 149, 199}) {
-                    all.add(window);
-                }
-                e.getValue().getAsJsonObject().add("protocols", all);
+            JsonArray all = new JsonArray();
+            for (int window : new int[]{99, 149, 199}) {
+                all.add(window);
             }
+            dev.opencollab.paletter.tools.model.MappingWindows.oldest(e.getValue().getAsJsonObject()).add("protocols", all);
         });
         Inputs in = new Inputs(base.components(), base.fixtures(), base.feedback(), mappings, base.transforms(), base.api(), base.since());
         String index = ComponentGenerator.generate(in).get("dev/opencollab/paletter/internal/component/ComponentIndex.java");
@@ -327,10 +328,10 @@ class ComponentWindowsTest {
                          "examples": [], "doc": ""}]}"""));
         JsonObject mappings = ComponentGeneratorTest.mappings();
         mappings.getAsJsonObject("components").add("item:description", ComponentGeneratorTest.json("""
-            {"status": "sent", "wire": ["props.tab"], "protocols": [100, 200], "fields": {
+            {"windows": [{"status": "sent", "wire": ["props.tab"], "protocols": [100, 200], "fields": {
               "menu": {"status": "inferred", "rules": [], "whenAbsent": {"props.tab": "9 (int)"}},
               "menu.tab": {"status": "inferred", "rules": [{"kind": "table", "table": {"blocks": "1", "none": "9"}, "nbt": "int", "tags": [],
-                           "wire": "props.tab"}], "whenAbsent": {"props.tab": "9 (int)"}}}}"""));
+                           "wire": "props.tab"}], "whenAbsent": {"props.tab": "9 (int)"}}}}]}"""));
         JsonObject api = base.api().deepCopy();
         api.add("standalone", ComponentGeneratorTest.json("{\"item:description\": \"Menu\"}"));
         api.add("standalonePaths", ComponentGeneratorTest.json("{\"item:description\": \"menu\"}"));

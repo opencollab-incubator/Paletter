@@ -112,7 +112,8 @@ class SyntheticPipelineTest {
         String first = Files.readString(model.resolve("mappings.json"));
         assertTrue(new MappingInference(root).run(true), "a second run must reproduce the outputs");
 
-        JsonObject test = JsonParser.parseString(first).getAsJsonObject().getAsJsonObject("components").getAsJsonObject("item:minecraft:test");
+        JsonObject test = dev.opencollab.paletter.tools.model.MappingWindows.newest(
+            JsonParser.parseString(first).getAsJsonObject().getAsJsonObject("components").getAsJsonObject("item:minecraft:test"));
         assertEquals("sent", test.get("status").getAsString());
         JsonObject fields = test.getAsJsonObject("fields");
 

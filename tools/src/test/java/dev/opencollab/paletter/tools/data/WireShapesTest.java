@@ -31,8 +31,8 @@ class WireShapesTest {
            "fields": [{"path": "x", "types": [{"type": "integer"}], "required": false, "enumValues": [], "examples": [], "doc": ""}]}
         ]}""";
     private static final JsonObject MAPPINGS = JsonParser.parseString("""
-        {"components": {"item:minecraft:covered": {"status": "sent", "wire": ["minecraft:covered.x"],
-          "fields": {"x": {"status": "inferred", "rules": [{"kind": "identity", "nbt": "int", "tags": [], "wire": "minecraft:covered.x"}]}}}}}""")
+        {"components": {"item:minecraft:covered": {"windows": [{"protocols": [1], "status": "sent", "wire": ["minecraft:covered.x"],
+          "fields": {"x": {"status": "inferred", "rules": [{"kind": "identity", "nbt": "int", "tags": [], "wire": "minecraft:covered.x"}]}}}]}}}""")
         .getAsJsonObject();
 
     /** A build's spec capture with one item of the covered component with the given members, and maybe an undocumented component. */

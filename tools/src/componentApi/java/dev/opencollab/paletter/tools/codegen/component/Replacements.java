@@ -55,7 +55,8 @@ final class Replacements {
             if (!doc.get("category").getAsString().equals("component")) {
                 continue;
             }
-            JsonObject mapping = mapped.has(id) ? mapped.getAsJsonObject(id) : null;
+            // the oldest window: whether BDS rejected the component from the first capture on
+            JsonObject mapping = mapped.has(id) ? dev.opencollab.paletter.tools.model.MappingWindows.oldest(mapped.getAsJsonObject(id)) : null;
             String status = doc.get("status").getAsString();
             boolean rejected = mapping != null && mapping.has("status") && mapping.get("status").getAsString().equals("rejected");
             if (!status.equals("deprecated") && !status.equals("legacy") && !rejected) {

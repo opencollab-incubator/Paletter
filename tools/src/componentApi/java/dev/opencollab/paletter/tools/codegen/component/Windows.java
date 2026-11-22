@@ -98,34 +98,23 @@ final class Windows {
             return List.of();
         }
         TreeMap<Integer, JsonObject> byProtocol = new TreeMap<>();
-        if (mapping.has("protocols")) {
-            for (JsonElement p : mapping.getAsJsonArray("protocols")) {
-                byProtocol.put(p.getAsInt(), mapping);
-            }
+        List<JsonObject> listed;
+        try {
+            listed = MappingWindows.of(mapping);
+        } catch (IllegalArgumentException e) {
+            throw new GenerationException(id + ": " + e.getMessage());
         }
-        for (String key : mapping.keySet()) {
-            if (MappingWindows.protocolOfKey(key) >= 0) {
-                // The window's own protocols (the captures with this mapping), else just the one in the key
-                JsonObject window = mapping.getAsJsonObject(key);
-                List<Integer> protocols = new ArrayList<>();
-                if (window.has("protocols")) {
-                    window.getAsJsonArray("protocols").forEach(p -> protocols.add(p.getAsInt()));
-                } else {
-                    protocols.add(MappingWindows.protocolOfKey(key));
-                }
-                for (int protocol : protocols) {
-                    JsonObject other = byProtocol.put(protocol, window);
-                    if (other != null) {
-                        throw new GenerationException("conflicting windows: " + id + " has two mappings for protocol " + protocol);
-                    }
+        for (JsonObject window : listed) {
+            for (JsonElement p : window.getAsJsonArray("protocols")) {
+                if (byProtocol.put(p.getAsInt(), window) != null) {
+                    throw new GenerationException("conflicting windows: " + id + " has two mappings for protocol " + p.getAsInt());
                 }
             }
         }
-        if (byProtocol.isEmpty()) {
-            return List.of(new Window(Integer.MIN_VALUE, Integer.MAX_VALUE, mapping));
-        }
-        // Each observed mapping holds from its protocol until the next protocol with a different mapping; the oldest
-        // also holds for every older protocol (nothing contradicts it there)
+        // Each observed mapping holds from its protocol until the next protocol with a different mapping. A capture without
+        // the component fails generation (ComponentGenerator), so every window protocol is listed and none is absorbed by a
+        // neighbour. The oldest window also holds below the oldest capture: no bundled data version is older than it
+        // (ComponentIndex.OLDEST_CAPTURED_PROTOCOL)
         List<Window> windows = new ArrayList<>();
         List<Map.Entry<Integer, JsonObject>> entries = new ArrayList<>(byProtocol.entrySet());
         int i = 0;
