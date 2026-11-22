@@ -147,7 +147,7 @@ class ComponentConformanceTest {
      *       on vanilla blocks are tried ({@code fixtures.json descriptorValues});</li>
      *   <li>collision_box, selection_box, transformation: a vector with a third distinct value of every element is tried, so
      *       that no linear rule over them is fitted to two points; collision_box and selection_box also get boxes with the origin
-     *       and the size varied together (the affine rule);</li>
+     *       and the size varied together;</li>
      *   <li>geometry, item_visual, embedded_visual: the Molang of {@code bone_visibility} under several keys (and, with the schema, in the
      *       object form and as a number), and the names of {@code uv_lock} in several orders (the Molang and hash ordered set rules);</li>
      *   <li>material_instances: the booleans of each face in every combination (the packed bits rule).</li>

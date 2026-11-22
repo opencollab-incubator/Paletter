@@ -40,9 +40,6 @@ public interface Emitter {
     /** @return the emitter of the value of a union field as the alternative of a JSON type */
     Emitter as(String jsonType);
 
-    /** @return the number at a path of the value, a list or object ({@code origin[0]}), as a {@code double} */
-    CodeBlock input(String path);
-
     /** @return the value, an open value class of the API ({@code value()} is its string) */
     CodeBlock enumValue();
 

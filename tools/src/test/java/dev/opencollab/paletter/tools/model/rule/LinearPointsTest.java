@@ -25,18 +25,27 @@ class LinearPointsTest {
     }
 
     @Test
-    void twoPointsFitALineTodayButNeedAThirdOnceTheRecaptureHasOne() {
+    void twoPointsAreNoLineThreeAre() {
         // two points: any line, so scale 3 offset 8 says nothing
-        assertEquals(2, Linear.MIN_DISTINCT_POINTS, "3 once the recapture varies every linear field in three values");
-        assertNotNull(Linear.fit(xs("0", "4"), ys(8, 20)));
-        assertNull(Linear.fit(xs("0", "4"), ys(8, 20), 3));
+        assertNull(Linear.fit(xs("0", "4"), ys(8, 20)));
         // repeated inputs are no new point
-        assertNull(Linear.fit(xs("0", "4", "4", "0"), ys(8, 20, 20, 8), 3));
+        assertNull(Linear.fit(xs("0", "4", "4", "0"), ys(8, 20, 20, 8)));
         // three points on a line are
-        Linear line = Linear.fit(xs("0", "4", "8"), ys(8, 20, 32), 3);
+        Linear line = Linear.fit(xs("0", "4", "8"), ys(8, 20, 32));
+        assertNotNull(line);
         assertEquals(3.0, line.scale);
         assertEquals(8.0, line.offset);
         // three points that are no line are not
-        assertNull(Linear.fit(xs("0", "4", "8"), ys(8, 20, 31), 3));
+        assertNull(Linear.fit(xs("0", "4", "8"), ys(8, 20, 31)));
+    }
+
+    @Test
+    void aWrappedLineNeedsThreePointsToo() {
+        // -90 and 90 degrees as 3 and 1 quarter turns: two points, so no wrapped rule either
+        List<Leaf> turns = List.of(new Leaf("int", 3), new Leaf("int", 1));
+        assertNull(Linear.fit(xs("-90", "90"), turns));
+        Linear wrapped = Linear.fit(xs("-90", "90", "180"), List.of(new Leaf("int", 3), new Leaf("int", 1), new Leaf("int", 2)));
+        assertNotNull(wrapped);
+        assertEquals(4L, wrapped.modulo);
     }
 }

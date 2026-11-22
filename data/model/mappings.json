@@ -1320,16 +1320,10 @@
               "wire": "minecraft:collision_box.boxes[].maxY"
             },
             {
-              "kind": "linear",
-              "scale": 1.0,
-              "offset": 11.0,
-              "element": 2,
+              "kind": "empty-list",
               "nbt": "float",
               "tags": [
-                "renamed",
-                "nested",
-                "unit-conversion",
-                "list-element"
+                "injected-default"
               ],
               "wire": "minecraft:collision_box.boxes[].maxZ"
             },
@@ -1411,16 +1405,10 @@
           "status": "inferred",
           "rules": [
             {
-              "kind": "linear",
-              "scale": 0.333333,
-              "offset": 9.0,
-              "element": 2,
+              "kind": "empty-list",
               "nbt": "float",
               "tags": [
-                "renamed",
-                "nested",
-                "unit-conversion",
-                "list-element"
+                "injected-default"
               ],
               "wire": "minecraft:collision_box.boxes[].maxX"
             },
@@ -1439,16 +1427,10 @@
               "wire": "minecraft:collision_box.boxes[].maxY"
             },
             {
-              "kind": "linear",
-              "scale": 1.0,
-              "offset": 11.0,
-              "element": 2,
+              "kind": "empty-list",
               "nbt": "float",
               "tags": [
-                "renamed",
-                "nested",
-                "unit-conversion",
-                "list-element"
+                "injected-default"
               ],
               "wire": "minecraft:collision_box.boxes[].maxZ"
             },
@@ -1842,16 +1824,10 @@
                 "wire": "minecraft:collision_box.boxes[].maxY"
               },
               {
-                "kind": "linear",
-                "scale": 1.0,
-                "offset": 11.0,
-                "element": 2,
+                "kind": "empty-list",
                 "nbt": "float",
                 "tags": [
-                  "renamed",
-                  "nested",
-                  "unit-conversion",
-                  "list-element"
+                  "injected-default"
                 ],
                 "wire": "minecraft:collision_box.boxes[].maxZ"
               },
@@ -1954,30 +1930,18 @@
                 "wire": "minecraft:collision_box.boxes[].maxY"
               },
               {
-                "kind": "linear",
-                "scale": 1.0,
-                "offset": 11.0,
-                "element": 2,
+                "kind": "empty-list",
                 "nbt": "float",
                 "tags": [
-                  "renamed",
-                  "nested",
-                  "unit-conversion",
-                  "list-element"
+                  "injected-default"
                 ],
                 "wire": "minecraft:collision_box.boxes[].maxZ"
               },
               {
-                "kind": "linear",
-                "scale": -0.333333,
-                "offset": 7.0,
-                "element": 2,
+                "kind": "empty-list",
                 "nbt": "float",
                 "tags": [
-                  "renamed",
-                  "nested",
-                  "unit-conversion",
-                  "list-element"
+                  "injected-default"
                 ],
                 "wire": "minecraft:collision_box.boxes[].minX"
               },
@@ -2317,16 +2281,10 @@
                 "wire": "minecraft:collision_box.boxes[].maxY"
               },
               {
-                "kind": "linear",
-                "scale": 1.0,
-                "offset": 11.0,
-                "element": 2,
+                "kind": "empty-list",
                 "nbt": "float",
                 "tags": [
-                  "renamed",
-                  "nested",
-                  "unit-conversion",
-                  "list-element"
+                  "injected-default"
                 ],
                 "wire": "minecraft:collision_box.boxes[].maxZ"
               },
@@ -2449,30 +2407,18 @@
                 "wire": "minecraft:collision_box.boxes[].maxY"
               },
               {
-                "kind": "linear",
-                "scale": 1.0,
-                "offset": 11.0,
-                "element": 2,
+                "kind": "empty-list",
                 "nbt": "float",
                 "tags": [
-                  "renamed",
-                  "nested",
-                  "unit-conversion",
-                  "list-element"
+                  "injected-default"
                 ],
                 "wire": "minecraft:collision_box.boxes[].maxZ"
               },
               {
-                "kind": "linear",
-                "scale": -0.333333,
-                "offset": 7.0,
-                "element": 2,
+                "kind": "empty-list",
                 "nbt": "float",
                 "tags": [
-                  "renamed",
-                  "nested",
-                  "unit-conversion",
-                  "list-element"
+                  "injected-default"
                 ],
                 "wire": "minecraft:collision_box.boxes[].minX"
               },

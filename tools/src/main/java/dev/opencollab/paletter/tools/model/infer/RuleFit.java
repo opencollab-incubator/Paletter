@@ -7,7 +7,6 @@ import dev.opencollab.paletter.tools.model.Model.Field;
 import dev.opencollab.paletter.tools.model.addon.AddonGenerator;
 import dev.opencollab.paletter.tools.model.addon.JsonPath;
 import dev.opencollab.paletter.tools.model.infer.SpecCaptures.Obs;
-import dev.opencollab.paletter.tools.model.rule.Affine;
 import dev.opencollab.paletter.tools.model.rule.Affix;
 import dev.opencollab.paletter.tools.model.rule.Bitset;
 import dev.opencollab.paletter.tools.model.rule.Constant;
@@ -262,18 +261,14 @@ final class RuleFit {
             return best;
         }
         Rule count = Count.fit(set, wire);
-        Rule list = count != null ? count : EmptyList.fit(set, wire);
-        if (list != null) {
-            return list;
-        }
-        Rule elements = Affine.fitElements(set, wire);
-        return elements != null ? elements : Affine.fit(set, wire);
+        return count != null ? count : EmptyList.fit(set, wire);
     }
 
     /**
-     * How far a list element rule is from passing the value through: 0 for identity and for a pure scale. Two observations
-     * of a vector fit a line on every element ({@code [90, 180, 270]} and {@code [180, 270, 0]} put RY on element 0 with
-     * offset 1 as well as on element 1 with offset 0), so the element whose rule needs no offset explains the leaf.
+     * How far a list element rule is from passing the value through: 0 for identity and for a pure scale. Observations
+     * of a vector can fit a line on several elements ({@code [90, 180, 270]}, {@code [180, 270, 0]} and {@code [0, 90, 0]}
+     * put RY on element 0 with offset 1 as well as on element 1 with offset 0), so the element whose rule needs no offset
+     * explains the leaf.
      */
     private static double offset(Rule rule) {
         return rule instanceof Linear linear ? Math.abs(linear.offset) : 0;
@@ -320,7 +315,7 @@ final class RuleFit {
                 }
             }
         }
-        return Affine.fit(set, wire);
+        return null;
     }
 
     private List<String> tags(Component component, String path, String jsonName, String wire, Rule rule, List<Observation> set) {
