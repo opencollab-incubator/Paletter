@@ -73,8 +73,8 @@ class FallbackQueryTest {
             if (checked++ % 5 != 0) {
                 continue;
             }
-            ItemExplanation.Kind kind = oldest.explain(variant.type().identifier(), variant.aux(), null).kind();
-            boolean fallback = kind == ItemExplanation.Kind.FALLBACK || kind == ItemExplanation.Kind.DEFAULT;
+            ResolutionKind kind = oldest.explain(variant.type().identifier(), variant.aux(), null).kind();
+            boolean fallback = kind == ResolutionKind.FALLBACK || kind == ResolutionKind.DEFAULT;
             assertEquals(fallback, oldest.resolve(variant).fallback(), variant + " " + kind);
             assertEquals(fallback, !variant.equals(oldest.resolve(variant).variant()), variant + " " + kind);
             if (fallback) {

@@ -1075,9 +1075,9 @@ public final class Palette {
         NbtMap normalized = BlockStates.normalize(state);
         int canonical = Canonicals.block(blocks.canonical(), normalized);
         BlockResolution resolution = blocks.resolve(normalized);
-        BlockExplanation.Kind kind = resolution.block() != null ? BlockExplanation.Kind.valueOf(resolution.kind().name())
-            : blocks.defaultFallback() != null ? BlockExplanation.Kind.DEFAULT : BlockExplanation.Kind.MISSING;
-        RegisteredBlockState sent = kind == BlockExplanation.Kind.MISSING ? null
+        ResolutionKind kind = resolution.block() != null ? ResolutionKind.valueOf(resolution.kind().name())
+            : blocks.defaultFallback() != null ? ResolutionKind.DEFAULT : ResolutionKind.MISSING;
+        RegisteredBlockState sent = kind == ResolutionKind.MISSING ? null
             : canonical != -1 ? blocks.block(canonical) : resolution.block();
         List<String> chain = new ArrayList<>(List.of(BlockStates.name(normalized)));
         if (sent != null && !sent.identifier().equals(chain.getFirst())) {
@@ -1102,11 +1102,11 @@ public final class Palette {
         int canonical = Canonicals.item(items.canonical(), variant);
         ResolvedItem direct = items.resolve(variant);
         ResolvedItem sent = canonical != -1 ? items.item(canonical) : direct;
-        ItemExplanation.Kind kind;
+        ResolutionKind kind;
         if (direct != null) {
-            kind = direct.fallback() ? ItemExplanation.Kind.FALLBACK : ItemExplanation.Kind.EXACT;
+            kind = direct.fallback() ? ResolutionKind.FALLBACK : ResolutionKind.EXACT;
         } else {
-            kind = sent != null ? ItemExplanation.Kind.DEFAULT : ItemExplanation.Kind.MISSING;
+            kind = sent != null ? ResolutionKind.DEFAULT : ResolutionKind.MISSING;
         }
         List<String> chain = new ArrayList<>(List.of(identifier));
         String item = sent == null ? null : sent.definition().getIdentifier();

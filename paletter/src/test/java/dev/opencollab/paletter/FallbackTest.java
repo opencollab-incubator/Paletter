@@ -103,7 +103,7 @@ class FallbackTest {
         assertEquals("minecraft:unknown", BlockStates.name(Ids.blockAt(palette, block).getState()));
         Palette layered = with(Fallbacks.builder().block(BedrockBlockType.fromIdentifier(name), BlockFallback.of(BedrockBlocks.DIRT))).palette(OLDEST);
         assertEquals("minecraft:dirt", BlockStates.name(Ids.blockAt(layered, block).getState()));
-        assertEquals(BlockExplanation.Kind.FALLBACK, layered.explain(Ids.canonicalBlocks(palette).state(block)).kind());
+        assertEquals(ResolutionKind.FALLBACK, layered.explain(Ids.canonicalBlocks(palette).state(block)).kind());
     }
 
     @Test

@@ -23,7 +23,7 @@ class ExplainTest {
         BlockExplanation explanation = palette.explain(BlockStates.of("minecraft:stone"));
         int canonical = Ids.block(PALETTER, BlockStates.of("minecraft:stone"));
         assertNotNull(explanation.handle());
-        assertEquals(BlockExplanation.Kind.EXACT, explanation.kind());
+        assertEquals(ResolutionKind.EXACT, explanation.kind());
         assertEquals(Ids.runtimeId(palette, canonical), explanation.runtimeId());
         assertEquals(explanation.runtimeId(), explanation.hashedId());
         String text = explanation.toString();
@@ -39,13 +39,13 @@ class ExplainTest {
         boolean found = false;
         for (int i = 0; i < Ids.blockCount(newest) && !found; i++) {
             BlockExplanation explanation = oldest.explain(Ids.canonicalBlocks(newest).state(i));
-            if (explanation.kind() == BlockExplanation.Kind.FALLBACK || explanation.kind() == BlockExplanation.Kind.DEFAULT) {
+            if (explanation.kind() == ResolutionKind.FALLBACK || explanation.kind() == ResolutionKind.DEFAULT) {
                 found = true;
                 assertNotNull(explanation.handle());
                 assertEquals(Ids.runtimeId(oldest, i), explanation.runtimeId());
                 assertNotNull(explanation.sent());
                 assertTrue(explanation.toString().contains(explanation.kind().name().toLowerCase(Locale.ROOT)));
-                if (explanation.kind() == BlockExplanation.Kind.FALLBACK) {
+                if (explanation.kind() == ResolutionKind.FALLBACK) {
                     assertEquals(2, explanation.chain().size());
                     assertTrue(explanation.toString().contains(" -> "));
                 }
@@ -59,7 +59,7 @@ class ExplainTest {
         Palette palette = Palettes.paletter().vanilla(PALETTER.latest());
         ItemExplanation apple = palette.explain("minecraft:apple", 0, null);
         assertNotNull(apple.handle());
-        assertEquals(ItemExplanation.Kind.EXACT, apple.kind());
+        assertEquals(ResolutionKind.EXACT, apple.kind());
         assertEquals("minecraft:apple", apple.item());
         assertNull(apple.block());
         assertTrue(apple.creative());
