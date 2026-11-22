@@ -271,9 +271,10 @@ final class RuleFit {
     }
 
     /**
-     * How far a list element rule is from passing the value through: 0 for identity and for a pure scale. Two observations
-     * of a vector fit a line on every element ({@code [90, 180, 270]} and {@code [180, 270, 0]} put RY on element 0 with
-     * offset 1 as well as on element 1 with offset 0), so the element whose rule needs no offset explains the leaf.
+     * How far a list element rule is from passing the value through: 0 for identity and for a pure scale. Observations
+     * of a vector can fit a line on several elements ({@code [90, 180, 270]}, {@code [180, 270, 0]} and {@code [0, 90, 0]}
+     * put RY on element 0 with offset 1 as well as on element 1 with offset 0), so the element whose rule needs no offset
+     * explains the leaf.
      */
     private static double offset(Rule rule) {
         return rule instanceof Linear linear ? Math.abs(linear.offset) : 0;

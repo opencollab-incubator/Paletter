@@ -60,11 +60,11 @@ together and capture again); `rejected`: every variant setting it was rejected;
 | bitset | 7 |
 | constant | 200 |
 | descriptor | 4 |
-| empty-list | 18 |
+| empty-list | 21 |
 | empty-map | 5 |
 | enum-table | 4 |
 | identity | 228 |
-| linear | 15 |
+| linear | 12 |
 | ordered-set | 2 |
 | packed-bits | 8 |
 | structure | 29 |
@@ -75,17 +75,17 @@ together and capture again); `rejected`: every variant setting it was rejected;
 | enum->int | 6 |
 | explained-by-child-fields | 29 |
 | flattened | 18 |
-| injected-default | 201 |
+| injected-default | 204 |
 | item_properties | 19 |
-| list-element | 33 |
-| nested | 80 |
+| list-element | 30 |
+| nested | 77 |
 | outside-component:* | 3 |
 | packed-bits | 8 |
 | presence | 17 |
 | registry-resolved | 4 |
-| renamed | 92 |
+| renamed | 89 |
 | type:* | 110 |
-| unit-conversion | 15 |
+| unit-conversion | 12 |
 | value-map | 1 |
 
 ## Per component

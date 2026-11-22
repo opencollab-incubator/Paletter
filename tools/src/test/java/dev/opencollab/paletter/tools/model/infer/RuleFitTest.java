@@ -307,16 +307,27 @@ class RuleFitTest {
     }
 
     @Test
-    void twoVectorsPickTheElementWithoutOffset() {
-        // the accepted rotation variants of the capture: two points fit a line on every element; RY is element 1
+    void vectorsPickTheElementWithoutOffset() {
+        // RY is element 1; element 0 also fits a line through these three, with offset 1
         List<Observation> pairs = new ArrayList<>();
-        for (int[] v : new int[][]{{90, 180, 270}, {180, 270, 0}}) {
+        for (int[] v : new int[][]{{90, 180, 270}, {180, 270, 0}, {0, 90, 0}}) {
             pairs.add(new Observation(JsonParser.parseString("[" + v[0] + "," + v[1] + "," + v[2] + "]"), Map.of(W, new Leaf("int", v[1] / 90)), ""));
         }
         JsonObject rule = json(RuleFit.array(pairs, W, false));
         assertEquals("linear", rule.get("kind").getAsString());
         assertEquals(1, rule.get("element").getAsInt());
         assertEquals(0.0, rule.get("offset").getAsDouble());
+    }
+
+    @Test
+    void twoVectorsAreNoLine() {
+        // two points fit a line on every element: no evidence for any of them
+        List<Observation> pairs = new ArrayList<>();
+        for (int[] v : new int[][]{{90, 180, 270}, {180, 270, 0}}) {
+            pairs.add(new Observation(JsonParser.parseString("[" + v[0] + "," + v[1] + "," + v[2] + "]"), Map.of(W, new Leaf("int", v[1] / 90)), ""));
+        }
+        Rule rule = RuleFit.array(pairs, W, false);
+        assertFalse(rule instanceof dev.opencollab.paletter.tools.model.rule.Linear, rule == null ? "null" : rule.kind());
     }
 
     @Test

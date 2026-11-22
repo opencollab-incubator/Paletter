@@ -34,26 +34,22 @@ public final class Linear extends Rule {
     }
 
     /**
-     * The distinct inputs a line needs. Two points always fit a line, so with two the rule is a guess; the third point is
-     * what shows it. To be 3 once the recapture lands: the add-on then varies every linear field in three values. On the
-     * committed captures 3 only costs the nine two-point leaves of the collision box (under a hand transform), which would
-     * then be fitted as an empty list instead, so it stays 2 until the data has three points for them.
+     * The distinct inputs a line needs. Two points always fit a line, so a rule from two is a guess; the third point is
+     * what shows it. With fewer the leaf stays unexplained.
      */
-    static final int MIN_DISTINCT_POINTS = 2;
+    static final int MIN_DISTINCT_POINTS = 3;
 
-    /** @return the line through numeric values and leaves (wrapped if a straight one does not fit), or null */
+    /**
+     * @return the line through numeric values and leaves (wrapped if a straight one does not fit), or null; null with fewer
+     *         than {@link #MIN_DISTINCT_POINTS} different inputs
+     */
     public static Linear fit(List<JsonElement> xs, List<Leaf> ys) {
-        return fit(xs, ys, MIN_DISTINCT_POINTS);
-    }
-
-    /** @return the line through the values if there are at least {@code minPoints} different inputs, or null */
-    static Linear fit(List<JsonElement> xs, List<Leaf> ys, int minPoints) {
         if (!xs.stream().allMatch(x -> x.getAsJsonPrimitive().isNumber()) || !ys.stream().allMatch(y -> y != null && y.numeric())) {
             return null;
         }
         Set<Double> distinct = new TreeSet<>();
         xs.forEach(x -> distinct.add(x.getAsDouble()));
-        if (distinct.size() < minPoints) {
+        if (distinct.size() < MIN_DISTINCT_POINTS) {
             return null;
         }
         int i = 0;
