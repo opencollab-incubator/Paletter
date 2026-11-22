@@ -18,7 +18,7 @@ import java.util.List;
  * {@code RuleFit}), its encoder and its evaluation.
  */
 public abstract sealed class Rule permits Identity, Linear, Table, Affix, Bitset, Count, OrderedSet, Constant, EmptyList, EmptyMap,
-    Structure, CrossField, EnumTable, Affine, Union, Descriptor, PackedBits, Molang, HashOrderedSet {
+    Structure, CrossField, EnumTable, Union, Descriptor, PackedBits, Molang, HashOrderedSet {
     /** A table entry or constant for a leaf BDS does not send. */
     public static final String NOT_SENT = "<not sent>";
 
@@ -58,14 +58,6 @@ public abstract sealed class Rule permits Identity, Linear, Table, Affix, Bitset
      *         of every element: it writes the whole list ({@link Emitter#convert} and {@link Emitter#strings} give the list)
      */
     public boolean wholeList() {
-        return false;
-    }
-
-    /**
-     * @return whether the rule is of every element of a list of objects: the encoder writes its leaf in the loop over the
-     *         elements, from each element
-     */
-    public boolean eachElement() {
         return false;
     }
 
@@ -150,7 +142,6 @@ public abstract sealed class Rule permits Identity, Linear, Table, Affix, Bitset
             case Structure.KIND -> new Structure();
             case CrossField.KIND -> new CrossField();
             case EnumTable.KIND -> EnumTable.read(json);
-            case Affine.KIND -> Affine.read(json);
             case Union.KIND -> Union.read(json);
             case Descriptor.KIND -> Descriptor.read(json);
             case PackedBits.KIND -> PackedBits.read(json);

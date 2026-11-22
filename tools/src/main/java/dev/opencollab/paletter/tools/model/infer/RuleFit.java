@@ -7,7 +7,6 @@ import dev.opencollab.paletter.tools.model.Model.Field;
 import dev.opencollab.paletter.tools.model.addon.AddonGenerator;
 import dev.opencollab.paletter.tools.model.addon.JsonPath;
 import dev.opencollab.paletter.tools.model.infer.SpecCaptures.Obs;
-import dev.opencollab.paletter.tools.model.rule.Affine;
 import dev.opencollab.paletter.tools.model.rule.Affix;
 import dev.opencollab.paletter.tools.model.rule.Bitset;
 import dev.opencollab.paletter.tools.model.rule.Constant;
@@ -262,12 +261,7 @@ final class RuleFit {
             return best;
         }
         Rule count = Count.fit(set, wire);
-        Rule list = count != null ? count : EmptyList.fit(set, wire);
-        if (list != null) {
-            return list;
-        }
-        Rule elements = Affine.fitElements(set, wire);
-        return elements != null ? elements : Affine.fit(set, wire);
+        return count != null ? count : EmptyList.fit(set, wire);
     }
 
     /**
@@ -321,7 +315,7 @@ final class RuleFit {
                 }
             }
         }
-        return Affine.fit(set, wire);
+        return null;
     }
 
     private List<String> tags(Component component, String path, String jsonName, String wire, Rule rule, List<Observation> set) {

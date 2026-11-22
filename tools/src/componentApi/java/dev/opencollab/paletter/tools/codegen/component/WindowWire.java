@@ -364,9 +364,7 @@ final class WindowWire {
                 continue;
             }
             mapped = true;
-            if (!r.eachElement()) {
-                value(f, r, var, node, prefix, wire);
-            }
+            value(f, r, var, node, prefix, wire);
         }
         if (f.type instanceof ObjRef r) {
             fields(r.wire(), var, node, prefix);
@@ -391,11 +389,6 @@ final class WindowWire {
                 String path = strip(e.getKey());
                 if (path.startsWith(elementPrefix + ".") && !path.substring(elementPrefix.length() + 1).contains("[]")) {
                     put(elementNode, path.substring(elementPrefix.length() + 1), literal(e.getValue()));
-                }
-            }
-            for (Rule rule : rules) {
-                if (rule.eachElement()) {
-                    rule.emit(new LeafEmitter(this, f, l.element(), CodeBlock.of("$N", element), elementNode, relative(strip(rule.wire), elementPrefix), false));
                 }
             }
             fields(r.wire(), element, elementNode, elementPrefix);

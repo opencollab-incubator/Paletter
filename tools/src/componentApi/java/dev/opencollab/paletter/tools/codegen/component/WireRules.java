@@ -59,7 +59,7 @@ final class WireRules {
         List<Rule> rules = Rule.all(mappingOf(w, f));
         if (f.type instanceof ObjRef || (f.type instanceof ListOf l && l.element() instanceof ObjRef)) {
             // An object's own value rules come from its scalar shorthand, which its children explain
-            rules.removeIf(r -> r.writesValue() && !r.eachElement());
+            rules.removeIf(Rule::writesValue);
         }
         if (f.type instanceof ApiModel.UnionRef) {
             rules.removeIf(Rule::writesValue);

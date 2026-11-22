@@ -64,11 +64,6 @@ final class RecordingEmitter implements Emitter {
     }
 
     @Override
-    public CodeBlock input(String path) {
-        return CodeBlock.of("input($S)", path);
-    }
-
-    @Override
     public CodeBlock enumValue() {
         return CodeBlock.of("key");
     }

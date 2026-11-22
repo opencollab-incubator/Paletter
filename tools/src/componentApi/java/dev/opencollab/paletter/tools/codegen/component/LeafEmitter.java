@@ -6,19 +6,13 @@ import dev.opencollab.paletter.tools.codegen.component.ApiModel.EnumRef;
 import dev.opencollab.paletter.tools.codegen.component.ApiModel.EnumType;
 import dev.opencollab.paletter.tools.codegen.component.ApiModel.Field;
 import dev.opencollab.paletter.tools.codegen.component.ApiModel.ListOf;
-import dev.opencollab.paletter.tools.codegen.component.ApiModel.ObjRef;
-import dev.opencollab.paletter.tools.codegen.component.ApiModel.Scalar;
-import dev.opencollab.paletter.tools.codegen.component.ApiModel.ScalarKind;
 import dev.opencollab.paletter.tools.codegen.component.ApiModel.Type;
-import dev.opencollab.paletter.tools.codegen.component.ApiModel.Vec3;
 import dev.opencollab.paletter.tools.codegen.component.ComponentGenerator.GenerationException;
 import dev.opencollab.paletter.tools.model.rule.Emitter;
 import dev.opencollab.paletter.tools.model.rule.Rule;
 
 import java.util.List;
 import java.util.Set;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import static dev.opencollab.paletter.tools.codegen.component.WireSource.WIRE;
 
@@ -88,32 +82,6 @@ final class LeafEmitter implements Emitter {
     @Override
     public Emitter as(String jsonType) {
         throw error("a union rule needs the sealed type of the union, which the API does not generate yet");
-    }
-
-    @Override
-    public CodeBlock input(String path) {
-        Type type = t;
-        CodeBlock at = expr;
-        Matcher token = Pattern.compile("([^.\\[\\]]+)|\\[(\\d+)]").matcher(path);
-        while (token.find()) {
-            if (token.group(1) != null && type instanceof ObjRef object) {
-                Field child = object.wire().fields.stream().filter(x -> token.group(1).equals(x.json)).findFirst().orElse(null);
-                if (child == null || ApiSource.nullable(child)) {
-                    throw error("the input " + path + " is no field every value has");
-                }
-                at = CodeBlock.of("$L.$N()", at, child.java);
-                type = child.type;
-            } else if (token.group(2) != null && type instanceof Vec3) {
-                at = CodeBlock.of("$L.$L()", at, List.of("x", "y", "z").get(Integer.parseInt(token.group(2))));
-                type = new Scalar(ScalarKind.FLOAT);
-            } else if (token.group(2) != null && type instanceof ListOf l) {
-                at = CodeBlock.of("$L.get($L)", at, token.group(2));
-                type = l.element();
-            } else {
-                throw error("the input " + path + " is not in the value");
-            }
-        }
-        return WireValues.numeric(type, at);
     }
 
     @Override
@@ -208,8 +176,7 @@ final class LeafEmitter implements Emitter {
         List<Rule> all = window.rules(f).stream().filter(Rule::writesValue).toList();
         Set<String> known = rule.knownValues(f.documentedValues);
         // The rules of the field that know the same values, written in the same place: the first of them reports
-        List<Rule> group = all.stream().filter(r -> r.eachElement() == rule.eachElement() && known.equals(r.knownValues(f.documentedValues)))
-            .toList();
+        List<Rule> group = all.stream().filter(r -> known.equals(r.knownValues(f.documentedValues))).toList();
         if (!group.isEmpty() && !identity(group.getFirst()).equals(identity(rule))) {
             return null;
         }
