@@ -71,7 +71,9 @@ deprecation warnings, not compile errors. The API is shaped so that the compiler
   identity (component id, JSON path, value). A recorded name is reused, never recomputed: a restructure of the creator
   docs or a new component renames nothing, and a new name collision gives the `Block`/`Item` prefix to the newcomer. A
   field whose add-on JSON key Bedrock renames keeps its old accessor and builder setter as `@Deprecated` delegates.
-  Vanilla constants have the same in `constants-history.json`: a removed one stays, deprecated.
+  The Java type and nullability of a recorded field are locked too: a change fails generation until it is undone or,
+  in a major release, recorded deliberately. A documented value that leaves the docs keeps its constant in the value
+  class, `@Deprecated` and out of `known()`. Vanilla constants have the same in `constants-history.json`: a removed one stays, deprecated.
 - **Removed components and fields stay as stand-ins.** A field Bedrock removes keeps a `@Deprecated(forRemoval = true)`
   accessor that returns its default and a builder setter that does nothing; a removed component keeps a
   `@Deprecated(forRemoval = true)` class of the same shape, which every palette leaves out with a report warning. They go

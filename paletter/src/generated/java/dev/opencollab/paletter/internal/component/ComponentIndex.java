@@ -273,7 +273,7 @@ public final class ComponentIndex {
         BLOCK.put("minecraft:random_offset", RandomOffset.class);
         keys(RandomOffset.class, "x", "x", "y", "y", "z", "z");
         keys(RandomOffset.Range.class, "max", "max", "min", "min");
-        keys(RandomOffset.X.class, "range", "range", "steps", "steps");
+        keys(RandomOffset.Axis.class, "range", "range", "steps", "steps");
         BLOCK.put("minecraft:redstone_conductivity", RedstoneConductivity.class);
         keys(RedstoneConductivity.class, "allows_wire_to_step_down", "allowsWireToStepDown", "redstone_conductor", "redstoneConductor");
         BLOCK.put("minecraft:redstone_consumer", RedstoneConsumer.class);

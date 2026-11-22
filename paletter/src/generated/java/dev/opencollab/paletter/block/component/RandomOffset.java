@@ -27,13 +27,13 @@ public final class RandomOffset implements BlockComponent {
      */
     public static final String NAME = "minecraft:random_offset";
 
-    private final @NonNull X x;
+    private final @NonNull Axis x;
 
-    private final @NonNull X y;
+    private final @NonNull Axis y;
 
-    private final @NonNull X z;
+    private final @NonNull Axis z;
 
-    private RandomOffset(@NonNull X x, @NonNull X y, @NonNull X z) {
+    private RandomOffset(@NonNull Axis x, @NonNull Axis y, @NonNull Axis z) {
         Objects.requireNonNull(x, "RandomOffset.x");
         Objects.requireNonNull(y, "RandomOffset.y");
         Objects.requireNonNull(z, "RandomOffset.z");
@@ -48,7 +48,7 @@ public final class RandomOffset implements BlockComponent {
      *
      * @return the value
      */
-    public @NonNull X x() {
+    public @NonNull Axis x() {
         return x;
     }
 
@@ -58,7 +58,7 @@ public final class RandomOffset implements BlockComponent {
      *
      * @return the value
      */
-    public @NonNull X y() {
+    public @NonNull Axis y() {
         return y;
     }
 
@@ -68,7 +68,7 @@ public final class RandomOffset implements BlockComponent {
      *
      * @return the value
      */
-    public @NonNull X z() {
+    public @NonNull Axis z() {
         return z;
     }
 
@@ -124,11 +124,11 @@ public final class RandomOffset implements BlockComponent {
      * Builds {@link RandomOffset}: defaults applied, required fields and ranges checked by {@link #build()}.
      */
     public static final class Builder {
-        private @Nullable X x = X.builder().range(Range.builder().max(0.0f).min(0.0f).build()).steps(0).build();
+        private @Nullable Axis x = Axis.builder().range(Range.builder().max(0.0f).min(0.0f).build()).steps(0).build();
 
-        private @Nullable X y = X.builder().range(Range.builder().max(0.0f).min(0.0f).build()).steps(0).build();
+        private @Nullable Axis y = Axis.builder().range(Range.builder().max(0.0f).min(0.0f).build()).steps(0).build();
 
-        private @Nullable X z = X.builder().range(Range.builder().max(0.0f).min(0.0f).build()).steps(0).build();
+        private @Nullable Axis z = Axis.builder().range(Range.builder().max(0.0f).min(0.0f).build()).steps(0).build();
 
         private Builder() {
         }
@@ -140,7 +140,7 @@ public final class RandomOffset implements BlockComponent {
          * @return this builder
          * @throws NullPointerException if the value is null
          */
-        public @NonNull Builder x(@NonNull X x) {
+        public @NonNull Builder x(@NonNull Axis x) {
             this.x = Objects.requireNonNull(x, "RandomOffset.x");
             return this;
         }
@@ -152,7 +152,7 @@ public final class RandomOffset implements BlockComponent {
          * @return this builder
          * @throws NullPointerException if the value is null
          */
-        public @NonNull Builder y(@NonNull X y) {
+        public @NonNull Builder y(@NonNull Axis y) {
             this.y = Objects.requireNonNull(y, "RandomOffset.y");
             return this;
         }
@@ -164,7 +164,7 @@ public final class RandomOffset implements BlockComponent {
          * @return this builder
          * @throws NullPointerException if the value is null
          */
-        public @NonNull Builder z(@NonNull X z) {
+        public @NonNull Builder z(@NonNull Axis z) {
             this.z = Objects.requireNonNull(z, "RandomOffset.z");
             return this;
         }
@@ -308,13 +308,13 @@ public final class RandomOffset implements BlockComponent {
      * X coordinate
      *
      */
-    public static final class X {
+    public static final class Axis {
         private final @NonNull Range range;
 
         private final int steps;
 
-        private X(@NonNull Range range, int steps) {
-            Objects.requireNonNull(range, "RandomOffset.X.range");
+        private Axis(@NonNull Range range, int steps) {
+            Objects.requireNonNull(range, "RandomOffset.Axis.range");
             this.range = range;
             this.steps = steps;
         }
@@ -341,7 +341,7 @@ public final class RandomOffset implements BlockComponent {
 
         @Override
         public boolean equals(Object o) {
-            return this == o || o instanceof X other
+            return this == o || o instanceof Axis other
                     && Objects.equals(range, other.range)
                     && steps == other.steps;
         }
@@ -355,7 +355,7 @@ public final class RandomOffset implements BlockComponent {
 
         @Override
         public String toString() {
-            return "X[range=" + range + ", steps=" + steps + "]";
+            return "Axis[range=" + range + ", steps=" + steps + "]";
         }
 
         /**
@@ -381,7 +381,7 @@ public final class RandomOffset implements BlockComponent {
         }
 
         /**
-         * Builds {@link X}: defaults applied, required fields and ranges checked by {@link #build()}.
+         * Builds {@link Axis}: defaults applied, required fields and ranges checked by {@link #build()}.
          */
         public static final class Builder {
             private @Nullable Range range;
@@ -399,7 +399,7 @@ public final class RandomOffset implements BlockComponent {
              * @throws NullPointerException if the value is null
              */
             public @NonNull Builder range(@NonNull Range range) {
-                this.range = Objects.requireNonNull(range, "RandomOffset.X.range");
+                this.range = Objects.requireNonNull(range, "RandomOffset.Axis.range");
                 return this;
             }
 
@@ -421,11 +421,11 @@ public final class RandomOffset implements BlockComponent {
              * @throws IllegalStateException if a required field is not set
              * @throws IllegalArgumentException if a value is out of range
              */
-            public @NonNull X build() {
+            public @NonNull Axis build() {
                 if (range == null) {
-                    throw new IllegalStateException("RandomOffset.X.range is required");
+                    throw new IllegalStateException("RandomOffset.Axis.range is required");
                 }
-                return new X(range, steps);
+                return new Axis(range, steps);
             }
         }
     }

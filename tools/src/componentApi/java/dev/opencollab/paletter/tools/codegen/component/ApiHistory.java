@@ -33,7 +33,8 @@ import java.util.stream.Stream;
  *     the model and exactly one new field of the same object writes the same leaves, the JSON key was renamed: the old
  *     accessor and setter stay as {@code @Deprecated} delegates, and the entry names its successor ({@code renamedTo}),
  *     which later runs resolve directly. Without such a field the entry is marked {@code removed} and keeps a stand-in
- *     ({@link StandIns}); two such fields fail.</li>
+ *     ({@link StandIns}); two such fields fail. The recorded {@code type} and {@code nullable} of a live field are its
+ *     locked Java shape ({@link #checkShapes}).</li>
  * </ul>
  * Entries are never dropped, so the file only grows, and nothing generated from it disappears: a stand-in goes only when
  * its entry is deleted deliberately, in a major release (docs/api.md, "Lifecycle of versioned content"). A hand name in
@@ -195,6 +196,49 @@ final class ApiHistory {
                 + " all write its wire leaves " + wire + ": which one it was renamed to is ambiguous; name it in api.json fields");
         }
         return candidates.isEmpty() ? null : candidates.getFirst();
+    }
+
+    /**
+     * Locks the shape of every live field the history records: its model type ({@link StandIns#describe}, which names the
+     * nested class it uses) and whether it is nullable (a boxed or a primitive accessor, a setter that takes null, a
+     * required builder value) must be the recorded ones. A change of either breaks callers without a generation failure
+     * otherwise: a docs default turns {@code Integer foo()} into {@code int foo()}, a split of merged types re-points a
+     * field to another class, documented values turn a {@code String} into a value class.
+     *
+     * @throws GenerationException naming each changed field, both shapes and the entry to edit if the break is intended
+     */
+    void checkShapes(ApiModel model) {
+        JsonObject fields = recorded.get("fields");
+        List<String> changed = new ArrayList<>();
+        liveFields(model).forEach((key, f) -> {
+            JsonObject entry = fields.has(key) ? fields.getAsJsonObject(key) : null;
+            if (entry == null || !entry.has("type")) {
+                return;
+            }
+            String was = shape(entry.get("type").getAsString(), entry.has("nullable") && entry.get("nullable").getAsBoolean());
+            String now = shape(StandIns.describe(f.type), f.nullable());
+            if (!was.equals(now)) {
+                changed.add(key + " was " + was + ", is now " + now);
+            }
+        });
+        if (!changed.isEmpty()) {
+            throw new GenerationException("the Java shape of recorded fields changed, which breaks callers: " + String.join("; ", changed)
+                + ". Keep the old shape (api.json typeNames, optional, types), or, for an intended break (a major release), set the"
+                + " entry's type and nullable in data/model/" + FILE + " fields to the new shape");
+        }
+    }
+
+    private static String shape(String type, boolean nullable) {
+        return type + (nullable ? " (nullable)" : "");
+    }
+
+    /** The live fields of the model by identity, the first object that has a path winning (as {@link #write} records them). */
+    private static Map<String, Field> liveFields(ApiModel model) {
+        Map<String, Field> out = new TreeMap<>();
+        for (Comp c : model.components) {
+            objects(c).forEach(o -> o.fields.stream().filter(f -> f.path != null).forEach(f -> out.putIfAbsent(c.id + ":" + f.path, f)));
+        }
+        return out;
     }
 
     /** @return the {@code fields} entries the committed file records, by identity */

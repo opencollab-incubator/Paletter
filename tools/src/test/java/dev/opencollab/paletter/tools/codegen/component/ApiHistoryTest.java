@@ -227,6 +227,63 @@ class ApiHistoryTest {
     }
 
     @Test
+    void aValueThatLeftTheDocsKeepsItsConstantDeprecated() {
+        // "medium" was a documented value of mode; the docs list fast and slow only now
+        Output out = ComponentGenerator.generateAll(inputs("{\"constants\": {\"item:test:widget:mode=medium\": \"MEDIUM\"}}"));
+        String widget = out.sources().get(WIDGET);
+        assertTrue(widget.contains("        @Deprecated\n        public static final Mode MEDIUM = new Mode(\"medium\");"), widget);
+        assertTrue(widget.contains("KNOWN = List.of(FAST, SLOW);"), widget);
+        assertTrue(json(out.history()).getAsJsonObject("constants").has("item:test:widget:mode=medium"));
+        assertEquals(out.history(), ComponentGenerator.generateAll(ComponentGeneratorTest.inputs().withHistory(json(out.history()))).history(),
+            "stable");
+    }
+
+    /** The shape check fails with the field, both shapes and the entry to edit. */
+    private static void assertShapeChange(String history, String key, String was, String now) {
+        GenerationException e = assertThrows(GenerationException.class, () -> ComponentGenerator.generateAll(inputs(history)));
+        assertTrue(e.getMessage().contains(key + " was " + was + ", is now " + now) && e.getMessage().contains("data/model/api-history.json fields"),
+            e.getMessage());
+    }
+
+    @Test
+    void aDefaultAddedToANullableFieldFails() {
+        // count was optional without a default (Integer count()); the docs now give it one (int count())
+        assertShapeChange("{\"fields\": {\"item:test:widget:count\": {\"name\": \"count\", \"wire\": [], \"type\": \"int\", \"nullable\": true}}}",
+            "item:test:widget:count", "int (nullable)", "int");
+    }
+
+    @Test
+    void aRequiredFieldThatBecameOptionalFails() {
+        // fuel was required (a non-null String); BDS now takes its omission
+        assertShapeChange("{\"fields\": {\"item:test:widget:fuel\": {\"name\": \"fuel\", \"wire\": [], \"type\": \"string\"}}}",
+            "item:test:widget:fuel", "string", "string (nullable)");
+    }
+
+    @Test
+    void mergedTypesThatDivergeFail() {
+        // nested used the class Conditions, shared with another path; its structure now has a class of its own
+        ApiModel model = ComponentGenerator.model(ComponentGeneratorTest.inputs());
+        boolean nullable = model.component("item:test:widget").root.fields.stream().filter(f -> "nested".equals(f.path)).findFirst().orElseThrow().nullable();
+        String suffix = nullable ? " (nullable)" : "";
+        assertShapeChange("{\"fields\": {\"item:test:widget:nested\": {\"name\": \"nested\", \"wire\": [], \"type\": \"object:Conditions\""
+                + (nullable ? ", \"nullable\": true" : "") + "}}}",
+            "item:test:widget:nested", "object:Conditions" + suffix, "object:NestedThing" + suffix);
+    }
+
+    @Test
+    void documentedValuesThatTurnAStringIntoAValueClassFail() {
+        assertShapeChange("{\"fields\": {\"item:test:widget:mode\": {\"name\": \"mode\", \"wire\": [], \"type\": \"string\"}}}",
+            "item:test:widget:mode", "string", "enum:Mode");
+    }
+
+    @Test
+    void anIntendedBreakIsTheEditedEntry() {
+        // The maintainer set the entry to the new shape: generation passes and records it
+        Output out = ComponentGenerator.generateAll(inputs("{\"fields\": {\"item:test:widget:count\": {\"name\": \"count\", \"wire\": [], \"type\": \"int\"}}}"));
+        assertFalse(fields(out).getAsJsonObject("item:test:widget:count").has("nullable"));
+    }
+
+    @Test
     void aHandNameThatDisagreesWithTheHistoryFails() {
         Inputs base = inputs("{\"fields\": {\"item:test:widget:count\": {\"name\": \"amount\", \"wire\": []}}}");
         if (!base.api().has("fields")) {

@@ -1858,16 +1858,32 @@ public final class dev.opencollab.paletter.block.component.RandomOffset implemen
     public java.lang.String name()
     public dev.opencollab.paletter.block.component.RandomOffset$Builder toBuilder()
     public java.lang.String toString()
-    public dev.opencollab.paletter.block.component.RandomOffset$X x()
-    public dev.opencollab.paletter.block.component.RandomOffset$X y()
-    public dev.opencollab.paletter.block.component.RandomOffset$X z()
+    public dev.opencollab.paletter.block.component.RandomOffset$Axis x()
+    public dev.opencollab.paletter.block.component.RandomOffset$Axis y()
+    public dev.opencollab.paletter.block.component.RandomOffset$Axis z()
+}
+
+public static final class dev.opencollab.paletter.block.component.RandomOffset$Axis {
+    public static dev.opencollab.paletter.block.component.RandomOffset$Axis$Builder builder()
+    public boolean equals(java.lang.Object)
+    public int hashCode()
+    public dev.opencollab.paletter.block.component.RandomOffset$Range range()
+    public int steps()
+    public dev.opencollab.paletter.block.component.RandomOffset$Axis$Builder toBuilder()
+    public java.lang.String toString()
+}
+
+public static final class dev.opencollab.paletter.block.component.RandomOffset$Axis$Builder {
+    public dev.opencollab.paletter.block.component.RandomOffset$Axis build()
+    public dev.opencollab.paletter.block.component.RandomOffset$Axis$Builder range(dev.opencollab.paletter.block.component.RandomOffset$Range)
+    public dev.opencollab.paletter.block.component.RandomOffset$Axis$Builder steps(int)
 }
 
 public static final class dev.opencollab.paletter.block.component.RandomOffset$Builder {
     public dev.opencollab.paletter.block.component.RandomOffset build()
-    public dev.opencollab.paletter.block.component.RandomOffset$Builder x(dev.opencollab.paletter.block.component.RandomOffset$X)
-    public dev.opencollab.paletter.block.component.RandomOffset$Builder y(dev.opencollab.paletter.block.component.RandomOffset$X)
-    public dev.opencollab.paletter.block.component.RandomOffset$Builder z(dev.opencollab.paletter.block.component.RandomOffset$X)
+    public dev.opencollab.paletter.block.component.RandomOffset$Builder x(dev.opencollab.paletter.block.component.RandomOffset$Axis)
+    public dev.opencollab.paletter.block.component.RandomOffset$Builder y(dev.opencollab.paletter.block.component.RandomOffset$Axis)
+    public dev.opencollab.paletter.block.component.RandomOffset$Builder z(dev.opencollab.paletter.block.component.RandomOffset$Axis)
 }
 
 public static final class dev.opencollab.paletter.block.component.RandomOffset$Range {
@@ -1884,22 +1900,6 @@ public static final class dev.opencollab.paletter.block.component.RandomOffset$R
     public dev.opencollab.paletter.block.component.RandomOffset$Range build()
     public dev.opencollab.paletter.block.component.RandomOffset$Range$Builder max(float)
     public dev.opencollab.paletter.block.component.RandomOffset$Range$Builder min(float)
-}
-
-public static final class dev.opencollab.paletter.block.component.RandomOffset$X {
-    public static dev.opencollab.paletter.block.component.RandomOffset$X$Builder builder()
-    public boolean equals(java.lang.Object)
-    public int hashCode()
-    public dev.opencollab.paletter.block.component.RandomOffset$Range range()
-    public int steps()
-    public dev.opencollab.paletter.block.component.RandomOffset$X$Builder toBuilder()
-    public java.lang.String toString()
-}
-
-public static final class dev.opencollab.paletter.block.component.RandomOffset$X$Builder {
-    public dev.opencollab.paletter.block.component.RandomOffset$X build()
-    public dev.opencollab.paletter.block.component.RandomOffset$X$Builder range(dev.opencollab.paletter.block.component.RandomOffset$Range)
-    public dev.opencollab.paletter.block.component.RandomOffset$X$Builder steps(int)
 }
 
 public final class dev.opencollab.paletter.block.component.RedstoneConductivity implements dev.opencollab.paletter.block.component.BlockComponent {

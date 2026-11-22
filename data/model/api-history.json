@@ -113,7 +113,7 @@
     "block:minecraft:material_instances:west": "West",
     "block:minecraft:placement_filter:conditions[]": "Conditions",
     "block:minecraft:placement_filter:conditions[].block_filter[]": "BlockFilter",
-    "block:minecraft:random_offset:x": "X",
+    "block:minecraft:random_offset:x": "Axis",
     "block:minecraft:random_offset:x.range": "Range",
     "block:minecraft:random_offset:y": "Y",
     "block:minecraft:random_offset:y.range": "Range",
@@ -1570,7 +1570,7 @@
     "block:minecraft:random_offset:x": {
       "name": "x",
       "wire": [],
-      "type": "object:X",
+      "type": "object:Axis",
       "default": {
         "range": {
           "max": 0,
@@ -1611,7 +1611,7 @@
     "block:minecraft:random_offset:y": {
       "name": "y",
       "wire": [],
-      "type": "object:X",
+      "type": "object:Axis",
       "default": {
         "range": {
           "max": 0,
@@ -1652,7 +1652,7 @@
     "block:minecraft:random_offset:z": {
       "name": "z",
       "wire": [],
-      "type": "object:X",
+      "type": "object:Axis",
       "default": {
         "range": {
           "max": 0,

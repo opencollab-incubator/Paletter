@@ -138,6 +138,7 @@ public final class ComponentGenerator {
     public static Output generateAll(Inputs in) {
         ComponentGenerator generator = new ComponentGenerator(in);
         generator.build();
+        generator.hand.history.checkShapes(generator.model);
         generator.model.renames.addAll(generator.hand.history.renames(generator.model));
         StandIns.apply(generator.model, generator.hand.history, in.context().reserved());
         Map<String, String> out = new TreeMap<>();

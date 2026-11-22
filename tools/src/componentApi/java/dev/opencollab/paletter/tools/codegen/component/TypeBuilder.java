@@ -21,7 +21,9 @@ import dev.opencollab.paletter.tools.codegen.component.ModelFields.DocField;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
+import java.util.TreeMap;
 
 /**
  * The Java type of each field: scalars, enums, objects, lists, maps and unions, from the docs' types and the api.json decisions.
@@ -275,6 +277,21 @@ final class TypeBuilder {
             }
             e.values.add(value);
             e.constants.add(constant);
+        }
+        // A value that left the docs keeps its recorded constant, deprecated (docs/api.md, "Evolution")
+        for (Map.Entry<String, JsonElement> recorded : new TreeMap<>(hand.history.recordedSection("constants").asMap()).entrySet()) {
+            String value = recorded.getKey().startsWith(key + "=") ? recorded.getKey().substring(key.length() + 1) : null;
+            if (value == null || strings.contains(value)) {
+                continue;
+            }
+            String constant = recorded.getValue().getAsString();
+            if (!constants.add(constant)) {
+                throw new GenerationException("name collision: " + c.id + " enum " + name + " has two values named " + constant
+                    + " (one of them, " + value + ", left the docs and keeps its constant)");
+            }
+            e.removedValues.add(value);
+            e.removedConstants.add(constant);
+            System.out.println("warning: " + recorded.getKey() + " (" + name + "." + constant + ") left the docs: kept as a @Deprecated constant");
         }
         c.enums.put(name, e);
         return e;

@@ -671,7 +671,10 @@ Inputs, all in `data/model` except the last:
   is marked `removed` the same way and keeps a stand-in class, which every palette leaves out with a report warning.
   Generation prints a `warning:` line for each stand-in; two candidate successors fail. Entries are never dropped (a
   test holds the committed file to that): a stand-in goes only when its entries are deleted deliberately, in a major
-  release. A name in `api.json` must agree with the recorded one, so a deliberate rename edits both.
+  release. A name in `api.json` must agree with the recorded one, so a deliberate rename edits both. The recorded
+  `type` and `nullable` of a live field lock its Java shape: a field whose type (the nested class it uses included) or
+  nullability would change fails generation, naming the field and both shapes. Keep the old shape through `api.json`,
+  or, for an intended break (a major release), set the entry's `type` and `nullable` to the new shape.
 
 Rules the generator follows:
 

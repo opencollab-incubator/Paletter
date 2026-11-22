@@ -440,17 +440,17 @@ public final class BlockWire {
     }
 
     private static void randomOffset(RandomOffset c, WireContext ctx, WireNode out) {
-        RandomOffset.X v0 = c.x();
+        RandomOffset.Axis v0 = c.x();
         RandomOffset.Range v1 = v0.range();
         out.put("minecraft:random_offset.x.range.max", Wire.toFloat(v1.max()));
         out.put("minecraft:random_offset.x.range.min", Wire.toFloat(v1.min()));
         out.put("minecraft:random_offset.x.steps", Wire.toInt(v0.steps()));
-        RandomOffset.X v2 = c.y();
+        RandomOffset.Axis v2 = c.y();
         RandomOffset.Range v3 = v2.range();
         out.put("minecraft:random_offset.y.range.max", Wire.toFloat(v3.max()));
         out.put("minecraft:random_offset.y.range.min", Wire.toFloat(v3.min()));
         out.put("minecraft:random_offset.y.steps", Wire.toInt(v2.steps()));
-        RandomOffset.X v4 = c.z();
+        RandomOffset.Axis v4 = c.z();
         RandomOffset.Range v5 = v4.range();
         out.put("minecraft:random_offset.z.range.max", Wire.toFloat(v5.max()));
         out.put("minecraft:random_offset.z.range.min", Wire.toFloat(v5.min()));

@@ -324,6 +324,12 @@ final class ApiModel {
         String name;
         final List<String> values = new ArrayList<>();
         final List<String> constants = new ArrayList<>();
+        /**
+         * Values {@code api-history.json} records a constant for that the docs no longer list, and those constants: kept
+         * {@code @Deprecated} so that callers compile, left out of the known values.
+         */
+        final List<String> removedValues = new ArrayList<>();
+        final List<String> removedConstants = new ArrayList<>();
     }
 
     static final class Field {
