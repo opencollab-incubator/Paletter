@@ -21,7 +21,7 @@ import java.util.concurrent.Callable;
 
 import static dev.opencollab.paletter.tools.Cli.DEFAULT_COMMIT;
 
-/** The commands of the component model: {@code docs}, {@code addon}, {@code infer}, {@code check-mappings}. */
+/** The commands of the component model: {@code docs}, {@code addon}, {@code infer}, {@code check-mappings}, {@code retire}. */
 final class ModelCommands {
     private ModelCommands() {
     }
@@ -89,6 +89,21 @@ final class ModelCommands {
         @Override
         public Integer call() throws Exception {
             return new MappingInference(root()).run(false) ? 0 : 1;
+        }
+    }
+
+    @Command(name = "retire", description = "Drops a window protocol from data/model/mappings.json and mappings-evidence.json (its"
+        + " captures and windows; neighbouring windows that become alike join) and lists what else must go")
+    static final class Retire extends Rooted implements Callable<Integer> {
+        @picocli.CommandLine.Parameters(index = "0", description = "the window protocol of the captures to retire (mappings.json captures)")
+        int protocol;
+
+        @Override
+        public Integer call() throws Exception {
+            List<String> leftovers = dev.opencollab.paletter.tools.model.infer.Retire.run(root(), protocol);
+            System.out.println("retired protocol " + protocol + " from data/model; delete or edit by hand:");
+            leftovers.forEach(line -> System.out.println("  " + line));
+            return 0;
         }
     }
 

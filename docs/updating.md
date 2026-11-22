@@ -17,7 +17,8 @@ Reviewing the pull request:
    failures, changes and decisions. Only "Needs attention" matters first; each item says what to do.
 2. A new protocol is imported as a new data version (`versions.txt`, `paletter/src/main/resources/paletter/`). Read the
    wire-format changes in `data/model` (`mappings.json`, `coverage.md`) and the regenerated component API: a changed
-   wire shape needs your review, it is never automatic.
+   wire shape needs your review, it is never automatic. `mappings-evidence.json` changes with it (variant counts, BDS's
+   messages and refused values, ranges, unexplained leaves): no generator reads it, it explains `mappings.json`.
 3. Check the regenerated constants (`BedrockBlocks`, `BedrockItems`, ...) and `data/model/constants-history.json`: they
    are committed together. New names that collide or are invalid fail generation until
    `data/model/constant-names.txt` names them (`blocks|items|states|enums <key> <name>`).
@@ -130,6 +131,22 @@ See [releasing.md](releasing.md): guards, `checkReleaseDependencies`, tag `vX.Y.
 | Spec captures differ between builds | Different add-ons; recapture (section b). |
 | `checkConstants` / `checkComponentApi` / `checkBuilds` stale | Run the matching `generate` or `builds table`; commit. |
 | Exit code 1 from Gradle on a run with decisions | Gradle maps every non-zero code to 1. Run the launcher instead, `./gradlew :tools:installDist` then `tools/build/install/tools/bin/tools update ...`: it exits with the tool's own code (2 = decisions open), as the workflows do. |
+
+## h. Retiring a protocol
+
+When Paletter stops bundling a data version, its protocol leaves the component model:
+
+1. `retire <window protocol>` (the `windowProtocol` of its captures in `data/model/mappings.json`). It drops the
+   captures of that protocol, removes it from every window of `mappings.json` and `mappings-evidence.json` (a window left
+   without protocols goes), joins neighbouring windows whose wire shape is now the same (the older keeps its content, as
+   `infer` does) and does the same to the envelope.
+2. It prints what else belongs to the protocol and exists: the `versions.txt` row and bundled data of its data version
+   (`<version>.nbt`, the recipes bundle), its `data/bds/<build>` directories, its CloudburstMC/Data test data and
+   `SOURCE.md` row, its block id order file. A data version or build another capture still has is not listed. Delete or
+   edit those by hand.
+3. Then `builds table`, `inferMappings` (it must change nothing: the captures are gone), `generateComponentApi` and
+   `generateConstants`, each in its own Gradle run; the build must be green. A component no remaining window has leaves
+   `mappings.json` and its API keeps a stand-in (`api-history.json`).
 
 ## Pins
 
