@@ -493,10 +493,8 @@
       "wire": [
         "minecraft:collision_box.boxes[].maxX",
         "minecraft:collision_box.boxes[].maxY",
-        "minecraft:collision_box.boxes[].maxZ",
         "minecraft:collision_box.boxes[].minX",
         "minecraft:collision_box.boxes[].minY",
-        "minecraft:collision_box.boxes[].minZ",
         "minecraft:collision_box.enabled",
         "minecraft:collision_box.shape",
         "minecraft:collision_box.useVoxelShapes"
@@ -507,10 +505,7 @@
     "block:minecraft:collision_box:[].size": {
       "name": "size",
       "wire": [
-        "minecraft:collision_box.boxes[].maxX",
         "minecraft:collision_box.boxes[].maxY",
-        "minecraft:collision_box.boxes[].maxZ",
-        "minecraft:collision_box.boxes[].minX",
         "minecraft:collision_box.boxes[].minY",
         "minecraft:collision_box.boxes[].minZ",
         "minecraft:collision_box.enabled",
@@ -2230,9 +2225,7 @@
     },
     "item:minecraft:dyeable:default_color": {
       "name": "defaultColor",
-      "wire": [
-        "minecraft:dyeable.default_color[]"
-      ],
+      "wire": [],
       "type": "union:ColorValue",
       "default": [
         255,

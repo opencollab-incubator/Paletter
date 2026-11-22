@@ -79,9 +79,14 @@ public final class Linear extends Rule {
      * A line wrapped into {@code [0, m)}: whole steps on an integer leaf that start again past the largest one BDS sends
      * ({@code -90 -> 3}, {@code 450 -> 1} quarter turns). The modulus is the largest leaf plus one, and an observation
      * outside the line's range must show the wrap; null otherwise.
+     * <p>
+     * With few observations some pair of them and a third agree modulo m by chance (about 3 in m), so the leaf must have
+     * an integral NBT type and the scale must be whole steps, n or 1/n: {@code (3 * origin.x + 8) mod 12} onto a float
+     * leaf is no rule.
      */
     static Linear wrapped(List<JsonElement> xs, List<Leaf> ys) {
-        if (ys.stream().anyMatch(y -> y == null || !y.numeric() || y.number() < 0 || y.number() != Math.rint(y.number()))) {
+        if (ys.stream().anyMatch(y -> y == null || !y.numeric() || !INTEGRAL.contains(y.type()) || y.number() < 0
+            || y.number() != Math.rint(y.number()))) {
             return null;
         }
         long modulus = (long) ys.stream().mapToDouble(Leaf::number).max().orElse(0) + 1;
@@ -96,7 +101,7 @@ public final class Linear extends Rule {
                 }
                 double a = (ys.get(j).number() - ys.get(i).number()) / dx;
                 double b = ys.get(i).number() - a * xs.get(i).getAsDouble();
-                if (Math.abs(a) < 1e-9) {
+                if (Math.abs(a) < 1e-9 || !wholeSteps(a)) {
                     continue;
                 }
                 boolean fits = true;
@@ -112,6 +117,14 @@ public final class Linear extends Rule {
             }
         }
         return null;
+    }
+
+    private static final Set<String> INTEGRAL = Set.of("byte", "short", "int", "long");
+
+    /** @return whether a scale is a whole number of steps, n or 1/n */
+    static boolean wholeSteps(double scale) {
+        double s = Math.abs(scale);
+        return s >= 1 ? Math.abs(s - Math.rint(s)) < 1e-9 : Math.abs(1 / s - Math.rint(1 / s)) < 1e-6;
     }
 
     @Override
