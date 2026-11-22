@@ -671,13 +671,17 @@ Inputs, all in `data/model` except the last:
 - `mappings.json`: per component and protocol window, how each field reaches the wire. A component is
   `{"windows": [{"protocols": [...], "status": ..., "fields": ..., ...}, ...]}`, oldest window first, read only through
   `MappingWindows`. Every window protocol of the captures must be in some window of a captured component (a capture
-  without it fails generation); the oldest window also holds below the oldest capture.
+  without it fails generation); the oldest window also holds below the oldest capture. A field with no result in the
+  newest window (`not-generated`, its capture lacks the field's variants) while an older one has one is reported by
+  generation (a `warning:` line): its API facts (required, limits, defaults, the history's wire) come from that older
+  window, and protocols from the newest window on leave it out with a report entry until a capture with the current
+  add-on. Reported, not failed: the gap is the capture's, and failing would stop every generation until the recapture.
 - `api.json` (hand): Java shape only (names, unions, value forms, open enums).
 - `HandTransforms` (hand, in the tools): which fields are compiled by a method of `internal.component.Transforms`.
   Each method's Javadoc says why no inferred rule fits and what evidence backs it.
 - `api-history.json` (generated, read and rewritten by every run): every Java name the generator has emitted, by a stable
   identity: component id for a class, `<component id>:<JSON path>` for a nested class, value class or field (with the
-  wire leaves the newest capture writes from it, and its model `type`, `nullable` and `default`), `<id>:<path>=<value>`
+  wire leaves the newest capture with a result for it writes from it, and its model `type`, `nullable` and `default`), `<id>:<path>=<value>`
   for a constant. A recorded name is reused, never recomputed: a docs restructure or a new component renames nothing (a
   new collision gives the `Block`/`Item` prefix to the newcomer). When a field's path leaves the model and exactly one
   new field of the same object writes the same wire leaves, the JSON key was renamed: the old accessor and builder setter

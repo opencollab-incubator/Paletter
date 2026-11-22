@@ -130,9 +130,12 @@ final class ModelFields {
         return usable;
     }
 
-    /** Whether the newest capture shows BDS taking a field: a probe only field it accepts is part of the API all the same. */
+    /**
+     * Whether the newest capture with a result for a field ({@link Comp#evidence}) shows BDS taking it: a probe only field
+     * it accepts is part of the API all the same.
+     */
     static boolean takenByBds(Comp c, String path) {
-        Window w = c.latest();
+        Window w = c.evidence(path);
         JsonObject m = w == null ? null : w.field(path);
         return m != null && !m.get("status").getAsString().equals("rejected");
     }

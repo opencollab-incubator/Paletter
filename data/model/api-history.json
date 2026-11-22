@@ -790,19 +790,25 @@
     },
     "block:minecraft:geometry:n_way_visual_rotation.x": {
       "name": "x",
-      "wire": [],
+      "wire": [
+        "minecraft:geometry.n_way_visual_rotation.x"
+      ],
       "type": "string",
       "nullable": true
     },
     "block:minecraft:geometry:n_way_visual_rotation.y": {
       "name": "y",
-      "wire": [],
+      "wire": [
+        "minecraft:geometry.n_way_visual_rotation.y"
+      ],
       "type": "string",
       "nullable": true
     },
     "block:minecraft:geometry:n_way_visual_rotation.z": {
       "name": "z",
-      "wire": [],
+      "wire": [
+        "minecraft:geometry.n_way_visual_rotation.z"
+      ],
       "type": "string",
       "nullable": true
     },
@@ -1039,7 +1045,10 @@
     },
     "block:minecraft:material_instances:*.alpha_masked_tint": {
       "name": "alphaMaskedTint",
-      "wire": [],
+      "wire": [
+        "minecraft:material_instances.materials.*.packed_bools",
+        "minecraft:material_instances.materials.*.tint_method"
+      ],
       "type": "boolean",
       "nullable": true
     },
@@ -1107,7 +1116,10 @@
     },
     "block:minecraft:material_instances:down.alpha_masked_tint": {
       "name": "alphaMaskedTint",
-      "wire": [],
+      "wire": [
+        "minecraft:material_instances.materials.down.packed_bools",
+        "minecraft:material_instances.materials.down.tint_method"
+      ],
       "type": "boolean",
       "nullable": true
     },
@@ -1171,7 +1183,10 @@
     },
     "block:minecraft:material_instances:east.alpha_masked_tint": {
       "name": "alphaMaskedTint",
-      "wire": [],
+      "wire": [
+        "minecraft:material_instances.materials.east.packed_bools",
+        "minecraft:material_instances.materials.east.tint_method"
+      ],
       "type": "boolean",
       "nullable": true
     },
@@ -1235,7 +1250,10 @@
     },
     "block:minecraft:material_instances:north.alpha_masked_tint": {
       "name": "alphaMaskedTint",
-      "wire": [],
+      "wire": [
+        "minecraft:material_instances.materials.north.packed_bools",
+        "minecraft:material_instances.materials.north.tint_method"
+      ],
       "type": "boolean",
       "nullable": true
     },
@@ -1299,7 +1317,10 @@
     },
     "block:minecraft:material_instances:south.alpha_masked_tint": {
       "name": "alphaMaskedTint",
-      "wire": [],
+      "wire": [
+        "minecraft:material_instances.materials.south.packed_bools",
+        "minecraft:material_instances.materials.south.tint_method"
+      ],
       "type": "boolean",
       "nullable": true
     },
@@ -1363,7 +1384,10 @@
     },
     "block:minecraft:material_instances:up.alpha_masked_tint": {
       "name": "alphaMaskedTint",
-      "wire": [],
+      "wire": [
+        "minecraft:material_instances.materials.up.packed_bools",
+        "minecraft:material_instances.materials.up.tint_method"
+      ],
       "type": "boolean",
       "nullable": true
     },
@@ -1427,7 +1451,10 @@
     },
     "block:minecraft:material_instances:west.alpha_masked_tint": {
       "name": "alphaMaskedTint",
-      "wire": [],
+      "wire": [
+        "minecraft:material_instances.materials.west.packed_bools",
+        "minecraft:material_instances.materials.west.tint_method"
+      ],
       "type": "boolean",
       "nullable": true
     },

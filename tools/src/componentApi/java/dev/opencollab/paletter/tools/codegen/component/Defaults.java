@@ -32,8 +32,8 @@ final class Defaults {
      * (nullable) and the encoder writes what BDS sends.
      */
     void apply(Comp c, ObjType o) {
-        Window w = c.latest();
         for (Field f : o.fields) {
+            Window w = c.evidence(f.mappingKey);
             ObjType child = WireRules.objectOf(f.type);
             if (child != null) {
                 apply(c, child);

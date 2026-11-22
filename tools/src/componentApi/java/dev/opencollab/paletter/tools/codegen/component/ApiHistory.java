@@ -350,11 +350,11 @@ final class ApiHistory {
         return Stream.concat(Stream.of(c.root), c.allTypes.stream());
     }
 
-    /** The wire leaves the newest window that sends the component writes from a field (the rules' {@code wire}). */
+    /** The wire leaves the newest window with a result for a field ({@link Comp#evidence}) writes from it (the rules' {@code wire}). */
     static Set<String> wire(Comp c, Field f) {
         Set<String> out = new TreeSet<>();
-        ApiModel.Window latest = c.latest();
-        JsonObject mapping = latest == null || f.mappingKey == null ? null : latest.field(f.mappingKey);
+        ApiModel.Window evidence = c.evidence(f.mappingKey);
+        JsonObject mapping = evidence == null || f.mappingKey == null ? null : evidence.field(f.mappingKey);
         if (mapping != null) {
             collectWire(mapping, out);
         }

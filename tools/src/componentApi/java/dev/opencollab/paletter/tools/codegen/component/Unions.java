@@ -114,7 +114,7 @@ final class Unions {
             return object.fields.stream().filter(f -> f.json.equals(name)).findFirst()
                 .orElseThrow(() -> new GenerationException("api.json unions: " + c.id + " " + d.path + " shorthand '" + name + "' is no field of it"));
         }
-        Window w = c.latest();
+        Window w = c.evidence(d.path);
         JsonObject own = w == null ? null : w.field(d.path);
         Set<String> leaves = own == null ? Set.of() : WireRules.valueLeaves(own);
         if (!leaves.isEmpty()) {

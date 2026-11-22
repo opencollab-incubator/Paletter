@@ -79,9 +79,9 @@ final class TypeBuilder {
         f.docsDefault = d.defaultValue;
         String feedbackPath = c.standalone ? hand.standalonePrefix(c.id) + "." + d.path : d.path;
         List<String> notes = hand.notes(c, feedbackPath);
-        // Required unless BDS accepted the field's omission (it then knows what to send)
-        Window latest = c.latest();
-        JsonObject observed = latest == null ? null : latest.field(d.path);
+        // Required unless BDS accepted the field's omission (it then knows what to send): in the newest window with a result
+        Window evidence = c.evidence(d.path);
+        JsonObject observed = evidence == null ? null : evidence.field(d.path);
         boolean omissionAccepted = observed != null && observed.has("whenAbsent");
         boolean optional = hand.listed("optional", c.id + ":" + d.path);
         f.required = !optional && (d.required || (notes.contains("required") && !omissionAccepted));

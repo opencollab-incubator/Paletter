@@ -277,6 +277,7 @@ public final class ComponentGenerator {
         if (c.windows.isEmpty()) {
             throw new GenerationException(c.id + " has no window that sends it");
         }
+        Windows.gaps(c).forEach(gap -> System.out.println("warning: " + gap));
         c.serverOnly = Windows.serverOnly(c);
         c.rejected = Windows.rejected(c);
         c.sincePreview = Windows.sincePreview(model, c, Window::status);
