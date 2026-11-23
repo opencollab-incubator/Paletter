@@ -53,12 +53,18 @@ public final class Fixtures {
         this.filler = json.getAsJsonObject("filler");
     }
 
-    /** The fixtures with the newest committed schema (BDS's full enums, limits, fields and components), none if there is none. */
+    /**
+     * The fixtures with the newest committed schema (BDS's full enums, limits, fields and components), none if there is none, read
+     * for the add-on's format version ({@code formatVersion}): the model of the inference and the component API is the one the
+     * add-on varies, not a newer format of a newer build (1.26.70.24's format 1.26.70 replaces collision_box's origin and size
+     * by min and max).
+     */
     public static Fixtures read(Path model) throws IOException {
         Path bdsData = model.resolveSibling("bds");
-        return new Fixtures(JsonParser.parseString(Files.readString(model.resolve("fixtures.json"), StandardCharsets.UTF_8)).getAsJsonObject(),
-            optional(model.resolve("bds-feedback.json")), optional(model.resolve(KEYS_FILE)),
-            Schema.newest(bdsData, null), bdsData);
+        JsonObject json = JsonParser.parseString(Files.readString(model.resolve("fixtures.json"), StandardCharsets.UTF_8)).getAsJsonObject();
+        Schema schema = Schema.newest(bdsData, null);
+        return new Fixtures(json, optional(model.resolve("bds-feedback.json")), optional(model.resolve(KEYS_FILE)),
+            json.has("formatVersion") ? schema.forFormat(json.get("formatVersion").getAsString()) : schema, bdsData);
     }
 
     /**
