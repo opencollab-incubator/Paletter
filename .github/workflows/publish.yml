@@ -1,0 +1,73 @@
+# Publishes paletter and paletter-recipes to repo.opencollab.dev (docs/releasing.md):
+#   push to main -> the -SNAPSHOT version of gradle.properties, to maven-snapshots
+#   tag vX.Y.Z   -> version X.Y.Z of gradle.properties, to maven-releases. Fails while any dependency is a snapshot
+#                   (checkReleaseDependencies), so no release before Cloudburst's protocol 3.0.0 is released
+# Never runs in a fork. Needs the variable DEPLOY_USER and the secret DEPLOY_PASS; without them the publish fails
+# (requirePublishCredentials) instead of uploading nothing. PALETTER_SIGNING_KEY / PALETTER_SIGNING_PASSWORD are
+# optional: without them nothing is signed.
+
+name: Publish
+
+on:
+  push:
+    branches: [main]
+    tags: ['v*']
+
+permissions:
+  contents: read
+
+# One publish per ref at a time, none cancelled: a snapshot upload must not stop halfway
+concurrency:
+  group: publish-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    if: github.repository == 'opencollab-incubator/Paletter'
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      # A branch publishes only a SNAPSHOT, a tag only the release version it names
+      - name: Check the version against the ref
+        id: version
+        env:
+          REF_TYPE: ${{ github.ref_type }}
+          REF_NAME: ${{ github.ref_name }}
+        run: |
+          VERSION=$(grep -m1 '^version=' gradle.properties | cut -d= -f2)
+          if [ "$REF_TYPE" = tag ]; then
+            case "$VERSION" in *-SNAPSHOT) echo "Tag $REF_NAME, but gradle.properties has $VERSION"; exit 1 ;; esac
+            if [ "v$VERSION" != "$REF_NAME" ]; then echo "Tag $REF_NAME is not v$VERSION"; exit 1; fi
+            echo "publish=true" >> "$GITHUB_OUTPUT"
+          elif echo "$VERSION" | grep -q -- '-SNAPSHOT$'; then
+            echo "publish=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "main is at the release version $VERSION: it is published from its tag, not from the branch"
+            echo "publish=false" >> "$GITHUB_OUTPUT"
+          fi
+      - uses: actions/setup-java@d1374f8ac74474200d16ef8ecee22c7ae7a51880 # v6.3.0
+        if: steps.version.outputs.publish == 'true'
+        with:
+          distribution: temurin
+          java-version: 21
+      - uses: gradle/actions/setup-gradle@8da46b539cd8fe6ab27ca75128919a18d757604c # v6.4.1
+        if: steps.version.outputs.publish == 'true'
+        with:
+          # What is published is built here, not taken from a cache another run wrote
+          cache-read-only: true
+      - name: Build
+        if: steps.version.outputs.publish == 'true'
+        run: ./gradlew build
+      # Indra checks that the tree is clean, and for a release that HEAD is tagged; requirePublishCredentials fails on a
+      # missing or empty DEPLOY_USER / DEPLOY_PASS; checkReleaseDependencies fails a release on any snapshot dependency
+      - name: Publish
+        if: steps.version.outputs.publish == 'true'
+        run: ./gradlew publish
+        env:
+          ORG_GRADLE_PROJECT_geysermcUsername: ${{ vars.DEPLOY_USER }}
+          ORG_GRADLE_PROJECT_geysermcPassword: ${{ secrets.DEPLOY_PASS }}
+          ORG_GRADLE_PROJECT_paletterSigningKey: ${{ secrets.PALETTER_SIGNING_KEY }}
+          ORG_GRADLE_PROJECT_paletterSigningPassword: ${{ secrets.PALETTER_SIGNING_PASSWORD }}

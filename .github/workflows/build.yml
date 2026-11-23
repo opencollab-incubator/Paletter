@@ -29,5 +29,8 @@ jobs:
           # default, stated so it cannot change with a version bump
           cache-read-only: ${{ github.event_name == 'pull_request' }}
       # build runs check: all tests, the Javadoc, the API dump, the generated code (checkConstants, checkComponentApi),
-      # checkMappings (every captured bit and wire path is explained) and checkData (fallback coverage of the bundled versions)
+      # checkMappings (every captured bit and wire path is explained), checkData (fallback coverage of the bundled
+      # versions) and checkReleaseDependencies (no floating snapshot in what is published). Publishing is publish.yml
       - run: ./gradlew build
+      # What publish.yml uploads, into the local repository only: the POMs, sources and Javadoc jars build here too
+      - run: ./gradlew publishToMavenLocal

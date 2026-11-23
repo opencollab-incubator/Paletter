@@ -3,6 +3,36 @@
 This page goes deeper than the [README](../README.md). Method-level details are in the
 [Javadoc](https://opencollab-incubator.github.io/Paletter/latest/).
 
+## Installation
+
+`dev.opencollab.paletter:paletter`, and `dev.opencollab.paletter:paletter-recipes` for the vanilla recipes, from the
+repository `https://repo.opencollab.dev/main` (it also serves the Cloudburst protocol builds Paletter depends on). Only
+`1.0.0-SNAPSHOT` is published so far ([releasing.md](releasing.md)).
+
+```kotlin
+repositories {
+    maven("https://repo.opencollab.dev/main")
+}
+
+dependencies {
+    implementation("dev.opencollab.paletter:paletter:1.0.0-SNAPSHOT")
+    implementation("dev.opencollab.paletter:paletter-recipes:1.0.0-SNAPSHOT") // only for the recipes
+}
+```
+
+```xml
+<repository>
+    <id>opencollab</id>
+    <url>https://repo.opencollab.dev/main</url>
+</repository>
+
+<dependency>
+    <groupId>dev.opencollab.paletter</groupId>
+    <artifactId>paletter</artifactId>
+    <version>1.0.0-SNAPSHOT</version>
+</dependency>
+```
+
 ## What is API
 
 The API is the packages exported by
@@ -31,7 +61,8 @@ an overridden data driven item (apple), accepted the hard coded feather at forma
 stick at 1.26.60. The client's behaviour for Paletter's overrides is unverified on a client (see
 [wire-notes](wire-notes.md#overriding-vanilla-items)). `replaceComponents` has BDS's shape, `modifyComponents` merges.
 
-Paletter is at 1.0.0-SNAPSHOT, so any release may change or remove API. The build keeps API changes visible:
+Paletter is only published as `1.0.0-SNAPSHOT` so far, so any build may change or remove API. The build keeps API
+changes visible:
 
 - `:paletter:apiCheck` compares the compiled API with the committed dump
   [`paletter/api/paletter.api`](../paletter/api/paletter.api). After an intended change, run `:paletter:apiDump` and
