@@ -1,0 +1,240 @@
+[
+  {
+    "identifier": "paletter:b_chest_obstruction_1",
+    "kind": "block",
+    "file": "blocks/b_chest_obstruction_1.json",
+    "component": "block:minecraft:chest_obstruction",
+    "role": "base",
+    "path": "",
+    "label": "base",
+    "json": {}
+  },
+  {
+    "identifier": "paletter:b_chest_obstruction_2",
+    "kind": "block",
+    "file": "blocks/b_chest_obstruction_2.json",
+    "component": "block:minecraft:chest_obstruction",
+    "role": "control",
+    "path": "",
+    "label": "control 1.26.45",
+    "format": "1.26.45"
+  },
+  {
+    "identifier": "paletter:b_collision_box_1",
+    "kind": "block",
+    "file": "blocks/b_collision_box_1.json",
+    "component": "block:minecraft:collision_box",
+    "role": "base",
+    "path": "",
+    "label": "base",
+    "json": "minecraft:unit_cube"
+  },
+  {
+    "identifier": "paletter:b_collision_box_2",
+    "kind": "block",
+    "file": "blocks/b_collision_box_2.json",
+    "component": "block:minecraft:collision_box",
+    "role": "control",
+    "path": "",
+    "label": "control 1.26.45",
+    "format": "1.26.45"
+  },
+  {
+    "identifier": "paletter:b_connection_rule_1",
+    "kind": "block",
+    "file": "blocks/b_connection_rule_1.json",
+    "component": "block:minecraft:connection_rule",
+    "role": "base",
+    "path": "",
+    "label": "base",
+    "json": {}
+  },
+  {
+    "identifier": "paletter:b_connection_rule_2",
+    "kind": "block",
+    "file": "blocks/b_connection_rule_2.json",
+    "component": "block:minecraft:connection_rule",
+    "role": "control",
+    "path": "",
+    "label": "control 1.26.45",
+    "format": "1.26.45"
+  },
+  {
+    "identifier": "paletter:b_crafting_table_1",
+    "kind": "block",
+    "file": "blocks/b_crafting_table_1.json",
+    "component": "block:minecraft:crafting_table",
+    "role": "base",
+    "path": "",
+    "label": "base",
+    "json": {
+      "crafting_tags": [
+        "crafting_table"
+      ],
+      "table_name": "Paletter Table"
+    }
+  },
+  {
+    "identifier": "paletter:b_crafting_table_2",
+    "kind": "block",
+    "file": "blocks/b_crafting_table_2.json",
+    "component": "block:minecraft:crafting_table",
+    "role": "control",
+    "path": "",
+    "label": "control 1.26.45",
+    "format": "1.26.45"
+  },
+  {
+    "identifier": "paletter:b_instrument_sound_1",
+    "kind": "block",
+    "file": "blocks/b_instrument_sound_1.json",
+    "component": "block:minecraft:instrument_sound",
+    "role": "base",
+    "path": "",
+    "label": "base",
+    "json": {}
+  },
+  {
+    "identifier": "paletter:b_instrument_sound_2",
+    "kind": "block",
+    "file": "blocks/b_instrument_sound_2.json",
+    "component": "block:minecraft:instrument_sound",
+    "role": "control",
+    "path": "",
+    "label": "control 1.26.45",
+    "format": "1.26.45"
+  },
+  {
+    "identifier": "paletter:b_precipitation_interactions_1",
+    "kind": "block",
+    "file": "blocks/b_precipitation_interactions_1.json",
+    "component": "block:minecraft:precipitation_interactions",
+    "role": "base",
+    "path": "",
+    "label": "base",
+    "json": {
+      "precipitation_behavior": "accumulate snow"
+    }
+  },
+  {
+    "identifier": "paletter:b_precipitation_interactions_2",
+    "kind": "block",
+    "file": "blocks/b_precipitation_interactions_2.json",
+    "component": "block:minecraft:precipitation_interactions",
+    "role": "control",
+    "path": "",
+    "label": "control 1.26.45",
+    "format": "1.26.45"
+  },
+  {
+    "identifier": "paletter:b_redstone_consumer_1",
+    "kind": "block",
+    "file": "blocks/b_redstone_consumer_1.json",
+    "component": "block:minecraft:redstone_consumer",
+    "role": "base",
+    "path": "",
+    "label": "base",
+    "json": {}
+  },
+  {
+    "identifier": "paletter:b_redstone_consumer_2",
+    "kind": "block",
+    "file": "blocks/b_redstone_consumer_2.json",
+    "component": "block:minecraft:redstone_consumer",
+    "role": "control",
+    "path": "",
+    "label": "control 1.26.45",
+    "format": "1.26.45"
+  },
+  {
+    "identifier": "paletter:b_replaceable_1",
+    "kind": "block",
+    "file": "blocks/b_replaceable_1.json",
+    "component": "block:minecraft:replaceable",
+    "role": "base",
+    "path": "",
+    "label": "base",
+    "json": {}
+  },
+  {
+    "identifier": "paletter:b_replaceable_2",
+    "kind": "block",
+    "file": "blocks/b_replaceable_2.json",
+    "component": "block:minecraft:replaceable",
+    "role": "control",
+    "path": "",
+    "label": "control 1.26.45",
+    "format": "1.26.45"
+  },
+  {
+    "identifier": "paletter:b_support_1",
+    "kind": "block",
+    "file": "blocks/b_support_1.json",
+    "component": "block:minecraft:support",
+    "role": "base",
+    "path": "",
+    "label": "base",
+    "json": {
+      "shape": "fence"
+    }
+  },
+  {
+    "identifier": "paletter:b_support_2",
+    "kind": "block",
+    "file": "blocks/b_support_2.json",
+    "component": "block:minecraft:support",
+    "role": "control",
+    "path": "",
+    "label": "control 1.26.45",
+    "format": "1.26.45"
+  },
+  {
+    "identifier": "paletter:b_trait_connection_1",
+    "kind": "block",
+    "file": "blocks/b_trait_connection_1.json",
+    "component": "block:trait:minecraft:connection",
+    "role": "base",
+    "path": "",
+    "label": "base",
+    "json": {
+      "enabled_states": [
+        "minecraft:cardinal_connections"
+      ]
+    }
+  },
+  {
+    "identifier": "paletter:b_trait_connection_2",
+    "kind": "block",
+    "file": "blocks/b_trait_connection_2.json",
+    "component": "block:trait:minecraft:connection",
+    "role": "control",
+    "path": "",
+    "label": "control 1.26.45",
+    "format": "1.26.45"
+  },
+  {
+    "identifier": "paletter:b_trait_multi_block_1",
+    "kind": "block",
+    "file": "blocks/b_trait_multi_block_1.json",
+    "component": "block:trait:minecraft:multi_block",
+    "role": "base",
+    "path": "",
+    "label": "base",
+    "json": {
+      "enabled_states": [
+        "minecraft:multi_block_part"
+      ],
+      "direction": "up"
+    }
+  },
+  {
+    "identifier": "paletter:b_trait_multi_block_2",
+    "kind": "block",
+    "file": "blocks/b_trait_multi_block_2.json",
+    "component": "block:trait:minecraft:multi_block",
+    "role": "control",
+    "path": "",
+    "label": "control 1.26.45",
+    "format": "1.26.45"
+  }
+]

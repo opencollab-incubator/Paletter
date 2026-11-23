@@ -5,8 +5,11 @@
     "BlockBlockEntityDescription": {
       "name": "minecraft:block_entity",
       "keys": [
+        "container",
         "dynamic_properties",
-        "entity_storage"
+        "entity_storage",
+        "slot_count",
+        "title"
       ]
     },
     "BlockBreathabilityDescription": {

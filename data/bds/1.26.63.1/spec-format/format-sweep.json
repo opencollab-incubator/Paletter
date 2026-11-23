@@ -6,12 +6,146 @@
       "(base)": {
         "reference": "1.26.60 (rejected or not sent: nothing to compare with)",
         "formats": {
+          "1.10.0": {
+            "accepted": true
+          },
+          "1.16.0": {
+            "accepted": true
+          },
           "1.16.100": {
             "accepted": true
           },
           "1.18.10": {
             "accepted": false,
             "error": "Block definition parsing failed"
+          },
+          "1.19.10": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.19.20": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.19.40": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.19.50": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.19.60": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.19.80": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.20.0": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.20.10": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.20.20": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.20.30": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.20.40": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.20.50": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.20.60": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.20.80": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.21.0": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.21.10": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.21.20": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.21.30": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.21.40": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.21.50": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.21.60": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.21.70": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.21.80": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.21.90": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.21.100": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.21.110": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.21.120": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.21.130": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.26.0": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.26.10": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.26.20": {
+            "accepted": false,
+            "error": " -> components -> minecraft:block_light_absorption: this component was found in the input, but is not present in the Schema"
+          },
+          "1.26.30": {
+            "accepted": false,
+            "error": " -> components -> minecraft:block_light_absorption: this component was found in the input, but is not present in the Schema"
           }
         }
       }
@@ -20,6 +154,18 @@
       "(base)": {
         "reference": "1.26.60 (rejected or not sent: nothing to compare with)",
         "formats": {
+          "1.10.0": {
+            "accepted": true
+          },
+          "1.16.0": {
+            "accepted": true
+          },
+          "1.16.100": {
+            "accepted": true
+          },
+          "1.18.10": {
+            "accepted": true
+          },
           "1.19.10": {
             "accepted": false,
             "error": "Block definition parsing failed"
@@ -27,6 +173,277 @@
           "1.19.20": {
             "accepted": false,
             "error": "Block definition parsing failed"
+          },
+          "1.19.40": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.19.50": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.19.60": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.19.80": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.20.0": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.20.10": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.20.20": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.20.30": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.20.40": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.20.50": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.20.60": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.20.80": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.21.0": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.21.10": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.21.20": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.21.30": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.21.40": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.21.50": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.21.60": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.21.70": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.21.80": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.21.90": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.21.100": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.21.110": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.21.120": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.21.130": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.26.0": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.26.10": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.26.20": {
+            "accepted": false,
+            "error": " -> components -> minecraft:block_light_emission: this component was found in the input, but is not present in the Schema"
+          },
+          "1.26.30": {
+            "accepted": false,
+            "error": " -> components -> minecraft:block_light_emission: this component was found in the input, but is not present in the Schema"
+          }
+        }
+      }
+    },
+    "block:minecraft:bone_visibility": {
+      "(base)": {
+        "reference": "1.26.60 (rejected or not sent: nothing to compare with)",
+        "formats": {
+          "1.10.0": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.16.0": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.16.100": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.18.10": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.19.10": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.19.20": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.19.40": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.19.50": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.19.60": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.19.80": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.20.0": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.20.10": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.20.20": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.20.30": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.20.40": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.20.50": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.20.60": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.20.80": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.21.0": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.21.10": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.21.20": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.21.30": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.21.40": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.21.50": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.21.60": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.21.70": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.21.80": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.21.90": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.21.100": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.21.110": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.21.120": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.21.130": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.26.0": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.26.10": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.26.20": {
+            "accepted": false,
+            "error": " -> components -> minecraft:bone_visibility: this component was found in the input, but is not present in the Schema"
+          },
+          "1.26.30": {
+            "accepted": false,
+            "error": " -> components -> minecraft:bone_visibility: this component was found in the input, but is not present in the Schema"
           }
         }
       }
@@ -35,6 +452,10 @@
       "(base)": {
         "reference": "1.26.60 (rejected or not sent: nothing to compare with)",
         "formats": {
+          "1.10.0": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
           "1.16.0": {
             "accepted": false,
             "error": "Block definition parsing failed"
@@ -42,6 +463,436 @@
           "1.16.100": {
             "accepted": false,
             "error": "Block definition parsing failed"
+          },
+          "1.18.10": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.19.10": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.19.20": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.19.40": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.19.50": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.19.60": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.19.80": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.20.0": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.20.10": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.20.20": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.20.30": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.20.40": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.20.50": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.20.60": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.20.80": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.21.0": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.21.10": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.21.20": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.21.30": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.21.40": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.21.50": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.21.60": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.21.70": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.21.80": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.21.90": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.21.100": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.21.110": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.21.120": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.21.130": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.26.0": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.26.10": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.26.20": {
+            "accepted": false,
+            "error": " -> components -> minecraft:breathability: member \"minecraft:breathability\" is deprecated"
+          },
+          "1.26.30": {
+            "accepted": false,
+            "error": " -> components -> minecraft:breathability: member \"minecraft:breathability\" is deprecated"
+          }
+        }
+      },
+      "(base) \"air\"": {
+        "reference": "1.26.60 (rejected or not sent: nothing to compare with)",
+        "formats": {
+          "1.10.0": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.16.0": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.16.100": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.18.10": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.19.10": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.19.20": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.19.40": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.19.50": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.19.60": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.19.80": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.20.0": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.20.10": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.20.20": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.20.30": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.20.40": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.20.50": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.20.60": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.20.80": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.21.0": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.21.10": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.21.20": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.21.30": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.21.40": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.21.50": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.21.60": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.21.70": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.21.80": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.21.90": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.21.100": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.21.110": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.21.120": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.21.130": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.26.0": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.26.10": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.26.20": {
+            "accepted": false,
+            "error": " -> components -> minecraft:breathability: member \"minecraft:breathability\" is deprecated"
+          },
+          "1.26.30": {
+            "accepted": false,
+            "error": " -> components -> minecraft:breathability: member \"minecraft:breathability\" is deprecated"
+          }
+        }
+      },
+      "(base) \"solid\"": {
+        "reference": "1.26.60 (rejected or not sent: nothing to compare with)",
+        "formats": {
+          "1.10.0": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.16.0": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.16.100": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.18.10": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.19.10": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.19.20": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.19.40": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.19.50": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.19.60": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.19.80": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.20.0": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.20.10": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.20.20": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.20.30": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.20.40": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.20.50": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.20.60": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.20.80": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.21.0": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.21.10": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.21.20": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.21.30": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.21.40": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.21.50": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.21.60": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.21.70": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.21.80": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.21.90": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.21.100": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.21.110": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.21.120": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.21.130": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.26.0": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.26.10": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.26.20": {
+            "accepted": false,
+            "error": " -> components -> minecraft:breathability: member \"minecraft:breathability\" is deprecated"
+          },
+          "1.26.30": {
+            "accepted": false,
+            "error": " -> components -> minecraft:breathability: member \"minecraft:breathability\" is deprecated"
           }
         }
       }
@@ -128,18 +979,162 @@
         }
       }
     },
-    "block:minecraft:destructible_by_mining": {
+    "block:minecraft:destroy_time": {
       "(base)": {
         "reference": "1.26.60 (rejected or not sent: nothing to compare with)",
         "formats": {
+          "1.10.0": {
+            "accepted": true
+          },
+          "1.16.0": {
+            "accepted": true
+          },
+          "1.16.100": {
+            "accepted": true
+          },
+          "1.18.10": {
+            "accepted": true
+          },
+          "1.19.10": {
+            "accepted": true
+          },
+          "1.19.20": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.19.40": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.19.50": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.19.60": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.19.80": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.20.0": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.20.10": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.20.20": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.20.30": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.20.40": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.20.50": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.20.60": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.20.80": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.21.0": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.21.10": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.21.20": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.21.30": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.21.40": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
           "1.21.50": {
             "accepted": false,
             "error": "Block definition parsing failed"
+          },
+          "1.21.60": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.21.70": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.21.80": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.21.90": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.21.100": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.21.110": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.21.120": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.21.130": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.26.0": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.26.10": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.26.20": {
+            "accepted": false,
+            "error": " -> components -> minecraft:destroy_time: this component was found in the input, but is not present in the Schema"
+          },
+          "1.26.30": {
+            "accepted": false,
+            "error": " -> components -> minecraft:destroy_time: this component was found in the input, but is not present in the Schema"
           }
         }
+      }
+    },
+    "block:minecraft:destructible_by_mining": {
+      "(base)": {
+        "reference": "1.26.60",
+        "formats": {},
+        "sameAsReference": [
+          "1.21.50"
+        ]
       },
       "item_specific_speeds": {
-        "reference": "1.26.60 (rejected or not sent: nothing to compare with)",
+        "reference": "1.26.60",
         "formats": {}
       }
     },
@@ -233,23 +1228,19 @@
     "block:minecraft:embedded_visual": {
       "(base)": {
         "reference": "1.26.60",
+        "formats": {},
+        "sameAsReference": [
+          "1.21.120"
+        ]
+      }
+    },
+    "block:minecraft:enchantment_power_transmitter": {
+      "(base)": {
+        "reference": "1.26.60",
         "formats": {
-          "1.21.120": {
-            "accepted": true,
-            "differs": {
-              "components.minecraft:embedded_visual.geometry.n_way_visual_rotation.x": {
-                "reference": "paletter_a (string)",
-                "value": "absent"
-              },
-              "components.minecraft:embedded_visual.geometry.n_way_visual_rotation.y": {
-                "reference": "paletter_a (string)",
-                "value": "absent"
-              },
-              "components.minecraft:embedded_visual.geometry.n_way_visual_rotation.z": {
-                "reference": "paletter_a (string)",
-                "value": "absent"
-              }
-            }
+          "1.26.30": {
+            "accepted": false,
+            "error": " -> components -> minecraft:enchantment_power_transmitter: this component was found in the input, but is not present in the Schema"
           }
         }
       }
@@ -283,6 +1274,152 @@
                 "value": "1 (byte)"
               }
             }
+          }
+        }
+      }
+    },
+    "block:minecraft:explosion_resistance": {
+      "(base)": {
+        "reference": "1.26.60 (rejected or not sent: nothing to compare with)",
+        "formats": {
+          "1.10.0": {
+            "accepted": true
+          },
+          "1.16.0": {
+            "accepted": true
+          },
+          "1.16.100": {
+            "accepted": true
+          },
+          "1.18.10": {
+            "accepted": true
+          },
+          "1.19.10": {
+            "accepted": true
+          },
+          "1.19.20": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.19.40": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.19.50": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.19.60": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.19.80": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.20.0": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.20.10": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.20.20": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.20.30": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.20.40": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.20.50": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.20.60": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.20.80": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.21.0": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.21.10": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.21.20": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.21.30": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.21.40": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.21.50": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.21.60": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.21.70": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.21.80": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.21.90": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.21.100": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.21.110": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.21.120": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.21.130": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.26.0": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.26.10": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.26.20": {
+            "accepted": false,
+            "error": " -> components -> minecraft:explosion_resistance: this component was found in the input, but is not present in the Schema"
+          },
+          "1.26.30": {
+            "accepted": false,
+            "error": " -> components -> minecraft:explosion_resistance: this component was found in the input, but is not present in the Schema"
           }
         }
       }
@@ -389,7 +1526,7 @@
                 "value": "{} (compound)"
               },
               "components.minecraft:geometry.bone_visibility.bone_a": {
-                "reference": "1.000000 (string)",
+                "reference": "q.block_state('paletter:flag') (string)",
                 "value": "absent"
               },
               "components.minecraft:geometry.culling": {
@@ -445,8 +1582,17 @@
             "error": "Block definition parsing failed"
           },
           "1.19.80": {
-            "accepted": true,
+            "accepted": false,
+            "error": "bone_a: Only boolean values are supported for bone visibilities in format versions before 1.20.10.",
             "differs": {
+              "components.minecraft:geometry.bone_visibility": {
+                "reference": "absent",
+                "value": "{} (compound)"
+              },
+              "components.minecraft:geometry.bone_visibility.bone_a": {
+                "reference": "q.block_state('paletter:flag') (string)",
+                "value": "absent"
+              },
               "components.minecraft:geometry.culling": {
                 "reference": "paletter:culling (string)",
                 "value": " (string)"
@@ -832,18 +1978,6 @@
                 "value": "1 (byte)",
                 "differingBits": "1"
               },
-              "components.minecraft:item_visual.geometryDescription.n_way_visual_rotation.x": {
-                "reference": "paletter_a (string)",
-                "value": "absent"
-              },
-              "components.minecraft:item_visual.geometryDescription.n_way_visual_rotation.y": {
-                "reference": "paletter_a (string)",
-                "value": "absent"
-              },
-              "components.minecraft:item_visual.geometryDescription.n_way_visual_rotation.z": {
-                "reference": "paletter_a (string)",
-                "value": "absent"
-              },
               "components.minecraft:item_visual.materialInstancesDescription.materials.*.packed_bools": {
                 "reference": "5 (byte)",
                 "value": "1 (byte)",
@@ -857,6 +1991,16 @@
             }
           }
         }
+      }
+    },
+    "block:minecraft:leashable": {
+      "(base)": {
+        "reference": "1.26.60",
+        "formats": {},
+        "sameAsReference": [
+          "1.21.130",
+          "1.26.0"
+        ]
       }
     },
     "block:minecraft:liquid_detection": {
@@ -910,45 +2054,24 @@
     },
     "block:minecraft:map_color": {
       "(base)": {
-        "reference": "1.26.60 (rejected or not sent: nothing to compare with)",
-        "formats": {
-          "1.21.70": {
-            "accepted": true
-          },
-          "1.21.80": {
-            "accepted": false,
-            "error": "Block definition parsing failed"
-          },
-          "1.21.110": {
-            "accepted": false,
-            "error": "Block definition parsing failed"
-          },
-          "1.21.120": {
-            "accepted": false,
-            "error": "Block definition parsing failed"
-          }
-        }
+        "reference": "1.26.60",
+        "formats": {},
+        "sameAsReference": [
+          "1.21.70",
+          "1.21.80",
+          "1.21.110",
+          "1.21.120"
+        ]
       },
       "tint_method": {
-        "reference": "1.26.60 (rejected or not sent: nothing to compare with)",
-        "formats": {
-          "1.21.70": {
-            "accepted": false,
-            "error": "Block definition parsing failed"
-          },
-          "1.21.80": {
-            "accepted": false,
-            "error": "Block definition parsing failed"
-          },
-          "1.21.110": {
-            "accepted": false,
-            "error": "Block definition parsing failed"
-          },
-          "1.21.120": {
-            "accepted": false,
-            "error": "Block definition parsing failed"
-          }
-        }
+        "reference": "1.26.60",
+        "formats": {},
+        "sameAsReference": [
+          "1.21.70",
+          "1.21.80",
+          "1.21.110",
+          "1.21.120"
+        ]
       }
     },
     "block:minecraft:material_instances": {
@@ -4835,6 +5958,17 @@
         ]
       }
     },
+    "block:minecraft:neighbor_change": {
+      "(base)": {
+        "reference": "1.26.60",
+        "formats": {
+          "1.26.30": {
+            "accepted": false,
+            "error": " -> components -> minecraft:neighbor_change: this component was found in the input, but is not present in the Schema"
+          }
+        }
+      }
+    },
     "block:minecraft:placement_filter": {
       "(base)": {
         "reference": "1.26.60",
@@ -4870,6 +6004,157 @@
         }
       }
     },
+    "block:minecraft:queued_ticking": {
+      "(base)": {
+        "reference": "1.26.60 (rejected or not sent: nothing to compare with)",
+        "formats": {
+          "1.10.0": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.16.0": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.16.100": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.18.10": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.19.10": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.19.20": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.19.40": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.19.50": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.19.60": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.19.80": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.20.0": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.20.10": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.20.20": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.20.30": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.20.40": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.20.50": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.20.60": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.20.80": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.21.0": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.21.10": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.21.20": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.21.30": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.21.40": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.21.50": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.21.60": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.21.70": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.21.80": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.21.90": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.21.100": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.21.110": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.21.120": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.21.130": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.26.0": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.26.10": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.26.20": {
+            "accepted": false,
+            "error": " -> components -> minecraft:queued_ticking: member \"minecraft:queued_ticking\" is deprecated"
+          },
+          "1.26.30": {
+            "accepted": false,
+            "error": " -> components -> minecraft:queued_ticking: member \"minecraft:queued_ticking\" is deprecated"
+          }
+        }
+      }
+    },
     "block:minecraft:random_offset": {
       "(base)": {
         "reference": "1.26.60",
@@ -4883,11 +6168,67 @@
       "(base)": {
         "reference": "1.26.60 (rejected or not sent: nothing to compare with)",
         "formats": {
+          "1.10.0": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
           "1.16.0": {
             "accepted": false,
             "error": "Block definition parsing failed"
           },
           "1.16.100": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.18.10": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.19.10": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.19.20": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.19.40": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.19.50": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.19.60": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.19.80": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.20.0": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.20.10": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.20.20": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.20.30": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.20.40": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.20.50": {
             "accepted": false,
             "error": "Block definition parsing failed"
           },
@@ -4898,6 +6239,227 @@
           "1.20.80": {
             "accepted": false,
             "error": "Block definition parsing failed"
+          },
+          "1.21.0": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.21.10": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.21.20": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.21.30": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.21.40": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.21.50": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.21.60": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.21.70": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.21.80": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.21.90": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.21.100": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.21.110": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.21.120": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.21.130": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.26.0": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.26.10": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.26.20": {
+            "accepted": false,
+            "error": " -> components -> minecraft:random_ticking: member \"minecraft:random_ticking\" is deprecated"
+          },
+          "1.26.30": {
+            "accepted": false,
+            "error": " -> components -> minecraft:random_ticking: member \"minecraft:random_ticking\" is deprecated"
+          }
+        }
+      },
+      "(base) {\"on_tick\":{\"event\":\"paletter:event\",\"target\":\"self\"}}": {
+        "reference": "1.26.60 (rejected or not sent: nothing to compare with)",
+        "formats": {
+          "1.10.0": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.16.0": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.16.100": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.18.10": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.19.10": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.19.20": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.19.40": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.19.50": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.19.60": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.19.80": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.20.0": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.20.10": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.20.20": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.20.30": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.20.40": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.20.50": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.20.60": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.20.80": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.21.0": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.21.10": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.21.20": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.21.30": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.21.40": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.21.50": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.21.60": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.21.70": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.21.80": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.21.90": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.21.100": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.21.110": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.21.120": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.21.130": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.26.0": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.26.10": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.26.20": {
+            "accepted": false,
+            "error": " -> components -> minecraft:random_ticking: member \"minecraft:random_ticking\" is deprecated"
+          },
+          "1.26.30": {
+            "accepted": false,
+            "error": " -> components -> minecraft:random_ticking: member \"minecraft:random_ticking\" is deprecated"
           }
         }
       }
@@ -4968,6 +6530,28 @@
         "sameAsReference": [
           "1.21.130",
           "1.26.0"
+        ]
+      }
+    },
+    "block:minecraft:tags": {
+      "(base)": {
+        "reference": "1.26.60",
+        "formats": {
+          "1.20.40": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.20.50": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.26.10": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          }
+        },
+        "sameAsReference": [
+          "1.26.20"
         ]
       }
     },
@@ -5073,11 +6657,63 @@
       "(base)": {
         "reference": "1.26.60 (rejected or not sent: nothing to compare with)",
         "formats": {
+          "1.10.0": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
           "1.16.0": {
             "accepted": false,
             "error": "Block definition parsing failed"
           },
           "1.16.100": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.18.10": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.19.10": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.19.20": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.19.40": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.19.50": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.19.60": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.19.80": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.20.0": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.20.10": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.20.20": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.20.30": {
+            "accepted": false,
+            "error": "Block definition parsing failed"
+          },
+          "1.20.40": {
             "accepted": false,
             "error": "Block definition parsing failed"
           },
@@ -5088,6 +6724,93 @@
           "1.20.60": {
             "accepted": false,
             "error": "minecraft:unit_cube component is not valid from 1.20.60 onward."
+          },
+          "1.20.80": {
+            "accepted": false,
+            "error": "minecraft:unit_cube component is not valid from 1.20.60 onward."
+          },
+          "1.21.0": {
+            "accepted": false,
+            "error": "minecraft:unit_cube component is not valid from 1.20.60 onward."
+          },
+          "1.21.10": {
+            "accepted": false,
+            "error": "minecraft:unit_cube component is not valid from 1.20.60 onward."
+          },
+          "1.21.20": {
+            "accepted": false,
+            "error": "minecraft:unit_cube component is not valid from 1.20.60 onward."
+          },
+          "1.21.30": {
+            "accepted": false,
+            "error": "minecraft:unit_cube component is not valid from 1.20.60 onward."
+          },
+          "1.21.40": {
+            "accepted": false,
+            "error": "minecraft:unit_cube component is not valid from 1.20.60 onward."
+          },
+          "1.21.50": {
+            "accepted": false,
+            "error": "minecraft:unit_cube component is not valid from 1.20.60 onward."
+          },
+          "1.21.60": {
+            "accepted": false,
+            "error": "minecraft:unit_cube component is not valid from 1.20.60 onward."
+          },
+          "1.21.70": {
+            "accepted": false,
+            "error": "minecraft:unit_cube component is not valid from 1.20.60 onward."
+          },
+          "1.21.80": {
+            "accepted": false,
+            "error": "minecraft:unit_cube component is not valid from 1.20.60 onward."
+          },
+          "1.21.90": {
+            "accepted": false,
+            "error": "minecraft:unit_cube component is not valid from 1.20.60 onward."
+          },
+          "1.21.100": {
+            "accepted": false,
+            "error": "minecraft:unit_cube component is not valid from 1.20.60 onward."
+          },
+          "1.21.110": {
+            "accepted": false,
+            "error": "minecraft:unit_cube component is not valid from 1.20.60 onward."
+          },
+          "1.21.120": {
+            "accepted": false,
+            "error": "minecraft:unit_cube component is not valid from 1.20.60 onward."
+          },
+          "1.21.130": {
+            "accepted": false,
+            "error": "minecraft:unit_cube component is not valid from 1.20.60 onward."
+          },
+          "1.26.0": {
+            "accepted": false,
+            "error": "minecraft:unit_cube component is not valid from 1.20.60 onward."
+          },
+          "1.26.10": {
+            "accepted": false,
+            "error": "minecraft:unit_cube component is not valid from 1.20.60 onward."
+          },
+          "1.26.20": {
+            "accepted": false,
+            "error": " -> components -> minecraft:unit_cube: member \"minecraft:unit_cube\" is deprecated"
+          },
+          "1.26.30": {
+            "accepted": false,
+            "error": " -> components -> minecraft:unit_cube: member \"minecraft:unit_cube\" is deprecated"
+          }
+        }
+      }
+    },
+    "block:minecraft:vibration_properties": {
+      "(base)": {
+        "reference": "1.26.60",
+        "formats": {
+          "1.26.30": {
+            "accepted": false,
+            "error": " -> components -> minecraft:vibration_properties: this component was found in the input, but is not present in the Schema"
           }
         }
       }
@@ -5192,11 +6915,35 @@
     "item:minecraft:chargeable": {
       "(base)": {
         "reference": "1.26.60",
-        "formats": {},
+        "formats": {
+          "1.26.30": {
+            "accepted": false,
+            "error": "ERROR [Item]  'paletter:chargeable_45': Failed to parse field ' -> components -> minecraft:chargeable: this component was found in the input, but is not present in the Schema'"
+          }
+        },
         "sameAsReference": [
           "1.20.30",
           "1.20.40",
-          "1.20.50"
+          "1.20.50",
+          "1.20.60",
+          "1.20.80",
+          "1.21.0",
+          "1.21.10",
+          "1.21.20",
+          "1.21.30",
+          "1.21.40",
+          "1.21.50",
+          "1.21.60",
+          "1.21.70",
+          "1.21.80",
+          "1.21.90",
+          "1.21.100",
+          "1.21.110",
+          "1.21.120",
+          "1.21.130",
+          "1.26.0",
+          "1.26.10",
+          "1.26.20"
         ]
       }
     },
@@ -5685,10 +7432,224 @@
     "item:minecraft:render_offsets": {
       "(base)": {
         "reference": "1.26.60",
-        "formats": {},
+        "formats": {
+          "1.10.0": {
+            "accepted": false
+          },
+          "1.16.0": {
+            "accepted": false
+          },
+          "1.16.100": {
+            "accepted": false,
+            "error": "ERROR [Item] To use item 'paletter:render_offsets_9', use json format version 1.20.0 or higher"
+          },
+          "1.18.10": {
+            "accepted": false,
+            "error": "ERROR [Item] To use item 'paletter:render_offsets_13', use json format version 1.20.0 or higher"
+          },
+          "1.19.10": {
+            "accepted": false,
+            "error": "ERROR [Item] To use item 'paletter:render_offsets_17', use json format version 1.20.0 or higher"
+          },
+          "1.19.20": {
+            "accepted": false,
+            "error": "ERROR [Item] To use item 'paletter:render_offsets_21', use json format version 1.20.0 or higher"
+          },
+          "1.19.40": {
+            "accepted": false,
+            "error": "ERROR [Item] To use item 'paletter:render_offsets_25', use json format version 1.20.0 or higher"
+          },
+          "1.19.50": {
+            "accepted": false,
+            "error": "ERROR [Item] To use item 'paletter:render_offsets_29', use json format version 1.20.0 or higher"
+          },
+          "1.19.60": {
+            "accepted": false,
+            "error": "ERROR [Item] To use item 'paletter:render_offsets_33', use json format version 1.20.0 or higher"
+          },
+          "1.19.80": {
+            "accepted": false,
+            "error": "ERROR [Item] To use item 'paletter:render_offsets_37', use json format version 1.20.0 or higher"
+          },
+          "1.26.30": {
+            "accepted": false,
+            "error": "ERROR [Item]  'paletter:render_offsets_141': Failed to parse field ' -> components -> minecraft:render_offsets: this component was found in the input, but is not present in the Schema'"
+          }
+        },
         "sameAsReference": [
           "1.20.0",
-          "1.20.10"
+          "1.20.10",
+          "1.20.20",
+          "1.20.30",
+          "1.20.40",
+          "1.20.50",
+          "1.20.60",
+          "1.20.80",
+          "1.21.0",
+          "1.21.10",
+          "1.21.20",
+          "1.21.30",
+          "1.21.40",
+          "1.21.50",
+          "1.21.60",
+          "1.21.70",
+          "1.21.80",
+          "1.21.90",
+          "1.21.100",
+          "1.21.110",
+          "1.21.120",
+          "1.21.130",
+          "1.26.0",
+          "1.26.10",
+          "1.26.20"
+        ]
+      },
+      "(base) \"tools\"": {
+        "reference": "1.26.60",
+        "formats": {
+          "1.10.0": {
+            "accepted": false
+          },
+          "1.16.0": {
+            "accepted": false
+          },
+          "1.16.100": {
+            "accepted": false,
+            "error": "ERROR [Item] To use item 'paletter:render_offsets_12', use json format version 1.20.0 or higher"
+          },
+          "1.18.10": {
+            "accepted": false,
+            "error": "ERROR [Item] To use item 'paletter:render_offsets_16', use json format version 1.20.0 or higher"
+          },
+          "1.19.10": {
+            "accepted": false,
+            "error": "ERROR [Item] To use item 'paletter:render_offsets_20', use json format version 1.20.0 or higher"
+          },
+          "1.19.20": {
+            "accepted": false,
+            "error": "ERROR [Item] To use item 'paletter:render_offsets_24', use json format version 1.20.0 or higher"
+          },
+          "1.19.40": {
+            "accepted": false,
+            "error": "ERROR [Item] To use item 'paletter:render_offsets_28', use json format version 1.20.0 or higher"
+          },
+          "1.19.50": {
+            "accepted": false,
+            "error": "ERROR [Item] To use item 'paletter:render_offsets_32', use json format version 1.20.0 or higher"
+          },
+          "1.19.60": {
+            "accepted": false,
+            "error": "ERROR [Item] To use item 'paletter:render_offsets_36', use json format version 1.20.0 or higher"
+          },
+          "1.19.80": {
+            "accepted": false,
+            "error": "ERROR [Item] To use item 'paletter:render_offsets_40', use json format version 1.20.0 or higher"
+          },
+          "1.26.30": {
+            "accepted": false,
+            "error": "ERROR [Item]  'paletter:render_offsets_144': Failed to parse field ' -> components -> minecraft:render_offsets: this component was found in the input, but is not present in the Schema'"
+          }
+        },
+        "sameAsReference": [
+          "1.20.0",
+          "1.20.10",
+          "1.20.20",
+          "1.20.30",
+          "1.20.40",
+          "1.20.50",
+          "1.20.60",
+          "1.20.80",
+          "1.21.0",
+          "1.21.10",
+          "1.21.20",
+          "1.21.30",
+          "1.21.40",
+          "1.21.50",
+          "1.21.60",
+          "1.21.70",
+          "1.21.80",
+          "1.21.90",
+          "1.21.100",
+          "1.21.110",
+          "1.21.120",
+          "1.21.130",
+          "1.26.0",
+          "1.26.10",
+          "1.26.20"
+        ]
+      },
+      "(base) {\"main_hand\":{\"first_person\":{\"position\":[0,0,0],\"rotation\":[0,0,0],\"scale\":[1,1,1]}}}": {
+        "reference": "1.26.60",
+        "formats": {
+          "1.10.0": {
+            "accepted": false
+          },
+          "1.16.0": {
+            "accepted": false
+          },
+          "1.16.100": {
+            "accepted": false,
+            "error": "ERROR [Item] To use item 'paletter:render_offsets_11', use json format version 1.20.0 or higher"
+          },
+          "1.18.10": {
+            "accepted": false,
+            "error": "ERROR [Item] To use item 'paletter:render_offsets_15', use json format version 1.20.0 or higher"
+          },
+          "1.19.10": {
+            "accepted": false,
+            "error": "ERROR [Item] To use item 'paletter:render_offsets_19', use json format version 1.20.0 or higher"
+          },
+          "1.19.20": {
+            "accepted": false,
+            "error": "ERROR [Item] To use item 'paletter:render_offsets_23', use json format version 1.20.0 or higher"
+          },
+          "1.19.40": {
+            "accepted": false,
+            "error": "ERROR [Item] To use item 'paletter:render_offsets_27', use json format version 1.20.0 or higher"
+          },
+          "1.19.50": {
+            "accepted": false,
+            "error": "ERROR [Item] To use item 'paletter:render_offsets_31', use json format version 1.20.0 or higher"
+          },
+          "1.19.60": {
+            "accepted": false,
+            "error": "ERROR [Item] To use item 'paletter:render_offsets_35', use json format version 1.20.0 or higher"
+          },
+          "1.19.80": {
+            "accepted": false,
+            "error": "ERROR [Item] To use item 'paletter:render_offsets_39', use json format version 1.20.0 or higher"
+          },
+          "1.26.30": {
+            "accepted": false,
+            "error": "ERROR [Item]  'paletter:render_offsets_143': Failed to parse field ' -> components -> minecraft:render_offsets: this component was found in the input, but is not present in the Schema'"
+          }
+        },
+        "sameAsReference": [
+          "1.20.0",
+          "1.20.10",
+          "1.20.20",
+          "1.20.30",
+          "1.20.40",
+          "1.20.50",
+          "1.20.60",
+          "1.20.80",
+          "1.21.0",
+          "1.21.10",
+          "1.21.20",
+          "1.21.30",
+          "1.21.40",
+          "1.21.50",
+          "1.21.60",
+          "1.21.70",
+          "1.21.80",
+          "1.21.90",
+          "1.21.100",
+          "1.21.110",
+          "1.21.120",
+          "1.21.130",
+          "1.26.0",
+          "1.26.10",
+          "1.26.20"
         ]
       }
     },
@@ -5898,212 +7859,8 @@
                 "value": "up (string)"
               }
             }
-          }
-        }
-      },
-      "plant_at_any_solid_surface": {
-        "reference": "1.26.60",
-        "formats": {
-          "1.10.0": {
-            "accepted": true,
-            "differs": {
-              "item_properties.allow_off_hand": {
-                "reference": "0 (byte)",
-                "value": "absent"
-              },
-              "item_properties.can_destroy_in_creative": {
-                "reference": "1 (byte)",
-                "value": "absent"
-              },
-              "item_properties.creative_category": {
-                "reference": "4 (int)",
-                "value": "absent"
-              },
-              "item_properties.creative_group": {
-                "reference": " (string)",
-                "value": "absent"
-              },
-              "item_properties.damage": {
-                "reference": "0 (int)",
-                "value": "absent"
-              },
-              "item_properties.enchantable_slot": {
-                "reference": "none (string)",
-                "value": "absent"
-              },
-              "item_properties.enchantable_value": {
-                "reference": "0 (int)",
-                "value": "absent"
-              },
-              "item_properties.foil": {
-                "reference": "0 (byte)",
-                "value": "absent"
-              },
-              "item_properties.frame_count": {
-                "reference": "1 (int)",
-                "value": "absent"
-              },
-              "item_properties.hand_equipped": {
-                "reference": "0 (byte)",
-                "value": "absent"
-              },
-              "item_properties.hidden_in_commands": {
-                "reference": "2 (byte)",
-                "value": "absent"
-              },
-              "item_properties.liquid_clipped": {
-                "reference": "0 (byte)",
-                "value": "absent"
-              },
-              "item_properties.max_stack_size": {
-                "reference": "64 (int)",
-                "value": "absent"
-              },
-              "item_properties.mining_speed": {
-                "reference": "1.0 (float)",
-                "value": "absent"
-              },
-              "item_properties.should_despawn": {
-                "reference": "1 (byte)",
-                "value": "absent"
-              },
-              "item_properties.stacked_by_data": {
-                "reference": "0 (byte)",
-                "value": "absent"
-              },
-              "item_properties.use_animation": {
-                "reference": "0 (int)",
-                "value": "absent"
-              },
-              "item_properties.use_duration": {
-                "reference": "0 (int)",
-                "value": "absent"
-              },
-              "item_tags": {
-                "reference": "[] (list<void>)",
-                "value": "absent"
-              },
-              "minecraft:seed.crop_result": {
-                "reference": "absent",
-                "value": "minecraft:wheat (string)"
-              },
-              "minecraft:seed.plant_at[0]": {
-                "reference": "absent",
-                "value": "minecraft:farmland (string)"
-              },
-              "minecraft:seed.plant_at_any_solid_surface": {
-                "reference": "absent",
-                "value": "1 (byte)"
-              },
-              "minecraft:seed.plant_at_face": {
-                "reference": "absent",
-                "value": "up (string)"
-              }
-            }
           },
-          "1.16.0": {
-            "accepted": true,
-            "differs": {
-              "item_properties.allow_off_hand": {
-                "reference": "0 (byte)",
-                "value": "absent"
-              },
-              "item_properties.can_destroy_in_creative": {
-                "reference": "1 (byte)",
-                "value": "absent"
-              },
-              "item_properties.creative_category": {
-                "reference": "4 (int)",
-                "value": "absent"
-              },
-              "item_properties.creative_group": {
-                "reference": " (string)",
-                "value": "absent"
-              },
-              "item_properties.damage": {
-                "reference": "0 (int)",
-                "value": "absent"
-              },
-              "item_properties.enchantable_slot": {
-                "reference": "none (string)",
-                "value": "absent"
-              },
-              "item_properties.enchantable_value": {
-                "reference": "0 (int)",
-                "value": "absent"
-              },
-              "item_properties.foil": {
-                "reference": "0 (byte)",
-                "value": "absent"
-              },
-              "item_properties.frame_count": {
-                "reference": "1 (int)",
-                "value": "absent"
-              },
-              "item_properties.hand_equipped": {
-                "reference": "0 (byte)",
-                "value": "absent"
-              },
-              "item_properties.hidden_in_commands": {
-                "reference": "2 (byte)",
-                "value": "absent"
-              },
-              "item_properties.liquid_clipped": {
-                "reference": "0 (byte)",
-                "value": "absent"
-              },
-              "item_properties.max_stack_size": {
-                "reference": "64 (int)",
-                "value": "absent"
-              },
-              "item_properties.mining_speed": {
-                "reference": "1.0 (float)",
-                "value": "absent"
-              },
-              "item_properties.should_despawn": {
-                "reference": "1 (byte)",
-                "value": "absent"
-              },
-              "item_properties.stacked_by_data": {
-                "reference": "0 (byte)",
-                "value": "absent"
-              },
-              "item_properties.use_animation": {
-                "reference": "0 (int)",
-                "value": "absent"
-              },
-              "item_properties.use_duration": {
-                "reference": "0 (int)",
-                "value": "absent"
-              },
-              "item_tags": {
-                "reference": "[] (list<void>)",
-                "value": "absent"
-              },
-              "minecraft:seed.crop_result": {
-                "reference": "absent",
-                "value": "minecraft:wheat (string)"
-              },
-              "minecraft:seed.plant_at[0]": {
-                "reference": "absent",
-                "value": "minecraft:farmland (string)"
-              },
-              "minecraft:seed.plant_at_any_solid_surface": {
-                "reference": "absent",
-                "value": "1 (byte)"
-              },
-              "minecraft:seed.plant_at_face": {
-                "reference": "absent",
-                "value": "up (string)"
-              }
-            }
-          }
-        }
-      },
-      "plant_at_face": {
-        "reference": "1.26.60",
-        "formats": {
-          "1.10.0": {
+          "1.16.100": {
             "accepted": true,
             "differs": {
               "item_properties.allow_off_hand": {
@@ -6200,7 +7957,7 @@
               }
             }
           },
-          "1.16.0": {
+          "1.18.10": {
             "accepted": true,
             "differs": {
               "item_properties.allow_off_hand": {
@@ -6296,6 +8053,3017 @@
                 "value": "up (string)"
               }
             }
+          },
+          "1.19.10": {
+            "accepted": true,
+            "differs": {
+              "item_properties.allow_off_hand": {
+                "reference": "0 (byte)",
+                "value": "absent"
+              },
+              "item_properties.can_destroy_in_creative": {
+                "reference": "1 (byte)",
+                "value": "absent"
+              },
+              "item_properties.creative_category": {
+                "reference": "4 (int)",
+                "value": "absent"
+              },
+              "item_properties.creative_group": {
+                "reference": " (string)",
+                "value": "absent"
+              },
+              "item_properties.damage": {
+                "reference": "0 (int)",
+                "value": "absent"
+              },
+              "item_properties.enchantable_slot": {
+                "reference": "none (string)",
+                "value": "absent"
+              },
+              "item_properties.enchantable_value": {
+                "reference": "0 (int)",
+                "value": "absent"
+              },
+              "item_properties.foil": {
+                "reference": "0 (byte)",
+                "value": "absent"
+              },
+              "item_properties.frame_count": {
+                "reference": "1 (int)",
+                "value": "absent"
+              },
+              "item_properties.hand_equipped": {
+                "reference": "0 (byte)",
+                "value": "absent"
+              },
+              "item_properties.hidden_in_commands": {
+                "reference": "2 (byte)",
+                "value": "absent"
+              },
+              "item_properties.liquid_clipped": {
+                "reference": "0 (byte)",
+                "value": "absent"
+              },
+              "item_properties.max_stack_size": {
+                "reference": "64 (int)",
+                "value": "absent"
+              },
+              "item_properties.mining_speed": {
+                "reference": "1.0 (float)",
+                "value": "absent"
+              },
+              "item_properties.should_despawn": {
+                "reference": "1 (byte)",
+                "value": "absent"
+              },
+              "item_properties.stacked_by_data": {
+                "reference": "0 (byte)",
+                "value": "absent"
+              },
+              "item_properties.use_animation": {
+                "reference": "0 (int)",
+                "value": "absent"
+              },
+              "item_properties.use_duration": {
+                "reference": "0 (int)",
+                "value": "absent"
+              },
+              "item_tags": {
+                "reference": "[] (list<void>)",
+                "value": "absent"
+              },
+              "minecraft:seed.crop_result": {
+                "reference": "absent",
+                "value": "minecraft:wheat (string)"
+              },
+              "minecraft:seed.plant_at[0]": {
+                "reference": "absent",
+                "value": "minecraft:farmland (string)"
+              },
+              "minecraft:seed.plant_at_any_solid_surface": {
+                "reference": "absent",
+                "value": "0 (byte)"
+              },
+              "minecraft:seed.plant_at_face": {
+                "reference": "absent",
+                "value": "up (string)"
+              }
+            }
+          },
+          "1.19.20": {
+            "accepted": true,
+            "differs": {
+              "item_properties.allow_off_hand": {
+                "reference": "0 (byte)",
+                "value": "absent"
+              },
+              "item_properties.can_destroy_in_creative": {
+                "reference": "1 (byte)",
+                "value": "absent"
+              },
+              "item_properties.creative_category": {
+                "reference": "4 (int)",
+                "value": "absent"
+              },
+              "item_properties.creative_group": {
+                "reference": " (string)",
+                "value": "absent"
+              },
+              "item_properties.damage": {
+                "reference": "0 (int)",
+                "value": "absent"
+              },
+              "item_properties.enchantable_slot": {
+                "reference": "none (string)",
+                "value": "absent"
+              },
+              "item_properties.enchantable_value": {
+                "reference": "0 (int)",
+                "value": "absent"
+              },
+              "item_properties.foil": {
+                "reference": "0 (byte)",
+                "value": "absent"
+              },
+              "item_properties.frame_count": {
+                "reference": "1 (int)",
+                "value": "absent"
+              },
+              "item_properties.hand_equipped": {
+                "reference": "0 (byte)",
+                "value": "absent"
+              },
+              "item_properties.hidden_in_commands": {
+                "reference": "2 (byte)",
+                "value": "absent"
+              },
+              "item_properties.liquid_clipped": {
+                "reference": "0 (byte)",
+                "value": "absent"
+              },
+              "item_properties.max_stack_size": {
+                "reference": "64 (int)",
+                "value": "absent"
+              },
+              "item_properties.mining_speed": {
+                "reference": "1.0 (float)",
+                "value": "absent"
+              },
+              "item_properties.should_despawn": {
+                "reference": "1 (byte)",
+                "value": "absent"
+              },
+              "item_properties.stacked_by_data": {
+                "reference": "0 (byte)",
+                "value": "absent"
+              },
+              "item_properties.use_animation": {
+                "reference": "0 (int)",
+                "value": "absent"
+              },
+              "item_properties.use_duration": {
+                "reference": "0 (int)",
+                "value": "absent"
+              },
+              "item_tags": {
+                "reference": "[] (list<void>)",
+                "value": "absent"
+              },
+              "minecraft:seed.crop_result": {
+                "reference": "absent",
+                "value": "minecraft:wheat (string)"
+              },
+              "minecraft:seed.plant_at[0]": {
+                "reference": "absent",
+                "value": "minecraft:farmland (string)"
+              },
+              "minecraft:seed.plant_at_any_solid_surface": {
+                "reference": "absent",
+                "value": "0 (byte)"
+              },
+              "minecraft:seed.plant_at_face": {
+                "reference": "absent",
+                "value": "up (string)"
+              }
+            }
+          },
+          "1.19.40": {
+            "accepted": true,
+            "differs": {
+              "item_properties.allow_off_hand": {
+                "reference": "0 (byte)",
+                "value": "absent"
+              },
+              "item_properties.can_destroy_in_creative": {
+                "reference": "1 (byte)",
+                "value": "absent"
+              },
+              "item_properties.creative_category": {
+                "reference": "4 (int)",
+                "value": "absent"
+              },
+              "item_properties.creative_group": {
+                "reference": " (string)",
+                "value": "absent"
+              },
+              "item_properties.damage": {
+                "reference": "0 (int)",
+                "value": "absent"
+              },
+              "item_properties.enchantable_slot": {
+                "reference": "none (string)",
+                "value": "absent"
+              },
+              "item_properties.enchantable_value": {
+                "reference": "0 (int)",
+                "value": "absent"
+              },
+              "item_properties.foil": {
+                "reference": "0 (byte)",
+                "value": "absent"
+              },
+              "item_properties.frame_count": {
+                "reference": "1 (int)",
+                "value": "absent"
+              },
+              "item_properties.hand_equipped": {
+                "reference": "0 (byte)",
+                "value": "absent"
+              },
+              "item_properties.hidden_in_commands": {
+                "reference": "2 (byte)",
+                "value": "absent"
+              },
+              "item_properties.liquid_clipped": {
+                "reference": "0 (byte)",
+                "value": "absent"
+              },
+              "item_properties.max_stack_size": {
+                "reference": "64 (int)",
+                "value": "absent"
+              },
+              "item_properties.mining_speed": {
+                "reference": "1.0 (float)",
+                "value": "absent"
+              },
+              "item_properties.should_despawn": {
+                "reference": "1 (byte)",
+                "value": "absent"
+              },
+              "item_properties.stacked_by_data": {
+                "reference": "0 (byte)",
+                "value": "absent"
+              },
+              "item_properties.use_animation": {
+                "reference": "0 (int)",
+                "value": "absent"
+              },
+              "item_properties.use_duration": {
+                "reference": "0 (int)",
+                "value": "absent"
+              },
+              "item_tags": {
+                "reference": "[] (list<void>)",
+                "value": "absent"
+              },
+              "minecraft:seed.crop_result": {
+                "reference": "absent",
+                "value": "minecraft:wheat (string)"
+              },
+              "minecraft:seed.plant_at[0]": {
+                "reference": "absent",
+                "value": "minecraft:farmland (string)"
+              },
+              "minecraft:seed.plant_at_any_solid_surface": {
+                "reference": "absent",
+                "value": "0 (byte)"
+              },
+              "minecraft:seed.plant_at_face": {
+                "reference": "absent",
+                "value": "up (string)"
+              }
+            }
+          },
+          "1.19.50": {
+            "accepted": true,
+            "differs": {
+              "item_properties.allow_off_hand": {
+                "reference": "0 (byte)",
+                "value": "absent"
+              },
+              "item_properties.can_destroy_in_creative": {
+                "reference": "1 (byte)",
+                "value": "absent"
+              },
+              "item_properties.creative_category": {
+                "reference": "4 (int)",
+                "value": "absent"
+              },
+              "item_properties.creative_group": {
+                "reference": " (string)",
+                "value": "absent"
+              },
+              "item_properties.damage": {
+                "reference": "0 (int)",
+                "value": "absent"
+              },
+              "item_properties.enchantable_slot": {
+                "reference": "none (string)",
+                "value": "absent"
+              },
+              "item_properties.enchantable_value": {
+                "reference": "0 (int)",
+                "value": "absent"
+              },
+              "item_properties.foil": {
+                "reference": "0 (byte)",
+                "value": "absent"
+              },
+              "item_properties.frame_count": {
+                "reference": "1 (int)",
+                "value": "absent"
+              },
+              "item_properties.hand_equipped": {
+                "reference": "0 (byte)",
+                "value": "absent"
+              },
+              "item_properties.hidden_in_commands": {
+                "reference": "2 (byte)",
+                "value": "absent"
+              },
+              "item_properties.liquid_clipped": {
+                "reference": "0 (byte)",
+                "value": "absent"
+              },
+              "item_properties.max_stack_size": {
+                "reference": "64 (int)",
+                "value": "absent"
+              },
+              "item_properties.mining_speed": {
+                "reference": "1.0 (float)",
+                "value": "absent"
+              },
+              "item_properties.should_despawn": {
+                "reference": "1 (byte)",
+                "value": "absent"
+              },
+              "item_properties.stacked_by_data": {
+                "reference": "0 (byte)",
+                "value": "absent"
+              },
+              "item_properties.use_animation": {
+                "reference": "0 (int)",
+                "value": "absent"
+              },
+              "item_properties.use_duration": {
+                "reference": "0 (int)",
+                "value": "absent"
+              },
+              "item_tags": {
+                "reference": "[] (list<void>)",
+                "value": "absent"
+              },
+              "minecraft:seed.crop_result": {
+                "reference": "absent",
+                "value": "minecraft:wheat (string)"
+              },
+              "minecraft:seed.plant_at[0]": {
+                "reference": "absent",
+                "value": "minecraft:farmland (string)"
+              },
+              "minecraft:seed.plant_at_any_solid_surface": {
+                "reference": "absent",
+                "value": "0 (byte)"
+              },
+              "minecraft:seed.plant_at_face": {
+                "reference": "absent",
+                "value": "up (string)"
+              }
+            }
+          },
+          "1.19.60": {
+            "accepted": true,
+            "differs": {
+              "item_properties.allow_off_hand": {
+                "reference": "0 (byte)",
+                "value": "absent"
+              },
+              "item_properties.can_destroy_in_creative": {
+                "reference": "1 (byte)",
+                "value": "absent"
+              },
+              "item_properties.creative_category": {
+                "reference": "4 (int)",
+                "value": "absent"
+              },
+              "item_properties.creative_group": {
+                "reference": " (string)",
+                "value": "absent"
+              },
+              "item_properties.damage": {
+                "reference": "0 (int)",
+                "value": "absent"
+              },
+              "item_properties.enchantable_slot": {
+                "reference": "none (string)",
+                "value": "absent"
+              },
+              "item_properties.enchantable_value": {
+                "reference": "0 (int)",
+                "value": "absent"
+              },
+              "item_properties.foil": {
+                "reference": "0 (byte)",
+                "value": "absent"
+              },
+              "item_properties.frame_count": {
+                "reference": "1 (int)",
+                "value": "absent"
+              },
+              "item_properties.hand_equipped": {
+                "reference": "0 (byte)",
+                "value": "absent"
+              },
+              "item_properties.hidden_in_commands": {
+                "reference": "2 (byte)",
+                "value": "absent"
+              },
+              "item_properties.liquid_clipped": {
+                "reference": "0 (byte)",
+                "value": "absent"
+              },
+              "item_properties.max_stack_size": {
+                "reference": "64 (int)",
+                "value": "absent"
+              },
+              "item_properties.mining_speed": {
+                "reference": "1.0 (float)",
+                "value": "absent"
+              },
+              "item_properties.should_despawn": {
+                "reference": "1 (byte)",
+                "value": "absent"
+              },
+              "item_properties.stacked_by_data": {
+                "reference": "0 (byte)",
+                "value": "absent"
+              },
+              "item_properties.use_animation": {
+                "reference": "0 (int)",
+                "value": "absent"
+              },
+              "item_properties.use_duration": {
+                "reference": "0 (int)",
+                "value": "absent"
+              },
+              "item_tags": {
+                "reference": "[] (list<void>)",
+                "value": "absent"
+              },
+              "minecraft:seed.crop_result": {
+                "reference": "absent",
+                "value": "minecraft:wheat (string)"
+              },
+              "minecraft:seed.plant_at[0]": {
+                "reference": "absent",
+                "value": "minecraft:farmland (string)"
+              },
+              "minecraft:seed.plant_at_any_solid_surface": {
+                "reference": "absent",
+                "value": "0 (byte)"
+              },
+              "minecraft:seed.plant_at_face": {
+                "reference": "absent",
+                "value": "up (string)"
+              }
+            }
+          },
+          "1.19.80": {
+            "accepted": true,
+            "differs": {
+              "item_properties.allow_off_hand": {
+                "reference": "0 (byte)",
+                "value": "absent"
+              },
+              "item_properties.can_destroy_in_creative": {
+                "reference": "1 (byte)",
+                "value": "absent"
+              },
+              "item_properties.creative_category": {
+                "reference": "4 (int)",
+                "value": "absent"
+              },
+              "item_properties.creative_group": {
+                "reference": " (string)",
+                "value": "absent"
+              },
+              "item_properties.damage": {
+                "reference": "0 (int)",
+                "value": "absent"
+              },
+              "item_properties.enchantable_slot": {
+                "reference": "none (string)",
+                "value": "absent"
+              },
+              "item_properties.enchantable_value": {
+                "reference": "0 (int)",
+                "value": "absent"
+              },
+              "item_properties.foil": {
+                "reference": "0 (byte)",
+                "value": "absent"
+              },
+              "item_properties.frame_count": {
+                "reference": "1 (int)",
+                "value": "absent"
+              },
+              "item_properties.hand_equipped": {
+                "reference": "0 (byte)",
+                "value": "absent"
+              },
+              "item_properties.hidden_in_commands": {
+                "reference": "2 (byte)",
+                "value": "absent"
+              },
+              "item_properties.liquid_clipped": {
+                "reference": "0 (byte)",
+                "value": "absent"
+              },
+              "item_properties.max_stack_size": {
+                "reference": "64 (int)",
+                "value": "absent"
+              },
+              "item_properties.mining_speed": {
+                "reference": "1.0 (float)",
+                "value": "absent"
+              },
+              "item_properties.should_despawn": {
+                "reference": "1 (byte)",
+                "value": "absent"
+              },
+              "item_properties.stacked_by_data": {
+                "reference": "0 (byte)",
+                "value": "absent"
+              },
+              "item_properties.use_animation": {
+                "reference": "0 (int)",
+                "value": "absent"
+              },
+              "item_properties.use_duration": {
+                "reference": "0 (int)",
+                "value": "absent"
+              },
+              "item_tags": {
+                "reference": "[] (list<void>)",
+                "value": "absent"
+              },
+              "minecraft:seed.crop_result": {
+                "reference": "absent",
+                "value": "minecraft:wheat (string)"
+              },
+              "minecraft:seed.plant_at[0]": {
+                "reference": "absent",
+                "value": "minecraft:farmland (string)"
+              },
+              "minecraft:seed.plant_at_any_solid_surface": {
+                "reference": "absent",
+                "value": "0 (byte)"
+              },
+              "minecraft:seed.plant_at_face": {
+                "reference": "absent",
+                "value": "up (string)"
+              }
+            }
+          },
+          "1.20.0": {
+            "accepted": true,
+            "differs": {
+              "item_properties.allow_off_hand": {
+                "reference": "0 (byte)",
+                "value": "absent"
+              },
+              "item_properties.can_destroy_in_creative": {
+                "reference": "1 (byte)",
+                "value": "absent"
+              },
+              "item_properties.creative_category": {
+                "reference": "4 (int)",
+                "value": "absent"
+              },
+              "item_properties.creative_group": {
+                "reference": " (string)",
+                "value": "absent"
+              },
+              "item_properties.damage": {
+                "reference": "0 (int)",
+                "value": "absent"
+              },
+              "item_properties.enchantable_slot": {
+                "reference": "none (string)",
+                "value": "absent"
+              },
+              "item_properties.enchantable_value": {
+                "reference": "0 (int)",
+                "value": "absent"
+              },
+              "item_properties.foil": {
+                "reference": "0 (byte)",
+                "value": "absent"
+              },
+              "item_properties.frame_count": {
+                "reference": "1 (int)",
+                "value": "absent"
+              },
+              "item_properties.hand_equipped": {
+                "reference": "0 (byte)",
+                "value": "absent"
+              },
+              "item_properties.hidden_in_commands": {
+                "reference": "2 (byte)",
+                "value": "absent"
+              },
+              "item_properties.liquid_clipped": {
+                "reference": "0 (byte)",
+                "value": "absent"
+              },
+              "item_properties.max_stack_size": {
+                "reference": "64 (int)",
+                "value": "absent"
+              },
+              "item_properties.mining_speed": {
+                "reference": "1.0 (float)",
+                "value": "absent"
+              },
+              "item_properties.should_despawn": {
+                "reference": "1 (byte)",
+                "value": "absent"
+              },
+              "item_properties.stacked_by_data": {
+                "reference": "0 (byte)",
+                "value": "absent"
+              },
+              "item_properties.use_animation": {
+                "reference": "0 (int)",
+                "value": "absent"
+              },
+              "item_properties.use_duration": {
+                "reference": "0 (int)",
+                "value": "absent"
+              },
+              "item_tags": {
+                "reference": "[] (list<void>)",
+                "value": "absent"
+              },
+              "minecraft:seed.crop_result": {
+                "reference": "absent",
+                "value": "minecraft:wheat (string)"
+              },
+              "minecraft:seed.plant_at[0]": {
+                "reference": "absent",
+                "value": "minecraft:farmland (string)"
+              },
+              "minecraft:seed.plant_at_any_solid_surface": {
+                "reference": "absent",
+                "value": "0 (byte)"
+              },
+              "minecraft:seed.plant_at_face": {
+                "reference": "absent",
+                "value": "up (string)"
+              }
+            }
+          },
+          "1.20.10": {
+            "accepted": true,
+            "differs": {
+              "item_properties.allow_off_hand": {
+                "reference": "0 (byte)",
+                "value": "absent"
+              },
+              "item_properties.can_destroy_in_creative": {
+                "reference": "1 (byte)",
+                "value": "absent"
+              },
+              "item_properties.creative_category": {
+                "reference": "4 (int)",
+                "value": "absent"
+              },
+              "item_properties.creative_group": {
+                "reference": " (string)",
+                "value": "absent"
+              },
+              "item_properties.damage": {
+                "reference": "0 (int)",
+                "value": "absent"
+              },
+              "item_properties.enchantable_slot": {
+                "reference": "none (string)",
+                "value": "absent"
+              },
+              "item_properties.enchantable_value": {
+                "reference": "0 (int)",
+                "value": "absent"
+              },
+              "item_properties.foil": {
+                "reference": "0 (byte)",
+                "value": "absent"
+              },
+              "item_properties.frame_count": {
+                "reference": "1 (int)",
+                "value": "absent"
+              },
+              "item_properties.hand_equipped": {
+                "reference": "0 (byte)",
+                "value": "absent"
+              },
+              "item_properties.hidden_in_commands": {
+                "reference": "2 (byte)",
+                "value": "absent"
+              },
+              "item_properties.liquid_clipped": {
+                "reference": "0 (byte)",
+                "value": "absent"
+              },
+              "item_properties.max_stack_size": {
+                "reference": "64 (int)",
+                "value": "absent"
+              },
+              "item_properties.mining_speed": {
+                "reference": "1.0 (float)",
+                "value": "absent"
+              },
+              "item_properties.should_despawn": {
+                "reference": "1 (byte)",
+                "value": "absent"
+              },
+              "item_properties.stacked_by_data": {
+                "reference": "0 (byte)",
+                "value": "absent"
+              },
+              "item_properties.use_animation": {
+                "reference": "0 (int)",
+                "value": "absent"
+              },
+              "item_properties.use_duration": {
+                "reference": "0 (int)",
+                "value": "absent"
+              },
+              "item_tags": {
+                "reference": "[] (list<void>)",
+                "value": "absent"
+              },
+              "minecraft:seed.crop_result": {
+                "reference": "absent",
+                "value": "minecraft:wheat (string)"
+              },
+              "minecraft:seed.plant_at[0]": {
+                "reference": "absent",
+                "value": "minecraft:farmland (string)"
+              },
+              "minecraft:seed.plant_at_any_solid_surface": {
+                "reference": "absent",
+                "value": "0 (byte)"
+              },
+              "minecraft:seed.plant_at_face": {
+                "reference": "absent",
+                "value": "up (string)"
+              }
+            }
+          },
+          "1.20.20": {
+            "accepted": true,
+            "differs": {
+              "item_properties.allow_off_hand": {
+                "reference": "0 (byte)",
+                "value": "absent"
+              },
+              "item_properties.can_destroy_in_creative": {
+                "reference": "1 (byte)",
+                "value": "absent"
+              },
+              "item_properties.creative_category": {
+                "reference": "4 (int)",
+                "value": "absent"
+              },
+              "item_properties.creative_group": {
+                "reference": " (string)",
+                "value": "absent"
+              },
+              "item_properties.damage": {
+                "reference": "0 (int)",
+                "value": "absent"
+              },
+              "item_properties.enchantable_slot": {
+                "reference": "none (string)",
+                "value": "absent"
+              },
+              "item_properties.enchantable_value": {
+                "reference": "0 (int)",
+                "value": "absent"
+              },
+              "item_properties.foil": {
+                "reference": "0 (byte)",
+                "value": "absent"
+              },
+              "item_properties.frame_count": {
+                "reference": "1 (int)",
+                "value": "absent"
+              },
+              "item_properties.hand_equipped": {
+                "reference": "0 (byte)",
+                "value": "absent"
+              },
+              "item_properties.hidden_in_commands": {
+                "reference": "2 (byte)",
+                "value": "absent"
+              },
+              "item_properties.liquid_clipped": {
+                "reference": "0 (byte)",
+                "value": "absent"
+              },
+              "item_properties.max_stack_size": {
+                "reference": "64 (int)",
+                "value": "absent"
+              },
+              "item_properties.mining_speed": {
+                "reference": "1.0 (float)",
+                "value": "absent"
+              },
+              "item_properties.should_despawn": {
+                "reference": "1 (byte)",
+                "value": "absent"
+              },
+              "item_properties.stacked_by_data": {
+                "reference": "0 (byte)",
+                "value": "absent"
+              },
+              "item_properties.use_animation": {
+                "reference": "0 (int)",
+                "value": "absent"
+              },
+              "item_properties.use_duration": {
+                "reference": "0 (int)",
+                "value": "absent"
+              },
+              "item_tags": {
+                "reference": "[] (list<void>)",
+                "value": "absent"
+              },
+              "minecraft:seed.crop_result": {
+                "reference": "absent",
+                "value": "minecraft:wheat (string)"
+              },
+              "minecraft:seed.plant_at[0]": {
+                "reference": "absent",
+                "value": "minecraft:farmland (string)"
+              },
+              "minecraft:seed.plant_at_any_solid_surface": {
+                "reference": "absent",
+                "value": "0 (byte)"
+              },
+              "minecraft:seed.plant_at_face": {
+                "reference": "absent",
+                "value": "up (string)"
+              }
+            }
+          },
+          "1.20.30": {
+            "accepted": true,
+            "differs": {
+              "item_properties.allow_off_hand": {
+                "reference": "0 (byte)",
+                "value": "absent"
+              },
+              "item_properties.can_destroy_in_creative": {
+                "reference": "1 (byte)",
+                "value": "absent"
+              },
+              "item_properties.creative_category": {
+                "reference": "4 (int)",
+                "value": "absent"
+              },
+              "item_properties.creative_group": {
+                "reference": " (string)",
+                "value": "absent"
+              },
+              "item_properties.damage": {
+                "reference": "0 (int)",
+                "value": "absent"
+              },
+              "item_properties.enchantable_slot": {
+                "reference": "none (string)",
+                "value": "absent"
+              },
+              "item_properties.enchantable_value": {
+                "reference": "0 (int)",
+                "value": "absent"
+              },
+              "item_properties.foil": {
+                "reference": "0 (byte)",
+                "value": "absent"
+              },
+              "item_properties.frame_count": {
+                "reference": "1 (int)",
+                "value": "absent"
+              },
+              "item_properties.hand_equipped": {
+                "reference": "0 (byte)",
+                "value": "absent"
+              },
+              "item_properties.hidden_in_commands": {
+                "reference": "2 (byte)",
+                "value": "absent"
+              },
+              "item_properties.liquid_clipped": {
+                "reference": "0 (byte)",
+                "value": "absent"
+              },
+              "item_properties.max_stack_size": {
+                "reference": "64 (int)",
+                "value": "absent"
+              },
+              "item_properties.mining_speed": {
+                "reference": "1.0 (float)",
+                "value": "absent"
+              },
+              "item_properties.should_despawn": {
+                "reference": "1 (byte)",
+                "value": "absent"
+              },
+              "item_properties.stacked_by_data": {
+                "reference": "0 (byte)",
+                "value": "absent"
+              },
+              "item_properties.use_animation": {
+                "reference": "0 (int)",
+                "value": "absent"
+              },
+              "item_properties.use_duration": {
+                "reference": "0 (int)",
+                "value": "absent"
+              },
+              "item_tags": {
+                "reference": "[] (list<void>)",
+                "value": "absent"
+              },
+              "minecraft:seed.crop_result": {
+                "reference": "absent",
+                "value": "minecraft:wheat (string)"
+              },
+              "minecraft:seed.plant_at[0]": {
+                "reference": "absent",
+                "value": "minecraft:farmland (string)"
+              },
+              "minecraft:seed.plant_at_any_solid_surface": {
+                "reference": "absent",
+                "value": "0 (byte)"
+              },
+              "minecraft:seed.plant_at_face": {
+                "reference": "absent",
+                "value": "up (string)"
+              }
+            }
+          },
+          "1.20.40": {
+            "accepted": true,
+            "differs": {
+              "item_properties.allow_off_hand": {
+                "reference": "0 (byte)",
+                "value": "absent"
+              },
+              "item_properties.can_destroy_in_creative": {
+                "reference": "1 (byte)",
+                "value": "absent"
+              },
+              "item_properties.creative_category": {
+                "reference": "4 (int)",
+                "value": "absent"
+              },
+              "item_properties.creative_group": {
+                "reference": " (string)",
+                "value": "absent"
+              },
+              "item_properties.damage": {
+                "reference": "0 (int)",
+                "value": "absent"
+              },
+              "item_properties.enchantable_slot": {
+                "reference": "none (string)",
+                "value": "absent"
+              },
+              "item_properties.enchantable_value": {
+                "reference": "0 (int)",
+                "value": "absent"
+              },
+              "item_properties.foil": {
+                "reference": "0 (byte)",
+                "value": "absent"
+              },
+              "item_properties.frame_count": {
+                "reference": "1 (int)",
+                "value": "absent"
+              },
+              "item_properties.hand_equipped": {
+                "reference": "0 (byte)",
+                "value": "absent"
+              },
+              "item_properties.hidden_in_commands": {
+                "reference": "2 (byte)",
+                "value": "absent"
+              },
+              "item_properties.liquid_clipped": {
+                "reference": "0 (byte)",
+                "value": "absent"
+              },
+              "item_properties.max_stack_size": {
+                "reference": "64 (int)",
+                "value": "absent"
+              },
+              "item_properties.mining_speed": {
+                "reference": "1.0 (float)",
+                "value": "absent"
+              },
+              "item_properties.should_despawn": {
+                "reference": "1 (byte)",
+                "value": "absent"
+              },
+              "item_properties.stacked_by_data": {
+                "reference": "0 (byte)",
+                "value": "absent"
+              },
+              "item_properties.use_animation": {
+                "reference": "0 (int)",
+                "value": "absent"
+              },
+              "item_properties.use_duration": {
+                "reference": "0 (int)",
+                "value": "absent"
+              },
+              "item_tags": {
+                "reference": "[] (list<void>)",
+                "value": "absent"
+              },
+              "minecraft:seed.crop_result": {
+                "reference": "absent",
+                "value": "minecraft:wheat (string)"
+              },
+              "minecraft:seed.plant_at[0]": {
+                "reference": "absent",
+                "value": "minecraft:farmland (string)"
+              },
+              "minecraft:seed.plant_at_any_solid_surface": {
+                "reference": "absent",
+                "value": "0 (byte)"
+              },
+              "minecraft:seed.plant_at_face": {
+                "reference": "absent",
+                "value": "up (string)"
+              }
+            }
+          },
+          "1.20.50": {
+            "accepted": true,
+            "differs": {
+              "item_properties.allow_off_hand": {
+                "reference": "0 (byte)",
+                "value": "absent"
+              },
+              "item_properties.can_destroy_in_creative": {
+                "reference": "1 (byte)",
+                "value": "absent"
+              },
+              "item_properties.creative_category": {
+                "reference": "4 (int)",
+                "value": "absent"
+              },
+              "item_properties.creative_group": {
+                "reference": " (string)",
+                "value": "absent"
+              },
+              "item_properties.damage": {
+                "reference": "0 (int)",
+                "value": "absent"
+              },
+              "item_properties.enchantable_slot": {
+                "reference": "none (string)",
+                "value": "absent"
+              },
+              "item_properties.enchantable_value": {
+                "reference": "0 (int)",
+                "value": "absent"
+              },
+              "item_properties.foil": {
+                "reference": "0 (byte)",
+                "value": "absent"
+              },
+              "item_properties.frame_count": {
+                "reference": "1 (int)",
+                "value": "absent"
+              },
+              "item_properties.hand_equipped": {
+                "reference": "0 (byte)",
+                "value": "absent"
+              },
+              "item_properties.hidden_in_commands": {
+                "reference": "2 (byte)",
+                "value": "absent"
+              },
+              "item_properties.liquid_clipped": {
+                "reference": "0 (byte)",
+                "value": "absent"
+              },
+              "item_properties.max_stack_size": {
+                "reference": "64 (int)",
+                "value": "absent"
+              },
+              "item_properties.mining_speed": {
+                "reference": "1.0 (float)",
+                "value": "absent"
+              },
+              "item_properties.should_despawn": {
+                "reference": "1 (byte)",
+                "value": "absent"
+              },
+              "item_properties.stacked_by_data": {
+                "reference": "0 (byte)",
+                "value": "absent"
+              },
+              "item_properties.use_animation": {
+                "reference": "0 (int)",
+                "value": "absent"
+              },
+              "item_properties.use_duration": {
+                "reference": "0 (int)",
+                "value": "absent"
+              },
+              "item_tags": {
+                "reference": "[] (list<void>)",
+                "value": "absent"
+              },
+              "minecraft:seed.crop_result": {
+                "reference": "absent",
+                "value": "minecraft:wheat (string)"
+              },
+              "minecraft:seed.plant_at[0]": {
+                "reference": "absent",
+                "value": "minecraft:farmland (string)"
+              },
+              "minecraft:seed.plant_at_any_solid_surface": {
+                "reference": "absent",
+                "value": "0 (byte)"
+              },
+              "minecraft:seed.plant_at_face": {
+                "reference": "absent",
+                "value": "up (string)"
+              }
+            }
+          },
+          "1.20.60": {
+            "accepted": true,
+            "differs": {
+              "item_properties.allow_off_hand": {
+                "reference": "0 (byte)",
+                "value": "absent"
+              },
+              "item_properties.can_destroy_in_creative": {
+                "reference": "1 (byte)",
+                "value": "absent"
+              },
+              "item_properties.creative_category": {
+                "reference": "4 (int)",
+                "value": "absent"
+              },
+              "item_properties.creative_group": {
+                "reference": " (string)",
+                "value": "absent"
+              },
+              "item_properties.damage": {
+                "reference": "0 (int)",
+                "value": "absent"
+              },
+              "item_properties.enchantable_slot": {
+                "reference": "none (string)",
+                "value": "absent"
+              },
+              "item_properties.enchantable_value": {
+                "reference": "0 (int)",
+                "value": "absent"
+              },
+              "item_properties.foil": {
+                "reference": "0 (byte)",
+                "value": "absent"
+              },
+              "item_properties.frame_count": {
+                "reference": "1 (int)",
+                "value": "absent"
+              },
+              "item_properties.hand_equipped": {
+                "reference": "0 (byte)",
+                "value": "absent"
+              },
+              "item_properties.hidden_in_commands": {
+                "reference": "2 (byte)",
+                "value": "absent"
+              },
+              "item_properties.liquid_clipped": {
+                "reference": "0 (byte)",
+                "value": "absent"
+              },
+              "item_properties.max_stack_size": {
+                "reference": "64 (int)",
+                "value": "absent"
+              },
+              "item_properties.mining_speed": {
+                "reference": "1.0 (float)",
+                "value": "absent"
+              },
+              "item_properties.should_despawn": {
+                "reference": "1 (byte)",
+                "value": "absent"
+              },
+              "item_properties.stacked_by_data": {
+                "reference": "0 (byte)",
+                "value": "absent"
+              },
+              "item_properties.use_animation": {
+                "reference": "0 (int)",
+                "value": "absent"
+              },
+              "item_properties.use_duration": {
+                "reference": "0 (int)",
+                "value": "absent"
+              },
+              "item_tags": {
+                "reference": "[] (list<void>)",
+                "value": "absent"
+              },
+              "minecraft:seed.crop_result": {
+                "reference": "absent",
+                "value": "minecraft:wheat (string)"
+              },
+              "minecraft:seed.plant_at[0]": {
+                "reference": "absent",
+                "value": "minecraft:farmland (string)"
+              },
+              "minecraft:seed.plant_at_any_solid_surface": {
+                "reference": "absent",
+                "value": "0 (byte)"
+              },
+              "minecraft:seed.plant_at_face": {
+                "reference": "absent",
+                "value": "up (string)"
+              }
+            }
+          },
+          "1.20.80": {
+            "accepted": true,
+            "differs": {
+              "item_properties.allow_off_hand": {
+                "reference": "0 (byte)",
+                "value": "absent"
+              },
+              "item_properties.can_destroy_in_creative": {
+                "reference": "1 (byte)",
+                "value": "absent"
+              },
+              "item_properties.creative_category": {
+                "reference": "4 (int)",
+                "value": "absent"
+              },
+              "item_properties.creative_group": {
+                "reference": " (string)",
+                "value": "absent"
+              },
+              "item_properties.damage": {
+                "reference": "0 (int)",
+                "value": "absent"
+              },
+              "item_properties.enchantable_slot": {
+                "reference": "none (string)",
+                "value": "absent"
+              },
+              "item_properties.enchantable_value": {
+                "reference": "0 (int)",
+                "value": "absent"
+              },
+              "item_properties.foil": {
+                "reference": "0 (byte)",
+                "value": "absent"
+              },
+              "item_properties.frame_count": {
+                "reference": "1 (int)",
+                "value": "absent"
+              },
+              "item_properties.hand_equipped": {
+                "reference": "0 (byte)",
+                "value": "absent"
+              },
+              "item_properties.hidden_in_commands": {
+                "reference": "2 (byte)",
+                "value": "absent"
+              },
+              "item_properties.liquid_clipped": {
+                "reference": "0 (byte)",
+                "value": "absent"
+              },
+              "item_properties.max_stack_size": {
+                "reference": "64 (int)",
+                "value": "absent"
+              },
+              "item_properties.mining_speed": {
+                "reference": "1.0 (float)",
+                "value": "absent"
+              },
+              "item_properties.should_despawn": {
+                "reference": "1 (byte)",
+                "value": "absent"
+              },
+              "item_properties.stacked_by_data": {
+                "reference": "0 (byte)",
+                "value": "absent"
+              },
+              "item_properties.use_animation": {
+                "reference": "0 (int)",
+                "value": "absent"
+              },
+              "item_properties.use_duration": {
+                "reference": "0 (int)",
+                "value": "absent"
+              },
+              "item_tags": {
+                "reference": "[] (list<void>)",
+                "value": "absent"
+              },
+              "minecraft:seed.crop_result": {
+                "reference": "absent",
+                "value": "minecraft:wheat (string)"
+              },
+              "minecraft:seed.plant_at[0]": {
+                "reference": "absent",
+                "value": "minecraft:farmland (string)"
+              },
+              "minecraft:seed.plant_at_any_solid_surface": {
+                "reference": "absent",
+                "value": "0 (byte)"
+              },
+              "minecraft:seed.plant_at_face": {
+                "reference": "absent",
+                "value": "up (string)"
+              }
+            }
+          },
+          "1.21.0": {
+            "accepted": true,
+            "differs": {
+              "item_properties.allow_off_hand": {
+                "reference": "0 (byte)",
+                "value": "absent"
+              },
+              "item_properties.can_destroy_in_creative": {
+                "reference": "1 (byte)",
+                "value": "absent"
+              },
+              "item_properties.creative_category": {
+                "reference": "4 (int)",
+                "value": "absent"
+              },
+              "item_properties.creative_group": {
+                "reference": " (string)",
+                "value": "absent"
+              },
+              "item_properties.damage": {
+                "reference": "0 (int)",
+                "value": "absent"
+              },
+              "item_properties.enchantable_slot": {
+                "reference": "none (string)",
+                "value": "absent"
+              },
+              "item_properties.enchantable_value": {
+                "reference": "0 (int)",
+                "value": "absent"
+              },
+              "item_properties.foil": {
+                "reference": "0 (byte)",
+                "value": "absent"
+              },
+              "item_properties.frame_count": {
+                "reference": "1 (int)",
+                "value": "absent"
+              },
+              "item_properties.hand_equipped": {
+                "reference": "0 (byte)",
+                "value": "absent"
+              },
+              "item_properties.hidden_in_commands": {
+                "reference": "2 (byte)",
+                "value": "absent"
+              },
+              "item_properties.liquid_clipped": {
+                "reference": "0 (byte)",
+                "value": "absent"
+              },
+              "item_properties.max_stack_size": {
+                "reference": "64 (int)",
+                "value": "absent"
+              },
+              "item_properties.mining_speed": {
+                "reference": "1.0 (float)",
+                "value": "absent"
+              },
+              "item_properties.should_despawn": {
+                "reference": "1 (byte)",
+                "value": "absent"
+              },
+              "item_properties.stacked_by_data": {
+                "reference": "0 (byte)",
+                "value": "absent"
+              },
+              "item_properties.use_animation": {
+                "reference": "0 (int)",
+                "value": "absent"
+              },
+              "item_properties.use_duration": {
+                "reference": "0 (int)",
+                "value": "absent"
+              },
+              "item_tags": {
+                "reference": "[] (list<void>)",
+                "value": "absent"
+              },
+              "minecraft:seed.crop_result": {
+                "reference": "absent",
+                "value": "minecraft:wheat (string)"
+              },
+              "minecraft:seed.plant_at[0]": {
+                "reference": "absent",
+                "value": "minecraft:farmland (string)"
+              },
+              "minecraft:seed.plant_at_any_solid_surface": {
+                "reference": "absent",
+                "value": "0 (byte)"
+              },
+              "minecraft:seed.plant_at_face": {
+                "reference": "absent",
+                "value": "up (string)"
+              }
+            }
+          },
+          "1.21.10": {
+            "accepted": true,
+            "differs": {
+              "item_properties.allow_off_hand": {
+                "reference": "0 (byte)",
+                "value": "absent"
+              },
+              "item_properties.can_destroy_in_creative": {
+                "reference": "1 (byte)",
+                "value": "absent"
+              },
+              "item_properties.creative_category": {
+                "reference": "4 (int)",
+                "value": "absent"
+              },
+              "item_properties.creative_group": {
+                "reference": " (string)",
+                "value": "absent"
+              },
+              "item_properties.damage": {
+                "reference": "0 (int)",
+                "value": "absent"
+              },
+              "item_properties.enchantable_slot": {
+                "reference": "none (string)",
+                "value": "absent"
+              },
+              "item_properties.enchantable_value": {
+                "reference": "0 (int)",
+                "value": "absent"
+              },
+              "item_properties.foil": {
+                "reference": "0 (byte)",
+                "value": "absent"
+              },
+              "item_properties.frame_count": {
+                "reference": "1 (int)",
+                "value": "absent"
+              },
+              "item_properties.hand_equipped": {
+                "reference": "0 (byte)",
+                "value": "absent"
+              },
+              "item_properties.hidden_in_commands": {
+                "reference": "2 (byte)",
+                "value": "absent"
+              },
+              "item_properties.liquid_clipped": {
+                "reference": "0 (byte)",
+                "value": "absent"
+              },
+              "item_properties.max_stack_size": {
+                "reference": "64 (int)",
+                "value": "absent"
+              },
+              "item_properties.mining_speed": {
+                "reference": "1.0 (float)",
+                "value": "absent"
+              },
+              "item_properties.should_despawn": {
+                "reference": "1 (byte)",
+                "value": "absent"
+              },
+              "item_properties.stacked_by_data": {
+                "reference": "0 (byte)",
+                "value": "absent"
+              },
+              "item_properties.use_animation": {
+                "reference": "0 (int)",
+                "value": "absent"
+              },
+              "item_properties.use_duration": {
+                "reference": "0 (int)",
+                "value": "absent"
+              },
+              "item_tags": {
+                "reference": "[] (list<void>)",
+                "value": "absent"
+              },
+              "minecraft:seed.crop_result": {
+                "reference": "absent",
+                "value": "minecraft:wheat (string)"
+              },
+              "minecraft:seed.plant_at[0]": {
+                "reference": "absent",
+                "value": "minecraft:farmland (string)"
+              },
+              "minecraft:seed.plant_at_any_solid_surface": {
+                "reference": "absent",
+                "value": "0 (byte)"
+              },
+              "minecraft:seed.plant_at_face": {
+                "reference": "absent",
+                "value": "up (string)"
+              }
+            }
+          },
+          "1.21.20": {
+            "accepted": true,
+            "differs": {
+              "item_properties.allow_off_hand": {
+                "reference": "0 (byte)",
+                "value": "absent"
+              },
+              "item_properties.can_destroy_in_creative": {
+                "reference": "1 (byte)",
+                "value": "absent"
+              },
+              "item_properties.creative_category": {
+                "reference": "4 (int)",
+                "value": "absent"
+              },
+              "item_properties.creative_group": {
+                "reference": " (string)",
+                "value": "absent"
+              },
+              "item_properties.damage": {
+                "reference": "0 (int)",
+                "value": "absent"
+              },
+              "item_properties.enchantable_slot": {
+                "reference": "none (string)",
+                "value": "absent"
+              },
+              "item_properties.enchantable_value": {
+                "reference": "0 (int)",
+                "value": "absent"
+              },
+              "item_properties.foil": {
+                "reference": "0 (byte)",
+                "value": "absent"
+              },
+              "item_properties.frame_count": {
+                "reference": "1 (int)",
+                "value": "absent"
+              },
+              "item_properties.hand_equipped": {
+                "reference": "0 (byte)",
+                "value": "absent"
+              },
+              "item_properties.hidden_in_commands": {
+                "reference": "2 (byte)",
+                "value": "absent"
+              },
+              "item_properties.liquid_clipped": {
+                "reference": "0 (byte)",
+                "value": "absent"
+              },
+              "item_properties.max_stack_size": {
+                "reference": "64 (int)",
+                "value": "absent"
+              },
+              "item_properties.mining_speed": {
+                "reference": "1.0 (float)",
+                "value": "absent"
+              },
+              "item_properties.should_despawn": {
+                "reference": "1 (byte)",
+                "value": "absent"
+              },
+              "item_properties.stacked_by_data": {
+                "reference": "0 (byte)",
+                "value": "absent"
+              },
+              "item_properties.use_animation": {
+                "reference": "0 (int)",
+                "value": "absent"
+              },
+              "item_properties.use_duration": {
+                "reference": "0 (int)",
+                "value": "absent"
+              },
+              "item_tags": {
+                "reference": "[] (list<void>)",
+                "value": "absent"
+              },
+              "minecraft:seed.crop_result": {
+                "reference": "absent",
+                "value": "minecraft:wheat (string)"
+              },
+              "minecraft:seed.plant_at[0]": {
+                "reference": "absent",
+                "value": "minecraft:farmland (string)"
+              },
+              "minecraft:seed.plant_at_any_solid_surface": {
+                "reference": "absent",
+                "value": "0 (byte)"
+              },
+              "minecraft:seed.plant_at_face": {
+                "reference": "absent",
+                "value": "up (string)"
+              }
+            }
+          },
+          "1.21.30": {
+            "accepted": true,
+            "differs": {
+              "item_properties.allow_off_hand": {
+                "reference": "0 (byte)",
+                "value": "absent"
+              },
+              "item_properties.can_destroy_in_creative": {
+                "reference": "1 (byte)",
+                "value": "absent"
+              },
+              "item_properties.creative_category": {
+                "reference": "4 (int)",
+                "value": "absent"
+              },
+              "item_properties.creative_group": {
+                "reference": " (string)",
+                "value": "absent"
+              },
+              "item_properties.damage": {
+                "reference": "0 (int)",
+                "value": "absent"
+              },
+              "item_properties.enchantable_slot": {
+                "reference": "none (string)",
+                "value": "absent"
+              },
+              "item_properties.enchantable_value": {
+                "reference": "0 (int)",
+                "value": "absent"
+              },
+              "item_properties.foil": {
+                "reference": "0 (byte)",
+                "value": "absent"
+              },
+              "item_properties.frame_count": {
+                "reference": "1 (int)",
+                "value": "absent"
+              },
+              "item_properties.hand_equipped": {
+                "reference": "0 (byte)",
+                "value": "absent"
+              },
+              "item_properties.hidden_in_commands": {
+                "reference": "2 (byte)",
+                "value": "absent"
+              },
+              "item_properties.liquid_clipped": {
+                "reference": "0 (byte)",
+                "value": "absent"
+              },
+              "item_properties.max_stack_size": {
+                "reference": "64 (int)",
+                "value": "absent"
+              },
+              "item_properties.mining_speed": {
+                "reference": "1.0 (float)",
+                "value": "absent"
+              },
+              "item_properties.should_despawn": {
+                "reference": "1 (byte)",
+                "value": "absent"
+              },
+              "item_properties.stacked_by_data": {
+                "reference": "0 (byte)",
+                "value": "absent"
+              },
+              "item_properties.use_animation": {
+                "reference": "0 (int)",
+                "value": "absent"
+              },
+              "item_properties.use_duration": {
+                "reference": "0 (int)",
+                "value": "absent"
+              },
+              "item_tags": {
+                "reference": "[] (list<void>)",
+                "value": "absent"
+              },
+              "minecraft:seed.crop_result": {
+                "reference": "absent",
+                "value": "minecraft:wheat (string)"
+              },
+              "minecraft:seed.plant_at[0]": {
+                "reference": "absent",
+                "value": "minecraft:farmland (string)"
+              },
+              "minecraft:seed.plant_at_any_solid_surface": {
+                "reference": "absent",
+                "value": "0 (byte)"
+              },
+              "minecraft:seed.plant_at_face": {
+                "reference": "absent",
+                "value": "up (string)"
+              }
+            }
+          },
+          "1.21.40": {
+            "accepted": true,
+            "differs": {
+              "item_properties.allow_off_hand": {
+                "reference": "0 (byte)",
+                "value": "absent"
+              },
+              "item_properties.can_destroy_in_creative": {
+                "reference": "1 (byte)",
+                "value": "absent"
+              },
+              "item_properties.creative_category": {
+                "reference": "4 (int)",
+                "value": "absent"
+              },
+              "item_properties.creative_group": {
+                "reference": " (string)",
+                "value": "absent"
+              },
+              "item_properties.damage": {
+                "reference": "0 (int)",
+                "value": "absent"
+              },
+              "item_properties.enchantable_slot": {
+                "reference": "none (string)",
+                "value": "absent"
+              },
+              "item_properties.enchantable_value": {
+                "reference": "0 (int)",
+                "value": "absent"
+              },
+              "item_properties.foil": {
+                "reference": "0 (byte)",
+                "value": "absent"
+              },
+              "item_properties.frame_count": {
+                "reference": "1 (int)",
+                "value": "absent"
+              },
+              "item_properties.hand_equipped": {
+                "reference": "0 (byte)",
+                "value": "absent"
+              },
+              "item_properties.hidden_in_commands": {
+                "reference": "2 (byte)",
+                "value": "absent"
+              },
+              "item_properties.liquid_clipped": {
+                "reference": "0 (byte)",
+                "value": "absent"
+              },
+              "item_properties.max_stack_size": {
+                "reference": "64 (int)",
+                "value": "absent"
+              },
+              "item_properties.mining_speed": {
+                "reference": "1.0 (float)",
+                "value": "absent"
+              },
+              "item_properties.should_despawn": {
+                "reference": "1 (byte)",
+                "value": "absent"
+              },
+              "item_properties.stacked_by_data": {
+                "reference": "0 (byte)",
+                "value": "absent"
+              },
+              "item_properties.use_animation": {
+                "reference": "0 (int)",
+                "value": "absent"
+              },
+              "item_properties.use_duration": {
+                "reference": "0 (int)",
+                "value": "absent"
+              },
+              "item_tags": {
+                "reference": "[] (list<void>)",
+                "value": "absent"
+              },
+              "minecraft:seed.crop_result": {
+                "reference": "absent",
+                "value": "minecraft:wheat (string)"
+              },
+              "minecraft:seed.plant_at[0]": {
+                "reference": "absent",
+                "value": "minecraft:farmland (string)"
+              },
+              "minecraft:seed.plant_at_any_solid_surface": {
+                "reference": "absent",
+                "value": "0 (byte)"
+              },
+              "minecraft:seed.plant_at_face": {
+                "reference": "absent",
+                "value": "up (string)"
+              }
+            }
+          },
+          "1.21.50": {
+            "accepted": true,
+            "differs": {
+              "item_properties.allow_off_hand": {
+                "reference": "0 (byte)",
+                "value": "absent"
+              },
+              "item_properties.can_destroy_in_creative": {
+                "reference": "1 (byte)",
+                "value": "absent"
+              },
+              "item_properties.creative_category": {
+                "reference": "4 (int)",
+                "value": "absent"
+              },
+              "item_properties.creative_group": {
+                "reference": " (string)",
+                "value": "absent"
+              },
+              "item_properties.damage": {
+                "reference": "0 (int)",
+                "value": "absent"
+              },
+              "item_properties.enchantable_slot": {
+                "reference": "none (string)",
+                "value": "absent"
+              },
+              "item_properties.enchantable_value": {
+                "reference": "0 (int)",
+                "value": "absent"
+              },
+              "item_properties.foil": {
+                "reference": "0 (byte)",
+                "value": "absent"
+              },
+              "item_properties.frame_count": {
+                "reference": "1 (int)",
+                "value": "absent"
+              },
+              "item_properties.hand_equipped": {
+                "reference": "0 (byte)",
+                "value": "absent"
+              },
+              "item_properties.hidden_in_commands": {
+                "reference": "2 (byte)",
+                "value": "absent"
+              },
+              "item_properties.liquid_clipped": {
+                "reference": "0 (byte)",
+                "value": "absent"
+              },
+              "item_properties.max_stack_size": {
+                "reference": "64 (int)",
+                "value": "absent"
+              },
+              "item_properties.mining_speed": {
+                "reference": "1.0 (float)",
+                "value": "absent"
+              },
+              "item_properties.should_despawn": {
+                "reference": "1 (byte)",
+                "value": "absent"
+              },
+              "item_properties.stacked_by_data": {
+                "reference": "0 (byte)",
+                "value": "absent"
+              },
+              "item_properties.use_animation": {
+                "reference": "0 (int)",
+                "value": "absent"
+              },
+              "item_properties.use_duration": {
+                "reference": "0 (int)",
+                "value": "absent"
+              },
+              "item_tags": {
+                "reference": "[] (list<void>)",
+                "value": "absent"
+              },
+              "minecraft:seed.crop_result": {
+                "reference": "absent",
+                "value": "minecraft:wheat (string)"
+              },
+              "minecraft:seed.plant_at[0]": {
+                "reference": "absent",
+                "value": "minecraft:farmland (string)"
+              },
+              "minecraft:seed.plant_at_any_solid_surface": {
+                "reference": "absent",
+                "value": "0 (byte)"
+              },
+              "minecraft:seed.plant_at_face": {
+                "reference": "absent",
+                "value": "up (string)"
+              }
+            }
+          },
+          "1.21.60": {
+            "accepted": true,
+            "differs": {
+              "item_properties.allow_off_hand": {
+                "reference": "0 (byte)",
+                "value": "absent"
+              },
+              "item_properties.can_destroy_in_creative": {
+                "reference": "1 (byte)",
+                "value": "absent"
+              },
+              "item_properties.creative_category": {
+                "reference": "4 (int)",
+                "value": "absent"
+              },
+              "item_properties.creative_group": {
+                "reference": " (string)",
+                "value": "absent"
+              },
+              "item_properties.damage": {
+                "reference": "0 (int)",
+                "value": "absent"
+              },
+              "item_properties.enchantable_slot": {
+                "reference": "none (string)",
+                "value": "absent"
+              },
+              "item_properties.enchantable_value": {
+                "reference": "0 (int)",
+                "value": "absent"
+              },
+              "item_properties.foil": {
+                "reference": "0 (byte)",
+                "value": "absent"
+              },
+              "item_properties.frame_count": {
+                "reference": "1 (int)",
+                "value": "absent"
+              },
+              "item_properties.hand_equipped": {
+                "reference": "0 (byte)",
+                "value": "absent"
+              },
+              "item_properties.hidden_in_commands": {
+                "reference": "2 (byte)",
+                "value": "absent"
+              },
+              "item_properties.liquid_clipped": {
+                "reference": "0 (byte)",
+                "value": "absent"
+              },
+              "item_properties.max_stack_size": {
+                "reference": "64 (int)",
+                "value": "absent"
+              },
+              "item_properties.mining_speed": {
+                "reference": "1.0 (float)",
+                "value": "absent"
+              },
+              "item_properties.should_despawn": {
+                "reference": "1 (byte)",
+                "value": "absent"
+              },
+              "item_properties.stacked_by_data": {
+                "reference": "0 (byte)",
+                "value": "absent"
+              },
+              "item_properties.use_animation": {
+                "reference": "0 (int)",
+                "value": "absent"
+              },
+              "item_properties.use_duration": {
+                "reference": "0 (int)",
+                "value": "absent"
+              },
+              "item_tags": {
+                "reference": "[] (list<void>)",
+                "value": "absent"
+              },
+              "minecraft:seed.crop_result": {
+                "reference": "absent",
+                "value": "minecraft:wheat (string)"
+              },
+              "minecraft:seed.plant_at[0]": {
+                "reference": "absent",
+                "value": "minecraft:farmland (string)"
+              },
+              "minecraft:seed.plant_at_any_solid_surface": {
+                "reference": "absent",
+                "value": "0 (byte)"
+              },
+              "minecraft:seed.plant_at_face": {
+                "reference": "absent",
+                "value": "up (string)"
+              }
+            }
+          },
+          "1.21.70": {
+            "accepted": true,
+            "differs": {
+              "item_properties.allow_off_hand": {
+                "reference": "0 (byte)",
+                "value": "absent"
+              },
+              "item_properties.can_destroy_in_creative": {
+                "reference": "1 (byte)",
+                "value": "absent"
+              },
+              "item_properties.creative_category": {
+                "reference": "4 (int)",
+                "value": "absent"
+              },
+              "item_properties.creative_group": {
+                "reference": " (string)",
+                "value": "absent"
+              },
+              "item_properties.damage": {
+                "reference": "0 (int)",
+                "value": "absent"
+              },
+              "item_properties.enchantable_slot": {
+                "reference": "none (string)",
+                "value": "absent"
+              },
+              "item_properties.enchantable_value": {
+                "reference": "0 (int)",
+                "value": "absent"
+              },
+              "item_properties.foil": {
+                "reference": "0 (byte)",
+                "value": "absent"
+              },
+              "item_properties.frame_count": {
+                "reference": "1 (int)",
+                "value": "absent"
+              },
+              "item_properties.hand_equipped": {
+                "reference": "0 (byte)",
+                "value": "absent"
+              },
+              "item_properties.hidden_in_commands": {
+                "reference": "2 (byte)",
+                "value": "absent"
+              },
+              "item_properties.liquid_clipped": {
+                "reference": "0 (byte)",
+                "value": "absent"
+              },
+              "item_properties.max_stack_size": {
+                "reference": "64 (int)",
+                "value": "absent"
+              },
+              "item_properties.mining_speed": {
+                "reference": "1.0 (float)",
+                "value": "absent"
+              },
+              "item_properties.should_despawn": {
+                "reference": "1 (byte)",
+                "value": "absent"
+              },
+              "item_properties.stacked_by_data": {
+                "reference": "0 (byte)",
+                "value": "absent"
+              },
+              "item_properties.use_animation": {
+                "reference": "0 (int)",
+                "value": "absent"
+              },
+              "item_properties.use_duration": {
+                "reference": "0 (int)",
+                "value": "absent"
+              },
+              "item_tags": {
+                "reference": "[] (list<void>)",
+                "value": "absent"
+              },
+              "minecraft:seed.crop_result": {
+                "reference": "absent",
+                "value": "minecraft:wheat (string)"
+              },
+              "minecraft:seed.plant_at[0]": {
+                "reference": "absent",
+                "value": "minecraft:farmland (string)"
+              },
+              "minecraft:seed.plant_at_any_solid_surface": {
+                "reference": "absent",
+                "value": "0 (byte)"
+              },
+              "minecraft:seed.plant_at_face": {
+                "reference": "absent",
+                "value": "up (string)"
+              }
+            }
+          },
+          "1.21.80": {
+            "accepted": true,
+            "differs": {
+              "item_properties.allow_off_hand": {
+                "reference": "0 (byte)",
+                "value": "absent"
+              },
+              "item_properties.can_destroy_in_creative": {
+                "reference": "1 (byte)",
+                "value": "absent"
+              },
+              "item_properties.creative_category": {
+                "reference": "4 (int)",
+                "value": "absent"
+              },
+              "item_properties.creative_group": {
+                "reference": " (string)",
+                "value": "absent"
+              },
+              "item_properties.damage": {
+                "reference": "0 (int)",
+                "value": "absent"
+              },
+              "item_properties.enchantable_slot": {
+                "reference": "none (string)",
+                "value": "absent"
+              },
+              "item_properties.enchantable_value": {
+                "reference": "0 (int)",
+                "value": "absent"
+              },
+              "item_properties.foil": {
+                "reference": "0 (byte)",
+                "value": "absent"
+              },
+              "item_properties.frame_count": {
+                "reference": "1 (int)",
+                "value": "absent"
+              },
+              "item_properties.hand_equipped": {
+                "reference": "0 (byte)",
+                "value": "absent"
+              },
+              "item_properties.hidden_in_commands": {
+                "reference": "2 (byte)",
+                "value": "absent"
+              },
+              "item_properties.liquid_clipped": {
+                "reference": "0 (byte)",
+                "value": "absent"
+              },
+              "item_properties.max_stack_size": {
+                "reference": "64 (int)",
+                "value": "absent"
+              },
+              "item_properties.mining_speed": {
+                "reference": "1.0 (float)",
+                "value": "absent"
+              },
+              "item_properties.should_despawn": {
+                "reference": "1 (byte)",
+                "value": "absent"
+              },
+              "item_properties.stacked_by_data": {
+                "reference": "0 (byte)",
+                "value": "absent"
+              },
+              "item_properties.use_animation": {
+                "reference": "0 (int)",
+                "value": "absent"
+              },
+              "item_properties.use_duration": {
+                "reference": "0 (int)",
+                "value": "absent"
+              },
+              "item_tags": {
+                "reference": "[] (list<void>)",
+                "value": "absent"
+              },
+              "minecraft:seed.crop_result": {
+                "reference": "absent",
+                "value": "minecraft:wheat (string)"
+              },
+              "minecraft:seed.plant_at[0]": {
+                "reference": "absent",
+                "value": "minecraft:farmland (string)"
+              },
+              "minecraft:seed.plant_at_any_solid_surface": {
+                "reference": "absent",
+                "value": "0 (byte)"
+              },
+              "minecraft:seed.plant_at_face": {
+                "reference": "absent",
+                "value": "up (string)"
+              }
+            }
+          },
+          "1.21.90": {
+            "accepted": true,
+            "differs": {
+              "item_properties.allow_off_hand": {
+                "reference": "0 (byte)",
+                "value": "absent"
+              },
+              "item_properties.can_destroy_in_creative": {
+                "reference": "1 (byte)",
+                "value": "absent"
+              },
+              "item_properties.creative_category": {
+                "reference": "4 (int)",
+                "value": "absent"
+              },
+              "item_properties.creative_group": {
+                "reference": " (string)",
+                "value": "absent"
+              },
+              "item_properties.damage": {
+                "reference": "0 (int)",
+                "value": "absent"
+              },
+              "item_properties.enchantable_slot": {
+                "reference": "none (string)",
+                "value": "absent"
+              },
+              "item_properties.enchantable_value": {
+                "reference": "0 (int)",
+                "value": "absent"
+              },
+              "item_properties.foil": {
+                "reference": "0 (byte)",
+                "value": "absent"
+              },
+              "item_properties.frame_count": {
+                "reference": "1 (int)",
+                "value": "absent"
+              },
+              "item_properties.hand_equipped": {
+                "reference": "0 (byte)",
+                "value": "absent"
+              },
+              "item_properties.hidden_in_commands": {
+                "reference": "2 (byte)",
+                "value": "absent"
+              },
+              "item_properties.liquid_clipped": {
+                "reference": "0 (byte)",
+                "value": "absent"
+              },
+              "item_properties.max_stack_size": {
+                "reference": "64 (int)",
+                "value": "absent"
+              },
+              "item_properties.mining_speed": {
+                "reference": "1.0 (float)",
+                "value": "absent"
+              },
+              "item_properties.should_despawn": {
+                "reference": "1 (byte)",
+                "value": "absent"
+              },
+              "item_properties.stacked_by_data": {
+                "reference": "0 (byte)",
+                "value": "absent"
+              },
+              "item_properties.use_animation": {
+                "reference": "0 (int)",
+                "value": "absent"
+              },
+              "item_properties.use_duration": {
+                "reference": "0 (int)",
+                "value": "absent"
+              },
+              "item_tags": {
+                "reference": "[] (list<void>)",
+                "value": "absent"
+              },
+              "minecraft:seed.crop_result": {
+                "reference": "absent",
+                "value": "minecraft:wheat (string)"
+              },
+              "minecraft:seed.plant_at[0]": {
+                "reference": "absent",
+                "value": "minecraft:farmland (string)"
+              },
+              "minecraft:seed.plant_at_any_solid_surface": {
+                "reference": "absent",
+                "value": "0 (byte)"
+              },
+              "minecraft:seed.plant_at_face": {
+                "reference": "absent",
+                "value": "up (string)"
+              }
+            }
+          },
+          "1.21.100": {
+            "accepted": true,
+            "differs": {
+              "item_properties.allow_off_hand": {
+                "reference": "0 (byte)",
+                "value": "absent"
+              },
+              "item_properties.can_destroy_in_creative": {
+                "reference": "1 (byte)",
+                "value": "absent"
+              },
+              "item_properties.creative_category": {
+                "reference": "4 (int)",
+                "value": "absent"
+              },
+              "item_properties.creative_group": {
+                "reference": " (string)",
+                "value": "absent"
+              },
+              "item_properties.damage": {
+                "reference": "0 (int)",
+                "value": "absent"
+              },
+              "item_properties.enchantable_slot": {
+                "reference": "none (string)",
+                "value": "absent"
+              },
+              "item_properties.enchantable_value": {
+                "reference": "0 (int)",
+                "value": "absent"
+              },
+              "item_properties.foil": {
+                "reference": "0 (byte)",
+                "value": "absent"
+              },
+              "item_properties.frame_count": {
+                "reference": "1 (int)",
+                "value": "absent"
+              },
+              "item_properties.hand_equipped": {
+                "reference": "0 (byte)",
+                "value": "absent"
+              },
+              "item_properties.hidden_in_commands": {
+                "reference": "2 (byte)",
+                "value": "absent"
+              },
+              "item_properties.liquid_clipped": {
+                "reference": "0 (byte)",
+                "value": "absent"
+              },
+              "item_properties.max_stack_size": {
+                "reference": "64 (int)",
+                "value": "absent"
+              },
+              "item_properties.mining_speed": {
+                "reference": "1.0 (float)",
+                "value": "absent"
+              },
+              "item_properties.should_despawn": {
+                "reference": "1 (byte)",
+                "value": "absent"
+              },
+              "item_properties.stacked_by_data": {
+                "reference": "0 (byte)",
+                "value": "absent"
+              },
+              "item_properties.use_animation": {
+                "reference": "0 (int)",
+                "value": "absent"
+              },
+              "item_properties.use_duration": {
+                "reference": "0 (int)",
+                "value": "absent"
+              },
+              "item_tags": {
+                "reference": "[] (list<void>)",
+                "value": "absent"
+              },
+              "minecraft:seed.crop_result": {
+                "reference": "absent",
+                "value": "minecraft:wheat (string)"
+              },
+              "minecraft:seed.plant_at[0]": {
+                "reference": "absent",
+                "value": "minecraft:farmland (string)"
+              },
+              "minecraft:seed.plant_at_any_solid_surface": {
+                "reference": "absent",
+                "value": "0 (byte)"
+              },
+              "minecraft:seed.plant_at_face": {
+                "reference": "absent",
+                "value": "up (string)"
+              }
+            }
+          },
+          "1.21.110": {
+            "accepted": true,
+            "differs": {
+              "item_properties.allow_off_hand": {
+                "reference": "0 (byte)",
+                "value": "absent"
+              },
+              "item_properties.can_destroy_in_creative": {
+                "reference": "1 (byte)",
+                "value": "absent"
+              },
+              "item_properties.creative_category": {
+                "reference": "4 (int)",
+                "value": "absent"
+              },
+              "item_properties.creative_group": {
+                "reference": " (string)",
+                "value": "absent"
+              },
+              "item_properties.damage": {
+                "reference": "0 (int)",
+                "value": "absent"
+              },
+              "item_properties.enchantable_slot": {
+                "reference": "none (string)",
+                "value": "absent"
+              },
+              "item_properties.enchantable_value": {
+                "reference": "0 (int)",
+                "value": "absent"
+              },
+              "item_properties.foil": {
+                "reference": "0 (byte)",
+                "value": "absent"
+              },
+              "item_properties.frame_count": {
+                "reference": "1 (int)",
+                "value": "absent"
+              },
+              "item_properties.hand_equipped": {
+                "reference": "0 (byte)",
+                "value": "absent"
+              },
+              "item_properties.hidden_in_commands": {
+                "reference": "2 (byte)",
+                "value": "absent"
+              },
+              "item_properties.liquid_clipped": {
+                "reference": "0 (byte)",
+                "value": "absent"
+              },
+              "item_properties.max_stack_size": {
+                "reference": "64 (int)",
+                "value": "absent"
+              },
+              "item_properties.mining_speed": {
+                "reference": "1.0 (float)",
+                "value": "absent"
+              },
+              "item_properties.should_despawn": {
+                "reference": "1 (byte)",
+                "value": "absent"
+              },
+              "item_properties.stacked_by_data": {
+                "reference": "0 (byte)",
+                "value": "absent"
+              },
+              "item_properties.use_animation": {
+                "reference": "0 (int)",
+                "value": "absent"
+              },
+              "item_properties.use_duration": {
+                "reference": "0 (int)",
+                "value": "absent"
+              },
+              "item_tags": {
+                "reference": "[] (list<void>)",
+                "value": "absent"
+              },
+              "minecraft:seed.crop_result": {
+                "reference": "absent",
+                "value": "minecraft:wheat (string)"
+              },
+              "minecraft:seed.plant_at[0]": {
+                "reference": "absent",
+                "value": "minecraft:farmland (string)"
+              },
+              "minecraft:seed.plant_at_any_solid_surface": {
+                "reference": "absent",
+                "value": "0 (byte)"
+              },
+              "minecraft:seed.plant_at_face": {
+                "reference": "absent",
+                "value": "up (string)"
+              }
+            }
+          },
+          "1.21.120": {
+            "accepted": true,
+            "differs": {
+              "item_properties.allow_off_hand": {
+                "reference": "0 (byte)",
+                "value": "absent"
+              },
+              "item_properties.can_destroy_in_creative": {
+                "reference": "1 (byte)",
+                "value": "absent"
+              },
+              "item_properties.creative_category": {
+                "reference": "4 (int)",
+                "value": "absent"
+              },
+              "item_properties.creative_group": {
+                "reference": " (string)",
+                "value": "absent"
+              },
+              "item_properties.damage": {
+                "reference": "0 (int)",
+                "value": "absent"
+              },
+              "item_properties.enchantable_slot": {
+                "reference": "none (string)",
+                "value": "absent"
+              },
+              "item_properties.enchantable_value": {
+                "reference": "0 (int)",
+                "value": "absent"
+              },
+              "item_properties.foil": {
+                "reference": "0 (byte)",
+                "value": "absent"
+              },
+              "item_properties.frame_count": {
+                "reference": "1 (int)",
+                "value": "absent"
+              },
+              "item_properties.hand_equipped": {
+                "reference": "0 (byte)",
+                "value": "absent"
+              },
+              "item_properties.hidden_in_commands": {
+                "reference": "2 (byte)",
+                "value": "absent"
+              },
+              "item_properties.liquid_clipped": {
+                "reference": "0 (byte)",
+                "value": "absent"
+              },
+              "item_properties.max_stack_size": {
+                "reference": "64 (int)",
+                "value": "absent"
+              },
+              "item_properties.mining_speed": {
+                "reference": "1.0 (float)",
+                "value": "absent"
+              },
+              "item_properties.should_despawn": {
+                "reference": "1 (byte)",
+                "value": "absent"
+              },
+              "item_properties.stacked_by_data": {
+                "reference": "0 (byte)",
+                "value": "absent"
+              },
+              "item_properties.use_animation": {
+                "reference": "0 (int)",
+                "value": "absent"
+              },
+              "item_properties.use_duration": {
+                "reference": "0 (int)",
+                "value": "absent"
+              },
+              "item_tags": {
+                "reference": "[] (list<void>)",
+                "value": "absent"
+              },
+              "minecraft:seed.crop_result": {
+                "reference": "absent",
+                "value": "minecraft:wheat (string)"
+              },
+              "minecraft:seed.plant_at[0]": {
+                "reference": "absent",
+                "value": "minecraft:farmland (string)"
+              },
+              "minecraft:seed.plant_at_any_solid_surface": {
+                "reference": "absent",
+                "value": "0 (byte)"
+              },
+              "minecraft:seed.plant_at_face": {
+                "reference": "absent",
+                "value": "up (string)"
+              }
+            }
+          },
+          "1.21.130": {
+            "accepted": true,
+            "differs": {
+              "item_properties.allow_off_hand": {
+                "reference": "0 (byte)",
+                "value": "absent"
+              },
+              "item_properties.can_destroy_in_creative": {
+                "reference": "1 (byte)",
+                "value": "absent"
+              },
+              "item_properties.creative_category": {
+                "reference": "4 (int)",
+                "value": "absent"
+              },
+              "item_properties.creative_group": {
+                "reference": " (string)",
+                "value": "absent"
+              },
+              "item_properties.damage": {
+                "reference": "0 (int)",
+                "value": "absent"
+              },
+              "item_properties.enchantable_slot": {
+                "reference": "none (string)",
+                "value": "absent"
+              },
+              "item_properties.enchantable_value": {
+                "reference": "0 (int)",
+                "value": "absent"
+              },
+              "item_properties.foil": {
+                "reference": "0 (byte)",
+                "value": "absent"
+              },
+              "item_properties.frame_count": {
+                "reference": "1 (int)",
+                "value": "absent"
+              },
+              "item_properties.hand_equipped": {
+                "reference": "0 (byte)",
+                "value": "absent"
+              },
+              "item_properties.hidden_in_commands": {
+                "reference": "2 (byte)",
+                "value": "absent"
+              },
+              "item_properties.liquid_clipped": {
+                "reference": "0 (byte)",
+                "value": "absent"
+              },
+              "item_properties.max_stack_size": {
+                "reference": "64 (int)",
+                "value": "absent"
+              },
+              "item_properties.mining_speed": {
+                "reference": "1.0 (float)",
+                "value": "absent"
+              },
+              "item_properties.should_despawn": {
+                "reference": "1 (byte)",
+                "value": "absent"
+              },
+              "item_properties.stacked_by_data": {
+                "reference": "0 (byte)",
+                "value": "absent"
+              },
+              "item_properties.use_animation": {
+                "reference": "0 (int)",
+                "value": "absent"
+              },
+              "item_properties.use_duration": {
+                "reference": "0 (int)",
+                "value": "absent"
+              },
+              "item_tags": {
+                "reference": "[] (list<void>)",
+                "value": "absent"
+              },
+              "minecraft:seed.crop_result": {
+                "reference": "absent",
+                "value": "minecraft:wheat (string)"
+              },
+              "minecraft:seed.plant_at[0]": {
+                "reference": "absent",
+                "value": "minecraft:farmland (string)"
+              },
+              "minecraft:seed.plant_at_any_solid_surface": {
+                "reference": "absent",
+                "value": "0 (byte)"
+              },
+              "minecraft:seed.plant_at_face": {
+                "reference": "absent",
+                "value": "up (string)"
+              }
+            }
+          },
+          "1.26.0": {
+            "accepted": true,
+            "differs": {
+              "item_properties.allow_off_hand": {
+                "reference": "0 (byte)",
+                "value": "absent"
+              },
+              "item_properties.can_destroy_in_creative": {
+                "reference": "1 (byte)",
+                "value": "absent"
+              },
+              "item_properties.creative_category": {
+                "reference": "4 (int)",
+                "value": "absent"
+              },
+              "item_properties.creative_group": {
+                "reference": " (string)",
+                "value": "absent"
+              },
+              "item_properties.damage": {
+                "reference": "0 (int)",
+                "value": "absent"
+              },
+              "item_properties.enchantable_slot": {
+                "reference": "none (string)",
+                "value": "absent"
+              },
+              "item_properties.enchantable_value": {
+                "reference": "0 (int)",
+                "value": "absent"
+              },
+              "item_properties.foil": {
+                "reference": "0 (byte)",
+                "value": "absent"
+              },
+              "item_properties.frame_count": {
+                "reference": "1 (int)",
+                "value": "absent"
+              },
+              "item_properties.hand_equipped": {
+                "reference": "0 (byte)",
+                "value": "absent"
+              },
+              "item_properties.hidden_in_commands": {
+                "reference": "2 (byte)",
+                "value": "absent"
+              },
+              "item_properties.liquid_clipped": {
+                "reference": "0 (byte)",
+                "value": "absent"
+              },
+              "item_properties.max_stack_size": {
+                "reference": "64 (int)",
+                "value": "absent"
+              },
+              "item_properties.mining_speed": {
+                "reference": "1.0 (float)",
+                "value": "absent"
+              },
+              "item_properties.should_despawn": {
+                "reference": "1 (byte)",
+                "value": "absent"
+              },
+              "item_properties.stacked_by_data": {
+                "reference": "0 (byte)",
+                "value": "absent"
+              },
+              "item_properties.use_animation": {
+                "reference": "0 (int)",
+                "value": "absent"
+              },
+              "item_properties.use_duration": {
+                "reference": "0 (int)",
+                "value": "absent"
+              },
+              "item_tags": {
+                "reference": "[] (list<void>)",
+                "value": "absent"
+              },
+              "minecraft:seed.crop_result": {
+                "reference": "absent",
+                "value": "minecraft:wheat (string)"
+              },
+              "minecraft:seed.plant_at[0]": {
+                "reference": "absent",
+                "value": "minecraft:farmland (string)"
+              },
+              "minecraft:seed.plant_at_any_solid_surface": {
+                "reference": "absent",
+                "value": "0 (byte)"
+              },
+              "minecraft:seed.plant_at_face": {
+                "reference": "absent",
+                "value": "up (string)"
+              }
+            }
+          },
+          "1.26.10": {
+            "accepted": true,
+            "differs": {
+              "item_properties.allow_off_hand": {
+                "reference": "0 (byte)",
+                "value": "absent"
+              },
+              "item_properties.can_destroy_in_creative": {
+                "reference": "1 (byte)",
+                "value": "absent"
+              },
+              "item_properties.creative_category": {
+                "reference": "4 (int)",
+                "value": "absent"
+              },
+              "item_properties.creative_group": {
+                "reference": " (string)",
+                "value": "absent"
+              },
+              "item_properties.damage": {
+                "reference": "0 (int)",
+                "value": "absent"
+              },
+              "item_properties.enchantable_slot": {
+                "reference": "none (string)",
+                "value": "absent"
+              },
+              "item_properties.enchantable_value": {
+                "reference": "0 (int)",
+                "value": "absent"
+              },
+              "item_properties.foil": {
+                "reference": "0 (byte)",
+                "value": "absent"
+              },
+              "item_properties.frame_count": {
+                "reference": "1 (int)",
+                "value": "absent"
+              },
+              "item_properties.hand_equipped": {
+                "reference": "0 (byte)",
+                "value": "absent"
+              },
+              "item_properties.hidden_in_commands": {
+                "reference": "2 (byte)",
+                "value": "absent"
+              },
+              "item_properties.liquid_clipped": {
+                "reference": "0 (byte)",
+                "value": "absent"
+              },
+              "item_properties.max_stack_size": {
+                "reference": "64 (int)",
+                "value": "absent"
+              },
+              "item_properties.mining_speed": {
+                "reference": "1.0 (float)",
+                "value": "absent"
+              },
+              "item_properties.should_despawn": {
+                "reference": "1 (byte)",
+                "value": "absent"
+              },
+              "item_properties.stacked_by_data": {
+                "reference": "0 (byte)",
+                "value": "absent"
+              },
+              "item_properties.use_animation": {
+                "reference": "0 (int)",
+                "value": "absent"
+              },
+              "item_properties.use_duration": {
+                "reference": "0 (int)",
+                "value": "absent"
+              },
+              "item_tags": {
+                "reference": "[] (list<void>)",
+                "value": "absent"
+              },
+              "minecraft:seed.crop_result": {
+                "reference": "absent",
+                "value": "minecraft:wheat (string)"
+              },
+              "minecraft:seed.plant_at[0]": {
+                "reference": "absent",
+                "value": "minecraft:farmland (string)"
+              },
+              "minecraft:seed.plant_at_any_solid_surface": {
+                "reference": "absent",
+                "value": "0 (byte)"
+              },
+              "minecraft:seed.plant_at_face": {
+                "reference": "absent",
+                "value": "up (string)"
+              }
+            }
+          },
+          "1.26.20": {
+            "accepted": true,
+            "differs": {
+              "item_properties.allow_off_hand": {
+                "reference": "0 (byte)",
+                "value": "absent"
+              },
+              "item_properties.can_destroy_in_creative": {
+                "reference": "1 (byte)",
+                "value": "absent"
+              },
+              "item_properties.creative_category": {
+                "reference": "4 (int)",
+                "value": "absent"
+              },
+              "item_properties.creative_group": {
+                "reference": " (string)",
+                "value": "absent"
+              },
+              "item_properties.damage": {
+                "reference": "0 (int)",
+                "value": "absent"
+              },
+              "item_properties.enchantable_slot": {
+                "reference": "none (string)",
+                "value": "absent"
+              },
+              "item_properties.enchantable_value": {
+                "reference": "0 (int)",
+                "value": "absent"
+              },
+              "item_properties.foil": {
+                "reference": "0 (byte)",
+                "value": "absent"
+              },
+              "item_properties.frame_count": {
+                "reference": "1 (int)",
+                "value": "absent"
+              },
+              "item_properties.hand_equipped": {
+                "reference": "0 (byte)",
+                "value": "absent"
+              },
+              "item_properties.hidden_in_commands": {
+                "reference": "2 (byte)",
+                "value": "absent"
+              },
+              "item_properties.liquid_clipped": {
+                "reference": "0 (byte)",
+                "value": "absent"
+              },
+              "item_properties.max_stack_size": {
+                "reference": "64 (int)",
+                "value": "absent"
+              },
+              "item_properties.mining_speed": {
+                "reference": "1.0 (float)",
+                "value": "absent"
+              },
+              "item_properties.should_despawn": {
+                "reference": "1 (byte)",
+                "value": "absent"
+              },
+              "item_properties.stacked_by_data": {
+                "reference": "0 (byte)",
+                "value": "absent"
+              },
+              "item_properties.use_animation": {
+                "reference": "0 (int)",
+                "value": "absent"
+              },
+              "item_properties.use_duration": {
+                "reference": "0 (int)",
+                "value": "absent"
+              },
+              "item_tags": {
+                "reference": "[] (list<void>)",
+                "value": "absent"
+              },
+              "minecraft:seed.crop_result": {
+                "reference": "absent",
+                "value": "minecraft:wheat (string)"
+              },
+              "minecraft:seed.plant_at[0]": {
+                "reference": "absent",
+                "value": "minecraft:farmland (string)"
+              },
+              "minecraft:seed.plant_at_any_solid_surface": {
+                "reference": "absent",
+                "value": "0 (byte)"
+              },
+              "minecraft:seed.plant_at_face": {
+                "reference": "absent",
+                "value": "up (string)"
+              }
+            }
+          },
+          "1.26.30": {
+            "accepted": false,
+            "error": "ERROR [Item]  'paletter:seed_71': Failed to parse field ' -> components -> minecraft:seed: this component was found in the input, but is not present in the Schema'"
           }
         }
       }
@@ -6493,7 +11261,9 @@
         "reference": "1.26.60",
         "formats": {},
         "sameAsReference": [
-          "1.20.50"
+          "1.20.50",
+          "1.26.10",
+          "1.26.20"
         ]
       }
     },
@@ -6546,7 +11316,67 @@
       "(base)": {
         "reference": "1.26.60",
         "formats": {
+          "1.10.0": {
+            "accepted": false
+          },
+          "1.16.0": {
+            "accepted": false
+          },
+          "1.16.100": {
+            "accepted": false,
+            "error": "ERROR [Item] To use item 'paletter:use_duration_5', use json format version 1.20.0 or higher"
+          },
+          "1.18.10": {
+            "accepted": false,
+            "error": "ERROR [Item] To use item 'paletter:use_duration_7', use json format version 1.20.0 or higher"
+          },
+          "1.19.10": {
+            "accepted": false,
+            "error": "ERROR [Item] To use item 'paletter:use_duration_9', use json format version 1.20.0 or higher"
+          },
+          "1.19.20": {
+            "accepted": false,
+            "error": "ERROR [Item] To use item 'paletter:use_duration_11', use json format version 1.20.0 or higher"
+          },
+          "1.19.40": {
+            "accepted": false,
+            "error": "ERROR [Item] To use item 'paletter:use_duration_13', use json format version 1.20.0 or higher"
+          },
+          "1.19.50": {
+            "accepted": false,
+            "error": "ERROR [Item] To use item 'paletter:use_duration_15', use json format version 1.20.0 or higher"
+          },
+          "1.19.60": {
+            "accepted": false,
+            "error": "ERROR [Item] To use item 'paletter:use_duration_17', use json format version 1.20.0 or higher"
+          },
+          "1.19.80": {
+            "accepted": false,
+            "error": "ERROR [Item] To use item 'paletter:use_duration_19', use json format version 1.20.0 or higher"
+          },
           "1.20.20": {
+            "accepted": true,
+            "differs": {
+              "item_properties.use_duration": {
+                "reference": "0 (int)",
+                "value": "30 (int)",
+                "differingBits": "11110"
+              },
+              "minecraft:use_modifiers.emit_vibrations": {
+                "reference": "absent",
+                "value": "1 (byte)"
+              },
+              "minecraft:use_modifiers.start_using": {
+                "reference": "absent",
+                "value": "always (string)"
+              },
+              "minecraft:use_modifiers.use_duration": {
+                "reference": "absent",
+                "value": "1.5 (float)"
+              }
+            }
+          },
+          "1.20.30": {
             "accepted": true,
             "differs": {
               "item_properties.use_duration": {
@@ -6589,11 +11419,35 @@
                 "value": "1.5 (float)"
               }
             }
+          },
+          "1.26.30": {
+            "accepted": false,
+            "error": "ERROR [Item]  'paletter:use_duration_71': Failed to parse field ' -> components -> minecraft:use_duration: this component was found in the input, but is not present in the Schema'"
           }
         },
         "sameAsReference": [
+          "1.20.0",
           "1.20.10",
-          "1.20.50"
+          "1.20.50",
+          "1.20.60",
+          "1.20.80",
+          "1.21.0",
+          "1.21.10",
+          "1.21.20",
+          "1.21.30",
+          "1.21.40",
+          "1.21.50",
+          "1.21.60",
+          "1.21.70",
+          "1.21.80",
+          "1.21.90",
+          "1.21.100",
+          "1.21.110",
+          "1.21.120",
+          "1.21.130",
+          "1.26.0",
+          "1.26.10",
+          "1.26.20"
         ]
       }
     },
@@ -6626,9 +11480,18 @@
       },
       "start_using": {
         "reference": "1.26.60",
-        "formats": {},
+        "formats": {
+          "1.26.20": {
+            "accepted": true,
+            "differs": {
+              "minecraft:use_modifiers.start_using": {
+                "reference": "if_first (string)",
+                "value": "always (string)"
+              }
+            }
+          }
+        },
         "sameAsReference": [
-          "1.26.20",
           "1.26.30"
         ]
       }
@@ -6636,10 +11499,76 @@
     "item:minecraft:weapon": {
       "(base)": {
         "reference": "1.26.60",
-        "formats": {},
+        "formats": {
+          "1.10.0": {
+            "accepted": false
+          },
+          "1.16.0": {
+            "accepted": false
+          },
+          "1.16.100": {
+            "accepted": false,
+            "error": "ERROR [Item] To use item 'paletter:weapon_5', use json format version 1.20.0 or higher"
+          },
+          "1.18.10": {
+            "accepted": false,
+            "error": "ERROR [Item] To use item 'paletter:weapon_7', use json format version 1.20.0 or higher"
+          },
+          "1.19.10": {
+            "accepted": false,
+            "error": "ERROR [Item] To use item 'paletter:weapon_9', use json format version 1.20.0 or higher"
+          },
+          "1.19.20": {
+            "accepted": false,
+            "error": "ERROR [Item] To use item 'paletter:weapon_11', use json format version 1.20.0 or higher"
+          },
+          "1.19.40": {
+            "accepted": false,
+            "error": "ERROR [Item] To use item 'paletter:weapon_13', use json format version 1.20.0 or higher"
+          },
+          "1.19.50": {
+            "accepted": false,
+            "error": "ERROR [Item] To use item 'paletter:weapon_15', use json format version 1.20.0 or higher"
+          },
+          "1.19.60": {
+            "accepted": false,
+            "error": "ERROR [Item] To use item 'paletter:weapon_17', use json format version 1.20.0 or higher"
+          },
+          "1.19.80": {
+            "accepted": false,
+            "error": "ERROR [Item] To use item 'paletter:weapon_19', use json format version 1.20.0 or higher"
+          },
+          "1.26.30": {
+            "accepted": false,
+            "error": "ERROR [Item]  'paletter:weapon_71': Failed to parse field ' -> components -> minecraft:weapon: this component was found in the input, but is not present in the Schema'"
+          }
+        },
         "sameAsReference": [
+          "1.20.0",
+          "1.20.10",
+          "1.20.20",
           "1.20.30",
-          "1.20.40"
+          "1.20.40",
+          "1.20.50",
+          "1.20.60",
+          "1.20.80",
+          "1.21.0",
+          "1.21.10",
+          "1.21.20",
+          "1.21.30",
+          "1.21.40",
+          "1.21.50",
+          "1.21.60",
+          "1.21.70",
+          "1.21.80",
+          "1.21.90",
+          "1.21.100",
+          "1.21.110",
+          "1.21.120",
+          "1.21.130",
+          "1.26.0",
+          "1.26.10",
+          "1.26.20"
         ]
       }
     },

@@ -1,0 +1,18 @@
+{
+  "bdsVersion": "1.26.52.3",
+  "platform": "windows",
+  "protocol": 2193,
+  "preview": false,
+  "formatVersion": "1.26.52",
+  "resolvedHashes": 3356,
+  "unresolvedHashes": 0,
+  "experiments": [
+    "upcoming_creator_features=true",
+    "gametest=true",
+    "experimental_creator_cameras=true",
+    "villager_trades_rebalance=true",
+    "voxel_shapes=true",
+    "poi=true",
+    "creator_world_clocks=true"
+  ]
+}

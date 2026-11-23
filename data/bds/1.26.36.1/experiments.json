@@ -32,6 +32,7 @@
         "blocksAdded": [],
         "dataDrivenBlocks": [],
         "creativeAdded": [],
+        "creativeWithoutBlock": [],
         "removed": []
       }
     },
@@ -53,6 +54,7 @@
         "blocksAdded": [],
         "dataDrivenBlocks": [],
         "creativeAdded": [],
+        "creativeWithoutBlock": [],
         "removed": []
       }
     },
@@ -86,6 +88,7 @@
         "blocksAdded": [],
         "dataDrivenBlocks": [],
         "creativeAdded": [],
+        "creativeWithoutBlock": [],
         "removed": []
       }
     },
@@ -107,6 +110,7 @@
         "blocksAdded": [],
         "dataDrivenBlocks": [],
         "creativeAdded": [],
+        "creativeWithoutBlock": [],
         "removed": []
       }
     },
@@ -122,6 +126,7 @@
         "blocksAdded": [],
         "dataDrivenBlocks": [],
         "creativeAdded": [],
+        "creativeWithoutBlock": [],
         "removed": []
       }
     },
