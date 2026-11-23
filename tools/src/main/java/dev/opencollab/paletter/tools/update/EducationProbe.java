@@ -10,6 +10,7 @@ import dev.opencollab.paletter.internal.data.PaletteDataCodec;
 import dev.opencollab.paletter.internal.data.VanillaData;
 import dev.opencollab.paletter.tools.Layout;
 import dev.opencollab.paletter.tools.bds.BdsDistribution;
+import dev.opencollab.paletter.tools.bds.BdsRun;
 import dev.opencollab.paletter.tools.bds.BdsServer;
 import dev.opencollab.paletter.tools.client.Capture;
 import dev.opencollab.paletter.tools.client.CapturedData;
@@ -34,9 +35,9 @@ import java.util.TreeSet;
  * that only the Education Edition world has ({@link #diff}). The result is {@code data/bds/<bds version>/education.json},
  * the input of the constants generator ({@code @Education}, {@code isEducation()}).
  * <p>
- * Options: {@code --version 1.26.63.1}, {@code --cache DIR}, {@code --port 19300}, {@code --reference 26.60} (bundled
- * version the capture resolves block hashes against; default the one with the newest protocol not above the server's),
- * {@code --out DIR} (captures; default {@code <cache>/runs/education-<platform>-<version>}), {@code --timeout 300}.
+ * Options: the build and its server ({@link BdsRun}), {@code --data-version 26.60} (bundled version the capture resolves block
+ * hashes against; default the one with the newest protocol not above the server's), {@code --out DIR} (captures; default
+ * {@code <cache>/runs/education-<platform>-<version>}).
  * The server is extracted into {@code <cache>/servers/education-<platform>-<version>} and removed afterwards.
  */
 public final class EducationProbe {
@@ -104,21 +105,24 @@ public final class EducationProbe {
         return new Result(List.copyOf(items), List.copyOf(blocks));
     }
 
-    public static void run(Path root, Map<String, String> options) throws Exception {
-        Path cache = options.containsKey("cache") ? Path.of(options.get("cache")) : BdsDistribution.defaultCache();
-        BdsDistribution distribution = BdsDistribution.resolve(false, options.get("version"));
+    /**
+     * @param out where the logs and captures go, or null for the run directory of the build
+     * @param dataVersion the bundled version the block hashes are resolved against, or null for the one of the server's protocol
+     */
+    public static void run(Path root, BdsRun options, Path out, String dataVersion) throws Exception {
+        Path cache = options.cache();
+        BdsDistribution distribution = options.distribution();
         Path server = distribution.serverDirectory(cache, "education-");
-        Path out = options.containsKey("out") ? Path.of(options.get("out")).toAbsolutePath()
-            : distribution.runDirectory(cache, "education-");
-        int port = Integer.parseInt(options.getOrDefault("port", "19300"));
-        int timeout = Integer.parseInt(options.getOrDefault("timeout", "300"));
+        out = out != null ? out.toAbsolutePath() : distribution.runDirectory(cache, "education-");
+        int port = options.port();
+        int timeout = options.timeout();
         BdsDistribution.deleteRecursively(out);
         Files.createDirectories(out);
         if (!Files.exists(BdsServer.executable(server))) {
             BdsDistribution.extract(distribution.zip(cache, root), server);
         }
         try {
-            Result result = capture(root, options, distribution, server, out, port, timeout);
+            Result result = capture(root, dataVersion, distribution, server, out, port, timeout);
             System.out.println("Education content of BDS " + distribution.version() + ": " + result.items().size() + " items, "
                 + result.blocks().size() + " blocks");
         } finally {
@@ -126,14 +130,11 @@ public final class EducationProbe {
         }
     }
 
-    private static Result capture(Path root, Map<String, String> options, BdsDistribution distribution, Path server, Path out,
+    private static Result capture(Path root, String dataVersion, BdsDistribution distribution, Path server, Path out,
                                   int port, int timeout) throws Exception {
         Capture.Reachable reachable = createWorld(server, port, out, timeout);
-        if (reachable == null || reachable.protocol() == 0) {
-            throw new IOException("BDS answers no ping or LAN discovery with a protocol; pass the version to education-capture");
-        }
-        int protocol = reachable.protocol();
-        VanillaData reference = reference(root, options.get("reference"), protocol);
+        int protocol = Capture.requireProtocol(reachable);
+        VanillaData reference = reference(root, dataVersion, protocol);
         System.out.println("BDS " + distribution.version() + ", protocol " + protocol + ", hashes resolved against " + reference.version().name());
         Result result = compare(server, port, protocol, reference, reachable.netherNet(), distribution.version(), out, timeout);
         Path target = BdsDistribution.inside(root.resolve(Layout.BDS), distribution.version()).resolve("education.json");
@@ -257,7 +258,7 @@ public final class EducationProbe {
             }
         }
         if (best == null) {
-            throw new IOException("No bundled version for protocol " + protocol + "; pass --reference");
+            throw new IOException("No bundled version for protocol " + protocol + "; pass --data-version");
         }
         return best;
     }

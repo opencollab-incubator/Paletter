@@ -14,10 +14,10 @@ import java.util.List;
 import java.util.Map;
 
 /** Component wire shapes: the vanilla data driven content against the bundled data, and the spec capture's coverage by the mappings. */
-final class ShapesStage {
+final class WireShapesStage {
     private final UpdateContext ctx;
 
-    ShapesStage(UpdateContext ctx) {
+    WireShapesStage(UpdateContext ctx) {
         this.ctx = ctx;
     }
 

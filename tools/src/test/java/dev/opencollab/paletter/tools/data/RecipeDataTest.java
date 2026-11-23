@@ -150,7 +150,7 @@ class RecipeDataTest {
 
     /**
      * The assumptions {@code update} fails on hold for every committed release recipe capture against the bundled data of its
-     * version. TODO: the 1.26.70.24 preview capture breaks "Recipe results have their block state" (results of blocks new in
+     * version, apart from the bundled preview's. TODO (docs/data-pipeline.md, Recapture to-do): the preview capture breaks "Recipe results have their block state" (results of blocks new in
      * 26.70 whose runtime id the capture did not resolve); the next preview update reports that as a FAIL.
      */
     @Test
@@ -158,8 +158,9 @@ class RecipeDataTest {
         java.nio.file.Path root = java.nio.file.Path.of("..");
         int checked = 0;
         try (java.util.stream.Stream<java.nio.file.Path> builds = java.nio.file.Files.list(root.resolve("data/bds"))) {
+            java.util.Set<String> preview = java.util.Set.copyOf(dev.opencollab.paletter.tools.CommittedBuilds.preview());
             for (java.nio.file.Path build : builds.filter(b -> java.nio.file.Files.exists(b.resolve("vanilla").resolve(RecipeCapture.CRAFTING))
-                && !b.getFileName().toString().equals("1.26.70.24")).toList()) {
+                && !preview.contains(b.getFileName().toString())).toList()) {
                 String name = dev.opencollab.paletter.tools.BuildNumber.parse(build.getFileName().toString()).dataVersion();
                 java.nio.file.Path bundled = root.resolve("paletter/src/main/resources/paletter").resolve(name + ".nbt");
                 if (!java.nio.file.Files.exists(bundled)) {

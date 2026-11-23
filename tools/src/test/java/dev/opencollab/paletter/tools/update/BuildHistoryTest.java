@@ -66,7 +66,7 @@ class BuildHistoryTest {
     void aListBehindMinecraftNetIsWarnedAbout() {
         assertNull(BuildHistory.staleness(list(), "1.26.100.2"));
         String warning = BuildHistory.staleness(list(), "1.26.101.1");
-        assertTrue(warning.startsWith("WARNING") && warning.contains("1.26.100.2") && warning.contains("1.26.101.1") && warning.contains(COMMIT), warning);
+        assertTrue(warning.startsWith("warning:") && warning.contains("1.26.100.2") && warning.contains("1.26.101.1") && warning.contains(COMMIT), warning);
     }
 
     @Test
@@ -78,7 +78,7 @@ class BuildHistoryTest {
         assertEquals(BuildHistory.FROM_LIST, list.source("1.26.100.2"));
         // Covered this way, the difference is a note, not a warning
         String note = BuildHistory.staleness(list, "1.26.101.1");
-        assertTrue(note.startsWith("NOTE") && note.contains("newest listed 1.26.100.2"), note);
+        assertTrue(note.startsWith("note:") && note.contains("newest listed 1.26.100.2"), note);
         // Listed already, older than the list, or unknown: the list stays as it is
         assertEquals(list(), list().withCurrentRelease("1.26.100.2"));
         assertEquals(list(), list().withCurrentRelease("1.26.63.1"));

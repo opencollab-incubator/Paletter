@@ -137,7 +137,7 @@ class UpdateTest {
 
         report.check(Report.Status.DIFF, "Blocks", "1 new");
         report.action("decide it");
-        assertEquals(Update.EXIT_TODOS, Update.exitCode(report, false));
+        assertEquals(Update.EXIT_DECISIONS, Update.exitCode(report, false));
         // A verification has no decisions, only differences
         assertEquals(1, Update.exitCode(report, true));
 

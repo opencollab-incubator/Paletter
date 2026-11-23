@@ -7,10 +7,12 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.gson.JsonSyntaxException;
 import dev.opencollab.paletter.tools.BuildNumber;
+import dev.opencollab.paletter.tools.Console;
 import dev.opencollab.paletter.tools.Http;
 import dev.opencollab.paletter.tools.Layout;
 import dev.opencollab.paletter.tools.Versions;
 import dev.opencollab.paletter.tools.bds.BdsDistribution;
+import dev.opencollab.paletter.tools.bds.BdsRun;
 import dev.opencollab.paletter.tools.bds.ZipChecksums;
 
 import java.io.ByteArrayInputStream;
@@ -24,7 +26,6 @@ import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -287,14 +288,14 @@ public final class BuildHistory {
      */
     static String staleness(BuildList list, String current) {
         if (list.fromLinksApi().contains(current)) {
-            return "NOTE: " + current + ", the current release of minecraft.net, is not in " + REPOSITORY + " yet (newest listed "
-                + list.newestListed() + ", commit " + list.commit() + "); it is checked with the build number from the links API";
+            return Console.note(current + ", the current release of minecraft.net, is not in " + REPOSITORY + " yet (newest listed "
+                + list.newestListed() + ", commit " + list.commit() + "); it is checked with the build number from the links API");
         }
         if (current.equals(list.newest()) && (list.stable() == null || current.equals(list.stable()))) {
             return null;
         }
-        return "WARNING: the newest release of " + REPOSITORY + " (" + list.newest() + ", stable " + list.stable() + ", commit "
-            + list.commit() + ") is not the current release of minecraft.net (" + current + ")";
+        return Console.warning("the newest release of " + REPOSITORY + " (" + list.newest() + ", stable " + list.stable() + ", commit "
+            + list.commit() + ") is not the current release of minecraft.net (" + current + ")");
     }
 
     /**
@@ -308,7 +309,7 @@ public final class BuildHistory {
         try {
             current = BdsDistribution.resolve(false, false, null).version();
         } catch (IOException e) {
-            System.out.println("WARNING: could not read the current release from the download links API: " + e);
+            Console.warn("could not read the current release from the download links API: " + e);
             return list;
         }
         list = list.withCurrentRelease(current);
@@ -546,7 +547,7 @@ public final class BuildHistory {
         Map<String, Integer> captured = capturedReleases(root);
         List<String> problems = problems(root, record, captured);
         if (!problems.isEmpty()) {
-            problems.forEach(problem -> System.out.println("ERROR: " + problem));
+            problems.forEach(Console::error);
             return 1;
         }
         captured.forEach((build, protocol) -> record.putIfAbsent(build, new Entry(protocol, null, FROM_CAPTURES, KEPT_BY_UPDATE, List.of())));
@@ -558,7 +559,7 @@ public final class BuildHistory {
         for (Map.Entry<String, String> frozen : freeze.entrySet()) {
             Entry entry = record.get(BuildNumber.require(frozen.getKey()));
             if (entry == null || !entry.kept()) {
-                System.out.println("ERROR: " + frozen.getKey() + " is no kept build of the record; only a kept build is frozen");
+                Console.error(frozen.getKey() + " is no kept build of the record; only a kept build is frozen");
                 return 1;
             }
             record.put(frozen.getKey(), entry.frozen(frozen.getValue()));
@@ -712,17 +713,12 @@ public final class BuildHistory {
         throw new IllegalStateException(step.kind().toString());
     }
 
-    /** The runner of {@link #check}: {@link Update} with {@code options} ({@code port}, {@code timeout}, {@code cache}). */
-    public static Runner updates(Path root, Map<String, String> options) {
+    /** The runner of {@link #check}: {@link Update} of a release build with {@code run}'s server ({@code port}, {@code timeout}, {@code cache}). */
+    public static Runner updates(Path root, BdsRun run) {
         return (build, against, verifyOnly) -> {
-            Map<String, String> buildOptions = new LinkedHashMap<>(options);
-            buildOptions.put("channel", "release");
-            buildOptions.put("version", build);
-            buildOptions.put("against", against);
-            if (verifyOnly) {
-                buildOptions.put("verify-only", "true");
-            }
-            Update update = new Update(root, buildOptions);
+            UpdateOptions options = UpdateOptions.of(new BdsRun(build, false, run.cache(), run.port(), run.timeout(), run.keepServer()))
+                .withAgainst(against).withVerifyOnly(verifyOnly);
+            Update update = new Update(root, options);
             update.run();
             return new Outcome(update.protocol(), update.failed(), update.changed(), update.notCompared());
         };
@@ -745,7 +741,7 @@ public final class BuildHistory {
         Map<String, Integer> captured = capturedReleases(root);
         List<String> problems = problems(root, record, captured);
         if (!problems.isEmpty()) {
-            problems.forEach(problem -> System.out.println("ERROR: " + problem));
+            problems.forEach(Console::error);
             return 1;
         }
         List<String> unlisted = new ArrayList<>(record.keySet());
@@ -756,7 +752,7 @@ public final class BuildHistory {
         });
         unlisted.removeIf(list.releases()::contains);
         if (!unlisted.isEmpty()) {
-            System.out.println("NOTE: the list lacks " + unlisted.size() + " recorded or captured builds: " + String.join(", ", unlisted));
+            Console.inform("the list lacks " + unlisted.size() + " recorded or captured builds: " + String.join(", ", unlisted));
         }
         int runs = 0;
         for (String build : builds) {

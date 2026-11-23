@@ -1,6 +1,8 @@
 package dev.opencollab.paletter.tools.update;
 
+import dev.opencollab.paletter.tools.Console;
 import dev.opencollab.paletter.tools.Layout;
+import dev.opencollab.paletter.tools.Stale;
 import dev.opencollab.paletter.tools.Versions;
 import dev.opencollab.paletter.tools.data.Importer;
 
@@ -219,7 +221,7 @@ public final class BuildTable {
         boolean sound = true;
         if (check) {
             for (String problem : BuildHistory.problems(root, record, captured)) {
-                System.out.println("ERROR: " + problem);
+                Console.error(problem);
                 sound = false;
             }
         }
@@ -230,7 +232,7 @@ public final class BuildTable {
             }
             if (check) {
                 sound = false;
-                System.out.println(root.relativize(file.getKey()) + " is stale: run ./gradlew :tools:run --args=\"builds table\"");
+                Stale.print(root.relativize(file.getKey()).toString().replace('\\', '/'), "./gradlew :tools:run --args=\"builds table\"");
             } else {
                 BuildHistory.writeAtomically(file.getKey(), file.getValue());
                 System.out.println("Wrote " + root.relativize(file.getKey()));

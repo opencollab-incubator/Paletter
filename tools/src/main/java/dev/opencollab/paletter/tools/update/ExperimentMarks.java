@@ -6,6 +6,7 @@ import com.google.gson.JsonObject;
 import dev.opencollab.paletter.internal.data.ExperimentContent;
 import dev.opencollab.paletter.internal.data.PaletteDataCodec;
 import dev.opencollab.paletter.internal.data.VanillaData;
+import dev.opencollab.paletter.tools.Json;
 import dev.opencollab.paletter.tools.Layout;
 import dev.opencollab.paletter.tools.codegen.constants.ConstantsGenerator;
 
@@ -107,7 +108,7 @@ public final class ExperimentMarks {
             for (Path capture : captures.filter(Files::isDirectory).sorted().toList()) {
                 Path file = capture.resolve("experiments.json");
                 if (Files.exists(file)) {
-                    JsonObject record = ConstantsGenerator.readJson(file);
+                    JsonObject record = Json.objectOrEmpty(file);
                     String release = ConstantsGenerator.Sources.releaseOf(bundles, record.get("protocol").getAsInt());
                     if (release != null) {
                         records.put(release, record);

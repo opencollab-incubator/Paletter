@@ -2,6 +2,7 @@ package dev.opencollab.paletter.tools.bds;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import dev.opencollab.paletter.tools.CommittedBuilds;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
@@ -9,21 +10,12 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
-import java.util.Set;
-import java.util.TreeSet;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class ScriptModulesTest {
-    /**
-     * The builds without a {@code script-modules.json} yet: the recapture's {@code update} writes it from each build's docgen output (none
-     * is committed or cached to read it from now, and the manifest of the behaviour dump add-on is not known to come from a run of the
-     * build). A build with the file that is still listed fails, and so does one without it that is not listed.
-     */
-    private static final Set<String> PENDING = Set.of("1.26.36.1", "1.26.45.1", "1.26.52.3", "1.26.63.1", "1.26.70.24");
-
     private static void touch(Path file) throws IOException {
         Files.createDirectories(file.getParent());
         Files.writeString(file, "x");
@@ -72,11 +64,6 @@ class ScriptModulesTest {
 
     @Test
     void everyBuildHasItsFileOrIsPending() throws IOException {
-        Path data = Path.of("..", "data", "bds").toAbsolutePath().normalize();
-        Set<String> without = new TreeSet<>();
-        try (var builds = Files.list(data)) {
-            builds.filter(Files::isDirectory).filter(b -> !Files.exists(b.resolve(ScriptModules.FILE))).forEach(b -> without.add(b.getFileName().toString()));
-        }
-        assertEquals(PENDING, without, "the builds without script-modules.json must be PENDING exactly");
+        CommittedBuilds.assertPending(ScriptModules.FILE, b -> Files.exists(CommittedBuilds.directory(b).resolve(ScriptModules.FILE)));
     }
 }

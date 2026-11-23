@@ -21,28 +21,26 @@ final class GeneratorCommands {
             CommandLine.usage(this, System.out);
         }
 
-        @Command(name = "generate")
+        @Command(name = "generate", description = "Writes the constants classes from the bundled data, the names and the history")
         static final class Generate extends Rooted implements Callable<Integer> {
             @Override
             public Integer call() throws IOException {
-                dev.opencollab.paletter.tools.codegen.constants.Main.main(new String[]{"generate", "--root", root().toString()});
-                return 0;
+                return dev.opencollab.paletter.tools.codegen.constants.Main.run(root(), false);
             }
         }
 
-        @Command(name = "check")
+        @Command(name = "check", description = "Exits with 1 if the committed constants differ from what generate writes")
         static final class Check extends Rooted implements Callable<Integer> {
             @Override
             public Integer call() throws IOException {
-                dev.opencollab.paletter.tools.codegen.constants.Main.main(new String[]{"check", "--root", root().toString()});
-                return 0;
+                return dev.opencollab.paletter.tools.codegen.constants.Main.run(root(), true);
             }
         }
     }
 
     @Command(name = "inspect", description = "Explain what the bundled palettes do with a block state or an item variant")
     static final class InspectCommand implements Callable<Integer> {
-        @Option(names = "--version", required = true, description = "Bundled version name, or all") String version;
+        @Option(names = "--data-version", required = true, description = "The bundled data version, e.g. 26.60, or all") String version;
         @Option(names = "--block", description = "Block: identifier or identifier[key=value,...], e.g. 'minecraft:oak_stairs[upside_down_bit=true]'") String block;
         @Option(names = "--item", description = "Item: identifier or identifier:damage, e.g. minecraft:potion:5") String item;
 
@@ -61,29 +59,24 @@ final class GeneratorCommands {
             CommandLine.usage(this, System.out);
         }
 
-        @Command(name = "generate")
+        @Command(name = "generate", description = "Writes the component API from data/model")
         static final class Generate extends Rooted implements Callable<Integer> {
             @Option(names = "--sources", description = "Write here instead of paletter/src/generated/java") Path sources;
 
             @Override
             public Integer call() throws Exception {
-                dev.opencollab.paletter.tools.codegen.component.Main.main(args("generate", root(), sources));
-                return 0;
+                return dev.opencollab.paletter.tools.codegen.component.Main.report(root(),
+                    sources != null ? sources : root().resolve(dev.opencollab.paletter.tools.codegen.component.Main.SOURCES), false);
             }
         }
 
-        @Command(name = "check")
+        @Command(name = "check", description = "Exits with 1 if the committed component API differs from what generate writes")
         static final class Check extends Rooted implements Callable<Integer> {
             @Override
             public Integer call() throws Exception {
-                dev.opencollab.paletter.tools.codegen.component.Main.main(args("check", root(), null));
-                return 0;
+                return dev.opencollab.paletter.tools.codegen.component.Main.report(root(),
+                    root().resolve(dev.opencollab.paletter.tools.codegen.component.Main.SOURCES), true);
             }
-        }
-
-        static String[] args(String mode, Path root, Path sources) {
-            return sources == null ? new String[]{mode, "--root", root.toString()}
-                : new String[]{mode, "--root", root.toString(), "--sources", sources.toString()};
         }
     }
 }

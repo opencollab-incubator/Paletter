@@ -5,7 +5,7 @@ import dev.opencollab.paletter.tools.bds.BdsDump;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
+import dev.opencollab.paletter.tools.Json;
 import org.cloudburstmc.nbt.NbtMap;
 import org.cloudburstmc.nbt.NbtType;
 import org.cloudburstmc.protocol.bedrock.data.BlockPropertyData;
@@ -22,7 +22,6 @@ import dev.opencollab.paletter.internal.data.VersionFallbacks;
 
 import java.io.IOException;
 import java.io.OutputStream;
-import java.io.Reader;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -207,7 +206,7 @@ public final class Importer {
 
     private static List<VanillaItem> readItems(Path statesFile, NbtMap components) throws IOException {
         List<VanillaItem> items = new ArrayList<>();
-        for (JsonElement element : readJson(statesFile).getAsJsonArray()) {
+        for (JsonElement element : Json.element(statesFile).getAsJsonArray()) {
             JsonObject item = element.getAsJsonObject();
             String identifier = item.get("name").getAsString();
             boolean componentBased = item.get("componentBased").getAsBoolean();
@@ -242,7 +241,7 @@ public final class Importer {
      * loose stacks) and items pointing at group indexes. Converts it to the layout model.
      */
     private static RawLayout readCreative(Path file) throws IOException {
-        JsonObject root = readJson(file).getAsJsonObject();
+        JsonObject root = Json.object(file);
         JsonArray groups = root.getAsJsonArray("groups");
         List<List<RawStack>> stacksByGroup = new ArrayList<>();
         for (int i = 0; i < groups.size(); i++) {
@@ -283,7 +282,7 @@ public final class Importer {
 
     public static Map<String, List<String>> readItemTags(Path file) throws IOException {
         Map<String, List<String>> tags = new TreeMap<>();
-        readJson(file).getAsJsonObject().entrySet().forEach(entry -> {
+        Json.object(file).entrySet().forEach(entry -> {
             List<String> items = new ArrayList<>();
             entry.getValue().getAsJsonArray().forEach(item -> items.add(item.getAsString()));
             tags.put(entry.getKey(), items);
@@ -365,7 +364,7 @@ public final class Importer {
         if (!Files.isRegularFile(capture)) {
             return null;
         }
-        JsonObject json = readJson(capture).getAsJsonObject();
+        JsonObject json = Json.object(capture);
         return json.has("codecProtocol") ? json.get("codecProtocol").getAsInt() : null;
     }
 
@@ -385,11 +384,5 @@ public final class Importer {
             .sorted(java.util.Comparator.comparingInt(IndexEntry::protocol))
             .forEach(entry -> lines.add(entry.line()));
         Files.writeString(directory.resolve("versions.txt"), String.join("\n", lines) + "\n");
-    }
-
-    static JsonElement readJson(Path file) throws IOException {
-        try (Reader reader = Files.newBufferedReader(file)) {
-            return JsonParser.parseReader(reader);
-        }
     }
 }

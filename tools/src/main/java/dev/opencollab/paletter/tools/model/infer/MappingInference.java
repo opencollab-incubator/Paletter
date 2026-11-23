@@ -3,6 +3,7 @@ package dev.opencollab.paletter.tools.model.infer;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import dev.opencollab.paletter.tools.Stale;
 import dev.opencollab.paletter.tools.codegen.component.HandTransforms;
 import dev.opencollab.paletter.tools.model.Fixtures;
 import dev.opencollab.paletter.tools.model.MappingWindows;
@@ -91,12 +92,17 @@ public final class MappingInference {
         String coverageText = output.coverage();
         String feedbackText = output.feedback();
         if (check) {
-            boolean same = mappingsText.equals(read(modelDir.resolve("mappings.json")))
-                && output.evidence().equals(read(modelDir.resolve(MappingEvidence.FILE)))
-                && feedbackText.equals(read(modelDir.resolve("bds-feedback.json")))
-                && coverageText.equals(read(modelDir.resolve("coverage.md")));
-            System.out.println(same ? "data/model/mappings.json, " + MappingEvidence.FILE + " and coverage.md are up to date"
-                : "data/model/mappings.json, " + MappingEvidence.FILE + " or coverage.md is stale: run ./gradlew :tools:inferMappings");
+            boolean same = true;
+            for (Map.Entry<String, String> file : new TreeMap<>(Map.of("mappings.json", mappingsText, MappingEvidence.FILE, output.evidence(),
+                "bds-feedback.json", feedbackText, "coverage.md", coverageText)).entrySet()) {
+                if (!file.getValue().equals(read(modelDir.resolve(file.getKey())))) {
+                    Stale.print("data/model/" + file.getKey(), "./gradlew :tools:inferMappings");
+                    same = false;
+                }
+            }
+            if (same) {
+                System.out.println("data/model/mappings.json, " + MappingEvidence.FILE + ", bds-feedback.json and coverage.md are up to date");
+            }
             return same;
         }
         Files.writeString(modelDir.resolve("mappings.json"), mappingsText, StandardCharsets.UTF_8);

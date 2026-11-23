@@ -3,12 +3,12 @@ package dev.opencollab.paletter.tools.update;
 import dev.opencollab.paletter.internal.data.VanillaData;
 import dev.opencollab.paletter.tools.Layout;
 import dev.opencollab.paletter.tools.bds.BdsDistribution;
+import dev.opencollab.paletter.tools.bds.BdsRun;
 import dev.opencollab.paletter.tools.bds.BdsServer;
 import dev.opencollab.paletter.tools.bds.CapturePlatform;
 import dev.opencollab.paletter.tools.client.Capture;
 import dev.opencollab.paletter.tools.client.RecipeCapture;
 
-import java.io.File;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.nio.file.Files;
@@ -18,7 +18,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
- * {@code recipes-capture --version <build> [--preview]}: captures a vanilla world of one BDS build, the same capture as the
+ * {@code recipes-capture --version <build> [--channel preview]}: captures a vanilla world of one BDS build, the same capture as the
  * one of {@code update}, and copies only the recipe files ({@link RecipeCapture#CRAFTING}, {@link RecipeCapture#TRIM}) into
  * {@code data/bds/<build>/vanilla}. Options: {@code --cache DIR}, {@code --port 19750}, {@code --timeout 300},
  * {@code --keep-server}. It refuses a build without captures in {@code data/bds} and a machine of another BDS platform
@@ -30,13 +30,13 @@ public final class RecipeProbe {
     private RecipeProbe() {
     }
 
-    public static void run(Path root, Map<String, String> options) throws Exception {
+    public static void run(Path root, BdsRun options) throws Exception {
         if (!Files.isDirectory(root.resolve(Layout.BDS))) {
             throw new IllegalArgumentException(root + " is not the repository root (it has no " + Layout.BDS
                 + "); pass --root as a native path, e.g. C:/...");
         }
-        Path cache = options.containsKey("cache") ? path(options.get("cache")) : BdsDistribution.defaultCache();
-        BdsDistribution distribution = BdsDistribution.resolve(options.containsKey("preview"), options.get("version"));
+        Path cache = options.cache();
+        BdsDistribution distribution = options.distribution();
         // The recipe files go beside the captures of the build, which `update` made (a preview has no vanilla/capture.json)
         Path build = root.resolve(Layout.BDS).resolve(distribution.version());
         if (!Files.isDirectory(build)) {
@@ -50,8 +50,8 @@ public final class RecipeProbe {
         String name = "recipes-" + distribution.platform() + "-" + distribution.version();
         Path server = cache.resolve("servers").resolve(name);
         Path work = cache.resolve("runs").resolve(name);
-        int port = Integer.parseInt(options.getOrDefault("port", "19750"));
-        int timeout = Integer.parseInt(options.getOrDefault("timeout", "300"));
+        int port = options.port();
+        int timeout = options.timeout();
         BdsDistribution.deleteRecursively(work);
         Files.createDirectories(work);
         if (!Files.exists(BdsServer.executable(server))) {
@@ -60,7 +60,7 @@ public final class RecipeProbe {
         try {
             capture(build.resolve("vanilla"), root, distribution.version(), server, work, port, timeout);
         } finally {
-            if (!options.containsKey("keep-server")) {
+            if (!options.keepServer()) {
                 BdsDistribution.deleteRecursively(server);
             }
         }
@@ -89,9 +89,7 @@ public final class RecipeProbe {
             bds.start(work.resolve("bds.log"));
             bds.awaitStarted(timeout);
             Capture.Reachable reachable = Capture.reachable(bds, address, 20);
-            if (reachable == null || reachable.protocol() == 0) {
-                throw new IOException("BDS answers neither a RakNet ping nor NetherNet LAN discovery with a protocol");
-            }
+            Capture.requireProtocol(reachable);
             VanillaData reference = EducationProbe.reference(root, null, reachable.protocol());
             System.out.println("BDS " + bdsVersion + ", protocol " + reachable.protocol() + (reachable.netherNet() ? " (NetherNet)" : ""));
             Capture.capture(address, reachable.protocol(), reference, bdsVersion, work.resolve("vanilla"), null, 90, reachable.netherNet());
@@ -104,13 +102,5 @@ public final class RecipeProbe {
             Files.copy(work.resolve("vanilla").resolve(file), out.resolve(file), StandardCopyOption.REPLACE_EXISTING);
             System.out.println("Wrote " + out.resolve(file) + " (" + Files.size(out.resolve(file)) + " bytes)");
         }
-    }
-
-    /** A path option; a Git Bash path ({@code /c/...}) reaches Java unconverted and would silently mean {@code C:\c\...}. */
-    private static Path path(String value) {
-        if (File.separatorChar == '\\' && value.matches("/[A-Za-z]/.*")) {
-            throw new IllegalArgumentException(value + " is a Git Bash path; pass it as " + value.charAt(1) + ":" + value.substring(2));
-        }
-        return Path.of(value).toAbsolutePath();
     }
 }

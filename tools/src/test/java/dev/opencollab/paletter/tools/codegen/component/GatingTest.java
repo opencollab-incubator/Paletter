@@ -1,6 +1,7 @@
 package dev.opencollab.paletter.tools.codegen.component;
 
 import com.google.gson.JsonObject;
+import dev.opencollab.paletter.tools.CommittedBuilds;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
@@ -9,21 +10,12 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
-import java.util.TreeSet;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class GatingTest {
-    /**
-     * The builds without a gating capture yet: the recapture's {@code update} writes {@code spec-gating/gating.json} (no BDS ran for it
-     * here). The capture is not essential: a missing file only leaves {@code @BedrockExperiment} unverified. A build with the file that
-     * is still listed fails, and so does one without it that is not listed.
-     */
-    private static final Set<String> PENDING = Set.of("1.26.36.1", "1.26.45.1", "1.26.52.3", "1.26.63.1", "1.26.70.24");
-
     private static void write(Path bds, String build, String component, String without, String with) throws IOException {
         Path file = bds.resolve(build).resolve(Gating.FILE);
         Files.createDirectories(file.getParent());
@@ -66,11 +58,6 @@ class GatingTest {
 
     @Test
     void everyBuildHasItsFileOrIsPending() throws IOException {
-        Path data = Path.of("..", "data", "bds").toAbsolutePath().normalize();
-        Set<String> without = new TreeSet<>();
-        try (var builds = Files.list(data)) {
-            builds.filter(Files::isDirectory).filter(b -> !Files.exists(b.resolve(Gating.FILE))).forEach(b -> without.add(b.getFileName().toString()));
-        }
-        assertEquals(PENDING, without, "the builds without gating.json must be PENDING exactly");
+        CommittedBuilds.assertPending(Gating.FILE, b -> Files.exists(CommittedBuilds.directory(b).resolve(Gating.FILE)));
     }
 }

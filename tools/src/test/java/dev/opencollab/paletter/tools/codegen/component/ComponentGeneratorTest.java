@@ -253,18 +253,18 @@ class ComponentGeneratorTest {
             "generated sources do not compile: " + errors);
     }
 
-@Test
-void aRetiredComponentIsOmittedWithItsReasonAndItsReplacement() {
-    Inputs in = inputs();
-    in.api().add("retired", json("{\"item:test:former\": \"BDS sends nothing for it\"}"));
-    ApiModel model = ComponentGenerator.model(in);
-    assertEquals("retired, never on the wire: BDS sends nothing for it", model.omitted.get("item:test:former"));
-    assertTrue(model.components.stream().noneMatch(c -> c.id.equals("item:test:former")));
-    assertTrue(model.components.stream().anyMatch(c -> c.id.equals("item:test:old")), "the others stay generated");
-}
+    @Test
+    void aRetiredComponentIsOmittedWithItsReasonAndItsReplacement() {
+        Inputs in = inputs();
+        in.api().add("retired", json("{\"item:test:former\": \"BDS sends nothing for it\"}"));
+        ApiModel model = ComponentGenerator.model(in);
+        assertEquals("retired, never on the wire: BDS sends nothing for it", model.omitted.get("item:test:former"));
+        assertTrue(model.components.stream().noneMatch(c -> c.id.equals("item:test:former")));
+        assertTrue(model.components.stream().anyMatch(c -> c.id.equals("item:test:old")), "the others stay generated");
+    }
 
-@Test
-void theModelHasTheComponentsOfTheFixture() {
+    @Test
+    void theModelHasTheComponentsOfTheFixture() {
         ApiModel model = ComponentGenerator.model(inputs());
         assertEquals(Set.of("item:test:gadget", "block:test:glow", "item:test:widget", "block:test:hidden", "item:test:old", "item:test:former",
                 "item:test:count", "item:test:ancient", "item:test:quiet", "block:test:slab"),

@@ -228,7 +228,7 @@ public final class WireShapes {
      * component the docs do not describe and those of a documented component the inference never mapped
      * ({@link #NOT_INFERRED_YET}: strict runs after the inference, so nothing is left to infer). All are for a human to look
      * at; coverage.md lists the rest, which have a standing reason. Only the report paths of the capture-only and verify runs
-     * ({@code ShapesStage}), which do not infer, leave {@link #NOT_INFERRED_YET} out of what they call a change.
+     * ({@code WireShapesStage}), which do not infer, leave {@link #NOT_INFERRED_YET} out of what they call a change.
      */
     public static List<String> unexplained(String build, Map<String, List<String>> classified) {
         List<String> lines = new ArrayList<>();

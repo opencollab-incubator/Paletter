@@ -21,6 +21,8 @@ import java.util.List;
  */
 public final class DocsFetcher implements DocsParser.DocsSource {
     public static final String REPOSITORY = "MicrosoftDocs/minecraft-creator";
+    /** The docs commit the committed model was generated from (MicrosoftDocs/minecraft-creator main, 2026-11-06): a pin, see docs/updating.md. */
+    public static final String PINNED_COMMIT = "457cdeaa5aa428429884b092895f3979b1f69ad3";
     private static final HttpClient HTTP = HttpClient.newBuilder().followRedirects(HttpClient.Redirect.NORMAL).build();
 
     private final String commit;

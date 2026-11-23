@@ -114,10 +114,7 @@ final class ExperimentStage {
         result.uiKeyOf = ExperimentDiscovery.matchUiKeys(result.current, result.uiKeys);
 
         // Attribution
-        String mode = ctx.options.getOrDefault("experiment-attribution", "each");
-        if (!List.of("each", "all", "none").contains(mode)) {
-            throw new IllegalArgumentException("--experiment-attribution must be each, all or none");
-        }
+        String mode = ctx.options.attribution().text();
         if (mode.equals("each") && result.current.size() > EACH_LIMIT) {
             ctx.report.check(Report.Status.INFO, "Experiments: attribution", result.current.size() + " current toggles (more than "
                 + EACH_LIMIT + "): only all together");

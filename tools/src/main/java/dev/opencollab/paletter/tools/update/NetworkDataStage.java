@@ -5,7 +5,7 @@ import dev.opencollab.paletter.tools.data.VariantNames;
 import dev.opencollab.paletter.tools.bds.BdsDistribution;
 import dev.opencollab.paletter.tools.bds.BdsDump;
 import dev.opencollab.paletter.tools.client.GiveCapture;
-import dev.opencollab.paletter.tools.data.Checker;
+import dev.opencollab.paletter.tools.data.FallbackGaps;
 import dev.opencollab.paletter.tools.data.Diff;
 import dev.opencollab.paletter.tools.data.Importer;
 import org.cloudburstmc.nbt.NbtMap;
@@ -66,7 +66,7 @@ final class NetworkDataStage {
     }
 
     void networkData(BdsDistribution distribution, BdsDump dump, Runs runs, Staging staging) throws Exception {
-        String name = runs.existing != null ? runs.existing : ctx.options.getOrDefault("name", BuildNumber.parse(distribution.version()).dataVersion());
+        String name = runs.existing != null ? runs.existing : (ctx.options.dataVersion() != null ? ctx.options.dataVersion() : BuildNumber.parse(distribution.version()).dataVersion());
         ctx.report.header.put("Bundled version", runs.existing != null ? name + " (existing, same protocol)" : name + " (new protocol)");
         runs.bundledName = name;
         // The capture in the bundled format, imported into a scratch directory
@@ -93,7 +93,7 @@ final class NetworkDataStage {
             ctx.report.diff("Network data: BDS " + distribution.version() + " vs bundled " + name, network);
             if (!network.identical()) {
                 ctx.report.action("same protocol, different data: decide whether to re-import " + name + " (`import --source "
-                    + runs.vanilla + " --name " + name + " --protocol " + runs.protocol + " --bds-dump " + runs.dumpLog + "`)");
+                    + runs.vanilla + " --data-version " + name + " --protocol " + runs.protocol + " --bds-dump " + runs.dumpLog + "`)");
             }
             // Refresh what comes from the Script API (item tags, block defaults); keep the network data
             VanillaData refreshed = new VanillaData(bundled.version(), bundled.blockStates(), bundled.items(), bundled.dataDrivenBlocks(),
@@ -123,7 +123,7 @@ final class NetworkDataStage {
             new Importer(staging.resources).run(runs.vanilla, name, runs.protocol, null, runs.dumpLog, ctx.preview);
             ctx.report.check(Report.Status.INFO, "Import", "imported " + name + " (" + runs.protocol + ")" + (ctx.preview ? " as a preview version" : ""));
             // Content older versions lack is listed above (INFO); there are no bundled fallbacks to check
-            new Checker(staging.resources).problems(ctx.preview);
+            new FallbackGaps(staging.resources).problems(ctx.preview);
             updateVariantNames(variantNames, name, dump, captured);
         }
         stageVariantNames(variantNames, staging.resources);

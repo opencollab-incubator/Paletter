@@ -22,7 +22,7 @@ class UpdateHistoryTest {
     private static Update historyCheck(Path root) throws IOException {
         Files.createDirectories(root.resolve("data/bds/1.26.36.1/spec"));
         // A root given with a detour still compares with the paths built from it
-        Update update = new Update(root.resolve("data/..").resolve("."), Map.of("channel", "release", "against", "1.26.36.1"));
+        Update update = new Update(root.resolve("data/..").resolve("."), UpdateOptions.release().withAgainst("1.26.36.1"));
         update.begin(new BdsDistribution("1.26.31.1", false, "win", "https://example.invalid/bedrock-server-1.26.31.1.zip"));
         return update;
     }
@@ -53,7 +53,7 @@ class UpdateHistoryTest {
         assertFalse(new SpecStage(check.context(), null).variantsAlike(other, "1.26.36.1"));
         assertTrue(check.report().failed());
         // A recapture's captures are of the new add-on by design, even when it compares with the committed ones of a release
-        Update recapture = new Update(root, Map.of("channel", "release", "against", "1.26.36.1", "capture-only", out.toString()));
+        Update recapture = new Update(root, UpdateOptions.release().withAgainst("1.26.36.1").withCaptureOnly(out));
         recapture.begin(new BdsDistribution("1.26.31.1", false, "win", "https://example.invalid/bedrock-server-1.26.31.1.zip"));
         assertTrue(new SpecStage(recapture.context(), null).variantsAlike(other, "1.26.36.1"));
         assertFalse(recapture.report().failed());
@@ -104,8 +104,8 @@ class UpdateHistoryTest {
 
     @Test
     void theBuildComparedWithMustBeABuildWithCaptures(@TempDir Path root) {
-        assertThrows(IllegalArgumentException.class, () -> new Update(root, Map.of("against", "1.26.36.1\\..\\x")));
-        Update update = new Update(root, Map.of("against", "1.26.36.1"));
+        assertThrows(IllegalArgumentException.class, () -> new Update(root, UpdateOptions.release().withAgainst("1.26.36.1\\..\\x")));
+        Update update = new Update(root, UpdateOptions.release().withAgainst("1.26.36.1"));
         assertThrows(IllegalArgumentException.class, () -> update.begin(new BdsDistribution("1.26.31.1", false, "win", "u")));
     }
 
@@ -141,7 +141,7 @@ class UpdateHistoryTest {
         // The build is committed already (a recapture): its directory is neither deleted nor an obstacle
         Files.createDirectories(root.resolve("data/bds/1.26.36.1/spec"));
         Files.writeString(root.resolve("data/bds/1.26.36.1/experiments.json"), "old");
-        Update update = new Update(root, Map.of("channel", "release", "capture-only", out.toString()));
+        Update update = new Update(root, UpdateOptions.release().withCaptureOnly(out));
         update.begin(new BdsDistribution("1.26.36.1", false, "win", "https://example.invalid/bedrock-server-1.26.36.1.zip"));
         update.context().stage(root.resolve("data/bds/1.26.36.1/experiments.json"), "new".getBytes(StandardCharsets.UTF_8), "experiment record");
         update.context().stage(root.resolve("data/bds/1.26.36.1/creative-probe/creative_items.json.gz"), "x".getBytes(StandardCharsets.UTF_8), "creative order probe inventory");
@@ -163,8 +163,8 @@ class UpdateHistoryTest {
 
     @Test
     void aCaptureOnlyRunNeedsADirectoryOutsideDataBds(@TempDir Path root) {
-        assertThrows(IllegalArgumentException.class, () -> new Update(root, Map.of("channel", "release", "capture-only", root.resolve("data/bds/x").toString())));
-        assertThrows(IllegalArgumentException.class, () -> new Update(root, Map.of("channel", "release", "capture-only", root.toString())));
-        assertThrows(IllegalArgumentException.class, () -> new Update(root, Map.of("channel", "release", "capture-only", "out", "verify-only", "true")));
+        assertThrows(IllegalArgumentException.class, () -> new Update(root, UpdateOptions.release().withCaptureOnly(root.resolve("data/bds/x"))));
+        assertThrows(IllegalArgumentException.class, () -> new Update(root, UpdateOptions.release().withCaptureOnly(root)));
+        assertThrows(IllegalArgumentException.class, () -> new Update(root, UpdateOptions.release().withCaptureOnly(Path.of("out")).withVerifyOnly(true)));
     }
 }

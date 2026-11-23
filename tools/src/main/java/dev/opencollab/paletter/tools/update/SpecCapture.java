@@ -34,7 +34,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -63,18 +62,18 @@ public final class SpecCapture {
     private static final int SHRINK_ROUNDS = 4;
 
     private final Path root;
-    private final Map<String, String> options;
+    private final SpecCaptureOptions options;
     private Capture.Summary summary;
     private final List<String> unattributed = new ArrayList<>();
 
     /** The schema of the run that extracted it (an {@code update}), which the add-ons use instead of the committed file; or null. */
     private final Schema runSchema;
 
-    public SpecCapture(Path root, Map<String, String> options) {
+    public SpecCapture(Path root, SpecCaptureOptions options) {
         this(root, options, null);
     }
 
-    public SpecCapture(Path root, Map<String, String> options, Schema runSchema) {
+    public SpecCapture(Path root, SpecCaptureOptions options, Schema runSchema) {
         this.root = root;
         this.options = options;
         this.runSchema = runSchema;
@@ -112,22 +111,22 @@ public final class SpecCapture {
     }
 
     public int run() throws Exception {
-        boolean preview = options.getOrDefault("channel", "release").equals("preview");
-        Path cache = options.containsKey("cache") ? Path.of(options.get("cache")) : BdsDistribution.defaultCache();
-        BdsDistribution distribution = BdsDistribution.resolve(preview, options.get("version"));
-        int port = Integer.parseInt(options.getOrDefault("port", "19270"));
-        int timeout = Integer.parseInt(options.getOrDefault("timeout", "600"));
+        boolean preview = options.bds().preview();
+        Path cache = options.bds().cache();
+        BdsDistribution distribution = options.bds().distribution();
+        int port = options.bds().port();
+        int timeout = options.bds().timeout();
         Path work = distribution.runDirectory(cache, "spec-");
         BdsDistribution.deleteRecursively(work);
         Files.createDirectories(work);
-        boolean probeKeys = options.containsKey("probe-keys");
-        boolean formatSweep = options.containsKey("format-sweep");
-        boolean gating = options.containsKey("gating");
-        Path out = options.containsKey("out") ? Path.of(options.get("out"))
-            : root.resolve(Layout.BDS).resolve(distribution.version()).resolve(probeKeys ? "spec-keys" : formatSweep ? "spec-format" : gating ? "spec-gating" : "spec");
+        boolean probeKeys = options.mode() == SpecCaptureOptions.Mode.KEYS;
+        boolean formatSweep = options.mode() == SpecCaptureOptions.Mode.FORMAT_SWEEP;
+        boolean gating = options.mode() == SpecCaptureOptions.Mode.GATING;
+        Path out = options.out() != null ? options.out()
+            : root.resolve(Layout.BDS).resolve(distribution.version()).resolve(options.mode().directory());
 
-        // update passes reuse-server: the server its captures ran on is still extracted, and this run removes it
-        Path server = distribution.extract(cache, root, !options.containsKey("keep-server") && !options.containsKey("reuse-server"));
+        // update passes reuseServer: the server its captures ran on is still extracted, and this run removes it
+        Path server = distribution.extract(cache, root, !options.bds().keepServer() && !options.reuseServer());
         try {
             Path modelDir = root.resolve("data/model");
             // The add-on is the one place that takes BDS's schema: full enums and limits to vary
@@ -147,8 +146,8 @@ public final class SpecCapture {
                     // not the add-ons an earlier capture on this server installed: their files are ours, not BDS's
                     behaviorPacks.filter(pack -> !pack.getFileName().toString().startsWith("paletter_spec")).forEach(packs::add);
                 }
-                if (options.containsKey("vanilla-pack")) {
-                    packs.add(Path.of(options.get("vanilla-pack")));
+                if (options.vanillaPack() != null) {
+                    packs.add(options.vanillaPack());
                 }
                 evidence = KeyDiscovery.gather(generator.model(), BdsServer.executable(server), cache, packs);
                 if (probeKeys) {
@@ -238,37 +237,26 @@ public final class SpecCapture {
             }
             System.out.println("Spec capture of BDS " + distribution.version() + " (protocol " + protocol + "): " + generator.variants().size()
                 + " variants, " + contentLog.size() + " content log lines -> " + out);
-            if (options.containsKey("with-gating")) {
+            if (options.withGating()) {
                 // The same server once more, in a world without experiments: not essential, so a failure only loses this file
-                Map<String, String> gate = new LinkedHashMap<>(options);
-                gate.remove("with-gating");
-                gate.remove("with-format-sweep");
-                gate.remove("experiments");
-                gate.put("gating", "true");
-                gate.put("reuse-server", "true");
-                gate.put("out", out.resolveSibling("spec-gating").toString());
                 try {
-                    new SpecCapture(root, gate, runSchema).run();
+                    new SpecCapture(root, options.followUp(SpecCaptureOptions.Mode.GATING, out.resolveSibling(SpecCaptureOptions.Mode.GATING.directory())),
+                        runSchema).run();
                 } catch (Exception e) {
                     System.out.println("The gating capture of BDS " + distribution.version() + " failed, its components stay unverified: " + e);
                 }
             }
-            if (options.containsKey("with-format-sweep")) {
+            if (options.withFormatSweep()) {
                 // The same server once more, with the add-on of the format sweep: its own capture next to this one
-                Map<String, String> sweep = new LinkedHashMap<>(options);
-                sweep.remove("with-format-sweep");
-                sweep.remove("with-gating");
-                sweep.put("format-sweep", "true");
-                sweep.put("reuse-server", "true");
-                sweep.put("out", out.resolveSibling("spec-format").toString());
-                SpecCapture sweepCapture = new SpecCapture(root, sweep, runSchema);
+                SpecCapture sweepCapture = new SpecCapture(root,
+                    options.followUp(SpecCaptureOptions.Mode.FORMAT_SWEEP, out.resolveSibling(SpecCaptureOptions.Mode.FORMAT_SWEEP.directory())), runSchema);
                 int code = sweepCapture.run();
                 unattributed.addAll(sweepCapture.unattributed);
                 return code;
             }
             return 0;
         } finally {
-            if (!options.containsKey("keep-server")) {
+            if (!options.bds().keepServer()) {
                 try {
                     BdsDistribution.deleteRecursively(server);
                 } catch (IOException e) {
@@ -305,14 +293,14 @@ public final class SpecCapture {
             bds.start(work.resolve("bds-create.log"));
             bds.awaitStarted(timeout);
         }
-        List<String> experiments = options.containsKey("experiments")
-            ? Arrays.asList(options.get("experiments").split(","))
+        boolean gating = options.mode() == SpecCaptureOptions.Mode.GATING;
+        List<String> experiments = options.experiments() != null ? options.experiments()
             : ExperimentDiscovery.recordedCurrent(root.resolve(Layout.BDS), version,
-                ExperimentDiscovery.previewProtocols(root.resolve("paletter/src/main/resources/paletter"), options.getOrDefault("channel", "release").equals("preview")));
-        if (experiments.isEmpty() && !options.containsKey("gating")) {
+                ExperimentDiscovery.previewProtocols(root.resolve("paletter/src/main/resources/paletter"), options.bds().preview()));
+        if (experiments.isEmpty() && !gating) {
             throw new IOException("No experiments for the capture: no committed experiments.json at or below " + version + "; pass --experiments");
         }
-        if (!options.containsKey("gating")) {
+        if (!gating) {
             Capture.enableExperiments(server.resolve("worlds").resolve(WORLD).resolve("level.dat"), experiments);
         }
 
@@ -330,10 +318,9 @@ public final class SpecCapture {
                 .stream().map(SpecCapture::contentLine).toList();
             Capture.Reachable reachable = Capture.reachable(bds, address, 20);
             boolean raknet = reachable == null || !reachable.netherNet();
-            int protocol = reachable != null && reachable.protocol() != 0 ? reachable.protocol()
-                : Integer.parseInt(options.getOrDefault("protocol", "0"));
+            int protocol = reachable != null && reachable.protocol() != 0 ? reachable.protocol() : options.protocol();
             if (protocol == 0) {
-                throw new IOException("No protocol from the server status; pass --protocol");
+                throw new IOException(Capture.NO_PROTOCOL + "; pass --protocol");
             }
             Capture.Summary summary = Capture.capture(address, protocol, reference(root, protocol), version, work.resolve("capture"),
                 work.resolve("custom"), 120, !raknet);

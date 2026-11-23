@@ -26,7 +26,7 @@ of a different block type, BDS takes the hash + 1, and again until the id is fre
 which the + 1 follows the order BDS assigns ids in. Paletter (`HashedIds`, `BlockRegistry`) assigns vanilla states first
 (no two collide, so each keeps its hash), then custom blocks in block id order (`BlockIdOrder`, 10000 up), each block's
 states in order. That ids are assigned in block id order is an assumption from the registration order, until the
-recapture checks the pair below.
+recapture checks the pair below ([Recapture to-do](data-pipeline.md#recapture-to-do)).
 
 - The spec add-on carries `paletter:hash_368468` and `paletter:hash_2193012`, the first pair of `paletter:hash_<n>` whose
   single states hash alike (578938111; `hashCollision` in `data/model/fixtures.json`, found by `HashCollisions.firstPair`; the build checks only that the pair collides, the search runs in
@@ -166,7 +166,7 @@ the start game block property list and the block pass iterate it. Paletter repro
 
 Custom block ids follow descending file name order of the block files, not identifier order: in the
 `creative-probe-file-order` capture, files `b14.json` to `b01.json` got ids 10000 to 10013. With one file per block named
-after the block, which is the usual layout, that equals descending identifier order, compared in upper case: the file listing of Windows BDS sorts names in upper case, so `_` sorts after letters (`b_x` is numbered before `block_x`; every spec capture of 1.26.36.1 to 1.26.70.24 follows this, `CreativeOrderCheckTest.blockMapOrderMatchesTheSpecCapture`). Paletter has no files, so it numbers
+after the block, which is the usual layout, that equals descending identifier order, compared in upper case: the file listing of Windows BDS sorts names in upper case, so `_` sorts after letters (`b_x` is numbered before `block_x`; every committed spec capture whose protocol a data version starts with follows this, `CreativeOrderCheckTest.blockMapOrderMatchesTheSpecCaptures`; a hotfix build of another protocol has no layout to compare with and is skipped). Paletter has no files, so it numbers
 custom blocks by identifier, descending, whatever order the layers register them in. For add-ons whose file names do not
 sort like their identifiers, block items will be ordered differently than on BDS. Item order is unaffected.
 
@@ -179,8 +179,8 @@ packs' blocks after the main pack (`CreativeOrderCheck.blockOrder`).
 
 **Where Paletter differs on purpose.** Groups stay in category order in the packet, and a new group gets its first
 stack as icon instead of air. The client shows the same thing either way. A placement with an anchor
-(`CreativePlacement#after`) is an explicit override. `CreativeOrdering.APPEND` is the older behaviour: registration
-order, groups matched by name in any category; which content is in the creative inventory is still decided by the menu
+(`CreativePlacement#after`) is an explicit override. `CreativeOrdering.APPEND` orders by registration
+order and matches groups by name in any category; which content is in the creative inventory is still decided by the menu
 categories, as in BDS.
 
 **Limits.** The block map order comes from MSVC's standard library. The Linux BDS uses another one, so its block order
@@ -191,7 +191,7 @@ content split across layers is ordered layer by layer.
 to 1024 buckets) and `creative-probe-file-order` captures in `data/bds/1.26.63.1/`. Repeated server starts give identical
 packets. `CreativeOrderCheckTest` compiles each capture's custom content through Paletter and compares the whole creative
 inventory with the captured packet, and `update` repeats the check on every new build. To probe by hand:
-`./gradlew :tools:run --args="creative-probe --addon <dir> --out <dir> --starts 2"`.
+`./gradlew :tools:run --args="creative-probe --version <build> --addon <dir> --out <dir> --starts 2"`.
 
 ## Recipe unlock
 
@@ -200,7 +200,8 @@ inventory with the captured packet, and `update` repeats the check on every new 
 creative order probe pack carries one shapeless recipe per unlock form and per recipe format (`UnlockProbe`), so that
 `update` records the answer for every build: `data/bds/<build>/recipe-probe/crafting_data.json.gz` has the recipes whose
 identifier starts with `paletter:unlock_`, `unlock` raw as BDS sent them, and the content log of the creative order probe
-world says which BDS rejected. The identifier of a recipe is `paletter:unlock_<form>_<format with _ for .>`.
+world says which BDS rejected. The identifier of a recipe is `paletter:unlock_<form>_<format with _ for .>`. No build has
+the directory yet ([Recapture to-do](data-pipeline.md#recapture-to-do)).
 
 - **Forms** (from BDS): no `unlock` key (the control); a list of `{"item"}`, of `{"item", "data"}` and of `{"tag"}`, as BDS's own
   vanilla recipes have them; the object `{"context": ...}` with `None` and `PlayerInWater` (vanilla recipes) and `AlwaysUnlocked`
@@ -216,8 +217,8 @@ The headless client lists, per capture, every packet it received and sent from t
 `capture.json`: `<- Name` received, `-> Name` sent when queued) and the index of start game in it (`startGameIndex`).
 **This is what BDS sends, in the order it sends it. It does not say what a client requires; that is unverified, there
 is no client test.** The client never sends `SetLocalPlayerAsInitialized`, so the order after start game also depends on
-its chunk radius and sub-chunk requests. Captures made before this field existed do not have it; it appears with the
-next recapture of each build. Sample, BDS 1.26.63.1 on Windows, one run (determinism across runs is checked by the
+its chunk radius and sub-chunk requests. Captures made before this field existed do not have it
+([Recapture to-do](data-pipeline.md#recapture-to-do)). Sample, BDS 1.26.63.1 on Windows, one run (determinism across runs is checked by the
 recapture), from a one-off spike capture:
 
 1. Before start game: NetworkSettings, ServerToClientHandshake, PlayStatus (login success), ResourcePacksInfo,

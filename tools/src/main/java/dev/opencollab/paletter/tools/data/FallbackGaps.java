@@ -24,7 +24,7 @@ import java.util.TreeSet;
  * defines a fallback ({@code Fallbacks.builder()} of {@code Paletter.builder()}). Nothing here is an error; the
  * list is what a consumer has to decide about.
  */
-public final class Checker {
+public final class FallbackGaps {
     private final Path output;
     /**
      * Per older version, the content of the newest version it lacks. Filled by {@link #problems}.
@@ -37,7 +37,7 @@ public final class Checker {
      */
     final Map<String, List<String>> gated = new LinkedHashMap<>();
 
-    public Checker(Path output) {
+    public FallbackGaps(Path output) {
         this.output = output;
     }
 

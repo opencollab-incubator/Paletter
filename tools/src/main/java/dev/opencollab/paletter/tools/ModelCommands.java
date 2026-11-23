@@ -19,8 +19,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Callable;
 
-import static dev.opencollab.paletter.tools.Cli.DEFAULT_COMMIT;
-
 /** The commands of the component model: {@code docs}, {@code addon}, {@code infer}, {@code check-mappings}, {@code retire}. */
 final class ModelCommands {
     private ModelCommands() {
@@ -29,8 +27,8 @@ final class ModelCommands {
     @Command(name = "docs", description = "Creator docs -> data/model/components.json. --docs is a checkout of MicrosoftDocs/minecraft-creator "
         + "(commit from git); otherwise the pages of --commit (default: the commit components.json was made from) are downloaded into the cache.")
     static final class Docs extends Rooted implements Callable<Integer> {
-        @Option(names = "--docs") Path docs;
-        @Option(names = "--commit") String commit;
+        @Option(names = "--docs", description = "A checkout of MicrosoftDocs/minecraft-creator (default: download the pages of --commit)") Path docs;
+        @Option(names = "--commit", description = "The commit of the docs (default: the checkout's HEAD, or the one components.json was made from)") String commit;
 
         @Override
         public Integer call() throws Exception {
@@ -43,7 +41,7 @@ final class ModelCommands {
                 if (sha == null && Files.exists(model.resolve("components.json"))) {
                     sha = Model.read(model.resolve("components.json")).commit();
                 }
-                source = new DocsFetcher(sha != null ? sha : DEFAULT_COMMIT, DocsFetcher.defaultCache());
+                source = new DocsFetcher(sha != null ? sha : DocsFetcher.PINNED_COMMIT, DocsFetcher.defaultCache());
             }
             Model parsed = new DocsParser(source).parse();
             parsed.write(model.resolve("components.json"));
@@ -52,33 +50,52 @@ final class ModelCommands {
             return 0;
         }
 
+        /** The commit is the provenance of the model and of coverage.md: without one the run fails and asks for {@code --commit}. */
         private static String gitHead(Path docs) {
             try {
                 Process git = new ProcessBuilder("git", "-C", docs.toString(), "rev-parse", "HEAD").redirectErrorStream(true).start();
                 String head = new String(git.getInputStream().readAllBytes()).trim();
-                return git.waitFor() == 0 ? head : "unknown";
+                if (git.waitFor() == 0) {
+                    return head;
+                }
             } catch (Exception e) {
-                return "unknown";
+                // the same message below
             }
+            throw new IllegalArgumentException(docs + " is no git checkout: pass --commit, the commit of its docs");
         }
     }
 
     @Command(name = "addon", description = "Generates an add-on. Kinds: spec (data/model -> every documented component + variants.json, "
         + "the default), creative (data/addons/creative), creative-large (the 700 block probe)")
     static final class Addon extends Rooted implements Callable<Integer> {
-        @Option(names = "--out", required = true) Path out;
-        @Option(names = "--kind", defaultValue = "spec", description = "spec, creative or creative-large") String kind;
+        enum Kind {
+            SPEC, CREATIVE, CREATIVE_LARGE
+        }
+
+        /** {@code creative-large} for {@code CREATIVE_LARGE}. */
+        static final class KindConverter implements picocli.CommandLine.ITypeConverter<Kind> {
+            @Override
+            public Kind convert(String value) {
+                try {
+                    return Kind.valueOf(value.toUpperCase(java.util.Locale.ROOT).replace('-', '_'));
+                } catch (IllegalArgumentException e) {
+                    throw new picocli.CommandLine.TypeConversionException("expected spec, creative or creative-large but was '" + value + "'");
+                }
+            }
+        }
+
+        @Option(names = "--out", required = true, description = "The directory the add-on is written to") Path out;
+        @Option(names = "--kind", defaultValue = "spec", converter = KindConverter.class, description = "spec, creative or creative-large (default: spec)") Kind kind;
 
         @Override
         public Integer call() throws Exception {
             switch (kind) {
-                case "spec" -> {
+                case SPEC -> {
                     Path model = root().resolve(Layout.MODEL);
                     new AddonGenerator(Model.read(model.resolve("components.json")), Fixtures.read(model).withNewestSchema(null)).write(out);
                 }
-                case "creative" -> FixedAddons.writeCreative(out);
-                case "creative-large" -> FixedAddons.writeCreativeLarge(out);
-                default -> throw new IllegalArgumentException("Unknown --kind " + kind);
+                case CREATIVE -> FixedAddons.writeCreative(out);
+                case CREATIVE_LARGE -> FixedAddons.writeCreativeLarge(out);
             }
             return 0;
         }
@@ -95,7 +112,7 @@ final class ModelCommands {
     @Command(name = "retire", description = "Drops a window protocol from data/model/mappings.json and mappings-evidence.json (its"
         + " captures and windows; neighbouring windows that become alike join) and lists what else must go")
     static final class Retire extends Rooted implements Callable<Integer> {
-        @picocli.CommandLine.Parameters(index = "0", description = "the window protocol of the captures to retire (mappings.json captures)")
+        @picocli.CommandLine.Parameters(index = "0", paramLabel = "PROTOCOL", description = "The window protocol of the captures to retire (mappings.json captures)")
         int protocol;
 
         @Override

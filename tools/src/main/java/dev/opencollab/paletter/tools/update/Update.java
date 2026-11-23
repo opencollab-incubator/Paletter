@@ -15,7 +15,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Map;
 
 /**
  * {@code update}: pulls the newest BDS of a channel, runs the Script API dump and the network captures, compares the
@@ -30,10 +29,10 @@ public final class Update {
 
     /** The report of an update, in {@code data/bds/<build>/}. */
     public static final String REPORT = "update-report.md";
-    /** The exit code of an update that wrote everything but left decisions (the report's TODO list). */
-    public static final int EXIT_TODOS = 2;
+    /** The exit code of an update that wrote everything but left decisions (the report's "Needs attention" list). */
+    public static final int EXIT_DECISIONS = 2;
 
-    public Update(Path root, Map<String, String> options) {
+    public Update(Path root, UpdateOptions options) {
         this.ctx = new UpdateContext(root, options);
     }
 
@@ -73,8 +72,8 @@ public final class Update {
 
     /** @return the process exit code */
     public int run() throws Exception {
-        Path cache = ctx.options.containsKey("cache") ? Path.of(ctx.options.get("cache")) : BdsDistribution.defaultCache();
-        BdsDistribution distribution = BdsDistribution.resolve(ctx.preview, ctx.options.get("version"));
+        Path cache = ctx.options.bds().cache();
+        BdsDistribution distribution = ctx.options.bds().distribution();
         begin(distribution);
         Path work = distribution.runDirectory(cache, "");
         BdsDistribution.deleteRecursively(work);
@@ -135,7 +134,7 @@ public final class Update {
         // An update keeps its report with the data of its build, so a later run can be diffed against it; an update that
         // changed no data file keeps the committed report, so the report is never the only change. A history check keeps
         // its report with the captures of a kept build
-        Path reportFile = ctx.options.containsKey("report") ? Path.of(ctx.options.get("report"))
+        Path reportFile = ctx.options.report() != null ? ctx.options.report()
             : ctx.captureOnly != null ? work.resolve("report.md")
             : ctx.against != null ? (kept ? ctx.buildDirectory.resolve(REPORT) : work.resolve("report.md"))
             : ctx.verifyOnly || ctx.report.repoChanges.isEmpty() ? work.resolve("report.md") : ctx.bdsData.resolve(distribution.version()).resolve(REPORT);
@@ -180,11 +179,21 @@ public final class Update {
     /** The command line of this run, without the options that only say where things go. */
     private String command(BdsDistribution distribution) {
         StringBuilder args = new StringBuilder("update --channel " + (ctx.preview ? "preview" : "release") + " --version " + distribution.version());
-        for (String option : List.of("against", "verify-only", "name", "protocol", "experiments", "experiment-attribution")) {
-            if (ctx.options.containsKey(option)) {
-                String value = ctx.options.get(option);
-                args.append(" --").append(option).append(value == null || value.equals("true") ? "" : " " + value);
-            }
+        UpdateOptions o = ctx.options;
+        if (o.against() != null) {
+            args.append(" --against ").append(o.against());
+        }
+        if (o.verifyOnly()) {
+            args.append(" --verify-only");
+        }
+        if (o.dataVersion() != null) {
+            args.append(" --data-version ").append(o.dataVersion());
+        }
+        if (o.experiments() != null) {
+            args.append(" --experiments ").append(String.join(",", o.experiments()));
+        }
+        if (o.attribution() != UpdateOptions.Attribution.EACH) {
+            args.append(" --experiment-attribution ").append(o.attribution().text());
         }
         return "./gradlew :tools:run --args=\"" + args + "\"";
     }
@@ -200,7 +209,7 @@ public final class Update {
         runs.bdsVersion = distribution.version();
         runs.formatVersion = AddonGenerator.formatVersionFor(FixedAddons.FORMAT_VERSION, distribution.version());
         try {
-            // 1. Script API dump
+            // Step 1 of docs/data-pipeline.md ("Updating for a new BDS build"): the Script API dump
             Path dumpLog = work.resolve("bds-dump.log");
             Path docs = ScriptApiDump.run(ctx.root, server, dumpLog, ctx.timeout, ctx.port);
             scriptApi.scriptModules(distribution, docs, runs);
@@ -214,25 +223,26 @@ public final class Update {
                 "BDS reports " + json[0] + "; " + dump.items().size() + " items, " + dump.blockDefaults().size() + " blocks, "
                     + dump.itemTags().size() + " item tags" + (dump.errors().isEmpty() ? "" : "; addon errors: " + dump.errors()));
 
-            // 2. Network captures (vanilla, experiments and the creative order probe, hashed and sequential block ids)
+            // Steps 2 to 5: the network captures (vanilla, experiments and the creative order probe, hashed and sequential block ids)
+            // and the checks of the assumptions the library relies on
             captures.captures(server, work, dump, runs);
             protocol = runs.protocol;
             if (runs.codecProtocol != null && runs.protocol != null) {
                 // The captures were decoded with another protocol's codec: BDS's own packet schemas say whether that is safe
-                ProtocolSchemaCheck.report(ctx.report, cache.resolve("docgen"),runs.codecProtocol, runs.protocol);
+                ProtocolSchemaCheck.report(ctx.report, cache.resolve("docgen"), runs.codecProtocol, runs.protocol);
             }
 
-            // 3. Voxel shapes: the packet of the vanilla world, of the probe add-on and of the anchors
+            // Also on this server: the voxel shapes, the packet of the vanilla world, of the probe add-on and of the anchors
             if (runs.vanilla != null) {
                 new VoxelShapesStage(ctx).voxelShapes(distribution, server, work, runs);
             } else {
                 ctx.report.check(Report.Status.SKIP, "Voxel shapes", "no capture of this build");
             }
 
-            // 4. Behaviour dump, behaviour probe and Education Edition capture, on this server (before the spec capture removes it)
+            // The behaviour dump, behaviour probe and Education Edition capture, on this server (before the spec capture removes it)
             new BehaviourStage(ctx).behaviour(distribution, server, work, runs);
         } finally {
-            // With a capture, the spec capture runs on this server too (reuse-server) and removes it
+            // With a capture, the spec capture runs on this server too (reuseServer) and removes it
             if (!ctx.keepServer && runs.protocol == null) {
                 try {
                     BdsDistribution.deleteRecursively(server);
@@ -242,7 +252,7 @@ public final class Update {
             }
         }
 
-        // 5. Compare and update
+        // Steps 6 and 7: compare with the committed data and update it
         scriptApi.scriptApi(distribution, dump, runs);
         new InventoryStage(ctx).inventory(cache, distribution);
         Staging staging = new Staging(ctx, work.resolve("staging"));
@@ -255,7 +265,7 @@ public final class Update {
         new ExperimentReportStage(ctx).experimentsReport(distribution, runs, staging);
         addonChecks.creativeOrder(runs);
         if (runs.imported != null) {
-            new ShapesStage(ctx).vanillaShapes(runs);
+            new WireShapesStage(ctx).vanillaShapes(runs);
         }
         SpecStage spec = new SpecStage(ctx, captures);
         if (ctx.against != null || ctx.captureOnly != null) {
@@ -280,11 +290,11 @@ public final class Update {
     }
 
     /**
-     * The process exit code of a run with {@code report}: 1 for a failure (or a difference in a verification), {@link #EXIT_TODOS}
+     * The process exit code of a run with {@code report}: 1 for a failure (or a difference in a verification), {@link #EXIT_DECISIONS}
      * for decisions left, else 0. {@code ./gradlew :tools:run} turns every non-zero exit into 1; the launcher of
      * {@code ./gradlew :tools:installDist} ({@code tools/build/install/tools/bin/tools}) passes it on, which the workflows use.
      */
     static int exitCode(Report report, boolean verifyOnly) {
-        return report.failed() || (verifyOnly && report.differs()) ? 1 : !verifyOnly && report.hasTodos() ? EXIT_TODOS : 0;
+        return report.failed() || (verifyOnly && report.differs()) ? 1 : !verifyOnly && report.hasDecisions() ? EXIT_DECISIONS : 0;
     }
 }

@@ -42,7 +42,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * renamed block, a removed item, and a preview-only block and item. Item variants: two named
  * potion variants of the release (one already in the history, one new), a removed one, and one only the preview has.
  */
-class ConstantsGoldenTest {
+class ConstantsSyntheticBundleTest {
 
     // ---- Fixture -------------------------------------------------------------------------------------------------
 

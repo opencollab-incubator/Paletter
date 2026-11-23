@@ -9,6 +9,7 @@ import org.cloudburstmc.nbt.NbtType;
 import org.cloudburstmc.nbt.NbtUtils;
 import org.cloudburstmc.protocol.bedrock.data.inventory.crafting.RecipeUnlockingRequirement.UnlockingContext;
 import dev.opencollab.paletter.internal.data.PaletteDataCodec;
+import dev.opencollab.paletter.tools.Json;
 import dev.opencollab.paletter.tools.Versions;
 import dev.opencollab.paletter.tools.Layout;
 import dev.opencollab.paletter.tools.client.RecipeCapture;
@@ -65,7 +66,7 @@ public final class RecipeImport {
             for (Path build : list.filter(Files::isDirectory).sorted(Comparator.comparing(path -> path.getFileName().toString(), Versions.ORDER)).toList()) {
                 Path record = build.resolve("experiments.json");
                 if (Files.exists(record) && Files.exists(build.resolve("vanilla").resolve(RecipeCapture.CRAFTING))) {
-                    JsonObject json = ConstantsGenerator.readJson(record);
+                    JsonObject json = Json.objectOrEmpty(record);
                     String version = ConstantsGenerator.Sources.releaseOf(versions, json.get("protocol").getAsInt());
                     if (version != null) {
                         builds.put(version, build.resolve("vanilla"));

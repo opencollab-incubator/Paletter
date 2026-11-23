@@ -2,6 +2,8 @@ package dev.opencollab.paletter.tools.data;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+import dev.opencollab.paletter.tools.CommittedBuilds;
 import org.cloudburstmc.nbt.NbtMap;
 import org.cloudburstmc.nbt.NbtType;
 import org.cloudburstmc.protocol.bedrock.data.inventory.CreativeItemData;
@@ -15,11 +17,13 @@ import dev.opencollab.paletter.data.DataVersion;
 import org.junit.jupiter.api.io.TempDir;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.CsvSource;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
+import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -27,19 +31,42 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Paletter's default creative ordering against what BDS sent (see docs/wire-notes.md): the creative inventory of the
- * creative order probe (every kind of menu category placement) of BDS 1.26.63.1 and of the preview 1.26.70.24 (whose
- * layout has items only the preview has), and of the large probe of 1.26.63.1 (700 blocks, so BDS's block map has more
- * than 512 buckets), and the block ids and block map order of the spec add-on, which BDS iterates for the start game
- * block properties and for the block pass alike.
+ * creative order probe (every kind of menu category placement) of every build that has one (the preview's layout has items only
+ * the preview has), and of the large probe (700 blocks, so BDS's block map has more than 512 buckets), and the block ids and block
+ * map order of the spec add-on of every build, which BDS iterates for the start game block properties and for the block pass alike.
  */
 class CreativeOrderCheckTest {
     private static final Path CAPTURES = Path.of("../data/bds/1.26.63.1");
     private static final Path DATA = Path.of("../paletter/src/main/resources/paletter");
 
+    /** The builds that have the capture, with the protocol of their spec capture. */
+    private static Stream<Arguments> builds(String capture, int customStacks) {
+        return CommittedBuilds.all().stream().filter(b -> Files.exists(CommittedBuilds.directory(b).resolve(capture).resolve("creative_items.json.gz")))
+            .map(b -> Arguments.of(b, protocol(b), capture, customStacks));
+    }
+
+    static Stream<Arguments> creativeCaptures() {
+        return Stream.concat(builds("creative-probe", 30), builds("creative-large", 700));
+    }
+
+    static Stream<Arguments> specCaptures() {
+        return CommittedBuilds.all().stream().filter(b -> Files.exists(CommittedBuilds.directory(b).resolve("spec").resolve("capture.json")))
+            .map(b -> Arguments.of(b, protocol(b)));
+    }
+
+    private static int protocol(String build) {
+        try {
+            return JsonParser.parseString(Files.readString(CommittedBuilds.directory(build).resolve("spec").resolve("capture.json")))
+                .getAsJsonObject().get("protocol").getAsInt();
+        } catch (java.io.IOException e) {
+            throw new java.io.UncheckedIOException(e);
+        }
+    }
+
     @ParameterizedTest
-    @CsvSource({"1.26.63.1, 2225, creative-probe, 30", "1.26.63.1, 2225, creative-large, 700", "1.26.70.24, 2259, creative-probe, 30"})
+    @MethodSource("creativeCaptures")
     void bdsOrderingMatchesTheCapture(String build, int protocol, String capture, int customStacks) throws Exception {
-        Path directory = Path.of("../data/bds").resolve(build).resolve(capture);
+        Path directory = CommittedBuilds.directory(build).resolve(capture);
         CreativeOrderCheck.Result result = CreativeOrderCheck.check(protocol, DATA,
             directory.resolve("creative_items.json.gz"), directory.resolve("custom_item_registry.nbt"),
             directory.resolve("custom_block_properties.nbt"));
@@ -49,11 +76,13 @@ class CreativeOrderCheckTest {
 
     /** Every spec capture of a build: BDS numbers the custom blocks and puts them in the block pass in Paletter's order. */
     @ParameterizedTest
-    @CsvSource({"1.26.63.1, 2225", "1.26.70.24, 2259"})
+    @MethodSource("specCaptures")
     void blockMapOrderMatchesTheSpecCaptures(String build, int protocol) throws Exception {
-        Path directory = Path.of("../data/bds").resolve(build).resolve("spec");
+        Path directory = CommittedBuilds.directory(build).resolve("spec");
         CreativeOrderCheck.Result result = CreativeOrderCheck.blockOrder(protocol, DATA, directory.resolve("custom_item_registry.nbt"),
             directory.resolve("custom_block_properties.nbt"), List.of());
+        // A hotfix build of a protocol that no data version starts with has no layout to compare with (1.26.45.1)
+        org.junit.jupiter.api.Assumptions.assumeTrue(result.skipped() == null, result.skipped());
         assertTrue(result.matches(), String.join("\n", result.differences()));
         assertTrue(result.customStacks() >= 1000, "only " + result.customStacks() + " custom blocks compared");
     }
