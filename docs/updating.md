@@ -128,8 +128,8 @@ is added in CloudburstMC/Protocol, not here.
 
 ## f. Releasing
 
-See [releasing.md](releasing.md): guards, `checkReleaseDependencies`, tag `vX.Y.Z`, `publish -Ppaletter.deploy=true`,
-`paletter/api/released.version`.
+See [releasing.md](releasing.md): snapshots publish from `main` through `publish.yml`; a release (tag `vX.Y.Z`) needs
+`checkReleaseDependencies` to pass, the deploy credentials, and `paletter/api/released.version`.
 
 ## g. Troubleshooting `update`
 
