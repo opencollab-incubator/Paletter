@@ -1025,7 +1025,7 @@
     "block:minecraft:map_color:tint_method": {
       "name": "tintMethod",
       "wire": [],
-      "type": "string",
+      "type": "enum:TintMethod",
       "nullable": true
     },
     "block:minecraft:material_instances:*": {

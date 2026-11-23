@@ -652,7 +652,8 @@ public final class Transforms {
      * enum ("none, eat, drink, ... (7 others)"), so the other names and ids are not BDS data yet.
      */
     public static void useAnimationId(@NonNull WireContext ctx, @NonNull WireNode out, @NonNull UseAnimation c) {
-        String value = c.value() == null ? "none" : c.value();
+        // The value's add-on string (an enum of the schema's names, whose toString is that string)
+        String value = java.util.Objects.toString(c.value(), "none");
         out.put("minecraft:use_animation.value", value);
         out.put("item_properties.use_animation", USE_ANIMATIONS.getOrDefault(value, 0));
     }
