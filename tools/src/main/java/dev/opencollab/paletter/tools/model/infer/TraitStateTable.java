@@ -130,7 +130,8 @@ final class TraitStateTable {
                 skipped.forEach(line -> System.out.println("Skipped: " + line + " (no dump of BDS's block states has a state of its name: not in the trait state table)"));
             }
         }
-        Map<String, String> verified = verify(root, table);
+        Map<String, Set<String>> disputes = new TreeMap<>();
+        Map<String, String> verified = verify(root, table, disputes);
         JsonObject out = new JsonObject();
         table.forEach((trait, byValue) -> {
             JsonObject values = new JsonObject();
@@ -146,6 +147,11 @@ final class TraitStateTable {
                     json.addProperty("valuesFrom", state.valuesFrom());
                     json.addProperty("default", verified.getOrDefault(state.name(),
                         "unverified: no capture holds the hash of a default state with it"));
+                    if (disputes.containsKey(state.name())) {
+                        JsonArray disputed = new JsonArray();
+                        disputes.get(state.name()).forEach(disputed::add);
+                        json.add("disputes", disputed);
+                    }
                     list.add(json);
                 }
                 values.add(value, list);
@@ -272,9 +278,12 @@ final class TraitStateTable {
      * Compares the default state of every trait variant BDS accepted in a spec capture ({@code data/bds/<build>/spec}: one
      * variant per combination of {@code enabled_states}) with the hash BDS sent for it in the creative inventory.
      *
+     * @param disputes gets, per state, the builds whose own Script API dump gives it other values than the table (from the newest
+     *                 dump), whose hashes are checked with those
      * @return state name -> where its default is verified
      */
-    private static Map<String, String> verify(Path root, Map<String, Map<String, List<State>>> table) throws IOException {
+    private static Map<String, String> verify(Path root, Map<String, Map<String, List<State>>> table,
+                                              Map<String, Set<String>> disputes) throws IOException {
         Map<String, String> verified = new TreeMap<>();
         List<Path> captures;
         try (Stream<Path> builds = Files.list(root.resolve(Layout.BDS))) {
@@ -282,6 +291,7 @@ final class TraitStateTable {
         }
         for (Path capture : captures) {
             String build = capture.getParent().getFileName().toString();
+            BdsStates dump = buildStates(root, build);
             Map<String, Long> sent = new LinkedHashMap<>();
             try (Reader reader = new InputStreamReader(new GZIPInputStream(Files.newInputStream(capture.resolve(SpecCapture.CREATIVE_ITEMS))), StandardCharsets.UTF_8)) {
                 for (JsonElement e : JsonParser.parseReader(reader).getAsJsonObject().getAsJsonArray("items")) {
@@ -311,9 +321,22 @@ final class TraitStateTable {
                     states.put(property.getString("name"), ((NbtList<?>) property.get("enum")).getFirst());
                 }
                 List<String> added = new ArrayList<>();
+                Map<String, String> own = new TreeMap<>();
                 for (JsonElement value : variant.getAsJsonObject("json").getAsJsonArray("enabled_states")) {
                     for (State state : table.get(trait).getOrDefault(value.getAsString(), List.of())) {
-                        states.put(state.name(), state.first());
+                        // A state the table has from BDS's newest dump can have other values in this build's own dump: BDS 1.26.36.1
+                        // lists minecraft:sixteen_way_rotation as strings, the newer builds as 0 to 15. The build's own decide here
+                        List<Object> ownValues = state.valuesFrom().startsWith("BDS ") ? dump.types().get(state.name()) : null;
+                        if (ownValues != null && !ownValues.isEmpty() && !sameValues(ownValues, state)) {
+                            states.put(state.name(), switch (ownValues.getFirst()) {
+                                case Boolean b -> (byte) (b ? 1 : 0);
+                                case Number n -> n.intValue();
+                                default -> ownValues.getFirst().toString();
+                            });
+                            own.put(state.name(), ownValues.toString());
+                        } else {
+                            states.put(state.name(), state.first());
+                        }
                         added.add(state.name());
                     }
                 }
@@ -324,11 +347,39 @@ final class TraitStateTable {
                         + " (" + states.build() + "): data/model/mappings.json traitStates is wrong");
                 }
                 for (String state : added) {
-                    verified.putIfAbsent(state, "verified (name and default): BDS " + build + " sent hash " + hash + " for the default state of "
-                        + name + " (enabled_states " + variant.getAsJsonObject("json").getAsJsonArray("enabled_states") + ")");
+                    if (own.containsKey(state)) {
+                        disputes.computeIfAbsent(state, s -> new java.util.TreeSet<>()).add("BDS " + build + " has the values " + own.get(state)
+                            + " (its Script API dump) and sent hash " + hash + " for the default state of " + name + " with the first of them:"
+                            + " the table holds the values of the newest dump");
+                    } else {
+                        verified.putIfAbsent(state, "verified (name and default): BDS " + build + " sent hash " + hash + " for the default state of "
+                            + name + " (enabled_states " + variant.getAsJsonObject("json").getAsJsonArray("enabled_states") + ")");
+                    }
                 }
             }
         }
         return verified;
+    }
+
+    /** Whether a build's dump lists the same values as a state of the table, in the same order. */
+    private static boolean sameValues(List<Object> values, State state) {
+        if (values.size() != state.values().size()) {
+            return false;
+        }
+        for (int i = 0; i < values.size(); i++) {
+            Object value = values.get(i);
+            JsonPrimitive expected = state.values().get(i);
+            String given = value instanceof Boolean b ? (b ? "1" : "0") : value instanceof Number n ? String.valueOf(n.intValue()) : value.toString();
+            if (!given.equals(expected.isNumber() ? String.valueOf(expected.getAsInt()) : expected.getAsString())) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /** The block states of a build's own Script API dump, none without one. */
+    private static BdsStates buildStates(Path root, String build) throws IOException {
+        Path dump = root.resolve(Layout.BDS).resolve(build).resolve(DUMP);
+        return Files.exists(dump) ? new BdsStates(build, BdsDump.read(dump).stateTypes()) : BdsStates.NONE;
     }
 }

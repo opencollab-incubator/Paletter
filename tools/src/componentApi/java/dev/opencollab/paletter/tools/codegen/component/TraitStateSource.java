@@ -36,6 +36,10 @@ final class TraitStateSource {
                     JsonObject state = e.getAsJsonObject();
                     body.add("// $L: values from $L; $L\n", state.get("name").getAsString(),
                         state.get("valuesFrom").getAsString(), state.get("default").getAsString());
+                    if (state.has("disputes")) {
+                        // A build whose own BDS data says other values: the table holds the newest build's for every version
+                        state.getAsJsonArray("disputes").forEach(d -> body.add("// disputed: $L\n", d.getAsString()));
+                    }
                     states.add(property(state));
                 }
                 body.add("case $S -> $T.of(\n$>$>$L$<$<);\n", trait.getKey() + " " + value.getKey(), list, CodeBlock.join(states, ",\n"));
