@@ -167,14 +167,13 @@
   },
   "boolCombinations": ["block:minecraft:material_instances"],
   "combinations": {
-    "_comment": "Whole component maps (role combination), by component id: the component next to another one that writes the same wire leaf, so the capture says which value BDS keeps (SharedLeaves). wearable's slot table writes item_properties.max_stack_size and allow_off_hand; each pair disagrees on the leaf, in both orders of the file. Inputs, not facts.",
+    "_comment": "Whole component maps (role combination), by component id: the component next to another one that writes the same wire leaf, so the capture says which value BDS keeps (SharedLeaves). wearable's slot table writes item_properties.max_stack_size and allow_off_hand; each pair disagrees on the leaf, in both orders of the file. Not slot.weapon.offhand with allow_off_hand false: BDS 1.26.70.26 rejects it with a content log line that names no item ('Items with the 'minecraft:wearable' component and 'slot' set to 'slot.weapon.offhand' must allow off hand use.'). Inputs, not facts.",
     "item:minecraft:wearable": [
       {"minecraft:wearable": {"slot": "slot.armor.head"}, "minecraft:max_stack_size": 16},
       {"minecraft:max_stack_size": 16, "minecraft:wearable": {"slot": "slot.armor.head"}},
       {"minecraft:wearable": {"slot": "slot.weapon.mainhand"}, "minecraft:max_stack_size": 16},
-      {"minecraft:wearable": {"slot": "slot.weapon.offhand"}, "minecraft:allow_off_hand": false},
-      {"minecraft:allow_off_hand": false, "minecraft:wearable": {"slot": "slot.weapon.offhand"}},
-      {"minecraft:wearable": {"slot": "slot.armor.head"}, "minecraft:allow_off_hand": true}
+      {"minecraft:wearable": {"slot": "slot.armor.head"}, "minecraft:allow_off_hand": true},
+      {"minecraft:allow_off_hand": true, "minecraft:wearable": {"slot": "slot.armor.head"}}
     ]
   },
   "descriptorValues": {
