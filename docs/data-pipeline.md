@@ -113,7 +113,12 @@ A run downloads BDS and, in `<cache>/runs/<platform>-<version>/`:
 2. Captures a vanilla world with the headless client: item registry, creative inventory and block properties. Every
    creative block id is checked against the computed state hash. It captures again with sequential ids.
 3. Discovers the build's experiment toggles (below) and captures with each one.
-4. Captures the creative order probe world (`data/addons/creative`), hashed and with sequential block ids.
+4. Captures the creative order probe world (`data/addons/creative`), hashed and with sequential block ids. Then the palette
+   probe (`data/addons/palette-probe`): in a world with sequential block ids and the build's current toggles on, its script
+   places every state of every block type into a barrier-walled cell of its own next to the spawned capture client, which
+   records the block update BDS sends for each cell. The pairs are `vanilla/sequential-ids.json.gz` (`PaletteIds`): the id of
+   every state, not only of the creative stacks, so the order of the states within each block is BDS's (`PaletteIdsTest`
+   holds the committed files to the bundled palettes; the run reports them against its reference palette, INFO only).
 5. Checks the assumptions the library relies on: sequential block ids sorted by name hash, custom block ids from 10000
    in descending identifier order, custom block items at `255 - block_id`, and the creative order rule.
 6. Compares everything against the committed data: a build with committed captures against its own, a build not
@@ -269,8 +274,9 @@ workflow by hand on `bds-data/preview` for the other.
    per build (the daily check's cache keys). The captures and the run's report are uploaded as the artifact
    `captures-<build>`; a failed leg uploads its report and logs, never captures. Under `--capture-only` an `--against` add-on mismatch is information, not a failure (the captures are of the new add-on by design), nothing deletes a directory of the repository, and the Gradle cache is read-only in the capture jobs.
 3. `assemble` (only when every leg succeeded: captures of two add-ons never share a pull request) validates the
-   artifacts, copies them over `data/bds/<build>/` (overlaying, deleting nothing) and runs what `update` does after the
-   captures, with no BDS: `inferMappings`, `whitebox-coverage` (from the committed `whitebox.json`; the binary did not
+   artifacts, copies them over `data/bds/<build>/` (overlaying, deleting nothing; a build without committed captures only when
+   its leg compared it with another kept build, the unchecked build of a line) and runs what `update` does after the
+   captures, with no BDS: `experiment-marks` (the marks of the bundled versions from the new experiment records), `inferMappings`, `whitebox-coverage` (from the committed `whitebox.json`; the binary did not
    change), `generateComponentApi`, `:paletter:apiDump`, `generateConstants`, `voxel-shapes import` (as `update` does). It also runs `check-mappings --strict` and puts its verdict (residual bits, unclassified wire paths, linked fields) into the report, without failing on it. It fails when the inference changed
    `bds-feedback.json`, `fixtures.json`, `components.json` or `bds-keys.json` (and uploads `git diff -- data/model` as the artifact `recapture-guard-diff`): those captures were made with an add-on that is not the
    final one, so the change is committed and the workflow runs again until a pass changes nothing. It writes a patch of
@@ -377,7 +383,9 @@ identifier-like strings from the server binary plus the ids of the committed `ex
 current, the others retired. Each current toggle is then captured on its own to attribute content to it.
 
 The result is committed as `data/bds/<build>/experiments.json`, and the bundled version gets experiment marks: per
-toggle, the items, blocks and creative stacks it adds. The bundle itself is captured without experiments.
+toggle, the items, blocks and creative stacks it adds, and the items of those stacks none of which carries a block in the
+capture with the toggle (`creativeWithoutBlock`; doors, signs, beds): a palette with the toggle sends such an item without a
+block, as it does for the items of the regular creative inventory. The bundle itself is captured without experiments.
 
 The record also lists, per toggle, the recipes it adds, removes or changes (`content.recipes`, the recipe diff of the
 toggle's capture against the one without experiments). They are not part of the bundle's marks: the recipes module
