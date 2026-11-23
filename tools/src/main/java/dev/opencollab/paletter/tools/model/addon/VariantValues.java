@@ -805,6 +805,27 @@ final class VariantValues {
                 single.add(key, element);
                 values.add(new Labeled("{1 object} " + expression.getAsString(), single, true));
             }
+            // Further values of the other members (probeValues of '<path>{}.<member>': the Molang version), with the sample
+            // expression: what BDS does with a version it does not take as written
+            JsonElement expression = sample(c, path + "{}", items, null);
+            for (Schema.Member member : members) {
+                if (member.types().contains("string")) {
+                    continue;
+                }
+                for (JsonElement probe : fixtures.probeValues(c.id(), path + "{}." + member.name())) {
+                    JsonObject element = new JsonObject();
+                    for (Schema.Member other : members) {
+                        JsonElement given = other == member ? probe.deepCopy()
+                            : other.types().contains("string") ? expression.deepCopy() : memberSample(c, path, other);
+                        if (given != null) {
+                            element.add(other.name(), given);
+                        }
+                    }
+                    JsonObject single = new JsonObject();
+                    single.add(key, element);
+                    values.add(new Labeled("{1 object} " + member.name() + " " + probe, single, true));
+                }
+            }
         }
         if (types.contains("number") || types.contains("integer")) {
             for (Labeled number : numbers(c, path + "{}", null, null, false)) {
