@@ -1,4 +1,5 @@
 plugins {
+    id("paletter.base-conventions")
     application
 }
 
@@ -55,11 +56,22 @@ tasks.test {
     systemProperty("paletter.updateGolden", (findProperty("updateGolden") as String?) ?: "false")
     // -PupdateShapeDisagreements=true rewrites data/model/vanilla-shapes-known-<protocol>.txt (VanillaShapeOracleTest)
     systemProperty("paletter.updateShapeDisagreements", (findProperty("updateShapeDisagreements") as String?) ?: "false")
+    // Beyond the repository inputs of every test (paletter.base-conventions): LocaleRootTest reads the sources of every
+    // module, DeprecatedDocsTest reads docs/api.md
+    val root = layout.settingsDirectory
+    for (dir in listOf("paletter-recipes/src", "examples/src")) {
+        inputs.dir(root.dir(dir)).withPathSensitivity(PathSensitivity.RELATIVE).withPropertyName("repository $dir")
+    }
+    inputs.file(root.file("docs/api.md")).withPathSensitivity(PathSensitivity.RELATIVE).withPropertyName("repository docs/api.md")
 }
 
 application {
     mainClass.set("dev.opencollab.paletter.tools.Cli")
 }
+
+// installDist is what the workflows and scripts use (tools/build/install); the archives are about 94 MB nobody reads
+tasks.distZip { enabled = false }
+tasks.distTar { enabled = false }
 
 tasks.named<JavaExec>("run") {
     workingDir = rootProject.projectDir
@@ -67,7 +79,28 @@ tasks.named<JavaExec>("run") {
     standardInput = System.`in`
 }
 
-val root = listOf("--root", rootProject.projectDir.absolutePath)
+// `--root <repository>`, appended to the arguments; not an input (RepositoryRootOption)
+val repositoryRoot = layout.settingsDirectory.asFile
+
+// What the check commands read under the repository root: the committed data, captures and model (data), the bundled
+// resources and the generated sources they compare with (paletter/src, paletter-recipes/src) and the version
+// (gradle.properties, read by the component API generator). Read from the code of the commands; a superset for all seven.
+val checkInputs = listOf("data", "paletter/src", "paletter-recipes/src")
+
+// A check task is up to date when neither these files nor the tools' classpath changed. It writes a marker file as its
+// output, since the commands themselves write nothing.
+fun JavaExec.checkTask() {
+    val root = layout.settingsDirectory
+    for (dir in checkInputs) {
+        inputs.dir(root.dir(dir)).withPathSensitivity(PathSensitivity.RELATIVE).withPropertyName("repository $dir")
+    }
+    inputs.file(root.file("gradle.properties")).withPathSensitivity(PathSensitivity.RELATIVE).withPropertyName("gradle.properties")
+    val marker = layout.buildDirectory.file("checks/$name.ok")
+    outputs.file(marker).withPropertyName("marker")
+    doLast {
+        marker.get().asFile.writeText("ok\n")
+    }
+}
 
 fun cliTask(name: String, group: String, description: String, vararg args: String, check: Boolean = false) =
     tasks.register<JavaExec>(name) {
@@ -75,10 +108,11 @@ fun cliTask(name: String, group: String, description: String, vararg args: Strin
         this.description = description
         classpath = sourceSets["main"].runtimeClasspath
         mainClass.set("dev.opencollab.paletter.tools.Cli")
-        this.args = args.toList() + root
-        workingDir = rootProject.projectDir
+        this.args = args.toList()
+        argumentProviders.add(RepositoryRootOption(repositoryRoot))
+        workingDir = repositoryRoot
         if (check) {
-            outputs.upToDateWhen { false }
+            checkTask()
         }
     }
 
@@ -95,7 +129,8 @@ val generateComponentApi = tasks.register<JavaExec>("generateComponentApi") {
     description = "Regenerates the component API and its encoders from the component model"
     classpath = componentApi.runtimeClasspath
     mainClass.set("dev.opencollab.paletter.tools.codegen.component.Main")
-    args = listOf("generate") + root
+    args = listOf("generate")
+    argumentProviders.add(RepositoryRootOption(repositoryRoot))
     // reads what inferMappings writes: after it when both run
     mustRunAfter("inferMappings")
     inputs.dir(rootProject.file("data/model"))
@@ -108,8 +143,9 @@ val checkComponentApi = tasks.register<JavaExec>("checkComponentApi") {
     description = "Fails if regenerating the component API from the component model yields a diff"
     classpath = componentApi.runtimeClasspath
     mainClass.set("dev.opencollab.paletter.tools.codegen.component.Main")
-    args = listOf("check") + root
-    outputs.upToDateWhen { false }
+    args = listOf("check")
+    argumentProviders.add(RepositoryRootOption(repositoryRoot))
+    checkTask()
     mustRunAfter("inferMappings", generateComponentApi)
 }
 
@@ -119,7 +155,8 @@ tasks.register<JavaExec>("generateComponentApiPreview") {
     description = "Generates the component API into tools/build/component-api, leaving the committed sources alone"
     classpath = componentApi.runtimeClasspath
     mainClass.set("dev.opencollab.paletter.tools.codegen.component.Main")
-    args = listOf("generate") + root + listOf("--sources", layout.buildDirectory.dir("component-api").get().asFile.absolutePath)
+    args = listOf("generate", "--sources", layout.buildDirectory.dir("component-api").get().asFile.absolutePath)
+    argumentProviders.add(RepositoryRootOption(repositoryRoot))
 }
 
 // The component model: the add-on JSON side from Microsoft's creator docs, the spec capture add-on generated from it, and the
@@ -130,8 +167,9 @@ tasks.register<JavaExec>("generateModel") {
     description = "Parses the creator docs into data/model/components.json"
     classpath = sourceSets["main"].runtimeClasspath
     mainClass.set("dev.opencollab.paletter.tools.Cli")
-    workingDir = rootProject.projectDir
-    args = listOf("docs") + root + (findProperty("docs") as String?).let { if (it == null) listOf() else listOf("--docs", it) }
+    workingDir = repositoryRoot
+    args = listOf("docs") + (findProperty("docs") as String?).let { if (it == null) listOf() else listOf("--docs", it) }
+    argumentProviders.add(RepositoryRootOption(repositoryRoot))
 }
 
 tasks.register<JavaExec>("generateAddon") {
@@ -139,8 +177,9 @@ tasks.register<JavaExec>("generateAddon") {
     description = "Generates the spec capture add-on from data/model into build/spec-addon"
     classpath = sourceSets["main"].runtimeClasspath
     mainClass.set("dev.opencollab.paletter.tools.Cli")
-    workingDir = rootProject.projectDir
-    args = listOf("addon") + root + listOf("--out", layout.buildDirectory.dir("spec-addon").get().asFile.absolutePath)
+    workingDir = repositoryRoot
+    args = listOf("addon", "--out", layout.buildDirectory.dir("spec-addon").get().asFile.absolutePath)
+    argumentProviders.add(RepositoryRootOption(repositoryRoot))
 }
 
 val inferMappings = cliTask("inferMappings", "spec", "Infers data/model/mappings.json and coverage.md from the committed captures", "infer")

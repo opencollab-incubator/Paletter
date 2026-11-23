@@ -1,6 +1,9 @@
 [versions]
-# Keep in sync with Geyser's gradle/libs.versions.toml
+# Keep in sync with Geyser's gradle/libs.versions.toml. One timestamped build for codec, connection and common: the
+# codec's own metadata asks for the floating common:3.0.0.Beta15-SNAPSHOT, so common is pinned to the codec's build
 protocol = "3.0.0.Beta15-20261116.161745-6"
+# common asks for the floating immutable:2.0-SNAPSHOT; the 2.0 release (as in Geyser) wins over it
+math = "2.0"
 # CloudburstMC/Network, "nethernet" branch (tools client only); keep in sync with Geyser
 network = "2.0.0.CR6-20261030.131938-23"
 libdatachannel = "0.24.6.0-20261029.091642-10"
@@ -13,17 +16,23 @@ junit = "6.1.3"
 picocli = "4.7.7"
 # The API dump (tools module, apiDump source set) reads class files
 asm = "9.11.1"
-# apiCompat (paletter): binary compatibility against the released artifact
 # The white-box discovery (tools module) decodes x86-64 instructions of the BDS binary
 iced = "1.21.0"
+# build-logic: the conventions of the published modules. Same as Geyser
+indra = "4.0.0"
+# build-logic, apiCompat: binary compatibility against the released artifact
 japicmp = "0.4.6"
 jmh-plugin = "0.7.4"
+# JMH itself, run by the jmh plugin (paletter's benchmarks)
+jmh-core = "1.37"
 # Memory measurement (paletter test and jmh only, never a runtime dependency)
 jol = "0.17"
 
 [libraries]
 protocol-codec = { group = "org.cloudburstmc.protocol", name = "bedrock-codec", version.ref = "protocol" }
 protocol-connection = { group = "org.cloudburstmc.protocol", name = "bedrock-connection", version.ref = "protocol" }
+protocol-common = { group = "org.cloudburstmc.protocol", name = "common", version.ref = "protocol" }
+math-immutable = { group = "org.cloudburstmc.math", name = "immutable", version.ref = "math" }
 fastutil-int-object = { group = "org.cloudburstmc.fastutil.maps", name = "int-object-maps", version.ref = "fastutil" }
 fastutil-object-int = { group = "org.cloudburstmc.fastutil.maps", name = "object-int-maps", version.ref = "fastutil" }
 fastutil-object-object = { group = "org.cloudburstmc.fastutil.maps", name = "object-object-maps", version.ref = "fastutil" }
@@ -41,7 +50,9 @@ junit-bom = { group = "org.junit", name = "junit-bom", version.ref = "junit" }
 # Versions from junit-bom
 junit-jupiter = { group = "org.junit.jupiter", name = "junit-jupiter" }
 junit-platform-launcher = { group = "org.junit.platform", name = "junit-platform-launcher" }
+# build-logic only: the plugins its conventions apply
+indra-common = { group = "net.kyori", name = "indra-common", version.ref = "indra" }
+japicmp-plugin = { group = "me.champeau.gradle", name = "japicmp-gradle-plugin", version.ref = "japicmp" }
 
 [plugins]
-japicmp = { id = "me.champeau.gradle.japicmp", version.ref = "japicmp" }
 jmh = { id = "me.champeau.jmh", version.ref = "jmh-plugin" }
