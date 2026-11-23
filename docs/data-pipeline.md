@@ -327,61 +327,37 @@ Everything that waits for the next full recapture, in one list. The other sectio
 that names a pending item is named in its line, and it is removed in the commit that settles the item. After the recapture
 nothing on this list may remain.
 
-**Captures the committed builds lack.** Each is gated by a test that lists the builds captured before the current add-on
-(`CommittedBuilds.BEFORE_CURRENT_ADDON`, one list for all of them); it fails for a build that has the file while listed and
-for one that lacks it while not listed, so a recapture removes the builds from the list as it captures them.
+The recapture of 2026-11-23 (1.26.36.1, 1.26.45.1, 1.26.52.3, 1.26.63.1 and the preview 1.26.70.24, with the current add-on)
+settled what this list held: every build has `script-modules.json`, `spec-gating/gating.json`, `vanilla/block-items.json`, the
+engine pack blocks, the hash collision pair, `recipe-probe/crafting_data.json.gz` and `content.recipes`
+(`CommittedBuilds.BEFORE_CURRENT_ADDON` is empty); the conformance test compares every captured variant; the 26.70 recipe capture
+is current; `vanilla/sequential-ids.json.gz` (the palette probe) holds the shelves and the straw bed of 1.26.36.1 and 1.26.45.1 in
+the bundled order (`PaletteIdsTest`); `creativeWithoutBlock` sends 26.40's door, signs, straw bed, red shrub and shelf mushroom
+without a block with `y_2026_drop_3` on. What it showed is still open:
 
-- `script-modules.json` (`ScriptModulesTest`): `update` writes it from each build's docgen output. The layout of
-  `script_modules` is read as `@minecraft/server/<version>` or `@minecraft/server_<version>` and is unverified against a real tree.
-- `spec-gating/gating.json` (`GatingTest`): `@BedrockExperiment` stays unverified without it, never a failure.
-- `vanilla/block-items.json` (`BlockItemsCaptureTest`): the `/give` start.
-- Engine pack blocks in the spec capture (`MolangVersionTest`).
-- The hash collision pair in the spec capture (`HashCollisionCaptureTest`): until it is captured, that block ids are assigned in
-  block id order is an assumption from the registration order ([wire-notes.md](wire-notes.md), Hash collisions).
-- `recipe-probe/crafting_data.json.gz` (the unlock forms, wire-notes.md, Recipe unlock) and `packetOrder` in `capture.json`
-  (Join sequence): no build has them.
-- `content.recipes` in `experiments.json`: no committed record has it, and until then a history check does not count a
-  toggle's recipes as a difference when the earlier record lacks them.
+- **molangVersion follows the pack's `min_engine_version`** (`MolangVersionTest` fails): the engine pack blocks have 0
+  (`1.16.100`) and 6 (`1.19.40`), every other block 13, in every build. `BlockWire`'s constant has to become an input of the API.
+- **Conformance** (`ComponentConformanceTest`): about 340 accepted variants per build are not reproduced (see
+  `build/reports/component-conformance-<protocol>.md`): the components a combination variant sets leak into later items of the
+  check (`wearable`, `damage_absorption`), descriptors of `block_placer`, `entity_placer` and `digger`, `food`
+  `using_converts_to`, a permutation condition sent as `1.000000`, and setters the schema's forms lack (`geometry`, the visuals,
+  `repairable`, `map_color`, `tags`).
+- **`packetOrder`** in `capture.json`: a recapture does not rewrite a build's `vanilla/capture.json` (only the import does).
+- **The unchecked build of a line** (see Full recapture): 1.26.66.1 was captured but cannot join the data.
 
-**Components the committed captures do not cover.** `ComponentConformanceTest.RECAPTURE_PENDING` lists the components whose
-variants the add-on generates now and the committed captures do not hold (the schema's enum values are also varied, none cut at
-`MAX_VALUES`); `SWEEP_PENDING` lists the components whose format sweep (`spec-format/format-sweep.json`) is not captured, so
-nothing says whether BDS upgrades their old formats, sends them only in old-style items, never sends them or rejects them at
-every format. `breathability`, `unit_cube`, `render_offsets`, `block_light_emission`, `bone_visibility` and `destroy_time` stay
-generated in the API until the sweep decides. The conformance test fails for an entry that is captured now.
+**What the generated code assumed without a capture**, marked `TODO(recapture)` where it is used, and what the captures say:
 
-**The 26.70 recipes.** The committed recipe capture of the preview could not resolve the block states of the results that place
-blocks new in 26.70 (it used 26.60's palette); the capture code is fixed. `CraftingDataConformanceTest.PENDING_RECAPTURE` expects
-exactly those differences and fails the moment there are none, and `RecipeDataTest.theCommittedCapturesHoldTheRecipeAssumptions`
-leaves the bundled preview out until then.
-
-**The state order within blocks of 26.30 and 26.40.** The order of the states of the `*_shelf` blocks (and in 26.40 of
-`poplar_shelf` and `straw_bed`) rests on CloudburstMC/Data, which the bundled palettes descend from; an independent network
-dump has another order, and no BDS capture can tell: the sequential-id captures only check creative stacks, whose default
-state is index 0 in both orders. The recapture has to record the sequential block id of every state of the full palette (not
-only of the creative stacks), so the order of 1.26.36.1 and 1.26.45.1 is checked against BDS.
-
-**The blocks of experiment creative stacks.** An item is sent without a block where its captured creative stacks carry none
-(doors, signs, beds, seeds, ...). The creative stacks a toggle adds are recorded as identifiers only (`creativeAdded` in
-`experiments.json`), so in 26.40 with `y_2026_drop_3` on, `poplar_door`, `poplar_sign`, `poplar_hanging_sign`,
-`red_shrub`, `shelf_mushroom` and `straw_bed` still get the block of the block to item relation (26.50, where they are
-regular content, sends them without one). The recapture has to record the toggle's creative stacks with their blocks.
-
-**What the generated code assumes without a capture**, each marked `TODO(recapture)` where it is used. The spec add-on has to
-gain these variants (`fixtures.json` probe values or the add-on generator), then the next recapture settles them:
-
-- **Two components onto one leaf** (`SharedLeaves`, `WireNode.own`): `minecraft:wearable` with `minecraft:max_stack_size`
-  (`item_properties.max_stack_size`) and with `minecraft:allow_off_hand` (`item_properties.allow_off_hand`). The encoders
-  keep the value of the component the leaf carries unchanged, whatever the order; which one BDS keeps is unverified.
-- **Linear rules onto integral leaves** (`Linear`, `Wire.toInt`): the captures only hold values exact in binary
-  (`use_modifiers.use_duration` 0, -1, 0.5, 1, 2.25, 30), so how BDS rounds `20 * 0.7` is unknown; the encoder truncates
-  the double product (`0.7` -> 13, where 14 is as likely). Capture non-exact values (0.35, 0.7, 0.95) and fit the rounding.
-- **`minecraft:enchantable` slots**: one accepted value (`sword`) is captured, so `slot` is sent as that constant
-  whatever it says. Capture the 25 slots BDS's error lists; the field will most likely become a value class, a type
-  change the history check then reports (record it in `api-history.json` before 1.0).
-- **`collision_box` limit**: a component without a box limit fact in `bds-feedback.json` gets one box past any limit, so that BDS
-  says it; until the recapture has run its boxes stay inside the tightest limit of the other components (borrowed, unverified;
-  a test checks the fallback).
+- **Two components onto one leaf** (`SharedLeaves`, `WireNode.own`): BDS keeps `max_stack_size`'s and `allow_off_hand`'s value
+  over `wearable`'s slot table, in both orders of the file (`wearable` combination variants, every build): the owner the encoders
+  keep. Settled.
+- **Linear rules onto integral leaves** (`Linear`, `Wire.toInt`): BDS 1.26.63.1 and 1.26.70.24 send `use_duration` 0.35, 0.7 and
+  0.95 as 7, 14 and 19 (the older builds send 0 for every value);
+  the encoder truncates the double product of the float and sends 6, 13 and 18. Both a float product truncated and a rounded
+  product fit; which one BDS computes is unverified. Open: the encoder has to follow.
+- **`minecraft:enchantable` slots**: all 25 slots are captured; the inference fits a table (`cosmetic_head` is sent as an empty
+  string). Settled in the data; the API's constant goes with the regenerated code.
+- **`collision_box` limit**: still no box limit fact in `bds-feedback.json`; the boxes stay inside the tightest limit of the other
+  components (borrowed, unverified).
 
 ### Experiments
 

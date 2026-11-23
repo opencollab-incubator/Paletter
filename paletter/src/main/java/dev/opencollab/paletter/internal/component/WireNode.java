@@ -69,9 +69,8 @@ public final class WireNode {
      * Sets a leaf that several components write and this one owns: a later {@link #putUnowned} of the leaf keeps this
      * value, so the owner's value wins whatever the order of the components.
      * <p>
-     * Unverified: no capture has the owner together with a component that also writes the leaf, so which value BDS keeps
-     * is not known; the owner is the component the leaf carries the value of. TODO(recapture): capture the combinations
-     * (docs/data-pipeline.md, "Recapture to-do") and follow what BDS sends.
+     * The owner is the component the leaf carries the value of; BDS keeps its value too (max_stack_size and allow_off_hand over
+     * wearable's slot table, in both orders of the file: the combination variants of the spec captures, 1.26.36.1 to 1.26.70.24).
      */
     public @NonNull WireNode own(@NonNull String path, @NonNull Object value) {
         if (owned == null) {
