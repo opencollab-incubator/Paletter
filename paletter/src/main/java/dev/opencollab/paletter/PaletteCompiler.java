@@ -80,7 +80,7 @@ final class PaletteCompiler {
         if (vanillaShapes == null) {
             // BDS sends the voxel shapes packet to every client (protocol 924 and later), so a palette needs them
             throw new PaletteException("No vanilla voxel shapes for " + data.version() + " in the data source (no registry"
-                + " of the version in voxel_shapes.nbt): the palette cannot build the voxel shapes packet, which BDS sends"
+                + " of the version among the generated shapes or in its voxel_shapes.nbt): the palette cannot build the voxel shapes packet, which BDS sends"
                 + " to every client before start game");
         }
         Palette.Shapes shapes = new Palette.Shapes(vanillaShapes, VoxelShapeCompiler.compile(vanillaShapes, Map.of(), blocks, report));

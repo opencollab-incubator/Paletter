@@ -14,7 +14,9 @@ bundled data               -> generateConstants                  -> paletter/src
 BDS binary (not run)       -> whitebox, whitebox-coverage         -> data/bds/<build>/whitebox.json, whitebox-coverage.md
 data/bds + third party     -> behaviour import                   -> data/behaviour/captures.nbt, REPORT.md, generated behaviour data
 data/behaviour/captures.nbt -> generateBehaviour                 -> paletter/src/generated/java (internal.behaviour.vanilla)
-data/bds/<build>/voxel-shapes -> voxel-shapes import             -> voxel_shapes.nbt
+bundled palettes           -> generateBlocks (import / update)   -> paletter/src/generated/java (internal.vanilla.blocks); the
+                                                                    version files lose their block states
+data/bds/<build>/voxel-shapes -> voxel-shapes import             -> paletter/src/generated/java (internal.vanilla.shapes)
 ```
 
 Maintainers: [updating.md](updating.md) is the short runbook for the recurring jobs.
@@ -64,7 +66,8 @@ command takes `--help`. Paths are relative to the repository root (`--root` over
 | `components generate\|check`, `constants generate\|check` | The generators (below). |
 | `behaviour import`, `behaviour-probe`, `behaviour-dump` | Behaviour values (below). |
 | `script-dump` | Runs the Script API dump add-on on one BDS build: `data/bds/<build>/dump.json.gz` and the item variant names (below). |
-| `voxel-shapes capture\|import\|check` | Voxel shape captures and `voxel_shapes.nbt`. |
+| `voxel-shapes capture\|import\|check` | Voxel shape captures and the generated shape classes ([Voxel shapes](#voxel-shapes)). |
+| `blocks generate\|check` | The vanilla block definitions as generated code ([Block definitions](#block-definitions)). |
 | `creative-probe` | Runs an add-on on BDS and records the creative inventory order. |
 | `education-capture` | Records what only an Education Edition world adds (`education.json`, used for `@Education`). |
 | `recipes-capture` | Records the crafting and trim data of one build (`vanilla/crafting_data.json.gz`, `vanilla/trim_data.json`); `update` writes them too. |
@@ -73,8 +76,9 @@ command takes `--help`. Paths are relative to the repository root (`--root` over
 | `inspect` | Prints `Palette#explain` for a block state or item in one or all bundled versions. |
 
 Gradle tasks (each with the command it runs: [updating.md](updating.md)): `generateConstants`, `generateComponentApi`, `generateComponentApiPreview`, `generateModel`,
-`generateAddon` and `inferMappings` write; `checkConstants`, `checkComponentApi`, `checkMappings` (strict) and `checkWhitebox` are part
-of `./gradlew build` and fail when committed output is stale, `checkData` fails on problems of the bundled data.
+`generateAddon`, `generateBlocks` and `inferMappings` write; `checkConstants`, `checkComponentApi`, `checkBlocks`, `checkVoxelShapes`,
+`checkMappings` (strict) and `checkWhitebox` are part of `./gradlew build` and fail when committed output is stale, `checkData` fails on
+problems of the bundled data.
 
 The generator tests assert on fragments of what they generate from small synthetic fixtures and compile the output (the component
 and the constants generators), and the committed output is held up to date by `checkConstants` and `checkComponentApi`, so a change
@@ -844,6 +848,66 @@ regeneration cannot drop one. Commit the history together with the classes.
 - `internal.vanilla.BlockLayout` checks that each block's states are the full cartesian product of its values, so state
   ids can be computed from strides.
 
+### Block definitions
+
+The vanilla block states of the bundled versions are generated code, not data. `./gradlew :tools:generateBlocks` (`blocks
+generate`; checked by `:tools:checkBlocks` in `check`) writes `dev.opencollab.paletter.internal.vanilla.blocks` with JavaPoet
+(`BlockCode` in the tools):
+
+- `BlockValues`: every value list of a block property once, the values in Bedrock's order: `CARDINAL_DIRECTION =
+  StateValues.strings("minecraft:cardinal_direction", "south", "west", "north", "east")`, `AGE_0_15 = StateValues.ints("age", 0, 15)`,
+  `OPEN_BIT = StateValues.bool("open_bit")`. The name is the property's without `minecraft:` (with it where two properties would
+  share one, `MINECRAFT_FACING_DIRECTION`), an int property adds its range, a string property with several value lists the hash
+  of its values. Ints that are no run are listed (`intList`); byte values other than false then true fail generation.
+- `BlockBase`: the oldest version of `versions.txt`, one line per block: its identifier, its properties in the order Bedrock
+  enumerates its states (the first changes slowest, the last fastest) and its default state where that is not the first:
+  `v.block("minecraft:copper_chest", CARDINAL_DIRECTION).defaultState("north")`.
+- `BlockChanges<version>`: what changed against the version before, each line with a comment naming the BDS build whose
+  captures the version was imported from (the newest build of its line with `vanilla/capture.json` or a Script API dump in `data/bds`): a new block
+  (`v.block`), a removed one (`v.remove`), properties inserted into a block's order (`v.addProperties(block, position, ...)`, 0
+  the slowest), a removed property (`v.removeProperty`), a new default (`v.defaultState`); anything else (other values, another
+  order) redefines the block (`v.redefine`) with a comment that says what changed.
+- `BlockData` builds them all for `VanillaBlocks` (hand-written, `internal.vanilla`), which loads it by name: the library
+  compiles without the package.
+
+What is derived, at palette build (`BlockDefinitions#derive`), and never stored: the states of a block as the full cartesian
+product of its values (an odometer, the last property fastest), the keys of each state sorted, the blocks ordered by the
+unsigned FNV-1 64 hash of their identifiers (`BlockRegistry#nameHash`), so the sequential runtime ids, and the hashed ids
+(FNV-1a of the state NBT, `BlockHashes`, as before). The generator reads each version's palette (from the version file where
+it still has its block states, as an import writes it, otherwise from the definitions the tools were compiled with), reads
+the definitions from it (each property's place from how often it changes) and derives the palette again through the same
+code the library runs: it fails with what it found, never a guess, on a block whose states are not one run, not the full
+product of their values or in no odometer order, a property order that is ambiguous (two properties that change at the same
+rate), blocks out of name hash order, a state whose keys are not sorted, or other defaults. Then it applies each version's
+changes to the version before and fails unless that gives the version. It writes the sources and every version file without
+its block states (`blocks` and `block_defaults`, which the codec then takes from the definitions).
+
+`import` runs it after writing the version; `update` runs it on the staged data (`BlocksStage`, after the constants) and stages
+the sources with the slimmed files. `PaletteDataCodec#write` leaves the block states out on its own wherever the definitions
+of the version give exactly them, so rewriting a version file (experiment marks, a refreshed version) keeps it slim, and a
+version whose palette changed keeps its states until `generateBlocks` folds them in. Data of a version the library has no
+definitions of (a directory data source) keeps carrying its states.
+
+What stays data, and why:
+
+- Per version file (`<version>.nbt`): the items (ids are BDS registration order with holes; an update shifts 45 to 584 of them),
+  the creative inventory (about 2,000 ordered stacks, the block a stack carries exactly where BDS sends one), item tags, experiment
+  gating and the block to item relation. Of the relation only what is not derivable is stored: `block_items` holds the blocks
+  whose item has another identifier (about 190 of 1,500), `blocks_without_item` the blocks no item places; every other block is
+  placed by the item of its own identifier.
+- `properties.nbt`, stored once with version ranges: item component data (a tree per item; 20.7 KB gzipped for five versions,
+  16 to 17 KB per version if each version file held its own), the property data of the vanilla data driven blocks (6.2 KB) and the
+  order BDS sends those in (`block_order`: neither sorted nor by name hash or block id, so data). None of it is derivable, and the
+  ranges are what keeps it small; the typed component API would be the code form of the trees, which is a project of its own.
+
+Retiring a version (`retire`, [updating.md](updating.md) section h): once its `versions.txt` row and file are gone,
+`generateBlocks` makes the next version `BlockBase`, with what it inherited folded in, and drops its change class.
+
+Tests: `BlockCodeTest` runs the generator on three small versions (what the classes say, that the compiled output gives every
+palette again, retiring, and the palettes it must refuse); `GeneratedBlocksLimitsTest` keeps every generated block and shape
+class under half of the JVM's method and constant pool limits. The generated classes are the only copy of the palettes: if they
+stop compiling after a change of `BlockDefinitions`, keep the old method until `generateBlocks` has rewritten them.
+
 ## Behaviour data
 
 ```
@@ -927,8 +991,15 @@ can always run: if the generated classes no longer compile, delete the package a
 
 `voxel-shapes capture --version <build>` (also part of `update`) records the voxel shapes packet of a vanilla world,
 of a world with the `voxel_shapes` experiment, of a probe add-on and of anchor blocks, plus BDS's own shape files, into
-`data/bds/<build>/voxel-shapes`. `voxel-shapes import` writes `voxel_shapes.nbt`; `VoxelShapeConformanceTest` checks the
-library against every capture. The findings are in [wire-notes.md](wire-notes.md#voxel-shapes).
+`data/bds/<build>/voxel-shapes`. `voxel-shapes import` writes `dev.opencollab.paletter.internal.vanilla.shapes` (`ShapeCode`;
+`voxel-shapes check`, the Gradle task `checkVoxelShapes` in `check`, fails when it is stale): `VoxelShapeTable` holds every distinct
+shape once as the boxes a greedy merge of its cells gives (`ANVIL` for a shape BDS names, `BOX_0_0_0_16_8_16` for one box on whole
+pixels, else `SHAPE_` and the first block it is made for; the boxes in pixels in its Javadoc), checked to give the captured grid
+again; `VoxelShapes<version>` lists each registry in id order (`s.named("minecraft:anvil", ANVIL)`, `s.block(SHAPE_X, "minecraft:x")`),
+`VoxelShapeData` builds them for the bundled data source. The shapes are a table of their own, not the behaviour data's
+`BehaviourShapes`: those are `BlockShape`s (boxes as the behaviour probe measured them) of another generator, and sharing would let
+one generator's run break the other's classes. `VoxelShapeConformanceTest` checks the library against every capture. The findings
+are in [wire-notes.md](wire-notes.md#voxel-shapes).
 
 ## BDS schema
 

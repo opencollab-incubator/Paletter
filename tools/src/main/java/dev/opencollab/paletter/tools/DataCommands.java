@@ -38,7 +38,8 @@ final class DataCommands {
         @Override
         public Integer call() throws Exception {
             new Importer(resources()).run(source, dataVersion, protocol, itemTags, bdsDump);
-            return 0;
+            // The imported palette becomes generated block definitions; the version file keeps the rest
+            return dev.opencollab.paletter.tools.blocks.BlockGenerator.run(root(), false);
         }
     }
 
@@ -209,7 +210,7 @@ final class DataCommands {
             }
         }
 
-        @Command(name = "import", description = "The captures of data/bds/*/voxel-shapes -> the bundled voxel_shapes.nbt")
+        @Command(name = "import", description = "The captures of data/bds/*/voxel-shapes -> the generated shape classes (internal.vanilla.shapes)")
         static final class ImportShapes extends Rooted implements Callable<Integer> {
             @Override
             public Integer call() throws Exception {
@@ -218,15 +219,11 @@ final class DataCommands {
             }
         }
 
-        @Command(name = "check", description = "import, but fail if the bundled voxel_shapes.nbt differs")
+        @Command(name = "check", description = "import, but fail if the generated shape classes differ")
         static final class CheckShapes extends Rooted implements Callable<Integer> {
             @Override
             public Integer call() throws Exception {
-                if (!dev.opencollab.paletter.tools.shape.ShapeImport.check(root())) {
-                    Stale.print(BundledFiles.VOXEL_SHAPES, "voxel-shapes import");
-                    return 1;
-                }
-                return 0;
+                return dev.opencollab.paletter.tools.shape.ShapeImport.check(root());
             }
         }
     }

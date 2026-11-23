@@ -65,6 +65,24 @@ public final class VoxelShapeStore {
         return EMPTY;
     }
 
+    /**
+     * @return the vanilla shapes of the bundled versions, built now from the generated classes ({@code internal.vanilla.shapes},
+     * loaded by name so the library compiles without them); empty if they are missing
+     */
+    public static @NonNull VoxelShapeStore bundled() {
+        java.lang.reflect.Method load;
+        try {
+            load = Class.forName("dev.opencollab.paletter.internal.vanilla.shapes.VoxelShapeData").getMethod("load");
+        } catch (ClassNotFoundException | NoSuchMethodException e) {
+            return EMPTY;
+        }
+        try {
+            return (VoxelShapeStore) load.invoke(null);
+        } catch (ReflectiveOperationException e) {
+            throw new IllegalStateException("The generated voxel shapes do not build", e);
+        }
+    }
+
     public @NonNull List<Registry> registries() {
         return registries;
     }

@@ -30,8 +30,10 @@ import java.util.Map;
  * Reads data in the bundled format from a set of files: {@code versions.txt} lists one
  * {@code <name> <protocol> [preview] [codec=<protocol>]} line per version (a {@link DataVersion#isPreview() preview}; the
  * {@link DataVersion#codecProtocol() codec} that decoded its captures where that was another protocol's), and each version is stored in {@code <name>.nbt}
- * (written by the generator, see {@link PaletteDataCodec}). Item components and data driven blocks are stored once with
- * their version ranges in {@code properties.nbt} (see {@link PropertyStore}), the vanilla voxel shapes in {@code voxel_shapes.nbt} (see
+ * (written by the generator, see {@link PaletteDataCodec}; a file without block states takes those of the generated
+ * definitions of its version). Item components and data driven blocks are stored once with
+ * their version ranges in {@code properties.nbt} (see {@link PropertyStore}); the vanilla voxel shapes are the generated
+ * ones ({@link VoxelShapeStore#bundled()}) unless the set has a {@code voxel_shapes.nbt} (see
  * {@link VoxelShapeStore}); {@code renames.txt} is optional, as is {@code builds.txt}: one {@code <name> <BDS build> <protocol>}
  * line per release build verified to send a version's data ({@link #verifiedBuilds}).
  * The files are either {@code /paletter/} on the classpath of the library ({@link PaletteDataSource#bundled()}) or a
@@ -48,8 +50,8 @@ final class FileDataSource implements PaletteDataSource {
     // Read once: versions may load on several threads at the same time
     private final Lazy<PropertyStore> properties = new Lazy<>(
         () -> readOrEmpty("properties.nbt", "properties", PropertyStore::read, PropertyStore.empty()));
-    private final Lazy<VoxelShapeStore> voxelShapes = new Lazy<>(
-        () -> readOrEmpty("voxel_shapes.nbt", "voxel shapes", VoxelShapeStore::read, VoxelShapeStore.empty()));
+    // The bundled shapes are generated classes; a directory may carry its own
+    private final Lazy<VoxelShapeStore> voxelShapes = new Lazy<>(this::readVoxelShapes);
 
     private FileDataSource(Opener opener, String origin) {
         this.opener = opener;
@@ -62,6 +64,14 @@ final class FileDataSource implements PaletteDataSource {
             return stream == null ? empty : reader.read(stream);
         } catch (IOException e) {
             throw new UncheckedIOException("Unable to read the Paletter " + what + " in " + origin, e);
+        }
+    }
+
+    private VoxelShapeStore readVoxelShapes() {
+        try (InputStream stream = opener.open("voxel_shapes.nbt")) {
+            return stream == null ? VoxelShapeStore.bundled() : VoxelShapeStore.read(stream);
+        } catch (IOException e) {
+            throw new UncheckedIOException("Unable to read the Paletter voxel shapes in " + origin, e);
         }
     }
 

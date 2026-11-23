@@ -131,6 +131,6 @@ class ShapeToolingTest {
 
     @Test
     void theBundledVoxelShapesAreWhatTheCapturesGive() throws IOException {
-        assertTrue(ShapeImport.check(ROOT), "voxel_shapes.nbt is stale: run ./gradlew :tools:run --args=\"voxel-shapes import\"");
+        assertEquals(0, ShapeImport.check(ROOT), "the generated shapes are stale: run ./gradlew :tools:run --args=\"voxel-shapes import\"");
     }
 }

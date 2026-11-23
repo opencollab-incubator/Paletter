@@ -118,7 +118,8 @@ class BehaviourCodeTest {
     void longStatementListsAreSplitIntoMethodsAndClasses() {
         List<com.palantir.javapoet.CodeBlock> statements = java.util.stream.IntStream.range(0, 1000)
             .mapToObj(i -> com.palantir.javapoet.CodeBlock.builder().addStatement("v.remove($S)", "x" + i).build()).toList();
-        List<com.palantir.javapoet.TypeSpec> types = BehaviourCode.chunked("Name", "doc", statements, BehaviourSetters.CHANGES, "v");
+        List<com.palantir.javapoet.TypeSpec> types = dev.opencollab.paletter.tools.codegen.Chunks.chunked("Name", "doc", statements,
+            BehaviourSetters.CHANGES, "v");
         // 60 statements a method: 17 methods, 8 a class
         assertEquals(List.of("Name", "NamePart2", "NamePart3"), types.stream().map(com.palantir.javapoet.TypeSpec::name).toList());
         assertEquals(10, types.getFirst().methodSpecs().size(), "the constructor, 8 parts and load");

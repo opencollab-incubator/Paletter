@@ -19,6 +19,8 @@ The Gradle tasks are the commands with their usual arguments:
 | `generateComponentApi`, `checkComponentApi` | `components generate`, `components check` |
 | `generateConstants`, `checkConstants` | `constants generate`, `constants check` |
 | `generateBehaviour`, `checkBehaviour` | `behaviour generate`, `behaviour check` |
+| `generateBlocks`, `checkBlocks` | `blocks generate`, `blocks check` |
+| `checkVoxelShapes` | `voxel-shapes check` |
 
 ## a. A new BDS release or preview appeared
 
@@ -35,12 +37,18 @@ Reviewing the pull request:
    wire-format changes in `data/model` (`mappings.json`, `coverage.md`) and the regenerated component API: a changed
    wire shape needs your review, it is never automatic. `mappings-evidence.json` changes with it (variant counts, BDS's
    messages and refused values, ranges, unexplained leaves): no generator reads it, it explains `mappings.json`.
-3. Check the regenerated constants (`BedrockBlocks`, `BedrockItems`, ...) and `data/model/constants-history.json`: they
+3. The palette of a new version is not data: `update` turns it into a change class of the generated block definitions
+   (`internal.vanilla.blocks/BlockChanges<version>`) and stages the version file without block states. Read that class: a
+   `redefine` line (other values or another property order) or a removed block is BDS doing something new. A palette the
+   definitions cannot say (not a cartesian product, no unique property order, out of name hash order) is a FAIL with what it
+   found ("Block definitions").
+4. Check the regenerated constants (`BedrockBlocks`, `BedrockItems`, ...) and `data/model/constants-history.json`: they
    are committed together. New names that collide or are invalid fail generation until
    `data/model/constant-names.txt` names them (`blocks|items|states|enums <key> <name>`).
-4. The build must be green (`./gradlew build`, which includes `checkConstants`, `checkComponentApi`, `checkMappings`,
-   `checkData`, `checkBuilds`). A patch that changes generated code only becomes a PR with `BDS_DATA_TOKEN` set.
-5. Merge. Decisions the report lists stay manual (below); exit code 2 means "written, decisions open".
+5. The build must be green (`./gradlew build`, which includes `checkConstants`, `checkComponentApi`, `checkBlocks`,
+   `checkVoxelShapes`, `checkMappings`, `checkData`, `checkBuilds`). A patch that changes generated code only becomes a PR with
+   `BDS_DATA_TOKEN` set.
+6. Merge. Decisions the report lists stay manual (below); exit code 2 means "written, decisions open".
 
 When it reports decisions or FAILs:
 
@@ -150,7 +158,9 @@ See [releasing.md](releasing.md): snapshots publish from `main` through `publish
 | "The add-on's script did not register all its components" | The spec add-on's script failed in BDS; see the content log. |
 | "linked", "residual bits", "unclassified wire paths" | `check-mappings --strict`; see section d, step 4. |
 | Spec captures differ between builds | Different add-ons; recapture (section b). |
-| `checkConstants` / `checkComponentApi` / `checkBuilds` / `checkBehaviour` stale | Run the matching `generate` or `builds table`; commit. |
+| `checkConstants` / `checkComponentApi` / `checkBuilds` / `checkBehaviour` / `checkBlocks` / `checkVoxelShapes` stale | Run the matching `generate` (`voxel-shapes import` for the shapes) or `builds table`; commit. `checkBlocks` also fails on a version file that still has its block states: `generateBlocks` moves them into the definitions. |
+| `checkBlocks` fails: a palette is not a cartesian product, has no unique property order or is out of name hash order | BDS did something the generated definitions cannot say. Never edit the generated classes by hand: extend `BlockDefinitions` (and `BlockModel`, `BlockDiff`, `BlockCode` in the tools) so they can, with a test in `BlockCodeTest`. |
+| The generated block classes do not compile after a change of `BlockDefinitions` | They are the only copy of the palettes, so they cannot be deleted and regenerated like the behaviour classes: keep the old method of `BlockDefinitions` until `generateBlocks` has rewritten them, or check out version files with their block states (an older commit) and run `generateBlocks`. |
 | `generateBehaviour` does not start: the generated behaviour classes do not compile (a behaviour key was renamed or removed by `generateComponentApi`, or the runtime changed) | The tools run on the compiled library, and the library compiles without those classes (`VanillaBehaviour` loads them by name). Delete `paletter/src/generated/java/dev/opencollab/paletter/internal/behaviour/vanilla` and run `generateBehaviour` again; it writes the whole directory. |
 | Exit code 1 from Gradle on a run with decisions | Gradle maps every non-zero code to 1. Run the launcher instead, `./gradlew :tools:installDist` then `tools/build/install/tools/bin/tools update ...`: it exits with the tool's own code (2 = decisions open), as the workflows do. |
 
@@ -171,7 +181,10 @@ When Paletter stops bundling a data version, its protocol leaves the component m
    `AbsentComponentTest`). Keep those files, or move the evidence and its tests first; the tests on committed builds
    (`CommittedBuilds`) follow a deleted directory by themselves.
 3. Then `builds table`, `inferMappings` (it must change nothing: the captures are gone), `generateComponentApi`,
-   `generateConstants` and `generateBehaviour`, each in its own Gradle run; the build must be green. `retire` has marked the
+   `generateConstants`, `generateBehaviour` and `generateBlocks`, each in its own Gradle run; the build must be green.
+   `generateBlocks` makes the next version `BlockBase` of the block definitions, with what it inherited folded in, and drops
+   its change class (the next version's palette comes from the definitions as committed, which still start at the retired
+   version). `retire` has marked the
    data version retired in `data/behaviour/captures.nbt` (its captures stay: newer versions inherit from them), so
    `generateBehaviour` writes the next version as `BehaviourBase` with everything it inherited folded in, and drops the
    retired version's class, and the "Version changes to check" section of `data/behaviour/REPORT.md`; the rest of the

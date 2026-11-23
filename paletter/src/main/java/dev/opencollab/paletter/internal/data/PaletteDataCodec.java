@@ -18,6 +18,8 @@ import dev.opencollab.paletter.internal.creative.RawGroup;
 import dev.opencollab.paletter.internal.creative.RawLayout;
 import dev.opencollab.paletter.internal.creative.RawNode;
 import dev.opencollab.paletter.internal.creative.RawStack;
+import dev.opencollab.paletter.internal.vanilla.BlockDefinitions;
+import dev.opencollab.paletter.internal.vanilla.VanillaBlocks;
 import dev.opencollab.paletter.item.ItemFallback;
 import dev.opencollab.paletter.vanilla.BedrockBlockType;
 import dev.opencollab.paletter.vanilla.BedrockItemType;
@@ -43,7 +45,9 @@ import java.util.zip.GZIPInputStream;
  * <pre>
  * format: int                      {@value #FORMAT}
  * name: string, protocol: int      the data version
- * blocks: [{name, states}]         vanilla block states in runtime id order
+ * blocks: [{name, states}]         optional: vanilla block states in runtime id order. Without it (every bundled version),
+ *                                  the states and defaults are those of the generated block definitions of the version
+ *                                  ({@code VanillaBlocks}); the writer leaves out what those give
  * items: [{name, id, version, component_based}]
  *                                  (the item components and the data driven blocks are in properties.nbt, see PropertyStore)
  * creative: {construction|nature|equipment|items: [node]}
@@ -53,10 +57,13 @@ import java.util.zip.GZIPInputStream;
  * fallbacks: {blocks: {name: {target, clear_states, force}}, items: {name: {target, force}}, unmapped: [name]}
  *                                  optional, and not part of the bundled data (consumers define fallbacks);
  *                                  custom data sources may carry it
- * block_defaults: {name: states}   optional
+ * block_defaults: {name: states}   optional, only with blocks: the defaults that are not the first state of their block
  * experiments: {toggle: {items: [name], blocks: [name], creative: [id or id:damage]}}
  *                                  optional; only written when the version was captured with experiments
- * block_items: {block: item}       optional: the item that places each block
+ * block_items: {block: item}       optional: the item that places each block. With blocks_without_item only the blocks
+ *                                  whose item has another identifier (or that are not in the palette)
+ * blocks_without_item: [block]     optional: the blocks of the palette no item places; with it, every other block of the
+ *                                  palette is placed by the item of its own identifier
  * </pre>
  */
 @Internal
@@ -93,9 +100,25 @@ public final class PaletteDataCodec {
         // States repeat a lot between blocks (e.g. every log has the same pillar_axis compound); share instances
         Map<NbtMap, NbtMap> interner = new HashMap<>();
         List<NbtMap> blocks = new ArrayList<>();
-        for (NbtMap block : root.getList("blocks", NbtType.COMPOUND)) {
-            NbtMap states = interner.computeIfAbsent(block.getCompound("states"), PaletteDataCodec::internStrings);
-            blocks.add(BlockStates.of(block.getString("name").intern(), states));
+        Map<String, NbtMap> defaults = new HashMap<>();
+        if (root.containsKey("blocks")) {
+            for (NbtMap block : root.getList("blocks", NbtType.COMPOUND)) {
+                NbtMap states = interner.computeIfAbsent(block.getCompound("states"), PaletteDataCodec::internStrings);
+                blocks.add(BlockStates.of(block.getString("name").intern(), states));
+            }
+            root.getCompound("block_defaults", NbtMap.EMPTY).forEach((name, states) ->
+                defaults.put(name, BlockStates.of(name.intern(), interner.computeIfAbsent((NbtMap) states, PaletteDataCodec::internStrings))));
+        } else {
+            // The block states of a bundled version are generated code, not data
+            BlockDefinitions.Palette palette = VanillaBlocks.palette(version.name());
+            if (palette == null) {
+                throw new IOException("The data of " + version.name() + " has no block states, and the library has no generated block "
+                    + "definitions of it (it has " + VanillaBlocks.versions() + ")");
+            }
+            blocks = palette.states();
+            defaults.putAll(palette.defaults());
+            // The creative stacks share the palette's instances, as they share those of a file
+            blocks.forEach(state -> interner.putIfAbsent(BlockStates.states(state), BlockStates.states(state)));
         }
 
         List<VanillaItem> items = new ArrayList<>();
@@ -149,10 +172,6 @@ public final class PaletteDataCodec {
         });
         Set<String> unmapped = new HashSet<>(fallbacksNbt.getList("unmapped", NbtType.STRING, List.of()));
 
-        Map<String, NbtMap> defaults = new HashMap<>();
-        root.getCompound("block_defaults", NbtMap.EMPTY).forEach((name, states) ->
-            defaults.put(name, BlockStates.of(name.intern(), interner.computeIfAbsent((NbtMap) states, PaletteDataCodec::internStrings))));
-
         Map<String, ExperimentContent> experiments = new HashMap<>();
         root.getCompound("experiments", NbtMap.EMPTY).forEach((toggle, value) -> {
             NbtMap content = (NbtMap) value;
@@ -162,22 +181,59 @@ public final class PaletteDataCodec {
 
         Map<String, String> blockItems = new HashMap<>();
         root.getCompound("block_items", NbtMap.EMPTY).forEach((block, item) -> blockItems.put(block, (String) item));
+        if (root.containsKey("blocks_without_item")) {
+            // Every other block is placed by the item of its own identifier
+            Set<String> without = new HashSet<>(root.getList("blocks_without_item", NbtType.STRING));
+            for (NbtMap state : blocks) {
+                String name = BlockStates.name(state);
+                if (!without.contains(name)) {
+                    blockItems.putIfAbsent(name, name);
+                }
+            }
+        }
 
         return new VanillaData(version, blocks, items, List.of(), RawLayout.of(categories), tags,
             new VersionFallbacks(blockFallbacks, itemFallbacks, unmapped), defaults, experiments, blockItems);
     }
 
     /**
-     * Writes the data. Maps are written sorted by key, so the same data always produces the same bytes.
+     * Writes the data, without the block states and defaults where they are what the generated block definitions of the
+     * version give ({@link VanillaBlocks}). Maps are written sorted by key, so the same data always produces the same bytes.
      */
     public static void write(@NonNull VanillaData data, @NonNull OutputStream stream) throws IOException {
+        write(data, stream, !derivable(data));
+    }
+
+    /** @return whether the block states and defaults of the data are what the generated definitions of its version give */
+    public static boolean derivable(@NonNull VanillaData data) {
+        BlockDefinitions.Palette palette = VanillaBlocks.palette(data.version().name());
+        if (palette == null || !palette.states().equals(data.blockStates())) {
+            return false;
+        }
+        // A default that is the first state of its block says what no default says
+        Map<String, NbtMap> defaults = new HashMap<>(data.blockDefaults());
+        Map<String, NbtMap> first = new HashMap<>();
+        data.blockStates().forEach(state -> first.putIfAbsent(BlockStates.name(state), state));
+        defaults.entrySet().removeIf(entry -> entry.getValue().equals(first.get(entry.getKey())));
+        return defaults.equals(palette.defaults());
+    }
+
+    /**
+     * Writes the data. Maps are written sorted by key, so the same data always produces the same bytes.
+     *
+     * @param blocks whether to write the block states and defaults; without them, reading takes those of the generated
+     *               definitions of the version
+     */
+    public static void write(@NonNull VanillaData data, @NonNull OutputStream stream, boolean blocks) throws IOException {
         NbtMapBuilder root = NbtMap.builder()
             .putString(GENERATED_KEY, GENERATED)
             .putInt("format", FORMAT)
             .putString("name", data.version().name())
             .putInt("protocol", data.version().protocolVersion());
 
-        root.putList("blocks", NbtType.COMPOUND, data.blockStates());
+        if (blocks) {
+            root.putList("blocks", NbtType.COMPOUND, data.blockStates());
+        }
 
         List<NbtMap> items = new ArrayList<>(data.items().size());
         for (VanillaItem item : data.items()) {
@@ -219,9 +275,11 @@ public final class PaletteDataCodec {
             writeFallbacks(data, root);
         }
 
-        NbtMapBuilder defaults = NbtMap.builder();
-        new TreeMap<>(data.blockDefaults()).forEach((name, state) -> defaults.putCompound(name, BlockStates.states(state)));
-        root.putCompound("block_defaults", defaults.build());
+        if (blocks) {
+            NbtMapBuilder defaults = NbtMap.builder();
+            new TreeMap<>(data.blockDefaults()).forEach((name, state) -> defaults.putCompound(name, BlockStates.states(state)));
+            root.putCompound("block_defaults", defaults.build());
+        }
 
         writeRest(data, root);
 
@@ -262,9 +320,19 @@ public final class PaletteDataCodec {
         }
 
         if (!data.blockItems().isEmpty()) {
+            // Only what the palette does not give: a block of the palette is placed by the item of its own identifier
+            // unless it is listed with another item or as having none
+            Set<String> palette = new TreeSet<>();
+            data.blockStates().forEach(state -> palette.add(BlockStates.name(state)));
             NbtMapBuilder blockItems = NbtMap.builder();
-            new TreeMap<>(data.blockItems()).forEach(blockItems::putString);
+            new TreeMap<>(data.blockItems()).forEach((block, item) -> {
+                if (!item.equals(block) || !palette.contains(block)) {
+                    blockItems.putString(block, item);
+                }
+            });
             root.putCompound("block_items", blockItems.build());
+            List<String> without = palette.stream().filter(block -> !data.blockItems().containsKey(block)).toList();
+            root.putList("blocks_without_item", NbtType.STRING, new ArrayList<>(without));
         }
     }
 

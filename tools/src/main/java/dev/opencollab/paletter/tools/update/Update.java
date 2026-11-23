@@ -276,6 +276,7 @@ public final class Update {
             return;
         }
         new ConstantsStage(ctx).constants(staging);
+        new BlocksStage(ctx).blocks(staging);
         staging.apply();
         // After the data is in place: the inference puts each capture into the window of its bundled version
         if (runs.protocol != null) {

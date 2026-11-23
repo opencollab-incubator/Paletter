@@ -69,11 +69,17 @@ class PaletterBuilderTest {
 
     @Test
     void aDirectoryInTheBundledFormatIsADataSource(@TempDir Path directory) throws IOException {
-        for (String file : List.of("versions.txt", "properties.nbt", "voxel_shapes.nbt", "renames.txt")) {
+        for (String file : List.of("versions.txt", "properties.nbt", "renames.txt")) {
             copy(file, directory);
         }
+        // A source of its own may carry full palettes, its own voxel shapes too; a bundled version file has no block states
         for (DataVersion version : PALETTER.versions()) {
-            copy(version.name() + ".nbt", directory);
+            try (var out = Files.newOutputStream(directory.resolve(version.name() + ".nbt"))) {
+                dev.opencollab.paletter.internal.data.PaletteDataCodec.write(PaletteDataSource.bundled().load(version), out, true);
+            }
+        }
+        try (var out = Files.newOutputStream(directory.resolve("voxel_shapes.nbt"))) {
+            PaletteDataSource.bundled().voxelShapes().write(out, "a test");
         }
         PaletteDataSource source = PaletteDataSource.directory(directory);
         assertEquals(PALETTER.versions(), source.versions().stream().filter(version -> !version.isPreview()).toList());
@@ -83,6 +89,16 @@ class PaletterBuilderTest {
         assertEquals(expected.blocks().size(), actual.blocks().size());
         assertEquals(stacks(expected), stacks(actual));
         assertEquals(expected.voxelShapesPacket(), actual.voxelShapesPacket());
+        assertEquals(PALETTER.vanillaData(PALETTER.latest()).blockStates(), paletter.vanillaData(PALETTER.latest()).blockStates());
+        // Without block states and shapes of its own, the generated ones of its versions
+        for (DataVersion version : PALETTER.versions()) {
+            Files.delete(directory.resolve(version.name() + ".nbt"));
+            copy(version.name() + ".nbt", directory);
+        }
+        Files.delete(directory.resolve("voxel_shapes.nbt"));
+        Paletter slim = Paletter.builder().data(PaletteDataSource.directory(directory)).build();
+        assertEquals(expected.voxelShapesPacket(), slim.palette(PALETTER.latest().protocolVersion()).voxelShapesPacket());
+        assertEquals(PALETTER.vanillaData(PALETTER.latest()).blockStates(), slim.vanillaData(PALETTER.latest()).blockStates());
         assertThrows(java.io.UncheckedIOException.class,
             () -> Paletter.builder().data(PaletteDataSource.directory(directory.resolve("missing"))).build().versions());
     }
