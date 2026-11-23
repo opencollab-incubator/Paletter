@@ -97,7 +97,7 @@ class CloudburstDataTest {
     }
 
     /**
-     * The newest snapshot is the commit {@code data/behaviour/sources.json} pins: the pin moves with {@code behaviour.nbt}, and the
+     * The newest snapshot is the commit {@code data/behaviour/sources.json} pins: the pin moves with {@code data/behaviour/captures.nbt}, and the
      * snapshot has to move with it (docs/updating.md, Pins).
      */
     @Test

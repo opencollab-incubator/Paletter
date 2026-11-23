@@ -7,7 +7,6 @@ import com.palantir.javapoet.JavaFile;
 import com.palantir.javapoet.MethodSpec;
 import com.palantir.javapoet.TypeSpec;
 import dev.opencollab.paletter.data.DataVersion;
-import dev.opencollab.paletter.internal.behaviour.BehaviourStore;
 import dev.opencollab.paletter.internal.behaviour.Provenance;
 import dev.opencollab.paletter.tools.behaviour.BehaviourNames.TableKind;
 import dev.opencollab.paletter.tools.behaviour.BehaviourOps.Op;

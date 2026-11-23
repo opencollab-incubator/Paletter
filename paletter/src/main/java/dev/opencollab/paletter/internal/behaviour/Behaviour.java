@@ -18,7 +18,9 @@ import dev.opencollab.paletter.item.RegisteredItem;
 import dev.opencollab.paletter.property.Properties;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Supplier;
 
 /**
@@ -48,9 +50,13 @@ public final class Behaviour {
     private final Palette palette;
     /**
      * The vanilla values, asked for only when a column or a provenance is built: a resolution and its handle need none.
-     * A {@code Paletter} built with {@code behaviour(false)} gives a supplier that throws, so nothing loads or keeps them.
+     * A {@code Paletter} built with {@code behaviour(false)} gives a supplier that throws, so nothing loads or keeps them
+     * (the generated classes are not even loaded).
      */
-    private final Supplier<BehaviourStore> store;
+    private final Supplier<VanillaBehaviour> store;
+    /** The vanilla values of each block of the palette, found once: a {@link VanillaVersion.BlockEntry} or {@link #NONE}. */
+    private final Map<RegisteredBlock, Object> entries = new ConcurrentHashMap<>();
+    private static final Object NONE = new Object();
     /** The behaviour of the palette this one extends, whose states come first here; null if there is none. */
     private final @Nullable Behaviour parent;
     /** The behaviour of the palette this one extends, whose items this one shares by instance; null if there is none. */
@@ -69,7 +75,7 @@ public final class Behaviour {
     private final IntIndex positions;
     private final @Nullable Column[] itemColumns = new Column[KEYS];
 
-    private Behaviour(Palette palette, Supplier<BehaviourStore> store, @Nullable Behaviour parent) {
+    private Behaviour(Palette palette, Supplier<VanillaBehaviour> store, @Nullable Behaviour parent) {
         this.palette = palette;
         this.store = store;
         BlockRegistry registry = palette.blocks();
@@ -87,7 +93,7 @@ public final class Behaviour {
     /**
      * @param parent the behaviour of the palette this one extends (its block states come first in this one), or null
      */
-    public static @NonNull Behaviour of(@NonNull Palette palette, @NonNull BehaviourStore store, @Nullable Behaviour parent) {
+    public static @NonNull Behaviour of(@NonNull Palette palette, @NonNull VanillaBehaviour store, @Nullable Behaviour parent) {
         Objects.requireNonNull(store);
         return of(palette, () -> store, parent);
     }
@@ -96,7 +102,7 @@ public final class Behaviour {
      * @param store the vanilla values, asked for the first time a column or a provenance needs them
      * @param parent the behaviour of the palette this one extends (its block states come first in this one), or null
      */
-    public static @NonNull Behaviour of(@NonNull Palette palette, @NonNull Supplier<BehaviourStore> store, @Nullable Behaviour parent) {
+    public static @NonNull Behaviour of(@NonNull Palette palette, @NonNull Supplier<VanillaBehaviour> store, @Nullable Behaviour parent) {
         return new Behaviour(Objects.requireNonNull(palette), Objects.requireNonNull(store), parent);
     }
 
@@ -325,16 +331,39 @@ public final class Behaviour {
         return item.isCustom() || !item.components().isEmpty() ? customItem(item, key) : vanilla(item, key);
     }
 
+    /** A bundled value and the capture that decided it. */
+    private record Hit(@NonNull Object value, @NonNull Capture capture) {
+    }
+
+    /** @return the bundled value of a vanilla block state, or null if there is none */
+    private @Nullable Hit blockHit(RegisteredBlockState state, @Nullable RegisteredBlock block, BehaviourKey<?> key) {
+        VanillaVersion values = store.get().version(palette.version());
+        if (values == null || block == null) {
+            return null;
+        }
+        Object entry = entries.computeIfAbsent(block, b -> {
+            VanillaVersion.BlockEntry found = values.block(b.identifier(), BlockSchema.of(b.states().stream().map(RegisteredBlockState::states).toList()));
+            return found == null ? NONE : found;
+        });
+        Object value = entry == NONE ? null : VanillaVersion.value((VanillaVersion.BlockEntry) entry, key, state.states());
+        return value == null ? null : new Hit(value, Objects.requireNonNull(values.capture(state.identifier(), key, state.states())));
+    }
+
+    /** @return the bundled value of a vanilla item, or null if there is none */
+    private @Nullable Hit itemHit(RegisteredItem item, BehaviourKey<?> key) {
+        VanillaVersion values = store.get().version(palette.version());
+        Object value = values == null ? null : values.item(item.getIdentifier(), key);
+        return value == null ? null : new Hit(value, Objects.requireNonNull(values.itemCapture(item.getIdentifier(), key)));
+    }
+
     private @Nullable Value vanilla(RegisteredBlockState state, BehaviourKey<?> key) {
         RegisteredBlock block = palette.blocks().block(state.identifier());
-        BehaviourStore.Resolved resolved = store.get().block(key, state.getRuntimeId(), palette.version());
         Value wire = block == null ? null : vanillaWire(key, block.properties(state));
-        return choose(resolved, wire);
+        return choose(blockHit(state, block, key), wire, key, state.identifier(), state.states());
     }
 
     private @Nullable Value vanilla(RegisteredItem item, BehaviourKey<?> key) {
-        BehaviourStore.Resolved resolved = store.get().item(key, item.getIdentifier(), palette.version());
-        return choose(resolved, vanillaWire(key, item.properties()));
+        return choose(itemHit(item, key), vanillaWire(key, item.properties()), key, item.getIdentifier(), org.cloudburstmc.nbt.NbtMap.EMPTY);
     }
 
     private @Nullable Value customBlock(RegisteredBlockState state, BehaviourKey<?> key) {
@@ -360,10 +389,11 @@ public final class Behaviour {
      * Direct evidence of the version beats a third-party dump and a capture of an older version; among direct sources
      * of the version the stronger kind decides ({@link Provenance.Source}: captures before the wire).
      */
-    private @Nullable Value choose(BehaviourStore.@Nullable Resolved stored, @Nullable Value wire) {
+    private @Nullable Value choose(@Nullable Hit stored, @Nullable Value wire, BehaviourKey<?> key, String identifier,
+                                   org.cloudburstmc.nbt.NbtMap states) {
         return switch (choice(stored == null ? null : stored.capture(), wire != null)) {
             case NONE -> null;
-            case STORED -> captured(stored);
+            case STORED -> captured(stored, key, identifier, states);
             case WIRE -> wire;
         };
     }
@@ -374,7 +404,7 @@ public final class Behaviour {
      * The one decision both paths make: which of the stored capture and the wire value gives the value (or neither). The value
      * path and the provenance path only differ in what they build from the answer.
      */
-    private Choice choice(BehaviourStore.@Nullable Capture stored, boolean hasWire) {
+    private Choice choice(@Nullable Capture stored, boolean hasWire) {
         if (!hasWire) {
             return stored == null ? Choice.NONE : Choice.STORED;
         }
@@ -426,7 +456,7 @@ public final class Behaviour {
             return new Value(sent, new Provenance(Provenance.Source.WIRE, "component data Paletter sends, not set by the user",
                 version, version));
         }
-        BehaviourStore.Default fallback = store.get().defaultOf(key);
+        VanillaBehaviour.Default fallback = store.get().customDefault(key);
         if (fallback == null) {
             return new Value(null, Provenance.unknownDefault(version));
         }
@@ -434,13 +464,13 @@ public final class Behaviour {
             fallback.source() + " " + fallback.reference(), version, version));
     }
 
-    private Value captured(BehaviourStore.Resolved resolved) {
-        BehaviourStore.Capture capture = resolved.capture();
-        List<Provenance.Alternative> alternatives = resolved.disputes().stream()
+    private Value captured(Hit hit, BehaviourKey<?> key, String identifier, org.cloudburstmc.nbt.NbtMap states) {
+        Capture capture = hit.capture();
+        List<Provenance.Alternative> alternatives = store.get().disputes(capture, key, identifier, states).stream()
             .map(d -> new Provenance.Alternative(d.capture().source(), d.capture().reference(), d.capture().version(), d.value()))
             .toList();
-        return new Value(resolved.value(), new Provenance(capture.source(), capture.reference(), capture.version(), palette.version(),
-            alternatives, resolved.postProcessing()));
+        return new Value(hit.value(), new Provenance(capture.source(), capture.reference(), capture.version(), palette.version(),
+            alternatives, store.get().note(capture, key, identifier, states)));
     }
 
     // ---- Values only: what the columns are built from. The decisions of the methods above without the provenance, which
@@ -452,8 +482,7 @@ public final class Behaviour {
             return block == null ? null
                 : customValue(key, block.properties(state), block.components(state).stream().map(c -> c.name()).toList());
         }
-        BehaviourStore.Hit stored = store.get().blockHit(key, state.getRuntimeId(), palette.version());
-        return chooseValue(stored, block == null ? null : WireRules.value(key, block.properties(state)));
+        return chooseValue(blockHit(state, block, key), block == null ? null : WireRules.value(key, block.properties(state)));
     }
 
     private @Nullable Object value(RegisteredItem item, BehaviourKey<?> key) {
@@ -469,7 +498,7 @@ public final class Behaviour {
     }
 
     private @Nullable Object vanillaValue(RegisteredItem item, BehaviourKey<?> key) {
-        return chooseValue(store.get().itemHit(key, item.getIdentifier(), palette.version()), WireRules.value(key, item.properties()));
+        return chooseValue(itemHit(item, key), WireRules.value(key, item.properties()));
     }
 
     private @Nullable Object customValue(BehaviourKey<?> key, Properties properties, List<String> components) {
@@ -481,12 +510,12 @@ public final class Behaviour {
         if (sent != null) {
             return sent;
         }
-        BehaviourStore.Default fallback = store.get().defaultOf(key);
+        VanillaBehaviour.Default fallback = store.get().customDefault(key);
         return fallback == null ? null : fallback.value();
     }
 
     /** {@link #choose} on values: a capture of this very version from a direct source beats the wire. */
-    private @Nullable Object chooseValue(BehaviourStore.@Nullable Hit stored, @Nullable Object wire) {
+    private @Nullable Object chooseValue(@Nullable Hit stored, @Nullable Object wire) {
         return switch (choice(stored == null ? null : stored.capture(), wire != null)) {
             case NONE -> null;
             case STORED -> stored.value();

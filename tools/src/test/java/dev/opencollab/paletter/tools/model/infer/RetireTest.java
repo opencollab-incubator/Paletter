@@ -2,6 +2,11 @@ package dev.opencollab.paletter.tools.model.infer;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import dev.opencollab.paletter.behaviour.BlockBehaviour;
+import dev.opencollab.paletter.data.DataVersion;
+import dev.opencollab.paletter.internal.behaviour.Provenance;
+import dev.opencollab.paletter.tools.behaviour.BehaviourGenerator;
+import dev.opencollab.paletter.tools.behaviour.BehaviourStore;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
@@ -9,6 +14,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
+import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -94,5 +100,31 @@ class RetireTest {
         JsonObject written = json(Files.readString(model.resolve("mappings.json")));
         assertEquals(2, written.getAsJsonArray("captures").size());
         assertTrue(Files.readString(model.resolve(MappingEvidence.FILE)).contains("\"accepted\": 1"));
+    }
+
+    /**
+     * The behaviour capture store retires the data version with the protocol: its captures stay (what 1.3 inherits from it
+     * is still there), and generateBehaviour then writes 1.3 as the base (BehaviourCodeTest checks that fold).
+     */
+    @Test
+    void theBehaviourStoreRetiresTheVersion(@TempDir Path root) throws IOException {
+        Path model = Files.createDirectories(root.resolve("data/model"));
+        Files.writeString(model.resolve("mappings.json"), MAPPINGS);
+        DataVersion v11 = new DataVersion("1.1", 10);
+        DataVersion v12 = new DataVersion("1.2", 20);
+        DataVersion v13 = new DataVersion("1.3", 30);
+        BehaviourStore.Builder builder = new BehaviourStore.Builder(List.of(v11, v12, v13));
+        int capture = builder.capture(v12, Provenance.Source.CLOUDBURST_DATA, "c", List.of(1), List.of());
+        builder.blocks(BlockBehaviour.FRICTION, capture, Map.of(1, 0.5f));
+        BehaviourGenerator.write(root, builder.build());
+
+        List<String> out = Retire.run(root, 20);
+        assertTrue(out.getFirst().startsWith(BehaviourGenerator.CAPTURES + ": retired 1.2"), out.getFirst());
+        assertTrue(out.getFirst().endsWith("generateBehaviour makes 1.1 the base"), out.getFirst());
+        BehaviourStore store = BehaviourGenerator.read(root);
+        assertEquals(List.of("1.2"), store.retired());
+        assertEquals(List.of("1.1", "1.3"), store.generated());
+        assertEquals(0.5f, store.block(BlockBehaviour.FRICTION, 1, v13).value(), "1.3 still inherits the capture of 1.2");
+        assertTrue(out.getLast().contains("generateBehaviour"));
     }
 }

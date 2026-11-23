@@ -3,7 +3,7 @@ package dev.opencollab.paletter;
 import dev.opencollab.paletter.annotation.Internal;
 import dev.opencollab.paletter.internal.PaletteReportBuilder;
 import dev.opencollab.paletter.internal.behaviour.Behaviour;
-import dev.opencollab.paletter.internal.behaviour.BehaviourStore;
+import dev.opencollab.paletter.internal.behaviour.VanillaBehaviour;
 import dev.opencollab.paletter.internal.Canonicals;
 import dev.opencollab.paletter.internal.Lazy;
 import dev.opencollab.paletter.internal.Forwarding;
@@ -114,7 +114,7 @@ public final class Palette {
     private final CreativeOrdering ordering;
     private final VanillaContent.ExperimentGating gating;
     private final Map<PaletteLayer, WeakReference<Palette>> extensions = new WeakHashMap<>();
-    private final Supplier<BehaviourStore> behaviourStore;
+    private final Supplier<VanillaBehaviour> behaviourStore;
     private final Shapes shapes;
     private volatile Behaviour behaviour;
     /**
@@ -143,7 +143,7 @@ public final class Palette {
 
     Palette(VanillaData data, List<PaletteLayer> layers, BlockRegistry blocks, ItemRegistry items,
             CreativeLayout creativeLayout, CreativeContent creative, PaletteReportBuilder report, CreativeOrdering ordering,
-            VanillaContent.ExperimentGating gating, Supplier<BehaviourStore> behaviourStore, Shapes shapes, @Nullable Palette parent) {
+            VanillaContent.ExperimentGating gating, Supplier<VanillaBehaviour> behaviourStore, Shapes shapes, @Nullable Palette parent) {
         this.parent = parent;
         this.newestVersion = blocks.canonical().root().version().equals(data.version().toString());
         this.parentCanonicalSize = parent == null ? 0 : parent.blocks.canonical().size();
@@ -211,7 +211,7 @@ public final class Palette {
         return shapes;
     }
 
-    Supplier<BehaviourStore> behaviourStore() {
+    Supplier<VanillaBehaviour> behaviourStore() {
         return behaviourStore;
     }
 

@@ -6,7 +6,6 @@ import dev.opencollab.paletter.internal.data.Renames;
 import dev.opencollab.paletter.internal.data.VanillaData;
 
 import dev.opencollab.paletter.internal.data.PaletteDataCodec;
-import dev.opencollab.paletter.internal.behaviour.BehaviourStore;
 import dev.opencollab.paletter.internal.data.PropertyStore;
 import dev.opencollab.paletter.internal.shape.VoxelShapeStore;
 
@@ -32,8 +31,7 @@ import java.util.Map;
  * {@code <name> <protocol> [preview] [codec=<protocol>]} line per version (a {@link DataVersion#isPreview() preview}; the
  * {@link DataVersion#codecProtocol() codec} that decoded its captures where that was another protocol's), and each version is stored in {@code <name>.nbt}
  * (written by the generator, see {@link PaletteDataCodec}). Item components and data driven blocks are stored once with
- * their version ranges in {@code properties.nbt} (see {@link PropertyStore}), behaviour values in
- * {@code behaviour.nbt} (see {@link BehaviourStore}), the vanilla voxel shapes in {@code voxel_shapes.nbt} (see
+ * their version ranges in {@code properties.nbt} (see {@link PropertyStore}), the vanilla voxel shapes in {@code voxel_shapes.nbt} (see
  * {@link VoxelShapeStore}); {@code renames.txt} is optional, as is {@code builds.txt}: one {@code <name> <BDS build> <protocol>}
  * line per release build verified to send a version's data ({@link #verifiedBuilds}).
  * The files are either {@code /paletter/} on the classpath of the library ({@link PaletteDataSource#bundled()}) or a
@@ -50,9 +48,6 @@ final class FileDataSource implements PaletteDataSource {
     // Read once: versions may load on several threads at the same time
     private final Lazy<PropertyStore> properties = new Lazy<>(
         () -> readOrEmpty("properties.nbt", "properties", PropertyStore::read, PropertyStore.empty()));
-    // behaviour.nbt is large, and Paletters of several threads may ask at the same time
-    private final Lazy<BehaviourStore> behaviour = new Lazy<>(
-        () -> readOrEmpty("behaviour.nbt", "behaviour data", BehaviourStore::read, BehaviourStore.empty()));
     private final Lazy<VoxelShapeStore> voxelShapes = new Lazy<>(
         () -> readOrEmpty("voxel_shapes.nbt", "voxel shapes", VoxelShapeStore::read, VoxelShapeStore.empty()));
 
@@ -194,11 +189,6 @@ final class FileDataSource implements PaletteDataSource {
     @Override
     public @NonNull VoxelShapeStore voxelShapes() {
         return voxelShapes.get();
-    }
-
-    @Override
-    public @NonNull BehaviourStore behaviour() {
-        return behaviour.get();
     }
 
     @Override

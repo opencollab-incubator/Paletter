@@ -12,7 +12,8 @@ data/model + spec capture  -> infer                              -> data/model/m
 data/model                 -> generateComponentApi               -> paletter/src/generated/java (components, encoders, behaviour keys)
 bundled data               -> generateConstants                  -> paletter/src/generated/java (vanilla constants)
 BDS binary (not run)       -> whitebox, whitebox-coverage         -> data/bds/<build>/whitebox.json, whitebox-coverage.md
-data/bds + third party     -> behaviour import                   -> behaviour.nbt, data/behaviour/REPORT.md
+data/bds + third party     -> behaviour import                   -> data/behaviour/captures.nbt, REPORT.md, generated behaviour data
+data/behaviour/captures.nbt -> generateBehaviour                 -> paletter/src/generated/java (internal.behaviour.vanilla)
 data/bds/<build>/voxel-shapes -> voxel-shapes import             -> voxel_shapes.nbt
 ```
 
@@ -837,7 +838,7 @@ regeneration cannot drop one. Commit the history together with the classes.
 ./gradlew :tools:run --args="behaviour import --cloudburst-data <checkout> --allay <checkout>"
 ```
 
-writes `behaviour.nbt` and `data/behaviour/REPORT.md` from:
+writes the capture store `data/behaviour/captures.nbt`, the generated behaviour data and `data/behaviour/REPORT.md` from:
 
 - Paletter's own captures under `data/bds`: Script API dumps (`behaviour-dump`, run with the Beta APIs), and
   experiments on BDS (`behaviour-probe`: door collision, climbing, and the defaults of custom blocks);
@@ -851,11 +852,45 @@ probes (`BehaviourStage.OPTIONAL`, listed in the report header: the behaviour pr
 reference build), which are a skipped row and a TODO. The recapture's assemble job then runs `behaviour import` on the staged captures and on CloudburstMC/Data and
 AllayMC/Allay at the commits pinned in `data/behaviour/sources.json`. That file is the one place of the pins: the workflow
 fetches those commits, `behaviour import` fails when a checkout is at another one, and `BehaviourSourcesTest` fails when the
-workflow writes a commit of its own. Move a pin together with the regenerated `behaviour.nbt` and `REPORT.md`.
+workflow writes a commit of its own. Move a pin together with the regenerated `captures.nbt`, generated classes and
+`REPORT.md`.
 
-The report lists the ranking, which source decides each key in each version, disputes and post-processed values. The
-same sources at the same commits give the same bytes. Keys that only have third-party sources are the `NATIVE:` ones in
-the report; [native-capture.md](native-capture.md) is the plan for capturing them from BDS.
+The report lists the ranking, which source decides each key in each version, disputes, post-processed values and the
+changes only a third-party dump shows (below). The same sources at the same commits give the same bytes. Keys that only
+have third-party sources are the `NATIVE:` ones in the report; [native-capture.md](native-capture.md) is the plan for
+capturing them from BDS.
+
+### Captures and generated code
+
+`data/behaviour/captures.nbt` is the importer's own store (`BehaviourStore` in the tools): every capture with its
+coverage and values, disputes, post-processing notes, the defaults of custom content, and the versions `retire` retired.
+The library does not read it. `./gradlew :tools:generateBehaviour` (also run by `behaviour import`; checked by
+`:tools:checkBehaviour` in `check`) writes `dev.opencollab.paletter.internal.behaviour.vanilla` from it and the bundled
+palettes, with JavaPoet (`BehaviourCode`):
+
+- `BehaviourBase`: the oldest version that is not retired. `v.everyBlock()` / `v.everyItem()` set a default per key,
+  then one chain per block and item with the keys that differ from it, through typed setters generated from the keys
+  (`BlockSetters`, `ItemSetters`): `.destroyTime(1.5f)`; a value of one state property as data,
+  `.destroyTime("growth", 0, 0.0f, 7, 0.5f)`; a value of several properties as a shared table constant
+  (`BehaviourTables`, keyed by property values, never palette order); `...Unknown()` where nothing is known. Shapes are
+  named constants (`BehaviourShapes`: `BOX_0_0_0_16_8_16`, or the first block and key that use a shape of several boxes).
+  A block's schema (`growth=0..7`) names its states: a palette's block gets the values only if it has the same states.
+- `BehaviourChanges<version>`: what changed against the version before, each line with a comment naming the capture that
+  decided it and the captures of the version that confirm it, e.g.
+  `// destroy_time 0.2 -> 0.3: BDS Script API dump 1.26.45.1, confirmed by CloudburstMC/Data 0021592`. A change only a
+  third-party dump decided is `SOURCE ONLY` and listed in the report: BDS evidence wins and there is none, and the version
+  before is no evidence for this one, so the value is used and marked for a human to check. A block that did not change is
+  the same object in both versions at runtime.
+- `BehaviourSources<version>`: the deciding capture per key and version, and per block or item where it differs (a cell of
+  captures for a block whose states different sources cover); `BehaviourMarks`: notes and disputes per capture, and the
+  custom defaults; `BehaviourCaptures`: the captures by name.
+- No lambdas. Methods hold at most 60 statements, classes 8 methods; `GeneratedBehaviourLimitsTest` keeps every method
+  under half of the JVM's 64 KB and every constant pool under half of its limit, so growth fails a test, not class loading.
+
+Tests: `GeneratedBehaviourTest` compares every value, capture, note and dispute of every state, item and key of every
+bundled palette with the store's own lookup; `BehaviourCodeTest` runs the generator on a small store (and compiles and
+runs its output). `retire` retires the dropped data version in the store (its captures stay, as what newer versions
+inherit); `generateBehaviour` then makes the next version the base, with everything it inherited folded in.
 
 ## Voxel shapes
 

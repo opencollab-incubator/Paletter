@@ -1,6 +1,5 @@
 package dev.opencollab.paletter.tools.behaviour;
 
-import dev.opencollab.paletter.internal.behaviour.BehaviourStore;
 import dev.opencollab.paletter.tools.codegen.GeneratedSources;
 
 import java.io.IOException;
@@ -16,7 +15,7 @@ import java.util.List;
  */
 public final class BehaviourGenerator {
     /** The capture store, relative to the repository root: what the importer writes and the generator reads. */
-    public static final String CAPTURES = "paletter/src/main/resources/paletter/behaviour.nbt";
+    public static final String CAPTURES = "data/behaviour/captures.nbt";
     static final String RESOURCES = "paletter/src/main/resources/paletter";
 
     private BehaviourGenerator() {
@@ -24,17 +23,32 @@ public final class BehaviourGenerator {
 
     /** @return the generated files and the SOURCE ONLY changes, from the committed store and palettes */
     public static BehaviourCode.Result generate(Path root) throws IOException {
-        BehaviourStore store;
-        try (InputStream in = Files.newInputStream(root.resolve(CAPTURES))) {
-            store = BehaviourStore.read(in);
-        }
-        return generate(root, store);
+        return generate(root, read(root));
     }
 
-    /** @return the generated files of a store: its versions whose palettes are bundled */
+    /** @return the committed capture store */
+    public static BehaviourStore read(Path root) throws IOException {
+        try (InputStream in = Files.newInputStream(root.resolve(CAPTURES))) {
+            return BehaviourStore.read(in);
+        }
+    }
+
+    /** Writes the capture store. */
+    public static void write(Path root, BehaviourStore store) throws IOException {
+        Files.createDirectories(root.resolve(CAPTURES).getParent());
+        try (var out = Files.newOutputStream(root.resolve(CAPTURES))) {
+            store.write(out);
+        }
+    }
+
+    /** @return the generated files of a store: its versions that are not retired, whose palettes are bundled */
     static BehaviourCode.Result generate(Path root, BehaviourStore store) throws IOException {
         List<BehaviourImport.Bundled> bundled = BehaviourImport.bundled(root.resolve(RESOURCES)).stream()
-            .filter(palette -> store.versions().contains(palette.version().name())).toList();
+            .filter(palette -> store.generated().contains(palette.version().name())).toList();
+        if (bundled.size() != store.generated().size()) {
+            throw new IllegalStateException("The capture store has versions " + store.generated() + " (retired: " + store.retired()
+                + "), the bundled palettes " + bundled.stream().map(b -> b.version().name()).toList() + ": retire or bundle them");
+        }
         return BehaviourCode.generate(new BehaviourModel(store, bundled), CAPTURES);
     }
 

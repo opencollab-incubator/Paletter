@@ -4,7 +4,7 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.cloudburstmc.nbt.NbtMap;
 import org.cloudburstmc.protocol.bedrock.data.BlockPropertyData;
-import dev.opencollab.paletter.internal.behaviour.BehaviourStore;
+import dev.opencollab.paletter.internal.behaviour.VanillaBehaviour;
 import dev.opencollab.paletter.internal.shape.VoxelShapeCompiler;
 import dev.opencollab.paletter.internal.shape.VoxelShapeStore;
 import dev.opencollab.paletter.internal.block.BlockInterner;
@@ -58,7 +58,7 @@ final class PaletteCompiler {
 
     static Palette vanilla(VanillaData loaded, CanonicalBlocks canonicalBlocks, CanonicalItems canonicalItems,
                            BlockInterner interner, Fallbacks fallbacks, VanillaContent content, CreativeOrdering ordering,
-                           Supplier<BehaviourStore> behaviour, VoxelShapeStore shapeStore) {
+                           Supplier<VanillaBehaviour> behaviour, VoxelShapeStore shapeStore) {
         VanillaContent.Applied applied = content.apply(loaded);
         VanillaData data = applied.data();
         PaletteReportBuilder report = new PaletteReportBuilder();

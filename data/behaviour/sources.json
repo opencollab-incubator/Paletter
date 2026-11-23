@@ -1,5 +1,5 @@
 {
-  "_comment": "The third-party behaviour dumps `behaviour import` reads, each pinned to the commit the committed behaviour.nbt was built from. Read by `behaviour import` (BehaviourSources: a checkout at another commit fails) and by .github/workflows/recapture.yml (which fetches exactly these commits). Move a pin together with a regenerated behaviour.nbt and data/behaviour/REPORT.md.",
+  "_comment": "The third-party behaviour dumps `behaviour import` reads, each pinned to the commit the committed data/behaviour/captures.nbt was built from. Read by `behaviour import` (BehaviourSources: a checkout at another commit fails) and by .github/workflows/recapture.yml (which fetches exactly these commits). Move a pin together with a regenerated captures.nbt, generated behaviour data and data/behaviour/REPORT.md.",
   "sources": {
     "CloudburstMC/Data": {
       "repository": "https://github.com/CloudburstMC/Data.git",

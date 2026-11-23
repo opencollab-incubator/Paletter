@@ -1,7 +1,6 @@
 package dev.opencollab.paletter.tools.behaviour;
 
 import dev.opencollab.paletter.behaviour.BlockShape;
-import dev.opencollab.paletter.internal.behaviour.BehaviourStore;
 import dev.opencollab.paletter.tools.behaviour.CellFit.Table;
 
 import java.util.ArrayList;

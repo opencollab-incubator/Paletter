@@ -8,7 +8,6 @@ import dev.opencollab.paletter.behaviour.ItemBehaviour;
 import dev.opencollab.paletter.block.RegisteredBlock;
 import dev.opencollab.paletter.block.RegisteredBlockState;
 import dev.opencollab.paletter.data.DataVersion;
-import dev.opencollab.paletter.internal.behaviour.BehaviourStore;
 import dev.opencollab.paletter.internal.behaviour.BlockSchema;
 import dev.opencollab.paletter.internal.behaviour.Capture;
 import dev.opencollab.paletter.internal.behaviour.VanillaBehaviour;

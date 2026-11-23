@@ -66,7 +66,7 @@ final class BehaviourStatements {
                 }
                 case BehaviourOps.EveryItem every -> {
                     if (before != null) {
-                        every.values().forEach((k, value) -> notes.add(BehaviourModel.ITEM_KEYS.get(k).name() + " -> " + value + " for every item"));
+                        every.values().forEach((k, value) -> notes.add(everyItem(before, version, k, value)));
                     }
                     yield chain("v.everyItem()", every.values().entrySet().stream().map(e -> literals.setter(BehaviourModel.ITEM_KEYS.get(e.getKey()),
                         new Constant(e.getValue()), TableKind.VALUES)).toList());
@@ -136,6 +136,19 @@ final class BehaviourStatements {
         BehaviourKey<?> key = BehaviourModel.BLOCK_KEYS.get(k);
         return comments.comment(version, key, "every block", key.name() + " -> " + (value == null ? "unknown" : literals.comment(value))
             + " for every block (" + blocks + " changed)", decided);
+    }
+
+    private String everyItem(BehaviourModel.Version before, BehaviourModel.Version version, int k, Object value) {
+        List<BehaviourComments.Decided> decided = new ArrayList<>();
+        for (BehaviourModel.Item item : version.items().values()) {
+            BehaviourModel.Item was = before.items().get(item.id());
+            if (was != null && java.util.Objects.equals(item.values()[k], value) && !java.util.Objects.equals(was.values()[k], value)) {
+                decided.add(new BehaviourComments.Decided(item.captures()[k], 0, item.id(), value));
+            }
+        }
+        BehaviourKey<?> key = BehaviourModel.ITEM_KEYS.get(k);
+        return comments.comment(version, key, "every item", key.name() + " -> " + (value == null ? "unknown" : literals.comment(value))
+            + " for every item (" + decided.size() + " changed)", decided);
     }
 
     private String blockChange(BehaviourModel.Version version, BehaviourModel.@Nullable Block was, BehaviourModel.Block block, int k) {

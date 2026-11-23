@@ -15,7 +15,6 @@ import dev.opencollab.paletter.internal.behaviour.Provenance;
 import dev.opencollab.paletter.block.BlockHashes;
 import dev.opencollab.paletter.data.DataVersion;
 import dev.opencollab.paletter.data.PaletteDataSource;
-import dev.opencollab.paletter.internal.behaviour.BehaviourStore;
 import dev.opencollab.paletter.internal.data.VanillaData;
 import dev.opencollab.paletter.internal.data.VanillaItem;
 
@@ -40,9 +39,10 @@ import java.util.stream.Stream;
 import java.util.zip.GZIPInputStream;
 
 /**
- * Builds {@code behaviour.nbt} from the sources that dump BDS: CloudburstMC/Data and AllayMC/Allay (git checkouts,
- * every commit of their dump files is read and identified by its block state hashes), and Paletter's own Script API
- * dumps in {@code data/bds}. See {@link BehaviourStore} for the format and {@link BehaviourReport} for what it reports.
+ * Builds the capture store {@code data/behaviour/captures.nbt} from the sources that dump BDS: CloudburstMC/Data and
+ * AllayMC/Allay (git checkouts, every commit of their dump files is read and identified by its block state hashes), and
+ * Paletter's own Script API dumps in {@code data/bds}; then generates the library's behaviour data from it
+ * ({@link BehaviourGenerator}). See {@link BehaviourStore} for the format and {@link BehaviourReport} for what it reports.
  * <p>
  * Ranking, strongest first: Paletter's own captures of BDS (native, Script API, the behaviour probe; the wire is ranked at
  * runtime), then CloudburstMC/Data, then Allay. Allay only decides what Data does not have (items). Third-party values the sources
@@ -98,7 +98,7 @@ public final class BehaviourImport {
     }
 
     /**
-     * Reads every source and writes {@code behaviour.nbt} into the resources and the report.
+     * Reads every source and writes the capture store, the generated behaviour data and the report.
      *
      * @param cloudburstData a checkout of https://github.com/CloudburstMC/Data, or null
      * @param allay a checkout of https://github.com/AllayMC/Allay (a partial clone is enough), or null
@@ -126,15 +126,24 @@ public final class BehaviourImport {
             importer.allay(new GitHistory(allay));
         }
         BehaviourStore store = importer.build();
-        try (var out = Files.newOutputStream(resources.resolve("behaviour.nbt"))) {
-            store.write(out);
+        // What retire did stays done: a version that is retired stays retired while its palette is still bundled
+        if (Files.exists(root.resolve(BehaviourGenerator.CAPTURES))) {
+            for (String retired : BehaviourGenerator.read(root).retired()) {
+                if (store.versions().contains(retired)) {
+                    store = store.retire(retired);
+                }
+            }
         }
+        BehaviourGenerator.write(root, store);
+        BehaviourCode.Result code = BehaviourGenerator.generate(root, store);
+        BehaviourGenerator.write(root, code, false);
         Path report = root.resolve("data/behaviour/REPORT.md");
         Files.createDirectories(report.getParent());
-        Files.writeString(report, new BehaviourReport(importer.bundled, importer.captures, store, importer.log, importer.customDefaults).render());
+        Files.writeString(report, new BehaviourReport(importer.bundled, importer.captures, store, importer.log, importer.customDefaults,
+            code.sourceOnly()).render());
         System.out.println(store);
-        System.out.println("Wrote " + resources.resolve("behaviour.nbt") + " (" + Files.size(resources.resolve("behaviour.nbt"))
-            + " bytes) and " + report);
+        System.out.println("Wrote " + BehaviourGenerator.CAPTURES + " (" + Files.size(root.resolve(BehaviourGenerator.CAPTURES))
+            + " bytes), the generated behaviour data and " + report);
     }
 
     List<Capture> captures() {

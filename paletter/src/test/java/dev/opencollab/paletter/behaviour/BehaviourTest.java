@@ -14,8 +14,10 @@ import dev.opencollab.paletter.block.component.Friction;
 import dev.opencollab.paletter.block.component.LightEmission;
 import dev.opencollab.paletter.data.DataVersion;
 import dev.opencollab.paletter.internal.behaviour.Behaviour;
-import dev.opencollab.paletter.internal.behaviour.BehaviourStore;
+import dev.opencollab.paletter.internal.behaviour.Capture;
 import dev.opencollab.paletter.internal.behaviour.Provenance;
+import dev.opencollab.paletter.internal.behaviour.VanillaBehaviour;
+import dev.opencollab.paletter.internal.behaviour.vanilla.Changes;
 import dev.opencollab.paletter.item.CustomItem;
 import dev.opencollab.paletter.item.RegisteredItem;
 import dev.opencollab.paletter.item.component.MaxStackSize;
@@ -120,14 +122,19 @@ class BehaviourTest {
         List<DataVersion> versions = PALETTER.versions();
         DataVersion older = versions.get(versions.indexOf(LATEST) - 1);
         String sword = BedrockItems.DIAMOND_SWORD.identifier();
-        int stone = palette.blockDefinition(BedrockBlocks.STONE.defaultState()).getRuntimeId();
-        BehaviourStore.Builder store = new BehaviourStore.Builder(versions);
-        int allay = store.capture(older, Provenance.Source.ALLAY_DATA, "AllayMC/Allay@" + "a".repeat(40), List.of(), List.of(sword));
-        store.items(ItemBehaviour.ATTACK_DAMAGE, allay, Map.of(sword, 7));
-        int data = store.capture(LATEST, Provenance.Source.CLOUDBURST_DATA, "CloudburstMC/Data@" + "0123456789".repeat(4), List.of(stone), List.of());
-        store.blocks(BlockBehaviour.FRICTION, data, Map.of(stone, 0.6f));
-        int script = store.capture(LATEST, Provenance.Source.SCRIPT_API, "script", List.of(), List.of(sword));
-        store.items(ItemBehaviour.MAX_STACK_SIZE, script, Map.of(sword, 1));
+        String stone = "minecraft:stone";
+        Capture allay = new Capture(Provenance.Source.ALLAY_DATA, "AllayMC/Allay@" + "a".repeat(40), older);
+        Capture data = new Capture(Provenance.Source.CLOUDBURST_DATA, "CloudburstMC/Data@" + "0123456789".repeat(4), LATEST);
+        Capture script = new Capture(Provenance.Source.SCRIPT_API, "script", LATEST);
+        VanillaBehaviour.Builder store = VanillaBehaviour.builder();
+        Changes old = new Changes(store.version(older));
+        old.item(sword).attackDamage(7);
+        old.itemSources(sword).attackDamage(allay);
+        Changes latest = new Changes(store.version(LATEST));
+        latest.block(stone, "").friction(0.6f);
+        latest.blockSources(stone).friction(data);
+        latest.changeItem(sword).maxStackSize(1);
+        latest.itemSources(sword).maxStackSize(script);
         return Behaviour.of(palette, store.build(), null);
     }
 
@@ -481,8 +488,8 @@ class BehaviourTest {
     void aKnownBdsDefaultIsAMatterOfDataOnly() {
         CustomBlock block = CustomBlock.builder("test:block").component(Friction.of(0.1f)).build();
         Palette palette = latest().extend(PaletteLayer.builder("test").block(block).build());
-        BehaviourStore.Builder builder = new BehaviourStore.Builder(List.of(LATEST));
-        builder.defaultOf(BlockBehaviour.DESTROY_TIME, 1f, Provenance.Source.NATIVE, "test capture");
+        VanillaBehaviour.Builder builder = VanillaBehaviour.builder();
+        builder.customDefault(BlockBehaviour.DESTROY_TIME, 1f, Provenance.Source.NATIVE, "test capture");
         Behaviour behaviour = Behaviour.of(palette, builder.build(), null);
         BlockValues values = behaviour.block(palette.blocks().indexOf(palette.blocks().block("test:block").defaultState()));
 

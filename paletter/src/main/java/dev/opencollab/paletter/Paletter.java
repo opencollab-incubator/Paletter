@@ -19,7 +19,7 @@ import dev.opencollab.paletter.internal.creative.RawStack;
 import dev.opencollab.paletter.internal.data.VanillaData;
 import dev.opencollab.paletter.internal.data.VanillaItem;
 import dev.opencollab.paletter.internal.CanonicalItems;
-import dev.opencollab.paletter.internal.behaviour.BehaviourStore;
+import dev.opencollab.paletter.internal.behaviour.VanillaBehaviour;
 import dev.opencollab.paletter.property.Properties;
 import dev.opencollab.paletter.vanilla.BedrockBlockType;
 import dev.opencollab.paletter.vanilla.BedrockItemType;
@@ -410,12 +410,15 @@ public final class Paletter {
     public @NonNull Palette vanilla(@NonNull DataVersion version) {
         return vanilla.computeIfAbsent(version,
             key -> PaletteCompiler.vanilla(vanillaData(key), canonicalBlocks(), canonicalItems(), blockInterner,
-                fallbacks, vanillaContent, creativeOrdering, behaviour ? source::behaviour : Paletter::noBehaviour,
+                fallbacks, vanillaContent, creativeOrdering, behaviour ? VanillaBehaviour::bundled : Paletter::noBehaviour,
                 source.voxelShapes()));
     }
 
-    /** The behaviour data of a Paletter built with {@code behaviour(false)}: none, and asking is an error. */
-    private static BehaviourStore noBehaviour() {
+    /**
+     * The behaviour data of a Paletter built with {@code behaviour(false)}: none, and asking is an error. The generated
+     * behaviour classes are never loaded then: only {@link VanillaBehaviour#bundled()} loads them.
+     */
+    private static VanillaBehaviour noBehaviour() {
         throw new IllegalStateException("Behaviour values are switched off for this Paletter (Paletter.Builder#behaviour(false))");
     }
 

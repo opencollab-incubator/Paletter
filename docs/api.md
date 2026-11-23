@@ -163,7 +163,8 @@ set by hand.
 
 `Paletter.builder()...build()` compiles the palette of every served version, in parallel, before it returns: the vanilla
 data, the voxel shapes, the canonical, item, creative and resolution tables, the preview handles of a preview version, and
-the behaviour data with every behaviour column (unless `behaviour(false)`). After that no lookup on those palettes reads or
+the behaviour values with every behaviour column (unless `behaviour(false)`; the values are generated classes, loaded the
+first time a Paletter with behaviour builds, and never loaded with `behaviour(false)`). After that no lookup on those palettes reads or
 builds data: `palette(...)` is a map read, and `resolve`, `behaviour().get`, `encode`, `decode` and the packet builders
 only use what is there. Narrow `versions(...)` to compile, and keep, fewer.
 
@@ -469,8 +470,13 @@ block.behaviour();    // the values of the block that is sent
   ...). A key without its component gets the BDS default measured by the behaviour probe.
 - Shapes are those of one state. Shapes that depend on neighbours or position, such as plant offsets, are up to you.
 - `Paletter.builder().behaviour(false)` switches behaviour values off, for consumers that never read them: the behaviour
-  data is never read or kept, resolutions work as before, and `get`, `getOrElse`, `provenance` and `explain` throw
-  `IllegalStateException` naming the switch.
+  data is never loaded or kept (its generated classes are not even loaded), resolutions work as before, and `get`,
+  `getOrElse`, `provenance` and `explain` throw `IllegalStateException` naming the switch.
+- The vanilla values are part of the library: generated Java code (`internal.behaviour.vanilla`), one class per bundled
+  version with what changed, built once per JVM. They do not come from the `PaletteDataSource`: a custom data source
+  serves its palettes with the bundled values of the same version (by name, else the newest older one by protocol), and
+  can no longer bring values of its own. Until 1.0, `PaletteDataSource#behaviour()` and the bundled `behaviour.nbt`
+  were that hook; both are gone.
 
 The sources, their ranking, disputed values and the custom block defaults are listed in the generated
 [data/behaviour/REPORT.md](../data/behaviour/REPORT.md).

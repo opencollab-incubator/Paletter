@@ -205,7 +205,7 @@ final class BdsCommands {
         }
 
         @Command(name = "import", description = "Reads the git history of the dump sources and the Script API dumps of data/bds, "
-            + "writes resources/behaviour.nbt and data/behaviour/REPORT.md")
+            + "writes data/behaviour/captures.nbt, the generated behaviour data and data/behaviour/REPORT.md")
         static final class Import extends Rooted implements Callable<Integer> {
             @Option(names = "--cloudburst-data", description = "Checkout of https://github.com/CloudburstMC/Data") Path cloudburstData;
             @Option(names = "--allay", description = "Checkout of https://github.com/AllayMC/Allay (git clone --filter=blob:none is enough)") Path allay;

@@ -4,7 +4,6 @@ import dev.opencollab.paletter.behaviour.BehaviourKey;
 import dev.opencollab.paletter.behaviour.BlockBehaviour;
 import dev.opencollab.paletter.behaviour.ItemBehaviour;
 import dev.opencollab.paletter.data.DataVersion;
-import dev.opencollab.paletter.internal.behaviour.BehaviourStore;
 import dev.opencollab.paletter.internal.behaviour.BlockSchema;
 import dev.opencollab.paletter.tools.behaviour.CellFit.Fit;
 import org.checkerframework.checker.nullness.qual.Nullable;
