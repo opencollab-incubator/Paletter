@@ -7,6 +7,7 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 import java.util.stream.Stream;
 
 /**
@@ -53,12 +54,12 @@ public final class GeneratedSources {
      *                         owns: one that is not in {@code files} is stale
      * @param header how the first line of a generated file starts
      * @param check whether to only report
-     * @return what differs: {@code <path>: missing}, {@code <path>: outdated} or {@code <path>: no longer generated}, in that order
+     * @return what differs, by path: {@code <path>: missing}, {@code <path>: outdated} or {@code <path>: no longer generated}, in that order
      */
     public static List<String> sync(Path directory, Map<String, String> files, List<String> ownedDirectories, String header, boolean check)
         throws IOException {
         List<String> changes = new ArrayList<>();
-        for (Map.Entry<String, String> file : files.entrySet()) {
+        for (Map.Entry<String, String> file : new TreeMap<>(files).entrySet()) {
             Path path = directory.resolve(file.getKey());
             String existing = Files.exists(path) ? Files.readString(path, StandardCharsets.UTF_8).replace("\r\n", "\n") : null;
             if (file.getValue().equals(existing)) {
