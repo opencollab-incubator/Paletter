@@ -207,3 +207,33 @@ measures 3.8 MB for the recipes of the newest version while held, and nothing ke
 
 The served versions hold the tables a lookup used to build on first use. Of the behaviour store, int arrays (the ids of
 the captures and columns) are 3.3 MB and the value arrays 2.8 MB; strings 0.3 MB, shapes 33 KB.
+
+## Behaviour values as generated code
+
+The vanilla behaviour values moved from `behaviour.nbt` (per state and capture) to generated classes (per block, one
+class of changes per version; data-pipeline.md "Captures and generated code"). Values, `explain` and columns are the same
+for every state, item and key of every bundled palette.
+
+`StartupBenchmark`, five cold forks each, before (`980b2cd0`) and after run back to back on the same laptop:
+
+| Benchmark | Before (median) | After (median) |
+|-----------|-----------------|----------------|
+| `vanilla` (behaviour values loaded and every column built) | 3,875 ms | 3,342 ms |
+| `withoutBehaviour` | 2,334 ms | 2,462 ms |
+
+What behaviour adds to `build()` went from about 1.5 s to about 0.9 s. `withoutBehaviour` did not change (its forks spread
+from 2,327 to 2,820 ms after, 2,313 to 2,467 before); it loads no behaviour class.
+
+**Memory** (`MemoryBaselineTest`):
+
+| What | Before | After |
+|------|--------|-------|
+| bundled behaviour values of every version, shared | 6,624,728 (`behaviour.nbt` read) | 1,959,568 (the generated data, built) |
+| behaviour columns of the newest palette, every key, with its entries of the values | 2,356,032 | 2,231,288 |
+| vanilla palette, newest / oldest version, behaviour off | 11,914,448 / 13,310,304 | 11,914,520 / 13,310,376 |
+
+The generated classes take metaspace once loaded, which JOL does not count: 40 classes, 965,950 bytes of class files.
+
+**Jar**: `paletter-1.0.0-SNAPSHOT.jar` 2,308,598 bytes before, 2,190,580 after (the 421 KB `behaviour.nbt` out, the
+generated classes in). **Limits** (`GeneratedBehaviourLimitsTest`): the largest method is 22,523 bytes of bytecode, the
+largest constant pool 1,418 entries.
