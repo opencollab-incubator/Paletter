@@ -423,7 +423,7 @@ class ConstantsGeneratorTest {
         // Without any history, the hand names alone give the names the committed history has
         ConstantsGenerator.Result fresh = ConstantsGenerator.generate(release, null,
             ConstantsGenerator.Names.of(Renames.NONE, committed, new JsonObject()), new JsonObject(), "1.0.0");
-        JsonObject committedHistory = ConstantsGenerator.readJson(ROOT.resolve(ConstantsGenerator.HISTORY));
+        JsonObject committedHistory = dev.opencollab.paletter.tools.Json.objectOrEmpty(ROOT.resolve(ConstantsGenerator.HISTORY));
         assertEquals(committedHistory.getAsJsonObject("states").keySet(), history(fresh).getAsJsonObject("states").keySet());
         assertEquals(committedHistory.getAsJsonObject("enums").keySet(), history(fresh).getAsJsonObject("enums").keySet());
 

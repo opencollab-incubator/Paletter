@@ -110,7 +110,7 @@ final class ReferencePalette {
             ctx.report.check(Report.Status.INFO, "Reference palette", latest.name() + " adjusted with the Script API: "
                 + (generated.isEmpty() ? "" : "generated " + String.join(", ", generated)) + (removed.isEmpty() ? "" : "; removed " + removed));
             if (!generated.isEmpty()) {
-                ctx.report.todo("Block palette: the states of " + generated.size() + " blocks were generated from the Script API; their order "
+                ctx.report.decision("Block palette: the states of " + generated.size() + " blocks were generated from the Script API; their order "
                     + "within each block is inferred (Update#keyOrder) and only creative stacks verify it", "Generated blocks",
                     generated.stream().map(block -> "- " + block).toList());
             }

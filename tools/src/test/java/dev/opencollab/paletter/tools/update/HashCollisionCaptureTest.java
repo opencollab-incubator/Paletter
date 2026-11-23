@@ -7,6 +7,7 @@ import dev.opencollab.paletter.Palette;
 import dev.opencollab.paletter.PaletteLayer;
 import dev.opencollab.paletter.Paletter;
 import dev.opencollab.paletter.block.CustomBlock;
+import dev.opencollab.paletter.tools.CommittedBuilds;
 import dev.opencollab.paletter.tools.model.Fixtures;
 import org.junit.jupiter.api.Test;
 
@@ -31,12 +32,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  * the pair alone: which of the two gets the hash depends only on their order among the custom blocks, which is the same.
  */
 class HashCollisionCaptureTest {
-    /**
-     * The builds whose spec capture does not carry the pair yet: the next recapture with the current add-on does. A build whose
-     * capture carries it that is still listed fails, and so does one without it that is not listed.
-     */
-    private static final Set<String> PENDING = Set.of("1.26.36.1", "1.26.45.1", "1.26.52.3", "1.26.63.1", "1.26.70.24");
-
     @Test
     void everySpecCaptureHasThePairOrIsPendingAndAgreesWithPaletter() throws IOException {
         Path root = Path.of(System.getProperty("paletter.root", "..")).toAbsolutePath().normalize();
@@ -45,27 +40,25 @@ class HashCollisionCaptureTest {
         Paletter paletter = Paletter.builder().previews(true).build();
         PaletteLayer layer = PaletteLayer.builder("hash-collision").block(CustomBlock.builder(pair.get(0)).build())
             .block(CustomBlock.builder(pair.get(1)).build()).build();
-        Set<String> without = new TreeSet<>();
-        try (var builds = Files.list(root.resolve("data").resolve("bds"))) {
-            for (Path build : (Iterable<Path>) builds.filter(Files::isDirectory).sorted()::iterator) {
-                Path spec = build.resolve("spec");
-                if (!Files.exists(spec.resolve(SpecCapture.CREATIVE_ITEMS))) {
-                    continue;
-                }
-                Map<String, Long> sent = sent(spec.resolve(SpecCapture.CREATIVE_ITEMS));
-                if (!sent.keySet().containsAll(pair)) {
-                    without.add(build.getFileName().toString());
-                    continue;
-                }
-                int protocol = JsonParser.parseString(Files.readString(spec.resolve("capture.json"))).getAsJsonObject().get("protocol").getAsInt();
-                Palette palette = paletter.vanilla(paletter.version(protocol)).extend(layer);
-                for (String block : pair) {
-                    assertEquals(sent.get(block), Integer.toUnsignedLong(palette.blocks().defaultState(block).getRuntimeId()),
-                        "BDS " + build.getFileName() + " gave " + block + " another id than Paletter");
-                }
+        Set<String> with = new TreeSet<>();
+        for (String name : CommittedBuilds.all()) {
+            Path spec = CommittedBuilds.directory(name).resolve("spec");
+            if (!Files.exists(spec.resolve(SpecCapture.CREATIVE_ITEMS))) {
+                continue;
+            }
+            Map<String, Long> sent = sent(spec.resolve(SpecCapture.CREATIVE_ITEMS));
+            if (!sent.keySet().containsAll(pair)) {
+                continue;
+            }
+            with.add(name);
+            int protocol = JsonParser.parseString(Files.readString(spec.resolve("capture.json"))).getAsJsonObject().get("protocol").getAsInt();
+            Palette palette = paletter.vanilla(paletter.version(protocol)).extend(layer);
+            for (String block : pair) {
+                assertEquals(sent.get(block), Integer.toUnsignedLong(palette.blocks().defaultState(block).getRuntimeId()),
+                    "BDS " + name + " gave " + block + " another id than Paletter");
             }
         }
-        assertEquals(PENDING, without, "the spec captures without the pair must be PENDING exactly");
+        CommittedBuilds.assertPending("the hash collision pair in its spec capture", with::contains);
     }
 
     private static Map<String, Long> sent(Path creativeItems) throws IOException {

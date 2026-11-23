@@ -130,17 +130,6 @@ public final class Markdown {
             }
             return bullets;
         }
-
-        /** The {@code **JSON path:** `a > b`} line of a property section, or null. */
-        public String jsonPath() {
-            for (String line : lines) {
-                String trimmed = line.trim();
-                if (trimmed.startsWith("**JSON path:**")) {
-                    return trimmed.substring("**JSON path:**".length()).replace("`", "").trim();
-                }
-            }
-            return null;
-        }
     }
 
     public record Bullet(int depth, String text) {

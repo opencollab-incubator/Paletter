@@ -16,7 +16,6 @@ import java.net.InetSocketAddress;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
-import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -74,17 +73,9 @@ final class CaptureStage {
                     || line.contains("NetherNet"));
             } else {
                 runs.netherNet = reachable.netherNet();
-                if (reachable.protocol() != 0) {
-                    runs.protocol = reachable.protocol();
-                    ctx.report.header.put("Protocol", runs.protocol + (raknet ? " (RakNet pong: " : " (NetherNet LAN discovery: ")
-                        + reachable.status() + ")");
-                } else {
-                    runs.protocol = Integer.parseInt(ctx.options.getOrDefault("protocol", "0"));
-                    if (runs.protocol == 0) {
-                        throw new IOException("The server's status carries no protocol version; pass --protocol");
-                    }
-                    ctx.report.header.put("Protocol", runs.protocol + " (from --protocol)");
-                }
+                runs.protocol = reachable.requireProtocol();
+                ctx.report.header.put("Protocol", runs.protocol + (raknet ? " (RakNet pong: " : " (NetherNet LAN discovery: ")
+                    + reachable.status() + ")");
                 ctx.report.header.put("Transport", raknet ? "RakNet" : "NetherNet (HTTP signaling on server-port, WebRTC; "
                     + "self signed identity bound to the login chain)");
                 runs.existing = ctx.against != null ? ctx.containingVersion(runs.protocol) : ctx.bundledName(runs.protocol);
@@ -102,7 +93,7 @@ final class CaptureStage {
             }
         }
         if (network != null) {
-            ctx.report.check(Report.Status.FAIL, "Network capture", "BDS answers neither a RakNet ping nor NetherNet signaling on port " + ctx.port);
+            ctx.report.check(Report.Status.FAIL, "Network capture", Capture.NO_PROTOCOL + " (port " + ctx.port + ")");
             ctx.report.evidence("Network lines of the server", List.of("```", String.join("\n", network), "```"));
             return;
         }
@@ -118,10 +109,9 @@ final class CaptureStage {
         // Experiments: discover the toggles, verify them, capture what each one adds
         runs.experiments.current = ExperimentDiscovery.recordedCurrent(ctx.bdsData, ctx.buildDirectory.getFileName().toString(),
             ExperimentDiscovery.previewProtocols(ctx.resources, ctx.preview));
-        if (ctx.options.containsKey("experiments")) {
+        if (ctx.options.experiments() != null) {
             runs.experiments.source = "--experiments";
-            runs.experiments.current = Arrays.stream(ctx.options.get("experiments").split(",")).map(String::strip)
-                .filter(t -> !t.isEmpty()).sorted().toList();
+            runs.experiments.current = ctx.options.experiments().stream().sorted().toList();
         }
         try {
             new ExperimentStage(ctx, this).experiments(server, work, address, dump, runs, properties);
@@ -172,7 +162,7 @@ final class CaptureStage {
             }
         });
         if (!ordering.withinBlockOrder.isEmpty()) {
-            ctx.report.todo("Block palette: " + ordering.withinBlockOrder.size() + " creative states of generated blocks sit elsewhere "
+            ctx.report.decision("Block palette: " + ordering.withinBlockOrder.size() + " creative states of generated blocks sit elsewhere "
                 + "within their block than generated; fix the state order of those blocks before importing", "States",
                 ordering.withinBlockOrder.stream().map(state -> "- " + state).toList());
         }

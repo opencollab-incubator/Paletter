@@ -1,13 +1,11 @@
 package dev.opencollab.paletter.tools.codegen.constants;
 
+import dev.opencollab.paletter.tools.codegen.GeneratedSources;
+
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Stream;
 
 /**
  * {@code :tools:generateConstants} ({@code generate}) and {@code :tools:checkConstants} ({@code check}, part of
@@ -19,64 +17,29 @@ public final class Main {
     }
 
     public static void main(String[] args) throws IOException {
-        String mode = args[0];
-        Path root = Path.of(".");
-        for (int i = 1; i < args.length; i++) {
-            if (args[i].equals("--root")) {
-                root = Path.of(args[++i]);
-            } else {
-                throw new IllegalArgumentException("Unknown argument " + args[i]);
-            }
-        }
-        ConstantsGenerator.Result result = ConstantsGenerator.generate(root);
-        switch (mode) {
-            case "generate" -> write(root, result);
-            case "check" -> check(root, result);
-            default -> throw new IllegalArgumentException("Unknown mode " + mode);
-        }
+        GeneratedSources.Arguments arguments = GeneratedSources.Arguments.parse(args, false);
+        System.exit(run(arguments.root(), arguments.check()));
     }
 
-    /**
-     * Generated files that the result no longer has: enums, and the preview classes earlier generators wrote. A file without
-     * the generator's header is hand-written and never stale.
-     */
+    /** @return the process exit code: 1 if {@code check} found a file out of date */
+    public static int run(Path root, boolean check) throws IOException {
+        return run(root, ConstantsGenerator.generate(root), check);
+    }
+
+    static int run(Path root, ConstantsGenerator.Result result, boolean check) throws IOException {
+        if (!check) {
+            System.out.println(summary(result));
+        }
+        List<String> changes = GeneratedSources.sync(root, result.files(), List.of(ConstantsGenerator.STATE_DIR), ConstantsSource.GENERATOR, check);
+        int code = GeneratedSources.report(changes, check, ":tools:generateConstants");
+        System.out.println(check ? result.files().size() - changes.size() + " of " + result.files().size() + " generated constants files are up to date"
+            : "Wrote " + changes.size() + " of " + result.files().size() + " files");
+        return code;
+    }
+
+    /** The generated enums that the result no longer has: with the generator's header, so never a hand-written file. */
     public static List<Path> stale(Path root, Map<String, String> files) throws IOException {
-        List<Path> stale = new ArrayList<>();
-        Path dir = root.resolve(ConstantsGenerator.STATE_DIR);
-        if (Files.isDirectory(dir)) {
-            try (Stream<Path> list = Files.list(dir)) {
-                for (Path file : list.filter(f -> !files.containsKey(ConstantsGenerator.STATE_DIR + "/" + f.getFileName())).toList()) {
-                    if (Files.readString(file, StandardCharsets.UTF_8).startsWith(ConstantsSource.GENERATOR)) {
-                        stale.add(file);
-                    }
-                }
-            }
-        }
-        for (String preview : List.of("BedrockPreviewBlocks.java", "BedrockPreviewItems.java")) {
-            String path = ConstantsGenerator.PACKAGE_DIR + "/" + preview;
-            if (!files.containsKey(path) && Files.exists(root.resolve(path))) {
-                stale.add(root.resolve(path));
-            }
-        }
-        return stale;
-    }
-
-    static void write(Path root, ConstantsGenerator.Result result) throws IOException {
-        for (Path file : stale(root, result.files())) {
-            Files.delete(file);
-        }
-        int changed = 0;
-        for (Map.Entry<String, String> output : result.files().entrySet()) {
-            Path file = root.resolve(output.getKey());
-            if (Files.exists(file) && Files.readString(file, StandardCharsets.UTF_8).equals(output.getValue())) {
-                continue;
-            }
-            Files.createDirectories(file.getParent());
-            Files.writeString(file, output.getValue(), StandardCharsets.UTF_8);
-            changed++;
-        }
-        System.out.println(summary(result));
-        System.out.println("Wrote " + changed + " of " + result.files().size() + " files");
+        return GeneratedSources.stale(root, files, List.of(ConstantsGenerator.STATE_DIR), ConstantsSource.GENERATOR);
     }
 
     static String summary(ConstantsGenerator.Result result) {
@@ -96,25 +59,5 @@ public final class Main {
             result.deprecated().forEach(deprecated -> out.append("\n  ").append(deprecated));
         }
         return out.toString();
-    }
-
-    static void check(Path root, ConstantsGenerator.Result result) throws IOException {
-        List<String> problems = new ArrayList<>();
-        for (Path file : stale(root, result.files())) {
-            problems.add("stale generated file " + file);
-        }
-        for (Map.Entry<String, String> output : result.files().entrySet()) {
-            Path file = root.resolve(output.getKey());
-            if (!Files.exists(file)) {
-                problems.add("missing " + output.getKey());
-            } else if (!Files.readString(file, StandardCharsets.UTF_8).replace("\r\n", "\n").equals(output.getValue())) {
-                problems.add("outdated " + output.getKey());
-            }
-        }
-        if (!problems.isEmpty()) {
-            throw new IllegalStateException("Generated constants are out of date; run ./gradlew :tools:generateConstants\n  "
-                + String.join("\n  ", problems));
-        }
-        System.out.println("All " + result.files().size() + " generated constants files are up to date");
     }
 }

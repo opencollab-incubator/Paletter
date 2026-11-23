@@ -11,7 +11,6 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -27,7 +26,7 @@ class BehaviourStageTest {
     private static final String BUILD = "1.26.63.1";
 
     private static Update update(String build) {
-        Update update = new Update(ROOT, Map.of("channel", "release", "verify-only", "true"));
+        Update update = new Update(ROOT, UpdateOptions.release().withVerifyOnly(true));
         update.begin(new BdsDistribution(build, false, "win", "https://example.invalid/bedrock-server-" + build + ".zip"));
         return update;
     }
@@ -79,7 +78,7 @@ class BehaviourStageTest {
             throw new IOException("BDS exited without PROBE-DONE");
         });
         assertFalse(update.report().failed());
-        assertTrue(update.report().hasTodos());
+        assertTrue(update.report().hasDecisions());
     }
 
     @Test

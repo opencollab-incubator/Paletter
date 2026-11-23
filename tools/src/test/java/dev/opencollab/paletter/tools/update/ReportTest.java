@@ -33,7 +33,7 @@ class ReportTest {
         report.check(Report.Status.DIFF, "Creative order", "2 differences");
         report.action("update CreativeOrdering.BDS");
         report.check(Report.Status.DIFF, "Spec capture values", "1 leaf differs");
-        report.todo("decide");
+        report.decision("decide");
         assertEquals("Failed: 1 failure, 3 changes, 2 decisions needed", report.verdict());
         String markdown = report.render();
         assertTrue(markdown.contains("## Needs attention\n\n- Failed: **Voxel shapes**: boom\n"), markdown);

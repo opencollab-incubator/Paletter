@@ -4,6 +4,21 @@ A runbook for the recurring jobs. It only points at commands that exist; the rea
 [data-pipeline.md](data-pipeline.md). All tools run as `./gradlew :tools:run --args="<command> ..."` (`--help` lists
 the commands). Captures need Windows BDS: the committed captures are from Windows, and `update` refuses another platform.
 
+Every command names things the same way: `--version` is a BDS build number, `--channel release|preview` its channel, and
+`--data-version` a bundled data version such as `26.60`. A check that finds committed output out of date, and any command that
+compares, exits with 1.
+
+The Gradle tasks are the commands with their usual arguments:
+
+| Gradle task | Command |
+|---|---|
+| `inferMappings` | `infer` |
+| `checkMappings` | `check-mappings --strict` |
+| `generateModel` | `docs` (`-Pdocs=<minecraft-creator checkout>`) |
+| `generateAddon` | `addon --out build/spec-addon` |
+| `generateComponentApi`, `checkComponentApi` | `components generate`, `components check` |
+| `generateConstants`, `checkConstants` | `constants generate`, `constants check` |
+
 ## a. A new BDS release or preview appeared
 
 `bds-data.yml` runs daily (05:17 UTC) for both channels: `update --channel release|preview`, then `generateComponentApi`
@@ -42,8 +57,8 @@ When it reports decisions or FAILs:
   ```
   git clone --filter=blob:none --no-checkout https://github.com/CloudburstMC/Data.git cb-data
   git -C cb-data checkout 0021592b1a4253528bad1e1d8b537e306e097557
-  ./gradlew :tools:run --args="export --name 26.60 --out build/export-26.60 --all-experiments"
-  ./gradlew :tools:run --args="verify --source cb-data --name 26.60 --against build/export-26.60 --report build/verify-26.60.md"
+  ./gradlew :tools:run --args="export --data-version 26.60 --out build/export-26.60 --all-experiments"
+  ./gradlew :tools:run --args="verify --source cb-data --data-version 26.60 --against build/export-26.60 --report build/verify-26.60.md"
   ```
 
   Exit code 1 on any difference. `CloudburstDataTest` does both steps for every bundled release in the normal build, against
@@ -70,7 +85,7 @@ add-ons. After a change to the model, fixtures, `bds-feedback.json` or the add-o
 ## c. A new data version line (e.g. 26.80)
 
 1. Nothing is hand-written in `versions.txt` (generated: `<data version> <first protocol> [preview] [codec=...]`).
-   `update --channel release|preview` imports a new protocol and writes the line. `--name <x.y>` overrides the name.
+   `update --channel release|preview` imports a new protocol and writes the line. `--data-version <x.y>` overrides the name.
 2. First protocol: the protocol of the first build that spoke it. If the version's first build was a preview, it keeps
    that preview protocol until `builds check`/`update` verify a build; `builds table` flags a data version whose first
    protocol no verified build has.
@@ -123,8 +138,8 @@ See [releasing.md](releasing.md): guards, `checkReleaseDependencies`, tag `vX.Y.
 | `update` refuses to run, "captures of different platforms are not compared" | The committed captures are another platform than your BDS. Use Windows. |
 | `--against checks release builds only`, `--capture-only ... not data/bds, not with --verify-only` | Option misuse; give a directory of its own. |
 | `No kept build in data/bds to compare` | `--against` names a build with no captures. |
-| `BDS answers neither a RakNet ping nor NetherNet LAN discovery` | BDS did not start or does not speak either; read `<cache>/runs/<platform>-<version>/` logs. |
-| `No experiments for the capture: no committed experiments.json at or below ...` | No earlier record; pass `--experiments a,b`. |
+| `BDS answers neither a RakNet ping nor NetherNet LAN discovery with a protocol` | BDS did not start or does not speak either (every command that starts a BDS says this); read `<cache>/runs/<platform>-<version>/` logs. |
+| `No experiments for the capture: no committed experiments.json at or below ...` | No earlier record; pass `--experiments a,b` (to `update` or `spec-capture`). |
 | `BDS's documentation generator wrote no docs (see bds-docgen.log)` | The schema and potion step failed. |
 | "The add-on's script did not register all its components" | The spec add-on's script failed in BDS; see the content log. |
 | "linked", "residual bits", "unclassified wire paths" | `check-mappings --strict`; see section d, step 4. |
@@ -143,7 +158,11 @@ When Paletter stops bundling a data version, its protocol leaves the component m
 2. It prints what else belongs to the protocol and exists: the `versions.txt` row and bundled data of its data version
    (`<version>.nbt`, the recipes bundle), its `data/bds/<build>` directories, its CloudburstMC/Data test data and
    `SOURCE.md` row, its block id order file. A data version or build another capture still has is not listed. Delete or
-   edit those by hand.
+   edit those by hand. A build directory can also hold one-off evidence that exists nowhere else and that
+   [wire-notes.md](wire-notes.md) and tests pin: for `1.26.63.1` that is `creative-large`, `creative-probe-file-order`,
+   `override`, `spec-keys` and `behaviour-probe` (`BlockHashesTest`, `CreativeOrderCheckTest`, `FixedAddonsTest`,
+   `AbsentComponentTest`). Keep those files, or move the evidence and its tests first; the tests on committed builds
+   (`CommittedBuilds`) follow a deleted directory by themselves.
 3. Then `builds table`, `inferMappings` (it must change nothing: the captures are gone), `generateComponentApi` and
    `generateConstants`, each in its own Gradle run; the build must be green. A component no remaining window has leaves
    `mappings.json` and its API keeps a stand-in (`api-history.json`).
@@ -158,7 +177,7 @@ itself is listed below the table.
 | Cloudburst protocol snapshot (`protocol`) | `gradle/libs.versions.toml` | A BDS protocol without its own codec (section e). Follow Geyser's `gradle/libs.versions.toml`; then `update` again. |
 | CloudburstMC/Network snapshot (`network`, NetherNet) | `gradle/libs.versions.toml` | With Geyser, or when the capture client cannot reach a new BDS over NetherNet. |
 | libdatachannel snapshot (`libdatachannel`) | `gradle/libs.versions.toml` | With `network`, whose NetherNet transport needs it. |
-| MicrosoftDocs/minecraft-creator commit (`Cli.DEFAULT_COMMIT`) | `tools/.../Cli.java` | When the creator docs document new components: run `docs --commit <sha>` (without it the commit already in `components.json` is used, and `DEFAULT_COMMIT` only when there is none), set `DEFAULT_COMMIT` to the same commit, review `data/model`, recapture (section b). |
+| MicrosoftDocs/minecraft-creator commit (`DocsFetcher.PINNED_COMMIT`) | `tools/.../model/docs/DocsFetcher.java` | When the creator docs document new components: run `docs --commit <sha>` (without it the commit already in `components.json` is used, and `PINNED_COMMIT` only when there is none), set `PINNED_COMMIT` to the same commit, review `data/model`, recapture (section b). |
 | CloudburstMC/Data and AllayMC/Allay commits | `data/behaviour/sources.json` | When they have dumps of a newer version: move both pins, run `behaviour import` on checkouts at them, commit `behaviour.nbt` and `data/behaviour/REPORT.md` with the pins. The import fails on a checkout at another commit. |
 | Test data of `CloudburstDataTest` (CloudburstMC/Data files and commits) | `tools/src/test/resources/test-data/` and its `SOURCE.md` | With the CloudburstMC/Data pin above (a test ties the newest snapshot's commit to it), and when the bundled data of a version is refreshed from another BDS build (a test compares the build in `SOURCE.md`): `git show <commit>:<file>` from a clone of CloudburstMC/Data into the version's folder, then update its row. |
 | Format version of the fixed add-ons (`FixedAddons.FORMAT_VERSION`) | `tools/.../model/addon/FixedAddons.java` and `data/model/fixtures.json` `formatVersion` | When BDS retires the format: change both (a test ties them), then recapture (section b). |

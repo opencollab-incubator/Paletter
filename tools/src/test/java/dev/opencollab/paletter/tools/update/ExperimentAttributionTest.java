@@ -1,7 +1,7 @@
 package dev.opencollab.paletter.tools.update;
 
 import dev.opencollab.paletter.tools.bds.BdsDump;
-import dev.opencollab.paletter.tools.data.Checker;
+import dev.opencollab.paletter.tools.data.FallbackGaps;
 import org.cloudburstmc.nbt.NbtMap;
 import dev.opencollab.paletter.internal.block.BlockStates;
 import dev.opencollab.paletter.tools.client.CapturedData;
@@ -148,12 +148,12 @@ class ExperimentAttributionTest {
         VanillaData latest = data("27.0", Map.of(), VersionFallbacks.NONE);
         ExperimentContent drop = new ExperimentContent(List.of("minecraft:icicle"), List.of("minecraft:icicle"), List.of());
         VanillaData older = data("26.60", Map.of("y_2026_drop_4", drop), VersionFallbacks.NONE);
-        assertEquals(List.of("block minecraft:icicle (y_2026_drop_4)", "item minecraft:icicle (y_2026_drop_4)"), Checker.gatedContent(older, latest));
+        assertEquals(List.of("block minecraft:icicle (y_2026_drop_4)", "item minecraft:icicle (y_2026_drop_4)"), FallbackGaps.gatedContent(older, latest));
 
         // Still gated in the newest version: nothing to do
-        assertEquals(List.of(), Checker.gatedContent(older, data("27.0", Map.of("y_2026_drop_4", drop), VersionFallbacks.NONE)));
+        assertEquals(List.of(), FallbackGaps.gatedContent(older, data("27.0", Map.of("y_2026_drop_4", drop), VersionFallbacks.NONE)));
         // No experiment marks: nothing known
-        assertEquals(List.of(), Checker.gatedContent(data("26.60", Map.of(), VersionFallbacks.NONE), latest));
+        assertEquals(List.of(), FallbackGaps.gatedContent(data("26.60", Map.of(), VersionFallbacks.NONE), latest));
     }
 
     @Test
@@ -162,7 +162,7 @@ class ExperimentAttributionTest {
         VanillaData older = new VanillaData(new DataVersion("26.50", 1), List.of(BlockStates.of("minecraft:stone", NbtMap.EMPTY)),
             List.of(new VanillaItem("minecraft:stone", 1, 2, false, null)), List.of(), RawLayout.of(Map.of()), Map.of(),
             VersionFallbacks.NONE, Map.of(), Map.of());
-        assertEquals(List.of("block minecraft:icicle", "item minecraft:icicle"), Checker.missing(older, latest));
+        assertEquals(List.of("block minecraft:icicle", "item minecraft:icicle"), FallbackGaps.missing(older, latest));
     }
 
     private static VanillaData data(String name, Map<String, ExperimentContent> experiments, VersionFallbacks fallbacks) {

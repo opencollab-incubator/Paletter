@@ -2,6 +2,7 @@ package dev.opencollab.paletter.tools.codegen.component;
 
 import org.cloudburstmc.nbt.NbtMap;
 import org.cloudburstmc.nbt.NbtType;
+import dev.opencollab.paletter.tools.CommittedBuilds;
 import dev.opencollab.paletter.tools.model.addon.AddonGenerator;
 import dev.opencollab.paletter.tools.model.addon.AddonWriter;
 import org.junit.jupiter.api.Test;
@@ -26,12 +27,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  */
 class MolangVersionTest {
     private static final Path BLOCK_WIRE = ComponentConformanceTest.ROOT.resolve("paletter/src/generated/java/dev/opencollab/paletter/internal/component/BlockWire.java");
-
-    /**
-     * The builds whose spec capture has no engine pack blocks yet: captured before the add-on had them. Explicit until the recapture;
-     * a build with the blocks that is still listed fails, and so does one without them that is not listed.
-     */
-    private static final Set<String> ENGINE_PACKS_PENDING = Set.of("1.26.36.1", "1.26.45.1", "1.26.52.3", "1.26.63.1", "1.26.70.24");
 
     static int constant() throws IOException {
         Matcher m = Pattern.compile("out.put\\(\"molangVersion\", (\\d+)\\)").matcher(Files.readString(BLOCK_WIRE));
@@ -60,7 +55,7 @@ class MolangVersionTest {
     @Test
     void theEnginePacksAgree() throws IOException {
         int constant = constant();
-        Set<String> without = new TreeSet<>();
+        Set<String> with = new TreeSet<>();
         for (Path capture : ComponentConformanceTest.captures()) {
             String build = capture.getParent().getFileName().toString();
             Set<String> found = new TreeSet<>();
@@ -71,12 +66,11 @@ class MolangVersionTest {
                         + " has another molangVersion: it follows the engine version, so BlockWire's constant must become an input");
                 });
             }
-            if (found.isEmpty()) {
-                without.add(build);
-            } else {
+            if (!found.isEmpty()) {
                 assertEquals(AddonWriter.enginePacks().size(), found.size(), build + ": a block of an engine pack is missing");
+                with.add(build);
             }
         }
-        assertEquals(ENGINE_PACKS_PENDING, without, "the builds whose capture has the engine pack blocks must leave ENGINE_PACKS_PENDING");
+        CommittedBuilds.assertPending("engine pack blocks in its spec capture", with::contains);
     }
 }

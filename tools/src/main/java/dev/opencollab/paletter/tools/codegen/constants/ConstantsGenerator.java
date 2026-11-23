@@ -3,8 +3,8 @@ package dev.opencollab.paletter.tools.codegen.constants;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
 import dev.opencollab.paletter.internal.data.PaletteDataCodec;
+import dev.opencollab.paletter.tools.Json;
 import dev.opencollab.paletter.tools.codegen.component.ExperimentToggles;
 import dev.opencollab.paletter.internal.data.Renames;
 import dev.opencollab.paletter.internal.data.VanillaData;
@@ -20,7 +20,6 @@ import org.cloudburstmc.nbt.NbtMapBuilder;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -155,7 +154,7 @@ public final class ConstantsGenerator {
      * Generates from the files of a repository root.
      */
     public static Result generate(Path root) throws IOException {
-        return generate(root.resolve(DATA), names(root), readJson(root.resolve(HISTORY)), paletterVersion(root),
+        return generate(root.resolve(DATA), names(root), Json.objectOrEmpty(root.resolve(HISTORY)), paletterVersion(root),
             Sources.read(root.resolve(DATA), root.resolve(BDS), root.resolve(VariantNames.FILE)).withBaseline(root.resolve(Baseline.FILE)));
     }
 
@@ -195,14 +194,7 @@ public final class ConstantsGenerator {
     public static Names names(Path root) throws IOException {
         Path names = root.resolve(NAMES);
         return Names.of(Renames.parse(Files.readAllLines(root.resolve(RENAMES))), Files.exists(names) ? Files.readAllLines(names) : List.of(),
-            readJson(root.resolve(HISTORY)));
-    }
-
-    public static JsonObject readJson(Path file) throws IOException {
-        if (!Files.exists(file)) {
-            return new JsonObject();
-        }
-        return JsonParser.parseString(Files.readString(file, StandardCharsets.UTF_8)).getAsJsonObject();
+            Json.objectOrEmpty(root.resolve(HISTORY)));
     }
 
     /** @return the version in the root {@code gradle.properties} without {@code -SNAPSHOT} */

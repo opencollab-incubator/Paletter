@@ -39,7 +39,7 @@ final class UpdateContext {
     final Path root;
     final Path resources;
     final Path bdsData;
-    final Map<String, String> options;
+    final UpdateOptions options;
     final boolean preview;
     final boolean verifyOnly;
     final boolean keepServer;
@@ -65,27 +65,23 @@ final class UpdateContext {
     Path buildDirectory;
     Report report;
 
-    UpdateContext(Path root, Map<String, String> options) {
+    UpdateContext(Path root, UpdateOptions options) {
         // Normalised, so that every path built from it compares with startsWith
         root = root.toAbsolutePath().normalize();
         this.root = root;
         this.resources = root.resolve("paletter/src/main/resources/paletter");
         this.bdsData = root.resolve(Layout.BDS);
         this.options = options;
-        String channel = options.getOrDefault("channel", "release");
-        if (!channel.equals("release") && !channel.equals("preview")) {
-            throw new IllegalArgumentException("--channel must be release or preview");
-        }
-        this.preview = channel.equals("preview");
-        this.verifyOnly = options.containsKey("verify-only");
-        this.keepServer = options.containsKey("keep-server");
-        this.port = Integer.parseInt(options.getOrDefault("port", "19260"));
-        this.timeout = Integer.parseInt(options.getOrDefault("timeout", "300"));
-        this.against = options.containsKey("against") ? BuildNumber.require(options.get("against")) : null;
+        this.preview = options.bds().preview();
+        this.verifyOnly = options.verifyOnly();
+        this.keepServer = options.bds().keepServer();
+        this.port = options.bds().port();
+        this.timeout = options.bds().timeout();
+        this.against = options.against() != null ? BuildNumber.require(options.against()) : null;
         if (against != null && preview) {
             throw new IllegalArgumentException("--against checks release builds only");
         }
-        this.captureOnly = options.containsKey("capture-only") ? Path.of(options.get("capture-only")).toAbsolutePath().normalize() : null;
+        this.captureOnly = options.captureOnly() != null ? options.captureOnly().toAbsolutePath().normalize() : null;
         if (captureOnly != null && (verifyOnly || captureOnly.startsWith(bdsData) || bdsData.startsWith(captureOnly))) {
             throw new IllegalArgumentException("--capture-only writes the captures into a directory of its own (not data/bds, not with --verify-only)");
         }

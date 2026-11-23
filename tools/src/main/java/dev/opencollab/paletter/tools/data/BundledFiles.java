@@ -35,6 +35,18 @@ public final class BundledFiles {
     private BundledFiles() {
     }
 
+    /** The bundled version {@code name} from the library jar. */
+    public static VanillaData bundled(String name) throws IOException {
+        return dev.opencollab.paletter.data.PaletteDataSource.bundled().load(new dev.opencollab.paletter.data.DataVersion(name, 0));
+    }
+
+    /** The name of the newest bundled release version (what {@code versions.txt} lists last, previews left out). */
+    public static String newestRelease() {
+        List<dev.opencollab.paletter.data.DataVersion> versions = dev.opencollab.paletter.data.PaletteDataSource.bundled().versions();
+        return versions.stream().filter(version -> !version.isPreview()).reduce((first, second) -> second)
+            .orElseThrow(() -> new IllegalStateException("No release version is bundled")).name();
+    }
+
     /** The properties of a directory; empty if it has none yet. */
     public static PropertyStore readStore(Path directory) throws IOException {
         Path file = directory.resolve(STORE);

@@ -1,6 +1,9 @@
 package dev.opencollab.paletter.tools.update;
 
+import dev.opencollab.paletter.tools.BuildNumber;
+import dev.opencollab.paletter.tools.Layout;
 import dev.opencollab.paletter.tools.bds.BdsDistribution;
+import dev.opencollab.paletter.tools.bds.BdsRun;
 import dev.opencollab.paletter.tools.bds.BdsServer;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -13,7 +16,6 @@ import java.net.InetSocketAddress;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
-import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -21,10 +23,8 @@ import java.util.stream.Stream;
 
 /**
  * {@code creative-probe}: runs an add-on on its own copy of BDS and captures the creative inventory, once per server
- * start, to see where BDS puts custom content (see docs/wire-notes.md). Options: {@code --addon DIR} (with
- * {@code behavior_pack}, optional {@code resource_pack}), {@code --out DIR}, {@code --version 1.26.63.1},
- * {@code --reference 26.60} (bundled version the capture resolves block hashes against), {@code --protocol 2225},
- * {@code --starts 2}, {@code --experiments a,b} (none by default), {@code --port 19290}, {@code --cache DIR}.
+ * start, to see where BDS puts custom content (see docs/wire-notes.md). The options are {@link Options}; the protocol and
+ * the bundled version the capture resolves block hashes against follow from the build unless given.
  * The server is extracted into {@code <cache>/servers/creative-probe-<platform>-<version>} and kept.
  */
 public final class CreativeProbe {
@@ -34,21 +34,45 @@ public final class CreativeProbe {
     private CreativeProbe() {
     }
 
-    public static void run(Path root, Map<String, String> options) throws Exception {
-        Path addon = Path.of(options.get("addon")).toAbsolutePath();
-        Path out = Path.of(options.get("out")).toAbsolutePath();
-        Path cache = options.containsKey("cache") ? Path.of(options.get("cache")) : BdsDistribution.defaultCache();
-        BdsDistribution distribution = BdsDistribution.resolve(false, options.getOrDefault("version", "1.26.63.1"));
+    /**
+     * What a run is asked to do.
+     *
+     * @param bds the build ({@code version} required) and its server
+     * @param addon the add-on directory, with {@code behavior_pack} and optionally {@code resource_pack}
+     * @param out where the captures go
+     * @param starts how many times the server starts
+     * @param protocol the protocol of the build, or 0 for the one of its spec capture in {@code data/bds}
+     * @param dataVersion the bundled version the captures resolve block hashes against, or null for the build's line
+     * @param experiments the toggles of the world, empty for none
+     */
+    public record Options(BdsRun bds, Path addon, Path out, int starts, int protocol, String dataVersion, List<String> experiments) {
+    }
+
+    public static void run(Path root, Options options) throws Exception {
+        Path addon = options.addon().toAbsolutePath();
+        Path out = options.out().toAbsolutePath();
+        Path cache = options.bds().cache();
+        if (options.bds().version() == null) {
+            throw new IllegalArgumentException("--version is required: the BDS build the add-on runs on");
+        }
+        BdsDistribution distribution = options.bds().distribution();
         Path server = distribution.serverDirectory(cache, "creative-probe-");
         if (!Files.exists(BdsServer.executable(server))) {
             BdsDistribution.extract(distribution.zip(cache, root), server);
         }
-        int port = Integer.parseInt(options.getOrDefault("port", "19290"));
-        int starts = Integer.parseInt(options.getOrDefault("starts", "2"));
-        int protocol = Integer.parseInt(options.getOrDefault("protocol", "2225"));
+        int port = options.bds().port();
+        int starts = options.starts();
+        int protocol = options.protocol();
+        if (protocol == 0) {
+            Integer committed = BuildHistory.protocol(root.resolve(Layout.BDS).resolve(distribution.version()));
+            if (committed == null) {
+                throw new IllegalArgumentException("No protocol: data/bds has no spec capture of " + distribution.version() + "; pass --protocol");
+            }
+            protocol = committed;
+        }
+        String dataVersion = options.dataVersion() != null ? options.dataVersion() : BuildNumber.parse(distribution.version()).dataVersion();
         VanillaData reference;
-        try (InputStream stream = Files.newInputStream(root.resolve("paletter/src/main/resources/paletter")
-            .resolve(options.getOrDefault("reference", "26.60") + ".nbt"))) {
+        try (InputStream stream = Files.newInputStream(root.resolve("paletter/src/main/resources/paletter").resolve(dataVersion + ".nbt"))) {
             reference = PaletteDataCodec.read(stream);
         }
 
@@ -73,18 +97,17 @@ public final class CreativeProbe {
 
         try (BdsServer bds = new BdsServer(server, false)) {
             bds.start(out.resolve("bds-create.log"));
-            bds.awaitStarted(300);
+            bds.awaitStarted(options.bds().timeout());
         }
-        if (options.containsKey("experiments")) {
-            Capture.enableExperiments(server.resolve("worlds").resolve(WORLD).resolve("level.dat"),
-                Arrays.asList(options.get("experiments").split(",")));
+        if (!options.experiments().isEmpty()) {
+            Capture.enableExperiments(server.resolve("worlds").resolve(WORLD).resolve("level.dat"), options.experiments());
         }
         InetSocketAddress address = new InetSocketAddress("127.0.0.1", port);
         for (int start = 1; start <= starts; start++) {
             Path run = out.resolve("start-" + start);
             try (BdsServer bds = new BdsServer(server, false)) {
                 bds.start(out.resolve("bds-start-" + start + ".log"));
-                bds.awaitStarted(300);
+                bds.awaitStarted(options.bds().timeout());
                 Capture.capture(address, protocol, reference, distribution.version(), run, run.resolve("custom"), 90);
                 List<String> log = bds.lines(line -> line.matches(".*(ERROR|WARN)\\] \\[.*") && !line.contains("TRANSPORT"));
                 Files.write(run.resolve("content-log.txt"), log);

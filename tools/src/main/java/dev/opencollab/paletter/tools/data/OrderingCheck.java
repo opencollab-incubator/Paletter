@@ -6,6 +6,7 @@ import com.google.gson.JsonObject;
 import org.cloudburstmc.nbt.NbtMap;
 import org.cloudburstmc.nbt.NbtType;
 import dev.opencollab.paletter.block.BlockRegistry;
+import dev.opencollab.paletter.tools.Json;
 import dev.opencollab.paletter.internal.block.BlockStates;
 import dev.opencollab.paletter.internal.component.ComponentIndex;
 
@@ -48,8 +49,8 @@ public final class OrderingCheck {
         for (int i = 0; i < sorted.size(); i++) {
             index.put(BlockStates.normalize(sorted.get(i)), i);
         }
-        JsonArray a = Importer.readJson(hashed.resolve("creative_items.json")).getAsJsonObject().getAsJsonArray("items");
-        JsonArray b = Importer.readJson(sequential.resolve("creative_items.json")).getAsJsonObject().getAsJsonArray("items");
+        JsonArray a = Json.object(hashed.resolve("creative_items.json")).getAsJsonArray("items");
+        JsonArray b = Json.object(sequential.resolve("creative_items.json")).getAsJsonArray("items");
         if (a.size() != b.size()) {
             failures.add(label + ": the hashed and sequential runs sent different creative inventories (" + a.size() + " vs " + b.size() + " stacks)");
             return;
@@ -153,7 +154,7 @@ public final class OrderingCheck {
         // Block items are the plain (not component based) items; a custom item with the block's identifier renames the
         // block item to <namespace>:item.<name>, or replaces it (block_placer.replace_block_item)
         Map<String, Integer> blockItemIds = new HashMap<>();
-        for (JsonElement element : Importer.readJson(capture.resolve("runtime_item_states.json")).getAsJsonArray()) {
+        for (JsonElement element : Json.element(capture.resolve("runtime_item_states.json")).getAsJsonArray()) {
             JsonObject item = element.getAsJsonObject();
             if (!item.get("componentBased").getAsBoolean()) {
                 blockItemIds.put(item.get("name").getAsString(), item.get("id").getAsInt());

@@ -223,6 +223,24 @@ public final class Capture {
      * @param status the version from the RakNet pong or NetherNet LAN discovery, empty if none
      */
     public record Reachable(boolean netherNet, int protocol, String status) {
+        /** The protocol of the server. */
+        public int requireProtocol() throws IOException {
+            if (protocol == 0) {
+                throw new IOException(NO_PROTOCOL);
+            }
+            return protocol;
+        }
+    }
+
+    /** The failure of a started BDS that tells no protocol, worded once for every capture. */
+    public static final String NO_PROTOCOL = "BDS answers neither a RakNet ping nor NetherNet LAN discovery with a protocol";
+
+    /** {@code reachable}'s protocol, or the failure of {@link #NO_PROTOCOL} (null: the server answered neither transport). */
+    public static int requireProtocol(Reachable reachable) throws IOException {
+        if (reachable == null) {
+            throw new IOException(NO_PROTOCOL);
+        }
+        return reachable.requireProtocol();
     }
 
     /**

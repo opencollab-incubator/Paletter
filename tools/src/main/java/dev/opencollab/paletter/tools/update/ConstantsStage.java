@@ -1,5 +1,6 @@
 package dev.opencollab.paletter.tools.update;
 
+import dev.opencollab.paletter.tools.Json;
 import dev.opencollab.paletter.tools.data.VariantNames;
 import dev.opencollab.paletter.tools.codegen.constants.ConstantsGenerator;
 import java.io.IOException;
@@ -55,7 +56,7 @@ final class ConstantsStage {
      * history and the captures of {@code root}.
      */
     static ConstantsGenerator.Result generateConstants(Path root, Path resources, Map<String, List<VariantNames.Entry>> variantNames) throws IOException {
-        return ConstantsGenerator.generate(resources, ConstantsGenerator.names(root), ConstantsGenerator.readJson(root.resolve(ConstantsGenerator.HISTORY)),
+        return ConstantsGenerator.generate(resources, ConstantsGenerator.names(root), Json.objectOrEmpty(root.resolve(ConstantsGenerator.HISTORY)),
             ConstantsGenerator.paletterVersion(root), ConstantsGenerator.Sources.read(resources, root.resolve(ConstantsGenerator.BDS), variantNames)
                 .withBaseline(root.resolve(dev.opencollab.paletter.tools.codegen.constants.Baseline.FILE)));
     }

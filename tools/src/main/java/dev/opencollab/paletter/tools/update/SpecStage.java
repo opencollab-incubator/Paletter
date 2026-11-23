@@ -26,6 +26,8 @@ import java.util.stream.Stream;
 
 /** The spec capture of the build (with the format sweep) and the mapping inference over all captures. */
 final class SpecStage {
+    /** Seconds the spec add-on's server gets to start at least. */
+    private static final int SPEC_TIMEOUT = 600;
     private final UpdateContext ctx;
     private final CaptureStage captures;
 
@@ -62,20 +64,14 @@ final class SpecStage {
         // A history check captures into the work directory; keep() copies the capture when the build is kept
         boolean write = !ctx.verifyOnly && ctx.against == null && ctx.captureOnly == null;
         Path out = write ? ctx.bdsData.resolve(distribution.version()).resolve("spec") : work.resolve("spec");
-        Map<String, String> specOptions = new LinkedHashMap<>(ctx.options);
-        specOptions.put("version", distribution.version());
-        specOptions.put("reuse-server", "true");
-        specOptions.put("port", String.valueOf(ctx.port + 10));
-        specOptions.put("protocol", String.valueOf(runs.protocol));
-        specOptions.put("out", out.toString());
-        // The format sweep: what BDS accepts at older formats of the components it rejects now, on the same server
-        if (!ctx.verifyOnly && ctx.against == null) {
-            specOptions.put("with-format-sweep", "true");
-            // And a world without experiments, for the gating the creator docs claim (not essential: a missing file is "unverified")
-            specOptions.put("with-gating", "true");
-        }
+        // The format sweep: what BDS accepts at older formats of the components it rejects now, on the same server; and a world
+        // without experiments, for the gating the creator docs claim (not essential: a missing file is "unverified")
+        boolean followUps = !ctx.verifyOnly && ctx.against == null;
         // The spec add-on world has this build's current toggles on, so it also covers experimental content
-        specOptions.put("experiments", String.join(",", runs.experiments.current));
+        // (the load of the spec add-on takes longer than the other captures: at least SPEC_TIMEOUT seconds)
+        SpecCaptureOptions specOptions = new SpecCaptureOptions(
+            ctx.options.bds().withVersion(distribution.version()).withPort(ctx.port + 10).withTimeout(Math.max(ctx.timeout, SPEC_TIMEOUT)),
+            SpecCaptureOptions.Mode.SPEC, out, null, runs.experiments.current, runs.protocol, true, followUps, followUps);
         // A history check compares with the build it is checked against
         String previousBuild = ctx.against != null ? ctx.against : UpdateContext.baseline(distribution.version(), ctx.committedBuilds("spec/capture.json"));
         boolean own = distribution.version().equals(previousBuild);
@@ -196,7 +192,7 @@ final class SpecStage {
     private void specChecks(Path capture, Capture.Summary summary, Runs runs) throws Exception {
         captures.hashCheck("spec add-on", summary);
         captures.appliedCheck(runs.experiments, "spec add-on world", runs.experiments.current, summary);
-        new ShapesStage(ctx).coverage(capture);
+        new WireShapesStage(ctx).coverage(capture);
         if (runs.existing != null) {
             // The engine packs follow the main pack in the world's pack list (SpecCapture#freshWorld), one block each
             CreativeOrderCheck.Result order = CreativeOrderCheck.blockOrder(runs.protocol, ctx.resources,

@@ -3,6 +3,7 @@ package dev.opencollab.paletter.tools.model;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import dev.opencollab.paletter.tools.Console;
 import dev.opencollab.paletter.tools.model.Model.Component;
 import dev.opencollab.paletter.tools.model.Model.Field;
 import dev.opencollab.paletter.tools.model.Model.JType;
@@ -57,7 +58,7 @@ public final class Schema {
     /**
      * The schema of the newest build in {@code bdsData} that has one and is not newer than {@code build} (any build if it is
      * null): a build without its own schema (or one whose docgen failed) uses the previous one. A schema file that cannot be
-     * read is no schema, with a warning: the add-on is then made without one, as before the step existed.
+     * read is no schema, with a warning: the add-on is then made without one.
      */
     public static Schema newest(Path bdsData, String build) {
         if (!Files.isDirectory(bdsData)) {
@@ -70,7 +71,7 @@ public final class Schema {
                 .map(b -> b.resolve(FILE)).orElse(null);
             return file == null ? NONE : read(file);
         } catch (IOException | RuntimeException e) {
-            System.err.println("WARNING: no BDS schema, a " + FILE + " in " + bdsData + " cannot be read: " + e);
+            Console.warn("no BDS schema, a " + FILE + " in " + bdsData + " cannot be read: " + e);
             return NONE;
         }
     }

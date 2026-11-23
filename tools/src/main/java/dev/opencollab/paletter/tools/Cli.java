@@ -1,13 +1,7 @@
 package dev.opencollab.paletter.tools;
 
-import dev.opencollab.paletter.internal.data.VanillaData;
-import dev.opencollab.paletter.tools.data.BundledFiles;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
-
-import java.io.IOException;
-import java.nio.file.Path;
-import java.util.Map;
 
 /**
  * The one command line of the tooling: {@code ./gradlew :tools:run --args="<command> ..."}. Paths are relative to the
@@ -32,36 +26,27 @@ import java.util.Map;
     DataCommands.RecipesImportCommand.class
 })
 public final class Cli implements Runnable {
-    /** The docs commit the committed model was generated from (MicrosoftDocs/minecraft-creator main, 2026-11-06). */
-    public static final String DEFAULT_COMMIT = "457cdeaa5aa428429884b092895f3979b1f69ad3";
-
     public static void main(String[] args) {
-        System.exit(new CommandLine(new Cli()).execute(args));
+        System.exit(commandLine().execute(args));
+    }
+
+    /** The command line as {@link #main} runs it. */
+    static CommandLine commandLine() {
+        CommandLine commandLine = new CommandLine(new Cli());
+        commandLine.setCaseInsensitiveEnumValuesAllowed(true);
+        // A mistake of the caller (a missing or wrong option) is a message, not a stack trace
+        commandLine.setExecutionExceptionHandler((exception, command, parseResult) -> {
+            if (!(exception instanceof IllegalArgumentException)) {
+                throw exception;
+            }
+            Console.error(exception.getMessage());
+            return 1;
+        });
+        return commandLine;
     }
 
     @Override
     public void run() {
         CommandLine.usage(this, System.out);
-    }
-
-    /** The bundled Paletter version {@code name} from the library jar. */
-    public static VanillaData reference(String name) throws IOException {
-        return dev.opencollab.paletter.data.PaletteDataSource.bundled().load(new dev.opencollab.paletter.data.DataVersion(name, 0));
-    }
-
-    static VanillaData readPalette(Path file) throws IOException {
-        return BundledFiles.read(file);
-    }
-
-    static void put(Map<String, String> options, String name, String value) {
-        if (value != null) {
-            options.put(name, value);
-        }
-    }
-
-    static void flag(Map<String, String> options, String name, boolean value) {
-        if (value) {
-            options.put(name, "true");
-        }
     }
 }

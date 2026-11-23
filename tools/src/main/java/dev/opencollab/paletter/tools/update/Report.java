@@ -41,19 +41,19 @@ public final class Report {
     }
 
     /** A decision; {@code owner} is the check it acts on, shown on the same line, or null. */
-    private record Todo(String text, List<Evidence> evidence, Check owner) {
+    private record Decision(String text, List<Evidence> evidence, Check owner) {
     }
 
     private static final int SECTION_LIMIT = 200;
     /** Longer decisions show their start and collapse the full text. */
-    private static final int TODO_LIMIT = 200;
+    private static final int DECISION_LIMIT = 200;
 
     final Map<String, String> header = new LinkedHashMap<>();
     private final List<Check> checks = new ArrayList<>();
     private final Map<String, List<String>> sections = new LinkedHashMap<>();
     private final Map<String, Map<String, List<String>>> changes = new LinkedHashMap<>();
     final List<String> wireChanges = new ArrayList<>();
-    private final List<Todo> todos = new ArrayList<>();
+    private final List<Decision> decisions = new ArrayList<>();
     final List<String> repoChanges = new ArrayList<>();
     /** A history check ({@code update --against}): the build compared with. */
     String against;
@@ -91,31 +91,31 @@ public final class Report {
     }
 
     /** A decision for a human. */
-    void todo(String text) {
-        todo(text, null, List.of());
+    void decision(String text) {
+        decision(text, null, List.of());
     }
 
     /** A decision for a human, with a collapsed list that backs it. */
-    void todo(String text, String summary, Collection<String> lines) {
-        todos.add(new Todo(text, backing(summary, lines), null));
+    void decision(String text, String summary, Collection<String> lines) {
+        decisions.add(new Decision(text, backing(summary, lines), null));
     }
 
-    /** What to do about the last check: on its line when it needs attention, so the two are one entry. */
+    /** The decision about the last check: on its line when it needs attention, so the two are one entry. */
     void action(String text) {
         action(text, null, List.of());
     }
 
     /** What to do about the last check, with a collapsed list that backs it. */
     void action(String text, String summary, Collection<String> lines) {
-        todos.add(new Todo(text, backing(summary, lines), checks.isEmpty() ? null : checks.getLast()));
+        decisions.add(new Decision(text, backing(summary, lines), checks.isEmpty() ? null : checks.getLast()));
     }
 
     private static List<Evidence> backing(String summary, Collection<String> lines) {
         return lines.isEmpty() ? List.of() : List.of(new Evidence(summary, List.copyOf(lines)));
     }
 
-    boolean hasTodos() {
-        return !todos.isEmpty();
+    boolean hasDecisions() {
+        return !decisions.isEmpty();
     }
 
     /** A collapsed section with the details. */
@@ -170,8 +170,8 @@ public final class Report {
         if (diffs > 0) {
             parts.add(count(diffs, "change", "changes"));
         }
-        if (!todos.isEmpty()) {
-            parts.add(count(todos.size(), "decision", "decisions") + " needed");
+        if (!decisions.isEmpty()) {
+            parts.add(count(decisions.size(), "decision", "decisions") + " needed");
         }
         if (parts.isEmpty() && !repoChanges.isEmpty()) {
             parts.add(count(repoChanges.size(), "repository file", "repository files") + " changed");
@@ -207,29 +207,29 @@ public final class Report {
         }
 
         List<Check> attention = checks.stream().filter(check -> check.status == Status.FAIL || check.status == Status.DIFF).toList();
-        if (!attention.isEmpty() || !todos.isEmpty()) {
+        if (!attention.isEmpty() || !decisions.isEmpty()) {
             out.append("## Needs attention\n\n");
             for (Check check : attention) {
-                List<Todo> actions = todos.stream().filter(todo -> todo.owner == check).toList();
+                List<Decision> actions = decisions.stream().filter(decision -> decision.owner == check).toList();
                 out.append("- ").append(check.status.label).append(": **").append(check.name).append("**")
                     .append(check.detail.isEmpty() ? "" : ": " + oneLine(check.detail));
                 if (!actions.isEmpty()) {
-                    out.append("; to do: ").append(String.join("; ", actions.stream().map(todo -> oneLine(todo.text)).toList()));
+                    out.append("; to do: ").append(String.join("; ", actions.stream().map(decision -> oneLine(decision.text)).toList()));
                 }
                 out.append('\n');
                 check.evidence.forEach(evidence -> details(out, evidence.summary, evidence.lines, "  "));
-                actions.forEach(todo -> todo.evidence.forEach(evidence -> details(out, evidence.summary, evidence.lines, "  ")));
+                actions.forEach(decision -> decision.evidence.forEach(evidence -> details(out, evidence.summary, evidence.lines, "  ")));
             }
-            for (Todo todo : todos) {
-                if (attention.contains(todo.owner)) {
+            for (Decision decision : decisions) {
+                if (attention.contains(decision.owner)) {
                     continue;
                 }
-                String text = oneLine(todo.text);
-                List<Evidence> evidence = new ArrayList<>(todo.evidence);
-                if (text.length() > TODO_LIMIT) {
-                    int cut = text.lastIndexOf(' ', TODO_LIMIT);
+                String text = oneLine(decision.text);
+                List<Evidence> evidence = new ArrayList<>(decision.evidence);
+                if (text.length() > DECISION_LIMIT) {
+                    int cut = text.lastIndexOf(' ', DECISION_LIMIT);
                     evidence.addFirst(new Evidence("Full text", List.of(text)));
-                    text = text.substring(0, cut > 0 ? cut : TODO_LIMIT) + " ...";
+                    text = text.substring(0, cut > 0 ? cut : DECISION_LIMIT) + " ...";
                 }
                 out.append("- To do: ").append(text).append('\n');
                 evidence.forEach(e -> details(out, e.summary, e.lines, "  "));

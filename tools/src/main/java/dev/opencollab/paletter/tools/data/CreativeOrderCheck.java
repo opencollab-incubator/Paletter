@@ -3,7 +3,7 @@ package dev.opencollab.paletter.tools.data;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
+import dev.opencollab.paletter.tools.Json;
 import org.cloudburstmc.nbt.NbtMap;
 import org.cloudburstmc.nbt.NbtType;
 import org.cloudburstmc.nbt.NbtUtils;
@@ -22,10 +22,7 @@ import dev.opencollab.paletter.item.CustomItem;
 import dev.opencollab.paletter.item.component.BlockPlacer;
 import dev.opencollab.paletter.block.component.BlockMenuCategory;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -33,11 +30,9 @@ import java.util.Comparator;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
-import java.util.zip.GZIPInputStream;
 
 /**
  * Checks {@link CreativeOrdering#BDS} against a capture: the custom items and blocks BDS sent (with their menu
@@ -94,7 +89,7 @@ public final class CreativeOrderCheck {
 
         Set<String> vanillaStacks = new HashSet<>();
         vanilla.creative().items().forEach(entry -> vanillaStacks.add(stack(entry.getItem())));
-        List<Node> expected = bds(readJson(creativeItems), vanillaStacks);
+        List<Node> expected = bds(Json.object(creativeItems), vanillaStacks);
         List<Node> actual = paletter(palette);
         int custom = (int) expected.stream().flatMap(node -> node.stacks().stream()).filter(id -> !id.startsWith("minecraft:")).count();
         return new Result(custom, differences(expected, actual), null);
@@ -297,15 +292,5 @@ public final class CreativeOrderCheck {
 
     static List<NbtMap> readList(Path file, String key) throws IOException {
         return Nbt.readGzip(file).getList(key, NbtType.COMPOUND);
-    }
-
-    static JsonObject readJson(Path file) throws IOException {
-        byte[] bytes = Files.readAllBytes(file);
-        if (file.getFileName().toString().toLowerCase(Locale.ROOT).endsWith(".gz")) {
-            try (InputStream in = new GZIPInputStream(new ByteArrayInputStream(bytes))) {
-                bytes = in.readAllBytes();
-            }
-        }
-        return JsonParser.parseString(new String(bytes, StandardCharsets.UTF_8)).getAsJsonObject();
     }
 }

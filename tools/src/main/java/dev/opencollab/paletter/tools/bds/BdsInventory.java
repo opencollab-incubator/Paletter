@@ -92,8 +92,8 @@ public final class BdsInventory {
      *
      * @return the file written
      */
-    public static Path write(Path root, String version, Path cache) throws IOException, InterruptedException {
-        JsonObject inventory = read(root, version, false, cache);
+    public static Path write(Path root, String version, boolean preview, Path cache) throws IOException, InterruptedException {
+        JsonObject inventory = read(root, version, preview, cache);
         Path file = root.resolve("data/bds").resolve(version).resolve(FILE);
         Files.createDirectories(file.getParent());
         Files.writeString(file, json(inventory));

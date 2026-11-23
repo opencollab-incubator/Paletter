@@ -9,6 +9,7 @@ import com.google.gson.JsonParser;
 import dev.opencollab.paletter.internal.data.VanillaData;
 import dev.opencollab.paletter.tools.Layout;
 import dev.opencollab.paletter.tools.bds.BdsDistribution;
+import dev.opencollab.paletter.tools.bds.BdsRun;
 import dev.opencollab.paletter.tools.bds.BdsServer;
 import dev.opencollab.paletter.tools.client.Capture;
 import dev.opencollab.paletter.tools.client.CaptureWriter;
@@ -59,13 +60,13 @@ public final class ShapeProbe {
     private ShapeProbe() {
     }
 
-    public static void run(Path root, Map<String, String> options) throws Exception {
-        Path cache = options.containsKey("cache") ? Path.of(options.get("cache")) : BdsDistribution.defaultCache();
-        BdsDistribution distribution = BdsDistribution.resolve(false, options.get("version"));
+    public static void run(Path root, BdsRun options) throws Exception {
+        Path cache = options.cache();
+        BdsDistribution distribution = options.distribution();
         Path server = distribution.serverDirectory(cache, "shapes-");
         Path work = distribution.runDirectory(cache, "shapes-");
-        int port = Integer.parseInt(options.getOrDefault("port", "19310"));
-        int timeout = Integer.parseInt(options.getOrDefault("timeout", "300"));
+        int port = options.port();
+        int timeout = options.timeout();
         BdsDistribution.deleteRecursively(work);
         Files.createDirectories(work);
         if (!Files.exists(BdsServer.executable(server))) {
@@ -75,7 +76,7 @@ public final class ShapeProbe {
             capture(root.resolve(Layout.BDS).resolve(distribution.version()).resolve(DIRECTORY), root, distribution.version(), server, work,
                 null, port, timeout);
         } finally {
-            if (!options.containsKey("keep-server")) {
+            if (!options.keepServer()) {
                 BdsDistribution.deleteRecursively(server);
             }
         }
@@ -125,11 +126,8 @@ public final class ShapeProbe {
             bds.start(work.resolve("bds-create.log"));
             bds.awaitStarted(timeout);
             Capture.Reachable reachable = Capture.reachable(bds, address, 20);
-            if (reachable == null || reachable.protocol() == 0) {
-                throw new IOException("BDS answers neither a RakNet ping nor NetherNet LAN discovery with a protocol");
-            }
+            protocol = Capture.requireProtocol(reachable);
             netherNet = reachable.netherNet();
-            protocol = reachable.protocol();
         }
         if (reference == null) {
             reference = EducationProbe.reference(root, null, protocol);

@@ -2,6 +2,7 @@ package dev.opencollab.paletter.tools.codegen.constants;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import dev.opencollab.paletter.tools.Json;
 import dev.opencollab.paletter.tools.codegen.constants.ConstantsGenerator.Bundle;
 import dev.opencollab.paletter.tools.codegen.constants.ConstantsGenerator.Sources;
 
@@ -43,7 +44,7 @@ record BdsCaptures(Map<String, Map<String, String>> gatedItems, Map<String, Map<
             for (Path capture : captures) {
                 Path experiments = capture.resolve("experiments.json");
                 if (Files.exists(experiments)) {
-                    JsonObject json = ConstantsGenerator.readJson(experiments);
+                    JsonObject json = Json.objectOrEmpty(experiments);
                     // A capture of a preview says nothing of the release before it. The capture says whether it is one;
                     // without that, the bundle its protocol belongs to does
                     Bundle bundle = Sources.bundleOf(bundles, json.get("protocol").getAsInt());
@@ -67,7 +68,7 @@ record BdsCaptures(Map<String, Map<String, String>> gatedItems, Map<String, Map<
                 }
                 Path education = capture.resolve("education.json");
                 if (Files.exists(education)) {
-                    JsonObject json = ConstantsGenerator.readJson(education);
+                    JsonObject json = Json.objectOrEmpty(education);
                     educationItems.addAll(strings(json, "items"));
                     educationBlocks.addAll(strings(json, "blocks"));
                 }
@@ -79,8 +80,8 @@ record BdsCaptures(Map<String, Map<String, String>> gatedItems, Map<String, Map<
         /** The {@code preview} flag of the capture's {@code spec/capture.json} or {@code capture.json}, or null if neither has one. */
         private static Boolean previewFlag(Path capture) throws IOException {
             for (Path file : List.of(capture.resolve("spec/capture.json"), capture.resolve("capture.json"))) {
-                if (Files.exists(file) && ConstantsGenerator.readJson(file).has("preview")) {
-                    return ConstantsGenerator.readJson(file).get("preview").getAsBoolean();
+                if (Files.exists(file) && Json.object(file).has("preview")) {
+                    return Json.object(file).get("preview").getAsBoolean();
                 }
             }
             return null;
