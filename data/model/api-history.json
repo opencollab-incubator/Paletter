@@ -904,8 +904,7 @@
         "minecraft:item_visual.geometryDescription.n_way_visual_rotation.y",
         "minecraft:item_visual.geometryDescription.n_way_visual_rotation.z"
       ],
-      "type": "string",
-      "nullable": true
+      "type": "string"
     },
     "block:minecraft:item_visual:geometry.n_way_visual_rotation": {
       "name": "nWayVisualRotation",
@@ -1007,7 +1006,7 @@
       "wire": [
         "minecraft:liquid_detection.detectionRules[].stopsLiquidFromDirection"
       ],
-      "type": "list<string>",
+      "type": "list<enum:StopsLiquidFlowingFromDirection>",
       "default": []
     },
     "block:minecraft:liquid_detection:detection_rules[].use_liquid_clipping": {
@@ -1530,7 +1529,7 @@
         "minecraft:placement_filter.conditions[].allowed_faces",
         "minecraft:placement_filter.conditions[].block_filter"
       ],
-      "type": "list<string>",
+      "type": "list<enum:AllowedFaces>",
       "default": [
         "down",
         "up",
@@ -1586,8 +1585,7 @@
       "wire": [
         "minecraft:precipitation_interactions.precipitation_behavior"
       ],
-      "type": "enum:PrecipitationBehavior",
-      "nullable": true
+      "type": "enum:PrecipitationBehavior"
     },
     "block:minecraft:random_offset:x": {
       "name": "x",
@@ -2131,8 +2129,7 @@
         "minecraft:digger.destroy_speeds[].block.tags",
         "minecraft:digger.destroy_speeds[].speed"
       ],
-      "type": "object:Block",
-      "nullable": true
+      "type": "object:Block"
     },
     "item:minecraft:digger:destroy_speeds[].block.name": {
       "name": "name",
@@ -2176,8 +2173,7 @@
         "minecraft:digger.destroy_speeds[].block.tags",
         "minecraft:digger.destroy_speeds[].speed"
       ],
-      "type": "int",
-      "nullable": true
+      "type": "int"
     },
     "item:minecraft:digger:use_efficiency": {
       "name": "useEfficiency",
@@ -2771,8 +2767,7 @@
         "minecraft:repairable.repair_items[].items[].name",
         "minecraft:repairable.repair_items[].repair_amount"
       ],
-      "type": "union:ItemsOrTags",
-      "nullable": true
+      "type": "union:ItemsOrTags"
     },
     "item:minecraft:repairable:repair_items[].repair_amount": {
       "name": "repairAmount",
@@ -2804,8 +2799,7 @@
         "minecraft:shooter.ammunition[].use_in_creative",
         "minecraft:shooter.ammunition[].use_offhand"
       ],
-      "type": "string",
-      "nullable": true
+      "type": "string"
     },
     "item:minecraft:shooter:ammunition[].search_inventory": {
       "name": "searchInventory",
@@ -3032,7 +3026,7 @@
         "item_properties.use_animation",
         "minecraft:use_animation.value"
       ],
-      "type": "string",
+      "type": "enum:Value",
       "nullable": true
     },
     "item:minecraft:use_duration:value": {
