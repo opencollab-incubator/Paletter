@@ -1246,23 +1246,496 @@
               },
               "reference": "control (the base was rejected)"
             },
-            "[].max.x": {
-              "status": "not-generated"
+            "[].origin": {
+              "transform": "collisionBoxes",
+              "status": "hand-rule",
+              "rules": [
+                {
+                  "kind": "constant",
+                  "value": "16.0",
+                  "nbt": "float",
+                  "tags": [
+                    "injected-default"
+                  ],
+                  "wire": "minecraft:collision_box.boxes[].maxX"
+                },
+                {
+                  "kind": "constant",
+                  "value": "16.0",
+                  "nbt": "float",
+                  "tags": [
+                    "injected-default"
+                  ],
+                  "wire": "minecraft:collision_box.boxes[].maxY"
+                },
+                {
+                  "kind": "constant",
+                  "value": "16.0",
+                  "nbt": "float",
+                  "tags": [
+                    "injected-default"
+                  ],
+                  "wire": "minecraft:collision_box.boxes[].maxZ"
+                },
+                {
+                  "kind": "constant",
+                  "value": "0.0",
+                  "nbt": "float",
+                  "tags": [
+                    "injected-default"
+                  ],
+                  "wire": "minecraft:collision_box.boxes[].minX"
+                },
+                {
+                  "kind": "constant",
+                  "value": "0.0",
+                  "nbt": "float",
+                  "tags": [
+                    "injected-default"
+                  ],
+                  "wire": "minecraft:collision_box.boxes[].minY"
+                },
+                {
+                  "kind": "constant",
+                  "value": "0.0",
+                  "nbt": "float",
+                  "tags": [
+                    "injected-default"
+                  ],
+                  "wire": "minecraft:collision_box.boxes[].minZ"
+                },
+                {
+                  "kind": "constant",
+                  "value": "1",
+                  "nbt": "byte",
+                  "tags": [
+                    "injected-default"
+                  ],
+                  "wire": "minecraft:collision_box.enabled"
+                }
+              ],
+              "whenAbsent": {
+                "minecraft:collision_box.boxes[].maxX": "omitted",
+                "minecraft:collision_box.boxes[].maxY": "omitted",
+                "minecraft:collision_box.boxes[].maxZ": "omitted",
+                "minecraft:collision_box.boxes[].minX": "omitted",
+                "minecraft:collision_box.boxes[].minY": "omitted",
+                "minecraft:collision_box.boxes[].minZ": "omitted",
+                "minecraft:collision_box.enabled": "omitted"
+              },
+              "reference": "control (the base was rejected)"
             },
-            "[].max.y": {
-              "status": "not-generated"
+            "[].origin.x": {
+              "status": "rejected",
+              "reference": "control (the base was rejected)"
             },
-            "[].max.z": {
-              "status": "not-generated"
+            "[].origin.y": {
+              "transform": "collisionBoxes",
+              "status": "hand-rule",
+              "rules": [
+                {
+                  "kind": "constant",
+                  "value": "16.0",
+                  "nbt": "float",
+                  "tags": [
+                    "injected-default"
+                  ],
+                  "wire": "minecraft:collision_box.boxes[].maxX"
+                },
+                {
+                  "kind": "linear",
+                  "scale": 1.0,
+                  "offset": 16.0,
+                  "nbt": "float",
+                  "tags": [
+                    "renamed",
+                    "type:integer->float",
+                    "unit-conversion"
+                  ],
+                  "wire": "minecraft:collision_box.boxes[].maxY"
+                },
+                {
+                  "kind": "constant",
+                  "value": "16.0",
+                  "nbt": "float",
+                  "tags": [
+                    "injected-default"
+                  ],
+                  "wire": "minecraft:collision_box.boxes[].maxZ"
+                },
+                {
+                  "kind": "constant",
+                  "value": "0.0",
+                  "nbt": "float",
+                  "tags": [
+                    "injected-default"
+                  ],
+                  "wire": "minecraft:collision_box.boxes[].minX"
+                },
+                {
+                  "kind": "identity",
+                  "nbt": "float",
+                  "tags": [
+                    "renamed",
+                    "type:integer->float"
+                  ],
+                  "wire": "minecraft:collision_box.boxes[].minY"
+                },
+                {
+                  "kind": "constant",
+                  "value": "0.0",
+                  "nbt": "float",
+                  "tags": [
+                    "injected-default"
+                  ],
+                  "wire": "minecraft:collision_box.boxes[].minZ"
+                },
+                {
+                  "kind": "constant",
+                  "value": "1",
+                  "nbt": "byte",
+                  "tags": [
+                    "injected-default"
+                  ],
+                  "wire": "minecraft:collision_box.enabled"
+                }
+              ],
+              "whenAbsent": {
+                "minecraft:collision_box.boxes[].maxX": "omitted",
+                "minecraft:collision_box.boxes[].maxY": "omitted",
+                "minecraft:collision_box.boxes[].maxZ": "omitted",
+                "minecraft:collision_box.boxes[].minX": "omitted",
+                "minecraft:collision_box.boxes[].minY": "omitted",
+                "minecraft:collision_box.boxes[].minZ": "omitted",
+                "minecraft:collision_box.enabled": "omitted"
+              },
+              "reference": "control (the base was rejected)"
             },
-            "[].min.x": {
-              "status": "not-generated"
+            "[].origin.z": {
+              "status": "rejected",
+              "reference": "control (the base was rejected)"
             },
-            "[].min.y": {
-              "status": "not-generated"
+            "[].size": {
+              "transform": "collisionBoxes",
+              "status": "hand-rule",
+              "rules": [
+                {
+                  "kind": "identity",
+                  "element": 0,
+                  "nbt": "float",
+                  "tags": [
+                    "renamed",
+                    "nested",
+                    "list-element"
+                  ],
+                  "wire": "minecraft:collision_box.boxes[].maxX"
+                },
+                {
+                  "kind": "identity",
+                  "element": 1,
+                  "nbt": "float",
+                  "tags": [
+                    "renamed",
+                    "nested",
+                    "list-element"
+                  ],
+                  "wire": "minecraft:collision_box.boxes[].maxY"
+                },
+                {
+                  "kind": "identity",
+                  "element": 2,
+                  "nbt": "float",
+                  "tags": [
+                    "renamed",
+                    "nested",
+                    "list-element"
+                  ],
+                  "wire": "minecraft:collision_box.boxes[].maxZ"
+                },
+                {
+                  "kind": "constant",
+                  "value": "0.0",
+                  "nbt": "float",
+                  "tags": [
+                    "injected-default"
+                  ],
+                  "wire": "minecraft:collision_box.boxes[].minX"
+                },
+                {
+                  "kind": "constant",
+                  "value": "0.0",
+                  "nbt": "float",
+                  "tags": [
+                    "injected-default"
+                  ],
+                  "wire": "minecraft:collision_box.boxes[].minY"
+                },
+                {
+                  "kind": "constant",
+                  "value": "0.0",
+                  "nbt": "float",
+                  "tags": [
+                    "injected-default"
+                  ],
+                  "wire": "minecraft:collision_box.boxes[].minZ"
+                },
+                {
+                  "kind": "constant",
+                  "value": "1",
+                  "nbt": "byte",
+                  "tags": [
+                    "injected-default"
+                  ],
+                  "wire": "minecraft:collision_box.enabled"
+                }
+              ],
+              "whenAbsent": {
+                "minecraft:collision_box.boxes[].maxX": "omitted",
+                "minecraft:collision_box.boxes[].maxY": "omitted",
+                "minecraft:collision_box.boxes[].maxZ": "omitted",
+                "minecraft:collision_box.boxes[].minX": "omitted",
+                "minecraft:collision_box.boxes[].minY": "omitted",
+                "minecraft:collision_box.boxes[].minZ": "omitted",
+                "minecraft:collision_box.enabled": "omitted"
+              },
+              "reference": "control (the base was rejected)"
             },
-            "[].min.z": {
-              "status": "not-generated"
+            "[].size.x": {
+              "transform": "collisionBoxes",
+              "status": "hand-rule",
+              "rules": [
+                {
+                  "kind": "identity",
+                  "nbt": "float",
+                  "tags": [
+                    "renamed",
+                    "type:integer->float"
+                  ],
+                  "wire": "minecraft:collision_box.boxes[].maxX"
+                },
+                {
+                  "kind": "constant",
+                  "value": "16.0",
+                  "nbt": "float",
+                  "tags": [
+                    "injected-default"
+                  ],
+                  "wire": "minecraft:collision_box.boxes[].maxY"
+                },
+                {
+                  "kind": "constant",
+                  "value": "16.0",
+                  "nbt": "float",
+                  "tags": [
+                    "injected-default"
+                  ],
+                  "wire": "minecraft:collision_box.boxes[].maxZ"
+                },
+                {
+                  "kind": "constant",
+                  "value": "0.0",
+                  "nbt": "float",
+                  "tags": [
+                    "injected-default"
+                  ],
+                  "wire": "minecraft:collision_box.boxes[].minX"
+                },
+                {
+                  "kind": "constant",
+                  "value": "0.0",
+                  "nbt": "float",
+                  "tags": [
+                    "injected-default"
+                  ],
+                  "wire": "minecraft:collision_box.boxes[].minY"
+                },
+                {
+                  "kind": "constant",
+                  "value": "0.0",
+                  "nbt": "float",
+                  "tags": [
+                    "injected-default"
+                  ],
+                  "wire": "minecraft:collision_box.boxes[].minZ"
+                },
+                {
+                  "kind": "constant",
+                  "value": "1",
+                  "nbt": "byte",
+                  "tags": [
+                    "injected-default"
+                  ],
+                  "wire": "minecraft:collision_box.enabled"
+                }
+              ],
+              "whenAbsent": {
+                "minecraft:collision_box.boxes[].maxX": "omitted",
+                "minecraft:collision_box.boxes[].maxY": "omitted",
+                "minecraft:collision_box.boxes[].maxZ": "omitted",
+                "minecraft:collision_box.boxes[].minX": "omitted",
+                "minecraft:collision_box.boxes[].minY": "omitted",
+                "minecraft:collision_box.boxes[].minZ": "omitted",
+                "minecraft:collision_box.enabled": "omitted"
+              },
+              "reference": "control (the base was rejected)"
+            },
+            "[].size.y": {
+              "transform": "collisionBoxes",
+              "status": "hand-rule",
+              "rules": [
+                {
+                  "kind": "constant",
+                  "value": "16.0",
+                  "nbt": "float",
+                  "tags": [
+                    "injected-default"
+                  ],
+                  "wire": "minecraft:collision_box.boxes[].maxX"
+                },
+                {
+                  "kind": "identity",
+                  "nbt": "float",
+                  "tags": [
+                    "renamed",
+                    "type:integer->float"
+                  ],
+                  "wire": "minecraft:collision_box.boxes[].maxY"
+                },
+                {
+                  "kind": "constant",
+                  "value": "16.0",
+                  "nbt": "float",
+                  "tags": [
+                    "injected-default"
+                  ],
+                  "wire": "minecraft:collision_box.boxes[].maxZ"
+                },
+                {
+                  "kind": "constant",
+                  "value": "0.0",
+                  "nbt": "float",
+                  "tags": [
+                    "injected-default"
+                  ],
+                  "wire": "minecraft:collision_box.boxes[].minX"
+                },
+                {
+                  "kind": "constant",
+                  "value": "0.0",
+                  "nbt": "float",
+                  "tags": [
+                    "injected-default"
+                  ],
+                  "wire": "minecraft:collision_box.boxes[].minY"
+                },
+                {
+                  "kind": "constant",
+                  "value": "0.0",
+                  "nbt": "float",
+                  "tags": [
+                    "injected-default"
+                  ],
+                  "wire": "minecraft:collision_box.boxes[].minZ"
+                },
+                {
+                  "kind": "constant",
+                  "value": "1",
+                  "nbt": "byte",
+                  "tags": [
+                    "injected-default"
+                  ],
+                  "wire": "minecraft:collision_box.enabled"
+                }
+              ],
+              "whenAbsent": {
+                "minecraft:collision_box.boxes[].maxX": "omitted",
+                "minecraft:collision_box.boxes[].maxY": "omitted",
+                "minecraft:collision_box.boxes[].maxZ": "omitted",
+                "minecraft:collision_box.boxes[].minX": "omitted",
+                "minecraft:collision_box.boxes[].minY": "omitted",
+                "minecraft:collision_box.boxes[].minZ": "omitted",
+                "minecraft:collision_box.enabled": "omitted"
+              },
+              "reference": "control (the base was rejected)"
+            },
+            "[].size.z": {
+              "transform": "collisionBoxes",
+              "status": "hand-rule",
+              "rules": [
+                {
+                  "kind": "constant",
+                  "value": "16.0",
+                  "nbt": "float",
+                  "tags": [
+                    "injected-default"
+                  ],
+                  "wire": "minecraft:collision_box.boxes[].maxX"
+                },
+                {
+                  "kind": "constant",
+                  "value": "16.0",
+                  "nbt": "float",
+                  "tags": [
+                    "injected-default"
+                  ],
+                  "wire": "minecraft:collision_box.boxes[].maxY"
+                },
+                {
+                  "kind": "identity",
+                  "nbt": "float",
+                  "tags": [
+                    "renamed",
+                    "type:integer->float"
+                  ],
+                  "wire": "minecraft:collision_box.boxes[].maxZ"
+                },
+                {
+                  "kind": "constant",
+                  "value": "0.0",
+                  "nbt": "float",
+                  "tags": [
+                    "injected-default"
+                  ],
+                  "wire": "minecraft:collision_box.boxes[].minX"
+                },
+                {
+                  "kind": "constant",
+                  "value": "0.0",
+                  "nbt": "float",
+                  "tags": [
+                    "injected-default"
+                  ],
+                  "wire": "minecraft:collision_box.boxes[].minY"
+                },
+                {
+                  "kind": "constant",
+                  "value": "0.0",
+                  "nbt": "float",
+                  "tags": [
+                    "injected-default"
+                  ],
+                  "wire": "minecraft:collision_box.boxes[].minZ"
+                },
+                {
+                  "kind": "constant",
+                  "value": "1",
+                  "nbt": "byte",
+                  "tags": [
+                    "injected-default"
+                  ],
+                  "wire": "minecraft:collision_box.enabled"
+                }
+              ],
+              "whenAbsent": {
+                "minecraft:collision_box.boxes[].maxX": "omitted",
+                "minecraft:collision_box.boxes[].maxY": "omitted",
+                "minecraft:collision_box.boxes[].maxZ": "omitted",
+                "minecraft:collision_box.boxes[].minX": "omitted",
+                "minecraft:collision_box.boxes[].minY": "omitted",
+                "minecraft:collision_box.boxes[].minZ": "omitted",
+                "minecraft:collision_box.enabled": "omitted"
+              },
+              "reference": "control (the base was rejected)"
             }
           },
           "transforms": {
@@ -1410,28 +1883,348 @@
               "status": "rejected",
               "reference": "control (the base was rejected)"
             },
-            "[].max.x": {
+            "[].origin": {
               "status": "rejected",
               "reference": "control (the base was rejected)"
             },
-            "[].max.y": {
+            "[].origin.x": {
               "status": "rejected",
               "reference": "control (the base was rejected)"
             },
-            "[].max.z": {
+            "[].origin.y": {
               "status": "rejected",
               "reference": "control (the base was rejected)"
             },
-            "[].min.x": {
+            "[].origin.z": {
               "status": "rejected",
               "reference": "control (the base was rejected)"
             },
-            "[].min.y": {
-              "status": "rejected",
+            "[].size": {
+              "transform": "collisionBoxes",
+              "status": "hand-rule",
+              "rules": [
+                {
+                  "kind": "constant",
+                  "value": "16.0",
+                  "nbt": "float",
+                  "tags": [
+                    "injected-default"
+                  ],
+                  "wire": "minecraft:collision_box.boxes[].maxX"
+                },
+                {
+                  "kind": "identity",
+                  "element": 1,
+                  "nbt": "float",
+                  "tags": [
+                    "renamed",
+                    "nested",
+                    "list-element"
+                  ],
+                  "wire": "minecraft:collision_box.boxes[].maxY"
+                },
+                {
+                  "kind": "identity",
+                  "element": 2,
+                  "nbt": "float",
+                  "tags": [
+                    "renamed",
+                    "nested",
+                    "list-element"
+                  ],
+                  "wire": "minecraft:collision_box.boxes[].maxZ"
+                },
+                {
+                  "kind": "linear",
+                  "scale": -1.0,
+                  "offset": 16.0,
+                  "element": 0,
+                  "nbt": "float",
+                  "tags": [
+                    "renamed",
+                    "nested",
+                    "unit-conversion",
+                    "list-element"
+                  ],
+                  "wire": "minecraft:collision_box.boxes[].minX"
+                },
+                {
+                  "kind": "constant",
+                  "value": "0.0",
+                  "nbt": "float",
+                  "tags": [
+                    "injected-default"
+                  ],
+                  "wire": "minecraft:collision_box.boxes[].minY"
+                },
+                {
+                  "kind": "constant",
+                  "value": "0.0",
+                  "nbt": "float",
+                  "tags": [
+                    "injected-default"
+                  ],
+                  "wire": "minecraft:collision_box.boxes[].minZ"
+                },
+                {
+                  "kind": "constant",
+                  "value": "1",
+                  "nbt": "byte",
+                  "tags": [
+                    "injected-default"
+                  ],
+                  "wire": "minecraft:collision_box.enabled"
+                }
+              ],
+              "whenAbsent": {
+                "minecraft:collision_box.boxes[].maxX": "omitted",
+                "minecraft:collision_box.boxes[].maxY": "omitted",
+                "minecraft:collision_box.boxes[].maxZ": "omitted",
+                "minecraft:collision_box.boxes[].minX": "omitted",
+                "minecraft:collision_box.boxes[].minY": "omitted",
+                "minecraft:collision_box.boxes[].minZ": "omitted",
+                "minecraft:collision_box.enabled": "omitted"
+              },
               "reference": "control (the base was rejected)"
             },
-            "[].min.z": {
-              "status": "rejected",
+            "[].size.x": {
+              "transform": "collisionBoxes",
+              "status": "hand-rule",
+              "rules": [
+                {
+                  "kind": "constant",
+                  "value": "16.0",
+                  "nbt": "float",
+                  "tags": [
+                    "injected-default"
+                  ],
+                  "wire": "minecraft:collision_box.boxes[].maxX"
+                },
+                {
+                  "kind": "constant",
+                  "value": "0.0",
+                  "nbt": "float",
+                  "tags": [
+                    "injected-default"
+                  ],
+                  "wire": "minecraft:collision_box.boxes[].maxY"
+                },
+                {
+                  "kind": "constant",
+                  "value": "0.0",
+                  "nbt": "float",
+                  "tags": [
+                    "injected-default"
+                  ],
+                  "wire": "minecraft:collision_box.boxes[].maxZ"
+                },
+                {
+                  "kind": "linear",
+                  "scale": -1.0,
+                  "offset": 16.0,
+                  "nbt": "float",
+                  "tags": [
+                    "renamed",
+                    "type:integer->float",
+                    "unit-conversion"
+                  ],
+                  "wire": "minecraft:collision_box.boxes[].minX"
+                },
+                {
+                  "kind": "constant",
+                  "value": "0.0",
+                  "nbt": "float",
+                  "tags": [
+                    "injected-default"
+                  ],
+                  "wire": "minecraft:collision_box.boxes[].minY"
+                },
+                {
+                  "kind": "constant",
+                  "value": "0.0",
+                  "nbt": "float",
+                  "tags": [
+                    "injected-default"
+                  ],
+                  "wire": "minecraft:collision_box.boxes[].minZ"
+                },
+                {
+                  "kind": "constant",
+                  "value": "1",
+                  "nbt": "byte",
+                  "tags": [
+                    "injected-default"
+                  ],
+                  "wire": "minecraft:collision_box.enabled"
+                }
+              ],
+              "whenAbsent": {
+                "minecraft:collision_box.boxes[].maxX": "omitted",
+                "minecraft:collision_box.boxes[].maxY": "omitted",
+                "minecraft:collision_box.boxes[].maxZ": "omitted",
+                "minecraft:collision_box.boxes[].minX": "omitted",
+                "minecraft:collision_box.boxes[].minY": "omitted",
+                "minecraft:collision_box.boxes[].minZ": "omitted",
+                "minecraft:collision_box.enabled": "omitted"
+              },
+              "reference": "control (the base was rejected)"
+            },
+            "[].size.y": {
+              "transform": "collisionBoxes",
+              "status": "hand-rule",
+              "rules": [
+                {
+                  "kind": "constant",
+                  "value": "16.0",
+                  "nbt": "float",
+                  "tags": [
+                    "injected-default"
+                  ],
+                  "wire": "minecraft:collision_box.boxes[].maxX"
+                },
+                {
+                  "kind": "identity",
+                  "nbt": "float",
+                  "tags": [
+                    "renamed",
+                    "type:integer->float"
+                  ],
+                  "wire": "minecraft:collision_box.boxes[].maxY"
+                },
+                {
+                  "kind": "constant",
+                  "value": "0.0",
+                  "nbt": "float",
+                  "tags": [
+                    "injected-default"
+                  ],
+                  "wire": "minecraft:collision_box.boxes[].maxZ"
+                },
+                {
+                  "kind": "constant",
+                  "value": "16.0",
+                  "nbt": "float",
+                  "tags": [
+                    "injected-default"
+                  ],
+                  "wire": "minecraft:collision_box.boxes[].minX"
+                },
+                {
+                  "kind": "constant",
+                  "value": "0.0",
+                  "nbt": "float",
+                  "tags": [
+                    "injected-default"
+                  ],
+                  "wire": "minecraft:collision_box.boxes[].minY"
+                },
+                {
+                  "kind": "constant",
+                  "value": "0.0",
+                  "nbt": "float",
+                  "tags": [
+                    "injected-default"
+                  ],
+                  "wire": "minecraft:collision_box.boxes[].minZ"
+                },
+                {
+                  "kind": "constant",
+                  "value": "1",
+                  "nbt": "byte",
+                  "tags": [
+                    "injected-default"
+                  ],
+                  "wire": "minecraft:collision_box.enabled"
+                }
+              ],
+              "whenAbsent": {
+                "minecraft:collision_box.boxes[].maxX": "omitted",
+                "minecraft:collision_box.boxes[].maxY": "omitted",
+                "minecraft:collision_box.boxes[].maxZ": "omitted",
+                "minecraft:collision_box.boxes[].minX": "omitted",
+                "minecraft:collision_box.boxes[].minY": "omitted",
+                "minecraft:collision_box.boxes[].minZ": "omitted",
+                "minecraft:collision_box.enabled": "omitted"
+              },
+              "reference": "control (the base was rejected)"
+            },
+            "[].size.z": {
+              "transform": "collisionBoxes",
+              "status": "hand-rule",
+              "rules": [
+                {
+                  "kind": "constant",
+                  "value": "16.0",
+                  "nbt": "float",
+                  "tags": [
+                    "injected-default"
+                  ],
+                  "wire": "minecraft:collision_box.boxes[].maxX"
+                },
+                {
+                  "kind": "constant",
+                  "value": "0.0",
+                  "nbt": "float",
+                  "tags": [
+                    "injected-default"
+                  ],
+                  "wire": "minecraft:collision_box.boxes[].maxY"
+                },
+                {
+                  "kind": "identity",
+                  "nbt": "float",
+                  "tags": [
+                    "renamed",
+                    "type:integer->float"
+                  ],
+                  "wire": "minecraft:collision_box.boxes[].maxZ"
+                },
+                {
+                  "kind": "constant",
+                  "value": "16.0",
+                  "nbt": "float",
+                  "tags": [
+                    "injected-default"
+                  ],
+                  "wire": "minecraft:collision_box.boxes[].minX"
+                },
+                {
+                  "kind": "constant",
+                  "value": "0.0",
+                  "nbt": "float",
+                  "tags": [
+                    "injected-default"
+                  ],
+                  "wire": "minecraft:collision_box.boxes[].minY"
+                },
+                {
+                  "kind": "constant",
+                  "value": "0.0",
+                  "nbt": "float",
+                  "tags": [
+                    "injected-default"
+                  ],
+                  "wire": "minecraft:collision_box.boxes[].minZ"
+                },
+                {
+                  "kind": "constant",
+                  "value": "1",
+                  "nbt": "byte",
+                  "tags": [
+                    "injected-default"
+                  ],
+                  "wire": "minecraft:collision_box.enabled"
+                }
+              ],
+              "whenAbsent": {
+                "minecraft:collision_box.boxes[].maxX": "omitted",
+                "minecraft:collision_box.boxes[].maxY": "omitted",
+                "minecraft:collision_box.boxes[].maxZ": "omitted",
+                "minecraft:collision_box.boxes[].minX": "omitted",
+                "minecraft:collision_box.boxes[].minY": "omitted",
+                "minecraft:collision_box.boxes[].minZ": "omitted",
+                "minecraft:collision_box.enabled": "omitted"
+              },
               "reference": "control (the base was rejected)"
             }
           },
@@ -1612,23 +2405,622 @@
               "status": "rejected",
               "reference": "control (the base was rejected)"
             },
-            "[].max.x": {
-              "status": "not-generated"
+            "[].origin": {
+              "transform": "collisionBoxes",
+              "status": "hand-rule",
+              "rules": [
+                {
+                  "kind": "constant",
+                  "value": "16.0",
+                  "nbt": "float",
+                  "tags": [
+                    "injected-default"
+                  ],
+                  "wire": "minecraft:collision_box.boxes[].maxX"
+                },
+                {
+                  "kind": "constant",
+                  "value": "16.0",
+                  "nbt": "float",
+                  "tags": [
+                    "injected-default"
+                  ],
+                  "wire": "minecraft:collision_box.boxes[].maxY"
+                },
+                {
+                  "kind": "constant",
+                  "value": "16.0",
+                  "nbt": "float",
+                  "tags": [
+                    "injected-default"
+                  ],
+                  "wire": "minecraft:collision_box.boxes[].maxZ"
+                },
+                {
+                  "kind": "constant",
+                  "value": "0.0",
+                  "nbt": "float",
+                  "tags": [
+                    "injected-default"
+                  ],
+                  "wire": "minecraft:collision_box.boxes[].minX"
+                },
+                {
+                  "kind": "constant",
+                  "value": "0.0",
+                  "nbt": "float",
+                  "tags": [
+                    "injected-default"
+                  ],
+                  "wire": "minecraft:collision_box.boxes[].minY"
+                },
+                {
+                  "kind": "constant",
+                  "value": "0.0",
+                  "nbt": "float",
+                  "tags": [
+                    "injected-default"
+                  ],
+                  "wire": "minecraft:collision_box.boxes[].minZ"
+                },
+                {
+                  "kind": "constant",
+                  "value": "1",
+                  "nbt": "byte",
+                  "tags": [
+                    "injected-default"
+                  ],
+                  "wire": "minecraft:collision_box.enabled"
+                },
+                {
+                  "kind": "constant",
+                  "value": "",
+                  "nbt": "string",
+                  "tags": [
+                    "injected-default"
+                  ],
+                  "wire": "minecraft:collision_box.shape"
+                },
+                {
+                  "kind": "constant",
+                  "value": "0",
+                  "nbt": "byte",
+                  "tags": [
+                    "injected-default"
+                  ],
+                  "wire": "minecraft:collision_box.useVoxelShapes"
+                }
+              ],
+              "whenAbsent": {
+                "minecraft:collision_box.boxes[].maxX": "omitted",
+                "minecraft:collision_box.boxes[].maxY": "omitted",
+                "minecraft:collision_box.boxes[].maxZ": "omitted",
+                "minecraft:collision_box.boxes[].minX": "omitted",
+                "minecraft:collision_box.boxes[].minY": "omitted",
+                "minecraft:collision_box.boxes[].minZ": "omitted",
+                "minecraft:collision_box.enabled": "omitted",
+                "minecraft:collision_box.shape": "omitted",
+                "minecraft:collision_box.useVoxelShapes": "omitted"
+              },
+              "reference": "control (the base was rejected)"
             },
-            "[].max.y": {
-              "status": "not-generated"
+            "[].origin.x": {
+              "status": "rejected",
+              "reference": "control (the base was rejected)"
             },
-            "[].max.z": {
-              "status": "not-generated"
+            "[].origin.y": {
+              "transform": "collisionBoxes",
+              "status": "hand-rule",
+              "rules": [
+                {
+                  "kind": "constant",
+                  "value": "16.0",
+                  "nbt": "float",
+                  "tags": [
+                    "injected-default"
+                  ],
+                  "wire": "minecraft:collision_box.boxes[].maxX"
+                },
+                {
+                  "kind": "linear",
+                  "scale": 1.0,
+                  "offset": 16.0,
+                  "nbt": "float",
+                  "tags": [
+                    "renamed",
+                    "type:integer->float",
+                    "unit-conversion"
+                  ],
+                  "wire": "minecraft:collision_box.boxes[].maxY"
+                },
+                {
+                  "kind": "constant",
+                  "value": "16.0",
+                  "nbt": "float",
+                  "tags": [
+                    "injected-default"
+                  ],
+                  "wire": "minecraft:collision_box.boxes[].maxZ"
+                },
+                {
+                  "kind": "constant",
+                  "value": "0.0",
+                  "nbt": "float",
+                  "tags": [
+                    "injected-default"
+                  ],
+                  "wire": "minecraft:collision_box.boxes[].minX"
+                },
+                {
+                  "kind": "identity",
+                  "nbt": "float",
+                  "tags": [
+                    "renamed",
+                    "type:integer->float"
+                  ],
+                  "wire": "minecraft:collision_box.boxes[].minY"
+                },
+                {
+                  "kind": "constant",
+                  "value": "0.0",
+                  "nbt": "float",
+                  "tags": [
+                    "injected-default"
+                  ],
+                  "wire": "minecraft:collision_box.boxes[].minZ"
+                },
+                {
+                  "kind": "constant",
+                  "value": "1",
+                  "nbt": "byte",
+                  "tags": [
+                    "injected-default"
+                  ],
+                  "wire": "minecraft:collision_box.enabled"
+                },
+                {
+                  "kind": "constant",
+                  "value": "",
+                  "nbt": "string",
+                  "tags": [
+                    "injected-default"
+                  ],
+                  "wire": "minecraft:collision_box.shape"
+                },
+                {
+                  "kind": "constant",
+                  "value": "0",
+                  "nbt": "byte",
+                  "tags": [
+                    "injected-default"
+                  ],
+                  "wire": "minecraft:collision_box.useVoxelShapes"
+                }
+              ],
+              "whenAbsent": {
+                "minecraft:collision_box.boxes[].maxX": "omitted",
+                "minecraft:collision_box.boxes[].maxY": "omitted",
+                "minecraft:collision_box.boxes[].maxZ": "omitted",
+                "minecraft:collision_box.boxes[].minX": "omitted",
+                "minecraft:collision_box.boxes[].minY": "omitted",
+                "minecraft:collision_box.boxes[].minZ": "omitted",
+                "minecraft:collision_box.enabled": "omitted",
+                "minecraft:collision_box.shape": "omitted",
+                "minecraft:collision_box.useVoxelShapes": "omitted"
+              },
+              "reference": "control (the base was rejected)"
             },
-            "[].min.x": {
-              "status": "not-generated"
+            "[].origin.z": {
+              "status": "rejected",
+              "reference": "control (the base was rejected)"
             },
-            "[].min.y": {
-              "status": "not-generated"
+            "[].size": {
+              "transform": "collisionBoxes",
+              "status": "hand-rule",
+              "rules": [
+                {
+                  "kind": "constant",
+                  "value": "16.0",
+                  "nbt": "float",
+                  "tags": [
+                    "injected-default"
+                  ],
+                  "wire": "minecraft:collision_box.boxes[].maxX"
+                },
+                {
+                  "kind": "identity",
+                  "element": 1,
+                  "nbt": "float",
+                  "tags": [
+                    "renamed",
+                    "nested",
+                    "list-element"
+                  ],
+                  "wire": "minecraft:collision_box.boxes[].maxY"
+                },
+                {
+                  "kind": "identity",
+                  "element": 2,
+                  "nbt": "float",
+                  "tags": [
+                    "renamed",
+                    "nested",
+                    "list-element"
+                  ],
+                  "wire": "minecraft:collision_box.boxes[].maxZ"
+                },
+                {
+                  "kind": "linear",
+                  "scale": -1.0,
+                  "offset": 16.0,
+                  "element": 0,
+                  "nbt": "float",
+                  "tags": [
+                    "renamed",
+                    "nested",
+                    "unit-conversion",
+                    "list-element"
+                  ],
+                  "wire": "minecraft:collision_box.boxes[].minX"
+                },
+                {
+                  "kind": "constant",
+                  "value": "0.0",
+                  "nbt": "float",
+                  "tags": [
+                    "injected-default"
+                  ],
+                  "wire": "minecraft:collision_box.boxes[].minY"
+                },
+                {
+                  "kind": "constant",
+                  "value": "0.0",
+                  "nbt": "float",
+                  "tags": [
+                    "injected-default"
+                  ],
+                  "wire": "minecraft:collision_box.boxes[].minZ"
+                },
+                {
+                  "kind": "constant",
+                  "value": "1",
+                  "nbt": "byte",
+                  "tags": [
+                    "injected-default"
+                  ],
+                  "wire": "minecraft:collision_box.enabled"
+                },
+                {
+                  "kind": "constant",
+                  "value": "",
+                  "nbt": "string",
+                  "tags": [
+                    "injected-default"
+                  ],
+                  "wire": "minecraft:collision_box.shape"
+                },
+                {
+                  "kind": "constant",
+                  "value": "0",
+                  "nbt": "byte",
+                  "tags": [
+                    "injected-default"
+                  ],
+                  "wire": "minecraft:collision_box.useVoxelShapes"
+                }
+              ],
+              "whenAbsent": {
+                "minecraft:collision_box.boxes[].maxX": "omitted",
+                "minecraft:collision_box.boxes[].maxY": "omitted",
+                "minecraft:collision_box.boxes[].maxZ": "omitted",
+                "minecraft:collision_box.boxes[].minX": "omitted",
+                "minecraft:collision_box.boxes[].minY": "omitted",
+                "minecraft:collision_box.boxes[].minZ": "omitted",
+                "minecraft:collision_box.enabled": "omitted",
+                "minecraft:collision_box.shape": "omitted",
+                "minecraft:collision_box.useVoxelShapes": "omitted"
+              },
+              "reference": "control (the base was rejected)"
             },
-            "[].min.z": {
-              "status": "not-generated"
+            "[].size.x": {
+              "transform": "collisionBoxes",
+              "status": "hand-rule",
+              "rules": [
+                {
+                  "kind": "constant",
+                  "value": "16.0",
+                  "nbt": "float",
+                  "tags": [
+                    "injected-default"
+                  ],
+                  "wire": "minecraft:collision_box.boxes[].maxX"
+                },
+                {
+                  "kind": "constant",
+                  "value": "16.0",
+                  "nbt": "float",
+                  "tags": [
+                    "injected-default"
+                  ],
+                  "wire": "minecraft:collision_box.boxes[].maxY"
+                },
+                {
+                  "kind": "constant",
+                  "value": "16.0",
+                  "nbt": "float",
+                  "tags": [
+                    "injected-default"
+                  ],
+                  "wire": "minecraft:collision_box.boxes[].maxZ"
+                },
+                {
+                  "kind": "linear",
+                  "scale": -1.0,
+                  "offset": 16.0,
+                  "nbt": "float",
+                  "tags": [
+                    "renamed",
+                    "type:integer->float",
+                    "unit-conversion"
+                  ],
+                  "wire": "minecraft:collision_box.boxes[].minX"
+                },
+                {
+                  "kind": "constant",
+                  "value": "0.0",
+                  "nbt": "float",
+                  "tags": [
+                    "injected-default"
+                  ],
+                  "wire": "minecraft:collision_box.boxes[].minY"
+                },
+                {
+                  "kind": "constant",
+                  "value": "0.0",
+                  "nbt": "float",
+                  "tags": [
+                    "injected-default"
+                  ],
+                  "wire": "minecraft:collision_box.boxes[].minZ"
+                },
+                {
+                  "kind": "constant",
+                  "value": "1",
+                  "nbt": "byte",
+                  "tags": [
+                    "injected-default"
+                  ],
+                  "wire": "minecraft:collision_box.enabled"
+                },
+                {
+                  "kind": "constant",
+                  "value": "",
+                  "nbt": "string",
+                  "tags": [
+                    "injected-default"
+                  ],
+                  "wire": "minecraft:collision_box.shape"
+                },
+                {
+                  "kind": "constant",
+                  "value": "0",
+                  "nbt": "byte",
+                  "tags": [
+                    "injected-default"
+                  ],
+                  "wire": "minecraft:collision_box.useVoxelShapes"
+                }
+              ],
+              "whenAbsent": {
+                "minecraft:collision_box.boxes[].maxX": "omitted",
+                "minecraft:collision_box.boxes[].maxY": "omitted",
+                "minecraft:collision_box.boxes[].maxZ": "omitted",
+                "minecraft:collision_box.boxes[].minX": "omitted",
+                "minecraft:collision_box.boxes[].minY": "omitted",
+                "minecraft:collision_box.boxes[].minZ": "omitted",
+                "minecraft:collision_box.enabled": "omitted",
+                "minecraft:collision_box.shape": "omitted",
+                "minecraft:collision_box.useVoxelShapes": "omitted"
+              },
+              "reference": "control (the base was rejected)"
+            },
+            "[].size.y": {
+              "transform": "collisionBoxes",
+              "status": "hand-rule",
+              "rules": [
+                {
+                  "kind": "constant",
+                  "value": "16.0",
+                  "nbt": "float",
+                  "tags": [
+                    "injected-default"
+                  ],
+                  "wire": "minecraft:collision_box.boxes[].maxX"
+                },
+                {
+                  "kind": "identity",
+                  "nbt": "float",
+                  "tags": [
+                    "renamed",
+                    "type:integer->float"
+                  ],
+                  "wire": "minecraft:collision_box.boxes[].maxY"
+                },
+                {
+                  "kind": "constant",
+                  "value": "16.0",
+                  "nbt": "float",
+                  "tags": [
+                    "injected-default"
+                  ],
+                  "wire": "minecraft:collision_box.boxes[].maxZ"
+                },
+                {
+                  "kind": "constant",
+                  "value": "0.0",
+                  "nbt": "float",
+                  "tags": [
+                    "injected-default"
+                  ],
+                  "wire": "minecraft:collision_box.boxes[].minX"
+                },
+                {
+                  "kind": "constant",
+                  "value": "0.0",
+                  "nbt": "float",
+                  "tags": [
+                    "injected-default"
+                  ],
+                  "wire": "minecraft:collision_box.boxes[].minY"
+                },
+                {
+                  "kind": "constant",
+                  "value": "0.0",
+                  "nbt": "float",
+                  "tags": [
+                    "injected-default"
+                  ],
+                  "wire": "minecraft:collision_box.boxes[].minZ"
+                },
+                {
+                  "kind": "constant",
+                  "value": "1",
+                  "nbt": "byte",
+                  "tags": [
+                    "injected-default"
+                  ],
+                  "wire": "minecraft:collision_box.enabled"
+                },
+                {
+                  "kind": "constant",
+                  "value": "",
+                  "nbt": "string",
+                  "tags": [
+                    "injected-default"
+                  ],
+                  "wire": "minecraft:collision_box.shape"
+                },
+                {
+                  "kind": "constant",
+                  "value": "0",
+                  "nbt": "byte",
+                  "tags": [
+                    "injected-default"
+                  ],
+                  "wire": "minecraft:collision_box.useVoxelShapes"
+                }
+              ],
+              "whenAbsent": {
+                "minecraft:collision_box.boxes[].maxX": "omitted",
+                "minecraft:collision_box.boxes[].maxY": "omitted",
+                "minecraft:collision_box.boxes[].maxZ": "omitted",
+                "minecraft:collision_box.boxes[].minX": "omitted",
+                "minecraft:collision_box.boxes[].minY": "omitted",
+                "minecraft:collision_box.boxes[].minZ": "omitted",
+                "minecraft:collision_box.enabled": "omitted",
+                "minecraft:collision_box.shape": "omitted",
+                "minecraft:collision_box.useVoxelShapes": "omitted"
+              },
+              "reference": "control (the base was rejected)"
+            },
+            "[].size.z": {
+              "transform": "collisionBoxes",
+              "status": "hand-rule",
+              "rules": [
+                {
+                  "kind": "constant",
+                  "value": "16.0",
+                  "nbt": "float",
+                  "tags": [
+                    "injected-default"
+                  ],
+                  "wire": "minecraft:collision_box.boxes[].maxX"
+                },
+                {
+                  "kind": "constant",
+                  "value": "16.0",
+                  "nbt": "float",
+                  "tags": [
+                    "injected-default"
+                  ],
+                  "wire": "minecraft:collision_box.boxes[].maxY"
+                },
+                {
+                  "kind": "identity",
+                  "nbt": "float",
+                  "tags": [
+                    "renamed",
+                    "type:integer->float"
+                  ],
+                  "wire": "minecraft:collision_box.boxes[].maxZ"
+                },
+                {
+                  "kind": "constant",
+                  "value": "0.0",
+                  "nbt": "float",
+                  "tags": [
+                    "injected-default"
+                  ],
+                  "wire": "minecraft:collision_box.boxes[].minX"
+                },
+                {
+                  "kind": "constant",
+                  "value": "0.0",
+                  "nbt": "float",
+                  "tags": [
+                    "injected-default"
+                  ],
+                  "wire": "minecraft:collision_box.boxes[].minY"
+                },
+                {
+                  "kind": "constant",
+                  "value": "0.0",
+                  "nbt": "float",
+                  "tags": [
+                    "injected-default"
+                  ],
+                  "wire": "minecraft:collision_box.boxes[].minZ"
+                },
+                {
+                  "kind": "constant",
+                  "value": "1",
+                  "nbt": "byte",
+                  "tags": [
+                    "injected-default"
+                  ],
+                  "wire": "minecraft:collision_box.enabled"
+                },
+                {
+                  "kind": "constant",
+                  "value": "",
+                  "nbt": "string",
+                  "tags": [
+                    "injected-default"
+                  ],
+                  "wire": "minecraft:collision_box.shape"
+                },
+                {
+                  "kind": "constant",
+                  "value": "0",
+                  "nbt": "byte",
+                  "tags": [
+                    "injected-default"
+                  ],
+                  "wire": "minecraft:collision_box.useVoxelShapes"
+                }
+              ],
+              "whenAbsent": {
+                "minecraft:collision_box.boxes[].maxX": "omitted",
+                "minecraft:collision_box.boxes[].maxY": "omitted",
+                "minecraft:collision_box.boxes[].maxZ": "omitted",
+                "minecraft:collision_box.boxes[].minX": "omitted",
+                "minecraft:collision_box.boxes[].minY": "omitted",
+                "minecraft:collision_box.boxes[].minZ": "omitted",
+                "minecraft:collision_box.enabled": "omitted",
+                "minecraft:collision_box.shape": "omitted",
+                "minecraft:collision_box.useVoxelShapes": "omitted"
+              },
+              "reference": "control (the base was rejected)"
             }
           },
           "transforms": {

@@ -18,14 +18,13 @@ What the captures show but no field explains:
 
 | | count |
 |---|---|
-| documented | 112 |
+| documented | 111 |
 | sent | 80 |
 | accepted by BDS | 95 |
 | rejected | 14 |
 | server-only | 15 |
 | untestable | 1 |
 | skipped | 1 |
-| not tested | 1 |
 
 `sent`: the component changes the wire; `server-only`: accepted, nothing on the wire; `rejected`: BDS rejects every variant; `untestable`: its companions were rejected.
 
@@ -33,18 +32,18 @@ What the captures show but no field explains:
 
 | status | docs fields | errata fields |
 |---|---|---|
-| documented | 390 | 6 |
-| accepted by BDS | 329 | 3 |
-| sent on wire | 290 | 3 |
+| documented | 392 | 6 |
+| accepted by BDS | 335 | 3 |
+| sent on wire | 296 | 3 |
 | inferred | 197 | 0 |
 | partial | 0 | 0 |
 | unresolved | 1 | 0 |
-| hand-rule | 92 | 3 |
+| hand-rule | 98 | 3 |
 | dropped | 38 | 0 |
 | linked | 0 | 0 |
-| rejected | 41 | 3 |
+| rejected | 43 | 3 |
 | no-evidence | 1 | 0 |
-| not-generated | 20 | 0 |
+| not-generated | 14 | 0 |
 
 `inferred`: every wire leaf the field moves is explained by an automatic rule; `partial`: some are; `unresolved`: none is
 (needs a hand rule); `hand-rule`: unresolved or partial and named in `HandTransforms`; `dropped`: BDS accepts the
@@ -59,14 +58,14 @@ together and capture again); `rejected`: every variant setting it was rejected;
 |---|---|
 | affix | 2 |
 | bitset | 8 |
-| constant | 250 |
+| constant | 296 |
 | descriptor | 4 |
 | empty-list | 16 |
 | empty-map | 5 |
 | enum-table | 5 |
 | hash-ordered-set | 3 |
-| identity | 243 |
-| linear | 7 |
+| identity | 248 |
+| linear | 10 |
 | molang | 3 |
 | ordered-set | 2 |
 | packed-bits | 14 |
@@ -78,17 +77,17 @@ together and capture again); `rejected`: every variant setting it was rejected;
 | enum->int | 6 |
 | explained-by-child-fields | 53 |
 | flattened | 25 |
-| injected-default | 250 |
+| injected-default | 296 |
 | item_properties | 20 |
-| list-element | 25 |
-| nested | 87 |
+| list-element | 28 |
+| nested | 90 |
 | outside-component:* | 3 |
 | packed-bits | 14 |
 | presence | 16 |
 | registry-resolved | 4 |
-| renamed | 101 |
-| type:* | 122 |
-| unit-conversion | 7 |
+| renamed | 109 |
+| type:* | 127 |
+| unit-conversion | 10 |
 | value-map | 2 |
 
 ## Per component
@@ -102,7 +101,7 @@ together and capture again); `rejected`: every variant setting it was rejected;
 | `block:minecraft:bone_visibility` | deprecated | rejected |  | 0 / 0 / 0 / 0 / 0 / 0 |
 | `block:minecraft:breathability` | deprecated | rejected |  | 0 / 0 / 0 / 0 / 0 / 0 |
 | `block:minecraft:chest_obstruction` | active (exp.) | server-only |  | 0 / 0 / 0 / 1 / 0 / 1 |
-| `block:minecraft:collision_box` | active (exp.) | sent | minecraft:collision_box | 0 / 0 / 0 / 0 / 4 / 10 |
+| `block:minecraft:collision_box` | active (exp.) | sent | minecraft:collision_box | 0 / 0 / 6 / 0 / 6 / 12 |
 | `block:minecraft:connection_rule` | active (exp.) | sent | minecraft:connection_rule | 2 / 0 / 0 / 0 / 0 / 2 |
 | `block:minecraft:crafting_table` | active (exp.) | sent | minecraft:crafting_table | 2 / 0 / 0 / 0 / 0 / 2 |
 | `block:minecraft:custom_components` | deprecated | sent | minecraft:custom_components, permutations | 0 / 0 / 0 / 0 / 0 / 0 |
@@ -201,7 +200,6 @@ together and capture again); `rejected`: every variant setting it was rejected;
 | `item:minecraft:weapon` | deprecated | rejected |  | 0 / 0 / 0 / 0 / 3 / 3 |
 | `item:minecraft:wearable` | active | sent | item_properties.allow_off_hand, item_properties.max_stack_size, minecraft:allow_... | 3 / 0 / 0 / 0 / 1 / 4 |
 | `block:minecraft:enchantment_power_transmitter` | active | server-only |  | 0 / 0 / 0 / 0 / 0 / 0 |
-| `block:minecraft:jukebox_playlist_source` | active | not tested |  | 0 / 0 / 0 / 0 / 0 / 0 |
 | `block:minecraft:leashable` | active | sent | minecraft:leashable | 4 / 0 / 0 / 0 / 0 / 4 |
 | `block:minecraft:neighbor_change` | active | server-only |  | 0 / 0 / 0 / 1 / 0 / 1 |
 | `block:minecraft:sound` | active | sent | minecraft:sound | 1 / 0 / 0 / 0 / 0 / 1 |
@@ -210,6 +208,12 @@ together and capture again); `rejected`: every variant setting it was rejected;
 
 ## Fields that need a hand rule
 
+- `block:minecraft:collision_box` `[].origin`: hand-rule -> `collisionBoxes`
+- `block:minecraft:collision_box` `[].origin.y`: hand-rule -> `collisionBoxes`
+- `block:minecraft:collision_box` `[].size`: hand-rule -> `collisionBoxes`
+- `block:minecraft:collision_box` `[].size.x`: hand-rule -> `collisionBoxes`
+- `block:minecraft:collision_box` `[].size.y`: hand-rule -> `collisionBoxes`
+- `block:minecraft:collision_box` `[].size.z`: hand-rule -> `collisionBoxes`
 - `block:minecraft:destructible_by_mining` `item_specific_speeds`: hand-rule -> `destructibleByMining`
 - `block:minecraft:destructible_by_mining` `item_specific_speeds[].destroy_speed`: hand-rule -> `destructibleByMining`
 - `block:minecraft:destructible_by_mining` `item_specific_speeds[].item`: hand-rule -> `destructibleByMining`

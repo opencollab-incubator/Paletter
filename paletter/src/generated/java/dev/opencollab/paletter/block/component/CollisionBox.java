@@ -194,48 +194,54 @@ public final class CollisionBox implements BlockComponent {
      *
      */
     public static final class Entry {
-        private Entry() {
+        private final @NonNull Vec3 origin;
+
+        private final @NonNull Vec3 size;
+
+        private Entry(@NonNull Vec3 origin, @NonNull Vec3 size) {
+            Objects.requireNonNull(origin, "CollisionBox.Entry.origin");
+            Objects.requireNonNull(size, "CollisionBox.Entry.size");
+            this.origin = origin;
+            this.size = size;
         }
 
         /**
-         * Bedrock no longer has add-on JSON {@code origin}: this stand-in returns null, and its builder setter does nothing.
+         * (bds-schema 26.70) BDS accepts this key; the creator docs do not list it. Add-on JSON {@code origin}. Default:
+         * <code>[-8.0,0.0,-8.0]</code>.
          *
-         * @return null
-         * @deprecated Bedrock no longer has it; it goes in the next major release
+         * @return the value
          */
-        @Deprecated(
-                forRemoval = true
-        )
-        public @Nullable Vec3 origin() {
-            return null;
+        public @NonNull Vec3 origin() {
+            return origin;
         }
 
         /**
-         * Bedrock no longer has add-on JSON {@code size}: this stand-in returns null, and its builder setter does nothing.
+         * (bds-schema 26.70) BDS accepts this key; the creator docs do not list it. Add-on JSON {@code size}. Default:
+         * <code>[16.0,16.0,16.0]</code>.
          *
-         * @return null
-         * @deprecated Bedrock no longer has it; it goes in the next major release
+         * @return the value
          */
-        @Deprecated(
-                forRemoval = true
-        )
-        public @Nullable Vec3 size() {
-            return null;
+        public @NonNull Vec3 size() {
+            return size;
         }
 
         @Override
         public boolean equals(Object o) {
-            return o instanceof Entry;
+            return this == o || o instanceof Entry other
+                    && Objects.equals(origin, other.origin)
+                    && Objects.equals(size, other.size);
         }
 
         @Override
         public int hashCode() {
-            return 0;
+            int h = Objects.hashCode(origin);
+            h = 31 * h + Objects.hashCode(size);
+            return h;
         }
 
         @Override
         public String toString() {
-            return "Entry[]";
+            return "Entry[origin=" + origin + ", size=" + size + "]";
         }
 
         /**
@@ -254,6 +260,8 @@ public final class CollisionBox implements BlockComponent {
          */
         public @NonNull Builder toBuilder() {
             Builder builder = new Builder();
+            builder.origin = origin;
+            builder.size = size;
             return builder;
         }
 
@@ -261,35 +269,59 @@ public final class CollisionBox implements BlockComponent {
          * Builds {@link Entry}: defaults applied, required fields and ranges checked by {@link #build()}.
          */
         public static final class Builder {
+            private @Nullable Vec3 origin = new Vec3(-8.0f, 0.0f, -8.0f);
+
+            private @Nullable Vec3 size = new Vec3(16.0f, 16.0f, 16.0f);
+
             private Builder() {
             }
 
             /**
-             * Does nothing: Bedrock no longer has add-on JSON {@code origin}.
+             * Sets {@code origin}.
              *
-             * @param origin ignored
+             * @param origin the value
              * @return this builder
-             * @deprecated Bedrock no longer has it; it goes in the next major release
+             * @throws NullPointerException if the value is null
              */
-            @Deprecated(
-                    forRemoval = true
-            )
-            public @NonNull Builder origin(@Nullable Vec3 origin) {
+            public @NonNull Builder origin(@NonNull Vec3 origin) {
+                this.origin = Objects.requireNonNull(origin, "CollisionBox.Entry.origin");
                 return this;
             }
 
             /**
-             * Does nothing: Bedrock no longer has add-on JSON {@code size}.
+             * Sets {@code origin}.
              *
-             * @param size ignored
+             * @param x the x component
+             * @param y the y component
+             * @param z the z component
              * @return this builder
-             * @deprecated Bedrock no longer has it; it goes in the next major release
              */
-            @Deprecated(
-                    forRemoval = true
-            )
-            public @NonNull Builder size(@Nullable Vec3 size) {
+            public @NonNull Builder origin(float x, float y, float z) {
+                return origin(new Vec3(x, y, z));
+            }
+
+            /**
+             * Sets {@code size}.
+             *
+             * @param size the value
+             * @return this builder
+             * @throws NullPointerException if the value is null
+             */
+            public @NonNull Builder size(@NonNull Vec3 size) {
+                this.size = Objects.requireNonNull(size, "CollisionBox.Entry.size");
                 return this;
+            }
+
+            /**
+             * Sets {@code size}.
+             *
+             * @param x the x component
+             * @param y the y component
+             * @param z the z component
+             * @return this builder
+             */
+            public @NonNull Builder size(float x, float y, float z) {
+                return size(new Vec3(x, y, z));
             }
 
             /**
@@ -300,7 +332,7 @@ public final class CollisionBox implements BlockComponent {
              * @throws IllegalArgumentException if a value is out of range
              */
             public @NonNull Entry build() {
-                return new Entry();
+                return new Entry(origin, size);
             }
         }
     }

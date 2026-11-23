@@ -205,7 +205,7 @@ public final class ComponentIndex {
         keys(ChestObstruction.class, "obstruction_rule", "obstructionRule");
         BLOCK.put("minecraft:collision_box", CollisionBox.class);
         keys(CollisionBox.class);
-        keys(CollisionBox.Entry.class);
+        keys(CollisionBox.Entry.class, "origin", "origin", "size", "size");
         FORMS.put(CollisionBox.class, Map.of("array<object>", "boxes", "boolean", "enabled", "object", "boxes[]"));
         BLOCK.put("minecraft:connection_rule", ConnectionRule.class);
         keys(ConnectionRule.class, "accepts_connections_from", "acceptsConnectionsFrom", "enabled_directions", "enabledDirections");

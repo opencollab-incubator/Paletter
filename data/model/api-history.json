@@ -541,25 +541,40 @@
       "wire": [
         "minecraft:collision_box.boxes[].maxX",
         "minecraft:collision_box.boxes[].maxY",
+        "minecraft:collision_box.boxes[].maxZ",
         "minecraft:collision_box.boxes[].minX",
-        "minecraft:collision_box.boxes[].minY",
-        "minecraft:collision_box.enabled",
-        "minecraft:collision_box.shape",
-        "minecraft:collision_box.useVoxelShapes"
-      ],
-      "type": "vec3"
-    },
-    "block:minecraft:collision_box:[].size": {
-      "name": "size",
-      "wire": [
-        "minecraft:collision_box.boxes[].maxY",
         "minecraft:collision_box.boxes[].minY",
         "minecraft:collision_box.boxes[].minZ",
         "minecraft:collision_box.enabled",
         "minecraft:collision_box.shape",
         "minecraft:collision_box.useVoxelShapes"
       ],
-      "type": "vec3"
+      "type": "vec3",
+      "default": [
+        -8.0,
+        0.0,
+        -8.0
+      ]
+    },
+    "block:minecraft:collision_box:[].size": {
+      "name": "size",
+      "wire": [
+        "minecraft:collision_box.boxes[].maxX",
+        "minecraft:collision_box.boxes[].maxY",
+        "minecraft:collision_box.boxes[].maxZ",
+        "minecraft:collision_box.boxes[].minX",
+        "minecraft:collision_box.boxes[].minY",
+        "minecraft:collision_box.boxes[].minZ",
+        "minecraft:collision_box.enabled",
+        "minecraft:collision_box.shape",
+        "minecraft:collision_box.useVoxelShapes"
+      ],
+      "type": "vec3",
+      "default": [
+        16.0,
+        16.0,
+        16.0
+      ]
     },
     "block:minecraft:connection_rule:accepts_connections_from": {
       "name": "acceptsConnectionsFrom",

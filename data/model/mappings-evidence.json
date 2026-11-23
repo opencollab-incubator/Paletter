@@ -553,6 +553,156 @@
                 "minecraft:collision_box: invalid numeric value",
                 "minecraft:collision_box: Invalid box size\"origin\" + \"size\", must be inside the following limit: Vec3(-8,0,-8) and Vec3(8,24,8)"
               ]
+            },
+            "[].origin": {
+              "accepted": 1,
+              "rejected": 7,
+              "rejectedValues": [
+                "vec3:1,2",
+                "vec3:1,2,3,4",
+                "vec3:1,2,3",
+                "vec3:-4,5.5,0",
+                "vec3:0,0,0",
+                "vec3:16,16,16",
+                "vec3:-2,1,1"
+              ],
+              "bdsErrors": [
+                "minecraft:collision_box: expected an object",
+                "minecraft:collision_box: invalid numeric value",
+                "origin: Expected [x, y, z].",
+                "minecraft:collision_box: Invalid box sizeThe total of each \"origin\" + \"size\" pair, must be inside the following limit: Vec3(-8,0,-8) and Vec3(8,24,8)"
+              ]
+            },
+            "[].origin.x": {
+              "accepted": 0,
+              "rejected": 10,
+              "rejectedValues": [
+                "number:0",
+                "number:0.5",
+                "number:1",
+                "number:2.25",
+                "number:30",
+                "number:-1",
+                "number:90",
+                "number:-90",
+                "number:450",
+                "number:45"
+              ],
+              "bdsErrors": [
+                "minecraft:collision_box: Invalid box sizeThe total of each \"origin\" + \"size\" pair, must be inside the following limit: Vec3(-8,0,-8) and Vec3(8,24,8)",
+                "minecraft:collision_box: expected an object",
+                "minecraft:collision_box: invalid numeric value",
+                "origin: Expected [x, y, z]."
+              ]
+            },
+            "[].origin.y": {
+              "accepted": 4,
+              "rejected": 6,
+              "rejectedValues": [
+                "number:30",
+                "number:-1",
+                "number:90",
+                "number:-90",
+                "number:450",
+                "number:45"
+              ],
+              "bdsErrors": [
+                "minecraft:collision_box: expected an object",
+                "minecraft:collision_box: invalid numeric value",
+                "origin: Expected [x, y, z]."
+              ]
+            },
+            "[].origin.z": {
+              "accepted": 0,
+              "rejected": 10,
+              "rejectedValues": [
+                "number:0",
+                "number:0.5",
+                "number:1",
+                "number:2.25",
+                "number:30",
+                "number:-1",
+                "number:90",
+                "number:-90",
+                "number:450",
+                "number:45"
+              ],
+              "bdsErrors": [
+                "minecraft:collision_box: Invalid box sizeThe total of each \"origin\" + \"size\" pair, must be inside the following limit: Vec3(-8,0,-8) and Vec3(8,24,8)",
+                "minecraft:collision_box: expected an object",
+                "minecraft:collision_box: invalid numeric value",
+                "origin: Expected [x, y, z]."
+              ]
+            },
+            "[].size": {
+              "accepted": 4,
+              "rejected": 4,
+              "rejectedValues": [
+                "vec3:1,2",
+                "vec3:1,2,3,4",
+                "vec3:-4,5.5,0",
+                "vec3:-2,1,1"
+              ],
+              "bdsErrors": [
+                "minecraft:collision_box: expected an object",
+                "minecraft:collision_box: invalid numeric value",
+                "size: Expected [x, y, z].",
+                "minecraft:collision_box: Invalid box sizeThe total of each \"origin\" + \"size\" pair, must be inside the following limit: Vec3(-8,0,-8) and Vec3(8,24,8)"
+              ]
+            },
+            "[].size.x": {
+              "accepted": 4,
+              "rejected": 6,
+              "rejectedValues": [
+                "number:30",
+                "number:-1",
+                "number:90",
+                "number:-90",
+                "number:450",
+                "number:45"
+              ],
+              "bdsErrors": [
+                "minecraft:collision_box: expected an object",
+                "minecraft:collision_box: invalid numeric value",
+                "size: Expected [x, y, z].",
+                "minecraft:collision_box: Invalid box sizeThe total of each \"origin\" + \"size\" pair, must be inside the following limit: Vec3(-8,0,-8) and Vec3(8,24,8)"
+              ]
+            },
+            "[].size.y": {
+              "accepted": 4,
+              "rejected": 6,
+              "rejectedValues": [
+                "number:30",
+                "number:-1",
+                "number:90",
+                "number:-90",
+                "number:450",
+                "number:45"
+              ],
+              "bdsErrors": [
+                "minecraft:collision_box: expected an object",
+                "minecraft:collision_box: invalid numeric value",
+                "size: Expected [x, y, z].",
+                "minecraft:collision_box: Invalid box sizeThe total of each \"origin\" + \"size\" pair, must be inside the following limit: Vec3(-8,0,-8) and Vec3(8,24,8)"
+              ]
+            },
+            "[].size.z": {
+              "accepted": 4,
+              "rejected": 6,
+              "rejectedValues": [
+                "number:30",
+                "number:-1",
+                "number:90",
+                "number:-90",
+                "number:450",
+                "number:45"
+              ],
+              "bdsErrors": [
+                "minecraft:collision_box: expected an object",
+                "minecraft:collision_box: invalid numeric value",
+                "size: Expected [x, y, z].",
+                "minecraft:collision_box: Invalid box sizeThe total of each \"origin\" + \"size\" pair, must be inside the following limit: Vec3(-8,0,-8) and Vec3(8,24,8)"
+              ]
             }
           },
           "forms": {
@@ -671,28 +821,26 @@
                 "minecraft:collision_box: invalid numeric value"
               ]
             },
-            "[].max.x": {
+            "[].origin": {
               "accepted": 0,
-              "rejected": 10,
+              "rejected": 8,
               "rejectedValues": [
-                "number:0",
-                "number:0.5",
-                "number:1",
-                "number:2.25",
-                "number:30",
-                "number:-1",
-                "number:90",
-                "number:-90",
-                "number:450",
-                "number:45"
+                "vec3:1,2",
+                "vec3:1,2,3,4",
+                "vec3:1,2,3",
+                "vec3:-4,5.5,0",
+                "vec3:0,0,0",
+                "vec3:16,16,16",
+                "vec3:-2,1,1",
+                "object:{}"
               ],
               "bdsErrors": [
-                "minecraft:collision_box: \"origin\"/\"size\" cannot be combined with \"min\"/\"max\"",
                 "minecraft:collision_box: invalid numeric value",
-                "max: Expected [x, y, z]."
+                "origin: Expected [x, y, z].",
+                "minecraft:collision_box: Invalid box boundsThe area covered by all boxes must be within Vec3(0,0,0) to Vec3(16,24,16)"
               ]
             },
-            "[].max.y": {
+            "[].origin.x": {
               "accepted": 0,
               "rejected": 10,
               "rejectedValues": [
@@ -708,12 +856,12 @@
                 "number:45"
               ],
               "bdsErrors": [
-                "minecraft:collision_box: \"origin\"/\"size\" cannot be combined with \"min\"/\"max\"",
+                "minecraft:collision_box: Invalid box boundsThe area covered by all boxes must be within Vec3(0,0,0) to Vec3(16,24,16)",
                 "minecraft:collision_box: invalid numeric value",
-                "max: Expected [x, y, z]."
+                "origin: Expected [x, y, z]."
               ]
             },
-            "[].max.z": {
+            "[].origin.y": {
               "accepted": 0,
               "rejected": 10,
               "rejectedValues": [
@@ -729,12 +877,12 @@
                 "number:45"
               ],
               "bdsErrors": [
-                "minecraft:collision_box: \"origin\"/\"size\" cannot be combined with \"min\"/\"max\"",
+                "minecraft:collision_box: Invalid box boundsThe area covered by all boxes must be within Vec3(0,0,0) to Vec3(16,24,16)",
                 "minecraft:collision_box: invalid numeric value",
-                "max: Expected [x, y, z]."
+                "origin: Expected [x, y, z]."
               ]
             },
-            "[].min.x": {
+            "[].origin.z": {
               "accepted": 0,
               "rejected": 10,
               "rejectedValues": [
@@ -750,40 +898,30 @@
                 "number:45"
               ],
               "bdsErrors": [
-                "minecraft:collision_box: \"origin\"/\"size\" cannot be combined with \"min\"/\"max\"",
+                "minecraft:collision_box: Invalid box boundsThe area covered by all boxes must be within Vec3(0,0,0) to Vec3(16,24,16)",
                 "minecraft:collision_box: invalid numeric value",
-                "min: Expected [x, y, z]."
+                "origin: Expected [x, y, z]."
               ]
             },
-            "[].min.y": {
-              "accepted": 0,
-              "rejected": 10,
+            "[].size": {
+              "accepted": 4,
+              "rejected": 4,
               "rejectedValues": [
-                "number:0",
-                "number:0.5",
-                "number:1",
-                "number:2.25",
-                "number:30",
-                "number:-1",
-                "number:90",
-                "number:-90",
-                "number:450",
-                "number:45"
+                "vec3:1,2",
+                "vec3:1,2,3,4",
+                "vec3:-4,5.5,0",
+                "vec3:-2,1,1"
               ],
               "bdsErrors": [
-                "minecraft:collision_box: \"origin\"/\"size\" cannot be combined with \"min\"/\"max\"",
                 "minecraft:collision_box: invalid numeric value",
-                "min: Expected [x, y, z]."
+                "size: Expected [x, y, z].",
+                "minecraft:collision_box: Invalid box boundsThe area covered by all boxes must be within Vec3(0,0,0) to Vec3(16,24,16)"
               ]
             },
-            "[].min.z": {
-              "accepted": 0,
-              "rejected": 10,
+            "[].size.x": {
+              "accepted": 4,
+              "rejected": 6,
               "rejectedValues": [
-                "number:0",
-                "number:0.5",
-                "number:1",
-                "number:2.25",
                 "number:30",
                 "number:-1",
                 "number:90",
@@ -792,9 +930,43 @@
                 "number:45"
               ],
               "bdsErrors": [
-                "minecraft:collision_box: \"origin\"/\"size\" cannot be combined with \"min\"/\"max\"",
                 "minecraft:collision_box: invalid numeric value",
-                "min: Expected [x, y, z]."
+                "size: Expected [x, y, z].",
+                "minecraft:collision_box: Invalid box boundsThe area covered by all boxes must be within Vec3(0,0,0) to Vec3(16,24,16)"
+              ]
+            },
+            "[].size.y": {
+              "accepted": 4,
+              "rejected": 6,
+              "rejectedValues": [
+                "number:30",
+                "number:-1",
+                "number:90",
+                "number:-90",
+                "number:450",
+                "number:45"
+              ],
+              "bdsErrors": [
+                "minecraft:collision_box: invalid numeric value",
+                "size: Expected [x, y, z].",
+                "minecraft:collision_box: Invalid box boundsThe area covered by all boxes must be within Vec3(0,0,0) to Vec3(16,24,16)"
+              ]
+            },
+            "[].size.z": {
+              "accepted": 4,
+              "rejected": 6,
+              "rejectedValues": [
+                "number:30",
+                "number:-1",
+                "number:90",
+                "number:-90",
+                "number:450",
+                "number:45"
+              ],
+              "bdsErrors": [
+                "minecraft:collision_box: invalid numeric value",
+                "size: Expected [x, y, z].",
+                "minecraft:collision_box: Invalid box boundsThe area covered by all boxes must be within Vec3(0,0,0) to Vec3(16,24,16)"
               ]
             }
           },
@@ -913,6 +1085,148 @@
               "bdsErrors": [
                 "minecraft:collision_box: expected an array",
                 "minecraft:collision_box: invalid numeric value"
+              ]
+            },
+            "[].origin": {
+              "accepted": 1,
+              "rejected": 7,
+              "rejectedValues": [
+                "vec3:1,2",
+                "vec3:1,2,3,4",
+                "vec3:1,2,3",
+                "vec3:-4,5.5,0",
+                "vec3:0,0,0",
+                "vec3:16,16,16",
+                "vec3:-2,1,1"
+              ],
+              "bdsErrors": [
+                "minecraft:collision_box: invalid numeric value",
+                "origin: Expected [x, y, z].",
+                "minecraft:collision_box: Invalid box sizeThe total of each \"origin\" + \"size\" pair, must be inside the following limit: Vec3(-8,0,-8) and Vec3(8,24,8)"
+              ]
+            },
+            "[].origin.x": {
+              "accepted": 0,
+              "rejected": 10,
+              "rejectedValues": [
+                "number:0",
+                "number:0.5",
+                "number:1",
+                "number:2.25",
+                "number:30",
+                "number:-1",
+                "number:90",
+                "number:-90",
+                "number:450",
+                "number:45"
+              ],
+              "bdsErrors": [
+                "minecraft:collision_box: Invalid box sizeThe total of each \"origin\" + \"size\" pair, must be inside the following limit: Vec3(-8,0,-8) and Vec3(8,24,8)",
+                "minecraft:collision_box: invalid numeric value",
+                "origin: Expected [x, y, z]."
+              ]
+            },
+            "[].origin.y": {
+              "accepted": 4,
+              "rejected": 6,
+              "rejectedValues": [
+                "number:30",
+                "number:-1",
+                "number:90",
+                "number:-90",
+                "number:450",
+                "number:45"
+              ],
+              "bdsErrors": [
+                "minecraft:collision_box: invalid numeric value",
+                "origin: Expected [x, y, z]."
+              ]
+            },
+            "[].origin.z": {
+              "accepted": 0,
+              "rejected": 10,
+              "rejectedValues": [
+                "number:0",
+                "number:0.5",
+                "number:1",
+                "number:2.25",
+                "number:30",
+                "number:-1",
+                "number:90",
+                "number:-90",
+                "number:450",
+                "number:45"
+              ],
+              "bdsErrors": [
+                "minecraft:collision_box: Invalid box sizeThe total of each \"origin\" + \"size\" pair, must be inside the following limit: Vec3(-8,0,-8) and Vec3(8,24,8)",
+                "minecraft:collision_box: invalid numeric value",
+                "origin: Expected [x, y, z]."
+              ]
+            },
+            "[].size": {
+              "accepted": 4,
+              "rejected": 4,
+              "rejectedValues": [
+                "vec3:1,2",
+                "vec3:1,2,3,4",
+                "vec3:-4,5.5,0",
+                "vec3:-2,1,1"
+              ],
+              "bdsErrors": [
+                "minecraft:collision_box: invalid numeric value",
+                "size: Expected [x, y, z].",
+                "minecraft:collision_box: Invalid box sizeThe total of each \"origin\" + \"size\" pair, must be inside the following limit: Vec3(-8,0,-8) and Vec3(8,24,8)"
+              ]
+            },
+            "[].size.x": {
+              "accepted": 4,
+              "rejected": 6,
+              "rejectedValues": [
+                "number:30",
+                "number:-1",
+                "number:90",
+                "number:-90",
+                "number:450",
+                "number:45"
+              ],
+              "bdsErrors": [
+                "minecraft:collision_box: invalid numeric value",
+                "size: Expected [x, y, z].",
+                "minecraft:collision_box: Invalid box sizeThe total of each \"origin\" + \"size\" pair, must be inside the following limit: Vec3(-8,0,-8) and Vec3(8,24,8)"
+              ]
+            },
+            "[].size.y": {
+              "accepted": 4,
+              "rejected": 6,
+              "rejectedValues": [
+                "number:30",
+                "number:-1",
+                "number:90",
+                "number:-90",
+                "number:450",
+                "number:45"
+              ],
+              "bdsErrors": [
+                "minecraft:collision_box: invalid numeric value",
+                "size: Expected [x, y, z].",
+                "minecraft:collision_box: Invalid box sizeThe total of each \"origin\" + \"size\" pair, must be inside the following limit: Vec3(-8,0,-8) and Vec3(8,24,8)"
+              ]
+            },
+            "[].size.z": {
+              "accepted": 4,
+              "rejected": 6,
+              "rejectedValues": [
+                "number:30",
+                "number:-1",
+                "number:90",
+                "number:-90",
+                "number:450",
+                "number:45"
+              ],
+              "bdsErrors": [
+                "minecraft:collision_box: invalid numeric value",
+                "size: Expected [x, y, z].",
+                "minecraft:collision_box: Invalid box sizeThe total of each \"origin\" + \"size\" pair, must be inside the following limit: Vec3(-8,0,-8) and Vec3(8,24,8)"
               ]
             }
           },

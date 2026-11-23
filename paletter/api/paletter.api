@@ -793,16 +793,18 @@ public static final class dev.opencollab.paletter.block.component.CollisionBox$E
     public static dev.opencollab.paletter.block.component.CollisionBox$Entry$Builder builder()
     public boolean equals(java.lang.Object)
     public int hashCode()
-    @Deprecated public dev.opencollab.paletter.block.component.CollisionBox$Vec3 origin()
-    @Deprecated public dev.opencollab.paletter.block.component.CollisionBox$Vec3 size()
+    public dev.opencollab.paletter.block.component.CollisionBox$Vec3 origin()
+    public dev.opencollab.paletter.block.component.CollisionBox$Vec3 size()
     public dev.opencollab.paletter.block.component.CollisionBox$Entry$Builder toBuilder()
     public java.lang.String toString()
 }
 
 public static final class dev.opencollab.paletter.block.component.CollisionBox$Entry$Builder {
     public dev.opencollab.paletter.block.component.CollisionBox$Entry build()
-    @Deprecated public dev.opencollab.paletter.block.component.CollisionBox$Entry$Builder origin(dev.opencollab.paletter.block.component.CollisionBox$Vec3)
-    @Deprecated public dev.opencollab.paletter.block.component.CollisionBox$Entry$Builder size(dev.opencollab.paletter.block.component.CollisionBox$Vec3)
+    public dev.opencollab.paletter.block.component.CollisionBox$Entry$Builder origin(float, float, float)
+    public dev.opencollab.paletter.block.component.CollisionBox$Entry$Builder origin(dev.opencollab.paletter.block.component.CollisionBox$Vec3)
+    public dev.opencollab.paletter.block.component.CollisionBox$Entry$Builder size(float, float, float)
+    public dev.opencollab.paletter.block.component.CollisionBox$Entry$Builder size(dev.opencollab.paletter.block.component.CollisionBox$Vec3)
 }
 
 public record dev.opencollab.paletter.block.component.CollisionBox$Vec3 {
