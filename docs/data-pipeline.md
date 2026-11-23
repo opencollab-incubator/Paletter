@@ -947,7 +947,8 @@ writes the capture store `data/behaviour/captures.nbt`, the generated behaviour 
 `education-capture` on the server of its other captures, six more starts of BDS, and stages their files like the other
 captures: only when they differ from the committed ones of the build. A step that fails is a FAIL, except the optional
 probes (`BehaviourStage.OPTIONAL`, listed in the report header: the behaviour probe, whose measurements come from one
-reference build), which are a skipped row and a TODO. The recapture's assemble job then runs `behaviour import` on the staged captures and on CloudburstMC/Data and
+reference build; and the behaviour dump of a preview, as BDS 1.26.70.24 and 1.26.70.26 exit without a word in its world sample,
+around `minecraft:straw_bed`, cause unverified), which are a skipped row and a TODO. The recapture's assemble job then runs `behaviour import` on the staged captures and on CloudburstMC/Data and
 AllayMC/Allay at the commits pinned in `data/behaviour/sources.json`. That file is the one place of the pins: the workflow
 fetches those commits, `behaviour import` fails when a checkout is at another one, and `BehaviourSourcesTest` fails when the
 workflow writes a commit of its own. Move a pin together with the regenerated `captures.nbt`, generated classes and
