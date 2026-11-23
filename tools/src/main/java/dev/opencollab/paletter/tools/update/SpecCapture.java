@@ -210,7 +210,7 @@ public final class SpecCapture {
             JsonArray echoed = new JsonArray();
             summary.experiments().forEach(echoed::add);
             metadata.add("experiments", echoed);
-            Files.writeString(out.resolve("capture.json"), new GsonBuilder().setPrettyPrinting().create().toJson(metadata) + "\n");
+            Files.writeString(out.resolve("capture.json"), new GsonBuilder().setPrettyPrinting().disableHtmlEscaping().create().toJson(metadata) + "\n");
             if (evidence != null) {
                 Map<String, Map<String, Leaf>> leaves = leaves(out);
                 Map<String, List<String>> log = logByVariant(contentLog, generator, new ArrayList<>());

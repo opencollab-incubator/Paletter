@@ -192,7 +192,7 @@ public final class ShapeProbe {
         CaptureWriter.addProtocol(metadata, protocol, Capture.codecFor(protocol).getProtocolVersion());
         metadata.addProperty("formatVersion", formatVersion);
         metadata.addProperty("experimentChangesPacket", experimentChanges);
-        Files.writeString(out.resolve("capture.json"), new GsonBuilder().setPrettyPrinting().create().toJson(metadata) + "\n");
+        Files.writeString(out.resolve("capture.json"), new GsonBuilder().setPrettyPrinting().disableHtmlEscaping().create().toJson(metadata) + "\n");
         System.out.println("Wrote " + out);
     }
 
