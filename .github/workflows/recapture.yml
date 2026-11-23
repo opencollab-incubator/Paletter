@@ -299,8 +299,8 @@ jobs:
           done
 
       # The third-party behaviour dumps that `behaviour import` ranks below Paletter's own captures. Public repositories,
-      # read as data (their git history is parsed, nothing in them is run), each at the commit the committed behaviour.nbt
-      # was built from: the pins of data/behaviour/sources.json, which `behaviour import` checks the checkouts against
+      # read as data (their git history is parsed, nothing in them is run), each at the commit the committed
+      # data/behaviour/captures.nbt was built from: the pins of data/behaviour/sources.json, which `behaviour import` checks the checkouts against
       # (BehaviourSourcesTest keeps this step reading them). The same sources at the same commits give the same bytes. A
       # partial clone without a checkout: only the files the import reads are fetched
       - name: Fetch the third-party behaviour dumps

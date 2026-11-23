@@ -27,7 +27,7 @@ import java.util.concurrent.TimeUnit;
 @BenchmarkMode(Mode.AverageTime)
 @OutputTimeUnit(TimeUnit.MILLISECONDS)
 public class ReadBenchmark {
-    @Param({"26.60.nbt", "behaviour.nbt"})
+    @Param({"26.60.nbt", "properties.nbt"})
     public String file;
     private byte[] bytes;
 

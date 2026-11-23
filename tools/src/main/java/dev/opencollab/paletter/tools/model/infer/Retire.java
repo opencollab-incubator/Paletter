@@ -3,6 +3,8 @@ package dev.opencollab.paletter.tools.model.infer;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import dev.opencollab.paletter.tools.behaviour.BehaviourGenerator;
+import dev.opencollab.paletter.tools.behaviour.BehaviourStore;
 import dev.opencollab.paletter.tools.model.MappingWindows;
 import dev.opencollab.paletter.tools.model.Model;
 
@@ -20,7 +22,8 @@ import java.util.TreeSet;
  * {@code mappings.json} and {@code mappings-evidence.json} it removes the protocol from every window (and a window left
  * without protocols), the captures of that window protocol, and its envelope windows; neighbouring windows that now have
  * the same wire shape ({@link MappingWindows#wireShape}) become one, keeping the older window's content as the inference
- * does. What else belongs to the protocol is listed for the maintainer, not deleted: its {@code versions.txt} row and
+ * does. A data version no capture keeps any more is retired in the behaviour capture store ({@link #retireBehaviour}):
+ * {@code generateBehaviour} then folds it into the base. What else belongs to the protocol is listed for the maintainer, not deleted: its {@code versions.txt} row and
  * bundled data, its {@code data/bds} build directories, its CloudburstMC/Data test data.
  */
 public final class Retire {
@@ -42,7 +45,39 @@ public final class Retire {
         if (evidence != null) {
             Files.writeString(model.resolve(MappingEvidence.FILE), Model.GSON.toJson(evidence) + "\n", StandardCharsets.UTF_8);
         }
-        return leftovers(root, captures);
+        List<String> out = retireBehaviour(root, mappings, captures);
+        out.addAll(leftovers(root, captures));
+        return out;
+    }
+
+    /**
+     * Retires the data versions no capture keeps from the behaviour capture store: their captures stay (newer versions
+     * inherit from them), but no code is generated for them, so the next generation folds what the oldest version had into
+     * the base of the next one.
+     *
+     * @return what was done, one line each
+     */
+    static List<String> retireBehaviour(Path root, JsonObject mappings, List<JsonObject> retired) throws IOException {
+        List<String> out = new ArrayList<>();
+        if (!Files.exists(root.resolve(BehaviourGenerator.CAPTURES))) {
+            return out;
+        }
+        TreeSet<String> kept = new TreeSet<>();
+        mappings.getAsJsonArray("captures").forEach(c -> kept.add(c.getAsJsonObject().get("dataVersion").getAsString()));
+        BehaviourStore store = BehaviourGenerator.read(root);
+        BehaviourStore before = store;
+        for (JsonObject capture : retired) {
+            String version = capture.get("dataVersion").getAsString();
+            if (!kept.contains(version) && store.generated().contains(version)) {
+                store = store.retire(version);
+                out.add(BehaviourGenerator.CAPTURES + ": retired " + version + " (its captures stay as evidence); generateBehaviour makes "
+                    + (store.generated().isEmpty() ? "no version" : store.generated().getFirst()) + " the base");
+            }
+        }
+        if (store != before) {
+            BehaviourGenerator.write(root, store);
+        }
+        return out;
     }
 
     /**
@@ -160,8 +195,8 @@ public final class Retire {
                 existing(root, out, "data/bds/" + build + "/", "paletter/src/test/resources/block-id-order/bds-" + build + ".txt");
             }
         }
-        out.add("then: builds table, inferMappings (changes nothing once the captures are gone), generateComponentApi and"
-            + " generateConstants (each its own Gradle run)");
+        out.add("then: builds table, inferMappings (changes nothing once the captures are gone), generateComponentApi,"
+            + " generateConstants and generateBehaviour (each its own Gradle run)");
         return out;
     }
 

@@ -122,6 +122,12 @@ cliTask("generateConstants", "codegen", "Regenerates the vanilla constants class
 val checkConstants = cliTask("checkConstants", "verification",
     "Fails if regenerating the vanilla constants from the committed data, names and history yields a diff", "constants", "check", check = true)
 
+// The vanilla behaviour values (paletter internal.behaviour.vanilla) from the capture store and the bundled palettes.
+// behaviour import writes the store and generates too.
+cliTask("generateBehaviour", "codegen", "Regenerates the vanilla behaviour data classes from the capture store", "behaviour", "generate")
+val checkBehaviour = cliTask("checkBehaviour", "verification",
+    "Fails if regenerating the vanilla behaviour data from the committed capture store and palettes yields a diff", "behaviour", "check", check = true)
+
 // The custom item/block component API (dev.opencollab.paletter.item.component, block.component and the internal encoders)
 // from the component model. Runs on the componentApi source set only, so it works while paletter does not compile.
 val generateComponentApi = tasks.register<JavaExec>("generateComponentApi") {
@@ -214,7 +220,7 @@ val checkRecipes = cliTask("checkRecipes", "verification",
     "Fails if the bundled recipes are not what the recipe captures in data/bds give", "recipes-import", "--check", check = true)
 
 tasks.named("check") {
-    dependsOn(checkConstants, checkComponentApi, checkMappings, checkData, checkWhitebox, checkBuilds, checkRecipes)
+    dependsOn(checkConstants, checkBehaviour, checkComponentApi, checkMappings, checkData, checkWhitebox, checkBuilds, checkRecipes)
 }
 
 // The white-box analysis of a cached BDS binary against the committed whitebox.json. Explicit only (not in check or

@@ -18,6 +18,7 @@ The Gradle tasks are the commands with their usual arguments:
 | `generateAddon` | `addon --out build/spec-addon` |
 | `generateComponentApi`, `checkComponentApi` | `components generate`, `components check` |
 | `generateConstants`, `checkConstants` | `constants generate`, `constants check` |
+| `generateBehaviour`, `checkBehaviour` | `behaviour generate`, `behaviour check` |
 
 ## a. A new BDS release or preview appeared
 
@@ -97,6 +98,11 @@ add-ons. After a change to the model, fixtures, `bds-feedback.json` or the add-o
    `First in Bedrock <release>` and `@BedrockSince("<data version>")` are derived by the generators from the captures,
    never typed. Review the diff, then commit `constants-history.json` with the classes.
 5. Run `builds table` (or `builds check`); `checkBuilds` fails if `data/bds/builds.md` is stale.
+6. Behaviour values: `checkBehaviour` fails while a bundled release has no data in `data/behaviour/captures.nbt` (it
+   would silently get the values of the version before), and when a bundled palette of a version with data changed (the
+   daily `update` does not run the generator). Run `behaviour import` on the pinned checkouts (it writes the store, the
+   generated classes and `REPORT.md`), or `generateBehaviour` when only the palette changed; review the
+   "Version changes to check" section of the report.
 
 ## d. A new or changed component
 
@@ -144,7 +150,8 @@ See [releasing.md](releasing.md): snapshots publish from `main` through `publish
 | "The add-on's script did not register all its components" | The spec add-on's script failed in BDS; see the content log. |
 | "linked", "residual bits", "unclassified wire paths" | `check-mappings --strict`; see section d, step 4. |
 | Spec captures differ between builds | Different add-ons; recapture (section b). |
-| `checkConstants` / `checkComponentApi` / `checkBuilds` stale | Run the matching `generate` or `builds table`; commit. |
+| `checkConstants` / `checkComponentApi` / `checkBuilds` / `checkBehaviour` stale | Run the matching `generate` or `builds table`; commit. |
+| `generateBehaviour` does not start: the generated behaviour classes do not compile (a behaviour key was renamed or removed by `generateComponentApi`, or the runtime changed) | The tools run on the compiled library, and the library compiles without those classes (`VanillaBehaviour` loads them by name). Delete `paletter/src/generated/java/dev/opencollab/paletter/internal/behaviour/vanilla` and run `generateBehaviour` again; it writes the whole directory. |
 | Exit code 1 from Gradle on a run with decisions | Gradle maps every non-zero code to 1. Run the launcher instead, `./gradlew :tools:installDist` then `tools/build/install/tools/bin/tools update ...`: it exits with the tool's own code (2 = decisions open), as the workflows do. |
 
 ## h. Retiring a protocol
@@ -163,8 +170,13 @@ When Paletter stops bundling a data version, its protocol leaves the component m
    `override`, `spec-keys` and `behaviour-probe` (`BlockHashesTest`, `CreativeOrderCheckTest`, `FixedAddonsTest`,
    `AbsentComponentTest`). Keep those files, or move the evidence and its tests first; the tests on committed builds
    (`CommittedBuilds`) follow a deleted directory by themselves.
-3. Then `builds table`, `inferMappings` (it must change nothing: the captures are gone), `generateComponentApi` and
-   `generateConstants`, each in its own Gradle run; the build must be green. A component no remaining window has leaves
+3. Then `builds table`, `inferMappings` (it must change nothing: the captures are gone), `generateComponentApi`,
+   `generateConstants` and `generateBehaviour`, each in its own Gradle run; the build must be green. `retire` has marked the
+   data version retired in `data/behaviour/captures.nbt` (its captures stay: newer versions inherit from them), so
+   `generateBehaviour` writes the next version as `BehaviourBase` with everything it inherited folded in, and drops the
+   retired version's class, and the "Version changes to check" section of `data/behaviour/REPORT.md`; the rest of the
+   report lists the version until the next `behaviour import`. That import keeps the retired version's captures once its
+   palette is deleted (read back from `captures.nbt`, they cannot be read from the sources without it). A component no remaining window has leaves
    `mappings.json` and its API keeps a stand-in (`api-history.json`).
 
 ## Pins
@@ -178,7 +190,7 @@ itself is listed below the table.
 | CloudburstMC/Network snapshot (`network`, NetherNet) | `gradle/libs.versions.toml` | With Geyser, or when the capture client cannot reach a new BDS over NetherNet. |
 | libdatachannel snapshot (`libdatachannel`) | `gradle/libs.versions.toml` | With `network`, whose NetherNet transport needs it. |
 | MicrosoftDocs/minecraft-creator commit (`DocsFetcher.PINNED_COMMIT`) | `tools/.../model/docs/DocsFetcher.java` | When the creator docs document new components: run `docs --commit <sha>` (without it the commit already in `components.json` is used, and `PINNED_COMMIT` only when there is none), set `PINNED_COMMIT` to the same commit, review `data/model`, recapture (section b). |
-| CloudburstMC/Data and AllayMC/Allay commits | `data/behaviour/sources.json` | When they have dumps of a newer version: move both pins, run `behaviour import` on checkouts at them, commit `behaviour.nbt` and `data/behaviour/REPORT.md` with the pins. The import fails on a checkout at another commit. |
+| CloudburstMC/Data and AllayMC/Allay commits | `data/behaviour/sources.json` | When they have dumps of a newer version: move both pins, run `behaviour import` on checkouts at them, commit `data/behaviour/captures.nbt`, the generated behaviour classes (`paletter/src/generated/.../internal/behaviour/vanilla`) and `data/behaviour/REPORT.md` with the pins; review the `SOURCE ONLY` changes the report lists. The import fails on a checkout at another commit. |
 | Test data of `CloudburstDataTest` (CloudburstMC/Data files and commits) | `tools/src/test/resources/test-data/` and its `SOURCE.md` | With the CloudburstMC/Data pin above (a test ties the newest snapshot's commit to it), and when the bundled data of a version is refreshed from another BDS build (a test compares the build in `SOURCE.md`): `git show <commit>:<file>` from a clone of CloudburstMC/Data into the version's folder, then update its row. |
 | Format version of the fixed add-ons (`FixedAddons.FORMAT_VERSION`) | `tools/.../model/addon/FixedAddons.java` and `data/model/fixtures.json` `formatVersion` | When BDS retires the format: change both (a test ties them), then recapture (section b). |
 | Recipe unlock formats (`UnlockProbe.FORMATS`) | `tools/.../model/addon/UnlockProbe.java` | Copied from the vanilla packs of 1.26.63.1: add the formats a new build's `behavior_packs/**/recipes` use. |

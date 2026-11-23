@@ -12,7 +12,7 @@ import java.util.regex.Pattern;
 
 /**
  * The pins of the third-party behaviour dumps, {@code data/behaviour/sources.json}: per source its repository and the commit
- * the committed {@code behaviour.nbt} was built from. The one place they are written: {@code behaviour import} requires its
+ * the committed {@code data/behaviour/captures.nbt} was built from. The one place they are written: {@code behaviour import} requires its
  * checkouts to be at them, and the recapture workflow fetches exactly them.
  */
 public final class BehaviourSources {
@@ -52,12 +52,12 @@ public final class BehaviourSources {
 
     /**
      * Throws unless the checkout's HEAD is the pinned commit of the source: the same sources at the same commits give the same
-     * bytes, and any other commit would change behaviour.nbt without the pin saying so.
+     * bytes, and any other commit would change the capture store without the pin saying so.
      */
     static void requirePinned(Source source, String head) throws IOException {
         if (!source.commit().equals(head)) {
             throw new IOException("The checkout of " + source.name() + " is at " + head + ", but " + FILE + " pins " + source.commit()
-                + ": check out the pinned commit, or move the pin together with the regenerated behaviour.nbt");
+                + ": check out the pinned commit, or move the pin together with the regenerated data/behaviour/captures.nbt");
         }
     }
 }

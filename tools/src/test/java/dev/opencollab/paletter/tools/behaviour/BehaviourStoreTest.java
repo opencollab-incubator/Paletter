@@ -1,4 +1,4 @@
-package dev.opencollab.paletter.internal.behaviour;
+package dev.opencollab.paletter.tools.behaviour;
 
 import dev.opencollab.paletter.behaviour.BlockBehaviour;
 import dev.opencollab.paletter.behaviour.BlockShape;
@@ -87,6 +87,15 @@ class BehaviourStoreTest {
             }
         }
         assertArrayEquals(bytes, bytes(read), "deterministic");
+    }
+
+    @Test
+    void aRetiredVersionKeepsItsCapturesAndIsNoLongerGenerated() throws IOException {
+        BehaviourStore retired = BehaviourStore.read(new ByteArrayInputStream(bytes(store().retire("1"))));
+        assertEquals(List.of("1"), retired.retired());
+        assertEquals(List.of("2", "3"), retired.generated());
+        assertEquals(0.98f, retired.block(BlockBehaviour.FRICTION, 2, V2).value(), "V2 still inherits from V1");
+        assertThrows(IllegalArgumentException.class, () -> store().retire("9"));
     }
 
     @Test

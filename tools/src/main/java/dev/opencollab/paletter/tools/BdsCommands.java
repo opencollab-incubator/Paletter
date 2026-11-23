@@ -197,7 +197,7 @@ final class BdsCommands {
     }
 
     @Command(name = "behaviour", description = "Behaviour values of vanilla blocks and items (friction, shapes, max stack size, ...)",
-        subcommands = {BehaviourCommand.Import.class})
+        subcommands = {BehaviourCommand.Import.class, BehaviourCommand.Generate.class, BehaviourCommand.Check.class})
     static final class BehaviourCommand implements Runnable {
         @Override
         public void run() {
@@ -205,7 +205,7 @@ final class BdsCommands {
         }
 
         @Command(name = "import", description = "Reads the git history of the dump sources and the Script API dumps of data/bds, "
-            + "writes resources/behaviour.nbt and data/behaviour/REPORT.md")
+            + "writes data/behaviour/captures.nbt, the generated behaviour data and data/behaviour/REPORT.md")
         static final class Import extends Rooted implements Callable<Integer> {
             @Option(names = "--cloudburst-data", description = "Checkout of https://github.com/CloudburstMC/Data") Path cloudburstData;
             @Option(names = "--allay", description = "Checkout of https://github.com/AllayMC/Allay (git clone --filter=blob:none is enough)") Path allay;
@@ -214,6 +214,23 @@ final class BdsCommands {
             public Integer call() throws Exception {
                 dev.opencollab.paletter.tools.behaviour.BehaviourImport.run(root(), cloudburstData, allay);
                 return 0;
+            }
+        }
+
+        @Command(name = "generate", description = "Writes the generated behaviour data (paletter internal.behaviour.vanilla) from the "
+            + "committed capture store and the bundled palettes")
+        static final class Generate extends Rooted implements Callable<Integer> {
+            @Override
+            public Integer call() throws Exception {
+                return dev.opencollab.paletter.tools.behaviour.BehaviourGenerator.run(root(), false);
+            }
+        }
+
+        @Command(name = "check", description = "Fails if regenerating the behaviour data from the committed capture store and palettes yields a diff")
+        static final class Check extends Rooted implements Callable<Integer> {
+            @Override
+            public Integer call() throws Exception {
+                return dev.opencollab.paletter.tools.behaviour.BehaviourGenerator.run(root(), true);
             }
         }
     }

@@ -28,7 +28,7 @@ jobs:
           # Only main writes the Gradle cache; pull requests (also from forks) only read it. This is setup-gradle's
           # default, stated so it cannot change with a version bump
           cache-read-only: ${{ github.event_name == 'pull_request' }}
-      # build runs check: all tests, the Javadoc, the API dump, the generated code (checkConstants, checkComponentApi),
+      # build runs check: all tests, the Javadoc, the API dump, the generated code (checkConstants, checkComponentApi, checkBehaviour),
       # checkMappings (every captured bit and wire path is explained), checkData (fallback coverage of the bundled
       # versions) and checkReleaseDependencies (no floating snapshot in what is published). Publishing is publish.yml
       - run: ./gradlew build

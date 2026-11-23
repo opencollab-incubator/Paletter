@@ -6,7 +6,7 @@ For people changing Paletter. Usage is in [api.md](api.md); data, tools and code
 ## Modules
 
 - `paletter/`: the library, the only published module. Hand-written code is in `src/main/java`. Generated code (the
-  component API, encoders, behaviour keys and vanilla constants) is in `src/generated/java`, in the same packages.
+  component API, encoders, behaviour keys, vanilla constants and vanilla behaviour values) is in `src/generated/java`, in the same packages.
   Bundled data is in `src/main/resources/paletter`.
 - `tools/`: everything else: the BDS pipeline, the headless capture client, the component model and the generators.
 - `examples/`: runnable examples of the API.
@@ -49,10 +49,12 @@ only hold canonical entries.
 
 `paletter/src/main/resources/paletter/` holds `versions.txt`, one gzipped NBT file per version (format in
 `internal.data.PaletteDataCodec`), `properties.nbt` (component data stored once with the version range it applies to),
-`behaviour.nbt`, `voxel_shapes.nbt`, the generated `builds.txt` (the BDS builds each version was verified against,
+`voxel_shapes.nbt`, the generated `builds.txt` (the BDS builds each version was verified against,
 from `data/bds/builds.json`) and the hand-written `renames.txt`. `PaletteDataSource#bundled()` reads them. Each
 version file holds block states, items with components, data driven blocks, the creative layout, item tags, default
-block states, the block to item relation and experiment marks.
+block states, the block to item relation and experiment marks. The vanilla behaviour values are not a file: they are
+generated classes (`internal.behaviour.vanilla`, see data-pipeline.md "Captures and generated code"), the same for every
+data source.
 
 ## Wire-only components
 

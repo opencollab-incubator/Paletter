@@ -182,7 +182,8 @@ the first lookup of each key on each palette paid it. Without behaviour the buil
 below, and no behaviour store).
 
 **Gzip reads.** The bundled files are read through `PaletteDataCodec#readGzip`, buffered on the inflated side.
-`ReadBenchmark`, the same bytes in memory: `26.60.nbt` 121 ms unbuffered, 32 ms buffered; `behaviour.nbt` 91 ms and 20 ms.
+`ReadBenchmark`, the same bytes in memory: `26.60.nbt` 121 ms unbuffered, 32 ms buffered; `behaviour.nbt` 91 ms and 20 ms
+(it reads `properties.nbt` instead now: `behaviour.nbt` is gone, see "Behaviour values as generated code").
 
 **Item by runtime id.** The registries a Paletter compiles keep a flat table by runtime id (about 16 KB each, shared by
 all sessions). `HotPathBenchmark.itemByRuntimeIdCompiled` (the compiled palette) 11.7 to 2.5 ns, `itemByRuntimeId` (two
@@ -207,3 +208,35 @@ measures 3.8 MB for the recipes of the newest version while held, and nothing ke
 
 The served versions hold the tables a lookup used to build on first use. Of the behaviour store, int arrays (the ids of
 the captures and columns) are 3.3 MB and the value arrays 2.8 MB; strings 0.3 MB, shapes 33 KB.
+
+## Behaviour values as generated code
+
+The vanilla behaviour values moved from `behaviour.nbt` (per state and capture) to generated classes (per block, one
+class of changes per version; data-pipeline.md "Captures and generated code"). Values, `explain` and columns are the same
+for every state, item and key of every bundled palette.
+
+`StartupBenchmark`, five cold forks each, before (`980b2cd0`) and after run back to back on the same laptop, twice
+(the second after the review fixes, on a busier machine): median (fastest to slowest fork).
+
+| Benchmark | Run 1 before | Run 1 after | Run 2 before | Run 2 after |
+|-----------|--------------|-------------|--------------|-------------|
+| `vanilla` (behaviour values loaded and every column built) | 3,875 (3,724-4,078) | 3,342 (3,069-3,403) | 4,888 (4,525-5,317) | 4,703 (3,967-5,384) |
+| `withoutBehaviour` | 2,334 (2,313-2,467) | 2,462 (2,327-2,820) | 3,088 (2,808-3,112) | 3,113 (2,659-3,283) |
+
+What behaviour adds to `build()`: run 1 about 1.5 s before, 0.9 s after; run 2 about 1.8 s and 1.6 s, within the spread
+of its forks. Read it as "not slower, probably faster"; `withoutBehaviour` did not change (it loads no behaviour class).
+
+**Memory** (`MemoryBaselineTest`):
+
+| What | Before | After |
+|------|--------|-------|
+| bundled behaviour values of every version, shared (heap) | 6,624,728 (`behaviour.nbt` read) | 2,033,960 (the generated data, built) |
+| metaspace the generated classes add once loaded (not on the heap) | none | 1,716,664 |
+| behaviour columns of the newest palette, every key | 2,356,032 | 2,176,872 |
+| vanilla palette, newest / oldest version, behaviour off | 11,914,448 / 13,310,304 | 11,914,456 / 13,310,312 |
+
+Heap and metaspace together: 3.75 MB against 6.6 MB. The class files are 43 classes, 1,009,158 bytes.
+
+**Jar**: `paletter-1.0.0-SNAPSHOT.jar` 2,308,598 bytes before, 2,217,635 after (the 421 KB `behaviour.nbt` out, the
+generated classes in). **Limits** (`GeneratedBehaviourLimitsTest`): the largest method is 18,721 bytes of bytecode, the
+largest constant pool 1,386 entries.

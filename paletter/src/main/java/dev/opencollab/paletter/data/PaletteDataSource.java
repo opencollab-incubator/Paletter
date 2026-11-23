@@ -1,6 +1,5 @@
 package dev.opencollab.paletter.data;
 
-import dev.opencollab.paletter.internal.behaviour.BehaviourStore;
 import dev.opencollab.paletter.internal.shape.VoxelShapeStore;
 import dev.opencollab.paletter.internal.data.Renames;
 
@@ -90,17 +89,6 @@ public interface PaletteDataSource {
     }
 
     /**
-     * Internal: the versioned behaviour values of vanilla blocks and items.
-     *
-     * @return the versioned behaviour values of vanilla blocks and items; the bundled source reads
-     *         {@code behaviour.nbt}, the default has none
-     */
-    @dev.opencollab.paletter.annotation.Internal
-    default @NonNull BehaviourStore behaviour() {
-        return BehaviourStore.empty();
-    }
-
-    /**
      * Internal: the vanilla voxel shapes of the versions.
      *
      * @return the vanilla voxel shapes of the versions; the bundled source reads {@code voxel_shapes.nbt}, the default
@@ -125,7 +113,7 @@ public interface PaletteDataSource {
      *
      * @param directory a directory in the bundled format: {@code versions.txt}, one {@code <name>.nbt} per version,
      *                  {@code voxel_shapes.nbt} with the shapes of every version (a palette without them fails to build),
-     *                  and optionally {@code properties.nbt}, {@code behaviour.nbt}, {@code renames.txt} and
+     *                  and optionally {@code properties.nbt}, {@code renames.txt} and
      *                  {@code builds.txt}. Read when first needed
      * @return a source reading that directory
      * @since 1.0.0

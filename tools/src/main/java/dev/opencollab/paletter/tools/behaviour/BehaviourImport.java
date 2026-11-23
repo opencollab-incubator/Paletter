@@ -15,7 +15,6 @@ import dev.opencollab.paletter.internal.behaviour.Provenance;
 import dev.opencollab.paletter.block.BlockHashes;
 import dev.opencollab.paletter.data.DataVersion;
 import dev.opencollab.paletter.data.PaletteDataSource;
-import dev.opencollab.paletter.internal.behaviour.BehaviourStore;
 import dev.opencollab.paletter.internal.data.VanillaData;
 import dev.opencollab.paletter.internal.data.VanillaItem;
 
@@ -40,9 +39,10 @@ import java.util.stream.Stream;
 import java.util.zip.GZIPInputStream;
 
 /**
- * Builds {@code behaviour.nbt} from the sources that dump BDS: CloudburstMC/Data and AllayMC/Allay (git checkouts,
- * every commit of their dump files is read and identified by its block state hashes), and Paletter's own Script API
- * dumps in {@code data/bds}. See {@link BehaviourStore} for the format and {@link BehaviourReport} for what it reports.
+ * Builds the capture store {@code data/behaviour/captures.nbt} from the sources that dump BDS: CloudburstMC/Data and
+ * AllayMC/Allay (git checkouts, every commit of their dump files is read and identified by its block state hashes), and
+ * Paletter's own Script API dumps in {@code data/bds}; then generates the library's behaviour data from it
+ * ({@link BehaviourGenerator}). See {@link BehaviourStore} for the format and {@link BehaviourReport} for what it reports.
  * <p>
  * Ranking, strongest first: Paletter's own captures of BDS (native, Script API, the behaviour probe; the wire is ranked at
  * runtime), then CloudburstMC/Data, then Allay. Allay only decides what Data does not have (items). Third-party values the sources
@@ -98,7 +98,7 @@ public final class BehaviourImport {
     }
 
     /**
-     * Reads every source and writes {@code behaviour.nbt} into the resources and the report.
+     * Reads every source and writes the capture store, the generated behaviour data and the report.
      *
      * @param cloudburstData a checkout of https://github.com/CloudburstMC/Data, or null
      * @param allay a checkout of https://github.com/AllayMC/Allay (a partial clone is enough), or null
@@ -125,16 +125,18 @@ public final class BehaviourImport {
         if (allay != null) {
             importer.allay(new GitHistory(allay));
         }
-        BehaviourStore store = importer.build();
-        try (var out = Files.newOutputStream(resources.resolve("behaviour.nbt"))) {
-            store.write(out);
-        }
+        // What retire did stays done, and the captures of a retired version stay when its palette is gone
+        BehaviourStore store = importer.build(Files.exists(root.resolve(BehaviourGenerator.CAPTURES)) ? BehaviourGenerator.read(root) : null);
+        BehaviourGenerator.write(root, store);
+        BehaviourCode.Result code = BehaviourGenerator.generate(root, store);
+        BehaviourGenerator.write(root, code, false);
         Path report = root.resolve("data/behaviour/REPORT.md");
         Files.createDirectories(report.getParent());
-        Files.writeString(report, new BehaviourReport(importer.bundled, importer.captures, store, importer.log, importer.customDefaults).render());
+        Files.writeString(report, new BehaviourReport(importer.bundled, importer.captures, store, importer.log, importer.customDefaults,
+            code.reportSection()).render());
         System.out.println(store);
-        System.out.println("Wrote " + resources.resolve("behaviour.nbt") + " (" + Files.size(resources.resolve("behaviour.nbt"))
-            + " bytes) and " + report);
+        System.out.println("Wrote " + BehaviourGenerator.CAPTURES + " (" + Files.size(root.resolve(BehaviourGenerator.CAPTURES))
+            + " bytes), the generated behaviour data and " + report);
     }
 
     List<Capture> captures() {
@@ -590,15 +592,30 @@ public final class BehaviourImport {
      * strongest decides every id it covers and the others only fill the ids it lacks.
      */
     BehaviourStore build() {
+        return build(null);
+    }
+
+    /**
+     * @param previous the store written before, or null: the captures of its retired versions whose palettes are no longer
+     *                 bundled are taken over as they are (they cannot be read again without the palette, and newer versions
+     *                 inherit from them), and every version it retired stays retired
+     */
+    BehaviourStore build(@Nullable BehaviourStore previous) {
+        if (previous != null) {
+            carry(previous);
+        }
         captures.sort(Comparator.comparing((Capture c) -> c.version())
             .thenComparing(c -> -c.source().ordinal()));
-        BehaviourStore.Builder builder = new BehaviourStore.Builder(bundled.stream().map(Bundled::version).toList());
+        List<DataVersion> versions = new ArrayList<>(bundled.stream().map(Bundled::version).toList());
+        carriedOrder.keySet().stream().map(Capture::version).filter(v -> !versions.contains(v)).distinct().forEach(versions::add);
+        BehaviourStore.Builder builder = new BehaviourStore.Builder(versions);
         List<Set<Integer>> coveredBlocks = new ArrayList<>();
         List<Set<String>> coveredItems = new ArrayList<>();
         for (Capture capture : captures) {
-            Bundled palette = bundled(capture.version());
-            Set<Integer> blocks = covered(capture, palette.states().keySet(), Capture::blocks);
-            Set<String> items = covered(capture, palette.items(), Capture::items);
+            List<Integer> carried = carriedOrder.get(capture);
+            Set<Integer> blocks = covered(capture, carried != null ? new java.util.LinkedHashSet<>(carried) : bundled(capture.version()).states().keySet(),
+                Capture::blocks);
+            Set<String> items = covered(capture, carried != null ? capture.items().ids : bundled(capture.version()).items(), Capture::items);
             int index = builder.capture(capture.version(), capture.source(), capture.reference(), blocks, items);
             coveredBlocks.add(blocks);
             coveredItems.add(items);
@@ -610,7 +627,66 @@ public final class BehaviourImport {
         for (CustomDefault custom : customDefaults) {
             builder.defaultOf(raw(custom.key()), custom.value(), custom.source(), custom.reference());
         }
-        return builder.metadata(metadata()).build();
+        BehaviourStore store = builder.metadata(metadata()).build();
+        if (previous != null) {
+            for (String retired : previous.retired()) {
+                if (store.versions().contains(retired)) {
+                    store = store.retire(retired);
+                }
+            }
+        }
+        return store;
+    }
+
+    /** The captures taken over from the store before, with the order of the block states they covered there. */
+    private final Map<Capture, List<Integer>> carriedOrder = new LinkedHashMap<>();
+    /** The captures taken over, with their index in the store before ({@link #previous}). */
+    private final Map<Capture, Integer> carriedFrom = new LinkedHashMap<>();
+    private @Nullable BehaviourStore previous;
+
+    /** Puts the disputes the store before had for a capture taken over, the other captures by their index here. */
+    @SuppressWarnings("unchecked")
+    private <I> void seed(Map<BehaviourKey<?>, Map<I, Map<Integer, Object>>> disputed, Capture capture, Values<I> own) {
+        previous.disputesOf(carriedFrom.get(capture)).forEach((key, byId) -> byId.forEach((id, alternatives) -> {
+            if (!own.byKey.getOrDefault(key, Map.of()).containsKey((I) id)) {
+                return; // an id of the other kind (items vs. blocks)
+            }
+            alternatives.forEach((old, value) -> carriedFrom.entrySet().stream().filter(e -> e.getValue() == old.intValue()).findFirst()
+                .ifPresent(e -> disputed.computeIfAbsent(key, k -> new LinkedHashMap<>()).computeIfAbsent((I) id, k -> new LinkedHashMap<>())
+                    .put(captures.indexOf(e.getKey()), value)));
+        }));
+    }
+
+    /**
+     * Takes over the captures of the versions the store before retired whose palettes are no longer bundled: read back from
+     * the store as the sources gave them, so they take part in the ranking, disputes and carries as before.
+     */
+    private void carry(BehaviourStore previous) {
+        this.previous = previous;
+        for (BehaviourStore.Capture old : previous.captures()) {
+            String version = old.version().name();
+            if (!previous.retired().contains(version) || bundled.stream().anyMatch(b -> b.version().name().equals(version))) {
+                continue;
+            }
+            Values<Integer> blocks = new Values<>();
+            previous.blockValues(old.index()).forEach((key, values) -> values.forEach((id, value) -> blocks.put(key, id, value)));
+            Values<String> items = new Values<>();
+            previous.itemValues(old.index()).forEach((key, values) -> values.forEach((id, value) -> items.put(key, id, value)));
+            previous.notes(old.index()).forEach((key, notes) -> notes.forEach((id, note) -> {
+                if (id instanceof Integer hash) {
+                    blocks.postProcessed(key, hash, note);
+                    blocks.reportsPostProcessing.add(key);
+                } else {
+                    items.postProcessed(key, (String) id, note);
+                    items.reportsPostProcessing.add(key);
+                }
+            }));
+            Capture capture = new Capture(old.source(), old.reference(), "", old.version(), "taken over from " + BehaviourGenerator.CAPTURES
+                + " (retired " + version + ")", blocks, items);
+            captures.add(capture);
+            carriedOrder.put(capture, java.util.Arrays.stream(old.order()).boxed().toList());
+            carriedFrom.put(capture, old.index());
+        }
     }
 
     /** Capture {@code i} of {@link #captures} is capture {@code i} of the builder. */
@@ -632,6 +708,11 @@ public final class BehaviourImport {
                     noted.computeIfAbsent(key, k -> new LinkedHashMap<>()).put(id, note);
                 }
             }));
+            if (carriedFrom.containsKey(capture)) {
+                // Taken over: its disputes are the store's, which the sources can no longer be asked for
+                seed(disputed, capture, own);
+                continue;
+            }
             if (!capture.source().thirdParty()) {
                 continue;
             }
@@ -743,13 +824,16 @@ public final class BehaviourImport {
         return same;
     }
 
+    /** @return the position of a version among the bundled ones and those of captures taken over, oldest first */
     private int versionIndex(DataVersion version) {
-        for (int i = 0; i < bundled.size(); i++) {
-            if (bundled.get(i).version().equals(version)) {
-                return i;
-            }
+        List<DataVersion> all = new ArrayList<>(bundled.stream().map(Bundled::version).toList());
+        carriedOrder.keySet().stream().map(Capture::version).filter(v -> !all.contains(v)).distinct().forEach(all::add);
+        all.sort(null);
+        int index = all.indexOf(version);
+        if (index < 0) {
+            throw new IllegalArgumentException(version.toString());
         }
-        throw new IllegalArgumentException(version.toString());
+        return index;
     }
 
     private <I> void emit(BehaviourStore.Builder builder, List<Map<BehaviourKey<?>, Map<I, Map<Integer, Object>>>> disputes,
