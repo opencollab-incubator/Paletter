@@ -450,8 +450,11 @@ final class FieldAnalysis {
         // (a field whose leaves only follow its presence, under a transform, is the transform's too). A fit that explains
         // every leaf is the transform's as well: the encoder calls the transform, not the rules, so the field is recorded
         // the same whether the fit happened to succeed or not
-        if ((status.equals("inferred") || status.equals("unresolved") || status.equals("partial")
-            || ((status.equals("dropped") || status.equals("linked")) && !rules.isEmpty())) && transformKey != null) {
+        // A linked field under a transform is the transform's even where no leaf follows it: the encoder of the transform decides
+        // what goes on the wire, and the messages that link it (selection_box's object form of origin: "Invalid box size "origin"
+        // + "size"") are the transform's to honour
+        if ((status.equals("inferred") || status.equals("unresolved") || status.equals("partial") || status.equals("linked")
+            || (status.equals("dropped") && !rules.isEmpty())) && transformKey != null) {
             out.addProperty("transform", transforms.get(transformKey));
             out.remove("linkedTo");
             status = "hand-rule";

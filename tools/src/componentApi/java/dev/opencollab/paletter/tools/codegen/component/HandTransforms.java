@@ -26,6 +26,9 @@ public final class HandTransforms {
     public static final SortedMap<String, String> BY_PATH = Collections.unmodifiableSortedMap(new TreeMap<>(Map.ofEntries(
         // blocks
         entry("block:minecraft:collision_box:[]", "collisionBoxes"),
+        // the single {origin, size} object of older formats (accepted by 1.26.36.1 to 1.26.52.3): one entry of boxes
+        entry("block:minecraft:collision_box:origin", "collisionBoxes"),
+        entry("block:minecraft:collision_box:size", "collisionBoxes"),
         entry("block:minecraft:destructible_by_mining:", "destructibleByMining"),
         entry("block:minecraft:embedded_visual:geometry", "embeddedGeometry"),
         entry("block:minecraft:embedded_visual:material_instances", "materialInstancesInline"),
