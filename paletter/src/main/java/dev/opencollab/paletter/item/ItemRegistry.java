@@ -103,6 +103,12 @@ public final class ItemRegistry implements DefinitionRegistry<ItemDefinition> {
     private final int nextRuntimeId;
     /** Runtime ids of the parent's items that this registry renumbered: the parent's item with such an id no longer exists here. */
     private final IntSet renumbered;
+    /**
+     * Of the registries a Paletter compiles ({@link #loadEagerly}): every definition ({@link #definitions()}, this
+     * registry's and its parents') at {@code runtimeId - flatBase}, else null. Written once; {@link #flatBase} before it.
+     */
+    private volatile RegisteredItem @Nullable [] flat;
+    private int flatBase;
     private final Lazy<CanonicalTable> canonicalTable;
     private volatile @Nullable ResolvedItem defaultResolved;
     /** The resolutions of variants of constants the bundled release lacks and this registry too, made on first use. */
@@ -164,6 +170,10 @@ public final class ItemRegistry implements DefinitionRegistry<ItemDefinition> {
             merged.putAll(this.tags);
             return Collections.unmodifiableMap(merged);
         });
+        if (parent == null) {
+            // Nothing to merge: the own tags are all
+            mergedTags.preset(this.tags);
+        }
         this.canonicalTable = new Lazy<>(() -> buildCanonicalTable(null));
     }
 
@@ -233,6 +243,11 @@ public final class ItemRegistry implements DefinitionRegistry<ItemDefinition> {
 
     @Override
     public @Nullable RegisteredItem getDefinition(int runtimeId) {
+        RegisteredItem[] table = flat;
+        if (table != null) {
+            int slot = runtimeId - flatBase;
+            return slot >= 0 && slot < table.length ? table[slot] : null;
+        }
         RegisteredItem item = byRuntimeId.get(runtimeId);
         return item != null || parent == null || renumbered.contains(runtimeId) ? item : parent.getDefinition(runtimeId);
     }
@@ -693,6 +708,33 @@ public final class ItemRegistry implements DefinitionRegistry<ItemDefinition> {
     @Internal
     public void prepareCanonical() {
         canonicalTable();
+    }
+
+    /**
+     * Builds now everything a lookup would build on first use: the canonical tables, the merged definitions and tags,
+     * the default fallback's resolution. Called for the palettes a {@code Paletter} compiles.
+     */
+    @Internal
+    public void loadEagerly() {
+        canonicalTable();
+        List<RegisteredItem> all = definitions();
+        tags();
+        unavailableItems.get();
+        defaultResolved();
+        // These registries are shared by every session of a version: a flat table by runtime id costs a few KB once
+        // and makes a lookup one array read instead of a hash probe per layer. Only when the ids are dense enough.
+        if (flat == null && !all.isEmpty()) {
+            int first = all.getFirst().getRuntimeId();
+            int span = all.getLast().getRuntimeId() - first + 1;
+            if (span <= 4 * all.size() + 4096) {
+                RegisteredItem[] table = new RegisteredItem[span];
+                for (RegisteredItem item : all) {
+                    table[item.getRuntimeId() - first] = item;
+                }
+                flatBase = first;
+                flat = table;
+            }
+        }
     }
 
     private CanonicalTable canonicalTable() {

@@ -184,7 +184,7 @@ class VoxelShapesTest {
             registries.add(new VoxelShapeStore.Registry(versions, registry.experiment(), registry.shapes()));
         }
         VoxelShapeStore store = new VoxelShapeStore(registries);
-        Paletter paletter = Paletter.builder().data(new PaletteDataSource() {
+        PaletteDataSource source = new PaletteDataSource() {
             @Override
             public List<DataVersion> versions() {
                 return bundled.versions();
@@ -199,10 +199,10 @@ class VoxelShapesTest {
             public VoxelShapeStore voxelShapes() {
                 return store;
             }
-        }).build();
-        assertNotNull(paletter.palette(bundled.versions().get(1).protocolVersion()).voxelShapesPacket());
-        PaletteException e = assertThrows(PaletteException.class, () -> paletter.palette(missing.protocolVersion()));
+        };
+        Paletter without = Paletter.builder().data(source).versions(version -> !version.equals(missing)).build();
+        assertNotNull(without.palette(bundled.versions().get(1).protocolVersion()).voxelShapesPacket());
+        PaletteException e = assertThrows(PaletteException.class, () -> Paletter.builder().data(source).build());
         assertTrue(e.getMessage().contains("voxel shapes for " + missing), e.getMessage());
-        assertThrows(PaletteException.class, paletter::warmUp);
     }
 }

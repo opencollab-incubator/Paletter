@@ -22,6 +22,7 @@ import dev.opencollab.paletter.item.ItemFallback;
 import dev.opencollab.paletter.vanilla.BedrockBlockType;
 import dev.opencollab.paletter.vanilla.BedrockItemType;
 
+import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -35,6 +36,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
+import java.util.zip.GZIPInputStream;
 
 /**
  * The bundled data format: one gzipped big endian NBT compound per version. Written by the generator, read at runtime.
@@ -69,11 +71,19 @@ public final class PaletteDataCodec {
     private PaletteDataCodec() {
     }
 
-    public static @NonNull VanillaData read(@NonNull InputStream stream) throws IOException {
-        NbtMap root;
-        try (NBTInputStream input = NbtUtils.createGZIPReader(stream)) {
-            root = (NbtMap) input.readTag();
+    /**
+     * Reads the root compound of a gzipped NBT file and closes the stream. The inflated side is buffered: the NBT reader
+     * reads one primitive at a time, and without a buffer each of those is its own {@code Inflater} call
+     * ({@code NbtUtils.createGZIPReader} has none).
+     */
+    public static @NonNull NbtMap readGzip(@NonNull InputStream stream) throws IOException {
+        try (NBTInputStream input = NbtUtils.createReader(new BufferedInputStream(new GZIPInputStream(stream, 8192), 1 << 16))) {
+            return (NbtMap) input.readTag();
         }
+    }
+
+    public static @NonNull VanillaData read(@NonNull InputStream stream) throws IOException {
+        NbtMap root = readGzip(stream);
         int format = root.getInt("format", -1);
         if (format != FORMAT) {
             throw new IOException("Unsupported Paletter data format " + format + ", expected " + FORMAT);

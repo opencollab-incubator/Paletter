@@ -34,6 +34,8 @@ public sealed interface Recipe permits Recipe.Shaped, Recipe.Shapeless, Recipe.M
         private final int priority;
         private final boolean assumeSymmetry;
         private final Unlock unlock;
+        /** {@link #hashCode()}, made on first use: a recipe is a map key of {@code CraftingData} (0: not made yet). */
+        private int hash;
 
         private Shaped(Builder b) {
             this.id = Required.of(b.id, "Recipe.Shaped.id");
@@ -160,7 +162,11 @@ public sealed interface Recipe permits Recipe.Shaped, Recipe.Shapeless, Recipe.M
 
         @Override
         public int hashCode() {
-            return Objects.hash(id, width, height, ingredients, results, station, priority, assumeSymmetry, unlock);
+            int h = hash;
+            if (h == 0) {
+                hash = h = Objects.hash(id, width, height, ingredients, results, station, priority, assumeSymmetry, unlock);
+            }
+            return h;
         }
 
         @Override
@@ -305,6 +311,8 @@ public sealed interface Recipe permits Recipe.Shaped, Recipe.Shapeless, Recipe.M
         private final int priority;
         private final boolean shulkerBox;
         private final Unlock unlock;
+        /** {@link #hashCode()}, made on first use (0: not made yet). */
+        private int hash;
 
         private Shapeless(Builder b) {
             this.id = Required.of(b.id, "Recipe.Shapeless.id");
@@ -408,7 +416,11 @@ public sealed interface Recipe permits Recipe.Shaped, Recipe.Shapeless, Recipe.M
 
         @Override
         public int hashCode() {
-            return Objects.hash(id, ingredients, results, station, priority, shulkerBox, unlock);
+            int h = hash;
+            if (h == 0) {
+                hash = h = Objects.hash(id, ingredients, results, station, priority, shulkerBox, unlock);
+            }
+            return h;
         }
 
         @Override
@@ -584,6 +596,8 @@ public sealed interface Recipe permits Recipe.Shaped, Recipe.Shapeless, Recipe.M
         private final Ingredient addition;
         private final Result result;
         private final String station;
+        /** {@link #hashCode()}, made on first use (0: not made yet). */
+        private int hash;
 
         private SmithingTransform(Builder b) {
             this.id = Required.of(b.id, "Recipe.SmithingTransform.id");
@@ -665,7 +679,11 @@ public sealed interface Recipe permits Recipe.Shaped, Recipe.Shapeless, Recipe.M
 
         @Override
         public int hashCode() {
-            return Objects.hash(id, template, base, addition, result, station);
+            int h = hash;
+            if (h == 0) {
+                hash = h = Objects.hash(id, template, base, addition, result, station);
+            }
+            return h;
         }
 
         @Override
@@ -780,6 +798,8 @@ public sealed interface Recipe permits Recipe.Shaped, Recipe.Shapeless, Recipe.M
         private final Ingredient base;
         private final Ingredient addition;
         private final String station;
+        /** {@link #hashCode()}, made on first use (0: not made yet). */
+        private int hash;
 
         private SmithingTrim(Builder b) {
             this.id = Required.of(b.id, "Recipe.SmithingTrim.id");
@@ -851,7 +871,11 @@ public sealed interface Recipe permits Recipe.Shaped, Recipe.Shapeless, Recipe.M
 
         @Override
         public int hashCode() {
-            return Objects.hash(id, template, base, addition, station);
+            int h = hash;
+            if (h == 0) {
+                hash = h = Objects.hash(id, template, base, addition, station);
+            }
+            return h;
         }
 
         @Override

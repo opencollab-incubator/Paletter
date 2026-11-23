@@ -4,6 +4,7 @@ import org.cloudburstmc.nbt.NbtMap;
 import org.cloudburstmc.protocol.bedrock.codec.BedrockCodecHelper;
 import org.cloudburstmc.protocol.bedrock.codec.v2225.Bedrock_v2225;
 import org.cloudburstmc.protocol.bedrock.data.definitions.BlockDefinition;
+import org.cloudburstmc.protocol.bedrock.data.definitions.ItemDefinition;
 import org.cloudburstmc.protocol.common.DefinitionRegistry;
 import org.cloudburstmc.protocol.bedrock.data.inventory.ItemData;
 import dev.opencollab.paletter.Lookup;
@@ -48,6 +49,10 @@ public class HotPathBenchmark {
     private static final int SEED = 42;
 
     private Palette palette;
+    /** The palette the Paletter compiled, which {@link #palette} extends by two session layers. */
+    private Palette compiled;
+    /** The runtime id of each of {@link #encoded}. */
+    private int[] itemRuntimeIds;
     /** The block definitions a codec helper gets from {@link Palette#applyTo}. */
     private DefinitionRegistry<BlockDefinition> blockDefinitions;
     private BedrockItemVariant[] variants;
@@ -71,7 +76,8 @@ public class HotPathBenchmark {
     @Setup
     public void setUp() {
         Paletter paletter = Paletter.builder().layer(layer("server", 0, 8)).build();
-        palette = paletter.palette(paletter.latest().protocolVersion())
+        compiled = paletter.palette(paletter.latest().protocolVersion());
+        palette = compiled
             .extend(layer("session", 8, 8))
             .extend(layer("session-2", 16, 8));
         BedrockCodecHelper helper = Bedrock_v2225.CODEC.createHelper();
@@ -89,6 +95,10 @@ public class HotPathBenchmark {
             stacks[i] = BedrockItemStack.of(variants[i]);
             encoded[i] = palette.encode(stacks[i]);
             copies[i] = palette.encode(stacks[i]);
+        }
+        itemRuntimeIds = new int[variants.length];
+        for (int i = 0; i < variants.length; i++) {
+            itemRuntimeIds[i] = encoded[i].getDefinition().getRuntimeId();
         }
 
         List<Integer> ids = new ArrayList<>();
@@ -153,6 +163,18 @@ public class HotPathBenchmark {
         int i = custom;
         custom = i + 1 == customStates.length ? 0 : i + 1;
         return i;
+    }
+
+    /** An item runtime id to its definition, what the codec does for every inbound item: on the palette with two session layers. */
+    @Benchmark
+    public ItemDefinition itemByRuntimeId() {
+        return palette.items().getDefinition(itemRuntimeIds[nextItem()]);
+    }
+
+    /** The same on the palette the Paletter compiled (one global layer), without session layers. */
+    @Benchmark
+    public ItemDefinition itemByRuntimeIdCompiled() {
+        return compiled.items().getDefinition(itemRuntimeIds[nextItem()]);
     }
 
     @Benchmark

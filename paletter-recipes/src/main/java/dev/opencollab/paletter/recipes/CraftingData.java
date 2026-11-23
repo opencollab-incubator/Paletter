@@ -10,12 +10,12 @@ import org.cloudburstmc.protocol.bedrock.data.inventory.crafting.recipe.Smithing
 import org.cloudburstmc.protocol.bedrock.data.inventory.crafting.recipe.SmithingTrimRecipeData;
 import org.cloudburstmc.protocol.bedrock.packet.CraftingDataPacket;
 import dev.opencollab.paletter.Palette;
+import it.unimi.dsi.fastutil.objects.Object2IntMap;
+import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 /**
@@ -51,12 +51,13 @@ public final class CraftingData {
     private static final int SPLIT_LISTS_FROM = 2168;
 
     private final CraftingDataPacket encoded;
-    private final Map<Recipe, Integer> netIds;
+    /** Net id by recipe, -1 for the others. */
+    private final Object2IntMap<Recipe> netIds;
     private final List<Recipe> dropped;
     private final List<PotionMix> droppedPotionMixes;
     private final List<ContainerMix> droppedContainerMixes;
 
-    private CraftingData(CraftingDataPacket encoded, Map<Recipe, Integer> netIds, List<Recipe> dropped, List<PotionMix> droppedPotionMixes,
+    private CraftingData(CraftingDataPacket encoded, Object2IntMap<Recipe> netIds, List<Recipe> dropped, List<PotionMix> droppedPotionMixes,
                          List<ContainerMix> droppedContainerMixes) {
         this.encoded = encoded;
         this.netIds = netIds;
@@ -102,7 +103,7 @@ public final class CraftingData {
      * @return its net id, or -1 if it was dropped or not added
      */
     public int netId(@NonNull Recipe recipe) {
-        return netIds.getOrDefault(recipe, -1);
+        return netIds.getInt(recipe);
     }
 
     /**
@@ -191,7 +192,8 @@ public final class CraftingData {
         public @NonNull CraftingData build() {
             RecipeEncoder encoder = new RecipeEncoder(palette);
             CraftingDataPacket packet = new CraftingDataPacket();
-            Map<Recipe, Integer> netIds = new HashMap<>();
+            Object2IntMap<Recipe> netIds = new Object2IntOpenHashMap<>(recipes.size());
+            netIds.defaultReturnValue(-1);
             Set<Recipe> dropped = new LinkedHashSet<>();
             boolean legacy = palette.version().protocolVersion() < SPLIT_LISTS_FROM;
             int netId = 1;

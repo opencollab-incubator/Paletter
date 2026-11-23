@@ -8,6 +8,7 @@ import dev.opencollab.paletter.data.PaletteDataSource;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UncheckedIOException;
+import java.lang.ref.SoftReference;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -23,7 +24,13 @@ import java.util.concurrent.ConcurrentHashMap;
  * @since 1.0.0
  */
 public final class VanillaRecipes {
-    private static final Map<String, VanillaRecipes> CACHE = new ConcurrentHashMap<>();
+    /**
+     * Read recipes by version name, held softly: a consumer typically builds its {@code CraftingData} from them once per
+     * palette and keeps that, so the recipes (about 3.8 MB per version, see {@code RecipesMemoryTest}) are not pinned for the life of the JVM. While
+     * someone holds them, or memory is plentiful, {@link #of} returns the same instance; after a collection under memory
+     * pressure it reads the version again.
+     */
+    private static final Map<String, SoftReference<VanillaRecipes>> CACHE = new ConcurrentHashMap<>();
 
     private final DataVersion version;
     private final List<Recipe> recipes;
@@ -47,7 +54,8 @@ public final class VanillaRecipes {
     }
 
     /**
-     * The recipes of a data version, cached.
+     * The recipes of a data version. They are cached softly: the same instance while it is in use, read again after memory
+     * ran short. Keep what is built from them (a {@code CraftingData}), not these.
      *
      * @param version a data version of {@link #versions()}
      * @return its recipes
@@ -64,7 +72,7 @@ public final class VanillaRecipes {
     }
 
     /**
-     * Finds the recipes of a data version, cached.
+     * Finds the recipes of a data version, cached softly like {@link #of(DataVersion)}.
      *
      * @param version a data version
      * @param orElse what to return for a version without bundled recipes
@@ -75,13 +83,27 @@ public final class VanillaRecipes {
         if (!hasBundle(version)) {
             return orElse;
         }
-        return CACHE.computeIfAbsent(version.name(), name -> {
-            try (InputStream stream = VanillaRecipes.class.getResourceAsStream(path(version))) {
-                return RecipeBundle.read(version, stream);
-            } catch (IOException e) {
-                throw new UncheckedIOException(e);
+        VanillaRecipes cached = cached(version);
+        if (cached != null) {
+            return cached;
+        }
+        synchronized (CACHE) {
+            cached = cached(version);
+            if (cached == null) {
+                try (InputStream stream = VanillaRecipes.class.getResourceAsStream(path(version))) {
+                    cached = RecipeBundle.read(version, stream);
+                } catch (IOException e) {
+                    throw new UncheckedIOException(e);
+                }
+                CACHE.put(version.name(), new SoftReference<>(cached));
             }
-        });
+            return cached;
+        }
+    }
+
+    private static @Nullable VanillaRecipes cached(DataVersion version) {
+        SoftReference<VanillaRecipes> reference = CACHE.get(version.name());
+        return reference == null ? null : reference.get();
     }
 
     /** Whether the data source has the version (exactly) and the library has its recipes. */

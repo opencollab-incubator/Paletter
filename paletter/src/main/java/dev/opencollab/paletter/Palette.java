@@ -268,9 +268,41 @@ public final class Palette {
     private synchronized Behaviour buildBehaviour() {
         Behaviour result = behaviour;
         if (result == null) {
-            behaviour = result = Behaviour.of(this, behaviourStore.get(), parent == null ? null : parent.behaviour());
+            behaviour = result = Behaviour.of(this, behaviourStore, parent == null ? null : parent.behaviour());
         }
         return result;
+    }
+
+    /**
+     * Builds now everything a lookup on this palette (and on the palette it extends) would build on first use: the
+     * behaviour values and their columns, the resolution tables, the item tables, the preview handles of a preview
+     * version. Called for the palettes a {@link Paletter} compiles, so no lookup on them waits for data. Without
+     * {@code behaviour} the behaviour values are left out (they are switched off).
+     */
+    void loadEagerly(boolean withBehaviour) {
+        if (parent != null) {
+            parent.loadEagerly(withBehaviour);
+        }
+        resolvedByCanonicalTable();
+        resolvedByIndexTable();
+        unavailableBlocks.get();
+        versionItems.get();
+        firstStates.get();
+        creativeIdentifiers.get();
+        items.loadEagerly();
+        // The handles of the blocks a preview added or changed are made with the first handle of such a palette
+        BedrockBlockState.fromCanonical(blocks.canonical(), 0);
+        Behaviour values = behaviour();
+        if (withBehaviour) {
+            values.loadAll();
+        }
+    }
+
+    /** For tests: whether {@link #loadEagerly} left nothing to build on first use. */
+    boolean loadedEagerly(boolean withBehaviour) {
+        return (parent == null || parent.loadedEagerly(withBehaviour)) && resolvedByCanonical != null && resolvedByIndex != null
+            && unavailableBlocks.peek() != null && versionItems.peek() != null && firstStates.peek() != null
+            && creativeIdentifiers.peek() != null && behaviour != null && (!withBehaviour || behaviour.loaded());
     }
 
     /**
@@ -359,8 +391,10 @@ public final class Palette {
         ResolvedBlock resolved = cache[own];
         if (resolved == null) {
             RegisteredBlockState block = blocks.block(canonical);
-            cache[own] = resolved = new ResolvedBlock(block, blocks.isFallback(canonical),
-                behaviour().block(blocks.indexOfRuntimeId(block.getRuntimeId())));
+            int index = blocks.indexOfRuntimeId(block.getRuntimeId());
+            // A state that is no fallback resolves to what its block resolves to by index: one instance for both lookups
+            cache[own] = resolved = blocks.isFallback(canonical) ? new ResolvedBlock(block, true, behaviour().block(index))
+                : resolveIndex(index);
         }
         return resolved;
     }

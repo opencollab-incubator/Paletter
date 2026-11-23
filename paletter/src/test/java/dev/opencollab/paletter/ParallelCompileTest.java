@@ -18,11 +18,11 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
- * {@link Paletter#warmUp()} compiles the versions in parallel: the palettes are the same as compiled one after another,
- * with the same runtime ids, definitions and reports, the same objects shared between versions, and the reports passed
- * on in the same order.
+ * {@link Paletter.Builder#build()} compiles the versions in parallel: the palettes are the same as compiled one after
+ * another, with the same runtime ids, definitions and reports, the same objects shared between versions, and the reports
+ * passed on in the same order.
  */
-class ParallelWarmUpTest {
+class ParallelCompileTest {
     /** Threads the global layer was compiled on, by the creative edit it runs. */
     private static final Set<String> THREADS = ConcurrentHashMap.newKeySet();
 
@@ -37,17 +37,16 @@ class ParallelWarmUpTest {
     }
 
     /** The configuration of the test, with its reports collected in order. */
-    private static Paletter paletter(List<PaletteReport> reports) {
-        return Paletter.builder().experiments(Palettes.EXPERIMENTS).layer(layer()).reports(reports::add).build();
+    private static Paletter paletter(List<PaletteReport> reports, boolean sequential) {
+        Paletter.Builder builder = Paletter.builder().experiments(Palettes.EXPERIMENTS).layer(layer()).reports(reports::add);
+        builder.sequential = sequential;
+        return builder.build();
     }
 
     @Test
-    void parallelWarmUpCompilesTheSamePalettes() {
+    void parallelCompileGivesTheSamePalettes() {
         List<PaletteReport> sequentialReports = new ArrayList<>();
-        Paletter sequential = paletter(sequentialReports);
-        for (DataVersion version : sequential.versions()) {
-            sequential.palette(version.protocolVersion());
-        }
+        Paletter sequential = paletter(sequentialReports, true);
         List<DataVersion> versions = sequential.versions();
         assertTrue(versions.size() > 1, "the test needs several versions");
         List<String> expectedSharing = PaletteComparison.sharing(palettes(sequential, versions));
@@ -57,10 +56,9 @@ class ParallelWarmUpTest {
         for (int round = 0; round < 3; round++) {
             THREADS.clear();
             List<PaletteReport> reports = Collections.synchronizedList(new ArrayList<>());
-            Paletter parallel = paletter(reports);
-            parallel.warmUp();
+            Paletter parallel = paletter(reports, false);
             if (Runtime.getRuntime().availableProcessors() > 1) {
-                assertTrue(THREADS.size() > 1 && THREADS.stream().allMatch(name -> name.startsWith("Paletter warm-up")),
+                assertTrue(THREADS.size() > 1 && THREADS.stream().allMatch(name -> name.startsWith("Paletter compile")),
                     "compiled on " + THREADS);
             }
             assertTrue(parallel.compileDataReleased());
@@ -81,7 +79,7 @@ class ParallelWarmUpTest {
             assertEquals(expectedSharing, PaletteComparison.sharing(palettes(parallel, versions)), "round " + round);
             assertEquals(expectedVanillaSharing, PaletteComparison.sharing(vanillaPalettes(parallel, versions)), "round " + round);
             // Nothing was reported twice, however often it is asked for
-            parallel.warmUp();
+            palettes(parallel, versions);
             assertEquals(sequentialReports.size(), reports.size());
         }
     }

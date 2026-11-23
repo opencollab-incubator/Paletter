@@ -1,5 +1,6 @@
 package dev.opencollab.paletter.recipes;
 
+import dev.opencollab.paletter.Lookup;
 import dev.opencollab.paletter.PaletteLayer;
 import dev.opencollab.paletter.creative.CreativeCategory;
 import dev.opencollab.paletter.item.CustomItem;
@@ -14,14 +15,17 @@ import dev.opencollab.paletter.vanilla.BedrockItems;
 import dev.opencollab.paletter.vanilla.ItemKey;
 import org.junit.jupiter.api.Test;
 
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Predicate;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class IngredientsTest {
     private static final List<DataVersion> VERSIONS = VanillaRecipes.versions();
@@ -119,6 +123,99 @@ class IngredientsTest {
             }
         }
         throw new AssertionError("No tag of the newest version has an item the oldest lacks");
+    }
+
+    /** The search before the per palette index: every tag's members rebuilt and compared on each call. */
+    private static Ingredient.Tag scanned(Palette palette, Set<? extends ItemKey> items, Predicate<BedrockItemType> unobtainable) {
+        Set<BedrockItemType> wanted = new HashSet<>();
+        Map<BedrockItemType, Set<Integer>> partial = new HashMap<>();
+        for (ItemKey item : items) {
+            BedrockItemType type = item.type();
+            if (palette.itemDefinition(type) == null || unobtainable.test(type)) {
+                continue;
+            }
+            if (item instanceof BedrockItemVariant variant) {
+                partial.computeIfAbsent(type, key -> new HashSet<>()).add(variant.aux());
+            } else {
+                wanted.add(type);
+            }
+        }
+        partial.keySet().removeAll(wanted);
+        Map<BedrockItemType, Set<Integer>> existing = new HashMap<>();
+        for (BedrockItemVariant variant : palette.itemVariants()) {
+            if (partial.containsKey(variant.type()) && palette.itemVariant(variant.type().identifier(), variant.aux(), Lookup.EXACT) != null) {
+                existing.computeIfAbsent(variant.type(), key -> new HashSet<>()).add(variant.aux());
+            }
+        }
+        for (Map.Entry<BedrockItemType, Set<Integer>> entry : partial.entrySet()) {
+            if (!entry.getValue().containsAll(existing.getOrDefault(entry.getKey(), Set.of()))) {
+                return null;
+            }
+            wanted.add(entry.getKey());
+        }
+        if (wanted.isEmpty()) {
+            return null;
+        }
+        String best = null;
+        int bestSize = 0;
+        for (Map.Entry<String, List<String>> tag : palette.itemTags().entrySet()) {
+            Set<BedrockItemType> members = new HashSet<>();
+            for (String identifier : tag.getValue()) {
+                BedrockItemType member = BedrockItemType.fromIdentifier(identifier);
+                if (!unobtainable.test(member)) {
+                    members.add(member);
+                }
+            }
+            if (members.equals(wanted) && (best == null || tag.getValue().size() < bestSize || tag.getValue().size() == bestSize && tag.getKey().compareTo(best) < 0)) {
+                best = tag.getKey();
+                bestSize = tag.getValue().size();
+            }
+        }
+        return best == null ? null : new Ingredient.Tag(best, 1);
+    }
+
+    @Test
+    void theIndexFindsWhatAScanOfEveryTagFinds() {
+        Palette oldest = Paletter.builder().build().palette(VERSIONS.getFirst().protocolVersion());
+        int compared = 0;
+        for (Palette palette : List.of(NEWEST, oldest)) {
+            for (String tag : palette.itemTags().keySet()) {
+                Set<BedrockItemType> all = members(palette, tag);
+                BedrockItemType first = all.iterator().next();
+                Set<BedrockItemType> lessOne = new HashSet<>(all);
+                lessOne.remove(first);
+                Set<ItemKey> asVariants = new HashSet<>(lessOne);
+                asVariants.addAll(first.variants());
+                Set<ItemKey> oneVariant = new HashSet<>(lessOne);
+                oneVariant.add(first.variants().getFirst());
+                for (Set<? extends ItemKey> items : List.of(all, lessOne, asVariants, oneVariant)) {
+                    for (Predicate<BedrockItemType> unobtainable : List.<Predicate<BedrockItemType>>of(item -> false, first::equals)) {
+                        assertEquals(scanned(palette, items, unobtainable), Ingredients.tagOf(palette, items, unobtainable), tag);
+                        compared++;
+                    }
+                }
+            }
+        }
+        assertTrue(compared > 100, "compared " + compared);
+        // A rough timing, printed for docs/benchmarks.md (no JMH in this module): the last of three rounds over all tags of the newest palette
+        for (int round = 0; round < 3; round++) {
+            long scan = 0;
+            long index = 0;
+            int calls = 0;
+            for (String tag : NEWEST.itemTags().keySet()) {
+                Set<BedrockItemType> all = members(NEWEST, tag);
+                long start = System.nanoTime();
+                scanned(NEWEST, all, item -> false);
+                long middle = System.nanoTime();
+                Ingredients.tagOf(NEWEST, all, item -> false);
+                index += System.nanoTime() - middle;
+                scan += middle - start;
+                calls++;
+            }
+            if (round == 2) {
+                System.out.printf("MEASURE tagOf per call: scan of every tag %.1f us, index %.1f us (%d calls)%n", scan / 1e3 / calls, index / 1e3 / calls, calls);
+            }
+        }
     }
 
     private static CustomItem item(String name, String... tags) {

@@ -19,6 +19,7 @@ import dev.opencollab.paletter.property.Properties;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.function.Supplier;
 
 /**
  * The behaviour values of the blocks and items of one {@link Palette}, behind {@link Palette#resolve(dev.opencollab.paletter.vanilla.BedrockBlockState)} and
@@ -45,7 +46,11 @@ public final class Behaviour {
     private static final int KEYS = BlockBehaviour.keys().size() + ItemBehaviour.keys().size();
 
     private final Palette palette;
-    private final BehaviourStore store;
+    /**
+     * The vanilla values, asked for only when a column or a provenance is built: a resolution and its handle need none.
+     * A {@code Paletter} built with {@code behaviour(false)} gives a supplier that throws, so nothing loads or keeps them.
+     */
+    private final Supplier<BehaviourStore> store;
     /** The behaviour of the palette this one extends, whose states come first here; null if there is none. */
     private final @Nullable Behaviour parent;
     /** The behaviour of the palette this one extends, whose items this one shares by instance; null if there is none. */
@@ -64,7 +69,7 @@ public final class Behaviour {
     private final IntIndex positions;
     private final @Nullable Column[] itemColumns = new Column[KEYS];
 
-    private Behaviour(Palette palette, BehaviourStore store, @Nullable Behaviour parent) {
+    private Behaviour(Palette palette, Supplier<BehaviourStore> store, @Nullable Behaviour parent) {
         this.palette = palette;
         this.store = store;
         BlockRegistry registry = palette.blocks();
@@ -83,6 +88,15 @@ public final class Behaviour {
      * @param parent the behaviour of the palette this one extends (its block states come first in this one), or null
      */
     public static @NonNull Behaviour of(@NonNull Palette palette, @NonNull BehaviourStore store, @Nullable Behaviour parent) {
+        Objects.requireNonNull(store);
+        return of(palette, () -> store, parent);
+    }
+
+    /**
+     * @param store the vanilla values, asked for the first time a column or a provenance needs them
+     * @param parent the behaviour of the palette this one extends (its block states come first in this one), or null
+     */
+    public static @NonNull Behaviour of(@NonNull Palette palette, @NonNull Supplier<BehaviourStore> store, @Nullable Behaviour parent) {
         return new Behaviour(Objects.requireNonNull(palette), Objects.requireNonNull(store), parent);
     }
 
@@ -152,8 +166,39 @@ public final class Behaviour {
         return column != null ? column : buildBlocks(key);
     }
 
+    /**
+     * Reads the vanilla values and builds every block and item column now, instead of on the first lookup of each key.
+     * Called for the palettes a {@code Paletter} compiles (not with {@code behaviour(false)}).
+     */
+    public void loadAll() {
+        store.get();
+        for (BehaviourKey<?> key : BlockBehaviour.keys()) {
+            blockColumn(key);
+        }
+        for (BehaviourKey<?> key : ItemBehaviour.keys()) {
+            itemColumn(key);
+        }
+    }
+
+    /** For tests: whether every column is built. */
+    public boolean loaded() {
+        for (BehaviourKey<?> key : BlockBehaviour.keys()) {
+            if (blockColumns[key.ordinal()] == null) {
+                return false;
+            }
+        }
+        for (BehaviourKey<?> key : ItemBehaviour.keys()) {
+            if (itemColumns[key.ordinal()] == null) {
+                return false;
+            }
+        }
+        return true;
+    }
+
     private synchronized Column buildBlocks(BehaviourKey<?> key) {
         require(key, BehaviourKey.Owner.BLOCK);
+        // Throws here, for every key alike, when the Paletter has no behaviour values (Builder#behaviour(false))
+        store.get();
         Column column = blockColumns[key.ordinal()];
         if (column == null) {
             BlockRegistry registry = palette.blocks();
@@ -177,6 +222,7 @@ public final class Behaviour {
 
     private synchronized Column buildItems(BehaviourKey<?> key) {
         require(key, BehaviourKey.Owner.ITEM);
+        store.get();
         Column column = itemColumns[key.ordinal()];
         if (column == null) {
             Object[] values = new Object[items.size()];
@@ -269,23 +315,25 @@ public final class Behaviour {
 
     public @Nullable Value resolve(@NonNull RegisteredBlockState state, @NonNull BehaviourKey<?> key) {
         require(key, BehaviourKey.Owner.BLOCK);
+        store.get();
         return state.isCustom() ? customBlock(state, key) : vanilla(state, key);
     }
 
     public @Nullable Value resolve(@NonNull RegisteredItem item, @NonNull BehaviourKey<?> key) {
         require(key, BehaviourKey.Owner.ITEM);
+        store.get();
         return item.isCustom() || !item.components().isEmpty() ? customItem(item, key) : vanilla(item, key);
     }
 
     private @Nullable Value vanilla(RegisteredBlockState state, BehaviourKey<?> key) {
         RegisteredBlock block = palette.blocks().block(state.identifier());
-        BehaviourStore.Resolved resolved = store.block(key, state.getRuntimeId(), palette.version());
+        BehaviourStore.Resolved resolved = store.get().block(key, state.getRuntimeId(), palette.version());
         Value wire = block == null ? null : vanillaWire(key, block.properties(state));
         return choose(resolved, wire);
     }
 
     private @Nullable Value vanilla(RegisteredItem item, BehaviourKey<?> key) {
-        BehaviourStore.Resolved resolved = store.item(key, item.getIdentifier(), palette.version());
+        BehaviourStore.Resolved resolved = store.get().item(key, item.getIdentifier(), palette.version());
         return choose(resolved, vanillaWire(key, item.properties()));
     }
 
@@ -378,7 +426,7 @@ public final class Behaviour {
             return new Value(sent, new Provenance(Provenance.Source.WIRE, "component data Paletter sends, not set by the user",
                 version, version));
         }
-        BehaviourStore.Default fallback = store.defaultOf(key);
+        BehaviourStore.Default fallback = store.get().defaultOf(key);
         if (fallback == null) {
             return new Value(null, Provenance.unknownDefault(version));
         }
@@ -404,7 +452,7 @@ public final class Behaviour {
             return block == null ? null
                 : customValue(key, block.properties(state), block.components(state).stream().map(c -> c.name()).toList());
         }
-        BehaviourStore.Hit stored = store.blockHit(key, state.getRuntimeId(), palette.version());
+        BehaviourStore.Hit stored = store.get().blockHit(key, state.getRuntimeId(), palette.version());
         return chooseValue(stored, block == null ? null : WireRules.value(key, block.properties(state)));
     }
 
@@ -421,7 +469,7 @@ public final class Behaviour {
     }
 
     private @Nullable Object vanillaValue(RegisteredItem item, BehaviourKey<?> key) {
-        return chooseValue(store.itemHit(key, item.getIdentifier(), palette.version()), WireRules.value(key, item.properties()));
+        return chooseValue(store.get().itemHit(key, item.getIdentifier(), palette.version()), WireRules.value(key, item.properties()));
     }
 
     private @Nullable Object customValue(BehaviourKey<?> key, Properties properties, List<String> components) {
@@ -433,7 +481,7 @@ public final class Behaviour {
         if (sent != null) {
             return sent;
         }
-        BehaviourStore.Default fallback = store.defaultOf(key);
+        BehaviourStore.Default fallback = store.get().defaultOf(key);
         return fallback == null ? null : fallback.value();
     }
 

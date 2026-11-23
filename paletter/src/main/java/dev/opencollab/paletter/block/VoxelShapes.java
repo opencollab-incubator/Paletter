@@ -30,6 +30,8 @@ public final class VoxelShapes {
     private final List<VoxelGrid> shapes;
     private final Map<String, Integer> names;
     private final int customShapeCount;
+    /** The shapes as sent, made once: each login's packet shares them (a shape on the wire is boxed shorts and floats). */
+    private final List<SerializableVoxelShape> wire;
 
     /**
      * Internal: creates the shapes of a palette, done by the palette compiler.
@@ -43,6 +45,11 @@ public final class VoxelShapes {
         this.shapes = List.copyOf(shapes);
         this.names = Collections.unmodifiableMap(new LinkedHashMap<>(names));
         this.customShapeCount = customShapeCount;
+        List<SerializableVoxelShape> wire = new ArrayList<>(this.shapes.size());
+        for (VoxelGrid shape : this.shapes) {
+            wire.add(shape.toWire());
+        }
+        this.wire = Collections.unmodifiableList(wire);
     }
 
     /**
@@ -82,12 +89,8 @@ public final class VoxelShapes {
      */
     @Internal
     public @NonNull VoxelShapesPacket toPacket() {
-        List<SerializableVoxelShape> wire = new ArrayList<>(shapes.size());
-        for (VoxelGrid shape : shapes) {
-            wire.add(shape.toWire());
-        }
         VoxelShapesPacket packet = new VoxelShapesPacket();
-        packet.setShapes(wire);
+        packet.setShapes(new ArrayList<>(wire));
         packet.setNameMap(new LinkedHashMap<>(names));
         packet.setCustomShapeCount(customShapeCount);
         return packet;

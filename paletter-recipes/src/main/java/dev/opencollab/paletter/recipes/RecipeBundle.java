@@ -9,12 +9,14 @@ import dev.opencollab.paletter.data.DataVersion;
 import dev.opencollab.paletter.vanilla.BedrockItemType;
 import dev.opencollab.paletter.vanilla.BedrockItemVariant;
 
+import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.UUID;
+import java.util.zip.GZIPInputStream;
 
 /**
  * The bundled recipe file ({@code /paletter/recipes/<data version>.nbt}): a gzipped big endian NBT compound, written by the
@@ -48,7 +50,8 @@ final class RecipeBundle {
 
     static VanillaRecipes read(DataVersion version, InputStream stream) throws IOException {
         NbtMap root;
-        try (NBTInputStream input = NbtUtils.createGZIPReader(stream)) {
+        // Buffered on the inflated side (as Paletter's own readers): the NBT reader reads one primitive at a time
+        try (NBTInputStream input = NbtUtils.createReader(new BufferedInputStream(new GZIPInputStream(stream, 8192), 1 << 16))) {
             root = (NbtMap) input.readTag();
         }
         if (root.getInt("format", -1) != FORMAT) {

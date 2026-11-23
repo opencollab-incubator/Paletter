@@ -4,6 +4,7 @@ import dev.opencollab.paletter.block.BlockProperty;
 import dev.opencollab.paletter.block.CustomBlock;
 import dev.opencollab.paletter.creative.CreativeCategory;
 import dev.opencollab.paletter.data.DataVersion;
+import dev.opencollab.paletter.data.PaletteDataSource;
 import dev.opencollab.paletter.item.CustomItem;
 import dev.opencollab.paletter.item.component.MaxStackSize;
 import org.junit.jupiter.api.Test;
@@ -37,22 +38,32 @@ import static org.junit.jupiter.api.Assertions.fail;
  * The limits are above the measured values, which are noted beside them; raise one only for a reason, and say so in the commit.
  */
 class MemoryBaselineTest {
-    /** A session layer of two blocks and three properties: no creative placement, so the creative content is the parent's. Measured 50,984 bytes, the same in every run. */
+    /** A session layer of two blocks and three properties: no creative placement, so the creative content is the parent's. Measured 53,056 bytes (50,984 before build() compiled the palettes with everything loaded), the same in every run. */
     private static final long MAX_EXTEND_BYTES = 56_000;
-    /** A layer with an item and a block in creative: the creative content is compiled again. Measured 299,208 bytes, the same in every run. */
+    /** A layer with an item and a block in creative: the creative content is compiled again. Measured 300,656 bytes (299,208 before), the same in every run. */
     private static final long MAX_EXTEND_WITH_CREATIVE_BYTES = 330_000;
     /**
-     * A vanilla palette with everything it reaches, of the newest and of the oldest version. Measured 12.9 and 13.6 MB
-     * (12,918,680 and 13,566,112 bytes) since the state indexes are keyed by state hashes; 14.5 and 15.0 MB before.
+     * A vanilla palette with everything it reaches, of the newest and of the oldest version, behaviour off. Measured 11.9
+     * and 13.3 MB (11,914,448 and 13,310,304 bytes) since build() compiles (and then drops what only compiling uses);
+     * 12.9 and 13.6 MB before that, 14.5 and 15.0 MB before the state indexes were keyed by state hashes.
      */
-    private static final long MAX_VANILLA_LATEST_BYTES = 14_200_000;
-    private static final long MAX_VANILLA_OLDEST_BYTES = 14_900_000;
+    private static final long MAX_VANILLA_LATEST_BYTES = 13_100_000;
+    private static final long MAX_VANILLA_OLDEST_BYTES = 14_600_000;
     /**
      * A Paletter serving every bundled version but the oldest, with all its palettes compiled, and the shared bundled
-     * instance it loads through. Measured 16.7 MB (16,697,128 bytes) since the state indexes are keyed by state hashes;
-     * 18.5 MB before, 20.9 MB before what only compiling uses was dropped once all are compiled.
+     * loader it loads through, behaviour off. Measured 18.4 MB (18,437,040 bytes) since build() builds what lookups used to
+     * build on first use (resolution tables, merged item definitions and their flat table by runtime id, ...); 16.7 MB
+     * before that, 18.5 MB before the state indexes were keyed by state hashes, 20.9 MB before what only compiling uses
+     * was dropped once all are compiled.
      */
-    private static final long MAX_SERVED_BYTES = 18_400_000;
+    private static final long MAX_SERVED_BYTES = 20_000_000;
+    /**
+     * The bundled behaviour store ({@code behaviour.nbt} as read), shared by every palette. Measured 6.6 MB (6,624,728
+     * bytes): int[] ids 3.3 MB, Object[] values 2.8 MB, the rest strings and shapes.
+     */
+    private static final long MAX_BEHAVIOUR_STORE_BYTES = 7_300_000;
+    /** The behaviour columns of the newest palette, all keys built (as {@code build()} does). Measured 2.4 MB (2,356,032 bytes). */
+    private static final long MAX_BEHAVIOUR_COLUMNS_BYTES = 2_600_000;
 
     private static PaletteLayer sessionLayer(String id) {
         return PaletteLayer.builder(id)
@@ -74,7 +85,7 @@ class MemoryBaselineTest {
      * Runs in the measuring JVM ({@link VanillaMeasure}).
      */
     private static long extendBytes(Function<String, PaletteLayer> layer) {
-        Paletter paletter = Paletter.builder().build();
+        Paletter paletter = Paletter.builder().versions(MemoryBaselineTest::newestRelease).build();
         Palette base = paletter.palette(paletter.latest().protocolVersion());
         base.extend(layer.apply("warmup"));
         System.gc();
@@ -85,7 +96,7 @@ class MemoryBaselineTest {
 
     /**
      * What a vanilla palette reaches, measured in a JVM of its own: what other tests of this JVM have filled in the handles of
-     * the constants and in the data source (the behaviour captures alone are about 15 MB) would count as the palette's.
+     * the constants and in the data source (the behaviour store alone is 6.6 MB, measured on its own below) would count as the palette's.
      */
     private static long vanillaBytes(String mode) {
         // The object layout decides the size: pinned, so the number does not depend on the JDK or the machine.
@@ -118,6 +129,7 @@ class MemoryBaselineTest {
             if (process.exitValue() != 0) {
                 throw new IllegalStateException("the measuring JVM failed: " + text);
             }
+            text.lines().filter(line -> line.startsWith("FOOTPRINT ")).forEach(line -> System.out.println("MEMORY " + line));
             return Long.parseLong(text.lines().reduce((first, second) -> second).orElseThrow());
         } catch (IOException | InterruptedException | ExecutionException | TimeoutException e) {
             throw new IllegalStateException(e);
@@ -135,6 +147,20 @@ class MemoryBaselineTest {
      */
     public static final class VanillaMeasure {
         public static void main(String[] args) {
+            if (args[0].equals("behaviour")) {
+                // The behaviour store alone, with where its bytes go
+                Object store = PaletteDataSource.bundled().behaviour();
+                GraphLayout layout = GraphLayout.parseInstance(store);
+                layout.toFootprint().lines().forEach(line -> System.out.println("FOOTPRINT " + line));
+                System.out.println(layout.totalSize());
+                return;
+            }
+            if (args[0].equals("withBehaviour")) {
+                // The newest palette with its behaviour columns, and the store it reaches through its data source
+                Paletter paletter = Paletter.builder().versions(MemoryBaselineTest::newestRelease).build();
+                System.out.println(GraphLayout.parseInstance(paletter.palette(paletter.latest().protocolVersion())).totalSize());
+                return;
+            }
             if (args[0].equals("extend")) {
                 System.out.println(extendBytes(MemoryBaselineTest::sessionLayer));
                 return;
@@ -144,18 +170,22 @@ class MemoryBaselineTest {
                 return;
             }
             if (args[0].equals("served")) {
-                DataVersion oldest = Paletter.bundled().versions().getFirst();
-                Paletter paletter = Paletter.builder().versions(version -> !version.equals(oldest)).build();
-                for (DataVersion version : paletter.versions()) {
-                    paletter.palette(version.protocolVersion());
-                }
-                System.out.println(GraphLayout.parseInstance(paletter, Paletter.bundled()).totalSize());
+                DataVersion oldest = PaletteDataSource.bundled().versions().getFirst();
+                Paletter paletter = Paletter.builder().behaviour(false).versions(version -> !version.equals(oldest)).build();
+                System.out.println(GraphLayout.parseInstance(paletter, Paletter.bundledLoader()).totalSize());
                 return;
             }
-            Paletter paletter = Paletter.builder().build();
-            DataVersion version = Boolean.parseBoolean(args[0]) ? paletter.latest() : paletter.versions().getFirst();
-            System.out.println(GraphLayout.parseInstance(paletter.vanilla(version)).totalSize());
+            // Behaviour off: the palette alone, see "behaviour" and "withBehaviour" for the rest
+            boolean newest = Boolean.parseBoolean(args[0]);
+            DataVersion oldest = PaletteDataSource.bundled().versions().getFirst();
+            Paletter paletter = Paletter.builder().behaviour(false)
+                .versions(version -> newest ? newestRelease(version) : version.equals(oldest)).build();
+            System.out.println(GraphLayout.parseInstance(paletter.vanilla(paletter.versions().getFirst())).totalSize());
         }
+    }
+
+    private static boolean newestRelease(DataVersion version) {
+        return version.equals(PaletteDataSource.bundled().versions().stream().filter(v -> !v.isPreview()).reduce((a, b) -> b).orElseThrow());
     }
 
     @Test
@@ -177,6 +207,15 @@ class MemoryBaselineTest {
     @Test
     void servedVersionsStaySmall() {
         assertOnce("the served versions", MAX_SERVED_BYTES, vanillaBytes("served"));
+    }
+
+    @Test
+    void behaviourStaysWithinItsLimit() {
+        long store = vanillaBytes("behaviour");
+        assertOnce("the behaviour store", MAX_BEHAVIOUR_STORE_BYTES, store);
+        // The newest palette with behaviour on reaches the store too: the columns are the rest of the difference
+        long columns = vanillaBytes("withBehaviour") - vanillaBytes("true") - store;
+        assertOnce("the behaviour columns of the newest palette", MAX_BEHAVIOUR_COLUMNS_BYTES, columns);
     }
 
     private static void assertOnce(String what, long limit, long bytes) {

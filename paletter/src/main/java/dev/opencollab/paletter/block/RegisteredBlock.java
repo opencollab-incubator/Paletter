@@ -6,6 +6,7 @@ import org.cloudburstmc.nbt.NbtMap;
 import dev.opencollab.paletter.Origin;
 import dev.opencollab.paletter.annotation.Internal;
 import dev.opencollab.paletter.block.component.BlockComponent;
+import dev.opencollab.paletter.internal.block.BlockStates;
 import dev.opencollab.paletter.internal.block.StateConditions;
 import dev.opencollab.paletter.internal.property.PropertySplit;
 import dev.opencollab.paletter.property.Properties;
@@ -114,7 +115,8 @@ public final class RegisteredBlock {
             result = states.getFirst();
             if (defaultStateNbt != null) {
                 for (RegisteredBlockState state : states) {
-                    if (state.getState().equals(defaultStateNbt)) {
+                    // Compared by their two values: the kept state is not iterated (docs/benchmarks.md)
+                    if (BlockStates.same(defaultStateNbt, state.getState())) {
                         result = state;
                         break;
                     }

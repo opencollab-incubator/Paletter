@@ -28,6 +28,11 @@ public final class VoxelGrid {
 
     private final float[][] coordinates;
     private final boolean[] cells;
+    /**
+     * {@link #toWire()}, made once: palettes that share the shape share it. Two threads may both make it and keep equal
+     * values; the wire shape's fields are final, so either is safe to read.
+     */
+    private SerializableVoxelShape wire;
     /** The hash, made on first use (0: not yet; a grid that hashes to 0 is hashed again): the vanilla grids are hashed by every palette. */
     private int hash;
 
@@ -237,6 +242,14 @@ public final class VoxelGrid {
     }
 
     public SerializableVoxelShape toWire() {
+        SerializableVoxelShape result = wire;
+        if (result == null) {
+            wire = result = buildWire();
+        }
+        return result;
+    }
+
+    private SerializableVoxelShape buildWire() {
         List<Short> storage = new ArrayList<>();
         for (int at = 0; at < cells.length; at += 8) {
             int bits = 0;
@@ -251,7 +264,8 @@ public final class VoxelGrid {
         short xSize = (short) (coordinates[0].length - 1);
         short ySize = (short) (coordinates[1].length - 1);
         short zSize = (short) (coordinates[2].length - 1);
-        return new SerializableVoxelShape(new SerializableVoxelShape.SerializableCells(xSize, ySize, zSize, storage),
+        // Unmodifiable: the instance is shared by every packet that sends the shape
+        return new SerializableVoxelShape(new SerializableVoxelShape.SerializableCells(xSize, ySize, zSize, List.copyOf(storage)),
             floats(coordinates[0]), floats(coordinates[1]), floats(coordinates[2]));
     }
 
@@ -260,7 +274,7 @@ public final class VoxelGrid {
         for (float value : values) {
             list.add(value);
         }
-        return list;
+        return List.copyOf(list);
     }
 
     /** A shape as it was sent: kept as it is, minimal or not. */

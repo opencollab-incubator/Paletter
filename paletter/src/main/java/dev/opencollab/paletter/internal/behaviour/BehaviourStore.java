@@ -2,7 +2,6 @@ package dev.opencollab.paletter.internal.behaviour;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
-import org.cloudburstmc.nbt.NBTInputStream;
 import org.cloudburstmc.nbt.NBTOutputStream;
 import org.cloudburstmc.nbt.NbtList;
 import org.cloudburstmc.nbt.NbtMap;
@@ -520,10 +519,7 @@ public final class BehaviourStore {
     // ---- Serialisation ----
 
     public static @NonNull BehaviourStore read(@NonNull InputStream stream) throws IOException {
-        NbtMap root;
-        try (NBTInputStream input = NbtUtils.createGZIPReader(stream)) {
-            root = (NbtMap) input.readTag();
-        }
+        NbtMap root = PaletteDataCodec.readGzip(stream);
         int format = root.getInt("format", -1);
         if (format != FORMAT) {
             throw new IOException("Unsupported Paletter behaviour format " + format + ", expected " + FORMAT);
@@ -575,10 +571,14 @@ public final class BehaviourStore {
                     packed[i] = (long) ids[i] << 32 | i;
                 }
                 Arrays.sort(packed);
-                int[] sortedIds = new int[ids.length];
+                // A column of every covered state has the capture's own sorted ids: share that array
+                boolean full = ids == covered;
+                int[] sortedIds = full ? captures.get(capture).blocks() : new int[ids.length];
                 Object[] sortedValues = new Object[ids.length];
                 for (int i = 0; i < packed.length; i++) {
-                    sortedIds[i] = (int) (packed[i] >> 32);
+                    if (!full) {
+                        sortedIds[i] = (int) (packed[i] >> 32);
+                    }
                     sortedValues[i] = values[(int) packed[i]];
                 }
                 columns.add(new Column<>(capture, sortedIds, sortedValues));
