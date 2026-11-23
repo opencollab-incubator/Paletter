@@ -277,5 +277,7 @@ generated table).
 
 **After the review fixes** (the digest a file without block states carries, checked on every read; the soft cache of the
 definitions), same method: loading the newest version cold 217 to 222 ms (the digest hashes every state once more, cold), every
-version after it 283 to 340 ms, about what reading the old files cost. Memory: newest / oldest palette 11,881,312 / 13,297,504,
+version after it 283 to 340 ms, about what reading the old files cost. The bundled data source then stopped checking the digest
+at load (the build checks the bundled files: `checkBlocks`, `PaletteDataCodecBlocksTest`; a directory data source still checks):
+five cold runs gave 155 to 166 ms for the newest version and 222 to 252 ms for every version after it, as before the fixes. Memory: newest / oldest palette 11,881,312 / 13,297,504,
 served versions 18,355,872, metaspace of the generated block and shape classes 382,632 bytes.

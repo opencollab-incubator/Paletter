@@ -57,6 +57,16 @@ class PaletteDataCodecBlocksTest {
     }
 
     @Test
+    void everyBundledFileHasTheDigestOfItsDerivedPalette() throws IOException {
+        // The bundled source does not check it on load (FileDataSource.BUNDLED): the build does, here and in checkBlocks
+        for (DataVersion version : PaletteDataSource.bundled().versions()) {
+            try (var in = PaletteDataCodecBlocksTest.class.getResourceAsStream("/paletter/" + version.name() + ".nbt")) {
+                assertEquals(PaletteDataSource.bundled().load(version).blockStates(), PaletteDataCodec.read(in, true).blockStates());
+            }
+        }
+    }
+
+    @Test
     void otherStatesOrDefaultsAreWrittenOut() throws IOException {
         VanillaData data = newest();
         List<NbtMap> fewer = new ArrayList<>(data.blockStates());

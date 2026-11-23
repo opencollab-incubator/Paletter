@@ -40,10 +40,13 @@ import java.util.Map;
  * directory ({@link PaletteDataSource#directory(Path)}).
  */
 final class FileDataSource implements PaletteDataSource {
+    // The bundled files are checked against the generated definitions by the build (checkBlocks): not again at each load
     static final FileDataSource BUNDLED = new FileDataSource(
-        file -> FileDataSource.class.getResourceAsStream("/paletter/" + file), "the library jar");
+        file -> FileDataSource.class.getResourceAsStream("/paletter/" + file), "the library jar", false);
     private final Opener opener;
     private final String origin;
+    /** Whether a version file without block states is checked against the digest it stores ({@link PaletteDataCodec#read}). */
+    private final boolean checkDigest;
 
     private final Lazy<List<DataVersion>> versions = new Lazy<>(this::readIndex);
     private final Lazy<Map<String, List<VerifiedBuild>>> verifiedBuilds = new Lazy<>(this::readBuilds);
@@ -53,9 +56,10 @@ final class FileDataSource implements PaletteDataSource {
     // The bundled shapes are generated classes; a directory may carry its own
     private final Lazy<VoxelShapeStore> voxelShapes = new Lazy<>(this::readVoxelShapes);
 
-    private FileDataSource(Opener opener, String origin) {
+    private FileDataSource(Opener opener, String origin, boolean checkDigest) {
         this.opener = opener;
         this.origin = origin;
+        this.checkDigest = checkDigest;
     }
 
     /** Reads a file of the set with {@code reader}, or returns {@code empty} if there is none. */
@@ -84,7 +88,7 @@ final class FileDataSource implements PaletteDataSource {
         return new FileDataSource(file -> {
             Path path = directory.resolve(file);
             return Files.isRegularFile(path) ? Files.newInputStream(path) : null;
-        }, directory.toString());
+        }, directory.toString(), true);
     }
 
     /** Opens a file of the set, or returns null if there is none. */
@@ -178,7 +182,7 @@ final class FileDataSource implements PaletteDataSource {
     @Override
     public @NonNull VanillaData load(@NonNull DataVersion version) throws IOException {
         try (InputStream stream = open(version.name() + ".nbt")) {
-            return properties().attach(PaletteDataCodec.read(stream));
+            return properties().attach(PaletteDataCodec.read(stream, checkDigest));
         }
     }
 

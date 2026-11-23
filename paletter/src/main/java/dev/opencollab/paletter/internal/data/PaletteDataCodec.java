@@ -92,7 +92,17 @@ public final class PaletteDataCodec {
         }
     }
 
+    /** Reads data, checking the digest of a file without block states against the derived palette. */
     public static @NonNull VanillaData read(@NonNull InputStream stream) throws IOException {
+        return read(stream, true);
+    }
+
+    /**
+     * @param checkDigest whether to check the digest of a file without block states against the derived palette: off only
+     *                    for the files bundled with the library, which the build checks ({@code checkBlocks}, tests), as
+     *                    hashing every state again costs a cold load about 60 ms
+     */
+    public static @NonNull VanillaData read(@NonNull InputStream stream, boolean checkDigest) throws IOException {
         NbtMap root = readGzip(stream);
         int format = root.getInt("format", -1);
         if (format != FORMAT) {
@@ -124,7 +134,7 @@ public final class PaletteDataCodec {
             if (digest == null) {
                 throw new IOException("The data of " + version.name() + " has neither block states nor the digest of the palette it was written with");
             }
-            NbtMap derived = digest(palette.states(), palette.defaults());
+            NbtMap derived = checkDigest ? digest(palette.states(), palette.defaults()) : digest;
             if (!derived.equals(digest)) {
                 throw new IOException("The block states the library derives for " + version.name() + " (" + derived + ") are not the ones its data "
                     + "file was written with (" + digest + "): the generated block definitions and the data are of different palettes");

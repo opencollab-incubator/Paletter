@@ -887,8 +887,9 @@ change, so their place cannot change the states: they go first, by name. Then it
 before and fails unless that gives the version. It writes the sources and every version file without its block states
 (`blocks` and `block_defaults`, which the codec then takes from the definitions) but with `blocks_digest`: the state count and
 an FNV-1a 64 over the hashed ids of the states in order and of the defaults, of the palette that was imported. Reading a file
-without block states (the library, `checkBlocks`, every tool) fails, naming the version, unless the derived palette has that
-digest: a hand edit of the generated classes, a merge of two data changes into a chain nobody captured, or a file paired with
+without block states (`checkBlocks`, every tool, a directory data source) fails, naming the version, unless the derived palette
+has that digest. The bundled data source skips the check at load (it costs a cold load about 60 ms): the build checks the
+bundled files (`checkBlocks`, `PaletteDataCodecBlocksTest`). So a hand edit of the generated classes, a merge of two data changes into a chain nobody captured, or a file paired with
 the definitions of another library cannot pass silently. `blocks export --out <dir>` writes the bundled data with every
 version's block states again (to recover, see updating.md troubleshooting).
 
