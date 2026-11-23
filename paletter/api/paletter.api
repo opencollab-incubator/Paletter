@@ -139,6 +139,7 @@ public final class dev.opencollab.paletter.PaletteLayer {
     public java.util.List<java.util.function.BiConsumer<dev.opencollab.paletter.creative.CreativeEditor, dev.opencollab.paletter.data.DataVersion>> creativeEdits()
     public java.lang.String id()
     public java.util.List<dev.opencollab.paletter.item.CustomItem> items()
+    public java.lang.String minEngineVersion()
     public java.util.List<dev.opencollab.paletter.PaletteLayer$Override> overrides()
     public java.util.Map<java.lang.String, java.util.List<java.lang.String>> tags()
     public java.lang.String toString()
@@ -151,6 +152,7 @@ public static final class dev.opencollab.paletter.PaletteLayer$Builder {
     public dev.opencollab.paletter.PaletteLayer$Builder creative(java.util.function.BiConsumer<dev.opencollab.paletter.creative.CreativeEditor, dev.opencollab.paletter.data.DataVersion>)
     public dev.opencollab.paletter.PaletteLayer$Builder creative(java.util.function.Consumer<dev.opencollab.paletter.creative.CreativeEditor>)
     public dev.opencollab.paletter.PaletteLayer$Builder item(dev.opencollab.paletter.item.CustomItem)
+    public dev.opencollab.paletter.PaletteLayer$Builder minEngineVersion(java.lang.String)
     @Experimental public dev.opencollab.paletter.PaletteLayer$Builder overrideItem(dev.opencollab.paletter.vanilla.BedrockItemType, java.util.function.Consumer<dev.opencollab.paletter.item.ItemOverride>)
     @Experimental public dev.opencollab.paletter.PaletteLayer$Builder overrideItem(java.lang.String, java.util.function.Consumer<dev.opencollab.paletter.item.ItemOverride>)
     public dev.opencollab.paletter.PaletteLayer$Builder tag(java.lang.String, java.lang.String...)
@@ -728,15 +730,12 @@ public static final class dev.opencollab.paletter.block.component.BoneVisibility
     public boolean equals(java.lang.Object)
     public int hashCode()
     public java.lang.String name()
-    public static dev.opencollab.paletter.block.component.Breathability of(java.lang.String)
     public dev.opencollab.paletter.block.component.Breathability$Builder toBuilder()
     public java.lang.String toString()
-    public java.lang.String value()
 }
 
 public static final class dev.opencollab.paletter.block.component.Breathability$Builder {
     public dev.opencollab.paletter.block.component.Breathability build()
-    public dev.opencollab.paletter.block.component.Breathability$Builder value(java.lang.String)
 }
 
 public final class dev.opencollab.paletter.block.component.ChestObstruction implements dev.opencollab.paletter.block.component.BlockComponent {
@@ -1037,6 +1036,7 @@ public final class dev.opencollab.paletter.block.component.EmbeddedVisual implem
 public static final class dev.opencollab.paletter.block.component.EmbeddedVisual$Builder {
     public dev.opencollab.paletter.block.component.EmbeddedVisual build()
     public dev.opencollab.paletter.block.component.EmbeddedVisual$Builder geometry(dev.opencollab.paletter.block.component.EmbeddedVisual$VisualGeometry)
+    public dev.opencollab.paletter.block.component.EmbeddedVisual$Builder geometry(java.lang.String)
     public dev.opencollab.paletter.block.component.EmbeddedVisual$Builder materialInstances(dev.opencollab.paletter.block.component.MaterialInstances)
 }
 
@@ -1068,6 +1068,7 @@ public static final class dev.opencollab.paletter.block.component.EmbeddedVisual
     public int hashCode()
     public java.lang.String identifier()
     public dev.opencollab.paletter.block.component.EmbeddedVisual$NWayVisualRotation nWayVisualRotation()
+    public static dev.opencollab.paletter.block.component.EmbeddedVisual$VisualGeometry of(java.lang.String)
     public dev.opencollab.paletter.block.component.EmbeddedVisual$VisualGeometry$Builder toBuilder()
     public java.lang.String toString()
     public dev.opencollab.paletter.block.component.UvLock uvLock()
@@ -1549,6 +1550,7 @@ public final class dev.opencollab.paletter.block.component.MapColor implements d
     public boolean equals(java.lang.Object)
     public int hashCode()
     public java.lang.String name()
+    public static dev.opencollab.paletter.block.component.MapColor of(java.lang.String)
     public java.util.List<java.lang.Integer> rgb()
     public dev.opencollab.paletter.block.component.MapColor$TintMethod tintMethod()
     public dev.opencollab.paletter.block.component.MapColor$Builder toBuilder()

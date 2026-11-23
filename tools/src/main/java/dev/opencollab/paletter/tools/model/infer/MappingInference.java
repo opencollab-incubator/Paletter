@@ -260,6 +260,10 @@ public final class MappingInference {
         }
         formats(components);
         mappings.add("envelope", Envelope.windows(captures, resultsByCapture, fixtures, this::dataProtocol));
+        JsonObject molangVersions = MolangVersions.infer(root, captures);
+        if (!molangVersions.isEmpty()) {
+            mappings.add("molangVersions", molangVersions);
+        }
         mappings.add("components", components);
         coverage.wirePaths(dev.opencollab.paletter.tools.data.WireShapes.uncoveredByBuild(root.resolve(dev.opencollab.paletter.tools.Layout.BDS), mappings, model));
         coverage.findings(findings);

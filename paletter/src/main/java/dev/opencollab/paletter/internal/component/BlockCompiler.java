@@ -25,7 +25,14 @@ public final class BlockCompiler {
         WireContext ctx = context.subject(block.identifier());
         WireNode out = new WireNode();
         WireNode components = new WireNode();
+        // minecraft:tags is no component on the wire: BDS 1.26.36.1 to 1.26.70.24 send its tags as the block's top level
+        // blockTags, as written (duplicates kept), and nothing for an empty list
+        java.util.List<String> tags = new java.util.ArrayList<>(block.tags());
         for (BlockComponent component : block.components()) {
+            if (component instanceof dev.opencollab.paletter.block.component.BlockTags blockTags) {
+                tags.addAll(blockTags.value());
+                continue;
+            }
             BlockWire.write(component, ctx, components);
         }
         if (!components.isEmpty()) {
@@ -49,8 +56,8 @@ public final class BlockCompiler {
         for (CustomBlock.Permutation permutation : block.permutations()) {
             Transforms.permutationComponents(ctx, out, permutation);
         }
-        if (!block.tags().isEmpty()) {
-            out.put("blockTags", Wire.strings(block.tags()));
+        if (!tags.isEmpty()) {
+            out.put("blockTags", Wire.strings(tags));
         }
         return out.build();
     }

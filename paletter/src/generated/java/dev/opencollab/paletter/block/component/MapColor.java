@@ -33,14 +33,13 @@ public final class MapColor implements BlockComponent {
 
     private final @NonNull List<Integer> rgb;
 
-    private final @NonNull String color;
+    private final @Nullable String color;
 
     private final @Nullable TintMethod tintMethod;
 
-    private MapColor(@NonNull List<Integer> rgb, @NonNull String color,
+    private MapColor(@NonNull List<Integer> rgb, @Nullable String color,
             @Nullable TintMethod tintMethod) {
         rgb = List.copyOf(Objects.requireNonNull(rgb, "MapColor.rgb"));
-        Objects.requireNonNull(color, "MapColor.color");
         this.rgb = rgb;
         this.color = color;
         this.tintMethod = tintMethod;
@@ -57,11 +56,11 @@ public final class MapColor implements BlockComponent {
 
     /**
      * The color is represented as a hex value in the format "#RRGGBB". May also be expressed as an array of [R, G,
-     * B] from 0 to 255. Add-on JSON {@code color}. Required.
+     * B] from 0 to 255. Add-on JSON {@code color}. Optional (null: not set).
      *
      * @return the value
      */
-    public @NonNull String color() {
+    public @Nullable String color() {
         return color;
     }
 
@@ -105,8 +104,17 @@ public final class MapColor implements BlockComponent {
     }
 
     /**
-     * Creates a builder with every optional field at its default; required fields must be set before
-     * {@code build()}.
+     * The string shorthand: sets {@code color}.
+     *
+     * @param value the value of that field
+     * @return the value with everything else at its default
+     */
+    public static @NonNull MapColor of(@NonNull String value) {
+        return builder().color(value).build();
+    }
+
+    /**
+     * Creates a builder with every field at its default.
      *
      * @return a builder with the defaults applied
      */
@@ -173,10 +181,9 @@ public final class MapColor implements BlockComponent {
          *
          * @param color the value
          * @return this builder
-         * @throws NullPointerException if the value is null
          */
-        public @NonNull Builder color(@NonNull String color) {
-            this.color = Objects.requireNonNull(color, "MapColor.color");
+        public @NonNull Builder color(@Nullable String color) {
+            this.color = color;
             return this;
         }
 
@@ -199,9 +206,6 @@ public final class MapColor implements BlockComponent {
          * @throws IllegalArgumentException if a value is out of range
          */
         public @NonNull MapColor build() {
-            if (color == null) {
-                throw new IllegalStateException("MapColor.color is required");
-            }
             return new MapColor(rgb, color, tintMethod);
         }
     }

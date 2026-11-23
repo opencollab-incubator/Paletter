@@ -119,7 +119,7 @@ final class PaletteCompiler {
         // Blocks first: items need to know which blocks exist, and custom blocks re-number all states.
         // Without custom blocks or block fallbacks the parent's block palette (and its canonical table) is shared
         BlockRegistry blocks = parent.blocks()
-            .withCustomBlocks(data, layer, layer.blocks(), report, source);
+            .withCustomBlocks(data, layer, layer.blocks(), report, source, layer.minEngineVersion());
 
         // Items of the layer that replace the item of one of its blocks: they are the blocks' items
         Map<String, CustomItem> replacements = new LinkedHashMap<>();

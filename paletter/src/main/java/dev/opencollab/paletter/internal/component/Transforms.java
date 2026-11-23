@@ -18,6 +18,7 @@ import dev.opencollab.paletter.block.component.UvLock;
 import dev.opencollab.paletter.item.component.BlockPlacer;
 import dev.opencollab.paletter.item.component.ColorValue;
 import dev.opencollab.paletter.item.component.Dyeable;
+import dev.opencollab.paletter.item.component.Food;
 import dev.opencollab.paletter.item.component.HoverTextColor;
 import dev.opencollab.paletter.item.component.Icon;
 import dev.opencollab.paletter.item.component.ItemsOrTags;
@@ -376,29 +377,27 @@ public final class Transforms {
     // ---- block_descriptor_states -------------------------------------------------------------------------------------
 
     /**
-     * Placement filter descriptors send their states as a list of {@code {state, type, value}}, only when there are any.
+     * Placement filter descriptors send their states as a list of {@code {state, type, value}}, only when there are any, in
+     * the order given. BDS 1.26.36.1 to 1.26.70.24 send a string as type 1 with the string ({@code pillar_axis "x"},
+     * {@code open_bit "true"}), and an int as type 2 with the int; a boolean is an int too (type 2, 1 or 0), whatever the
+     * named block's states are.
      */
     public static void blockDescriptorStates(@NonNull WireContext ctx, @NonNull WireNode out, PlacementFilter.BlockFilter d) {
         if (d.states().isEmpty()) {
             return;
         }
-        NbtMap typed = Wire.states(ctx, d.name(), d.states());
         out.list("states");
-        typed.forEach((state, value) -> {
+        d.states().forEach((state, value) -> {
             WireNode entry = out.element("states");
             entry.put("state", state);
-            entry.put("type", stateType(value));
-            entry.put("value", value);
+            if (value instanceof String text) {
+                entry.put("type", 1);
+                entry.put("value", text);
+            } else {
+                entry.put("type", 2);
+                entry.put("value", value instanceof Boolean b ? (b ? 1 : 0) : value);
+            }
         });
-    }
-
-    /**
-     * The {@code type} of a placement filter state: 2 for an int state, as BDS 1.26.63.1 sent it. 1 for a string and 0 for
-     * a boolean state follow the same order but are unverified: no accepted variant has a string or boolean state, so the
-     * conformance suite does not check them.
-     */
-    private static int stateType(Object value) {
-        return value instanceof Integer ? 2 : value instanceof Byte ? 0 : 1;
     }
 
     // ---- block_name ----------------------------------------------------------------------------------------------------
@@ -444,10 +443,23 @@ public final class Transforms {
     // ---- item descriptors --------------------------------------------------------------------------------------------
 
     /**
+     * {@code food.using_converts_to}: {@code {name}} with the name as written (BDS 1.26.36.1 to 1.26.70.24 neither namespace it
+     * nor check it against the registry: {@code "bowl"} and {@code "minecraft:paletter_unknown"} are sent as given), {@code {}}
+     * for an empty name or none. The add-on JSON's object form {@code {"name": X}} is the same value X.
+     */
+    public static void usingConvertsTo(@NonNull WireContext ctx, @NonNull WireNode out, @NonNull Food c) {
+        String item = c.usingConvertsTo();
+        out.put("minecraft:food.using_converts_to", NbtMap.EMPTY);
+        if (item != null && !item.isEmpty()) {
+            out.put("minecraft:food.using_converts_to.name", item);
+        }
+    }
+
+    /**
      * {@code ammunition[].item}: an item descriptor: {@code {name}} for an item the
      * registry knows, {@code {}} for any other descriptor (the captures send {@code "item": {}} and objects without a
-     * {@code name} as {@code {}}, where the inferred identity of {@code item.name} would leave the compound out); an entry
-     * without item is sent with the empty descriptor too.
+     * {@code name} as {@code {}}, where the inferred identity of {@code item.name} would leave the compound out). BDS's schema
+     * requires the item, so every entry has one.
      */
     public static void ammunitionItemDescriptor(@NonNull WireContext ctx, @NonNull WireNode out, Shooter.@NonNull Ammunition c) {
         Wire.itemDescriptor(ctx, out, "item", Shooter.NAME, "ammunition[].item", c.item());
@@ -613,13 +625,12 @@ public final class Transforms {
 
 
     /**
-     * A permutation's Molang condition as BDS sends it: a number constant like any Molang number ({@link Wire#molangNumber}),
-     * anything else as written. Only {@code "1"} and {@code "0"} are captured as conditions (BDS 1.26.36.1 to 1.26.70.24);
-     * that BDS prints the other number shapes the same way here is unverified.
+     * A permutation's Molang condition as BDS sends it ({@link Wire#molang}): {@code true} and a number constant as a Molang
+     * number, anything else as written. BDS 1.26.36.1 to 1.26.70.24 send {@code "true"} and {@code "1"} as {@code "1.000000"},
+     * {@code "0"} as {@code "0.000000"}; {@code "false"} and the other number shapes are unverified as conditions.
      */
     static String condition(String condition) {
-        String number = Wire.molangNumber(condition);
-        return number != null ? number : condition;
+        return Wire.molang(condition);
     }
 
     // ---- selection_box -----------------------------------------------------------------------------------------------

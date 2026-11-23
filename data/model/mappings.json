@@ -292,6 +292,11 @@
       }
     ]
   },
+  "molangVersions": {
+    "1.16.100": 0,
+    "1.19.40": 6,
+    "1.26.36": 13
+  },
   "components": {
     "block:description": {
       "windows": [
@@ -15568,7 +15573,8 @@
             }
           },
           "constants": {
-            "minecraft:block_placer.canUseBlockAsIcon": "1 (byte)"
+            "minecraft:block_placer.canUseBlockAsIcon": "1 (byte)",
+            "minecraft:publisher_on_use_on.autoSucceedOnClient": "0 (byte)"
           },
           "transforms": {
             "block": {
@@ -17142,6 +17148,9 @@
                 "minecraft:entity_placer.use_on[].tags": "omitted"
               }
             }
+          },
+          "constants": {
+            "minecraft:publisher_on_use_on.autoSucceedOnClient": "0 (byte)"
           }
         }
       ]
@@ -17251,7 +17260,8 @@
               }
             },
             "using_converts_to": {
-              "status": "unresolved",
+              "transform": "usingConvertsTo",
+              "status": "hand-rule",
               "whenAbsent": {
                 "minecraft:food.using_converts_to": "{} (compound)",
                 "minecraft:food.using_converts_to.name": "omitted"
@@ -17260,6 +17270,14 @@
             "remove_effects": {
               "unknownToBds": true,
               "status": "rejected"
+            }
+          },
+          "transforms": {
+            "using_converts_to": {
+              "verified": {
+                "build": "1.26.36.1",
+                "variants": 9
+              }
             }
           }
         }
@@ -21344,8 +21362,6 @@
           "wire": [
             "item_properties.allow_off_hand",
             "item_properties.max_stack_size",
-            "minecraft:allow_off_hand",
-            "minecraft:max_stack_size",
             "minecraft:wearable"
           ],
           "status": "sent",
@@ -21435,10 +21451,6 @@
               "unknownToBds": true,
               "status": "rejected"
             }
-          },
-          "constants": {
-            "minecraft:allow_off_hand.value": "1 (byte)",
-            "minecraft:max_stack_size.value": "16 (byte)"
           }
         }
       ]

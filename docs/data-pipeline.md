@@ -290,12 +290,11 @@ The builds are not checked against each other again: the set of kept builds does
 build, which is what the pull request shows as the effect of the add-on change. Files that an earlier capture had and the
 new one lacks stay in `data/bds/<build>`; the patch has no deletions of them.
 
-**Open: the unchecked build of a line.** `builds plan` adds the newest unrecorded build of each line, but its captures cannot join
-the data: the staging refuses a build without committed captures, and staged anyway they stop `inferMappings`, because its spec
-add-on differs from the one of the window's import build. The probed keys of `bds-keys.json` apply only to the build they were
-probed on (`Fixtures#forBuild`), so 1.26.66.1's add-on lacks the 76 key variants of 1.26.63.1's and numbers the rest differently
-(the local recapture of 2026-11-23). A history check of such a build fails the same way. Until that is decided, a recapture runs
-without those legs, and `builds check` keeps them unverified.
+**The unchecked build of a line.** `builds plan` adds the newest unrecorded build of each line. The probed keys of
+`bds-keys.json` apply to every build of the line (protocol window) of the build they were probed on (`Fixtures#forBuild`): 1.26.66.1
+gets the add-on of 1.26.63.1, key variants included, so its spec capture compares variant by variant with the window's import
+build. The staging still refuses a build without committed captures: such a build is compared (`builds check`, a history check),
+not committed.
 
 **Security.** The jobs that run the BDS binary and Gradle over captures (`capture`, and `assemble`, which runs Gradle on
 data from the capture jobs) have `contents: read`, no credentials in the checkout and no secrets. Only `publish` has write
@@ -335,15 +334,24 @@ is current; `vanilla/sequential-ids.json.gz` (the palette probe) holds the shelv
 the bundled order (`PaletteIdsTest`); `creativeWithoutBlock` sends 26.40's door, signs, straw bed, red shrub and shelf mushroom
 without a block with `y_2026_drop_3` on. What it showed is still open:
 
-- **molangVersion follows the pack's `min_engine_version`** (`MolangVersionTest` fails): the engine pack blocks have 0
-  (`1.16.100`) and 6 (`1.19.40`), every other block 13, in every build. `BlockWire`'s constant has to become an input of the API.
-- **Conformance** (`ComponentConformanceTest`): about 340 accepted variants per build are not reproduced (see
-  `build/reports/component-conformance-<protocol>.md`): the components a combination variant sets leak into later items of the
-  check (`wearable`, `damage_absorption`), descriptors of `block_placer`, `entity_placer` and `digger`, `food`
-  `using_converts_to`, a permutation condition sent as `1.000000`, and setters the schema's forms lack (`geometry`, the visuals,
-  `repairable`, `map_color`, `tags`).
 - **`packetOrder`** in `capture.json`: a recapture does not rewrite a build's `vanilla/capture.json` (only the import does).
 - **The unchecked build of a line** (see Full recapture): 1.26.66.1 was captured but cannot join the data.
+- **`connected_faces` order**: the add-on writes enum lists in the schema's order, which is BDS's own (down, up, north, south,
+  west, east), so no capture shows BDS reordering a set; the inference keeps the JSON's order (`GeneratedRulesTest`). The add-on
+  needs a list in another order (the values reversed) to settle it.
+
+#### Waiting for a capture
+
+- **use_duration rounding**: BDS 1.26.63.1 and 1.26.70.24 send `use_modifiers` `use_duration` 0.35, 0.7 and 0.95 as 7, 14 and 19;
+  the encoder truncates the double product and sends 6, 13 and 18. A float product truncated and a rounded product both give
+  7, 14 and 19. Values that tell them apart (float32 of the value times 20): 0.33 (6.6: truncated 6, rounded 7), 0.38 (7.6: 7 or
+  8); ties 0.025, 0.075, 0.125 (0.5, 1.5, 2.5: truncated 0, 1, 2; half up 1, 2, 3; half even 0, 2, 2); 0.31 (6.2: rounded 6,
+  ceiling 7). Until a capture with them, the variants that differ only there are checked apart
+  (`ComponentConformanceTest.useDurationRoundingIsBds`, disabled).
+
+Decided: `molangVersion` follows the layer's `min_engine_version` (`PaletteLayer.Builder#minEngineVersion`, `molangVersions` of
+`mappings.json` from the engine pack blocks: 1.16.100 gives 0, 1.19.40 gives 6, the add-on's format 13); probed keys apply to
+the builds of the probed build's line; the api-history field-shape breaks of the recapture stand.
 
 **What the generated code assumed without a capture**, marked `TODO(recapture)` where it is used, and what the captures say:
 

@@ -45,7 +45,12 @@ import java.util.Set;
  * without one or as an empty list it is not set;</li>
  * <li>an empty list for an object is that object with nothing set;</li>
  * <li>the JSON constants {@code true} and {@code false} where a Molang expression (a string) is taken are the strings
- * {@code "true"} and {@code "false"}.</li>
+ * {@code "true"} and {@code "false"}, and a number there is its text;</li>
+ * <li>a Molang expression object {@code {expression, version}} is its expression (1.26.36.1 sends the version too, a pending
+ * decision of docs/data-pipeline.md);</li>
+ * <li>a vector object with some axes has the others from the field's default, or 0 for 1.26.63.1;</li>
+ * <li>a descriptor that names nothing, for a required name, is the empty name;</li>
+ * <li>{@code "always"} and {@code "never"} for a boolean are true and false (flammable {@code lava_flammable}).</li>
  * <li>script custom components (a key outside the {@code minecraft:} namespace, registered in the {@code scriptComponents} of
  * {@code fixtures.json}) are not bound one by one: the callbacks of all of them on a block are the {@link ScriptHooks} flags, and
  * {@code onUseOn} on an item is {@link UseOnHook}. The old form (a list of names) is not in the API.</li>
@@ -60,7 +65,37 @@ public final class ApiBinder {
 
     private static final JsonObject SCRIPT_COMPONENTS = scriptComponents();
 
+    /**
+     * The protocol whose JSON reading of collision_box BDS 1.26.63.1 has: a vector object without some axes has them at 0
+     * ({@code size {"x": 0.5}} is 0.5, 0, 0; {@code origin {}} is 0, 0, 0 and out of bounds), where every other captured build,
+     * and 1.26.63.1 for selection_box and transformation, take the field's default for them.
+     */
+    private static final int MISSING_AXES_ZERO = 2225;
+
+    /** Whether the vector object being bound has its missing axes at 0 ({@link #MISSING_AXES_ZERO}); set per definition. */
+    private static boolean missingAxesZero;
+
     private ApiBinder() {
+    }
+
+    /** The item of a variant of a capture of {@code protocol}, read as that build reads the JSON. */
+    static CustomItem item(JsonObject file, int protocol) {
+        missingAxesZero = protocol == MISSING_AXES_ZERO;
+        try {
+            return item(file);
+        } finally {
+            missingAxesZero = false;
+        }
+    }
+
+    /** The block of a variant of a capture of {@code protocol}, read as that build reads the JSON. */
+    static CustomBlock block(JsonObject file, int protocol) {
+        missingAxesZero = protocol == MISSING_AXES_ZERO;
+        try {
+            return block(file);
+        } finally {
+            missingAxesZero = false;
+        }
     }
 
     private static JsonObject scriptComponents() {
@@ -211,12 +246,24 @@ public final class ApiBinder {
                     if (java == null) {
                         throw new Unbindable(type.getSimpleName() + " has no field for the JSON key " + e.getKey());
                     }
-                    set(builder, java, e.getValue());
+                    try {
+                        set(builder, java, e.getValue());
+                    } catch (Unbindable u) {
+                        // a field given as the list the type's root list form holds is that list (map_color color [r, g, b] is rgb)
+                        String list = e.getValue().isJsonArray() ? forms.get(jsonType(e.getValue())) : null;
+                        if (list == null || list.endsWith("[]")) {
+                            throw u;
+                        }
+                        set(builder, list, e.getValue());
+                    }
                 }
                 return builder.getClass().getMethod("build").invoke(builder);
             }
-            // A value form: a form field, or a shorthand factory
+            // A value form: a form field, or a shorthand factory (an empty list is the list form of any element type)
             String form = jsonType(value);
+            if (value.isJsonArray() && value.getAsJsonArray().isEmpty()) {
+                form = forms.keySet().stream().filter(f -> f.startsWith("array<")).findFirst().orElse(form);
+            }
             if (forms.containsKey(form) && !forms.get(form).endsWith("[]")) {
                 Object builder = type.getMethod("builder").invoke(null);
                 set(builder, forms.get(form), value);
@@ -244,6 +291,15 @@ public final class ApiBinder {
 
     private static String jsonType(JsonElement value) {
         if (value.isJsonArray()) {
+            // the element type when every element is a string or every one an integer
+            List<JsonElement> elements = value.getAsJsonArray().asList();
+            if (!elements.isEmpty() && elements.stream().allMatch(e -> e.isJsonPrimitive() && e.getAsJsonPrimitive().isString())) {
+                return "array<string>";
+            }
+            if (!elements.isEmpty() && elements.stream().allMatch(e -> e.isJsonPrimitive() && e.getAsJsonPrimitive().isNumber()
+                && e.getAsDouble() == Math.rint(e.getAsDouble()))) {
+                return "array<integer>";
+            }
             return "array<object>";
         }
         if (value.isJsonObject()) {
@@ -285,13 +341,18 @@ public final class ApiBinder {
             }
             for (Method m : candidates) {
                 if (m.getParameterTypes()[0] == String.class) {
-                    m.invoke(builder, (Object) null);
+                    try {
+                        m.invoke(builder, (Object) null);
+                    } catch (InvocationTargetException e) {
+                        // a required name: a descriptor that names nothing is the empty name (shooter ammunition item {} and "")
+                        m.invoke(builder, "");
+                    }
                     return;
                 }
             }
             throw new Unbindable("no setter " + java + " takes nothing");
         }
-        // A vector object with some axes: a consumer takes the default vector and changes those axes
+        // A vector object with some axes: a consumer takes the default vector and changes those axes (or 0, as 1.26.63.1 reads it)
         for (Method m : candidates) {
             Class<?> p = m.getParameterTypes()[0];
             if (p.isRecord() && p.getSimpleName().equals("Vec3") && value.isJsonObject()) {
@@ -299,7 +360,7 @@ public final class ApiBinder {
                 current.setAccessible(true);
                 Object base = current.get(builder);
                 float[] xyz = new float[3];
-                if (base != null) {
+                if (base != null && !(missingAxesZero && builder.getClass().getName().contains("CollisionBox"))) {
                     for (int i = 0; i < 3; i++) {
                         xyz[i] = (float) p.getRecordComponents()[i].getAccessor().invoke(base);
                     }
@@ -342,6 +403,10 @@ public final class ApiBinder {
     private static Object convert(Type type, JsonElement value) {
         Class<?> raw = type instanceof ParameterizedType p ? (Class<?>) p.getRawType() : (Class<?>) type;
         if (raw == boolean.class || raw == Boolean.class) {
+            // a boolean BDS binds to the strings "always" and "never" (flammable lava_flammable, schema underlyingType boolean)
+            if (value.isJsonPrimitive() && value.getAsJsonPrimitive().isString() && List.of("always", "never").contains(value.getAsString())) {
+                return value.getAsString().equals("always");
+            }
             if (!value.isJsonPrimitive() || !value.getAsJsonPrimitive().isBoolean()) {
                 throw new Unbindable("not a boolean");
             }
@@ -360,6 +425,10 @@ public final class ApiBinder {
             return value.getAsFloat();
         }
         if (raw == String.class) {
+            // a Molang expression object is its expression (its version is a pending decision: docs/data-pipeline.md)
+            if (value.isJsonObject() && value.getAsJsonObject().has("expression") && value.getAsJsonObject().get("expression").isJsonPrimitive()) {
+                return value.getAsJsonObject().get("expression").getAsString();
+            }
             if (!value.isJsonPrimitive() || !value.getAsJsonPrimitive().isString()) {
                 throw new Unbindable("not a string");
             }
@@ -401,8 +470,8 @@ public final class ApiBinder {
             Map<String, Object> out = new LinkedHashMap<>();
             for (Map.Entry<String, JsonElement> e : value.getAsJsonObject().entrySet()) {
                 JsonElement entry = e.getValue();
-                if (v == String.class && entry.isJsonPrimitive() && entry.getAsJsonPrimitive().isBoolean()) {
-                    entry = new JsonPrimitive(entry.getAsString()); // a Molang constant
+                if (v == String.class && entry.isJsonPrimitive() && !entry.getAsJsonPrimitive().isString()) {
+                    entry = new JsonPrimitive(entry.getAsString()); // a Molang constant: a boolean or a number as its text
                 }
                 out.put(e.getKey(), v == Object.class ? stateValue(entry) : convert(v, entry));
             }

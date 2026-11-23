@@ -48,11 +48,13 @@ public final class HandTransforms {
         // follows two fields and the item's own identifier
         entry("item:minecraft:block_placer:replace_block_item", "replaceBlockItem"),
         entry("item:minecraft:dyeable:default_color", "rgbColor"),
+        // the name as written or {}, where the JSON is a string or an object's name: two JSON forms onto one leaf
+        entry("item:minecraft:food:using_converts_to", "usingConvertsTo"),
         entry("item:minecraft:hover_text_color:value", "formattingCode"),
         entry("item:minecraft:icon:", "iconTextures"),
         // item descriptors and Molang that change shape with the protocol, in one list the entries of which are dropped by the registry
         entry("item:minecraft:repairable:repair_items", "itemDescriptorList"),
-        // null-item entry not captured yet; unverified. The add-on probes one (fixtures.json probeValues); TODO after the recapture: try the descriptor rule
+        // {name} for an item the registry knows, {} for any other value (an object without a name too, every build)
         entry("item:minecraft:shooter:ammunition[].item", "ammunitionItemDescriptor"),
         entry("item:minecraft:use_animation:value", "useAnimationId"))));
 

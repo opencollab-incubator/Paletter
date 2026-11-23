@@ -448,11 +448,16 @@ class SchemaTest {
     }
 
 
-    /** The committed content log and the committed schema say the same where they speak of the same thing. */
+    /**
+     * The committed content log and the committed schema say the same where they speak of the same thing, at the format of the
+     * add-on whose content log it is (as the add-on reads the schema): a newer format may say otherwise (collision_box's
+     * {@code maxItems} is 16 at format 1.26.60 and 32 at 1.26.70 in BDS 1.26.70.24's schema).
+     */
     @Test
     void theCommittedDataHasNoDisputes() throws IOException {
         Path root = Path.of(System.getProperty("paletter.root", ".."));
-        Schema schema = Schema.newest(root.resolve("data/bds"), null);
+        String format = JsonParser.parseString(Files.readString(root.resolve("data/model/fixtures.json"))).getAsJsonObject().get("formatVersion").getAsString();
+        Schema schema = Schema.newest(root.resolve("data/bds"), null).forFormat(format);
         assertNotNull(schema.build());
         JsonObject log = JsonParser.parseString(Files.readString(root.resolve("data/model/bds-feedback.json"))).getAsJsonObject();
         assertEquals(List.of(), schema.disputes(log));

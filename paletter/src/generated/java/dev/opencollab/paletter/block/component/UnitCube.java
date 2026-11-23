@@ -6,19 +6,16 @@ package dev.opencollab.paletter.block.component;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 /**
- * Specifies that a unit cube is to be used with tessellation.
- * <p>
- * Add-on JSON: {@code "minecraft:unit_cube"}.
- * Retired: rejected by every captured BDS (oldest: Bedrock 26.30, protocol 1001): minecraft:unit_cube: member
- * "minecraft:unit_cube" is deprecated. Its encoder writes nothing and adds a report warning, as BDS would never
- * send it to a client.
+ * Removed: Bedrock no longer has {@code minecraft:unit_cube}. This stand-in keeps code that uses it compiling
+ * until the next major release; its fields return their defaults, its builder ignores what it is given, and
+ * every palette leaves it out with a report warning.
  *
- * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/blockreference/examples/blockcomponents/minecraftblock_unit_cube?view=minecraft-bedrock-stable">Microsoft Learn: minecraft:unit_cube</a>
  * @since 1.0.0
- * @deprecated rejected by every captured BDS (oldest: Bedrock 26.30, protocol 1001): minecraft:unit_cube: member
- *        "minecraft:unit_cube" is deprecated
+ * @deprecated Bedrock no longer has it; it goes in the next major release
  */
-@Deprecated
+@Deprecated(
+        forRemoval = true
+)
 public final class UnitCube implements BlockComponent {
     /**
      * The component name in add-on JSON.

@@ -75,7 +75,8 @@ public final class Food implements ItemComponent {
     /**
      * When used, converts to the item specified by the string in this field. Default does not convert item. Add-on
      * JSON {@code using_converts_to}. Optional (null: not set). The docs give the default {}, which is not a value
-     * of this type; unset, BDS's behaviour applies.
+     * of this type; unset, BDS's behaviour applies. Compiled by the hand transform {@code
+     * Transforms.usingConvertsTo}.
      *
      * @return the value
      */

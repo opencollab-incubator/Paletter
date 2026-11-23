@@ -18,6 +18,11 @@
         "shorthandOf": "identifier"
       }
     },
+    "block:minecraft:map_color": {
+      "string": {
+        "shorthandOf": "color"
+      }
+    },
     "block:minecraft:selection_box": {
       "boolean": {
         "field": "enabled"
@@ -173,7 +178,7 @@
       }
     },
     "block:minecraft:embedded_visual:geometry": {
-      "use": "object"
+      "use": ["object", "string"]
     },
     "item:minecraft:repairable:repair_items[].repair_amount": {
       "name": "RepairAmount",
@@ -272,6 +277,9 @@
     "item:minecraft:weapon": "BDS 1.26.63.1 accepts it at formats 1.20.30 and 1.20.40 and sends the same as without it (data/bds/1.26.63.1/spec-format)",
     "block:minecraft:queued_ticking": "the white-box of BDS 1.26.70.24 has it with network false (not sent)",
     "block:minecraft:random_ticking": "the white-box of BDS 1.26.70.24 has it with network false (not sent)",
+    "block:minecraft:bone_visibility": "BDS 1.26.36.1 to 1.26.70.24 reject it at every format of the format sweep (data/bds/<build>/spec-format)",
+    "block:minecraft:breathability": "BDS 1.26.36.1 to 1.26.70.24 reject it at every format of the format sweep (data/bds/<build>/spec-format)",
+    "block:minecraft:unit_cube": "BDS 1.26.36.1 to 1.26.70.24 reject it at every format of the format sweep (data/bds/<build>/spec-format)",
     "block:minecraft:explosion_resistance": "the white-box of BDS 1.26.70.24 has no component of that name, and its replacement destructible_by_explosion is accepted but server only (data/bds/1.26.63.1/spec)"
   },
   "handWritten": {
@@ -284,6 +292,7 @@
     "item:minecraft:throwable": "ThrowableItem"
   },
   "optional": [
+    "block:minecraft:map_color:color",
     "block:minecraft:destructible_by_mining:seconds_to_destroy",
     "block:minecraft:destructible_by_explosion:explosion_resistance",
     "block:minecraft:destructible_by_mining:item_specific_speeds[].item",

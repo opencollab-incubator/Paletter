@@ -106,7 +106,10 @@ final class TypeBuilder {
             return unions.unionType(c, d, fields, types, union);
         }
         if (union != null && union.has("use")) {
-            types = List.of(ModelFields.parseType(union.get("use").getAsString()));
+            // one type, or the types kept of several (["object", "string"]: the object with its string shorthand)
+            types = union.get("use").isJsonArray()
+                ? union.getAsJsonArray("use").asList().stream().map(t -> ModelFields.parseType(t.getAsString())).toList()
+                : List.of(ModelFields.parseType(union.get("use").getAsString()));
         }
         if (override != null && override.startsWith("component:")) {
             return new ApiModel.ComponentRef(override.substring("component:".length()));

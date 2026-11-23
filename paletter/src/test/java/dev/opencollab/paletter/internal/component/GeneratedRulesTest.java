@@ -41,9 +41,11 @@ class GeneratedRulesTest {
 
     @Test
     void faceListsAndFaceBits() {
-        // ordered-set: BDS sends the faces of the set in its own order
-        NbtMap producer = block(RedstoneProducer.builder().power(15).connectedFaces(RedstoneProducer.ConnectedFaces.EAST,
-            RedstoneProducer.ConnectedFaces.UP, RedstoneProducer.ConnectedFaces.NORTH).build(), ctx);
+        // ordered-set without an order of BDS's own: the faces as given, without duplicates. The recapture's add-on writes the
+        // faces in the schema's order (down, up, north, south, west, east), which is BDS's, so it cannot show a reordering;
+        // TODO(recapture): a list in another order settles it (docs/data-pipeline.md, "Recapture to-do")
+        NbtMap producer = block(RedstoneProducer.builder().power(15).connectedFaces(RedstoneProducer.ConnectedFaces.UP,
+            RedstoneProducer.ConnectedFaces.NORTH, RedstoneProducer.ConnectedFaces.EAST, RedstoneProducer.ConnectedFaces.NORTH).build(), ctx);
         assertEquals(List.of("up", "north", "east"),
             producer.getCompound("minecraft:redstone_producer").getList("connected_faces", NbtType.STRING));
         // list identity: the directions as given

@@ -131,6 +131,16 @@ public final class EmbeddedVisual implements BlockComponent {
         }
 
         /**
+         * Sets {@code geometry} with its shorthand: {@code identifier}.
+         *
+         * @param identifier the value
+         * @return this builder
+         */
+        public @NonNull Builder geometry(@NonNull String identifier) {
+            return geometry(VisualGeometry.of(identifier));
+        }
+
+        /**
          * Sets {@code material_instances}.
          *
          * @param materialInstances the value
@@ -463,6 +473,16 @@ public final class EmbeddedVisual implements BlockComponent {
         @Override
         public String toString() {
             return "VisualGeometry[boneVisibility=" + boneVisibility + ", culling=" + culling + ", cullingLayer=" + cullingLayer + ", cullingShape=" + cullingShape + ", identifier=" + identifier + ", nWayVisualRotation=" + nWayVisualRotation + ", uvLock=" + uvLock + "]";
+        }
+
+        /**
+         * The string shorthand: sets {@code identifier}.
+         *
+         * @param value the value of that field
+         * @return the value with everything else at its default
+         */
+        public static @NonNull VisualGeometry of(@NonNull String value) {
+            return builder().identifier(value).build();
         }
 
         /**

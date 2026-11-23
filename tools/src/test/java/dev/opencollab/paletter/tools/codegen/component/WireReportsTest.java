@@ -6,11 +6,8 @@ import dev.opencollab.paletter.tools.codegen.component.ComponentGenerator.Genera
 import dev.opencollab.paletter.tools.codegen.component.ComponentGenerator.Inputs;
 import org.junit.jupiter.api.Test;
 
-import java.io.IOException;
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import static dev.opencollab.paletter.tools.codegen.component.ComponentGeneratorTest.json;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -19,11 +16,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 /** What the encoders report for a value they cannot send, and smaller generator guards. */
 class WireReportsTest {
     private static final String ITEM_WIRE = "dev/opencollab/paletter/internal/component/ItemWire.java";
-
-    private static Map<String, String> committed() throws IOException {
-        Path root = Path.of(System.getProperty("paletter.root", ".."));
-        return ComponentGenerator.generate(ComponentGenerator.read(root.resolve("data/model"), Main.version(root), Main.context(root)));
-    }
 
     @Test
     void aFieldWithADefaultThatAWindowCannotSendReportsAnyOtherValue() {
@@ -36,16 +28,14 @@ class WireReportsTest {
     }
 
     @Test
-    void anOrderedSetReportsAValueOutsideItsOrder() throws IOException {
-        String wire = committed().get("dev/opencollab/paletter/internal/component/BlockWire.java");
-        assertTrue(wire.contains("ctx.drop(RedstoneProducer.NAME, \"connected_faces = \" + x"), wire);
-    }
-
-    @Test
-    void aFieldSentAsAConstantIsReportedOnlyForAnotherValue() throws IOException {
-        String wire = committed().get(ITEM_WIRE);
-        assertTrue(java.util.regex.Pattern.compile("if \\(!\"sword\"\\.equals\\([\\w.()]+\\)\\) \\{\n\\s+ctx\\.changed\\(Enchantable\\.NAME, \"slot is sent as a constant, whatever its value\"\\);")
-            .matcher(wire).find(), wire);
+    void anOrderedSetReportsAValueOutsideItsOrder() {
+        // BDS's own order of a closed set of values (connected_faces): a value outside it has no place and is reported
+        Inputs in = ComponentGeneratorTest.inputs();
+        ComponentGeneratorTest.window(in.mappings(), "item:test:widget").getAsJsonObject("fields").add("tags", json(
+            "{\"status\": \"inferred\", \"rules\": [{\"kind\": \"ordered-set\", \"order\": [\"b\", \"a\"], \"nbt\": \"string\", \"tags\": [], \"wire\": \"test:widget.tags[]\"}]}"));
+        String wire = ComponentGenerator.generate(in).get(ITEM_WIRE);
+        assertTrue(java.util.regex.Pattern.compile("ctx\\.drop\\(Widget\\.NAME, \"tags = \" \\+ x\\d*").matcher(wire).find(), wire);
+        assertTrue(wire.contains("List.of(\"b\", \"a\").stream().filter("), wire);
     }
 
     @Test

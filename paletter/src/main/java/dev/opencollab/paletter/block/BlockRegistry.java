@@ -108,7 +108,7 @@ public final class BlockRegistry implements DefinitionRegistry<BlockDefinition> 
     @Internal
     public static @NonNull BlockRegistry build(@NonNull VanillaData data, @NonNull CanonicalBlocks canonical,
                                               @NonNull BlockInterner interner) {
-        return new BlockRegistry(new Table(null, data, List.of(), Map.of(), List.of(), Map.of(), interner), canonical, data.fallbacks().blocks(),
+        return new BlockRegistry(new Table(null, data, List.of(), Map.of(), List.of(), Map.of(), interner, Map.of()), canonical, data.fallbacks().blocks(),
             BlockFallback.UNKNOWN, Set.of(), interner, null);
     }
 
@@ -176,11 +176,14 @@ public final class BlockRegistry implements DefinitionRegistry<BlockDefinition> 
      * @param report receives what the version cannot express of the blocks
      * @param source the layer id, for the report
      * @param additional the custom blocks to add
+     * @param minEngineVersion the {@code min_engine_version} of the layer's pack, null for the newest: BDS's {@code molangVersion}
+     *                         of the blocks follows it
      * @return a palette with these custom blocks added, keeping this palette's fallbacks, or this palette if there are none
      */
     @Internal
     public @NonNull BlockRegistry withCustomBlocks(@NonNull VanillaData data, @NonNull Object key, @NonNull List<CustomBlock> additional,
-                                                  @NonNull PaletteReportBuilder report, @NonNull String source) {
+                                                  @NonNull PaletteReportBuilder report, @NonNull String source,
+                                                  @Nullable String minEngineVersion) {
         if (additional.isEmpty()) {
             return this;
         }
@@ -196,6 +199,11 @@ public final class BlockRegistry implements DefinitionRegistry<BlockDefinition> 
             blockIds.put(byIdentifier.get(i), CUSTOM_BLOCK_ID_START + i);
         }
         List<BlockPropertyData> encoded = new ArrayList<>(all.size());
+        // The engine version of each block's own layer, the blocks already here included (absent: the newest)
+        Map<String, String> engineVersions = new HashMap<>(table.engineVersions);
+        if (minEngineVersion != null) {
+            additional.forEach(block -> engineVersions.put(block.identifier(), minEngineVersion));
+        }
         WireContext context = WireContext.of(data, report, source);
         // The blocks already here were reported by their own layers: encode them again into a report nobody reads
         WireContext earlier = WireContext.of(data, new PaletteReportBuilder(), source);
@@ -212,8 +220,8 @@ public final class BlockRegistry implements DefinitionRegistry<BlockDefinition> 
             int blockId = blockIds.get(block.identifier());
             boolean isEarlier = i < table.customBlocks.size();
             BlockPropertyData kept = isEarlier && table.customBlockIds.get(block.identifier()) == blockId ? earlierEncoded.get(block.identifier()) : null;
-            encoded.add(kept != null ? kept
-                : new BlockPropertyData(block.identifier(), BlockCompiler.propertyData(block, blockId, isEarlier ? earlier : context)));
+            encoded.add(kept != null ? kept : new BlockPropertyData(block.identifier(), BlockCompiler.propertyData(block, blockId,
+                (isEarlier ? earlier : context).minEngineVersion(engineVersions.get(block.identifier())))));
         }
         // The property list BDS sends follows its block ids too
         encoded.sort(java.util.Comparator.comparing(BlockPropertyData::getName).reversed());
@@ -221,7 +229,7 @@ public final class BlockRegistry implements DefinitionRegistry<BlockDefinition> 
         additional.forEach(block -> origins.put(block.identifier(), Origin.custom(source)));
         // Hashed ids of the states here do not change (a collision that would change them throws): only the added states get a
         // table, over this one
-        Table extended = new Table(table, data, all, Map.copyOf(origins), encoded, Map.copyOf(blockIds), interner);
+        Table extended = new Table(table, data, all, Map.copyOf(origins), encoded, Map.copyOf(blockIds), interner, Map.copyOf(engineVersions));
         return new BlockRegistry(extended, canonical.extend(key, additional), fallbacks, defaultFallback, missing, interner, this);
     }
 
@@ -921,13 +929,17 @@ public final class BlockRegistry implements DefinitionRegistry<BlockDefinition> 
         /** The {@code block_id} of every custom block, including the parent's. */
         private final Map<String, Integer> customBlockIds;
         private final Map<String, Origin> origins;
+        /** The {@code min_engine_version} of the layer of every custom block that has one, including the parent's. */
+        private final Map<String, String> engineVersions;
         private final Map<String, RegisteredBlock> ownBlocks;
         private final Map<String, Schema> schemas = new ConcurrentHashMap<>();
         private final RegisteredBlockState air;
 
         private Table(@Nullable Table parent, VanillaData data, List<CustomBlock> customBlocks, Map<String, Origin> origins,
-                      List<BlockPropertyData> customProperties, Map<String, Integer> customBlockIds, BlockInterner interner) {
+                      List<BlockPropertyData> customProperties, Map<String, Integer> customBlockIds, BlockInterner interner,
+                      Map<String, String> engineVersions) {
             this.parent = parent;
+            this.engineVersions = engineVersions;
             this.root = parent == null ? this : parent.root;
             this.customBlockIds = customBlockIds;
             this.parentSize = parent == null ? 0 : parent.size();

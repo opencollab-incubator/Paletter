@@ -42,6 +42,8 @@ final class ApiModel {
      * kind ({@code item}, {@code block}): protocol windows, oldest first, each {@code {protocols, leaves}}.
      */
     final Map<String, com.google.gson.JsonArray> envelope = new LinkedHashMap<>();
+    /** {@code molangVersions} of {@code mappings.json}: engine version -> molangVersion where it changes, oldest first; empty without. */
+    com.google.gson.JsonObject molangVersions = new com.google.gson.JsonObject();
     /** Protocol and BDS version of every capture, oldest first (the bounds of the windows are protocols). */
     final java.util.TreeMap<Integer, String> captureVersions = new java.util.TreeMap<>();
     /** The sealed union types by name (api.json {@code unions}), shared by every field of the same shape. */

@@ -37,8 +37,8 @@ What the captures show but no field explains:
 | sent on wire | 296 | 3 |
 | inferred | 197 | 0 |
 | partial | 0 | 0 |
-| unresolved | 1 | 0 |
-| hand-rule | 98 | 3 |
+| unresolved | 0 | 0 |
+| hand-rule | 99 | 3 |
 | dropped | 38 | 0 |
 | linked | 0 | 0 |
 | rejected | 43 | 3 |
@@ -198,7 +198,7 @@ together and capture again); `rejected`: every variant setting it was rejected;
 | `item:minecraft:use_duration` | deprecated | rejected |  | 0 / 0 / 0 / 0 / 1 / 1 |
 | `item:minecraft:use_modifiers` | active | sent | item_properties.use_duration, minecraft:use_modifiers | 5 / 0 / 0 / 0 / 0 / 5 |
 | `item:minecraft:weapon` | deprecated | rejected |  | 0 / 0 / 0 / 0 / 3 / 3 |
-| `item:minecraft:wearable` | active | sent | item_properties.allow_off_hand, item_properties.max_stack_size, minecraft:allow_... | 3 / 0 / 0 / 0 / 1 / 4 |
+| `item:minecraft:wearable` | active | sent | item_properties.allow_off_hand, item_properties.max_stack_size, minecraft:wearab... | 3 / 0 / 0 / 0 / 1 / 4 |
 | `block:minecraft:enchantment_power_transmitter` | active | server-only |  | 0 / 0 / 0 / 0 / 0 / 0 |
 | `block:minecraft:leashable` | active | sent | minecraft:leashable | 4 / 0 / 0 / 0 / 0 / 4 |
 | `block:minecraft:neighbor_change` | active | server-only |  | 0 / 0 / 0 / 1 / 0 / 1 |
@@ -304,7 +304,7 @@ together and capture again); `rejected`: every variant setting it was rejected;
 - `item:minecraft:block_placer` `block`: hand-rule -> `blockName` (unexplained: `minecraft:block_placer.block`)
 - `item:minecraft:block_placer` `replace_block_item`: hand-rule -> `replaceBlockItem` (unexplained: `minecraft:block_placer.replaceBlockItem`)
 - `item:minecraft:dyeable` `default_color`: hand-rule -> `rgbColor` (unexplained: `minecraft:dyeable.default_color[]`)
-- `item:minecraft:food` `using_converts_to`: unresolved (unexplained: `minecraft:food.using_converts_to`, `minecraft:food.using_converts_to.name`)
+- `item:minecraft:food` `using_converts_to`: hand-rule -> `usingConvertsTo` (unexplained: `minecraft:food.using_converts_to`, `minecraft:food.using_converts_to.name`)
 - `item:minecraft:hover_text_color` `value`: hand-rule -> `formattingCode` (unexplained: `item_properties.hover_text_color`)
 - `item:minecraft:icon` `textures`: hand-rule -> `iconTextures`
 - `item:minecraft:icon` form `string`: hand-rule -> `iconTextures`
@@ -318,11 +318,11 @@ together and capture again); `rejected`: every variant setting it was rejected;
 
 ## Constants no capture reaches
 
-Wire values of `Transforms` that no accepted variant sends, so the conformance suite does not check them (each one's Javadoc says where it comes from): `Transforms.FORMATTING`, `Transforms.USE_ANIMATIONS`, `Transforms.stateType`.
+Wire values of `Transforms` that no accepted variant sends, so the conformance suite does not check them (each one's Javadoc says where it comes from): `Transforms.FORMATTING`, `Transforms.USE_ANIMATIONS`.
 
 ## Hand transforms not verified by BDS
 
-21 of 23 transforms have accepted variants that set what they compile (`verified: {build, variants}` in `mappings.json`; the conformance suite reproduces those variants). Not verified:
+22 of 24 transforms have accepted variants that set what they compile (`verified: {build, variants}` in `mappings.json`; the conformance suite reproduces those variants). Not verified:
 
 - `block:minecraft:collision_box:origin` (`collisionBoxes`): BDS rejected all 7 variants that set it: minecraft:collision_box: expected an array; minecraft:collision_box: invalid numeric value
 - `block:minecraft:collision_box:size` (`collisionBoxes`): BDS rejected all 7 variants that set it: minecraft:collision_box: expected an array; minecraft:collision_box: invalid numeric value

@@ -62,7 +62,7 @@ import org.cloudburstmc.nbt.NbtMap;
  * Encoders of the generated {@link BlockComponent} types: the rules of {@code data/model/mappings.json} per
  * protocol window, hand transforms by name. Not API.
  */
-@SuppressWarnings({"unused", "deprecation"})
+@SuppressWarnings({"unused", "deprecation", "removal"})
 public final class BlockWire {
     private BlockWire() {
     }
@@ -77,8 +77,6 @@ public final class BlockWire {
             case BlockEntity c -> blockEntity(c, ctx, out);
             case BlockLightAbsorption c -> ctx.drop(BlockLightAbsorption.NAME, "is not sent to clients (BDS: rejected)");
             case BlockLightEmission c -> ctx.drop(BlockLightEmission.NAME, "is not sent to clients (BDS: rejected)");
-            case BoneVisibility c -> ctx.drop(BoneVisibility.NAME, "is not sent to clients (BDS: rejected)");
-            case Breathability c -> ctx.drop(Breathability.NAME, "is not sent to clients (BDS: rejected)");
             case ChestObstruction c -> { } // server only: BDS sends nothing to clients
             case CollisionBox c -> collisionBox(c, ctx, out);
             case ConnectionRule c -> connectionRule(c, ctx, out);
@@ -119,8 +117,10 @@ public final class BlockWire {
             case BlockTags c -> out.put("blockTags", Wire.strings(c.value()));
             case Tick c -> { } // server only: BDS sends nothing to clients
             case Transformation c -> transformation(c, ctx, out);
-            case UnitCube c -> ctx.drop(UnitCube.NAME, "is not sent to clients (BDS: rejected)");
             case VibrationProperties c -> vibrationProperties(c, ctx, out);
+            case BoneVisibility c -> ctx.drop(BoneVisibility.NAME, "was removed from Bedrock (a deprecated stand-in)");
+            case Breathability c -> ctx.drop(Breathability.NAME, "was removed from Bedrock (a deprecated stand-in)");
+            case UnitCube c -> ctx.drop(UnitCube.NAME, "was removed from Bedrock (a deprecated stand-in)");
             case WireOnlyBlockComponent c -> WireOnlyWire.write(c, ctx, out);
             default -> throw new IllegalArgumentException(component.toString());
         }
@@ -623,7 +623,7 @@ public final class BlockWire {
      * the spec captures sends alike). The description and the components write over it.
      */
     public static void envelope(@NonNull WireContext ctx, @NonNull WireNode out) {
-        out.put("molangVersion", 13);
+        out.put("molangVersion", ComponentIndex.molangVersion(ctx.minEngineVersion()));
         out.put("vanilla_block_data.material", "dirt");
     }
 }

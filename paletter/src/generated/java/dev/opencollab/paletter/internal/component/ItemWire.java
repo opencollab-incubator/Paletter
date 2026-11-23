@@ -54,7 +54,6 @@ import dev.opencollab.paletter.item.component.WireOnlyItemComponent;
 import java.util.List;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
-import org.cloudburstmc.nbt.NbtMap;
 
 /**
  * Encoders of the generated {@link ItemComponent} types: the rules of {@code data/model/mappings.json} per
@@ -135,6 +134,7 @@ public final class ItemWire {
 
     private static void blockPlacer(BlockPlacer c, WireContext ctx, WireNode out) {
         out.put("minecraft:block_placer.canUseBlockAsIcon", (byte) 1);
+        out.put("minecraft:publisher_on_use_on.autoSucceedOnClient", (byte) 0);
         out.put("minecraft:block_placer.alignedPlacement", Wire.bool(c.alignedPlacement()));
         out.list("minecraft:block_placer.use_on");
         for (BlockPlacer.UseOn e0 : c.useOn()) {
@@ -244,6 +244,7 @@ public final class ItemWire {
     }
 
     private static void entityPlacer(EntityPlacer c, WireContext ctx, WireNode out) {
+        out.put("minecraft:publisher_on_use_on.autoSucceedOnClient", (byte) 0);
         out.list("minecraft:entity_placer.dispense_on");
         for (EntityPlacer.UseOn e0 : c.dispenseOn()) {
             WireNode n1 = out.element("minecraft:entity_placer.dispense_on");
@@ -266,12 +267,7 @@ public final class ItemWire {
         out.put("minecraft:food.can_always_eat", Wire.bool(c.canAlwaysEat()));
         out.put("minecraft:food.nutrition", Wire.toInt(c.nutrition()));
         out.put("minecraft:food.saturation_modifier", Wire.toFloat(c.saturationModifier()));
-        if (c.usingConvertsTo() != null) {
-            ctx.drop(Food.NAME, "using_converts_to has no known wire mapping");
-        } else {
-            out.put("minecraft:food.using_converts_to", NbtMap.EMPTY);
-            out.remove("minecraft:food.using_converts_to.name");
-        }
+        Transforms.usingConvertsTo(ctx, out, c);
     }
 
     private static void fuel(Fuel c, WireContext ctx, WireNode out) {
@@ -540,8 +536,6 @@ public final class ItemWire {
     }
 
     private static void wearable(Wearable c, WireContext ctx, WireNode out) {
-        out.put("minecraft:allow_off_hand.value", (byte) 1);
-        out.put("minecraft:max_stack_size.value", (byte) 16);
         out.put("minecraft:wearable.hides_player_location", Wire.bool(c.hidesPlayerLocation()));
         out.put("minecraft:wearable.protection", Wire.toInt(c.protection()));
         Wearable.Slot v0 = c.slot();

@@ -9,8 +9,6 @@ import dev.opencollab.paletter.block.component.BlockLightAbsorption;
 import dev.opencollab.paletter.block.component.BlockLightEmission;
 import dev.opencollab.paletter.block.component.BlockMenuCategory;
 import dev.opencollab.paletter.block.component.BlockTags;
-import dev.opencollab.paletter.block.component.BoneVisibility;
-import dev.opencollab.paletter.block.component.Breathability;
 import dev.opencollab.paletter.block.component.ChestObstruction;
 import dev.opencollab.paletter.block.component.CollisionBox;
 import dev.opencollab.paletter.block.component.Connection;
@@ -53,7 +51,6 @@ import dev.opencollab.paletter.block.component.Sound;
 import dev.opencollab.paletter.block.component.Support;
 import dev.opencollab.paletter.block.component.Tick;
 import dev.opencollab.paletter.block.component.Transformation;
-import dev.opencollab.paletter.block.component.UnitCube;
 import dev.opencollab.paletter.block.component.VibrationProperties;
 import dev.opencollab.paletter.item.component.AllowOffHand;
 import dev.opencollab.paletter.item.component.BlockPlacer;
@@ -104,6 +101,7 @@ import dev.opencollab.paletter.item.component.Wearable;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 /**
  * Every generated component type by add-on JSON name, and the JSON key of every field of every generated class
@@ -196,11 +194,6 @@ public final class ComponentIndex {
         BLOCK.put("minecraft:block_light_emission", BlockLightEmission.class);
         keys(BlockLightEmission.class);
         FORMS.put(BlockLightEmission.class, Map.of("integer", "value"));
-        BLOCK.put("minecraft:bone_visibility", BoneVisibility.class);
-        keys(BoneVisibility.class);
-        BLOCK.put("minecraft:breathability", Breathability.class);
-        keys(Breathability.class);
-        FORMS.put(Breathability.class, Map.of("string", "value"));
         BLOCK.put("minecraft:chest_obstruction", ChestObstruction.class);
         keys(ChestObstruction.class, "obstruction_rule", "obstructionRule");
         BLOCK.put("minecraft:collision_box", CollisionBox.class);
@@ -310,8 +303,6 @@ public final class ComponentIndex {
         keys(Tick.class, "interval_range", "intervalRange", "looping", "looping");
         BLOCK.put("minecraft:transformation", Transformation.class);
         keys(Transformation.class, "rotation", "rotation", "rotation_pivot", "rotationPivot", "scale", "scale", "scale_pivot", "scalePivot", "translation", "translation");
-        BLOCK.put("minecraft:unit_cube", UnitCube.class);
-        keys(UnitCube.class);
         BLOCK.put("minecraft:vibration_properties", VibrationProperties.class);
         keys(VibrationProperties.class, "dampen_vibrations", "dampenVibrations", "occlude_vibrations", "occludeVibrations");
         TRAIT.put("minecraft:connection", Connection.class);
@@ -439,6 +430,27 @@ public final class ComponentIndex {
     }
 
     private ComponentIndex() {
+    }
+
+    /**
+     * The {@code molangVersion} BDS writes into every block of a pack of this {@code min_engine_version} ({@code molangVersions} of
+     * {@code data/model/mappings.json}: {"1.16.100":0,"1.19.40":6,"1.26.36":13}, each from that engine version on; the oldest
+     * also below it, unverified).
+     *
+     * @param minEngineVersion the pack's engine version, e.g. {@code 1.19.40}; null for the newest
+     * @return the molangVersion
+     */
+    public static int molangVersion(@Nullable String minEngineVersion) {
+        if (minEngineVersion == null) {
+            return 13;
+        }
+        if (Wire.compareVersions(minEngineVersion, "1.26.36") >= 0) {
+            return 13;
+        }
+        if (Wire.compareVersions(minEngineVersion, "1.19.40") >= 0) {
+            return 6;
+        }
+        return 0;
     }
 
     private static void keys(Class<?> type, String... keys) {

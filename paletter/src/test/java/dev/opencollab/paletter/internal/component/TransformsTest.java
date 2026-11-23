@@ -332,13 +332,18 @@ class TransformsTest {
     }
 
     @Test
-    void descriptorStatesOfAnUnknownBlockOrStateAreReported() {
-        Wire.blockDescriptor(ctx, new WireNode(), "", "minecraft:oak_log", Map.of("paletter_state", 1), null);
-        assertEquals(1, report.warnings().size());
+    void descriptorStatesAreIntsAndAStringIsReportedAsZero() {
+        // BDS 1.26.36.1 to 1.26.70.24: names the block lacks and blocks the registry lacks are sent as given
+        WireNode unknown = new WireNode();
+        Wire.blockDescriptor(ctx, unknown, "", "minecraft:oak_log", Map.of("paletter_state", 1), null);
         Wire.blockDescriptor(ctx, new WireNode(), "", "minecraft:paletter_unknown", Map.of("a", 1), null);
-        assertEquals(2, report.warnings().size());
-        Wire.blockDescriptor(ctx, new WireNode(), "", "minecraft:oak_log", Map.of("pillar_axis", "y"), null);
-        assertEquals(3, report.warnings().size(), "an enum state is sent as the string until its BDS index can be derived");
+        assertEquals(1, unknown.build().getCompound("states").getInt("paletter_state"));
+        assertTrue(report.entries().isEmpty(), report.entries().toString());
+        // a string is 0 (pillar_axis x, y, z and w alike), a boolean 1 or 0
+        WireNode lossy = new WireNode();
+        Wire.blockDescriptor(ctx, lossy, "", "minecraft:lever", Map.of("lever_direction", "east", "open_bit", true), null);
+        assertEquals(NbtMap.builder().putInt("lever_direction", 0).putInt("open_bit", 1).build(), lossy.build().getCompound("states"));
+        assertEquals(1, report.warnings().size(), "the string's value is lost");
     }
 
     @Test
@@ -364,14 +369,14 @@ class TransformsTest {
     }
 
     @Test
-    void blockDescriptorsAreTypedByTheRegistry() {
+    void blockDescriptorsAreTheFullTriple() {
         WireNode placer = new WireNode();
-        BlockPlacer.UseOn use = BlockPlacer.UseOn.of(BedrockBlocks.OAK_LOG.defaultState());
+        BlockPlacer.UseOn use = BlockPlacer.UseOn.of(BedrockBlocks.WHITE_CANDLE.defaultState());
         Wire.blockDescriptor(ctx, placer, "", use.name(), use.states(), use.tags());
         NbtMap states = placer.build().getCompound("states");
-        assertEquals("minecraft:oak_log", placer.build().getString("name"));
+        assertEquals("minecraft:white_candle", placer.build().getString("name"));
         assertEquals("", placer.build().getString("tags"), "item descriptors are always the full triple");
-        assertEquals(BedrockBlocks.OAK_LOG.defaultState().toNbt().getCompound("states"), states);
+        assertEquals(NbtMap.builder().putInt("candles", 0).putInt("lit", 0).build(), states);
 
         WireNode entity = new WireNode();
         Wire.blockDescriptor(ctx, entity, "", null, Map.of(), "q.any_tag('stone')");
@@ -388,6 +393,18 @@ class TransformsTest {
         assertEquals("x", entry.getString("state"));
         assertEquals(2, entry.getInt("type"));
         assertEquals(1, entry.getInt("value"));
+        // BDS 1.26.36.1 to 1.26.70.24: a boolean is an int (type 2), a string type 1 with the string
+        WireNode typed = new WireNode();
+        Transforms.blockDescriptorStates(ctx, typed, PlacementFilter.BlockFilter.builder().name("minecraft:lever")
+            .states(new java.util.LinkedHashMap<>(Map.of("open_bit", true))).build());
+        NbtMap bool = typed.build().getList("states", NbtType.COMPOUND).getFirst();
+        assertEquals(2, bool.getInt("type"));
+        assertEquals(1, bool.get("value"));
+        WireNode text = new WireNode();
+        Transforms.blockDescriptorStates(ctx, text, PlacementFilter.BlockFilter.builder().name("minecraft:oak_log").states(Map.of("pillar_axis", "x")).build());
+        NbtMap string = text.build().getList("states", NbtType.COMPOUND).getFirst();
+        assertEquals(1, string.getInt("type"));
+        assertEquals("x", string.getString("value"));
         WireNode empty = new WireNode();
         Transforms.blockDescriptorStates(ctx, empty, PlacementFilter.BlockFilter.builder().name("minecraft:dirt").build());
         assertTrue(empty.isEmpty(), "placement filters send no states when there are none");
@@ -546,20 +563,16 @@ class TransformsTest {
 
     @Test
     void anAmmunitionItemIsADescriptorThatIsEmptyWhenItNamesNoKnownItem() {
+        // An entry always names an item: BDS's schema requires it (Shooter.Ammunition.item is required)
         WireNode known = new WireNode();
         Transforms.ammunitionItemDescriptor(ctx, known, Shooter.Ammunition.builder().item("minecraft:stick").build());
         assertEquals("minecraft:stick", compound(known, "item").getString("name"));
         assertTrue(report.entries().isEmpty());
 
-        WireNode none = new WireNode();
-        Transforms.ammunitionItemDescriptor(ctx, none, Shooter.Ammunition.builder().build());
-        assertTrue(compound(none, "item").isEmpty());
-        assertTrue(none.build().containsKey("item"), "{} is sent, not left out");
-        assertTrue(report.entries().isEmpty());
-
         WireNode unknown = new WireNode();
         Transforms.ammunitionItemDescriptor(ctx, unknown, Shooter.Ammunition.builder().item("minecraft:no_such_item").build());
         assertTrue(compound(unknown, "item").isEmpty());
+        assertTrue(unknown.build().containsKey("item"), "{} is sent, not left out");
         assertEquals(1, report.warnings().size());
     }
 }
