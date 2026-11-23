@@ -45,8 +45,8 @@ final class BehaviourSources26_60 {
         v.blockSources("minecraft:acacia_door")
                 .collisionShape(BDS_PROBE_26_60_DOORS);
         v.blockSources("minecraft:acacia_fence")
-                .solid(SOURCES_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_A567F3)
-                .mapColor(SOURCES_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_C47075);
+                .solid(SOURCES_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_58504E)
+                .mapColor(SOURCES_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_3D3225);
         v.blockSources("minecraft:acacia_fence_gate")
                 .solid("in_wall_bit", false, SCRIPT_API_26_60_SOLID, true, CLOUDBURST_DATA_26_60)
                 .mapColor("in_wall_bit", false, SCRIPT_API_26_60_MAP_COLOR,
@@ -70,8 +70,8 @@ final class BehaviourSources26_60 {
         v.blockSources("minecraft:bamboo_door")
                 .collisionShape(BDS_PROBE_26_60_DOORS);
         v.blockSources("minecraft:bamboo_fence")
-                .solid(SOURCES_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_A567F3)
-                .mapColor(SOURCES_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_C47075);
+                .solid(SOURCES_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_58504E)
+                .mapColor(SOURCES_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_3D3225);
         v.blockSources("minecraft:bamboo_fence_gate")
                 .solid("in_wall_bit", false, SCRIPT_API_26_60_SOLID, true, CLOUDBURST_DATA_26_60)
                 .mapColor("in_wall_bit", false, SCRIPT_API_26_60_MAP_COLOR,
@@ -93,8 +93,8 @@ final class BehaviourSources26_60 {
         v.blockSources("minecraft:birch_door")
                 .collisionShape(BDS_PROBE_26_60_DOORS);
         v.blockSources("minecraft:birch_fence")
-                .solid(SOURCES_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_A567F3)
-                .mapColor(SOURCES_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_C47075);
+                .solid(SOURCES_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_58504E)
+                .mapColor(SOURCES_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_3D3225);
         v.blockSources("minecraft:birch_fence_gate")
                 .solid("in_wall_bit", false, SCRIPT_API_26_60_SOLID, true, CLOUDBURST_DATA_26_60)
                 .mapColor("in_wall_bit", false, SCRIPT_API_26_60_MAP_COLOR,
@@ -123,8 +123,8 @@ final class BehaviourSources26_60 {
                         "inner_right", CLOUDBURST_DATA_26_60, "none", SCRIPT_API_26_60_TINT_METHOD,
                         "outer_left", CLOUDBURST_DATA_26_60, "outer_right", CLOUDBURST_DATA_26_60);
         v.blockSources("minecraft:black_stained_glass_pane")
-                .solid(SOURCES_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_A567F3)
-                .mapColor(SOURCES_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_C47075);
+                .solid(SOURCES_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_58504E)
+                .mapColor(SOURCES_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_3D3225);
         v.blockSources("minecraft:black_wool_double_slab")
                 .tintMethod(SCRIPT_API_26_60_TINT_METHOD);
         v.blockSources("minecraft:black_wool_slab")
@@ -164,8 +164,8 @@ final class BehaviourSources26_60 {
                         "inner_right", CLOUDBURST_DATA_26_60, "none", SCRIPT_API_26_60_TINT_METHOD,
                         "outer_left", CLOUDBURST_DATA_26_60, "outer_right", CLOUDBURST_DATA_26_60);
         v.blockSources("minecraft:blue_stained_glass_pane")
-                .solid(SOURCES_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_A567F3)
-                .mapColor(SOURCES_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_C47075);
+                .solid(SOURCES_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_58504E)
+                .mapColor(SOURCES_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_3D3225);
         v.blockSources("minecraft:blue_wool_double_slab")
                 .tintMethod(SCRIPT_API_26_60_TINT_METHOD);
         v.blockSources("minecraft:blue_wool_slab")
@@ -208,8 +208,8 @@ final class BehaviourSources26_60 {
                         "inner_right", CLOUDBURST_DATA_26_60, "none", SCRIPT_API_26_60_TINT_METHOD,
                         "outer_left", CLOUDBURST_DATA_26_60, "outer_right", CLOUDBURST_DATA_26_60);
         v.blockSources("minecraft:brown_stained_glass_pane")
-                .solid(SOURCES_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_A567F3)
-                .mapColor(SOURCES_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_C47075);
+                .solid(SOURCES_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_58504E)
+                .mapColor(SOURCES_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_3D3225);
         v.blockSources("minecraft:brown_wool_double_slab")
                 .tintMethod(SCRIPT_API_26_60_TINT_METHOD);
         v.blockSources("minecraft:brown_wool_slab")
@@ -386,8 +386,8 @@ final class BehaviourSources26_60 {
         v.blockSources("minecraft:cherry_door")
                 .collisionShape(BDS_PROBE_26_60_DOORS);
         v.blockSources("minecraft:cherry_fence")
-                .solid(SOURCES_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_A567F3)
-                .mapColor(SOURCES_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_C47075);
+                .solid(SOURCES_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_58504E)
+                .mapColor(SOURCES_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_3D3225);
         v.blockSources("minecraft:cherry_fence_gate")
                 .solid("in_wall_bit", false, SCRIPT_API_26_60_SOLID, true, CLOUDBURST_DATA_26_60)
                 .mapColor("in_wall_bit", false, SCRIPT_API_26_60_MAP_COLOR,
@@ -400,8 +400,8 @@ final class BehaviourSources26_60 {
                         "inner_right", CLOUDBURST_DATA_26_60, "none", SCRIPT_API_26_60_MAP_COLOR,
                         "outer_left", CLOUDBURST_DATA_26_60, "outer_right", CLOUDBURST_DATA_26_60);
         v.blockSources("minecraft:chorus_plant")
-                .solid(SOURCES_CONNECTION_DOWN_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_UP_CONNECTION_WEST_49B122)
-                .mapColor(SOURCES_CONNECTION_DOWN_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_UP_CONNECTION_WEST_D989A4);
+                .solid(SOURCES_CONNECTION_DOWN_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_UP_CONNECTION_WEST_65568D)
+                .mapColor(SOURCES_CONNECTION_DOWN_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_UP_CONNECTION_WEST_5B9064);
         v.blockSources("minecraft:cinnabar_brick_stairs")
                 .solid("minecraft:corner", "inner_left", CLOUDBURST_DATA_26_60,
                         "inner_right", CLOUDBURST_DATA_26_60, "none", SCRIPT_API_26_60_SOLID,
@@ -463,8 +463,8 @@ final class BehaviourSources26_60 {
                         "top", SCRIPT_API_26_60_MAP_COLOR, "unknown", CLOUDBURST_DATA_26_60,
                         "west", SCRIPT_API_26_60_MAP_COLOR);
         v.blockSources("minecraft:copper_bars")
-                .solid(SOURCES_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_A567F3)
-                .mapColor(SOURCES_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_C47075);
+                .solid(SOURCES_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_58504E)
+                .mapColor(SOURCES_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_3D3225);
         v.blockSources("minecraft:copper_door")
                 .collisionShape(BDS_PROBE_26_60_DOORS);
         v.blockSources("minecraft:copper_torch")
@@ -484,8 +484,8 @@ final class BehaviourSources26_60 {
         v.blockSources("minecraft:crimson_door")
                 .collisionShape(BDS_PROBE_26_60_DOORS);
         v.blockSources("minecraft:crimson_fence")
-                .solid(SOURCES_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_A567F3)
-                .mapColor(SOURCES_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_C47075);
+                .solid(SOURCES_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_58504E)
+                .mapColor(SOURCES_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_3D3225);
         v.blockSources("minecraft:crimson_fence_gate")
                 .solid("in_wall_bit", false, SCRIPT_API_26_60_SOLID, true, CLOUDBURST_DATA_26_60)
                 .mapColor("in_wall_bit", false, SCRIPT_API_26_60_MAP_COLOR,
@@ -522,8 +522,8 @@ final class BehaviourSources26_60 {
 
     static void part6(Changes v) {
         v.blockSources("minecraft:cyan_stained_glass_pane")
-                .solid(SOURCES_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_A567F3)
-                .mapColor(SOURCES_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_C47075);
+                .solid(SOURCES_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_58504E)
+                .mapColor(SOURCES_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_3D3225);
         v.blockSources("minecraft:cyan_wool_double_slab")
                 .tintMethod(SCRIPT_API_26_60_TINT_METHOD);
         v.blockSources("minecraft:cyan_wool_slab")
@@ -541,8 +541,8 @@ final class BehaviourSources26_60 {
         v.blockSources("minecraft:dark_oak_door")
                 .collisionShape(BDS_PROBE_26_60_DOORS);
         v.blockSources("minecraft:dark_oak_fence")
-                .solid(SOURCES_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_A567F3)
-                .mapColor(SOURCES_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_C47075);
+                .solid(SOURCES_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_58504E)
+                .mapColor(SOURCES_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_3D3225);
         v.blockSources("minecraft:dark_oak_fence_gate")
                 .solid("in_wall_bit", false, SCRIPT_API_26_60_SOLID, true, CLOUDBURST_DATA_26_60)
                 .mapColor("in_wall_bit", false, SCRIPT_API_26_60_MAP_COLOR,

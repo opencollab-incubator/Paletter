@@ -5,6 +5,10 @@ package dev.opencollab.paletter.block.component;
 
 import dev.opencollab.paletter.annotation.BedrockFormat;
 import dev.opencollab.paletter.annotation.ServerOnly;
+import dev.opencollab.paletter.internal.component.Check;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
@@ -27,14 +31,28 @@ public final class MapColor implements BlockComponent {
      */
     public static final String NAME = "minecraft:map_color";
 
+    private final @NonNull List<Integer> rgb;
+
     private final @NonNull String color;
 
-    private final @Nullable String tintMethod;
+    private final @Nullable TintMethod tintMethod;
 
-    private MapColor(@NonNull String color, @Nullable String tintMethod) {
+    private MapColor(@NonNull List<Integer> rgb, @NonNull String color,
+            @Nullable TintMethod tintMethod) {
+        rgb = List.copyOf(Objects.requireNonNull(rgb, "MapColor.rgb"));
         Objects.requireNonNull(color, "MapColor.color");
+        this.rgb = rgb;
         this.color = color;
         this.tintMethod = tintMethod;
+    }
+
+    /**
+     * The entries of the component (add-on JSON: the component's value is this list). Default: <code>[]</code>.
+     *
+     * @return the value
+     */
+    public @NonNull List<Integer> rgb() {
+        return rgb;
     }
 
     /**
@@ -56,27 +74,29 @@ public final class MapColor implements BlockComponent {
      * @return the value
      */
     @BedrockFormat("1.21.80")
-    public @Nullable String tintMethod() {
+    public @Nullable TintMethod tintMethod() {
         return tintMethod;
     }
 
     @Override
     public boolean equals(Object o) {
         return this == o || o instanceof MapColor other
+                && Objects.equals(rgb, other.rgb)
                 && Objects.equals(color, other.color)
                 && Objects.equals(tintMethod, other.tintMethod);
     }
 
     @Override
     public int hashCode() {
-        int h = Objects.hashCode(color);
+        int h = Objects.hashCode(rgb);
+        h = 31 * h + Objects.hashCode(color);
         h = 31 * h + Objects.hashCode(tintMethod);
         return h;
     }
 
     @Override
     public String toString() {
-        return "MapColor[color=" + color + ", tintMethod=" + tintMethod + "]";
+        return "MapColor[rgb=" + rgb + ", color=" + color + ", tintMethod=" + tintMethod + "]";
     }
 
     @Override
@@ -101,6 +121,7 @@ public final class MapColor implements BlockComponent {
      */
     public @NonNull Builder toBuilder() {
         Builder builder = new Builder();
+        builder.rgb = rgb;
         builder.color = color;
         builder.tintMethod = tintMethod;
         return builder;
@@ -110,11 +131,41 @@ public final class MapColor implements BlockComponent {
      * Builds {@link MapColor}: defaults applied, required fields and ranges checked by {@link #build()}.
      */
     public static final class Builder {
+        private @Nullable List<Integer> rgb = List.of();
+
         private @Nullable String color;
 
-        private @Nullable String tintMethod;
+        private @Nullable TintMethod tintMethod;
 
         private Builder() {
+        }
+
+        /**
+         * Sets {@code rgb}.
+         *
+         * @param rgb the value
+         * @return this builder
+         * @throws NullPointerException if the value is null
+         */
+        public @NonNull Builder rgb(@NonNull List<Integer> rgb) {
+            this.rgb = Objects.requireNonNull(rgb, "MapColor.rgb");
+            return this;
+        }
+
+        /**
+         * Sets {@code rgb} to the values (at least one value).
+         *
+         * @param first the first value
+         * @param rest the other values
+         * @return this builder
+         */
+        public @NonNull Builder rgb(int first, int... rest) {
+            List<Integer> values = new ArrayList<>();
+            values.add(first);
+            for (int x : rest) {
+                values.add(x);
+            }
+            return rgb(values);
         }
 
         /**
@@ -135,7 +186,7 @@ public final class MapColor implements BlockComponent {
          * @param tintMethod the value
          * @return this builder
          */
-        public @NonNull Builder tintMethod(@Nullable String tintMethod) {
+        public @NonNull Builder tintMethod(@Nullable TintMethod tintMethod) {
             this.tintMethod = tintMethod;
             return this;
         }
@@ -151,7 +202,112 @@ public final class MapColor implements BlockComponent {
             if (color == null) {
                 throw new IllegalStateException("MapColor.color is required");
             }
-            return new MapColor(color, tintMethod);
+            return new MapColor(rgb, color, tintMethod);
+        }
+    }
+
+    /**
+     * A value of an add-on JSON string: a constant per documented value, {@link #of} for any other.
+     * {@link #value()} is the add-on JSON string. Not an enum: Bedrock adds values, so a {@code switch} over
+     * {@link #value()} needs a {@code default}.
+     */
+    public static final class TintMethod {
+        /**
+         * {@code none}
+         */
+        public static final TintMethod NONE = new TintMethod("none");
+
+        /**
+         * {@code default_foliage}
+         */
+        public static final TintMethod DEFAULT_FOLIAGE = new TintMethod("default_foliage");
+
+        /**
+         * {@code birch_foliage}
+         */
+        public static final TintMethod BIRCH_FOLIAGE = new TintMethod("birch_foliage");
+
+        /**
+         * {@code evergreen_foliage}
+         */
+        public static final TintMethod EVERGREEN_FOLIAGE = new TintMethod("evergreen_foliage");
+
+        /**
+         * {@code dry_foliage}
+         */
+        public static final TintMethod DRY_FOLIAGE = new TintMethod("dry_foliage");
+
+        /**
+         * {@code grass}
+         */
+        public static final TintMethod GRASS = new TintMethod("grass");
+
+        /**
+         * {@code water}
+         */
+        public static final TintMethod WATER = new TintMethod("water");
+
+        private static final List<TintMethod> KNOWN = List.of(NONE, DEFAULT_FOLIAGE, BIRCH_FOLIAGE, EVERGREEN_FOLIAGE, DRY_FOLIAGE, GRASS, WATER);
+
+        private static final Map<String, TintMethod> BY_VALUE = Check.index(KNOWN, TintMethod::value);
+
+        private final String value;
+
+        private TintMethod(String value) {
+            this.value = value;
+        }
+
+        /**
+         * Returns the value of an add-on JSON string: the constant of a documented value, else a new value.
+         *
+         * @param value the value in add-on JSON
+         * @return the constant of the value, or a value Paletter does not know
+         */
+        public static @NonNull TintMethod of(@NonNull String value) {
+            TintMethod known = BY_VALUE.get(Objects.requireNonNull(value, "TintMethod.value"));
+            return known != null ? known : new TintMethod(value);
+        }
+
+        /**
+         * Returns the documented values, the constants of this class.
+         *
+         * @return the constants, in the order of the documentation
+         */
+        public static @NonNull List<TintMethod> known() {
+            return KNOWN;
+        }
+
+        /**
+         * Returns the value in add-on JSON.
+         *
+         * @return the value in add-on JSON
+         */
+        public @NonNull String value() {
+            return value;
+        }
+
+        /**
+         * Returns whether the value is documented, one of the constants.
+         *
+         * @return whether this is one of {@link #known()}
+         */
+        public boolean isKnown() {
+            return BY_VALUE.get(value) == this;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            return this == o || o instanceof TintMethod other && value.equals(other.value);
+        }
+
+        @Override
+        public int hashCode() {
+            return value.hashCode();
+        }
+
+        @Override
+        public String toString() {
+            return value;
         }
     }
 }

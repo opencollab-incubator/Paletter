@@ -135,7 +135,6 @@ public final class ItemWire {
 
     private static void blockPlacer(BlockPlacer c, WireContext ctx, WireNode out) {
         out.put("minecraft:block_placer.canUseBlockAsIcon", (byte) 1);
-        out.put("minecraft:publisher_on_use_on.autoSucceedOnClient", (byte) 0);
         out.put("minecraft:block_placer.alignedPlacement", Wire.bool(c.alignedPlacement()));
         out.list("minecraft:block_placer.use_on");
         for (BlockPlacer.UseOn e0 : c.useOn()) {
@@ -180,19 +179,14 @@ public final class ItemWire {
         for (Digger.DestroySpeeds e0 : c.destroySpeeds()) {
             WireNode n1 = out.element("minecraft:digger.destroy_speeds");
             Digger.Block v2 = e0.block();
-            if (v2 != null) {
-                Wire.blockDescriptor(ctx, n1, "block", v2.name(), v2.states(), v2.tags());
-            } else {
-                n1.remove("block.name");
-                n1.remove("block.states");
-                n1.remove("block.tags");
-            }
-            Integer v3 = e0.speed();
-            if (v3 != null) {
-                n1.put("speed", Wire.toInt(v3));
-            } else {
-                n1.remove("speed");
-            }
+            n1.remove("block.states.candles");
+            n1.remove("block.states.lever_direction");
+            n1.remove("block.states.lit");
+            n1.remove("block.states.minecraft:cardinal_direction");
+            n1.remove("block.states.open_bit");
+            n1.remove("block.states.pillar_axis");
+            Wire.blockDescriptor(ctx, n1, "block", v2.name(), v2.states(), v2.tags());
+            n1.put("speed", Wire.toInt(e0.speed()));
         }
         out.put("minecraft:digger.use_efficiency", Wire.bool(c.useEfficiency()));
     }
@@ -214,18 +208,42 @@ public final class ItemWire {
     }
 
     private static void enchantable(Enchantable c, WireContext ctx, WireNode out) {
-        out.put("item_properties.enchantable_slot", "sword");
-        out.put("minecraft:enchantable.slot", "sword");
-        if (!"sword".equals(c.slot())) {
-            ctx.changed(Enchantable.NAME, "slot is sent as a constant, whatever its value");
+        String v0 = c.slot();
+        switch (v0) {
+            case "all" -> out.put("item_properties.enchantable_slot", "all");
+            case "armor_feet" -> out.put("item_properties.enchantable_slot", "armor_feet");
+            case "armor_head" -> out.put("item_properties.enchantable_slot", "armor_head");
+            case "armor_legs" -> out.put("item_properties.enchantable_slot", "armor_legs");
+            case "armor_torso" -> out.put("item_properties.enchantable_slot", "armor_torso");
+            case "axe" -> out.put("item_properties.enchantable_slot", "axe");
+            case "bow" -> out.put("item_properties.enchantable_slot", "bow");
+            case "carrot_stick" -> out.put("item_properties.enchantable_slot", "carrot_stick");
+            case "cosmetic_head" -> out.put("item_properties.enchantable_slot", "");
+            case "crossbow" -> out.put("item_properties.enchantable_slot", "crossbow");
+            case "elytra" -> out.put("item_properties.enchantable_slot", "elytra");
+            case "fishing_rod" -> out.put("item_properties.enchantable_slot", "fishing_rod");
+            case "flintsteel" -> out.put("item_properties.enchantable_slot", "flintsteel");
+            case "g_armor" -> out.put("item_properties.enchantable_slot", "g_armor");
+            case "g_digging" -> out.put("item_properties.enchantable_slot", "g_digging");
+            case "g_tool" -> out.put("item_properties.enchantable_slot", "g_tool");
+            case "hoe" -> out.put("item_properties.enchantable_slot", "hoe");
+            case "melee_spear" -> out.put("item_properties.enchantable_slot", "melee_spear");
+            case "none" -> out.put("item_properties.enchantable_slot", "none");
+            case "pickaxe" -> out.put("item_properties.enchantable_slot", "pickaxe");
+            case "shears" -> out.put("item_properties.enchantable_slot", "shears");
+            case "shield" -> out.put("item_properties.enchantable_slot", "shield");
+            case "shovel" -> out.put("item_properties.enchantable_slot", "shovel");
+            case "spear" -> out.put("item_properties.enchantable_slot", "spear");
+            case "sword" -> out.put("item_properties.enchantable_slot", "sword");
+            default -> ctx.changed(Enchantable.NAME, "slot = " + v0 + " is sent as minecraft:enchantable.slot, but item_properties.enchantable_slot has no known wire value for it and keeps its default");
         }
-        int v0 = c.value();
-        out.put("item_properties.enchantable_value", Wire.toInt(v0));
-        out.put("minecraft:enchantable.value", Wire.toByte(v0));
+        out.put("minecraft:enchantable.slot", v0);
+        int v1 = c.value();
+        out.put("item_properties.enchantable_value", Wire.toInt(v1));
+        out.put("minecraft:enchantable.value", Wire.toByte(v1));
     }
 
     private static void entityPlacer(EntityPlacer c, WireContext ctx, WireNode out) {
-        out.put("minecraft:publisher_on_use_on.autoSucceedOnClient", (byte) 0);
         out.list("minecraft:entity_placer.dispense_on");
         for (EntityPlacer.UseOn e0 : c.dispenseOn()) {
             WireNode n1 = out.element("minecraft:entity_placer.dispense_on");
@@ -248,9 +266,8 @@ public final class ItemWire {
         out.put("minecraft:food.can_always_eat", Wire.bool(c.canAlwaysEat()));
         out.put("minecraft:food.nutrition", Wire.toInt(c.nutrition()));
         out.put("minecraft:food.saturation_modifier", Wire.toFloat(c.saturationModifier()));
-        String v0 = c.usingConvertsTo();
-        if (v0 != null) {
-            out.put("minecraft:food.using_converts_to.name", v0);
+        if (c.usingConvertsTo() != null) {
+            ctx.drop(Food.NAME, "using_converts_to has no known wire mapping");
         } else {
             out.put("minecraft:food.using_converts_to", NbtMap.EMPTY);
             out.remove("minecraft:food.using_converts_to.name");
@@ -523,6 +540,8 @@ public final class ItemWire {
     }
 
     private static void wearable(Wearable c, WireContext ctx, WireNode out) {
+        out.put("minecraft:allow_off_hand.value", (byte) 1);
+        out.put("minecraft:max_stack_size.value", (byte) 16);
         out.put("minecraft:wearable.hides_player_location", Wire.bool(c.hidesPlayerLocation()));
         out.put("minecraft:wearable.protection", Wire.toInt(c.protection()));
         Wearable.Slot v0 = c.slot();

@@ -608,11 +608,6 @@ public final class MaterialInstances implements BlockComponent {
      */
     public static final class RenderMethod {
         /**
-         * {@code opaque}
-         */
-        public static final RenderMethod OPAQUE = new RenderMethod("opaque");
-
-        /**
          * {@code double_sided}
          */
         public static final RenderMethod DOUBLE_SIDED = new RenderMethod("double_sided");
@@ -621,6 +616,21 @@ public final class MaterialInstances implements BlockComponent {
          * {@code blend}
          */
         public static final RenderMethod BLEND = new RenderMethod("blend");
+
+        /**
+         * {@code blend_to_opaque}
+         */
+        public static final RenderMethod BLEND_TO_OPAQUE = new RenderMethod("blend_to_opaque");
+
+        /**
+         * {@code opaque}
+         */
+        public static final RenderMethod OPAQUE = new RenderMethod("opaque");
+
+        /**
+         * {@code alpha_test_to_opaque}
+         */
+        public static final RenderMethod ALPHA_TEST_TO_OPAQUE = new RenderMethod("alpha_test_to_opaque");
 
         /**
          * {@code alpha_test}
@@ -633,21 +643,11 @@ public final class MaterialInstances implements BlockComponent {
         public static final RenderMethod ALPHA_TEST_SINGLE_SIDED = new RenderMethod("alpha_test_single_sided");
 
         /**
-         * {@code blend_to_opaque}
-         */
-        public static final RenderMethod BLEND_TO_OPAQUE = new RenderMethod("blend_to_opaque");
-
-        /**
-         * {@code alpha_test_to_opaque}
-         */
-        public static final RenderMethod ALPHA_TEST_TO_OPAQUE = new RenderMethod("alpha_test_to_opaque");
-
-        /**
          * {@code alpha_test_single_sided_to_opaque}
          */
         public static final RenderMethod ALPHA_TEST_SINGLE_SIDED_TO_OPAQUE = new RenderMethod("alpha_test_single_sided_to_opaque");
 
-        private static final List<RenderMethod> KNOWN = List.of(OPAQUE, DOUBLE_SIDED, BLEND, ALPHA_TEST, ALPHA_TEST_SINGLE_SIDED, BLEND_TO_OPAQUE, ALPHA_TEST_TO_OPAQUE, ALPHA_TEST_SINGLE_SIDED_TO_OPAQUE);
+        private static final List<RenderMethod> KNOWN = List.of(DOUBLE_SIDED, BLEND, BLEND_TO_OPAQUE, OPAQUE, ALPHA_TEST_TO_OPAQUE, ALPHA_TEST, ALPHA_TEST_SINGLE_SIDED, ALPHA_TEST_SINGLE_SIDED_TO_OPAQUE);
 
         private static final Map<String, RenderMethod> BY_VALUE = Check.index(KNOWN, RenderMethod::value);
 

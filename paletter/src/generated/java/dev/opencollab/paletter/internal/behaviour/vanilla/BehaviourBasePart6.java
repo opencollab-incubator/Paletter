@@ -126,7 +126,7 @@ final class BehaviourBasePart6 {
                 .translucency(0.5f);
         v.block("minecraft:weathered_copper_door", "door_hinge_bit=false|true,minecraft:cardinal_direction='east'|'north'|'south'|'west',open_bit=false|true,upper_block_bit=false|true")
                 .destroyTime(3.0f)
-                .collisionShape(TABLE_DOOR_HINGE_BIT_CARDINAL_DIRECTION_OPEN_BIT_C4BD10)
+                .collisionShape(TABLE_DOOR_HINGE_BIT_CARDINAL_DIRECTION_OPEN_BIT_C89710)
                 .outlineShape(TABLE_DOOR_HINGE_BIT_CARDINAL_DIRECTION_OPEN_BIT_C4BD10)
                 .canContainLiquid(true)
                 .mapColor(0x3A8E8CFF)
@@ -221,17 +221,47 @@ final class BehaviourBasePart6 {
                 .collisionShape(BlockShape.EMPTY)
                 .outlineShape(BOX_4_9_4_12_16_12)
                 .liquidBlocking(false)
+                .liquidFlowDirections("weeping_vines_age", 0, null, 1, 63, 2, 63, 3, 63, 4, 63,
+                        5, 63, 6, 63, 7, 63, 8, 63, 9, 63, 10, 63, 11, 63, 12, 63, 13, 63, 14, 63,
+                        15, 63, 16, 63, 17, 63, 18, 63, 19, 63, 20, 63, 21, 63, 22, 63, 23, 63,
+                        24, 63, 25, 63)
                 .mapColor(0x700200FF)
                 .translucency(1.0f)
-                .movementType("Popped")
-                .accumulatesSnow(false)
-                .obstructsRain(false);
+                .climbable(true)
+                .movementType("weeping_vines_age", 0, null, 1, "Popped", 2, "Popped", 3, "Popped",
+                        4, "Popped", 5, "Popped", 6, "Popped", 7, "Popped", 8, "Popped",
+                        9, "Popped", 10, "Popped", 11, "Popped", 12, "Popped", 13, "Popped",
+                        14, "Popped", 15, "Popped", 16, "Popped", 17, "Popped", 18, "Popped",
+                        19, "Popped", 20, "Popped", 21, "Popped", 22, "Popped", 23, "Popped",
+                        24, "Popped", 25, "Popped")
+                .stickyType("weeping_vines_age", 0, null, 1, "None", 2, "None", 3, "None",
+                        4, "None", 5, "None", 6, "None", 7, "None", 8, "None", 9, "None",
+                        10, "None", 11, "None", 12, "None", 13, "None", 14, "None", 15, "None",
+                        16, "None", 17, "None", 18, "None", 19, "None", 20, "None", 21, "None",
+                        22, "None", 23, "None", 24, "None", 25, "None")
+                .accumulatesSnow("weeping_vines_age", 0, null, 1, false, 2, false, 3, false,
+                        4, false, 5, false, 6, false, 7, false, 8, false, 9, false, 10, false,
+                        11, false, 12, false, 13, false, 14, false, 15, false, 16, false, 17, false,
+                        18, false, 19, false, 20, false, 21, false, 22, false, 23, false, 24, false,
+                        25, false)
+                .snowLoggable("weeping_vines_age", 0, null, 1, false, 2, false, 3, false, 4, false,
+                        5, false, 6, false, 7, false, 8, false, 9, false, 10, false, 11, false,
+                        12, false, 13, false, 14, false, 15, false, 16, false, 17, false, 18, false,
+                        19, false, 20, false, 21, false, 22, false, 23, false, 24, false, 25, false)
+                .obstructsRain("weeping_vines_age", 0, null, 1, false, 2, false, 3, false, 4, false,
+                        5, false, 6, false, 7, false, 8, false, 9, false, 10, false, 11, false,
+                        12, false, 13, false, 14, false, 15, false, 16, false, 17, false, 18, false,
+                        19, false, 20, false, 21, false, 22, false, 23, false, 24, false,
+                        25, false);
         v.block("minecraft:wet_sponge", "")
                 .destroyTime(0.6f)
                 .explosionResistance(0.6f)
                 .solid(true)
                 .lightDampening(15)
                 .mapColor(0xE5E533FF);
+    }
+
+    static void part41(Changes v) {
         v.block("minecraft:wheat", "growth=0..7")
                 .explosionResistance(0.0f)
                 .collisionShape(BlockShape.EMPTY)
@@ -260,9 +290,6 @@ final class BehaviourBasePart6 {
                 .translucency(1.0f)
                 .accumulatesSnow(false)
                 .obstructsRain(false);
-    }
-
-    static void part41(Changes v) {
         v.block("minecraft:white_candle_cake", "lit=false|true")
                 .destroyTime(0.5f)
                 .explosionResistance(0.5f)
@@ -411,7 +438,7 @@ final class BehaviourBasePart6 {
         v.block("minecraft:wooden_door", "door_hinge_bit=false|true,minecraft:cardinal_direction='east'|'north'|'south'|'west',open_bit=false|true,upper_block_bit=false|true")
                 .destroyTime(3.0f)
                 .explosionResistance(3.0f)
-                .collisionShape(TABLE_DOOR_HINGE_BIT_CARDINAL_DIRECTION_OPEN_BIT_C4BD10)
+                .collisionShape(TABLE_DOOR_HINGE_BIT_CARDINAL_DIRECTION_OPEN_BIT_C89710)
                 .outlineShape(TABLE_DOOR_HINGE_BIT_CARDINAL_DIRECTION_OPEN_BIT_C4BD10)
                 .canContainLiquid(true)
                 .mapColor(0x8F7748FF)
@@ -534,6 +561,9 @@ final class BehaviourBasePart6 {
                 .flameOdds(30)
                 .burnOdds(60)
                 .translucency(0.8f);
+    }
+
+    static void part42(Changes v) {
         v.block("minecraft:zombie_head", "facing_direction=0..5")
                 .destroyTime(1.0f)
                 .explosionResistance(1.0f)
@@ -575,9 +605,6 @@ final class BehaviourBasePart6 {
         v.item("minecraft:acacia_sapling").furnaceBurnDuration(100).compostChance(30);
         v.item("minecraft:acacia_shelf").furnaceBurnDuration(300);
         v.item("minecraft:acacia_sign").maxStackSize(16).furnaceBurnDuration(200).weight(4);
-    }
-
-    static void part42(Changes v) {
         v.item("minecraft:acacia_slab").furnaceBurnDuration(300);
         v.item("minecraft:acacia_stairs").furnaceBurnDuration(300);
         v.item("minecraft:acacia_standing_sign").furnaceBurnDuration(300).weightUnknown();
@@ -625,6 +652,9 @@ final class BehaviourBasePart6 {
         v.item("minecraft:bamboo_button").furnaceBurnDuration(100);
         v.item("minecraft:bamboo_chest_raft").maxStackSize(1).furnaceBurnDuration(1200).weight(64);
         v.item("minecraft:bamboo_door").furnaceBurnDuration(200);
+    }
+
+    static void part43(Changes v) {
         v.item("minecraft:bamboo_double_slab").furnaceBurnDuration(300).weightUnknown();
         v.item("minecraft:bamboo_fence").furnaceBurnDuration(300);
         v.item("minecraft:bamboo_fence_gate").furnaceBurnDuration(300);
@@ -642,9 +672,6 @@ final class BehaviourBasePart6 {
         v.item("minecraft:bamboo_slab").furnaceBurnDuration(300);
         v.item("minecraft:bamboo_stairs").furnaceBurnDuration(300);
         v.item("minecraft:bamboo_standing_sign").furnaceBurnDuration(300).weightUnknown();
-    }
-
-    static void part43(Changes v) {
         v.item("minecraft:bamboo_trapdoor").furnaceBurnDuration(300);
         v.item("minecraft:bamboo_wall_sign").furnaceBurnDuration(300).weightUnknown();
         v.item("minecraft:banner").maxStackSize(16).furnaceBurnDuration(300).weight(4);
@@ -688,6 +715,9 @@ final class BehaviourBasePart6 {
         v.item("minecraft:birch_wood").furnaceBurnDuration(300);
         v.item("minecraft:black_bundle").maxStackSize(1).weight(4);
         v.item("minecraft:black_candle");
+    }
+
+    static void part44(Changes v) {
         v.item("minecraft:black_candle_cake").weightUnknown();
         v.item("minecraft:black_carpet");
         v.item("minecraft:black_concrete");
@@ -705,9 +735,6 @@ final class BehaviourBasePart6 {
         v.item("minecraft:blackstone_slab");
         v.item("minecraft:blackstone_stairs");
         v.item("minecraft:blackstone_wall");
-    }
-
-    static void part44(Changes v) {
         v.item("minecraft:blade_pottery_sherd");
         v.item("minecraft:blast_furnace");
         v.item("minecraft:blaze_powder");
@@ -756,6 +783,9 @@ final class BehaviourBasePart6 {
         v.item("minecraft:bread").compostChance(85);
         v.item("minecraft:breeze_rod");
         v.item("minecraft:breeze_spawn_egg");
+    }
+
+    static void part45(Changes v) {
         v.item("minecraft:brewer_pottery_sherd");
         v.item("minecraft:brewing_stand");
         v.item("minecraft:brick").furnaceXpMultiplier(0.3f);
@@ -773,9 +803,6 @@ final class BehaviourBasePart6 {
         v.item("minecraft:brown_dye").furnaceXpMultiplier(0.2f);
         v.item("minecraft:brown_egg").maxStackSize(16).weight(4);
         v.item("minecraft:brown_glazed_terracotta");
-    }
-
-    static void part45(Changes v) {
         v.item("minecraft:brown_harness").maxStackSize(1).weight(64);
         v.item("minecraft:brown_mushroom").compostChance(65);
         v.item("minecraft:brown_mushroom_block").compostChance(85);
@@ -823,6 +850,9 @@ final class BehaviourBasePart6 {
         v.item("minecraft:cave_vines_body_with_berries").weightUnknown();
         v.item("minecraft:cave_vines_head_with_berries").weightUnknown();
         v.item("minecraft:chain_command_block");
+    }
+
+    static void part46(Changes v) {
         v.item("minecraft:chainmail_boots")
                 .maxStackSize(1)
                 .maxDamage(195)
@@ -860,9 +890,6 @@ final class BehaviourBasePart6 {
         v.item("minecraft:cherry_fence_gate").furnaceBurnDuration(300);
         v.item("minecraft:cherry_hanging_sign").maxStackSize(16).furnaceBurnDuration(800).weight(4);
         v.item("minecraft:cherry_leaves").compostChance(30);
-    }
-
-    static void part46(Changes v) {
         v.item("minecraft:cherry_log").furnaceBurnDuration(300);
         v.item("minecraft:cherry_planks").furnaceBurnDuration(300);
         v.item("minecraft:cherry_pressure_plate").furnaceBurnDuration(300);
@@ -906,6 +933,9 @@ final class BehaviourBasePart6 {
         v.item("minecraft:cinnabar_bricks");
         v.item("minecraft:cinnabar_double_slab").weightUnknown();
         v.item("minecraft:cinnabar_slab");
+    }
+
+    static void part47(Changes v) {
         v.item("minecraft:cinnabar_stairs");
         v.item("minecraft:cinnabar_wall");
         v.item("minecraft:clay");
@@ -923,9 +953,6 @@ final class BehaviourBasePart6 {
         v.item("minecraft:cobbled_deepslate_slab");
         v.item("minecraft:cobbled_deepslate_stairs");
         v.item("minecraft:cobbled_deepslate_wall");
-    }
-
-    static void part47(Changes v) {
         v.item("minecraft:cobblestone");
         v.item("minecraft:cobblestone_double_slab").weightUnknown();
         v.item("minecraft:cobblestone_slab");
@@ -984,59 +1011,5 @@ final class BehaviourBasePart6 {
                 .weight(64);
         v.item("minecraft:copper_door");
         v.item("minecraft:copper_golem_spawn_egg");
-        v.item("minecraft:copper_golem_statue");
-        v.item("minecraft:copper_grate");
-        v.item("minecraft:copper_helmet")
-                .maxStackSize(1)
-                .maxDamage(121)
-                .armorValue(2)
-                .enchantValue(8)
-                .weight(64);
-        v.item("minecraft:copper_hoe")
-                .maxStackSize(1)
-                .maxDamage(190)
-                .attackDamage(3)
-                .enchantValue(13)
-                .weight(64);
-        v.item("minecraft:copper_horse_armor").maxStackSize(1).armorValue(4).weight(64);
-        v.item("minecraft:copper_ingot").furnaceXpMultiplier(0.7f);
-        v.item("minecraft:copper_lantern");
-        v.item("minecraft:copper_leggings")
-                .maxStackSize(1)
-                .maxDamage(165)
-                .armorValue(3)
-                .enchantValue(8)
-                .weight(64);
-        v.item("minecraft:copper_nautilus_armor").maxStackSize(1).armorValue(4).weight(64);
-        v.item("minecraft:copper_nugget").furnaceXpMultiplier(0.1f);
-        v.item("minecraft:copper_ore");
-        v.item("minecraft:copper_pickaxe")
-                .maxStackSize(1)
-                .maxDamage(190)
-                .attackDamage(3)
-                .enchantValue(13)
-                .weight(64);
-        v.item("minecraft:copper_shovel")
-                .maxStackSize(1)
-                .maxDamage(190)
-                .attackDamage(2)
-                .enchantValue(13)
-                .weight(64);
-        v.item("minecraft:copper_spear")
-                .maxStackSize(1)
-                .maxDamage(190)
-                .attackDamage(2)
-                .enchantValue(13)
-                .weight(64)
-                .cooldownCategory("minecraft:spear")
-                .cooldownTicks(17);
-        v.item("minecraft:copper_sword")
-                .maxStackSize(1)
-                .maxDamage(190)
-                .attackDamage(5)
-                .enchantValue(13)
-                .weight(64);
-        v.item("minecraft:copper_torch");
-        v.item("minecraft:copper_trapdoor");
     }
 }

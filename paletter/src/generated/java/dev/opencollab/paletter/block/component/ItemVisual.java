@@ -329,7 +329,7 @@ public final class ItemVisual implements BlockComponent {
 
         private final @Nullable String cullingShape;
 
-        private final @Nullable String identifier;
+        private final @NonNull String identifier;
 
         private final @Nullable NWayVisualRotation nWayVisualRotation;
 
@@ -337,10 +337,11 @@ public final class ItemVisual implements BlockComponent {
 
         private VisualGeometry(@NonNull Map<String, String> boneVisibility,
                 @Nullable String culling, @Nullable String cullingLayer,
-                @Nullable String cullingShape, @Nullable String identifier,
+                @Nullable String cullingShape, @NonNull String identifier,
                 @Nullable NWayVisualRotation nWayVisualRotation, @NonNull UvLock uvLock) {
             boneVisibility = Check.copy(boneVisibility, "ItemVisual.VisualGeometry.boneVisibility");
             Check.conflict("ItemVisual.VisualGeometry", "boneVisibility", !boneVisibility.isEmpty(), "identifier", identifier, "minecraft:geometry.full_block");
+            Objects.requireNonNull(identifier, "ItemVisual.VisualGeometry.identifier");
             Objects.requireNonNull(uvLock, "ItemVisual.VisualGeometry.uvLock");
             this.boneVisibility = boneVisibility;
             this.culling = culling;
@@ -412,11 +413,11 @@ public final class ItemVisual implements BlockComponent {
          * The description identifier of the geometry to use to render this block. This identifier must either match an
          * existing geometry identifier in any of the loaded resource packs or be one of the currently supported Vanilla
          * identifiers: "minecraft:geometry.full_block" or "minecraft:geometry.cross". Value must have at most 256 items.
-         * Add-on JSON {@code identifier}. Optional (null: not set).
+         * Add-on JSON {@code identifier}. Required.
          *
          * @return the value
          */
-        public @Nullable String identifier() {
+        public @NonNull String identifier() {
             return identifier;
         }
 
@@ -482,7 +483,8 @@ public final class ItemVisual implements BlockComponent {
         }
 
         /**
-         * Creates a builder with every field at its default.
+         * Creates a builder with every optional field at its default; required fields must be set before
+         * {@code build()}.
          *
          * @return a builder with the defaults applied
          */
@@ -578,9 +580,10 @@ public final class ItemVisual implements BlockComponent {
              *
              * @param identifier the value
              * @return this builder
+             * @throws NullPointerException if the value is null
              */
-            public @NonNull Builder identifier(@Nullable String identifier) {
-                this.identifier = identifier;
+            public @NonNull Builder identifier(@NonNull String identifier) {
+                this.identifier = Objects.requireNonNull(identifier, "ItemVisual.VisualGeometry.identifier");
                 return this;
             }
 
@@ -652,6 +655,9 @@ public final class ItemVisual implements BlockComponent {
              * @throws IllegalArgumentException if a value is out of range
              */
             public @NonNull VisualGeometry build() {
+                if (identifier == null) {
+                    throw new IllegalStateException("ItemVisual.VisualGeometry.identifier is required");
+                }
                 return new VisualGeometry(boneVisibility, culling, cullingLayer, cullingShape, identifier, nWayVisualRotation, uvLock);
             }
         }

@@ -529,7 +529,7 @@ final class BehaviourChanges26_40 {
         v.change("minecraft:orange_concrete").requiresCorrectTool(false);
         // requires_correct_tool true -> false: CloudburstMC/Data 7046791; SOURCE ONLY (no BDS capture); undone in 26.50 by the same source: suspected dump artefact
         v.change("minecraft:orange_glazed_terracotta").requiresCorrectTool(false);
-        // new in 26.40: values from BDS Script API dump 1.26.45.1, CloudburstMC/Data 7046791
+        // new in 26.40: values from BDS Script API dump 1.26.45.1, BDS behaviour probe 1.26.45.1 (climbing), CloudburstMC/Data 7046791
         v.block("minecraft:orange_poplar_leaves", "persistent_bit=false|true,update_bit=false|true")
                 .destroyTime(0.2f)
                 .explosionResistance(0.2f)
@@ -663,7 +663,7 @@ final class BehaviourChanges26_40 {
         v.change("minecraft:polished_tuff_stairs").requiresCorrectTool(false);
         // requires_correct_tool true -> false: CloudburstMC/Data 7046791; SOURCE ONLY (no BDS capture); undone in 26.50 by the same source: suspected dump artefact
         v.change("minecraft:polished_tuff_wall").requiresCorrectTool(false);
-        // new in 26.40: values from BDS Script API dump 1.26.45.1, CloudburstMC/Data 7046791
+        // new in 26.40: values from BDS Script API dump 1.26.45.1, BDS behaviour probe 1.26.45.1 (climbing), CloudburstMC/Data 7046791
         v.block("minecraft:poplar_button", "button_pressed_bit=false|true,facing_direction=0..5")
                 .destroyTime(0.5f)
                 .explosionResistance(0.5f)
@@ -671,17 +671,17 @@ final class BehaviourChanges26_40 {
                 .outlineShape(TABLE_BUTTON_PRESSED_BIT_FACING_DIRECTION_8483EF)
                 .canContainLiquid(true)
                 .movementType("Popped");
-        // new in 26.40: values from BDS Script API dump 1.26.45.1, CloudburstMC/Data 7046791
+        // new in 26.40: values from BDS Script API dump 1.26.45.1, BDS behaviour probe 1.26.45.1 (climbing), BDS behaviour probe 1.26.45.1 (doors), CloudburstMC/Data 7046791
         v.block("minecraft:poplar_door", "door_hinge_bit=false|true,minecraft:cardinal_direction='east'|'north'|'south'|'west',open_bit=false|true,upper_block_bit=false|true")
                 .destroyTime(3.0f)
                 .explosionResistance(3.0f)
-                .collisionShape(TABLE_DOOR_HINGE_BIT_CARDINAL_DIRECTION_OPEN_BIT_C4BD10)
+                .collisionShape(TABLE_DOOR_HINGE_BIT_CARDINAL_DIRECTION_OPEN_BIT_C89710)
                 .outlineShape(TABLE_DOOR_HINGE_BIT_CARDINAL_DIRECTION_OPEN_BIT_C4BD10)
                 .canContainLiquid(true)
                 .mapColor(0xD87F33FF)
                 .translucency(0.8f)
                 .movementType("Popped");
-        // new in 26.40: values from BDS Script API dump 1.26.45.1, CloudburstMC/Data 7046791
+        // new in 26.40: values from BDS Script API dump 1.26.45.1, BDS behaviour probe 1.26.45.1 (climbing), CloudburstMC/Data 7046791
         v.block("minecraft:poplar_double_slab", "minecraft:vertical_half='bottom'|'top'")
                 .destroyTime(2.0f)
                 .explosionResistance(3.0f)
@@ -690,7 +690,7 @@ final class BehaviourChanges26_40 {
                 .mapColor(0xD87F33FF)
                 .flameOdds(5)
                 .burnOdds(20);
-        // new in 26.40: values from BDS Script API dump 1.26.45.1, CloudburstMC/Data 7046791
+        // new in 26.40: values from BDS Script API dump 1.26.45.1, BDS behaviour probe 1.26.45.1 (climbing), CloudburstMC/Data 7046791
         v.block("minecraft:poplar_fence", "")
                 .destroyTime(2.0f)
                 .explosionResistance(3.0f)
@@ -701,7 +701,7 @@ final class BehaviourChanges26_40 {
                 .flameOdds(5)
                 .burnOdds(20)
                 .translucency(0.8f);
-        // new in 26.40: values from BDS Script API dump 1.26.45.1, CloudburstMC/Data 7046791
+        // new in 26.40: values from BDS Script API dump 1.26.45.1, BDS behaviour probe 1.26.45.1 (climbing), CloudburstMC/Data 7046791
         v.block("minecraft:poplar_fence_gate", "in_wall_bit=false|true,minecraft:cardinal_direction='east'|'north'|'south'|'west',open_bit=false|true")
                 .destroyTime(2.0f)
                 .explosionResistance(3.0f)
@@ -720,7 +720,7 @@ final class BehaviourChanges26_40 {
                 .accumulatesSnow("in_wall_bit", false, true, true, null)
                 .snowLoggable("in_wall_bit", false, false, true, null)
                 .obstructsRain("in_wall_bit", false, true, true, null);
-        // new in 26.40: values from BDS Script API dump 1.26.45.1, CloudburstMC/Data 7046791
+        // new in 26.40: values from BDS Script API dump 1.26.45.1, BDS behaviour probe 1.26.45.1 (climbing), CloudburstMC/Data 7046791
         v.block("minecraft:poplar_hanging_sign", "attached_bit=false|true,facing_direction=0..5,ground_sign_direction=0..15,hanging=false|true")
                 .destroyTime(1.0f)
                 .explosionResistance(1.0f)
@@ -732,7 +732,7 @@ final class BehaviourChanges26_40 {
                 .mapColor(0xD87F33FF)
                 .translucency(0.8f)
                 .movementType("Popped");
-        // new in 26.40: values from BDS Script API dump 1.26.45.1, CloudburstMC/Data 7046791
+        // new in 26.40: values from BDS Script API dump 1.26.45.1, BDS behaviour probe 1.26.45.1 (climbing), CloudburstMC/Data 7046791
         v.block("minecraft:poplar_log", "pillar_axis='x'|'y'|'z'")
                 .destroyTime(2.0f)
                 .explosionResistance(2.0f)
@@ -741,7 +741,7 @@ final class BehaviourChanges26_40 {
                 .mapColor("pillar_axis", "x", 0x664C33FF, "y", 0xD87F33FF, "z", 0x664C33FF)
                 .flameOdds(5)
                 .burnOdds(5);
-        // new in 26.40: values from BDS Script API dump 1.26.45.1, CloudburstMC/Data 7046791
+        // new in 26.40: values from BDS Script API dump 1.26.45.1, BDS behaviour probe 1.26.45.1 (climbing), CloudburstMC/Data 7046791
         v.block("minecraft:poplar_planks", "")
                 .destroyTime(2.0f)
                 .explosionResistance(3.0f)
@@ -750,7 +750,7 @@ final class BehaviourChanges26_40 {
                 .mapColor(0xD87F33FF)
                 .flameOdds(5)
                 .burnOdds(20);
-        // new in 26.40: values from BDS Script API dump 1.26.45.1, CloudburstMC/Data 7046791
+        // new in 26.40: values from BDS Script API dump 1.26.45.1, BDS behaviour probe 1.26.45.1 (climbing), CloudburstMC/Data 7046791
         v.block("minecraft:poplar_pressure_plate", "redstone_signal=0..15")
                 .destroyTime(0.5f)
                 .explosionResistance(0.5f)
@@ -775,7 +775,7 @@ final class BehaviourChanges26_40 {
                 .mapColor(0xD87F33FF)
                 .translucency(0.2f)
                 .movementType("Popped");
-        // new in 26.40: values from BDS Script API dump 1.26.45.1, CloudburstMC/Data 7046791
+        // new in 26.40: values from BDS Script API dump 1.26.45.1, BDS behaviour probe 1.26.45.1 (climbing), CloudburstMC/Data 7046791
         v.block("minecraft:poplar_sapling", "age_bit=false|true")
                 .explosionResistance(0.0f)
                 .collisionShape(BlockShape.EMPTY)
@@ -789,7 +789,7 @@ final class BehaviourChanges26_40 {
                 .movementType("Popped")
                 .accumulatesSnow(false)
                 .obstructsRain(false);
-        // new in 26.40: values from BDS Script API dump 1.26.45.1, CloudburstMC/Data 7046791
+        // new in 26.40: values from BDS Script API dump 1.26.45.1, BDS behaviour probe 1.26.45.1 (climbing), CloudburstMC/Data 7046791
         v.block("minecraft:poplar_shelf", "minecraft:cardinal_direction='east'|'north'|'south'|'west',powered_bit=false|true,powered_shelf_type=0..3")
                 .destroyTime(2.0f)
                 .explosionResistance(3.0f)
@@ -806,7 +806,7 @@ final class BehaviourChanges26_40 {
                 .flameOdds(30)
                 .burnOdds(20)
                 .translucency(0.8f);
-        // new in 26.40: values from BDS Script API dump 1.26.45.1, CloudburstMC/Data 7046791
+        // new in 26.40: values from BDS Script API dump 1.26.45.1, BDS behaviour probe 1.26.45.1 (climbing), CloudburstMC/Data 7046791
         v.block("minecraft:poplar_slab", "minecraft:vertical_half='bottom'|'top'")
                 .destroyTime(2.0f)
                 .explosionResistance(3.0f)
@@ -819,7 +819,7 @@ final class BehaviourChanges26_40 {
                 .mapColor(0xD87F33FF)
                 .flameOdds(5)
                 .burnOdds(20);
-        // new in 26.40: values from BDS Script API dump 1.26.45.1, CloudburstMC/Data 7046791
+        // new in 26.40: values from BDS Script API dump 1.26.45.1, BDS behaviour probe 1.26.45.1 (climbing), CloudburstMC/Data 7046791
         v.block("minecraft:poplar_stairs", "upside_down_bit=false|true,weirdo_direction=0..3")
                 .destroyTime(2.0f)
                 .explosionResistance(3.0f)
@@ -830,7 +830,7 @@ final class BehaviourChanges26_40 {
                 .flameOdds(5)
                 .burnOdds(20)
                 .translucency(0.8f);
-        // new in 26.40: values from BDS Script API dump 1.26.45.1, CloudburstMC/Data 7046791
+        // new in 26.40: values from BDS Script API dump 1.26.45.1, BDS behaviour probe 1.26.45.1 (climbing), CloudburstMC/Data 7046791
         v.block("minecraft:poplar_standing_sign", "ground_sign_direction=0..15")
                 .destroyTime(1.0f)
                 .explosionResistance(1.0f)
@@ -840,7 +840,7 @@ final class BehaviourChanges26_40 {
                 .mapColor(0xD87F33FF)
                 .translucency(0.8f)
                 .movementType("Popped");
-        // new in 26.40: values from BDS Script API dump 1.26.45.1, CloudburstMC/Data 7046791
+        // new in 26.40: values from BDS Script API dump 1.26.45.1, BDS behaviour probe 1.26.45.1 (climbing), CloudburstMC/Data 7046791
         v.block("minecraft:poplar_trapdoor", "direction=0..3,open_bit=false|true,upside_down_bit=false|true")
                 .destroyTime(3.0f)
                 .explosionResistance(3.0f)
@@ -849,7 +849,10 @@ final class BehaviourChanges26_40 {
                 .canContainLiquid(true)
                 .mapColor(0xD87F33FF)
                 .translucency(0.8f);
-        // new in 26.40: values from BDS Script API dump 1.26.45.1, CloudburstMC/Data 7046791
+    }
+
+    static void part6(Changes v) {
+        // new in 26.40: values from BDS Script API dump 1.26.45.1, BDS behaviour probe 1.26.45.1 (climbing), CloudburstMC/Data 7046791
         v.block("minecraft:poplar_wall_sign", "facing_direction=0..5")
                 .destroyTime(1.0f)
                 .explosionResistance(1.0f)
@@ -863,10 +866,7 @@ final class BehaviourChanges26_40 {
                 .mapColor(0xD87F33FF)
                 .translucency(0.8f)
                 .movementType("Popped");
-    }
-
-    static void part6(Changes v) {
-        // new in 26.40: values from BDS Script API dump 1.26.45.1, CloudburstMC/Data 7046791
+        // new in 26.40: values from BDS Script API dump 1.26.45.1, BDS behaviour probe 1.26.45.1 (climbing), CloudburstMC/Data 7046791
         v.block("minecraft:poplar_wood", "pillar_axis='x'|'y'|'z'")
                 .destroyTime(2.0f)
                 .explosionResistance(2.0f)
@@ -939,7 +939,7 @@ final class BehaviourChanges26_40 {
         v.change("minecraft:red_nether_brick_stairs").requiresCorrectTool(false);
         // requires_correct_tool true -> false: CloudburstMC/Data 7046791; SOURCE ONLY (no BDS capture); undone in 26.50 by the same source: suspected dump artefact
         v.change("minecraft:red_nether_brick_wall").requiresCorrectTool(false);
-        // new in 26.40: values from BDS Script API dump 1.26.45.1, CloudburstMC/Data 7046791
+        // new in 26.40: values from BDS Script API dump 1.26.45.1, BDS behaviour probe 1.26.45.1 (climbing), CloudburstMC/Data 7046791
         v.block("minecraft:red_poplar_leaves", "persistent_bit=false|true,update_bit=false|true")
                 .destroyTime(0.2f)
                 .explosionResistance(0.2f)
@@ -1000,11 +1000,11 @@ final class BehaviourChanges26_40 {
         v.change("minecraft:smooth_quartz_double_slab").requiresCorrectTool(false);
         // requires_correct_tool true -> false: CloudburstMC/Data 7046791; SOURCE ONLY (no BDS capture); undone in 26.50 by the same source: suspected dump artefact
         v.change("minecraft:smooth_quartz_slab").requiresCorrectTool(false);
-        // requires_correct_tool true -> false: CloudburstMC/Data 7046791; SOURCE ONLY (no BDS capture)
-        v.change("minecraft:smooth_quartz_stairs").requiresCorrectTool(false);
     }
 
     static void part7(Changes v) {
+        // requires_correct_tool true -> false: CloudburstMC/Data 7046791; SOURCE ONLY (no BDS capture)
+        v.change("minecraft:smooth_quartz_stairs").requiresCorrectTool(false);
         // requires_correct_tool true -> false: CloudburstMC/Data 7046791; SOURCE ONLY (no BDS capture); undone in 26.50 by the same source: suspected dump artefact
         v.change("minecraft:smooth_red_sandstone").requiresCorrectTool(false);
         // requires_correct_tool true -> false: CloudburstMC/Data 7046791; SOURCE ONLY (no BDS capture); undone in 26.50 by the same source: suspected dump artefact
@@ -1047,7 +1047,7 @@ final class BehaviourChanges26_40 {
         v.change("minecraft:stonecutter").requiresCorrectTool(false);
         // requires_correct_tool true -> false: CloudburstMC/Data 7046791; SOURCE ONLY (no BDS capture); undone in 26.50 by the same source: suspected dump artefact
         v.change("minecraft:stonecutter_block").requiresCorrectTool(false);
-        // new in 26.40: values from BDS Script API dump 1.26.45.1, CloudburstMC/Data 7046791
+        // new in 26.40: values from BDS Script API dump 1.26.45.1, BDS behaviour probe 1.26.45.1 (climbing), CloudburstMC/Data 7046791
         v.block("minecraft:straw_bed", "head_piece_bit=false|true,minecraft:cardinal_direction='east'|'north'|'south'|'west',occupied_bit=false|true")
                 .destroyTime(0.2f)
                 .explosionResistance(0.2f)
@@ -1062,7 +1062,7 @@ final class BehaviourChanges26_40 {
                 .movementType("Popped");
         // requires_correct_tool false -> true: CloudburstMC/Data 7046791; SOURCE ONLY (no BDS capture); undone in 26.50 by the same source: suspected dump artefact
         v.change("minecraft:stripped_mangrove_wood").requiresCorrectTool(true);
-        // new in 26.40: values from BDS Script API dump 1.26.45.1, CloudburstMC/Data 7046791
+        // new in 26.40: values from BDS Script API dump 1.26.45.1, BDS behaviour probe 1.26.45.1 (climbing), CloudburstMC/Data 7046791
         v.block("minecraft:stripped_poplar_log", "pillar_axis='x'|'y'|'z'")
                 .destroyTime(2.0f)
                 .explosionResistance(2.0f)
@@ -1071,7 +1071,7 @@ final class BehaviourChanges26_40 {
                 .mapColor(0xD87F33FF)
                 .flameOdds(5)
                 .burnOdds(5);
-        // new in 26.40: values from BDS Script API dump 1.26.45.1, CloudburstMC/Data 7046791
+        // new in 26.40: values from BDS Script API dump 1.26.45.1, BDS behaviour probe 1.26.45.1 (climbing), CloudburstMC/Data 7046791
         v.block("minecraft:stripped_poplar_wood", "pillar_axis='x'|'y'|'z'")
                 .destroyTime(2.0f)
                 .explosionResistance(2.0f)
@@ -1148,8 +1148,6 @@ final class BehaviourChanges26_40 {
         v.change("minecraft:waxed_cut_copper").requiresCorrectTool(false);
         // requires_correct_tool true -> false: CloudburstMC/Data 7046791; SOURCE ONLY (no BDS capture); undone in 26.50 by the same source: suspected dump artefact
         v.change("minecraft:waxed_cut_copper_slab").requiresCorrectTool(false);
-        // requires_correct_tool true -> false: CloudburstMC/Data 7046791; SOURCE ONLY (no BDS capture)
-        v.change("minecraft:waxed_cut_copper_stairs").requiresCorrectTool(false);
     }
 
     static void load(Changes v) {

@@ -33,6 +33,20 @@ final class BehaviourCaptures {
     V26_30);
 
     /**
+     * BDS behaviour probe 1.26.36.1 (doors).
+     */
+    static final Capture BDS_PROBE_26_30_DOORS = new Capture(Provenance.Source.BDS_PROBE,
+    "Paletter data/bds/1.26.36.1/behaviour-probe/capture.json (doors)",
+    V26_30);
+
+    /**
+     * BDS behaviour probe 1.26.36.1 (climbing).
+     */
+    static final Capture BDS_PROBE_26_30_CLIMBING = new Capture(Provenance.Source.BDS_PROBE,
+    "Paletter data/bds/1.26.36.1/behaviour-probe/capture.json (climbing)",
+    V26_30);
+
+    /**
      * BDS Script API dump 1.26.36.1.
      */
     static final Capture SCRIPT_API_26_30_SOLID = new Capture(Provenance.Source.SCRIPT_API,
@@ -93,6 +107,20 @@ final class BehaviourCaptures {
      */
     static final Capture CLOUDBURST_DATA_26_40 = new Capture(Provenance.Source.CLOUDBURST_DATA,
     "CloudburstMC/Data@7046791ae9fcf056a3b26cd6605ffc1db6d97357",
+    V26_40);
+
+    /**
+     * BDS behaviour probe 1.26.45.1 (doors).
+     */
+    static final Capture BDS_PROBE_26_40_DOORS = new Capture(Provenance.Source.BDS_PROBE,
+    "Paletter data/bds/1.26.45.1/behaviour-probe/capture.json (doors)",
+    V26_40);
+
+    /**
+     * BDS behaviour probe 1.26.45.1 (climbing).
+     */
+    static final Capture BDS_PROBE_26_40_CLIMBING = new Capture(Provenance.Source.BDS_PROBE,
+    "Paletter data/bds/1.26.45.1/behaviour-probe/capture.json (climbing)",
     V26_40);
 
     /**
@@ -166,6 +194,20 @@ final class BehaviourCaptures {
     V26_50);
 
     /**
+     * BDS behaviour probe 1.26.52.3 (doors).
+     */
+    static final Capture BDS_PROBE_26_50_DOORS = new Capture(Provenance.Source.BDS_PROBE,
+    "Paletter data/bds/1.26.52.3/behaviour-probe/capture.json (doors)",
+    V26_50);
+
+    /**
+     * BDS behaviour probe 1.26.52.3 (climbing).
+     */
+    static final Capture BDS_PROBE_26_50_CLIMBING = new Capture(Provenance.Source.BDS_PROBE,
+    "Paletter data/bds/1.26.52.3/behaviour-probe/capture.json (climbing)",
+    V26_50);
+
+    /**
      * BDS Script API dump 1.26.52.3.
      */
     static final Capture SCRIPT_API_26_50_SOLID = new Capture(Provenance.Source.SCRIPT_API,
@@ -229,17 +271,17 @@ final class BehaviourCaptures {
     V26_60);
 
     /**
-     * BDS behaviour probe 1.26.63.1 (doors).
+     * BDS behaviour probe 1.26.70.24 (doors).
      */
     static final Capture BDS_PROBE_26_60_DOORS = new Capture(Provenance.Source.BDS_PROBE,
-    "Paletter data/bds/1.26.63.1/behaviour-probe/capture.json (doors)",
+    "Paletter data/bds/1.26.70.24/behaviour-probe/capture.json (doors)",
     V26_60);
 
     /**
-     * BDS behaviour probe 1.26.63.1 (climbing).
+     * BDS behaviour probe 1.26.70.24 (climbing).
      */
     static final Capture BDS_PROBE_26_60_CLIMBING = new Capture(Provenance.Source.BDS_PROBE,
-    "Paletter data/bds/1.26.63.1/behaviour-probe/capture.json (climbing)",
+    "Paletter data/bds/1.26.70.24/behaviour-probe/capture.json (climbing)",
     V26_60);
 
     /**

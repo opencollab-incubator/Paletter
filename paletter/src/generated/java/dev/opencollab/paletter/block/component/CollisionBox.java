@@ -17,7 +17,8 @@ import org.checkerframework.checker.nullness.qual.Nullable;
  * through. If this component is omitted, default values are used.
  * <p>
  * Add-on JSON: {@code "minecraft:collision_box"}.
- * The creator docs name the experiments Holiday Creator Features, Upcoming Creator Features for it (in some format versions); unverified against BDS.
+ * The creator docs name the experiments Holiday Creator Features, Upcoming Creator Features for it (in some format versions);
+ * BDS rejects it even with the experiments on in 26.30, 26.40, 26.50, 26.60, 1.26.70.24.
  * Unverified: the creator docs name experiment "Holiday Creator Features", which is in no capture.
  *
  * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/blockreference/examples/blockcomponents/minecraftblock_collision_box?view=minecraft-bedrock-stable">Microsoft Learn: minecraft:collision_box</a>
@@ -193,50 +194,48 @@ public final class CollisionBox implements BlockComponent {
      *
      */
     public static final class Entry {
-        private final @Nullable Vec3 origin;
-
-        private final @Nullable Vec3 size;
-
-        private Entry(@Nullable Vec3 origin, @Nullable Vec3 size) {
-            this.origin = origin;
-            this.size = size;
+        private Entry() {
         }
 
         /**
-         * Add-on JSON {@code origin}. Optional (null: not set).
+         * Bedrock no longer has add-on JSON {@code origin}: this stand-in returns null, and its builder setter does nothing.
          *
-         * @return the value
+         * @return null
+         * @deprecated Bedrock no longer has it; it goes in the next major release
          */
+        @Deprecated(
+                forRemoval = true
+        )
         public @Nullable Vec3 origin() {
-            return origin;
+            return null;
         }
 
         /**
-         * Add-on JSON {@code size}. Optional (null: not set).
+         * Bedrock no longer has add-on JSON {@code size}: this stand-in returns null, and its builder setter does nothing.
          *
-         * @return the value
+         * @return null
+         * @deprecated Bedrock no longer has it; it goes in the next major release
          */
+        @Deprecated(
+                forRemoval = true
+        )
         public @Nullable Vec3 size() {
-            return size;
+            return null;
         }
 
         @Override
         public boolean equals(Object o) {
-            return this == o || o instanceof Entry other
-                    && Objects.equals(origin, other.origin)
-                    && Objects.equals(size, other.size);
+            return o instanceof Entry;
         }
 
         @Override
         public int hashCode() {
-            int h = Objects.hashCode(origin);
-            h = 31 * h + Objects.hashCode(size);
-            return h;
+            return 0;
         }
 
         @Override
         public String toString() {
-            return "Entry[origin=" + origin + ", size=" + size + "]";
+            return "Entry[]";
         }
 
         /**
@@ -255,8 +254,6 @@ public final class CollisionBox implements BlockComponent {
          */
         public @NonNull Builder toBuilder() {
             Builder builder = new Builder();
-            builder.origin = origin;
-            builder.size = size;
             return builder;
         }
 
@@ -264,57 +261,35 @@ public final class CollisionBox implements BlockComponent {
          * Builds {@link Entry}: defaults applied, required fields and ranges checked by {@link #build()}.
          */
         public static final class Builder {
-            private @Nullable Vec3 origin;
-
-            private @Nullable Vec3 size;
-
             private Builder() {
             }
 
             /**
-             * Sets {@code origin}.
+             * Does nothing: Bedrock no longer has add-on JSON {@code origin}.
              *
-             * @param origin the value
+             * @param origin ignored
              * @return this builder
+             * @deprecated Bedrock no longer has it; it goes in the next major release
              */
+            @Deprecated(
+                    forRemoval = true
+            )
             public @NonNull Builder origin(@Nullable Vec3 origin) {
-                this.origin = origin;
                 return this;
             }
 
             /**
-             * Sets {@code origin}.
+             * Does nothing: Bedrock no longer has add-on JSON {@code size}.
              *
-             * @param x the x component
-             * @param y the y component
-             * @param z the z component
+             * @param size ignored
              * @return this builder
+             * @deprecated Bedrock no longer has it; it goes in the next major release
              */
-            public @NonNull Builder origin(float x, float y, float z) {
-                return origin(new Vec3(x, y, z));
-            }
-
-            /**
-             * Sets {@code size}.
-             *
-             * @param size the value
-             * @return this builder
-             */
+            @Deprecated(
+                    forRemoval = true
+            )
             public @NonNull Builder size(@Nullable Vec3 size) {
-                this.size = size;
                 return this;
-            }
-
-            /**
-             * Sets {@code size}.
-             *
-             * @param x the x component
-             * @param y the y component
-             * @param z the z component
-             * @return this builder
-             */
-            public @NonNull Builder size(float x, float y, float z) {
-                return size(new Vec3(x, y, z));
             }
 
             /**
@@ -325,7 +300,7 @@ public final class CollisionBox implements BlockComponent {
              * @throws IllegalArgumentException if a value is out of range
              */
             public @NonNull Entry build() {
-                return new Entry(origin, size);
+                return new Entry();
             }
         }
     }

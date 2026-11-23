@@ -560,7 +560,7 @@ public final class dev.opencollab.paletter.block.VoxelShapes {
     public java.lang.String toString()
 }
 
-public sealed interface dev.opencollab.paletter.block.component.BlockComponent permits dev.opencollab.paletter.block.component.BlockDisplayName, dev.opencollab.paletter.block.component.BlockEntity, dev.opencollab.paletter.block.component.BlockLightAbsorption, dev.opencollab.paletter.block.component.BlockLightEmission, dev.opencollab.paletter.block.component.BoneVisibility, dev.opencollab.paletter.block.component.Breathability, dev.opencollab.paletter.block.component.ChestObstruction, dev.opencollab.paletter.block.component.CollisionBox, dev.opencollab.paletter.block.component.ConnectionRule, dev.opencollab.paletter.block.component.CraftingTable, dev.opencollab.paletter.block.component.DestroyTime, dev.opencollab.paletter.block.component.DestructibleByExplosion, dev.opencollab.paletter.block.component.DestructibleByMining, dev.opencollab.paletter.block.component.DestructionParticles, dev.opencollab.paletter.block.component.EmbeddedVisual, dev.opencollab.paletter.block.component.EntityFallOn, dev.opencollab.paletter.block.component.Flammable, dev.opencollab.paletter.block.component.FlowerPottable, dev.opencollab.paletter.block.component.Friction, dev.opencollab.paletter.block.component.FutureBlockComponent, dev.opencollab.paletter.block.component.Geometry, dev.opencollab.paletter.block.component.InstrumentSound, dev.opencollab.paletter.block.component.ItemVisual, dev.opencollab.paletter.block.component.LightDampening, dev.opencollab.paletter.block.component.LightEmission, dev.opencollab.paletter.block.component.LiquidDetection, dev.opencollab.paletter.block.component.Loot, dev.opencollab.paletter.block.component.MapColor, dev.opencollab.paletter.block.component.MaterialInstances, dev.opencollab.paletter.block.component.Movable, dev.opencollab.paletter.block.component.PlacementFilter, dev.opencollab.paletter.block.component.PrecipitationInteractions, dev.opencollab.paletter.block.component.RandomOffset, dev.opencollab.paletter.block.component.RedstoneConductivity, dev.opencollab.paletter.block.component.RedstoneConsumer, dev.opencollab.paletter.block.component.RedstoneProducer, dev.opencollab.paletter.block.component.Replaceable, dev.opencollab.paletter.block.component.SelectionBox, dev.opencollab.paletter.block.component.Support, dev.opencollab.paletter.block.component.Tick, dev.opencollab.paletter.block.component.Transformation, dev.opencollab.paletter.block.component.UnitCube, dev.opencollab.paletter.block.component.WireOnlyBlockComponent {
+public sealed interface dev.opencollab.paletter.block.component.BlockComponent permits dev.opencollab.paletter.block.component.BlockDisplayName, dev.opencollab.paletter.block.component.BlockEntity, dev.opencollab.paletter.block.component.BlockLightAbsorption, dev.opencollab.paletter.block.component.BlockLightEmission, dev.opencollab.paletter.block.component.BlockTags, dev.opencollab.paletter.block.component.BoneVisibility, dev.opencollab.paletter.block.component.Breathability, dev.opencollab.paletter.block.component.ChestObstruction, dev.opencollab.paletter.block.component.CollisionBox, dev.opencollab.paletter.block.component.ConnectionRule, dev.opencollab.paletter.block.component.CraftingTable, dev.opencollab.paletter.block.component.DestroyTime, dev.opencollab.paletter.block.component.DestructibleByExplosion, dev.opencollab.paletter.block.component.DestructibleByMining, dev.opencollab.paletter.block.component.DestructionParticles, dev.opencollab.paletter.block.component.EmbeddedVisual, dev.opencollab.paletter.block.component.EnchantmentPowerTransmitter, dev.opencollab.paletter.block.component.EntityFallOn, dev.opencollab.paletter.block.component.Flammable, dev.opencollab.paletter.block.component.FlowerPottable, dev.opencollab.paletter.block.component.Friction, dev.opencollab.paletter.block.component.FutureBlockComponent, dev.opencollab.paletter.block.component.Geometry, dev.opencollab.paletter.block.component.InstrumentSound, dev.opencollab.paletter.block.component.ItemVisual, dev.opencollab.paletter.block.component.Leashable, dev.opencollab.paletter.block.component.LightDampening, dev.opencollab.paletter.block.component.LightEmission, dev.opencollab.paletter.block.component.LiquidDetection, dev.opencollab.paletter.block.component.Loot, dev.opencollab.paletter.block.component.MapColor, dev.opencollab.paletter.block.component.MaterialInstances, dev.opencollab.paletter.block.component.Movable, dev.opencollab.paletter.block.component.NeighborChange, dev.opencollab.paletter.block.component.PlacementFilter, dev.opencollab.paletter.block.component.PrecipitationInteractions, dev.opencollab.paletter.block.component.RandomOffset, dev.opencollab.paletter.block.component.RedstoneConductivity, dev.opencollab.paletter.block.component.RedstoneConsumer, dev.opencollab.paletter.block.component.RedstoneProducer, dev.opencollab.paletter.block.component.Replaceable, dev.opencollab.paletter.block.component.SelectionBox, dev.opencollab.paletter.block.component.Sound, dev.opencollab.paletter.block.component.Support, dev.opencollab.paletter.block.component.Tick, dev.opencollab.paletter.block.component.Transformation, dev.opencollab.paletter.block.component.UnitCube, dev.opencollab.paletter.block.component.VibrationProperties, dev.opencollab.paletter.block.component.WireOnlyBlockComponent {
     public abstract java.lang.String name()
 }
 
@@ -687,6 +687,23 @@ public static final class dev.opencollab.paletter.block.component.BlockMenuCateg
     public java.lang.String value()
 }
 
+public final class dev.opencollab.paletter.block.component.BlockTags implements dev.opencollab.paletter.block.component.BlockComponent {
+    public static final java.lang.String NAME = "minecraft:tags"
+    public static dev.opencollab.paletter.block.component.BlockTags$Builder builder()
+    public boolean equals(java.lang.Object)
+    public int hashCode()
+    public java.lang.String name()
+    public dev.opencollab.paletter.block.component.BlockTags$Builder toBuilder()
+    public java.lang.String toString()
+    public java.util.List<java.lang.String> value()
+}
+
+public static final class dev.opencollab.paletter.block.component.BlockTags$Builder {
+    public dev.opencollab.paletter.block.component.BlockTags build()
+    public dev.opencollab.paletter.block.component.BlockTags$Builder value(java.lang.String, java.lang.String...)
+    public dev.opencollab.paletter.block.component.BlockTags$Builder value(java.util.List<java.lang.String>)
+}
+
 public sealed interface dev.opencollab.paletter.block.component.BlockTrait permits dev.opencollab.paletter.block.component.Connection, dev.opencollab.paletter.block.component.FutureBlockTrait, dev.opencollab.paletter.block.component.MultiBlock, dev.opencollab.paletter.block.component.PlacementDirection, dev.opencollab.paletter.block.component.PlacementPosition {
     public abstract java.lang.String name()
 }
@@ -776,18 +793,16 @@ public static final class dev.opencollab.paletter.block.component.CollisionBox$E
     public static dev.opencollab.paletter.block.component.CollisionBox$Entry$Builder builder()
     public boolean equals(java.lang.Object)
     public int hashCode()
-    public dev.opencollab.paletter.block.component.CollisionBox$Vec3 origin()
-    public dev.opencollab.paletter.block.component.CollisionBox$Vec3 size()
+    @Deprecated public dev.opencollab.paletter.block.component.CollisionBox$Vec3 origin()
+    @Deprecated public dev.opencollab.paletter.block.component.CollisionBox$Vec3 size()
     public dev.opencollab.paletter.block.component.CollisionBox$Entry$Builder toBuilder()
     public java.lang.String toString()
 }
 
 public static final class dev.opencollab.paletter.block.component.CollisionBox$Entry$Builder {
     public dev.opencollab.paletter.block.component.CollisionBox$Entry build()
-    public dev.opencollab.paletter.block.component.CollisionBox$Entry$Builder origin(float, float, float)
-    public dev.opencollab.paletter.block.component.CollisionBox$Entry$Builder origin(dev.opencollab.paletter.block.component.CollisionBox$Vec3)
-    public dev.opencollab.paletter.block.component.CollisionBox$Entry$Builder size(float, float, float)
-    public dev.opencollab.paletter.block.component.CollisionBox$Entry$Builder size(dev.opencollab.paletter.block.component.CollisionBox$Vec3)
+    @Deprecated public dev.opencollab.paletter.block.component.CollisionBox$Entry$Builder origin(dev.opencollab.paletter.block.component.CollisionBox$Vec3)
+    @Deprecated public dev.opencollab.paletter.block.component.CollisionBox$Entry$Builder size(dev.opencollab.paletter.block.component.CollisionBox$Vec3)
 }
 
 public record dev.opencollab.paletter.block.component.CollisionBox$Vec3 {
@@ -1070,6 +1085,23 @@ public static final class dev.opencollab.paletter.block.component.EmbeddedVisual
     public dev.opencollab.paletter.block.component.EmbeddedVisual$VisualGeometry$Builder uvLock(boolean)
 }
 
+public final class dev.opencollab.paletter.block.component.EnchantmentPowerTransmitter implements dev.opencollab.paletter.block.component.BlockComponent {
+    public static final java.lang.String NAME = "minecraft:enchantment_power_transmitter"
+    public static dev.opencollab.paletter.block.component.EnchantmentPowerTransmitter$Builder builder()
+    public boolean equals(java.lang.Object)
+    public int hashCode()
+    public java.lang.String name()
+    public static dev.opencollab.paletter.block.component.EnchantmentPowerTransmitter of(boolean)
+    public dev.opencollab.paletter.block.component.EnchantmentPowerTransmitter$Builder toBuilder()
+    public java.lang.String toString()
+    public boolean value()
+}
+
+public static final class dev.opencollab.paletter.block.component.EnchantmentPowerTransmitter$Builder {
+    public dev.opencollab.paletter.block.component.EnchantmentPowerTransmitter build()
+    public dev.opencollab.paletter.block.component.EnchantmentPowerTransmitter$Builder value(boolean)
+}
+
 public final class dev.opencollab.paletter.block.component.EntityFallOn implements dev.opencollab.paletter.block.component.BlockComponent {
     public static final java.lang.String NAME = "minecraft:entity_fall_on"
     public static dev.opencollab.paletter.block.component.EntityFallOn$Builder builder()
@@ -1348,6 +1380,34 @@ public static final class dev.opencollab.paletter.block.component.ItemVisual$Vis
     public dev.opencollab.paletter.block.component.ItemVisual$VisualGeometry$Builder uvLock(boolean)
 }
 
+public final class dev.opencollab.paletter.block.component.Leashable implements dev.opencollab.paletter.block.component.BlockComponent {
+    public static final java.lang.String NAME = "minecraft:leashable"
+    public static dev.opencollab.paletter.block.component.Leashable$Builder builder()
+    public boolean equals(java.lang.Object)
+    public int hashCode()
+    public java.lang.String name()
+    public dev.opencollab.paletter.block.component.Leashable$Vec3 offset()
+    public dev.opencollab.paletter.block.component.Leashable$Builder toBuilder()
+    public java.lang.String toString()
+}
+
+public static final class dev.opencollab.paletter.block.component.Leashable$Builder {
+    public dev.opencollab.paletter.block.component.Leashable build()
+    public dev.opencollab.paletter.block.component.Leashable$Builder offset(float, float, float)
+    public dev.opencollab.paletter.block.component.Leashable$Builder offset(dev.opencollab.paletter.block.component.Leashable$Vec3)
+}
+
+public record dev.opencollab.paletter.block.component.Leashable$Vec3 {
+    public <init>(float, float, float)
+    public final boolean equals(java.lang.Object)
+    public final int hashCode()
+    public static dev.opencollab.paletter.block.component.Leashable$Vec3 of(float, float, float)
+    public final java.lang.String toString()
+    public float x()
+    public float y()
+    public float z()
+}
+
 public final class dev.opencollab.paletter.block.component.LightDampening implements dev.opencollab.paletter.block.component.BlockComponent {
     public static final java.lang.String NAME = "minecraft:light_dampening"
     public static dev.opencollab.paletter.block.component.LightDampening$Builder builder()
@@ -1406,7 +1466,7 @@ public static final class dev.opencollab.paletter.block.component.LiquidDetectio
     public int hashCode()
     public dev.opencollab.paletter.block.component.LiquidDetection$LiquidType liquidType()
     public dev.opencollab.paletter.block.component.LiquidDetection$OnLiquidTouches onLiquidTouches()
-    public java.util.List<java.lang.String> stopsLiquidFlowingFromDirection()
+    public java.util.List<dev.opencollab.paletter.block.component.LiquidDetection$StopsLiquidFlowingFromDirection> stopsLiquidFlowingFromDirection()
     public dev.opencollab.paletter.block.component.LiquidDetection$DetectionRules$Builder toBuilder()
     public java.lang.String toString()
     public boolean useLiquidClipping()
@@ -1417,8 +1477,8 @@ public static final class dev.opencollab.paletter.block.component.LiquidDetectio
     public dev.opencollab.paletter.block.component.LiquidDetection$DetectionRules$Builder canContainLiquid(boolean)
     public dev.opencollab.paletter.block.component.LiquidDetection$DetectionRules$Builder liquidType(dev.opencollab.paletter.block.component.LiquidDetection$LiquidType)
     public dev.opencollab.paletter.block.component.LiquidDetection$DetectionRules$Builder onLiquidTouches(dev.opencollab.paletter.block.component.LiquidDetection$OnLiquidTouches)
-    public dev.opencollab.paletter.block.component.LiquidDetection$DetectionRules$Builder stopsLiquidFlowingFromDirection(java.lang.String, java.lang.String...)
-    public dev.opencollab.paletter.block.component.LiquidDetection$DetectionRules$Builder stopsLiquidFlowingFromDirection(java.util.List<java.lang.String>)
+    public dev.opencollab.paletter.block.component.LiquidDetection$DetectionRules$Builder stopsLiquidFlowingFromDirection(dev.opencollab.paletter.block.component.LiquidDetection$StopsLiquidFlowingFromDirection, dev.opencollab.paletter.block.component.LiquidDetection$StopsLiquidFlowingFromDirection...)
+    public dev.opencollab.paletter.block.component.LiquidDetection$DetectionRules$Builder stopsLiquidFlowingFromDirection(java.util.List<dev.opencollab.paletter.block.component.LiquidDetection$StopsLiquidFlowingFromDirection>)
     public dev.opencollab.paletter.block.component.LiquidDetection$DetectionRules$Builder useLiquidClipping(boolean)
 }
 
@@ -1447,6 +1507,22 @@ public static final class dev.opencollab.paletter.block.component.LiquidDetectio
     public java.lang.String value()
 }
 
+public static final class dev.opencollab.paletter.block.component.LiquidDetection$StopsLiquidFlowingFromDirection {
+    public static final dev.opencollab.paletter.block.component.LiquidDetection$StopsLiquidFlowingFromDirection DOWN
+    public static final dev.opencollab.paletter.block.component.LiquidDetection$StopsLiquidFlowingFromDirection EAST
+    public static final dev.opencollab.paletter.block.component.LiquidDetection$StopsLiquidFlowingFromDirection NORTH
+    public static final dev.opencollab.paletter.block.component.LiquidDetection$StopsLiquidFlowingFromDirection SOUTH
+    public static final dev.opencollab.paletter.block.component.LiquidDetection$StopsLiquidFlowingFromDirection UP
+    public static final dev.opencollab.paletter.block.component.LiquidDetection$StopsLiquidFlowingFromDirection WEST
+    public boolean equals(java.lang.Object)
+    public int hashCode()
+    public boolean isKnown()
+    public static java.util.List<dev.opencollab.paletter.block.component.LiquidDetection$StopsLiquidFlowingFromDirection> known()
+    public static dev.opencollab.paletter.block.component.LiquidDetection$StopsLiquidFlowingFromDirection of(java.lang.String)
+    public java.lang.String toString()
+    public java.lang.String value()
+}
+
 public final class dev.opencollab.paletter.block.component.Loot implements dev.opencollab.paletter.block.component.BlockComponent {
     public static final java.lang.String NAME = "minecraft:loot"
     public static dev.opencollab.paletter.block.component.Loot$Builder builder()
@@ -1471,7 +1547,8 @@ public final class dev.opencollab.paletter.block.component.MapColor implements d
     public boolean equals(java.lang.Object)
     public int hashCode()
     public java.lang.String name()
-    public java.lang.String tintMethod()
+    public java.util.List<java.lang.Integer> rgb()
+    public dev.opencollab.paletter.block.component.MapColor$TintMethod tintMethod()
     public dev.opencollab.paletter.block.component.MapColor$Builder toBuilder()
     public java.lang.String toString()
 }
@@ -1479,7 +1556,26 @@ public final class dev.opencollab.paletter.block.component.MapColor implements d
 public static final class dev.opencollab.paletter.block.component.MapColor$Builder {
     public dev.opencollab.paletter.block.component.MapColor build()
     public dev.opencollab.paletter.block.component.MapColor$Builder color(java.lang.String)
-    public dev.opencollab.paletter.block.component.MapColor$Builder tintMethod(java.lang.String)
+    public dev.opencollab.paletter.block.component.MapColor$Builder rgb(int, int...)
+    public dev.opencollab.paletter.block.component.MapColor$Builder rgb(java.util.List<java.lang.Integer>)
+    public dev.opencollab.paletter.block.component.MapColor$Builder tintMethod(dev.opencollab.paletter.block.component.MapColor$TintMethod)
+}
+
+public static final class dev.opencollab.paletter.block.component.MapColor$TintMethod {
+    public static final dev.opencollab.paletter.block.component.MapColor$TintMethod BIRCH_FOLIAGE
+    public static final dev.opencollab.paletter.block.component.MapColor$TintMethod DEFAULT_FOLIAGE
+    public static final dev.opencollab.paletter.block.component.MapColor$TintMethod DRY_FOLIAGE
+    public static final dev.opencollab.paletter.block.component.MapColor$TintMethod EVERGREEN_FOLIAGE
+    public static final dev.opencollab.paletter.block.component.MapColor$TintMethod GRASS
+    public static final dev.opencollab.paletter.block.component.MapColor$TintMethod NONE
+    public static final dev.opencollab.paletter.block.component.MapColor$TintMethod WATER
+    public boolean equals(java.lang.Object)
+    public int hashCode()
+    public boolean isKnown()
+    public static java.util.List<dev.opencollab.paletter.block.component.MapColor$TintMethod> known()
+    public static dev.opencollab.paletter.block.component.MapColor$TintMethod of(java.lang.String)
+    public java.lang.String toString()
+    public java.lang.String value()
 }
 
 public final class dev.opencollab.paletter.block.component.MaterialInstances implements dev.opencollab.paletter.block.component.BlockComponent {
@@ -1669,6 +1765,40 @@ public static final class dev.opencollab.paletter.block.component.MultiBlock$Mul
     public java.lang.String value()
 }
 
+public final class dev.opencollab.paletter.block.component.NeighborChange implements dev.opencollab.paletter.block.component.BlockComponent {
+    public static final java.lang.String NAME = "minecraft:neighbor_change"
+    public static dev.opencollab.paletter.block.component.NeighborChange$Builder builder()
+    public boolean equals(java.lang.Object)
+    public int hashCode()
+    public java.lang.String name()
+    public java.util.List<dev.opencollab.paletter.block.component.NeighborChange$NeighborDirections> neighborDirections()
+    public dev.opencollab.paletter.block.component.NeighborChange$Builder toBuilder()
+    public java.lang.String toString()
+}
+
+public static final class dev.opencollab.paletter.block.component.NeighborChange$Builder {
+    public dev.opencollab.paletter.block.component.NeighborChange build()
+    public dev.opencollab.paletter.block.component.NeighborChange$Builder neighborDirections(dev.opencollab.paletter.block.component.NeighborChange$NeighborDirections, dev.opencollab.paletter.block.component.NeighborChange$NeighborDirections...)
+    public dev.opencollab.paletter.block.component.NeighborChange$Builder neighborDirections(java.util.List<dev.opencollab.paletter.block.component.NeighborChange$NeighborDirections>)
+}
+
+public static final class dev.opencollab.paletter.block.component.NeighborChange$NeighborDirections {
+    public static final dev.opencollab.paletter.block.component.NeighborChange$NeighborDirections ALL
+    public static final dev.opencollab.paletter.block.component.NeighborChange$NeighborDirections DOWN
+    public static final dev.opencollab.paletter.block.component.NeighborChange$NeighborDirections EAST
+    public static final dev.opencollab.paletter.block.component.NeighborChange$NeighborDirections NORTH
+    public static final dev.opencollab.paletter.block.component.NeighborChange$NeighborDirections SOUTH
+    public static final dev.opencollab.paletter.block.component.NeighborChange$NeighborDirections UP
+    public static final dev.opencollab.paletter.block.component.NeighborChange$NeighborDirections WEST
+    public boolean equals(java.lang.Object)
+    public int hashCode()
+    public boolean isKnown()
+    public static java.util.List<dev.opencollab.paletter.block.component.NeighborChange$NeighborDirections> known()
+    public static dev.opencollab.paletter.block.component.NeighborChange$NeighborDirections of(java.lang.String)
+    public java.lang.String toString()
+    public java.lang.String value()
+}
+
 @Deprecated public final class dev.opencollab.paletter.block.component.OnPlayerPlacing implements dev.opencollab.paletter.block.component.WireOnlyBlockComponent {
     public static final java.lang.String NAME = "minecraft:on_player_placing"
     public boolean equals(java.lang.Object)
@@ -1696,6 +1826,8 @@ public static final class dev.opencollab.paletter.block.component.PlacementDirec
     public static dev.opencollab.paletter.block.component.PlacementDirection$BlocksToCornerWith$Builder builder()
     public boolean equals(java.lang.Object)
     public int hashCode()
+    public java.lang.String name()
+    public java.util.Map<java.lang.String, java.lang.Integer> states()
     public java.lang.String tags()
     public dev.opencollab.paletter.block.component.PlacementDirection$BlocksToCornerWith$Builder toBuilder()
     public java.lang.String toString()
@@ -1703,6 +1835,8 @@ public static final class dev.opencollab.paletter.block.component.PlacementDirec
 
 public static final class dev.opencollab.paletter.block.component.PlacementDirection$BlocksToCornerWith$Builder {
     public dev.opencollab.paletter.block.component.PlacementDirection$BlocksToCornerWith build()
+    public dev.opencollab.paletter.block.component.PlacementDirection$BlocksToCornerWith$Builder name(java.lang.String)
+    public dev.opencollab.paletter.block.component.PlacementDirection$BlocksToCornerWith$Builder states(java.util.Map<java.lang.String, java.lang.Integer>)
     public dev.opencollab.paletter.block.component.PlacementDirection$BlocksToCornerWith$Builder tags(java.lang.String)
 }
 
@@ -1719,6 +1853,7 @@ public static final class dev.opencollab.paletter.block.component.PlacementDirec
     public static final dev.opencollab.paletter.block.component.PlacementDirection$EnabledStates CARDINAL_DIRECTION
     public static final dev.opencollab.paletter.block.component.PlacementDirection$EnabledStates CORNER_AND_CARDINAL_DIRECTION
     public static final dev.opencollab.paletter.block.component.PlacementDirection$EnabledStates FACING_DIRECTION
+    public static final dev.opencollab.paletter.block.component.PlacementDirection$EnabledStates SIXTEEN_WAY_ROTATION
     public boolean equals(java.lang.Object)
     public int hashCode()
     public boolean isKnown()
@@ -1737,6 +1872,22 @@ public final class dev.opencollab.paletter.block.component.PlacementFilter imple
     public java.lang.String name()
     public dev.opencollab.paletter.block.component.PlacementFilter$Builder toBuilder()
     public java.lang.String toString()
+}
+
+public static final class dev.opencollab.paletter.block.component.PlacementFilter$AllowedFaces {
+    public static final dev.opencollab.paletter.block.component.PlacementFilter$AllowedFaces DOWN
+    public static final dev.opencollab.paletter.block.component.PlacementFilter$AllowedFaces EAST
+    public static final dev.opencollab.paletter.block.component.PlacementFilter$AllowedFaces NORTH
+    public static final dev.opencollab.paletter.block.component.PlacementFilter$AllowedFaces SOUTH
+    public static final dev.opencollab.paletter.block.component.PlacementFilter$AllowedFaces UP
+    public static final dev.opencollab.paletter.block.component.PlacementFilter$AllowedFaces WEST
+    public boolean equals(java.lang.Object)
+    public int hashCode()
+    public boolean isKnown()
+    public static java.util.List<dev.opencollab.paletter.block.component.PlacementFilter$AllowedFaces> known()
+    public static dev.opencollab.paletter.block.component.PlacementFilter$AllowedFaces of(java.lang.String)
+    public java.lang.String toString()
+    public java.lang.String value()
 }
 
 public static final class dev.opencollab.paletter.block.component.PlacementFilter$BlockFilter {
@@ -1766,7 +1917,7 @@ public static final class dev.opencollab.paletter.block.component.PlacementFilte
 }
 
 public static final class dev.opencollab.paletter.block.component.PlacementFilter$Conditions {
-    public java.util.List<java.lang.String> allowedFaces()
+    public java.util.List<dev.opencollab.paletter.block.component.PlacementFilter$AllowedFaces> allowedFaces()
     public java.util.List<dev.opencollab.paletter.block.component.PlacementFilter$BlockFilter> blockFilter()
     public static dev.opencollab.paletter.block.component.PlacementFilter$Conditions$Builder builder()
     public boolean equals(java.lang.Object)
@@ -1776,8 +1927,8 @@ public static final class dev.opencollab.paletter.block.component.PlacementFilte
 }
 
 public static final class dev.opencollab.paletter.block.component.PlacementFilter$Conditions$Builder {
-    public dev.opencollab.paletter.block.component.PlacementFilter$Conditions$Builder allowedFaces(java.lang.String, java.lang.String...)
-    public dev.opencollab.paletter.block.component.PlacementFilter$Conditions$Builder allowedFaces(java.util.List<java.lang.String>)
+    public dev.opencollab.paletter.block.component.PlacementFilter$Conditions$Builder allowedFaces(dev.opencollab.paletter.block.component.PlacementFilter$AllowedFaces, dev.opencollab.paletter.block.component.PlacementFilter$AllowedFaces...)
+    public dev.opencollab.paletter.block.component.PlacementFilter$Conditions$Builder allowedFaces(java.util.List<dev.opencollab.paletter.block.component.PlacementFilter$AllowedFaces>)
     public dev.opencollab.paletter.block.component.PlacementFilter$Conditions$Builder blockFilter(dev.opencollab.paletter.block.component.PlacementFilter$BlockFilter, dev.opencollab.paletter.block.component.PlacementFilter$BlockFilter...)
     public dev.opencollab.paletter.block.component.PlacementFilter$Conditions$Builder blockFilter(java.util.List<dev.opencollab.paletter.block.component.PlacementFilter$BlockFilter>)
     public dev.opencollab.paletter.block.component.PlacementFilter$Conditions build()
@@ -2044,6 +2195,22 @@ public record dev.opencollab.paletter.block.component.SelectionBox$Vec3 {
     public float z()
 }
 
+public final class dev.opencollab.paletter.block.component.Sound implements dev.opencollab.paletter.block.component.BlockComponent {
+    public static final java.lang.String NAME = "minecraft:sound"
+    public static dev.opencollab.paletter.block.component.Sound$Builder builder()
+    public boolean equals(java.lang.Object)
+    public int hashCode()
+    public java.lang.String name()
+    public java.lang.String sound()
+    public dev.opencollab.paletter.block.component.Sound$Builder toBuilder()
+    public java.lang.String toString()
+}
+
+public static final class dev.opencollab.paletter.block.component.Sound$Builder {
+    public dev.opencollab.paletter.block.component.Sound build()
+    public dev.opencollab.paletter.block.component.Sound$Builder sound(java.lang.String)
+}
+
 public final class dev.opencollab.paletter.block.component.Support implements dev.opencollab.paletter.block.component.BlockComponent {
     public static final java.lang.String NAME = "minecraft:support"
     public static dev.opencollab.paletter.block.component.Support$Builder builder()
@@ -2164,6 +2331,24 @@ public record dev.opencollab.paletter.block.component.UvLock$Flag implements dev
     public final int hashCode()
     public final java.lang.String toString()
     public boolean value()
+}
+
+public final class dev.opencollab.paletter.block.component.VibrationProperties implements dev.opencollab.paletter.block.component.BlockComponent {
+    public static final java.lang.String NAME = "minecraft:vibration_properties"
+    public static dev.opencollab.paletter.block.component.VibrationProperties$Builder builder()
+    public boolean dampenVibrations()
+    public boolean equals(java.lang.Object)
+    public int hashCode()
+    public java.lang.String name()
+    public boolean occludeVibrations()
+    public dev.opencollab.paletter.block.component.VibrationProperties$Builder toBuilder()
+    public java.lang.String toString()
+}
+
+public static final class dev.opencollab.paletter.block.component.VibrationProperties$Builder {
+    public dev.opencollab.paletter.block.component.VibrationProperties build()
+    public dev.opencollab.paletter.block.component.VibrationProperties$Builder dampenVibrations(boolean)
+    public dev.opencollab.paletter.block.component.VibrationProperties$Builder occludeVibrations(boolean)
 }
 
 public sealed interface dev.opencollab.paletter.block.component.WireOnlyBlockComponent extends dev.opencollab.paletter.block.component.BlockComponent permits dev.opencollab.paletter.block.component.FutureWireOnlyBlockComponent, dev.opencollab.paletter.block.component.OnPlayerPlacing, dev.opencollab.paletter.block.component.ScriptHooks {
@@ -2686,15 +2871,16 @@ public static final class dev.opencollab.paletter.item.component.Digger$DestroyS
     public static dev.opencollab.paletter.item.component.Digger$DestroySpeeds$Builder builder()
     public boolean equals(java.lang.Object)
     public int hashCode()
-    public java.lang.Integer speed()
+    public int speed()
     public dev.opencollab.paletter.item.component.Digger$DestroySpeeds$Builder toBuilder()
     public java.lang.String toString()
 }
 
 public static final class dev.opencollab.paletter.item.component.Digger$DestroySpeeds$Builder {
     public dev.opencollab.paletter.item.component.Digger$DestroySpeeds$Builder block(dev.opencollab.paletter.item.component.Digger$Block)
+    public dev.opencollab.paletter.item.component.Digger$DestroySpeeds$Builder block(java.lang.String)
     public dev.opencollab.paletter.item.component.Digger$DestroySpeeds build()
-    public dev.opencollab.paletter.item.component.Digger$DestroySpeeds$Builder speed(java.lang.Integer)
+    public dev.opencollab.paletter.item.component.Digger$DestroySpeeds$Builder speed(int)
 }
 
 public final class dev.opencollab.paletter.item.component.Durability implements dev.opencollab.paletter.item.component.ItemComponent {
@@ -3547,6 +3733,7 @@ public static final class dev.opencollab.paletter.item.component.Repairable$Repa
     public dev.opencollab.paletter.item.component.Repairable$RepairItems$Builder items(dev.opencollab.paletter.item.component.ItemsOrTags)
     public dev.opencollab.paletter.item.component.Repairable$RepairItems$Builder items(dev.opencollab.paletter.vanilla.BedrockItemType, dev.opencollab.paletter.vanilla.BedrockItemType...)
     public dev.opencollab.paletter.item.component.Repairable$RepairItems$Builder items(java.lang.String, java.lang.String...)
+    public dev.opencollab.paletter.item.component.Repairable$RepairItems$Builder items(java.util.List<java.lang.String>)
     public dev.opencollab.paletter.item.component.Repairable$RepairItems$Builder repairAmount(float)
     public dev.opencollab.paletter.item.component.Repairable$RepairItems$Builder repairAmount(dev.opencollab.paletter.item.component.RepairAmount)
 }
@@ -3579,6 +3766,7 @@ public static final class dev.opencollab.paletter.item.component.Shooter$Ammunit
 
 public static final class dev.opencollab.paletter.item.component.Shooter$Ammunition$Builder {
     public dev.opencollab.paletter.item.component.Shooter$Ammunition build()
+    public dev.opencollab.paletter.item.component.Shooter$Ammunition$Builder item(dev.opencollab.paletter.vanilla.BedrockItemType)
     public dev.opencollab.paletter.item.component.Shooter$Ammunition$Builder item(java.lang.String)
     public dev.opencollab.paletter.item.component.Shooter$Ammunition$Builder searchInventory(boolean)
     public dev.opencollab.paletter.item.component.Shooter$Ammunition$Builder useInCreative(boolean)
@@ -3771,15 +3959,35 @@ public final class dev.opencollab.paletter.item.component.UseAnimation implement
     public boolean equals(java.lang.Object)
     public int hashCode()
     public java.lang.String name()
-    public static dev.opencollab.paletter.item.component.UseAnimation of(java.lang.String)
+    public static dev.opencollab.paletter.item.component.UseAnimation of(dev.opencollab.paletter.item.component.UseAnimation$Value)
     public dev.opencollab.paletter.item.component.UseAnimation$Builder toBuilder()
     public java.lang.String toString()
-    public java.lang.String value()
+    public dev.opencollab.paletter.item.component.UseAnimation$Value value()
 }
 
 public static final class dev.opencollab.paletter.item.component.UseAnimation$Builder {
     public dev.opencollab.paletter.item.component.UseAnimation build()
-    public dev.opencollab.paletter.item.component.UseAnimation$Builder value(java.lang.String)
+    public dev.opencollab.paletter.item.component.UseAnimation$Builder value(dev.opencollab.paletter.item.component.UseAnimation$Value)
+}
+
+public static final class dev.opencollab.paletter.item.component.UseAnimation$Value {
+    public static final dev.opencollab.paletter.item.component.UseAnimation$Value BLOCK
+    public static final dev.opencollab.paletter.item.component.UseAnimation$Value BOW
+    public static final dev.opencollab.paletter.item.component.UseAnimation$Value BRUSH
+    public static final dev.opencollab.paletter.item.component.UseAnimation$Value CAMERA
+    public static final dev.opencollab.paletter.item.component.UseAnimation$Value CROSSBOW
+    public static final dev.opencollab.paletter.item.component.UseAnimation$Value DRINK
+    public static final dev.opencollab.paletter.item.component.UseAnimation$Value EAT
+    public static final dev.opencollab.paletter.item.component.UseAnimation$Value NONE
+    public static final dev.opencollab.paletter.item.component.UseAnimation$Value SPEAR
+    public static final dev.opencollab.paletter.item.component.UseAnimation$Value SPYGLASS
+    public boolean equals(java.lang.Object)
+    public int hashCode()
+    public boolean isKnown()
+    public static java.util.List<dev.opencollab.paletter.item.component.UseAnimation$Value> known()
+    public static dev.opencollab.paletter.item.component.UseAnimation$Value of(java.lang.String)
+    public java.lang.String toString()
+    public java.lang.String value()
 }
 
 @Deprecated public final class dev.opencollab.paletter.item.component.UseDuration implements dev.opencollab.paletter.item.component.ItemComponent {

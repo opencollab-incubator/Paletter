@@ -188,31 +188,6 @@ public final class Wearable implements ItemComponent {
      */
     public static final class Slot {
         /**
-         * {@code slot.armor.body}
-         */
-        public static final Slot SLOT_ARMOR_BODY = new Slot("slot.armor.body");
-
-        /**
-         * {@code slot.armor.chest}
-         */
-        public static final Slot SLOT_ARMOR_CHEST = new Slot("slot.armor.chest");
-
-        /**
-         * {@code slot.armor.feet}
-         */
-        public static final Slot SLOT_ARMOR_FEET = new Slot("slot.armor.feet");
-
-        /**
-         * {@code slot.armor.head}
-         */
-        public static final Slot SLOT_ARMOR_HEAD = new Slot("slot.armor.head");
-
-        /**
-         * {@code slot.armor.legs}
-         */
-        public static final Slot SLOT_ARMOR_LEGS = new Slot("slot.armor.legs");
-
-        /**
          * {@code slot.weapon.mainhand}
          */
         public static final Slot SLOT_WEAPON_MAINHAND = new Slot("slot.weapon.mainhand");
@@ -222,7 +197,32 @@ public final class Wearable implements ItemComponent {
          */
         public static final Slot SLOT_WEAPON_OFFHAND = new Slot("slot.weapon.offhand");
 
-        private static final List<Slot> KNOWN = List.of(SLOT_ARMOR_BODY, SLOT_ARMOR_CHEST, SLOT_ARMOR_FEET, SLOT_ARMOR_HEAD, SLOT_ARMOR_LEGS, SLOT_WEAPON_MAINHAND, SLOT_WEAPON_OFFHAND);
+        /**
+         * {@code slot.armor.head}
+         */
+        public static final Slot SLOT_ARMOR_HEAD = new Slot("slot.armor.head");
+
+        /**
+         * {@code slot.armor.chest}
+         */
+        public static final Slot SLOT_ARMOR_CHEST = new Slot("slot.armor.chest");
+
+        /**
+         * {@code slot.armor.legs}
+         */
+        public static final Slot SLOT_ARMOR_LEGS = new Slot("slot.armor.legs");
+
+        /**
+         * {@code slot.armor.feet}
+         */
+        public static final Slot SLOT_ARMOR_FEET = new Slot("slot.armor.feet");
+
+        /**
+         * {@code slot.armor.body}
+         */
+        public static final Slot SLOT_ARMOR_BODY = new Slot("slot.armor.body");
+
+        private static final List<Slot> KNOWN = List.of(SLOT_WEAPON_MAINHAND, SLOT_WEAPON_OFFHAND, SLOT_ARMOR_HEAD, SLOT_ARMOR_CHEST, SLOT_ARMOR_LEGS, SLOT_ARMOR_FEET, SLOT_ARMOR_BODY);
 
         private static final Map<String, Slot> BY_VALUE = Check.index(KNOWN, Slot::value);
 

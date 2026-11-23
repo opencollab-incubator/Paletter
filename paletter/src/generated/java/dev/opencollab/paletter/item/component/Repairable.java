@@ -145,21 +145,22 @@ public final class Repairable implements ItemComponent {
      *
      */
     public static final class RepairItems {
-        private final @Nullable ItemsOrTags items;
+        private final @NonNull ItemsOrTags items;
 
         private final @Nullable RepairAmount repairAmount;
 
-        private RepairItems(@Nullable ItemsOrTags items, @Nullable RepairAmount repairAmount) {
+        private RepairItems(@NonNull ItemsOrTags items, @Nullable RepairAmount repairAmount) {
+            Objects.requireNonNull(items, "Repairable.RepairItems.items");
             this.items = items;
             this.repairAmount = repairAmount;
         }
 
         /**
-         * Add-on JSON {@code items}. Optional (null: not set).
+         * Add-on JSON {@code items}. Required.
          *
          * @return the value
          */
-        public @Nullable ItemsOrTags items() {
+        public @NonNull ItemsOrTags items() {
             return items;
         }
 
@@ -192,7 +193,8 @@ public final class Repairable implements ItemComponent {
         }
 
         /**
-         * Creates a builder with every field at its default.
+         * Creates a builder with every optional field at its default; required fields must be set before
+         * {@code build()}.
          *
          * @return a builder with the defaults applied
          */
@@ -228,10 +230,21 @@ public final class Repairable implements ItemComponent {
              *
              * @param items the value
              * @return this builder
+             * @throws NullPointerException if the value is null
              */
-            public @NonNull Builder items(@Nullable ItemsOrTags items) {
-                this.items = items;
+            public @NonNull Builder items(@NonNull ItemsOrTags items) {
+                this.items = Objects.requireNonNull(items, "Repairable.RepairItems.items");
                 return this;
+            }
+
+            /**
+             * Sets {@code items} to the identifiers of the items.
+             *
+             * @param items the value
+             * @return this builder
+             */
+            public @NonNull Builder items(@NonNull List<String> items) {
+                return items(ItemsOrTags.items(items));
             }
 
             /**
@@ -247,7 +260,7 @@ public final class Repairable implements ItemComponent {
                 for (String x : rest) {
                     values.add(x);
                 }
-                return items(ItemsOrTags.items(values));
+                return items(values);
             }
 
             /**
@@ -264,7 +277,7 @@ public final class Repairable implements ItemComponent {
                 for (BedrockItemType x : rest) {
                     values.add(x.identifier());
                 }
-                return items(ItemsOrTags.items(values));
+                return items(values);
             }
 
             /**
@@ -296,6 +309,9 @@ public final class Repairable implements ItemComponent {
              * @throws IllegalArgumentException if a value is out of range
              */
             public @NonNull RepairItems build() {
+                if (items == null) {
+                    throw new IllegalStateException("Repairable.RepairItems.items is required");
+                }
                 return new RepairItems(items, repairAmount);
             }
         }

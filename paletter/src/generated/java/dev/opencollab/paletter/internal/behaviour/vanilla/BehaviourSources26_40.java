@@ -34,21 +34,28 @@ final class BehaviourSources26_40 {
                 .burnOdds(CLOUDBURST_DATA_26_40)
                 .translucency(CLOUDBURST_DATA_26_40)
                 .thickness(CLOUDBURST_DATA_26_40)
+                .climbable(BDS_PROBE_26_40_CLIMBING)
                 .movementType(SCRIPT_API_26_40_SOLID)
                 .stickyType(SCRIPT_API_26_40_SOLID)
                 .accumulatesSnow(SCRIPT_API_26_40_SOLID)
                 .snowLoggable(SCRIPT_API_26_40_SOLID)
                 .obstructsRain(SCRIPT_API_26_40_SOLID);
+        v.blockSources("minecraft:acacia_door")
+                .collisionShape(BDS_PROBE_26_40_DOORS);
         v.blockSources("minecraft:acacia_fence_gate")
                 .solid("in_wall_bit", false, SCRIPT_API_26_40_SOLID, true, CLOUDBURST_DATA_26_40)
                 .mapColor("in_wall_bit", false, SCRIPT_API_26_40_MAP_COLOR,
                         true, CLOUDBURST_DATA_26_40);
         v.blockSources("minecraft:acacia_leaves")
                 .tintMethod(SCRIPT_API_26_40_TINT_METHOD);
+        v.blockSources("minecraft:bamboo_door")
+                .collisionShape(BDS_PROBE_26_40_DOORS);
         v.blockSources("minecraft:bamboo_fence_gate")
                 .solid("in_wall_bit", false, SCRIPT_API_26_40_SOLID, true, CLOUDBURST_DATA_26_40)
                 .mapColor("in_wall_bit", false, SCRIPT_API_26_40_MAP_COLOR,
                         true, CLOUDBURST_DATA_26_40);
+        v.blockSources("minecraft:birch_door")
+                .collisionShape(BDS_PROBE_26_40_DOORS);
         v.blockSources("minecraft:birch_fence_gate")
                 .solid("in_wall_bit", false, SCRIPT_API_26_40_SOLID, true, CLOUDBURST_DATA_26_40)
                 .mapColor("in_wall_bit", false, SCRIPT_API_26_40_MAP_COLOR,
@@ -217,6 +224,8 @@ final class BehaviourSources26_40 {
                         10, CLOUDBURST_DATA_26_40, 11, CLOUDBURST_DATA_26_40,
                         12, CLOUDBURST_DATA_26_40, 13, CLOUDBURST_DATA_26_40,
                         14, CLOUDBURST_DATA_26_40, 15, CLOUDBURST_DATA_26_40);
+        v.blockSources("minecraft:cherry_door")
+                .collisionShape(BDS_PROBE_26_40_DOORS);
         v.blockSources("minecraft:cherry_fence_gate")
                 .solid("in_wall_bit", false, SCRIPT_API_26_40_SOLID, true, CLOUDBURST_DATA_26_40)
                 .mapColor("in_wall_bit", false, SCRIPT_API_26_40_MAP_COLOR,
@@ -260,6 +269,8 @@ final class BehaviourSources26_40 {
                         "north", SCRIPT_API_26_40_MAP_COLOR, "south", SCRIPT_API_26_40_MAP_COLOR,
                         "top", SCRIPT_API_26_40_MAP_COLOR, "unknown", CLOUDBURST_DATA_26_40,
                         "west", SCRIPT_API_26_40_MAP_COLOR);
+        v.blockSources("minecraft:copper_door")
+                .collisionShape(BDS_PROBE_26_40_DOORS);
         v.blockSources("minecraft:copper_torch")
                 .solid("torch_facing_direction", "east", SCRIPT_API_26_40_SOLID,
                         "north", SCRIPT_API_26_40_SOLID, "south", SCRIPT_API_26_40_SOLID,
@@ -274,10 +285,14 @@ final class BehaviourSources26_40 {
                         "dormant", CLOUDBURST_DATA_26_40, "uprooted", SCRIPT_API_26_40_SOLID)
                 .mapColor("creaking_heart_state", "awake", CLOUDBURST_DATA_26_40,
                         "dormant", CLOUDBURST_DATA_26_40, "uprooted", SCRIPT_API_26_40_MAP_COLOR);
+        v.blockSources("minecraft:crimson_door")
+                .collisionShape(BDS_PROBE_26_40_DOORS);
         v.blockSources("minecraft:crimson_fence_gate")
                 .solid("in_wall_bit", false, SCRIPT_API_26_40_SOLID, true, CLOUDBURST_DATA_26_40)
                 .mapColor("in_wall_bit", false, SCRIPT_API_26_40_MAP_COLOR,
                         true, CLOUDBURST_DATA_26_40);
+        v.blockSources("minecraft:dark_oak_door")
+                .collisionShape(BDS_PROBE_26_40_DOORS);
         v.blockSources("minecraft:dark_oak_fence_gate")
                 .solid("in_wall_bit", false, SCRIPT_API_26_40_SOLID, true, CLOUDBURST_DATA_26_40)
                 .mapColor("in_wall_bit", false, SCRIPT_API_26_40_MAP_COLOR,
@@ -386,15 +401,15 @@ final class BehaviourSources26_40 {
                 .mapColor(CLOUDBURST_DATA_26_40);
         v.blockSources("minecraft:element_24")
                 .mapColor(CLOUDBURST_DATA_26_40);
+    }
+
+    static void part4(Changes v) {
         v.blockSources("minecraft:element_25")
                 .mapColor(CLOUDBURST_DATA_26_40);
         v.blockSources("minecraft:element_26")
                 .mapColor(CLOUDBURST_DATA_26_40);
         v.blockSources("minecraft:element_27")
                 .mapColor(CLOUDBURST_DATA_26_40);
-    }
-
-    static void part4(Changes v) {
         v.blockSources("minecraft:element_28")
                 .mapColor(CLOUDBURST_DATA_26_40);
         v.blockSources("minecraft:element_29")
@@ -509,15 +524,15 @@ final class BehaviourSources26_40 {
                 .mapColor(CLOUDBURST_DATA_26_40);
         v.blockSources("minecraft:element_79")
                 .mapColor(CLOUDBURST_DATA_26_40);
+    }
+
+    static void part5(Changes v) {
         v.blockSources("minecraft:element_8")
                 .mapColor(CLOUDBURST_DATA_26_40);
         v.blockSources("minecraft:element_80")
                 .mapColor(CLOUDBURST_DATA_26_40);
         v.blockSources("minecraft:element_81")
                 .mapColor(CLOUDBURST_DATA_26_40);
-    }
-
-    static void part5(Changes v) {
         v.blockSources("minecraft:element_82")
                 .mapColor(CLOUDBURST_DATA_26_40);
         v.blockSources("minecraft:element_83")
@@ -556,6 +571,8 @@ final class BehaviourSources26_40 {
                 .mapColor(CLOUDBURST_DATA_26_40);
         v.blockSources("minecraft:element_99")
                 .mapColor(CLOUDBURST_DATA_26_40);
+        v.blockSources("minecraft:exposed_copper_door")
+                .collisionShape(BDS_PROBE_26_40_DOORS);
         v.blockSources("minecraft:fence_gate")
                 .solid("in_wall_bit", false, SCRIPT_API_26_40_SOLID, true, CLOUDBURST_DATA_26_40)
                 .mapColor("in_wall_bit", false, SCRIPT_API_26_40_MAP_COLOR,
@@ -582,12 +599,18 @@ final class BehaviourSources26_40 {
                 .tintMethod(SCRIPT_API_26_40_TINT_METHOD);
         v.blockSources("minecraft:horn_coral_wall_fan")
                 .tintMethod(SCRIPT_API_26_40_TINT_METHOD);
+        v.blockSources("minecraft:iron_door")
+                .collisionShape(BDS_PROBE_26_40_DOORS);
+        v.blockSources("minecraft:jungle_door")
+                .collisionShape(BDS_PROBE_26_40_DOORS);
         v.blockSources("minecraft:jungle_fence_gate")
                 .solid("in_wall_bit", false, SCRIPT_API_26_40_SOLID, true, CLOUDBURST_DATA_26_40)
                 .mapColor("in_wall_bit", false, SCRIPT_API_26_40_MAP_COLOR,
                         true, CLOUDBURST_DATA_26_40);
         v.blockSources("minecraft:jungle_leaves")
                 .tintMethod(SCRIPT_API_26_40_TINT_METHOD);
+        v.blockSources("minecraft:mangrove_door")
+                .collisionShape(BDS_PROBE_26_40_DOORS);
         v.blockSources("minecraft:mangrove_fence_gate")
                 .solid("in_wall_bit", false, SCRIPT_API_26_40_SOLID, true, CLOUDBURST_DATA_26_40)
                 .mapColor("in_wall_bit", false, SCRIPT_API_26_40_MAP_COLOR,
@@ -600,13 +623,19 @@ final class BehaviourSources26_40 {
                 .solid("powered_bit", false, SCRIPT_API_26_40_SOLID, true, CLOUDBURST_DATA_26_40)
                 .mapColor("powered_bit", false, SCRIPT_API_26_40_MAP_COLOR,
                         true, CLOUDBURST_DATA_26_40);
+        v.blockSources("minecraft:oxidized_copper_door")
+                .collisionShape(BDS_PROBE_26_40_DOORS);
         v.blockSources("minecraft:pale_hanging_moss")
                 .solid("tip", false, CLOUDBURST_DATA_26_40, true, SCRIPT_API_26_40_SOLID)
                 .mapColor("tip", false, CLOUDBURST_DATA_26_40, true, SCRIPT_API_26_40_MAP_COLOR);
+        v.blockSources("minecraft:pale_oak_door")
+                .collisionShape(BDS_PROBE_26_40_DOORS);
         v.blockSources("minecraft:pale_oak_fence_gate")
                 .solid("in_wall_bit", false, SCRIPT_API_26_40_SOLID, true, CLOUDBURST_DATA_26_40)
                 .mapColor("in_wall_bit", false, SCRIPT_API_26_40_MAP_COLOR,
                         true, CLOUDBURST_DATA_26_40);
+        v.blockSources("minecraft:poplar_door")
+                .collisionShape(BDS_PROBE_26_40_DOORS);
         v.blockSources("minecraft:poplar_fence_gate")
                 .solid("in_wall_bit", false, SCRIPT_API_26_40_SOLID, true, CLOUDBURST_DATA_26_40)
                 .mapColor("in_wall_bit", false, SCRIPT_API_26_40_MAP_COLOR,
@@ -636,6 +665,9 @@ final class BehaviourSources26_40 {
                         11, CLOUDBURST_DATA_26_40, 12, CLOUDBURST_DATA_26_40,
                         13, CLOUDBURST_DATA_26_40, 14, CLOUDBURST_DATA_26_40,
                         15, CLOUDBURST_DATA_26_40);
+    }
+
+    static void part6(Changes v) {
         v.blockSources("minecraft:scaffolding")
                 .solid("stability", 0, SCRIPT_API_26_40_SOLID, 1, CLOUDBURST_DATA_26_40,
                         2, CLOUDBURST_DATA_26_40, 3, CLOUDBURST_DATA_26_40,
@@ -652,9 +684,8 @@ final class BehaviourSources26_40 {
         v.blockSources("minecraft:soul_fire")
                 .solid(CLOUDBURST_DATA_26_40)
                 .mapColor(CLOUDBURST_DATA_26_40);
-    }
-
-    static void part6(Changes v) {
+        v.blockSources("minecraft:spruce_door")
+                .collisionShape(BDS_PROBE_26_40_DOORS);
         v.blockSources("minecraft:spruce_fence_gate")
                 .solid("in_wall_bit", false, SCRIPT_API_26_40_SOLID, true, CLOUDBURST_DATA_26_40)
                 .mapColor("in_wall_bit", false, SCRIPT_API_26_40_MAP_COLOR,
@@ -673,11 +704,11 @@ final class BehaviourSources26_40 {
                         "top", SCRIPT_API_26_40_MAP_COLOR, "unknown", CLOUDBURST_DATA_26_40,
                         "west", SCRIPT_API_26_40_MAP_COLOR);
         v.blockSources("minecraft:trip_wire")
-                .solid(SOURCES_ATTACHED_BIT_DISARMED_BIT_POWERED_BIT_SUSPENDED_BIT_5FCC10)
-                .mapColor(SOURCES_ATTACHED_BIT_DISARMED_BIT_POWERED_BIT_SUSPENDED_BIT_CB6592);
+                .solid(SOURCES_ATTACHED_BIT_DISARMED_BIT_POWERED_BIT_SUSPENDED_BIT_B7E5B2)
+                .mapColor(SOURCES_ATTACHED_BIT_DISARMED_BIT_POWERED_BIT_SUSPENDED_BIT_237F34);
         v.blockSources("minecraft:tripwire_hook")
-                .solid(SOURCES_ATTACHED_BIT_POWERED_BIT_C27CD4)
-                .mapColor(SOURCES_ATTACHED_BIT_POWERED_BIT_795156);
+                .solid(SOURCES_ATTACHED_BIT_POWERED_BIT_C6095E)
+                .mapColor(SOURCES_ATTACHED_BIT_POWERED_BIT_7CDDE0);
         v.blockSources("minecraft:tube_coral")
                 .tintMethod(SCRIPT_API_26_40_TINT_METHOD);
         v.blockSources("minecraft:tube_coral_fan")
@@ -723,12 +754,24 @@ final class BehaviourSources26_40 {
                         "west", SCRIPT_API_26_40_MAP_COLOR);
         v.blockSources("minecraft:vine")
                 .tintMethod(SCRIPT_API_26_40_TINT_METHOD);
+        v.blockSources("minecraft:warped_door")
+                .collisionShape(BDS_PROBE_26_40_DOORS);
         v.blockSources("minecraft:warped_fence_gate")
                 .solid("in_wall_bit", false, SCRIPT_API_26_40_SOLID, true, CLOUDBURST_DATA_26_40)
                 .mapColor("in_wall_bit", false, SCRIPT_API_26_40_MAP_COLOR,
                         true, CLOUDBURST_DATA_26_40);
         v.blockSources("minecraft:water")
                 .tintMethod(SCRIPT_API_26_40_TINT_METHOD);
+        v.blockSources("minecraft:waxed_copper_door")
+                .collisionShape(BDS_PROBE_26_40_DOORS);
+        v.blockSources("minecraft:waxed_exposed_copper_door")
+                .collisionShape(BDS_PROBE_26_40_DOORS);
+        v.blockSources("minecraft:waxed_oxidized_copper_door")
+                .collisionShape(BDS_PROBE_26_40_DOORS);
+        v.blockSources("minecraft:waxed_weathered_copper_door")
+                .collisionShape(BDS_PROBE_26_40_DOORS);
+        v.blockSources("minecraft:weathered_copper_door")
+                .collisionShape(BDS_PROBE_26_40_DOORS);
     }
 
     static void part7(Changes v) {
@@ -746,20 +789,6 @@ final class BehaviourSources26_40 {
                         20, SCRIPT_API_26_40_SOLID, 21, SCRIPT_API_26_40_SOLID,
                         22, SCRIPT_API_26_40_SOLID, 23, SCRIPT_API_26_40_SOLID,
                         24, SCRIPT_API_26_40_SOLID, 25, SCRIPT_API_26_40_SOLID)
-                .liquidFlowDirections("weeping_vines_age", 0, SCRIPT_API_26_30_SOLID,
-                        1, SCRIPT_API_26_40_SOLID, 2, SCRIPT_API_26_40_SOLID,
-                        3, SCRIPT_API_26_40_SOLID, 4, SCRIPT_API_26_40_SOLID,
-                        5, SCRIPT_API_26_40_SOLID, 6, SCRIPT_API_26_40_SOLID,
-                        7, SCRIPT_API_26_40_SOLID, 8, SCRIPT_API_26_40_SOLID,
-                        9, SCRIPT_API_26_40_SOLID, 10, SCRIPT_API_26_40_SOLID,
-                        11, SCRIPT_API_26_40_SOLID, 12, SCRIPT_API_26_40_SOLID,
-                        13, SCRIPT_API_26_40_SOLID, 14, SCRIPT_API_26_40_SOLID,
-                        15, SCRIPT_API_26_40_SOLID, 16, SCRIPT_API_26_40_SOLID,
-                        17, SCRIPT_API_26_40_SOLID, 18, SCRIPT_API_26_40_SOLID,
-                        19, SCRIPT_API_26_40_SOLID, 20, SCRIPT_API_26_40_SOLID,
-                        21, SCRIPT_API_26_40_SOLID, 22, SCRIPT_API_26_40_SOLID,
-                        23, SCRIPT_API_26_40_SOLID, 24, SCRIPT_API_26_40_SOLID,
-                        25, SCRIPT_API_26_40_SOLID)
                 .mapColor("weeping_vines_age", 0, CLOUDBURST_DATA_26_40,
                         1, SCRIPT_API_26_40_MAP_COLOR, 2, SCRIPT_API_26_40_MAP_COLOR,
                         3, SCRIPT_API_26_40_MAP_COLOR, 4, SCRIPT_API_26_40_MAP_COLOR,
@@ -773,77 +802,19 @@ final class BehaviourSources26_40 {
                         19, SCRIPT_API_26_40_MAP_COLOR, 20, SCRIPT_API_26_40_MAP_COLOR,
                         21, SCRIPT_API_26_40_MAP_COLOR, 22, SCRIPT_API_26_40_MAP_COLOR,
                         23, SCRIPT_API_26_40_MAP_COLOR, 24, SCRIPT_API_26_40_MAP_COLOR,
-                        25, SCRIPT_API_26_40_MAP_COLOR)
-                .movementType("weeping_vines_age", 0, SCRIPT_API_26_30_SOLID,
-                        1, SCRIPT_API_26_40_SOLID, 2, SCRIPT_API_26_40_SOLID,
-                        3, SCRIPT_API_26_40_SOLID, 4, SCRIPT_API_26_40_SOLID,
-                        5, SCRIPT_API_26_40_SOLID, 6, SCRIPT_API_26_40_SOLID,
-                        7, SCRIPT_API_26_40_SOLID, 8, SCRIPT_API_26_40_SOLID,
-                        9, SCRIPT_API_26_40_SOLID, 10, SCRIPT_API_26_40_SOLID,
-                        11, SCRIPT_API_26_40_SOLID, 12, SCRIPT_API_26_40_SOLID,
-                        13, SCRIPT_API_26_40_SOLID, 14, SCRIPT_API_26_40_SOLID,
-                        15, SCRIPT_API_26_40_SOLID, 16, SCRIPT_API_26_40_SOLID,
-                        17, SCRIPT_API_26_40_SOLID, 18, SCRIPT_API_26_40_SOLID,
-                        19, SCRIPT_API_26_40_SOLID, 20, SCRIPT_API_26_40_SOLID,
-                        21, SCRIPT_API_26_40_SOLID, 22, SCRIPT_API_26_40_SOLID,
-                        23, SCRIPT_API_26_40_SOLID, 24, SCRIPT_API_26_40_SOLID,
-                        25, SCRIPT_API_26_40_SOLID)
-                .stickyType("weeping_vines_age", 0, SCRIPT_API_26_30_SOLID,
-                        1, SCRIPT_API_26_40_SOLID, 2, SCRIPT_API_26_40_SOLID,
-                        3, SCRIPT_API_26_40_SOLID, 4, SCRIPT_API_26_40_SOLID,
-                        5, SCRIPT_API_26_40_SOLID, 6, SCRIPT_API_26_40_SOLID,
-                        7, SCRIPT_API_26_40_SOLID, 8, SCRIPT_API_26_40_SOLID,
-                        9, SCRIPT_API_26_40_SOLID, 10, SCRIPT_API_26_40_SOLID,
-                        11, SCRIPT_API_26_40_SOLID, 12, SCRIPT_API_26_40_SOLID,
-                        13, SCRIPT_API_26_40_SOLID, 14, SCRIPT_API_26_40_SOLID,
-                        15, SCRIPT_API_26_40_SOLID, 16, SCRIPT_API_26_40_SOLID,
-                        17, SCRIPT_API_26_40_SOLID, 18, SCRIPT_API_26_40_SOLID,
-                        19, SCRIPT_API_26_40_SOLID, 20, SCRIPT_API_26_40_SOLID,
-                        21, SCRIPT_API_26_40_SOLID, 22, SCRIPT_API_26_40_SOLID,
-                        23, SCRIPT_API_26_40_SOLID, 24, SCRIPT_API_26_40_SOLID,
-                        25, SCRIPT_API_26_40_SOLID)
-                .accumulatesSnow("weeping_vines_age", 0, SCRIPT_API_26_30_SOLID,
-                        1, SCRIPT_API_26_40_SOLID, 2, SCRIPT_API_26_40_SOLID,
-                        3, SCRIPT_API_26_40_SOLID, 4, SCRIPT_API_26_40_SOLID,
-                        5, SCRIPT_API_26_40_SOLID, 6, SCRIPT_API_26_40_SOLID,
-                        7, SCRIPT_API_26_40_SOLID, 8, SCRIPT_API_26_40_SOLID,
-                        9, SCRIPT_API_26_40_SOLID, 10, SCRIPT_API_26_40_SOLID,
-                        11, SCRIPT_API_26_40_SOLID, 12, SCRIPT_API_26_40_SOLID,
-                        13, SCRIPT_API_26_40_SOLID, 14, SCRIPT_API_26_40_SOLID,
-                        15, SCRIPT_API_26_40_SOLID, 16, SCRIPT_API_26_40_SOLID,
-                        17, SCRIPT_API_26_40_SOLID, 18, SCRIPT_API_26_40_SOLID,
-                        19, SCRIPT_API_26_40_SOLID, 20, SCRIPT_API_26_40_SOLID,
-                        21, SCRIPT_API_26_40_SOLID, 22, SCRIPT_API_26_40_SOLID,
-                        23, SCRIPT_API_26_40_SOLID, 24, SCRIPT_API_26_40_SOLID,
-                        25, SCRIPT_API_26_40_SOLID)
-                .snowLoggable("weeping_vines_age", 0, SCRIPT_API_26_30_SOLID,
-                        1, SCRIPT_API_26_40_SOLID, 2, SCRIPT_API_26_40_SOLID,
-                        3, SCRIPT_API_26_40_SOLID, 4, SCRIPT_API_26_40_SOLID,
-                        5, SCRIPT_API_26_40_SOLID, 6, SCRIPT_API_26_40_SOLID,
-                        7, SCRIPT_API_26_40_SOLID, 8, SCRIPT_API_26_40_SOLID,
-                        9, SCRIPT_API_26_40_SOLID, 10, SCRIPT_API_26_40_SOLID,
-                        11, SCRIPT_API_26_40_SOLID, 12, SCRIPT_API_26_40_SOLID,
-                        13, SCRIPT_API_26_40_SOLID, 14, SCRIPT_API_26_40_SOLID,
-                        15, SCRIPT_API_26_40_SOLID, 16, SCRIPT_API_26_40_SOLID,
-                        17, SCRIPT_API_26_40_SOLID, 18, SCRIPT_API_26_40_SOLID,
-                        19, SCRIPT_API_26_40_SOLID, 20, SCRIPT_API_26_40_SOLID,
-                        21, SCRIPT_API_26_40_SOLID, 22, SCRIPT_API_26_40_SOLID,
-                        23, SCRIPT_API_26_40_SOLID, 24, SCRIPT_API_26_40_SOLID,
-                        25, SCRIPT_API_26_40_SOLID)
-                .obstructsRain("weeping_vines_age", 0, SCRIPT_API_26_30_SOLID,
-                        1, SCRIPT_API_26_40_SOLID, 2, SCRIPT_API_26_40_SOLID,
-                        3, SCRIPT_API_26_40_SOLID, 4, SCRIPT_API_26_40_SOLID,
-                        5, SCRIPT_API_26_40_SOLID, 6, SCRIPT_API_26_40_SOLID,
-                        7, SCRIPT_API_26_40_SOLID, 8, SCRIPT_API_26_40_SOLID,
-                        9, SCRIPT_API_26_40_SOLID, 10, SCRIPT_API_26_40_SOLID,
-                        11, SCRIPT_API_26_40_SOLID, 12, SCRIPT_API_26_40_SOLID,
-                        13, SCRIPT_API_26_40_SOLID, 14, SCRIPT_API_26_40_SOLID,
-                        15, SCRIPT_API_26_40_SOLID, 16, SCRIPT_API_26_40_SOLID,
-                        17, SCRIPT_API_26_40_SOLID, 18, SCRIPT_API_26_40_SOLID,
-                        19, SCRIPT_API_26_40_SOLID, 20, SCRIPT_API_26_40_SOLID,
-                        21, SCRIPT_API_26_40_SOLID, 22, SCRIPT_API_26_40_SOLID,
-                        23, SCRIPT_API_26_40_SOLID, 24, SCRIPT_API_26_40_SOLID,
-                        25, SCRIPT_API_26_40_SOLID);
+                        25, SCRIPT_API_26_40_MAP_COLOR);
+        v.blockSources("minecraft:wooden_door")
+                .collisionShape(BDS_PROBE_26_40_DOORS);
+        v.itemSources()
+                .maxStackSize(SCRIPT_API_26_40_MAX_STACK_SIZE)
+                .maxDamage(SCRIPT_API_26_40_MAX_STACK_SIZE)
+                .weight(SCRIPT_API_26_40_MAX_STACK_SIZE)
+                .nutrition(SCRIPT_API_26_40_NUTRITION)
+                .saturationModifier(SCRIPT_API_26_40_NUTRITION)
+                .canAlwaysEat(SCRIPT_API_26_40_NUTRITION)
+                .cooldownCategory(SCRIPT_API_26_40_COOLDOWN_CATEGORY)
+                .cooldownTicks(SCRIPT_API_26_40_COOLDOWN_CATEGORY)
+                .compostChance(SCRIPT_API_26_40_COMPOST_CHANCE);
     }
 
     static void load(Changes v) {
@@ -855,6 +826,5 @@ final class BehaviourSources26_40 {
         part5(v);
         part6(v);
         part7(v);
-        BehaviourSources26_40Part2.part8(v);
     }
 }

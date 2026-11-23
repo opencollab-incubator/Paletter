@@ -5,6 +5,7 @@ package dev.opencollab.paletter.block.component;
 
 import dev.opencollab.paletter.annotation.BedrockFormat;
 import dev.opencollab.paletter.annotation.ServerOnly;
+import dev.opencollab.paletter.internal.component.Check;
 import java.util.Objects;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
@@ -39,6 +40,8 @@ public final class Flammable implements BlockComponent {
 
     private Flammable(int catchChanceModifier, int destroyChanceModifier, boolean lavaFlammable,
             @Nullable Boolean enabled) {
+        Check.range("Flammable.catchChanceModifier", catchChanceModifier, 0.0, null);
+        Check.range("Flammable.destroyChanceModifier", destroyChanceModifier, 0.0, null);
         this.catchChanceModifier = catchChanceModifier;
         this.destroyChanceModifier = destroyChanceModifier;
         this.lavaFlammable = lavaFlammable;
@@ -52,7 +55,7 @@ public final class Flammable implements BlockComponent {
      * "destroy_chance_modifier" is 0). If the "catch_chance_modifier" is 0, and the block is directly ignited, the
      * fire will eventually burn out without destroying the block (or it will have a chance to be destroyed if
      * "destroy_chance_modifier" is greater than 0). The default value of 5 is the same as that of Planks. Add-on
-     * JSON {@code catch_chance_modifier}. Default: <code>5</code>.
+     * JSON {@code catch_chance_modifier}. Default: <code>5</code>. At least 0 (docs).
      *
      * @return the value
      */
@@ -65,7 +68,7 @@ public final class Flammable implements BlockComponent {
      * than or equal to 0, with a higher number meaning more likely to be destroyed by fire. For a
      * "destroy_chance_modifier" of 0, the block will never be destroyed by fire, and the fire will burn forever if
      * the "catch_chance_modifier" is greater than 0. The default value of 20 is the same as that of Planks. Add-on
-     * JSON {@code destroy_chance_modifier}. Default: <code>20</code>.
+     * JSON {@code destroy_chance_modifier}. Default: <code>20</code>. At least 0 (docs).
      *
      * @return the value
      */

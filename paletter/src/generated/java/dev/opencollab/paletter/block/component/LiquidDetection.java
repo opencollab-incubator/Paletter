@@ -151,13 +151,14 @@ public final class LiquidDetection implements BlockComponent {
 
         private final @NonNull OnLiquidTouches onLiquidTouches;
 
-        private final @NonNull List<String> stopsLiquidFlowingFromDirection;
+        private final @NonNull List<StopsLiquidFlowingFromDirection> stopsLiquidFlowingFromDirection;
 
         private final boolean useLiquidClipping;
 
         private DetectionRules(boolean canContainLiquid, @NonNull LiquidType liquidType,
                 @NonNull OnLiquidTouches onLiquidTouches,
-                @NonNull List<String> stopsLiquidFlowingFromDirection, boolean useLiquidClipping) {
+                @NonNull List<StopsLiquidFlowingFromDirection> stopsLiquidFlowingFromDirection,
+                boolean useLiquidClipping) {
             Objects.requireNonNull(liquidType, "LiquidDetection.DetectionRules.liquidType");
             Objects.requireNonNull(onLiquidTouches, "LiquidDetection.DetectionRules.onLiquidTouches");
             stopsLiquidFlowingFromDirection = List.copyOf(Objects.requireNonNull(stopsLiquidFlowingFromDirection, "LiquidDetection.DetectionRules.stopsLiquidFlowingFromDirection"));
@@ -211,7 +212,7 @@ public final class LiquidDetection implements BlockComponent {
          *
          * @return the value
          */
-        public @NonNull List<String> stopsLiquidFlowingFromDirection() {
+        public @NonNull List<StopsLiquidFlowingFromDirection> stopsLiquidFlowingFromDirection() {
             return stopsLiquidFlowingFromDirection;
         }
 
@@ -294,7 +295,7 @@ public final class LiquidDetection implements BlockComponent {
 
             private @Nullable OnLiquidTouches onLiquidTouches = OnLiquidTouches.BLOCKING;
 
-            private @Nullable List<String> stopsLiquidFlowingFromDirection = List.of();
+            private @Nullable List<StopsLiquidFlowingFromDirection> stopsLiquidFlowingFromDirection = List.of();
 
             private @Nullable Boolean useLiquidClipping = false;
 
@@ -344,7 +345,7 @@ public final class LiquidDetection implements BlockComponent {
              * @throws NullPointerException if the value is null
              */
             public @NonNull Builder stopsLiquidFlowingFromDirection(
-                    @NonNull List<String> stopsLiquidFlowingFromDirection) {
+                    @NonNull List<StopsLiquidFlowingFromDirection> stopsLiquidFlowingFromDirection) {
                 this.stopsLiquidFlowingFromDirection = Objects.requireNonNull(stopsLiquidFlowingFromDirection, "LiquidDetection.DetectionRules.stopsLiquidFlowingFromDirection");
                 return this;
             }
@@ -356,11 +357,12 @@ public final class LiquidDetection implements BlockComponent {
              * @param rest the other values
              * @return this builder
              */
-            public @NonNull Builder stopsLiquidFlowingFromDirection(@NonNull String first,
-                    @NonNull String... rest) {
-                List<String> values = new ArrayList<>();
+            public @NonNull Builder stopsLiquidFlowingFromDirection(
+                    @NonNull StopsLiquidFlowingFromDirection first,
+                    @NonNull StopsLiquidFlowingFromDirection... rest) {
+                List<StopsLiquidFlowingFromDirection> values = new ArrayList<>();
                 values.add(first);
-                for (String x : rest) {
+                for (StopsLiquidFlowingFromDirection x : rest) {
                     values.add(x);
                 }
                 return stopsLiquidFlowingFromDirection(values);
@@ -472,26 +474,26 @@ public final class LiquidDetection implements BlockComponent {
      */
     public static final class OnLiquidTouches {
         /**
-         * {@code blocking}
-         */
-        public static final OnLiquidTouches BLOCKING = new OnLiquidTouches("blocking");
-
-        /**
          * {@code broken}
          */
         public static final OnLiquidTouches BROKEN = new OnLiquidTouches("broken");
-
-        /**
-         * {@code no_reaction}
-         */
-        public static final OnLiquidTouches NO_REACTION = new OnLiquidTouches("no_reaction");
 
         /**
          * {@code popped}
          */
         public static final OnLiquidTouches POPPED = new OnLiquidTouches("popped");
 
-        private static final List<OnLiquidTouches> KNOWN = List.of(BLOCKING, BROKEN, NO_REACTION, POPPED);
+        /**
+         * {@code blocking}
+         */
+        public static final OnLiquidTouches BLOCKING = new OnLiquidTouches("blocking");
+
+        /**
+         * {@code no_reaction}
+         */
+        public static final OnLiquidTouches NO_REACTION = new OnLiquidTouches("no_reaction");
+
+        private static final List<OnLiquidTouches> KNOWN = List.of(BROKEN, POPPED, BLOCKING, NO_REACTION);
 
         private static final Map<String, OnLiquidTouches> BY_VALUE = Check.index(KNOWN, OnLiquidTouches::value);
 
@@ -542,6 +544,106 @@ public final class LiquidDetection implements BlockComponent {
         @Override
         public boolean equals(Object o) {
             return this == o || o instanceof OnLiquidTouches other && value.equals(other.value);
+        }
+
+        @Override
+        public int hashCode() {
+            return value.hashCode();
+        }
+
+        @Override
+        public String toString() {
+            return value;
+        }
+    }
+
+    /**
+     * A value of an add-on JSON string: a constant per documented value, {@link #of} for any other.
+     * {@link #value()} is the add-on JSON string. Not an enum: Bedrock adds values, so a {@code switch} over
+     * {@link #value()} needs a {@code default}.
+     */
+    public static final class StopsLiquidFlowingFromDirection {
+        /**
+         * {@code down}
+         */
+        public static final StopsLiquidFlowingFromDirection DOWN = new StopsLiquidFlowingFromDirection("down");
+
+        /**
+         * {@code up}
+         */
+        public static final StopsLiquidFlowingFromDirection UP = new StopsLiquidFlowingFromDirection("up");
+
+        /**
+         * {@code north}
+         */
+        public static final StopsLiquidFlowingFromDirection NORTH = new StopsLiquidFlowingFromDirection("north");
+
+        /**
+         * {@code south}
+         */
+        public static final StopsLiquidFlowingFromDirection SOUTH = new StopsLiquidFlowingFromDirection("south");
+
+        /**
+         * {@code west}
+         */
+        public static final StopsLiquidFlowingFromDirection WEST = new StopsLiquidFlowingFromDirection("west");
+
+        /**
+         * {@code east}
+         */
+        public static final StopsLiquidFlowingFromDirection EAST = new StopsLiquidFlowingFromDirection("east");
+
+        private static final List<StopsLiquidFlowingFromDirection> KNOWN = List.of(DOWN, UP, NORTH, SOUTH, WEST, EAST);
+
+        private static final Map<String, StopsLiquidFlowingFromDirection> BY_VALUE = Check.index(KNOWN, StopsLiquidFlowingFromDirection::value);
+
+        private final String value;
+
+        private StopsLiquidFlowingFromDirection(String value) {
+            this.value = value;
+        }
+
+        /**
+         * Returns the value of an add-on JSON string: the constant of a documented value, else a new value.
+         *
+         * @param value the value in add-on JSON
+         * @return the constant of the value, or a value Paletter does not know
+         */
+        public static @NonNull StopsLiquidFlowingFromDirection of(@NonNull String value) {
+            StopsLiquidFlowingFromDirection known = BY_VALUE.get(Objects.requireNonNull(value, "StopsLiquidFlowingFromDirection.value"));
+            return known != null ? known : new StopsLiquidFlowingFromDirection(value);
+        }
+
+        /**
+         * Returns the documented values, the constants of this class.
+         *
+         * @return the constants, in the order of the documentation
+         */
+        public static @NonNull List<StopsLiquidFlowingFromDirection> known() {
+            return KNOWN;
+        }
+
+        /**
+         * Returns the value in add-on JSON.
+         *
+         * @return the value in add-on JSON
+         */
+        public @NonNull String value() {
+            return value;
+        }
+
+        /**
+         * Returns whether the value is documented, one of the constants.
+         *
+         * @return whether this is one of {@link #known()}
+         */
+        public boolean isKnown() {
+            return BY_VALUE.get(value) == this;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            return this == o || o instanceof StopsLiquidFlowingFromDirection other && value.equals(other.value);
         }
 
         @Override

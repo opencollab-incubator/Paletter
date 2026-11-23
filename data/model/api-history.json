@@ -17,6 +17,7 @@
     "block:minecraft:destruction_particles": "DestructionParticles",
     "block:minecraft:display_name": "BlockDisplayName",
     "block:minecraft:embedded_visual": "EmbeddedVisual",
+    "block:minecraft:enchantment_power_transmitter": "EnchantmentPowerTransmitter",
     "block:minecraft:entity_fall_on": "EntityFallOn",
     "block:minecraft:flammable": "Flammable",
     "block:minecraft:flower_pottable": "FlowerPottable",
@@ -24,6 +25,7 @@
     "block:minecraft:geometry": "Geometry",
     "block:minecraft:instrument_sound": "InstrumentSound",
     "block:minecraft:item_visual": "ItemVisual",
+    "block:minecraft:leashable": "Leashable",
     "block:minecraft:light_dampening": "LightDampening",
     "block:minecraft:light_emission": "LightEmission",
     "block:minecraft:liquid_detection": "LiquidDetection",
@@ -31,6 +33,7 @@
     "block:minecraft:map_color": "MapColor",
     "block:minecraft:material_instances": "MaterialInstances",
     "block:minecraft:movable": "Movable",
+    "block:minecraft:neighbor_change": "NeighborChange",
     "block:minecraft:placement_filter": "PlacementFilter",
     "block:minecraft:precipitation_interactions": "PrecipitationInteractions",
     "block:minecraft:random_offset": "RandomOffset",
@@ -39,10 +42,13 @@
     "block:minecraft:redstone_producer": "RedstoneProducer",
     "block:minecraft:replaceable": "Replaceable",
     "block:minecraft:selection_box": "SelectionBox",
+    "block:minecraft:sound": "Sound",
     "block:minecraft:support": "Support",
+    "block:minecraft:tags": "BlockTags",
     "block:minecraft:tick": "Tick",
     "block:minecraft:transformation": "Transformation",
     "block:minecraft:unit_cube": "UnitCube",
+    "block:minecraft:vibration_properties": "VibrationProperties",
     "block:trait:minecraft:connection": "Connection",
     "block:trait:minecraft:multi_block": "MultiBlock",
     "block:trait:minecraft:placement_direction": "PlacementDirection",
@@ -147,6 +153,8 @@
     "block:minecraft:instrument_sound:up": "Up",
     "block:minecraft:liquid_detection:detection_rules[].liquid_type": "LiquidType",
     "block:minecraft:liquid_detection:detection_rules[].on_liquid_touches": "OnLiquidTouches",
+    "block:minecraft:liquid_detection:detection_rules[].stops_liquid_flowing_from_direction": "StopsLiquidFlowingFromDirection",
+    "block:minecraft:map_color:tint_method": "TintMethod",
     "block:minecraft:material_instances:*.render_method": "RenderMethod",
     "block:minecraft:material_instances:down.render_method": "RenderMethod",
     "block:minecraft:material_instances:east.render_method": "RenderMethod",
@@ -156,6 +164,8 @@
     "block:minecraft:material_instances:west.render_method": "RenderMethod",
     "block:minecraft:movable:movement_type": "MovementType",
     "block:minecraft:movable:sticky": "Sticky",
+    "block:minecraft:neighbor_change:neighbor_directions": "NeighborDirections",
+    "block:minecraft:placement_filter:conditions[].allowed_faces": "AllowedFaces",
     "block:minecraft:precipitation_interactions:precipitation_behavior": "PrecipitationBehavior",
     "block:minecraft:redstone_producer:connected_faces": "ConnectedFaces",
     "block:minecraft:redstone_producer:strongly_powered_face": "StronglyPoweredFace",
@@ -168,6 +178,7 @@
     "item:description:category": "Category",
     "item:minecraft:cooldown:type": "Type",
     "item:minecraft:durability_sensor:durability_thresholds[].particle_type": "ParticleType",
+    "item:minecraft:use_animation:value": "Value",
     "item:minecraft:use_modifiers:start_using": "StartUsing",
     "item:minecraft:wearable:slot": "Slot"
   },
@@ -253,6 +264,19 @@
     "block:minecraft:liquid_detection:detection_rules[].on_liquid_touches=broken": "BROKEN",
     "block:minecraft:liquid_detection:detection_rules[].on_liquid_touches=no_reaction": "NO_REACTION",
     "block:minecraft:liquid_detection:detection_rules[].on_liquid_touches=popped": "POPPED",
+    "block:minecraft:liquid_detection:detection_rules[].stops_liquid_flowing_from_direction=down": "DOWN",
+    "block:minecraft:liquid_detection:detection_rules[].stops_liquid_flowing_from_direction=east": "EAST",
+    "block:minecraft:liquid_detection:detection_rules[].stops_liquid_flowing_from_direction=north": "NORTH",
+    "block:minecraft:liquid_detection:detection_rules[].stops_liquid_flowing_from_direction=south": "SOUTH",
+    "block:minecraft:liquid_detection:detection_rules[].stops_liquid_flowing_from_direction=up": "UP",
+    "block:minecraft:liquid_detection:detection_rules[].stops_liquid_flowing_from_direction=west": "WEST",
+    "block:minecraft:map_color:tint_method=birch_foliage": "BIRCH_FOLIAGE",
+    "block:minecraft:map_color:tint_method=default_foliage": "DEFAULT_FOLIAGE",
+    "block:minecraft:map_color:tint_method=dry_foliage": "DRY_FOLIAGE",
+    "block:minecraft:map_color:tint_method=evergreen_foliage": "EVERGREEN_FOLIAGE",
+    "block:minecraft:map_color:tint_method=grass": "GRASS",
+    "block:minecraft:map_color:tint_method=none": "NONE",
+    "block:minecraft:map_color:tint_method=water": "WATER",
     "block:minecraft:material_instances:*.render_method=alpha_test": "ALPHA_TEST",
     "block:minecraft:material_instances:*.render_method=alpha_test_single_sided": "ALPHA_TEST_SINGLE_SIDED",
     "block:minecraft:material_instances:*.render_method=alpha_test_single_sided_to_opaque": "ALPHA_TEST_SINGLE_SIDED_TO_OPAQUE",
@@ -267,6 +291,19 @@
     "block:minecraft:movable:movement_type=push_pull": "PUSH_PULL",
     "block:minecraft:movable:sticky=none": "NONE",
     "block:minecraft:movable:sticky=same": "SAME",
+    "block:minecraft:neighbor_change:neighbor_directions=all": "ALL",
+    "block:minecraft:neighbor_change:neighbor_directions=down": "DOWN",
+    "block:minecraft:neighbor_change:neighbor_directions=east": "EAST",
+    "block:minecraft:neighbor_change:neighbor_directions=north": "NORTH",
+    "block:minecraft:neighbor_change:neighbor_directions=south": "SOUTH",
+    "block:minecraft:neighbor_change:neighbor_directions=up": "UP",
+    "block:minecraft:neighbor_change:neighbor_directions=west": "WEST",
+    "block:minecraft:placement_filter:conditions[].allowed_faces=down": "DOWN",
+    "block:minecraft:placement_filter:conditions[].allowed_faces=east": "EAST",
+    "block:minecraft:placement_filter:conditions[].allowed_faces=north": "NORTH",
+    "block:minecraft:placement_filter:conditions[].allowed_faces=south": "SOUTH",
+    "block:minecraft:placement_filter:conditions[].allowed_faces=up": "UP",
+    "block:minecraft:placement_filter:conditions[].allowed_faces=west": "WEST",
     "block:minecraft:precipitation_interactions:precipitation_behavior=none": "NONE",
     "block:minecraft:precipitation_interactions:precipitation_behavior=obstruct_rain": "OBSTRUCT_RAIN",
     "block:minecraft:precipitation_interactions:precipitation_behavior=obstruct_rain_accumulate_snow": "OBSTRUCT_RAIN_ACCUMULATE_SNOW",
@@ -296,6 +333,7 @@
     "block:trait:minecraft:placement_direction:enabled_states=minecraft:cardinal_direction": "CARDINAL_DIRECTION",
     "block:trait:minecraft:placement_direction:enabled_states=minecraft:corner_and_cardinal_direction": "CORNER_AND_CARDINAL_DIRECTION",
     "block:trait:minecraft:placement_direction:enabled_states=minecraft:facing_direction": "FACING_DIRECTION",
+    "block:trait:minecraft:placement_direction:enabled_states=minecraft:sixteen_way_rotation": "SIXTEEN_WAY_ROTATION",
     "block:trait:minecraft:placement_position:enabled_states=minecraft:block_face": "BLOCK_FACE",
     "block:trait:minecraft:placement_position:enabled_states=minecraft:vertical_half": "VERTICAL_HALF",
     "item:description:category=construction": "CONSTRUCTION",
@@ -403,6 +441,16 @@
     "item:minecraft:durability_sensor:durability_thresholds[].particle_type=witchspell": "WITCHSPELL",
     "item:minecraft:durability_sensor:durability_thresholds[].particle_type=wolfarmorcrack": "WOLFARMORCRACK",
     "item:minecraft:durability_sensor:durability_thresholds[].particle_type=yellowpoplarleaves": "YELLOWPOPLARLEAVES",
+    "item:minecraft:use_animation:value=block": "BLOCK",
+    "item:minecraft:use_animation:value=bow": "BOW",
+    "item:minecraft:use_animation:value=brush": "BRUSH",
+    "item:minecraft:use_animation:value=camera": "CAMERA",
+    "item:minecraft:use_animation:value=crossbow": "CROSSBOW",
+    "item:minecraft:use_animation:value=drink": "DRINK",
+    "item:minecraft:use_animation:value=eat": "EAT",
+    "item:minecraft:use_animation:value=none": "NONE",
+    "item:minecraft:use_animation:value=spear": "SPEAR",
+    "item:minecraft:use_animation:value=spyglass": "SPYGLASS",
     "item:minecraft:use_modifiers:start_using=always": "ALWAYS",
     "item:minecraft:use_modifiers:start_using=if_first": "IF_FIRST",
     "item:minecraft:wearable:slot=slot.armor.body": "SLOT_ARMOR_BODY",
@@ -500,7 +548,8 @@
         "minecraft:collision_box.useVoxelShapes"
       ],
       "type": "vec3",
-      "nullable": true
+      "nullable": true,
+      "removed": true
     },
     "block:minecraft:collision_box:[].size": {
       "name": "size",
@@ -513,7 +562,8 @@
         "minecraft:collision_box.useVoxelShapes"
       ],
       "type": "vec3",
-      "nullable": true
+      "nullable": true,
+      "removed": true
     },
     "block:minecraft:connection_rule:accepts_connections_from": {
       "name": "acceptsConnectionsFrom",
@@ -621,13 +671,26 @@
     },
     "block:minecraft:embedded_visual:geometry": {
       "name": "geometry",
-      "wire": [],
+      "wire": [
+        "minecraft:embedded_visual.geometry.culling",
+        "minecraft:embedded_visual.geometry.culling_shape",
+        "minecraft:embedded_visual.geometry.identifier",
+        "minecraft:embedded_visual.geometry.n_way_visual_rotation.x",
+        "minecraft:embedded_visual.geometry.n_way_visual_rotation.y",
+        "minecraft:embedded_visual.geometry.n_way_visual_rotation.z"
+      ],
       "type": "object:VisualGeometry"
     },
     "block:minecraft:embedded_visual:geometry.bone_visibility": {
       "name": "boneVisibility",
       "wire": [
-        "minecraft:embedded_visual.geometry.bone_visibility"
+        "minecraft:embedded_visual.geometry.bone_visibility",
+        "minecraft:embedded_visual.geometry.bone_visibility.bone_a_3",
+        "minecraft:embedded_visual.geometry.culling",
+        "minecraft:embedded_visual.geometry.culling_shape",
+        "minecraft:embedded_visual.geometry.n_way_visual_rotation.x",
+        "minecraft:embedded_visual.geometry.n_way_visual_rotation.y",
+        "minecraft:embedded_visual.geometry.n_way_visual_rotation.z"
       ],
       "type": "map<string>",
       "default": {}
@@ -635,7 +698,11 @@
     "block:minecraft:embedded_visual:geometry.culling": {
       "name": "culling",
       "wire": [
-        "minecraft:embedded_visual.geometry.culling"
+        "minecraft:embedded_visual.geometry.culling",
+        "minecraft:embedded_visual.geometry.culling_shape",
+        "minecraft:embedded_visual.geometry.n_way_visual_rotation.x",
+        "minecraft:embedded_visual.geometry.n_way_visual_rotation.y",
+        "minecraft:embedded_visual.geometry.n_way_visual_rotation.z"
       ],
       "type": "string",
       "nullable": true
@@ -643,7 +710,12 @@
     "block:minecraft:embedded_visual:geometry.culling_layer": {
       "name": "cullingLayer",
       "wire": [
-        "minecraft:embedded_visual.geometry.culling_layer"
+        "minecraft:embedded_visual.geometry.culling",
+        "minecraft:embedded_visual.geometry.culling_layer",
+        "minecraft:embedded_visual.geometry.culling_shape",
+        "minecraft:embedded_visual.geometry.n_way_visual_rotation.x",
+        "minecraft:embedded_visual.geometry.n_way_visual_rotation.y",
+        "minecraft:embedded_visual.geometry.n_way_visual_rotation.z"
       ],
       "type": "string",
       "nullable": true
@@ -651,7 +723,11 @@
     "block:minecraft:embedded_visual:geometry.culling_shape": {
       "name": "cullingShape",
       "wire": [
-        "minecraft:embedded_visual.geometry.culling_shape"
+        "minecraft:embedded_visual.geometry.culling",
+        "minecraft:embedded_visual.geometry.culling_shape",
+        "minecraft:embedded_visual.geometry.n_way_visual_rotation.x",
+        "minecraft:embedded_visual.geometry.n_way_visual_rotation.y",
+        "minecraft:embedded_visual.geometry.n_way_visual_rotation.z"
       ],
       "type": "string",
       "nullable": true
@@ -659,13 +735,20 @@
     "block:minecraft:embedded_visual:geometry.identifier": {
       "name": "identifier",
       "wire": [
-        "minecraft:embedded_visual.geometry.identifier"
+        "minecraft:embedded_visual.geometry.culling",
+        "minecraft:embedded_visual.geometry.culling_shape",
+        "minecraft:embedded_visual.geometry.identifier",
+        "minecraft:embedded_visual.geometry.n_way_visual_rotation.x",
+        "minecraft:embedded_visual.geometry.n_way_visual_rotation.y",
+        "minecraft:embedded_visual.geometry.n_way_visual_rotation.z"
       ],
       "type": "string"
     },
     "block:minecraft:embedded_visual:geometry.n_way_visual_rotation": {
       "name": "nWayVisualRotation",
       "wire": [
+        "minecraft:embedded_visual.geometry.culling",
+        "minecraft:embedded_visual.geometry.culling_shape",
         "minecraft:embedded_visual.geometry.n_way_visual_rotation.x",
         "minecraft:embedded_visual.geometry.n_way_visual_rotation.y",
         "minecraft:embedded_visual.geometry.n_way_visual_rotation.z"
@@ -676,7 +759,11 @@
     "block:minecraft:embedded_visual:geometry.n_way_visual_rotation.x": {
       "name": "x",
       "wire": [
-        "minecraft:embedded_visual.geometry.n_way_visual_rotation.x"
+        "minecraft:embedded_visual.geometry.culling",
+        "minecraft:embedded_visual.geometry.culling_shape",
+        "minecraft:embedded_visual.geometry.n_way_visual_rotation.x",
+        "minecraft:embedded_visual.geometry.n_way_visual_rotation.y",
+        "minecraft:embedded_visual.geometry.n_way_visual_rotation.z"
       ],
       "type": "string",
       "nullable": true
@@ -684,7 +771,11 @@
     "block:minecraft:embedded_visual:geometry.n_way_visual_rotation.y": {
       "name": "y",
       "wire": [
-        "minecraft:embedded_visual.geometry.n_way_visual_rotation.y"
+        "minecraft:embedded_visual.geometry.culling",
+        "minecraft:embedded_visual.geometry.culling_shape",
+        "minecraft:embedded_visual.geometry.n_way_visual_rotation.x",
+        "minecraft:embedded_visual.geometry.n_way_visual_rotation.y",
+        "minecraft:embedded_visual.geometry.n_way_visual_rotation.z"
       ],
       "type": "string",
       "nullable": true
@@ -692,6 +783,10 @@
     "block:minecraft:embedded_visual:geometry.n_way_visual_rotation.z": {
       "name": "z",
       "wire": [
+        "minecraft:embedded_visual.geometry.culling",
+        "minecraft:embedded_visual.geometry.culling_shape",
+        "minecraft:embedded_visual.geometry.n_way_visual_rotation.x",
+        "minecraft:embedded_visual.geometry.n_way_visual_rotation.y",
         "minecraft:embedded_visual.geometry.n_way_visual_rotation.z"
       ],
       "type": "string",
@@ -700,7 +795,13 @@
     "block:minecraft:embedded_visual:geometry.uv_lock": {
       "name": "uvLock",
       "wire": [
-        "minecraft:embedded_visual.geometry.uv_lock"
+        "minecraft:embedded_visual.geometry.culling",
+        "minecraft:embedded_visual.geometry.culling_shape",
+        "minecraft:embedded_visual.geometry.n_way_visual_rotation.x",
+        "minecraft:embedded_visual.geometry.n_way_visual_rotation.y",
+        "minecraft:embedded_visual.geometry.n_way_visual_rotation.z",
+        "minecraft:embedded_visual.geometry.uv_lock",
+        "minecraft:embedded_visual.geometry.uv_lock[]"
       ],
       "type": "union:UvLock",
       "default": false
@@ -746,7 +847,8 @@
     "block:minecraft:geometry:bone_visibility": {
       "name": "boneVisibility",
       "wire": [
-        "minecraft:geometry.bone_visibility"
+        "minecraft:geometry.bone_visibility",
+        "minecraft:geometry.bone_visibility.bone_a_3"
       ],
       "type": "map<string>",
       "nullable": true
@@ -790,32 +892,27 @@
     },
     "block:minecraft:geometry:n_way_visual_rotation.x": {
       "name": "x",
-      "wire": [
-        "minecraft:geometry.n_way_visual_rotation.x"
-      ],
+      "wire": [],
       "type": "string",
       "nullable": true
     },
     "block:minecraft:geometry:n_way_visual_rotation.y": {
       "name": "y",
-      "wire": [
-        "minecraft:geometry.n_way_visual_rotation.y"
-      ],
+      "wire": [],
       "type": "string",
       "nullable": true
     },
     "block:minecraft:geometry:n_way_visual_rotation.z": {
       "name": "z",
-      "wire": [
-        "minecraft:geometry.n_way_visual_rotation.z"
-      ],
+      "wire": [],
       "type": "string",
       "nullable": true
     },
     "block:minecraft:geometry:uv_lock": {
       "name": "uvLock",
       "wire": [
-        "minecraft:geometry.uv_lock"
+        "minecraft:geometry.uv_lock",
+        "minecraft:geometry.uv_lock[]"
       ],
       "type": "union:UvLock",
       "nullable": true
@@ -848,6 +945,7 @@
       "name": "boneVisibility",
       "wire": [
         "minecraft:item_visual.geometryDescription.bone_visibility",
+        "minecraft:item_visual.geometryDescription.bone_visibility.bone_a_3",
         "minecraft:item_visual.geometryDescription.culling",
         "minecraft:item_visual.geometryDescription.culling_shape",
         "minecraft:item_visual.geometryDescription.n_way_visual_rotation.x",
@@ -962,7 +1060,8 @@
         "minecraft:item_visual.geometryDescription.n_way_visual_rotation.x",
         "minecraft:item_visual.geometryDescription.n_way_visual_rotation.y",
         "minecraft:item_visual.geometryDescription.n_way_visual_rotation.z",
-        "minecraft:item_visual.geometryDescription.uv_lock"
+        "minecraft:item_visual.geometryDescription.uv_lock",
+        "minecraft:item_visual.geometryDescription.uv_lock[]"
       ],
       "type": "union:UvLock",
       "default": false
@@ -973,6 +1072,18 @@
         "minecraft:item_visual.materialInstancesDescription.materials"
       ],
       "type": "component:MaterialInstances"
+    },
+    "block:minecraft:leashable:offset": {
+      "name": "offset",
+      "wire": [
+        "minecraft:leashable.offset[]"
+      ],
+      "type": "vec3",
+      "default": [
+        0.0,
+        0.25,
+        0.0
+      ]
     },
     "block:minecraft:liquid_detection:detection_rules": {
       "name": "detectionRules",
@@ -1046,6 +1157,7 @@
       "name": "alphaMaskedTint",
       "wire": [
         "minecraft:material_instances.materials.*.packed_bools",
+        "minecraft:material_instances.materials.*.render_method",
         "minecraft:material_instances.materials.*.tint_method"
       ],
       "type": "boolean",
@@ -1117,6 +1229,7 @@
       "name": "alphaMaskedTint",
       "wire": [
         "minecraft:material_instances.materials.down.packed_bools",
+        "minecraft:material_instances.materials.down.render_method",
         "minecraft:material_instances.materials.down.tint_method"
       ],
       "type": "boolean",
@@ -1132,7 +1245,9 @@
     },
     "block:minecraft:material_instances:down.face_dimming": {
       "name": "faceDimming",
-      "wire": [],
+      "wire": [
+        "minecraft:material_instances.materials.down.packed_bools"
+      ],
       "type": "boolean",
       "nullable": true
     },
@@ -1162,7 +1277,9 @@
     },
     "block:minecraft:material_instances:down.tint_method": {
       "name": "tintMethod",
-      "wire": [],
+      "wire": [
+        "minecraft:material_instances.materials.down.tint_method"
+      ],
       "type": "string",
       "nullable": true
     },
@@ -1184,6 +1301,7 @@
       "name": "alphaMaskedTint",
       "wire": [
         "minecraft:material_instances.materials.east.packed_bools",
+        "minecraft:material_instances.materials.east.render_method",
         "minecraft:material_instances.materials.east.tint_method"
       ],
       "type": "boolean",
@@ -1199,7 +1317,9 @@
     },
     "block:minecraft:material_instances:east.face_dimming": {
       "name": "faceDimming",
-      "wire": [],
+      "wire": [
+        "minecraft:material_instances.materials.east.packed_bools"
+      ],
       "type": "boolean",
       "nullable": true
     },
@@ -1229,7 +1349,9 @@
     },
     "block:minecraft:material_instances:east.tint_method": {
       "name": "tintMethod",
-      "wire": [],
+      "wire": [
+        "minecraft:material_instances.materials.east.tint_method"
+      ],
       "type": "string",
       "nullable": true
     },
@@ -1251,6 +1373,7 @@
       "name": "alphaMaskedTint",
       "wire": [
         "minecraft:material_instances.materials.north.packed_bools",
+        "minecraft:material_instances.materials.north.render_method",
         "minecraft:material_instances.materials.north.tint_method"
       ],
       "type": "boolean",
@@ -1266,7 +1389,9 @@
     },
     "block:minecraft:material_instances:north.face_dimming": {
       "name": "faceDimming",
-      "wire": [],
+      "wire": [
+        "minecraft:material_instances.materials.north.packed_bools"
+      ],
       "type": "boolean",
       "nullable": true
     },
@@ -1296,7 +1421,9 @@
     },
     "block:minecraft:material_instances:north.tint_method": {
       "name": "tintMethod",
-      "wire": [],
+      "wire": [
+        "minecraft:material_instances.materials.north.tint_method"
+      ],
       "type": "string",
       "nullable": true
     },
@@ -1318,6 +1445,7 @@
       "name": "alphaMaskedTint",
       "wire": [
         "minecraft:material_instances.materials.south.packed_bools",
+        "minecraft:material_instances.materials.south.render_method",
         "minecraft:material_instances.materials.south.tint_method"
       ],
       "type": "boolean",
@@ -1333,7 +1461,9 @@
     },
     "block:minecraft:material_instances:south.face_dimming": {
       "name": "faceDimming",
-      "wire": [],
+      "wire": [
+        "minecraft:material_instances.materials.south.packed_bools"
+      ],
       "type": "boolean",
       "nullable": true
     },
@@ -1363,7 +1493,9 @@
     },
     "block:minecraft:material_instances:south.tint_method": {
       "name": "tintMethod",
-      "wire": [],
+      "wire": [
+        "minecraft:material_instances.materials.south.tint_method"
+      ],
       "type": "string",
       "nullable": true
     },
@@ -1385,6 +1517,7 @@
       "name": "alphaMaskedTint",
       "wire": [
         "minecraft:material_instances.materials.up.packed_bools",
+        "minecraft:material_instances.materials.up.render_method",
         "minecraft:material_instances.materials.up.tint_method"
       ],
       "type": "boolean",
@@ -1400,7 +1533,9 @@
     },
     "block:minecraft:material_instances:up.face_dimming": {
       "name": "faceDimming",
-      "wire": [],
+      "wire": [
+        "minecraft:material_instances.materials.up.packed_bools"
+      ],
       "type": "boolean",
       "nullable": true
     },
@@ -1430,7 +1565,9 @@
     },
     "block:minecraft:material_instances:up.tint_method": {
       "name": "tintMethod",
-      "wire": [],
+      "wire": [
+        "minecraft:material_instances.materials.up.tint_method"
+      ],
       "type": "string",
       "nullable": true
     },
@@ -1452,6 +1589,7 @@
       "name": "alphaMaskedTint",
       "wire": [
         "minecraft:material_instances.materials.west.packed_bools",
+        "minecraft:material_instances.materials.west.render_method",
         "minecraft:material_instances.materials.west.tint_method"
       ],
       "type": "boolean",
@@ -1467,7 +1605,9 @@
     },
     "block:minecraft:material_instances:west.face_dimming": {
       "name": "faceDimming",
-      "wire": [],
+      "wire": [
+        "minecraft:material_instances.materials.west.packed_bools"
+      ],
       "type": "boolean",
       "nullable": true
     },
@@ -1497,7 +1637,9 @@
     },
     "block:minecraft:material_instances:west.tint_method": {
       "name": "tintMethod",
-      "wire": [],
+      "wire": [
+        "minecraft:material_instances.materials.west.tint_method"
+      ],
       "type": "string",
       "nullable": true
     },
@@ -1511,6 +1653,14 @@
       "wire": [],
       "type": "enum:Sticky",
       "default": "none"
+    },
+    "block:minecraft:neighbor_change:neighbor_directions": {
+      "name": "neighborDirections",
+      "wire": [],
+      "type": "list<enum:NeighborDirections>",
+      "default": [
+        "all"
+      ]
     },
     "block:minecraft:placement_filter:conditions": {
       "name": "conditions",
@@ -1545,7 +1695,10 @@
         "minecraft:placement_filter.conditions",
         "minecraft:placement_filter.conditions[].allowed_faces",
         "minecraft:placement_filter.conditions[].block_filter",
-        "minecraft:placement_filter.conditions[].block_filter[].name"
+        "minecraft:placement_filter.conditions[].block_filter[].name",
+        "minecraft:placement_filter.conditions[].block_filter[].states[].state",
+        "minecraft:placement_filter.conditions[].block_filter[].states[].type",
+        "minecraft:placement_filter.conditions[].block_filter[].states[].value"
       ],
       "type": "list<object:BlockFilter>",
       "default": []
@@ -1802,6 +1955,14 @@
         16
       ]
     },
+    "block:minecraft:sound:sound": {
+      "name": "sound",
+      "wire": [
+        "minecraft:sound.sound"
+      ],
+      "type": "string",
+      "default": ""
+    },
     "block:minecraft:support:shape": {
       "name": "shape",
       "wire": [
@@ -1890,6 +2051,18 @@
         0
       ]
     },
+    "block:minecraft:vibration_properties:dampen_vibrations": {
+      "name": "dampenVibrations",
+      "wire": [],
+      "type": "boolean",
+      "default": false
+    },
+    "block:minecraft:vibration_properties:occlude_vibrations": {
+      "name": "occludeVibrations",
+      "wire": [],
+      "type": "boolean",
+      "default": false
+    },
     "block:trait:minecraft:connection:enabled_states": {
       "name": "enabledStates",
       "wire": [],
@@ -1924,6 +2097,18 @@
       "type": "list<object:BlocksToCornerWith>",
       "nullable": true
     },
+    "block:trait:minecraft:placement_direction:blocks_to_corner_with[].name": {
+      "name": "name",
+      "wire": [],
+      "type": "string",
+      "default": ""
+    },
+    "block:trait:minecraft:placement_direction:blocks_to_corner_with[].states": {
+      "name": "states",
+      "wire": [],
+      "type": "map<int>",
+      "default": {}
+    },
     "block:trait:minecraft:placement_direction:blocks_to_corner_with[].tags": {
       "name": "tags",
       "wire": [],
@@ -1935,7 +2120,8 @@
       "wire": [
         "traits[].enabled_states.cardinal_direction",
         "traits[].enabled_states.corner_and_cardinal_direction",
-        "traits[].enabled_states.facing_direction"
+        "traits[].enabled_states.facing_direction",
+        "traits[].enabled_states.sixteen_way_rotation"
       ],
       "type": "list<enum:EnabledStates>"
     },
@@ -2013,6 +2199,13 @@
         "minecraft:block_placer.use_on",
         "minecraft:block_placer.use_on[].name",
         "minecraft:block_placer.use_on[].states",
+        "minecraft:block_placer.use_on[].states.candles",
+        "minecraft:block_placer.use_on[].states.lever_direction",
+        "minecraft:block_placer.use_on[].states.lit",
+        "minecraft:block_placer.use_on[].states.minecraft:cardinal_direction",
+        "minecraft:block_placer.use_on[].states.open_bit",
+        "minecraft:block_placer.use_on[].states.paletter_unknown",
+        "minecraft:block_placer.use_on[].states.pillar_axis",
         "minecraft:block_placer.use_on[].tags"
       ],
       "type": "list<object:UseOn>",
@@ -2126,6 +2319,13 @@
         "minecraft:digger.destroy_speeds",
         "minecraft:digger.destroy_speeds[].block.name",
         "minecraft:digger.destroy_speeds[].block.states",
+        "minecraft:digger.destroy_speeds[].block.states.candles",
+        "minecraft:digger.destroy_speeds[].block.states.lever_direction",
+        "minecraft:digger.destroy_speeds[].block.states.lit",
+        "minecraft:digger.destroy_speeds[].block.states.minecraft:cardinal_direction",
+        "minecraft:digger.destroy_speeds[].block.states.open_bit",
+        "minecraft:digger.destroy_speeds[].block.states.paletter_unknown",
+        "minecraft:digger.destroy_speeds[].block.states.pillar_axis",
         "minecraft:digger.destroy_speeds[].block.tags",
         "minecraft:digger.destroy_speeds[].speed"
       ],
@@ -2258,7 +2458,10 @@
     },
     "item:minecraft:enchantable:slot": {
       "name": "slot",
-      "wire": [],
+      "wire": [
+        "item_properties.enchantable_slot",
+        "minecraft:enchantable.slot"
+      ],
       "type": "string"
     },
     "item:minecraft:enchantable:value": {
@@ -2275,6 +2478,13 @@
         "minecraft:entity_placer.dispense_on",
         "minecraft:entity_placer.dispense_on[].name",
         "minecraft:entity_placer.dispense_on[].states",
+        "minecraft:entity_placer.dispense_on[].states.candles",
+        "minecraft:entity_placer.dispense_on[].states.lever_direction",
+        "minecraft:entity_placer.dispense_on[].states.lit",
+        "minecraft:entity_placer.dispense_on[].states.minecraft:cardinal_direction",
+        "minecraft:entity_placer.dispense_on[].states.open_bit",
+        "minecraft:entity_placer.dispense_on[].states.paletter_unknown",
+        "minecraft:entity_placer.dispense_on[].states.pillar_axis",
         "minecraft:entity_placer.dispense_on[].tags"
       ],
       "type": "list<object:UseOn>",
@@ -2324,6 +2534,13 @@
         "minecraft:entity_placer.use_on",
         "minecraft:entity_placer.use_on[].name",
         "minecraft:entity_placer.use_on[].states",
+        "minecraft:entity_placer.use_on[].states.candles",
+        "minecraft:entity_placer.use_on[].states.lever_direction",
+        "minecraft:entity_placer.use_on[].states.lit",
+        "minecraft:entity_placer.use_on[].states.minecraft:cardinal_direction",
+        "minecraft:entity_placer.use_on[].states.open_bit",
+        "minecraft:entity_placer.use_on[].states.paletter_unknown",
+        "minecraft:entity_placer.use_on[].states.pillar_axis",
         "minecraft:entity_placer.use_on[].tags"
       ],
       "type": "list<object:UseOn>",
@@ -2393,9 +2610,7 @@
     },
     "item:minecraft:food:using_converts_to": {
       "name": "usingConvertsTo",
-      "wire": [
-        "minecraft:food.using_converts_to.name"
-      ],
+      "wire": [],
       "type": "string",
       "nullable": true
     },

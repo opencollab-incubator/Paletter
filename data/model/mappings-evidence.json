@@ -306,6 +306,10 @@
             "dynamic_properties": {
               "accepted": 2,
               "rejected": 0
+            },
+            "entity_storage": {
+              "accepted": 2,
+              "rejected": 0
             }
           }
         }
@@ -481,14 +485,15 @@
           "fields": {
             "[].max": {
               "accepted": 0,
-              "rejected": 6,
+              "rejected": 7,
               "rejectedValues": [
                 "vec3:1,2",
                 "vec3:1,2,3,4",
                 "vec3:1,2,3",
                 "vec3:-4,5.5,0",
                 "vec3:0,0,0",
-                "vec3:16,16,16"
+                "vec3:16,16,16",
+                "vec3:-2,1,1"
               ],
               "bdsErrors": [
                 "minecraft:collision_box: expected an object",
@@ -498,14 +503,15 @@
             },
             "[].min": {
               "accepted": 0,
-              "rejected": 6,
+              "rejected": 7,
               "rejectedValues": [
                 "vec3:1,2",
                 "vec3:1,2,3,4",
                 "vec3:1,2,3",
                 "vec3:-4,5.5,0",
                 "vec3:0,0,0",
-                "vec3:16,16,16"
+                "vec3:16,16,16",
+                "vec3:-2,1,1"
               ],
               "bdsErrors": [
                 "minecraft:collision_box: expected an object",
@@ -513,94 +519,17 @@
                 "min: this member was found in the input, but is not present in the Schema"
               ]
             },
-            "[].origin": {
-              "accepted": 3,
-              "rejected": 3,
-              "rejectedValues": [
-                "vec3:1,2",
-                "vec3:1,2,3,4",
-                "vec3:16,16,16"
-              ],
-              "bdsErrors": [
-                "minecraft:collision_box: expected an object",
-                "minecraft:collision_box: invalid numeric value",
-                "origin: Expected [x, y, z]."
-              ],
-              "unexplained": [
-                {
-                  "wire": "minecraft:collision_box.boxes[0].maxZ",
-                  "samples": [
-                    "<absent> -> -",
-                    "[1,2,3] -> 14.0 (float)",
-                    "[-4,5.5,0] -> 11.0 (float)",
-                    "[0,0,0] -> 11.0 (float)"
-                  ]
-                },
-                {
-                  "wire": "minecraft:collision_box.boxes[0].minZ",
-                  "samples": [
-                    "<absent> -> -",
-                    "[1,2,3] -> 11.0 (float)",
-                    "[-4,5.5,0] -> 8.0 (float)",
-                    "[0,0,0] -> 8.0 (float)"
-                  ]
-                }
-              ]
-            },
-            "[].size": {
-              "accepted": 3,
-              "rejected": 3,
-              "rejectedValues": [
-                "vec3:1,2",
-                "vec3:1,2,3,4",
-                "vec3:16,16,16"
-              ],
-              "bdsErrors": [
-                "minecraft:collision_box: expected an object",
-                "minecraft:collision_box: invalid numeric value",
-                "size: Expected [x, y, z].",
-                "minecraft:collision_box: Invalid box sizeThe total of each \"origin\" + \"size\" pair, must be inside the following limit: Vec3(-8,0,-8) and Vec3(8,24,8)"
-              ],
-              "unexplained": [
-                {
-                  "wire": "minecraft:collision_box.boxes[0].maxX",
-                  "samples": [
-                    "<absent> -> -",
-                    "[1,2,3] -> 10.0 (float)",
-                    "[-4,5.5,0] -> 9.0 (float)",
-                    "[0,0,0] -> 9.0 (float)"
-                  ]
-                },
-                {
-                  "wire": "minecraft:collision_box.boxes[0].maxZ",
-                  "samples": [
-                    "<absent> -> -",
-                    "[1,2,3] -> 14.0 (float)",
-                    "[-4,5.5,0] -> 11.0 (float)",
-                    "[0,0,0] -> 11.0 (float)"
-                  ]
-                },
-                {
-                  "wire": "minecraft:collision_box.boxes[0].minX",
-                  "samples": [
-                    "<absent> -> -",
-                    "[1,2,3] -> 9.0 (float)",
-                    "[-4,5.5,0] -> 5.0 (float)",
-                    "[0,0,0] -> 9.0 (float)"
-                  ]
-                }
-              ]
-            },
             "origin": {
-              "accepted": 0,
-              "rejected": 6,
+              "accepted": 1,
+              "rejected": 7,
               "rejectedValues": [
                 "vec3:1,2",
                 "vec3:1,2,3,4",
                 "vec3:1,2,3",
                 "vec3:-4,5.5,0",
                 "vec3:0,0,0",
-                "vec3:16,16,16"
+                "vec3:16,16,16",
+                "vec3:-2,1,1"
               ],
               "bdsErrors": [
                 "origin: Expected [x, y, z].",
@@ -610,12 +539,13 @@
               ]
             },
             "size": {
-              "accepted": 3,
-              "rejected": 3,
+              "accepted": 4,
+              "rejected": 4,
               "rejectedValues": [
                 "vec3:1,2",
                 "vec3:1,2,3,4",
-                "vec3:-4,5.5,0"
+                "vec3:-4,5.5,0",
+                "vec3:-2,1,1"
               ],
               "bdsErrors": [
                 "size: Expected [x, y, z].",
@@ -647,8 +577,16 @@
               ]
             },
             "array<object>": {
-              "accepted": 3,
-              "rejected": 0
+              "accepted": 4,
+              "rejected": 1,
+              "rejectedValues": [
+                "array<object>:[17x]"
+              ],
+              "bdsErrors": [
+                "minecraft:collision_box: expected an object",
+                "minecraft:collision_box: invalid numeric value",
+                "minecraft:collision_box: too many input elements, expected no more than 16"
+              ]
             },
             "object": {
               "accepted": 1,
@@ -663,14 +601,16 @@
           "fields": {
             "[].max": {
               "accepted": 0,
-              "rejected": 6,
+              "rejected": 8,
               "rejectedValues": [
                 "vec3:1,2",
                 "vec3:1,2,3,4",
                 "vec3:1,2,3",
                 "vec3:-4,5.5,0",
                 "vec3:0,0,0",
-                "vec3:16,16,16"
+                "vec3:16,16,16",
+                "vec3:-2,1,1",
+                "object:{}"
               ],
               "bdsErrors": [
                 "minecraft:collision_box: invalid numeric value",
@@ -680,14 +620,16 @@
             },
             "[].min": {
               "accepted": 0,
-              "rejected": 6,
+              "rejected": 8,
               "rejectedValues": [
                 "vec3:1,2",
                 "vec3:1,2,3,4",
                 "vec3:1,2,3",
                 "vec3:-4,5.5,0",
                 "vec3:0,0,0",
-                "vec3:16,16,16"
+                "vec3:16,16,16",
+                "vec3:-2,1,1",
+                "object:{}"
               ],
               "bdsErrors": [
                 "minecraft:collision_box: invalid numeric value",
@@ -695,92 +637,17 @@
                 "minecraft:collision_box: \"origin\"/\"size\" cannot be combined with \"min\"/\"max\""
               ]
             },
-            "[].origin": {
-              "accepted": 3,
-              "rejected": 3,
-              "rejectedValues": [
-                "vec3:1,2",
-                "vec3:1,2,3,4",
-                "vec3:16,16,16"
-              ],
-              "bdsErrors": [
-                "minecraft:collision_box: invalid numeric value",
-                "origin: Expected [x, y, z]."
-              ],
-              "unexplained": [
-                {
-                  "wire": "minecraft:collision_box.boxes[0].maxZ",
-                  "samples": [
-                    "<absent> -> -",
-                    "[1,2,3] -> 14.0 (float)",
-                    "[-4,5.5,0] -> 11.0 (float)",
-                    "[0,0,0] -> 11.0 (float)"
-                  ]
-                },
-                {
-                  "wire": "minecraft:collision_box.boxes[0].minZ",
-                  "samples": [
-                    "<absent> -> -",
-                    "[1,2,3] -> 11.0 (float)",
-                    "[-4,5.5,0] -> 8.0 (float)",
-                    "[0,0,0] -> 8.0 (float)"
-                  ]
-                }
-              ]
-            },
-            "[].size": {
-              "accepted": 3,
-              "rejected": 3,
-              "rejectedValues": [
-                "vec3:1,2",
-                "vec3:1,2,3,4",
-                "vec3:16,16,16"
-              ],
-              "bdsErrors": [
-                "minecraft:collision_box: invalid numeric value",
-                "size: Expected [x, y, z].",
-                "minecraft:collision_box: Invalid box boundsThe area covered by all boxes must be within Vec3(0,0,0) to Vec3(16,24,16)"
-              ],
-              "unexplained": [
-                {
-                  "wire": "minecraft:collision_box.boxes[0].maxX",
-                  "samples": [
-                    "<absent> -> -",
-                    "[1,2,3] -> 7.0 (float)",
-                    "[-4,5.5,0] -> 11.0 (float)",
-                    "[0,0,0] -> 7.0 (float)"
-                  ]
-                },
-                {
-                  "wire": "minecraft:collision_box.boxes[0].maxZ",
-                  "samples": [
-                    "<absent> -> -",
-                    "[1,2,3] -> 14.0 (float)",
-                    "[-4,5.5,0] -> 11.0 (float)",
-                    "[0,0,0] -> 11.0 (float)"
-                  ]
-                },
-                {
-                  "wire": "minecraft:collision_box.boxes[0].minX",
-                  "samples": [
-                    "<absent> -> -",
-                    "[1,2,3] -> 6.0 (float)",
-                    "[-4,5.5,0] -> 7.0 (float)",
-                    "[0,0,0] -> 7.0 (float)"
-                  ]
-                }
-              ]
-            },
             "origin": {
               "accepted": 0,
-              "rejected": 6,
+              "rejected": 7,
               "rejectedValues": [
                 "vec3:1,2",
                 "vec3:1,2,3,4",
                 "vec3:1,2,3",
                 "vec3:-4,5.5,0",
                 "vec3:0,0,0",
-                "vec3:16,16,16"
+                "vec3:16,16,16",
+                "vec3:-2,1,1"
               ],
               "bdsErrors": [
                 "minecraft:collision_box: expected an array",
@@ -789,18 +656,145 @@
             },
             "size": {
               "accepted": 0,
-              "rejected": 6,
+              "rejected": 7,
               "rejectedValues": [
                 "vec3:1,2",
                 "vec3:1,2,3,4",
                 "vec3:1,2,3",
                 "vec3:-4,5.5,0",
                 "vec3:0,0,0",
-                "vec3:16,16,16"
+                "vec3:16,16,16",
+                "vec3:-2,1,1"
               ],
               "bdsErrors": [
                 "minecraft:collision_box: expected an array",
                 "minecraft:collision_box: invalid numeric value"
+              ]
+            },
+            "[].max.x": {
+              "accepted": 0,
+              "rejected": 10,
+              "rejectedValues": [
+                "number:0",
+                "number:0.5",
+                "number:1",
+                "number:2.25",
+                "number:30",
+                "number:-1",
+                "number:90",
+                "number:-90",
+                "number:450",
+                "number:45"
+              ],
+              "bdsErrors": [
+                "minecraft:collision_box: \"origin\"/\"size\" cannot be combined with \"min\"/\"max\"",
+                "minecraft:collision_box: invalid numeric value",
+                "max: Expected [x, y, z]."
+              ]
+            },
+            "[].max.y": {
+              "accepted": 0,
+              "rejected": 10,
+              "rejectedValues": [
+                "number:0",
+                "number:0.5",
+                "number:1",
+                "number:2.25",
+                "number:30",
+                "number:-1",
+                "number:90",
+                "number:-90",
+                "number:450",
+                "number:45"
+              ],
+              "bdsErrors": [
+                "minecraft:collision_box: \"origin\"/\"size\" cannot be combined with \"min\"/\"max\"",
+                "minecraft:collision_box: invalid numeric value",
+                "max: Expected [x, y, z]."
+              ]
+            },
+            "[].max.z": {
+              "accepted": 0,
+              "rejected": 10,
+              "rejectedValues": [
+                "number:0",
+                "number:0.5",
+                "number:1",
+                "number:2.25",
+                "number:30",
+                "number:-1",
+                "number:90",
+                "number:-90",
+                "number:450",
+                "number:45"
+              ],
+              "bdsErrors": [
+                "minecraft:collision_box: \"origin\"/\"size\" cannot be combined with \"min\"/\"max\"",
+                "minecraft:collision_box: invalid numeric value",
+                "max: Expected [x, y, z]."
+              ]
+            },
+            "[].min.x": {
+              "accepted": 0,
+              "rejected": 10,
+              "rejectedValues": [
+                "number:0",
+                "number:0.5",
+                "number:1",
+                "number:2.25",
+                "number:30",
+                "number:-1",
+                "number:90",
+                "number:-90",
+                "number:450",
+                "number:45"
+              ],
+              "bdsErrors": [
+                "minecraft:collision_box: \"origin\"/\"size\" cannot be combined with \"min\"/\"max\"",
+                "minecraft:collision_box: invalid numeric value",
+                "min: Expected [x, y, z]."
+              ]
+            },
+            "[].min.y": {
+              "accepted": 0,
+              "rejected": 10,
+              "rejectedValues": [
+                "number:0",
+                "number:0.5",
+                "number:1",
+                "number:2.25",
+                "number:30",
+                "number:-1",
+                "number:90",
+                "number:-90",
+                "number:450",
+                "number:45"
+              ],
+              "bdsErrors": [
+                "minecraft:collision_box: \"origin\"/\"size\" cannot be combined with \"min\"/\"max\"",
+                "minecraft:collision_box: invalid numeric value",
+                "min: Expected [x, y, z]."
+              ]
+            },
+            "[].min.z": {
+              "accepted": 0,
+              "rejected": 10,
+              "rejectedValues": [
+                "number:0",
+                "number:0.5",
+                "number:1",
+                "number:2.25",
+                "number:30",
+                "number:-1",
+                "number:90",
+                "number:-90",
+                "number:450",
+                "number:45"
+              ],
+              "bdsErrors": [
+                "minecraft:collision_box: \"origin\"/\"size\" cannot be combined with \"min\"/\"max\"",
+                "minecraft:collision_box: invalid numeric value",
+                "min: Expected [x, y, z]."
               ]
             }
           },
@@ -825,8 +819,15 @@
               ]
             },
             "array<object>": {
-              "accepted": 3,
-              "rejected": 0
+              "accepted": 4,
+              "rejected": 1,
+              "rejectedValues": [
+                "array<object>:[17x]"
+              ],
+              "bdsErrors": [
+                "minecraft:collision_box: invalid numeric value",
+                "minecraft:collision_box: too many input elements, expected no more than 16"
+              ]
             },
             "object": {
               "accepted": 0,
@@ -848,14 +849,15 @@
           "fields": {
             "[].max": {
               "accepted": 0,
-              "rejected": 6,
+              "rejected": 7,
               "rejectedValues": [
                 "vec3:1,2",
                 "vec3:1,2,3,4",
                 "vec3:1,2,3",
                 "vec3:-4,5.5,0",
                 "vec3:0,0,0",
-                "vec3:16,16,16"
+                "vec3:16,16,16",
+                "vec3:-2,1,1"
               ],
               "bdsErrors": [
                 "minecraft:collision_box: invalid numeric value",
@@ -864,106 +866,32 @@
             },
             "[].min": {
               "accepted": 0,
-              "rejected": 6,
+              "rejected": 7,
               "rejectedValues": [
                 "vec3:1,2",
                 "vec3:1,2,3,4",
                 "vec3:1,2,3",
                 "vec3:-4,5.5,0",
                 "vec3:0,0,0",
-                "vec3:16,16,16"
+                "vec3:16,16,16",
+                "vec3:-2,1,1"
               ],
               "bdsErrors": [
                 "minecraft:collision_box: invalid numeric value",
                 "min: this member was found in the input, but is not present in the Schema"
               ]
             },
-            "[].origin": {
-              "accepted": 3,
-              "rejected": 3,
-              "rejectedValues": [
-                "vec3:1,2",
-                "vec3:1,2,3,4",
-                "vec3:16,16,16"
-              ],
-              "bdsErrors": [
-                "minecraft:collision_box: invalid numeric value",
-                "origin: Expected [x, y, z]."
-              ],
-              "unexplained": [
-                {
-                  "wire": "minecraft:collision_box.boxes[0].maxZ",
-                  "samples": [
-                    "<absent> -> -",
-                    "[1,2,3] -> 14.0 (float)",
-                    "[-4,5.5,0] -> 11.0 (float)",
-                    "[0,0,0] -> 11.0 (float)"
-                  ]
-                },
-                {
-                  "wire": "minecraft:collision_box.boxes[0].minZ",
-                  "samples": [
-                    "<absent> -> -",
-                    "[1,2,3] -> 11.0 (float)",
-                    "[-4,5.5,0] -> 8.0 (float)",
-                    "[0,0,0] -> 8.0 (float)"
-                  ]
-                }
-              ]
-            },
-            "[].size": {
-              "accepted": 3,
-              "rejected": 3,
-              "rejectedValues": [
-                "vec3:1,2",
-                "vec3:1,2,3,4",
-                "vec3:16,16,16"
-              ],
-              "bdsErrors": [
-                "minecraft:collision_box: invalid numeric value",
-                "size: Expected [x, y, z].",
-                "minecraft:collision_box: Invalid box sizeThe total of each \"origin\" + \"size\" pair, must be inside the following limit: Vec3(-8,0,-8) and Vec3(8,24,8)"
-              ],
-              "unexplained": [
-                {
-                  "wire": "minecraft:collision_box.boxes[0].maxX",
-                  "samples": [
-                    "<absent> -> -",
-                    "[1,2,3] -> 7.0 (float)",
-                    "[-4,5.5,0] -> 11.0 (float)",
-                    "[0,0,0] -> 7.0 (float)"
-                  ]
-                },
-                {
-                  "wire": "minecraft:collision_box.boxes[0].maxZ",
-                  "samples": [
-                    "<absent> -> -",
-                    "[1,2,3] -> 14.0 (float)",
-                    "[-4,5.5,0] -> 11.0 (float)",
-                    "[0,0,0] -> 11.0 (float)"
-                  ]
-                },
-                {
-                  "wire": "minecraft:collision_box.boxes[0].minX",
-                  "samples": [
-                    "<absent> -> -",
-                    "[1,2,3] -> 6.0 (float)",
-                    "[-4,5.5,0] -> 7.0 (float)",
-                    "[0,0,0] -> 7.0 (float)"
-                  ]
-                }
-              ]
-            },
             "origin": {
               "accepted": 0,
-              "rejected": 6,
+              "rejected": 7,
               "rejectedValues": [
                 "vec3:1,2",
                 "vec3:1,2,3,4",
                 "vec3:1,2,3",
                 "vec3:-4,5.5,0",
                 "vec3:0,0,0",
-                "vec3:16,16,16"
+                "vec3:16,16,16",
+                "vec3:-2,1,1"
               ],
               "bdsErrors": [
                 "minecraft:collision_box: expected an array",
@@ -972,14 +900,15 @@
             },
             "size": {
               "accepted": 0,
-              "rejected": 6,
+              "rejected": 7,
               "rejectedValues": [
                 "vec3:1,2",
                 "vec3:1,2,3,4",
                 "vec3:1,2,3",
                 "vec3:-4,5.5,0",
                 "vec3:0,0,0",
-                "vec3:16,16,16"
+                "vec3:16,16,16",
+                "vec3:-2,1,1"
               ],
               "bdsErrors": [
                 "minecraft:collision_box: expected an array",
@@ -1008,8 +937,15 @@
               ]
             },
             "array<object>": {
-              "accepted": 3,
-              "rejected": 0
+              "accepted": 4,
+              "rejected": 1,
+              "rejectedValues": [
+                "array<object>:[17x]"
+              ],
+              "bdsErrors": [
+                "minecraft:collision_box: invalid numeric value",
+                "minecraft:collision_box: too many input elements, expected no more than 16"
+              ]
             },
             "object": {
               "accepted": 0,
@@ -1054,10 +990,10 @@
                 "array<string>:[wrong type]",
                 "array<string>:[2x]",
                 "string:paletter_invalid",
-                "string:east",
-                "string:north",
                 "string:south",
-                "string:west"
+                "string:west",
+                "string:north",
+                "string:east"
               ],
               "bdsErrors": [
                 "enabled_directions[0]: This value is bound to Direction and expects one of the following strings: south, west, north, ... (1 others)",
@@ -1081,14 +1017,16 @@
           ],
           "fields": {
             "crafting_tags": {
-              "accepted": 4,
-              "rejected": 2,
+              "accepted": 5,
+              "rejected": 3,
               "rejectedValues": [
                 "omitted",
+                "array<string>:[65x]",
                 "array<string>:[wrong type]"
               ],
               "bdsErrors": [
                 "crafting_tags: missing required field",
+                "crafting_tags: too many input elements, expected no more than 64",
                 "crafting_tags[0]: invalid string"
               ]
             },
@@ -1097,6 +1035,19 @@
               "rejected": 0
             }
           }
+        }
+      ]
+    },
+    "block:minecraft:custom_components": {
+      "windows": [
+        {
+          "protocols": [
+            1001,
+            2168,
+            2193,
+            2225,
+            2259
+          ]
         }
       ]
     },
@@ -1213,18 +1164,21 @@
               ]
             },
             "item_specific_speeds[].item": {
-              "accepted": 6,
-              "rejected": 3,
+              "accepted": 7,
+              "rejected": 6,
               "rejectedValues": [
                 "omitted",
+                "map<string>:{1}",
+                "map<string>:{2}",
+                "map<string>:{unknown key}",
                 "array<object>:[1]",
                 "array<object>:[2]"
               ],
               "bdsErrors": [
                 "item: missing required field",
                 "minecraft:destructible_by_mining: invalid numeric value",
-                "item: invalid string",
-                "item[0]: expected a key/value object"
+                "[Item] block_definitions | behavior_packs/paletter_spec | blocks/b_destructible_by_mining_24.json | ItemDescriptor missing key to reconstruct from (expression tags, item name or item tag)",
+                "[Item] block_definitions | behavior_packs/paletter_spec | blocks/b_destructible_by_mining_25.json | ItemDescriptor missing key to reconstruct from (expression tags, item name or item tag)"
               ]
             },
             "item_specific_speeds[].item[].tags": {
@@ -1284,11 +1238,12 @@
           ],
           "fields": {
             "particle_count": {
-              "accepted": 5,
-              "rejected": 2,
+              "accepted": 6,
+              "rejected": 3,
               "rejectedValues": [
                 "integer:-1",
-                "integer:1.5"
+                "integer:256",
+                "integer:0.5"
               ],
               "bdsErrors": [
                 "particle_count: invalid numeric value"
@@ -1343,7 +1298,7 @@
           ],
           "fields": {
             "geometry": {
-              "accepted": 1,
+              "accepted": 6,
               "rejected": 5,
               "rejectedValues": [
                 "omitted",
@@ -1360,8 +1315,8 @@
               ]
             },
             "geometry.bone_visibility": {
-              "accepted": 36,
-              "rejected": 38,
+              "accepted": 95,
+              "rejected": 103,
               "rejectedValues": [
                 "map<string>:{1}",
                 "map<string>:{2}",
@@ -1395,6 +1350,71 @@
                 "map<string>:{1} .5e1",
                 "map<string>:{1} -1e3",
                 "map<string>:{1} 1E3",
+                "map<string>:{1} 1e-50",
+                "map<string>:{1} \t1",
+                "map<string>:{1} 00.5",
+                "map<string>:{3 keys} 0 / 0.0 / 1",
+                "map<string>:{3 keys} 0.5 / -1 / 0.1234567",
+                "map<string>:{3 keys} 0.0078125 / 16777217 / 2",
+                "map<string>:{3 keys} -0 / -0.5 / .5",
+                "map<string>:{3 keys} 1. / +1 /  1 ",
+                "map<string>:{3 keys} 1. / +1 /  1  linked geometry.identifier",
+                "map<string>:{3 keys} 1e3 / 1e-3 / 1.5E2",
+                "map<string>:{3 keys} true / false / !q.block_state('paletter:flag')",
+                "map<string>:{3 keys} query.block_state('paletter:flag') / -.5 / -1.",
+                "map<string>:{3 keys} 1.e3 / .5e1 / -1e3",
+                "map<string>:{3 keys} 1E3 / 1e-50 / \t1",
+                "map<string>:{3 keys} 00.5 / 0 / 0.0",
+                "map<string>:{3 keys} 0.0 / 1 / 0.5",
+                "map<string>:{3 keys} -1 / 0.1234567 / 0.0078125",
+                "map<string>:{3 keys} 16777217 / 2 / -0",
+                "map<string>:{3 keys} -0.5 / .5 / 1.",
+                "map<string>:{3 keys} +1 /  1  / 1e3",
+                "map<string>:{3 keys} +1 /  1  / 1e3 linked geometry.identifier",
+                "map<string>:{3 keys} 1e-3 / 1.5E2 / true",
+                "map<string>:{3 keys} false / !q.block_state('paletter:flag') / query.block_state('paletter:flag')",
+                "map<string>:{3 keys} -.5 / -1. / 1.e3",
+                "map<string>:{3 keys} .5e1 / -1e3 / 1E3",
+                "map<string>:{3 keys} 1e-50 / \t1 / 00.5",
+                "map<string>:{1 object} q.block_state('paletter:flag')",
+                "map<string>:{1 object} 0",
+                "map<string>:{1 object} 0.0",
+                "map<string>:{1 object} 1",
+                "map<string>:{1 object} 0.5",
+                "map<string>:{1 object} -1",
+                "map<string>:{1 object} 0.1234567",
+                "map<string>:{1 object} 0.0078125",
+                "map<string>:{1 object} 16777217",
+                "map<string>:{1 object} 2",
+                "map<string>:{1 object} -0",
+                "map<string>:{1 object} -0.5",
+                "map<string>:{1 object} .5",
+                "map<string>:{1 object} 1.",
+                "map<string>:{1 object} +1",
+                "map<string>:{1 object} +1 linked geometry.identifier",
+                "map<string>:{1 object}  1 ",
+                "map<string>:{1 object} 1e3",
+                "map<string>:{1 object} 1e-3",
+                "map<string>:{1 object} 1.5E2",
+                "map<string>:{1 object} true",
+                "map<string>:{1 object} false",
+                "map<string>:{1 object} !q.block_state('paletter:flag')",
+                "map<string>:{1 object} query.block_state('paletter:flag')",
+                "map<string>:{1 object} -.5",
+                "map<string>:{1 object} -1.",
+                "map<string>:{1 object} 1.e3",
+                "map<string>:{1 object} .5e1",
+                "map<string>:{1 object} -1e3",
+                "map<string>:{1 object} 1E3",
+                "map<string>:{1 object} 1e-50",
+                "map<string>:{1 object} \t1",
+                "map<string>:{1 object} 00.5",
+                "map<string>:{1 number} 0",
+                "map<string>:{1 number} 0.5",
+                "map<string>:{1 number} 1",
+                "map<string>:{1 number} 2.25",
+                "map<string>:{1 number} 30",
+                "map<string>:{1 number} -1",
                 "map<boolean>:{1}",
                 "map<boolean>:{1} linked geometry.identifier",
                 "map<boolean>:{2}",
@@ -1405,29 +1425,18 @@
               "bdsErrors": [
                 "geometry: Invalid bones: Cannot use bone visibility feature with: minecraft:geometry.full_block",
                 "geometry: invalid string",
-                "[Components] block_definitions | behavior_packs/paletter_spec | blocks/b_embedded_visual_44.json | Bad expression: +1, for bone visibilities of bone bone_a of geometry geometry.paletter_cube",
-                "[Molang] block_definitions | behavior_packs/paletter_spec | blocks/b_embedded_visual_44.json | +1 | Error: binary Add + operator at end of expression"
+                "[Components] block_definitions | behavior_packs/paletter_spec | blocks/b_embedded_visual_49.json | Bad expression: +1, for bone visibilities of bone bone_a of geometry geometry.paletter_cube",
+                "[Molang] block_definitions | behavior_packs/paletter_spec | blocks/b_embedded_visual_49.json | +1 | Error: binary Add + operator at end of expression"
               ],
               "unexplained": [
                 {
-                  "wire": "minecraft:embedded_visual.geometry.bone_visibility.bone_a_2.expression",
+                  "wire": "minecraft:embedded_visual.geometry.bone_visibility.bone_a.expression",
                   "samples": [
                     "<absent> -> -",
                     "{} -> -",
                     "{} -> -",
-                    "{\"bone_a\":\"q.block_state('paletter:flag')\"} -> -",
-                    "{\"bone_a\":\"q.block_state('paletter:flag')\",\"bone_a_2\":\"1.0\"} -> 1.000000 (string)",
-                    "{\"paletter_unknown\":\"q.block_state('paletter:flag')\"} -> -"
-                  ]
-                },
-                {
-                  "wire": "minecraft:embedded_visual.geometry.bone_visibility.bone_a_2.version",
-                  "samples": [
-                    "<absent> -> -",
-                    "{} -> -",
-                    "{} -> -",
-                    "{\"bone_a\":\"q.block_state('paletter:flag')\"} -> -",
-                    "{\"bone_a\":\"q.block_state('paletter:flag')\",\"bone_a_2\":\"1.0\"} -> 13 (short)",
+                    "{\"bone_a\":\"q.block_state('paletter:flag')\"} -> q.block_state('paletter:flag') (string)",
+                    "{\"bone_a\":\"q.block_state('paletter:flag')\",\"bone_a_2\":\"1.0\"} -> q.block_state('paletter:flag') (string)",
                     "{\"paletter_unknown\":\"q.block_state('paletter:flag')\"} -> -"
                   ]
                 },
@@ -1445,15 +1454,15 @@
               ]
             },
             "geometry.culling": {
-              "accepted": 6,
+              "accepted": 5,
               "rejected": 0
             },
             "geometry.culling_layer": {
-              "accepted": 4,
+              "accepted": 3,
               "rejected": 0
             },
             "geometry.culling_shape": {
-              "accepted": 3,
+              "accepted": 2,
               "rejected": 3,
               "rejectedValues": [
                 "string:",
@@ -1467,17 +1476,10 @@
             },
             "geometry.identifier": {
               "accepted": 3,
-              "rejected": 1,
-              "rejectedValues": [
-                "omitted"
-              ],
-              "bdsErrors": [
-                "identifier: missing required field",
-                "geometry: invalid string"
-              ]
+              "rejected": 0
             },
             "geometry.n_way_visual_rotation": {
-              "accepted": 2,
+              "accepted": 1,
               "rejected": 1,
               "rejectedValues": [
                 "object:{}"
@@ -1488,53 +1490,30 @@
               ]
             },
             "geometry.n_way_visual_rotation.x": {
-              "accepted": 6,
+              "accepted": 5,
               "rejected": 0
             },
             "geometry.n_way_visual_rotation.y": {
-              "accepted": 6,
+              "accepted": 5,
               "rejected": 0
             },
             "geometry.n_way_visual_rotation.z": {
-              "accepted": 6,
+              "accepted": 5,
               "rejected": 0
             },
             "geometry.uv_lock": {
-              "accepted": 6,
-              "rejected": 2,
+              "accepted": 19,
+              "rejected": 3,
               "rejectedValues": [
+                "array<string>:[65x]",
                 "array<string>:[wrong type]",
                 "object:{}"
               ],
               "bdsErrors": [
                 "uv_lock: invalid numeric value",
-                "uv_lock[0]: invalid string",
                 "geometry: invalid string",
+                "uv_lock[0]: invalid string",
                 "uv_lock: expected an array"
-              ],
-              "unexplained": [
-                {
-                  "wire": "minecraft:embedded_visual.geometry.uv_lock[0]",
-                  "samples": [
-                    "<absent> -> -",
-                    "true -> -",
-                    "false -> -",
-                    "[] -> -",
-                    "[\"bone_a\"] -> bone_a (string)",
-                    "[\"bone_a\",\"paletter_b\"] -> paletter_b (string)"
-                  ]
-                },
-                {
-                  "wire": "minecraft:embedded_visual.geometry.uv_lock[1]",
-                  "samples": [
-                    "<absent> -> -",
-                    "true -> -",
-                    "false -> -",
-                    "[] -> -",
-                    "[\"bone_a\"] -> -",
-                    "[\"bone_a\",\"paletter_b\"] -> bone_a (string)"
-                  ]
-                }
               ]
             },
             "material_instances": {
@@ -1559,7 +1538,7 @@
           ],
           "fields": {
             "geometry": {
-              "accepted": 1,
+              "accepted": 6,
               "rejected": 5,
               "rejectedValues": [
                 "omitted",
@@ -1576,8 +1555,8 @@
               ]
             },
             "geometry.bone_visibility": {
-              "accepted": 36,
-              "rejected": 38,
+              "accepted": 95,
+              "rejected": 103,
               "rejectedValues": [
                 "map<string>:{1}",
                 "map<string>:{2}",
@@ -1611,6 +1590,71 @@
                 "map<string>:{1} .5e1",
                 "map<string>:{1} -1e3",
                 "map<string>:{1} 1E3",
+                "map<string>:{1} 1e-50",
+                "map<string>:{1} \t1",
+                "map<string>:{1} 00.5",
+                "map<string>:{3 keys} 0 / 0.0 / 1",
+                "map<string>:{3 keys} 0.5 / -1 / 0.1234567",
+                "map<string>:{3 keys} 0.0078125 / 16777217 / 2",
+                "map<string>:{3 keys} -0 / -0.5 / .5",
+                "map<string>:{3 keys} 1. / +1 /  1 ",
+                "map<string>:{3 keys} 1. / +1 /  1  linked geometry.identifier",
+                "map<string>:{3 keys} 1e3 / 1e-3 / 1.5E2",
+                "map<string>:{3 keys} true / false / !q.block_state('paletter:flag')",
+                "map<string>:{3 keys} query.block_state('paletter:flag') / -.5 / -1.",
+                "map<string>:{3 keys} 1.e3 / .5e1 / -1e3",
+                "map<string>:{3 keys} 1E3 / 1e-50 / \t1",
+                "map<string>:{3 keys} 00.5 / 0 / 0.0",
+                "map<string>:{3 keys} 0.0 / 1 / 0.5",
+                "map<string>:{3 keys} -1 / 0.1234567 / 0.0078125",
+                "map<string>:{3 keys} 16777217 / 2 / -0",
+                "map<string>:{3 keys} -0.5 / .5 / 1.",
+                "map<string>:{3 keys} +1 /  1  / 1e3",
+                "map<string>:{3 keys} +1 /  1  / 1e3 linked geometry.identifier",
+                "map<string>:{3 keys} 1e-3 / 1.5E2 / true",
+                "map<string>:{3 keys} false / !q.block_state('paletter:flag') / query.block_state('paletter:flag')",
+                "map<string>:{3 keys} -.5 / -1. / 1.e3",
+                "map<string>:{3 keys} .5e1 / -1e3 / 1E3",
+                "map<string>:{3 keys} 1e-50 / \t1 / 00.5",
+                "map<string>:{1 object} q.block_state('paletter:flag')",
+                "map<string>:{1 object} 0",
+                "map<string>:{1 object} 0.0",
+                "map<string>:{1 object} 1",
+                "map<string>:{1 object} 0.5",
+                "map<string>:{1 object} -1",
+                "map<string>:{1 object} 0.1234567",
+                "map<string>:{1 object} 0.0078125",
+                "map<string>:{1 object} 16777217",
+                "map<string>:{1 object} 2",
+                "map<string>:{1 object} -0",
+                "map<string>:{1 object} -0.5",
+                "map<string>:{1 object} .5",
+                "map<string>:{1 object} 1.",
+                "map<string>:{1 object} +1",
+                "map<string>:{1 object} +1 linked geometry.identifier",
+                "map<string>:{1 object}  1 ",
+                "map<string>:{1 object} 1e3",
+                "map<string>:{1 object} 1e-3",
+                "map<string>:{1 object} 1.5E2",
+                "map<string>:{1 object} true",
+                "map<string>:{1 object} false",
+                "map<string>:{1 object} !q.block_state('paletter:flag')",
+                "map<string>:{1 object} query.block_state('paletter:flag')",
+                "map<string>:{1 object} -.5",
+                "map<string>:{1 object} -1.",
+                "map<string>:{1 object} 1.e3",
+                "map<string>:{1 object} .5e1",
+                "map<string>:{1 object} -1e3",
+                "map<string>:{1 object} 1E3",
+                "map<string>:{1 object} 1e-50",
+                "map<string>:{1 object} \t1",
+                "map<string>:{1 object} 00.5",
+                "map<string>:{1 number} 0",
+                "map<string>:{1 number} 0.5",
+                "map<string>:{1 number} 1",
+                "map<string>:{1 number} 2.25",
+                "map<string>:{1 number} 30",
+                "map<string>:{1 number} -1",
                 "map<boolean>:{1}",
                 "map<boolean>:{1} linked geometry.identifier",
                 "map<boolean>:{2}",
@@ -1621,33 +1665,33 @@
               "bdsErrors": [
                 "geometry: Invalid bones: Cannot use bone visibility feature with: minecraft:geometry.full_block",
                 "geometry: invalid string",
-                "[Components] block_definitions | behavior_packs/paletter_spec | blocks/b_embedded_visual_44.json | Bad expression: +1, for bone visibilities of bone bone_a of geometry geometry.paletter_cube",
-                "[Molang] block_definitions | behavior_packs/paletter_spec | blocks/b_embedded_visual_44.json | +1 | Error: binary Add + operator at end of expression"
+                "[Components] block_definitions | behavior_packs/paletter_spec | blocks/b_embedded_visual_49.json | Bad expression: +1, for bone visibilities of bone bone_a of geometry geometry.paletter_cube",
+                "[Molang] block_definitions | behavior_packs/paletter_spec | blocks/b_embedded_visual_49.json | +1 | Error: binary Add + operator at end of expression"
               ],
               "unexplained": [
                 {
-                  "wire": "minecraft:embedded_visual.geometry.bone_visibility.bone_a_2",
+                  "wire": "minecraft:embedded_visual.geometry.bone_visibility.bone_a",
                   "samples": [
                     "<absent> -> -",
                     "{} -> -",
                     "{} -> -",
-                    "{\"bone_a\":\"q.block_state('paletter:flag')\"} -> -",
-                    "{\"bone_a\":\"q.block_state('paletter:flag')\",\"bone_a_2\":\"1.0\"} -> 1.000000 (string)",
+                    "{\"bone_a\":\"q.block_state('paletter:flag')\"} -> q.block_state('paletter:flag') (string)",
+                    "{\"bone_a\":\"q.block_state('paletter:flag')\",\"bone_a_2\":\"1.0\"} -> q.block_state('paletter:flag') (string)",
                     "{\"paletter_unknown\":\"q.block_state('paletter:flag')\"} -> -"
                   ]
                 }
               ]
             },
             "geometry.culling": {
-              "accepted": 6,
+              "accepted": 5,
               "rejected": 0
             },
             "geometry.culling_layer": {
-              "accepted": 4,
+              "accepted": 3,
               "rejected": 0
             },
             "geometry.culling_shape": {
-              "accepted": 3,
+              "accepted": 2,
               "rejected": 3,
               "rejectedValues": [
                 "string:",
@@ -1661,17 +1705,10 @@
             },
             "geometry.identifier": {
               "accepted": 3,
-              "rejected": 1,
-              "rejectedValues": [
-                "omitted"
-              ],
-              "bdsErrors": [
-                "identifier: missing required field",
-                "geometry: invalid string"
-              ]
+              "rejected": 0
             },
             "geometry.n_way_visual_rotation": {
-              "accepted": 2,
+              "accepted": 1,
               "rejected": 1,
               "rejectedValues": [
                 "object:{}"
@@ -1682,53 +1719,30 @@
               ]
             },
             "geometry.n_way_visual_rotation.x": {
-              "accepted": 6,
+              "accepted": 5,
               "rejected": 0
             },
             "geometry.n_way_visual_rotation.y": {
-              "accepted": 6,
+              "accepted": 5,
               "rejected": 0
             },
             "geometry.n_way_visual_rotation.z": {
-              "accepted": 6,
+              "accepted": 5,
               "rejected": 0
             },
             "geometry.uv_lock": {
-              "accepted": 6,
-              "rejected": 2,
+              "accepted": 19,
+              "rejected": 3,
               "rejectedValues": [
+                "array<string>:[65x]",
                 "array<string>:[wrong type]",
                 "object:{}"
               ],
               "bdsErrors": [
                 "uv_lock: invalid numeric value",
-                "uv_lock[0]: invalid string",
                 "geometry: invalid string",
+                "uv_lock[0]: invalid string",
                 "uv_lock: expected an array"
-              ],
-              "unexplained": [
-                {
-                  "wire": "minecraft:embedded_visual.geometry.uv_lock[0]",
-                  "samples": [
-                    "<absent> -> -",
-                    "true -> -",
-                    "false -> -",
-                    "[] -> -",
-                    "[\"bone_a\"] -> bone_a (string)",
-                    "[\"bone_a\",\"paletter_b\"] -> paletter_b (string)"
-                  ]
-                },
-                {
-                  "wire": "minecraft:embedded_visual.geometry.uv_lock[1]",
-                  "samples": [
-                    "<absent> -> -",
-                    "true -> -",
-                    "false -> -",
-                    "[] -> -",
-                    "[\"bone_a\"] -> -",
-                    "[\"bone_a\",\"paletter_b\"] -> bone_a (string)"
-                  ]
-                }
               ]
             },
             "material_instances": {
@@ -1753,7 +1767,7 @@
           ],
           "fields": {
             "geometry": {
-              "accepted": 1,
+              "accepted": 6,
               "rejected": 5,
               "rejectedValues": [
                 "omitted",
@@ -1770,8 +1784,8 @@
               ]
             },
             "geometry.bone_visibility": {
-              "accepted": 39,
-              "rejected": 35,
+              "accepted": 98,
+              "rejected": 100,
               "rejectedValues": [
                 "map<string>:{1}",
                 "map<string>:{2}",
@@ -1805,6 +1819,71 @@
                 "map<string>:{1} .5e1",
                 "map<string>:{1} -1e3",
                 "map<string>:{1} 1E3",
+                "map<string>:{1} 1e-50",
+                "map<string>:{1} \t1",
+                "map<string>:{1} 00.5",
+                "map<string>:{3 keys} 0 / 0.0 / 1",
+                "map<string>:{3 keys} 0.5 / -1 / 0.1234567",
+                "map<string>:{3 keys} 0.0078125 / 16777217 / 2",
+                "map<string>:{3 keys} -0 / -0.5 / .5",
+                "map<string>:{3 keys} 1. / +1 /  1 ",
+                "map<string>:{3 keys} 1. / +1 /  1  linked geometry.identifier",
+                "map<string>:{3 keys} 1e3 / 1e-3 / 1.5E2",
+                "map<string>:{3 keys} true / false / !q.block_state('paletter:flag')",
+                "map<string>:{3 keys} query.block_state('paletter:flag') / -.5 / -1.",
+                "map<string>:{3 keys} 1.e3 / .5e1 / -1e3",
+                "map<string>:{3 keys} 1E3 / 1e-50 / \t1",
+                "map<string>:{3 keys} 00.5 / 0 / 0.0",
+                "map<string>:{3 keys} 0.0 / 1 / 0.5",
+                "map<string>:{3 keys} -1 / 0.1234567 / 0.0078125",
+                "map<string>:{3 keys} 16777217 / 2 / -0",
+                "map<string>:{3 keys} -0.5 / .5 / 1.",
+                "map<string>:{3 keys} +1 /  1  / 1e3",
+                "map<string>:{3 keys} +1 /  1  / 1e3 linked geometry.identifier",
+                "map<string>:{3 keys} 1e-3 / 1.5E2 / true",
+                "map<string>:{3 keys} false / !q.block_state('paletter:flag') / query.block_state('paletter:flag')",
+                "map<string>:{3 keys} -.5 / -1. / 1.e3",
+                "map<string>:{3 keys} .5e1 / -1e3 / 1E3",
+                "map<string>:{3 keys} 1e-50 / \t1 / 00.5",
+                "map<string>:{1 object} q.block_state('paletter:flag')",
+                "map<string>:{1 object} 0",
+                "map<string>:{1 object} 0.0",
+                "map<string>:{1 object} 1",
+                "map<string>:{1 object} 0.5",
+                "map<string>:{1 object} -1",
+                "map<string>:{1 object} 0.1234567",
+                "map<string>:{1 object} 0.0078125",
+                "map<string>:{1 object} 16777217",
+                "map<string>:{1 object} 2",
+                "map<string>:{1 object} -0",
+                "map<string>:{1 object} -0.5",
+                "map<string>:{1 object} .5",
+                "map<string>:{1 object} 1.",
+                "map<string>:{1 object} +1",
+                "map<string>:{1 object} +1 linked geometry.identifier",
+                "map<string>:{1 object}  1 ",
+                "map<string>:{1 object} 1e3",
+                "map<string>:{1 object} 1e-3",
+                "map<string>:{1 object} 1.5E2",
+                "map<string>:{1 object} true",
+                "map<string>:{1 object} false",
+                "map<string>:{1 object} !q.block_state('paletter:flag')",
+                "map<string>:{1 object} query.block_state('paletter:flag')",
+                "map<string>:{1 object} -.5",
+                "map<string>:{1 object} -1.",
+                "map<string>:{1 object} 1.e3",
+                "map<string>:{1 object} .5e1",
+                "map<string>:{1 object} -1e3",
+                "map<string>:{1 object} 1E3",
+                "map<string>:{1 object} 1e-50",
+                "map<string>:{1 object} \t1",
+                "map<string>:{1 object} 00.5",
+                "map<string>:{1 number} 0",
+                "map<string>:{1 number} 0.5",
+                "map<string>:{1 number} 1",
+                "map<string>:{1 number} 2.25",
+                "map<string>:{1 number} 30",
+                "map<string>:{1 number} -1",
                 "map<boolean>:{1}",
                 "map<boolean>:{2}",
                 "map<boolean>:{unknown key}"
@@ -1812,8 +1891,8 @@
               "bdsErrors": [
                 "geometry: Invalid bones: Cannot use bone visibility feature with: minecraft:geometry.full_block",
                 "geometry: invalid string",
-                "[Components] block_definitions | behavior_packs/paletter_spec | blocks/b_embedded_visual_44.json | Bad expression: +1, for bone visibilities of bone bone_a of geometry geometry.paletter_cube",
-                "[Molang] block_definitions | behavior_packs/paletter_spec | blocks/b_embedded_visual_44.json | +1 | Error: binary Add + operator at end of expression"
+                "[Components] block_definitions | behavior_packs/paletter_spec | blocks/b_embedded_visual_49.json | Bad expression: +1, for bone visibilities of bone bone_a of geometry geometry.paletter_cube",
+                "[Molang] block_definitions | behavior_packs/paletter_spec | blocks/b_embedded_visual_49.json | +1 | Error: binary Add + operator at end of expression"
               ],
               "unexplained": [
                 {
@@ -1852,15 +1931,15 @@
               ]
             },
             "geometry.culling": {
-              "accepted": 6,
+              "accepted": 5,
               "rejected": 0
             },
             "geometry.culling_layer": {
-              "accepted": 4,
+              "accepted": 3,
               "rejected": 0
             },
             "geometry.culling_shape": {
-              "accepted": 3,
+              "accepted": 2,
               "rejected": 3,
               "rejectedValues": [
                 "string:",
@@ -1874,17 +1953,10 @@
             },
             "geometry.identifier": {
               "accepted": 3,
-              "rejected": 1,
-              "rejectedValues": [
-                "omitted"
-              ],
-              "bdsErrors": [
-                "identifier: missing required field",
-                "geometry: invalid string"
-              ]
+              "rejected": 0
             },
             "geometry.n_way_visual_rotation": {
-              "accepted": 2,
+              "accepted": 1,
               "rejected": 1,
               "rejectedValues": [
                 "object:{}"
@@ -1895,53 +1967,30 @@
               ]
             },
             "geometry.n_way_visual_rotation.x": {
-              "accepted": 6,
+              "accepted": 5,
               "rejected": 0
             },
             "geometry.n_way_visual_rotation.y": {
-              "accepted": 6,
+              "accepted": 5,
               "rejected": 0
             },
             "geometry.n_way_visual_rotation.z": {
-              "accepted": 6,
+              "accepted": 5,
               "rejected": 0
             },
             "geometry.uv_lock": {
-              "accepted": 6,
-              "rejected": 2,
+              "accepted": 19,
+              "rejected": 3,
               "rejectedValues": [
+                "array<string>:[65x]",
                 "array<string>:[wrong type]",
                 "object:{}"
               ],
               "bdsErrors": [
                 "uv_lock: invalid numeric value",
-                "uv_lock[0]: invalid string",
                 "geometry: invalid string",
+                "uv_lock[0]: invalid string",
                 "uv_lock: expected an array"
-              ],
-              "unexplained": [
-                {
-                  "wire": "minecraft:embedded_visual.geometry.uv_lock[0]",
-                  "samples": [
-                    "<absent> -> -",
-                    "true -> -",
-                    "false -> -",
-                    "[] -> -",
-                    "[\"bone_a\"] -> bone_a (string)",
-                    "[\"bone_a\",\"paletter_b\"] -> paletter_b (string)"
-                  ]
-                },
-                {
-                  "wire": "minecraft:embedded_visual.geometry.uv_lock[1]",
-                  "samples": [
-                    "<absent> -> -",
-                    "true -> -",
-                    "false -> -",
-                    "[] -> -",
-                    "[\"bone_a\"] -> -",
-                    "[\"bone_a\",\"paletter_b\"] -> bone_a (string)"
-                  ]
-                }
               ]
             },
             "material_instances": {
@@ -2047,7 +2096,7 @@
               "rejected": 2,
               "rejectedValues": [
                 "integer:-1",
-                "integer:1.5"
+                "integer:0.5"
               ],
               "bdsErrors": [
                 "catch_chance_modifier: invalid numeric value",
@@ -2059,7 +2108,7 @@
               "rejected": 2,
               "rejectedValues": [
                 "integer:-1",
-                "integer:1.5"
+                "integer:0.5"
               ],
               "bdsErrors": [
                 "destroy_chance_modifier: invalid numeric value",
@@ -2067,15 +2116,17 @@
               ]
             },
             "lava_flammable": {
-              "accepted": 0,
-              "rejected": 2,
+              "accepted": 2,
+              "rejected": 3,
               "rejectedValues": [
+                "string:paletter_invalid",
                 "boolean:true",
                 "boolean:false"
               ],
               "bdsErrors": [
-                "lava_flammable: This value is bound to Lava Flammable and expects one of the following strings: never, always",
-                "minecraft:flammable: invalid numeric value"
+                "lava_flammable: This value is bound to Lava Flammable and expects one of the following strings: never, always. Found: paletter_invalid",
+                "minecraft:flammable: invalid numeric value",
+                "lava_flammable: This value is bound to Lava Flammable and expects one of the following strings: never, always"
               ]
             }
           },
@@ -2155,10 +2206,13 @@
           ],
           "fields": {
             "bone_visibility": {
-              "accepted": 33,
-              "rejected": 4,
+              "accepted": 92,
+              "rejected": 7,
               "rejectedValues": [
                 "map<string>:{1} +1",
+                "map<string>:{3 keys} 1. / +1 /  1 ",
+                "map<string>:{3 keys} +1 /  1  / 1e3",
+                "map<string>:{1 object} +1",
                 "map<boolean>:{1}",
                 "map<boolean>:{2}",
                 "map<boolean>:{unknown key}"
@@ -2166,29 +2220,18 @@
               "bdsErrors": [
                 "[Components] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_26.json | Bad expression: +1, for bone visibilities of bone bone_a of geometry geometry.paletter_cube",
                 "[Molang] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_26.json | +1 | Error: binary Add + operator at end of expression",
-                "bone_a: expected an object",
-                "bone_a: invalid numeric value"
+                "[Components] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_48.json | Bad expression: +1, for bone visibilities of bone bone_a_2 of geometry geometry.paletter_cube",
+                "[Molang] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_48.json | +1 | Error: binary Add + operator at end of expression"
               ],
               "unexplained": [
                 {
-                  "wire": "minecraft:geometry.bone_visibility.bone_a_2.expression",
+                  "wire": "minecraft:geometry.bone_visibility.bone_a.expression",
                   "samples": [
-                    "{\"bone_a\":\"q.block_state('paletter:flag')\"} -> -",
+                    "{\"bone_a\":\"q.block_state('paletter:flag')\"} -> q.block_state('paletter:flag') (string)",
                     "<absent> -> -",
                     "{} -> -",
-                    "{\"bone_a\":\"q.block_state('paletter:flag')\"} -> -",
-                    "{\"bone_a\":\"q.block_state('paletter:flag')\",\"bone_a_2\":\"1.0\"} -> 1.000000 (string)",
-                    "{\"paletter_unknown\":\"q.block_state('paletter:flag')\"} -> -"
-                  ]
-                },
-                {
-                  "wire": "minecraft:geometry.bone_visibility.bone_a_2.version",
-                  "samples": [
-                    "{\"bone_a\":\"q.block_state('paletter:flag')\"} -> -",
-                    "<absent> -> -",
-                    "{} -> -",
-                    "{\"bone_a\":\"q.block_state('paletter:flag')\"} -> -",
-                    "{\"bone_a\":\"q.block_state('paletter:flag')\",\"bone_a_2\":\"1.0\"} -> 13 (short)",
+                    "{\"bone_a\":\"q.block_state('paletter:flag')\"} -> q.block_state('paletter:flag') (string)",
+                    "{\"bone_a\":\"q.block_state('paletter:flag')\",\"bone_a_2\":\"1.0\"} -> q.block_state('paletter:flag') (string)",
                     "{\"paletter_unknown\":\"q.block_state('paletter:flag')\"} -> -"
                   ]
                 },
@@ -2255,9 +2298,10 @@
               ]
             },
             "uv_lock": {
-              "accepted": 7,
-              "rejected": 6,
+              "accepted": 20,
+              "rejected": 7,
               "rejectedValues": [
+                "array<string>:[65x]",
                 "array<string>:[wrong type]",
                 "string:bone_a",
                 "string:paletter_b",
@@ -2267,33 +2311,60 @@
               ],
               "bdsErrors": [
                 "uv_lock: invalid numeric value",
-                "uv_lock[0]: invalid string",
                 "minecraft:geometry: invalid string",
+                "uv_lock[0]: invalid string",
                 "uv_lock: expected an array"
+              ]
+            },
+            "n_way_visual_rotation.x": {
+              "accepted": 0,
+              "rejected": 5,
+              "rejectedValues": [
+                "string:paletter_a",
+                "string:paletter_b",
+                "string:",
+                "string:minecraft:paletter_a",
+                "string:minecraft:paletter_unknown"
               ],
-              "unexplained": [
-                {
-                  "wire": "minecraft:geometry.uv_lock[0]",
-                  "samples": [
-                    "[\"bone_a\"] -> bone_a (string)",
-                    "<absent> -> -",
-                    "true -> -",
-                    "false -> -",
-                    "[] -> -",
-                    "[\"bone_a\"] -> bone_a (string)"
-                  ]
-                },
-                {
-                  "wire": "minecraft:geometry.uv_lock[1]",
-                  "samples": [
-                    "[\"bone_a\"] -> -",
-                    "<absent> -> -",
-                    "true -> -",
-                    "false -> -",
-                    "[] -> -",
-                    "[\"bone_a\"] -> -"
-                  ]
-                }
+              "bdsErrors": [
+                "[Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_158.json | minecraft:geometry n_way_visual_rotation.x references unknown state paletter_a.",
+                "[Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_159.json | minecraft:geometry n_way_visual_rotation.x references unknown state paletter_b.",
+                "minecraft:geometry: n_way_visual_rotation must define at least one axis (x, y, or z)",
+                "minecraft:geometry: invalid string"
+              ]
+            },
+            "n_way_visual_rotation.y": {
+              "accepted": 0,
+              "rejected": 5,
+              "rejectedValues": [
+                "string:paletter_a",
+                "string:paletter_b",
+                "string:",
+                "string:minecraft:paletter_a",
+                "string:minecraft:paletter_unknown"
+              ],
+              "bdsErrors": [
+                "[Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_163.json | minecraft:geometry n_way_visual_rotation.y references unknown state paletter_a.",
+                "[Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_164.json | minecraft:geometry n_way_visual_rotation.y references unknown state paletter_b.",
+                "minecraft:geometry: n_way_visual_rotation must define at least one axis (x, y, or z)",
+                "minecraft:geometry: invalid string"
+              ]
+            },
+            "n_way_visual_rotation.z": {
+              "accepted": 0,
+              "rejected": 5,
+              "rejectedValues": [
+                "string:paletter_a",
+                "string:paletter_b",
+                "string:",
+                "string:minecraft:paletter_a",
+                "string:minecraft:paletter_unknown"
+              ],
+              "bdsErrors": [
+                "[Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_168.json | minecraft:geometry n_way_visual_rotation.z references unknown state paletter_a.",
+                "[Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_169.json | minecraft:geometry n_way_visual_rotation.z references unknown state paletter_b.",
+                "minecraft:geometry: n_way_visual_rotation must define at least one axis (x, y, or z)",
+                "minecraft:geometry: invalid string"
               ]
             }
           },
@@ -2311,10 +2382,13 @@
           ],
           "fields": {
             "bone_visibility": {
-              "accepted": 33,
-              "rejected": 4,
+              "accepted": 92,
+              "rejected": 7,
               "rejectedValues": [
                 "map<string>:{1} +1",
+                "map<string>:{3 keys} 1. / +1 /  1 ",
+                "map<string>:{3 keys} +1 /  1  / 1e3",
+                "map<string>:{1 object} +1",
                 "map<boolean>:{1}",
                 "map<boolean>:{2}",
                 "map<boolean>:{unknown key}"
@@ -2322,18 +2396,18 @@
               "bdsErrors": [
                 "[Components] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_26.json | Bad expression: +1, for bone visibilities of bone bone_a of geometry geometry.paletter_cube",
                 "[Molang] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_26.json | +1 | Error: binary Add + operator at end of expression",
-                "bone_a: expected an object",
-                "bone_a: invalid numeric value"
+                "[Components] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_48.json | Bad expression: +1, for bone visibilities of bone bone_a_2 of geometry geometry.paletter_cube",
+                "[Molang] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_48.json | +1 | Error: binary Add + operator at end of expression"
               ],
               "unexplained": [
                 {
-                  "wire": "minecraft:geometry.bone_visibility.bone_a_2",
+                  "wire": "minecraft:geometry.bone_visibility.bone_a",
                   "samples": [
-                    "{\"bone_a\":\"q.block_state('paletter:flag')\"} -> -",
+                    "{\"bone_a\":\"q.block_state('paletter:flag')\"} -> q.block_state('paletter:flag') (string)",
                     "<absent> -> -",
                     "{} -> -",
-                    "{\"bone_a\":\"q.block_state('paletter:flag')\"} -> -",
-                    "{\"bone_a\":\"q.block_state('paletter:flag')\",\"bone_a_2\":\"1.0\"} -> 1.000000 (string)",
+                    "{\"bone_a\":\"q.block_state('paletter:flag')\"} -> q.block_state('paletter:flag') (string)",
+                    "{\"bone_a\":\"q.block_state('paletter:flag')\",\"bone_a_2\":\"1.0\"} -> q.block_state('paletter:flag') (string)",
                     "{\"paletter_unknown\":\"q.block_state('paletter:flag')\"} -> -"
                   ]
                 }
@@ -2389,9 +2463,10 @@
               ]
             },
             "uv_lock": {
-              "accepted": 7,
-              "rejected": 6,
+              "accepted": 20,
+              "rejected": 7,
               "rejectedValues": [
+                "array<string>:[65x]",
                 "array<string>:[wrong type]",
                 "string:bone_a",
                 "string:paletter_b",
@@ -2401,33 +2476,60 @@
               ],
               "bdsErrors": [
                 "uv_lock: invalid numeric value",
-                "uv_lock[0]: invalid string",
                 "minecraft:geometry: invalid string",
+                "uv_lock[0]: invalid string",
                 "uv_lock: expected an array"
+              ]
+            },
+            "n_way_visual_rotation.x": {
+              "accepted": 0,
+              "rejected": 5,
+              "rejectedValues": [
+                "string:paletter_a",
+                "string:paletter_b",
+                "string:",
+                "string:minecraft:paletter_a",
+                "string:minecraft:paletter_unknown"
               ],
-              "unexplained": [
-                {
-                  "wire": "minecraft:geometry.uv_lock[0]",
-                  "samples": [
-                    "[\"bone_a\"] -> bone_a (string)",
-                    "<absent> -> -",
-                    "true -> -",
-                    "false -> -",
-                    "[] -> -",
-                    "[\"bone_a\"] -> bone_a (string)"
-                  ]
-                },
-                {
-                  "wire": "minecraft:geometry.uv_lock[1]",
-                  "samples": [
-                    "[\"bone_a\"] -> -",
-                    "<absent> -> -",
-                    "true -> -",
-                    "false -> -",
-                    "[] -> -",
-                    "[\"bone_a\"] -> -"
-                  ]
-                }
+              "bdsErrors": [
+                "[Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_158.json | minecraft:geometry field n_way_visual_rotation.x references unknown state paletter_a",
+                "[Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_159.json | minecraft:geometry field n_way_visual_rotation.x references unknown state paletter_b",
+                "minecraft:geometry: n_way_visual_rotation must define at least one axis (x, y, or z)",
+                "minecraft:geometry: invalid string"
+              ]
+            },
+            "n_way_visual_rotation.y": {
+              "accepted": 0,
+              "rejected": 5,
+              "rejectedValues": [
+                "string:paletter_a",
+                "string:paletter_b",
+                "string:",
+                "string:minecraft:paletter_a",
+                "string:minecraft:paletter_unknown"
+              ],
+              "bdsErrors": [
+                "[Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_163.json | minecraft:geometry field n_way_visual_rotation.y references unknown state paletter_a",
+                "[Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_164.json | minecraft:geometry field n_way_visual_rotation.y references unknown state paletter_b",
+                "minecraft:geometry: n_way_visual_rotation must define at least one axis (x, y, or z)",
+                "minecraft:geometry: invalid string"
+              ]
+            },
+            "n_way_visual_rotation.z": {
+              "accepted": 0,
+              "rejected": 5,
+              "rejectedValues": [
+                "string:paletter_a",
+                "string:paletter_b",
+                "string:",
+                "string:minecraft:paletter_a",
+                "string:minecraft:paletter_unknown"
+              ],
+              "bdsErrors": [
+                "[Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_168.json | minecraft:geometry field n_way_visual_rotation.z references unknown state paletter_a",
+                "[Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_169.json | minecraft:geometry field n_way_visual_rotation.z references unknown state paletter_b",
+                "minecraft:geometry: n_way_visual_rotation must define at least one axis (x, y, or z)",
+                "minecraft:geometry: invalid string"
               ]
             }
           },
@@ -2444,14 +2546,19 @@
           ],
           "fields": {
             "bone_visibility": {
-              "accepted": 36,
-              "rejected": 1,
+              "accepted": 95,
+              "rejected": 4,
               "rejectedValues": [
-                "map<string>:{1} +1"
+                "map<string>:{1} +1",
+                "map<string>:{3 keys} 1. / +1 /  1 ",
+                "map<string>:{3 keys} +1 /  1  / 1e3",
+                "map<string>:{1 object} +1"
               ],
               "bdsErrors": [
                 "[Components] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_26.json | Bad expression: +1, for bone visibilities of bone bone_a of geometry geometry.paletter_cube",
-                "[Molang] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_26.json | +1 | Error: binary Add + operator at end of expression"
+                "[Molang] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_26.json | +1 | Error: binary Add + operator at end of expression",
+                "[Components] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_48.json | Bad expression: +1, for bone visibilities of bone bone_a_2 of geometry geometry.paletter_cube",
+                "[Molang] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_48.json | +1 | Error: binary Add + operator at end of expression"
               ],
               "unexplained": [
                 {
@@ -2539,9 +2646,10 @@
               ]
             },
             "uv_lock": {
-              "accepted": 7,
-              "rejected": 6,
+              "accepted": 20,
+              "rejected": 7,
               "rejectedValues": [
+                "array<string>:[65x]",
                 "array<string>:[wrong type]",
                 "string:bone_a",
                 "string:paletter_b",
@@ -2551,33 +2659,9 @@
               ],
               "bdsErrors": [
                 "uv_lock: invalid numeric value",
-                "uv_lock[0]: invalid string",
                 "minecraft:geometry: invalid string",
+                "uv_lock[0]: invalid string",
                 "uv_lock: expected an array"
-              ],
-              "unexplained": [
-                {
-                  "wire": "minecraft:geometry.uv_lock[0]",
-                  "samples": [
-                    "[\"bone_a\"] -> bone_a (string)",
-                    "<absent> -> -",
-                    "true -> -",
-                    "false -> -",
-                    "[] -> -",
-                    "[\"bone_a\"] -> bone_a (string)"
-                  ]
-                },
-                {
-                  "wire": "minecraft:geometry.uv_lock[1]",
-                  "samples": [
-                    "[\"bone_a\"] -> -",
-                    "<absent> -> -",
-                    "true -> -",
-                    "false -> -",
-                    "[] -> -",
-                    "[\"bone_a\"] -> -"
-                  ]
-                }
               ]
             },
             "n_way_visual_rotation.x": {
@@ -2589,9 +2673,9 @@
                 "string:minecraft:paletter_unknown"
               ],
               "bdsErrors": [
-                "[Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_86.json | minecraft:geometry field n_way_visual_rotation.x references unknown state paletter_b",
-                "[Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_88.json | minecraft:geometry field n_way_visual_rotation.x references unknown state cardinal_direction",
-                "[Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_89.json | minecraft:geometry field n_way_visual_rotation.x references unknown state minecraft:paletter_unknown"
+                "[Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_162.json | minecraft:geometry field n_way_visual_rotation.x references unknown state paletter_b",
+                "[Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_164.json | minecraft:geometry field n_way_visual_rotation.x references unknown state cardinal_direction",
+                "[Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_165.json | minecraft:geometry field n_way_visual_rotation.x references unknown state minecraft:paletter_unknown"
               ]
             },
             "n_way_visual_rotation.y": {
@@ -2603,9 +2687,9 @@
                 "string:minecraft:paletter_unknown"
               ],
               "bdsErrors": [
-                "[Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_92.json | minecraft:geometry field n_way_visual_rotation.y references unknown state paletter_b",
-                "[Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_94.json | minecraft:geometry field n_way_visual_rotation.y references unknown state cardinal_direction",
-                "[Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_95.json | minecraft:geometry field n_way_visual_rotation.y references unknown state minecraft:paletter_unknown"
+                "[Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_168.json | minecraft:geometry field n_way_visual_rotation.y references unknown state paletter_b",
+                "[Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_170.json | minecraft:geometry field n_way_visual_rotation.y references unknown state cardinal_direction",
+                "[Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_171.json | minecraft:geometry field n_way_visual_rotation.y references unknown state minecraft:paletter_unknown"
               ]
             },
             "n_way_visual_rotation.z": {
@@ -2617,9 +2701,9 @@
                 "string:minecraft:paletter_unknown"
               ],
               "bdsErrors": [
-                "[Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_98.json | minecraft:geometry field n_way_visual_rotation.z references unknown state paletter_b",
-                "[Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_100.json | minecraft:geometry field n_way_visual_rotation.z references unknown state cardinal_direction",
-                "[Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_101.json | minecraft:geometry field n_way_visual_rotation.z references unknown state minecraft:paletter_unknown"
+                "[Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_174.json | minecraft:geometry field n_way_visual_rotation.z references unknown state paletter_b",
+                "[Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_176.json | minecraft:geometry field n_way_visual_rotation.z references unknown state cardinal_direction",
+                "[Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_177.json | minecraft:geometry field n_way_visual_rotation.z references unknown state minecraft:paletter_unknown"
               ]
             }
           },
@@ -2636,14 +2720,19 @@
           ],
           "fields": {
             "bone_visibility": {
-              "accepted": 36,
-              "rejected": 1,
+              "accepted": 95,
+              "rejected": 4,
               "rejectedValues": [
-                "map<string>:{1} +1"
+                "map<string>:{1} +1",
+                "map<string>:{3 keys} 1. / +1 /  1 ",
+                "map<string>:{3 keys} +1 /  1  / 1e3",
+                "map<string>:{1 object} +1"
               ],
               "bdsErrors": [
                 "[Components] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_26.json | Bad expression: +1, for bone visibilities of bone bone_a of geometry geometry.paletter_cube",
-                "[Molang] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_26.json | +1 | Error: binary Add + operator at end of expression"
+                "[Molang] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_26.json | +1 | Error: binary Add + operator at end of expression",
+                "[Components] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_48.json | Bad expression: +1, for bone visibilities of bone bone_a_2 of geometry geometry.paletter_cube",
+                "[Molang] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_48.json | +1 | Error: binary Add + operator at end of expression"
               ],
               "unexplained": [
                 {
@@ -2731,9 +2820,10 @@
               ]
             },
             "uv_lock": {
-              "accepted": 7,
-              "rejected": 6,
+              "accepted": 20,
+              "rejected": 7,
               "rejectedValues": [
+                "array<string>:[65x]",
                 "array<string>:[wrong type]",
                 "string:bone_a",
                 "string:paletter_b",
@@ -2743,33 +2833,60 @@
               ],
               "bdsErrors": [
                 "uv_lock: invalid numeric value",
-                "uv_lock[0]: invalid string",
                 "minecraft:geometry: invalid string",
+                "uv_lock[0]: invalid string",
                 "uv_lock: expected an array"
+              ]
+            },
+            "n_way_visual_rotation.x": {
+              "accepted": 0,
+              "rejected": 5,
+              "rejectedValues": [
+                "string:paletter_a",
+                "string:paletter_b",
+                "string:",
+                "string:minecraft:paletter_a",
+                "string:minecraft:paletter_unknown"
               ],
-              "unexplained": [
-                {
-                  "wire": "minecraft:geometry.uv_lock[0]",
-                  "samples": [
-                    "[\"bone_a\"] -> bone_a (string)",
-                    "<absent> -> -",
-                    "true -> -",
-                    "false -> -",
-                    "[] -> -",
-                    "[\"bone_a\"] -> bone_a (string)"
-                  ]
-                },
-                {
-                  "wire": "minecraft:geometry.uv_lock[1]",
-                  "samples": [
-                    "[\"bone_a\"] -> -",
-                    "<absent> -> -",
-                    "true -> -",
-                    "false -> -",
-                    "[] -> -",
-                    "[\"bone_a\"] -> -"
-                  ]
-                }
+              "bdsErrors": [
+                "[Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_158.json | minecraft:geometry field n_way_visual_rotation.x references unknown state paletter_a",
+                "[Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_159.json | minecraft:geometry field n_way_visual_rotation.x references unknown state paletter_b",
+                "minecraft:geometry: n_way_visual_rotation must define at least one axis (x, y, or z)",
+                "minecraft:geometry: invalid string"
+              ]
+            },
+            "n_way_visual_rotation.y": {
+              "accepted": 0,
+              "rejected": 5,
+              "rejectedValues": [
+                "string:paletter_a",
+                "string:paletter_b",
+                "string:",
+                "string:minecraft:paletter_a",
+                "string:minecraft:paletter_unknown"
+              ],
+              "bdsErrors": [
+                "[Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_163.json | minecraft:geometry field n_way_visual_rotation.y references unknown state paletter_a",
+                "[Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_164.json | minecraft:geometry field n_way_visual_rotation.y references unknown state paletter_b",
+                "minecraft:geometry: n_way_visual_rotation must define at least one axis (x, y, or z)",
+                "minecraft:geometry: invalid string"
+              ]
+            },
+            "n_way_visual_rotation.z": {
+              "accepted": 0,
+              "rejected": 5,
+              "rejectedValues": [
+                "string:paletter_a",
+                "string:paletter_b",
+                "string:",
+                "string:minecraft:paletter_a",
+                "string:minecraft:paletter_unknown"
+              ],
+              "bdsErrors": [
+                "[Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_168.json | minecraft:geometry field n_way_visual_rotation.z references unknown state paletter_a",
+                "[Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_169.json | minecraft:geometry field n_way_visual_rotation.z references unknown state paletter_b",
+                "minecraft:geometry: n_way_visual_rotation must define at least one axis (x, y, or z)",
+                "minecraft:geometry: invalid string"
               ]
             }
           },
@@ -2838,8 +2955,8 @@
               ]
             },
             "geometry.bone_visibility": {
-              "accepted": 36,
-              "rejected": 38,
+              "accepted": 95,
+              "rejected": 103,
               "rejectedValues": [
                 "map<string>:{1}",
                 "map<string>:{2}",
@@ -2873,6 +2990,71 @@
                 "map<string>:{1} .5e1",
                 "map<string>:{1} -1e3",
                 "map<string>:{1} 1E3",
+                "map<string>:{1} 1e-50",
+                "map<string>:{1} \t1",
+                "map<string>:{1} 00.5",
+                "map<string>:{3 keys} 0 / 0.0 / 1",
+                "map<string>:{3 keys} 0.5 / -1 / 0.1234567",
+                "map<string>:{3 keys} 0.0078125 / 16777217 / 2",
+                "map<string>:{3 keys} -0 / -0.5 / .5",
+                "map<string>:{3 keys} 1. / +1 /  1 ",
+                "map<string>:{3 keys} 1. / +1 /  1  linked geometry.identifier",
+                "map<string>:{3 keys} 1e3 / 1e-3 / 1.5E2",
+                "map<string>:{3 keys} true / false / !q.block_state('paletter:flag')",
+                "map<string>:{3 keys} query.block_state('paletter:flag') / -.5 / -1.",
+                "map<string>:{3 keys} 1.e3 / .5e1 / -1e3",
+                "map<string>:{3 keys} 1E3 / 1e-50 / \t1",
+                "map<string>:{3 keys} 00.5 / 0 / 0.0",
+                "map<string>:{3 keys} 0.0 / 1 / 0.5",
+                "map<string>:{3 keys} -1 / 0.1234567 / 0.0078125",
+                "map<string>:{3 keys} 16777217 / 2 / -0",
+                "map<string>:{3 keys} -0.5 / .5 / 1.",
+                "map<string>:{3 keys} +1 /  1  / 1e3",
+                "map<string>:{3 keys} +1 /  1  / 1e3 linked geometry.identifier",
+                "map<string>:{3 keys} 1e-3 / 1.5E2 / true",
+                "map<string>:{3 keys} false / !q.block_state('paletter:flag') / query.block_state('paletter:flag')",
+                "map<string>:{3 keys} -.5 / -1. / 1.e3",
+                "map<string>:{3 keys} .5e1 / -1e3 / 1E3",
+                "map<string>:{3 keys} 1e-50 / \t1 / 00.5",
+                "map<string>:{1 object} q.block_state('paletter:flag')",
+                "map<string>:{1 object} 0",
+                "map<string>:{1 object} 0.0",
+                "map<string>:{1 object} 1",
+                "map<string>:{1 object} 0.5",
+                "map<string>:{1 object} -1",
+                "map<string>:{1 object} 0.1234567",
+                "map<string>:{1 object} 0.0078125",
+                "map<string>:{1 object} 16777217",
+                "map<string>:{1 object} 2",
+                "map<string>:{1 object} -0",
+                "map<string>:{1 object} -0.5",
+                "map<string>:{1 object} .5",
+                "map<string>:{1 object} 1.",
+                "map<string>:{1 object} +1",
+                "map<string>:{1 object} +1 linked geometry.identifier",
+                "map<string>:{1 object}  1 ",
+                "map<string>:{1 object} 1e3",
+                "map<string>:{1 object} 1e-3",
+                "map<string>:{1 object} 1.5E2",
+                "map<string>:{1 object} true",
+                "map<string>:{1 object} false",
+                "map<string>:{1 object} !q.block_state('paletter:flag')",
+                "map<string>:{1 object} query.block_state('paletter:flag')",
+                "map<string>:{1 object} -.5",
+                "map<string>:{1 object} -1.",
+                "map<string>:{1 object} 1.e3",
+                "map<string>:{1 object} .5e1",
+                "map<string>:{1 object} -1e3",
+                "map<string>:{1 object} 1E3",
+                "map<string>:{1 object} 1e-50",
+                "map<string>:{1 object} \t1",
+                "map<string>:{1 object} 00.5",
+                "map<string>:{1 number} 0",
+                "map<string>:{1 number} 0.5",
+                "map<string>:{1 number} 1",
+                "map<string>:{1 number} 2.25",
+                "map<string>:{1 number} 30",
+                "map<string>:{1 number} -1",
                 "map<boolean>:{1}",
                 "map<boolean>:{1} linked geometry.identifier",
                 "map<boolean>:{2}",
@@ -2888,24 +3070,13 @@
               ],
               "unexplained": [
                 {
-                  "wire": "minecraft:item_visual.geometryDescription.bone_visibility.bone_a_2.expression",
+                  "wire": "minecraft:item_visual.geometryDescription.bone_visibility.bone_a.expression",
                   "samples": [
                     "<absent> -> -",
                     "{} -> -",
                     "{} -> -",
-                    "{\"bone_a\":\"q.block_state('paletter:flag')\"} -> -",
-                    "{\"bone_a\":\"q.block_state('paletter:flag')\",\"bone_a_2\":\"1.0\"} -> 1.000000 (string)",
-                    "{\"paletter_unknown\":\"q.block_state('paletter:flag')\"} -> -"
-                  ]
-                },
-                {
-                  "wire": "minecraft:item_visual.geometryDescription.bone_visibility.bone_a_2.version",
-                  "samples": [
-                    "<absent> -> -",
-                    "{} -> -",
-                    "{} -> -",
-                    "{\"bone_a\":\"q.block_state('paletter:flag')\"} -> -",
-                    "{\"bone_a\":\"q.block_state('paletter:flag')\",\"bone_a_2\":\"1.0\"} -> 13 (short)",
+                    "{\"bone_a\":\"q.block_state('paletter:flag')\"} -> q.block_state('paletter:flag') (string)",
+                    "{\"bone_a\":\"q.block_state('paletter:flag')\",\"bone_a_2\":\"1.0\"} -> q.block_state('paletter:flag') (string)",
                     "{\"paletter_unknown\":\"q.block_state('paletter:flag')\"} -> -"
                   ]
                 },
@@ -2971,41 +3142,18 @@
               "rejected": 0
             },
             "geometry.uv_lock": {
-              "accepted": 6,
-              "rejected": 2,
+              "accepted": 19,
+              "rejected": 3,
               "rejectedValues": [
+                "array<string>:[65x]",
                 "array<string>:[wrong type]",
                 "object:{}"
               ],
               "bdsErrors": [
                 "uv_lock: invalid numeric value",
-                "uv_lock[0]: invalid string",
                 "geometry: invalid string",
+                "uv_lock[0]: invalid string",
                 "uv_lock: expected an array"
-              ],
-              "unexplained": [
-                {
-                  "wire": "minecraft:item_visual.geometryDescription.uv_lock[0]",
-                  "samples": [
-                    "<absent> -> -",
-                    "true -> -",
-                    "false -> -",
-                    "[] -> -",
-                    "[\"bone_a\"] -> bone_a (string)",
-                    "[\"bone_a\",\"paletter_b\"] -> paletter_b (string)"
-                  ]
-                },
-                {
-                  "wire": "minecraft:item_visual.geometryDescription.uv_lock[1]",
-                  "samples": [
-                    "<absent> -> -",
-                    "true -> -",
-                    "false -> -",
-                    "[] -> -",
-                    "[\"bone_a\"] -> -",
-                    "[\"bone_a\",\"paletter_b\"] -> bone_a (string)"
-                  ]
-                }
               ]
             },
             "material_instances": {
@@ -3071,8 +3219,8 @@
               ]
             },
             "geometry.bone_visibility": {
-              "accepted": 36,
-              "rejected": 38,
+              "accepted": 95,
+              "rejected": 103,
               "rejectedValues": [
                 "map<string>:{1}",
                 "map<string>:{2}",
@@ -3106,6 +3254,71 @@
                 "map<string>:{1} .5e1",
                 "map<string>:{1} -1e3",
                 "map<string>:{1} 1E3",
+                "map<string>:{1} 1e-50",
+                "map<string>:{1} \t1",
+                "map<string>:{1} 00.5",
+                "map<string>:{3 keys} 0 / 0.0 / 1",
+                "map<string>:{3 keys} 0.5 / -1 / 0.1234567",
+                "map<string>:{3 keys} 0.0078125 / 16777217 / 2",
+                "map<string>:{3 keys} -0 / -0.5 / .5",
+                "map<string>:{3 keys} 1. / +1 /  1 ",
+                "map<string>:{3 keys} 1. / +1 /  1  linked geometry.identifier",
+                "map<string>:{3 keys} 1e3 / 1e-3 / 1.5E2",
+                "map<string>:{3 keys} true / false / !q.block_state('paletter:flag')",
+                "map<string>:{3 keys} query.block_state('paletter:flag') / -.5 / -1.",
+                "map<string>:{3 keys} 1.e3 / .5e1 / -1e3",
+                "map<string>:{3 keys} 1E3 / 1e-50 / \t1",
+                "map<string>:{3 keys} 00.5 / 0 / 0.0",
+                "map<string>:{3 keys} 0.0 / 1 / 0.5",
+                "map<string>:{3 keys} -1 / 0.1234567 / 0.0078125",
+                "map<string>:{3 keys} 16777217 / 2 / -0",
+                "map<string>:{3 keys} -0.5 / .5 / 1.",
+                "map<string>:{3 keys} +1 /  1  / 1e3",
+                "map<string>:{3 keys} +1 /  1  / 1e3 linked geometry.identifier",
+                "map<string>:{3 keys} 1e-3 / 1.5E2 / true",
+                "map<string>:{3 keys} false / !q.block_state('paletter:flag') / query.block_state('paletter:flag')",
+                "map<string>:{3 keys} -.5 / -1. / 1.e3",
+                "map<string>:{3 keys} .5e1 / -1e3 / 1E3",
+                "map<string>:{3 keys} 1e-50 / \t1 / 00.5",
+                "map<string>:{1 object} q.block_state('paletter:flag')",
+                "map<string>:{1 object} 0",
+                "map<string>:{1 object} 0.0",
+                "map<string>:{1 object} 1",
+                "map<string>:{1 object} 0.5",
+                "map<string>:{1 object} -1",
+                "map<string>:{1 object} 0.1234567",
+                "map<string>:{1 object} 0.0078125",
+                "map<string>:{1 object} 16777217",
+                "map<string>:{1 object} 2",
+                "map<string>:{1 object} -0",
+                "map<string>:{1 object} -0.5",
+                "map<string>:{1 object} .5",
+                "map<string>:{1 object} 1.",
+                "map<string>:{1 object} +1",
+                "map<string>:{1 object} +1 linked geometry.identifier",
+                "map<string>:{1 object}  1 ",
+                "map<string>:{1 object} 1e3",
+                "map<string>:{1 object} 1e-3",
+                "map<string>:{1 object} 1.5E2",
+                "map<string>:{1 object} true",
+                "map<string>:{1 object} false",
+                "map<string>:{1 object} !q.block_state('paletter:flag')",
+                "map<string>:{1 object} query.block_state('paletter:flag')",
+                "map<string>:{1 object} -.5",
+                "map<string>:{1 object} -1.",
+                "map<string>:{1 object} 1.e3",
+                "map<string>:{1 object} .5e1",
+                "map<string>:{1 object} -1e3",
+                "map<string>:{1 object} 1E3",
+                "map<string>:{1 object} 1e-50",
+                "map<string>:{1 object} \t1",
+                "map<string>:{1 object} 00.5",
+                "map<string>:{1 number} 0",
+                "map<string>:{1 number} 0.5",
+                "map<string>:{1 number} 1",
+                "map<string>:{1 number} 2.25",
+                "map<string>:{1 number} 30",
+                "map<string>:{1 number} -1",
                 "map<boolean>:{1}",
                 "map<boolean>:{1} linked geometry.identifier",
                 "map<boolean>:{2}",
@@ -3121,13 +3334,13 @@
               ],
               "unexplained": [
                 {
-                  "wire": "minecraft:item_visual.geometryDescription.bone_visibility.bone_a_2",
+                  "wire": "minecraft:item_visual.geometryDescription.bone_visibility.bone_a",
                   "samples": [
                     "<absent> -> -",
                     "{} -> -",
                     "{} -> -",
-                    "{\"bone_a\":\"q.block_state('paletter:flag')\"} -> -",
-                    "{\"bone_a\":\"q.block_state('paletter:flag')\",\"bone_a_2\":\"1.0\"} -> 1.000000 (string)",
+                    "{\"bone_a\":\"q.block_state('paletter:flag')\"} -> q.block_state('paletter:flag') (string)",
+                    "{\"bone_a\":\"q.block_state('paletter:flag')\",\"bone_a_2\":\"1.0\"} -> q.block_state('paletter:flag') (string)",
                     "{\"paletter_unknown\":\"q.block_state('paletter:flag')\"} -> -"
                   ]
                 }
@@ -3182,41 +3395,18 @@
               "rejected": 0
             },
             "geometry.uv_lock": {
-              "accepted": 6,
-              "rejected": 2,
+              "accepted": 19,
+              "rejected": 3,
               "rejectedValues": [
+                "array<string>:[65x]",
                 "array<string>:[wrong type]",
                 "object:{}"
               ],
               "bdsErrors": [
                 "uv_lock: invalid numeric value",
-                "uv_lock[0]: invalid string",
                 "geometry: invalid string",
+                "uv_lock[0]: invalid string",
                 "uv_lock: expected an array"
-              ],
-              "unexplained": [
-                {
-                  "wire": "minecraft:item_visual.geometryDescription.uv_lock[0]",
-                  "samples": [
-                    "<absent> -> -",
-                    "true -> -",
-                    "false -> -",
-                    "[] -> -",
-                    "[\"bone_a\"] -> bone_a (string)",
-                    "[\"bone_a\",\"paletter_b\"] -> paletter_b (string)"
-                  ]
-                },
-                {
-                  "wire": "minecraft:item_visual.geometryDescription.uv_lock[1]",
-                  "samples": [
-                    "<absent> -> -",
-                    "true -> -",
-                    "false -> -",
-                    "[] -> -",
-                    "[\"bone_a\"] -> -",
-                    "[\"bone_a\",\"paletter_b\"] -> bone_a (string)"
-                  ]
-                }
               ]
             },
             "material_instances": {
@@ -3282,8 +3472,8 @@
               ]
             },
             "geometry.bone_visibility": {
-              "accepted": 39,
-              "rejected": 35,
+              "accepted": 98,
+              "rejected": 100,
               "rejectedValues": [
                 "map<string>:{1}",
                 "map<string>:{2}",
@@ -3317,6 +3507,71 @@
                 "map<string>:{1} .5e1",
                 "map<string>:{1} -1e3",
                 "map<string>:{1} 1E3",
+                "map<string>:{1} 1e-50",
+                "map<string>:{1} \t1",
+                "map<string>:{1} 00.5",
+                "map<string>:{3 keys} 0 / 0.0 / 1",
+                "map<string>:{3 keys} 0.5 / -1 / 0.1234567",
+                "map<string>:{3 keys} 0.0078125 / 16777217 / 2",
+                "map<string>:{3 keys} -0 / -0.5 / .5",
+                "map<string>:{3 keys} 1. / +1 /  1 ",
+                "map<string>:{3 keys} 1. / +1 /  1  linked geometry.identifier",
+                "map<string>:{3 keys} 1e3 / 1e-3 / 1.5E2",
+                "map<string>:{3 keys} true / false / !q.block_state('paletter:flag')",
+                "map<string>:{3 keys} query.block_state('paletter:flag') / -.5 / -1.",
+                "map<string>:{3 keys} 1.e3 / .5e1 / -1e3",
+                "map<string>:{3 keys} 1E3 / 1e-50 / \t1",
+                "map<string>:{3 keys} 00.5 / 0 / 0.0",
+                "map<string>:{3 keys} 0.0 / 1 / 0.5",
+                "map<string>:{3 keys} -1 / 0.1234567 / 0.0078125",
+                "map<string>:{3 keys} 16777217 / 2 / -0",
+                "map<string>:{3 keys} -0.5 / .5 / 1.",
+                "map<string>:{3 keys} +1 /  1  / 1e3",
+                "map<string>:{3 keys} +1 /  1  / 1e3 linked geometry.identifier",
+                "map<string>:{3 keys} 1e-3 / 1.5E2 / true",
+                "map<string>:{3 keys} false / !q.block_state('paletter:flag') / query.block_state('paletter:flag')",
+                "map<string>:{3 keys} -.5 / -1. / 1.e3",
+                "map<string>:{3 keys} .5e1 / -1e3 / 1E3",
+                "map<string>:{3 keys} 1e-50 / \t1 / 00.5",
+                "map<string>:{1 object} q.block_state('paletter:flag')",
+                "map<string>:{1 object} 0",
+                "map<string>:{1 object} 0.0",
+                "map<string>:{1 object} 1",
+                "map<string>:{1 object} 0.5",
+                "map<string>:{1 object} -1",
+                "map<string>:{1 object} 0.1234567",
+                "map<string>:{1 object} 0.0078125",
+                "map<string>:{1 object} 16777217",
+                "map<string>:{1 object} 2",
+                "map<string>:{1 object} -0",
+                "map<string>:{1 object} -0.5",
+                "map<string>:{1 object} .5",
+                "map<string>:{1 object} 1.",
+                "map<string>:{1 object} +1",
+                "map<string>:{1 object} +1 linked geometry.identifier",
+                "map<string>:{1 object}  1 ",
+                "map<string>:{1 object} 1e3",
+                "map<string>:{1 object} 1e-3",
+                "map<string>:{1 object} 1.5E2",
+                "map<string>:{1 object} true",
+                "map<string>:{1 object} false",
+                "map<string>:{1 object} !q.block_state('paletter:flag')",
+                "map<string>:{1 object} query.block_state('paletter:flag')",
+                "map<string>:{1 object} -.5",
+                "map<string>:{1 object} -1.",
+                "map<string>:{1 object} 1.e3",
+                "map<string>:{1 object} .5e1",
+                "map<string>:{1 object} -1e3",
+                "map<string>:{1 object} 1E3",
+                "map<string>:{1 object} 1e-50",
+                "map<string>:{1 object} \t1",
+                "map<string>:{1 object} 00.5",
+                "map<string>:{1 number} 0",
+                "map<string>:{1 number} 0.5",
+                "map<string>:{1 number} 1",
+                "map<string>:{1 number} 2.25",
+                "map<string>:{1 number} 30",
+                "map<string>:{1 number} -1",
                 "map<boolean>:{1}",
                 "map<boolean>:{2}",
                 "map<boolean>:{unknown key}"
@@ -3412,41 +3667,18 @@
               "rejected": 0
             },
             "geometry.uv_lock": {
-              "accepted": 6,
-              "rejected": 2,
+              "accepted": 19,
+              "rejected": 3,
               "rejectedValues": [
+                "array<string>:[65x]",
                 "array<string>:[wrong type]",
                 "object:{}"
               ],
               "bdsErrors": [
                 "uv_lock: invalid numeric value",
-                "uv_lock[0]: invalid string",
                 "geometry: invalid string",
+                "uv_lock[0]: invalid string",
                 "uv_lock: expected an array"
-              ],
-              "unexplained": [
-                {
-                  "wire": "minecraft:item_visual.geometryDescription.uv_lock[0]",
-                  "samples": [
-                    "<absent> -> -",
-                    "true -> -",
-                    "false -> -",
-                    "[] -> -",
-                    "[\"bone_a\"] -> bone_a (string)",
-                    "[\"bone_a\",\"paletter_b\"] -> paletter_b (string)"
-                  ]
-                },
-                {
-                  "wire": "minecraft:item_visual.geometryDescription.uv_lock[1]",
-                  "samples": [
-                    "<absent> -> -",
-                    "true -> -",
-                    "false -> -",
-                    "[] -> -",
-                    "[\"bone_a\"] -> -",
-                    "[\"bone_a\",\"paletter_b\"] -> bone_a (string)"
-                  ]
-                }
               ]
             },
             "material_instances": {
@@ -3628,7 +3860,7 @@
               ],
               "bdsErrors": [
                 "stops_liquid_flowing_from_direction[0]: This value is bound to Facing and expects one of the following strings: down, up, north, ... (3 others)",
-                "[Components] block_definitions | behavior_packs/paletter_spec | blocks/b_liquid_detection_28.json | Detected duplicate direction in \"stops_liquid_flowing_from_direction\" field: \"up\"",
+                "[Components] block_definitions | behavior_packs/paletter_spec | blocks/b_liquid_detection_28.json | Detected duplicate direction in \"stops_liquid_flowing_from_direction\" field: \"down\"",
                 "stops_liquid_flowing_from_direction: expected an array"
               ]
             },
@@ -3730,12 +3962,19 @@
           ],
           "fields": {
             "color": {
-              "accepted": 1,
-              "rejected": 3,
+              "accepted": 7,
+              "rejected": 10,
               "rejectedValues": [
                 "omitted",
                 "string:paletter_b",
-                "string:"
+                "string:",
+                "array<integer>:[]",
+                "array<integer>:[4x]",
+                "array<integer>:[wrong type]",
+                "array<integer>:[3]",
+                "array<integer>:[3,7]",
+                "array<integer>:[0.5,0.25,2]",
+                "array<integer>:[2x]"
               ],
               "bdsErrors": [
                 "color: missing required field",
@@ -3744,7 +3983,7 @@
               ]
             },
             "tint_method": {
-              "accepted": 4,
+              "accepted": 8,
               "rejected": 1,
               "rejectedValues": [
                 "string:paletter_invalid"
@@ -3752,6 +3991,37 @@
               "bdsErrors": [
                 "tint_method: This value is bound to Tint Method and expects one of the following strings: none, default_foliage, birch_foliage, ... (4 others). Found: paletter_invalid",
                 "minecraft:map_color: Expected [r, g, b], with values in the 0-255 range, or a hex value with 6 characters (e.g. RGB as #FFFFFF)."
+              ]
+            }
+          },
+          "forms": {
+            "string": {
+              "accepted": 1,
+              "rejected": 2,
+              "rejectedValues": [
+                "string:paletter_b",
+                "string:"
+              ],
+              "bdsErrors": [
+                "minecraft:map_color: Expected [r, g, b], with values in the 0-255 range, or a hex value with 6 characters (e.g. RGB as #FFFFFF).",
+                "minecraft:map_color: expected an object"
+              ]
+            },
+            "array<integer>": {
+              "accepted": 6,
+              "rejected": 7,
+              "rejectedValues": [
+                "array<integer>:[]",
+                "array<integer>:[4x]",
+                "array<integer>:[wrong type]",
+                "array<integer>:[3]",
+                "array<integer>:[3,7]",
+                "array<integer>:[0.5,0.25,2]",
+                "array<integer>:[2x]"
+              ],
+              "bdsErrors": [
+                "minecraft:map_color: Expected [r, g, b], with values in the 0-255 range, or a hex value with 6 characters (e.g. RGB as #FFFFFF).",
+                "minecraft:map_color: expected an object"
               ]
             }
           }
@@ -3768,7 +4038,7 @@
           ],
           "fields": {
             "*": {
-              "accepted": 8,
+              "accepted": 12,
               "rejected": 0
             },
             "*.ambient_occlusion": {
@@ -3836,7 +4106,7 @@
               ]
             },
             "down": {
-              "accepted": 8,
+              "accepted": 12,
               "rejected": 0
             },
             "down.ambient_occlusion": {
@@ -3857,7 +4127,7 @@
               ]
             },
             "down.face_dimming": {
-              "accepted": 2,
+              "accepted": 4,
               "rejected": 4,
               "rejectedValues": [
                 "string:paletter_b",
@@ -3890,19 +4160,21 @@
               "rejected": 0
             },
             "down.tint_method": {
-              "accepted": 0,
-              "rejected": 2,
+              "accepted": 7,
+              "rejected": 3,
               "rejectedValues": [
+                "string:paletter_invalid",
                 "boolean:true",
                 "boolean:false"
               ],
               "bdsErrors": [
-                "tint_method: This value is bound to Tint Method and expects one of the following strings: none, default_foliage, birch_foliage, ... (4 others)",
-                "down: invalid string"
+                "tint_method: This value is bound to Tint Method and expects one of the following strings: none, default_foliage, birch_foliage, ... (4 others). Found: paletter_invalid",
+                "down: invalid string",
+                "tint_method: This value is bound to Tint Method and expects one of the following strings: none, default_foliage, birch_foliage, ... (4 others)"
               ]
             },
             "east": {
-              "accepted": 8,
+              "accepted": 12,
               "rejected": 0
             },
             "east.ambient_occlusion": {
@@ -3923,7 +4195,7 @@
               ]
             },
             "east.face_dimming": {
-              "accepted": 2,
+              "accepted": 4,
               "rejected": 4,
               "rejectedValues": [
                 "string:paletter_b",
@@ -3956,19 +4228,21 @@
               "rejected": 0
             },
             "east.tint_method": {
-              "accepted": 0,
-              "rejected": 2,
+              "accepted": 7,
+              "rejected": 3,
               "rejectedValues": [
+                "string:paletter_invalid",
                 "boolean:true",
                 "boolean:false"
               ],
               "bdsErrors": [
-                "tint_method: This value is bound to Tint Method and expects one of the following strings: none, default_foliage, birch_foliage, ... (4 others)",
-                "east: invalid string"
+                "tint_method: This value is bound to Tint Method and expects one of the following strings: none, default_foliage, birch_foliage, ... (4 others). Found: paletter_invalid",
+                "east: invalid string",
+                "tint_method: This value is bound to Tint Method and expects one of the following strings: none, default_foliage, birch_foliage, ... (4 others)"
               ]
             },
             "north": {
-              "accepted": 8,
+              "accepted": 12,
               "rejected": 0
             },
             "north.ambient_occlusion": {
@@ -3989,7 +4263,7 @@
               ]
             },
             "north.face_dimming": {
-              "accepted": 2,
+              "accepted": 4,
               "rejected": 4,
               "rejectedValues": [
                 "string:paletter_b",
@@ -4022,19 +4296,21 @@
               "rejected": 0
             },
             "north.tint_method": {
-              "accepted": 0,
-              "rejected": 2,
+              "accepted": 7,
+              "rejected": 3,
               "rejectedValues": [
+                "string:paletter_invalid",
                 "boolean:true",
                 "boolean:false"
               ],
               "bdsErrors": [
-                "tint_method: This value is bound to Tint Method and expects one of the following strings: none, default_foliage, birch_foliage, ... (4 others)",
-                "north: invalid string"
+                "tint_method: This value is bound to Tint Method and expects one of the following strings: none, default_foliage, birch_foliage, ... (4 others). Found: paletter_invalid",
+                "north: invalid string",
+                "tint_method: This value is bound to Tint Method and expects one of the following strings: none, default_foliage, birch_foliage, ... (4 others)"
               ]
             },
             "south": {
-              "accepted": 8,
+              "accepted": 12,
               "rejected": 0
             },
             "south.ambient_occlusion": {
@@ -4055,7 +4331,7 @@
               ]
             },
             "south.face_dimming": {
-              "accepted": 2,
+              "accepted": 4,
               "rejected": 4,
               "rejectedValues": [
                 "string:paletter_b",
@@ -4088,19 +4364,21 @@
               "rejected": 0
             },
             "south.tint_method": {
-              "accepted": 0,
-              "rejected": 2,
+              "accepted": 7,
+              "rejected": 3,
               "rejectedValues": [
+                "string:paletter_invalid",
                 "boolean:true",
                 "boolean:false"
               ],
               "bdsErrors": [
-                "tint_method: This value is bound to Tint Method and expects one of the following strings: none, default_foliage, birch_foliage, ... (4 others)",
-                "south: invalid string"
+                "tint_method: This value is bound to Tint Method and expects one of the following strings: none, default_foliage, birch_foliage, ... (4 others). Found: paletter_invalid",
+                "south: invalid string",
+                "tint_method: This value is bound to Tint Method and expects one of the following strings: none, default_foliage, birch_foliage, ... (4 others)"
               ]
             },
             "up": {
-              "accepted": 8,
+              "accepted": 12,
               "rejected": 0
             },
             "up.ambient_occlusion": {
@@ -4121,7 +4399,7 @@
               ]
             },
             "up.face_dimming": {
-              "accepted": 2,
+              "accepted": 4,
               "rejected": 4,
               "rejectedValues": [
                 "string:paletter_b",
@@ -4154,19 +4432,21 @@
               "rejected": 0
             },
             "up.tint_method": {
-              "accepted": 0,
-              "rejected": 2,
+              "accepted": 7,
+              "rejected": 3,
               "rejectedValues": [
+                "string:paletter_invalid",
                 "boolean:true",
                 "boolean:false"
               ],
               "bdsErrors": [
-                "tint_method: This value is bound to Tint Method and expects one of the following strings: none, default_foliage, birch_foliage, ... (4 others)",
-                "up: invalid string"
+                "tint_method: This value is bound to Tint Method and expects one of the following strings: none, default_foliage, birch_foliage, ... (4 others). Found: paletter_invalid",
+                "up: invalid string",
+                "tint_method: This value is bound to Tint Method and expects one of the following strings: none, default_foliage, birch_foliage, ... (4 others)"
               ]
             },
             "west": {
-              "accepted": 8,
+              "accepted": 12,
               "rejected": 0
             },
             "west.ambient_occlusion": {
@@ -4187,7 +4467,7 @@
               ]
             },
             "west.face_dimming": {
-              "accepted": 2,
+              "accepted": 4,
               "rejected": 4,
               "rejectedValues": [
                 "string:paletter_b",
@@ -4220,15 +4500,17 @@
               "rejected": 0
             },
             "west.tint_method": {
-              "accepted": 0,
-              "rejected": 2,
+              "accepted": 7,
+              "rejected": 3,
               "rejectedValues": [
+                "string:paletter_invalid",
                 "boolean:true",
                 "boolean:false"
               ],
               "bdsErrors": [
-                "tint_method: This value is bound to Tint Method and expects one of the following strings: none, default_foliage, birch_foliage, ... (4 others)",
-                "west: invalid string"
+                "tint_method: This value is bound to Tint Method and expects one of the following strings: none, default_foliage, birch_foliage, ... (4 others). Found: paletter_invalid",
+                "west: invalid string",
+                "tint_method: This value is bound to Tint Method and expects one of the following strings: none, default_foliage, birch_foliage, ... (4 others)"
               ]
             }
           }
@@ -4239,7 +4521,7 @@
           ],
           "fields": {
             "*": {
-              "accepted": 8,
+              "accepted": 20,
               "rejected": 0
             },
             "*.ambient_occlusion": {
@@ -4307,7 +4589,7 @@
               ]
             },
             "down": {
-              "accepted": 8,
+              "accepted": 20,
               "rejected": 0
             },
             "down.ambient_occlusion": {
@@ -4328,7 +4610,7 @@
               ]
             },
             "down.face_dimming": {
-              "accepted": 2,
+              "accepted": 4,
               "rejected": 4,
               "rejectedValues": [
                 "string:paletter_b",
@@ -4361,19 +4643,21 @@
               "rejected": 0
             },
             "down.tint_method": {
-              "accepted": 0,
-              "rejected": 2,
+              "accepted": 7,
+              "rejected": 3,
               "rejectedValues": [
+                "string:paletter_invalid",
                 "boolean:true",
                 "boolean:false"
               ],
               "bdsErrors": [
-                "tint_method: This value is bound to Tint Method and expects one of the following strings: none, default_foliage, birch_foliage, ... (4 others)",
-                "down: invalid string"
+                "tint_method: This value is bound to Tint Method and expects one of the following strings: none, default_foliage, birch_foliage, ... (4 others). Found: paletter_invalid",
+                "down: invalid string",
+                "tint_method: This value is bound to Tint Method and expects one of the following strings: none, default_foliage, birch_foliage, ... (4 others)"
               ]
             },
             "east": {
-              "accepted": 8,
+              "accepted": 20,
               "rejected": 0
             },
             "east.ambient_occlusion": {
@@ -4394,7 +4678,7 @@
               ]
             },
             "east.face_dimming": {
-              "accepted": 2,
+              "accepted": 4,
               "rejected": 4,
               "rejectedValues": [
                 "string:paletter_b",
@@ -4427,19 +4711,21 @@
               "rejected": 0
             },
             "east.tint_method": {
-              "accepted": 0,
-              "rejected": 2,
+              "accepted": 7,
+              "rejected": 3,
               "rejectedValues": [
+                "string:paletter_invalid",
                 "boolean:true",
                 "boolean:false"
               ],
               "bdsErrors": [
-                "tint_method: This value is bound to Tint Method and expects one of the following strings: none, default_foliage, birch_foliage, ... (4 others)",
-                "east: invalid string"
+                "tint_method: This value is bound to Tint Method and expects one of the following strings: none, default_foliage, birch_foliage, ... (4 others). Found: paletter_invalid",
+                "east: invalid string",
+                "tint_method: This value is bound to Tint Method and expects one of the following strings: none, default_foliage, birch_foliage, ... (4 others)"
               ]
             },
             "north": {
-              "accepted": 8,
+              "accepted": 20,
               "rejected": 0
             },
             "north.ambient_occlusion": {
@@ -4460,7 +4746,7 @@
               ]
             },
             "north.face_dimming": {
-              "accepted": 2,
+              "accepted": 4,
               "rejected": 4,
               "rejectedValues": [
                 "string:paletter_b",
@@ -4493,19 +4779,21 @@
               "rejected": 0
             },
             "north.tint_method": {
-              "accepted": 0,
-              "rejected": 2,
+              "accepted": 7,
+              "rejected": 3,
               "rejectedValues": [
+                "string:paletter_invalid",
                 "boolean:true",
                 "boolean:false"
               ],
               "bdsErrors": [
-                "tint_method: This value is bound to Tint Method and expects one of the following strings: none, default_foliage, birch_foliage, ... (4 others)",
-                "north: invalid string"
+                "tint_method: This value is bound to Tint Method and expects one of the following strings: none, default_foliage, birch_foliage, ... (4 others). Found: paletter_invalid",
+                "north: invalid string",
+                "tint_method: This value is bound to Tint Method and expects one of the following strings: none, default_foliage, birch_foliage, ... (4 others)"
               ]
             },
             "south": {
-              "accepted": 8,
+              "accepted": 20,
               "rejected": 0
             },
             "south.ambient_occlusion": {
@@ -4526,7 +4814,7 @@
               ]
             },
             "south.face_dimming": {
-              "accepted": 2,
+              "accepted": 4,
               "rejected": 4,
               "rejectedValues": [
                 "string:paletter_b",
@@ -4559,19 +4847,21 @@
               "rejected": 0
             },
             "south.tint_method": {
-              "accepted": 0,
-              "rejected": 2,
+              "accepted": 7,
+              "rejected": 3,
               "rejectedValues": [
+                "string:paletter_invalid",
                 "boolean:true",
                 "boolean:false"
               ],
               "bdsErrors": [
-                "tint_method: This value is bound to Tint Method and expects one of the following strings: none, default_foliage, birch_foliage, ... (4 others)",
-                "south: invalid string"
+                "tint_method: This value is bound to Tint Method and expects one of the following strings: none, default_foliage, birch_foliage, ... (4 others). Found: paletter_invalid",
+                "south: invalid string",
+                "tint_method: This value is bound to Tint Method and expects one of the following strings: none, default_foliage, birch_foliage, ... (4 others)"
               ]
             },
             "up": {
-              "accepted": 8,
+              "accepted": 20,
               "rejected": 0
             },
             "up.ambient_occlusion": {
@@ -4592,7 +4882,7 @@
               ]
             },
             "up.face_dimming": {
-              "accepted": 2,
+              "accepted": 4,
               "rejected": 4,
               "rejectedValues": [
                 "string:paletter_b",
@@ -4625,19 +4915,21 @@
               "rejected": 0
             },
             "up.tint_method": {
-              "accepted": 0,
-              "rejected": 2,
+              "accepted": 7,
+              "rejected": 3,
               "rejectedValues": [
+                "string:paletter_invalid",
                 "boolean:true",
                 "boolean:false"
               ],
               "bdsErrors": [
-                "tint_method: This value is bound to Tint Method and expects one of the following strings: none, default_foliage, birch_foliage, ... (4 others)",
-                "up: invalid string"
+                "tint_method: This value is bound to Tint Method and expects one of the following strings: none, default_foliage, birch_foliage, ... (4 others). Found: paletter_invalid",
+                "up: invalid string",
+                "tint_method: This value is bound to Tint Method and expects one of the following strings: none, default_foliage, birch_foliage, ... (4 others)"
               ]
             },
             "west": {
-              "accepted": 8,
+              "accepted": 20,
               "rejected": 0
             },
             "west.ambient_occlusion": {
@@ -4658,7 +4950,7 @@
               ]
             },
             "west.face_dimming": {
-              "accepted": 2,
+              "accepted": 4,
               "rejected": 4,
               "rejectedValues": [
                 "string:paletter_b",
@@ -4691,15 +4983,17 @@
               "rejected": 0
             },
             "west.tint_method": {
-              "accepted": 0,
-              "rejected": 2,
+              "accepted": 7,
+              "rejected": 3,
               "rejectedValues": [
+                "string:paletter_invalid",
                 "boolean:true",
                 "boolean:false"
               ],
               "bdsErrors": [
-                "tint_method: This value is bound to Tint Method and expects one of the following strings: none, default_foliage, birch_foliage, ... (4 others)",
-                "west: invalid string"
+                "tint_method: This value is bound to Tint Method and expects one of the following strings: none, default_foliage, birch_foliage, ... (4 others). Found: paletter_invalid",
+                "west: invalid string",
+                "tint_method: This value is bound to Tint Method and expects one of the following strings: none, default_foliage, birch_foliage, ... (4 others)"
               ]
             },
             "*.alpha_masked_tint": {
@@ -4738,7 +5032,7 @@
           ],
           "fields": {
             "*": {
-              "accepted": 8,
+              "accepted": 12,
               "rejected": 0
             },
             "*.ambient_occlusion": {
@@ -4806,7 +5100,7 @@
               ]
             },
             "down": {
-              "accepted": 8,
+              "accepted": 12,
               "rejected": 0
             },
             "down.ambient_occlusion": {
@@ -4827,7 +5121,7 @@
               ]
             },
             "down.face_dimming": {
-              "accepted": 2,
+              "accepted": 4,
               "rejected": 4,
               "rejectedValues": [
                 "string:paletter_b",
@@ -4860,19 +5154,21 @@
               "rejected": 0
             },
             "down.tint_method": {
-              "accepted": 0,
-              "rejected": 2,
+              "accepted": 7,
+              "rejected": 3,
               "rejectedValues": [
+                "string:paletter_invalid",
                 "boolean:true",
                 "boolean:false"
               ],
               "bdsErrors": [
-                "tint_method: This value is bound to Tint Method and expects one of the following strings: none, default_foliage, birch_foliage, ... (4 others)",
-                "down: invalid string"
+                "tint_method: This value is bound to Tint Method and expects one of the following strings: none, default_foliage, birch_foliage, ... (4 others). Found: paletter_invalid",
+                "down: invalid string",
+                "tint_method: This value is bound to Tint Method and expects one of the following strings: none, default_foliage, birch_foliage, ... (4 others)"
               ]
             },
             "east": {
-              "accepted": 8,
+              "accepted": 12,
               "rejected": 0
             },
             "east.ambient_occlusion": {
@@ -4893,7 +5189,7 @@
               ]
             },
             "east.face_dimming": {
-              "accepted": 2,
+              "accepted": 4,
               "rejected": 4,
               "rejectedValues": [
                 "string:paletter_b",
@@ -4926,19 +5222,21 @@
               "rejected": 0
             },
             "east.tint_method": {
-              "accepted": 0,
-              "rejected": 2,
+              "accepted": 7,
+              "rejected": 3,
               "rejectedValues": [
+                "string:paletter_invalid",
                 "boolean:true",
                 "boolean:false"
               ],
               "bdsErrors": [
-                "tint_method: This value is bound to Tint Method and expects one of the following strings: none, default_foliage, birch_foliage, ... (4 others)",
-                "east: invalid string"
+                "tint_method: This value is bound to Tint Method and expects one of the following strings: none, default_foliage, birch_foliage, ... (4 others). Found: paletter_invalid",
+                "east: invalid string",
+                "tint_method: This value is bound to Tint Method and expects one of the following strings: none, default_foliage, birch_foliage, ... (4 others)"
               ]
             },
             "north": {
-              "accepted": 8,
+              "accepted": 12,
               "rejected": 0
             },
             "north.ambient_occlusion": {
@@ -4959,7 +5257,7 @@
               ]
             },
             "north.face_dimming": {
-              "accepted": 2,
+              "accepted": 4,
               "rejected": 4,
               "rejectedValues": [
                 "string:paletter_b",
@@ -4992,19 +5290,21 @@
               "rejected": 0
             },
             "north.tint_method": {
-              "accepted": 0,
-              "rejected": 2,
+              "accepted": 7,
+              "rejected": 3,
               "rejectedValues": [
+                "string:paletter_invalid",
                 "boolean:true",
                 "boolean:false"
               ],
               "bdsErrors": [
-                "tint_method: This value is bound to Tint Method and expects one of the following strings: none, default_foliage, birch_foliage, ... (4 others)",
-                "north: invalid string"
+                "tint_method: This value is bound to Tint Method and expects one of the following strings: none, default_foliage, birch_foliage, ... (4 others). Found: paletter_invalid",
+                "north: invalid string",
+                "tint_method: This value is bound to Tint Method and expects one of the following strings: none, default_foliage, birch_foliage, ... (4 others)"
               ]
             },
             "south": {
-              "accepted": 8,
+              "accepted": 12,
               "rejected": 0
             },
             "south.ambient_occlusion": {
@@ -5025,7 +5325,7 @@
               ]
             },
             "south.face_dimming": {
-              "accepted": 2,
+              "accepted": 4,
               "rejected": 4,
               "rejectedValues": [
                 "string:paletter_b",
@@ -5058,19 +5358,21 @@
               "rejected": 0
             },
             "south.tint_method": {
-              "accepted": 0,
-              "rejected": 2,
+              "accepted": 7,
+              "rejected": 3,
               "rejectedValues": [
+                "string:paletter_invalid",
                 "boolean:true",
                 "boolean:false"
               ],
               "bdsErrors": [
-                "tint_method: This value is bound to Tint Method and expects one of the following strings: none, default_foliage, birch_foliage, ... (4 others)",
-                "south: invalid string"
+                "tint_method: This value is bound to Tint Method and expects one of the following strings: none, default_foliage, birch_foliage, ... (4 others). Found: paletter_invalid",
+                "south: invalid string",
+                "tint_method: This value is bound to Tint Method and expects one of the following strings: none, default_foliage, birch_foliage, ... (4 others)"
               ]
             },
             "up": {
-              "accepted": 8,
+              "accepted": 12,
               "rejected": 0
             },
             "up.ambient_occlusion": {
@@ -5091,7 +5393,7 @@
               ]
             },
             "up.face_dimming": {
-              "accepted": 2,
+              "accepted": 4,
               "rejected": 4,
               "rejectedValues": [
                 "string:paletter_b",
@@ -5124,19 +5426,21 @@
               "rejected": 0
             },
             "up.tint_method": {
-              "accepted": 0,
-              "rejected": 2,
+              "accepted": 7,
+              "rejected": 3,
               "rejectedValues": [
+                "string:paletter_invalid",
                 "boolean:true",
                 "boolean:false"
               ],
               "bdsErrors": [
-                "tint_method: This value is bound to Tint Method and expects one of the following strings: none, default_foliage, birch_foliage, ... (4 others)",
-                "up: invalid string"
+                "tint_method: This value is bound to Tint Method and expects one of the following strings: none, default_foliage, birch_foliage, ... (4 others). Found: paletter_invalid",
+                "up: invalid string",
+                "tint_method: This value is bound to Tint Method and expects one of the following strings: none, default_foliage, birch_foliage, ... (4 others)"
               ]
             },
             "west": {
-              "accepted": 8,
+              "accepted": 12,
               "rejected": 0
             },
             "west.ambient_occlusion": {
@@ -5157,7 +5461,7 @@
               ]
             },
             "west.face_dimming": {
-              "accepted": 2,
+              "accepted": 4,
               "rejected": 4,
               "rejectedValues": [
                 "string:paletter_b",
@@ -5190,15 +5494,17 @@
               "rejected": 0
             },
             "west.tint_method": {
-              "accepted": 0,
-              "rejected": 2,
+              "accepted": 7,
+              "rejected": 3,
               "rejectedValues": [
+                "string:paletter_invalid",
                 "boolean:true",
                 "boolean:false"
               ],
               "bdsErrors": [
-                "tint_method: This value is bound to Tint Method and expects one of the following strings: none, default_foliage, birch_foliage, ... (4 others)",
-                "west: invalid string"
+                "tint_method: This value is bound to Tint Method and expects one of the following strings: none, default_foliage, birch_foliage, ... (4 others). Found: paletter_invalid",
+                "west: invalid string",
+                "tint_method: This value is bound to Tint Method and expects one of the following strings: none, default_foliage, birch_foliage, ... (4 others)"
               ]
             }
           }
@@ -5254,8 +5560,14 @@
           ],
           "fields": {
             "conditions": {
-              "accepted": 3,
-              "rejected": 0
+              "accepted": 4,
+              "rejected": 1,
+              "rejectedValues": [
+                "array<object>:[65x]"
+              ],
+              "bdsErrors": [
+                "conditions: too many input elements, expected no more than 64"
+              ]
             },
             "conditions[].allowed_faces": {
               "accepted": 9,
@@ -5267,14 +5579,15 @@
               ],
               "bdsErrors": [
                 "allowed_faces[0]: This value is bound to Facing and expects one of the following strings: down, up, north, ... (3 others)",
-                "[Components] block_definitions | behavior_packs/paletter_spec | blocks/b_placement_filter_16.json | Detected duplicate direction in \"stops_liquid_flowing_from_direction\" field: \"down\"",
+                "[Components] block_definitions | behavior_packs/paletter_spec | blocks/b_placement_filter_18.json | Detected duplicate direction in \"stops_liquid_flowing_from_direction\" field: \"down\"",
                 "allowed_faces: expected an array"
               ]
             },
             "conditions[].block_filter": {
-              "accepted": 3,
-              "rejected": 6,
+              "accepted": 21,
+              "rejected": 7,
               "rejectedValues": [
+                "array<object>:[65x]",
                 "string:paletter_a",
                 "string:paletter_b",
                 "string:",
@@ -5283,6 +5596,7 @@
                 "object:{}"
               ],
               "bdsErrors": [
+                "block_filter: too many input elements, expected no more than 64",
                 "block_filter: expected an array"
               ]
             },
@@ -5527,7 +5841,7 @@
               "rejected": 2,
               "rejectedValues": [
                 "integer:-1",
-                "integer:1.5"
+                "integer:0.5"
               ],
               "bdsErrors": [
                 "steps: invalid numeric value"
@@ -5598,7 +5912,7 @@
               "rejected": 2,
               "rejectedValues": [
                 "integer:-1",
-                "integer:1.5"
+                "integer:0.5"
               ],
               "bdsErrors": [
                 "steps: invalid numeric value"
@@ -5669,7 +5983,7 @@
               "rejected": 2,
               "rejectedValues": [
                 "integer:-1",
-                "integer:1.5"
+                "integer:0.5"
               ],
               "bdsErrors": [
                 "steps: invalid numeric value"
@@ -5743,14 +6057,14 @@
               "accepted": 5,
               "rejected": 4,
               "rejectedValues": [
+                "integer:-1",
                 "integer:16",
                 "integer:100",
-                "integer:-1",
-                "integer:1.5"
+                "integer:0.5"
               ],
               "bdsErrors": [
-                "min_power: the input must be a number <= 15",
-                "min_power: invalid numeric value"
+                "min_power: invalid numeric value",
+                "min_power: the input must be a number <= 15"
               ]
             },
             "propagates_power": {
@@ -5778,12 +6092,12 @@
               "rejectedValues": [
                 "array<string>:[wrong type]",
                 "string:paletter_invalid",
+                "string:down",
+                "string:up",
                 "string:north",
-                "string:east",
                 "string:south",
                 "string:west",
-                "string:up",
-                "string:down"
+                "string:east"
               ],
               "bdsErrors": [
                 "connected_faces[0]: This value is bound to Facing and expects one of the following strings: down, up, north, ... (3 others)",
@@ -5853,7 +6167,7 @@
           ],
           "fields": {
             "origin": {
-              "accepted": 4,
+              "accepted": 6,
               "rejected": 10,
               "rejectedValues": [
                 "vec3:-9,0,-8",
@@ -5874,8 +6188,8 @@
               ]
             },
             "size": {
-              "accepted": 6,
-              "rejected": 8,
+              "accepted": 7,
+              "rejected": 9,
               "rejectedValues": [
                 "vec3:-8,0,-8",
                 "vec3:-9,0,-8",
@@ -5884,18 +6198,136 @@
                 "vec3:8,17,8",
                 "vec3:1,2",
                 "vec3:1,2,3,4",
-                "vec3:-4,5.5,0"
+                "vec3:-4,5.5,0",
+                "vec3:-2,1,1"
               ],
               "bdsErrors": [
                 "minecraft:selection_box: Invalid box size\"origin\" + \"size\", must be inside the following limit: Vec3(-8,0,-8) and Vec3(8,16,8)",
                 "minecraft:selection_box: invalid numeric value",
                 "size: Expected [x, y, z]."
               ]
+            },
+            "origin.x": {
+              "accepted": 0,
+              "rejected": 10,
+              "rejectedValues": [
+                "number:0",
+                "number:0.5",
+                "number:1",
+                "number:2.25",
+                "number:30",
+                "number:-1",
+                "number:90",
+                "number:-90",
+                "number:450",
+                "number:45"
+              ],
+              "bdsErrors": [
+                "minecraft:selection_box: Invalid box size\"origin\" + \"size\", must be inside the following limit: Vec3(-8,0,-8) and Vec3(8,16,8)",
+                "minecraft:selection_box: invalid numeric value",
+                "origin: Expected [x, y, z]."
+              ]
+            },
+            "origin.y": {
+              "accepted": 1,
+              "rejected": 9,
+              "rejectedValues": [
+                "number:0.5",
+                "number:1",
+                "number:2.25",
+                "number:30",
+                "number:-1",
+                "number:90",
+                "number:-90",
+                "number:450",
+                "number:45"
+              ],
+              "bdsErrors": [
+                "minecraft:selection_box: Invalid box size\"origin\" + \"size\", must be inside the following limit: Vec3(-8,0,-8) and Vec3(8,16,8)",
+                "minecraft:selection_box: invalid numeric value",
+                "origin: Expected [x, y, z]."
+              ]
+            },
+            "origin.z": {
+              "accepted": 0,
+              "rejected": 10,
+              "rejectedValues": [
+                "number:0",
+                "number:0.5",
+                "number:1",
+                "number:2.25",
+                "number:30",
+                "number:-1",
+                "number:90",
+                "number:-90",
+                "number:450",
+                "number:45"
+              ],
+              "bdsErrors": [
+                "minecraft:selection_box: Invalid box size\"origin\" + \"size\", must be inside the following limit: Vec3(-8,0,-8) and Vec3(8,16,8)",
+                "minecraft:selection_box: invalid numeric value",
+                "origin: Expected [x, y, z]."
+              ]
+            },
+            "size.x": {
+              "accepted": 4,
+              "rejected": 6,
+              "rejectedValues": [
+                "number:30",
+                "number:-1",
+                "number:90",
+                "number:-90",
+                "number:450",
+                "number:45"
+              ],
+              "bdsErrors": [
+                "size: Expected [x, y, z].",
+                "minecraft:selection_box: invalid numeric value",
+                "minecraft:selection_box: Invalid box size\"origin\" + \"size\", must be inside the following limit: Vec3(-8,0,-8) and Vec3(8,16,8)"
+              ]
+            },
+            "size.y": {
+              "accepted": 4,
+              "rejected": 6,
+              "rejectedValues": [
+                "number:30",
+                "number:-1",
+                "number:90",
+                "number:-90",
+                "number:450",
+                "number:45"
+              ],
+              "bdsErrors": [
+                "size: Expected [x, y, z].",
+                "minecraft:selection_box: invalid numeric value",
+                "minecraft:selection_box: Invalid box size\"origin\" + \"size\", must be inside the following limit: Vec3(-8,0,-8) and Vec3(8,16,8)"
+              ]
+            },
+            "size.z": {
+              "accepted": 4,
+              "rejected": 6,
+              "rejectedValues": [
+                "number:30",
+                "number:-1",
+                "number:90",
+                "number:-90",
+                "number:450",
+                "number:45"
+              ],
+              "bdsErrors": [
+                "size: Expected [x, y, z].",
+                "minecraft:selection_box: invalid numeric value",
+                "minecraft:selection_box: Invalid box size\"origin\" + \"size\", must be inside the following limit: Vec3(-8,0,-8) and Vec3(8,16,8)"
+              ]
             }
           },
           "forms": {
             "boolean": {
               "accepted": 2,
+              "rejected": 0
+            },
+            "object": {
+              "accepted": 9,
               "rejected": 0
             }
           }
@@ -5926,6 +6358,19 @@
               ]
             }
           }
+        }
+      ]
+    },
+    "block:minecraft:tag": {
+      "windows": [
+        {
+          "protocols": [
+            1001,
+            2168,
+            2193,
+            2225,
+            2259
+          ]
         }
       ]
     },
@@ -5982,9 +6427,11 @@
           "fields": {
             "rotation": {
               "accepted": 4,
-              "rejected": 9,
+              "rejected": 11,
               "rejectedValues": [
                 "array<number>:[]",
+                "array<number>:[3x]",
+                "array<number>:[4x]",
                 "array<number>:[wrong type]",
                 "array<number>:[3]",
                 "array<number>:[3,7]",
@@ -6047,7 +6494,7 @@
               ]
             },
             "rotation_pivot": {
-              "accepted": 5,
+              "accepted": 6,
               "rejected": 2,
               "rejectedValues": [
                 "vec3:1,2",
@@ -6070,10 +6517,11 @@
               "rejected": 0
             },
             "scale": {
-              "accepted": 7,
-              "rejected": 5,
+              "accepted": 8,
+              "rejected": 6,
               "rejectedValues": [
                 "array<number>:[]",
+                "array<number>:[4x]",
                 "array<number>:[wrong type]",
                 "array<number>:[3]",
                 "array<number>:[3,7]",
@@ -6096,7 +6544,7 @@
               "rejected": 0
             },
             "scale_pivot": {
-              "accepted": 5,
+              "accepted": 6,
               "rejected": 2,
               "rejectedValues": [
                 "vec3:1,2",
@@ -6119,10 +6567,11 @@
               "rejected": 0
             },
             "translation": {
-              "accepted": 7,
-              "rejected": 5,
+              "accepted": 8,
+              "rejected": 6,
               "rejectedValues": [
                 "array<number>:[]",
+                "array<number>:[4x]",
                 "array<number>:[wrong type]",
                 "array<number>:[3]",
                 "array<number>:[3,7]",
@@ -6370,14 +6819,11 @@
             },
             "direction": {
               "accepted": 2,
-              "rejected": 6,
+              "rejected": 3,
               "rejectedValues": [
                 "omitted",
                 "string:paletter_invalid",
-                "string:north",
-                "string:south",
-                "string:west",
-                "string:east"
+                "string:north"
               ],
               "bdsErrors": [
                 "direction: missing required field",
@@ -6454,7 +6900,7 @@
           ],
           "fields": {
             "enabled_states": {
-              "accepted": 8,
+              "accepted": 16,
               "rejected": 3,
               "rejectedValues": [
                 "omitted",
@@ -6469,15 +6915,19 @@
             },
             "y_rotation_offset": {
               "accepted": 6,
-              "rejected": 3,
+              "rejected": 5,
               "rejectedValues": [
                 "number:-1",
                 "number:361",
-                "number:271"
+                "number:271",
+                "number:45",
+                "number:135"
               ],
               "bdsErrors": [
                 "y_rotation_offset: the input is outside of the accepted range [0, 360]",
-                "y_rotation_offset: 271 is not multiple of 90"
+                "y_rotation_offset: 271 is not multiple of 90",
+                "y_rotation_offset: 45 is not multiple of 90",
+                "y_rotation_offset: 135 is not multiple of 90"
               ],
               "bdsRange": [
                 0,
@@ -6499,6 +6949,37 @@
               "bdsErrors": [
                 "minecraft:placement_direction: \"blocks_to_corner_with\" can only be used when \"minecraft:corner_and_cardinal_direction\" is enabled in \"enabled_states\".",
                 "blocks_to_corner_with[0]: Block name is missing in block descriptor",
+                "blocks_to_corner_with[0]: invalid string"
+              ]
+            },
+            "blocks_to_corner_with[].name": {
+              "accepted": 0,
+              "rejected": 5,
+              "rejectedValues": [
+                "string:minecraft:stone",
+                "string:minecraft:dirt",
+                "string:",
+                "string:stone",
+                "string:minecraft:paletter_unknown"
+              ],
+              "bdsErrors": [
+                "minecraft:placement_direction: \"blocks_to_corner_with\" can only be used when \"minecraft:corner_and_cardinal_direction\" is enabled in \"enabled_states\".",
+                "blocks_to_corner_with[0]: Block name is missing in block descriptor",
+                "blocks_to_corner_with[0]: invalid string"
+              ]
+            },
+            "blocks_to_corner_with[].states": {
+              "accepted": 0,
+              "rejected": 4,
+              "rejectedValues": [
+                "map<integer>:{}",
+                "map<integer>:{1}",
+                "map<integer>:{2}",
+                "map<integer>:{unknown key}"
+              ],
+              "bdsErrors": [
+                "minecraft:placement_direction: \"blocks_to_corner_with\" can only be used when \"minecraft:corner_and_cardinal_direction\" is enabled in \"enabled_states\".",
+                "blocks_to_corner_with[0]: Cannot have both a tag expression and block states in a block descriptor for block:",
                 "blocks_to_corner_with[0]: invalid string"
               ]
             }
@@ -6695,9 +7176,11 @@
               ]
             },
             "use_on": {
-              "accepted": 2,
-              "rejected": 7,
+              "accepted": 19,
+              "rejected": 9,
               "rejectedValues": [
+                "array<object>:[256x]",
+                "array<object>:[257x]",
                 "array<object>:[2]",
                 "string:paletter_a",
                 "string:paletter_b",
@@ -6709,6 +7192,7 @@
               "bdsErrors": [
                 "use_on: No duplicates allowed",
                 "[Item]  Error Parsing Item <id>:",
+                "use_on: too many input elements, expected no more than 256",
                 "use_on: expected an array"
               ]
             },
@@ -6946,6 +7430,19 @@
         }
       ]
     },
+    "item:minecraft:custom_components": {
+      "windows": [
+        {
+          "protocols": [
+            1001,
+            2168,
+            2193,
+            2225,
+            2259
+          ]
+        }
+      ]
+    },
     "item:minecraft:damage": {
       "windows": [
         {
@@ -7046,7 +7543,7 @@
               "rejected": 0
             },
             "destroy_speeds[].block": {
-              "accepted": 6,
+              "accepted": 40,
               "rejected": 3,
               "rejectedValues": [
                 "object:{}",
@@ -7257,7 +7754,7 @@
               ]
             },
             "durability_thresholds[].particle_type": {
-              "accepted": 31,
+              "accepted": 94,
               "rejected": 1,
               "rejectedValues": [
                 "string:paletter_invalid"
@@ -7268,19 +7765,14 @@
               ]
             },
             "durability_thresholds[].sound_event": {
-              "accepted": 2,
-              "rejected": 4,
+              "accepted": 568,
+              "rejected": 1,
               "rejectedValues": [
-                "string:paletter_b",
-                "string:",
-                "string:minecraft:break",
-                "string:minecraft:paletter_unknown"
+                "string:paletter_invalid"
               ],
               "bdsErrors": [
-                "sound_event: This value is bound to LevelSoundEvent and expects one of the following strings: item.use.on, hit, step, ... (564 others). Found: paletter_b",
-                "[Item]  Error Parsing Item <id>:",
-                "sound_event: This value is bound to LevelSoundEvent and expects one of the following strings: item.use.on, hit, step, ... (564 others). Found:",
-                "sound_event: This value is bound to LevelSoundEvent and expects one of the following strings: item.use.on, hit, step, ... (564 others). Found: minecraft:break"
+                "sound_event: This value is bound to LevelSoundEvent and expects one of the following strings: item.use.on, hit, step, ... (564 others). Found: paletter_invalid",
+                "[Item]  Error Parsing Item <id>:"
               ]
             },
             "sound_event": {
@@ -7314,11 +7806,12 @@
           ],
           "fields": {
             "default_color": {
-              "accepted": 7,
-              "rejected": 7,
+              "accepted": 8,
+              "rejected": 8,
               "rejectedValues": [
                 "string:",
                 "array<number>:[]",
+                "array<number>:[4x]",
                 "array<number>:[wrong type]",
                 "array<number>:[3]",
                 "array<number>:[3,7]",
@@ -7336,9 +7829,9 @@
                     "<absent> -> 255 (int)",
                     "\"#ff0080\" -> 255 (int)",
                     "\"#3366cc\" -> 51 (int)",
+                    "[3,3,3] -> 3 (int)",
                     "[90,180,270] -> 90 (int)",
-                    "[180,270,0] -> 180 (int)",
-                    "[1,2,3] -> 1 (int)"
+                    "[180,270,0] -> 180 (int)"
                   ]
                 },
                 {
@@ -7347,9 +7840,9 @@
                     "<absent> -> 255 (int)",
                     "\"#ff0080\" -> 0 (int)",
                     "\"#3366cc\" -> 102 (int)",
+                    "[3,3,3] -> 3 (int)",
                     "[90,180,270] -> 180 (int)",
-                    "[180,270,0] -> 255 (int)",
-                    "[1,2,3] -> 2 (int)"
+                    "[180,270,0] -> 255 (int)"
                   ]
                 },
                 {
@@ -7358,9 +7851,9 @@
                     "<absent> -> 255 (int)",
                     "\"#ff0080\" -> 128 (int)",
                     "\"#3366cc\" -> 204 (int)",
+                    "[3,3,3] -> 3 (int)",
                     "[90,180,270] -> 255 (int)",
-                    "[180,270,0] -> 0 (int)",
-                    "[1,2,3] -> 3 (int)"
+                    "[180,270,0] -> 0 (int)"
                   ]
                 }
               ]
@@ -7381,14 +7874,11 @@
           ],
           "fields": {
             "slot": {
-              "accepted": 1,
-              "rejected": 5,
+              "accepted": 25,
+              "rejected": 2,
               "rejectedValues": [
                 "omitted",
-                "string:paletter_b",
-                "string:",
-                "string:minecraft:sword",
-                "string:minecraft:paletter_unknown"
+                "string:paletter_invalid"
               ],
               "bdsErrors": [
                 "slot: missing required field",
@@ -7427,7 +7917,7 @@
           ],
           "fields": {
             "dispense_on": {
-              "accepted": 3,
+              "accepted": 20,
               "rejected": 6,
               "rejectedValues": [
                 "string:paletter_a",
@@ -7496,7 +7986,7 @@
               ]
             },
             "use_on": {
-              "accepted": 3,
+              "accepted": 20,
               "rejected": 6,
               "rejectedValues": [
                 "string:paletter_a",
@@ -7614,7 +8104,7 @@
               ]
             },
             "using_converts_to": {
-              "accepted": 4,
+              "accepted": 9,
               "rejected": 0,
               "unexplained": [
                 {
@@ -7624,7 +8114,19 @@
                     "{} -> {} (compound)",
                     "{\"name\":\"minecraft:bowl\"} -> -",
                     "{\"name\":\"minecraft:bowl\",\"name_2\":\"minecraft:bowl\"} -> -",
-                    "{\"paletter_unknown\":\"minecraft:bowl\"} -> {} (compound)"
+                    "{\"paletter_unknown\":\"minecraft:bowl\"} -> {} (compound)",
+                    "\"minecraft:bowl\" -> -"
+                  ]
+                },
+                {
+                  "wire": "minecraft:food.using_converts_to.name",
+                  "samples": [
+                    "<absent> -> -",
+                    "{} -> -",
+                    "{\"name\":\"minecraft:bowl\"} -> minecraft:bowl (string)",
+                    "{\"name\":\"minecraft:bowl\",\"name_2\":\"minecraft:bowl\"} -> minecraft:bowl (string)",
+                    "{\"paletter_unknown\":\"minecraft:bowl\"} -> -",
+                    "\"minecraft:bowl\" -> minecraft:bowl (string)"
                   ]
                 }
               ]
@@ -7754,7 +8256,7 @@
           ],
           "fields": {
             "value": {
-              "accepted": 6,
+              "accepted": 33,
               "rejected": 0,
               "unexplained": [
                 {
@@ -7762,10 +8264,10 @@
                   "samples": [
                     "\"dark_purple\" -> §5 (string)",
                     "<absent> -> -",
-                    "\"dark_purple\" -> §5 (string)",
-                    "\"paletter_b\" -> -",
-                    "\"\" -> -",
-                    "\"minecraft:dark_purple\" -> -"
+                    "\"black\" -> §0 (string)",
+                    "\"dark_blue\" -> §1 (string)",
+                    "\"dark_green\" -> §2 (string)",
+                    "\"dark_aqua\" -> §3 (string)"
                   ]
                 }
               ]
@@ -7773,7 +8275,7 @@
           },
           "forms": {
             "string": {
-              "accepted": 5,
+              "accepted": 32,
               "rejected": 0
             }
           }
@@ -8359,18 +8861,79 @@
               ]
             },
             "repair_items[].repair_amount": {
-              "accepted": 11,
+              "accepted": 12,
+              "rejected": 1,
+              "rejectedValues": [
+                "object:{}"
+              ],
+              "bdsErrors": [
+                "expression: missing required field",
+                "version: missing required field",
+                "repair_amount: invalid numeric value",
+                "repair_amount: invalid string"
+              ]
+            },
+            "repair_items[].repair_amount.expression": {
+              "accepted": 5,
               "rejected": 0,
               "unexplained": [
                 {
                   "wire": "minecraft:repairable.repair_items[0].repair_amount.version",
                   "samples": [
                     "<absent> -> -",
+                    "\"paletter_a\" -> 1 (short)",
+                    "\"paletter_b\" -> 1 (short)",
+                    "\"\" -> -1 (short)",
+                    "\"minecraft:paletter_a\" -> 1 (short)",
+                    "\"minecraft:paletter_unknown\" -> 1 (short)"
+                  ]
+                }
+              ]
+            },
+            "repair_items[].repair_amount.version": {
+              "accepted": 6,
+              "rejected": 1,
+              "rejectedValues": [
+                "integer:1.5"
+              ],
+              "bdsErrors": [
+                "version: invalid numeric value",
+                "repair_amount: invalid numeric value",
+                "repair_amount: invalid string",
+                "repair_items[0]: expected an array"
+              ],
+              "unexplained": [
+                {
+                  "wire": "minecraft:repairable.repair_items[0].repair_amount",
+                  "samples": [
+                    "<absent> -> -",
                     "0 -> -",
-                    "0.5 -> -",
                     "1 -> -",
-                    "2.25 -> -",
-                    "30 -> -"
+                    "2 -> -",
+                    "7 -> -",
+                    "100 -> 0.0 (float)"
+                  ]
+                },
+                {
+                  "wire": "minecraft:repairable.repair_items[0].repair_amount.expression",
+                  "samples": [
+                    "<absent> -> -",
+                    "0 -> paletter_a (string)",
+                    "1 -> paletter_a (string)",
+                    "2 -> paletter_a (string)",
+                    "7 -> paletter_a (string)",
+                    "100 -> -"
+                  ]
+                },
+                {
+                  "wire": "minecraft:repairable.repair_items[0].repair_amount.version",
+                  "samples": [
+                    "<absent> -> -",
+                    "0 -> 0 (short)",
+                    "1 -> 1 (short)",
+                    "2 -> 2 (short)",
+                    "7 -> 7 (short)",
+                    "100 -> -"
                   ]
                 }
               ]
@@ -8455,8 +9018,47 @@
               ]
             },
             "repair_items[].repair_amount": {
-              "accepted": 11,
+              "accepted": 12,
+              "rejected": 1,
+              "rejectedValues": [
+                "object:{}"
+              ],
+              "bdsErrors": [
+                "expression: missing required field",
+                "version: missing required field",
+                "repair_amount: invalid numeric value",
+                "repair_amount: invalid string"
+              ]
+            },
+            "repair_items[].repair_amount.expression": {
+              "accepted": 5,
               "rejected": 0
+            },
+            "repair_items[].repair_amount.version": {
+              "accepted": 6,
+              "rejected": 1,
+              "rejectedValues": [
+                "integer:1.5"
+              ],
+              "bdsErrors": [
+                "version: invalid numeric value",
+                "repair_amount: invalid numeric value",
+                "repair_amount: invalid string",
+                "repair_items[0]: expected an array"
+              ],
+              "unexplained": [
+                {
+                  "wire": "minecraft:repairable.repair_items[0].repair_amount",
+                  "samples": [
+                    "<absent> -> -",
+                    "0 -> paletter_a (string)",
+                    "1 -> paletter_a (string)",
+                    "2 -> paletter_a (string)",
+                    "7 -> paletter_a (string)",
+                    "100 -> 0.0 (float)"
+                  ]
+                }
+              ]
             }
           }
         }
@@ -8562,7 +9164,14 @@
           "fields": {
             "ammunition": {
               "accepted": 3,
-              "rejected": 0
+              "rejected": 1,
+              "rejectedValues": [
+                "array<object>:[probe] [{\"search_inventory\":true}]"
+              ],
+              "bdsErrors": [
+                "item: missing required field",
+                "[Item]  Error Parsing Item <id>:"
+              ]
             },
             "ammunition[].item": {
               "accepted": 9,
@@ -8842,51 +9451,36 @@
           ],
           "fields": {
             "attack_critical_hit": {
-              "accepted": 2,
-              "rejected": 4,
+              "accepted": 568,
+              "rejected": 1,
               "rejectedValues": [
-                "string:paletter_b",
-                "string:",
-                "string:minecraft:attack.strong",
-                "string:minecraft:paletter_unknown"
+                "string:paletter_invalid"
               ],
               "bdsErrors": [
-                "attack_critical_hit: This value is bound to LevelSoundEvent and expects one of the following strings: item.use.on, hit, step, ... (564 others). Found: paletter_b",
-                "[Item]  Error Parsing Item <id>:",
-                "attack_critical_hit: This value is bound to LevelSoundEvent and expects one of the following strings: item.use.on, hit, step, ... (564 others). Found:",
-                "attack_critical_hit: This value is bound to LevelSoundEvent and expects one of the following strings: item.use.on, hit, step, ... (564 others). Found: minecraft:attack.strong"
+                "attack_critical_hit: This value is bound to LevelSoundEvent and expects one of the following strings: item.use.on, hit, step, ... (564 others). Found: paletter_invalid",
+                "[Item]  Error Parsing Item <id>:"
               ]
             },
             "attack_hit": {
-              "accepted": 2,
-              "rejected": 4,
+              "accepted": 568,
+              "rejected": 1,
               "rejectedValues": [
-                "string:paletter_b",
-                "string:",
-                "string:minecraft:attack.strong",
-                "string:minecraft:paletter_unknown"
+                "string:paletter_invalid"
               ],
               "bdsErrors": [
-                "attack_hit: This value is bound to LevelSoundEvent and expects one of the following strings: item.use.on, hit, step, ... (564 others). Found: paletter_b",
-                "[Item]  Error Parsing Item <id>:",
-                "attack_hit: This value is bound to LevelSoundEvent and expects one of the following strings: item.use.on, hit, step, ... (564 others). Found:",
-                "attack_hit: This value is bound to LevelSoundEvent and expects one of the following strings: item.use.on, hit, step, ... (564 others). Found: minecraft:attack.strong"
+                "attack_hit: This value is bound to LevelSoundEvent and expects one of the following strings: item.use.on, hit, step, ... (564 others). Found: paletter_invalid",
+                "[Item]  Error Parsing Item <id>:"
               ]
             },
             "attack_miss": {
-              "accepted": 2,
-              "rejected": 4,
+              "accepted": 568,
+              "rejected": 1,
               "rejectedValues": [
-                "string:paletter_b",
-                "string:",
-                "string:minecraft:attack.nodamage",
-                "string:minecraft:paletter_unknown"
+                "string:paletter_invalid"
               ],
               "bdsErrors": [
-                "attack_miss: This value is bound to LevelSoundEvent and expects one of the following strings: item.use.on, hit, step, ... (564 others). Found: paletter_b",
-                "[Item]  Error Parsing Item <id>:",
-                "attack_miss: This value is bound to LevelSoundEvent and expects one of the following strings: item.use.on, hit, step, ... (564 others). Found:",
-                "attack_miss: This value is bound to LevelSoundEvent and expects one of the following strings: item.use.on, hit, step, ... (564 others). Found: minecraft:attack.nodamage"
+                "attack_miss: This value is bound to LevelSoundEvent and expects one of the following strings: item.use.on, hit, step, ... (564 others). Found: paletter_invalid",
+                "[Item]  Error Parsing Item <id>:"
               ]
             }
           }
@@ -8971,7 +9565,7 @@
           ],
           "fields": {
             "value": {
-              "accepted": 5,
+              "accepted": 11,
               "rejected": 1,
               "rejectedValues": [
                 "string:paletter_invalid"
@@ -8985,7 +9579,7 @@
           },
           "forms": {
             "string": {
-              "accepted": 3,
+              "accepted": 10,
               "rejected": 1,
               "rejectedValues": [
                 "string:paletter_invalid"
@@ -9084,19 +9678,14 @@
               ]
             },
             "start_sound": {
-              "accepted": 2,
-              "rejected": 4,
+              "accepted": 568,
+              "rejected": 1,
               "rejectedValues": [
-                "string:paletter_b",
-                "string:",
-                "string:minecraft:bow",
-                "string:minecraft:paletter_unknown"
+                "string:paletter_invalid"
               ],
               "bdsErrors": [
-                "start_sound: This value is bound to LevelSoundEvent and expects one of the following strings: item.use.on, hit, step, ... (564 others). Found: paletter_b",
-                "[Item]  Error Parsing Item <id>:",
-                "start_sound: This value is bound to LevelSoundEvent and expects one of the following strings: item.use.on, hit, step, ... (564 others). Found:",
-                "start_sound: This value is bound to LevelSoundEvent and expects one of the following strings: item.use.on, hit, step, ... (564 others). Found: minecraft:bow"
+                "start_sound: This value is bound to LevelSoundEvent and expects one of the following strings: item.use.on, hit, step, ... (564 others). Found: paletter_invalid",
+                "[Item]  Error Parsing Item <id>:"
               ]
             },
             "start_using": {
@@ -9111,7 +9700,7 @@
               ]
             },
             "use_duration": {
-              "accepted": 5,
+              "accepted": 8,
               "rejected": 1,
               "rejectedValues": [
                 "number:-1"
@@ -9228,6 +9817,183 @@
                 "dispensable: this member was found in the input, but is not present in the Schema",
                 "[Item]  Error Parsing Item <id>:"
               ]
+            }
+          }
+        }
+      ]
+    },
+    "block:minecraft:enchantment_power_transmitter": {
+      "windows": [
+        {
+          "protocols": [
+            1001,
+            2168,
+            2193
+          ]
+        },
+        {
+          "protocols": [
+            2225,
+            2259
+          ],
+          "forms": {
+            "base": {
+              "accepted": 1,
+              "rejected": 0
+            },
+            "boolean": {
+              "accepted": 2,
+              "rejected": 0
+            }
+          }
+        }
+      ]
+    },
+    "block:minecraft:leashable": {
+      "windows": [
+        {
+          "protocols": [
+            1001,
+            2168,
+            2193,
+            2225,
+            2259
+          ],
+          "fields": {
+            "offset": {
+              "accepted": 6,
+              "rejected": 2,
+              "rejectedValues": [
+                "vec3:1,2",
+                "vec3:1,2,3,4"
+              ],
+              "bdsErrors": [
+                "offset: Expected [x, y, z]."
+              ]
+            },
+            "offset.x": {
+              "accepted": 10,
+              "rejected": 0
+            },
+            "offset.y": {
+              "accepted": 10,
+              "rejected": 0
+            },
+            "offset.z": {
+              "accepted": 10,
+              "rejected": 0
+            }
+          }
+        }
+      ]
+    },
+    "block:minecraft:neighbor_change": {
+      "windows": [
+        {
+          "protocols": [
+            1001,
+            2168,
+            2193
+          ]
+        },
+        {
+          "protocols": [
+            2225,
+            2259
+          ],
+          "fields": {
+            "neighbor_directions": {
+              "accepted": 8,
+              "rejected": 3,
+              "rejectedValues": [
+                "array<string>:[]",
+                "array<string>:[wrong type]",
+                "array<string>:[all,up]"
+              ],
+              "bdsErrors": [
+                "neighbor_directions: expected object with at least 1 elements",
+                "neighbor_directions[0]: This value is bound to Neighbor Change Direction and expects one of the following strings: down, up, north, ... (4 others)",
+                "[Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_neighbor_change_12.json | The all neighbor direction must be used alone"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    "block:minecraft:sound": {
+      "windows": [
+        {
+          "protocols": [
+            1001
+          ]
+        },
+        {
+          "protocols": [
+            2168,
+            2193,
+            2225,
+            2259
+          ],
+          "fields": {
+            "sound": {
+              "accepted": 5,
+              "rejected": 0
+            }
+          }
+        }
+      ]
+    },
+    "block:minecraft:tags": {
+      "windows": [
+        {
+          "protocols": [
+            1001,
+            2168,
+            2193,
+            2225,
+            2259
+          ],
+          "forms": {
+            "base": {
+              "accepted": 1,
+              "rejected": 0
+            },
+            "array<string>": {
+              "accepted": 4,
+              "rejected": 1,
+              "rejectedValues": [
+                "array<string>:[wrong type]"
+              ],
+              "bdsErrors": [
+                "minecraft:tags[0]: invalid string"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    "block:minecraft:vibration_properties": {
+      "windows": [
+        {
+          "protocols": [
+            1001,
+            2168,
+            2193
+          ]
+        },
+        {
+          "protocols": [
+            2225,
+            2259
+          ],
+          "fields": {
+            "dampen_vibrations": {
+              "accepted": 2,
+              "rejected": 0
+            },
+            "occlude_vibrations": {
+              "accepted": 2,
+              "rejected": 0
             }
           }
         }

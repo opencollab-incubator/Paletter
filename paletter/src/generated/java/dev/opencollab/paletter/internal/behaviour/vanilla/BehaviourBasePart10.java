@@ -10,6 +10,23 @@ final class BehaviourBasePart10 {
     }
 
     static void part72(Changes v) {
+        v.item("minecraft:waxed_cut_copper");
+        v.item("minecraft:waxed_cut_copper_slab");
+        v.item("minecraft:waxed_cut_copper_stairs");
+        v.item("minecraft:waxed_double_cut_copper_slab").weightUnknown();
+        v.item("minecraft:waxed_exposed_chiseled_copper");
+        v.item("minecraft:waxed_exposed_copper");
+        v.item("minecraft:waxed_exposed_copper_bars");
+        v.item("minecraft:waxed_exposed_copper_bulb");
+        v.item("minecraft:waxed_exposed_copper_chain");
+        v.item("minecraft:waxed_exposed_copper_chest");
+        v.item("minecraft:waxed_exposed_copper_door");
+        v.item("minecraft:waxed_exposed_copper_golem_statue");
+        v.item("minecraft:waxed_exposed_copper_grate");
+        v.item("minecraft:waxed_exposed_copper_lantern");
+        v.item("minecraft:waxed_exposed_copper_trapdoor");
+        v.item("minecraft:waxed_exposed_cut_copper");
+        v.item("minecraft:waxed_exposed_cut_copper_slab");
         v.item("minecraft:waxed_exposed_cut_copper_stairs");
         v.item("minecraft:waxed_exposed_double_cut_copper_slab").weightUnknown();
         v.item("minecraft:waxed_exposed_lightning_rod");
@@ -53,6 +70,9 @@ final class BehaviourBasePart10 {
         v.item("minecraft:weathered_copper_bulb");
         v.item("minecraft:weathered_copper_chain");
         v.item("minecraft:weathered_copper_chest");
+    }
+
+    static void part73(Changes v) {
         v.item("minecraft:weathered_copper_door");
         v.item("minecraft:weathered_copper_golem_statue");
         v.item("minecraft:weathered_copper_grate");
@@ -70,9 +90,6 @@ final class BehaviourBasePart10 {
         v.item("minecraft:wheat_seeds").compostChance(30);
         v.item("minecraft:white_bundle").maxStackSize(1).weight(4);
         v.item("minecraft:white_candle");
-    }
-
-    static void part73(Changes v) {
         v.item("minecraft:white_candle_cake").weightUnknown();
         v.item("minecraft:white_carpet");
         v.item("minecraft:white_concrete");
@@ -158,6 +175,9 @@ final class BehaviourBasePart10 {
         v.item("minecraft:yellow_carpet");
         v.item("minecraft:yellow_concrete");
         v.item("minecraft:yellow_concrete_powder");
+    }
+
+    static void part74(Changes v) {
         v.item("minecraft:yellow_dye").furnaceXpMultiplier(0.2f);
         v.item("minecraft:yellow_glazed_terracotta");
         v.item("minecraft:yellow_harness").maxStackSize(1).weight(64);

@@ -15,9 +15,35 @@ import dev.opencollab.paletter.internal.behaviour.Cell;
 final class BehaviourTablesPart2 {
     /**
      * Used by:
+     * - minecraft:trip_wire liquid_flow_directions
+     */
+    static final Cell TABLE_ATTACHED_BIT_DISARMED_BIT_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_POWERED_BIT_SUSPENDED_BIT_2F4A55 = Cell.table(new String[] {"attached_bit", "disarmed_bit", "minecraft:connection_east", "minecraft:connection_north", "minecraft:connection_south", "minecraft:connection_west", "powered_bit", "suspended_bit"},
+    new Object[][] {{false, true}, {false, true}, {false, true}, {false, true}, {false, true}, {false, true}, {false, true}, {false, true}},
+    null, 63, null, null, null, null, null, null, null, null, null, null, null, null, null, null,
+            null, null, null, null, null, null, null, null, null, null, null, null, null, null,
+            null, null, null, null, null, null, null, null, null, null, null, null, null, null,
+            null, null, null, null, null, null, null, null, null, null, null, null, null, null,
+            null, null, null, null, null, null, null, null, null, null, null, null, null, null,
+            null, null, null, null, null, null, null, null, null, null, null, null, null, null,
+            null, null, null, null, null, null, null, null, null, null, null, null, null, null,
+            null, null, null, null, null, null, null, null, null, null, null, null, null, null,
+            null, null, null, null, null, null, null, null, null, null, null, null, null, null,
+            null, null, null, null, null, null, null, null, null, null, null, null, null, null,
+            null, null, null, null, null, null, null, null, null, null, null, null, null, null,
+            null, null, null, null, null, null, null, null, null, null, null, null, null, null,
+            null, null, null, null, null, null, null, null, null, null, null, null, null, null,
+            null, null, null, null, null, null, null, null, null, null, null, null, null, null,
+            null, null, null, null, null, null, null, null, null, null, null, null, null, null,
+            null, null, null, null, null, null, null, null, null, null, null, null, null, null,
+            null, null, null, null, null, null, null, null, null, null, null, null, null, null,
+            null, null, null, null, null, null, null, null, null, null, null, null, null, null,
+            null, null);
+
+    /**
+     * Used by:
      * - minecraft:trip_wire map_color (captures)
      */
-    static final Cell SOURCES_ATTACHED_BIT_DISARMED_BIT_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_POWERED_BIT_SUSPENDED_BIT_E46F62 = Cell.table(new String[] {"attached_bit", "disarmed_bit", "minecraft:connection_east", "minecraft:connection_north", "minecraft:connection_south", "minecraft:connection_west", "powered_bit", "suspended_bit"},
+    static final Cell SOURCES_ATTACHED_BIT_DISARMED_BIT_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_POWERED_BIT_SUSPENDED_BIT_AC1CE4 = Cell.table(new String[] {"attached_bit", "disarmed_bit", "minecraft:connection_east", "minecraft:connection_north", "minecraft:connection_south", "minecraft:connection_west", "powered_bit", "suspended_bit"},
     new Object[][] {{false, true}, {false, true}, {false, true}, {false, true}, {false, true}, {false, true}, {false, true}, {false, true}},
     CLOUDBURST_DATA_26_50, SCRIPT_API_26_50_MAP_COLOR, CLOUDBURST_DATA_26_50, CLOUDBURST_DATA_26_50,
             CLOUDBURST_DATA_26_50, CLOUDBURST_DATA_26_50, CLOUDBURST_DATA_26_50,
@@ -191,7 +217,7 @@ final class BehaviourTablesPart2 {
      * Used by:
      * - minecraft:tripwire_hook solid (captures)
      */
-    static final Cell SOURCES_ATTACHED_BIT_POWERED_BIT_E7A150 = Cell.table(new String[] {"attached_bit", "powered_bit"},
+    static final Cell SOURCES_ATTACHED_BIT_POWERED_BIT_37E5E2 = Cell.table(new String[] {"attached_bit", "powered_bit"},
     new Object[][] {{false, true}, {false, true}},
     SCRIPT_API_26_50_SOLID, CLOUDBURST_DATA_26_50, CLOUDBURST_DATA_26_50, CLOUDBURST_DATA_26_50);
 
@@ -199,31 +225,10 @@ final class BehaviourTablesPart2 {
      * Used by:
      * - minecraft:tripwire_hook map_color (captures)
      */
-    static final Cell SOURCES_ATTACHED_BIT_POWERED_BIT_9E75D2 = Cell.table(new String[] {"attached_bit", "powered_bit"},
+    static final Cell SOURCES_ATTACHED_BIT_POWERED_BIT_EEBA64 = Cell.table(new String[] {"attached_bit", "powered_bit"},
     new Object[][] {{false, true}, {false, true}},
     SCRIPT_API_26_50_MAP_COLOR, CLOUDBURST_DATA_26_50, CLOUDBURST_DATA_26_50,
             CLOUDBURST_DATA_26_50);
-
-    /**
-     * Used by:
-     * - minecraft:acacia_door collision_shape
-     * - minecraft:bamboo_door collision_shape
-     * - minecraft:birch_door collision_shape
-     * - minecraft:cherry_door collision_shape
-     * - minecraft:copper_door collision_shape
-     * - minecraft:crimson_door collision_shape
-     * - and 16 more
-     */
-    static final Cell TABLE_DOOR_HINGE_BIT_CARDINAL_DIRECTION_OPEN_BIT_C89710 = Cell.table(new String[] {"door_hinge_bit", "minecraft:cardinal_direction", "open_bit"},
-    new Object[][] {{false, true}, {"east", "north", "south", "west"}, {false, true}},
-    SHAPE_ACACIA_TRAPDOOR_COLLISION_SHAPE_6, SHAPE_ACACIA_TRAPDOOR_COLLISION_SHAPE_3,
-            SHAPE_ACACIA_TRAPDOOR_COLLISION_SHAPE_4, SHAPE_ACACIA_TRAPDOOR_COLLISION_SHAPE_6,
-            SHAPE_ACACIA_TRAPDOOR_COLLISION_SHAPE_3, SHAPE_ACACIA_TRAPDOOR_COLLISION_SHAPE_5,
-            SHAPE_ACACIA_TRAPDOOR_COLLISION_SHAPE_5, SHAPE_ACACIA_TRAPDOOR_COLLISION_SHAPE_4,
-            SHAPE_ACACIA_TRAPDOOR_COLLISION_SHAPE_6, SHAPE_ACACIA_TRAPDOOR_COLLISION_SHAPE_4,
-            SHAPE_ACACIA_TRAPDOOR_COLLISION_SHAPE_4, SHAPE_ACACIA_TRAPDOOR_COLLISION_SHAPE_5,
-            SHAPE_ACACIA_TRAPDOOR_COLLISION_SHAPE_3, SHAPE_ACACIA_TRAPDOOR_COLLISION_SHAPE_6,
-            SHAPE_ACACIA_TRAPDOOR_COLLISION_SHAPE_5, SHAPE_ACACIA_TRAPDOOR_COLLISION_SHAPE_3);
 
     /**
      * Used by:
@@ -235,7 +240,7 @@ final class BehaviourTablesPart2 {
      * - minecraft:brown_stained_glass_pane solid (captures)
      * - and 51 more
      */
-    static final Cell SOURCES_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_A567F3 = Cell.table(new String[] {"minecraft:connection_east", "minecraft:connection_north", "minecraft:connection_south", "minecraft:connection_west"},
+    static final Cell SOURCES_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_58504E = Cell.table(new String[] {"minecraft:connection_east", "minecraft:connection_north", "minecraft:connection_south", "minecraft:connection_west"},
     new Object[][] {{false, true}, {false, true}, {false, true}, {false, true}},
     SCRIPT_API_26_60_SOLID, CLOUDBURST_DATA_26_60, CLOUDBURST_DATA_26_60, CLOUDBURST_DATA_26_60,
             CLOUDBURST_DATA_26_60, CLOUDBURST_DATA_26_60, CLOUDBURST_DATA_26_60,
@@ -253,7 +258,7 @@ final class BehaviourTablesPart2 {
      * - minecraft:brown_stained_glass_pane map_color (captures)
      * - and 51 more
      */
-    static final Cell SOURCES_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_C47075 = Cell.table(new String[] {"minecraft:connection_east", "minecraft:connection_north", "minecraft:connection_south", "minecraft:connection_west"},
+    static final Cell SOURCES_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_3D3225 = Cell.table(new String[] {"minecraft:connection_east", "minecraft:connection_north", "minecraft:connection_south", "minecraft:connection_west"},
     new Object[][] {{false, true}, {false, true}, {false, true}, {false, true}},
     SCRIPT_API_26_60_MAP_COLOR, CLOUDBURST_DATA_26_60, CLOUDBURST_DATA_26_60, CLOUDBURST_DATA_26_60,
             CLOUDBURST_DATA_26_60, CLOUDBURST_DATA_26_60, CLOUDBURST_DATA_26_60,
@@ -265,7 +270,7 @@ final class BehaviourTablesPart2 {
      * Used by:
      * - minecraft:chorus_plant solid (captures)
      */
-    static final Cell SOURCES_CONNECTION_DOWN_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_UP_CONNECTION_WEST_49B122 = Cell.table(new String[] {"minecraft:connection_down", "minecraft:connection_east", "minecraft:connection_north", "minecraft:connection_south", "minecraft:connection_up", "minecraft:connection_west"},
+    static final Cell SOURCES_CONNECTION_DOWN_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_UP_CONNECTION_WEST_65568D = Cell.table(new String[] {"minecraft:connection_down", "minecraft:connection_east", "minecraft:connection_north", "minecraft:connection_south", "minecraft:connection_up", "minecraft:connection_west"},
     new Object[][] {{false, true}, {false, true}, {false, true}, {false, true}, {false, true}, {false, true}},
     SCRIPT_API_26_60_SOLID, CLOUDBURST_DATA_26_60, CLOUDBURST_DATA_26_60, CLOUDBURST_DATA_26_60,
             CLOUDBURST_DATA_26_60, CLOUDBURST_DATA_26_60, CLOUDBURST_DATA_26_60,
@@ -329,7 +334,7 @@ final class BehaviourTablesPart2 {
      * Used by:
      * - minecraft:chorus_plant map_color (captures)
      */
-    static final Cell SOURCES_CONNECTION_DOWN_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_UP_CONNECTION_WEST_D989A4 = Cell.table(new String[] {"minecraft:connection_down", "minecraft:connection_east", "minecraft:connection_north", "minecraft:connection_south", "minecraft:connection_up", "minecraft:connection_west"},
+    static final Cell SOURCES_CONNECTION_DOWN_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_UP_CONNECTION_WEST_5B9064 = Cell.table(new String[] {"minecraft:connection_down", "minecraft:connection_east", "minecraft:connection_north", "minecraft:connection_south", "minecraft:connection_up", "minecraft:connection_west"},
     new Object[][] {{false, true}, {false, true}, {false, true}, {false, true}, {false, true}, {false, true}},
     SCRIPT_API_26_60_MAP_COLOR, CLOUDBURST_DATA_26_60, CLOUDBURST_DATA_26_60, CLOUDBURST_DATA_26_60,
             CLOUDBURST_DATA_26_60, CLOUDBURST_DATA_26_60, CLOUDBURST_DATA_26_60,
@@ -408,7 +413,7 @@ final class BehaviourTablesPart2 {
      * Used by:
      * - minecraft:fire solid (captures)
      */
-    static final Cell SOURCES_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_UP_CONNECTION_WEST_338957 = Cell.table(new String[] {"minecraft:connection_east", "minecraft:connection_north", "minecraft:connection_south", "minecraft:connection_up", "minecraft:connection_west"},
+    static final Cell SOURCES_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_UP_CONNECTION_WEST_2EDB62 = Cell.table(new String[] {"minecraft:connection_east", "minecraft:connection_north", "minecraft:connection_south", "minecraft:connection_up", "minecraft:connection_west"},
     new Object[][] {{false, true}, {false, true}, {false, true}, {false, true}, {false, true}},
     SCRIPT_API_26_60_SOLID, CLOUDBURST_DATA_26_60, CLOUDBURST_DATA_26_60, CLOUDBURST_DATA_26_60,
             CLOUDBURST_DATA_26_60, CLOUDBURST_DATA_26_60, CLOUDBURST_DATA_26_60,
@@ -436,7 +441,7 @@ final class BehaviourTablesPart2 {
      * Used by:
      * - minecraft:fire map_color (captures)
      */
-    static final Cell SOURCES_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_UP_CONNECTION_WEST_4D81D9 = Cell.table(new String[] {"minecraft:connection_east", "minecraft:connection_north", "minecraft:connection_south", "minecraft:connection_up", "minecraft:connection_west"},
+    static final Cell SOURCES_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_UP_CONNECTION_WEST_598539 = Cell.table(new String[] {"minecraft:connection_east", "minecraft:connection_north", "minecraft:connection_south", "minecraft:connection_up", "minecraft:connection_west"},
     new Object[][] {{false, true}, {false, true}, {false, true}, {false, true}, {false, true}},
     SCRIPT_API_26_60_MAP_COLOR, CLOUDBURST_DATA_26_60, CLOUDBURST_DATA_26_60, CLOUDBURST_DATA_26_60,
             CLOUDBURST_DATA_26_60, CLOUDBURST_DATA_26_60, CLOUDBURST_DATA_26_60,
@@ -495,98 +500,6 @@ final class BehaviourTablesPart2 {
             BOX_5_0_5_11_11_11, BOX_5_5_5_11_16_11, BlockShape.FULL_CUBE, BlockShape.FULL_CUBE,
             BlockShape.FULL_CUBE, BlockShape.FULL_CUBE, BlockShape.FULL_CUBE, BlockShape.FULL_CUBE,
             BlockShape.FULL_CUBE, BlockShape.FULL_CUBE, BOX_0_0_0_16_11_16, BOX_0_5_0_16_16_16);
-
-    /**
-     * Used by:
-     * - minecraft:trip_wire solid (captures)
-     */
-    static final Cell SOURCES_ATTACHED_BIT_DISARMED_BIT_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_POWERED_BIT_SUSPENDED_BIT_ACEC37 = Cell.table(new String[] {"attached_bit", "disarmed_bit", "minecraft:connection_east", "minecraft:connection_north", "minecraft:connection_south", "minecraft:connection_west", "powered_bit", "suspended_bit"},
-    new Object[][] {{false, true}, {false, true}, {false, true}, {false, true}, {false, true}, {false, true}, {false, true}, {false, true}},
-    CLOUDBURST_DATA_26_60, SCRIPT_API_26_60_SOLID, CLOUDBURST_DATA_26_60, CLOUDBURST_DATA_26_60,
-            CLOUDBURST_DATA_26_60, CLOUDBURST_DATA_26_60, CLOUDBURST_DATA_26_60,
-            CLOUDBURST_DATA_26_60, CLOUDBURST_DATA_26_60, CLOUDBURST_DATA_26_60,
-            CLOUDBURST_DATA_26_60, CLOUDBURST_DATA_26_60, CLOUDBURST_DATA_26_60,
-            CLOUDBURST_DATA_26_60, CLOUDBURST_DATA_26_60, CLOUDBURST_DATA_26_60,
-            CLOUDBURST_DATA_26_60, CLOUDBURST_DATA_26_60, CLOUDBURST_DATA_26_60,
-            CLOUDBURST_DATA_26_60, CLOUDBURST_DATA_26_60, CLOUDBURST_DATA_26_60,
-            CLOUDBURST_DATA_26_60, CLOUDBURST_DATA_26_60, CLOUDBURST_DATA_26_60,
-            CLOUDBURST_DATA_26_60, CLOUDBURST_DATA_26_60, CLOUDBURST_DATA_26_60,
-            CLOUDBURST_DATA_26_60, CLOUDBURST_DATA_26_60, CLOUDBURST_DATA_26_60,
-            CLOUDBURST_DATA_26_60, CLOUDBURST_DATA_26_60, CLOUDBURST_DATA_26_60,
-            CLOUDBURST_DATA_26_60, CLOUDBURST_DATA_26_60, CLOUDBURST_DATA_26_60,
-            CLOUDBURST_DATA_26_60, CLOUDBURST_DATA_26_60, CLOUDBURST_DATA_26_60,
-            CLOUDBURST_DATA_26_60, CLOUDBURST_DATA_26_60, CLOUDBURST_DATA_26_60,
-            CLOUDBURST_DATA_26_60, CLOUDBURST_DATA_26_60, CLOUDBURST_DATA_26_60,
-            CLOUDBURST_DATA_26_60, CLOUDBURST_DATA_26_60, CLOUDBURST_DATA_26_60,
-            CLOUDBURST_DATA_26_60, CLOUDBURST_DATA_26_60, CLOUDBURST_DATA_26_60,
-            CLOUDBURST_DATA_26_60, CLOUDBURST_DATA_26_60, CLOUDBURST_DATA_26_60,
-            CLOUDBURST_DATA_26_60, CLOUDBURST_DATA_26_60, CLOUDBURST_DATA_26_60,
-            CLOUDBURST_DATA_26_60, CLOUDBURST_DATA_26_60, CLOUDBURST_DATA_26_60,
-            CLOUDBURST_DATA_26_60, CLOUDBURST_DATA_26_60, CLOUDBURST_DATA_26_60,
-            CLOUDBURST_DATA_26_60, CLOUDBURST_DATA_26_60, CLOUDBURST_DATA_26_60,
-            CLOUDBURST_DATA_26_60, CLOUDBURST_DATA_26_60, CLOUDBURST_DATA_26_60,
-            CLOUDBURST_DATA_26_60, CLOUDBURST_DATA_26_60, CLOUDBURST_DATA_26_60,
-            CLOUDBURST_DATA_26_60, CLOUDBURST_DATA_26_60, CLOUDBURST_DATA_26_60,
-            CLOUDBURST_DATA_26_60, CLOUDBURST_DATA_26_60, CLOUDBURST_DATA_26_60,
-            CLOUDBURST_DATA_26_60, CLOUDBURST_DATA_26_60, CLOUDBURST_DATA_26_60,
-            CLOUDBURST_DATA_26_60, CLOUDBURST_DATA_26_60, CLOUDBURST_DATA_26_60,
-            CLOUDBURST_DATA_26_60, CLOUDBURST_DATA_26_60, CLOUDBURST_DATA_26_60,
-            CLOUDBURST_DATA_26_60, CLOUDBURST_DATA_26_60, CLOUDBURST_DATA_26_60,
-            CLOUDBURST_DATA_26_60, CLOUDBURST_DATA_26_60, CLOUDBURST_DATA_26_60,
-            CLOUDBURST_DATA_26_60, CLOUDBURST_DATA_26_60, CLOUDBURST_DATA_26_60,
-            CLOUDBURST_DATA_26_60, CLOUDBURST_DATA_26_60, CLOUDBURST_DATA_26_60,
-            CLOUDBURST_DATA_26_60, CLOUDBURST_DATA_26_60, CLOUDBURST_DATA_26_60,
-            CLOUDBURST_DATA_26_60, CLOUDBURST_DATA_26_60, CLOUDBURST_DATA_26_60,
-            CLOUDBURST_DATA_26_60, CLOUDBURST_DATA_26_60, CLOUDBURST_DATA_26_60,
-            CLOUDBURST_DATA_26_60, CLOUDBURST_DATA_26_60, CLOUDBURST_DATA_26_60,
-            CLOUDBURST_DATA_26_60, CLOUDBURST_DATA_26_60, CLOUDBURST_DATA_26_60,
-            CLOUDBURST_DATA_26_60, CLOUDBURST_DATA_26_60, CLOUDBURST_DATA_26_60,
-            CLOUDBURST_DATA_26_60, CLOUDBURST_DATA_26_60, CLOUDBURST_DATA_26_60,
-            CLOUDBURST_DATA_26_60, CLOUDBURST_DATA_26_60, CLOUDBURST_DATA_26_60,
-            CLOUDBURST_DATA_26_60, CLOUDBURST_DATA_26_60, CLOUDBURST_DATA_26_60,
-            CLOUDBURST_DATA_26_60, CLOUDBURST_DATA_26_60, CLOUDBURST_DATA_26_60,
-            CLOUDBURST_DATA_26_60, CLOUDBURST_DATA_26_60, CLOUDBURST_DATA_26_60,
-            CLOUDBURST_DATA_26_60, CLOUDBURST_DATA_26_60, CLOUDBURST_DATA_26_60,
-            CLOUDBURST_DATA_26_60, CLOUDBURST_DATA_26_60, CLOUDBURST_DATA_26_60,
-            CLOUDBURST_DATA_26_60, CLOUDBURST_DATA_26_60, CLOUDBURST_DATA_26_60,
-            CLOUDBURST_DATA_26_60, CLOUDBURST_DATA_26_60, CLOUDBURST_DATA_26_60,
-            CLOUDBURST_DATA_26_60, CLOUDBURST_DATA_26_60, CLOUDBURST_DATA_26_60,
-            CLOUDBURST_DATA_26_60, CLOUDBURST_DATA_26_60, CLOUDBURST_DATA_26_60,
-            CLOUDBURST_DATA_26_60, CLOUDBURST_DATA_26_60, CLOUDBURST_DATA_26_60,
-            CLOUDBURST_DATA_26_60, CLOUDBURST_DATA_26_60, CLOUDBURST_DATA_26_60,
-            CLOUDBURST_DATA_26_60, CLOUDBURST_DATA_26_60, CLOUDBURST_DATA_26_60,
-            CLOUDBURST_DATA_26_60, CLOUDBURST_DATA_26_60, CLOUDBURST_DATA_26_60,
-            CLOUDBURST_DATA_26_60, CLOUDBURST_DATA_26_60, CLOUDBURST_DATA_26_60,
-            CLOUDBURST_DATA_26_60, CLOUDBURST_DATA_26_60, CLOUDBURST_DATA_26_60,
-            CLOUDBURST_DATA_26_60, CLOUDBURST_DATA_26_60, CLOUDBURST_DATA_26_60,
-            CLOUDBURST_DATA_26_60, CLOUDBURST_DATA_26_60, CLOUDBURST_DATA_26_60,
-            CLOUDBURST_DATA_26_60, CLOUDBURST_DATA_26_60, CLOUDBURST_DATA_26_60,
-            CLOUDBURST_DATA_26_60, CLOUDBURST_DATA_26_60, CLOUDBURST_DATA_26_60,
-            CLOUDBURST_DATA_26_60, CLOUDBURST_DATA_26_60, CLOUDBURST_DATA_26_60,
-            CLOUDBURST_DATA_26_60, CLOUDBURST_DATA_26_60, CLOUDBURST_DATA_26_60,
-            CLOUDBURST_DATA_26_60, CLOUDBURST_DATA_26_60, CLOUDBURST_DATA_26_60,
-            CLOUDBURST_DATA_26_60, CLOUDBURST_DATA_26_60, CLOUDBURST_DATA_26_60,
-            CLOUDBURST_DATA_26_60, CLOUDBURST_DATA_26_60, CLOUDBURST_DATA_26_60,
-            CLOUDBURST_DATA_26_60, CLOUDBURST_DATA_26_60, CLOUDBURST_DATA_26_60,
-            CLOUDBURST_DATA_26_60, CLOUDBURST_DATA_26_60, CLOUDBURST_DATA_26_60,
-            CLOUDBURST_DATA_26_60, CLOUDBURST_DATA_26_60, CLOUDBURST_DATA_26_60,
-            CLOUDBURST_DATA_26_60, CLOUDBURST_DATA_26_60, CLOUDBURST_DATA_26_60,
-            CLOUDBURST_DATA_26_60, CLOUDBURST_DATA_26_60, CLOUDBURST_DATA_26_60,
-            CLOUDBURST_DATA_26_60, CLOUDBURST_DATA_26_60, CLOUDBURST_DATA_26_60,
-            CLOUDBURST_DATA_26_60, CLOUDBURST_DATA_26_60, CLOUDBURST_DATA_26_60,
-            CLOUDBURST_DATA_26_60, CLOUDBURST_DATA_26_60, CLOUDBURST_DATA_26_60,
-            CLOUDBURST_DATA_26_60, CLOUDBURST_DATA_26_60, CLOUDBURST_DATA_26_60,
-            CLOUDBURST_DATA_26_60, CLOUDBURST_DATA_26_60, CLOUDBURST_DATA_26_60,
-            CLOUDBURST_DATA_26_60, CLOUDBURST_DATA_26_60, CLOUDBURST_DATA_26_60,
-            CLOUDBURST_DATA_26_60, CLOUDBURST_DATA_26_60, CLOUDBURST_DATA_26_60,
-            CLOUDBURST_DATA_26_60, CLOUDBURST_DATA_26_60, CLOUDBURST_DATA_26_60,
-            CLOUDBURST_DATA_26_60, CLOUDBURST_DATA_26_60, CLOUDBURST_DATA_26_60,
-            CLOUDBURST_DATA_26_60, CLOUDBURST_DATA_26_60, CLOUDBURST_DATA_26_60,
-            CLOUDBURST_DATA_26_60, CLOUDBURST_DATA_26_60, CLOUDBURST_DATA_26_60,
-            CLOUDBURST_DATA_26_60, CLOUDBURST_DATA_26_60, CLOUDBURST_DATA_26_60,
-            CLOUDBURST_DATA_26_60, CLOUDBURST_DATA_26_60, CLOUDBURST_DATA_26_60,
-            CLOUDBURST_DATA_26_60, CLOUDBURST_DATA_26_60, CLOUDBURST_DATA_26_60,
-            CLOUDBURST_DATA_26_60, CLOUDBURST_DATA_26_60, CLOUDBURST_DATA_26_60);
 
     private BehaviourTablesPart2() {
     }

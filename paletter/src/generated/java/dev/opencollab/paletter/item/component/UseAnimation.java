@@ -4,6 +4,9 @@
 package dev.opencollab.paletter.item.component;
 
 import dev.opencollab.paletter.annotation.BedrockFormat;
+import dev.opencollab.paletter.internal.component.Check;
+import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
@@ -23,9 +26,9 @@ public final class UseAnimation implements ItemComponent {
      */
     public static final String NAME = "minecraft:use_animation";
 
-    private final @Nullable String value;
+    private final @Nullable Value value;
 
-    private UseAnimation(@Nullable String value) {
+    private UseAnimation(@Nullable Value value) {
         this.value = value;
     }
 
@@ -35,7 +38,7 @@ public final class UseAnimation implements ItemComponent {
      *
      * @return the value
      */
-    public @Nullable String value() {
+    public @Nullable Value value() {
         return value;
     }
 
@@ -67,7 +70,7 @@ public final class UseAnimation implements ItemComponent {
      * @param value the value of that field
      * @return the value with everything else at its default
      */
-    public static @NonNull UseAnimation of(@NonNull String value) {
+    public static @NonNull UseAnimation of(@NonNull Value value) {
         return builder().value(value).build();
     }
 
@@ -95,7 +98,7 @@ public final class UseAnimation implements ItemComponent {
      * Builds {@link UseAnimation}: defaults applied, required fields and ranges checked by {@link #build()}.
      */
     public static final class Builder {
-        private @Nullable String value;
+        private @Nullable Value value;
 
         private Builder() {
         }
@@ -106,7 +109,7 @@ public final class UseAnimation implements ItemComponent {
          * @param value the value
          * @return this builder
          */
-        public @NonNull Builder value(@Nullable String value) {
+        public @NonNull Builder value(@Nullable Value value) {
             this.value = value;
             return this;
         }
@@ -120,6 +123,126 @@ public final class UseAnimation implements ItemComponent {
          */
         public @NonNull UseAnimation build() {
             return new UseAnimation(value);
+        }
+    }
+
+    /**
+     * A value of an add-on JSON string: a constant per documented value, {@link #of} for any other.
+     * {@link #value()} is the add-on JSON string. Not an enum: Bedrock adds values, so a {@code switch} over
+     * {@link #value()} needs a {@code default}.
+     */
+    public static final class Value {
+        /**
+         * {@code none}
+         */
+        public static final Value NONE = new Value("none");
+
+        /**
+         * {@code eat}
+         */
+        public static final Value EAT = new Value("eat");
+
+        /**
+         * {@code drink}
+         */
+        public static final Value DRINK = new Value("drink");
+
+        /**
+         * {@code block}
+         */
+        public static final Value BLOCK = new Value("block");
+
+        /**
+         * {@code bow}
+         */
+        public static final Value BOW = new Value("bow");
+
+        /**
+         * {@code camera}
+         */
+        public static final Value CAMERA = new Value("camera");
+
+        /**
+         * {@code crossbow}
+         */
+        public static final Value CROSSBOW = new Value("crossbow");
+
+        /**
+         * {@code spear}
+         */
+        public static final Value SPEAR = new Value("spear");
+
+        /**
+         * {@code spyglass}
+         */
+        public static final Value SPYGLASS = new Value("spyglass");
+
+        /**
+         * {@code brush}
+         */
+        public static final Value BRUSH = new Value("brush");
+
+        private static final List<Value> KNOWN = List.of(NONE, EAT, DRINK, BLOCK, BOW, CAMERA, CROSSBOW, SPEAR, SPYGLASS, BRUSH);
+
+        private static final Map<String, Value> BY_VALUE = Check.index(KNOWN, Value::value);
+
+        private final String value;
+
+        private Value(String value) {
+            this.value = value;
+        }
+
+        /**
+         * Returns the value of an add-on JSON string: the constant of a documented value, else a new value.
+         *
+         * @param value the value in add-on JSON
+         * @return the constant of the value, or a value Paletter does not know
+         */
+        public static @NonNull Value of(@NonNull String value) {
+            Value known = BY_VALUE.get(Objects.requireNonNull(value, "Value.value"));
+            return known != null ? known : new Value(value);
+        }
+
+        /**
+         * Returns the documented values, the constants of this class.
+         *
+         * @return the constants, in the order of the documentation
+         */
+        public static @NonNull List<Value> known() {
+            return KNOWN;
+        }
+
+        /**
+         * Returns the value in add-on JSON.
+         *
+         * @return the value in add-on JSON
+         */
+        public @NonNull String value() {
+            return value;
+        }
+
+        /**
+         * Returns whether the value is documented, one of the constants.
+         *
+         * @return whether this is one of {@link #known()}
+         */
+        public boolean isKnown() {
+            return BY_VALUE.get(value) == this;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            return this == o || o instanceof Value other && value.equals(other.value);
+        }
+
+        @Override
+        public int hashCode() {
+            return value.hashCode();
+        }
+
+        @Override
+        public String toString() {
+            return value;
         }
     }
 }

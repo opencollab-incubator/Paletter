@@ -4,6 +4,7 @@
 package dev.opencollab.paletter.item.component;
 
 import dev.opencollab.paletter.annotation.BedrockFormat;
+import dev.opencollab.paletter.vanilla.BedrockItemType;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -229,7 +230,7 @@ public final class Shooter implements ItemComponent {
      *
      */
     public static final class Ammunition {
-        private final @Nullable String item;
+        private final @NonNull String item;
 
         private final boolean searchInventory;
 
@@ -237,8 +238,9 @@ public final class Shooter implements ItemComponent {
 
         private final boolean useOffhand;
 
-        private Ammunition(@Nullable String item, boolean searchInventory, boolean useInCreative,
+        private Ammunition(@NonNull String item, boolean searchInventory, boolean useInCreative,
                 boolean useOffhand) {
+            Objects.requireNonNull(item, "Shooter.Ammunition.item");
             this.item = item;
             this.searchInventory = searchInventory;
             this.useInCreative = useInCreative;
@@ -246,12 +248,12 @@ public final class Shooter implements ItemComponent {
         }
 
         /**
-         * Ammunition item description identifier. Add-on JSON {@code item}. Optional (null: not set). Compiled by the
-         * hand transform {@code Transforms.ammunitionItemDescriptor}.
+         * Ammunition item description identifier. Add-on JSON {@code item}. Required. Compiled by the hand transform
+         * {@code Transforms.ammunitionItemDescriptor}.
          *
          * @return the value
          */
-        public @Nullable String item() {
+        public @NonNull String item() {
             return item;
         }
 
@@ -308,7 +310,8 @@ public final class Shooter implements ItemComponent {
         }
 
         /**
-         * Creates a builder with every field at its default.
+         * Creates a builder with every optional field at its default; required fields must be set before
+         * {@code build()}.
          *
          * @return a builder with the defaults applied
          */
@@ -350,10 +353,21 @@ public final class Shooter implements ItemComponent {
              *
              * @param item the value
              * @return this builder
+             * @throws NullPointerException if the value is null
              */
-            public @NonNull Builder item(@Nullable String item) {
-                this.item = item;
+            public @NonNull Builder item(@NonNull String item) {
+                this.item = Objects.requireNonNull(item, "Shooter.Ammunition.item");
                 return this;
+            }
+
+            /**
+             * Sets {@code item} to a vanilla or custom item.
+             *
+             * @param item the value
+             * @return this builder
+             */
+            public @NonNull Builder item(@NonNull BedrockItemType item) {
+                return item(item.identifier());
             }
 
             /**
@@ -397,6 +411,9 @@ public final class Shooter implements ItemComponent {
              * @throws IllegalArgumentException if a value is out of range
              */
             public @NonNull Ammunition build() {
+                if (item == null) {
+                    throw new IllegalStateException("Shooter.Ammunition.item is required");
+                }
                 return new Ammunition(item, searchInventory, useInCreative, useOffhand);
             }
         }
