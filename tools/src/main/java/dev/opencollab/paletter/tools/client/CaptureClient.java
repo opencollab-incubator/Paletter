@@ -46,6 +46,8 @@ import org.cloudburstmc.protocol.bedrock.packet.ResourcePacksInfoPacket;
 import org.cloudburstmc.protocol.bedrock.packet.ServerToClientHandshakePacket;
 import org.cloudburstmc.protocol.bedrock.packet.StartGamePacket;
 import org.cloudburstmc.protocol.bedrock.packet.TrimDataPacket;
+import org.cloudburstmc.protocol.bedrock.packet.UpdateBlockPacket;
+import org.cloudburstmc.protocol.bedrock.packet.UpdateSubChunkBlocksPacket;
 import org.cloudburstmc.protocol.bedrock.packet.VoxelShapesPacket;
 import org.cloudburstmc.protocol.common.DefinitionRegistry;
 import org.cloudburstmc.protocol.common.PacketSignal;
@@ -95,6 +97,11 @@ public final class CaptureClient {
         public final Map<String, GiveCapture.Given> gives = new ConcurrentHashMap<>();
         /** The gives were cut short (too many gives in a row without an answer, no spawn, or the deadline): the answers are partial. */
         public volatile boolean givesAborted;
+        /**
+         * With {@link CaptureClient#holdUntil}: the runtime id of the last block update of each position, layer 0 only (block update and
+         * sub-chunk block update packets), by {@code "x y z"}.
+         */
+        public final Map<String, Integer> blockUpdates = new ConcurrentHashMap<>();
     }
 
     private final BedrockCodec codec;
@@ -123,6 +130,8 @@ public final class CaptureClient {
     private volatile boolean givesDone = true;
 
     private final boolean netherNet;
+    /** With it, the client spawns and stays until it holds ({@link #holdUntil}); null for a capture of the join sequence only. */
+    private volatile java.util.function.BooleanSupplier hold;
 
     public CaptureClient(BedrockCodec codec, InetSocketAddress address) {
         this(codec, address, false);
@@ -154,6 +163,16 @@ public final class CaptureClient {
         giveQueue.addAll(identifiers);
         dataItems = blockItems;
         givesDone = identifiers.isEmpty();
+        return this;
+    }
+
+    /**
+     * Spawns the player and stays connected until {@code until} holds (something on the server side, such as a script that changes
+     * the world around the player, is done), recording the block updates meanwhile ({@link Result#blockUpdates}). The capture then
+     * completes after a short wait for the packets still under way.
+     */
+    public CaptureClient holdUntil(java.util.function.BooleanSupplier until) {
+        this.hold = until;
         return this;
     }
 
@@ -227,6 +246,10 @@ public final class CaptureClient {
             long deadline = System.nanoTime() + TimeUnit.SECONDS.toNanos(timeoutSeconds);
             while (!done.isDone()) {
                 giveTimeouts(System.currentTimeMillis());
+                if (hold != null && readyAt != 0 && completeAt == Long.MAX_VALUE && hold.getAsBoolean()) {
+                    // The packets of the last changes may still be under way
+                    completeAt = System.currentTimeMillis() + 3000;
+                }
                 if (System.currentTimeMillis() >= completeAt) {
                     done.complete(result);
                     break;
@@ -265,7 +288,7 @@ public final class CaptureClient {
             if (readyAt == 0) {
                 readyAt = System.currentTimeMillis();
             }
-            if (givesDone && completeAt == Long.MAX_VALUE) {
+            if (givesDone && hold == null && completeAt == Long.MAX_VALUE) {
                 // Give the server a moment for the remaining packets of the join sequence (biomes, recipes, ...)
                 completeAt = System.currentTimeMillis() + 3000;
             }
@@ -455,6 +478,12 @@ public final class CaptureClient {
         public PacketSignal handle(PlayStatusPacket packet) {
             System.out.println("  play status " + packet.getStatus());
             if (packet.getStatus() == PlayStatusPacket.Status.PLAYER_SPAWN) {
+                if (hold != null) {
+                    // Spawned: the server's player spawn event fires
+                    SetLocalPlayerAsInitializedPacket initialized = new SetLocalPlayerAsInitializedPacket();
+                    initialized.setRuntimeEntityId(result.startGame.getRuntimeEntityId());
+                    send(session, initialized, false);
+                }
                 startGives(result.startGame.getRuntimeEntityId(), toSend -> send(session, toSend, false));
             }
             if (packet.getStatus() != PlayStatusPacket.Status.LOGIN_SUCCESS && packet.getStatus() != PlayStatusPacket.Status.PLAYER_SPAWN) {
@@ -568,6 +597,26 @@ public final class CaptureClient {
         public PacketSignal handle(VoxelShapesPacket packet) {
             result.voxelShapes = packet;
             return PacketSignal.HANDLED;
+        }
+
+        @Override
+        public PacketSignal handle(UpdateBlockPacket packet) {
+            if (packet.getDataLayer() == 0) {
+                blockUpdate(packet.getBlockPosition(), packet.getDefinition());
+            }
+            return PacketSignal.HANDLED;
+        }
+
+        @Override
+        public PacketSignal handle(UpdateSubChunkBlocksPacket packet) {
+            packet.getStandardBlocks().forEach(entry -> blockUpdate(entry.getPosition(), entry.getDefinition()));
+            return PacketSignal.HANDLED;
+        }
+
+        private void blockUpdate(org.cloudburstmc.math.vector.Vector3i position, BlockDefinition block) {
+            if (hold != null && block != null) {
+                result.blockUpdates.put(position.getX() + " " + position.getY() + " " + position.getZ(), block.getRuntimeId());
+            }
         }
 
         @Override

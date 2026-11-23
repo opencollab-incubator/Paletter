@@ -1,0 +1,25 @@
+{
+  "format_version": 2,
+  "header": {
+    "name": "Paletter palette probe",
+    "description": "Places every state of every block type next to the joining player, so the client sees the runtime id of each; prints PALETTE lines to the server console",
+    "uuid": "c4a7e2b9-5d1f-4e83-9a6c-2b8d0f3e1a57",
+    "version": [1, 0, 0],
+    "min_engine_version": [1, 21, 80]
+  },
+  "modules": [
+    {
+      "type": "script",
+      "language": "javascript",
+      "uuid": "e81b3f4c-9a2d-4c6e-b7f0-5d3a1c8e2f94",
+      "entry": "scripts/main.js",
+      "version": [1, 0, 0]
+    }
+  ],
+  "dependencies": [
+    {
+      "module_name": "@minecraft/server",
+      "version": "2.1.0"
+    }
+  ]
+}

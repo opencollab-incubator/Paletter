@@ -24,6 +24,7 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
+import java.util.Map;
 import java.util.SortedSet;
 import java.util.TreeSet;
 import java.util.jar.JarEntry;
@@ -194,6 +195,22 @@ public final class Capture {
         return new Summary(protocol, codecProtocol, codec.getMinecraftVersion(), result.startGame.isBlockNetworkIdsHashed(),
             writer.resolvedHashes(), writer.unresolvedHashes(), experiments, packStackExperiments, writer.traitStatesUnknown(),
             writer.experimentBlocksUnverified());
+    }
+
+    /**
+     * Spawns a client and records the block updates it receives until {@code until} holds ({@link CaptureClient#holdUntil}).
+     *
+     * @return the runtime id of the last block update of each position, by {@code "x y z"}
+     */
+    public static Map<String, Integer> blockUpdates(InetSocketAddress address, int protocol, boolean netherNet,
+                                                    java.util.function.BooleanSupplier until, long timeoutSeconds) throws Exception {
+        BedrockCodec codec = codecFor(protocol);
+        if (codec.getProtocolVersion() != protocol) {
+            codec = codec.toBuilder().protocolVersion(protocol).build();
+        }
+        codec = clientCodec(codec);
+        awaitConnectable(address, netherNet, CONNECT_SECONDS);
+        return Map.copyOf(new CaptureClient(codec, address, netherNet).holdUntil(until).run(timeoutSeconds).blockUpdates);
     }
 
     /**

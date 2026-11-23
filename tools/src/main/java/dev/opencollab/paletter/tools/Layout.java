@@ -12,6 +12,8 @@ public final class Layout {
     public static final String CREATIVE_ADDON = ADDONS + "/creative";
     public static final String PROBE_ADDON = ADDONS + "/probe";
     public static final String BEHAVIOUR_DUMP_ADDON = ADDONS + "/behaviour-dump";
+    /** Places every block state next to the capture client, which records the sequential id of each ({@code PaletteIds}). */
+    public static final String PALETTE_PROBE_ADDON = ADDONS + "/palette-probe";
 
     private Layout() {
     }

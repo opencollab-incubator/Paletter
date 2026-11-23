@@ -4,8 +4,11 @@ import dev.opencollab.paletter.tools.bds.BdsDistribution;
 import dev.opencollab.paletter.tools.bds.BdsDump;
 import dev.opencollab.paletter.tools.bds.BdsServer;
 import dev.opencollab.paletter.tools.bds.CapturePlatform;
+import dev.opencollab.paletter.tools.Layout;
 import dev.opencollab.paletter.tools.client.GiveCapture;
+import dev.opencollab.paletter.tools.client.LevelDat;
 import dev.opencollab.paletter.tools.client.NetherNet;
+import dev.opencollab.paletter.tools.client.PaletteIds;
 import dev.opencollab.paletter.tools.data.OrderingCheck;
 import dev.opencollab.paletter.tools.model.addon.FixedAddons;
 import com.google.gson.JsonObject;
@@ -30,6 +33,7 @@ final class CaptureStage {
     private static final String CAPTURE_PACK = "paletter_capture";
     private static final String GIVE_WORLD = "paletter_give";
     private static final String CREATIVE_WORLD = "paletter_creative";
+    private static final String PALETTE_WORLD = "paletter_palette";
 
     private final UpdateContext ctx;
     private final ReferencePalette palette;
@@ -142,12 +146,24 @@ final class CaptureStage {
             bds.awaitStarted(ctx.timeout);
             capture(address, runs, work.resolve("creative-sequential"), null, "creative order probe capture (sequential ids)");
         }
+        paletteIds(server, work, address, runs, properties);
 
         OrderingCheck ordering = new OrderingCheck();
         ordering.bundledOrder("reference palette " + runs.reference.version().name(), runs.reference.blockStates());
         ordering.sequential("vanilla", work.resolve("vanilla"), work.resolve("vanilla-sequential"));
         ordering.sequential("creative order probe", work.resolve("creative"), work.resolve("creative-sequential"));
         ordering.customBlockIds("creative order probe", work.resolve("creative"));
+        if (runs.paletteIds != null) {
+            // The whole palette, the states within each block too; SequentialIdsTest holds the committed captures to the bundled data
+            List<String> wrong = PaletteIds.mismatches(runs.reference.blockStates(), PaletteIds.read(runs.paletteIds));
+            ctx.report.check(Report.Status.INFO, "Sequential ids (palette probe)", wrong.isEmpty()
+                ? "every observed id is the index of its state in the reference palette " + runs.reference.version().name()
+                : wrong.size() + " observed ids are not the index of their state in the reference palette " + runs.reference.version().name());
+            if (!wrong.isEmpty()) {
+                ctx.report.evidence("States whose sequential id is not their index in the reference palette",
+                    wrong.stream().limit(200).map(line -> "- " + line).toList());
+            }
+        }
         ordering.passes.forEach(pass -> ctx.report.check(Report.Status.PASS, "Block numbering", pass));
         // A history check numbers against the bundled data version of its window, which may lack states of this build and
         // of the build it is checked against alike: the states themselves are compared through the Script API dump
@@ -165,6 +181,65 @@ final class CaptureStage {
             ctx.report.decision("Block palette: " + ordering.withinBlockOrder.size() + " creative states of generated blocks sit elsewhere "
                 + "within their block than generated; fix the state order of those blocks before importing", "States",
                 ordering.withinBlockOrder.stream().map(state -> "- " + state).toList());
+        }
+    }
+
+    /**
+     * A start of its own for the palette probe ({@link PaletteIds}): sequential ids, the build's current toggles on (their blocks are
+     * numbered too), the probe's script places every state next to the client, which stays until the script is done. Only ever INFO:
+     * the ids are checked against the reference palette here and against the bundled data by a test, and a failure here does not fail
+     * the run.
+     */
+    private void paletteIds(Path server, Path work, InetSocketAddress address, Runs runs, Map<String, String> properties) {
+        Map<String, String> own = new LinkedHashMap<>(properties);
+        own.put("level-name", PALETTE_WORLD);
+        own.put("block-network-ids-are-hashes", "false");
+        List<String> toggles = runs.experiments.current;
+        try {
+            Path pack = work.resolve("palette-pack");
+            BdsDistribution.deleteRecursively(pack);
+            copyTree(ctx.root.resolve(Layout.PALETTE_PROBE_ADDON), pack.resolve("behavior_pack"));
+            freshWorld(server, PALETTE_WORLD, pack);
+            BdsServer.configure(server, own);
+            if (!toggles.isEmpty()) {
+                // BDS writes the world's level.dat at its first start; the toggles go into it before the probe's start
+                try (BdsServer bds = new BdsServer(server, false)) {
+                    bds.start(work.resolve("bds-palette-create.log"));
+                    bds.awaitStarted(ctx.timeout);
+                }
+                LevelDat.enableExperiments(server.resolve("worlds").resolve(PALETTE_WORLD).resolve("level.dat"), toggles);
+            }
+            try (BdsServer bds = new BdsServer(server, false)) {
+                bds.start(work.resolve("bds-palette.log"));
+                bds.awaitStarted(ctx.timeout);
+                Map<String, Integer> updates = Capture.blockUpdates(address, runs.protocol, runs.netherNet,
+                    () -> bds.sawLine(line -> line.contains(PaletteIds.MARKER + "-DONE") || line.contains(PaletteIds.MARKER + "-FAILED")), 600);
+                List<String> failed = bds.lines(line -> line.contains(PaletteIds.MARKER + "-FAILED"));
+                if (!failed.isEmpty() || !bds.sawLine(line -> line.contains(PaletteIds.MARKER + "-DONE"))) {
+                    throw new IOException(failed.isEmpty() ? "the probe printed no " + PaletteIds.MARKER + "-DONE" : failed.getFirst().strip());
+                }
+                PaletteIds.Result result = PaletteIds.pair(bds.lines(line -> line.contains(PaletteIds.MARKER + " ")), updates);
+                Path file = work.resolve("palette").resolve(PaletteIds.FILE);
+                PaletteIds.write(file, PaletteIds.render(runs.bdsVersion, runs.protocol, toggles, result));
+                runs.paletteIds = file;
+                ctx.report.check(Report.Status.INFO, "Sequential ids (palette probe)", result.ids().size() + " states observed, "
+                    + result.notObserved().size() + " not (their cell changed, or no block update), toggles " + toggles);
+            }
+        } catch (Exception e) {
+            ctx.report.check(Report.Status.INFO, "Sequential ids (palette probe)", "not captured: " + e);
+        }
+    }
+
+    private static void copyTree(Path source, Path target) throws IOException {
+        try (Stream<Path> files = Files.walk(source)) {
+            for (Path file : files.toList()) {
+                Path copy = target.resolve(source.relativize(file).toString());
+                if (Files.isDirectory(file)) {
+                    Files.createDirectories(copy);
+                } else {
+                    Files.copy(file, copy, StandardCopyOption.REPLACE_EXISTING);
+                }
+            }
         }
     }
 
