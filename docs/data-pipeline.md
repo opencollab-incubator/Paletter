@@ -235,7 +235,9 @@ changes, every kept build has to be captured again, or the model describes some 
 with the new one. `recapture.yml` does that in parallel and opens **one** pull request.
 
 **When it runs.** By hand (Actions > Recapture > Run workflow; the `ref` input names the branch to recapture, empty is
-the branch the run was started on), and from `bds-data.yml` when the data update's patch changes an add-on input
+the branch the run was started on); on a pull request, by adding the `recapture` label, which recaptures the pull
+request's branch and opens the recapture pull request against it (only for branches of this repository, since a fork's
+pull request gets no write token; remove and add the label to run it again); and from `bds-data.yml` when the data update's patch changes an add-on input
 (`data/model/components.json`, `fixtures.json`, `bds-feedback.json`, `bds-keys.json`), read from git: the pull request of the update was created or updated by this run, and its pushed branch changes one of them against the base: the daily workflow then calls it
 on the update's own branch, `bds-data/<channel>`, and the recapture pull request is opened against that branch. A run that leaves the data pull request as it was starts nothing, so a day without news neither recaptures nor force-pushes away a recapture merged into the branch. Nothing
 starts it on a push. If both channels change the add-on in one run, only the release one is recaptured; start the

@@ -2,8 +2,9 @@
 # the checked-out commit, and turned into ONE pull request. Run it whenever the add-on changes (the model, the fixtures,
 # `bds-feedback.json`, the add-on generator): the captures of a build only answer for the add-on they were made with
 # (a history check refuses to compare spec captures of different add-ons), so a change to the add-on is only complete once every build was captured with it. See
-# docs/data-pipeline.md, "Full recapture". Started by hand (workflow_dispatch), or by bds-data.yml (workflow_call) when a
-# new build changes the add-on inputs; nothing starts it on a push.
+# docs/data-pipeline.md, "Full recapture". Started by hand (workflow_dispatch), by the `recapture` label on a pull request
+# of a branch of this repository, or by bds-data.yml (workflow_call) when a new build changes the add-on inputs; nothing
+# starts it on a push.
 #
 # Security: the same split as bds-data.yml, in four jobs.
 #   plan      read-only. Lists the builds from the checkout (`builds plan`) and pins the commit every job uses.
@@ -44,6 +45,10 @@ on:
     secrets:
       BDS_DATA_TOKEN:
         required: false
+  # On a pull request: adding the `recapture` label runs it against the pull request's branch (remove and add the label
+  # to run it again). Only for branches of this repository: a fork's pull request has no write token for the publish job.
+  pull_request:
+    types: [labeled]
 
 permissions: {}
 
@@ -57,6 +62,9 @@ concurrency:
 
 jobs:
   plan:
+    if: >-
+      github.event_name != 'pull_request' || (github.event.label.name == 'recapture'
+      && github.event.pull_request.head.repo.full_name == github.repository)
     runs-on: ubuntu-latest
     timeout-minutes: 30
     permissions:
@@ -66,7 +74,8 @@ jobs:
       sha: ${{ steps.plan.outputs.sha }}
       base: ${{ steps.plan.outputs.base }}
     env:
-      INPUT_REF: ${{ inputs.ref }}
+      # A pull request's run captures its head branch (github.ref_name is the merge ref there)
+      INPUT_REF: ${{ inputs.ref || github.head_ref }}
       RUN_REF: ${{ github.ref_name }}
     steps:
       # The branch name is checked before anything uses it
