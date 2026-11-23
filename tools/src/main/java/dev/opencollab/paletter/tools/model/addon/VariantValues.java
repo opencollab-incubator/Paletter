@@ -639,6 +639,11 @@ final class VariantValues {
                         JsonArray all = new JsonArray();
                         listed.forEach(all::add);
                         values.add(new Labeled("[all]", all));
+                        // The values in the other order: the schema lists them in BDS's own order (connected_faces), so only a
+                        // list in another order shows whether BDS sends the set in its order or in the JSON's
+                        JsonArray reversed = new JsonArray();
+                        listed.reversed().forEach(reversed::add);
+                        values.add(new Labeled("[all reversed]", reversed));
                     }
                 } else {
                     values.add(new Labeled("[1]", arrayOf(first)));
