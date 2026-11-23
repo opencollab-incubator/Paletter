@@ -31,9 +31,20 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 class CompileDataReleaseTest {
     private static final DataVersion OLDEST = Paletter.bundled().versions().getFirst();
 
+    /** A Paletter whose palettes compile on first use, not in build(): the release runs once the last served one is asked for. */
+    private static Paletter lazy(Paletter.Builder builder) {
+        builder.compileOnBuild = false;
+        return builder.build();
+    }
+
+    @Test
+    void buildReleases() {
+        assertTrue(Paletter.builder().versions(version -> !version.equals(OLDEST)).build().compileDataReleased());
+    }
+
     /** Every bundled version but the oldest, all compiled: the release has run. */
     private static Paletter released() {
-        Paletter paletter = Paletter.builder().versions(version -> !version.equals(OLDEST)).build();
+        Paletter paletter = lazy(Paletter.builder().versions(version -> !version.equals(OLDEST)));
         List<DataVersion> versions = paletter.versions();
         for (DataVersion version : versions) {
             assertFalse(paletter.compileDataReleased(), "released before " + version + " was compiled");
@@ -71,7 +82,7 @@ class CompileDataReleaseTest {
     void extendAfterTheReleaseIsTheSame() {
         Paletter paletter = released();
         // Compiles only the newest palette: nothing is released
-        Paletter unreleased = Paletter.builder().build();
+        Paletter unreleased = lazy(Paletter.builder());
         assertReleasedExtendIsTheSame(paletter, unreleased, CompileDataReleaseTest::sessionLayer);
         assertReleasedExtendIsTheSame(paletter, unreleased, CompileDataReleaseTest::creativeLayer);
         assertFalse(unreleased.compileDataReleased());
@@ -91,18 +102,18 @@ class CompileDataReleaseTest {
     void aVersionCompiledAfterTheReleaseIsTheSame() {
         Paletter paletter = released();
         Palette late = paletter.vanilla(OLDEST);
-        PaletteComparison.assertSameContent(Paletter.builder().build().vanilla(OLDEST), late);
+        PaletteComparison.assertSameContent(lazy(Paletter.builder()).vanilla(OLDEST), late);
         // Its vanilla states are those of the other versions, only its blocks and pages are its own
         assertSame(paletter.palette(paletter.latest().protocolVersion()).blockDefinition(BedrockBlocks.AIR.defaultState()),
             late.blockDefinition(BedrockBlocks.AIR.defaultState()));
         // And extending it works too
-        PaletteComparison.assertSameContent(Paletter.builder().build().vanilla(OLDEST).extend(sessionLayer("late")),
+        PaletteComparison.assertSameContent(lazy(Paletter.builder()).vanilla(OLDEST).extend(sessionLayer("late")),
             late.extend(sessionLayer("late")));
     }
 
     @Test
     void theDataSourceReadsThePropertiesAgain() {
-        Paletter paletter = Paletter.builder().versions(version -> !version.equals(OLDEST)).build();
+        Paletter paletter = lazy(Paletter.builder().versions(version -> !version.equals(OLDEST)));
         DataVersion latest = paletter.latest();
         // The vanilla palette alone does not release anything
         Palette vanilla = paletter.vanilla(latest);
@@ -117,7 +128,7 @@ class CompileDataReleaseTest {
         assertTrue(items.values().stream().anyMatch(properties -> !properties.isEmpty()));
         assertTrue(blocks.values().stream().anyMatch(properties -> !properties.isEmpty()));
         assertFalse(paletter.compileDataReleased());
-        paletter.warmUp();
+        paletter.versions().forEach(version -> paletter.palette(version.protocolVersion()));
         assertTrue(paletter.compileDataReleased());
         items.forEach((type, properties) -> assertEquals(properties, paletter.properties(type, latest), type.identifier()));
         blocks.forEach((type, properties) -> assertEquals(properties, paletter.properties(type, latest), type.identifier()));

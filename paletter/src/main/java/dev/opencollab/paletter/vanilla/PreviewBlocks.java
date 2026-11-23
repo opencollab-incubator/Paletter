@@ -7,11 +7,9 @@ import dev.opencollab.paletter.internal.CanonicalBlocks;
 import dev.opencollab.paletter.internal.vanilla.BlockLayout;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.WeakHashMap;
 
 /**
  * The handles of the blocks a palette's newest version added or changed since the newest release, which the generated
@@ -23,8 +21,6 @@ import java.util.WeakHashMap;
  * root, and find it by their NBT in others.
  */
 final class PreviewBlocks {
-    private static final Map<CanonicalBlocks, PreviewBlocks> BY_ROOT = Collections.synchronizedMap(new WeakHashMap<>());
-
     private final Int2ObjectMap<BedrockBlockState> states = new Int2ObjectOpenHashMap<>();
     /** The constants of blocks the bundled release lacks that this root has, to the canonical id of their first state. */
     private final Map<BedrockBlockType, Integer> firsts = new IdentityHashMap<>();
@@ -79,7 +75,12 @@ final class PreviewBlocks {
      * @return its state if the block is one the bundled release lacks or has differently, else null
      */
     static BedrockBlockState state(CanonicalBlocks root, int id) {
-        return BY_ROOT.computeIfAbsent(root, PreviewBlocks::new).states.get(id);
+        return of(root).states.get(id);
+    }
+
+    /** The root keeps them: a volatile read per lookup, no lock (this is on the runtime id to key path of a preview palette). */
+    private static PreviewBlocks of(CanonicalBlocks root) {
+        return (PreviewBlocks) root.previewBlocks(PreviewBlocks::new);
     }
 
     /**
@@ -88,7 +89,7 @@ final class PreviewBlocks {
      * @return the canonical id of its first state in the root, or -1 if the root lacks the block (or has other states)
      */
     static int first(CanonicalBlocks root, BedrockBlockType constant) {
-        Integer first = BY_ROOT.computeIfAbsent(root, PreviewBlocks::new).firsts.get(constant);
+        Integer first = of(root).firsts.get(constant);
         return first == null ? -1 : first;
     }
 }

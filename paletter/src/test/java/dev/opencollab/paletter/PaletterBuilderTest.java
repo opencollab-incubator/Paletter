@@ -233,12 +233,12 @@ class PaletterBuilderTest {
         AtomicInteger reports = new AtomicInteger();
         Paletter paletter = Paletter.builder().reports(report -> reports.incrementAndGet())
             .layer(PaletteLayer.builder("global").build()).build();
-        assertEquals(0, reports.get());
+        // build() compiled every version and reported each once
+        assertEquals(paletter.versions().size(), reports.get());
         paletter.palette(OLDEST);
         paletter.palette(OLDEST);
-        assertEquals(1, reports.get());
         paletter.palette(PALETTER.latest().protocolVersion());
-        assertEquals(2, reports.get());
+        assertEquals(paletter.versions().size(), reports.get());
     }
 
     @Test

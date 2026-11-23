@@ -20,7 +20,7 @@ import java.util.concurrent.TimeUnit;
 
 /**
  * What a server does once at startup: build a {@link Paletter} and compile the palette of every bundled release version
- * with {@link Paletter#warmUp()}. One shot in a fresh JVM, no warm-up: a warm-up would not be startup any more. Every fork is one
+ * in {@link Paletter.Builder#build()}. One shot in a fresh JVM, no warm-up: a warm-up would not be startup any more. Every fork is one
  * cold measurement; the value to report is the median of the forks.
  * <p>
  * Run it on its own, with no warm-up and one iteration (a run without {@code -Pjmh.includes} leaves it out, and the
@@ -39,6 +39,12 @@ public class StartupBenchmark {
         return compile(Paletter.builder().build());
     }
 
+    /** Vanilla only, behaviour values off ({@code behaviour(false)}): what a proxy that never reads them pays. */
+    @Benchmark
+    public int withoutBehaviour() {
+        return compile(Paletter.builder().behaviour(false).build());
+    }
+
     /** With one custom layer of 20 blocks and 20 items, registered before the palettes compile. */
     @Benchmark
     public int withCustomLayer() {
@@ -51,8 +57,7 @@ public class StartupBenchmark {
     }
 
     private static int compile(Paletter paletter) {
-        // All at once, as a server does before it accepts players; then each is looked up as a session would
-        paletter.warmUp();
+        // build() compiled every version, as a server does before it accepts players; each is looked up as a session would
         int variants = 0;
         for (DataVersion version : paletter.versions()) {
             Palette palette = paletter.palette(version.protocolVersion());

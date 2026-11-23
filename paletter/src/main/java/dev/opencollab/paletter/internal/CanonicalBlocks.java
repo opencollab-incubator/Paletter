@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.WeakHashMap;
+import java.util.function.Function;
 
 /**
  * Dense, version independent block state indices ("canonical" ids). Every state of the newest bundled version gets
@@ -60,6 +61,8 @@ public final class CanonicalBlocks {
     private final Lazy<Map<String, Schema>> schemas = new Lazy<>(this::buildSchemas);
     /** Of a root only: its vanilla ids and those of the one other root asked about last. */
     private volatile @Nullable Translation translation;
+    /** Of a root only: the preview handles {@code vanilla.PreviewBlocks} makes from it, see {@link #previewBlocks}. */
+    private volatile @Nullable Object previewBlocks;
 
     private CanonicalBlocks(@Nullable CanonicalBlocks parent, List<NbtMap> states, List<CustomBlock> blocks,
                             Renames renames, String version, Map<String, NbtMap> defaultStates) {
@@ -239,6 +242,28 @@ public final class CanonicalBlocks {
                 if (current == null || current.reference() != other) {
                     root.translation = current = Translation.of(other, root.states.length, other.states.length,
                         id -> other.index.indexOf(root.states[id]));
+                }
+            }
+        }
+        return current;
+    }
+
+    /**
+     * What the vanilla package derives from the root of this lineage once (the handles of the blocks a preview added or
+     * changed). Kept by the root, so it lives as long as the root does, and read without a lock after the first call.
+     *
+     * @param make builds it from the root, called once per root
+     * @return what {@code make} built for the root of this lineage
+     */
+    @Internal
+    public @NonNull Object previewBlocks(@NonNull Function<CanonicalBlocks, Object> make) {
+        CanonicalBlocks root = this.root;
+        Object current = root.previewBlocks;
+        if (current == null) {
+            synchronized (root) {
+                current = root.previewBlocks;
+                if (current == null) {
+                    root.previewBlocks = current = make.apply(root);
                 }
             }
         }

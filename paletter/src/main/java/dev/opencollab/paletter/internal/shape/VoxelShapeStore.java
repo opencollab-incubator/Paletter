@@ -2,7 +2,6 @@ package dev.opencollab.paletter.internal.shape;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
-import org.cloudburstmc.nbt.NBTInputStream;
 import org.cloudburstmc.nbt.NBTOutputStream;
 import org.cloudburstmc.nbt.NbtMap;
 import org.cloudburstmc.nbt.NbtMapBuilder;
@@ -10,6 +9,7 @@ import org.cloudburstmc.nbt.NbtType;
 import org.cloudburstmc.nbt.NbtUtils;
 import org.cloudburstmc.protocol.bedrock.data.SerializableVoxelShape;
 import dev.opencollab.paletter.data.DataVersion;
+import dev.opencollab.paletter.internal.data.PaletteDataCodec;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -97,10 +97,7 @@ public final class VoxelShapeStore {
     }
 
     public static @NonNull VoxelShapeStore read(@NonNull InputStream stream) throws IOException {
-        NbtMap root;
-        try (NBTInputStream input = NbtUtils.createGZIPReader(stream)) {
-            root = (NbtMap) input.readTag();
-        }
+        NbtMap root = PaletteDataCodec.readGzip(stream);
         List<Registry> registries = new ArrayList<>();
         for (NbtMap registry : root.getList("registries", NbtType.COMPOUND)) {
             List<Entry> shapes = new ArrayList<>();

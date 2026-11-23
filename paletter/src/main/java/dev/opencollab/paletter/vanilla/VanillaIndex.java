@@ -87,7 +87,8 @@ final class VanillaIndex {
         this.itemConstants = constantItems;
         this.blockConstants = constantBlocks;
         // The constants of a preview are not in the data of the release: they carry their states (see VanillaTypes.previewBlock)
-        Paletter paletter = Paletter.bundled();
+        // The loader, not Paletter.bundled(): that compiles every version, which links these constants
+        Paletter paletter = Paletter.bundledLoader();
         VanillaData latest = paletter.vanillaData(paletter.latest());
         this.blocks = paletter.canonicalBlocks();
         this.items = paletter.canonicalItems();

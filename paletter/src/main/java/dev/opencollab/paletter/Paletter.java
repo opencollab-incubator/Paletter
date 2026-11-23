@@ -19,6 +19,7 @@ import dev.opencollab.paletter.internal.creative.RawStack;
 import dev.opencollab.paletter.internal.data.VanillaData;
 import dev.opencollab.paletter.internal.data.VanillaItem;
 import dev.opencollab.paletter.internal.CanonicalItems;
+import dev.opencollab.paletter.internal.behaviour.BehaviourStore;
 import dev.opencollab.paletter.property.Properties;
 import dev.opencollab.paletter.vanilla.BedrockBlockType;
 import dev.opencollab.paletter.vanilla.BedrockItemType;
@@ -50,7 +51,9 @@ import java.util.function.Predicate;
  * // Optionally per session, sharing everything it does not change
  * Palette sessionPalette = palette.extend(sessionLayer);
  * }</pre>
- * Everything is loaded lazily and cached; instances are thread safe. Block states and item components that are equal
+ * {@link Builder#build()} compiles the palette of every served version, with everything its lookups use, so no later
+ * call waits for data ({@link #vanilla(DataVersion)} of a version that is not served compiles on its first call, and
+ * {@link Palette#extend} compiles when called). Instances are thread safe. Block states and item components that are equal
  * across versions are the same instances. Share one instance for the whole application: every per-version palette it
  * compiles is cached in it.
  * <p>
@@ -75,6 +78,8 @@ import java.util.function.Predicate;
 public final class Paletter {
     private final PaletteDataSource source;
     private final boolean previews;
+    /** {@link Builder#behaviour(boolean)}. */
+    private final boolean behaviour;
     private final List<DataVersion> versions;
     private final Fallbacks fallbacks;
     private final VanillaContent vanillaContent;
@@ -100,6 +105,7 @@ public final class Paletter {
     private Paletter(Builder builder) {
         this.source = builder.source;
         this.previews = builder.previews;
+        this.behaviour = builder.behaviour;
         this.versions = source.versions().stream().filter(this::available).filter(builder.versions).toList();
         this.fallbacks = builder.fallbacks;
         this.vanillaContent = builder.vanillaContent.copy();
@@ -177,7 +183,7 @@ public final class Paletter {
 
     /** What is loaded from the data source only depends on the data source: every Paletter over the bundled data shares it. */
     private boolean sharesBundledData() {
-        return source == PaletteDataSource.bundled() && this != Holder.BUNDLED;
+        return source == PaletteDataSource.bundled() && this != Loaders.BUNDLED;
     }
 
     /**
@@ -186,7 +192,7 @@ public final class Paletter {
      * release's; the canonical ids of the others are mapped from them.
      */
     private @Nullable Paletter sharedCanonicals() {
-        Paletter shared = previews ? Holder.WITH_PREVIEWS : Holder.BUNDLED;
+        Paletter shared = previews ? Loaders.WITH_PREVIEWS : Loaders.BUNDLED;
         return source == PaletteDataSource.bundled() && this != shared ? shared : null;
     }
 
@@ -242,7 +248,7 @@ public final class Paletter {
     @Internal
     public @NonNull VanillaData vanillaData(@NonNull DataVersion version) {
         // A Paletter over the bundled data loads through the shared one, but only its own versions decide when interning ends
-        Paletter loader = sharesBundledData() ? Holder.BUNDLED : this;
+        Paletter loader = sharesBundledData() ? Loaders.BUNDLED : this;
         VanillaData loaded = loader.data.computeIfAbsent(version, v -> {
             try {
                 return loader.intern(loader.source.load(v));
@@ -274,7 +280,7 @@ public final class Paletter {
 
     /** For tests: whether the intern map this instance loads through was dropped. */
     boolean internReleased() {
-        Paletter loader = sharesBundledData() ? Holder.BUNDLED : this;
+        Paletter loader = sharesBundledData() ? Loaders.BUNDLED : this;
         synchronized (loader.internLock) {
             return loader.interned == null;
         }
@@ -379,7 +385,13 @@ public final class Paletter {
     public @NonNull Palette vanilla(@NonNull DataVersion version) {
         return vanilla.computeIfAbsent(version,
             key -> PaletteCompiler.vanilla(vanillaData(key), canonicalBlocks(), canonicalItems(), blockInterner,
-                fallbacks, vanillaContent, creativeOrdering, source::behaviour, source.voxelShapes()));
+                fallbacks, vanillaContent, creativeOrdering, behaviour ? source::behaviour : Paletter::noBehaviour,
+                source.voxelShapes()));
+    }
+
+    /** The behaviour data of a Paletter built with {@code behaviour(false)}: none, and asking is an error. */
+    private static BehaviourStore noBehaviour() {
+        throw new IllegalStateException("Behaviour values are switched off for this Paletter (Paletter.Builder#behaviour(false))");
     }
 
     /**
@@ -452,31 +464,33 @@ public final class Paletter {
     }
 
     /**
-     * Compiles the palettes of all served versions now, instead of on first use, so no session pays for it. The versions
-     * compile at the same time, on a few threads of their own (at most one per processor) that end with this call; the
-     * palettes are the same as compiled one after another. Each is passed to the {@link Builder#reports reports}
-     * consumer as usual, on the calling thread and oldest version first.
+     * Compiles the palettes of all served versions, for {@link Builder#build()}. The versions compile at the same time, on
+     * a few threads of their own (at most one per processor) that end with this call; the palettes are the same as
+     * compiled one after another. Each is passed to the {@link Builder#reports reports} consumer on the calling thread,
+     * oldest version first.
      *
-     * @return this instance
      * @throws PaletteException if a global layer cannot be compiled: the first version's failure, after the palettes
      *                          that compiled were reported
-     * @since 1.0.0
      */
-    public @NonNull Paletter warmUp() {
+    private void compileAll(boolean sequential) {
+        // The one file of the data source no palette reads: loaded here too, so verifiedBuilds(...) does not wait either
+        if (!versions.isEmpty()) {
+            source.verifiedBuilds(versions.getFirst());
+        }
         List<DataVersion> pending = versions.stream().filter(version -> !compiled.containsKey(version)).toList();
-        int threads = Math.min(pending.size(), Runtime.getRuntime().availableProcessors());
+        int threads = sequential ? 1 : Math.min(pending.size(), Runtime.getRuntime().availableProcessors());
         if (threads <= 1) {
             for (DataVersion version : pending) {
                 compiled(version);
             }
-            return this;
+            return;
         }
         // The versions share only what is thread safe: the maps of this instance, the interners (their maps are
         // concurrent or locked, and equal content gives the same instance whichever version comes first) and the
         // lazily built lookups of the data source and the canonical ids (built once, under a lock)
         AtomicInteger count = new AtomicInteger();
         ExecutorService pool = Executors.newFixedThreadPool(threads, task -> {
-            Thread thread = new Thread(task, "Paletter warm-up " + count.incrementAndGet());
+            Thread thread = new Thread(task, "Paletter compile " + count.incrementAndGet());
             thread.setDaemon(true);
             return thread;
         });
@@ -519,7 +533,6 @@ public final class Paletter {
         } finally {
             pool.shutdown();
         }
-        return this;
     }
 
     /** A palette, and whether the call that returned it compiled it (and so reports it). */
@@ -527,6 +540,12 @@ public final class Paletter {
     }
 
     private Palette compiled(DataVersion version) {
+        // Every served version is compiled by build(): a plain read, no allocation and no lock of a map bin
+        Palette palette = compiled.get(version);
+        return palette != null ? palette : compiledReported(version);
+    }
+
+    private Palette compiledReported(DataVersion version) {
         Compiled result = compiledUnreported(version);
         if (result.created()) {
             reported(result.palette());
@@ -542,6 +561,8 @@ public final class Paletter {
             for (PaletteLayer layer : globalLayers) {
                 result = PaletteCompiler.extend(result, layer);
             }
+            // Everything a lookup on it would otherwise build on first use, here on the compiling thread
+            result.loadEagerly(behaviour);
             return result;
         });
         return new Compiled(palette, created[0]);
@@ -581,6 +602,17 @@ public final class Paletter {
         source.releaseProperties();
     }
 
+    /**
+     * Internal: the loader every Paletter over the bundled data shares its data and canonical ids through. It compiles no
+     * palette, so the vanilla constants link to its data without compiling {@link #bundled()}.
+     *
+     * @return the loader of the bundled data, without previews
+     */
+    @Internal
+    public static @NonNull Paletter bundledLoader() {
+        return Loaders.BUNDLED;
+    }
+
     /** For tests: whether what only compiling uses was dropped. */
     boolean compileDataReleased() {
         return compileDataReleased;
@@ -611,6 +643,11 @@ public final class Paletter {
         private PaletteDataSource source = PaletteDataSource.bundled();
         private Predicate<DataVersion> versions = version -> true;
         private boolean previews;
+        private boolean behaviour = true;
+        /** For tests: compile the versions one after another, on the calling thread. */
+        boolean sequential;
+        /** For tests: false leaves every palette to compile on its first {@code palette(...)}, the way it was before build() compiled. */
+        boolean compileOnBuild = true;
         private Fallbacks fallbacks = Fallbacks.UNKNOWN;
         private final VanillaContent vanillaContent = new VanillaContent();
         private CreativeOrdering creativeOrdering = CreativeOrdering.BDS;
@@ -766,18 +803,53 @@ public final class Paletter {
         }
 
         /**
-         * Creates the Paletter. Only the version index is read; no palette is compiled yet, see {@link Paletter#warmUp()}.
+         * Loads the behaviour values ({@link Palette#resolve(dev.opencollab.paletter.vanilla.BedrockBlockState)}{@code .behaviour()},
+         * {@code ResolvedItem#behaviour()}) with the palettes, or not. Off, the behaviour data is never read or kept, and asking
+         * for a behaviour value throws {@link IllegalStateException}; resolutions and everything else work as before. For
+         * consumers that never read behaviour values (a proxy that only translates).
+         *
+         * @param behaviour whether behaviour values are loaded; default {@code true}
+         * @return this builder
+         */
+        public @NonNull Builder behaviour(boolean behaviour) {
+            this.behaviour = behaviour;
+            return this;
+        }
+
+        /**
+         * Creates the Paletter and compiles the palette of every served version now, so no later call waits for data:
+         * each palette is built with everything its lookups use (behaviour values unless {@link #behaviour(boolean) off},
+         * voxel shapes, creative content, lookup tables). The versions compile at the same time, on a few threads of their
+         * own (at most one per processor) that end with this call; the palettes are the same as compiled one after another.
+         * Each is passed to the {@link #reports reports} consumer on the calling thread, oldest version first. Narrow the
+         * versions with {@link #versions(Predicate)} to compile fewer.
          *
          * @return the Paletter
+         * @throws PaletteException if a layer cannot be compiled: the first version's failure, after the palettes that
+         *                          compiled were reported
+         * @throws java.io.UncheckedIOException if the data source cannot be read
          */
         public @NonNull Paletter build() {
-            return new Paletter(this);
+            Paletter paletter = new Paletter(this);
+            if (compileOnBuild) {
+                paletter.compileAll(sequential);
+            }
+            return paletter;
         }
     }
 
+    /** {@link #bundled()}: compiled on first use. */
     private static final class Holder {
         private static final Paletter BUNDLED = builder().build();
-        private static final Paletter WITH_PREVIEWS = builder().previews(true).build();
+    }
+
+    /**
+     * The loaders every Paletter over the bundled data shares its data and canonical ids through (see
+     * {@link #sharesBundledData}, {@link #sharedCanonicals}). Never compiled: they only load data, so they keep no palette.
+     */
+    private static final class Loaders {
+        private static final Paletter BUNDLED = new Paletter(builder());
+        private static final Paletter WITH_PREVIEWS = new Paletter(builder().previews(true));
     }
 
     // ---- Properties ----

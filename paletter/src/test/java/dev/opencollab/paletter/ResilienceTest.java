@@ -2,6 +2,11 @@ package dev.opencollab.paletter;
 
 import org.cloudburstmc.protocol.bedrock.data.BlockPropertyData;
 import org.cloudburstmc.protocol.bedrock.packet.StartGamePacket;
+import dev.opencollab.paletter.behaviour.BlockBehaviour;
+import dev.opencollab.paletter.behaviour.ItemBehaviour;
+import dev.opencollab.paletter.block.ResolvedBlock;
+import dev.opencollab.paletter.vanilla.BedrockBlocks;
+import dev.opencollab.paletter.vanilla.BedrockItems;
 import dev.opencollab.paletter.block.BlockHashes;
 import dev.opencollab.paletter.block.BlockProperty;
 import dev.opencollab.paletter.block.BlockRegistry;
@@ -146,20 +151,17 @@ class ResilienceTest {
     }
 
     @Test
-    void aFailedGlobalLayerCachesNothingInThePaletter() {
+    void aFailedGlobalLayerFailsTheBuildEveryTime() {
         PaletteLayer duplicate = PaletteLayer.builder("global").block(block("minecraft:stone")).build();
-        Paletter paletter = Paletter.builder().layer(duplicate).build();
-        assertThrows(PaletteException.class, () -> paletter.palette(LATEST.protocolVersion()));
-        assertThrows(PaletteException.class, () -> paletter.palette(LATEST.protocolVersion()));
-        assertThrows(PaletteException.class, paletter::warmUp);
-        // The vanilla palette is not affected
-        assertNotNull(paletter.vanilla(LATEST));
+        Paletter.Builder builder = Paletter.builder().versions(LATEST::equals).layer(duplicate);
+        assertThrows(PaletteException.class, builder::build);
+        assertThrows(PaletteException.class, builder::build);
     }
 
     @Test
     void aGlobalLayerFailsLoudlyWithContext() {
         PaletteLayer duplicate = PaletteLayer.builder("global").block(block("minecraft:stone")).build();
-        PaletteException loud = assertThrows(PaletteException.class, () -> Paletter.builder().layer(duplicate).build().palette(LATEST.protocolVersion()));
+        PaletteException loud = assertThrows(PaletteException.class, () -> Paletter.builder().versions(LATEST::equals).layer(duplicate).build());
         assertTrue(loud.getMessage().contains("global") && loud.getMessage().contains(LATEST.toString()), loud.getMessage());
         assertEquals("global", loud.layer());
         assertEquals("minecraft:stone", loud.identifier());
@@ -168,33 +170,26 @@ class ResilienceTest {
         PaletteLayer throwing = PaletteLayer.builder("startup").creative(editor -> {
             throw cause;
         }).build();
-        PaletteException wrapped = assertThrows(PaletteException.class, () -> Paletter.builder().layer(throwing).build().palette(LATEST.protocolVersion()));
+        PaletteException wrapped = assertThrows(PaletteException.class, () -> Paletter.builder().versions(LATEST::equals).layer(throwing).build());
         assertSame(cause, wrapped.getCause());
         assertTrue(wrapped.getMessage().contains("startup") && wrapped.getMessage().contains(LATEST.toString())
             && wrapped.getMessage().contains("boom"), wrapped.getMessage());
     }
 
     @Test
-    void aReportsConsumerMayUseThePaletterAndEachPaletteIsReportedOnce() {
+    void eachPaletteIsReportedOnceOldestFirst() {
         List<PaletteReport> reports = Collections.synchronizedList(new ArrayList<>());
-        Paletter[] self = new Paletter[1];
-        Paletter paletter = Paletter.builder().reports(report -> {
-            reports.add(report);
-            // Re-entrancy: asking for another palette from inside the consumer
-            self[0].palette(self[0].versions().getFirst().protocolVersion());
-        }).layer(PaletteLayer.builder("global").build()).build();
-        self[0] = paletter;
-        paletter.palette(LATEST.protocolVersion());
-        assertEquals(2, reports.size(), "the latest, then the oldest it asked for");
+        Paletter paletter = Paletter.builder().reports(reports::add).layer(PaletteLayer.builder("global").build()).build();
+        assertEquals(paletter.versions(), reports.stream().map(PaletteReport::version).toList());
         paletter.palette(LATEST.protocolVersion());
         paletter.palette(paletter.versions().getFirst().protocolVersion());
-        assertEquals(2, reports.size());
+        assertEquals(paletter.versions().size(), reports.size());
     }
 
     @Test
     void aProtocolNewerThanTheDataIsReportedAsInfo() {
         List<PaletteReport> reports = new ArrayList<>();
-        Paletter paletter = Paletter.builder().reports(reports::add).build();
+        Paletter paletter = Paletter.builder().versions(LATEST::equals).reports(reports::add).build();
         int newer = LATEST.protocolVersion() + 1;
         Palette palette = paletter.palette(newer);
         assertEquals(2, reports.size(), "the compiled palette, then the note");
@@ -211,16 +206,28 @@ class ResilienceTest {
     }
 
     @Test
-    void warmUpCompilesEveryVersionOnce() {
+    void buildCompilesEveryVersionOnceWithEverythingLoaded() {
         AtomicInteger reports = new AtomicInteger();
         Paletter paletter = Paletter.builder().reports(report -> reports.incrementAndGet()).build();
-        assertSame(paletter, paletter.warmUp());
         assertEquals(paletter.versions().size(), reports.get());
         for (DataVersion version : paletter.versions()) {
-            assertNotNull(paletter.palette(version.protocolVersion()));
+            Palette palette = paletter.palette(version.protocolVersion());
+            // Nothing is left to build on first use, behaviour values included
+            assertTrue(palette.loadedEagerly(true), version.toString());
         }
-        paletter.warmUp();
         assertEquals(paletter.versions().size(), reports.get());
+    }
+
+    @Test
+    void withoutBehaviourNothingIsLoadedAndAskingThrows() {
+        Paletter paletter = Paletter.builder().versions(LATEST::equals).behaviour(false).build();
+        Palette palette = paletter.palette(LATEST.protocolVersion());
+        assertTrue(palette.loadedEagerly(false));
+        ResolvedBlock stone = palette.resolve(BedrockBlocks.STONE.defaultState());
+        assertNotNull(stone.definition());
+        IllegalStateException e = assertThrows(IllegalStateException.class, () -> stone.behaviour().get(BlockBehaviour.FRICTION));
+        assertTrue(e.getMessage().contains("behaviour(false)"), e.getMessage());
+        assertThrows(IllegalStateException.class, () -> palette.resolve(BedrockItems.STICK).behaviour().getOrElse(ItemBehaviour.MAX_STACK_SIZE, 0));
     }
 
     @Test

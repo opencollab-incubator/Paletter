@@ -159,6 +159,24 @@ members. Setting `forRemoval` when the last bundled version that has the content
 retire` command will do it, so users get a `javac` warning at every use well before the major release. Until then it is
 set by hand.
 
+## Loading
+
+`Paletter.builder()...build()` compiles the palette of every served version, in parallel, before it returns: the vanilla
+data, the voxel shapes, the canonical, item, creative and resolution tables, the preview handles of a preview version, and
+the behaviour data with every behaviour column (unless `behaviour(false)`). After that no lookup on those palettes reads or
+builds data: `palette(...)` is a map read, and `resolve`, `behaviour().get`, `encode`, `decode` and the packet builders
+only use what is there. Narrow `versions(...)` to compile, and keep, fewer.
+
+What still happens on first use, and is thread safe (built once under a lock, read without one):
+
+- `Paletter.bundled()` builds the shared instance on its first call; `vanilla(version)` of a version that is not served
+  compiles it on its first call.
+- `Palette#extend(layer)` compiles the extension when called (and caches it per layer); the behaviour columns of the
+  states it adds are built on the first value asked for, from data already loaded.
+- A `ResolvedBlock` is made, once, the first time its state is resolved (one small object, nothing is read).
+- `Ingredients.tagOf` indexes a palette's tags on its first call for that palette; `VanillaRecipes.of(version)` reads the
+  recipes of a version.
+
 ## Keys and lookups
 
 Keys (`BedrockBlockType`, `BedrockBlockState`, `BedrockItemType`, `BedrockItemVariant`) are identities. `equals` always
@@ -450,6 +468,9 @@ block.behaviour();    // the values of the block that is sent
 - Custom blocks and items answer from their components (`Friction`, `LightEmission`, `CollisionBox`, `MaxStackSize`,
   ...). A key without its component gets the BDS default measured by the behaviour probe.
 - Shapes are those of one state. Shapes that depend on neighbours or position, such as plant offsets, are up to you.
+- `Paletter.builder().behaviour(false)` switches behaviour values off, for consumers that never read them: the behaviour
+  data is never read or kept, resolutions work as before, and `get`, `getOrElse`, `provenance` and `explain` throw
+  `IllegalStateException` naming the switch.
 
 The sources, their ranking, disputed values and the custom block defaults are listed in the generated
 [data/behaviour/REPORT.md](../data/behaviour/REPORT.md).
@@ -504,8 +525,9 @@ by name; no match gives null.
 
 ## Errors and reports
 
-Layers given to `Paletter.builder()` are startup configuration: a problem throws `PaletteException` on the first
-`palette(...)` call, and `Paletter#warmUp()` compiles every version up front. `Palette#extend(layer)` throws a
+Layers given to `Paletter.builder()` are startup configuration: `build()` compiles every served version, so a problem
+throws `PaletteException` from `build()` (the first version's failure, after the palettes that compiled were reported).
+`Palette#extend(layer)` throws a
 `PaletteException` too, and changes nothing: the palette is unchanged, no palette or failure is cached, and the same palette can
 still be extended by another layer. Duplicate identifiers (blocks, items, voxel shapes) and duplicate block runtime ids
 are rejected, across layers and within one. `PaletteException#layer()` is the id of the layer and `#identifier()` the

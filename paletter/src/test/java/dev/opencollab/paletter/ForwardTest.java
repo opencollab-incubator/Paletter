@@ -9,6 +9,7 @@ import dev.opencollab.paletter.data.PaletteDataSource;
 import dev.opencollab.paletter.internal.data.Renames;
 import dev.opencollab.paletter.internal.data.VanillaData;
 import dev.opencollab.paletter.internal.item.ItemVariant;
+import dev.opencollab.paletter.internal.shape.VoxelShapeStore;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
@@ -117,6 +118,11 @@ class ForwardTest {
             public @NonNull Renames renames() {
                 return Renames.parse(List.of("block minecraft:old_stone minecraft:stone", "block minecraft:older_stone minecraft:old_stone",
                     "item minecraft:old_stick minecraft:stick", "item minecraft:gone minecraft:also_gone"));
+            }
+
+            @Override
+            public @NonNull VoxelShapeStore voxelShapes() {
+                return bundled.voxelShapes();
             }
         }).build();
         Forwarding block = Ids.forwardBlock(renaming, BlockStates.of("minecraft:older_stone"));

@@ -10,6 +10,8 @@ import org.cloudburstmc.nbt.NbtUtils;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.UncheckedIOException;
+import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
 import java.util.TreeMap;
 
 /**
@@ -53,6 +55,48 @@ public final class BlockHashes {
         if ("minecraft:unknown".equals(name)) {
             return UNKNOWN_HASH;
         }
+        // The bytes the NBT writer would produce, fed to the hash directly: no sorted copy, compound or writer per state
+        NbtMap values = BlockStates.states(state);
+        String[] keys = values.keySet().toArray(String[]::new);
+        Arrays.sort(keys);
+        Fnv1a32 hash = new Fnv1a32();
+        hash.tag(TAG_COMPOUND, "");
+        hash.tag(TAG_STRING, "name");
+        hash.string(name);
+        hash.tag(TAG_COMPOUND, "states");
+        for (String key : keys) {
+            switch (values.get(key)) {
+                case Byte value -> {
+                    hash.tag(TAG_BYTE, key);
+                    hash.write(value);
+                }
+                case Integer value -> {
+                    hash.tag(TAG_INT, key);
+                    hash.intLE(value);
+                }
+                case String value -> {
+                    hash.tag(TAG_STRING, key);
+                    hash.string(value);
+                }
+                // Block states only have these three; anything else goes through the NBT writer
+                default -> {
+                    return hashWithWriter(name, state);
+                }
+            }
+        }
+        hash.write(TAG_END);
+        hash.write(TAG_END);
+        return hash.hash;
+    }
+
+    private static final int TAG_END = 0;
+    private static final int TAG_BYTE = 1;
+    private static final int TAG_INT = 3;
+    private static final int TAG_STRING = 8;
+    private static final int TAG_COMPOUND = 10;
+
+    /** {@link #hash(NbtMap)} through the little endian NBT writer, for values other than byte, int and string. */
+    static int hashWithWriter(String name, NbtMap state) {
         NbtMap canonical = NbtMap.builder()
             .putString("name", name)
             .putCompound("states", NbtMap.fromMap(new TreeMap<>(BlockStates.states(state))))
@@ -80,6 +124,27 @@ public final class BlockHashes {
             for (int i = offset; i < offset + length; i++) {
                 write(bytes[i]);
             }
+        }
+
+        /** A tag's type and name, as the writer starts an entry. */
+        void tag(int type, String name) {
+            write(type);
+            string(name);
+        }
+
+        /** As {@code LittleEndianDataOutputStream#writeUTF}: the UTF-8 length as a little endian short, then the bytes. */
+        void string(String value) {
+            byte[] bytes = value.getBytes(StandardCharsets.UTF_8);
+            write(bytes.length);
+            write(bytes.length >>> 8);
+            write(bytes, 0, bytes.length);
+        }
+
+        void intLE(int value) {
+            write(value);
+            write(value >>> 8);
+            write(value >>> 16);
+            write(value >>> 24);
         }
     }
 }

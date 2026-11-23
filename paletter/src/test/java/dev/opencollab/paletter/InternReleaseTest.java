@@ -2,6 +2,7 @@ package dev.opencollab.paletter;
 
 import dev.opencollab.paletter.block.BlockHashes;
 import dev.opencollab.paletter.data.DataVersion;
+import dev.opencollab.paletter.data.PaletteDataSource;
 import dev.opencollab.paletter.vanilla.BedrockBlocks;
 import org.junit.jupiter.api.Test;
 
@@ -48,15 +49,18 @@ class InternReleaseTest {
     /** The checking JVM: a Paletter without the oldest bundled version, then a version loaded after the release. */
     public static final class Check {
         public static void main(String[] args) {
-            DataVersion oldest = Paletter.bundled().versions().getFirst();
-            Paletter paletter = Paletter.builder().versions(version -> !version.equals(oldest)).build();
+            DataVersion oldest = PaletteDataSource.bundled().versions().getFirst();
+            // Compiled on first use, not in build(), to see the state before the served versions are loaded
+            Paletter.Builder builder = Paletter.builder().versions(version -> !version.equals(oldest));
+            builder.compileOnBuild = false;
+            Paletter paletter = builder.build();
             boolean before = paletter.internReleased();
             for (DataVersion version : paletter.versions()) {
                 paletter.palette(version.protocolVersion());
             }
             boolean after = paletter.internReleased();
             // The oldest version is loaded after the release: it gets copies of its own, with the same values
-            Palette later = Paletter.builder().build().palette(oldest.protocolVersion());
+            Palette later = Paletter.builder().versions(oldest::equals).build().palette(oldest.protocolVersion());
             int air = later.runtimeId(BedrockBlocks.AIR.defaultState());
             String laterResult = air == BlockHashes.hash(BedrockBlocks.AIR.defaultState().toNbt()) && later.blocks().size() > 1000 ? "ok" : "broken";
             System.out.println("before=" + before + " after=" + after + " later=" + laterResult);

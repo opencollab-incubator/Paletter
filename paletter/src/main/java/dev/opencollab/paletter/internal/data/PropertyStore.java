@@ -2,7 +2,6 @@ package dev.opencollab.paletter.internal.data;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
-import org.cloudburstmc.nbt.NBTInputStream;
 import org.cloudburstmc.nbt.NBTOutputStream;
 import org.cloudburstmc.nbt.NbtMap;
 import org.cloudburstmc.nbt.NbtMapBuilder;
@@ -343,10 +342,7 @@ public final class PropertyStore {
     // ---- Serialisation ----
 
     public static @NonNull PropertyStore read(@NonNull InputStream stream) throws IOException {
-        NbtMap root;
-        try (NBTInputStream input = NbtUtils.createGZIPReader(stream)) {
-            root = (NbtMap) input.readTag();
-        }
+        NbtMap root = PaletteDataCodec.readGzip(stream);
         int format = root.getInt("format", -1);
         if (format != FORMAT) {
             throw new IOException("Unsupported Paletter property format " + format + ", expected " + FORMAT);

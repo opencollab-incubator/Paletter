@@ -34,13 +34,14 @@ PaletteLayer content = PaletteLayer.builder("server")
     .overrideItem(BedrockItems.CAKE, item -> item.modifyComponents(MaxStackSize.of(1)))
     .build();
 
-// One Paletter per application: policy and global content
+// One Paletter per application: policy and global content. build() compiles every served version with all it needs,
+// so no later call waits for data (narrow them with versions(...); behaviour(false) if behaviour values are never read)
 Paletter paletter = Paletter.builder()
     .fallbacks(Fallbacks.builder().item(BedrockItems.POPLAR_BOAT, BedrockItems.OAK_BOAT).build())
     .layer(content)
     .build();
 
-// One palette per protocol version, compiled once and shared by every session on that version
+// One palette per protocol version, compiled by build() and shared by every session on that version
 Palette palette = paletter.palette(session.getCodec());
 palette.applyTo(session.getPeer().getCodecHelper());   // item and block definitions
 palette.applyTo(startGamePacket);                      // block properties, hashed block ids

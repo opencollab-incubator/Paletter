@@ -180,6 +180,10 @@ public final class BedrockItemType implements ItemKey {
         if (linked == null) {
             return -1;
         }
+        // Most types number their variants 0, 1, 2, ... in data order (potions, dyes, ...): then the aux is the position
+        if (aux >= 0 && aux < linked.ids.length && linked.variants.get(aux).aux() == aux) {
+            return linked.ids[aux];
+        }
         for (int i = 0; i < linked.ids.length; i++) {
             if (linked.variants.get(i).aux() == aux) {
                 return linked.ids[i];

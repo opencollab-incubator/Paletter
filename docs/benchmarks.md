@@ -130,8 +130,8 @@ id) did not change, so this is the layout of the heap rather than code, but it i
 
 ## Startup (JMH, cold)
 
-`StartupBenchmark` is one cold shot per fork: build a `Paletter` and compile the palette of every bundled release version
-with `warmUp()`, then look each one up. `withCustomLayer` adds one layer of 20 blocks and
+`StartupBenchmark` is one cold shot per fork: build a `Paletter`, which compiles the palette of every bundled release
+version (before `build()` did this, the benchmark called `warmUp()`), then look each one up. `withCustomLayer` adds one layer of 20 blocks and
 20 items. It is left out of the other runs (a warm-up would defeat it); run it with
 
 ```
@@ -146,7 +146,7 @@ with `warmUp()`, then look each one up. `withCustomLayer` adds one layer of 20 b
 The JVMs run with `-Xmx2g` on the same shared laptop; the spread is about 10%, so read the custom layer's cost (about 0.3 s)
 as an estimate.
 
-`warmUp()` compiles the versions in parallel (one thread per version, at most one per processor; 16 here). Two runs of
+`warmUp()` (now part of `build()`) compiles the versions in parallel (one thread per version, at most one per processor; 16 here). Two runs of
 sequential (before) and parallel (after) on the same laptop, five cold JVMs each, median:
 
 | Benchmark | Before, run 1 | After, run 1 | Before, run 2 | After, run 2 |
@@ -164,3 +164,46 @@ block table with its parent; one that does compiles the creative content again, 
 unmodifiable map over the `StateMap`, about 25,000 of them), which is the library's representation.
 
 The lookups themselves allocate nothing, except the item data that `encode` returns: `HotPathTest` counts the bytes of each.
+
+## 1.0 performance pass
+
+Same laptop, shared with other builds (quick runs: 2 warm-ups, 3 or 4 iterations, one fork; startup three cold forks).
+
+**Eager build.** `Paletter.Builder#build()` now compiles every served version with everything a lookup used to build on
+first use (`warmUp()` is gone), and `behaviour(false)` switches behaviour values off. `StartupBenchmark`, median of three:
+
+| Benchmark | Before (`build()` + `warmUp()`) | After |
+|-----------|---------------------------------|-------|
+| `vanilla` (behaviour values loaded and every column built) | 3,547 ms | 5,110 ms |
+| `withoutBehaviour` | not available | 2,982 ms |
+
+Loading the behaviour store and building every behaviour column of every version costs about 2.1 s of the build; before,
+the first lookup of each key on each palette paid it. Without behaviour the build is faster than before (the gzip reads
+below, and no behaviour store).
+
+**Gzip reads.** The bundled files are read through `PaletteDataCodec#readGzip`, buffered on the inflated side.
+`ReadBenchmark`, the same bytes in memory: `26.60.nbt` 121 ms unbuffered, 32 ms buffered; `behaviour.nbt` 91 ms and 20 ms.
+
+**Item by runtime id.** The registries a Paletter compiles keep a flat table by runtime id (about 16 KB each, shared by
+all sessions). `HotPathBenchmark.itemByRuntimeIdCompiled` (the compiled palette) 11.7 to 2.5 ns, `itemByRuntimeId` (two
+session layers on top) 34.3 to 19.7 ns.
+
+**Previews.** A runtime id to its key on a preview palette no longer takes a JVM-wide lock (the preview handles hang off
+the canonical root). `ContentionBenchmark.previewBlockState`, eight threads: 154 ns (error 38); not measured before.
+
+**Recipes.** `Ingredients.tagOf` indexes a palette's tags once: 353 us per call before, 20 us after (`IngredientsTest`
+prints it; a rough timing, there is no JMH in `:paletter-recipes`). `VanillaRecipes` caches softly: `RecipesMemoryTest`
+measures 3.8 MB for the recipes of the newest version while held, and nothing kept once dropped.
+
+**Memory** (`MemoryBaselineTest`, bytes; vanilla and served with behaviour off):
+
+| What | Before | After |
+|------|--------|-------|
+| vanilla palette, newest / oldest version | 12,918,680 / 13,566,112 | 11,914,448 / 13,310,304 |
+| served versions (all but the oldest) | 16,697,128 | 18,441,504 |
+| `extend`, two blocks / creative | 50,984 / 299,208 | 53,056 / 300,656 |
+| behaviour store (`behaviour.nbt` read, shared) | not measured | 6,624,728 |
+| behaviour columns of the newest palette, every key | not measured | 2,356,032 |
+
+The served versions hold the tables a lookup used to build on first use. Of the behaviour store, int arrays (the ids of
+the captures and columns) are 3.3 MB and the value arrays 2.8 MB; strings 0.3 MB, shapes 33 KB.

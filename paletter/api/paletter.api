@@ -207,11 +207,11 @@ public final class dev.opencollab.paletter.Paletter {
     public dev.opencollab.paletter.data.DataVersion version(int)
     public dev.opencollab.paletter.data.DataVersion version(java.lang.String)
     public java.util.List<dev.opencollab.paletter.data.DataVersion> versions()
-    public dev.opencollab.paletter.Paletter warmUp()
 }
 
 public static final class dev.opencollab.paletter.Paletter$Builder {
     public dev.opencollab.paletter.Paletter$Builder allExperiments()
+    public dev.opencollab.paletter.Paletter$Builder behaviour(boolean)
     public dev.opencollab.paletter.Paletter build()
     public dev.opencollab.paletter.Paletter$Builder creativeOrdering(dev.opencollab.paletter.creative.CreativeOrdering)
     public dev.opencollab.paletter.Paletter$Builder data(dev.opencollab.paletter.data.PaletteDataSource)

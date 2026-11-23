@@ -7,6 +7,7 @@ import dev.opencollab.paletter.behaviour.BlockBehaviour;
 import dev.opencollab.paletter.behaviour.ItemBehaviour;
 import dev.opencollab.paletter.block.BlockProperty;
 import dev.opencollab.paletter.block.CustomBlock;
+import dev.opencollab.paletter.data.DataVersion;
 import dev.opencollab.paletter.vanilla.BedrockBlockState;
 import dev.opencollab.paletter.vanilla.BedrockBlocks;
 import dev.opencollab.paletter.vanilla.BedrockItemVariant;
@@ -39,6 +40,9 @@ public class ContentionBenchmark {
     private BedrockItemVariant[] variants;
     private BedrockBlockState[] states;
     private CustomBlock block;
+    /** The palette of the bundled preview, and the runtime ids of its blocks in a shuffled order. */
+    private Palette preview;
+    private int[] previewRuntimeIds;
 
     /** Where a thread is in the shuffled inputs. */
     @State(Scope.Thread)
@@ -68,6 +72,15 @@ public class ContentionBenchmark {
         Collections.shuffle(stateList, random);
         states = stateList.toArray(BedrockBlockState[]::new);
         block = CustomBlock.builder("bench:session_block").property(BlockProperty.bool("bench:lit")).build();
+
+        Paletter previews = Paletter.builder().previews(true).versions(DataVersion::isPreview).behaviour(false).build();
+        preview = previews.palette(previews.latest().protocolVersion());
+        List<Integer> ids = new ArrayList<>();
+        for (int i = 0; i < preview.blocks().size(); i++) {
+            ids.add(preview.blocks().byIndex(i).getRuntimeId());
+        }
+        Collections.shuffle(ids, random);
+        previewRuntimeIds = ids.stream().mapToInt(Integer::intValue).toArray();
     }
 
     @Benchmark
@@ -78,6 +91,15 @@ public class ContentionBenchmark {
     @Benchmark
     public int resolveItemBehaviour(Cursor cursor) {
         return palette.resolve(variants[cursor.step(variants.length)]).behaviour().getOrElse(ItemBehaviour.MAX_STACK_SIZE, 0);
+    }
+
+    /**
+     * A block runtime id to its key on the palette of a preview version (previews on): the keys of the blocks the preview
+     * added or changed come from a table of the preview's canonical blocks, which must not be behind a lock.
+     */
+    @Benchmark
+    public BedrockBlockState previewBlockState(Cursor cursor) {
+        return preview.blockState(previewRuntimeIds[cursor.step(previewRuntimeIds.length)]);
     }
 
     @Benchmark
