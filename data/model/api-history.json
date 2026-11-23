@@ -547,9 +547,7 @@
         "minecraft:collision_box.shape",
         "minecraft:collision_box.useVoxelShapes"
       ],
-      "type": "vec3",
-      "nullable": true,
-      "removed": true
+      "type": "vec3"
     },
     "block:minecraft:collision_box:[].size": {
       "name": "size",
@@ -561,9 +559,7 @@
         "minecraft:collision_box.shape",
         "minecraft:collision_box.useVoxelShapes"
       ],
-      "type": "vec3",
-      "nullable": true,
-      "removed": true
+      "type": "vec3"
     },
     "block:minecraft:connection_rule:accepts_connections_from": {
       "name": "acceptsConnectionsFrom",
