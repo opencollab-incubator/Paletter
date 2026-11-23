@@ -226,11 +226,6 @@ final class Image {
         return section != null && (section.name().equals(".data") || section.name().equals(".bss"));
     }
 
-    int u8(long va) {
-        int offset = offset(va);
-        return offset < 0 ? -1 : bytes[offset] & 0xff;
-    }
-
     long u64(long va) {
         int offset = offset(va);
         return offset < 0 || offset + 8 > bytes.length ? 0 : little.getLong(offset);
