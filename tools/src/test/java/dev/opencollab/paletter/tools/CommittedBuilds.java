@@ -26,7 +26,7 @@ public final class CommittedBuilds {
      * block items, engine pack blocks, the hash collision pair). The recapture removes a build from this list when it captures it again.
      * A build that is not committed any more is ignored here; a build that is committed and not listed must have everything.
      */
-    private static final Set<String> BEFORE_CURRENT_ADDON = Set.of("1.26.36.1", "1.26.45.1", "1.26.52.3", "1.26.63.1", "1.26.70.24");
+    private static final Set<String> BEFORE_CURRENT_ADDON = Set.of();
 
     private CommittedBuilds() {
     }

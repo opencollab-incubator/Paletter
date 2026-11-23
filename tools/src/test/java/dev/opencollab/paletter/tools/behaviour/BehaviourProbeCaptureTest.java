@@ -23,6 +23,9 @@ class BehaviourProbeCaptureTest {
     private static final Path DIRECTORY = newest();
     /** The BDS build of the capture: the name of its {@code data/bds} directory. */
     private static final String BUILD = DIRECTORY.getParent().getFileName().toString();
+    /** The version BDS reports for it: a preview's as a beta ({@code 1.26.70-beta24}). */
+    private static final String REPORTED = dev.opencollab.paletter.tools.BuildNumber.parse(BUILD)
+        .reported(dev.opencollab.paletter.tools.CommittedBuilds.preview().contains(BUILD));
 
     /** @return {@code data/bds/<build>/behaviour-probe} of the newest build that has one */
     private static Path newest() {
@@ -42,7 +45,7 @@ class BehaviourProbeCaptureTest {
     @Test
     void theCaptureIsWhatTheCommittedConsoleGives() throws IOException {
         ProbeLog log = ProbeLog.parse(Files.readAllLines(DIRECTORY.resolve(BehaviourProbe.LOG)));
-        assertEquals(BUILD, log.version());
+        assertEquals(REPORTED, log.version());
         assertEquals(committed().getAsJsonObject("bds").get("build").getAsString(), log.build());
         assertEquals(committed(), BehaviourProbe.measure(log, committed().get("block_format_version").getAsString()),
             "run behaviour-probe --from-log again");
@@ -87,7 +90,7 @@ class BehaviourProbeCaptureTest {
     @Test
     void theBuildIsThereForTheNextReader() throws IOException {
         JsonObject bds = committed().getAsJsonObject("bds");
-        assertEquals(BUILD, bds.get("version").getAsString());
+        assertEquals(REPORTED, bds.get("version").getAsString());
         assertTrue(bds.get("build").getAsString().matches("[0-9]+"), bds.toString());
         assertTrue(committed().get("generated").getAsString().contains("Do not edit"));
     }

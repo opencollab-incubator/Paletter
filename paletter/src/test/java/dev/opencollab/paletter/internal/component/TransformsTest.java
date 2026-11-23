@@ -462,7 +462,7 @@ class TransformsTest {
         assertEquals((byte) 0, compound(selection, "minecraft:selection_box").getByte("enabled"));
 
         WireNode animation = new WireNode();
-        Transforms.useAnimationId(ctx, animation, UseAnimation.of("spear"));
+        Transforms.useAnimationId(ctx, animation, UseAnimation.of(UseAnimation.Value.of("spear")));
         assertEquals(6, compound(animation, "item_properties").getInt("use_animation"));
         assertEquals("spear", compound(animation, "minecraft:use_animation").getString("value"));
         WireNode none = new WireNode();

@@ -51,9 +51,9 @@ class HandTransformsTest {
     }
 
     /** Table entries of Transforms that no capture backs: hand-entered, listed here so that none is mistaken for BDS data. */
-    private static final Set<String> UNVERIFIED_USE_ANIMATIONS = Set.of("block", "bow", "camera", "crossbow", "spyglass", "brush");
+    private static final Set<String> UNVERIFIED_USE_ANIMATIONS = Set.of();
 
-    private static final Set<String> UNVERIFIED_COLORS = Set.of("black", "dark_blue", "dark_green", "dark_aqua", "dark_red", "gold",
+    private static final Set<String> UNVERIFIED_COLORS = Set.of("dark_red", "gold",
         "gray", "dark_gray", "blue", "green", "aqua", "light_purple", "yellow", "white", "minecoin_gold", "red", "material_quartz",
         "material_iron", "material_netherite", "material_redstone", "material_copper", "material_gold", "material_emerald",
         "material_diamond", "material_lapis", "material_amethyst", "material_resin");

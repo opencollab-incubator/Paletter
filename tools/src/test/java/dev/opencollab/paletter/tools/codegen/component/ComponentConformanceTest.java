@@ -136,42 +136,6 @@ class ComponentConformanceTest {
             () -> conformance(capture, capture.equals(captures.getLast()))));
     }
 
-    /**
-     * Components whose variants the generator makes differently from the newest capture, because the add-on changed after it.
-     * Their definitions are compared again once the capture is redone; until then this must name them, each with its reason,
-     * and fails when one matches again.
-     * <ul>
-     *   <li>enchantable: the accepted slot strings are now read from BDS's regex message, so all of them are tried;</li>
-     *   <li>hover_text_color: the names of the hand table of {@code Transforms} are tried ({@code fixtures.json probeValues});</li>
-     *   <li>block_placer, entity_placer, digger, placement_filter: block descriptors with enum, boolean and string states
-     *       on vanilla blocks are tried ({@code fixtures.json descriptorValues});</li>
-     *   <li>collision_box, selection_box, transformation: a vector with a third distinct value of every element is tried, so
-     *       that no linear rule over them is fitted to two points; collision_box and selection_box also get boxes with the origin
-     *       and the size varied together;</li>
-     *   <li>geometry, item_visual, embedded_visual: the Molang of {@code bone_visibility} under several keys (and, with the schema, in the
-     *       object form and as a number), and the names of {@code uv_lock} in several orders (the Molang and hash ordered set rules);</li>
-     *   <li>material_instances: the booleans of each face in every combination (the packed bits rule).</li>
-     * </ul>
-     * With the schema in the model (the recapture), every value of each schema enum is also tried, none cut at {@code MAX_VALUES}
-     * (durability_sensor's particle types, the use animations): the committed captures are of the model without it, so those components
-     * need no entry here.
-     */
-    private static final Set<String> RECAPTURE_PENDING = Set.of("item:minecraft:enchantable", "item:minecraft:hover_text_color",
-        "item:minecraft:block_placer", "item:minecraft:entity_placer", "item:minecraft:digger",
-        "block:minecraft:placement_filter", "block:minecraft:collision_box", "block:minecraft:selection_box", "block:minecraft:transformation",
-        "block:minecraft:geometry", "block:minecraft:item_visual", "block:minecraft:embedded_visual", "block:minecraft:material_instances",
-        // the script custom components (control included) are not in the committed captures yet
-        "block:minecraft:custom_components", "item:minecraft:custom_components",
-        // the ammunition entry without an item (fixtures.json probeValues) is not in the committed captures yet
-        "item:minecraft:shooter",
-        // the blocks with block tags (role tag) are not in the committed captures yet
-        "block:minecraft:tag");
-
-    /** Not in the committed captures yet: the components of {@link #RECAPTURE_PENDING}, and every script variant (the placers' ones too). */
-    private static boolean pending(String component, String role) {
-        return RECAPTURE_PENDING.contains(component) || role.equals("script");
-    }
-
     private void conformance(Path capture, boolean newest) throws IOException {
         JsonObject meta = JsonParser.parseString(Files.readString(capture.resolve("capture.json"))).getAsJsonObject();
         int protocol = meta.get("protocol").getAsInt();
@@ -185,18 +149,13 @@ class ComponentConformanceTest {
         AddonGenerator generator = new AddonGenerator(Model.read(MODEL.resolve("components.json")), fixtures,
             meta.get("formatVersion").getAsString(), AddonGenerator.Shrunk.of(manifest));
         if (newest) {
-            List<JsonObject> captured = Arrays.stream(recorded).filter(r -> !pending(r.get("component").getAsString(), r.has("role") ? r.get("role").getAsString() : "")).toList();
-            List<AddonGenerator.Variant> generated = generator.variants().stream().filter(v -> !pending(v.componentId(), v.role())).toList();
+            List<JsonObject> captured = Arrays.asList(recorded);
+            List<AddonGenerator.Variant> generated = generator.variants();
             assertEquals(captured.size(), generated.size(), "the add-on generator no longer produces the captured variants");
             for (int i = 0; i < captured.size(); i++) {
                 AddonGenerator.Variant v = generated.get(i);
                 assertEquals(captured.get(i).get("json"), v.component() == null || v.component() == JsonNull.INSTANCE ? null : v.component(),
                     v.identifier() + " differs from the captured variant");
-            }
-            for (String pending : RECAPTURE_PENDING) {
-                assertTrue(Arrays.stream(recorded).filter(r -> r.get("component").getAsString().equals(pending)).count()
-                    != generator.variants().stream().filter(v -> v.componentId().equals(pending)).count(),
-                    pending + " is generated as captured again: remove it from RECAPTURE_PENDING");
             }
         }
 
@@ -230,7 +189,7 @@ class ComponentConformanceTest {
                 rejected++; // rejected by BDS: nothing to conform to
                 continue;
             }
-            if (component.endsWith(":minecraft:custom_components") && entry.get("json").isJsonArray()) {
+            if (component.endsWith(":minecraft:custom_components") && entry.has("json") && entry.get("json").isJsonArray()) {
                 oldForm++; // accepted, in the old list-of-names form: the API deliberately offers only the new form
                 continue;
             }
@@ -252,6 +211,11 @@ class ComponentConformanceTest {
         Set<String> classifiedNow = new TreeSet<>();
         JsonObject mappings = JsonParser.parseString(Files.readString(MODEL.resolve("mappings.json"), StandardCharsets.UTF_8)).getAsJsonObject().getAsJsonObject("components");
         for (String component : uncompared) {
+            if (fixtures.skip(component, null) != null) {
+                // Not modelled (fixtures.json skip), so no generated encoding to verify: block:minecraft:tag, whose tag:<name>
+                // components every captured build rejects ("not present in the Schema")
+                continue;
+            }
             String how = OldFormats.classify(mappings.has(component) ? mappings.getAsJsonObject(component) : null, OldFormats.notSent(whitebox(), component), compared);
             if (how == null || (how.equals(OldFormats.PENDING_SWEEP) && !SWEEP_PENDING.contains(component))) {
                 unexplained.add(component + (how == null ? " (its formats fit no class)" : ""));

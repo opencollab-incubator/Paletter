@@ -640,16 +640,15 @@ public final class Transforms {
     // ---- use_animation_id --------------------------------------------------------------------------------------------
 
     /**
-     * Animation name -> {@code item_properties.use_animation}, hand-entered. The captures have none, eat, drink and spear;
-     * HandTransformsTest lists every other entry as unverified.
+     * Animation name -> {@code item_properties.use_animation}, hand-entered; every entry is captured (HandTransformsTest holds it
+     * to the inference's table).
      */
     private static final Map<String, Integer> USE_ANIMATIONS = Map.of("none", 0, "eat", 1, "drink", 2, "block", 3, "bow", 4,
         "camera", 5, "spear", 6, "crossbow", 9, "spyglass", 10, "brush", 12);
 
     /**
      * {@code minecraft:use_animation}: the component keeps the name, {@code item_properties.use_animation} numbers it
-     * (none, eat, drink and spear are captured, see {@link #USE_ANIMATIONS}); unknown names are 0. BDS's error truncates the
-     * enum ("none, eat, drink, ... (7 others)"), so the other names and ids are not BDS data yet.
+     * ({@link #USE_ANIMATIONS}: every name of BDS's schema enum is captured, from 1.26.36.1 to 1.26.70.24); unknown names are 0.
      */
     public static void useAnimationId(@NonNull WireContext ctx, @NonNull WireNode out, @NonNull UseAnimation c) {
         // The value's add-on string (an enum of the schema's names, whose toString is that string)
