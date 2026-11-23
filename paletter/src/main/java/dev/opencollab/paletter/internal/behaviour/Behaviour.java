@@ -72,6 +72,8 @@ public final class Behaviour {
     private final List<RegisteredItem> items;
     /** The position of an own item in {@link #items} by runtime id, or -1. */
     private final IntIndex positions;
+    /** The handles of the own items by position, made on first use ({@link #itemHandle}). */
+    private final @Nullable ItemValues[] itemHandles;
     private final @Nullable Column[] itemColumns = new Column[KEYS];
 
     private Behaviour(Palette palette, Supplier<VanillaBehaviour> data, @Nullable Behaviour parent) {
@@ -84,6 +86,7 @@ public final class Behaviour {
         this.base = extending ? parent.palette.blocks().size() : 0;
         this.items = palette.items().ownDefinitions();
         this.positions = new IntIndex(items.size());
+        this.itemHandles = new ItemValues[items.size()];
         for (int i = 0; i < items.size(); i++) {
             positions.put(items.get(i).getRuntimeId(), i);
         }
@@ -146,7 +149,21 @@ public final class Behaviour {
                 found = position;
             }
         }
-        return owner == null ? null : new ItemValues(owner, found);
+        return owner == null ? null : owner.itemHandle(found);
+    }
+
+    /**
+     * The handle of an own item, made once: unlike {@link #block(int)}'s, the lookup of an item (a loop over the palettes and
+     * an index probe) is too large for the JIT to inline into every caller, so a handle made per call is not scalar-replaced
+     * and allocates (24 bytes per lookup in {@code HotPathTest} once the suite has made the call sites polymorphic).
+     * {@link ItemValues} is immutable with final fields: a race makes two equal handles, of which one stays.
+     */
+    private ItemValues itemHandle(int position) {
+        ItemValues handle = itemHandles[position];
+        if (handle == null) {
+            itemHandles[position] = handle = new ItemValues(this, position);
+        }
+        return handle;
     }
 
     private int positionOf(RegisteredItem item) {
