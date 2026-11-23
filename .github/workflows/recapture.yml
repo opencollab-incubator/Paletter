@@ -330,6 +330,8 @@ jobs:
           ./gradlew :tools:generateComponentApi
           ./gradlew :paletter:apiDump
           ./gradlew :tools:run --args="voxel-shapes import"
+          # The bundled recipes from the new recipe captures (checkRecipes, part of the build, fails while they are stale)
+          ./gradlew :tools:run --args="recipes-import"
           ./gradlew :tools:generateConstants
           # What update fails on: bits no field explains, wire paths nothing classifies, linked fields. Reported in the pull
           # request instead (the guard below is what blocks); check-mappings --strict prints them

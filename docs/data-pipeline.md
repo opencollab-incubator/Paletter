@@ -277,7 +277,8 @@ workflow by hand on `bds-data/preview` for the other.
    artifacts, copies them over `data/bds/<build>/` (overlaying, deleting nothing; a build without committed captures fails,
    so the unchecked build of a line the plan adds fails here: see the open point below) and runs what `update` does after the
    captures, with no BDS: `experiment-marks` (the marks of the bundled versions from the new experiment records), `inferMappings`, `whitebox-coverage` (from the committed `whitebox.json`; the binary did not
-   change), `generateComponentApi`, `:paletter:apiDump`, `generateConstants`, `voxel-shapes import` (as `update` does). It also runs `check-mappings --strict` and puts its verdict (residual bits, unclassified wire paths, linked fields) into the report, without failing on it. It fails when the inference changed
+   change), `generateComponentApi`, `:paletter:apiDump`, `generateConstants`, `voxel-shapes import` (as `update` does),
+   `recipes-import` (the bundled recipes from the new recipe captures). It also runs `check-mappings --strict` and puts its verdict (residual bits, unclassified wire paths, linked fields) into the report, without failing on it. It fails when the inference changed
    `bds-feedback.json`, `fixtures.json`, `components.json` or `bds-keys.json` (and uploads `git diff -- data/model` as the artifact `recapture-guard-diff`): those captures were made with an add-on that is not the
    final one, so the change is committed and the workflow runs again until a pass changes nothing. It writes a patch of
    the data paths and a report (one verdict line and the collapsed report per build).
