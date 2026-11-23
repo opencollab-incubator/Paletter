@@ -117,10 +117,58 @@ Where the data of each version comes from is in the generated reports, not repea
 [docs/data-pipeline.md](docs/data-pipeline.md) explains how data is captured and generated, and how to update it for
 a new Bedrock version.
 
+## Installation
+
+Published to `https://repo.opencollab.dev` as `dev.opencollab.paletter:paletter` and, for the recipes,
+`dev.opencollab.paletter:paletter-recipes` (it brings `paletter` with it). Only snapshots exist so far
+(`1.0.0-SNAPSHOT`, every push to `main`); a release waits for a Cloudburst protocol 3.0.0 release
+([releasing.md](docs/releasing.md)). The repository below also serves the Cloudburst protocol builds Paletter depends on.
+
+Gradle (Kotlin DSL):
+
+```kotlin
+repositories {
+    maven("https://repo.opencollab.dev/main")
+}
+
+dependencies {
+    implementation("dev.opencollab.paletter:paletter:1.0.0-SNAPSHOT")
+    // Only for the vanilla recipes
+    implementation("dev.opencollab.paletter:paletter-recipes:1.0.0-SNAPSHOT")
+}
+```
+
+Maven:
+
+```xml
+<repositories>
+    <repository>
+        <id>opencollab</id>
+        <url>https://repo.opencollab.dev/main</url>
+    </repository>
+</repositories>
+
+<dependencies>
+    <dependency>
+        <groupId>dev.opencollab.paletter</groupId>
+        <artifactId>paletter</artifactId>
+        <version>1.0.0-SNAPSHOT</version>
+    </dependency>
+    <!-- Only for the vanilla recipes -->
+    <dependency>
+        <groupId>dev.opencollab.paletter</groupId>
+        <artifactId>paletter-recipes</artifactId>
+        <version>1.0.0-SNAPSHOT</version>
+    </dependency>
+</dependencies>
+```
+
+Java 21 or newer.
+
 ## Status
 
-Paletter is at 1.0.0-SNAPSHOT, not released yet. Until the first release the API can change without a deprecation period. The build
-already tracks API changes (`paletter/api/paletter.api`), so every change is visible in review.
+Until the first release the API can change without a deprecation period. The build already tracks API changes
+(`paletter/api/paletter.api`), so every change is visible in review.
 
 Bundled versions ([versions.txt](paletter/src/main/resources/paletter/versions.txt)): 26.30, 26.40, 26.50, 26.60 and
 the 26.70 preview (served only with `Paletter.builder().previews(true)`). Known gaps:

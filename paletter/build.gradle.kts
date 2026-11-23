@@ -1,15 +1,25 @@
-import me.champeau.gradle.japicmp.JapicmpTask
-
+// Published: paletter.publish-conventions (POM, repositories, strict Javadoc), paletter.api-conventions (module-info,
+// API dump, binary compatibility). See docs/releasing.md and docs/api.md.
 plugins {
-    `java-library`
-    `maven-publish`
-    alias(libs.plugins.japicmp)
+    id("paletter.publish-conventions")
+    id("paletter.api-conventions")
     alias(libs.plugins.jmh)
+}
+
+description = "Bedrock Edition palette library: blocks, items and components per data version"
+
+paletterApi {
+    // The jars the descriptor requires; the checker annotations are static
+    modulePathPrefixes = listOf("bedrock-codec", "common-", "nbt-", "checker-qual")
 }
 
 dependencies {
     // Cloudburst protocol types are the library's public currency: definitions, ItemData, creative and block property data.
     api(libs.protocol.codec)
+    // The codec's metadata asks for the floating common:3.0.0.Beta15-SNAPSHOT and, through it, math immutable:2.0-SNAPSHOT.
+    // Declared here, the pinned builds win for Gradle (the higher version) and for Maven (the nearest declaration)
+    api(libs.protocol.common)
+    runtimeOnly(libs.math.immutable)
     api(libs.fastutil.int.`object`)
     api(libs.fastutil.`object`.int)
     api(libs.fastutil.`object`.`object`)
@@ -26,82 +36,24 @@ sourceSets.main {
     java.srcDir("src/generated/java")
 }
 
-java {
-    withSourcesJar()
-    // So `build` builds the Javadoc too, and a broken reference fails before merge
-    withJavadocJar()
-}
-
 tasks.javadoc {
     // The implementation is not API; its types are not documented (and not linked: the API never exposes them, ApiBoundaryTest)
     exclude("dev/opencollab/paletter/internal/**")
-    options {
-        this as StandardJavadocDocletOptions
-        // Every doclint group, `missing` included: an undocumented public member, or any other warning, fails the build.
-        // The JDK is linked by javadoc's built-in platform links (docs.oracle.com, no download).
-        addBooleanOption("Xdoclint:all", true)
-        addBooleanOption("Werror", true)
-        // The default cap of 100 hides the real count
-        addStringOption("Xmaxwarns", "10000")
-    }
 }
 
 // Microbenchmarks of the hot paths (src/jmh), not part of the build: `./gradlew :paletter:jmh`, narrowed with
 // `-Pjmh.includes=<regex>`. Results go to build/results/jmh.
 jmh {
-    jmhVersion.set("1.37")
+    jmhVersion = libs.versions.jmh.core
     // -Pjmh.warmups=1 -Pjmh.iterations=2 -Pjmh.forks=1 for a quick run
-    fork.set(providers.gradleProperty("jmh.forks").map(String::toInt).orElse(1))
-    warmupIterations.set(providers.gradleProperty("jmh.warmups").map(String::toInt).orElse(3))
-    warmup.set("1s")
-    iterations.set(providers.gradleProperty("jmh.iterations").map(String::toInt).orElse(5))
-    timeOnIteration.set("1s")
+    fork = providers.gradleProperty("jmh.forks").map(String::toInt).orElse(1)
+    warmupIterations = providers.gradleProperty("jmh.warmups").map(String::toInt).orElse(3)
+    warmup = "1s"
+    iterations = providers.gradleProperty("jmh.iterations").map(String::toInt).orElse(5)
+    timeOnIteration = "1s"
     // StartupBenchmark is one cold shot per fork: it only runs when asked for, with no warm-up
-    includes.set(listOf(providers.gradleProperty("jmh.includes").getOrElse("HotPath|Extend|Contention")))
-    jvmArgs.set(listOf("-Xmx2g"))
+    includes = listOf(providers.gradleProperty("jmh.includes").getOrElse("HotPath|Extend|Contention"))
+    jvmArgs = listOf("-Xmx2g")
     // -Pjmh.profilers=gc for the bytes allocated per operation (gc.alloc.rate.norm)
-    profilers.set(providers.gradleProperty("jmh.profilers").map { it.split(",") }.orElse(listOf()))
-}
-
-// Publication, POM metadata and the publishing guards: gradle/publishing.gradle.kts, docs/releasing.md
-apply(from = rootProject.file("gradle/publishing.gradle.kts"))
-
-// API boundary and compatibility (module-info, API dump, binary compatibility); shared with the other modules, see
-// gradle/api-boundary.gradle.kts and docs/api.md.
-// The jars the descriptor requires; the checker annotations are static
-extra["apiModulePathPrefixes"] = listOf("bedrock-codec", "common-", "nbt-", "checker-qual")
-apply(from = rootProject.file("gradle/api-boundary.gradle.kts"))
-@Suppress("UNCHECKED_CAST")
-val apiPackages = extra["apiPackages"] as List<String>
-
-// Binary compatibility against a RELEASED artifact, resolved from a Maven repository. Configured but skipped while no
-// release exists: api/released.version is absent or empty. After the first release, write its version there; the check then
-// compares the exported packages with the published jar (japicmp; @Internal and @Experimental API excluded).
-val releasedVersion = file("api/released.version").takeIf { it.exists() }?.readText()?.trim().orEmpty()
-val releasedApi = configurations.create("releasedApi") {
-    isCanBeConsumed = false
-    isTransitive = false
-}
-if (releasedVersion.isNotEmpty()) {
-    dependencies.add("releasedApi", "dev.opencollab.paletter:paletter:$releasedVersion")
-}
-
-val apiCompat = tasks.register<JapicmpTask>("apiCompat") {
-    group = "verification"
-    description = "Fails on binary incompatible changes of the exported API against the released artifact in api/released.version (skipped before the first release)"
-    enabled = releasedVersion.isNotEmpty()
-    oldClasspath.from(releasedApi, configurations.runtimeClasspath)
-    oldArchives.from(releasedApi)
-    newClasspath.from(tasks.jar, configurations.runtimeClasspath)
-    newArchives.from(tasks.jar)
-    packageIncludes.set(apiPackages)
-    annotationExcludes.set(listOf("@dev.opencollab.paletter.annotation.Internal", "@dev.opencollab.paletter.annotation.Experimental"))
-    onlyBinaryIncompatibleModified.set(true)
-    failOnModification.set(true)
-    ignoreMissingClasses.set(true)
-    txtOutputFile.set(layout.buildDirectory.file("reports/japicmp/api-compat.txt"))
-}
-
-tasks.check {
-    dependsOn(apiCompat)
+    profilers = providers.gradleProperty("jmh.profilers").map { it.split(",") }.orElse(listOf())
 }

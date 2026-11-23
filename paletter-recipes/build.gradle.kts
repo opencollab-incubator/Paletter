@@ -1,12 +1,15 @@
+// Published, as :paletter: paletter.publish-conventions and paletter.api-conventions. See docs/releasing.md.
 plugins {
-    `java-library`
-    `maven-publish`
+    id("paletter.publish-conventions")
+    id("paletter.api-conventions")
 }
 
-// API boundary and compatibility, shared with :paletter (gradle/api-boundary.gradle.kts). The descriptor requires
-// :paletter, which is on the module path as its jar (Automatic-Module-Name).
-extra["apiModulePathPrefixes"] = listOf("checker-qual")
-apply(from = rootProject.file("gradle/api-boundary.gradle.kts"))
+description = "Vanilla Bedrock Edition recipes per data version, on top of Paletter's palettes"
+
+paletterApi {
+    // The descriptor requires :paletter, which is on the module path as its jar (Automatic-Module-Name, apiModuleJars)
+    modulePathPrefixes = listOf("checker-qual")
+}
 
 // Vanilla recipes per data version, on top of Paletter's palettes. :paletter never depends on this module.
 dependencies {
@@ -19,22 +22,3 @@ dependencies {
 sourceSets.main {
     java.srcDir("src/generated/java")
 }
-
-java {
-    withSourcesJar()
-    withJavadocJar()
-}
-
-// As :paletter's: every doclint group, any warning fails
-tasks.javadoc {
-    options {
-        this as StandardJavadocDocletOptions
-        addBooleanOption("Xdoclint:all", true)
-        addBooleanOption("Werror", true)
-    }
-}
-
-// Publication, POM metadata and the publishing guards: gradle/publishing.gradle.kts, docs/releasing.md
-apply(from = rootProject.file("gradle/publishing.gradle.kts"))
-
-// No binary compatibility check (japicmp, as in :paletter) until there is a release to compare with.
