@@ -74,9 +74,9 @@ class MemoryBaselineTest {
     private static final long MAX_BEHAVIOUR_METASPACE_BYTES = 2_000_000;
     /**
      * What loading the generated block definitions and voxel shapes and building them once adds to the metaspace; nothing of
-     * them stays on the heap (they are built for each version as it loads). Measured: see docs/benchmarks.md.
+     * them stays on the heap (they are built for each version as it loads). Measured 0.38 MB (383,832 bytes).
      */
-    private static final long MAX_BLOCKS_METASPACE_BYTES = 1_000_000;
+    private static final long MAX_BLOCKS_METASPACE_BYTES = 420_000;
 
     private static PaletteLayer sessionLayer(String id) {
         return PaletteLayer.builder(id)
