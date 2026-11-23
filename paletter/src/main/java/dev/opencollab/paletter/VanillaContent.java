@@ -27,6 +27,7 @@ import java.util.TreeSet;
  * <p>
  * Content a version has only behind an experiment toggle (BDS offers it only to worlds with that experiment, see
  * {@code Paletter.Builder#experiments}) is missing unless the toggle is enabled, so ordinary (non-forced) fallbacks apply to it.
+ * Its items stay in the item registry, as BDS registers them in a world without the toggle as well.
  *
  * @since 1.0.0
  */
@@ -156,12 +157,15 @@ final class VanillaContent {
         ExperimentGating gating = new ExperimentGating(List.copyOf(enabled), Map.copyOf(enabledItems), Map.copyOf(enabledBlocks),
             Set.copyOf(missingBlocks), Map.copyOf(disabledItems), Map.copyOf(disabledBlocks), Set.copyOf(removed), List.copyOf(notes));
         if (remove.isEmpty() && missingBlocks.isEmpty()) {
-            return new Applied(data, gating);
+            return new Applied(data, List.of(), gating);
         }
         List<VanillaItem> items = new ArrayList<>();
+        List<VanillaItem> gated = new ArrayList<>();
         for (VanillaItem item : data.items()) {
             if (!remove.contains(item.identifier())) {
                 items.add(item);
+            } else if (!removed.contains(item.identifier())) {
+                gated.add(item);
             }
         }
         Map<String, List<String>> tags = new LinkedHashMap<>();
@@ -169,14 +173,16 @@ final class VanillaContent {
         List<BlockPropertyData> dataDriven = data.dataDrivenBlocks().stream().filter(block -> !missingBlocks.contains(block.getName())).toList();
         return new Applied(new VanillaData(data.version(), data.blockStates(), items, dataDriven,
             data.creative().remove(stack -> remove.contains(stack.identifier())), tags,
-            data.fallbacks(), data.blockDefaults(), data.experiments(), data.blockItems()), gating);
+            data.fallbacks(), data.blockDefaults(), data.experiments(), data.blockItems()), List.copyOf(gated), gating);
     }
 
     /**
      * @param data the data with the content of disabled experiments and removed items taken out
+     * @param gatedItems the items of the data behind a disabled toggle: BDS registers them in a world without the
+     *                   toggle too, so the item registry has them, but they count as missing everywhere else
      * @param gating which experiments the palette has and what they gate
      */
-    record Applied(VanillaData data, ExperimentGating gating) {
+    record Applied(VanillaData data, List<VanillaItem> gatedItems, ExperimentGating gating) {
     }
 
     /**

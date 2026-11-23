@@ -851,7 +851,9 @@ public final class Palette {
      *
      * @param key the item type or variant
      * @return the block's key, or null if the item is not a block item here (or no state of the newest data
-     *         resolves to the block, see {@link #blockState(BlockDefinition)})
+     *         resolves to the block, see {@link #blockState(BlockDefinition)}). Null too for an item that places a block
+     *         but that BDS sends without one, as its captured creative stacks show (doors, signs, beds, seeds, ...): this
+     *         is the block sent with the item, not the block it places ({@link #itemOf} is the other direction)
      * @since 1.0.0
      */
     public @Nullable BedrockBlockState blockOf(@NonNull ItemKey key) {
@@ -899,7 +901,9 @@ public final class Palette {
      *
      * @param type the item type, a key
      * @return the item of a type as registered in this palette, or null if it has none (an item of a layer this palette
-     *         does not have, or one that does not exist in this version; fallbacks are not applied, see {@link #encode})
+     *         does not have, or one that does not exist in this version; fallbacks are not applied, see {@link #encode}).
+     *         Null too for an item behind a disabled experiment toggle, which counts as missing although it is registered
+     *         (see {@link #itemDefinitions()})
      * @since 1.0.0
      */
     public @Nullable RegisteredItem itemDefinition(@NonNull BedrockItemType type) {
@@ -910,8 +914,8 @@ public final class Palette {
      * Returns the definition of an item by identifier.
      *
      * @param identifier an item identifier such as {@code minecraft:stick}
-     * @return the item with this identifier as registered in this palette, or null if it has none; fallbacks are not
-     *         applied, see {@link #encode}
+     * @return the item with this identifier as registered in this palette, or null if it has none or it is behind a
+     *         disabled experiment toggle (see {@link #itemDefinitions()}); fallbacks are not applied, see {@link #encode}
      * @since 1.0.0
      */
     public @Nullable RegisteredItem itemDefinition(@NonNull String identifier) {
@@ -919,7 +923,10 @@ public final class Palette {
     }
 
     /**
-     * Lists the item definitions of this palette.
+     * Lists the item definitions of this palette: the item registry to send. Like BDS's in a world without experiments,
+     * it has the items behind a disabled experiment toggle too, which BDS registers in such a world as well; every other
+     * part of the palette treats them as missing (no lookup finds them, they resolve through the {@link Fallbacks}, the
+     * creative content leaves them out). {@link #itemDefinition(int)} finds them, {@link #itemDefinition(String)} does not.
      *
      * @return every item registered in this palette, in runtime id order
      * @since 1.0.0

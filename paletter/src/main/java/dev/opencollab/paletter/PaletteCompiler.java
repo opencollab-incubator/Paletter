@@ -67,7 +67,7 @@ final class PaletteCompiler {
             .withMissing(applied.gating().missingBlocks())
             .withFallbacks(fallbacks.blocks(data.version()))
             .withDefaultFallback(fallbacks.defaultBlock());
-        ItemRegistry.Builder builder = ItemRegistry.vanilla(data, blocks, canonicalItems);
+        ItemRegistry.Builder builder = ItemRegistry.vanilla(data, applied.gatedItems(), blocks, canonicalItems);
         fallbacks.items(data.version()).forEach(builder::fallback);
         builder.defaultFallback(fallbacks.defaultItem());
         CreativeLayout layout = RawConverter.convert(data.creative(), blocks, report);

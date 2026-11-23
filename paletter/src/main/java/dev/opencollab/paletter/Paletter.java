@@ -737,6 +737,8 @@ public final class Paletter {
          * Enables experiment toggles (e.g. {@code y_2026_drop_4}) in every version. By default none is enabled: the items
          * and blocks a version has only behind a toggle are missing in its palette, so the {@link Fallbacks} apply to
          * them like to content the version lacks altogether (and {@code force} is only for content that is really there).
+         * The items stay in the item registry ({@link Palette#itemDefinitions()}) all the same: BDS registers them in a
+         * world without the toggle too, it only leaves them out of everything else (the creative inventory, for one).
          * An enabled toggle makes its content present in the versions that gate it; those palettes list the toggle in
          * {@link Palette#experiments()} and send it with
          * {@link Palette#applyTo(org.cloudburstmc.protocol.bedrock.packet.StartGamePacket)}. A palette tells the toggle of a

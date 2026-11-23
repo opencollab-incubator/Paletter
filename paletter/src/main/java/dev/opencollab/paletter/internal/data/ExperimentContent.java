@@ -9,7 +9,8 @@ import java.util.List;
  * captured without experiments, so this content is either missing from it (new items) or present but not usable
  * without the toggle (blocks in the palette, items in the registry that only the toggle turns on). A Paletter treats it
  * as missing unless it enables the toggle ({@code Paletter.Builder#experiments}), so ordinary fallbacks apply to it; a block
- * is gated with its item (the block to item relation).
+ * is gated with its item (the block to item relation). The one exception is the item registry: the items of the data stay
+ * in it, as BDS registers them in a world without the toggle too (the captures without experiments have them).
  * <p>
  * Recorded by the generator's {@code update} (one capture per toggle against one without any, see
  * docs/data-pipeline.md, "Experiments").

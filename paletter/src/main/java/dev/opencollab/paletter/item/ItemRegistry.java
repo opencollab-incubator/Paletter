@@ -181,22 +181,41 @@ public final class ItemRegistry implements DefinitionRegistry<ItemDefinition> {
      * Starts the item palette of a version from its vanilla items.
      *
      * @param data the bundled data of the version
+     * @param gated items of the version behind a disabled experiment toggle (not in {@code data}): registered with their
+     *              runtime ids, as BDS registers them in a world without the toggle, but not by identifier, so they
+     *              resolve like items the version lacks (through the fallbacks)
      * @param blocks the block palette of the version
      * @param canonical the canonical item ids the palette resolves
      * @return a builder holding the vanilla items, fallbacks and tags of the version
      */
     @Internal
-    public static @NonNull Builder vanilla(@NonNull VanillaData data, @NonNull BlockRegistry blocks, @NonNull CanonicalItems canonical) {
+    public static @NonNull Builder vanilla(@NonNull VanillaData data, @NonNull List<VanillaItem> gated, @NonNull BlockRegistry blocks,
+                                           @NonNull CanonicalItems canonical) {
         Builder builder = new Builder(data.version(), blocks, data.fallbacks().items(), canonical);
         data.blockItems().forEach((block, item) -> builder.itemBlocks.computeIfAbsent(item, i -> new TreeSet<>()).add(block));
+        // BDS sends an item with a block only if the item has a block of its own: not doors, signs, beds, seeds, redstone,
+        // hoppers, campfires, ..., although they place one. The captured creative stacks show which: none of such an item's
+        // stacks carries a block (the crafting results of the captures agree). Such an item places blocks, but is sent without one
+        Set<String> withBlock = new HashSet<>();
+        Set<String> withoutBlock = new HashSet<>();
+        data.creative().forEachStack(stack -> (stack.blockState() != null ? withBlock : withoutBlock).add(stack.identifier()));
+        withoutBlock.removeAll(withBlock);
+        withoutBlock.forEach(item -> builder.itemBlocks.computeIfPresent(item, (i, placed) -> Set.of()));
         for (VanillaItem item : data.items()) {
-            ItemVersion itemVersion = ItemVersion.from(item.version());
-            builder.put(ItemInterner.intern(item.identifier(), item.runtimeId(), itemVersion, item.componentBased(), item.componentData(),
-                () -> new RegisteredItem(item.identifier(), item.runtimeId(), itemVersion, item.componentBased(), item.componentData(),
-                    Origin.VANILLA, List.of(), null, null)));
+            builder.put(registered(item));
+        }
+        for (VanillaItem item : gated) {
+            builder.putGated(registered(item));
         }
         data.itemTags().forEach((tag, items) -> builder.tags.put(tag, new LinkedHashSet<>(items)));
         return builder;
+    }
+
+    private static RegisteredItem registered(VanillaItem item) {
+        ItemVersion itemVersion = ItemVersion.from(item.version());
+        return ItemInterner.intern(item.identifier(), item.runtimeId(), itemVersion, item.componentBased(), item.componentData(),
+            () -> new RegisteredItem(item.identifier(), item.runtimeId(), itemVersion, item.componentBased(), item.componentData(),
+                Origin.VANILLA, List.of(), null, null));
     }
 
     /**
@@ -378,7 +397,8 @@ public final class ItemRegistry implements DefinitionRegistry<ItemDefinition> {
      *     <li>a block set by an item override of a layer;</li>
      *     <li>the bundled block to item relation of the data ({@code VanillaData#blockItems}): the block whose first
      *     creative stack the item has, else the block named like the item, else the first block that places it
-     *     (sorted by identifier), in its default state;</li>
+     *     (sorted by identifier), in its default state. None for an item whose creative stacks in the data all lack a
+     *     block: BDS sends such an item without one although it places a block (doors, signs, beds, seeds, ...);</li>
      *     <li>a block state of the item's creative stacks (items the relation does not know);</li>
      *     <li>for data without the relation: a block named like the item, in its default state;</li>
      *     <li>the block of a custom block item.</li>
@@ -960,7 +980,10 @@ public final class ItemRegistry implements DefinitionRegistry<ItemDefinition> {
         private final Map<String, RegisteredItem> byIdentifier;
         private final Map<String, NbtMap> blockOverrides;
         private final Set<String> customBlockItems;
-        /** The bundled block to item relation, inverted: item to the blocks that it places, sorted. Empty for data without it. */
+        /**
+         * The bundled block to item relation, inverted: item to the blocks that it places, sorted. Empty for data without it.
+         * An empty set: the item places blocks, but BDS sends it without a block (see {@link ItemRegistry#vanilla}).
+         */
         private final Map<String, Set<String>> itemBlocks;
         private final Map<String, ItemFallback> fallbacks;
         private @Nullable ItemFallback defaultFallback;
@@ -1061,6 +1084,12 @@ public final class ItemRegistry implements DefinitionRegistry<ItemDefinition> {
             byIdentifier.put(item.getIdentifier(), item);
             touched.add(item.getIdentifier());
             // Plain block items have negative ids: they never move the next sequential id
+            nextRuntimeId = Math.max(nextRuntimeId, item.getRuntimeId() + 1);
+        }
+
+        /** An item behind a disabled experiment toggle: in the registry by runtime id only, see {@link ItemRegistry#vanilla}. */
+        private void putGated(RegisteredItem item) {
+            byRuntimeId.put(item.getRuntimeId(), item);
             nextRuntimeId = Math.max(nextRuntimeId, item.getRuntimeId() + 1);
         }
 
@@ -1310,7 +1339,8 @@ public final class ItemRegistry implements DefinitionRegistry<ItemDefinition> {
             } else {
                 if (parent != null) {
                     for (RegisteredItem item : parent.definitions()) {
-                        if (!byIdentifier.containsKey(item.getIdentifier())) {
+                        // Not the gated items: registered by runtime id only, they never resolve
+                        if (!byIdentifier.containsKey(item.getIdentifier()) && parent.getDefinition(item.getIdentifier()) == item) {
                             identifiers.add(item.getIdentifier());
                         }
                     }
@@ -1330,7 +1360,8 @@ public final class ItemRegistry implements DefinitionRegistry<ItemDefinition> {
                         }
                     }
                 } else if (placed != null) {
-                    block = bundledBlock(identifier, placed, states);
+                    // No blocks: the item places blocks, but BDS sends it without one
+                    block = placed.isEmpty() ? null : bundledBlock(identifier, placed, states);
                     if (states != null && states.size() > 1) {
                         multiState.add(identifier);
                     }
