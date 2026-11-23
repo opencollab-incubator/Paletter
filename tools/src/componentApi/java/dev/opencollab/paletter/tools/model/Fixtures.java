@@ -68,12 +68,20 @@ public final class Fixtures {
     }
 
     /**
-     * The fixtures for an add-on run on one BDS build: the probed keys only if the probe ran on that build. A key a newer
-     * build accepts can be one an older build refuses, and a refused key in a base makes BDS reject every variant.
+     * The fixtures for an add-on run on one BDS build: the probed keys only if the probe ran on a build of the same line
+     * (protocol window: {@code 1.26.63.1} and {@code 1.26.66.1} are both of 26.60), so every build of the window gets the same
+     * add-on. A key a newer line accepts can be one an older line refuses, and a refused key in a base makes BDS reject every
+     * variant; within a line, the daily check of a new build probes the keys again and reports a difference.
      */
     public Fixtures forBuild(String bdsVersion) {
-        boolean probedThere = keys.has("bdsVersion") && keys.get("bdsVersion").getAsString().equals(bdsVersion);
+        boolean probedThere = keys.has("bdsVersion") && line(keys.get("bdsVersion").getAsString()).equals(line(bdsVersion));
         return new Fixtures(json, feedback, probedThere ? keys : new JsonObject(), schema, bdsData);
+    }
+
+    /** The line (data version) of a build: {@code 1.26.63.1} is {@code 26.60}; a name that is no build number is its own line. */
+    static String line(String build) {
+        java.util.regex.Matcher m = java.util.regex.Pattern.compile("1\\.(\\d+)\\.(\\d+)\\.\\d+").matcher(build);
+        return m.matches() ? m.group(1) + "." + Integer.parseInt(m.group(2)) / 10 * 10 : build;
     }
 
     /**

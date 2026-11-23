@@ -128,6 +128,19 @@ class ProbeGeneratorTest {
     }
 
     @Test
+    void probedKeysReachEveryBuildOfTheProbedLine(@TempDir Path root) throws IOException {
+        Path model = model(root, null, """
+            {"bdsVersion": "1.26.63.1", "components": {"block:minecraft:mat": {"accepted": {"emissive": {"types": ["boolean"]}}}}}""");
+        Model docs = Model.read(model.resolve("components.json"));
+
+        Component sameLine = new AddonGenerator(docs, Fixtures.read(model).forBuild("1.26.66.1"), "1.26.60").model().component("block:minecraft:mat");
+        Component otherLine = new AddonGenerator(docs, Fixtures.read(model).forBuild("1.26.52.3"), "1.26.60").model().component("block:minecraft:mat");
+
+        assertNotNull(sameLine.field("emissive"), "1.26.66.1 is of the probed build's window (26.60)");
+        assertNull(otherLine.field("emissive"), "1.26.52.3 is of another window");
+    }
+
+    @Test
     void theFormatSweepDropsWhatNeedsANewerFormat(@TempDir Path root) throws IOException {
         AddonGenerator generator = AddonGenerator.empty(Model.read(model(root, null, null).resolve("components.json")),
             Fixtures.read(root.resolve("model")), "1.26.60");
