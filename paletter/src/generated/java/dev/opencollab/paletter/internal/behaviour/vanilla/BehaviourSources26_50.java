@@ -3,10 +3,7 @@
 package dev.opencollab.paletter.internal.behaviour.vanilla;
 
 import static dev.opencollab.paletter.internal.behaviour.vanilla.BehaviourCaptures.*;
-import static dev.opencollab.paletter.internal.behaviour.vanilla.BehaviourShapes.*;
-import static dev.opencollab.paletter.internal.behaviour.vanilla.BehaviourShapesPart2.*;
 import static dev.opencollab.paletter.internal.behaviour.vanilla.BehaviourTables.*;
-import static dev.opencollab.paletter.internal.behaviour.vanilla.BehaviourTablesPart2.*;
 
 /**
  * The captures that decided the values of 26.50, as changes against 26.40: per key a default, and the blocks and items decided otherwise (a block whose states different captures decided has a cell of captures).
@@ -20,297 +17,583 @@ final class BehaviourSources26_50 {
                 .destroyTime(CLOUDBURST_DATA_26_50)
                 .explosionResistance(CLOUDBURST_DATA_26_50)
                 .friction(CLOUDBURST_DATA_26_50)
-                .solid(SCRIPT_API_26_50)
+                .solid(SCRIPT_API_26_50_SOLID)
                 .collisionShape(CLOUDBURST_DATA_26_50)
                 .outlineShape(CLOUDBURST_DATA_26_50)
                 .lightEmission(CLOUDBURST_DATA_26_50)
                 .lightDampening(CLOUDBURST_DATA_26_50)
-                .canContainLiquid(SCRIPT_API_26_50_2)
-                .liquidBlocking(SCRIPT_API_26_50_2)
-                .destroyedByLiquid(SCRIPT_API_26_50_2)
-                .liquidSpreadCausesSpawn(SCRIPT_API_26_50_2)
-                .liquidFlowDirections(SCRIPT_API_26_50)
+                .canContainLiquid(SCRIPT_API_26_50_CAN_CONTAIN_LIQUID)
+                .liquidBlocking(SCRIPT_API_26_50_CAN_CONTAIN_LIQUID)
+                .destroyedByLiquid(SCRIPT_API_26_50_CAN_CONTAIN_LIQUID)
+                .liquidSpreadCausesSpawn(SCRIPT_API_26_50_CAN_CONTAIN_LIQUID)
+                .liquidFlowDirections(SCRIPT_API_26_50_SOLID)
                 .requiresCorrectTool(CLOUDBURST_DATA_26_50)
-                .mapColor(SCRIPT_API_26_50_3)
+                .mapColor(SCRIPT_API_26_50_MAP_COLOR)
                 .tintMethod(CLOUDBURST_DATA_26_50)
                 .flameOdds(CLOUDBURST_DATA_26_50)
                 .burnOdds(CLOUDBURST_DATA_26_50)
                 .translucency(CLOUDBURST_DATA_26_50)
                 .thickness(CLOUDBURST_DATA_26_50)
-                .movementType(SCRIPT_API_26_50)
-                .stickyType(SCRIPT_API_26_50)
-                .accumulatesSnow(SCRIPT_API_26_50)
-                .snowLoggable(SCRIPT_API_26_50)
-                .obstructsRain(SCRIPT_API_26_50);
+                .movementType(SCRIPT_API_26_50_SOLID)
+                .stickyType(SCRIPT_API_26_50_SOLID)
+                .accumulatesSnow(SCRIPT_API_26_50_SOLID)
+                .snowLoggable(SCRIPT_API_26_50_SOLID)
+                .obstructsRain(SCRIPT_API_26_50_SOLID);
         v.blockSources("minecraft:acacia_fence")
-                .solid(ACACIA_FENCE_SOLID_SOURCES)
-                .mapColor(ACACIA_FENCE_MAP_COLOR_SOURCES);
+                .solid(SOURCES_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_98458C)
+                .mapColor(SOURCES_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_B74E0E);
         v.blockSources("minecraft:acacia_fence_gate")
-                .solid("in_wall_bit", false, SCRIPT_API_26_50, true, CLOUDBURST_DATA_26_50)
-                .mapColor("in_wall_bit", false, SCRIPT_API_26_50_3, true, CLOUDBURST_DATA_26_50);
+                .solid("in_wall_bit", false, SCRIPT_API_26_50_SOLID, true, CLOUDBURST_DATA_26_50)
+                .mapColor("in_wall_bit", false, SCRIPT_API_26_50_MAP_COLOR,
+                        true, CLOUDBURST_DATA_26_50);
         v.blockSources("minecraft:acacia_leaves")
-                .tintMethod(SCRIPT_API_26_50_4);
+                .tintMethod(SCRIPT_API_26_50_TINT_METHOD);
         v.blockSources("minecraft:acacia_stairs")
-                .solid("minecraft:corner", "inner_left", CLOUDBURST_DATA_26_50, "inner_right", CLOUDBURST_DATA_26_50, "none", SCRIPT_API_26_50, "outer_left", CLOUDBURST_DATA_26_50, "outer_right", CLOUDBURST_DATA_26_50)
-                .mapColor("minecraft:corner", "inner_left", CLOUDBURST_DATA_26_50, "inner_right", CLOUDBURST_DATA_26_50, "none", SCRIPT_API_26_50_3, "outer_left", CLOUDBURST_DATA_26_50, "outer_right", CLOUDBURST_DATA_26_50);
+                .solid("minecraft:corner", "inner_left", CLOUDBURST_DATA_26_50,
+                        "inner_right", CLOUDBURST_DATA_26_50, "none", SCRIPT_API_26_50_SOLID,
+                        "outer_left", CLOUDBURST_DATA_26_50, "outer_right", CLOUDBURST_DATA_26_50)
+                .mapColor("minecraft:corner", "inner_left", CLOUDBURST_DATA_26_50,
+                        "inner_right", CLOUDBURST_DATA_26_50, "none", SCRIPT_API_26_50_MAP_COLOR,
+                        "outer_left", CLOUDBURST_DATA_26_50, "outer_right", CLOUDBURST_DATA_26_50);
         v.blockSources("minecraft:andesite_stairs")
-                .solid("minecraft:corner", "inner_left", CLOUDBURST_DATA_26_50, "inner_right", CLOUDBURST_DATA_26_50, "none", SCRIPT_API_26_50, "outer_left", CLOUDBURST_DATA_26_50, "outer_right", CLOUDBURST_DATA_26_50)
-                .mapColor("minecraft:corner", "inner_left", CLOUDBURST_DATA_26_50, "inner_right", CLOUDBURST_DATA_26_50, "none", SCRIPT_API_26_50_3, "outer_left", CLOUDBURST_DATA_26_50, "outer_right", CLOUDBURST_DATA_26_50);
+                .solid("minecraft:corner", "inner_left", CLOUDBURST_DATA_26_50,
+                        "inner_right", CLOUDBURST_DATA_26_50, "none", SCRIPT_API_26_50_SOLID,
+                        "outer_left", CLOUDBURST_DATA_26_50, "outer_right", CLOUDBURST_DATA_26_50)
+                .mapColor("minecraft:corner", "inner_left", CLOUDBURST_DATA_26_50,
+                        "inner_right", CLOUDBURST_DATA_26_50, "none", SCRIPT_API_26_50_MAP_COLOR,
+                        "outer_left", CLOUDBURST_DATA_26_50, "outer_right", CLOUDBURST_DATA_26_50);
         v.blockSources("minecraft:bamboo_fence")
-                .solid(ACACIA_FENCE_SOLID_SOURCES)
-                .mapColor(ACACIA_FENCE_MAP_COLOR_SOURCES);
+                .solid(SOURCES_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_98458C)
+                .mapColor(SOURCES_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_B74E0E);
         v.blockSources("minecraft:bamboo_fence_gate")
-                .solid("in_wall_bit", false, SCRIPT_API_26_50, true, CLOUDBURST_DATA_26_50)
-                .mapColor("in_wall_bit", false, SCRIPT_API_26_50_3, true, CLOUDBURST_DATA_26_50);
+                .solid("in_wall_bit", false, SCRIPT_API_26_50_SOLID, true, CLOUDBURST_DATA_26_50)
+                .mapColor("in_wall_bit", false, SCRIPT_API_26_50_MAP_COLOR,
+                        true, CLOUDBURST_DATA_26_50);
         v.blockSources("minecraft:bamboo_mosaic_stairs")
-                .solid("minecraft:corner", "inner_left", CLOUDBURST_DATA_26_50, "inner_right", CLOUDBURST_DATA_26_50, "none", SCRIPT_API_26_50, "outer_left", CLOUDBURST_DATA_26_50, "outer_right", CLOUDBURST_DATA_26_50)
-                .mapColor("minecraft:corner", "inner_left", CLOUDBURST_DATA_26_50, "inner_right", CLOUDBURST_DATA_26_50, "none", SCRIPT_API_26_50_3, "outer_left", CLOUDBURST_DATA_26_50, "outer_right", CLOUDBURST_DATA_26_50);
+                .solid("minecraft:corner", "inner_left", CLOUDBURST_DATA_26_50,
+                        "inner_right", CLOUDBURST_DATA_26_50, "none", SCRIPT_API_26_50_SOLID,
+                        "outer_left", CLOUDBURST_DATA_26_50, "outer_right", CLOUDBURST_DATA_26_50)
+                .mapColor("minecraft:corner", "inner_left", CLOUDBURST_DATA_26_50,
+                        "inner_right", CLOUDBURST_DATA_26_50, "none", SCRIPT_API_26_50_MAP_COLOR,
+                        "outer_left", CLOUDBURST_DATA_26_50, "outer_right", CLOUDBURST_DATA_26_50);
         v.blockSources("minecraft:bamboo_stairs")
-                .solid("minecraft:corner", "inner_left", CLOUDBURST_DATA_26_50, "inner_right", CLOUDBURST_DATA_26_50, "none", SCRIPT_API_26_50, "outer_left", CLOUDBURST_DATA_26_50, "outer_right", CLOUDBURST_DATA_26_50)
-                .mapColor("minecraft:corner", "inner_left", CLOUDBURST_DATA_26_50, "inner_right", CLOUDBURST_DATA_26_50, "none", SCRIPT_API_26_50_3, "outer_left", CLOUDBURST_DATA_26_50, "outer_right", CLOUDBURST_DATA_26_50);
+                .solid("minecraft:corner", "inner_left", CLOUDBURST_DATA_26_50,
+                        "inner_right", CLOUDBURST_DATA_26_50, "none", SCRIPT_API_26_50_SOLID,
+                        "outer_left", CLOUDBURST_DATA_26_50, "outer_right", CLOUDBURST_DATA_26_50)
+                .mapColor("minecraft:corner", "inner_left", CLOUDBURST_DATA_26_50,
+                        "inner_right", CLOUDBURST_DATA_26_50, "none", SCRIPT_API_26_50_MAP_COLOR,
+                        "outer_left", CLOUDBURST_DATA_26_50, "outer_right", CLOUDBURST_DATA_26_50);
         v.blockSources("minecraft:birch_fence")
-                .solid(ACACIA_FENCE_SOLID_SOURCES)
-                .mapColor(ACACIA_FENCE_MAP_COLOR_SOURCES);
+                .solid(SOURCES_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_98458C)
+                .mapColor(SOURCES_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_B74E0E);
         v.blockSources("minecraft:birch_fence_gate")
-                .solid("in_wall_bit", false, SCRIPT_API_26_50, true, CLOUDBURST_DATA_26_50)
-                .mapColor("in_wall_bit", false, SCRIPT_API_26_50_3, true, CLOUDBURST_DATA_26_50);
+                .solid("in_wall_bit", false, SCRIPT_API_26_50_SOLID, true, CLOUDBURST_DATA_26_50)
+                .mapColor("in_wall_bit", false, SCRIPT_API_26_50_MAP_COLOR,
+                        true, CLOUDBURST_DATA_26_50);
         v.blockSources("minecraft:birch_leaves")
-                .tintMethod(SCRIPT_API_26_50_4);
+                .tintMethod(SCRIPT_API_26_50_TINT_METHOD);
         v.blockSources("minecraft:birch_stairs")
-                .solid("minecraft:corner", "inner_left", CLOUDBURST_DATA_26_50, "inner_right", CLOUDBURST_DATA_26_50, "none", SCRIPT_API_26_50, "outer_left", CLOUDBURST_DATA_26_50, "outer_right", CLOUDBURST_DATA_26_50)
-                .mapColor("minecraft:corner", "inner_left", CLOUDBURST_DATA_26_50, "inner_right", CLOUDBURST_DATA_26_50, "none", SCRIPT_API_26_50_3, "outer_left", CLOUDBURST_DATA_26_50, "outer_right", CLOUDBURST_DATA_26_50);
+                .solid("minecraft:corner", "inner_left", CLOUDBURST_DATA_26_50,
+                        "inner_right", CLOUDBURST_DATA_26_50, "none", SCRIPT_API_26_50_SOLID,
+                        "outer_left", CLOUDBURST_DATA_26_50, "outer_right", CLOUDBURST_DATA_26_50)
+                .mapColor("minecraft:corner", "inner_left", CLOUDBURST_DATA_26_50,
+                        "inner_right", CLOUDBURST_DATA_26_50, "none", SCRIPT_API_26_50_MAP_COLOR,
+                        "outer_left", CLOUDBURST_DATA_26_50, "outer_right", CLOUDBURST_DATA_26_50);
         v.blockSources("minecraft:black_concrete_double_slab")
-                .tintMethod(SCRIPT_API_26_50_4);
+                .tintMethod(SCRIPT_API_26_50_TINT_METHOD);
         v.blockSources("minecraft:black_concrete_slab")
-                .tintMethod(SCRIPT_API_26_50_4);
+                .tintMethod(SCRIPT_API_26_50_TINT_METHOD);
         v.blockSources("minecraft:black_concrete_stairs")
-                .solid("minecraft:corner", "inner_left", CLOUDBURST_DATA_26_50, "inner_right", CLOUDBURST_DATA_26_50, "none", SCRIPT_API_26_50, "outer_left", CLOUDBURST_DATA_26_50, "outer_right", CLOUDBURST_DATA_26_50)
-                .mapColor("minecraft:corner", "inner_left", CLOUDBURST_DATA_26_50, "inner_right", CLOUDBURST_DATA_26_50, "none", SCRIPT_API_26_50_3, "outer_left", CLOUDBURST_DATA_26_50, "outer_right", CLOUDBURST_DATA_26_50)
-                .tintMethod("minecraft:corner", "inner_left", CLOUDBURST_DATA_26_50, "inner_right", CLOUDBURST_DATA_26_50, "none", SCRIPT_API_26_50_4, "outer_left", CLOUDBURST_DATA_26_50, "outer_right", CLOUDBURST_DATA_26_50);
+                .solid("minecraft:corner", "inner_left", CLOUDBURST_DATA_26_50,
+                        "inner_right", CLOUDBURST_DATA_26_50, "none", SCRIPT_API_26_50_SOLID,
+                        "outer_left", CLOUDBURST_DATA_26_50, "outer_right", CLOUDBURST_DATA_26_50)
+                .mapColor("minecraft:corner", "inner_left", CLOUDBURST_DATA_26_50,
+                        "inner_right", CLOUDBURST_DATA_26_50, "none", SCRIPT_API_26_50_MAP_COLOR,
+                        "outer_left", CLOUDBURST_DATA_26_50, "outer_right", CLOUDBURST_DATA_26_50)
+                .tintMethod("minecraft:corner", "inner_left", CLOUDBURST_DATA_26_50,
+                        "inner_right", CLOUDBURST_DATA_26_50, "none", SCRIPT_API_26_50_TINT_METHOD,
+                        "outer_left", CLOUDBURST_DATA_26_50, "outer_right", CLOUDBURST_DATA_26_50);
         v.blockSources("minecraft:black_stained_glass_pane")
-                .solid(ACACIA_FENCE_SOLID_SOURCES)
-                .mapColor(ACACIA_FENCE_MAP_COLOR_SOURCES);
+                .solid(SOURCES_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_98458C)
+                .mapColor(SOURCES_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_B74E0E);
         v.blockSources("minecraft:black_wool_double_slab")
-                .tintMethod(SCRIPT_API_26_50_4);
+                .tintMethod(SCRIPT_API_26_50_TINT_METHOD);
         v.blockSources("minecraft:black_wool_slab")
-                .tintMethod(SCRIPT_API_26_50_4);
-        v.blockSources("minecraft:black_wool_stairs")
-                .solid("minecraft:corner", "inner_left", CLOUDBURST_DATA_26_50, "inner_right", CLOUDBURST_DATA_26_50, "none", SCRIPT_API_26_50, "outer_left", CLOUDBURST_DATA_26_50, "outer_right", CLOUDBURST_DATA_26_50)
-                .mapColor("minecraft:corner", "inner_left", CLOUDBURST_DATA_26_50, "inner_right", CLOUDBURST_DATA_26_50, "none", SCRIPT_API_26_50_3, "outer_left", CLOUDBURST_DATA_26_50, "outer_right", CLOUDBURST_DATA_26_50)
-                .tintMethod("minecraft:corner", "inner_left", CLOUDBURST_DATA_26_50, "inner_right", CLOUDBURST_DATA_26_50, "none", SCRIPT_API_26_50_4, "outer_left", CLOUDBURST_DATA_26_50, "outer_right", CLOUDBURST_DATA_26_50);
+                .tintMethod(SCRIPT_API_26_50_TINT_METHOD);
     }
 
     static void part1(Changes v) {
+        v.blockSources("minecraft:black_wool_stairs")
+                .solid("minecraft:corner", "inner_left", CLOUDBURST_DATA_26_50,
+                        "inner_right", CLOUDBURST_DATA_26_50, "none", SCRIPT_API_26_50_SOLID,
+                        "outer_left", CLOUDBURST_DATA_26_50, "outer_right", CLOUDBURST_DATA_26_50)
+                .mapColor("minecraft:corner", "inner_left", CLOUDBURST_DATA_26_50,
+                        "inner_right", CLOUDBURST_DATA_26_50, "none", SCRIPT_API_26_50_MAP_COLOR,
+                        "outer_left", CLOUDBURST_DATA_26_50, "outer_right", CLOUDBURST_DATA_26_50)
+                .tintMethod("minecraft:corner", "inner_left", CLOUDBURST_DATA_26_50,
+                        "inner_right", CLOUDBURST_DATA_26_50, "none", SCRIPT_API_26_50_TINT_METHOD,
+                        "outer_left", CLOUDBURST_DATA_26_50, "outer_right", CLOUDBURST_DATA_26_50);
         v.blockSources("minecraft:blackstone_stairs")
-                .solid("minecraft:corner", "inner_left", CLOUDBURST_DATA_26_50, "inner_right", CLOUDBURST_DATA_26_50, "none", SCRIPT_API_26_50, "outer_left", CLOUDBURST_DATA_26_50, "outer_right", CLOUDBURST_DATA_26_50)
-                .mapColor("minecraft:corner", "inner_left", CLOUDBURST_DATA_26_50, "inner_right", CLOUDBURST_DATA_26_50, "none", SCRIPT_API_26_50_3, "outer_left", CLOUDBURST_DATA_26_50, "outer_right", CLOUDBURST_DATA_26_50);
+                .solid("minecraft:corner", "inner_left", CLOUDBURST_DATA_26_50,
+                        "inner_right", CLOUDBURST_DATA_26_50, "none", SCRIPT_API_26_50_SOLID,
+                        "outer_left", CLOUDBURST_DATA_26_50, "outer_right", CLOUDBURST_DATA_26_50)
+                .mapColor("minecraft:corner", "inner_left", CLOUDBURST_DATA_26_50,
+                        "inner_right", CLOUDBURST_DATA_26_50, "none", SCRIPT_API_26_50_MAP_COLOR,
+                        "outer_left", CLOUDBURST_DATA_26_50, "outer_right", CLOUDBURST_DATA_26_50);
         v.blockSources("minecraft:blue_concrete_double_slab")
-                .tintMethod(SCRIPT_API_26_50_4);
+                .tintMethod(SCRIPT_API_26_50_TINT_METHOD);
         v.blockSources("minecraft:blue_concrete_slab")
-                .tintMethod(SCRIPT_API_26_50_4);
+                .tintMethod(SCRIPT_API_26_50_TINT_METHOD);
         v.blockSources("minecraft:blue_concrete_stairs")
-                .solid("minecraft:corner", "inner_left", CLOUDBURST_DATA_26_50, "inner_right", CLOUDBURST_DATA_26_50, "none", SCRIPT_API_26_50, "outer_left", CLOUDBURST_DATA_26_50, "outer_right", CLOUDBURST_DATA_26_50)
-                .mapColor("minecraft:corner", "inner_left", CLOUDBURST_DATA_26_50, "inner_right", CLOUDBURST_DATA_26_50, "none", SCRIPT_API_26_50_3, "outer_left", CLOUDBURST_DATA_26_50, "outer_right", CLOUDBURST_DATA_26_50)
-                .tintMethod("minecraft:corner", "inner_left", CLOUDBURST_DATA_26_50, "inner_right", CLOUDBURST_DATA_26_50, "none", SCRIPT_API_26_50_4, "outer_left", CLOUDBURST_DATA_26_50, "outer_right", CLOUDBURST_DATA_26_50);
+                .solid("minecraft:corner", "inner_left", CLOUDBURST_DATA_26_50,
+                        "inner_right", CLOUDBURST_DATA_26_50, "none", SCRIPT_API_26_50_SOLID,
+                        "outer_left", CLOUDBURST_DATA_26_50, "outer_right", CLOUDBURST_DATA_26_50)
+                .mapColor("minecraft:corner", "inner_left", CLOUDBURST_DATA_26_50,
+                        "inner_right", CLOUDBURST_DATA_26_50, "none", SCRIPT_API_26_50_MAP_COLOR,
+                        "outer_left", CLOUDBURST_DATA_26_50, "outer_right", CLOUDBURST_DATA_26_50)
+                .tintMethod("minecraft:corner", "inner_left", CLOUDBURST_DATA_26_50,
+                        "inner_right", CLOUDBURST_DATA_26_50, "none", SCRIPT_API_26_50_TINT_METHOD,
+                        "outer_left", CLOUDBURST_DATA_26_50, "outer_right", CLOUDBURST_DATA_26_50);
         v.blockSources("minecraft:blue_stained_glass_pane")
-                .solid(ACACIA_FENCE_SOLID_SOURCES)
-                .mapColor(ACACIA_FENCE_MAP_COLOR_SOURCES);
+                .solid(SOURCES_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_98458C)
+                .mapColor(SOURCES_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_B74E0E);
         v.blockSources("minecraft:blue_wool_double_slab")
-                .tintMethod(SCRIPT_API_26_50_4);
+                .tintMethod(SCRIPT_API_26_50_TINT_METHOD);
         v.blockSources("minecraft:blue_wool_slab")
-                .tintMethod(SCRIPT_API_26_50_4);
+                .tintMethod(SCRIPT_API_26_50_TINT_METHOD);
         v.blockSources("minecraft:blue_wool_stairs")
-                .solid("minecraft:corner", "inner_left", CLOUDBURST_DATA_26_50, "inner_right", CLOUDBURST_DATA_26_50, "none", SCRIPT_API_26_50, "outer_left", CLOUDBURST_DATA_26_50, "outer_right", CLOUDBURST_DATA_26_50)
-                .mapColor("minecraft:corner", "inner_left", CLOUDBURST_DATA_26_50, "inner_right", CLOUDBURST_DATA_26_50, "none", SCRIPT_API_26_50_3, "outer_left", CLOUDBURST_DATA_26_50, "outer_right", CLOUDBURST_DATA_26_50)
-                .tintMethod("minecraft:corner", "inner_left", CLOUDBURST_DATA_26_50, "inner_right", CLOUDBURST_DATA_26_50, "none", SCRIPT_API_26_50_4, "outer_left", CLOUDBURST_DATA_26_50, "outer_right", CLOUDBURST_DATA_26_50);
+                .solid("minecraft:corner", "inner_left", CLOUDBURST_DATA_26_50,
+                        "inner_right", CLOUDBURST_DATA_26_50, "none", SCRIPT_API_26_50_SOLID,
+                        "outer_left", CLOUDBURST_DATA_26_50, "outer_right", CLOUDBURST_DATA_26_50)
+                .mapColor("minecraft:corner", "inner_left", CLOUDBURST_DATA_26_50,
+                        "inner_right", CLOUDBURST_DATA_26_50, "none", SCRIPT_API_26_50_MAP_COLOR,
+                        "outer_left", CLOUDBURST_DATA_26_50, "outer_right", CLOUDBURST_DATA_26_50)
+                .tintMethod("minecraft:corner", "inner_left", CLOUDBURST_DATA_26_50,
+                        "inner_right", CLOUDBURST_DATA_26_50, "none", SCRIPT_API_26_50_TINT_METHOD,
+                        "outer_left", CLOUDBURST_DATA_26_50, "outer_right", CLOUDBURST_DATA_26_50);
         v.blockSources("minecraft:brain_coral")
-                .tintMethod(SCRIPT_API_26_50_4);
+                .tintMethod(SCRIPT_API_26_50_TINT_METHOD);
         v.blockSources("minecraft:brain_coral_fan")
-                .tintMethod(SCRIPT_API_26_50_4);
+                .tintMethod(SCRIPT_API_26_50_TINT_METHOD);
         v.blockSources("minecraft:brain_coral_wall_fan")
-                .tintMethod(SCRIPT_API_26_50_4);
+                .tintMethod(SCRIPT_API_26_50_TINT_METHOD);
         v.blockSources("minecraft:brick_stairs")
-                .solid("minecraft:corner", "inner_left", CLOUDBURST_DATA_26_50, "inner_right", CLOUDBURST_DATA_26_50, "none", SCRIPT_API_26_50, "outer_left", CLOUDBURST_DATA_26_50, "outer_right", CLOUDBURST_DATA_26_50)
-                .mapColor("minecraft:corner", "inner_left", CLOUDBURST_DATA_26_50, "inner_right", CLOUDBURST_DATA_26_50, "none", SCRIPT_API_26_50_3, "outer_left", CLOUDBURST_DATA_26_50, "outer_right", CLOUDBURST_DATA_26_50);
+                .solid("minecraft:corner", "inner_left", CLOUDBURST_DATA_26_50,
+                        "inner_right", CLOUDBURST_DATA_26_50, "none", SCRIPT_API_26_50_SOLID,
+                        "outer_left", CLOUDBURST_DATA_26_50, "outer_right", CLOUDBURST_DATA_26_50)
+                .mapColor("minecraft:corner", "inner_left", CLOUDBURST_DATA_26_50,
+                        "inner_right", CLOUDBURST_DATA_26_50, "none", SCRIPT_API_26_50_MAP_COLOR,
+                        "outer_left", CLOUDBURST_DATA_26_50, "outer_right", CLOUDBURST_DATA_26_50);
         v.blockSources("minecraft:brown_concrete_double_slab")
-                .tintMethod(SCRIPT_API_26_50_4);
+                .tintMethod(SCRIPT_API_26_50_TINT_METHOD);
         v.blockSources("minecraft:brown_concrete_slab")
-                .tintMethod(SCRIPT_API_26_50_4);
+                .tintMethod(SCRIPT_API_26_50_TINT_METHOD);
         v.blockSources("minecraft:brown_concrete_stairs")
-                .solid("minecraft:corner", "inner_left", CLOUDBURST_DATA_26_50, "inner_right", CLOUDBURST_DATA_26_50, "none", SCRIPT_API_26_50, "outer_left", CLOUDBURST_DATA_26_50, "outer_right", CLOUDBURST_DATA_26_50)
-                .mapColor("minecraft:corner", "inner_left", CLOUDBURST_DATA_26_50, "inner_right", CLOUDBURST_DATA_26_50, "none", SCRIPT_API_26_50_3, "outer_left", CLOUDBURST_DATA_26_50, "outer_right", CLOUDBURST_DATA_26_50)
-                .tintMethod("minecraft:corner", "inner_left", CLOUDBURST_DATA_26_50, "inner_right", CLOUDBURST_DATA_26_50, "none", SCRIPT_API_26_50_4, "outer_left", CLOUDBURST_DATA_26_50, "outer_right", CLOUDBURST_DATA_26_50);
+                .solid("minecraft:corner", "inner_left", CLOUDBURST_DATA_26_50,
+                        "inner_right", CLOUDBURST_DATA_26_50, "none", SCRIPT_API_26_50_SOLID,
+                        "outer_left", CLOUDBURST_DATA_26_50, "outer_right", CLOUDBURST_DATA_26_50)
+                .mapColor("minecraft:corner", "inner_left", CLOUDBURST_DATA_26_50,
+                        "inner_right", CLOUDBURST_DATA_26_50, "none", SCRIPT_API_26_50_MAP_COLOR,
+                        "outer_left", CLOUDBURST_DATA_26_50, "outer_right", CLOUDBURST_DATA_26_50)
+                .tintMethod("minecraft:corner", "inner_left", CLOUDBURST_DATA_26_50,
+                        "inner_right", CLOUDBURST_DATA_26_50, "none", SCRIPT_API_26_50_TINT_METHOD,
+                        "outer_left", CLOUDBURST_DATA_26_50, "outer_right", CLOUDBURST_DATA_26_50);
         v.blockSources("minecraft:brown_stained_glass_pane")
-                .solid(ACACIA_FENCE_SOLID_SOURCES)
-                .mapColor(ACACIA_FENCE_MAP_COLOR_SOURCES);
+                .solid(SOURCES_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_98458C)
+                .mapColor(SOURCES_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_B74E0E);
         v.blockSources("minecraft:brown_wool_double_slab")
-                .tintMethod(SCRIPT_API_26_50_4);
+                .tintMethod(SCRIPT_API_26_50_TINT_METHOD);
         v.blockSources("minecraft:brown_wool_slab")
-                .tintMethod(SCRIPT_API_26_50_4);
+                .tintMethod(SCRIPT_API_26_50_TINT_METHOD);
         v.blockSources("minecraft:brown_wool_stairs")
-                .solid("minecraft:corner", "inner_left", CLOUDBURST_DATA_26_50, "inner_right", CLOUDBURST_DATA_26_50, "none", SCRIPT_API_26_50, "outer_left", CLOUDBURST_DATA_26_50, "outer_right", CLOUDBURST_DATA_26_50)
-                .mapColor("minecraft:corner", "inner_left", CLOUDBURST_DATA_26_50, "inner_right", CLOUDBURST_DATA_26_50, "none", SCRIPT_API_26_50_3, "outer_left", CLOUDBURST_DATA_26_50, "outer_right", CLOUDBURST_DATA_26_50)
-                .tintMethod("minecraft:corner", "inner_left", CLOUDBURST_DATA_26_50, "inner_right", CLOUDBURST_DATA_26_50, "none", SCRIPT_API_26_50_4, "outer_left", CLOUDBURST_DATA_26_50, "outer_right", CLOUDBURST_DATA_26_50);
+                .solid("minecraft:corner", "inner_left", CLOUDBURST_DATA_26_50,
+                        "inner_right", CLOUDBURST_DATA_26_50, "none", SCRIPT_API_26_50_SOLID,
+                        "outer_left", CLOUDBURST_DATA_26_50, "outer_right", CLOUDBURST_DATA_26_50)
+                .mapColor("minecraft:corner", "inner_left", CLOUDBURST_DATA_26_50,
+                        "inner_right", CLOUDBURST_DATA_26_50, "none", SCRIPT_API_26_50_MAP_COLOR,
+                        "outer_left", CLOUDBURST_DATA_26_50, "outer_right", CLOUDBURST_DATA_26_50)
+                .tintMethod("minecraft:corner", "inner_left", CLOUDBURST_DATA_26_50,
+                        "inner_right", CLOUDBURST_DATA_26_50, "none", SCRIPT_API_26_50_TINT_METHOD,
+                        "outer_left", CLOUDBURST_DATA_26_50, "outer_right", CLOUDBURST_DATA_26_50);
         v.blockSources("minecraft:bubble_column")
                 .solid(CLOUDBURST_DATA_26_50)
                 .mapColor(CLOUDBURST_DATA_26_50);
         v.blockSources("minecraft:bubble_coral")
-                .tintMethod(SCRIPT_API_26_50_4);
+                .tintMethod(SCRIPT_API_26_50_TINT_METHOD);
         v.blockSources("minecraft:bubble_coral_fan")
-                .tintMethod(SCRIPT_API_26_50_4);
+                .tintMethod(SCRIPT_API_26_50_TINT_METHOD);
         v.blockSources("minecraft:bubble_coral_wall_fan")
-                .tintMethod(SCRIPT_API_26_50_4);
+                .tintMethod(SCRIPT_API_26_50_TINT_METHOD);
     }
 
     static void part2(Changes v) {
         v.blockSources("minecraft:cave_vines")
-                .solid("growing_plant_age", 0, CLOUDBURST_DATA_26_50, 1, SCRIPT_API_26_50, 2, SCRIPT_API_26_50, 3, SCRIPT_API_26_50, 4, SCRIPT_API_26_50, 5, SCRIPT_API_26_50, 6, SCRIPT_API_26_50, 7, SCRIPT_API_26_50, 8, SCRIPT_API_26_50, 9, SCRIPT_API_26_50, 10, SCRIPT_API_26_50, 11, SCRIPT_API_26_50, 12, SCRIPT_API_26_50, 13, SCRIPT_API_26_50, 14, SCRIPT_API_26_50, 15, SCRIPT_API_26_50, 16, SCRIPT_API_26_50, 17, SCRIPT_API_26_50, 18, SCRIPT_API_26_50, 19, SCRIPT_API_26_50, 20, SCRIPT_API_26_50, 21, SCRIPT_API_26_50, 22, SCRIPT_API_26_50, 23, SCRIPT_API_26_50, 24, SCRIPT_API_26_50, 25, SCRIPT_API_26_50)
-                .mapColor("growing_plant_age", 0, CLOUDBURST_DATA_26_50, 1, SCRIPT_API_26_50_3, 2, SCRIPT_API_26_50_3, 3, SCRIPT_API_26_50_3, 4, SCRIPT_API_26_50_3, 5, SCRIPT_API_26_50_3, 6, SCRIPT_API_26_50_3, 7, SCRIPT_API_26_50_3, 8, SCRIPT_API_26_50_3, 9, SCRIPT_API_26_50_3, 10, SCRIPT_API_26_50_3, 11, SCRIPT_API_26_50_3, 12, SCRIPT_API_26_50_3, 13, SCRIPT_API_26_50_3, 14, SCRIPT_API_26_50_3, 15, SCRIPT_API_26_50_3, 16, SCRIPT_API_26_50_3, 17, SCRIPT_API_26_50_3, 18, SCRIPT_API_26_50_3, 19, SCRIPT_API_26_50_3, 20, SCRIPT_API_26_50_3, 21, SCRIPT_API_26_50_3, 22, SCRIPT_API_26_50_3, 23, SCRIPT_API_26_50_3, 24, SCRIPT_API_26_50_3, 25, SCRIPT_API_26_50_3);
+                .solid("growing_plant_age", 0, CLOUDBURST_DATA_26_50, 1, SCRIPT_API_26_50_SOLID,
+                        2, SCRIPT_API_26_50_SOLID, 3, SCRIPT_API_26_50_SOLID,
+                        4, SCRIPT_API_26_50_SOLID, 5, SCRIPT_API_26_50_SOLID,
+                        6, SCRIPT_API_26_50_SOLID, 7, SCRIPT_API_26_50_SOLID,
+                        8, SCRIPT_API_26_50_SOLID, 9, SCRIPT_API_26_50_SOLID,
+                        10, SCRIPT_API_26_50_SOLID, 11, SCRIPT_API_26_50_SOLID,
+                        12, SCRIPT_API_26_50_SOLID, 13, SCRIPT_API_26_50_SOLID,
+                        14, SCRIPT_API_26_50_SOLID, 15, SCRIPT_API_26_50_SOLID,
+                        16, SCRIPT_API_26_50_SOLID, 17, SCRIPT_API_26_50_SOLID,
+                        18, SCRIPT_API_26_50_SOLID, 19, SCRIPT_API_26_50_SOLID,
+                        20, SCRIPT_API_26_50_SOLID, 21, SCRIPT_API_26_50_SOLID,
+                        22, SCRIPT_API_26_50_SOLID, 23, SCRIPT_API_26_50_SOLID,
+                        24, SCRIPT_API_26_50_SOLID, 25, SCRIPT_API_26_50_SOLID)
+                .mapColor("growing_plant_age", 0, CLOUDBURST_DATA_26_50,
+                        1, SCRIPT_API_26_50_MAP_COLOR, 2, SCRIPT_API_26_50_MAP_COLOR,
+                        3, SCRIPT_API_26_50_MAP_COLOR, 4, SCRIPT_API_26_50_MAP_COLOR,
+                        5, SCRIPT_API_26_50_MAP_COLOR, 6, SCRIPT_API_26_50_MAP_COLOR,
+                        7, SCRIPT_API_26_50_MAP_COLOR, 8, SCRIPT_API_26_50_MAP_COLOR,
+                        9, SCRIPT_API_26_50_MAP_COLOR, 10, SCRIPT_API_26_50_MAP_COLOR,
+                        11, SCRIPT_API_26_50_MAP_COLOR, 12, SCRIPT_API_26_50_MAP_COLOR,
+                        13, SCRIPT_API_26_50_MAP_COLOR, 14, SCRIPT_API_26_50_MAP_COLOR,
+                        15, SCRIPT_API_26_50_MAP_COLOR, 16, SCRIPT_API_26_50_MAP_COLOR,
+                        17, SCRIPT_API_26_50_MAP_COLOR, 18, SCRIPT_API_26_50_MAP_COLOR,
+                        19, SCRIPT_API_26_50_MAP_COLOR, 20, SCRIPT_API_26_50_MAP_COLOR,
+                        21, SCRIPT_API_26_50_MAP_COLOR, 22, SCRIPT_API_26_50_MAP_COLOR,
+                        23, SCRIPT_API_26_50_MAP_COLOR, 24, SCRIPT_API_26_50_MAP_COLOR,
+                        25, SCRIPT_API_26_50_MAP_COLOR);
         v.blockSources("minecraft:cave_vines_body_with_berries")
-                .solid("growing_plant_age", 0, CLOUDBURST_DATA_26_50, 1, SCRIPT_API_26_50, 2, SCRIPT_API_26_50, 3, SCRIPT_API_26_50, 4, SCRIPT_API_26_50, 5, SCRIPT_API_26_50, 6, SCRIPT_API_26_50, 7, SCRIPT_API_26_50, 8, SCRIPT_API_26_50, 9, SCRIPT_API_26_50, 10, SCRIPT_API_26_50, 11, SCRIPT_API_26_50, 12, SCRIPT_API_26_50, 13, SCRIPT_API_26_50, 14, SCRIPT_API_26_50, 15, SCRIPT_API_26_50, 16, SCRIPT_API_26_50, 17, SCRIPT_API_26_50, 18, SCRIPT_API_26_50, 19, SCRIPT_API_26_50, 20, SCRIPT_API_26_50, 21, SCRIPT_API_26_50, 22, SCRIPT_API_26_50, 23, SCRIPT_API_26_50, 24, SCRIPT_API_26_50, 25, SCRIPT_API_26_50)
-                .mapColor("growing_plant_age", 0, CLOUDBURST_DATA_26_50, 1, SCRIPT_API_26_50_3, 2, SCRIPT_API_26_50_3, 3, SCRIPT_API_26_50_3, 4, SCRIPT_API_26_50_3, 5, SCRIPT_API_26_50_3, 6, SCRIPT_API_26_50_3, 7, SCRIPT_API_26_50_3, 8, SCRIPT_API_26_50_3, 9, SCRIPT_API_26_50_3, 10, SCRIPT_API_26_50_3, 11, SCRIPT_API_26_50_3, 12, SCRIPT_API_26_50_3, 13, SCRIPT_API_26_50_3, 14, SCRIPT_API_26_50_3, 15, SCRIPT_API_26_50_3, 16, SCRIPT_API_26_50_3, 17, SCRIPT_API_26_50_3, 18, SCRIPT_API_26_50_3, 19, SCRIPT_API_26_50_3, 20, SCRIPT_API_26_50_3, 21, SCRIPT_API_26_50_3, 22, SCRIPT_API_26_50_3, 23, SCRIPT_API_26_50_3, 24, SCRIPT_API_26_50_3, 25, SCRIPT_API_26_50_3);
-        v.blockSources("minecraft:cave_vines_head_with_berries")
-                .solid("growing_plant_age", 0, CLOUDBURST_DATA_26_50, 1, SCRIPT_API_26_50, 2, SCRIPT_API_26_50, 3, SCRIPT_API_26_50, 4, SCRIPT_API_26_50, 5, SCRIPT_API_26_50, 6, SCRIPT_API_26_50, 7, SCRIPT_API_26_50, 8, SCRIPT_API_26_50, 9, SCRIPT_API_26_50, 10, SCRIPT_API_26_50, 11, SCRIPT_API_26_50, 12, SCRIPT_API_26_50, 13, SCRIPT_API_26_50, 14, SCRIPT_API_26_50, 15, SCRIPT_API_26_50, 16, SCRIPT_API_26_50, 17, SCRIPT_API_26_50, 18, SCRIPT_API_26_50, 19, SCRIPT_API_26_50, 20, SCRIPT_API_26_50, 21, SCRIPT_API_26_50, 22, SCRIPT_API_26_50, 23, SCRIPT_API_26_50, 24, SCRIPT_API_26_50, 25, SCRIPT_API_26_50)
-                .mapColor("growing_plant_age", 0, CLOUDBURST_DATA_26_50, 1, SCRIPT_API_26_50_3, 2, SCRIPT_API_26_50_3, 3, SCRIPT_API_26_50_3, 4, SCRIPT_API_26_50_3, 5, SCRIPT_API_26_50_3, 6, SCRIPT_API_26_50_3, 7, SCRIPT_API_26_50_3, 8, SCRIPT_API_26_50_3, 9, SCRIPT_API_26_50_3, 10, SCRIPT_API_26_50_3, 11, SCRIPT_API_26_50_3, 12, SCRIPT_API_26_50_3, 13, SCRIPT_API_26_50_3, 14, SCRIPT_API_26_50_3, 15, SCRIPT_API_26_50_3, 16, SCRIPT_API_26_50_3, 17, SCRIPT_API_26_50_3, 18, SCRIPT_API_26_50_3, 19, SCRIPT_API_26_50_3, 20, SCRIPT_API_26_50_3, 21, SCRIPT_API_26_50_3, 22, SCRIPT_API_26_50_3, 23, SCRIPT_API_26_50_3, 24, SCRIPT_API_26_50_3, 25, SCRIPT_API_26_50_3);
+                .solid("growing_plant_age", 0, CLOUDBURST_DATA_26_50, 1, SCRIPT_API_26_50_SOLID,
+                        2, SCRIPT_API_26_50_SOLID, 3, SCRIPT_API_26_50_SOLID,
+                        4, SCRIPT_API_26_50_SOLID, 5, SCRIPT_API_26_50_SOLID,
+                        6, SCRIPT_API_26_50_SOLID, 7, SCRIPT_API_26_50_SOLID,
+                        8, SCRIPT_API_26_50_SOLID, 9, SCRIPT_API_26_50_SOLID,
+                        10, SCRIPT_API_26_50_SOLID, 11, SCRIPT_API_26_50_SOLID,
+                        12, SCRIPT_API_26_50_SOLID, 13, SCRIPT_API_26_50_SOLID,
+                        14, SCRIPT_API_26_50_SOLID, 15, SCRIPT_API_26_50_SOLID,
+                        16, SCRIPT_API_26_50_SOLID, 17, SCRIPT_API_26_50_SOLID,
+                        18, SCRIPT_API_26_50_SOLID, 19, SCRIPT_API_26_50_SOLID,
+                        20, SCRIPT_API_26_50_SOLID, 21, SCRIPT_API_26_50_SOLID,
+                        22, SCRIPT_API_26_50_SOLID, 23, SCRIPT_API_26_50_SOLID,
+                        24, SCRIPT_API_26_50_SOLID, 25, SCRIPT_API_26_50_SOLID)
+                .mapColor("growing_plant_age", 0, CLOUDBURST_DATA_26_50,
+                        1, SCRIPT_API_26_50_MAP_COLOR, 2, SCRIPT_API_26_50_MAP_COLOR,
+                        3, SCRIPT_API_26_50_MAP_COLOR, 4, SCRIPT_API_26_50_MAP_COLOR,
+                        5, SCRIPT_API_26_50_MAP_COLOR, 6, SCRIPT_API_26_50_MAP_COLOR,
+                        7, SCRIPT_API_26_50_MAP_COLOR, 8, SCRIPT_API_26_50_MAP_COLOR,
+                        9, SCRIPT_API_26_50_MAP_COLOR, 10, SCRIPT_API_26_50_MAP_COLOR,
+                        11, SCRIPT_API_26_50_MAP_COLOR, 12, SCRIPT_API_26_50_MAP_COLOR,
+                        13, SCRIPT_API_26_50_MAP_COLOR, 14, SCRIPT_API_26_50_MAP_COLOR,
+                        15, SCRIPT_API_26_50_MAP_COLOR, 16, SCRIPT_API_26_50_MAP_COLOR,
+                        17, SCRIPT_API_26_50_MAP_COLOR, 18, SCRIPT_API_26_50_MAP_COLOR,
+                        19, SCRIPT_API_26_50_MAP_COLOR, 20, SCRIPT_API_26_50_MAP_COLOR,
+                        21, SCRIPT_API_26_50_MAP_COLOR, 22, SCRIPT_API_26_50_MAP_COLOR,
+                        23, SCRIPT_API_26_50_MAP_COLOR, 24, SCRIPT_API_26_50_MAP_COLOR,
+                        25, SCRIPT_API_26_50_MAP_COLOR);
     }
 
     static void part3(Changes v) {
-        v.blockSources("minecraft:chalkboard")
-                .solid("direction", 0, SCRIPT_API_26_50, 1, SCRIPT_API_26_50, 2, SCRIPT_API_26_50, 3, SCRIPT_API_26_50, 4, CLOUDBURST_DATA_26_50, 5, CLOUDBURST_DATA_26_50, 6, CLOUDBURST_DATA_26_50, 7, CLOUDBURST_DATA_26_50, 8, CLOUDBURST_DATA_26_50, 9, CLOUDBURST_DATA_26_50, 10, CLOUDBURST_DATA_26_50, 11, CLOUDBURST_DATA_26_50, 12, CLOUDBURST_DATA_26_50, 13, CLOUDBURST_DATA_26_50, 14, CLOUDBURST_DATA_26_50, 15, CLOUDBURST_DATA_26_50)
-                .canContainLiquid("direction", 0, SCRIPT_API_26_50_2, 1, SCRIPT_API_26_50_2, 2, SCRIPT_API_26_50_2, 3, SCRIPT_API_26_50_2, 4, CLOUDBURST_DATA_26_50, 5, CLOUDBURST_DATA_26_50, 6, CLOUDBURST_DATA_26_50, 7, CLOUDBURST_DATA_26_50, 8, CLOUDBURST_DATA_26_50, 9, CLOUDBURST_DATA_26_50, 10, CLOUDBURST_DATA_26_50, 11, CLOUDBURST_DATA_26_50, 12, CLOUDBURST_DATA_26_50, 13, CLOUDBURST_DATA_26_50, 14, CLOUDBURST_DATA_26_50, 15, CLOUDBURST_DATA_26_50)
-                .liquidBlocking("direction", 0, SCRIPT_API_26_50_2, 1, SCRIPT_API_26_50_2, 2, SCRIPT_API_26_50_2, 3, SCRIPT_API_26_50_2, 4, CLOUDBURST_DATA_26_50, 5, CLOUDBURST_DATA_26_50, 6, CLOUDBURST_DATA_26_50, 7, CLOUDBURST_DATA_26_50, 8, CLOUDBURST_DATA_26_50, 9, CLOUDBURST_DATA_26_50, 10, CLOUDBURST_DATA_26_50, 11, CLOUDBURST_DATA_26_50, 12, CLOUDBURST_DATA_26_50, 13, CLOUDBURST_DATA_26_50, 14, CLOUDBURST_DATA_26_50, 15, CLOUDBURST_DATA_26_50)
-                .destroyedByLiquid("direction", 0, SCRIPT_API_26_50_2, 1, SCRIPT_API_26_50_2, 2, SCRIPT_API_26_50_2, 3, SCRIPT_API_26_50_2, 4, CLOUDBURST_DATA_26_50, 5, CLOUDBURST_DATA_26_50, 6, CLOUDBURST_DATA_26_50, 7, CLOUDBURST_DATA_26_50, 8, CLOUDBURST_DATA_26_50, 9, CLOUDBURST_DATA_26_50, 10, CLOUDBURST_DATA_26_50, 11, CLOUDBURST_DATA_26_50, 12, CLOUDBURST_DATA_26_50, 13, CLOUDBURST_DATA_26_50, 14, CLOUDBURST_DATA_26_50, 15, CLOUDBURST_DATA_26_50)
-                .liquidSpreadCausesSpawn("direction", 0, SCRIPT_API_26_50_2, 1, SCRIPT_API_26_50_2, 2, SCRIPT_API_26_50_2, 3, SCRIPT_API_26_50_2, 4, CLOUDBURST_DATA_26_50, 5, CLOUDBURST_DATA_26_50, 6, CLOUDBURST_DATA_26_50, 7, CLOUDBURST_DATA_26_50, 8, CLOUDBURST_DATA_26_50, 9, CLOUDBURST_DATA_26_50, 10, CLOUDBURST_DATA_26_50, 11, CLOUDBURST_DATA_26_50, 12, CLOUDBURST_DATA_26_50, 13, CLOUDBURST_DATA_26_50, 14, CLOUDBURST_DATA_26_50, 15, CLOUDBURST_DATA_26_50)
-                .mapColor("direction", 0, SCRIPT_API_26_50_3, 1, SCRIPT_API_26_50_3, 2, SCRIPT_API_26_50_3, 3, SCRIPT_API_26_50_3, 4, CLOUDBURST_DATA_26_50, 5, CLOUDBURST_DATA_26_50, 6, CLOUDBURST_DATA_26_50, 7, CLOUDBURST_DATA_26_50, 8, CLOUDBURST_DATA_26_50, 9, CLOUDBURST_DATA_26_50, 10, CLOUDBURST_DATA_26_50, 11, CLOUDBURST_DATA_26_50, 12, CLOUDBURST_DATA_26_50, 13, CLOUDBURST_DATA_26_50, 14, CLOUDBURST_DATA_26_50, 15, CLOUDBURST_DATA_26_50);
-        v.blockSources("minecraft:cherry_fence")
-                .solid(ACACIA_FENCE_SOLID_SOURCES)
-                .mapColor(ACACIA_FENCE_MAP_COLOR_SOURCES);
-        v.blockSources("minecraft:cherry_fence_gate")
-                .solid("in_wall_bit", false, SCRIPT_API_26_50, true, CLOUDBURST_DATA_26_50)
-                .mapColor("in_wall_bit", false, SCRIPT_API_26_50_3, true, CLOUDBURST_DATA_26_50);
-        v.blockSources("minecraft:cherry_stairs")
-                .solid("minecraft:corner", "inner_left", CLOUDBURST_DATA_26_50, "inner_right", CLOUDBURST_DATA_26_50, "none", SCRIPT_API_26_50, "outer_left", CLOUDBURST_DATA_26_50, "outer_right", CLOUDBURST_DATA_26_50)
-                .mapColor("minecraft:corner", "inner_left", CLOUDBURST_DATA_26_50, "inner_right", CLOUDBURST_DATA_26_50, "none", SCRIPT_API_26_50_3, "outer_left", CLOUDBURST_DATA_26_50, "outer_right", CLOUDBURST_DATA_26_50);
-        v.blockSources("minecraft:cinnabar_brick_stairs")
-                .solid("minecraft:corner", "inner_left", CLOUDBURST_DATA_26_50, "inner_right", CLOUDBURST_DATA_26_50, "none", SCRIPT_API_26_50, "outer_left", CLOUDBURST_DATA_26_50, "outer_right", CLOUDBURST_DATA_26_50)
-                .mapColor("minecraft:corner", "inner_left", CLOUDBURST_DATA_26_50, "inner_right", CLOUDBURST_DATA_26_50, "none", SCRIPT_API_26_50_3, "outer_left", CLOUDBURST_DATA_26_50, "outer_right", CLOUDBURST_DATA_26_50);
-        v.blockSources("minecraft:cinnabar_stairs")
-                .solid("minecraft:corner", "inner_left", CLOUDBURST_DATA_26_50, "inner_right", CLOUDBURST_DATA_26_50, "none", SCRIPT_API_26_50, "outer_left", CLOUDBURST_DATA_26_50, "outer_right", CLOUDBURST_DATA_26_50)
-                .mapColor("minecraft:corner", "inner_left", CLOUDBURST_DATA_26_50, "inner_right", CLOUDBURST_DATA_26_50, "none", SCRIPT_API_26_50_3, "outer_left", CLOUDBURST_DATA_26_50, "outer_right", CLOUDBURST_DATA_26_50);
-        v.blockSources("minecraft:cobbled_deepslate_stairs")
-                .solid("minecraft:corner", "inner_left", CLOUDBURST_DATA_26_50, "inner_right", CLOUDBURST_DATA_26_50, "none", SCRIPT_API_26_50, "outer_left", CLOUDBURST_DATA_26_50, "outer_right", CLOUDBURST_DATA_26_50)
-                .mapColor("minecraft:corner", "inner_left", CLOUDBURST_DATA_26_50, "inner_right", CLOUDBURST_DATA_26_50, "none", SCRIPT_API_26_50_3, "outer_left", CLOUDBURST_DATA_26_50, "outer_right", CLOUDBURST_DATA_26_50);
-        v.blockSources("minecraft:colored_torch_blue")
-                .solid("torch_facing_direction", "east", SCRIPT_API_26_50, "north", SCRIPT_API_26_50, "south", SCRIPT_API_26_50, "top", SCRIPT_API_26_50, "unknown", CLOUDBURST_DATA_26_50, "west", SCRIPT_API_26_50)
-                .mapColor("torch_facing_direction", "east", SCRIPT_API_26_50_3, "north", SCRIPT_API_26_50_3, "south", SCRIPT_API_26_50_3, "top", SCRIPT_API_26_50_3, "unknown", CLOUDBURST_DATA_26_50, "west", SCRIPT_API_26_50_3);
+        v.blockSources("minecraft:cave_vines_head_with_berries")
+                .solid("growing_plant_age", 0, CLOUDBURST_DATA_26_50, 1, SCRIPT_API_26_50_SOLID,
+                        2, SCRIPT_API_26_50_SOLID, 3, SCRIPT_API_26_50_SOLID,
+                        4, SCRIPT_API_26_50_SOLID, 5, SCRIPT_API_26_50_SOLID,
+                        6, SCRIPT_API_26_50_SOLID, 7, SCRIPT_API_26_50_SOLID,
+                        8, SCRIPT_API_26_50_SOLID, 9, SCRIPT_API_26_50_SOLID,
+                        10, SCRIPT_API_26_50_SOLID, 11, SCRIPT_API_26_50_SOLID,
+                        12, SCRIPT_API_26_50_SOLID, 13, SCRIPT_API_26_50_SOLID,
+                        14, SCRIPT_API_26_50_SOLID, 15, SCRIPT_API_26_50_SOLID,
+                        16, SCRIPT_API_26_50_SOLID, 17, SCRIPT_API_26_50_SOLID,
+                        18, SCRIPT_API_26_50_SOLID, 19, SCRIPT_API_26_50_SOLID,
+                        20, SCRIPT_API_26_50_SOLID, 21, SCRIPT_API_26_50_SOLID,
+                        22, SCRIPT_API_26_50_SOLID, 23, SCRIPT_API_26_50_SOLID,
+                        24, SCRIPT_API_26_50_SOLID, 25, SCRIPT_API_26_50_SOLID)
+                .mapColor("growing_plant_age", 0, CLOUDBURST_DATA_26_50,
+                        1, SCRIPT_API_26_50_MAP_COLOR, 2, SCRIPT_API_26_50_MAP_COLOR,
+                        3, SCRIPT_API_26_50_MAP_COLOR, 4, SCRIPT_API_26_50_MAP_COLOR,
+                        5, SCRIPT_API_26_50_MAP_COLOR, 6, SCRIPT_API_26_50_MAP_COLOR,
+                        7, SCRIPT_API_26_50_MAP_COLOR, 8, SCRIPT_API_26_50_MAP_COLOR,
+                        9, SCRIPT_API_26_50_MAP_COLOR, 10, SCRIPT_API_26_50_MAP_COLOR,
+                        11, SCRIPT_API_26_50_MAP_COLOR, 12, SCRIPT_API_26_50_MAP_COLOR,
+                        13, SCRIPT_API_26_50_MAP_COLOR, 14, SCRIPT_API_26_50_MAP_COLOR,
+                        15, SCRIPT_API_26_50_MAP_COLOR, 16, SCRIPT_API_26_50_MAP_COLOR,
+                        17, SCRIPT_API_26_50_MAP_COLOR, 18, SCRIPT_API_26_50_MAP_COLOR,
+                        19, SCRIPT_API_26_50_MAP_COLOR, 20, SCRIPT_API_26_50_MAP_COLOR,
+                        21, SCRIPT_API_26_50_MAP_COLOR, 22, SCRIPT_API_26_50_MAP_COLOR,
+                        23, SCRIPT_API_26_50_MAP_COLOR, 24, SCRIPT_API_26_50_MAP_COLOR,
+                        25, SCRIPT_API_26_50_MAP_COLOR);
     }
 
     static void part4(Changes v) {
-        v.blockSources("minecraft:colored_torch_green")
-                .solid("torch_facing_direction", "east", SCRIPT_API_26_50, "north", SCRIPT_API_26_50, "south", SCRIPT_API_26_50, "top", SCRIPT_API_26_50, "unknown", CLOUDBURST_DATA_26_50, "west", SCRIPT_API_26_50)
-                .mapColor("torch_facing_direction", "east", SCRIPT_API_26_50_3, "north", SCRIPT_API_26_50_3, "south", SCRIPT_API_26_50_3, "top", SCRIPT_API_26_50_3, "unknown", CLOUDBURST_DATA_26_50, "west", SCRIPT_API_26_50_3);
-        v.blockSources("minecraft:colored_torch_purple")
-                .solid("torch_facing_direction", "east", SCRIPT_API_26_50, "north", SCRIPT_API_26_50, "south", SCRIPT_API_26_50, "top", SCRIPT_API_26_50, "unknown", CLOUDBURST_DATA_26_50, "west", SCRIPT_API_26_50)
-                .mapColor("torch_facing_direction", "east", SCRIPT_API_26_50_3, "north", SCRIPT_API_26_50_3, "south", SCRIPT_API_26_50_3, "top", SCRIPT_API_26_50_3, "unknown", CLOUDBURST_DATA_26_50, "west", SCRIPT_API_26_50_3);
-        v.blockSources("minecraft:colored_torch_red")
-                .solid("torch_facing_direction", "east", SCRIPT_API_26_50, "north", SCRIPT_API_26_50, "south", SCRIPT_API_26_50, "top", SCRIPT_API_26_50, "unknown", CLOUDBURST_DATA_26_50, "west", SCRIPT_API_26_50)
-                .mapColor("torch_facing_direction", "east", SCRIPT_API_26_50_3, "north", SCRIPT_API_26_50_3, "south", SCRIPT_API_26_50_3, "top", SCRIPT_API_26_50_3, "unknown", CLOUDBURST_DATA_26_50, "west", SCRIPT_API_26_50_3);
-        v.blockSources("minecraft:copper_bars")
-                .solid(ACACIA_FENCE_SOLID_SOURCES)
-                .mapColor(ACACIA_FENCE_MAP_COLOR_SOURCES);
-        v.blockSources("minecraft:copper_torch")
-                .solid("torch_facing_direction", "east", SCRIPT_API_26_50, "north", SCRIPT_API_26_50, "south", SCRIPT_API_26_50, "top", SCRIPT_API_26_50, "unknown", CLOUDBURST_DATA_26_50, "west", SCRIPT_API_26_50)
-                .mapColor("torch_facing_direction", "east", SCRIPT_API_26_50_3, "north", SCRIPT_API_26_50_3, "south", SCRIPT_API_26_50_3, "top", SCRIPT_API_26_50_3, "unknown", CLOUDBURST_DATA_26_50, "west", SCRIPT_API_26_50_3);
-        v.blockSources("minecraft:creaking_heart")
-                .solid("creaking_heart_state", "awake", CLOUDBURST_DATA_26_50, "dormant", CLOUDBURST_DATA_26_50, "uprooted", SCRIPT_API_26_50)
-                .mapColor("creaking_heart_state", "awake", CLOUDBURST_DATA_26_50, "dormant", CLOUDBURST_DATA_26_50, "uprooted", SCRIPT_API_26_50_3);
-        v.blockSources("minecraft:crimson_fence")
-                .solid(ACACIA_FENCE_SOLID_SOURCES)
-                .mapColor(ACACIA_FENCE_MAP_COLOR_SOURCES);
-        v.blockSources("minecraft:crimson_fence_gate")
-                .solid("in_wall_bit", false, SCRIPT_API_26_50, true, CLOUDBURST_DATA_26_50)
-                .mapColor("in_wall_bit", false, SCRIPT_API_26_50_3, true, CLOUDBURST_DATA_26_50);
-        v.blockSources("minecraft:crimson_stairs")
-                .solid("minecraft:corner", "inner_left", CLOUDBURST_DATA_26_50, "inner_right", CLOUDBURST_DATA_26_50, "none", SCRIPT_API_26_50, "outer_left", CLOUDBURST_DATA_26_50, "outer_right", CLOUDBURST_DATA_26_50)
-                .mapColor("minecraft:corner", "inner_left", CLOUDBURST_DATA_26_50, "inner_right", CLOUDBURST_DATA_26_50, "none", SCRIPT_API_26_50_3, "outer_left", CLOUDBURST_DATA_26_50, "outer_right", CLOUDBURST_DATA_26_50);
-        v.blockSources("minecraft:cut_copper_stairs")
-                .solid("minecraft:corner", "inner_left", CLOUDBURST_DATA_26_50, "inner_right", CLOUDBURST_DATA_26_50, "none", SCRIPT_API_26_50, "outer_left", CLOUDBURST_DATA_26_50, "outer_right", CLOUDBURST_DATA_26_50)
-                .mapColor("minecraft:corner", "inner_left", CLOUDBURST_DATA_26_50, "inner_right", CLOUDBURST_DATA_26_50, "none", SCRIPT_API_26_50_3, "outer_left", CLOUDBURST_DATA_26_50, "outer_right", CLOUDBURST_DATA_26_50);
-        v.blockSources("minecraft:cyan_concrete_double_slab")
-                .tintMethod(SCRIPT_API_26_50_4);
-        v.blockSources("minecraft:cyan_concrete_slab")
-                .tintMethod(SCRIPT_API_26_50_4);
-        v.blockSources("minecraft:cyan_concrete_stairs")
-                .solid("minecraft:corner", "inner_left", CLOUDBURST_DATA_26_50, "inner_right", CLOUDBURST_DATA_26_50, "none", SCRIPT_API_26_50, "outer_left", CLOUDBURST_DATA_26_50, "outer_right", CLOUDBURST_DATA_26_50)
-                .mapColor("minecraft:corner", "inner_left", CLOUDBURST_DATA_26_50, "inner_right", CLOUDBURST_DATA_26_50, "none", SCRIPT_API_26_50_3, "outer_left", CLOUDBURST_DATA_26_50, "outer_right", CLOUDBURST_DATA_26_50)
-                .tintMethod("minecraft:corner", "inner_left", CLOUDBURST_DATA_26_50, "inner_right", CLOUDBURST_DATA_26_50, "none", SCRIPT_API_26_50_4, "outer_left", CLOUDBURST_DATA_26_50, "outer_right", CLOUDBURST_DATA_26_50);
-        v.blockSources("minecraft:cyan_stained_glass_pane")
-                .solid(ACACIA_FENCE_SOLID_SOURCES)
-                .mapColor(ACACIA_FENCE_MAP_COLOR_SOURCES);
-        v.blockSources("minecraft:cyan_wool_double_slab")
-                .tintMethod(SCRIPT_API_26_50_4);
-        v.blockSources("minecraft:cyan_wool_slab")
-                .tintMethod(SCRIPT_API_26_50_4);
-        v.blockSources("minecraft:cyan_wool_stairs")
-                .solid("minecraft:corner", "inner_left", CLOUDBURST_DATA_26_50, "inner_right", CLOUDBURST_DATA_26_50, "none", SCRIPT_API_26_50, "outer_left", CLOUDBURST_DATA_26_50, "outer_right", CLOUDBURST_DATA_26_50)
-                .mapColor("minecraft:corner", "inner_left", CLOUDBURST_DATA_26_50, "inner_right", CLOUDBURST_DATA_26_50, "none", SCRIPT_API_26_50_3, "outer_left", CLOUDBURST_DATA_26_50, "outer_right", CLOUDBURST_DATA_26_50)
-                .tintMethod("minecraft:corner", "inner_left", CLOUDBURST_DATA_26_50, "inner_right", CLOUDBURST_DATA_26_50, "none", SCRIPT_API_26_50_4, "outer_left", CLOUDBURST_DATA_26_50, "outer_right", CLOUDBURST_DATA_26_50);
-        v.blockSources("minecraft:dark_oak_fence")
-                .solid(ACACIA_FENCE_SOLID_SOURCES)
-                .mapColor(ACACIA_FENCE_MAP_COLOR_SOURCES);
-        v.blockSources("minecraft:dark_oak_fence_gate")
-                .solid("in_wall_bit", false, SCRIPT_API_26_50, true, CLOUDBURST_DATA_26_50)
-                .mapColor("in_wall_bit", false, SCRIPT_API_26_50_3, true, CLOUDBURST_DATA_26_50);
-        v.blockSources("minecraft:dark_oak_leaves")
-                .tintMethod(SCRIPT_API_26_50_4);
-        v.blockSources("minecraft:dark_oak_stairs")
-                .solid("minecraft:corner", "inner_left", CLOUDBURST_DATA_26_50, "inner_right", CLOUDBURST_DATA_26_50, "none", SCRIPT_API_26_50, "outer_left", CLOUDBURST_DATA_26_50, "outer_right", CLOUDBURST_DATA_26_50)
-                .mapColor("minecraft:corner", "inner_left", CLOUDBURST_DATA_26_50, "inner_right", CLOUDBURST_DATA_26_50, "none", SCRIPT_API_26_50_3, "outer_left", CLOUDBURST_DATA_26_50, "outer_right", CLOUDBURST_DATA_26_50);
+        v.blockSources("minecraft:chalkboard")
+                .solid("direction", 0, SCRIPT_API_26_50_SOLID, 1, SCRIPT_API_26_50_SOLID,
+                        2, SCRIPT_API_26_50_SOLID, 3, SCRIPT_API_26_50_SOLID,
+                        4, CLOUDBURST_DATA_26_50, 5, CLOUDBURST_DATA_26_50,
+                        6, CLOUDBURST_DATA_26_50, 7, CLOUDBURST_DATA_26_50,
+                        8, CLOUDBURST_DATA_26_50, 9, CLOUDBURST_DATA_26_50,
+                        10, CLOUDBURST_DATA_26_50, 11, CLOUDBURST_DATA_26_50,
+                        12, CLOUDBURST_DATA_26_50, 13, CLOUDBURST_DATA_26_50,
+                        14, CLOUDBURST_DATA_26_50, 15, CLOUDBURST_DATA_26_50)
+                .canContainLiquid("direction", 0, SCRIPT_API_26_50_CAN_CONTAIN_LIQUID,
+                        1, SCRIPT_API_26_50_CAN_CONTAIN_LIQUID,
+                        2, SCRIPT_API_26_50_CAN_CONTAIN_LIQUID,
+                        3, SCRIPT_API_26_50_CAN_CONTAIN_LIQUID, 4, CLOUDBURST_DATA_26_50,
+                        5, CLOUDBURST_DATA_26_50, 6, CLOUDBURST_DATA_26_50,
+                        7, CLOUDBURST_DATA_26_50, 8, CLOUDBURST_DATA_26_50,
+                        9, CLOUDBURST_DATA_26_50, 10, CLOUDBURST_DATA_26_50,
+                        11, CLOUDBURST_DATA_26_50, 12, CLOUDBURST_DATA_26_50,
+                        13, CLOUDBURST_DATA_26_50, 14, CLOUDBURST_DATA_26_50,
+                        15, CLOUDBURST_DATA_26_50)
+                .liquidBlocking("direction", 0, SCRIPT_API_26_50_CAN_CONTAIN_LIQUID,
+                        1, SCRIPT_API_26_50_CAN_CONTAIN_LIQUID,
+                        2, SCRIPT_API_26_50_CAN_CONTAIN_LIQUID,
+                        3, SCRIPT_API_26_50_CAN_CONTAIN_LIQUID, 4, CLOUDBURST_DATA_26_50,
+                        5, CLOUDBURST_DATA_26_50, 6, CLOUDBURST_DATA_26_50,
+                        7, CLOUDBURST_DATA_26_50, 8, CLOUDBURST_DATA_26_50,
+                        9, CLOUDBURST_DATA_26_50, 10, CLOUDBURST_DATA_26_50,
+                        11, CLOUDBURST_DATA_26_50, 12, CLOUDBURST_DATA_26_50,
+                        13, CLOUDBURST_DATA_26_50, 14, CLOUDBURST_DATA_26_50,
+                        15, CLOUDBURST_DATA_26_50)
+                .destroyedByLiquid("direction", 0, SCRIPT_API_26_50_CAN_CONTAIN_LIQUID,
+                        1, SCRIPT_API_26_50_CAN_CONTAIN_LIQUID,
+                        2, SCRIPT_API_26_50_CAN_CONTAIN_LIQUID,
+                        3, SCRIPT_API_26_50_CAN_CONTAIN_LIQUID, 4, CLOUDBURST_DATA_26_50,
+                        5, CLOUDBURST_DATA_26_50, 6, CLOUDBURST_DATA_26_50,
+                        7, CLOUDBURST_DATA_26_50, 8, CLOUDBURST_DATA_26_50,
+                        9, CLOUDBURST_DATA_26_50, 10, CLOUDBURST_DATA_26_50,
+                        11, CLOUDBURST_DATA_26_50, 12, CLOUDBURST_DATA_26_50,
+                        13, CLOUDBURST_DATA_26_50, 14, CLOUDBURST_DATA_26_50,
+                        15, CLOUDBURST_DATA_26_50)
+                .liquidSpreadCausesSpawn("direction", 0, SCRIPT_API_26_50_CAN_CONTAIN_LIQUID,
+                        1, SCRIPT_API_26_50_CAN_CONTAIN_LIQUID,
+                        2, SCRIPT_API_26_50_CAN_CONTAIN_LIQUID,
+                        3, SCRIPT_API_26_50_CAN_CONTAIN_LIQUID, 4, CLOUDBURST_DATA_26_50,
+                        5, CLOUDBURST_DATA_26_50, 6, CLOUDBURST_DATA_26_50,
+                        7, CLOUDBURST_DATA_26_50, 8, CLOUDBURST_DATA_26_50,
+                        9, CLOUDBURST_DATA_26_50, 10, CLOUDBURST_DATA_26_50,
+                        11, CLOUDBURST_DATA_26_50, 12, CLOUDBURST_DATA_26_50,
+                        13, CLOUDBURST_DATA_26_50, 14, CLOUDBURST_DATA_26_50,
+                        15, CLOUDBURST_DATA_26_50)
+                .mapColor("direction", 0, SCRIPT_API_26_50_MAP_COLOR, 1, SCRIPT_API_26_50_MAP_COLOR,
+                        2, SCRIPT_API_26_50_MAP_COLOR, 3, SCRIPT_API_26_50_MAP_COLOR,
+                        4, CLOUDBURST_DATA_26_50, 5, CLOUDBURST_DATA_26_50,
+                        6, CLOUDBURST_DATA_26_50, 7, CLOUDBURST_DATA_26_50,
+                        8, CLOUDBURST_DATA_26_50, 9, CLOUDBURST_DATA_26_50,
+                        10, CLOUDBURST_DATA_26_50, 11, CLOUDBURST_DATA_26_50,
+                        12, CLOUDBURST_DATA_26_50, 13, CLOUDBURST_DATA_26_50,
+                        14, CLOUDBURST_DATA_26_50, 15, CLOUDBURST_DATA_26_50);
+        v.blockSources("minecraft:cherry_fence")
+                .solid(SOURCES_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_98458C)
+                .mapColor(SOURCES_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_B74E0E);
+        v.blockSources("minecraft:cherry_fence_gate")
+                .solid("in_wall_bit", false, SCRIPT_API_26_50_SOLID, true, CLOUDBURST_DATA_26_50)
+                .mapColor("in_wall_bit", false, SCRIPT_API_26_50_MAP_COLOR,
+                        true, CLOUDBURST_DATA_26_50);
+        v.blockSources("minecraft:cherry_stairs")
+                .solid("minecraft:corner", "inner_left", CLOUDBURST_DATA_26_50,
+                        "inner_right", CLOUDBURST_DATA_26_50, "none", SCRIPT_API_26_50_SOLID,
+                        "outer_left", CLOUDBURST_DATA_26_50, "outer_right", CLOUDBURST_DATA_26_50)
+                .mapColor("minecraft:corner", "inner_left", CLOUDBURST_DATA_26_50,
+                        "inner_right", CLOUDBURST_DATA_26_50, "none", SCRIPT_API_26_50_MAP_COLOR,
+                        "outer_left", CLOUDBURST_DATA_26_50, "outer_right", CLOUDBURST_DATA_26_50);
+        v.blockSources("minecraft:cinnabar_brick_stairs")
+                .solid("minecraft:corner", "inner_left", CLOUDBURST_DATA_26_50,
+                        "inner_right", CLOUDBURST_DATA_26_50, "none", SCRIPT_API_26_50_SOLID,
+                        "outer_left", CLOUDBURST_DATA_26_50, "outer_right", CLOUDBURST_DATA_26_50)
+                .mapColor("minecraft:corner", "inner_left", CLOUDBURST_DATA_26_50,
+                        "inner_right", CLOUDBURST_DATA_26_50, "none", SCRIPT_API_26_50_MAP_COLOR,
+                        "outer_left", CLOUDBURST_DATA_26_50, "outer_right", CLOUDBURST_DATA_26_50);
+        v.blockSources("minecraft:cinnabar_stairs")
+                .solid("minecraft:corner", "inner_left", CLOUDBURST_DATA_26_50,
+                        "inner_right", CLOUDBURST_DATA_26_50, "none", SCRIPT_API_26_50_SOLID,
+                        "outer_left", CLOUDBURST_DATA_26_50, "outer_right", CLOUDBURST_DATA_26_50)
+                .mapColor("minecraft:corner", "inner_left", CLOUDBURST_DATA_26_50,
+                        "inner_right", CLOUDBURST_DATA_26_50, "none", SCRIPT_API_26_50_MAP_COLOR,
+                        "outer_left", CLOUDBURST_DATA_26_50, "outer_right", CLOUDBURST_DATA_26_50);
     }
 
     static void part5(Changes v) {
+        v.blockSources("minecraft:cobbled_deepslate_stairs")
+                .solid("minecraft:corner", "inner_left", CLOUDBURST_DATA_26_50,
+                        "inner_right", CLOUDBURST_DATA_26_50, "none", SCRIPT_API_26_50_SOLID,
+                        "outer_left", CLOUDBURST_DATA_26_50, "outer_right", CLOUDBURST_DATA_26_50)
+                .mapColor("minecraft:corner", "inner_left", CLOUDBURST_DATA_26_50,
+                        "inner_right", CLOUDBURST_DATA_26_50, "none", SCRIPT_API_26_50_MAP_COLOR,
+                        "outer_left", CLOUDBURST_DATA_26_50, "outer_right", CLOUDBURST_DATA_26_50);
+        v.blockSources("minecraft:colored_torch_blue")
+                .solid("torch_facing_direction", "east", SCRIPT_API_26_50_SOLID,
+                        "north", SCRIPT_API_26_50_SOLID, "south", SCRIPT_API_26_50_SOLID,
+                        "top", SCRIPT_API_26_50_SOLID, "unknown", CLOUDBURST_DATA_26_50,
+                        "west", SCRIPT_API_26_50_SOLID)
+                .mapColor("torch_facing_direction", "east", SCRIPT_API_26_50_MAP_COLOR,
+                        "north", SCRIPT_API_26_50_MAP_COLOR, "south", SCRIPT_API_26_50_MAP_COLOR,
+                        "top", SCRIPT_API_26_50_MAP_COLOR, "unknown", CLOUDBURST_DATA_26_50,
+                        "west", SCRIPT_API_26_50_MAP_COLOR);
+        v.blockSources("minecraft:colored_torch_green")
+                .solid("torch_facing_direction", "east", SCRIPT_API_26_50_SOLID,
+                        "north", SCRIPT_API_26_50_SOLID, "south", SCRIPT_API_26_50_SOLID,
+                        "top", SCRIPT_API_26_50_SOLID, "unknown", CLOUDBURST_DATA_26_50,
+                        "west", SCRIPT_API_26_50_SOLID)
+                .mapColor("torch_facing_direction", "east", SCRIPT_API_26_50_MAP_COLOR,
+                        "north", SCRIPT_API_26_50_MAP_COLOR, "south", SCRIPT_API_26_50_MAP_COLOR,
+                        "top", SCRIPT_API_26_50_MAP_COLOR, "unknown", CLOUDBURST_DATA_26_50,
+                        "west", SCRIPT_API_26_50_MAP_COLOR);
+        v.blockSources("minecraft:colored_torch_purple")
+                .solid("torch_facing_direction", "east", SCRIPT_API_26_50_SOLID,
+                        "north", SCRIPT_API_26_50_SOLID, "south", SCRIPT_API_26_50_SOLID,
+                        "top", SCRIPT_API_26_50_SOLID, "unknown", CLOUDBURST_DATA_26_50,
+                        "west", SCRIPT_API_26_50_SOLID)
+                .mapColor("torch_facing_direction", "east", SCRIPT_API_26_50_MAP_COLOR,
+                        "north", SCRIPT_API_26_50_MAP_COLOR, "south", SCRIPT_API_26_50_MAP_COLOR,
+                        "top", SCRIPT_API_26_50_MAP_COLOR, "unknown", CLOUDBURST_DATA_26_50,
+                        "west", SCRIPT_API_26_50_MAP_COLOR);
+        v.blockSources("minecraft:colored_torch_red")
+                .solid("torch_facing_direction", "east", SCRIPT_API_26_50_SOLID,
+                        "north", SCRIPT_API_26_50_SOLID, "south", SCRIPT_API_26_50_SOLID,
+                        "top", SCRIPT_API_26_50_SOLID, "unknown", CLOUDBURST_DATA_26_50,
+                        "west", SCRIPT_API_26_50_SOLID)
+                .mapColor("torch_facing_direction", "east", SCRIPT_API_26_50_MAP_COLOR,
+                        "north", SCRIPT_API_26_50_MAP_COLOR, "south", SCRIPT_API_26_50_MAP_COLOR,
+                        "top", SCRIPT_API_26_50_MAP_COLOR, "unknown", CLOUDBURST_DATA_26_50,
+                        "west", SCRIPT_API_26_50_MAP_COLOR);
+        v.blockSources("minecraft:copper_bars")
+                .solid(SOURCES_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_98458C)
+                .mapColor(SOURCES_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_B74E0E);
+        v.blockSources("minecraft:copper_torch")
+                .solid("torch_facing_direction", "east", SCRIPT_API_26_50_SOLID,
+                        "north", SCRIPT_API_26_50_SOLID, "south", SCRIPT_API_26_50_SOLID,
+                        "top", SCRIPT_API_26_50_SOLID, "unknown", CLOUDBURST_DATA_26_50,
+                        "west", SCRIPT_API_26_50_SOLID)
+                .mapColor("torch_facing_direction", "east", SCRIPT_API_26_50_MAP_COLOR,
+                        "north", SCRIPT_API_26_50_MAP_COLOR, "south", SCRIPT_API_26_50_MAP_COLOR,
+                        "top", SCRIPT_API_26_50_MAP_COLOR, "unknown", CLOUDBURST_DATA_26_50,
+                        "west", SCRIPT_API_26_50_MAP_COLOR);
+        v.blockSources("minecraft:creaking_heart")
+                .solid("creaking_heart_state", "awake", CLOUDBURST_DATA_26_50,
+                        "dormant", CLOUDBURST_DATA_26_50, "uprooted", SCRIPT_API_26_50_SOLID)
+                .mapColor("creaking_heart_state", "awake", CLOUDBURST_DATA_26_50,
+                        "dormant", CLOUDBURST_DATA_26_50, "uprooted", SCRIPT_API_26_50_MAP_COLOR);
+        v.blockSources("minecraft:crimson_fence")
+                .solid(SOURCES_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_98458C)
+                .mapColor(SOURCES_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_B74E0E);
+        v.blockSources("minecraft:crimson_fence_gate")
+                .solid("in_wall_bit", false, SCRIPT_API_26_50_SOLID, true, CLOUDBURST_DATA_26_50)
+                .mapColor("in_wall_bit", false, SCRIPT_API_26_50_MAP_COLOR,
+                        true, CLOUDBURST_DATA_26_50);
+        v.blockSources("minecraft:crimson_stairs")
+                .solid("minecraft:corner", "inner_left", CLOUDBURST_DATA_26_50,
+                        "inner_right", CLOUDBURST_DATA_26_50, "none", SCRIPT_API_26_50_SOLID,
+                        "outer_left", CLOUDBURST_DATA_26_50, "outer_right", CLOUDBURST_DATA_26_50)
+                .mapColor("minecraft:corner", "inner_left", CLOUDBURST_DATA_26_50,
+                        "inner_right", CLOUDBURST_DATA_26_50, "none", SCRIPT_API_26_50_MAP_COLOR,
+                        "outer_left", CLOUDBURST_DATA_26_50, "outer_right", CLOUDBURST_DATA_26_50);
+        v.blockSources("minecraft:cut_copper_stairs")
+                .solid("minecraft:corner", "inner_left", CLOUDBURST_DATA_26_50,
+                        "inner_right", CLOUDBURST_DATA_26_50, "none", SCRIPT_API_26_50_SOLID,
+                        "outer_left", CLOUDBURST_DATA_26_50, "outer_right", CLOUDBURST_DATA_26_50)
+                .mapColor("minecraft:corner", "inner_left", CLOUDBURST_DATA_26_50,
+                        "inner_right", CLOUDBURST_DATA_26_50, "none", SCRIPT_API_26_50_MAP_COLOR,
+                        "outer_left", CLOUDBURST_DATA_26_50, "outer_right", CLOUDBURST_DATA_26_50);
+        v.blockSources("minecraft:cyan_concrete_double_slab")
+                .tintMethod(SCRIPT_API_26_50_TINT_METHOD);
+        v.blockSources("minecraft:cyan_concrete_slab")
+                .tintMethod(SCRIPT_API_26_50_TINT_METHOD);
+        v.blockSources("minecraft:cyan_concrete_stairs")
+                .solid("minecraft:corner", "inner_left", CLOUDBURST_DATA_26_50,
+                        "inner_right", CLOUDBURST_DATA_26_50, "none", SCRIPT_API_26_50_SOLID,
+                        "outer_left", CLOUDBURST_DATA_26_50, "outer_right", CLOUDBURST_DATA_26_50)
+                .mapColor("minecraft:corner", "inner_left", CLOUDBURST_DATA_26_50,
+                        "inner_right", CLOUDBURST_DATA_26_50, "none", SCRIPT_API_26_50_MAP_COLOR,
+                        "outer_left", CLOUDBURST_DATA_26_50, "outer_right", CLOUDBURST_DATA_26_50)
+                .tintMethod("minecraft:corner", "inner_left", CLOUDBURST_DATA_26_50,
+                        "inner_right", CLOUDBURST_DATA_26_50, "none", SCRIPT_API_26_50_TINT_METHOD,
+                        "outer_left", CLOUDBURST_DATA_26_50, "outer_right", CLOUDBURST_DATA_26_50);
+        v.blockSources("minecraft:cyan_stained_glass_pane")
+                .solid(SOURCES_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_98458C)
+                .mapColor(SOURCES_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_B74E0E);
+        v.blockSources("minecraft:cyan_wool_double_slab")
+                .tintMethod(SCRIPT_API_26_50_TINT_METHOD);
+        v.blockSources("minecraft:cyan_wool_slab")
+                .tintMethod(SCRIPT_API_26_50_TINT_METHOD);
+    }
+
+    static void part6(Changes v) {
+        v.blockSources("minecraft:cyan_wool_stairs")
+                .solid("minecraft:corner", "inner_left", CLOUDBURST_DATA_26_50,
+                        "inner_right", CLOUDBURST_DATA_26_50, "none", SCRIPT_API_26_50_SOLID,
+                        "outer_left", CLOUDBURST_DATA_26_50, "outer_right", CLOUDBURST_DATA_26_50)
+                .mapColor("minecraft:corner", "inner_left", CLOUDBURST_DATA_26_50,
+                        "inner_right", CLOUDBURST_DATA_26_50, "none", SCRIPT_API_26_50_MAP_COLOR,
+                        "outer_left", CLOUDBURST_DATA_26_50, "outer_right", CLOUDBURST_DATA_26_50)
+                .tintMethod("minecraft:corner", "inner_left", CLOUDBURST_DATA_26_50,
+                        "inner_right", CLOUDBURST_DATA_26_50, "none", SCRIPT_API_26_50_TINT_METHOD,
+                        "outer_left", CLOUDBURST_DATA_26_50, "outer_right", CLOUDBURST_DATA_26_50);
+        v.blockSources("minecraft:dark_oak_fence")
+                .solid(SOURCES_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_98458C)
+                .mapColor(SOURCES_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_B74E0E);
+        v.blockSources("minecraft:dark_oak_fence_gate")
+                .solid("in_wall_bit", false, SCRIPT_API_26_50_SOLID, true, CLOUDBURST_DATA_26_50)
+                .mapColor("in_wall_bit", false, SCRIPT_API_26_50_MAP_COLOR,
+                        true, CLOUDBURST_DATA_26_50);
+        v.blockSources("minecraft:dark_oak_leaves")
+                .tintMethod(SCRIPT_API_26_50_TINT_METHOD);
+        v.blockSources("minecraft:dark_oak_stairs")
+                .solid("minecraft:corner", "inner_left", CLOUDBURST_DATA_26_50,
+                        "inner_right", CLOUDBURST_DATA_26_50, "none", SCRIPT_API_26_50_SOLID,
+                        "outer_left", CLOUDBURST_DATA_26_50, "outer_right", CLOUDBURST_DATA_26_50)
+                .mapColor("minecraft:corner", "inner_left", CLOUDBURST_DATA_26_50,
+                        "inner_right", CLOUDBURST_DATA_26_50, "none", SCRIPT_API_26_50_MAP_COLOR,
+                        "outer_left", CLOUDBURST_DATA_26_50, "outer_right", CLOUDBURST_DATA_26_50);
         v.blockSources("minecraft:dark_prismarine_stairs")
-                .solid("minecraft:corner", "inner_left", CLOUDBURST_DATA_26_50, "inner_right", CLOUDBURST_DATA_26_50, "none", SCRIPT_API_26_50, "outer_left", CLOUDBURST_DATA_26_50, "outer_right", CLOUDBURST_DATA_26_50)
-                .mapColor("minecraft:corner", "inner_left", CLOUDBURST_DATA_26_50, "inner_right", CLOUDBURST_DATA_26_50, "none", SCRIPT_API_26_50_3, "outer_left", CLOUDBURST_DATA_26_50, "outer_right", CLOUDBURST_DATA_26_50);
+                .solid("minecraft:corner", "inner_left", CLOUDBURST_DATA_26_50,
+                        "inner_right", CLOUDBURST_DATA_26_50, "none", SCRIPT_API_26_50_SOLID,
+                        "outer_left", CLOUDBURST_DATA_26_50, "outer_right", CLOUDBURST_DATA_26_50)
+                .mapColor("minecraft:corner", "inner_left", CLOUDBURST_DATA_26_50,
+                        "inner_right", CLOUDBURST_DATA_26_50, "none", SCRIPT_API_26_50_MAP_COLOR,
+                        "outer_left", CLOUDBURST_DATA_26_50, "outer_right", CLOUDBURST_DATA_26_50);
         v.blockSources("minecraft:dead_brain_coral")
-                .tintMethod(SCRIPT_API_26_50_4);
+                .tintMethod(SCRIPT_API_26_50_TINT_METHOD);
         v.blockSources("minecraft:dead_brain_coral_fan")
-                .tintMethod(SCRIPT_API_26_50_4);
+                .tintMethod(SCRIPT_API_26_50_TINT_METHOD);
         v.blockSources("minecraft:dead_brain_coral_wall_fan")
-                .tintMethod(SCRIPT_API_26_50_4);
+                .tintMethod(SCRIPT_API_26_50_TINT_METHOD);
         v.blockSources("minecraft:dead_bubble_coral")
-                .tintMethod(SCRIPT_API_26_50_4);
+                .tintMethod(SCRIPT_API_26_50_TINT_METHOD);
         v.blockSources("minecraft:dead_bubble_coral_fan")
-                .tintMethod(SCRIPT_API_26_50_4);
+                .tintMethod(SCRIPT_API_26_50_TINT_METHOD);
         v.blockSources("minecraft:dead_bubble_coral_wall_fan")
-                .tintMethod(SCRIPT_API_26_50_4);
+                .tintMethod(SCRIPT_API_26_50_TINT_METHOD);
         v.blockSources("minecraft:dead_fire_coral")
-                .tintMethod(SCRIPT_API_26_50_4);
+                .tintMethod(SCRIPT_API_26_50_TINT_METHOD);
         v.blockSources("minecraft:dead_fire_coral_fan")
-                .tintMethod(SCRIPT_API_26_50_4);
+                .tintMethod(SCRIPT_API_26_50_TINT_METHOD);
         v.blockSources("minecraft:dead_fire_coral_wall_fan")
-                .tintMethod(SCRIPT_API_26_50_4);
+                .tintMethod(SCRIPT_API_26_50_TINT_METHOD);
         v.blockSources("minecraft:dead_horn_coral")
-                .tintMethod(SCRIPT_API_26_50_4);
+                .tintMethod(SCRIPT_API_26_50_TINT_METHOD);
         v.blockSources("minecraft:dead_horn_coral_fan")
-                .tintMethod(SCRIPT_API_26_50_4);
+                .tintMethod(SCRIPT_API_26_50_TINT_METHOD);
         v.blockSources("minecraft:dead_horn_coral_wall_fan")
-                .tintMethod(SCRIPT_API_26_50_4);
+                .tintMethod(SCRIPT_API_26_50_TINT_METHOD);
         v.blockSources("minecraft:dead_tube_coral")
-                .tintMethod(SCRIPT_API_26_50_4);
+                .tintMethod(SCRIPT_API_26_50_TINT_METHOD);
         v.blockSources("minecraft:dead_tube_coral_fan")
-                .tintMethod(SCRIPT_API_26_50_4);
+                .tintMethod(SCRIPT_API_26_50_TINT_METHOD);
         v.blockSources("minecraft:dead_tube_coral_wall_fan")
-                .tintMethod(SCRIPT_API_26_50_4);
+                .tintMethod(SCRIPT_API_26_50_TINT_METHOD);
         v.blockSources("minecraft:deepslate_brick_stairs")
-                .solid("minecraft:corner", "inner_left", CLOUDBURST_DATA_26_50, "inner_right", CLOUDBURST_DATA_26_50, "none", SCRIPT_API_26_50, "outer_left", CLOUDBURST_DATA_26_50, "outer_right", CLOUDBURST_DATA_26_50)
-                .mapColor("minecraft:corner", "inner_left", CLOUDBURST_DATA_26_50, "inner_right", CLOUDBURST_DATA_26_50, "none", SCRIPT_API_26_50_3, "outer_left", CLOUDBURST_DATA_26_50, "outer_right", CLOUDBURST_DATA_26_50);
+                .solid("minecraft:corner", "inner_left", CLOUDBURST_DATA_26_50,
+                        "inner_right", CLOUDBURST_DATA_26_50, "none", SCRIPT_API_26_50_SOLID,
+                        "outer_left", CLOUDBURST_DATA_26_50, "outer_right", CLOUDBURST_DATA_26_50)
+                .mapColor("minecraft:corner", "inner_left", CLOUDBURST_DATA_26_50,
+                        "inner_right", CLOUDBURST_DATA_26_50, "none", SCRIPT_API_26_50_MAP_COLOR,
+                        "outer_left", CLOUDBURST_DATA_26_50, "outer_right", CLOUDBURST_DATA_26_50);
         v.blockSources("minecraft:deepslate_tile_stairs")
-                .solid("minecraft:corner", "inner_left", CLOUDBURST_DATA_26_50, "inner_right", CLOUDBURST_DATA_26_50, "none", SCRIPT_API_26_50, "outer_left", CLOUDBURST_DATA_26_50, "outer_right", CLOUDBURST_DATA_26_50)
-                .mapColor("minecraft:corner", "inner_left", CLOUDBURST_DATA_26_50, "inner_right", CLOUDBURST_DATA_26_50, "none", SCRIPT_API_26_50_3, "outer_left", CLOUDBURST_DATA_26_50, "outer_right", CLOUDBURST_DATA_26_50);
+                .solid("minecraft:corner", "inner_left", CLOUDBURST_DATA_26_50,
+                        "inner_right", CLOUDBURST_DATA_26_50, "none", SCRIPT_API_26_50_SOLID,
+                        "outer_left", CLOUDBURST_DATA_26_50, "outer_right", CLOUDBURST_DATA_26_50)
+                .mapColor("minecraft:corner", "inner_left", CLOUDBURST_DATA_26_50,
+                        "inner_right", CLOUDBURST_DATA_26_50, "none", SCRIPT_API_26_50_MAP_COLOR,
+                        "outer_left", CLOUDBURST_DATA_26_50, "outer_right", CLOUDBURST_DATA_26_50);
         v.blockSources("minecraft:diorite_stairs")
-                .solid("minecraft:corner", "inner_left", CLOUDBURST_DATA_26_50, "inner_right", CLOUDBURST_DATA_26_50, "none", SCRIPT_API_26_50, "outer_left", CLOUDBURST_DATA_26_50, "outer_right", CLOUDBURST_DATA_26_50)
-                .mapColor("minecraft:corner", "inner_left", CLOUDBURST_DATA_26_50, "inner_right", CLOUDBURST_DATA_26_50, "none", SCRIPT_API_26_50_3, "outer_left", CLOUDBURST_DATA_26_50, "outer_right", CLOUDBURST_DATA_26_50);
+                .solid("minecraft:corner", "inner_left", CLOUDBURST_DATA_26_50,
+                        "inner_right", CLOUDBURST_DATA_26_50, "none", SCRIPT_API_26_50_SOLID,
+                        "outer_left", CLOUDBURST_DATA_26_50, "outer_right", CLOUDBURST_DATA_26_50)
+                .mapColor("minecraft:corner", "inner_left", CLOUDBURST_DATA_26_50,
+                        "inner_right", CLOUDBURST_DATA_26_50, "none", SCRIPT_API_26_50_MAP_COLOR,
+                        "outer_left", CLOUDBURST_DATA_26_50, "outer_right", CLOUDBURST_DATA_26_50);
         v.blockSources("minecraft:element_1")
                 .mapColor(CLOUDBURST_DATA_26_50);
         v.blockSources("minecraft:element_10")
@@ -369,6 +652,9 @@ final class BehaviourSources26_50 {
                 .mapColor(CLOUDBURST_DATA_26_50);
         v.blockSources("minecraft:element_18")
                 .mapColor(CLOUDBURST_DATA_26_50);
+    }
+
+    static void part7(Changes v) {
         v.blockSources("minecraft:element_19")
                 .mapColor(CLOUDBURST_DATA_26_50);
         v.blockSources("minecraft:element_2")
@@ -393,9 +679,6 @@ final class BehaviourSources26_50 {
                 .mapColor(CLOUDBURST_DATA_26_50);
         v.blockSources("minecraft:element_29")
                 .mapColor(CLOUDBURST_DATA_26_50);
-    }
-
-    static void part6(Changes v) {
         v.blockSources("minecraft:element_3")
                 .mapColor(CLOUDBURST_DATA_26_50);
         v.blockSources("minecraft:element_30")
@@ -492,135 +775,6 @@ final class BehaviourSources26_50 {
                 .mapColor(CLOUDBURST_DATA_26_50);
         v.blockSources("minecraft:element_72")
                 .mapColor(CLOUDBURST_DATA_26_50);
-        v.blockSources("minecraft:element_73")
-                .mapColor(CLOUDBURST_DATA_26_50);
-        v.blockSources("minecraft:element_74")
-                .mapColor(CLOUDBURST_DATA_26_50);
-        v.blockSources("minecraft:element_75")
-                .mapColor(CLOUDBURST_DATA_26_50);
-        v.blockSources("minecraft:element_76")
-                .mapColor(CLOUDBURST_DATA_26_50);
-        v.blockSources("minecraft:element_77")
-                .mapColor(CLOUDBURST_DATA_26_50);
-        v.blockSources("minecraft:element_78")
-                .mapColor(CLOUDBURST_DATA_26_50);
-        v.blockSources("minecraft:element_79")
-                .mapColor(CLOUDBURST_DATA_26_50);
-        v.blockSources("minecraft:element_8")
-                .mapColor(CLOUDBURST_DATA_26_50);
-        v.blockSources("minecraft:element_80")
-                .mapColor(CLOUDBURST_DATA_26_50);
-        v.blockSources("minecraft:element_81")
-                .mapColor(CLOUDBURST_DATA_26_50);
-        v.blockSources("minecraft:element_82")
-                .mapColor(CLOUDBURST_DATA_26_50);
-        v.blockSources("minecraft:element_83")
-                .mapColor(CLOUDBURST_DATA_26_50);
-    }
-
-    static void part7(Changes v) {
-        v.blockSources("minecraft:element_84")
-                .mapColor(CLOUDBURST_DATA_26_50);
-        v.blockSources("minecraft:element_85")
-                .mapColor(CLOUDBURST_DATA_26_50);
-        v.blockSources("minecraft:element_86")
-                .mapColor(CLOUDBURST_DATA_26_50);
-        v.blockSources("minecraft:element_87")
-                .mapColor(CLOUDBURST_DATA_26_50);
-        v.blockSources("minecraft:element_88")
-                .mapColor(CLOUDBURST_DATA_26_50);
-        v.blockSources("minecraft:element_89")
-                .mapColor(CLOUDBURST_DATA_26_50);
-        v.blockSources("minecraft:element_9")
-                .mapColor(CLOUDBURST_DATA_26_50);
-        v.blockSources("minecraft:element_90")
-                .mapColor(CLOUDBURST_DATA_26_50);
-        v.blockSources("minecraft:element_91")
-                .mapColor(CLOUDBURST_DATA_26_50);
-        v.blockSources("minecraft:element_92")
-                .mapColor(CLOUDBURST_DATA_26_50);
-        v.blockSources("minecraft:element_93")
-                .mapColor(CLOUDBURST_DATA_26_50);
-        v.blockSources("minecraft:element_94")
-                .mapColor(CLOUDBURST_DATA_26_50);
-        v.blockSources("minecraft:element_95")
-                .mapColor(CLOUDBURST_DATA_26_50);
-        v.blockSources("minecraft:element_96")
-                .mapColor(CLOUDBURST_DATA_26_50);
-        v.blockSources("minecraft:element_97")
-                .mapColor(CLOUDBURST_DATA_26_50);
-        v.blockSources("minecraft:element_98")
-                .mapColor(CLOUDBURST_DATA_26_50);
-        v.blockSources("minecraft:element_99")
-                .mapColor(CLOUDBURST_DATA_26_50);
-        v.blockSources("minecraft:end_brick_stairs")
-                .solid("minecraft:corner", "inner_left", CLOUDBURST_DATA_26_50, "inner_right", CLOUDBURST_DATA_26_50, "none", SCRIPT_API_26_50, "outer_left", CLOUDBURST_DATA_26_50, "outer_right", CLOUDBURST_DATA_26_50)
-                .mapColor("minecraft:corner", "inner_left", CLOUDBURST_DATA_26_50, "inner_right", CLOUDBURST_DATA_26_50, "none", SCRIPT_API_26_50_3, "outer_left", CLOUDBURST_DATA_26_50, "outer_right", CLOUDBURST_DATA_26_50);
-        v.blockSources("minecraft:exposed_copper_bars")
-                .solid(ACACIA_FENCE_SOLID_SOURCES)
-                .mapColor(ACACIA_FENCE_MAP_COLOR_SOURCES);
-        v.blockSources("minecraft:exposed_cut_copper_stairs")
-                .solid("minecraft:corner", "inner_left", CLOUDBURST_DATA_26_50, "inner_right", CLOUDBURST_DATA_26_50, "none", SCRIPT_API_26_50, "outer_left", CLOUDBURST_DATA_26_50, "outer_right", CLOUDBURST_DATA_26_50)
-                .mapColor("minecraft:corner", "inner_left", CLOUDBURST_DATA_26_50, "inner_right", CLOUDBURST_DATA_26_50, "none", SCRIPT_API_26_50_3, "outer_left", CLOUDBURST_DATA_26_50, "outer_right", CLOUDBURST_DATA_26_50);
-        v.blockSources("minecraft:fence_gate")
-                .solid("in_wall_bit", false, SCRIPT_API_26_50, true, CLOUDBURST_DATA_26_50)
-                .mapColor("in_wall_bit", false, SCRIPT_API_26_50_3, true, CLOUDBURST_DATA_26_50);
-        v.blockSources("minecraft:fern")
-                .tintMethod(SCRIPT_API_26_50_4);
-        v.blockSources("minecraft:fire_coral")
-                .tintMethod(SCRIPT_API_26_50_4);
-        v.blockSources("minecraft:fire_coral_fan")
-                .tintMethod(SCRIPT_API_26_50_4);
-        v.blockSources("minecraft:fire_coral_wall_fan")
-                .tintMethod(SCRIPT_API_26_50_4);
-        v.blockSources("minecraft:flowing_lava")
-                .solid(CLOUDBURST_DATA_26_50)
-                .mapColor(CLOUDBURST_DATA_26_50);
-        v.blockSources("minecraft:flowing_water")
-                .solid(CLOUDBURST_DATA_26_50)
-                .mapColor(CLOUDBURST_DATA_26_50);
-        v.blockSources("minecraft:glass_pane")
-                .solid(ACACIA_FENCE_SOLID_SOURCES)
-                .mapColor(ACACIA_FENCE_MAP_COLOR_SOURCES);
-        v.blockSources("minecraft:granite_stairs")
-                .solid("minecraft:corner", "inner_left", CLOUDBURST_DATA_26_50, "inner_right", CLOUDBURST_DATA_26_50, "none", SCRIPT_API_26_50, "outer_left", CLOUDBURST_DATA_26_50, "outer_right", CLOUDBURST_DATA_26_50)
-                .mapColor("minecraft:corner", "inner_left", CLOUDBURST_DATA_26_50, "inner_right", CLOUDBURST_DATA_26_50, "none", SCRIPT_API_26_50_3, "outer_left", CLOUDBURST_DATA_26_50, "outer_right", CLOUDBURST_DATA_26_50);
-        v.blockSources("minecraft:grass_block")
-                .tintMethod(SCRIPT_API_26_50_4);
-        v.blockSources("minecraft:gray_concrete_double_slab")
-                .tintMethod(SCRIPT_API_26_50_4);
-        v.blockSources("minecraft:gray_concrete_slab")
-                .tintMethod(SCRIPT_API_26_50_4);
-        v.blockSources("minecraft:gray_concrete_stairs")
-                .solid("minecraft:corner", "inner_left", CLOUDBURST_DATA_26_50, "inner_right", CLOUDBURST_DATA_26_50, "none", SCRIPT_API_26_50, "outer_left", CLOUDBURST_DATA_26_50, "outer_right", CLOUDBURST_DATA_26_50)
-                .mapColor("minecraft:corner", "inner_left", CLOUDBURST_DATA_26_50, "inner_right", CLOUDBURST_DATA_26_50, "none", SCRIPT_API_26_50_3, "outer_left", CLOUDBURST_DATA_26_50, "outer_right", CLOUDBURST_DATA_26_50)
-                .tintMethod("minecraft:corner", "inner_left", CLOUDBURST_DATA_26_50, "inner_right", CLOUDBURST_DATA_26_50, "none", SCRIPT_API_26_50_4, "outer_left", CLOUDBURST_DATA_26_50, "outer_right", CLOUDBURST_DATA_26_50);
-        v.blockSources("minecraft:gray_stained_glass_pane")
-                .solid(ACACIA_FENCE_SOLID_SOURCES)
-                .mapColor(ACACIA_FENCE_MAP_COLOR_SOURCES);
-        v.blockSources("minecraft:gray_wool_double_slab")
-                .tintMethod(SCRIPT_API_26_50_4);
-        v.blockSources("minecraft:gray_wool_slab")
-                .tintMethod(SCRIPT_API_26_50_4);
-        v.blockSources("minecraft:gray_wool_stairs")
-                .solid("minecraft:corner", "inner_left", CLOUDBURST_DATA_26_50, "inner_right", CLOUDBURST_DATA_26_50, "none", SCRIPT_API_26_50, "outer_left", CLOUDBURST_DATA_26_50, "outer_right", CLOUDBURST_DATA_26_50)
-                .mapColor("minecraft:corner", "inner_left", CLOUDBURST_DATA_26_50, "inner_right", CLOUDBURST_DATA_26_50, "none", SCRIPT_API_26_50_3, "outer_left", CLOUDBURST_DATA_26_50, "outer_right", CLOUDBURST_DATA_26_50)
-                .tintMethod("minecraft:corner", "inner_left", CLOUDBURST_DATA_26_50, "inner_right", CLOUDBURST_DATA_26_50, "none", SCRIPT_API_26_50_4, "outer_left", CLOUDBURST_DATA_26_50, "outer_right", CLOUDBURST_DATA_26_50);
-        v.blockSources("minecraft:green_concrete_double_slab")
-                .tintMethod(SCRIPT_API_26_50_4);
-        v.blockSources("minecraft:green_concrete_slab")
-                .tintMethod(SCRIPT_API_26_50_4);
-        v.blockSources("minecraft:green_concrete_stairs")
-                .solid("minecraft:corner", "inner_left", CLOUDBURST_DATA_26_50, "inner_right", CLOUDBURST_DATA_26_50, "none", SCRIPT_API_26_50, "outer_left", CLOUDBURST_DATA_26_50, "outer_right", CLOUDBURST_DATA_26_50)
-                .mapColor("minecraft:corner", "inner_left", CLOUDBURST_DATA_26_50, "inner_right", CLOUDBURST_DATA_26_50, "none", SCRIPT_API_26_50_3, "outer_left", CLOUDBURST_DATA_26_50, "outer_right", CLOUDBURST_DATA_26_50)
-                .tintMethod("minecraft:corner", "inner_left", CLOUDBURST_DATA_26_50, "inner_right", CLOUDBURST_DATA_26_50, "none", SCRIPT_API_26_50_4, "outer_left", CLOUDBURST_DATA_26_50, "outer_right", CLOUDBURST_DATA_26_50);
-        v.blockSources("minecraft:green_stained_glass_pane")
-                .solid(ACACIA_FENCE_SOLID_SOURCES)
-                .mapColor(ACACIA_FENCE_MAP_COLOR_SOURCES);
-        v.blockSources("minecraft:green_wool_double_slab")
-                .tintMethod(SCRIPT_API_26_50_4);
-        v.blockSources("minecraft:green_wool_slab")
-                .tintMethod(SCRIPT_API_26_50_4);
     }
 
     static void load(Changes v) {
@@ -650,5 +804,7 @@ final class BehaviourSources26_50 {
         BehaviourSources26_50Part3.part23(v);
         BehaviourSources26_50Part4.part24(v);
         BehaviourSources26_50Part4.part25(v);
+        BehaviourSources26_50Part4.part26(v);
+        BehaviourSources26_50Part4.part27(v);
     }
 }

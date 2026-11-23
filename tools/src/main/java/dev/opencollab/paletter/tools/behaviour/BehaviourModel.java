@@ -54,7 +54,7 @@ final class BehaviourModel {
     }
 
     /** A note ({@code alternative} null) or a dispute of a capture, for a block (a fit over the states it decides) or an item. */
-    record Mark(int capture, BehaviourKey<?> key, String id, @Nullable Integer alternative, Fit value) {
+    record Mark(int capture, BehaviourKey<?> key, String id, @Nullable Integer alternative, Fit value, String from, String to) {
     }
 
     final BehaviourStore store;
@@ -64,13 +64,20 @@ final class BehaviourModel {
     private final Map<Integer, NbtMap> stateByHash = new HashMap<>();
     private final MarkCollector collector = new MarkCollector();
 
+    /** A value a direct BDS capture gave that a newer third-party dump contradicts ({@link BdsFirst}): it needs a new capture. */
+    record Recapture(String version, BehaviourKey<?> key, String id, BdsFirst.Kept kept) {
+    }
+
+    /** Every value {@link BdsFirst} kept, in generation order. */
+    final List<Recapture> recaptures = new ArrayList<>();
+
     /** @param bundled the palettes of the versions to generate, oldest first */
     BehaviourModel(BehaviourStore store, List<BehaviourImport.Bundled> bundled) {
         this.store = store;
         for (BehaviourImport.Bundled palette : bundled) {
             versions.add(version(palette));
         }
-        marks = collector.marks(stateByHash);
+        marks = collector.marks(stateByHash, versions.stream().map(v -> v.version().name()).toList());
     }
 
     private Version version(BehaviourImport.Bundled palette) {
@@ -101,13 +108,17 @@ final class BehaviourModel {
             int[] captures = new int[ITEM_KEYS.size()];
             boolean any = false;
             for (int k = 0; k < values.length; k++) {
-                BehaviourStore.Resolved resolved = store.item(ITEM_KEYS.get(k), id, version);
+                BdsFirst.Kept kept = BdsFirst.itemKept(store, ITEM_KEYS.get(k), id, version);
+                if (kept != null) {
+                    recaptures.add(new Recapture(version.name(), ITEM_KEYS.get(k), id, kept));
+                }
+                BehaviourStore.Resolved resolved = kept != null ? kept.kept() : store.item(ITEM_KEYS.get(k), id, version);
                 captures[k] = resolved == null ? -1 : resolved.capture().index();
                 values[k] = resolved == null ? null : resolved.value();
                 if (resolved != null) {
                     any = true;
                     itemCounts.get(k).merge(captures[k], 1, Integer::sum);
-                    collector.item(resolved, ITEM_KEYS.get(k), id);
+                    collector.item(resolved, ITEM_KEYS.get(k), id, versions.size());
                 }
             }
             if (any) {
@@ -143,13 +154,17 @@ final class BehaviourModel {
         for (int k = 0; k < values.length; k++) {
             BehaviourKey<?> key = BLOCK_KEYS.get(k);
             for (int s = 0; s < hashes.length; s++) {
-                BehaviourStore.Resolved resolved = store.block(key, hashes[s], version);
+                BdsFirst.Kept kept = BdsFirst.blockKept(store, key, hashes[s], version);
+                if (kept != null) {
+                    recaptures.add(new Recapture(version.name(), key, id + BehaviourComments.describe(states.get(s)), kept));
+                }
+                BehaviourStore.Resolved resolved = kept != null ? kept.kept() : store.block(key, hashes[s], version);
                 values[k][s] = resolved == null ? null : resolved.value();
                 captures[k][s] = resolved == null ? -1 : resolved.capture().index();
                 if (resolved != null) {
                     any = true;
                     counts.get(k).merge(captures[k][s], 1, Integer::sum);
-                    collector.block(resolved, key, id, hashes[s]);
+                    collector.block(resolved, key, id, hashes[s], versions.size());
                 }
             }
         }

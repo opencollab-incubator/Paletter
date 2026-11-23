@@ -38,8 +38,16 @@ final class BehaviourCode {
     private static final ClassName DATA_VERSION = ClassName.get(DataVersion.class);
     private static final ClassName SOURCE = ClassName.get(Provenance.Source.class);
 
-    /** @param files by path from the repository root; {@code sourceOnly} the changes only third-party dumps decided */
-    record Result(Map<String, String> files, List<BehaviourComments.SourceOnly> sourceOnly) {
+    /**
+     * @param files by path from the repository root
+     * @param flags the changes a human should check (SOURCE ONLY, first coverage from a dump, suspected dump artefacts)
+     * @param recaptures the values a direct capture gave that a newer dump contradicts ({@link BdsFirst})
+     */
+    record Result(Map<String, String> files, List<BehaviourComments.Flag> flags, List<BehaviourModel.Recapture> recaptures) {
+        /** @return the section of {@code REPORT.md} these give ({@link ChangesSection}) */
+        String reportSection() {
+            return ChangesSection.render(flags, recaptures);
+        }
     }
 
     private BehaviourCode() {
@@ -56,7 +64,7 @@ final class BehaviourCode {
         types.addAll(BehaviourConstants.tables(names, literals));
         types.addAll(BehaviourSetters.types());
         types.add(captures(model, names));
-        BehaviourComments comments = new BehaviourComments(model.store, literals::comment);
+        BehaviourComments comments = new BehaviourComments(model, literals::comment, BehaviourLiterals::report);
         BehaviourStatements statements = new BehaviourStatements(model, literals, comments);
         BehaviourOps.Sim sim = new BehaviourOps.Sim();
         MethodSpec.Builder load = MethodSpec.methodBuilder("load").addModifiers(Modifier.PUBLIC, Modifier.STATIC).returns(VANILLA_BEHAVIOUR)
@@ -72,7 +80,8 @@ final class BehaviourCode {
                 + "everyItem), then each block and item with the keys whose values differ from it."
                 : "What changed in " + version.version().name() + " against " + before.version().name() + ", each change with the capture "
                 + "that decided it and the captures of the version that confirm it. SOURCE ONLY: no direct BDS capture decided the change, "
-                + "only a third-party dump (see data/behaviour/REPORT.md).";
+                + "only a third-party dump; first coverage: nothing was known before; a block that is new or has other states says "
+                + "where its values come from. data/behaviour/REPORT.md lists what to check.";
             types.addAll(chunked(valuesClass, doc, statements.values(ops, before, version)));
             types.addAll(chunked("BehaviourSources" + suffix, "The captures that decided the values of " + version.version().name()
                 + (before == null ? "" : ", as changes against " + before.version().name()) + ": per key a default, and the blocks and items "
@@ -84,7 +93,8 @@ final class BehaviourCode {
             before = version;
         }
         types.addAll(chunked("BehaviourMarks", "What the sources of captures said they post-processed (notes), the values other captures "
-            + "disputed where nothing direct from BDS settles them, and the BDS defaults of custom content.", marks(model, literals), BUILDER, "b"));
+            + "disputed where nothing direct from BDS settles them, each for the versions it holds in, and the BDS defaults of custom content.",
+            marks(model, literals, names), BUILDER, "b"));
         load.addStatement("BehaviourMarks.load(behaviour)").addStatement("return behaviour.build()");
         types.add(TypeSpec.classBuilder("BehaviourData").addModifiers(Modifier.PUBLIC, Modifier.FINAL)
             .addJavadoc("The bundled behaviour values of vanilla blocks and items, generated from the captures: what "
@@ -97,22 +107,27 @@ final class BehaviourCode {
         constants.addAll(literals.owners.values());
         constants.add(BehaviourLiterals.CAPTURES);
         for (TypeSpec type : types) {
+            // Only the constant classes the file uses: written without the imports, a use reads "BehaviourShapes.X"
+            String plain = JavaFile.builder(PACKAGE, type).build().toString();
             JavaFile.Builder file = JavaFile.builder(PACKAGE, type).addFileComment(header).indent("    ").skipJavaLangImports(true);
-            constants.stream().filter(c -> !c.simpleName().equals(type.name())).forEach(c -> file.addStaticImport(c, "*"));
+            constants.stream().filter(c -> !c.simpleName().equals(type.name()) && plain.contains(c.simpleName() + "."))
+                .forEach(c -> file.addStaticImport(c, "*"));
             files.put(DIRECTORY + "/" + type.name() + ".java", file.build().toString());
         }
-        return new Result(files, List.copyOf(comments.sourceOnly));
+        return new Result(files, List.copyOf(comments.flags), List.copyOf(model.recaptures));
     }
 
-    private static List<CodeBlock> marks(BehaviourModel model, BehaviourLiterals literals) {
+    private static List<CodeBlock> marks(BehaviourModel model, BehaviourLiterals literals, BehaviourNames names) {
         List<CodeBlock> marks = new ArrayList<>();
         for (BehaviourModel.Mark mark : model.marks) {
             CodeBlock value = literals.argument(mark.value(), TableKind.MARKS);
+            CodeBlock versions = CodeBlock.of("$T." + names.versions.get(mark.from()) + ", $T." + names.versions.get(mark.to()),
+                BehaviourLiterals.CAPTURES, BehaviourLiterals.CAPTURES);
             marks.add(mark.alternative() == null
-                ? CodeBlock.builder().addStatement("b.note($L, $L, $S, $L)", literals.capture(mark.capture()), BehaviourLiterals.key(mark.key()),
-                    mark.id(), value).build()
-                : CodeBlock.builder().addStatement("b.dispute($L, $L, $S, $L, $L)", literals.capture(mark.capture()), BehaviourLiterals.key(mark.key()),
-                    mark.id(), literals.capture(mark.alternative()), value).build());
+                ? CodeBlock.builder().addStatement("b.note($L, $L, $L, $S, $L)", versions, literals.capture(mark.capture()),
+                    BehaviourLiterals.key(mark.key()), mark.id(), value).build()
+                : CodeBlock.builder().addStatement("b.dispute($L, $L, $L, $S, $L, $L)", versions, literals.capture(mark.capture()),
+                    BehaviourLiterals.key(mark.key()), mark.id(), literals.capture(mark.alternative()), value).build());
         }
         model.customDefaults().forEach((key, value) -> marks.add(CodeBlock.builder().addStatement("b.customDefault($L, $L, $T.$L, $S)",
             BehaviourLiterals.key(key), literals.value(value.value()), SOURCE, value.source().name(), value.reference()).build()));
@@ -131,8 +146,8 @@ final class BehaviourCode {
             .initializer("new $T($S, $L)", DATA_VERSION, name, versions.get(name).protocolVersion()).build()));
         for (BehaviourStore.Capture capture : model.store.captures()) {
             type.addField(FieldSpec.builder(BehaviourSetters.CAPTURE, names.captures.get(capture.index()), Modifier.STATIC, Modifier.FINAL)
-                .addJavadoc("$L$L.\n", BehaviourComments.label(capture), capture.source().thirdParty() ? " (third party)" : "")
-                .initializer("new $T($T.$L, $S, $N)", BehaviourSetters.CAPTURE, SOURCE, capture.source().name(), capture.reference(),
+                .addJavadoc("$L$L.\n", BehaviourComments.safe(BehaviourComments.label(capture)), capture.source().thirdParty() ? " (third party)" : "")
+                .initializer("new $T($T.$L,\n$S,\n$N)", BehaviourSetters.CAPTURE, SOURCE, capture.source().name(), capture.reference(),
                     names.versions.get(capture.version().name())).build());
         }
         return type.build();

@@ -24,7 +24,7 @@ import java.util.Map;
  * array elements, so no static initializer comes near the JVM's limit of 64 KB per method.
  */
 final class BehaviourConstants {
-    /** The most floats or table values in one class: a few bytes of bytecode each. */
+    /** The most floats, or table values and property values, in one class: a few bytes of bytecode each. */
     static final int WEIGHT = 2_500;
 
     private BehaviourConstants() {
@@ -67,7 +67,7 @@ final class BehaviourConstants {
             }
         }
         if (fit instanceof Table table) {
-            names.table(kind, table, user, description);
+            names.table(kind, table, description);
         }
     }
 
@@ -82,7 +82,8 @@ final class BehaviourConstants {
                 floats.add(literals.value(coordinate));
             }
             layout.add(FieldSpec.builder(BehaviourLiterals.BLOCK_SHAPE, shape.getValue(), Modifier.STATIC, Modifier.FINAL)
-                .initializer("$T.of($L)", BehaviourLiterals.BLOCK_SHAPE, CodeBlock.join(floats, ", ")).build(), coordinates.length, literals);
+                .addJavadoc("$L (in pixels).\n", BehaviourNames.inPixels(shape.getKey()))
+                .initializer("$T.of($L)", BehaviourLiterals.BLOCK_SHAPE, CodeBlock.join(floats, ",$W")).build(), coordinates.length, literals);
         }
         layout.finish();
         return types;
@@ -101,12 +102,14 @@ final class BehaviourConstants {
             }
             List<CodeBlock> values = table.values().stream().map(v -> literals.cellValue(v, entry.getKey().kind() == TableKind.SOURCES)).toList();
             List<String> users = names.tableUsers.get(entry.getKey());
-            String doc = "Used by " + String.join(", ", users.stream().distinct().limit(6).toList())
-                + (users.stream().distinct().count() > 6 ? " and " + (users.stream().distinct().count() - 6) + " more" : "") + ".\n";
+            List<String> distinct = users.stream().distinct().toList();
+            String doc = "Used by:\n" + String.join("\n", distinct.stream().limit(6).map(user -> "- " + BehaviourComments.safe(user)).toList())
+                + (distinct.size() > 6 ? "\n- and " + (distinct.size() - 6) + " more" : "") + "\n";
+            int weight = values.size() + table.properties().size() + table.domains().stream().mapToInt(List::size).sum();
             layout.add(FieldSpec.builder(BehaviourSetters.CELL, entry.getValue(), Modifier.STATIC, Modifier.FINAL).addJavadoc(doc)
-                .initializer("$T.table(new String[] {$L}, new Object[][] {$L},$W$L)", BehaviourSetters.CELL,
+                .initializer("$T.table(new String[] {$L},\nnew Object[][] {$L},\n$L)", BehaviourSetters.CELL,
                     CodeBlock.join(table.properties().stream().map(p -> CodeBlock.of("$S", p)).toList(), ", "),
-                    CodeBlock.join(domains, ", "), CodeBlock.join(values, ",$W")).build(), values.size(), literals);
+                    CodeBlock.join(domains, ", "), CodeBlock.join(values, ",$W")).build(), weight, literals);
         }
         layout.finish();
         return types;

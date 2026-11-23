@@ -17,8 +17,9 @@ import java.util.Map;
  * Immutable. Built by {@link VanillaVersionBuilder} from the generated data: the oldest version from its base, each newer
  * one from the version before it and its changes, so a block that did not change is the same {@link BlockEntry} in both.
  * <p>
- * A block's values are per key: a value for all its states, a {@link Cell} or null (unknown). A block of a palette has
- * these values only if its states are the ones the entry was made for ({@link BlockSchema}). The deciding capture of a
+ * A block's values are per key: a value for all its states, a {@link Cell} or null (unknown). A state of a palette has
+ * these values only if the entry covers it ({@link BlockEntry#covers}: the same properties and known values), which is
+ * what looking it up by state hash in the version's palette would give. The deciding capture of a
  * value is the version's default capture of the key unless the block or item has its own (a capture or a {@link Cell} of
  * captures, for a block whose states different sources cover).
  */
@@ -27,8 +28,58 @@ public final class VanillaVersion {
     /** The position of a key in the values of its owner, by {@link BehaviourKey#ordinal()}. */
     private static final int[] INDEX = index();
 
-    /** The values of one block: its schema, and per key a value, a {@link Cell} or null. */
-    public record BlockEntry(@NonNull String schema, @Nullable Object @NonNull [] values) {
+    /**
+     * The values of one block: its states (the properties and the values of each, from its {@link BlockSchema}), and per
+     * key a value, a {@link Cell} or null. Not changed once its version is built.
+     */
+    public static final class BlockEntry {
+        private final String schema;
+        private final String[] properties;
+        private final Object[][] domains;
+        final @Nullable Object[] values;
+
+        BlockEntry(String schema, Object[] values) {
+            this(schema, BlockSchema.parse(schema), values);
+        }
+
+        /** @param parsed the schema read back, shared by the blocks of the same schema */
+        BlockEntry(String schema, BlockSchema.Parsed parsed, Object[] values) {
+            this.schema = schema;
+            this.properties = parsed.properties();
+            this.domains = parsed.domains();
+            this.values = values;
+        }
+
+        /** @return the same states with other values */
+        BlockEntry with(Object[] values) {
+            return new BlockEntry(schema, new BlockSchema.Parsed(properties, domains), values);
+        }
+
+        public @NonNull String schema() {
+            return schema;
+        }
+
+        /**
+         * @param states the {@code states} compound of a block state of a palette
+         * @return true if it is one of this entry's states: the same properties, each with one of the entry's values (what
+         * the same state hash means, as every combination of the values is a state)
+         */
+        public boolean covers(@NonNull NbtMap states) {
+            if (states.size() != properties.length) {
+                return false;
+            }
+            for (int i = 0; i < properties.length; i++) {
+                Object value = BlockSchema.value(states.get(properties[i]));
+                boolean found = false;
+                for (Object candidate : domains[i]) {
+                    found |= candidate.equals(value);
+                }
+                if (!found) {
+                    return false;
+                }
+            }
+            return true;
+        }
     }
 
     private final DataVersion version;
@@ -78,18 +129,14 @@ public final class VanillaVersion {
         return version;
     }
 
-    /**
-     * @param schema the {@link BlockSchema} of the block in the palette asking
-     * @return the values of the block, or null if this version has none for a block with these states
-     */
-    public @Nullable BlockEntry block(@NonNull String identifier, @NonNull String schema) {
-        BlockEntry entry = blocks.get(identifier);
-        return entry != null && entry.schema().equals(schema) ? entry : null;
+    /** @return the values of a block, or null if this version has none; check {@link BlockEntry#covers} for each state */
+    public @Nullable BlockEntry block(@NonNull String identifier) {
+        return blocks.get(identifier);
     }
 
-    /** @return the value of a key for a state of the block, or null if it is unknown */
+    /** @return the value of a key for a state of the block (one it {@linkplain BlockEntry#covers covers}), or null if it is unknown */
     public static @Nullable Object value(@NonNull BlockEntry entry, @NonNull BehaviourKey<?> key, @NonNull NbtMap states) {
-        Object value = entry.values()[index(key)];
+        Object value = entry.values[index(key)];
         return value instanceof Cell cell ? cell.get(states) : value;
     }
 

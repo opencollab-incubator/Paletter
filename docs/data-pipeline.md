@@ -872,25 +872,44 @@ palettes, with JavaPoet (`BehaviourCode`):
   then one chain per block and item with the keys that differ from it, through typed setters generated from the keys
   (`BlockSetters`, `ItemSetters`): `.destroyTime(1.5f)`; a value of one state property as data,
   `.destroyTime("growth", 0, 0.0f, 7, 0.5f)`; a value of several properties as a shared table constant
-  (`BehaviourTables`, keyed by property values, never palette order); `...Unknown()` where nothing is known. Shapes are
-  named constants (`BehaviourShapes`: `BOX_0_0_0_16_8_16`, or the first block and key that use a shape of several boxes).
-  A block's schema (`growth=0..7`) names its states: a palette's block gets the values only if it has the same states.
+  (`BehaviourTables`: `TABLE_<properties>_<hash of the values>`, keyed by property values, never palette order);
+  `...Unknown()` where nothing is known. Map colours are written as hex RGBA. Shapes are named constants
+  (`BehaviourShapes`: `BOX_0_0_0_16_8_16` for a box with corners on whole pixels, else `SHAPE_` and the first block and key
+  that use it, its boxes in the Javadoc). A block's schema (`growth=0..7`) names its states: a state of a palette gets the
+  block's values if it has the same properties and each value is one of the schema's (what its state hash would find).
 - `BehaviourChanges<version>`: what changed against the version before, each line with a comment naming the capture that
-  decided it and the captures of the version that confirm it, e.g.
-  `// destroy_time 0.2 -> 0.3: BDS Script API dump 1.26.45.1, confirmed by CloudburstMC/Data 0021592`. A change only a
-  third-party dump decided is `SOURCE ONLY` and listed in the report: BDS evidence wins and there is none, and the version
-  before is no evidence for this one, so the value is used and marked for a human to check. A block that did not change is
-  the same object in both versions at runtime.
+  decided it and the captures of the version that confirm it (or say otherwise), e.g.
+  `// destroy_time 0.2 -> 0.3: BDS Script API dump 1.26.45.1, confirmed by CloudburstMC/Data 0021592`. Flags, also listed
+  in the report's "Version changes to check": `SOURCE ONLY` (only a third-party dump decided the change; `SOURCE ONLY for
+  n of m values` where it decided part of it), `first coverage` (a value where nothing was known before, not a change), and
+  `suspected dump artefact` (a change one source makes and takes back in the next version, such as CloudburstMC/Data's
+  `requires_correct_tool` in 26.40). New blocks and items say where their values come from. A block or item whose values
+  did not change is the same object in both versions at runtime (in 26.60 almost every block changed: it gained the
+  climbing and vibration keys).
 - `BehaviourSources<version>`: the deciding capture per key and version, and per block or item where it differs (a cell of
-  captures for a block whose states different sources cover); `BehaviourMarks`: notes and disputes per capture, and the
-  custom defaults; `BehaviourCaptures`: the captures by name.
+  captures for a block whose states different sources cover); `BehaviourMarks`: notes and disputes per capture, each for
+  the versions it holds in, and the custom defaults; `BehaviourCaptures`: the captures by source, version and part
+  (`SCRIPT_API_26_30_MAP_COLOR`).
+- Nothing a source says can end a comment: values in comments and Javadoc escape backslashes, characters outside
+  printable ASCII and `*/`.
+
+**BDS first.** The generator resolves each value with the store's lookup (the newest capture covering it decides) and one
+rule on top (`BdsFirst`): a value a direct BDS capture gave is never replaced by a third-party dump of a newer version that
+says something else. The BDS value stays (inherited), the dump's value is a dispute of it, and the report lists it under
+"Needs recapture". Where only dumps have a key, the newest dump of the version is used: the version before is no evidence
+for this one, and the change is flagged.
 - No lambdas. Methods hold at most 60 statements, classes 8 methods; `GeneratedBehaviourLimitsTest` keeps every method
   under half of the JVM's 64 KB and every constant pool under half of its limit, so growth fails a test, not class loading.
 
 Tests: `GeneratedBehaviourTest` compares every value, capture, note and dispute of every state, item and key of every
-bundled palette with the store's own lookup; `BehaviourCodeTest` runs the generator on a small store (and compiles and
-runs its output). `retire` retires the dropped data version in the store (its captures stay, as what newer versions
-inherit); `generateBehaviour` then makes the next version the base, with everything it inherited folded in.
+bundled palette with the store's lookup and `BdsFirst`; `BehaviourCodeTest` runs the generator on a small store (and
+compiles and runs its output). `retire` retires the dropped data version in the store (its captures stay, as what newer
+versions inherit, also through later imports once the palette is gone); `generateBehaviour` then makes the next version
+the base, with everything it inherited folded in.
+
+The library compiles without the generated package (`VanillaBehaviour` loads `BehaviourData` by name), so the generator
+can always run: if the generated classes no longer compile, delete the package and run `generateBehaviour`
+(docs/updating.md, troubleshooting).
 
 ## Voxel shapes
 

@@ -77,7 +77,7 @@ final class BehaviourStatements {
                         if (before.paletteItems().contains(declare.id())) {
                             declare.values().keySet().forEach(k -> notes.add(itemChange(version, null, item, k)));
                         } else {
-                            notes.add("new in " + version.version().name());
+                            notes.add("new in " + version.version().name() + ": " + itemDeciders(item));
                         }
                     }
                     yield chain(CodeBlock.of("v.item($S)", declare.id()), itemSetters(declare.values()));
@@ -134,37 +134,73 @@ final class BehaviourStatements {
             }
         }
         BehaviourKey<?> key = BehaviourModel.BLOCK_KEYS.get(k);
-        return comments.comment(version, key, "every block", key.name() + " -> " + (value == null ? "unknown" : literals.comment(value))
-            + " for every block (" + blocks + " changed)", decided);
+        boolean first = firstCoverage(before, version, k, value);
+        String tail = " for every block (" + blocks + " changed)";
+        String arrow = first ? " unknown -> " : " -> ";
+        return comments.comment(version, key, "every block", key.name() + arrow + show(value, false) + tail,
+            key.name() + arrow + show(value, true) + tail, decided, first, null);
+    }
+
+    /** @return whether no block that got the value had one before */
+    private static boolean firstCoverage(BehaviourModel.Version before, BehaviourModel.Version version, int k, Object value) {
+        for (BehaviourModel.Block block : version.blocks().values()) {
+            BehaviourModel.Block was = before.blocks().get(block.id());
+            if (was != null && was.schema().equals(block.schema()) && block.fits()[k].equals(new Constant(value))
+                && !was.fits()[k].equals(new Constant(null)) && !was.fits()[k].equals(block.fits()[k])) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private String show(@Nullable Object value, boolean report) {
+        return value == null ? "unknown" : report ? BehaviourLiterals.report(value) : literals.comment(value);
     }
 
     private String everyItem(BehaviourModel.Version before, BehaviourModel.Version version, int k, Object value) {
         List<BehaviourComments.Decided> decided = new ArrayList<>();
+        boolean first = true;
         for (BehaviourModel.Item item : version.items().values()) {
             BehaviourModel.Item was = before.items().get(item.id());
-            if (was != null && java.util.Objects.equals(item.values()[k], value) && !java.util.Objects.equals(was.values()[k], value)) {
+            Object old = was == null ? null : was.values()[k];
+            if (java.util.Objects.equals(item.values()[k], value) && !java.util.Objects.equals(old, value)) {
                 decided.add(new BehaviourComments.Decided(item.captures()[k], 0, item.id(), value));
+                first &= old == null;
             }
         }
         BehaviourKey<?> key = BehaviourModel.ITEM_KEYS.get(k);
-        return comments.comment(version, key, "every item", key.name() + " -> " + (value == null ? "unknown" : literals.comment(value))
-            + " for every item (" + decided.size() + " changed)", decided);
+        String tail = " for every item (" + decided.size() + " changed)";
+        String arrow = first ? " unknown -> " : " -> ";
+        return comments.comment(version, key, "every item", key.name() + arrow + show(value, false) + tail,
+            key.name() + arrow + show(value, true) + tail, decided, first, null);
     }
 
+    /** @param was the block in the version before with the same states, or null where it had no values */
     private String blockChange(BehaviourModel.Version version, BehaviourModel.@Nullable Block was, BehaviourModel.Block block, int k) {
         List<BehaviourComments.Decided> changed = BehaviourComments.changed(was, block, k);
+        BehaviourKey<?> key = BehaviourModel.BLOCK_KEYS.get(k);
         if (changed.isEmpty()) {
-            return BehaviourModel.BLOCK_KEYS.get(k).name() + " stays as in the version before (not what every block got)";
+            return key.name() + " stays as in the version before (not what every block got)";
         }
-        return comments.comment(version, BehaviourModel.BLOCK_KEYS.get(k), block.id(), comments.what(was, block, k, changed.size()), changed);
+        boolean first = true;
+        for (BehaviourComments.Decided one : changed) {
+            int s = java.util.Arrays.stream(block.hashes()).boxed().toList().indexOf(one.hash());
+            first &= one.value() != null && (was == null || was.values()[k][s] == null);
+        }
+        return comments.comment(version, key, block.id(), comments.what(was, block, k, changed.size(), false),
+            comments.what(was, block, k, changed.size(), true), changed, first, was == null ? null : comments.flip(version, was, block, k));
     }
 
     private String itemChange(BehaviourModel.Version version, Object @Nullable [] was, BehaviourModel.Item item, int k) {
+        BehaviourKey<?> key = BehaviourModel.ITEM_KEYS.get(k);
         if (was != null && java.util.Objects.equals(was[k], item.values()[k])) {
-            return BehaviourModel.ITEM_KEYS.get(k).name() + " stays as in the version before (not what every item got)";
+            return key.name() + " stays as in the version before (not what every item got)";
         }
-        return comments.comment(version, BehaviourModel.ITEM_KEYS.get(k), item.id(), comments.what(was, item, k),
-            List.of(new BehaviourComments.Decided(item.captures()[k], 0, item.id(), item.values()[k])));
+        if (item.values()[k] == null) {
+            return key.name() + " stays unknown (not what every item starts from)";
+        }
+        return comments.comment(version, key, item.id(), comments.what(was, item, k, false), comments.what(was, item, k, true),
+            List.of(new BehaviourComments.Decided(item.captures()[k], 0, item.id(), item.values()[k])), was == null || was[k] == null, null);
     }
 
     /** @return the captures a block's values come from, for the comment of a new block */
@@ -175,6 +211,17 @@ final class BehaviourStatements {
                 if (capture >= 0) {
                     labels.add(BehaviourComments.label(model.store.captures().get(capture)));
                 }
+            }
+        }
+        return "values from " + String.join(", ", labels);
+    }
+
+    /** @return the captures an item's values come from, for the comment of a new item */
+    private String itemDeciders(BehaviourModel.Item item) {
+        TreeSet<String> labels = new TreeSet<>();
+        for (int capture : item.captures()) {
+            if (capture >= 0) {
+                labels.add(BehaviourComments.label(model.store.captures().get(capture)));
             }
         }
         return "values from " + String.join(", ", labels);
@@ -205,7 +252,8 @@ final class BehaviourStatements {
 
     private static CodeBlock statement(List<String> notes, CodeBlock call) {
         CodeBlock.Builder code = CodeBlock.builder();
-        notes.forEach(note -> code.add("// $L\n", note));
+        // Values in comments come from the sources: nothing in them may end the comment (BehaviourComments.safe)
+        notes.forEach(note -> code.add("// $L\n", BehaviourComments.safe(note)));
         return code.addStatement("$L", call).build();
     }
 }

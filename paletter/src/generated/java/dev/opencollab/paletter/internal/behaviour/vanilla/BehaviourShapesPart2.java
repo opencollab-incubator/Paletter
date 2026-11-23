@@ -2,338 +2,993 @@
 // and the bundled palettes. Do not edit; see docs/data-pipeline.md.
 package dev.opencollab.paletter.internal.behaviour.vanilla;
 
-import static dev.opencollab.paletter.internal.behaviour.vanilla.BehaviourCaptures.*;
-import static dev.opencollab.paletter.internal.behaviour.vanilla.BehaviourShapes.*;
-import static dev.opencollab.paletter.internal.behaviour.vanilla.BehaviourTables.*;
-import static dev.opencollab.paletter.internal.behaviour.vanilla.BehaviourTablesPart2.*;
-
 import dev.opencollab.paletter.behaviour.BlockShape;
 
 /**
  * The shapes of the generated behaviour data, each once.
  */
 final class BehaviourShapesPart2 {
-    static final BlockShape ACACIA_FENCE_COLLISION_SHAPE_2 = BlockShape.of(0.375f, 0.0f, 0.0f, 0.625f, 1.5f, 0.625f, 0.0f, 0.0f, 0.375f, 0.625f, 1.5f, 0.625f);
-
-    static final BlockShape ACACIA_FENCE_COLLISION_SHAPE_3 = BlockShape.of(0.375f, 0.0f, 0.0f, 0.625f, 1.5f, 1.0f, 0.0f, 0.0f, 0.375f, 0.625f, 1.5f, 0.625f);
-
-    static final BlockShape BOX_6_0_6_16_24_10 = BlockShape.of(0.375f, 0.0f, 0.375f, 1.0f, 1.5f, 0.625f);
-
-    static final BlockShape ACACIA_FENCE_COLLISION_SHAPE_4 = BlockShape.of(0.375f, 0.0f, 0.375f, 0.625f, 1.5f, 1.0f, 0.375f, 0.0f, 0.375f, 1.0f, 1.5f, 0.625f);
-
-    static final BlockShape ACACIA_FENCE_COLLISION_SHAPE_5 = BlockShape.of(0.375f, 0.0f, 0.375f, 0.625f, 1.5f, 1.0f, 0.0f, 0.0f, 0.375f, 1.0f, 1.5f, 0.625f);
-
-    static final BlockShape ACACIA_FENCE_COLLISION_SHAPE_6 = BlockShape.of(0.375f, 0.0f, 0.0f, 0.625f, 1.5f, 0.625f, 0.375f, 0.0f, 0.375f, 1.0f, 1.5f, 0.625f);
-
-    static final BlockShape ACACIA_FENCE_COLLISION_SHAPE_7 = BlockShape.of(0.375f, 0.0f, 0.0f, 0.625f, 1.5f, 0.625f, 0.0f, 0.0f, 0.375f, 1.0f, 1.5f, 0.625f);
-
-    static final BlockShape ACACIA_FENCE_COLLISION_SHAPE_8 = BlockShape.of(0.375f, 0.0f, 0.0f, 0.625f, 1.5f, 1.0f, 0.375f, 0.0f, 0.375f, 1.0f, 1.5f, 0.625f);
-
-    static final BlockShape ACACIA_FENCE_COLLISION_SHAPE_9 = BlockShape.of(0.375f, 0.0f, 0.0f, 0.625f, 1.5f, 1.0f, 0.0f, 0.0f, 0.375f, 1.0f, 1.5f, 0.625f);
-
-    static final BlockShape BOX_0_0_6_10_16_10 = BlockShape.of(0.0f, 0.0f, 0.375f, 0.625f, 1.0f, 0.625f);
-
-    static final BlockShape BOX_6_0_6_10_16_16 = BlockShape.of(0.375f, 0.0f, 0.375f, 0.625f, 1.0f, 1.0f);
-
-    static final BlockShape BOX_0_0_6_10_16_16 = BlockShape.of(0.0f, 0.0f, 0.375f, 0.625f, 1.0f, 1.0f);
-
-    static final BlockShape BOX_6_0_0_10_16_10 = BlockShape.of(0.375f, 0.0f, 0.0f, 0.625f, 1.0f, 0.625f);
-
-    static final BlockShape BOX_0_0_0_10_16_10 = BlockShape.of(0.0f, 0.0f, 0.0f, 0.625f, 1.0f, 0.625f);
-
-    static final BlockShape BOX_0_0_0_10_16_16 = BlockShape.of(0.0f, 0.0f, 0.0f, 0.625f, 1.0f, 1.0f);
-
-    static final BlockShape BOX_6_0_6_16_16_10 = BlockShape.of(0.375f, 0.0f, 0.375f, 1.0f, 1.0f, 0.625f);
-
-    static final BlockShape BOX_6_0_6_16_16_16 = BlockShape.of(0.375f, 0.0f, 0.375f, 1.0f, 1.0f, 1.0f);
-
-    static final BlockShape BOX_0_0_6_16_16_16 = BlockShape.of(0.0f, 0.0f, 0.375f, 1.0f, 1.0f, 1.0f);
-
-    static final BlockShape BOX_6_0_0_16_16_10 = BlockShape.of(0.375f, 0.0f, 0.0f, 1.0f, 1.0f, 0.625f);
-
-    static final BlockShape BOX_0_0_0_16_16_10 = BlockShape.of(0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 0.625f);
-
-    static final BlockShape BOX_6_0_0_16_16_16 = BlockShape.of(0.375f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f);
-
-    static final BlockShape ACACIA_STAIRS_COLLISION_SHAPE_10 = BlockShape.of(0.0f, 0.0f, 0.0f, 1.0f, 0.5f, 1.0f, 0.5f, 0.5f, 0.0f, 1.0f, 1.0f, 1.0f, 0.0f, 0.5f, 0.0f, 0.5f, 1.0f, 0.5f);
-
-    static final BlockShape ACACIA_STAIRS_COLLISION_SHAPE_11 = BlockShape.of(0.0f, 0.0f, 0.0f, 1.0f, 0.5f, 1.0f, 0.0f, 0.5f, 0.0f, 0.5f, 1.0f, 1.0f, 0.5f, 0.5f, 0.5f, 1.0f, 1.0f, 1.0f);
-
-    static final BlockShape ACACIA_STAIRS_COLLISION_SHAPE_12 = BlockShape.of(0.0f, 0.0f, 0.0f, 1.0f, 0.5f, 1.0f, 0.0f, 0.5f, 0.5f, 1.0f, 1.0f, 1.0f, 0.5f, 0.5f, 0.0f, 1.0f, 1.0f, 0.5f);
-
-    static final BlockShape ACACIA_STAIRS_COLLISION_SHAPE_13 = BlockShape.of(0.0f, 0.0f, 0.0f, 1.0f, 0.5f, 1.0f, 0.0f, 0.5f, 0.0f, 1.0f, 1.0f, 0.5f, 0.0f, 0.5f, 0.5f, 0.5f, 1.0f, 1.0f);
-
-    static final BlockShape ACACIA_STAIRS_COLLISION_SHAPE_14 = BlockShape.of(0.0f, 0.5f, 0.0f, 1.0f, 1.0f, 1.0f, 0.5f, 0.0f, 0.0f, 1.0f, 0.5f, 1.0f, 0.0f, 0.0f, 0.0f, 0.5f, 0.5f, 0.5f);
-
-    static final BlockShape ACACIA_STAIRS_COLLISION_SHAPE_15 = BlockShape.of(0.0f, 0.5f, 0.0f, 1.0f, 1.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.5f, 0.5f, 1.0f, 0.5f, 0.0f, 0.5f, 1.0f, 0.5f, 1.0f);
-
-    static final BlockShape ACACIA_STAIRS_COLLISION_SHAPE_16 = BlockShape.of(0.0f, 0.5f, 0.0f, 1.0f, 1.0f, 1.0f, 0.0f, 0.0f, 0.5f, 1.0f, 0.5f, 1.0f, 0.5f, 0.0f, 0.0f, 1.0f, 0.5f, 0.5f);
-
-    static final BlockShape ACACIA_STAIRS_COLLISION_SHAPE_17 = BlockShape.of(0.0f, 0.5f, 0.0f, 1.0f, 1.0f, 1.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.5f, 0.5f, 0.0f, 0.0f, 0.5f, 0.5f, 0.5f, 1.0f);
-
-    static final BlockShape ACACIA_STAIRS_COLLISION_SHAPE_18 = BlockShape.of(0.0f, 0.0f, 0.0f, 1.0f, 0.5f, 1.0f, 0.5f, 0.5f, 0.0f, 1.0f, 1.0f, 1.0f, 0.0f, 0.5f, 0.5f, 0.5f, 1.0f, 1.0f);
-
-    static final BlockShape ACACIA_STAIRS_COLLISION_SHAPE_19 = BlockShape.of(0.0f, 0.0f, 0.0f, 1.0f, 0.5f, 1.0f, 0.0f, 0.5f, 0.0f, 0.5f, 1.0f, 1.0f, 0.5f, 0.5f, 0.0f, 1.0f, 1.0f, 0.5f);
-
-    static final BlockShape ACACIA_STAIRS_COLLISION_SHAPE_20 = BlockShape.of(0.0f, 0.0f, 0.0f, 1.0f, 0.5f, 1.0f, 0.0f, 0.5f, 0.5f, 1.0f, 1.0f, 1.0f, 0.0f, 0.5f, 0.0f, 0.5f, 1.0f, 0.5f);
-
-    static final BlockShape ACACIA_STAIRS_COLLISION_SHAPE_21 = BlockShape.of(0.0f, 0.0f, 0.0f, 1.0f, 0.5f, 1.0f, 0.0f, 0.5f, 0.0f, 1.0f, 1.0f, 0.5f, 0.5f, 0.5f, 0.5f, 1.0f, 1.0f, 1.0f);
-
-    static final BlockShape ACACIA_STAIRS_COLLISION_SHAPE_22 = BlockShape.of(0.0f, 0.5f, 0.0f, 1.0f, 1.0f, 1.0f, 0.5f, 0.0f, 0.0f, 1.0f, 0.5f, 1.0f, 0.0f, 0.0f, 0.5f, 0.5f, 0.5f, 1.0f);
-
-    static final BlockShape ACACIA_STAIRS_COLLISION_SHAPE_23 = BlockShape.of(0.0f, 0.5f, 0.0f, 1.0f, 1.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.5f, 0.5f, 1.0f, 0.5f, 0.0f, 0.0f, 1.0f, 0.5f, 0.5f);
-
-    static final BlockShape ACACIA_STAIRS_COLLISION_SHAPE_24 = BlockShape.of(0.0f, 0.5f, 0.0f, 1.0f, 1.0f, 1.0f, 0.0f, 0.0f, 0.5f, 1.0f, 0.5f, 1.0f, 0.0f, 0.0f, 0.0f, 0.5f, 0.5f, 0.5f);
-
-    static final BlockShape ACACIA_STAIRS_COLLISION_SHAPE_25 = BlockShape.of(0.0f, 0.5f, 0.0f, 1.0f, 1.0f, 1.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.5f, 0.5f, 0.5f, 0.0f, 0.5f, 1.0f, 0.5f, 1.0f);
-
-    static final BlockShape ACACIA_STAIRS_COLLISION_SHAPE_26 = BlockShape.of(0.0f, 0.0f, 0.0f, 1.0f, 0.5f, 1.0f, 0.5f, 0.5f, 0.0f, 1.0f, 1.0f, 0.5f);
-
-    static final BlockShape ACACIA_STAIRS_COLLISION_SHAPE_27 = BlockShape.of(0.0f, 0.0f, 0.0f, 1.0f, 0.5f, 1.0f, 0.0f, 0.5f, 0.5f, 0.5f, 1.0f, 1.0f);
-
-    static final BlockShape ACACIA_STAIRS_COLLISION_SHAPE_28 = BlockShape.of(0.0f, 0.0f, 0.0f, 1.0f, 0.5f, 1.0f, 0.5f, 0.5f, 0.5f, 1.0f, 1.0f, 1.0f);
-
-    static final BlockShape ACACIA_STAIRS_COLLISION_SHAPE_29 = BlockShape.of(0.0f, 0.0f, 0.0f, 1.0f, 0.5f, 1.0f, 0.0f, 0.5f, 0.0f, 0.5f, 1.0f, 0.5f);
-
-    static final BlockShape ACACIA_STAIRS_COLLISION_SHAPE_30 = BlockShape.of(0.0f, 0.5f, 0.0f, 1.0f, 1.0f, 1.0f, 0.5f, 0.0f, 0.0f, 1.0f, 0.5f, 0.5f);
-
-    static final BlockShape ACACIA_STAIRS_COLLISION_SHAPE_31 = BlockShape.of(0.0f, 0.5f, 0.0f, 1.0f, 1.0f, 1.0f, 0.0f, 0.0f, 0.5f, 0.5f, 0.5f, 1.0f);
-
-    static final BlockShape ACACIA_STAIRS_COLLISION_SHAPE_32 = BlockShape.of(0.0f, 0.5f, 0.0f, 1.0f, 1.0f, 1.0f, 0.5f, 0.0f, 0.5f, 1.0f, 0.5f, 1.0f);
-
-    static final BlockShape ACACIA_STAIRS_COLLISION_SHAPE_33 = BlockShape.of(0.0f, 0.5f, 0.0f, 1.0f, 1.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.5f, 0.5f, 0.5f);
-
-    static final BlockShape BOX_8_0_8_11_16_11 = BlockShape.of(0.5f, 0.0f, 0.5f, 0.6875f, 1.0f, 0.6875f);
-
-    static final BlockShape BOX_8_0_8_10_16_10 = BlockShape.of(0.5f, 0.0f, 0.5f, 0.625f, 1.0f, 0.625f);
-
-    static final BlockShape BOX_0_0_7_8_16_9 = BlockShape.of(0.0f, 0.0f, 0.4375f, 0.5f, 1.0f, 0.5625f);
-
-    static final BlockShape BOX_7_0_8_9_16_16 = BlockShape.of(0.4375f, 0.0f, 0.5f, 0.5625f, 1.0f, 1.0f);
-
-    static final BlockShape BLACK_STAINED_GLASS_PANE_COLLISION_SHAPE = BlockShape.of(0.0f, 0.0f, 0.4375f, 0.5f, 1.0f, 0.5625f, 0.4375f, 0.0f, 0.5f, 0.5625f, 1.0f, 1.0f);
-
-    static final BlockShape BOX_7_0_0_9_16_8 = BlockShape.of(0.4375f, 0.0f, 0.0f, 0.5625f, 1.0f, 0.5f);
-
-    static final BlockShape BLACK_STAINED_GLASS_PANE_COLLISION_SHAPE_2 = BlockShape.of(0.0f, 0.0f, 0.4375f, 0.5f, 1.0f, 0.5625f, 0.4375f, 0.0f, 0.0f, 0.5625f, 1.0f, 0.5f);
-
-    static final BlockShape BOX_7_0_0_9_16_16 = BlockShape.of(0.4375f, 0.0f, 0.0f, 0.5625f, 1.0f, 1.0f);
-
-    static final BlockShape BLACK_STAINED_GLASS_PANE_COLLISION_SHAPE_3 = BlockShape.of(0.0f, 0.0f, 0.4375f, 0.5f, 1.0f, 0.5625f, 0.4375f, 0.0f, 0.0f, 0.5625f, 1.0f, 1.0f);
-
-    static final BlockShape BOX_8_0_7_16_16_9 = BlockShape.of(0.5f, 0.0f, 0.4375f, 1.0f, 1.0f, 0.5625f);
-
-    static final BlockShape BOX_0_0_7_16_16_9 = BlockShape.of(0.0f, 0.0f, 0.4375f, 1.0f, 1.0f, 0.5625f);
-
-    static final BlockShape BLACK_STAINED_GLASS_PANE_COLLISION_SHAPE_4 = BlockShape.of(0.5f, 0.0f, 0.4375f, 1.0f, 1.0f, 0.5625f, 0.4375f, 0.0f, 0.5f, 0.5625f, 1.0f, 1.0f);
-
-    static final BlockShape BLACK_STAINED_GLASS_PANE_COLLISION_SHAPE_5 = BlockShape.of(0.0f, 0.0f, 0.4375f, 1.0f, 1.0f, 0.5625f, 0.4375f, 0.0f, 0.5f, 0.5625f, 1.0f, 1.0f);
-
-    static final BlockShape BLACK_STAINED_GLASS_PANE_COLLISION_SHAPE_6 = BlockShape.of(0.5f, 0.0f, 0.4375f, 1.0f, 1.0f, 0.5625f, 0.4375f, 0.0f, 0.0f, 0.5625f, 1.0f, 0.5f);
-
-    static final BlockShape BLACK_STAINED_GLASS_PANE_COLLISION_SHAPE_7 = BlockShape.of(0.0f, 0.0f, 0.4375f, 1.0f, 1.0f, 0.5625f, 0.4375f, 0.0f, 0.0f, 0.5625f, 1.0f, 0.5f);
-
-    static final BlockShape BLACK_STAINED_GLASS_PANE_COLLISION_SHAPE_8 = BlockShape.of(0.5f, 0.0f, 0.4375f, 1.0f, 1.0f, 0.5625f, 0.4375f, 0.0f, 0.0f, 0.5625f, 1.0f, 1.0f);
-
-    static final BlockShape BLACK_STAINED_GLASS_PANE_COLLISION_SHAPE_9 = BlockShape.of(0.0f, 0.0f, 0.4375f, 1.0f, 1.0f, 0.5625f, 0.4375f, 0.0f, 0.0f, 0.5625f, 1.0f, 1.0f);
-
-    static final BlockShape BOX_0_0_7_9_16_9 = BlockShape.of(0.0f, 0.0f, 0.4375f, 0.5625f, 1.0f, 0.5625f);
-
-    static final BlockShape BOX_7_0_7_9_16_16 = BlockShape.of(0.4375f, 0.0f, 0.4375f, 0.5625f, 1.0f, 1.0f);
-
-    static final BlockShape BOX_0_0_7_9_16_16 = BlockShape.of(0.0f, 0.0f, 0.4375f, 0.5625f, 1.0f, 1.0f);
-
-    static final BlockShape BOX_7_0_0_9_16_9 = BlockShape.of(0.4375f, 0.0f, 0.0f, 0.5625f, 1.0f, 0.5625f);
-
-    static final BlockShape BOX_0_0_0_9_16_9 = BlockShape.of(0.0f, 0.0f, 0.0f, 0.5625f, 1.0f, 0.5625f);
-
-    static final BlockShape BOX_0_0_0_9_16_16 = BlockShape.of(0.0f, 0.0f, 0.0f, 0.5625f, 1.0f, 1.0f);
-
-    static final BlockShape BOX_7_0_7_16_16_9 = BlockShape.of(0.4375f, 0.0f, 0.4375f, 1.0f, 1.0f, 0.5625f);
-
-    static final BlockShape BOX_7_0_7_16_16_16 = BlockShape.of(0.4375f, 0.0f, 0.4375f, 1.0f, 1.0f, 1.0f);
-
-    static final BlockShape BOX_0_0_7_16_16_16 = BlockShape.of(0.0f, 0.0f, 0.4375f, 1.0f, 1.0f, 1.0f);
-
-    static final BlockShape BOX_7_0_0_16_16_9 = BlockShape.of(0.4375f, 0.0f, 0.0f, 1.0f, 1.0f, 0.5625f);
-
-    static final BlockShape BOX_0_0_0_16_16_9 = BlockShape.of(0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 0.5625f);
-
-    static final BlockShape BOX_7_0_0_16_16_16 = BlockShape.of(0.4375f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f);
-
-    static final BlockShape BOX_1P599984_0_1P599984_14P4_12P8_14P4 = BlockShape.of(0.099999f, 0.0f, 0.099999f, 0.9f, 0.8f, 0.9f);
-
-    static final BlockShape BOX_3P199984_0_3P199984_12P8_6P4_12P8 = BlockShape.of(0.199999f, 0.0f, 0.199999f, 0.8f, 0.4f, 0.8f);
-
-    static final BlockShape BOX_2P4_11P2_2P4_13P6_16_13P6 = BlockShape.of(0.15f, 0.7f, 0.15f, 0.85f, 1.0f, 0.85f);
-
-    static final BlockShape BOX_4P8_0_4P8_11P2_16_11P2 = BlockShape.of(0.3f, 0.0f, 0.3f, 0.7f, 1.0f, 0.7f);
-
-    static final BlockShape BOX_4P8_0_4P8_11P2_9P6_11P2 = BlockShape.of(0.3f, 0.0f, 0.3f, 0.7f, 0.6f, 0.7f);
-
-    static final BlockShape BOX_6_12_6_10_16_10 = BlockShape.of(0.375f, 0.75f, 0.375f, 0.625f, 1.0f, 0.625f);
-
-    static final BlockShape BOX_6_10_6_10_16_10 = BlockShape.of(0.375f, 0.625f, 0.375f, 0.625f, 1.0f, 0.625f);
-
-    static final BlockShape BOX_6_7_6_10_16_10 = BlockShape.of(0.375f, 0.4375f, 0.375f, 0.625f, 1.0f, 0.625f);
-
-    static final BlockShape BOX_6_3_6_10_16_10 = BlockShape.of(0.375f, 0.1875f, 0.375f, 0.625f, 1.0f, 0.625f);
-
-    static final BlockShape BOX_2P4_0_2P4_13P6_4P8_13P6 = BlockShape.of(0.15f, 0.0f, 0.15f, 0.85f, 0.3f, 0.85f);
-
-    static final BlockShape BOX_5_0_5_11_16_11 = BlockShape.of(0.3125f, 0.0f, 0.3125f, 0.6875f, 1.0f, 0.6875f);
-
-    static final BlockShape BOX_3_0_3_13_16_13 = BlockShape.of(0.1875f, 0.0f, 0.1875f, 0.8125f, 1.0f, 0.8125f);
-
-    static final BlockShape BOX_5_0_5_11_11_11 = BlockShape.of(0.3125f, 0.0f, 0.3125f, 0.6875f, 0.6875f, 0.6875f);
-
-    static final BlockShape BOX_5_5_5_11_16_11 = BlockShape.of(0.3125f, 0.3125f, 0.3125f, 0.6875f, 1.0f, 0.6875f);
-
-    static final BlockShape BOX_0_4_3_7_11_13 = BlockShape.of(0.0f, 0.25f, 0.1875f, 0.4375f, 0.6875f, 0.8125f);
-
-    static final BlockShape BOX_3_4_9_13_11_16 = BlockShape.of(0.1875f, 0.25f, 0.5625f, 0.8125f, 0.6875f, 1.0f);
-
-    static final BlockShape BOX_3_4_0_13_11_7 = BlockShape.of(0.1875f, 0.25f, 0.0f, 0.8125f, 0.6875f, 0.4375f);
-
-    static final BlockShape BOX_9_4_3_16_11_13 = BlockShape.of(0.5625f, 0.25f, 0.1875f, 1.0f, 0.6875f, 0.8125f);
-
-    static final BlockShape BOX_0_4_1_10_11_15 = BlockShape.of(0.0f, 0.25f, 0.0625f, 0.625f, 0.6875f, 0.9375f);
-
-    static final BlockShape BOX_1_4_6_15_11_16 = BlockShape.of(0.0625f, 0.25f, 0.375f, 0.9375f, 0.6875f, 1.0f);
-
-    static final BlockShape BOX_1_4_0_15_11_10 = BlockShape.of(0.0625f, 0.25f, 0.0f, 0.9375f, 0.6875f, 0.625f);
-
-    static final BlockShape BOX_6_4_1_16_11_15 = BlockShape.of(0.375f, 0.25f, 0.0625f, 1.0f, 0.6875f, 0.9375f);
-
-    static final BlockShape BOX_0_8_3_7_11_13 = BlockShape.of(0.0f, 0.5f, 0.1875f, 0.4375f, 0.6875f, 0.8125f);
-
-    static final BlockShape BOX_3_8_9_13_11_16 = BlockShape.of(0.1875f, 0.5f, 0.5625f, 0.8125f, 0.6875f, 1.0f);
-
-    static final BlockShape BOX_3_8_0_13_11_7 = BlockShape.of(0.1875f, 0.5f, 0.0f, 0.8125f, 0.6875f, 0.4375f);
-
-    static final BlockShape BOX_9_8_3_16_11_13 = BlockShape.of(0.5625f, 0.5f, 0.1875f, 1.0f, 0.6875f, 0.8125f);
-
-    static final BlockShape BOX_0_6_1_10_11_15 = BlockShape.of(0.0f, 0.375f, 0.0625f, 0.625f, 0.6875f, 0.9375f);
-
-    static final BlockShape BOX_1_6_6_15_11_16 = BlockShape.of(0.0625f, 0.375f, 0.375f, 0.9375f, 0.6875f, 1.0f);
-
-    static final BlockShape BOX_1_6_0_15_11_10 = BlockShape.of(0.0625f, 0.375f, 0.0f, 0.9375f, 0.6875f, 0.625f);
-
-    static final BlockShape BOX_6_6_1_16_11_15 = BlockShape.of(0.375f, 0.375f, 0.0625f, 1.0f, 0.6875f, 0.9375f);
-
-    static final BlockShape BOX_2_0_2_14_10_14 = BlockShape.of(0.125f, 0.0f, 0.125f, 0.875f, 0.625f, 0.875f);
-
-    static final BlockShape BOX_0_2_2_14_14_14 = BlockShape.of(0.0f, 0.125f, 0.125f, 0.875f, 0.875f, 0.875f);
-
-    static final BlockShape BOX_2_2_2_14_16_14 = BlockShape.of(0.125f, 0.125f, 0.125f, 0.875f, 1.0f, 0.875f);
-
-    static final BlockShape BOX_0_2_2_14_16_14 = BlockShape.of(0.0f, 0.125f, 0.125f, 0.875f, 1.0f, 0.875f);
-
-    static final BlockShape BOX_2_2_2_14_14_16 = BlockShape.of(0.125f, 0.125f, 0.125f, 0.875f, 0.875f, 1.0f);
-
-    static final BlockShape BOX_0_2_2_14_14_16 = BlockShape.of(0.0f, 0.125f, 0.125f, 0.875f, 0.875f, 1.0f);
-
-    static final BlockShape BOX_2_2_2_14_16_16 = BlockShape.of(0.125f, 0.125f, 0.125f, 0.875f, 1.0f, 1.0f);
-
-    static final BlockShape BOX_0_2_2_14_16_16 = BlockShape.of(0.0f, 0.125f, 0.125f, 0.875f, 1.0f, 1.0f);
-
-    static final BlockShape BOX_2_2_0_14_14_14 = BlockShape.of(0.125f, 0.125f, 0.0f, 0.875f, 0.875f, 0.875f);
-
-    static final BlockShape BOX_0_2_0_14_14_14 = BlockShape.of(0.0f, 0.125f, 0.0f, 0.875f, 0.875f, 0.875f);
-
-    static final BlockShape BOX_2_2_0_14_16_14 = BlockShape.of(0.125f, 0.125f, 0.0f, 0.875f, 1.0f, 0.875f);
-
-    static final BlockShape BOX_0_2_0_14_16_14 = BlockShape.of(0.0f, 0.125f, 0.0f, 0.875f, 1.0f, 0.875f);
-
-    static final BlockShape BOX_0_2_0_14_14_16 = BlockShape.of(0.0f, 0.125f, 0.0f, 0.875f, 0.875f, 1.0f);
-
-    static final BlockShape BOX_2_2_0_14_16_16 = BlockShape.of(0.125f, 0.125f, 0.0f, 0.875f, 1.0f, 1.0f);
-
-    static final BlockShape BOX_0_2_0_14_16_16 = BlockShape.of(0.0f, 0.125f, 0.0f, 0.875f, 1.0f, 1.0f);
-
-    static final BlockShape BOX_2_2_2_16_14_14 = BlockShape.of(0.125f, 0.125f, 0.125f, 1.0f, 0.875f, 0.875f);
-
-    static final BlockShape BOX_2_2_2_16_16_14 = BlockShape.of(0.125f, 0.125f, 0.125f, 1.0f, 1.0f, 0.875f);
-
-    static final BlockShape BOX_0_2_2_16_16_14 = BlockShape.of(0.0f, 0.125f, 0.125f, 1.0f, 1.0f, 0.875f);
-
-    static final BlockShape BOX_2_2_2_16_14_16 = BlockShape.of(0.125f, 0.125f, 0.125f, 1.0f, 0.875f, 1.0f);
-
-    static final BlockShape BOX_0_2_2_16_14_16 = BlockShape.of(0.0f, 0.125f, 0.125f, 1.0f, 0.875f, 1.0f);
-
-    static final BlockShape BOX_2_2_2_16_16_16 = BlockShape.of(0.125f, 0.125f, 0.125f, 1.0f, 1.0f, 1.0f);
-
-    static final BlockShape BOX_0_2_2_16_16_16 = BlockShape.of(0.0f, 0.125f, 0.125f, 1.0f, 1.0f, 1.0f);
-
-    static final BlockShape BOX_2_2_0_16_14_14 = BlockShape.of(0.125f, 0.125f, 0.0f, 1.0f, 0.875f, 0.875f);
-
-    static final BlockShape BOX_0_2_0_16_14_14 = BlockShape.of(0.0f, 0.125f, 0.0f, 1.0f, 0.875f, 0.875f);
-
-    static final BlockShape BOX_2_2_0_16_16_14 = BlockShape.of(0.125f, 0.125f, 0.0f, 1.0f, 1.0f, 0.875f);
-
-    static final BlockShape BOX_0_2_0_16_16_14 = BlockShape.of(0.0f, 0.125f, 0.0f, 1.0f, 1.0f, 0.875f);
-
-    static final BlockShape BOX_2_2_0_16_14_16 = BlockShape.of(0.125f, 0.125f, 0.0f, 1.0f, 0.875f, 1.0f);
-
-    static final BlockShape BOX_0_2_0_16_14_16 = BlockShape.of(0.0f, 0.125f, 0.0f, 1.0f, 0.875f, 1.0f);
-
-    static final BlockShape BOX_2_2_0_16_16_16 = BlockShape.of(0.125f, 0.125f, 0.0f, 1.0f, 1.0f, 1.0f);
-
-    static final BlockShape BOX_0_0_2_14_14_14 = BlockShape.of(0.0f, 0.0f, 0.125f, 0.875f, 0.875f, 0.875f);
-
-    static final BlockShape BOX_0_0_2_14_16_14 = BlockShape.of(0.0f, 0.0f, 0.125f, 0.875f, 1.0f, 0.875f);
-
-    static final BlockShape BOX_2_0_2_14_14_16 = BlockShape.of(0.125f, 0.0f, 0.125f, 0.875f, 0.875f, 1.0f);
-
-    static final BlockShape BOX_0_0_2_14_14_16 = BlockShape.of(0.0f, 0.0f, 0.125f, 0.875f, 0.875f, 1.0f);
-
-    static final BlockShape BOX_2_0_2_14_16_16 = BlockShape.of(0.125f, 0.0f, 0.125f, 0.875f, 1.0f, 1.0f);
-
-    static final BlockShape BOX_0_0_2_14_16_16 = BlockShape.of(0.0f, 0.0f, 0.125f, 0.875f, 1.0f, 1.0f);
-
-    static final BlockShape BOX_2_0_0_14_14_14 = BlockShape.of(0.125f, 0.0f, 0.0f, 0.875f, 0.875f, 0.875f);
-
-    static final BlockShape BOX_0_0_0_14_14_14 = BlockShape.of(0.0f, 0.0f, 0.0f, 0.875f, 0.875f, 0.875f);
-
-    static final BlockShape BOX_2_0_0_14_16_14 = BlockShape.of(0.125f, 0.0f, 0.0f, 0.875f, 1.0f, 0.875f);
-
-    static final BlockShape BOX_0_0_0_14_16_14 = BlockShape.of(0.0f, 0.0f, 0.0f, 0.875f, 1.0f, 0.875f);
-
-    static final BlockShape BOX_2_0_0_14_14_16 = BlockShape.of(0.125f, 0.0f, 0.0f, 0.875f, 0.875f, 1.0f);
-
-    static final BlockShape BOX_0_0_0_14_14_16 = BlockShape.of(0.0f, 0.0f, 0.0f, 0.875f, 0.875f, 1.0f);
-
-    static final BlockShape BOX_0_0_0_14_16_16 = BlockShape.of(0.0f, 0.0f, 0.0f, 0.875f, 1.0f, 1.0f);
-
-    static final BlockShape BOX_2_0_2_16_14_14 = BlockShape.of(0.125f, 0.0f, 0.125f, 1.0f, 0.875f, 0.875f);
-
-    static final BlockShape BOX_0_0_2_16_14_14 = BlockShape.of(0.0f, 0.0f, 0.125f, 1.0f, 0.875f, 0.875f);
-
-    static final BlockShape BOX_2_0_2_16_16_14 = BlockShape.of(0.125f, 0.0f, 0.125f, 1.0f, 1.0f, 0.875f);
-
-    static final BlockShape BOX_2_0_2_16_14_16 = BlockShape.of(0.125f, 0.0f, 0.125f, 1.0f, 0.875f, 1.0f);
-
-    static final BlockShape BOX_0_0_2_16_14_16 = BlockShape.of(0.0f, 0.0f, 0.125f, 1.0f, 0.875f, 1.0f);
-
-    static final BlockShape BOX_2_0_2_16_16_16 = BlockShape.of(0.125f, 0.0f, 0.125f, 1.0f, 1.0f, 1.0f);
-
-    static final BlockShape BOX_0_0_2_16_16_16 = BlockShape.of(0.0f, 0.0f, 0.125f, 1.0f, 1.0f, 1.0f);
-
-    static final BlockShape BOX_2_0_0_16_14_14 = BlockShape.of(0.125f, 0.0f, 0.0f, 1.0f, 0.875f, 0.875f);
-
-    static final BlockShape BOX_0_0_0_16_14_14 = BlockShape.of(0.0f, 0.0f, 0.0f, 1.0f, 0.875f, 0.875f);
-
-    static final BlockShape BOX_2_0_0_16_16_14 = BlockShape.of(0.125f, 0.0f, 0.0f, 1.0f, 1.0f, 0.875f);
-
-    static final BlockShape BOX_0_0_0_16_16_14 = BlockShape.of(0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 0.875f);
-
-    static final BlockShape BOX_2_0_0_16_14_16 = BlockShape.of(0.125f, 0.0f, 0.0f, 1.0f, 0.875f, 1.0f);
-
-    static final BlockShape BOX_2_0_0_16_16_16 = BlockShape.of(0.125f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f);
-
-    static final BlockShape BOX_0_0_0_16_11_16 = BlockShape.of(0.0f, 0.0f, 0.0f, 1.0f, 0.6875f, 1.0f);
-
-    static final BlockShape BOX_0_5_0_16_16_16 = BlockShape.of(0.0f, 0.3125f, 0.0f, 1.0f, 1.0f, 1.0f);
+    /**
+     * [6, 0, 0, 10, 24, 10] [0, 0, 6, 10, 24, 10] (in pixels).
+     */
+    static final BlockShape SHAPE_ACACIA_FENCE_COLLISION_SHAPE_2 = BlockShape.of(0.375f, 0.0f, 0.0f,
+            0.625f, 1.5f, 0.625f, 0.0f, 0.0f, 0.375f, 0.625f, 1.5f, 0.625f);
+
+    /**
+     * [6, 0, 0, 10, 24, 16] [0, 0, 6, 10, 24, 10] (in pixels).
+     */
+    static final BlockShape SHAPE_ACACIA_FENCE_COLLISION_SHAPE_3 = BlockShape.of(0.375f, 0.0f, 0.0f,
+            0.625f, 1.5f, 1.0f, 0.0f, 0.0f, 0.375f, 0.625f, 1.5f, 0.625f);
+
+    /**
+     * [6, 0, 6, 16, 24, 10] (in pixels).
+     */
+    static final BlockShape BOX_6_0_6_16_24_10 = BlockShape.of(0.375f, 0.0f, 0.375f, 1.0f, 1.5f,
+            0.625f);
+
+    /**
+     * [6, 0, 6, 10, 24, 16] [6, 0, 6, 16, 24, 10] (in pixels).
+     */
+    static final BlockShape SHAPE_ACACIA_FENCE_COLLISION_SHAPE_4 = BlockShape.of(0.375f, 0.0f,
+            0.375f, 0.625f, 1.5f, 1.0f, 0.375f, 0.0f, 0.375f, 1.0f, 1.5f, 0.625f);
+
+    /**
+     * [6, 0, 6, 10, 24, 16] [0, 0, 6, 16, 24, 10] (in pixels).
+     */
+    static final BlockShape SHAPE_ACACIA_FENCE_COLLISION_SHAPE_5 = BlockShape.of(0.375f, 0.0f,
+            0.375f, 0.625f, 1.5f, 1.0f, 0.0f, 0.0f, 0.375f, 1.0f, 1.5f, 0.625f);
+
+    /**
+     * [6, 0, 0, 10, 24, 10] [6, 0, 6, 16, 24, 10] (in pixels).
+     */
+    static final BlockShape SHAPE_ACACIA_FENCE_COLLISION_SHAPE_6 = BlockShape.of(0.375f, 0.0f, 0.0f,
+            0.625f, 1.5f, 0.625f, 0.375f, 0.0f, 0.375f, 1.0f, 1.5f, 0.625f);
+
+    /**
+     * [6, 0, 0, 10, 24, 10] [0, 0, 6, 16, 24, 10] (in pixels).
+     */
+    static final BlockShape SHAPE_ACACIA_FENCE_COLLISION_SHAPE_7 = BlockShape.of(0.375f, 0.0f, 0.0f,
+            0.625f, 1.5f, 0.625f, 0.0f, 0.0f, 0.375f, 1.0f, 1.5f, 0.625f);
+
+    /**
+     * [6, 0, 0, 10, 24, 16] [6, 0, 6, 16, 24, 10] (in pixels).
+     */
+    static final BlockShape SHAPE_ACACIA_FENCE_COLLISION_SHAPE_8 = BlockShape.of(0.375f, 0.0f, 0.0f,
+            0.625f, 1.5f, 1.0f, 0.375f, 0.0f, 0.375f, 1.0f, 1.5f, 0.625f);
+
+    /**
+     * [6, 0, 0, 10, 24, 16] [0, 0, 6, 16, 24, 10] (in pixels).
+     */
+    static final BlockShape SHAPE_ACACIA_FENCE_COLLISION_SHAPE_9 = BlockShape.of(0.375f, 0.0f, 0.0f,
+            0.625f, 1.5f, 1.0f, 0.0f, 0.0f, 0.375f, 1.0f, 1.5f, 0.625f);
+
+    /**
+     * [0, 0, 6, 10, 16, 10] (in pixels).
+     */
+    static final BlockShape BOX_0_0_6_10_16_10 = BlockShape.of(0.0f, 0.0f, 0.375f, 0.625f, 1.0f,
+            0.625f);
+
+    /**
+     * [6, 0, 6, 10, 16, 16] (in pixels).
+     */
+    static final BlockShape BOX_6_0_6_10_16_16 = BlockShape.of(0.375f, 0.0f, 0.375f, 0.625f, 1.0f,
+            1.0f);
+
+    /**
+     * [0, 0, 6, 10, 16, 16] (in pixels).
+     */
+    static final BlockShape BOX_0_0_6_10_16_16 = BlockShape.of(0.0f, 0.0f, 0.375f, 0.625f, 1.0f,
+            1.0f);
+
+    /**
+     * [6, 0, 0, 10, 16, 10] (in pixels).
+     */
+    static final BlockShape BOX_6_0_0_10_16_10 = BlockShape.of(0.375f, 0.0f, 0.0f, 0.625f, 1.0f,
+            0.625f);
+
+    /**
+     * [0, 0, 0, 10, 16, 10] (in pixels).
+     */
+    static final BlockShape BOX_0_0_0_10_16_10 = BlockShape.of(0.0f, 0.0f, 0.0f, 0.625f, 1.0f,
+            0.625f);
+
+    /**
+     * [0, 0, 0, 10, 16, 16] (in pixels).
+     */
+    static final BlockShape BOX_0_0_0_10_16_16 = BlockShape.of(0.0f, 0.0f, 0.0f, 0.625f, 1.0f,
+            1.0f);
+
+    /**
+     * [6, 0, 6, 16, 16, 10] (in pixels).
+     */
+    static final BlockShape BOX_6_0_6_16_16_10 = BlockShape.of(0.375f, 0.0f, 0.375f, 1.0f, 1.0f,
+            0.625f);
+
+    /**
+     * [6, 0, 6, 16, 16, 16] (in pixels).
+     */
+    static final BlockShape BOX_6_0_6_16_16_16 = BlockShape.of(0.375f, 0.0f, 0.375f, 1.0f, 1.0f,
+            1.0f);
+
+    /**
+     * [0, 0, 6, 16, 16, 16] (in pixels).
+     */
+    static final BlockShape BOX_0_0_6_16_16_16 = BlockShape.of(0.0f, 0.0f, 0.375f, 1.0f, 1.0f,
+            1.0f);
+
+    /**
+     * [6, 0, 0, 16, 16, 10] (in pixels).
+     */
+    static final BlockShape BOX_6_0_0_16_16_10 = BlockShape.of(0.375f, 0.0f, 0.0f, 1.0f, 1.0f,
+            0.625f);
+
+    /**
+     * [0, 0, 0, 16, 16, 10] (in pixels).
+     */
+    static final BlockShape BOX_0_0_0_16_16_10 = BlockShape.of(0.0f, 0.0f, 0.0f, 1.0f, 1.0f,
+            0.625f);
+
+    /**
+     * [6, 0, 0, 16, 16, 16] (in pixels).
+     */
+    static final BlockShape BOX_6_0_0_16_16_16 = BlockShape.of(0.375f, 0.0f, 0.0f, 1.0f, 1.0f,
+            1.0f);
+
+    /**
+     * [0, 0, 0, 16, 8, 16] [8, 8, 0, 16, 16, 16] [0, 8, 0, 8, 16, 8] (in pixels).
+     */
+    static final BlockShape SHAPE_ACACIA_STAIRS_COLLISION_SHAPE_9 = BlockShape.of(0.0f, 0.0f, 0.0f,
+            1.0f, 0.5f, 1.0f, 0.5f, 0.5f, 0.0f, 1.0f, 1.0f, 1.0f, 0.0f, 0.5f, 0.0f, 0.5f, 1.0f,
+            0.5f);
+
+    /**
+     * [0, 0, 0, 16, 8, 16] [0, 8, 0, 8, 16, 16] [8, 8, 8, 16, 16, 16] (in pixels).
+     */
+    static final BlockShape SHAPE_ACACIA_STAIRS_COLLISION_SHAPE_10 = BlockShape.of(0.0f, 0.0f, 0.0f,
+            1.0f, 0.5f, 1.0f, 0.0f, 0.5f, 0.0f, 0.5f, 1.0f, 1.0f, 0.5f, 0.5f, 0.5f, 1.0f, 1.0f,
+            1.0f);
+
+    /**
+     * [0, 0, 0, 16, 8, 16] [0, 8, 8, 16, 16, 16] [8, 8, 0, 16, 16, 8] (in pixels).
+     */
+    static final BlockShape SHAPE_ACACIA_STAIRS_COLLISION_SHAPE_11 = BlockShape.of(0.0f, 0.0f, 0.0f,
+            1.0f, 0.5f, 1.0f, 0.0f, 0.5f, 0.5f, 1.0f, 1.0f, 1.0f, 0.5f, 0.5f, 0.0f, 1.0f, 1.0f,
+            0.5f);
+
+    /**
+     * [0, 0, 0, 16, 8, 16] [0, 8, 0, 16, 16, 8] [0, 8, 8, 8, 16, 16] (in pixels).
+     */
+    static final BlockShape SHAPE_ACACIA_STAIRS_COLLISION_SHAPE_12 = BlockShape.of(0.0f, 0.0f, 0.0f,
+            1.0f, 0.5f, 1.0f, 0.0f, 0.5f, 0.0f, 1.0f, 1.0f, 0.5f, 0.0f, 0.5f, 0.5f, 0.5f, 1.0f,
+            1.0f);
+
+    /**
+     * [0, 8, 0, 16, 16, 16] [8, 0, 0, 16, 8, 16] [0, 0, 0, 8, 8, 8] (in pixels).
+     */
+    static final BlockShape SHAPE_ACACIA_STAIRS_COLLISION_SHAPE_13 = BlockShape.of(0.0f, 0.5f, 0.0f,
+            1.0f, 1.0f, 1.0f, 0.5f, 0.0f, 0.0f, 1.0f, 0.5f, 1.0f, 0.0f, 0.0f, 0.0f, 0.5f, 0.5f,
+            0.5f);
+
+    /**
+     * [0, 8, 0, 16, 16, 16] [0, 0, 0, 8, 8, 16] [8, 0, 8, 16, 8, 16] (in pixels).
+     */
+    static final BlockShape SHAPE_ACACIA_STAIRS_COLLISION_SHAPE_14 = BlockShape.of(0.0f, 0.5f, 0.0f,
+            1.0f, 1.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.5f, 0.5f, 1.0f, 0.5f, 0.0f, 0.5f, 1.0f, 0.5f,
+            1.0f);
+
+    /**
+     * [0, 8, 0, 16, 16, 16] [0, 0, 8, 16, 8, 16] [8, 0, 0, 16, 8, 8] (in pixels).
+     */
+    static final BlockShape SHAPE_ACACIA_STAIRS_COLLISION_SHAPE_15 = BlockShape.of(0.0f, 0.5f, 0.0f,
+            1.0f, 1.0f, 1.0f, 0.0f, 0.0f, 0.5f, 1.0f, 0.5f, 1.0f, 0.5f, 0.0f, 0.0f, 1.0f, 0.5f,
+            0.5f);
+
+    /**
+     * [0, 8, 0, 16, 16, 16] [0, 0, 0, 16, 8, 8] [0, 0, 8, 8, 8, 16] (in pixels).
+     */
+    static final BlockShape SHAPE_ACACIA_STAIRS_COLLISION_SHAPE_16 = BlockShape.of(0.0f, 0.5f, 0.0f,
+            1.0f, 1.0f, 1.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.5f, 0.5f, 0.0f, 0.0f, 0.5f, 0.5f, 0.5f,
+            1.0f);
+
+    /**
+     * [0, 0, 0, 16, 8, 16] [8, 8, 0, 16, 16, 16] [0, 8, 8, 8, 16, 16] (in pixels).
+     */
+    static final BlockShape SHAPE_ACACIA_STAIRS_COLLISION_SHAPE_17 = BlockShape.of(0.0f, 0.0f, 0.0f,
+            1.0f, 0.5f, 1.0f, 0.5f, 0.5f, 0.0f, 1.0f, 1.0f, 1.0f, 0.0f, 0.5f, 0.5f, 0.5f, 1.0f,
+            1.0f);
+
+    /**
+     * [0, 0, 0, 16, 8, 16] [0, 8, 0, 8, 16, 16] [8, 8, 0, 16, 16, 8] (in pixels).
+     */
+    static final BlockShape SHAPE_ACACIA_STAIRS_COLLISION_SHAPE_18 = BlockShape.of(0.0f, 0.0f, 0.0f,
+            1.0f, 0.5f, 1.0f, 0.0f, 0.5f, 0.0f, 0.5f, 1.0f, 1.0f, 0.5f, 0.5f, 0.0f, 1.0f, 1.0f,
+            0.5f);
+
+    /**
+     * [0, 0, 0, 16, 8, 16] [0, 8, 8, 16, 16, 16] [0, 8, 0, 8, 16, 8] (in pixels).
+     */
+    static final BlockShape SHAPE_ACACIA_STAIRS_COLLISION_SHAPE_19 = BlockShape.of(0.0f, 0.0f, 0.0f,
+            1.0f, 0.5f, 1.0f, 0.0f, 0.5f, 0.5f, 1.0f, 1.0f, 1.0f, 0.0f, 0.5f, 0.0f, 0.5f, 1.0f,
+            0.5f);
+
+    /**
+     * [0, 0, 0, 16, 8, 16] [0, 8, 0, 16, 16, 8] [8, 8, 8, 16, 16, 16] (in pixels).
+     */
+    static final BlockShape SHAPE_ACACIA_STAIRS_COLLISION_SHAPE_20 = BlockShape.of(0.0f, 0.0f, 0.0f,
+            1.0f, 0.5f, 1.0f, 0.0f, 0.5f, 0.0f, 1.0f, 1.0f, 0.5f, 0.5f, 0.5f, 0.5f, 1.0f, 1.0f,
+            1.0f);
+
+    /**
+     * [0, 8, 0, 16, 16, 16] [8, 0, 0, 16, 8, 16] [0, 0, 8, 8, 8, 16] (in pixels).
+     */
+    static final BlockShape SHAPE_ACACIA_STAIRS_COLLISION_SHAPE_21 = BlockShape.of(0.0f, 0.5f, 0.0f,
+            1.0f, 1.0f, 1.0f, 0.5f, 0.0f, 0.0f, 1.0f, 0.5f, 1.0f, 0.0f, 0.0f, 0.5f, 0.5f, 0.5f,
+            1.0f);
+
+    /**
+     * [0, 8, 0, 16, 16, 16] [0, 0, 0, 8, 8, 16] [8, 0, 0, 16, 8, 8] (in pixels).
+     */
+    static final BlockShape SHAPE_ACACIA_STAIRS_COLLISION_SHAPE_22 = BlockShape.of(0.0f, 0.5f, 0.0f,
+            1.0f, 1.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.5f, 0.5f, 1.0f, 0.5f, 0.0f, 0.0f, 1.0f, 0.5f,
+            0.5f);
+
+    /**
+     * [0, 8, 0, 16, 16, 16] [0, 0, 8, 16, 8, 16] [0, 0, 0, 8, 8, 8] (in pixels).
+     */
+    static final BlockShape SHAPE_ACACIA_STAIRS_COLLISION_SHAPE_23 = BlockShape.of(0.0f, 0.5f, 0.0f,
+            1.0f, 1.0f, 1.0f, 0.0f, 0.0f, 0.5f, 1.0f, 0.5f, 1.0f, 0.0f, 0.0f, 0.0f, 0.5f, 0.5f,
+            0.5f);
+
+    /**
+     * [0, 8, 0, 16, 16, 16] [0, 0, 0, 16, 8, 8] [8, 0, 8, 16, 8, 16] (in pixels).
+     */
+    static final BlockShape SHAPE_ACACIA_STAIRS_COLLISION_SHAPE_24 = BlockShape.of(0.0f, 0.5f, 0.0f,
+            1.0f, 1.0f, 1.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.5f, 0.5f, 0.5f, 0.0f, 0.5f, 1.0f, 0.5f,
+            1.0f);
+
+    /**
+     * [0, 0, 0, 16, 8, 16] [8, 8, 0, 16, 16, 8] (in pixels).
+     */
+    static final BlockShape SHAPE_ACACIA_STAIRS_COLLISION_SHAPE_25 = BlockShape.of(0.0f, 0.0f, 0.0f,
+            1.0f, 0.5f, 1.0f, 0.5f, 0.5f, 0.0f, 1.0f, 1.0f, 0.5f);
+
+    /**
+     * [0, 0, 0, 16, 8, 16] [0, 8, 8, 8, 16, 16] (in pixels).
+     */
+    static final BlockShape SHAPE_ACACIA_STAIRS_COLLISION_SHAPE_26 = BlockShape.of(0.0f, 0.0f, 0.0f,
+            1.0f, 0.5f, 1.0f, 0.0f, 0.5f, 0.5f, 0.5f, 1.0f, 1.0f);
+
+    /**
+     * [0, 0, 0, 16, 8, 16] [8, 8, 8, 16, 16, 16] (in pixels).
+     */
+    static final BlockShape SHAPE_ACACIA_STAIRS_COLLISION_SHAPE_27 = BlockShape.of(0.0f, 0.0f, 0.0f,
+            1.0f, 0.5f, 1.0f, 0.5f, 0.5f, 0.5f, 1.0f, 1.0f, 1.0f);
+
+    /**
+     * [0, 0, 0, 16, 8, 16] [0, 8, 0, 8, 16, 8] (in pixels).
+     */
+    static final BlockShape SHAPE_ACACIA_STAIRS_COLLISION_SHAPE_28 = BlockShape.of(0.0f, 0.0f, 0.0f,
+            1.0f, 0.5f, 1.0f, 0.0f, 0.5f, 0.0f, 0.5f, 1.0f, 0.5f);
+
+    /**
+     * [0, 8, 0, 16, 16, 16] [8, 0, 0, 16, 8, 8] (in pixels).
+     */
+    static final BlockShape SHAPE_ACACIA_STAIRS_COLLISION_SHAPE_29 = BlockShape.of(0.0f, 0.5f, 0.0f,
+            1.0f, 1.0f, 1.0f, 0.5f, 0.0f, 0.0f, 1.0f, 0.5f, 0.5f);
+
+    /**
+     * [0, 8, 0, 16, 16, 16] [0, 0, 8, 8, 8, 16] (in pixels).
+     */
+    static final BlockShape SHAPE_ACACIA_STAIRS_COLLISION_SHAPE_30 = BlockShape.of(0.0f, 0.5f, 0.0f,
+            1.0f, 1.0f, 1.0f, 0.0f, 0.0f, 0.5f, 0.5f, 0.5f, 1.0f);
+
+    /**
+     * [0, 8, 0, 16, 16, 16] [8, 0, 8, 16, 8, 16] (in pixels).
+     */
+    static final BlockShape SHAPE_ACACIA_STAIRS_COLLISION_SHAPE_31 = BlockShape.of(0.0f, 0.5f, 0.0f,
+            1.0f, 1.0f, 1.0f, 0.5f, 0.0f, 0.5f, 1.0f, 0.5f, 1.0f);
+
+    /**
+     * [0, 8, 0, 16, 16, 16] [0, 0, 0, 8, 8, 8] (in pixels).
+     */
+    static final BlockShape SHAPE_ACACIA_STAIRS_COLLISION_SHAPE_32 = BlockShape.of(0.0f, 0.5f, 0.0f,
+            1.0f, 1.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.5f, 0.5f, 0.5f);
+
+    /**
+     * [8, 0, 8, 11, 16, 11] (in pixels).
+     */
+    static final BlockShape BOX_8_0_8_11_16_11 = BlockShape.of(0.5f, 0.0f, 0.5f, 0.6875f, 1.0f,
+            0.6875f);
+
+    /**
+     * [8, 0, 8, 10, 16, 10] (in pixels).
+     */
+    static final BlockShape BOX_8_0_8_10_16_10 = BlockShape.of(0.5f, 0.0f, 0.5f, 0.625f, 1.0f,
+            0.625f);
+
+    /**
+     * [0, 0, 7, 8, 16, 9] (in pixels).
+     */
+    static final BlockShape BOX_0_0_7_8_16_9 = BlockShape.of(0.0f, 0.0f, 0.4375f, 0.5f, 1.0f,
+            0.5625f);
+
+    /**
+     * [7, 0, 8, 9, 16, 16] (in pixels).
+     */
+    static final BlockShape BOX_7_0_8_9_16_16 = BlockShape.of(0.4375f, 0.0f, 0.5f, 0.5625f, 1.0f,
+            1.0f);
+
+    /**
+     * [0, 0, 7, 8, 16, 9] [7, 0, 8, 9, 16, 16] (in pixels).
+     */
+    static final BlockShape SHAPE_BLACK_STAINED_GLASS_PANE_COLLISION_SHAPE = BlockShape.of(0.0f,
+            0.0f, 0.4375f, 0.5f, 1.0f, 0.5625f, 0.4375f, 0.0f, 0.5f, 0.5625f, 1.0f, 1.0f);
+
+    /**
+     * [7, 0, 0, 9, 16, 8] (in pixels).
+     */
+    static final BlockShape BOX_7_0_0_9_16_8 = BlockShape.of(0.4375f, 0.0f, 0.0f, 0.5625f, 1.0f,
+            0.5f);
+
+    /**
+     * [0, 0, 7, 8, 16, 9] [7, 0, 0, 9, 16, 8] (in pixels).
+     */
+    static final BlockShape SHAPE_BLACK_STAINED_GLASS_PANE_COLLISION_SHAPE_2 = BlockShape.of(0.0f,
+            0.0f, 0.4375f, 0.5f, 1.0f, 0.5625f, 0.4375f, 0.0f, 0.0f, 0.5625f, 1.0f, 0.5f);
+
+    /**
+     * [7, 0, 0, 9, 16, 16] (in pixels).
+     */
+    static final BlockShape BOX_7_0_0_9_16_16 = BlockShape.of(0.4375f, 0.0f, 0.0f, 0.5625f, 1.0f,
+            1.0f);
+
+    /**
+     * [0, 0, 7, 8, 16, 9] [7, 0, 0, 9, 16, 16] (in pixels).
+     */
+    static final BlockShape SHAPE_BLACK_STAINED_GLASS_PANE_COLLISION_SHAPE_3 = BlockShape.of(0.0f,
+            0.0f, 0.4375f, 0.5f, 1.0f, 0.5625f, 0.4375f, 0.0f, 0.0f, 0.5625f, 1.0f, 1.0f);
+
+    /**
+     * [8, 0, 7, 16, 16, 9] (in pixels).
+     */
+    static final BlockShape BOX_8_0_7_16_16_9 = BlockShape.of(0.5f, 0.0f, 0.4375f, 1.0f, 1.0f,
+            0.5625f);
+
+    /**
+     * [0, 0, 7, 16, 16, 9] (in pixels).
+     */
+    static final BlockShape BOX_0_0_7_16_16_9 = BlockShape.of(0.0f, 0.0f, 0.4375f, 1.0f, 1.0f,
+            0.5625f);
+
+    /**
+     * [8, 0, 7, 16, 16, 9] [7, 0, 8, 9, 16, 16] (in pixels).
+     */
+    static final BlockShape SHAPE_BLACK_STAINED_GLASS_PANE_COLLISION_SHAPE_4 = BlockShape.of(0.5f,
+            0.0f, 0.4375f, 1.0f, 1.0f, 0.5625f, 0.4375f, 0.0f, 0.5f, 0.5625f, 1.0f, 1.0f);
+
+    /**
+     * [0, 0, 7, 16, 16, 9] [7, 0, 8, 9, 16, 16] (in pixels).
+     */
+    static final BlockShape SHAPE_BLACK_STAINED_GLASS_PANE_COLLISION_SHAPE_5 = BlockShape.of(0.0f,
+            0.0f, 0.4375f, 1.0f, 1.0f, 0.5625f, 0.4375f, 0.0f, 0.5f, 0.5625f, 1.0f, 1.0f);
+
+    /**
+     * [8, 0, 7, 16, 16, 9] [7, 0, 0, 9, 16, 8] (in pixels).
+     */
+    static final BlockShape SHAPE_BLACK_STAINED_GLASS_PANE_COLLISION_SHAPE_6 = BlockShape.of(0.5f,
+            0.0f, 0.4375f, 1.0f, 1.0f, 0.5625f, 0.4375f, 0.0f, 0.0f, 0.5625f, 1.0f, 0.5f);
+
+    /**
+     * [0, 0, 7, 16, 16, 9] [7, 0, 0, 9, 16, 8] (in pixels).
+     */
+    static final BlockShape SHAPE_BLACK_STAINED_GLASS_PANE_COLLISION_SHAPE_7 = BlockShape.of(0.0f,
+            0.0f, 0.4375f, 1.0f, 1.0f, 0.5625f, 0.4375f, 0.0f, 0.0f, 0.5625f, 1.0f, 0.5f);
+
+    /**
+     * [8, 0, 7, 16, 16, 9] [7, 0, 0, 9, 16, 16] (in pixels).
+     */
+    static final BlockShape SHAPE_BLACK_STAINED_GLASS_PANE_COLLISION_SHAPE_8 = BlockShape.of(0.5f,
+            0.0f, 0.4375f, 1.0f, 1.0f, 0.5625f, 0.4375f, 0.0f, 0.0f, 0.5625f, 1.0f, 1.0f);
+
+    /**
+     * [0, 0, 7, 16, 16, 9] [7, 0, 0, 9, 16, 16] (in pixels).
+     */
+    static final BlockShape SHAPE_BLACK_STAINED_GLASS_PANE_COLLISION_SHAPE_9 = BlockShape.of(0.0f,
+            0.0f, 0.4375f, 1.0f, 1.0f, 0.5625f, 0.4375f, 0.0f, 0.0f, 0.5625f, 1.0f, 1.0f);
+
+    /**
+     * [0, 0, 7, 9, 16, 9] (in pixels).
+     */
+    static final BlockShape BOX_0_0_7_9_16_9 = BlockShape.of(0.0f, 0.0f, 0.4375f, 0.5625f, 1.0f,
+            0.5625f);
+
+    /**
+     * [7, 0, 7, 9, 16, 16] (in pixels).
+     */
+    static final BlockShape BOX_7_0_7_9_16_16 = BlockShape.of(0.4375f, 0.0f, 0.4375f, 0.5625f, 1.0f,
+            1.0f);
+
+    /**
+     * [0, 0, 7, 9, 16, 16] (in pixels).
+     */
+    static final BlockShape BOX_0_0_7_9_16_16 = BlockShape.of(0.0f, 0.0f, 0.4375f, 0.5625f, 1.0f,
+            1.0f);
+
+    /**
+     * [7, 0, 0, 9, 16, 9] (in pixels).
+     */
+    static final BlockShape BOX_7_0_0_9_16_9 = BlockShape.of(0.4375f, 0.0f, 0.0f, 0.5625f, 1.0f,
+            0.5625f);
+
+    /**
+     * [0, 0, 0, 9, 16, 9] (in pixels).
+     */
+    static final BlockShape BOX_0_0_0_9_16_9 = BlockShape.of(0.0f, 0.0f, 0.0f, 0.5625f, 1.0f,
+            0.5625f);
+
+    /**
+     * [0, 0, 0, 9, 16, 16] (in pixels).
+     */
+    static final BlockShape BOX_0_0_0_9_16_16 = BlockShape.of(0.0f, 0.0f, 0.0f, 0.5625f, 1.0f,
+            1.0f);
+
+    /**
+     * [7, 0, 7, 16, 16, 9] (in pixels).
+     */
+    static final BlockShape BOX_7_0_7_16_16_9 = BlockShape.of(0.4375f, 0.0f, 0.4375f, 1.0f, 1.0f,
+            0.5625f);
+
+    /**
+     * [7, 0, 7, 16, 16, 16] (in pixels).
+     */
+    static final BlockShape BOX_7_0_7_16_16_16 = BlockShape.of(0.4375f, 0.0f, 0.4375f, 1.0f, 1.0f,
+            1.0f);
+
+    /**
+     * [0, 0, 7, 16, 16, 16] (in pixels).
+     */
+    static final BlockShape BOX_0_0_7_16_16_16 = BlockShape.of(0.0f, 0.0f, 0.4375f, 1.0f, 1.0f,
+            1.0f);
+
+    /**
+     * [7, 0, 0, 16, 16, 9] (in pixels).
+     */
+    static final BlockShape BOX_7_0_0_16_16_9 = BlockShape.of(0.4375f, 0.0f, 0.0f, 1.0f, 1.0f,
+            0.5625f);
+
+    /**
+     * [0, 0, 0, 16, 16, 9] (in pixels).
+     */
+    static final BlockShape BOX_0_0_0_16_16_9 = BlockShape.of(0.0f, 0.0f, 0.0f, 1.0f, 1.0f,
+            0.5625f);
+
+    /**
+     * [7, 0, 0, 16, 16, 16] (in pixels).
+     */
+    static final BlockShape BOX_7_0_0_16_16_16 = BlockShape.of(0.4375f, 0.0f, 0.0f, 1.0f, 1.0f,
+            1.0f);
+
+    /**
+     * [1.599984, 0, 1.599984, 14.4, 12.8, 14.4] (in pixels).
+     */
+    static final BlockShape SHAPE_BRAIN_CORAL_OUTLINE_SHAPE = BlockShape.of(0.099999f, 0.0f,
+            0.099999f, 0.9f, 0.8f, 0.9f);
+
+    /**
+     * [3.199984, 0, 3.199984, 12.8, 6.4, 12.8] (in pixels).
+     */
+    static final BlockShape SHAPE_BRAIN_CORAL_FAN_OUTLINE_SHAPE_2 = BlockShape.of(0.199999f, 0.0f,
+            0.199999f, 0.8f, 0.4f, 0.8f);
+
+    /**
+     * [2.4, 11.2, 2.4, 13.6, 16, 13.6] (in pixels).
+     */
+    static final BlockShape SHAPE_HANGING_ROOTS_OUTLINE_SHAPE_2 = BlockShape.of(0.15f, 0.7f, 0.15f,
+            0.85f, 1.0f, 0.85f);
+
+    /**
+     * [4.8, 0, 4.8, 11.2, 16, 11.2] (in pixels).
+     */
+    static final BlockShape SHAPE_LARGE_FERN_OUTLINE_SHAPE_3 = BlockShape.of(0.3f, 0.0f, 0.3f, 0.7f,
+            1.0f, 0.7f);
+
+    /**
+     * [4.8, 0, 4.8, 11.2, 9.6, 11.2] (in pixels).
+     */
+    static final BlockShape SHAPE_LARGE_FERN_OUTLINE_SHAPE_4 = BlockShape.of(0.3f, 0.0f, 0.3f, 0.7f,
+            0.6f, 0.7f);
+
+    /**
+     * [6, 12, 6, 10, 16, 10] (in pixels).
+     */
+    static final BlockShape BOX_6_12_6_10_16_10 = BlockShape.of(0.375f, 0.75f, 0.375f, 0.625f, 1.0f,
+            0.625f);
+
+    /**
+     * [6, 10, 6, 10, 16, 10] (in pixels).
+     */
+    static final BlockShape BOX_6_10_6_10_16_10 = BlockShape.of(0.375f, 0.625f, 0.375f, 0.625f,
+            1.0f, 0.625f);
+
+    /**
+     * [6, 7, 6, 10, 16, 10] (in pixels).
+     */
+    static final BlockShape BOX_6_7_6_10_16_10 = BlockShape.of(0.375f, 0.4375f, 0.375f, 0.625f,
+            1.0f, 0.625f);
+
+    /**
+     * [6, 3, 6, 10, 16, 10] (in pixels).
+     */
+    static final BlockShape BOX_6_3_6_10_16_10 = BlockShape.of(0.375f, 0.1875f, 0.375f, 0.625f,
+            1.0f, 0.625f);
+
+    /**
+     * [2.4, 0, 2.4, 13.6, 4.8, 13.6] (in pixels).
+     */
+    static final BlockShape SHAPE_NETHER_SPROUTS_OUTLINE_SHAPE_2 = BlockShape.of(0.15f, 0.0f, 0.15f,
+            0.85f, 0.3f, 0.85f);
+
+    /**
+     * [5, 0, 5, 11, 16, 11] (in pixels).
+     */
+    static final BlockShape BOX_5_0_5_11_16_11 = BlockShape.of(0.3125f, 0.0f, 0.3125f, 0.6875f,
+            1.0f, 0.6875f);
+
+    /**
+     * [3, 0, 3, 13, 16, 13] (in pixels).
+     */
+    static final BlockShape BOX_3_0_3_13_16_13 = BlockShape.of(0.1875f, 0.0f, 0.1875f, 0.8125f,
+            1.0f, 0.8125f);
+
+    /**
+     * [5, 0, 5, 11, 11, 11] (in pixels).
+     */
+    static final BlockShape BOX_5_0_5_11_11_11 = BlockShape.of(0.3125f, 0.0f, 0.3125f, 0.6875f,
+            0.6875f, 0.6875f);
+
+    /**
+     * [5, 5, 5, 11, 16, 11] (in pixels).
+     */
+    static final BlockShape BOX_5_5_5_11_16_11 = BlockShape.of(0.3125f, 0.3125f, 0.3125f, 0.6875f,
+            1.0f, 0.6875f);
+
+    /**
+     * [0, 4, 3, 7, 11, 13] (in pixels).
+     */
+    static final BlockShape BOX_0_4_3_7_11_13 = BlockShape.of(0.0f, 0.25f, 0.1875f, 0.4375f,
+            0.6875f, 0.8125f);
+
+    /**
+     * [3, 4, 9, 13, 11, 16] (in pixels).
+     */
+    static final BlockShape BOX_3_4_9_13_11_16 = BlockShape.of(0.1875f, 0.25f, 0.5625f, 0.8125f,
+            0.6875f, 1.0f);
+
+    /**
+     * [3, 4, 0, 13, 11, 7] (in pixels).
+     */
+    static final BlockShape BOX_3_4_0_13_11_7 = BlockShape.of(0.1875f, 0.25f, 0.0f, 0.8125f,
+            0.6875f, 0.4375f);
+
+    /**
+     * [9, 4, 3, 16, 11, 13] (in pixels).
+     */
+    static final BlockShape BOX_9_4_3_16_11_13 = BlockShape.of(0.5625f, 0.25f, 0.1875f, 1.0f,
+            0.6875f, 0.8125f);
+
+    /**
+     * [0, 4, 1, 10, 11, 15] (in pixels).
+     */
+    static final BlockShape BOX_0_4_1_10_11_15 = BlockShape.of(0.0f, 0.25f, 0.0625f, 0.625f,
+            0.6875f, 0.9375f);
+
+    /**
+     * [1, 4, 6, 15, 11, 16] (in pixels).
+     */
+    static final BlockShape BOX_1_4_6_15_11_16 = BlockShape.of(0.0625f, 0.25f, 0.375f, 0.9375f,
+            0.6875f, 1.0f);
+
+    /**
+     * [1, 4, 0, 15, 11, 10] (in pixels).
+     */
+    static final BlockShape BOX_1_4_0_15_11_10 = BlockShape.of(0.0625f, 0.25f, 0.0f, 0.9375f,
+            0.6875f, 0.625f);
+
+    /**
+     * [6, 4, 1, 16, 11, 15] (in pixels).
+     */
+    static final BlockShape BOX_6_4_1_16_11_15 = BlockShape.of(0.375f, 0.25f, 0.0625f, 1.0f,
+            0.6875f, 0.9375f);
+
+    /**
+     * [0, 8, 3, 7, 11, 13] (in pixels).
+     */
+    static final BlockShape BOX_0_8_3_7_11_13 = BlockShape.of(0.0f, 0.5f, 0.1875f, 0.4375f, 0.6875f,
+            0.8125f);
+
+    /**
+     * [3, 8, 9, 13, 11, 16] (in pixels).
+     */
+    static final BlockShape BOX_3_8_9_13_11_16 = BlockShape.of(0.1875f, 0.5f, 0.5625f, 0.8125f,
+            0.6875f, 1.0f);
+
+    /**
+     * [3, 8, 0, 13, 11, 7] (in pixels).
+     */
+    static final BlockShape BOX_3_8_0_13_11_7 = BlockShape.of(0.1875f, 0.5f, 0.0f, 0.8125f, 0.6875f,
+            0.4375f);
+
+    /**
+     * [9, 8, 3, 16, 11, 13] (in pixels).
+     */
+    static final BlockShape BOX_9_8_3_16_11_13 = BlockShape.of(0.5625f, 0.5f, 0.1875f, 1.0f,
+            0.6875f, 0.8125f);
+
+    /**
+     * [0, 6, 1, 10, 11, 15] (in pixels).
+     */
+    static final BlockShape BOX_0_6_1_10_11_15 = BlockShape.of(0.0f, 0.375f, 0.0625f, 0.625f,
+            0.6875f, 0.9375f);
+
+    /**
+     * [1, 6, 6, 15, 11, 16] (in pixels).
+     */
+    static final BlockShape BOX_1_6_6_15_11_16 = BlockShape.of(0.0625f, 0.375f, 0.375f, 0.9375f,
+            0.6875f, 1.0f);
+
+    /**
+     * [1, 6, 0, 15, 11, 10] (in pixels).
+     */
+    static final BlockShape BOX_1_6_0_15_11_10 = BlockShape.of(0.0625f, 0.375f, 0.0f, 0.9375f,
+            0.6875f, 0.625f);
+
+    /**
+     * [6, 6, 1, 16, 11, 15] (in pixels).
+     */
+    static final BlockShape BOX_6_6_1_16_11_15 = BlockShape.of(0.375f, 0.375f, 0.0625f, 1.0f,
+            0.6875f, 0.9375f);
+
+    /**
+     * [2, 0, 2, 14, 10, 14] (in pixels).
+     */
+    static final BlockShape BOX_2_0_2_14_10_14 = BlockShape.of(0.125f, 0.0f, 0.125f, 0.875f, 0.625f,
+            0.875f);
+
+    /**
+     * [0, 2, 2, 14, 14, 14] (in pixels).
+     */
+    static final BlockShape BOX_0_2_2_14_14_14 = BlockShape.of(0.0f, 0.125f, 0.125f, 0.875f, 0.875f,
+            0.875f);
+
+    /**
+     * [2, 2, 2, 14, 16, 14] (in pixels).
+     */
+    static final BlockShape BOX_2_2_2_14_16_14 = BlockShape.of(0.125f, 0.125f, 0.125f, 0.875f, 1.0f,
+            0.875f);
+
+    /**
+     * [0, 2, 2, 14, 16, 14] (in pixels).
+     */
+    static final BlockShape BOX_0_2_2_14_16_14 = BlockShape.of(0.0f, 0.125f, 0.125f, 0.875f, 1.0f,
+            0.875f);
+
+    /**
+     * [2, 2, 2, 14, 14, 16] (in pixels).
+     */
+    static final BlockShape BOX_2_2_2_14_14_16 = BlockShape.of(0.125f, 0.125f, 0.125f, 0.875f,
+            0.875f, 1.0f);
+
+    /**
+     * [0, 2, 2, 14, 14, 16] (in pixels).
+     */
+    static final BlockShape BOX_0_2_2_14_14_16 = BlockShape.of(0.0f, 0.125f, 0.125f, 0.875f, 0.875f,
+            1.0f);
+
+    /**
+     * [2, 2, 2, 14, 16, 16] (in pixels).
+     */
+    static final BlockShape BOX_2_2_2_14_16_16 = BlockShape.of(0.125f, 0.125f, 0.125f, 0.875f, 1.0f,
+            1.0f);
+
+    /**
+     * [0, 2, 2, 14, 16, 16] (in pixels).
+     */
+    static final BlockShape BOX_0_2_2_14_16_16 = BlockShape.of(0.0f, 0.125f, 0.125f, 0.875f, 1.0f,
+            1.0f);
+
+    /**
+     * [2, 2, 0, 14, 14, 14] (in pixels).
+     */
+    static final BlockShape BOX_2_2_0_14_14_14 = BlockShape.of(0.125f, 0.125f, 0.0f, 0.875f, 0.875f,
+            0.875f);
+
+    /**
+     * [0, 2, 0, 14, 14, 14] (in pixels).
+     */
+    static final BlockShape BOX_0_2_0_14_14_14 = BlockShape.of(0.0f, 0.125f, 0.0f, 0.875f, 0.875f,
+            0.875f);
+
+    /**
+     * [2, 2, 0, 14, 16, 14] (in pixels).
+     */
+    static final BlockShape BOX_2_2_0_14_16_14 = BlockShape.of(0.125f, 0.125f, 0.0f, 0.875f, 1.0f,
+            0.875f);
+
+    /**
+     * [0, 2, 0, 14, 16, 14] (in pixels).
+     */
+    static final BlockShape BOX_0_2_0_14_16_14 = BlockShape.of(0.0f, 0.125f, 0.0f, 0.875f, 1.0f,
+            0.875f);
+
+    /**
+     * [0, 2, 0, 14, 14, 16] (in pixels).
+     */
+    static final BlockShape BOX_0_2_0_14_14_16 = BlockShape.of(0.0f, 0.125f, 0.0f, 0.875f, 0.875f,
+            1.0f);
+
+    /**
+     * [2, 2, 0, 14, 16, 16] (in pixels).
+     */
+    static final BlockShape BOX_2_2_0_14_16_16 = BlockShape.of(0.125f, 0.125f, 0.0f, 0.875f, 1.0f,
+            1.0f);
+
+    /**
+     * [0, 2, 0, 14, 16, 16] (in pixels).
+     */
+    static final BlockShape BOX_0_2_0_14_16_16 = BlockShape.of(0.0f, 0.125f, 0.0f, 0.875f, 1.0f,
+            1.0f);
+
+    /**
+     * [2, 2, 2, 16, 14, 14] (in pixels).
+     */
+    static final BlockShape BOX_2_2_2_16_14_14 = BlockShape.of(0.125f, 0.125f, 0.125f, 1.0f, 0.875f,
+            0.875f);
+
+    /**
+     * [2, 2, 2, 16, 16, 14] (in pixels).
+     */
+    static final BlockShape BOX_2_2_2_16_16_14 = BlockShape.of(0.125f, 0.125f, 0.125f, 1.0f, 1.0f,
+            0.875f);
+
+    /**
+     * [0, 2, 2, 16, 16, 14] (in pixels).
+     */
+    static final BlockShape BOX_0_2_2_16_16_14 = BlockShape.of(0.0f, 0.125f, 0.125f, 1.0f, 1.0f,
+            0.875f);
+
+    /**
+     * [2, 2, 2, 16, 14, 16] (in pixels).
+     */
+    static final BlockShape BOX_2_2_2_16_14_16 = BlockShape.of(0.125f, 0.125f, 0.125f, 1.0f, 0.875f,
+            1.0f);
+
+    /**
+     * [0, 2, 2, 16, 14, 16] (in pixels).
+     */
+    static final BlockShape BOX_0_2_2_16_14_16 = BlockShape.of(0.0f, 0.125f, 0.125f, 1.0f, 0.875f,
+            1.0f);
+
+    /**
+     * [2, 2, 2, 16, 16, 16] (in pixels).
+     */
+    static final BlockShape BOX_2_2_2_16_16_16 = BlockShape.of(0.125f, 0.125f, 0.125f, 1.0f, 1.0f,
+            1.0f);
+
+    /**
+     * [0, 2, 2, 16, 16, 16] (in pixels).
+     */
+    static final BlockShape BOX_0_2_2_16_16_16 = BlockShape.of(0.0f, 0.125f, 0.125f, 1.0f, 1.0f,
+            1.0f);
+
+    /**
+     * [2, 2, 0, 16, 14, 14] (in pixels).
+     */
+    static final BlockShape BOX_2_2_0_16_14_14 = BlockShape.of(0.125f, 0.125f, 0.0f, 1.0f, 0.875f,
+            0.875f);
+
+    /**
+     * [0, 2, 0, 16, 14, 14] (in pixels).
+     */
+    static final BlockShape BOX_0_2_0_16_14_14 = BlockShape.of(0.0f, 0.125f, 0.0f, 1.0f, 0.875f,
+            0.875f);
+
+    /**
+     * [2, 2, 0, 16, 16, 14] (in pixels).
+     */
+    static final BlockShape BOX_2_2_0_16_16_14 = BlockShape.of(0.125f, 0.125f, 0.0f, 1.0f, 1.0f,
+            0.875f);
+
+    /**
+     * [0, 2, 0, 16, 16, 14] (in pixels).
+     */
+    static final BlockShape BOX_0_2_0_16_16_14 = BlockShape.of(0.0f, 0.125f, 0.0f, 1.0f, 1.0f,
+            0.875f);
+
+    /**
+     * [2, 2, 0, 16, 14, 16] (in pixels).
+     */
+    static final BlockShape BOX_2_2_0_16_14_16 = BlockShape.of(0.125f, 0.125f, 0.0f, 1.0f, 0.875f,
+            1.0f);
+
+    /**
+     * [0, 2, 0, 16, 14, 16] (in pixels).
+     */
+    static final BlockShape BOX_0_2_0_16_14_16 = BlockShape.of(0.0f, 0.125f, 0.0f, 1.0f, 0.875f,
+            1.0f);
+
+    /**
+     * [2, 2, 0, 16, 16, 16] (in pixels).
+     */
+    static final BlockShape BOX_2_2_0_16_16_16 = BlockShape.of(0.125f, 0.125f, 0.0f, 1.0f, 1.0f,
+            1.0f);
+
+    /**
+     * [0, 0, 2, 14, 14, 14] (in pixels).
+     */
+    static final BlockShape BOX_0_0_2_14_14_14 = BlockShape.of(0.0f, 0.0f, 0.125f, 0.875f, 0.875f,
+            0.875f);
+
+    /**
+     * [0, 0, 2, 14, 16, 14] (in pixels).
+     */
+    static final BlockShape BOX_0_0_2_14_16_14 = BlockShape.of(0.0f, 0.0f, 0.125f, 0.875f, 1.0f,
+            0.875f);
+
+    /**
+     * [2, 0, 2, 14, 14, 16] (in pixels).
+     */
+    static final BlockShape BOX_2_0_2_14_14_16 = BlockShape.of(0.125f, 0.0f, 0.125f, 0.875f, 0.875f,
+            1.0f);
+
+    /**
+     * [0, 0, 2, 14, 14, 16] (in pixels).
+     */
+    static final BlockShape BOX_0_0_2_14_14_16 = BlockShape.of(0.0f, 0.0f, 0.125f, 0.875f, 0.875f,
+            1.0f);
+
+    /**
+     * [2, 0, 2, 14, 16, 16] (in pixels).
+     */
+    static final BlockShape BOX_2_0_2_14_16_16 = BlockShape.of(0.125f, 0.0f, 0.125f, 0.875f, 1.0f,
+            1.0f);
+
+    /**
+     * [0, 0, 2, 14, 16, 16] (in pixels).
+     */
+    static final BlockShape BOX_0_0_2_14_16_16 = BlockShape.of(0.0f, 0.0f, 0.125f, 0.875f, 1.0f,
+            1.0f);
+
+    /**
+     * [2, 0, 0, 14, 14, 14] (in pixels).
+     */
+    static final BlockShape BOX_2_0_0_14_14_14 = BlockShape.of(0.125f, 0.0f, 0.0f, 0.875f, 0.875f,
+            0.875f);
+
+    /**
+     * [0, 0, 0, 14, 14, 14] (in pixels).
+     */
+    static final BlockShape BOX_0_0_0_14_14_14 = BlockShape.of(0.0f, 0.0f, 0.0f, 0.875f, 0.875f,
+            0.875f);
+
+    /**
+     * [2, 0, 0, 14, 16, 14] (in pixels).
+     */
+    static final BlockShape BOX_2_0_0_14_16_14 = BlockShape.of(0.125f, 0.0f, 0.0f, 0.875f, 1.0f,
+            0.875f);
+
+    /**
+     * [0, 0, 0, 14, 16, 14] (in pixels).
+     */
+    static final BlockShape BOX_0_0_0_14_16_14 = BlockShape.of(0.0f, 0.0f, 0.0f, 0.875f, 1.0f,
+            0.875f);
+
+    /**
+     * [2, 0, 0, 14, 14, 16] (in pixels).
+     */
+    static final BlockShape BOX_2_0_0_14_14_16 = BlockShape.of(0.125f, 0.0f, 0.0f, 0.875f, 0.875f,
+            1.0f);
+
+    /**
+     * [0, 0, 0, 14, 14, 16] (in pixels).
+     */
+    static final BlockShape BOX_0_0_0_14_14_16 = BlockShape.of(0.0f, 0.0f, 0.0f, 0.875f, 0.875f,
+            1.0f);
+
+    /**
+     * [0, 0, 0, 14, 16, 16] (in pixels).
+     */
+    static final BlockShape BOX_0_0_0_14_16_16 = BlockShape.of(0.0f, 0.0f, 0.0f, 0.875f, 1.0f,
+            1.0f);
+
+    /**
+     * [2, 0, 2, 16, 14, 14] (in pixels).
+     */
+    static final BlockShape BOX_2_0_2_16_14_14 = BlockShape.of(0.125f, 0.0f, 0.125f, 1.0f, 0.875f,
+            0.875f);
+
+    /**
+     * [0, 0, 2, 16, 14, 14] (in pixels).
+     */
+    static final BlockShape BOX_0_0_2_16_14_14 = BlockShape.of(0.0f, 0.0f, 0.125f, 1.0f, 0.875f,
+            0.875f);
+
+    /**
+     * [2, 0, 2, 16, 16, 14] (in pixels).
+     */
+    static final BlockShape BOX_2_0_2_16_16_14 = BlockShape.of(0.125f, 0.0f, 0.125f, 1.0f, 1.0f,
+            0.875f);
+
+    /**
+     * [2, 0, 2, 16, 14, 16] (in pixels).
+     */
+    static final BlockShape BOX_2_0_2_16_14_16 = BlockShape.of(0.125f, 0.0f, 0.125f, 1.0f, 0.875f,
+            1.0f);
+
+    /**
+     * [0, 0, 2, 16, 14, 16] (in pixels).
+     */
+    static final BlockShape BOX_0_0_2_16_14_16 = BlockShape.of(0.0f, 0.0f, 0.125f, 1.0f, 0.875f,
+            1.0f);
+
+    /**
+     * [2, 0, 2, 16, 16, 16] (in pixels).
+     */
+    static final BlockShape BOX_2_0_2_16_16_16 = BlockShape.of(0.125f, 0.0f, 0.125f, 1.0f, 1.0f,
+            1.0f);
+
+    /**
+     * [0, 0, 2, 16, 16, 16] (in pixels).
+     */
+    static final BlockShape BOX_0_0_2_16_16_16 = BlockShape.of(0.0f, 0.0f, 0.125f, 1.0f, 1.0f,
+            1.0f);
+
+    /**
+     * [2, 0, 0, 16, 14, 14] (in pixels).
+     */
+    static final BlockShape BOX_2_0_0_16_14_14 = BlockShape.of(0.125f, 0.0f, 0.0f, 1.0f, 0.875f,
+            0.875f);
+
+    /**
+     * [0, 0, 0, 16, 14, 14] (in pixels).
+     */
+    static final BlockShape BOX_0_0_0_16_14_14 = BlockShape.of(0.0f, 0.0f, 0.0f, 1.0f, 0.875f,
+            0.875f);
+
+    /**
+     * [2, 0, 0, 16, 16, 14] (in pixels).
+     */
+    static final BlockShape BOX_2_0_0_16_16_14 = BlockShape.of(0.125f, 0.0f, 0.0f, 1.0f, 1.0f,
+            0.875f);
+
+    /**
+     * [0, 0, 0, 16, 16, 14] (in pixels).
+     */
+    static final BlockShape BOX_0_0_0_16_16_14 = BlockShape.of(0.0f, 0.0f, 0.0f, 1.0f, 1.0f,
+            0.875f);
+
+    /**
+     * [2, 0, 0, 16, 14, 16] (in pixels).
+     */
+    static final BlockShape BOX_2_0_0_16_14_16 = BlockShape.of(0.125f, 0.0f, 0.0f, 1.0f, 0.875f,
+            1.0f);
+
+    /**
+     * [2, 0, 0, 16, 16, 16] (in pixels).
+     */
+    static final BlockShape BOX_2_0_0_16_16_16 = BlockShape.of(0.125f, 0.0f, 0.0f, 1.0f, 1.0f,
+            1.0f);
+
+    /**
+     * [0, 0, 0, 16, 11, 16] (in pixels).
+     */
+    static final BlockShape BOX_0_0_0_16_11_16 = BlockShape.of(0.0f, 0.0f, 0.0f, 1.0f, 0.6875f,
+            1.0f);
+
+    /**
+     * [0, 5, 0, 16, 16, 16] (in pixels).
+     */
+    static final BlockShape BOX_0_5_0_16_16_16 = BlockShape.of(0.0f, 0.3125f, 0.0f, 1.0f, 1.0f,
+            1.0f);
 
     private BehaviourShapesPart2() {
     }

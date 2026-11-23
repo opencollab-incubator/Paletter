@@ -475,8 +475,8 @@ block.behaviour();    // the values of the block that is sent
 - The vanilla values are part of the library: generated Java code (`internal.behaviour.vanilla`), one class per bundled
   version with what changed, built once per JVM. They do not come from the `PaletteDataSource`: a custom data source
   serves its palettes with the bundled values of the same version (by name, else the newest older one by protocol), and
-  can no longer bring values of its own. Until 1.0, `PaletteDataSource#behaviour()` and the bundled `behaviour.nbt`
-  were that hook; both are gone.
+  cannot bring values of its own. A state of such a palette gets a bundled block's values when it has the same properties
+  and each value is one the bundled version has.
 
 The sources, their ranking, disputed values and the custom block defaults are listed in the generated
 [data/behaviour/REPORT.md](../data/behaviour/REPORT.md).

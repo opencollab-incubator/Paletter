@@ -39,8 +39,12 @@ public final class VanillaVersionBuilder {
     private Object @Nullable [] everyBlock;
     private Object @Nullable [] everyItem;
 
-    VanillaVersionBuilder(DataVersion version, @Nullable VanillaVersion previous) {
+    /** The schemas read back, by their text: shared by every block of the same states, in every version. */
+    private final Map<String, BlockSchema.Parsed> schemas;
+
+    VanillaVersionBuilder(DataVersion version, @Nullable VanillaVersion previous, Map<String, BlockSchema.Parsed> schemas) {
         this.version = version;
+        this.schemas = schemas;
         int blockKeys = BlockBehaviour.keys().size();
         int itemKeys = ItemBehaviour.keys().size();
         blocks = previous == null ? new HashMap<>() : new HashMap<>(previous.blocks);
@@ -67,7 +71,7 @@ public final class VanillaVersionBuilder {
         flush();
         Object[] values = blockDefaults.clone();
         own.add(values);
-        blocks.put(identifier, new VanillaVersion.BlockEntry(schema, values));
+        blocks.put(identifier, new VanillaVersion.BlockEntry(schema, schemas.computeIfAbsent(schema, BlockSchema::parse), values));
         blockSources.remove(identifier);
         return values;
     }
@@ -76,7 +80,7 @@ public final class VanillaVersionBuilder {
     public Object @NonNull [] change(@NonNull String identifier) {
         flush();
         VanillaVersion.BlockEntry entry = Objects.requireNonNull(blocks.get(identifier), identifier);
-        return ownBlock(identifier, entry).values();
+        return ownBlock(identifier, entry).values;
     }
 
     /** Removes a block: the version has no values for it. */
@@ -141,11 +145,11 @@ public final class VanillaVersionBuilder {
     // ---- Building ----
 
     private VanillaVersion.BlockEntry ownBlock(String identifier, VanillaVersion.BlockEntry entry) {
-        if (own.contains(entry.values())) {
+        if (own.contains(entry.values)) {
             return entry;
         }
-        VanillaVersion.BlockEntry copy = new VanillaVersion.BlockEntry(entry.schema(), entry.values().clone());
-        own.add(copy.values());
+        VanillaVersion.BlockEntry copy = entry.with(entry.values.clone());
+        own.add(copy.values);
         blocks.put(identifier, copy);
         return copy;
     }
@@ -166,14 +170,19 @@ public final class VanillaVersionBuilder {
         return values;
     }
 
-    /** Applies what {@link #everyBlock()} and {@link #everyItem()} were given, before anything else changes. */
+    /**
+     * Applies what {@link #everyBlock()} and {@link #everyItem()} were given, before anything else changes. A block or item
+     * that already has those values keeps its arrays, shared with the version before.
+     */
     private void flush() {
         if (everyBlock != null) {
             Object[] every = everyBlock;
             everyBlock = null;
             apply(every, blockDefaults);
             for (Map.Entry<String, VanillaVersion.BlockEntry> entry : Map.copyOf(blocks).entrySet()) {
-                apply(every, ownBlock(entry.getKey(), entry.getValue()).values());
+                if (!has(every, entry.getValue().values)) {
+                    apply(every, ownBlock(entry.getKey(), entry.getValue()).values);
+                }
             }
         }
         if (everyItem != null) {
@@ -181,9 +190,21 @@ public final class VanillaVersionBuilder {
             everyItem = null;
             apply(every, itemDefaults);
             for (Map.Entry<String, Object[]> entry : Map.copyOf(items).entrySet()) {
-                apply(every, ownArray(items, entry.getValue(), entry.getKey()));
+                if (!has(every, entry.getValue())) {
+                    apply(every, ownArray(items, entry.getValue(), entry.getKey()));
+                }
             }
         }
+    }
+
+    /** @return true if {@code values} already has every value {@code every} sets */
+    private static boolean has(Object[] every, Object[] values) {
+        for (int i = 0; i < every.length; i++) {
+            if (every[i] != UNSET && !Objects.equals(every[i], values[i])) {
+                return false;
+            }
+        }
+        return true;
     }
 
     private static void apply(Object[] every, Object[] values) {

@@ -18,6 +18,7 @@ The Gradle tasks are the commands with their usual arguments:
 | `generateAddon` | `addon --out build/spec-addon` |
 | `generateComponentApi`, `checkComponentApi` | `components generate`, `components check` |
 | `generateConstants`, `checkConstants` | `constants generate`, `constants check` |
+| `generateBehaviour`, `checkBehaviour` | `behaviour generate`, `behaviour check` |
 
 ## a. A new BDS release or preview appeared
 
@@ -97,6 +98,11 @@ add-ons. After a change to the model, fixtures, `bds-feedback.json` or the add-o
    `First in Bedrock <release>` and `@BedrockSince("<data version>")` are derived by the generators from the captures,
    never typed. Review the diff, then commit `constants-history.json` with the classes.
 5. Run `builds table` (or `builds check`); `checkBuilds` fails if `data/bds/builds.md` is stale.
+6. Behaviour values: `checkBehaviour` fails while a bundled release has no data in `data/behaviour/captures.nbt` (it
+   would silently get the values of the version before), and when a bundled palette of a version with data changed (the
+   daily `update` does not run the generator). Run `behaviour import` on the pinned checkouts (it writes the store, the
+   generated classes and `REPORT.md`), or `generateBehaviour` when only the palette changed; review the
+   "Version changes to check" section of the report.
 
 ## d. A new or changed component
 
@@ -144,7 +150,8 @@ See [releasing.md](releasing.md): snapshots publish from `main` through `publish
 | "The add-on's script did not register all its components" | The spec add-on's script failed in BDS; see the content log. |
 | "linked", "residual bits", "unclassified wire paths" | `check-mappings --strict`; see section d, step 4. |
 | Spec captures differ between builds | Different add-ons; recapture (section b). |
-| `checkConstants` / `checkComponentApi` / `checkBuilds` stale | Run the matching `generate` or `builds table`; commit. |
+| `checkConstants` / `checkComponentApi` / `checkBuilds` / `checkBehaviour` stale | Run the matching `generate` or `builds table`; commit. |
+| `generateBehaviour` does not start: the generated behaviour classes do not compile (a behaviour key was renamed or removed by `generateComponentApi`, or the runtime changed) | The tools run on the compiled library, and the library compiles without those classes (`VanillaBehaviour` loads them by name). Delete `paletter/src/generated/java/dev/opencollab/paletter/internal/behaviour/vanilla` and run `generateBehaviour` again; it writes the whole directory. |
 | Exit code 1 from Gradle on a run with decisions | Gradle maps every non-zero code to 1. Run the launcher instead, `./gradlew :tools:installDist` then `tools/build/install/tools/bin/tools update ...`: it exits with the tool's own code (2 = decisions open), as the workflows do. |
 
 ## h. Retiring a protocol
@@ -167,7 +174,9 @@ When Paletter stops bundling a data version, its protocol leaves the component m
    `generateConstants` and `generateBehaviour`, each in its own Gradle run; the build must be green. `retire` has marked the
    data version retired in `data/behaviour/captures.nbt` (its captures stay: newer versions inherit from them), so
    `generateBehaviour` writes the next version as `BehaviourBase` with everything it inherited folded in, and drops the
-   retired version's class. `data/behaviour/REPORT.md` still lists the version until the next `behaviour import`. A component no remaining window has leaves
+   retired version's class, and the "Version changes to check" section of `data/behaviour/REPORT.md`; the rest of the
+   report lists the version until the next `behaviour import`. That import keeps the retired version's captures once its
+   palette is deleted (read back from `captures.nbt`, they cannot be read from the sources without it). A component no remaining window has leaves
    `mappings.json` and its API keeps a stand-in (`api-history.json`).
 
 ## Pins

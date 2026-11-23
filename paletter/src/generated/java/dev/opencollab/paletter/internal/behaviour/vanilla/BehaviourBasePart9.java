@@ -2,12 +2,6 @@
 // and the bundled palettes. Do not edit; see docs/data-pipeline.md.
 package dev.opencollab.paletter.internal.behaviour.vanilla;
 
-import static dev.opencollab.paletter.internal.behaviour.vanilla.BehaviourCaptures.*;
-import static dev.opencollab.paletter.internal.behaviour.vanilla.BehaviourShapes.*;
-import static dev.opencollab.paletter.internal.behaviour.vanilla.BehaviourShapesPart2.*;
-import static dev.opencollab.paletter.internal.behaviour.vanilla.BehaviourTables.*;
-import static dev.opencollab.paletter.internal.behaviour.vanilla.BehaviourTablesPart2.*;
-
 /**
  * The behaviour values of 26.30, the oldest generated version: a default per key (everyBlock, everyItem), then each block and item with the keys whose values differ from it. (continued)
  */
@@ -16,6 +10,162 @@ final class BehaviourBasePart9 {
     }
 
     static void part64(Changes v) {
+        v.item("minecraft:pointed_dripstone");
+        v.item("minecraft:poisonous_potato");
+        v.item("minecraft:polar_bear_spawn_egg");
+        v.item("minecraft:polished_andesite");
+        v.item("minecraft:polished_andesite_double_slab").weightUnknown();
+        v.item("minecraft:polished_andesite_slab");
+        v.item("minecraft:polished_andesite_stairs");
+        v.item("minecraft:polished_basalt");
+        v.item("minecraft:polished_blackstone");
+        v.item("minecraft:polished_blackstone_brick_double_slab").weightUnknown();
+        v.item("minecraft:polished_blackstone_brick_slab");
+        v.item("minecraft:polished_blackstone_brick_stairs");
+        v.item("minecraft:polished_blackstone_brick_wall");
+        v.item("minecraft:polished_blackstone_bricks");
+        v.item("minecraft:polished_blackstone_button");
+        v.item("minecraft:polished_blackstone_double_slab").weightUnknown();
+        v.item("minecraft:polished_blackstone_pressure_plate");
+        v.item("minecraft:polished_blackstone_slab");
+        v.item("minecraft:polished_blackstone_stairs");
+        v.item("minecraft:polished_blackstone_wall");
+        v.item("minecraft:polished_cinnabar");
+        v.item("minecraft:polished_cinnabar_double_slab").weightUnknown();
+        v.item("minecraft:polished_cinnabar_slab");
+        v.item("minecraft:polished_cinnabar_stairs");
+        v.item("minecraft:polished_cinnabar_wall");
+        v.item("minecraft:polished_deepslate");
+        v.item("minecraft:polished_deepslate_double_slab").weightUnknown();
+        v.item("minecraft:polished_deepslate_slab");
+        v.item("minecraft:polished_deepslate_stairs");
+        v.item("minecraft:polished_deepslate_wall");
+        v.item("minecraft:polished_diorite");
+        v.item("minecraft:polished_diorite_double_slab").weightUnknown();
+        v.item("minecraft:polished_diorite_slab");
+        v.item("minecraft:polished_diorite_stairs");
+        v.item("minecraft:polished_granite");
+        v.item("minecraft:polished_granite_double_slab").weightUnknown();
+        v.item("minecraft:polished_granite_slab");
+        v.item("minecraft:polished_granite_stairs");
+        v.item("minecraft:polished_sulfur");
+        v.item("minecraft:polished_sulfur_double_slab").weightUnknown();
+        v.item("minecraft:polished_sulfur_slab");
+        v.item("minecraft:polished_sulfur_stairs");
+        v.item("minecraft:polished_sulfur_wall");
+        v.item("minecraft:polished_tuff");
+        v.item("minecraft:polished_tuff_double_slab").weightUnknown();
+        v.item("minecraft:polished_tuff_slab");
+        v.item("minecraft:polished_tuff_stairs");
+        v.item("minecraft:polished_tuff_wall");
+        v.item("minecraft:popped_chorus_fruit").furnaceXpMultiplier(0.1f);
+        v.item("minecraft:poppy").compostChance(65);
+        v.item("minecraft:porkchop");
+        v.item("minecraft:portal").weightUnknown();
+        v.item("minecraft:potato").compostChance(65);
+        v.item("minecraft:potatoes").weightUnknown();
+        v.item("minecraft:potent_sulfur");
+        v.item("minecraft:potion").maxStackSize(1).weight(64);
+        v.item("minecraft:powder_snow").weightUnknown();
+        v.item("minecraft:powder_snow_bucket").maxStackSize(1).weight(64);
+        v.item("minecraft:powered_comparator").weightUnknown();
+        v.item("minecraft:powered_repeater").weightUnknown();
+    }
+
+    static void part65(Changes v) {
+        v.item("minecraft:prismarine");
+        v.item("minecraft:prismarine_brick_double_slab").weightUnknown();
+        v.item("minecraft:prismarine_brick_slab");
+        v.item("minecraft:prismarine_bricks");
+        v.item("minecraft:prismarine_bricks_stairs");
+        v.item("minecraft:prismarine_crystals");
+        v.item("minecraft:prismarine_double_slab").weightUnknown();
+        v.item("minecraft:prismarine_shard");
+        v.item("minecraft:prismarine_slab");
+        v.item("minecraft:prismarine_stairs");
+        v.item("minecraft:prismarine_wall");
+        v.item("minecraft:prize_pottery_sherd");
+        v.item("minecraft:pufferfish");
+        v.item("minecraft:pufferfish_bucket").maxStackSize(1).weight(64);
+        v.item("minecraft:pufferfish_spawn_egg");
+        v.item("minecraft:pumpkin").compostChance(65);
+        v.item("minecraft:pumpkin_pie").compostChance(100);
+        v.item("minecraft:pumpkin_seeds").compostChance(30);
+        v.item("minecraft:pumpkin_stem").weightUnknown();
+        v.item("minecraft:purple_bundle").maxStackSize(1).weight(4);
+        v.item("minecraft:purple_candle");
+        v.item("minecraft:purple_candle_cake").weightUnknown();
+        v.item("minecraft:purple_carpet");
+        v.item("minecraft:purple_concrete");
+        v.item("minecraft:purple_concrete_powder");
+        v.item("minecraft:purple_dye").furnaceXpMultiplier(0.2f);
+        v.item("minecraft:purple_glazed_terracotta");
+        v.item("minecraft:purple_harness").maxStackSize(1).weight(64);
+        v.item("minecraft:purple_shulker_box").maxStackSize(1).weight(64);
+        v.item("minecraft:purple_stained_glass");
+        v.item("minecraft:purple_stained_glass_pane");
+        v.item("minecraft:purple_terracotta");
+        v.item("minecraft:purple_wool");
+        v.item("minecraft:purpur_block");
+        v.item("minecraft:purpur_double_slab").weightUnknown();
+        v.item("minecraft:purpur_pillar");
+        v.item("minecraft:purpur_slab");
+        v.item("minecraft:purpur_stairs");
+        v.item("minecraft:quartz").furnaceXpMultiplier(0.2f);
+        v.item("minecraft:quartz_block");
+        v.item("minecraft:quartz_bricks");
+        v.item("minecraft:quartz_double_slab").weightUnknown();
+        v.item("minecraft:quartz_ore");
+        v.item("minecraft:quartz_pillar");
+        v.item("minecraft:quartz_slab");
+        v.item("minecraft:quartz_stairs");
+        v.item("minecraft:rabbit");
+        v.item("minecraft:rabbit_foot");
+        v.item("minecraft:rabbit_hide");
+        v.item("minecraft:rabbit_spawn_egg");
+        v.item("minecraft:rabbit_stew").maxStackSize(1).weight(64);
+        v.item("minecraft:rail");
+        v.item("minecraft:raiser_armor_trim_smithing_template");
+        v.item("minecraft:rapid_fertilizer").weightUnknown();
+        v.item("minecraft:ravager_spawn_egg");
+        v.item("minecraft:raw_copper");
+        v.item("minecraft:raw_copper_block");
+        v.item("minecraft:raw_gold");
+        v.item("minecraft:raw_gold_block");
+        v.item("minecraft:raw_iron");
+    }
+
+    static void part66(Changes v) {
+        v.item("minecraft:raw_iron_block");
+        v.item("minecraft:recovery_compass");
+        v.item("minecraft:red_bundle").maxStackSize(1).weight(4);
+        v.item("minecraft:red_candle");
+        v.item("minecraft:red_candle_cake").weightUnknown();
+        v.item("minecraft:red_carpet");
+        v.item("minecraft:red_concrete");
+        v.item("minecraft:red_concrete_powder");
+        v.item("minecraft:red_dye").furnaceXpMultiplier(0.2f);
+        v.item("minecraft:red_flower").weightUnknown();
+        v.item("minecraft:red_glazed_terracotta");
+        v.item("minecraft:red_harness").maxStackSize(1).weight(64);
+        v.item("minecraft:red_mushroom").compostChance(65);
+        v.item("minecraft:red_mushroom_block").compostChance(85);
+        v.item("minecraft:red_nether_brick");
+        v.item("minecraft:red_nether_brick_double_slab").weightUnknown();
+        v.item("minecraft:red_nether_brick_slab");
+        v.item("minecraft:red_nether_brick_stairs");
+        v.item("minecraft:red_nether_brick_wall");
+        v.item("minecraft:red_sand");
+        v.item("minecraft:red_sandstone");
+        v.item("minecraft:red_sandstone_double_slab").weightUnknown();
+        v.item("minecraft:red_sandstone_slab");
+        v.item("minecraft:red_sandstone_stairs");
+        v.item("minecraft:red_sandstone_wall");
+        v.item("minecraft:red_shulker_box").maxStackSize(1).weight(64);
+        v.item("minecraft:red_stained_glass");
+        v.item("minecraft:red_stained_glass_pane");
+        v.item("minecraft:red_terracotta");
+        v.item("minecraft:red_tulip").compostChance(65);
         v.item("minecraft:red_wool");
         v.item("minecraft:redstone").furnaceXpMultiplier(0.7f);
         v.item("minecraft:redstone_block");
@@ -46,6 +196,9 @@ final class BehaviourBasePart9 {
         v.item("minecraft:sand");
         v.item("minecraft:sandstone");
         v.item("minecraft:sandstone_double_slab").weightUnknown();
+    }
+
+    static void part67(Changes v) {
         v.item("minecraft:sandstone_slab");
         v.item("minecraft:sandstone_stairs");
         v.item("minecraft:sandstone_wall");
@@ -81,9 +234,6 @@ final class BehaviourBasePart9 {
         v.item("minecraft:silence_armor_trim_smithing_template");
         v.item("minecraft:silver_glazed_terracotta");
         v.item("minecraft:silverfish_spawn_egg");
-    }
-
-    static void part65(Changes v) {
         v.item("minecraft:skeleton_horse_spawn_egg");
         v.item("minecraft:skeleton_skull");
         v.item("minecraft:skeleton_spawn_egg");
@@ -114,6 +264,9 @@ final class BehaviourBasePart9 {
         v.item("minecraft:smooth_stone_double_slab").weightUnknown();
         v.item("minecraft:smooth_stone_slab");
         v.item("minecraft:sniffer_egg");
+    }
+
+    static void part68(Changes v) {
         v.item("minecraft:sniffer_spawn_egg");
         v.item("minecraft:snort_pottery_sherd");
         v.item("minecraft:snout_armor_trim_smithing_template");
@@ -144,9 +297,6 @@ final class BehaviourBasePart9 {
         v.item("minecraft:spruce_fence_gate").furnaceBurnDuration(300);
         v.item("minecraft:spruce_hanging_sign").maxStackSize(16).furnaceBurnDuration(800).weight(4);
         v.item("minecraft:spruce_leaves").compostChance(30);
-    }
-
-    static void part66(Changes v) {
         v.item("minecraft:spruce_log").furnaceBurnDuration(300);
         v.item("minecraft:spruce_planks").furnaceBurnDuration(300);
         v.item("minecraft:spruce_pressure_plate").furnaceBurnDuration(300);
@@ -182,6 +332,9 @@ final class BehaviourBasePart9 {
         v.item("minecraft:stone_block_slab4").weightUnknown();
         v.item("minecraft:stone_brick_double_slab").weightUnknown();
         v.item("minecraft:stone_brick_slab");
+    }
+
+    static void part69(Changes v) {
         v.item("minecraft:stone_brick_stairs");
         v.item("minecraft:stone_brick_wall");
         v.item("minecraft:stone_bricks");
@@ -239,9 +392,6 @@ final class BehaviourBasePart9 {
         v.item("minecraft:stripped_dark_oak_wood").furnaceBurnDuration(300);
         v.item("minecraft:stripped_jungle_log").furnaceBurnDuration(300);
         v.item("minecraft:stripped_jungle_wood").furnaceBurnDuration(300);
-    }
-
-    static void part67(Changes v) {
         v.item("minecraft:stripped_mangrove_log").furnaceBurnDuration(300);
         v.item("minecraft:stripped_mangrove_wood").furnaceBurnDuration(300);
         v.item("minecraft:stripped_oak_log").furnaceBurnDuration(300);
@@ -272,6 +422,9 @@ final class BehaviourBasePart9 {
         v.item("minecraft:sunflower").compostChance(65);
         v.item("minecraft:suspicious_gravel");
         v.item("minecraft:suspicious_sand");
+    }
+
+    static void part70(Changes v) {
         v.item("minecraft:suspicious_stew").maxStackSize(1).weight(64);
         v.item("minecraft:sweet_berries").compostChance(30);
         v.item("minecraft:sweet_berry_bush").weightUnknown();
@@ -307,9 +460,6 @@ final class BehaviourBasePart9 {
         v.item("minecraft:tropical_fish_bucket").maxStackSize(1).weight(64);
         v.item("minecraft:tropical_fish_spawn_egg");
         v.item("minecraft:tube_coral");
-    }
-
-    static void part68(Changes v) {
         v.item("minecraft:tube_coral_block");
         v.item("minecraft:tube_coral_fan");
         v.item("minecraft:tube_coral_wall_fan").weightUnknown();
@@ -345,6 +495,9 @@ final class BehaviourBasePart9 {
         v.item("minecraft:vex_armor_trim_smithing_template");
         v.item("minecraft:vex_spawn_egg");
         v.item("minecraft:villager_spawn_egg");
+    }
+
+    static void part71(Changes v) {
         v.item("minecraft:vindicator_spawn_egg");
         v.item("minecraft:vine").compostChance(50);
         v.item("minecraft:wall_banner").furnaceBurnDuration(300).weightUnknown();
@@ -379,9 +532,6 @@ final class BehaviourBasePart9 {
         v.item("minecraft:warped_wall_sign").weightUnknown();
         v.item("minecraft:warped_wart_block").compostChance(85);
         v.item("minecraft:water").weightUnknown();
-    }
-
-    static void part69(Changes v) {
         v.item("minecraft:water_bucket").maxStackSize(1).weight(64);
         v.item("minecraft:waterlily").compostChance(65);
         v.item("minecraft:waxed_chiseled_copper");
@@ -412,171 +562,5 @@ final class BehaviourBasePart9 {
         v.item("minecraft:waxed_exposed_copper_trapdoor");
         v.item("minecraft:waxed_exposed_cut_copper");
         v.item("minecraft:waxed_exposed_cut_copper_slab");
-        v.item("minecraft:waxed_exposed_cut_copper_stairs");
-        v.item("minecraft:waxed_exposed_double_cut_copper_slab").weightUnknown();
-        v.item("minecraft:waxed_exposed_lightning_rod");
-        v.item("minecraft:waxed_lightning_rod");
-        v.item("minecraft:waxed_oxidized_chiseled_copper");
-        v.item("minecraft:waxed_oxidized_copper");
-        v.item("minecraft:waxed_oxidized_copper_bars");
-        v.item("minecraft:waxed_oxidized_copper_bulb");
-        v.item("minecraft:waxed_oxidized_copper_chain");
-        v.item("minecraft:waxed_oxidized_copper_chest");
-        v.item("minecraft:waxed_oxidized_copper_door");
-        v.item("minecraft:waxed_oxidized_copper_golem_statue");
-        v.item("minecraft:waxed_oxidized_copper_grate");
-        v.item("minecraft:waxed_oxidized_copper_lantern");
-        v.item("minecraft:waxed_oxidized_copper_trapdoor");
-        v.item("minecraft:waxed_oxidized_cut_copper");
-        v.item("minecraft:waxed_oxidized_cut_copper_slab");
-        v.item("minecraft:waxed_oxidized_cut_copper_stairs");
-        v.item("minecraft:waxed_oxidized_double_cut_copper_slab").weightUnknown();
-        v.item("minecraft:waxed_oxidized_lightning_rod");
-        v.item("minecraft:waxed_weathered_chiseled_copper");
-        v.item("minecraft:waxed_weathered_copper");
-        v.item("minecraft:waxed_weathered_copper_bars");
-        v.item("minecraft:waxed_weathered_copper_bulb");
-        v.item("minecraft:waxed_weathered_copper_chain");
-        v.item("minecraft:waxed_weathered_copper_chest");
-        v.item("minecraft:waxed_weathered_copper_door");
-        v.item("minecraft:waxed_weathered_copper_golem_statue");
-        v.item("minecraft:waxed_weathered_copper_grate");
-        v.item("minecraft:waxed_weathered_copper_lantern");
-    }
-
-    static void part70(Changes v) {
-        v.item("minecraft:waxed_weathered_copper_trapdoor");
-        v.item("minecraft:waxed_weathered_cut_copper");
-        v.item("minecraft:waxed_weathered_cut_copper_slab");
-        v.item("minecraft:waxed_weathered_cut_copper_stairs");
-        v.item("minecraft:waxed_weathered_double_cut_copper_slab").weightUnknown();
-        v.item("minecraft:waxed_weathered_lightning_rod");
-        v.item("minecraft:wayfinder_armor_trim_smithing_template");
-        v.item("minecraft:weathered_chiseled_copper");
-        v.item("minecraft:weathered_copper");
-        v.item("minecraft:weathered_copper_bars");
-        v.item("minecraft:weathered_copper_bulb");
-        v.item("minecraft:weathered_copper_chain");
-        v.item("minecraft:weathered_copper_chest");
-        v.item("minecraft:weathered_copper_door");
-        v.item("minecraft:weathered_copper_golem_statue");
-        v.item("minecraft:weathered_copper_grate");
-        v.item("minecraft:weathered_copper_lantern");
-        v.item("minecraft:weathered_copper_trapdoor");
-        v.item("minecraft:weathered_cut_copper");
-        v.item("minecraft:weathered_cut_copper_slab");
-        v.item("minecraft:weathered_cut_copper_stairs");
-        v.item("minecraft:weathered_double_cut_copper_slab").weightUnknown();
-        v.item("minecraft:weathered_lightning_rod");
-        v.item("minecraft:web");
-        v.item("minecraft:weeping_vines").compostChance(50);
-        v.item("minecraft:wet_sponge");
-        v.item("minecraft:wheat").compostChance(65);
-        v.item("minecraft:wheat_seeds").compostChance(30);
-        v.item("minecraft:white_bundle").maxStackSize(1).weight(4);
-        v.item("minecraft:white_candle");
-        v.item("minecraft:white_candle_cake").weightUnknown();
-        v.item("minecraft:white_carpet");
-        v.item("minecraft:white_concrete");
-        v.item("minecraft:white_concrete_powder");
-        v.item("minecraft:white_dye").furnaceXpMultiplier(0.2f);
-        v.item("minecraft:white_glazed_terracotta");
-        v.item("minecraft:white_harness").maxStackSize(1).weight(64);
-        v.item("minecraft:white_shulker_box").maxStackSize(1).weight(64);
-        v.item("minecraft:white_stained_glass");
-        v.item("minecraft:white_stained_glass_pane");
-        v.item("minecraft:white_terracotta");
-        v.item("minecraft:white_tulip").compostChance(65);
-        v.item("minecraft:white_wool");
-        v.item("minecraft:wild_armor_trim_smithing_template");
-        v.item("minecraft:wildflowers").compostChance(30);
-        v.item("minecraft:wind_charge").cooldownCategory("minecraft:wind_charge").cooldownTicks(10);
-        v.item("minecraft:witch_spawn_egg");
-        v.item("minecraft:wither_rose").compostChance(65);
-        v.item("minecraft:wither_skeleton_skull");
-        v.item("minecraft:wither_skeleton_spawn_egg");
-        v.item("minecraft:wither_spawn_egg");
-        v.item("minecraft:wolf_armor")
-                .maxStackSize(1)
-                .maxDamage(64)
-                .armorValue(11)
-                .weight(64);
-        v.item("minecraft:wolf_spawn_egg");
-        v.item("minecraft:wood").furnaceBurnDuration(300).weightUnknown();
-        v.item("minecraft:wooden_axe")
-                .maxStackSize(1)
-                .maxDamage(59)
-                .attackDamage(3)
-                .enchantValue(15)
-                .furnaceBurnDuration(200)
-                .weight(64);
-        v.item("minecraft:wooden_button").furnaceBurnDuration(100);
-        v.item("minecraft:wooden_door").furnaceBurnDuration(200);
-        v.item("minecraft:wooden_hoe")
-                .maxStackSize(1)
-                .maxDamage(59)
-                .attackDamage(2)
-                .enchantValue(15)
-                .furnaceBurnDuration(200)
-                .weight(64);
-        v.item("minecraft:wooden_pickaxe")
-                .maxStackSize(1)
-                .maxDamage(59)
-                .attackDamage(2)
-                .enchantValue(15)
-                .furnaceBurnDuration(200)
-                .weight(64);
-        v.item("minecraft:wooden_pressure_plate").furnaceBurnDuration(300);
-    }
-
-    static void part71(Changes v) {
-        v.item("minecraft:wooden_shovel")
-                .maxStackSize(1)
-                .maxDamage(59)
-                .attackDamage(1)
-                .enchantValue(15)
-                .furnaceBurnDuration(200)
-                .weight(64);
-        v.item("minecraft:wooden_slab").furnaceBurnDuration(300).weightUnknown();
-        v.item("minecraft:wooden_spear")
-                .maxStackSize(1)
-                .maxDamage(60)
-                .attackDamage(1)
-                .enchantValue(15)
-                .furnaceBurnDuration(200)
-                .weight(64)
-                .cooldownCategory("minecraft:spear")
-                .cooldownTicks(13);
-        v.item("minecraft:wooden_sword")
-                .maxStackSize(1)
-                .maxDamage(59)
-                .attackDamage(4)
-                .enchantValue(15)
-                .furnaceBurnDuration(200)
-                .weight(64);
-        v.item("minecraft:wool").weightUnknown();
-        v.item("minecraft:writable_book").maxStackSize(1).weight(64);
-        v.item("minecraft:written_book").maxStackSize(16).weightUnknown();
-        v.item("minecraft:yellow_bundle").maxStackSize(1).weight(4);
-        v.item("minecraft:yellow_candle");
-        v.item("minecraft:yellow_candle_cake").weightUnknown();
-        v.item("minecraft:yellow_carpet");
-        v.item("minecraft:yellow_concrete");
-        v.item("minecraft:yellow_concrete_powder");
-        v.item("minecraft:yellow_dye").furnaceXpMultiplier(0.2f);
-        v.item("minecraft:yellow_glazed_terracotta");
-        v.item("minecraft:yellow_harness").maxStackSize(1).weight(64);
-        v.item("minecraft:yellow_shulker_box").maxStackSize(1).weight(64);
-        v.item("minecraft:yellow_stained_glass");
-        v.item("minecraft:yellow_stained_glass_pane");
-        v.item("minecraft:yellow_terracotta");
-        v.item("minecraft:yellow_wool");
-        v.item("minecraft:zoglin_spawn_egg");
-        v.item("minecraft:zombie_head");
-        v.item("minecraft:zombie_horse_spawn_egg");
-        v.item("minecraft:zombie_nautilus_spawn_egg");
-        v.item("minecraft:zombie_pigman_spawn_egg");
-        v.item("minecraft:zombie_spawn_egg");
-        v.item("minecraft:zombie_villager_spawn_egg");
     }
 }

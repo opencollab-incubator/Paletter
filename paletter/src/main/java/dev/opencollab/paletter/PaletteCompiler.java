@@ -166,7 +166,7 @@ final class PaletteCompiler {
         layers.add(layer);
         Palette.Shapes shapes = shapes(parent, layer, layers, blocks, report);
         return new Palette(data, layers, blocks, itemPalette, layout, content, report, parent.ordering(), parent.gating(),
-            parent.behaviourStore(), shapes, parent);
+            parent.behaviourData(), shapes, parent);
     }
 
     /**

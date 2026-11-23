@@ -43,11 +43,15 @@ public final class BehaviourGenerator {
 
     /** @return the generated files of a store: its versions that are not retired, whose palettes are bundled */
     static BehaviourCode.Result generate(Path root, BehaviourStore store) throws IOException {
-        List<BehaviourImport.Bundled> bundled = BehaviourImport.bundled(root.resolve(RESOURCES)).stream()
-            .filter(palette -> store.generated().contains(palette.version().name())).toList();
-        if (bundled.size() != store.generated().size()) {
+        List<BehaviourImport.Bundled> all = BehaviourImport.bundled(root.resolve(RESOURCES));
+        List<BehaviourImport.Bundled> bundled = all.stream().filter(palette -> store.generated().contains(palette.version().name())).toList();
+        List<String> missing = all.stream().map(b -> b.version().name())
+            .filter(name -> !store.versions().contains(name)).toList();
+        if (bundled.size() != store.generated().size() || !missing.isEmpty()) {
+            // A bundled release the store does not know would silently get the values of the version before
             throw new IllegalStateException("The capture store has versions " + store.generated() + " (retired: " + store.retired()
-                + "), the bundled palettes " + bundled.stream().map(b -> b.version().name()).toList() + ": retire or bundle them");
+                + "), the bundled releases " + all.stream().map(b -> b.version().name()).toList()
+                + ": run behaviour import for a new release, retire one that is no longer bundled");
         }
         return BehaviourCode.generate(new BehaviourModel(store, bundled), CAPTURES);
     }
@@ -58,10 +62,15 @@ public final class BehaviourGenerator {
     }
 
     static int write(Path root, BehaviourCode.Result result, boolean check) throws IOException {
-        List<String> changes = GeneratedSources.sync(root, result.files(), List.of(BehaviourCode.DIRECTORY), BehaviourCode.GENERATOR, check);
+        List<String> changes = new java.util.ArrayList<>(GeneratedSources.sync(root, result.files(), List.of(BehaviourCode.DIRECTORY),
+            BehaviourCode.GENERATOR, check));
+        if (ChangesSection.sync(root, result.reportSection(), check)) {
+            changes.add(ChangesSection.REPORT + ": " + ChangesSection.HEADING.substring(3) + " outdated");
+        }
         int code = GeneratedSources.report(changes, check, ":tools:generateBehaviour");
         System.out.println(check ? result.files().size() - changes.size() + " of " + result.files().size() + " generated behaviour files are up to date"
-            : "Wrote " + changes.size() + " of " + result.files().size() + " files; " + result.sourceOnly().size() + " SOURCE ONLY changes");
+            : "Wrote " + changes.size() + " of " + result.files().size() + " files; " + result.flags().size() + " flagged changes, "
+            + result.recaptures().size() + " values that need a recapture");
         return code;
     }
 }

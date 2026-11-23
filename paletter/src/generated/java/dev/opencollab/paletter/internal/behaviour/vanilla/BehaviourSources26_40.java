@@ -3,10 +3,7 @@
 package dev.opencollab.paletter.internal.behaviour.vanilla;
 
 import static dev.opencollab.paletter.internal.behaviour.vanilla.BehaviourCaptures.*;
-import static dev.opencollab.paletter.internal.behaviour.vanilla.BehaviourShapes.*;
-import static dev.opencollab.paletter.internal.behaviour.vanilla.BehaviourShapesPart2.*;
 import static dev.opencollab.paletter.internal.behaviour.vanilla.BehaviourTables.*;
-import static dev.opencollab.paletter.internal.behaviour.vanilla.BehaviourTablesPart2.*;
 
 /**
  * The captures that decided the values of 26.40, as changes against 26.30: per key a default, and the blocks and items decided otherwise (a block whose states different captures decided has a cell of captures).
@@ -20,137 +17,303 @@ final class BehaviourSources26_40 {
                 .destroyTime(CLOUDBURST_DATA_26_40)
                 .explosionResistance(CLOUDBURST_DATA_26_40)
                 .friction(CLOUDBURST_DATA_26_40)
-                .solid(SCRIPT_API_26_40)
+                .solid(SCRIPT_API_26_40_SOLID)
                 .collisionShape(CLOUDBURST_DATA_26_40)
                 .outlineShape(CLOUDBURST_DATA_26_40)
                 .lightEmission(CLOUDBURST_DATA_26_40)
                 .lightDampening(CLOUDBURST_DATA_26_40)
-                .canContainLiquid(SCRIPT_API_26_40_2)
-                .liquidBlocking(SCRIPT_API_26_40_2)
-                .destroyedByLiquid(SCRIPT_API_26_40_2)
-                .liquidSpreadCausesSpawn(SCRIPT_API_26_40_2)
-                .liquidFlowDirections(SCRIPT_API_26_40)
+                .canContainLiquid(SCRIPT_API_26_40_CAN_CONTAIN_LIQUID)
+                .liquidBlocking(SCRIPT_API_26_40_CAN_CONTAIN_LIQUID)
+                .destroyedByLiquid(SCRIPT_API_26_40_CAN_CONTAIN_LIQUID)
+                .liquidSpreadCausesSpawn(SCRIPT_API_26_40_CAN_CONTAIN_LIQUID)
+                .liquidFlowDirections(SCRIPT_API_26_40_SOLID)
                 .requiresCorrectTool(CLOUDBURST_DATA_26_40)
-                .mapColor(SCRIPT_API_26_40_3)
+                .mapColor(SCRIPT_API_26_40_MAP_COLOR)
                 .tintMethod(CLOUDBURST_DATA_26_40)
                 .flameOdds(CLOUDBURST_DATA_26_40)
                 .burnOdds(CLOUDBURST_DATA_26_40)
                 .translucency(CLOUDBURST_DATA_26_40)
                 .thickness(CLOUDBURST_DATA_26_40)
-                .movementType(SCRIPT_API_26_40)
-                .stickyType(SCRIPT_API_26_40)
-                .accumulatesSnow(SCRIPT_API_26_40)
-                .snowLoggable(SCRIPT_API_26_40)
-                .obstructsRain(SCRIPT_API_26_40);
+                .movementType(SCRIPT_API_26_40_SOLID)
+                .stickyType(SCRIPT_API_26_40_SOLID)
+                .accumulatesSnow(SCRIPT_API_26_40_SOLID)
+                .snowLoggable(SCRIPT_API_26_40_SOLID)
+                .obstructsRain(SCRIPT_API_26_40_SOLID);
         v.blockSources("minecraft:acacia_fence_gate")
-                .solid("in_wall_bit", false, SCRIPT_API_26_40, true, CLOUDBURST_DATA_26_40)
-                .mapColor("in_wall_bit", false, SCRIPT_API_26_40_3, true, CLOUDBURST_DATA_26_40);
+                .solid("in_wall_bit", false, SCRIPT_API_26_40_SOLID, true, CLOUDBURST_DATA_26_40)
+                .mapColor("in_wall_bit", false, SCRIPT_API_26_40_MAP_COLOR,
+                        true, CLOUDBURST_DATA_26_40);
         v.blockSources("minecraft:acacia_leaves")
-                .tintMethod(SCRIPT_API_26_40_4);
+                .tintMethod(SCRIPT_API_26_40_TINT_METHOD);
         v.blockSources("minecraft:bamboo_fence_gate")
-                .solid("in_wall_bit", false, SCRIPT_API_26_40, true, CLOUDBURST_DATA_26_40)
-                .mapColor("in_wall_bit", false, SCRIPT_API_26_40_3, true, CLOUDBURST_DATA_26_40);
+                .solid("in_wall_bit", false, SCRIPT_API_26_40_SOLID, true, CLOUDBURST_DATA_26_40)
+                .mapColor("in_wall_bit", false, SCRIPT_API_26_40_MAP_COLOR,
+                        true, CLOUDBURST_DATA_26_40);
         v.blockSources("minecraft:birch_fence_gate")
-                .solid("in_wall_bit", false, SCRIPT_API_26_40, true, CLOUDBURST_DATA_26_40)
-                .mapColor("in_wall_bit", false, SCRIPT_API_26_40_3, true, CLOUDBURST_DATA_26_40);
+                .solid("in_wall_bit", false, SCRIPT_API_26_40_SOLID, true, CLOUDBURST_DATA_26_40)
+                .mapColor("in_wall_bit", false, SCRIPT_API_26_40_MAP_COLOR,
+                        true, CLOUDBURST_DATA_26_40);
         v.blockSources("minecraft:birch_leaves")
-                .tintMethod(SCRIPT_API_26_40_4);
+                .tintMethod(SCRIPT_API_26_40_TINT_METHOD);
         v.blockSources("minecraft:brain_coral")
-                .tintMethod(SCRIPT_API_26_40_4);
+                .tintMethod(SCRIPT_API_26_40_TINT_METHOD);
         v.blockSources("minecraft:brain_coral_fan")
-                .tintMethod(SCRIPT_API_26_40_4);
+                .tintMethod(SCRIPT_API_26_40_TINT_METHOD);
         v.blockSources("minecraft:brain_coral_wall_fan")
-                .tintMethod(SCRIPT_API_26_40_4);
+                .tintMethod(SCRIPT_API_26_40_TINT_METHOD);
         v.blockSources("minecraft:bubble_column")
                 .solid(CLOUDBURST_DATA_26_40)
                 .mapColor(CLOUDBURST_DATA_26_40);
         v.blockSources("minecraft:bubble_coral")
-                .tintMethod(SCRIPT_API_26_40_4);
+                .tintMethod(SCRIPT_API_26_40_TINT_METHOD);
         v.blockSources("minecraft:bubble_coral_fan")
-                .tintMethod(SCRIPT_API_26_40_4);
+                .tintMethod(SCRIPT_API_26_40_TINT_METHOD);
         v.blockSources("minecraft:bubble_coral_wall_fan")
-                .tintMethod(SCRIPT_API_26_40_4);
+                .tintMethod(SCRIPT_API_26_40_TINT_METHOD);
         v.blockSources("minecraft:cave_vines")
-                .solid("growing_plant_age", 0, CLOUDBURST_DATA_26_40, 1, SCRIPT_API_26_40, 2, SCRIPT_API_26_40, 3, SCRIPT_API_26_40, 4, SCRIPT_API_26_40, 5, SCRIPT_API_26_40, 6, SCRIPT_API_26_40, 7, SCRIPT_API_26_40, 8, SCRIPT_API_26_40, 9, SCRIPT_API_26_40, 10, SCRIPT_API_26_40, 11, SCRIPT_API_26_40, 12, SCRIPT_API_26_40, 13, SCRIPT_API_26_40, 14, SCRIPT_API_26_40, 15, SCRIPT_API_26_40, 16, SCRIPT_API_26_40, 17, SCRIPT_API_26_40, 18, SCRIPT_API_26_40, 19, SCRIPT_API_26_40, 20, SCRIPT_API_26_40, 21, SCRIPT_API_26_40, 22, SCRIPT_API_26_40, 23, SCRIPT_API_26_40, 24, SCRIPT_API_26_40, 25, SCRIPT_API_26_40)
-                .mapColor("growing_plant_age", 0, CLOUDBURST_DATA_26_40, 1, SCRIPT_API_26_40_3, 2, SCRIPT_API_26_40_3, 3, SCRIPT_API_26_40_3, 4, SCRIPT_API_26_40_3, 5, SCRIPT_API_26_40_3, 6, SCRIPT_API_26_40_3, 7, SCRIPT_API_26_40_3, 8, SCRIPT_API_26_40_3, 9, SCRIPT_API_26_40_3, 10, SCRIPT_API_26_40_3, 11, SCRIPT_API_26_40_3, 12, SCRIPT_API_26_40_3, 13, SCRIPT_API_26_40_3, 14, SCRIPT_API_26_40_3, 15, SCRIPT_API_26_40_3, 16, SCRIPT_API_26_40_3, 17, SCRIPT_API_26_40_3, 18, SCRIPT_API_26_40_3, 19, SCRIPT_API_26_40_3, 20, SCRIPT_API_26_40_3, 21, SCRIPT_API_26_40_3, 22, SCRIPT_API_26_40_3, 23, SCRIPT_API_26_40_3, 24, SCRIPT_API_26_40_3, 25, SCRIPT_API_26_40_3);
-        v.blockSources("minecraft:cave_vines_body_with_berries")
-                .solid("growing_plant_age", 0, CLOUDBURST_DATA_26_40, 1, SCRIPT_API_26_40, 2, SCRIPT_API_26_40, 3, SCRIPT_API_26_40, 4, SCRIPT_API_26_40, 5, SCRIPT_API_26_40, 6, SCRIPT_API_26_40, 7, SCRIPT_API_26_40, 8, SCRIPT_API_26_40, 9, SCRIPT_API_26_40, 10, SCRIPT_API_26_40, 11, SCRIPT_API_26_40, 12, SCRIPT_API_26_40, 13, SCRIPT_API_26_40, 14, SCRIPT_API_26_40, 15, SCRIPT_API_26_40, 16, SCRIPT_API_26_40, 17, SCRIPT_API_26_40, 18, SCRIPT_API_26_40, 19, SCRIPT_API_26_40, 20, SCRIPT_API_26_40, 21, SCRIPT_API_26_40, 22, SCRIPT_API_26_40, 23, SCRIPT_API_26_40, 24, SCRIPT_API_26_40, 25, SCRIPT_API_26_40)
-                .mapColor("growing_plant_age", 0, CLOUDBURST_DATA_26_40, 1, SCRIPT_API_26_40_3, 2, SCRIPT_API_26_40_3, 3, SCRIPT_API_26_40_3, 4, SCRIPT_API_26_40_3, 5, SCRIPT_API_26_40_3, 6, SCRIPT_API_26_40_3, 7, SCRIPT_API_26_40_3, 8, SCRIPT_API_26_40_3, 9, SCRIPT_API_26_40_3, 10, SCRIPT_API_26_40_3, 11, SCRIPT_API_26_40_3, 12, SCRIPT_API_26_40_3, 13, SCRIPT_API_26_40_3, 14, SCRIPT_API_26_40_3, 15, SCRIPT_API_26_40_3, 16, SCRIPT_API_26_40_3, 17, SCRIPT_API_26_40_3, 18, SCRIPT_API_26_40_3, 19, SCRIPT_API_26_40_3, 20, SCRIPT_API_26_40_3, 21, SCRIPT_API_26_40_3, 22, SCRIPT_API_26_40_3, 23, SCRIPT_API_26_40_3, 24, SCRIPT_API_26_40_3, 25, SCRIPT_API_26_40_3);
+                .solid("growing_plant_age", 0, CLOUDBURST_DATA_26_40, 1, SCRIPT_API_26_40_SOLID,
+                        2, SCRIPT_API_26_40_SOLID, 3, SCRIPT_API_26_40_SOLID,
+                        4, SCRIPT_API_26_40_SOLID, 5, SCRIPT_API_26_40_SOLID,
+                        6, SCRIPT_API_26_40_SOLID, 7, SCRIPT_API_26_40_SOLID,
+                        8, SCRIPT_API_26_40_SOLID, 9, SCRIPT_API_26_40_SOLID,
+                        10, SCRIPT_API_26_40_SOLID, 11, SCRIPT_API_26_40_SOLID,
+                        12, SCRIPT_API_26_40_SOLID, 13, SCRIPT_API_26_40_SOLID,
+                        14, SCRIPT_API_26_40_SOLID, 15, SCRIPT_API_26_40_SOLID,
+                        16, SCRIPT_API_26_40_SOLID, 17, SCRIPT_API_26_40_SOLID,
+                        18, SCRIPT_API_26_40_SOLID, 19, SCRIPT_API_26_40_SOLID,
+                        20, SCRIPT_API_26_40_SOLID, 21, SCRIPT_API_26_40_SOLID,
+                        22, SCRIPT_API_26_40_SOLID, 23, SCRIPT_API_26_40_SOLID,
+                        24, SCRIPT_API_26_40_SOLID, 25, SCRIPT_API_26_40_SOLID)
+                .mapColor("growing_plant_age", 0, CLOUDBURST_DATA_26_40,
+                        1, SCRIPT_API_26_40_MAP_COLOR, 2, SCRIPT_API_26_40_MAP_COLOR,
+                        3, SCRIPT_API_26_40_MAP_COLOR, 4, SCRIPT_API_26_40_MAP_COLOR,
+                        5, SCRIPT_API_26_40_MAP_COLOR, 6, SCRIPT_API_26_40_MAP_COLOR,
+                        7, SCRIPT_API_26_40_MAP_COLOR, 8, SCRIPT_API_26_40_MAP_COLOR,
+                        9, SCRIPT_API_26_40_MAP_COLOR, 10, SCRIPT_API_26_40_MAP_COLOR,
+                        11, SCRIPT_API_26_40_MAP_COLOR, 12, SCRIPT_API_26_40_MAP_COLOR,
+                        13, SCRIPT_API_26_40_MAP_COLOR, 14, SCRIPT_API_26_40_MAP_COLOR,
+                        15, SCRIPT_API_26_40_MAP_COLOR, 16, SCRIPT_API_26_40_MAP_COLOR,
+                        17, SCRIPT_API_26_40_MAP_COLOR, 18, SCRIPT_API_26_40_MAP_COLOR,
+                        19, SCRIPT_API_26_40_MAP_COLOR, 20, SCRIPT_API_26_40_MAP_COLOR,
+                        21, SCRIPT_API_26_40_MAP_COLOR, 22, SCRIPT_API_26_40_MAP_COLOR,
+                        23, SCRIPT_API_26_40_MAP_COLOR, 24, SCRIPT_API_26_40_MAP_COLOR,
+                        25, SCRIPT_API_26_40_MAP_COLOR);
     }
 
     static void part1(Changes v) {
+        v.blockSources("minecraft:cave_vines_body_with_berries")
+                .solid("growing_plant_age", 0, CLOUDBURST_DATA_26_40, 1, SCRIPT_API_26_40_SOLID,
+                        2, SCRIPT_API_26_40_SOLID, 3, SCRIPT_API_26_40_SOLID,
+                        4, SCRIPT_API_26_40_SOLID, 5, SCRIPT_API_26_40_SOLID,
+                        6, SCRIPT_API_26_40_SOLID, 7, SCRIPT_API_26_40_SOLID,
+                        8, SCRIPT_API_26_40_SOLID, 9, SCRIPT_API_26_40_SOLID,
+                        10, SCRIPT_API_26_40_SOLID, 11, SCRIPT_API_26_40_SOLID,
+                        12, SCRIPT_API_26_40_SOLID, 13, SCRIPT_API_26_40_SOLID,
+                        14, SCRIPT_API_26_40_SOLID, 15, SCRIPT_API_26_40_SOLID,
+                        16, SCRIPT_API_26_40_SOLID, 17, SCRIPT_API_26_40_SOLID,
+                        18, SCRIPT_API_26_40_SOLID, 19, SCRIPT_API_26_40_SOLID,
+                        20, SCRIPT_API_26_40_SOLID, 21, SCRIPT_API_26_40_SOLID,
+                        22, SCRIPT_API_26_40_SOLID, 23, SCRIPT_API_26_40_SOLID,
+                        24, SCRIPT_API_26_40_SOLID, 25, SCRIPT_API_26_40_SOLID)
+                .mapColor("growing_plant_age", 0, CLOUDBURST_DATA_26_40,
+                        1, SCRIPT_API_26_40_MAP_COLOR, 2, SCRIPT_API_26_40_MAP_COLOR,
+                        3, SCRIPT_API_26_40_MAP_COLOR, 4, SCRIPT_API_26_40_MAP_COLOR,
+                        5, SCRIPT_API_26_40_MAP_COLOR, 6, SCRIPT_API_26_40_MAP_COLOR,
+                        7, SCRIPT_API_26_40_MAP_COLOR, 8, SCRIPT_API_26_40_MAP_COLOR,
+                        9, SCRIPT_API_26_40_MAP_COLOR, 10, SCRIPT_API_26_40_MAP_COLOR,
+                        11, SCRIPT_API_26_40_MAP_COLOR, 12, SCRIPT_API_26_40_MAP_COLOR,
+                        13, SCRIPT_API_26_40_MAP_COLOR, 14, SCRIPT_API_26_40_MAP_COLOR,
+                        15, SCRIPT_API_26_40_MAP_COLOR, 16, SCRIPT_API_26_40_MAP_COLOR,
+                        17, SCRIPT_API_26_40_MAP_COLOR, 18, SCRIPT_API_26_40_MAP_COLOR,
+                        19, SCRIPT_API_26_40_MAP_COLOR, 20, SCRIPT_API_26_40_MAP_COLOR,
+                        21, SCRIPT_API_26_40_MAP_COLOR, 22, SCRIPT_API_26_40_MAP_COLOR,
+                        23, SCRIPT_API_26_40_MAP_COLOR, 24, SCRIPT_API_26_40_MAP_COLOR,
+                        25, SCRIPT_API_26_40_MAP_COLOR);
         v.blockSources("minecraft:cave_vines_head_with_berries")
-                .solid("growing_plant_age", 0, CLOUDBURST_DATA_26_40, 1, SCRIPT_API_26_40, 2, SCRIPT_API_26_40, 3, SCRIPT_API_26_40, 4, SCRIPT_API_26_40, 5, SCRIPT_API_26_40, 6, SCRIPT_API_26_40, 7, SCRIPT_API_26_40, 8, SCRIPT_API_26_40, 9, SCRIPT_API_26_40, 10, SCRIPT_API_26_40, 11, SCRIPT_API_26_40, 12, SCRIPT_API_26_40, 13, SCRIPT_API_26_40, 14, SCRIPT_API_26_40, 15, SCRIPT_API_26_40, 16, SCRIPT_API_26_40, 17, SCRIPT_API_26_40, 18, SCRIPT_API_26_40, 19, SCRIPT_API_26_40, 20, SCRIPT_API_26_40, 21, SCRIPT_API_26_40, 22, SCRIPT_API_26_40, 23, SCRIPT_API_26_40, 24, SCRIPT_API_26_40, 25, SCRIPT_API_26_40)
-                .mapColor("growing_plant_age", 0, CLOUDBURST_DATA_26_40, 1, SCRIPT_API_26_40_3, 2, SCRIPT_API_26_40_3, 3, SCRIPT_API_26_40_3, 4, SCRIPT_API_26_40_3, 5, SCRIPT_API_26_40_3, 6, SCRIPT_API_26_40_3, 7, SCRIPT_API_26_40_3, 8, SCRIPT_API_26_40_3, 9, SCRIPT_API_26_40_3, 10, SCRIPT_API_26_40_3, 11, SCRIPT_API_26_40_3, 12, SCRIPT_API_26_40_3, 13, SCRIPT_API_26_40_3, 14, SCRIPT_API_26_40_3, 15, SCRIPT_API_26_40_3, 16, SCRIPT_API_26_40_3, 17, SCRIPT_API_26_40_3, 18, SCRIPT_API_26_40_3, 19, SCRIPT_API_26_40_3, 20, SCRIPT_API_26_40_3, 21, SCRIPT_API_26_40_3, 22, SCRIPT_API_26_40_3, 23, SCRIPT_API_26_40_3, 24, SCRIPT_API_26_40_3, 25, SCRIPT_API_26_40_3);
-        v.blockSources("minecraft:chalkboard")
-                .solid("direction", 0, SCRIPT_API_26_40, 1, SCRIPT_API_26_40, 2, SCRIPT_API_26_40, 3, SCRIPT_API_26_40, 4, CLOUDBURST_DATA_26_40, 5, CLOUDBURST_DATA_26_40, 6, CLOUDBURST_DATA_26_40, 7, CLOUDBURST_DATA_26_40, 8, CLOUDBURST_DATA_26_40, 9, CLOUDBURST_DATA_26_40, 10, CLOUDBURST_DATA_26_40, 11, CLOUDBURST_DATA_26_40, 12, CLOUDBURST_DATA_26_40, 13, CLOUDBURST_DATA_26_40, 14, CLOUDBURST_DATA_26_40, 15, CLOUDBURST_DATA_26_40)
-                .canContainLiquid("direction", 0, SCRIPT_API_26_40_2, 1, SCRIPT_API_26_40_2, 2, SCRIPT_API_26_40_2, 3, SCRIPT_API_26_40_2, 4, CLOUDBURST_DATA_26_40, 5, CLOUDBURST_DATA_26_40, 6, CLOUDBURST_DATA_26_40, 7, CLOUDBURST_DATA_26_40, 8, CLOUDBURST_DATA_26_40, 9, CLOUDBURST_DATA_26_40, 10, CLOUDBURST_DATA_26_40, 11, CLOUDBURST_DATA_26_40, 12, CLOUDBURST_DATA_26_40, 13, CLOUDBURST_DATA_26_40, 14, CLOUDBURST_DATA_26_40, 15, CLOUDBURST_DATA_26_40)
-                .liquidBlocking("direction", 0, SCRIPT_API_26_40_2, 1, SCRIPT_API_26_40_2, 2, SCRIPT_API_26_40_2, 3, SCRIPT_API_26_40_2, 4, CLOUDBURST_DATA_26_40, 5, CLOUDBURST_DATA_26_40, 6, CLOUDBURST_DATA_26_40, 7, CLOUDBURST_DATA_26_40, 8, CLOUDBURST_DATA_26_40, 9, CLOUDBURST_DATA_26_40, 10, CLOUDBURST_DATA_26_40, 11, CLOUDBURST_DATA_26_40, 12, CLOUDBURST_DATA_26_40, 13, CLOUDBURST_DATA_26_40, 14, CLOUDBURST_DATA_26_40, 15, CLOUDBURST_DATA_26_40)
-                .destroyedByLiquid("direction", 0, SCRIPT_API_26_40_2, 1, SCRIPT_API_26_40_2, 2, SCRIPT_API_26_40_2, 3, SCRIPT_API_26_40_2, 4, CLOUDBURST_DATA_26_40, 5, CLOUDBURST_DATA_26_40, 6, CLOUDBURST_DATA_26_40, 7, CLOUDBURST_DATA_26_40, 8, CLOUDBURST_DATA_26_40, 9, CLOUDBURST_DATA_26_40, 10, CLOUDBURST_DATA_26_40, 11, CLOUDBURST_DATA_26_40, 12, CLOUDBURST_DATA_26_40, 13, CLOUDBURST_DATA_26_40, 14, CLOUDBURST_DATA_26_40, 15, CLOUDBURST_DATA_26_40)
-                .liquidSpreadCausesSpawn("direction", 0, SCRIPT_API_26_40_2, 1, SCRIPT_API_26_40_2, 2, SCRIPT_API_26_40_2, 3, SCRIPT_API_26_40_2, 4, CLOUDBURST_DATA_26_40, 5, CLOUDBURST_DATA_26_40, 6, CLOUDBURST_DATA_26_40, 7, CLOUDBURST_DATA_26_40, 8, CLOUDBURST_DATA_26_40, 9, CLOUDBURST_DATA_26_40, 10, CLOUDBURST_DATA_26_40, 11, CLOUDBURST_DATA_26_40, 12, CLOUDBURST_DATA_26_40, 13, CLOUDBURST_DATA_26_40, 14, CLOUDBURST_DATA_26_40, 15, CLOUDBURST_DATA_26_40)
-                .mapColor("direction", 0, SCRIPT_API_26_40_3, 1, SCRIPT_API_26_40_3, 2, SCRIPT_API_26_40_3, 3, SCRIPT_API_26_40_3, 4, CLOUDBURST_DATA_26_40, 5, CLOUDBURST_DATA_26_40, 6, CLOUDBURST_DATA_26_40, 7, CLOUDBURST_DATA_26_40, 8, CLOUDBURST_DATA_26_40, 9, CLOUDBURST_DATA_26_40, 10, CLOUDBURST_DATA_26_40, 11, CLOUDBURST_DATA_26_40, 12, CLOUDBURST_DATA_26_40, 13, CLOUDBURST_DATA_26_40, 14, CLOUDBURST_DATA_26_40, 15, CLOUDBURST_DATA_26_40);
-        v.blockSources("minecraft:cherry_fence_gate")
-                .solid("in_wall_bit", false, SCRIPT_API_26_40, true, CLOUDBURST_DATA_26_40)
-                .mapColor("in_wall_bit", false, SCRIPT_API_26_40_3, true, CLOUDBURST_DATA_26_40);
-        v.blockSources("minecraft:colored_torch_blue")
-                .solid("torch_facing_direction", "east", SCRIPT_API_26_40, "north", SCRIPT_API_26_40, "south", SCRIPT_API_26_40, "top", SCRIPT_API_26_40, "unknown", CLOUDBURST_DATA_26_40, "west", SCRIPT_API_26_40)
-                .mapColor("torch_facing_direction", "east", SCRIPT_API_26_40_3, "north", SCRIPT_API_26_40_3, "south", SCRIPT_API_26_40_3, "top", SCRIPT_API_26_40_3, "unknown", CLOUDBURST_DATA_26_40, "west", SCRIPT_API_26_40_3);
+                .solid("growing_plant_age", 0, CLOUDBURST_DATA_26_40, 1, SCRIPT_API_26_40_SOLID,
+                        2, SCRIPT_API_26_40_SOLID, 3, SCRIPT_API_26_40_SOLID,
+                        4, SCRIPT_API_26_40_SOLID, 5, SCRIPT_API_26_40_SOLID,
+                        6, SCRIPT_API_26_40_SOLID, 7, SCRIPT_API_26_40_SOLID,
+                        8, SCRIPT_API_26_40_SOLID, 9, SCRIPT_API_26_40_SOLID,
+                        10, SCRIPT_API_26_40_SOLID, 11, SCRIPT_API_26_40_SOLID,
+                        12, SCRIPT_API_26_40_SOLID, 13, SCRIPT_API_26_40_SOLID,
+                        14, SCRIPT_API_26_40_SOLID, 15, SCRIPT_API_26_40_SOLID,
+                        16, SCRIPT_API_26_40_SOLID, 17, SCRIPT_API_26_40_SOLID,
+                        18, SCRIPT_API_26_40_SOLID, 19, SCRIPT_API_26_40_SOLID,
+                        20, SCRIPT_API_26_40_SOLID, 21, SCRIPT_API_26_40_SOLID,
+                        22, SCRIPT_API_26_40_SOLID, 23, SCRIPT_API_26_40_SOLID,
+                        24, SCRIPT_API_26_40_SOLID, 25, SCRIPT_API_26_40_SOLID)
+                .mapColor("growing_plant_age", 0, CLOUDBURST_DATA_26_40,
+                        1, SCRIPT_API_26_40_MAP_COLOR, 2, SCRIPT_API_26_40_MAP_COLOR,
+                        3, SCRIPT_API_26_40_MAP_COLOR, 4, SCRIPT_API_26_40_MAP_COLOR,
+                        5, SCRIPT_API_26_40_MAP_COLOR, 6, SCRIPT_API_26_40_MAP_COLOR,
+                        7, SCRIPT_API_26_40_MAP_COLOR, 8, SCRIPT_API_26_40_MAP_COLOR,
+                        9, SCRIPT_API_26_40_MAP_COLOR, 10, SCRIPT_API_26_40_MAP_COLOR,
+                        11, SCRIPT_API_26_40_MAP_COLOR, 12, SCRIPT_API_26_40_MAP_COLOR,
+                        13, SCRIPT_API_26_40_MAP_COLOR, 14, SCRIPT_API_26_40_MAP_COLOR,
+                        15, SCRIPT_API_26_40_MAP_COLOR, 16, SCRIPT_API_26_40_MAP_COLOR,
+                        17, SCRIPT_API_26_40_MAP_COLOR, 18, SCRIPT_API_26_40_MAP_COLOR,
+                        19, SCRIPT_API_26_40_MAP_COLOR, 20, SCRIPT_API_26_40_MAP_COLOR,
+                        21, SCRIPT_API_26_40_MAP_COLOR, 22, SCRIPT_API_26_40_MAP_COLOR,
+                        23, SCRIPT_API_26_40_MAP_COLOR, 24, SCRIPT_API_26_40_MAP_COLOR,
+                        25, SCRIPT_API_26_40_MAP_COLOR);
     }
 
     static void part2(Changes v) {
+        v.blockSources("minecraft:chalkboard")
+                .solid("direction", 0, SCRIPT_API_26_40_SOLID, 1, SCRIPT_API_26_40_SOLID,
+                        2, SCRIPT_API_26_40_SOLID, 3, SCRIPT_API_26_40_SOLID,
+                        4, CLOUDBURST_DATA_26_40, 5, CLOUDBURST_DATA_26_40,
+                        6, CLOUDBURST_DATA_26_40, 7, CLOUDBURST_DATA_26_40,
+                        8, CLOUDBURST_DATA_26_40, 9, CLOUDBURST_DATA_26_40,
+                        10, CLOUDBURST_DATA_26_40, 11, CLOUDBURST_DATA_26_40,
+                        12, CLOUDBURST_DATA_26_40, 13, CLOUDBURST_DATA_26_40,
+                        14, CLOUDBURST_DATA_26_40, 15, CLOUDBURST_DATA_26_40)
+                .canContainLiquid("direction", 0, SCRIPT_API_26_40_CAN_CONTAIN_LIQUID,
+                        1, SCRIPT_API_26_40_CAN_CONTAIN_LIQUID,
+                        2, SCRIPT_API_26_40_CAN_CONTAIN_LIQUID,
+                        3, SCRIPT_API_26_40_CAN_CONTAIN_LIQUID, 4, CLOUDBURST_DATA_26_40,
+                        5, CLOUDBURST_DATA_26_40, 6, CLOUDBURST_DATA_26_40,
+                        7, CLOUDBURST_DATA_26_40, 8, CLOUDBURST_DATA_26_40,
+                        9, CLOUDBURST_DATA_26_40, 10, CLOUDBURST_DATA_26_40,
+                        11, CLOUDBURST_DATA_26_40, 12, CLOUDBURST_DATA_26_40,
+                        13, CLOUDBURST_DATA_26_40, 14, CLOUDBURST_DATA_26_40,
+                        15, CLOUDBURST_DATA_26_40)
+                .liquidBlocking("direction", 0, SCRIPT_API_26_40_CAN_CONTAIN_LIQUID,
+                        1, SCRIPT_API_26_40_CAN_CONTAIN_LIQUID,
+                        2, SCRIPT_API_26_40_CAN_CONTAIN_LIQUID,
+                        3, SCRIPT_API_26_40_CAN_CONTAIN_LIQUID, 4, CLOUDBURST_DATA_26_40,
+                        5, CLOUDBURST_DATA_26_40, 6, CLOUDBURST_DATA_26_40,
+                        7, CLOUDBURST_DATA_26_40, 8, CLOUDBURST_DATA_26_40,
+                        9, CLOUDBURST_DATA_26_40, 10, CLOUDBURST_DATA_26_40,
+                        11, CLOUDBURST_DATA_26_40, 12, CLOUDBURST_DATA_26_40,
+                        13, CLOUDBURST_DATA_26_40, 14, CLOUDBURST_DATA_26_40,
+                        15, CLOUDBURST_DATA_26_40)
+                .destroyedByLiquid("direction", 0, SCRIPT_API_26_40_CAN_CONTAIN_LIQUID,
+                        1, SCRIPT_API_26_40_CAN_CONTAIN_LIQUID,
+                        2, SCRIPT_API_26_40_CAN_CONTAIN_LIQUID,
+                        3, SCRIPT_API_26_40_CAN_CONTAIN_LIQUID, 4, CLOUDBURST_DATA_26_40,
+                        5, CLOUDBURST_DATA_26_40, 6, CLOUDBURST_DATA_26_40,
+                        7, CLOUDBURST_DATA_26_40, 8, CLOUDBURST_DATA_26_40,
+                        9, CLOUDBURST_DATA_26_40, 10, CLOUDBURST_DATA_26_40,
+                        11, CLOUDBURST_DATA_26_40, 12, CLOUDBURST_DATA_26_40,
+                        13, CLOUDBURST_DATA_26_40, 14, CLOUDBURST_DATA_26_40,
+                        15, CLOUDBURST_DATA_26_40)
+                .liquidSpreadCausesSpawn("direction", 0, SCRIPT_API_26_40_CAN_CONTAIN_LIQUID,
+                        1, SCRIPT_API_26_40_CAN_CONTAIN_LIQUID,
+                        2, SCRIPT_API_26_40_CAN_CONTAIN_LIQUID,
+                        3, SCRIPT_API_26_40_CAN_CONTAIN_LIQUID, 4, CLOUDBURST_DATA_26_40,
+                        5, CLOUDBURST_DATA_26_40, 6, CLOUDBURST_DATA_26_40,
+                        7, CLOUDBURST_DATA_26_40, 8, CLOUDBURST_DATA_26_40,
+                        9, CLOUDBURST_DATA_26_40, 10, CLOUDBURST_DATA_26_40,
+                        11, CLOUDBURST_DATA_26_40, 12, CLOUDBURST_DATA_26_40,
+                        13, CLOUDBURST_DATA_26_40, 14, CLOUDBURST_DATA_26_40,
+                        15, CLOUDBURST_DATA_26_40)
+                .mapColor("direction", 0, SCRIPT_API_26_40_MAP_COLOR, 1, SCRIPT_API_26_40_MAP_COLOR,
+                        2, SCRIPT_API_26_40_MAP_COLOR, 3, SCRIPT_API_26_40_MAP_COLOR,
+                        4, CLOUDBURST_DATA_26_40, 5, CLOUDBURST_DATA_26_40,
+                        6, CLOUDBURST_DATA_26_40, 7, CLOUDBURST_DATA_26_40,
+                        8, CLOUDBURST_DATA_26_40, 9, CLOUDBURST_DATA_26_40,
+                        10, CLOUDBURST_DATA_26_40, 11, CLOUDBURST_DATA_26_40,
+                        12, CLOUDBURST_DATA_26_40, 13, CLOUDBURST_DATA_26_40,
+                        14, CLOUDBURST_DATA_26_40, 15, CLOUDBURST_DATA_26_40);
+        v.blockSources("minecraft:cherry_fence_gate")
+                .solid("in_wall_bit", false, SCRIPT_API_26_40_SOLID, true, CLOUDBURST_DATA_26_40)
+                .mapColor("in_wall_bit", false, SCRIPT_API_26_40_MAP_COLOR,
+                        true, CLOUDBURST_DATA_26_40);
+        v.blockSources("minecraft:colored_torch_blue")
+                .solid("torch_facing_direction", "east", SCRIPT_API_26_40_SOLID,
+                        "north", SCRIPT_API_26_40_SOLID, "south", SCRIPT_API_26_40_SOLID,
+                        "top", SCRIPT_API_26_40_SOLID, "unknown", CLOUDBURST_DATA_26_40,
+                        "west", SCRIPT_API_26_40_SOLID)
+                .mapColor("torch_facing_direction", "east", SCRIPT_API_26_40_MAP_COLOR,
+                        "north", SCRIPT_API_26_40_MAP_COLOR, "south", SCRIPT_API_26_40_MAP_COLOR,
+                        "top", SCRIPT_API_26_40_MAP_COLOR, "unknown", CLOUDBURST_DATA_26_40,
+                        "west", SCRIPT_API_26_40_MAP_COLOR);
         v.blockSources("minecraft:colored_torch_green")
-                .solid("torch_facing_direction", "east", SCRIPT_API_26_40, "north", SCRIPT_API_26_40, "south", SCRIPT_API_26_40, "top", SCRIPT_API_26_40, "unknown", CLOUDBURST_DATA_26_40, "west", SCRIPT_API_26_40)
-                .mapColor("torch_facing_direction", "east", SCRIPT_API_26_40_3, "north", SCRIPT_API_26_40_3, "south", SCRIPT_API_26_40_3, "top", SCRIPT_API_26_40_3, "unknown", CLOUDBURST_DATA_26_40, "west", SCRIPT_API_26_40_3);
+                .solid("torch_facing_direction", "east", SCRIPT_API_26_40_SOLID,
+                        "north", SCRIPT_API_26_40_SOLID, "south", SCRIPT_API_26_40_SOLID,
+                        "top", SCRIPT_API_26_40_SOLID, "unknown", CLOUDBURST_DATA_26_40,
+                        "west", SCRIPT_API_26_40_SOLID)
+                .mapColor("torch_facing_direction", "east", SCRIPT_API_26_40_MAP_COLOR,
+                        "north", SCRIPT_API_26_40_MAP_COLOR, "south", SCRIPT_API_26_40_MAP_COLOR,
+                        "top", SCRIPT_API_26_40_MAP_COLOR, "unknown", CLOUDBURST_DATA_26_40,
+                        "west", SCRIPT_API_26_40_MAP_COLOR);
         v.blockSources("minecraft:colored_torch_purple")
-                .solid("torch_facing_direction", "east", SCRIPT_API_26_40, "north", SCRIPT_API_26_40, "south", SCRIPT_API_26_40, "top", SCRIPT_API_26_40, "unknown", CLOUDBURST_DATA_26_40, "west", SCRIPT_API_26_40)
-                .mapColor("torch_facing_direction", "east", SCRIPT_API_26_40_3, "north", SCRIPT_API_26_40_3, "south", SCRIPT_API_26_40_3, "top", SCRIPT_API_26_40_3, "unknown", CLOUDBURST_DATA_26_40, "west", SCRIPT_API_26_40_3);
+                .solid("torch_facing_direction", "east", SCRIPT_API_26_40_SOLID,
+                        "north", SCRIPT_API_26_40_SOLID, "south", SCRIPT_API_26_40_SOLID,
+                        "top", SCRIPT_API_26_40_SOLID, "unknown", CLOUDBURST_DATA_26_40,
+                        "west", SCRIPT_API_26_40_SOLID)
+                .mapColor("torch_facing_direction", "east", SCRIPT_API_26_40_MAP_COLOR,
+                        "north", SCRIPT_API_26_40_MAP_COLOR, "south", SCRIPT_API_26_40_MAP_COLOR,
+                        "top", SCRIPT_API_26_40_MAP_COLOR, "unknown", CLOUDBURST_DATA_26_40,
+                        "west", SCRIPT_API_26_40_MAP_COLOR);
+    }
+
+    static void part3(Changes v) {
         v.blockSources("minecraft:colored_torch_red")
-                .solid("torch_facing_direction", "east", SCRIPT_API_26_40, "north", SCRIPT_API_26_40, "south", SCRIPT_API_26_40, "top", SCRIPT_API_26_40, "unknown", CLOUDBURST_DATA_26_40, "west", SCRIPT_API_26_40)
-                .mapColor("torch_facing_direction", "east", SCRIPT_API_26_40_3, "north", SCRIPT_API_26_40_3, "south", SCRIPT_API_26_40_3, "top", SCRIPT_API_26_40_3, "unknown", CLOUDBURST_DATA_26_40, "west", SCRIPT_API_26_40_3);
+                .solid("torch_facing_direction", "east", SCRIPT_API_26_40_SOLID,
+                        "north", SCRIPT_API_26_40_SOLID, "south", SCRIPT_API_26_40_SOLID,
+                        "top", SCRIPT_API_26_40_SOLID, "unknown", CLOUDBURST_DATA_26_40,
+                        "west", SCRIPT_API_26_40_SOLID)
+                .mapColor("torch_facing_direction", "east", SCRIPT_API_26_40_MAP_COLOR,
+                        "north", SCRIPT_API_26_40_MAP_COLOR, "south", SCRIPT_API_26_40_MAP_COLOR,
+                        "top", SCRIPT_API_26_40_MAP_COLOR, "unknown", CLOUDBURST_DATA_26_40,
+                        "west", SCRIPT_API_26_40_MAP_COLOR);
         v.blockSources("minecraft:copper_torch")
-                .solid("torch_facing_direction", "east", SCRIPT_API_26_40, "north", SCRIPT_API_26_40, "south", SCRIPT_API_26_40, "top", SCRIPT_API_26_40, "unknown", CLOUDBURST_DATA_26_40, "west", SCRIPT_API_26_40)
-                .mapColor("torch_facing_direction", "east", SCRIPT_API_26_40_3, "north", SCRIPT_API_26_40_3, "south", SCRIPT_API_26_40_3, "top", SCRIPT_API_26_40_3, "unknown", CLOUDBURST_DATA_26_40, "west", SCRIPT_API_26_40_3);
+                .solid("torch_facing_direction", "east", SCRIPT_API_26_40_SOLID,
+                        "north", SCRIPT_API_26_40_SOLID, "south", SCRIPT_API_26_40_SOLID,
+                        "top", SCRIPT_API_26_40_SOLID, "unknown", CLOUDBURST_DATA_26_40,
+                        "west", SCRIPT_API_26_40_SOLID)
+                .mapColor("torch_facing_direction", "east", SCRIPT_API_26_40_MAP_COLOR,
+                        "north", SCRIPT_API_26_40_MAP_COLOR, "south", SCRIPT_API_26_40_MAP_COLOR,
+                        "top", SCRIPT_API_26_40_MAP_COLOR, "unknown", CLOUDBURST_DATA_26_40,
+                        "west", SCRIPT_API_26_40_MAP_COLOR);
         v.blockSources("minecraft:creaking_heart")
-                .solid("creaking_heart_state", "awake", CLOUDBURST_DATA_26_40, "dormant", CLOUDBURST_DATA_26_40, "uprooted", SCRIPT_API_26_40)
-                .mapColor("creaking_heart_state", "awake", CLOUDBURST_DATA_26_40, "dormant", CLOUDBURST_DATA_26_40, "uprooted", SCRIPT_API_26_40_3);
+                .solid("creaking_heart_state", "awake", CLOUDBURST_DATA_26_40,
+                        "dormant", CLOUDBURST_DATA_26_40, "uprooted", SCRIPT_API_26_40_SOLID)
+                .mapColor("creaking_heart_state", "awake", CLOUDBURST_DATA_26_40,
+                        "dormant", CLOUDBURST_DATA_26_40, "uprooted", SCRIPT_API_26_40_MAP_COLOR);
         v.blockSources("minecraft:crimson_fence_gate")
-                .solid("in_wall_bit", false, SCRIPT_API_26_40, true, CLOUDBURST_DATA_26_40)
-                .mapColor("in_wall_bit", false, SCRIPT_API_26_40_3, true, CLOUDBURST_DATA_26_40);
+                .solid("in_wall_bit", false, SCRIPT_API_26_40_SOLID, true, CLOUDBURST_DATA_26_40)
+                .mapColor("in_wall_bit", false, SCRIPT_API_26_40_MAP_COLOR,
+                        true, CLOUDBURST_DATA_26_40);
         v.blockSources("minecraft:dark_oak_fence_gate")
-                .solid("in_wall_bit", false, SCRIPT_API_26_40, true, CLOUDBURST_DATA_26_40)
-                .mapColor("in_wall_bit", false, SCRIPT_API_26_40_3, true, CLOUDBURST_DATA_26_40);
+                .solid("in_wall_bit", false, SCRIPT_API_26_40_SOLID, true, CLOUDBURST_DATA_26_40)
+                .mapColor("in_wall_bit", false, SCRIPT_API_26_40_MAP_COLOR,
+                        true, CLOUDBURST_DATA_26_40);
         v.blockSources("minecraft:dark_oak_leaves")
-                .tintMethod(SCRIPT_API_26_40_4);
+                .tintMethod(SCRIPT_API_26_40_TINT_METHOD);
         v.blockSources("minecraft:dead_brain_coral")
-                .tintMethod(SCRIPT_API_26_40_4);
+                .tintMethod(SCRIPT_API_26_40_TINT_METHOD);
         v.blockSources("minecraft:dead_brain_coral_fan")
-                .tintMethod(SCRIPT_API_26_40_4);
+                .tintMethod(SCRIPT_API_26_40_TINT_METHOD);
         v.blockSources("minecraft:dead_brain_coral_wall_fan")
-                .tintMethod(SCRIPT_API_26_40_4);
+                .tintMethod(SCRIPT_API_26_40_TINT_METHOD);
         v.blockSources("minecraft:dead_bubble_coral")
-                .tintMethod(SCRIPT_API_26_40_4);
+                .tintMethod(SCRIPT_API_26_40_TINT_METHOD);
         v.blockSources("minecraft:dead_bubble_coral_fan")
-                .tintMethod(SCRIPT_API_26_40_4);
+                .tintMethod(SCRIPT_API_26_40_TINT_METHOD);
         v.blockSources("minecraft:dead_bubble_coral_wall_fan")
-                .tintMethod(SCRIPT_API_26_40_4);
+                .tintMethod(SCRIPT_API_26_40_TINT_METHOD);
         v.blockSources("minecraft:dead_fire_coral")
-                .tintMethod(SCRIPT_API_26_40_4);
+                .tintMethod(SCRIPT_API_26_40_TINT_METHOD);
         v.blockSources("minecraft:dead_fire_coral_fan")
-                .tintMethod(SCRIPT_API_26_40_4);
+                .tintMethod(SCRIPT_API_26_40_TINT_METHOD);
         v.blockSources("minecraft:dead_fire_coral_wall_fan")
-                .tintMethod(SCRIPT_API_26_40_4);
+                .tintMethod(SCRIPT_API_26_40_TINT_METHOD);
         v.blockSources("minecraft:dead_horn_coral")
-                .tintMethod(SCRIPT_API_26_40_4);
+                .tintMethod(SCRIPT_API_26_40_TINT_METHOD);
         v.blockSources("minecraft:dead_horn_coral_fan")
-                .tintMethod(SCRIPT_API_26_40_4);
+                .tintMethod(SCRIPT_API_26_40_TINT_METHOD);
         v.blockSources("minecraft:dead_horn_coral_wall_fan")
-                .tintMethod(SCRIPT_API_26_40_4);
+                .tintMethod(SCRIPT_API_26_40_TINT_METHOD);
         v.blockSources("minecraft:dead_tube_coral")
-                .tintMethod(SCRIPT_API_26_40_4);
+                .tintMethod(SCRIPT_API_26_40_TINT_METHOD);
         v.blockSources("minecraft:dead_tube_coral_fan")
-                .tintMethod(SCRIPT_API_26_40_4);
+                .tintMethod(SCRIPT_API_26_40_TINT_METHOD);
         v.blockSources("minecraft:dead_tube_coral_wall_fan")
-                .tintMethod(SCRIPT_API_26_40_4);
+                .tintMethod(SCRIPT_API_26_40_TINT_METHOD);
         v.blockSources("minecraft:element_1")
                 .mapColor(CLOUDBURST_DATA_26_40);
         v.blockSources("minecraft:element_10")
@@ -225,13 +388,13 @@ final class BehaviourSources26_40 {
                 .mapColor(CLOUDBURST_DATA_26_40);
         v.blockSources("minecraft:element_25")
                 .mapColor(CLOUDBURST_DATA_26_40);
-    }
-
-    static void part3(Changes v) {
         v.blockSources("minecraft:element_26")
                 .mapColor(CLOUDBURST_DATA_26_40);
         v.blockSources("minecraft:element_27")
                 .mapColor(CLOUDBURST_DATA_26_40);
+    }
+
+    static void part4(Changes v) {
         v.blockSources("minecraft:element_28")
                 .mapColor(CLOUDBURST_DATA_26_40);
         v.blockSources("minecraft:element_29")
@@ -348,13 +511,13 @@ final class BehaviourSources26_40 {
                 .mapColor(CLOUDBURST_DATA_26_40);
         v.blockSources("minecraft:element_8")
                 .mapColor(CLOUDBURST_DATA_26_40);
-    }
-
-    static void part4(Changes v) {
         v.blockSources("minecraft:element_80")
                 .mapColor(CLOUDBURST_DATA_26_40);
         v.blockSources("minecraft:element_81")
                 .mapColor(CLOUDBURST_DATA_26_40);
+    }
+
+    static void part5(Changes v) {
         v.blockSources("minecraft:element_82")
                 .mapColor(CLOUDBURST_DATA_26_40);
         v.blockSources("minecraft:element_83")
@@ -394,16 +557,17 @@ final class BehaviourSources26_40 {
         v.blockSources("minecraft:element_99")
                 .mapColor(CLOUDBURST_DATA_26_40);
         v.blockSources("minecraft:fence_gate")
-                .solid("in_wall_bit", false, SCRIPT_API_26_40, true, CLOUDBURST_DATA_26_40)
-                .mapColor("in_wall_bit", false, SCRIPT_API_26_40_3, true, CLOUDBURST_DATA_26_40);
+                .solid("in_wall_bit", false, SCRIPT_API_26_40_SOLID, true, CLOUDBURST_DATA_26_40)
+                .mapColor("in_wall_bit", false, SCRIPT_API_26_40_MAP_COLOR,
+                        true, CLOUDBURST_DATA_26_40);
         v.blockSources("minecraft:fern")
-                .tintMethod(SCRIPT_API_26_40_4);
+                .tintMethod(SCRIPT_API_26_40_TINT_METHOD);
         v.blockSources("minecraft:fire_coral")
-                .tintMethod(SCRIPT_API_26_40_4);
+                .tintMethod(SCRIPT_API_26_40_TINT_METHOD);
         v.blockSources("minecraft:fire_coral_fan")
-                .tintMethod(SCRIPT_API_26_40_4);
+                .tintMethod(SCRIPT_API_26_40_TINT_METHOD);
         v.blockSources("minecraft:fire_coral_wall_fan")
-                .tintMethod(SCRIPT_API_26_40_4);
+                .tintMethod(SCRIPT_API_26_40_TINT_METHOD);
         v.blockSources("minecraft:flowing_lava")
                 .solid(CLOUDBURST_DATA_26_40)
                 .mapColor(CLOUDBURST_DATA_26_40);
@@ -411,116 +575,275 @@ final class BehaviourSources26_40 {
                 .solid(CLOUDBURST_DATA_26_40)
                 .mapColor(CLOUDBURST_DATA_26_40);
         v.blockSources("minecraft:grass_block")
-                .tintMethod(SCRIPT_API_26_40_4);
+                .tintMethod(SCRIPT_API_26_40_TINT_METHOD);
         v.blockSources("minecraft:horn_coral")
-                .tintMethod(SCRIPT_API_26_40_4);
+                .tintMethod(SCRIPT_API_26_40_TINT_METHOD);
         v.blockSources("minecraft:horn_coral_fan")
-                .tintMethod(SCRIPT_API_26_40_4);
+                .tintMethod(SCRIPT_API_26_40_TINT_METHOD);
         v.blockSources("minecraft:horn_coral_wall_fan")
-                .tintMethod(SCRIPT_API_26_40_4);
+                .tintMethod(SCRIPT_API_26_40_TINT_METHOD);
         v.blockSources("minecraft:jungle_fence_gate")
-                .solid("in_wall_bit", false, SCRIPT_API_26_40, true, CLOUDBURST_DATA_26_40)
-                .mapColor("in_wall_bit", false, SCRIPT_API_26_40_3, true, CLOUDBURST_DATA_26_40);
+                .solid("in_wall_bit", false, SCRIPT_API_26_40_SOLID, true, CLOUDBURST_DATA_26_40)
+                .mapColor("in_wall_bit", false, SCRIPT_API_26_40_MAP_COLOR,
+                        true, CLOUDBURST_DATA_26_40);
         v.blockSources("minecraft:jungle_leaves")
-                .tintMethod(SCRIPT_API_26_40_4);
+                .tintMethod(SCRIPT_API_26_40_TINT_METHOD);
         v.blockSources("minecraft:mangrove_fence_gate")
-                .solid("in_wall_bit", false, SCRIPT_API_26_40, true, CLOUDBURST_DATA_26_40)
-                .mapColor("in_wall_bit", false, SCRIPT_API_26_40_3, true, CLOUDBURST_DATA_26_40);
+                .solid("in_wall_bit", false, SCRIPT_API_26_40_SOLID, true, CLOUDBURST_DATA_26_40)
+                .mapColor("in_wall_bit", false, SCRIPT_API_26_40_MAP_COLOR,
+                        true, CLOUDBURST_DATA_26_40);
         v.blockSources("minecraft:mangrove_leaves")
-                .tintMethod(SCRIPT_API_26_40_4);
+                .tintMethod(SCRIPT_API_26_40_TINT_METHOD);
         v.blockSources("minecraft:oak_leaves")
-                .tintMethod(SCRIPT_API_26_40_4);
+                .tintMethod(SCRIPT_API_26_40_TINT_METHOD);
         v.blockSources("minecraft:observer")
-                .solid("powered_bit", false, SCRIPT_API_26_40, true, CLOUDBURST_DATA_26_40)
-                .mapColor("powered_bit", false, SCRIPT_API_26_40_3, true, CLOUDBURST_DATA_26_40);
+                .solid("powered_bit", false, SCRIPT_API_26_40_SOLID, true, CLOUDBURST_DATA_26_40)
+                .mapColor("powered_bit", false, SCRIPT_API_26_40_MAP_COLOR,
+                        true, CLOUDBURST_DATA_26_40);
         v.blockSources("minecraft:pale_hanging_moss")
-                .solid("tip", false, CLOUDBURST_DATA_26_40, true, SCRIPT_API_26_40)
-                .mapColor("tip", false, CLOUDBURST_DATA_26_40, true, SCRIPT_API_26_40_3);
+                .solid("tip", false, CLOUDBURST_DATA_26_40, true, SCRIPT_API_26_40_SOLID)
+                .mapColor("tip", false, CLOUDBURST_DATA_26_40, true, SCRIPT_API_26_40_MAP_COLOR);
         v.blockSources("minecraft:pale_oak_fence_gate")
-                .solid("in_wall_bit", false, SCRIPT_API_26_40, true, CLOUDBURST_DATA_26_40)
-                .mapColor("in_wall_bit", false, SCRIPT_API_26_40_3, true, CLOUDBURST_DATA_26_40);
+                .solid("in_wall_bit", false, SCRIPT_API_26_40_SOLID, true, CLOUDBURST_DATA_26_40)
+                .mapColor("in_wall_bit", false, SCRIPT_API_26_40_MAP_COLOR,
+                        true, CLOUDBURST_DATA_26_40);
         v.blockSources("minecraft:poplar_fence_gate")
-                .solid("in_wall_bit", false, SCRIPT_API_26_40, true, CLOUDBURST_DATA_26_40)
-                .mapColor("in_wall_bit", false, SCRIPT_API_26_40_3, true, CLOUDBURST_DATA_26_40);
+                .solid("in_wall_bit", false, SCRIPT_API_26_40_SOLID, true, CLOUDBURST_DATA_26_40)
+                .mapColor("in_wall_bit", false, SCRIPT_API_26_40_MAP_COLOR,
+                        true, CLOUDBURST_DATA_26_40);
         v.blockSources("minecraft:potent_sulfur")
-                .solid("potent_sulfur_state", "continuous", CLOUDBURST_DATA_26_40, "dormant", CLOUDBURST_DATA_26_40, "dry", SCRIPT_API_26_40, "erupting", CLOUDBURST_DATA_26_40, "wet", CLOUDBURST_DATA_26_40)
-                .mapColor("potent_sulfur_state", "continuous", CLOUDBURST_DATA_26_40, "dormant", CLOUDBURST_DATA_26_40, "dry", SCRIPT_API_26_40_3, "erupting", CLOUDBURST_DATA_26_40, "wet", CLOUDBURST_DATA_26_40);
+                .solid("potent_sulfur_state", "continuous", CLOUDBURST_DATA_26_40,
+                        "dormant", CLOUDBURST_DATA_26_40, "dry", SCRIPT_API_26_40_SOLID,
+                        "erupting", CLOUDBURST_DATA_26_40, "wet", CLOUDBURST_DATA_26_40)
+                .mapColor("potent_sulfur_state", "continuous", CLOUDBURST_DATA_26_40,
+                        "dormant", CLOUDBURST_DATA_26_40, "dry", SCRIPT_API_26_40_MAP_COLOR,
+                        "erupting", CLOUDBURST_DATA_26_40, "wet", CLOUDBURST_DATA_26_40);
         v.blockSources("minecraft:redstone_wire")
-                .solid("redstone_signal", 0, SCRIPT_API_26_40, 1, CLOUDBURST_DATA_26_40, 2, CLOUDBURST_DATA_26_40, 3, CLOUDBURST_DATA_26_40, 4, CLOUDBURST_DATA_26_40, 5, CLOUDBURST_DATA_26_40, 6, CLOUDBURST_DATA_26_40, 7, CLOUDBURST_DATA_26_40, 8, CLOUDBURST_DATA_26_40, 9, CLOUDBURST_DATA_26_40, 10, CLOUDBURST_DATA_26_40, 11, CLOUDBURST_DATA_26_40, 12, CLOUDBURST_DATA_26_40, 13, CLOUDBURST_DATA_26_40, 14, CLOUDBURST_DATA_26_40, 15, CLOUDBURST_DATA_26_40)
-                .mapColor("redstone_signal", 0, SCRIPT_API_26_40_3, 1, CLOUDBURST_DATA_26_40, 2, CLOUDBURST_DATA_26_40, 3, CLOUDBURST_DATA_26_40, 4, CLOUDBURST_DATA_26_40, 5, CLOUDBURST_DATA_26_40, 6, CLOUDBURST_DATA_26_40, 7, CLOUDBURST_DATA_26_40, 8, CLOUDBURST_DATA_26_40, 9, CLOUDBURST_DATA_26_40, 10, CLOUDBURST_DATA_26_40, 11, CLOUDBURST_DATA_26_40, 12, CLOUDBURST_DATA_26_40, 13, CLOUDBURST_DATA_26_40, 14, CLOUDBURST_DATA_26_40, 15, CLOUDBURST_DATA_26_40);
+                .solid("redstone_signal", 0, SCRIPT_API_26_40_SOLID, 1, CLOUDBURST_DATA_26_40,
+                        2, CLOUDBURST_DATA_26_40, 3, CLOUDBURST_DATA_26_40,
+                        4, CLOUDBURST_DATA_26_40, 5, CLOUDBURST_DATA_26_40,
+                        6, CLOUDBURST_DATA_26_40, 7, CLOUDBURST_DATA_26_40,
+                        8, CLOUDBURST_DATA_26_40, 9, CLOUDBURST_DATA_26_40,
+                        10, CLOUDBURST_DATA_26_40, 11, CLOUDBURST_DATA_26_40,
+                        12, CLOUDBURST_DATA_26_40, 13, CLOUDBURST_DATA_26_40,
+                        14, CLOUDBURST_DATA_26_40, 15, CLOUDBURST_DATA_26_40)
+                .mapColor("redstone_signal", 0, SCRIPT_API_26_40_MAP_COLOR,
+                        1, CLOUDBURST_DATA_26_40, 2, CLOUDBURST_DATA_26_40,
+                        3, CLOUDBURST_DATA_26_40, 4, CLOUDBURST_DATA_26_40,
+                        5, CLOUDBURST_DATA_26_40, 6, CLOUDBURST_DATA_26_40,
+                        7, CLOUDBURST_DATA_26_40, 8, CLOUDBURST_DATA_26_40,
+                        9, CLOUDBURST_DATA_26_40, 10, CLOUDBURST_DATA_26_40,
+                        11, CLOUDBURST_DATA_26_40, 12, CLOUDBURST_DATA_26_40,
+                        13, CLOUDBURST_DATA_26_40, 14, CLOUDBURST_DATA_26_40,
+                        15, CLOUDBURST_DATA_26_40);
         v.blockSources("minecraft:scaffolding")
-                .solid("stability", 0, SCRIPT_API_26_40, 1, CLOUDBURST_DATA_26_40, 2, CLOUDBURST_DATA_26_40, 3, CLOUDBURST_DATA_26_40, 4, CLOUDBURST_DATA_26_40, 5, CLOUDBURST_DATA_26_40, 6, CLOUDBURST_DATA_26_40, 7, CLOUDBURST_DATA_26_40)
-                .mapColor("stability", 0, SCRIPT_API_26_40_3, 1, CLOUDBURST_DATA_26_40, 2, CLOUDBURST_DATA_26_40, 3, CLOUDBURST_DATA_26_40, 4, CLOUDBURST_DATA_26_40, 5, CLOUDBURST_DATA_26_40, 6, CLOUDBURST_DATA_26_40, 7, CLOUDBURST_DATA_26_40);
+                .solid("stability", 0, SCRIPT_API_26_40_SOLID, 1, CLOUDBURST_DATA_26_40,
+                        2, CLOUDBURST_DATA_26_40, 3, CLOUDBURST_DATA_26_40,
+                        4, CLOUDBURST_DATA_26_40, 5, CLOUDBURST_DATA_26_40,
+                        6, CLOUDBURST_DATA_26_40, 7, CLOUDBURST_DATA_26_40)
+                .mapColor("stability", 0, SCRIPT_API_26_40_MAP_COLOR, 1, CLOUDBURST_DATA_26_40,
+                        2, CLOUDBURST_DATA_26_40, 3, CLOUDBURST_DATA_26_40,
+                        4, CLOUDBURST_DATA_26_40, 5, CLOUDBURST_DATA_26_40,
+                        6, CLOUDBURST_DATA_26_40, 7, CLOUDBURST_DATA_26_40);
         v.blockSources("minecraft:short_dry_grass")
-                .tintMethod(SCRIPT_API_26_40_4);
+                .tintMethod(SCRIPT_API_26_40_TINT_METHOD);
         v.blockSources("minecraft:short_grass")
-                .tintMethod(SCRIPT_API_26_40_4);
+                .tintMethod(SCRIPT_API_26_40_TINT_METHOD);
         v.blockSources("minecraft:soul_fire")
                 .solid(CLOUDBURST_DATA_26_40)
                 .mapColor(CLOUDBURST_DATA_26_40);
-        v.blockSources("minecraft:spruce_fence_gate")
-                .solid("in_wall_bit", false, SCRIPT_API_26_40, true, CLOUDBURST_DATA_26_40)
-                .mapColor("in_wall_bit", false, SCRIPT_API_26_40_3, true, CLOUDBURST_DATA_26_40);
-        v.blockSources("minecraft:spruce_leaves")
-                .tintMethod(SCRIPT_API_26_40_4);
-        v.blockSources("minecraft:tall_dry_grass")
-                .tintMethod(SCRIPT_API_26_40_4);
-    }
-
-    static void part5(Changes v) {
-        v.blockSources("minecraft:torch")
-                .solid("torch_facing_direction", "east", SCRIPT_API_26_40, "north", SCRIPT_API_26_40, "south", SCRIPT_API_26_40, "top", SCRIPT_API_26_40, "unknown", CLOUDBURST_DATA_26_40, "west", SCRIPT_API_26_40)
-                .mapColor("torch_facing_direction", "east", SCRIPT_API_26_40_3, "north", SCRIPT_API_26_40_3, "south", SCRIPT_API_26_40_3, "top", SCRIPT_API_26_40_3, "unknown", CLOUDBURST_DATA_26_40, "west", SCRIPT_API_26_40_3);
-        v.blockSources("minecraft:trip_wire")
-                .solid(TRIP_WIRE_SOLID_SOURCES_2)
-                .mapColor(TRIP_WIRE_MAP_COLOR_SOURCES_2);
-        v.blockSources("minecraft:tripwire_hook")
-                .solid(TRIPWIRE_HOOK_SOLID_SOURCES_2)
-                .mapColor(TRIPWIRE_HOOK_MAP_COLOR_SOURCES_2);
-        v.blockSources("minecraft:tube_coral")
-                .tintMethod(SCRIPT_API_26_40_4);
-        v.blockSources("minecraft:tube_coral_fan")
-                .tintMethod(SCRIPT_API_26_40_4);
-        v.blockSources("minecraft:tube_coral_wall_fan")
-                .tintMethod(SCRIPT_API_26_40_4);
-        v.blockSources("minecraft:twisting_vines")
-                .solid("twisting_vines_age", 0, CLOUDBURST_DATA_26_40, 1, SCRIPT_API_26_40, 2, SCRIPT_API_26_40, 3, SCRIPT_API_26_40, 4, SCRIPT_API_26_40, 5, SCRIPT_API_26_40, 6, SCRIPT_API_26_40, 7, SCRIPT_API_26_40, 8, SCRIPT_API_26_40, 9, SCRIPT_API_26_40, 10, SCRIPT_API_26_40, 11, SCRIPT_API_26_40, 12, SCRIPT_API_26_40, 13, SCRIPT_API_26_40, 14, SCRIPT_API_26_40, 15, SCRIPT_API_26_40, 16, SCRIPT_API_26_40, 17, SCRIPT_API_26_40, 18, SCRIPT_API_26_40, 19, SCRIPT_API_26_40, 20, SCRIPT_API_26_40, 21, SCRIPT_API_26_40, 22, SCRIPT_API_26_40, 23, SCRIPT_API_26_40, 24, SCRIPT_API_26_40, 25, SCRIPT_API_26_40)
-                .mapColor("twisting_vines_age", 0, CLOUDBURST_DATA_26_40, 1, SCRIPT_API_26_40_3, 2, SCRIPT_API_26_40_3, 3, SCRIPT_API_26_40_3, 4, SCRIPT_API_26_40_3, 5, SCRIPT_API_26_40_3, 6, SCRIPT_API_26_40_3, 7, SCRIPT_API_26_40_3, 8, SCRIPT_API_26_40_3, 9, SCRIPT_API_26_40_3, 10, SCRIPT_API_26_40_3, 11, SCRIPT_API_26_40_3, 12, SCRIPT_API_26_40_3, 13, SCRIPT_API_26_40_3, 14, SCRIPT_API_26_40_3, 15, SCRIPT_API_26_40_3, 16, SCRIPT_API_26_40_3, 17, SCRIPT_API_26_40_3, 18, SCRIPT_API_26_40_3, 19, SCRIPT_API_26_40_3, 20, SCRIPT_API_26_40_3, 21, SCRIPT_API_26_40_3, 22, SCRIPT_API_26_40_3, 23, SCRIPT_API_26_40_3, 24, SCRIPT_API_26_40_3, 25, SCRIPT_API_26_40_3);
-        v.blockSources("minecraft:underwater_torch")
-                .solid("torch_facing_direction", "east", SCRIPT_API_26_40, "north", SCRIPT_API_26_40, "south", SCRIPT_API_26_40, "top", SCRIPT_API_26_40, "unknown", CLOUDBURST_DATA_26_40, "west", SCRIPT_API_26_40)
-                .mapColor("torch_facing_direction", "east", SCRIPT_API_26_40_3, "north", SCRIPT_API_26_40_3, "south", SCRIPT_API_26_40_3, "top", SCRIPT_API_26_40_3, "unknown", CLOUDBURST_DATA_26_40, "west", SCRIPT_API_26_40_3);
-        v.blockSources("minecraft:vine")
-                .tintMethod(SCRIPT_API_26_40_4);
-        v.blockSources("minecraft:warped_fence_gate")
-                .solid("in_wall_bit", false, SCRIPT_API_26_40, true, CLOUDBURST_DATA_26_40)
-                .mapColor("in_wall_bit", false, SCRIPT_API_26_40_3, true, CLOUDBURST_DATA_26_40);
-        v.blockSources("minecraft:water")
-                .tintMethod(SCRIPT_API_26_40_4);
     }
 
     static void part6(Changes v) {
-        v.blockSources("minecraft:weeping_vines")
-                .solid("weeping_vines_age", 0, CLOUDBURST_DATA_26_40, 1, SCRIPT_API_26_40, 2, SCRIPT_API_26_40, 3, SCRIPT_API_26_40, 4, SCRIPT_API_26_40, 5, SCRIPT_API_26_40, 6, SCRIPT_API_26_40, 7, SCRIPT_API_26_40, 8, SCRIPT_API_26_40, 9, SCRIPT_API_26_40, 10, SCRIPT_API_26_40, 11, SCRIPT_API_26_40, 12, SCRIPT_API_26_40, 13, SCRIPT_API_26_40, 14, SCRIPT_API_26_40, 15, SCRIPT_API_26_40, 16, SCRIPT_API_26_40, 17, SCRIPT_API_26_40, 18, SCRIPT_API_26_40, 19, SCRIPT_API_26_40, 20, SCRIPT_API_26_40, 21, SCRIPT_API_26_40, 22, SCRIPT_API_26_40, 23, SCRIPT_API_26_40, 24, SCRIPT_API_26_40, 25, SCRIPT_API_26_40)
-                .liquidFlowDirections("weeping_vines_age", 0, SCRIPT_API_26_30, 1, SCRIPT_API_26_40, 2, SCRIPT_API_26_40, 3, SCRIPT_API_26_40, 4, SCRIPT_API_26_40, 5, SCRIPT_API_26_40, 6, SCRIPT_API_26_40, 7, SCRIPT_API_26_40, 8, SCRIPT_API_26_40, 9, SCRIPT_API_26_40, 10, SCRIPT_API_26_40, 11, SCRIPT_API_26_40, 12, SCRIPT_API_26_40, 13, SCRIPT_API_26_40, 14, SCRIPT_API_26_40, 15, SCRIPT_API_26_40, 16, SCRIPT_API_26_40, 17, SCRIPT_API_26_40, 18, SCRIPT_API_26_40, 19, SCRIPT_API_26_40, 20, SCRIPT_API_26_40, 21, SCRIPT_API_26_40, 22, SCRIPT_API_26_40, 23, SCRIPT_API_26_40, 24, SCRIPT_API_26_40, 25, SCRIPT_API_26_40)
-                .mapColor("weeping_vines_age", 0, CLOUDBURST_DATA_26_40, 1, SCRIPT_API_26_40_3, 2, SCRIPT_API_26_40_3, 3, SCRIPT_API_26_40_3, 4, SCRIPT_API_26_40_3, 5, SCRIPT_API_26_40_3, 6, SCRIPT_API_26_40_3, 7, SCRIPT_API_26_40_3, 8, SCRIPT_API_26_40_3, 9, SCRIPT_API_26_40_3, 10, SCRIPT_API_26_40_3, 11, SCRIPT_API_26_40_3, 12, SCRIPT_API_26_40_3, 13, SCRIPT_API_26_40_3, 14, SCRIPT_API_26_40_3, 15, SCRIPT_API_26_40_3, 16, SCRIPT_API_26_40_3, 17, SCRIPT_API_26_40_3, 18, SCRIPT_API_26_40_3, 19, SCRIPT_API_26_40_3, 20, SCRIPT_API_26_40_3, 21, SCRIPT_API_26_40_3, 22, SCRIPT_API_26_40_3, 23, SCRIPT_API_26_40_3, 24, SCRIPT_API_26_40_3, 25, SCRIPT_API_26_40_3)
-                .movementType("weeping_vines_age", 0, SCRIPT_API_26_30, 1, SCRIPT_API_26_40, 2, SCRIPT_API_26_40, 3, SCRIPT_API_26_40, 4, SCRIPT_API_26_40, 5, SCRIPT_API_26_40, 6, SCRIPT_API_26_40, 7, SCRIPT_API_26_40, 8, SCRIPT_API_26_40, 9, SCRIPT_API_26_40, 10, SCRIPT_API_26_40, 11, SCRIPT_API_26_40, 12, SCRIPT_API_26_40, 13, SCRIPT_API_26_40, 14, SCRIPT_API_26_40, 15, SCRIPT_API_26_40, 16, SCRIPT_API_26_40, 17, SCRIPT_API_26_40, 18, SCRIPT_API_26_40, 19, SCRIPT_API_26_40, 20, SCRIPT_API_26_40, 21, SCRIPT_API_26_40, 22, SCRIPT_API_26_40, 23, SCRIPT_API_26_40, 24, SCRIPT_API_26_40, 25, SCRIPT_API_26_40)
-                .stickyType("weeping_vines_age", 0, SCRIPT_API_26_30, 1, SCRIPT_API_26_40, 2, SCRIPT_API_26_40, 3, SCRIPT_API_26_40, 4, SCRIPT_API_26_40, 5, SCRIPT_API_26_40, 6, SCRIPT_API_26_40, 7, SCRIPT_API_26_40, 8, SCRIPT_API_26_40, 9, SCRIPT_API_26_40, 10, SCRIPT_API_26_40, 11, SCRIPT_API_26_40, 12, SCRIPT_API_26_40, 13, SCRIPT_API_26_40, 14, SCRIPT_API_26_40, 15, SCRIPT_API_26_40, 16, SCRIPT_API_26_40, 17, SCRIPT_API_26_40, 18, SCRIPT_API_26_40, 19, SCRIPT_API_26_40, 20, SCRIPT_API_26_40, 21, SCRIPT_API_26_40, 22, SCRIPT_API_26_40, 23, SCRIPT_API_26_40, 24, SCRIPT_API_26_40, 25, SCRIPT_API_26_40)
-                .accumulatesSnow("weeping_vines_age", 0, SCRIPT_API_26_30, 1, SCRIPT_API_26_40, 2, SCRIPT_API_26_40, 3, SCRIPT_API_26_40, 4, SCRIPT_API_26_40, 5, SCRIPT_API_26_40, 6, SCRIPT_API_26_40, 7, SCRIPT_API_26_40, 8, SCRIPT_API_26_40, 9, SCRIPT_API_26_40, 10, SCRIPT_API_26_40, 11, SCRIPT_API_26_40, 12, SCRIPT_API_26_40, 13, SCRIPT_API_26_40, 14, SCRIPT_API_26_40, 15, SCRIPT_API_26_40, 16, SCRIPT_API_26_40, 17, SCRIPT_API_26_40, 18, SCRIPT_API_26_40, 19, SCRIPT_API_26_40, 20, SCRIPT_API_26_40, 21, SCRIPT_API_26_40, 22, SCRIPT_API_26_40, 23, SCRIPT_API_26_40, 24, SCRIPT_API_26_40, 25, SCRIPT_API_26_40)
-                .snowLoggable("weeping_vines_age", 0, SCRIPT_API_26_30, 1, SCRIPT_API_26_40, 2, SCRIPT_API_26_40, 3, SCRIPT_API_26_40, 4, SCRIPT_API_26_40, 5, SCRIPT_API_26_40, 6, SCRIPT_API_26_40, 7, SCRIPT_API_26_40, 8, SCRIPT_API_26_40, 9, SCRIPT_API_26_40, 10, SCRIPT_API_26_40, 11, SCRIPT_API_26_40, 12, SCRIPT_API_26_40, 13, SCRIPT_API_26_40, 14, SCRIPT_API_26_40, 15, SCRIPT_API_26_40, 16, SCRIPT_API_26_40, 17, SCRIPT_API_26_40, 18, SCRIPT_API_26_40, 19, SCRIPT_API_26_40, 20, SCRIPT_API_26_40, 21, SCRIPT_API_26_40, 22, SCRIPT_API_26_40, 23, SCRIPT_API_26_40, 24, SCRIPT_API_26_40, 25, SCRIPT_API_26_40)
-                .obstructsRain("weeping_vines_age", 0, SCRIPT_API_26_30, 1, SCRIPT_API_26_40, 2, SCRIPT_API_26_40, 3, SCRIPT_API_26_40, 4, SCRIPT_API_26_40, 5, SCRIPT_API_26_40, 6, SCRIPT_API_26_40, 7, SCRIPT_API_26_40, 8, SCRIPT_API_26_40, 9, SCRIPT_API_26_40, 10, SCRIPT_API_26_40, 11, SCRIPT_API_26_40, 12, SCRIPT_API_26_40, 13, SCRIPT_API_26_40, 14, SCRIPT_API_26_40, 15, SCRIPT_API_26_40, 16, SCRIPT_API_26_40, 17, SCRIPT_API_26_40, 18, SCRIPT_API_26_40, 19, SCRIPT_API_26_40, 20, SCRIPT_API_26_40, 21, SCRIPT_API_26_40, 22, SCRIPT_API_26_40, 23, SCRIPT_API_26_40, 24, SCRIPT_API_26_40, 25, SCRIPT_API_26_40);
+        v.blockSources("minecraft:spruce_fence_gate")
+                .solid("in_wall_bit", false, SCRIPT_API_26_40_SOLID, true, CLOUDBURST_DATA_26_40)
+                .mapColor("in_wall_bit", false, SCRIPT_API_26_40_MAP_COLOR,
+                        true, CLOUDBURST_DATA_26_40);
+        v.blockSources("minecraft:spruce_leaves")
+                .tintMethod(SCRIPT_API_26_40_TINT_METHOD);
+        v.blockSources("minecraft:tall_dry_grass")
+                .tintMethod(SCRIPT_API_26_40_TINT_METHOD);
+        v.blockSources("minecraft:torch")
+                .solid("torch_facing_direction", "east", SCRIPT_API_26_40_SOLID,
+                        "north", SCRIPT_API_26_40_SOLID, "south", SCRIPT_API_26_40_SOLID,
+                        "top", SCRIPT_API_26_40_SOLID, "unknown", CLOUDBURST_DATA_26_40,
+                        "west", SCRIPT_API_26_40_SOLID)
+                .mapColor("torch_facing_direction", "east", SCRIPT_API_26_40_MAP_COLOR,
+                        "north", SCRIPT_API_26_40_MAP_COLOR, "south", SCRIPT_API_26_40_MAP_COLOR,
+                        "top", SCRIPT_API_26_40_MAP_COLOR, "unknown", CLOUDBURST_DATA_26_40,
+                        "west", SCRIPT_API_26_40_MAP_COLOR);
+        v.blockSources("minecraft:trip_wire")
+                .solid(SOURCES_ATTACHED_BIT_DISARMED_BIT_POWERED_BIT_SUSPENDED_BIT_5FCC10)
+                .mapColor(SOURCES_ATTACHED_BIT_DISARMED_BIT_POWERED_BIT_SUSPENDED_BIT_CB6592);
+        v.blockSources("minecraft:tripwire_hook")
+                .solid(SOURCES_ATTACHED_BIT_POWERED_BIT_C27CD4)
+                .mapColor(SOURCES_ATTACHED_BIT_POWERED_BIT_795156);
+        v.blockSources("minecraft:tube_coral")
+                .tintMethod(SCRIPT_API_26_40_TINT_METHOD);
+        v.blockSources("minecraft:tube_coral_fan")
+                .tintMethod(SCRIPT_API_26_40_TINT_METHOD);
+        v.blockSources("minecraft:tube_coral_wall_fan")
+                .tintMethod(SCRIPT_API_26_40_TINT_METHOD);
+        v.blockSources("minecraft:twisting_vines")
+                .solid("twisting_vines_age", 0, CLOUDBURST_DATA_26_40, 1, SCRIPT_API_26_40_SOLID,
+                        2, SCRIPT_API_26_40_SOLID, 3, SCRIPT_API_26_40_SOLID,
+                        4, SCRIPT_API_26_40_SOLID, 5, SCRIPT_API_26_40_SOLID,
+                        6, SCRIPT_API_26_40_SOLID, 7, SCRIPT_API_26_40_SOLID,
+                        8, SCRIPT_API_26_40_SOLID, 9, SCRIPT_API_26_40_SOLID,
+                        10, SCRIPT_API_26_40_SOLID, 11, SCRIPT_API_26_40_SOLID,
+                        12, SCRIPT_API_26_40_SOLID, 13, SCRIPT_API_26_40_SOLID,
+                        14, SCRIPT_API_26_40_SOLID, 15, SCRIPT_API_26_40_SOLID,
+                        16, SCRIPT_API_26_40_SOLID, 17, SCRIPT_API_26_40_SOLID,
+                        18, SCRIPT_API_26_40_SOLID, 19, SCRIPT_API_26_40_SOLID,
+                        20, SCRIPT_API_26_40_SOLID, 21, SCRIPT_API_26_40_SOLID,
+                        22, SCRIPT_API_26_40_SOLID, 23, SCRIPT_API_26_40_SOLID,
+                        24, SCRIPT_API_26_40_SOLID, 25, SCRIPT_API_26_40_SOLID)
+                .mapColor("twisting_vines_age", 0, CLOUDBURST_DATA_26_40,
+                        1, SCRIPT_API_26_40_MAP_COLOR, 2, SCRIPT_API_26_40_MAP_COLOR,
+                        3, SCRIPT_API_26_40_MAP_COLOR, 4, SCRIPT_API_26_40_MAP_COLOR,
+                        5, SCRIPT_API_26_40_MAP_COLOR, 6, SCRIPT_API_26_40_MAP_COLOR,
+                        7, SCRIPT_API_26_40_MAP_COLOR, 8, SCRIPT_API_26_40_MAP_COLOR,
+                        9, SCRIPT_API_26_40_MAP_COLOR, 10, SCRIPT_API_26_40_MAP_COLOR,
+                        11, SCRIPT_API_26_40_MAP_COLOR, 12, SCRIPT_API_26_40_MAP_COLOR,
+                        13, SCRIPT_API_26_40_MAP_COLOR, 14, SCRIPT_API_26_40_MAP_COLOR,
+                        15, SCRIPT_API_26_40_MAP_COLOR, 16, SCRIPT_API_26_40_MAP_COLOR,
+                        17, SCRIPT_API_26_40_MAP_COLOR, 18, SCRIPT_API_26_40_MAP_COLOR,
+                        19, SCRIPT_API_26_40_MAP_COLOR, 20, SCRIPT_API_26_40_MAP_COLOR,
+                        21, SCRIPT_API_26_40_MAP_COLOR, 22, SCRIPT_API_26_40_MAP_COLOR,
+                        23, SCRIPT_API_26_40_MAP_COLOR, 24, SCRIPT_API_26_40_MAP_COLOR,
+                        25, SCRIPT_API_26_40_MAP_COLOR);
+        v.blockSources("minecraft:underwater_torch")
+                .solid("torch_facing_direction", "east", SCRIPT_API_26_40_SOLID,
+                        "north", SCRIPT_API_26_40_SOLID, "south", SCRIPT_API_26_40_SOLID,
+                        "top", SCRIPT_API_26_40_SOLID, "unknown", CLOUDBURST_DATA_26_40,
+                        "west", SCRIPT_API_26_40_SOLID)
+                .mapColor("torch_facing_direction", "east", SCRIPT_API_26_40_MAP_COLOR,
+                        "north", SCRIPT_API_26_40_MAP_COLOR, "south", SCRIPT_API_26_40_MAP_COLOR,
+                        "top", SCRIPT_API_26_40_MAP_COLOR, "unknown", CLOUDBURST_DATA_26_40,
+                        "west", SCRIPT_API_26_40_MAP_COLOR);
+        v.blockSources("minecraft:vine")
+                .tintMethod(SCRIPT_API_26_40_TINT_METHOD);
+        v.blockSources("minecraft:warped_fence_gate")
+                .solid("in_wall_bit", false, SCRIPT_API_26_40_SOLID, true, CLOUDBURST_DATA_26_40)
+                .mapColor("in_wall_bit", false, SCRIPT_API_26_40_MAP_COLOR,
+                        true, CLOUDBURST_DATA_26_40);
+        v.blockSources("minecraft:water")
+                .tintMethod(SCRIPT_API_26_40_TINT_METHOD);
     }
 
     static void part7(Changes v) {
-        v.itemSources()
-                .maxStackSize(SCRIPT_API_26_40_5)
-                .maxDamage(SCRIPT_API_26_40_5)
-                .weight(SCRIPT_API_26_40_5)
-                .nutrition(SCRIPT_API_26_40_6)
-                .saturationModifier(SCRIPT_API_26_40_6)
-                .canAlwaysEat(SCRIPT_API_26_40_6)
-                .cooldownCategory(SCRIPT_API_26_40_7)
-                .cooldownTicks(SCRIPT_API_26_40_7)
-                .compostChance(SCRIPT_API_26_40_8);
+        v.blockSources("minecraft:weeping_vines")
+                .solid("weeping_vines_age", 0, CLOUDBURST_DATA_26_40, 1, SCRIPT_API_26_40_SOLID,
+                        2, SCRIPT_API_26_40_SOLID, 3, SCRIPT_API_26_40_SOLID,
+                        4, SCRIPT_API_26_40_SOLID, 5, SCRIPT_API_26_40_SOLID,
+                        6, SCRIPT_API_26_40_SOLID, 7, SCRIPT_API_26_40_SOLID,
+                        8, SCRIPT_API_26_40_SOLID, 9, SCRIPT_API_26_40_SOLID,
+                        10, SCRIPT_API_26_40_SOLID, 11, SCRIPT_API_26_40_SOLID,
+                        12, SCRIPT_API_26_40_SOLID, 13, SCRIPT_API_26_40_SOLID,
+                        14, SCRIPT_API_26_40_SOLID, 15, SCRIPT_API_26_40_SOLID,
+                        16, SCRIPT_API_26_40_SOLID, 17, SCRIPT_API_26_40_SOLID,
+                        18, SCRIPT_API_26_40_SOLID, 19, SCRIPT_API_26_40_SOLID,
+                        20, SCRIPT_API_26_40_SOLID, 21, SCRIPT_API_26_40_SOLID,
+                        22, SCRIPT_API_26_40_SOLID, 23, SCRIPT_API_26_40_SOLID,
+                        24, SCRIPT_API_26_40_SOLID, 25, SCRIPT_API_26_40_SOLID)
+                .liquidFlowDirections("weeping_vines_age", 0, SCRIPT_API_26_30_SOLID,
+                        1, SCRIPT_API_26_40_SOLID, 2, SCRIPT_API_26_40_SOLID,
+                        3, SCRIPT_API_26_40_SOLID, 4, SCRIPT_API_26_40_SOLID,
+                        5, SCRIPT_API_26_40_SOLID, 6, SCRIPT_API_26_40_SOLID,
+                        7, SCRIPT_API_26_40_SOLID, 8, SCRIPT_API_26_40_SOLID,
+                        9, SCRIPT_API_26_40_SOLID, 10, SCRIPT_API_26_40_SOLID,
+                        11, SCRIPT_API_26_40_SOLID, 12, SCRIPT_API_26_40_SOLID,
+                        13, SCRIPT_API_26_40_SOLID, 14, SCRIPT_API_26_40_SOLID,
+                        15, SCRIPT_API_26_40_SOLID, 16, SCRIPT_API_26_40_SOLID,
+                        17, SCRIPT_API_26_40_SOLID, 18, SCRIPT_API_26_40_SOLID,
+                        19, SCRIPT_API_26_40_SOLID, 20, SCRIPT_API_26_40_SOLID,
+                        21, SCRIPT_API_26_40_SOLID, 22, SCRIPT_API_26_40_SOLID,
+                        23, SCRIPT_API_26_40_SOLID, 24, SCRIPT_API_26_40_SOLID,
+                        25, SCRIPT_API_26_40_SOLID)
+                .mapColor("weeping_vines_age", 0, CLOUDBURST_DATA_26_40,
+                        1, SCRIPT_API_26_40_MAP_COLOR, 2, SCRIPT_API_26_40_MAP_COLOR,
+                        3, SCRIPT_API_26_40_MAP_COLOR, 4, SCRIPT_API_26_40_MAP_COLOR,
+                        5, SCRIPT_API_26_40_MAP_COLOR, 6, SCRIPT_API_26_40_MAP_COLOR,
+                        7, SCRIPT_API_26_40_MAP_COLOR, 8, SCRIPT_API_26_40_MAP_COLOR,
+                        9, SCRIPT_API_26_40_MAP_COLOR, 10, SCRIPT_API_26_40_MAP_COLOR,
+                        11, SCRIPT_API_26_40_MAP_COLOR, 12, SCRIPT_API_26_40_MAP_COLOR,
+                        13, SCRIPT_API_26_40_MAP_COLOR, 14, SCRIPT_API_26_40_MAP_COLOR,
+                        15, SCRIPT_API_26_40_MAP_COLOR, 16, SCRIPT_API_26_40_MAP_COLOR,
+                        17, SCRIPT_API_26_40_MAP_COLOR, 18, SCRIPT_API_26_40_MAP_COLOR,
+                        19, SCRIPT_API_26_40_MAP_COLOR, 20, SCRIPT_API_26_40_MAP_COLOR,
+                        21, SCRIPT_API_26_40_MAP_COLOR, 22, SCRIPT_API_26_40_MAP_COLOR,
+                        23, SCRIPT_API_26_40_MAP_COLOR, 24, SCRIPT_API_26_40_MAP_COLOR,
+                        25, SCRIPT_API_26_40_MAP_COLOR)
+                .movementType("weeping_vines_age", 0, SCRIPT_API_26_30_SOLID,
+                        1, SCRIPT_API_26_40_SOLID, 2, SCRIPT_API_26_40_SOLID,
+                        3, SCRIPT_API_26_40_SOLID, 4, SCRIPT_API_26_40_SOLID,
+                        5, SCRIPT_API_26_40_SOLID, 6, SCRIPT_API_26_40_SOLID,
+                        7, SCRIPT_API_26_40_SOLID, 8, SCRIPT_API_26_40_SOLID,
+                        9, SCRIPT_API_26_40_SOLID, 10, SCRIPT_API_26_40_SOLID,
+                        11, SCRIPT_API_26_40_SOLID, 12, SCRIPT_API_26_40_SOLID,
+                        13, SCRIPT_API_26_40_SOLID, 14, SCRIPT_API_26_40_SOLID,
+                        15, SCRIPT_API_26_40_SOLID, 16, SCRIPT_API_26_40_SOLID,
+                        17, SCRIPT_API_26_40_SOLID, 18, SCRIPT_API_26_40_SOLID,
+                        19, SCRIPT_API_26_40_SOLID, 20, SCRIPT_API_26_40_SOLID,
+                        21, SCRIPT_API_26_40_SOLID, 22, SCRIPT_API_26_40_SOLID,
+                        23, SCRIPT_API_26_40_SOLID, 24, SCRIPT_API_26_40_SOLID,
+                        25, SCRIPT_API_26_40_SOLID)
+                .stickyType("weeping_vines_age", 0, SCRIPT_API_26_30_SOLID,
+                        1, SCRIPT_API_26_40_SOLID, 2, SCRIPT_API_26_40_SOLID,
+                        3, SCRIPT_API_26_40_SOLID, 4, SCRIPT_API_26_40_SOLID,
+                        5, SCRIPT_API_26_40_SOLID, 6, SCRIPT_API_26_40_SOLID,
+                        7, SCRIPT_API_26_40_SOLID, 8, SCRIPT_API_26_40_SOLID,
+                        9, SCRIPT_API_26_40_SOLID, 10, SCRIPT_API_26_40_SOLID,
+                        11, SCRIPT_API_26_40_SOLID, 12, SCRIPT_API_26_40_SOLID,
+                        13, SCRIPT_API_26_40_SOLID, 14, SCRIPT_API_26_40_SOLID,
+                        15, SCRIPT_API_26_40_SOLID, 16, SCRIPT_API_26_40_SOLID,
+                        17, SCRIPT_API_26_40_SOLID, 18, SCRIPT_API_26_40_SOLID,
+                        19, SCRIPT_API_26_40_SOLID, 20, SCRIPT_API_26_40_SOLID,
+                        21, SCRIPT_API_26_40_SOLID, 22, SCRIPT_API_26_40_SOLID,
+                        23, SCRIPT_API_26_40_SOLID, 24, SCRIPT_API_26_40_SOLID,
+                        25, SCRIPT_API_26_40_SOLID)
+                .accumulatesSnow("weeping_vines_age", 0, SCRIPT_API_26_30_SOLID,
+                        1, SCRIPT_API_26_40_SOLID, 2, SCRIPT_API_26_40_SOLID,
+                        3, SCRIPT_API_26_40_SOLID, 4, SCRIPT_API_26_40_SOLID,
+                        5, SCRIPT_API_26_40_SOLID, 6, SCRIPT_API_26_40_SOLID,
+                        7, SCRIPT_API_26_40_SOLID, 8, SCRIPT_API_26_40_SOLID,
+                        9, SCRIPT_API_26_40_SOLID, 10, SCRIPT_API_26_40_SOLID,
+                        11, SCRIPT_API_26_40_SOLID, 12, SCRIPT_API_26_40_SOLID,
+                        13, SCRIPT_API_26_40_SOLID, 14, SCRIPT_API_26_40_SOLID,
+                        15, SCRIPT_API_26_40_SOLID, 16, SCRIPT_API_26_40_SOLID,
+                        17, SCRIPT_API_26_40_SOLID, 18, SCRIPT_API_26_40_SOLID,
+                        19, SCRIPT_API_26_40_SOLID, 20, SCRIPT_API_26_40_SOLID,
+                        21, SCRIPT_API_26_40_SOLID, 22, SCRIPT_API_26_40_SOLID,
+                        23, SCRIPT_API_26_40_SOLID, 24, SCRIPT_API_26_40_SOLID,
+                        25, SCRIPT_API_26_40_SOLID)
+                .snowLoggable("weeping_vines_age", 0, SCRIPT_API_26_30_SOLID,
+                        1, SCRIPT_API_26_40_SOLID, 2, SCRIPT_API_26_40_SOLID,
+                        3, SCRIPT_API_26_40_SOLID, 4, SCRIPT_API_26_40_SOLID,
+                        5, SCRIPT_API_26_40_SOLID, 6, SCRIPT_API_26_40_SOLID,
+                        7, SCRIPT_API_26_40_SOLID, 8, SCRIPT_API_26_40_SOLID,
+                        9, SCRIPT_API_26_40_SOLID, 10, SCRIPT_API_26_40_SOLID,
+                        11, SCRIPT_API_26_40_SOLID, 12, SCRIPT_API_26_40_SOLID,
+                        13, SCRIPT_API_26_40_SOLID, 14, SCRIPT_API_26_40_SOLID,
+                        15, SCRIPT_API_26_40_SOLID, 16, SCRIPT_API_26_40_SOLID,
+                        17, SCRIPT_API_26_40_SOLID, 18, SCRIPT_API_26_40_SOLID,
+                        19, SCRIPT_API_26_40_SOLID, 20, SCRIPT_API_26_40_SOLID,
+                        21, SCRIPT_API_26_40_SOLID, 22, SCRIPT_API_26_40_SOLID,
+                        23, SCRIPT_API_26_40_SOLID, 24, SCRIPT_API_26_40_SOLID,
+                        25, SCRIPT_API_26_40_SOLID)
+                .obstructsRain("weeping_vines_age", 0, SCRIPT_API_26_30_SOLID,
+                        1, SCRIPT_API_26_40_SOLID, 2, SCRIPT_API_26_40_SOLID,
+                        3, SCRIPT_API_26_40_SOLID, 4, SCRIPT_API_26_40_SOLID,
+                        5, SCRIPT_API_26_40_SOLID, 6, SCRIPT_API_26_40_SOLID,
+                        7, SCRIPT_API_26_40_SOLID, 8, SCRIPT_API_26_40_SOLID,
+                        9, SCRIPT_API_26_40_SOLID, 10, SCRIPT_API_26_40_SOLID,
+                        11, SCRIPT_API_26_40_SOLID, 12, SCRIPT_API_26_40_SOLID,
+                        13, SCRIPT_API_26_40_SOLID, 14, SCRIPT_API_26_40_SOLID,
+                        15, SCRIPT_API_26_40_SOLID, 16, SCRIPT_API_26_40_SOLID,
+                        17, SCRIPT_API_26_40_SOLID, 18, SCRIPT_API_26_40_SOLID,
+                        19, SCRIPT_API_26_40_SOLID, 20, SCRIPT_API_26_40_SOLID,
+                        21, SCRIPT_API_26_40_SOLID, 22, SCRIPT_API_26_40_SOLID,
+                        23, SCRIPT_API_26_40_SOLID, 24, SCRIPT_API_26_40_SOLID,
+                        25, SCRIPT_API_26_40_SOLID);
     }
 
     static void load(Changes v) {
@@ -532,5 +855,6 @@ final class BehaviourSources26_40 {
         part5(v);
         part6(v);
         part7(v);
+        BehaviourSources26_40Part2.part8(v);
     }
 }

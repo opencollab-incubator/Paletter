@@ -114,7 +114,7 @@ public final class Palette {
     private final CreativeOrdering ordering;
     private final VanillaContent.ExperimentGating gating;
     private final Map<PaletteLayer, WeakReference<Palette>> extensions = new WeakHashMap<>();
-    private final Supplier<VanillaBehaviour> behaviourStore;
+    private final Supplier<VanillaBehaviour> behaviourData;
     private final Shapes shapes;
     private volatile Behaviour behaviour;
     /**
@@ -143,12 +143,12 @@ public final class Palette {
 
     Palette(VanillaData data, List<PaletteLayer> layers, BlockRegistry blocks, ItemRegistry items,
             CreativeLayout creativeLayout, CreativeContent creative, PaletteReportBuilder report, CreativeOrdering ordering,
-            VanillaContent.ExperimentGating gating, Supplier<VanillaBehaviour> behaviourStore, Shapes shapes, @Nullable Palette parent) {
+            VanillaContent.ExperimentGating gating, Supplier<VanillaBehaviour> behaviourData, Shapes shapes, @Nullable Palette parent) {
         this.parent = parent;
         this.newestVersion = blocks.canonical().root().version().equals(data.version().toString());
         this.parentCanonicalSize = parent == null ? 0 : parent.blocks.canonical().size();
         this.parentSize = parent == null ? 0 : parent.blocks.size();
-        this.behaviourStore = behaviourStore;
+        this.behaviourData = behaviourData;
         this.shapes = shapes;
         this.gating = gating;
         this.data = data;
@@ -195,7 +195,7 @@ public final class Palette {
      * @return this palette with another report, sharing everything else
      */
     Palette withReport(PaletteReportBuilder report) {
-        return new Palette(data, layers, blocks, items, creativeLayout, creative, report, ordering, gating, behaviourStore, shapes, this);
+        return new Palette(data, layers, blocks, items, creativeLayout, creative, report, ordering, gating, behaviourData, shapes, this);
     }
 
     /**
@@ -211,8 +211,8 @@ public final class Palette {
         return shapes;
     }
 
-    Supplier<VanillaBehaviour> behaviourStore() {
-        return behaviourStore;
+    Supplier<VanillaBehaviour> behaviourData() {
+        return behaviourData;
     }
 
     /**
@@ -268,7 +268,7 @@ public final class Palette {
     private synchronized Behaviour buildBehaviour() {
         Behaviour result = behaviour;
         if (result == null) {
-            behaviour = result = Behaviour.of(this, behaviourStore, parent == null ? null : parent.behaviour());
+            behaviour = result = Behaviour.of(this, behaviourData, parent == null ? null : parent.behaviour());
         }
         return result;
     }

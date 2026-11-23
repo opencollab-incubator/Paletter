@@ -361,6 +361,83 @@ public final class BehaviourStore {
         return null;
     }
 
+    /**
+     * @return what one capture said, per key, about each block state it covers (by state hash): how the importer reads
+     * the captures of a retired version back, as it cannot read them from their sources without the version's palette
+     */
+    public @NonNull Map<BehaviourKey<?>, Map<Integer, Object>> blockValues(int capture) {
+        Map<BehaviourKey<?>, Map<Integer, Object>> result = new LinkedHashMap<>();
+        blocks.forEach((key, columns) -> {
+            if (columns.stream().anyMatch(c -> c.capture() == capture)) {
+                Map<Integer, Object> values = result.computeIfAbsent(key, k -> new LinkedHashMap<>());
+                for (int id : captures.get(capture).order()) {
+                    Object value = captured(capture, key, id);
+                    if (value != null) {
+                        values.put(id, value);
+                    }
+                }
+            }
+        });
+        return result;
+    }
+
+    /** @return what one capture said, per key, about each item it covers, like {@link #blockValues} */
+    public @NonNull Map<BehaviourKey<?>, Map<String, Object>> itemValues(int capture) {
+        Map<BehaviourKey<?>, Map<String, Object>> result = new LinkedHashMap<>();
+        items.forEach((key, columns) -> {
+            if (columns.stream().anyMatch(c -> c.capture() == capture)) {
+                Map<String, Object> values = result.computeIfAbsent(key, k -> new LinkedHashMap<>());
+                for (String id : new TreeSet<>(captures.get(capture).items())) {
+                    Object value = captured(capture, key, id);
+                    if (value != null) {
+                        values.put(id, value);
+                    }
+                }
+            }
+        });
+        return result;
+    }
+
+    /**
+     * @return per key and id (state hash or item), what other captures said where they disagreed with one capture: by the
+     * index of the other capture, its value
+     */
+    public @NonNull Map<BehaviourKey<?>, Map<Object, Map<Integer, Object>>> disputesOf(int capture) {
+        Map<BehaviourKey<?>, Map<Object, Map<Integer, Object>>> result = new LinkedHashMap<>();
+        for (Map<BehaviourKey<?>, ? extends List<? extends Mark<?>>> marks : List.of(blockMarks, itemMarks)) {
+            marks.forEach((key, list) -> {
+                for (Mark<?> mark : list) {
+                    if (mark.capture() == capture && mark.altCapture() >= 0) {
+                        Object[] ids = mark.ids() instanceof int[] hashes ? Arrays.stream(hashes).boxed().toArray() : (Object[]) mark.ids();
+                        for (int i = 0; i < ids.length; i++) {
+                            result.computeIfAbsent(key, k -> new LinkedHashMap<>()).computeIfAbsent(ids[i], k -> new LinkedHashMap<>())
+                                .put(mark.altCapture(), mark.altValues()[i]);
+                        }
+                    }
+                }
+            });
+        }
+        return result;
+    }
+
+    /** @return per key, what the source of one capture said it post-processed, by state hash or item */
+    public @NonNull Map<BehaviourKey<?>, Map<Object, String>> notes(int capture) {
+        Map<BehaviourKey<?>, Map<Object, String>> result = new LinkedHashMap<>();
+        for (Map<BehaviourKey<?>, ? extends List<? extends Mark<?>>> marks : List.of(blockMarks, itemMarks)) {
+            marks.forEach((key, list) -> {
+                for (Mark<?> mark : list) {
+                    if (mark.capture() == capture && mark.altCapture() < 0) {
+                        Object[] ids = mark.ids() instanceof int[] hashes ? Arrays.stream(hashes).boxed().toArray() : (Object[]) mark.ids();
+                        for (Object id : ids) {
+                            result.computeIfAbsent(key, k -> new LinkedHashMap<>()).put(id, mark.note());
+                        }
+                    }
+                }
+            });
+        }
+        return result;
+    }
+
     // ---- Building ----
 
     /**

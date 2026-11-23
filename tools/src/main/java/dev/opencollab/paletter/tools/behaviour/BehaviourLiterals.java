@@ -31,6 +31,19 @@ final class BehaviourLiterals {
         this.names = names;
     }
 
+    /** An int written as hexadecimal: a colour, RGBA. */
+    record Hex(int value) {
+        @Override
+        public String toString() {
+            return String.format(java.util.Locale.ROOT, "0x%08X", value);
+        }
+    }
+
+    /** @return a value of a key as it is written: map colours as {@link Hex} */
+    private static @Nullable Object written(BehaviourKey<?> key, @Nullable Object value) {
+        return key.name().equals("map_color") && value instanceof Integer colour ? new Hex(colour) : value;
+    }
+
     /** @return a value of a key, a property value or a note: a literal, or the constant of a shape */
     CodeBlock value(@Nullable Object value) {
         return switch (value) {
@@ -42,6 +55,7 @@ final class BehaviourLiterals {
                 yield CodeBlock.of("$Lf", Float.toString(f));
             }
             case Integer i -> CodeBlock.of("$L", i);
+            case Hex hex -> CodeBlock.of("$L", hex);
             case Boolean b -> CodeBlock.of("$L", b);
             case String s -> CodeBlock.of("$S", s);
             case BlockShape shape when shape.equals(BlockShape.EMPTY) -> CodeBlock.of("$T.EMPTY", BLOCK_SHAPE);
@@ -77,8 +91,9 @@ final class BehaviourLiterals {
         return switch (fit) {
             case null -> CodeBlock.of(".$L$L()", name, captures ? "Default" : "Unknown");
             case Constant constant when constant.value() == null -> CodeBlock.of(".$L$L()", name, captures ? "Default" : "Unknown");
-            case Constant constant -> CodeBlock.of(".$L($L)", name, cellValue(constant.value(), captures));
-            case ByProperty map -> CodeBlock.of(".$L($L)", name, pairs(map, captures));
+            case Constant constant -> CodeBlock.of(".$L($L)", name, cellValue(captures ? constant.value() : written(key, constant.value()), captures));
+            case ByProperty map -> CodeBlock.of(".$L($L)", name, pairs(captures ? map
+                : new ByProperty(map.property(), map.keys(), map.values().stream().map(v -> written(key, v)).toList()), captures));
             case Table table -> CodeBlock.of(".$L($L)", name, constant(names.tables.get(new BehaviourNames.TableKey(kind, table))));
         };
     }
@@ -88,10 +103,10 @@ final class BehaviourLiterals {
         List<CodeBlock> parts = new ArrayList<>();
         parts.add(CodeBlock.of("$S", map.property()));
         for (int i = 0; i < map.keys().size(); i++) {
-            parts.add(value(map.keys().get(i)));
-            parts.add(cellValue(map.values().get(i), captures));
+            parts.add(CodeBlock.of("$L, $L", value(map.keys().get(i)), cellValue(map.values().get(i), captures)));
         }
-        return CodeBlock.join(parts, ", ");
+        // A pair per wrapping point: a long map breaks between pairs, not within one
+        return CodeBlock.join(parts, ",$W");
     }
 
     /** @return a fit as an argument: a value, {@code Cell.map(...)} or a table constant */
@@ -104,12 +119,20 @@ final class BehaviourLiterals {
         };
     }
 
-    /** @return how a value reads in a comment */
+    /** @return how a value reads in a comment (made {@linkplain BehaviourComments#safe safe} there) */
     String comment(Object value) {
         if (value instanceof BlockShape shape) {
             return shape.equals(BlockShape.EMPTY) ? "EMPTY" : shape.equals(BlockShape.FULL_CUBE) ? "FULL_CUBE" : names.shapes.get(shape);
         }
-        return value.toString();
+        return value instanceof String text ? '"' + text + '"' : value.toString();
+    }
+
+    /** @return how a value reads in the report: shapes by their boxes in pixels */
+    static String report(Object value) {
+        if (value instanceof BlockShape shape) {
+            return BehaviourNames.inPixels(shape);
+        }
+        return value instanceof String text ? '"' + text + '"' : value.toString();
     }
 
     /** @return {@code BlockBehaviour.DESTROY_TIME} */

@@ -3,10 +3,6 @@
 package dev.opencollab.paletter.internal.behaviour.vanilla;
 
 import static dev.opencollab.paletter.internal.behaviour.vanilla.BehaviourCaptures.*;
-import static dev.opencollab.paletter.internal.behaviour.vanilla.BehaviourShapes.*;
-import static dev.opencollab.paletter.internal.behaviour.vanilla.BehaviourShapesPart2.*;
-import static dev.opencollab.paletter.internal.behaviour.vanilla.BehaviourTables.*;
-import static dev.opencollab.paletter.internal.behaviour.vanilla.BehaviourTablesPart2.*;
 
 /**
  * The captures that decided the values of 26.30: per key a default, and the blocks and items decided otherwise (a block whose states different captures decided has a cell of captures). (continued)
@@ -16,6 +12,204 @@ final class BehaviourSources26_30Part2 {
     }
 
     static void part8(Changes v) {
+        v.itemSources("minecraft:dead_horn_coral_wall_fan")
+                .maxStackSize(ALLAY_DATA_26_30)
+                .maxDamage(ALLAY_DATA_26_30);
+        v.itemSources("minecraft:dead_tube_coral_wall_fan")
+                .maxStackSize(ALLAY_DATA_26_30)
+                .maxDamage(ALLAY_DATA_26_30);
+        v.itemSources("minecraft:deepslate_brick_double_slab")
+                .maxStackSize(ALLAY_DATA_26_30)
+                .maxDamage(ALLAY_DATA_26_30);
+        v.itemSources("minecraft:deepslate_tile_double_slab")
+                .maxStackSize(ALLAY_DATA_26_30)
+                .maxDamage(ALLAY_DATA_26_30);
+        v.itemSources("minecraft:deprecated_anvil")
+                .maxStackSize(ALLAY_DATA_26_30)
+                .maxDamage(ALLAY_DATA_26_30);
+        v.itemSources("minecraft:deprecated_purpur_block_1")
+                .maxStackSize(ALLAY_DATA_26_30)
+                .maxDamage(ALLAY_DATA_26_30);
+        v.itemSources("minecraft:deprecated_purpur_block_2")
+                .maxStackSize(ALLAY_DATA_26_30)
+                .maxDamage(ALLAY_DATA_26_30);
+        v.itemSources("minecraft:diorite_double_slab")
+                .maxStackSize(ALLAY_DATA_26_30)
+                .maxDamage(ALLAY_DATA_26_30);
+        v.itemSources("minecraft:double_cut_copper_slab")
+                .maxStackSize(ALLAY_DATA_26_30)
+                .maxDamage(ALLAY_DATA_26_30);
+        v.itemSources("minecraft:double_plant")
+                .maxStackSize(ALLAY_DATA_26_30)
+                .maxDamage(ALLAY_DATA_26_30);
+        v.itemSources("minecraft:double_stone_block_slab")
+                .maxStackSize(ALLAY_DATA_26_30)
+                .maxDamage(ALLAY_DATA_26_30);
+        v.itemSources("minecraft:double_stone_block_slab2")
+                .maxStackSize(ALLAY_DATA_26_30)
+                .maxDamage(ALLAY_DATA_26_30);
+        v.itemSources("minecraft:double_stone_block_slab3")
+                .maxStackSize(ALLAY_DATA_26_30)
+                .maxDamage(ALLAY_DATA_26_30);
+        v.itemSources("minecraft:double_stone_block_slab4")
+                .maxStackSize(ALLAY_DATA_26_30)
+                .maxDamage(ALLAY_DATA_26_30);
+        v.itemSources("minecraft:dye")
+                .maxStackSize(ALLAY_DATA_26_30)
+                .maxDamage(ALLAY_DATA_26_30);
+        v.itemSources("minecraft:element_0")
+                .maxStackSize(ALLAY_DATA_26_30)
+                .maxDamage(ALLAY_DATA_26_30);
+        v.itemSources("minecraft:element_1")
+                .maxStackSize(ALLAY_DATA_26_30)
+                .maxDamage(ALLAY_DATA_26_30);
+        v.itemSources("minecraft:element_10")
+                .maxStackSize(ALLAY_DATA_26_30)
+                .maxDamage(ALLAY_DATA_26_30);
+        v.itemSources("minecraft:element_100")
+                .maxStackSize(ALLAY_DATA_26_30)
+                .maxDamage(ALLAY_DATA_26_30);
+        v.itemSources("minecraft:element_101")
+                .maxStackSize(ALLAY_DATA_26_30)
+                .maxDamage(ALLAY_DATA_26_30);
+        v.itemSources("minecraft:element_102")
+                .maxStackSize(ALLAY_DATA_26_30)
+                .maxDamage(ALLAY_DATA_26_30);
+        v.itemSources("minecraft:element_103")
+                .maxStackSize(ALLAY_DATA_26_30)
+                .maxDamage(ALLAY_DATA_26_30);
+        v.itemSources("minecraft:element_104")
+                .maxStackSize(ALLAY_DATA_26_30)
+                .maxDamage(ALLAY_DATA_26_30);
+        v.itemSources("minecraft:element_105")
+                .maxStackSize(ALLAY_DATA_26_30)
+                .maxDamage(ALLAY_DATA_26_30);
+        v.itemSources("minecraft:element_106")
+                .maxStackSize(ALLAY_DATA_26_30)
+                .maxDamage(ALLAY_DATA_26_30);
+        v.itemSources("minecraft:element_107")
+                .maxStackSize(ALLAY_DATA_26_30)
+                .maxDamage(ALLAY_DATA_26_30);
+        v.itemSources("minecraft:element_108")
+                .maxStackSize(ALLAY_DATA_26_30)
+                .maxDamage(ALLAY_DATA_26_30);
+        v.itemSources("minecraft:element_109")
+                .maxStackSize(ALLAY_DATA_26_30)
+                .maxDamage(ALLAY_DATA_26_30);
+        v.itemSources("minecraft:element_11")
+                .maxStackSize(ALLAY_DATA_26_30)
+                .maxDamage(ALLAY_DATA_26_30);
+        v.itemSources("minecraft:element_110")
+                .maxStackSize(ALLAY_DATA_26_30)
+                .maxDamage(ALLAY_DATA_26_30);
+        v.itemSources("minecraft:element_111")
+                .maxStackSize(ALLAY_DATA_26_30)
+                .maxDamage(ALLAY_DATA_26_30);
+        v.itemSources("minecraft:element_112")
+                .maxStackSize(ALLAY_DATA_26_30)
+                .maxDamage(ALLAY_DATA_26_30);
+        v.itemSources("minecraft:element_113")
+                .maxStackSize(ALLAY_DATA_26_30)
+                .maxDamage(ALLAY_DATA_26_30);
+        v.itemSources("minecraft:element_114")
+                .maxStackSize(ALLAY_DATA_26_30)
+                .maxDamage(ALLAY_DATA_26_30);
+        v.itemSources("minecraft:element_115")
+                .maxStackSize(ALLAY_DATA_26_30)
+                .maxDamage(ALLAY_DATA_26_30);
+        v.itemSources("minecraft:element_116")
+                .maxStackSize(ALLAY_DATA_26_30)
+                .maxDamage(ALLAY_DATA_26_30);
+        v.itemSources("minecraft:element_117")
+                .maxStackSize(ALLAY_DATA_26_30)
+                .maxDamage(ALLAY_DATA_26_30);
+        v.itemSources("minecraft:element_118")
+                .maxStackSize(ALLAY_DATA_26_30)
+                .maxDamage(ALLAY_DATA_26_30);
+        v.itemSources("minecraft:element_12")
+                .maxStackSize(ALLAY_DATA_26_30)
+                .maxDamage(ALLAY_DATA_26_30);
+        v.itemSources("minecraft:element_13")
+                .maxStackSize(ALLAY_DATA_26_30)
+                .maxDamage(ALLAY_DATA_26_30);
+        v.itemSources("minecraft:element_14")
+                .maxStackSize(ALLAY_DATA_26_30)
+                .maxDamage(ALLAY_DATA_26_30);
+        v.itemSources("minecraft:element_15")
+                .maxStackSize(ALLAY_DATA_26_30)
+                .maxDamage(ALLAY_DATA_26_30);
+        v.itemSources("minecraft:element_16")
+                .maxStackSize(ALLAY_DATA_26_30)
+                .maxDamage(ALLAY_DATA_26_30);
+        v.itemSources("minecraft:element_17")
+                .maxStackSize(ALLAY_DATA_26_30)
+                .maxDamage(ALLAY_DATA_26_30);
+        v.itemSources("minecraft:element_18")
+                .maxStackSize(ALLAY_DATA_26_30)
+                .maxDamage(ALLAY_DATA_26_30);
+        v.itemSources("minecraft:element_19")
+                .maxStackSize(ALLAY_DATA_26_30)
+                .maxDamage(ALLAY_DATA_26_30);
+        v.itemSources("minecraft:element_2")
+                .maxStackSize(ALLAY_DATA_26_30)
+                .maxDamage(ALLAY_DATA_26_30);
+        v.itemSources("minecraft:element_20")
+                .maxStackSize(ALLAY_DATA_26_30)
+                .maxDamage(ALLAY_DATA_26_30);
+        v.itemSources("minecraft:element_21")
+                .maxStackSize(ALLAY_DATA_26_30)
+                .maxDamage(ALLAY_DATA_26_30);
+        v.itemSources("minecraft:element_22")
+                .maxStackSize(ALLAY_DATA_26_30)
+                .maxDamage(ALLAY_DATA_26_30);
+        v.itemSources("minecraft:element_23")
+                .maxStackSize(ALLAY_DATA_26_30)
+                .maxDamage(ALLAY_DATA_26_30);
+        v.itemSources("minecraft:element_24")
+                .maxStackSize(ALLAY_DATA_26_30)
+                .maxDamage(ALLAY_DATA_26_30);
+        v.itemSources("minecraft:element_25")
+                .maxStackSize(ALLAY_DATA_26_30)
+                .maxDamage(ALLAY_DATA_26_30);
+        v.itemSources("minecraft:element_26")
+                .maxStackSize(ALLAY_DATA_26_30)
+                .maxDamage(ALLAY_DATA_26_30);
+        v.itemSources("minecraft:element_27")
+                .maxStackSize(ALLAY_DATA_26_30)
+                .maxDamage(ALLAY_DATA_26_30);
+        v.itemSources("minecraft:element_28")
+                .maxStackSize(ALLAY_DATA_26_30)
+                .maxDamage(ALLAY_DATA_26_30);
+        v.itemSources("minecraft:element_29")
+                .maxStackSize(ALLAY_DATA_26_30)
+                .maxDamage(ALLAY_DATA_26_30);
+        v.itemSources("minecraft:element_3")
+                .maxStackSize(ALLAY_DATA_26_30)
+                .maxDamage(ALLAY_DATA_26_30);
+        v.itemSources("minecraft:element_30")
+                .maxStackSize(ALLAY_DATA_26_30)
+                .maxDamage(ALLAY_DATA_26_30);
+        v.itemSources("minecraft:element_31")
+                .maxStackSize(ALLAY_DATA_26_30)
+                .maxDamage(ALLAY_DATA_26_30);
+    }
+
+    static void part9(Changes v) {
+        v.itemSources("minecraft:element_32")
+                .maxStackSize(ALLAY_DATA_26_30)
+                .maxDamage(ALLAY_DATA_26_30);
+        v.itemSources("minecraft:element_33")
+                .maxStackSize(ALLAY_DATA_26_30)
+                .maxDamage(ALLAY_DATA_26_30);
+        v.itemSources("minecraft:element_34")
+                .maxStackSize(ALLAY_DATA_26_30)
+                .maxDamage(ALLAY_DATA_26_30);
+        v.itemSources("minecraft:element_35")
+                .maxStackSize(ALLAY_DATA_26_30)
+                .maxDamage(ALLAY_DATA_26_30);
+        v.itemSources("minecraft:element_36")
+                .maxStackSize(ALLAY_DATA_26_30)
+                .maxDamage(ALLAY_DATA_26_30);
         v.itemSources("minecraft:element_37")
                 .maxStackSize(ALLAY_DATA_26_30)
                 .maxDamage(ALLAY_DATA_26_30);
@@ -181,6 +375,9 @@ final class BehaviourSources26_30Part2 {
         v.itemSources("minecraft:element_86")
                 .maxStackSize(ALLAY_DATA_26_30)
                 .maxDamage(ALLAY_DATA_26_30);
+    }
+
+    static void part10(Changes v) {
         v.itemSources("minecraft:element_87")
                 .maxStackSize(ALLAY_DATA_26_30)
                 .maxDamage(ALLAY_DATA_26_30);
@@ -196,9 +393,6 @@ final class BehaviourSources26_30Part2 {
         v.itemSources("minecraft:element_90")
                 .maxStackSize(ALLAY_DATA_26_30)
                 .maxDamage(ALLAY_DATA_26_30);
-    }
-
-    static void part9(Changes v) {
         v.itemSources("minecraft:element_91")
                 .maxStackSize(ALLAY_DATA_26_30)
                 .maxDamage(ALLAY_DATA_26_30);
@@ -364,6 +558,9 @@ final class BehaviourSources26_30Part2 {
         v.itemSources("minecraft:hard_stained_glass")
                 .maxStackSize(ALLAY_DATA_26_30)
                 .maxDamage(ALLAY_DATA_26_30);
+    }
+
+    static void part11(Changes v) {
         v.itemSources("minecraft:hard_stained_glass_pane")
                 .maxStackSize(ALLAY_DATA_26_30)
                 .maxDamage(ALLAY_DATA_26_30);
@@ -379,9 +576,6 @@ final class BehaviourSources26_30Part2 {
         v.itemSources("minecraft:hard_yellow_stained_glass_pane")
                 .maxStackSize(ALLAY_DATA_26_30)
                 .maxDamage(ALLAY_DATA_26_30);
-    }
-
-    static void part10(Changes v) {
         v.itemSources("minecraft:horn_coral_wall_fan")
                 .maxStackSize(ALLAY_DATA_26_30)
                 .maxDamage(ALLAY_DATA_26_30);
@@ -547,6 +741,9 @@ final class BehaviourSources26_30Part2 {
         v.itemSources("minecraft:netherreactor")
                 .maxStackSize(ALLAY_DATA_26_30)
                 .maxDamage(ALLAY_DATA_26_30);
+    }
+
+    static void part12(Changes v) {
         v.itemSources("minecraft:normal_stone_double_slab")
                 .maxStackSize(ALLAY_DATA_26_30)
                 .maxDamage(ALLAY_DATA_26_30);
@@ -562,9 +759,6 @@ final class BehaviourSources26_30Part2 {
         v.itemSources("minecraft:oxidized_double_cut_copper_slab")
                 .maxStackSize(ALLAY_DATA_26_30)
                 .maxDamage(ALLAY_DATA_26_30);
-    }
-
-    static void part11(Changes v) {
         v.itemSources("minecraft:pale_oak_double_slab")
                 .maxStackSize(ALLAY_DATA_26_30)
                 .maxDamage(ALLAY_DATA_26_30);
@@ -730,6 +924,9 @@ final class BehaviourSources26_30Part2 {
         v.itemSources("minecraft:standing_sign")
                 .maxStackSize(ALLAY_DATA_26_30)
                 .maxDamage(ALLAY_DATA_26_30);
+    }
+
+    static void part13(Changes v) {
         v.itemSources("minecraft:sticky_piston_arm_collision")
                 .maxStackSize(ALLAY_DATA_26_30)
                 .maxDamage(ALLAY_DATA_26_30);
@@ -745,9 +942,6 @@ final class BehaviourSources26_30Part2 {
         v.itemSources("minecraft:stone_block_slab4")
                 .maxStackSize(ALLAY_DATA_26_30)
                 .maxDamage(ALLAY_DATA_26_30);
-    }
-
-    static void part12(Changes v) {
         v.itemSources("minecraft:stone_brick_double_slab")
                 .maxStackSize(ALLAY_DATA_26_30)
                 .maxDamage(ALLAY_DATA_26_30);

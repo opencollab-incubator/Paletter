@@ -2,290 +2,530 @@
 // and the bundled palettes. Do not edit; see docs/data-pipeline.md.
 package dev.opencollab.paletter.internal.behaviour.vanilla;
 
-import static dev.opencollab.paletter.internal.behaviour.vanilla.BehaviourCaptures.*;
 import static dev.opencollab.paletter.internal.behaviour.vanilla.BehaviourShapes.*;
 import static dev.opencollab.paletter.internal.behaviour.vanilla.BehaviourShapesPart2.*;
 import static dev.opencollab.paletter.internal.behaviour.vanilla.BehaviourTables.*;
-import static dev.opencollab.paletter.internal.behaviour.vanilla.BehaviourTablesPart2.*;
 
 /**
- * What changed in 26.50 against 26.40, each change with the capture that decided it and the captures of the version that confirm it. SOURCE ONLY: no direct BDS capture decided the change, only a third-party dump (see data/behaviour/REPORT.md). (continued)
+ * What changed in 26.50 against 26.40, each change with the capture that decided it and the captures of the version that confirm it. SOURCE ONLY: no direct BDS capture decided the change, only a third-party dump; first coverage: nothing was known before; a block that is new or has other states says where its values come from. data/behaviour/REPORT.md lists what to check. (continued)
  */
 final class BehaviourChanges26_50Part2 {
     private BehaviourChanges26_50Part2() {
     }
 
     static void part8(Changes v) {
+        // requires_correct_tool false -> true: CloudburstMC/Data 88a2436; SOURCE ONLY (no BDS capture); undoes the change of 26.40 by the same source: suspected dump artefact
+        v.change("minecraft:gray_glazed_terracotta").requiresCorrectTool(true);
         // other states than in 26.40 (none): values from BDS Script API dump 1.26.52.3, CloudburstMC/Data 88a2436
-        v.block("minecraft:hard_glass_pane", "minecraft:connection_east=false|true,minecraft:connection_north=false|true,minecraft:connection_south=false|true,minecraft:connection_west=false|true")
+        v.block("minecraft:gray_stained_glass_pane", "minecraft:connection_east=false|true,minecraft:connection_north=false|true,minecraft:connection_south=false|true,minecraft:connection_west=false|true")
+                .destroyTime(0.3f)
+                .explosionResistance(0.3f)
+                .collisionShape(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_B233D5)
+                .outlineShape(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_2E2A33)
+                .canContainLiquid(true)
+                .liquidFlowDirections(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_9A27D1)
+                .translucency(1.0f)
+                .movementType(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_375773)
+                .stickyType(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_43522C)
+                .accumulatesSnow(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_9B2762)
+                .snowLoggable(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_1AB959)
+                .obstructsRain(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_9B2762);
+        // requires_correct_tool false -> true: CloudburstMC/Data 88a2436; SOURCE ONLY (no BDS capture); undoes the change of 26.40 by the same source: suspected dump artefact
+        v.change("minecraft:gray_terracotta").requiresCorrectTool(true);
+        // new in 26.50: values from BDS Script API dump 1.26.52.3, CloudburstMC/Data 88a2436
+        v.block("minecraft:gray_wool_double_slab", "minecraft:vertical_half='bottom'|'top'")
+                .destroyTime(0.8f)
+                .explosionResistance(0.16f)
+                .solid(true)
+                .lightDampening(15)
+                .mapColor(0x474F52FF)
+                .flameOdds(30)
+                .burnOdds(60);
+        // new in 26.50: values from BDS Script API dump 1.26.52.3, CloudburstMC/Data 88a2436
+        v.block("minecraft:gray_wool_slab", "minecraft:vertical_half='bottom'|'top'")
+                .destroyTime(0.8f)
+                .explosionResistance(0.16f)
+                .collisionShape("minecraft:vertical_half", "bottom", BOX_0_0_0_16_8_16,
+                        "top", BOX_0_8_0_16_16_16)
+                .outlineShape("minecraft:vertical_half", "bottom", BOX_0_0_0_16_8_16,
+                        "top", BOX_0_8_0_16_16_16)
+                .canContainLiquid(true)
+                .liquidFlowDirections("minecraft:vertical_half", "bottom", 62, "top", 61)
+                .mapColor(0x474F52FF)
+                .flameOdds(30)
+                .burnOdds(60)
+                .translucency(0.8f);
+        // new in 26.50: values from BDS Script API dump 1.26.52.3, CloudburstMC/Data 88a2436
+        v.block("minecraft:gray_wool_stairs", "minecraft:corner='inner_left'|'inner_right'|'none'|'outer_left'|'outer_right',upside_down_bit=false|true,weirdo_direction=0..3")
+                .destroyTime(0.8f)
+                .explosionResistance(0.16f)
+                .collisionShape(TABLE_CORNER_UPSIDE_DOWN_BIT_WEIRDO_DIRECTION_BD8305)
+                .canContainLiquid(true)
+                .liquidFlowDirections(TABLE_CORNER_UPSIDE_DOWN_BIT_WEIRDO_DIRECTION_91C7B2)
+                .mapColor("minecraft:corner", "inner_left", 0x00000000, "inner_right", 0x00000000,
+                        "none", 0x474F52FF, "outer_left", 0x00000000, "outer_right", 0x00000000)
+                .flameOdds(30)
+                .burnOdds(60)
+                .translucency(0.8f)
+                .movementType("minecraft:corner", "inner_left", null, "inner_right", null,
+                        "none", "PushPull", "outer_left", null, "outer_right", null)
+                .stickyType("minecraft:corner", "inner_left", null, "inner_right", null,
+                        "none", "None", "outer_left", null, "outer_right", null)
+                .accumulatesSnow("minecraft:corner", "inner_left", null, "inner_right", null,
+                        "none", true, "outer_left", null, "outer_right", null)
+                .snowLoggable("minecraft:corner", "inner_left", null, "inner_right", null,
+                        "none", false, "outer_left", null, "outer_right", null)
+                .obstructsRain("minecraft:corner", "inner_left", null, "inner_right", null,
+                        "none", true, "outer_left", null, "outer_right", null);
+        // requires_correct_tool false -> true: CloudburstMC/Data 88a2436; SOURCE ONLY (no BDS capture); undoes the change of 26.40 by the same source: suspected dump artefact
+        v.change("minecraft:green_concrete").requiresCorrectTool(true);
+        // new in 26.50: values from BDS Script API dump 1.26.52.3, CloudburstMC/Data 88a2436
+        v.block("minecraft:green_concrete_double_slab", "minecraft:vertical_half='bottom'|'top'")
+                .destroyTime(1.8f)
+                .explosionResistance(0.359999f)
+                .solid(true)
+                .lightDampening(15)
+                .requiresCorrectTool(true)
+                .mapColor(0x667F33FF);
+        // new in 26.50: values from BDS Script API dump 1.26.52.3, CloudburstMC/Data 88a2436
+        v.block("minecraft:green_concrete_slab", "minecraft:vertical_half='bottom'|'top'")
+                .destroyTime(1.8f)
+                .explosionResistance(0.359999f)
+                .collisionShape("minecraft:vertical_half", "bottom", BOX_0_0_0_16_8_16,
+                        "top", BOX_0_8_0_16_16_16)
+                .outlineShape("minecraft:vertical_half", "bottom", BOX_0_0_0_16_8_16,
+                        "top", BOX_0_8_0_16_16_16)
+                .canContainLiquid(true)
+                .liquidFlowDirections("minecraft:vertical_half", "bottom", 62, "top", 61)
+                .requiresCorrectTool(true)
+                .mapColor(0x667F33FF);
+        // new in 26.50: values from BDS Script API dump 1.26.52.3, CloudburstMC/Data 88a2436
+        v.block("minecraft:green_concrete_stairs", "minecraft:corner='inner_left'|'inner_right'|'none'|'outer_left'|'outer_right',upside_down_bit=false|true,weirdo_direction=0..3")
+                .destroyTime(1.8f)
+                .explosionResistance(0.359999f)
+                .collisionShape(TABLE_CORNER_UPSIDE_DOWN_BIT_WEIRDO_DIRECTION_BD8305)
+                .canContainLiquid(true)
+                .liquidFlowDirections(TABLE_CORNER_UPSIDE_DOWN_BIT_WEIRDO_DIRECTION_91C7B2)
+                .requiresCorrectTool(true)
+                .mapColor("minecraft:corner", "inner_left", 0x00000000, "inner_right", 0x00000000,
+                        "none", 0x667F33FF, "outer_left", 0x00000000, "outer_right", 0x00000000)
+                .translucency(0.8f)
+                .movementType("minecraft:corner", "inner_left", null, "inner_right", null,
+                        "none", "PushPull", "outer_left", null, "outer_right", null)
+                .stickyType("minecraft:corner", "inner_left", null, "inner_right", null,
+                        "none", "None", "outer_left", null, "outer_right", null)
+                .accumulatesSnow("minecraft:corner", "inner_left", null, "inner_right", null,
+                        "none", true, "outer_left", null, "outer_right", null)
+                .snowLoggable("minecraft:corner", "inner_left", null, "inner_right", null,
+                        "none", false, "outer_left", null, "outer_right", null)
+                .obstructsRain("minecraft:corner", "inner_left", null, "inner_right", null,
+                        "none", true, "outer_left", null, "outer_right", null);
+        // requires_correct_tool false -> true: CloudburstMC/Data 88a2436; SOURCE ONLY (no BDS capture); undoes the change of 26.40 by the same source: suspected dump artefact
+        v.change("minecraft:green_glazed_terracotta").requiresCorrectTool(true);
+        // other states than in 26.40 (none): values from BDS Script API dump 1.26.52.3, CloudburstMC/Data 88a2436
+        v.block("minecraft:green_stained_glass_pane", "minecraft:connection_east=false|true,minecraft:connection_north=false|true,minecraft:connection_south=false|true,minecraft:connection_west=false|true")
+                .destroyTime(0.3f)
+                .explosionResistance(0.3f)
+                .collisionShape(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_B233D5)
+                .outlineShape(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_2E2A33)
+                .canContainLiquid(true)
+                .liquidFlowDirections(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_9A27D1)
+                .translucency(1.0f)
+                .movementType(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_375773)
+                .stickyType(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_43522C)
+                .accumulatesSnow(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_9B2762)
+                .snowLoggable(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_1AB959)
+                .obstructsRain(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_9B2762);
+        // requires_correct_tool false -> true: CloudburstMC/Data 88a2436; SOURCE ONLY (no BDS capture); undoes the change of 26.40 by the same source: suspected dump artefact
+        v.change("minecraft:green_terracotta").requiresCorrectTool(true);
+        // new in 26.50: values from BDS Script API dump 1.26.52.3, CloudburstMC/Data 88a2436
+        v.block("minecraft:green_wool_double_slab", "minecraft:vertical_half='bottom'|'top'")
+                .destroyTime(0.8f)
+                .explosionResistance(0.16f)
+                .solid(true)
+                .lightDampening(15)
+                .mapColor(0x5E7C16FF)
+                .flameOdds(30)
+                .burnOdds(60);
+        // new in 26.50: values from BDS Script API dump 1.26.52.3, CloudburstMC/Data 88a2436
+        v.block("minecraft:green_wool_slab", "minecraft:vertical_half='bottom'|'top'")
+                .destroyTime(0.8f)
+                .explosionResistance(0.16f)
+                .collisionShape("minecraft:vertical_half", "bottom", BOX_0_0_0_16_8_16,
+                        "top", BOX_0_8_0_16_16_16)
+                .outlineShape("minecraft:vertical_half", "bottom", BOX_0_0_0_16_8_16,
+                        "top", BOX_0_8_0_16_16_16)
+                .canContainLiquid(true)
+                .liquidFlowDirections("minecraft:vertical_half", "bottom", 62, "top", 61)
+                .mapColor(0x5E7C16FF)
+                .flameOdds(30)
+                .burnOdds(60)
+                .translucency(0.8f);
+        // new in 26.50: values from BDS Script API dump 1.26.52.3, CloudburstMC/Data 88a2436
+        v.block("minecraft:green_wool_stairs", "minecraft:corner='inner_left'|'inner_right'|'none'|'outer_left'|'outer_right',upside_down_bit=false|true,weirdo_direction=0..3")
+                .destroyTime(0.8f)
+                .explosionResistance(0.16f)
+                .collisionShape(TABLE_CORNER_UPSIDE_DOWN_BIT_WEIRDO_DIRECTION_BD8305)
+                .canContainLiquid(true)
+                .liquidFlowDirections(TABLE_CORNER_UPSIDE_DOWN_BIT_WEIRDO_DIRECTION_91C7B2)
+                .mapColor("minecraft:corner", "inner_left", 0x00000000, "inner_right", 0x00000000,
+                        "none", 0x5E7C16FF, "outer_left", 0x00000000, "outer_right", 0x00000000)
+                .flameOdds(30)
+                .burnOdds(60)
+                .translucency(0.8f)
+                .movementType("minecraft:corner", "inner_left", null, "inner_right", null,
+                        "none", "PushPull", "outer_left", null, "outer_right", null)
+                .stickyType("minecraft:corner", "inner_left", null, "inner_right", null,
+                        "none", "None", "outer_left", null, "outer_right", null)
+                .accumulatesSnow("minecraft:corner", "inner_left", null, "inner_right", null,
+                        "none", true, "outer_left", null, "outer_right", null)
+                .snowLoggable("minecraft:corner", "inner_left", null, "inner_right", null,
+                        "none", false, "outer_left", null, "outer_right", null)
+                .obstructsRain("minecraft:corner", "inner_left", null, "inner_right", null,
+                        "none", true, "outer_left", null, "outer_right", null);
+        // requires_correct_tool false -> true: CloudburstMC/Data 88a2436; SOURCE ONLY (no BDS capture); undoes the change of 26.40 by the same source: suspected dump artefact
+        v.change("minecraft:grindstone").requiresCorrectTool(true);
+        // outline_shape SHAPE_HANGING_ROOTS_OUTLINE_SHAPE -> SHAPE_HANGING_ROOTS_OUTLINE_SHAPE_2: CloudburstMC/Data 88a2436; SOURCE ONLY (no BDS capture)
+        v.change("minecraft:hanging_roots")
+                .outlineShape(SHAPE_HANGING_ROOTS_OUTLINE_SHAPE_2);
+        // other states than in 26.40 (none): values from BDS Script API dump 1.26.52.3, CloudburstMC/Data 88a2436
+        v.block("minecraft:hard_black_stained_glass_pane", "minecraft:connection_east=false|true,minecraft:connection_north=false|true,minecraft:connection_south=false|true,minecraft:connection_west=false|true")
                 .destroyTime(10.0f)
                 .explosionResistance(10.0f)
-                .collisionShape(BLACK_STAINED_GLASS_PANE_COLLISION_SHAPE_10)
-                .outlineShape(BLACK_STAINED_GLASS_PANE_OUTLINE_SHAPE)
+                .collisionShape(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_B233D5)
+                .outlineShape(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_2E2A33)
                 .canContainLiquid(true)
-                .liquidFlowDirections(ACACIA_FENCE_LIQUID_FLOW_DIRECTIONS)
+                .liquidFlowDirections(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_9A27D1)
                 .translucency(1.0f)
-                .movementType(ACACIA_FENCE_MOVEMENT_TYPE)
-                .stickyType(ACACIA_FENCE_STICKY_TYPE)
-                .accumulatesSnow(ACACIA_FENCE_ACCUMULATES_SNOW)
-                .snowLoggable(ACACIA_FENCE_SNOW_LOGGABLE)
-                .obstructsRain(ACACIA_FENCE_ACCUMULATES_SNOW);
-        // other states than in 26.40 (none): values from BDS Script API dump 1.26.52.3, CloudburstMC/Data 88a2436
-        v.block("minecraft:hard_gray_stained_glass_pane", "minecraft:connection_east=false|true,minecraft:connection_north=false|true,minecraft:connection_south=false|true,minecraft:connection_west=false|true")
-                .destroyTime(10.0f)
-                .explosionResistance(10.0f)
-                .collisionShape(BLACK_STAINED_GLASS_PANE_COLLISION_SHAPE_10)
-                .outlineShape(BLACK_STAINED_GLASS_PANE_OUTLINE_SHAPE)
-                .canContainLiquid(true)
-                .liquidFlowDirections(ACACIA_FENCE_LIQUID_FLOW_DIRECTIONS)
-                .translucency(1.0f)
-                .movementType(ACACIA_FENCE_MOVEMENT_TYPE)
-                .stickyType(ACACIA_FENCE_STICKY_TYPE)
-                .accumulatesSnow(ACACIA_FENCE_ACCUMULATES_SNOW)
-                .snowLoggable(ACACIA_FENCE_SNOW_LOGGABLE)
-                .obstructsRain(ACACIA_FENCE_ACCUMULATES_SNOW);
-        // other states than in 26.40 (none): values from BDS Script API dump 1.26.52.3, CloudburstMC/Data 88a2436
-        v.block("minecraft:hard_green_stained_glass_pane", "minecraft:connection_east=false|true,minecraft:connection_north=false|true,minecraft:connection_south=false|true,minecraft:connection_west=false|true")
-                .destroyTime(10.0f)
-                .explosionResistance(10.0f)
-                .collisionShape(BLACK_STAINED_GLASS_PANE_COLLISION_SHAPE_10)
-                .outlineShape(BLACK_STAINED_GLASS_PANE_OUTLINE_SHAPE)
-                .canContainLiquid(true)
-                .liquidFlowDirections(ACACIA_FENCE_LIQUID_FLOW_DIRECTIONS)
-                .translucency(1.0f)
-                .movementType(ACACIA_FENCE_MOVEMENT_TYPE)
-                .stickyType(ACACIA_FENCE_STICKY_TYPE)
-                .accumulatesSnow(ACACIA_FENCE_ACCUMULATES_SNOW)
-                .snowLoggable(ACACIA_FENCE_SNOW_LOGGABLE)
-                .obstructsRain(ACACIA_FENCE_ACCUMULATES_SNOW);
-        // other states than in 26.40 (none): values from BDS Script API dump 1.26.52.3, CloudburstMC/Data 88a2436
-        v.block("minecraft:hard_light_blue_stained_glass_pane", "minecraft:connection_east=false|true,minecraft:connection_north=false|true,minecraft:connection_south=false|true,minecraft:connection_west=false|true")
-                .destroyTime(10.0f)
-                .explosionResistance(10.0f)
-                .collisionShape(BLACK_STAINED_GLASS_PANE_COLLISION_SHAPE_10)
-                .outlineShape(BLACK_STAINED_GLASS_PANE_OUTLINE_SHAPE)
-                .canContainLiquid(true)
-                .liquidFlowDirections(ACACIA_FENCE_LIQUID_FLOW_DIRECTIONS)
-                .translucency(1.0f)
-                .movementType(ACACIA_FENCE_MOVEMENT_TYPE)
-                .stickyType(ACACIA_FENCE_STICKY_TYPE)
-                .accumulatesSnow(ACACIA_FENCE_ACCUMULATES_SNOW)
-                .snowLoggable(ACACIA_FENCE_SNOW_LOGGABLE)
-                .obstructsRain(ACACIA_FENCE_ACCUMULATES_SNOW);
-        // other states than in 26.40 (none): values from BDS Script API dump 1.26.52.3, CloudburstMC/Data 88a2436
-        v.block("minecraft:hard_light_gray_stained_glass_pane", "minecraft:connection_east=false|true,minecraft:connection_north=false|true,minecraft:connection_south=false|true,minecraft:connection_west=false|true")
-                .destroyTime(10.0f)
-                .explosionResistance(10.0f)
-                .collisionShape(BLACK_STAINED_GLASS_PANE_COLLISION_SHAPE_10)
-                .outlineShape(BLACK_STAINED_GLASS_PANE_OUTLINE_SHAPE)
-                .canContainLiquid(true)
-                .liquidFlowDirections(ACACIA_FENCE_LIQUID_FLOW_DIRECTIONS)
-                .translucency(1.0f)
-                .movementType(ACACIA_FENCE_MOVEMENT_TYPE)
-                .stickyType(ACACIA_FENCE_STICKY_TYPE)
-                .accumulatesSnow(ACACIA_FENCE_ACCUMULATES_SNOW)
-                .snowLoggable(ACACIA_FENCE_SNOW_LOGGABLE)
-                .obstructsRain(ACACIA_FENCE_ACCUMULATES_SNOW);
-        // other states than in 26.40 (none): values from BDS Script API dump 1.26.52.3, CloudburstMC/Data 88a2436
-        v.block("minecraft:hard_lime_stained_glass_pane", "minecraft:connection_east=false|true,minecraft:connection_north=false|true,minecraft:connection_south=false|true,minecraft:connection_west=false|true")
-                .destroyTime(10.0f)
-                .explosionResistance(10.0f)
-                .collisionShape(BLACK_STAINED_GLASS_PANE_COLLISION_SHAPE_10)
-                .outlineShape(BLACK_STAINED_GLASS_PANE_OUTLINE_SHAPE)
-                .canContainLiquid(true)
-                .liquidFlowDirections(ACACIA_FENCE_LIQUID_FLOW_DIRECTIONS)
-                .translucency(1.0f)
-                .movementType(ACACIA_FENCE_MOVEMENT_TYPE)
-                .stickyType(ACACIA_FENCE_STICKY_TYPE)
-                .accumulatesSnow(ACACIA_FENCE_ACCUMULATES_SNOW)
-                .snowLoggable(ACACIA_FENCE_SNOW_LOGGABLE)
-                .obstructsRain(ACACIA_FENCE_ACCUMULATES_SNOW);
-        // other states than in 26.40 (none): values from BDS Script API dump 1.26.52.3, CloudburstMC/Data 88a2436
-        v.block("minecraft:hard_magenta_stained_glass_pane", "minecraft:connection_east=false|true,minecraft:connection_north=false|true,minecraft:connection_south=false|true,minecraft:connection_west=false|true")
-                .destroyTime(10.0f)
-                .explosionResistance(10.0f)
-                .collisionShape(BLACK_STAINED_GLASS_PANE_COLLISION_SHAPE_10)
-                .outlineShape(BLACK_STAINED_GLASS_PANE_OUTLINE_SHAPE)
-                .canContainLiquid(true)
-                .liquidFlowDirections(ACACIA_FENCE_LIQUID_FLOW_DIRECTIONS)
-                .translucency(1.0f)
-                .movementType(ACACIA_FENCE_MOVEMENT_TYPE)
-                .stickyType(ACACIA_FENCE_STICKY_TYPE)
-                .accumulatesSnow(ACACIA_FENCE_ACCUMULATES_SNOW)
-                .snowLoggable(ACACIA_FENCE_SNOW_LOGGABLE)
-                .obstructsRain(ACACIA_FENCE_ACCUMULATES_SNOW);
-        // other states than in 26.40 (none): values from BDS Script API dump 1.26.52.3, CloudburstMC/Data 88a2436
-        v.block("minecraft:hard_orange_stained_glass_pane", "minecraft:connection_east=false|true,minecraft:connection_north=false|true,minecraft:connection_south=false|true,minecraft:connection_west=false|true")
-                .destroyTime(10.0f)
-                .explosionResistance(10.0f)
-                .collisionShape(BLACK_STAINED_GLASS_PANE_COLLISION_SHAPE_10)
-                .outlineShape(BLACK_STAINED_GLASS_PANE_OUTLINE_SHAPE)
-                .canContainLiquid(true)
-                .liquidFlowDirections(ACACIA_FENCE_LIQUID_FLOW_DIRECTIONS)
-                .translucency(1.0f)
-                .movementType(ACACIA_FENCE_MOVEMENT_TYPE)
-                .stickyType(ACACIA_FENCE_STICKY_TYPE)
-                .accumulatesSnow(ACACIA_FENCE_ACCUMULATES_SNOW)
-                .snowLoggable(ACACIA_FENCE_SNOW_LOGGABLE)
-                .obstructsRain(ACACIA_FENCE_ACCUMULATES_SNOW);
-        // other states than in 26.40 (none): values from BDS Script API dump 1.26.52.3, CloudburstMC/Data 88a2436
-        v.block("minecraft:hard_pink_stained_glass_pane", "minecraft:connection_east=false|true,minecraft:connection_north=false|true,minecraft:connection_south=false|true,minecraft:connection_west=false|true")
-                .destroyTime(10.0f)
-                .explosionResistance(10.0f)
-                .collisionShape(BLACK_STAINED_GLASS_PANE_COLLISION_SHAPE_10)
-                .outlineShape(BLACK_STAINED_GLASS_PANE_OUTLINE_SHAPE)
-                .canContainLiquid(true)
-                .liquidFlowDirections(ACACIA_FENCE_LIQUID_FLOW_DIRECTIONS)
-                .translucency(1.0f)
-                .movementType(ACACIA_FENCE_MOVEMENT_TYPE)
-                .stickyType(ACACIA_FENCE_STICKY_TYPE)
-                .accumulatesSnow(ACACIA_FENCE_ACCUMULATES_SNOW)
-                .snowLoggable(ACACIA_FENCE_SNOW_LOGGABLE)
-                .obstructsRain(ACACIA_FENCE_ACCUMULATES_SNOW);
-        // other states than in 26.40 (none): values from BDS Script API dump 1.26.52.3, CloudburstMC/Data 88a2436
-        v.block("minecraft:hard_purple_stained_glass_pane", "minecraft:connection_east=false|true,minecraft:connection_north=false|true,minecraft:connection_south=false|true,minecraft:connection_west=false|true")
-                .destroyTime(10.0f)
-                .explosionResistance(10.0f)
-                .collisionShape(BLACK_STAINED_GLASS_PANE_COLLISION_SHAPE_10)
-                .outlineShape(BLACK_STAINED_GLASS_PANE_OUTLINE_SHAPE)
-                .canContainLiquid(true)
-                .liquidFlowDirections(ACACIA_FENCE_LIQUID_FLOW_DIRECTIONS)
-                .translucency(1.0f)
-                .movementType(ACACIA_FENCE_MOVEMENT_TYPE)
-                .stickyType(ACACIA_FENCE_STICKY_TYPE)
-                .accumulatesSnow(ACACIA_FENCE_ACCUMULATES_SNOW)
-                .snowLoggable(ACACIA_FENCE_SNOW_LOGGABLE)
-                .obstructsRain(ACACIA_FENCE_ACCUMULATES_SNOW);
-        // other states than in 26.40 (none): values from BDS Script API dump 1.26.52.3, CloudburstMC/Data 88a2436
-        v.block("minecraft:hard_red_stained_glass_pane", "minecraft:connection_east=false|true,minecraft:connection_north=false|true,minecraft:connection_south=false|true,minecraft:connection_west=false|true")
-                .destroyTime(10.0f)
-                .explosionResistance(10.0f)
-                .collisionShape(BLACK_STAINED_GLASS_PANE_COLLISION_SHAPE_10)
-                .outlineShape(BLACK_STAINED_GLASS_PANE_OUTLINE_SHAPE)
-                .canContainLiquid(true)
-                .liquidFlowDirections(ACACIA_FENCE_LIQUID_FLOW_DIRECTIONS)
-                .translucency(1.0f)
-                .movementType(ACACIA_FENCE_MOVEMENT_TYPE)
-                .stickyType(ACACIA_FENCE_STICKY_TYPE)
-                .accumulatesSnow(ACACIA_FENCE_ACCUMULATES_SNOW)
-                .snowLoggable(ACACIA_FENCE_SNOW_LOGGABLE)
-                .obstructsRain(ACACIA_FENCE_ACCUMULATES_SNOW);
+                .movementType(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_375773)
+                .stickyType(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_43522C)
+                .accumulatesSnow(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_9B2762)
+                .snowLoggable(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_1AB959)
+                .obstructsRain(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_9B2762);
     }
 
     static void part9(Changes v) {
         // other states than in 26.40 (none): values from BDS Script API dump 1.26.52.3, CloudburstMC/Data 88a2436
+        v.block("minecraft:hard_blue_stained_glass_pane", "minecraft:connection_east=false|true,minecraft:connection_north=false|true,minecraft:connection_south=false|true,minecraft:connection_west=false|true")
+                .destroyTime(10.0f)
+                .explosionResistance(10.0f)
+                .collisionShape(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_B233D5)
+                .outlineShape(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_2E2A33)
+                .canContainLiquid(true)
+                .liquidFlowDirections(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_9A27D1)
+                .translucency(1.0f)
+                .movementType(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_375773)
+                .stickyType(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_43522C)
+                .accumulatesSnow(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_9B2762)
+                .snowLoggable(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_1AB959)
+                .obstructsRain(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_9B2762);
+        // other states than in 26.40 (none): values from BDS Script API dump 1.26.52.3, CloudburstMC/Data 88a2436
+        v.block("minecraft:hard_brown_stained_glass_pane", "minecraft:connection_east=false|true,minecraft:connection_north=false|true,minecraft:connection_south=false|true,minecraft:connection_west=false|true")
+                .destroyTime(10.0f)
+                .explosionResistance(10.0f)
+                .collisionShape(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_B233D5)
+                .outlineShape(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_2E2A33)
+                .canContainLiquid(true)
+                .liquidFlowDirections(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_9A27D1)
+                .translucency(1.0f)
+                .movementType(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_375773)
+                .stickyType(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_43522C)
+                .accumulatesSnow(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_9B2762)
+                .snowLoggable(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_1AB959)
+                .obstructsRain(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_9B2762);
+        // other states than in 26.40 (none): values from BDS Script API dump 1.26.52.3, CloudburstMC/Data 88a2436
+        v.block("minecraft:hard_cyan_stained_glass_pane", "minecraft:connection_east=false|true,minecraft:connection_north=false|true,minecraft:connection_south=false|true,minecraft:connection_west=false|true")
+                .destroyTime(10.0f)
+                .explosionResistance(10.0f)
+                .collisionShape(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_B233D5)
+                .outlineShape(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_2E2A33)
+                .canContainLiquid(true)
+                .liquidFlowDirections(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_9A27D1)
+                .translucency(1.0f)
+                .movementType(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_375773)
+                .stickyType(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_43522C)
+                .accumulatesSnow(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_9B2762)
+                .snowLoggable(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_1AB959)
+                .obstructsRain(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_9B2762);
+        // other states than in 26.40 (none): values from BDS Script API dump 1.26.52.3, CloudburstMC/Data 88a2436
+        v.block("minecraft:hard_glass_pane", "minecraft:connection_east=false|true,minecraft:connection_north=false|true,minecraft:connection_south=false|true,minecraft:connection_west=false|true")
+                .destroyTime(10.0f)
+                .explosionResistance(10.0f)
+                .collisionShape(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_B233D5)
+                .outlineShape(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_2E2A33)
+                .canContainLiquid(true)
+                .liquidFlowDirections(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_9A27D1)
+                .translucency(1.0f)
+                .movementType(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_375773)
+                .stickyType(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_43522C)
+                .accumulatesSnow(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_9B2762)
+                .snowLoggable(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_1AB959)
+                .obstructsRain(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_9B2762);
+        // other states than in 26.40 (none): values from BDS Script API dump 1.26.52.3, CloudburstMC/Data 88a2436
+        v.block("minecraft:hard_gray_stained_glass_pane", "minecraft:connection_east=false|true,minecraft:connection_north=false|true,minecraft:connection_south=false|true,minecraft:connection_west=false|true")
+                .destroyTime(10.0f)
+                .explosionResistance(10.0f)
+                .collisionShape(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_B233D5)
+                .outlineShape(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_2E2A33)
+                .canContainLiquid(true)
+                .liquidFlowDirections(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_9A27D1)
+                .translucency(1.0f)
+                .movementType(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_375773)
+                .stickyType(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_43522C)
+                .accumulatesSnow(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_9B2762)
+                .snowLoggable(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_1AB959)
+                .obstructsRain(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_9B2762);
+        // other states than in 26.40 (none): values from BDS Script API dump 1.26.52.3, CloudburstMC/Data 88a2436
+        v.block("minecraft:hard_green_stained_glass_pane", "minecraft:connection_east=false|true,minecraft:connection_north=false|true,minecraft:connection_south=false|true,minecraft:connection_west=false|true")
+                .destroyTime(10.0f)
+                .explosionResistance(10.0f)
+                .collisionShape(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_B233D5)
+                .outlineShape(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_2E2A33)
+                .canContainLiquid(true)
+                .liquidFlowDirections(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_9A27D1)
+                .translucency(1.0f)
+                .movementType(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_375773)
+                .stickyType(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_43522C)
+                .accumulatesSnow(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_9B2762)
+                .snowLoggable(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_1AB959)
+                .obstructsRain(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_9B2762);
+        // other states than in 26.40 (none): values from BDS Script API dump 1.26.52.3, CloudburstMC/Data 88a2436
+        v.block("minecraft:hard_light_blue_stained_glass_pane", "minecraft:connection_east=false|true,minecraft:connection_north=false|true,minecraft:connection_south=false|true,minecraft:connection_west=false|true")
+                .destroyTime(10.0f)
+                .explosionResistance(10.0f)
+                .collisionShape(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_B233D5)
+                .outlineShape(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_2E2A33)
+                .canContainLiquid(true)
+                .liquidFlowDirections(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_9A27D1)
+                .translucency(1.0f)
+                .movementType(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_375773)
+                .stickyType(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_43522C)
+                .accumulatesSnow(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_9B2762)
+                .snowLoggable(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_1AB959)
+                .obstructsRain(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_9B2762);
+        // other states than in 26.40 (none): values from BDS Script API dump 1.26.52.3, CloudburstMC/Data 88a2436
+        v.block("minecraft:hard_light_gray_stained_glass_pane", "minecraft:connection_east=false|true,minecraft:connection_north=false|true,minecraft:connection_south=false|true,minecraft:connection_west=false|true")
+                .destroyTime(10.0f)
+                .explosionResistance(10.0f)
+                .collisionShape(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_B233D5)
+                .outlineShape(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_2E2A33)
+                .canContainLiquid(true)
+                .liquidFlowDirections(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_9A27D1)
+                .translucency(1.0f)
+                .movementType(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_375773)
+                .stickyType(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_43522C)
+                .accumulatesSnow(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_9B2762)
+                .snowLoggable(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_1AB959)
+                .obstructsRain(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_9B2762);
+        // other states than in 26.40 (none): values from BDS Script API dump 1.26.52.3, CloudburstMC/Data 88a2436
+        v.block("minecraft:hard_lime_stained_glass_pane", "minecraft:connection_east=false|true,minecraft:connection_north=false|true,minecraft:connection_south=false|true,minecraft:connection_west=false|true")
+                .destroyTime(10.0f)
+                .explosionResistance(10.0f)
+                .collisionShape(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_B233D5)
+                .outlineShape(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_2E2A33)
+                .canContainLiquid(true)
+                .liquidFlowDirections(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_9A27D1)
+                .translucency(1.0f)
+                .movementType(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_375773)
+                .stickyType(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_43522C)
+                .accumulatesSnow(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_9B2762)
+                .snowLoggable(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_1AB959)
+                .obstructsRain(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_9B2762);
+    }
+
+    static void part10(Changes v) {
+        // other states than in 26.40 (none): values from BDS Script API dump 1.26.52.3, CloudburstMC/Data 88a2436
+        v.block("minecraft:hard_magenta_stained_glass_pane", "minecraft:connection_east=false|true,minecraft:connection_north=false|true,minecraft:connection_south=false|true,minecraft:connection_west=false|true")
+                .destroyTime(10.0f)
+                .explosionResistance(10.0f)
+                .collisionShape(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_B233D5)
+                .outlineShape(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_2E2A33)
+                .canContainLiquid(true)
+                .liquidFlowDirections(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_9A27D1)
+                .translucency(1.0f)
+                .movementType(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_375773)
+                .stickyType(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_43522C)
+                .accumulatesSnow(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_9B2762)
+                .snowLoggable(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_1AB959)
+                .obstructsRain(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_9B2762);
+        // other states than in 26.40 (none): values from BDS Script API dump 1.26.52.3, CloudburstMC/Data 88a2436
+        v.block("minecraft:hard_orange_stained_glass_pane", "minecraft:connection_east=false|true,minecraft:connection_north=false|true,minecraft:connection_south=false|true,minecraft:connection_west=false|true")
+                .destroyTime(10.0f)
+                .explosionResistance(10.0f)
+                .collisionShape(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_B233D5)
+                .outlineShape(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_2E2A33)
+                .canContainLiquid(true)
+                .liquidFlowDirections(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_9A27D1)
+                .translucency(1.0f)
+                .movementType(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_375773)
+                .stickyType(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_43522C)
+                .accumulatesSnow(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_9B2762)
+                .snowLoggable(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_1AB959)
+                .obstructsRain(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_9B2762);
+        // other states than in 26.40 (none): values from BDS Script API dump 1.26.52.3, CloudburstMC/Data 88a2436
+        v.block("minecraft:hard_pink_stained_glass_pane", "minecraft:connection_east=false|true,minecraft:connection_north=false|true,minecraft:connection_south=false|true,minecraft:connection_west=false|true")
+                .destroyTime(10.0f)
+                .explosionResistance(10.0f)
+                .collisionShape(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_B233D5)
+                .outlineShape(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_2E2A33)
+                .canContainLiquid(true)
+                .liquidFlowDirections(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_9A27D1)
+                .translucency(1.0f)
+                .movementType(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_375773)
+                .stickyType(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_43522C)
+                .accumulatesSnow(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_9B2762)
+                .snowLoggable(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_1AB959)
+                .obstructsRain(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_9B2762);
+        // other states than in 26.40 (none): values from BDS Script API dump 1.26.52.3, CloudburstMC/Data 88a2436
+        v.block("minecraft:hard_purple_stained_glass_pane", "minecraft:connection_east=false|true,minecraft:connection_north=false|true,minecraft:connection_south=false|true,minecraft:connection_west=false|true")
+                .destroyTime(10.0f)
+                .explosionResistance(10.0f)
+                .collisionShape(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_B233D5)
+                .outlineShape(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_2E2A33)
+                .canContainLiquid(true)
+                .liquidFlowDirections(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_9A27D1)
+                .translucency(1.0f)
+                .movementType(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_375773)
+                .stickyType(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_43522C)
+                .accumulatesSnow(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_9B2762)
+                .snowLoggable(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_1AB959)
+                .obstructsRain(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_9B2762);
+        // other states than in 26.40 (none): values from BDS Script API dump 1.26.52.3, CloudburstMC/Data 88a2436
+        v.block("minecraft:hard_red_stained_glass_pane", "minecraft:connection_east=false|true,minecraft:connection_north=false|true,minecraft:connection_south=false|true,minecraft:connection_west=false|true")
+                .destroyTime(10.0f)
+                .explosionResistance(10.0f)
+                .collisionShape(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_B233D5)
+                .outlineShape(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_2E2A33)
+                .canContainLiquid(true)
+                .liquidFlowDirections(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_9A27D1)
+                .translucency(1.0f)
+                .movementType(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_375773)
+                .stickyType(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_43522C)
+                .accumulatesSnow(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_9B2762)
+                .snowLoggable(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_1AB959)
+                .obstructsRain(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_9B2762);
+        // other states than in 26.40 (none): values from BDS Script API dump 1.26.52.3, CloudburstMC/Data 88a2436
         v.block("minecraft:hard_white_stained_glass_pane", "minecraft:connection_east=false|true,minecraft:connection_north=false|true,minecraft:connection_south=false|true,minecraft:connection_west=false|true")
                 .destroyTime(10.0f)
                 .explosionResistance(10.0f)
-                .collisionShape(BLACK_STAINED_GLASS_PANE_COLLISION_SHAPE_10)
-                .outlineShape(BLACK_STAINED_GLASS_PANE_OUTLINE_SHAPE)
+                .collisionShape(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_B233D5)
+                .outlineShape(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_2E2A33)
                 .canContainLiquid(true)
-                .liquidFlowDirections(ACACIA_FENCE_LIQUID_FLOW_DIRECTIONS)
+                .liquidFlowDirections(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_9A27D1)
                 .translucency(1.0f)
-                .movementType(ACACIA_FENCE_MOVEMENT_TYPE)
-                .stickyType(ACACIA_FENCE_STICKY_TYPE)
-                .accumulatesSnow(ACACIA_FENCE_ACCUMULATES_SNOW)
-                .snowLoggable(ACACIA_FENCE_SNOW_LOGGABLE)
-                .obstructsRain(ACACIA_FENCE_ACCUMULATES_SNOW);
+                .movementType(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_375773)
+                .stickyType(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_43522C)
+                .accumulatesSnow(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_9B2762)
+                .snowLoggable(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_1AB959)
+                .obstructsRain(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_9B2762);
         // other states than in 26.40 (none): values from BDS Script API dump 1.26.52.3, CloudburstMC/Data 88a2436
         v.block("minecraft:hard_yellow_stained_glass_pane", "minecraft:connection_east=false|true,minecraft:connection_north=false|true,minecraft:connection_south=false|true,minecraft:connection_west=false|true")
                 .destroyTime(10.0f)
                 .explosionResistance(10.0f)
-                .collisionShape(BLACK_STAINED_GLASS_PANE_COLLISION_SHAPE_10)
-                .outlineShape(BLACK_STAINED_GLASS_PANE_OUTLINE_SHAPE)
+                .collisionShape(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_B233D5)
+                .outlineShape(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_2E2A33)
                 .canContainLiquid(true)
-                .liquidFlowDirections(ACACIA_FENCE_LIQUID_FLOW_DIRECTIONS)
+                .liquidFlowDirections(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_9A27D1)
                 .translucency(1.0f)
-                .movementType(ACACIA_FENCE_MOVEMENT_TYPE)
-                .stickyType(ACACIA_FENCE_STICKY_TYPE)
-                .accumulatesSnow(ACACIA_FENCE_ACCUMULATES_SNOW)
-                .snowLoggable(ACACIA_FENCE_SNOW_LOGGABLE)
-                .obstructsRain(ACACIA_FENCE_ACCUMULATES_SNOW);
-        // requires_correct_tool false -> true: CloudburstMC/Data 88a2436; SOURCE ONLY (no BDS capture)
+                .movementType(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_375773)
+                .stickyType(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_43522C)
+                .accumulatesSnow(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_9B2762)
+                .snowLoggable(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_1AB959)
+                .obstructsRain(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_9B2762);
+        // requires_correct_tool false -> true: CloudburstMC/Data 88a2436; SOURCE ONLY (no BDS capture); undoes the change of 26.40 by the same source: suspected dump artefact
         v.change("minecraft:hardened_clay").requiresCorrectTool(true);
-        // requires_correct_tool false -> true: CloudburstMC/Data 88a2436; SOURCE ONLY (no BDS capture)
+        // requires_correct_tool false -> true: CloudburstMC/Data 88a2436; SOURCE ONLY (no BDS capture); undoes the change of 26.40 by the same source: suspected dump artefact
         v.change("minecraft:hopper").requiresCorrectTool(true);
-        // outline_shape BOX_M1P333328_0_M0P266656_11P466672_12P8_12P533328 -> BOX_1P599984_0_1P599984_14P4_12P8_14P4: CloudburstMC/Data 88a2436; SOURCE ONLY (no BDS capture)
+        // outline_shape SHAPE_BAMBOO_SAPLING_OUTLINE_SHAPE -> SHAPE_BRAIN_CORAL_OUTLINE_SHAPE: CloudburstMC/Data 88a2436; SOURCE ONLY (no BDS capture)
         v.change("minecraft:horn_coral")
-                .outlineShape(BOX_1P599984_0_1P599984_14P4_12P8_14P4);
-        // requires_correct_tool false -> true: CloudburstMC/Data 88a2436; SOURCE ONLY (no BDS capture)
+                .outlineShape(SHAPE_BRAIN_CORAL_OUTLINE_SHAPE);
+        // requires_correct_tool false -> true: CloudburstMC/Data 88a2436; SOURCE ONLY (no BDS capture); undoes the change of 26.40 by the same source: suspected dump artefact
         v.change("minecraft:horn_coral_block").requiresCorrectTool(true);
-        // outline_shape BOX_0P266656_0_1P333328_9P866656_6P4_10P933344 -> BOX_3P199984_0_3P199984_12P8_6P4_12P8: CloudburstMC/Data 88a2436; SOURCE ONLY (no BDS capture)
+        // outline_shape SHAPE_BRAIN_CORAL_FAN_OUTLINE_SHAPE -> SHAPE_BRAIN_CORAL_FAN_OUTLINE_SHAPE_2: CloudburstMC/Data 88a2436; SOURCE ONLY (no BDS capture)
         v.change("minecraft:horn_coral_fan")
-                .outlineShape(BOX_3P199984_0_3P199984_12P8_6P4_12P8);
-        // requires_correct_tool true -> false: CloudburstMC/Data 88a2436; SOURCE ONLY (no BDS capture)
+                .outlineShape(SHAPE_BRAIN_CORAL_FAN_OUTLINE_SHAPE_2);
+        // requires_correct_tool true -> false: CloudburstMC/Data 88a2436; SOURCE ONLY (no BDS capture); undoes the change of 26.40 by the same source: suspected dump artefact
         v.change("minecraft:infested_mossy_stone_bricks").requiresCorrectTool(false);
-        // requires_correct_tool true -> false: CloudburstMC/Data 88a2436; SOURCE ONLY (no BDS capture)
+        // requires_correct_tool true -> false: CloudburstMC/Data 88a2436; SOURCE ONLY (no BDS capture); undoes the change of 26.40 by the same source: suspected dump artefact
         v.change("minecraft:infested_stone_bricks").requiresCorrectTool(false);
-        // requires_correct_tool false -> true: CloudburstMC/Data 88a2436; SOURCE ONLY (no BDS capture)
+        // requires_correct_tool false -> true: CloudburstMC/Data 88a2436; SOURCE ONLY (no BDS capture); undoes the change of 26.40 by the same source: suspected dump artefact
         v.change("minecraft:invisible_bedrock").requiresCorrectTool(true);
+    }
+
+    static void part11(Changes v) {
         // other states than in 26.40 (none): values from BDS Script API dump 1.26.52.3, CloudburstMC/Data 88a2436
         v.block("minecraft:iron_bars", "minecraft:connection_east=false|true,minecraft:connection_north=false|true,minecraft:connection_south=false|true,minecraft:connection_west=false|true")
                 .destroyTime(5.0f)
-                .collisionShape(BLACK_STAINED_GLASS_PANE_COLLISION_SHAPE_10)
-                .outlineShape(BLACK_STAINED_GLASS_PANE_OUTLINE_SHAPE)
+                .collisionShape(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_B233D5)
+                .outlineShape(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_2E2A33)
                 .canContainLiquid(true)
-                .liquidFlowDirections(ACACIA_FENCE_LIQUID_FLOW_DIRECTIONS)
+                .liquidFlowDirections(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_9A27D1)
                 .requiresCorrectTool(true)
                 .translucency(0.8f)
-                .movementType(ACACIA_FENCE_MOVEMENT_TYPE)
-                .stickyType(ACACIA_FENCE_STICKY_TYPE)
-                .accumulatesSnow(ACACIA_FENCE_ACCUMULATES_SNOW)
-                .snowLoggable(ACACIA_FENCE_SNOW_LOGGABLE)
-                .obstructsRain(ACACIA_FENCE_ACCUMULATES_SNOW);
-        // requires_correct_tool false -> true: CloudburstMC/Data 88a2436; SOURCE ONLY (no BDS capture)
+                .movementType(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_375773)
+                .stickyType(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_43522C)
+                .accumulatesSnow(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_9B2762)
+                .snowLoggable(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_1AB959)
+                .obstructsRain(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_9B2762);
+        // requires_correct_tool false -> true: CloudburstMC/Data 88a2436; SOURCE ONLY (no BDS capture); undoes the change of 26.40 by the same source: suspected dump artefact
         v.change("minecraft:iron_block").requiresCorrectTool(true);
-        // requires_correct_tool false -> true: CloudburstMC/Data 88a2436; SOURCE ONLY (no BDS capture)
+        // requires_correct_tool false -> true: CloudburstMC/Data 88a2436; SOURCE ONLY (no BDS capture); undoes the change of 26.40 by the same source: suspected dump artefact
         v.change("minecraft:iron_chain").requiresCorrectTool(true);
-        // requires_correct_tool false -> true: CloudburstMC/Data 88a2436; SOURCE ONLY (no BDS capture)
+        // requires_correct_tool false -> true: CloudburstMC/Data 88a2436; SOURCE ONLY (no BDS capture); undoes the change of 26.40 by the same source: suspected dump artefact
         v.change("minecraft:iron_ore").requiresCorrectTool(true);
-        // requires_correct_tool false -> true: CloudburstMC/Data 88a2436; SOURCE ONLY (no BDS capture)
+        // requires_correct_tool false -> true: CloudburstMC/Data 88a2436; SOURCE ONLY (no BDS capture); undoes the change of 26.40 by the same source: suspected dump artefact
         v.change("minecraft:iron_trapdoor").requiresCorrectTool(true);
-        // requires_correct_tool false -> true: CloudburstMC/Data 88a2436; SOURCE ONLY (no BDS capture)
+        // requires_correct_tool false -> true: CloudburstMC/Data 88a2436; SOURCE ONLY (no BDS capture); undoes the change of 26.40 by the same source: suspected dump artefact
         v.change("minecraft:jigsaw").requiresCorrectTool(true);
         // other states than in 26.40 (none): values from BDS Script API dump 1.26.52.3, CloudburstMC/Data 88a2436
         v.block("minecraft:jungle_fence", "minecraft:connection_east=false|true,minecraft:connection_north=false|true,minecraft:connection_south=false|true,minecraft:connection_west=false|true")
                 .destroyTime(2.0f)
                 .explosionResistance(3.0f)
-                .collisionShape(ACACIA_FENCE_COLLISION_SHAPE_10)
-                .outlineShape(ACACIA_FENCE_OUTLINE_SHAPE)
+                .collisionShape(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_E9F3EE)
+                .outlineShape(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_F36CB3)
                 .canContainLiquid(true)
-                .liquidFlowDirections(ACACIA_FENCE_LIQUID_FLOW_DIRECTIONS)
-                .mapColor(-1754444289)
+                .liquidFlowDirections(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_9A27D1)
+                .mapColor(0x976D4DFF)
                 .flameOdds(5)
                 .burnOdds(20)
                 .translucency(0.8f)
-                .movementType(ACACIA_FENCE_MOVEMENT_TYPE)
-                .stickyType(ACACIA_FENCE_STICKY_TYPE)
-                .accumulatesSnow(ACACIA_FENCE_ACCUMULATES_SNOW)
-                .snowLoggable(ACACIA_FENCE_SNOW_LOGGABLE)
-                .obstructsRain(ACACIA_FENCE_ACCUMULATES_SNOW);
+                .movementType(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_375773)
+                .stickyType(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_43522C)
+                .accumulatesSnow(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_9B2762)
+                .snowLoggable(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_1AB959)
+                .obstructsRain(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_9B2762);
         // other states than in 26.40 (upside_down_bit=false|true,weirdo_direction=0..3): values from BDS Script API dump 1.26.52.3, CloudburstMC/Data 88a2436
         v.block("minecraft:jungle_stairs", "minecraft:corner='inner_left'|'inner_right'|'none'|'outer_left'|'outer_right',upside_down_bit=false|true,weirdo_direction=0..3")
                 .destroyTime(2.0f)
                 .explosionResistance(3.0f)
-                .collisionShape(ACACIA_STAIRS_COLLISION_SHAPE_34)
+                .collisionShape(TABLE_CORNER_UPSIDE_DOWN_BIT_WEIRDO_DIRECTION_BD8305)
                 .canContainLiquid(true)
-                .liquidFlowDirections(ACACIA_STAIRS_LIQUID_FLOW_DIRECTIONS_2)
-                .mapColor(-1754444289)
+                .liquidFlowDirections(TABLE_CORNER_UPSIDE_DOWN_BIT_WEIRDO_DIRECTION_91C7B2)
+                .mapColor(0x976D4DFF)
                 .flameOdds(5)
                 .burnOdds(20)
                 .translucency(0.8f)
-                .movementType("minecraft:corner", "inner_left", null, "inner_right", null, "none", "PushPull", "outer_left", null, "outer_right", null)
-                .stickyType("minecraft:corner", "inner_left", null, "inner_right", null, "none", "None", "outer_left", null, "outer_right", null)
-                .accumulatesSnow("minecraft:corner", "inner_left", null, "inner_right", null, "none", true, "outer_left", null, "outer_right", null)
-                .snowLoggable("minecraft:corner", "inner_left", null, "inner_right", null, "none", false, "outer_left", null, "outer_right", null)
-                .obstructsRain("minecraft:corner", "inner_left", null, "inner_right", null, "none", true, "outer_left", null, "outer_right", null);
-        // requires_correct_tool false -> true: CloudburstMC/Data 88a2436; SOURCE ONLY (no BDS capture)
+                .movementType("minecraft:corner", "inner_left", null, "inner_right", null,
+                        "none", "PushPull", "outer_left", null, "outer_right", null)
+                .stickyType("minecraft:corner", "inner_left", null, "inner_right", null,
+                        "none", "None", "outer_left", null, "outer_right", null)
+                .accumulatesSnow("minecraft:corner", "inner_left", null, "inner_right", null,
+                        "none", true, "outer_left", null, "outer_right", null)
+                .snowLoggable("minecraft:corner", "inner_left", null, "inner_right", null,
+                        "none", false, "outer_left", null, "outer_right", null)
+                .obstructsRain("minecraft:corner", "inner_left", null, "inner_right", null,
+                        "none", true, "outer_left", null, "outer_right", null);
+        // requires_correct_tool false -> true: CloudburstMC/Data 88a2436; SOURCE ONLY (no BDS capture); undoes the change of 26.40 by the same source: suspected dump artefact
         v.change("minecraft:lapis_block").requiresCorrectTool(true);
-        // requires_correct_tool false -> true: CloudburstMC/Data 88a2436; SOURCE ONLY (no BDS capture)
+        // requires_correct_tool false -> true: CloudburstMC/Data 88a2436; SOURCE ONLY (no BDS capture); undoes the change of 26.40 by the same source: suspected dump artefact
         v.change("minecraft:lapis_ore").requiresCorrectTool(true);
         // outline_shape per state (2 of 2 states): CloudburstMC/Data 88a2436; SOURCE ONLY (no BDS capture)
         v.change("minecraft:large_fern")
-                .outlineShape("upper_block_bit", false, BOX_4P8_0_4P8_11P2_16_11P2, true, BOX_4P8_0_4P8_11P2_9P6_11P2);
-        // requires_correct_tool true -> false: CloudburstMC/Data 88a2436; SOURCE ONLY (no BDS capture)
+                .outlineShape("upper_block_bit", false, SHAPE_LARGE_FERN_OUTLINE_SHAPE_3,
+                        true, SHAPE_LARGE_FERN_OUTLINE_SHAPE_4);
+        // requires_correct_tool true -> false: CloudburstMC/Data 88a2436; SOURCE ONLY (no BDS capture); undoes the change of 26.40 by the same source: suspected dump artefact
         v.change("minecraft:light_block_0").requiresCorrectTool(false);
-        // requires_correct_tool false -> true: CloudburstMC/Data 88a2436; SOURCE ONLY (no BDS capture)
+        // requires_correct_tool false -> true: CloudburstMC/Data 88a2436; SOURCE ONLY (no BDS capture); undoes the change of 26.40 by the same source: suspected dump artefact
         v.change("minecraft:light_blue_concrete").requiresCorrectTool(true);
         // new in 26.50: values from BDS Script API dump 1.26.52.3, CloudburstMC/Data 88a2436
         v.block("minecraft:light_blue_concrete_double_slab", "minecraft:vertical_half='bottom'|'top'")
@@ -294,49 +534,57 @@ final class BehaviourChanges26_50Part2 {
                 .solid(true)
                 .lightDampening(15)
                 .requiresCorrectTool(true)
-                .mapColor(1721358591);
+                .mapColor(0x6699D8FF);
         // new in 26.50: values from BDS Script API dump 1.26.52.3, CloudburstMC/Data 88a2436
         v.block("minecraft:light_blue_concrete_slab", "minecraft:vertical_half='bottom'|'top'")
                 .destroyTime(1.8f)
                 .explosionResistance(0.359999f)
-                .collisionShape("minecraft:vertical_half", "bottom", BOX_0_0_0_16_8_16, "top", BOX_0_8_0_16_16_16)
-                .outlineShape("minecraft:vertical_half", "bottom", BOX_0_0_0_16_8_16, "top", BOX_0_8_0_16_16_16)
+                .collisionShape("minecraft:vertical_half", "bottom", BOX_0_0_0_16_8_16,
+                        "top", BOX_0_8_0_16_16_16)
+                .outlineShape("minecraft:vertical_half", "bottom", BOX_0_0_0_16_8_16,
+                        "top", BOX_0_8_0_16_16_16)
                 .canContainLiquid(true)
                 .liquidFlowDirections("minecraft:vertical_half", "bottom", 62, "top", 61)
                 .requiresCorrectTool(true)
-                .mapColor(1721358591);
+                .mapColor(0x6699D8FF);
         // new in 26.50: values from BDS Script API dump 1.26.52.3, CloudburstMC/Data 88a2436
         v.block("minecraft:light_blue_concrete_stairs", "minecraft:corner='inner_left'|'inner_right'|'none'|'outer_left'|'outer_right',upside_down_bit=false|true,weirdo_direction=0..3")
                 .destroyTime(1.8f)
                 .explosionResistance(0.359999f)
-                .collisionShape(ACACIA_STAIRS_COLLISION_SHAPE_34)
+                .collisionShape(TABLE_CORNER_UPSIDE_DOWN_BIT_WEIRDO_DIRECTION_BD8305)
                 .canContainLiquid(true)
-                .liquidFlowDirections(ACACIA_STAIRS_LIQUID_FLOW_DIRECTIONS_2)
+                .liquidFlowDirections(TABLE_CORNER_UPSIDE_DOWN_BIT_WEIRDO_DIRECTION_91C7B2)
                 .requiresCorrectTool(true)
-                .mapColor("minecraft:corner", "inner_left", 0, "inner_right", 0, "none", 1721358591, "outer_left", 0, "outer_right", 0)
+                .mapColor("minecraft:corner", "inner_left", 0x00000000, "inner_right", 0x00000000,
+                        "none", 0x6699D8FF, "outer_left", 0x00000000, "outer_right", 0x00000000)
                 .translucency(0.8f)
-                .movementType("minecraft:corner", "inner_left", null, "inner_right", null, "none", "PushPull", "outer_left", null, "outer_right", null)
-                .stickyType("minecraft:corner", "inner_left", null, "inner_right", null, "none", "None", "outer_left", null, "outer_right", null)
-                .accumulatesSnow("minecraft:corner", "inner_left", null, "inner_right", null, "none", true, "outer_left", null, "outer_right", null)
-                .snowLoggable("minecraft:corner", "inner_left", null, "inner_right", null, "none", false, "outer_left", null, "outer_right", null)
-                .obstructsRain("minecraft:corner", "inner_left", null, "inner_right", null, "none", true, "outer_left", null, "outer_right", null);
-        // requires_correct_tool false -> true: CloudburstMC/Data 88a2436; SOURCE ONLY (no BDS capture)
+                .movementType("minecraft:corner", "inner_left", null, "inner_right", null,
+                        "none", "PushPull", "outer_left", null, "outer_right", null)
+                .stickyType("minecraft:corner", "inner_left", null, "inner_right", null,
+                        "none", "None", "outer_left", null, "outer_right", null)
+                .accumulatesSnow("minecraft:corner", "inner_left", null, "inner_right", null,
+                        "none", true, "outer_left", null, "outer_right", null)
+                .snowLoggable("minecraft:corner", "inner_left", null, "inner_right", null,
+                        "none", false, "outer_left", null, "outer_right", null)
+                .obstructsRain("minecraft:corner", "inner_left", null, "inner_right", null,
+                        "none", true, "outer_left", null, "outer_right", null);
+        // requires_correct_tool false -> true: CloudburstMC/Data 88a2436; SOURCE ONLY (no BDS capture); undoes the change of 26.40 by the same source: suspected dump artefact
         v.change("minecraft:light_blue_glazed_terracotta").requiresCorrectTool(true);
         // other states than in 26.40 (none): values from BDS Script API dump 1.26.52.3, CloudburstMC/Data 88a2436
         v.block("minecraft:light_blue_stained_glass_pane", "minecraft:connection_east=false|true,minecraft:connection_north=false|true,minecraft:connection_south=false|true,minecraft:connection_west=false|true")
                 .destroyTime(0.3f)
                 .explosionResistance(0.3f)
-                .collisionShape(BLACK_STAINED_GLASS_PANE_COLLISION_SHAPE_10)
-                .outlineShape(BLACK_STAINED_GLASS_PANE_OUTLINE_SHAPE)
+                .collisionShape(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_B233D5)
+                .outlineShape(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_2E2A33)
                 .canContainLiquid(true)
-                .liquidFlowDirections(ACACIA_FENCE_LIQUID_FLOW_DIRECTIONS)
+                .liquidFlowDirections(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_9A27D1)
                 .translucency(1.0f)
-                .movementType(ACACIA_FENCE_MOVEMENT_TYPE)
-                .stickyType(ACACIA_FENCE_STICKY_TYPE)
-                .accumulatesSnow(ACACIA_FENCE_ACCUMULATES_SNOW)
-                .snowLoggable(ACACIA_FENCE_SNOW_LOGGABLE)
-                .obstructsRain(ACACIA_FENCE_ACCUMULATES_SNOW);
-        // requires_correct_tool false -> true: CloudburstMC/Data 88a2436; SOURCE ONLY (no BDS capture)
+                .movementType(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_375773)
+                .stickyType(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_43522C)
+                .accumulatesSnow(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_9B2762)
+                .snowLoggable(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_1AB959)
+                .obstructsRain(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_9B2762);
+        // requires_correct_tool false -> true: CloudburstMC/Data 88a2436; SOURCE ONLY (no BDS capture); undoes the change of 26.40 by the same source: suspected dump artefact
         v.change("minecraft:light_blue_terracotta").requiresCorrectTool(true);
         // new in 26.50: values from BDS Script API dump 1.26.52.3, CloudburstMC/Data 88a2436
         v.block("minecraft:light_blue_wool_double_slab", "minecraft:vertical_half='bottom'|'top'")
@@ -344,41 +592,46 @@ final class BehaviourChanges26_50Part2 {
                 .explosionResistance(0.16f)
                 .solid(true)
                 .lightDampening(15)
-                .mapColor(984865535)
+                .mapColor(0x3AB3DAFF)
                 .flameOdds(30)
                 .burnOdds(60);
         // new in 26.50: values from BDS Script API dump 1.26.52.3, CloudburstMC/Data 88a2436
         v.block("minecraft:light_blue_wool_slab", "minecraft:vertical_half='bottom'|'top'")
                 .destroyTime(0.8f)
                 .explosionResistance(0.16f)
-                .collisionShape("minecraft:vertical_half", "bottom", BOX_0_0_0_16_8_16, "top", BOX_0_8_0_16_16_16)
-                .outlineShape("minecraft:vertical_half", "bottom", BOX_0_0_0_16_8_16, "top", BOX_0_8_0_16_16_16)
+                .collisionShape("minecraft:vertical_half", "bottom", BOX_0_0_0_16_8_16,
+                        "top", BOX_0_8_0_16_16_16)
+                .outlineShape("minecraft:vertical_half", "bottom", BOX_0_0_0_16_8_16,
+                        "top", BOX_0_8_0_16_16_16)
                 .canContainLiquid(true)
                 .liquidFlowDirections("minecraft:vertical_half", "bottom", 62, "top", 61)
-                .mapColor(984865535)
+                .mapColor(0x3AB3DAFF)
                 .flameOdds(30)
                 .burnOdds(60)
                 .translucency(0.8f);
-    }
-
-    static void part10(Changes v) {
         // new in 26.50: values from BDS Script API dump 1.26.52.3, CloudburstMC/Data 88a2436
         v.block("minecraft:light_blue_wool_stairs", "minecraft:corner='inner_left'|'inner_right'|'none'|'outer_left'|'outer_right',upside_down_bit=false|true,weirdo_direction=0..3")
                 .destroyTime(0.8f)
                 .explosionResistance(0.16f)
-                .collisionShape(ACACIA_STAIRS_COLLISION_SHAPE_34)
+                .collisionShape(TABLE_CORNER_UPSIDE_DOWN_BIT_WEIRDO_DIRECTION_BD8305)
                 .canContainLiquid(true)
-                .liquidFlowDirections(ACACIA_STAIRS_LIQUID_FLOW_DIRECTIONS_2)
-                .mapColor("minecraft:corner", "inner_left", 0, "inner_right", 0, "none", 984865535, "outer_left", 0, "outer_right", 0)
+                .liquidFlowDirections(TABLE_CORNER_UPSIDE_DOWN_BIT_WEIRDO_DIRECTION_91C7B2)
+                .mapColor("minecraft:corner", "inner_left", 0x00000000, "inner_right", 0x00000000,
+                        "none", 0x3AB3DAFF, "outer_left", 0x00000000, "outer_right", 0x00000000)
                 .flameOdds(30)
                 .burnOdds(60)
                 .translucency(0.8f)
-                .movementType("minecraft:corner", "inner_left", null, "inner_right", null, "none", "PushPull", "outer_left", null, "outer_right", null)
-                .stickyType("minecraft:corner", "inner_left", null, "inner_right", null, "none", "None", "outer_left", null, "outer_right", null)
-                .accumulatesSnow("minecraft:corner", "inner_left", null, "inner_right", null, "none", true, "outer_left", null, "outer_right", null)
-                .snowLoggable("minecraft:corner", "inner_left", null, "inner_right", null, "none", false, "outer_left", null, "outer_right", null)
-                .obstructsRain("minecraft:corner", "inner_left", null, "inner_right", null, "none", true, "outer_left", null, "outer_right", null);
-        // requires_correct_tool false -> true: CloudburstMC/Data 88a2436; SOURCE ONLY (no BDS capture)
+                .movementType("minecraft:corner", "inner_left", null, "inner_right", null,
+                        "none", "PushPull", "outer_left", null, "outer_right", null)
+                .stickyType("minecraft:corner", "inner_left", null, "inner_right", null,
+                        "none", "None", "outer_left", null, "outer_right", null)
+                .accumulatesSnow("minecraft:corner", "inner_left", null, "inner_right", null,
+                        "none", true, "outer_left", null, "outer_right", null)
+                .snowLoggable("minecraft:corner", "inner_left", null, "inner_right", null,
+                        "none", false, "outer_left", null, "outer_right", null)
+                .obstructsRain("minecraft:corner", "inner_left", null, "inner_right", null,
+                        "none", true, "outer_left", null, "outer_right", null);
+        // requires_correct_tool false -> true: CloudburstMC/Data 88a2436; SOURCE ONLY (no BDS capture); undoes the change of 26.40 by the same source: suspected dump artefact
         v.change("minecraft:light_gray_concrete").requiresCorrectTool(true);
         // new in 26.50: values from BDS Script API dump 1.26.52.3, CloudburstMC/Data 88a2436
         v.block("minecraft:light_gray_concrete_double_slab", "minecraft:vertical_half='bottom'|'top'")
@@ -387,47 +640,58 @@ final class BehaviourChanges26_50Part2 {
                 .solid(true)
                 .lightDampening(15)
                 .requiresCorrectTool(true)
-                .mapColor(-1717986817);
+                .mapColor(0x999999FF);
+    }
+
+    static void part12(Changes v) {
         // new in 26.50: values from BDS Script API dump 1.26.52.3, CloudburstMC/Data 88a2436
         v.block("minecraft:light_gray_concrete_slab", "minecraft:vertical_half='bottom'|'top'")
                 .destroyTime(1.8f)
                 .explosionResistance(0.359999f)
-                .collisionShape("minecraft:vertical_half", "bottom", BOX_0_0_0_16_8_16, "top", BOX_0_8_0_16_16_16)
-                .outlineShape("minecraft:vertical_half", "bottom", BOX_0_0_0_16_8_16, "top", BOX_0_8_0_16_16_16)
+                .collisionShape("minecraft:vertical_half", "bottom", BOX_0_0_0_16_8_16,
+                        "top", BOX_0_8_0_16_16_16)
+                .outlineShape("minecraft:vertical_half", "bottom", BOX_0_0_0_16_8_16,
+                        "top", BOX_0_8_0_16_16_16)
                 .canContainLiquid(true)
                 .liquidFlowDirections("minecraft:vertical_half", "bottom", 62, "top", 61)
                 .requiresCorrectTool(true)
-                .mapColor(-1717986817);
+                .mapColor(0x999999FF);
         // new in 26.50: values from BDS Script API dump 1.26.52.3, CloudburstMC/Data 88a2436
         v.block("minecraft:light_gray_concrete_stairs", "minecraft:corner='inner_left'|'inner_right'|'none'|'outer_left'|'outer_right',upside_down_bit=false|true,weirdo_direction=0..3")
                 .destroyTime(1.8f)
                 .explosionResistance(0.359999f)
-                .collisionShape(ACACIA_STAIRS_COLLISION_SHAPE_34)
+                .collisionShape(TABLE_CORNER_UPSIDE_DOWN_BIT_WEIRDO_DIRECTION_BD8305)
                 .canContainLiquid(true)
-                .liquidFlowDirections(ACACIA_STAIRS_LIQUID_FLOW_DIRECTIONS_2)
+                .liquidFlowDirections(TABLE_CORNER_UPSIDE_DOWN_BIT_WEIRDO_DIRECTION_91C7B2)
                 .requiresCorrectTool(true)
-                .mapColor("minecraft:corner", "inner_left", 0, "inner_right", 0, "none", -1717986817, "outer_left", 0, "outer_right", 0)
+                .mapColor("minecraft:corner", "inner_left", 0x00000000, "inner_right", 0x00000000,
+                        "none", 0x999999FF, "outer_left", 0x00000000, "outer_right", 0x00000000)
                 .translucency(0.8f)
-                .movementType("minecraft:corner", "inner_left", null, "inner_right", null, "none", "PushPull", "outer_left", null, "outer_right", null)
-                .stickyType("minecraft:corner", "inner_left", null, "inner_right", null, "none", "None", "outer_left", null, "outer_right", null)
-                .accumulatesSnow("minecraft:corner", "inner_left", null, "inner_right", null, "none", true, "outer_left", null, "outer_right", null)
-                .snowLoggable("minecraft:corner", "inner_left", null, "inner_right", null, "none", false, "outer_left", null, "outer_right", null)
-                .obstructsRain("minecraft:corner", "inner_left", null, "inner_right", null, "none", true, "outer_left", null, "outer_right", null);
+                .movementType("minecraft:corner", "inner_left", null, "inner_right", null,
+                        "none", "PushPull", "outer_left", null, "outer_right", null)
+                .stickyType("minecraft:corner", "inner_left", null, "inner_right", null,
+                        "none", "None", "outer_left", null, "outer_right", null)
+                .accumulatesSnow("minecraft:corner", "inner_left", null, "inner_right", null,
+                        "none", true, "outer_left", null, "outer_right", null)
+                .snowLoggable("minecraft:corner", "inner_left", null, "inner_right", null,
+                        "none", false, "outer_left", null, "outer_right", null)
+                .obstructsRain("minecraft:corner", "inner_left", null, "inner_right", null,
+                        "none", true, "outer_left", null, "outer_right", null);
         // other states than in 26.40 (none): values from BDS Script API dump 1.26.52.3, CloudburstMC/Data 88a2436
         v.block("minecraft:light_gray_stained_glass_pane", "minecraft:connection_east=false|true,minecraft:connection_north=false|true,minecraft:connection_south=false|true,minecraft:connection_west=false|true")
                 .destroyTime(0.3f)
                 .explosionResistance(0.3f)
-                .collisionShape(BLACK_STAINED_GLASS_PANE_COLLISION_SHAPE_10)
-                .outlineShape(BLACK_STAINED_GLASS_PANE_OUTLINE_SHAPE)
+                .collisionShape(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_B233D5)
+                .outlineShape(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_2E2A33)
                 .canContainLiquid(true)
-                .liquidFlowDirections(ACACIA_FENCE_LIQUID_FLOW_DIRECTIONS)
+                .liquidFlowDirections(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_9A27D1)
                 .translucency(1.0f)
-                .movementType(ACACIA_FENCE_MOVEMENT_TYPE)
-                .stickyType(ACACIA_FENCE_STICKY_TYPE)
-                .accumulatesSnow(ACACIA_FENCE_ACCUMULATES_SNOW)
-                .snowLoggable(ACACIA_FENCE_SNOW_LOGGABLE)
-                .obstructsRain(ACACIA_FENCE_ACCUMULATES_SNOW);
-        // requires_correct_tool false -> true: CloudburstMC/Data 88a2436; SOURCE ONLY (no BDS capture)
+                .movementType(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_375773)
+                .stickyType(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_43522C)
+                .accumulatesSnow(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_9B2762)
+                .snowLoggable(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_1AB959)
+                .obstructsRain(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_9B2762);
+        // requires_correct_tool false -> true: CloudburstMC/Data 88a2436; SOURCE ONLY (no BDS capture); undoes the change of 26.40 by the same source: suspected dump artefact
         v.change("minecraft:light_gray_terracotta").requiresCorrectTool(true);
         // new in 26.50: values from BDS Script API dump 1.26.52.3, CloudburstMC/Data 88a2436
         v.block("minecraft:light_gray_wool_double_slab", "minecraft:vertical_half='bottom'|'top'")
@@ -435,18 +699,20 @@ final class BehaviourChanges26_50Part2 {
                 .explosionResistance(0.16f)
                 .solid(true)
                 .lightDampening(15)
-                .mapColor(-1650616321)
+                .mapColor(0x9D9D97FF)
                 .flameOdds(30)
                 .burnOdds(60);
         // new in 26.50: values from BDS Script API dump 1.26.52.3, CloudburstMC/Data 88a2436
         v.block("minecraft:light_gray_wool_slab", "minecraft:vertical_half='bottom'|'top'")
                 .destroyTime(0.8f)
                 .explosionResistance(0.16f)
-                .collisionShape("minecraft:vertical_half", "bottom", BOX_0_0_0_16_8_16, "top", BOX_0_8_0_16_16_16)
-                .outlineShape("minecraft:vertical_half", "bottom", BOX_0_0_0_16_8_16, "top", BOX_0_8_0_16_16_16)
+                .collisionShape("minecraft:vertical_half", "bottom", BOX_0_0_0_16_8_16,
+                        "top", BOX_0_8_0_16_16_16)
+                .outlineShape("minecraft:vertical_half", "bottom", BOX_0_0_0_16_8_16,
+                        "top", BOX_0_8_0_16_16_16)
                 .canContainLiquid(true)
                 .liquidFlowDirections("minecraft:vertical_half", "bottom", 62, "top", 61)
-                .mapColor(-1650616321)
+                .mapColor(0x9D9D97FF)
                 .flameOdds(30)
                 .burnOdds(60)
                 .translucency(0.8f);
@@ -454,27 +720,34 @@ final class BehaviourChanges26_50Part2 {
         v.block("minecraft:light_gray_wool_stairs", "minecraft:corner='inner_left'|'inner_right'|'none'|'outer_left'|'outer_right',upside_down_bit=false|true,weirdo_direction=0..3")
                 .destroyTime(0.8f)
                 .explosionResistance(0.16f)
-                .collisionShape(ACACIA_STAIRS_COLLISION_SHAPE_34)
+                .collisionShape(TABLE_CORNER_UPSIDE_DOWN_BIT_WEIRDO_DIRECTION_BD8305)
                 .canContainLiquid(true)
-                .liquidFlowDirections(ACACIA_STAIRS_LIQUID_FLOW_DIRECTIONS_2)
-                .mapColor("minecraft:corner", "inner_left", 0, "inner_right", 0, "none", -1650616321, "outer_left", 0, "outer_right", 0)
+                .liquidFlowDirections(TABLE_CORNER_UPSIDE_DOWN_BIT_WEIRDO_DIRECTION_91C7B2)
+                .mapColor("minecraft:corner", "inner_left", 0x00000000, "inner_right", 0x00000000,
+                        "none", 0x9D9D97FF, "outer_left", 0x00000000, "outer_right", 0x00000000)
                 .flameOdds(30)
                 .burnOdds(60)
                 .translucency(0.8f)
-                .movementType("minecraft:corner", "inner_left", null, "inner_right", null, "none", "PushPull", "outer_left", null, "outer_right", null)
-                .stickyType("minecraft:corner", "inner_left", null, "inner_right", null, "none", "None", "outer_left", null, "outer_right", null)
-                .accumulatesSnow("minecraft:corner", "inner_left", null, "inner_right", null, "none", true, "outer_left", null, "outer_right", null)
-                .snowLoggable("minecraft:corner", "inner_left", null, "inner_right", null, "none", false, "outer_left", null, "outer_right", null)
-                .obstructsRain("minecraft:corner", "inner_left", null, "inner_right", null, "none", true, "outer_left", null, "outer_right", null);
-        // requires_correct_tool true -> false: CloudburstMC/Data 88a2436; SOURCE ONLY (no BDS capture)
+                .movementType("minecraft:corner", "inner_left", null, "inner_right", null,
+                        "none", "PushPull", "outer_left", null, "outer_right", null)
+                .stickyType("minecraft:corner", "inner_left", null, "inner_right", null,
+                        "none", "None", "outer_left", null, "outer_right", null)
+                .accumulatesSnow("minecraft:corner", "inner_left", null, "inner_right", null,
+                        "none", true, "outer_left", null, "outer_right", null)
+                .snowLoggable("minecraft:corner", "inner_left", null, "inner_right", null,
+                        "none", false, "outer_left", null, "outer_right", null)
+                .obstructsRain("minecraft:corner", "inner_left", null, "inner_right", null,
+                        "none", true, "outer_left", null, "outer_right", null);
+        // requires_correct_tool true -> false: CloudburstMC/Data 88a2436; SOURCE ONLY (no BDS capture); undoes the change of 26.40 by the same source: suspected dump artefact
         v.change("minecraft:light_weighted_pressure_plate").requiresCorrectTool(false);
         // outline_shape per state (2 of 2 states): CloudburstMC/Data 88a2436; SOURCE ONLY (no BDS capture)
         v.change("minecraft:lilac")
-                .outlineShape("upper_block_bit", false, BOX_4P8_0_4P8_11P2_16_11P2, true, BOX_4P8_0_4P8_11P2_9P6_11P2);
-        // outline_shape BOX_M0P533344_0_0P533344_8P266656_9P6_9P333328 -> BOX_2P4_0_2P4_11P2_9P6_11P2: CloudburstMC/Data 88a2436; SOURCE ONLY (no BDS capture)
+                .outlineShape("upper_block_bit", false, SHAPE_LARGE_FERN_OUTLINE_SHAPE_3,
+                        true, SHAPE_LARGE_FERN_OUTLINE_SHAPE_4);
+        // outline_shape SHAPE_ALLIUM_OUTLINE_SHAPE -> SHAPE_TORCHFLOWER_CROP_OUTLINE_SHAPE: CloudburstMC/Data 88a2436; SOURCE ONLY (no BDS capture)
         v.change("minecraft:lily_of_the_valley")
-                .outlineShape(BOX_2P4_0_2P4_11P2_9P6_11P2);
-        // requires_correct_tool false -> true: CloudburstMC/Data 88a2436; SOURCE ONLY (no BDS capture)
+                .outlineShape(SHAPE_TORCHFLOWER_CROP_OUTLINE_SHAPE);
+        // requires_correct_tool false -> true: CloudburstMC/Data 88a2436; SOURCE ONLY (no BDS capture); undoes the change of 26.40 by the same source: suspected dump artefact
         v.change("minecraft:lime_concrete").requiresCorrectTool(true);
         // new in 26.50: values from BDS Script API dump 1.26.52.3, CloudburstMC/Data 88a2436
         v.block("minecraft:lime_concrete_double_slab", "minecraft:vertical_half='bottom'|'top'")
@@ -483,49 +756,57 @@ final class BehaviourChanges26_50Part2 {
                 .solid(true)
                 .lightDampening(15)
                 .requiresCorrectTool(true)
-                .mapColor(2144082431);
+                .mapColor(0x7FCC19FF);
         // new in 26.50: values from BDS Script API dump 1.26.52.3, CloudburstMC/Data 88a2436
         v.block("minecraft:lime_concrete_slab", "minecraft:vertical_half='bottom'|'top'")
                 .destroyTime(1.8f)
                 .explosionResistance(0.359999f)
-                .collisionShape("minecraft:vertical_half", "bottom", BOX_0_0_0_16_8_16, "top", BOX_0_8_0_16_16_16)
-                .outlineShape("minecraft:vertical_half", "bottom", BOX_0_0_0_16_8_16, "top", BOX_0_8_0_16_16_16)
+                .collisionShape("minecraft:vertical_half", "bottom", BOX_0_0_0_16_8_16,
+                        "top", BOX_0_8_0_16_16_16)
+                .outlineShape("minecraft:vertical_half", "bottom", BOX_0_0_0_16_8_16,
+                        "top", BOX_0_8_0_16_16_16)
                 .canContainLiquid(true)
                 .liquidFlowDirections("minecraft:vertical_half", "bottom", 62, "top", 61)
                 .requiresCorrectTool(true)
-                .mapColor(2144082431);
+                .mapColor(0x7FCC19FF);
         // new in 26.50: values from BDS Script API dump 1.26.52.3, CloudburstMC/Data 88a2436
         v.block("minecraft:lime_concrete_stairs", "minecraft:corner='inner_left'|'inner_right'|'none'|'outer_left'|'outer_right',upside_down_bit=false|true,weirdo_direction=0..3")
                 .destroyTime(1.8f)
                 .explosionResistance(0.359999f)
-                .collisionShape(ACACIA_STAIRS_COLLISION_SHAPE_34)
+                .collisionShape(TABLE_CORNER_UPSIDE_DOWN_BIT_WEIRDO_DIRECTION_BD8305)
                 .canContainLiquid(true)
-                .liquidFlowDirections(ACACIA_STAIRS_LIQUID_FLOW_DIRECTIONS_2)
+                .liquidFlowDirections(TABLE_CORNER_UPSIDE_DOWN_BIT_WEIRDO_DIRECTION_91C7B2)
                 .requiresCorrectTool(true)
-                .mapColor("minecraft:corner", "inner_left", 0, "inner_right", 0, "none", 2144082431, "outer_left", 0, "outer_right", 0)
+                .mapColor("minecraft:corner", "inner_left", 0x00000000, "inner_right", 0x00000000,
+                        "none", 0x7FCC19FF, "outer_left", 0x00000000, "outer_right", 0x00000000)
                 .translucency(0.8f)
-                .movementType("minecraft:corner", "inner_left", null, "inner_right", null, "none", "PushPull", "outer_left", null, "outer_right", null)
-                .stickyType("minecraft:corner", "inner_left", null, "inner_right", null, "none", "None", "outer_left", null, "outer_right", null)
-                .accumulatesSnow("minecraft:corner", "inner_left", null, "inner_right", null, "none", true, "outer_left", null, "outer_right", null)
-                .snowLoggable("minecraft:corner", "inner_left", null, "inner_right", null, "none", false, "outer_left", null, "outer_right", null)
-                .obstructsRain("minecraft:corner", "inner_left", null, "inner_right", null, "none", true, "outer_left", null, "outer_right", null);
-        // requires_correct_tool false -> true: CloudburstMC/Data 88a2436; SOURCE ONLY (no BDS capture)
+                .movementType("minecraft:corner", "inner_left", null, "inner_right", null,
+                        "none", "PushPull", "outer_left", null, "outer_right", null)
+                .stickyType("minecraft:corner", "inner_left", null, "inner_right", null,
+                        "none", "None", "outer_left", null, "outer_right", null)
+                .accumulatesSnow("minecraft:corner", "inner_left", null, "inner_right", null,
+                        "none", true, "outer_left", null, "outer_right", null)
+                .snowLoggable("minecraft:corner", "inner_left", null, "inner_right", null,
+                        "none", false, "outer_left", null, "outer_right", null)
+                .obstructsRain("minecraft:corner", "inner_left", null, "inner_right", null,
+                        "none", true, "outer_left", null, "outer_right", null);
+        // requires_correct_tool false -> true: CloudburstMC/Data 88a2436; SOURCE ONLY (no BDS capture); undoes the change of 26.40 by the same source: suspected dump artefact
         v.change("minecraft:lime_glazed_terracotta").requiresCorrectTool(true);
         // other states than in 26.40 (none): values from BDS Script API dump 1.26.52.3, CloudburstMC/Data 88a2436
         v.block("minecraft:lime_stained_glass_pane", "minecraft:connection_east=false|true,minecraft:connection_north=false|true,minecraft:connection_south=false|true,minecraft:connection_west=false|true")
                 .destroyTime(0.3f)
                 .explosionResistance(0.3f)
-                .collisionShape(BLACK_STAINED_GLASS_PANE_COLLISION_SHAPE_10)
-                .outlineShape(BLACK_STAINED_GLASS_PANE_OUTLINE_SHAPE)
+                .collisionShape(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_B233D5)
+                .outlineShape(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_2E2A33)
                 .canContainLiquid(true)
-                .liquidFlowDirections(ACACIA_FENCE_LIQUID_FLOW_DIRECTIONS)
+                .liquidFlowDirections(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_9A27D1)
                 .translucency(1.0f)
-                .movementType(ACACIA_FENCE_MOVEMENT_TYPE)
-                .stickyType(ACACIA_FENCE_STICKY_TYPE)
-                .accumulatesSnow(ACACIA_FENCE_ACCUMULATES_SNOW)
-                .snowLoggable(ACACIA_FENCE_SNOW_LOGGABLE)
-                .obstructsRain(ACACIA_FENCE_ACCUMULATES_SNOW);
-        // requires_correct_tool false -> true: CloudburstMC/Data 88a2436; SOURCE ONLY (no BDS capture)
+                .movementType(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_375773)
+                .stickyType(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_43522C)
+                .accumulatesSnow(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_9B2762)
+                .snowLoggable(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_1AB959)
+                .obstructsRain(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_9B2762);
+        // requires_correct_tool false -> true: CloudburstMC/Data 88a2436; SOURCE ONLY (no BDS capture); undoes the change of 26.40 by the same source: suspected dump artefact
         v.change("minecraft:lime_terracotta").requiresCorrectTool(true);
         // new in 26.50: values from BDS Script API dump 1.26.52.3, CloudburstMC/Data 88a2436
         v.block("minecraft:lime_wool_double_slab", "minecraft:vertical_half='bottom'|'top'")
@@ -533,53 +814,61 @@ final class BehaviourChanges26_50Part2 {
                 .explosionResistance(0.16f)
                 .solid(true)
                 .lightDampening(15)
-                .mapColor(-2134433793)
+                .mapColor(0x80C71FFF)
                 .flameOdds(30)
                 .burnOdds(60);
         // new in 26.50: values from BDS Script API dump 1.26.52.3, CloudburstMC/Data 88a2436
         v.block("minecraft:lime_wool_slab", "minecraft:vertical_half='bottom'|'top'")
                 .destroyTime(0.8f)
                 .explosionResistance(0.16f)
-                .collisionShape("minecraft:vertical_half", "bottom", BOX_0_0_0_16_8_16, "top", BOX_0_8_0_16_16_16)
-                .outlineShape("minecraft:vertical_half", "bottom", BOX_0_0_0_16_8_16, "top", BOX_0_8_0_16_16_16)
+                .collisionShape("minecraft:vertical_half", "bottom", BOX_0_0_0_16_8_16,
+                        "top", BOX_0_8_0_16_16_16)
+                .outlineShape("minecraft:vertical_half", "bottom", BOX_0_0_0_16_8_16,
+                        "top", BOX_0_8_0_16_16_16)
                 .canContainLiquid(true)
                 .liquidFlowDirections("minecraft:vertical_half", "bottom", 62, "top", 61)
-                .mapColor(-2134433793)
+                .mapColor(0x80C71FFF)
                 .flameOdds(30)
                 .burnOdds(60)
                 .translucency(0.8f);
     }
 
-    static void part11(Changes v) {
+    static void part13(Changes v) {
         // new in 26.50: values from BDS Script API dump 1.26.52.3, CloudburstMC/Data 88a2436
         v.block("minecraft:lime_wool_stairs", "minecraft:corner='inner_left'|'inner_right'|'none'|'outer_left'|'outer_right',upside_down_bit=false|true,weirdo_direction=0..3")
                 .destroyTime(0.8f)
                 .explosionResistance(0.16f)
-                .collisionShape(ACACIA_STAIRS_COLLISION_SHAPE_34)
+                .collisionShape(TABLE_CORNER_UPSIDE_DOWN_BIT_WEIRDO_DIRECTION_BD8305)
                 .canContainLiquid(true)
-                .liquidFlowDirections(ACACIA_STAIRS_LIQUID_FLOW_DIRECTIONS_2)
-                .mapColor("minecraft:corner", "inner_left", 0, "inner_right", 0, "none", -2134433793, "outer_left", 0, "outer_right", 0)
+                .liquidFlowDirections(TABLE_CORNER_UPSIDE_DOWN_BIT_WEIRDO_DIRECTION_91C7B2)
+                .mapColor("minecraft:corner", "inner_left", 0x00000000, "inner_right", 0x00000000,
+                        "none", 0x80C71FFF, "outer_left", 0x00000000, "outer_right", 0x00000000)
                 .flameOdds(30)
                 .burnOdds(60)
                 .translucency(0.8f)
-                .movementType("minecraft:corner", "inner_left", null, "inner_right", null, "none", "PushPull", "outer_left", null, "outer_right", null)
-                .stickyType("minecraft:corner", "inner_left", null, "inner_right", null, "none", "None", "outer_left", null, "outer_right", null)
-                .accumulatesSnow("minecraft:corner", "inner_left", null, "inner_right", null, "none", true, "outer_left", null, "outer_right", null)
-                .snowLoggable("minecraft:corner", "inner_left", null, "inner_right", null, "none", false, "outer_left", null, "outer_right", null)
-                .obstructsRain("minecraft:corner", "inner_left", null, "inner_right", null, "none", true, "outer_left", null, "outer_right", null);
-        // requires_correct_tool false -> true: CloudburstMC/Data 88a2436; SOURCE ONLY (no BDS capture)
+                .movementType("minecraft:corner", "inner_left", null, "inner_right", null,
+                        "none", "PushPull", "outer_left", null, "outer_right", null)
+                .stickyType("minecraft:corner", "inner_left", null, "inner_right", null,
+                        "none", "None", "outer_left", null, "outer_right", null)
+                .accumulatesSnow("minecraft:corner", "inner_left", null, "inner_right", null,
+                        "none", true, "outer_left", null, "outer_right", null)
+                .snowLoggable("minecraft:corner", "inner_left", null, "inner_right", null,
+                        "none", false, "outer_left", null, "outer_right", null)
+                .obstructsRain("minecraft:corner", "inner_left", null, "inner_right", null,
+                        "none", true, "outer_left", null, "outer_right", null);
+        // requires_correct_tool false -> true: CloudburstMC/Data 88a2436; SOURCE ONLY (no BDS capture); undoes the change of 26.40 by the same source: suspected dump artefact
         v.change("minecraft:lit_blast_furnace").requiresCorrectTool(true);
-        // requires_correct_tool false -> true: CloudburstMC/Data 88a2436; SOURCE ONLY (no BDS capture)
+        // requires_correct_tool false -> true: CloudburstMC/Data 88a2436; SOURCE ONLY (no BDS capture); undoes the change of 26.40 by the same source: suspected dump artefact
         v.change("minecraft:lit_deepslate_redstone_ore").requiresCorrectTool(true);
-        // requires_correct_tool false -> true: CloudburstMC/Data 88a2436; SOURCE ONLY (no BDS capture)
+        // requires_correct_tool false -> true: CloudburstMC/Data 88a2436; SOURCE ONLY (no BDS capture); undoes the change of 26.40 by the same source: suspected dump artefact
         v.change("minecraft:lit_furnace").requiresCorrectTool(true);
-        // requires_correct_tool false -> true: CloudburstMC/Data 88a2436; SOURCE ONLY (no BDS capture)
+        // requires_correct_tool false -> true: CloudburstMC/Data 88a2436; SOURCE ONLY (no BDS capture); undoes the change of 26.40 by the same source: suspected dump artefact
         v.change("minecraft:lit_redstone_ore").requiresCorrectTool(true);
-        // requires_correct_tool false -> true: CloudburstMC/Data 88a2436; SOURCE ONLY (no BDS capture)
+        // requires_correct_tool false -> true: CloudburstMC/Data 88a2436; SOURCE ONLY (no BDS capture); undoes the change of 26.40 by the same source: suspected dump artefact
         v.change("minecraft:lit_smoker").requiresCorrectTool(true);
-        // requires_correct_tool false -> true: CloudburstMC/Data 88a2436; SOURCE ONLY (no BDS capture)
+        // requires_correct_tool false -> true: CloudburstMC/Data 88a2436; SOURCE ONLY (no BDS capture); undoes the change of 26.40 by the same source: suspected dump artefact
         v.change("minecraft:lodestone").requiresCorrectTool(true);
-        // requires_correct_tool false -> true: CloudburstMC/Data 88a2436; SOURCE ONLY (no BDS capture)
+        // requires_correct_tool false -> true: CloudburstMC/Data 88a2436; SOURCE ONLY (no BDS capture); undoes the change of 26.40 by the same source: suspected dump artefact
         v.change("minecraft:magenta_concrete").requiresCorrectTool(true);
         // new in 26.50: values from BDS Script API dump 1.26.52.3, CloudburstMC/Data 88a2436
         v.block("minecraft:magenta_concrete_double_slab", "minecraft:vertical_half='bottom'|'top'")
@@ -588,49 +877,57 @@ final class BehaviourChanges26_50Part2 {
                 .solid(true)
                 .lightDampening(15)
                 .requiresCorrectTool(true)
-                .mapColor(-1303586561);
+                .mapColor(0xB24CD8FF);
         // new in 26.50: values from BDS Script API dump 1.26.52.3, CloudburstMC/Data 88a2436
         v.block("minecraft:magenta_concrete_slab", "minecraft:vertical_half='bottom'|'top'")
                 .destroyTime(1.8f)
                 .explosionResistance(0.359999f)
-                .collisionShape("minecraft:vertical_half", "bottom", BOX_0_0_0_16_8_16, "top", BOX_0_8_0_16_16_16)
-                .outlineShape("minecraft:vertical_half", "bottom", BOX_0_0_0_16_8_16, "top", BOX_0_8_0_16_16_16)
+                .collisionShape("minecraft:vertical_half", "bottom", BOX_0_0_0_16_8_16,
+                        "top", BOX_0_8_0_16_16_16)
+                .outlineShape("minecraft:vertical_half", "bottom", BOX_0_0_0_16_8_16,
+                        "top", BOX_0_8_0_16_16_16)
                 .canContainLiquid(true)
                 .liquidFlowDirections("minecraft:vertical_half", "bottom", 62, "top", 61)
                 .requiresCorrectTool(true)
-                .mapColor(-1303586561);
+                .mapColor(0xB24CD8FF);
         // new in 26.50: values from BDS Script API dump 1.26.52.3, CloudburstMC/Data 88a2436
         v.block("minecraft:magenta_concrete_stairs", "minecraft:corner='inner_left'|'inner_right'|'none'|'outer_left'|'outer_right',upside_down_bit=false|true,weirdo_direction=0..3")
                 .destroyTime(1.8f)
                 .explosionResistance(0.359999f)
-                .collisionShape(ACACIA_STAIRS_COLLISION_SHAPE_34)
+                .collisionShape(TABLE_CORNER_UPSIDE_DOWN_BIT_WEIRDO_DIRECTION_BD8305)
                 .canContainLiquid(true)
-                .liquidFlowDirections(ACACIA_STAIRS_LIQUID_FLOW_DIRECTIONS_2)
+                .liquidFlowDirections(TABLE_CORNER_UPSIDE_DOWN_BIT_WEIRDO_DIRECTION_91C7B2)
                 .requiresCorrectTool(true)
-                .mapColor("minecraft:corner", "inner_left", 0, "inner_right", 0, "none", -1303586561, "outer_left", 0, "outer_right", 0)
+                .mapColor("minecraft:corner", "inner_left", 0x00000000, "inner_right", 0x00000000,
+                        "none", 0xB24CD8FF, "outer_left", 0x00000000, "outer_right", 0x00000000)
                 .translucency(0.8f)
-                .movementType("minecraft:corner", "inner_left", null, "inner_right", null, "none", "PushPull", "outer_left", null, "outer_right", null)
-                .stickyType("minecraft:corner", "inner_left", null, "inner_right", null, "none", "None", "outer_left", null, "outer_right", null)
-                .accumulatesSnow("minecraft:corner", "inner_left", null, "inner_right", null, "none", true, "outer_left", null, "outer_right", null)
-                .snowLoggable("minecraft:corner", "inner_left", null, "inner_right", null, "none", false, "outer_left", null, "outer_right", null)
-                .obstructsRain("minecraft:corner", "inner_left", null, "inner_right", null, "none", true, "outer_left", null, "outer_right", null);
-        // requires_correct_tool false -> true: CloudburstMC/Data 88a2436; SOURCE ONLY (no BDS capture)
+                .movementType("minecraft:corner", "inner_left", null, "inner_right", null,
+                        "none", "PushPull", "outer_left", null, "outer_right", null)
+                .stickyType("minecraft:corner", "inner_left", null, "inner_right", null,
+                        "none", "None", "outer_left", null, "outer_right", null)
+                .accumulatesSnow("minecraft:corner", "inner_left", null, "inner_right", null,
+                        "none", true, "outer_left", null, "outer_right", null)
+                .snowLoggable("minecraft:corner", "inner_left", null, "inner_right", null,
+                        "none", false, "outer_left", null, "outer_right", null)
+                .obstructsRain("minecraft:corner", "inner_left", null, "inner_right", null,
+                        "none", true, "outer_left", null, "outer_right", null);
+        // requires_correct_tool false -> true: CloudburstMC/Data 88a2436; SOURCE ONLY (no BDS capture); undoes the change of 26.40 by the same source: suspected dump artefact
         v.change("minecraft:magenta_glazed_terracotta").requiresCorrectTool(true);
         // other states than in 26.40 (none): values from BDS Script API dump 1.26.52.3, CloudburstMC/Data 88a2436
         v.block("minecraft:magenta_stained_glass_pane", "minecraft:connection_east=false|true,minecraft:connection_north=false|true,minecraft:connection_south=false|true,minecraft:connection_west=false|true")
                 .destroyTime(0.3f)
                 .explosionResistance(0.3f)
-                .collisionShape(BLACK_STAINED_GLASS_PANE_COLLISION_SHAPE_10)
-                .outlineShape(BLACK_STAINED_GLASS_PANE_OUTLINE_SHAPE)
+                .collisionShape(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_B233D5)
+                .outlineShape(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_2E2A33)
                 .canContainLiquid(true)
-                .liquidFlowDirections(ACACIA_FENCE_LIQUID_FLOW_DIRECTIONS)
+                .liquidFlowDirections(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_9A27D1)
                 .translucency(1.0f)
-                .movementType(ACACIA_FENCE_MOVEMENT_TYPE)
-                .stickyType(ACACIA_FENCE_STICKY_TYPE)
-                .accumulatesSnow(ACACIA_FENCE_ACCUMULATES_SNOW)
-                .snowLoggable(ACACIA_FENCE_SNOW_LOGGABLE)
-                .obstructsRain(ACACIA_FENCE_ACCUMULATES_SNOW);
-        // requires_correct_tool false -> true: CloudburstMC/Data 88a2436; SOURCE ONLY (no BDS capture)
+                .movementType(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_375773)
+                .stickyType(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_43522C)
+                .accumulatesSnow(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_9B2762)
+                .snowLoggable(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_1AB959)
+                .obstructsRain(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_9B2762);
+        // requires_correct_tool false -> true: CloudburstMC/Data 88a2436; SOURCE ONLY (no BDS capture); undoes the change of 26.40 by the same source: suspected dump artefact
         v.change("minecraft:magenta_terracotta").requiresCorrectTool(true);
         // new in 26.50: values from BDS Script API dump 1.26.52.3, CloudburstMC/Data 88a2436
         v.block("minecraft:magenta_wool_double_slab", "minecraft:vertical_half='bottom'|'top'")
@@ -638,18 +935,20 @@ final class BehaviourChanges26_50Part2 {
                 .explosionResistance(0.16f)
                 .solid(true)
                 .lightDampening(15)
-                .mapColor(-951140865)
+                .mapColor(0xC74EBDFF)
                 .flameOdds(30)
                 .burnOdds(60);
         // new in 26.50: values from BDS Script API dump 1.26.52.3, CloudburstMC/Data 88a2436
         v.block("minecraft:magenta_wool_slab", "minecraft:vertical_half='bottom'|'top'")
                 .destroyTime(0.8f)
                 .explosionResistance(0.16f)
-                .collisionShape("minecraft:vertical_half", "bottom", BOX_0_0_0_16_8_16, "top", BOX_0_8_0_16_16_16)
-                .outlineShape("minecraft:vertical_half", "bottom", BOX_0_0_0_16_8_16, "top", BOX_0_8_0_16_16_16)
+                .collisionShape("minecraft:vertical_half", "bottom", BOX_0_0_0_16_8_16,
+                        "top", BOX_0_8_0_16_16_16)
+                .outlineShape("minecraft:vertical_half", "bottom", BOX_0_0_0_16_8_16,
+                        "top", BOX_0_8_0_16_16_16)
                 .canContainLiquid(true)
                 .liquidFlowDirections("minecraft:vertical_half", "bottom", 62, "top", 61)
-                .mapColor(-951140865)
+                .mapColor(0xC74EBDFF)
                 .flameOdds(30)
                 .burnOdds(60)
                 .translucency(0.8f);
@@ -657,241 +956,285 @@ final class BehaviourChanges26_50Part2 {
         v.block("minecraft:magenta_wool_stairs", "minecraft:corner='inner_left'|'inner_right'|'none'|'outer_left'|'outer_right',upside_down_bit=false|true,weirdo_direction=0..3")
                 .destroyTime(0.8f)
                 .explosionResistance(0.16f)
-                .collisionShape(ACACIA_STAIRS_COLLISION_SHAPE_34)
+                .collisionShape(TABLE_CORNER_UPSIDE_DOWN_BIT_WEIRDO_DIRECTION_BD8305)
                 .canContainLiquid(true)
-                .liquidFlowDirections(ACACIA_STAIRS_LIQUID_FLOW_DIRECTIONS_2)
-                .mapColor("minecraft:corner", "inner_left", 0, "inner_right", 0, "none", -951140865, "outer_left", 0, "outer_right", 0)
+                .liquidFlowDirections(TABLE_CORNER_UPSIDE_DOWN_BIT_WEIRDO_DIRECTION_91C7B2)
+                .mapColor("minecraft:corner", "inner_left", 0x00000000, "inner_right", 0x00000000,
+                        "none", 0xC74EBDFF, "outer_left", 0x00000000, "outer_right", 0x00000000)
                 .flameOdds(30)
                 .burnOdds(60)
                 .translucency(0.8f)
-                .movementType("minecraft:corner", "inner_left", null, "inner_right", null, "none", "PushPull", "outer_left", null, "outer_right", null)
-                .stickyType("minecraft:corner", "inner_left", null, "inner_right", null, "none", "None", "outer_left", null, "outer_right", null)
-                .accumulatesSnow("minecraft:corner", "inner_left", null, "inner_right", null, "none", true, "outer_left", null, "outer_right", null)
-                .snowLoggable("minecraft:corner", "inner_left", null, "inner_right", null, "none", false, "outer_left", null, "outer_right", null)
-                .obstructsRain("minecraft:corner", "inner_left", null, "inner_right", null, "none", true, "outer_left", null, "outer_right", null);
-        // requires_correct_tool false -> true: CloudburstMC/Data 88a2436; SOURCE ONLY (no BDS capture)
+                .movementType("minecraft:corner", "inner_left", null, "inner_right", null,
+                        "none", "PushPull", "outer_left", null, "outer_right", null)
+                .stickyType("minecraft:corner", "inner_left", null, "inner_right", null,
+                        "none", "None", "outer_left", null, "outer_right", null)
+                .accumulatesSnow("minecraft:corner", "inner_left", null, "inner_right", null,
+                        "none", true, "outer_left", null, "outer_right", null)
+                .snowLoggable("minecraft:corner", "inner_left", null, "inner_right", null,
+                        "none", false, "outer_left", null, "outer_right", null)
+                .obstructsRain("minecraft:corner", "inner_left", null, "inner_right", null,
+                        "none", true, "outer_left", null, "outer_right", null);
+        // requires_correct_tool false -> true: CloudburstMC/Data 88a2436; SOURCE ONLY (no BDS capture); undoes the change of 26.40 by the same source: suspected dump artefact
         v.change("minecraft:magma").requiresCorrectTool(true);
         // other states than in 26.40 (none): values from BDS Script API dump 1.26.52.3, CloudburstMC/Data 88a2436
         v.block("minecraft:mangrove_fence", "minecraft:connection_east=false|true,minecraft:connection_north=false|true,minecraft:connection_south=false|true,minecraft:connection_west=false|true")
                 .destroyTime(2.0f)
                 .explosionResistance(3.0f)
-                .collisionShape(ACACIA_FENCE_COLLISION_SHAPE_10)
-                .outlineShape(ACACIA_FENCE_OUTLINE_SHAPE)
+                .collisionShape(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_E9F3EE)
+                .outlineShape(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_F36CB3)
                 .canContainLiquid(true)
-                .liquidFlowDirections(ACACIA_FENCE_LIQUID_FLOW_DIRECTIONS)
-                .mapColor(-1724697601)
+                .liquidFlowDirections(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_9A27D1)
+                .mapColor(0x993333FF)
                 .flameOdds(5)
                 .burnOdds(20)
                 .translucency(0.8f)
-                .movementType(ACACIA_FENCE_MOVEMENT_TYPE)
-                .stickyType(ACACIA_FENCE_STICKY_TYPE)
-                .accumulatesSnow(ACACIA_FENCE_ACCUMULATES_SNOW)
-                .snowLoggable(ACACIA_FENCE_SNOW_LOGGABLE)
-                .obstructsRain(ACACIA_FENCE_ACCUMULATES_SNOW);
-        // requires_correct_tool true -> false: CloudburstMC/Data 88a2436; SOURCE ONLY (no BDS capture)
+                .movementType(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_375773)
+                .stickyType(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_43522C)
+                .accumulatesSnow(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_9B2762)
+                .snowLoggable(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_1AB959)
+                .obstructsRain(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_9B2762);
+        // requires_correct_tool true -> false: CloudburstMC/Data 88a2436; SOURCE ONLY (no BDS capture); undoes the change of 26.40 by the same source: suspected dump artefact
         v.change("minecraft:mangrove_leaves").requiresCorrectTool(false);
-        // requires_correct_tool true -> false: CloudburstMC/Data 88a2436; SOURCE ONLY (no BDS capture)
+        // requires_correct_tool true -> false: CloudburstMC/Data 88a2436; SOURCE ONLY (no BDS capture); undoes the change of 26.40 by the same source: suspected dump artefact
         v.change("minecraft:mangrove_pressure_plate").requiresCorrectTool(false);
         // outline_shape per state (10 of 10 states): CloudburstMC/Data 88a2436; SOURCE ONLY (no BDS capture)
         v.change("minecraft:mangrove_propagule")
-                .outlineShape(MANGROVE_PROPAGULE_OUTLINE_SHAPE_2);
+                .outlineShape(TABLE_HANGING_PROPAGULE_STAGE_5F3339);
         // other states than in 26.40 (upside_down_bit=false|true,weirdo_direction=0..3): values from BDS Script API dump 1.26.52.3, CloudburstMC/Data 88a2436
         v.block("minecraft:mangrove_stairs", "minecraft:corner='inner_left'|'inner_right'|'none'|'outer_left'|'outer_right',upside_down_bit=false|true,weirdo_direction=0..3")
                 .destroyTime(2.0f)
                 .explosionResistance(3.0f)
-                .collisionShape(ACACIA_STAIRS_COLLISION_SHAPE_34)
+                .collisionShape(TABLE_CORNER_UPSIDE_DOWN_BIT_WEIRDO_DIRECTION_BD8305)
                 .canContainLiquid(true)
-                .liquidFlowDirections(ACACIA_STAIRS_LIQUID_FLOW_DIRECTIONS_2)
-                .mapColor(-1724697601)
+                .liquidFlowDirections(TABLE_CORNER_UPSIDE_DOWN_BIT_WEIRDO_DIRECTION_91C7B2)
+                .mapColor(0x993333FF)
                 .flameOdds(5)
                 .burnOdds(20)
                 .translucency(0.8f)
-                .movementType("minecraft:corner", "inner_left", null, "inner_right", null, "none", "PushPull", "outer_left", null, "outer_right", null)
-                .stickyType("minecraft:corner", "inner_left", null, "inner_right", null, "none", "None", "outer_left", null, "outer_right", null)
-                .accumulatesSnow("minecraft:corner", "inner_left", null, "inner_right", null, "none", true, "outer_left", null, "outer_right", null)
-                .snowLoggable("minecraft:corner", "inner_left", null, "inner_right", null, "none", false, "outer_left", null, "outer_right", null)
-                .obstructsRain("minecraft:corner", "inner_left", null, "inner_right", null, "none", true, "outer_left", null, "outer_right", null);
-        // requires_correct_tool true -> false: CloudburstMC/Data 88a2436; SOURCE ONLY (no BDS capture)
+                .movementType("minecraft:corner", "inner_left", null, "inner_right", null,
+                        "none", "PushPull", "outer_left", null, "outer_right", null)
+                .stickyType("minecraft:corner", "inner_left", null, "inner_right", null,
+                        "none", "None", "outer_left", null, "outer_right", null)
+                .accumulatesSnow("minecraft:corner", "inner_left", null, "inner_right", null,
+                        "none", true, "outer_left", null, "outer_right", null)
+                .snowLoggable("minecraft:corner", "inner_left", null, "inner_right", null,
+                        "none", false, "outer_left", null, "outer_right", null)
+                .obstructsRain("minecraft:corner", "inner_left", null, "inner_right", null,
+                        "none", true, "outer_left", null, "outer_right", null);
+        // requires_correct_tool true -> false: CloudburstMC/Data 88a2436; SOURCE ONLY (no BDS capture); undoes the change of 26.40 by the same source: suspected dump artefact
         v.change("minecraft:mangrove_wood").requiresCorrectTool(false);
-        // requires_correct_tool false -> true: CloudburstMC/Data 88a2436; SOURCE ONLY (no BDS capture)
+        // requires_correct_tool false -> true: CloudburstMC/Data 88a2436; SOURCE ONLY (no BDS capture); undoes the change of 26.40 by the same source: suspected dump artefact
         v.change("minecraft:mob_spawner").requiresCorrectTool(true);
-        // requires_correct_tool false -> true: CloudburstMC/Data 88a2436; SOURCE ONLY (no BDS capture)
+    }
+
+    static void part14(Changes v) {
+        // requires_correct_tool false -> true: CloudburstMC/Data 88a2436; SOURCE ONLY (no BDS capture); undoes the change of 26.40 by the same source: suspected dump artefact
         v.change("minecraft:mossy_cobblestone").requiresCorrectTool(true);
-        // requires_correct_tool false -> true: CloudburstMC/Data 88a2436; SOURCE ONLY (no BDS capture)
+        // requires_correct_tool false -> true: CloudburstMC/Data 88a2436; SOURCE ONLY (no BDS capture); undoes the change of 26.40 by the same source: suspected dump artefact
         v.change("minecraft:mossy_cobblestone_double_slab").requiresCorrectTool(true);
-        // requires_correct_tool false -> true: CloudburstMC/Data 88a2436; SOURCE ONLY (no BDS capture)
+        // requires_correct_tool false -> true: CloudburstMC/Data 88a2436; SOURCE ONLY (no BDS capture); undoes the change of 26.40 by the same source: suspected dump artefact
         v.change("minecraft:mossy_cobblestone_slab").requiresCorrectTool(true);
         // other states than in 26.40 (upside_down_bit=false|true,weirdo_direction=0..3): values from BDS Script API dump 1.26.52.3, CloudburstMC/Data 88a2436
         v.block("minecraft:mossy_cobblestone_stairs", "minecraft:corner='inner_left'|'inner_right'|'none'|'outer_left'|'outer_right',upside_down_bit=false|true,weirdo_direction=0..3")
                 .destroyTime(2.0f)
-                .collisionShape(ACACIA_STAIRS_COLLISION_SHAPE_34)
+                .collisionShape(TABLE_CORNER_UPSIDE_DOWN_BIT_WEIRDO_DIRECTION_BD8305)
                 .canContainLiquid(true)
-                .liquidFlowDirections(ACACIA_STAIRS_LIQUID_FLOW_DIRECTIONS_2)
+                .liquidFlowDirections(TABLE_CORNER_UPSIDE_DOWN_BIT_WEIRDO_DIRECTION_91C7B2)
                 .requiresCorrectTool(true)
-                .mapColor(1886417151)
+                .mapColor(0x707070FF)
                 .translucency(0.8f)
-                .movementType("minecraft:corner", "inner_left", null, "inner_right", null, "none", "PushPull", "outer_left", null, "outer_right", null)
-                .stickyType("minecraft:corner", "inner_left", null, "inner_right", null, "none", "None", "outer_left", null, "outer_right", null)
-                .accumulatesSnow("minecraft:corner", "inner_left", null, "inner_right", null, "none", true, "outer_left", null, "outer_right", null)
-                .snowLoggable("minecraft:corner", "inner_left", null, "inner_right", null, "none", false, "outer_left", null, "outer_right", null)
-                .obstructsRain("minecraft:corner", "inner_left", null, "inner_right", null, "none", true, "outer_left", null, "outer_right", null);
-        // requires_correct_tool false -> true: CloudburstMC/Data 88a2436; SOURCE ONLY (no BDS capture)
+                .movementType("minecraft:corner", "inner_left", null, "inner_right", null,
+                        "none", "PushPull", "outer_left", null, "outer_right", null)
+                .stickyType("minecraft:corner", "inner_left", null, "inner_right", null,
+                        "none", "None", "outer_left", null, "outer_right", null)
+                .accumulatesSnow("minecraft:corner", "inner_left", null, "inner_right", null,
+                        "none", true, "outer_left", null, "outer_right", null)
+                .snowLoggable("minecraft:corner", "inner_left", null, "inner_right", null,
+                        "none", false, "outer_left", null, "outer_right", null)
+                .obstructsRain("minecraft:corner", "inner_left", null, "inner_right", null,
+                        "none", true, "outer_left", null, "outer_right", null);
+        // requires_correct_tool false -> true: CloudburstMC/Data 88a2436; SOURCE ONLY (no BDS capture); undoes the change of 26.40 by the same source: suspected dump artefact
         v.change("minecraft:mossy_cobblestone_wall").requiresCorrectTool(true);
-        // requires_correct_tool false -> true: CloudburstMC/Data 88a2436; SOURCE ONLY (no BDS capture)
+        // requires_correct_tool false -> true: CloudburstMC/Data 88a2436; SOURCE ONLY (no BDS capture); undoes the change of 26.40 by the same source: suspected dump artefact
         v.change("minecraft:mossy_stone_brick_double_slab").requiresCorrectTool(true);
-        // requires_correct_tool false -> true: CloudburstMC/Data 88a2436; SOURCE ONLY (no BDS capture)
+        // requires_correct_tool false -> true: CloudburstMC/Data 88a2436; SOURCE ONLY (no BDS capture); undoes the change of 26.40 by the same source: suspected dump artefact
         v.change("minecraft:mossy_stone_brick_slab").requiresCorrectTool(true);
-    }
-
-    static void part12(Changes v) {
         // other states than in 26.40 (upside_down_bit=false|true,weirdo_direction=0..3): values from BDS Script API dump 1.26.52.3, CloudburstMC/Data 88a2436
         v.block("minecraft:mossy_stone_brick_stairs", "minecraft:corner='inner_left'|'inner_right'|'none'|'outer_left'|'outer_right',upside_down_bit=false|true,weirdo_direction=0..3")
                 .destroyTime(1.5f)
-                .collisionShape(ACACIA_STAIRS_COLLISION_SHAPE_34)
+                .collisionShape(TABLE_CORNER_UPSIDE_DOWN_BIT_WEIRDO_DIRECTION_BD8305)
                 .canContainLiquid(true)
-                .liquidFlowDirections(ACACIA_STAIRS_LIQUID_FLOW_DIRECTIONS_2)
+                .liquidFlowDirections(TABLE_CORNER_UPSIDE_DOWN_BIT_WEIRDO_DIRECTION_91C7B2)
                 .requiresCorrectTool(true)
-                .mapColor(1886417151)
+                .mapColor(0x707070FF)
                 .translucency(0.8f)
-                .movementType("minecraft:corner", "inner_left", null, "inner_right", null, "none", "PushPull", "outer_left", null, "outer_right", null)
-                .stickyType("minecraft:corner", "inner_left", null, "inner_right", null, "none", "None", "outer_left", null, "outer_right", null)
-                .accumulatesSnow("minecraft:corner", "inner_left", null, "inner_right", null, "none", true, "outer_left", null, "outer_right", null)
-                .snowLoggable("minecraft:corner", "inner_left", null, "inner_right", null, "none", false, "outer_left", null, "outer_right", null)
-                .obstructsRain("minecraft:corner", "inner_left", null, "inner_right", null, "none", true, "outer_left", null, "outer_right", null);
-        // requires_correct_tool false -> true: CloudburstMC/Data 88a2436; SOURCE ONLY (no BDS capture)
+                .movementType("minecraft:corner", "inner_left", null, "inner_right", null,
+                        "none", "PushPull", "outer_left", null, "outer_right", null)
+                .stickyType("minecraft:corner", "inner_left", null, "inner_right", null,
+                        "none", "None", "outer_left", null, "outer_right", null)
+                .accumulatesSnow("minecraft:corner", "inner_left", null, "inner_right", null,
+                        "none", true, "outer_left", null, "outer_right", null)
+                .snowLoggable("minecraft:corner", "inner_left", null, "inner_right", null,
+                        "none", false, "outer_left", null, "outer_right", null)
+                .obstructsRain("minecraft:corner", "inner_left", null, "inner_right", null,
+                        "none", true, "outer_left", null, "outer_right", null);
+        // requires_correct_tool false -> true: CloudburstMC/Data 88a2436; SOURCE ONLY (no BDS capture); undoes the change of 26.40 by the same source: suspected dump artefact
         v.change("minecraft:mossy_stone_brick_wall").requiresCorrectTool(true);
-        // requires_correct_tool false -> true: CloudburstMC/Data 88a2436; SOURCE ONLY (no BDS capture)
+        // requires_correct_tool false -> true: CloudburstMC/Data 88a2436; SOURCE ONLY (no BDS capture); undoes the change of 26.40 by the same source: suspected dump artefact
         v.change("minecraft:mossy_stone_bricks").requiresCorrectTool(true);
-        // requires_correct_tool false -> true: CloudburstMC/Data 88a2436; SOURCE ONLY (no BDS capture)
+        // requires_correct_tool false -> true: CloudburstMC/Data 88a2436; SOURCE ONLY (no BDS capture); undoes the change of 26.40 by the same source: suspected dump artefact
         v.change("minecraft:moving_block").requiresCorrectTool(true);
-        // requires_correct_tool false -> true: CloudburstMC/Data 88a2436; SOURCE ONLY (no BDS capture)
+        // requires_correct_tool false -> true: CloudburstMC/Data 88a2436; SOURCE ONLY (no BDS capture); undoes the change of 26.40 by the same source: suspected dump artefact
         v.change("minecraft:mud_brick_double_slab").requiresCorrectTool(true);
-        // requires_correct_tool false -> true: CloudburstMC/Data 88a2436; SOURCE ONLY (no BDS capture)
+        // requires_correct_tool false -> true: CloudburstMC/Data 88a2436; SOURCE ONLY (no BDS capture); undoes the change of 26.40 by the same source: suspected dump artefact
         v.change("minecraft:mud_brick_slab").requiresCorrectTool(true);
         // other states than in 26.40 (upside_down_bit=false|true,weirdo_direction=0..3): values from BDS Script API dump 1.26.52.3, CloudburstMC/Data 88a2436
         v.block("minecraft:mud_brick_stairs", "minecraft:corner='inner_left'|'inner_right'|'none'|'outer_left'|'outer_right',upside_down_bit=false|true,weirdo_direction=0..3")
                 .destroyTime(1.5f)
                 .explosionResistance(3.0f)
-                .collisionShape(ACACIA_STAIRS_COLLISION_SHAPE_34)
+                .collisionShape(TABLE_CORNER_UPSIDE_DOWN_BIT_WEIRDO_DIRECTION_BD8305)
                 .canContainLiquid(true)
-                .liquidFlowDirections(ACACIA_STAIRS_LIQUID_FLOW_DIRECTIONS_2)
+                .liquidFlowDirections(TABLE_CORNER_UPSIDE_DOWN_BIT_WEIRDO_DIRECTION_91C7B2)
                 .requiresCorrectTool(true)
-                .mapColor(-2023005441)
+                .mapColor(0x876B62FF)
                 .translucency(0.8f)
-                .movementType("minecraft:corner", "inner_left", null, "inner_right", null, "none", "PushPull", "outer_left", null, "outer_right", null)
-                .stickyType("minecraft:corner", "inner_left", null, "inner_right", null, "none", "None", "outer_left", null, "outer_right", null)
-                .accumulatesSnow("minecraft:corner", "inner_left", null, "inner_right", null, "none", true, "outer_left", null, "outer_right", null)
-                .snowLoggable("minecraft:corner", "inner_left", null, "inner_right", null, "none", false, "outer_left", null, "outer_right", null)
-                .obstructsRain("minecraft:corner", "inner_left", null, "inner_right", null, "none", true, "outer_left", null, "outer_right", null);
-        // requires_correct_tool false -> true: CloudburstMC/Data 88a2436; SOURCE ONLY (no BDS capture)
+                .movementType("minecraft:corner", "inner_left", null, "inner_right", null,
+                        "none", "PushPull", "outer_left", null, "outer_right", null)
+                .stickyType("minecraft:corner", "inner_left", null, "inner_right", null,
+                        "none", "None", "outer_left", null, "outer_right", null)
+                .accumulatesSnow("minecraft:corner", "inner_left", null, "inner_right", null,
+                        "none", true, "outer_left", null, "outer_right", null)
+                .snowLoggable("minecraft:corner", "inner_left", null, "inner_right", null,
+                        "none", false, "outer_left", null, "outer_right", null)
+                .obstructsRain("minecraft:corner", "inner_left", null, "inner_right", null,
+                        "none", true, "outer_left", null, "outer_right", null);
+        // requires_correct_tool false -> true: CloudburstMC/Data 88a2436; SOURCE ONLY (no BDS capture); undoes the change of 26.40 by the same source: suspected dump artefact
         v.change("minecraft:mud_brick_wall").requiresCorrectTool(true);
-        // requires_correct_tool false -> true: CloudburstMC/Data 88a2436; SOURCE ONLY (no BDS capture)
+        // requires_correct_tool false -> true: CloudburstMC/Data 88a2436; SOURCE ONLY (no BDS capture); undoes the change of 26.40 by the same source: suspected dump artefact
         v.change("minecraft:mud_bricks").requiresCorrectTool(true);
-        // requires_correct_tool false -> true: CloudburstMC/Data 88a2436; SOURCE ONLY (no BDS capture)
+        // requires_correct_tool false -> true: CloudburstMC/Data 88a2436; SOURCE ONLY (no BDS capture); undoes the change of 26.40 by the same source: suspected dump artefact
         v.change("minecraft:nether_brick").requiresCorrectTool(true);
         // other states than in 26.40 (none): values from BDS Script API dump 1.26.52.3, CloudburstMC/Data 88a2436
         v.block("minecraft:nether_brick_fence", "minecraft:connection_east=false|true,minecraft:connection_north=false|true,minecraft:connection_south=false|true,minecraft:connection_west=false|true")
                 .destroyTime(2.0f)
-                .collisionShape(ACACIA_FENCE_COLLISION_SHAPE_10)
-                .outlineShape(ACACIA_FENCE_OUTLINE_SHAPE)
+                .collisionShape(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_E9F3EE)
+                .outlineShape(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_F36CB3)
                 .canContainLiquid(true)
-                .liquidFlowDirections(ACACIA_FENCE_LIQUID_FLOW_DIRECTIONS)
+                .liquidFlowDirections(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_9A27D1)
                 .requiresCorrectTool(true)
-                .mapColor(1879179519)
+                .mapColor(0x700200FF)
                 .translucency(0.8f)
-                .movementType(ACACIA_FENCE_MOVEMENT_TYPE)
-                .stickyType(ACACIA_FENCE_STICKY_TYPE)
-                .accumulatesSnow(ACACIA_FENCE_ACCUMULATES_SNOW)
-                .snowLoggable(ACACIA_FENCE_SNOW_LOGGABLE)
-                .obstructsRain(ACACIA_FENCE_ACCUMULATES_SNOW);
-        // requires_correct_tool false -> true: CloudburstMC/Data 88a2436; SOURCE ONLY (no BDS capture)
+                .movementType(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_375773)
+                .stickyType(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_43522C)
+                .accumulatesSnow(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_9B2762)
+                .snowLoggable(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_1AB959)
+                .obstructsRain(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_9B2762);
+        // requires_correct_tool false -> true: CloudburstMC/Data 88a2436; SOURCE ONLY (no BDS capture); undoes the change of 26.40 by the same source: suspected dump artefact
         v.change("minecraft:nether_brick_slab").requiresCorrectTool(true);
         // other states than in 26.40 (upside_down_bit=false|true,weirdo_direction=0..3): values from BDS Script API dump 1.26.52.3, CloudburstMC/Data 88a2436
         v.block("minecraft:nether_brick_stairs", "minecraft:corner='inner_left'|'inner_right'|'none'|'outer_left'|'outer_right',upside_down_bit=false|true,weirdo_direction=0..3")
                 .destroyTime(2.0f)
-                .collisionShape(ACACIA_STAIRS_COLLISION_SHAPE_34)
+                .collisionShape(TABLE_CORNER_UPSIDE_DOWN_BIT_WEIRDO_DIRECTION_BD8305)
                 .canContainLiquid(true)
-                .liquidFlowDirections(ACACIA_STAIRS_LIQUID_FLOW_DIRECTIONS_2)
+                .liquidFlowDirections(TABLE_CORNER_UPSIDE_DOWN_BIT_WEIRDO_DIRECTION_91C7B2)
                 .requiresCorrectTool(true)
-                .mapColor(1879179519)
+                .mapColor(0x700200FF)
                 .translucency(0.8f)
-                .movementType("minecraft:corner", "inner_left", null, "inner_right", null, "none", "PushPull", "outer_left", null, "outer_right", null)
-                .stickyType("minecraft:corner", "inner_left", null, "inner_right", null, "none", "None", "outer_left", null, "outer_right", null)
-                .accumulatesSnow("minecraft:corner", "inner_left", null, "inner_right", null, "none", true, "outer_left", null, "outer_right", null)
-                .snowLoggable("minecraft:corner", "inner_left", null, "inner_right", null, "none", false, "outer_left", null, "outer_right", null)
-                .obstructsRain("minecraft:corner", "inner_left", null, "inner_right", null, "none", true, "outer_left", null, "outer_right", null);
-        // requires_correct_tool false -> true: CloudburstMC/Data 88a2436; SOURCE ONLY (no BDS capture)
+                .movementType("minecraft:corner", "inner_left", null, "inner_right", null,
+                        "none", "PushPull", "outer_left", null, "outer_right", null)
+                .stickyType("minecraft:corner", "inner_left", null, "inner_right", null,
+                        "none", "None", "outer_left", null, "outer_right", null)
+                .accumulatesSnow("minecraft:corner", "inner_left", null, "inner_right", null,
+                        "none", true, "outer_left", null, "outer_right", null)
+                .snowLoggable("minecraft:corner", "inner_left", null, "inner_right", null,
+                        "none", false, "outer_left", null, "outer_right", null)
+                .obstructsRain("minecraft:corner", "inner_left", null, "inner_right", null,
+                        "none", true, "outer_left", null, "outer_right", null);
+        // requires_correct_tool false -> true: CloudburstMC/Data 88a2436; SOURCE ONLY (no BDS capture); undoes the change of 26.40 by the same source: suspected dump artefact
         v.change("minecraft:nether_brick_wall").requiresCorrectTool(true);
-        // requires_correct_tool false -> true: CloudburstMC/Data 88a2436; SOURCE ONLY (no BDS capture)
+        // requires_correct_tool false -> true: CloudburstMC/Data 88a2436; SOURCE ONLY (no BDS capture); undoes the change of 26.40 by the same source: suspected dump artefact
         v.change("minecraft:nether_gold_ore").requiresCorrectTool(true);
-        // outline_shape BOX_M0P533344_0_0P533344_10P666672_4P8_11P733328 -> BOX_2P4_0_2P4_13P6_4P8_13P6: CloudburstMC/Data 88a2436; SOURCE ONLY (no BDS capture)
+        // outline_shape SHAPE_NETHER_SPROUTS_OUTLINE_SHAPE -> SHAPE_NETHER_SPROUTS_OUTLINE_SHAPE_2: CloudburstMC/Data 88a2436; SOURCE ONLY (no BDS capture)
         v.change("minecraft:nether_sprouts")
-                .outlineShape(BOX_2P4_0_2P4_13P6_4P8_13P6);
-        // requires_correct_tool false -> true: CloudburstMC/Data 88a2436; SOURCE ONLY (no BDS capture)
+                .outlineShape(SHAPE_NETHER_SPROUTS_OUTLINE_SHAPE_2);
+        // requires_correct_tool false -> true: CloudburstMC/Data 88a2436; SOURCE ONLY (no BDS capture); undoes the change of 26.40 by the same source: suspected dump artefact
         v.change("minecraft:netherite_block").requiresCorrectTool(true);
-        // requires_correct_tool false -> true: CloudburstMC/Data 88a2436; SOURCE ONLY (no BDS capture)
+        // requires_correct_tool false -> true: CloudburstMC/Data 88a2436; SOURCE ONLY (no BDS capture); undoes the change of 26.40 by the same source: suspected dump artefact
         v.change("minecraft:netherrack").requiresCorrectTool(true);
-        // requires_correct_tool false -> true: CloudburstMC/Data 88a2436; SOURCE ONLY (no BDS capture)
+        // requires_correct_tool false -> true: CloudburstMC/Data 88a2436; SOURCE ONLY (no BDS capture); undoes the change of 26.40 by the same source: suspected dump artefact
         v.change("minecraft:netherreactor").requiresCorrectTool(true);
-        // requires_correct_tool false -> true: CloudburstMC/Data 88a2436; SOURCE ONLY (no BDS capture)
+        // requires_correct_tool false -> true: CloudburstMC/Data 88a2436; SOURCE ONLY (no BDS capture); undoes the change of 26.40 by the same source: suspected dump artefact
         v.change("minecraft:normal_stone_double_slab").requiresCorrectTool(true);
-        // requires_correct_tool false -> true: CloudburstMC/Data 88a2436; SOURCE ONLY (no BDS capture)
+        // requires_correct_tool false -> true: CloudburstMC/Data 88a2436; SOURCE ONLY (no BDS capture); undoes the change of 26.40 by the same source: suspected dump artefact
         v.change("minecraft:normal_stone_slab").requiresCorrectTool(true);
         // other states than in 26.40 (upside_down_bit=false|true,weirdo_direction=0..3): values from BDS Script API dump 1.26.52.3, CloudburstMC/Data 88a2436
         v.block("minecraft:normal_stone_stairs", "minecraft:corner='inner_left'|'inner_right'|'none'|'outer_left'|'outer_right',upside_down_bit=false|true,weirdo_direction=0..3")
                 .destroyTime(1.5f)
-                .collisionShape(ACACIA_STAIRS_COLLISION_SHAPE_34)
+                .collisionShape(TABLE_CORNER_UPSIDE_DOWN_BIT_WEIRDO_DIRECTION_BD8305)
                 .canContainLiquid(true)
-                .liquidFlowDirections(ACACIA_STAIRS_LIQUID_FLOW_DIRECTIONS_2)
+                .liquidFlowDirections(TABLE_CORNER_UPSIDE_DOWN_BIT_WEIRDO_DIRECTION_91C7B2)
                 .requiresCorrectTool(true)
-                .mapColor(1886417151)
+                .mapColor(0x707070FF)
                 .translucency(0.8f)
-                .movementType("minecraft:corner", "inner_left", null, "inner_right", null, "none", "PushPull", "outer_left", null, "outer_right", null)
-                .stickyType("minecraft:corner", "inner_left", null, "inner_right", null, "none", "None", "outer_left", null, "outer_right", null)
-                .accumulatesSnow("minecraft:corner", "inner_left", null, "inner_right", null, "none", true, "outer_left", null, "outer_right", null)
-                .snowLoggable("minecraft:corner", "inner_left", null, "inner_right", null, "none", false, "outer_left", null, "outer_right", null)
-                .obstructsRain("minecraft:corner", "inner_left", null, "inner_right", null, "none", true, "outer_left", null, "outer_right", null);
+                .movementType("minecraft:corner", "inner_left", null, "inner_right", null,
+                        "none", "PushPull", "outer_left", null, "outer_right", null)
+                .stickyType("minecraft:corner", "inner_left", null, "inner_right", null,
+                        "none", "None", "outer_left", null, "outer_right", null)
+                .accumulatesSnow("minecraft:corner", "inner_left", null, "inner_right", null,
+                        "none", true, "outer_left", null, "outer_right", null)
+                .snowLoggable("minecraft:corner", "inner_left", null, "inner_right", null,
+                        "none", false, "outer_left", null, "outer_right", null)
+                .obstructsRain("minecraft:corner", "inner_left", null, "inner_right", null,
+                        "none", true, "outer_left", null, "outer_right", null);
+    }
+
+    static void part15(Changes v) {
         // other states than in 26.40 (none): values from BDS Script API dump 1.26.52.3, CloudburstMC/Data 88a2436
         v.block("minecraft:oak_fence", "minecraft:connection_east=false|true,minecraft:connection_north=false|true,minecraft:connection_south=false|true,minecraft:connection_west=false|true")
                 .destroyTime(2.0f)
                 .explosionResistance(3.0f)
-                .collisionShape(ACACIA_FENCE_COLLISION_SHAPE_10)
-                .outlineShape(ACACIA_FENCE_OUTLINE_SHAPE)
+                .collisionShape(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_E9F3EE)
+                .outlineShape(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_F36CB3)
                 .canContainLiquid(true)
-                .liquidFlowDirections(ACACIA_FENCE_LIQUID_FLOW_DIRECTIONS)
-                .mapColor(-1888007937)
+                .liquidFlowDirections(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_9A27D1)
+                .mapColor(0x8F7748FF)
                 .flameOdds(5)
                 .burnOdds(20)
                 .translucency(0.8f)
-                .movementType(ACACIA_FENCE_MOVEMENT_TYPE)
-                .stickyType(ACACIA_FENCE_STICKY_TYPE)
-                .accumulatesSnow(ACACIA_FENCE_ACCUMULATES_SNOW)
-                .snowLoggable(ACACIA_FENCE_SNOW_LOGGABLE)
-                .obstructsRain(ACACIA_FENCE_ACCUMULATES_SNOW);
+                .movementType(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_375773)
+                .stickyType(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_43522C)
+                .accumulatesSnow(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_9B2762)
+                .snowLoggable(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_1AB959)
+                .obstructsRain(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_9B2762);
         // other states than in 26.40 (upside_down_bit=false|true,weirdo_direction=0..3): values from BDS Script API dump 1.26.52.3, CloudburstMC/Data 88a2436
         v.block("minecraft:oak_stairs", "minecraft:corner='inner_left'|'inner_right'|'none'|'outer_left'|'outer_right',upside_down_bit=false|true,weirdo_direction=0..3")
                 .destroyTime(2.0f)
                 .explosionResistance(3.0f)
-                .collisionShape(ACACIA_STAIRS_COLLISION_SHAPE_34)
+                .collisionShape(TABLE_CORNER_UPSIDE_DOWN_BIT_WEIRDO_DIRECTION_BD8305)
                 .canContainLiquid(true)
-                .liquidFlowDirections(ACACIA_STAIRS_LIQUID_FLOW_DIRECTIONS_2)
-                .mapColor(-1888007937)
+                .liquidFlowDirections(TABLE_CORNER_UPSIDE_DOWN_BIT_WEIRDO_DIRECTION_91C7B2)
+                .mapColor(0x8F7748FF)
                 .flameOdds(5)
                 .burnOdds(20)
                 .translucency(0.8f)
-                .movementType("minecraft:corner", "inner_left", null, "inner_right", null, "none", "PushPull", "outer_left", null, "outer_right", null)
-                .stickyType("minecraft:corner", "inner_left", null, "inner_right", null, "none", "None", "outer_left", null, "outer_right", null)
-                .accumulatesSnow("minecraft:corner", "inner_left", null, "inner_right", null, "none", true, "outer_left", null, "outer_right", null)
-                .snowLoggable("minecraft:corner", "inner_left", null, "inner_right", null, "none", false, "outer_left", null, "outer_right", null)
-                .obstructsRain("minecraft:corner", "inner_left", null, "inner_right", null, "none", true, "outer_left", null, "outer_right", null);
-        // requires_correct_tool false -> true: CloudburstMC/Data 88a2436; SOURCE ONLY (no BDS capture)
+                .movementType("minecraft:corner", "inner_left", null, "inner_right", null,
+                        "none", "PushPull", "outer_left", null, "outer_right", null)
+                .stickyType("minecraft:corner", "inner_left", null, "inner_right", null,
+                        "none", "None", "outer_left", null, "outer_right", null)
+                .accumulatesSnow("minecraft:corner", "inner_left", null, "inner_right", null,
+                        "none", true, "outer_left", null, "outer_right", null)
+                .snowLoggable("minecraft:corner", "inner_left", null, "inner_right", null,
+                        "none", false, "outer_left", null, "outer_right", null)
+                .obstructsRain("minecraft:corner", "inner_left", null, "inner_right", null,
+                        "none", true, "outer_left", null, "outer_right", null);
+        // requires_correct_tool false -> true: CloudburstMC/Data 88a2436; SOURCE ONLY (no BDS capture); undoes the change of 26.40 by the same source: suspected dump artefact
         v.change("minecraft:observer").requiresCorrectTool(true);
-        // requires_correct_tool false -> true: CloudburstMC/Data 88a2436; SOURCE ONLY (no BDS capture)
+        // requires_correct_tool false -> true: CloudburstMC/Data 88a2436; SOURCE ONLY (no BDS capture); undoes the change of 26.40 by the same source: suspected dump artefact
         v.change("minecraft:obsidian").requiresCorrectTool(true);
-        // outline_shape BOX_M0P533344_0_0P533344_8P266656_9P6_9P333328 -> BOX_2P4_0_2P4_11P2_9P6_11P2: CloudburstMC/Data 88a2436; SOURCE ONLY (no BDS capture)
+        // outline_shape SHAPE_ALLIUM_OUTLINE_SHAPE -> SHAPE_TORCHFLOWER_CROP_OUTLINE_SHAPE: CloudburstMC/Data 88a2436; SOURCE ONLY (no BDS capture)
         v.change("minecraft:open_eyeblossom")
-                .outlineShape(BOX_2P4_0_2P4_11P2_9P6_11P2);
-        // requires_correct_tool false -> true: CloudburstMC/Data 88a2436; SOURCE ONLY (no BDS capture)
+                .outlineShape(SHAPE_TORCHFLOWER_CROP_OUTLINE_SHAPE);
+        // requires_correct_tool false -> true: CloudburstMC/Data 88a2436; SOURCE ONLY (no BDS capture); undoes the change of 26.40 by the same source: suspected dump artefact
         v.change("minecraft:orange_concrete").requiresCorrectTool(true);
         // new in 26.50: values from BDS Script API dump 1.26.52.3, CloudburstMC/Data 88a2436
         v.block("minecraft:orange_concrete_double_slab", "minecraft:vertical_half='bottom'|'top'")
@@ -900,74 +1243,81 @@ final class BehaviourChanges26_50Part2 {
                 .solid(true)
                 .lightDampening(15)
                 .requiresCorrectTool(true)
-                .mapColor(-662752257);
+                .mapColor(0xD87F33FF);
         // new in 26.50: values from BDS Script API dump 1.26.52.3, CloudburstMC/Data 88a2436
         v.block("minecraft:orange_concrete_slab", "minecraft:vertical_half='bottom'|'top'")
                 .destroyTime(1.8f)
                 .explosionResistance(0.359999f)
-                .collisionShape("minecraft:vertical_half", "bottom", BOX_0_0_0_16_8_16, "top", BOX_0_8_0_16_16_16)
-                .outlineShape("minecraft:vertical_half", "bottom", BOX_0_0_0_16_8_16, "top", BOX_0_8_0_16_16_16)
+                .collisionShape("minecraft:vertical_half", "bottom", BOX_0_0_0_16_8_16,
+                        "top", BOX_0_8_0_16_16_16)
+                .outlineShape("minecraft:vertical_half", "bottom", BOX_0_0_0_16_8_16,
+                        "top", BOX_0_8_0_16_16_16)
                 .canContainLiquid(true)
                 .liquidFlowDirections("minecraft:vertical_half", "bottom", 62, "top", 61)
                 .requiresCorrectTool(true)
-                .mapColor(-662752257);
-    }
-
-    static void part13(Changes v) {
+                .mapColor(0xD87F33FF);
         // new in 26.50: values from BDS Script API dump 1.26.52.3, CloudburstMC/Data 88a2436
         v.block("minecraft:orange_concrete_stairs", "minecraft:corner='inner_left'|'inner_right'|'none'|'outer_left'|'outer_right',upside_down_bit=false|true,weirdo_direction=0..3")
                 .destroyTime(1.8f)
                 .explosionResistance(0.359999f)
-                .collisionShape(ACACIA_STAIRS_COLLISION_SHAPE_34)
+                .collisionShape(TABLE_CORNER_UPSIDE_DOWN_BIT_WEIRDO_DIRECTION_BD8305)
                 .canContainLiquid(true)
-                .liquidFlowDirections(ACACIA_STAIRS_LIQUID_FLOW_DIRECTIONS_2)
+                .liquidFlowDirections(TABLE_CORNER_UPSIDE_DOWN_BIT_WEIRDO_DIRECTION_91C7B2)
                 .requiresCorrectTool(true)
-                .mapColor("minecraft:corner", "inner_left", 0, "inner_right", 0, "none", -662752257, "outer_left", 0, "outer_right", 0)
+                .mapColor("minecraft:corner", "inner_left", 0x00000000, "inner_right", 0x00000000,
+                        "none", 0xD87F33FF, "outer_left", 0x00000000, "outer_right", 0x00000000)
                 .translucency(0.8f)
-                .movementType("minecraft:corner", "inner_left", null, "inner_right", null, "none", "PushPull", "outer_left", null, "outer_right", null)
-                .stickyType("minecraft:corner", "inner_left", null, "inner_right", null, "none", "None", "outer_left", null, "outer_right", null)
-                .accumulatesSnow("minecraft:corner", "inner_left", null, "inner_right", null, "none", true, "outer_left", null, "outer_right", null)
-                .snowLoggable("minecraft:corner", "inner_left", null, "inner_right", null, "none", false, "outer_left", null, "outer_right", null)
-                .obstructsRain("minecraft:corner", "inner_left", null, "inner_right", null, "none", true, "outer_left", null, "outer_right", null);
-        // requires_correct_tool false -> true: CloudburstMC/Data 88a2436; SOURCE ONLY (no BDS capture)
+                .movementType("minecraft:corner", "inner_left", null, "inner_right", null,
+                        "none", "PushPull", "outer_left", null, "outer_right", null)
+                .stickyType("minecraft:corner", "inner_left", null, "inner_right", null,
+                        "none", "None", "outer_left", null, "outer_right", null)
+                .accumulatesSnow("minecraft:corner", "inner_left", null, "inner_right", null,
+                        "none", true, "outer_left", null, "outer_right", null)
+                .snowLoggable("minecraft:corner", "inner_left", null, "inner_right", null,
+                        "none", false, "outer_left", null, "outer_right", null)
+                .obstructsRain("minecraft:corner", "inner_left", null, "inner_right", null,
+                        "none", true, "outer_left", null, "outer_right", null);
+        // requires_correct_tool false -> true: CloudburstMC/Data 88a2436; SOURCE ONLY (no BDS capture); undoes the change of 26.40 by the same source: suspected dump artefact
         v.change("minecraft:orange_glazed_terracotta").requiresCorrectTool(true);
         // other states than in 26.40 (none): values from BDS Script API dump 1.26.52.3, CloudburstMC/Data 88a2436
         v.block("minecraft:orange_stained_glass_pane", "minecraft:connection_east=false|true,minecraft:connection_north=false|true,minecraft:connection_south=false|true,minecraft:connection_west=false|true")
                 .destroyTime(0.3f)
                 .explosionResistance(0.3f)
-                .collisionShape(BLACK_STAINED_GLASS_PANE_COLLISION_SHAPE_10)
-                .outlineShape(BLACK_STAINED_GLASS_PANE_OUTLINE_SHAPE)
+                .collisionShape(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_B233D5)
+                .outlineShape(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_2E2A33)
                 .canContainLiquid(true)
-                .liquidFlowDirections(ACACIA_FENCE_LIQUID_FLOW_DIRECTIONS)
+                .liquidFlowDirections(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_9A27D1)
                 .translucency(1.0f)
-                .movementType(ACACIA_FENCE_MOVEMENT_TYPE)
-                .stickyType(ACACIA_FENCE_STICKY_TYPE)
-                .accumulatesSnow(ACACIA_FENCE_ACCUMULATES_SNOW)
-                .snowLoggable(ACACIA_FENCE_SNOW_LOGGABLE)
-                .obstructsRain(ACACIA_FENCE_ACCUMULATES_SNOW);
-        // requires_correct_tool false -> true: CloudburstMC/Data 88a2436; SOURCE ONLY (no BDS capture)
+                .movementType(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_375773)
+                .stickyType(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_43522C)
+                .accumulatesSnow(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_9B2762)
+                .snowLoggable(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_1AB959)
+                .obstructsRain(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_9B2762);
+        // requires_correct_tool false -> true: CloudburstMC/Data 88a2436; SOURCE ONLY (no BDS capture); undoes the change of 26.40 by the same source: suspected dump artefact
         v.change("minecraft:orange_terracotta").requiresCorrectTool(true);
-        // outline_shape BOX_M0P533344_0_0P533344_8P266656_9P6_9P333328 -> BOX_2P4_0_2P4_11P2_9P6_11P2: CloudburstMC/Data 88a2436; SOURCE ONLY (no BDS capture)
+        // outline_shape SHAPE_ALLIUM_OUTLINE_SHAPE -> SHAPE_TORCHFLOWER_CROP_OUTLINE_SHAPE: CloudburstMC/Data 88a2436; SOURCE ONLY (no BDS capture)
         v.change("minecraft:orange_tulip")
-                .outlineShape(BOX_2P4_0_2P4_11P2_9P6_11P2);
+                .outlineShape(SHAPE_TORCHFLOWER_CROP_OUTLINE_SHAPE);
         // new in 26.50: values from BDS Script API dump 1.26.52.3, CloudburstMC/Data 88a2436
         v.block("minecraft:orange_wool_double_slab", "minecraft:vertical_half='bottom'|'top'")
                 .destroyTime(0.8f)
                 .explosionResistance(0.16f)
                 .solid(true)
                 .lightDampening(15)
-                .mapColor(-109044225)
+                .mapColor(0xF9801DFF)
                 .flameOdds(30)
                 .burnOdds(60);
         // new in 26.50: values from BDS Script API dump 1.26.52.3, CloudburstMC/Data 88a2436
         v.block("minecraft:orange_wool_slab", "minecraft:vertical_half='bottom'|'top'")
                 .destroyTime(0.8f)
                 .explosionResistance(0.16f)
-                .collisionShape("minecraft:vertical_half", "bottom", BOX_0_0_0_16_8_16, "top", BOX_0_8_0_16_16_16)
-                .outlineShape("minecraft:vertical_half", "bottom", BOX_0_0_0_16_8_16, "top", BOX_0_8_0_16_16_16)
+                .collisionShape("minecraft:vertical_half", "bottom", BOX_0_0_0_16_8_16,
+                        "top", BOX_0_8_0_16_16_16)
+                .outlineShape("minecraft:vertical_half", "bottom", BOX_0_0_0_16_8_16,
+                        "top", BOX_0_8_0_16_16_16)
                 .canContainLiquid(true)
                 .liquidFlowDirections("minecraft:vertical_half", "bottom", 62, "top", 61)
-                .mapColor(-109044225)
+                .mapColor(0xF9801DFF)
                 .flameOdds(30)
                 .burnOdds(60)
                 .translucency(0.8f);
@@ -975,484 +1325,52 @@ final class BehaviourChanges26_50Part2 {
         v.block("minecraft:orange_wool_stairs", "minecraft:corner='inner_left'|'inner_right'|'none'|'outer_left'|'outer_right',upside_down_bit=false|true,weirdo_direction=0..3")
                 .destroyTime(0.8f)
                 .explosionResistance(0.16f)
-                .collisionShape(ACACIA_STAIRS_COLLISION_SHAPE_34)
+                .collisionShape(TABLE_CORNER_UPSIDE_DOWN_BIT_WEIRDO_DIRECTION_BD8305)
                 .canContainLiquid(true)
-                .liquidFlowDirections(ACACIA_STAIRS_LIQUID_FLOW_DIRECTIONS_2)
-                .mapColor("minecraft:corner", "inner_left", 0, "inner_right", 0, "none", -109044225, "outer_left", 0, "outer_right", 0)
+                .liquidFlowDirections(TABLE_CORNER_UPSIDE_DOWN_BIT_WEIRDO_DIRECTION_91C7B2)
+                .mapColor("minecraft:corner", "inner_left", 0x00000000, "inner_right", 0x00000000,
+                        "none", 0xF9801DFF, "outer_left", 0x00000000, "outer_right", 0x00000000)
                 .flameOdds(30)
                 .burnOdds(60)
                 .translucency(0.8f)
-                .movementType("minecraft:corner", "inner_left", null, "inner_right", null, "none", "PushPull", "outer_left", null, "outer_right", null)
-                .stickyType("minecraft:corner", "inner_left", null, "inner_right", null, "none", "None", "outer_left", null, "outer_right", null)
-                .accumulatesSnow("minecraft:corner", "inner_left", null, "inner_right", null, "none", true, "outer_left", null, "outer_right", null)
-                .snowLoggable("minecraft:corner", "inner_left", null, "inner_right", null, "none", false, "outer_left", null, "outer_right", null)
-                .obstructsRain("minecraft:corner", "inner_left", null, "inner_right", null, "none", true, "outer_left", null, "outer_right", null);
-        // outline_shape BOX_M0P533344_0_0P533344_8P266656_9P6_9P333328 -> BOX_2P4_0_2P4_11P2_9P6_11P2: CloudburstMC/Data 88a2436; SOURCE ONLY (no BDS capture)
+                .movementType("minecraft:corner", "inner_left", null, "inner_right", null,
+                        "none", "PushPull", "outer_left", null, "outer_right", null)
+                .stickyType("minecraft:corner", "inner_left", null, "inner_right", null,
+                        "none", "None", "outer_left", null, "outer_right", null)
+                .accumulatesSnow("minecraft:corner", "inner_left", null, "inner_right", null,
+                        "none", true, "outer_left", null, "outer_right", null)
+                .snowLoggable("minecraft:corner", "inner_left", null, "inner_right", null,
+                        "none", false, "outer_left", null, "outer_right", null)
+                .obstructsRain("minecraft:corner", "inner_left", null, "inner_right", null,
+                        "none", true, "outer_left", null, "outer_right", null);
+        // outline_shape SHAPE_ALLIUM_OUTLINE_SHAPE -> SHAPE_TORCHFLOWER_CROP_OUTLINE_SHAPE: CloudburstMC/Data 88a2436; SOURCE ONLY (no BDS capture)
         v.change("minecraft:oxeye_daisy")
-                .outlineShape(BOX_2P4_0_2P4_11P2_9P6_11P2);
-        // requires_correct_tool false -> true: CloudburstMC/Data 88a2436; SOURCE ONLY (no BDS capture)
+                .outlineShape(SHAPE_TORCHFLOWER_CROP_OUTLINE_SHAPE);
+        // requires_correct_tool false -> true: CloudburstMC/Data 88a2436; SOURCE ONLY (no BDS capture); undoes the change of 26.40 by the same source: suspected dump artefact
         v.change("minecraft:oxidized_chiseled_copper").requiresCorrectTool(true);
-        // requires_correct_tool false -> true: CloudburstMC/Data 88a2436; SOURCE ONLY (no BDS capture)
+        // requires_correct_tool false -> true: CloudburstMC/Data 88a2436; SOURCE ONLY (no BDS capture); undoes the change of 26.40 by the same source: suspected dump artefact
         v.change("minecraft:oxidized_copper").requiresCorrectTool(true);
         // other states than in 26.40 (none): values from BDS Script API dump 1.26.52.3, CloudburstMC/Data 88a2436
         v.block("minecraft:oxidized_copper_bars", "minecraft:connection_east=false|true,minecraft:connection_north=false|true,minecraft:connection_south=false|true,minecraft:connection_west=false|true")
                 .destroyTime(5.0f)
-                .collisionShape(BLACK_STAINED_GLASS_PANE_COLLISION_SHAPE_10)
-                .outlineShape(BLACK_STAINED_GLASS_PANE_OUTLINE_SHAPE)
+                .collisionShape(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_B233D5)
+                .outlineShape(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_2E2A33)
                 .canContainLiquid(true)
-                .liquidFlowDirections(ACACIA_FENCE_LIQUID_FLOW_DIRECTIONS)
+                .liquidFlowDirections(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_9A27D1)
                 .requiresCorrectTool(true)
                 .translucency(0.8f)
-                .movementType(ACACIA_FENCE_MOVEMENT_TYPE)
-                .stickyType(ACACIA_FENCE_STICKY_TYPE)
-                .accumulatesSnow(ACACIA_FENCE_ACCUMULATES_SNOW)
-                .snowLoggable(ACACIA_FENCE_SNOW_LOGGABLE)
-                .obstructsRain(ACACIA_FENCE_ACCUMULATES_SNOW);
-        // requires_correct_tool false -> true: CloudburstMC/Data 88a2436; SOURCE ONLY (no BDS capture)
+                .movementType(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_375773)
+                .stickyType(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_43522C)
+                .accumulatesSnow(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_9B2762)
+                .snowLoggable(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_1AB959)
+                .obstructsRain(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_9B2762);
+        // requires_correct_tool false -> true: CloudburstMC/Data 88a2436; SOURCE ONLY (no BDS capture); undoes the change of 26.40 by the same source: suspected dump artefact
         v.change("minecraft:oxidized_copper_chain").requiresCorrectTool(true);
-        // requires_correct_tool false -> true: CloudburstMC/Data 88a2436; SOURCE ONLY (no BDS capture)
+        // requires_correct_tool false -> true: CloudburstMC/Data 88a2436; SOURCE ONLY (no BDS capture); undoes the change of 26.40 by the same source: suspected dump artefact
         v.change("minecraft:oxidized_copper_chest").requiresCorrectTool(true);
-        // requires_correct_tool false -> true: CloudburstMC/Data 88a2436; SOURCE ONLY (no BDS capture)
+        // requires_correct_tool false -> true: CloudburstMC/Data 88a2436; SOURCE ONLY (no BDS capture); undoes the change of 26.40 by the same source: suspected dump artefact
         v.change("minecraft:oxidized_copper_grate").requiresCorrectTool(true);
-        // requires_correct_tool false -> true: CloudburstMC/Data 88a2436; SOURCE ONLY (no BDS capture)
+        // requires_correct_tool false -> true: CloudburstMC/Data 88a2436; SOURCE ONLY (no BDS capture); undoes the change of 26.40 by the same source: suspected dump artefact
         v.change("minecraft:oxidized_copper_trapdoor").requiresCorrectTool(true);
-        // requires_correct_tool false -> true: CloudburstMC/Data 88a2436; SOURCE ONLY (no BDS capture)
-        v.change("minecraft:oxidized_cut_copper").requiresCorrectTool(true);
-        // other states than in 26.40 (upside_down_bit=false|true,weirdo_direction=0..3): values from BDS Script API dump 1.26.52.3, CloudburstMC/Data 88a2436
-        v.block("minecraft:oxidized_cut_copper_stairs", "minecraft:corner='inner_left'|'inner_right'|'none'|'outer_left'|'outer_right',upside_down_bit=false|true,weirdo_direction=0..3")
-                .destroyTime(3.0f)
-                .collisionShape(ACACIA_STAIRS_COLLISION_SHAPE_34)
-                .canContainLiquid(true)
-                .liquidFlowDirections(ACACIA_STAIRS_LIQUID_FLOW_DIRECTIONS_2)
-                .requiresCorrectTool(true)
-                .mapColor(377390847)
-                .translucency(0.8f)
-                .movementType("minecraft:corner", "inner_left", null, "inner_right", null, "none", "PushPull", "outer_left", null, "outer_right", null)
-                .stickyType("minecraft:corner", "inner_left", null, "inner_right", null, "none", "None", "outer_left", null, "outer_right", null)
-                .accumulatesSnow("minecraft:corner", "inner_left", null, "inner_right", null, "none", true, "outer_left", null, "outer_right", null)
-                .snowLoggable("minecraft:corner", "inner_left", null, "inner_right", null, "none", false, "outer_left", null, "outer_right", null)
-                .obstructsRain("minecraft:corner", "inner_left", null, "inner_right", null, "none", true, "outer_left", null, "outer_right", null);
-        // other states than in 26.40 (none): values from BDS Script API dump 1.26.52.3, CloudburstMC/Data 88a2436
-        v.block("minecraft:pale_oak_fence", "minecraft:connection_east=false|true,minecraft:connection_north=false|true,minecraft:connection_south=false|true,minecraft:connection_west=false|true")
-                .destroyTime(2.0f)
-                .explosionResistance(3.0f)
-                .collisionShape(ACACIA_FENCE_COLLISION_SHAPE_10)
-                .outlineShape(ACACIA_FENCE_OUTLINE_SHAPE)
-                .canContainLiquid(true)
-                .liquidFlowDirections(ACACIA_FENCE_LIQUID_FLOW_DIRECTIONS)
-                .mapColor(-199169)
-                .flameOdds(5)
-                .burnOdds(20)
-                .translucency(0.8f)
-                .movementType(ACACIA_FENCE_MOVEMENT_TYPE)
-                .stickyType(ACACIA_FENCE_STICKY_TYPE)
-                .accumulatesSnow(ACACIA_FENCE_ACCUMULATES_SNOW)
-                .snowLoggable(ACACIA_FENCE_SNOW_LOGGABLE)
-                .obstructsRain(ACACIA_FENCE_ACCUMULATES_SNOW);
-        // flame_odds 5 -> 0: CloudburstMC/Data 88a2436; SOURCE ONLY (no BDS capture)
-        // burn_odds 20 -> 0: CloudburstMC/Data 88a2436; SOURCE ONLY (no BDS capture)
-        v.change("minecraft:pale_oak_sapling").flameOdds(0).burnOdds(0);
-        // other states than in 26.40 (upside_down_bit=false|true,weirdo_direction=0..3): values from BDS Script API dump 1.26.52.3, CloudburstMC/Data 88a2436
-        v.block("minecraft:pale_oak_stairs", "minecraft:corner='inner_left'|'inner_right'|'none'|'outer_left'|'outer_right',upside_down_bit=false|true,weirdo_direction=0..3")
-                .destroyTime(2.0f)
-                .explosionResistance(3.0f)
-                .collisionShape(ACACIA_STAIRS_COLLISION_SHAPE_34)
-                .canContainLiquid(true)
-                .liquidFlowDirections(ACACIA_STAIRS_LIQUID_FLOW_DIRECTIONS_2)
-                .mapColor(-199169)
-                .flameOdds(5)
-                .burnOdds(20)
-                .translucency(0.8f)
-                .movementType("minecraft:corner", "inner_left", null, "inner_right", null, "none", "PushPull", "outer_left", null, "outer_right", null)
-                .stickyType("minecraft:corner", "inner_left", null, "inner_right", null, "none", "None", "outer_left", null, "outer_right", null)
-                .accumulatesSnow("minecraft:corner", "inner_left", null, "inner_right", null, "none", true, "outer_left", null, "outer_right", null)
-                .snowLoggable("minecraft:corner", "inner_left", null, "inner_right", null, "none", false, "outer_left", null, "outer_right", null)
-                .obstructsRain("minecraft:corner", "inner_left", null, "inner_right", null, "none", true, "outer_left", null, "outer_right", null);
-        // outline_shape per state (2 of 2 states): CloudburstMC/Data 88a2436; SOURCE ONLY (no BDS capture)
-        v.change("minecraft:peony")
-                .outlineShape("upper_block_bit", false, BOX_4P8_0_4P8_11P2_16_11P2, true, BOX_4P8_0_4P8_11P2_9P6_11P2);
-        // requires_correct_tool false -> true: CloudburstMC/Data 88a2436; SOURCE ONLY (no BDS capture)
-        v.change("minecraft:petrified_oak_double_slab").requiresCorrectTool(true);
-        // requires_correct_tool false -> true: CloudburstMC/Data 88a2436; SOURCE ONLY (no BDS capture)
-        v.change("minecraft:petrified_oak_slab").requiresCorrectTool(true);
-        // requires_correct_tool false -> true: CloudburstMC/Data 88a2436; SOURCE ONLY (no BDS capture)
-        v.change("minecraft:pink_concrete").requiresCorrectTool(true);
-        // new in 26.50: values from BDS Script API dump 1.26.52.3, CloudburstMC/Data 88a2436
-        v.block("minecraft:pink_concrete_double_slab", "minecraft:vertical_half='bottom'|'top'")
-                .destroyTime(1.8f)
-                .explosionResistance(0.359999f)
-                .solid(true)
-                .lightDampening(15)
-                .requiresCorrectTool(true)
-                .mapColor(-226515457);
-        // new in 26.50: values from BDS Script API dump 1.26.52.3, CloudburstMC/Data 88a2436
-        v.block("minecraft:pink_concrete_slab", "minecraft:vertical_half='bottom'|'top'")
-                .destroyTime(1.8f)
-                .explosionResistance(0.359999f)
-                .collisionShape("minecraft:vertical_half", "bottom", BOX_0_0_0_16_8_16, "top", BOX_0_8_0_16_16_16)
-                .outlineShape("minecraft:vertical_half", "bottom", BOX_0_0_0_16_8_16, "top", BOX_0_8_0_16_16_16)
-                .canContainLiquid(true)
-                .liquidFlowDirections("minecraft:vertical_half", "bottom", 62, "top", 61)
-                .requiresCorrectTool(true)
-                .mapColor(-226515457);
-    }
-
-    static void part14(Changes v) {
-        // new in 26.50: values from BDS Script API dump 1.26.52.3, CloudburstMC/Data 88a2436
-        v.block("minecraft:pink_concrete_stairs", "minecraft:corner='inner_left'|'inner_right'|'none'|'outer_left'|'outer_right',upside_down_bit=false|true,weirdo_direction=0..3")
-                .destroyTime(1.8f)
-                .explosionResistance(0.359999f)
-                .collisionShape(ACACIA_STAIRS_COLLISION_SHAPE_34)
-                .canContainLiquid(true)
-                .liquidFlowDirections(ACACIA_STAIRS_LIQUID_FLOW_DIRECTIONS_2)
-                .requiresCorrectTool(true)
-                .mapColor("minecraft:corner", "inner_left", 0, "inner_right", 0, "none", -226515457, "outer_left", 0, "outer_right", 0)
-                .translucency(0.8f)
-                .movementType("minecraft:corner", "inner_left", null, "inner_right", null, "none", "PushPull", "outer_left", null, "outer_right", null)
-                .stickyType("minecraft:corner", "inner_left", null, "inner_right", null, "none", "None", "outer_left", null, "outer_right", null)
-                .accumulatesSnow("minecraft:corner", "inner_left", null, "inner_right", null, "none", true, "outer_left", null, "outer_right", null)
-                .snowLoggable("minecraft:corner", "inner_left", null, "inner_right", null, "none", false, "outer_left", null, "outer_right", null)
-                .obstructsRain("minecraft:corner", "inner_left", null, "inner_right", null, "none", true, "outer_left", null, "outer_right", null);
-        // requires_correct_tool false -> true: CloudburstMC/Data 88a2436; SOURCE ONLY (no BDS capture)
-        v.change("minecraft:pink_glazed_terracotta").requiresCorrectTool(true);
-        // other states than in 26.40 (none): values from BDS Script API dump 1.26.52.3, CloudburstMC/Data 88a2436
-        v.block("minecraft:pink_stained_glass_pane", "minecraft:connection_east=false|true,minecraft:connection_north=false|true,minecraft:connection_south=false|true,minecraft:connection_west=false|true")
-                .destroyTime(0.3f)
-                .explosionResistance(0.3f)
-                .collisionShape(BLACK_STAINED_GLASS_PANE_COLLISION_SHAPE_10)
-                .outlineShape(BLACK_STAINED_GLASS_PANE_OUTLINE_SHAPE)
-                .canContainLiquid(true)
-                .liquidFlowDirections(ACACIA_FENCE_LIQUID_FLOW_DIRECTIONS)
-                .translucency(1.0f)
-                .movementType(ACACIA_FENCE_MOVEMENT_TYPE)
-                .stickyType(ACACIA_FENCE_STICKY_TYPE)
-                .accumulatesSnow(ACACIA_FENCE_ACCUMULATES_SNOW)
-                .snowLoggable(ACACIA_FENCE_SNOW_LOGGABLE)
-                .obstructsRain(ACACIA_FENCE_ACCUMULATES_SNOW);
-        // requires_correct_tool false -> true: CloudburstMC/Data 88a2436; SOURCE ONLY (no BDS capture)
-        v.change("minecraft:pink_terracotta").requiresCorrectTool(true);
-        // outline_shape BOX_M0P533344_0_0P533344_8P266656_9P6_9P333328 -> BOX_2P4_0_2P4_11P2_9P6_11P2: CloudburstMC/Data 88a2436; SOURCE ONLY (no BDS capture)
-        v.change("minecraft:pink_tulip")
-                .outlineShape(BOX_2P4_0_2P4_11P2_9P6_11P2);
-        // new in 26.50: values from BDS Script API dump 1.26.52.3, CloudburstMC/Data 88a2436
-        v.block("minecraft:pink_wool_double_slab", "minecraft:vertical_half='bottom'|'top'")
-                .destroyTime(0.8f)
-                .explosionResistance(0.16f)
-                .solid(true)
-                .lightDampening(15)
-                .mapColor(-208950529)
-                .flameOdds(30)
-                .burnOdds(60);
-        // new in 26.50: values from BDS Script API dump 1.26.52.3, CloudburstMC/Data 88a2436
-        v.block("minecraft:pink_wool_slab", "minecraft:vertical_half='bottom'|'top'")
-                .destroyTime(0.8f)
-                .explosionResistance(0.16f)
-                .collisionShape("minecraft:vertical_half", "bottom", BOX_0_0_0_16_8_16, "top", BOX_0_8_0_16_16_16)
-                .outlineShape("minecraft:vertical_half", "bottom", BOX_0_0_0_16_8_16, "top", BOX_0_8_0_16_16_16)
-                .canContainLiquid(true)
-                .liquidFlowDirections("minecraft:vertical_half", "bottom", 62, "top", 61)
-                .mapColor(-208950529)
-                .flameOdds(30)
-                .burnOdds(60)
-                .translucency(0.8f);
-        // new in 26.50: values from BDS Script API dump 1.26.52.3, CloudburstMC/Data 88a2436
-        v.block("minecraft:pink_wool_stairs", "minecraft:corner='inner_left'|'inner_right'|'none'|'outer_left'|'outer_right',upside_down_bit=false|true,weirdo_direction=0..3")
-                .destroyTime(0.8f)
-                .explosionResistance(0.16f)
-                .collisionShape(ACACIA_STAIRS_COLLISION_SHAPE_34)
-                .canContainLiquid(true)
-                .liquidFlowDirections(ACACIA_STAIRS_LIQUID_FLOW_DIRECTIONS_2)
-                .mapColor("minecraft:corner", "inner_left", 0, "inner_right", 0, "none", -208950529, "outer_left", 0, "outer_right", 0)
-                .flameOdds(30)
-                .burnOdds(60)
-                .translucency(0.8f)
-                .movementType("minecraft:corner", "inner_left", null, "inner_right", null, "none", "PushPull", "outer_left", null, "outer_right", null)
-                .stickyType("minecraft:corner", "inner_left", null, "inner_right", null, "none", "None", "outer_left", null, "outer_right", null)
-                .accumulatesSnow("minecraft:corner", "inner_left", null, "inner_right", null, "none", true, "outer_left", null, "outer_right", null)
-                .snowLoggable("minecraft:corner", "inner_left", null, "inner_right", null, "none", false, "outer_left", null, "outer_right", null)
-                .obstructsRain("minecraft:corner", "inner_left", null, "inner_right", null, "none", true, "outer_left", null, "outer_right", null);
-        // outline_shape per state (2 of 2 states): CloudburstMC/Data 88a2436; SOURCE ONLY (no BDS capture)
-        // requires_correct_tool true -> false: CloudburstMC/Data 88a2436; SOURCE ONLY (no BDS capture)
-        v.change("minecraft:pitcher_plant")
-                .outlineShape("upper_block_bit", false, BOX_4P8_0_4P8_11P2_16_11P2, true, BOX_4P8_0_4P8_11P2_9P6_11P2)
-                .requiresCorrectTool(false);
-        // collision_shape per state (10 of 10 states): CloudburstMC/Data 88a2436; SOURCE ONLY (no BDS capture)
-        // outline_shape per state (10 of 10 states): CloudburstMC/Data 88a2436; SOURCE ONLY (no BDS capture)
-        v.change("minecraft:pointed_dripstone")
-                .collisionShape(POINTED_DRIPSTONE_COLLISION_SHAPE_2)
-                .outlineShape(POINTED_DRIPSTONE_COLLISION_SHAPE_2);
-        // requires_correct_tool false -> true: CloudburstMC/Data 88a2436; SOURCE ONLY (no BDS capture)
-        v.change("minecraft:polished_andesite").requiresCorrectTool(true);
-        // requires_correct_tool false -> true: CloudburstMC/Data 88a2436; SOURCE ONLY (no BDS capture)
-        v.change("minecraft:polished_andesite_double_slab").requiresCorrectTool(true);
-        // requires_correct_tool false -> true: CloudburstMC/Data 88a2436; SOURCE ONLY (no BDS capture)
-        v.change("minecraft:polished_andesite_slab").requiresCorrectTool(true);
-        // other states than in 26.40 (upside_down_bit=false|true,weirdo_direction=0..3): values from BDS Script API dump 1.26.52.3, CloudburstMC/Data 88a2436
-        v.block("minecraft:polished_andesite_stairs", "minecraft:corner='inner_left'|'inner_right'|'none'|'outer_left'|'outer_right',upside_down_bit=false|true,weirdo_direction=0..3")
-                .destroyTime(1.5f)
-                .collisionShape(ACACIA_STAIRS_COLLISION_SHAPE_34)
-                .canContainLiquid(true)
-                .liquidFlowDirections(ACACIA_STAIRS_LIQUID_FLOW_DIRECTIONS_2)
-                .requiresCorrectTool(true)
-                .mapColor(1886417151)
-                .translucency(0.8f)
-                .movementType("minecraft:corner", "inner_left", null, "inner_right", null, "none", "PushPull", "outer_left", null, "outer_right", null)
-                .stickyType("minecraft:corner", "inner_left", null, "inner_right", null, "none", "None", "outer_left", null, "outer_right", null)
-                .accumulatesSnow("minecraft:corner", "inner_left", null, "inner_right", null, "none", true, "outer_left", null, "outer_right", null)
-                .snowLoggable("minecraft:corner", "inner_left", null, "inner_right", null, "none", false, "outer_left", null, "outer_right", null)
-                .obstructsRain("minecraft:corner", "inner_left", null, "inner_right", null, "none", true, "outer_left", null, "outer_right", null);
-        // requires_correct_tool false -> true: CloudburstMC/Data 88a2436; SOURCE ONLY (no BDS capture)
-        v.change("minecraft:polished_basalt").requiresCorrectTool(true);
-        // requires_correct_tool false -> true: CloudburstMC/Data 88a2436; SOURCE ONLY (no BDS capture)
-        v.change("minecraft:polished_blackstone").requiresCorrectTool(true);
-        // requires_correct_tool false -> true: CloudburstMC/Data 88a2436; SOURCE ONLY (no BDS capture)
-        v.change("minecraft:polished_blackstone_brick_double_slab").requiresCorrectTool(true);
-        // requires_correct_tool false -> true: CloudburstMC/Data 88a2436; SOURCE ONLY (no BDS capture)
-        v.change("minecraft:polished_blackstone_brick_slab").requiresCorrectTool(true);
-        // other states than in 26.40 (upside_down_bit=false|true,weirdo_direction=0..3): values from BDS Script API dump 1.26.52.3, CloudburstMC/Data 88a2436
-        v.block("minecraft:polished_blackstone_brick_stairs", "minecraft:corner='inner_left'|'inner_right'|'none'|'outer_left'|'outer_right',upside_down_bit=false|true,weirdo_direction=0..3")
-                .destroyTime(1.5f)
-                .collisionShape(ACACIA_STAIRS_COLLISION_SHAPE_34)
-                .canContainLiquid(true)
-                .liquidFlowDirections(ACACIA_STAIRS_LIQUID_FLOW_DIRECTIONS_2)
-                .requiresCorrectTool(true)
-                .mapColor(421075455)
-                .translucency(0.8f)
-                .movementType("minecraft:corner", "inner_left", null, "inner_right", null, "none", "PushPull", "outer_left", null, "outer_right", null)
-                .stickyType("minecraft:corner", "inner_left", null, "inner_right", null, "none", "None", "outer_left", null, "outer_right", null)
-                .accumulatesSnow("minecraft:corner", "inner_left", null, "inner_right", null, "none", true, "outer_left", null, "outer_right", null)
-                .snowLoggable("minecraft:corner", "inner_left", null, "inner_right", null, "none", false, "outer_left", null, "outer_right", null)
-                .obstructsRain("minecraft:corner", "inner_left", null, "inner_right", null, "none", true, "outer_left", null, "outer_right", null);
-        // requires_correct_tool false -> true: CloudburstMC/Data 88a2436; SOURCE ONLY (no BDS capture)
-        v.change("minecraft:polished_blackstone_brick_wall").requiresCorrectTool(true);
-        // requires_correct_tool false -> true: CloudburstMC/Data 88a2436; SOURCE ONLY (no BDS capture)
-        v.change("minecraft:polished_blackstone_bricks").requiresCorrectTool(true);
-        // requires_correct_tool false -> true: CloudburstMC/Data 88a2436; SOURCE ONLY (no BDS capture)
-        v.change("minecraft:polished_blackstone_double_slab").requiresCorrectTool(true);
-        // requires_correct_tool true -> false: CloudburstMC/Data 88a2436; SOURCE ONLY (no BDS capture)
-        v.change("minecraft:polished_blackstone_pressure_plate").requiresCorrectTool(false);
-        // requires_correct_tool false -> true: CloudburstMC/Data 88a2436; SOURCE ONLY (no BDS capture)
-        v.change("minecraft:polished_blackstone_slab").requiresCorrectTool(true);
-        // other states than in 26.40 (upside_down_bit=false|true,weirdo_direction=0..3): values from BDS Script API dump 1.26.52.3, CloudburstMC/Data 88a2436
-        v.block("minecraft:polished_blackstone_stairs", "minecraft:corner='inner_left'|'inner_right'|'none'|'outer_left'|'outer_right',upside_down_bit=false|true,weirdo_direction=0..3")
-                .destroyTime(2.0f)
-                .collisionShape(ACACIA_STAIRS_COLLISION_SHAPE_34)
-                .canContainLiquid(true)
-                .liquidFlowDirections(ACACIA_STAIRS_LIQUID_FLOW_DIRECTIONS_2)
-                .requiresCorrectTool(true)
-                .mapColor(421075455)
-                .translucency(0.8f)
-                .movementType("minecraft:corner", "inner_left", null, "inner_right", null, "none", "PushPull", "outer_left", null, "outer_right", null)
-                .stickyType("minecraft:corner", "inner_left", null, "inner_right", null, "none", "None", "outer_left", null, "outer_right", null)
-                .accumulatesSnow("minecraft:corner", "inner_left", null, "inner_right", null, "none", true, "outer_left", null, "outer_right", null)
-                .snowLoggable("minecraft:corner", "inner_left", null, "inner_right", null, "none", false, "outer_left", null, "outer_right", null)
-                .obstructsRain("minecraft:corner", "inner_left", null, "inner_right", null, "none", true, "outer_left", null, "outer_right", null);
-        // requires_correct_tool false -> true: CloudburstMC/Data 88a2436; SOURCE ONLY (no BDS capture)
-        v.change("minecraft:polished_blackstone_wall").requiresCorrectTool(true);
-        // requires_correct_tool false -> true: CloudburstMC/Data 88a2436; SOURCE ONLY (no BDS capture)
-        v.change("minecraft:polished_cinnabar").requiresCorrectTool(true);
-        // requires_correct_tool false -> true: CloudburstMC/Data 88a2436; SOURCE ONLY (no BDS capture)
-        v.change("minecraft:polished_cinnabar_double_slab").requiresCorrectTool(true);
-        // requires_correct_tool false -> true: CloudburstMC/Data 88a2436; SOURCE ONLY (no BDS capture)
-        v.change("minecraft:polished_cinnabar_slab").requiresCorrectTool(true);
-        // other states than in 26.40 (upside_down_bit=false|true,weirdo_direction=0..3): values from BDS Script API dump 1.26.52.3, CloudburstMC/Data 88a2436
-        v.block("minecraft:polished_cinnabar_stairs", "minecraft:corner='inner_left'|'inner_right'|'none'|'outer_left'|'outer_right',upside_down_bit=false|true,weirdo_direction=0..3")
-                .destroyTime(1.5f)
-                .collisionShape(ACACIA_STAIRS_COLLISION_SHAPE_34)
-                .canContainLiquid(true)
-                .liquidFlowDirections(ACACIA_STAIRS_LIQUID_FLOW_DIRECTIONS_2)
-                .requiresCorrectTool(true)
-                .mapColor(-1724697601)
-                .translucency(0.8f)
-                .movementType("minecraft:corner", "inner_left", null, "inner_right", null, "none", "PushPull", "outer_left", null, "outer_right", null)
-                .stickyType("minecraft:corner", "inner_left", null, "inner_right", null, "none", "None", "outer_left", null, "outer_right", null)
-                .accumulatesSnow("minecraft:corner", "inner_left", null, "inner_right", null, "none", true, "outer_left", null, "outer_right", null)
-                .snowLoggable("minecraft:corner", "inner_left", null, "inner_right", null, "none", false, "outer_left", null, "outer_right", null)
-                .obstructsRain("minecraft:corner", "inner_left", null, "inner_right", null, "none", true, "outer_left", null, "outer_right", null);
-        // requires_correct_tool false -> true: CloudburstMC/Data 88a2436; SOURCE ONLY (no BDS capture)
-        v.change("minecraft:polished_cinnabar_wall").requiresCorrectTool(true);
-        // requires_correct_tool false -> true: CloudburstMC/Data 88a2436; SOURCE ONLY (no BDS capture)
-        v.change("minecraft:polished_deepslate").requiresCorrectTool(true);
-        // requires_correct_tool false -> true: CloudburstMC/Data 88a2436; SOURCE ONLY (no BDS capture)
-        v.change("minecraft:polished_deepslate_double_slab").requiresCorrectTool(true);
-    }
-
-    static void part15(Changes v) {
-        // requires_correct_tool false -> true: CloudburstMC/Data 88a2436; SOURCE ONLY (no BDS capture)
-        v.change("minecraft:polished_deepslate_slab").requiresCorrectTool(true);
-        // other states than in 26.40 (upside_down_bit=false|true,weirdo_direction=0..3): values from BDS Script API dump 1.26.52.3, CloudburstMC/Data 88a2436
-        v.block("minecraft:polished_deepslate_stairs", "minecraft:corner='inner_left'|'inner_right'|'none'|'outer_left'|'outer_right',upside_down_bit=false|true,weirdo_direction=0..3")
-                .destroyTime(3.5f)
-                .collisionShape(ACACIA_STAIRS_COLLISION_SHAPE_34)
-                .canContainLiquid(true)
-                .liquidFlowDirections(ACACIA_STAIRS_LIQUID_FLOW_DIRECTIONS_2)
-                .requiresCorrectTool(true)
-                .mapColor(1684301055)
-                .translucency(0.8f)
-                .movementType("minecraft:corner", "inner_left", null, "inner_right", null, "none", "PushPull", "outer_left", null, "outer_right", null)
-                .stickyType("minecraft:corner", "inner_left", null, "inner_right", null, "none", "None", "outer_left", null, "outer_right", null)
-                .accumulatesSnow("minecraft:corner", "inner_left", null, "inner_right", null, "none", true, "outer_left", null, "outer_right", null)
-                .snowLoggable("minecraft:corner", "inner_left", null, "inner_right", null, "none", false, "outer_left", null, "outer_right", null)
-                .obstructsRain("minecraft:corner", "inner_left", null, "inner_right", null, "none", true, "outer_left", null, "outer_right", null);
-        // requires_correct_tool false -> true: CloudburstMC/Data 88a2436; SOURCE ONLY (no BDS capture)
-        v.change("minecraft:polished_deepslate_wall").requiresCorrectTool(true);
-        // requires_correct_tool false -> true: CloudburstMC/Data 88a2436; SOURCE ONLY (no BDS capture)
-        v.change("minecraft:polished_diorite").requiresCorrectTool(true);
-        // requires_correct_tool false -> true: CloudburstMC/Data 88a2436; SOURCE ONLY (no BDS capture)
-        v.change("minecraft:polished_diorite_double_slab").requiresCorrectTool(true);
-        // requires_correct_tool false -> true: CloudburstMC/Data 88a2436; SOURCE ONLY (no BDS capture)
-        v.change("minecraft:polished_diorite_slab").requiresCorrectTool(true);
-        // other states than in 26.40 (upside_down_bit=false|true,weirdo_direction=0..3): values from BDS Script API dump 1.26.52.3, CloudburstMC/Data 88a2436
-        v.block("minecraft:polished_diorite_stairs", "minecraft:corner='inner_left'|'inner_right'|'none'|'outer_left'|'outer_right',upside_down_bit=false|true,weirdo_direction=0..3")
-                .destroyTime(1.5f)
-                .collisionShape(ACACIA_STAIRS_COLLISION_SHAPE_34)
-                .canContainLiquid(true)
-                .liquidFlowDirections(ACACIA_STAIRS_LIQUID_FLOW_DIRECTIONS_2)
-                .requiresCorrectTool(true)
-                .mapColor(-199169)
-                .translucency(0.8f)
-                .movementType("minecraft:corner", "inner_left", null, "inner_right", null, "none", "PushPull", "outer_left", null, "outer_right", null)
-                .stickyType("minecraft:corner", "inner_left", null, "inner_right", null, "none", "None", "outer_left", null, "outer_right", null)
-                .accumulatesSnow("minecraft:corner", "inner_left", null, "inner_right", null, "none", true, "outer_left", null, "outer_right", null)
-                .snowLoggable("minecraft:corner", "inner_left", null, "inner_right", null, "none", false, "outer_left", null, "outer_right", null)
-                .obstructsRain("minecraft:corner", "inner_left", null, "inner_right", null, "none", true, "outer_left", null, "outer_right", null);
-        // requires_correct_tool false -> true: CloudburstMC/Data 88a2436; SOURCE ONLY (no BDS capture)
-        v.change("minecraft:polished_granite").requiresCorrectTool(true);
-        // requires_correct_tool false -> true: CloudburstMC/Data 88a2436; SOURCE ONLY (no BDS capture)
-        v.change("minecraft:polished_granite_double_slab").requiresCorrectTool(true);
-        // requires_correct_tool false -> true: CloudburstMC/Data 88a2436; SOURCE ONLY (no BDS capture)
-        v.change("minecraft:polished_granite_slab").requiresCorrectTool(true);
-        // other states than in 26.40 (upside_down_bit=false|true,weirdo_direction=0..3): values from BDS Script API dump 1.26.52.3, CloudburstMC/Data 88a2436
-        v.block("minecraft:polished_granite_stairs", "minecraft:corner='inner_left'|'inner_right'|'none'|'outer_left'|'outer_right',upside_down_bit=false|true,weirdo_direction=0..3")
-                .destroyTime(1.5f)
-                .collisionShape(ACACIA_STAIRS_COLLISION_SHAPE_34)
-                .canContainLiquid(true)
-                .liquidFlowDirections(ACACIA_STAIRS_LIQUID_FLOW_DIRECTIONS_2)
-                .requiresCorrectTool(true)
-                .mapColor(-1754444289)
-                .translucency(0.8f)
-                .movementType("minecraft:corner", "inner_left", null, "inner_right", null, "none", "PushPull", "outer_left", null, "outer_right", null)
-                .stickyType("minecraft:corner", "inner_left", null, "inner_right", null, "none", "None", "outer_left", null, "outer_right", null)
-                .accumulatesSnow("minecraft:corner", "inner_left", null, "inner_right", null, "none", true, "outer_left", null, "outer_right", null)
-                .snowLoggable("minecraft:corner", "inner_left", null, "inner_right", null, "none", false, "outer_left", null, "outer_right", null)
-                .obstructsRain("minecraft:corner", "inner_left", null, "inner_right", null, "none", true, "outer_left", null, "outer_right", null);
-        // requires_correct_tool false -> true: CloudburstMC/Data 88a2436; SOURCE ONLY (no BDS capture)
-        v.change("minecraft:polished_sulfur").requiresCorrectTool(true);
-        // requires_correct_tool false -> true: CloudburstMC/Data 88a2436; SOURCE ONLY (no BDS capture)
-        v.change("minecraft:polished_sulfur_double_slab").requiresCorrectTool(true);
-        // requires_correct_tool false -> true: CloudburstMC/Data 88a2436; SOURCE ONLY (no BDS capture)
-        v.change("minecraft:polished_sulfur_slab").requiresCorrectTool(true);
-        // other states than in 26.40 (upside_down_bit=false|true,weirdo_direction=0..3): values from BDS Script API dump 1.26.52.3, CloudburstMC/Data 88a2436
-        v.block("minecraft:polished_sulfur_stairs", "minecraft:corner='inner_left'|'inner_right'|'none'|'outer_left'|'outer_right',upside_down_bit=false|true,weirdo_direction=0..3")
-                .destroyTime(1.5f)
-                .collisionShape(ACACIA_STAIRS_COLLISION_SHAPE_34)
-                .canContainLiquid(true)
-                .liquidFlowDirections(ACACIA_STAIRS_LIQUID_FLOW_DIRECTIONS_2)
-                .requiresCorrectTool(true)
-                .mapColor(-437963777)
-                .translucency(0.8f)
-                .movementType("minecraft:corner", "inner_left", null, "inner_right", null, "none", "PushPull", "outer_left", null, "outer_right", null)
-                .stickyType("minecraft:corner", "inner_left", null, "inner_right", null, "none", "None", "outer_left", null, "outer_right", null)
-                .accumulatesSnow("minecraft:corner", "inner_left", null, "inner_right", null, "none", true, "outer_left", null, "outer_right", null)
-                .snowLoggable("minecraft:corner", "inner_left", null, "inner_right", null, "none", false, "outer_left", null, "outer_right", null)
-                .obstructsRain("minecraft:corner", "inner_left", null, "inner_right", null, "none", true, "outer_left", null, "outer_right", null);
-        // requires_correct_tool false -> true: CloudburstMC/Data 88a2436; SOURCE ONLY (no BDS capture)
-        v.change("minecraft:polished_sulfur_wall").requiresCorrectTool(true);
-        // requires_correct_tool false -> true: CloudburstMC/Data 88a2436; SOURCE ONLY (no BDS capture)
-        v.change("minecraft:polished_tuff").requiresCorrectTool(true);
-        // requires_correct_tool false -> true: CloudburstMC/Data 88a2436; SOURCE ONLY (no BDS capture)
-        v.change("minecraft:polished_tuff_double_slab").requiresCorrectTool(true);
-        // requires_correct_tool false -> true: CloudburstMC/Data 88a2436; SOURCE ONLY (no BDS capture)
-        v.change("minecraft:polished_tuff_slab").requiresCorrectTool(true);
-        // other states than in 26.40 (upside_down_bit=false|true,weirdo_direction=0..3): values from BDS Script API dump 1.26.52.3, CloudburstMC/Data 88a2436
-        v.block("minecraft:polished_tuff_stairs", "minecraft:corner='inner_left'|'inner_right'|'none'|'outer_left'|'outer_right',upside_down_bit=false|true,weirdo_direction=0..3")
-                .destroyTime(1.5f)
-                .collisionShape(ACACIA_STAIRS_COLLISION_SHAPE_34)
-                .canContainLiquid(true)
-                .liquidFlowDirections(ACACIA_STAIRS_LIQUID_FLOW_DIRECTIONS_2)
-                .requiresCorrectTool(true)
-                .mapColor(958997503)
-                .translucency(0.8f)
-                .movementType("minecraft:corner", "inner_left", null, "inner_right", null, "none", "PushPull", "outer_left", null, "outer_right", null)
-                .stickyType("minecraft:corner", "inner_left", null, "inner_right", null, "none", "None", "outer_left", null, "outer_right", null)
-                .accumulatesSnow("minecraft:corner", "inner_left", null, "inner_right", null, "none", true, "outer_left", null, "outer_right", null)
-                .snowLoggable("minecraft:corner", "inner_left", null, "inner_right", null, "none", false, "outer_left", null, "outer_right", null)
-                .obstructsRain("minecraft:corner", "inner_left", null, "inner_right", null, "none", true, "outer_left", null, "outer_right", null);
-        // requires_correct_tool false -> true: CloudburstMC/Data 88a2436; SOURCE ONLY (no BDS capture)
-        v.change("minecraft:polished_tuff_wall").requiresCorrectTool(true);
-        // map_color -662752257 -> -1717986817: BDS Script API dump 1.26.52.3, confirmed by CloudburstMC/Data 88a2436
-        v.change("minecraft:poplar_door").mapColor(-1717986817);
-        // map_color -662752257 -> -1717986817: BDS Script API dump 1.26.52.3, confirmed by CloudburstMC/Data 88a2436
-        v.change("minecraft:poplar_double_slab").mapColor(-1717986817);
-        // other states than in 26.40 (none): values from BDS Script API dump 1.26.52.3, CloudburstMC/Data 88a2436
-        v.block("minecraft:poplar_fence", "minecraft:connection_east=false|true,minecraft:connection_north=false|true,minecraft:connection_south=false|true,minecraft:connection_west=false|true")
-                .destroyTime(2.0f)
-                .explosionResistance(3.0f)
-                .collisionShape(ACACIA_FENCE_COLLISION_SHAPE_10)
-                .outlineShape(ACACIA_FENCE_OUTLINE_SHAPE)
-                .canContainLiquid(true)
-                .liquidFlowDirections(ACACIA_FENCE_LIQUID_FLOW_DIRECTIONS)
-                .mapColor(-1717986817)
-                .flameOdds(5)
-                .burnOdds(20)
-                .translucency(0.8f)
-                .movementType(ACACIA_FENCE_MOVEMENT_TYPE)
-                .stickyType(ACACIA_FENCE_STICKY_TYPE)
-                .accumulatesSnow(ACACIA_FENCE_ACCUMULATES_SNOW)
-                .snowLoggable(ACACIA_FENCE_SNOW_LOGGABLE)
-                .obstructsRain(ACACIA_FENCE_ACCUMULATES_SNOW);
-        // map_color -662752257 -> -1717986817: BDS Script API dump 1.26.52.3 (8), CloudburstMC/Data 88a2436 (8)
-        v.change("minecraft:poplar_fence_gate").mapColor(-1717986817);
-        // map_color -662752257 -> -1717986817: BDS Script API dump 1.26.52.3, confirmed by CloudburstMC/Data 88a2436
-        v.change("minecraft:poplar_hanging_sign").mapColor(-1717986817);
-        // map_color per state (3 of 3 states): BDS Script API dump 1.26.52.3, confirmed by CloudburstMC/Data 88a2436
-        v.change("minecraft:poplar_log").mapColor(-1717986817);
-        // map_color -662752257 -> -1717986817: BDS Script API dump 1.26.52.3, confirmed by CloudburstMC/Data 88a2436
-        v.change("minecraft:poplar_planks").mapColor(-1717986817);
-        // map_color -662752257 -> -1717986817: BDS Script API dump 1.26.52.3, confirmed by CloudburstMC/Data 88a2436
-        v.change("minecraft:poplar_pressure_plate").mapColor(-1717986817);
-        // map_color -662752257 -> -1482184705: BDS Script API dump 1.26.52.3, confirmed by CloudburstMC/Data 88a2436
-        // flame_odds 5 -> 0: CloudburstMC/Data 88a2436; SOURCE ONLY (no BDS capture)
-        // burn_odds 20 -> 0: CloudburstMC/Data 88a2436; SOURCE ONLY (no BDS capture)
-        v.change("minecraft:poplar_sapling").mapColor(-1482184705).flameOdds(0).burnOdds(0);
-        // map_color -662752257 -> -1717986817: BDS Script API dump 1.26.52.3, confirmed by CloudburstMC/Data 88a2436
-        v.change("minecraft:poplar_shelf").mapColor(-1717986817);
-        // map_color -662752257 -> -1717986817: BDS Script API dump 1.26.52.3, confirmed by CloudburstMC/Data 88a2436
-        v.change("minecraft:poplar_slab").mapColor(-1717986817);
-        // other states than in 26.40 (upside_down_bit=false|true,weirdo_direction=0..3): values from BDS Script API dump 1.26.52.3, CloudburstMC/Data 88a2436
-        v.block("minecraft:poplar_stairs", "minecraft:corner='inner_left'|'inner_right'|'none'|'outer_left'|'outer_right',upside_down_bit=false|true,weirdo_direction=0..3")
-                .destroyTime(2.0f)
-                .explosionResistance(3.0f)
-                .collisionShape(ACACIA_STAIRS_COLLISION_SHAPE_34)
-                .canContainLiquid(true)
-                .liquidFlowDirections(ACACIA_STAIRS_LIQUID_FLOW_DIRECTIONS_2)
-                .mapColor(-1717986817)
-                .flameOdds(5)
-                .burnOdds(20)
-                .translucency(0.8f)
-                .movementType("minecraft:corner", "inner_left", null, "inner_right", null, "none", "PushPull", "outer_left", null, "outer_right", null)
-                .stickyType("minecraft:corner", "inner_left", null, "inner_right", null, "none", "None", "outer_left", null, "outer_right", null)
-                .accumulatesSnow("minecraft:corner", "inner_left", null, "inner_right", null, "none", true, "outer_left", null, "outer_right", null)
-                .snowLoggable("minecraft:corner", "inner_left", null, "inner_right", null, "none", false, "outer_left", null, "outer_right", null)
-                .obstructsRain("minecraft:corner", "inner_left", null, "inner_right", null, "none", true, "outer_left", null, "outer_right", null);
-        // map_color -662752257 -> -1717986817: BDS Script API dump 1.26.52.3, confirmed by CloudburstMC/Data 88a2436
-        v.change("minecraft:poplar_standing_sign").mapColor(-1717986817);
-        // map_color -662752257 -> -1717986817: BDS Script API dump 1.26.52.3, confirmed by CloudburstMC/Data 88a2436
-        v.change("minecraft:poplar_trapdoor").mapColor(-1717986817);
-        // map_color -662752257 -> -1717986817: BDS Script API dump 1.26.52.3, confirmed by CloudburstMC/Data 88a2436
-        v.change("minecraft:poplar_wall_sign").mapColor(-1717986817);
-        // map_color 1716270079 -> -2125057537: BDS Script API dump 1.26.52.3, confirmed by CloudburstMC/Data 88a2436
-        v.change("minecraft:poplar_wood").mapColor(-2125057537);
-        // outline_shape BOX_M0P533344_0_0P533344_8P266656_9P6_9P333328 -> BOX_2P4_0_2P4_11P2_9P6_11P2: CloudburstMC/Data 88a2436; SOURCE ONLY (no BDS capture)
-        v.change("minecraft:poppy")
-                .outlineShape(BOX_2P4_0_2P4_11P2_9P6_11P2);
-        // requires_correct_tool false -> true: CloudburstMC/Data 88a2436; SOURCE ONLY (no BDS capture)
-        v.change("minecraft:potent_sulfur").requiresCorrectTool(true);
-        // requires_correct_tool false -> true: CloudburstMC/Data 88a2436; SOURCE ONLY (no BDS capture)
-        v.change("minecraft:prismarine").requiresCorrectTool(true);
-        // requires_correct_tool false -> true: CloudburstMC/Data 88a2436; SOURCE ONLY (no BDS capture)
-        v.change("minecraft:prismarine_brick_double_slab").requiresCorrectTool(true);
-        // requires_correct_tool false -> true: CloudburstMC/Data 88a2436; SOURCE ONLY (no BDS capture)
-        v.change("minecraft:prismarine_brick_slab").requiresCorrectTool(true);
     }
 }

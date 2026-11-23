@@ -5,7 +5,6 @@ package dev.opencollab.paletter.internal.behaviour.vanilla;
 import static dev.opencollab.paletter.internal.behaviour.vanilla.BehaviourCaptures.*;
 import static dev.opencollab.paletter.internal.behaviour.vanilla.BehaviourShapes.*;
 import static dev.opencollab.paletter.internal.behaviour.vanilla.BehaviourShapesPart2.*;
-import static dev.opencollab.paletter.internal.behaviour.vanilla.BehaviourTablesPart2.*;
 
 import dev.opencollab.paletter.behaviour.BlockShape;
 import dev.opencollab.paletter.internal.behaviour.Cell;
@@ -15,81 +14,155 @@ import dev.opencollab.paletter.internal.behaviour.Cell;
  */
 final class BehaviourTables {
     /**
-     * Used by minecraft:acacia_button outline_shape, minecraft:bamboo_button outline_shape, minecraft:birch_button outline_shape, minecraft:cherry_button outline_shape, minecraft:crimson_button outline_shape, minecraft:dark_oak_button outline_shape and 9 more.
+     * Used by:
+     * - minecraft:acacia_button outline_shape
+     * - minecraft:bamboo_button outline_shape
+     * - minecraft:birch_button outline_shape
+     * - minecraft:cherry_button outline_shape
+     * - minecraft:crimson_button outline_shape
+     * - minecraft:dark_oak_button outline_shape
+     * - and 9 more
      */
-    static final Cell ACACIA_BUTTON_OUTLINE_SHAPE = Cell.table(new String[] {"button_pressed_bit", "facing_direction"}, new Object[][] {{false, true}, {0, 1, 2, 3, 4, 5}},
-            BOX_5_14_6_11_16_10, BOX_5_0_6_11_2_10, BOX_5_6_14_11_10_16, BOX_5_6_0_11_10_2,
+    static final Cell TABLE_BUTTON_PRESSED_BIT_FACING_DIRECTION_8483EF = Cell.table(new String[] {"button_pressed_bit", "facing_direction"},
+    new Object[][] {{false, true}, {0, 1, 2, 3, 4, 5}},
+    BOX_5_14_6_11_16_10, BOX_5_0_6_11_2_10, BOX_5_6_14_11_10_16, BOX_5_6_0_11_10_2,
             BOX_14_6_5_16_10_11, BOX_0_6_5_2_10_11, BOX_5_15_6_11_16_10, BOX_5_0_6_11_1_10,
             BOX_5_6_15_11_10_16, BOX_5_6_0_11_10_1, BOX_15_6_5_16_10_11, BOX_0_6_5_1_10_11);
 
     /**
-     * Used by minecraft:acacia_door collision_shape, minecraft:acacia_door outline_shape, minecraft:bamboo_door collision_shape, minecraft:bamboo_door outline_shape, minecraft:birch_door collision_shape, minecraft:birch_door outline_shape and 38 more.
+     * Used by:
+     * - minecraft:acacia_door collision_shape
+     * - minecraft:acacia_door outline_shape
+     * - minecraft:bamboo_door collision_shape
+     * - minecraft:bamboo_door outline_shape
+     * - minecraft:birch_door collision_shape
+     * - minecraft:birch_door outline_shape
+     * - and 38 more
      */
-    static final Cell ACACIA_DOOR_COLLISION_SHAPE = Cell.table(new String[] {"door_hinge_bit", "minecraft:cardinal_direction", "open_bit"}, new Object[][] {{false, true}, {"east", "north", "south", "west"}, {false, true}},
-            BOX_0_0_13_16_16_16, BOX_0_0_0_3_16_16, BOX_13_0_0_16_16_16, BOX_0_0_13_16_16_16,
+    static final Cell TABLE_DOOR_HINGE_BIT_CARDINAL_DIRECTION_OPEN_BIT_C4BD10 = Cell.table(new String[] {"door_hinge_bit", "minecraft:cardinal_direction", "open_bit"},
+    new Object[][] {{false, true}, {"east", "north", "south", "west"}, {false, true}},
+    BOX_0_0_13_16_16_16, BOX_0_0_0_3_16_16, BOX_13_0_0_16_16_16, BOX_0_0_13_16_16_16,
             BOX_0_0_0_3_16_16, BOX_0_0_0_16_16_3, BOX_0_0_0_16_16_3, BOX_13_0_0_16_16_16,
             BOX_0_0_13_16_16_16, BOX_13_0_0_16_16_16, BOX_13_0_0_16_16_16, BOX_0_0_0_16_16_3,
             BOX_0_0_0_3_16_16, BOX_0_0_13_16_16_16, BOX_0_0_0_16_16_3, BOX_0_0_0_3_16_16);
 
     /**
-     * Used by minecraft:acacia_fence_gate collision_shape, minecraft:bamboo_fence_gate collision_shape, minecraft:birch_fence_gate collision_shape, minecraft:cherry_fence_gate collision_shape, minecraft:crimson_fence_gate collision_shape, minecraft:dark_oak_fence_gate collision_shape and 7 more.
+     * Used by:
+     * - minecraft:acacia_fence_gate collision_shape
+     * - minecraft:bamboo_fence_gate collision_shape
+     * - minecraft:birch_fence_gate collision_shape
+     * - minecraft:cherry_fence_gate collision_shape
+     * - minecraft:crimson_fence_gate collision_shape
+     * - minecraft:dark_oak_fence_gate collision_shape
+     * - and 7 more
      */
-    static final Cell ACACIA_FENCE_GATE_COLLISION_SHAPE = Cell.table(new String[] {"minecraft:cardinal_direction", "open_bit"}, new Object[][] {{"east", "north", "south", "west"}, {false, true}},
-            BOX_6_0_0_10_24_16, BlockShape.EMPTY, BOX_0_0_6_16_24_10, BlockShape.EMPTY,
-            BOX_0_0_6_16_24_10, BlockShape.EMPTY, BOX_6_0_0_10_24_16, BlockShape.EMPTY);
+    static final Cell TABLE_CARDINAL_DIRECTION_OPEN_BIT_C87F8B = Cell.table(new String[] {"minecraft:cardinal_direction", "open_bit"},
+    new Object[][] {{"east", "north", "south", "west"}, {false, true}},
+    BOX_6_0_0_10_24_16, BlockShape.EMPTY, BOX_0_0_6_16_24_10, BlockShape.EMPTY, BOX_0_0_6_16_24_10,
+            BlockShape.EMPTY, BOX_6_0_0_10_24_16, BlockShape.EMPTY);
 
     /**
-     * Used by minecraft:acacia_hanging_sign collision_shape, minecraft:bamboo_hanging_sign collision_shape, minecraft:birch_hanging_sign collision_shape, minecraft:cherry_hanging_sign collision_shape, minecraft:crimson_hanging_sign collision_shape, minecraft:dark_oak_hanging_sign collision_shape and 7 more.
+     * Used by:
+     * - minecraft:acacia_hanging_sign collision_shape
+     * - minecraft:bamboo_hanging_sign collision_shape
+     * - minecraft:birch_hanging_sign collision_shape
+     * - minecraft:cherry_hanging_sign collision_shape
+     * - minecraft:crimson_hanging_sign collision_shape
+     * - minecraft:dark_oak_hanging_sign collision_shape
+     * - and 7 more
      */
-    static final Cell ACACIA_HANGING_SIGN_COLLISION_SHAPE = Cell.table(new String[] {"facing_direction", "hanging"}, new Object[][] {{0, 1, 2, 3, 4, 5}, {false, true}},
-            BOX_6_14_0_10_16_16, BlockShape.EMPTY, BOX_6_14_0_10_16_16, BlockShape.EMPTY,
+    static final Cell TABLE_FACING_DIRECTION_HANGING_6F9CD1 = Cell.table(new String[] {"facing_direction", "hanging"},
+    new Object[][] {{0, 1, 2, 3, 4, 5}, {false, true}},
+    BOX_6_14_0_10_16_16, BlockShape.EMPTY, BOX_6_14_0_10_16_16, BlockShape.EMPTY,
             BOX_0_14_6_16_16_10, BlockShape.EMPTY, BOX_0_14_6_16_16_10, BlockShape.EMPTY,
             BOX_6_14_0_10_16_16, BlockShape.EMPTY, BOX_6_14_0_10_16_16, BlockShape.EMPTY);
 
     /**
-     * Used by minecraft:acacia_stairs collision_shape, minecraft:andesite_stairs collision_shape, minecraft:bamboo_mosaic_stairs collision_shape, minecraft:bamboo_stairs collision_shape, minecraft:birch_stairs collision_shape, minecraft:blackstone_stairs collision_shape and 59 more.
+     * Used by:
+     * - minecraft:acacia_stairs collision_shape
+     * - minecraft:andesite_stairs collision_shape
+     * - minecraft:bamboo_mosaic_stairs collision_shape
+     * - minecraft:bamboo_stairs collision_shape
+     * - minecraft:birch_stairs collision_shape
+     * - minecraft:blackstone_stairs collision_shape
+     * - and 59 more
      */
-    static final Cell ACACIA_STAIRS_COLLISION_SHAPE_9 = Cell.table(new String[] {"upside_down_bit", "weirdo_direction"}, new Object[][] {{false, true}, {0, 1, 2, 3}},
-            ACACIA_STAIRS_COLLISION_SHAPE, ACACIA_STAIRS_COLLISION_SHAPE_2,
-            ACACIA_STAIRS_COLLISION_SHAPE_3, ACACIA_STAIRS_COLLISION_SHAPE_4,
-            ACACIA_STAIRS_COLLISION_SHAPE_5, ACACIA_STAIRS_COLLISION_SHAPE_6,
-            ACACIA_STAIRS_COLLISION_SHAPE_7, ACACIA_STAIRS_COLLISION_SHAPE_8);
+    static final Cell TABLE_UPSIDE_DOWN_BIT_WEIRDO_DIRECTION_87FC4F = Cell.table(new String[] {"upside_down_bit", "weirdo_direction"},
+    new Object[][] {{false, true}, {0, 1, 2, 3}},
+    SHAPE_ACACIA_STAIRS_COLLISION_SHAPE, SHAPE_ACACIA_STAIRS_COLLISION_SHAPE_2,
+            SHAPE_ACACIA_STAIRS_COLLISION_SHAPE_3, SHAPE_ACACIA_STAIRS_COLLISION_SHAPE_4,
+            SHAPE_ACACIA_STAIRS_COLLISION_SHAPE_5, SHAPE_ACACIA_STAIRS_COLLISION_SHAPE_6,
+            SHAPE_ACACIA_STAIRS_COLLISION_SHAPE_7, SHAPE_ACACIA_STAIRS_COLLISION_SHAPE_8);
 
     /**
-     * Used by minecraft:acacia_stairs liquid_flow_directions, minecraft:andesite_stairs liquid_flow_directions, minecraft:bamboo_mosaic_stairs liquid_flow_directions, minecraft:bamboo_stairs liquid_flow_directions, minecraft:birch_stairs liquid_flow_directions, minecraft:blackstone_stairs liquid_flow_directions and 59 more.
+     * Used by:
+     * - minecraft:acacia_stairs liquid_flow_directions
+     * - minecraft:andesite_stairs liquid_flow_directions
+     * - minecraft:bamboo_mosaic_stairs liquid_flow_directions
+     * - minecraft:bamboo_stairs liquid_flow_directions
+     * - minecraft:birch_stairs liquid_flow_directions
+     * - minecraft:blackstone_stairs liquid_flow_directions
+     * - and 59 more
      */
-    static final Cell ACACIA_STAIRS_LIQUID_FLOW_DIRECTIONS = Cell.table(new String[] {"upside_down_bit", "weirdo_direction"}, new Object[][] {{false, true}, {0, 1, 2, 3}},
-            30, 46, 54, 58, 29, 45, 53, 57);
+    static final Cell TABLE_UPSIDE_DOWN_BIT_WEIRDO_DIRECTION_C4AAFC = Cell.table(new String[] {"upside_down_bit", "weirdo_direction"},
+    new Object[][] {{false, true}, {0, 1, 2, 3}},
+    30, 46, 54, 58, 29, 45, 53, 57);
 
     /**
-     * Used by minecraft:acacia_trapdoor collision_shape, minecraft:bamboo_trapdoor collision_shape, minecraft:birch_trapdoor collision_shape, minecraft:cherry_trapdoor collision_shape, minecraft:copper_trapdoor collision_shape, minecraft:crimson_trapdoor collision_shape and 16 more.
+     * Used by:
+     * - minecraft:acacia_trapdoor collision_shape
+     * - minecraft:bamboo_trapdoor collision_shape
+     * - minecraft:birch_trapdoor collision_shape
+     * - minecraft:cherry_trapdoor collision_shape
+     * - minecraft:copper_trapdoor collision_shape
+     * - minecraft:crimson_trapdoor collision_shape
+     * - and 16 more
      */
-    static final Cell ACACIA_TRAPDOOR_COLLISION_SHAPE = Cell.table(new String[] {"direction", "open_bit", "upside_down_bit"}, new Object[][] {{0, 1, 2, 3}, {false, true}, {false, true}},
-            BOX_0_0_0_16_2P92_16, BOX_0_13P08_0_16_16_16, BOX_0_0_0_2P92_16_16,
-            BOX_0_0_0_2P92_16_16, BOX_0_0_0_16_2P92_16, BOX_0_13P08_0_16_16_16,
-            BOX_13P08_0_0_16_16_16, BOX_13P08_0_0_16_16_16, BOX_0_0_0_16_2P92_16,
-            BOX_0_13P08_0_16_16_16, BOX_0_0_0_16_16_2P92, BOX_0_0_0_16_16_2P92,
-            BOX_0_0_0_16_2P92_16, BOX_0_13P08_0_16_16_16, BOX_0_0_13P08_16_16_16,
-            BOX_0_0_13P08_16_16_16);
+    static final Cell TABLE_DIRECTION_OPEN_BIT_UPSIDE_DOWN_BIT_A554C9 = Cell.table(new String[] {"direction", "open_bit", "upside_down_bit"},
+    new Object[][] {{0, 1, 2, 3}, {false, true}, {false, true}},
+    SHAPE_ACACIA_TRAPDOOR_COLLISION_SHAPE, SHAPE_ACACIA_TRAPDOOR_COLLISION_SHAPE_2,
+            SHAPE_ACACIA_TRAPDOOR_COLLISION_SHAPE_3, SHAPE_ACACIA_TRAPDOOR_COLLISION_SHAPE_3,
+            SHAPE_ACACIA_TRAPDOOR_COLLISION_SHAPE, SHAPE_ACACIA_TRAPDOOR_COLLISION_SHAPE_2,
+            SHAPE_ACACIA_TRAPDOOR_COLLISION_SHAPE_4, SHAPE_ACACIA_TRAPDOOR_COLLISION_SHAPE_4,
+            SHAPE_ACACIA_TRAPDOOR_COLLISION_SHAPE, SHAPE_ACACIA_TRAPDOOR_COLLISION_SHAPE_2,
+            SHAPE_ACACIA_TRAPDOOR_COLLISION_SHAPE_5, SHAPE_ACACIA_TRAPDOOR_COLLISION_SHAPE_5,
+            SHAPE_ACACIA_TRAPDOOR_COLLISION_SHAPE, SHAPE_ACACIA_TRAPDOOR_COLLISION_SHAPE_2,
+            SHAPE_ACACIA_TRAPDOOR_COLLISION_SHAPE_6, SHAPE_ACACIA_TRAPDOOR_COLLISION_SHAPE_6);
 
     /**
-     * Used by minecraft:acacia_trapdoor outline_shape, minecraft:bamboo_trapdoor outline_shape, minecraft:birch_trapdoor outline_shape, minecraft:cherry_trapdoor outline_shape, minecraft:copper_trapdoor outline_shape, minecraft:crimson_trapdoor outline_shape and 16 more.
+     * Used by:
+     * - minecraft:acacia_trapdoor outline_shape
+     * - minecraft:bamboo_trapdoor outline_shape
+     * - minecraft:birch_trapdoor outline_shape
+     * - minecraft:cherry_trapdoor outline_shape
+     * - minecraft:copper_trapdoor outline_shape
+     * - minecraft:crimson_trapdoor outline_shape
+     * - and 16 more
      */
-    static final Cell ACACIA_TRAPDOOR_OUTLINE_SHAPE = Cell.table(new String[] {"direction", "open_bit", "upside_down_bit"}, new Object[][] {{0, 1, 2, 3}, {false, true}, {false, true}},
-            BOX_0P008_0P008_0P008_15P992_2P92_15P992, BOX_0P008_13P08_0P008_15P992_15P992_15P992,
-            BOX_0P008_0P008_0P008_2P92_15P992_15P992, BOX_0P008_0P008_0P008_2P92_15P992_15P992,
-            BOX_0P008_0P008_0P008_15P992_2P92_15P992, BOX_0P008_13P08_0P008_15P992_15P992_15P992,
-            BOX_13P08_0P008_0P008_15P992_15P992_15P992, BOX_13P08_0P008_0P008_15P992_15P992_15P992,
-            BOX_0P008_0P008_0P008_15P992_2P92_15P992, BOX_0P008_13P08_0P008_15P992_15P992_15P992,
-            BOX_0P008_0P008_0P008_15P992_15P992_2P92, BOX_0P008_0P008_0P008_15P992_15P992_2P92,
-            BOX_0P008_0P008_0P008_15P992_2P92_15P992, BOX_0P008_13P08_0P008_15P992_15P992_15P992,
-            BOX_0P008_0P008_13P08_15P992_15P992_15P992, BOX_0P008_0P008_13P08_15P992_15P992_15P992);
+    static final Cell TABLE_DIRECTION_OPEN_BIT_UPSIDE_DOWN_BIT_BCB459 = Cell.table(new String[] {"direction", "open_bit", "upside_down_bit"},
+    new Object[][] {{0, 1, 2, 3}, {false, true}, {false, true}},
+    SHAPE_ACACIA_TRAPDOOR_OUTLINE_SHAPE, SHAPE_ACACIA_TRAPDOOR_OUTLINE_SHAPE_2,
+            SHAPE_ACACIA_TRAPDOOR_OUTLINE_SHAPE_3, SHAPE_ACACIA_TRAPDOOR_OUTLINE_SHAPE_3,
+            SHAPE_ACACIA_TRAPDOOR_OUTLINE_SHAPE, SHAPE_ACACIA_TRAPDOOR_OUTLINE_SHAPE_2,
+            SHAPE_ACACIA_TRAPDOOR_OUTLINE_SHAPE_4, SHAPE_ACACIA_TRAPDOOR_OUTLINE_SHAPE_4,
+            SHAPE_ACACIA_TRAPDOOR_OUTLINE_SHAPE, SHAPE_ACACIA_TRAPDOOR_OUTLINE_SHAPE_2,
+            SHAPE_ACACIA_TRAPDOOR_OUTLINE_SHAPE_5, SHAPE_ACACIA_TRAPDOOR_OUTLINE_SHAPE_5,
+            SHAPE_ACACIA_TRAPDOOR_OUTLINE_SHAPE, SHAPE_ACACIA_TRAPDOOR_OUTLINE_SHAPE_2,
+            SHAPE_ACACIA_TRAPDOOR_OUTLINE_SHAPE_6, SHAPE_ACACIA_TRAPDOOR_OUTLINE_SHAPE_6);
 
     /**
-     * Used by minecraft:andesite_wall collision_shape, minecraft:blackstone_wall collision_shape, minecraft:brick_wall collision_shape, minecraft:cinnabar_brick_wall collision_shape, minecraft:cinnabar_wall collision_shape, minecraft:cobbled_deepslate_wall collision_shape and 26 more.
+     * Used by:
+     * - minecraft:andesite_wall collision_shape
+     * - minecraft:blackstone_wall collision_shape
+     * - minecraft:brick_wall collision_shape
+     * - minecraft:cinnabar_brick_wall collision_shape
+     * - minecraft:cinnabar_wall collision_shape
+     * - minecraft:cobbled_deepslate_wall collision_shape
+     * - and 26 more
      */
-    static final Cell ANDESITE_WALL_COLLISION_SHAPE = Cell.table(new String[] {"wall_connection_type_east", "wall_connection_type_north", "wall_connection_type_south", "wall_connection_type_west", "wall_post_bit"}, new Object[][] {{"none", "short", "tall"}, {"none", "short", "tall"}, {"none", "short", "tall"}, {"none", "short", "tall"}, {false, true}},
-            BOX_4_0_4_12_24_12, BOX_4_0_4_12_24_12, BOX_0_0_4_12_24_12, BOX_0_0_4_12_24_12,
+    static final Cell TABLE_WALL_CONNECTION_TYPE_EAST_WALL_CONNECTION_TYPE_NORTH_WALL_CONNECTION_TYPE_SOUTH_WALL_CONNECTION_TYPE_WEST_WALL_POST_BIT_2A29E9 = Cell.table(new String[] {"wall_connection_type_east", "wall_connection_type_north", "wall_connection_type_south", "wall_connection_type_west", "wall_post_bit"},
+    new Object[][] {{"none", "short", "tall"}, {"none", "short", "tall"}, {"none", "short", "tall"}, {"none", "short", "tall"}, {false, true}},
+    BOX_4_0_4_12_24_12, BOX_4_0_4_12_24_12, BOX_0_0_4_12_24_12, BOX_0_0_4_12_24_12,
             BOX_0_0_4_12_24_12, BOX_0_0_4_12_24_12, BOX_4_0_4_12_24_16, BOX_4_0_4_12_24_16,
             BOX_0_0_4_12_24_16, BOX_0_0_4_12_24_16, BOX_0_0_4_12_24_16, BOX_0_0_4_12_24_16,
             BOX_4_0_4_12_24_16, BOX_4_0_4_12_24_16, BOX_0_0_4_12_24_16, BOX_0_0_4_12_24_16,
@@ -132,118 +205,178 @@ final class BehaviourTables {
             BOX_0_0_0_16_24_16, BOX_0_0_0_16_24_16);
 
     /**
-     * Used by minecraft:andesite_wall outline_shape, minecraft:blackstone_wall outline_shape, minecraft:brick_wall outline_shape, minecraft:cinnabar_brick_wall outline_shape, minecraft:cinnabar_wall outline_shape, minecraft:cobbled_deepslate_wall outline_shape and 26 more.
+     * Used by:
+     * - minecraft:andesite_wall outline_shape
+     * - minecraft:blackstone_wall outline_shape
+     * - minecraft:brick_wall outline_shape
+     * - minecraft:cinnabar_brick_wall outline_shape
+     * - minecraft:cinnabar_wall outline_shape
+     * - minecraft:cobbled_deepslate_wall outline_shape
+     * - and 26 more
      */
-    static final Cell ANDESITE_WALL_OUTLINE_SHAPE = Cell.table(new String[] {"wall_connection_type_east", "wall_connection_type_north", "wall_connection_type_south", "wall_connection_type_west", "wall_post_bit"}, new Object[][] {{"none", "short", "tall"}, {"none", "short", "tall"}, {"none", "short", "tall"}, {"none", "short", "tall"}, {false, true}},
-            BOX_4_0_4_12_13_12, BOX_4_0_4_12_15P9984_12, BOX_0_0_4_12_13_12,
-            BOX_0_0_4_12_15P9984_12, BOX_0_0_4_12_15P9984_12, BOX_0_0_4_12_15P9984_12,
-            BOX_4_0_4_12_13_16, BOX_4_0_4_12_15P9984_16, BOX_0_0_4_12_13_16,
-            BOX_0_0_4_12_15P9984_16, BOX_0_0_4_12_15P9984_16, BOX_0_0_4_12_15P9984_16,
-            BOX_4_0_4_12_15P9984_16, BOX_4_0_4_12_15P9984_16, BOX_0_0_4_12_15P9984_16,
-            BOX_0_0_4_12_15P9984_16, BOX_0_0_4_12_15P9984_16, BOX_0_0_4_12_15P9984_16,
-            BOX_4_0_0_12_13_12, BOX_4_0_0_12_15P9984_12, BOX_0_0_0_12_13_12,
-            BOX_0_0_0_12_15P9984_12, BOX_0_0_0_12_15P9984_12, BOX_0_0_0_12_15P9984_12,
-            BOX_5_0_0_11_13_16, BOX_4_0_0_12_15P9984_16, BOX_0_0_0_12_13_16,
-            BOX_0_0_0_12_15P9984_16, BOX_0_0_0_12_15P9984_16, BOX_0_0_0_12_15P9984_16,
-            BOX_5_0_0_11_15P9984_16, BOX_4_0_0_12_15P9984_16, BOX_0_0_0_12_15P9984_16,
-            BOX_0_0_0_12_15P9984_16, BOX_0_0_0_12_15P9984_16, BOX_0_0_0_12_15P9984_16,
-            BOX_4_0_0_12_15P9984_12, BOX_4_0_0_12_15P9984_12, BOX_0_0_0_12_15P9984_12,
-            BOX_0_0_0_12_15P9984_12, BOX_0_0_0_12_15P9984_12, BOX_0_0_0_12_15P9984_12,
-            BOX_5_0_0_11_15P9984_16, BOX_4_0_0_12_15P9984_16, BOX_0_0_0_12_15P9984_16,
-            BOX_0_0_0_12_15P9984_16, BOX_0_0_0_12_15P9984_16, BOX_0_0_0_12_15P9984_16,
-            BOX_5_0_0_11_15P9984_16, BOX_4_0_0_12_15P9984_16, BOX_0_0_0_12_15P9984_16,
-            BOX_0_0_0_12_15P9984_16, BOX_0_0_0_12_15P9984_16, BOX_0_0_0_12_15P9984_16,
-            BOX_4_0_4_16_13_12, BOX_4_0_4_16_15P9984_12, BOX_0_0_5_16_13_11,
-            BOX_0_0_4_16_15P9984_12, BOX_0_0_5_16_15P9984_11, BOX_0_0_4_16_15P9984_12,
-            BOX_4_0_4_16_13_16, BOX_4_0_4_16_15P9984_16, BOX_0_0_4_16_13_16,
-            BOX_0_0_4_16_15P9984_16, BOX_0_0_4_16_15P9984_16, BOX_0_0_4_16_15P9984_16,
-            BOX_4_0_4_16_15P9984_16, BOX_4_0_4_16_15P9984_16, BOX_0_0_4_16_15P9984_16,
-            BOX_0_0_4_16_15P9984_16, BOX_0_0_4_16_15P9984_16, BOX_0_0_4_16_15P9984_16,
-            BOX_4_0_0_16_13_12, BOX_4_0_0_16_15P9984_12, BOX_0_0_0_16_13_12,
-            BOX_0_0_0_16_15P9984_12, BOX_0_0_0_16_15P9984_12, BOX_0_0_0_16_15P9984_12,
-            BOX_4_0_0_16_13_16, BOX_4_0_0_16_15P9984_16, BOX_0_0_0_16_13_16,
-            BOX_0_0_0_16_15P9984_16, BOX_0_0_0_16_15P9984_16, BOX_0_0_0_16_15P9984_16,
-            BOX_4_0_0_16_15P9984_16, BOX_4_0_0_16_15P9984_16, BOX_0_0_0_16_15P9984_16,
-            BOX_0_0_0_16_15P9984_16, BOX_0_0_0_16_15P9984_16, BOX_0_0_0_16_15P9984_16,
-            BOX_4_0_0_16_15P9984_12, BOX_4_0_0_16_15P9984_12, BOX_0_0_0_16_15P9984_12,
-            BOX_0_0_0_16_15P9984_12, BOX_0_0_0_16_15P9984_12, BOX_0_0_0_16_15P9984_12,
-            BOX_4_0_0_16_15P9984_16, BOX_4_0_0_16_15P9984_16, BOX_0_0_0_16_15P9984_16,
-            BOX_0_0_0_16_15P9984_16, BOX_0_0_0_16_15P9984_16, BOX_0_0_0_16_15P9984_16,
-            BOX_4_0_0_16_15P9984_16, BOX_4_0_0_16_15P9984_16, BOX_0_0_0_16_15P9984_16,
-            BOX_0_0_0_16_15P9984_16, BOX_0_0_0_16_15P9984_16, BOX_0_0_0_16_15P9984_16,
-            BOX_4_0_4_16_15P9984_12, BOX_4_0_4_16_15P9984_12, BOX_0_0_5_16_15P9984_11,
-            BOX_0_0_4_16_15P9984_12, BOX_0_0_5_16_15P9984_11, BOX_0_0_4_16_15P9984_12,
-            BOX_4_0_4_16_15P9984_16, BOX_4_0_4_16_15P9984_16, BOX_0_0_4_16_15P9984_16,
-            BOX_0_0_4_16_15P9984_16, BOX_0_0_4_16_15P9984_16, BOX_0_0_4_16_15P9984_16,
-            BOX_4_0_4_16_15P9984_16, BOX_4_0_4_16_15P9984_16, BOX_0_0_4_16_15P9984_16,
-            BOX_0_0_4_16_15P9984_16, BOX_0_0_4_16_15P9984_16, BOX_0_0_4_16_15P9984_16,
-            BOX_4_0_0_16_15P9984_12, BOX_4_0_0_16_15P9984_12, BOX_0_0_0_16_15P9984_12,
-            BOX_0_0_0_16_15P9984_12, BOX_0_0_0_16_15P9984_12, BOX_0_0_0_16_15P9984_12,
-            BOX_4_0_0_16_15P9984_16, BOX_4_0_0_16_15P9984_16, BOX_0_0_0_16_15P9984_16,
-            BOX_0_0_0_16_15P9984_16, BOX_0_0_0_16_15P9984_16, BOX_0_0_0_16_15P9984_16,
-            BOX_4_0_0_16_15P9984_16, BOX_4_0_0_16_15P9984_16, BOX_0_0_0_16_15P9984_16,
-            BOX_0_0_0_16_15P9984_16, BOX_0_0_0_16_15P9984_16, BOX_0_0_0_16_15P9984_16,
-            BOX_4_0_0_16_15P9984_12, BOX_4_0_0_16_15P9984_12, BOX_0_0_0_16_15P9984_12,
-            BOX_0_0_0_16_15P9984_12, BOX_0_0_0_16_15P9984_12, BOX_0_0_0_16_15P9984_12,
-            BOX_4_0_0_16_15P9984_16, BOX_4_0_0_16_15P9984_16, BOX_0_0_0_16_15P9984_16,
-            BOX_0_0_0_16_15P9984_16, BOX_0_0_0_16_15P9984_16, BOX_0_0_0_16_15P9984_16,
-            BOX_4_0_0_16_15P9984_16, BOX_4_0_0_16_15P9984_16, BOX_0_0_0_16_15P9984_16,
-            BOX_0_0_0_16_15P9984_16, BOX_0_0_0_16_15P9984_16, BOX_0_0_0_16_15P9984_16);
+    static final Cell TABLE_WALL_CONNECTION_TYPE_EAST_WALL_CONNECTION_TYPE_NORTH_WALL_CONNECTION_TYPE_SOUTH_WALL_CONNECTION_TYPE_WEST_WALL_POST_BIT_D598FB = Cell.table(new String[] {"wall_connection_type_east", "wall_connection_type_north", "wall_connection_type_south", "wall_connection_type_west", "wall_post_bit"},
+    new Object[][] {{"none", "short", "tall"}, {"none", "short", "tall"}, {"none", "short", "tall"}, {"none", "short", "tall"}, {false, true}},
+    BOX_4_0_4_12_13_12, SHAPE_ANDESITE_WALL_OUTLINE_SHAPE, BOX_0_0_4_12_13_12,
+            SHAPE_ANDESITE_WALL_OUTLINE_SHAPE_2, SHAPE_ANDESITE_WALL_OUTLINE_SHAPE_2,
+            SHAPE_ANDESITE_WALL_OUTLINE_SHAPE_2, BOX_4_0_4_12_13_16,
+            SHAPE_ANDESITE_WALL_OUTLINE_SHAPE_3, BOX_0_0_4_12_13_16,
+            SHAPE_ANDESITE_WALL_OUTLINE_SHAPE_4, SHAPE_ANDESITE_WALL_OUTLINE_SHAPE_4,
+            SHAPE_ANDESITE_WALL_OUTLINE_SHAPE_4, SHAPE_ANDESITE_WALL_OUTLINE_SHAPE_3,
+            SHAPE_ANDESITE_WALL_OUTLINE_SHAPE_3, SHAPE_ANDESITE_WALL_OUTLINE_SHAPE_4,
+            SHAPE_ANDESITE_WALL_OUTLINE_SHAPE_4, SHAPE_ANDESITE_WALL_OUTLINE_SHAPE_4,
+            SHAPE_ANDESITE_WALL_OUTLINE_SHAPE_4, BOX_4_0_0_12_13_12,
+            SHAPE_ANDESITE_WALL_OUTLINE_SHAPE_5, BOX_0_0_0_12_13_12,
+            SHAPE_ANDESITE_WALL_OUTLINE_SHAPE_6, SHAPE_ANDESITE_WALL_OUTLINE_SHAPE_6,
+            SHAPE_ANDESITE_WALL_OUTLINE_SHAPE_6, BOX_5_0_0_11_13_16,
+            SHAPE_ANDESITE_WALL_OUTLINE_SHAPE_7, BOX_0_0_0_12_13_16,
+            SHAPE_ANDESITE_WALL_OUTLINE_SHAPE_8, SHAPE_ANDESITE_WALL_OUTLINE_SHAPE_8,
+            SHAPE_ANDESITE_WALL_OUTLINE_SHAPE_8, SHAPE_ANDESITE_WALL_OUTLINE_SHAPE_9,
+            SHAPE_ANDESITE_WALL_OUTLINE_SHAPE_7, SHAPE_ANDESITE_WALL_OUTLINE_SHAPE_8,
+            SHAPE_ANDESITE_WALL_OUTLINE_SHAPE_8, SHAPE_ANDESITE_WALL_OUTLINE_SHAPE_8,
+            SHAPE_ANDESITE_WALL_OUTLINE_SHAPE_8, SHAPE_ANDESITE_WALL_OUTLINE_SHAPE_5,
+            SHAPE_ANDESITE_WALL_OUTLINE_SHAPE_5, SHAPE_ANDESITE_WALL_OUTLINE_SHAPE_6,
+            SHAPE_ANDESITE_WALL_OUTLINE_SHAPE_6, SHAPE_ANDESITE_WALL_OUTLINE_SHAPE_6,
+            SHAPE_ANDESITE_WALL_OUTLINE_SHAPE_6, SHAPE_ANDESITE_WALL_OUTLINE_SHAPE_9,
+            SHAPE_ANDESITE_WALL_OUTLINE_SHAPE_7, SHAPE_ANDESITE_WALL_OUTLINE_SHAPE_8,
+            SHAPE_ANDESITE_WALL_OUTLINE_SHAPE_8, SHAPE_ANDESITE_WALL_OUTLINE_SHAPE_8,
+            SHAPE_ANDESITE_WALL_OUTLINE_SHAPE_8, SHAPE_ANDESITE_WALL_OUTLINE_SHAPE_9,
+            SHAPE_ANDESITE_WALL_OUTLINE_SHAPE_7, SHAPE_ANDESITE_WALL_OUTLINE_SHAPE_8,
+            SHAPE_ANDESITE_WALL_OUTLINE_SHAPE_8, SHAPE_ANDESITE_WALL_OUTLINE_SHAPE_8,
+            SHAPE_ANDESITE_WALL_OUTLINE_SHAPE_8, BOX_4_0_4_16_13_12,
+            SHAPE_ANDESITE_WALL_OUTLINE_SHAPE_10, BOX_0_0_5_16_13_11,
+            SHAPE_ANDESITE_WALL_OUTLINE_SHAPE_11, SHAPE_ANDESITE_WALL_OUTLINE_SHAPE_12,
+            SHAPE_ANDESITE_WALL_OUTLINE_SHAPE_11, BOX_4_0_4_16_13_16,
+            SHAPE_ANDESITE_WALL_OUTLINE_SHAPE_13, BOX_0_0_4_16_13_16,
+            SHAPE_ANDESITE_WALL_OUTLINE_SHAPE_14, SHAPE_ANDESITE_WALL_OUTLINE_SHAPE_14,
+            SHAPE_ANDESITE_WALL_OUTLINE_SHAPE_14, SHAPE_ANDESITE_WALL_OUTLINE_SHAPE_13,
+            SHAPE_ANDESITE_WALL_OUTLINE_SHAPE_13, SHAPE_ANDESITE_WALL_OUTLINE_SHAPE_14,
+            SHAPE_ANDESITE_WALL_OUTLINE_SHAPE_14, SHAPE_ANDESITE_WALL_OUTLINE_SHAPE_14,
+            SHAPE_ANDESITE_WALL_OUTLINE_SHAPE_14, BOX_4_0_0_16_13_12,
+            SHAPE_ANDESITE_WALL_OUTLINE_SHAPE_15, BOX_0_0_0_16_13_12,
+            SHAPE_ANDESITE_WALL_OUTLINE_SHAPE_16, SHAPE_ANDESITE_WALL_OUTLINE_SHAPE_16,
+            SHAPE_ANDESITE_WALL_OUTLINE_SHAPE_16, BOX_4_0_0_16_13_16,
+            SHAPE_ANDESITE_WALL_OUTLINE_SHAPE_17, BOX_0_0_0_16_13_16,
+            SHAPE_ANDESITE_WALL_OUTLINE_SHAPE_18, SHAPE_ANDESITE_WALL_OUTLINE_SHAPE_18,
+            SHAPE_ANDESITE_WALL_OUTLINE_SHAPE_18, SHAPE_ANDESITE_WALL_OUTLINE_SHAPE_17,
+            SHAPE_ANDESITE_WALL_OUTLINE_SHAPE_17, SHAPE_ANDESITE_WALL_OUTLINE_SHAPE_18,
+            SHAPE_ANDESITE_WALL_OUTLINE_SHAPE_18, SHAPE_ANDESITE_WALL_OUTLINE_SHAPE_18,
+            SHAPE_ANDESITE_WALL_OUTLINE_SHAPE_18, SHAPE_ANDESITE_WALL_OUTLINE_SHAPE_15,
+            SHAPE_ANDESITE_WALL_OUTLINE_SHAPE_15, SHAPE_ANDESITE_WALL_OUTLINE_SHAPE_16,
+            SHAPE_ANDESITE_WALL_OUTLINE_SHAPE_16, SHAPE_ANDESITE_WALL_OUTLINE_SHAPE_16,
+            SHAPE_ANDESITE_WALL_OUTLINE_SHAPE_16, SHAPE_ANDESITE_WALL_OUTLINE_SHAPE_17,
+            SHAPE_ANDESITE_WALL_OUTLINE_SHAPE_17, SHAPE_ANDESITE_WALL_OUTLINE_SHAPE_18,
+            SHAPE_ANDESITE_WALL_OUTLINE_SHAPE_18, SHAPE_ANDESITE_WALL_OUTLINE_SHAPE_18,
+            SHAPE_ANDESITE_WALL_OUTLINE_SHAPE_18, SHAPE_ANDESITE_WALL_OUTLINE_SHAPE_17,
+            SHAPE_ANDESITE_WALL_OUTLINE_SHAPE_17, SHAPE_ANDESITE_WALL_OUTLINE_SHAPE_18,
+            SHAPE_ANDESITE_WALL_OUTLINE_SHAPE_18, SHAPE_ANDESITE_WALL_OUTLINE_SHAPE_18,
+            SHAPE_ANDESITE_WALL_OUTLINE_SHAPE_18, SHAPE_ANDESITE_WALL_OUTLINE_SHAPE_10,
+            SHAPE_ANDESITE_WALL_OUTLINE_SHAPE_10, SHAPE_ANDESITE_WALL_OUTLINE_SHAPE_12,
+            SHAPE_ANDESITE_WALL_OUTLINE_SHAPE_11, SHAPE_ANDESITE_WALL_OUTLINE_SHAPE_12,
+            SHAPE_ANDESITE_WALL_OUTLINE_SHAPE_11, SHAPE_ANDESITE_WALL_OUTLINE_SHAPE_13,
+            SHAPE_ANDESITE_WALL_OUTLINE_SHAPE_13, SHAPE_ANDESITE_WALL_OUTLINE_SHAPE_14,
+            SHAPE_ANDESITE_WALL_OUTLINE_SHAPE_14, SHAPE_ANDESITE_WALL_OUTLINE_SHAPE_14,
+            SHAPE_ANDESITE_WALL_OUTLINE_SHAPE_14, SHAPE_ANDESITE_WALL_OUTLINE_SHAPE_13,
+            SHAPE_ANDESITE_WALL_OUTLINE_SHAPE_13, SHAPE_ANDESITE_WALL_OUTLINE_SHAPE_14,
+            SHAPE_ANDESITE_WALL_OUTLINE_SHAPE_14, SHAPE_ANDESITE_WALL_OUTLINE_SHAPE_14,
+            SHAPE_ANDESITE_WALL_OUTLINE_SHAPE_14, SHAPE_ANDESITE_WALL_OUTLINE_SHAPE_15,
+            SHAPE_ANDESITE_WALL_OUTLINE_SHAPE_15, SHAPE_ANDESITE_WALL_OUTLINE_SHAPE_16,
+            SHAPE_ANDESITE_WALL_OUTLINE_SHAPE_16, SHAPE_ANDESITE_WALL_OUTLINE_SHAPE_16,
+            SHAPE_ANDESITE_WALL_OUTLINE_SHAPE_16, SHAPE_ANDESITE_WALL_OUTLINE_SHAPE_17,
+            SHAPE_ANDESITE_WALL_OUTLINE_SHAPE_17, SHAPE_ANDESITE_WALL_OUTLINE_SHAPE_18,
+            SHAPE_ANDESITE_WALL_OUTLINE_SHAPE_18, SHAPE_ANDESITE_WALL_OUTLINE_SHAPE_18,
+            SHAPE_ANDESITE_WALL_OUTLINE_SHAPE_18, SHAPE_ANDESITE_WALL_OUTLINE_SHAPE_17,
+            SHAPE_ANDESITE_WALL_OUTLINE_SHAPE_17, SHAPE_ANDESITE_WALL_OUTLINE_SHAPE_18,
+            SHAPE_ANDESITE_WALL_OUTLINE_SHAPE_18, SHAPE_ANDESITE_WALL_OUTLINE_SHAPE_18,
+            SHAPE_ANDESITE_WALL_OUTLINE_SHAPE_18, SHAPE_ANDESITE_WALL_OUTLINE_SHAPE_15,
+            SHAPE_ANDESITE_WALL_OUTLINE_SHAPE_15, SHAPE_ANDESITE_WALL_OUTLINE_SHAPE_16,
+            SHAPE_ANDESITE_WALL_OUTLINE_SHAPE_16, SHAPE_ANDESITE_WALL_OUTLINE_SHAPE_16,
+            SHAPE_ANDESITE_WALL_OUTLINE_SHAPE_16, SHAPE_ANDESITE_WALL_OUTLINE_SHAPE_17,
+            SHAPE_ANDESITE_WALL_OUTLINE_SHAPE_17, SHAPE_ANDESITE_WALL_OUTLINE_SHAPE_18,
+            SHAPE_ANDESITE_WALL_OUTLINE_SHAPE_18, SHAPE_ANDESITE_WALL_OUTLINE_SHAPE_18,
+            SHAPE_ANDESITE_WALL_OUTLINE_SHAPE_18, SHAPE_ANDESITE_WALL_OUTLINE_SHAPE_17,
+            SHAPE_ANDESITE_WALL_OUTLINE_SHAPE_17, SHAPE_ANDESITE_WALL_OUTLINE_SHAPE_18,
+            SHAPE_ANDESITE_WALL_OUTLINE_SHAPE_18, SHAPE_ANDESITE_WALL_OUTLINE_SHAPE_18,
+            SHAPE_ANDESITE_WALL_OUTLINE_SHAPE_18);
 
     /**
-     * Used by minecraft:bell collision_shape, minecraft:bell outline_shape.
+     * Used by:
+     * - minecraft:bell collision_shape
+     * - minecraft:bell outline_shape
      */
-    static final Cell BELL_COLLISION_SHAPE = Cell.table(new String[] {"attachment", "direction"}, new Object[][] {{"hanging", "multiple", "side", "standing"}, {0, 1, 2, 3}},
-            BOX_4_4_4_12_16_12, BOX_4_4_4_12_16_12, BOX_4_4_4_12_16_12, BOX_4_4_4_12_16_12,
+    static final Cell TABLE_ATTACHMENT_DIRECTION_511AEA = Cell.table(new String[] {"attachment", "direction"},
+    new Object[][] {{"hanging", "multiple", "side", "standing"}, {0, 1, 2, 3}},
+    BOX_4_4_4_12_16_12, BOX_4_4_4_12_16_12, BOX_4_4_4_12_16_12, BOX_4_4_4_12_16_12,
             BOX_4_4_0_12_16_16, BOX_0_4_4_16_16_12, BOX_4_4_0_12_16_16, BOX_0_4_4_16_16_12,
             BOX_4_4_0_12_15_13, BOX_3_4_4_16_15_12, BOX_4_4_3_12_15_16, BOX_0_4_4_13_15_12,
             BOX_0_0_4_16_13_12, BOX_4_0_0_12_13_16, BOX_0_0_4_16_13_12, BOX_4_0_0_12_13_16);
 
     /**
-     * Used by minecraft:big_dripleaf collision_shape.
+     * Used by:
+     * - minecraft:big_dripleaf collision_shape
      */
-    static final Cell BIG_DRIPLEAF_COLLISION_SHAPE = Cell.table(new String[] {"big_dripleaf_head", "big_dripleaf_tilt"}, new Object[][] {{false, true}, {"full_tilt", "none", "partial_tilt", "unstable"}},
-            BlockShape.EMPTY, BlockShape.EMPTY, BlockShape.EMPTY, BlockShape.EMPTY,
-            BlockShape.EMPTY, BOX_0_11_0_16_15_16, BOX_0_11_0_16_13_16, BOX_0_11_0_16_15_16);
+    static final Cell TABLE_BIG_DRIPLEAF_HEAD_BIG_DRIPLEAF_TILT_26F10A = Cell.table(new String[] {"big_dripleaf_head", "big_dripleaf_tilt"},
+    new Object[][] {{false, true}, {"full_tilt", "none", "partial_tilt", "unstable"}},
+    BlockShape.EMPTY, BlockShape.EMPTY, BlockShape.EMPTY, BlockShape.EMPTY, BlockShape.EMPTY,
+            BOX_0_11_0_16_15_16, BOX_0_11_0_16_13_16, BOX_0_11_0_16_15_16);
 
     /**
-     * Used by minecraft:big_dripleaf outline_shape.
+     * Used by:
+     * - minecraft:big_dripleaf outline_shape
      */
-    static final Cell BIG_DRIPLEAF_OUTLINE_SHAPE = Cell.table(new String[] {"big_dripleaf_head", "minecraft:cardinal_direction"}, new Object[][] {{false, true}, {"east", "north", "south", "west"}},
-            BOX_2_0_5_8_16_11, BOX_5_0_8_11_16_14, BOX_5_0_2_11_16_8, BOX_8_0_5_14_16_11,
+    static final Cell TABLE_BIG_DRIPLEAF_HEAD_CARDINAL_DIRECTION_2DCDAC = Cell.table(new String[] {"big_dripleaf_head", "minecraft:cardinal_direction"},
+    new Object[][] {{false, true}, {"east", "north", "south", "west"}},
+    BOX_2_0_5_8_16_11, BOX_5_0_8_11_16_14, BOX_5_0_2_11_16_8, BOX_8_0_5_14_16_11,
             BOX_0_0_0_16_15_16, BOX_0_0_0_16_15_16, BOX_0_0_0_16_15_16, BOX_0_0_0_16_15_16);
 
     /**
-     * Used by minecraft:black_candle light_emission, minecraft:blue_candle light_emission, minecraft:brown_candle light_emission, minecraft:candle light_emission, minecraft:cyan_candle light_emission, minecraft:gray_candle light_emission and 11 more.
+     * Used by:
+     * - minecraft:black_candle light_emission
+     * - minecraft:blue_candle light_emission
+     * - minecraft:brown_candle light_emission
+     * - minecraft:candle light_emission
+     * - minecraft:cyan_candle light_emission
+     * - minecraft:gray_candle light_emission
+     * - and 11 more
      */
-    static final Cell BLACK_CANDLE_LIGHT_EMISSION = Cell.table(new String[] {"candles", "lit"}, new Object[][] {{0, 1, 2, 3}, {false, true}},
-            0, 3, 0, 6, 0, 9, 0, 12);
+    static final Cell TABLE_CANDLES_LIT_D44016 = Cell.table(new String[] {"candles", "lit"},
+    new Object[][] {{0, 1, 2, 3}, {false, true}},
+    0, 3, 0, 6, 0, 9, 0, 12);
 
     /**
-     * Used by minecraft:cauldron light_emission.
+     * Used by:
+     * - minecraft:cauldron light_emission
      */
-    static final Cell CAULDRON_LIGHT_EMISSION = Cell.table(new String[] {"cauldron_liquid", "fill_level"}, new Object[][] {{"lava", "powder_snow", "water"}, {0, 1, 2, 3, 4, 5, 6}},
-            0, 15, 15, 15, 15, 15, 15, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+    static final Cell TABLE_CAULDRON_LIQUID_FILL_LEVEL_F3D1D9 = Cell.table(new String[] {"cauldron_liquid", "fill_level"},
+    new Object[][] {{"lava", "powder_snow", "water"}, {0, 1, 2, 3, 4, 5, 6}},
+    0, 15, 15, 15, 15, 15, 15, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
 
     /**
-     * Used by minecraft:cauldron light_dampening.
+     * Used by:
+     * - minecraft:cauldron light_dampening
      */
-    static final Cell CAULDRON_LIGHT_DAMPENING = Cell.table(new String[] {"cauldron_liquid", "fill_level"}, new Object[][] {{"lava", "powder_snow", "water"}, {0, 1, 2, 3, 4, 5, 6}},
-            3, 14, 14, 14, 14, 14, 14, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3);
+    static final Cell TABLE_CAULDRON_LIQUID_FILL_LEVEL_432CB6 = Cell.table(new String[] {"cauldron_liquid", "fill_level"},
+    new Object[][] {{"lava", "powder_snow", "water"}, {0, 1, 2, 3, 4, 5, 6}},
+    3, 14, 14, 14, 14, 14, 14, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3);
 
     /**
-     * Used by minecraft:cocoa collision_shape, minecraft:cocoa outline_shape.
+     * Used by:
+     * - minecraft:cocoa collision_shape
+     * - minecraft:cocoa outline_shape
      */
-    static final Cell COCOA_COLLISION_SHAPE = Cell.table(new String[] {"age", "direction"}, new Object[][] {{0, 1, 2}, {0, 1, 2, 3}},
-            BOX_6_7_11_10_12_15, BOX_1_7_6_5_12_10, BOX_6_7_1_10_12_5, BOX_11_7_6_15_12_10,
+    static final Cell TABLE_AGE_DIRECTION_BB4B84 = Cell.table(new String[] {"age", "direction"},
+    new Object[][] {{0, 1, 2}, {0, 1, 2, 3}},
+    BOX_6_7_11_10_12_15, BOX_1_7_6_5_12_10, BOX_6_7_1_10_12_5, BOX_11_7_6_15_12_10,
             BOX_5_5_9_11_12_15, BOX_1_5_5_7_12_11, BOX_5_5_1_11_12_7, BOX_9_5_5_15_12_11,
             BOX_4_3_7_12_12_15, BOX_1_3_4_9_12_12, BOX_4_3_1_12_12_9, BOX_7_3_4_15_12_12);
 
     /**
-     * Used by minecraft:frame outline_shape, minecraft:glow_frame outline_shape.
+     * Used by:
+     * - minecraft:frame outline_shape
+     * - minecraft:glow_frame outline_shape
      */
-    static final Cell FRAME_OUTLINE_SHAPE = Cell.table(new String[] {"facing_direction", "item_frame_map_bit", "item_frame_photo_bit"}, new Object[][] {{0, 1, 2, 3, 4, 5}, {false, true}, {false, true}},
-            BOX_2_15_2_14_16_14, BOX_0_15_0_16_16_16, BOX_0_15_0_16_16_16, BOX_0_15_0_16_16_16,
+    static final Cell TABLE_FACING_DIRECTION_ITEM_FRAME_MAP_BIT_ITEM_FRAME_PHOTO_BIT_FE6192 = Cell.table(new String[] {"facing_direction", "item_frame_map_bit", "item_frame_photo_bit"},
+    new Object[][] {{0, 1, 2, 3, 4, 5}, {false, true}, {false, true}},
+    BOX_2_15_2_14_16_14, BOX_0_15_0_16_16_16, BOX_0_15_0_16_16_16, BOX_0_15_0_16_16_16,
             BOX_2_0_2_14_1_14, BOX_0_0_0_16_1_16, BOX_0_0_0_16_1_16, BOX_0_0_0_16_1_16,
             BOX_2_2_15_14_14_16, BOX_0_0_15_16_16_16, BOX_0_0_15_16_16_16, BOX_0_0_15_16_16_16,
             BOX_2_2_0_14_14_1, BOX_0_0_0_16_16_1, BOX_0_0_0_16_16_1, BOX_0_0_0_16_16_1,
@@ -251,51 +384,56 @@ final class BehaviourTables {
             BOX_0_2_2_1_14_14, BOX_0_0_0_1_16_16, BOX_0_0_0_1_16_16, BOX_0_0_0_1_16_16);
 
     /**
-     * Used by minecraft:grindstone collision_shape, minecraft:grindstone outline_shape.
+     * Used by:
+     * - minecraft:grindstone collision_shape
+     * - minecraft:grindstone outline_shape
      */
-    static final Cell GRINDSTONE_COLLISION_SHAPE = Cell.table(new String[] {"attachment", "direction"}, new Object[][] {{"hanging", "multiple", "side", "standing"}, {0, 1, 2, 3}},
-            BOX_2_0_2_14_16_14, BOX_2_0_2_14_16_14, BOX_2_0_2_14_16_14, BOX_2_0_2_14_16_14,
+    static final Cell TABLE_ATTACHMENT_DIRECTION_A9F102 = Cell.table(new String[] {"attachment", "direction"},
+    new Object[][] {{"hanging", "multiple", "side", "standing"}, {0, 1, 2, 3}},
+    BOX_2_0_2_14_16_14, BOX_2_0_2_14_16_14, BOX_2_0_2_14_16_14, BOX_2_0_2_14_16_14,
             BOX_2_0_2_14_16_14, BOX_2_0_2_14_16_14, BOX_2_0_2_14_16_14, BOX_2_0_2_14_16_14,
             BOX_2_2_0_14_14_16, BOX_0_2_2_16_14_14, BOX_2_2_0_14_14_16, BOX_0_2_2_16_14_14,
             BOX_2_0_2_14_16_14, BOX_2_0_2_14_16_14, BOX_2_0_2_14_16_14, BOX_2_0_2_14_16_14);
 
     /**
-     * Used by minecraft:mangrove_propagule outline_shape.
+     * Used by:
+     * - minecraft:mangrove_propagule outline_shape
      */
-    static final Cell MANGROVE_PROPAGULE_OUTLINE_SHAPE = Cell.table(new String[] {"hanging", "propagule_stage"}, new Object[][] {{false, true}, {0, 1, 2, 3, 4}},
-            BOX_3P066656_0_4P133328_7P066656_16_8P133328,
-            BOX_3P066656_0_4P133328_7P066656_16_8P133328,
-            BOX_3P066656_0_4P133328_7P066656_16_8P133328,
-            BOX_3P066656_0_4P133328_7P066656_16_8P133328,
-            BOX_3P066656_0_4P133328_7P066656_16_8P133328,
-            BOX_3P066656_12_4P133328_7P066656_16_8P133328,
-            BOX_3P066656_10_4P133328_7P066656_16_8P133328,
-            BOX_3P066656_7_4P133328_7P066656_16_8P133328,
-            BOX_3P066656_3_4P133328_7P066656_16_8P133328,
-            BOX_3P066656_0_4P133328_7P066656_16_8P133328);
+    static final Cell TABLE_HANGING_PROPAGULE_STAGE_355CDB = Cell.table(new String[] {"hanging", "propagule_stage"},
+    new Object[][] {{false, true}, {0, 1, 2, 3, 4}},
+    SHAPE_MANGROVE_PROPAGULE_OUTLINE_SHAPE, SHAPE_MANGROVE_PROPAGULE_OUTLINE_SHAPE,
+            SHAPE_MANGROVE_PROPAGULE_OUTLINE_SHAPE, SHAPE_MANGROVE_PROPAGULE_OUTLINE_SHAPE,
+            SHAPE_MANGROVE_PROPAGULE_OUTLINE_SHAPE, SHAPE_MANGROVE_PROPAGULE_OUTLINE_SHAPE_2,
+            SHAPE_MANGROVE_PROPAGULE_OUTLINE_SHAPE_3, SHAPE_MANGROVE_PROPAGULE_OUTLINE_SHAPE_4,
+            SHAPE_MANGROVE_PROPAGULE_OUTLINE_SHAPE_5, SHAPE_MANGROVE_PROPAGULE_OUTLINE_SHAPE);
 
     /**
-     * Used by minecraft:melon_stem outline_shape, minecraft:pumpkin_stem outline_shape.
+     * Used by:
+     * - minecraft:melon_stem outline_shape
+     * - minecraft:pumpkin_stem outline_shape
      */
-    static final Cell MELON_STEM_OUTLINE_SHAPE = Cell.table(new String[] {"facing_direction", "growth"}, new Object[][] {{0, 1, 2, 3, 4, 5}, {0, 1, 2, 3, 4, 5, 6, 7}},
-            BOX_6_0_6_10_2_10, BOX_6_0_6_10_4_10, BOX_6_0_6_10_6_10, BOX_6_0_6_10_8_10,
-            BOX_6_0_6_10_10_10, BOX_6_0_6_10_12_10, BOX_6_0_6_10_14_10, BOX_6_0_6_10_16_10,
+    static final Cell TABLE_FACING_DIRECTION_GROWTH_FCF606 = Cell.table(new String[] {"facing_direction", "growth"},
+    new Object[][] {{0, 1, 2, 3, 4, 5}, {0, 1, 2, 3, 4, 5, 6, 7}},
+    BOX_6_0_6_10_2_10, BOX_6_0_6_10_4_10, BOX_6_0_6_10_6_10, BOX_6_0_6_10_8_10, BOX_6_0_6_10_10_10,
+            BOX_6_0_6_10_12_10, BOX_6_0_6_10_14_10, BOX_6_0_6_10_16_10, BOX_6_0_6_10_9_10,
             BOX_6_0_6_10_9_10, BOX_6_0_6_10_9_10, BOX_6_0_6_10_9_10, BOX_6_0_6_10_9_10,
-            BOX_6_0_6_10_9_10, BOX_6_0_6_10_9_10, BOX_6_0_6_10_9_10, BOX_6_0_6_10_9_10,
+            BOX_6_0_6_10_9_10, BOX_6_0_6_10_9_10, BOX_6_0_6_10_9_10, BOX_6_0_0_10_9_10,
             BOX_6_0_0_10_9_10, BOX_6_0_0_10_9_10, BOX_6_0_0_10_9_10, BOX_6_0_0_10_9_10,
-            BOX_6_0_0_10_9_10, BOX_6_0_0_10_9_10, BOX_6_0_0_10_9_10, BOX_6_0_0_10_9_10,
+            BOX_6_0_0_10_9_10, BOX_6_0_0_10_9_10, BOX_6_0_0_10_9_10, BOX_6_0_6_10_9_16,
             BOX_6_0_6_10_9_16, BOX_6_0_6_10_9_16, BOX_6_0_6_10_9_16, BOX_6_0_6_10_9_16,
-            BOX_6_0_6_10_9_16, BOX_6_0_6_10_9_16, BOX_6_0_6_10_9_16, BOX_6_0_6_10_9_16,
+            BOX_6_0_6_10_9_16, BOX_6_0_6_10_9_16, BOX_6_0_6_10_9_16, BOX_0_0_6_10_9_10,
             BOX_0_0_6_10_9_10, BOX_0_0_6_10_9_10, BOX_0_0_6_10_9_10, BOX_0_0_6_10_9_10,
-            BOX_0_0_6_10_9_10, BOX_0_0_6_10_9_10, BOX_0_0_6_10_9_10, BOX_0_0_6_10_9_10,
+            BOX_0_0_6_10_9_10, BOX_0_0_6_10_9_10, BOX_0_0_6_10_9_10, BOX_6_0_6_16_9_10,
             BOX_6_0_6_16_9_10, BOX_6_0_6_16_9_10, BOX_6_0_6_16_9_10, BOX_6_0_6_16_9_10,
-            BOX_6_0_6_16_9_10, BOX_6_0_6_16_9_10, BOX_6_0_6_16_9_10, BOX_6_0_6_16_9_10);
+            BOX_6_0_6_16_9_10, BOX_6_0_6_16_9_10, BOX_6_0_6_16_9_10);
 
     /**
-     * Used by minecraft:pale_moss_carpet outline_shape.
+     * Used by:
+     * - minecraft:pale_moss_carpet outline_shape
      */
-    static final Cell PALE_MOSS_CARPET_OUTLINE_SHAPE = Cell.table(new String[] {"pale_moss_carpet_side_east", "pale_moss_carpet_side_north", "pale_moss_carpet_side_south", "pale_moss_carpet_side_west", "upper_block_bit"}, new Object[][] {{"none", "short", "tall"}, {"none", "short", "tall"}, {"none", "short", "tall"}, {"none", "short", "tall"}, {false, true}},
-            BOX_0_0_0_16_1_16, BlockShape.EMPTY, BOX_0_0_0_16_10_16, BOX_0_0_0_16_10_16,
+    static final Cell TABLE_PALE_MOSS_CARPET_SIDE_EAST_PALE_MOSS_CARPET_SIDE_NORTH_PALE_MOSS_CARPET_SIDE_SOUTH_PALE_MOSS_CARPET_SIDE_WEST_UPPER_BLOCK_BIT_1C8786 = Cell.table(new String[] {"pale_moss_carpet_side_east", "pale_moss_carpet_side_north", "pale_moss_carpet_side_south", "pale_moss_carpet_side_west", "upper_block_bit"},
+    new Object[][] {{"none", "short", "tall"}, {"none", "short", "tall"}, {"none", "short", "tall"}, {"none", "short", "tall"}, {false, true}},
+    BOX_0_0_0_16_1_16, BlockShape.EMPTY, BOX_0_0_0_16_10_16, BOX_0_0_0_16_10_16,
             BlockShape.FULL_CUBE, BlockShape.FULL_CUBE, BOX_0_0_0_16_10_16, BOX_0_0_0_16_10_16,
             BOX_0_0_0_16_10_16, BOX_0_0_0_16_10_16, BlockShape.FULL_CUBE, BlockShape.FULL_CUBE,
             BlockShape.FULL_CUBE, BlockShape.FULL_CUBE, BlockShape.FULL_CUBE, BlockShape.FULL_CUBE,
@@ -338,332 +476,497 @@ final class BehaviourTables {
             BlockShape.FULL_CUBE, BlockShape.FULL_CUBE);
 
     /**
-     * Used by minecraft:pitcher_crop collision_shape.
+     * Used by:
+     * - minecraft:pitcher_crop collision_shape
      */
-    static final Cell PITCHER_CROP_COLLISION_SHAPE = Cell.table(new String[] {"growth", "upper_block_bit"}, new Object[][] {{0, 1, 2, 3, 4, 5, 6, 7}, {false, true}},
-            BOX_5_M1_5_11_3_11, BlockShape.EMPTY, BOX_3_M1_3_13_5_13, BlockShape.EMPTY,
-            BOX_3_M1_3_13_5_13, BlockShape.EMPTY, BOX_3_M1_3_13_5_13, BlockShape.EMPTY,
-            BOX_3_M1_3_13_5_13, BlockShape.EMPTY, BOX_3_M1_3_13_5_13, BlockShape.EMPTY,
-            BOX_3_M1_3_13_5_13, BlockShape.EMPTY, BOX_3_M1_3_13_5_13, BlockShape.EMPTY);
+    static final Cell TABLE_GROWTH_UPPER_BLOCK_BIT_BBB90D = Cell.table(new String[] {"growth", "upper_block_bit"},
+    new Object[][] {{0, 1, 2, 3, 4, 5, 6, 7}, {false, true}},
+    BOX_5_M1_5_11_3_11, BlockShape.EMPTY, BOX_3_M1_3_13_5_13, BlockShape.EMPTY, BOX_3_M1_3_13_5_13,
+            BlockShape.EMPTY, BOX_3_M1_3_13_5_13, BlockShape.EMPTY, BOX_3_M1_3_13_5_13,
+            BlockShape.EMPTY, BOX_3_M1_3_13_5_13, BlockShape.EMPTY, BOX_3_M1_3_13_5_13,
+            BlockShape.EMPTY, BOX_3_M1_3_13_5_13, BlockShape.EMPTY);
 
     /**
-     * Used by minecraft:pitcher_crop outline_shape.
+     * Used by:
+     * - minecraft:pitcher_crop outline_shape
      */
-    static final Cell PITCHER_CROP_OUTLINE_SHAPE = Cell.table(new String[] {"growth", "upper_block_bit"}, new Object[][] {{0, 1, 2, 3, 4, 5, 6, 7}, {false, true}},
-            BOX_5_M1_5_11_3_11, BOX_3_0_3_13_15_13, BOX_3_M1_3_13_14_13, BOX_3_0_3_13_15_13,
+    static final Cell TABLE_GROWTH_UPPER_BLOCK_BIT_99CCD2 = Cell.table(new String[] {"growth", "upper_block_bit"},
+    new Object[][] {{0, 1, 2, 3, 4, 5, 6, 7}, {false, true}},
+    BOX_5_M1_5_11_3_11, BOX_3_0_3_13_15_13, BOX_3_M1_3_13_14_13, BOX_3_0_3_13_15_13,
             BOX_3_M1_3_13_16_13, BOX_3_0_3_13_15_13, BOX_3_M1_3_13_16_13, BOX_3_0_3_13_11_13,
             BOX_3_M1_3_13_16_13, BOX_3_0_3_13_15_13, BOX_3_M1_3_13_16_13, BOX_3_0_3_13_15_13,
             BOX_3_M1_3_13_16_13, BOX_3_0_3_13_15_13, BOX_3_M1_3_13_16_13, BOX_3_0_3_13_15_13);
 
     /**
-     * Used by minecraft:pointed_dripstone collision_shape, minecraft:pointed_dripstone outline_shape, minecraft:sulfur_spike collision_shape, minecraft:sulfur_spike outline_shape.
+     * Used by:
+     * - minecraft:pointed_dripstone collision_shape
+     * - minecraft:pointed_dripstone outline_shape
+     * - minecraft:sulfur_spike collision_shape
+     * - minecraft:sulfur_spike outline_shape
      */
-    static final Cell POINTED_DRIPSTONE_COLLISION_SHAPE = Cell.table(new String[] {"dripstone_thickness", "hanging"}, new Object[][] {{"base", "frustum", "merge", "middle", "tip"}, {false, true}},
-            BOX_0P533344_0_1P066672_12P533328_16_13P066656,
-            BOX_0P533344_0_1P066672_12P533328_16_13P066656,
-            BOX_2P533328_0_3P066656_10P533328_16_11P066656,
-            BOX_2P533328_0_3P066656_10P533328_16_11P066656,
-            BOX_3P533328_0_4P066656_9P533328_16_10P066656,
-            BOX_3P533328_0_4P066656_9P533328_16_10P066656,
-            BOX_1P533328_0_2P066656_11P533328_16_12P066656,
-            BOX_1P533328_0_2P066656_11P533328_16_12P066656,
-            BOX_3P533328_0_4P066656_9P533328_11_10P066656,
-            BOX_3P533328_5_4P066656_9P533328_16_10P066656);
+    static final Cell TABLE_DRIPSTONE_THICKNESS_HANGING_456F2E = Cell.table(new String[] {"dripstone_thickness", "hanging"},
+    new Object[][] {{"base", "frustum", "merge", "middle", "tip"}, {false, true}},
+    SHAPE_POINTED_DRIPSTONE_COLLISION_SHAPE, SHAPE_POINTED_DRIPSTONE_COLLISION_SHAPE,
+            SHAPE_POINTED_DRIPSTONE_COLLISION_SHAPE_2, SHAPE_POINTED_DRIPSTONE_COLLISION_SHAPE_2,
+            SHAPE_POINTED_DRIPSTONE_COLLISION_SHAPE_3, SHAPE_POINTED_DRIPSTONE_COLLISION_SHAPE_3,
+            SHAPE_POINTED_DRIPSTONE_COLLISION_SHAPE_4, SHAPE_POINTED_DRIPSTONE_COLLISION_SHAPE_4,
+            SHAPE_POINTED_DRIPSTONE_COLLISION_SHAPE_5, SHAPE_POINTED_DRIPSTONE_COLLISION_SHAPE_6);
 
     /**
-     * Used by minecraft:sea_pickle light_emission.
+     * Used by:
+     * - minecraft:sea_pickle light_emission
      */
-    static final Cell SEA_PICKLE_LIGHT_EMISSION = Cell.table(new String[] {"cluster_count", "dead_bit"}, new Object[][] {{0, 1, 2, 3}, {false, true}},
-            6, 0, 9, 0, 12, 0, 15, 0);
+    static final Cell TABLE_CLUSTER_COUNT_DEAD_BIT_ED81AE = Cell.table(new String[] {"cluster_count", "dead_bit"},
+    new Object[][] {{0, 1, 2, 3}, {false, true}},
+    6, 0, 9, 0, 12, 0, 15, 0);
 
     /**
-     * Used by minecraft:trip_wire solid (captures).
+     * Used by:
+     * - minecraft:trip_wire solid (captures)
      */
-    static final Cell TRIP_WIRE_SOLID_SOURCES = Cell.table(new String[] {"attached_bit", "disarmed_bit", "powered_bit", "suspended_bit"}, new Object[][] {{false, true}, {false, true}, {false, true}, {false, true}},
-            CLOUDBURST_DATA_26_30, SCRIPT_API_26_30, CLOUDBURST_DATA_26_30, CLOUDBURST_DATA_26_30,
+    static final Cell SOURCES_ATTACHED_BIT_DISARMED_BIT_POWERED_BIT_SUSPENDED_BIT_17ADA0 = Cell.table(new String[] {"attached_bit", "disarmed_bit", "powered_bit", "suspended_bit"},
+    new Object[][] {{false, true}, {false, true}, {false, true}, {false, true}},
+    CLOUDBURST_DATA_26_30, SCRIPT_API_26_30_SOLID, CLOUDBURST_DATA_26_30, CLOUDBURST_DATA_26_30,
             CLOUDBURST_DATA_26_30, CLOUDBURST_DATA_26_30, CLOUDBURST_DATA_26_30,
             CLOUDBURST_DATA_26_30, CLOUDBURST_DATA_26_30, CLOUDBURST_DATA_26_30,
             CLOUDBURST_DATA_26_30, CLOUDBURST_DATA_26_30, CLOUDBURST_DATA_26_30,
             CLOUDBURST_DATA_26_30, CLOUDBURST_DATA_26_30, CLOUDBURST_DATA_26_30);
 
     /**
-     * Used by minecraft:trip_wire outline_shape.
+     * Used by:
+     * - minecraft:trip_wire outline_shape
      */
-    static final Cell TRIP_WIRE_OUTLINE_SHAPE = Cell.table(new String[] {"attached_bit", "suspended_bit"}, new Object[][] {{false, true}, {false, true}},
-            BOX_0_0_0_16_1P5_16, BOX_0_0_0_16_8_16, BOX_0_0_0_16_1P5_16, BOX_0_1_0_16_2P5_16);
+    static final Cell TABLE_ATTACHED_BIT_SUSPENDED_BIT_620CA7 = Cell.table(new String[] {"attached_bit", "suspended_bit"},
+    new Object[][] {{false, true}, {false, true}},
+    SHAPE_TRIP_WIRE_OUTLINE_SHAPE, BOX_0_0_0_16_8_16, SHAPE_TRIP_WIRE_OUTLINE_SHAPE,
+            SHAPE_TRIP_WIRE_OUTLINE_SHAPE_2);
 
     /**
-     * Used by minecraft:trip_wire liquid_flow_directions.
+     * Used by:
+     * - minecraft:trip_wire liquid_flow_directions
      */
-    static final Cell TRIP_WIRE_LIQUID_FLOW_DIRECTIONS = Cell.table(new String[] {"attached_bit", "disarmed_bit", "powered_bit", "suspended_bit"}, new Object[][] {{false, true}, {false, true}, {false, true}, {false, true}},
-            null, 63, null, null, null, null, null, null, null, null, null, null, null, null, null,
+    static final Cell TABLE_ATTACHED_BIT_DISARMED_BIT_POWERED_BIT_SUSPENDED_BIT_EAC805 = Cell.table(new String[] {"attached_bit", "disarmed_bit", "powered_bit", "suspended_bit"},
+    new Object[][] {{false, true}, {false, true}, {false, true}, {false, true}},
+    null, 63, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
+
+    /**
+     * Used by:
+     * - minecraft:trip_wire map_color (captures)
+     */
+    static final Cell SOURCES_ATTACHED_BIT_DISARMED_BIT_POWERED_BIT_SUSPENDED_BIT_5932A2 = Cell.table(new String[] {"attached_bit", "disarmed_bit", "powered_bit", "suspended_bit"},
+    new Object[][] {{false, true}, {false, true}, {false, true}, {false, true}},
+    CLOUDBURST_DATA_26_30, SCRIPT_API_26_30_MAP_COLOR, CLOUDBURST_DATA_26_30, CLOUDBURST_DATA_26_30,
+            CLOUDBURST_DATA_26_30, CLOUDBURST_DATA_26_30, CLOUDBURST_DATA_26_30,
+            CLOUDBURST_DATA_26_30, CLOUDBURST_DATA_26_30, CLOUDBURST_DATA_26_30,
+            CLOUDBURST_DATA_26_30, CLOUDBURST_DATA_26_30, CLOUDBURST_DATA_26_30,
+            CLOUDBURST_DATA_26_30, CLOUDBURST_DATA_26_30, CLOUDBURST_DATA_26_30);
+
+    /**
+     * Used by:
+     * - minecraft:trip_wire movement_type
+     */
+    static final Cell TABLE_ATTACHED_BIT_DISARMED_BIT_POWERED_BIT_SUSPENDED_BIT_A448C6 = Cell.table(new String[] {"attached_bit", "disarmed_bit", "powered_bit", "suspended_bit"},
+    new Object[][] {{false, true}, {false, true}, {false, true}, {false, true}},
+    null, "Popped", null, null, null, null, null, null, null, null, null, null, null, null, null,
             null);
 
     /**
-     * Used by minecraft:trip_wire map_color (captures).
+     * Used by:
+     * - minecraft:trip_wire sticky_type
      */
-    static final Cell TRIP_WIRE_MAP_COLOR_SOURCES = Cell.table(new String[] {"attached_bit", "disarmed_bit", "powered_bit", "suspended_bit"}, new Object[][] {{false, true}, {false, true}, {false, true}, {false, true}},
-            CLOUDBURST_DATA_26_30, SCRIPT_API_26_30_3, CLOUDBURST_DATA_26_30, CLOUDBURST_DATA_26_30,
-            CLOUDBURST_DATA_26_30, CLOUDBURST_DATA_26_30, CLOUDBURST_DATA_26_30,
-            CLOUDBURST_DATA_26_30, CLOUDBURST_DATA_26_30, CLOUDBURST_DATA_26_30,
-            CLOUDBURST_DATA_26_30, CLOUDBURST_DATA_26_30, CLOUDBURST_DATA_26_30,
-            CLOUDBURST_DATA_26_30, CLOUDBURST_DATA_26_30, CLOUDBURST_DATA_26_30);
+    static final Cell TABLE_ATTACHED_BIT_DISARMED_BIT_POWERED_BIT_SUSPENDED_BIT_E1D2E0 = Cell.table(new String[] {"attached_bit", "disarmed_bit", "powered_bit", "suspended_bit"},
+    new Object[][] {{false, true}, {false, true}, {false, true}, {false, true}},
+    null, "None", null, null, null, null, null, null, null, null, null, null, null, null, null,
+            null);
 
     /**
-     * Used by minecraft:trip_wire movement_type.
+     * Used by:
+     * - minecraft:trip_wire accumulates_snow
+     * - minecraft:trip_wire snow_loggable
+     * - minecraft:trip_wire obstructs_rain
      */
-    static final Cell TRIP_WIRE_MOVEMENT_TYPE = Cell.table(new String[] {"attached_bit", "disarmed_bit", "powered_bit", "suspended_bit"}, new Object[][] {{false, true}, {false, true}, {false, true}, {false, true}},
-            null, "Popped", null, null, null, null, null, null, null, null, null, null, null, null,
-            null, null);
+    static final Cell TABLE_ATTACHED_BIT_DISARMED_BIT_POWERED_BIT_SUSPENDED_BIT_9C894F = Cell.table(new String[] {"attached_bit", "disarmed_bit", "powered_bit", "suspended_bit"},
+    new Object[][] {{false, true}, {false, true}, {false, true}, {false, true}},
+    null, false, null, null, null, null, null, null, null, null, null, null, null, null, null,
+            null);
 
     /**
-     * Used by minecraft:trip_wire sticky_type.
+     * Used by:
+     * - minecraft:tripwire_hook solid (captures)
      */
-    static final Cell TRIP_WIRE_STICKY_TYPE = Cell.table(new String[] {"attached_bit", "disarmed_bit", "powered_bit", "suspended_bit"}, new Object[][] {{false, true}, {false, true}, {false, true}, {false, true}},
-            null, "None", null, null, null, null, null, null, null, null, null, null, null, null,
-            null, null);
+    static final Cell SOURCES_ATTACHED_BIT_POWERED_BIT_EE72E6 = Cell.table(new String[] {"attached_bit", "powered_bit"},
+    new Object[][] {{false, true}, {false, true}},
+    SCRIPT_API_26_30_SOLID, CLOUDBURST_DATA_26_30, CLOUDBURST_DATA_26_30, CLOUDBURST_DATA_26_30);
 
     /**
-     * Used by minecraft:trip_wire accumulates_snow, minecraft:trip_wire snow_loggable, minecraft:trip_wire obstructs_rain.
+     * Used by:
+     * - minecraft:tripwire_hook liquid_flow_directions
      */
-    static final Cell TRIP_WIRE_ACCUMULATES_SNOW = Cell.table(new String[] {"attached_bit", "disarmed_bit", "powered_bit", "suspended_bit"}, new Object[][] {{false, true}, {false, true}, {false, true}, {false, true}},
-            null, false, null, null, null, null, null, null, null, null, null, null, null, null,
-            null, null);
+    static final Cell TABLE_ATTACHED_BIT_POWERED_BIT_2469A9 = Cell.table(new String[] {"attached_bit", "powered_bit"},
+    new Object[][] {{false, true}, {false, true}},
+    63, null, null, null);
 
     /**
-     * Used by minecraft:tripwire_hook solid (captures).
+     * Used by:
+     * - minecraft:tripwire_hook map_color (captures)
      */
-    static final Cell TRIPWIRE_HOOK_SOLID_SOURCES = Cell.table(new String[] {"attached_bit", "powered_bit"}, new Object[][] {{false, true}, {false, true}},
-            SCRIPT_API_26_30, CLOUDBURST_DATA_26_30, CLOUDBURST_DATA_26_30, CLOUDBURST_DATA_26_30);
-
-    /**
-     * Used by minecraft:tripwire_hook liquid_flow_directions.
-     */
-    static final Cell TRIPWIRE_HOOK_LIQUID_FLOW_DIRECTIONS = Cell.table(new String[] {"attached_bit", "powered_bit"}, new Object[][] {{false, true}, {false, true}},
-            63, null, null, null);
-
-    /**
-     * Used by minecraft:tripwire_hook map_color (captures).
-     */
-    static final Cell TRIPWIRE_HOOK_MAP_COLOR_SOURCES = Cell.table(new String[] {"attached_bit", "powered_bit"}, new Object[][] {{false, true}, {false, true}},
-            SCRIPT_API_26_30_3, CLOUDBURST_DATA_26_30, CLOUDBURST_DATA_26_30,
+    static final Cell SOURCES_ATTACHED_BIT_POWERED_BIT_51BDA4 = Cell.table(new String[] {"attached_bit", "powered_bit"},
+    new Object[][] {{false, true}, {false, true}},
+    SCRIPT_API_26_30_MAP_COLOR, CLOUDBURST_DATA_26_30, CLOUDBURST_DATA_26_30,
             CLOUDBURST_DATA_26_30);
 
     /**
-     * Used by minecraft:tripwire_hook movement_type.
+     * Used by:
+     * - minecraft:tripwire_hook movement_type
      */
-    static final Cell TRIPWIRE_HOOK_MOVEMENT_TYPE = Cell.table(new String[] {"attached_bit", "powered_bit"}, new Object[][] {{false, true}, {false, true}},
-            "Popped", null, null, null);
+    static final Cell TABLE_ATTACHED_BIT_POWERED_BIT_F1302A = Cell.table(new String[] {"attached_bit", "powered_bit"},
+    new Object[][] {{false, true}, {false, true}},
+    "Popped", null, null, null);
 
     /**
-     * Used by minecraft:tripwire_hook sticky_type.
+     * Used by:
+     * - minecraft:tripwire_hook sticky_type
      */
-    static final Cell TRIPWIRE_HOOK_STICKY_TYPE = Cell.table(new String[] {"attached_bit", "powered_bit"}, new Object[][] {{false, true}, {false, true}},
-            "None", null, null, null);
+    static final Cell TABLE_ATTACHED_BIT_POWERED_BIT_722004 = Cell.table(new String[] {"attached_bit", "powered_bit"},
+    new Object[][] {{false, true}, {false, true}},
+    "None", null, null, null);
 
     /**
-     * Used by minecraft:tripwire_hook accumulates_snow, minecraft:tripwire_hook snow_loggable, minecraft:tripwire_hook obstructs_rain, minecraft:tripwire_hook dampens_vibrations, minecraft:tripwire_hook occludes_vibrations.
+     * Used by:
+     * - minecraft:tripwire_hook accumulates_snow
+     * - minecraft:tripwire_hook snow_loggable
+     * - minecraft:tripwire_hook obstructs_rain
+     * - minecraft:tripwire_hook dampens_vibrations
+     * - minecraft:tripwire_hook occludes_vibrations
      */
-    static final Cell TRIPWIRE_HOOK_ACCUMULATES_SNOW = Cell.table(new String[] {"attached_bit", "powered_bit"}, new Object[][] {{false, true}, {false, true}},
-            false, null, null, null);
+    static final Cell TABLE_ATTACHED_BIT_POWERED_BIT_7A8F79 = Cell.table(new String[] {"attached_bit", "powered_bit"},
+    new Object[][] {{false, true}, {false, true}},
+    false, null, null, null);
 
     /**
-     * Used by minecraft:trip_wire solid (captures).
+     * Used by:
+     * - minecraft:trip_wire solid (captures)
      */
-    static final Cell TRIP_WIRE_SOLID_SOURCES_2 = Cell.table(new String[] {"attached_bit", "disarmed_bit", "powered_bit", "suspended_bit"}, new Object[][] {{false, true}, {false, true}, {false, true}, {false, true}},
-            CLOUDBURST_DATA_26_40, SCRIPT_API_26_40, CLOUDBURST_DATA_26_40, CLOUDBURST_DATA_26_40,
+    static final Cell SOURCES_ATTACHED_BIT_DISARMED_BIT_POWERED_BIT_SUSPENDED_BIT_5FCC10 = Cell.table(new String[] {"attached_bit", "disarmed_bit", "powered_bit", "suspended_bit"},
+    new Object[][] {{false, true}, {false, true}, {false, true}, {false, true}},
+    CLOUDBURST_DATA_26_40, SCRIPT_API_26_40_SOLID, CLOUDBURST_DATA_26_40, CLOUDBURST_DATA_26_40,
             CLOUDBURST_DATA_26_40, CLOUDBURST_DATA_26_40, CLOUDBURST_DATA_26_40,
             CLOUDBURST_DATA_26_40, CLOUDBURST_DATA_26_40, CLOUDBURST_DATA_26_40,
             CLOUDBURST_DATA_26_40, CLOUDBURST_DATA_26_40, CLOUDBURST_DATA_26_40,
             CLOUDBURST_DATA_26_40, CLOUDBURST_DATA_26_40, CLOUDBURST_DATA_26_40);
 
     /**
-     * Used by minecraft:trip_wire map_color (captures).
+     * Used by:
+     * - minecraft:trip_wire map_color (captures)
      */
-    static final Cell TRIP_WIRE_MAP_COLOR_SOURCES_2 = Cell.table(new String[] {"attached_bit", "disarmed_bit", "powered_bit", "suspended_bit"}, new Object[][] {{false, true}, {false, true}, {false, true}, {false, true}},
-            CLOUDBURST_DATA_26_40, SCRIPT_API_26_40_3, CLOUDBURST_DATA_26_40, CLOUDBURST_DATA_26_40,
+    static final Cell SOURCES_ATTACHED_BIT_DISARMED_BIT_POWERED_BIT_SUSPENDED_BIT_CB6592 = Cell.table(new String[] {"attached_bit", "disarmed_bit", "powered_bit", "suspended_bit"},
+    new Object[][] {{false, true}, {false, true}, {false, true}, {false, true}},
+    CLOUDBURST_DATA_26_40, SCRIPT_API_26_40_MAP_COLOR, CLOUDBURST_DATA_26_40, CLOUDBURST_DATA_26_40,
             CLOUDBURST_DATA_26_40, CLOUDBURST_DATA_26_40, CLOUDBURST_DATA_26_40,
             CLOUDBURST_DATA_26_40, CLOUDBURST_DATA_26_40, CLOUDBURST_DATA_26_40,
             CLOUDBURST_DATA_26_40, CLOUDBURST_DATA_26_40, CLOUDBURST_DATA_26_40,
             CLOUDBURST_DATA_26_40, CLOUDBURST_DATA_26_40, CLOUDBURST_DATA_26_40);
 
     /**
-     * Used by minecraft:tripwire_hook solid (captures).
+     * Used by:
+     * - minecraft:tripwire_hook solid (captures)
      */
-    static final Cell TRIPWIRE_HOOK_SOLID_SOURCES_2 = Cell.table(new String[] {"attached_bit", "powered_bit"}, new Object[][] {{false, true}, {false, true}},
-            SCRIPT_API_26_40, CLOUDBURST_DATA_26_40, CLOUDBURST_DATA_26_40, CLOUDBURST_DATA_26_40);
+    static final Cell SOURCES_ATTACHED_BIT_POWERED_BIT_C27CD4 = Cell.table(new String[] {"attached_bit", "powered_bit"},
+    new Object[][] {{false, true}, {false, true}},
+    SCRIPT_API_26_40_SOLID, CLOUDBURST_DATA_26_40, CLOUDBURST_DATA_26_40, CLOUDBURST_DATA_26_40);
 
     /**
-     * Used by minecraft:tripwire_hook map_color (captures).
+     * Used by:
+     * - minecraft:tripwire_hook map_color (captures)
      */
-    static final Cell TRIPWIRE_HOOK_MAP_COLOR_SOURCES_2 = Cell.table(new String[] {"attached_bit", "powered_bit"}, new Object[][] {{false, true}, {false, true}},
-            SCRIPT_API_26_40_3, CLOUDBURST_DATA_26_40, CLOUDBURST_DATA_26_40,
+    static final Cell SOURCES_ATTACHED_BIT_POWERED_BIT_795156 = Cell.table(new String[] {"attached_bit", "powered_bit"},
+    new Object[][] {{false, true}, {false, true}},
+    SCRIPT_API_26_40_MAP_COLOR, CLOUDBURST_DATA_26_40, CLOUDBURST_DATA_26_40,
             CLOUDBURST_DATA_26_40);
 
     /**
-     * Used by minecraft:acacia_fence solid (captures), minecraft:bamboo_fence solid (captures), minecraft:birch_fence solid (captures), minecraft:black_stained_glass_pane solid (captures), minecraft:blue_stained_glass_pane solid (captures), minecraft:brown_stained_glass_pane solid (captures) and 51 more.
+     * Used by:
+     * - minecraft:acacia_fence solid (captures)
+     * - minecraft:bamboo_fence solid (captures)
+     * - minecraft:birch_fence solid (captures)
+     * - minecraft:black_stained_glass_pane solid (captures)
+     * - minecraft:blue_stained_glass_pane solid (captures)
+     * - minecraft:brown_stained_glass_pane solid (captures)
+     * - and 51 more
      */
-    static final Cell ACACIA_FENCE_SOLID_SOURCES = Cell.table(new String[] {"minecraft:connection_east", "minecraft:connection_north", "minecraft:connection_south", "minecraft:connection_west"}, new Object[][] {{false, true}, {false, true}, {false, true}, {false, true}},
-            SCRIPT_API_26_50, CLOUDBURST_DATA_26_50, CLOUDBURST_DATA_26_50, CLOUDBURST_DATA_26_50,
+    static final Cell SOURCES_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_98458C = Cell.table(new String[] {"minecraft:connection_east", "minecraft:connection_north", "minecraft:connection_south", "minecraft:connection_west"},
+    new Object[][] {{false, true}, {false, true}, {false, true}, {false, true}},
+    SCRIPT_API_26_50_SOLID, CLOUDBURST_DATA_26_50, CLOUDBURST_DATA_26_50, CLOUDBURST_DATA_26_50,
             CLOUDBURST_DATA_26_50, CLOUDBURST_DATA_26_50, CLOUDBURST_DATA_26_50,
             CLOUDBURST_DATA_26_50, CLOUDBURST_DATA_26_50, CLOUDBURST_DATA_26_50,
             CLOUDBURST_DATA_26_50, CLOUDBURST_DATA_26_50, CLOUDBURST_DATA_26_50,
             CLOUDBURST_DATA_26_50, CLOUDBURST_DATA_26_50, CLOUDBURST_DATA_26_50);
 
     /**
-     * Used by minecraft:acacia_fence collision_shape, minecraft:bamboo_fence collision_shape, minecraft:birch_fence collision_shape, minecraft:cherry_fence collision_shape, minecraft:crimson_fence collision_shape, minecraft:dark_oak_fence collision_shape and 8 more.
+     * Used by:
+     * - minecraft:acacia_fence collision_shape
+     * - minecraft:bamboo_fence collision_shape
+     * - minecraft:birch_fence collision_shape
+     * - minecraft:cherry_fence collision_shape
+     * - minecraft:crimson_fence collision_shape
+     * - minecraft:dark_oak_fence collision_shape
+     * - and 8 more
      */
-    static final Cell ACACIA_FENCE_COLLISION_SHAPE_10 = Cell.table(new String[] {"minecraft:connection_east", "minecraft:connection_north", "minecraft:connection_south", "minecraft:connection_west"}, new Object[][] {{false, true}, {false, true}, {false, true}, {false, true}},
-            BOX_6_0_6_10_24_10, BOX_0_0_6_10_24_10, BOX_6_0_6_10_24_16,
-            ACACIA_FENCE_COLLISION_SHAPE, BOX_6_0_0_10_24_10, ACACIA_FENCE_COLLISION_SHAPE_2,
-            BOX_6_0_0_10_24_16, ACACIA_FENCE_COLLISION_SHAPE_3, BOX_6_0_6_16_24_10,
-            BOX_0_0_6_16_24_10, ACACIA_FENCE_COLLISION_SHAPE_4, ACACIA_FENCE_COLLISION_SHAPE_5,
-            ACACIA_FENCE_COLLISION_SHAPE_6, ACACIA_FENCE_COLLISION_SHAPE_7,
-            ACACIA_FENCE_COLLISION_SHAPE_8, ACACIA_FENCE_COLLISION_SHAPE_9);
+    static final Cell TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_E9F3EE = Cell.table(new String[] {"minecraft:connection_east", "minecraft:connection_north", "minecraft:connection_south", "minecraft:connection_west"},
+    new Object[][] {{false, true}, {false, true}, {false, true}, {false, true}},
+    BOX_6_0_6_10_24_10, BOX_0_0_6_10_24_10, BOX_6_0_6_10_24_16, SHAPE_ACACIA_FENCE_COLLISION_SHAPE,
+            BOX_6_0_0_10_24_10, SHAPE_ACACIA_FENCE_COLLISION_SHAPE_2, BOX_6_0_0_10_24_16,
+            SHAPE_ACACIA_FENCE_COLLISION_SHAPE_3, BOX_6_0_6_16_24_10, BOX_0_0_6_16_24_10,
+            SHAPE_ACACIA_FENCE_COLLISION_SHAPE_4, SHAPE_ACACIA_FENCE_COLLISION_SHAPE_5,
+            SHAPE_ACACIA_FENCE_COLLISION_SHAPE_6, SHAPE_ACACIA_FENCE_COLLISION_SHAPE_7,
+            SHAPE_ACACIA_FENCE_COLLISION_SHAPE_8, SHAPE_ACACIA_FENCE_COLLISION_SHAPE_9);
 
     /**
-     * Used by minecraft:acacia_fence outline_shape, minecraft:bamboo_fence outline_shape, minecraft:birch_fence outline_shape, minecraft:cherry_fence outline_shape, minecraft:crimson_fence outline_shape, minecraft:dark_oak_fence outline_shape and 8 more.
+     * Used by:
+     * - minecraft:acacia_fence outline_shape
+     * - minecraft:bamboo_fence outline_shape
+     * - minecraft:birch_fence outline_shape
+     * - minecraft:cherry_fence outline_shape
+     * - minecraft:crimson_fence outline_shape
+     * - minecraft:dark_oak_fence outline_shape
+     * - and 8 more
      */
-    static final Cell ACACIA_FENCE_OUTLINE_SHAPE = Cell.table(new String[] {"minecraft:connection_east", "minecraft:connection_north", "minecraft:connection_south", "minecraft:connection_west"}, new Object[][] {{false, true}, {false, true}, {false, true}, {false, true}},
-            BOX_6_0_6_10_16_10, BOX_0_0_6_10_16_10, BOX_6_0_6_10_16_16, BOX_0_0_6_10_16_16,
+    static final Cell TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_F36CB3 = Cell.table(new String[] {"minecraft:connection_east", "minecraft:connection_north", "minecraft:connection_south", "minecraft:connection_west"},
+    new Object[][] {{false, true}, {false, true}, {false, true}, {false, true}},
+    BOX_6_0_6_10_16_10, BOX_0_0_6_10_16_10, BOX_6_0_6_10_16_16, BOX_0_0_6_10_16_16,
             BOX_6_0_0_10_16_10, BOX_0_0_0_10_16_10, BOX_6_0_0_10_16_16, BOX_0_0_0_10_16_16,
             BOX_6_0_6_16_16_10, BOX_0_0_6_16_16_10, BOX_6_0_6_16_16_16, BOX_0_0_6_16_16_16,
             BOX_6_0_0_16_16_10, BOX_0_0_0_16_16_10, BOX_6_0_0_16_16_16, BlockShape.FULL_CUBE);
 
     /**
-     * Used by minecraft:acacia_fence liquid_flow_directions, minecraft:bamboo_fence liquid_flow_directions, minecraft:birch_fence liquid_flow_directions, minecraft:black_stained_glass_pane liquid_flow_directions, minecraft:blue_stained_glass_pane liquid_flow_directions, minecraft:brown_stained_glass_pane liquid_flow_directions and 51 more.
+     * Used by:
+     * - minecraft:acacia_fence liquid_flow_directions
+     * - minecraft:bamboo_fence liquid_flow_directions
+     * - minecraft:birch_fence liquid_flow_directions
+     * - minecraft:black_stained_glass_pane liquid_flow_directions
+     * - minecraft:blue_stained_glass_pane liquid_flow_directions
+     * - minecraft:brown_stained_glass_pane liquid_flow_directions
+     * - and 51 more
      */
-    static final Cell ACACIA_FENCE_LIQUID_FLOW_DIRECTIONS = Cell.table(new String[] {"minecraft:connection_east", "minecraft:connection_north", "minecraft:connection_south", "minecraft:connection_west"}, new Object[][] {{false, true}, {false, true}, {false, true}, {false, true}},
-            63, null, null, null, null, null, null, null, null, null, null, null, null, null, null,
-            null);
+    static final Cell TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_9A27D1 = Cell.table(new String[] {"minecraft:connection_east", "minecraft:connection_north", "minecraft:connection_south", "minecraft:connection_west"},
+    new Object[][] {{false, true}, {false, true}, {false, true}, {false, true}},
+    63, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
 
     /**
-     * Used by minecraft:acacia_fence map_color (captures), minecraft:bamboo_fence map_color (captures), minecraft:birch_fence map_color (captures), minecraft:black_stained_glass_pane map_color (captures), minecraft:blue_stained_glass_pane map_color (captures), minecraft:brown_stained_glass_pane map_color (captures) and 51 more.
+     * Used by:
+     * - minecraft:acacia_fence map_color (captures)
+     * - minecraft:bamboo_fence map_color (captures)
+     * - minecraft:birch_fence map_color (captures)
+     * - minecraft:black_stained_glass_pane map_color (captures)
+     * - minecraft:blue_stained_glass_pane map_color (captures)
+     * - minecraft:brown_stained_glass_pane map_color (captures)
+     * - and 51 more
      */
-    static final Cell ACACIA_FENCE_MAP_COLOR_SOURCES = Cell.table(new String[] {"minecraft:connection_east", "minecraft:connection_north", "minecraft:connection_south", "minecraft:connection_west"}, new Object[][] {{false, true}, {false, true}, {false, true}, {false, true}},
-            SCRIPT_API_26_50_3, CLOUDBURST_DATA_26_50, CLOUDBURST_DATA_26_50, CLOUDBURST_DATA_26_50,
+    static final Cell SOURCES_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_B74E0E = Cell.table(new String[] {"minecraft:connection_east", "minecraft:connection_north", "minecraft:connection_south", "minecraft:connection_west"},
+    new Object[][] {{false, true}, {false, true}, {false, true}, {false, true}},
+    SCRIPT_API_26_50_MAP_COLOR, CLOUDBURST_DATA_26_50, CLOUDBURST_DATA_26_50, CLOUDBURST_DATA_26_50,
             CLOUDBURST_DATA_26_50, CLOUDBURST_DATA_26_50, CLOUDBURST_DATA_26_50,
             CLOUDBURST_DATA_26_50, CLOUDBURST_DATA_26_50, CLOUDBURST_DATA_26_50,
             CLOUDBURST_DATA_26_50, CLOUDBURST_DATA_26_50, CLOUDBURST_DATA_26_50,
             CLOUDBURST_DATA_26_50, CLOUDBURST_DATA_26_50, CLOUDBURST_DATA_26_50);
 
     /**
-     * Used by minecraft:acacia_fence movement_type, minecraft:bamboo_fence movement_type, minecraft:birch_fence movement_type, minecraft:black_stained_glass_pane movement_type, minecraft:blue_stained_glass_pane movement_type, minecraft:brown_stained_glass_pane movement_type and 51 more.
+     * Used by:
+     * - minecraft:acacia_fence movement_type
+     * - minecraft:bamboo_fence movement_type
+     * - minecraft:birch_fence movement_type
+     * - minecraft:black_stained_glass_pane movement_type
+     * - minecraft:blue_stained_glass_pane movement_type
+     * - minecraft:brown_stained_glass_pane movement_type
+     * - and 51 more
      */
-    static final Cell ACACIA_FENCE_MOVEMENT_TYPE = Cell.table(new String[] {"minecraft:connection_east", "minecraft:connection_north", "minecraft:connection_south", "minecraft:connection_west"}, new Object[][] {{false, true}, {false, true}, {false, true}, {false, true}},
-            "PushPull", null, null, null, null, null, null, null, null, null, null, null, null,
-            null, null, null);
+    static final Cell TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_375773 = Cell.table(new String[] {"minecraft:connection_east", "minecraft:connection_north", "minecraft:connection_south", "minecraft:connection_west"},
+    new Object[][] {{false, true}, {false, true}, {false, true}, {false, true}},
+    "PushPull", null, null, null, null, null, null, null, null, null, null, null, null, null, null,
+            null);
 
     /**
-     * Used by minecraft:acacia_fence sticky_type, minecraft:bamboo_fence sticky_type, minecraft:birch_fence sticky_type, minecraft:black_stained_glass_pane sticky_type, minecraft:blue_stained_glass_pane sticky_type, minecraft:brown_stained_glass_pane sticky_type and 51 more.
+     * Used by:
+     * - minecraft:acacia_fence sticky_type
+     * - minecraft:bamboo_fence sticky_type
+     * - minecraft:birch_fence sticky_type
+     * - minecraft:black_stained_glass_pane sticky_type
+     * - minecraft:blue_stained_glass_pane sticky_type
+     * - minecraft:brown_stained_glass_pane sticky_type
+     * - and 51 more
      */
-    static final Cell ACACIA_FENCE_STICKY_TYPE = Cell.table(new String[] {"minecraft:connection_east", "minecraft:connection_north", "minecraft:connection_south", "minecraft:connection_west"}, new Object[][] {{false, true}, {false, true}, {false, true}, {false, true}},
-            "None", null, null, null, null, null, null, null, null, null, null, null, null, null,
-            null, null);
+    static final Cell TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_43522C = Cell.table(new String[] {"minecraft:connection_east", "minecraft:connection_north", "minecraft:connection_south", "minecraft:connection_west"},
+    new Object[][] {{false, true}, {false, true}, {false, true}, {false, true}},
+    "None", null, null, null, null, null, null, null, null, null, null, null, null, null, null,
+            null);
 
     /**
-     * Used by minecraft:acacia_fence accumulates_snow, minecraft:acacia_fence obstructs_rain, minecraft:bamboo_fence accumulates_snow, minecraft:bamboo_fence obstructs_rain, minecraft:birch_fence accumulates_snow, minecraft:birch_fence obstructs_rain and 108 more.
+     * Used by:
+     * - minecraft:acacia_fence accumulates_snow
+     * - minecraft:acacia_fence obstructs_rain
+     * - minecraft:bamboo_fence accumulates_snow
+     * - minecraft:bamboo_fence obstructs_rain
+     * - minecraft:birch_fence accumulates_snow
+     * - minecraft:birch_fence obstructs_rain
+     * - and 108 more
      */
-    static final Cell ACACIA_FENCE_ACCUMULATES_SNOW = Cell.table(new String[] {"minecraft:connection_east", "minecraft:connection_north", "minecraft:connection_south", "minecraft:connection_west"}, new Object[][] {{false, true}, {false, true}, {false, true}, {false, true}},
-            true, null, null, null, null, null, null, null, null, null, null, null, null, null,
-            null, null);
+    static final Cell TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_9B2762 = Cell.table(new String[] {"minecraft:connection_east", "minecraft:connection_north", "minecraft:connection_south", "minecraft:connection_west"},
+    new Object[][] {{false, true}, {false, true}, {false, true}, {false, true}},
+    true, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
 
     /**
-     * Used by minecraft:acacia_fence snow_loggable, minecraft:bamboo_fence snow_loggable, minecraft:birch_fence snow_loggable, minecraft:black_stained_glass_pane snow_loggable, minecraft:blue_stained_glass_pane snow_loggable, minecraft:brown_stained_glass_pane snow_loggable and 165 more.
+     * Used by:
+     * - minecraft:acacia_fence snow_loggable
+     * - minecraft:bamboo_fence snow_loggable
+     * - minecraft:birch_fence snow_loggable
+     * - minecraft:black_stained_glass_pane snow_loggable
+     * - minecraft:blue_stained_glass_pane snow_loggable
+     * - minecraft:brown_stained_glass_pane snow_loggable
+     * - and 165 more
      */
-    static final Cell ACACIA_FENCE_SNOW_LOGGABLE = Cell.table(new String[] {"minecraft:connection_east", "minecraft:connection_north", "minecraft:connection_south", "minecraft:connection_west"}, new Object[][] {{false, true}, {false, true}, {false, true}, {false, true}},
-            false, null, null, null, null, null, null, null, null, null, null, null, null, null,
-            null, null);
+    static final Cell TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_1AB959 = Cell.table(new String[] {"minecraft:connection_east", "minecraft:connection_north", "minecraft:connection_south", "minecraft:connection_west"},
+    new Object[][] {{false, true}, {false, true}, {false, true}, {false, true}},
+    false, null, null, null, null, null, null, null, null, null, null, null, null, null, null,
+            null);
 
     /**
-     * Used by minecraft:acacia_stairs collision_shape, minecraft:andesite_stairs collision_shape, minecraft:bamboo_mosaic_stairs collision_shape, minecraft:bamboo_stairs collision_shape, minecraft:birch_stairs collision_shape, minecraft:black_concrete_stairs collision_shape and 91 more.
+     * Used by:
+     * - minecraft:acacia_stairs collision_shape
+     * - minecraft:andesite_stairs collision_shape
+     * - minecraft:bamboo_mosaic_stairs collision_shape
+     * - minecraft:bamboo_stairs collision_shape
+     * - minecraft:birch_stairs collision_shape
+     * - minecraft:black_concrete_stairs collision_shape
+     * - and 91 more
      */
-    static final Cell ACACIA_STAIRS_COLLISION_SHAPE_34 = Cell.table(new String[] {"minecraft:corner", "upside_down_bit", "weirdo_direction"}, new Object[][] {{"inner_left", "inner_right", "none", "outer_left", "outer_right"}, {false, true}, {0, 1, 2, 3}},
-            ACACIA_STAIRS_COLLISION_SHAPE_10, ACACIA_STAIRS_COLLISION_SHAPE_11,
-            ACACIA_STAIRS_COLLISION_SHAPE_12, ACACIA_STAIRS_COLLISION_SHAPE_13,
-            ACACIA_STAIRS_COLLISION_SHAPE_14, ACACIA_STAIRS_COLLISION_SHAPE_15,
-            ACACIA_STAIRS_COLLISION_SHAPE_16, ACACIA_STAIRS_COLLISION_SHAPE_17,
-            ACACIA_STAIRS_COLLISION_SHAPE_18, ACACIA_STAIRS_COLLISION_SHAPE_19,
-            ACACIA_STAIRS_COLLISION_SHAPE_20, ACACIA_STAIRS_COLLISION_SHAPE_21,
-            ACACIA_STAIRS_COLLISION_SHAPE_22, ACACIA_STAIRS_COLLISION_SHAPE_23,
-            ACACIA_STAIRS_COLLISION_SHAPE_24, ACACIA_STAIRS_COLLISION_SHAPE_25,
-            ACACIA_STAIRS_COLLISION_SHAPE, ACACIA_STAIRS_COLLISION_SHAPE_2,
-            ACACIA_STAIRS_COLLISION_SHAPE_3, ACACIA_STAIRS_COLLISION_SHAPE_4,
-            ACACIA_STAIRS_COLLISION_SHAPE_5, ACACIA_STAIRS_COLLISION_SHAPE_6,
-            ACACIA_STAIRS_COLLISION_SHAPE_7, ACACIA_STAIRS_COLLISION_SHAPE_8,
-            ACACIA_STAIRS_COLLISION_SHAPE_26, ACACIA_STAIRS_COLLISION_SHAPE_27,
-            ACACIA_STAIRS_COLLISION_SHAPE_28, ACACIA_STAIRS_COLLISION_SHAPE_29,
-            ACACIA_STAIRS_COLLISION_SHAPE_30, ACACIA_STAIRS_COLLISION_SHAPE_31,
-            ACACIA_STAIRS_COLLISION_SHAPE_32, ACACIA_STAIRS_COLLISION_SHAPE_33,
-            ACACIA_STAIRS_COLLISION_SHAPE_28, ACACIA_STAIRS_COLLISION_SHAPE_29,
-            ACACIA_STAIRS_COLLISION_SHAPE_27, ACACIA_STAIRS_COLLISION_SHAPE_26,
-            ACACIA_STAIRS_COLLISION_SHAPE_32, ACACIA_STAIRS_COLLISION_SHAPE_33,
-            ACACIA_STAIRS_COLLISION_SHAPE_31, ACACIA_STAIRS_COLLISION_SHAPE_30);
+    static final Cell TABLE_CORNER_UPSIDE_DOWN_BIT_WEIRDO_DIRECTION_BD8305 = Cell.table(new String[] {"minecraft:corner", "upside_down_bit", "weirdo_direction"},
+    new Object[][] {{"inner_left", "inner_right", "none", "outer_left", "outer_right"}, {false, true}, {0, 1, 2, 3}},
+    SHAPE_ACACIA_STAIRS_COLLISION_SHAPE_9, SHAPE_ACACIA_STAIRS_COLLISION_SHAPE_10,
+            SHAPE_ACACIA_STAIRS_COLLISION_SHAPE_11, SHAPE_ACACIA_STAIRS_COLLISION_SHAPE_12,
+            SHAPE_ACACIA_STAIRS_COLLISION_SHAPE_13, SHAPE_ACACIA_STAIRS_COLLISION_SHAPE_14,
+            SHAPE_ACACIA_STAIRS_COLLISION_SHAPE_15, SHAPE_ACACIA_STAIRS_COLLISION_SHAPE_16,
+            SHAPE_ACACIA_STAIRS_COLLISION_SHAPE_17, SHAPE_ACACIA_STAIRS_COLLISION_SHAPE_18,
+            SHAPE_ACACIA_STAIRS_COLLISION_SHAPE_19, SHAPE_ACACIA_STAIRS_COLLISION_SHAPE_20,
+            SHAPE_ACACIA_STAIRS_COLLISION_SHAPE_21, SHAPE_ACACIA_STAIRS_COLLISION_SHAPE_22,
+            SHAPE_ACACIA_STAIRS_COLLISION_SHAPE_23, SHAPE_ACACIA_STAIRS_COLLISION_SHAPE_24,
+            SHAPE_ACACIA_STAIRS_COLLISION_SHAPE, SHAPE_ACACIA_STAIRS_COLLISION_SHAPE_2,
+            SHAPE_ACACIA_STAIRS_COLLISION_SHAPE_3, SHAPE_ACACIA_STAIRS_COLLISION_SHAPE_4,
+            SHAPE_ACACIA_STAIRS_COLLISION_SHAPE_5, SHAPE_ACACIA_STAIRS_COLLISION_SHAPE_6,
+            SHAPE_ACACIA_STAIRS_COLLISION_SHAPE_7, SHAPE_ACACIA_STAIRS_COLLISION_SHAPE_8,
+            SHAPE_ACACIA_STAIRS_COLLISION_SHAPE_25, SHAPE_ACACIA_STAIRS_COLLISION_SHAPE_26,
+            SHAPE_ACACIA_STAIRS_COLLISION_SHAPE_27, SHAPE_ACACIA_STAIRS_COLLISION_SHAPE_28,
+            SHAPE_ACACIA_STAIRS_COLLISION_SHAPE_29, SHAPE_ACACIA_STAIRS_COLLISION_SHAPE_30,
+            SHAPE_ACACIA_STAIRS_COLLISION_SHAPE_31, SHAPE_ACACIA_STAIRS_COLLISION_SHAPE_32,
+            SHAPE_ACACIA_STAIRS_COLLISION_SHAPE_27, SHAPE_ACACIA_STAIRS_COLLISION_SHAPE_28,
+            SHAPE_ACACIA_STAIRS_COLLISION_SHAPE_26, SHAPE_ACACIA_STAIRS_COLLISION_SHAPE_25,
+            SHAPE_ACACIA_STAIRS_COLLISION_SHAPE_31, SHAPE_ACACIA_STAIRS_COLLISION_SHAPE_32,
+            SHAPE_ACACIA_STAIRS_COLLISION_SHAPE_30, SHAPE_ACACIA_STAIRS_COLLISION_SHAPE_29);
 
     /**
-     * Used by minecraft:acacia_stairs liquid_flow_directions, minecraft:andesite_stairs liquid_flow_directions, minecraft:bamboo_mosaic_stairs liquid_flow_directions, minecraft:bamboo_stairs liquid_flow_directions, minecraft:birch_stairs liquid_flow_directions, minecraft:black_concrete_stairs liquid_flow_directions and 91 more.
+     * Used by:
+     * - minecraft:acacia_stairs liquid_flow_directions
+     * - minecraft:andesite_stairs liquid_flow_directions
+     * - minecraft:bamboo_mosaic_stairs liquid_flow_directions
+     * - minecraft:bamboo_stairs liquid_flow_directions
+     * - minecraft:birch_stairs liquid_flow_directions
+     * - minecraft:black_concrete_stairs liquid_flow_directions
+     * - and 91 more
      */
-    static final Cell ACACIA_STAIRS_LIQUID_FLOW_DIRECTIONS_2 = Cell.table(new String[] {"minecraft:corner", "upside_down_bit", "weirdo_direction"}, new Object[][] {{"inner_left", "inner_right", "none", "outer_left", "outer_right"}, {false, true}, {0, 1, 2, 3}},
-            null, null, null, null, null, null, null, null, null, null, null, null, null, null,
-            null, null, 30, 46, 54, 58, 29, 45, 53, 57, null, null, null, null, null, null, null,
-            null, null, null, null, null, null, null, null, null);
+    static final Cell TABLE_CORNER_UPSIDE_DOWN_BIT_WEIRDO_DIRECTION_91C7B2 = Cell.table(new String[] {"minecraft:corner", "upside_down_bit", "weirdo_direction"},
+    new Object[][] {{"inner_left", "inner_right", "none", "outer_left", "outer_right"}, {false, true}, {0, 1, 2, 3}},
+    null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null,
+            30, 46, 54, 58, 29, 45, 53, 57, null, null, null, null, null, null, null, null, null,
+            null, null, null, null, null, null, null);
 
     /**
-     * Used by minecraft:black_stained_glass_pane collision_shape, minecraft:blue_stained_glass_pane collision_shape, minecraft:brown_stained_glass_pane collision_shape, minecraft:copper_bars collision_shape, minecraft:cyan_stained_glass_pane collision_shape, minecraft:exposed_copper_bars collision_shape and 37 more.
+     * Used by:
+     * - minecraft:black_stained_glass_pane collision_shape
+     * - minecraft:blue_stained_glass_pane collision_shape
+     * - minecraft:brown_stained_glass_pane collision_shape
+     * - minecraft:copper_bars collision_shape
+     * - minecraft:cyan_stained_glass_pane collision_shape
+     * - minecraft:exposed_copper_bars collision_shape
+     * - and 37 more
      */
-    static final Cell BLACK_STAINED_GLASS_PANE_COLLISION_SHAPE_10 = Cell.table(new String[] {"minecraft:connection_east", "minecraft:connection_north", "minecraft:connection_south", "minecraft:connection_west"}, new Object[][] {{false, true}, {false, true}, {false, true}, {false, true}},
-            BOX_7_0_7_9_16_9, BOX_0_0_7_8_16_9, BOX_7_0_8_9_16_16,
-            BLACK_STAINED_GLASS_PANE_COLLISION_SHAPE, BOX_7_0_0_9_16_8,
-            BLACK_STAINED_GLASS_PANE_COLLISION_SHAPE_2, BOX_7_0_0_9_16_16,
-            BLACK_STAINED_GLASS_PANE_COLLISION_SHAPE_3, BOX_8_0_7_16_16_9, BOX_0_0_7_16_16_9,
-            BLACK_STAINED_GLASS_PANE_COLLISION_SHAPE_4, BLACK_STAINED_GLASS_PANE_COLLISION_SHAPE_5,
-            BLACK_STAINED_GLASS_PANE_COLLISION_SHAPE_6, BLACK_STAINED_GLASS_PANE_COLLISION_SHAPE_7,
-            BLACK_STAINED_GLASS_PANE_COLLISION_SHAPE_8, BLACK_STAINED_GLASS_PANE_COLLISION_SHAPE_9);
+    static final Cell TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_B233D5 = Cell.table(new String[] {"minecraft:connection_east", "minecraft:connection_north", "minecraft:connection_south", "minecraft:connection_west"},
+    new Object[][] {{false, true}, {false, true}, {false, true}, {false, true}},
+    BOX_7_0_7_9_16_9, BOX_0_0_7_8_16_9, BOX_7_0_8_9_16_16,
+            SHAPE_BLACK_STAINED_GLASS_PANE_COLLISION_SHAPE, BOX_7_0_0_9_16_8,
+            SHAPE_BLACK_STAINED_GLASS_PANE_COLLISION_SHAPE_2, BOX_7_0_0_9_16_16,
+            SHAPE_BLACK_STAINED_GLASS_PANE_COLLISION_SHAPE_3, BOX_8_0_7_16_16_9, BOX_0_0_7_16_16_9,
+            SHAPE_BLACK_STAINED_GLASS_PANE_COLLISION_SHAPE_4,
+            SHAPE_BLACK_STAINED_GLASS_PANE_COLLISION_SHAPE_5,
+            SHAPE_BLACK_STAINED_GLASS_PANE_COLLISION_SHAPE_6,
+            SHAPE_BLACK_STAINED_GLASS_PANE_COLLISION_SHAPE_7,
+            SHAPE_BLACK_STAINED_GLASS_PANE_COLLISION_SHAPE_8,
+            SHAPE_BLACK_STAINED_GLASS_PANE_COLLISION_SHAPE_9);
 
     /**
-     * Used by minecraft:black_stained_glass_pane outline_shape, minecraft:blue_stained_glass_pane outline_shape, minecraft:brown_stained_glass_pane outline_shape, minecraft:copper_bars outline_shape, minecraft:cyan_stained_glass_pane outline_shape, minecraft:exposed_copper_bars outline_shape and 37 more.
+     * Used by:
+     * - minecraft:black_stained_glass_pane outline_shape
+     * - minecraft:blue_stained_glass_pane outline_shape
+     * - minecraft:brown_stained_glass_pane outline_shape
+     * - minecraft:copper_bars outline_shape
+     * - minecraft:cyan_stained_glass_pane outline_shape
+     * - minecraft:exposed_copper_bars outline_shape
+     * - and 37 more
      */
-    static final Cell BLACK_STAINED_GLASS_PANE_OUTLINE_SHAPE = Cell.table(new String[] {"minecraft:connection_east", "minecraft:connection_north", "minecraft:connection_south", "minecraft:connection_west"}, new Object[][] {{false, true}, {false, true}, {false, true}, {false, true}},
-            BOX_7_0_7_9_16_9, BOX_0_0_7_9_16_9, BOX_7_0_7_9_16_16, BOX_0_0_7_9_16_16,
-            BOX_7_0_0_9_16_9, BOX_0_0_0_9_16_9, BOX_7_0_0_9_16_16, BOX_0_0_0_9_16_16,
-            BOX_7_0_7_16_16_9, BOX_0_0_7_16_16_9, BOX_7_0_7_16_16_16, BOX_0_0_7_16_16_16,
-            BOX_7_0_0_16_16_9, BOX_0_0_0_16_16_9, BOX_7_0_0_16_16_16, BlockShape.FULL_CUBE);
+    static final Cell TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_2E2A33 = Cell.table(new String[] {"minecraft:connection_east", "minecraft:connection_north", "minecraft:connection_south", "minecraft:connection_west"},
+    new Object[][] {{false, true}, {false, true}, {false, true}, {false, true}},
+    BOX_7_0_7_9_16_9, BOX_0_0_7_9_16_9, BOX_7_0_7_9_16_16, BOX_0_0_7_9_16_16, BOX_7_0_0_9_16_9,
+            BOX_0_0_0_9_16_9, BOX_7_0_0_9_16_16, BOX_0_0_0_9_16_16, BOX_7_0_7_16_16_9,
+            BOX_0_0_7_16_16_9, BOX_7_0_7_16_16_16, BOX_0_0_7_16_16_16, BOX_7_0_0_16_16_9,
+            BOX_0_0_0_16_16_9, BOX_7_0_0_16_16_16, BlockShape.FULL_CUBE);
 
     /**
-     * Used by minecraft:mangrove_propagule outline_shape.
+     * Used by:
+     * - minecraft:mangrove_propagule outline_shape
      */
-    static final Cell MANGROVE_PROPAGULE_OUTLINE_SHAPE_2 = Cell.table(new String[] {"hanging", "propagule_stage"}, new Object[][] {{false, true}, {0, 1, 2, 3, 4}},
-            BOX_6_0_6_10_16_10, BOX_6_0_6_10_16_10, BOX_6_0_6_10_16_10, BOX_6_0_6_10_16_10,
+    static final Cell TABLE_HANGING_PROPAGULE_STAGE_5F3339 = Cell.table(new String[] {"hanging", "propagule_stage"},
+    new Object[][] {{false, true}, {0, 1, 2, 3, 4}},
+    BOX_6_0_6_10_16_10, BOX_6_0_6_10_16_10, BOX_6_0_6_10_16_10, BOX_6_0_6_10_16_10,
             BOX_6_0_6_10_16_10, BOX_6_12_6_10_16_10, BOX_6_10_6_10_16_10, BOX_6_7_6_10_16_10,
             BOX_6_3_6_10_16_10, BOX_6_0_6_10_16_10);
 
     /**
-     * Used by minecraft:pointed_dripstone collision_shape, minecraft:pointed_dripstone outline_shape, minecraft:sulfur_spike collision_shape, minecraft:sulfur_spike outline_shape, minecraft:icicle collision_shape.
+     * Used by:
+     * - minecraft:pointed_dripstone collision_shape
+     * - minecraft:pointed_dripstone outline_shape
+     * - minecraft:sulfur_spike collision_shape
+     * - minecraft:sulfur_spike outline_shape
+     * - minecraft:icicle collision_shape
      */
-    static final Cell POINTED_DRIPSTONE_COLLISION_SHAPE_2 = Cell.table(new String[] {"dripstone_thickness", "hanging"}, new Object[][] {{"base", "frustum", "merge", "middle", "tip"}, {false, true}},
-            BOX_2_0_2_14_16_14, BOX_2_0_2_14_16_14, BOX_4_0_4_12_16_12, BOX_4_0_4_12_16_12,
+    static final Cell TABLE_DRIPSTONE_THICKNESS_HANGING_7E5CC4 = Cell.table(new String[] {"dripstone_thickness", "hanging"},
+    new Object[][] {{"base", "frustum", "merge", "middle", "tip"}, {false, true}},
+    BOX_2_0_2_14_16_14, BOX_2_0_2_14_16_14, BOX_4_0_4_12_16_12, BOX_4_0_4_12_16_12,
             BOX_5_0_5_11_16_11, BOX_5_0_5_11_16_11, BOX_3_0_3_13_16_13, BOX_3_0_3_13_16_13,
             BOX_5_0_5_11_11_11, BOX_5_5_5_11_16_11);
 
     /**
-     * Used by minecraft:shelf_mushroom collision_shape.
+     * Used by:
+     * - minecraft:shelf_mushroom collision_shape
      */
-    static final Cell SHELF_MUSHROOM_COLLISION_SHAPE = Cell.table(new String[] {"growth", "minecraft:cardinal_direction"}, new Object[][] {{0, 1}, {"east", "north", "south", "west"}},
-            BOX_0_4_3_7_11_13, BOX_3_4_9_13_11_16, BOX_3_4_0_13_11_7, BOX_9_4_3_16_11_13,
+    static final Cell TABLE_GROWTH_CARDINAL_DIRECTION_23A8DA = Cell.table(new String[] {"growth", "minecraft:cardinal_direction"},
+    new Object[][] {{0, 1}, {"east", "north", "south", "west"}},
+    BOX_0_4_3_7_11_13, BOX_3_4_9_13_11_16, BOX_3_4_0_13_11_7, BOX_9_4_3_16_11_13,
             BOX_0_4_1_10_11_15, BOX_1_4_6_15_11_16, BOX_1_4_0_15_11_10, BOX_6_4_1_16_11_15);
 
     /**
-     * Used by minecraft:shelf_mushroom outline_shape.
+     * Used by:
+     * - minecraft:shelf_mushroom outline_shape
      */
-    static final Cell SHELF_MUSHROOM_OUTLINE_SHAPE = Cell.table(new String[] {"growth", "minecraft:cardinal_direction"}, new Object[][] {{0, 1}, {"east", "north", "south", "west"}},
-            BOX_0_8_3_7_11_13, BOX_3_8_9_13_11_16, BOX_3_8_0_13_11_7, BOX_9_8_3_16_11_13,
+    static final Cell TABLE_GROWTH_CARDINAL_DIRECTION_8DAE78 = Cell.table(new String[] {"growth", "minecraft:cardinal_direction"},
+    new Object[][] {{0, 1}, {"east", "north", "south", "west"}},
+    BOX_0_8_3_7_11_13, BOX_3_8_9_13_11_16, BOX_3_8_0_13_11_7, BOX_9_8_3_16_11_13,
             BOX_0_6_1_10_11_15, BOX_1_6_6_15_11_16, BOX_1_6_0_15_11_10, BOX_6_6_1_16_11_15);
 
     /**
-     * Used by minecraft:trip_wire solid (captures).
+     * Used by:
+     * - minecraft:trip_wire solid (captures)
      */
-    static final Cell TRIP_WIRE_SOLID_SOURCES_3 = Cell.table(new String[] {"attached_bit", "disarmed_bit", "minecraft:connection_east", "minecraft:connection_north", "minecraft:connection_south", "minecraft:connection_west", "powered_bit", "suspended_bit"}, new Object[][] {{false, true}, {false, true}, {false, true}, {false, true}, {false, true}, {false, true}, {false, true}, {false, true}},
-            CLOUDBURST_DATA_26_50, SCRIPT_API_26_50, CLOUDBURST_DATA_26_50, CLOUDBURST_DATA_26_50,
+    static final Cell SOURCES_ATTACHED_BIT_DISARMED_BIT_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_POWERED_BIT_SUSPENDED_BIT_BCC5E0 = Cell.table(new String[] {"attached_bit", "disarmed_bit", "minecraft:connection_east", "minecraft:connection_north", "minecraft:connection_south", "minecraft:connection_west", "powered_bit", "suspended_bit"},
+    new Object[][] {{false, true}, {false, true}, {false, true}, {false, true}, {false, true}, {false, true}, {false, true}, {false, true}},
+    CLOUDBURST_DATA_26_50, SCRIPT_API_26_50_SOLID, CLOUDBURST_DATA_26_50, CLOUDBURST_DATA_26_50,
             CLOUDBURST_DATA_26_50, CLOUDBURST_DATA_26_50, CLOUDBURST_DATA_26_50,
             CLOUDBURST_DATA_26_50, CLOUDBURST_DATA_26_50, CLOUDBURST_DATA_26_50,
             CLOUDBURST_DATA_26_50, CLOUDBURST_DATA_26_50, CLOUDBURST_DATA_26_50,
@@ -750,10 +1053,12 @@ final class BehaviourTables {
             CLOUDBURST_DATA_26_50, CLOUDBURST_DATA_26_50, CLOUDBURST_DATA_26_50);
 
     /**
-     * Used by minecraft:trip_wire liquid_flow_directions.
+     * Used by:
+     * - minecraft:trip_wire liquid_flow_directions
      */
-    static final Cell TRIP_WIRE_LIQUID_FLOW_DIRECTIONS_2 = Cell.table(new String[] {"attached_bit", "disarmed_bit", "minecraft:connection_east", "minecraft:connection_north", "minecraft:connection_south", "minecraft:connection_west", "powered_bit", "suspended_bit"}, new Object[][] {{false, true}, {false, true}, {false, true}, {false, true}, {false, true}, {false, true}, {false, true}, {false, true}},
-            null, 63, null, null, null, null, null, null, null, null, null, null, null, null, null,
+    static final Cell TABLE_ATTACHED_BIT_DISARMED_BIT_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_POWERED_BIT_SUSPENDED_BIT_2F4A55 = Cell.table(new String[] {"attached_bit", "disarmed_bit", "minecraft:connection_east", "minecraft:connection_north", "minecraft:connection_south", "minecraft:connection_west", "powered_bit", "suspended_bit"},
+    new Object[][] {{false, true}, {false, true}, {false, true}, {false, true}, {false, true}, {false, true}, {false, true}, {false, true}},
+    null, 63, null, null, null, null, null, null, null, null, null, null, null, null, null, null,
             null, null, null, null, null, null, null, null, null, null, null, null, null, null,
             null, null, null, null, null, null, null, null, null, null, null, null, null, null,
             null, null, null, null, null, null, null, null, null, null, null, null, null, null,
@@ -771,121 +1076,7 @@ final class BehaviourTables {
             null, null, null, null, null, null, null, null, null, null, null, null, null, null,
             null, null, null, null, null, null, null, null, null, null, null, null, null, null,
             null, null, null, null, null, null, null, null, null, null, null, null, null, null,
-            null, null, null);
-
-    /**
-     * Used by minecraft:trip_wire map_color (captures).
-     */
-    static final Cell TRIP_WIRE_MAP_COLOR_SOURCES_3 = Cell.table(new String[] {"attached_bit", "disarmed_bit", "minecraft:connection_east", "minecraft:connection_north", "minecraft:connection_south", "minecraft:connection_west", "powered_bit", "suspended_bit"}, new Object[][] {{false, true}, {false, true}, {false, true}, {false, true}, {false, true}, {false, true}, {false, true}, {false, true}},
-            CLOUDBURST_DATA_26_50, SCRIPT_API_26_50_3, CLOUDBURST_DATA_26_50, CLOUDBURST_DATA_26_50,
-            CLOUDBURST_DATA_26_50, CLOUDBURST_DATA_26_50, CLOUDBURST_DATA_26_50,
-            CLOUDBURST_DATA_26_50, CLOUDBURST_DATA_26_50, CLOUDBURST_DATA_26_50,
-            CLOUDBURST_DATA_26_50, CLOUDBURST_DATA_26_50, CLOUDBURST_DATA_26_50,
-            CLOUDBURST_DATA_26_50, CLOUDBURST_DATA_26_50, CLOUDBURST_DATA_26_50,
-            CLOUDBURST_DATA_26_50, CLOUDBURST_DATA_26_50, CLOUDBURST_DATA_26_50,
-            CLOUDBURST_DATA_26_50, CLOUDBURST_DATA_26_50, CLOUDBURST_DATA_26_50,
-            CLOUDBURST_DATA_26_50, CLOUDBURST_DATA_26_50, CLOUDBURST_DATA_26_50,
-            CLOUDBURST_DATA_26_50, CLOUDBURST_DATA_26_50, CLOUDBURST_DATA_26_50,
-            CLOUDBURST_DATA_26_50, CLOUDBURST_DATA_26_50, CLOUDBURST_DATA_26_50,
-            CLOUDBURST_DATA_26_50, CLOUDBURST_DATA_26_50, CLOUDBURST_DATA_26_50,
-            CLOUDBURST_DATA_26_50, CLOUDBURST_DATA_26_50, CLOUDBURST_DATA_26_50,
-            CLOUDBURST_DATA_26_50, CLOUDBURST_DATA_26_50, CLOUDBURST_DATA_26_50,
-            CLOUDBURST_DATA_26_50, CLOUDBURST_DATA_26_50, CLOUDBURST_DATA_26_50,
-            CLOUDBURST_DATA_26_50, CLOUDBURST_DATA_26_50, CLOUDBURST_DATA_26_50,
-            CLOUDBURST_DATA_26_50, CLOUDBURST_DATA_26_50, CLOUDBURST_DATA_26_50,
-            CLOUDBURST_DATA_26_50, CLOUDBURST_DATA_26_50, CLOUDBURST_DATA_26_50,
-            CLOUDBURST_DATA_26_50, CLOUDBURST_DATA_26_50, CLOUDBURST_DATA_26_50,
-            CLOUDBURST_DATA_26_50, CLOUDBURST_DATA_26_50, CLOUDBURST_DATA_26_50,
-            CLOUDBURST_DATA_26_50, CLOUDBURST_DATA_26_50, CLOUDBURST_DATA_26_50,
-            CLOUDBURST_DATA_26_50, CLOUDBURST_DATA_26_50, CLOUDBURST_DATA_26_50,
-            CLOUDBURST_DATA_26_50, CLOUDBURST_DATA_26_50, CLOUDBURST_DATA_26_50,
-            CLOUDBURST_DATA_26_50, CLOUDBURST_DATA_26_50, CLOUDBURST_DATA_26_50,
-            CLOUDBURST_DATA_26_50, CLOUDBURST_DATA_26_50, CLOUDBURST_DATA_26_50,
-            CLOUDBURST_DATA_26_50, CLOUDBURST_DATA_26_50, CLOUDBURST_DATA_26_50,
-            CLOUDBURST_DATA_26_50, CLOUDBURST_DATA_26_50, CLOUDBURST_DATA_26_50,
-            CLOUDBURST_DATA_26_50, CLOUDBURST_DATA_26_50, CLOUDBURST_DATA_26_50,
-            CLOUDBURST_DATA_26_50, CLOUDBURST_DATA_26_50, CLOUDBURST_DATA_26_50,
-            CLOUDBURST_DATA_26_50, CLOUDBURST_DATA_26_50, CLOUDBURST_DATA_26_50,
-            CLOUDBURST_DATA_26_50, CLOUDBURST_DATA_26_50, CLOUDBURST_DATA_26_50,
-            CLOUDBURST_DATA_26_50, CLOUDBURST_DATA_26_50, CLOUDBURST_DATA_26_50,
-            CLOUDBURST_DATA_26_50, CLOUDBURST_DATA_26_50, CLOUDBURST_DATA_26_50,
-            CLOUDBURST_DATA_26_50, CLOUDBURST_DATA_26_50, CLOUDBURST_DATA_26_50,
-            CLOUDBURST_DATA_26_50, CLOUDBURST_DATA_26_50, CLOUDBURST_DATA_26_50,
-            CLOUDBURST_DATA_26_50, CLOUDBURST_DATA_26_50, CLOUDBURST_DATA_26_50,
-            CLOUDBURST_DATA_26_50, CLOUDBURST_DATA_26_50, CLOUDBURST_DATA_26_50,
-            CLOUDBURST_DATA_26_50, CLOUDBURST_DATA_26_50, CLOUDBURST_DATA_26_50,
-            CLOUDBURST_DATA_26_50, CLOUDBURST_DATA_26_50, CLOUDBURST_DATA_26_50,
-            CLOUDBURST_DATA_26_50, CLOUDBURST_DATA_26_50, CLOUDBURST_DATA_26_50,
-            CLOUDBURST_DATA_26_50, CLOUDBURST_DATA_26_50, CLOUDBURST_DATA_26_50,
-            CLOUDBURST_DATA_26_50, CLOUDBURST_DATA_26_50, CLOUDBURST_DATA_26_50,
-            CLOUDBURST_DATA_26_50, CLOUDBURST_DATA_26_50, CLOUDBURST_DATA_26_50,
-            CLOUDBURST_DATA_26_50, CLOUDBURST_DATA_26_50, CLOUDBURST_DATA_26_50,
-            CLOUDBURST_DATA_26_50, CLOUDBURST_DATA_26_50, CLOUDBURST_DATA_26_50,
-            CLOUDBURST_DATA_26_50, CLOUDBURST_DATA_26_50, CLOUDBURST_DATA_26_50,
-            CLOUDBURST_DATA_26_50, CLOUDBURST_DATA_26_50, CLOUDBURST_DATA_26_50,
-            CLOUDBURST_DATA_26_50, CLOUDBURST_DATA_26_50, CLOUDBURST_DATA_26_50,
-            CLOUDBURST_DATA_26_50, CLOUDBURST_DATA_26_50, CLOUDBURST_DATA_26_50,
-            CLOUDBURST_DATA_26_50, CLOUDBURST_DATA_26_50, CLOUDBURST_DATA_26_50,
-            CLOUDBURST_DATA_26_50, CLOUDBURST_DATA_26_50, CLOUDBURST_DATA_26_50,
-            CLOUDBURST_DATA_26_50, CLOUDBURST_DATA_26_50, CLOUDBURST_DATA_26_50,
-            CLOUDBURST_DATA_26_50, CLOUDBURST_DATA_26_50, CLOUDBURST_DATA_26_50,
-            CLOUDBURST_DATA_26_50, CLOUDBURST_DATA_26_50, CLOUDBURST_DATA_26_50,
-            CLOUDBURST_DATA_26_50, CLOUDBURST_DATA_26_50, CLOUDBURST_DATA_26_50,
-            CLOUDBURST_DATA_26_50, CLOUDBURST_DATA_26_50, CLOUDBURST_DATA_26_50,
-            CLOUDBURST_DATA_26_50, CLOUDBURST_DATA_26_50, CLOUDBURST_DATA_26_50,
-            CLOUDBURST_DATA_26_50, CLOUDBURST_DATA_26_50, CLOUDBURST_DATA_26_50,
-            CLOUDBURST_DATA_26_50, CLOUDBURST_DATA_26_50, CLOUDBURST_DATA_26_50,
-            CLOUDBURST_DATA_26_50, CLOUDBURST_DATA_26_50, CLOUDBURST_DATA_26_50,
-            CLOUDBURST_DATA_26_50, CLOUDBURST_DATA_26_50, CLOUDBURST_DATA_26_50,
-            CLOUDBURST_DATA_26_50, CLOUDBURST_DATA_26_50, CLOUDBURST_DATA_26_50,
-            CLOUDBURST_DATA_26_50, CLOUDBURST_DATA_26_50, CLOUDBURST_DATA_26_50,
-            CLOUDBURST_DATA_26_50, CLOUDBURST_DATA_26_50, CLOUDBURST_DATA_26_50,
-            CLOUDBURST_DATA_26_50, CLOUDBURST_DATA_26_50, CLOUDBURST_DATA_26_50,
-            CLOUDBURST_DATA_26_50, CLOUDBURST_DATA_26_50, CLOUDBURST_DATA_26_50,
-            CLOUDBURST_DATA_26_50, CLOUDBURST_DATA_26_50, CLOUDBURST_DATA_26_50,
-            CLOUDBURST_DATA_26_50, CLOUDBURST_DATA_26_50, CLOUDBURST_DATA_26_50,
-            CLOUDBURST_DATA_26_50, CLOUDBURST_DATA_26_50, CLOUDBURST_DATA_26_50,
-            CLOUDBURST_DATA_26_50, CLOUDBURST_DATA_26_50, CLOUDBURST_DATA_26_50,
-            CLOUDBURST_DATA_26_50, CLOUDBURST_DATA_26_50, CLOUDBURST_DATA_26_50,
-            CLOUDBURST_DATA_26_50, CLOUDBURST_DATA_26_50, CLOUDBURST_DATA_26_50,
-            CLOUDBURST_DATA_26_50, CLOUDBURST_DATA_26_50, CLOUDBURST_DATA_26_50,
-            CLOUDBURST_DATA_26_50, CLOUDBURST_DATA_26_50, CLOUDBURST_DATA_26_50,
-            CLOUDBURST_DATA_26_50, CLOUDBURST_DATA_26_50, CLOUDBURST_DATA_26_50,
-            CLOUDBURST_DATA_26_50, CLOUDBURST_DATA_26_50, CLOUDBURST_DATA_26_50,
-            CLOUDBURST_DATA_26_50, CLOUDBURST_DATA_26_50, CLOUDBURST_DATA_26_50,
-            CLOUDBURST_DATA_26_50, CLOUDBURST_DATA_26_50, CLOUDBURST_DATA_26_50,
-            CLOUDBURST_DATA_26_50, CLOUDBURST_DATA_26_50, CLOUDBURST_DATA_26_50,
-            CLOUDBURST_DATA_26_50, CLOUDBURST_DATA_26_50, CLOUDBURST_DATA_26_50,
-            CLOUDBURST_DATA_26_50, CLOUDBURST_DATA_26_50, CLOUDBURST_DATA_26_50,
-            CLOUDBURST_DATA_26_50, CLOUDBURST_DATA_26_50, CLOUDBURST_DATA_26_50,
-            CLOUDBURST_DATA_26_50, CLOUDBURST_DATA_26_50, CLOUDBURST_DATA_26_50,
-            CLOUDBURST_DATA_26_50, CLOUDBURST_DATA_26_50, CLOUDBURST_DATA_26_50,
-            CLOUDBURST_DATA_26_50, CLOUDBURST_DATA_26_50, CLOUDBURST_DATA_26_50,
-            CLOUDBURST_DATA_26_50, CLOUDBURST_DATA_26_50, CLOUDBURST_DATA_26_50);
-
-    /**
-     * Used by minecraft:trip_wire movement_type.
-     */
-    static final Cell TRIP_WIRE_MOVEMENT_TYPE_2 = Cell.table(new String[] {"attached_bit", "disarmed_bit", "minecraft:connection_east", "minecraft:connection_north", "minecraft:connection_south", "minecraft:connection_west", "powered_bit", "suspended_bit"}, new Object[][] {{false, true}, {false, true}, {false, true}, {false, true}, {false, true}, {false, true}, {false, true}, {false, true}},
-            null, "Popped", null, null, null, null, null, null, null, null, null, null, null, null,
-            null, null, null, null, null, null, null, null, null, null, null, null, null, null,
-            null, null, null, null, null, null, null, null, null, null, null, null, null, null,
-            null, null, null, null, null, null, null, null, null, null, null, null, null, null,
-            null, null, null, null, null, null, null, null, null, null, null, null, null, null,
-            null, null, null, null, null, null, null, null, null, null, null, null, null, null,
-            null, null, null, null, null, null, null, null, null, null, null, null, null, null,
-            null, null, null, null, null, null, null, null, null, null, null, null, null, null,
-            null, null, null, null, null, null, null, null, null, null, null, null, null, null,
-            null, null, null, null, null, null, null, null, null, null, null, null, null, null,
-            null, null, null, null, null, null, null, null, null, null, null, null, null, null,
-            null, null, null, null, null, null, null, null, null, null, null, null, null, null,
-            null, null, null, null, null, null, null, null, null, null, null, null, null, null,
-            null, null, null, null, null, null, null, null, null, null, null, null, null, null,
-            null, null, null, null, null, null, null, null, null, null, null, null, null, null,
-            null, null, null, null, null, null, null, null, null, null, null, null, null, null,
-            null, null, null, null, null, null, null, null, null, null, null, null, null, null,
-            null, null, null, null, null, null, null, null, null, null, null, null, null, null,
-            null, null, null, null);
+            null, null);
 
     private BehaviourTables() {
     }

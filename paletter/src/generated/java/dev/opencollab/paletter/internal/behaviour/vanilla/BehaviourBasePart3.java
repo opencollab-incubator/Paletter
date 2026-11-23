@@ -2,11 +2,8 @@
 // and the bundled palettes. Do not edit; see docs/data-pipeline.md.
 package dev.opencollab.paletter.internal.behaviour.vanilla;
 
-import static dev.opencollab.paletter.internal.behaviour.vanilla.BehaviourCaptures.*;
 import static dev.opencollab.paletter.internal.behaviour.vanilla.BehaviourShapes.*;
-import static dev.opencollab.paletter.internal.behaviour.vanilla.BehaviourShapesPart2.*;
 import static dev.opencollab.paletter.internal.behaviour.vanilla.BehaviourTables.*;
-import static dev.opencollab.paletter.internal.behaviour.vanilla.BehaviourTablesPart2.*;
 
 import dev.opencollab.paletter.behaviour.BlockShape;
 
@@ -18,20 +15,323 @@ final class BehaviourBasePart3 {
     }
 
     static void part16(Changes v) {
+        v.block("minecraft:exposed_lightning_rod", "facing_direction=0..5,powered_bit=false|true")
+                .destroyTime(3.0f)
+                .collisionShape("facing_direction", 0, BOX_6_0_6_10_16_10, 1, BOX_6_0_6_10_16_10,
+                        2, BOX_6_6_0_10_10_16, 3, BOX_6_6_0_10_10_16, 4, BOX_0_6_6_16_10_10,
+                        5, BOX_0_6_6_16_10_10)
+                .outlineShape("facing_direction", 0, BOX_6_0_6_10_16_10, 1, BOX_6_0_6_10_16_10,
+                        2, BOX_6_6_0_10_10_16, 3, BOX_6_6_0_10_10_16, 4, BOX_0_6_6_16_10_10,
+                        5, BOX_0_6_6_16_10_10)
+                .canContainLiquid(true)
+                .requiresCorrectTool(true)
+                .mapColor(0xD87F33FF)
+                .translucency(0.8f);
+        v.block("minecraft:farmland", "moisturized_amount=0..7")
+                .destroyTime(0.6f)
+                .explosionResistance(0.6f)
+                .collisionShape(BOX_0_0_0_16_15_16)
+                .outlineShape(BOX_0_0_0_16_15_16)
+                .mapColor(0x976D4DFF);
+        v.block("minecraft:fence_gate", "in_wall_bit=false|true,minecraft:cardinal_direction='east'|'north'|'south'|'west',open_bit=false|true")
+                .destroyTime(2.0f)
+                .explosionResistance(3.0f)
+                .collisionShape(TABLE_CARDINAL_DIRECTION_OPEN_BIT_C87F8B)
+                .outlineShape("minecraft:cardinal_direction", "east", BOX_6_0_0_10_16_16,
+                        "north", BOX_0_0_6_16_16_10, "south", BOX_0_0_6_16_16_10,
+                        "west", BOX_6_0_0_10_16_16)
+                .canContainLiquid(true)
+                .liquidFlowDirections("in_wall_bit", false, 63, true, null)
+                .mapColor(0x8F7748FF)
+                .flameOdds(5)
+                .burnOdds(20)
+                .translucency(0.8f)
+                .movementType("in_wall_bit", false, "PushPull", true, null)
+                .stickyType("in_wall_bit", false, "None", true, null)
+                .accumulatesSnow("in_wall_bit", false, true, true, null)
+                .snowLoggable("in_wall_bit", false, false, true, null)
+                .obstructsRain("in_wall_bit", false, true, true, null);
+        v.block("minecraft:fern", "")
+                .explosionResistance(0.0f)
+                .collisionShape(BlockShape.EMPTY)
+                .outlineShape(SHAPE_FERN_OUTLINE_SHAPE)
+                .liquidBlocking(false)
+                .liquidSpreadCausesSpawn(true)
+                .mapColor(0xFFFFFFFF)
+                .tintMethod("Grass")
+                .flameOdds(60)
+                .burnOdds(100)
+                .translucency(1.0f)
+                .movementType("Popped")
+                .accumulatesSnow(false)
+                .snowLoggable(true)
+                .obstructsRain(false);
+        v.block("minecraft:fire", "age=0..15")
+                .explosionResistance(0.0f)
+                .collisionShape(BlockShape.EMPTY)
+                .lightEmission(15)
+                .liquidBlocking(false)
+                .liquidSpreadCausesSpawn(true)
+                .mapColor(0xFF0000FF)
+                .translucency(1.0f)
+                .movementType("Popped")
+                .accumulatesSnow(false)
+                .obstructsRain(false);
+        v.block("minecraft:fire_coral", "")
+                .explosionResistance(0.0f)
+                .collisionShape(BlockShape.EMPTY)
+                .outlineShape(SHAPE_BAMBOO_SAPLING_OUTLINE_SHAPE)
+                .canContainLiquid(true)
+                .liquidBlocking(false)
+                .liquidSpreadCausesSpawn(true)
+                .mapColor(0xFFFFFFFF)
+                .tintMethod("Grass")
+                .translucency(0.8f)
+                .movementType("Popped");
+        v.block("minecraft:fire_coral_block", "")
+                .destroyTime(1.5f)
+                .solid(true)
+                .lightDampening(15)
+                .requiresCorrectTool(true)
+                .mapColor(0x993333FF);
+        v.block("minecraft:fire_coral_fan", "coral_fan_direction=0|1")
+                .explosionResistance(0.0f)
+                .collisionShape(BlockShape.EMPTY)
+                .outlineShape(SHAPE_BRAIN_CORAL_FAN_OUTLINE_SHAPE)
+                .canContainLiquid(true)
+                .liquidBlocking(false)
+                .liquidSpreadCausesSpawn(true)
+                .mapColor(0xFFFFFFFF)
+                .tintMethod("Grass")
+                .translucency(0.8f)
+                .movementType("Popped");
+        v.block("minecraft:fire_coral_wall_fan", "coral_direction=0..3")
+                .explosionResistance(0.0f)
+                .collisionShape(BlockShape.EMPTY)
+                .outlineShape("coral_direction", 0, SHAPE_BRAIN_CORAL_WALL_FAN_OUTLINE_SHAPE,
+                        1, SHAPE_BRAIN_CORAL_WALL_FAN_OUTLINE_SHAPE_2,
+                        2, SHAPE_BRAIN_CORAL_WALL_FAN_OUTLINE_SHAPE_3,
+                        3, SHAPE_BRAIN_CORAL_WALL_FAN_OUTLINE_SHAPE_4)
+                .canContainLiquid(true)
+                .liquidBlocking(false)
+                .liquidSpreadCausesSpawn(true)
+                .mapColor(0xFFFFFFFF)
+                .tintMethod("Grass")
+                .translucency(0.8f)
+                .movementType("Popped");
+        v.block("minecraft:firefly_bush", "")
+                .explosionResistance(0.0f)
+                .collisionShape(BlockShape.EMPTY)
+                .lightEmission(2)
+                .liquidBlocking(false)
+                .liquidSpreadCausesSpawn(true)
+                .mapColor(0x007C00FF)
+                .flameOdds(60)
+                .burnOdds(100)
+                .translucency(1.0f)
+                .movementType("Popped")
+                .accumulatesSnow(false)
+                .snowLoggable(true)
+                .obstructsRain(false);
+        v.block("minecraft:fletching_table", "")
+                .destroyTime(2.5f)
+                .explosionResistance(2.5f)
+                .solid(true)
+                .lightDampening(15)
+                .mapColor(0x8F7748FF);
+        v.block("minecraft:flower_pot", "update_bit=false|true")
+                .explosionResistance(0.0f)
+                .collisionShape(BOX_5_0_5_11_6_11)
+                .outlineShape(BOX_5_0_5_11_6_11)
+                .canContainLiquid(true)
+                .liquidBlocking(false)
+                .liquidSpreadCausesSpawn(true)
+                .translucency(1.0f)
+                .movementType("Popped")
+                .accumulatesSnow(false)
+                .obstructsRain(false);
+        v.block("minecraft:flowering_azalea", "")
+                .explosionResistance(0.0f)
+                .canContainLiquid(true)
+                .liquidBlocking(false)
+                .liquidSpreadCausesSpawn(true)
+                .mapColor(0x007C00FF)
+                .flameOdds(15)
+                .burnOdds(100)
+                .translucency(1.0f)
+                .movementType("Popped")
+                .accumulatesSnow(false)
+                .obstructsRain(false);
+        v.block("minecraft:flowing_lava", "liquid_depth=0..15")
+                .destroyTime(100.0f)
+                .explosionResistance(100.0f)
+                .collisionShape(BlockShape.EMPTY)
+                .lightEmission(15)
+                .lightDampening(15)
+                .liquidBlocking(false)
+                .liquidFlowDirectionsUnknown()
+                .mapColor(0xFF0000FF)
+                .translucency(1.0f)
+                .movementTypeUnknown()
+                .stickyTypeUnknown()
+                .accumulatesSnowUnknown()
+                .snowLoggableUnknown()
+                .obstructsRainUnknown();
+        v.block("minecraft:flowing_water", "liquid_depth=0..15")
+                .destroyTime(100.0f)
+                .explosionResistance(100.0f)
+                .collisionShape(BlockShape.EMPTY)
+                .lightDampening(2)
+                .liquidBlocking(false)
+                .liquidFlowDirectionsUnknown()
+                .tintMethod("Water")
+                .translucency(1.0f)
+                .movementTypeUnknown()
+                .stickyTypeUnknown()
+                .accumulatesSnowUnknown()
+                .snowLoggableUnknown()
+                .obstructsRainUnknown();
+        v.block("minecraft:frame", "facing_direction=0..5,item_frame_map_bit=false|true,item_frame_photo_bit=false|true")
+                .destroyTime(0.25f)
+                .explosionResistance(0.25f)
+                .collisionShape(BlockShape.EMPTY)
+                .outlineShape(TABLE_FACING_DIRECTION_ITEM_FRAME_MAP_BIT_ITEM_FRAME_PHOTO_BIT_FE6192)
+                .canContainLiquid(true)
+                .translucency(1.0f)
+                .movementType("Popped")
+                .accumulatesSnow(false)
+                .obstructsRain(false);
+        v.block("minecraft:frog_spawn", "")
+                .explosionResistance(0.0f)
+                .collisionShape(BlockShape.EMPTY)
+                .outlineShape(SHAPE_FROG_SPAWN_OUTLINE_SHAPE)
+                .canContainLiquid(true)
+                .liquidBlocking(false)
+                .mapColor(0x4040FFFF)
+                .translucency(1.0f)
+                .movementType("Popped")
+                .accumulatesSnow(false)
+                .obstructsRain(false);
+        v.block("minecraft:frosted_ice", "age=0..3")
+                .destroyTime(0.5f)
+                .explosionResistance(0.5f)
+                .friction(0.98f)
+                .lightDampening(3)
+                .mapColor(0xA0A0FFFF);
+        v.block("minecraft:furnace", "minecraft:cardinal_direction='east'|'north'|'south'|'west'")
+                .destroyTime(3.5f)
+                .explosionResistance(3.5f)
+                .solid(true)
+                .lightDampening(15)
+                .requiresCorrectTool(true)
+                .mapColor(0x707070FF);
+        v.block("minecraft:gilded_blackstone", "")
+                .destroyTime(1.5f)
+                .solid(true)
+                .lightDampening(15)
+                .requiresCorrectTool(true)
+                .mapColor(0x191919FF);
+        v.block("minecraft:glass", "").destroyTime(0.3f).explosionResistance(0.3f).translucency(1.0f);
+        v.block("minecraft:glass_pane", "")
+                .destroyTime(0.3f)
+                .explosionResistance(0.3f)
+                .collisionShape(BOX_7_0_7_9_16_9)
+                .outlineShape(BOX_7_0_7_9_16_9)
+                .canContainLiquid(true)
+                .translucency(1.0f);
+        v.block("minecraft:glow_frame", "facing_direction=0..5,item_frame_map_bit=false|true,item_frame_photo_bit=false|true")
+                .destroyTime(0.25f)
+                .explosionResistance(0.25f)
+                .collisionShape(BlockShape.EMPTY)
+                .outlineShape(TABLE_FACING_DIRECTION_ITEM_FRAME_MAP_BIT_ITEM_FRAME_PHOTO_BIT_FE6192)
+                .canContainLiquid(true)
+                .translucency(1.0f)
+                .movementType("Popped")
+                .accumulatesSnow(false)
+                .obstructsRain(false);
+        v.block("minecraft:glow_lichen", "multi_face_direction_bits=0..63")
+                .destroyTime(0.2f)
+                .explosionResistance(0.2f)
+                .collisionShape(BlockShape.EMPTY)
+                .outlineShape("multi_face_direction_bits", 0, BlockShape.FULL_CUBE,
+                        1, BOX_0_0_0_16_1_16, 2, BOX_0_15_0_16_16_16, 3, BlockShape.FULL_CUBE,
+                        4, BOX_0_0_15_16_16_16, 5, BlockShape.FULL_CUBE, 6, BlockShape.FULL_CUBE,
+                        7, BlockShape.FULL_CUBE, 8, BOX_0_0_0_1_16_16, 9, BlockShape.FULL_CUBE,
+                        10, BlockShape.FULL_CUBE, 11, BlockShape.FULL_CUBE,
+                        12, BlockShape.FULL_CUBE, 13, BlockShape.FULL_CUBE,
+                        14, BlockShape.FULL_CUBE, 15, BlockShape.FULL_CUBE, 16, BOX_0_0_0_16_16_1,
+                        17, BlockShape.FULL_CUBE, 18, BlockShape.FULL_CUBE,
+                        19, BlockShape.FULL_CUBE, 20, BlockShape.FULL_CUBE,
+                        21, BlockShape.FULL_CUBE, 22, BlockShape.FULL_CUBE,
+                        23, BlockShape.FULL_CUBE, 24, BlockShape.FULL_CUBE,
+                        25, BlockShape.FULL_CUBE, 26, BlockShape.FULL_CUBE,
+                        27, BlockShape.FULL_CUBE, 28, BlockShape.FULL_CUBE,
+                        29, BlockShape.FULL_CUBE, 30, BlockShape.FULL_CUBE,
+                        31, BlockShape.FULL_CUBE, 32, BOX_15_0_0_16_16_16, 33, BlockShape.FULL_CUBE,
+                        34, BlockShape.FULL_CUBE, 35, BlockShape.FULL_CUBE,
+                        36, BlockShape.FULL_CUBE, 37, BlockShape.FULL_CUBE,
+                        38, BlockShape.FULL_CUBE, 39, BlockShape.FULL_CUBE,
+                        40, BlockShape.FULL_CUBE, 41, BlockShape.FULL_CUBE,
+                        42, BlockShape.FULL_CUBE, 43, BlockShape.FULL_CUBE,
+                        44, BlockShape.FULL_CUBE, 45, BlockShape.FULL_CUBE,
+                        46, BlockShape.FULL_CUBE, 47, BlockShape.FULL_CUBE,
+                        48, BlockShape.FULL_CUBE, 49, BlockShape.FULL_CUBE,
+                        50, BlockShape.FULL_CUBE, 51, BlockShape.FULL_CUBE,
+                        52, BlockShape.FULL_CUBE, 53, BlockShape.FULL_CUBE,
+                        54, BlockShape.FULL_CUBE, 55, BlockShape.FULL_CUBE,
+                        56, BlockShape.FULL_CUBE, 57, BlockShape.FULL_CUBE,
+                        58, BlockShape.FULL_CUBE, 59, BlockShape.FULL_CUBE,
+                        60, BlockShape.FULL_CUBE, 61, BlockShape.FULL_CUBE,
+                        62, BlockShape.FULL_CUBE, 63, BlockShape.FULL_CUBE)
+                .lightEmission(7)
+                .canContainLiquid(true)
+                .mapColor(0x7FA796FF)
+                .flameOdds(15)
+                .burnOdds(100)
+                .translucency(1.0f)
+                .movementType("Popped")
+                .accumulatesSnow(false)
+                .obstructsRain(false);
+    }
+
+    static void part17(Changes v) {
+        v.block("minecraft:glowingobsidian", "")
+                .destroyTime(35.0f)
+                .explosionResistance(1200.0f)
+                .solid(true)
+                .lightEmission(13)
+                .lightDampening(15)
+                .requiresCorrectTool(true)
+                .mapColor(0x191919FF)
+                .movementType("Immovable");
+        v.block("minecraft:glowstone", "")
+                .destroyTime(0.3f)
+                .explosionResistance(0.3f)
+                .solid(true)
+                .lightEmission(15)
+                .lightDampening(15)
+                .mapColor(0xF7E9A3FF)
+                .translucency(1.0f);
+        v.block("minecraft:gold_block", "")
+                .destroyTime(3.0f)
+                .solid(true)
+                .lightDampening(15)
+                .requiresCorrectTool(true)
+                .mapColor(0xFAEE4DFF);
         v.block("minecraft:gold_ore", "")
                 .destroyTime(3.0f)
                 .explosionResistance(3.0f)
                 .solid(true)
                 .lightDampening(15)
                 .requiresCorrectTool(true)
-                .mapColor(1886417151);
+                .mapColor(0x707070FF);
         v.block("minecraft:golden_dandelion", "")
                 .explosionResistance(0.0f)
                 .collisionShape(BlockShape.EMPTY)
-                .outlineShape(BOX_M0P533344_0_0P533344_8P266656_9P6_9P333328)
+                .outlineShape(SHAPE_ALLIUM_OUTLINE_SHAPE)
                 .liquidBlocking(false)
                 .liquidSpreadCausesSpawn(true)
-                .mapColor(8126719)
+                .mapColor(0x007C00FF)
                 .flameOdds(60)
                 .burnOdds(100)
                 .translucency(1.0f)
@@ -43,7 +343,9 @@ final class BehaviourBasePart3 {
                 .destroyTime(0.7f)
                 .explosionResistance(0.7f)
                 .collisionShape(BlockShape.EMPTY)
-                .outlineShape("rail_direction", 0, BOX_0_0_0_16_1_16, 1, BOX_0_0_0_16_1_16, 2, BOX_0_0_0_16_8_16, 3, BOX_0_0_0_16_8_16, 4, BOX_0_0_0_16_8_16, 5, BOX_0_0_0_16_8_16)
+                .outlineShape("rail_direction", 0, BOX_0_0_0_16_1_16, 1, BOX_0_0_0_16_1_16,
+                        2, BOX_0_0_0_16_8_16, 3, BOX_0_0_0_16_8_16, 4, BOX_0_0_0_16_8_16,
+                        5, BOX_0_0_0_16_8_16)
                 .canContainLiquid(true)
                 .liquidBlocking(false)
                 .liquidSpreadCausesSpawn(true)
@@ -56,65 +358,69 @@ final class BehaviourBasePart3 {
                 .solid(true)
                 .lightDampening(15)
                 .requiresCorrectTool(true)
-                .mapColor(-1754444289);
+                .mapColor(0x976D4DFF);
         v.block("minecraft:granite_double_slab", "minecraft:vertical_half='bottom'|'top'")
                 .destroyTime(1.5f)
                 .solid(true)
                 .lightDampening(15)
                 .requiresCorrectTool(true)
-                .mapColor(-1754444289);
+                .mapColor(0x976D4DFF);
         v.block("minecraft:granite_slab", "minecraft:vertical_half='bottom'|'top'")
                 .destroyTime(1.5f)
-                .collisionShape("minecraft:vertical_half", "bottom", BOX_0_0_0_16_8_16, "top", BOX_0_8_0_16_16_16)
-                .outlineShape("minecraft:vertical_half", "bottom", BOX_0_0_0_16_8_16, "top", BOX_0_8_0_16_16_16)
+                .collisionShape("minecraft:vertical_half", "bottom", BOX_0_0_0_16_8_16,
+                        "top", BOX_0_8_0_16_16_16)
+                .outlineShape("minecraft:vertical_half", "bottom", BOX_0_0_0_16_8_16,
+                        "top", BOX_0_8_0_16_16_16)
                 .canContainLiquid(true)
                 .liquidFlowDirections("minecraft:vertical_half", "bottom", 62, "top", 61)
                 .requiresCorrectTool(true)
-                .mapColor(-1754444289);
+                .mapColor(0x976D4DFF);
         v.block("minecraft:granite_stairs", "upside_down_bit=false|true,weirdo_direction=0..3")
                 .destroyTime(1.5f)
-                .collisionShape(ACACIA_STAIRS_COLLISION_SHAPE_9)
+                .collisionShape(TABLE_UPSIDE_DOWN_BIT_WEIRDO_DIRECTION_87FC4F)
                 .canContainLiquid(true)
-                .liquidFlowDirections(ACACIA_STAIRS_LIQUID_FLOW_DIRECTIONS)
+                .liquidFlowDirections(TABLE_UPSIDE_DOWN_BIT_WEIRDO_DIRECTION_C4AAFC)
                 .requiresCorrectTool(true)
-                .mapColor(-1754444289)
+                .mapColor(0x976D4DFF)
                 .translucency(0.8f);
         v.block("minecraft:granite_wall", "wall_connection_type_east='none'|'short'|'tall',wall_connection_type_north='none'|'short'|'tall',wall_connection_type_south='none'|'short'|'tall',wall_connection_type_west='none'|'short'|'tall',wall_post_bit=false|true")
                 .destroyTime(1.5f)
-                .collisionShape(ANDESITE_WALL_COLLISION_SHAPE)
-                .outlineShape(ANDESITE_WALL_OUTLINE_SHAPE)
+                .collisionShape(TABLE_WALL_CONNECTION_TYPE_EAST_WALL_CONNECTION_TYPE_NORTH_WALL_CONNECTION_TYPE_SOUTH_WALL_CONNECTION_TYPE_WEST_WALL_POST_BIT_2A29E9)
+                .outlineShape(TABLE_WALL_CONNECTION_TYPE_EAST_WALL_CONNECTION_TYPE_NORTH_WALL_CONNECTION_TYPE_SOUTH_WALL_CONNECTION_TYPE_WEST_WALL_POST_BIT_D598FB)
                 .canContainLiquid(true)
                 .requiresCorrectTool(true)
-                .mapColor(-1754444289)
+                .mapColor(0x976D4DFF)
                 .translucency(0.8f);
         v.block("minecraft:grass_block", "")
                 .destroyTime(0.6f)
                 .explosionResistance(0.6f)
                 .solid(true)
                 .lightDampening(15)
-                .mapColor(-1)
+                .mapColor(0xFFFFFFFF)
                 .tintMethod("Grass");
         v.block("minecraft:grass_path", "")
                 .destroyTime(0.65f)
                 .explosionResistance(0.65f)
                 .collisionShape(BOX_0_0_0_16_15_16)
                 .outlineShape(BOX_0_0_0_16_15_16)
-                .mapColor(-1754444289)
+                .mapColor(0x976D4DFF)
                 .accumulatesSnow(false);
         v.block("minecraft:gravel", "")
                 .destroyTime(0.6f)
                 .explosionResistance(0.6f)
                 .solid(true)
                 .lightDampening(15)
-                .mapColor(1886417151);
+                .mapColor(0x707070FF);
         v.block("minecraft:gray_candle", "candles=0..3,lit=false|true")
                 .destroyTime(0.1f)
                 .explosionResistance(0.1f)
-                .collisionShape("candles", 0, BOX_7_0_7_9_6_9, 1, BOX_5_0_7_11_6_10, 2, BOX_5_0_6_10_6_11, 3, BOX_5_0_5_11_6_10)
-                .outlineShape("candles", 0, BOX_7_0_7_9_6_9, 1, BOX_5_0_7_11_6_10, 2, BOX_5_0_6_10_6_11, 3, BOX_5_0_5_11_6_10)
-                .lightEmission(BLACK_CANDLE_LIGHT_EMISSION)
+                .collisionShape("candles", 0, BOX_7_0_7_9_6_9, 1, BOX_5_0_7_11_6_10,
+                        2, BOX_5_0_6_10_6_11, 3, BOX_5_0_5_11_6_10)
+                .outlineShape("candles", 0, BOX_7_0_7_9_6_9, 1, BOX_5_0_7_11_6_10,
+                        2, BOX_5_0_6_10_6_11, 3, BOX_5_0_5_11_6_10)
+                .lightEmission(TABLE_CANDLES_LIT_D44016)
                 .canContainLiquid(true)
-                .mapColor(1280068863)
+                .mapColor(0x4C4C4CFF)
                 .translucency(1.0f)
                 .accumulatesSnow(false)
                 .obstructsRain(false);
@@ -135,7 +441,7 @@ final class BehaviourBasePart3 {
                 .canContainLiquid(true)
                 .liquidBlocking(false)
                 .liquidSpreadCausesSpawn(true)
-                .mapColor(1280068863)
+                .mapColor(0x4C4C4CFF)
                 .flameOdds(30)
                 .burnOdds(20)
                 .translucency(0.89f)
@@ -148,32 +454,32 @@ final class BehaviourBasePart3 {
                 .solid(true)
                 .lightDampening(15)
                 .requiresCorrectTool(true)
-                .mapColor(1280068863);
+                .mapColor(0x4C4C4CFF);
         v.block("minecraft:gray_concrete_powder", "")
                 .destroyTime(0.5f)
                 .explosionResistance(0.5f)
                 .solid(true)
                 .lightDampening(15)
-                .mapColor(1280068863);
+                .mapColor(0x4C4C4CFF);
         v.block("minecraft:gray_glazed_terracotta", "facing_direction=0..5")
                 .destroyTime(1.4f)
                 .explosionResistance(1.4f)
                 .solid(true)
                 .lightDampening(15)
                 .requiresCorrectTool(true)
-                .mapColor(1280068863)
+                .mapColor(0x4C4C4CFF)
                 .movementType("Push");
         v.block("minecraft:gray_shulker_box", "")
                 .destroyTime(2.0f)
                 .explosionResistance(2.0f)
                 .canContainLiquid(true)
-                .mapColor(1280068863)
+                .mapColor(0x4C4C4CFF)
                 .translucency(0.5f)
                 .movementType("Popped");
         v.block("minecraft:gray_stained_glass", "")
                 .destroyTime(0.3f)
                 .explosionResistance(0.3f)
-                .mapColor(1280068863)
+                .mapColor(0x4C4C4CFF)
                 .translucency(1.0f);
         v.block("minecraft:gray_stained_glass_pane", "")
                 .destroyTime(0.3f)
@@ -188,24 +494,26 @@ final class BehaviourBasePart3 {
                 .solid(true)
                 .lightDampening(15)
                 .requiresCorrectTool(true)
-                .mapColor(958997503);
+                .mapColor(0x392923FF);
         v.block("minecraft:gray_wool", "")
                 .destroyTime(0.8f)
                 .explosionResistance(0.8f)
                 .solid(true)
                 .lightDampening(15)
-                .mapColor(1280068863)
+                .mapColor(0x4C4C4CFF)
                 .flameOdds(30)
                 .burnOdds(60)
                 .translucency(0.8f);
         v.block("minecraft:green_candle", "candles=0..3,lit=false|true")
                 .destroyTime(0.1f)
                 .explosionResistance(0.1f)
-                .collisionShape("candles", 0, BOX_7_0_7_9_6_9, 1, BOX_5_0_7_11_6_10, 2, BOX_5_0_6_10_6_11, 3, BOX_5_0_5_11_6_10)
-                .outlineShape("candles", 0, BOX_7_0_7_9_6_9, 1, BOX_5_0_7_11_6_10, 2, BOX_5_0_6_10_6_11, 3, BOX_5_0_5_11_6_10)
-                .lightEmission(BLACK_CANDLE_LIGHT_EMISSION)
+                .collisionShape("candles", 0, BOX_7_0_7_9_6_9, 1, BOX_5_0_7_11_6_10,
+                        2, BOX_5_0_6_10_6_11, 3, BOX_5_0_5_11_6_10)
+                .outlineShape("candles", 0, BOX_7_0_7_9_6_9, 1, BOX_5_0_7_11_6_10,
+                        2, BOX_5_0_6_10_6_11, 3, BOX_5_0_5_11_6_10)
+                .lightEmission(TABLE_CANDLES_LIT_D44016)
                 .canContainLiquid(true)
-                .mapColor(1719612415)
+                .mapColor(0x667F33FF)
                 .translucency(1.0f)
                 .accumulatesSnow(false)
                 .obstructsRain(false);
@@ -226,7 +534,7 @@ final class BehaviourBasePart3 {
                 .canContainLiquid(true)
                 .liquidBlocking(false)
                 .liquidSpreadCausesSpawn(true)
-                .mapColor(1719612415)
+                .mapColor(0x667F33FF)
                 .flameOdds(30)
                 .burnOdds(20)
                 .translucency(0.89f)
@@ -239,32 +547,32 @@ final class BehaviourBasePart3 {
                 .solid(true)
                 .lightDampening(15)
                 .requiresCorrectTool(true)
-                .mapColor(1719612415);
+                .mapColor(0x667F33FF);
         v.block("minecraft:green_concrete_powder", "")
                 .destroyTime(0.5f)
                 .explosionResistance(0.5f)
                 .solid(true)
                 .lightDampening(15)
-                .mapColor(1719612415);
+                .mapColor(0x667F33FF);
         v.block("minecraft:green_glazed_terracotta", "facing_direction=0..5")
                 .destroyTime(1.4f)
                 .explosionResistance(1.4f)
                 .solid(true)
                 .lightDampening(15)
                 .requiresCorrectTool(true)
-                .mapColor(1719612415)
+                .mapColor(0x667F33FF)
                 .movementType("Push");
         v.block("minecraft:green_shulker_box", "")
                 .destroyTime(2.0f)
                 .explosionResistance(2.0f)
                 .canContainLiquid(true)
-                .mapColor(1719612415)
+                .mapColor(0x667F33FF)
                 .translucency(0.5f)
                 .movementType("Popped");
         v.block("minecraft:green_stained_glass", "")
                 .destroyTime(0.3f)
                 .explosionResistance(0.3f)
-                .mapColor(1719612415)
+                .mapColor(0x667F33FF)
                 .translucency(1.0f);
         v.block("minecraft:green_stained_glass_pane", "")
                 .destroyTime(0.3f)
@@ -279,31 +587,31 @@ final class BehaviourBasePart3 {
                 .solid(true)
                 .lightDampening(15)
                 .requiresCorrectTool(true)
-                .mapColor(1280453375);
+                .mapColor(0x4C522AFF);
         v.block("minecraft:green_wool", "")
                 .destroyTime(0.8f)
                 .explosionResistance(0.8f)
                 .solid(true)
                 .lightDampening(15)
-                .mapColor(1719612415)
+                .mapColor(0x667F33FF)
                 .flameOdds(30)
                 .burnOdds(60)
                 .translucency(0.8f);
         v.block("minecraft:grindstone", "attachment='hanging'|'multiple'|'side'|'standing',direction=0..3")
                 .destroyTime(2.0f)
-                .collisionShape(GRINDSTONE_COLLISION_SHAPE)
-                .outlineShape(GRINDSTONE_COLLISION_SHAPE)
+                .collisionShape(TABLE_ATTACHMENT_DIRECTION_A9F102)
+                .outlineShape(TABLE_ATTACHMENT_DIRECTION_A9F102)
                 .canContainLiquid(true)
                 .requiresCorrectTool(true)
-                .mapColor(-1482184705)
+                .mapColor(0xA7A7A7FF)
                 .translucency(0.8f)
                 .movementType("Immovable");
         v.block("minecraft:hanging_roots", "")
                 .explosionResistance(0.0f)
                 .collisionShape(BlockShape.EMPTY)
-                .outlineShape(BOX_M0P533344_11P2_0P533344_10P666672_16_11P733328)
+                .outlineShape(SHAPE_HANGING_ROOTS_OUTLINE_SHAPE)
                 .canContainLiquid(true)
-                .mapColor(8126719)
+                .mapColor(0x007C00FF)
                 .flameOdds(15)
                 .burnOdds(100)
                 .translucency(1.0f)
@@ -313,7 +621,7 @@ final class BehaviourBasePart3 {
         v.block("minecraft:hard_black_stained_glass", "")
                 .destroyTime(10.0f)
                 .explosionResistance(10.0f)
-                .mapColor(421075455)
+                .mapColor(0x191919FF)
                 .translucency(1.0f);
         v.block("minecraft:hard_black_stained_glass_pane", "")
                 .destroyTime(10.0f)
@@ -325,7 +633,7 @@ final class BehaviourBasePart3 {
         v.block("minecraft:hard_blue_stained_glass", "")
                 .destroyTime(10.0f)
                 .explosionResistance(10.0f)
-                .mapColor(860664575)
+                .mapColor(0x334CB2FF)
                 .translucency(1.0f);
         v.block("minecraft:hard_blue_stained_glass_pane", "")
                 .destroyTime(10.0f)
@@ -337,7 +645,7 @@ final class BehaviourBasePart3 {
         v.block("minecraft:hard_brown_stained_glass", "")
                 .destroyTime(10.0f)
                 .explosionResistance(10.0f)
-                .mapColor(1716270079)
+                .mapColor(0x664C33FF)
                 .translucency(1.0f);
         v.block("minecraft:hard_brown_stained_glass_pane", "")
                 .destroyTime(10.0f)
@@ -346,10 +654,13 @@ final class BehaviourBasePart3 {
                 .outlineShape(BOX_7_0_7_9_16_9)
                 .canContainLiquid(true)
                 .translucency(1.0f);
+    }
+
+    static void part18(Changes v) {
         v.block("minecraft:hard_cyan_stained_glass", "")
                 .destroyTime(10.0f)
                 .explosionResistance(10.0f)
-                .mapColor(1283430911)
+                .mapColor(0x4C7F99FF)
                 .translucency(1.0f);
         v.block("minecraft:hard_cyan_stained_glass_pane", "")
                 .destroyTime(10.0f)
@@ -366,13 +677,10 @@ final class BehaviourBasePart3 {
                 .outlineShape(BOX_7_0_7_9_16_9)
                 .canContainLiquid(true)
                 .translucency(1.0f);
-    }
-
-    static void part17(Changes v) {
         v.block("minecraft:hard_gray_stained_glass", "")
                 .destroyTime(10.0f)
                 .explosionResistance(10.0f)
-                .mapColor(1280068863)
+                .mapColor(0x4C4C4CFF)
                 .translucency(1.0f);
         v.block("minecraft:hard_gray_stained_glass_pane", "")
                 .destroyTime(10.0f)
@@ -384,7 +692,7 @@ final class BehaviourBasePart3 {
         v.block("minecraft:hard_green_stained_glass", "")
                 .destroyTime(10.0f)
                 .explosionResistance(10.0f)
-                .mapColor(1719612415)
+                .mapColor(0x667F33FF)
                 .translucency(1.0f);
         v.block("minecraft:hard_green_stained_glass_pane", "")
                 .destroyTime(10.0f)
@@ -396,7 +704,7 @@ final class BehaviourBasePart3 {
         v.block("minecraft:hard_light_blue_stained_glass", "")
                 .destroyTime(10.0f)
                 .explosionResistance(10.0f)
-                .mapColor(1721358591)
+                .mapColor(0x6699D8FF)
                 .translucency(1.0f);
         v.block("minecraft:hard_light_blue_stained_glass_pane", "")
                 .destroyTime(10.0f)
@@ -408,7 +716,7 @@ final class BehaviourBasePart3 {
         v.block("minecraft:hard_light_gray_stained_glass", "")
                 .destroyTime(10.0f)
                 .explosionResistance(10.0f)
-                .mapColor(-1717986817)
+                .mapColor(0x999999FF)
                 .translucency(1.0f);
         v.block("minecraft:hard_light_gray_stained_glass_pane", "")
                 .destroyTime(10.0f)
@@ -420,7 +728,7 @@ final class BehaviourBasePart3 {
         v.block("minecraft:hard_lime_stained_glass", "")
                 .destroyTime(10.0f)
                 .explosionResistance(10.0f)
-                .mapColor(2144082431)
+                .mapColor(0x7FCC19FF)
                 .translucency(1.0f);
         v.block("minecraft:hard_lime_stained_glass_pane", "")
                 .destroyTime(10.0f)
@@ -432,7 +740,7 @@ final class BehaviourBasePart3 {
         v.block("minecraft:hard_magenta_stained_glass", "")
                 .destroyTime(10.0f)
                 .explosionResistance(10.0f)
-                .mapColor(-1303586561)
+                .mapColor(0xB24CD8FF)
                 .translucency(1.0f);
         v.block("minecraft:hard_magenta_stained_glass_pane", "")
                 .destroyTime(10.0f)
@@ -444,7 +752,7 @@ final class BehaviourBasePart3 {
         v.block("minecraft:hard_orange_stained_glass", "")
                 .destroyTime(10.0f)
                 .explosionResistance(10.0f)
-                .mapColor(-662752257)
+                .mapColor(0xD87F33FF)
                 .translucency(1.0f);
         v.block("minecraft:hard_orange_stained_glass_pane", "")
                 .destroyTime(10.0f)
@@ -456,7 +764,7 @@ final class BehaviourBasePart3 {
         v.block("minecraft:hard_pink_stained_glass", "")
                 .destroyTime(10.0f)
                 .explosionResistance(10.0f)
-                .mapColor(-226515457)
+                .mapColor(0xF27FA5FF)
                 .translucency(1.0f);
         v.block("minecraft:hard_pink_stained_glass_pane", "")
                 .destroyTime(10.0f)
@@ -468,7 +776,7 @@ final class BehaviourBasePart3 {
         v.block("minecraft:hard_purple_stained_glass", "")
                 .destroyTime(10.0f)
                 .explosionResistance(10.0f)
-                .mapColor(-1722102273)
+                .mapColor(0x995ACDFF)
                 .translucency(1.0f);
         v.block("minecraft:hard_purple_stained_glass_pane", "")
                 .destroyTime(10.0f)
@@ -480,7 +788,7 @@ final class BehaviourBasePart3 {
         v.block("minecraft:hard_red_stained_glass", "")
                 .destroyTime(10.0f)
                 .explosionResistance(10.0f)
-                .mapColor(-1724697601)
+                .mapColor(0x993333FF)
                 .translucency(1.0f);
         v.block("minecraft:hard_red_stained_glass_pane", "")
                 .destroyTime(10.0f)
@@ -492,7 +800,7 @@ final class BehaviourBasePart3 {
         v.block("minecraft:hard_white_stained_glass", "")
                 .destroyTime(10.0f)
                 .explosionResistance(10.0f)
-                .mapColor(-1)
+                .mapColor(0xFFFFFFFF)
                 .translucency(1.0f);
         v.block("minecraft:hard_white_stained_glass_pane", "")
                 .destroyTime(10.0f)
@@ -504,7 +812,7 @@ final class BehaviourBasePart3 {
         v.block("minecraft:hard_yellow_stained_glass", "")
                 .destroyTime(10.0f)
                 .explosionResistance(10.0f)
-                .mapColor(-437963777)
+                .mapColor(0xE5E533FF)
                 .translucency(1.0f);
         v.block("minecraft:hard_yellow_stained_glass_pane", "")
                 .destroyTime(10.0f)
@@ -519,13 +827,13 @@ final class BehaviourBasePart3 {
                 .solid(true)
                 .lightDampening(15)
                 .requiresCorrectTool(true)
-                .mapColor(-662752257);
+                .mapColor(0xD87F33FF);
         v.block("minecraft:hay_block", "deprecated=0..3,pillar_axis='x'|'y'|'z'")
                 .destroyTime(0.5f)
                 .explosionResistance(0.5f)
                 .solid(true)
                 .lightDampening(15)
-                .mapColor(-437963777)
+                .mapColor(0xE5E533FF)
                 .flameOdds(60)
                 .burnOdds(20);
         v.block("minecraft:heavy_core", "")
@@ -535,15 +843,30 @@ final class BehaviourBasePart3 {
                 .outlineShape(BOX_4_0_4_12_8_12)
                 .canContainLiquid(true)
                 .liquidFlowDirections(62)
-                .mapColor(-1482184705)
+                .mapColor(0xA7A7A7FF)
                 .movementType("Push");
         v.block("minecraft:heavy_weighted_pressure_plate", "redstone_signal=0..15")
                 .destroyTime(0.5f)
                 .explosionResistance(0.5f)
                 .collisionShape(BlockShape.EMPTY)
-                .outlineShape("redstone_signal", 0, BOX_1_0_1_15_1_15, 1, BOX_1_0_1_15_0P5_15, 2, BOX_1_0_1_15_0P5_15, 3, BOX_1_0_1_15_0P5_15, 4, BOX_1_0_1_15_0P5_15, 5, BOX_1_0_1_15_0P5_15, 6, BOX_1_0_1_15_0P5_15, 7, BOX_1_0_1_15_0P5_15, 8, BOX_1_0_1_15_0P5_15, 9, BOX_1_0_1_15_0P5_15, 10, BOX_1_0_1_15_0P5_15, 11, BOX_1_0_1_15_0P5_15, 12, BOX_1_0_1_15_0P5_15, 13, BOX_1_0_1_15_0P5_15, 14, BOX_1_0_1_15_0P5_15, 15, BOX_1_0_1_15_0P5_15)
+                .outlineShape("redstone_signal", 0, BOX_1_0_1_15_1_15,
+                        1, SHAPE_ACACIA_PRESSURE_PLATE_OUTLINE_SHAPE,
+                        2, SHAPE_ACACIA_PRESSURE_PLATE_OUTLINE_SHAPE,
+                        3, SHAPE_ACACIA_PRESSURE_PLATE_OUTLINE_SHAPE,
+                        4, SHAPE_ACACIA_PRESSURE_PLATE_OUTLINE_SHAPE,
+                        5, SHAPE_ACACIA_PRESSURE_PLATE_OUTLINE_SHAPE,
+                        6, SHAPE_ACACIA_PRESSURE_PLATE_OUTLINE_SHAPE,
+                        7, SHAPE_ACACIA_PRESSURE_PLATE_OUTLINE_SHAPE,
+                        8, SHAPE_ACACIA_PRESSURE_PLATE_OUTLINE_SHAPE,
+                        9, SHAPE_ACACIA_PRESSURE_PLATE_OUTLINE_SHAPE,
+                        10, SHAPE_ACACIA_PRESSURE_PLATE_OUTLINE_SHAPE,
+                        11, SHAPE_ACACIA_PRESSURE_PLATE_OUTLINE_SHAPE,
+                        12, SHAPE_ACACIA_PRESSURE_PLATE_OUTLINE_SHAPE,
+                        13, SHAPE_ACACIA_PRESSURE_PLATE_OUTLINE_SHAPE,
+                        14, SHAPE_ACACIA_PRESSURE_PLATE_OUTLINE_SHAPE,
+                        15, SHAPE_ACACIA_PRESSURE_PLATE_OUTLINE_SHAPE)
                 .canContainLiquid(true)
-                .mapColor(-1482184705)
+                .mapColor(0xA7A7A7FF)
                 .translucency(0.2f)
                 .movementType("Popped");
         v.block("minecraft:honey_block", "")
@@ -552,7 +875,7 @@ final class BehaviourBasePart3 {
                 .solid(true)
                 .collisionShape(BOX_1_0_1_15_16_15)
                 .outlineShape(BOX_1_0_1_15_16_15)
-                .mapColor(-662752257)
+                .mapColor(0xD87F33FF)
                 .translucency(0.8f)
                 .stickyType("Same");
         v.block("minecraft:honeycomb_block", "")
@@ -560,24 +883,27 @@ final class BehaviourBasePart3 {
                 .explosionResistance(0.6f)
                 .solid(true)
                 .lightDampening(15)
-                .mapColor(-662752257);
+                .mapColor(0xD87F33FF);
         v.block("minecraft:hopper", "facing_direction=0..5,toggle_bit=false|true")
                 .destroyTime(3.0f)
                 .explosionResistance(4.8f)
-                .collisionShape("facing_direction", 0, HOPPER_COLLISION_SHAPE, 1, HOPPER_COLLISION_SHAPE, 2, HOPPER_COLLISION_SHAPE_2, 3, HOPPER_COLLISION_SHAPE_3, 4, HOPPER_COLLISION_SHAPE_4, 5, HOPPER_COLLISION_SHAPE_5)
+                .collisionShape("facing_direction", 0, SHAPE_HOPPER_COLLISION_SHAPE,
+                        1, SHAPE_HOPPER_COLLISION_SHAPE, 2, SHAPE_HOPPER_COLLISION_SHAPE_2,
+                        3, SHAPE_HOPPER_COLLISION_SHAPE_3, 4, SHAPE_HOPPER_COLLISION_SHAPE_4,
+                        5, SHAPE_HOPPER_COLLISION_SHAPE_5)
                 .lightDampening(3)
                 .canContainLiquid(true)
                 .requiresCorrectTool(true)
-                .mapColor(1886417151)
+                .mapColor(0x707070FF)
                 .translucency(0.8f);
         v.block("minecraft:horn_coral", "")
                 .explosionResistance(0.0f)
                 .collisionShape(BlockShape.EMPTY)
-                .outlineShape(BOX_M1P333328_0_M0P266656_11P466672_12P8_12P533328)
+                .outlineShape(SHAPE_BAMBOO_SAPLING_OUTLINE_SHAPE)
                 .canContainLiquid(true)
                 .liquidBlocking(false)
                 .liquidSpreadCausesSpawn(true)
-                .mapColor(-1)
+                .mapColor(0xFFFFFFFF)
                 .tintMethod("Grass")
                 .translucency(0.8f)
                 .movementType("Popped");
@@ -586,26 +912,29 @@ final class BehaviourBasePart3 {
                 .solid(true)
                 .lightDampening(15)
                 .requiresCorrectTool(true)
-                .mapColor(-437963777);
+                .mapColor(0xE5E533FF);
         v.block("minecraft:horn_coral_fan", "coral_fan_direction=0|1")
                 .explosionResistance(0.0f)
                 .collisionShape(BlockShape.EMPTY)
-                .outlineShape(BOX_0P266656_0_1P333328_9P866656_6P4_10P933344)
+                .outlineShape(SHAPE_BRAIN_CORAL_FAN_OUTLINE_SHAPE)
                 .canContainLiquid(true)
                 .liquidBlocking(false)
                 .liquidSpreadCausesSpawn(true)
-                .mapColor(-1)
+                .mapColor(0xFFFFFFFF)
                 .tintMethod("Grass")
                 .translucency(0.8f)
                 .movementType("Popped");
         v.block("minecraft:horn_coral_wall_fan", "coral_direction=0..3")
                 .explosionResistance(0.0f)
                 .collisionShape(BlockShape.EMPTY)
-                .outlineShape("coral_direction", 0, BOX_6P399984_4P8_3P199984_16_11P2_12P8, 1, BOX_0_4P8_3P199984_9P6_11P2_12P8, 2, BOX_3P199984_4P8_6P399984_12P8_11P2_16, 3, BOX_3P199984_4P8_0_12P8_11P2_9P6)
+                .outlineShape("coral_direction", 0, SHAPE_BRAIN_CORAL_WALL_FAN_OUTLINE_SHAPE,
+                        1, SHAPE_BRAIN_CORAL_WALL_FAN_OUTLINE_SHAPE_2,
+                        2, SHAPE_BRAIN_CORAL_WALL_FAN_OUTLINE_SHAPE_3,
+                        3, SHAPE_BRAIN_CORAL_WALL_FAN_OUTLINE_SHAPE_4)
                 .canContainLiquid(true)
                 .liquidBlocking(false)
                 .liquidSpreadCausesSpawn(true)
-                .mapColor(-1)
+                .mapColor(0xFFFFFFFF)
                 .tintMethod("Grass")
                 .translucency(0.8f)
                 .movementType("Popped");
@@ -614,68 +943,71 @@ final class BehaviourBasePart3 {
                 .explosionResistance(0.5f)
                 .friction(0.98f)
                 .lightDampening(3)
-                .mapColor(-1600061441)
+                .mapColor(0xA0A0FFFF)
                 .accumulatesSnow(false);
         v.block("minecraft:infested_chiseled_stone_bricks", "")
                 .destroyTime(0.75f)
                 .explosionResistance(0.75f)
                 .solid(true)
                 .lightDampening(15)
-                .mapColor(1886417151);
+                .mapColor(0x707070FF);
         v.block("minecraft:infested_cobblestone", "")
                 .destroyTime(1.0f)
                 .explosionResistance(0.75f)
                 .solid(true)
                 .lightDampening(15)
-                .mapColor(1886417151);
+                .mapColor(0x707070FF);
         v.block("minecraft:infested_cracked_stone_bricks", "")
                 .destroyTime(0.75f)
                 .explosionResistance(0.75f)
                 .solid(true)
                 .lightDampening(15)
-                .mapColor(1886417151);
+                .mapColor(0x707070FF);
         v.block("minecraft:infested_deepslate", "pillar_axis='x'|'y'|'z'")
                 .destroyTime(1.5f)
                 .explosionResistance(0.75f)
                 .solid(true)
                 .lightDampening(15)
-                .mapColor(1684301055);
+                .mapColor(0x646464FF);
         v.block("minecraft:infested_mossy_stone_bricks", "")
                 .destroyTime(0.75f)
                 .explosionResistance(0.75f)
                 .solid(true)
                 .lightDampening(15)
-                .mapColor(1886417151);
+                .mapColor(0x707070FF);
         v.block("minecraft:infested_stone", "")
                 .destroyTime(0.75f)
                 .explosionResistance(0.75f)
                 .solid(true)
                 .lightDampening(15)
-                .mapColor(1886417151);
+                .mapColor(0x707070FF);
         v.block("minecraft:infested_stone_bricks", "")
                 .destroyTime(0.75f)
                 .explosionResistance(0.75f)
                 .solid(true)
                 .lightDampening(15)
-                .mapColor(1886417151);
+                .mapColor(0x707070FF);
         v.block("minecraft:info_update", "")
                 .destroyTime(1.0f)
                 .explosionResistance(1.0f)
                 .solid(true)
                 .lightDampening(15)
-                .mapColor(-1754444289);
+                .mapColor(0x976D4DFF);
         v.block("minecraft:info_update2", "")
                 .destroyTime(1.0f)
                 .explosionResistance(1.0f)
                 .solid(true)
                 .lightDampening(15)
-                .mapColor(-1754444289);
+                .mapColor(0x976D4DFF);
         v.block("minecraft:invisible_bedrock", "")
                 .destroyTime(-1.0f)
                 .explosionResistance(3600000.0f)
                 .requiresCorrectTool(true)
                 .translucency(0.8f)
                 .movementType("Immovable");
+    }
+
+    static void part19(Changes v) {
         v.block("minecraft:iron_bars", "")
                 .destroyTime(5.0f)
                 .collisionShape(BOX_7_0_7_9_16_9)
@@ -688,24 +1020,25 @@ final class BehaviourBasePart3 {
                 .solid(true)
                 .lightDampening(15)
                 .requiresCorrectTool(true)
-                .mapColor(-1482184705);
+                .mapColor(0xA7A7A7FF);
         v.block("minecraft:iron_chain", "pillar_axis='x'|'y'|'z'")
                 .destroyTime(5.0f)
-                .collisionShape("pillar_axis", "x", BOX_0_6P5_6P5_16_9P5_9P5, "y", BOX_6P5_0_6P5_9P5_16_9P5, "z", BOX_6P5_6P5_0_9P5_9P5_16)
-                .outlineShape("pillar_axis", "x", BOX_0_6P5_6P5_16_9P5_9P5, "y", BOX_6P5_0_6P5_9P5_16_9P5, "z", BOX_6P5_6P5_0_9P5_9P5_16)
+                .collisionShape("pillar_axis", "x", SHAPE_COPPER_CHAIN_COLLISION_SHAPE,
+                        "y", SHAPE_COPPER_CHAIN_COLLISION_SHAPE_2,
+                        "z", SHAPE_COPPER_CHAIN_COLLISION_SHAPE_3)
+                .outlineShape("pillar_axis", "x", SHAPE_COPPER_CHAIN_COLLISION_SHAPE,
+                        "y", SHAPE_COPPER_CHAIN_COLLISION_SHAPE_2,
+                        "z", SHAPE_COPPER_CHAIN_COLLISION_SHAPE_3)
                 .canContainLiquid(true)
                 .requiresCorrectTool(true)
                 .translucency(0.8f);
-    }
-
-    static void part18(Changes v) {
         v.block("minecraft:iron_door", "door_hinge_bit=false|true,minecraft:cardinal_direction='east'|'north'|'south'|'west',open_bit=false|true,upper_block_bit=false|true")
                 .destroyTime(5.0f)
                 .explosionResistance(5.0f)
-                .collisionShape(ACACIA_DOOR_COLLISION_SHAPE)
-                .outlineShape(ACACIA_DOOR_COLLISION_SHAPE)
+                .collisionShape(TABLE_DOOR_HINGE_BIT_CARDINAL_DIRECTION_OPEN_BIT_C4BD10)
+                .outlineShape(TABLE_DOOR_HINGE_BIT_CARDINAL_DIRECTION_OPEN_BIT_C4BD10)
                 .canContainLiquid(true)
-                .mapColor(-1482184705)
+                .mapColor(0xA7A7A7FF)
                 .translucency(0.8f)
                 .movementType("Popped");
         v.block("minecraft:iron_ore", "")
@@ -714,15 +1047,15 @@ final class BehaviourBasePart3 {
                 .solid(true)
                 .lightDampening(15)
                 .requiresCorrectTool(true)
-                .mapColor(1886417151);
+                .mapColor(0x707070FF);
         v.block("minecraft:iron_trapdoor", "direction=0..3,open_bit=false|true,upside_down_bit=false|true")
                 .destroyTime(5.0f)
                 .explosionResistance(5.0f)
-                .collisionShape(ACACIA_TRAPDOOR_COLLISION_SHAPE)
-                .outlineShape(ACACIA_TRAPDOOR_OUTLINE_SHAPE)
+                .collisionShape(TABLE_DIRECTION_OPEN_BIT_UPSIDE_DOWN_BIT_A554C9)
+                .outlineShape(TABLE_DIRECTION_OPEN_BIT_UPSIDE_DOWN_BIT_BCB459)
                 .canContainLiquid(true)
                 .requiresCorrectTool(true)
-                .mapColor(-1482184705)
+                .mapColor(0xA7A7A7FF)
                 .translucency(0.8f);
         v.block("minecraft:jigsaw", "facing_direction=0..5,rotation=0..3")
                 .destroyTime(-1.0f)
@@ -731,28 +1064,28 @@ final class BehaviourBasePart3 {
                 .lightDampening(15)
                 .canContainLiquid(true)
                 .requiresCorrectTool(true)
-                .mapColor(-1717986817)
+                .mapColor(0x999999FF)
                 .movementType("Immovable");
         v.block("minecraft:jukebox", "")
                 .destroyTime(2.0f)
                 .solid(true)
                 .lightDampening(15)
-                .mapColor(-1754444289)
+                .mapColor(0x976D4DFF)
                 .movementType("Immovable");
         v.block("minecraft:jungle_button", "button_pressed_bit=false|true,facing_direction=0..5")
                 .destroyTime(0.5f)
                 .explosionResistance(0.5f)
                 .collisionShape(BlockShape.EMPTY)
-                .outlineShape(ACACIA_BUTTON_OUTLINE_SHAPE)
+                .outlineShape(TABLE_BUTTON_PRESSED_BIT_FACING_DIRECTION_8483EF)
                 .canContainLiquid(true)
                 .movementType("Popped");
         v.block("minecraft:jungle_door", "door_hinge_bit=false|true,minecraft:cardinal_direction='east'|'north'|'south'|'west',open_bit=false|true,upper_block_bit=false|true")
                 .destroyTime(3.0f)
                 .explosionResistance(3.0f)
-                .collisionShape(ACACIA_DOOR_COLLISION_SHAPE)
-                .outlineShape(ACACIA_DOOR_COLLISION_SHAPE)
+                .collisionShape(TABLE_DOOR_HINGE_BIT_CARDINAL_DIRECTION_OPEN_BIT_C4BD10)
+                .outlineShape(TABLE_DOOR_HINGE_BIT_CARDINAL_DIRECTION_OPEN_BIT_C4BD10)
                 .canContainLiquid(true)
-                .mapColor(-1754444289)
+                .mapColor(0x976D4DFF)
                 .translucency(0.8f)
                 .movementType("Popped");
         v.block("minecraft:jungle_double_slab", "minecraft:vertical_half='bottom'|'top'")
@@ -760,7 +1093,7 @@ final class BehaviourBasePart3 {
                 .explosionResistance(3.0f)
                 .solid(true)
                 .lightDampening(15)
-                .mapColor(-1754444289)
+                .mapColor(0x976D4DFF)
                 .flameOdds(5)
                 .burnOdds(20);
         v.block("minecraft:jungle_fence", "")
@@ -769,18 +1102,20 @@ final class BehaviourBasePart3 {
                 .collisionShape(BOX_6_0_6_10_24_10)
                 .outlineShape(BOX_6_0_6_10_16_10)
                 .canContainLiquid(true)
-                .mapColor(-1754444289)
+                .mapColor(0x976D4DFF)
                 .flameOdds(5)
                 .burnOdds(20)
                 .translucency(0.8f);
         v.block("minecraft:jungle_fence_gate", "in_wall_bit=false|true,minecraft:cardinal_direction='east'|'north'|'south'|'west',open_bit=false|true")
                 .destroyTime(2.0f)
                 .explosionResistance(3.0f)
-                .collisionShape(ACACIA_FENCE_GATE_COLLISION_SHAPE)
-                .outlineShape("minecraft:cardinal_direction", "east", BOX_6_0_0_10_16_16, "north", BOX_0_0_6_16_16_10, "south", BOX_0_0_6_16_16_10, "west", BOX_6_0_0_10_16_16)
+                .collisionShape(TABLE_CARDINAL_DIRECTION_OPEN_BIT_C87F8B)
+                .outlineShape("minecraft:cardinal_direction", "east", BOX_6_0_0_10_16_16,
+                        "north", BOX_0_0_6_16_16_10, "south", BOX_0_0_6_16_16_10,
+                        "west", BOX_6_0_0_10_16_16)
                 .canContainLiquid(true)
                 .liquidFlowDirections("in_wall_bit", false, 63, true, null)
-                .mapColor(-1754444289)
+                .mapColor(0x976D4DFF)
                 .flameOdds(5)
                 .burnOdds(20)
                 .translucency(0.8f)
@@ -792,10 +1127,12 @@ final class BehaviourBasePart3 {
         v.block("minecraft:jungle_hanging_sign", "attached_bit=false|true,facing_direction=0..5,ground_sign_direction=0..15,hanging=false|true")
                 .destroyTime(1.0f)
                 .explosionResistance(1.0f)
-                .collisionShape(ACACIA_HANGING_SIGN_COLLISION_SHAPE)
-                .outlineShape("facing_direction", 0, BOX_0_0_6_16_16_10, 1, BOX_0_0_6_16_16_10, 2, BOX_0_0_6_16_16_10, 3, BOX_0_0_6_16_16_10, 4, BOX_6_0_0_10_16_16, 5, BOX_6_0_0_10_16_16)
+                .collisionShape(TABLE_FACING_DIRECTION_HANGING_6F9CD1)
+                .outlineShape("facing_direction", 0, BOX_0_0_6_16_16_10, 1, BOX_0_0_6_16_16_10,
+                        2, BOX_0_0_6_16_16_10, 3, BOX_0_0_6_16_16_10, 4, BOX_6_0_0_10_16_16,
+                        5, BOX_6_0_0_10_16_16)
                 .canContainLiquid(true)
-                .mapColor(-1754444289)
+                .mapColor(0x976D4DFF)
                 .translucency(0.8f)
                 .movementType("Popped");
         v.block("minecraft:jungle_leaves", "persistent_bit=false|true,update_bit=false|true")
@@ -803,7 +1140,7 @@ final class BehaviourBasePart3 {
                 .explosionResistance(0.2f)
                 .lightDampening(1)
                 .canContainLiquid(true)
-                .mapColor(-1970631937)
+                .mapColor(0x8A8A8AFF)
                 .tintMethod("DefaultFoliage")
                 .flameOdds(30)
                 .burnOdds(60)
@@ -814,7 +1151,7 @@ final class BehaviourBasePart3 {
                 .explosionResistance(2.0f)
                 .solid(true)
                 .lightDampening(15)
-                .mapColor("pillar_axis", "x", -2125057537, "y", -1754444289, "z", -2125057537)
+                .mapColor("pillar_axis", "x", 0x815631FF, "y", 0x976D4DFF, "z", 0x815631FF)
                 .flameOdds(5)
                 .burnOdds(5);
         v.block("minecraft:jungle_planks", "")
@@ -822,25 +1159,40 @@ final class BehaviourBasePart3 {
                 .explosionResistance(3.0f)
                 .solid(true)
                 .lightDampening(15)
-                .mapColor(-1754444289)
+                .mapColor(0x976D4DFF)
                 .flameOdds(5)
                 .burnOdds(20);
         v.block("minecraft:jungle_pressure_plate", "redstone_signal=0..15")
                 .destroyTime(0.5f)
                 .explosionResistance(0.5f)
                 .collisionShape(BlockShape.EMPTY)
-                .outlineShape("redstone_signal", 0, BOX_1_0_1_15_1_15, 1, BOX_1_0_1_15_0P5_15, 2, BOX_1_0_1_15_0P5_15, 3, BOX_1_0_1_15_0P5_15, 4, BOX_1_0_1_15_0P5_15, 5, BOX_1_0_1_15_0P5_15, 6, BOX_1_0_1_15_0P5_15, 7, BOX_1_0_1_15_0P5_15, 8, BOX_1_0_1_15_0P5_15, 9, BOX_1_0_1_15_0P5_15, 10, BOX_1_0_1_15_0P5_15, 11, BOX_1_0_1_15_0P5_15, 12, BOX_1_0_1_15_0P5_15, 13, BOX_1_0_1_15_0P5_15, 14, BOX_1_0_1_15_0P5_15, 15, BOX_1_0_1_15_0P5_15)
+                .outlineShape("redstone_signal", 0, BOX_1_0_1_15_1_15,
+                        1, SHAPE_ACACIA_PRESSURE_PLATE_OUTLINE_SHAPE,
+                        2, SHAPE_ACACIA_PRESSURE_PLATE_OUTLINE_SHAPE,
+                        3, SHAPE_ACACIA_PRESSURE_PLATE_OUTLINE_SHAPE,
+                        4, SHAPE_ACACIA_PRESSURE_PLATE_OUTLINE_SHAPE,
+                        5, SHAPE_ACACIA_PRESSURE_PLATE_OUTLINE_SHAPE,
+                        6, SHAPE_ACACIA_PRESSURE_PLATE_OUTLINE_SHAPE,
+                        7, SHAPE_ACACIA_PRESSURE_PLATE_OUTLINE_SHAPE,
+                        8, SHAPE_ACACIA_PRESSURE_PLATE_OUTLINE_SHAPE,
+                        9, SHAPE_ACACIA_PRESSURE_PLATE_OUTLINE_SHAPE,
+                        10, SHAPE_ACACIA_PRESSURE_PLATE_OUTLINE_SHAPE,
+                        11, SHAPE_ACACIA_PRESSURE_PLATE_OUTLINE_SHAPE,
+                        12, SHAPE_ACACIA_PRESSURE_PLATE_OUTLINE_SHAPE,
+                        13, SHAPE_ACACIA_PRESSURE_PLATE_OUTLINE_SHAPE,
+                        14, SHAPE_ACACIA_PRESSURE_PLATE_OUTLINE_SHAPE,
+                        15, SHAPE_ACACIA_PRESSURE_PLATE_OUTLINE_SHAPE)
                 .canContainLiquid(true)
-                .mapColor(-1754444289)
+                .mapColor(0x976D4DFF)
                 .translucency(0.2f)
                 .movementType("Popped");
         v.block("minecraft:jungle_sapling", "age_bit=false|true")
                 .explosionResistance(0.0f)
                 .collisionShape(BlockShape.EMPTY)
-                .outlineShape(BOX_1P6_0_1P6_14P4_12P8_14P4)
+                .outlineShape(SHAPE_ACACIA_SAPLING_OUTLINE_SHAPE)
                 .liquidBlocking(false)
                 .liquidSpreadCausesSpawn(true)
-                .mapColor(8126719)
+                .mapColor(0x007C00FF)
                 .translucency(1.0f)
                 .movementType("Popped")
                 .accumulatesSnow(false)
@@ -848,31 +1200,38 @@ final class BehaviourBasePart3 {
         v.block("minecraft:jungle_shelf", "minecraft:cardinal_direction='east'|'north'|'south'|'west',powered_bit=false|true,powered_shelf_type=0..3")
                 .destroyTime(2.0f)
                 .explosionResistance(3.0f)
-                .collisionShape("minecraft:cardinal_direction", "east", BOX_0_0_0_5_16_16, "north", BOX_0_0_11_16_16_16, "south", BOX_0_0_0_16_16_5, "west", BOX_11_0_0_16_16_16)
-                .outlineShape("minecraft:cardinal_direction", "east", BOX_0_0_0_5_16_16, "north", BOX_0_0_11_16_16_16, "south", BOX_0_0_0_16_16_5, "west", BOX_11_0_0_16_16_16)
+                .collisionShape("minecraft:cardinal_direction", "east", BOX_0_0_0_5_16_16,
+                        "north", BOX_0_0_11_16_16_16, "south", BOX_0_0_0_16_16_5,
+                        "west", BOX_11_0_0_16_16_16)
+                .outlineShape("minecraft:cardinal_direction", "east", BOX_0_0_0_5_16_16,
+                        "north", BOX_0_0_11_16_16_16, "south", BOX_0_0_0_16_16_5,
+                        "west", BOX_11_0_0_16_16_16)
                 .canContainLiquid(true)
-                .liquidFlowDirections("minecraft:cardinal_direction", "east", 59, "north", 55, "south", 61, "west", 62)
-                .mapColor(-1754444289)
+                .liquidFlowDirections("minecraft:cardinal_direction", "east", 59, "north", 55,
+                        "south", 61, "west", 62)
+                .mapColor(0x976D4DFF)
                 .flameOdds(30)
                 .burnOdds(20)
                 .translucency(0.8f);
         v.block("minecraft:jungle_slab", "minecraft:vertical_half='bottom'|'top'")
                 .destroyTime(2.0f)
                 .explosionResistance(3.0f)
-                .collisionShape("minecraft:vertical_half", "bottom", BOX_0_0_0_16_8_16, "top", BOX_0_8_0_16_16_16)
-                .outlineShape("minecraft:vertical_half", "bottom", BOX_0_0_0_16_8_16, "top", BOX_0_8_0_16_16_16)
+                .collisionShape("minecraft:vertical_half", "bottom", BOX_0_0_0_16_8_16,
+                        "top", BOX_0_8_0_16_16_16)
+                .outlineShape("minecraft:vertical_half", "bottom", BOX_0_0_0_16_8_16,
+                        "top", BOX_0_8_0_16_16_16)
                 .canContainLiquid(true)
                 .liquidFlowDirections("minecraft:vertical_half", "bottom", 62, "top", 61)
-                .mapColor(-1754444289)
+                .mapColor(0x976D4DFF)
                 .flameOdds(5)
                 .burnOdds(20);
         v.block("minecraft:jungle_stairs", "upside_down_bit=false|true,weirdo_direction=0..3")
                 .destroyTime(2.0f)
                 .explosionResistance(3.0f)
-                .collisionShape(ACACIA_STAIRS_COLLISION_SHAPE_9)
+                .collisionShape(TABLE_UPSIDE_DOWN_BIT_WEIRDO_DIRECTION_87FC4F)
                 .canContainLiquid(true)
-                .liquidFlowDirections(ACACIA_STAIRS_LIQUID_FLOW_DIRECTIONS)
-                .mapColor(-1754444289)
+                .liquidFlowDirections(TABLE_UPSIDE_DOWN_BIT_WEIRDO_DIRECTION_C4AAFC)
+                .mapColor(0x976D4DFF)
                 .flameOdds(5)
                 .burnOdds(20)
                 .translucency(0.8f);
@@ -882,24 +1241,28 @@ final class BehaviourBasePart3 {
                 .collisionShape(BlockShape.EMPTY)
                 .outlineShape(BOX_4_0_4_12_16_12)
                 .canContainLiquid(true)
-                .mapColor(-1754444289)
+                .mapColor(0x976D4DFF)
                 .translucency(0.8f)
                 .movementType("Popped");
         v.block("minecraft:jungle_trapdoor", "direction=0..3,open_bit=false|true,upside_down_bit=false|true")
                 .destroyTime(3.0f)
                 .explosionResistance(3.0f)
-                .collisionShape(ACACIA_TRAPDOOR_COLLISION_SHAPE)
-                .outlineShape(ACACIA_TRAPDOOR_OUTLINE_SHAPE)
+                .collisionShape(TABLE_DIRECTION_OPEN_BIT_UPSIDE_DOWN_BIT_A554C9)
+                .outlineShape(TABLE_DIRECTION_OPEN_BIT_UPSIDE_DOWN_BIT_BCB459)
                 .canContainLiquid(true)
-                .mapColor(-1754444289)
+                .mapColor(0x976D4DFF)
                 .translucency(0.8f);
         v.block("minecraft:jungle_wall_sign", "facing_direction=0..5")
                 .destroyTime(1.0f)
                 .explosionResistance(1.0f)
                 .collisionShape(BlockShape.EMPTY)
-                .outlineShape("facing_direction", 0, BlockShape.FULL_CUBE, 1, BlockShape.FULL_CUBE, 2, BOX_0_4P5_14_16_12P5_16, 3, BOX_0_4P5_0_16_12P5_2, 4, BOX_14_4P5_0_16_12P5_16, 5, BOX_0_4P5_0_2_12P5_16)
+                .outlineShape("facing_direction", 0, BlockShape.FULL_CUBE, 1, BlockShape.FULL_CUBE,
+                        2, SHAPE_ACACIA_WALL_SIGN_OUTLINE_SHAPE,
+                        3, SHAPE_ACACIA_WALL_SIGN_OUTLINE_SHAPE_2,
+                        4, SHAPE_ACACIA_WALL_SIGN_OUTLINE_SHAPE_3,
+                        5, SHAPE_ACACIA_WALL_SIGN_OUTLINE_SHAPE_4)
                 .canContainLiquid(true)
-                .mapColor(-1754444289)
+                .mapColor(0x976D4DFF)
                 .translucency(0.8f)
                 .movementType("Popped");
         v.block("minecraft:jungle_wood", "pillar_axis='x'|'y'|'z'")
@@ -907,7 +1270,7 @@ final class BehaviourBasePart3 {
                 .explosionResistance(2.0f)
                 .solid(true)
                 .lightDampening(15)
-                .mapColor(-1754444289)
+                .mapColor(0x976D4DFF)
                 .flameOdds(5)
                 .burnOdds(5);
         v.block("minecraft:kelp", "kelp_age=0..25")
@@ -916,21 +1279,28 @@ final class BehaviourBasePart3 {
                 .canContainLiquid(true)
                 .liquidBlocking(false)
                 .liquidSpreadCausesSpawn(true)
-                .mapColor(1078001663)
+                .mapColor(0x4040FFFF)
                 .translucency(1.0f)
                 .movementType("Popped")
                 .accumulatesSnow(false)
                 .obstructsRain(false);
+    }
+
+    static void part20(Changes v) {
         v.block("minecraft:lab_table", "direction=0..3")
                 .destroyTime(2.5f)
                 .explosionResistance(2.5f)
                 .liquidBlocking(false)
-                .mapColor(-1);
+                .mapColor(0xFFFFFFFF);
         v.block("minecraft:ladder", "facing_direction=0..5")
                 .destroyTime(0.4f)
                 .explosionResistance(0.4f)
-                .collisionShape("facing_direction", 0, BlockShape.EMPTY, 1, BlockShape.EMPTY, 2, BOX_0_0_13_16_16_16, 3, BOX_0_0_0_16_16_3, 4, BOX_13_0_0_16_16_16, 5, BOX_0_0_0_3_16_16)
-                .outlineShape("facing_direction", 0, BlockShape.EMPTY, 1, BlockShape.EMPTY, 2, BOX_0_0_13_16_16_16, 3, BOX_0_0_0_16_16_3, 4, BOX_13_0_0_16_16_16, 5, BOX_0_0_0_3_16_16)
+                .collisionShape("facing_direction", 0, BlockShape.EMPTY, 1, BlockShape.EMPTY,
+                        2, BOX_0_0_13_16_16_16, 3, BOX_0_0_0_16_16_3, 4, BOX_13_0_0_16_16_16,
+                        5, BOX_0_0_0_3_16_16)
+                .outlineShape("facing_direction", 0, BlockShape.EMPTY, 1, BlockShape.EMPTY,
+                        2, BOX_0_0_13_16_16_16, 3, BOX_0_0_0_16_16_3, 4, BOX_13_0_0_16_16_16,
+                        5, BOX_0_0_0_3_16_16)
                 .canContainLiquid(true)
                 .translucency(1.0f)
                 .movementType("Popped")
@@ -943,7 +1313,7 @@ final class BehaviourBasePart3 {
                 .outlineShape("hanging", false, BOX_5_0_5_11_8_11, true, BOX_5_2_5_11_10_11)
                 .lightEmission(15)
                 .canContainLiquid(true)
-                .mapColor(-1482184705)
+                .mapColor(0xA7A7A7FF)
                 .translucency(0.8f);
         v.block("minecraft:lapis_block", "")
                 .destroyTime(3.0f)
@@ -951,33 +1321,37 @@ final class BehaviourBasePart3 {
                 .solid(true)
                 .lightDampening(15)
                 .requiresCorrectTool(true)
-                .mapColor(1249968127);
+                .mapColor(0x4A80FFFF);
         v.block("minecraft:lapis_ore", "")
                 .destroyTime(3.0f)
                 .explosionResistance(3.0f)
                 .solid(true)
                 .lightDampening(15)
                 .requiresCorrectTool(true)
-                .mapColor(1886417151);
-    }
-
-    static void part19(Changes v) {
+                .mapColor(0x707070FF);
         v.block("minecraft:large_amethyst_bud", "minecraft:block_face='down'|'east'|'north'|'south'|'up'|'west'")
                 .destroyTime(1.5f)
                 .explosionResistance(1.5f)
-                .collisionShape("minecraft:block_face", "down", BOX_3_11_3_13_16_13, "east", BOX_0_3_3_5_13_13, "north", BOX_3_3_11_13_13_16, "south", BOX_3_3_0_13_13_5, "up", BOX_3_0_3_13_5_13, "west", BOX_11_3_3_16_13_13)
-                .outlineShape("minecraft:block_face", "down", BOX_3_11_3_13_16_13, "east", BOX_0_3_3_5_13_13, "north", BOX_3_3_11_13_13_16, "south", BOX_3_3_0_13_13_5, "up", BOX_3_0_3_13_5_13, "west", BOX_11_3_3_16_13_13)
+                .collisionShape("minecraft:block_face", "down", BOX_3_11_3_13_16_13,
+                        "east", BOX_0_3_3_5_13_13, "north", BOX_3_3_11_13_13_16,
+                        "south", BOX_3_3_0_13_13_5, "up", BOX_3_0_3_13_5_13,
+                        "west", BOX_11_3_3_16_13_13)
+                .outlineShape("minecraft:block_face", "down", BOX_3_11_3_13_16_13,
+                        "east", BOX_0_3_3_5_13_13, "north", BOX_3_3_11_13_13_16,
+                        "south", BOX_3_3_0_13_13_5, "up", BOX_3_0_3_13_5_13,
+                        "west", BOX_11_3_3_16_13_13)
                 .lightEmission(4)
                 .canContainLiquid(true)
-                .mapColor(-1722102273)
+                .mapColor(0x995ACDFF)
                 .movementType("Popped");
         v.block("minecraft:large_fern", "upper_block_bit=false|true")
                 .explosionResistance(0.0f)
                 .collisionShape(BlockShape.EMPTY)
-                .outlineShape("upper_block_bit", false, BOX_1P866656_0_2P933344_8P266656_16_9P333328, true, BOX_1P866656_0_2P933344_8P266656_9P6_9P333328)
+                .outlineShape("upper_block_bit", false, SHAPE_LARGE_FERN_OUTLINE_SHAPE,
+                        true, SHAPE_LARGE_FERN_OUTLINE_SHAPE_2)
                 .liquidBlocking(false)
                 .liquidSpreadCausesSpawn(true)
-                .mapColor(8126719)
+                .mapColor(0x007C00FF)
                 .tintMethod("Grass")
                 .flameOdds(60)
                 .burnOdds(100)
@@ -992,7 +1366,7 @@ final class BehaviourBasePart3 {
                 .lightEmission(15)
                 .lightDampening(15)
                 .liquidBlocking(false)
-                .mapColor(-16776961)
+                .mapColor(0xFF0000FF)
                 .translucency(1.0f)
                 .movementType("Popped");
         v.block("minecraft:leaf_litter", "growth=0..7,minecraft:cardinal_direction='east'|'north'|'south'|'west'")
@@ -1002,7 +1376,7 @@ final class BehaviourBasePart3 {
                 .canContainLiquid(true)
                 .liquidBlocking(false)
                 .liquidSpreadCausesSpawn(true)
-                .mapColor(1716270079)
+                .mapColor(0x664C33FF)
                 .tintMethod("DryFoliage")
                 .flameOdds(60)
                 .burnOdds(100)
@@ -1013,10 +1387,10 @@ final class BehaviourBasePart3 {
         v.block("minecraft:lectern", "minecraft:cardinal_direction='east'|'north'|'south'|'west',powered_bit=false|true")
                 .destroyTime(2.5f)
                 .explosionResistance(2.5f)
-                .collisionShape(BOX_0_0_0_16_14P4_16)
-                .outlineShape(BOX_0_0_0_16_14P4_16)
+                .collisionShape(SHAPE_LECTERN_COLLISION_SHAPE)
+                .outlineShape(SHAPE_LECTERN_COLLISION_SHAPE)
                 .canContainLiquid(true)
-                .mapColor(-1888007937)
+                .mapColor(0x8F7748FF)
                 .flameOdds(5)
                 .burnOdds(20)
                 .translucency(0.8f);
@@ -1024,7 +1398,11 @@ final class BehaviourBasePart3 {
                 .destroyTime(0.5f)
                 .explosionResistance(0.5f)
                 .collisionShape(BlockShape.EMPTY)
-                .outlineShape("lever_direction", "down_east_west", BOX_4_6P4_4_12_16_12, "down_north_south", BOX_4_6P4_4_12_16_12, "east", BOX_0_4_5_6_12_11, "north", BOX_5_4_10_11_12_16, "south", BOX_5_4_0_11_12_6, "up_east_west", BOX_4_0_4_12_9P6_12, "up_north_south", BOX_4_0_4_12_9P6_12, "west", BOX_10_4_5_16_12_11)
+                .outlineShape("lever_direction", "down_east_west", SHAPE_LEVER_OUTLINE_SHAPE,
+                        "down_north_south", SHAPE_LEVER_OUTLINE_SHAPE, "east", BOX_0_4_5_6_12_11,
+                        "north", BOX_5_4_10_11_12_16, "south", BOX_5_4_0_11_12_6,
+                        "up_east_west", SHAPE_LEVER_OUTLINE_SHAPE_2,
+                        "up_north_south", SHAPE_LEVER_OUTLINE_SHAPE_2, "west", BOX_10_4_5_16_12_11)
                 .canContainLiquid(true)
                 .liquidBlocking(false)
                 .translucency(1.0f)
@@ -1193,11 +1571,13 @@ final class BehaviourBasePart3 {
         v.block("minecraft:light_blue_candle", "candles=0..3,lit=false|true")
                 .destroyTime(0.1f)
                 .explosionResistance(0.1f)
-                .collisionShape("candles", 0, BOX_7_0_7_9_6_9, 1, BOX_5_0_7_11_6_10, 2, BOX_5_0_6_10_6_11, 3, BOX_5_0_5_11_6_10)
-                .outlineShape("candles", 0, BOX_7_0_7_9_6_9, 1, BOX_5_0_7_11_6_10, 2, BOX_5_0_6_10_6_11, 3, BOX_5_0_5_11_6_10)
-                .lightEmission(BLACK_CANDLE_LIGHT_EMISSION)
+                .collisionShape("candles", 0, BOX_7_0_7_9_6_9, 1, BOX_5_0_7_11_6_10,
+                        2, BOX_5_0_6_10_6_11, 3, BOX_5_0_5_11_6_10)
+                .outlineShape("candles", 0, BOX_7_0_7_9_6_9, 1, BOX_5_0_7_11_6_10,
+                        2, BOX_5_0_6_10_6_11, 3, BOX_5_0_5_11_6_10)
+                .lightEmission(TABLE_CANDLES_LIT_D44016)
                 .canContainLiquid(true)
-                .mapColor(1721358591)
+                .mapColor(0x6699D8FF)
                 .translucency(1.0f)
                 .accumulatesSnow(false)
                 .obstructsRain(false);
@@ -1218,7 +1598,7 @@ final class BehaviourBasePart3 {
                 .canContainLiquid(true)
                 .liquidBlocking(false)
                 .liquidSpreadCausesSpawn(true)
-                .mapColor(1721358591)
+                .mapColor(0x6699D8FF)
                 .flameOdds(30)
                 .burnOdds(20)
                 .translucency(0.89f)
@@ -1231,32 +1611,35 @@ final class BehaviourBasePart3 {
                 .solid(true)
                 .lightDampening(15)
                 .requiresCorrectTool(true)
-                .mapColor(1721358591);
+                .mapColor(0x6699D8FF);
         v.block("minecraft:light_blue_concrete_powder", "")
                 .destroyTime(0.5f)
                 .explosionResistance(0.5f)
                 .solid(true)
                 .lightDampening(15)
-                .mapColor(1721358591);
+                .mapColor(0x6699D8FF);
         v.block("minecraft:light_blue_glazed_terracotta", "facing_direction=0..5")
                 .destroyTime(1.4f)
                 .explosionResistance(1.4f)
                 .solid(true)
                 .lightDampening(15)
                 .requiresCorrectTool(true)
-                .mapColor(1721358591)
+                .mapColor(0x6699D8FF)
                 .movementType("Push");
         v.block("minecraft:light_blue_shulker_box", "")
                 .destroyTime(2.0f)
                 .explosionResistance(2.0f)
                 .canContainLiquid(true)
-                .mapColor(1721358591)
+                .mapColor(0x6699D8FF)
                 .translucency(0.5f)
                 .movementType("Popped");
+    }
+
+    static void part21(Changes v) {
         v.block("minecraft:light_blue_stained_glass", "")
                 .destroyTime(0.3f)
                 .explosionResistance(0.3f)
-                .mapColor(1721358591)
+                .mapColor(0x6699D8FF)
                 .translucency(1.0f);
         v.block("minecraft:light_blue_stained_glass_pane", "")
                 .destroyTime(0.3f)
@@ -1271,24 +1654,26 @@ final class BehaviourBasePart3 {
                 .solid(true)
                 .lightDampening(15)
                 .requiresCorrectTool(true)
-                .mapColor(1886161663);
+                .mapColor(0x706C8AFF);
         v.block("minecraft:light_blue_wool", "")
                 .destroyTime(0.8f)
                 .explosionResistance(0.8f)
                 .solid(true)
                 .lightDampening(15)
-                .mapColor(1721358591)
+                .mapColor(0x6699D8FF)
                 .flameOdds(30)
                 .burnOdds(60)
                 .translucency(0.8f);
         v.block("minecraft:light_gray_candle", "candles=0..3,lit=false|true")
                 .destroyTime(0.1f)
                 .explosionResistance(0.1f)
-                .collisionShape("candles", 0, BOX_7_0_7_9_6_9, 1, BOX_5_0_7_11_6_10, 2, BOX_5_0_6_10_6_11, 3, BOX_5_0_5_11_6_10)
-                .outlineShape("candles", 0, BOX_7_0_7_9_6_9, 1, BOX_5_0_7_11_6_10, 2, BOX_5_0_6_10_6_11, 3, BOX_5_0_5_11_6_10)
-                .lightEmission(BLACK_CANDLE_LIGHT_EMISSION)
+                .collisionShape("candles", 0, BOX_7_0_7_9_6_9, 1, BOX_5_0_7_11_6_10,
+                        2, BOX_5_0_6_10_6_11, 3, BOX_5_0_5_11_6_10)
+                .outlineShape("candles", 0, BOX_7_0_7_9_6_9, 1, BOX_5_0_7_11_6_10,
+                        2, BOX_5_0_6_10_6_11, 3, BOX_5_0_5_11_6_10)
+                .lightEmission(TABLE_CANDLES_LIT_D44016)
                 .canContainLiquid(true)
-                .mapColor(-1717986817)
+                .mapColor(0x999999FF)
                 .translucency(1.0f)
                 .accumulatesSnow(false)
                 .obstructsRain(false);
@@ -1301,9 +1686,6 @@ final class BehaviourBasePart3 {
                 .canContainLiquid(true)
                 .translucency(0.8f)
                 .movementType("Popped");
-    }
-
-    static void part20(Changes v) {
         v.block("minecraft:light_gray_carpet", "")
                 .destroyTime(0.1f)
                 .explosionResistance(0.1f)
@@ -1312,7 +1694,7 @@ final class BehaviourBasePart3 {
                 .canContainLiquid(true)
                 .liquidBlocking(false)
                 .liquidSpreadCausesSpawn(true)
-                .mapColor(-1717986817)
+                .mapColor(0x999999FF)
                 .flameOdds(30)
                 .burnOdds(20)
                 .translucency(0.89f)
@@ -1325,24 +1707,24 @@ final class BehaviourBasePart3 {
                 .solid(true)
                 .lightDampening(15)
                 .requiresCorrectTool(true)
-                .mapColor(-1717986817);
+                .mapColor(0x999999FF);
         v.block("minecraft:light_gray_concrete_powder", "")
                 .destroyTime(0.5f)
                 .explosionResistance(0.5f)
                 .solid(true)
                 .lightDampening(15)
-                .mapColor(-1717986817);
+                .mapColor(0x999999FF);
         v.block("minecraft:light_gray_shulker_box", "")
                 .destroyTime(2.0f)
                 .explosionResistance(2.0f)
                 .canContainLiquid(true)
-                .mapColor(-1717986817)
+                .mapColor(0x999999FF)
                 .translucency(0.5f)
                 .movementType("Popped");
         v.block("minecraft:light_gray_stained_glass", "")
                 .destroyTime(0.3f)
                 .explosionResistance(0.3f)
-                .mapColor(-1717986817)
+                .mapColor(0x999999FF)
                 .translucency(1.0f);
         v.block("minecraft:light_gray_stained_glass_pane", "")
                 .destroyTime(0.3f)
@@ -1357,13 +1739,13 @@ final class BehaviourBasePart3 {
                 .solid(true)
                 .lightDampening(15)
                 .requiresCorrectTool(true)
-                .mapColor(-2023005441);
+                .mapColor(0x876B62FF);
         v.block("minecraft:light_gray_wool", "")
                 .destroyTime(0.8f)
                 .explosionResistance(0.8f)
                 .solid(true)
                 .lightDampening(15)
-                .mapColor(-1717986817)
+                .mapColor(0x999999FF)
                 .flameOdds(30)
                 .burnOdds(60)
                 .translucency(0.8f);
@@ -1371,26 +1753,46 @@ final class BehaviourBasePart3 {
                 .destroyTime(0.5f)
                 .explosionResistance(0.5f)
                 .collisionShape(BlockShape.EMPTY)
-                .outlineShape("redstone_signal", 0, BOX_1_0_1_15_1_15, 1, BOX_1_0_1_15_0P5_15, 2, BOX_1_0_1_15_0P5_15, 3, BOX_1_0_1_15_0P5_15, 4, BOX_1_0_1_15_0P5_15, 5, BOX_1_0_1_15_0P5_15, 6, BOX_1_0_1_15_0P5_15, 7, BOX_1_0_1_15_0P5_15, 8, BOX_1_0_1_15_0P5_15, 9, BOX_1_0_1_15_0P5_15, 10, BOX_1_0_1_15_0P5_15, 11, BOX_1_0_1_15_0P5_15, 12, BOX_1_0_1_15_0P5_15, 13, BOX_1_0_1_15_0P5_15, 14, BOX_1_0_1_15_0P5_15, 15, BOX_1_0_1_15_0P5_15)
+                .outlineShape("redstone_signal", 0, BOX_1_0_1_15_1_15,
+                        1, SHAPE_ACACIA_PRESSURE_PLATE_OUTLINE_SHAPE,
+                        2, SHAPE_ACACIA_PRESSURE_PLATE_OUTLINE_SHAPE,
+                        3, SHAPE_ACACIA_PRESSURE_PLATE_OUTLINE_SHAPE,
+                        4, SHAPE_ACACIA_PRESSURE_PLATE_OUTLINE_SHAPE,
+                        5, SHAPE_ACACIA_PRESSURE_PLATE_OUTLINE_SHAPE,
+                        6, SHAPE_ACACIA_PRESSURE_PLATE_OUTLINE_SHAPE,
+                        7, SHAPE_ACACIA_PRESSURE_PLATE_OUTLINE_SHAPE,
+                        8, SHAPE_ACACIA_PRESSURE_PLATE_OUTLINE_SHAPE,
+                        9, SHAPE_ACACIA_PRESSURE_PLATE_OUTLINE_SHAPE,
+                        10, SHAPE_ACACIA_PRESSURE_PLATE_OUTLINE_SHAPE,
+                        11, SHAPE_ACACIA_PRESSURE_PLATE_OUTLINE_SHAPE,
+                        12, SHAPE_ACACIA_PRESSURE_PLATE_OUTLINE_SHAPE,
+                        13, SHAPE_ACACIA_PRESSURE_PLATE_OUTLINE_SHAPE,
+                        14, SHAPE_ACACIA_PRESSURE_PLATE_OUTLINE_SHAPE,
+                        15, SHAPE_ACACIA_PRESSURE_PLATE_OUTLINE_SHAPE)
                 .canContainLiquid(true)
-                .mapColor(-85045761)
+                .mapColor(0xFAEE4DFF)
                 .translucency(0.2f)
                 .movementType("Popped");
         v.block("minecraft:lightning_rod", "facing_direction=0..5,powered_bit=false|true")
                 .destroyTime(3.0f)
-                .collisionShape("facing_direction", 0, BOX_6_0_6_10_16_10, 1, BOX_6_0_6_10_16_10, 2, BOX_6_6_0_10_10_16, 3, BOX_6_6_0_10_10_16, 4, BOX_0_6_6_16_10_10, 5, BOX_0_6_6_16_10_10)
-                .outlineShape("facing_direction", 0, BOX_6_0_6_10_16_10, 1, BOX_6_0_6_10_16_10, 2, BOX_6_6_0_10_10_16, 3, BOX_6_6_0_10_10_16, 4, BOX_0_6_6_16_10_10, 5, BOX_0_6_6_16_10_10)
+                .collisionShape("facing_direction", 0, BOX_6_0_6_10_16_10, 1, BOX_6_0_6_10_16_10,
+                        2, BOX_6_6_0_10_10_16, 3, BOX_6_6_0_10_10_16, 4, BOX_0_6_6_16_10_10,
+                        5, BOX_0_6_6_16_10_10)
+                .outlineShape("facing_direction", 0, BOX_6_0_6_10_16_10, 1, BOX_6_0_6_10_16_10,
+                        2, BOX_6_6_0_10_10_16, 3, BOX_6_6_0_10_10_16, 4, BOX_0_6_6_16_10_10,
+                        5, BOX_0_6_6_16_10_10)
                 .canContainLiquid(true)
                 .requiresCorrectTool(true)
-                .mapColor(-662752257)
+                .mapColor(0xD87F33FF)
                 .translucency(0.8f);
         v.block("minecraft:lilac", "upper_block_bit=false|true")
                 .explosionResistance(0.0f)
                 .collisionShape(BlockShape.EMPTY)
-                .outlineShape("upper_block_bit", false, BOX_1P866656_0_2P933344_8P266656_16_9P333328, true, BOX_1P866656_0_2P933344_8P266656_9P6_9P333328)
+                .outlineShape("upper_block_bit", false, SHAPE_LARGE_FERN_OUTLINE_SHAPE,
+                        true, SHAPE_LARGE_FERN_OUTLINE_SHAPE_2)
                 .liquidBlocking(false)
                 .liquidSpreadCausesSpawn(true)
-                .mapColor(8126719)
+                .mapColor(0x007C00FF)
                 .flameOdds(60)
                 .burnOdds(100)
                 .translucency(1.0f)
@@ -1400,10 +1802,10 @@ final class BehaviourBasePart3 {
         v.block("minecraft:lily_of_the_valley", "")
                 .explosionResistance(0.0f)
                 .collisionShape(BlockShape.EMPTY)
-                .outlineShape(BOX_M0P533344_0_0P533344_8P266656_9P6_9P333328)
+                .outlineShape(SHAPE_ALLIUM_OUTLINE_SHAPE)
                 .liquidBlocking(false)
                 .liquidSpreadCausesSpawn(true)
-                .mapColor(8126719)
+                .mapColor(0x007C00FF)
                 .flameOdds(60)
                 .burnOdds(100)
                 .translucency(1.0f)
@@ -1414,11 +1816,13 @@ final class BehaviourBasePart3 {
         v.block("minecraft:lime_candle", "candles=0..3,lit=false|true")
                 .destroyTime(0.1f)
                 .explosionResistance(0.1f)
-                .collisionShape("candles", 0, BOX_7_0_7_9_6_9, 1, BOX_5_0_7_11_6_10, 2, BOX_5_0_6_10_6_11, 3, BOX_5_0_5_11_6_10)
-                .outlineShape("candles", 0, BOX_7_0_7_9_6_9, 1, BOX_5_0_7_11_6_10, 2, BOX_5_0_6_10_6_11, 3, BOX_5_0_5_11_6_10)
-                .lightEmission(BLACK_CANDLE_LIGHT_EMISSION)
+                .collisionShape("candles", 0, BOX_7_0_7_9_6_9, 1, BOX_5_0_7_11_6_10,
+                        2, BOX_5_0_6_10_6_11, 3, BOX_5_0_5_11_6_10)
+                .outlineShape("candles", 0, BOX_7_0_7_9_6_9, 1, BOX_5_0_7_11_6_10,
+                        2, BOX_5_0_6_10_6_11, 3, BOX_5_0_5_11_6_10)
+                .lightEmission(TABLE_CANDLES_LIT_D44016)
                 .canContainLiquid(true)
-                .mapColor(2144082431)
+                .mapColor(0x7FCC19FF)
                 .translucency(1.0f)
                 .accumulatesSnow(false)
                 .obstructsRain(false);
@@ -1439,7 +1843,7 @@ final class BehaviourBasePart3 {
                 .canContainLiquid(true)
                 .liquidBlocking(false)
                 .liquidSpreadCausesSpawn(true)
-                .mapColor(2144082431)
+                .mapColor(0x7FCC19FF)
                 .flameOdds(30)
                 .burnOdds(20)
                 .translucency(0.89f)
@@ -1452,32 +1856,32 @@ final class BehaviourBasePart3 {
                 .solid(true)
                 .lightDampening(15)
                 .requiresCorrectTool(true)
-                .mapColor(2144082431);
+                .mapColor(0x7FCC19FF);
         v.block("minecraft:lime_concrete_powder", "")
                 .destroyTime(0.5f)
                 .explosionResistance(0.5f)
                 .solid(true)
                 .lightDampening(15)
-                .mapColor(2144082431);
+                .mapColor(0x7FCC19FF);
         v.block("minecraft:lime_glazed_terracotta", "facing_direction=0..5")
                 .destroyTime(1.4f)
                 .explosionResistance(1.4f)
                 .solid(true)
                 .lightDampening(15)
                 .requiresCorrectTool(true)
-                .mapColor(2144082431)
+                .mapColor(0x7FCC19FF)
                 .movementType("Push");
         v.block("minecraft:lime_shulker_box", "")
                 .destroyTime(2.0f)
                 .explosionResistance(2.0f)
                 .canContainLiquid(true)
-                .mapColor(2144082431)
+                .mapColor(0x7FCC19FF)
                 .translucency(0.5f)
                 .movementType("Popped");
         v.block("minecraft:lime_stained_glass", "")
                 .destroyTime(0.3f)
                 .explosionResistance(0.3f)
-                .mapColor(2144082431)
+                .mapColor(0x7FCC19FF)
                 .translucency(1.0f);
         v.block("minecraft:lime_stained_glass_pane", "")
                 .destroyTime(0.3f)
@@ -1492,13 +1896,13 @@ final class BehaviourBasePart3 {
                 .solid(true)
                 .lightDampening(15)
                 .requiresCorrectTool(true)
-                .mapColor(1735734783);
+                .mapColor(0x677535FF);
         v.block("minecraft:lime_wool", "")
                 .destroyTime(0.8f)
                 .explosionResistance(0.8f)
                 .solid(true)
                 .lightDampening(15)
-                .mapColor(2144082431)
+                .mapColor(0x7FCC19FF)
                 .flameOdds(30)
                 .burnOdds(60)
                 .translucency(0.8f);
@@ -1509,7 +1913,7 @@ final class BehaviourBasePart3 {
                 .lightEmission(13)
                 .lightDampening(15)
                 .requiresCorrectTool(true)
-                .mapColor(1886417151);
+                .mapColor(0x707070FF);
         v.block("minecraft:lit_deepslate_redstone_ore", "")
                 .destroyTime(4.5f)
                 .explosionResistance(3.0f)
@@ -1517,7 +1921,7 @@ final class BehaviourBasePart3 {
                 .lightEmission(9)
                 .lightDampening(15)
                 .requiresCorrectTool(true)
-                .mapColor(1684301055);
+                .mapColor(0x646464FF);
         v.block("minecraft:lit_furnace", "minecraft:cardinal_direction='east'|'north'|'south'|'west'")
                 .destroyTime(3.5f)
                 .explosionResistance(3.5f)
@@ -1525,14 +1929,14 @@ final class BehaviourBasePart3 {
                 .lightEmission(13)
                 .lightDampening(15)
                 .requiresCorrectTool(true)
-                .mapColor(1886417151);
+                .mapColor(0x707070FF);
         v.block("minecraft:lit_pumpkin", "minecraft:cardinal_direction='east'|'north'|'south'|'west'")
                 .destroyTime(1.0f)
                 .explosionResistance(1.0f)
                 .solid(true)
                 .lightEmission(15)
                 .lightDampening(15)
-                .mapColor(-662752257)
+                .mapColor(0xD87F33FF)
                 .movementType("Popped");
         v.block("minecraft:lit_redstone_lamp", "")
                 .destroyTime(0.3f)
@@ -1548,7 +1952,7 @@ final class BehaviourBasePart3 {
                 .lightEmission(9)
                 .lightDampening(15)
                 .requiresCorrectTool(true)
-                .mapColor(1886417151);
+                .mapColor(0x707070FF);
         v.block("minecraft:lit_smoker", "minecraft:cardinal_direction='east'|'north'|'south'|'west'")
                 .destroyTime(3.5f)
                 .explosionResistance(3.5f)
@@ -1556,29 +1960,34 @@ final class BehaviourBasePart3 {
                 .lightEmission(13)
                 .lightDampening(15)
                 .requiresCorrectTool(true)
-                .mapColor(1886417151);
+                .mapColor(0x707070FF);
         v.block("minecraft:lodestone", "")
                 .destroyTime(3.5f)
                 .explosionResistance(3.5f)
                 .solid(true)
                 .lightDampening(15)
                 .requiresCorrectTool(true)
-                .mapColor(-1)
+                .mapColor(0xFFFFFFFF)
                 .movementType("Immovable");
         v.block("minecraft:loom", "direction=0..3")
                 .destroyTime(2.5f)
                 .explosionResistance(2.5f)
                 .solid(true)
                 .lightDampening(15)
-                .mapColor(-1888007937);
+                .mapColor(0x8F7748FF);
+    }
+
+    static void part22(Changes v) {
         v.block("minecraft:magenta_candle", "candles=0..3,lit=false|true")
                 .destroyTime(0.1f)
                 .explosionResistance(0.1f)
-                .collisionShape("candles", 0, BOX_7_0_7_9_6_9, 1, BOX_5_0_7_11_6_10, 2, BOX_5_0_6_10_6_11, 3, BOX_5_0_5_11_6_10)
-                .outlineShape("candles", 0, BOX_7_0_7_9_6_9, 1, BOX_5_0_7_11_6_10, 2, BOX_5_0_6_10_6_11, 3, BOX_5_0_5_11_6_10)
-                .lightEmission(BLACK_CANDLE_LIGHT_EMISSION)
+                .collisionShape("candles", 0, BOX_7_0_7_9_6_9, 1, BOX_5_0_7_11_6_10,
+                        2, BOX_5_0_6_10_6_11, 3, BOX_5_0_5_11_6_10)
+                .outlineShape("candles", 0, BOX_7_0_7_9_6_9, 1, BOX_5_0_7_11_6_10,
+                        2, BOX_5_0_6_10_6_11, 3, BOX_5_0_5_11_6_10)
+                .lightEmission(TABLE_CANDLES_LIT_D44016)
                 .canContainLiquid(true)
-                .mapColor(-1303586561)
+                .mapColor(0xB24CD8FF)
                 .translucency(1.0f)
                 .accumulatesSnow(false)
                 .obstructsRain(false);
@@ -1599,7 +2008,7 @@ final class BehaviourBasePart3 {
                 .canContainLiquid(true)
                 .liquidBlocking(false)
                 .liquidSpreadCausesSpawn(true)
-                .mapColor(-1303586561)
+                .mapColor(0xB24CD8FF)
                 .flameOdds(30)
                 .burnOdds(20)
                 .translucency(0.89f)
@@ -1612,32 +2021,32 @@ final class BehaviourBasePart3 {
                 .solid(true)
                 .lightDampening(15)
                 .requiresCorrectTool(true)
-                .mapColor(-1303586561);
+                .mapColor(0xB24CD8FF);
         v.block("minecraft:magenta_concrete_powder", "")
                 .destroyTime(0.5f)
                 .explosionResistance(0.5f)
                 .solid(true)
                 .lightDampening(15)
-                .mapColor(-1303586561);
+                .mapColor(0xB24CD8FF);
         v.block("minecraft:magenta_glazed_terracotta", "facing_direction=0..5")
                 .destroyTime(1.4f)
                 .explosionResistance(1.4f)
                 .solid(true)
                 .lightDampening(15)
                 .requiresCorrectTool(true)
-                .mapColor(-1303586561)
+                .mapColor(0xB24CD8FF)
                 .movementType("Push");
         v.block("minecraft:magenta_shulker_box", "")
                 .destroyTime(2.0f)
                 .explosionResistance(2.0f)
                 .canContainLiquid(true)
-                .mapColor(-1303586561)
+                .mapColor(0xB24CD8FF)
                 .translucency(0.5f)
                 .movementType("Popped");
         v.block("minecraft:magenta_stained_glass", "")
                 .destroyTime(0.3f)
                 .explosionResistance(0.3f)
-                .mapColor(-1303586561)
+                .mapColor(0xB24CD8FF)
                 .translucency(1.0f);
         v.block("minecraft:magenta_stained_glass_pane", "")
                 .destroyTime(0.3f)
@@ -1646,22 +2055,19 @@ final class BehaviourBasePart3 {
                 .outlineShape(BOX_7_0_7_9_16_9)
                 .canContainLiquid(true)
                 .translucency(1.0f);
-    }
-
-    static void part21(Changes v) {
         v.block("minecraft:magenta_terracotta", "")
                 .destroyTime(1.25f)
                 .explosionResistance(1.25f)
                 .solid(true)
                 .lightDampening(15)
                 .requiresCorrectTool(true)
-                .mapColor(-1789432577);
+                .mapColor(0x95576CFF);
         v.block("minecraft:magenta_wool", "")
                 .destroyTime(0.8f)
                 .explosionResistance(0.8f)
                 .solid(true)
                 .lightDampening(15)
-                .mapColor(-1303586561)
+                .mapColor(0xB24CD8FF)
                 .flameOdds(30)
                 .burnOdds(60)
                 .translucency(0.8f);
@@ -1672,21 +2078,21 @@ final class BehaviourBasePart3 {
                 .lightEmission(3)
                 .lightDampening(15)
                 .requiresCorrectTool(true)
-                .mapColor(1879179519);
+                .mapColor(0x700200FF);
         v.block("minecraft:mangrove_button", "button_pressed_bit=false|true,facing_direction=0..5")
                 .destroyTime(0.5f)
                 .explosionResistance(0.5f)
                 .collisionShape(BlockShape.EMPTY)
-                .outlineShape(ACACIA_BUTTON_OUTLINE_SHAPE)
+                .outlineShape(TABLE_BUTTON_PRESSED_BIT_FACING_DIRECTION_8483EF)
                 .canContainLiquid(true)
                 .movementType("Popped");
         v.block("minecraft:mangrove_door", "door_hinge_bit=false|true,minecraft:cardinal_direction='east'|'north'|'south'|'west',open_bit=false|true,upper_block_bit=false|true")
                 .destroyTime(3.0f)
                 .explosionResistance(3.0f)
-                .collisionShape(ACACIA_DOOR_COLLISION_SHAPE)
-                .outlineShape(ACACIA_DOOR_COLLISION_SHAPE)
+                .collisionShape(TABLE_DOOR_HINGE_BIT_CARDINAL_DIRECTION_OPEN_BIT_C4BD10)
+                .outlineShape(TABLE_DOOR_HINGE_BIT_CARDINAL_DIRECTION_OPEN_BIT_C4BD10)
                 .canContainLiquid(true)
-                .mapColor(-1724697601)
+                .mapColor(0x993333FF)
                 .translucency(0.8f)
                 .movementType("Popped");
         v.block("minecraft:mangrove_double_slab", "minecraft:vertical_half='bottom'|'top'")
@@ -1694,7 +2100,7 @@ final class BehaviourBasePart3 {
                 .explosionResistance(3.0f)
                 .solid(true)
                 .lightDampening(15)
-                .mapColor(-1724697601)
+                .mapColor(0x993333FF)
                 .flameOdds(5)
                 .burnOdds(20);
         v.block("minecraft:mangrove_fence", "")
@@ -1703,18 +2109,20 @@ final class BehaviourBasePart3 {
                 .collisionShape(BOX_6_0_6_10_24_10)
                 .outlineShape(BOX_6_0_6_10_16_10)
                 .canContainLiquid(true)
-                .mapColor(-1724697601)
+                .mapColor(0x993333FF)
                 .flameOdds(5)
                 .burnOdds(20)
                 .translucency(0.8f);
         v.block("minecraft:mangrove_fence_gate", "in_wall_bit=false|true,minecraft:cardinal_direction='east'|'north'|'south'|'west',open_bit=false|true")
                 .destroyTime(2.0f)
                 .explosionResistance(3.0f)
-                .collisionShape(ACACIA_FENCE_GATE_COLLISION_SHAPE)
-                .outlineShape("minecraft:cardinal_direction", "east", BOX_6_0_0_10_16_16, "north", BOX_0_0_6_16_16_10, "south", BOX_0_0_6_16_16_10, "west", BOX_6_0_0_10_16_16)
+                .collisionShape(TABLE_CARDINAL_DIRECTION_OPEN_BIT_C87F8B)
+                .outlineShape("minecraft:cardinal_direction", "east", BOX_6_0_0_10_16_16,
+                        "north", BOX_0_0_6_16_16_10, "south", BOX_0_0_6_16_16_10,
+                        "west", BOX_6_0_0_10_16_16)
                 .canContainLiquid(true)
                 .liquidFlowDirections("in_wall_bit", false, 63, true, null)
-                .mapColor(-1724697601)
+                .mapColor(0x993333FF)
                 .flameOdds(5)
                 .burnOdds(20)
                 .translucency(0.8f)
@@ -1726,10 +2134,12 @@ final class BehaviourBasePart3 {
         v.block("minecraft:mangrove_hanging_sign", "attached_bit=false|true,facing_direction=0..5,ground_sign_direction=0..15,hanging=false|true")
                 .destroyTime(1.0f)
                 .explosionResistance(1.0f)
-                .collisionShape(ACACIA_HANGING_SIGN_COLLISION_SHAPE)
-                .outlineShape("facing_direction", 0, BOX_0_0_6_16_16_10, 1, BOX_0_0_6_16_16_10, 2, BOX_0_0_6_16_16_10, 3, BOX_0_0_6_16_16_10, 4, BOX_6_0_0_10_16_16, 5, BOX_6_0_0_10_16_16)
+                .collisionShape(TABLE_FACING_DIRECTION_HANGING_6F9CD1)
+                .outlineShape("facing_direction", 0, BOX_0_0_6_16_16_10, 1, BOX_0_0_6_16_16_10,
+                        2, BOX_0_0_6_16_16_10, 3, BOX_0_0_6_16_16_10, 4, BOX_6_0_0_10_16_16,
+                        5, BOX_6_0_0_10_16_16)
                 .canContainLiquid(true)
-                .mapColor(-1724697601)
+                .mapColor(0x993333FF)
                 .translucency(0.8f)
                 .movementType("Popped");
         v.block("minecraft:mangrove_leaves", "persistent_bit=false|true,update_bit=false|true")
@@ -1737,7 +2147,7 @@ final class BehaviourBasePart3 {
                 .explosionResistance(0.2f)
                 .lightDampening(1)
                 .canContainLiquid(true)
-                .mapColor(-1970631937)
+                .mapColor(0x8A8A8AFF)
                 .tintMethod("DefaultFoliage")
                 .flameOdds(30)
                 .burnOdds(60)
@@ -1748,7 +2158,7 @@ final class BehaviourBasePart3 {
                 .explosionResistance(0.4f)
                 .solid(true)
                 .lightDampening(15)
-                .mapColor("pillar_axis", "x", -2125057537, "y", -1724697601, "z", -2125057537)
+                .mapColor("pillar_axis", "x", 0x815631FF, "y", 0x993333FF, "z", 0x815631FF)
                 .flameOdds(5)
                 .burnOdds(5);
         v.block("minecraft:mangrove_planks", "")
@@ -1756,25 +2166,40 @@ final class BehaviourBasePart3 {
                 .explosionResistance(3.0f)
                 .solid(true)
                 .lightDampening(15)
-                .mapColor(-1724697601)
+                .mapColor(0x993333FF)
                 .flameOdds(5)
                 .burnOdds(20);
         v.block("minecraft:mangrove_pressure_plate", "redstone_signal=0..15")
                 .destroyTime(0.5f)
                 .explosionResistance(0.5f)
                 .collisionShape(BlockShape.EMPTY)
-                .outlineShape("redstone_signal", 0, BOX_1_0_1_15_1_15, 1, BOX_1_0_1_15_0P5_15, 2, BOX_1_0_1_15_0P5_15, 3, BOX_1_0_1_15_0P5_15, 4, BOX_1_0_1_15_0P5_15, 5, BOX_1_0_1_15_0P5_15, 6, BOX_1_0_1_15_0P5_15, 7, BOX_1_0_1_15_0P5_15, 8, BOX_1_0_1_15_0P5_15, 9, BOX_1_0_1_15_0P5_15, 10, BOX_1_0_1_15_0P5_15, 11, BOX_1_0_1_15_0P5_15, 12, BOX_1_0_1_15_0P5_15, 13, BOX_1_0_1_15_0P5_15, 14, BOX_1_0_1_15_0P5_15, 15, BOX_1_0_1_15_0P5_15)
+                .outlineShape("redstone_signal", 0, BOX_1_0_1_15_1_15,
+                        1, SHAPE_ACACIA_PRESSURE_PLATE_OUTLINE_SHAPE,
+                        2, SHAPE_ACACIA_PRESSURE_PLATE_OUTLINE_SHAPE,
+                        3, SHAPE_ACACIA_PRESSURE_PLATE_OUTLINE_SHAPE,
+                        4, SHAPE_ACACIA_PRESSURE_PLATE_OUTLINE_SHAPE,
+                        5, SHAPE_ACACIA_PRESSURE_PLATE_OUTLINE_SHAPE,
+                        6, SHAPE_ACACIA_PRESSURE_PLATE_OUTLINE_SHAPE,
+                        7, SHAPE_ACACIA_PRESSURE_PLATE_OUTLINE_SHAPE,
+                        8, SHAPE_ACACIA_PRESSURE_PLATE_OUTLINE_SHAPE,
+                        9, SHAPE_ACACIA_PRESSURE_PLATE_OUTLINE_SHAPE,
+                        10, SHAPE_ACACIA_PRESSURE_PLATE_OUTLINE_SHAPE,
+                        11, SHAPE_ACACIA_PRESSURE_PLATE_OUTLINE_SHAPE,
+                        12, SHAPE_ACACIA_PRESSURE_PLATE_OUTLINE_SHAPE,
+                        13, SHAPE_ACACIA_PRESSURE_PLATE_OUTLINE_SHAPE,
+                        14, SHAPE_ACACIA_PRESSURE_PLATE_OUTLINE_SHAPE,
+                        15, SHAPE_ACACIA_PRESSURE_PLATE_OUTLINE_SHAPE)
                 .canContainLiquid(true)
-                .mapColor(-1724697601)
+                .mapColor(0x993333FF)
                 .translucency(0.2f)
                 .movementType("Popped");
         v.block("minecraft:mangrove_propagule", "hanging=false|true,propagule_stage=0..4")
                 .explosionResistance(0.0f)
                 .collisionShape(BlockShape.EMPTY)
-                .outlineShape(MANGROVE_PROPAGULE_OUTLINE_SHAPE)
+                .outlineShape(TABLE_HANGING_PROPAGULE_STAGE_355CDB)
                 .canContainLiquid(true)
                 .liquidBlocking(false)
-                .mapColor(8126719)
+                .mapColor(0x007C00FF)
                 .translucency(1.0f)
                 .movementType("Popped")
                 .accumulatesSnow(false)
@@ -1783,37 +2208,44 @@ final class BehaviourBasePart3 {
                 .destroyTime(0.7f)
                 .explosionResistance(0.7f)
                 .canContainLiquid(true)
-                .mapColor(-2125057537)
+                .mapColor(0x815631FF)
                 .flameOdds(5)
                 .burnOdds(5);
         v.block("minecraft:mangrove_shelf", "minecraft:cardinal_direction='east'|'north'|'south'|'west',powered_bit=false|true,powered_shelf_type=0..3")
                 .destroyTime(2.0f)
                 .explosionResistance(3.0f)
-                .collisionShape("minecraft:cardinal_direction", "east", BOX_0_0_0_5_16_16, "north", BOX_0_0_11_16_16_16, "south", BOX_0_0_0_16_16_5, "west", BOX_11_0_0_16_16_16)
-                .outlineShape("minecraft:cardinal_direction", "east", BOX_0_0_0_5_16_16, "north", BOX_0_0_11_16_16_16, "south", BOX_0_0_0_16_16_5, "west", BOX_11_0_0_16_16_16)
+                .collisionShape("minecraft:cardinal_direction", "east", BOX_0_0_0_5_16_16,
+                        "north", BOX_0_0_11_16_16_16, "south", BOX_0_0_0_16_16_5,
+                        "west", BOX_11_0_0_16_16_16)
+                .outlineShape("minecraft:cardinal_direction", "east", BOX_0_0_0_5_16_16,
+                        "north", BOX_0_0_11_16_16_16, "south", BOX_0_0_0_16_16_5,
+                        "west", BOX_11_0_0_16_16_16)
                 .canContainLiquid(true)
-                .liquidFlowDirections("minecraft:cardinal_direction", "east", 59, "north", 55, "south", 61, "west", 62)
-                .mapColor(-2125057537)
+                .liquidFlowDirections("minecraft:cardinal_direction", "east", 59, "north", 55,
+                        "south", 61, "west", 62)
+                .mapColor(0x815631FF)
                 .flameOdds(30)
                 .burnOdds(20)
                 .translucency(0.8f);
         v.block("minecraft:mangrove_slab", "minecraft:vertical_half='bottom'|'top'")
                 .destroyTime(2.0f)
                 .explosionResistance(3.0f)
-                .collisionShape("minecraft:vertical_half", "bottom", BOX_0_0_0_16_8_16, "top", BOX_0_8_0_16_16_16)
-                .outlineShape("minecraft:vertical_half", "bottom", BOX_0_0_0_16_8_16, "top", BOX_0_8_0_16_16_16)
+                .collisionShape("minecraft:vertical_half", "bottom", BOX_0_0_0_16_8_16,
+                        "top", BOX_0_8_0_16_16_16)
+                .outlineShape("minecraft:vertical_half", "bottom", BOX_0_0_0_16_8_16,
+                        "top", BOX_0_8_0_16_16_16)
                 .canContainLiquid(true)
                 .liquidFlowDirections("minecraft:vertical_half", "bottom", 62, "top", 61)
-                .mapColor(-1724697601)
+                .mapColor(0x993333FF)
                 .flameOdds(5)
                 .burnOdds(20);
         v.block("minecraft:mangrove_stairs", "upside_down_bit=false|true,weirdo_direction=0..3")
                 .destroyTime(2.0f)
                 .explosionResistance(3.0f)
-                .collisionShape(ACACIA_STAIRS_COLLISION_SHAPE_9)
+                .collisionShape(TABLE_UPSIDE_DOWN_BIT_WEIRDO_DIRECTION_87FC4F)
                 .canContainLiquid(true)
-                .liquidFlowDirections(ACACIA_STAIRS_LIQUID_FLOW_DIRECTIONS)
-                .mapColor(-1724697601)
+                .liquidFlowDirections(TABLE_UPSIDE_DOWN_BIT_WEIRDO_DIRECTION_C4AAFC)
+                .mapColor(0x993333FF)
                 .flameOdds(5)
                 .burnOdds(20)
                 .translucency(0.8f);
@@ -1823,24 +2255,31 @@ final class BehaviourBasePart3 {
                 .collisionShape(BlockShape.EMPTY)
                 .outlineShape(BOX_4_0_4_12_16_12)
                 .canContainLiquid(true)
-                .mapColor(-1724697601)
+                .mapColor(0x993333FF)
                 .translucency(0.8f)
                 .movementType("Popped");
         v.block("minecraft:mangrove_trapdoor", "direction=0..3,open_bit=false|true,upside_down_bit=false|true")
                 .destroyTime(3.0f)
                 .explosionResistance(3.0f)
-                .collisionShape(ACACIA_TRAPDOOR_COLLISION_SHAPE)
-                .outlineShape(ACACIA_TRAPDOOR_OUTLINE_SHAPE)
+                .collisionShape(TABLE_DIRECTION_OPEN_BIT_UPSIDE_DOWN_BIT_A554C9)
+                .outlineShape(TABLE_DIRECTION_OPEN_BIT_UPSIDE_DOWN_BIT_BCB459)
                 .canContainLiquid(true)
-                .mapColor(-1724697601)
+                .mapColor(0x993333FF)
                 .translucency(0.8f);
+    }
+
+    static void part23(Changes v) {
         v.block("minecraft:mangrove_wall_sign", "facing_direction=0..5")
                 .destroyTime(1.0f)
                 .explosionResistance(1.0f)
                 .collisionShape(BlockShape.EMPTY)
-                .outlineShape("facing_direction", 0, BlockShape.FULL_CUBE, 1, BlockShape.FULL_CUBE, 2, BOX_0_4P5_14_16_12P5_16, 3, BOX_0_4P5_0_16_12P5_2, 4, BOX_14_4P5_0_16_12P5_16, 5, BOX_0_4P5_0_2_12P5_16)
+                .outlineShape("facing_direction", 0, BlockShape.FULL_CUBE, 1, BlockShape.FULL_CUBE,
+                        2, SHAPE_ACACIA_WALL_SIGN_OUTLINE_SHAPE,
+                        3, SHAPE_ACACIA_WALL_SIGN_OUTLINE_SHAPE_2,
+                        4, SHAPE_ACACIA_WALL_SIGN_OUTLINE_SHAPE_3,
+                        5, SHAPE_ACACIA_WALL_SIGN_OUTLINE_SHAPE_4)
                 .canContainLiquid(true)
-                .mapColor(-1724697601)
+                .mapColor(0x993333FF)
                 .translucency(0.8f)
                 .movementType("Popped");
         v.block("minecraft:mangrove_wood", "pillar_axis='x'|'y'|'z'")
@@ -1848,37 +2287,43 @@ final class BehaviourBasePart3 {
                 .explosionResistance(2.0f)
                 .solid(true)
                 .lightDampening(15)
-                .mapColor(-1724697601)
+                .mapColor(0x993333FF)
                 .flameOdds(5)
                 .burnOdds(5);
         v.block("minecraft:material_reducer", "direction=0..3")
                 .destroyTime(2.5f)
                 .explosionResistance(2.5f)
                 .liquidBlocking(false)
-                .mapColor(-1);
+                .mapColor(0xFFFFFFFF);
         v.block("minecraft:medium_amethyst_bud", "minecraft:block_face='down'|'east'|'north'|'south'|'up'|'west'")
                 .destroyTime(1.5f)
                 .explosionResistance(1.5f)
-                .collisionShape("minecraft:block_face", "down", BOX_3_12_3_13_16_13, "east", BOX_0_3_3_4_13_13, "north", BOX_3_3_12_13_13_16, "south", BOX_3_3_0_13_13_4, "up", BOX_3_0_3_13_4_13, "west", BOX_12_3_3_16_13_13)
-                .outlineShape("minecraft:block_face", "down", BOX_3_12_3_13_16_13, "east", BOX_0_3_3_4_13_13, "north", BOX_3_3_12_13_13_16, "south", BOX_3_3_0_13_13_4, "up", BOX_3_0_3_13_4_13, "west", BOX_12_3_3_16_13_13)
+                .collisionShape("minecraft:block_face", "down", BOX_3_12_3_13_16_13,
+                        "east", BOX_0_3_3_4_13_13, "north", BOX_3_3_12_13_13_16,
+                        "south", BOX_3_3_0_13_13_4, "up", BOX_3_0_3_13_4_13,
+                        "west", BOX_12_3_3_16_13_13)
+                .outlineShape("minecraft:block_face", "down", BOX_3_12_3_13_16_13,
+                        "east", BOX_0_3_3_4_13_13, "north", BOX_3_3_12_13_13_16,
+                        "south", BOX_3_3_0_13_13_4, "up", BOX_3_0_3_13_4_13,
+                        "west", BOX_12_3_3_16_13_13)
                 .lightEmission(2)
                 .canContainLiquid(true)
-                .mapColor(-1722102273)
+                .mapColor(0x995ACDFF)
                 .movementType("Popped");
         v.block("minecraft:melon_block", "")
                 .destroyTime(1.0f)
                 .explosionResistance(1.0f)
                 .solid(true)
                 .lightDampening(15)
-                .mapColor(2144082431)
+                .mapColor(0x7FCC19FF)
                 .movementType("Popped");
         v.block("minecraft:melon_stem", "facing_direction=0..5,growth=0..7")
                 .explosionResistance(0.0f)
                 .collisionShape(BlockShape.EMPTY)
-                .outlineShape(MELON_STEM_OUTLINE_SHAPE)
+                .outlineShape(TABLE_FACING_DIRECTION_GROWTH_FCF606)
                 .liquidBlocking(false)
                 .liquidSpreadCausesSpawn(true)
-                .mapColor(8126719)
+                .mapColor(0x007C00FF)
                 .tintMethod("Stem")
                 .translucency(1.0f)
                 .movementType("Popped")
@@ -1890,14 +2335,14 @@ final class BehaviourBasePart3 {
                 .solid(true)
                 .canContainLiquid(true)
                 .requiresCorrectTool(true)
-                .mapColor(1886417151)
+                .mapColor(0x707070FF)
                 .movementType("Immovable");
         v.block("minecraft:moss_block", "")
                 .destroyTime(0.1f)
                 .explosionResistance(0.1f)
                 .solid(true)
                 .lightDampening(15)
-                .mapColor(1719612415)
+                .mapColor(0x667F33FF)
                 .movementType("Popped");
         v.block("minecraft:moss_carpet", "")
                 .destroyTime(0.1f)
@@ -1907,7 +2352,7 @@ final class BehaviourBasePart3 {
                 .canContainLiquid(true)
                 .liquidBlocking(false)
                 .liquidSpreadCausesSpawn(true)
-                .mapColor(1719612415)
+                .mapColor(0x667F33FF)
                 .translucency(0.89f)
                 .thickness(0.07f)
                 .movementType("Popped")
@@ -1918,76 +2363,77 @@ final class BehaviourBasePart3 {
                 .solid(true)
                 .lightDampening(15)
                 .requiresCorrectTool(true)
-                .mapColor(1886417151);
+                .mapColor(0x707070FF);
         v.block("minecraft:mossy_cobblestone_double_slab", "minecraft:vertical_half='bottom'|'top'")
                 .destroyTime(2.0f)
                 .solid(true)
                 .lightDampening(15)
                 .requiresCorrectTool(true)
-                .mapColor(1886417151);
-    }
-
-    static void part22(Changes v) {
+                .mapColor(0x707070FF);
         v.block("minecraft:mossy_cobblestone_slab", "minecraft:vertical_half='bottom'|'top'")
                 .destroyTime(2.0f)
-                .collisionShape("minecraft:vertical_half", "bottom", BOX_0_0_0_16_8_16, "top", BOX_0_8_0_16_16_16)
-                .outlineShape("minecraft:vertical_half", "bottom", BOX_0_0_0_16_8_16, "top", BOX_0_8_0_16_16_16)
+                .collisionShape("minecraft:vertical_half", "bottom", BOX_0_0_0_16_8_16,
+                        "top", BOX_0_8_0_16_16_16)
+                .outlineShape("minecraft:vertical_half", "bottom", BOX_0_0_0_16_8_16,
+                        "top", BOX_0_8_0_16_16_16)
                 .canContainLiquid(true)
                 .liquidFlowDirections("minecraft:vertical_half", "bottom", 62, "top", 61)
                 .requiresCorrectTool(true)
-                .mapColor(1886417151);
+                .mapColor(0x707070FF);
         v.block("minecraft:mossy_cobblestone_stairs", "upside_down_bit=false|true,weirdo_direction=0..3")
                 .destroyTime(2.0f)
-                .collisionShape(ACACIA_STAIRS_COLLISION_SHAPE_9)
+                .collisionShape(TABLE_UPSIDE_DOWN_BIT_WEIRDO_DIRECTION_87FC4F)
                 .canContainLiquid(true)
-                .liquidFlowDirections(ACACIA_STAIRS_LIQUID_FLOW_DIRECTIONS)
+                .liquidFlowDirections(TABLE_UPSIDE_DOWN_BIT_WEIRDO_DIRECTION_C4AAFC)
                 .requiresCorrectTool(true)
-                .mapColor(1886417151)
+                .mapColor(0x707070FF)
                 .translucency(0.8f);
         v.block("minecraft:mossy_cobblestone_wall", "wall_connection_type_east='none'|'short'|'tall',wall_connection_type_north='none'|'short'|'tall',wall_connection_type_south='none'|'short'|'tall',wall_connection_type_west='none'|'short'|'tall',wall_post_bit=false|true")
                 .destroyTime(2.0f)
-                .collisionShape(ANDESITE_WALL_COLLISION_SHAPE)
-                .outlineShape(ANDESITE_WALL_OUTLINE_SHAPE)
+                .collisionShape(TABLE_WALL_CONNECTION_TYPE_EAST_WALL_CONNECTION_TYPE_NORTH_WALL_CONNECTION_TYPE_SOUTH_WALL_CONNECTION_TYPE_WEST_WALL_POST_BIT_2A29E9)
+                .outlineShape(TABLE_WALL_CONNECTION_TYPE_EAST_WALL_CONNECTION_TYPE_NORTH_WALL_CONNECTION_TYPE_SOUTH_WALL_CONNECTION_TYPE_WEST_WALL_POST_BIT_D598FB)
                 .canContainLiquid(true)
                 .requiresCorrectTool(true)
-                .mapColor(1886417151)
+                .mapColor(0x707070FF)
                 .translucency(0.8f);
         v.block("minecraft:mossy_stone_brick_double_slab", "minecraft:vertical_half='bottom'|'top'")
                 .destroyTime(1.5f)
                 .solid(true)
                 .lightDampening(15)
                 .requiresCorrectTool(true)
-                .mapColor(1886417151);
+                .mapColor(0x707070FF);
         v.block("minecraft:mossy_stone_brick_slab", "minecraft:vertical_half='bottom'|'top'")
                 .destroyTime(1.5f)
-                .collisionShape("minecraft:vertical_half", "bottom", BOX_0_0_0_16_8_16, "top", BOX_0_8_0_16_16_16)
-                .outlineShape("minecraft:vertical_half", "bottom", BOX_0_0_0_16_8_16, "top", BOX_0_8_0_16_16_16)
+                .collisionShape("minecraft:vertical_half", "bottom", BOX_0_0_0_16_8_16,
+                        "top", BOX_0_8_0_16_16_16)
+                .outlineShape("minecraft:vertical_half", "bottom", BOX_0_0_0_16_8_16,
+                        "top", BOX_0_8_0_16_16_16)
                 .canContainLiquid(true)
                 .liquidFlowDirections("minecraft:vertical_half", "bottom", 62, "top", 61)
                 .requiresCorrectTool(true)
-                .mapColor(1886417151);
+                .mapColor(0x707070FF);
         v.block("minecraft:mossy_stone_brick_stairs", "upside_down_bit=false|true,weirdo_direction=0..3")
                 .destroyTime(1.5f)
-                .collisionShape(ACACIA_STAIRS_COLLISION_SHAPE_9)
+                .collisionShape(TABLE_UPSIDE_DOWN_BIT_WEIRDO_DIRECTION_87FC4F)
                 .canContainLiquid(true)
-                .liquidFlowDirections(ACACIA_STAIRS_LIQUID_FLOW_DIRECTIONS)
+                .liquidFlowDirections(TABLE_UPSIDE_DOWN_BIT_WEIRDO_DIRECTION_C4AAFC)
                 .requiresCorrectTool(true)
-                .mapColor(1886417151)
+                .mapColor(0x707070FF)
                 .translucency(0.8f);
         v.block("minecraft:mossy_stone_brick_wall", "wall_connection_type_east='none'|'short'|'tall',wall_connection_type_north='none'|'short'|'tall',wall_connection_type_south='none'|'short'|'tall',wall_connection_type_west='none'|'short'|'tall',wall_post_bit=false|true")
                 .destroyTime(1.5f)
-                .collisionShape(ANDESITE_WALL_COLLISION_SHAPE)
-                .outlineShape(ANDESITE_WALL_OUTLINE_SHAPE)
+                .collisionShape(TABLE_WALL_CONNECTION_TYPE_EAST_WALL_CONNECTION_TYPE_NORTH_WALL_CONNECTION_TYPE_SOUTH_WALL_CONNECTION_TYPE_WEST_WALL_POST_BIT_2A29E9)
+                .outlineShape(TABLE_WALL_CONNECTION_TYPE_EAST_WALL_CONNECTION_TYPE_NORTH_WALL_CONNECTION_TYPE_SOUTH_WALL_CONNECTION_TYPE_WEST_WALL_POST_BIT_D598FB)
                 .canContainLiquid(true)
                 .requiresCorrectTool(true)
-                .mapColor(1886417151)
+                .mapColor(0x707070FF)
                 .translucency(0.8f);
         v.block("minecraft:mossy_stone_bricks", "")
                 .destroyTime(1.5f)
                 .solid(true)
                 .lightDampening(15)
                 .requiresCorrectTool(true)
-                .mapColor(1886417151);
+                .mapColor(0x707070FF);
         v.block("minecraft:moving_block", "")
                 .destroyTime(-1.0f)
                 .explosionResistance(0.0f)
@@ -1995,7 +2441,7 @@ final class BehaviourBasePart3 {
                 .outlineShape(BlockShape.EMPTY)
                 .canContainLiquid(true)
                 .requiresCorrectTool(true)
-                .mapColor(1886417151)
+                .mapColor(0x707070FF)
                 .movementType("Immovable");
         v.block("minecraft:mud", "")
                 .destroyTime(0.5f)
@@ -2003,40 +2449,42 @@ final class BehaviourBasePart3 {
                 .solid(true)
                 .collisionShape(BOX_0_0_0_16_14_16)
                 .lightDampening(15)
-                .mapColor(1465670911);
+                .mapColor(0x575C5CFF);
         v.block("minecraft:mud_brick_double_slab", "minecraft:vertical_half='bottom'|'top'")
                 .destroyTime(1.5f)
                 .explosionResistance(3.0f)
                 .solid(true)
                 .lightDampening(15)
                 .requiresCorrectTool(true)
-                .mapColor(-2023005441);
+                .mapColor(0x876B62FF);
         v.block("minecraft:mud_brick_slab", "minecraft:vertical_half='bottom'|'top'")
                 .destroyTime(1.5f)
                 .explosionResistance(3.0f)
-                .collisionShape("minecraft:vertical_half", "bottom", BOX_0_0_0_16_8_16, "top", BOX_0_8_0_16_16_16)
-                .outlineShape("minecraft:vertical_half", "bottom", BOX_0_0_0_16_8_16, "top", BOX_0_8_0_16_16_16)
+                .collisionShape("minecraft:vertical_half", "bottom", BOX_0_0_0_16_8_16,
+                        "top", BOX_0_8_0_16_16_16)
+                .outlineShape("minecraft:vertical_half", "bottom", BOX_0_0_0_16_8_16,
+                        "top", BOX_0_8_0_16_16_16)
                 .canContainLiquid(true)
                 .liquidFlowDirections("minecraft:vertical_half", "bottom", 62, "top", 61)
                 .requiresCorrectTool(true)
-                .mapColor(-2023005441);
+                .mapColor(0x876B62FF);
         v.block("minecraft:mud_brick_stairs", "upside_down_bit=false|true,weirdo_direction=0..3")
                 .destroyTime(1.5f)
                 .explosionResistance(3.0f)
-                .collisionShape(ACACIA_STAIRS_COLLISION_SHAPE_9)
+                .collisionShape(TABLE_UPSIDE_DOWN_BIT_WEIRDO_DIRECTION_87FC4F)
                 .canContainLiquid(true)
-                .liquidFlowDirections(ACACIA_STAIRS_LIQUID_FLOW_DIRECTIONS)
+                .liquidFlowDirections(TABLE_UPSIDE_DOWN_BIT_WEIRDO_DIRECTION_C4AAFC)
                 .requiresCorrectTool(true)
-                .mapColor(-2023005441)
+                .mapColor(0x876B62FF)
                 .translucency(0.8f);
         v.block("minecraft:mud_brick_wall", "wall_connection_type_east='none'|'short'|'tall',wall_connection_type_north='none'|'short'|'tall',wall_connection_type_south='none'|'short'|'tall',wall_connection_type_west='none'|'short'|'tall',wall_post_bit=false|true")
                 .destroyTime(1.5f)
                 .explosionResistance(3.0f)
-                .collisionShape(ANDESITE_WALL_COLLISION_SHAPE)
-                .outlineShape(ANDESITE_WALL_OUTLINE_SHAPE)
+                .collisionShape(TABLE_WALL_CONNECTION_TYPE_EAST_WALL_CONNECTION_TYPE_NORTH_WALL_CONNECTION_TYPE_SOUTH_WALL_CONNECTION_TYPE_WEST_WALL_POST_BIT_2A29E9)
+                .outlineShape(TABLE_WALL_CONNECTION_TYPE_EAST_WALL_CONNECTION_TYPE_NORTH_WALL_CONNECTION_TYPE_SOUTH_WALL_CONNECTION_TYPE_WEST_WALL_POST_BIT_D598FB)
                 .canContainLiquid(true)
                 .requiresCorrectTool(true)
-                .mapColor(-2023005441)
+                .mapColor(0x876B62FF)
                 .translucency(0.8f);
         v.block("minecraft:mud_bricks", "")
                 .destroyTime(1.5f)
@@ -2044,513 +2492,62 @@ final class BehaviourBasePart3 {
                 .solid(true)
                 .lightDampening(15)
                 .requiresCorrectTool(true)
-                .mapColor(-2023005441);
+                .mapColor(0x876B62FF);
         v.block("minecraft:muddy_mangrove_roots", "pillar_axis='x'|'y'|'z'")
                 .destroyTime(0.7f)
                 .explosionResistance(0.7f)
                 .solid(true)
                 .lightDampening(15)
-                .mapColor(-2125057537);
+                .mapColor(0x815631FF);
         v.block("minecraft:mushroom_stem", "huge_mushroom_bits=0..15")
                 .destroyTime(0.2f)
                 .explosionResistance(0.2f)
                 .solid(true)
                 .lightDampening(15)
-                .mapColor(-943208449);
+                .mapColor(0xC7C7C7FF);
         v.block("minecraft:mycelium", "")
                 .destroyTime(0.6f)
                 .explosionResistance(0.6f)
                 .solid(true)
                 .lightDampening(15)
-                .mapColor(-1722102273);
+                .mapColor(0x995ACDFF);
         v.block("minecraft:nether_brick", "")
                 .destroyTime(2.0f)
                 .solid(true)
                 .lightDampening(15)
                 .requiresCorrectTool(true)
-                .mapColor(1879179519);
+                .mapColor(0x700200FF);
         v.block("minecraft:nether_brick_double_slab", "minecraft:vertical_half='bottom'|'top'")
                 .destroyTime(2.0f)
                 .solid(true)
                 .lightDampening(15)
                 .requiresCorrectTool(true)
-                .mapColor(1879179519);
+                .mapColor(0x700200FF);
         v.block("minecraft:nether_brick_fence", "")
                 .destroyTime(2.0f)
                 .collisionShape(BOX_6_0_6_10_24_10)
                 .outlineShape(BOX_6_0_6_10_16_10)
                 .canContainLiquid(true)
                 .requiresCorrectTool(true)
-                .mapColor(1879179519)
+                .mapColor(0x700200FF)
                 .translucency(0.8f);
         v.block("minecraft:nether_brick_slab", "minecraft:vertical_half='bottom'|'top'")
                 .destroyTime(2.0f)
-                .collisionShape("minecraft:vertical_half", "bottom", BOX_0_0_0_16_8_16, "top", BOX_0_8_0_16_16_16)
-                .outlineShape("minecraft:vertical_half", "bottom", BOX_0_0_0_16_8_16, "top", BOX_0_8_0_16_16_16)
+                .collisionShape("minecraft:vertical_half", "bottom", BOX_0_0_0_16_8_16,
+                        "top", BOX_0_8_0_16_16_16)
+                .outlineShape("minecraft:vertical_half", "bottom", BOX_0_0_0_16_8_16,
+                        "top", BOX_0_8_0_16_16_16)
                 .canContainLiquid(true)
                 .liquidFlowDirections("minecraft:vertical_half", "bottom", 62, "top", 61)
                 .requiresCorrectTool(true)
-                .mapColor(1879179519);
+                .mapColor(0x700200FF);
         v.block("minecraft:nether_brick_stairs", "upside_down_bit=false|true,weirdo_direction=0..3")
                 .destroyTime(2.0f)
-                .collisionShape(ACACIA_STAIRS_COLLISION_SHAPE_9)
+                .collisionShape(TABLE_UPSIDE_DOWN_BIT_WEIRDO_DIRECTION_87FC4F)
                 .canContainLiquid(true)
-                .liquidFlowDirections(ACACIA_STAIRS_LIQUID_FLOW_DIRECTIONS)
+                .liquidFlowDirections(TABLE_UPSIDE_DOWN_BIT_WEIRDO_DIRECTION_C4AAFC)
                 .requiresCorrectTool(true)
-                .mapColor(1879179519)
+                .mapColor(0x700200FF)
                 .translucency(0.8f);
-        v.block("minecraft:nether_brick_wall", "wall_connection_type_east='none'|'short'|'tall',wall_connection_type_north='none'|'short'|'tall',wall_connection_type_south='none'|'short'|'tall',wall_connection_type_west='none'|'short'|'tall',wall_post_bit=false|true")
-                .destroyTime(2.0f)
-                .collisionShape(ANDESITE_WALL_COLLISION_SHAPE)
-                .outlineShape(ANDESITE_WALL_OUTLINE_SHAPE)
-                .canContainLiquid(true)
-                .requiresCorrectTool(true)
-                .mapColor(1879179519)
-                .translucency(0.8f);
-        v.block("minecraft:nether_gold_ore", "")
-                .destroyTime(3.0f)
-                .explosionResistance(3.0f)
-                .solid(true)
-                .lightDampening(15)
-                .requiresCorrectTool(true)
-                .mapColor(1879179519);
-        v.block("minecraft:nether_sprouts", "")
-                .explosionResistance(0.0f)
-                .collisionShape(BlockShape.EMPTY)
-                .outlineShape(BOX_M0P533344_0_0P533344_10P666672_4P8_11P733328)
-                .liquidBlocking(false)
-                .mapColor(1283430911)
-                .translucency(1.0f)
-                .movementType("Popped")
-                .accumulatesSnow(false)
-                .snowLoggable(true)
-                .obstructsRain(false);
-        v.block("minecraft:nether_wart", "age=0..3")
-                .explosionResistance(0.0f)
-                .collisionShape(BlockShape.EMPTY)
-                .outlineShape("age", 0, BOX_0_0_0_16_4_16, 1, BOX_0_0_0_16_8_16, 2, BOX_0_0_0_16_12_16, 3, BlockShape.FULL_CUBE)
-                .liquidBlocking(false)
-                .liquidSpreadCausesSpawn(true)
-                .mapColor(-1724697601)
-                .translucency(1.0f)
-                .movementType("Popped")
-                .accumulatesSnow(false)
-                .obstructsRain(false);
-        v.block("minecraft:nether_wart_block", "")
-                .destroyTime(1.0f)
-                .explosionResistance(1.0f)
-                .solid(true)
-                .lightDampening(15)
-                .mapColor(-1724697601);
-        v.block("minecraft:netherite_block", "")
-                .destroyTime(50.0f)
-                .explosionResistance(1200.0f)
-                .solid(true)
-                .lightDampening(15)
-                .requiresCorrectTool(true)
-                .mapColor(421075455);
-        v.block("minecraft:netherrack", "")
-                .destroyTime(0.4f)
-                .explosionResistance(0.4f)
-                .solid(true)
-                .lightDampening(15)
-                .requiresCorrectTool(true)
-                .mapColor(1879179519);
-        v.block("minecraft:netherreactor", "")
-                .destroyTime(3.0f)
-                .explosionResistance(3.0f)
-                .solid(true)
-                .lightDampening(15)
-                .requiresCorrectTool(true)
-                .mapColor(-1482184705);
-        v.block("minecraft:normal_stone_double_slab", "minecraft:vertical_half='bottom'|'top'")
-                .destroyTime(2.0f)
-                .solid(true)
-                .lightDampening(15)
-                .requiresCorrectTool(true)
-                .mapColor(1886417151);
-        v.block("minecraft:normal_stone_slab", "minecraft:vertical_half='bottom'|'top'")
-                .destroyTime(2.0f)
-                .collisionShape("minecraft:vertical_half", "bottom", BOX_0_0_0_16_8_16, "top", BOX_0_8_0_16_16_16)
-                .outlineShape("minecraft:vertical_half", "bottom", BOX_0_0_0_16_8_16, "top", BOX_0_8_0_16_16_16)
-                .canContainLiquid(true)
-                .liquidFlowDirections("minecraft:vertical_half", "bottom", 62, "top", 61)
-                .requiresCorrectTool(true)
-                .mapColor(1886417151);
-        v.block("minecraft:normal_stone_stairs", "upside_down_bit=false|true,weirdo_direction=0..3")
-                .destroyTime(1.5f)
-                .collisionShape(ACACIA_STAIRS_COLLISION_SHAPE_9)
-                .canContainLiquid(true)
-                .liquidFlowDirections(ACACIA_STAIRS_LIQUID_FLOW_DIRECTIONS)
-                .requiresCorrectTool(true)
-                .mapColor(1886417151)
-                .translucency(0.8f);
-        v.block("minecraft:noteblock", "")
-                .destroyTime(0.8f)
-                .explosionResistance(0.8f)
-                .solid(true)
-                .lightDampening(15)
-                .mapColor(-1888007937);
-        v.block("minecraft:oak_double_slab", "minecraft:vertical_half='bottom'|'top'")
-                .destroyTime(2.0f)
-                .explosionResistance(3.0f)
-                .solid(true)
-                .lightDampening(15)
-                .mapColor(-1888007937)
-                .flameOdds(5)
-                .burnOdds(20);
-        v.block("minecraft:oak_fence", "")
-                .destroyTime(2.0f)
-                .explosionResistance(3.0f)
-                .collisionShape(BOX_6_0_6_10_24_10)
-                .outlineShape(BOX_6_0_6_10_16_10)
-                .canContainLiquid(true)
-                .mapColor(-1888007937)
-                .flameOdds(5)
-                .burnOdds(20)
-                .translucency(0.8f);
-        v.block("minecraft:oak_hanging_sign", "attached_bit=false|true,facing_direction=0..5,ground_sign_direction=0..15,hanging=false|true")
-                .destroyTime(1.0f)
-                .explosionResistance(1.0f)
-                .collisionShape(ACACIA_HANGING_SIGN_COLLISION_SHAPE)
-                .outlineShape("facing_direction", 0, BOX_0_0_6_16_16_10, 1, BOX_0_0_6_16_16_10, 2, BOX_0_0_6_16_16_10, 3, BOX_0_0_6_16_16_10, 4, BOX_6_0_0_10_16_16, 5, BOX_6_0_0_10_16_16)
-                .canContainLiquid(true)
-                .mapColor(-1888007937)
-                .translucency(0.8f)
-                .movementType("Popped");
-        v.block("minecraft:oak_leaves", "persistent_bit=false|true,update_bit=false|true")
-                .destroyTime(0.2f)
-                .explosionResistance(0.2f)
-                .lightDampening(1)
-                .canContainLiquid(true)
-                .mapColor(-1970631937)
-                .tintMethod("DefaultFoliage")
-                .flameOdds(30)
-                .burnOdds(60)
-                .translucency(0.5f)
-                .movementType("Popped");
-    }
-
-    static void part23(Changes v) {
-        v.block("minecraft:oak_log", "pillar_axis='x'|'y'|'z'")
-                .destroyTime(2.0f)
-                .explosionResistance(2.0f)
-                .solid(true)
-                .lightDampening(15)
-                .mapColor("pillar_axis", "x", -2125057537, "y", -1888007937, "z", -2125057537)
-                .flameOdds(5)
-                .burnOdds(5);
-        v.block("minecraft:oak_planks", "")
-                .destroyTime(2.0f)
-                .explosionResistance(3.0f)
-                .solid(true)
-                .lightDampening(15)
-                .mapColor(-1888007937)
-                .flameOdds(5)
-                .burnOdds(20);
-        v.block("minecraft:oak_sapling", "age_bit=false|true")
-                .explosionResistance(0.0f)
-                .collisionShape(BlockShape.EMPTY)
-                .outlineShape(BOX_1P6_0_1P6_14P4_12P8_14P4)
-                .liquidBlocking(false)
-                .liquidSpreadCausesSpawn(true)
-                .mapColor(8126719)
-                .translucency(1.0f)
-                .movementType("Popped")
-                .accumulatesSnow(false)
-                .obstructsRain(false);
-        v.block("minecraft:oak_shelf", "minecraft:cardinal_direction='east'|'north'|'south'|'west',powered_bit=false|true,powered_shelf_type=0..3")
-                .destroyTime(2.0f)
-                .explosionResistance(3.0f)
-                .collisionShape("minecraft:cardinal_direction", "east", BOX_0_0_0_5_16_16, "north", BOX_0_0_11_16_16_16, "south", BOX_0_0_0_16_16_5, "west", BOX_11_0_0_16_16_16)
-                .outlineShape("minecraft:cardinal_direction", "east", BOX_0_0_0_5_16_16, "north", BOX_0_0_11_16_16_16, "south", BOX_0_0_0_16_16_5, "west", BOX_11_0_0_16_16_16)
-                .canContainLiquid(true)
-                .liquidFlowDirections("minecraft:cardinal_direction", "east", 59, "north", 55, "south", 61, "west", 62)
-                .mapColor(-1888007937)
-                .flameOdds(30)
-                .burnOdds(20)
-                .translucency(0.8f);
-        v.block("minecraft:oak_slab", "minecraft:vertical_half='bottom'|'top'")
-                .destroyTime(2.0f)
-                .explosionResistance(3.0f)
-                .collisionShape("minecraft:vertical_half", "bottom", BOX_0_0_0_16_8_16, "top", BOX_0_8_0_16_16_16)
-                .outlineShape("minecraft:vertical_half", "bottom", BOX_0_0_0_16_8_16, "top", BOX_0_8_0_16_16_16)
-                .canContainLiquid(true)
-                .liquidFlowDirections("minecraft:vertical_half", "bottom", 62, "top", 61)
-                .mapColor(-1888007937)
-                .flameOdds(5)
-                .burnOdds(20);
-        v.block("minecraft:oak_stairs", "upside_down_bit=false|true,weirdo_direction=0..3")
-                .destroyTime(2.0f)
-                .explosionResistance(3.0f)
-                .collisionShape(ACACIA_STAIRS_COLLISION_SHAPE_9)
-                .canContainLiquid(true)
-                .liquidFlowDirections(ACACIA_STAIRS_LIQUID_FLOW_DIRECTIONS)
-                .mapColor(-1888007937)
-                .flameOdds(5)
-                .burnOdds(20)
-                .translucency(0.8f);
-        v.block("minecraft:oak_wood", "pillar_axis='x'|'y'|'z'")
-                .destroyTime(2.0f)
-                .explosionResistance(2.0f)
-                .solid(true)
-                .lightDampening(15)
-                .mapColor(-1888007937)
-                .flameOdds(5)
-                .burnOdds(5);
-        v.block("minecraft:observer", "minecraft:facing_direction='down'|'east'|'north'|'south'|'up'|'west',powered_bit=false|true")
-                .destroyTime(3.0f)
-                .explosionResistance(3.0f)
-                .solid(true)
-                .lightDampening(15)
-                .liquidFlowDirections("powered_bit", false, 63, true, null)
-                .requiresCorrectTool(true)
-                .mapColor(1886417151)
-                .movementType("powered_bit", false, "PushPull", true, null)
-                .stickyType("powered_bit", false, "None", true, null)
-                .accumulatesSnow("powered_bit", false, true, true, null)
-                .snowLoggable("powered_bit", false, false, true, null)
-                .obstructsRain("powered_bit", false, true, true, null);
-        v.block("minecraft:obsidian", "")
-                .destroyTime(35.0f)
-                .explosionResistance(1200.0f)
-                .solid(true)
-                .lightDampening(15)
-                .requiresCorrectTool(true)
-                .mapColor(421075455)
-                .movementType("Immovable");
-        v.block("minecraft:ochre_froglight", "pillar_axis='x'|'y'|'z'")
-                .destroyTime(0.3f)
-                .explosionResistance(0.3f)
-                .solid(true)
-                .lightEmission(15)
-                .lightDampening(15)
-                .mapColor(-135683073)
-                .translucency(1.0f);
-        v.block("minecraft:open_eyeblossom", "")
-                .explosionResistance(0.0f)
-                .collisionShape(BlockShape.EMPTY)
-                .outlineShape(BOX_M0P533344_0_0P533344_8P266656_9P6_9P333328)
-                .liquidBlocking(false)
-                .liquidSpreadCausesSpawn(true)
-                .mapColor(-662752257)
-                .flameOdds(60)
-                .burnOdds(100)
-                .translucency(1.0f)
-                .movementType("Popped")
-                .accumulatesSnow(false)
-                .snowLoggable(true)
-                .obstructsRain(false);
-        v.block("minecraft:orange_candle", "candles=0..3,lit=false|true")
-                .destroyTime(0.1f)
-                .explosionResistance(0.1f)
-                .collisionShape("candles", 0, BOX_7_0_7_9_6_9, 1, BOX_5_0_7_11_6_10, 2, BOX_5_0_6_10_6_11, 3, BOX_5_0_5_11_6_10)
-                .outlineShape("candles", 0, BOX_7_0_7_9_6_9, 1, BOX_5_0_7_11_6_10, 2, BOX_5_0_6_10_6_11, 3, BOX_5_0_5_11_6_10)
-                .lightEmission(BLACK_CANDLE_LIGHT_EMISSION)
-                .canContainLiquid(true)
-                .mapColor(-662752257)
-                .translucency(1.0f)
-                .accumulatesSnow(false)
-                .obstructsRain(false);
-        v.block("minecraft:orange_candle_cake", "lit=false|true")
-                .destroyTime(0.5f)
-                .explosionResistance(0.5f)
-                .collisionShape(BOX_1_0_1_15_8_15)
-                .outlineShape(BOX_1_0_1_15_8_15)
-                .lightEmission("lit", false, 0, true, 3)
-                .canContainLiquid(true)
-                .translucency(0.8f)
-                .movementType("Popped");
-        v.block("minecraft:orange_carpet", "")
-                .destroyTime(0.1f)
-                .explosionResistance(0.1f)
-                .collisionShape(BOX_0_0_0_16_1_16)
-                .outlineShape(BOX_0_0_0_16_1_16)
-                .canContainLiquid(true)
-                .liquidBlocking(false)
-                .liquidSpreadCausesSpawn(true)
-                .mapColor(-662752257)
-                .flameOdds(30)
-                .burnOdds(20)
-                .translucency(0.89f)
-                .thickness(0.07f)
-                .accumulatesSnow(false)
-                .obstructsRain(false);
-        v.block("minecraft:orange_concrete", "")
-                .destroyTime(1.8f)
-                .explosionResistance(1.8f)
-                .solid(true)
-                .lightDampening(15)
-                .requiresCorrectTool(true)
-                .mapColor(-662752257);
-        v.block("minecraft:orange_concrete_powder", "")
-                .destroyTime(0.5f)
-                .explosionResistance(0.5f)
-                .solid(true)
-                .lightDampening(15)
-                .mapColor(-662752257);
-        v.block("minecraft:orange_glazed_terracotta", "facing_direction=0..5")
-                .destroyTime(1.4f)
-                .explosionResistance(1.4f)
-                .solid(true)
-                .lightDampening(15)
-                .requiresCorrectTool(true)
-                .mapColor(-662752257)
-                .movementType("Push");
-        v.block("minecraft:orange_shulker_box", "")
-                .destroyTime(2.0f)
-                .explosionResistance(2.0f)
-                .canContainLiquid(true)
-                .mapColor(-662752257)
-                .translucency(0.5f)
-                .movementType("Popped");
-        v.block("minecraft:orange_stained_glass", "")
-                .destroyTime(0.3f)
-                .explosionResistance(0.3f)
-                .mapColor(-662752257)
-                .translucency(1.0f);
-        v.block("minecraft:orange_stained_glass_pane", "")
-                .destroyTime(0.3f)
-                .explosionResistance(0.3f)
-                .collisionShape(BOX_7_0_7_9_16_9)
-                .outlineShape(BOX_7_0_7_9_16_9)
-                .canContainLiquid(true)
-                .translucency(1.0f);
-        v.block("minecraft:orange_terracotta", "")
-                .destroyTime(1.25f)
-                .explosionResistance(1.25f)
-                .solid(true)
-                .lightDampening(15)
-                .requiresCorrectTool(true)
-                .mapColor(-1622006529);
-        v.block("minecraft:orange_tulip", "")
-                .explosionResistance(0.0f)
-                .collisionShape(BlockShape.EMPTY)
-                .outlineShape(BOX_M0P533344_0_0P533344_8P266656_9P6_9P333328)
-                .liquidBlocking(false)
-                .liquidSpreadCausesSpawn(true)
-                .mapColor(8126719)
-                .flameOdds(60)
-                .burnOdds(100)
-                .translucency(1.0f)
-                .movementType("Popped")
-                .accumulatesSnow(false)
-                .snowLoggable(true)
-                .obstructsRain(false);
-        v.block("minecraft:orange_wool", "")
-                .destroyTime(0.8f)
-                .explosionResistance(0.8f)
-                .solid(true)
-                .lightDampening(15)
-                .mapColor(-662752257)
-                .flameOdds(30)
-                .burnOdds(60)
-                .translucency(0.8f);
-        v.block("minecraft:oxeye_daisy", "")
-                .explosionResistance(0.0f)
-                .collisionShape(BlockShape.EMPTY)
-                .outlineShape(BOX_M0P533344_0_0P533344_8P266656_9P6_9P333328)
-                .liquidBlocking(false)
-                .liquidSpreadCausesSpawn(true)
-                .mapColor(8126719)
-                .flameOdds(60)
-                .burnOdds(100)
-                .translucency(1.0f)
-                .movementType("Popped")
-                .accumulatesSnow(false)
-                .snowLoggable(true)
-                .obstructsRain(false);
-        v.block("minecraft:oxidized_chiseled_copper", "")
-                .destroyTime(3.0f)
-                .solid(true)
-                .lightDampening(15)
-                .requiresCorrectTool(true)
-                .mapColor(377390847);
-        v.block("minecraft:oxidized_copper", "")
-                .destroyTime(3.0f)
-                .solid(true)
-                .lightDampening(15)
-                .requiresCorrectTool(true)
-                .mapColor(377390847);
-        v.block("minecraft:oxidized_copper_bars", "")
-                .destroyTime(5.0f)
-                .collisionShape(BOX_7_0_7_9_16_9)
-                .outlineShape(BOX_7_0_7_9_16_9)
-                .canContainLiquid(true)
-                .requiresCorrectTool(true)
-                .translucency(0.8f);
-        v.block("minecraft:oxidized_copper_bulb", "lit=false|true,powered_bit=false|true")
-                .destroyTime(3.0f)
-                .solid(true)
-                .lightEmission("lit", false, 0, true, 4)
-                .lightDampening(15)
-                .requiresCorrectTool(true)
-                .mapColor(377390847);
-        v.block("minecraft:oxidized_copper_chain", "pillar_axis='x'|'y'|'z'")
-                .destroyTime(5.0f)
-                .collisionShape("pillar_axis", "x", BOX_0_6P5_6P5_16_9P5_9P5, "y", BOX_6P5_0_6P5_9P5_16_9P5, "z", BOX_6P5_6P5_0_9P5_9P5_16)
-                .outlineShape("pillar_axis", "x", BOX_0_6P5_6P5_16_9P5_9P5, "y", BOX_6P5_0_6P5_9P5_16_9P5, "z", BOX_6P5_6P5_0_9P5_9P5_16)
-                .canContainLiquid(true)
-                .requiresCorrectTool(true)
-                .translucency(0.8f);
-        v.block("minecraft:oxidized_copper_chest", "minecraft:cardinal_direction='east'|'north'|'south'|'west'")
-                .destroyTime(3.0f)
-                .collisionShape(BOX_0P4_0_0P4_15P6_15P2_15P6)
-                .outlineShape(BOX_0P4_0_0P4_15P6_15P2_15P6)
-                .canContainLiquid(true)
-                .requiresCorrectTool(true)
-                .mapColor(377390847)
-                .translucency(0.5f);
-        v.block("minecraft:oxidized_copper_door", "door_hinge_bit=false|true,minecraft:cardinal_direction='east'|'north'|'south'|'west',open_bit=false|true,upper_block_bit=false|true")
-                .destroyTime(3.0f)
-                .collisionShape(ACACIA_DOOR_COLLISION_SHAPE)
-                .outlineShape(ACACIA_DOOR_COLLISION_SHAPE)
-                .canContainLiquid(true)
-                .mapColor(377390847)
-                .translucency(0.8f)
-                .movementType("Popped");
-        v.block("minecraft:oxidized_copper_golem_statue", "minecraft:cardinal_direction='east'|'north'|'south'|'west'")
-                .destroyTime(3.0f)
-                .collisionShape(BOX_3_0_3_13_14_13)
-                .outlineShape(BOX_3_0_3_13_14_13)
-                .canContainLiquid(true)
-                .mapColor(377390847)
-                .movementType("Popped");
-        v.block("minecraft:oxidized_copper_grate", "")
-                .destroyTime(3.0f)
-                .canContainLiquid(true)
-                .requiresCorrectTool(true)
-                .mapColor(377390847);
-        v.block("minecraft:oxidized_copper_lantern", "hanging=false|true")
-                .destroyTime(3.5f)
-                .explosionResistance(3.5f)
-                .collisionShape("hanging", false, BOX_5_0_5_11_8_11, true, BOX_5_2_5_11_10_11)
-                .outlineShape("hanging", false, BOX_5_0_5_11_8_11, true, BOX_5_2_5_11_10_11)
-                .lightEmission(15)
-                .canContainLiquid(true)
-                .mapColor(377390847)
-                .translucency(0.8f);
-        v.block("minecraft:oxidized_copper_trapdoor", "direction=0..3,open_bit=false|true,upside_down_bit=false|true")
-                .destroyTime(3.0f)
-                .collisionShape(ACACIA_TRAPDOOR_COLLISION_SHAPE)
-                .outlineShape(ACACIA_TRAPDOOR_OUTLINE_SHAPE)
-                .canContainLiquid(true)
-                .requiresCorrectTool(true)
-                .mapColor(-1482184705)
-                .translucency(0.8f);
-        v.block("minecraft:oxidized_cut_copper", "")
-                .destroyTime(3.0f)
-                .solid(true)
-                .lightDampening(15)
-                .requiresCorrectTool(true)
-                .mapColor(377390847);
-        v.block("minecraft:oxidized_cut_copper_slab", "minecraft:vertical_half='bottom'|'top'")
-                .destroyTime(3.0f)
-                .collisionShape("minecraft:vertical_half", "bottom", BOX_0_0_0_16_8_16, "top", BOX_0_8_0_16_16_16)
-                .outlineShape("minecraft:vertical_half", "bottom", BOX_0_0_0_16_8_16, "top", BOX_0_8_0_16_16_16)
-                .canContainLiquid(true)
-                .liquidFlowDirections("minecraft:vertical_half", "bottom", 62, "top", 61)
-                .requiresCorrectTool(true)
-                .mapColor(377390847);
     }
 }

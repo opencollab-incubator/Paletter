@@ -30,16 +30,17 @@ final class BehaviourReport {
     private final BehaviourStore store;
     private final List<String> log;
     private final List<BehaviourImport.CustomDefault> customDefaults;
-    private final List<BehaviourComments.SourceOnly> sourceOnly;
+    /** The section the generator writes ({@link ChangesSection}). */
+    private final String changes;
 
     BehaviourReport(List<BehaviourImport.Bundled> bundled, List<BehaviourImport.Capture> captures, BehaviourStore store, List<String> log,
-                    List<BehaviourImport.CustomDefault> customDefaults, List<BehaviourComments.SourceOnly> sourceOnly) {
+                    List<BehaviourImport.CustomDefault> customDefaults, String changes) {
         this.bundled = bundled;
         this.captures = captures;
         this.store = store;
         this.log = log;
         this.customDefaults = customDefaults;
-        this.sourceOnly = sourceOnly;
+        this.changes = changes;
     }
 
     String render() {
@@ -55,7 +56,7 @@ final class BehaviourReport {
         keys(out);
         sources(out);
         coverage(out);
-        sourceOnly(out);
+        out.append(changes);
         disputes(out);
         postProcessed(out);
         customDefaults(out);
@@ -142,34 +143,6 @@ final class BehaviourReport {
         out.append("\nKeys no dump has:\n\n");
         notDumped.stream().sorted(java.util.Comparator.comparing(Object::toString))
             .forEach(key -> out.append("- `").append(key).append("`: ").append(insteadOfADump(key)).append('\n'));
-        out.append('\n');
-    }
-
-    /**
-     * The changes between versions that only a third-party dump decided ({@code SOURCE ONLY} in the generated classes),
-     * per version and key. They are used: by the provenance rule BDS evidence wins and disputes are marked, but no BDS
-     * capture covers these values, and the version before is no evidence for this one, so the newest dump of the version is
-     * what there is. They are listed here because a source's own artefact (a change of its dump file, say) looks the same
-     * as a game change: check them against BDS before relying on one.
-     */
-    private void sourceOnly(StringBuilder out) {
-        out.append("## Changes only a third-party dump shows\n\nA value that changed against the version before, where every "
-            + "capture that decided the new value is a third-party dump and no BDS capture of the version covers it. The generated "
-            + "class of the version marks each such change `SOURCE ONLY`. The value is used (BDS evidence would win, but there is "
-            + "none; the version before is no evidence for this one) and listed here to be checked against BDS: a source's own "
-            + "artefact, such as another dump file, looks the same as a game change.\n\n");
-        if (sourceOnly.isEmpty()) {
-            out.append("None.\n\n");
-            return;
-        }
-        Map<String, List<BehaviourComments.SourceOnly>> byVersionAndKey = new TreeMap<>();
-        sourceOnly.forEach(change -> byVersionAndKey.computeIfAbsent(change.version() + " " + change.key(), k -> new ArrayList<>()).add(change));
-        out.append("| Version and key | Decided by | Changes | Blocks / items (first 30) |\n|---|---|---|---|\n");
-        byVersionAndKey.forEach((label, changes) -> out.append("| ").append(label).append(" | ")
-            .append(String.join(", ", changes.stream().map(BehaviourComments.SourceOnly::deciders).distinct().sorted().toList())).append(" | ")
-            .append(changes.size()).append(" | ")
-            .append(String.join(", ", changes.stream().limit(30).map(c -> c.id().replace("minecraft:", "") + " (" + c.change()
-                .substring(c.change().indexOf(' ') + 1) + ")").toList())).append(changes.size() > 30 ? ", ..." : "").append(" |\n"));
         out.append('\n');
     }
 

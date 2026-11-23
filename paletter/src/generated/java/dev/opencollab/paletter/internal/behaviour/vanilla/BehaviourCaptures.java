@@ -2,11 +2,6 @@
 // and the bundled palettes. Do not edit; see docs/data-pipeline.md.
 package dev.opencollab.paletter.internal.behaviour.vanilla;
 
-import static dev.opencollab.paletter.internal.behaviour.vanilla.BehaviourShapes.*;
-import static dev.opencollab.paletter.internal.behaviour.vanilla.BehaviourShapesPart2.*;
-import static dev.opencollab.paletter.internal.behaviour.vanilla.BehaviourTables.*;
-import static dev.opencollab.paletter.internal.behaviour.vanilla.BehaviourTablesPart2.*;
-
 import dev.opencollab.paletter.data.DataVersion;
 import dev.opencollab.paletter.internal.behaviour.Capture;
 import dev.opencollab.paletter.internal.behaviour.Provenance;
@@ -26,202 +21,282 @@ final class BehaviourCaptures {
     /**
      * AllayMC/Allay cf68fe1 (third party).
      */
-    static final Capture ALLAY_DATA_26_30 = new Capture(Provenance.Source.ALLAY_DATA, "AllayMC/Allay@cf68fe1ff0ab3a9c1d2df6b4af061be4653c9151", V26_30);
+    static final Capture ALLAY_DATA_26_30 = new Capture(Provenance.Source.ALLAY_DATA,
+    "AllayMC/Allay@cf68fe1ff0ab3a9c1d2df6b4af061be4653c9151",
+    V26_30);
 
     /**
      * CloudburstMC/Data fb969c5 (third party).
      */
-    static final Capture CLOUDBURST_DATA_26_30 = new Capture(Provenance.Source.CLOUDBURST_DATA, "CloudburstMC/Data@fb969c547236d87a17181941cd585a0eb18f7ceb", V26_30);
+    static final Capture CLOUDBURST_DATA_26_30 = new Capture(Provenance.Source.CLOUDBURST_DATA,
+    "CloudburstMC/Data@fb969c547236d87a17181941cd585a0eb18f7ceb",
+    V26_30);
 
     /**
      * BDS Script API dump 1.26.36.1.
      */
-    static final Capture SCRIPT_API_26_30 = new Capture(Provenance.Source.SCRIPT_API, "Paletter data/bds/1.26.36.1/behaviour-dump.json.gz (solid, liquid_flow_directions, movement_type, sticky_type, accumulates_snow, snow_loggable, obstructs_rain)", V26_30);
+    static final Capture SCRIPT_API_26_30_SOLID = new Capture(Provenance.Source.SCRIPT_API,
+    "Paletter data/bds/1.26.36.1/behaviour-dump.json.gz (solid, liquid_flow_directions, movement_type, sticky_type, accumulates_snow, snow_loggable, obstructs_rain)",
+    V26_30);
 
     /**
      * BDS Script API dump 1.26.36.1.
      */
-    static final Capture SCRIPT_API_26_30_2 = new Capture(Provenance.Source.SCRIPT_API, "Paletter data/bds/1.26.36.1/behaviour-dump.json.gz (can_contain_liquid, liquid_blocking, destroyed_by_liquid, liquid_spread_causes_spawn)", V26_30);
+    static final Capture SCRIPT_API_26_30_CAN_CONTAIN_LIQUID = new Capture(Provenance.Source.SCRIPT_API,
+    "Paletter data/bds/1.26.36.1/behaviour-dump.json.gz (can_contain_liquid, liquid_blocking, destroyed_by_liquid, liquid_spread_causes_spawn)",
+    V26_30);
 
     /**
      * BDS Script API dump 1.26.36.1.
      */
-    static final Capture SCRIPT_API_26_30_3 = new Capture(Provenance.Source.SCRIPT_API, "Paletter data/bds/1.26.36.1/behaviour-dump.json.gz (map_color)", V26_30);
+    static final Capture SCRIPT_API_26_30_MAP_COLOR = new Capture(Provenance.Source.SCRIPT_API,
+    "Paletter data/bds/1.26.36.1/behaviour-dump.json.gz (map_color)",
+    V26_30);
 
     /**
      * BDS Script API dump 1.26.36.1.
      */
-    static final Capture SCRIPT_API_26_30_4 = new Capture(Provenance.Source.SCRIPT_API, "Paletter data/bds/1.26.36.1/behaviour-dump.json.gz (tint_method)", V26_30);
+    static final Capture SCRIPT_API_26_30_TINT_METHOD = new Capture(Provenance.Source.SCRIPT_API,
+    "Paletter data/bds/1.26.36.1/behaviour-dump.json.gz (tint_method)",
+    V26_30);
 
     /**
      * BDS Script API dump 1.26.36.1.
      */
-    static final Capture SCRIPT_API_26_30_5 = new Capture(Provenance.Source.SCRIPT_API, "Paletter data/bds/1.26.36.1/behaviour-dump.json.gz (max_stack_size, max_damage, weight)", V26_30);
+    static final Capture SCRIPT_API_26_30_MAX_STACK_SIZE = new Capture(Provenance.Source.SCRIPT_API,
+    "Paletter data/bds/1.26.36.1/behaviour-dump.json.gz (max_stack_size, max_damage, weight)",
+    V26_30);
 
     /**
      * BDS Script API dump 1.26.36.1.
      */
-    static final Capture SCRIPT_API_26_30_6 = new Capture(Provenance.Source.SCRIPT_API, "Paletter data/bds/1.26.36.1/behaviour-dump.json.gz (nutrition, saturation_modifier, can_always_eat)", V26_30);
+    static final Capture SCRIPT_API_26_30_NUTRITION = new Capture(Provenance.Source.SCRIPT_API,
+    "Paletter data/bds/1.26.36.1/behaviour-dump.json.gz (nutrition, saturation_modifier, can_always_eat)",
+    V26_30);
 
     /**
      * BDS Script API dump 1.26.36.1.
      */
-    static final Capture SCRIPT_API_26_30_7 = new Capture(Provenance.Source.SCRIPT_API, "Paletter data/bds/1.26.36.1/behaviour-dump.json.gz (cooldown_category, cooldown_ticks)", V26_30);
+    static final Capture SCRIPT_API_26_30_COOLDOWN_CATEGORY = new Capture(Provenance.Source.SCRIPT_API,
+    "Paletter data/bds/1.26.36.1/behaviour-dump.json.gz (cooldown_category, cooldown_ticks)",
+    V26_30);
 
     /**
      * BDS Script API dump 1.26.36.1.
      */
-    static final Capture SCRIPT_API_26_30_8 = new Capture(Provenance.Source.SCRIPT_API, "Paletter data/bds/1.26.36.1/behaviour-dump.json.gz (compost_chance)", V26_30);
+    static final Capture SCRIPT_API_26_30_COMPOST_CHANCE = new Capture(Provenance.Source.SCRIPT_API,
+    "Paletter data/bds/1.26.36.1/behaviour-dump.json.gz (compost_chance)",
+    V26_30);
 
     /**
      * CloudburstMC/Data 7046791 (third party).
      */
-    static final Capture CLOUDBURST_DATA_26_40 = new Capture(Provenance.Source.CLOUDBURST_DATA, "CloudburstMC/Data@7046791ae9fcf056a3b26cd6605ffc1db6d97357", V26_40);
+    static final Capture CLOUDBURST_DATA_26_40 = new Capture(Provenance.Source.CLOUDBURST_DATA,
+    "CloudburstMC/Data@7046791ae9fcf056a3b26cd6605ffc1db6d97357",
+    V26_40);
 
     /**
      * BDS Script API dump 1.26.45.1.
      */
-    static final Capture SCRIPT_API_26_40 = new Capture(Provenance.Source.SCRIPT_API, "Paletter data/bds/1.26.45.1/behaviour-dump.json.gz (solid, liquid_flow_directions, movement_type, sticky_type, accumulates_snow, snow_loggable, obstructs_rain)", V26_40);
+    static final Capture SCRIPT_API_26_40_SOLID = new Capture(Provenance.Source.SCRIPT_API,
+    "Paletter data/bds/1.26.45.1/behaviour-dump.json.gz (solid, liquid_flow_directions, movement_type, sticky_type, accumulates_snow, snow_loggable, obstructs_rain)",
+    V26_40);
 
     /**
      * BDS Script API dump 1.26.45.1.
      */
-    static final Capture SCRIPT_API_26_40_2 = new Capture(Provenance.Source.SCRIPT_API, "Paletter data/bds/1.26.45.1/behaviour-dump.json.gz (can_contain_liquid, liquid_blocking, destroyed_by_liquid, liquid_spread_causes_spawn)", V26_40);
+    static final Capture SCRIPT_API_26_40_CAN_CONTAIN_LIQUID = new Capture(Provenance.Source.SCRIPT_API,
+    "Paletter data/bds/1.26.45.1/behaviour-dump.json.gz (can_contain_liquid, liquid_blocking, destroyed_by_liquid, liquid_spread_causes_spawn)",
+    V26_40);
 
     /**
      * BDS Script API dump 1.26.45.1.
      */
-    static final Capture SCRIPT_API_26_40_3 = new Capture(Provenance.Source.SCRIPT_API, "Paletter data/bds/1.26.45.1/behaviour-dump.json.gz (map_color)", V26_40);
+    static final Capture SCRIPT_API_26_40_MAP_COLOR = new Capture(Provenance.Source.SCRIPT_API,
+    "Paletter data/bds/1.26.45.1/behaviour-dump.json.gz (map_color)",
+    V26_40);
 
     /**
      * BDS Script API dump 1.26.45.1.
      */
-    static final Capture SCRIPT_API_26_40_4 = new Capture(Provenance.Source.SCRIPT_API, "Paletter data/bds/1.26.45.1/behaviour-dump.json.gz (tint_method)", V26_40);
+    static final Capture SCRIPT_API_26_40_TINT_METHOD = new Capture(Provenance.Source.SCRIPT_API,
+    "Paletter data/bds/1.26.45.1/behaviour-dump.json.gz (tint_method)",
+    V26_40);
 
     /**
      * BDS Script API dump 1.26.45.1.
      */
-    static final Capture SCRIPT_API_26_40_5 = new Capture(Provenance.Source.SCRIPT_API, "Paletter data/bds/1.26.45.1/behaviour-dump.json.gz (max_stack_size, max_damage, weight)", V26_40);
+    static final Capture SCRIPT_API_26_40_MAX_STACK_SIZE = new Capture(Provenance.Source.SCRIPT_API,
+    "Paletter data/bds/1.26.45.1/behaviour-dump.json.gz (max_stack_size, max_damage, weight)",
+    V26_40);
 
     /**
      * BDS Script API dump 1.26.45.1.
      */
-    static final Capture SCRIPT_API_26_40_6 = new Capture(Provenance.Source.SCRIPT_API, "Paletter data/bds/1.26.45.1/behaviour-dump.json.gz (nutrition, saturation_modifier, can_always_eat)", V26_40);
+    static final Capture SCRIPT_API_26_40_NUTRITION = new Capture(Provenance.Source.SCRIPT_API,
+    "Paletter data/bds/1.26.45.1/behaviour-dump.json.gz (nutrition, saturation_modifier, can_always_eat)",
+    V26_40);
 
     /**
      * BDS Script API dump 1.26.45.1.
      */
-    static final Capture SCRIPT_API_26_40_7 = new Capture(Provenance.Source.SCRIPT_API, "Paletter data/bds/1.26.45.1/behaviour-dump.json.gz (cooldown_category, cooldown_ticks)", V26_40);
+    static final Capture SCRIPT_API_26_40_COOLDOWN_CATEGORY = new Capture(Provenance.Source.SCRIPT_API,
+    "Paletter data/bds/1.26.45.1/behaviour-dump.json.gz (cooldown_category, cooldown_ticks)",
+    V26_40);
 
     /**
      * BDS Script API dump 1.26.45.1.
      */
-    static final Capture SCRIPT_API_26_40_8 = new Capture(Provenance.Source.SCRIPT_API, "Paletter data/bds/1.26.45.1/behaviour-dump.json.gz (compost_chance)", V26_40);
+    static final Capture SCRIPT_API_26_40_COMPOST_CHANCE = new Capture(Provenance.Source.SCRIPT_API,
+    "Paletter data/bds/1.26.45.1/behaviour-dump.json.gz (compost_chance)",
+    V26_40);
 
     /**
      * AllayMC/Allay f8c660e (third party).
      */
-    static final Capture ALLAY_DATA_26_50 = new Capture(Provenance.Source.ALLAY_DATA, "AllayMC/Allay@f8c660ed3a7f773aec11536cb958c0433ecef9d6", V26_50);
+    static final Capture ALLAY_DATA_26_50 = new Capture(Provenance.Source.ALLAY_DATA,
+    "AllayMC/Allay@f8c660ed3a7f773aec11536cb958c0433ecef9d6",
+    V26_50);
 
     /**
      * CloudburstMC/Data 88a2436 (third party).
      */
-    static final Capture CLOUDBURST_DATA_26_50 = new Capture(Provenance.Source.CLOUDBURST_DATA, "CloudburstMC/Data@88a2436a2d5c605da082a00fee5f103f888a9160", V26_50);
+    static final Capture CLOUDBURST_DATA_26_50 = new Capture(Provenance.Source.CLOUDBURST_DATA,
+    "CloudburstMC/Data@88a2436a2d5c605da082a00fee5f103f888a9160",
+    V26_50);
 
     /**
      * BDS Script API dump 1.26.52.3.
      */
-    static final Capture SCRIPT_API_26_50 = new Capture(Provenance.Source.SCRIPT_API, "Paletter data/bds/1.26.52.3/behaviour-dump.json.gz (solid, liquid_flow_directions, movement_type, sticky_type, accumulates_snow, snow_loggable, obstructs_rain)", V26_50);
+    static final Capture SCRIPT_API_26_50_SOLID = new Capture(Provenance.Source.SCRIPT_API,
+    "Paletter data/bds/1.26.52.3/behaviour-dump.json.gz (solid, liquid_flow_directions, movement_type, sticky_type, accumulates_snow, snow_loggable, obstructs_rain)",
+    V26_50);
 
     /**
      * BDS Script API dump 1.26.52.3.
      */
-    static final Capture SCRIPT_API_26_50_2 = new Capture(Provenance.Source.SCRIPT_API, "Paletter data/bds/1.26.52.3/behaviour-dump.json.gz (can_contain_liquid, liquid_blocking, destroyed_by_liquid, liquid_spread_causes_spawn)", V26_50);
+    static final Capture SCRIPT_API_26_50_CAN_CONTAIN_LIQUID = new Capture(Provenance.Source.SCRIPT_API,
+    "Paletter data/bds/1.26.52.3/behaviour-dump.json.gz (can_contain_liquid, liquid_blocking, destroyed_by_liquid, liquid_spread_causes_spawn)",
+    V26_50);
 
     /**
      * BDS Script API dump 1.26.52.3.
      */
-    static final Capture SCRIPT_API_26_50_3 = new Capture(Provenance.Source.SCRIPT_API, "Paletter data/bds/1.26.52.3/behaviour-dump.json.gz (map_color)", V26_50);
+    static final Capture SCRIPT_API_26_50_MAP_COLOR = new Capture(Provenance.Source.SCRIPT_API,
+    "Paletter data/bds/1.26.52.3/behaviour-dump.json.gz (map_color)",
+    V26_50);
 
     /**
      * BDS Script API dump 1.26.52.3.
      */
-    static final Capture SCRIPT_API_26_50_4 = new Capture(Provenance.Source.SCRIPT_API, "Paletter data/bds/1.26.52.3/behaviour-dump.json.gz (tint_method)", V26_50);
+    static final Capture SCRIPT_API_26_50_TINT_METHOD = new Capture(Provenance.Source.SCRIPT_API,
+    "Paletter data/bds/1.26.52.3/behaviour-dump.json.gz (tint_method)",
+    V26_50);
 
     /**
      * BDS Script API dump 1.26.52.3.
      */
-    static final Capture SCRIPT_API_26_50_5 = new Capture(Provenance.Source.SCRIPT_API, "Paletter data/bds/1.26.52.3/behaviour-dump.json.gz (max_stack_size, max_damage, weight)", V26_50);
+    static final Capture SCRIPT_API_26_50_MAX_STACK_SIZE = new Capture(Provenance.Source.SCRIPT_API,
+    "Paletter data/bds/1.26.52.3/behaviour-dump.json.gz (max_stack_size, max_damage, weight)",
+    V26_50);
 
     /**
      * BDS Script API dump 1.26.52.3.
      */
-    static final Capture SCRIPT_API_26_50_6 = new Capture(Provenance.Source.SCRIPT_API, "Paletter data/bds/1.26.52.3/behaviour-dump.json.gz (nutrition, saturation_modifier, can_always_eat)", V26_50);
+    static final Capture SCRIPT_API_26_50_NUTRITION = new Capture(Provenance.Source.SCRIPT_API,
+    "Paletter data/bds/1.26.52.3/behaviour-dump.json.gz (nutrition, saturation_modifier, can_always_eat)",
+    V26_50);
 
     /**
      * BDS Script API dump 1.26.52.3.
      */
-    static final Capture SCRIPT_API_26_50_7 = new Capture(Provenance.Source.SCRIPT_API, "Paletter data/bds/1.26.52.3/behaviour-dump.json.gz (cooldown_category, cooldown_ticks)", V26_50);
+    static final Capture SCRIPT_API_26_50_COOLDOWN_CATEGORY = new Capture(Provenance.Source.SCRIPT_API,
+    "Paletter data/bds/1.26.52.3/behaviour-dump.json.gz (cooldown_category, cooldown_ticks)",
+    V26_50);
 
     /**
      * BDS Script API dump 1.26.52.3.
      */
-    static final Capture SCRIPT_API_26_50_8 = new Capture(Provenance.Source.SCRIPT_API, "Paletter data/bds/1.26.52.3/behaviour-dump.json.gz (compost_chance)", V26_50);
+    static final Capture SCRIPT_API_26_50_COMPOST_CHANCE = new Capture(Provenance.Source.SCRIPT_API,
+    "Paletter data/bds/1.26.52.3/behaviour-dump.json.gz (compost_chance)",
+    V26_50);
 
     /**
      * CloudburstMC/Data 0021592 (third party).
      */
-    static final Capture CLOUDBURST_DATA_26_60 = new Capture(Provenance.Source.CLOUDBURST_DATA, "CloudburstMC/Data@0021592b1a4253528bad1e1d8b537e306e097557", V26_60);
+    static final Capture CLOUDBURST_DATA_26_60 = new Capture(Provenance.Source.CLOUDBURST_DATA,
+    "CloudburstMC/Data@0021592b1a4253528bad1e1d8b537e306e097557",
+    V26_60);
 
     /**
      * BDS behaviour probe 1.26.63.1 (doors).
      */
-    static final Capture BDS_PROBE_26_60 = new Capture(Provenance.Source.BDS_PROBE, "Paletter data/bds/1.26.63.1/behaviour-probe/capture.json (doors)", V26_60);
+    static final Capture BDS_PROBE_26_60_DOORS = new Capture(Provenance.Source.BDS_PROBE,
+    "Paletter data/bds/1.26.63.1/behaviour-probe/capture.json (doors)",
+    V26_60);
 
     /**
      * BDS behaviour probe 1.26.63.1 (climbing).
      */
-    static final Capture BDS_PROBE_26_60_2 = new Capture(Provenance.Source.BDS_PROBE, "Paletter data/bds/1.26.63.1/behaviour-probe/capture.json (climbing)", V26_60);
+    static final Capture BDS_PROBE_26_60_CLIMBING = new Capture(Provenance.Source.BDS_PROBE,
+    "Paletter data/bds/1.26.63.1/behaviour-probe/capture.json (climbing)",
+    V26_60);
 
     /**
      * BDS Script API dump 1.26.63.1.
      */
-    static final Capture SCRIPT_API_26_60 = new Capture(Provenance.Source.SCRIPT_API, "Paletter data/bds/1.26.63.1/behaviour-dump.json.gz (solid, liquid_flow_directions, movement_type, sticky_type, accumulates_snow, snow_loggable, obstructs_rain, dampens_vibrations, occludes_vibrations)", V26_60);
+    static final Capture SCRIPT_API_26_60_SOLID = new Capture(Provenance.Source.SCRIPT_API,
+    "Paletter data/bds/1.26.63.1/behaviour-dump.json.gz (solid, liquid_flow_directions, movement_type, sticky_type, accumulates_snow, snow_loggable, obstructs_rain, dampens_vibrations, occludes_vibrations)",
+    V26_60);
 
     /**
      * BDS Script API dump 1.26.63.1.
      */
-    static final Capture SCRIPT_API_26_60_2 = new Capture(Provenance.Source.SCRIPT_API, "Paletter data/bds/1.26.63.1/behaviour-dump.json.gz (can_contain_liquid, liquid_blocking, destroyed_by_liquid, liquid_spread_causes_spawn)", V26_60);
+    static final Capture SCRIPT_API_26_60_CAN_CONTAIN_LIQUID = new Capture(Provenance.Source.SCRIPT_API,
+    "Paletter data/bds/1.26.63.1/behaviour-dump.json.gz (can_contain_liquid, liquid_blocking, destroyed_by_liquid, liquid_spread_causes_spawn)",
+    V26_60);
 
     /**
      * BDS Script API dump 1.26.63.1.
      */
-    static final Capture SCRIPT_API_26_60_3 = new Capture(Provenance.Source.SCRIPT_API, "Paletter data/bds/1.26.63.1/behaviour-dump.json.gz (map_color)", V26_60);
+    static final Capture SCRIPT_API_26_60_MAP_COLOR = new Capture(Provenance.Source.SCRIPT_API,
+    "Paletter data/bds/1.26.63.1/behaviour-dump.json.gz (map_color)",
+    V26_60);
 
     /**
      * BDS Script API dump 1.26.63.1.
      */
-    static final Capture SCRIPT_API_26_60_4 = new Capture(Provenance.Source.SCRIPT_API, "Paletter data/bds/1.26.63.1/behaviour-dump.json.gz (tint_method)", V26_60);
+    static final Capture SCRIPT_API_26_60_TINT_METHOD = new Capture(Provenance.Source.SCRIPT_API,
+    "Paletter data/bds/1.26.63.1/behaviour-dump.json.gz (tint_method)",
+    V26_60);
 
     /**
      * BDS Script API dump 1.26.63.1.
      */
-    static final Capture SCRIPT_API_26_60_5 = new Capture(Provenance.Source.SCRIPT_API, "Paletter data/bds/1.26.63.1/behaviour-dump.json.gz (max_stack_size, max_damage, weight)", V26_60);
+    static final Capture SCRIPT_API_26_60_MAX_STACK_SIZE = new Capture(Provenance.Source.SCRIPT_API,
+    "Paletter data/bds/1.26.63.1/behaviour-dump.json.gz (max_stack_size, max_damage, weight)",
+    V26_60);
 
     /**
      * BDS Script API dump 1.26.63.1.
      */
-    static final Capture SCRIPT_API_26_60_6 = new Capture(Provenance.Source.SCRIPT_API, "Paletter data/bds/1.26.63.1/behaviour-dump.json.gz (nutrition, saturation_modifier, can_always_eat)", V26_60);
+    static final Capture SCRIPT_API_26_60_NUTRITION = new Capture(Provenance.Source.SCRIPT_API,
+    "Paletter data/bds/1.26.63.1/behaviour-dump.json.gz (nutrition, saturation_modifier, can_always_eat)",
+    V26_60);
 
     /**
      * BDS Script API dump 1.26.63.1.
      */
-    static final Capture SCRIPT_API_26_60_7 = new Capture(Provenance.Source.SCRIPT_API, "Paletter data/bds/1.26.63.1/behaviour-dump.json.gz (cooldown_category, cooldown_ticks)", V26_60);
+    static final Capture SCRIPT_API_26_60_COOLDOWN_CATEGORY = new Capture(Provenance.Source.SCRIPT_API,
+    "Paletter data/bds/1.26.63.1/behaviour-dump.json.gz (cooldown_category, cooldown_ticks)",
+    V26_60);
 
     /**
      * BDS Script API dump 1.26.63.1.
      */
-    static final Capture SCRIPT_API_26_60_8 = new Capture(Provenance.Source.SCRIPT_API, "Paletter data/bds/1.26.63.1/behaviour-dump.json.gz (compost_chance)", V26_60);
+    static final Capture SCRIPT_API_26_60_COMPOST_CHANCE = new Capture(Provenance.Source.SCRIPT_API,
+    "Paletter data/bds/1.26.63.1/behaviour-dump.json.gz (compost_chance)",
+    V26_60);
 
     private BehaviourCaptures() {
     }

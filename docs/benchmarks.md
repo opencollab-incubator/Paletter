@@ -182,7 +182,8 @@ the first lookup of each key on each palette paid it. Without behaviour the buil
 below, and no behaviour store).
 
 **Gzip reads.** The bundled files are read through `PaletteDataCodec#readGzip`, buffered on the inflated side.
-`ReadBenchmark`, the same bytes in memory: `26.60.nbt` 121 ms unbuffered, 32 ms buffered; `behaviour.nbt` 91 ms and 20 ms.
+`ReadBenchmark`, the same bytes in memory: `26.60.nbt` 121 ms unbuffered, 32 ms buffered; `behaviour.nbt` 91 ms and 20 ms
+(it reads `properties.nbt` instead now: `behaviour.nbt` is gone, see "Behaviour values as generated code").
 
 **Item by runtime id.** The registries a Paletter compiles keep a flat table by runtime id (about 16 KB each, shared by
 all sessions). `HotPathBenchmark.itemByRuntimeIdCompiled` (the compiled palette) 11.7 to 2.5 ns, `itemByRuntimeId` (two

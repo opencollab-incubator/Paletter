@@ -60,6 +60,52 @@ public final class BlockSchema {
         return out.toString();
     }
 
+    /** A schema read back: the property names in order and the values of each. */
+    public record Parsed(@NonNull String @NonNull [] properties, @NonNull Object @NonNull [] @NonNull [] domains) {
+    }
+
+    /** @return the properties and values {@link #of} wrote */
+    public static @NonNull Parsed parse(@NonNull String schema) {
+        List<String> names = new ArrayList<>();
+        List<Object[]> domains = new ArrayList<>();
+        int at = 0;
+        while (at < schema.length()) {
+            int equals = schema.indexOf('=', at);
+            names.add(schema.substring(at, equals));
+            List<Object> values = new ArrayList<>();
+            at = equals + 1;
+            while (true) {
+                int end;
+                if (schema.charAt(at) == '\'') {
+                    end = schema.indexOf('\'', at + 1) + 1;
+                    values.add(schema.substring(at + 1, end - 1));
+                } else {
+                    end = at;
+                    while (end < schema.length() && schema.charAt(end) != '|' && schema.charAt(end) != ',') {
+                        end++;
+                    }
+                    String text = schema.substring(at, end);
+                    int range = text.indexOf("..");
+                    if (range > 0) {
+                        for (int i = Integer.parseInt(text.substring(0, range)); i <= Integer.parseInt(text.substring(range + 2)); i++) {
+                            values.add(i);
+                        }
+                    } else {
+                        values.add(text.equals("true") || text.equals("false") ? (Object) Boolean.parseBoolean(text) : (Object) Integer.parseInt(text));
+                    }
+                }
+                at = end;
+                if (at >= schema.length() || schema.charAt(at) == ',') {
+                    at++;
+                    break;
+                }
+                at++; // '|'
+            }
+            domains.add(values.toArray());
+        }
+        return new Parsed(names.toArray(String[]::new), domains.toArray(Object[][]::new));
+    }
+
     private static int rank(Object value) {
         return value instanceof Boolean ? 0 : value instanceof Integer ? 1 : 2;
     }

@@ -59,14 +59,19 @@ class MemoryBaselineTest {
     private static final long MAX_SERVED_BYTES = 20_000_000;
     /**
      * The bundled behaviour values of every version (the generated data, built: {@code VanillaBehaviour.bundled()}), shared
-     * by every palette. Measured 2.0 MB (1,959,568 bytes); 6.6 MB (6,624,728) when they were {@code behaviour.nbt} as read.
+     * by every palette. Measured 2.0 MB (2,033,960 bytes); 6.6 MB (6,624,728) when they were {@code behaviour.nbt} as read.
      */
     private static final long MAX_BEHAVIOUR_STORE_BYTES = 2_200_000;
     /**
-     * The behaviour columns of the newest palette, all keys built (as {@code build()} does), with the palette's entries of
-     * the bundled values. Measured 2.2 MB (2,231,288 bytes); 2.4 MB (2,356,032) before.
+     * The behaviour columns of the newest palette, all keys built (as {@code build()} does). Measured 2.2 MB (2,176,872
+     * bytes); 2.4 MB (2,356,032) before.
      */
-    private static final long MAX_BEHAVIOUR_COLUMNS_BYTES = 2_450_000;
+    private static final long MAX_BEHAVIOUR_COLUMNS_BYTES = 2_400_000;
+    /**
+     * What loading the generated behaviour classes and building the values adds to the metaspace, which stays for the life
+     * of the class loader and is not on the heap (JOL does not count it). Measured 1.7 MB (1,715,872 bytes).
+     */
+    private static final long MAX_BEHAVIOUR_METASPACE_BYTES = 2_000_000;
 
     private static PaletteLayer sessionLayer(String id) {
         return PaletteLayer.builder(id)
@@ -158,6 +163,13 @@ class MemoryBaselineTest {
                 System.out.println(layout.totalSize());
                 return;
             }
+            if (args[0].equals("metaspace")) {
+                // What loading and running the generated classes adds to the metaspace (not on the heap, so not in JOL's count)
+                long before = metaspace();
+                dev.opencollab.paletter.internal.behaviour.VanillaBehaviour.bundled();
+                System.out.println(metaspace() - before);
+                return;
+            }
             if (args[0].equals("withBehaviour")) {
                 // The newest palette with its behaviour columns, and the bundled values (counted once, as in "behaviour")
                 Paletter paletter = Paletter.builder().versions(MemoryBaselineTest::newestRelease).build();
@@ -186,6 +198,12 @@ class MemoryBaselineTest {
                 .versions(version -> newest ? newestRelease(version) : version.equals(oldest)).build();
             System.out.println(GraphLayout.parseInstance(paletter.vanilla(paletter.versions().getFirst())).totalSize());
         }
+    }
+
+    /** @return the bytes the Metaspace pool uses now */
+    private static long metaspace() {
+        return java.lang.management.ManagementFactory.getMemoryPoolMXBeans().stream().filter(pool -> pool.getName().equals("Metaspace"))
+            .mapToLong(pool -> pool.getUsage().getUsed()).sum();
     }
 
     private static boolean newestRelease(DataVersion version) {
@@ -220,6 +238,7 @@ class MemoryBaselineTest {
         // The newest palette with behaviour on reaches the store too: the columns are the rest of the difference
         long columns = vanillaBytes("withBehaviour") - vanillaBytes("true") - store;
         assertOnce("the behaviour columns of the newest palette", MAX_BEHAVIOUR_COLUMNS_BYTES, columns);
+        assertOnce("the metaspace of the generated behaviour classes", MAX_BEHAVIOUR_METASPACE_BYTES, vanillaBytes("metaspace"));
     }
 
     private static void assertOnce(String what, long limit, long bytes) {

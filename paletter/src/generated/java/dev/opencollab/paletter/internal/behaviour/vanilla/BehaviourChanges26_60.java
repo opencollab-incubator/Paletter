@@ -2,413 +2,507 @@
 // and the bundled palettes. Do not edit; see docs/data-pipeline.md.
 package dev.opencollab.paletter.internal.behaviour.vanilla;
 
-import static dev.opencollab.paletter.internal.behaviour.vanilla.BehaviourCaptures.*;
 import static dev.opencollab.paletter.internal.behaviour.vanilla.BehaviourShapes.*;
-import static dev.opencollab.paletter.internal.behaviour.vanilla.BehaviourShapesPart2.*;
 import static dev.opencollab.paletter.internal.behaviour.vanilla.BehaviourTables.*;
 import static dev.opencollab.paletter.internal.behaviour.vanilla.BehaviourTablesPart2.*;
 
 import dev.opencollab.paletter.behaviour.BlockShape;
 
 /**
- * What changed in 26.60 against 26.50, each change with the capture that decided it and the captures of the version that confirm it. SOURCE ONLY: no direct BDS capture decided the change, only a third-party dump (see data/behaviour/REPORT.md).
+ * What changed in 26.60 against 26.50, each change with the capture that decided it and the captures of the version that confirm it. SOURCE ONLY: no direct BDS capture decided the change, only a third-party dump; first coverage: nothing was known before; a block that is new or has other states says where its values come from. data/behaviour/REPORT.md lists what to check.
  */
 final class BehaviourChanges26_60 {
     private BehaviourChanges26_60() {
     }
 
     static void part0(Changes v) {
-        // climbable -> false for every block (1466 changed): BDS behaviour probe 1.26.63.1 (climbing)
-        // dampens_vibrations -> false for every block (1219 changed): BDS Script API dump 1.26.63.1
-        // occludes_vibrations -> false for every block (1235 changed): BDS Script API dump 1.26.63.1
+        // first coverage, climbable = false for every block (1466 changed): BDS behaviour probe 1.26.63.1 (climbing)
+        // first coverage, dampens_vibrations = false for every block (1219 changed): BDS Script API dump 1.26.63.1
+        // first coverage, occludes_vibrations = false for every block (1235 changed): BDS Script API dump 1.26.63.1
         v.everyBlock().climbable(false).dampensVibrations(false).occludesVibrations(false);
         // collision_shape per state (32 of 32 states): BDS behaviour probe 1.26.63.1 (doors); CloudburstMC/Data 0021592 says otherwise
         v.change("minecraft:acacia_door")
-                .collisionShape(ACACIA_DOOR_COLLISION_SHAPE_2);
-        // dampens_vibrations per state (1 of 16 states): BDS Script API dump 1.26.63.1
-        // occludes_vibrations per state (1 of 16 states): BDS Script API dump 1.26.63.1
+                .collisionShape(TABLE_DOOR_HINGE_BIT_CARDINAL_DIRECTION_OPEN_BIT_C89710);
+        // first coverage, dampens_vibrations per state (1 of 16 states): BDS Script API dump 1.26.63.1
+        // first coverage, occludes_vibrations per state (1 of 16 states): BDS Script API dump 1.26.63.1
         v.change("minecraft:acacia_fence")
-                .dampensVibrations(ACACIA_FENCE_SNOW_LOGGABLE)
-                .occludesVibrations(ACACIA_FENCE_SNOW_LOGGABLE);
-        // dampens_vibrations per state (8 of 16 states): BDS Script API dump 1.26.63.1
-        // occludes_vibrations per state (8 of 16 states): BDS Script API dump 1.26.63.1
+                .dampensVibrations(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_1AB959)
+                .occludesVibrations(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_1AB959);
+        // first coverage, dampens_vibrations per state (8 of 16 states): BDS Script API dump 1.26.63.1
+        // first coverage, occludes_vibrations per state (8 of 16 states): BDS Script API dump 1.26.63.1
         v.change("minecraft:acacia_fence_gate")
                 .dampensVibrations("in_wall_bit", false, false, true, null)
                 .occludesVibrations("in_wall_bit", false, false, true, null);
-        // dampens_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
-        // occludes_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
+        // first coverage, dampens_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
+        // first coverage, occludes_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
         v.change("minecraft:acacia_stairs")
-                .dampensVibrations("minecraft:corner", "inner_left", null, "inner_right", null, "none", false, "outer_left", null, "outer_right", null)
-                .occludesVibrations("minecraft:corner", "inner_left", null, "inner_right", null, "none", false, "outer_left", null, "outer_right", null);
-        // dampens_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
-        // occludes_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
+                .dampensVibrations("minecraft:corner", "inner_left", null, "inner_right", null,
+                        "none", false, "outer_left", null, "outer_right", null)
+                .occludesVibrations("minecraft:corner", "inner_left", null, "inner_right", null,
+                        "none", false, "outer_left", null, "outer_right", null);
+        // first coverage, dampens_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
+        // first coverage, occludes_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
         v.change("minecraft:andesite_stairs")
-                .dampensVibrations("minecraft:corner", "inner_left", null, "inner_right", null, "none", false, "outer_left", null, "outer_right", null)
-                .occludesVibrations("minecraft:corner", "inner_left", null, "inner_right", null, "none", false, "outer_left", null, "outer_right", null);
+                .dampensVibrations("minecraft:corner", "inner_left", null, "inner_right", null,
+                        "none", false, "outer_left", null, "outer_right", null)
+                .occludesVibrations("minecraft:corner", "inner_left", null, "inner_right", null,
+                        "none", false, "outer_left", null, "outer_right", null);
         // collision_shape per state (32 of 32 states): BDS behaviour probe 1.26.63.1 (doors); CloudburstMC/Data 0021592 says otherwise
         v.change("minecraft:bamboo_door")
-                .collisionShape(ACACIA_DOOR_COLLISION_SHAPE_2);
-        // dampens_vibrations per state (1 of 16 states): BDS Script API dump 1.26.63.1
-        // occludes_vibrations per state (1 of 16 states): BDS Script API dump 1.26.63.1
+                .collisionShape(TABLE_DOOR_HINGE_BIT_CARDINAL_DIRECTION_OPEN_BIT_C89710);
+        // first coverage, dampens_vibrations per state (1 of 16 states): BDS Script API dump 1.26.63.1
+        // first coverage, occludes_vibrations per state (1 of 16 states): BDS Script API dump 1.26.63.1
         v.change("minecraft:bamboo_fence")
-                .dampensVibrations(ACACIA_FENCE_SNOW_LOGGABLE)
-                .occludesVibrations(ACACIA_FENCE_SNOW_LOGGABLE);
-        // dampens_vibrations per state (8 of 16 states): BDS Script API dump 1.26.63.1
-        // occludes_vibrations per state (8 of 16 states): BDS Script API dump 1.26.63.1
+                .dampensVibrations(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_1AB959)
+                .occludesVibrations(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_1AB959);
+        // first coverage, dampens_vibrations per state (8 of 16 states): BDS Script API dump 1.26.63.1
+        // first coverage, occludes_vibrations per state (8 of 16 states): BDS Script API dump 1.26.63.1
         v.change("minecraft:bamboo_fence_gate")
                 .dampensVibrations("in_wall_bit", false, false, true, null)
                 .occludesVibrations("in_wall_bit", false, false, true, null);
-        // dampens_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
-        // occludes_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
+        // first coverage, dampens_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
+        // first coverage, occludes_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
         v.change("minecraft:bamboo_mosaic_stairs")
-                .dampensVibrations("minecraft:corner", "inner_left", null, "inner_right", null, "none", false, "outer_left", null, "outer_right", null)
-                .occludesVibrations("minecraft:corner", "inner_left", null, "inner_right", null, "none", false, "outer_left", null, "outer_right", null);
-        // dampens_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
-        // occludes_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
+                .dampensVibrations("minecraft:corner", "inner_left", null, "inner_right", null,
+                        "none", false, "outer_left", null, "outer_right", null)
+                .occludesVibrations("minecraft:corner", "inner_left", null, "inner_right", null,
+                        "none", false, "outer_left", null, "outer_right", null);
+        // first coverage, dampens_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
+        // first coverage, occludes_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
         v.change("minecraft:bamboo_stairs")
-                .dampensVibrations("minecraft:corner", "inner_left", null, "inner_right", null, "none", false, "outer_left", null, "outer_right", null)
-                .occludesVibrations("minecraft:corner", "inner_left", null, "inner_right", null, "none", false, "outer_left", null, "outer_right", null);
+                .dampensVibrations("minecraft:corner", "inner_left", null, "inner_right", null,
+                        "none", false, "outer_left", null, "outer_right", null)
+                .occludesVibrations("minecraft:corner", "inner_left", null, "inner_right", null,
+                        "none", false, "outer_left", null, "outer_right", null);
         // collision_shape per state (32 of 32 states): BDS behaviour probe 1.26.63.1 (doors); CloudburstMC/Data 0021592 says otherwise
         v.change("minecraft:birch_door")
-                .collisionShape(ACACIA_DOOR_COLLISION_SHAPE_2);
-        // dampens_vibrations per state (1 of 16 states): BDS Script API dump 1.26.63.1
-        // occludes_vibrations per state (1 of 16 states): BDS Script API dump 1.26.63.1
+                .collisionShape(TABLE_DOOR_HINGE_BIT_CARDINAL_DIRECTION_OPEN_BIT_C89710);
+        // first coverage, dampens_vibrations per state (1 of 16 states): BDS Script API dump 1.26.63.1
+        // first coverage, occludes_vibrations per state (1 of 16 states): BDS Script API dump 1.26.63.1
         v.change("minecraft:birch_fence")
-                .dampensVibrations(ACACIA_FENCE_SNOW_LOGGABLE)
-                .occludesVibrations(ACACIA_FENCE_SNOW_LOGGABLE);
-        // dampens_vibrations per state (8 of 16 states): BDS Script API dump 1.26.63.1
-        // occludes_vibrations per state (8 of 16 states): BDS Script API dump 1.26.63.1
+                .dampensVibrations(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_1AB959)
+                .occludesVibrations(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_1AB959);
+        // first coverage, dampens_vibrations per state (8 of 16 states): BDS Script API dump 1.26.63.1
+        // first coverage, occludes_vibrations per state (8 of 16 states): BDS Script API dump 1.26.63.1
         v.change("minecraft:birch_fence_gate")
                 .dampensVibrations("in_wall_bit", false, false, true, null)
                 .occludesVibrations("in_wall_bit", false, false, true, null);
-        // dampens_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
-        // occludes_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
+        // first coverage, dampens_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
+        // first coverage, occludes_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
         v.change("minecraft:birch_stairs")
-                .dampensVibrations("minecraft:corner", "inner_left", null, "inner_right", null, "none", false, "outer_left", null, "outer_right", null)
-                .occludesVibrations("minecraft:corner", "inner_left", null, "inner_right", null, "none", false, "outer_left", null, "outer_right", null);
-        // dampens_vibrations unknown -> true: BDS Script API dump 1.26.63.1
+                .dampensVibrations("minecraft:corner", "inner_left", null, "inner_right", null,
+                        "none", false, "outer_left", null, "outer_right", null)
+                .occludesVibrations("minecraft:corner", "inner_left", null, "inner_right", null,
+                        "none", false, "outer_left", null, "outer_right", null);
+        // first coverage, dampens_vibrations = true: BDS Script API dump 1.26.63.1
         v.change("minecraft:black_carpet").dampensVibrations(true);
-        // dampens_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
-        // occludes_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
+        // first coverage, dampens_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
+        // first coverage, occludes_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
         v.change("minecraft:black_concrete_stairs")
-                .dampensVibrations("minecraft:corner", "inner_left", null, "inner_right", null, "none", false, "outer_left", null, "outer_right", null)
-                .occludesVibrations("minecraft:corner", "inner_left", null, "inner_right", null, "none", false, "outer_left", null, "outer_right", null);
-        // dampens_vibrations per state (1 of 16 states): BDS Script API dump 1.26.63.1
-        // occludes_vibrations per state (1 of 16 states): BDS Script API dump 1.26.63.1
+                .dampensVibrations("minecraft:corner", "inner_left", null, "inner_right", null,
+                        "none", false, "outer_left", null, "outer_right", null)
+                .occludesVibrations("minecraft:corner", "inner_left", null, "inner_right", null,
+                        "none", false, "outer_left", null, "outer_right", null);
+        // first coverage, dampens_vibrations per state (1 of 16 states): BDS Script API dump 1.26.63.1
+        // first coverage, occludes_vibrations per state (1 of 16 states): BDS Script API dump 1.26.63.1
         v.change("minecraft:black_stained_glass_pane")
-                .dampensVibrations(ACACIA_FENCE_SNOW_LOGGABLE)
-                .occludesVibrations(ACACIA_FENCE_SNOW_LOGGABLE);
-        // dampens_vibrations unknown -> true: BDS Script API dump 1.26.63.1
-        // occludes_vibrations unknown -> true: BDS Script API dump 1.26.63.1
+                .dampensVibrations(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_1AB959)
+                .occludesVibrations(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_1AB959);
+        // first coverage, dampens_vibrations = true: BDS Script API dump 1.26.63.1
+        // first coverage, occludes_vibrations = true: BDS Script API dump 1.26.63.1
         v.change("minecraft:black_wool").dampensVibrations(true).occludesVibrations(true);
-        // dampens_vibrations unknown -> true: BDS Script API dump 1.26.63.1
-        // occludes_vibrations unknown -> true: BDS Script API dump 1.26.63.1
+        // first coverage, dampens_vibrations = true: BDS Script API dump 1.26.63.1
+        // first coverage, occludes_vibrations = true: BDS Script API dump 1.26.63.1
         v.change("minecraft:black_wool_double_slab").dampensVibrations(true).occludesVibrations(true);
-        // dampens_vibrations unknown -> true: BDS Script API dump 1.26.63.1
-        // occludes_vibrations unknown -> true: BDS Script API dump 1.26.63.1
+        // first coverage, dampens_vibrations = true: BDS Script API dump 1.26.63.1
+        // first coverage, occludes_vibrations = true: BDS Script API dump 1.26.63.1
         v.change("minecraft:black_wool_slab").dampensVibrations(true).occludesVibrations(true);
-        // dampens_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
-        // occludes_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
+        // first coverage, dampens_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
+        // first coverage, occludes_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
         v.change("minecraft:black_wool_stairs")
-                .dampensVibrations("minecraft:corner", "inner_left", null, "inner_right", null, "none", true, "outer_left", null, "outer_right", null)
-                .occludesVibrations("minecraft:corner", "inner_left", null, "inner_right", null, "none", true, "outer_left", null, "outer_right", null);
-        // dampens_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
-        // occludes_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
+                .dampensVibrations("minecraft:corner", "inner_left", null, "inner_right", null,
+                        "none", true, "outer_left", null, "outer_right", null)
+                .occludesVibrations("minecraft:corner", "inner_left", null, "inner_right", null,
+                        "none", true, "outer_left", null, "outer_right", null);
+        // first coverage, dampens_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
+        // first coverage, occludes_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
         v.change("minecraft:blackstone_stairs")
-                .dampensVibrations("minecraft:corner", "inner_left", null, "inner_right", null, "none", false, "outer_left", null, "outer_right", null)
-                .occludesVibrations("minecraft:corner", "inner_left", null, "inner_right", null, "none", false, "outer_left", null, "outer_right", null);
-        // dampens_vibrations unknown -> true: BDS Script API dump 1.26.63.1
+                .dampensVibrations("minecraft:corner", "inner_left", null, "inner_right", null,
+                        "none", false, "outer_left", null, "outer_right", null)
+                .occludesVibrations("minecraft:corner", "inner_left", null, "inner_right", null,
+                        "none", false, "outer_left", null, "outer_right", null);
+        // first coverage, dampens_vibrations = true: BDS Script API dump 1.26.63.1
         v.change("minecraft:blue_carpet").dampensVibrations(true);
-        // dampens_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
-        // occludes_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
+        // first coverage, dampens_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
+        // first coverage, occludes_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
         v.change("minecraft:blue_concrete_stairs")
-                .dampensVibrations("minecraft:corner", "inner_left", null, "inner_right", null, "none", false, "outer_left", null, "outer_right", null)
-                .occludesVibrations("minecraft:corner", "inner_left", null, "inner_right", null, "none", false, "outer_left", null, "outer_right", null);
-        // dampens_vibrations per state (1 of 16 states): BDS Script API dump 1.26.63.1
-        // occludes_vibrations per state (1 of 16 states): BDS Script API dump 1.26.63.1
+                .dampensVibrations("minecraft:corner", "inner_left", null, "inner_right", null,
+                        "none", false, "outer_left", null, "outer_right", null)
+                .occludesVibrations("minecraft:corner", "inner_left", null, "inner_right", null,
+                        "none", false, "outer_left", null, "outer_right", null);
+        // first coverage, dampens_vibrations per state (1 of 16 states): BDS Script API dump 1.26.63.1
+        // first coverage, occludes_vibrations per state (1 of 16 states): BDS Script API dump 1.26.63.1
         v.change("minecraft:blue_stained_glass_pane")
-                .dampensVibrations(ACACIA_FENCE_SNOW_LOGGABLE)
-                .occludesVibrations(ACACIA_FENCE_SNOW_LOGGABLE);
-        // dampens_vibrations unknown -> true: BDS Script API dump 1.26.63.1
-        // occludes_vibrations unknown -> true: BDS Script API dump 1.26.63.1
+                .dampensVibrations(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_1AB959)
+                .occludesVibrations(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_1AB959);
+        // first coverage, dampens_vibrations = true: BDS Script API dump 1.26.63.1
+        // first coverage, occludes_vibrations = true: BDS Script API dump 1.26.63.1
         v.change("minecraft:blue_wool").dampensVibrations(true).occludesVibrations(true);
-        // dampens_vibrations unknown -> true: BDS Script API dump 1.26.63.1
-        // occludes_vibrations unknown -> true: BDS Script API dump 1.26.63.1
+        // first coverage, dampens_vibrations = true: BDS Script API dump 1.26.63.1
+        // first coverage, occludes_vibrations = true: BDS Script API dump 1.26.63.1
         v.change("minecraft:blue_wool_double_slab").dampensVibrations(true).occludesVibrations(true);
-        // dampens_vibrations unknown -> true: BDS Script API dump 1.26.63.1
-        // occludes_vibrations unknown -> true: BDS Script API dump 1.26.63.1
+        // first coverage, dampens_vibrations = true: BDS Script API dump 1.26.63.1
+        // first coverage, occludes_vibrations = true: BDS Script API dump 1.26.63.1
         v.change("minecraft:blue_wool_slab").dampensVibrations(true).occludesVibrations(true);
-        // dampens_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
-        // occludes_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
+        // first coverage, dampens_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
+        // first coverage, occludes_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
         v.change("minecraft:blue_wool_stairs")
-                .dampensVibrations("minecraft:corner", "inner_left", null, "inner_right", null, "none", true, "outer_left", null, "outer_right", null)
-                .occludesVibrations("minecraft:corner", "inner_left", null, "inner_right", null, "none", true, "outer_left", null, "outer_right", null);
-        // dampens_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
-        // occludes_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
+                .dampensVibrations("minecraft:corner", "inner_left", null, "inner_right", null,
+                        "none", true, "outer_left", null, "outer_right", null)
+                .occludesVibrations("minecraft:corner", "inner_left", null, "inner_right", null,
+                        "none", true, "outer_left", null, "outer_right", null);
+        // first coverage, dampens_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
+        // first coverage, occludes_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
         v.change("minecraft:brick_stairs")
-                .dampensVibrations("minecraft:corner", "inner_left", null, "inner_right", null, "none", false, "outer_left", null, "outer_right", null)
-                .occludesVibrations("minecraft:corner", "inner_left", null, "inner_right", null, "none", false, "outer_left", null, "outer_right", null);
-        // dampens_vibrations unknown -> true: BDS Script API dump 1.26.63.1
+                .dampensVibrations("minecraft:corner", "inner_left", null, "inner_right", null,
+                        "none", false, "outer_left", null, "outer_right", null)
+                .occludesVibrations("minecraft:corner", "inner_left", null, "inner_right", null,
+                        "none", false, "outer_left", null, "outer_right", null);
+        // first coverage, dampens_vibrations = true: BDS Script API dump 1.26.63.1
         v.change("minecraft:brown_carpet").dampensVibrations(true);
-        // dampens_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
-        // occludes_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
+        // first coverage, dampens_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
+        // first coverage, occludes_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
         v.change("minecraft:brown_concrete_stairs")
-                .dampensVibrations("minecraft:corner", "inner_left", null, "inner_right", null, "none", false, "outer_left", null, "outer_right", null)
-                .occludesVibrations("minecraft:corner", "inner_left", null, "inner_right", null, "none", false, "outer_left", null, "outer_right", null);
-        // dampens_vibrations per state (1 of 16 states): BDS Script API dump 1.26.63.1
-        // occludes_vibrations per state (1 of 16 states): BDS Script API dump 1.26.63.1
+                .dampensVibrations("minecraft:corner", "inner_left", null, "inner_right", null,
+                        "none", false, "outer_left", null, "outer_right", null)
+                .occludesVibrations("minecraft:corner", "inner_left", null, "inner_right", null,
+                        "none", false, "outer_left", null, "outer_right", null);
+        // first coverage, dampens_vibrations per state (1 of 16 states): BDS Script API dump 1.26.63.1
+        // first coverage, occludes_vibrations per state (1 of 16 states): BDS Script API dump 1.26.63.1
         v.change("minecraft:brown_stained_glass_pane")
-                .dampensVibrations(ACACIA_FENCE_SNOW_LOGGABLE)
-                .occludesVibrations(ACACIA_FENCE_SNOW_LOGGABLE);
-        // dampens_vibrations unknown -> true: BDS Script API dump 1.26.63.1
-        // occludes_vibrations unknown -> true: BDS Script API dump 1.26.63.1
+                .dampensVibrations(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_1AB959)
+                .occludesVibrations(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_1AB959);
+        // first coverage, dampens_vibrations = true: BDS Script API dump 1.26.63.1
+        // first coverage, occludes_vibrations = true: BDS Script API dump 1.26.63.1
         v.change("minecraft:brown_wool").dampensVibrations(true).occludesVibrations(true);
-        // dampens_vibrations unknown -> true: BDS Script API dump 1.26.63.1
-        // occludes_vibrations unknown -> true: BDS Script API dump 1.26.63.1
+        // first coverage, dampens_vibrations = true: BDS Script API dump 1.26.63.1
+        // first coverage, occludes_vibrations = true: BDS Script API dump 1.26.63.1
         v.change("minecraft:brown_wool_double_slab").dampensVibrations(true).occludesVibrations(true);
-        // dampens_vibrations unknown -> true: BDS Script API dump 1.26.63.1
-        // occludes_vibrations unknown -> true: BDS Script API dump 1.26.63.1
+        // first coverage, dampens_vibrations = true: BDS Script API dump 1.26.63.1
+        // first coverage, occludes_vibrations = true: BDS Script API dump 1.26.63.1
         v.change("minecraft:brown_wool_slab").dampensVibrations(true).occludesVibrations(true);
-        // dampens_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
-        // occludes_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
+        // first coverage, dampens_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
+        // first coverage, occludes_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
         v.change("minecraft:brown_wool_stairs")
-                .dampensVibrations("minecraft:corner", "inner_left", null, "inner_right", null, "none", true, "outer_left", null, "outer_right", null)
-                .occludesVibrations("minecraft:corner", "inner_left", null, "inner_right", null, "none", true, "outer_left", null, "outer_right", null);
+                .dampensVibrations("minecraft:corner", "inner_left", null, "inner_right", null,
+                        "none", true, "outer_left", null, "outer_right", null)
+                .occludesVibrations("minecraft:corner", "inner_left", null, "inner_right", null,
+                        "none", true, "outer_left", null, "outer_right", null);
         // dampens_vibrations stays as in the version before (not what every block got)
         // occludes_vibrations stays as in the version before (not what every block got)
         v.change("minecraft:bubble_column").dampensVibrationsUnknown().occludesVibrationsUnknown();
-        // climbable unknown -> true: BDS behaviour probe 1.26.63.1 (climbing)
-        // dampens_vibrations per state (25 of 26 states): BDS Script API dump 1.26.63.1
-        // occludes_vibrations per state (25 of 26 states): BDS Script API dump 1.26.63.1
-        v.change("minecraft:cave_vines")
-                .climbable(true)
-                .dampensVibrations("growing_plant_age", 0, null, 1, false, 2, false, 3, false, 4, false, 5, false, 6, false, 7, false, 8, false, 9, false, 10, false, 11, false, 12, false, 13, false, 14, false, 15, false, 16, false, 17, false, 18, false, 19, false, 20, false, 21, false, 22, false, 23, false, 24, false, 25, false)
-                .occludesVibrations("growing_plant_age", 0, null, 1, false, 2, false, 3, false, 4, false, 5, false, 6, false, 7, false, 8, false, 9, false, 10, false, 11, false, 12, false, 13, false, 14, false, 15, false, 16, false, 17, false, 18, false, 19, false, 20, false, 21, false, 22, false, 23, false, 24, false, 25, false);
-        // climbable unknown -> true: BDS behaviour probe 1.26.63.1 (climbing)
-        // dampens_vibrations per state (25 of 26 states): BDS Script API dump 1.26.63.1
-        // occludes_vibrations per state (25 of 26 states): BDS Script API dump 1.26.63.1
-        v.change("minecraft:cave_vines_body_with_berries")
-                .climbable(true)
-                .dampensVibrations("growing_plant_age", 0, null, 1, false, 2, false, 3, false, 4, false, 5, false, 6, false, 7, false, 8, false, 9, false, 10, false, 11, false, 12, false, 13, false, 14, false, 15, false, 16, false, 17, false, 18, false, 19, false, 20, false, 21, false, 22, false, 23, false, 24, false, 25, false)
-                .occludesVibrations("growing_plant_age", 0, null, 1, false, 2, false, 3, false, 4, false, 5, false, 6, false, 7, false, 8, false, 9, false, 10, false, 11, false, 12, false, 13, false, 14, false, 15, false, 16, false, 17, false, 18, false, 19, false, 20, false, 21, false, 22, false, 23, false, 24, false, 25, false);
     }
 
     static void part1(Changes v) {
-        // climbable unknown -> true: BDS behaviour probe 1.26.63.1 (climbing)
-        // dampens_vibrations per state (25 of 26 states): BDS Script API dump 1.26.63.1
-        // occludes_vibrations per state (25 of 26 states): BDS Script API dump 1.26.63.1
+        // first coverage, climbable = true: BDS behaviour probe 1.26.63.1 (climbing)
+        // first coverage, dampens_vibrations per state (25 of 26 states): BDS Script API dump 1.26.63.1
+        // first coverage, occludes_vibrations per state (25 of 26 states): BDS Script API dump 1.26.63.1
+        v.change("minecraft:cave_vines")
+                .climbable(true)
+                .dampensVibrations("growing_plant_age", 0, null, 1, false, 2, false, 3, false,
+                        4, false, 5, false, 6, false, 7, false, 8, false, 9, false, 10, false,
+                        11, false, 12, false, 13, false, 14, false, 15, false, 16, false, 17, false,
+                        18, false, 19, false, 20, false, 21, false, 22, false, 23, false, 24, false,
+                        25, false)
+                .occludesVibrations("growing_plant_age", 0, null, 1, false, 2, false, 3, false,
+                        4, false, 5, false, 6, false, 7, false, 8, false, 9, false, 10, false,
+                        11, false, 12, false, 13, false, 14, false, 15, false, 16, false, 17, false,
+                        18, false, 19, false, 20, false, 21, false, 22, false, 23, false, 24, false,
+                        25, false);
+        // first coverage, climbable = true: BDS behaviour probe 1.26.63.1 (climbing)
+        // first coverage, dampens_vibrations per state (25 of 26 states): BDS Script API dump 1.26.63.1
+        // first coverage, occludes_vibrations per state (25 of 26 states): BDS Script API dump 1.26.63.1
+        v.change("minecraft:cave_vines_body_with_berries")
+                .climbable(true)
+                .dampensVibrations("growing_plant_age", 0, null, 1, false, 2, false, 3, false,
+                        4, false, 5, false, 6, false, 7, false, 8, false, 9, false, 10, false,
+                        11, false, 12, false, 13, false, 14, false, 15, false, 16, false, 17, false,
+                        18, false, 19, false, 20, false, 21, false, 22, false, 23, false, 24, false,
+                        25, false)
+                .occludesVibrations("growing_plant_age", 0, null, 1, false, 2, false, 3, false,
+                        4, false, 5, false, 6, false, 7, false, 8, false, 9, false, 10, false,
+                        11, false, 12, false, 13, false, 14, false, 15, false, 16, false, 17, false,
+                        18, false, 19, false, 20, false, 21, false, 22, false, 23, false, 24, false,
+                        25, false);
+        // first coverage, climbable = true: BDS behaviour probe 1.26.63.1 (climbing)
+        // first coverage, dampens_vibrations per state (25 of 26 states): BDS Script API dump 1.26.63.1
+        // first coverage, occludes_vibrations per state (25 of 26 states): BDS Script API dump 1.26.63.1
         v.change("minecraft:cave_vines_head_with_berries")
                 .climbable(true)
-                .dampensVibrations("growing_plant_age", 0, null, 1, false, 2, false, 3, false, 4, false, 5, false, 6, false, 7, false, 8, false, 9, false, 10, false, 11, false, 12, false, 13, false, 14, false, 15, false, 16, false, 17, false, 18, false, 19, false, 20, false, 21, false, 22, false, 23, false, 24, false, 25, false)
-                .occludesVibrations("growing_plant_age", 0, null, 1, false, 2, false, 3, false, 4, false, 5, false, 6, false, 7, false, 8, false, 9, false, 10, false, 11, false, 12, false, 13, false, 14, false, 15, false, 16, false, 17, false, 18, false, 19, false, 20, false, 21, false, 22, false, 23, false, 24, false, 25, false);
-        // dampens_vibrations per state (4 of 16 states): BDS Script API dump 1.26.63.1
-        // occludes_vibrations per state (4 of 16 states): BDS Script API dump 1.26.63.1
+                .dampensVibrations("growing_plant_age", 0, null, 1, false, 2, false, 3, false,
+                        4, false, 5, false, 6, false, 7, false, 8, false, 9, false, 10, false,
+                        11, false, 12, false, 13, false, 14, false, 15, false, 16, false, 17, false,
+                        18, false, 19, false, 20, false, 21, false, 22, false, 23, false, 24, false,
+                        25, false)
+                .occludesVibrations("growing_plant_age", 0, null, 1, false, 2, false, 3, false,
+                        4, false, 5, false, 6, false, 7, false, 8, false, 9, false, 10, false,
+                        11, false, 12, false, 13, false, 14, false, 15, false, 16, false, 17, false,
+                        18, false, 19, false, 20, false, 21, false, 22, false, 23, false, 24, false,
+                        25, false);
+        // first coverage, dampens_vibrations per state (4 of 16 states): BDS Script API dump 1.26.63.1
+        // first coverage, occludes_vibrations per state (4 of 16 states): BDS Script API dump 1.26.63.1
         v.change("minecraft:chalkboard")
-                .dampensVibrations("direction", 0, false, 1, false, 2, false, 3, false, 4, null, 5, null, 6, null, 7, null, 8, null, 9, null, 10, null, 11, null, 12, null, 13, null, 14, null, 15, null)
-                .occludesVibrations("direction", 0, false, 1, false, 2, false, 3, false, 4, null, 5, null, 6, null, 7, null, 8, null, 9, null, 10, null, 11, null, 12, null, 13, null, 14, null, 15, null);
+                .dampensVibrations("direction", 0, false, 1, false, 2, false, 3, false, 4, null,
+                        5, null, 6, null, 7, null, 8, null, 9, null, 10, null, 11, null, 12, null,
+                        13, null, 14, null, 15, null)
+                .occludesVibrations("direction", 0, false, 1, false, 2, false, 3, false, 4, null,
+                        5, null, 6, null, 7, null, 8, null, 9, null, 10, null, 11, null, 12, null,
+                        13, null, 14, null, 15, null);
         // collision_shape per state (32 of 32 states): BDS behaviour probe 1.26.63.1 (doors); CloudburstMC/Data 0021592 says otherwise
         v.change("minecraft:cherry_door")
-                .collisionShape(ACACIA_DOOR_COLLISION_SHAPE_2);
-        // dampens_vibrations per state (1 of 16 states): BDS Script API dump 1.26.63.1
-        // occludes_vibrations per state (1 of 16 states): BDS Script API dump 1.26.63.1
+                .collisionShape(TABLE_DOOR_HINGE_BIT_CARDINAL_DIRECTION_OPEN_BIT_C89710);
+        // first coverage, dampens_vibrations per state (1 of 16 states): BDS Script API dump 1.26.63.1
+        // first coverage, occludes_vibrations per state (1 of 16 states): BDS Script API dump 1.26.63.1
         v.change("minecraft:cherry_fence")
-                .dampensVibrations(ACACIA_FENCE_SNOW_LOGGABLE)
-                .occludesVibrations(ACACIA_FENCE_SNOW_LOGGABLE);
-        // dampens_vibrations per state (8 of 16 states): BDS Script API dump 1.26.63.1
-        // occludes_vibrations per state (8 of 16 states): BDS Script API dump 1.26.63.1
+                .dampensVibrations(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_1AB959)
+                .occludesVibrations(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_1AB959);
+        // first coverage, dampens_vibrations per state (8 of 16 states): BDS Script API dump 1.26.63.1
+        // first coverage, occludes_vibrations per state (8 of 16 states): BDS Script API dump 1.26.63.1
         v.change("minecraft:cherry_fence_gate")
                 .dampensVibrations("in_wall_bit", false, false, true, null)
                 .occludesVibrations("in_wall_bit", false, false, true, null);
-        // dampens_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
-        // occludes_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
+        // first coverage, dampens_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
+        // first coverage, occludes_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
         v.change("minecraft:cherry_stairs")
-                .dampensVibrations("minecraft:corner", "inner_left", null, "inner_right", null, "none", false, "outer_left", null, "outer_right", null)
-                .occludesVibrations("minecraft:corner", "inner_left", null, "inner_right", null, "none", false, "outer_left", null, "outer_right", null);
+                .dampensVibrations("minecraft:corner", "inner_left", null, "inner_right", null,
+                        "none", false, "outer_left", null, "outer_right", null)
+                .occludesVibrations("minecraft:corner", "inner_left", null, "inner_right", null,
+                        "none", false, "outer_left", null, "outer_right", null);
         // other states than in 26.50 (none): values from BDS Script API dump 1.26.63.1, BDS behaviour probe 1.26.63.1 (climbing), CloudburstMC/Data 0021592
         v.block("minecraft:chorus_plant", "minecraft:connection_down=false|true,minecraft:connection_east=false|true,minecraft:connection_north=false|true,minecraft:connection_south=false|true,minecraft:connection_up=false|true,minecraft:connection_west=false|true")
                 .destroyTime(0.4f)
                 .explosionResistance(0.4f)
-                .collisionShape(CHORUS_PLANT_COLLISION_SHAPE)
-                .outlineShape(CHORUS_PLANT_COLLISION_SHAPE)
+                .collisionShape(TABLE_CONNECTION_DOWN_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_UP_CONNECTION_WEST_F89ACA)
+                .outlineShape(TABLE_CONNECTION_DOWN_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_UP_CONNECTION_WEST_F89ACA)
                 .liquidBlocking(false)
                 .liquidSpreadCausesSpawn(true)
-                .liquidFlowDirections(CHORUS_PLANT_LIQUID_FLOW_DIRECTIONS)
-                .mapColor(-1722102273)
-                .movementType(CHORUS_PLANT_MOVEMENT_TYPE)
-                .stickyType(CHORUS_PLANT_STICKY_TYPE)
-                .accumulatesSnow(CHORUS_PLANT_ACCUMULATES_SNOW)
-                .snowLoggable(CHORUS_PLANT_SNOW_LOGGABLE)
-                .obstructsRain(CHORUS_PLANT_ACCUMULATES_SNOW)
-                .dampensVibrations(CHORUS_PLANT_SNOW_LOGGABLE)
-                .occludesVibrations(CHORUS_PLANT_SNOW_LOGGABLE);
-        // dampens_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
-        // occludes_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
+                .liquidFlowDirections(TABLE_CONNECTION_DOWN_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_UP_CONNECTION_WEST_E9EEC0)
+                .mapColor(0x995ACDFF)
+                .movementType(TABLE_CONNECTION_DOWN_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_UP_CONNECTION_WEST_1C9EC1)
+                .stickyType(TABLE_CONNECTION_DOWN_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_UP_CONNECTION_WEST_3A915B)
+                .accumulatesSnow(TABLE_CONNECTION_DOWN_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_UP_CONNECTION_WEST_6D4E91)
+                .snowLoggable(TABLE_CONNECTION_DOWN_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_UP_CONNECTION_WEST_C9EC2A)
+                .obstructsRain(TABLE_CONNECTION_DOWN_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_UP_CONNECTION_WEST_6D4E91)
+                .dampensVibrations(TABLE_CONNECTION_DOWN_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_UP_CONNECTION_WEST_C9EC2A)
+                .occludesVibrations(TABLE_CONNECTION_DOWN_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_UP_CONNECTION_WEST_C9EC2A);
+        // first coverage, dampens_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
+        // first coverage, occludes_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
         v.change("minecraft:cinnabar_brick_stairs")
-                .dampensVibrations("minecraft:corner", "inner_left", null, "inner_right", null, "none", false, "outer_left", null, "outer_right", null)
-                .occludesVibrations("minecraft:corner", "inner_left", null, "inner_right", null, "none", false, "outer_left", null, "outer_right", null);
-        // dampens_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
-        // occludes_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
+                .dampensVibrations("minecraft:corner", "inner_left", null, "inner_right", null,
+                        "none", false, "outer_left", null, "outer_right", null)
+                .occludesVibrations("minecraft:corner", "inner_left", null, "inner_right", null,
+                        "none", false, "outer_left", null, "outer_right", null);
+        // first coverage, dampens_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
+        // first coverage, occludes_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
         v.change("minecraft:cinnabar_stairs")
-                .dampensVibrations("minecraft:corner", "inner_left", null, "inner_right", null, "none", false, "outer_left", null, "outer_right", null)
-                .occludesVibrations("minecraft:corner", "inner_left", null, "inner_right", null, "none", false, "outer_left", null, "outer_right", null);
-        // dampens_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
-        // occludes_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
+                .dampensVibrations("minecraft:corner", "inner_left", null, "inner_right", null,
+                        "none", false, "outer_left", null, "outer_right", null)
+                .occludesVibrations("minecraft:corner", "inner_left", null, "inner_right", null,
+                        "none", false, "outer_left", null, "outer_right", null);
+        // first coverage, dampens_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
+        // first coverage, occludes_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
         v.change("minecraft:cobbled_deepslate_stairs")
-                .dampensVibrations("minecraft:corner", "inner_left", null, "inner_right", null, "none", false, "outer_left", null, "outer_right", null)
-                .occludesVibrations("minecraft:corner", "inner_left", null, "inner_right", null, "none", false, "outer_left", null, "outer_right", null);
-        // dampens_vibrations per state (5 of 6 states): BDS Script API dump 1.26.63.1
-        // occludes_vibrations per state (5 of 6 states): BDS Script API dump 1.26.63.1
+                .dampensVibrations("minecraft:corner", "inner_left", null, "inner_right", null,
+                        "none", false, "outer_left", null, "outer_right", null)
+                .occludesVibrations("minecraft:corner", "inner_left", null, "inner_right", null,
+                        "none", false, "outer_left", null, "outer_right", null);
+        // first coverage, dampens_vibrations per state (5 of 6 states): BDS Script API dump 1.26.63.1
+        // first coverage, occludes_vibrations per state (5 of 6 states): BDS Script API dump 1.26.63.1
         v.change("minecraft:colored_torch_blue")
-                .dampensVibrations("torch_facing_direction", "east", false, "north", false, "south", false, "top", false, "unknown", null, "west", false)
-                .occludesVibrations("torch_facing_direction", "east", false, "north", false, "south", false, "top", false, "unknown", null, "west", false);
-        // dampens_vibrations per state (5 of 6 states): BDS Script API dump 1.26.63.1
-        // occludes_vibrations per state (5 of 6 states): BDS Script API dump 1.26.63.1
+                .dampensVibrations("torch_facing_direction", "east", false, "north", false,
+                        "south", false, "top", false, "unknown", null, "west", false)
+                .occludesVibrations("torch_facing_direction", "east", false, "north", false,
+                        "south", false, "top", false, "unknown", null, "west", false);
+        // first coverage, dampens_vibrations per state (5 of 6 states): BDS Script API dump 1.26.63.1
+        // first coverage, occludes_vibrations per state (5 of 6 states): BDS Script API dump 1.26.63.1
         v.change("minecraft:colored_torch_green")
-                .dampensVibrations("torch_facing_direction", "east", false, "north", false, "south", false, "top", false, "unknown", null, "west", false)
-                .occludesVibrations("torch_facing_direction", "east", false, "north", false, "south", false, "top", false, "unknown", null, "west", false);
-        // dampens_vibrations per state (5 of 6 states): BDS Script API dump 1.26.63.1
-        // occludes_vibrations per state (5 of 6 states): BDS Script API dump 1.26.63.1
+                .dampensVibrations("torch_facing_direction", "east", false, "north", false,
+                        "south", false, "top", false, "unknown", null, "west", false)
+                .occludesVibrations("torch_facing_direction", "east", false, "north", false,
+                        "south", false, "top", false, "unknown", null, "west", false);
+        // first coverage, dampens_vibrations per state (5 of 6 states): BDS Script API dump 1.26.63.1
+        // first coverage, occludes_vibrations per state (5 of 6 states): BDS Script API dump 1.26.63.1
         v.change("minecraft:colored_torch_purple")
-                .dampensVibrations("torch_facing_direction", "east", false, "north", false, "south", false, "top", false, "unknown", null, "west", false)
-                .occludesVibrations("torch_facing_direction", "east", false, "north", false, "south", false, "top", false, "unknown", null, "west", false);
-        // dampens_vibrations per state (5 of 6 states): BDS Script API dump 1.26.63.1
-        // occludes_vibrations per state (5 of 6 states): BDS Script API dump 1.26.63.1
+                .dampensVibrations("torch_facing_direction", "east", false, "north", false,
+                        "south", false, "top", false, "unknown", null, "west", false)
+                .occludesVibrations("torch_facing_direction", "east", false, "north", false,
+                        "south", false, "top", false, "unknown", null, "west", false);
+        // first coverage, dampens_vibrations per state (5 of 6 states): BDS Script API dump 1.26.63.1
+        // first coverage, occludes_vibrations per state (5 of 6 states): BDS Script API dump 1.26.63.1
         v.change("minecraft:colored_torch_red")
-                .dampensVibrations("torch_facing_direction", "east", false, "north", false, "south", false, "top", false, "unknown", null, "west", false)
-                .occludesVibrations("torch_facing_direction", "east", false, "north", false, "south", false, "top", false, "unknown", null, "west", false);
-        // dampens_vibrations per state (1 of 16 states): BDS Script API dump 1.26.63.1
-        // occludes_vibrations per state (1 of 16 states): BDS Script API dump 1.26.63.1
+                .dampensVibrations("torch_facing_direction", "east", false, "north", false,
+                        "south", false, "top", false, "unknown", null, "west", false)
+                .occludesVibrations("torch_facing_direction", "east", false, "north", false,
+                        "south", false, "top", false, "unknown", null, "west", false);
+        // first coverage, dampens_vibrations per state (1 of 16 states): BDS Script API dump 1.26.63.1
+        // first coverage, occludes_vibrations per state (1 of 16 states): BDS Script API dump 1.26.63.1
         v.change("minecraft:copper_bars")
-                .dampensVibrations(ACACIA_FENCE_SNOW_LOGGABLE)
-                .occludesVibrations(ACACIA_FENCE_SNOW_LOGGABLE);
+                .dampensVibrations(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_1AB959)
+                .occludesVibrations(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_1AB959);
         // collision_shape per state (32 of 32 states): BDS behaviour probe 1.26.63.1 (doors); CloudburstMC/Data 0021592 says otherwise
         v.change("minecraft:copper_door")
-                .collisionShape(ACACIA_DOOR_COLLISION_SHAPE_2);
-        // dampens_vibrations per state (5 of 6 states): BDS Script API dump 1.26.63.1
-        // occludes_vibrations per state (5 of 6 states): BDS Script API dump 1.26.63.1
+                .collisionShape(TABLE_DOOR_HINGE_BIT_CARDINAL_DIRECTION_OPEN_BIT_C89710);
+        // first coverage, dampens_vibrations per state (5 of 6 states): BDS Script API dump 1.26.63.1
+        // first coverage, occludes_vibrations per state (5 of 6 states): BDS Script API dump 1.26.63.1
         v.change("minecraft:copper_torch")
-                .dampensVibrations("torch_facing_direction", "east", false, "north", false, "south", false, "top", false, "unknown", null, "west", false)
-                .occludesVibrations("torch_facing_direction", "east", false, "north", false, "south", false, "top", false, "unknown", null, "west", false);
-        // dampens_vibrations per state (6 of 18 states): BDS Script API dump 1.26.63.1
-        // occludes_vibrations per state (6 of 18 states): BDS Script API dump 1.26.63.1
+                .dampensVibrations("torch_facing_direction", "east", false, "north", false,
+                        "south", false, "top", false, "unknown", null, "west", false)
+                .occludesVibrations("torch_facing_direction", "east", false, "north", false,
+                        "south", false, "top", false, "unknown", null, "west", false);
+        // first coverage, dampens_vibrations per state (6 of 18 states): BDS Script API dump 1.26.63.1
+        // first coverage, occludes_vibrations per state (6 of 18 states): BDS Script API dump 1.26.63.1
         v.change("minecraft:creaking_heart")
-                .dampensVibrations("creaking_heart_state", "awake", null, "dormant", null, "uprooted", false)
-                .occludesVibrations("creaking_heart_state", "awake", null, "dormant", null, "uprooted", false);
+                .dampensVibrations("creaking_heart_state", "awake", null, "dormant", null,
+                        "uprooted", false)
+                .occludesVibrations("creaking_heart_state", "awake", null, "dormant", null,
+                        "uprooted", false);
         // collision_shape per state (32 of 32 states): BDS behaviour probe 1.26.63.1 (doors); CloudburstMC/Data 0021592 says otherwise
         v.change("minecraft:crimson_door")
-                .collisionShape(ACACIA_DOOR_COLLISION_SHAPE_2);
-        // dampens_vibrations per state (1 of 16 states): BDS Script API dump 1.26.63.1
-        // occludes_vibrations per state (1 of 16 states): BDS Script API dump 1.26.63.1
+                .collisionShape(TABLE_DOOR_HINGE_BIT_CARDINAL_DIRECTION_OPEN_BIT_C89710);
+        // first coverage, dampens_vibrations per state (1 of 16 states): BDS Script API dump 1.26.63.1
+        // first coverage, occludes_vibrations per state (1 of 16 states): BDS Script API dump 1.26.63.1
         v.change("minecraft:crimson_fence")
-                .dampensVibrations(ACACIA_FENCE_SNOW_LOGGABLE)
-                .occludesVibrations(ACACIA_FENCE_SNOW_LOGGABLE);
-        // dampens_vibrations per state (8 of 16 states): BDS Script API dump 1.26.63.1
-        // occludes_vibrations per state (8 of 16 states): BDS Script API dump 1.26.63.1
+                .dampensVibrations(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_1AB959)
+                .occludesVibrations(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_1AB959);
+        // first coverage, dampens_vibrations per state (8 of 16 states): BDS Script API dump 1.26.63.1
+        // first coverage, occludes_vibrations per state (8 of 16 states): BDS Script API dump 1.26.63.1
         v.change("minecraft:crimson_fence_gate")
                 .dampensVibrations("in_wall_bit", false, false, true, null)
                 .occludesVibrations("in_wall_bit", false, false, true, null);
-        // dampens_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
-        // occludes_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
+        // first coverage, dampens_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
+        // first coverage, occludes_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
         v.change("minecraft:crimson_stairs")
-                .dampensVibrations("minecraft:corner", "inner_left", null, "inner_right", null, "none", false, "outer_left", null, "outer_right", null)
-                .occludesVibrations("minecraft:corner", "inner_left", null, "inner_right", null, "none", false, "outer_left", null, "outer_right", null);
-        // dampens_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
-        // occludes_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
+                .dampensVibrations("minecraft:corner", "inner_left", null, "inner_right", null,
+                        "none", false, "outer_left", null, "outer_right", null)
+                .occludesVibrations("minecraft:corner", "inner_left", null, "inner_right", null,
+                        "none", false, "outer_left", null, "outer_right", null);
+        // first coverage, dampens_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
+        // first coverage, occludes_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
         v.change("minecraft:cut_copper_stairs")
-                .dampensVibrations("minecraft:corner", "inner_left", null, "inner_right", null, "none", false, "outer_left", null, "outer_right", null)
-                .occludesVibrations("minecraft:corner", "inner_left", null, "inner_right", null, "none", false, "outer_left", null, "outer_right", null);
-        // dampens_vibrations unknown -> true: BDS Script API dump 1.26.63.1
-        v.change("minecraft:cyan_carpet").dampensVibrations(true);
-        // dampens_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
-        // occludes_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
-        v.change("minecraft:cyan_concrete_stairs")
-                .dampensVibrations("minecraft:corner", "inner_left", null, "inner_right", null, "none", false, "outer_left", null, "outer_right", null)
-                .occludesVibrations("minecraft:corner", "inner_left", null, "inner_right", null, "none", false, "outer_left", null, "outer_right", null);
-        // dampens_vibrations per state (1 of 16 states): BDS Script API dump 1.26.63.1
-        // occludes_vibrations per state (1 of 16 states): BDS Script API dump 1.26.63.1
-        v.change("minecraft:cyan_stained_glass_pane")
-                .dampensVibrations(ACACIA_FENCE_SNOW_LOGGABLE)
-                .occludesVibrations(ACACIA_FENCE_SNOW_LOGGABLE);
-        // dampens_vibrations unknown -> true: BDS Script API dump 1.26.63.1
-        // occludes_vibrations unknown -> true: BDS Script API dump 1.26.63.1
-        v.change("minecraft:cyan_wool").dampensVibrations(true).occludesVibrations(true);
-        // dampens_vibrations unknown -> true: BDS Script API dump 1.26.63.1
-        // occludes_vibrations unknown -> true: BDS Script API dump 1.26.63.1
-        v.change("minecraft:cyan_wool_double_slab").dampensVibrations(true).occludesVibrations(true);
-        // dampens_vibrations unknown -> true: BDS Script API dump 1.26.63.1
-        // occludes_vibrations unknown -> true: BDS Script API dump 1.26.63.1
-        v.change("minecraft:cyan_wool_slab").dampensVibrations(true).occludesVibrations(true);
-        // dampens_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
-        // occludes_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
-        v.change("minecraft:cyan_wool_stairs")
-                .dampensVibrations("minecraft:corner", "inner_left", null, "inner_right", null, "none", true, "outer_left", null, "outer_right", null)
-                .occludesVibrations("minecraft:corner", "inner_left", null, "inner_right", null, "none", true, "outer_left", null, "outer_right", null);
-        // collision_shape per state (32 of 32 states): BDS behaviour probe 1.26.63.1 (doors); CloudburstMC/Data 0021592 says otherwise
-        v.change("minecraft:dark_oak_door")
-                .collisionShape(ACACIA_DOOR_COLLISION_SHAPE_2);
-        // dampens_vibrations per state (1 of 16 states): BDS Script API dump 1.26.63.1
-        // occludes_vibrations per state (1 of 16 states): BDS Script API dump 1.26.63.1
-        v.change("minecraft:dark_oak_fence")
-                .dampensVibrations(ACACIA_FENCE_SNOW_LOGGABLE)
-                .occludesVibrations(ACACIA_FENCE_SNOW_LOGGABLE);
-        // dampens_vibrations per state (8 of 16 states): BDS Script API dump 1.26.63.1
-        // occludes_vibrations per state (8 of 16 states): BDS Script API dump 1.26.63.1
-        v.change("minecraft:dark_oak_fence_gate")
-                .dampensVibrations("in_wall_bit", false, false, true, null)
-                .occludesVibrations("in_wall_bit", false, false, true, null);
-        // dampens_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
-        // occludes_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
-        v.change("minecraft:dark_oak_stairs")
-                .dampensVibrations("minecraft:corner", "inner_left", null, "inner_right", null, "none", false, "outer_left", null, "outer_right", null)
-                .occludesVibrations("minecraft:corner", "inner_left", null, "inner_right", null, "none", false, "outer_left", null, "outer_right", null);
+                .dampensVibrations("minecraft:corner", "inner_left", null, "inner_right", null,
+                        "none", false, "outer_left", null, "outer_right", null)
+                .occludesVibrations("minecraft:corner", "inner_left", null, "inner_right", null,
+                        "none", false, "outer_left", null, "outer_right", null);
     }
 
     static void part2(Changes v) {
-        // dampens_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
-        // occludes_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
+        // first coverage, dampens_vibrations = true: BDS Script API dump 1.26.63.1
+        v.change("minecraft:cyan_carpet").dampensVibrations(true);
+        // first coverage, dampens_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
+        // first coverage, occludes_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
+        v.change("minecraft:cyan_concrete_stairs")
+                .dampensVibrations("minecraft:corner", "inner_left", null, "inner_right", null,
+                        "none", false, "outer_left", null, "outer_right", null)
+                .occludesVibrations("minecraft:corner", "inner_left", null, "inner_right", null,
+                        "none", false, "outer_left", null, "outer_right", null);
+        // first coverage, dampens_vibrations per state (1 of 16 states): BDS Script API dump 1.26.63.1
+        // first coverage, occludes_vibrations per state (1 of 16 states): BDS Script API dump 1.26.63.1
+        v.change("minecraft:cyan_stained_glass_pane")
+                .dampensVibrations(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_1AB959)
+                .occludesVibrations(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_1AB959);
+        // first coverage, dampens_vibrations = true: BDS Script API dump 1.26.63.1
+        // first coverage, occludes_vibrations = true: BDS Script API dump 1.26.63.1
+        v.change("minecraft:cyan_wool").dampensVibrations(true).occludesVibrations(true);
+        // first coverage, dampens_vibrations = true: BDS Script API dump 1.26.63.1
+        // first coverage, occludes_vibrations = true: BDS Script API dump 1.26.63.1
+        v.change("minecraft:cyan_wool_double_slab").dampensVibrations(true).occludesVibrations(true);
+        // first coverage, dampens_vibrations = true: BDS Script API dump 1.26.63.1
+        // first coverage, occludes_vibrations = true: BDS Script API dump 1.26.63.1
+        v.change("minecraft:cyan_wool_slab").dampensVibrations(true).occludesVibrations(true);
+        // first coverage, dampens_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
+        // first coverage, occludes_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
+        v.change("minecraft:cyan_wool_stairs")
+                .dampensVibrations("minecraft:corner", "inner_left", null, "inner_right", null,
+                        "none", true, "outer_left", null, "outer_right", null)
+                .occludesVibrations("minecraft:corner", "inner_left", null, "inner_right", null,
+                        "none", true, "outer_left", null, "outer_right", null);
+        // collision_shape per state (32 of 32 states): BDS behaviour probe 1.26.63.1 (doors); CloudburstMC/Data 0021592 says otherwise
+        v.change("minecraft:dark_oak_door")
+                .collisionShape(TABLE_DOOR_HINGE_BIT_CARDINAL_DIRECTION_OPEN_BIT_C89710);
+        // first coverage, dampens_vibrations per state (1 of 16 states): BDS Script API dump 1.26.63.1
+        // first coverage, occludes_vibrations per state (1 of 16 states): BDS Script API dump 1.26.63.1
+        v.change("minecraft:dark_oak_fence")
+                .dampensVibrations(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_1AB959)
+                .occludesVibrations(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_1AB959);
+        // first coverage, dampens_vibrations per state (8 of 16 states): BDS Script API dump 1.26.63.1
+        // first coverage, occludes_vibrations per state (8 of 16 states): BDS Script API dump 1.26.63.1
+        v.change("minecraft:dark_oak_fence_gate")
+                .dampensVibrations("in_wall_bit", false, false, true, null)
+                .occludesVibrations("in_wall_bit", false, false, true, null);
+        // first coverage, dampens_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
+        // first coverage, occludes_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
+        v.change("minecraft:dark_oak_stairs")
+                .dampensVibrations("minecraft:corner", "inner_left", null, "inner_right", null,
+                        "none", false, "outer_left", null, "outer_right", null)
+                .occludesVibrations("minecraft:corner", "inner_left", null, "inner_right", null,
+                        "none", false, "outer_left", null, "outer_right", null);
+        // first coverage, dampens_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
+        // first coverage, occludes_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
         v.change("minecraft:dark_prismarine_stairs")
-                .dampensVibrations("minecraft:corner", "inner_left", null, "inner_right", null, "none", false, "outer_left", null, "outer_right", null)
-                .occludesVibrations("minecraft:corner", "inner_left", null, "inner_right", null, "none", false, "outer_left", null, "outer_right", null);
-        // dampens_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
-        // occludes_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
+                .dampensVibrations("minecraft:corner", "inner_left", null, "inner_right", null,
+                        "none", false, "outer_left", null, "outer_right", null)
+                .occludesVibrations("minecraft:corner", "inner_left", null, "inner_right", null,
+                        "none", false, "outer_left", null, "outer_right", null);
+        // first coverage, dampens_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
+        // first coverage, occludes_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
         v.change("minecraft:deepslate_brick_stairs")
-                .dampensVibrations("minecraft:corner", "inner_left", null, "inner_right", null, "none", false, "outer_left", null, "outer_right", null)
-                .occludesVibrations("minecraft:corner", "inner_left", null, "inner_right", null, "none", false, "outer_left", null, "outer_right", null);
-        // dampens_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
-        // occludes_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
+                .dampensVibrations("minecraft:corner", "inner_left", null, "inner_right", null,
+                        "none", false, "outer_left", null, "outer_right", null)
+                .occludesVibrations("minecraft:corner", "inner_left", null, "inner_right", null,
+                        "none", false, "outer_left", null, "outer_right", null);
+        // first coverage, dampens_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
+        // first coverage, occludes_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
         v.change("minecraft:deepslate_tile_stairs")
-                .dampensVibrations("minecraft:corner", "inner_left", null, "inner_right", null, "none", false, "outer_left", null, "outer_right", null)
-                .occludesVibrations("minecraft:corner", "inner_left", null, "inner_right", null, "none", false, "outer_left", null, "outer_right", null);
-        // dampens_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
-        // occludes_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
+                .dampensVibrations("minecraft:corner", "inner_left", null, "inner_right", null,
+                        "none", false, "outer_left", null, "outer_right", null)
+                .occludesVibrations("minecraft:corner", "inner_left", null, "inner_right", null,
+                        "none", false, "outer_left", null, "outer_right", null);
+        // first coverage, dampens_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
+        // first coverage, occludes_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
         v.change("minecraft:diorite_stairs")
-                .dampensVibrations("minecraft:corner", "inner_left", null, "inner_right", null, "none", false, "outer_left", null, "outer_right", null)
-                .occludesVibrations("minecraft:corner", "inner_left", null, "inner_right", null, "none", false, "outer_left", null, "outer_right", null);
+                .dampensVibrations("minecraft:corner", "inner_left", null, "inner_right", null,
+                        "none", false, "outer_left", null, "outer_right", null)
+                .occludesVibrations("minecraft:corner", "inner_left", null, "inner_right", null,
+                        "none", false, "outer_left", null, "outer_right", null);
         // new in 26.60: values from BDS Script API dump 1.26.63.1, BDS behaviour probe 1.26.63.1 (climbing), CloudburstMC/Data 0021592
         v.block("minecraft:disc_press", "minecraft:cardinal_direction='east'|'north'|'south'|'west'")
                 .explosionResistance(0.0f);
-        // dampens_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
-        // occludes_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
+        // first coverage, dampens_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
+        // first coverage, occludes_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
         v.change("minecraft:end_brick_stairs")
-                .dampensVibrations("minecraft:corner", "inner_left", null, "inner_right", null, "none", false, "outer_left", null, "outer_right", null)
-                .occludesVibrations("minecraft:corner", "inner_left", null, "inner_right", null, "none", false, "outer_left", null, "outer_right", null);
+                .dampensVibrations("minecraft:corner", "inner_left", null, "inner_right", null,
+                        "none", false, "outer_left", null, "outer_right", null)
+                .occludesVibrations("minecraft:corner", "inner_left", null, "inner_right", null,
+                        "none", false, "outer_left", null, "outer_right", null);
         // climbable stays as in the version before (not what every block got)
         v.change("minecraft:end_portal").climbableUnknown();
-        // dampens_vibrations per state (1 of 16 states): BDS Script API dump 1.26.63.1
-        // occludes_vibrations per state (1 of 16 states): BDS Script API dump 1.26.63.1
+        // first coverage, dampens_vibrations per state (1 of 16 states): BDS Script API dump 1.26.63.1
+        // first coverage, occludes_vibrations per state (1 of 16 states): BDS Script API dump 1.26.63.1
         v.change("minecraft:exposed_copper_bars")
-                .dampensVibrations(ACACIA_FENCE_SNOW_LOGGABLE)
-                .occludesVibrations(ACACIA_FENCE_SNOW_LOGGABLE);
+                .dampensVibrations(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_1AB959)
+                .occludesVibrations(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_1AB959);
         // collision_shape per state (32 of 32 states): BDS behaviour probe 1.26.63.1 (doors); CloudburstMC/Data 0021592 says otherwise
         v.change("minecraft:exposed_copper_door")
-                .collisionShape(ACACIA_DOOR_COLLISION_SHAPE_2);
-        // dampens_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
-        // occludes_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
+                .collisionShape(TABLE_DOOR_HINGE_BIT_CARDINAL_DIRECTION_OPEN_BIT_C89710);
+        // first coverage, dampens_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
+        // first coverage, occludes_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
         v.change("minecraft:exposed_cut_copper_stairs")
-                .dampensVibrations("minecraft:corner", "inner_left", null, "inner_right", null, "none", false, "outer_left", null, "outer_right", null)
-                .occludesVibrations("minecraft:corner", "inner_left", null, "inner_right", null, "none", false, "outer_left", null, "outer_right", null);
-        // dampens_vibrations per state (8 of 16 states): BDS Script API dump 1.26.63.1
-        // occludes_vibrations per state (8 of 16 states): BDS Script API dump 1.26.63.1
+                .dampensVibrations("minecraft:corner", "inner_left", null, "inner_right", null,
+                        "none", false, "outer_left", null, "outer_right", null)
+                .occludesVibrations("minecraft:corner", "inner_left", null, "inner_right", null,
+                        "none", false, "outer_left", null, "outer_right", null);
+        // first coverage, dampens_vibrations per state (8 of 16 states): BDS Script API dump 1.26.63.1
+        // first coverage, occludes_vibrations per state (8 of 16 states): BDS Script API dump 1.26.63.1
         v.change("minecraft:fence_gate")
                 .dampensVibrations("in_wall_bit", false, false, true, null)
                 .occludesVibrations("in_wall_bit", false, false, true, null);
@@ -419,629 +513,734 @@ final class BehaviourChanges26_60 {
                 .lightEmission(15)
                 .liquidBlocking(false)
                 .liquidSpreadCausesSpawn(true)
-                .liquidFlowDirections(FIRE_LIQUID_FLOW_DIRECTIONS)
-                .mapColor(-16776961)
+                .liquidFlowDirections(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_UP_CONNECTION_WEST_5A6C35)
+                .mapColor(0xFF0000FF)
                 .translucency(1.0f)
-                .movementType(FIRE_MOVEMENT_TYPE)
-                .stickyType(FIRE_STICKY_TYPE)
-                .accumulatesSnow(FIRE_ACCUMULATES_SNOW)
-                .snowLoggable(FIRE_ACCUMULATES_SNOW)
-                .obstructsRain(FIRE_ACCUMULATES_SNOW)
-                .dampensVibrations(FIRE_ACCUMULATES_SNOW)
-                .occludesVibrations(FIRE_ACCUMULATES_SNOW);
+                .movementType(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_UP_CONNECTION_WEST_2441B6)
+                .stickyType(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_UP_CONNECTION_WEST_633590)
+                .accumulatesSnow(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_UP_CONNECTION_WEST_C49BD5)
+                .snowLoggable(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_UP_CONNECTION_WEST_C49BD5)
+                .obstructsRain(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_UP_CONNECTION_WEST_C49BD5)
+                .dampensVibrations(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_UP_CONNECTION_WEST_C49BD5)
+                .occludesVibrations(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_UP_CONNECTION_WEST_C49BD5);
         // dampens_vibrations stays as in the version before (not what every block got)
         // occludes_vibrations stays as in the version before (not what every block got)
         v.change("minecraft:flowing_lava").dampensVibrationsUnknown().occludesVibrationsUnknown();
         // dampens_vibrations stays as in the version before (not what every block got)
         // occludes_vibrations stays as in the version before (not what every block got)
         v.change("minecraft:flowing_water").dampensVibrationsUnknown().occludesVibrationsUnknown();
-        // dampens_vibrations per state (1 of 16 states): BDS Script API dump 1.26.63.1
-        // occludes_vibrations per state (1 of 16 states): BDS Script API dump 1.26.63.1
+        // first coverage, dampens_vibrations per state (1 of 16 states): BDS Script API dump 1.26.63.1
+        // first coverage, occludes_vibrations per state (1 of 16 states): BDS Script API dump 1.26.63.1
         v.change("minecraft:glass_pane")
-                .dampensVibrations(ACACIA_FENCE_SNOW_LOGGABLE)
-                .occludesVibrations(ACACIA_FENCE_SNOW_LOGGABLE);
-        // dampens_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
-        // occludes_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
+                .dampensVibrations(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_1AB959)
+                .occludesVibrations(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_1AB959);
+        // first coverage, dampens_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
+        // first coverage, occludes_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
         v.change("minecraft:granite_stairs")
-                .dampensVibrations("minecraft:corner", "inner_left", null, "inner_right", null, "none", false, "outer_left", null, "outer_right", null)
-                .occludesVibrations("minecraft:corner", "inner_left", null, "inner_right", null, "none", false, "outer_left", null, "outer_right", null);
-        // dampens_vibrations unknown -> true: BDS Script API dump 1.26.63.1
+                .dampensVibrations("minecraft:corner", "inner_left", null, "inner_right", null,
+                        "none", false, "outer_left", null, "outer_right", null)
+                .occludesVibrations("minecraft:corner", "inner_left", null, "inner_right", null,
+                        "none", false, "outer_left", null, "outer_right", null);
+        // first coverage, dampens_vibrations = true: BDS Script API dump 1.26.63.1
         v.change("minecraft:gray_carpet").dampensVibrations(true);
-        // dampens_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
-        // occludes_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
+        // first coverage, dampens_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
+        // first coverage, occludes_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
         v.change("minecraft:gray_concrete_stairs")
-                .dampensVibrations("minecraft:corner", "inner_left", null, "inner_right", null, "none", false, "outer_left", null, "outer_right", null)
-                .occludesVibrations("minecraft:corner", "inner_left", null, "inner_right", null, "none", false, "outer_left", null, "outer_right", null);
-        // dampens_vibrations per state (1 of 16 states): BDS Script API dump 1.26.63.1
-        // occludes_vibrations per state (1 of 16 states): BDS Script API dump 1.26.63.1
+                .dampensVibrations("minecraft:corner", "inner_left", null, "inner_right", null,
+                        "none", false, "outer_left", null, "outer_right", null)
+                .occludesVibrations("minecraft:corner", "inner_left", null, "inner_right", null,
+                        "none", false, "outer_left", null, "outer_right", null);
+        // first coverage, dampens_vibrations per state (1 of 16 states): BDS Script API dump 1.26.63.1
+        // first coverage, occludes_vibrations per state (1 of 16 states): BDS Script API dump 1.26.63.1
         v.change("minecraft:gray_stained_glass_pane")
-                .dampensVibrations(ACACIA_FENCE_SNOW_LOGGABLE)
-                .occludesVibrations(ACACIA_FENCE_SNOW_LOGGABLE);
-        // dampens_vibrations unknown -> true: BDS Script API dump 1.26.63.1
-        // occludes_vibrations unknown -> true: BDS Script API dump 1.26.63.1
+                .dampensVibrations(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_1AB959)
+                .occludesVibrations(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_1AB959);
+        // first coverage, dampens_vibrations = true: BDS Script API dump 1.26.63.1
+        // first coverage, occludes_vibrations = true: BDS Script API dump 1.26.63.1
         v.change("minecraft:gray_wool").dampensVibrations(true).occludesVibrations(true);
-        // dampens_vibrations unknown -> true: BDS Script API dump 1.26.63.1
-        // occludes_vibrations unknown -> true: BDS Script API dump 1.26.63.1
+        // first coverage, dampens_vibrations = true: BDS Script API dump 1.26.63.1
+        // first coverage, occludes_vibrations = true: BDS Script API dump 1.26.63.1
         v.change("minecraft:gray_wool_double_slab").dampensVibrations(true).occludesVibrations(true);
-        // dampens_vibrations unknown -> true: BDS Script API dump 1.26.63.1
-        // occludes_vibrations unknown -> true: BDS Script API dump 1.26.63.1
+        // first coverage, dampens_vibrations = true: BDS Script API dump 1.26.63.1
+        // first coverage, occludes_vibrations = true: BDS Script API dump 1.26.63.1
         v.change("minecraft:gray_wool_slab").dampensVibrations(true).occludesVibrations(true);
-        // dampens_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
-        // occludes_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
+        // first coverage, dampens_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
+        // first coverage, occludes_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
         v.change("minecraft:gray_wool_stairs")
-                .dampensVibrations("minecraft:corner", "inner_left", null, "inner_right", null, "none", true, "outer_left", null, "outer_right", null)
-                .occludesVibrations("minecraft:corner", "inner_left", null, "inner_right", null, "none", true, "outer_left", null, "outer_right", null);
-        // dampens_vibrations unknown -> true: BDS Script API dump 1.26.63.1
+                .dampensVibrations("minecraft:corner", "inner_left", null, "inner_right", null,
+                        "none", true, "outer_left", null, "outer_right", null)
+                .occludesVibrations("minecraft:corner", "inner_left", null, "inner_right", null,
+                        "none", true, "outer_left", null, "outer_right", null);
+        // first coverage, dampens_vibrations = true: BDS Script API dump 1.26.63.1
         v.change("minecraft:green_carpet").dampensVibrations(true);
-        // dampens_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
-        // occludes_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
+        // first coverage, dampens_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
+        // first coverage, occludes_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
         v.change("minecraft:green_concrete_stairs")
-                .dampensVibrations("minecraft:corner", "inner_left", null, "inner_right", null, "none", false, "outer_left", null, "outer_right", null)
-                .occludesVibrations("minecraft:corner", "inner_left", null, "inner_right", null, "none", false, "outer_left", null, "outer_right", null);
-        // dampens_vibrations per state (1 of 16 states): BDS Script API dump 1.26.63.1
-        // occludes_vibrations per state (1 of 16 states): BDS Script API dump 1.26.63.1
-        v.change("minecraft:green_stained_glass_pane")
-                .dampensVibrations(ACACIA_FENCE_SNOW_LOGGABLE)
-                .occludesVibrations(ACACIA_FENCE_SNOW_LOGGABLE);
-        // dampens_vibrations unknown -> true: BDS Script API dump 1.26.63.1
-        // occludes_vibrations unknown -> true: BDS Script API dump 1.26.63.1
-        v.change("minecraft:green_wool").dampensVibrations(true).occludesVibrations(true);
-        // dampens_vibrations unknown -> true: BDS Script API dump 1.26.63.1
-        // occludes_vibrations unknown -> true: BDS Script API dump 1.26.63.1
-        v.change("minecraft:green_wool_double_slab").dampensVibrations(true).occludesVibrations(true);
-        // dampens_vibrations unknown -> true: BDS Script API dump 1.26.63.1
-        // occludes_vibrations unknown -> true: BDS Script API dump 1.26.63.1
-        v.change("minecraft:green_wool_slab").dampensVibrations(true).occludesVibrations(true);
-        // dampens_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
-        // occludes_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
-        v.change("minecraft:green_wool_stairs")
-                .dampensVibrations("minecraft:corner", "inner_left", null, "inner_right", null, "none", true, "outer_left", null, "outer_right", null)
-                .occludesVibrations("minecraft:corner", "inner_left", null, "inner_right", null, "none", true, "outer_left", null, "outer_right", null);
-        // dampens_vibrations per state (1 of 16 states): BDS Script API dump 1.26.63.1
-        // occludes_vibrations per state (1 of 16 states): BDS Script API dump 1.26.63.1
-        v.change("minecraft:hard_black_stained_glass_pane")
-                .dampensVibrations(ACACIA_FENCE_SNOW_LOGGABLE)
-                .occludesVibrations(ACACIA_FENCE_SNOW_LOGGABLE);
-        // dampens_vibrations per state (1 of 16 states): BDS Script API dump 1.26.63.1
-        // occludes_vibrations per state (1 of 16 states): BDS Script API dump 1.26.63.1
-        v.change("minecraft:hard_blue_stained_glass_pane")
-                .dampensVibrations(ACACIA_FENCE_SNOW_LOGGABLE)
-                .occludesVibrations(ACACIA_FENCE_SNOW_LOGGABLE);
-        // dampens_vibrations per state (1 of 16 states): BDS Script API dump 1.26.63.1
-        // occludes_vibrations per state (1 of 16 states): BDS Script API dump 1.26.63.1
-        v.change("minecraft:hard_brown_stained_glass_pane")
-                .dampensVibrations(ACACIA_FENCE_SNOW_LOGGABLE)
-                .occludesVibrations(ACACIA_FENCE_SNOW_LOGGABLE);
-        // dampens_vibrations per state (1 of 16 states): BDS Script API dump 1.26.63.1
-        // occludes_vibrations per state (1 of 16 states): BDS Script API dump 1.26.63.1
-        v.change("minecraft:hard_cyan_stained_glass_pane")
-                .dampensVibrations(ACACIA_FENCE_SNOW_LOGGABLE)
-                .occludesVibrations(ACACIA_FENCE_SNOW_LOGGABLE);
-        // dampens_vibrations per state (1 of 16 states): BDS Script API dump 1.26.63.1
-        // occludes_vibrations per state (1 of 16 states): BDS Script API dump 1.26.63.1
-        v.change("minecraft:hard_glass_pane")
-                .dampensVibrations(ACACIA_FENCE_SNOW_LOGGABLE)
-                .occludesVibrations(ACACIA_FENCE_SNOW_LOGGABLE);
-        // dampens_vibrations per state (1 of 16 states): BDS Script API dump 1.26.63.1
-        // occludes_vibrations per state (1 of 16 states): BDS Script API dump 1.26.63.1
-        v.change("minecraft:hard_gray_stained_glass_pane")
-                .dampensVibrations(ACACIA_FENCE_SNOW_LOGGABLE)
-                .occludesVibrations(ACACIA_FENCE_SNOW_LOGGABLE);
-        // dampens_vibrations per state (1 of 16 states): BDS Script API dump 1.26.63.1
-        // occludes_vibrations per state (1 of 16 states): BDS Script API dump 1.26.63.1
-        v.change("minecraft:hard_green_stained_glass_pane")
-                .dampensVibrations(ACACIA_FENCE_SNOW_LOGGABLE)
-                .occludesVibrations(ACACIA_FENCE_SNOW_LOGGABLE);
-        // dampens_vibrations per state (1 of 16 states): BDS Script API dump 1.26.63.1
-        // occludes_vibrations per state (1 of 16 states): BDS Script API dump 1.26.63.1
-        v.change("minecraft:hard_light_blue_stained_glass_pane")
-                .dampensVibrations(ACACIA_FENCE_SNOW_LOGGABLE)
-                .occludesVibrations(ACACIA_FENCE_SNOW_LOGGABLE);
-        // dampens_vibrations per state (1 of 16 states): BDS Script API dump 1.26.63.1
-        // occludes_vibrations per state (1 of 16 states): BDS Script API dump 1.26.63.1
-        v.change("minecraft:hard_light_gray_stained_glass_pane")
-                .dampensVibrations(ACACIA_FENCE_SNOW_LOGGABLE)
-                .occludesVibrations(ACACIA_FENCE_SNOW_LOGGABLE);
+                .dampensVibrations("minecraft:corner", "inner_left", null, "inner_right", null,
+                        "none", false, "outer_left", null, "outer_right", null)
+                .occludesVibrations("minecraft:corner", "inner_left", null, "inner_right", null,
+                        "none", false, "outer_left", null, "outer_right", null);
     }
 
     static void part3(Changes v) {
-        // dampens_vibrations per state (1 of 16 states): BDS Script API dump 1.26.63.1
-        // occludes_vibrations per state (1 of 16 states): BDS Script API dump 1.26.63.1
+        // first coverage, dampens_vibrations per state (1 of 16 states): BDS Script API dump 1.26.63.1
+        // first coverage, occludes_vibrations per state (1 of 16 states): BDS Script API dump 1.26.63.1
+        v.change("minecraft:green_stained_glass_pane")
+                .dampensVibrations(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_1AB959)
+                .occludesVibrations(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_1AB959);
+        // first coverage, dampens_vibrations = true: BDS Script API dump 1.26.63.1
+        // first coverage, occludes_vibrations = true: BDS Script API dump 1.26.63.1
+        v.change("minecraft:green_wool").dampensVibrations(true).occludesVibrations(true);
+        // first coverage, dampens_vibrations = true: BDS Script API dump 1.26.63.1
+        // first coverage, occludes_vibrations = true: BDS Script API dump 1.26.63.1
+        v.change("minecraft:green_wool_double_slab").dampensVibrations(true).occludesVibrations(true);
+        // first coverage, dampens_vibrations = true: BDS Script API dump 1.26.63.1
+        // first coverage, occludes_vibrations = true: BDS Script API dump 1.26.63.1
+        v.change("minecraft:green_wool_slab").dampensVibrations(true).occludesVibrations(true);
+        // first coverage, dampens_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
+        // first coverage, occludes_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
+        v.change("minecraft:green_wool_stairs")
+                .dampensVibrations("minecraft:corner", "inner_left", null, "inner_right", null,
+                        "none", true, "outer_left", null, "outer_right", null)
+                .occludesVibrations("minecraft:corner", "inner_left", null, "inner_right", null,
+                        "none", true, "outer_left", null, "outer_right", null);
+        // first coverage, dampens_vibrations per state (1 of 16 states): BDS Script API dump 1.26.63.1
+        // first coverage, occludes_vibrations per state (1 of 16 states): BDS Script API dump 1.26.63.1
+        v.change("minecraft:hard_black_stained_glass_pane")
+                .dampensVibrations(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_1AB959)
+                .occludesVibrations(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_1AB959);
+        // first coverage, dampens_vibrations per state (1 of 16 states): BDS Script API dump 1.26.63.1
+        // first coverage, occludes_vibrations per state (1 of 16 states): BDS Script API dump 1.26.63.1
+        v.change("minecraft:hard_blue_stained_glass_pane")
+                .dampensVibrations(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_1AB959)
+                .occludesVibrations(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_1AB959);
+        // first coverage, dampens_vibrations per state (1 of 16 states): BDS Script API dump 1.26.63.1
+        // first coverage, occludes_vibrations per state (1 of 16 states): BDS Script API dump 1.26.63.1
+        v.change("minecraft:hard_brown_stained_glass_pane")
+                .dampensVibrations(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_1AB959)
+                .occludesVibrations(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_1AB959);
+        // first coverage, dampens_vibrations per state (1 of 16 states): BDS Script API dump 1.26.63.1
+        // first coverage, occludes_vibrations per state (1 of 16 states): BDS Script API dump 1.26.63.1
+        v.change("minecraft:hard_cyan_stained_glass_pane")
+                .dampensVibrations(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_1AB959)
+                .occludesVibrations(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_1AB959);
+        // first coverage, dampens_vibrations per state (1 of 16 states): BDS Script API dump 1.26.63.1
+        // first coverage, occludes_vibrations per state (1 of 16 states): BDS Script API dump 1.26.63.1
+        v.change("minecraft:hard_glass_pane")
+                .dampensVibrations(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_1AB959)
+                .occludesVibrations(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_1AB959);
+        // first coverage, dampens_vibrations per state (1 of 16 states): BDS Script API dump 1.26.63.1
+        // first coverage, occludes_vibrations per state (1 of 16 states): BDS Script API dump 1.26.63.1
+        v.change("minecraft:hard_gray_stained_glass_pane")
+                .dampensVibrations(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_1AB959)
+                .occludesVibrations(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_1AB959);
+        // first coverage, dampens_vibrations per state (1 of 16 states): BDS Script API dump 1.26.63.1
+        // first coverage, occludes_vibrations per state (1 of 16 states): BDS Script API dump 1.26.63.1
+        v.change("minecraft:hard_green_stained_glass_pane")
+                .dampensVibrations(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_1AB959)
+                .occludesVibrations(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_1AB959);
+        // first coverage, dampens_vibrations per state (1 of 16 states): BDS Script API dump 1.26.63.1
+        // first coverage, occludes_vibrations per state (1 of 16 states): BDS Script API dump 1.26.63.1
+        v.change("minecraft:hard_light_blue_stained_glass_pane")
+                .dampensVibrations(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_1AB959)
+                .occludesVibrations(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_1AB959);
+        // first coverage, dampens_vibrations per state (1 of 16 states): BDS Script API dump 1.26.63.1
+        // first coverage, occludes_vibrations per state (1 of 16 states): BDS Script API dump 1.26.63.1
+        v.change("minecraft:hard_light_gray_stained_glass_pane")
+                .dampensVibrations(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_1AB959)
+                .occludesVibrations(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_1AB959);
+        // first coverage, dampens_vibrations per state (1 of 16 states): BDS Script API dump 1.26.63.1
+        // first coverage, occludes_vibrations per state (1 of 16 states): BDS Script API dump 1.26.63.1
         v.change("minecraft:hard_lime_stained_glass_pane")
-                .dampensVibrations(ACACIA_FENCE_SNOW_LOGGABLE)
-                .occludesVibrations(ACACIA_FENCE_SNOW_LOGGABLE);
-        // dampens_vibrations per state (1 of 16 states): BDS Script API dump 1.26.63.1
-        // occludes_vibrations per state (1 of 16 states): BDS Script API dump 1.26.63.1
+                .dampensVibrations(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_1AB959)
+                .occludesVibrations(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_1AB959);
+        // first coverage, dampens_vibrations per state (1 of 16 states): BDS Script API dump 1.26.63.1
+        // first coverage, occludes_vibrations per state (1 of 16 states): BDS Script API dump 1.26.63.1
         v.change("minecraft:hard_magenta_stained_glass_pane")
-                .dampensVibrations(ACACIA_FENCE_SNOW_LOGGABLE)
-                .occludesVibrations(ACACIA_FENCE_SNOW_LOGGABLE);
-        // dampens_vibrations per state (1 of 16 states): BDS Script API dump 1.26.63.1
-        // occludes_vibrations per state (1 of 16 states): BDS Script API dump 1.26.63.1
+                .dampensVibrations(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_1AB959)
+                .occludesVibrations(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_1AB959);
+        // first coverage, dampens_vibrations per state (1 of 16 states): BDS Script API dump 1.26.63.1
+        // first coverage, occludes_vibrations per state (1 of 16 states): BDS Script API dump 1.26.63.1
         v.change("minecraft:hard_orange_stained_glass_pane")
-                .dampensVibrations(ACACIA_FENCE_SNOW_LOGGABLE)
-                .occludesVibrations(ACACIA_FENCE_SNOW_LOGGABLE);
-        // dampens_vibrations per state (1 of 16 states): BDS Script API dump 1.26.63.1
-        // occludes_vibrations per state (1 of 16 states): BDS Script API dump 1.26.63.1
+                .dampensVibrations(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_1AB959)
+                .occludesVibrations(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_1AB959);
+        // first coverage, dampens_vibrations per state (1 of 16 states): BDS Script API dump 1.26.63.1
+        // first coverage, occludes_vibrations per state (1 of 16 states): BDS Script API dump 1.26.63.1
         v.change("minecraft:hard_pink_stained_glass_pane")
-                .dampensVibrations(ACACIA_FENCE_SNOW_LOGGABLE)
-                .occludesVibrations(ACACIA_FENCE_SNOW_LOGGABLE);
-        // dampens_vibrations per state (1 of 16 states): BDS Script API dump 1.26.63.1
-        // occludes_vibrations per state (1 of 16 states): BDS Script API dump 1.26.63.1
+                .dampensVibrations(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_1AB959)
+                .occludesVibrations(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_1AB959);
+        // first coverage, dampens_vibrations per state (1 of 16 states): BDS Script API dump 1.26.63.1
+        // first coverage, occludes_vibrations per state (1 of 16 states): BDS Script API dump 1.26.63.1
         v.change("minecraft:hard_purple_stained_glass_pane")
-                .dampensVibrations(ACACIA_FENCE_SNOW_LOGGABLE)
-                .occludesVibrations(ACACIA_FENCE_SNOW_LOGGABLE);
-        // dampens_vibrations per state (1 of 16 states): BDS Script API dump 1.26.63.1
-        // occludes_vibrations per state (1 of 16 states): BDS Script API dump 1.26.63.1
+                .dampensVibrations(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_1AB959)
+                .occludesVibrations(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_1AB959);
+        // first coverage, dampens_vibrations per state (1 of 16 states): BDS Script API dump 1.26.63.1
+        // first coverage, occludes_vibrations per state (1 of 16 states): BDS Script API dump 1.26.63.1
         v.change("minecraft:hard_red_stained_glass_pane")
-                .dampensVibrations(ACACIA_FENCE_SNOW_LOGGABLE)
-                .occludesVibrations(ACACIA_FENCE_SNOW_LOGGABLE);
-        // dampens_vibrations per state (1 of 16 states): BDS Script API dump 1.26.63.1
-        // occludes_vibrations per state (1 of 16 states): BDS Script API dump 1.26.63.1
+                .dampensVibrations(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_1AB959)
+                .occludesVibrations(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_1AB959);
+        // first coverage, dampens_vibrations per state (1 of 16 states): BDS Script API dump 1.26.63.1
+        // first coverage, occludes_vibrations per state (1 of 16 states): BDS Script API dump 1.26.63.1
         v.change("minecraft:hard_white_stained_glass_pane")
-                .dampensVibrations(ACACIA_FENCE_SNOW_LOGGABLE)
-                .occludesVibrations(ACACIA_FENCE_SNOW_LOGGABLE);
-        // dampens_vibrations per state (1 of 16 states): BDS Script API dump 1.26.63.1
-        // occludes_vibrations per state (1 of 16 states): BDS Script API dump 1.26.63.1
+                .dampensVibrations(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_1AB959)
+                .occludesVibrations(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_1AB959);
+        // first coverage, dampens_vibrations per state (1 of 16 states): BDS Script API dump 1.26.63.1
+        // first coverage, occludes_vibrations per state (1 of 16 states): BDS Script API dump 1.26.63.1
         v.change("minecraft:hard_yellow_stained_glass_pane")
-                .dampensVibrations(ACACIA_FENCE_SNOW_LOGGABLE)
-                .occludesVibrations(ACACIA_FENCE_SNOW_LOGGABLE);
+                .dampensVibrations(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_1AB959)
+                .occludesVibrations(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_1AB959);
         // new in 26.60: values from BDS Script API dump 1.26.63.1, BDS behaviour probe 1.26.63.1 (climbing), CloudburstMC/Data 0021592
         v.block("minecraft:ice_crystal", "minecraft:block_face='down'|'east'|'north'|'south'|'up'|'west'")
                 .destroyTime(1.5f)
                 .explosionResistance(1.5f)
-                .collisionShape("minecraft:block_face", "down", BOX_3_9_3_13_16_13, "east", BOX_0_3_3_7_13_13, "north", BOX_3_3_9_13_13_16, "south", BOX_3_3_0_13_13_7, "up", BOX_3_0_3_13_7_13, "west", BOX_9_3_3_16_13_13)
-                .outlineShape("minecraft:block_face", "down", BOX_3_9_3_13_16_13, "east", BOX_0_3_3_7_13_13, "north", BOX_3_3_9_13_13_16, "south", BOX_3_3_0_13_13_7, "up", BOX_3_0_3_13_7_13, "west", BOX_9_3_3_16_13_13)
+                .collisionShape("minecraft:block_face", "down", BOX_3_9_3_13_16_13,
+                        "east", BOX_0_3_3_7_13_13, "north", BOX_3_3_9_13_13_16,
+                        "south", BOX_3_3_0_13_13_7, "up", BOX_3_0_3_13_7_13,
+                        "west", BOX_9_3_3_16_13_13)
+                .outlineShape("minecraft:block_face", "down", BOX_3_9_3_13_16_13,
+                        "east", BOX_0_3_3_7_13_13, "north", BOX_3_3_9_13_13_16,
+                        "south", BOX_3_3_0_13_13_7, "up", BOX_3_0_3_13_7_13,
+                        "west", BOX_9_3_3_16_13_13)
                 .lightEmission(4)
                 .canContainLiquid(true)
-                .mapColor(-1600061441)
+                .mapColor(0xA0A0FFFF)
                 .movementType("Popped");
         // new in 26.60: values from BDS Script API dump 1.26.63.1, BDS behaviour probe 1.26.63.1 (climbing), CloudburstMC/Data 0021592
         v.block("minecraft:icicle", "attached_bit=false|true,dripstone_thickness='base'|'frustum'|'merge'|'middle'|'tip',hanging=false|true")
                 .destroyTime(0.5f)
                 .explosionResistance(0.5f)
-                .collisionShape(POINTED_DRIPSTONE_COLLISION_SHAPE_2)
-                .outlineShape(ICICLE_OUTLINE_SHAPE)
+                .collisionShape(TABLE_DRIPSTONE_THICKNESS_HANGING_7E5CC4)
+                .outlineShape(TABLE_ATTACHED_BIT_DRIPSTONE_THICKNESS_HANGING_E3889B)
                 .canContainLiquid(true)
                 .movementType("Popped");
-        // dampens_vibrations per state (1 of 16 states): BDS Script API dump 1.26.63.1
-        // occludes_vibrations per state (1 of 16 states): BDS Script API dump 1.26.63.1
+        // first coverage, dampens_vibrations per state (1 of 16 states): BDS Script API dump 1.26.63.1
+        // first coverage, occludes_vibrations per state (1 of 16 states): BDS Script API dump 1.26.63.1
         v.change("minecraft:iron_bars")
-                .dampensVibrations(ACACIA_FENCE_SNOW_LOGGABLE)
-                .occludesVibrations(ACACIA_FENCE_SNOW_LOGGABLE);
+                .dampensVibrations(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_1AB959)
+                .occludesVibrations(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_1AB959);
         // collision_shape per state (32 of 32 states): BDS behaviour probe 1.26.63.1 (doors); CloudburstMC/Data 0021592 says otherwise
         v.change("minecraft:iron_door")
-                .collisionShape(ACACIA_DOOR_COLLISION_SHAPE_2);
+                .collisionShape(TABLE_DOOR_HINGE_BIT_CARDINAL_DIRECTION_OPEN_BIT_C89710);
         // collision_shape per state (32 of 32 states): BDS behaviour probe 1.26.63.1 (doors); CloudburstMC/Data 0021592 says otherwise
         v.change("minecraft:jungle_door")
-                .collisionShape(ACACIA_DOOR_COLLISION_SHAPE_2);
-        // dampens_vibrations per state (1 of 16 states): BDS Script API dump 1.26.63.1
-        // occludes_vibrations per state (1 of 16 states): BDS Script API dump 1.26.63.1
+                .collisionShape(TABLE_DOOR_HINGE_BIT_CARDINAL_DIRECTION_OPEN_BIT_C89710);
+        // first coverage, dampens_vibrations per state (1 of 16 states): BDS Script API dump 1.26.63.1
+        // first coverage, occludes_vibrations per state (1 of 16 states): BDS Script API dump 1.26.63.1
         v.change("minecraft:jungle_fence")
-                .dampensVibrations(ACACIA_FENCE_SNOW_LOGGABLE)
-                .occludesVibrations(ACACIA_FENCE_SNOW_LOGGABLE);
-        // dampens_vibrations per state (8 of 16 states): BDS Script API dump 1.26.63.1
-        // occludes_vibrations per state (8 of 16 states): BDS Script API dump 1.26.63.1
-        v.change("minecraft:jungle_fence_gate")
-                .dampensVibrations("in_wall_bit", false, false, true, null)
-                .occludesVibrations("in_wall_bit", false, false, true, null);
-        // dampens_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
-        // occludes_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
-        v.change("minecraft:jungle_stairs")
-                .dampensVibrations("minecraft:corner", "inner_left", null, "inner_right", null, "none", false, "outer_left", null, "outer_right", null)
-                .occludesVibrations("minecraft:corner", "inner_left", null, "inner_right", null, "none", false, "outer_left", null, "outer_right", null);
-        // climbable unknown -> true: BDS behaviour probe 1.26.63.1 (climbing)
-        v.change("minecraft:ladder").climbable(true);
-        // dampens_vibrations unknown -> true: BDS Script API dump 1.26.63.1
-        v.change("minecraft:light_blue_carpet").dampensVibrations(true);
-        // dampens_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
-        // occludes_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
-        v.change("minecraft:light_blue_concrete_stairs")
-                .dampensVibrations("minecraft:corner", "inner_left", null, "inner_right", null, "none", false, "outer_left", null, "outer_right", null)
-                .occludesVibrations("minecraft:corner", "inner_left", null, "inner_right", null, "none", false, "outer_left", null, "outer_right", null);
-        // dampens_vibrations per state (1 of 16 states): BDS Script API dump 1.26.63.1
-        // occludes_vibrations per state (1 of 16 states): BDS Script API dump 1.26.63.1
-        v.change("minecraft:light_blue_stained_glass_pane")
-                .dampensVibrations(ACACIA_FENCE_SNOW_LOGGABLE)
-                .occludesVibrations(ACACIA_FENCE_SNOW_LOGGABLE);
-        // dampens_vibrations unknown -> true: BDS Script API dump 1.26.63.1
-        // occludes_vibrations unknown -> true: BDS Script API dump 1.26.63.1
-        v.change("minecraft:light_blue_wool").dampensVibrations(true).occludesVibrations(true);
-        // dampens_vibrations unknown -> true: BDS Script API dump 1.26.63.1
-        // occludes_vibrations unknown -> true: BDS Script API dump 1.26.63.1
-        v.change("minecraft:light_blue_wool_double_slab").dampensVibrations(true).occludesVibrations(true);
-        // dampens_vibrations unknown -> true: BDS Script API dump 1.26.63.1
-        // occludes_vibrations unknown -> true: BDS Script API dump 1.26.63.1
-        v.change("minecraft:light_blue_wool_slab").dampensVibrations(true).occludesVibrations(true);
-        // dampens_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
-        // occludes_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
-        v.change("minecraft:light_blue_wool_stairs")
-                .dampensVibrations("minecraft:corner", "inner_left", null, "inner_right", null, "none", true, "outer_left", null, "outer_right", null)
-                .occludesVibrations("minecraft:corner", "inner_left", null, "inner_right", null, "none", true, "outer_left", null, "outer_right", null);
-        // dampens_vibrations unknown -> true: BDS Script API dump 1.26.63.1
-        v.change("minecraft:light_gray_carpet").dampensVibrations(true);
-        // dampens_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
-        // occludes_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
-        v.change("minecraft:light_gray_concrete_stairs")
-                .dampensVibrations("minecraft:corner", "inner_left", null, "inner_right", null, "none", false, "outer_left", null, "outer_right", null)
-                .occludesVibrations("minecraft:corner", "inner_left", null, "inner_right", null, "none", false, "outer_left", null, "outer_right", null);
-        // dampens_vibrations per state (1 of 16 states): BDS Script API dump 1.26.63.1
-        // occludes_vibrations per state (1 of 16 states): BDS Script API dump 1.26.63.1
-        v.change("minecraft:light_gray_stained_glass_pane")
-                .dampensVibrations(ACACIA_FENCE_SNOW_LOGGABLE)
-                .occludesVibrations(ACACIA_FENCE_SNOW_LOGGABLE);
-        // dampens_vibrations unknown -> true: BDS Script API dump 1.26.63.1
-        // occludes_vibrations unknown -> true: BDS Script API dump 1.26.63.1
-        v.change("minecraft:light_gray_wool").dampensVibrations(true).occludesVibrations(true);
-        // dampens_vibrations unknown -> true: BDS Script API dump 1.26.63.1
-        // occludes_vibrations unknown -> true: BDS Script API dump 1.26.63.1
-        v.change("minecraft:light_gray_wool_double_slab").dampensVibrations(true).occludesVibrations(true);
-        // dampens_vibrations unknown -> true: BDS Script API dump 1.26.63.1
-        // occludes_vibrations unknown -> true: BDS Script API dump 1.26.63.1
-        v.change("minecraft:light_gray_wool_slab").dampensVibrations(true).occludesVibrations(true);
-        // dampens_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
-        // occludes_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
-        v.change("minecraft:light_gray_wool_stairs")
-                .dampensVibrations("minecraft:corner", "inner_left", null, "inner_right", null, "none", true, "outer_left", null, "outer_right", null)
-                .occludesVibrations("minecraft:corner", "inner_left", null, "inner_right", null, "none", true, "outer_left", null, "outer_right", null);
-        // dampens_vibrations unknown -> true: BDS Script API dump 1.26.63.1
-        v.change("minecraft:lime_carpet").dampensVibrations(true);
-        // dampens_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
-        // occludes_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
-        v.change("minecraft:lime_concrete_stairs")
-                .dampensVibrations("minecraft:corner", "inner_left", null, "inner_right", null, "none", false, "outer_left", null, "outer_right", null)
-                .occludesVibrations("minecraft:corner", "inner_left", null, "inner_right", null, "none", false, "outer_left", null, "outer_right", null);
-        // dampens_vibrations per state (1 of 16 states): BDS Script API dump 1.26.63.1
-        // occludes_vibrations per state (1 of 16 states): BDS Script API dump 1.26.63.1
-        v.change("minecraft:lime_stained_glass_pane")
-                .dampensVibrations(ACACIA_FENCE_SNOW_LOGGABLE)
-                .occludesVibrations(ACACIA_FENCE_SNOW_LOGGABLE);
-        // dampens_vibrations unknown -> true: BDS Script API dump 1.26.63.1
-        // occludes_vibrations unknown -> true: BDS Script API dump 1.26.63.1
-        v.change("minecraft:lime_wool").dampensVibrations(true).occludesVibrations(true);
-        // dampens_vibrations unknown -> true: BDS Script API dump 1.26.63.1
-        // occludes_vibrations unknown -> true: BDS Script API dump 1.26.63.1
-        v.change("minecraft:lime_wool_double_slab").dampensVibrations(true).occludesVibrations(true);
-        // dampens_vibrations unknown -> true: BDS Script API dump 1.26.63.1
-        // occludes_vibrations unknown -> true: BDS Script API dump 1.26.63.1
-        v.change("minecraft:lime_wool_slab").dampensVibrations(true).occludesVibrations(true);
-        // dampens_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
-        // occludes_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
-        v.change("minecraft:lime_wool_stairs")
-                .dampensVibrations("minecraft:corner", "inner_left", null, "inner_right", null, "none", true, "outer_left", null, "outer_right", null)
-                .occludesVibrations("minecraft:corner", "inner_left", null, "inner_right", null, "none", true, "outer_left", null, "outer_right", null);
-        // dampens_vibrations unknown -> true: BDS Script API dump 1.26.63.1
-        v.change("minecraft:magenta_carpet").dampensVibrations(true);
-        // dampens_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
-        // occludes_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
-        v.change("minecraft:magenta_concrete_stairs")
-                .dampensVibrations("minecraft:corner", "inner_left", null, "inner_right", null, "none", false, "outer_left", null, "outer_right", null)
-                .occludesVibrations("minecraft:corner", "inner_left", null, "inner_right", null, "none", false, "outer_left", null, "outer_right", null);
-        // dampens_vibrations per state (1 of 16 states): BDS Script API dump 1.26.63.1
-        // occludes_vibrations per state (1 of 16 states): BDS Script API dump 1.26.63.1
-        v.change("minecraft:magenta_stained_glass_pane")
-                .dampensVibrations(ACACIA_FENCE_SNOW_LOGGABLE)
-                .occludesVibrations(ACACIA_FENCE_SNOW_LOGGABLE);
+                .dampensVibrations(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_1AB959)
+                .occludesVibrations(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_1AB959);
     }
 
     static void part4(Changes v) {
-        // dampens_vibrations unknown -> true: BDS Script API dump 1.26.63.1
-        // occludes_vibrations unknown -> true: BDS Script API dump 1.26.63.1
+        // first coverage, dampens_vibrations per state (8 of 16 states): BDS Script API dump 1.26.63.1
+        // first coverage, occludes_vibrations per state (8 of 16 states): BDS Script API dump 1.26.63.1
+        v.change("minecraft:jungle_fence_gate")
+                .dampensVibrations("in_wall_bit", false, false, true, null)
+                .occludesVibrations("in_wall_bit", false, false, true, null);
+        // first coverage, dampens_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
+        // first coverage, occludes_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
+        v.change("minecraft:jungle_stairs")
+                .dampensVibrations("minecraft:corner", "inner_left", null, "inner_right", null,
+                        "none", false, "outer_left", null, "outer_right", null)
+                .occludesVibrations("minecraft:corner", "inner_left", null, "inner_right", null,
+                        "none", false, "outer_left", null, "outer_right", null);
+        // first coverage, climbable = true: BDS behaviour probe 1.26.63.1 (climbing)
+        v.change("minecraft:ladder").climbable(true);
+        // first coverage, dampens_vibrations = true: BDS Script API dump 1.26.63.1
+        v.change("minecraft:light_blue_carpet").dampensVibrations(true);
+        // first coverage, dampens_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
+        // first coverage, occludes_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
+        v.change("minecraft:light_blue_concrete_stairs")
+                .dampensVibrations("minecraft:corner", "inner_left", null, "inner_right", null,
+                        "none", false, "outer_left", null, "outer_right", null)
+                .occludesVibrations("minecraft:corner", "inner_left", null, "inner_right", null,
+                        "none", false, "outer_left", null, "outer_right", null);
+        // first coverage, dampens_vibrations per state (1 of 16 states): BDS Script API dump 1.26.63.1
+        // first coverage, occludes_vibrations per state (1 of 16 states): BDS Script API dump 1.26.63.1
+        v.change("minecraft:light_blue_stained_glass_pane")
+                .dampensVibrations(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_1AB959)
+                .occludesVibrations(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_1AB959);
+        // first coverage, dampens_vibrations = true: BDS Script API dump 1.26.63.1
+        // first coverage, occludes_vibrations = true: BDS Script API dump 1.26.63.1
+        v.change("minecraft:light_blue_wool").dampensVibrations(true).occludesVibrations(true);
+        // first coverage, dampens_vibrations = true: BDS Script API dump 1.26.63.1
+        // first coverage, occludes_vibrations = true: BDS Script API dump 1.26.63.1
+        v.change("minecraft:light_blue_wool_double_slab").dampensVibrations(true).occludesVibrations(true);
+        // first coverage, dampens_vibrations = true: BDS Script API dump 1.26.63.1
+        // first coverage, occludes_vibrations = true: BDS Script API dump 1.26.63.1
+        v.change("minecraft:light_blue_wool_slab").dampensVibrations(true).occludesVibrations(true);
+        // first coverage, dampens_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
+        // first coverage, occludes_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
+        v.change("minecraft:light_blue_wool_stairs")
+                .dampensVibrations("minecraft:corner", "inner_left", null, "inner_right", null,
+                        "none", true, "outer_left", null, "outer_right", null)
+                .occludesVibrations("minecraft:corner", "inner_left", null, "inner_right", null,
+                        "none", true, "outer_left", null, "outer_right", null);
+        // first coverage, dampens_vibrations = true: BDS Script API dump 1.26.63.1
+        v.change("minecraft:light_gray_carpet").dampensVibrations(true);
+        // first coverage, dampens_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
+        // first coverage, occludes_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
+        v.change("minecraft:light_gray_concrete_stairs")
+                .dampensVibrations("minecraft:corner", "inner_left", null, "inner_right", null,
+                        "none", false, "outer_left", null, "outer_right", null)
+                .occludesVibrations("minecraft:corner", "inner_left", null, "inner_right", null,
+                        "none", false, "outer_left", null, "outer_right", null);
+        // first coverage, dampens_vibrations per state (1 of 16 states): BDS Script API dump 1.26.63.1
+        // first coverage, occludes_vibrations per state (1 of 16 states): BDS Script API dump 1.26.63.1
+        v.change("minecraft:light_gray_stained_glass_pane")
+                .dampensVibrations(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_1AB959)
+                .occludesVibrations(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_1AB959);
+        // first coverage, dampens_vibrations = true: BDS Script API dump 1.26.63.1
+        // first coverage, occludes_vibrations = true: BDS Script API dump 1.26.63.1
+        v.change("minecraft:light_gray_wool").dampensVibrations(true).occludesVibrations(true);
+        // first coverage, dampens_vibrations = true: BDS Script API dump 1.26.63.1
+        // first coverage, occludes_vibrations = true: BDS Script API dump 1.26.63.1
+        v.change("minecraft:light_gray_wool_double_slab").dampensVibrations(true).occludesVibrations(true);
+        // first coverage, dampens_vibrations = true: BDS Script API dump 1.26.63.1
+        // first coverage, occludes_vibrations = true: BDS Script API dump 1.26.63.1
+        v.change("minecraft:light_gray_wool_slab").dampensVibrations(true).occludesVibrations(true);
+        // first coverage, dampens_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
+        // first coverage, occludes_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
+        v.change("minecraft:light_gray_wool_stairs")
+                .dampensVibrations("minecraft:corner", "inner_left", null, "inner_right", null,
+                        "none", true, "outer_left", null, "outer_right", null)
+                .occludesVibrations("minecraft:corner", "inner_left", null, "inner_right", null,
+                        "none", true, "outer_left", null, "outer_right", null);
+        // first coverage, dampens_vibrations = true: BDS Script API dump 1.26.63.1
+        v.change("minecraft:lime_carpet").dampensVibrations(true);
+        // first coverage, dampens_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
+        // first coverage, occludes_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
+        v.change("minecraft:lime_concrete_stairs")
+                .dampensVibrations("minecraft:corner", "inner_left", null, "inner_right", null,
+                        "none", false, "outer_left", null, "outer_right", null)
+                .occludesVibrations("minecraft:corner", "inner_left", null, "inner_right", null,
+                        "none", false, "outer_left", null, "outer_right", null);
+        // first coverage, dampens_vibrations per state (1 of 16 states): BDS Script API dump 1.26.63.1
+        // first coverage, occludes_vibrations per state (1 of 16 states): BDS Script API dump 1.26.63.1
+        v.change("minecraft:lime_stained_glass_pane")
+                .dampensVibrations(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_1AB959)
+                .occludesVibrations(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_1AB959);
+        // first coverage, dampens_vibrations = true: BDS Script API dump 1.26.63.1
+        // first coverage, occludes_vibrations = true: BDS Script API dump 1.26.63.1
+        v.change("minecraft:lime_wool").dampensVibrations(true).occludesVibrations(true);
+        // first coverage, dampens_vibrations = true: BDS Script API dump 1.26.63.1
+        // first coverage, occludes_vibrations = true: BDS Script API dump 1.26.63.1
+        v.change("minecraft:lime_wool_double_slab").dampensVibrations(true).occludesVibrations(true);
+        // first coverage, dampens_vibrations = true: BDS Script API dump 1.26.63.1
+        // first coverage, occludes_vibrations = true: BDS Script API dump 1.26.63.1
+        v.change("minecraft:lime_wool_slab").dampensVibrations(true).occludesVibrations(true);
+        // first coverage, dampens_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
+        // first coverage, occludes_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
+        v.change("minecraft:lime_wool_stairs")
+                .dampensVibrations("minecraft:corner", "inner_left", null, "inner_right", null,
+                        "none", true, "outer_left", null, "outer_right", null)
+                .occludesVibrations("minecraft:corner", "inner_left", null, "inner_right", null,
+                        "none", true, "outer_left", null, "outer_right", null);
+        // first coverage, dampens_vibrations = true: BDS Script API dump 1.26.63.1
+        v.change("minecraft:magenta_carpet").dampensVibrations(true);
+        // first coverage, dampens_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
+        // first coverage, occludes_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
+        v.change("minecraft:magenta_concrete_stairs")
+                .dampensVibrations("minecraft:corner", "inner_left", null, "inner_right", null,
+                        "none", false, "outer_left", null, "outer_right", null)
+                .occludesVibrations("minecraft:corner", "inner_left", null, "inner_right", null,
+                        "none", false, "outer_left", null, "outer_right", null);
+        // first coverage, dampens_vibrations per state (1 of 16 states): BDS Script API dump 1.26.63.1
+        // first coverage, occludes_vibrations per state (1 of 16 states): BDS Script API dump 1.26.63.1
+        v.change("minecraft:magenta_stained_glass_pane")
+                .dampensVibrations(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_1AB959)
+                .occludesVibrations(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_1AB959);
+        // first coverage, dampens_vibrations = true: BDS Script API dump 1.26.63.1
+        // first coverage, occludes_vibrations = true: BDS Script API dump 1.26.63.1
         v.change("minecraft:magenta_wool").dampensVibrations(true).occludesVibrations(true);
-        // dampens_vibrations unknown -> true: BDS Script API dump 1.26.63.1
-        // occludes_vibrations unknown -> true: BDS Script API dump 1.26.63.1
+        // first coverage, dampens_vibrations = true: BDS Script API dump 1.26.63.1
+        // first coverage, occludes_vibrations = true: BDS Script API dump 1.26.63.1
         v.change("minecraft:magenta_wool_double_slab").dampensVibrations(true).occludesVibrations(true);
-        // dampens_vibrations unknown -> true: BDS Script API dump 1.26.63.1
-        // occludes_vibrations unknown -> true: BDS Script API dump 1.26.63.1
+        // first coverage, dampens_vibrations = true: BDS Script API dump 1.26.63.1
+        // first coverage, occludes_vibrations = true: BDS Script API dump 1.26.63.1
         v.change("minecraft:magenta_wool_slab").dampensVibrations(true).occludesVibrations(true);
-        // dampens_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
-        // occludes_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
+        // first coverage, dampens_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
+        // first coverage, occludes_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
         v.change("minecraft:magenta_wool_stairs")
-                .dampensVibrations("minecraft:corner", "inner_left", null, "inner_right", null, "none", true, "outer_left", null, "outer_right", null)
-                .occludesVibrations("minecraft:corner", "inner_left", null, "inner_right", null, "none", true, "outer_left", null, "outer_right", null);
+                .dampensVibrations("minecraft:corner", "inner_left", null, "inner_right", null,
+                        "none", true, "outer_left", null, "outer_right", null)
+                .occludesVibrations("minecraft:corner", "inner_left", null, "inner_right", null,
+                        "none", true, "outer_left", null, "outer_right", null);
         // collision_shape per state (32 of 32 states): BDS behaviour probe 1.26.63.1 (doors); CloudburstMC/Data 0021592 says otherwise
         v.change("minecraft:mangrove_door")
-                .collisionShape(ACACIA_DOOR_COLLISION_SHAPE_2);
-        // dampens_vibrations per state (1 of 16 states): BDS Script API dump 1.26.63.1
-        // occludes_vibrations per state (1 of 16 states): BDS Script API dump 1.26.63.1
+                .collisionShape(TABLE_DOOR_HINGE_BIT_CARDINAL_DIRECTION_OPEN_BIT_C89710);
+        // first coverage, dampens_vibrations per state (1 of 16 states): BDS Script API dump 1.26.63.1
+        // first coverage, occludes_vibrations per state (1 of 16 states): BDS Script API dump 1.26.63.1
         v.change("minecraft:mangrove_fence")
-                .dampensVibrations(ACACIA_FENCE_SNOW_LOGGABLE)
-                .occludesVibrations(ACACIA_FENCE_SNOW_LOGGABLE);
-        // dampens_vibrations per state (8 of 16 states): BDS Script API dump 1.26.63.1
-        // occludes_vibrations per state (8 of 16 states): BDS Script API dump 1.26.63.1
+                .dampensVibrations(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_1AB959)
+                .occludesVibrations(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_1AB959);
+        // first coverage, dampens_vibrations per state (8 of 16 states): BDS Script API dump 1.26.63.1
+        // first coverage, occludes_vibrations per state (8 of 16 states): BDS Script API dump 1.26.63.1
         v.change("minecraft:mangrove_fence_gate")
                 .dampensVibrations("in_wall_bit", false, false, true, null)
                 .occludesVibrations("in_wall_bit", false, false, true, null);
-        // dampens_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
-        // occludes_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
+        // first coverage, dampens_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
+        // first coverage, occludes_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
         v.change("minecraft:mangrove_stairs")
-                .dampensVibrations("minecraft:corner", "inner_left", null, "inner_right", null, "none", false, "outer_left", null, "outer_right", null)
-                .occludesVibrations("minecraft:corner", "inner_left", null, "inner_right", null, "none", false, "outer_left", null, "outer_right", null);
-        // dampens_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
-        // occludes_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
+                .dampensVibrations("minecraft:corner", "inner_left", null, "inner_right", null,
+                        "none", false, "outer_left", null, "outer_right", null)
+                .occludesVibrations("minecraft:corner", "inner_left", null, "inner_right", null,
+                        "none", false, "outer_left", null, "outer_right", null);
+        // first coverage, dampens_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
+        // first coverage, occludes_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
         v.change("minecraft:mossy_cobblestone_stairs")
-                .dampensVibrations("minecraft:corner", "inner_left", null, "inner_right", null, "none", false, "outer_left", null, "outer_right", null)
-                .occludesVibrations("minecraft:corner", "inner_left", null, "inner_right", null, "none", false, "outer_left", null, "outer_right", null);
-        // dampens_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
-        // occludes_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
+                .dampensVibrations("minecraft:corner", "inner_left", null, "inner_right", null,
+                        "none", false, "outer_left", null, "outer_right", null)
+                .occludesVibrations("minecraft:corner", "inner_left", null, "inner_right", null,
+                        "none", false, "outer_left", null, "outer_right", null);
+        // first coverage, dampens_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
+        // first coverage, occludes_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
         v.change("minecraft:mossy_stone_brick_stairs")
-                .dampensVibrations("minecraft:corner", "inner_left", null, "inner_right", null, "none", false, "outer_left", null, "outer_right", null)
-                .occludesVibrations("minecraft:corner", "inner_left", null, "inner_right", null, "none", false, "outer_left", null, "outer_right", null);
-        // dampens_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
-        // occludes_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
+                .dampensVibrations("minecraft:corner", "inner_left", null, "inner_right", null,
+                        "none", false, "outer_left", null, "outer_right", null)
+                .occludesVibrations("minecraft:corner", "inner_left", null, "inner_right", null,
+                        "none", false, "outer_left", null, "outer_right", null);
+        // first coverage, dampens_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
+        // first coverage, occludes_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
         v.change("minecraft:mud_brick_stairs")
-                .dampensVibrations("minecraft:corner", "inner_left", null, "inner_right", null, "none", false, "outer_left", null, "outer_right", null)
-                .occludesVibrations("minecraft:corner", "inner_left", null, "inner_right", null, "none", false, "outer_left", null, "outer_right", null);
-        // dampens_vibrations per state (1 of 16 states): BDS Script API dump 1.26.63.1
-        // occludes_vibrations per state (1 of 16 states): BDS Script API dump 1.26.63.1
+                .dampensVibrations("minecraft:corner", "inner_left", null, "inner_right", null,
+                        "none", false, "outer_left", null, "outer_right", null)
+                .occludesVibrations("minecraft:corner", "inner_left", null, "inner_right", null,
+                        "none", false, "outer_left", null, "outer_right", null);
+        // first coverage, dampens_vibrations per state (1 of 16 states): BDS Script API dump 1.26.63.1
+        // first coverage, occludes_vibrations per state (1 of 16 states): BDS Script API dump 1.26.63.1
         v.change("minecraft:nether_brick_fence")
-                .dampensVibrations(ACACIA_FENCE_SNOW_LOGGABLE)
-                .occludesVibrations(ACACIA_FENCE_SNOW_LOGGABLE);
-        // dampens_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
-        // occludes_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
+                .dampensVibrations(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_1AB959)
+                .occludesVibrations(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_1AB959);
+        // first coverage, dampens_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
+        // first coverage, occludes_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
         v.change("minecraft:nether_brick_stairs")
-                .dampensVibrations("minecraft:corner", "inner_left", null, "inner_right", null, "none", false, "outer_left", null, "outer_right", null)
-                .occludesVibrations("minecraft:corner", "inner_left", null, "inner_right", null, "none", false, "outer_left", null, "outer_right", null);
-        // dampens_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
-        // occludes_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
+                .dampensVibrations("minecraft:corner", "inner_left", null, "inner_right", null,
+                        "none", false, "outer_left", null, "outer_right", null)
+                .occludesVibrations("minecraft:corner", "inner_left", null, "inner_right", null,
+                        "none", false, "outer_left", null, "outer_right", null);
+    }
+
+    static void part5(Changes v) {
+        // first coverage, dampens_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
+        // first coverage, occludes_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
         v.change("minecraft:normal_stone_stairs")
-                .dampensVibrations("minecraft:corner", "inner_left", null, "inner_right", null, "none", false, "outer_left", null, "outer_right", null)
-                .occludesVibrations("minecraft:corner", "inner_left", null, "inner_right", null, "none", false, "outer_left", null, "outer_right", null);
-        // dampens_vibrations per state (1 of 16 states): BDS Script API dump 1.26.63.1
-        // occludes_vibrations per state (1 of 16 states): BDS Script API dump 1.26.63.1
+                .dampensVibrations("minecraft:corner", "inner_left", null, "inner_right", null,
+                        "none", false, "outer_left", null, "outer_right", null)
+                .occludesVibrations("minecraft:corner", "inner_left", null, "inner_right", null,
+                        "none", false, "outer_left", null, "outer_right", null);
+        // first coverage, dampens_vibrations per state (1 of 16 states): BDS Script API dump 1.26.63.1
+        // first coverage, occludes_vibrations per state (1 of 16 states): BDS Script API dump 1.26.63.1
         v.change("minecraft:oak_fence")
-                .dampensVibrations(ACACIA_FENCE_SNOW_LOGGABLE)
-                .occludesVibrations(ACACIA_FENCE_SNOW_LOGGABLE);
-        // dampens_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
-        // occludes_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
+                .dampensVibrations(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_1AB959)
+                .occludesVibrations(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_1AB959);
+        // first coverage, dampens_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
+        // first coverage, occludes_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
         v.change("minecraft:oak_stairs")
-                .dampensVibrations("minecraft:corner", "inner_left", null, "inner_right", null, "none", false, "outer_left", null, "outer_right", null)
-                .occludesVibrations("minecraft:corner", "inner_left", null, "inner_right", null, "none", false, "outer_left", null, "outer_right", null);
-        // dampens_vibrations per state (6 of 12 states): BDS Script API dump 1.26.63.1
-        // occludes_vibrations per state (6 of 12 states): BDS Script API dump 1.26.63.1
+                .dampensVibrations("minecraft:corner", "inner_left", null, "inner_right", null,
+                        "none", false, "outer_left", null, "outer_right", null)
+                .occludesVibrations("minecraft:corner", "inner_left", null, "inner_right", null,
+                        "none", false, "outer_left", null, "outer_right", null);
+        // first coverage, dampens_vibrations per state (6 of 12 states): BDS Script API dump 1.26.63.1
+        // first coverage, occludes_vibrations per state (6 of 12 states): BDS Script API dump 1.26.63.1
         v.change("minecraft:observer")
                 .dampensVibrations("powered_bit", false, false, true, null)
                 .occludesVibrations("powered_bit", false, false, true, null);
-        // dampens_vibrations unknown -> true: BDS Script API dump 1.26.63.1
+        // first coverage, dampens_vibrations = true: BDS Script API dump 1.26.63.1
         v.change("minecraft:orange_carpet").dampensVibrations(true);
-        // dampens_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
-        // occludes_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
+        // first coverage, dampens_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
+        // first coverage, occludes_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
         v.change("minecraft:orange_concrete_stairs")
-                .dampensVibrations("minecraft:corner", "inner_left", null, "inner_right", null, "none", false, "outer_left", null, "outer_right", null)
-                .occludesVibrations("minecraft:corner", "inner_left", null, "inner_right", null, "none", false, "outer_left", null, "outer_right", null);
-        // dampens_vibrations per state (1 of 16 states): BDS Script API dump 1.26.63.1
-        // occludes_vibrations per state (1 of 16 states): BDS Script API dump 1.26.63.1
+                .dampensVibrations("minecraft:corner", "inner_left", null, "inner_right", null,
+                        "none", false, "outer_left", null, "outer_right", null)
+                .occludesVibrations("minecraft:corner", "inner_left", null, "inner_right", null,
+                        "none", false, "outer_left", null, "outer_right", null);
+        // first coverage, dampens_vibrations per state (1 of 16 states): BDS Script API dump 1.26.63.1
+        // first coverage, occludes_vibrations per state (1 of 16 states): BDS Script API dump 1.26.63.1
         v.change("minecraft:orange_stained_glass_pane")
-                .dampensVibrations(ACACIA_FENCE_SNOW_LOGGABLE)
-                .occludesVibrations(ACACIA_FENCE_SNOW_LOGGABLE);
-        // dampens_vibrations unknown -> true: BDS Script API dump 1.26.63.1
-        // occludes_vibrations unknown -> true: BDS Script API dump 1.26.63.1
+                .dampensVibrations(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_1AB959)
+                .occludesVibrations(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_1AB959);
+        // first coverage, dampens_vibrations = true: BDS Script API dump 1.26.63.1
+        // first coverage, occludes_vibrations = true: BDS Script API dump 1.26.63.1
         v.change("minecraft:orange_wool").dampensVibrations(true).occludesVibrations(true);
-        // dampens_vibrations unknown -> true: BDS Script API dump 1.26.63.1
-        // occludes_vibrations unknown -> true: BDS Script API dump 1.26.63.1
+        // first coverage, dampens_vibrations = true: BDS Script API dump 1.26.63.1
+        // first coverage, occludes_vibrations = true: BDS Script API dump 1.26.63.1
         v.change("minecraft:orange_wool_double_slab").dampensVibrations(true).occludesVibrations(true);
-        // dampens_vibrations unknown -> true: BDS Script API dump 1.26.63.1
-        // occludes_vibrations unknown -> true: BDS Script API dump 1.26.63.1
+        // first coverage, dampens_vibrations = true: BDS Script API dump 1.26.63.1
+        // first coverage, occludes_vibrations = true: BDS Script API dump 1.26.63.1
         v.change("minecraft:orange_wool_slab").dampensVibrations(true).occludesVibrations(true);
-        // dampens_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
-        // occludes_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
+        // first coverage, dampens_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
+        // first coverage, occludes_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
         v.change("minecraft:orange_wool_stairs")
-                .dampensVibrations("minecraft:corner", "inner_left", null, "inner_right", null, "none", true, "outer_left", null, "outer_right", null)
-                .occludesVibrations("minecraft:corner", "inner_left", null, "inner_right", null, "none", true, "outer_left", null, "outer_right", null);
-        // dampens_vibrations per state (1 of 16 states): BDS Script API dump 1.26.63.1
-        // occludes_vibrations per state (1 of 16 states): BDS Script API dump 1.26.63.1
+                .dampensVibrations("minecraft:corner", "inner_left", null, "inner_right", null,
+                        "none", true, "outer_left", null, "outer_right", null)
+                .occludesVibrations("minecraft:corner", "inner_left", null, "inner_right", null,
+                        "none", true, "outer_left", null, "outer_right", null);
+        // first coverage, dampens_vibrations per state (1 of 16 states): BDS Script API dump 1.26.63.1
+        // first coverage, occludes_vibrations per state (1 of 16 states): BDS Script API dump 1.26.63.1
         v.change("minecraft:oxidized_copper_bars")
-                .dampensVibrations(ACACIA_FENCE_SNOW_LOGGABLE)
-                .occludesVibrations(ACACIA_FENCE_SNOW_LOGGABLE);
+                .dampensVibrations(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_1AB959)
+                .occludesVibrations(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_1AB959);
         // collision_shape per state (32 of 32 states): BDS behaviour probe 1.26.63.1 (doors); CloudburstMC/Data 0021592 says otherwise
         v.change("minecraft:oxidized_copper_door")
-                .collisionShape(ACACIA_DOOR_COLLISION_SHAPE_2);
-        // dampens_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
-        // occludes_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
+                .collisionShape(TABLE_DOOR_HINGE_BIT_CARDINAL_DIRECTION_OPEN_BIT_C89710);
+        // first coverage, dampens_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
+        // first coverage, occludes_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
         v.change("minecraft:oxidized_cut_copper_stairs")
-                .dampensVibrations("minecraft:corner", "inner_left", null, "inner_right", null, "none", false, "outer_left", null, "outer_right", null)
-                .occludesVibrations("minecraft:corner", "inner_left", null, "inner_right", null, "none", false, "outer_left", null, "outer_right", null);
-        // dampens_vibrations per state (1 of 2 states): BDS Script API dump 1.26.63.1
-        // occludes_vibrations per state (1 of 2 states): BDS Script API dump 1.26.63.1
+                .dampensVibrations("minecraft:corner", "inner_left", null, "inner_right", null,
+                        "none", false, "outer_left", null, "outer_right", null)
+                .occludesVibrations("minecraft:corner", "inner_left", null, "inner_right", null,
+                        "none", false, "outer_left", null, "outer_right", null);
+        // first coverage, dampens_vibrations per state (1 of 2 states): BDS Script API dump 1.26.63.1
+        // first coverage, occludes_vibrations per state (1 of 2 states): BDS Script API dump 1.26.63.1
         v.change("minecraft:pale_hanging_moss")
                 .dampensVibrations("tip", false, null, true, false)
                 .occludesVibrations("tip", false, null, true, false);
         // collision_shape per state (32 of 32 states): BDS behaviour probe 1.26.63.1 (doors); CloudburstMC/Data 0021592 says otherwise
         v.change("minecraft:pale_oak_door")
-                .collisionShape(ACACIA_DOOR_COLLISION_SHAPE_2);
-        // dampens_vibrations per state (1 of 16 states): BDS Script API dump 1.26.63.1
-        // occludes_vibrations per state (1 of 16 states): BDS Script API dump 1.26.63.1
+                .collisionShape(TABLE_DOOR_HINGE_BIT_CARDINAL_DIRECTION_OPEN_BIT_C89710);
+        // first coverage, dampens_vibrations per state (1 of 16 states): BDS Script API dump 1.26.63.1
+        // first coverage, occludes_vibrations per state (1 of 16 states): BDS Script API dump 1.26.63.1
         v.change("minecraft:pale_oak_fence")
-                .dampensVibrations(ACACIA_FENCE_SNOW_LOGGABLE)
-                .occludesVibrations(ACACIA_FENCE_SNOW_LOGGABLE);
-        // dampens_vibrations per state (8 of 16 states): BDS Script API dump 1.26.63.1
-        // occludes_vibrations per state (8 of 16 states): BDS Script API dump 1.26.63.1
+                .dampensVibrations(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_1AB959)
+                .occludesVibrations(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_1AB959);
+        // first coverage, dampens_vibrations per state (8 of 16 states): BDS Script API dump 1.26.63.1
+        // first coverage, occludes_vibrations per state (8 of 16 states): BDS Script API dump 1.26.63.1
         v.change("minecraft:pale_oak_fence_gate")
                 .dampensVibrations("in_wall_bit", false, false, true, null)
                 .occludesVibrations("in_wall_bit", false, false, true, null);
-        // dampens_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
-        // occludes_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
+        // first coverage, dampens_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
+        // first coverage, occludes_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
         v.change("minecraft:pale_oak_stairs")
-                .dampensVibrations("minecraft:corner", "inner_left", null, "inner_right", null, "none", false, "outer_left", null, "outer_right", null)
-                .occludesVibrations("minecraft:corner", "inner_left", null, "inner_right", null, "none", false, "outer_left", null, "outer_right", null);
-        // dampens_vibrations unknown -> true: BDS Script API dump 1.26.63.1
+                .dampensVibrations("minecraft:corner", "inner_left", null, "inner_right", null,
+                        "none", false, "outer_left", null, "outer_right", null)
+                .occludesVibrations("minecraft:corner", "inner_left", null, "inner_right", null,
+                        "none", false, "outer_left", null, "outer_right", null);
+        // first coverage, dampens_vibrations = true: BDS Script API dump 1.26.63.1
         v.change("minecraft:pink_carpet").dampensVibrations(true);
-        // dampens_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
-        // occludes_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
+        // first coverage, dampens_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
+        // first coverage, occludes_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
         v.change("minecraft:pink_concrete_stairs")
-                .dampensVibrations("minecraft:corner", "inner_left", null, "inner_right", null, "none", false, "outer_left", null, "outer_right", null)
-                .occludesVibrations("minecraft:corner", "inner_left", null, "inner_right", null, "none", false, "outer_left", null, "outer_right", null);
-        // dampens_vibrations per state (1 of 16 states): BDS Script API dump 1.26.63.1
-        // occludes_vibrations per state (1 of 16 states): BDS Script API dump 1.26.63.1
+                .dampensVibrations("minecraft:corner", "inner_left", null, "inner_right", null,
+                        "none", false, "outer_left", null, "outer_right", null)
+                .occludesVibrations("minecraft:corner", "inner_left", null, "inner_right", null,
+                        "none", false, "outer_left", null, "outer_right", null);
+        // first coverage, dampens_vibrations per state (1 of 16 states): BDS Script API dump 1.26.63.1
+        // first coverage, occludes_vibrations per state (1 of 16 states): BDS Script API dump 1.26.63.1
         v.change("minecraft:pink_stained_glass_pane")
-                .dampensVibrations(ACACIA_FENCE_SNOW_LOGGABLE)
-                .occludesVibrations(ACACIA_FENCE_SNOW_LOGGABLE);
-        // dampens_vibrations unknown -> true: BDS Script API dump 1.26.63.1
-        // occludes_vibrations unknown -> true: BDS Script API dump 1.26.63.1
+                .dampensVibrations(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_1AB959)
+                .occludesVibrations(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_1AB959);
+        // first coverage, dampens_vibrations = true: BDS Script API dump 1.26.63.1
+        // first coverage, occludes_vibrations = true: BDS Script API dump 1.26.63.1
         v.change("minecraft:pink_wool").dampensVibrations(true).occludesVibrations(true);
-        // dampens_vibrations unknown -> true: BDS Script API dump 1.26.63.1
-        // occludes_vibrations unknown -> true: BDS Script API dump 1.26.63.1
+        // first coverage, dampens_vibrations = true: BDS Script API dump 1.26.63.1
+        // first coverage, occludes_vibrations = true: BDS Script API dump 1.26.63.1
         v.change("minecraft:pink_wool_double_slab").dampensVibrations(true).occludesVibrations(true);
-        // dampens_vibrations unknown -> true: BDS Script API dump 1.26.63.1
-        // occludes_vibrations unknown -> true: BDS Script API dump 1.26.63.1
+        // first coverage, dampens_vibrations = true: BDS Script API dump 1.26.63.1
+        // first coverage, occludes_vibrations = true: BDS Script API dump 1.26.63.1
         v.change("minecraft:pink_wool_slab").dampensVibrations(true).occludesVibrations(true);
-        // dampens_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
-        // occludes_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
+        // first coverage, dampens_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
+        // first coverage, occludes_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
         v.change("minecraft:pink_wool_stairs")
-                .dampensVibrations("minecraft:corner", "inner_left", null, "inner_right", null, "none", true, "outer_left", null, "outer_right", null)
-                .occludesVibrations("minecraft:corner", "inner_left", null, "inner_right", null, "none", true, "outer_left", null, "outer_right", null);
-        // dampens_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
-        // occludes_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
+                .dampensVibrations("minecraft:corner", "inner_left", null, "inner_right", null,
+                        "none", true, "outer_left", null, "outer_right", null)
+                .occludesVibrations("minecraft:corner", "inner_left", null, "inner_right", null,
+                        "none", true, "outer_left", null, "outer_right", null);
+        // first coverage, dampens_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
+        // first coverage, occludes_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
         v.change("minecraft:polished_andesite_stairs")
-                .dampensVibrations("minecraft:corner", "inner_left", null, "inner_right", null, "none", false, "outer_left", null, "outer_right", null)
-                .occludesVibrations("minecraft:corner", "inner_left", null, "inner_right", null, "none", false, "outer_left", null, "outer_right", null);
-        // dampens_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
-        // occludes_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
+                .dampensVibrations("minecraft:corner", "inner_left", null, "inner_right", null,
+                        "none", false, "outer_left", null, "outer_right", null)
+                .occludesVibrations("minecraft:corner", "inner_left", null, "inner_right", null,
+                        "none", false, "outer_left", null, "outer_right", null);
+        // first coverage, dampens_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
+        // first coverage, occludes_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
         v.change("minecraft:polished_blackstone_brick_stairs")
-                .dampensVibrations("minecraft:corner", "inner_left", null, "inner_right", null, "none", false, "outer_left", null, "outer_right", null)
-                .occludesVibrations("minecraft:corner", "inner_left", null, "inner_right", null, "none", false, "outer_left", null, "outer_right", null);
-        // dampens_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
-        // occludes_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
+                .dampensVibrations("minecraft:corner", "inner_left", null, "inner_right", null,
+                        "none", false, "outer_left", null, "outer_right", null)
+                .occludesVibrations("minecraft:corner", "inner_left", null, "inner_right", null,
+                        "none", false, "outer_left", null, "outer_right", null);
+        // first coverage, dampens_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
+        // first coverage, occludes_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
         v.change("minecraft:polished_blackstone_stairs")
-                .dampensVibrations("minecraft:corner", "inner_left", null, "inner_right", null, "none", false, "outer_left", null, "outer_right", null)
-                .occludesVibrations("minecraft:corner", "inner_left", null, "inner_right", null, "none", false, "outer_left", null, "outer_right", null);
-    }
-
-    static void part5(Changes v) {
-        // dampens_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
-        // occludes_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
+                .dampensVibrations("minecraft:corner", "inner_left", null, "inner_right", null,
+                        "none", false, "outer_left", null, "outer_right", null)
+                .occludesVibrations("minecraft:corner", "inner_left", null, "inner_right", null,
+                        "none", false, "outer_left", null, "outer_right", null);
+        // first coverage, dampens_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
+        // first coverage, occludes_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
         v.change("minecraft:polished_cinnabar_stairs")
-                .dampensVibrations("minecraft:corner", "inner_left", null, "inner_right", null, "none", false, "outer_left", null, "outer_right", null)
-                .occludesVibrations("minecraft:corner", "inner_left", null, "inner_right", null, "none", false, "outer_left", null, "outer_right", null);
-        // dampens_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
-        // occludes_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
+                .dampensVibrations("minecraft:corner", "inner_left", null, "inner_right", null,
+                        "none", false, "outer_left", null, "outer_right", null)
+                .occludesVibrations("minecraft:corner", "inner_left", null, "inner_right", null,
+                        "none", false, "outer_left", null, "outer_right", null);
+        // first coverage, dampens_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
+        // first coverage, occludes_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
         v.change("minecraft:polished_deepslate_stairs")
-                .dampensVibrations("minecraft:corner", "inner_left", null, "inner_right", null, "none", false, "outer_left", null, "outer_right", null)
-                .occludesVibrations("minecraft:corner", "inner_left", null, "inner_right", null, "none", false, "outer_left", null, "outer_right", null);
-        // dampens_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
-        // occludes_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
+                .dampensVibrations("minecraft:corner", "inner_left", null, "inner_right", null,
+                        "none", false, "outer_left", null, "outer_right", null)
+                .occludesVibrations("minecraft:corner", "inner_left", null, "inner_right", null,
+                        "none", false, "outer_left", null, "outer_right", null);
+        // first coverage, dampens_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
+        // first coverage, occludes_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
         v.change("minecraft:polished_diorite_stairs")
-                .dampensVibrations("minecraft:corner", "inner_left", null, "inner_right", null, "none", false, "outer_left", null, "outer_right", null)
-                .occludesVibrations("minecraft:corner", "inner_left", null, "inner_right", null, "none", false, "outer_left", null, "outer_right", null);
-        // dampens_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
-        // occludes_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
+                .dampensVibrations("minecraft:corner", "inner_left", null, "inner_right", null,
+                        "none", false, "outer_left", null, "outer_right", null)
+                .occludesVibrations("minecraft:corner", "inner_left", null, "inner_right", null,
+                        "none", false, "outer_left", null, "outer_right", null);
+        // first coverage, dampens_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
+        // first coverage, occludes_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
         v.change("minecraft:polished_granite_stairs")
-                .dampensVibrations("minecraft:corner", "inner_left", null, "inner_right", null, "none", false, "outer_left", null, "outer_right", null)
-                .occludesVibrations("minecraft:corner", "inner_left", null, "inner_right", null, "none", false, "outer_left", null, "outer_right", null);
-        // dampens_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
-        // occludes_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
+                .dampensVibrations("minecraft:corner", "inner_left", null, "inner_right", null,
+                        "none", false, "outer_left", null, "outer_right", null)
+                .occludesVibrations("minecraft:corner", "inner_left", null, "inner_right", null,
+                        "none", false, "outer_left", null, "outer_right", null);
+        // first coverage, dampens_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
+        // first coverage, occludes_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
         v.change("minecraft:polished_sulfur_stairs")
-                .dampensVibrations("minecraft:corner", "inner_left", null, "inner_right", null, "none", false, "outer_left", null, "outer_right", null)
-                .occludesVibrations("minecraft:corner", "inner_left", null, "inner_right", null, "none", false, "outer_left", null, "outer_right", null);
-        // dampens_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
-        // occludes_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
+                .dampensVibrations("minecraft:corner", "inner_left", null, "inner_right", null,
+                        "none", false, "outer_left", null, "outer_right", null)
+                .occludesVibrations("minecraft:corner", "inner_left", null, "inner_right", null,
+                        "none", false, "outer_left", null, "outer_right", null);
+        // first coverage, dampens_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
+        // first coverage, occludes_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
         v.change("minecraft:polished_tuff_stairs")
-                .dampensVibrations("minecraft:corner", "inner_left", null, "inner_right", null, "none", false, "outer_left", null, "outer_right", null)
-                .occludesVibrations("minecraft:corner", "inner_left", null, "inner_right", null, "none", false, "outer_left", null, "outer_right", null);
+                .dampensVibrations("minecraft:corner", "inner_left", null, "inner_right", null,
+                        "none", false, "outer_left", null, "outer_right", null)
+                .occludesVibrations("minecraft:corner", "inner_left", null, "inner_right", null,
+                        "none", false, "outer_left", null, "outer_right", null);
         // collision_shape per state (32 of 32 states): BDS behaviour probe 1.26.63.1 (doors); CloudburstMC/Data 0021592 says otherwise
         v.change("minecraft:poplar_door")
-                .collisionShape(ACACIA_DOOR_COLLISION_SHAPE_2);
-        // dampens_vibrations per state (1 of 16 states): BDS Script API dump 1.26.63.1
-        // occludes_vibrations per state (1 of 16 states): BDS Script API dump 1.26.63.1
+                .collisionShape(TABLE_DOOR_HINGE_BIT_CARDINAL_DIRECTION_OPEN_BIT_C89710);
+    }
+
+    static void part6(Changes v) {
+        // first coverage, dampens_vibrations per state (1 of 16 states): BDS Script API dump 1.26.63.1
+        // first coverage, occludes_vibrations per state (1 of 16 states): BDS Script API dump 1.26.63.1
         v.change("minecraft:poplar_fence")
-                .dampensVibrations(ACACIA_FENCE_SNOW_LOGGABLE)
-                .occludesVibrations(ACACIA_FENCE_SNOW_LOGGABLE);
-        // dampens_vibrations per state (8 of 16 states): BDS Script API dump 1.26.63.1
-        // occludes_vibrations per state (8 of 16 states): BDS Script API dump 1.26.63.1
+                .dampensVibrations(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_1AB959)
+                .occludesVibrations(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_1AB959);
+        // first coverage, dampens_vibrations per state (8 of 16 states): BDS Script API dump 1.26.63.1
+        // first coverage, occludes_vibrations per state (8 of 16 states): BDS Script API dump 1.26.63.1
         v.change("minecraft:poplar_fence_gate")
                 .dampensVibrations("in_wall_bit", false, false, true, null)
                 .occludesVibrations("in_wall_bit", false, false, true, null);
-        // dampens_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
-        // occludes_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
+        // first coverage, dampens_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
+        // first coverage, occludes_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
         v.change("minecraft:poplar_stairs")
-                .dampensVibrations("minecraft:corner", "inner_left", null, "inner_right", null, "none", false, "outer_left", null, "outer_right", null)
-                .occludesVibrations("minecraft:corner", "inner_left", null, "inner_right", null, "none", false, "outer_left", null, "outer_right", null);
-        // dampens_vibrations per state (1 of 5 states): BDS Script API dump 1.26.63.1
-        // occludes_vibrations per state (1 of 5 states): BDS Script API dump 1.26.63.1
+                .dampensVibrations("minecraft:corner", "inner_left", null, "inner_right", null,
+                        "none", false, "outer_left", null, "outer_right", null)
+                .occludesVibrations("minecraft:corner", "inner_left", null, "inner_right", null,
+                        "none", false, "outer_left", null, "outer_right", null);
+        // first coverage, dampens_vibrations per state (1 of 5 states): BDS Script API dump 1.26.63.1
+        // first coverage, occludes_vibrations per state (1 of 5 states): BDS Script API dump 1.26.63.1
         v.change("minecraft:potent_sulfur")
-                .dampensVibrations("potent_sulfur_state", "continuous", null, "dormant", null, "dry", false, "erupting", null, "wet", null)
-                .occludesVibrations("potent_sulfur_state", "continuous", null, "dormant", null, "dry", false, "erupting", null, "wet", null);
-        // dampens_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
-        // occludes_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
+                .dampensVibrations("potent_sulfur_state", "continuous", null, "dormant", null,
+                        "dry", false, "erupting", null, "wet", null)
+                .occludesVibrations("potent_sulfur_state", "continuous", null, "dormant", null,
+                        "dry", false, "erupting", null, "wet", null);
+        // first coverage, dampens_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
+        // first coverage, occludes_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
         v.change("minecraft:prismarine_bricks_stairs")
-                .dampensVibrations("minecraft:corner", "inner_left", null, "inner_right", null, "none", false, "outer_left", null, "outer_right", null)
-                .occludesVibrations("minecraft:corner", "inner_left", null, "inner_right", null, "none", false, "outer_left", null, "outer_right", null);
-        // dampens_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
-        // occludes_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
+                .dampensVibrations("minecraft:corner", "inner_left", null, "inner_right", null,
+                        "none", false, "outer_left", null, "outer_right", null)
+                .occludesVibrations("minecraft:corner", "inner_left", null, "inner_right", null,
+                        "none", false, "outer_left", null, "outer_right", null);
+        // first coverage, dampens_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
+        // first coverage, occludes_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
         v.change("minecraft:prismarine_stairs")
-                .dampensVibrations("minecraft:corner", "inner_left", null, "inner_right", null, "none", false, "outer_left", null, "outer_right", null)
-                .occludesVibrations("minecraft:corner", "inner_left", null, "inner_right", null, "none", false, "outer_left", null, "outer_right", null);
-        // dampens_vibrations unknown -> true: BDS Script API dump 1.26.63.1
+                .dampensVibrations("minecraft:corner", "inner_left", null, "inner_right", null,
+                        "none", false, "outer_left", null, "outer_right", null)
+                .occludesVibrations("minecraft:corner", "inner_left", null, "inner_right", null,
+                        "none", false, "outer_left", null, "outer_right", null);
+        // first coverage, dampens_vibrations = true: BDS Script API dump 1.26.63.1
         v.change("minecraft:purple_carpet").dampensVibrations(true);
-        // dampens_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
-        // occludes_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
+        // first coverage, dampens_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
+        // first coverage, occludes_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
         v.change("minecraft:purple_concrete_stairs")
-                .dampensVibrations("minecraft:corner", "inner_left", null, "inner_right", null, "none", false, "outer_left", null, "outer_right", null)
-                .occludesVibrations("minecraft:corner", "inner_left", null, "inner_right", null, "none", false, "outer_left", null, "outer_right", null);
-        // dampens_vibrations per state (1 of 16 states): BDS Script API dump 1.26.63.1
-        // occludes_vibrations per state (1 of 16 states): BDS Script API dump 1.26.63.1
+                .dampensVibrations("minecraft:corner", "inner_left", null, "inner_right", null,
+                        "none", false, "outer_left", null, "outer_right", null)
+                .occludesVibrations("minecraft:corner", "inner_left", null, "inner_right", null,
+                        "none", false, "outer_left", null, "outer_right", null);
+        // first coverage, dampens_vibrations per state (1 of 16 states): BDS Script API dump 1.26.63.1
+        // first coverage, occludes_vibrations per state (1 of 16 states): BDS Script API dump 1.26.63.1
         v.change("minecraft:purple_stained_glass_pane")
-                .dampensVibrations(ACACIA_FENCE_SNOW_LOGGABLE)
-                .occludesVibrations(ACACIA_FENCE_SNOW_LOGGABLE);
-        // dampens_vibrations unknown -> true: BDS Script API dump 1.26.63.1
-        // occludes_vibrations unknown -> true: BDS Script API dump 1.26.63.1
+                .dampensVibrations(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_1AB959)
+                .occludesVibrations(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_1AB959);
+        // first coverage, dampens_vibrations = true: BDS Script API dump 1.26.63.1
+        // first coverage, occludes_vibrations = true: BDS Script API dump 1.26.63.1
         v.change("minecraft:purple_wool").dampensVibrations(true).occludesVibrations(true);
-        // dampens_vibrations unknown -> true: BDS Script API dump 1.26.63.1
-        // occludes_vibrations unknown -> true: BDS Script API dump 1.26.63.1
+        // first coverage, dampens_vibrations = true: BDS Script API dump 1.26.63.1
+        // first coverage, occludes_vibrations = true: BDS Script API dump 1.26.63.1
         v.change("minecraft:purple_wool_double_slab").dampensVibrations(true).occludesVibrations(true);
-        // dampens_vibrations unknown -> true: BDS Script API dump 1.26.63.1
-        // occludes_vibrations unknown -> true: BDS Script API dump 1.26.63.1
+        // first coverage, dampens_vibrations = true: BDS Script API dump 1.26.63.1
+        // first coverage, occludes_vibrations = true: BDS Script API dump 1.26.63.1
         v.change("minecraft:purple_wool_slab").dampensVibrations(true).occludesVibrations(true);
-        // dampens_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
-        // occludes_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
+        // first coverage, dampens_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
+        // first coverage, occludes_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
         v.change("minecraft:purple_wool_stairs")
-                .dampensVibrations("minecraft:corner", "inner_left", null, "inner_right", null, "none", true, "outer_left", null, "outer_right", null)
-                .occludesVibrations("minecraft:corner", "inner_left", null, "inner_right", null, "none", true, "outer_left", null, "outer_right", null);
-        // dampens_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
-        // occludes_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
+                .dampensVibrations("minecraft:corner", "inner_left", null, "inner_right", null,
+                        "none", true, "outer_left", null, "outer_right", null)
+                .occludesVibrations("minecraft:corner", "inner_left", null, "inner_right", null,
+                        "none", true, "outer_left", null, "outer_right", null);
+        // first coverage, dampens_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
+        // first coverage, occludes_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
         v.change("minecraft:purpur_stairs")
-                .dampensVibrations("minecraft:corner", "inner_left", null, "inner_right", null, "none", false, "outer_left", null, "outer_right", null)
-                .occludesVibrations("minecraft:corner", "inner_left", null, "inner_right", null, "none", false, "outer_left", null, "outer_right", null);
-        // dampens_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
-        // occludes_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
+                .dampensVibrations("minecraft:corner", "inner_left", null, "inner_right", null,
+                        "none", false, "outer_left", null, "outer_right", null)
+                .occludesVibrations("minecraft:corner", "inner_left", null, "inner_right", null,
+                        "none", false, "outer_left", null, "outer_right", null);
+        // first coverage, dampens_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
+        // first coverage, occludes_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
         v.change("minecraft:quartz_stairs")
-                .dampensVibrations("minecraft:corner", "inner_left", null, "inner_right", null, "none", false, "outer_left", null, "outer_right", null)
-                .occludesVibrations("minecraft:corner", "inner_left", null, "inner_right", null, "none", false, "outer_left", null, "outer_right", null);
-        // dampens_vibrations unknown -> true: BDS Script API dump 1.26.63.1
+                .dampensVibrations("minecraft:corner", "inner_left", null, "inner_right", null,
+                        "none", false, "outer_left", null, "outer_right", null)
+                .occludesVibrations("minecraft:corner", "inner_left", null, "inner_right", null,
+                        "none", false, "outer_left", null, "outer_right", null);
+        // first coverage, dampens_vibrations = true: BDS Script API dump 1.26.63.1
         v.change("minecraft:red_carpet").dampensVibrations(true);
-        // dampens_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
-        // occludes_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
+        // first coverage, dampens_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
+        // first coverage, occludes_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
         v.change("minecraft:red_concrete_stairs")
-                .dampensVibrations("minecraft:corner", "inner_left", null, "inner_right", null, "none", false, "outer_left", null, "outer_right", null)
-                .occludesVibrations("minecraft:corner", "inner_left", null, "inner_right", null, "none", false, "outer_left", null, "outer_right", null);
-        // dampens_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
-        // occludes_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
+                .dampensVibrations("minecraft:corner", "inner_left", null, "inner_right", null,
+                        "none", false, "outer_left", null, "outer_right", null)
+                .occludesVibrations("minecraft:corner", "inner_left", null, "inner_right", null,
+                        "none", false, "outer_left", null, "outer_right", null);
+        // first coverage, dampens_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
+        // first coverage, occludes_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
         v.change("minecraft:red_nether_brick_stairs")
-                .dampensVibrations("minecraft:corner", "inner_left", null, "inner_right", null, "none", false, "outer_left", null, "outer_right", null)
-                .occludesVibrations("minecraft:corner", "inner_left", null, "inner_right", null, "none", false, "outer_left", null, "outer_right", null);
-        // dampens_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
-        // occludes_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
+                .dampensVibrations("minecraft:corner", "inner_left", null, "inner_right", null,
+                        "none", false, "outer_left", null, "outer_right", null)
+                .occludesVibrations("minecraft:corner", "inner_left", null, "inner_right", null,
+                        "none", false, "outer_left", null, "outer_right", null);
+        // first coverage, dampens_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
+        // first coverage, occludes_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
         v.change("minecraft:red_sandstone_stairs")
-                .dampensVibrations("minecraft:corner", "inner_left", null, "inner_right", null, "none", false, "outer_left", null, "outer_right", null)
-                .occludesVibrations("minecraft:corner", "inner_left", null, "inner_right", null, "none", false, "outer_left", null, "outer_right", null);
-        // dampens_vibrations per state (1 of 16 states): BDS Script API dump 1.26.63.1
-        // occludes_vibrations per state (1 of 16 states): BDS Script API dump 1.26.63.1
+                .dampensVibrations("minecraft:corner", "inner_left", null, "inner_right", null,
+                        "none", false, "outer_left", null, "outer_right", null)
+                .occludesVibrations("minecraft:corner", "inner_left", null, "inner_right", null,
+                        "none", false, "outer_left", null, "outer_right", null);
+        // first coverage, dampens_vibrations per state (1 of 16 states): BDS Script API dump 1.26.63.1
+        // first coverage, occludes_vibrations per state (1 of 16 states): BDS Script API dump 1.26.63.1
         v.change("minecraft:red_stained_glass_pane")
-                .dampensVibrations(ACACIA_FENCE_SNOW_LOGGABLE)
-                .occludesVibrations(ACACIA_FENCE_SNOW_LOGGABLE);
-        // dampens_vibrations unknown -> true: BDS Script API dump 1.26.63.1
-        // occludes_vibrations unknown -> true: BDS Script API dump 1.26.63.1
+                .dampensVibrations(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_1AB959)
+                .occludesVibrations(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_1AB959);
+        // first coverage, dampens_vibrations = true: BDS Script API dump 1.26.63.1
+        // first coverage, occludes_vibrations = true: BDS Script API dump 1.26.63.1
         v.change("minecraft:red_wool").dampensVibrations(true).occludesVibrations(true);
-        // dampens_vibrations unknown -> true: BDS Script API dump 1.26.63.1
-        // occludes_vibrations unknown -> true: BDS Script API dump 1.26.63.1
+        // first coverage, dampens_vibrations = true: BDS Script API dump 1.26.63.1
+        // first coverage, occludes_vibrations = true: BDS Script API dump 1.26.63.1
         v.change("minecraft:red_wool_double_slab").dampensVibrations(true).occludesVibrations(true);
-        // dampens_vibrations unknown -> true: BDS Script API dump 1.26.63.1
-        // occludes_vibrations unknown -> true: BDS Script API dump 1.26.63.1
+        // first coverage, dampens_vibrations = true: BDS Script API dump 1.26.63.1
+        // first coverage, occludes_vibrations = true: BDS Script API dump 1.26.63.1
         v.change("minecraft:red_wool_slab").dampensVibrations(true).occludesVibrations(true);
-        // dampens_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
-        // occludes_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
+        // first coverage, dampens_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
+        // first coverage, occludes_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
         v.change("minecraft:red_wool_stairs")
-                .dampensVibrations("minecraft:corner", "inner_left", null, "inner_right", null, "none", true, "outer_left", null, "outer_right", null)
-                .occludesVibrations("minecraft:corner", "inner_left", null, "inner_right", null, "none", true, "outer_left", null, "outer_right", null);
+                .dampensVibrations("minecraft:corner", "inner_left", null, "inner_right", null,
+                        "none", true, "outer_left", null, "outer_right", null)
+                .occludesVibrations("minecraft:corner", "inner_left", null, "inner_right", null,
+                        "none", true, "outer_left", null, "outer_right", null);
         // other states than in 26.50 (redstone_signal=0..15): values from BDS Script API dump 1.26.63.1, BDS behaviour probe 1.26.63.1 (climbing), CloudburstMC/Data 0021592
         v.block("minecraft:redstone_wire", "redstone_east='none'|'side'|'up',redstone_north='none'|'side'|'up',redstone_signal=0..15,redstone_south='none'|'side'|'up',redstone_west='none'|'side'|'up'")
                 .explosionResistance(0.0f)
@@ -1049,278 +1248,264 @@ final class BehaviourChanges26_60 {
                 .outlineShape(BOX_0_0_0_16_1_16)
                 .liquidBlocking(false)
                 .liquidSpreadCausesSpawn(true)
-                .liquidFlowDirections("redstone_signal", 0, 63, 1, null, 2, null, 3, null, 4, null, 5, null, 6, null, 7, null, 8, null, 9, null, 10, null, 11, null, 12, null, 13, null, 14, null, 15, null)
+                .liquidFlowDirections("redstone_signal", 0, 63, 1, null, 2, null, 3, null, 4, null,
+                        5, null, 6, null, 7, null, 8, null, 9, null, 10, null, 11, null, 12, null,
+                        13, null, 14, null, 15, null)
                 .tintMethod("RedStoneWire")
                 .translucency(0.8f)
                 .thickness(0.07f)
-                .movementType("redstone_signal", 0, "Popped", 1, null, 2, null, 3, null, 4, null, 5, null, 6, null, 7, null, 8, null, 9, null, 10, null, 11, null, 12, null, 13, null, 14, null, 15, null)
-                .stickyType("redstone_signal", 0, "None", 1, null, 2, null, 3, null, 4, null, 5, null, 6, null, 7, null, 8, null, 9, null, 10, null, 11, null, 12, null, 13, null, 14, null, 15, null)
-                .accumulatesSnow("redstone_signal", 0, false, 1, null, 2, null, 3, null, 4, null, 5, null, 6, null, 7, null, 8, null, 9, null, 10, null, 11, null, 12, null, 13, null, 14, null, 15, null)
-                .snowLoggable("redstone_signal", 0, false, 1, null, 2, null, 3, null, 4, null, 5, null, 6, null, 7, null, 8, null, 9, null, 10, null, 11, null, 12, null, 13, null, 14, null, 15, null)
-                .obstructsRain("redstone_signal", 0, false, 1, null, 2, null, 3, null, 4, null, 5, null, 6, null, 7, null, 8, null, 9, null, 10, null, 11, null, 12, null, 13, null, 14, null, 15, null)
-                .dampensVibrations("redstone_signal", 0, false, 1, null, 2, null, 3, null, 4, null, 5, null, 6, null, 7, null, 8, null, 9, null, 10, null, 11, null, 12, null, 13, null, 14, null, 15, null)
-                .occludesVibrations("redstone_signal", 0, false, 1, null, 2, null, 3, null, 4, null, 5, null, 6, null, 7, null, 8, null, 9, null, 10, null, 11, null, 12, null, 13, null, 14, null, 15, null);
-        // dampens_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
-        // occludes_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
+                .movementType("redstone_signal", 0, "Popped", 1, null, 2, null, 3, null, 4, null,
+                        5, null, 6, null, 7, null, 8, null, 9, null, 10, null, 11, null, 12, null,
+                        13, null, 14, null, 15, null)
+                .stickyType("redstone_signal", 0, "None", 1, null, 2, null, 3, null, 4, null,
+                        5, null, 6, null, 7, null, 8, null, 9, null, 10, null, 11, null, 12, null,
+                        13, null, 14, null, 15, null)
+                .accumulatesSnow("redstone_signal", 0, false, 1, null, 2, null, 3, null, 4, null,
+                        5, null, 6, null, 7, null, 8, null, 9, null, 10, null, 11, null, 12, null,
+                        13, null, 14, null, 15, null)
+                .snowLoggable("redstone_signal", 0, false, 1, null, 2, null, 3, null, 4, null,
+                        5, null, 6, null, 7, null, 8, null, 9, null, 10, null, 11, null, 12, null,
+                        13, null, 14, null, 15, null)
+                .obstructsRain("redstone_signal", 0, false, 1, null, 2, null, 3, null, 4, null,
+                        5, null, 6, null, 7, null, 8, null, 9, null, 10, null, 11, null, 12, null,
+                        13, null, 14, null, 15, null)
+                .dampensVibrations("redstone_signal", 0, false, 1, null, 2, null, 3, null, 4, null,
+                        5, null, 6, null, 7, null, 8, null, 9, null, 10, null, 11, null, 12, null,
+                        13, null, 14, null, 15, null)
+                .occludesVibrations("redstone_signal", 0, false, 1, null, 2, null, 3, null, 4, null,
+                        5, null, 6, null, 7, null, 8, null, 9, null, 10, null, 11, null, 12, null,
+                        13, null, 14, null, 15, null);
+        // first coverage, dampens_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
+        // first coverage, occludes_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
         v.change("minecraft:resin_brick_stairs")
-                .dampensVibrations("minecraft:corner", "inner_left", null, "inner_right", null, "none", false, "outer_left", null, "outer_right", null)
-                .occludesVibrations("minecraft:corner", "inner_left", null, "inner_right", null, "none", false, "outer_left", null, "outer_right", null);
-        // dampens_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
-        // occludes_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
+                .dampensVibrations("minecraft:corner", "inner_left", null, "inner_right", null,
+                        "none", false, "outer_left", null, "outer_right", null)
+                .occludesVibrations("minecraft:corner", "inner_left", null, "inner_right", null,
+                        "none", false, "outer_left", null, "outer_right", null);
+        // first coverage, dampens_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
+        // first coverage, occludes_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
         v.change("minecraft:sandstone_stairs")
-                .dampensVibrations("minecraft:corner", "inner_left", null, "inner_right", null, "none", false, "outer_left", null, "outer_right", null)
-                .occludesVibrations("minecraft:corner", "inner_left", null, "inner_right", null, "none", false, "outer_left", null, "outer_right", null);
-        // dampens_vibrations per state (2 of 16 states): BDS Script API dump 1.26.63.1
-        // occludes_vibrations per state (2 of 16 states): BDS Script API dump 1.26.63.1
+                .dampensVibrations("minecraft:corner", "inner_left", null, "inner_right", null,
+                        "none", false, "outer_left", null, "outer_right", null)
+                .occludesVibrations("minecraft:corner", "inner_left", null, "inner_right", null,
+                        "none", false, "outer_left", null, "outer_right", null);
+        // first coverage, dampens_vibrations per state (2 of 16 states): BDS Script API dump 1.26.63.1
+        // first coverage, occludes_vibrations per state (2 of 16 states): BDS Script API dump 1.26.63.1
         v.change("minecraft:scaffolding")
-                .dampensVibrations("stability", 0, false, 1, null, 2, null, 3, null, 4, null, 5, null, 6, null, 7, null)
-                .occludesVibrations("stability", 0, false, 1, null, 2, null, 3, null, 4, null, 5, null, 6, null, 7, null);
-    }
-
-    static void part6(Changes v) {
-        // dampens_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
-        // occludes_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
+                .dampensVibrations("stability", 0, false, 1, null, 2, null, 3, null, 4, null,
+                        5, null, 6, null, 7, null)
+                .occludesVibrations("stability", 0, false, 1, null, 2, null, 3, null, 4, null,
+                        5, null, 6, null, 7, null);
+        // first coverage, dampens_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
+        // first coverage, occludes_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
         v.change("minecraft:smooth_quartz_stairs")
-                .dampensVibrations("minecraft:corner", "inner_left", null, "inner_right", null, "none", false, "outer_left", null, "outer_right", null)
-                .occludesVibrations("minecraft:corner", "inner_left", null, "inner_right", null, "none", false, "outer_left", null, "outer_right", null);
-        // dampens_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
-        // occludes_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
+                .dampensVibrations("minecraft:corner", "inner_left", null, "inner_right", null,
+                        "none", false, "outer_left", null, "outer_right", null)
+                .occludesVibrations("minecraft:corner", "inner_left", null, "inner_right", null,
+                        "none", false, "outer_left", null, "outer_right", null);
+        // first coverage, dampens_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
+        // first coverage, occludes_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
         v.change("minecraft:smooth_red_sandstone_stairs")
-                .dampensVibrations("minecraft:corner", "inner_left", null, "inner_right", null, "none", false, "outer_left", null, "outer_right", null)
-                .occludesVibrations("minecraft:corner", "inner_left", null, "inner_right", null, "none", false, "outer_left", null, "outer_right", null);
-        // dampens_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
-        // occludes_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
+                .dampensVibrations("minecraft:corner", "inner_left", null, "inner_right", null,
+                        "none", false, "outer_left", null, "outer_right", null)
+                .occludesVibrations("minecraft:corner", "inner_left", null, "inner_right", null,
+                        "none", false, "outer_left", null, "outer_right", null);
+        // first coverage, dampens_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
+        // first coverage, occludes_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
         v.change("minecraft:smooth_sandstone_stairs")
-                .dampensVibrations("minecraft:corner", "inner_left", null, "inner_right", null, "none", false, "outer_left", null, "outer_right", null)
-                .occludesVibrations("minecraft:corner", "inner_left", null, "inner_right", null, "none", false, "outer_left", null, "outer_right", null);
+                .dampensVibrations("minecraft:corner", "inner_left", null, "inner_right", null,
+                        "none", false, "outer_left", null, "outer_right", null)
+                .occludesVibrations("minecraft:corner", "inner_left", null, "inner_right", null,
+                        "none", false, "outer_left", null, "outer_right", null);
         // dampens_vibrations stays as in the version before (not what every block got)
         // occludes_vibrations stays as in the version before (not what every block got)
         v.change("minecraft:soul_fire").dampensVibrationsUnknown().occludesVibrationsUnknown();
-        // collision_shape per state (32 of 32 states): BDS behaviour probe 1.26.63.1 (doors); CloudburstMC/Data 0021592 says otherwise
-        v.change("minecraft:spruce_door")
-                .collisionShape(ACACIA_DOOR_COLLISION_SHAPE_2);
-        // dampens_vibrations per state (1 of 16 states): BDS Script API dump 1.26.63.1
-        // occludes_vibrations per state (1 of 16 states): BDS Script API dump 1.26.63.1
-        v.change("minecraft:spruce_fence")
-                .dampensVibrations(ACACIA_FENCE_SNOW_LOGGABLE)
-                .occludesVibrations(ACACIA_FENCE_SNOW_LOGGABLE);
-        // dampens_vibrations per state (8 of 16 states): BDS Script API dump 1.26.63.1
-        // occludes_vibrations per state (8 of 16 states): BDS Script API dump 1.26.63.1
-        v.change("minecraft:spruce_fence_gate")
-                .dampensVibrations("in_wall_bit", false, false, true, null)
-                .occludesVibrations("in_wall_bit", false, false, true, null);
-        // dampens_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
-        // occludes_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
-        v.change("minecraft:spruce_stairs")
-                .dampensVibrations("minecraft:corner", "inner_left", null, "inner_right", null, "none", false, "outer_left", null, "outer_right", null)
-                .occludesVibrations("minecraft:corner", "inner_left", null, "inner_right", null, "none", false, "outer_left", null, "outer_right", null);
-        // dampens_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
-        // occludes_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
-        v.change("minecraft:stone_brick_stairs")
-                .dampensVibrations("minecraft:corner", "inner_left", null, "inner_right", null, "none", false, "outer_left", null, "outer_right", null)
-                .occludesVibrations("minecraft:corner", "inner_left", null, "inner_right", null, "none", false, "outer_left", null, "outer_right", null);
-        // dampens_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
-        // occludes_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
-        v.change("minecraft:stone_stairs")
-                .dampensVibrations("minecraft:corner", "inner_left", null, "inner_right", null, "none", false, "outer_left", null, "outer_right", null)
-                .occludesVibrations("minecraft:corner", "inner_left", null, "inner_right", null, "none", false, "outer_left", null, "outer_right", null);
-        // dampens_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
-        // occludes_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
-        v.change("minecraft:sulfur_brick_stairs")
-                .dampensVibrations("minecraft:corner", "inner_left", null, "inner_right", null, "none", false, "outer_left", null, "outer_right", null)
-                .occludesVibrations("minecraft:corner", "inner_left", null, "inner_right", null, "none", false, "outer_left", null, "outer_right", null);
-        // dampens_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
-        // occludes_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
-        v.change("minecraft:sulfur_stairs")
-                .dampensVibrations("minecraft:corner", "inner_left", null, "inner_right", null, "none", false, "outer_left", null, "outer_right", null)
-                .occludesVibrations("minecraft:corner", "inner_left", null, "inner_right", null, "none", false, "outer_left", null, "outer_right", null);
-        // dampens_vibrations per state (5 of 6 states): BDS Script API dump 1.26.63.1
-        // occludes_vibrations per state (5 of 6 states): BDS Script API dump 1.26.63.1
-        v.change("minecraft:torch")
-                .dampensVibrations("torch_facing_direction", "east", false, "north", false, "south", false, "top", false, "unknown", null, "west", false)
-                .occludesVibrations("torch_facing_direction", "east", false, "north", false, "south", false, "top", false, "unknown", null, "west", false);
-        // dampens_vibrations per state (1 of 256 states): BDS Script API dump 1.26.63.1
-        // occludes_vibrations per state (1 of 256 states): BDS Script API dump 1.26.63.1
-        v.change("minecraft:trip_wire")
-                .dampensVibrations(TRIP_WIRE_ACCUMULATES_SNOW_2)
-                .occludesVibrations(TRIP_WIRE_ACCUMULATES_SNOW_2);
-        // dampens_vibrations per state (4 of 16 states): BDS Script API dump 1.26.63.1
-        // occludes_vibrations per state (4 of 16 states): BDS Script API dump 1.26.63.1
-        v.change("minecraft:tripwire_hook")
-                .dampensVibrations(TRIPWIRE_HOOK_ACCUMULATES_SNOW)
-                .occludesVibrations(TRIPWIRE_HOOK_ACCUMULATES_SNOW);
-        // dampens_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
-        // occludes_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
-        v.change("minecraft:tuff_brick_stairs")
-                .dampensVibrations("minecraft:corner", "inner_left", null, "inner_right", null, "none", false, "outer_left", null, "outer_right", null)
-                .occludesVibrations("minecraft:corner", "inner_left", null, "inner_right", null, "none", false, "outer_left", null, "outer_right", null);
-        // dampens_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
-        // occludes_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
-        v.change("minecraft:tuff_stairs")
-                .dampensVibrations("minecraft:corner", "inner_left", null, "inner_right", null, "none", false, "outer_left", null, "outer_right", null)
-                .occludesVibrations("minecraft:corner", "inner_left", null, "inner_right", null, "none", false, "outer_left", null, "outer_right", null);
-        // climbable unknown -> true: BDS behaviour probe 1.26.63.1 (climbing)
-        // dampens_vibrations per state (25 of 26 states): BDS Script API dump 1.26.63.1
-        // occludes_vibrations per state (25 of 26 states): BDS Script API dump 1.26.63.1
-        v.change("minecraft:twisting_vines")
-                .climbable(true)
-                .dampensVibrations("twisting_vines_age", 0, null, 1, false, 2, false, 3, false, 4, false, 5, false, 6, false, 7, false, 8, false, 9, false, 10, false, 11, false, 12, false, 13, false, 14, false, 15, false, 16, false, 17, false, 18, false, 19, false, 20, false, 21, false, 22, false, 23, false, 24, false, 25, false)
-                .occludesVibrations("twisting_vines_age", 0, null, 1, false, 2, false, 3, false, 4, false, 5, false, 6, false, 7, false, 8, false, 9, false, 10, false, 11, false, 12, false, 13, false, 14, false, 15, false, 16, false, 17, false, 18, false, 19, false, 20, false, 21, false, 22, false, 23, false, 24, false, 25, false);
-        // dampens_vibrations per state (5 of 6 states): BDS Script API dump 1.26.63.1
-        // occludes_vibrations per state (5 of 6 states): BDS Script API dump 1.26.63.1
-        v.change("minecraft:underwater_torch")
-                .dampensVibrations("torch_facing_direction", "east", false, "north", false, "south", false, "top", false, "unknown", null, "west", false)
-                .occludesVibrations("torch_facing_direction", "east", false, "north", false, "south", false, "top", false, "unknown", null, "west", false);
-        // climbable unknown -> true: BDS behaviour probe 1.26.63.1 (climbing)
-        v.change("minecraft:vine").climbable(true);
-        // collision_shape per state (32 of 32 states): BDS behaviour probe 1.26.63.1 (doors); CloudburstMC/Data 0021592 says otherwise
-        v.change("minecraft:warped_door")
-                .collisionShape(ACACIA_DOOR_COLLISION_SHAPE_2);
-        // dampens_vibrations per state (1 of 16 states): BDS Script API dump 1.26.63.1
-        // occludes_vibrations per state (1 of 16 states): BDS Script API dump 1.26.63.1
-        v.change("minecraft:warped_fence")
-                .dampensVibrations(ACACIA_FENCE_SNOW_LOGGABLE)
-                .occludesVibrations(ACACIA_FENCE_SNOW_LOGGABLE);
-        // dampens_vibrations per state (8 of 16 states): BDS Script API dump 1.26.63.1
-        // occludes_vibrations per state (8 of 16 states): BDS Script API dump 1.26.63.1
-        v.change("minecraft:warped_fence_gate")
-                .dampensVibrations("in_wall_bit", false, false, true, null)
-                .occludesVibrations("in_wall_bit", false, false, true, null);
-        // dampens_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
-        // occludes_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
-        v.change("minecraft:warped_stairs")
-                .dampensVibrations("minecraft:corner", "inner_left", null, "inner_right", null, "none", false, "outer_left", null, "outer_right", null)
-                .occludesVibrations("minecraft:corner", "inner_left", null, "inner_right", null, "none", false, "outer_left", null, "outer_right", null);
-        // dampens_vibrations per state (1 of 16 states): BDS Script API dump 1.26.63.1
-        // occludes_vibrations per state (1 of 16 states): BDS Script API dump 1.26.63.1
-        v.change("minecraft:waxed_copper_bars")
-                .dampensVibrations(ACACIA_FENCE_SNOW_LOGGABLE)
-                .occludesVibrations(ACACIA_FENCE_SNOW_LOGGABLE);
-        // collision_shape per state (32 of 32 states): BDS behaviour probe 1.26.63.1 (doors); CloudburstMC/Data 0021592 says otherwise
-        v.change("minecraft:waxed_copper_door")
-                .collisionShape(ACACIA_DOOR_COLLISION_SHAPE_2);
-        // dampens_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
-        // occludes_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
-        v.change("minecraft:waxed_cut_copper_stairs")
-                .dampensVibrations("minecraft:corner", "inner_left", null, "inner_right", null, "none", false, "outer_left", null, "outer_right", null)
-                .occludesVibrations("minecraft:corner", "inner_left", null, "inner_right", null, "none", false, "outer_left", null, "outer_right", null);
-        // dampens_vibrations per state (1 of 16 states): BDS Script API dump 1.26.63.1
-        // occludes_vibrations per state (1 of 16 states): BDS Script API dump 1.26.63.1
-        v.change("minecraft:waxed_exposed_copper_bars")
-                .dampensVibrations(ACACIA_FENCE_SNOW_LOGGABLE)
-                .occludesVibrations(ACACIA_FENCE_SNOW_LOGGABLE);
-        // collision_shape per state (32 of 32 states): BDS behaviour probe 1.26.63.1 (doors); CloudburstMC/Data 0021592 says otherwise
-        v.change("minecraft:waxed_exposed_copper_door")
-                .collisionShape(ACACIA_DOOR_COLLISION_SHAPE_2);
-        // dampens_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
-        // occludes_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
-        v.change("minecraft:waxed_exposed_cut_copper_stairs")
-                .dampensVibrations("minecraft:corner", "inner_left", null, "inner_right", null, "none", false, "outer_left", null, "outer_right", null)
-                .occludesVibrations("minecraft:corner", "inner_left", null, "inner_right", null, "none", false, "outer_left", null, "outer_right", null);
-        // dampens_vibrations per state (1 of 16 states): BDS Script API dump 1.26.63.1
-        // occludes_vibrations per state (1 of 16 states): BDS Script API dump 1.26.63.1
-        v.change("minecraft:waxed_oxidized_copper_bars")
-                .dampensVibrations(ACACIA_FENCE_SNOW_LOGGABLE)
-                .occludesVibrations(ACACIA_FENCE_SNOW_LOGGABLE);
-        // collision_shape per state (32 of 32 states): BDS behaviour probe 1.26.63.1 (doors); CloudburstMC/Data 0021592 says otherwise
-        v.change("minecraft:waxed_oxidized_copper_door")
-                .collisionShape(ACACIA_DOOR_COLLISION_SHAPE_2);
-        // dampens_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
-        // occludes_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
-        v.change("minecraft:waxed_oxidized_cut_copper_stairs")
-                .dampensVibrations("minecraft:corner", "inner_left", null, "inner_right", null, "none", false, "outer_left", null, "outer_right", null)
-                .occludesVibrations("minecraft:corner", "inner_left", null, "inner_right", null, "none", false, "outer_left", null, "outer_right", null);
-        // dampens_vibrations per state (1 of 16 states): BDS Script API dump 1.26.63.1
-        // occludes_vibrations per state (1 of 16 states): BDS Script API dump 1.26.63.1
-        v.change("minecraft:waxed_weathered_copper_bars")
-                .dampensVibrations(ACACIA_FENCE_SNOW_LOGGABLE)
-                .occludesVibrations(ACACIA_FENCE_SNOW_LOGGABLE);
-        // collision_shape per state (32 of 32 states): BDS behaviour probe 1.26.63.1 (doors); CloudburstMC/Data 0021592 says otherwise
-        v.change("minecraft:waxed_weathered_copper_door")
-                .collisionShape(ACACIA_DOOR_COLLISION_SHAPE_2);
-        // dampens_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
-        // occludes_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
-        v.change("minecraft:waxed_weathered_cut_copper_stairs")
-                .dampensVibrations("minecraft:corner", "inner_left", null, "inner_right", null, "none", false, "outer_left", null, "outer_right", null)
-                .occludesVibrations("minecraft:corner", "inner_left", null, "inner_right", null, "none", false, "outer_left", null, "outer_right", null);
-        // dampens_vibrations per state (1 of 16 states): BDS Script API dump 1.26.63.1
-        // occludes_vibrations per state (1 of 16 states): BDS Script API dump 1.26.63.1
-        v.change("minecraft:weathered_copper_bars")
-                .dampensVibrations(ACACIA_FENCE_SNOW_LOGGABLE)
-                .occludesVibrations(ACACIA_FENCE_SNOW_LOGGABLE);
     }
 
     static void part7(Changes v) {
         // collision_shape per state (32 of 32 states): BDS behaviour probe 1.26.63.1 (doors); CloudburstMC/Data 0021592 says otherwise
-        v.change("minecraft:weathered_copper_door")
-                .collisionShape(ACACIA_DOOR_COLLISION_SHAPE_2);
-        // dampens_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
-        // occludes_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
-        v.change("minecraft:weathered_cut_copper_stairs")
-                .dampensVibrations("minecraft:corner", "inner_left", null, "inner_right", null, "none", false, "outer_left", null, "outer_right", null)
-                .occludesVibrations("minecraft:corner", "inner_left", null, "inner_right", null, "none", false, "outer_left", null, "outer_right", null);
-        // climbable unknown -> true: BDS behaviour probe 1.26.63.1 (climbing)
-        // dampens_vibrations per state (25 of 26 states): BDS Script API dump 1.26.63.1
-        // occludes_vibrations per state (25 of 26 states): BDS Script API dump 1.26.63.1
-        v.change("minecraft:weeping_vines")
+        v.change("minecraft:spruce_door")
+                .collisionShape(TABLE_DOOR_HINGE_BIT_CARDINAL_DIRECTION_OPEN_BIT_C89710);
+        // first coverage, dampens_vibrations per state (1 of 16 states): BDS Script API dump 1.26.63.1
+        // first coverage, occludes_vibrations per state (1 of 16 states): BDS Script API dump 1.26.63.1
+        v.change("minecraft:spruce_fence")
+                .dampensVibrations(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_1AB959)
+                .occludesVibrations(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_1AB959);
+        // first coverage, dampens_vibrations per state (8 of 16 states): BDS Script API dump 1.26.63.1
+        // first coverage, occludes_vibrations per state (8 of 16 states): BDS Script API dump 1.26.63.1
+        v.change("minecraft:spruce_fence_gate")
+                .dampensVibrations("in_wall_bit", false, false, true, null)
+                .occludesVibrations("in_wall_bit", false, false, true, null);
+        // first coverage, dampens_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
+        // first coverage, occludes_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
+        v.change("minecraft:spruce_stairs")
+                .dampensVibrations("minecraft:corner", "inner_left", null, "inner_right", null,
+                        "none", false, "outer_left", null, "outer_right", null)
+                .occludesVibrations("minecraft:corner", "inner_left", null, "inner_right", null,
+                        "none", false, "outer_left", null, "outer_right", null);
+        // first coverage, dampens_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
+        // first coverage, occludes_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
+        v.change("minecraft:stone_brick_stairs")
+                .dampensVibrations("minecraft:corner", "inner_left", null, "inner_right", null,
+                        "none", false, "outer_left", null, "outer_right", null)
+                .occludesVibrations("minecraft:corner", "inner_left", null, "inner_right", null,
+                        "none", false, "outer_left", null, "outer_right", null);
+        // first coverage, dampens_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
+        // first coverage, occludes_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
+        v.change("minecraft:stone_stairs")
+                .dampensVibrations("minecraft:corner", "inner_left", null, "inner_right", null,
+                        "none", false, "outer_left", null, "outer_right", null)
+                .occludesVibrations("minecraft:corner", "inner_left", null, "inner_right", null,
+                        "none", false, "outer_left", null, "outer_right", null);
+        // first coverage, dampens_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
+        // first coverage, occludes_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
+        v.change("minecraft:sulfur_brick_stairs")
+                .dampensVibrations("minecraft:corner", "inner_left", null, "inner_right", null,
+                        "none", false, "outer_left", null, "outer_right", null)
+                .occludesVibrations("minecraft:corner", "inner_left", null, "inner_right", null,
+                        "none", false, "outer_left", null, "outer_right", null);
+        // first coverage, dampens_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
+        // first coverage, occludes_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
+        v.change("minecraft:sulfur_stairs")
+                .dampensVibrations("minecraft:corner", "inner_left", null, "inner_right", null,
+                        "none", false, "outer_left", null, "outer_right", null)
+                .occludesVibrations("minecraft:corner", "inner_left", null, "inner_right", null,
+                        "none", false, "outer_left", null, "outer_right", null);
+        // first coverage, dampens_vibrations per state (5 of 6 states): BDS Script API dump 1.26.63.1
+        // first coverage, occludes_vibrations per state (5 of 6 states): BDS Script API dump 1.26.63.1
+        v.change("minecraft:torch")
+                .dampensVibrations("torch_facing_direction", "east", false, "north", false,
+                        "south", false, "top", false, "unknown", null, "west", false)
+                .occludesVibrations("torch_facing_direction", "east", false, "north", false,
+                        "south", false, "top", false, "unknown", null, "west", false);
+        // first coverage, dampens_vibrations per state (1 of 256 states): BDS Script API dump 1.26.63.1
+        // first coverage, occludes_vibrations per state (1 of 256 states): BDS Script API dump 1.26.63.1
+        v.change("minecraft:trip_wire")
+                .dampensVibrations(TABLE_ATTACHED_BIT_DISARMED_BIT_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_POWERED_BIT_SUSPENDED_BIT_B8819F)
+                .occludesVibrations(TABLE_ATTACHED_BIT_DISARMED_BIT_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_POWERED_BIT_SUSPENDED_BIT_B8819F);
+        // first coverage, dampens_vibrations per state (4 of 16 states): BDS Script API dump 1.26.63.1
+        // first coverage, occludes_vibrations per state (4 of 16 states): BDS Script API dump 1.26.63.1
+        v.change("minecraft:tripwire_hook")
+                .dampensVibrations(TABLE_ATTACHED_BIT_POWERED_BIT_7A8F79)
+                .occludesVibrations(TABLE_ATTACHED_BIT_POWERED_BIT_7A8F79);
+        // first coverage, dampens_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
+        // first coverage, occludes_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
+        v.change("minecraft:tuff_brick_stairs")
+                .dampensVibrations("minecraft:corner", "inner_left", null, "inner_right", null,
+                        "none", false, "outer_left", null, "outer_right", null)
+                .occludesVibrations("minecraft:corner", "inner_left", null, "inner_right", null,
+                        "none", false, "outer_left", null, "outer_right", null);
+        // first coverage, dampens_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
+        // first coverage, occludes_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
+        v.change("minecraft:tuff_stairs")
+                .dampensVibrations("minecraft:corner", "inner_left", null, "inner_right", null,
+                        "none", false, "outer_left", null, "outer_right", null)
+                .occludesVibrations("minecraft:corner", "inner_left", null, "inner_right", null,
+                        "none", false, "outer_left", null, "outer_right", null);
+        // first coverage, climbable = true: BDS behaviour probe 1.26.63.1 (climbing)
+        // first coverage, dampens_vibrations per state (25 of 26 states): BDS Script API dump 1.26.63.1
+        // first coverage, occludes_vibrations per state (25 of 26 states): BDS Script API dump 1.26.63.1
+        v.change("minecraft:twisting_vines")
                 .climbable(true)
-                .dampensVibrations("weeping_vines_age", 0, null, 1, false, 2, false, 3, false, 4, false, 5, false, 6, false, 7, false, 8, false, 9, false, 10, false, 11, false, 12, false, 13, false, 14, false, 15, false, 16, false, 17, false, 18, false, 19, false, 20, false, 21, false, 22, false, 23, false, 24, false, 25, false)
-                .occludesVibrations("weeping_vines_age", 0, null, 1, false, 2, false, 3, false, 4, false, 5, false, 6, false, 7, false, 8, false, 9, false, 10, false, 11, false, 12, false, 13, false, 14, false, 15, false, 16, false, 17, false, 18, false, 19, false, 20, false, 21, false, 22, false, 23, false, 24, false, 25, false);
-        // dampens_vibrations unknown -> true: BDS Script API dump 1.26.63.1
-        v.change("minecraft:white_carpet").dampensVibrations(true);
-        // dampens_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
-        // occludes_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
-        v.change("minecraft:white_concrete_stairs")
-                .dampensVibrations("minecraft:corner", "inner_left", null, "inner_right", null, "none", false, "outer_left", null, "outer_right", null)
-                .occludesVibrations("minecraft:corner", "inner_left", null, "inner_right", null, "none", false, "outer_left", null, "outer_right", null);
-        // dampens_vibrations per state (1 of 16 states): BDS Script API dump 1.26.63.1
-        // occludes_vibrations per state (1 of 16 states): BDS Script API dump 1.26.63.1
-        v.change("minecraft:white_stained_glass_pane")
-                .dampensVibrations(ACACIA_FENCE_SNOW_LOGGABLE)
-                .occludesVibrations(ACACIA_FENCE_SNOW_LOGGABLE);
-        // dampens_vibrations unknown -> true: BDS Script API dump 1.26.63.1
-        // occludes_vibrations unknown -> true: BDS Script API dump 1.26.63.1
-        v.change("minecraft:white_wool").dampensVibrations(true).occludesVibrations(true);
-        // dampens_vibrations unknown -> true: BDS Script API dump 1.26.63.1
-        // occludes_vibrations unknown -> true: BDS Script API dump 1.26.63.1
-        v.change("minecraft:white_wool_double_slab").dampensVibrations(true).occludesVibrations(true);
-        // dampens_vibrations unknown -> true: BDS Script API dump 1.26.63.1
-        // occludes_vibrations unknown -> true: BDS Script API dump 1.26.63.1
-        v.change("minecraft:white_wool_slab").dampensVibrations(true).occludesVibrations(true);
-        // dampens_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
-        // occludes_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
-        v.change("minecraft:white_wool_stairs")
-                .dampensVibrations("minecraft:corner", "inner_left", null, "inner_right", null, "none", true, "outer_left", null, "outer_right", null)
-                .occludesVibrations("minecraft:corner", "inner_left", null, "inner_right", null, "none", true, "outer_left", null, "outer_right", null);
+                .dampensVibrations("twisting_vines_age", 0, null, 1, false, 2, false, 3, false,
+                        4, false, 5, false, 6, false, 7, false, 8, false, 9, false, 10, false,
+                        11, false, 12, false, 13, false, 14, false, 15, false, 16, false, 17, false,
+                        18, false, 19, false, 20, false, 21, false, 22, false, 23, false, 24, false,
+                        25, false)
+                .occludesVibrations("twisting_vines_age", 0, null, 1, false, 2, false, 3, false,
+                        4, false, 5, false, 6, false, 7, false, 8, false, 9, false, 10, false,
+                        11, false, 12, false, 13, false, 14, false, 15, false, 16, false, 17, false,
+                        18, false, 19, false, 20, false, 21, false, 22, false, 23, false, 24, false,
+                        25, false);
+        // first coverage, dampens_vibrations per state (5 of 6 states): BDS Script API dump 1.26.63.1
+        // first coverage, occludes_vibrations per state (5 of 6 states): BDS Script API dump 1.26.63.1
+        v.change("minecraft:underwater_torch")
+                .dampensVibrations("torch_facing_direction", "east", false, "north", false,
+                        "south", false, "top", false, "unknown", null, "west", false)
+                .occludesVibrations("torch_facing_direction", "east", false, "north", false,
+                        "south", false, "top", false, "unknown", null, "west", false);
+        // first coverage, climbable = true: BDS behaviour probe 1.26.63.1 (climbing)
+        v.change("minecraft:vine").climbable(true);
         // collision_shape per state (32 of 32 states): BDS behaviour probe 1.26.63.1 (doors); CloudburstMC/Data 0021592 says otherwise
-        v.change("minecraft:wooden_door")
-                .collisionShape(ACACIA_DOOR_COLLISION_SHAPE_2);
-        // dampens_vibrations unknown -> true: BDS Script API dump 1.26.63.1
-        v.change("minecraft:yellow_carpet").dampensVibrations(true);
-        // dampens_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
-        // occludes_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
-        v.change("minecraft:yellow_concrete_stairs")
-                .dampensVibrations("minecraft:corner", "inner_left", null, "inner_right", null, "none", false, "outer_left", null, "outer_right", null)
-                .occludesVibrations("minecraft:corner", "inner_left", null, "inner_right", null, "none", false, "outer_left", null, "outer_right", null);
-        // dampens_vibrations per state (1 of 16 states): BDS Script API dump 1.26.63.1
-        // occludes_vibrations per state (1 of 16 states): BDS Script API dump 1.26.63.1
-        v.change("minecraft:yellow_stained_glass_pane")
-                .dampensVibrations(ACACIA_FENCE_SNOW_LOGGABLE)
-                .occludesVibrations(ACACIA_FENCE_SNOW_LOGGABLE);
-        // dampens_vibrations unknown -> true: BDS Script API dump 1.26.63.1
-        // occludes_vibrations unknown -> true: BDS Script API dump 1.26.63.1
-        v.change("minecraft:yellow_wool").dampensVibrations(true).occludesVibrations(true);
-        // dampens_vibrations unknown -> true: BDS Script API dump 1.26.63.1
-        // occludes_vibrations unknown -> true: BDS Script API dump 1.26.63.1
-        v.change("minecraft:yellow_wool_double_slab").dampensVibrations(true).occludesVibrations(true);
-        // dampens_vibrations unknown -> true: BDS Script API dump 1.26.63.1
-        // occludes_vibrations unknown -> true: BDS Script API dump 1.26.63.1
-        v.change("minecraft:yellow_wool_slab").dampensVibrations(true).occludesVibrations(true);
-        // dampens_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
-        // occludes_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
-        v.change("minecraft:yellow_wool_stairs")
-                .dampensVibrations("minecraft:corner", "inner_left", null, "inner_right", null, "none", true, "outer_left", null, "outer_right", null)
-                .occludesVibrations("minecraft:corner", "inner_left", null, "inner_right", null, "none", true, "outer_left", null, "outer_right", null);
+        v.change("minecraft:warped_door")
+                .collisionShape(TABLE_DOOR_HINGE_BIT_CARDINAL_DIRECTION_OPEN_BIT_C89710);
+        // first coverage, dampens_vibrations per state (1 of 16 states): BDS Script API dump 1.26.63.1
+        // first coverage, occludes_vibrations per state (1 of 16 states): BDS Script API dump 1.26.63.1
+        v.change("minecraft:warped_fence")
+                .dampensVibrations(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_1AB959)
+                .occludesVibrations(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_1AB959);
+        // first coverage, dampens_vibrations per state (8 of 16 states): BDS Script API dump 1.26.63.1
+        // first coverage, occludes_vibrations per state (8 of 16 states): BDS Script API dump 1.26.63.1
+        v.change("minecraft:warped_fence_gate")
+                .dampensVibrations("in_wall_bit", false, false, true, null)
+                .occludesVibrations("in_wall_bit", false, false, true, null);
+        // first coverage, dampens_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
+        // first coverage, occludes_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
+        v.change("minecraft:warped_stairs")
+                .dampensVibrations("minecraft:corner", "inner_left", null, "inner_right", null,
+                        "none", false, "outer_left", null, "outer_right", null)
+                .occludesVibrations("minecraft:corner", "inner_left", null, "inner_right", null,
+                        "none", false, "outer_left", null, "outer_right", null);
+        // first coverage, dampens_vibrations per state (1 of 16 states): BDS Script API dump 1.26.63.1
+        // first coverage, occludes_vibrations per state (1 of 16 states): BDS Script API dump 1.26.63.1
+        v.change("minecraft:waxed_copper_bars")
+                .dampensVibrations(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_1AB959)
+                .occludesVibrations(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_1AB959);
+        // collision_shape per state (32 of 32 states): BDS behaviour probe 1.26.63.1 (doors); CloudburstMC/Data 0021592 says otherwise
+        v.change("minecraft:waxed_copper_door")
+                .collisionShape(TABLE_DOOR_HINGE_BIT_CARDINAL_DIRECTION_OPEN_BIT_C89710);
+        // first coverage, dampens_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
+        // first coverage, occludes_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
+        v.change("minecraft:waxed_cut_copper_stairs")
+                .dampensVibrations("minecraft:corner", "inner_left", null, "inner_right", null,
+                        "none", false, "outer_left", null, "outer_right", null)
+                .occludesVibrations("minecraft:corner", "inner_left", null, "inner_right", null,
+                        "none", false, "outer_left", null, "outer_right", null);
+        // first coverage, dampens_vibrations per state (1 of 16 states): BDS Script API dump 1.26.63.1
+        // first coverage, occludes_vibrations per state (1 of 16 states): BDS Script API dump 1.26.63.1
+        v.change("minecraft:waxed_exposed_copper_bars")
+                .dampensVibrations(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_1AB959)
+                .occludesVibrations(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_1AB959);
+        // collision_shape per state (32 of 32 states): BDS behaviour probe 1.26.63.1 (doors); CloudburstMC/Data 0021592 says otherwise
+        v.change("minecraft:waxed_exposed_copper_door")
+                .collisionShape(TABLE_DOOR_HINGE_BIT_CARDINAL_DIRECTION_OPEN_BIT_C89710);
+        // first coverage, dampens_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
+        // first coverage, occludes_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
+        v.change("minecraft:waxed_exposed_cut_copper_stairs")
+                .dampensVibrations("minecraft:corner", "inner_left", null, "inner_right", null,
+                        "none", false, "outer_left", null, "outer_right", null)
+                .occludesVibrations("minecraft:corner", "inner_left", null, "inner_right", null,
+                        "none", false, "outer_left", null, "outer_right", null);
+        // first coverage, dampens_vibrations per state (1 of 16 states): BDS Script API dump 1.26.63.1
+        // first coverage, occludes_vibrations per state (1 of 16 states): BDS Script API dump 1.26.63.1
+        v.change("minecraft:waxed_oxidized_copper_bars")
+                .dampensVibrations(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_1AB959)
+                .occludesVibrations(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_1AB959);
+        // collision_shape per state (32 of 32 states): BDS behaviour probe 1.26.63.1 (doors); CloudburstMC/Data 0021592 says otherwise
+        v.change("minecraft:waxed_oxidized_copper_door")
+                .collisionShape(TABLE_DOOR_HINGE_BIT_CARDINAL_DIRECTION_OPEN_BIT_C89710);
+        // first coverage, dampens_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
+        // first coverage, occludes_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
+        v.change("minecraft:waxed_oxidized_cut_copper_stairs")
+                .dampensVibrations("minecraft:corner", "inner_left", null, "inner_right", null,
+                        "none", false, "outer_left", null, "outer_right", null)
+                .occludesVibrations("minecraft:corner", "inner_left", null, "inner_right", null,
+                        "none", false, "outer_left", null, "outer_right", null);
+        // first coverage, dampens_vibrations per state (1 of 16 states): BDS Script API dump 1.26.63.1
+        // first coverage, occludes_vibrations per state (1 of 16 states): BDS Script API dump 1.26.63.1
+        v.change("minecraft:waxed_weathered_copper_bars")
+                .dampensVibrations(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_1AB959)
+                .occludesVibrations(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_1AB959);
+        // collision_shape per state (32 of 32 states): BDS behaviour probe 1.26.63.1 (doors); CloudburstMC/Data 0021592 says otherwise
+        v.change("minecraft:waxed_weathered_copper_door")
+                .collisionShape(TABLE_DOOR_HINGE_BIT_CARDINAL_DIRECTION_OPEN_BIT_C89710);
+        // first coverage, dampens_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
+        // first coverage, occludes_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
+        v.change("minecraft:waxed_weathered_cut_copper_stairs")
+                .dampensVibrations("minecraft:corner", "inner_left", null, "inner_right", null,
+                        "none", false, "outer_left", null, "outer_right", null)
+                .occludesVibrations("minecraft:corner", "inner_left", null, "inner_right", null,
+                        "none", false, "outer_left", null, "outer_right", null);
     }
 
     static void load(Changes v) {
@@ -1332,5 +1517,6 @@ final class BehaviourChanges26_60 {
         part5(v);
         part6(v);
         part7(v);
+        BehaviourChanges26_60Part2.part8(v);
     }
 }
