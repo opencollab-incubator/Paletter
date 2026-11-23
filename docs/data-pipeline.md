@@ -274,8 +274,8 @@ workflow by hand on `bds-data/preview` for the other.
    per build (the daily check's cache keys). The captures and the run's report are uploaded as the artifact
    `captures-<build>`; a failed leg uploads its report and logs, never captures. Under `--capture-only` an `--against` add-on mismatch is information, not a failure (the captures are of the new add-on by design), nothing deletes a directory of the repository, and the Gradle cache is read-only in the capture jobs.
 3. `assemble` (only when every leg succeeded: captures of two add-ons never share a pull request) validates the
-   artifacts, copies them over `data/bds/<build>/` (overlaying, deleting nothing; a build without committed captures only when
-   its leg compared it with another kept build, the unchecked build of a line) and runs what `update` does after the
+   artifacts, copies them over `data/bds/<build>/` (overlaying, deleting nothing; a build without committed captures fails,
+   so the unchecked build of a line the plan adds fails here: see the open point below) and runs what `update` does after the
    captures, with no BDS: `experiment-marks` (the marks of the bundled versions from the new experiment records), `inferMappings`, `whitebox-coverage` (from the committed `whitebox.json`; the binary did not
    change), `generateComponentApi`, `:paletter:apiDump`, `generateConstants`, `voxel-shapes import` (as `update` does). It also runs `check-mappings --strict` and puts its verdict (residual bits, unclassified wire paths, linked fields) into the report, without failing on it. It fails when the inference changed
    `bds-feedback.json`, `fixtures.json`, `components.json` or `bds-keys.json` (and uploads `git diff -- data/model` as the artifact `recapture-guard-diff`): those captures were made with an add-on that is not the
@@ -288,6 +288,13 @@ The builds are not checked against each other again: the set of kept builds does
 `builds check`, which stays a separate step), and each leg compared its capture with the committed captures of its own
 build, which is what the pull request shows as the effect of the add-on change. Files that an earlier capture had and the
 new one lacks stay in `data/bds/<build>`; the patch has no deletions of them.
+
+**Open: the unchecked build of a line.** `builds plan` adds the newest unrecorded build of each line, but its captures cannot join
+the data: the staging refuses a build without committed captures, and staged anyway they stop `inferMappings`, because its spec
+add-on differs from the one of the window's import build. The probed keys of `bds-keys.json` apply only to the build they were
+probed on (`Fixtures#forBuild`), so 1.26.66.1's add-on lacks the 76 key variants of 1.26.63.1's and numbers the rest differently
+(the local recapture of 2026-11-23). A history check of such a build fails the same way. Until that is decided, a recapture runs
+without those legs, and `builds check` keeps them unverified.
 
 **Security.** The jobs that run the BDS binary and Gradle over captures (`capture`, and `assemble`, which runs Gradle on
 data from the capture jobs) have `contents: read`, no credentials in the checkout and no secrets. Only `publish` has write

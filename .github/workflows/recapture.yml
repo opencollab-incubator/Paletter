@@ -292,12 +292,8 @@ jobs:
             fi
             [ -f "$C/spec/capture.json" ] || { echo "$BUILD: no spec capture"; exit 1; }
             [ "$(du -sm "$C" | cut -f1)" -le 400 ] || { echo "$BUILD: the captures are larger than 400 MB"; exit 1; }
-            # A recapture refreshes committed builds, and adds the captures of a build no history check has seen yet: the plan
-            # compares such a leg with another kept build (`against`), and the next `builds check` verifies it
-            AGAINST=$(printf '%s' "$MATRIX" | jq -r --arg b "$BUILD" '.include[] | select(.build == $b) | .against')
-            if [ ! -f "data/bds/$BUILD/spec/capture.json" ] && { [ -z "$AGAINST" ] || [ "$AGAINST" = "$BUILD" ]; }; then
-              echo "$BUILD: no committed captures to refresh"; exit 1
-            fi
+            # A recapture refreshes committed builds only
+            [ -f "data/bds/$BUILD/spec/capture.json" ] || { echo "$BUILD: no committed captures to refresh"; exit 1; }
             cp -R "$C/." "data/bds/$BUILD/"
             echo "Staged $(wc -l < "$RUNNER_TEMP/files.txt") files into data/bds/$BUILD"
           done
