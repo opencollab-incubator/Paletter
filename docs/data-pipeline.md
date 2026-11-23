@@ -511,6 +511,11 @@ generator adds them, and `SamplesTest` checks each against a model of its own an
   (`(past any limit)`), so that BDS says its limit and the next `infer` records it; until then its boxes stay inside the tightest limit
   of the other components: **borrowed, unverified** for it ([Recapture to-do](#recapture-to-do): `collision_box`; a test checks the fallback).
 - *Vectors* the schema also describes by `x`, `y`, `z` stay vectors in the base (as an object they would have no member without a default).
+- *Fractions not exact in binary* (`fixtures.json` `probeValues` of a number field): `use_modifiers.use_duration` 0.35, 0.7 and 0.95, which
+  its linear rule scales by 20 onto an integer, so the capture says how BDS rounds the product.
+- *Two components onto one leaf* (`fixtures.json` `combinations`, role `combination`): whole component maps that put a component next to
+  another one writing the same wire leaf (`wearable`'s slot table with `max_stack_size` and with `allow_off_hand`, disagreeing on the
+  leaf, in both orders of the file), so the capture says which value BDS keeps (`SharedLeaves`).
 
 **Enums of an old format.** BDS's schema lists some enums only for format 1.26.30 (`swing_sounds`, `use_modifiers.start_sound`,
 `durability_sensor.durability_thresholds[].sound_event`, ...): the add-on's newer definitions take any string there, so their values are not

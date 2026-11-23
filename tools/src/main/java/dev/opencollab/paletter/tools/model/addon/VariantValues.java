@@ -368,6 +368,8 @@ final class VariantValues {
                 }
             }
         }
+        // Probes: values no limit or sample gives, such as fractions not exact in binary for a rule that scales onto an integer
+        fixtures.probeValues(c.id(), path).forEach(v -> numbers.add(v.getAsDouble()));
         List<Labeled> values = new ArrayList<>();
         for (double d : numbers) {
             if (integer && d != Math.rint(d)) {

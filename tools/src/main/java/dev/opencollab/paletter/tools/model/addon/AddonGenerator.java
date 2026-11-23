@@ -46,7 +46,8 @@ public final class AddonGenerator {
     /**
      * @param identifier the item or block identifier
      * @param role       {@code control} (companions only, or the minimal accepted pair for companions that need each other),
-     *                   {@code base}, {@code script} (script custom components bound, see {@link #scriptVariants}), {@code form} (a whole value of another JSON type), {@code field} (one field changed),
+     *                   {@code base}, {@code script} (script custom components bound, see {@link #scriptVariants}), {@code combination}
+     *                   (a whole component map of {@code fixtures.json} {@code combinations}), {@code form} (a whole value of another JSON type), {@code field} (one field changed),
      *                   {@code omit} (one base field removed), {@code probe} (one key the model does not know added,
      *                   see {@link #probe}), {@code format} (the base or one field at another format version, see
      *                   {@link #atFormat})
@@ -272,6 +273,10 @@ public final class AddonGenerator {
                 }
             }
             scriptVariants(c); // the placers: with a script component that has onUseOn
+            // With another component that writes the same wire leaf: which value BDS keeps
+            for (JsonObject components : fixtures.combinations(c.id())) {
+                variant(c, "combination", "", components.toString(), null, components.deepCopy());
+            }
         }
         tagVariants();
     }
@@ -576,7 +581,7 @@ public final class AddonGenerator {
 
     /** Whether a variant of this role carries a map of components by name instead of one component's value. */
     private static boolean namesComponents(String role) {
-        return role.equals("script") || role.equals("tag");
+        return role.equals("script") || role.equals("tag") || role.equals("combination");
     }
 
     private Component component(String id) {

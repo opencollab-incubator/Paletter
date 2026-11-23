@@ -204,6 +204,15 @@ public final class Fixtures {
         return out;
     }
 
+    /**
+     * Whole component maps of an item or block (by component id) that put the component next to another one writing the same wire
+     * leaf ({@code minecraft:wearable} with {@code minecraft:max_stack_size}): what BDS keeps of the two. Inputs, not facts.
+     */
+    public List<JsonObject> combinations(String component) {
+        JsonObject combinations = json.has("combinations") ? json.getAsJsonObject("combinations") : new JsonObject();
+        return combinations.has(component) ? combinations.getAsJsonArray(component).asList().stream().map(JsonElement::getAsJsonObject).toList() : List.of();
+    }
+
     /** Fields only set in their own variants, never in a base (a docs name BDS does not take would reject every variant). */
     public boolean probeOnly(String component, String path) {
         return json.has("probeOnly") && json.getAsJsonArray("probeOnly").contains(new com.google.gson.JsonPrimitive(component + ":" + path));
@@ -434,7 +443,7 @@ public final class Fixtures {
 
     /** The sections of fixtures.json and api.json whose keys start with a component id ({@code item:minecraft:food:path}). */
     private static final List<String> FIXTURE_SECTIONS = List.of("requires", "context", "skip", "together", "samples", "alternatives",
-        "mapValues", "mapKeys", "probeOnly", "probeValues", "sweepValues", "listNames", "boolCombinations", "unpinnedEnums");
+        "mapValues", "mapKeys", "probeOnly", "probeValues", "sweepValues", "listNames", "boolCombinations", "unpinnedEnums", "combinations");
     private static final List<String> API_SECTIONS = List.of("rootLists", "forms", "types", "unions", "keyedExtras", "descriptors",
         "blockDescriptors", "retired", "fields", "typeNames", "standalone", "standalonePaths", "openEnums", "exclude", "handWritten", "classes",
         "optional", "noDefaults", "enums", "renamedFields", "removedFields");

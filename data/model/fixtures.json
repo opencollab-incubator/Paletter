@@ -149,8 +149,9 @@
     "default": "paletter:k"
   },
   "probeValues": {
-    "_comment": "Further values of a field, each tried as a value of its own, by '<component>:<path>'. Probes, not facts: the names of the hand table of Transforms (FORMATTING) that no BDS message and no schema enum lists (the use_animation names come from the schema enum), and whole lists of objects the minimal entry never writes (an ammunition entry without an item, unverified until captured); only what BDS accepts and sends is evidence.",
+    "_comment": "Further values of a field, each tried as a value of its own, by '<component>:<path>'. Probes, not facts: the names of the hand table of Transforms (FORMATTING) that no BDS message and no schema enum lists (the use_animation names come from the schema enum), and whole lists of objects the minimal entry never writes (an ammunition entry without an item, unverified until captured), and numbers not exact in binary for a linear rule onto an integer (use_duration times 20: how BDS rounds); only what BDS accepts and sends is evidence.",
     "item:minecraft:shooter:ammunition": [[{"search_inventory": true}]],
+    "item:minecraft:use_modifiers:use_duration": [0.35, 0.7, 0.95],
     "item:minecraft:hover_text_color:": ["black", "dark_blue", "dark_green", "dark_aqua", "dark_red", "dark_purple", "gold", "gray", "dark_gray", "blue", "green", "aqua", "red", "light_purple", "yellow", "white", "minecoin_gold", "material_quartz", "material_iron", "material_netherite", "material_redstone", "material_copper", "material_gold", "material_emerald", "material_diamond", "material_lapis", "material_amethyst", "material_resin"],
     "item:minecraft:hover_text_color:value": ["black", "dark_blue", "dark_green", "dark_aqua", "dark_red", "dark_purple", "gold", "gray", "dark_gray", "blue", "green", "aqua", "red", "light_purple", "yellow", "white", "minecoin_gold", "material_quartz", "material_iron", "material_netherite", "material_redstone", "material_copper", "material_gold", "material_emerald", "material_diamond", "material_lapis", "material_amethyst", "material_resin"]
   },
@@ -165,6 +166,17 @@
     "block:minecraft:embedded_visual:geometry.uv_lock": ["bone_a", "bone_b", "bone_c", "bone_d", "bone_e"]
   },
   "boolCombinations": ["block:minecraft:material_instances"],
+  "combinations": {
+    "_comment": "Whole component maps (role combination), by component id: the component next to another one that writes the same wire leaf, so the capture says which value BDS keeps (SharedLeaves). wearable's slot table writes item_properties.max_stack_size and allow_off_hand; each pair disagrees on the leaf, in both orders of the file. Inputs, not facts.",
+    "item:minecraft:wearable": [
+      {"minecraft:wearable": {"slot": "slot.armor.head"}, "minecraft:max_stack_size": 16},
+      {"minecraft:max_stack_size": 16, "minecraft:wearable": {"slot": "slot.armor.head"}},
+      {"minecraft:wearable": {"slot": "slot.weapon.mainhand"}, "minecraft:max_stack_size": 16},
+      {"minecraft:wearable": {"slot": "slot.weapon.offhand"}, "minecraft:allow_off_hand": false},
+      {"minecraft:allow_off_hand": false, "minecraft:wearable": {"slot": "slot.weapon.offhand"}},
+      {"minecraft:wearable": {"slot": "slot.armor.head"}, "minecraft:allow_off_hand": true}
+    ]
+  },
   "descriptorValues": {
     "_comment": "Block descriptors tried in every field that is one (name, states and tags members), each as the whole descriptor: real vanilla blocks (Bedrock's state names) with enum values (all of pillar_axis, to see their order on the wire; two of cardinal_direction and lever_direction), an unlisted and an integer one, booleans, strings for a boolean and an integer state, and an integer for contrast. BDS's registry decides which it takes and how it sends them (enum index, state type).",
     "values": [
