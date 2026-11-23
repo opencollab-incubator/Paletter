@@ -35,13 +35,14 @@ class BlockOfTest {
     }
 
     @Test
-    void itemsNamedDifferentlyFromTheirBlockAreFound() {
+    void itemsThatPlaceABlockButHaveNoneOfTheirOwnAreSentWithoutOne() {
         for (DataVersion version : paletter.versions()) {
             Palette palette = paletter.vanilla(version);
-            // doors, signs and crops: the item is not named like the block
-            assertEquals("minecraft:acacia_door", block(palette, "minecraft:acacia_door"));
-            assertEquals("minecraft:acacia_standing_sign", block(palette, "minecraft:acacia_sign"));
-            assertEquals("minecraft:carrots", block(palette, "minecraft:carrot"));
+            // doors, signs and crops place a block, but BDS sends them without one (their captured creative stacks have none)
+            for (String item : List.of("minecraft:acacia_door", "minecraft:acacia_sign", "minecraft:carrot")) {
+                assertNull(palette.resolve(BedrockItemVariant.fromIdentifier(item, 0)).block(), item);
+                assertNotNull(paletter.vanillaData(version).blockItems().values().stream().filter(item::equals).findAny().orElse(null), item);
+            }
             // a slab item places the slab, never the double slab
             assertEquals("minecraft:acacia_slab", block(palette, "minecraft:acacia_slab"));
             assertNull(palette.resolve(BedrockItemVariant.fromIdentifier("minecraft:acacia_double_slab", 0)).block());
@@ -64,9 +65,13 @@ class BlockOfTest {
 
     @Test
     void blockOfIsVersionIndependent() {
-        BedrockBlockState block = paletter.vanilla(paletter.latest()).blockOf(BedrockItemVariant.fromIdentifier("minecraft:acacia_sign", 0));
+        BedrockBlockState block = paletter.vanilla(paletter.latest()).blockOf(BedrockItemVariant.fromIdentifier("minecraft:acacia_slab", 0));
         assertNotNull(block);
-        assertEquals("minecraft:acacia_standing_sign", block.type().identifier());
+        assertEquals("minecraft:acacia_slab", block.type().identifier());
+        for (DataVersion version : paletter.versions()) {
+            assertEquals(block.type().identifier(), block(paletter.vanilla(version), "minecraft:acacia_slab"), version.toString());
+        }
+        assertNull(paletter.vanilla(paletter.latest()).blockOf(BedrockItemVariant.fromIdentifier("minecraft:acacia_sign", 0)));
         assertNull(paletter.vanilla(paletter.latest()).blockOf(BedrockItemVariant.fromIdentifier("minecraft:stick", 0)));
     }
 

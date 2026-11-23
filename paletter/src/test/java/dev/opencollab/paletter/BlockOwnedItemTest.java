@@ -197,7 +197,8 @@ class BlockOwnedItemTest {
         assertSame(lamp.itemType(), palette.itemOf(lamp.type()));
         assertNull(palette.itemOf(none.type()));
         assertEquals("minecraft:oak_log", palette.itemOf(BedrockBlocks.OAK_LOG).identifier());
-        assertEquals("minecraft:acacia_sign", palette.itemOf(PALETTER.vanilla(PALETTER.latest()).blockOf(BedrockItems.ACACIA_SIGN).type()).identifier());
+        // A sign is sent without a block, but its block's item is the sign
+        assertEquals("minecraft:acacia_sign", palette.itemOf(BedrockBlocks.ACACIA_STANDING_SIGN).identifier());
         // The Script API relation gives the double slab the slab item
         assertEquals("minecraft:acacia_slab", palette.itemOf(BedrockBlocks.ACACIA_DOUBLE_SLAB).identifier());
         assertNull(PALETTER.vanilla(PALETTER.latest()).itemOf(lamp.type()));

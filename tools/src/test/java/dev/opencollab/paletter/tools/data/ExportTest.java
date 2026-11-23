@@ -60,23 +60,17 @@ class ExportTest {
     }
 
     /**
-     * The compiled palette sends what the bundled data holds: exported, every section but the creative layout verifies as
-     * identical against it. The creative layout differs in one known way: compiling gives the stacks of block items that the
-     * raw layout lists without a block state (the doors) the block state the client needs. The stacks themselves, in order,
-     * are the same.
+     * The compiled palette sends what the bundled data holds (a capture of BDS without experiments): exported, every section,
+     * the creative layout with the block of each stack included, verifies as identical against it. The item registry has the
+     * items behind a disabled experiment too, as the bundled data does.
      */
     @Test
     void bundledRoundTrip() throws Exception {
-        Palette palette = palette();
+        Paletter paletter = Paletter.bundled();
+        Palette palette = paletter.vanilla(paletter.latest());
         Path export = Files.createDirectory(directory.resolve("export"));
         Export.write(palette, export);
-        Diff diff = Diff.source(export, palette.version().name(), palette.vanillaData(), "bundled");
-        diff.sections.values().stream().filter(section -> !section.title.equals("Creative layout")).forEach(
-            section -> assertTrue(section.differences.isEmpty(), section.title + "\n" + diff.markdown(30)));
-
-        List<String> bundled = palette.vanillaData().creative().stacks().map(stack -> stack.identifier() + ":" + stack.damage()).toList();
-        List<String> exported = Export.read(export, palette.version().name()).data().creative().stacks()
-            .map(stack -> stack.identifier() + ":" + stack.damage()).toList();
-        org.junit.jupiter.api.Assertions.assertEquals(bundled, exported);
+        Diff diff = Diff.source(export, palette.version().name(), paletter.vanillaData(palette.version()), "bundled");
+        diff.sections.values().forEach(section -> assertTrue(section.differences.isEmpty(), section.title + "\n" + diff.markdown(30)));
     }
 }

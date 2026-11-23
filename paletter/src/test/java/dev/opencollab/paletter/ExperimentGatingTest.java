@@ -13,6 +13,7 @@ import dev.opencollab.paletter.internal.data.Renames;
 import dev.opencollab.paletter.internal.data.VanillaData;
 import dev.opencollab.paletter.internal.shape.VoxelShapeStore;
 import dev.opencollab.paletter.item.ItemFallback;
+import dev.opencollab.paletter.item.RegisteredItem;
 import dev.opencollab.paletter.vanilla.BedrockBlockState;
 import dev.opencollab.paletter.vanilla.BedrockBlocks;
 import dev.opencollab.paletter.vanilla.BedrockItems;
@@ -26,6 +27,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -49,6 +51,13 @@ class ExperimentGatingTest {
         assertEquals(BedrockItems.STICK.variant(), gated.resolve(BedrockItems.BLACK_CUSHION).variant());
         assertNull(gated.itemDefinition(BedrockItems.BLACK_CUSHION));
         assertEquals(List.of(), gated.experiments());
+        // Still registered, as BDS registers it in a world without the toggle (data/bds/1.26.45.1/vanilla/capture.json: 1976 items)
+        RegisteredItem registered = gated.itemDefinitions().stream()
+            .filter(item -> item.getIdentifier().equals(BedrockItems.BLACK_CUSHION.identifier())).findFirst().orElseThrow();
+        assertSame(registered, gated.itemDefinition(registered.getRuntimeId()));
+        assertEquals(1976, gated.itemDefinitions().size());
+        assertTrue(gated.creative().items().stream()
+            .noneMatch(item -> item.getItem().getDefinition().getIdentifier().equals(BedrockItems.BLACK_CUSHION.identifier())));
 
         Palette regular = paletter.palette(MIDDLE);
         assertFalse(regular.resolve(BedrockItems.BLACK_CUSHION).fallback());

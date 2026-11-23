@@ -336,6 +336,18 @@ blocks new in 26.70 (it used 26.60's palette); the capture code is fixed. `Craft
 exactly those differences and fails the moment there are none, and `RecipeDataTest.theCommittedCapturesHoldTheRecipeAssumptions`
 leaves the bundled preview out until then.
 
+**The state order within blocks of 26.30 and 26.40.** The order of the states of the `*_shelf` blocks (and in 26.40 of
+`poplar_shelf` and `straw_bed`) rests on CloudburstMC/Data, which the bundled palettes descend from; an independent network
+dump has another order, and no BDS capture can tell: the sequential-id captures only check creative stacks, whose default
+state is index 0 in both orders. The recapture has to record the sequential block id of every state of the full palette (not
+only of the creative stacks), so the order of 1.26.36.1 and 1.26.45.1 is checked against BDS.
+
+**The blocks of experiment creative stacks.** An item is sent without a block where its captured creative stacks carry none
+(doors, signs, beds, seeds, ...). The creative stacks a toggle adds are recorded as identifiers only (`creativeAdded` in
+`experiments.json`), so in 26.40 with `y_2026_drop_3` on, `poplar_door`, `poplar_sign`, `poplar_hanging_sign`,
+`red_shrub`, `shelf_mushroom` and `straw_bed` still get the block of the block to item relation (26.50, where they are
+regular content, sends them without one). The recapture has to record the toggle's creative stacks with their blocks.
+
 **The schema in the add-on.** `Fixtures.SCHEMA_IN_ADDON` is off, so the add-on, the spec capture, the mapping inference, the
 coverage and the component API still read the model without BDS's schema (the tests read it with the schema,
 `Fixtures.read(model, true)`). The recapture is made with it on: turn it on, delete the switch with both `Fixtures.read`
@@ -423,8 +435,8 @@ against a bundled version: block states and order, hashes, items, components, da
 layout. It writes only a report.
 
 `export --data-version 26.60 --out DIR [--previews] [--all-experiments]` writes what a compiled palette
-(`Paletter.bundled().vanilla(version)`, or with `--all-experiments` the palette with every experiment toggle on, which is
-what CloudburstMC/Data dumps) sends, in the file formats of CloudburstMC/Data: `block_palette.nbt` (states in registry index order, each with its
+(`Paletter.bundled().vanilla(version)`, or with `--all-experiments` the palette with every experiment toggle on) sends, in the
+file formats of CloudburstMC/Data (which dumps a world without experiments, like the export without `--all-experiments`): `block_palette.nbt` (states in registry index order, each with its
 runtime id as `network_id`), `runtime_item_states.json` and `item_components.nbt` (the item registry),
 `creative_items.json` (the creative content) and `data_driven_blocks.nbt`. A `_generated` file marks the directory as
 generated. The files are not byte-comparable with cb/data (gzip, key order, JSON layout, item order); compare with

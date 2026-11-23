@@ -107,7 +107,8 @@ final class DataCommands {
         @Option(names = "--data-version", required = true, description = "The data version, e.g. 26.60") String name;
         @Option(names = "--out", required = true, description = "The directory to write") Path out;
         @Option(names = "--previews", description = "Also offer the preview versions") boolean previews;
-        @Option(names = "--all-experiments", description = "Enable every experiment toggle, as CloudburstMC/Data dumps") boolean allExperiments;
+        @Option(names = "--all-experiments", description = "Enable every experiment toggle (except voxel_shapes). "
+            + "CloudburstMC/Data dumps a world without experiments: compare it with the export without this option") boolean allExperiments;
 
         @Override
         public Integer call() throws Exception {

@@ -229,7 +229,8 @@ all), or use the constants (`BedrockBlocks`, `BedrockItems`). There is no lookup
 against 26.50 keeps working when 26.60 becomes the newest version by using `Lookup.RENAMED` on the newest palette.
 
 Paletter decides which block an item carries (`Palette#blockOf`, a key). A layer override wins, then the block to item relation
-captured from the Script API, then the block states in the creative inventory.
+captured from the Script API, then the block states in the creative inventory. An item that places a block but whose captured
+creative stacks carry none (doors, signs, beds, seeds, redstone, hoppers, campfires, ...) carries no block, as BDS sends it.
 
 A custom block owns its item, as in BDS, so a layer never registers it separately: `CustomBlock.Builder#item` chooses
 `BlockItem.SIMPLE` or `NONE`. An item of its own that replaces the block item is an ordinary `CustomItem` with the block's
@@ -410,7 +411,10 @@ An item fallback is an exact variant: `ItemFallback.of(BedrockItems.BIRCH_BOAT)`
 `.forced()` replaces content even in versions that have it. Paletter ships no fallbacks: which replacement is right is
 your decision. `./gradlew :tools:run --args="check-data"` lists what each older version lacks.
 
-Content that a Bedrock version only has behind an experiment toggle is missing by default.
+Content that a Bedrock version only has behind an experiment toggle is missing by default: lookups do not find it, it
+resolves through the fallbacks, and the creative content leaves it out. Its items stay in the item registry
+(`Palette#itemDefinitions()`, `itemDefinition(int)`), because BDS registers them in a world without experiments too; only
+`itemDefinition(String)` and `itemDefinition(BedrockItemType)` treat them as missing.
 `Paletter.builder().experiments("y_2026_drop_3")` enables it in every version; `experiments(version, "y_2026_drop_3")`
 enables it in one version (a version that is not served makes `build()` throw a `PaletteException`). Every call adds to
 the earlier ones, like `removeItems(...)`, which hides vanilla items. `allExperiments()` enables every toggle
