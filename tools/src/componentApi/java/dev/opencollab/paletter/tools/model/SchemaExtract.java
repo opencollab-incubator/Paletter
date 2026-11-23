@@ -86,14 +86,25 @@ public final class SchemaExtract {
         return Model.GSON.toJson(schema) + "\n";
     }
 
+    /**
+     * The block component entry point of the builds that name it {@code block/<format>/Components.json} (title "Components"):
+     * 1.26.45.1 and 1.26.52.3 have only that one (format 1.26.20), 1.26.63.1 on also {@code block_components/1.26.60/Block
+     * Components.json}. Where both name one format, the {@code Block Components} file is read last and counts.
+     */
+    private static boolean blockComponents(Path file) {
+        Path format = file.getParent();
+        return file.getFileName().toString().equals("Components.json") && format != null && format.getParent() != null
+            && format.getParent().getFileName().toString().equals("block");
+    }
+
     private JsonObject read(Path server, String build) throws IOException {
         this.server = server;
         // kind -> format -> entry point
         Map<String, Map<String, Path>> entries = new LinkedHashMap<>();
         try (Stream<Path> tree = Files.walk(server)) {
-            for (Path file : tree.filter(f -> ENTRY.matcher(f.getFileName().toString()).matches()).sorted().toList()) {
+            for (Path file : tree.filter(f -> ENTRY.matcher(f.getFileName().toString()).matches() || blockComponents(f)).sorted().toList()) {
                 String name = file.getFileName().toString();
-                String kind = name.startsWith("Item") ? "item" : name.startsWith("Block") ? "block" : "trait";
+                String kind = name.startsWith("Item") ? "item" : name.startsWith("Block") || blockComponents(file) ? "block" : "trait";
                 entries.computeIfAbsent(kind, k -> new TreeMap<>(Schema::compareVersions)).put(file.getParent().getFileName().toString(), file);
             }
         }

@@ -196,6 +196,22 @@ class SchemaTest {
         assertTrue(definition(schema, "block", "minecraft:b", 0).getAsJsonObject("root").get("deprecated").getAsBoolean());
     }
 
+    /**
+     * BDS 1.26.45.1 and 1.26.52.3 name their block component entry point {@code block/1.26.20/Components.json}; 1.26.63.1 has that one
+     * and {@code block_components/1.26.60/Block Components.json}. Item formats of that name are not block components.
+     */
+    @Test
+    void theBlockComponentsOfTheBlockDirectoryAreAnEntryPoint() throws IOException {
+        file("block/1.26.20/Components.json", "{\"title\": \"Components\", \"properties\": {\"minecraft:a\": {\"type\": \"boolean\"}}}");
+        file("block_components/1.26.60/Block Components.json", "{\"properties\": {\"minecraft:a\": {\"type\": \"integer\"}}}");
+        file("item/1.21.10/Components.json", "{\"properties\": {\"minecraft:i\": {\"type\": \"boolean\"}}}");
+        file("item/1.26.30/Item Components.json", "{\"properties\": {\"minecraft:j\": {\"type\": \"boolean\"}}}");
+        JsonObject schema = SchemaExtract.extract(docs, "1.26.99.1");
+        assertEquals("[\"1.26.20\",\"1.26.60\"]", schema.getAsJsonObject("formats").get("block").toString());
+        assertEquals("[\"1.26.30\"]", schema.getAsJsonObject("formats").get("item").toString());
+        assertEquals(2, schema.getAsJsonObject("block").getAsJsonArray("minecraft:a").size(), "one definition per format");
+    }
+
     @Test
     void aKindWithOnlyBetaIsNothingToMerge() throws IOException {
         file("item/beta/Item Components (Beta).json", "{\"properties\": {\"minecraft:newer\": {\"type\": \"boolean\"}}}");

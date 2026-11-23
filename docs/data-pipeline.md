@@ -1035,7 +1035,8 @@ are in [wire-notes.md](wire-notes.md#voxel-shapes).
 
 `update` runs BDS's documentation generator first (its own start: BDS stops by itself), moves the generated `docs/` into the
 cache and writes `data/bds/<build>/schema.json` from `docs/json_schemas/server`. The extract starts at the entry points
-(`Item Components`, `Block Components`, `Traits`; the directory is the format version, `beta` last), follows the `$ref`s and
+(`Item Components`, `Block Components`, `Traits`, and `block/<format>/Components`, the only block one of 1.26.45.1 and 1.26.52.3;
+the directory is the format version, `beta` last), follows the `$ref`s and
 writes per component and field path (`a.b`, `a[]`, `a{}`) the facts: types, enum, default, minimum and maximum, string and
 list limits, pattern, required, deprecated, underlying type and runtime constraint text. A definition that is the same in
 several formats is written once with its formats. The file is generated and facts only: the descriptions and the raw tree
