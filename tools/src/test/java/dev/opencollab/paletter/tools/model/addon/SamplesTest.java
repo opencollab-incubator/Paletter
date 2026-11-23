@@ -96,14 +96,14 @@ class SamplesTest {
             "origin.y": {"types": ["number"], "default": 0.0},
             "origin.z": {"types": ["number"], "default": 0.0}}}]}}""".formatted(ENUM, ENUM);
 
-    private static AddonGenerator generator(Path root, boolean schema) throws IOException {
+    private static AddonGenerator generator(Path root) throws IOException {
         Path model = Files.createDirectories(root.resolve("model"));
         Files.writeString(model.resolve("components.json"), MODEL);
         Files.writeString(model.resolve("fixtures.json"), FIXTURES);
         Files.writeString(model.resolve("bds-feedback.json"), FEEDBACK);
         Files.createDirectories(root.resolve("bds/1.26.99.1"));
         Files.writeString(root.resolve("bds/1.26.99.1/schema.json"), SCHEMA);
-        return new AddonGenerator(Model.read(model.resolve("components.json")), Fixtures.read(model, schema), "1.26.60");
+        return new AddonGenerator(Model.read(model.resolve("components.json")), Fixtures.read(model), "1.26.60");
     }
 
     private static List<AddonGenerator.Variant> variants(AddonGenerator generator, String component, String path) {
@@ -113,7 +113,7 @@ class SamplesTest {
 
     @Test
     void everyValueOfASchemaEnumIsVariedAndNoneIsCut(@TempDir Path root) throws IOException {
-        AddonGenerator generator = generator(root, true);
+        AddonGenerator generator = generator(root);
         Set<String> sent = new TreeSet<>();
         variants(generator, "block:minecraft:geo", "mode").forEach(v -> sent.add(v.value().getAsString()));
         for (int i = 0; i < 40; i++) {
@@ -125,14 +125,6 @@ class SamplesTest {
         assertTrue(unpinned.size() < 40, unpinned.toString());
         assertEquals(1, generator.cutValues().size(), generator.cutValues().toString());
         assertTrue(generator.cutValues().getFirst().startsWith("block:minecraft:geo mode2 (string): kept 32 of "));
-    }
-
-    @Test
-    void withoutTheSchemaNothingIsPinned(@TempDir Path root) throws IOException {
-        // No enum in the model without the schema: only the invalid value and the samples
-        Set<String> sent = new TreeSet<>();
-        variants(generator(root, false), "block:minecraft:geo", "mode").forEach(v -> sent.add(v.value().getAsString()));
-        assertFalse(sent.contains("v39"), sent.toString());
     }
 
     /** The strings of a map's variants by key. */
@@ -148,7 +140,7 @@ class SamplesTest {
 
     @Test
     void molangIsTriedUnderSeveralKeys(@TempDir Path root) throws IOException {
-        List<AddonGenerator.Variant> bones = variants(generator(root, true), "block:minecraft:geo", "bones");
+        List<AddonGenerator.Variant> bones = variants(generator(root), "block:minecraft:geo", "bones");
         Map<String, Set<String>> byKey = molangByKey(bones, "{3 keys}");
         assertEquals(Set.of("bone_a", "bone_a_2", "bone_a_3"), byKey.keySet());
         // Each of the 7 strings is under two keys at least
@@ -162,7 +154,7 @@ class SamplesTest {
 
     @Test
     void molangIsTriedInTheObjectFormAndAsANumberWhereTheSchemaListsThem(@TempDir Path root) throws IOException {
-        List<AddonGenerator.Variant> bones = variants(generator(root, true), "block:minecraft:geo", "bones");
+        List<AddonGenerator.Variant> bones = variants(generator(root), "block:minecraft:geo", "bones");
         List<JsonObject> objects = bones.stream().filter(v -> v.label().contains("{1 object}")).map(v -> v.value().getAsJsonObject()).toList();
         assertEquals(8, objects.size(), "the sample and each of the 7 strings");
         JsonObject first = objects.getFirst().getAsJsonObject("bone_a");
@@ -171,15 +163,12 @@ class SamplesTest {
         assertEquals(2, first.size());
         assertTrue(objects.stream().anyMatch(o -> o.getAsJsonObject("bone_a").get("expression").getAsString().equals("1e3")));
         assertTrue(bones.stream().anyMatch(v -> v.label().contains("{1 number}") && v.value().getAsJsonObject().get("bone_a").getAsJsonPrimitive().isNumber()));
-        // Without the schema the model knows no other element type: none of them
-        assertTrue(variants(generator(root, false), "block:minecraft:geo", "bones").stream()
-            .noneMatch(v -> v.label().contains("{1 object}") || v.label().contains("{1 number}")));
     }
 
     @Test
     void namesAreWrittenInEveryOrderOfThreeAndInTwoMoreSetsAndAll(@TempDir Path root) throws IOException {
         List<List<String>> lists = new ArrayList<>();
-        for (AddonGenerator.Variant v : variants(generator(root, true), "block:minecraft:geo", "lock")) {
+        for (AddonGenerator.Variant v : variants(generator(root), "block:minecraft:geo", "lock")) {
             if (v.value().isJsonArray() && !v.value().getAsJsonArray().isEmpty() && v.value().getAsJsonArray().get(0).getAsString().matches("n\\d")
                 && v.value().getAsJsonArray().size() >= 3) {
                 List<String> names = new ArrayList<>();
@@ -197,7 +186,7 @@ class SamplesTest {
 
     @Test
     void theBooleansOfAnObjectAreTriedInEveryCombination(@TempDir Path root) throws IOException {
-        List<AddonGenerator.Variant> faces = variants(generator(root, true), "block:minecraft:geo", "faces").stream()
+        List<AddonGenerator.Variant> faces = variants(generator(root), "block:minecraft:geo", "faces").stream()
             .filter(v -> v.label().startsWith("object:{a=")).toList();
         // a and b (a base can hold them): 4; with c (set only by a variant of its own, with what it needs): 8
         assertEquals(12, faces.size(), faces.stream().map(AddonGenerator.Variant::label).toList().toString());
@@ -254,7 +243,7 @@ class SamplesTest {
 
     @Test
     void boxesVaryTheOriginAndTheSizeTogetherInsideBdsLimit(@TempDir Path root) throws IOException {
-        AddonGenerator generator = generator(root, true);
+        AddonGenerator generator = generator(root);
         // The component with the limit as a fact: the whole value
         List<AddonGenerator.Variant> cube = variants(generator, "block:minecraft:cube", "").stream().filter(v -> v.role().equals("form")).toList();
         assertJointBoxes(boxes(cube), new double[]{-8, 0, -8}, new double[]{8, 16, 8});
@@ -266,7 +255,7 @@ class SamplesTest {
 
     @Test
     void aBoxWithoutALimitYetHasABoxPastAnyLimitAndOneWithAFactDoesNot(@TempDir Path root) throws IOException {
-        AddonGenerator generator = generator(root, true);
+        AddonGenerator generator = generator(root);
         assertTrue(variants(generator, "block:minecraft:boxes", "[]").stream().anyMatch(v -> v.label().contains("(past any limit)")),
             "BDS says its limit when a box is past it");
         assertTrue(variants(generator, "block:minecraft:cube", "").stream().noneMatch(v -> v.label().contains("(past any limit)")));
@@ -279,7 +268,7 @@ class SamplesTest {
 
     @Test
     void aVectorTheSchemaAlsoDescribesByItsMembersStaysAVector(@TempDir Path root) throws IOException {
-        AddonGenerator.Variant base = generator(root, true).variants().stream()
+        AddonGenerator.Variant base = generator(root).variants().stream()
             .filter(v -> v.componentId().equals("block:minecraft:cube") && v.role().equals("base")).findFirst().orElseThrow();
         assertTrue(base.component().getAsJsonObject().get("origin").isJsonArray(), base.component().toString());
     }
@@ -287,7 +276,7 @@ class SamplesTest {
     @Test
     void theCommittedAddonHasTheSamplesTheRulesNeed() throws IOException {
         Path model = Path.of("..", "data", "model").toAbsolutePath().normalize();
-        AddonGenerator generator = new AddonGenerator(Model.read(model.resolve("components.json")), Fixtures.read(model, true), "1.26.60");
+        AddonGenerator generator = new AddonGenerator(Model.read(model.resolve("components.json")), Fixtures.read(model), "1.26.60");
         // every schema enum value of the use animations, as the whole value and as the field
         Set<String> animations = Set.of("none", "eat", "drink", "block", "bow", "camera", "crossbow", "spear", "spyglass", "brush");
         for (String path : List.of("", "value")) {
@@ -324,7 +313,7 @@ class SamplesTest {
     @Test
     void everyOpenEnumOfTheApiHasNoPinnedValues() throws IOException {
         Path model = Path.of("..", "data", "model").toAbsolutePath().normalize();
-        Fixtures fixtures = Fixtures.read(model, true);
+        Fixtures fixtures = Fixtures.read(model);
         JsonElement api = JsonParser.parseString(Files.readString(model.resolve("api.json")));
         // An open enum is a string in the API: no table, so no reason to vary all of its values
         for (JsonElement key : api.getAsJsonObject().getAsJsonArray("openEnums")) {

@@ -374,10 +374,10 @@ class SchemaTest {
         Path root = Path.of(System.getProperty("paletter.root", ".."));
         Path modelDir = root.resolve("data/model");
         Model docs = Model.read(modelDir.resolve("components.json"));
-        Fixtures fixtures = Fixtures.read(modelDir, true);
+        Fixtures fixtures = Fixtures.read(modelDir);
         assertNotNull(fixtures.schemaBuild(), "no data/bds/<build>/schema.json");
         Model with = fixtures.apply(docs);
-        Model without = Fixtures.read(modelDir, false).apply(docs);
+        Model without = docs;
         // The content log cut this list short ("... (7 others)"), the docs have none
         assertEquals(0, without.component("item:minecraft:use_animation").field("value").enumValues().size());
         assertTrue(with.component("item:minecraft:use_animation").field("value").enumValues().size() >= 10);

@@ -118,7 +118,7 @@ class TraitStateTableTest {
     @Test
     void withTheSchemaInTheModelTheTableTakesBdsStatesForWhatNoDocsName() throws IOException {
         Path modelDir = ROOT.resolve("data/model");
-        Model model = Fixtures.read(modelDir, true).apply(Model.read(modelDir.resolve("components.json")));
+        Model model = Fixtures.read(modelDir).apply(Model.read(modelDir.resolve("components.json")));
         JsonObject table = TraitStateTable.infer(ROOT, model).getAsJsonObject("minecraft:placement_direction");
         assertTrue(table.has("minecraft:cardinal_direction"));
         TraitStateTable.State bds = TraitStateTable.BdsStates.newest(ROOT).state("minecraft:sixteen_way_rotation");

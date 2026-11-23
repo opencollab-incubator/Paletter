@@ -40,15 +40,14 @@ class AddonSchemaTest {
          "fields": {"count": {"types": ["integer"], "minimum": 0.0, "maximum": 15.0},
                     "kind": {"types": ["string"], "enum": ["water", "lava"]}}}]}}""";
 
-    private static AddonGenerator generator(Path root, boolean schema) throws IOException {
+    private static AddonGenerator generator(Path root) throws IOException {
         Path model = Files.createDirectories(root.resolve("model"));
         Files.writeString(model.resolve("components.json"), MODEL);
         Files.writeString(model.resolve("fixtures.json"), FIXTURES);
         Files.writeString(model.resolve("bds-feedback.json"), FEEDBACK);
         Files.createDirectories(root.resolve("bds/1.26.99.1"));
         Files.writeString(root.resolve("bds/1.26.99.1/schema.json"), SCHEMA);
-        Fixtures fixtures = schema ? Fixtures.read(model, true) : Fixtures.read(model, false);
-        return new AddonGenerator(Model.read(model.resolve("components.json")), fixtures, "1.26.60");
+        return new AddonGenerator(Model.read(model.resolve("components.json")), Fixtures.read(model), "1.26.60");
     }
 
     private static List<String> labels(AddonGenerator generator, String path) {
@@ -57,15 +56,8 @@ class AddonSchemaTest {
     }
 
     @Test
-    void theSchemaIsOnlyInTheModelWhenTheSwitchIsOn(@TempDir Path root) throws IOException {
-        // With the switch off the log's range is all there is: 20 and 21, no 15
-        List<String> without = labels(generator(root, false), "count");
-        assertTrue(without.containsAll(List.of("20", "21")) && !without.contains("16"), without.toString());
-    }
-
-    @Test
     void whereTheSchemaAndTheLogDisagreeBothBoundariesAreTested(@TempDir Path root) throws IOException {
-        AddonGenerator generator = generator(root, true);
+        AddonGenerator generator = generator(root);
         List<String> count = labels(generator, "count");
         assertEquals(List.of("0", "-1", "15", "16"), count.subList(0, 4), "the schema's limits first");
         assertTrue(count.containsAll(List.of("20", "21")), "and the log's: BDS decides");
@@ -75,7 +67,7 @@ class AddonSchemaTest {
 
     @Test
     void theValuesTheGeneratorCutAreReported(@TempDir Path root) throws IOException {
-        List<String> cut = generator(root, true).cutValues();
+        List<String> cut = generator(root).cutValues();
         assertEquals(1, cut.size(), cut.toString());
         assertTrue(cut.getFirst().startsWith("block:minecraft:box mode (string): kept 32 of "), cut.getFirst());
         assertFalse(cut.getFirst().contains("v0,"), "the values that are varied are not listed as cut");

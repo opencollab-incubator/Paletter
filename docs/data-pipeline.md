@@ -353,13 +353,6 @@ only of the creative stacks), so the order of 1.26.36.1 and 1.26.45.1 is checked
 `red_shrub`, `shelf_mushroom` and `straw_bed` still get the block of the block to item relation (26.50, where they are
 regular content, sends them without one). The recapture has to record the toggle's creative stacks with their blocks.
 
-**The schema in the add-on.** `Fixtures.SCHEMA_IN_ADDON` is off, so the add-on, the spec capture, the mapping inference, the
-coverage and the component API still read the model without BDS's schema (the tests read it with the schema,
-`Fixtures.read(model, true)`). The recapture is made with it on: turn it on, delete the switch with both `Fixtures.read`
-overloads and the two comments that describe its removal (`Fixtures#withSchema`, `SpecCapture.fixtures`: the fallback becomes
-`throw new IOException("no schema extracted for " + build)`), and correct the sentence of `SpecCapture` that says the add-on is
-the one place that takes BDS's schema.
-
 **What the generated code assumes without a capture**, each marked `TODO(recapture)` where it is used. The spec add-on has to
 gain these variants (`fixtures.json` probe values or the add-on generator), then the next recapture settles them:
 
@@ -519,10 +512,9 @@ generator adds them, and `SamplesTest` checks each against a model of its own an
   of the other components: **borrowed, unverified** for it ([Recapture to-do](#recapture-to-do): `collision_box`; a test checks the fallback).
 - *Vectors* the schema also describes by `x`, `y`, `z` stay vectors in the base (as an object they would have no member without a default).
 
-**Known gap: enums of an old format.** BDS's schema lists some enums only for format 1.26.30 (`swing_sounds`, `use_modifiers.start_sound`,
-`durability_sensor.durability_thresholds[].sound_event`, ...): the add-on's format 1.26.50 definitions do not have them, so their values are
-not varied. The format sweep varies a key at its boundaries only, not its enum values. TODO: vary them in the sweep at 1.26.30 (a generator
-for that format reads the schema's 1.26.30 definitions already, `AddonGenerator(model, fixtures, "1.26.30")`).
+**Enums of an old format.** BDS's schema lists some enums only for format 1.26.30 (`swing_sounds`, `use_modifiers.start_sound`,
+`durability_sensor.durability_thresholds[].sound_event`, ...): the add-on's newer definitions take any string there, so their values are not
+varied. Deliberately: they are sound event names, which no palette feature needs.
 
 **Script API module.** The beta add-ons (`behaviour-dump`) depend on the `@minecraft/server` beta of the build. `update` reads the versions from
 the `script_modules` of BDS's own documentation generator (`ScriptModules.parse`) into `data/bds/<build>/script-modules.json` (marked
@@ -1027,10 +1019,8 @@ list limits, pattern, required, deprecated, underlying type and runtime constrai
 several formats is written once with its formats. The file is generated and facts only: the descriptions and the raw tree
 stay out of the repository.
 
-`Fixtures#apply` merges the schema into the model, schema before feedback before errata before docs, when
-`Fixtures.SCHEMA_IN_ADDON` is on (one switch for the add-on, the spec capture, the mapping inference, the coverage and the
-component API: one model). It is off until every build is captured again with the add-on the schema shapes, so the committed
-captures and the conformance test stay valid until then ([Recapture to-do](#recapture-to-do)).
+`Fixtures#apply` merges the schema into the model, schema before feedback before errata before docs. The schema is part of the add-on, the spec capture, the mapping inference,
+the coverage and the component API: one model.
 
 - Per component the newest stable format at or below the add-on's format version counts; `beta` and beta-only components do
   not. Enum values (also of list elements), limits, `step` and `required` replace the docs'; the schema's types are added (first

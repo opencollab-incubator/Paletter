@@ -81,19 +81,11 @@ public final class SpecCapture {
 
     /**
      * The fixtures of the add-on of one build: the run's own schema if it extracted one (the committed {@code schema.json} can be
-     * older, or from a reader that read less, and a capture-only run commits nothing), else the newest committed one.
+     * older, or from a reader that read less, and a capture-only run commits nothing), else the newest committed one. An
+     * {@code update} leg never takes the fallback: {@code SpecStage} fails a run that extracted no schema.
      */
     static Fixtures fixtures(Path modelDir, String build, Schema runSchema) throws IOException {
-        return fixtures(modelDir, build, runSchema, Fixtures.SCHEMA_IN_ADDON);
-    }
-
-    /**
-     * {@link #fixtures(Path, String, Schema)} with the switch given. With it off the run's schema is ignored, like every other reader
-     * of the model. Once the switch is gone, the fallback below (the {@code runSchema == null ?} branch) becomes
-     * {@code throw new IOException("no schema extracted for " + build)}: a leg without its schema must fail.
-     */
-    static Fixtures fixtures(Path modelDir, String build, Schema runSchema, boolean schemaInAddon) throws IOException {
-        Fixtures fixtures = Fixtures.read(modelDir, schemaInAddon).forBuild(build);
+        Fixtures fixtures = Fixtures.read(modelDir).forBuild(build);
         return runSchema == null ? fixtures.withNewestSchema(build) : fixtures.withSchema(runSchema);
     }
 
@@ -129,7 +121,7 @@ public final class SpecCapture {
         Path server = distribution.extract(cache, root, !options.bds().keepServer() && !options.reuseServer());
         try {
             Path modelDir = root.resolve("data/model");
-            // The add-on is the one place that takes BDS's schema: full enums and limits to vary
+            // BDS's schema of this build: full enums and limits to vary
             Fixtures fixtures = fixtures(modelDir, distribution.version(), runSchema);
             // The add-on asks for no newer format than the build is: older builds refuse packs of a newer engine version
             String formatVersion = AddonGenerator.formatVersionFor(fixtures.formatVersion, distribution.version());

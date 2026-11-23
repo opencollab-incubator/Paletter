@@ -89,9 +89,15 @@ class GeneratedMetadataTest {
         JsonObject components = ComponentGenerator.read(ROOT.resolve("data/model"), "1.0.0").components();
         components.getAsJsonArray("components").forEach(e -> {
             JsonObject c = e.getAsJsonObject();
-            if (c.get("category").getAsString().equals("component") || c.get("category").getAsString().equals("trait")) {
-                assertNotNull(Docs.learnUrl(c.get("page").getAsString()), c.get("id").getAsString());
+            if (!c.get("category").getAsString().equals("component") && !c.get("category").getAsString().equals("trait")) {
+                return;
             }
+            if (!c.has("page") || c.get("page").isJsonNull()) {
+                // A component only BDS's schema has: there is no creator docs page to link, and its doc says so
+                assertTrue(c.get("doc").getAsString().contains("BDS has this component in its schema"), c.get("id").getAsString());
+                return;
+            }
+            assertNotNull(Docs.learnUrl(c.get("page").getAsString()), c.get("id").getAsString());
         });
         assertEquals(3, model.lists.size());
         model.lists.values().forEach(page -> assertNotNull(Docs.learnUrl(page), page));
