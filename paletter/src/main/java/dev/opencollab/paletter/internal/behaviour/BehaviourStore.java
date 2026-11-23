@@ -293,6 +293,41 @@ public final class BehaviourStore {
         return null;
     }
 
+    /**
+     * @return what one capture said about a block state (by state hash), whether it decides or not; null if it does not
+     * cover the state or has no values of the key
+     */
+    public @Nullable Object captured(int capture, @NonNull BehaviourKey<?> key, int stateHash) {
+        List<Column<int[]>> columns = blocks.get(key);
+        if (columns == null || !captures.get(capture).covers(stateHash) || columns.stream().noneMatch(c -> c.capture() == capture)) {
+            return null;
+        }
+        for (int j = columns.size() - 1; j >= 0; j--) {
+            Column<int[]> column = columns.get(j);
+            int found = column.capture() > capture ? -1 : Arrays.binarySearch(column.ids(), stateHash);
+            if (found >= 0) {
+                return column.values()[found];
+            }
+        }
+        return null;
+    }
+
+    /** @return what one capture said about an item, like {@link #captured(int, BehaviourKey, int)} */
+    public @Nullable Object captured(int capture, @NonNull BehaviourKey<?> key, @NonNull String identifier) {
+        List<Column<String[]>> columns = items.get(key);
+        if (columns == null || !captures.get(capture).items().contains(identifier) || columns.stream().noneMatch(c -> c.capture() == capture)) {
+            return null;
+        }
+        for (int j = columns.size() - 1; j >= 0; j--) {
+            Column<String[]> column = columns.get(j);
+            int found = column.capture() > capture ? -1 : Arrays.binarySearch(column.ids(), identifier);
+            if (found >= 0) {
+                return column.values()[found];
+            }
+        }
+        return null;
+    }
+
     // ---- Building ----
 
     /**
