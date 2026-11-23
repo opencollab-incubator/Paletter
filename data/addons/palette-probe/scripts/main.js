@@ -4,11 +4,13 @@
 // the runtime id of each state in the block update of that cell; the tools pair the two. It prints:
 //
 //   PALETTE <index>/<total> <slice>   the JSON below in numbered chunks
+//   PALETTE-UNSETTLED [cell index]    the cells that changed again after the read back (scheduled ticks: fire, farmland)
 //   PALETTE-DONE <total> chunks       all done (PALETTE-FAILED <error> if the script failed)
 //
-//   {cells: [[x, y, z, block id, {state: value}]], moved: [cell index]}
+//   {cells: [[x, y, z, block id, {state: value}]], moved: [[cell index, block id, {state: value}]]}
 //     cells: every state, in the order placed; moved: the cells that did not hold their state when read back after the
-//     placement (a block that fell, flowed or broke): their block updates say nothing of that state
+//     placement, with what they held then (a wall that connected to its neighbours, a shelf that took another type, a block
+//     that fell or broke): their last block update is of that state, not of the one placed
 //
 // The tools draw the conclusions (dev.opencollab.paletter.tools.client.PaletteIds); this script draws none.
 import { world, system, BlockPermutation, BlockStates, BlockTypes } from "@minecraft/server";
@@ -67,6 +69,9 @@ function key(permutation) {
 
 async function main(player) {
     const dim = world.getDimension("overworld");
+    for (const command of ["gamerule randomtickspeed 0", "gamerule dofiretick false", "gamerule domobspawning false"]) {
+        dim.runCommand(command);
+    }
     const x0 = Math.floor(player.location.x / 16) * 16 - 16;
     const z0 = Math.floor(player.location.z / 16) * 16 - 16;
     const states = [];
@@ -110,10 +115,18 @@ async function main(player) {
         }
     })()));
     await wait(10);
+    // Read back last, right before the output: random ticks and fire are off, so nothing changes the cells after this
     const moved = [];
-    states.forEach((permutation, i) => {
+    const readBack = states.map((permutation, i) => {
         const block = dim.getBlock(cells[i]);
-        if (!block || key(block.permutation) !== key(permutation)) moved.push(i);
+        if (!block) {
+            moved.push([i, "", {}]);
+            return "";
+        }
+        if (key(block.permutation) !== key(permutation)) {
+            moved.push([i, block.permutation.type.id, block.permutation.getAllStates()]);
+        }
+        return key(block.permutation);
     });
     const json = JSON.stringify({
         cells: states.map((permutation, i) => [cells[i].x, cells[i].y, cells[i].z, permutation.type.id, permutation.getAllStates()]),
@@ -124,6 +137,14 @@ async function main(player) {
         console.warn(`PALETTE ${i}/${total} ${json.slice(i * CHUNK_SIZE, (i + 1) * CHUNK_SIZE)}`);
         if (i % 50 === 49) await wait(1);
     }
+    // Blocks with scheduled ticks (fire, farmland, frosted ice) can change after the read back: the cells that hold another state
+    // now than then say nothing, as their last block update may be of either
+    const unsettled = [];
+    states.forEach((permutation, i) => {
+        const block = dim.getBlock(cells[i]);
+        if ((block ? key(block.permutation) : "") !== readBack[i]) unsettled.push(i);
+    });
+    console.warn(`PALETTE-UNSETTLED ${JSON.stringify(unsettled)}`);
     console.warn(`PALETTE-DONE ${total} chunks`);
 }
 

@@ -155,13 +155,16 @@ final class CaptureStage {
         ordering.customBlockIds("creative order probe", work.resolve("creative"));
         if (runs.paletteIds != null) {
             // The whole palette, the states within each block too; SequentialIdsTest holds the committed captures to the bundled data
-            List<String> wrong = PaletteIds.mismatches(runs.reference.blockStates(), PaletteIds.read(runs.paletteIds));
-            ctx.report.check(Report.Status.INFO, "Sequential ids (palette probe)", wrong.isEmpty()
-                ? "every observed id is the index of its state in the reference palette " + runs.reference.version().name()
-                : wrong.size() + " observed ids are not the index of their state in the reference palette " + runs.reference.version().name());
-            if (!wrong.isEmpty()) {
-                ctx.report.evidence("States whose sequential id is not their index in the reference palette",
-                    wrong.stream().limit(200).map(line -> "- " + line).toList());
+            PaletteIds.Comparison comparison = PaletteIds.compare(runs.reference.blockStates(), PaletteIds.read(runs.paletteIds));
+            String palette = "the reference palette " + runs.reference.version().name();
+            ctx.report.check(Report.Status.INFO, "Sequential ids (palette probe)", (comparison.wrong().isEmpty()
+                ? "the observed states of every block are in the order of " + palette
+                : comparison.wrong().size() + " blocks differ from " + palette)
+                + "; " + comparison.offset().size() + " blocks shifted by blocks it lacks, " + comparison.otherBlocks().size()
+                + " blocks it lacks" + (comparison.otherBlocks().isEmpty() ? "" : " " + comparison.otherBlocks()));
+            if (!comparison.wrong().isEmpty()) {
+                ctx.report.evidence("Blocks whose sequential ids differ from " + palette,
+                    comparison.wrong().stream().limit(200).map(line -> "- " + line).toList());
             }
         }
         ordering.passes.forEach(pass -> ctx.report.check(Report.Status.PASS, "Block numbering", pass));
@@ -218,7 +221,8 @@ final class CaptureStage {
                 if (!failed.isEmpty() || !bds.sawLine(line -> line.contains(PaletteIds.MARKER + "-DONE"))) {
                     throw new IOException(failed.isEmpty() ? "the probe printed no " + PaletteIds.MARKER + "-DONE" : failed.getFirst().strip());
                 }
-                PaletteIds.Result result = PaletteIds.pair(bds.lines(line -> line.contains(PaletteIds.MARKER + " ")), updates);
+                PaletteIds.Result result = PaletteIds.pair(bds.lines(line -> line.contains(PaletteIds.MARKER + " ")
+                    || line.contains(PaletteIds.MARKER + "-UNSETTLED ")), updates);
                 Path file = work.resolve("palette").resolve(PaletteIds.FILE);
                 PaletteIds.write(file, PaletteIds.render(runs.bdsVersion, runs.protocol, toggles, result));
                 runs.paletteIds = file;

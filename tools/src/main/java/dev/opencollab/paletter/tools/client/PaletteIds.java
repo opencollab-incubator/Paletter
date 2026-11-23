@@ -86,22 +86,50 @@ public final class PaletteIds {
     public static Result pair(List<String> lines, Map<String, Integer> updates) throws IOException {
         JsonObject probe = JsonParser.parseString(join(lines)).getAsJsonObject();
         JsonArray cells = probe.getAsJsonArray("cells");
-        java.util.Set<Integer> moved = new java.util.HashSet<>();
-        probe.getAsJsonArray("moved").forEach(index -> moved.add(index.getAsInt()));
-        List<Entry> ids = new ArrayList<>();
-        Map<State, String> notObserved = new java.util.LinkedHashMap<>();
-        for (int i = 0; i < cells.size(); i++) {
-            JsonArray cell = cells.get(i).getAsJsonArray();
-            State state = new State(cell.get(3).getAsString(), cell.get(4).getAsJsonObject());
-            Integer id = updates.get(cell.get(0).getAsInt() + " " + cell.get(1).getAsInt() + " " + cell.get(2).getAsInt());
-            if (moved.contains(i)) {
-                notObserved.put(state, "the cell did not hold the state when read back (it fell, flowed or broke)");
-            } else if (id == null) {
-                notObserved.put(state, "no block update for its cell");
-            } else {
-                ids.add(new Entry(id, state));
+        // What a cell held when read back, where that is not what was placed: its last block update is of that state
+        Map<Integer, State> held = new HashMap<>();
+        probe.getAsJsonArray("moved").forEach(element -> {
+            JsonArray moved = element.getAsJsonArray();
+            held.put(moved.get(0).getAsInt(), moved.get(1).getAsString().isEmpty() ? null
+                : new State(moved.get(1).getAsString(), moved.get(2).getAsJsonObject()));
+        });
+        // The cells that changed again after the read back: their last update may be of either state
+        java.util.Set<Integer> unsettled = new java.util.HashSet<>();
+        for (String line : lines) {
+            int at = line.indexOf(MARKER + "-UNSETTLED ");
+            if (at >= 0) {
+                JsonParser.parseString(line.substring(at + MARKER.length() + 11).strip()).getAsJsonArray().forEach(i -> unsettled.add(i.getAsInt()));
             }
         }
+        Map<String, Entry> byState = new HashMap<>();
+        Map<String, State> conflicting = new TreeMap<>();
+        List<State> placed = new ArrayList<>();
+        for (int i = 0; i < cells.size(); i++) {
+            JsonArray cell = cells.get(i).getAsJsonArray();
+            placed.add(new State(cell.get(3).getAsString(), cell.get(4).getAsJsonObject()));
+            if (unsettled.contains(i)) {
+                continue;
+            }
+            State state = held.containsKey(i) ? held.get(i) : placed.getLast();
+            Integer id = updates.get(cell.get(0).getAsInt() + " " + cell.get(1).getAsInt() + " " + cell.get(2).getAsInt());
+            if (state == null || id == null) {
+                continue;
+            }
+            Entry before = byState.putIfAbsent(state.key(), new Entry(id, state));
+            if (before != null && before.id() != id) {
+                conflicting.put(state.key(), state);
+            }
+        }
+        conflicting.keySet().forEach(byState::remove);
+        Map<State, String> notObserved = new java.util.LinkedHashMap<>();
+        for (State state : placed) {
+            if (conflicting.containsKey(state.key())) {
+                notObserved.put(state, "two cells that held it had different block updates");
+            } else if (!byState.containsKey(state.key())) {
+                notObserved.put(state, "no cell held it to the end with a block update (it changed on placement, fell or broke)");
+            }
+        }
+        List<Entry> ids = new ArrayList<>(byState.values());
         ids.sort(java.util.Comparator.comparingInt(Entry::id));
         return new Result(ids, notObserved);
     }
@@ -184,23 +212,69 @@ public final class PaletteIds {
     }
 
     /**
-     * The observed ids that are not the index of their state in {@code palette} (the states in sequential order: by the name hash of
-     * the block, then in the block's own order), one line each; empty if every one is.
+     * What the observed ids say against {@code palette} (the states in sequential order: by the name hash of the block, then in the
+     * block's own order).
+     *
+     * @param wrong       the blocks of the palette whose observed states are not in the palette's order within the block, or that
+     *                    BDS has a state of that the palette lacks, one line each
+     * @param otherBlocks the observed blocks the palette does not have (the probe's world has the build's toggles on, which can add
+     *                    blocks a palette captured without them lacks)
+     * @param offset      blocks whose observed ids are their palette indices shifted by another amount than 0 (blocks the palette
+     *                    lacks before them), by block
      */
-    public static List<String> mismatches(List<NbtMap> palette, List<Entry> observed) {
+    public record Comparison(List<String> wrong, java.util.Set<String> otherBlocks, Map<String, Integer> offset) {
+    }
+
+    /**
+     * Compares the observed ids with {@code palette} block by block: within a block, every observed state must sit at the same
+     * distance from its palette index (so in the palette's order, with no state of BDS's between them that the palette lacks). Blocks
+     * the palette lacks shift the ids of the blocks after them, which is not a difference of the order within those blocks.
+     */
+    public static Comparison compare(List<NbtMap> palette, List<Entry> observed) {
         Map<String, Integer> index = new HashMap<>();
+        // The Script API also gives the legacy alias states of a block (a door's direction, a log's wood_type), which the palette
+        // does not have: an observed state is compared by the states its block has in the palette. A state the palette lacks
+        // but BDS numbers on its own still shows: two ids then meet one index, at two distances
+        Map<String, java.util.Set<String>> keys = new HashMap<>();
         for (int i = 0; i < palette.size(); i++) {
             index.put(State.key(palette.get(i)), i);
+            keys.computeIfAbsent(BlockStates.name(palette.get(i)), name -> new java.util.HashSet<>()).addAll(BlockStates.states(palette.get(i)).keySet());
         }
         List<String> wrong = new ArrayList<>();
+        java.util.Set<String> otherBlocks = new java.util.TreeSet<>();
+        Map<String, Integer> offsets = new TreeMap<>();
+        Map<String, List<String>> byBlock = new TreeMap<>();
         for (Entry entry : observed) {
-            Integer expected = index.get(entry.state().key());
-            if (expected == null || expected != entry.id()) {
-                wrong.add(entry.state().key() + ": BDS " + entry.id() + ", palette " + (expected == null ? "has no such state" : expected)
-                    + (entry.id() < palette.size() ? " (BDS's id is " + State.key(palette.get(entry.id())) + " there)" : ""));
+            String name = entry.state().name();
+            java.util.Set<String> own = keys.get(name);
+            if (own == null) {
+                otherBlocks.add(name);
+                continue;
+            }
+            JsonObject states = new JsonObject();
+            entry.state().states().entrySet().stream().filter(state -> own.contains(state.getKey()))
+                .forEach(state -> states.add(state.getKey(), state.getValue()));
+            String key = new State(name, states).key();
+            Integer expected = index.get(key);
+            if (expected == null) {
+                wrong.add(key + ": BDS " + entry.id() + ", the palette has no such state");
+                continue;
+            }
+            int offset = entry.id() - expected;
+            Integer first = offsets.putIfAbsent(name, offset);
+            byBlock.computeIfAbsent(name, n -> new ArrayList<>()).add(key + " BDS " + entry.id() + " palette " + expected);
+            if (first != null && first != offset) {
+                offsets.put(name, Integer.MIN_VALUE);
             }
         }
-        return wrong;
+        offsets.forEach((name, offset) -> {
+            if (offset == Integer.MIN_VALUE) {
+                wrong.add(name + ": the states are in another order or BDS has states between them the palette lacks: "
+                    + String.join("; ", byBlock.get(name)));
+            }
+        });
+        offsets.values().removeIf(offset -> offset == 0 || offset == Integer.MIN_VALUE);
+        return new Comparison(wrong, otherBlocks, offsets);
     }
 
     /** Writes the file. */
