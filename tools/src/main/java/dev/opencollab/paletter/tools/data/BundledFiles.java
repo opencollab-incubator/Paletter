@@ -27,7 +27,7 @@ import java.util.stream.Stream;
  */
 public final class BundledFiles {
     public static final String STORE = "properties.nbt";
-    /** The vanilla voxel shapes, written by {@code voxel-shapes import}, not a version file. */
+    /** The vanilla voxel shapes a directory data source may carry (the bundled ones are generated classes): not a version file. */
     public static final String VOXEL_SHAPES = "voxel_shapes.nbt";
 
     private BundledFiles() {

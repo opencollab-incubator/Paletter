@@ -20,7 +20,7 @@ For people changing Paletter. Usage is in [api.md](api.md); data, tools and code
 does not change is shared with the parent.
 
 1. **Blocks**: vanilla states, custom blocks (`internal.component.BlockCompiler`), block fallbacks, network ids. Voxel
-   shapes follow (`internal.shape.VoxelShapeCompiler`): vanilla ones from `voxel_shapes.nbt`, then the layers' shapes,
+   shapes follow (`internal.shape.VoxelShapeCompiler`): vanilla ones from the generated `internal.vanilla.shapes`, then the layers' shapes,
    then the shapes Bedrock derives for custom blocks.
 2. **Items**: vanilla definitions, custom items (`ItemCompiler`), overrides, item fallbacks, block items, tags.
 3. **Creative**: the layout (vanilla order, then placements and edits) and the packet.
@@ -49,12 +49,13 @@ only hold canonical entries.
 
 `paletter/src/main/resources/paletter/` holds `versions.txt`, one gzipped NBT file per version (format in
 `internal.data.PaletteDataCodec`), `properties.nbt` (component data stored once with the version range it applies to),
-`voxel_shapes.nbt`, the generated `builds.txt` (the BDS builds each version was verified against,
-from `data/bds/builds.json`) and the hand-written `renames.txt`. `PaletteDataSource#bundled()` reads them. Each
-version file holds block states, items with components, data driven blocks, the creative layout, item tags, default
-block states, the block to item relation and experiment marks. The vanilla behaviour values are not a file: they are
-generated classes (`internal.behaviour.vanilla`, see data-pipeline.md "Captures and generated code"), the same for every
-data source.
+the generated `builds.txt` (the BDS builds each version was verified against, from `data/bds/builds.json`) and the
+hand-written `renames.txt`. `PaletteDataSource#bundled()` reads them. Each version file holds the items, the creative
+layout, item tags, the block to item relation and experiment marks. The block states and default states of the bundled
+versions are generated classes (`internal.vanilla.blocks`, derived at load by `internal.vanilla.VanillaBlocks`; data-pipeline.md
+"Block definitions"), as are the vanilla voxel shapes (`internal.vanilla.shapes`) and the behaviour values
+(`internal.behaviour.vanilla`, "Captures and generated code"). A directory data source may still carry block states and
+`voxel_shapes.nbt` of its own.
 
 ## Wire-only components
 

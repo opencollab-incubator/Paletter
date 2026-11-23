@@ -91,8 +91,8 @@ public interface PaletteDataSource {
     /**
      * Internal: the vanilla voxel shapes of the versions.
      *
-     * @return the vanilla voxel shapes of the versions; the bundled source reads {@code voxel_shapes.nbt}, the default
-     *         has none. A palette of a version without them cannot be built
+     * @return the vanilla voxel shapes of the versions; the bundled source builds them from generated classes, the
+     *         default has none. A palette of a version without them cannot be built
      */
     @dev.opencollab.paletter.annotation.Internal
     default @NonNull VoxelShapeStore voxelShapes() {
@@ -111,10 +111,11 @@ public interface PaletteDataSource {
     /**
      * Returns a source reading a directory in the bundled format, e.g. data refreshed for a newer Bedrock version.
      *
-     * @param directory a directory in the bundled format: {@code versions.txt}, one {@code <name>.nbt} per version,
-     *                  {@code voxel_shapes.nbt} with the shapes of every version (a palette without them fails to build),
-     *                  and optionally {@code properties.nbt}, {@code renames.txt} and
-     *                  {@code builds.txt}. Read when first needed
+     * @param directory a directory in the bundled format: {@code versions.txt}, one {@code <name>.nbt} per version (with
+     *                  its block states, or without them for a version the library has generated block definitions of),
+     *                  and optionally {@code voxel_shapes.nbt} with the shapes of every version (without it, the
+     *                  library's own; a palette of a version without shapes fails to build), {@code properties.nbt},
+     *                  {@code renames.txt} and {@code builds.txt}. Read when first needed
      * @return a source reading that directory
      * @since 1.0.0
      */

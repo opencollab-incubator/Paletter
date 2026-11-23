@@ -240,3 +240,44 @@ Heap and metaspace together: 3.75 MB against 6.6 MB. The class files are 43 clas
 **Jar**: `paletter-1.0.0-SNAPSHOT.jar` 2,308,598 bytes before, 2,217,635 after (the 421 KB `behaviour.nbt` out, the
 generated classes in). **Limits** (`GeneratedBehaviourLimitsTest`): the largest method is 18,721 bytes of bytecode, the
 largest constant pool 1,386 entries.
+
+## Block definitions and voxel shapes as generated code
+
+The block states of the bundled versions moved from the version files into generated definitions (`internal.vanilla.blocks`,
+derived at load), the voxel shapes from `voxel_shapes.nbt` into `internal.vanilla.shapes`, and the block to item relation keeps
+only its non-identity entries (data-pipeline.md "Block definitions"). The data the library loads is the same for every version:
+states, their order and key order, hashed ids, defaults, block items, shapes.
+
+Before is `b5744bfe`, after the commit that made the change; same laptop, shared with other builds, run back to back.
+
+**Jar and files**: `paletter-1.0.0-SNAPSHOT.jar` 2,218,633 bytes before, 1,827,298 after (-391 KB). The five version files
+went from 140,592 / 144,443 / 168,650 / 177,508 / 183,469 bytes to 43,852 / 44,837 / 46,640 / 46,871 / 47,431 (814,662 to
+229,631), `voxel_shapes.nbt` (4,562) is gone; the generated sources are 4,467 lines (275 KB), 15 classes (9 block, 6 shape) of 205,990 bytes.
+**Limits** (`GeneratedBlocksLimitsTest`): the largest method is 2,187 bytes of bytecode in the block classes and 17,610 in the
+shape classes (the static initializer of a shape table), the largest constant pool 1,366 entries.
+
+**Loading the data** (a cold JVM, `PaletteDataSource.bundled().load`, three runs each): the newest version 160 to 190 ms before,
+156 to 166 ms after; then every version 325 to 337 ms before, 225 to 269 ms after. Deriving the states from the definitions
+costs about what parsing them did; the gain is the smaller files.
+
+**`build()`** (`StartupBenchmark`, three cold forks each, median): `vanilla` 3,033 ms before, 2,906 after; `withoutBehaviour`
+2,193 and 2,153; `withCustomLayer` 3,265 and 2,941. The forks spread by up to 15%: read it as "not slower".
+
+**Memory** (`MemoryBaselineTest`, bytes; palettes with behaviour off):
+
+| What | Before | After |
+|------|--------|-------|
+| vanilla palette, newest / oldest version | 11,885,536 / 13,296,088 | 11,878,576 / 13,292,320 |
+| served versions (all but the oldest) | 18,384,872 | 18,346,944 |
+| metaspace the generated block and shape classes add once loaded and run (not on the heap) | none | 383,832 |
+
+No palette holds the definitions: `VanillaBlocks` keeps them softly (built once for every version that loads, a few hundred KB the
+collector may take back), and a palette keeps the same state compounds as before (a few KB less, the shared shapes of the
+generated table).
+
+**After the review fixes** (the digest a file without block states carries, checked on every read; the soft cache of the
+definitions), same method: loading the newest version cold 217 to 222 ms (the digest hashes every state once more, cold), every
+version after it 283 to 340 ms, about what reading the old files cost. The bundled data source then stopped checking the digest
+at load (the build checks the bundled files: `checkBlocks`, `PaletteDataCodecBlocksTest`; a directory data source still checks):
+five cold runs gave 155 to 166 ms for the newest version and 222 to 252 ms for every version after it, as before the fixes. Memory: newest / oldest palette 11,881,312 / 13,297,504,
+served versions 18,355,872, metaspace of the generated block and shape classes 382,632 bytes.

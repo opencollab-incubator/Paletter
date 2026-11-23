@@ -23,7 +23,8 @@ import java.util.TreeSet;
  * without protocols), the captures of that window protocol, and its envelope windows; neighbouring windows that now have
  * the same wire shape ({@link MappingWindows#wireShape}) become one, keeping the older window's content as the inference
  * does. A data version no capture keeps any more is retired in the behaviour capture store ({@link #retireBehaviour}):
- * {@code generateBehaviour} then folds it into the base. What else belongs to the protocol is listed for the maintainer, not deleted: its {@code versions.txt} row and
+ * {@code generateBehaviour} then folds it into the base, as {@code generateBlocks} does with the block definitions once the
+ * version's {@code versions.txt} row and file are gone. What else belongs to the protocol is listed for the maintainer, not deleted: its {@code versions.txt} row and
  * bundled data, its {@code data/bds} build directories, its CloudburstMC/Data test data.
  */
 public final class Retire {
@@ -196,7 +197,8 @@ public final class Retire {
             }
         }
         out.add("then: builds table, inferMappings (changes nothing once the captures are gone), generateComponentApi,"
-            + " generateConstants and generateBehaviour (each its own Gradle run)");
+            + " generateConstants, generateBehaviour and generateBlocks (each its own Gradle run; with the version's versions.txt row"
+            + " and file gone, generateBlocks makes the next version the base of the block definitions, what it inherited folded in)");
         return out;
     }
 

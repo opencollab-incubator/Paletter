@@ -72,6 +72,12 @@ class MemoryBaselineTest {
      * of the class loader and is not on the heap (JOL does not count it). Measured 1.7 MB (1,715,872 bytes).
      */
     private static final long MAX_BEHAVIOUR_METASPACE_BYTES = 2_000_000;
+    /**
+     * What loading the generated block definitions and voxel shapes and building them once adds to the metaspace; nothing of
+     * them is counted on the heap (the definitions are kept softly by {@code VanillaBlocks}, reached by no palette). Measured
+     * 0.38 MB (383,832 bytes) on Windows; the limit leaves about 20% for other JVM builds (CI runs Linux).
+     */
+    private static final long MAX_BLOCKS_METASPACE_BYTES = 460_000;
 
     private static PaletteLayer sessionLayer(String id) {
         return PaletteLayer.builder(id)
@@ -170,6 +176,14 @@ class MemoryBaselineTest {
                 System.out.println(metaspace() - before);
                 return;
             }
+            if (args[0].equals("blocksMetaspace")) {
+                // What loading and running the generated block definitions and voxel shapes adds to the metaspace
+                long before = metaspace();
+                dev.opencollab.paletter.internal.vanilla.VanillaBlocks.all();
+                dev.opencollab.paletter.internal.shape.VoxelShapeStore.bundled();
+                System.out.println(metaspace() - before);
+                return;
+            }
             if (args[0].equals("withBehaviour")) {
                 // The newest palette with its behaviour columns, and the bundled values (counted once, as in "behaviour")
                 Paletter paletter = Paletter.builder().versions(MemoryBaselineTest::newestRelease).build();
@@ -239,6 +253,11 @@ class MemoryBaselineTest {
         long columns = vanillaBytes("withBehaviour") - vanillaBytes("true") - store;
         assertOnce("the behaviour columns of the newest palette", MAX_BEHAVIOUR_COLUMNS_BYTES, columns);
         assertOnce("the metaspace of the generated behaviour classes", MAX_BEHAVIOUR_METASPACE_BYTES, vanillaBytes("metaspace"));
+    }
+
+    @Test
+    void generatedBlocksStayWithinTheirLimit() {
+        assertOnce("the metaspace of the generated block definitions and voxel shapes", MAX_BLOCKS_METASPACE_BYTES, vanillaBytes("blocksMetaspace"));
     }
 
     private static void assertOnce(String what, long limit, long bytes) {

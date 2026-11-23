@@ -65,17 +65,7 @@ final class BehaviourComments {
      * a character outside printable ASCII as {@code <U+000A>}, and no {@code *}{@code /}
      */
     static String safe(String text) {
-        StringBuilder out = new StringBuilder();
-        for (char c : text.toCharArray()) {
-            if (c == '\\') {
-                out.append("\\\\");
-            } else if (c < 0x20 || c > 0x7e) {
-                out.append(String.format(java.util.Locale.ROOT, "<U+%04X>", (int) c));
-            } else {
-                out.append(c);
-            }
-        }
-        return out.toString().replace("*/", "*<U+002F>");
+        return dev.opencollab.paletter.tools.codegen.Comments.safe(text);
     }
 
     /** @return a capture in a few words: {@code BDS Script API dump 1.26.63.1}, {@code CloudburstMC/Data 0021592} */

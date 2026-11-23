@@ -30,30 +30,36 @@ import java.util.Map;
  * Reads data in the bundled format from a set of files: {@code versions.txt} lists one
  * {@code <name> <protocol> [preview] [codec=<protocol>]} line per version (a {@link DataVersion#isPreview() preview}; the
  * {@link DataVersion#codecProtocol() codec} that decoded its captures where that was another protocol's), and each version is stored in {@code <name>.nbt}
- * (written by the generator, see {@link PaletteDataCodec}). Item components and data driven blocks are stored once with
- * their version ranges in {@code properties.nbt} (see {@link PropertyStore}), the vanilla voxel shapes in {@code voxel_shapes.nbt} (see
+ * (written by the generator, see {@link PaletteDataCodec}; a file without block states takes those of the generated
+ * definitions of its version). Item components and data driven blocks are stored once with
+ * their version ranges in {@code properties.nbt} (see {@link PropertyStore}); the vanilla voxel shapes are the generated
+ * ones ({@link VoxelShapeStore#bundled()}) unless the set has a {@code voxel_shapes.nbt} (see
  * {@link VoxelShapeStore}); {@code renames.txt} is optional, as is {@code builds.txt}: one {@code <name> <BDS build> <protocol>}
  * line per release build verified to send a version's data ({@link #verifiedBuilds}).
  * The files are either {@code /paletter/} on the classpath of the library ({@link PaletteDataSource#bundled()}) or a
  * directory ({@link PaletteDataSource#directory(Path)}).
  */
 final class FileDataSource implements PaletteDataSource {
+    // The bundled files are checked against the generated definitions by the build (checkBlocks): not again at each load
     static final FileDataSource BUNDLED = new FileDataSource(
-        file -> FileDataSource.class.getResourceAsStream("/paletter/" + file), "the library jar");
+        file -> FileDataSource.class.getResourceAsStream("/paletter/" + file), "the library jar", false);
     private final Opener opener;
     private final String origin;
+    /** Whether a version file without block states is checked against the digest it stores ({@link PaletteDataCodec#read}). */
+    private final boolean checkDigest;
 
     private final Lazy<List<DataVersion>> versions = new Lazy<>(this::readIndex);
     private final Lazy<Map<String, List<VerifiedBuild>>> verifiedBuilds = new Lazy<>(this::readBuilds);
     // Read once: versions may load on several threads at the same time
     private final Lazy<PropertyStore> properties = new Lazy<>(
         () -> readOrEmpty("properties.nbt", "properties", PropertyStore::read, PropertyStore.empty()));
-    private final Lazy<VoxelShapeStore> voxelShapes = new Lazy<>(
-        () -> readOrEmpty("voxel_shapes.nbt", "voxel shapes", VoxelShapeStore::read, VoxelShapeStore.empty()));
+    // The bundled shapes are generated classes; a directory may carry its own
+    private final Lazy<VoxelShapeStore> voxelShapes = new Lazy<>(this::readVoxelShapes);
 
-    private FileDataSource(Opener opener, String origin) {
+    private FileDataSource(Opener opener, String origin, boolean checkDigest) {
         this.opener = opener;
         this.origin = origin;
+        this.checkDigest = checkDigest;
     }
 
     /** Reads a file of the set with {@code reader}, or returns {@code empty} if there is none. */
@@ -62,6 +68,14 @@ final class FileDataSource implements PaletteDataSource {
             return stream == null ? empty : reader.read(stream);
         } catch (IOException e) {
             throw new UncheckedIOException("Unable to read the Paletter " + what + " in " + origin, e);
+        }
+    }
+
+    private VoxelShapeStore readVoxelShapes() {
+        try (InputStream stream = opener.open("voxel_shapes.nbt")) {
+            return stream == null ? VoxelShapeStore.bundled() : VoxelShapeStore.read(stream);
+        } catch (IOException e) {
+            throw new UncheckedIOException("Unable to read the Paletter voxel shapes in " + origin, e);
         }
     }
 
@@ -74,7 +88,7 @@ final class FileDataSource implements PaletteDataSource {
         return new FileDataSource(file -> {
             Path path = directory.resolve(file);
             return Files.isRegularFile(path) ? Files.newInputStream(path) : null;
-        }, directory.toString());
+        }, directory.toString(), true);
     }
 
     /** Opens a file of the set, or returns null if there is none. */
@@ -168,7 +182,7 @@ final class FileDataSource implements PaletteDataSource {
     @Override
     public @NonNull VanillaData load(@NonNull DataVersion version) throws IOException {
         try (InputStream stream = open(version.name() + ".nbt")) {
-            return properties().attach(PaletteDataCodec.read(stream));
+            return properties().attach(PaletteDataCodec.read(stream, checkDigest));
         }
     }
 

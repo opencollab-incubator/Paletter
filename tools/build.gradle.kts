@@ -128,6 +128,16 @@ cliTask("generateBehaviour", "codegen", "Regenerates the vanilla behaviour data 
 val checkBehaviour = cliTask("checkBehaviour", "verification",
     "Fails if regenerating the vanilla behaviour data from the committed capture store and palettes yields a diff", "behaviour", "check", check = true)
 
+// The vanilla block definitions (paletter internal.vanilla.blocks) from the bundled palettes; generate also drops the block
+// states of the version files, which the definitions give.
+cliTask("generateBlocks", "codegen", "Regenerates the vanilla block definitions from the bundled palettes", "blocks", "generate")
+val checkBlocks = cliTask("checkBlocks", "verification",
+    "Fails if regenerating the vanilla block definitions from the bundled palettes yields a diff", "blocks", "check", check = true)
+
+// The vanilla voxel shapes (paletter internal.vanilla.shapes) from the shape captures in data/bds (voxel-shapes import writes them)
+val checkVoxelShapes = cliTask("checkVoxelShapes", "verification",
+    "Fails if importing the voxel shape captures again yields a diff of the generated shape classes", "voxel-shapes", "check", check = true)
+
 // The custom item/block component API (dev.opencollab.paletter.item.component, block.component and the internal encoders)
 // from the component model. Runs on the componentApi source set only, so it works while paletter does not compile.
 val generateComponentApi = tasks.register<JavaExec>("generateComponentApi") {
@@ -220,7 +230,7 @@ val checkRecipes = cliTask("checkRecipes", "verification",
     "Fails if the bundled recipes are not what the recipe captures in data/bds give", "recipes-import", "--check", check = true)
 
 tasks.named("check") {
-    dependsOn(checkConstants, checkBehaviour, checkComponentApi, checkMappings, checkData, checkWhitebox, checkBuilds, checkRecipes)
+    dependsOn(checkConstants, checkBehaviour, checkBlocks, checkVoxelShapes, checkComponentApi, checkMappings, checkData, checkWhitebox, checkBuilds, checkRecipes)
 }
 
 // The white-box analysis of a cached BDS binary against the committed whitebox.json. Explicit only (not in check or

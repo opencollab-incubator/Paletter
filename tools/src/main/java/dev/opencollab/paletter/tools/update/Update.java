@@ -276,16 +276,24 @@ public final class Update {
             return;
         }
         new ConstantsStage(ctx).constants(staging);
+        BlocksStage blocks = new BlocksStage(ctx);
+        blocks.blocks(staging.resources);
+        // The version files go in with their block states: what follows reads them in this process
         staging.apply();
-        // After the data is in place: the inference puts each capture into the window of its bundled version
-        if (runs.protocol != null) {
-            spec.specCapture(distribution, work, runs);
-        }
-        // After the captures, which the white-box facts are checked against and compared with
-        new WhiteboxStage(ctx).whitebox(cache, distribution);
-        if (runs.voxelShapesWritten) {
-            // After the data of the version is in place: the import reads the block names of the bundled versions
-            ShapeImport.run(ctx.root);
+        try {
+            // After the data is in place: the inference puts each capture into the window of its bundled version
+            if (runs.protocol != null) {
+                spec.specCapture(distribution, work, runs);
+            }
+            // After the captures, which the white-box facts are checked against and compared with
+            new WhiteboxStage(ctx).whitebox(cache, distribution);
+            if (runs.voxelShapesWritten) {
+                // After the data of the version is in place: the import reads the block names of the bundled versions
+                ShapeImport.run(ctx.root);
+            }
+        } finally {
+            // Last: the block states leave the version files, the staged definitions give them
+            blocks.slim();
         }
     }
 

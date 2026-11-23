@@ -38,6 +38,45 @@ final class GeneratorCommands {
         }
     }
 
+    @Command(name = "blocks", description = "Vanilla block definitions as generated code: generate (and drop the block states from the "
+        + "version files), check that the committed ones are up to date, or export the palettes as data",
+        subcommands = {Blocks.Generate.class, Blocks.Check.class, Blocks.Export.class})
+    static final class Blocks implements Runnable {
+        @Override
+        public void run() {
+            CommandLine.usage(this, System.out);
+        }
+
+        @Command(name = "generate", description = "Writes the block definitions of the bundled palettes and the version files without block states")
+        static final class Generate extends Rooted implements Callable<Integer> {
+            @Override
+            public Integer call() throws IOException {
+                return dev.opencollab.paletter.tools.blocks.BlockGenerator.run(root(), false);
+            }
+        }
+
+        @Command(name = "check", description = "Exits with 1 if the committed block definitions differ from what generate writes, or a version "
+            + "file still has its block states")
+        static final class Check extends Rooted implements Callable<Integer> {
+            @Override
+            public Integer call() throws IOException {
+                return dev.opencollab.paletter.tools.blocks.BlockGenerator.run(root(), true);
+            }
+        }
+
+        @Command(name = "export", description = "Writes the bundled data with the block states of every version (from the generated definitions) "
+            + "into a directory: the palettes as data, to recover from or to compare")
+        static final class Export extends Rooted implements Callable<Integer> {
+            @Option(names = "--out", required = true, description = "The directory to write") Path out;
+
+            @Override
+            public Integer call() throws IOException {
+                dev.opencollab.paletter.tools.blocks.BlockGenerator.export(root(), out);
+                return 0;
+            }
+        }
+    }
+
     @Command(name = "inspect", description = "Explain what the bundled palettes do with a block state or an item variant")
     static final class InspectCommand implements Callable<Integer> {
         @Option(names = "--data-version", required = true, description = "The bundled data version, e.g. 26.60, or all") String version;

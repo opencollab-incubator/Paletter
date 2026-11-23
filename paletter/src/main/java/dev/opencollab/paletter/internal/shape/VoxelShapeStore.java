@@ -18,12 +18,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * The bundled voxel shape registries of vanilla Bedrock ({@code voxel_shapes.nbt}): per data version the shapes BDS
- * sends a client of a world without add-ons, in its order (and, where it differs, of a world with the experiment
- * {@value #EXPERIMENT}). Generated from the captures in {@code data/bds} by the
- * tools ({@code voxel-shapes import}); registries that are equal are stored once with the versions they hold for.
+ * The voxel shape registries of vanilla Bedrock: per data version the shapes BDS sends a client of a world without
+ * add-ons, in its order (and, where it differs, of a world with the experiment {@value #EXPERIMENT}). The bundled ones
+ * are generated classes ({@link #bundled()}, written from the captures in {@code data/bds} by {@code voxel-shapes import});
+ * a directory data source may carry its own {@code voxel_shapes.nbt}. Registries that are equal are one with the versions
+ * they hold for.
  * <p>
- * File: gzipped NBT {@code {_generated, registries: [{versions: [name], experiment, shapes: [{x, y, z: [float], cells: byte[],
+ * File ({@code voxel_shapes.nbt}): gzipped NBT {@code {_generated, registries: [{versions: [name], experiment, shapes: [{x, y, z: [float], cells: byte[],
  * name?, block?, lastBlock?}]}]}}, the cells packed as on the wire ({@link VoxelGrid}).
  */
 public final class VoxelShapeStore {
@@ -63,6 +64,24 @@ public final class VoxelShapeStore {
 
     public static @NonNull VoxelShapeStore empty() {
         return EMPTY;
+    }
+
+    /**
+     * @return the vanilla shapes of the bundled versions, built now from the generated classes ({@code internal.vanilla.shapes},
+     * loaded by name so the library compiles without them); empty if they are missing
+     */
+    public static @NonNull VoxelShapeStore bundled() {
+        java.lang.reflect.Method load;
+        try {
+            load = Class.forName("dev.opencollab.paletter.internal.vanilla.shapes.VoxelShapeData").getMethod("load");
+        } catch (ClassNotFoundException | NoSuchMethodException e) {
+            return EMPTY;
+        }
+        try {
+            return (VoxelShapeStore) load.invoke(null);
+        } catch (ReflectiveOperationException e) {
+            throw new IllegalStateException("The generated voxel shapes do not build", e);
+        }
     }
 
     public @NonNull List<Registry> registries() {
