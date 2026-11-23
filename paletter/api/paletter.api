@@ -196,6 +196,8 @@ public final class dev.opencollab.paletter.Paletter {
     public dev.opencollab.paletter.vanilla.BedrockBlockType blockType(java.lang.String)
     public static dev.opencollab.paletter.Paletter$Builder builder()
     public static dev.opencollab.paletter.Paletter bundled()
+    public static dev.opencollab.paletter.data.DataVersion bundledVersion(int)
+    public static java.util.List<dev.opencollab.paletter.data.DataVersion> bundledVersions()
     public dev.opencollab.paletter.vanilla.BedrockItemType itemType(java.lang.String)
     public dev.opencollab.paletter.data.DataVersion latest()
     public dev.opencollab.paletter.Palette palette(int)

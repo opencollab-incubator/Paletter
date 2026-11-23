@@ -133,12 +133,37 @@ public final class Paletter {
 
     /**
      * Returns the shared Paletter over the data bundled in the library, with the defaults of {@link #builder()}.
+     * <p>
+     * Its first call compiles every bundled version, behaviour included, and the instance is kept for the life of the
+     * JVM. To look up versions only, use {@link #bundledVersions()} or {@link #bundledVersion(int)}, which compile nothing.
      *
      * @return a Paletter reading the data bundled in the library
      * @since 1.0.0
      */
     public static @NonNull Paletter bundled() {
         return Holder.BUNDLED;
+    }
+
+    /**
+     * Lists the release data versions bundled in the library, without compiling a palette.
+     *
+     * @return the bundled release data versions, oldest first, unmodifiable
+     * @since 1.0.0
+     */
+    public static @NonNull List<DataVersion> bundledVersions() {
+        return Loaders.BUNDLED.versions();
+    }
+
+    /**
+     * Finds the bundled release data version serving a protocol version, without compiling a palette.
+     *
+     * @param protocolVersion a Bedrock protocol version number
+     * @return the newest bundled release data version not newer than the protocol version
+     * @throws IllegalArgumentException if the protocol version is older than all bundled data
+     * @since 1.0.0
+     */
+    public static @NonNull DataVersion bundledVersion(int protocolVersion) {
+        return Loaders.BUNDLED.version(protocolVersion);
     }
 
     /**
