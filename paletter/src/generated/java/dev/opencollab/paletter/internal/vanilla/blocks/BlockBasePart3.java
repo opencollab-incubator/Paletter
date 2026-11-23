@@ -7,25 +7,33 @@ import static dev.opencollab.paletter.internal.vanilla.blocks.BlockValues.*;
 import dev.opencollab.paletter.internal.vanilla.BlockDefinitions;
 
 /**
- * The vanilla blocks of 26.30, the oldest generated version, imported from BDS 1.26.36.1: each block with its properties, the slowest changing first, and its default state where that is not the first. (continued)
+ * The vanilla blocks of 26.30, the oldest generated version, imported from the captures of BDS 1.26.36.1
+ * (data/bds/1.26.36.1; builds.txt verifies 1.26.36.1): each block with its properties, the slowest changing
+ * first, and its default state where that is not the first. A block whose state order no second source confirms
+ * says so. (continued)
  */
 final class BlockBasePart3 {
     private BlockBasePart3() {
     }
 
     static void part16(BlockDefinitions v) {
-        v.block("minecraft:polished_sulfur_wall", WALL_CONNECTION_TYPE_WEST, WALL_CONNECTION_TYPE_SOUTH, WALL_CONNECTION_TYPE_EAST, WALL_CONNECTION_TYPE_NORTH, WALL_POST_BIT);
+        v.block("minecraft:polished_sulfur_wall", WALL_CONNECTION_TYPE_WEST,
+                WALL_CONNECTION_TYPE_SOUTH, WALL_CONNECTION_TYPE_EAST, WALL_CONNECTION_TYPE_NORTH,
+                WALL_POST_BIT);
         v.block("minecraft:polished_tuff");
         v.block("minecraft:polished_tuff_double_slab", VERTICAL_HALF);
         v.block("minecraft:polished_tuff_slab", VERTICAL_HALF);
         v.block("minecraft:polished_tuff_stairs", UPSIDE_DOWN_BIT, WEIRDO_DIRECTION_0_3);
-        v.block("minecraft:polished_tuff_wall", WALL_CONNECTION_TYPE_WEST, WALL_CONNECTION_TYPE_SOUTH, WALL_CONNECTION_TYPE_EAST, WALL_CONNECTION_TYPE_NORTH, WALL_POST_BIT);
+        v.block("minecraft:polished_tuff_wall", WALL_CONNECTION_TYPE_WEST,
+                WALL_CONNECTION_TYPE_SOUTH, WALL_CONNECTION_TYPE_EAST, WALL_CONNECTION_TYPE_NORTH,
+                WALL_POST_BIT);
         v.block("minecraft:poppy");
         v.block("minecraft:portal", PORTAL_AXIS);
         v.block("minecraft:potatoes", GROWTH_0_7);
         v.block("minecraft:potent_sulfur", POTENT_SULFUR_STATE);
         v.block("minecraft:powder_snow");
-        v.block("minecraft:powered_comparator", OUTPUT_LIT_BIT, OUTPUT_SUBTRACT_BIT, CARDINAL_DIRECTION);
+        v.block("minecraft:powered_comparator", OUTPUT_LIT_BIT, OUTPUT_SUBTRACT_BIT,
+                CARDINAL_DIRECTION);
         v.block("minecraft:powered_repeater", REPEATER_DELAY_0_3, CARDINAL_DIRECTION);
         v.block("minecraft:prismarine");
         v.block("minecraft:prismarine_brick_double_slab", VERTICAL_HALF);
@@ -35,7 +43,8 @@ final class BlockBasePart3 {
         v.block("minecraft:prismarine_double_slab", VERTICAL_HALF);
         v.block("minecraft:prismarine_slab", VERTICAL_HALF);
         v.block("minecraft:prismarine_stairs", UPSIDE_DOWN_BIT, WEIRDO_DIRECTION_0_3);
-        v.block("minecraft:prismarine_wall", WALL_CONNECTION_TYPE_WEST, WALL_CONNECTION_TYPE_SOUTH, WALL_CONNECTION_TYPE_EAST, WALL_CONNECTION_TYPE_NORTH, WALL_POST_BIT);
+        v.block("minecraft:prismarine_wall", WALL_CONNECTION_TYPE_WEST, WALL_CONNECTION_TYPE_SOUTH,
+                WALL_CONNECTION_TYPE_EAST, WALL_CONNECTION_TYPE_NORTH, WALL_POST_BIT);
         v.block("minecraft:pumpkin", CARDINAL_DIRECTION);
         v.block("minecraft:pumpkin_stem", FACING_DIRECTION_0_5, GROWTH_0_7);
         v.block("minecraft:purple_candle", LIT, CANDLES_0_3);
@@ -80,13 +89,17 @@ final class BlockBasePart3 {
         v.block("minecraft:red_nether_brick_double_slab", VERTICAL_HALF);
         v.block("minecraft:red_nether_brick_slab", VERTICAL_HALF);
         v.block("minecraft:red_nether_brick_stairs", UPSIDE_DOWN_BIT, WEIRDO_DIRECTION_0_3);
-        v.block("minecraft:red_nether_brick_wall", WALL_CONNECTION_TYPE_WEST, WALL_CONNECTION_TYPE_SOUTH, WALL_CONNECTION_TYPE_EAST, WALL_CONNECTION_TYPE_NORTH, WALL_POST_BIT);
+        v.block("minecraft:red_nether_brick_wall", WALL_CONNECTION_TYPE_WEST,
+                WALL_CONNECTION_TYPE_SOUTH, WALL_CONNECTION_TYPE_EAST, WALL_CONNECTION_TYPE_NORTH,
+                WALL_POST_BIT);
         v.block("minecraft:red_sand");
         v.block("minecraft:red_sandstone");
         v.block("minecraft:red_sandstone_double_slab", VERTICAL_HALF);
         v.block("minecraft:red_sandstone_slab", VERTICAL_HALF);
         v.block("minecraft:red_sandstone_stairs", UPSIDE_DOWN_BIT, WEIRDO_DIRECTION_0_3);
-        v.block("minecraft:red_sandstone_wall", WALL_CONNECTION_TYPE_WEST, WALL_CONNECTION_TYPE_SOUTH, WALL_CONNECTION_TYPE_EAST, WALL_CONNECTION_TYPE_NORTH, WALL_POST_BIT);
+        v.block("minecraft:red_sandstone_wall", WALL_CONNECTION_TYPE_WEST,
+                WALL_CONNECTION_TYPE_SOUTH, WALL_CONNECTION_TYPE_EAST, WALL_CONNECTION_TYPE_NORTH,
+                WALL_POST_BIT);
         v.block("minecraft:red_shulker_box");
         v.block("minecraft:red_stained_glass");
         v.block("minecraft:red_stained_glass_pane");
@@ -106,7 +119,8 @@ final class BlockBasePart3 {
         v.block("minecraft:resin_brick_double_slab", VERTICAL_HALF);
         v.block("minecraft:resin_brick_slab", VERTICAL_HALF);
         v.block("minecraft:resin_brick_stairs", UPSIDE_DOWN_BIT, WEIRDO_DIRECTION_0_3);
-        v.block("minecraft:resin_brick_wall", WALL_CONNECTION_TYPE_WEST, WALL_CONNECTION_TYPE_SOUTH, WALL_CONNECTION_TYPE_EAST, WALL_CONNECTION_TYPE_NORTH, WALL_POST_BIT);
+        v.block("minecraft:resin_brick_wall", WALL_CONNECTION_TYPE_WEST, WALL_CONNECTION_TYPE_SOUTH,
+                WALL_CONNECTION_TYPE_EAST, WALL_CONNECTION_TYPE_NORTH, WALL_POST_BIT);
         v.block("minecraft:resin_bricks");
         v.block("minecraft:resin_clump", MULTI_FACE_DIRECTION_BITS_0_63);
         v.block("minecraft:respawn_anchor", RESPAWN_ANCHOR_CHARGE_0_4);
@@ -116,7 +130,8 @@ final class BlockBasePart3 {
         v.block("minecraft:sandstone_double_slab", VERTICAL_HALF);
         v.block("minecraft:sandstone_slab", VERTICAL_HALF);
         v.block("minecraft:sandstone_stairs", UPSIDE_DOWN_BIT, WEIRDO_DIRECTION_0_3);
-        v.block("minecraft:sandstone_wall", WALL_CONNECTION_TYPE_WEST, WALL_CONNECTION_TYPE_SOUTH, WALL_CONNECTION_TYPE_EAST, WALL_CONNECTION_TYPE_NORTH, WALL_POST_BIT);
+        v.block("minecraft:sandstone_wall", WALL_CONNECTION_TYPE_WEST, WALL_CONNECTION_TYPE_SOUTH,
+                WALL_CONNECTION_TYPE_EAST, WALL_CONNECTION_TYPE_NORTH, WALL_POST_BIT);
         v.block("minecraft:scaffolding", STABILITY_CHECK, STABILITY_0_7);
         v.block("minecraft:sculk");
         v.block("minecraft:sculk_catalyst", BLOOM);
@@ -133,7 +148,8 @@ final class BlockBasePart3 {
         v.block("minecraft:skeleton_skull", FACING_DIRECTION_0_5);
         v.block("minecraft:slime");
         v.block("minecraft:small_amethyst_bud", BLOCK_FACE).defaultState("up");
-        v.block("minecraft:small_dripleaf_block", CARDINAL_DIRECTION, UPPER_BLOCK_BIT).defaultState("east", true);
+        v.block("minecraft:small_dripleaf_block", CARDINAL_DIRECTION,
+                UPPER_BLOCK_BIT).defaultState("east", true);
         v.block("minecraft:smithing_table");
         v.block("minecraft:smoker", CARDINAL_DIRECTION);
         v.block("minecraft:smooth_basalt");
@@ -167,11 +183,13 @@ final class BlockBasePart3 {
         v.block("minecraft:sponge");
         v.block("minecraft:spore_blossom");
         v.block("minecraft:spruce_button", BUTTON_PRESSED_BIT, FACING_DIRECTION_0_5);
-        v.block("minecraft:spruce_door", DOOR_HINGE_BIT, UPPER_BLOCK_BIT, OPEN_BIT, CARDINAL_DIRECTION);
+        v.block("minecraft:spruce_door", DOOR_HINGE_BIT, UPPER_BLOCK_BIT, OPEN_BIT,
+                CARDINAL_DIRECTION);
         v.block("minecraft:spruce_double_slab", VERTICAL_HALF);
         v.block("minecraft:spruce_fence");
         v.block("minecraft:spruce_fence_gate", IN_WALL_BIT, OPEN_BIT, CARDINAL_DIRECTION);
-        v.block("minecraft:spruce_hanging_sign", ATTACHED_BIT, HANGING, GROUND_SIGN_DIRECTION_0_15, FACING_DIRECTION_0_5);
+        v.block("minecraft:spruce_hanging_sign", ATTACHED_BIT, HANGING, GROUND_SIGN_DIRECTION_0_15,
+                FACING_DIRECTION_0_5);
         v.block("minecraft:spruce_leaves", PERSISTENT_BIT, UPDATE_BIT);
         v.block("minecraft:spruce_log", PILLAR_AXIS);
         v.block("minecraft:spruce_planks");
@@ -192,7 +210,8 @@ final class BlockBasePart3 {
         v.block("minecraft:stone_brick_double_slab", VERTICAL_HALF);
         v.block("minecraft:stone_brick_slab", VERTICAL_HALF);
         v.block("minecraft:stone_brick_stairs", UPSIDE_DOWN_BIT, WEIRDO_DIRECTION_0_3);
-        v.block("minecraft:stone_brick_wall", WALL_CONNECTION_TYPE_WEST, WALL_CONNECTION_TYPE_SOUTH, WALL_CONNECTION_TYPE_EAST, WALL_CONNECTION_TYPE_NORTH, WALL_POST_BIT);
+        v.block("minecraft:stone_brick_wall", WALL_CONNECTION_TYPE_WEST, WALL_CONNECTION_TYPE_SOUTH,
+                WALL_CONNECTION_TYPE_EAST, WALL_CONNECTION_TYPE_NORTH, WALL_POST_BIT);
         v.block("minecraft:stone_bricks");
         v.block("minecraft:stone_button", BUTTON_PRESSED_BIT, FACING_DIRECTION_0_5);
         v.block("minecraft:stone_pressure_plate", REDSTONE_SIGNAL_0_15);
@@ -231,13 +250,16 @@ final class BlockBasePart3 {
         v.block("minecraft:sulfur_brick_double_slab", VERTICAL_HALF);
         v.block("minecraft:sulfur_brick_slab", VERTICAL_HALF);
         v.block("minecraft:sulfur_brick_stairs", UPSIDE_DOWN_BIT, WEIRDO_DIRECTION_0_3);
-        v.block("minecraft:sulfur_brick_wall", WALL_CONNECTION_TYPE_WEST, WALL_CONNECTION_TYPE_SOUTH, WALL_CONNECTION_TYPE_EAST, WALL_CONNECTION_TYPE_NORTH, WALL_POST_BIT);
+        v.block("minecraft:sulfur_brick_wall", WALL_CONNECTION_TYPE_WEST,
+                WALL_CONNECTION_TYPE_SOUTH, WALL_CONNECTION_TYPE_EAST, WALL_CONNECTION_TYPE_NORTH,
+                WALL_POST_BIT);
         v.block("minecraft:sulfur_bricks");
         v.block("minecraft:sulfur_double_slab", VERTICAL_HALF);
         v.block("minecraft:sulfur_slab", VERTICAL_HALF);
         v.block("minecraft:sulfur_spike", HANGING, DRIPSTONE_THICKNESS).defaultState(true, "tip");
         v.block("minecraft:sulfur_stairs", UPSIDE_DOWN_BIT, WEIRDO_DIRECTION_0_3);
-        v.block("minecraft:sulfur_wall", WALL_CONNECTION_TYPE_WEST, WALL_CONNECTION_TYPE_SOUTH, WALL_CONNECTION_TYPE_EAST, WALL_CONNECTION_TYPE_NORTH, WALL_POST_BIT);
+        v.block("minecraft:sulfur_wall", WALL_CONNECTION_TYPE_WEST, WALL_CONNECTION_TYPE_SOUTH,
+                WALL_CONNECTION_TYPE_EAST, WALL_CONNECTION_TYPE_NORTH, WALL_POST_BIT);
         v.block("minecraft:sunflower", UPPER_BLOCK_BIT);
         v.block("minecraft:suspicious_gravel", BRUSHED_PROGRESS_0_3, HANGING).defaultState(0, true);
         v.block("minecraft:suspicious_sand", BRUSHED_PROGRESS_0_3, HANGING).defaultState(0, true);
@@ -266,12 +288,14 @@ final class BlockBasePart3 {
     }
 
     static void part20(BlockDefinitions v) {
-        v.block("minecraft:tuff_brick_wall", WALL_CONNECTION_TYPE_WEST, WALL_CONNECTION_TYPE_SOUTH, WALL_CONNECTION_TYPE_EAST, WALL_CONNECTION_TYPE_NORTH, WALL_POST_BIT);
+        v.block("minecraft:tuff_brick_wall", WALL_CONNECTION_TYPE_WEST, WALL_CONNECTION_TYPE_SOUTH,
+                WALL_CONNECTION_TYPE_EAST, WALL_CONNECTION_TYPE_NORTH, WALL_POST_BIT);
         v.block("minecraft:tuff_bricks");
         v.block("minecraft:tuff_double_slab", VERTICAL_HALF);
         v.block("minecraft:tuff_slab", VERTICAL_HALF);
         v.block("minecraft:tuff_stairs", UPSIDE_DOWN_BIT, WEIRDO_DIRECTION_0_3);
-        v.block("minecraft:tuff_wall", WALL_CONNECTION_TYPE_WEST, WALL_CONNECTION_TYPE_SOUTH, WALL_CONNECTION_TYPE_EAST, WALL_CONNECTION_TYPE_NORTH, WALL_POST_BIT);
+        v.block("minecraft:tuff_wall", WALL_CONNECTION_TYPE_WEST, WALL_CONNECTION_TYPE_SOUTH,
+                WALL_CONNECTION_TYPE_EAST, WALL_CONNECTION_TYPE_NORTH, WALL_POST_BIT);
         v.block("minecraft:turtle_egg", CRACKED_STATE, TURTLE_EGG_COUNT);
         v.block("minecraft:twisting_vines", TWISTING_VINES_AGE_0_25);
         v.block("minecraft:underwater_tnt", EXPLODE_BIT);
@@ -279,7 +303,8 @@ final class BlockBasePart3 {
         v.block("minecraft:undyed_shulker_box");
         v.block("minecraft:unknown");
         v.block("minecraft:unlit_redstone_torch", TORCH_FACING_DIRECTION);
-        v.block("minecraft:unpowered_comparator", OUTPUT_LIT_BIT, OUTPUT_SUBTRACT_BIT, CARDINAL_DIRECTION);
+        v.block("minecraft:unpowered_comparator", OUTPUT_LIT_BIT, OUTPUT_SUBTRACT_BIT,
+                CARDINAL_DIRECTION);
         v.block("minecraft:unpowered_repeater", REPEATER_DELAY_0_3, CARDINAL_DIRECTION);
         v.block("minecraft:vault", OMINOUS, VAULT_STATE, CARDINAL_DIRECTION);
         v.block("minecraft:verdant_froglight", PILLAR_AXIS);
@@ -287,12 +312,14 @@ final class BlockBasePart3 {
         v.block("minecraft:wall_banner", FACING_DIRECTION_0_5);
         v.block("minecraft:wall_sign", FACING_DIRECTION_0_5);
         v.block("minecraft:warped_button", BUTTON_PRESSED_BIT, FACING_DIRECTION_0_5);
-        v.block("minecraft:warped_door", DOOR_HINGE_BIT, UPPER_BLOCK_BIT, OPEN_BIT, CARDINAL_DIRECTION);
+        v.block("minecraft:warped_door", DOOR_HINGE_BIT, UPPER_BLOCK_BIT, OPEN_BIT,
+                CARDINAL_DIRECTION);
         v.block("minecraft:warped_double_slab", VERTICAL_HALF);
         v.block("minecraft:warped_fence");
         v.block("minecraft:warped_fence_gate", IN_WALL_BIT, OPEN_BIT, CARDINAL_DIRECTION);
         v.block("minecraft:warped_fungus");
-        v.block("minecraft:warped_hanging_sign", ATTACHED_BIT, HANGING, GROUND_SIGN_DIRECTION_0_15, FACING_DIRECTION_0_5);
+        v.block("minecraft:warped_hanging_sign", ATTACHED_BIT, HANGING, GROUND_SIGN_DIRECTION_0_15,
+                FACING_DIRECTION_0_5);
         v.block("minecraft:warped_hyphae", PILLAR_AXIS);
         v.block("minecraft:warped_nylium");
         v.block("minecraft:warped_planks");
@@ -314,7 +341,8 @@ final class BlockBasePart3 {
         v.block("minecraft:waxed_copper_bulb", POWERED_BIT, LIT);
         v.block("minecraft:waxed_copper_chain", PILLAR_AXIS);
         v.block("minecraft:waxed_copper_chest", CARDINAL_DIRECTION).defaultState("north");
-        v.block("minecraft:waxed_copper_door", DOOR_HINGE_BIT, UPPER_BLOCK_BIT, OPEN_BIT, CARDINAL_DIRECTION);
+        v.block("minecraft:waxed_copper_door", DOOR_HINGE_BIT, UPPER_BLOCK_BIT, OPEN_BIT,
+                CARDINAL_DIRECTION);
         v.block("minecraft:waxed_copper_golem_statue", CARDINAL_DIRECTION);
         v.block("minecraft:waxed_copper_grate");
         v.block("minecraft:waxed_copper_lantern", HANGING);
@@ -332,11 +360,13 @@ final class BlockBasePart3 {
         v.block("minecraft:waxed_exposed_copper_bulb", POWERED_BIT, LIT);
         v.block("minecraft:waxed_exposed_copper_chain", PILLAR_AXIS);
         v.block("minecraft:waxed_exposed_copper_chest", CARDINAL_DIRECTION).defaultState("north");
-        v.block("minecraft:waxed_exposed_copper_door", DOOR_HINGE_BIT, UPPER_BLOCK_BIT, OPEN_BIT, CARDINAL_DIRECTION);
+        v.block("minecraft:waxed_exposed_copper_door", DOOR_HINGE_BIT, UPPER_BLOCK_BIT, OPEN_BIT,
+                CARDINAL_DIRECTION);
         v.block("minecraft:waxed_exposed_copper_golem_statue", CARDINAL_DIRECTION);
         v.block("minecraft:waxed_exposed_copper_grate");
         v.block("minecraft:waxed_exposed_copper_lantern", HANGING);
-        v.block("minecraft:waxed_exposed_copper_trapdoor", OPEN_BIT, UPSIDE_DOWN_BIT, DIRECTION_0_3);
+        v.block("minecraft:waxed_exposed_copper_trapdoor", OPEN_BIT, UPSIDE_DOWN_BIT,
+                DIRECTION_0_3);
         v.block("minecraft:waxed_exposed_cut_copper");
         v.block("minecraft:waxed_exposed_cut_copper_slab", VERTICAL_HALF);
         v.block("minecraft:waxed_exposed_cut_copper_stairs", UPSIDE_DOWN_BIT, WEIRDO_DIRECTION_0_3);
@@ -349,14 +379,17 @@ final class BlockBasePart3 {
         v.block("minecraft:waxed_oxidized_copper_bulb", POWERED_BIT, LIT);
         v.block("minecraft:waxed_oxidized_copper_chain", PILLAR_AXIS);
         v.block("minecraft:waxed_oxidized_copper_chest", CARDINAL_DIRECTION).defaultState("north");
-        v.block("minecraft:waxed_oxidized_copper_door", DOOR_HINGE_BIT, UPPER_BLOCK_BIT, OPEN_BIT, CARDINAL_DIRECTION);
+        v.block("minecraft:waxed_oxidized_copper_door", DOOR_HINGE_BIT, UPPER_BLOCK_BIT, OPEN_BIT,
+                CARDINAL_DIRECTION);
         v.block("minecraft:waxed_oxidized_copper_golem_statue", CARDINAL_DIRECTION);
         v.block("minecraft:waxed_oxidized_copper_grate");
         v.block("minecraft:waxed_oxidized_copper_lantern", HANGING);
-        v.block("minecraft:waxed_oxidized_copper_trapdoor", OPEN_BIT, UPSIDE_DOWN_BIT, DIRECTION_0_3);
+        v.block("minecraft:waxed_oxidized_copper_trapdoor", OPEN_BIT, UPSIDE_DOWN_BIT,
+                DIRECTION_0_3);
         v.block("minecraft:waxed_oxidized_cut_copper");
         v.block("minecraft:waxed_oxidized_cut_copper_slab", VERTICAL_HALF);
-        v.block("minecraft:waxed_oxidized_cut_copper_stairs", UPSIDE_DOWN_BIT, WEIRDO_DIRECTION_0_3);
+        v.block("minecraft:waxed_oxidized_cut_copper_stairs", UPSIDE_DOWN_BIT,
+                WEIRDO_DIRECTION_0_3);
         v.block("minecraft:waxed_oxidized_double_cut_copper_slab", VERTICAL_HALF);
         v.block("minecraft:waxed_oxidized_lightning_rod", POWERED_BIT, FACING_DIRECTION_0_5);
         v.block("minecraft:waxed_weathered_chiseled_copper");
@@ -365,14 +398,17 @@ final class BlockBasePart3 {
         v.block("minecraft:waxed_weathered_copper_bulb", POWERED_BIT, LIT);
         v.block("minecraft:waxed_weathered_copper_chain", PILLAR_AXIS);
         v.block("minecraft:waxed_weathered_copper_chest", CARDINAL_DIRECTION).defaultState("north");
-        v.block("minecraft:waxed_weathered_copper_door", DOOR_HINGE_BIT, UPPER_BLOCK_BIT, OPEN_BIT, CARDINAL_DIRECTION);
+        v.block("minecraft:waxed_weathered_copper_door", DOOR_HINGE_BIT, UPPER_BLOCK_BIT, OPEN_BIT,
+                CARDINAL_DIRECTION);
         v.block("minecraft:waxed_weathered_copper_golem_statue", CARDINAL_DIRECTION);
         v.block("minecraft:waxed_weathered_copper_grate");
         v.block("minecraft:waxed_weathered_copper_lantern", HANGING);
-        v.block("minecraft:waxed_weathered_copper_trapdoor", OPEN_BIT, UPSIDE_DOWN_BIT, DIRECTION_0_3);
+        v.block("minecraft:waxed_weathered_copper_trapdoor", OPEN_BIT, UPSIDE_DOWN_BIT,
+                DIRECTION_0_3);
         v.block("minecraft:waxed_weathered_cut_copper");
         v.block("minecraft:waxed_weathered_cut_copper_slab", VERTICAL_HALF);
-        v.block("minecraft:waxed_weathered_cut_copper_stairs", UPSIDE_DOWN_BIT, WEIRDO_DIRECTION_0_3);
+        v.block("minecraft:waxed_weathered_cut_copper_stairs", UPSIDE_DOWN_BIT,
+                WEIRDO_DIRECTION_0_3);
         v.block("minecraft:waxed_weathered_double_cut_copper_slab", VERTICAL_HALF);
         v.block("minecraft:waxed_weathered_lightning_rod", POWERED_BIT, FACING_DIRECTION_0_5);
         v.block("minecraft:weathered_chiseled_copper");
@@ -381,7 +417,8 @@ final class BlockBasePart3 {
         v.block("minecraft:weathered_copper_bulb", POWERED_BIT, LIT);
         v.block("minecraft:weathered_copper_chain", PILLAR_AXIS);
         v.block("minecraft:weathered_copper_chest", CARDINAL_DIRECTION).defaultState("north");
-        v.block("minecraft:weathered_copper_door", DOOR_HINGE_BIT, UPPER_BLOCK_BIT, OPEN_BIT, CARDINAL_DIRECTION);
+        v.block("minecraft:weathered_copper_door", DOOR_HINGE_BIT, UPPER_BLOCK_BIT, OPEN_BIT,
+                CARDINAL_DIRECTION);
         v.block("minecraft:weathered_copper_golem_statue", CARDINAL_DIRECTION);
         v.block("minecraft:weathered_copper_grate");
         v.block("minecraft:weathered_copper_lantern", HANGING);
@@ -414,7 +451,8 @@ final class BlockBasePart3 {
         v.block("minecraft:wither_rose");
         v.block("minecraft:wither_skeleton_skull", FACING_DIRECTION_0_5);
         v.block("minecraft:wooden_button", BUTTON_PRESSED_BIT, FACING_DIRECTION_0_5);
-        v.block("minecraft:wooden_door", DOOR_HINGE_BIT, UPPER_BLOCK_BIT, OPEN_BIT, CARDINAL_DIRECTION);
+        v.block("minecraft:wooden_door", DOOR_HINGE_BIT, UPPER_BLOCK_BIT, OPEN_BIT,
+                CARDINAL_DIRECTION);
         v.block("minecraft:wooden_pressure_plate", REDSTONE_SIGNAL_0_15);
         v.block("minecraft:yellow_candle", LIT, CANDLES_0_3);
         v.block("minecraft:yellow_candle_cake", LIT);

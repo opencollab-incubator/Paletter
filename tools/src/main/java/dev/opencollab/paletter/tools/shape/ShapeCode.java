@@ -49,6 +49,9 @@ final class ShapeCode {
         java.util.Set<String> taken = new java.util.HashSet<>();
         for (VoxelShapeStore.Registry registry : store.registries()) {
             for (VoxelShapeStore.Entry entry : registry.shapes()) {
+                if (entry.name() == null && entry.block() == null) {
+                    throw new IllegalStateException("A shape of " + registry.versions() + " has neither a name nor a block");
+                }
                 if (!names.containsKey(entry.grid())) {
                     float[] merged = boxes(entry.grid());
                     boxes.put(entry.grid(), merged);
@@ -89,7 +92,7 @@ final class ShapeCode {
             .addStatement("$T registries = new $T<>()", ParameterizedTypeName.get(ClassName.get(List.class), REGISTRY), ArrayList.class);
         Map<String, Integer> classNames = new TreeMap<>();
         for (VoxelShapeStore.Registry registry : store.registries()) {
-            String base = "VoxelShapes" + constant(registry.versions().getFirst()) + (registry.experiment() ? "Experiment" : "");
+            String base = "VoxelShapes" + registry.versions().getFirst().replaceAll("[^A-Za-z0-9]", "_") + (registry.experiment() ? "Experiment" : "");
             int count = classNames.merge(base, 1, Integer::sum);
             String name = count == 1 ? base : base + "_" + count;
             List<CodeBlock> statements = new ArrayList<>();
@@ -149,8 +152,10 @@ final class ShapeCode {
         return "SHAPE_" + constant(entry.block().replaceFirst("^minecraft:", ""));
     }
 
+    /** UPPER_SNAKE of a name; one that would be empty or start with a digit starts with {@code SHAPE_}. */
     static String constant(String name) {
-        return name.toUpperCase(Locale.ROOT).replaceAll("[^A-Z0-9]+", "_").replaceAll("^_|_$", "");
+        String constant = name.toUpperCase(Locale.ROOT).replaceAll("[^A-Z0-9]+", "_").replaceAll("^_|_$", "");
+        return constant.isEmpty() || Character.isDigit(constant.charAt(0)) ? "SHAPE_" + constant : constant;
     }
 
     /**

@@ -252,7 +252,7 @@ Before is `b5744bfe`, after the commit that made the change; same laptop, shared
 
 **Jar and files**: `paletter-1.0.0-SNAPSHOT.jar` 2,218,633 bytes before, 1,827,298 after (-391 KB). The five version files
 went from 140,592 / 144,443 / 168,650 / 177,508 / 183,469 bytes to 43,852 / 44,837 / 46,640 / 46,871 / 47,431 (814,662 to
-229,631), `voxel_shapes.nbt` (4,562) is gone; the generated sources are 4,467 lines (275 KB), 18 classes of 205,990 bytes.
+229,631), `voxel_shapes.nbt` (4,562) is gone; the generated sources are 4,467 lines (275 KB), 15 classes (9 block, 6 shape) of 205,990 bytes.
 **Limits** (`GeneratedBlocksLimitsTest`): the largest method is 2,187 bytes of bytecode in the block classes and 17,610 in the
 shape classes (the static initializer of a shape table), the largest constant pool 1,366 entries.
 
@@ -271,5 +271,11 @@ costs about what parsing them did; the gain is the smaller files.
 | served versions (all but the oldest) | 18,384,872 | 18,346,944 |
 | metaspace the generated block and shape classes add once loaded and run (not on the heap) | none | 383,832 |
 
-Nothing of the definitions stays on the heap: `VanillaBlocks` builds them for each version as it loads and drops them, and a
-palette keeps the same state compounds as before (a few KB less, the shared shapes of the generated table).
+No palette holds the definitions: `VanillaBlocks` keeps them softly (built once for every version that loads, a few hundred KB the
+collector may take back), and a palette keeps the same state compounds as before (a few KB less, the shared shapes of the
+generated table).
+
+**After the review fixes** (the digest a file without block states carries, checked on every read; the soft cache of the
+definitions), same method: loading the newest version cold 217 to 222 ms (the digest hashes every state once more, cold), every
+version after it 283 to 340 ms, about what reading the old files cost. Memory: newest / oldest palette 11,881,312 / 13,297,504,
+served versions 18,355,872, metaspace of the generated block and shape classes 382,632 bytes.

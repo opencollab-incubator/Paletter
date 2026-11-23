@@ -22,19 +22,24 @@ final class BlockValues {
 
     static final StateValues ATTACHED_BIT = StateValues.bool("attached_bit");
 
-    static final StateValues ATTACHMENT = StateValues.strings("attachment", "standing", "hanging", "side", "multiple");
+    static final StateValues ATTACHMENT = StateValues.strings("attachment", "standing", "hanging",
+            "side", "multiple");
 
-    static final StateValues BAMBOO_LEAF_SIZE = StateValues.strings("bamboo_leaf_size", "no_leaves", "small_leaves", "large_leaves");
+    static final StateValues BAMBOO_LEAF_SIZE = StateValues.strings("bamboo_leaf_size", "no_leaves",
+            "small_leaves", "large_leaves");
 
-    static final StateValues BAMBOO_STALK_THICKNESS = StateValues.strings("bamboo_stalk_thickness", "thin", "thick");
+    static final StateValues BAMBOO_STALK_THICKNESS = StateValues.strings("bamboo_stalk_thickness", "thin",
+            "thick");
 
     static final StateValues BIG_DRIPLEAF_HEAD = StateValues.bool("big_dripleaf_head");
 
-    static final StateValues BIG_DRIPLEAF_TILT = StateValues.strings("big_dripleaf_tilt", "none", "unstable", "partial_tilt", "full_tilt");
+    static final StateValues BIG_DRIPLEAF_TILT = StateValues.strings("big_dripleaf_tilt", "none",
+            "unstable", "partial_tilt", "full_tilt");
 
     static final StateValues BITE_COUNTER_0_6 = StateValues.ints("bite_counter", 0, 6);
 
-    static final StateValues BLOCK_FACE = StateValues.strings("minecraft:block_face", "down", "up", "north", "south", "west", "east");
+    static final StateValues BLOCK_FACE = StateValues.strings("minecraft:block_face", "down", "up",
+            "north", "south", "west", "east");
 
     static final StateValues BLOOM = StateValues.bool("bloom");
 
@@ -56,9 +61,11 @@ final class BlockValues {
 
     static final StateValues CAN_SUMMON = StateValues.bool("can_summon");
 
-    static final StateValues CARDINAL_DIRECTION = StateValues.strings("minecraft:cardinal_direction", "south", "west", "north", "east");
+    static final StateValues CARDINAL_DIRECTION = StateValues.strings("minecraft:cardinal_direction", "south",
+            "west", "north", "east");
 
-    static final StateValues CAULDRON_LIQUID = StateValues.strings("cauldron_liquid", "water", "lava", "powder_snow");
+    static final StateValues CAULDRON_LIQUID = StateValues.strings("cauldron_liquid", "water",
+            "lava", "powder_snow");
 
     static final StateValues CLUSTER_COUNT_0_3 = StateValues.ints("cluster_count", 0, 3);
 
@@ -82,15 +89,18 @@ final class BlockValues {
 
     static final StateValues CORAL_FAN_DIRECTION_0_1 = StateValues.ints("coral_fan_direction", 0, 1);
 
-    static final StateValues CORNER = StateValues.strings("minecraft:corner", "none", "inner_left", "inner_right", "outer_left", "outer_right");
+    static final StateValues CORNER = StateValues.strings("minecraft:corner", "none", "inner_left",
+            "inner_right", "outer_left", "outer_right");
 
     static final StateValues COVERED_BIT = StateValues.bool("covered_bit");
 
-    static final StateValues CRACKED_STATE = StateValues.strings("cracked_state", "no_cracks", "cracked", "max_cracked");
+    static final StateValues CRACKED_STATE = StateValues.strings("cracked_state", "no_cracks",
+            "cracked", "max_cracked");
 
     static final StateValues CRAFTING = StateValues.bool("crafting");
 
-    static final StateValues CREAKING_HEART_STATE = StateValues.strings("creaking_heart_state", "uprooted", "dormant", "awake");
+    static final StateValues CREAKING_HEART_STATE = StateValues.strings("creaking_heart_state", "uprooted",
+            "dormant", "awake");
 
     static final StateValues DEAD_BIT = StateValues.bool("dead_bit");
 
@@ -106,7 +116,8 @@ final class BlockValues {
 
     static final StateValues DRAG_DOWN = StateValues.bool("drag_down");
 
-    static final StateValues DRIPSTONE_THICKNESS = StateValues.strings("dripstone_thickness", "tip", "frustum", "middle", "base", "merge");
+    static final StateValues DRIPSTONE_THICKNESS = StateValues.strings("dripstone_thickness", "tip",
+            "frustum", "middle", "base", "merge");
 
     static final StateValues END_PORTAL_EYE_BIT = StateValues.bool("end_portal_eye_bit");
 
@@ -146,7 +157,8 @@ final class BlockValues {
 
     static final StateValues KELP_AGE_0_25 = StateValues.ints("kelp_age", 0, 25);
 
-    static final StateValues LEVER_DIRECTION = StateValues.strings("lever_direction", "down_east_west", "east", "west", "south", "north", "up_north_south", "up_east_west", "down_north_south");
+    static final StateValues LEVER_DIRECTION = StateValues.strings("lever_direction", "down_east_west",
+            "east", "west", "south", "north", "up_north_south", "up_east_west", "down_north_south");
 
     static final StateValues LIQUID_DEPTH_0_15 = StateValues.ints("liquid_depth", 0, 15);
 
@@ -154,7 +166,8 @@ final class BlockValues {
 
     static final StateValues LOCKED = StateValues.bool("locked");
 
-    static final StateValues MINECRAFT_FACING_DIRECTION = StateValues.strings("minecraft:facing_direction", "down", "up", "north", "south", "west", "east");
+    static final StateValues MINECRAFT_FACING_DIRECTION = StateValues.strings("minecraft:facing_direction", "down",
+            "up", "north", "south", "west", "east");
 
     static final StateValues MOISTURIZED_AMOUNT_0_7 = StateValues.ints("moisturized_amount", 0, 7);
 
@@ -168,19 +181,25 @@ final class BlockValues {
 
     static final StateValues OPEN_BIT = StateValues.bool("open_bit");
 
-    static final StateValues ORIENTATION = StateValues.strings("orientation", "down_east", "down_north", "down_south", "down_west", "up_east", "up_north", "up_south", "up_west", "west_up", "east_up", "north_up", "south_up");
+    static final StateValues ORIENTATION = StateValues.strings("orientation", "down_east",
+            "down_north", "down_south", "down_west", "up_east", "up_north", "up_south", "up_west",
+            "west_up", "east_up", "north_up", "south_up");
 
     static final StateValues OUTPUT_LIT_BIT = StateValues.bool("output_lit_bit");
 
     static final StateValues OUTPUT_SUBTRACT_BIT = StateValues.bool("output_subtract_bit");
 
-    static final StateValues PALE_MOSS_CARPET_SIDE_EAST = StateValues.strings("pale_moss_carpet_side_east", "none", "short", "tall");
+    static final StateValues PALE_MOSS_CARPET_SIDE_EAST = StateValues.strings("pale_moss_carpet_side_east", "none",
+            "short", "tall");
 
-    static final StateValues PALE_MOSS_CARPET_SIDE_NORTH = StateValues.strings("pale_moss_carpet_side_north", "none", "short", "tall");
+    static final StateValues PALE_MOSS_CARPET_SIDE_NORTH = StateValues.strings("pale_moss_carpet_side_north", "none",
+            "short", "tall");
 
-    static final StateValues PALE_MOSS_CARPET_SIDE_SOUTH = StateValues.strings("pale_moss_carpet_side_south", "none", "short", "tall");
+    static final StateValues PALE_MOSS_CARPET_SIDE_SOUTH = StateValues.strings("pale_moss_carpet_side_south", "none",
+            "short", "tall");
 
-    static final StateValues PALE_MOSS_CARPET_SIDE_WEST = StateValues.strings("pale_moss_carpet_side_west", "none", "short", "tall");
+    static final StateValues PALE_MOSS_CARPET_SIDE_WEST = StateValues.strings("pale_moss_carpet_side_west", "none",
+            "short", "tall");
 
     static final StateValues PERSISTENT_BIT = StateValues.bool("persistent_bit");
 
@@ -188,7 +207,8 @@ final class BlockValues {
 
     static final StateValues PORTAL_AXIS = StateValues.strings("portal_axis", "unknown", "x", "z");
 
-    static final StateValues POTENT_SULFUR_STATE = StateValues.strings("potent_sulfur_state", "dry", "wet", "dormant", "erupting", "continuous");
+    static final StateValues POTENT_SULFUR_STATE = StateValues.strings("potent_sulfur_state", "dry",
+            "wet", "dormant", "erupting", "continuous");
 
     static final StateValues POWERED_BIT = StateValues.bool("powered_bit");
 
@@ -202,15 +222,19 @@ final class BlockValues {
 
     static final StateValues RAIL_DIRECTION_0_9 = StateValues.ints("rail_direction", 0, 9);
 
-    static final StateValues REDSTONE_EAST = StateValues.strings("redstone_east", "none", "side", "up");
+    static final StateValues REDSTONE_EAST = StateValues.strings("redstone_east", "none", "side",
+            "up");
 
-    static final StateValues REDSTONE_NORTH = StateValues.strings("redstone_north", "none", "side", "up");
+    static final StateValues REDSTONE_NORTH = StateValues.strings("redstone_north", "none", "side",
+            "up");
 
     static final StateValues REDSTONE_SIGNAL_0_15 = StateValues.ints("redstone_signal", 0, 15);
 
-    static final StateValues REDSTONE_SOUTH = StateValues.strings("redstone_south", "none", "side", "up");
+    static final StateValues REDSTONE_SOUTH = StateValues.strings("redstone_south", "none", "side",
+            "up");
 
-    static final StateValues REDSTONE_WEST = StateValues.strings("redstone_west", "none", "side", "up");
+    static final StateValues REDSTONE_WEST = StateValues.strings("redstone_west", "none", "side",
+            "up");
 
     static final StateValues REHYDRATION_LEVEL_0_3 = StateValues.ints("rehydration_level", 0, 3);
 
@@ -222,13 +246,15 @@ final class BlockValues {
 
     static final StateValues SCULK_SENSOR_PHASE_0_2 = StateValues.ints("sculk_sensor_phase", 0, 2);
 
-    static final StateValues SEA_GRASS_TYPE = StateValues.strings("sea_grass_type", "default", "double_top", "double_bot");
+    static final StateValues SEA_GRASS_TYPE = StateValues.strings("sea_grass_type", "default",
+            "double_top", "double_bot");
 
     static final StateValues STABILITY_0_7 = StateValues.ints("stability", 0, 7);
 
     static final StateValues STABILITY_CHECK = StateValues.bool("stability_check");
 
-    static final StateValues STRUCTURE_BLOCK_TYPE = StateValues.strings("structure_block_type", "data", "save", "load", "corner", "invalid", "export");
+    static final StateValues STRUCTURE_BLOCK_TYPE = StateValues.strings("structure_block_type", "data",
+            "save", "load", "corner", "invalid", "export");
 
     static final StateValues SUSPENDED_BIT = StateValues.bool("suspended_bit");
 
@@ -236,13 +262,15 @@ final class BlockValues {
 
     static final StateValues TOGGLE_BIT = StateValues.bool("toggle_bit");
 
-    static final StateValues TORCH_FACING_DIRECTION = StateValues.strings("torch_facing_direction", "unknown", "west", "east", "north", "south", "top");
+    static final StateValues TORCH_FACING_DIRECTION = StateValues.strings("torch_facing_direction", "unknown",
+            "west", "east", "north", "south", "top");
 
     static final StateValues TRIAL_SPAWNER_STATE_0_5 = StateValues.ints("trial_spawner_state", 0, 5);
 
     static final StateValues TRIGGERED_BIT = StateValues.bool("triggered_bit");
 
-    static final StateValues TURTLE_EGG_COUNT = StateValues.strings("turtle_egg_count", "one_egg", "two_egg", "three_egg", "four_egg");
+    static final StateValues TURTLE_EGG_COUNT = StateValues.strings("turtle_egg_count", "one_egg",
+            "two_egg", "three_egg", "four_egg");
 
     static final StateValues TWISTING_VINES_AGE_0_25 = StateValues.ints("twisting_vines_age", 0, 25);
 
@@ -252,19 +280,25 @@ final class BlockValues {
 
     static final StateValues UPSIDE_DOWN_BIT = StateValues.bool("upside_down_bit");
 
-    static final StateValues VAULT_STATE = StateValues.strings("vault_state", "inactive", "active", "unlocking", "ejecting");
+    static final StateValues VAULT_STATE = StateValues.strings("vault_state", "inactive", "active",
+            "unlocking", "ejecting");
 
-    static final StateValues VERTICAL_HALF = StateValues.strings("minecraft:vertical_half", "bottom", "top");
+    static final StateValues VERTICAL_HALF = StateValues.strings("minecraft:vertical_half", "bottom",
+            "top");
 
     static final StateValues VINE_DIRECTION_BITS_0_15 = StateValues.ints("vine_direction_bits", 0, 15);
 
-    static final StateValues WALL_CONNECTION_TYPE_EAST = StateValues.strings("wall_connection_type_east", "none", "short", "tall");
+    static final StateValues WALL_CONNECTION_TYPE_EAST = StateValues.strings("wall_connection_type_east", "none",
+            "short", "tall");
 
-    static final StateValues WALL_CONNECTION_TYPE_NORTH = StateValues.strings("wall_connection_type_north", "none", "short", "tall");
+    static final StateValues WALL_CONNECTION_TYPE_NORTH = StateValues.strings("wall_connection_type_north", "none",
+            "short", "tall");
 
-    static final StateValues WALL_CONNECTION_TYPE_SOUTH = StateValues.strings("wall_connection_type_south", "none", "short", "tall");
+    static final StateValues WALL_CONNECTION_TYPE_SOUTH = StateValues.strings("wall_connection_type_south", "none",
+            "short", "tall");
 
-    static final StateValues WALL_CONNECTION_TYPE_WEST = StateValues.strings("wall_connection_type_west", "none", "short", "tall");
+    static final StateValues WALL_CONNECTION_TYPE_WEST = StateValues.strings("wall_connection_type_west", "none",
+            "short", "tall");
 
     static final StateValues WALL_POST_BIT = StateValues.bool("wall_post_bit");
 

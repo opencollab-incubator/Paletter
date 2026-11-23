@@ -19,7 +19,7 @@ The Gradle tasks are the commands with their usual arguments:
 | `generateComponentApi`, `checkComponentApi` | `components generate`, `components check` |
 | `generateConstants`, `checkConstants` | `constants generate`, `constants check` |
 | `generateBehaviour`, `checkBehaviour` | `behaviour generate`, `behaviour check` |
-| `generateBlocks`, `checkBlocks` | `blocks generate`, `blocks check` |
+| `generateBlocks`, `checkBlocks` | `blocks generate`, `blocks check` (`blocks export --out <dir>` writes the palettes as data) |
 | `checkVoxelShapes` | `voxel-shapes check` |
 
 ## a. A new BDS release or preview appeared
@@ -38,10 +38,14 @@ Reviewing the pull request:
    wire shape needs your review, it is never automatic. `mappings-evidence.json` changes with it (variant counts, BDS's
    messages and refused values, ranges, unexplained leaves): no generator reads it, it explains `mappings.json`.
 3. The palette of a new version is not data: `update` turns it into a change class of the generated block definitions
-   (`internal.vanilla.blocks/BlockChanges<version>`) and stages the version file without block states. Read that class: a
-   `redefine` line (other values or another property order) or a removed block is BDS doing something new. A palette the
-   definitions cannot say (not a cartesian product, no unique property order, out of name hash order) is a FAIL with what it
-   found ("Block definitions").
+   (`internal.vanilla.blocks/BlockChanges<version>`) and writes the version file without block states, with the digest of the
+   palette, as its last step. BDS sends no palette: `update` builds the new one from the previous palette and the Script API
+   dump (`ReferencePalette`), so the state order of a new or changed block is inferred. Those lines say `state order inferred,
+   not observed`, and the report lists the blocks ("Inferred state order"); check them against CloudburstMC/Data once it has the
+   version, and the sequential block id check ("Block numbering") of the report. A `redefine` line (other values or another
+   property order) or a removed block is BDS doing something new. Since `update` builds every block as a cartesian product
+   itself, a "Block definitions" FAIL there means a bug of the tools (or a hand-made version file), not BDS doing something new;
+   BDS doing something new shows as creative block ids the computed hashes do not resolve.
 4. Check the regenerated constants (`BedrockBlocks`, `BedrockItems`, ...) and `data/model/constants-history.json`: they
    are committed together. New names that collide or are invalid fail generation until
    `data/model/constant-names.txt` names them (`blocks|items|states|enums <key> <name>`).
@@ -159,8 +163,9 @@ See [releasing.md](releasing.md): snapshots publish from `main` through `publish
 | "linked", "residual bits", "unclassified wire paths" | `check-mappings --strict`; see section d, step 4. |
 | Spec captures differ between builds | Different add-ons; recapture (section b). |
 | `checkConstants` / `checkComponentApi` / `checkBuilds` / `checkBehaviour` / `checkBlocks` / `checkVoxelShapes` stale | Run the matching `generate` (`voxel-shapes import` for the shapes) or `builds table`; commit. `checkBlocks` also fails on a version file that still has its block states: `generateBlocks` moves them into the definitions. |
-| `checkBlocks` fails: a palette is not a cartesian product, has no unique property order or is out of name hash order | BDS did something the generated definitions cannot say. Never edit the generated classes by hand: extend `BlockDefinitions` (and `BlockModel`, `BlockDiff`, `BlockCode` in the tools) so they can, with a test in `BlockCodeTest`. |
-| The generated block classes do not compile after a change of `BlockDefinitions` | They are the only copy of the palettes, so they cannot be deleted and regenerated like the behaviour classes: keep the old method of `BlockDefinitions` until `generateBlocks` has rewritten them, or check out version files with their block states (an older commit) and run `generateBlocks`. |
+| `checkBlocks` fails: a palette is not a cartesian product, has no unique property order or is out of name hash order | A version file was imported (`import --source`) whose palette the generated definitions cannot say. Never edit the generated classes by hand: extend `BlockDefinitions` (and `BlockModel`, `BlockDiff`, `BlockCode` in the tools) so they can, with a test in `BlockCodeTest`. |
+| Reading a version fails: "The block states the library derives for ... are not the ones its data file was written with" | The generated definitions and the version file are of different palettes: a hand edit of the generated classes, a merge of two data changes that each touched the chain of change classes, or a version file of another library. Take the definitions and the file from one commit (or import the version again). |
+| The generated block classes do not compile after a change of `BlockDefinitions` | They are the only copy of the palettes. Before changing `BlockDefinitions`, `blocks export --out <dir>` writes every version with its block states. To recover: `git checkout <last green commit> -- paletter/src/generated/java/dev/opencollab/paletter/internal/vanilla/blocks`, or copy the exported version files into `paletter/src/main/resources/paletter`, delete the package (the library compiles without it) and run `generateBlocks`, which reads the states from the files. |
 | `generateBehaviour` does not start: the generated behaviour classes do not compile (a behaviour key was renamed or removed by `generateComponentApi`, or the runtime changed) | The tools run on the compiled library, and the library compiles without those classes (`VanillaBehaviour` loads them by name). Delete `paletter/src/generated/java/dev/opencollab/paletter/internal/behaviour/vanilla` and run `generateBehaviour` again; it writes the whole directory. |
 | Exit code 1 from Gradle on a run with decisions | Gradle maps every non-zero code to 1. Run the launcher instead, `./gradlew :tools:installDist` then `tools/build/install/tools/bin/tools update ...`: it exits with the tool's own code (2 = decisions open), as the workflows do. |
 

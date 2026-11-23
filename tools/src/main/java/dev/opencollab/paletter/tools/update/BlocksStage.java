@@ -12,40 +12,63 @@ import java.util.Map;
 
 /**
  * The vanilla block definitions, regenerated from the staged data: an imported or refreshed palette becomes generated
- * code, and its version file is staged without the block states. Staged with the data, so a data import never leaves a
- * palette that only a version file has.
+ * code. The version files keep their block states until {@link #slim} at the very end of the run: the stages after
+ * {@code Staging#apply} (the spec capture, the shape import) read the bundled data in this process, whose compiled
+ * definitions do not know a palette that is new or changed in this run.
  */
 final class BlocksStage {
     private final UpdateContext ctx;
+    private Map<String, byte[]> versionFiles = Map.of();
 
     BlocksStage(UpdateContext ctx) {
         this.ctx = ctx;
     }
 
-    void blocks(Staging staging) throws IOException {
+    /** Generates from {@code resources} (the staged copy of the bundled data) and stages the sources. */
+    void blocks(Path resources) {
         BlockGenerator.Result result;
         try {
-            result = BlockGenerator.generate(ctx.root, staging.resources);
-        } catch (IllegalStateException e) {
-            // A palette the definitions cannot say: what it does is in the message
-            ctx.report.check(Report.Status.FAIL, "Block definitions", e.getMessage());
+            result = BlockGenerator.generate(ctx.root, resources);
+        } catch (Exception e) {
+            // A palette the definitions cannot say, or anything else: the message says what; the data stays as staged
+            ctx.report.check(Report.Status.FAIL, "Block definitions", e.getClass().getSimpleName() + ": " + e.getMessage());
             return;
         }
-        List<String> changes = GeneratedSources.sync(ctx.root, result.sources(), List.of(BlockGenerator.DIRECTORY), BlockGenerator.GENERATOR, true);
-        ctx.report.check(changes.isEmpty() ? Report.Status.PASS : Report.Status.DIFF, "Block definitions",
-            changes.isEmpty() ? "the generated block definitions are unchanged" : changes.size() + " generated files change");
-        for (Path stale : GeneratedSources.stale(ctx.root, result.sources(), List.of(BlockGenerator.DIRECTORY), BlockGenerator.GENERATOR)) {
-            ctx.report.repoChanges.add((ctx.verifyOnly ? "would " : "") + "remove `" + ctx.root.relativize(stale).toString().replace('\\', '/') + "` (block definitions)");
-            if (!ctx.verifyOnly) {
-                Files.delete(stale);
+        try {
+            List<String> changes = GeneratedSources.sync(ctx.root, result.sources(), List.of(BlockGenerator.DIRECTORY), BlockGenerator.GENERATOR, true);
+            ctx.report.check(changes.isEmpty() ? Report.Status.PASS : Report.Status.DIFF, "Block definitions",
+                changes.isEmpty() ? "the generated block definitions are unchanged" : changes.size() + " generated files change");
+            result.inferred().forEach((version, blocks) -> {
+                if (!blocks.isEmpty() && changes.stream().anyMatch(change -> change.contains("BlockChanges" + version.replaceAll("[^A-Za-z0-9]", "_") + "."))) {
+                    ctx.report.decision("Block definitions: the state order of " + blocks.size() + " blocks of " + version + " is inferred, not observed "
+                        + "(BDS sends no palette, and no second source has the version); check it against CloudburstMC/Data once it has the version",
+                        "Inferred state order", blocks.stream().map(block -> "- " + block).toList());
+                }
+            });
+            for (Path stale : GeneratedSources.stale(ctx.root, result.sources(), List.of(BlockGenerator.DIRECTORY), BlockGenerator.GENERATOR)) {
+                ctx.report.repoChanges.add((ctx.verifyOnly ? "would " : "") + "remove `" + ctx.root.relativize(stale).toString().replace('\\', '/')
+                    + "` (block definitions)");
+                if (!ctx.verifyOnly) {
+                    Files.delete(stale);
+                }
             }
+            for (Map.Entry<String, String> file : result.sources().entrySet()) {
+                ctx.stage(ctx.root.resolve(file.getKey()), file.getValue().getBytes(StandardCharsets.UTF_8), "block definitions");
+            }
+            versionFiles = result.versionFiles();
+        } catch (Exception e) {
+            ctx.report.check(Report.Status.FAIL, "Block definitions", e.getClass().getSimpleName() + ": " + e.getMessage());
         }
-        for (Map.Entry<String, String> file : result.sources().entrySet()) {
-            ctx.stage(ctx.root.resolve(file.getKey()), file.getValue().getBytes(StandardCharsets.UTF_8), "block definitions");
-        }
-        // Into the staged copy: Staging#apply brings the version files to the repository
-        for (Map.Entry<String, byte[]> file : result.versionFiles().entrySet()) {
-            Files.write(staging.resources.resolve(Path.of(file.getKey()).getFileName().toString()), file.getValue());
+    }
+
+    /** The last step of the run: the version files without the block states, which the staged definitions give. */
+    void slim() {
+        try {
+            for (Map.Entry<String, byte[]> file : versionFiles.entrySet()) {
+                ctx.stage(ctx.resources.resolve(file.getKey()), file.getValue(), "bundled data without block states");
+            }
+        } catch (IOException e) {
+            ctx.report.check(Report.Status.FAIL, "Block definitions", "the version files keep their block states: " + e);
         }
     }
 }

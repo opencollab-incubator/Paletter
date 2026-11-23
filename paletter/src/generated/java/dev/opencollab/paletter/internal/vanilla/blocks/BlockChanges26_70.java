@@ -7,76 +7,88 @@ import static dev.opencollab.paletter.internal.vanilla.blocks.BlockValues.*;
 import dev.opencollab.paletter.internal.vanilla.BlockDefinitions;
 
 /**
- * What changed in the vanilla blocks of 26.70 against 26.60, each change with the capture it comes from. A position counts in a block's property order, 0 the slowest changing.
+ * What changed in the vanilla blocks of 26.70 against 26.60, imported from the captures of its preview build in
+ * data/bds (no release build is verified to send it, builds.txt). A line that gives a block a state order says
+ * whether a second source (CloudburstMC/Data) confirms it or it is inferred: BDS sends no palette. A position
+ * counts in a block's property order, 0 the slowest changing.
  */
 final class BlockChanges26_70 {
     private BlockChanges26_70() {
     }
 
     static void part0(BlockDefinitions v) {
-        // new: BDS 1.26.70.24
+        // new
         v.block("minecraft:brittle_ice", AGE_0_3);
-        // new: BDS 1.26.70.24
+        // new
         v.block("minecraft:calcite_double_slab", VERTICAL_HALF);
-        // new: BDS 1.26.70.24
+        // new
         v.block("minecraft:calcite_pillar", PILLAR_AXIS);
-        // new: BDS 1.26.70.24
+        // new
         v.block("minecraft:calcite_slab", VERTICAL_HALF);
-        // new: BDS 1.26.70.24
+        // new; state order inferred, not observed
         v.block("minecraft:calcite_stairs", CORNER, UPSIDE_DOWN_BIT, WEIRDO_DIRECTION_0_3);
-        // new: BDS 1.26.70.24
-        v.block("minecraft:calcite_wall", WALL_CONNECTION_TYPE_WEST, WALL_CONNECTION_TYPE_SOUTH, WALL_CONNECTION_TYPE_EAST, WALL_CONNECTION_TYPE_NORTH, WALL_POST_BIT);
-        // new: BDS 1.26.70.24
+        // new; state order inferred, not observed
+        v.block("minecraft:calcite_wall", WALL_CONNECTION_TYPE_WEST, WALL_CONNECTION_TYPE_SOUTH,
+                WALL_CONNECTION_TYPE_EAST, WALL_CONNECTION_TYPE_NORTH, WALL_POST_BIT);
+        // new
         v.block("minecraft:chiseled_packed_ice");
-        // new: BDS 1.26.70.24
+        // new
         v.block("minecraft:chiseled_soulshale");
-        // removed: BDS 1.26.70.24
+        // removed
         v.remove("minecraft:disc_press");
-        // new: BDS 1.26.70.24
+        // new
         v.block("minecraft:packed_ice_brick_double_slab", VERTICAL_HALF);
-        // new: BDS 1.26.70.24
+        // new
         v.block("minecraft:packed_ice_brick_slab", VERTICAL_HALF);
-        // new: BDS 1.26.70.24
+        // new; state order inferred, not observed
         v.block("minecraft:packed_ice_brick_stairs", CORNER, UPSIDE_DOWN_BIT, WEIRDO_DIRECTION_0_3);
-        // new: BDS 1.26.70.24
-        v.block("minecraft:packed_ice_brick_wall", WALL_CONNECTION_TYPE_WEST, WALL_CONNECTION_TYPE_SOUTH, WALL_CONNECTION_TYPE_EAST, WALL_CONNECTION_TYPE_NORTH, WALL_POST_BIT);
-        // new: BDS 1.26.70.24
+        // new; state order inferred, not observed
+        v.block("minecraft:packed_ice_brick_wall", WALL_CONNECTION_TYPE_WEST,
+                WALL_CONNECTION_TYPE_SOUTH, WALL_CONNECTION_TYPE_EAST, WALL_CONNECTION_TYPE_NORTH,
+                WALL_POST_BIT);
+        // new
         v.block("minecraft:packed_ice_bricks");
-        // new: BDS 1.26.70.24
+        // new
         v.block("minecraft:polished_calcite");
-        // new: BDS 1.26.70.24
+        // new
         v.block("minecraft:polished_calcite_brick_double_slab", VERTICAL_HALF);
-        // new: BDS 1.26.70.24
+        // new
         v.block("minecraft:polished_calcite_brick_slab", VERTICAL_HALF);
-        // new: BDS 1.26.70.24
-        v.block("minecraft:polished_calcite_brick_stairs", CORNER, UPSIDE_DOWN_BIT, WEIRDO_DIRECTION_0_3);
-        // new: BDS 1.26.70.24
-        v.block("minecraft:polished_calcite_brick_wall", WALL_CONNECTION_TYPE_WEST, WALL_CONNECTION_TYPE_SOUTH, WALL_CONNECTION_TYPE_EAST, WALL_CONNECTION_TYPE_NORTH, WALL_POST_BIT);
-        // new: BDS 1.26.70.24
+        // new; state order inferred, not observed
+        v.block("minecraft:polished_calcite_brick_stairs", CORNER, UPSIDE_DOWN_BIT,
+                WEIRDO_DIRECTION_0_3);
+        // new; state order inferred, not observed
+        v.block("minecraft:polished_calcite_brick_wall", WALL_CONNECTION_TYPE_WEST,
+                WALL_CONNECTION_TYPE_SOUTH, WALL_CONNECTION_TYPE_EAST, WALL_CONNECTION_TYPE_NORTH,
+                WALL_POST_BIT);
+        // new
         v.block("minecraft:polished_calcite_bricks");
-        // new: BDS 1.26.70.24
+        // new
         v.block("minecraft:polished_calcite_double_slab", VERTICAL_HALF);
-        // new: BDS 1.26.70.24
+        // new
         v.block("minecraft:polished_calcite_slab", VERTICAL_HALF);
-        // new: BDS 1.26.70.24
+        // new; state order inferred, not observed
         v.block("minecraft:polished_calcite_stairs", CORNER, UPSIDE_DOWN_BIT, WEIRDO_DIRECTION_0_3);
-        // new: BDS 1.26.70.24
-        v.block("minecraft:polished_calcite_wall", WALL_CONNECTION_TYPE_WEST, WALL_CONNECTION_TYPE_SOUTH, WALL_CONNECTION_TYPE_EAST, WALL_CONNECTION_TYPE_NORTH, WALL_POST_BIT);
-        // gains locked at position 0 of its order: BDS 1.26.70.24
+        // new; state order inferred, not observed
+        v.block("minecraft:polished_calcite_wall", WALL_CONNECTION_TYPE_WEST,
+                WALL_CONNECTION_TYPE_SOUTH, WALL_CONNECTION_TYPE_EAST, WALL_CONNECTION_TYPE_NORTH,
+                WALL_POST_BIT);
+        // gains locked at 0; state order inferred, not observed
         v.addProperties("minecraft:powered_repeater", 0, LOCKED);
-        // gains bottom at position 0 of its order: BDS 1.26.70.24
+        // gains bottom at 0; state order inferred, not observed
         v.addProperties("minecraft:scaffolding", 0, BOTTOM);
-        // new: BDS 1.26.70.24
+        // new
         v.block("minecraft:snow_brick_double_slab", VERTICAL_HALF);
-        // new: BDS 1.26.70.24
+        // new
         v.block("minecraft:snow_brick_slab", VERTICAL_HALF);
-        // new: BDS 1.26.70.24
+        // new; state order inferred, not observed
         v.block("minecraft:snow_brick_stairs", CORNER, UPSIDE_DOWN_BIT, WEIRDO_DIRECTION_0_3);
-        // new: BDS 1.26.70.24
-        v.block("minecraft:snow_brick_wall", WALL_CONNECTION_TYPE_WEST, WALL_CONNECTION_TYPE_SOUTH, WALL_CONNECTION_TYPE_EAST, WALL_CONNECTION_TYPE_NORTH, WALL_POST_BIT);
-        // new: BDS 1.26.70.24
+        // new; state order inferred, not observed
+        v.block("minecraft:snow_brick_wall", WALL_CONNECTION_TYPE_WEST, WALL_CONNECTION_TYPE_SOUTH,
+                WALL_CONNECTION_TYPE_EAST, WALL_CONNECTION_TYPE_NORTH, WALL_POST_BIT);
+        // new
         v.block("minecraft:snow_bricks");
-        // gains locked at position 0 of its order: BDS 1.26.70.24
+        // gains locked at 0; state order inferred, not observed
         v.addProperties("minecraft:unpowered_repeater", 0, LOCKED);
     }
 

@@ -12,7 +12,6 @@ import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Set;
 
 /**
@@ -27,8 +26,22 @@ final class BlockModel {
     private BlockModel() {
     }
 
-    /** @return the definitions of a palette, checked against it */
+    /**
+     * @return the definitions of a palette, checked against it
+     * @throws IllegalStateException for whatever the definitions cannot say, with the version in the message
+     */
     static BlockDefinitions definitions(String version, BlockDefinitions.Palette palette) {
+        try {
+            return read(version, palette);
+        } catch (IllegalStateException e) {
+            throw e;
+        } catch (RuntimeException e) {
+            // A default that is no state of its block, a block of more states than an int counts, ...
+            throw new IllegalStateException(version + ": " + e.getMessage(), e);
+        }
+    }
+
+    private static BlockDefinitions read(String version, BlockDefinitions.Palette palette) {
         Map<String, List<NbtMap>> blocks = new LinkedHashMap<>();
         String previous = null;
         for (NbtMap state : palette.states()) {
@@ -50,8 +63,12 @@ final class BlockModel {
                     throw new IllegalStateException(version + ": the default of " + name + " is a state of " + BlockStates.name(defaultState));
                 }
                 NbtMap values = BlockStates.states(defaultState);
-                defined.defaultState(properties.stream().map(p -> Objects.requireNonNull(values.get(p.name()),
-                    () -> version + ": the default of " + name + " lacks " + p.name())).toArray());
+                for (StateValues p : properties) {
+                    if (!values.containsKey(p.name())) {
+                        throw new IllegalStateException(version + ": the default of " + name + " lacks " + p.name());
+                    }
+                }
+                defined.defaultState(properties.stream().map(p -> values.get(p.name())).toArray());
             }
         });
         for (String name : palette.defaults().keySet()) {
@@ -92,10 +109,12 @@ final class BlockModel {
             }
             values.put(key, list);
         }
+        // A property of one value never changes, so its place cannot change the states: such properties go first, by name
         List<String> order = new ArrayList<>(keys);
-        order.sort(Comparator.comparing(periods::get, Comparator.reverseOrder()));
+        order.sort(Comparator.comparing((String key) -> values.get(key).size() == 1 ? 0 : 1)
+            .thenComparing(periods::get, Comparator.reverseOrder()).thenComparing(Comparator.naturalOrder()));
         for (int i = 1; i < order.size(); i++) {
-            if (periods.get(order.get(i)).equals(periods.get(order.get(i - 1)))) {
+            if (values.get(order.get(i)).size() > 1 && periods.get(order.get(i)).equals(periods.get(order.get(i - 1)))) {
                 throw new IllegalStateException(version + ": the property order of " + name + " is ambiguous: " + order.get(i - 1) + " and "
                     + order.get(i) + " change at the same rate (" + values.get(order.get(i - 1)) + ", " + values.get(order.get(i)) + ")");
             }

@@ -18,12 +18,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * The bundled voxel shape registries of vanilla Bedrock ({@code voxel_shapes.nbt}): per data version the shapes BDS
- * sends a client of a world without add-ons, in its order (and, where it differs, of a world with the experiment
- * {@value #EXPERIMENT}). Generated from the captures in {@code data/bds} by the
- * tools ({@code voxel-shapes import}); registries that are equal are stored once with the versions they hold for.
+ * The voxel shape registries of vanilla Bedrock: per data version the shapes BDS sends a client of a world without
+ * add-ons, in its order (and, where it differs, of a world with the experiment {@value #EXPERIMENT}). The bundled ones
+ * are generated classes ({@link #bundled()}, written from the captures in {@code data/bds} by {@code voxel-shapes import});
+ * a directory data source may carry its own {@code voxel_shapes.nbt}. Registries that are equal are one with the versions
+ * they hold for.
  * <p>
- * File: gzipped NBT {@code {_generated, registries: [{versions: [name], experiment, shapes: [{x, y, z: [float], cells: byte[],
+ * File ({@code voxel_shapes.nbt}): gzipped NBT {@code {_generated, registries: [{versions: [name], experiment, shapes: [{x, y, z: [float], cells: byte[],
  * name?, block?, lastBlock?}]}]}}, the cells packed as on the wire ({@link VoxelGrid}).
  */
 public final class VoxelShapeStore {

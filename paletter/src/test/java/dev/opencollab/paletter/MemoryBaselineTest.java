@@ -74,9 +74,10 @@ class MemoryBaselineTest {
     private static final long MAX_BEHAVIOUR_METASPACE_BYTES = 2_000_000;
     /**
      * What loading the generated block definitions and voxel shapes and building them once adds to the metaspace; nothing of
-     * them stays on the heap (they are built for each version as it loads). Measured 0.38 MB (383,832 bytes).
+     * them is counted on the heap (the definitions are kept softly by {@code VanillaBlocks}, reached by no palette). Measured
+     * 0.38 MB (383,832 bytes) on Windows; the limit leaves about 20% for other JVM builds (CI runs Linux).
      */
-    private static final long MAX_BLOCKS_METASPACE_BYTES = 420_000;
+    private static final long MAX_BLOCKS_METASPACE_BYTES = 460_000;
 
     private static PaletteLayer sessionLayer(String id) {
         return PaletteLayer.builder(id)

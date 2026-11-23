@@ -3,9 +3,11 @@ package dev.opencollab.paletter.internal.vanilla;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
+import java.lang.ref.SoftReference;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -13,11 +15,13 @@ import java.util.Map;
 /**
  * The generated vanilla block definitions of the bundled data versions ({@code internal.vanilla.blocks}, written by
  * {@code :tools:generateBlocks}): the block states of a version are derived from them, not read from its data file.
- * Built on each call, so nothing is kept once the palette is read. Not API.
+ * The definitions (a few hundred KB) are kept softly while versions load, so loading every version builds them once;
+ * the derived states belong to whoever asked. Not API.
  */
 public final class VanillaBlocks {
-    /** The generated class, loaded by name. */
-    private static final String DATA = "dev.opencollab.paletter.internal.vanilla.blocks.BlockData";
+    /** The generated class, loaded by name: the library compiles without it. */
+    public static final String DATA = "dev.opencollab.paletter.internal.vanilla.blocks.BlockData";
+    private static volatile SoftReference<Map<String, BlockDefinitions>> cache = new SoftReference<>(null);
 
     private VanillaBlocks() {
     }
@@ -47,9 +51,13 @@ public final class VanillaBlocks {
 
     /**
      * @return the definitions of every generated version, by name, oldest first; none if the generated classes are missing
-     * (the library compiles without them, so the generator can run on data that carries its block states)
+     * (the library compiles without them, so the generator can run on data that carries its block states). Not to be changed
      */
     public static @NonNull Map<String, BlockDefinitions> all() {
+        Map<String, BlockDefinitions> cached = cache.get();
+        if (cached != null) {
+            return cached;
+        }
         Versions versions = new Versions();
         Method load;
         try {
@@ -64,7 +72,9 @@ public final class VanillaBlocks {
         } catch (InvocationTargetException e) {
             throw new IllegalStateException("The generated block definitions do not build", e.getCause());
         }
-        return versions.versions();
+        cached = Collections.unmodifiableMap(versions.versions());
+        cache = new SoftReference<>(cached);
+        return cached;
     }
 
     /** @return the names of the generated versions, oldest first */

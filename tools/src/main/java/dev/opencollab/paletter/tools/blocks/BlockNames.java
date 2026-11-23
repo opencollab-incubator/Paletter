@@ -15,7 +15,7 @@ import java.util.TreeMap;
  * The names of the shared value list constants ({@code BlockValues}): the property name without {@code minecraft:} in
  * UPPER_SNAKE ({@code CARDINAL_DIRECTION}), with it where two properties would otherwise share a name
  * ({@code MINECRAFT_FACING_DIRECTION} beside {@code facing_direction}); an int property adds its range ({@code AGE_0_15}),
- * a string property with several value lists the hash of its values.
+ * a string property with several value lists the number of its values and the first ({@code COLOUR_2_GREEN}).
  */
 final class BlockNames {
     private BlockNames() {
@@ -62,7 +62,8 @@ final class BlockNames {
             shown.forEach(v -> suffix.append('_').append(v.toString().replace("-", "M")));
             return suffix.toString();
         }
-        return severalStringLists ? String.format(Locale.ROOT, "_%06X", values.values().toString().hashCode() & 0xFFFFFF) : "";
+        // The number of values and the first: readable, and two lists of one name that share both are a collision that fails
+        return severalStringLists ? "_" + values.size() + "_" + constant(values.value(0).toString()) : "";
     }
 
     private static String strip(String name) {

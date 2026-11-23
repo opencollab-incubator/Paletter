@@ -45,7 +45,7 @@ import java.util.zip.GZIPOutputStream;
  *     <li>{@code addon-plain.json}, {@code anchors-plain.json.gz}: the packets of the same two worlds without the
  *     experiment, where they differ.</li>
  * </ul>
- * {@code voxel-shapes import} turns the captures into the bundled {@code voxel_shapes.nbt} ({@link ShapeImport}).
+ * {@code voxel-shapes import} turns the captures into the generated shape classes of the library ({@link ShapeImport}).
  * <p>
  * Options: {@code --version 1.26.63.1}, {@code --cache DIR}, {@code --port 19310}, {@code --timeout 300},
  * {@code --keep-server}. Downloading BDS means accepting the Minecraft EULA.

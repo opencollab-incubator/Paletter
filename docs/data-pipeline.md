@@ -857,16 +857,20 @@ generate`; checked by `:tools:checkBlocks` in `check`) writes `dev.opencollab.pa
 - `BlockValues`: every value list of a block property once, the values in Bedrock's order: `CARDINAL_DIRECTION =
   StateValues.strings("minecraft:cardinal_direction", "south", "west", "north", "east")`, `AGE_0_15 = StateValues.ints("age", 0, 15)`,
   `OPEN_BIT = StateValues.bool("open_bit")`. The name is the property's without `minecraft:` (with it where two properties would
-  share one, `MINECRAFT_FACING_DIRECTION`), an int property adds its range, a string property with several value lists the hash
-  of its values. Ints that are no run are listed (`intList`); byte values other than false then true fail generation.
+  share one, `MINECRAFT_FACING_DIRECTION`), an int property adds its range, a string property with several value lists the number
+  of its values and the first (`COLOUR_2_GREEN`). Ints that are no run are listed (`intList`); byte values other than false then true fail generation.
 - `BlockBase`: the oldest version of `versions.txt`, one line per block: its identifier, its properties in the order Bedrock
   enumerates its states (the first changes slowest, the last fastest) and its default state where that is not the first:
   `v.block("minecraft:copper_chest", CARDINAL_DIRECTION).defaultState("north")`.
-- `BlockChanges<version>`: what changed against the version before, each line with a comment naming the BDS build whose
-  captures the version was imported from (the newest build of its line with `vanilla/capture.json` or a Script API dump in `data/bds`): a new block
-  (`v.block`), a removed one (`v.remove`), properties inserted into a block's order (`v.addProperties(block, position, ...)`, 0
-  the slowest), a removed property (`v.removeProperty`), a new default (`v.defaultState`); anything else (other values, another
-  order) redefines the block (`v.redefine`) with a comment that says what changed.
+- `BlockChanges<version>`: what changed against the version before. The class names once what the version was imported from
+  (the builds `builds.txt` verifies for it, the import build first; a preview has none). Each line says what it changes: a new
+  block (`v.block`), a removed one (`v.remove`), properties inserted into a block's order (`v.addProperties(block, position, ...)`,
+  0 the slowest), a removed property (`v.removeProperty`), a new default (`v.defaultState`); anything else (other values, another
+  order) redefines the block (`v.redefine`) with what changed.
+- Provenance of the order: BDS sends no palette. A line that gives a block of several properties a state order (and a block of
+  the base) says `state order confirmed by CloudburstMC/Data` where the CloudburstMC/Data palette of the version in
+  `tools/src/test/resources/test-data` has the block's states in the same order, else `state order inferred, not observed`: the
+  order `update` inferred (`ReferencePalette#keyOrder`). `generateBlocks` prints those blocks, `update` lists them as a decision.
 - `BlockData` builds them all for `VanillaBlocks` (hand-written, `internal.vanilla`), which loads it by name: the library
   compiles without the package.
 
@@ -878,15 +882,23 @@ it still has its block states, as an import writes it, otherwise from the defini
 the definitions from it (each property's place from how often it changes) and derives the palette again through the same
 code the library runs: it fails with what it found, never a guess, on a block whose states are not one run, not the full
 product of their values or in no odometer order, a property order that is ambiguous (two properties that change at the same
-rate), blocks out of name hash order, a state whose keys are not sorted, or other defaults. Then it applies each version's
-changes to the version before and fails unless that gives the version. It writes the sources and every version file without
-its block states (`blocks` and `block_defaults`, which the codec then takes from the definitions).
+rate), blocks out of name hash order, a state whose keys are not sorted, or other defaults. Properties of one value never
+change, so their place cannot change the states: they go first, by name. Then it applies each version's changes to the version
+before and fails unless that gives the version. It writes the sources and every version file without its block states
+(`blocks` and `block_defaults`, which the codec then takes from the definitions) but with `blocks_digest`: the state count and
+an FNV-1a 64 over the hashed ids of the states in order and of the defaults, of the palette that was imported. Reading a file
+without block states (the library, `checkBlocks`, every tool) fails, naming the version, unless the derived palette has that
+digest: a hand edit of the generated classes, a merge of two data changes into a chain nobody captured, or a file paired with
+the definitions of another library cannot pass silently. `blocks export --out <dir>` writes the bundled data with every
+version's block states again (to recover, see updating.md troubleshooting).
 
-`import` runs it after writing the version; `update` runs it on the staged data (`BlocksStage`, after the constants) and stages
-the sources with the slimmed files. `PaletteDataCodec#write` leaves the block states out on its own wherever the definitions
-of the version give exactly them, so rewriting a version file (experiment marks, a refreshed version) keeps it slim, and a
-version whose palette changed keeps its states until `generateBlocks` folds them in. Data of a version the library has no
-definitions of (a directory data source) keeps carrying its states.
+`import` runs it after writing the version. `update` runs it on the staged data (`BlocksStage`, after the constants) and stages
+the sources; the version files go into the repository with their block states, because the stages after that (the spec capture,
+the shape import) read the bundled data in the same process, whose compiled definitions do not know a palette that is new or
+changed in this run. Writing them without block states is the very last step of the run. `PaletteDataCodec#write` leaves the
+block states out on its own wherever the definitions of the version give exactly them, so rewriting a version file (experiment
+marks, a refreshed version) keeps it slim, and a version whose palette changed keeps its states until `generateBlocks` folds them
+in. Data of a version the library has no definitions of (a directory data source) keeps carrying its states.
 
 What stays data, and why:
 
@@ -904,9 +916,12 @@ Retiring a version (`retire`, [updating.md](updating.md) section h): once its `v
 `generateBlocks` makes the next version `BlockBase`, with what it inherited folded in, and drops its change class.
 
 Tests: `BlockCodeTest` runs the generator on three small versions (what the classes say, that the compiled output gives every
-palette again, retiring, and the palettes it must refuse); `GeneratedBlocksLimitsTest` keeps every generated block and shape
-class under half of the JVM's method and constant pool limits. The generated classes are the only copy of the palettes: if they
-stop compiling after a change of `BlockDefinitions`, keep the old method until `generateBlocks` has rewritten them.
+palette again, retiring, splitting); `BlockModelTest` has the palettes it must refuse; `BlockGeneratorTest` runs it end to end on
+a repository of its own (sources, slimmed files with their digest, `builds.txt`, the second source, export); `BlocksStageTest`
+runs the update stage that way, for a new version and for a changed palette under an existing name; `BlockDefinitionsTest` and
+`PaletteDataCodecBlocksTest` in `:paletter` test the runtime and the format. `GeneratedBlocksLimitsTest` keeps every generated
+block and shape class under half of the JVM's method and constant pool limits. The generated classes are the only copy of the
+palettes: if they stop compiling after a change of `BlockDefinitions`, see updating.md troubleshooting.
 
 ## Behaviour data
 

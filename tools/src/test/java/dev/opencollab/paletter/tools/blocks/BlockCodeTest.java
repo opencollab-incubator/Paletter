@@ -9,9 +9,9 @@ import org.junit.jupiter.api.io.TempDir;
 
 import java.nio.file.Path;
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -19,44 +19,29 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
- * The block definition generator on three small versions: what the base and the change classes say, that the generated
- * code, compiled and run, gives every palette again, that a retired version folds into the base, and that palettes the
- * definitions cannot say (not a cartesian product, no unique property order, blocks out of name hash order) fail.
+ * The block definition generator on small versions: what the base and the change classes say (what each version was
+ * imported from, once; whether a state order is confirmed or inferred), that the generated code, compiled and run, gives
+ * every palette again, that a retired version folds into the base, and the palettes it must refuse.
  */
 class BlockCodeTest {
-    private static final StateValues FACING = StateValues.ints("facing", 0, 3);
-    private static final StateValues OPEN = StateValues.bool("open_bit");
-    private static final StateValues HINGE = StateValues.bool("hinge_bit");
-    private static final StateValues GROWTH = StateValues.ints("growth", 0, 2);
-    private static final StateValues COLOUR = StateValues.strings("test:colour", "red", "blue");
-    private static final StateValues OTHER_COLOUR = StateValues.strings("colour", "green", "red");
+    private static final StateValues OPEN = BlockGeneratorFixture.OPEN;
 
-    /** 1.1: a, door (default facing 2), crop. 1.2: crop gone, new, door gains a hinge. 1.3: the door's order turns, new's default moves. */
-    static Map<String, BlockDefinitions.Palette> palettes() {
-        BlockDefinitions v1 = new BlockDefinitions();
-        v1.block("test:a");
-        v1.block("test:door", FACING, OPEN).defaultState(2, false);
-        v1.block("test:crop", GROWTH);
-        BlockDefinitions v2 = v1.copy();
-        v2.remove("test:crop");
-        v2.block("test:new", COLOUR, OTHER_COLOUR).defaultState("blue", "green");
-        v2.addProperties("test:door", 1, HINGE);
-        BlockDefinitions v3 = v2.copy();
-        v3.redefine("test:door", OPEN, HINGE, FACING).defaultState(false, false, 2);
-        v3.defaultState("test:new", "red", "red");
-        Map<String, BlockDefinitions.Palette> palettes = new LinkedHashMap<>();
-        palettes.put("1.1", v1.derive());
-        palettes.put("1.2", v2.derive());
-        palettes.put("1.3", v3.derive());
-        return palettes;
+    private static Map<String, BlockDefinitions.Palette> palettes() {
+        return BlockGeneratorFixture.palettes();
+    }
+
+    private static BlockCode.Generated generated(Map<String, BlockDefinitions.Palette> palettes) {
+        return BlockCode.generate(BlockModel.versions(palettes), Map.of("1.2", "BDS 1.2.0 */ System.exit(1); \\u000a"),
+            Map.of("1.2", Set.of("test:new")), "a test");
     }
 
     private static Map<String, String> generate(Map<String, BlockDefinitions.Palette> palettes) {
-        return BlockCode.generate(BlockModel.versions(palettes), Map.of("1.2", "BDS 1.2.0"), "a test");
+        return generated(palettes).files();
     }
 
-    private static String file(Map<String, String> files, String name) {
-        return files.get(BlockCode.DIRECTORY + "/" + name + ".java");
+    /** A generated file, its Javadoc lines joined so a sentence can be found whole. */
+    static String file(Map<String, String> files, String name) {
+        return files.get(BlockCode.DIRECTORY + "/" + name + ".java").replace("\n * ", " ");
     }
 
     @Test
@@ -65,31 +50,38 @@ class BlockCodeTest {
         String base = file(files, "BlockBase");
         assertTrue(base.startsWith(BlockCode.GENERATOR + " from a test."), base);
         assertTrue(base.contains("v.block(\"test:a\");"), base);
-        assertTrue(base.contains("v.block(\"test:door\", FACING_0_3, OPEN_BIT).defaultState(2, false);"), base);
+        assertTrue(base.contains("// " + BlockCode.INFERRED + "\n        v.block(\"test:door\", FACING_0_3, OPEN_BIT).defaultState(2, false);"), base);
         assertTrue(base.contains("v.block(\"test:crop\", GROWTH_0_2);"), base);
         String values = file(files, "BlockValues");
         assertTrue(values.contains("static final StateValues FACING_0_3 = StateValues.ints(\"facing\", 0, 3);"), values);
         assertTrue(values.contains("static final StateValues OPEN_BIT = StateValues.bool(\"open_bit\");"), values);
-        // test:colour and colour strip to one name: the namespaced one keeps its namespace
+        assertTrue(values.contains("static final StateValues ODD_4_2_9 = StateValues.intList(\"odd\", 4, 2, 9);"), values);
+        // test:colour and colour strip to one name: the namespaced one keeps it; two lists of colour say their size and first value
         assertTrue(values.contains("TEST_COLOUR = StateValues.strings(\"test:colour\", \"red\", \"blue\");"), values);
-        assertTrue(values.contains(" COLOUR = StateValues.strings(\"colour\", \"green\", \"red\");"), values);
+        assertTrue(values.contains(" COLOUR_2_GREEN = StateValues.strings(\"colour\", \"green\", \"red\");"), values);
+        assertTrue(values.contains(" COLOUR_2_WHITE = StateValues.strings(\"colour\", \"white\", \"black\");"), values);
         assertFalse(values.contains("BlockValues."), values);
     }
 
     @Test
-    void aVersionsClassHasItsChangesWithTheCaptureTheyComeFrom() {
+    void aVersionsClassNamesItsImportOnceAndEachLineWhatItChanges() {
         Map<String, String> files = generate(palettes());
         String changes = file(files, "BlockChanges1_2");
-        assertTrue(changes.contains("// removed: BDS 1.2.0\n        v.remove(\"test:crop\");"), changes);
-        assertTrue(changes.contains("// new: BDS 1.2.0\n        v.block(\"test:new\", TEST_COLOUR, COLOUR).defaultState(\"blue\", \"green\");"), changes);
-        assertTrue(changes.contains("// gains hinge_bit at position 1 of its order: BDS 1.2.0\n        v.addProperties(\"test:door\", 1, HINGE_BIT);"),
+        // What a source says cannot end the comment or start a Unicode escape
+        assertTrue(changes.contains("imported from BDS 1.2.0 *<U+002F> System.exit(1); \\\\u000a."), changes);
+        assertTrue(changes.contains("// removed\n        v.remove(\"test:crop\");"), changes);
+        assertTrue(changes.contains("// new; " + BlockCode.CONFIRMED + "\n        v.block(\"test:new\", TEST_COLOUR, COLOUR_2_GREEN).defaultState(\"blue\", \"green\");"),
             changes);
+        assertTrue(changes.contains("// gains hinge_bit at 1; " + BlockCode.INFERRED + "\n        v.addProperties(\"test:door\", 1, HINGE_BIT);"), changes);
         String turned = file(files, "BlockChanges1_3");
-        assertTrue(turned.contains("// another property order: [facing, hinge_bit, open_bit] -> [open_bit, hinge_bit, facing]: no BDS capture in data/bds\n"
+        assertTrue(turned.contains("imported from no record of its import."), turned);
+        assertTrue(turned.contains("// another property order: [facing, hinge_bit, open_bit] -> [open_bit, hinge_bit, facing]; " + BlockCode.INFERRED + "\n"
             + "        v.redefine(\"test:door\", OPEN_BIT, HINGE_BIT, FACING_0_3).defaultState(false, false, 2);"), turned);
-        assertTrue(turned.contains("// default state [blue, green] -> [red, red]: no BDS capture in data/bds\n        v.defaultState(\"test:new\", \"red\", \"red\");"),
-            turned);
+        assertTrue(turned.contains("// default state [blue, green] -> [red, red]\n        v.defaultState(\"test:new\", \"red\", \"red\");"), turned);
+        assertTrue(turned.contains("// loses open_bit\n        v.removeProperty(\"test:odd\", \"open_bit\");"), turned);
         assertTrue(file(files, "BlockData").contains("BlockChanges1_3.load(v1_3);"));
+        assertEquals(Map.of("1.1", List.of("test:door"), "1.2", List.of("test:door", "test:odd"), "1.3", List.of("test:door")),
+            generated(palettes()).inferred());
     }
 
     @Test
@@ -102,6 +94,18 @@ class BlockCodeTest {
             assertEquals(palette.states(), derived.states(), version);
             assertEquals(palette.defaults(), derived.defaults(), version);
         });
+    }
+
+    @Test
+    void manyBlocksAreSplitIntoParts(@TempDir Path directory) throws Exception {
+        BlockDefinitions definitions = new BlockDefinitions();
+        for (int i = 0; i < 1000; i++) {
+            definitions.block("test:block_" + i, OPEN);
+        }
+        Map<String, BlockDefinitions.Palette> palettes = Map.of("1.1", definitions.derive());
+        Map<String, String> files = generate(palettes);
+        assertTrue(files.containsKey(BlockCode.DIRECTORY + "/BlockBasePart2.java"), files.keySet().toString());
+        assertEquals(palettes.get("1.1").states(), CompiledBlocks.load(files, directory).get("1.1").derive().states());
     }
 
     @Test
@@ -142,10 +146,6 @@ class BlockCodeTest {
         reordered.removeAll(run);
         reordered.addAll(run);
         assertMessage("the blocks are not ordered by the unsigned FNV-1 64 hash of their identifiers", reordered, palette.defaults());
-
-        List<NbtMap> single = new ArrayList<>(states);
-        single.add(BlockStates.of("test:single", NbtMap.builder().putString("x", "a").putString("y", "b").build()));
-        assertMessage("the property order of test:single is ambiguous", single, Map.of());
     }
 
     private static void assertMessage(String expected, List<NbtMap> states, Map<String, NbtMap> defaults) {
