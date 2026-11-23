@@ -178,6 +178,7 @@ final class ExperimentReportStage {
                 content.add("blocksAdded", array(diff.blocksAdded()));
                 content.add("dataDrivenBlocks", array(diff.dataDrivenBlocks()));
                 content.add("creativeAdded", array(diff.creativeAdded()));
+                content.add("creativeWithoutBlock", array(diff.creativeWithoutBlock()));
                 content.add("removed", array(diff.removed()));
                 Map<String, List<String>> recipes = result.recipes.get(toggle);
                 if (recipes != null) {

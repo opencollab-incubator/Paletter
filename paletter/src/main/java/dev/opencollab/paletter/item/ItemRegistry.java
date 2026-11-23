@@ -199,6 +199,8 @@ public final class ItemRegistry implements DefinitionRegistry<ItemDefinition> {
         Set<String> withBlock = new HashSet<>();
         Set<String> withoutBlock = new HashSet<>();
         data.creative().forEachStack(stack -> (stack.blockState() != null ? withBlock : withoutBlock).add(stack.identifier()));
+        // The stacks a toggle adds are not in the data's creative inventory: their capture with the toggle says which carry none
+        data.experiments().values().forEach(content -> withoutBlock.addAll(content.creativeWithoutBlock()));
         withoutBlock.removeAll(withBlock);
         withoutBlock.forEach(item -> builder.itemBlocks.computeIfPresent(item, (i, placed) -> Set.of()));
         for (VanillaItem item : data.items()) {

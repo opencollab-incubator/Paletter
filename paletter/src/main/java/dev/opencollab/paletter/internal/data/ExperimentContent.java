@@ -19,19 +19,28 @@ import java.util.List;
  *              (version, component based flag or components) or first puts into the creative inventory
  * @param blocks block identifiers the toggle adds to the Script API block types or to the start game block properties
  * @param creative creative stacks the toggle adds, as {@code identifier} or {@code identifier:damage}
+ * @param creativeWithoutBlock the items of those stacks none of whose stacks carries a block in the capture with the toggle:
+ *                             one that places a block (doors, signs, beds) is sent without it
  *
  * @since 1.0.0
  */
-public record ExperimentContent(@NonNull List<String> items, @NonNull List<String> blocks, @NonNull List<String> creative) {
+public record ExperimentContent(@NonNull List<String> items, @NonNull List<String> blocks, @NonNull List<String> creative,
+                                @NonNull List<String> creativeWithoutBlock) {
     public static final ExperimentContent EMPTY = new ExperimentContent(List.of(), List.of(), List.of());
 
     public ExperimentContent {
         items = List.copyOf(items);
         blocks = List.copyOf(blocks);
         creative = List.copyOf(creative);
+        creativeWithoutBlock = List.copyOf(creativeWithoutBlock);
+    }
+
+    /** Content whose creative stacks carry a block wherever their item places one. */
+    public ExperimentContent(@NonNull List<String> items, @NonNull List<String> blocks, @NonNull List<String> creative) {
+        this(items, blocks, creative, List.of());
     }
 
     public boolean isEmpty() {
-        return items.isEmpty() && blocks.isEmpty() && creative.isEmpty();
+        return items.isEmpty() && blocks.isEmpty() && creative.isEmpty() && creativeWithoutBlock.isEmpty();
     }
 }
