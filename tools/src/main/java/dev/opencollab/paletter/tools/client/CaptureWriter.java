@@ -52,6 +52,8 @@ public final class CaptureWriter {
     private final Map<Integer, NbtMap> statesByHash = new LinkedHashMap<>();
     private final List<NbtMap> palette = new ArrayList<>();
     private final Set<Integer> unresolvedHashes = new LinkedHashSet<>();
+    /** The item of the first creative stack that carried each unresolved block id, so a report can name the block. */
+    private final Map<Integer, String> unresolvedItems = new LinkedHashMap<>();
     private int resolvedHashes;
     /**
      * Blocks with an {@code enabled_states} value the trait state table has no states for yet, to those values: their states
@@ -330,6 +332,7 @@ public final class CaptureWriter {
                 experimentBlocksSent.add(item.getDefinition().getIdentifier());
             } else {
                 unresolvedHashes.add(block.getRuntimeId());
+                unresolvedItems.putIfAbsent(block.getRuntimeId(), item.getDefinition().getIdentifier());
             }
         }
         if (item.getTag() != null) {
@@ -365,6 +368,11 @@ public final class CaptureWriter {
         JsonArray unresolved = new JsonArray();
         unresolvedHashes.forEach(hash -> unresolved.add(Integer.toUnsignedString(hash)));
         json.add("creativeBlockIdsUnresolved", unresolved);
+        if (!unresolvedItems.isEmpty()) {
+            JsonArray items = new JsonArray();
+            unresolvedBlocks().forEach(items::add);
+            json.add("creativeBlockIdsUnresolvedItems", items);
+        }
         if (!collidingBlocks.isEmpty()) {
             JsonArray blocks = new JsonArray();
             collidingBlocks.forEach(blocks::add);
@@ -416,6 +424,13 @@ public final class CaptureWriter {
 
     int resolvedHashes() {
         return resolvedHashes;
+    }
+
+    /** @return each unresolved creative block id as {@code <item of its creative stack> <id>}, in the order they were sent */
+    public List<String> unresolvedBlocks() {
+        List<String> blocks = new ArrayList<>();
+        unresolvedItems.forEach((hash, item) -> blocks.add(item + " " + Integer.toUnsignedString(hash)));
+        return blocks;
     }
 
     public int unresolvedHashes() {

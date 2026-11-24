@@ -334,7 +334,8 @@ final class CaptureStage {
                 + "of the bundled data version; the block states themselves are compared through the Script API dump");
         } else {
             ctx.report.check(Report.Status.FAIL, "Block hashes (" + label + ")", summary.unresolvedHashes() + " creative block ids match no "
-                + "palette state (" + summary.resolvedHashes() + " do): the palette lacks states this version has");
+                + "palette state (" + summary.resolvedHashes() + " do): the palette lacks states this version has; by the item of their "
+                + "creative stack: " + summary.unresolvedBlocks());
             ctx.report.action("add those states to the palette (`creativeBlockIdsUnresolved` in capture.json)");
         }
     }
