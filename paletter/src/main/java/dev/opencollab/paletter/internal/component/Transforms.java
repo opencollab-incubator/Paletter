@@ -126,7 +126,7 @@ public final class Transforms {
      */
     public static void geometry(@NonNull WireContext ctx, @NonNull WireNode out, @NonNull Geometry c) {
         NbtMapBuilder geometry = geometry(c.identifier(), boneVisibility(ctx, Geometry.NAME, c.boneVisibility()), c.culling(), c.cullingLayer(),
-            c.cullingShape(), c.uvLock()).toBuilder();
+            c.cullingShape(), uvLock(ctx, Geometry.NAME, c.uvLock())).toBuilder();
         Geometry.NWayVisualRotation rotation = c.nWayVisualRotation();
         if (rotation != null && ctx.protocol() >= ComponentIndex.V26_60) {
             geometry.putCompound("n_way_visual_rotation", rotation(rotation.x(), rotation.y(), rotation.z()));
@@ -142,7 +142,7 @@ public final class Transforms {
     public static void embeddedGeometry(@NonNull WireContext ctx, @NonNull WireNode out, @NonNull EmbeddedVisual c) {
         EmbeddedVisual.VisualGeometry g = c.geometry();
         NbtMapBuilder geometry = geometry(g.identifier(), boneVisibility(ctx, EmbeddedVisual.NAME, g.boneVisibility()), g.culling(),
-            g.cullingLayer(), g.cullingShape(), g.uvLock()).toBuilder();
+            g.cullingLayer(), g.cullingShape(), uvLock(ctx, EmbeddedVisual.NAME, g.uvLock())).toBuilder();
         for (String flag : List.of("ignoreGeometryForIsSolid", "isV1Fullblock", "needsLegacyTopRotation", "useBlockTypeLightAbsorption")) {
             geometry.remove(flag);
         }
@@ -263,7 +263,7 @@ public final class Transforms {
      * {@code true} as 1, a list as its bones, and take both for the full block geometry too.
      */
     public static void itemVisualUvLock(@NonNull WireContext ctx, @NonNull WireNode out, ItemVisual.@NonNull VisualGeometry g) {
-        out.put("minecraft:item_visual.geometryDescription.uv_lock", uvLock(g.uvLock()));
+        out.put("minecraft:item_visual.geometryDescription.uv_lock", uvLock(uvLock(ctx, ItemVisual.NAME, g.uvLock())));
     }
 
     /**
@@ -271,6 +271,23 @@ public final class Transforms {
      * and {@code embedded_visual}, BDS 1.26.36.1 to 1.26.70.24): a byte for the boolean form, 0 when it is not set; for the
      * list form the bones as strings in {@link Wire#byNameHash BDS's order}, an empty list without element type.
      */
+    /**
+     * The most {@code uv_lock} bones of a geometry: the BDS of Bedrock 26.60 rejects the whole block above it, counting
+     * duplicates. Only that build was tried, so the limit is a palette's, not the component's: a palette leaves a longer list
+     * out ({@code uv_lock} unset) with a report warning, instead of the block refusing to build.
+     */
+    static final int MAX_UV_LOCK_BONES = 64;
+
+    /** The {@code uv_lock} a palette sends: a bone list longer than {@link #MAX_UV_LOCK_BONES} is left out and reported. */
+    static @Nullable UvLock uvLock(@NonNull WireContext ctx, @NonNull String component, @Nullable UvLock uvLock) {
+        if (uvLock instanceof UvLock.Bones bones && bones.value().size() > MAX_UV_LOCK_BONES) {
+            ctx.drop(component, "uv_lock lists " + bones.value().size() + " bones, more than the " + MAX_UV_LOCK_BONES
+                + " BDS 26.60 allows (it rejects the block)");
+            return null;
+        }
+        return uvLock;
+    }
+
     static @NonNull Object uvLock(@Nullable UvLock uvLock) {
         return switch (uvLock) {
             case null -> Wire.bool(false);

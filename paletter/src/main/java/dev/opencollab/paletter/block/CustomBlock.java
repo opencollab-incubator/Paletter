@@ -9,12 +9,8 @@ import org.cloudburstmc.nbt.NbtMap;
 import org.cloudburstmc.nbt.NbtMapBuilder;
 import dev.opencollab.paletter.block.component.BlockComponent;
 import dev.opencollab.paletter.block.component.BlockTrait;
-import dev.opencollab.paletter.block.component.EmbeddedVisual;
-import dev.opencollab.paletter.block.component.Geometry;
-import dev.opencollab.paletter.block.component.ItemVisual;
 import dev.opencollab.paletter.block.component.BlockMenuCategory;
 import dev.opencollab.paletter.block.component.BlockTags;
-import dev.opencollab.paletter.block.component.UvLock;
 import dev.opencollab.paletter.creative.CreativeCategory;
 import dev.opencollab.paletter.creative.CreativePlacement;
 import dev.opencollab.paletter.item.CustomItem;
@@ -89,10 +85,6 @@ public final class CustomBlock {
         this.menuCategory = menuCategory;
         this.item = item instanceof BlockItem.Custom custom ? custom.resolve(identifier) : Objects.requireNonNull(item, "item");
         this.creative = creative;
-        checkUvLock(identifier, this.components);
-        for (Permutation permutation : this.permutations) {
-            checkUvLock(identifier, permutation.components());
-        }
         List<BlockProperty<?>> stateProperties = stateProperties(this.properties, this.traits);
         long combinations = 1;
         for (BlockProperty<?> property : stateProperties) {
@@ -236,11 +228,6 @@ public final class CustomBlock {
 
     /** The most state combinations a block may have, like vanilla blocks. */
     private static final int MAX_STATES = 1 << 24;
-    /**
-     * The most {@code uv_lock} bones of a geometry ({@code minecraft:geometry} and the geometry of {@code item_visual} and
-     * {@code embedded_visual}); the BDS of Bedrock 26.60 rejects the whole block above it, counting duplicates.
-     */
-    private static final int MAX_UV_LOCK_BONES = 64;
 
     private static List<BlockProperty<?>> stateProperties(List<BlockProperty<?>> properties, List<BlockTrait> traits) {
         if (traits.isEmpty()) {
@@ -262,21 +249,6 @@ public final class CustomBlock {
             }
         }
         return value;
-    }
-
-    private static void checkUvLock(String identifier, List<BlockComponent> components) {
-        for (BlockComponent component : components) {
-            UvLock uvLock = switch (component) {
-                case Geometry geometry -> geometry.uvLock();
-                case ItemVisual visual -> visual.geometry().uvLock();
-                case EmbeddedVisual visual -> visual.geometry().uvLock();
-                default -> null;
-            };
-            if (uvLock instanceof UvLock.Bones bones && bones.value().size() > MAX_UV_LOCK_BONES) {
-                throw new IllegalArgumentException(identifier + "'s " + component.name() + " lists " + bones.value().size()
-                    + " uv_lock bones, more than the " + MAX_UV_LOCK_BONES + " BDS allows");
-            }
-        }
     }
 
     private static void checkUnique(String identifier, List<BlockComponent> components) {
@@ -985,8 +957,8 @@ public final class CustomBlock {
          * Builds the block, creating its type and item type.
          *
          * @return the block
-         * @throws IllegalArgumentException if a {@code uv_lock} list has more than 64 bones, the block has more than
-         *         2^24 state combinations, or a default state names a missing property or value
+         * @throws IllegalArgumentException if the block has more than 2^24 state combinations, a default state names a
+         *         missing property or value, or a permutation reads a state the block does not have
          */
         public @NonNull CustomBlock build() {
             return new CustomBlock(identifier, properties, traits, components, permutations, menuCategory, item, creative, defaultStates);

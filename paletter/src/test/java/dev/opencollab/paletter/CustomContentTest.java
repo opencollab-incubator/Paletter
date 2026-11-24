@@ -228,23 +228,28 @@ class CustomContentTest {
     }
 
     @Test
-    void moreThan64UvLockBonesRejectTheBlock() {
-        // BDS 1.26.63.1 accepts 64 bones and rejects the block above, counting duplicates
+    void moreThan64UvLockBonesAreLeftOutByEachPalette() {
+        // BDS 1.26.63.1 accepts 64 bones and rejects the block above, counting duplicates: a palette's limit, not build()'s
         Geometry accepted = Geometry.builder().identifier("geometry.lamp").uvLock(UvLock.bones(Collections.nCopies(64, "lid"))).build();
-        CustomBlock.builder("example:lamp").component(accepted).build();
         Geometry rejected = Geometry.builder().identifier("geometry.lamp").uvLock(UvLock.bones(Collections.nCopies(65, "lid"))).build();
-        assertThrows(IllegalArgumentException.class, () -> CustomBlock.builder("example:lamp").component(rejected).build());
-        assertThrows(IllegalArgumentException.class, () -> CustomBlock.builder("example:lamp")
-            .property(BlockProperty.bool("example:lit")).permutation("q.block_state('example:lit')", rejected).build());
-        // and likewise in the geometry of item_visual and embedded_visual
         MaterialInstances materials = MaterialInstances.builder().build();
-        ItemVisual.VisualGeometry itemGeometry = ItemVisual.VisualGeometry.builder().identifier("geometry.lamp").uvLock(Collections.nCopies(64, "lid")).build();
-        CustomBlock.builder("example:lamp").component(ItemVisual.builder().geometry(itemGeometry).materialInstances(materials).build()).build();
-        assertThrows(IllegalArgumentException.class, () -> CustomBlock.builder("example:lamp").component(ItemVisual.builder()
-            .geometry(itemGeometry.toBuilder().uvLock(Collections.nCopies(65, "lid")).build()).materialInstances(materials).build()).build());
-        assertThrows(IllegalArgumentException.class, () -> CustomBlock.builder("example:lamp").component(EmbeddedVisual.builder()
+        ItemVisual.VisualGeometry itemGeometry = ItemVisual.VisualGeometry.builder().identifier("geometry.lamp").uvLock(Collections.nCopies(65, "lid")).build();
+        CustomBlock fine = CustomBlock.builder("example:fine").component(accepted).build();
+        CustomBlock lamp = CustomBlock.builder("example:lamp").component(rejected)
+            .property(BlockProperty.bool("example:lit")).permutation("q.block_state('example:lit')", rejected)
+            .component(ItemVisual.builder().geometry(itemGeometry).materialInstances(materials).build())
+            .build();
+        CustomBlock embedded = CustomBlock.builder("example:embedded").component(EmbeddedVisual.builder()
             .geometry(EmbeddedVisual.VisualGeometry.builder().identifier("geometry.lamp").uvLock(Collections.nCopies(65, "lid")).build())
-            .materialInstances(materials).build()).build());
+            .materialInstances(materials).build()).build();
+        Palette palette = Palettes.palette(PALETTER.latest().protocolVersion(),
+            PaletteLayer.builder("bones").block(fine).block(lamp).block(embedded).build());
+        List<String> warnings = palette.report().warnings().stream().map(e -> e.message()).filter(m -> m.contains("uv_lock")).toList();
+        assertEquals(4, warnings.size(), warnings.toString());
+        assertTrue(warnings.stream().noneMatch(m -> m.contains("example:fine")), warnings.toString());
+        NbtMap sent = palette.blocks().blockProperties().stream().filter(p -> p.getName().equals("example:lamp")).findFirst().orElseThrow()
+            .getProperties().getCompound("components").getCompound("minecraft:geometry");
+        assertEquals((byte) 0, sent.getByte("uv_lock"), "left out: sent as unset");
     }
 
     @Test
