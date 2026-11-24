@@ -18,7 +18,7 @@ final class RecaptureCommands {
     private RecaptureCommands() {
     }
 
-    @Command(name = "recapture", description = "A full recapture: `plan` lists the legs, each leg runs `update --capture-only`, `assemble` "
+    @Command(name = "recapture", mixinStandardHelpOptions = true, description ="A full recapture: `plan` lists the legs, each leg runs `update --capture-only`, `assemble` "
         + "stages their captures and runs the rest.", subcommands = {Recapture.Plan.class, Recapture.Assemble.class})
     static final class Recapture implements Runnable {
         @Override

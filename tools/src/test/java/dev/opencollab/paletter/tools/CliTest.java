@@ -98,6 +98,14 @@ class CliTest {
         cli.parseArgs("verify", "--source", "cb", "--data-version", "26.60", "--against", "out", "--report", "r.md");
     }
 
+    /** build.yml's launcher smoke test runs `recapture --help`. */
+    @Test
+    void theRecaptureCommandsPrintTheirHelp() {
+        CommandLine cli = Cli.commandLine();
+        cli.setOut(new PrintWriter(new StringWriter()));
+        assertEquals(0, cli.execute("recapture", "--help"));
+    }
+
     @Test
     void aWrongChannelIsRefused() {
         CommandLine cli = Cli.commandLine();
