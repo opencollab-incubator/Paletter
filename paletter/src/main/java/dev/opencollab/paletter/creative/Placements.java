@@ -25,8 +25,8 @@ final class Placements {
      * @param ordering the creative ordering of the palette
      * @return false if an anchor was set but matched nothing, so the default position was used
      */
-    public static boolean apply(@NonNull CreativePlacement placement, @NonNull CreativeEditor editor, @NonNull BedrockItemStack stack,
-                                @NonNull CreativeCategory category, @Nullable String group, @NonNull CreativeOrdering ordering) {
+    static boolean apply(@NonNull CreativePlacement placement, @NonNull CreativeEditor editor, @NonNull BedrockItemStack stack,
+                         @NonNull CreativeCategory category, @Nullable String group, @NonNull CreativeOrdering ordering) {
         CreativeEditor.Insertion insertion = editor.insert(stack);
         boolean anchored = placement instanceof CreativePlacement.After || placement instanceof CreativePlacement.Before;
         if (placement instanceof CreativePlacement.After after && insertion.after(after.anchor())) {

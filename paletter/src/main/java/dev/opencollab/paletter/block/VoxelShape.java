@@ -23,7 +23,11 @@ import java.util.List;
  * @since 1.0.0
  */
 public final class VoxelShape {
-    /** The shape without cells, {@code minecraft:empty}. */
+    /**
+     * The shape without cells, {@code minecraft:empty}.
+     *
+     * @since 1.0.0
+     */
     public static final VoxelShape EMPTY = new VoxelShape(VoxelGrid.EMPTY);
 
     private final VoxelGrid grid;
@@ -46,6 +50,7 @@ public final class VoxelShape {
      * @param boxes six floats per box: {@code minX, minY, minZ, maxX, maxY, maxZ}, in blocks (a pixel is {@code 1 / 16f})
      * @return the shape
      * @throws IllegalArgumentException if BDS would not load the shape
+     * @since 1.0.0
      */
     public static @NonNull VoxelShape ofBoxes(@NonNull String identifier, float @NonNull ... boxes) {
         VoxelShapeRules.check(identifier, boxes);
@@ -59,6 +64,7 @@ public final class VoxelShape {
      * @param boxes the boxes of the shape
      * @return the shape
      * @throws IllegalArgumentException if BDS would not load the shape
+     * @since 1.0.0
      */
     public static @NonNull VoxelShape ofBoxes(@NonNull String identifier, @NonNull BlockShape boxes) {
         return ofBoxes(identifier, boxes.coordinates());
@@ -68,6 +74,7 @@ public final class VoxelShape {
      * The x plane coordinates.
      *
      * @return the coordinates of the planes across the x axis, ascending, in blocks
+     * @since 1.0.0
      */
     public float @NonNull [] xCoordinates() {
         return grid.coordinates(0).clone();
@@ -77,6 +84,7 @@ public final class VoxelShape {
      * The y plane coordinates.
      *
      * @return the coordinates of the planes across the y axis, ascending, in blocks
+     * @since 1.0.0
      */
     public float @NonNull [] yCoordinates() {
         return grid.coordinates(1).clone();
@@ -86,6 +94,7 @@ public final class VoxelShape {
      * The z plane coordinates.
      *
      * @return the coordinates of the planes across the z axis, ascending, in blocks
+     * @since 1.0.0
      */
     public float @NonNull [] zCoordinates() {
         return grid.coordinates(2).clone();
@@ -95,6 +104,7 @@ public final class VoxelShape {
      * The number of cells along x.
      *
      * @return the number of cells along x ({@code xCoordinates().length - 1}, none for the empty shape)
+     * @since 1.0.0
      */
     public int xSize() {
         return grid.coordinates(0).length - 1;
@@ -104,6 +114,7 @@ public final class VoxelShape {
      * The number of cells along y.
      *
      * @return the number of cells along y
+     * @since 1.0.0
      */
     public int ySize() {
         return grid.coordinates(1).length - 1;
@@ -113,6 +124,7 @@ public final class VoxelShape {
      * The number of cells along z.
      *
      * @return the number of cells along z
+     * @since 1.0.0
      */
     public int zSize() {
         return grid.coordinates(2).length - 1;
@@ -126,6 +138,7 @@ public final class VoxelShape {
      * @param z the cell index along z
      * @return whether the cell between the planes {@code x} and {@code x + 1} (and likewise for y and z) is filled
      * @throws IndexOutOfBoundsException if the cell is not in the grid
+     * @since 1.0.0
      */
     public boolean cell(int x, int y, int z) {
         if (x < 0 || x >= xSize() || y < 0 || y >= ySize() || z < 0 || z >= zSize()) {
@@ -139,6 +152,7 @@ public final class VoxelShape {
      * Whether the shape is empty.
      *
      * @return whether the shape has no cells
+     * @since 1.0.0
      */
     public boolean isEmpty() {
         return grid.isEmpty();
@@ -148,6 +162,7 @@ public final class VoxelShape {
      * The filled cells as boxes.
      *
      * @return the filled cells as boxes in blocks, one per cell, in cell order. Not the boxes the shape was made of
+     * @since 1.0.0
      */
     public @NonNull List<BlockShape.Box> boxes() {
         return grid.toShape().boxes();

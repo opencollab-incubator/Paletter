@@ -128,6 +128,7 @@ public final class BedrockItemType implements ItemKey {
      * The vanilla item types.
      *
      * @return every vanilla item type of the newest bundled data, in runtime id order. Loads the data
+     * @since 1.0.0
      */
     public static @NonNull List<BedrockItemType> vanillaTypes() {
         return VanillaIndex.get().itemTypes;
@@ -217,6 +218,7 @@ public final class BedrockItemType implements ItemKey {
      * The item identifier.
      *
      * @return the item identifier, e.g. {@code minecraft:apple}
+     * @since 1.0.0
      */
     public @NonNull String identifier() {
         return identifier;
@@ -238,6 +240,7 @@ public final class BedrockItemType implements ItemKey {
      *
      * @return true for the type of a {@link CustomItem} or of a custom block's item, and for a type made for an
      *         identifier the bundled data does not know
+     * @since 1.0.0
      */
     public boolean isCustom() {
         return custom;
@@ -261,6 +264,7 @@ public final class BedrockItemType implements ItemKey {
      *
      * @return false for a vanilla constant the newest bundled release does not have: palettes without the item resolve
      *         it through their {@link dev.opencollab.paletter.Fallbacks}
+     * @since 1.0.0
      */
     public boolean isAvailable() {
         return linked().available;
@@ -271,6 +275,7 @@ public final class BedrockItemType implements ItemKey {
      * their {@link dev.opencollab.paletter.Fallbacks}, not through this.
      *
      * @return this type, or for a type that is not {@link #isAvailable() available} its fallback type
+     * @since 1.0.0
      */
     public @NonNull BedrockItemType resolved() {
         return linked().owner;
@@ -303,6 +308,7 @@ public final class BedrockItemType implements ItemKey {
      *
      * @param aux the aux value
      * @return the variant of this type with this aux value
+     * @since 1.0.0
      */
     public @NonNull BedrockItemVariant variant(int aux) {
         if (aux == 0) {
@@ -347,6 +353,7 @@ public final class BedrockItemType implements ItemKey {
      * The variants of the type that have a canonical id.
      *
      * @return the variants with a canonical id: the base variant first, then the creative inventory's other variants
+     * @since 1.0.0
      */
     public @NonNull List<BedrockItemVariant> variants() {
         return linked().variants;

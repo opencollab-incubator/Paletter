@@ -48,6 +48,7 @@ public final class RegisteredBlockState implements BlockDefinition {
      * The state as sent to the client.
      *
      * @return the state as {@code {name, states}}
+     * @since 1.0.0
      */
     public @NonNull NbtMap getState() {
         return state;
@@ -57,6 +58,7 @@ public final class RegisteredBlockState implements BlockDefinition {
      * The block identifier of this state.
      *
      * @return the {@code name} of the state, e.g. {@code minecraft:stone}
+     * @since 1.0.0
      */
     public @NonNull String identifier() {
         return state.getString("name");
@@ -66,6 +68,7 @@ public final class RegisteredBlockState implements BlockDefinition {
      * The state values of this state.
      *
      * @return the {@code states} compound of the state
+     * @since 1.0.0
      */
     public @NonNull NbtMap states() {
         return state.getCompound("states");
@@ -75,6 +78,7 @@ public final class RegisteredBlockState implements BlockDefinition {
      * Whether this is a custom state.
      *
      * @return true if this state belongs to a custom block added by a layer
+     * @since 1.0.0
      */
     public boolean isCustom() {
         return custom;

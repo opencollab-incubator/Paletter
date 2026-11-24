@@ -74,6 +74,7 @@ public final class BlockFallback {
      * The replacement block type.
      *
      * @return the replacement block type
+     * @since 1.0.0
      */
     public @NonNull BedrockBlockType target() {
         return target;
@@ -84,6 +85,7 @@ public final class BlockFallback {
      *
      * @return the exact replacement state, or null to carry over the state values the replaced block and the
      *         replacement have in common (the others use the replacement's defaults)
+     * @since 1.0.0
      */
     public @Nullable BedrockBlockState state() {
         return state;
@@ -93,6 +95,7 @@ public final class BlockFallback {
      * Whether the fallback is forced.
      *
      * @return true to replace the block even though it exists in this version
+     * @since 1.0.0
      */
     public boolean force() {
         return force;

@@ -23,6 +23,7 @@ public record CreativeGroup(@NonNull String name, @Nullable BedrockItemStack ico
      *
      * @throws IllegalArgumentException if the name is empty
      * @throws NullPointerException if the stacks, or one of them, are null
+     * @since 1.0.0
      */
     public CreativeGroup {
         if (name.isEmpty()) {

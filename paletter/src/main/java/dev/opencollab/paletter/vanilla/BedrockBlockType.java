@@ -234,6 +234,7 @@ public final class BedrockBlockType {
      * Lists the vanilla block types of the newest bundled data. Loads the data.
      *
      * @return every vanilla block type, in palette order
+     * @since 1.0.0
      */
     public static @NonNull List<BedrockBlockType> vanillaTypes() {
         return VanillaIndex.get().blockTypes;
@@ -308,6 +309,7 @@ public final class BedrockBlockType {
      * The block identifier.
      *
      * @return the block identifier, e.g. {@code minecraft:wooden_door}
+     * @since 1.0.0
      */
     public @NonNull String identifier() {
         return identifier;
@@ -329,6 +331,7 @@ public final class BedrockBlockType {
      *
      * @return true for the type of a {@link CustomBlock}, and for a type made for an identifier the bundled data does
      *         not know
+     * @since 1.0.0
      */
     public boolean isCustom() {
         return custom;
@@ -352,6 +355,7 @@ public final class BedrockBlockType {
      *
      * @return false for a vanilla constant the newest bundled release does not have: palettes without the block resolve
      *         its states through their {@link dev.opencollab.paletter.Fallbacks}
+     * @since 1.0.0
      */
     public boolean isAvailable() {
         if (!custom) {
@@ -365,6 +369,7 @@ public final class BedrockBlockType {
      * their {@link dev.opencollab.paletter.Fallbacks}, not through this.
      *
      * @return this type, or for a type that is not {@link #isAvailable() available} its fallback type
+     * @since 1.0.0
      */
     public @NonNull BedrockBlockType resolved() {
         if (isAvailable() || custom) {
@@ -378,6 +383,7 @@ public final class BedrockBlockType {
      * The state properties of the type.
      *
      * @return the state properties, sorted by name for vanilla blocks and in declaration order for custom blocks
+     * @since 1.0.0
      */
     public @NonNull List<BedrockState<?>> properties() {
         return Collections.unmodifiableList(Arrays.asList(layout().properties));
@@ -388,6 +394,7 @@ public final class BedrockBlockType {
      *
      * @param state a state property; matched by name
      * @return true if the type has a property with the state's name
+     * @since 1.0.0
      */
     public boolean hasProperty(@NonNull BedrockState<?> state) {
         return layout().property(state) != -1;
@@ -400,6 +407,7 @@ public final class BedrockBlockType {
      * @param state a state property of this block
      * @return the values of a state this block accepts, in its state order
      * @throws IllegalArgumentException if the block does not have the state
+     * @since 1.0.0
      */
     public <T> @NonNull List<T> values(@NonNull BedrockState<T> state) {
         BlockTypeLayout layout = layout();
@@ -426,6 +434,7 @@ public final class BedrockBlockType {
      * The default state of the type.
      *
      * @return the default state: what the block is placed as without further information
+     * @since 1.0.0
      */
     public @NonNull BedrockBlockState defaultState() {
         return layout().defaultState();
@@ -435,6 +444,7 @@ public final class BedrockBlockType {
      * Starts building a state.
      *
      * @return a builder starting from the default state
+     * @since 1.0.0
      */
     public @NonNull StateBuilder state() {
         return new StateBuilder(defaultState());
@@ -444,6 +454,7 @@ public final class BedrockBlockType {
      * Every state of the type.
      *
      * @return every state, in palette (canonical id) order
+     * @since 1.0.0
      */
     public @NonNull List<BedrockBlockState> states() {
         BlockTypeLayout layout = layout();
@@ -458,6 +469,7 @@ public final class BedrockBlockType {
      * The number of states of the type.
      *
      * @return the number of states
+     * @since 1.0.0
      */
     public int stateCount() {
         return layout().count;
@@ -508,6 +520,7 @@ public final class BedrockBlockType {
          * @param value the new value
          * @return this builder
          * @throws IllegalArgumentException if the block does not have the property or the value
+         * @since 1.0.0
          */
         public <T> @NonNull StateBuilder with(@NonNull BedrockState<T> property, @NonNull T value) {
             state = state.with(property, value);
@@ -521,6 +534,7 @@ public final class BedrockBlockType {
          * @param value the new value
          * @return this builder
          * @throws IllegalArgumentException if the block does not have the property
+         * @since 1.0.0
          */
         public @NonNull StateBuilder with(@NonNull BoolState property, boolean value) {
             state = state.with(property, value);
@@ -534,6 +548,7 @@ public final class BedrockBlockType {
          * @param value the new value
          * @return this builder
          * @throws IllegalArgumentException if the block does not have the property or the value
+         * @since 1.0.0
          */
         public @NonNull StateBuilder with(@NonNull IntState property, int value) {
             state = state.with(property, value);
@@ -544,6 +559,7 @@ public final class BedrockBlockType {
          * Builds the state.
          *
          * @return the state with the values set so far
+         * @since 1.0.0
          */
         public @NonNull BedrockBlockState build() {
             return state;

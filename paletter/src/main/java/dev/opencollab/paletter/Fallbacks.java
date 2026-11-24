@@ -34,11 +34,15 @@ import java.util.Objects;
 public final class Fallbacks {
     /**
      * Unknown for everything: {@link BlockFallback#UNKNOWN} and {@link ItemFallback#UNKNOWN}.
+     *
+     * @since 1.0.0
      */
     public static final Fallbacks UNKNOWN = new Builder().build();
 
     /**
      * No fallbacks at all: missing blocks are sent as air, missing items have no definition.
+     *
+     * @since 1.0.0
      */
     public static final Fallbacks NONE = new Builder().defaultItem(null).defaultBlock(null).build();
 

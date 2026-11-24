@@ -55,6 +55,7 @@ public final class VoxelShapes {
      *
      * @return the names of the shapes that have one ({@code minecraft:unit_cube}, {@code minecraft:anvil}, the custom
      * identifiers), in the order Bedrock sends them
+     * @since 1.0.0
      */
     public @NonNull Set<String> names() {
         return names.keySet();
@@ -65,6 +66,7 @@ public final class VoxelShapes {
      *
      * @param name the shape name, e.g. {@code minecraft:unit_cube}
      * @return the shape with this name, or null if there is none
+     * @since 1.0.0
      */
     public @Nullable VoxelShape get(@NonNull String name) {
         Integer id = names.get(name);
@@ -75,6 +77,7 @@ public final class VoxelShapes {
      * The number of shapes.
      *
      * @return the number of shapes, named or not
+     * @since 1.0.0
      */
     public int size() {
         return shapes.size();

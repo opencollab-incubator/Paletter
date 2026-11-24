@@ -20,6 +20,8 @@ import java.util.Objects;
 public final class OnPlayerPlacing implements WireOnlyBlockComponent {
     /**
      * The component name.
+     *
+     * @since 1.0.0
      */
     public static final String NAME = "minecraft:on_player_placing";
 
@@ -33,6 +35,7 @@ public final class OnPlayerPlacing implements WireOnlyBlockComponent {
      * Returns the event the client triggers.
      *
      * @return the event name, e.g. {@code geyser:place_event}
+     * @since 1.0.0
      */
     public @NonNull String triggerType() {
         return triggerType;
@@ -44,6 +47,7 @@ public final class OnPlayerPlacing implements WireOnlyBlockComponent {
      * @param triggerType the event name, e.g. {@code geyser:place_event}
      * @return the component
      * @throws NullPointerException if {@code triggerType} is null
+     * @since 1.0.0
      */
     public static @NonNull OnPlayerPlacing of(@NonNull String triggerType) {
         return new OnPlayerPlacing(triggerType);

@@ -101,6 +101,7 @@ public final class BedrockItemVariant implements ItemKey {
      * The type of the variant.
      *
      * @return the type this is a variant of
+     * @since 1.0.0
      */
     public @NonNull BedrockItemType type() {
         return type;
@@ -110,6 +111,7 @@ public final class BedrockItemVariant implements ItemKey {
      * The aux value of the variant.
      *
      * @return the aux value
+     * @since 1.0.0
      */
     public int aux() {
         return aux;

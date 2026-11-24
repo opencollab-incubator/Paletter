@@ -104,6 +104,7 @@ public final class CreativeContent {
      * Returns the groups of the packet.
      *
      * @return the groups, in packet order; unmodifiable
+     * @since 1.0.0
      */
     public @NonNull List<CreativeItemGroup> groups() {
         return groups;
@@ -113,6 +114,7 @@ public final class CreativeContent {
      * Returns the items of the packet.
      *
      * @return the items, in network id order; unmodifiable
+     * @since 1.0.0
      */
     public @NonNull List<CreativeItemData> items() {
         return items;
@@ -123,6 +125,7 @@ public final class CreativeContent {
      *
      * @param netId the creative item network id from the request
      * @return the entry, or null if the id is out of range
+     * @since 1.0.0
      */
     public @Nullable CreativeEntry entry(int netId) {
         int index = netId - 1;
@@ -133,6 +136,7 @@ public final class CreativeContent {
      * Returns the number of items.
      *
      * @return the number of items, which is the highest network id
+     * @since 1.0.0
      */
     public int size() {
         return entries.length;

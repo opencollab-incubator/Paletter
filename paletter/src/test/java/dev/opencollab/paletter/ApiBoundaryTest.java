@@ -198,21 +198,6 @@ class ApiBoundaryTest {
         assertTrue(missing.isEmpty(), "Exported types without @since in their javadoc:\n  " + String.join("\n  ", missing));
     }
 
-    /**
-     * Hand-written files whose members do not document {@code @since} yet: they are being reworked elsewhere and get it
-     * there. Remove a file once it is done; do not add one.
-     */
-    private static final Set<String> MEMBERS_WITHOUT_SINCE = Set.of(
-        "Fallbacks", "block/BlockFallback", "block/BlockHashes", "block/BlockProperty",
-        "block/CustomBlock", "block/RegisteredBlockState", "block/VoxelShape", "block/VoxelShapes",
-        "block/component/OnPlayerPlacing", "block/component/ScriptHooks", "creative/CreativeCategory",
-        "creative/CreativeContent", "creative/CreativeEditor", "creative/CreativeGroup", "creative/CreativeLayout",
-        "creative/Placements", "item/BedrockItemStack", "item/CustomItem", "item/ItemFallback", "item/ItemOverride",
-        "item/RegisteredItem", "item/component/FrameCount", "item/component/MiningSpeed",
-        "item/component/RenderOffsets", "item/component/UseOnHook", "vanilla/BedrockBlockState", "vanilla/BedrockBlockType",
-        "vanilla/BedrockItemType", "vanilla/BedrockItemVariant", "vanilla/BedrockState", "vanilla/BoolState",
-        "vanilla/EnumState", "vanilla/IntState", "vanilla/StringState");
-
     /** A Javadoc comment, the annotations after it, and the public or protected declaration it documents. */
     private static final Pattern MEMBER = Pattern.compile(
         "/\\*\\*(.*?)\\*/\\s*((?:@[\\w.]+(?:\\([^)]*\\))?\\s*)*)(?:public|protected)\\s+([^;{=]*)", Pattern.DOTALL);
@@ -228,7 +213,7 @@ class ApiBoundaryTest {
         try (Stream<Path> files = Files.walk(root)) {
             for (Path file : files.filter(f -> f.toString().endsWith(".java")).toList()) {
                 String relative = root.relativize(file).toString().replace('\\', '/').replaceAll("\\.java$", "");
-                if (relative.startsWith("internal/") || relative.endsWith("package-info") || MEMBERS_WITHOUT_SINCE.contains(relative)) {
+                if (relative.startsWith("internal/") || relative.endsWith("package-info")) {
                     continue;
                 }
                 Matcher matcher = MEMBER.matcher(Files.readString(file, StandardCharsets.UTF_8));

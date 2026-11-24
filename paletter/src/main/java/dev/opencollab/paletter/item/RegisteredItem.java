@@ -138,6 +138,7 @@ public final class RegisteredItem implements ItemDefinition {
      *
      * @return where this item comes from: vanilla, or the id of the layer that added it (an override keeps the origin
      * of the item it changes)
+     * @since 1.0.0
      */
     public @NonNull Origin origin() {
         return origin;
@@ -150,6 +151,7 @@ public final class RegisteredItem implements ItemDefinition {
      * @return the type of this item: the vanilla constant, or for a custom item or block item the type the
      *         {@link CustomItem} or {@link dev.opencollab.paletter.block.CustomBlock} owns ({@link CustomItem#type()},
      *         {@link dev.opencollab.paletter.block.CustomBlock#itemType()})
+     * @since 1.0.0
      */
     public @NonNull BedrockItemType type() {
         BedrockItemType result = key;
@@ -165,6 +167,7 @@ public final class RegisteredItem implements ItemDefinition {
      *
      * @return the components this item was given by a layer: those of a custom item, or the ones overrides set on top.
      * Empty for vanilla items that nothing overrides
+     * @since 1.0.0
      */
     public @NonNull List<ItemComponent> components() {
         return components;
@@ -176,6 +179,7 @@ public final class RegisteredItem implements ItemDefinition {
      * @return the properties of this item: its component data split the way the bundled property store names them
      * ({@code component:}, {@code wire:}). For a vanilla item that is what the store holds for the palette's version;
      * for a custom item or an overridden one it reflects the components the layers set
+     * @since 1.0.0
      */
     public @NonNull Properties properties() {
         Properties result = properties;
@@ -189,6 +193,7 @@ public final class RegisteredItem implements ItemDefinition {
      * Returns the custom item the definition was registered from.
      *
      * @return the custom item this was registered from, or null for vanilla items and items of custom blocks
+     * @since 1.0.0
      */
     public @Nullable CustomItem customItem() {
         return customItem;
@@ -198,6 +203,7 @@ public final class RegisteredItem implements ItemDefinition {
      * Tells whether a layer added the item.
      *
      * @return true if this item was added by a layer rather than being vanilla
+     * @since 1.0.0
      */
     public boolean isCustom() {
         return origin.isCustom();

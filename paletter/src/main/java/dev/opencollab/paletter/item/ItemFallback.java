@@ -58,6 +58,7 @@ public final class ItemFallback {
      * The replacement item type.
      *
      * @return the type of {@link #variant()}
+     * @since 1.0.0
      */
     public @NonNull BedrockItemType target() {
         return variant.type();
@@ -67,6 +68,7 @@ public final class ItemFallback {
      * The replacement variant.
      *
      * @return the exact replacement variant
+     * @since 1.0.0
      */
     public @NonNull BedrockItemVariant variant() {
         return variant;
@@ -76,6 +78,7 @@ public final class ItemFallback {
      * Whether the fallback is forced.
      *
      * @return true to replace the item even though it exists in this version
+     * @since 1.0.0
      */
     public boolean force() {
         return force;

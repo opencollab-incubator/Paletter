@@ -25,6 +25,8 @@ import java.util.Objects;
 public final class RenderOffsets implements WireOnlyItemComponent {
     /**
      * The component name.
+     *
+     * @since 1.0.0
      */
     public static final String NAME = "minecraft:render_offsets";
 
@@ -42,6 +44,7 @@ public final class RenderOffsets implements WireOnlyItemComponent {
      * Creates a builder with nothing set.
      *
      * @return a builder of render offsets
+     * @since 1.0.0
      */
     public static @NonNull Builder builder() {
         return new Builder();
@@ -52,6 +55,7 @@ public final class RenderOffsets implements WireOnlyItemComponent {
      *
      * @param preset the built-in offsets of an armor piece
      * @return render offsets that only name a preset
+     * @since 1.0.0
      */
     public static @NonNull RenderOffsets preset(@NonNull Preset preset) {
         return builder().preset(Objects.requireNonNull(preset, "RenderOffsets.preset")).build();
@@ -61,6 +65,7 @@ public final class RenderOffsets implements WireOnlyItemComponent {
      * Returns the offsets of the main hand.
      *
      * @return the main hand, or null to leave it out
+     * @since 1.0.0
      */
     public @Nullable Hand mainHand() {
         return mainHand;
@@ -70,6 +75,7 @@ public final class RenderOffsets implements WireOnlyItemComponent {
      * Returns the offsets of the off hand.
      *
      * @return the off hand, or null to leave it out
+     * @since 1.0.0
      */
     public @Nullable Hand offHand() {
         return offHand;
@@ -79,6 +85,7 @@ public final class RenderOffsets implements WireOnlyItemComponent {
      * Returns the preset.
      *
      * @return the built-in offsets of an armor piece, or null
+     * @since 1.0.0
      */
     public @Nullable Preset preset() {
         return preset;
@@ -88,6 +95,7 @@ public final class RenderOffsets implements WireOnlyItemComponent {
      * Creates a builder holding this value's fields, to change some of them.
      *
      * @return a builder with this value's fields
+     * @since 1.0.0
      */
     public @NonNull Builder toBuilder() {
         return builder().mainHand(mainHand).offHand(offHand).preset(preset);
@@ -127,6 +135,7 @@ public final class RenderOffsets implements WireOnlyItemComponent {
          *
          * @param mainHand the main hand, or null to leave it out
          * @return this builder
+         * @since 1.0.0
          */
         public @NonNull Builder mainHand(@Nullable Hand mainHand) {
             this.mainHand = mainHand;
@@ -138,6 +147,7 @@ public final class RenderOffsets implements WireOnlyItemComponent {
          *
          * @param offHand the off hand, or null to leave it out
          * @return this builder
+         * @since 1.0.0
          */
         public @NonNull Builder offHand(@Nullable Hand offHand) {
             this.offHand = offHand;
@@ -149,6 +159,7 @@ public final class RenderOffsets implements WireOnlyItemComponent {
          *
          * @param preset the built-in offsets of an armor piece, or null
          * @return this builder
+         * @since 1.0.0
          */
         public @NonNull Builder preset(@Nullable Preset preset) {
             this.preset = preset;
@@ -159,6 +170,7 @@ public final class RenderOffsets implements WireOnlyItemComponent {
          * Builds the render offsets.
          *
          * @return the render offsets
+         * @since 1.0.0
          */
         public @NonNull RenderOffsets build() {
             return new RenderOffsets(this);
@@ -190,6 +202,7 @@ public final class RenderOffsets implements WireOnlyItemComponent {
          * Returns the wire value of the preset.
          *
          * @return the string that is sent
+         * @since 1.0.0
          */
         public @NonNull String value() {
             return value;
@@ -219,6 +232,7 @@ public final class RenderOffsets implements WireOnlyItemComponent {
          * Creates a builder with nothing set.
          *
          * @return a builder of the offsets of a hand
+         * @since 1.0.0
          */
         public static @NonNull Builder builder() {
             return new Builder();
@@ -228,6 +242,7 @@ public final class RenderOffsets implements WireOnlyItemComponent {
          * Returns the first person view.
          *
          * @return the first person view, or null to leave it out
+         * @since 1.0.0
          */
         public @Nullable Offset firstPerson() {
             return firstPerson;
@@ -237,6 +252,7 @@ public final class RenderOffsets implements WireOnlyItemComponent {
          * Returns the third person view.
          *
          * @return the third person view, or null to leave it out
+         * @since 1.0.0
          */
         public @Nullable Offset thirdPerson() {
             return thirdPerson;
@@ -246,6 +262,7 @@ public final class RenderOffsets implements WireOnlyItemComponent {
          * Creates a builder holding this value's fields, to change some of them.
          *
          * @return a builder with this value's fields
+         * @since 1.0.0
          */
         public @NonNull Builder toBuilder() {
             return builder().firstPerson(firstPerson).thirdPerson(thirdPerson);
@@ -284,6 +301,7 @@ public final class RenderOffsets implements WireOnlyItemComponent {
              *
              * @param firstPerson the first person view, or null to leave it out
              * @return this builder
+             * @since 1.0.0
              */
             public @NonNull Builder firstPerson(@Nullable Offset firstPerson) {
                 this.firstPerson = firstPerson;
@@ -295,6 +313,7 @@ public final class RenderOffsets implements WireOnlyItemComponent {
              *
              * @param thirdPerson the third person view, or null to leave it out
              * @return this builder
+             * @since 1.0.0
              */
             public @NonNull Builder thirdPerson(@Nullable Offset thirdPerson) {
                 this.thirdPerson = thirdPerson;
@@ -305,6 +324,7 @@ public final class RenderOffsets implements WireOnlyItemComponent {
              * Builds the offsets of the hand.
              *
              * @return the offsets of the hand
+             * @since 1.0.0
              */
             public @NonNull Hand build() {
                 return new Hand(this);
@@ -332,6 +352,7 @@ public final class RenderOffsets implements WireOnlyItemComponent {
          * Creates a builder with nothing set.
          *
          * @return a builder of a transform
+         * @since 1.0.0
          */
         public static @NonNull Builder builder() {
             return new Builder();
@@ -344,6 +365,7 @@ public final class RenderOffsets implements WireOnlyItemComponent {
          * @param y the scale on the y axis
          * @param z the scale on the z axis
          * @return an offset that only scales
+         * @since 1.0.0
          */
         public static @NonNull Offset scale(float x, float y, float z) {
             return builder().scale(Vec3.of(x, y, z)).build();
@@ -353,6 +375,7 @@ public final class RenderOffsets implements WireOnlyItemComponent {
          * Returns the position offset.
          *
          * @return the position offset, or null
+         * @since 1.0.0
          */
         public @Nullable Vec3 position() {
             return position;
@@ -362,6 +385,7 @@ public final class RenderOffsets implements WireOnlyItemComponent {
          * Returns the rotation.
          *
          * @return the rotation, or null
+         * @since 1.0.0
          */
         public @Nullable Vec3 rotation() {
             return rotation;
@@ -371,6 +395,7 @@ public final class RenderOffsets implements WireOnlyItemComponent {
          * Returns the scale.
          *
          * @return the scale, or null
+         * @since 1.0.0
          */
         public @Nullable Vec3 scale() {
             return scale;
@@ -380,6 +405,7 @@ public final class RenderOffsets implements WireOnlyItemComponent {
          * Creates a builder holding this value's fields, to change some of them.
          *
          * @return a builder with this value's fields
+         * @since 1.0.0
          */
         public @NonNull Builder toBuilder() {
             return builder().position(position).rotation(rotation).scale(scale);
@@ -419,6 +445,7 @@ public final class RenderOffsets implements WireOnlyItemComponent {
              *
              * @param position the position offset, or null
              * @return this builder
+             * @since 1.0.0
              */
             public @NonNull Builder position(@Nullable Vec3 position) {
                 this.position = position;
@@ -430,6 +457,7 @@ public final class RenderOffsets implements WireOnlyItemComponent {
              *
              * @param rotation the rotation, or null
              * @return this builder
+             * @since 1.0.0
              */
             public @NonNull Builder rotation(@Nullable Vec3 rotation) {
                 this.rotation = rotation;
@@ -441,6 +469,7 @@ public final class RenderOffsets implements WireOnlyItemComponent {
              *
              * @param scale the scale, or null
              * @return this builder
+             * @since 1.0.0
              */
             public @NonNull Builder scale(@Nullable Vec3 scale) {
                 this.scale = scale;
@@ -451,6 +480,7 @@ public final class RenderOffsets implements WireOnlyItemComponent {
              * Builds the transform.
              *
              * @return the transform
+             * @since 1.0.0
              */
             public @NonNull Offset build() {
                 return new Offset(this);

@@ -29,6 +29,7 @@ public final class StringState extends BedrockState<String> {
      * @param values the values the state can have; at least one
      * @return a new state
      * @throws IllegalArgumentException if there are no values
+     * @since 1.0.0
      */
     public static @NonNull StringState of(@NonNull String name, @NonNull String @NonNull ... values) {
         return new StringState(name, List.of(values));
@@ -41,6 +42,7 @@ public final class StringState extends BedrockState<String> {
      * @param values the values the state can have; at least one
      * @return a new state
      * @throws IllegalArgumentException if there are no values
+     * @since 1.0.0
      */
     public static @NonNull StringState of(@NonNull String name, @NonNull List<String> values) {
         return new StringState(name, values);

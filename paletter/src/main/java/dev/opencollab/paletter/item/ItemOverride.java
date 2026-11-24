@@ -56,6 +56,7 @@ public final class ItemOverride {
      * Returns the item as it was before this override.
      *
      * @return the definition before this override
+     * @since 1.0.0
      */
     public @NonNull RegisteredItem original() {
         return original;
@@ -65,6 +66,7 @@ public final class ItemOverride {
      * Sends the item as a data driven item (item version {@code DATA_DRIVEN}), as BDS registers an add-on item.
      *
      * @return this override
+     * @since 1.0.0
      */
     public @NonNull ItemOverride dataDriven() {
         this.version = ItemVersion.DATA_DRIVEN;
@@ -75,6 +77,7 @@ public final class ItemOverride {
      * Sends the item as a legacy item (item version {@code LEGACY}), as BDS made the feather overridden at format 1.10.
      *
      * @return this override
+     * @since 1.0.0
      */
     public @NonNull ItemOverride legacy() {
         this.version = ItemVersion.LEGACY;
@@ -87,6 +90,7 @@ public final class ItemOverride {
      *
      * @param componentBased true to send the item as component based
      * @return this override
+     * @since 1.0.0
      */
     public @NonNull ItemOverride componentBased(boolean componentBased) {
         this.componentBased = componentBased;
@@ -102,6 +106,7 @@ public final class ItemOverride {
      *
      * @param components the components to merge; a later component replaces an earlier one of the same name
      * @return this override
+     * @since 1.0.0
      */
     public @NonNull ItemOverride modifyComponents(@NonNull ItemComponent... components) {
         for (ItemComponent component : components) {
@@ -125,6 +130,7 @@ public final class ItemOverride {
      *
      * @param components the only components the item has, apart from the custom item defaults
      * @return this override
+     * @since 1.0.0
      */
     public @NonNull ItemOverride replaceComponents(@NonNull ItemComponent... components) {
         dataDriven();
@@ -140,6 +146,7 @@ public final class ItemOverride {
      * @param state the block state
      * @return this override
      * @throws NullPointerException if the state is null; {@link #noBlock()} sends the item without a block
+     * @since 1.0.0
      */
     public @NonNull ItemOverride block(@NonNull BedrockBlockState state) {
         this.blockSet = true;
@@ -151,6 +158,7 @@ public final class ItemOverride {
      * Sends the item without a block, e.g. structure blocks, which otherwise break recipes.
      *
      * @return this override
+     * @since 1.0.0
      */
     public @NonNull ItemOverride noBlock() {
         this.blockSet = true;

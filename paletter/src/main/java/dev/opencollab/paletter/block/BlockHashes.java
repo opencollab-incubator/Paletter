@@ -32,6 +32,8 @@ public final class BlockHashes {
 
     /**
      * The id {@code minecraft:unknown} has in hashed palettes; the game special cases it.
+     *
+     * @since 1.0.0
      */
     public static final int UNKNOWN_HASH = -2;
 
@@ -49,6 +51,7 @@ public final class BlockHashes {
      *
      * @param state a block state as {@code {name, states}}; other keys are ignored
      * @return the hash, which is the runtime id of the state
+     * @since 1.0.0
      */
     public static int hash(@NonNull NbtMap state) {
         String name = BlockStates.name(state);

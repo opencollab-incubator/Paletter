@@ -13,6 +13,8 @@ import dev.opencollab.paletter.annotation.Experimental;
 public final class MiningSpeed implements WireOnlyItemComponent {
     /**
      * The wire path (there is no add-on JSON name).
+     *
+     * @since 1.0.0
      */
     public static final String NAME = "item_properties.mining_speed";
 
@@ -29,6 +31,7 @@ public final class MiningSpeed implements WireOnlyItemComponent {
      * Returns the mining speed.
      *
      * @return the mining speed sent to the client
+     * @since 1.0.0
      */
     public float value() {
         return value;
@@ -40,6 +43,7 @@ public final class MiningSpeed implements WireOnlyItemComponent {
      * @param value the mining speed sent to the client, finite
      * @return the component
      * @throws IllegalArgumentException if the value is not finite
+     * @since 1.0.0
      */
     public static @NonNull MiningSpeed of(float value) {
         return new MiningSpeed(value);

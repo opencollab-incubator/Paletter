@@ -29,6 +29,7 @@ public abstract sealed class BedrockState<T> permits BoolState, IntState, EnumSt
      * The name of the state.
      *
      * @return the state name as in the block state NBT, e.g. {@code minecraft:cardinal_direction} or {@code age}
+     * @since 1.0.0
      */
     public final @NonNull String name() {
         return name;
@@ -38,6 +39,7 @@ public abstract sealed class BedrockState<T> permits BoolState, IntState, EnumSt
      * The values of the state.
      *
      * @return every value of this state. For vanilla states: the values of every block with the state together
+     * @since 1.0.0
      */
     public abstract @NonNull List<T> values();
 

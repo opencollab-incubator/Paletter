@@ -12,6 +12,8 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 public final class ScriptHooks implements WireOnlyBlockComponent {
     /**
      * The component name.
+     *
+     * @since 1.0.0
      */
     public static final String NAME = "minecraft:custom_components";
 
@@ -27,6 +29,7 @@ public final class ScriptHooks implements WireOnlyBlockComponent {
      * Returns whether a custom component handles the interaction.
      *
      * @return whether any component registers {@code onPlayerInteract}
+     * @since 1.0.0
      */
     public boolean playerInteract() {
         return playerInteract;
@@ -36,6 +39,7 @@ public final class ScriptHooks implements WireOnlyBlockComponent {
      * Returns whether a custom component handles the placement.
      *
      * @return whether any component registers {@code beforeOnPlayerPlace}
+     * @since 1.0.0
      */
     public boolean playerPlacing() {
         return playerPlacing;
@@ -47,6 +51,7 @@ public final class ScriptHooks implements WireOnlyBlockComponent {
      * @param playerInteract whether any component registers {@code onPlayerInteract}
      * @param playerPlacing  whether any component registers {@code beforeOnPlayerPlace}
      * @return the component
+     * @since 1.0.0
      */
     public static @NonNull ScriptHooks of(boolean playerInteract, boolean playerPlacing) {
         return new ScriptHooks(playerInteract, playerPlacing);

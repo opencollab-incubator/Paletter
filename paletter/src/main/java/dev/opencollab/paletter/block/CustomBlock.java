@@ -176,6 +176,7 @@ public final class CustomBlock {
      * The block identifier.
      *
      * @return the block identifier (description {@code identifier})
+     * @since 1.0.0
      */
     public @NonNull String identifier() {
         return identifier;
@@ -185,6 +186,7 @@ public final class CustomBlock {
      * The state properties declared by the block.
      *
      * @return the state properties (description {@code states}), in declaration order
+     * @since 1.0.0
      */
     public @NonNull List<BlockProperty<?>> properties() {
         return properties;
@@ -194,6 +196,7 @@ public final class CustomBlock {
      * The traits of the block.
      *
      * @return the traits (description {@code traits}); the states they add are part of {@link #states()}
+     * @since 1.0.0
      */
     public @NonNull List<BlockTrait> traits() {
         return traits;
@@ -203,6 +206,7 @@ public final class CustomBlock {
      * The base components of the block.
      *
      * @return the base components (one per component name)
+     * @since 1.0.0
      */
     public @NonNull List<BlockComponent> components() {
         return components;
@@ -212,6 +216,7 @@ public final class CustomBlock {
      * The permutations of the block.
      *
      * @return components applied when a Molang condition on the state holds
+     * @since 1.0.0
      */
     public @NonNull List<Permutation> permutations() {
         return permutations;
@@ -222,6 +227,7 @@ public final class CustomBlock {
      * inventory and in which category and group, as in BDS.
      *
      * @return the menu category; null or category {@code none}: the block item is not in the creative inventory
+     * @since 1.0.0
      */
     public @Nullable BlockMenuCategory menuCategory() {
         return menuCategory;
@@ -231,6 +237,7 @@ public final class CustomBlock {
      * The registration of the block item.
      *
      * @return how the block item is registered
+     * @since 1.0.0
      */
     public @NonNull BlockItem item() {
         return item;
@@ -240,6 +247,7 @@ public final class CustomBlock {
      * Returns where the block item goes within the category and group of the {@link #menuCategory()}.
      *
      * @return the placement, {@link CreativePlacement#DEFAULT} if not set
+     * @since 1.0.0
      */
     public @NonNull CreativePlacement creativePlacement() {
         return creative;
@@ -249,6 +257,7 @@ public final class CustomBlock {
      * The default state values.
      *
      * @return state values of the default state; properties not listed use their first value
+     * @since 1.0.0
      */
     public @NonNull Map<String, Object> defaultStates() {
         return defaultStates;
@@ -258,6 +267,7 @@ public final class CustomBlock {
      * The block tags: the {@link BlockTags} component's, which {@link Builder#tag} adds to.
      *
      * @return block tags, queryable with Molang (sent as the block's {@code blockTags}); empty without the component
+     * @since 1.0.0
      */
     public @NonNull List<String> tags() {
         BlockTags tags = component(BlockTags.class);
@@ -268,6 +278,7 @@ public final class CustomBlock {
      * Starts a builder with everything of this block, to make a changed copy. The copy has types of its own.
      *
      * @return a builder with this block's definition
+     * @since 1.0.0
      */
     public @NonNull Builder toBuilder() {
         Builder builder = new Builder(identifier);
@@ -343,6 +354,7 @@ public final class CustomBlock {
          * @return the permutation
          * @throws NullPointerException if an argument or a component is null
          * @throws IllegalArgumentException if two components have the same name, or one is {@code minecraft:tags}
+         * @since 1.0.0
          */
         public static @NonNull Permutation of(@NonNull String condition, @NonNull List<? extends BlockComponent> components) {
             return new Permutation(condition, components);
@@ -357,6 +369,7 @@ public final class CustomBlock {
          * @return the permutation
          * @throws NullPointerException if an argument or a component is null
          * @throws IllegalArgumentException if two components have the same name, or one is {@code minecraft:tags}
+         * @since 1.0.0
          */
         public static @NonNull Permutation of(@NonNull String condition, @NonNull BlockComponent first, @NonNull BlockComponent... rest) {
             List<BlockComponent> components = new ArrayList<>(rest.length + 1);
@@ -369,6 +382,7 @@ public final class CustomBlock {
          * Returns the condition.
          *
          * @return a Molang condition, e.g. {@code q.block_state('example:lit') == 1}
+         * @since 1.0.0
          */
         public @NonNull String condition() {
             return condition;
@@ -378,6 +392,7 @@ public final class CustomBlock {
          * Returns the components.
          *
          * @return the components applied when the condition holds, in the order they were given
+         * @since 1.0.0
          */
         public @NonNull List<BlockComponent> components() {
             return components;
@@ -480,6 +495,7 @@ public final class CustomBlock {
              *
              * @return the item of the block
              * @throws IllegalStateException if this is not the item of a built block ({@link CustomBlock#item()})
+             * @since 1.0.0
              */
             public @NonNull CustomItem item() {
                 if (item == null) {
@@ -535,6 +551,7 @@ public final class CustomBlock {
      * @return a builder with the {@link BlockItem#SIMPLE simple} block item and no creative placement
      * @throws NullPointerException if {@code identifier} is null
      * @throws IllegalArgumentException if it is not {@code namespace:name}
+     * @since 1.0.0
      */
     public static @NonNull Builder builder(@NonNull String identifier) {
         return new Builder(identifier);
@@ -546,6 +563,7 @@ public final class CustomBlock {
      * @param type the component class
      * @param <T> the component type
      * @return the component of a type among the base components, or null
+     * @since 1.0.0
      */
     public <T extends BlockComponent> @Nullable T component(@NonNull Class<T> type) {
         for (BlockComponent component : components) {
@@ -561,6 +579,7 @@ public final class CustomBlock {
      *
      * @return the properties that make up the block's states: {@link #properties()}, then the states its traits add
      *         (e.g. {@code minecraft:cardinal_direction} of {@code minecraft:placement_direction})
+     * @since 1.0.0
      */
     public @NonNull List<BlockProperty<?>> stateProperties() {
         return stateProperties(properties, traits);
@@ -570,6 +589,7 @@ public final class CustomBlock {
      * The number of states.
      *
      * @return the amount of states: the product of the values of {@link #stateProperties()}, at most 2^24
+     * @since 1.0.0
      */
     public int stateCount() {
         int total = 1;
@@ -583,6 +603,7 @@ public final class CustomBlock {
      * All states of the block.
      *
      * @return all states, in the order Bedrock enumerates them: the first property changes fastest
+     * @since 1.0.0
      */
     public @NonNull List<NbtMap> states() {
         return states(stateProperties());
@@ -665,6 +686,7 @@ public final class CustomBlock {
      * The default state, as {@code {name, states}}.
      *
      * @return the state with the {@link #defaultStates()} values and the first value of every other property
+     * @since 1.0.0
      */
     public @NonNull NbtMap defaultState() {
         return defaultState(stateProperties());
@@ -726,6 +748,7 @@ public final class CustomBlock {
          * @param property the property
          * @return this builder
          * @throws IllegalArgumentException if a property with the same name was already added
+         * @since 1.0.0
          */
         public @NonNull Builder property(@NonNull BlockProperty<?> property) {
             for (BlockProperty<?> existing : properties) {
@@ -743,6 +766,7 @@ public final class CustomBlock {
          * @param properties the properties, in order
          * @return this builder
          * @throws IllegalArgumentException if a property with the same name was already added
+         * @since 1.0.0
          */
         public @NonNull Builder properties(@NonNull List<? extends BlockProperty<?>> properties) {
             properties.forEach(this::property);
@@ -755,6 +779,7 @@ public final class CustomBlock {
          * @param trait the trait
          * @return this builder
          * @throws NullPointerException if {@code trait} is null
+         * @since 1.0.0
          */
         public @NonNull Builder trait(@NonNull BlockTrait trait) {
             traits.removeIf(existing -> existing.name().equals(trait.name()));
@@ -768,6 +793,7 @@ public final class CustomBlock {
          * @param traits the traits
          * @return this builder
          * @throws NullPointerException if a trait is null
+         * @since 1.0.0
          */
         public @NonNull Builder traits(@NonNull List<? extends BlockTrait> traits) {
             traits.forEach(this::trait);
@@ -780,6 +806,7 @@ public final class CustomBlock {
          * @param component the component
          * @return this builder
          * @throws NullPointerException if {@code component} is null
+         * @since 1.0.0
          */
         public @NonNull Builder component(@NonNull BlockComponent component) {
             components.removeIf(existing -> existing.name().equals(component.name()));
@@ -794,6 +821,7 @@ public final class CustomBlock {
          * @param rest the other components
          * @return this builder
          * @throws NullPointerException if a component is null
+         * @since 1.0.0
          */
         public @NonNull Builder components(@NonNull BlockComponent first, @NonNull BlockComponent @NonNull ... rest) {
             component(first);
@@ -809,6 +837,7 @@ public final class CustomBlock {
          * @param components the components
          * @return this builder
          * @throws NullPointerException if a component is null
+         * @since 1.0.0
          */
         public @NonNull Builder components(@NonNull List<? extends BlockComponent> components) {
             components.forEach(this::component);
@@ -823,6 +852,7 @@ public final class CustomBlock {
          * @param rest the other components
          * @return this builder
          * @throws IllegalArgumentException if two components have the same name, or one is {@code minecraft:tags}
+         * @since 1.0.0
          */
         public @NonNull Builder permutation(@NonNull String condition, @NonNull BlockComponent first, @NonNull BlockComponent @NonNull ... rest) {
             permutations.add(Permutation.of(condition, first, rest));
@@ -834,6 +864,7 @@ public final class CustomBlock {
          *
          * @param permutation the permutation
          * @return this builder
+         * @since 1.0.0
          */
         public @NonNull Builder permutation(@NonNull Permutation permutation) {
             permutations.add(Objects.requireNonNull(permutation, "permutation"));
@@ -846,6 +877,7 @@ public final class CustomBlock {
          * @param permutations the permutations
          * @return this builder
          * @throws NullPointerException if a permutation is null
+         * @since 1.0.0
          */
         public @NonNull Builder permutations(@NonNull List<Permutation> permutations) {
             permutations.forEach(this::permutation);
@@ -859,6 +891,7 @@ public final class CustomBlock {
          *
          * @param menuCategory the menu category, or null for none
          * @return this builder
+         * @since 1.0.0
          */
         public @NonNull Builder menuCategory(@Nullable BlockMenuCategory menuCategory) {
             this.menuCategory = menuCategory;
@@ -871,6 +904,7 @@ public final class CustomBlock {
          * @param category the creative category
          * @return this builder
          * @throws NullPointerException if the category is null
+         * @since 1.0.0
          */
         public @NonNull Builder menuCategory(@NonNull CreativeCategory category) {
             return menuCategory(BlockMenuCategory.builder().category(BlockMenuCategory.Category.of(category.bedrockName())).build());
@@ -883,6 +917,7 @@ public final class CustomBlock {
          * @param group the group, not null, e.g. {@code itemGroup.name.minerals}
          * @return this builder
          * @throws NullPointerException if the category is null
+         * @since 1.0.0
          */
         public @NonNull Builder menuCategory(@NonNull CreativeCategory category, @NonNull String group) {
             return menuCategory(BlockMenuCategory.builder().category(BlockMenuCategory.Category.of(category.bedrockName()))
@@ -896,6 +931,7 @@ public final class CustomBlock {
          * @param item how the block item is registered
          * @return this builder
          * @throws NullPointerException if the item is null
+         * @since 1.0.0
          */
         public @NonNull Builder item(@NonNull BlockItem item) {
             this.item = item instanceof BlockItem.Custom custom ? custom.resolve(identifier) : Objects.requireNonNull(item, "item");
@@ -908,6 +944,7 @@ public final class CustomBlock {
          * @param creative where the block item goes
          * @return this builder
          * @throws NullPointerException if the placement is null
+         * @since 1.0.0
          */
         public @NonNull Builder creativePlacement(@NonNull CreativePlacement creative) {
             this.creative = Objects.requireNonNull(creative, "creative");
@@ -923,6 +960,7 @@ public final class CustomBlock {
          *              property
          * @return this builder
          * @throws NullPointerException if the property or the value is null
+         * @since 1.0.0
          */
         public @NonNull Builder defaultState(@NonNull String property, @NonNull Object value) {
             defaultStates.put(Objects.requireNonNull(property, "property"), Objects.requireNonNull(value, "value"));
@@ -937,6 +975,7 @@ public final class CustomBlock {
          * @param value the value
          * @return this builder
          * @throws NullPointerException if the property is null
+         * @since 1.0.0
          */
         public @NonNull Builder defaultState(@NonNull String property, boolean value) {
             return defaultState(property, (Object) value);
@@ -950,6 +989,7 @@ public final class CustomBlock {
          * @param value the value
          * @return this builder
          * @throws NullPointerException if the property is null
+         * @since 1.0.0
          */
         public @NonNull Builder defaultState(@NonNull String property, int value) {
             return defaultState(property, (Object) value);
@@ -964,6 +1004,7 @@ public final class CustomBlock {
          * @param rest the other tags
          * @return this builder
          * @throws NullPointerException if a tag is null
+         * @since 1.0.0
          */
         public @NonNull Builder tags(@NonNull String first, @NonNull String @NonNull ... rest) {
             List<String> tags = new ArrayList<>(rest.length + 1);
@@ -978,6 +1019,7 @@ public final class CustomBlock {
          * @param tags the tags
          * @return this builder
          * @throws NullPointerException if a tag is null
+         * @since 1.0.0
          */
         public @NonNull Builder tags(@NonNull List<String> tags) {
             List<String> merged = new ArrayList<>();
@@ -1000,6 +1042,7 @@ public final class CustomBlock {
          * @param tag the tag
          * @return this builder
          * @throws NullPointerException if the tag is null
+         * @since 1.0.0
          */
         public @NonNull Builder tag(@NonNull String tag) {
             return tags(List.of(tag));
@@ -1011,6 +1054,7 @@ public final class CustomBlock {
          * @return the block
          * @throws IllegalArgumentException if the block has more than 2^24 state combinations, a default state names a
          *         missing property or value, or a permutation reads a state the block does not have
+         * @since 1.0.0
          */
         public @NonNull CustomBlock build() {
             return new CustomBlock(identifier, properties, traits, components, permutations, menuCategory, item, creative, defaultStates);

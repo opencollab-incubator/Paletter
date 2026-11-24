@@ -30,6 +30,7 @@ public final class IntState extends BedrockState<Integer> {
      * @param max the highest value, inclusive
      * @return a state with the values {@code min} to {@code max}, both inclusive
      * @throws IllegalArgumentException if {@code max} is below {@code min}
+     * @since 1.0.0
      */
     public static @NonNull IntState range(@NonNull String name, int min, int max) {
         if (max < min) {
@@ -49,6 +50,7 @@ public final class IntState extends BedrockState<Integer> {
      * @param values the values the state can have; at least one
      * @return a new state
      * @throws IllegalArgumentException if there are no values
+     * @since 1.0.0
      */
     public static @NonNull IntState of(@NonNull String name, int @NonNull ... values) {
         List<Integer> list = new ArrayList<>(values.length);
@@ -67,6 +69,7 @@ public final class IntState extends BedrockState<Integer> {
      * The lowest value.
      *
      * @return the lowest value of the state
+     * @since 1.0.0
      */
     public int min() {
         int min = Integer.MAX_VALUE;
@@ -80,6 +83,7 @@ public final class IntState extends BedrockState<Integer> {
      * The highest value.
      *
      * @return the highest value of the state
+     * @since 1.0.0
      */
     public int max() {
         int max = Integer.MIN_VALUE;

@@ -14,6 +14,8 @@ import dev.opencollab.paletter.annotation.Experimental;
 public final class FrameCount implements WireOnlyItemComponent {
     /**
      * The wire path (there is no add-on JSON name).
+     *
+     * @since 1.0.0
      */
     public static final String NAME = "item_properties.frame_count";
 
@@ -30,6 +32,7 @@ public final class FrameCount implements WireOnlyItemComponent {
      * Returns the frame count.
      *
      * @return the frame count sent to the client, at least 1
+     * @since 1.0.0
      */
     public int value() {
         return value;
@@ -41,6 +44,7 @@ public final class FrameCount implements WireOnlyItemComponent {
      * @param value the frame count sent to the client, at least 1
      * @return the component
      * @throws IllegalArgumentException if the value is below 1
+     * @since 1.0.0
      */
     public static @NonNull FrameCount of(int value) {
         return new FrameCount(value);

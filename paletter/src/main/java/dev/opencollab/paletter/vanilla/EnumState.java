@@ -41,6 +41,7 @@ public final class EnumState<E extends Enum<E> & StateValue> extends BedrockStat
      * @param type the enum of the values; each constant's {@link StateValue#value()} must be unique
      * @return a new state
      * @throws IllegalArgumentException if two constants of the enum have the same value
+     * @since 1.0.0
      */
     public static <E extends Enum<E> & StateValue> @NonNull EnumState<E> of(@NonNull String name, @NonNull Class<E> type) {
         return new EnumState<>(name, type);
@@ -50,6 +51,7 @@ public final class EnumState<E extends Enum<E> & StateValue> extends BedrockStat
      * The enum of the values.
      *
      * @return the enum of the values
+     * @since 1.0.0
      */
     public @NonNull Class<E> type() {
         return type;
@@ -65,6 +67,7 @@ public final class EnumState<E extends Enum<E> & StateValue> extends BedrockStat
      *
      * @param value a string as stored in the block state NBT
      * @return the constant for the string, or null if there is none
+     * @since 1.0.0
      */
     public @Nullable E value(@NonNull String value) {
         return byValue.get(value);

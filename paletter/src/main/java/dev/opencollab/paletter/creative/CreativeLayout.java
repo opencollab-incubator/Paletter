@@ -39,6 +39,7 @@ public final class CreativeLayout {
      * Returns the layout without any content.
      *
      * @return the empty layout
+     * @since 1.0.0
      */
     public static @NonNull CreativeLayout empty() {
         return EMPTY;
@@ -49,6 +50,7 @@ public final class CreativeLayout {
      *
      * @param categories the nodes of each category, in order
      * @return the layout
+     * @since 1.0.0
      */
     public static @NonNull CreativeLayout of(@NonNull Map<CreativeCategory, List<CreativeNode>> categories) {
         return new CreativeLayout(categories);
@@ -59,6 +61,7 @@ public final class CreativeLayout {
      *
      * @param category the category
      * @return the nodes of a category, in order
+     * @since 1.0.0
      */
     public @NonNull List<CreativeNode> nodes(@NonNull CreativeCategory category) {
         return categories.get(category);
@@ -69,6 +72,7 @@ public final class CreativeLayout {
      *
      * @param name the group name
      * @return the first group of that name, or empty if there is none
+     * @since 1.0.0
      */
     public @NonNull Optional<CreativeGroup> group(@NonNull String name) {
         for (List<CreativeNode> nodes : categories.values()) {
@@ -85,6 +89,7 @@ public final class CreativeLayout {
      * Lists the stacks of the layout.
      *
      * @return every stack in display order, including stacks inside groups. Group icons are not included
+     * @since 1.0.0
      */
     public @NonNull Stream<BedrockItemStack> stacks() {
         List<BedrockItemStack> stacks = new ArrayList<>();
@@ -96,6 +101,7 @@ public final class CreativeLayout {
      * Visits every stack in display order, including stacks inside groups. Group icons are not visited.
      *
      * @param consumer the visitor
+     * @since 1.0.0
      */
     public void forEachStack(@NonNull Consumer<BedrockItemStack> consumer) {
         for (CreativeCategory category : CreativeCategory.values()) {
@@ -161,6 +167,7 @@ public final class CreativeLayout {
      * Starts editing.
      *
      * @return a mutable editor starting from this layout. This layout is not changed
+     * @since 1.0.0
      */
     public @NonNull CreativeEditor edit() {
         return new CreativeEditor(this);

@@ -53,6 +53,7 @@ public final class CreativeEditor {
      *
      * @param category the category
      * @return a snapshot of the current nodes of a category
+     * @since 1.0.0
      */
     public @NonNull List<CreativeNode> view(@NonNull CreativeCategory category) {
         return categories.get(category).stream().map(CreativeEditor::freeze).toList();
@@ -86,6 +87,7 @@ public final class CreativeEditor {
      *
      * @param name the group name
      * @return an editor of the first group of that name, or empty if there is none
+     * @since 1.0.0
      */
     public @NonNull Optional<GroupEditor> group(@NonNull String name) {
         MutableGroup group = findGroup(name);
@@ -99,6 +101,7 @@ public final class CreativeEditor {
      * @param name the group name
      * @return the group with this name, or a new empty group at the end of the category if none exists.
      * An existing group is returned as is, even if it lives in another category
+     * @since 1.0.0
      */
     public @NonNull GroupEditor groupOrCreate(@NonNull CreativeCategory category, @NonNull String name) {
         MutableGroup group = findGroup(name);
@@ -116,6 +119,7 @@ public final class CreativeEditor {
      * @param name the group name
      * @return an editor of the new group
      * @throws IllegalArgumentException if a group with this name already exists
+     * @since 1.0.0
      */
     public @NonNull GroupEditor createGroup(@NonNull CreativeCategory category, @NonNull String name) {
         if (findGroup(name) != null) {
@@ -129,6 +133,7 @@ public final class CreativeEditor {
      *
      * @param name the group name
      * @return true if a group of that name existed and was removed
+     * @since 1.0.0
      */
     public boolean removeGroup(@NonNull String name) {
         MutableGroup group = findGroup(name);
@@ -144,6 +149,7 @@ public final class CreativeEditor {
      *
      * @param name the group name
      * @return true if a group of that name existed and was dissolved
+     * @since 1.0.0
      */
     public boolean dissolveGroup(@NonNull String name) {
         MutableGroup group = findGroup(name);
@@ -162,6 +168,7 @@ public final class CreativeEditor {
      *
      * @param stacks the stacks to insert
      * @return the pending insertion
+     * @since 1.0.0
      */
     public @NonNull Insertion insert(@NonNull BedrockItemStack... stacks) {
         return new Insertion(List.of(stacks), null);
@@ -172,6 +179,7 @@ public final class CreativeEditor {
      *
      * @param stacks the stacks to insert; the list is copied
      * @return the pending insertion
+     * @since 1.0.0
      */
     public @NonNull Insertion insert(@NonNull List<BedrockItemStack> stacks) {
         return new Insertion(List.copyOf(stacks), null);
@@ -182,6 +190,7 @@ public final class CreativeEditor {
      *
      * @param matcher selects the stacks to move
      * @return the pending move
+     * @since 1.0.0
      */
     public @NonNull Insertion move(@NonNull ItemMatcher matcher) {
         List<BedrockItemStack> stacks = new ArrayList<>();
@@ -194,6 +203,7 @@ public final class CreativeEditor {
      *
      * @param matcher selects the stacks to remove
      * @return the amount of stacks removed
+     * @since 1.0.0
      */
     public int remove(@NonNull ItemMatcher matcher) {
         int removed = 0;
@@ -226,6 +236,7 @@ public final class CreativeEditor {
      * @param replacement maps a matching stack to its replacement, which must not be null
      * @return the amount of stacks replaced
      * @throws NullPointerException if the replacement returns null
+     * @since 1.0.0
      */
     public int replace(@NonNull ItemMatcher matcher, @NonNull UnaryOperator<BedrockItemStack> replacement) {
         int replaced = 0;
@@ -258,6 +269,7 @@ public final class CreativeEditor {
      * Freezes the current state.
      *
      * @return an immutable layout of the current state; this editor stays usable
+     * @since 1.0.0
      */
     public @NonNull CreativeLayout build() {
         Map<CreativeCategory, List<CreativeNode>> frozen = new EnumMap<>(CreativeCategory.class);
@@ -286,6 +298,7 @@ public final class CreativeEditor {
          *
          * @param anchor selects the stack to place after
          * @return true if the stacks were placed, false if nothing matches the anchor or they were placed already
+         * @since 1.0.0
          */
         public boolean after(@NonNull ItemMatcher anchor) {
             return relative(anchor, 1);
@@ -296,6 +309,7 @@ public final class CreativeEditor {
          *
          * @param anchor selects the stack to place before
          * @return true if the stacks were placed, false if nothing matches the anchor or they were placed already
+         * @since 1.0.0
          */
         public boolean before(@NonNull ItemMatcher anchor) {
             return relative(anchor, 0);
@@ -306,6 +320,7 @@ public final class CreativeEditor {
          *
          * @param group the group name, in any category
          * @return true if the stacks were placed, false if there is no such group or they were placed already
+         * @since 1.0.0
          */
         public boolean intoGroup(@NonNull String group) {
             return intoGroup(group, Integer.MAX_VALUE);
@@ -317,6 +332,7 @@ public final class CreativeEditor {
          * @param group the group name, in any category
          * @param index the index in the group; an index past the end places at the end
          * @return true if the stacks were placed, false if there is no such group or they were placed already
+         * @since 1.0.0
          */
         public boolean intoGroup(@NonNull String group, int index) {
             if (done || findGroup(group) == null) {
@@ -334,6 +350,7 @@ public final class CreativeEditor {
          * @param category the category to create the group in
          * @param group the group name
          * @return true if the stacks were placed, false if they were placed already
+         * @since 1.0.0
          */
         public boolean intoGroup(@NonNull CreativeCategory category, @NonNull String group) {
             if (done) {
@@ -402,6 +419,7 @@ public final class CreativeEditor {
          *
          * @param category the category
          * @return true if the stacks were placed, false if they were placed already
+         * @since 1.0.0
          */
         public boolean loose(@NonNull CreativeCategory category) {
             if (done) {
@@ -417,6 +435,7 @@ public final class CreativeEditor {
          *
          * @param group the group name
          * @return true if the stacks were placed, false if there is no such group or they were placed already
+         * @since 1.0.0
          */
         public boolean afterGroup(@NonNull String group) {
             return besideGroup(group, 1);
@@ -427,6 +446,7 @@ public final class CreativeEditor {
          *
          * @param group the group name
          * @return true if the stacks were placed, false if there is no such group or they were placed already
+         * @since 1.0.0
          */
         public boolean beforeGroup(@NonNull String group) {
             return besideGroup(group, 0);
@@ -479,6 +499,7 @@ public final class CreativeEditor {
          * Returns the group name.
          *
          * @return the group name
+         * @since 1.0.0
          */
         public @NonNull String name() {
             return group.name;
@@ -489,6 +510,7 @@ public final class CreativeEditor {
          *
          * @return the category
          * @throws IllegalStateException if the group was removed
+         * @since 1.0.0
          */
         public @NonNull CreativeCategory category() {
             return categoryOf(group);
@@ -498,6 +520,7 @@ public final class CreativeEditor {
          * Returns the icon of the group.
          *
          * @return the icon, or null if the first stack that exists in the client's version is used
+         * @since 1.0.0
          */
         public @Nullable BedrockItemStack icon() {
             return group.icon;
@@ -508,6 +531,7 @@ public final class CreativeEditor {
          *
          * @param icon the icon, or null to use the first stack that exists in the client's version
          * @return this editor
+         * @since 1.0.0
          */
         public @NonNull GroupEditor icon(@Nullable BedrockItemStack icon) {
             group.icon = icon;
@@ -518,6 +542,7 @@ public final class CreativeEditor {
          * Returns the stacks of the group.
          *
          * @return a snapshot of the stacks, in order
+         * @since 1.0.0
          */
         public @NonNull List<BedrockItemStack> stacks() {
             return List.copyOf(group.stacks);
@@ -527,6 +552,7 @@ public final class CreativeEditor {
          * Returns the number of stacks in the group.
          *
          * @return the number of stacks
+         * @since 1.0.0
          */
         public int size() {
             return group.stacks.size();
@@ -537,6 +563,7 @@ public final class CreativeEditor {
          *
          * @param stacks the stacks to add
          * @return this editor
+         * @since 1.0.0
          */
         public @NonNull GroupEditor add(@NonNull BedrockItemStack... stacks) {
             group.stacks.addAll(Arrays.asList(stacks));
@@ -550,6 +577,7 @@ public final class CreativeEditor {
          * @param stack the stack to add
          * @return this editor
          * @throws IndexOutOfBoundsException if the index is out of range
+         * @since 1.0.0
          */
         public @NonNull GroupEditor add(int index, @NonNull BedrockItemStack stack) {
             group.stacks.add(index, stack);
@@ -561,6 +589,7 @@ public final class CreativeEditor {
          *
          * @param matcher selects the stacks to remove
          * @return the amount of stacks removed
+         * @since 1.0.0
          */
         public int remove(@NonNull ItemMatcher matcher) {
             int before = group.stacks.size();
@@ -573,6 +602,7 @@ public final class CreativeEditor {
          *
          * @param comparator the order
          * @return this editor
+         * @since 1.0.0
          */
         public @NonNull GroupEditor sort(@NonNull Comparator<BedrockItemStack> comparator) {
             group.stacks.sort(comparator);
@@ -584,6 +614,7 @@ public final class CreativeEditor {
          *
          * @param category the category
          * @return this editor
+         * @since 1.0.0
          */
         public @NonNull GroupEditor moveTo(@NonNull CreativeCategory category) {
             detach();
@@ -597,6 +628,7 @@ public final class CreativeEditor {
          *
          * @param anchor selects the stack to place after
          * @return true if the group was moved, false if nothing matches the anchor or it is in this group
+         * @since 1.0.0
          */
         public boolean placeAfter(@NonNull ItemMatcher anchor) {
             return placeBeside(anchor, 1);
@@ -608,6 +640,7 @@ public final class CreativeEditor {
          *
          * @param anchor selects the stack to place before
          * @return true if the group was moved, false if nothing matches the anchor or it is in this group
+         * @since 1.0.0
          */
         public boolean placeBefore(@NonNull ItemMatcher anchor) {
             return placeBeside(anchor, 0);
@@ -618,6 +651,7 @@ public final class CreativeEditor {
          *
          * @param other the name of the other group
          * @return true if the group was moved, false if there is no such group or it is this group
+         * @since 1.0.0
          */
         public boolean placeAfterGroup(@NonNull String other) {
             return placeBesideGroup(other, 1);
@@ -628,6 +662,7 @@ public final class CreativeEditor {
          *
          * @param other the name of the other group
          * @return true if the group was moved, false if there is no such group or it is this group
+         * @since 1.0.0
          */
         public boolean placeBeforeGroup(@NonNull String other) {
             return placeBesideGroup(other, 0);

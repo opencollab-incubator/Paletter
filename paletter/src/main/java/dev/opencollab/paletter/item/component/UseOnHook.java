@@ -16,6 +16,8 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 public final class UseOnHook implements WireOnlyItemComponent {
     /**
      * The component name.
+     *
+     * @since 1.0.0
      */
     public static final String NAME = "minecraft:publisher_on_use_on";
 
@@ -29,6 +31,7 @@ public final class UseOnHook implements WireOnlyItemComponent {
      * Returns whether the client succeeds the use on its own.
      *
      * @return the {@code autoSucceedOnClient} byte sent to the client
+     * @since 1.0.0
      */
     public boolean autoSucceedOnClient() {
         return autoSucceedOnClient;
@@ -39,6 +42,7 @@ public final class UseOnHook implements WireOnlyItemComponent {
      *
      * @param autoSucceedOnClient the {@code autoSucceedOnClient} byte sent to the client
      * @return the component
+     * @since 1.0.0
      */
     public static @NonNull UseOnHook of(boolean autoSucceedOnClient) {
         return new UseOnHook(autoSucceedOnClient);

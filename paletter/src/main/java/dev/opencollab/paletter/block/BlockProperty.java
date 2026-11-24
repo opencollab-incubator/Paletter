@@ -72,6 +72,7 @@ public final class BlockProperty<T> {
      * Returns the name.
      *
      * @return the property name, e.g. {@code example:lit}
+     * @since 1.0.0
      */
     public @NonNull String name() {
         return name;
@@ -81,6 +82,7 @@ public final class BlockProperty<T> {
      * Returns the value type.
      *
      * @return the value type
+     * @since 1.0.0
      */
     public @NonNull Type type() {
         return type;
@@ -90,6 +92,7 @@ public final class BlockProperty<T> {
      * Returns the values.
      *
      * @return the possible values in order, unmodifiable; the first one is the default
+     * @since 1.0.0
      */
     public @NonNull List<T> values() {
         return values;

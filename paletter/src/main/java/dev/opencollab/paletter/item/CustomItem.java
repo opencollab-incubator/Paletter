@@ -65,6 +65,7 @@ public final class CustomItem {
      * Returns the item identifier.
      *
      * @return the item identifier, e.g. {@code geysermc:furnace_minecart} (description {@code identifier})
+     * @since 1.0.0
      */
     public @NonNull String identifier() {
         return identifier;
@@ -74,6 +75,7 @@ public final class CustomItem {
      * Returns the components of the item.
      *
      * @return the components (one per component name), in the order they were added
+     * @since 1.0.0
      */
     public @NonNull List<ItemComponent> components() {
         return components;
@@ -84,6 +86,7 @@ public final class CustomItem {
      * and in which category and group, as in BDS.
      *
      * @return the menu category; null or category {@code none}: the item is not in the creative inventory
+     * @since 1.0.0
      */
     public @Nullable ItemMenuCategory menuCategory() {
         return menuCategory;
@@ -93,6 +96,7 @@ public final class CustomItem {
      * Returns where the item goes within the category and group of the {@link #menuCategory()}.
      *
      * @return the placement, {@link CreativePlacement#DEFAULT} if not set
+     * @since 1.0.0
      */
     public @NonNull CreativePlacement creativePlacement() {
         return creative;
@@ -106,6 +110,7 @@ public final class CustomItem {
      * @throws NullPointerException if the identifier is null
      * @throws IllegalArgumentException if it is not {@code namespace:name}, or in the {@code minecraft} namespace, which BDS
      *         rejects for custom items
+     * @since 1.0.0
      */
     public static @NonNull Builder builder(@NonNull String identifier) {
         return new Builder(identifier);
@@ -117,6 +122,7 @@ public final class CustomItem {
      * @param type the component class
      * @param <T> the component type
      * @return the component of a type, or null if the item does not have it
+     * @since 1.0.0
      */
     public <T extends ItemComponent> @Nullable T component(@NonNull Class<T> type) {
         for (ItemComponent component : components) {
@@ -131,6 +137,7 @@ public final class CustomItem {
      * Returns the item tags.
      *
      * @return the item tags ({@code minecraft:tags}), empty if the item has no {@link Tags} component
+     * @since 1.0.0
      */
     public @NonNull List<String> tags() {
         Tags tags = component(Tags.class);
@@ -156,6 +163,7 @@ public final class CustomItem {
      * Starts a builder with everything of this item, to make a changed copy. The copy has a type of its own.
      *
      * @return a builder with this item's definition
+     * @since 1.0.0
      */
     public @NonNull Builder toBuilder() {
         Builder builder = new Builder(identifier);
@@ -217,6 +225,7 @@ public final class CustomItem {
          * @param component the component
          * @return this builder
          * @throws NullPointerException if the component is null
+         * @since 1.0.0
          */
         public @NonNull Builder component(@NonNull ItemComponent component) {
             components.removeIf(existing -> existing.name().equals(component.name()));
@@ -231,6 +240,7 @@ public final class CustomItem {
          * @param rest the other components
          * @return this builder
          * @throws NullPointerException if a component is null
+         * @since 1.0.0
          */
         public @NonNull Builder components(@NonNull ItemComponent first, @NonNull ItemComponent @NonNull ... rest) {
             component(first);
@@ -249,6 +259,7 @@ public final class CustomItem {
          * @param rest the other tags
          * @return this builder
          * @throws NullPointerException if a tag is null
+         * @since 1.0.0
          */
         public @NonNull Builder tags(@NonNull String first, @NonNull String @NonNull ... rest) {
             List<String> tags = new ArrayList<>(rest.length + 1);
@@ -263,6 +274,7 @@ public final class CustomItem {
          * @param tags the tags
          * @return this builder
          * @throws NullPointerException if a tag is null
+         * @since 1.0.0
          */
         public @NonNull Builder tags(@NonNull List<String> tags) {
             List<String> merged = new ArrayList<>();
@@ -285,6 +297,7 @@ public final class CustomItem {
          * @param tag the tag
          * @return this builder
          * @throws NullPointerException if the tag is null
+         * @since 1.0.0
          */
         public @NonNull Builder tag(@NonNull String tag) {
             return tags(List.of(tag));
@@ -296,6 +309,7 @@ public final class CustomItem {
          * @param components the components
          * @return this builder
          * @throws NullPointerException if a component is null
+         * @since 1.0.0
          */
         public @NonNull Builder components(@NonNull List<? extends ItemComponent> components) {
             components.forEach(this::component);
@@ -309,6 +323,7 @@ public final class CustomItem {
          *
          * @param menuCategory the menu category, or null for none
          * @return this builder
+         * @since 1.0.0
          */
         public @NonNull Builder menuCategory(@Nullable ItemMenuCategory menuCategory) {
             this.menuCategory = menuCategory;
@@ -321,6 +336,7 @@ public final class CustomItem {
          * @param category the creative category
          * @return this builder
          * @throws NullPointerException if the category is null
+         * @since 1.0.0
          */
         public @NonNull Builder menuCategory(@NonNull CreativeCategory category) {
             return menuCategory(ItemMenuCategory.builder().category(ItemMenuCategory.Category.of(category.bedrockName())).build());
@@ -333,6 +349,7 @@ public final class CustomItem {
          * @param group the group, not null, e.g. {@code itemGroup.name.minerals}
          * @return this builder
          * @throws NullPointerException if the category is null
+         * @since 1.0.0
          */
         public @NonNull Builder menuCategory(@NonNull CreativeCategory category, @NonNull String group) {
             return menuCategory(ItemMenuCategory.builder().category(ItemMenuCategory.Category.of(category.bedrockName()))
@@ -345,6 +362,7 @@ public final class CustomItem {
          * @param creative where the item goes
          * @return this builder
          * @throws NullPointerException if the placement is null
+         * @since 1.0.0
          */
         public @NonNull Builder creativePlacement(@NonNull CreativePlacement creative) {
             this.creative = Objects.requireNonNull(creative, "creative");
@@ -355,6 +373,7 @@ public final class CustomItem {
          * Builds the item. Each call makes a new item with a type of its own.
          *
          * @return the custom item
+         * @since 1.0.0
          */
         public @NonNull CustomItem build() {
             return new CustomItem(identifier, components, menuCategory, creative);

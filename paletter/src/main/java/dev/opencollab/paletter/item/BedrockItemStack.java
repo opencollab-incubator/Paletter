@@ -56,6 +56,7 @@ public final class BedrockItemStack {
      * @param key a variant, or a type for its base variant
      * @return one item of a variant, or of a type's base variant, without NBT or block state
      * @throws NullPointerException if the key is null
+     * @since 1.0.0
      */
     public static @NonNull BedrockItemStack of(@NonNull ItemKey key) {
         return builder(key).build();
@@ -69,6 +70,7 @@ public final class BedrockItemStack {
      * @return a stack of a variant, or of a type's base variant, without NBT or block state
      * @throws NullPointerException if the key is null
      * @throws IllegalArgumentException if the count is below 1
+     * @since 1.0.0
      */
     public static @NonNull BedrockItemStack of(@NonNull ItemKey key, int count) {
         return builder(key).count(count).build();
@@ -80,6 +82,7 @@ public final class BedrockItemStack {
      * @param key a variant, or a type for its base variant
      * @return a builder
      * @throws NullPointerException if the key is null
+     * @since 1.0.0
      */
     public static @NonNull Builder builder(@NonNull ItemKey key) {
         return new Builder(key.variant());
@@ -89,6 +92,7 @@ public final class BedrockItemStack {
      * Starts a builder with every field of this stack.
      *
      * @return a builder
+     * @since 1.0.0
      */
     public @NonNull Builder toBuilder() {
         Builder builder = new Builder(variant);
@@ -106,6 +110,7 @@ public final class BedrockItemStack {
      * The item variant: the key of the stack.
      *
      * @return the item variant (type and aux value)
+     * @since 1.0.0
      */
     public @NonNull BedrockItemVariant variant() {
         return variant;
@@ -115,6 +120,7 @@ public final class BedrockItemStack {
      * The item type of the variant.
      *
      * @return the item type
+     * @since 1.0.0
      */
     public @NonNull BedrockItemType type() {
         return variant.type();
@@ -125,6 +131,7 @@ public final class BedrockItemStack {
      *
      * @return the aux value: the variant's {@link BedrockItemVariant#aux()}, or on a stack of a base variant a value that
      *         names no variant
+     * @since 1.0.0
      */
     public int aux() {
         return aux;
@@ -134,6 +141,7 @@ public final class BedrockItemStack {
      * The stack size.
      *
      * @return the stack size, at least 1
+     * @since 1.0.0
      */
     public int count() {
         return count;
@@ -143,6 +151,7 @@ public final class BedrockItemStack {
      * The item NBT.
      *
      * @return the item NBT, or null for none (an empty compound is normalized to null)
+     * @since 1.0.0
      */
     public @Nullable NbtMap nbt() {
         return nbt;
@@ -152,6 +161,7 @@ public final class BedrockItemStack {
      * The block the stack places.
      *
      * @return the block the stack places, or null for the item's default block (or none)
+     * @since 1.0.0
      */
     public @Nullable BedrockBlockState blockState() {
         return blockState;
@@ -161,6 +171,7 @@ public final class BedrockItemStack {
      * The blocks the stack can be placed on in adventure mode.
      *
      * @return block identifiers, unmodifiable; empty for no restriction
+     * @since 1.0.0
      */
     public @NonNull List<String> canPlace() {
         return adventure == null ? List.of() : adventure.canPlace;
@@ -170,6 +181,7 @@ public final class BedrockItemStack {
      * The blocks the stack can break in adventure mode.
      *
      * @return block identifiers, unmodifiable; empty for no restriction
+     * @since 1.0.0
      */
     public @NonNull List<String> canBreak() {
         return adventure == null ? List.of() : adventure.canBreak;
@@ -179,6 +191,7 @@ public final class BedrockItemStack {
      * The game tick a shield stack can block from ({@code ItemData#getBlockingTicks()}).
      *
      * @return the blocking ticks, 0 for none
+     * @since 1.0.0
      */
     public long blockingTicks() {
         return adventure == null ? 0 : adventure.blockingTicks;
@@ -189,6 +202,7 @@ public final class BedrockItemStack {
      *
      * @param key a variant, or a type for its base variant
      * @return the new stack
+     * @since 1.0.0
      */
     public @NonNull BedrockItemStack withVariant(@NonNull ItemKey key) {
         return toBuilder().variant(key).build();
@@ -200,6 +214,7 @@ public final class BedrockItemStack {
      * @param count the stack size, at least 1
      * @return the new stack
      * @throws IllegalArgumentException if the count is below 1
+     * @since 1.0.0
      */
     public @NonNull BedrockItemStack withCount(int count) {
         return count == this.count ? this : toBuilder().count(count).build();
@@ -210,6 +225,7 @@ public final class BedrockItemStack {
      *
      * @param nbt the item NBT, or null for none
      * @return the new stack
+     * @since 1.0.0
      */
     public @NonNull BedrockItemStack withNbt(@Nullable NbtMap nbt) {
         return toBuilder().nbt(nbt).build();
@@ -220,6 +236,7 @@ public final class BedrockItemStack {
      *
      * @param blockState the block the stack places, or null for the item's default block (or none)
      * @return the new stack
+     * @since 1.0.0
      */
     public @NonNull BedrockItemStack withBlockState(@Nullable BedrockBlockState blockState) {
         return toBuilder().blockState(blockState).build();
@@ -296,6 +313,7 @@ public final class BedrockItemStack {
          * @param key a variant, or a type for its base variant
          * @return this builder
          * @throws NullPointerException if the key is null
+         * @since 1.0.0
          */
         public @NonNull Builder variant(@NonNull ItemKey key) {
             this.variant = Objects.requireNonNull(key, "key").variant();
@@ -310,6 +328,7 @@ public final class BedrockItemStack {
          *
          * @param aux the aux value
          * @return this builder
+         * @since 1.0.0
          */
         public @NonNull Builder aux(int aux) {
             this.aux = aux;
@@ -322,6 +341,7 @@ public final class BedrockItemStack {
          * @param count the stack size, at least 1
          * @return this builder
          * @throws IllegalArgumentException if the count is below 1
+         * @since 1.0.0
          */
         public @NonNull Builder count(int count) {
             if (count < 1) {
@@ -336,6 +356,7 @@ public final class BedrockItemStack {
          *
          * @param nbt the item NBT, or null for none; an empty compound is none
          * @return this builder
+         * @since 1.0.0
          */
         public @NonNull Builder nbt(@Nullable NbtMap nbt) {
             this.nbt = nbt == null || nbt.isEmpty() ? null : nbt;
@@ -347,6 +368,7 @@ public final class BedrockItemStack {
          *
          * @param blockState the block state, or null for the item's default block (or none)
          * @return this builder
+         * @since 1.0.0
          */
         public @NonNull Builder blockState(@Nullable BedrockBlockState blockState) {
             this.blockState = blockState;
@@ -359,6 +381,7 @@ public final class BedrockItemStack {
          * @param identifiers block identifiers, or null or empty for no restriction
          * @return this builder
          * @throws NullPointerException if an identifier is null
+         * @since 1.0.0
          */
         public @NonNull Builder canPlace(@Nullable List<String> identifiers) {
             this.canPlace = identifiers == null ? List.of() : List.copyOf(identifiers);
@@ -372,6 +395,7 @@ public final class BedrockItemStack {
          * @param rest more block identifiers
          * @return this builder
          * @throws NullPointerException if an identifier is null
+         * @since 1.0.0
          */
         public @NonNull Builder canPlace(@NonNull String first, @NonNull String @NonNull ... rest) {
             return canPlace(list(first, rest));
@@ -383,6 +407,7 @@ public final class BedrockItemStack {
          * @param identifiers block identifiers, or null or empty for no restriction
          * @return this builder
          * @throws NullPointerException if an identifier is null
+         * @since 1.0.0
          */
         public @NonNull Builder canBreak(@Nullable List<String> identifiers) {
             this.canBreak = identifiers == null ? List.of() : List.copyOf(identifiers);
@@ -396,6 +421,7 @@ public final class BedrockItemStack {
          * @param rest more block identifiers
          * @return this builder
          * @throws NullPointerException if an identifier is null
+         * @since 1.0.0
          */
         public @NonNull Builder canBreak(@NonNull String first, @NonNull String @NonNull ... rest) {
             return canBreak(list(first, rest));
@@ -407,6 +433,7 @@ public final class BedrockItemStack {
          * @param blockingTicks the blocking ticks, 0 for none
          * @return this builder
          * @throws IllegalArgumentException if the value is negative
+         * @since 1.0.0
          */
         public @NonNull Builder blockingTicks(long blockingTicks) {
             if (blockingTicks < 0) {
@@ -421,6 +448,7 @@ public final class BedrockItemStack {
          *
          * @return the stack
          * @throws IllegalArgumentException if an aux is set on a variant that is not a base variant and differs from its aux
+         * @since 1.0.0
          */
         public @NonNull BedrockItemStack build() {
             return new BedrockItemStack(this);

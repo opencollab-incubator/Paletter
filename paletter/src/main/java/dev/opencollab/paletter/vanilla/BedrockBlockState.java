@@ -73,6 +73,7 @@ public final class BedrockBlockState {
      * The type of the state.
      *
      * @return the block type this is a state of
+     * @since 1.0.0
      */
     public @NonNull BedrockBlockType type() {
         return layout.owner;
@@ -87,6 +88,7 @@ public final class BedrockBlockState {
      * @throws IllegalArgumentException if the block does not have the state
      * @throws IllegalStateException if the value has no constant in the state's enum (data newer than the constants);
      *         {@link #raw} reads such a value
+     * @since 1.0.0
      */
     public <T> @NonNull T get(@NonNull BedrockState<T> state) {
         int property = BedrockBlockType.requireProperty(layout, state);
@@ -107,6 +109,7 @@ public final class BedrockBlockState {
      * @param state the state property to read
      * @return the value as in {@link #values()} ({@link Boolean}, {@link Integer} or {@link String}), or null if the block
      *         does not have the state
+     * @since 1.0.0
      */
     public @Nullable Object raw(@NonNull BedrockState<?> state) {
         int property = layout.property(state);
@@ -125,6 +128,7 @@ public final class BedrockBlockState {
      * @param value the new value
      * @return this state with one value changed
      * @throws IllegalArgumentException if the block does not have the state or the value
+     * @since 1.0.0
      */
     public <T> @NonNull BedrockBlockState with(@NonNull BedrockState<T> state, @NonNull T value) {
         int property = BedrockBlockType.requireProperty(layout, state);
@@ -142,6 +146,7 @@ public final class BedrockBlockState {
      * @param value the new value
      * @return this state with one value changed
      * @throws IllegalArgumentException if the block does not have the state
+     * @since 1.0.0
      */
     public @NonNull BedrockBlockState with(@NonNull BoolState state, boolean value) {
         return with((BedrockState<Boolean>) state, value);
@@ -154,6 +159,7 @@ public final class BedrockBlockState {
      * @param value the new value
      * @return this state with one value changed
      * @throws IllegalArgumentException if the block does not have the state or the value
+     * @since 1.0.0
      */
     public @NonNull BedrockBlockState with(@NonNull IntState state, int value) {
         int property = BedrockBlockType.requireProperty(layout, state);
@@ -183,6 +189,7 @@ public final class BedrockBlockState {
      * {@code palette.blockState(identifier, values(), Lookup.EXACT)}
      *
      * @return the values: {@link Boolean}, {@link Integer} or {@link String}; unmodifiable
+     * @since 1.0.0
      */
     public @NonNull Map<String, Object> values() {
         Map<String, Object> values = this.values;
@@ -201,6 +208,7 @@ public final class BedrockBlockState {
      * Returns the state as NBT.
      *
      * @return the state as {@code {name, states}}
+     * @since 1.0.0
      */
     public @NonNull NbtMap toNbt() {
         NbtMap nbt = this.nbt;
