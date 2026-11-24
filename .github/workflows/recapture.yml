@@ -1,7 +1,7 @@
 # Full recapture: every kept BDS build and the newest preview, captured again in parallel with the add-on generated from
 # the checked-out commit, and turned into ONE pull request: docs/data-pipeline.md, "Full recapture". Started by hand
 # (workflow_dispatch: `ref`, `builds`, `dry-run`) or by the `recapture` label on a pull request of a branch of this
-# repository; nothing starts it on a push or a schedule.
+# repository, added by someone with write access; nothing starts it on a push or a schedule.
 #
 # Security: the same split as bds-data.yml, in four jobs.
 #   plan      read-only. `recapture plan` lists the committed builds of the checkout (no network) and the commit every
@@ -75,6 +75,20 @@ jobs:
       RUN_REF: ${{ github.ref_name }}
       INPUT_BUILDS: ${{ inputs.builds }}
     steps:
+      # Triage access is enough to add a label, and the run publishes with write access: only someone who can push to
+      # the repository starts it. The only step with the token, before any repository code runs: gh and nothing else
+      - name: Check who added the label
+        if: github.event_name == 'pull_request'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          SENDER: ${{ github.event.sender.login }}
+        run: |
+          echo "$SENDER" | grep -Eqx '[A-Za-z0-9-]{1,39}(\[bot\])?' || { echo "Bad sender"; exit 1; }
+          PERMISSION=$(gh api "repos/$GITHUB_REPOSITORY/collaborators/$SENDER/permission" --template '{{.permission}}')
+          case "$PERMISSION" in
+            admin|write) ;;
+            *) echo "::error::$SENDER has $PERMISSION access; adding the recapture label takes write access"; exit 1 ;;
+          esac
       # The branch name is checked before anything uses it
       - name: Check the branch name
         run: |

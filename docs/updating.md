@@ -86,7 +86,7 @@ When it reports decisions or FAILs:
 Captures answer for the add-on they were made with, and history checks refuse to compare spec captures of different
 add-ons. After a change to the model, fixtures, `bds-feedback.json` or the add-on generator, every kept build is captured again.
 
-- CI: the `recapture` label on the pull request that changes the add-on, or Actions > Recapture > Run workflow, `ref` =
+- CI: the `recapture` label (added by someone with write access) on the pull request that changes the add-on, or Actions > Recapture > Run workflow, `ref` =
   the branch (empty: the branch you started it on). Nothing starts it by itself. It runs `plan` (`recapture plan`, the
   committed builds only), one Windows `capture` job per build (`update --capture-only <dir> --version <build>`), `assemble`
   (`recapture assemble`: staging, inference, behaviour, white-box coverage, code generation) and `publish` (one PR

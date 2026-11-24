@@ -254,7 +254,8 @@ with the new one. `recapture.yml` does that in parallel and opens **one** pull r
 the branch the run was started on; `builds` narrows the plan to the builds named and `dry-run` stops before the pull
 request, so `builds: 1.26.63.1` with `dry-run` is a rehearsal of one Windows leg); on a pull request, by adding the `recapture` label, which recaptures the pull
 request's branch and opens the recapture pull request against it (only for branches of this repository, since a fork's
-pull request gets no write token; remove and add the label to run it again). Nothing starts it by itself: not a push, not
+pull request gets no write token, and only when someone with write access added the label: triage access can label too;
+remove and add the label to run it again). Nothing starts it by itself: not a push, not
 the schedule, not the daily check. When a data update changes an add-on input (`data/model/components.json`,
 `fixtures.json`, `bds-feedback.json`, `bds-keys.json`), the data pull request says so at the top of its body: label it
 `recapture` before merging.
