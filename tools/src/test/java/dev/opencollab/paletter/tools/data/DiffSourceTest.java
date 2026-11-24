@@ -18,6 +18,7 @@ import dev.opencollab.paletter.internal.creative.RawLayout;
 import dev.opencollab.paletter.internal.creative.RawNode;
 import dev.opencollab.paletter.internal.creative.RawStack;
 import dev.opencollab.paletter.data.DataVersion;
+import dev.opencollab.paletter.internal.access.Access;
 import dev.opencollab.paletter.internal.data.PaletteDataCodec;
 import dev.opencollab.paletter.internal.data.VanillaData;
 import dev.opencollab.paletter.internal.data.VanillaItem;
@@ -207,7 +208,7 @@ class DiffSourceTest {
     /** The bundled data exported into the layout must verify as identical: the importer and verify agree. */
     @Test
     void bundledRoundTrip() throws Exception {
-        VanillaData data = dev.opencollab.paletter.data.PaletteDataSource.bundled().load(DataVersion.of(NAME, 0));
+        VanillaData data = Access.data().loader(dev.opencollab.paletter.data.PaletteDataSource.bundled()).load(DataVersion.of(NAME, 0));
         write(data, directory, true);
         Diff verify = Diff.source(directory, NAME, data, "bundled");
         assertTrue(verify.identical(), verify.markdown(20));

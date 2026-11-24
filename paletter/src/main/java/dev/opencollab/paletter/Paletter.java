@@ -16,6 +16,8 @@ import dev.opencollab.paletter.data.VerifiedBuild;
 import dev.opencollab.paletter.internal.creative.RawLayout;
 import dev.opencollab.paletter.internal.creative.RawStack;
 import dev.opencollab.paletter.internal.data.VanillaData;
+import dev.opencollab.paletter.internal.access.Access;
+import dev.opencollab.paletter.internal.data.DataLoader;
 import dev.opencollab.paletter.internal.data.VanillaItem;
 import dev.opencollab.paletter.internal.CanonicalItems;
 import dev.opencollab.paletter.internal.behaviour.VanillaBehaviour;
@@ -76,6 +78,8 @@ import java.util.function.Predicate;
  */
 public final class Paletter {
     private final PaletteDataSource source;
+    /** The loading contract of {@link #source}. */
+    private final DataLoader sourceData;
     private final boolean previews;
     /** {@link Builder#behaviour(boolean)}. */
     private final boolean behaviour;
@@ -112,6 +116,7 @@ public final class Paletter {
 
     private Paletter(Builder builder) {
         this.source = builder.source;
+        this.sourceData = Access.data().loader(source);
         this.previews = builder.previews;
         this.behaviour = builder.behaviour;
         this.versions = source.versions().stream().filter(this::available).filter(builder.versions).toList();
@@ -322,7 +327,7 @@ public final class Paletter {
         Paletter loader = loader();
         VanillaData loaded = loader.data.computeIfAbsent(version, v -> {
             try {
-                return loader.intern(loader.source.load(v));
+                return loader.intern(loader.sourceData.load(v));
             } catch (IOException e) {
                 throw new UncheckedIOException("Unable to load Bedrock data " + v, e);
             }
@@ -424,7 +429,7 @@ public final class Paletter {
                 blocks = canonicalBlocks;
                 if (blocks == null) {
                     canonicalBlocks = blocks = sharedCanonicals() != null ? sharedCanonicals().canonicalBlocks()
-                        : CanonicalBlocks.of(vanillaData(newest()), source.renames());
+                        : CanonicalBlocks.of(vanillaData(newest()), sourceData.renames());
                 }
             }
         }
@@ -443,7 +448,7 @@ public final class Paletter {
                 items = canonicalItems;
                 if (items == null) {
                     canonicalItems = items = sharedCanonicals() != null ? sharedCanonicals().canonicalItems()
-                        : CanonicalItems.of(vanillaData(newest()), source.renames());
+                        : CanonicalItems.of(vanillaData(newest()), sourceData.renames());
                 }
             }
         }
@@ -480,7 +485,7 @@ public final class Paletter {
         return vanilla.computeIfAbsent(version,
             key -> PaletteCompiler.vanilla(vanillaData(key), canonicalBlocks(), canonicalItems(), blockInterner,
                 fallbacks, vanillaContent, creativeOrdering, behaviour ? VanillaBehaviour::bundled : Paletter::noBehaviour,
-                source.voxelShapes()));
+                sourceData.voxelShapes()));
     }
 
     /**
@@ -735,7 +740,7 @@ public final class Paletter {
             palette.blocks().releaseSchemas();
         }
         if (!othersCompiling) {
-            source.releaseProperties();
+            sourceData.releaseProperties();
         }
     }
 
@@ -1053,7 +1058,7 @@ public final class Paletter {
      * @since 1.0.0
      */
     public @NonNull Properties properties(@NonNull BedrockItemType type, @NonNull DataVersion version) {
-        return source.properties().item(type.identifier(), version);
+        return sourceData.properties().item(type.identifier(), version);
     }
 
     /**
@@ -1066,6 +1071,6 @@ public final class Paletter {
      * @since 1.0.0
      */
     public @NonNull Properties properties(@NonNull BedrockBlockType type, @NonNull DataVersion version) {
-        return source.properties().block(type.identifier(), version);
+        return sourceData.properties().block(type.identifier(), version);
     }
 }

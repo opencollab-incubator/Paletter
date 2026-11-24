@@ -7,7 +7,9 @@ import org.cloudburstmc.nbt.NbtMap;
 import dev.opencollab.paletter.block.BlockFallback;
 import dev.opencollab.paletter.data.DataVersion;
 import dev.opencollab.paletter.data.PaletteDataSource;
+import dev.opencollab.paletter.internal.access.Access;
 import dev.opencollab.paletter.internal.block.BlockStates;
+import dev.opencollab.paletter.internal.data.DataLoader;
 import dev.opencollab.paletter.internal.data.ExperimentContent;
 import dev.opencollab.paletter.internal.data.Renames;
 import dev.opencollab.paletter.internal.data.VanillaData;
@@ -197,8 +199,8 @@ class ExperimentGatingTest {
 
     /** The bundled data of 26.40 with a block of the palette gated, as a data driven block would be. */
     private static PaletteDataSource gatedBlock() {
-        PaletteDataSource bundled = PaletteDataSource.bundled();
-        return new PaletteDataSource() {
+        DataLoader bundled = Access.data().loader(PaletteDataSource.bundled());
+        return Access.data().source(new DataLoader() {
             @Override
             public List<DataVersion> versions() {
                 return bundled.versions();
@@ -219,7 +221,7 @@ class ExperimentGatingTest {
             public VoxelShapeStore voxelShapes() {
                 return bundled.voxelShapes();
             }
-        };
+        });
     }
 
     @Test

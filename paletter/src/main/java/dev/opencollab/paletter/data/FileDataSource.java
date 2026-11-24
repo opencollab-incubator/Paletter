@@ -1,6 +1,9 @@
 package dev.opencollab.paletter.data;
 
 import dev.opencollab.paletter.internal.Lazy;
+import dev.opencollab.paletter.internal.access.Access;
+import dev.opencollab.paletter.internal.access.DataAccess;
+import dev.opencollab.paletter.internal.data.DataLoader;
 import dev.opencollab.paletter.internal.data.Renames;
 
 import dev.opencollab.paletter.internal.data.VanillaData;
@@ -39,7 +42,24 @@ import java.util.Map;
  * The files are either {@code /paletter/} on the classpath of the library ({@link PaletteDataSource#bundled()}) or a
  * directory ({@link PaletteDataSource#directory(Path)}).
  */
-final class FileDataSource implements PaletteDataSource {
+final class FileDataSource implements PaletteDataSource, DataLoader {
+    static {
+        Access.setData(new DataAccess() {
+            @Override
+            public DataLoader loader(PaletteDataSource source) {
+                return switch (source) {
+                    case FileDataSource file -> file;
+                    case LoaderDataSource other -> other.loader;
+                };
+            }
+
+            @Override
+            public PaletteDataSource source(DataLoader loader) {
+                return new LoaderDataSource(loader);
+            }
+        });
+    }
+
     // The bundled files are checked against the generated definitions by the build (checkBlocks): not again at each load
     static final FileDataSource BUNDLED = new FileDataSource(
         file -> FileDataSource.class.getResourceAsStream("/paletter/" + file), "the library jar", false);

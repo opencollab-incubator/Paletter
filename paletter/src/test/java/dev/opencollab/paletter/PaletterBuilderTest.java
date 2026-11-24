@@ -6,6 +6,8 @@ import dev.opencollab.paletter.creative.CreativeCategory;
 import dev.opencollab.paletter.creative.CreativeOrdering;
 import dev.opencollab.paletter.data.DataVersion;
 import dev.opencollab.paletter.data.PaletteDataSource;
+import dev.opencollab.paletter.internal.access.Access;
+import dev.opencollab.paletter.internal.data.DataLoader;
 import dev.opencollab.paletter.internal.data.ExperimentContent;
 import dev.opencollab.paletter.internal.data.VanillaData;
 import dev.opencollab.paletter.internal.shape.VoxelShapeStore;
@@ -75,11 +77,11 @@ class PaletterBuilderTest {
         // A source of its own may carry full palettes, its own voxel shapes too; a bundled version file has no block states
         for (DataVersion version : PALETTER.versions()) {
             try (var out = Files.newOutputStream(directory.resolve(version.name() + ".nbt"))) {
-                dev.opencollab.paletter.internal.data.PaletteDataCodec.write(PaletteDataSource.bundled().load(version), out, true);
+                dev.opencollab.paletter.internal.data.PaletteDataCodec.write(Access.data().loader(PaletteDataSource.bundled()).load(version), out, true);
             }
         }
         try (var out = Files.newOutputStream(directory.resolve("voxel_shapes.nbt"))) {
-            PaletteDataSource.bundled().voxelShapes().write(out, "a test");
+            Access.data().loader(PaletteDataSource.bundled()).voxelShapes().write(out, "a test");
         }
         PaletteDataSource source = PaletteDataSource.directory(directory);
         assertEquals(PALETTER.versions(), source.versions().stream().filter(version -> !version.isPreview()).toList());
@@ -175,8 +177,8 @@ class PaletterBuilderTest {
 
     /** The bundled data without experiment marks, plus marks of our own. */
     private static PaletteDataSource experimental() {
-        PaletteDataSource bundled = PaletteDataSource.bundled();
-        return new PaletteDataSource() {
+        DataLoader bundled = Access.data().loader(PaletteDataSource.bundled());
+        return Access.data().source(new DataLoader() {
             @Override
             public List<DataVersion> versions() {
                 return bundled.versions();
@@ -199,7 +201,7 @@ class PaletterBuilderTest {
             public VoxelShapeStore voxelShapes() {
                 return bundled.voxelShapes();
             }
-        };
+        });
     }
 
     @Test

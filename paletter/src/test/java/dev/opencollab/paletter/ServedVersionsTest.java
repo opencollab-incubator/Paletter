@@ -6,6 +6,7 @@ import dev.opencollab.paletter.internal.CanonicalBlocks;
 import dev.opencollab.paletter.internal.CanonicalItems;
 import dev.opencollab.paletter.internal.access.Access;
 import dev.opencollab.paletter.internal.block.BlockStates;
+import dev.opencollab.paletter.internal.data.DataLoader;
 import dev.opencollab.paletter.internal.data.Renames;
 import dev.opencollab.paletter.internal.data.VanillaData;
 import dev.opencollab.paletter.internal.shape.VoxelShapeStore;
@@ -40,9 +41,9 @@ class ServedVersionsTest {
 
     /** An instance over data whose newest version is older than the bundled one: its canonical ids are its own. */
     private static Paletter olderData() {
-        PaletteDataSource bundled = PaletteDataSource.bundled();
+        DataLoader bundled = Access.data().loader(PaletteDataSource.bundled());
         List<DataVersion> versions = bundled.versions().subList(0, bundled.versions().size() - 1);
-        return Paletter.builder().data(new PaletteDataSource() {
+        return Paletter.builder().data(Access.data().source(new DataLoader() {
             @Override
             public List<DataVersion> versions() {
                 return versions;
@@ -62,7 +63,7 @@ class ServedVersionsTest {
             public VoxelShapeStore voxelShapes() {
                 return bundled.voxelShapes();
             }
-        }).build();
+        })).build();
     }
 
     @Test

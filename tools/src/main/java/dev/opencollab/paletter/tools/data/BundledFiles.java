@@ -1,5 +1,6 @@
 package dev.opencollab.paletter.tools.data;
 
+import dev.opencollab.paletter.internal.access.Access;
 import dev.opencollab.paletter.internal.data.PaletteDataCodec;
 import dev.opencollab.paletter.internal.data.PropertyStore;
 import dev.opencollab.paletter.internal.data.VanillaData;
@@ -35,7 +36,7 @@ public final class BundledFiles {
 
     /** The bundled version {@code name} from the library jar. */
     public static VanillaData bundled(String name) throws IOException {
-        return dev.opencollab.paletter.data.PaletteDataSource.bundled().load(dev.opencollab.paletter.data.DataVersion.of(name, 0));
+        return Access.data().loader(dev.opencollab.paletter.data.PaletteDataSource.bundled()).load(dev.opencollab.paletter.data.DataVersion.of(name, 0));
     }
 
     /** The name of the newest bundled release version (what {@code versions.txt} lists last, previews left out). */

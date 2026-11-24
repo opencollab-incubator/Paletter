@@ -6,6 +6,8 @@ import org.cloudburstmc.nbt.NbtMap;
 import dev.opencollab.paletter.internal.block.BlockStates;
 import dev.opencollab.paletter.data.DataVersion;
 import dev.opencollab.paletter.data.PaletteDataSource;
+import dev.opencollab.paletter.internal.access.Access;
+import dev.opencollab.paletter.internal.data.DataLoader;
 import dev.opencollab.paletter.internal.data.Renames;
 import dev.opencollab.paletter.internal.data.VanillaData;
 import dev.opencollab.paletter.internal.item.ItemVariant;
@@ -102,8 +104,8 @@ class ForwardTest {
 
     @Test
     void renamedBlocksAndItemsMapToTheirNewNames() {
-        PaletteDataSource bundled = PaletteDataSource.bundled();
-        Paletter renaming = Paletter.builder().data(new PaletteDataSource() {
+        DataLoader bundled = Access.data().loader(PaletteDataSource.bundled());
+        Paletter renaming = Paletter.builder().data(Access.data().source(new DataLoader() {
             @Override
             public @NonNull List<DataVersion> versions() {
                 return bundled.versions();
@@ -124,7 +126,7 @@ class ForwardTest {
             public @NonNull VoxelShapeStore voxelShapes() {
                 return bundled.voxelShapes();
             }
-        }).build();
+        })).build();
         Forwarding block = Ids.forwardBlock(renaming, BlockStates.of("minecraft:older_stone"));
         assertEquals(Forwarding.Kind.RENAMED, block.kind());
         assertEquals(Ids.block(renaming, BlockStates.of("minecraft:stone", java.util.Map.of("stone_type", "stone"))), block.canonical());

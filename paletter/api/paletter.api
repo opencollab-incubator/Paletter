@@ -2527,7 +2527,7 @@ public final class dev.opencollab.paletter.data.DataVersion implements java.lang
     public dev.opencollab.paletter.data.DataVersion withCodecProtocol(java.lang.Integer)
 }
 
-public interface dev.opencollab.paletter.data.PaletteDataSource {
+public sealed interface dev.opencollab.paletter.data.PaletteDataSource permits dev.opencollab.paletter.data.FileDataSource, dev.opencollab.paletter.data.LoaderDataSource {
     public static dev.opencollab.paletter.data.PaletteDataSource bundled()
     public static dev.opencollab.paletter.data.PaletteDataSource directory(java.nio.file.Path)
     public default java.util.List<dev.opencollab.paletter.data.VerifiedBuild> verifiedBuilds(dev.opencollab.paletter.data.DataVersion)

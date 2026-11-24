@@ -18,6 +18,7 @@ public final class Access {
     private static volatile VanillaAccess vanilla;
     private static volatile BehaviourAccess behaviour;
     private static volatile CreativeAccess creative;
+    private static volatile DataAccess data;
 
     private Access() {
     }
@@ -110,6 +111,21 @@ public final class Access {
     public static void setCreative(@NonNull CreativeAccess access) {
         check(creative);
         creative = Objects.requireNonNull(access);
+    }
+
+    /**
+     * @return the accessor of {@code dev.opencollab.paletter.data}, set by {@code FileDataSource}
+     */
+    public static @NonNull DataAccess data() {
+        return get(() -> data, "dev.opencollab.paletter.data.FileDataSource");
+    }
+
+    /**
+     * @param access the accessor of {@code dev.opencollab.paletter.data}; set once
+     */
+    public static void setData(@NonNull DataAccess access) {
+        check(data);
+        data = Objects.requireNonNull(access);
     }
 
     private static <T> T get(Supplier<T> field, String owner) {

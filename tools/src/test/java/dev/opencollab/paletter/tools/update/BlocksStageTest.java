@@ -2,6 +2,7 @@ package dev.opencollab.paletter.tools.update;
 
 import dev.opencollab.paletter.data.DataVersion;
 import dev.opencollab.paletter.data.PaletteDataSource;
+import dev.opencollab.paletter.internal.access.Access;
 import dev.opencollab.paletter.internal.data.PaletteDataCodec;
 import dev.opencollab.paletter.internal.data.VanillaData;
 import dev.opencollab.paletter.internal.vanilla.BlockDefinitions;
@@ -78,7 +79,7 @@ class BlocksStageTest {
     void aChangedPaletteUnderAnExistingNameIsTheStagedOne(@TempDir Path root) throws IOException {
         Path resources = Files.createDirectories(root.resolve("paletter/src/main/resources/paletter"));
         DataVersion newest = PaletteDataSource.bundled().versions().getLast();
-        VanillaData bundled = PaletteDataSource.bundled().load(newest);
+        VanillaData bundled = Access.data().loader(PaletteDataSource.bundled()).load(newest);
         Map<String, NbtMap> defaults = new HashMap<>(bundled.blockDefaults());
         defaults.remove(defaults.keySet().iterator().next());
         VanillaData changed = new VanillaData(newest, bundled.blockStates(), bundled.items(), bundled.dataDrivenBlocks(), bundled.creative(),

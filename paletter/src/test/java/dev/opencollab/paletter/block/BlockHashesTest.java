@@ -2,7 +2,9 @@ package dev.opencollab.paletter.block;
 
 import dev.opencollab.paletter.data.DataVersion;
 import dev.opencollab.paletter.data.PaletteDataSource;
+import dev.opencollab.paletter.internal.access.Access;
 import dev.opencollab.paletter.internal.block.BlockStates;
+import dev.opencollab.paletter.internal.data.DataLoader;
 import org.cloudburstmc.nbt.NbtMap;
 import org.junit.jupiter.api.Test;
 
@@ -18,7 +20,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 class BlockHashesTest {
     @Test
     void theDirectHashIsTheHashOfTheWrittenNbt() throws IOException {
-        PaletteDataSource bundled = PaletteDataSource.bundled();
+        DataLoader bundled = Access.data().loader(PaletteDataSource.bundled());
         int states = 0;
         for (DataVersion version : bundled.versions()) {
             for (NbtMap state : bundled.load(version).blockStates()) {

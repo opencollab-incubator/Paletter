@@ -54,7 +54,7 @@ final class VanillaIndex {
     private final Map<String, BedrockItemType> itemsById;
     /** Blocks whose states are not a full product in a stride order, and so use a lookup table. */
     final List<String> tableBlocks;
-    final Renames renames = PaletteDataSource.bundled().renames();
+    final Renames renames = Access.data().loader(PaletteDataSource.bundled()).renames();
     private final Map<String, BedrockItemType> itemConstants;
     private final Map<String, BedrockBlockType> blockConstants;
 

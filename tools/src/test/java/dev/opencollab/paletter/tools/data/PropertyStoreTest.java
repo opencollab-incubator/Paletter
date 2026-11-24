@@ -7,6 +7,7 @@ import org.cloudburstmc.protocol.bedrock.data.BlockPropertyData;
 import dev.opencollab.paletter.internal.creative.RawLayout;
 import dev.opencollab.paletter.data.DataVersion;
 import dev.opencollab.paletter.data.PaletteDataSource;
+import dev.opencollab.paletter.internal.access.Access;
 import dev.opencollab.paletter.internal.block.BlockStates;
 import dev.opencollab.paletter.internal.data.PaletteDataCodec;
 import dev.opencollab.paletter.internal.data.PropertyStore;
@@ -204,7 +205,7 @@ class PropertyStoreTest {
     void committedDataDrivenBlocksAreInTheOrderBdsSends() throws Exception {
         PaletteDataSource source = PaletteDataSource.bundled();
         DataVersion newest = source.versions().stream().filter(v -> !v.isPreview()).max(java.util.Comparator.naturalOrder()).orElseThrow();
-        List<String> names = source.load(newest).dataDrivenBlocks().stream().map(BlockPropertyData::getName).toList();
+        List<String> names = Access.data().loader(source).load(newest).dataDrivenBlocks().stream().map(BlockPropertyData::getName).toList();
         assertTrue(names.size() > 50);
         assertTrue(!names.equals(names.stream().sorted().toList()), "the order of BDS, not the sorted one");
         assertEquals("minecraft:light_gray_concrete_stairs", names.getFirst());
@@ -241,7 +242,7 @@ class PropertyStoreTest {
     void committedFilesAreWhatTheWriterProduces(@TempDir Path directory) throws Exception {
         PaletteDataSource source = PaletteDataSource.bundled();
         for (DataVersion version : source.versions()) {
-            assertTrue(source.properties().versions().contains(version.name()), version.name());
+            assertTrue(Access.data().loader(source).properties().versions().contains(version.name()), version.name());
         }
         Path resources = Path.of(System.getProperty("paletter.root", "..")).resolve("paletter/src/main/resources/paletter");
         assertTrue(Files.isDirectory(resources), resources.toString());

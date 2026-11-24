@@ -1,14 +1,7 @@
 package dev.opencollab.paletter.data;
 
-import dev.opencollab.paletter.internal.shape.VoxelShapeStore;
-import dev.opencollab.paletter.internal.data.Renames;
-
-import dev.opencollab.paletter.internal.data.PropertyStore;
-import dev.opencollab.paletter.internal.data.VanillaData;
-
 import org.checkerframework.checker.nullness.qual.NonNull;
 
-import java.io.IOException;
 import java.nio.file.Path;
 import java.util.List;
 
@@ -17,11 +10,11 @@ import java.util.List;
  * the library jar, so no network access or external files are needed at runtime; {@link #directory(Path)} reads the same
  * format from a directory, e.g. data refreshed for a newer Bedrock version than the library bundles.
  * <p>
- * This is a closed set of sources: the loading contract is internal.
+ * This is a closed set of sources (a sealed interface): the loading contract is internal.
  *
  * @since 1.0.0
  */
-public interface PaletteDataSource {
+public sealed interface PaletteDataSource permits FileDataSource, LoaderDataSource {
 
     /**
      * Lists the versions this source has data for. The {@link DataVersion#isPreview() previews} are among them: a
@@ -46,57 +39,6 @@ public interface PaletteDataSource {
      */
     default @NonNull List<VerifiedBuild> verifiedBuilds(@NonNull DataVersion version) {
         return List.of();
-    }
-
-    /**
-     * Internal: loads the data of the given version. Called at most once per version by
-     * {@link dev.opencollab.paletter.Paletter}.
-     *
-     * @param version a version of this source
-     * @return the data of the version
-     * @throws IOException if the data cannot be read
-     */
-    @dev.opencollab.paletter.annotation.Internal
-    @NonNull VanillaData load(@NonNull DataVersion version) throws IOException;
-
-    /**
-     * Internal: the identifiers Bedrock renamed.
-     *
-     * @return identifiers Bedrock renamed, which lets content of older versions map forward to the newest one
-     */
-    @dev.opencollab.paletter.annotation.Internal
-    default @NonNull Renames renames() {
-        return Renames.NONE;
-    }
-
-    /**
-     * Internal: the versioned properties of items and blocks.
-     *
-     * @return the versioned properties of items and blocks; the bundled source reads {@code properties.nbt}, the
-     *         default has none
-     */
-    @dev.opencollab.paletter.annotation.Internal
-    default @NonNull PropertyStore properties() {
-        return PropertyStore.empty();
-    }
-
-    /**
-     * Internal: drops what was read for {@link #properties()}, once the versions in use are loaded. A later call reads
-     * it again.
-     */
-    @dev.opencollab.paletter.annotation.Internal
-    default void releaseProperties() {
-    }
-
-    /**
-     * Internal: the vanilla voxel shapes of the versions.
-     *
-     * @return the vanilla voxel shapes of the versions; the bundled source builds them from generated classes, the
-     *         default has none. A palette of a version without them cannot be built
-     */
-    @dev.opencollab.paletter.annotation.Internal
-    default @NonNull VoxelShapeStore voxelShapes() {
-        return VoxelShapeStore.empty();
     }
 
     /**

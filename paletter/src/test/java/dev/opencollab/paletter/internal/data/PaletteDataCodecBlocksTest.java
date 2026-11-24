@@ -2,6 +2,7 @@ package dev.opencollab.paletter.internal.data;
 
 import dev.opencollab.paletter.data.DataVersion;
 import dev.opencollab.paletter.data.PaletteDataSource;
+import dev.opencollab.paletter.internal.access.Access;
 import dev.opencollab.paletter.internal.block.BlockStates;
 import dev.opencollab.paletter.internal.creative.RawLayout;
 import org.cloudburstmc.nbt.NBTOutputStream;
@@ -29,7 +30,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 class PaletteDataCodecBlocksTest {
     private static VanillaData newest() throws IOException {
         DataVersion version = PaletteDataSource.bundled().versions().getLast();
-        return PaletteDataSource.bundled().load(version);
+        return Access.data().loader(PaletteDataSource.bundled()).load(version);
     }
 
     private static byte[] bytes(VanillaData data) throws IOException {
@@ -61,7 +62,7 @@ class PaletteDataCodecBlocksTest {
         // The bundled source does not check it on load (FileDataSource.BUNDLED): the build does, here and in checkBlocks
         for (DataVersion version : PaletteDataSource.bundled().versions()) {
             try (var in = PaletteDataCodecBlocksTest.class.getResourceAsStream("/paletter/" + version.name() + ".nbt")) {
-                assertEquals(PaletteDataSource.bundled().load(version).blockStates(), PaletteDataCodec.read(in, true).blockStates());
+                assertEquals(Access.data().loader(PaletteDataSource.bundled()).load(version).blockStates(), PaletteDataCodec.read(in, true).blockStates());
             }
         }
     }

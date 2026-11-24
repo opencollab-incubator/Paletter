@@ -15,6 +15,7 @@ import dev.opencollab.paletter.internal.behaviour.Provenance;
 import dev.opencollab.paletter.block.BlockHashes;
 import dev.opencollab.paletter.data.DataVersion;
 import dev.opencollab.paletter.data.PaletteDataSource;
+import dev.opencollab.paletter.internal.access.Access;
 import dev.opencollab.paletter.internal.data.VanillaData;
 import dev.opencollab.paletter.internal.data.VanillaItem;
 
@@ -87,7 +88,7 @@ public final class BehaviourImport {
             if (version.isPreview()) {
                 continue;
             }
-            VanillaData data = source.load(version);
+            VanillaData data = Access.data().loader(source).load(version);
             Map<Integer, NbtMap> states = new LinkedHashMap<>();
             data.blockStates().forEach(state -> states.put(BlockHashes.hash(state), state));
             Set<String> items = new HashSet<>();

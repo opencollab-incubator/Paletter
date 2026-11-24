@@ -12,6 +12,8 @@ import dev.opencollab.paletter.block.component.MaterialInstances;
 import dev.opencollab.paletter.block.component.Transformation;
 import dev.opencollab.paletter.data.DataVersion;
 import dev.opencollab.paletter.data.PaletteDataSource;
+import dev.opencollab.paletter.internal.access.Access;
+import dev.opencollab.paletter.internal.data.DataLoader;
 import dev.opencollab.paletter.internal.data.VanillaData;
 import dev.opencollab.paletter.internal.shape.VoxelShapeStore;
 import org.junit.jupiter.api.Test;
@@ -174,7 +176,7 @@ class VoxelShapesTest {
 
     @Test
     void aVersionWithoutVanillaShapesFailsWhenItsPaletteIsBuilt() {
-        PaletteDataSource bundled = PaletteDataSource.bundled();
+        DataLoader bundled = Access.data().loader(PaletteDataSource.bundled());
         DataVersion missing = bundled.versions().getFirst();
         // The bundled shapes, less those of one version
         List<VoxelShapeStore.Registry> registries = new ArrayList<>();
@@ -184,7 +186,7 @@ class VoxelShapesTest {
             registries.add(new VoxelShapeStore.Registry(versions, registry.experiment(), registry.shapes()));
         }
         VoxelShapeStore store = new VoxelShapeStore(registries);
-        PaletteDataSource source = new PaletteDataSource() {
+        PaletteDataSource source = Access.data().source(new DataLoader() {
             @Override
             public List<DataVersion> versions() {
                 return bundled.versions();
@@ -199,7 +201,7 @@ class VoxelShapesTest {
             public VoxelShapeStore voxelShapes() {
                 return store;
             }
-        };
+        });
         Paletter without = Paletter.builder().data(source).versions(version -> !version.equals(missing)).build();
         assertNotNull(without.palette(bundled.versions().get(1).protocolVersion()).voxelShapesPacket());
         PaletteException e = assertThrows(PaletteException.class, () -> Paletter.builder().data(source).build());

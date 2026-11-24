@@ -3,6 +3,8 @@ package dev.opencollab.paletter;
 import dev.opencollab.paletter.data.DataVersion;
 import dev.opencollab.paletter.data.PaletteDataSource;
 import dev.opencollab.paletter.data.VerifiedBuild;
+import dev.opencollab.paletter.internal.access.Access;
+import dev.opencollab.paletter.internal.data.DataLoader;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -15,7 +17,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 class VerifiedBuildsTest {
     @Test
     void everyBundledReleaseVersionHasABuildThatServesIt() {
-        PaletteDataSource bundled = PaletteDataSource.bundled();
+        DataLoader bundled = Access.data().loader(PaletteDataSource.bundled());
         Paletter paletter = Paletter.bundled();
         for (DataVersion version : paletter.versions()) {
             List<VerifiedBuild> builds = paletter.verifiedBuilds(version);
@@ -31,7 +33,7 @@ class VerifiedBuildsTest {
 
     @Test
     void aSourceWithoutTheListHasNoBuilds() {
-        PaletteDataSource source = new PaletteDataSource() {
+        PaletteDataSource source = Access.data().source(new DataLoader() {
             @Override
             public List<DataVersion> versions() {
                 return PaletteDataSource.bundled().versions();
@@ -39,9 +41,9 @@ class VerifiedBuildsTest {
 
             @Override
             public dev.opencollab.paletter.internal.data.VanillaData load(DataVersion version) throws java.io.IOException {
-                return PaletteDataSource.bundled().load(version);
+                return Access.data().loader(PaletteDataSource.bundled()).load(version);
             }
-        };
+        });
         assertTrue(source.verifiedBuilds(Paletter.bundled().latest()).isEmpty());
     }
 }
