@@ -107,6 +107,9 @@ public final class Paletter {
         this.previews = builder.previews;
         this.behaviour = builder.behaviour;
         this.versions = source.versions().stream().filter(this::available).filter(builder.versions).toList();
+        if (versions.isEmpty()) {
+            throw new IllegalArgumentException("The versions predicate matches no data version of " + available());
+        }
         this.fallbacks = builder.fallbacks;
         this.vanillaContent = builder.vanillaContent.copy();
         for (DataVersion version : vanillaContent.experimentVersions()) {
@@ -221,9 +224,14 @@ public final class Paletter {
         return source == PaletteDataSource.bundled() && this != shared ? shared : null;
     }
 
+    /** The versions of the data this instance could serve: every version, without the previews unless previews are on. */
+    private List<DataVersion> available() {
+        return source.versions().stream().filter(this::available).toList();
+    }
+
     /** The newest version of the data, whether served or not: canonical ids are defined by it. */
     private DataVersion newest() {
-        return source.versions().stream().filter(this::available).reduce((older, newer) -> newer).orElseThrow();
+        return available().getLast();
     }
 
     /**
@@ -243,22 +251,49 @@ public final class Paletter {
     }
 
     /**
-     * Finds the data version serving a protocol version.
+     * Finds the data version serving a protocol version: the newest version of the data not newer than the protocol,
+     * whether this instance serves it or not. A data version this instance does not serve (see
+     * {@link Builder#versions(Predicate)}) is never replaced by an older one: its clients would get data that lacks
+     * their content.
      *
      * @param protocolVersion a Bedrock protocol version number
-     * @return the data version for a protocol version: the newest one not newer than it
-     * @throws IllegalArgumentException if the protocol version is older than all data
+     * @return the data version for the protocol version
+     * @throws IllegalArgumentException if the protocol version is older than all data, or its data version is not served
+     *         by this instance; {@link #supports(int)} tells beforehand
      * @since 1.0.0
      */
     public @NonNull DataVersion version(int protocolVersion) {
+        DataVersion found = dataVersion(protocolVersion);
+        if (found == null) {
+            throw new IllegalArgumentException("No Bedrock data for protocol " + protocolVersion + "; oldest is " + available().getFirst());
+        }
+        if (!versions.contains(found)) {
+            throw new IllegalArgumentException("Protocol " + protocolVersion + " needs the data of " + found
+                + ", which this Paletter does not serve (served: " + versions + ")");
+        }
+        return found;
+    }
+
+    /**
+     * Tells whether this instance serves a protocol version, so that {@link #version(int)} and {@link #palette(int)} do
+     * not throw for it.
+     *
+     * @param protocolVersion a Bedrock protocol version number
+     * @return true if the data version for the protocol (the newest one not newer than it) is served
+     * @since 1.0.0
+     */
+    public boolean supports(int protocolVersion) {
+        DataVersion found = dataVersion(protocolVersion);
+        return found != null && versions.contains(found);
+    }
+
+    /** The newest version of the data not newer than a protocol, served or not, or null if all are newer. */
+    private @Nullable DataVersion dataVersion(int protocolVersion) {
         DataVersion found = null;
-        for (DataVersion version : versions()) {
+        for (DataVersion version : available()) {
             if (version.protocolVersion() <= protocolVersion) {
                 found = version;
             }
-        }
-        if (found == null) {
-            throw new IllegalArgumentException("No Bedrock data for protocol " + protocolVersion + "; oldest is " + versions().getFirst());
         }
         return found;
     }
@@ -460,7 +495,8 @@ public final class Paletter {
      *
      * @param protocolVersion a Bedrock protocol version number
      * @return the palette serving it, never null
-     * @throws IllegalArgumentException if the protocol version is older than all data
+     * @throws IllegalArgumentException like {@link #version(int)}: the protocol version is older than all data, or its
+     *         data version is not served
      * @throws PaletteException if a layer of this instance cannot be compiled
      * @since 1.0.0
      */
@@ -489,6 +525,26 @@ public final class Paletter {
             return noted;
         }
         return palette;
+    }
+
+    /**
+     * Returns the palette of a data version this instance serves: vanilla content plus this instance's layers, as
+     * {@link #palette(int)} returns it for the protocols of the version.
+     *
+     * @param version a data version of {@link #versions()}
+     * @return the palette of the version
+     * @throws IllegalArgumentException if this instance does not serve the version
+     * @since 1.0.0
+     */
+    public @NonNull Palette palette(@NonNull DataVersion version) {
+        requireServed(version);
+        return compiled(version);
+    }
+
+    private void requireServed(DataVersion version) {
+        if (!versions.contains(Objects.requireNonNull(version))) {
+            throw new IllegalArgumentException(version + " is not served by this Paletter (served: " + versions + ")");
+        }
     }
 
     /**
@@ -651,7 +707,7 @@ public final class Paletter {
      *
      * @param codec the codec of a client's connection
      * @return the palette serving the codec's protocol version
-     * @throws IllegalArgumentException if the codec's protocol version is older than all data
+     * @throws IllegalArgumentException like {@link #version(int)}
      * @throws PaletteException if a layer of this instance cannot be compiled
      * @since 1.0.0
      */
@@ -698,9 +754,12 @@ public final class Paletter {
         }
 
         /**
-         * Restricts the data versions served.
+         * Restricts the data versions served. A client whose protocol needs a version left out is not served an older
+         * one instead: {@link Paletter#version(int)} and {@link Paletter#palette(int)} throw for it, and
+         * {@link Paletter#supports(int)} is false.
          *
-         * @param versions which data versions are served; default all
+         * @param versions which data versions are served; default all. It must accept at least one, or {@link #build()}
+         *                 throws {@link IllegalArgumentException}
          * @return this builder
          */
         public @NonNull Builder versions(@NonNull Predicate<DataVersion> versions) {
@@ -855,6 +914,7 @@ public final class Paletter {
          * versions with {@link #versions(Predicate)} to compile fewer.
          *
          * @return the Paletter
+         * @throws IllegalArgumentException if {@link #versions(Predicate)} accepts no data version
          * @throws PaletteException if a layer cannot be compiled: the first version's failure, after the palettes that
          *                          compiled were reported
          * @throws java.io.UncheckedIOException if the data source cannot be read

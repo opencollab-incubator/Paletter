@@ -167,7 +167,10 @@ data, the voxel shapes, the canonical, item, creative and resolution tables, the
 the behaviour values with every behaviour column (unless `behaviour(false)`; the values are generated classes, loaded the
 first time a Paletter with behaviour builds, and never loaded with `behaviour(false)`). After that no lookup on those palettes reads or
 builds data: `palette(...)` is a map read, and `resolve`, `behaviour().get`, `encode`, `decode` and the packet builders
-only use what is there. Narrow `versions(...)` to compile, and keep, fewer.
+only use what is there. Narrow `versions(...)` to compile, and keep, fewer. A client whose protocol needs a version that
+is not served is refused, never served an older version: `palette(protocol)` and `version(protocol)` throw
+`IllegalArgumentException`, and `supports(protocol)` tells beforehand. `palette(DataVersion)` returns the palette of a served
+version.
 
 What still happens on first use, and is thread safe (built once under a lock, read without one):
 

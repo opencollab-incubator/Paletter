@@ -18,8 +18,11 @@ import java.io.IOException;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Keys are the same whatever versions an instance serves, and canonical ids belong to the instance: a handle built from
@@ -103,5 +106,25 @@ class ServedVersionsTest {
             assertSame(BedrockBlocks.STONE.defaultState(), palette.blockState(BlockStates.of("minecraft:stone"), Lookup.RENAMED), where);
             assertSame(BedrockItems.POTION.variant(5), palette.itemVariant("minecraft:potion", 5, Lookup.RENAMED), where);
         }
+    }
+
+    @Test
+    void aVersionLeftOutIsNotReplacedByAnOlderOne() {
+        List<DataVersion> bundled = BUNDLED.versions();
+        DataVersion left = bundled.get(1);
+        Paletter paletter = Paletter.builder().versions(version -> !version.equals(left)).build();
+        assertFalse(paletter.supports(left.protocolVersion()));
+        assertThrows(IllegalArgumentException.class, () -> paletter.version(left.protocolVersion()));
+        assertThrows(IllegalArgumentException.class, () -> paletter.palette(left.protocolVersion()));
+        assertThrows(IllegalArgumentException.class, () -> paletter.palette(left));
+        DataVersion older = bundled.getFirst();
+        assertTrue(paletter.supports(older.protocolVersion()));
+        assertSame(paletter.palette(older.protocolVersion()), paletter.palette(older));
+        assertFalse(paletter.supports(older.protocolVersion() - 1));
+    }
+
+    @Test
+    void aPredicateThatMatchesNothingIsRefused() {
+        assertThrows(IllegalArgumentException.class, () -> Paletter.builder().versions(version -> false).build());
     }
 }
