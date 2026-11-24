@@ -156,7 +156,7 @@ public final class ApiBinder {
             }
         }
         if (block.has("components")) {
-            builder.components(blockComponents(block.getAsJsonObject("components")).toArray(BlockComponent[]::new));
+            builder.components(blockComponents(block.getAsJsonObject("components")));
         }
         if (block.has("permutations")) {
             for (JsonElement p : block.getAsJsonArray("permutations")) {

@@ -275,4 +275,21 @@ class CustomContentTest {
         assertEquals(first.report().warnings(), second.report().warnings());
         assertTrue(second.report().warnings().stream().noneMatch(w -> w.source().equals("second")));
     }
+
+    @Test
+    void tagsAreTheTagsComponentAndCopiesKeepTheDefinition() {
+        CustomBlock block = CustomBlock.builder("example:tagged").tag("example:a")
+            .component(dev.opencollab.paletter.block.component.BlockTags.builder().value("example:b").build())
+            .tags("example:c", "example:b").component(LightEmission.of(3)).build();
+        assertEquals(List.of("example:b", "example:c"), block.tags(), "the component replaced the earlier tags; tag() merges");
+        assertEquals(block, block.toBuilder().build());
+        assertEquals(block, CustomBlock.builder("example:tagged").component(LightEmission.of(3))
+            .tags(List.of("example:b", "example:c")).build(), "components in any order");
+        assertFalse(block.toBuilder().tag("example:d").build().equals(block));
+
+        CustomItem item = CustomItem.builder("example:tagged").tag("minecraft:is_food").component(Icon.of("x")).tag("example:x").build();
+        assertEquals(List.of("minecraft:is_food", "example:x"), item.tags());
+        assertEquals(item, item.toBuilder().build());
+        assertEquals(item, CustomItem.builder("example:tagged").component(Icon.of("x")).tags("minecraft:is_food", "example:x").build());
+    }
 }

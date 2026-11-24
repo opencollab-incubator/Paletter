@@ -12,8 +12,10 @@ import dev.opencollab.paletter.item.component.Tags;
 import dev.opencollab.paletter.vanilla.BedrockItemType;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 
 /**
  * A custom (data driven) item: an add-on JSON {@code minecraft:item} in Java. The palette assigns its runtime id and
@@ -148,6 +150,19 @@ public final class CustomItem {
     }
 
     /**
+     * Starts a builder with everything of this item, to make a changed copy. The copy has a type of its own.
+     *
+     * @return a builder with this item's definition
+     */
+    public @NonNull Builder toBuilder() {
+        Builder builder = new Builder(identifier);
+        builder.components.addAll(components);
+        builder.menuCategory = menuCategory;
+        builder.creative = creative;
+        return builder;
+    }
+
+    /**
      * Internal: the internal variant of the item, for its identifier.
      *
      * @return the internal variant with aux value 0 and no block state
@@ -158,17 +173,19 @@ public final class CustomItem {
     }
 
     /**
-     * @return true for an item with the same identifier and definition; its {@link #type()} is not compared
+     * @return true for an item with the same identifier and definition (components in any order); its {@link #type()} is not
+     *         compared
      */
     @Override
     public boolean equals(Object o) {
-        return this == o || o instanceof CustomItem other && identifier.equals(other.identifier) && components.equals(other.components)
+        return this == o || o instanceof CustomItem other && identifier.equals(other.identifier)
+            && components.size() == other.components.size() && Set.copyOf(components).equals(Set.copyOf(other.components))
             && Objects.equals(menuCategory, other.menuCategory) && Objects.equals(creative, other.creative);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(identifier, components, menuCategory, creative);
+        return Objects.hash(identifier, Set.copyOf(components), menuCategory, creative);
     }
 
     @Override
@@ -208,15 +225,67 @@ public final class CustomItem {
         /**
          * Adds components, replacing those of the same names.
          *
-         * @param components the components
+         * @param first the first component
+         * @param rest the other components
          * @return this builder
          * @throws NullPointerException if a component is null
          */
-        public @NonNull Builder components(@NonNull ItemComponent... components) {
-            for (ItemComponent component : components) {
+        public @NonNull Builder components(@NonNull ItemComponent first, @NonNull ItemComponent @NonNull ... rest) {
+            component(first);
+            for (ItemComponent component : rest) {
                 component(component);
             }
             return this;
+        }
+
+        /**
+         * Adds item tags to the item's {@link Tags} component ({@code minecraft:tags}, created if there is none). Tags it
+         * has already are skipped. This and {@link #component(ItemComponent) component(Tags)} are one mechanism: the
+         * component holds the tags.
+         *
+         * @param first the first tag, e.g. {@code minecraft:is_food}
+         * @param rest the other tags
+         * @return this builder
+         * @throws NullPointerException if a tag is null
+         */
+        public @NonNull Builder tags(@NonNull String first, @NonNull String @NonNull ... rest) {
+            List<String> tags = new ArrayList<>(rest.length + 1);
+            tags.add(first);
+            tags.addAll(Arrays.asList(rest));
+            return tags(tags);
+        }
+
+        /**
+         * Adds item tags, see {@link #tags(String, String...)}.
+         *
+         * @param tags the tags
+         * @return this builder
+         * @throws NullPointerException if a tag is null
+         */
+        public @NonNull Builder tags(@NonNull List<String> tags) {
+            List<String> merged = new ArrayList<>();
+            for (ItemComponent component : components) {
+                if (component instanceof Tags existing) {
+                    merged.addAll(existing.tags());
+                }
+            }
+            for (String tag : tags) {
+                if (!merged.contains(Objects.requireNonNull(tag, "tag"))) {
+                    merged.add(tag);
+                }
+            }
+            return merged.isEmpty() ? this : component(Tags.builder().tags(merged).build());
+        }
+
+        /**
+         * Adds one item tag, see {@link #tags(String, String...)}.
+         *
+         * @param tag the tag
+         * @return this builder
+         * @throws NullPointerException if the tag is null
+         */
+        public @NonNull Builder tag(@NonNull String tag) {
+            return tags(List.of(tag));
         }
 
         /**

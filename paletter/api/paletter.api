@@ -503,6 +503,7 @@ public final class dev.opencollab.paletter.block.CustomBlock {
     public java.util.List<dev.opencollab.paletter.block.BlockProperty<?>> stateProperties()
     public java.util.List<org.cloudburstmc.nbt.NbtMap> states()
     public java.util.List<java.lang.String> tags()
+    public dev.opencollab.paletter.block.CustomBlock$Builder toBuilder()
     public java.lang.String toString()
     public java.util.List<dev.opencollab.paletter.block.component.BlockTrait> traits()
     public dev.opencollab.paletter.vanilla.BedrockBlockType type()
@@ -532,7 +533,8 @@ public static final class dev.opencollab.paletter.block.CustomBlock$BlockItem$Si
 public static final class dev.opencollab.paletter.block.CustomBlock$Builder {
     public dev.opencollab.paletter.block.CustomBlock build()
     public dev.opencollab.paletter.block.CustomBlock$Builder component(dev.opencollab.paletter.block.component.BlockComponent)
-    public dev.opencollab.paletter.block.CustomBlock$Builder components(dev.opencollab.paletter.block.component.BlockComponent...)
+    public dev.opencollab.paletter.block.CustomBlock$Builder components(dev.opencollab.paletter.block.component.BlockComponent, dev.opencollab.paletter.block.component.BlockComponent...)
+    public dev.opencollab.paletter.block.CustomBlock$Builder components(java.util.List<? extends dev.opencollab.paletter.block.component.BlockComponent>)
     public dev.opencollab.paletter.block.CustomBlock$Builder creativePlacement(dev.opencollab.paletter.creative.CreativePlacement)
     public dev.opencollab.paletter.block.CustomBlock$Builder defaultState(java.lang.String, int)
     public dev.opencollab.paletter.block.CustomBlock$Builder defaultState(java.lang.String, java.lang.Object)
@@ -542,11 +544,15 @@ public static final class dev.opencollab.paletter.block.CustomBlock$Builder {
     public dev.opencollab.paletter.block.CustomBlock$Builder menuCategory(dev.opencollab.paletter.creative.CreativeCategory)
     public dev.opencollab.paletter.block.CustomBlock$Builder menuCategory(dev.opencollab.paletter.creative.CreativeCategory, java.lang.String)
     public dev.opencollab.paletter.block.CustomBlock$Builder permutation(dev.opencollab.paletter.block.CustomBlock$Permutation)
-    public dev.opencollab.paletter.block.CustomBlock$Builder permutation(java.lang.String, dev.opencollab.paletter.block.component.BlockComponent...)
+    public dev.opencollab.paletter.block.CustomBlock$Builder permutation(java.lang.String, dev.opencollab.paletter.block.component.BlockComponent, dev.opencollab.paletter.block.component.BlockComponent...)
+    public dev.opencollab.paletter.block.CustomBlock$Builder permutations(java.util.List<dev.opencollab.paletter.block.CustomBlock$Permutation>)
+    public dev.opencollab.paletter.block.CustomBlock$Builder properties(java.util.List<? extends dev.opencollab.paletter.block.BlockProperty<?>>)
     public dev.opencollab.paletter.block.CustomBlock$Builder property(dev.opencollab.paletter.block.BlockProperty<?>)
     public dev.opencollab.paletter.block.CustomBlock$Builder tag(java.lang.String)
-    public dev.opencollab.paletter.block.CustomBlock$Builder tags(java.lang.String...)
+    public dev.opencollab.paletter.block.CustomBlock$Builder tags(java.lang.String, java.lang.String...)
+    public dev.opencollab.paletter.block.CustomBlock$Builder tags(java.util.List<java.lang.String>)
     public dev.opencollab.paletter.block.CustomBlock$Builder trait(dev.opencollab.paletter.block.component.BlockTrait)
+    public dev.opencollab.paletter.block.CustomBlock$Builder traits(java.util.List<? extends dev.opencollab.paletter.block.component.BlockTrait>)
 }
 
 public static final class dev.opencollab.paletter.block.CustomBlock$Permutation {
@@ -2586,6 +2592,7 @@ public final class dev.opencollab.paletter.item.CustomItem {
     public java.lang.String identifier()
     public dev.opencollab.paletter.item.component.ItemMenuCategory menuCategory()
     public java.util.List<java.lang.String> tags()
+    public dev.opencollab.paletter.item.CustomItem$Builder toBuilder()
     public java.lang.String toString()
     public dev.opencollab.paletter.vanilla.BedrockItemType type()
 }
@@ -2593,12 +2600,15 @@ public final class dev.opencollab.paletter.item.CustomItem {
 public static final class dev.opencollab.paletter.item.CustomItem$Builder {
     public dev.opencollab.paletter.item.CustomItem build()
     public dev.opencollab.paletter.item.CustomItem$Builder component(dev.opencollab.paletter.item.component.ItemComponent)
+    public dev.opencollab.paletter.item.CustomItem$Builder components(dev.opencollab.paletter.item.component.ItemComponent, dev.opencollab.paletter.item.component.ItemComponent...)
     public dev.opencollab.paletter.item.CustomItem$Builder components(java.util.List<? extends dev.opencollab.paletter.item.component.ItemComponent>)
-    public dev.opencollab.paletter.item.CustomItem$Builder components(dev.opencollab.paletter.item.component.ItemComponent...)
     public dev.opencollab.paletter.item.CustomItem$Builder creativePlacement(dev.opencollab.paletter.creative.CreativePlacement)
     public dev.opencollab.paletter.item.CustomItem$Builder menuCategory(dev.opencollab.paletter.creative.CreativeCategory)
     public dev.opencollab.paletter.item.CustomItem$Builder menuCategory(dev.opencollab.paletter.creative.CreativeCategory, java.lang.String)
     public dev.opencollab.paletter.item.CustomItem$Builder menuCategory(dev.opencollab.paletter.item.component.ItemMenuCategory)
+    public dev.opencollab.paletter.item.CustomItem$Builder tag(java.lang.String)
+    public dev.opencollab.paletter.item.CustomItem$Builder tags(java.lang.String, java.lang.String...)
+    public dev.opencollab.paletter.item.CustomItem$Builder tags(java.util.List<java.lang.String>)
 }
 
 public final class dev.opencollab.paletter.item.ItemFallback {

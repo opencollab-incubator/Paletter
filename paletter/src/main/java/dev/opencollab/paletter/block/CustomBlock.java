@@ -62,7 +62,6 @@ public final class CustomBlock {
     private final BlockItem item;
     private final CreativePlacement creative;
     private final Map<String, Object> defaultStates;
-    private final List<String> tags;
     private final BedrockBlockType type;
     private final BedrockItemType itemType;
 
@@ -76,12 +75,11 @@ public final class CustomBlock {
      * @param item how the block item is registered
      * @param creative the position of the block item within its category and group
      * @param defaultStates state values of the default state; properties not listed use their first value
-     * @param tags block tags, queryable with Molang (sent as the block's {@code blockTags})
      */
     private CustomBlock(@NonNull String identifier, @NonNull List<BlockProperty<?>> properties, @NonNull List<BlockTrait> traits,
                        @NonNull List<BlockComponent> components, @NonNull List<Permutation> permutations,
                        @Nullable BlockMenuCategory menuCategory, @NonNull BlockItem item, @NonNull CreativePlacement creative,
-                       @NonNull Map<String, Object> defaultStates, @NonNull List<String> tags) {
+                       @NonNull Map<String, Object> defaultStates) {
         this.identifier = Objects.requireNonNull(identifier, "identifier");
         this.properties = List.copyOf(properties);
         this.traits = List.copyOf(traits);
@@ -90,7 +88,6 @@ public final class CustomBlock {
         this.menuCategory = menuCategory;
         this.item = item instanceof BlockItem.Custom custom ? custom.resolve(identifier) : Objects.requireNonNull(item, "item");
         this.creative = creative;
-        this.tags = List.copyOf(tags);
         checkUvLock(identifier, this.components);
         for (Permutation permutation : this.permutations) {
             checkUvLock(identifier, permutation.components());
@@ -201,12 +198,31 @@ public final class CustomBlock {
     }
 
     /**
-     * The block tags.
+     * The block tags: the {@link BlockTags} component's, which {@link Builder#tag} adds to.
      *
-     * @return block tags, queryable with Molang (sent as the block's {@code blockTags})
+     * @return block tags, queryable with Molang (sent as the block's {@code blockTags}); empty without the component
      */
     public @NonNull List<String> tags() {
-        return tags;
+        BlockTags tags = component(BlockTags.class);
+        return tags == null ? List.of() : tags.value();
+    }
+
+    /**
+     * Starts a builder with everything of this block, to make a changed copy. The copy has types of its own.
+     *
+     * @return a builder with this block's definition
+     */
+    public @NonNull Builder toBuilder() {
+        Builder builder = new Builder(identifier);
+        builder.properties.addAll(properties);
+        builder.traits.addAll(traits);
+        builder.components.addAll(components);
+        builder.permutations.addAll(permutations);
+        builder.menuCategory = menuCategory;
+        builder.item = item;
+        builder.creative = creative;
+        builder.defaultStates.putAll(defaultStates);
+        return builder;
     }
 
     /** The most state combinations a block may have, like vanilla blocks. */
@@ -631,26 +647,26 @@ public final class CustomBlock {
     }
 
     /**
-     * @return true for a block with the same identifier and definition; its types are not compared
+     * @return true for a block with the same identifier and definition (components in any order); its types are not compared
      */
     @Override
     public boolean equals(Object o) {
         return this == o || o instanceof CustomBlock other && identifier.equals(other.identifier) && properties.equals(other.properties)
-            && traits.equals(other.traits) && components.equals(other.components) && permutations.equals(other.permutations)
+            && traits.equals(other.traits) && sameComponents(components, other.components) && permutations.equals(other.permutations)
             && Objects.equals(menuCategory, other.menuCategory) && item.equals(other.item) && creative.equals(other.creative)
-            && defaultStates.equals(other.defaultStates) && tags.equals(other.tags);
+            && defaultStates.equals(other.defaultStates);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(identifier, properties, traits, components, permutations, menuCategory, item, creative, defaultStates, tags);
+        return Objects.hash(identifier, properties, traits, Set.copyOf(components), permutations, menuCategory, item, creative, defaultStates);
     }
 
     @Override
     public String toString() {
         return "CustomBlock[identifier=" + identifier + ", properties=" + properties + ", traits=" + traits + ", components="
             + components + ", permutations=" + permutations + ", menuCategory=" + menuCategory + ", item=" + item + ", creative="
-            + creative + ", defaultStates=" + defaultStates + ", tags=" + tags + "]";
+            + creative + ", defaultStates=" + defaultStates + "]";
     }
 
     /**
@@ -666,7 +682,6 @@ public final class CustomBlock {
         private BlockItem item = BlockItem.SIMPLE;
         private CreativePlacement creative = CreativePlacement.DEFAULT;
         private final Map<String, Object> defaultStates = new LinkedHashMap<>();
-        private final List<String> tags = new ArrayList<>();
 
         private Builder(String identifier) {
             this.identifier = Objects.requireNonNull(identifier);
@@ -690,6 +705,18 @@ public final class CustomBlock {
         }
 
         /**
+         * Adds state properties, see {@link #property(BlockProperty)}.
+         *
+         * @param properties the properties, in order
+         * @return this builder
+         * @throws IllegalArgumentException if a property with the same name was already added
+         */
+        public @NonNull Builder properties(@NonNull List<? extends BlockProperty<?>> properties) {
+            properties.forEach(this::property);
+            return this;
+        }
+
+        /**
          * Adds a trait, replacing one of the same name.
          *
          * @param trait the trait
@@ -699,6 +726,18 @@ public final class CustomBlock {
         public @NonNull Builder trait(@NonNull BlockTrait trait) {
             traits.removeIf(existing -> existing.name().equals(trait.name()));
             traits.add(Objects.requireNonNull(trait, "trait"));
+            return this;
+        }
+
+        /**
+         * Adds traits, replacing those of the same names.
+         *
+         * @param traits the traits
+         * @return this builder
+         * @throws NullPointerException if a trait is null
+         */
+        public @NonNull Builder traits(@NonNull List<? extends BlockTrait> traits) {
+            traits.forEach(this::trait);
             return this;
         }
 
@@ -718,13 +757,28 @@ public final class CustomBlock {
         /**
          * Adds base components, replacing those of the same names.
          *
-         * @param components the components
+         * @param first the first component
+         * @param rest the other components
          * @return this builder
+         * @throws NullPointerException if a component is null
          */
-        public @NonNull Builder components(@NonNull BlockComponent... components) {
-            for (BlockComponent component : components) {
+        public @NonNull Builder components(@NonNull BlockComponent first, @NonNull BlockComponent @NonNull ... rest) {
+            component(first);
+            for (BlockComponent component : rest) {
                 component(component);
             }
+            return this;
+        }
+
+        /**
+         * Adds base components, replacing those of the same names.
+         *
+         * @param components the components
+         * @return this builder
+         * @throws NullPointerException if a component is null
+         */
+        public @NonNull Builder components(@NonNull List<? extends BlockComponent> components) {
+            components.forEach(this::component);
             return this;
         }
 
@@ -732,12 +786,13 @@ public final class CustomBlock {
          * Adds a permutation: components applied when a Molang condition on the state holds.
          *
          * @param condition a Molang condition, e.g. {@code q.block_state('example:lit') == 1}
-         * @param components the components applied when it holds
+         * @param first the first component applied when it holds
+         * @param rest the other components
          * @return this builder
-         * @throws IllegalArgumentException if two components have the same name
+         * @throws IllegalArgumentException if two components have the same name, or one is {@code minecraft:tags}
          */
-        public @NonNull Builder permutation(@NonNull String condition, @NonNull BlockComponent... components) {
-            permutations.add(Permutation.of(condition, List.of(components)));
+        public @NonNull Builder permutation(@NonNull String condition, @NonNull BlockComponent first, @NonNull BlockComponent @NonNull ... rest) {
+            permutations.add(Permutation.of(condition, first, rest));
             return this;
         }
 
@@ -748,7 +803,19 @@ public final class CustomBlock {
          * @return this builder
          */
         public @NonNull Builder permutation(@NonNull Permutation permutation) {
-            permutations.add(permutation);
+            permutations.add(Objects.requireNonNull(permutation, "permutation"));
+            return this;
+        }
+
+        /**
+         * Adds permutations, in order.
+         *
+         * @param permutations the permutations
+         * @return this builder
+         * @throws NullPointerException if a permutation is null
+         */
+        public @NonNull Builder permutations(@NonNull List<Permutation> permutations) {
+            permutations.forEach(this::permutation);
             return this;
         }
 
@@ -856,29 +923,53 @@ public final class CustomBlock {
         }
 
         /**
-         * Adds block tags, queryable with Molang. Tags already added are skipped.
+         * Adds block tags, queryable with Molang, to the block's {@link BlockTags} component (created if there is none).
+         * Tags it has already are skipped. This and {@link #component(BlockComponent) component(BlockTags)} are one
+         * mechanism: the component holds the tags.
+         *
+         * @param first the first tag
+         * @param rest the other tags
+         * @return this builder
+         * @throws NullPointerException if a tag is null
+         */
+        public @NonNull Builder tags(@NonNull String first, @NonNull String @NonNull ... rest) {
+            List<String> tags = new ArrayList<>(rest.length + 1);
+            tags.add(first);
+            tags.addAll(Arrays.asList(rest));
+            return tags(tags);
+        }
+
+        /**
+         * Adds block tags, see {@link #tags(String, String...)}.
          *
          * @param tags the tags
          * @return this builder
          * @throws NullPointerException if a tag is null
          */
-        public @NonNull Builder tags(@NonNull String... tags) {
-            for (String tag : tags) {
-                if (!this.tags.contains(tag)) {
-                    this.tags.add(Objects.requireNonNull(tag, "tag"));
+        public @NonNull Builder tags(@NonNull List<String> tags) {
+            List<String> merged = new ArrayList<>();
+            for (BlockComponent component : components) {
+                if (component instanceof BlockTags existing) {
+                    merged.addAll(existing.value());
                 }
             }
-            return this;
+            for (String tag : tags) {
+                if (!merged.contains(Objects.requireNonNull(tag, "tag"))) {
+                    merged.add(tag);
+                }
+            }
+            return merged.isEmpty() ? this : component(BlockTags.builder().value(merged).build());
         }
 
         /**
-         * Adds one block tag, see {@link #tags(String...)}.
+         * Adds one block tag, see {@link #tags(String, String...)}.
          *
          * @param tag the tag
          * @return this builder
+         * @throws NullPointerException if the tag is null
          */
         public @NonNull Builder tag(@NonNull String tag) {
-            return tags(tag);
+            return tags(List.of(tag));
         }
 
         /**
@@ -889,7 +980,7 @@ public final class CustomBlock {
          *         2^24 state combinations, or a default state names a missing property or value
          */
         public @NonNull CustomBlock build() {
-            return new CustomBlock(identifier, properties, traits, components, permutations, menuCategory, item, creative, defaultStates, tags);
+            return new CustomBlock(identifier, properties, traits, components, permutations, menuCategory, item, creative, defaultStates);
         }
     }
 }
