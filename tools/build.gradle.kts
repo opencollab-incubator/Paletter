@@ -73,6 +73,21 @@ application {
 tasks.distZip { enabled = false }
 tasks.distTar { enabled = false }
 
+// The componentApi classes are a directory on the runtime classpath, which the distribution leaves out: the launcher gets
+// them as a jar of their own, or every command fails with NoClassDefFoundError
+val componentApiJar = tasks.register<Jar>("componentApiJar") {
+    archiveClassifier.set("component-api")
+    from(componentApi.output)
+}
+distributions.main {
+    contents {
+        into("lib") { from(componentApiJar) }
+    }
+}
+tasks.startScripts {
+    classpath = classpath!! + files(componentApiJar)
+}
+
 tasks.named<JavaExec>("run") {
     workingDir = rootProject.projectDir
     // update starts Bedrock Dedicated Servers; let it read stdin-less and stop them on Ctrl+C
