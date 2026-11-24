@@ -523,7 +523,7 @@ public final class Palette {
         if (!(newestVersion ? id != -1 : inVersion(state)) && (lookup == Lookup.EXACT || id != -1)) {
             return null;
         }
-        return canonical.handle(Canonicals.block(canonical, state));
+        return canonical.handle(Canonicals.lookupBlock(canonical, state));
     }
 
     /**
@@ -647,7 +647,17 @@ public final class Palette {
         String toggle = gating.disabledBlocks().get(name);
         return blockState(state, lookup) != null ? null
             : refused(name, lookup, toggle != null ? disabled(toggle) : null,
-                Canonicals.forwardBlock(blocks.canonical(), state), () -> differingKeys(state));
+                forwardingForExplanation(state), () -> differingKeys(state));
+    }
+
+    /** What the lookup refused: the strict forwarding, unless it only refused a value, which the differing keys name. */
+    private Forwarding forwardingForExplanation(NbtMap state) {
+        Forwarding strict = Canonicals.lookupForwardBlock(blocks.canonical(), state);
+        if (strict.known()) {
+            return strict;
+        }
+        Forwarding lenient = Canonicals.forwardBlock(blocks.canonical(), state);
+        return lenient.known() ? lenient : strict;
     }
 
     /**

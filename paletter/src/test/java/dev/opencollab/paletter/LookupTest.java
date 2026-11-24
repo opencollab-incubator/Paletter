@@ -9,6 +9,7 @@ import dev.opencollab.paletter.internal.block.BlockStates;
 import dev.opencollab.paletter.vanilla.BedrockBlockState;
 import dev.opencollab.paletter.vanilla.BedrockBlockType;
 import dev.opencollab.paletter.vanilla.BedrockBlocks;
+import dev.opencollab.paletter.vanilla.BedrockStates;
 import dev.opencollab.paletter.vanilla.BedrockItemType;
 import dev.opencollab.paletter.vanilla.BedrockItemVariant;
 import dev.opencollab.paletter.vanilla.BedrockItems;
@@ -63,6 +64,18 @@ class LookupTest {
         for (DataVersion version : PALETTER.versions()) {
             assertSame(mapped, PALETTER.vanilla(version).blockState(changed, Lookup.RENAMED), version.toString());
         }
+    }
+
+    @Test
+    void renamedDoesNotResetInvalidValues() {
+        // A value the block does not have is no match, not its default (as an aux an item lacks is none)
+        NbtMap bad = BlockStates.of("minecraft:wheat", java.util.Map.of("growth", 99));
+        assertNull(LATEST.blockState(bad, Lookup.RENAMED));
+        assertNotNull(LATEST.explainUnknown(bad, Lookup.RENAMED));
+        assertNull(LATEST.blockState("minecraft:wheat", java.util.Map.of("growth", 99), Lookup.RENAMED));
+        // A key the block does not have anymore is a change of shape: dropped
+        NbtMap extra = BlockStates.of("minecraft:wheat", java.util.Map.of("growth", 3, "removed_key", 1));
+        assertEquals(BedrockBlocks.WHEAT.state().with(BedrockStates.GROWTH, 3).build(), LATEST.blockState(extra, Lookup.RENAMED));
     }
 
     @Test

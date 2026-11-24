@@ -26,6 +26,8 @@ public enum Lookup {
     /**
      * Also accepts content of an older bundled version, mapped forward to what the palette's version has under a new
      * name: renamed blocks and items, changed state keys. Only unchanged content is checked against the palette's version.
+     * A key a block added gets its default and a removed one is dropped, but a value the block does not have for a key
+     * it still has (or a combination it lacks) is no match: invalid input is not reset to defaults.
      */
     RENAMED
 }

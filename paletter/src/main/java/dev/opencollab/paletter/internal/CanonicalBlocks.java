@@ -197,12 +197,23 @@ public final class CanonicalBlocks {
      * @since 1.0.0
      */
     public @NonNull Forwarding forward(@NonNull NbtMap state) {
+        return forward(state, false);
+    }
+
+    /**
+     * {@link #forward(NbtMap)}, strictly or not. Strictly, as a {@code Lookup.RENAMED} lookup of untrusted input forwards,
+     * only a change of shape is adapted (a renamed block, a key added or removed): a value the newest block does not
+     * have for a key it still has, or a combination it does not have, is {@link Forwarding.Kind#UNKNOWN} instead of its
+     * default, like an item variant without its aux.
+     */
+    @Internal
+    public @NonNull Forwarding forward(@NonNull NbtMap state, boolean strict) {
         NbtMap normalized = BlockStates.normalize(state);
         int exact = index(normalized);
         if (exact != -1) {
             return new Forwarding(exact, Forwarding.Kind.EXACT, "");
         }
-        return root().forwardVanilla(normalized);
+        return root().forwardVanilla(normalized, strict);
     }
 
     /**
@@ -328,7 +339,7 @@ public final class CanonicalBlocks {
         return found >= 0 ? found : -found - 2;
     }
 
-    private Forwarding forwardVanilla(NbtMap state) {
+    private Forwarding forwardVanilla(NbtMap state, boolean strict) {
         Map<String, Schema> schemas = schemas();
         String name = BlockStates.name(state);
         String target = name;
@@ -350,9 +361,16 @@ public final class CanonicalBlocks {
         Map<String, Object> adapted = new HashMap<>();
         for (Map.Entry<String, Object> entry : defaults.entrySet()) {
             Object value = requested.get(entry.getKey());
+            if (value instanceof Boolean flag) {
+                // NBT keeps booleans as bytes
+                value = (byte) (flag ? 1 : 0);
+            }
             if (value != null && schema.values.get(entry.getKey()).contains(value)) {
                 adapted.put(entry.getKey(), value);
             } else {
+                if (value != null && strict) {
+                    return Forwarding.unknown("block " + target + " has no value " + value + " of state " + entry.getKey() + " in " + version);
+                }
                 adapted.put(entry.getKey(), entry.getValue());
                 detail.add(value == null ? "state " + entry.getKey() + " is new, set to its default " + entry.getValue()
                     : "state " + entry.getKey() + "=" + value + " does not exist anymore, reset to " + entry.getValue());
@@ -365,6 +383,9 @@ public final class CanonicalBlocks {
         }
         int found = index(BlockStates.of(target, adapted));
         if (found == -1) {
+            if (strict) {
+                return Forwarding.unknown("block " + target + " has no state " + adapted + " in " + version);
+            }
             // The combination does not exist; the default is the best remaining guess
             found = index(schema.defaultState);
             detail.add("that combination does not exist, using the default state");

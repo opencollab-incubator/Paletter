@@ -219,7 +219,9 @@ Lookups are on `Palette`, because the palette is the version. `Palette#blockStat
 `itemType(identifier, Lookup)` and `blockType(identifier, Lookup)` take the `Lookup` explicitly: `Lookup.EXACT` accepts only
 what exists as written in the palette's own version, `Lookup.RENAMED` also content of an older bundled version, mapped
 forward (renamed identifiers following `renames.txt`, changed state keys); only content that is unchanged is checked
-against the palette's version. Each returns null if the lookup does not accept the content, and
+against the palette's version. A changed shape is adapted (a key the newest block added gets its default, a removed one is
+dropped), but a value the newest block does not have for a key it still has, or a combination it lacks, is no match, as an
+aux the item lacks is none: untrusted input is not reset to defaults. Each returns null if the lookup does not accept the content, and
 `explainUnknown(..., Lookup)` says why, naming the keys that differ from the closest known state (a block state key or value,
 the aux of an item). Content of the palette's layers is always accepted.
 

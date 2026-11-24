@@ -32,6 +32,19 @@ public final class Canonicals {
         return blocks.forward(state);
     }
 
+    /**
+     * @return the canonical id of a state for a {@code Lookup.RENAMED} lookup: like {@link #block}, but a value or
+     *         combination the newest block lacks is no match ({@link CanonicalBlocks#forward(NbtMap, boolean)}), or -1
+     */
+    public static int lookupBlock(@NonNull CanonicalBlocks blocks, @NonNull NbtMap state) {
+        int exact = blocks.index(state);
+        return exact != -1 ? exact : blocks.forward(state, true).canonical();
+    }
+
+    public static @NonNull Forwarding lookupForwardBlock(@NonNull CanonicalBlocks blocks, @NonNull NbtMap state) {
+        return blocks.forward(state, true);
+    }
+
     public static @NonNull Forwarding forwardItem(@NonNull CanonicalItems items, @NonNull ItemVariant variant) {
         return items.forward(variant);
     }
