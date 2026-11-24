@@ -144,7 +144,7 @@ that stay manual:
 - the order of states inside newly generated blocks, which BDS does not expose (`ReferencePalette#keyOrder` infers it from the
   previous release; check against CloudburstMC/Data with `verify` once it has the version);
 - adding a codec for a new protocol to the Cloudburst protocol library;
-- the version pins and the `BDS_DATA_TOKEN` rotation, all listed in [updating.md](updating.md#pins).
+- the version pins, all listed in [updating.md](updating.md#pins).
 
 The capture client uses RakNet when the server answers a RakNet ping and NetherNet otherwise (1.26.70 previews only
 speak NetherNet). With `online-mode=false` no Xbox sign-in is involved.
@@ -306,7 +306,7 @@ new one lacks stay in `data/bds/<build>`; the patch has no deletions of them.
 
 **Security.** The jobs that run the BDS binary and Gradle over captures (`capture`, and `assemble`, which runs Gradle on
 data from the capture jobs) have `contents: read`, no credentials in the checkout and no secrets. Only `publish` has write
-permissions and `BDS_DATA_TOKEN`, and it runs no Gradle, BDS or repository script: it applies a patch confined to the data
+permissions, and it runs no Gradle, BDS or repository script: it applies a patch confined to the data
 paths (no other path, no segment starting with `.`, no renames, no links, and every changed path of the working tree checked again). Artifacts
 are data: the build names are checked against the plan and strict patterns, the captures may hold only regular files and
 directories, every path matches a plain relative-path pattern without a segment starting with `.`, size is capped, and nothing in an artifact is
@@ -533,14 +533,14 @@ hand (`channel`, `version`, `force`, `verify-only`), in three jobs:
    generation failed on written data; `differs`; `hash`: the report without its date and path lines; `addon`: whether
    the patch changes an add-on input), deleting the patch when there is nothing to publish. The zips come from the
    cache ([CI](#ci)).
-3. `publish` (the only job with write permissions and `BDS_DATA_TOKEN`; it runs no build) reads the result against
+3. `publish` (the only job with write permissions; it runs no build) reads the result against
    strict patterns. New data (exit 0 or 2) becomes a pull request from `bds-data/<channel>` through
    `.github/actions/data-pr` (shared with the recapture: only a patch confined to the data paths is applied), whose body starts with `<!-- bds-check: <build> <data tree> -->`, `Closes #n` when the channel's failure issue is open,
    and a notice when an add-on input changed. A failure opens the channel's issue (`BDS data: the <channel> check
    failed`) or rewrites its body, with `<!-- bds-check: <build> <commit> <attempt> -->`; it comments only when the report
    changed. A failure is retried once on the next day, then skipped until a new commit (a fix) or a new build; `force`
-   always runs. A clean run closes the issue (not a run of an explicit `version`). A patch that changes generated code
-   needs the `BDS_DATA_TOKEN` secret, so the build runs on its pull request.
+   always runs. A clean run closes the issue (not a run of an explicit `version`). After opening or updating the pull
+   request, it starts `build.yml` on its branch.
 
 A build that became known by a pull request made by hand leaves its failure issue open: `decide` has no write scope, so
 a person closes it.

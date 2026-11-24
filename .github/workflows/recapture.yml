@@ -12,7 +12,7 @@
 #             directories, every path on an allow-list, a size cap; all valid or nothing staged), lays them over
 #             data/bds/<build> and runs the sequential half. It runs Gradle over data from the capture jobs, so it has no
 #             write permission and no secret either; it hands over a patch of the data paths and a report.
-#   publish   the only job with write permissions and BDS_DATA_TOKEN. Runs no Gradle or BDS and no repository code but
+#   publish   the only job with write permissions. Runs no Gradle or BDS and no repository code but
 #             .github/actions/data-pr from the pinned checkout of the branch, and applies only a patch confined to the
 #             data paths. Skipped with `dry-run`.
 # No script of an artifact is ever run, and no value of an artifact reaches a shell as code.
@@ -20,8 +20,7 @@
 # The capture platform stays Windows (`CapturePlatform`): the committed captures come from Windows BDS, and the daily
 # check captures on GitHub's Windows runners too. `update` refuses to run against committed captures of another platform.
 #
-# Pull requests opened with GITHUB_TOKEN do not start other workflows: set BDS_DATA_TOKEN (docs/releasing.md) to run the
-# build on the recapture pull request. A patch that changes generated code is only turned into a pull request with it.
+# Pull requests opened with GITHUB_TOKEN do not start other workflows, so publish starts build.yml on them by hand.
 
 name: Recapture
 
@@ -255,6 +254,8 @@ jobs:
     permissions:
       contents: write
       pull-requests: write
+      # Starts build.yml on the pull request
+      actions: write
     steps:
       # Checked again here: this job holds the token, and the branch name ends up in a ref and a pull request base
       - name: Check the branch name
@@ -289,9 +290,6 @@ jobs:
         uses: ./.github/actions/data-pr
         with:
           patch: ${{ runner.temp }}/in/data.patch
-          # Whether the token that makes the build run on the pull request is set (never the token itself)
-          has-token: ${{ secrets.BDS_DATA_TOKEN != '' }}
-          token: ${{ secrets.BDS_DATA_TOKEN || github.token }}
           base: ${{ needs.plan.outputs.base }}
           branch: recapture/${{ needs.plan.outputs.base }}
           title: "Recapture every BDS build with the current add-on"

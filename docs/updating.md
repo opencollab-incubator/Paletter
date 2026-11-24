@@ -52,8 +52,7 @@ Reviewing the pull request:
    are committed together. New names that collide or are invalid fail generation until
    `data/model/constant-names.txt` names them (`blocks|items|states|enums <key> <name>`).
 5. The build must be green (`./gradlew build`, which includes `checkConstants`, `checkComponentApi`, `checkBlocks`,
-   `checkVoxelShapes`, `checkMappings`, `checkData`, `checkBuilds`). A patch that changes generated code only becomes a PR with
-   `BDS_DATA_TOKEN` set.
+   `checkVoxelShapes`, `checkMappings`, `checkData`, `checkBuilds`).
 6. Merge. Decisions the report lists stay manual (below); exit code 2 means "written, decisions open".
 
 When it reports decisions or FAILs:
@@ -221,7 +220,6 @@ itself is listed below the table.
 | Script module of the script custom components (`scriptComponents.module`) | `data/model/fixtures.json` | Like the dump add-on's: a stable version the build ships. |
 | Windows runner image (`windows-2025`) | `.github/workflows/bds-data.yml`, `recapture.yml`, `native-capture.yml` | Deliberately, when GitHub retires the image: bump all three, then run `bds-data.yml` with `verify-only` on the newest kept build; any difference is the image's, not BDS's. |
 | GitHub Actions (`uses: ...@<sha>`) and Gradle dependencies | `.github/workflows/*.yml`, `gradle/libs.versions.toml` | Dependabot proposes them weekly; the Cloudburst and opencollab snapshots above are left out. |
-| `BDS_DATA_TOKEN` | Repository secret | Before it expires (a fine-grained token lasts at most a year): [releasing.md](releasing.md#repository-setup), "Rotation". |
 
 What follows by itself: `Capture.NEWEST` (the highest codec of the protocol library), the newest build of each channel
 (the download links API, `builds resolve`), the list of release builds (Bedrock-OSS/BDS-Versions at its newest commit,

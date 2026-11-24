@@ -12,7 +12,7 @@
 # Security: `decide` runs repository code with read scopes; its token is in the environment of the `gh` step only,
 # which runs before any repository code. `capture` runs untrusted code (the BDS binary, Gradle, the tools) with
 # `contents: read`, no credentials in the checkout and no secrets, and hands over the report and a patch as artifacts.
-# `publish` holds the write permissions and BDS_DATA_TOKEN, runs no Gradle or BDS and no repository code but the patch
+# `publish` holds the write permissions, runs no Gradle or BDS and no repository code but the patch
 # checks and the pull request step of .github/actions/data-pr from its own checkout, and reads artifact values against
 # strict patterns.
 #
@@ -22,8 +22,7 @@
 # host candidates only (no STUN/TURN), and libdatachannel ships a Windows x64 native. No WSL is needed: the tools run
 # the Windows BDS directly; only the BDS inventory step downloads the Linux zip to read its binary.
 #
-# Pull requests opened with GITHUB_TOKEN do not trigger other workflows: set BDS_DATA_TOKEN (docs/releasing.md) to run
-# the build on them. A patch that changes generated code is only turned into a pull request with it.
+# Pull requests opened with GITHUB_TOKEN do not trigger other workflows, so publish starts build.yml on them by hand.
 
 name: BDS data
 
@@ -208,6 +207,8 @@ jobs:
       contents: write
       pull-requests: write
       issues: write
+      # Starts build.yml on the pull request
+      actions: write
     strategy:
       fail-fast: false
       matrix: ${{ fromJSON(needs.decide.outputs.matrix) }}
@@ -326,9 +327,6 @@ jobs:
         uses: ./.github/actions/data-pr
         with:
           patch: ${{ runner.temp }}/in/data.patch
-          # Whether the token that makes the build run on the pull request is set (never the token itself)
-          has-token: ${{ secrets.BDS_DATA_TOKEN != '' }}
-          token: ${{ secrets.BDS_DATA_TOKEN || github.token }}
           branch: bds-data/${{ matrix.channel }}
           title: "Update bundled data from the newest BDS ${{ matrix.channel }}"
           commit-message: "Update bundled data from BDS ${{ matrix.build }}"

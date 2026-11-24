@@ -4,6 +4,8 @@ on:
   push:
     branches: [main]
   pull_request:
+  # Started by bds-data.yml and recapture.yml on their pull requests, which GITHUB_TOKEN opens without a build
+  workflow_dispatch:
 
 permissions:
   contents: read
@@ -27,9 +29,8 @@ jobs:
           java-version: 21
       - uses: gradle/actions/setup-gradle@8da46b539cd8fe6ab27ca75128919a18d757604c # v6.4.1
         with:
-          # Only main writes the Gradle cache; pull requests (also from forks) only read it. This is setup-gradle's
-          # default, stated so it cannot change with a version bump
-          cache-read-only: ${{ github.event_name == 'pull_request' }}
+          # Only main writes the Gradle cache; pull requests (also from forks) and dispatched builds only read it
+          cache-read-only: ${{ github.ref != 'refs/heads/main' }}
       # build runs check: all tests, the Javadoc, the API dumps, the generated code (checkConstants, checkComponentApi, checkBehaviour,
       # checkBlocks, checkVoxelShapes), the recipe bundles (checkRecipes), builds.txt and builds.md (checkBuilds), the
       # white-box coverage report (checkWhitebox), checkMappings (every captured bit and wire path is explained), checkData (fallback

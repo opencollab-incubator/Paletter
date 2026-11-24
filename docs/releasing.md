@@ -7,31 +7,9 @@ What the workflows in `.github/workflows` need from the GitHub repository settin
 **Actions permissions** (Settings > Actions > General):
 
 - Workflow permissions can stay at the read-only default: every workflow states the permissions of each job.
-- Enable "Allow GitHub Actions to create and approve pull requests". `bds-data.yml` opens its pull requests with
-  `GITHUB_TOKEN` when no `BDS_DATA_TOKEN` is set.
-
-**Secrets** (Settings > Secrets and variables > Actions):
-
-- `BDS_DATA_TOKEN` (optional, recommended): a fine-grained personal access token for this repository only, with
-  contents and pull requests read and write. `bds-data.yml` opens its pull requests with it, so `build.yml` runs on
-  them; a pull request opened with `GITHUB_TOKEN` starts no other workflow. Without it, a data update that changes
-  generated code (`paletter/src/generated`, `paletter-recipes/src/generated`) fails the publish job instead of opening a pull request nobody built. Only
-  the publish job sees the secret, never the job that runs BDS and Gradle.
-
-  **Rotation.** A fine-grained token expires after at most a year, and the workflows cannot tell: an expired token still
-  counts as set, and the publish job then fails in `create-pull-request` with an authentication error (HTTP 401 or "Bad
-  credentials"). Give the token an expiry date, put a reminder a few weeks before it, and rotate it then:
-
-  1. GitHub > Settings > Developer settings > Fine-grained tokens > Generate new token: resource owner the repository's
-     owner, only this repository, permissions Contents and Pull requests read and write, an expiry date.
-  2. Repository Settings > Secrets and variables > Actions > `BDS_DATA_TOKEN` > Update secret, paste the new token.
-  3. Run `bds-data.yml` by hand (Actions > BDS data > Run workflow, `verify-only` off; `force` on when the newest build is
-     already known, or the run ends after `decide`) or wait for the next new build, and check that the publish job opens
-     or updates its pull request.
-  4. Revoke the old token.
-
-  A failed publish with an authentication error means this step is due. It is listed with the other manual bumps in
-  [updating.md](updating.md#pins).
+- Enable "Allow GitHub Actions to create and approve pull requests": `bds-data.yml` and `recapture.yml` open their
+  pull requests with `GITHUB_TOKEN`, then start `build.yml` on them by hand, since such a pull request starts no
+  workflow itself.
 
 **Publishing** (`publish.yml`, Settings > Secrets and variables > Actions). Set exactly these; the names are Geyser's:
 

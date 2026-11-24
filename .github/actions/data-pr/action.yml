@@ -11,12 +11,6 @@ inputs:
   patch:
     description: The patch file (an empty or missing file is no change)
     required: true
-  has-token:
-    description: Whether BDS_DATA_TOKEN is set ("true"), which a patch that changes generated code needs
-    required: true
-  token:
-    description: The token create-pull-request pushes and opens the pull request with
-    required: true
   branch:
     description: The branch of the pull request
     required: true
@@ -63,7 +57,6 @@ runs:
       shell: bash
       env:
         PATCH: ${{ inputs.patch }}
-        HAS_TOKEN: ${{ inputs.has-token }}
         PREFIXES: ${{ steps.paths.outputs.prefixes }}
       run: |
         if [ ! -s "$PATCH" ]; then echo "No data changes"; echo "changed=false" >> "$GITHUB_OUTPUT"; exit 0; fi
@@ -79,11 +72,6 @@ runs:
         # No symlinks or submodules: a link inside data/ could point anywhere
         if grep -Eq '^(new file|new|old|deleted file) mode (120000|160000)' "$PATCH"; then
           echo "The patch adds a symlink or submodule"; exit 1
-        fi
-        # Generated code is reviewed only after the build ran on it, and a pull request opened with GITHUB_TOKEN gets no build
-        if [ "$HAS_TOKEN" != true ] && grep -Eq '^[a-z-]+/src/generated/' "$RUNNER_TEMP/paths.txt"; then
-          echo "::error::The data changes generated code, and no BDS_DATA_TOKEN secret is set, so the build would not run on the pull request. Set BDS_DATA_TOKEN (see docs/releasing.md) and run this workflow again."
-          exit 1
         fi
         git apply --check "$PATCH"
         git apply "$PATCH"
@@ -117,10 +105,11 @@ runs:
         GH_TOKEN: ${{ github.token }}
       run: gh label create bds-data --color 1d76db --description "Automated BDS data check" 2>/dev/null || true
     - name: Open or update the pull request
+      id: pr
       if: steps.apply.outputs.changed == 'true'
       uses: peter-evans/create-pull-request@3ffccacd46053766916f087ce41d627c0b8cf2d1 # v8.1.3
       with:
-        token: ${{ inputs.token }}
+        token: ${{ github.token }}
         base: ${{ inputs.base }}
         branch: ${{ inputs.branch }}
         delete-branch: true
@@ -129,3 +118,12 @@ runs:
         body-path: ${{ runner.temp }}/pr-body.md
         labels: bds-data
         add-paths: ${{ steps.paths.outputs.add-paths }}
+    # A pull request opened with GITHUB_TOKEN starts no workflow, but GITHUB_TOKEN may start one by hand: build.yml on the
+    # pull request's branch, whose checks then show on the pull request
+    - name: Build the pull request
+      if: steps.pr.outputs.pull-request-operation == 'created' || steps.pr.outputs.pull-request-operation == 'updated'
+      shell: bash
+      env:
+        GH_TOKEN: ${{ github.token }}
+        BRANCH: ${{ inputs.branch }}
+      run: gh workflow run build.yml --ref "$BRANCH"
