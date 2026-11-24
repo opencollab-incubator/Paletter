@@ -165,8 +165,8 @@ final class ValueClassSource {
         if (c.minFormat != null) {
             type.addAnnotation(AnnotationSpec.builder(BEDROCK_FORMAT).addMember("value", "$S", c.minFormat).build());
         }
-        if (!c.toggles.isEmpty()) {
-            type.addAnnotation(AnnotationSpec.builder(BEDROCK_EXPERIMENT).addMember("value", "$S", c.toggles.getFirst()).build());
+        if (c.experiment != null) {
+            type.addAnnotation(AnnotationSpec.builder(BEDROCK_EXPERIMENT).addMember("value", "$S", c.experiment).build());
         }
         if (c.sincePreview != null) {
             type.addAnnotation(AnnotationSpec.builder(SINCE_PREVIEW).addMember("value", "$S", c.sincePreview).build());

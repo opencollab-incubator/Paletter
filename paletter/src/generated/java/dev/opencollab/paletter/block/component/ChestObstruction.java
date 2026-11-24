@@ -3,7 +3,6 @@
 // data/model/ATTRIBUTION.md.
 package dev.opencollab.paletter.block.component;
 
-import dev.opencollab.paletter.annotation.BedrockExperiment;
 import dev.opencollab.paletter.annotation.BedrockFormat;
 import dev.opencollab.paletter.annotation.ServerOnly;
 import dev.opencollab.paletter.internal.component.Check;
@@ -20,12 +19,12 @@ import org.checkerframework.checker.nullness.qual.Nullable;
  * Server only: BDS accepts it in packs but sends nothing to clients (Bedrock 26.30, 26.40, 26.50, 26.60, 26.70),
  * so it has no client effect. Palettes leave it out without a warning.
  * The creator docs name the experiment Upcoming Creator Features for it (in some format versions);
+ * Not {@code @BedrockExperiment}: every bundled version takes it without the experiment.
  *
  * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/blockreference/examples/blockcomponents/minecraftblock_chest_obstruction?view=minecraft-bedrock-stable">Microsoft Learn: minecraft:chest_obstruction</a>
  * @since 1.0.0
  */
 @BedrockFormat("1.26.10")
-@BedrockExperiment("upcoming_creator_features")
 @ServerOnly
 public final class ChestObstruction implements BlockComponent {
     /**

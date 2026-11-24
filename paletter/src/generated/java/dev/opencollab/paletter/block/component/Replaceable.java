@@ -3,7 +3,6 @@
 // data/model/ATTRIBUTION.md.
 package dev.opencollab.paletter.block.component;
 
-import dev.opencollab.paletter.annotation.BedrockExperiment;
 import dev.opencollab.paletter.annotation.BedrockFormat;
 import dev.opencollab.paletter.annotation.ServerOnly;
 import org.checkerframework.checker.nullness.qual.NonNull;
@@ -17,12 +16,12 @@ import org.checkerframework.checker.nullness.qual.NonNull;
  * 26.40), so those palettes leave it out and add a report warning. Sent from protocol 2193 (Bedrock 26.50).
  * The creator docs name the experiment Upcoming Creator Features for it (in some format versions);
  * BDS takes it without any experiment in 26.50, 26.60, 26.70: the docs' gating does not hold there.
+ * Not {@code @BedrockExperiment}: every bundled version takes it without the experiment.
  *
  * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/blockreference/examples/blockcomponents/minecraftblock_replaceable?view=minecraft-bedrock-stable">Microsoft Learn: minecraft:replaceable</a>
  * @since 1.0.0
  */
 @BedrockFormat("1.21.70")
-@BedrockExperiment("upcoming_creator_features")
 @ServerOnly(
         until = 2193
 )

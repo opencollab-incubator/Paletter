@@ -282,6 +282,13 @@
     "block:minecraft:unit_cube": "BDS 1.26.36.1 to 1.26.70.24 reject it at every format of the format sweep (data/bds/<build>/spec-format)",
     "block:minecraft:explosion_resistance": "the white-box of BDS 1.26.70.24 has no component of that name, and its replacement destructible_by_explosion is accepted but server only (data/bds/1.26.63.1/spec)"
   },
+  "released": {
+    "_comment": "Components whose docs name an experiment that ended before the oldest bundled version, so their class gets no @BedrockExperiment. Only for components no capture shows taken without it (BDS rejects or ignores the spec form either way); a gated capture overrides this.",
+    "block:minecraft:collision_box": "the creator docs: the box array and 24 pixel height are available without Upcoming Creator Features from 1.26.0; Holiday Creator Features ended in 1.19.50",
+    "block:minecraft:chest_obstruction": "the creator docs: released without Upcoming Creator Features for block format versions 1.26.20 and newer",
+    "block:minecraft:redstone_consumer": "the creator docs: available without Upcoming Creator Features for block format versions 1.26.0 or higher",
+    "block:minecraft:precipitation_interactions": "the creator docs: only the snow_log_no_collision value (renamed snowlogging in 1.26.30) was behind Upcoming Creator Features"
+  },
   "handWritten": {
     "block:minecraft:custom_components": "the wire-only ScriptHooks (the flags BDS sends for script custom components; names and parameters never reach the wire)",
     "item:minecraft:custom_components": "the wire-only UseOnHook (minecraft:publisher_on_use_on, which BDS adds for a script component with onUseOn)",

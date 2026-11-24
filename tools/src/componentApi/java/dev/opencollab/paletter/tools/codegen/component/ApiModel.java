@@ -99,6 +99,12 @@ final class ApiModel {
         List<String> unmappedExperiments = List.of();
         /** What the captured servers do with the component without experiments, oldest build first (empty: not captured). */
         List<Gating.Result> gating = List.of();
+        /**
+         * The toggle of the class's {@code @BedrockExperiment}, or null: one of {@link #toggles}, unless a captured server took
+         * the component without experiments and none showed it gated, or api.json {@code released} says the docs' experiment
+         * ended before the oldest bundled version.
+         */
+        String experiment;
         /** The name before a {@code Block}/{@code Item} prefix kept names unique, which api.json type overrides use. */
         String baseName;
         ObjType root;

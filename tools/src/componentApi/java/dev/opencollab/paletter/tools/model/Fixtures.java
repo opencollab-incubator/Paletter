@@ -460,7 +460,7 @@ public final class Fixtures {
         "mapValues", "mapKeys", "probeOnly", "probeValues", "sweepValues", "listNames", "boolCombinations", "unpinnedEnums", "combinations");
     private static final List<String> API_SECTIONS = List.of("rootLists", "forms", "types", "unions", "keyedExtras", "descriptors",
         "blockDescriptors", "retired", "fields", "typeNames", "standalone", "standalonePaths", "openEnums", "exclude", "handWritten", "classes",
-        "optional", "noDefaults", "enums", "renamedFields", "removedFields");
+        "optional", "noDefaults", "enums", "renamedFields", "removedFields", "released");
 
     /**
      * The hand input entries that name no component of the model, as {@code <file> <section>: <key>}. A renamed or removed

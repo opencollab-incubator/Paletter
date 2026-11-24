@@ -54,6 +54,9 @@ final class ComponentDocs {
                     .append(String.join(", ", c.experiments.stream().map(Docs::escape).toList()))
                     .append(" for it (in some format versions);")
                     .append(c.gating.isEmpty() ? " unverified against BDS.\n" : "\n" + gatingDoc(c.gating, c.serverOnly != null));
+                if (c.experiment == null && !c.toggles.isEmpty()) {
+                    doc.append("Not {@code @BedrockExperiment}: every bundled version takes it without the experiment.\n");
+                }
                 for (String name : c.unmappedExperiments) {
                     doc.append("Unverified: the creator docs name experiment \"").append(Docs.escape(name)).append("\", which is in no capture.\n");
                 }

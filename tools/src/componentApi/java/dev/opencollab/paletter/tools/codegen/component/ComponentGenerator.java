@@ -253,6 +253,24 @@ public final class ComponentGenerator {
         NameCollisions.prefix(model, hand.in.context().reserved(), hand.history);
     }
 
+    /**
+     * The toggle a component's class is annotated with: the docs' experiment, unless the captures show the component taken
+     * without it in some build and gated in none, or {@code released} (api.json, the docs say when the experiment ended).
+     * Only the evidence of a gated build keeps it then. The annotation marks what Bedrock gates, not every page that names an
+     * experiment for some form or format version.
+     */
+    static String experiment(Comp c, boolean released) {
+        if (c.toggles.isEmpty()) {
+            return null;
+        }
+        boolean serverOnly = c.serverOnly != null;
+        if (c.gating.stream().anyMatch(r -> r.gated(serverOnly))) {
+            return c.toggles.getFirst();
+        }
+        boolean takenWithout = c.gating.stream().anyMatch(r -> Gating.ACCEPTED.equals(r.without()));
+        return takenWithout || released ? null : c.toggles.getFirst();
+    }
+
     private Comp component(JsonObject doc, JsonObject mapping, String standalone) {
         Comp c = new Comp();
         c.id = doc.get("id").getAsString();
@@ -282,6 +300,7 @@ public final class ComponentGenerator {
         }
         Windows.gaps(c).forEach(gap -> System.out.println("warning: " + gap));
         c.serverOnly = Windows.serverOnly(c);
+        c.experiment = experiment(c, hand.api("released").has(c.id));
         c.rejected = Windows.rejected(c);
         c.sincePreview = Windows.sincePreview(model, c, Window::status);
         c.bedrockSince = c.sincePreview != null ? null : Windows.bedrockSince(model, c);

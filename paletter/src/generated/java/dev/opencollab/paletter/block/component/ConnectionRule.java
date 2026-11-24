@@ -3,7 +3,6 @@
 // data/model/ATTRIBUTION.md.
 package dev.opencollab.paletter.block.component;
 
-import dev.opencollab.paletter.annotation.BedrockExperiment;
 import dev.opencollab.paletter.annotation.BedrockFormat;
 import dev.opencollab.paletter.internal.component.Check;
 import java.util.ArrayList;
@@ -20,12 +19,12 @@ import org.checkerframework.checker.nullness.qual.Nullable;
  * Add-on JSON: {@code "minecraft:connection_rule"}.
  * The creator docs name the experiment Upcoming Creator Features for it (in some format versions);
  * BDS takes it without any experiment in 26.30, 26.40, 26.50, 26.60, 26.70: the docs' gating does not hold there.
+ * Not {@code @BedrockExperiment}: every bundled version takes it without the experiment.
  *
  * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/blockreference/examples/blockcomponents/minecraftblock_connection_rule?view=minecraft-bedrock-stable">Microsoft Learn: minecraft:connection_rule</a>
  * @since 1.0.0
  */
 @BedrockFormat("1.21.130")
-@BedrockExperiment("upcoming_creator_features")
 public final class ConnectionRule implements BlockComponent {
     /**
      * The component name in add-on JSON.

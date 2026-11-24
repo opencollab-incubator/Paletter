@@ -154,6 +154,15 @@ class ComponentNamingTest {
     }
 
     @Test
+    void aComponentEveryCaptureTakesWithoutTheExperimentIsNotAnnotated() {
+        Context context = new Context(Set.of(), Map.of("Test Toggle", "test_toggle"), Map.of("item:test:gadget", List.of(
+            new Gating.Result("1.26.52.3", Gating.ACCEPTED, Gating.ACCEPTED), new Gating.Result("1.26.63.1", Gating.REJECTED, Gating.REJECTED))));
+        String gadget = ComponentGenerator.generate(withExperiments(context, "Test Toggle")).get(ITEM_PKG + "Gadget.java");
+        assertFalse(gadget.contains("@BedrockExperiment("), gadget);
+        assertTrue(gadget.contains("Not {@code @BedrockExperiment}: every bundled version takes it without the experiment."), gadget);
+    }
+
+    @Test
     void aGatingCaptureVerifiesAnExperimentNoCaptureNamesToo() {
         Context context = new Context(Set.of(), Map.of(), Map.of("item:test:gadget", List.of(new Gating.Result("1.26.70.24", Gating.REJECTED, Gating.ACCEPTED))));
         String gadget = ComponentGenerator.generate(withExperiments(context, "Holiday Creator Features")).get(ITEM_PKG + "Gadget.java");

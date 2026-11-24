@@ -3,7 +3,6 @@
 // data/model/ATTRIBUTION.md.
 package dev.opencollab.paletter.block.component;
 
-import dev.opencollab.paletter.annotation.BedrockExperiment;
 import dev.opencollab.paletter.annotation.BedrockFormat;
 import java.util.ArrayList;
 import java.util.List;
@@ -19,13 +18,13 @@ import org.checkerframework.checker.nullness.qual.Nullable;
  * Add-on JSON: {@code "minecraft:collision_box"}.
  * The creator docs name the experiments Holiday Creator Features, Upcoming Creator Features for it (in some format versions);
  * BDS rejects it even with the experiments on in 26.30, 26.40, 26.50, 26.60, 1.26.70.24.
+ * Not {@code @BedrockExperiment}: every bundled version takes it without the experiment.
  * Unverified: the creator docs name experiment "Holiday Creator Features", which is in no capture.
  *
  * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/blockreference/examples/blockcomponents/minecraftblock_collision_box?view=minecraft-bedrock-stable">Microsoft Learn: minecraft:collision_box</a>
  * @since 1.0.0
  */
 @BedrockFormat("1.19.50")
-@BedrockExperiment("upcoming_creator_features")
 public final class CollisionBox implements BlockComponent {
     /**
      * The component name in add-on JSON.

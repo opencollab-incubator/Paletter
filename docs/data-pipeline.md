@@ -421,6 +421,10 @@ experiments on in every captured build (they are kept, only reported; the update
 without the file leaves the gating "unverified against BDS", never a failure (no build has the file yet: [Recapture to-do](#recapture-to-do)). The docs name one entry for `collision_box` (Holiday Creator Features and Upcoming Creator Features), which is captured at the
 current format; the Holiday Creator Features form of an older format is not a variant of its own.
 
+The class gets `@BedrockExperiment` only where the toggle gates it: a build shows it gated, or no build takes it without
+experiments and `api.json` `released` does not say (from the docs) that the experiment ended before the oldest bundled version.
+A component every capture takes without the toggle keeps the docs' note in its Javadoc, not the annotation.
+
 ### Recipes
 
 `recipes-diff` diffs two committed recipe captures in `data/bds`, normalised (list layout, net ids and random UUIDs ignored): recipes
