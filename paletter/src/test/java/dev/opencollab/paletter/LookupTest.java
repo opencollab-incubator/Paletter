@@ -163,6 +163,16 @@ class LookupTest {
     }
 
     @Test
+    void customBlockTypesAreFound() {
+        CustomBlock lamp = CustomBlock.builder("lookup:lamp").property(dev.opencollab.paletter.block.BlockProperty.bool("lookup:lit")).build();
+        Palette extended = LATEST.extend(PaletteLayer.builder("custom-types").block(lamp).build());
+        for (Lookup lookup : Lookup.values()) {
+            assertSame(lamp.type(), extended.blockType("lookup:lamp", lookup), lookup.toString());
+            assertNull(LATEST.blockType("lookup:lamp", lookup), lookup.toString());
+        }
+    }
+
+    @Test
     void versionsAreFoundByName() {
         for (DataVersion version : PALETTER.versions()) {
             assertSame(version, PALETTER.version(version.name()));

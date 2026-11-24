@@ -619,15 +619,20 @@ public final class Palette {
     }
 
     /**
-     * Finds the key of a vanilla block type.
+     * Finds the key of a block type.
      *
-     * @param identifier a block identifier of a vanilla block
+     * @param identifier a block identifier
      * @param lookup whether the block must exist as is in this palette's version, see {@link Lookup}
      * @return the block type, or null if the lookup does not accept the identifier. {@link Lookup#RENAMED} also finds
-     *         a block under the name an older version gave it. For a custom block use its {@code type()}
+     *         a vanilla block under the name an older version gave it. A custom block of the palette's layers is always
+     *         found: the {@code type()} of the {@code CustomBlock}
      * @since 1.0.0
      */
     public @Nullable BedrockBlockType blockType(@NonNull String identifier, @NonNull Lookup lookup) {
+        BedrockBlockType custom = blocks.canonical().customType(identifier);
+        if (custom != null) {
+            return custom;
+        }
         NbtMap state = firstStates().get(identifier);
         if (state == null) {
             if (lookup == Lookup.EXACT) {
