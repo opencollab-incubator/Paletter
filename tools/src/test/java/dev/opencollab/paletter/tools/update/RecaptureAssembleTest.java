@@ -89,6 +89,27 @@ class RecaptureAssembleTest {
         assertTrue(steps.commands.stream().allMatch(command -> command.get(command.size() - 1).equals(root.toString())), "every step gets --root");
     }
 
+    /** download-artifact puts a single artifact's content straight into the target directory: a one-leg plan stages it. */
+    @Test
+    void aOneLegPlanStagesTheFlatLayoutOfASingleArtifact(@TempDir Path root, @TempDir Path in, @TempDir Path out) throws Exception {
+        repository(root);
+        Path captures = Files.createDirectories(in.resolve("captures").resolve("spec"));
+        Files.writeString(captures.resolve("capture.json"), "{\"protocol\": 1, \"new\": true}");
+        Files.writeString(in.resolve("report.md"), "# Report of " + A + "\n\nOK: no changes\n");
+        RecaptureAssemble.Options one = new RecaptureAssemble.Options(List.of(new RecapturePlan.Leg(A, false)), in, out,
+            () -> Map.of("CloudburstMC/Data", Path.of("cb"), "AllayMC/Allay", Path.of("allay")), "c".repeat(40), 1 << 20);
+        assertEquals(0, RecaptureAssemble.run(root, one, new Steps()));
+        assertEquals("{\"protocol\": 1, \"new\": true}", Files.readString(root.resolve("data/bds").resolve(A).resolve("spec/capture.json")));
+    }
+
+    /** With two legs a flat layout is not guessed at: the artifacts are not the plan's. */
+    @Test
+    void aTwoLegPlanRejectsAFlatLayout(@TempDir Path root, @TempDir Path in, @TempDir Path out) throws Exception {
+        repository(root);
+        Files.createDirectories(in.resolve("captures").resolve("spec"));
+        assertEquals(1, RecaptureAssemble.run(root, options(in, out), new Steps()));
+    }
+
     @Test
     void theReportHasAVerdictPerLegAndTheStrictLine(@TempDir Path root, @TempDir Path in, @TempDir Path out) throws Exception {
         repository(root);

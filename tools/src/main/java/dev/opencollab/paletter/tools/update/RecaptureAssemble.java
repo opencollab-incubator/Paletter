@@ -102,6 +102,7 @@ public final class RecaptureAssemble {
 
     /** @return the process exit code: 0, {@link #EXIT_ADDON_CHANGED}, or 1 for invalid artifacts or a failed step */
     public static int run(Path root, Options options, Runner runner) throws Exception {
+        singleArtifactLayout(options);
         List<String> problems = validate(root, options);
         if (!problems.isEmpty()) {
             problems.forEach(problem -> System.out.println("INVALID " + problem));
@@ -147,6 +148,34 @@ public final class RecaptureAssemble {
 
     private static Path captures(Path in, String build) {
         return in.resolve("captures-" + build).resolve("captures");
+    }
+
+    /**
+     * actions/download-artifact extracts a single matching artifact into the target directory itself, without the
+     * {@code captures-<build>} directory it gives each of several: with a one-leg plan, that layout is moved into the
+     * leg's directory, so {@link #validate} sees one layout. Nothing else is moved; validate still checks every entry.
+     */
+    static void singleArtifactLayout(Options options) throws IOException {
+        if (options.plan().size() != 1 || !Files.isDirectory(options.in())) {
+            return;
+        }
+        Path target = options.in().resolve("captures-" + options.plan().getFirst().build());
+        if (Files.exists(target)) {
+            return;
+        }
+        List<Path> entries;
+        try (Stream<Path> listing = Files.list(options.in())) {
+            entries = listing.toList();
+        }
+        boolean flat = entries.stream().anyMatch(entry -> entry.getFileName().toString().equals("captures"))
+            && entries.stream().noneMatch(entry -> entry.getFileName().toString().startsWith("captures-"));
+        if (!flat) {
+            return;
+        }
+        Files.createDirectory(target);
+        for (Path entry : entries) {
+            Files.move(entry, target.resolve(entry.getFileName().toString()));
+        }
     }
 
     /** Every problem of the artifacts; empty when all of them may be staged. */
