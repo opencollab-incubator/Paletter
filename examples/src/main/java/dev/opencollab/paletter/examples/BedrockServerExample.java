@@ -68,7 +68,7 @@ public final class BedrockServerExample {
         System.out.println("decode(apple) = " + palette.decode(apple));
 
         // What an item is made of in this version: its registered item and its properties
-        RegisteredItem registered = palette.itemDefinition(ruby.type());
+        RegisteredItem registered = palette.itemDefinition(ruby.type().identifier());
         System.out.println("ruby properties: " + registered.properties().all().size() + ", origin " + registered.origin());
         System.out.println("properties of an apple in the newest version, no palette needed: "
             + paletter.properties(BedrockItems.APPLE, paletter.latest()).all().size());

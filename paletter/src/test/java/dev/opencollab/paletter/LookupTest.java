@@ -178,7 +178,7 @@ class LookupTest {
         assertNull(LATEST.itemVariant("minecraft:paletter_test_unknown", 0, Lookup.RENAMED));
         for (BedrockItemType type : BedrockItemType.vanillaTypes()) {
             // Items behind an experiment toggle are not in the palette's version unless it enables the toggle
-            if (LATEST.itemDefinition(type) != null) {
+            if (LATEST.itemDefinition(type.identifier()) != null) {
                 assertSame(type.variant(), LATEST.itemVariant(type.identifier(), 0, Lookup.EXACT), type.identifier());
             }
         }

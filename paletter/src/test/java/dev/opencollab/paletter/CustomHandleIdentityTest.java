@@ -137,7 +137,7 @@ class CustomHandleIdentityTest {
         BedrockItemType itemType = lamp.itemType();
         assertSame(itemType, palette.itemOf(lamp.type()));
         assertSame(itemType.variant(), palette.itemVariant("example:lamp", 0, Lookup.RENAMED));
-        assertSame(itemType, palette.itemDefinition(itemType).type());
+        assertSame(itemType, palette.itemDefinition(itemType.identifier()).type());
         BedrockItemStack decoded = palette.decode(palette.encode(BedrockItemStack.of(itemType)));
         assertNotNull(decoded);
         assertSame(itemType.variant(), decoded.variant());
@@ -168,7 +168,7 @@ class CustomHandleIdentityTest {
         assertEquals(lampA.hashCode(), lampB.hashCode());
         // A handle of one works in the other palette
         assertEquals(a.runtimeId(lampA), b.runtimeId(lampA));
-        assertSame(b.itemDefinition(first.type()), b.itemDefinition(second.type()));
+        assertSame(b.itemDefinition(first.type().identifier()), b.itemDefinition(second.type().identifier()));
     }
 
     @Test
@@ -216,9 +216,9 @@ class CustomHandleIdentityTest {
         BedrockItemStack decoded = palette.decode(encoded);
         assertNotNull(decoded, where);
         assertSame(base, decoded.variant(), where);
-        assertSame(type, palette.itemDefinition(type).type(), where);
+        assertSame(type, palette.itemDefinition(type.identifier()).type(), where);
         assertSame(type, palette.resolve(base).definition().type(), where);
-        assertSame(item, palette.itemDefinition(type).customItem(), where);
+        assertSame(item, palette.itemDefinition(type.identifier()).customItem(), where);
         assertSame(base, palette.explain(item.identifier(), 0, null).handle(), where);
         assertSame(base, palette.itemVariants().stream().filter(v -> v.type().identifier().equals(item.identifier())).findFirst().orElseThrow(), where);
         assertSame(type, palette.creativeLayout().stacks().filter(stack -> stack.type().identifier().equals(item.identifier()))
@@ -230,7 +230,7 @@ class CustomHandleIdentityTest {
         BedrockItemStack decodedBlockItem = palette.decode(palette.encode(BedrockItemStack.of(blockItem)));
         assertNotNull(decodedBlockItem, where);
         assertSame(blockItem.variant(), decodedBlockItem.variant(), where);
-        assertSame(blockItem, palette.itemDefinition(blockItem).type(), where);
+        assertSame(blockItem, palette.itemDefinition(blockItem.identifier()).type(), where);
         assertSame(blockItem, palette.creativeLayout().stacks().filter(stack -> stack.type().identifier().equals(block.identifier()))
             .findFirst().orElseThrow().type(), where);
 

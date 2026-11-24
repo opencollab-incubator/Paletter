@@ -157,6 +157,6 @@ class PaletteIdentityTest {
             assertSame(base.blocks().byIndex(i), second.blocks().byIndex(i));
         }
         BedrockItemVariant variant = base.items().canonical().handle(0);
-        assertSame(base.itemDefinition(variant.type()), second.itemDefinition(variant.type()));
+        assertSame(base.itemDefinition(variant.type().identifier()), second.itemDefinition(variant.type().identifier()));
     }
 }

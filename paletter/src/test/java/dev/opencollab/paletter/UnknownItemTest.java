@@ -36,7 +36,7 @@ class UnknownItemTest {
     /** A canonical item of the newest version that the oldest lacks. */
     private static BedrockItemVariant missingInOldest(Palette oldest) {
         for (BedrockItemVariant variant : latest().itemVariants()) {
-            if (oldest.itemDefinition(variant.type()) == null) {
+            if (oldest.itemDefinition(variant.type().identifier()) == null) {
                 return variant;
             }
         }
@@ -87,7 +87,7 @@ class UnknownItemTest {
         BedrockItemVariant nobody = BedrockItemVariant.fromIdentifier("nobody:item", 0);
         assertEquals(ItemData.AIR, oldest.encode(BedrockItemStack.of(missing)));
         assertEquals(ItemData.AIR, oldest.encode(BedrockItemStack.of(nobody)));
-        assertNull(oldest.resolve(nobody));
+        assertNull(oldest.resolve(nobody, null));
     }
 
     @Test

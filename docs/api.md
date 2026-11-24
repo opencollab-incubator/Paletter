@@ -194,7 +194,19 @@ not know is a plain value, equal by identifier and not interned, so memory is bo
 items or blocks in different layers each own their keys, which are equal but not identical. Registered entries (`RegisteredItem`, `RegisteredBlockState`) are compared by identity, like
 Cloudburst definitions: there is one instance per entry per palette.
 
-Methods named `blockState`, `itemVariant` or `...Of` return keys; methods named `...Definition` return what is sent.
+Methods named `blockState`, `itemVariant`, `itemType`, `blockType` or `...Of` return keys; methods named `...Definition`
+return definitions (what is sent); `resolve` returns a resolution (`ResolvedBlock`, `ResolvedItem`). One rule per kind of
+argument:
+
+- **A key** (`resolve(BedrockBlockState | ItemKey)`, `blockDefinition(BedrockBlockState)`, `runtimeId(BedrockBlockState)`):
+  what this palette sends for it, with fallbacks applied. Never null: throws `IllegalArgumentException` where nothing can
+  be sent (a custom block of a layer the palette lacks, an item the version lacks with `Fallbacks.NONE`), and the
+  `orElse` overload returns its default there instead. `blockDefinition(state)` and `runtimeId(state)` are
+  `resolve(state).definition()` and its runtime id, without the resolution.
+- **An identifier, NBT, state values or a runtime id** (`blockState(...)`, `itemVariant`, `itemType`, `blockType`,
+  `blockDefinition(int)`, `itemDefinition(String | int)`, `resolveBlock(int)`): what this palette itself has, never a
+  fallback; null where it has nothing. Data a client sent never makes a lookup throw.
+- **A relation** (`blockOf`, `itemOf`, `experimentOf`): null where there is none.
 
 | Lookup | Returns |
 |---|---|
@@ -203,16 +215,15 @@ Methods named `blockState`, `itemVariant` or `...Of` return keys; methods named 
 | `Palette#runtimeId(BedrockBlockState)` | The runtime id (the state hash). Throws if the palette lacks the state; `runtimeId(state, orElse)` returns `orElse` instead. |
 | `Palette#blockDefinition(BedrockBlockState)` | The `RegisteredBlockState` this version sends, after adapting and fallbacks. Throws if the palette lacks the state. Only a custom block of a layer the palette does not have can be lacking: with the bundled data, every version has each vanilla state. |
 | `Palette#blockDefinition(BedrockBlockState, RegisteredBlockState)` | Like `blockDefinition(state)`, but returns `orElse` (may be null) where that throws; as `runtimeId(state, orElse)` does for the runtime id. |
-| `Palette#resolve(BedrockBlockState)` | A `ResolvedBlock`: the `definition()` sent (as `blockDefinition(state)`), `fallback()` (whether a `BlockFallback` or the default block was used; adapting state values to the version is not one) and `behaviour()` (`BlockValues`, see Behaviour). Throws like `blockDefinition(state)`. Makes a resolution per call. |
+| `Palette#resolve(BedrockBlockState)` | A `ResolvedBlock`: the `definition()` sent (as `blockDefinition(state)`), `kind()` (a `ResolutionKind`: `EXACT`, `ADAPTED` to the version's state values, `FALLBACK`, `DEFAULT` or `MISSING`; `fallback()` is true for the last three) and `behaviour()` (`BlockValues`, see Behaviour). Throws like `blockDefinition(state)`. Made once per state and kept. |
 | `Palette#resolve(BedrockBlockState, ResolvedBlock)` | Like `resolve(state)`, but returns `orElse` (may be null) where that throws. |
 | `Palette#resolveBlock(int)` | The `ResolvedBlock` of a block this palette sends, by runtime id, or null; never a fallback. |
-| `Palette#itemDefinition(BedrockItemType)` | The `RegisteredItem`, or null if the version lacks it. Fallbacks are not applied. |
-| `Palette#itemDefinition(String)` | The `RegisteredItem` for an identifier, or null. `itemDefinitions()` lists all items in runtime id order, `itemTags()` the item tags (tag to identifiers). |
+| `Palette#itemDefinition(String)` | The `RegisteredItem` for an identifier (`type.identifier()` of a key), or null if the version lacks it. Fallbacks are not applied. `itemDefinitions()` lists all items in runtime id order, `itemTags()` the item tags (tag to identifiers). |
 | `Palette#blockState(BlockDefinition)` | The key of a block this palette sends, looked up by runtime id: `blockDefinition(blockState(d))` is `d`. A definition of another palette gives the key of the block with its runtime id here, or null if there is none. |
 | `Palette#blockState(int)` | The key of the block with a runtime id (the hash), or null if this palette has no such block. For ids a server stores itself, e.g. chunk palettes; ids decoded from packets already come as definitions. |
 | `Palette#blockDefinition(int)` | The `RegisteredBlockState` with a runtime id, or null. |
 | `Palette#itemDefinition(int)` | The `RegisteredItem` with an item runtime id (negative for the plain item of a custom block), or null. |
-| `Palette#resolve(ItemKey)` | What `encode` would send, without building an `ItemData`. `behaviour()` gives the `ItemValues` of the item sent. `variant()` is the variant this palette sends for the requested one: the requested variant itself unless `fallback()`. |
+| `Palette#resolve(ItemKey)` | What `encode` would send, without building an `ItemData`. `kind()` is `EXACT`, `FALLBACK` or `DEFAULT`. `behaviour()` gives the `ItemValues` of the item sent. `variant()` is the variant this palette sends for the requested one: the requested variant itself unless `fallback()`. Throws only where nothing is sent (`Fallbacks.NONE`); `resolve(key, orElse)` returns `orElse` there. |
 | `Palette#blockOf(ItemKey)` | The key of the block an item is sent with, or null. `blockDefinition(blockOf(v))` is what is sent. |
 | `Palette#itemOf(BedrockBlockType)` | The item the Script API gives for the block's default permutation: the block's own item for a custom block, else the bundled block to item relation. Null if there is none here. Whether the client's pick block gives this item is unverified. |
 | `Palette#encode(BedrockItemStack)` | The `ItemData` for the client, with fallbacks applied. |
@@ -418,7 +429,7 @@ your decision. `./gradlew :tools:run --args="check-data"` lists what each older 
 Content that a Bedrock version only has behind an experiment toggle is missing by default: lookups do not find it, it
 resolves through the fallbacks, and the creative content leaves it out. Its items stay in the item registry
 (`Palette#itemDefinitions()`, `itemDefinition(int)`), because BDS registers them in a world without experiments too; only
-`itemDefinition(String)` and `itemDefinition(BedrockItemType)` treat them as missing.
+`itemDefinition(String)` treats them as missing.
 `Paletter.builder().experiments("y_2026_drop_3")` enables it in every version; `experiments(version, "y_2026_drop_3")`
 enables it in one version (a version that is not served makes `build()` throw an `IllegalArgumentException`). Every call adds to
 the earlier ones, like `removeItems(...)`, which hides vanilla items. `allExperiments()` enables every toggle
@@ -454,20 +465,20 @@ String why = palette.resolve(BedrockBlocks.BLUE_ICE.defaultState()).behaviour().
 
 ResolvedBlock block = palette.resolve(state);
 block.definition();   // the block sent, as blockDefinition(state)
-block.fallback();     // true if a fallback block was used for it
+block.kind();         // how it was resolved: EXACT, ADAPTED, FALLBACK, DEFAULT or MISSING
 block.behaviour();    // the values of the block that is sent
 ```
 
-- Keys are the constants of `BlockBehaviour` and `ItemBehaviour`. Number and boolean keys return primitives. A
-  Handles and a `ResolvedBlock` are made on each call: do not compare
-  them with `==`, use `equals`. A `ResolvedItem` is shared and compared by its parts.
+- Keys are the constants of `BlockBehaviour` and `ItemBehaviour`. Number and boolean keys return primitives. A palette
+  makes a resolution once and keeps it, but states or items that resolve alike may share one, and a `ResolvedItem`
+  hands out a new `ItemValues` handle on each call: compare resolutions and handles with `equals`, not `==`.
 - A resolution carries the values of the block or item that is sent. A fallback state has the values of its
   replacement.
 - `resolve(BedrockBlockState)` throws `IllegalArgumentException` where `blockDefinition(state)` throws.
   `resolve(state, orElse)` returns `orElse` (may be null) there, as `blockDefinition(state, orElse)` does.
   `resolveBlock(int runtimeId)` takes the runtime id of a block this palette sends (from a packet or a chunk palette) and
-  returns null if there is none; it is never a fallback. `resolve(ItemKey)` is null for an item that does not
-  exist and has no fallback.
+  returns null if there is none; it is never a fallback. `resolve(ItemKey)` throws only for an item that is not
+  sent at all (`Fallbacks.NONE`), and `resolve(key, orElse)` returns `orElse` there.
 - `get` throws `IllegalStateException` when no value is known; `getOrElse(key, fallback)` returns the fallback instead.
 - Values belong to the palette, not the state: a newer capture can change a value for one version only. An extended
   palette shares the values of its base for what they have in common, and the handles: one item has one handle in a

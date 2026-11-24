@@ -60,7 +60,7 @@ public final class Ingredients {
         Map<BedrockItemType, Set<Integer>> partial = null;
         for (ItemKey item : items) {
             BedrockItemType type = item.type();
-            if (palette.itemDefinition(type) == null || unobtainable.test(type)) {
+            if (palette.itemDefinition(type.identifier()) == null || unobtainable.test(type)) {
                 continue;
             }
             if (item instanceof BedrockItemVariant variant) {

@@ -14,6 +14,7 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
@@ -29,7 +30,7 @@ class FallbackQueryTest {
         Palette oldest = PALETTER.palette(OLDEST);
         List<BedrockItemVariant> missing = new ArrayList<>();
         for (BedrockItemVariant variant : PALETTER.palette(Integer.MAX_VALUE).itemVariants()) {
-            if (oldest.itemDefinition(variant.type()) == null) {
+            if (oldest.itemDefinition(variant.type().identifier()) == null) {
                 missing.add(variant);
             }
         }
@@ -109,18 +110,42 @@ class FallbackQueryTest {
         assertTrue(forced.resolve(BedrockItems.DIAMOND_SWORD).fallback());
         assertEquals(BedrockItems.STICK.variant(), forced.resolve(BedrockItems.DIAMOND_SWORD).variant());
         assertFalse(forced.resolve(BedrockItems.STICK).fallback());
+        assertEquals(ResolutionKind.FALLBACK, forced.resolve(BedrockItems.DIAMOND_SWORD).kind());
+        assertEquals(ResolutionKind.EXACT, forced.resolve(BedrockItems.STICK).kind());
+    }
+
+    @Test
+    void aResolutionSaysHowItWasResolved() {
+        Palette oldest = Paletter.bundled().palette(OLDEST);
+        BedrockItemVariant missing = missingInOldest().getFirst();
+        assertEquals(ResolutionKind.DEFAULT, oldest.resolve(missing).kind());
+        assertTrue(oldest.resolve(missing).fallback());
+        assertEquals(oldest.resolve(missing), oldest.resolve(missing.type().variant(missing.aux())));
+        for (dev.opencollab.paletter.vanilla.BedrockBlockState state : List.of(
+                dev.opencollab.paletter.vanilla.BedrockBlocks.STONE.defaultState(), dev.opencollab.paletter.vanilla.BedrockBlocks.AIR.defaultState())) {
+            assertEquals(ResolutionKind.EXACT, oldest.resolve(state).kind(), state.toString());
+        }
+        Palette none = Paletter.builder().fallbacks(Fallbacks.NONE).build().palette(OLDEST);
+        boolean defaults = false;
+        for (dev.opencollab.paletter.vanilla.BedrockBlockType type : oldest.report().unknownBlocks()) {
+            defaults = true;
+            assertEquals(ResolutionKind.DEFAULT, oldest.resolve(type.defaultState()).kind(), type.toString());
+            assertEquals(ResolutionKind.MISSING, none.resolve(type.defaultState()).kind(), type.toString());
+        }
+        assertTrue(defaults, "the oldest version lacks blocks of the newest");
     }
 
     @Test
     void anItemWithoutFallbackIsNeitherAFallbackNorSent() {
         Palette none = Paletter.builder().fallbacks(Fallbacks.NONE).build().palette(OLDEST);
         BedrockItemVariant missing = missingInOldest().getFirst();
-        assertNull(none.resolve(missing));
-        assertNull(none.itemDefinition(missing.type()));
+        assertNull(none.resolve(missing, null));
+        assertThrows(IllegalArgumentException.class, () -> none.resolve(missing));
+        assertNull(none.itemDefinition(missing.type().identifier()));
 
         // A key Paletter has never heard of
         BedrockItemVariant custom = BedrockItemType.fromIdentifier("paletter:nothing").variant();
-        assertNull(none.resolve(custom));
+        assertNull(none.resolve(custom, null));
     }
 
     @Test

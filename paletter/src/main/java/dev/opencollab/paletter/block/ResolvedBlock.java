@@ -1,6 +1,7 @@
 package dev.opencollab.paletter.block;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
+import dev.opencollab.paletter.ResolutionKind;
 import dev.opencollab.paletter.annotation.Internal;
 import dev.opencollab.paletter.behaviour.BlockValues;
 
@@ -8,30 +9,30 @@ import java.util.Objects;
 
 /**
  * A block state resolved against one palette: what it sends for it and what that does, see
- * {@link dev.opencollab.paletter.Palette#resolve(dev.opencollab.paletter.vanilla.BedrockBlockState)}. A resolution is made
- * on each call, with its {@link BlockValues} handle: do not compare resolutions with {@code ==}. Use
- * {@link dev.opencollab.paletter.Palette#runtimeId(dev.opencollab.paletter.vanilla.BedrockBlockState)} where only the id is
- * needed. Resolutions are equal if they have the same definition, fallback and behaviour (a handle of the same state
- * in the same palette).
+ * {@link dev.opencollab.paletter.Palette#resolve(dev.opencollab.paletter.vanilla.BedrockBlockState)}. A palette makes a
+ * resolution once per state and keeps it, with its {@link BlockValues} handle; states that resolve alike may share one.
+ * Use {@link dev.opencollab.paletter.Palette#runtimeId(dev.opencollab.paletter.vanilla.BedrockBlockState)} where only the
+ * id is needed. Resolutions are equal if they have the same definition, kind and behaviour (a handle of the same block in
+ * the same palette); compare them with {@code equals}.
  *
  * @since 1.0.0
  */
 public final class ResolvedBlock {
     private final RegisteredBlockState definition;
-    private final boolean fallback;
+    private final ResolutionKind kind;
     private final BlockValues behaviour;
 
     /**
      * Internal: plumbing of the palette's {@code resolve}, not part of the API.
      *
      * @param definition the block to send
-     * @param fallback whether a fallback was used, see {@link #fallback()}
+     * @param kind how the state was resolved, see {@link #kind()}
      * @param behaviour the behaviour values of {@code definition}
      */
     @Internal
-    public ResolvedBlock(@NonNull RegisteredBlockState definition, boolean fallback, @NonNull BlockValues behaviour) {
+    public ResolvedBlock(@NonNull RegisteredBlockState definition, @NonNull ResolutionKind kind, @NonNull BlockValues behaviour) {
         this.definition = definition;
-        this.fallback = fallback;
+        this.kind = Objects.requireNonNull(kind);
         this.behaviour = behaviour;
     }
 
@@ -45,14 +46,28 @@ public final class ResolvedBlock {
     }
 
     /**
+     * How the palette resolved the state for its version.
+     *
+     * @return {@link ResolutionKind#EXACT} (also for a block asked for by runtime id), {@link ResolutionKind#ADAPTED}
+     *         (the same block with state values fitted to the version), {@link ResolutionKind#FALLBACK} (a
+     *         {@code BlockFallback}, also a forced one), {@link ResolutionKind#DEFAULT} (the default fallback block) or
+     *         {@link ResolutionKind#MISSING} (no fallback at all: air is sent)
+     * @since 1.0.0
+     */
+    public @NonNull ResolutionKind kind() {
+        return kind;
+    }
+
+    /**
      * Whether the block sent is a replacement.
      *
-     * @return true if a {@code BlockFallback} or the default fallback block was used: the state has no block of its own
-     *         in this version, or is forcibly replaced. Not for a state that is only adapted to this version's state
-     *         values. False for a block asked for by runtime id
+     * @return true if the state has no block of its own in this version, or is forcibly replaced: {@link #kind()} is
+     *         {@code FALLBACK}, {@code DEFAULT} or {@code MISSING}. Not for a state that is only adapted to this
+     *         version's state values
+     * @since 1.0.0
      */
     public boolean fallback() {
-        return fallback;
+        return kind.isReplacement();
     }
 
     /**
@@ -66,17 +81,17 @@ public final class ResolvedBlock {
 
     @Override
     public boolean equals(Object o) {
-        return this == o || o instanceof ResolvedBlock other && fallback == other.fallback
+        return this == o || o instanceof ResolvedBlock other && kind == other.kind
             && definition.equals(other.definition) && behaviour.equals(other.behaviour);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(definition, fallback, behaviour);
+        return Objects.hash(definition, kind, behaviour);
     }
 
     @Override
     public String toString() {
-        return "ResolvedBlock{" + definition + ", fallback=" + fallback + '}';
+        return "ResolvedBlock{" + definition + ", " + kind + '}';
     }
 }

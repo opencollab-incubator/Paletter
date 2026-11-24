@@ -1,6 +1,7 @@
 package dev.opencollab.paletter.item;
 
 import dev.opencollab.paletter.PaletteReport;
+import dev.opencollab.paletter.ResolutionKind;
 import dev.opencollab.paletter.Origin;
 import dev.opencollab.paletter.Palette;
 import dev.opencollab.paletter.internal.behaviour.Behaviour;
@@ -539,7 +540,7 @@ public final class ItemRegistry implements DefinitionRegistry<ItemDefinition> {
             RegisteredItem fallback = getDefinition(defaultFallback.target().identifier());
             if (fallback != null) {
                 defaultResolved = result = new ResolvedItem(fallback, defaultFallback.variant().aux(),
-                    defaultBlockOf(fallback.getIdentifier()), true, this);
+                    defaultBlockOf(fallback.getIdentifier()), ResolutionKind.DEFAULT, this);
             }
         }
         return result;
@@ -566,7 +567,7 @@ public final class ItemRegistry implements DefinitionRegistry<ItemDefinition> {
                 block = resolution.block();
             }
         }
-        return new ResolvedItem(item, damage, block, fallback, this);
+        return new ResolvedItem(item, damage, block, fallback ? ResolutionKind.FALLBACK : ResolutionKind.EXACT, this);
     }
 
     // ---- Canonical ids ----

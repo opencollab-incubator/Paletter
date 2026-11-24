@@ -154,7 +154,7 @@ class ResolvedBehaviourTest {
         assertEquals(16, session.resolve(item.type()).behaviour().get(ItemBehaviour.MAX_STACK_SIZE));
         ItemValues pearl = session.resolve(BedrockItems.ENDER_PEARL).behaviour();
         assertEquals(base.resolve(BedrockItems.ENDER_PEARL).behaviour().get(ItemBehaviour.MAX_STACK_SIZE), pearl.get(ItemBehaviour.MAX_STACK_SIZE));
-        assertSame(session.itemDefinition(BedrockItems.ENDER_PEARL), pearl.item());
+        assertSame(session.itemDefinition(BedrockItems.ENDER_PEARL.identifier()), pearl.item());
     }
 
     @Test
@@ -165,7 +165,7 @@ class ResolvedBehaviourTest {
         ResolvedItem resolved = Objects.requireNonNull(session.resolve(BedrockItems.APPLE));
         assertSame(base.resolve(BedrockItems.APPLE).definition(), resolved.definition());
         assertFalse(resolved.fallback());
-        RegisteredItem apple = Objects.requireNonNull(session.itemDefinition(BedrockItems.APPLE));
+        RegisteredItem apple = Objects.requireNonNull(session.itemDefinition(BedrockItems.APPLE.identifier()));
         assertSame(apple, resolved.behaviour().item());
         assertEquals(session.behaviour().item(apple).get(ItemBehaviour.MAX_STACK_SIZE), resolved.behaviour().get(ItemBehaviour.MAX_STACK_SIZE));
     }
@@ -192,7 +192,7 @@ class ResolvedBehaviourTest {
         ResolvedItem pearl = Objects.requireNonNull(palette.resolve(BedrockItems.ENDER_PEARL));
         assertTrue(pearl.fallback());
         ItemValues values = pearl.behaviour();
-        assertSame(palette.itemDefinition(BedrockItems.DIAMOND_SWORD), values.item());
+        assertSame(palette.itemDefinition(BedrockItems.DIAMOND_SWORD.identifier()), values.item());
         assertEquals(1561, values.get(ItemBehaviour.MAX_DAMAGE));
         assertEquals(16, latest().resolve(BedrockItems.ENDER_PEARL).behaviour().get(ItemBehaviour.MAX_STACK_SIZE));
         ResolvedItem direct = Objects.requireNonNull(palette.resolve(BedrockItems.DIAMOND_SWORD));

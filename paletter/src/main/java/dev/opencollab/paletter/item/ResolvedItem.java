@@ -3,6 +3,7 @@ package dev.opencollab.paletter.item;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.cloudburstmc.protocol.bedrock.data.inventory.ItemData;
+import dev.opencollab.paletter.ResolutionKind;
 import dev.opencollab.paletter.behaviour.ItemValues;
 import dev.opencollab.paletter.block.RegisteredBlockState;
 import dev.opencollab.paletter.vanilla.BedrockItemVariant;
@@ -11,9 +12,9 @@ import java.util.Objects;
 
 /**
  * An item variant resolved against one palette: what to send to the client, see
- * {@link dev.opencollab.paletter.Palette#resolve(dev.opencollab.paletter.vanilla.BedrockItemVariant)}. Resolutions are
- * made by the palette, and shared between a palette and the palettes extending it: compare them by their parts, not
- * with {@code equals}.
+ * {@link dev.opencollab.paletter.Palette#resolve(dev.opencollab.paletter.vanilla.ItemKey)}. Resolutions are made by the
+ * palette, kept, and shared between a palette and the palettes extending it. Resolutions are equal if they send the same
+ * definition, aux and block, resolved the same way, with the same behaviour handle; compare them with {@code equals}.
  *
  * @since 1.0.0
  */
@@ -21,15 +22,15 @@ public final class ResolvedItem {
     private final RegisteredItem definition;
     private final int aux;
     private final @Nullable RegisteredBlockState block;
-    private final boolean fallback;
+    private final ResolutionKind kind;
     private final ItemRegistry registry;
 
-    ResolvedItem(@NonNull RegisteredItem definition, int aux, @Nullable RegisteredBlockState block, boolean fallback,
+    ResolvedItem(@NonNull RegisteredItem definition, int aux, @Nullable RegisteredBlockState block, @NonNull ResolutionKind kind,
                  @NonNull ItemRegistry registry) {
         this.definition = definition;
         this.aux = aux;
         this.block = block;
-        this.fallback = fallback;
+        this.kind = Objects.requireNonNull(kind);
         this.registry = registry;
     }
 
@@ -61,13 +62,24 @@ public final class ResolvedItem {
     }
 
     /**
+     * How the palette resolved the variant for its version.
+     *
+     * @return {@link ResolutionKind#EXACT}, {@link ResolutionKind#FALLBACK} (an {@code ItemFallback}, also a forced one)
+     *         or {@link ResolutionKind#DEFAULT} (the default fallback item); never {@code ADAPTED} or {@code MISSING}
+     * @since 1.0.0
+     */
+    public @NonNull ResolutionKind kind() {
+        return kind;
+    }
+
+    /**
      * Whether a replacement was used.
      *
-     * @return true if an {@code ItemFallback} or the default fallback item was used: the variant has no item of its
-     *         own in this version, or is forcibly replaced
+     * @return true if an {@code ItemFallback} or the default fallback item was used ({@link #kind()} is {@code FALLBACK}
+     *         or {@code DEFAULT}): the variant has no item of its own in this version, or is forcibly replaced
      */
     public boolean fallback() {
-        return fallback;
+        return kind.isReplacement();
     }
 
     /**
@@ -91,8 +103,19 @@ public final class ResolvedItem {
 
     /** @return whether another resolution has the same parts, whichever palette made it */
     boolean sameAs(ResolvedItem other) {
-        return aux == other.aux && fallback == other.fallback && definition.equals(other.definition)
+        return aux == other.aux && kind == other.kind && definition.equals(other.definition)
             && Objects.equals(block, other.block);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        return this == o || o instanceof ResolvedItem other && sameAs(other)
+            && (registry == other.registry || Objects.equals(registry.behaviour().item(definition), other.registry.behaviour().item(other.definition)));
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(definition, aux, block, kind);
     }
 
     /**
@@ -122,6 +145,6 @@ public final class ResolvedItem {
 
     @Override
     public String toString() {
-        return "ResolvedItem{" + definition + ", aux=" + aux + ", block=" + block + ", fallback=" + fallback + '}';
+        return "ResolvedItem{" + definition + ", aux=" + aux + ", block=" + block + ", " + kind + '}';
     }
 }

@@ -96,9 +96,9 @@ class BlockOwnedItemTest {
         assertNotNull(stacksOf(palette, "own:plain").getFirst().blockState());
         assertEquals(1, stacksOf(palette, "own:driven").size());
         assertSame(item.type(), palette.itemOf(block.type()));
-        assertSame(item.type(), palette.itemDefinition(item.type()).type());
+        assertSame(item.type(), palette.itemDefinition(item.type().identifier()).type());
         assertSame(block.type().defaultState(), palette.blockOf(item.type()));
-        assertTrue(palette.itemDefinition(item.type()).getRuntimeId() > 0, "a data driven item, numbered with the items");
+        assertTrue(palette.itemDefinition(item.type().identifier()).getRuntimeId() > 0, "a data driven item, numbered with the items");
     }
 
     private static CustomItem replacing(String identifier) {

@@ -1,8 +1,9 @@
 package dev.opencollab.paletter;
 
 /**
- * How a {@link Palette} resolved a block state or an item for its version, see {@link BlockExplanation} and
- * {@link ItemExplanation}.
+ * How a {@link Palette} resolved a block state or an item for its version: {@code kind()} of
+ * {@link dev.opencollab.paletter.block.ResolvedBlock} and {@link dev.opencollab.paletter.item.ResolvedItem}, and of
+ * {@link BlockExplanation} and {@link ItemExplanation}. Closed: Paletter defines it.
  *
  * @since 1.0.0
  */
@@ -27,5 +28,15 @@ public enum ResolutionKind {
     /**
      * Nothing suitable exists: blocks are sent as air, items have no definition.
      */
-    MISSING
+    MISSING;
+
+    /**
+     * Tells whether content resolved this way is sent as something else.
+     *
+     * @return true for {@link #FALLBACK}, {@link #DEFAULT} and {@link #MISSING}
+     * @since 1.0.0
+     */
+    public boolean isReplacement() {
+        return this == FALLBACK || this == DEFAULT || this == MISSING;
+    }
 }

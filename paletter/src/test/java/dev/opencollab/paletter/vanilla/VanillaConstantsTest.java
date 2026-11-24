@@ -173,7 +173,7 @@ class VanillaConstantsTest {
         assertSame(BedrockItems.APPLE, PALETTER.vanilla(PALETTER.latest()).itemType("minecraft:apple", Lookup.EXACT));
 
         Palette palette = PALETTER.palette(PALETTER.latest().protocolVersion());
-        assertEquals("minecraft:apple", palette.itemDefinition(BedrockItems.APPLE).getIdentifier());
+        assertEquals("minecraft:apple", palette.itemDefinition(BedrockItems.APPLE.identifier()).getIdentifier());
         assertEquals(5, palette.encode(BedrockItemStack.of(BedrockItems.POTION.variant(5))).getDamage());
         // Any aux value encodes; only variants with an id are recognized when decoding
         assertEquals(9999, palette.encode(BedrockItemStack.of(BedrockItems.POTION.variant(9999))).getDamage());
@@ -312,7 +312,7 @@ class VanillaConstantsTest {
         assertThrows(IllegalArgumentException.class, () -> vanilla.runtimeId(east));
 
         assertEquals(Ids.item(palette, ItemVariant.of("example:ruby")), Ids.item(palette, ruby.type()));
-        assertEquals("example:ruby", palette.itemDefinition(ruby.type()).getIdentifier());
+        assertEquals("example:ruby", palette.itemDefinition(ruby.type().identifier()).getIdentifier());
         assertEquals(Ids.item(palette, ItemVariant.of("example:lamp")), Ids.item(palette, lamp.itemType()));
     }
 
@@ -337,7 +337,7 @@ class VanillaConstantsTest {
         Paletter server = Paletter.builder().fallbacks(Fallbacks.builder().block(BedrockBlocks.ICICLE, BedrockBlocks.STONE).build())
             .layer(layer).build();
         Palette palette = server.palette(PALETTER.versions().getFirst().protocolVersion());
-        assertNotNull(palette.itemDefinition(BedrockItems.CAKE));
+        assertNotNull(palette.itemDefinition(BedrockItems.CAKE.identifier()));
         boolean[] emptyMap2 = new boolean[1];
         palette.creativeLayout().forEachStack(stack -> emptyMap2[0] |= ItemMatcher.of(BedrockItems.EMPTY_MAP.variant(2)).matches(stack));
         assertFalse(emptyMap2[0]);

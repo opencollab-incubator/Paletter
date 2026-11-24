@@ -49,7 +49,7 @@ class ExperimentGatingTest {
         Palette gated = paletter.palette(OLDEST);
         assertTrue(gated.resolve(BedrockItems.BLACK_CUSHION).fallback());
         assertEquals(BedrockItems.STICK.variant(), gated.resolve(BedrockItems.BLACK_CUSHION).variant());
-        assertNull(gated.itemDefinition(BedrockItems.BLACK_CUSHION));
+        assertNull(gated.itemDefinition(BedrockItems.BLACK_CUSHION.identifier()));
         assertEquals(List.of(), gated.experiments());
         // Still registered, as BDS registers it in a world without the toggle (data/bds/1.26.45.1/vanilla/capture.json: 1976 items)
         RegisteredItem registered = gated.itemDefinitions().stream()
@@ -61,7 +61,7 @@ class ExperimentGatingTest {
 
         Palette regular = paletter.palette(MIDDLE);
         assertFalse(regular.resolve(BedrockItems.BLACK_CUSHION).fallback());
-        assertNotNull(regular.itemDefinition(BedrockItems.BLACK_CUSHION));
+        assertNotNull(regular.itemDefinition(BedrockItems.BLACK_CUSHION.identifier()));
         assertEquals(List.of(), regular.experiments());
 
         // Without a fallback of its own the gated item is the default fallback, like content the version lacks
@@ -114,7 +114,7 @@ class ExperimentGatingTest {
         Paletter paletter = Paletter.builder().allExperiments().build();
 
         Palette all = paletter.palette(OLDEST);
-        assertNotNull(all.itemDefinition(BedrockItems.BLACK_CUSHION));
+        assertNotNull(all.itemDefinition(BedrockItems.BLACK_CUSHION.identifier()));
         assertTrue(all.experiments().contains(TOGGLE));
         assertFalse(all.experiments().contains(VoxelShapeStore.EXPERIMENT));
         assertEquals(List.of(), paletter.palette(1001).experiments());
@@ -156,7 +156,7 @@ class ExperimentGatingTest {
 
         Palette enabled = paletter.palette(OLDEST);
         assertFalse(enabled.resolve(BedrockItems.BLACK_CUSHION).fallback());
-        assertNotNull(enabled.itemDefinition(BedrockItems.BLACK_CUSHION));
+        assertNotNull(enabled.itemDefinition(BedrockItems.BLACK_CUSHION.identifier()));
         assertEquals(List.of(TOGGLE), enabled.experiments());
         assertEquals(TOGGLE, enabled.experimentOf(BedrockItems.BLACK_CUSHION));
         assertNull(enabled.experimentOf(BedrockItems.STICK));

@@ -115,7 +115,7 @@ final class RecipeEncoder {
     }
 
     private @Nullable ItemDefinition definition(BedrockItemType type) {
-        return palette.itemDefinition(type);
+        return palette.itemDefinition(type.identifier());
     }
 
     private @Nullable RecipeUnlockingRequirement unlock(Unlock unlock) {

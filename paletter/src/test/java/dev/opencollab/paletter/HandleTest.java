@@ -78,7 +78,7 @@ class HandleTest {
         assertNotNull(handle);
         assertSame(ruby.type().variant(), handle, "the palette hands back the item's own handle");
         assertSame(handle, palette.itemVariant("example:ruby", 0, Lookup.RENAMED));
-        assertNotNull(palette.itemDefinition(handle.type()));
+        assertNotNull(palette.itemDefinition(handle.type().identifier()));
         assertTrue(palette.itemVariants().contains(handle));
         assertTrue(palette.itemVariants().contains(BedrockItems.APPLE.variant()));
         assertNull(PALETTER.vanilla(PALETTER.latest()).itemVariant("example:ruby", 0, Lookup.RENAMED));

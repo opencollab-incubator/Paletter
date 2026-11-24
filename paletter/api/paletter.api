@@ -114,7 +114,6 @@ public final class dev.opencollab.paletter.Palette {
     public dev.opencollab.paletter.Palette extend(dev.opencollab.paletter.PaletteLayer)
     public org.cloudburstmc.protocol.bedrock.packet.ItemComponentPacket itemComponentPacket()
     public dev.opencollab.paletter.item.RegisteredItem itemDefinition(int)
-    public dev.opencollab.paletter.item.RegisteredItem itemDefinition(dev.opencollab.paletter.vanilla.BedrockItemType)
     public dev.opencollab.paletter.item.RegisteredItem itemDefinition(java.lang.String)
     public java.util.List<dev.opencollab.paletter.item.RegisteredItem> itemDefinitions()
     public dev.opencollab.paletter.vanilla.BedrockItemType itemOf(dev.opencollab.paletter.vanilla.BedrockBlockType)
@@ -127,6 +126,7 @@ public final class dev.opencollab.paletter.Palette {
     public dev.opencollab.paletter.block.ResolvedBlock resolve(dev.opencollab.paletter.vanilla.BedrockBlockState)
     public dev.opencollab.paletter.block.ResolvedBlock resolve(dev.opencollab.paletter.vanilla.BedrockBlockState, dev.opencollab.paletter.block.ResolvedBlock)
     public dev.opencollab.paletter.item.ResolvedItem resolve(dev.opencollab.paletter.vanilla.ItemKey)
+    public dev.opencollab.paletter.item.ResolvedItem resolve(dev.opencollab.paletter.vanilla.ItemKey, dev.opencollab.paletter.item.ResolvedItem)
     public dev.opencollab.paletter.block.ResolvedBlock resolveBlock(int)
     public int runtimeId(dev.opencollab.paletter.vanilla.BedrockBlockState)
     public int runtimeId(dev.opencollab.paletter.vanilla.BedrockBlockState, int)
@@ -257,6 +257,7 @@ public enum dev.opencollab.paletter.ResolutionKind {
     public static final dev.opencollab.paletter.ResolutionKind EXACT
     public static final dev.opencollab.paletter.ResolutionKind FALLBACK
     public static final dev.opencollab.paletter.ResolutionKind MISSING
+    public boolean isReplacement()
     public static dev.opencollab.paletter.ResolutionKind valueOf(java.lang.String)
     public static dev.opencollab.paletter.ResolutionKind[] values()
 }
@@ -555,6 +556,7 @@ public final class dev.opencollab.paletter.block.ResolvedBlock {
     public boolean equals(java.lang.Object)
     public boolean fallback()
     public int hashCode()
+    public dev.opencollab.paletter.ResolutionKind kind()
     public java.lang.String toString()
 }
 
@@ -2665,7 +2667,10 @@ public final class dev.opencollab.paletter.item.ResolvedItem {
     public dev.opencollab.paletter.behaviour.ItemValues behaviour()
     public dev.opencollab.paletter.block.RegisteredBlockState block()
     public dev.opencollab.paletter.item.RegisteredItem definition()
+    public boolean equals(java.lang.Object)
     public boolean fallback()
+    public int hashCode()
+    public dev.opencollab.paletter.ResolutionKind kind()
     public org.cloudburstmc.protocol.bedrock.data.inventory.ItemData$Builder toItemData()
     public java.lang.String toString()
     public dev.opencollab.paletter.vanilla.BedrockItemVariant variant()

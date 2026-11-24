@@ -74,11 +74,13 @@ import java.util.function.Supplier;
  * Thread safety: a palette is immutable and safe to share between threads and sessions. Its lazily built caches
  * (behaviour, version indexes) and {@link #extend(PaletteLayer)} synchronize internally; no method needs external locking.
  * <p>
- * Null handling: parameters and return values are {@code @NonNull} unless the signature says {@code @Nullable}.
- * Lookups by identifier, NBT or runtime id return null where nothing matches. Methods that take a key
- * ({@code blockDefinition}, {@code runtimeId}, {@code resolve}) throw {@link IllegalArgumentException} for a key this
- * palette does not contain (e.g. a custom block of a layer it lacks); their {@code orElse} overloads return the default
- * instead. Nothing throws for data a client sent.
+ * Null handling: parameters and return values are {@code @NonNull} unless the signature says {@code @Nullable}. Methods
+ * that take a key ({@code resolve}, {@code blockDefinition(BedrockBlockState)}, {@code runtimeId}) answer what is sent for
+ * it, fallbacks applied, and throw {@link IllegalArgumentException} where nothing can be sent (e.g. a custom block of a
+ * layer the palette lacks); their {@code orElse} overloads return the default instead. Lookups by identifier, NBT, state
+ * values or runtime id answer what the palette itself has, never a fallback, and return null where nothing matches.
+ * Relations ({@code blockOf}, {@code itemOf}, {@code experimentOf}) return null where there is none. Nothing throws for
+ * data a client sent.
  * <p>
  * Vocabulary: keys ({@link BedrockBlockState}, {@link BedrockItemVariant}, ...) identify content independent of any version;
  * definitions ({@link RegisteredBlockState}, {@link RegisteredItem}) are what the palette sends to the client; resolutions
@@ -351,8 +353,9 @@ public final class Palette {
         if (resolved == null) {
             BlockResolution resolution = blocks.resolveOrDefault(state.toNbt());
             RegisteredBlockState block = resolution.block();
-            resolved = new ResolvedBlock(block, !resolution.isExact() && resolution.kind() != BlockResolution.Kind.ADAPTED,
-                behaviour().block(blocks.indexOfRuntimeId(block.getRuntimeId())));
+            ResolutionKind kind = resolution.kind() == BlockResolution.Kind.DEFAULT && blocks.defaultFallback() == null
+                ? ResolutionKind.MISSING : ResolutionKind.valueOf(resolution.kind().name());
+            resolved = new ResolvedBlock(block, kind, behaviour().block(blocks.indexOfRuntimeId(block.getRuntimeId())));
             ResolvedBlock raced = cache.putIfAbsent(state, resolved);
             if (raced != null) {
                 resolved = raced;
@@ -382,11 +385,22 @@ public final class Palette {
         if (resolved == null) {
             RegisteredBlockState block = blocks.block(canonical);
             int index = blocks.indexOfRuntimeId(block.getRuntimeId());
-            // A state that is no fallback resolves to what its block resolves to by index: one instance for both lookups
-            cache[own] = resolved = blocks.isFallback(canonical) ? new ResolvedBlock(block, true, behaviour().block(index))
-                : resolveIndex(index);
+            // A state that is the block's own resolves to what its block resolves to by index: one instance for both lookups
+            ResolutionKind kind = kindOf(canonical, block);
+            cache[own] = resolved = kind == ResolutionKind.EXACT ? resolveIndex(index) : new ResolvedBlock(block, kind, behaviour().block(index));
         }
         return resolved;
+    }
+
+    /** How the canonical table resolved a canonical id to its block. */
+    private ResolutionKind kindOf(int canonical, RegisteredBlockState block) {
+        if (blocks.isMissing(canonical)) {
+            return blocks.defaultFallback() != null ? ResolutionKind.DEFAULT : ResolutionKind.MISSING;
+        }
+        if (blocks.isFallback(canonical)) {
+            return ResolutionKind.FALLBACK;
+        }
+        return blocks.canonical().index(block.getState()) == canonical ? ResolutionKind.EXACT : ResolutionKind.ADAPTED;
     }
 
     private synchronized ResolvedBlock[] resolvedByCanonicalTable() {
@@ -416,7 +430,7 @@ public final class Palette {
         }
         ResolvedBlock resolved = cache[own];
         if (resolved == null) {
-            cache[own] = resolved = new ResolvedBlock(blocks.byIndex(index), false, behaviour().block(index));
+            cache[own] = resolved = new ResolvedBlock(blocks.byIndex(index), ResolutionKind.EXACT, behaviour().block(index));
         }
         return resolved;
     }
@@ -888,29 +902,36 @@ public final class Palette {
      * What this palette sends for an item variant, without building an {@link ItemData}: the item definition, aux value
      * and block of {@link #encode} (fallbacks applied), as one cached record. For the variants of the newest version it
      * is a field read and an array load, it does not allocate. Use it to read the definition or aux value of many items;
-     * a stack's own block state, count and NBT are not part of it. {@link ResolvedItem#fallback()} tells whether the
-     * variant is sent as another item, {@link ResolvedItem#variant()} which.
+     * a stack's own block state, count and NBT are not part of it. {@link ResolvedItem#kind()} tells whether the
+     * variant is sent as another item, {@link ResolvedItem#variant()} which. Whether this version registers an item
+     * itself is {@link #itemDefinition(String)}.
      *
      * @param key the item type or variant
-     * @return the resolution, or null if the item does not exist in this version and has no fallback
+     * @return the resolution
+     * @throws IllegalArgumentException if nothing is sent for the item: this version does not have it, and neither it
+     *         nor the {@link Fallbacks} default has a fallback ({@link Fallbacks#NONE}). Use
+     *         {@link #resolve(ItemKey, ResolvedItem)} where that may happen
      * @since 1.0.0
      */
-    public @Nullable ResolvedItem resolve(@NonNull ItemKey key) {
-        return items.resolve(key);
+    public @NonNull ResolvedItem resolve(@NonNull ItemKey key) {
+        ResolvedItem resolved = items.resolve(key);
+        if (resolved == null) {
+            throw new IllegalArgumentException("Nothing is sent for " + key + " in " + this + ": the version lacks it and there is no fallback");
+        }
+        return resolved;
     }
 
     /**
-     * Returns the definition of an item type in this palette.
+     * Resolves an item like {@link #resolve(ItemKey)}, but returns a default where that throws.
      *
-     * @param type the item type, a key
-     * @return the item of a type as registered in this palette, or null if it has none (an item of a layer this palette
-     *         does not have, or one that does not exist in this version; fallbacks are not applied, see {@link #encode}).
-     *         Null too for an item behind a disabled experiment toggle, which counts as missing although it is registered
-     *         (see {@link #itemDefinitions()})
+     * @param key the item type or variant
+     * @param orElse what to return where {@link #resolve(ItemKey)} throws, may be null
+     * @return the resolution, or {@code orElse} if nothing is sent for the item
      * @since 1.0.0
      */
-    public @Nullable RegisteredItem itemDefinition(@NonNull BedrockItemType type) {
-        return items.getDefinition(type.identifier());
+    public @Nullable ResolvedItem resolve(@NonNull ItemKey key, @Nullable ResolvedItem orElse) {
+        ResolvedItem resolved = items.resolve(key);
+        return resolved != null ? resolved : orElse;
     }
 
     /**
@@ -1146,12 +1167,7 @@ public final class Palette {
         int canonical = Canonicals.item(items.canonical(), variant);
         ResolvedItem direct = items.resolve(variant);
         ResolvedItem sent = canonical != -1 ? items.item(canonical) : direct;
-        ResolutionKind kind;
-        if (direct != null) {
-            kind = direct.fallback() ? ResolutionKind.FALLBACK : ResolutionKind.EXACT;
-        } else {
-            kind = sent != null ? ResolutionKind.DEFAULT : ResolutionKind.MISSING;
-        }
+        ResolutionKind kind = direct != null ? direct.kind() : sent != null ? ResolutionKind.DEFAULT : ResolutionKind.MISSING;
         List<String> chain = new ArrayList<>(List.of(identifier));
         String item = sent == null ? null : sent.definition().getIdentifier();
         if (item != null && !item.equals(identifier)) {

@@ -113,7 +113,7 @@ class IngredientsTest {
         for (String tag : NEWEST.itemTags().keySet()) {
             Set<BedrockItemType> newer = members(NEWEST, tag);
             Set<BedrockItemType> lacking = new HashSet<>();
-            newer.stream().filter(item -> oldest.itemDefinition(item) == null).forEach(lacking::add);
+            newer.stream().filter(item -> oldest.itemDefinition(item.identifier()) == null).forEach(lacking::add);
             if (!lacking.isEmpty() && lacking.size() < newer.size() && oldest.itemTags().containsKey(tag)) {
                 Ingredient.Tag found = Ingredients.tagOf(oldest, newer, item -> false);
                 assertNotNull(found, tag);
@@ -131,7 +131,7 @@ class IngredientsTest {
         Map<BedrockItemType, Set<Integer>> partial = new HashMap<>();
         for (ItemKey item : items) {
             BedrockItemType type = item.type();
-            if (palette.itemDefinition(type) == null || unobtainable.test(type)) {
+            if (palette.itemDefinition(type.identifier()) == null || unobtainable.test(type)) {
                 continue;
             }
             if (item instanceof BedrockItemVariant variant) {
