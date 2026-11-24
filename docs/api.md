@@ -405,7 +405,8 @@ Geyser needs that have no add-on JSON form, so there is no BDS capture to verify
 `ScriptHooks` (block `minecraft:custom_components`: whether any script component handles interaction and placement) and
 `UseOnHook` (item `minecraft:publisher_on_use_on`) are hand-written too: the add-on JSON of those is component names, which
 never reach the wire; the spec capture will check them against BDS after the next recapture. `RenderOffsets` and
-`OnPlayerPlacing` are retired from the add-on format; `MiningSpeed` and `FrameCount` are `@Experimental`.
+`OnPlayerPlacing` are retired from the add-on format. All four are `@Experimental`: they can change or go in a minor
+release if clients stop honouring them.
 
 ## The creative inventory
 

@@ -1,5 +1,6 @@
 package dev.opencollab.paletter.block.component;
 
+import dev.opencollab.paletter.annotation.Experimental;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.util.Objects;
@@ -10,13 +11,12 @@ import java.util.Objects;
  * block twice (what Geyser uses it for).
  * <p>
  * Retired from the add-on format (the Bedrock Dedicated Server of Bedrock 26.60 rejects it at every {@code format_version}). Paletter
- * assumes current clients still honour it on the wire and keeps sending it for legacy content; it will be removed if
- * clients stop honouring it. Sent as {@code {triggerType: <string>}}.
+ * assumes current clients still honour it on the wire and keeps sending it for legacy content. It is {@link Experimental}:
+ * outside the compatibility promise, so it can change or go in a minor release if clients stop honouring it. Sent as {@code {triggerType: <string>}}.
  *
  * @since 1.0.0
- * @deprecated retired from the add-on format, still sent for legacy content; will be removed if clients stop honouring it
  */
-@Deprecated
+@Experimental
 public final class OnPlayerPlacing implements WireOnlyBlockComponent {
     /**
      * The component name.

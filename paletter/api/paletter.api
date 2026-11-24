@@ -586,7 +586,7 @@ public final class dev.opencollab.paletter.block.VoxelShapes {
     public java.lang.String toString()
 }
 
-public sealed interface dev.opencollab.paletter.block.component.BlockComponent permits dev.opencollab.paletter.block.component.BlockDisplayName, dev.opencollab.paletter.block.component.BlockEntity, dev.opencollab.paletter.block.component.BlockLightAbsorption, dev.opencollab.paletter.block.component.BlockLightEmission, dev.opencollab.paletter.block.component.BlockTags, dev.opencollab.paletter.block.component.BoneVisibility, dev.opencollab.paletter.block.component.Breathability, dev.opencollab.paletter.block.component.ChestObstruction, dev.opencollab.paletter.block.component.CollisionBox, dev.opencollab.paletter.block.component.ConnectionRule, dev.opencollab.paletter.block.component.CraftingTable, dev.opencollab.paletter.block.component.DestroyTime, dev.opencollab.paletter.block.component.DestructibleByExplosion, dev.opencollab.paletter.block.component.DestructibleByMining, dev.opencollab.paletter.block.component.DestructionParticles, dev.opencollab.paletter.block.component.EmbeddedVisual, dev.opencollab.paletter.block.component.EnchantmentPowerTransmitter, dev.opencollab.paletter.block.component.EntityFallOn, dev.opencollab.paletter.block.component.Flammable, dev.opencollab.paletter.block.component.FlowerPottable, dev.opencollab.paletter.block.component.Friction, dev.opencollab.paletter.block.component.FutureBlockComponent, dev.opencollab.paletter.block.component.Geometry, dev.opencollab.paletter.block.component.InstrumentSound, dev.opencollab.paletter.block.component.ItemVisual, dev.opencollab.paletter.block.component.Leashable, dev.opencollab.paletter.block.component.LightDampening, dev.opencollab.paletter.block.component.LightEmission, dev.opencollab.paletter.block.component.LiquidDetection, dev.opencollab.paletter.block.component.Loot, dev.opencollab.paletter.block.component.MapColor, dev.opencollab.paletter.block.component.MaterialInstances, dev.opencollab.paletter.block.component.Movable, dev.opencollab.paletter.block.component.NeighborChange, dev.opencollab.paletter.block.component.PlacementFilter, dev.opencollab.paletter.block.component.PrecipitationInteractions, dev.opencollab.paletter.block.component.RandomOffset, dev.opencollab.paletter.block.component.RedstoneConductivity, dev.opencollab.paletter.block.component.RedstoneConsumer, dev.opencollab.paletter.block.component.RedstoneProducer, dev.opencollab.paletter.block.component.Replaceable, dev.opencollab.paletter.block.component.SelectionBox, dev.opencollab.paletter.block.component.Sound, dev.opencollab.paletter.block.component.Support, dev.opencollab.paletter.block.component.Tick, dev.opencollab.paletter.block.component.Transformation, dev.opencollab.paletter.block.component.UnitCube, dev.opencollab.paletter.block.component.VibrationProperties, dev.opencollab.paletter.block.component.WireOnlyBlockComponent {
+public sealed interface dev.opencollab.paletter.block.component.BlockComponent permits dev.opencollab.paletter.block.component.BlockDisplayName, dev.opencollab.paletter.block.component.BlockEntity, dev.opencollab.paletter.block.component.BlockLightAbsorption, dev.opencollab.paletter.block.component.BlockLightEmission, dev.opencollab.paletter.block.component.BlockTags, dev.opencollab.paletter.block.component.ChestObstruction, dev.opencollab.paletter.block.component.CollisionBox, dev.opencollab.paletter.block.component.ConnectionRule, dev.opencollab.paletter.block.component.CraftingTable, dev.opencollab.paletter.block.component.DestroyTime, dev.opencollab.paletter.block.component.DestructibleByExplosion, dev.opencollab.paletter.block.component.DestructibleByMining, dev.opencollab.paletter.block.component.DestructionParticles, dev.opencollab.paletter.block.component.EmbeddedVisual, dev.opencollab.paletter.block.component.EnchantmentPowerTransmitter, dev.opencollab.paletter.block.component.EntityFallOn, dev.opencollab.paletter.block.component.Flammable, dev.opencollab.paletter.block.component.FlowerPottable, dev.opencollab.paletter.block.component.Friction, dev.opencollab.paletter.block.component.FutureBlockComponent, dev.opencollab.paletter.block.component.Geometry, dev.opencollab.paletter.block.component.InstrumentSound, dev.opencollab.paletter.block.component.ItemVisual, dev.opencollab.paletter.block.component.Leashable, dev.opencollab.paletter.block.component.LightDampening, dev.opencollab.paletter.block.component.LightEmission, dev.opencollab.paletter.block.component.LiquidDetection, dev.opencollab.paletter.block.component.Loot, dev.opencollab.paletter.block.component.MapColor, dev.opencollab.paletter.block.component.MaterialInstances, dev.opencollab.paletter.block.component.Movable, dev.opencollab.paletter.block.component.NeighborChange, dev.opencollab.paletter.block.component.PlacementFilter, dev.opencollab.paletter.block.component.PrecipitationInteractions, dev.opencollab.paletter.block.component.RandomOffset, dev.opencollab.paletter.block.component.RedstoneConductivity, dev.opencollab.paletter.block.component.RedstoneConsumer, dev.opencollab.paletter.block.component.RedstoneProducer, dev.opencollab.paletter.block.component.Replaceable, dev.opencollab.paletter.block.component.SelectionBox, dev.opencollab.paletter.block.component.Sound, dev.opencollab.paletter.block.component.Support, dev.opencollab.paletter.block.component.Tick, dev.opencollab.paletter.block.component.Transformation, dev.opencollab.paletter.block.component.VibrationProperties, dev.opencollab.paletter.block.component.WireOnlyBlockComponent {
     public abstract java.lang.String name()
 }
 
@@ -732,34 +732,6 @@ public static final class dev.opencollab.paletter.block.component.BlockTags$Buil
 
 public sealed interface dev.opencollab.paletter.block.component.BlockTrait permits dev.opencollab.paletter.block.component.Connection, dev.opencollab.paletter.block.component.FutureBlockTrait, dev.opencollab.paletter.block.component.MultiBlock, dev.opencollab.paletter.block.component.PlacementDirection, dev.opencollab.paletter.block.component.PlacementPosition {
     public abstract java.lang.String name()
-}
-
-@Deprecated(forRemoval = true) public final class dev.opencollab.paletter.block.component.BoneVisibility implements dev.opencollab.paletter.block.component.BlockComponent {
-    public static final java.lang.String NAME = "minecraft:bone_visibility"
-    public static dev.opencollab.paletter.block.component.BoneVisibility$Builder builder()
-    public boolean equals(java.lang.Object)
-    public int hashCode()
-    public java.lang.String name()
-    public dev.opencollab.paletter.block.component.BoneVisibility$Builder toBuilder()
-    public java.lang.String toString()
-}
-
-public static final class dev.opencollab.paletter.block.component.BoneVisibility$Builder {
-    public dev.opencollab.paletter.block.component.BoneVisibility build()
-}
-
-@Deprecated(forRemoval = true) public final class dev.opencollab.paletter.block.component.Breathability implements dev.opencollab.paletter.block.component.BlockComponent {
-    public static final java.lang.String NAME = "minecraft:breathability"
-    public static dev.opencollab.paletter.block.component.Breathability$Builder builder()
-    public boolean equals(java.lang.Object)
-    public int hashCode()
-    public java.lang.String name()
-    public dev.opencollab.paletter.block.component.Breathability$Builder toBuilder()
-    public java.lang.String toString()
-}
-
-public static final class dev.opencollab.paletter.block.component.Breathability$Builder {
-    public dev.opencollab.paletter.block.component.Breathability build()
 }
 
 public final class dev.opencollab.paletter.block.component.ChestObstruction implements dev.opencollab.paletter.block.component.BlockComponent {
@@ -1827,7 +1799,7 @@ public static final class dev.opencollab.paletter.block.component.NeighborChange
     public java.lang.String value()
 }
 
-@Deprecated public final class dev.opencollab.paletter.block.component.OnPlayerPlacing implements dev.opencollab.paletter.block.component.WireOnlyBlockComponent {
+@Experimental public final class dev.opencollab.paletter.block.component.OnPlayerPlacing implements dev.opencollab.paletter.block.component.WireOnlyBlockComponent {
     public static final java.lang.String NAME = "minecraft:on_player_placing"
     public boolean equals(java.lang.Object)
     public int hashCode()
@@ -2324,20 +2296,6 @@ public record dev.opencollab.paletter.block.component.Transformation$Vec3 {
     public float x()
     public float y()
     public float z()
-}
-
-@Deprecated(forRemoval = true) public final class dev.opencollab.paletter.block.component.UnitCube implements dev.opencollab.paletter.block.component.BlockComponent {
-    public static final java.lang.String NAME = "minecraft:unit_cube"
-    public static dev.opencollab.paletter.block.component.UnitCube$Builder builder()
-    public boolean equals(java.lang.Object)
-    public int hashCode()
-    public java.lang.String name()
-    public dev.opencollab.paletter.block.component.UnitCube$Builder toBuilder()
-    public java.lang.String toString()
-}
-
-public static final class dev.opencollab.paletter.block.component.UnitCube$Builder {
-    public dev.opencollab.paletter.block.component.UnitCube build()
 }
 
 public sealed interface dev.opencollab.paletter.block.component.UvLock permits dev.opencollab.paletter.block.component.FutureUvLock, dev.opencollab.paletter.block.component.UvLock$Bones, dev.opencollab.paletter.block.component.UvLock$Flag {
@@ -3652,7 +3610,7 @@ public static final class dev.opencollab.paletter.item.component.Rarity$Builder 
     public dev.opencollab.paletter.item.component.Rarity$Builder value(java.lang.String)
 }
 
-@Deprecated public final class dev.opencollab.paletter.item.component.RenderOffsets implements dev.opencollab.paletter.item.component.WireOnlyItemComponent {
+@Experimental public final class dev.opencollab.paletter.item.component.RenderOffsets implements dev.opencollab.paletter.item.component.WireOnlyItemComponent {
     public static final java.lang.String NAME = "minecraft:render_offsets"
     public static dev.opencollab.paletter.item.component.RenderOffsets$Builder builder()
     public boolean equals(java.lang.Object)

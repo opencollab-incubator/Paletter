@@ -12,7 +12,7 @@ import dev.opencollab.paletter.block.component.ItemVisual;
 import dev.opencollab.paletter.block.component.LightEmission;
 import dev.opencollab.paletter.block.component.MaterialInstances;
 import dev.opencollab.paletter.block.component.PlacementDirection;
-import dev.opencollab.paletter.block.component.UnitCube;
+import dev.opencollab.paletter.block.component.DestroyTime;
 import dev.opencollab.paletter.block.component.UvLock;
 import dev.opencollab.paletter.creative.CreativeCategory;
 import dev.opencollab.paletter.data.DataVersion;
@@ -266,7 +266,7 @@ class CustomContentTest {
         // A component BDS rejects is not sent: compiling it warns
         @SuppressWarnings("deprecation")
         CustomBlock fence = CustomBlock.builder("example:fence")
-            .component(UnitCube.builder().build())
+            .component(DestroyTime.of(true))
             .build();
         Palette first = Paletter.builder().layer(PaletteLayer.builder("first").block(fence).build()).build()
             .palette(PALETTER.latest().protocolVersion());

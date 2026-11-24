@@ -13,7 +13,6 @@ package dev.opencollab.paletter.item.component;
  *
  * @since 1.0.0
  */
-@SuppressWarnings("deprecation")
 public sealed interface WireOnlyItemComponent extends ItemComponent permits RenderOffsets, MiningSpeed, FrameCount, UseOnHook,
     FutureWireOnlyItemComponent {
 }

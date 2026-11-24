@@ -10,8 +10,6 @@ import dev.opencollab.paletter.block.component.BlockLightAbsorption;
 import dev.opencollab.paletter.block.component.BlockLightEmission;
 import dev.opencollab.paletter.block.component.BlockMenuCategory;
 import dev.opencollab.paletter.block.component.BlockTags;
-import dev.opencollab.paletter.block.component.BoneVisibility;
-import dev.opencollab.paletter.block.component.Breathability;
 import dev.opencollab.paletter.block.component.ChestObstruction;
 import dev.opencollab.paletter.block.component.CollisionBox;
 import dev.opencollab.paletter.block.component.ConnectionRule;
@@ -50,7 +48,6 @@ import dev.opencollab.paletter.block.component.Sound;
 import dev.opencollab.paletter.block.component.Support;
 import dev.opencollab.paletter.block.component.Tick;
 import dev.opencollab.paletter.block.component.Transformation;
-import dev.opencollab.paletter.block.component.UnitCube;
 import dev.opencollab.paletter.block.component.VibrationProperties;
 import dev.opencollab.paletter.block.component.WireOnlyBlockComponent;
 import java.util.List;
@@ -62,7 +59,7 @@ import org.cloudburstmc.nbt.NbtMap;
  * Encoders of the generated {@link BlockComponent} types: the rules of {@code data/model/mappings.json} per
  * protocol window, hand transforms by name. Not API.
  */
-@SuppressWarnings({"unused", "deprecation", "removal"})
+@SuppressWarnings({"unused", "deprecation"})
 public final class BlockWire {
     private BlockWire() {
     }
@@ -118,9 +115,6 @@ public final class BlockWire {
             case Tick c -> { } // server only: BDS sends nothing to clients
             case Transformation c -> transformation(c, ctx, out);
             case VibrationProperties c -> vibrationProperties(c, ctx, out);
-            case BoneVisibility c -> ctx.drop(BoneVisibility.NAME, "was removed from Bedrock (a deprecated stand-in)");
-            case Breathability c -> ctx.drop(Breathability.NAME, "was removed from Bedrock (a deprecated stand-in)");
-            case UnitCube c -> ctx.drop(UnitCube.NAME, "was removed from Bedrock (a deprecated stand-in)");
             case WireOnlyBlockComponent c -> WireOnlyWire.write(c, ctx, out);
             default -> throw new IllegalArgumentException(component.toString());
         }

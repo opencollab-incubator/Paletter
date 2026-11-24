@@ -5,14 +5,6 @@
     "block:minecraft:block_entity": "BlockEntity",
     "block:minecraft:block_light_absorption": "BlockLightAbsorption",
     "block:minecraft:block_light_emission": "BlockLightEmission",
-    "block:minecraft:bone_visibility": {
-      "name": "BoneVisibility",
-      "removed": true
-    },
-    "block:minecraft:breathability": {
-      "name": "Breathability",
-      "removed": true
-    },
     "block:minecraft:chest_obstruction": "ChestObstruction",
     "block:minecraft:collision_box": "CollisionBox",
     "block:minecraft:connection_rule": "ConnectionRule",
@@ -53,10 +45,6 @@
     "block:minecraft:tags": "BlockTags",
     "block:minecraft:tick": "Tick",
     "block:minecraft:transformation": "Transformation",
-    "block:minecraft:unit_cube": {
-      "name": "UnitCube",
-      "removed": true
-    },
     "block:minecraft:vibration_properties": "VibrationProperties",
     "block:trait:minecraft:connection": "Connection",
     "block:trait:minecraft:multi_block": "MultiBlock",

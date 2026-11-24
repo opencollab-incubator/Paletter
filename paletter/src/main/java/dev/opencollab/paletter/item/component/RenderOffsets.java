@@ -1,5 +1,6 @@
 package dev.opencollab.paletter.item.component;
 
+import dev.opencollab.paletter.annotation.Experimental;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
@@ -9,8 +10,8 @@ import java.util.Objects;
  * {@code minecraft:render_offsets}: where the item is drawn in each hand, per view.
  * <p>
  * Retired from the add-on format (the Bedrock Dedicated Server of Bedrock 26.60 rejects it at every {@code format_version}). Paletter
- * assumes current clients still honour it on the wire and keeps sending it for legacy content; it will be removed if
- * clients stop honouring it.
+ * assumes current clients still honour it on the wire and keeps sending it for legacy content. It is {@link Experimental}:
+ * outside the compatibility promise, so it can change or go in a minor release if clients stop honouring it.
  *
  * A {@link Preset} is the legacy form Geyser sends for armor converted from v1 custom mappings: a bare string
  * {@code render_offsets} (no {@code minecraft:} prefix, not a component) that names the client's built-in offsets of an
@@ -18,9 +19,8 @@ import java.util.Objects;
  *
  * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/itemreference/examples/itemcomponents/minecraft_render_offsets?view=minecraft-bedrock-stable">Microsoft Learn: minecraft:render_offsets</a>
  * @since 1.0.0
- * @deprecated retired from the add-on format, still sent for legacy content; will be removed if clients stop honouring it
  */
-@Deprecated
+@Experimental
 public final class RenderOffsets implements WireOnlyItemComponent {
     /**
      * The component name.
