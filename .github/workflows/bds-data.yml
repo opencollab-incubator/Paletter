@@ -2,7 +2,8 @@
 #
 # `decide` asks the download links API once for both channels and captures only a build that is new: not recorded in
 # data/bds/builds.json, without data/bds/<build>, not waiting in the open data pull request, not failed twice at this
-# commit. `capture` runs `update` on Windows BDS (downloaded from minecraft.net; that means accepting the Minecraft EULA,
+# commit. A build whose pull request was built on other data than this commit's (the other channel's data pull request
+# was merged since) is captured again, which refreshes that pull request. `capture` runs `update` on Windows BDS (downloaded from minecraft.net; that means accepting the Minecraft EULA,
 # https://minecraft.net/eula). `publish` turns new data into a pull request from `bds-data/<channel>` and a failure into
 # an issue; it closes the channel's failure issue after a clean run. A manual run can pick one channel, an explicit
 # `version`, `force` (capture a known build) and `verify-only` (`update --verify-only`, which also forces; no issue,
@@ -91,7 +92,9 @@ jobs:
           FORCE: ${{ inputs.force == true || inputs.verify-only == true }}
           COMMIT: ${{ github.sha }}
         run: |
-          ARGS=(daily decide --channel "$CHANNEL" --commit "$COMMIT" --issues "$RUNNER_TEMP/issues.json"
+          # The data tree: the marker of a data pull request carries the one it was built on (publish computes it the same way)
+          DATA_TREE=$(git ls-tree HEAD -- $(cat .github/data-paths.txt) | sha256sum | cut -c1-64)
+          ARGS=(daily decide --channel "$CHANNEL" --commit "$COMMIT" --data-tree "$DATA_TREE" --issues "$RUNNER_TEMP/issues.json"
             --pulls "$RUNNER_TEMP/pulls.json" --outputs "$GITHUB_OUTPUT" --summary "$GITHUB_STEP_SUMMARY")
           if [ -n "$INPUT_VERSION" ]; then ARGS+=(--version "$INPUT_VERSION"); fi
           if [ "$FORCE" = true ]; then ARGS+=(--force); fi
@@ -293,8 +296,9 @@ jobs:
           RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
         run: gh issue close "$NUMBER" --comment "BDS $BUILD matches the committed data (run $RUN_URL)"
 
-      # The top of the pull request body: the marker that tells `daily decide` the build waits here, the failure issue it
-      # closes and, when an add-on input changed, the notice (nothing recaptures by itself)
+      # The top of the pull request body: the marker that tells `daily decide` the build waits here (with the data tree it
+      # was built on, computed as in decide), the failure issue it closes and, when an add-on input changed, the notice
+      # (nothing recaptures by itself)
       - name: Write the pull request header
         id: header
         if: steps.result.outputs.differs == 'true' && (steps.result.outputs.update == '0' || steps.result.outputs.update == '2')
@@ -302,9 +306,10 @@ jobs:
           ADDON: ${{ steps.result.outputs.addon }}
           NUMBER: ${{ steps.result.outputs.issue }}
         run: |
+          DATA_TREE=$(git ls-tree HEAD -- $(cat .github/data-paths.txt) | sha256sum | cut -c1-64)
           {
             echo "header<<HEADER_END"
-            echo "<!-- bds-check: $BUILD -->"
+            echo "<!-- bds-check: $BUILD $DATA_TREE -->"
             if [ -n "$NUMBER" ]; then echo "Closes #$NUMBER"; fi
             if [ "$ADDON" = true ]; then
               echo

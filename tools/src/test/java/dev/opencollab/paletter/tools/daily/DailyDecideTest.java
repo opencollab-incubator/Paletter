@@ -23,6 +23,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 class DailyDecideTest {
     private static final String COMMIT = "a".repeat(40);
     private static final String OTHER_COMMIT = "b".repeat(40);
+    private static final String TREE = "c".repeat(64);
+    private static final String OTHER_TREE = "d".repeat(64);
     private static final String RELEASE = "1.26.66.1";
     private static final String PREVIEW = "1.26.70.25";
     private static final String LINKS = "{\"result\": {\"links\": ["
@@ -40,7 +42,7 @@ class DailyDecideTest {
     }
 
     private static DailyDecide.Decision release(Path root, boolean force, List<DailyDecide.Issue> issues, List<DailyDecide.Pull> pulls) throws IOException {
-        return DailyDecide.decide(root, "release", RELEASE, force, COMMIT, issues, pulls);
+        return DailyDecide.decide(root, "release", RELEASE, force, COMMIT, TREE, issues, pulls);
     }
 
     private static void record(Path root, String build) throws IOException {
@@ -68,12 +70,26 @@ class DailyDecideTest {
 
     @Test
     void row3ABuildWaitingInTheDataPullRequestIsSkipped(@TempDir Path root) throws IOException {
-        DailyDecide.Decision decision = release(root, false, List.of(), List.of(dataPull("release", "report\n<!-- bds-check: " + RELEASE + " -->\nmore")));
+        DailyDecide.Decision decision = release(root, false, List.of(), List.of(dataPull("release", "report\n<!-- bds-check: " + RELEASE + " " + TREE + " -->\nmore")));
         assertFalse(decision.capture());
         assertEquals("waiting in #9", decision.reason());
         // The pull request of the other channel, or of another build, decides nothing
-        assertTrue(release(root, false, List.of(), List.of(dataPull("preview", "<!-- bds-check: " + RELEASE + " -->"))).capture());
-        assertTrue(release(root, false, List.of(), List.of(dataPull("release", "<!-- bds-check: 1.26.63.1 -->"))).capture());
+        assertTrue(release(root, false, List.of(), List.of(dataPull("preview", "<!-- bds-check: " + RELEASE + " " + TREE + " -->"))).capture());
+        assertTrue(release(root, false, List.of(), List.of(dataPull("release", "<!-- bds-check: 1.26.63.1 " + TREE + " -->"))).capture());
+    }
+
+    @Test
+    void row3APullRequestBuiltOnOtherDataIsRefreshed(@TempDir Path root) throws IOException {
+        // The other channel's pull request was merged since, or the marker predates the data tree
+        for (String marker : List.of("<!-- bds-check: " + RELEASE + " " + OTHER_TREE + " -->", "<!-- bds-check: " + RELEASE + " -->")) {
+            DailyDecide.Decision decision = release(root, false, List.of(), List.of(dataPull("release", marker)));
+            assertTrue(decision.capture(), marker);
+            assertEquals(1, decision.attempt());
+            assertTrue(decision.reason().startsWith("waiting in #9, built on other data"), decision.reason());
+        }
+        // A refresh that failed twice at this commit waits like any other capture
+        List<DailyDecide.Issue> twice = List.of(ownIssue("release", "<!-- bds-check: " + RELEASE + " " + COMMIT + " 2 -->"));
+        assertFalse(release(root, false, twice, List.of(dataPull("release", "<!-- bds-check: " + RELEASE + " " + OTHER_TREE + " -->"))).capture());
     }
 
     @Test
@@ -83,8 +99,8 @@ class DailyDecideTest {
         assertFalse(skipped.capture());
         assertTrue(skipped.reason().startsWith("failed 2 times"), skipped.reason());
         // A fix (a new commit) or a new build is tried again
-        assertTrue(DailyDecide.decide(root, "release", RELEASE, false, OTHER_COMMIT, twice, List.of()).capture());
-        assertTrue(DailyDecide.decide(root, "release", "1.26.66.2", false, COMMIT, twice, List.of()).capture());
+        assertTrue(DailyDecide.decide(root, "release", RELEASE, false, OTHER_COMMIT, TREE, twice, List.of()).capture());
+        assertTrue(DailyDecide.decide(root, "release", "1.26.66.2", false, COMMIT, TREE, twice, List.of()).capture());
     }
 
     @Test
@@ -100,7 +116,7 @@ class DailyDecideTest {
     void row1ForceCapturesWhateverIsKnown(@TempDir Path root) throws IOException {
         record(root, RELEASE);
         List<DailyDecide.Issue> twice = List.of(ownIssue("release", "<!-- bds-check: " + RELEASE + " " + COMMIT + " 2 -->"));
-        DailyDecide.Decision forced = release(root, true, twice, List.of(dataPull("release", "<!-- bds-check: " + RELEASE + " -->")));
+        DailyDecide.Decision forced = release(root, true, twice, List.of(dataPull("release", "<!-- bds-check: " + RELEASE + " " + TREE + " -->")));
         assertTrue(forced.capture());
         assertEquals(2, forced.attempt(), "never beyond the second attempt");
     }
@@ -108,7 +124,7 @@ class DailyDecideTest {
     @Test
     void theRowsApplyInOrder(@TempDir Path root) throws IOException {
         List<DailyDecide.Issue> twice = List.of(ownIssue("release", "<!-- bds-check: " + RELEASE + " " + COMMIT + " 2 -->"));
-        List<DailyDecide.Pull> waiting = List.of(dataPull("release", "<!-- bds-check: " + RELEASE + " -->"));
+        List<DailyDecide.Pull> waiting = List.of(dataPull("release", "<!-- bds-check: " + RELEASE + " " + TREE + " -->"));
         assertEquals("waiting in #9", release(root, false, twice, waiting).reason(), "row 3 before row 4");
         record(root, RELEASE);
         assertTrue(release(root, false, twice, waiting).reason().startsWith("known"), "row 2 before row 3");
@@ -120,14 +136,14 @@ class DailyDecideTest {
         // An issue by a person with the same title, an issue of another title, a fork's pull request
         assertTrue(release(root, false, List.of(new DailyDecide.Issue(1, DailyDecide.issueTitle("release"), "someone", twice)), List.of()).capture());
         assertTrue(release(root, false, List.of(new DailyDecide.Issue(1, "BDS data: release", "app/github-actions", twice)), List.of()).capture());
-        assertTrue(release(root, false, List.of(), List.of(new DailyDecide.Pull(3, "bds-data/release", true, "<!-- bds-check: " + RELEASE + " -->"))).capture());
+        assertTrue(release(root, false, List.of(), List.of(new DailyDecide.Pull(3, "bds-data/release", true, "<!-- bds-check: " + RELEASE + " " + TREE + " -->"))).capture());
         // Malformed markers, and markers that are not a line of their own (markdown quoting one)
         for (String body : List.of("<!-- bds-check: " + RELEASE + " " + COMMIT + " 3 -->", "<!-- bds-check: " + RELEASE + " abc 2 -->",
             "<!--bds-check: " + RELEASE + " " + COMMIT + " 2-->", "`" + twice + "`", "> " + twice, "text " + twice)) {
             DailyDecide.Decision decision = release(root, false, List.of(ownIssue("release", body)), List.of());
             assertTrue(decision.capture() && decision.attempt() == 1, body);
         }
-        for (String body : List.of("`<!-- bds-check: " + RELEASE + " -->`", "<!-- bds-check: " + RELEASE + " --> and more", "<!-- bds-check: 1.26.66 -->")) {
+        for (String body : List.of("`<!-- bds-check: " + RELEASE + " " + TREE + " -->`", "<!-- bds-check: " + RELEASE + " " + TREE + " --> and more", "<!-- bds-check: 1.26.66 -->")) {
             assertTrue(release(root, false, List.of(), List.of(dataPull("release", body))).capture(), body);
         }
     }
@@ -135,7 +151,7 @@ class DailyDecideTest {
     @Test
     void oneLinksAnswerServesBothChannels(@TempDir Path root) throws Exception {
         AtomicInteger requests = new AtomicInteger();
-        List<DailyDecide.Decision> decisions = DailyDecide.decide(root, DailyDecide.CHANNELS, null, false, COMMIT, List.of(), List.of(), () -> {
+        List<DailyDecide.Decision> decisions = DailyDecide.decide(root, DailyDecide.CHANNELS, null, false, COMMIT, TREE, List.of(), List.of(), () -> {
             requests.incrementAndGet();
             return LINKS;
         });
@@ -149,16 +165,17 @@ class DailyDecideTest {
         DailyDecide.Links none = () -> {
             throw new AssertionError("no request with an explicit version");
         };
-        assertEquals("1.26.63.1", DailyDecide.decide(root, List.of("release"), "1.26.63.1", false, COMMIT, List.of(), List.of(), none).get(0).build());
-        assertThrows(IllegalArgumentException.class, () -> DailyDecide.decide(root, DailyDecide.CHANNELS, "1.26.63.1", false, COMMIT, List.of(), List.of(), none));
-        assertThrows(IllegalArgumentException.class, () -> DailyDecide.decide(root, List.of("release"), "1.26.63.1; rm", false, COMMIT, List.of(), List.of(), none));
-        assertThrows(IllegalArgumentException.class, () -> DailyDecide.decide(root, List.of("release"), "1.26.63.1", false, "HEAD", List.of(), List.of(), none));
+        assertEquals("1.26.63.1", DailyDecide.decide(root, List.of("release"), "1.26.63.1", false, COMMIT, TREE, List.of(), List.of(), none).get(0).build());
+        assertThrows(IllegalArgumentException.class, () -> DailyDecide.decide(root, DailyDecide.CHANNELS, "1.26.63.1", false, COMMIT, TREE, List.of(), List.of(), none));
+        assertThrows(IllegalArgumentException.class, () -> DailyDecide.decide(root, List.of("release"), "1.26.63.1; rm", false, COMMIT, TREE, List.of(), List.of(), none));
+        assertThrows(IllegalArgumentException.class, () -> DailyDecide.decide(root, List.of("release"), "1.26.63.1", false, "HEAD", TREE, List.of(), List.of(), none));
+        assertThrows(IllegalArgumentException.class, () -> DailyDecide.decide(root, List.of("release"), "1.26.63.1", false, COMMIT, "abc", List.of(), List.of(), none));
     }
 
     @Test
     void theMatrixHoldsOnlyBuildsChannelsAndAttempts(@TempDir Path root) throws Exception {
         record(root, RELEASE);
-        List<DailyDecide.Decision> decisions = DailyDecide.decide(root, DailyDecide.CHANNELS, null, false, COMMIT,
+        List<DailyDecide.Decision> decisions = DailyDecide.decide(root, DailyDecide.CHANNELS, null, false, COMMIT, TREE,
             List.of(ownIssue("preview", "<!-- bds-check: " + PREVIEW + " " + COMMIT + " 1 -->")), List.of(), () -> LINKS);
         JsonObject matrix = JsonParser.parseString(DailyDecide.matrix(decisions)).getAsJsonObject();
         assertEquals(Set.of("include"), matrix.keySet());

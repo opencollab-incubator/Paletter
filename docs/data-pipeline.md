@@ -505,11 +505,14 @@ hand (`channel`, `version`, `force`, `verify-only`), in three jobs:
    |---|---|---|
    | 1 | `force` (also `verify-only`) | capture |
    | 2 | B has an entry in `data/bds/builds.json` or a `data/bds/B` directory | skip: known |
-   | 3 | the open pull request of `bds-data/<channel>` (not from a fork) carries `<!-- bds-check: B -->` | skip: waiting in #n |
+   | 3 | the open pull request of `bds-data/<channel>` (not from a fork) carries `<!-- bds-check: B T -->`, T the data tree of this commit | skip: waiting in #n |
    | 4 | the workflow's own open issue (its exact title, by github-actions) carries `<!-- bds-check: B <this commit> 2 -->` | skip: failed twice at this commit |
    | 5 | otherwise | capture, attempt 2 after one failure at this commit, else 1 |
 
    Only a marker on a line of its own counts; issues of other authors and pull requests from forks decide nothing.
+   The data tree T is the SHA-256 of `git ls-tree HEAD -- <the data paths>`. A pull request whose marker has another T (or
+   none) was built on other data, typically before the other channel's data pull request was merged: rows 4 and 5 decide,
+   and its capture refreshes the pull request on the current data instead of leaving it to conflict.
    Every decision goes into the job summary. With nothing to capture the run ends here, in a few minutes. A known build
    whose add-on is stale is not captured: that is a [full recapture](#full-recapture). A plain `update` of a new build
    always writes its spec capture to `data/bds/<build>/spec`, so once its pull request is merged row 2 knows it, even
@@ -523,7 +526,7 @@ hand (`channel`, `version`, `force`, `verify-only`), in three jobs:
    cache ([CI](#ci)).
 3. `publish` (the only job with write permissions and `BDS_DATA_TOKEN`; it runs no build) reads the result against
    strict patterns. New data (exit 0 or 2) becomes a pull request from `bds-data/<channel>` through
-   `.github/actions/data-pr` (shared with the recapture: only a patch confined to the data paths is applied), whose body starts with `<!-- bds-check: <build> -->`, `Closes #n` when the channel's failure issue is open,
+   `.github/actions/data-pr` (shared with the recapture: only a patch confined to the data paths is applied), whose body starts with `<!-- bds-check: <build> <data tree> -->`, `Closes #n` when the channel's failure issue is open,
    and a notice when an add-on input changed. A failure opens the channel's issue (`BDS data: the <channel> check
    failed`) or rewrites its body, with `<!-- bds-check: <build> <commit> <attempt> -->`; it comments only when the report
    changed. A failure is retried once on the next day, then skipped until a new commit (a fix) or a new build; `force`

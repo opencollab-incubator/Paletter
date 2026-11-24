@@ -36,7 +36,7 @@ final class DailyCommands {
         }
 
         @Command(name = "decide", description = "Which newest builds the daily check captures: one request to the download links API for every "
-            + "channel (none with --version); a build that is recorded, has data/bds/<build>, waits in the open data pull request or failed "
+            + "channel (none with --version); a build that is recorded, has data/bds/<build>, waits in the open data pull request (built on this commit's data) or failed "
             + "twice at this commit is skipped. Appends `matrix` and `captures` to --outputs (the GitHub output format).")
         static final class Decide extends Rooted implements Callable<Integer> {
             @Option(names = "--channel", defaultValue = "BOTH", description = "The channels: ${COMPLETION-CANDIDATES} (default: ${DEFAULT-VALUE})")
@@ -44,6 +44,9 @@ final class DailyCommands {
             @Option(names = "--version", description = "This build instead of the newest (one channel only); no request") String version;
             @Option(names = "--force", description = "Capture whatever is known of the build") boolean force;
             @Option(names = "--commit", required = true, description = "The commit the workflow runs at (40 hex digits)") String commit;
+            @Option(names = "--data-tree", required = true, description = "The data tree of that commit: the SHA-256 of "
+                + "git ls-tree HEAD -- <the data paths> (64 hex digits), which the marker of a waiting data pull request carries")
+            String dataTree;
             @Option(names = "--issues", required = true, description = "The open issues: gh issue list --json number,title,author,body")
             Path issues;
             @Option(names = "--pulls", required = true, description = "The open pull requests: gh pr list --json number,headRefName,isCrossRepository,body")
@@ -54,7 +57,7 @@ final class DailyCommands {
 
             @Override
             public Integer call() throws Exception {
-                List<DailyDecide.Decision> decisions = DailyDecide.decide(root(), channel.names(), version, force, commit,
+                List<DailyDecide.Decision> decisions = DailyDecide.decide(root(), channel.names(), version, force, commit, dataTree,
                     DailyDecide.issues(Files.readString(issues)), DailyDecide.pulls(Files.readString(pulls)), BdsDistribution::links);
                 long captures = decisions.stream().filter(DailyDecide.Decision::capture).count();
                 Files.writeString(outputs, "matrix=" + DailyDecide.matrix(decisions) + "\ncaptures=" + captures + "\n",

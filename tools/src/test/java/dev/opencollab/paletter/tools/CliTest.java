@@ -78,9 +78,9 @@ class CliTest {
         cli.parseArgs("builds", "resolve", "--channel", "preview", "--output", "build.txt");
         cli.parseArgs("bds", "cache-key", "--channel", "preview", "--version", "1.26.70.24", "--output", "key.txt");
         cli.parseArgs("bds", "fetch", "--channel", "release", "--version", "1.26.63.1");
-        cli.parseArgs("daily", "decide", "--channel", "both", "--commit", "a".repeat(40), "--issues", "issues.json", "--pulls", "pulls.json",
+        cli.parseArgs("daily", "decide", "--channel", "both", "--commit", "a".repeat(40), "--data-tree", "c".repeat(64), "--issues", "issues.json", "--pulls", "pulls.json",
             "--outputs", "out.txt", "--summary", "summary.md");
-        cli.parseArgs("daily", "decide", "--channel", "preview", "--version", "1.26.70.24", "--force", "--commit", "a".repeat(40),
+        cli.parseArgs("daily", "decide", "--channel", "preview", "--version", "1.26.70.24", "--force", "--commit", "a".repeat(40), "--data-tree", "c".repeat(64),
             "--issues", "issues.json", "--pulls", "pulls.json", "--outputs", "out.txt");
         cli.parseArgs("daily", "result", "--channel", "release", "--version", "1.26.66.1", "--update-exit", "2", "--codegen-exit", "0",
             "--patch", "out/data.patch", "--out", "out", "--run-id", "123", "--summary", "summary.md", "--verify-only");

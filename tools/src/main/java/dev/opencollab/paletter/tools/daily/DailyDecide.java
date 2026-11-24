@@ -25,8 +25,10 @@ import java.util.regex.Pattern;
  * <ol>
  *     <li>{@code --force}: capture;</li>
  *     <li>B is recorded in {@code data/bds/builds.json} or has a {@code data/bds/B} directory: skip, known;</li>
- *     <li>the open pull request of {@code bds-data/<channel>} (not from a fork) carries {@code <!-- bds-check: B -->}: skip,
- *     it waits there;</li>
+ *     <li>the open pull request of {@code bds-data/<channel>} (not from a fork) carries {@code <!-- bds-check: B T -->}, T
+ *     the data tree of this commit ({@code --data-tree}): skip, it waits there. With another T (or none) the pull request
+ *     was built on other data, typically before the other channel's data pull request was merged: the rows below decide,
+ *     and a capture refreshes it;</li>
  *     <li>the workflow's own open issue of the channel carries {@code <!-- bds-check: B <this commit> 2 -->}: skip, it
  *     failed twice at this commit;</li>
  *     <li>else capture, attempt 2 after one failure at this commit, else 1.</li>
@@ -40,9 +42,11 @@ public final class DailyDecide {
     /** The authors the workflow's own issues have, as {@code gh issue list --json author} names them. */
     static final Set<String> BOT_AUTHORS = Set.of("app/github-actions", "github-actions", "github-actions[bot]");
     private static final String BUILD = "(1(?:\\.[0-9]{1,9}){3})";
-    private static final Pattern PULL_MARKER = Pattern.compile("(?m)^<!-- bds-check: " + BUILD + " -->\\r?$");
+    private static final Pattern PULL_MARKER = Pattern.compile("(?m)^<!-- bds-check: " + BUILD + "(?: ([0-9a-f]{64}))? -->\\r?$");
     private static final Pattern ISSUE_MARKER = Pattern.compile("(?m)^<!-- bds-check: " + BUILD + " ([0-9a-f]{40}) ([12]) -->\\r?$");
     private static final Pattern COMMIT = Pattern.compile("[0-9a-f]{40}");
+    /** The data tree: the SHA-256 of {@code git ls-tree HEAD -- <the data paths>}, as the workflow computes it. */
+    private static final Pattern DATA_TREE = Pattern.compile("[0-9a-f]{64}");
 
     /** The most attempts at one build per commit: one retry tells a flaky runner from a real failure. */
     public static final int ATTEMPTS = 2;
@@ -92,11 +96,15 @@ public final class DailyDecide {
      * @param channels the channels to check, in order
      * @param version an explicit build (one channel only), or null for the newest of each channel
      * @param commit the commit the workflow runs at
+     * @param dataTree the data tree of that commit (64 hex digits), which a waiting pull request's marker must carry
      */
-    public static List<Decision> decide(Path root, List<String> channels, String version, boolean force, String commit, List<Issue> issues,
-                                        List<Pull> pulls, Links links) throws IOException, InterruptedException {
+    public static List<Decision> decide(Path root, List<String> channels, String version, boolean force, String commit, String dataTree,
+                                        List<Issue> issues, List<Pull> pulls, Links links) throws IOException, InterruptedException {
         if (!COMMIT.matcher(commit).matches()) {
             throw new IllegalArgumentException("Not a commit: " + commit);
+        }
+        if (!DATA_TREE.matcher(dataTree).matches()) {
+            throw new IllegalArgumentException("Not a data tree: " + dataTree);
         }
         if (version != null && channels.size() != 1) {
             throw new IllegalArgumentException("An explicit version belongs to one channel: name it (--channel release or preview)");
@@ -113,14 +121,14 @@ public final class DailyDecide {
                 }
                 build = BdsDistribution.newestBuild(answer, channel.equals("preview"));
             }
-            decisions.add(decide(root, channel, build, force, commit, issues, pulls));
+            decisions.add(decide(root, channel, build, force, commit, dataTree, issues, pulls));
         }
         return decisions;
     }
 
     /** The first row of the table that applies to one channel's build. */
-    static Decision decide(Path root, String channel, String build, boolean force, String commit, List<Issue> issues, List<Pull> pulls)
-        throws IOException {
+    static Decision decide(Path root, String channel, String build, boolean force, String commit, String dataTree, List<Issue> issues,
+                           List<Pull> pulls) throws IOException {
         int failures = failures(issues, channel, build, commit);
         int attempt = Math.min(failures + 1, ATTEMPTS);
         if (force) {
@@ -132,17 +140,25 @@ public final class DailyDecide {
         if (Files.isDirectory(root.resolve(Layout.BDS).resolve(build))) {
             return new Decision(channel, build, false, 0, "known: data/bds/" + build + " exists");
         }
+        Integer stale = null;
         for (Pull pull : pulls) {
-            if (!pull.crossRepository() && pull.headRef().equals("bds-data/" + channel) && markers(PULL_MARKER, pull.body()).stream()
-                .anyMatch(marker -> marker.group(1).equals(build))) {
-                return new Decision(channel, build, false, 0, "waiting in #" + pull.number());
+            if (!pull.crossRepository() && pull.headRef().equals("bds-data/" + channel)) {
+                for (MatchResult marker : markers(PULL_MARKER, pull.body())) {
+                    if (marker.group(1).equals(build)) {
+                        if (dataTree.equals(marker.group(2))) {
+                            return new Decision(channel, build, false, 0, "waiting in #" + pull.number());
+                        }
+                        stale = pull.number();
+                    }
+                }
             }
         }
         if (failures >= ATTEMPTS) {
             return new Decision(channel, build, false, 0, "failed " + failures + " times at " + commit.substring(0, 12)
                 + ": a new commit, a new build or `force` tries again");
         }
-        return new Decision(channel, build, true, attempt, failures == 0 ? "new" : "new; it failed once at this commit, the one retry");
+        String reason = stale != null ? "waiting in #" + stale + ", built on other data than this commit's: captured again to refresh it" : "new";
+        return new Decision(channel, build, true, attempt, failures == 0 ? reason : reason + "; it failed once at this commit, the one retry");
     }
 
     /** The attempts the workflow's own issue of the channel records for this build at this commit (0 when none). */

@@ -90,6 +90,14 @@ class WorkflowConsistencyTest {
     }
 
     @Test
+    void decideAndPublishComputeTheDataTreeAlike() throws IOException {
+        String line = "DATA_TREE=$(git ls-tree HEAD -- $(cat .github/data-paths.txt) | sha256sum | cut -c1-64)";
+        Map<String, String> jobs = jobs(workflow("bds-data.yml"));
+        assertTrue(jobs.get("decide").contains(line), "decide computes the data tree");
+        assertTrue(jobs.get("publish").contains(line), "publish computes the data tree");
+    }
+
+    @Test
     void theJobSplitFindsEveryJob() {
         String text = "on: push\njobs:\n  decide:\n    steps: []\n  capture:\n    run: jq\n  publish:\n    run: x\n";
         assertEquals(List.of("decide", "capture", "publish"), List.copyOf(jobs(text).keySet()));
