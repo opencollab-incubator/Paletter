@@ -9,15 +9,13 @@ import dev.opencollab.paletter.vanilla.BedrockItems;
 import java.util.Objects;
 
 /**
- * A replacement for an item in a version. The target is a key: it needs no existence in any version, custom keys are
- * made with {@link dev.opencollab.paletter.Palette#itemType}.
+ * A replacement for an item in a version: an exact variant. The target is a key: it needs no existence in any version,
+ * custom keys are made with {@link dev.opencollab.paletter.Palette#itemType}. Made with {@link #of(ItemKey)} and
+ * {@link #forced()}; a value with {@code equals}, {@code hashCode} and {@code toString}.
  *
- * @param target the replacement item type
- * @param variant the exact replacement variant
- * @param force true to replace the item even though it exists in this version, e.g. because it is experimental there
  * @since 1.0.0
  */
-public record ItemFallback(@NonNull BedrockItemType target, @NonNull BedrockItemVariant variant, boolean force) {
+public final class ItemFallback {
     /**
      * The default for items a version lacks: the {@code minecraft:unknown} item (the block item of
      * {@code minecraft:unknown}).
@@ -26,18 +24,12 @@ public record ItemFallback(@NonNull BedrockItemType target, @NonNull BedrockItem
      */
     public static final ItemFallback UNKNOWN = of(BedrockItems.UNKNOWN);
 
-    /**
-     * Creates a fallback.
-     *
-     * @throws NullPointerException if the target or the variant is null
-     * @throws IllegalArgumentException if the variant is not of the target type
-     */
-    public ItemFallback {
-        Objects.requireNonNull(target);
-        Objects.requireNonNull(variant);
-        if (!variant.type().equals(target)) {
-            throw new IllegalArgumentException("The variant " + variant + " is not of " + target);
-        }
+    private final BedrockItemVariant variant;
+    private final boolean force;
+
+    private ItemFallback(BedrockItemVariant variant, boolean force) {
+        this.variant = Objects.requireNonNull(variant, "variant");
+        this.force = force;
     }
 
     /**
@@ -45,20 +37,62 @@ public record ItemFallback(@NonNull BedrockItemType target, @NonNull BedrockItem
      *
      * @param target the replacement: a variant, or a type for its base variant
      * @return a fallback to exactly this variant (a type is its base variant)
+     * @throws NullPointerException if the target is null
      * @since 1.0.0
      */
     public static @NonNull ItemFallback of(@NonNull ItemKey target) {
-        BedrockItemVariant variant = target.variant();
-        return new ItemFallback(variant.type(), variant, false);
+        return new ItemFallback(target.variant(), false);
     }
 
     /**
-     * Returns this fallback with {@code force} set.
+     * Returns this fallback, forced.
      *
-     * @return this fallback, used even in versions that have the item
+     * @return this fallback, used even in versions that have the item, e.g. because it is experimental there
      * @since 1.0.0
      */
     public @NonNull ItemFallback forced() {
-        return force ? this : new ItemFallback(target, variant, true);
+        return force ? this : new ItemFallback(variant, true);
+    }
+
+    /**
+     * The replacement item type.
+     *
+     * @return the type of {@link #variant()}
+     */
+    public @NonNull BedrockItemType target() {
+        return variant.type();
+    }
+
+    /**
+     * The replacement variant.
+     *
+     * @return the exact replacement variant
+     */
+    public @NonNull BedrockItemVariant variant() {
+        return variant;
+    }
+
+    /**
+     * Whether the fallback is forced.
+     *
+     * @return true to replace the item even though it exists in this version
+     */
+    public boolean force() {
+        return force;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        return this == o || o instanceof ItemFallback other && force == other.force && variant.equals(other.variant);
+    }
+
+    @Override
+    public int hashCode() {
+        return 31 * variant.hashCode() + (force ? 1 : 0);
+    }
+
+    @Override
+    public String toString() {
+        return "ItemFallback{" + variant + (force ? ", forced" : "") + "}";
     }
 }

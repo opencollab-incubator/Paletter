@@ -117,9 +117,9 @@ class FallbackTest {
 
         // A key needs no existence: a custom one is fine, it just resolves to nothing
         assertEquals(BedrockBlockType.fromIdentifier("paletter:nothing"), BlockFallback.of(BedrockBlockType.fromIdentifier("paletter:nothing")).target());
-        assertThrows(IllegalArgumentException.class, () -> new BlockFallback(BedrockBlocks.DIRT, exact, false));
-        assertThrows(IllegalArgumentException.class,
-            () -> new ItemFallback(BedrockItems.STICK, BedrockItems.APPLE.variant(0), false));
+        assertEquals(BedrockBlocks.STONE, BlockFallback.of(exact).target());
+        assertEquals(BlockFallback.of(exact).forced(), BlockFallback.of(exact).forced());
+        assertEquals(BedrockItems.APPLE, ItemFallback.of(BedrockItems.APPLE.variant(0)).target());
     }
 
     @Test

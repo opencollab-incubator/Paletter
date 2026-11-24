@@ -429,18 +429,17 @@ public final class dev.opencollab.paletter.behaviour.ItemValues {
 public final class dev.opencollab.paletter.behaviour.ObjectKey<T> extends dev.opencollab.paletter.behaviour.BehaviourKey<T> {
 }
 
-public record dev.opencollab.paletter.block.BlockFallback {
+public final class dev.opencollab.paletter.block.BlockFallback {
     public static final dev.opencollab.paletter.block.BlockFallback UNKNOWN
-    public <init>(dev.opencollab.paletter.vanilla.BedrockBlockType, dev.opencollab.paletter.vanilla.BedrockBlockState, boolean)
-    public final boolean equals(java.lang.Object)
+    public boolean equals(java.lang.Object)
     public boolean force()
     public dev.opencollab.paletter.block.BlockFallback forced()
-    public final int hashCode()
+    public int hashCode()
     public static dev.opencollab.paletter.block.BlockFallback of(dev.opencollab.paletter.vanilla.BedrockBlockState)
     public static dev.opencollab.paletter.block.BlockFallback of(dev.opencollab.paletter.vanilla.BedrockBlockType)
     public dev.opencollab.paletter.vanilla.BedrockBlockState state()
     public dev.opencollab.paletter.vanilla.BedrockBlockType target()
-    public final java.lang.String toString()
+    public java.lang.String toString()
 }
 
 public final class dev.opencollab.paletter.block.BlockHashes {
@@ -2615,16 +2614,15 @@ public static final class dev.opencollab.paletter.item.CustomItem$Builder {
     public dev.opencollab.paletter.item.CustomItem$Builder menuCategory(dev.opencollab.paletter.item.component.ItemMenuCategory)
 }
 
-public record dev.opencollab.paletter.item.ItemFallback {
+public final class dev.opencollab.paletter.item.ItemFallback {
     public static final dev.opencollab.paletter.item.ItemFallback UNKNOWN
-    public <init>(dev.opencollab.paletter.vanilla.BedrockItemType, dev.opencollab.paletter.vanilla.BedrockItemVariant, boolean)
-    public final boolean equals(java.lang.Object)
+    public boolean equals(java.lang.Object)
     public boolean force()
     public dev.opencollab.paletter.item.ItemFallback forced()
-    public final int hashCode()
+    public int hashCode()
     public static dev.opencollab.paletter.item.ItemFallback of(dev.opencollab.paletter.vanilla.ItemKey)
     public dev.opencollab.paletter.vanilla.BedrockItemType target()
-    public final java.lang.String toString()
+    public java.lang.String toString()
     public dev.opencollab.paletter.vanilla.BedrockItemVariant variant()
 }
 

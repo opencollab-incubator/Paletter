@@ -185,15 +185,15 @@ public final class PaletteDataCodec {
         fallbacksNbt.getCompound("blocks", NbtMap.EMPTY).forEach((name, value) -> {
             NbtMap fallback = (NbtMap) value;
             BedrockBlockType target = BedrockBlockType.fromIdentifier(fallback.getString("target"));
-            blockFallbacks.put(name, new BlockFallback(target, fallback.getBoolean("clear_states") ? target.defaultState() : null,
-                fallback.getBoolean("force")));
+            BlockFallback parsed = fallback.getBoolean("clear_states") ? BlockFallback.of(target.defaultState()) : BlockFallback.of(target);
+            blockFallbacks.put(name, fallback.getBoolean("force") ? parsed.forced() : parsed);
         });
         Map<String, ItemFallback> itemFallbacks = new HashMap<>();
         fallbacksNbt.getCompound("items", NbtMap.EMPTY).forEach((name, value) -> {
             NbtMap fallback = (NbtMap) value;
             // Bundled data names the target type only: the base variant, aux 0
             BedrockItemType target = BedrockItemType.fromIdentifier(fallback.getString("target"));
-            itemFallbacks.put(name, new ItemFallback(target, target.variant(), fallback.getBoolean("force")));
+            itemFallbacks.put(name, fallback.getBoolean("force") ? ItemFallback.of(target).forced() : ItemFallback.of(target));
         });
         Set<String> unmapped = new HashSet<>(fallbacksNbt.getList("unmapped", NbtType.STRING, List.of()));
 
