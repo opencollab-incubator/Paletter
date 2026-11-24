@@ -101,4 +101,37 @@ class ExtendReuseTest {
         assertNotSame(properties(parent, "reuse:lamp"), properties(child, "reuse:lamp"));
         assertEquals(child.blocks().customBlockId("reuse:lamp"), properties(child, "reuse:lamp").getProperties().getCompound("vanilla_block_data").getInt("block_id"));
     }
+
+    @Test
+    void concurrentCallsCompileALayerOnce() throws Exception {
+        Palette base = Paletter.bundled().palette(Paletter.bundled().latest());
+        java.util.concurrent.atomic.AtomicInteger compilations = new java.util.concurrent.atomic.AtomicInteger();
+        java.util.concurrent.CountDownLatch inside = new java.util.concurrent.CountDownLatch(1);
+        PaletteLayer layer = PaletteLayer.builder("once").creative(editor -> {
+            compilations.incrementAndGet();
+            inside.countDown();
+            try {
+                // Hold the compilation, so the other calls come while it runs
+                Thread.sleep(200);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
+        }).build();
+        java.util.concurrent.ExecutorService pool = java.util.concurrent.Executors.newFixedThreadPool(4);
+        try {
+            java.util.List<java.util.concurrent.Future<Palette>> calls = new java.util.ArrayList<>();
+            calls.add(pool.submit(() -> base.extend(layer)));
+            inside.await();
+            for (int i = 0; i < 3; i++) {
+                calls.add(pool.submit(() -> base.extend(layer)));
+            }
+            Palette first = calls.getFirst().get();
+            for (java.util.concurrent.Future<Palette> call : calls) {
+                assertSame(first, call.get());
+            }
+        } finally {
+            pool.shutdown();
+        }
+        assertEquals(1, compilations.get());
+    }
 }

@@ -61,9 +61,12 @@ import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.WeakHashMap;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CompletionException;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Supplier;
 
@@ -116,7 +119,11 @@ public final class Palette {
     private final PaletteReport report;
     private final CreativeOrdering ordering;
     private final VanillaContent.ExperimentGating gating;
-    private final Map<PaletteLayer, WeakReference<Palette>> extensions = new WeakHashMap<>();
+    /**
+     * The extensions by layer: a weak reference to a compiled one (the extension references its layer, so a strong value
+     * would keep the key alive forever), or the future of one being compiled.
+     */
+    private final Map<PaletteLayer, Object> extensions = new WeakHashMap<>();
     private final Supplier<VanillaBehaviour> behaviourData;
     private final Shapes shapes;
     private volatile Behaviour behaviour;
@@ -1228,8 +1235,9 @@ public final class Palette {
     }
 
     /**
-     * Compiles one more layer on top of this palette, e.g. for one session. Concurrent calls for one layer return the
-     * same palette, though each may compile it. The result is cached while it is reachable.
+     * Compiles one more layer on top of this palette, e.g. for one session. The result is cached while it is reachable.
+     * The layer is compiled once: concurrent calls for it wait for the first and return the same palette, while calls
+     * for other layers compile at the same time.
      * <p>
      * A layer that cannot be compiled (a duplicate identifier or runtime id, across or within layers, a block hash
      * collision, an exception from a component encoder or a callback) throws a {@link PaletteException} naming the layer
@@ -1242,23 +1250,54 @@ public final class Palette {
      * @since 1.0.0
      */
     public @NonNull Palette extend(@NonNull PaletteLayer layer) {
+        CompletableFuture<Palette> compiling;
+        CompletableFuture<?> other = null;
         synchronized (extensions) {
-            WeakReference<Palette> existing = extensions.get(layer);
-            Palette palette = existing == null ? null : existing.get();
-            if (palette != null) {
+            Object existing = extensions.get(Objects.requireNonNull(layer));
+            if (existing instanceof WeakReference<?> reference && reference.get() instanceof Palette palette) {
                 return palette;
+            }
+            if (existing instanceof CompletableFuture<?> future) {
+                other = future;
+                compiling = null;
+            } else {
+                compiling = new CompletableFuture<>();
+                extensions.put(layer, compiling);
             }
         }
-        Palette extended = PaletteCompiler.extend(this, layer);
-        synchronized (extensions) {
-            WeakReference<Palette> raced = extensions.get(layer);
-            Palette palette = raced == null ? null : raced.get();
-            if (palette != null) {
-                return palette;
+        if (other != null) {
+            // Compiled by another thread: waited for outside the lock, so other layers are not held up
+            return await(other);
+        }
+        try {
+            Palette extended = PaletteCompiler.extend(this, layer);
+            synchronized (extensions) {
+                extensions.put(layer, new WeakReference<>(extended));
             }
-            // Weak values: the extended palette references the layer, so a strong value would keep the key alive forever
-            extensions.put(layer, new WeakReference<>(extended));
+            compiling.complete(extended);
             return extended;
+        } catch (RuntimeException | Error e) {
+            // Nothing is cached for a failure: the next call compiles again
+            synchronized (extensions) {
+                extensions.remove(layer, compiling);
+            }
+            compiling.completeExceptionally(e);
+            throw e;
+        }
+    }
+
+    /** The palette another thread is compiling for a layer, or what it threw. */
+    private static Palette await(CompletableFuture<?> compiling) {
+        try {
+            return (Palette) compiling.join();
+        } catch (CompletionException e) {
+            if (e.getCause() instanceof RuntimeException runtime) {
+                throw runtime;
+            }
+            if (e.getCause() instanceof Error error) {
+                throw error;
+            }
+            throw e;
         }
     }
 
