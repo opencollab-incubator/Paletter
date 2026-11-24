@@ -4,6 +4,7 @@ import dev.opencollab.paletter.data.DataVersion;
 import dev.opencollab.paletter.data.PaletteDataSource;
 import dev.opencollab.paletter.internal.CanonicalBlocks;
 import dev.opencollab.paletter.internal.CanonicalItems;
+import dev.opencollab.paletter.internal.access.Access;
 import dev.opencollab.paletter.internal.block.BlockStates;
 import dev.opencollab.paletter.internal.data.Renames;
 import dev.opencollab.paletter.internal.data.VanillaData;
@@ -78,7 +79,7 @@ class ServedVersionsTest {
                     continue;
                 }
                 assertEquals(canonical.state(id), BlockStates.normalize(handle.toNbt()), where);
-                assertEquals(id, handle.canonicalIn(canonical), where);
+                assertEquals(id, Access.vanilla().canonicalId(handle, canonical), where);
                 assertEquals(palette.blocks().runtimeId(id), palette.runtimeId(handle), where);
             }
         }
@@ -92,8 +93,8 @@ class ServedVersionsTest {
                 BedrockItemVariant handle = canonical.handle(id);
                 String where = paletter.latest() + " " + canonical.variant(id);
                 assertNotNull(handle, where);
-                assertEquals(canonical.variant(id), handle.toItemVariant(), where);
-                assertEquals(id, handle.canonicalIn(canonical), where);
+                assertEquals(canonical.variant(id), Access.vanilla().toItemVariant(handle), where);
+                assertEquals(id, Access.vanilla().canonicalId(handle, canonical), where);
             }
         }
     }

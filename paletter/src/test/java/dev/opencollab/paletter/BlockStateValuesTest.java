@@ -5,6 +5,7 @@ import dev.opencollab.paletter.block.BlockProperty;
 import dev.opencollab.paletter.block.CustomBlock;
 import dev.opencollab.paletter.creative.CreativeCategory;
 import dev.opencollab.paletter.data.DataVersion;
+import dev.opencollab.paletter.internal.access.Access;
 import dev.opencollab.paletter.internal.block.BlockStates;
 import dev.opencollab.paletter.vanilla.BedrockBlockState;
 import dev.opencollab.paletter.vanilla.BedrockBlockType;
@@ -90,7 +91,7 @@ class BlockStateValuesTest {
         assertNull(palette.blockState("minecraft:wheat", Map.of("growth", true), Lookup.EXACT));
         assertNull(palette.blockState("minecraft:wheat", Map.of(), Lookup.EXACT));
         assertNull(palette.blockState("minecraft:wheat", Map.of("growth", 3, "extra", 1), Lookup.EXACT));
-        Map<String, Object> bytes = new LinkedHashMap<>(BedrockBlockType.fromIdentifier("minecraft:hopper").defaultState().values());
+        Map<String, Object> bytes = new LinkedHashMap<>(Access.vanilla().blockType("minecraft:hopper").defaultState().values());
         bytes.put("toggle_bit", (byte) 1);
         assertNull(palette.blockState("minecraft:hopper", bytes, Lookup.EXACT));
         bytes.put("toggle_bit", 1);

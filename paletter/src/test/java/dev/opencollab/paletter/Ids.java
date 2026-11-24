@@ -8,6 +8,7 @@ import dev.opencollab.paletter.internal.CanonicalBlocks;
 import dev.opencollab.paletter.internal.CanonicalItems;
 import dev.opencollab.paletter.internal.Canonicals;
 import dev.opencollab.paletter.internal.Forwarding;
+import dev.opencollab.paletter.internal.access.Access;
 import dev.opencollab.paletter.internal.item.ItemVariant;
 import dev.opencollab.paletter.vanilla.BedrockBlockState;
 import dev.opencollab.paletter.vanilla.BedrockItemType;
@@ -62,11 +63,11 @@ public final class Ids {
     }
 
     public static int block(Paletter p, BedrockBlockState state) {
-        return state.canonicalIn(canonicalBlocks(p));
+        return Access.vanilla().canonicalId(state, canonicalBlocks(p));
     }
 
     public static int block(Palette p, BedrockBlockState state) {
-        return state.canonicalIn(canonicalBlocks(p));
+        return Access.vanilla().canonicalId(state, canonicalBlocks(p));
     }
 
     public static int item(Paletter p, ItemVariant variant) {
@@ -78,23 +79,23 @@ public final class Ids {
     }
 
     public static int item(Paletter p, BedrockItemType type) {
-        return type.canonicalIn(canonicalItems(p));
+        return Access.vanilla().canonicalId(type, canonicalItems(p));
     }
 
     public static int item(Palette p, BedrockItemType type) {
-        return type.canonicalIn(canonicalItems(p));
+        return Access.vanilla().canonicalId(type, canonicalItems(p));
     }
 
     public static int item(Paletter p, BedrockItemVariant variant) {
-        return variant.canonicalIn(canonicalItems(p));
+        return Access.vanilla().canonicalId(variant, canonicalItems(p));
     }
 
     public static int item(Palette p, BedrockItemVariant variant) {
-        return variant.canonicalIn(canonicalItems(p));
+        return Access.vanilla().canonicalId(variant, canonicalItems(p));
     }
 
     public static int blockOf(Paletter p, ItemVariant variant) {
-        BedrockBlockState block = p.vanilla(p.latest()).blockOf(BedrockItemVariant.fromIdentifier(variant.identifier(), variant.damage()));
+        BedrockBlockState block = p.vanilla(p.latest()).blockOf(Access.vanilla().itemVariant(variant.identifier(), variant.damage()));
         return block == null ? -1 : block(p, block);
     }
 

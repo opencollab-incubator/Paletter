@@ -89,7 +89,7 @@ public final class RegisteredBlock {
     public @NonNull BedrockBlockType type() {
         BedrockBlockType key = this.key;
         if (key == null) {
-            key = customBlock != null ? customBlock.type() : BedrockBlockType.fromIdentifier(identifier);
+            key = customBlock != null ? customBlock.type() : Access.vanilla().blockType(identifier);
             this.key = key;
         }
         return key;

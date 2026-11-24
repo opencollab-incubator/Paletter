@@ -7,6 +7,7 @@ import dev.opencollab.paletter.tools.client.GiveCapture;
 import dev.opencollab.paletter.vanilla.BedrockBlockType;
 import dev.opencollab.paletter.vanilla.BedrockItemType;
 import com.google.gson.JsonParser;
+import dev.opencollab.paletter.internal.access.Access;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
@@ -33,7 +34,7 @@ class BlockItemsCaptureTest {
             int protocol = JsonParser.parseString(Files.readString(build.resolve("spec").resolve("capture.json"))).getAsJsonObject().get("protocol").getAsInt();
             Palette palette = paletter.vanilla(paletter.version(protocol));
             GiveCapture.Check check = GiveCapture.check(GiveCapture.read(file), block -> {
-                BedrockItemType item = palette.itemOf(BedrockBlockType.fromIdentifier(block));
+                BedrockItemType item = palette.itemOf(Access.vanilla().blockType(block));
                 return item == null ? null : item.identifier();
             });
             assertTrue(check.mismatches().isEmpty(), "BDS " + name + " gave another item than itemOf says: " + check.mismatches());

@@ -2,7 +2,6 @@ package dev.opencollab.paletter.vanilla;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
-import dev.opencollab.paletter.annotation.Internal;
 import dev.opencollab.paletter.internal.CanonicalItems;
 import dev.opencollab.paletter.internal.data.Renames;
 import dev.opencollab.paletter.internal.item.ItemVariant;
@@ -36,14 +35,13 @@ public final class BedrockItemVariant implements ItemKey {
     }
 
     /**
-     * Internal: the handle of a canonical id, for {@link dev.opencollab.paletter.Palette}.
+     * The handle of a canonical id, for {@link dev.opencollab.paletter.Palette}.
      *
      * @param canonical the canonical items of a palette lineage
      * @param id a canonical id
      * @return the variant of a canonical id (not null for an id in range)
      */
-    @Internal
-    public static @NonNull BedrockItemVariant fromCanonical(@NonNull CanonicalItems canonical, int id) {
+    static @NonNull BedrockItemVariant fromCanonical(@NonNull CanonicalItems canonical, int id) {
         VanillaIndex index = VanillaIndex.get();
         if (id < canonical.vanillaSize()) {
             // The ids belong to the palette's own newest version, which is not necessarily the bundled one
@@ -76,15 +74,14 @@ public final class BedrockItemVariant implements ItemKey {
     }
 
     /**
-     * Internal: the variant of an identifier and aux value, applying renames and splits (a legacy variant that
+     * The variant of an identifier and aux value, applying renames and splits (a legacy variant that
      * became its own type). Loads the data. Use {@link dev.opencollab.paletter.Palette#itemVariant} or {@code type.variant(aux)}.
      *
      * @param identifier an item identifier
      * @param aux the aux value
      * @return the variant, a plain value if Paletter does not know the identifier
      */
-    @Internal
-    public static @NonNull BedrockItemVariant fromIdentifier(@NonNull String identifier, int aux) {
+    static @NonNull BedrockItemVariant fromIdentifier(@NonNull String identifier, int aux) {
         Renames.Split split = VanillaIndex.get().renames.split(identifier, aux);
         if (split != null) {
             return BedrockItemType.fromIdentifier(split.identifier()).variant(split.aux());
@@ -119,12 +116,11 @@ public final class BedrockItemVariant implements ItemKey {
     }
 
     /**
-     * Internal: the variant as an {@link ItemVariant}.
+     * The variant as an {@link ItemVariant}.
      *
      * @return the identifier and aux value of this variant
      */
-    @Internal
-    public @NonNull ItemVariant toItemVariant() {
+    @NonNull ItemVariant toItemVariant() {
         ItemVariant variant = this.variant;
         if (variant == null) {
             variant = ItemVariant.of(type.identifier(), aux);
@@ -134,7 +130,7 @@ public final class BedrockItemVariant implements ItemKey {
     }
 
     /**
-     * Internal: the canonical id of this variant in a palette's canonical items. A variant of a type that is not
+     * The canonical id of this variant in a palette's canonical items. A variant of a type that is not
      * {@link BedrockItemType#isAvailable() available} is the palette's own item if the palette's newest version has it
      * (an {@link dev.opencollab.paletter.annotation.SincePreview @SincePreview} item in a palette with previews), else it
      * has no id: the palette resolves it by identifier, through the {@link dev.opencollab.paletter.Fallbacks}.
@@ -142,8 +138,7 @@ public final class BedrockItemVariant implements ItemKey {
      * @param canonical the canonical items of a palette
      * @return the canonical id of this variant in a palette's canonical items, or -1
      */
-    @Internal
-    public int canonicalIn(@NonNull CanonicalItems canonical) {
+    int canonicalIn(@NonNull CanonicalItems canonical) {
         if (id < 0 && !type.isCustom() && !type.isAvailable()) {
             int own = canonical.index(toItemVariant());
             return own < canonical.vanillaSize() ? own : -1;

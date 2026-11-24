@@ -7,6 +7,7 @@ import dev.opencollab.paletter.internal.block.BlockRegistry;
 import dev.opencollab.paletter.block.CustomBlock;
 import dev.opencollab.paletter.block.RegisteredBlockState;
 import dev.opencollab.paletter.block.component.Geometry;
+import dev.opencollab.paletter.internal.access.Access;
 import dev.opencollab.paletter.internal.block.BlockStates;
 import dev.opencollab.paletter.item.BedrockItemStack;
 import dev.opencollab.paletter.vanilla.BedrockBlockState;
@@ -47,7 +48,7 @@ class EncodeBlockStateTest {
     }
 
     private static void assertSameAsResolve(Palette palette, String item, BedrockBlockState state) {
-        BedrockItemStack stack = BedrockItemStack.builder(BedrockItemVariant.fromIdentifier(item, 0)).count(3).blockState(state).build();
+        BedrockItemStack stack = BedrockItemStack.builder(Access.vanilla().itemVariant(item, 0)).count(3).blockState(state).build();
         assertEquals(viaResolve(palette, stack), palette.encode(stack), item + " " + state);
     }
 
@@ -65,7 +66,7 @@ class EncodeBlockStateTest {
     void theBlockOfTheStateIsSent() {
         Palette palette = PALETTER.palette(PALETTER.latest().protocolVersion());
         BedrockBlockState sideways = state("minecraft:oak_log", Map.of("pillar_axis", "x"));
-        BedrockItemStack stack = BedrockItemStack.builder(BedrockItemVariant.fromIdentifier("minecraft:oak_log", 0)).blockState(sideways).build();
+        BedrockItemStack stack = BedrockItemStack.builder(Access.vanilla().itemVariant("minecraft:oak_log", 0)).blockState(sideways).build();
         assertEquals(palette.runtimeId(sideways), palette.encode(stack).getBlockDefinition().getRuntimeId());
     }
 
@@ -80,7 +81,7 @@ class EncodeBlockStateTest {
         NbtMap missing = blocks.missingCanonical().getFirst();
         BedrockBlockState missingState = PALETTER.vanilla(PALETTER.latest()).blockState(missing, Lookup.RENAMED);
         assertNotNull(missingState);
-        assertTrue(blocks.isMissing(missingState.canonicalIn(blocks.canonical())));
+        assertTrue(blocks.isMissing(Access.vanilla().canonicalId(missingState, blocks.canonical())));
         assertSameAsResolve(palette, "minecraft:oak_planks", missingState);
 
         // A canonical state this version only has by resolving it: it is not an exact state, and not missing
@@ -99,7 +100,7 @@ class EncodeBlockStateTest {
         Palette base = PALETTER.palette(PALETTER.latest().protocolVersion());
         Palette session = base.extend(layer);
         BedrockBlockState lit = LAMP.type().states().getLast();
-        BedrockItemVariant lamp = BedrockItemVariant.fromIdentifier(LAMP.identifier(), 0);
+        BedrockItemVariant lamp = Access.vanilla().itemVariant(LAMP.identifier(), 0);
         BedrockItemStack stack = BedrockItemStack.builder(lamp).count(2).blockState(lit).build();
 
         ItemData data = session.encode(stack);

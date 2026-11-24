@@ -2,7 +2,6 @@ package dev.opencollab.paletter.vanilla;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
-import dev.opencollab.paletter.annotation.Internal;
 import dev.opencollab.paletter.internal.data.Renames;
 import dev.opencollab.paletter.internal.CanonicalItems;
 import dev.opencollab.paletter.item.CustomItem;
@@ -74,7 +73,7 @@ public final class BedrockItemType implements ItemKey {
     }
 
     /**
-     * Internal: the type of an identifier: the vanilla constant if the identifier (after renames) is vanilla in the
+     * The type of an identifier: the vanilla constant if the identifier (after renames) is vanilla in the
      * newest bundled data or has a generated constant, else a custom type known by its identifier only (not interned,
      * so unknown identifiers never accumulate; equal, not identical, for equal identifiers). Loads the data. Use
      * {@link #byIdentifier(String)}, {@link dev.opencollab.paletter.Palette#itemType} or the constants of
@@ -83,8 +82,7 @@ public final class BedrockItemType implements ItemKey {
      * @param identifier an item identifier
      * @return the type of the identifier
      */
-    @Internal
-    public static @NonNull BedrockItemType fromIdentifier(@NonNull String identifier) {
+    static @NonNull BedrockItemType fromIdentifier(@NonNull String identifier) {
         BedrockItemType known = byIdentifier(identifier);
         return known != null ? known : new BedrockItemType(identifier);
     }
@@ -116,14 +114,13 @@ public final class BedrockItemType implements ItemKey {
     }
 
     /**
-     * Internal: plumbing of {@link CustomItem} and {@link dev.opencollab.paletter.block.CustomBlock}, which create their
+     * Plumbing of {@link CustomItem} and {@link dev.opencollab.paletter.block.CustomBlock}, which create their
      * type once and own it: use {@link CustomItem#type()} and {@link dev.opencollab.paletter.block.CustomBlock#itemType()}.
      *
      * @param identifier the item identifier
      * @return a new custom type of an identifier, with its base variant. Loads no data
      */
-    @Internal
-    public static @NonNull BedrockItemType custom(@NonNull String identifier) {
+    static @NonNull BedrockItemType custom(@NonNull String identifier) {
         return new BedrockItemType(identifier);
     }
 
@@ -356,23 +353,21 @@ public final class BedrockItemType implements ItemKey {
     }
 
     /**
-     * Internal: the base variant as an {@link ItemVariant}.
+     * The base variant as an {@link ItemVariant}.
      *
      * @return the base variant as an {@link ItemVariant} (of the {@link #resolved()} type)
      */
-    @Internal
-    public @NonNull ItemVariant toItemVariant() {
+    @NonNull ItemVariant toItemVariant() {
         return variant().toItemVariant();
     }
 
     /**
-     * Internal: the canonical id of the base variant in a palette's canonical items.
+     * The canonical id of the base variant in a palette's canonical items.
      *
      * @param canonical the canonical items of a palette
      * @return the canonical id of the base variant in a palette's canonical items, or -1
      */
-    @Internal
-    public int canonicalIn(@NonNull CanonicalItems canonical) {
+    int canonicalIn(@NonNull CanonicalItems canonical) {
         return variant().canonicalIn(canonical);
     }
 

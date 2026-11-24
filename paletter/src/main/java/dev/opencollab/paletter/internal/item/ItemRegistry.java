@@ -33,6 +33,7 @@ import dev.opencollab.paletter.block.RegisteredBlockState;
 import dev.opencollab.paletter.creative.CreativeLayout;
 import dev.opencollab.paletter.data.DataVersion;
 import dev.opencollab.paletter.internal.access.Access;
+import dev.opencollab.paletter.internal.access.VanillaAccess;
 import dev.opencollab.paletter.vanilla.BedrockBlockState;
 import dev.opencollab.paletter.vanilla.BedrockItemType;
 import dev.opencollab.paletter.vanilla.BedrockItemVariant;
@@ -82,6 +83,8 @@ import java.util.function.Consumer;
  * @since 1.0.0
  */
 public final class ItemRegistry implements DefinitionRegistry<ItemDefinition> {
+    /** The vanilla keys' internals, read on hot paths. */
+    private static final VanillaAccess VANILLA = Access.vanilla();
     private static final NbtMap NO_BLOCK = NbtMap.builder().putString("name", "paletter:no_block").build();
 
     private final @Nullable ItemRegistry parent;
@@ -467,14 +470,14 @@ public final class ItemRegistry implements DefinitionRegistry<ItemDefinition> {
      */
     public @Nullable ResolvedItem resolve(@NonNull ItemKey key) {
         BedrockItemVariant variant = key.variant();
-        int id = variant.canonicalIn(canonical);
+        int id = VANILLA.canonicalId(variant, canonical);
         if (id != -1) {
             return item(id);
         }
         BedrockItemType type = variant.type();
         // Only the interned variants of such a constant are kept (the base and the named ones): any other aux is the caller's
         return type.isCustom() || type.isAvailable() || type.variant(variant.aux()) != variant
-            ? resolve(variant.toItemVariant()) : unavailable(variant);
+            ? resolve(VANILLA.toItemVariant(variant)) : unavailable(variant);
     }
 
     /**
@@ -486,7 +489,7 @@ public final class ItemRegistry implements DefinitionRegistry<ItemDefinition> {
         Map<BedrockItemVariant, Optional<ResolvedItem>> cache = unavailableItems.get();
         Optional<ResolvedItem> resolved = cache.get(variant);
         if (resolved == null) {
-            resolved = Optional.ofNullable(resolve(variant.toItemVariant()));
+            resolved = Optional.ofNullable(resolve(VANILLA.toItemVariant(variant)));
             Optional<ResolvedItem> raced = cache.putIfAbsent(variant, resolved);
             if (raced != null) {
                 resolved = raced;
@@ -664,7 +667,7 @@ public final class ItemRegistry implements DefinitionRegistry<ItemDefinition> {
      * @return the block, or null if the state resolves to none
      */
     private @Nullable RegisteredBlockState ownBlock(BedrockBlockState state) {
-        int canonicalId = state.canonicalIn(blocks.canonical());
+        int canonicalId = VANILLA.canonicalId(state, blocks.canonical());
         if (canonicalId != -1 && !blocks.isMissing(canonicalId)) {
             return blocks.block(canonicalId);
         }

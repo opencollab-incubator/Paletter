@@ -7,6 +7,7 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import dev.opencollab.paletter.creative.CreativeCategory;
 import dev.opencollab.paletter.creative.CreativePlacement;
+import dev.opencollab.paletter.internal.access.Access;
 import dev.opencollab.paletter.item.component.ItemComponent;
 import dev.opencollab.paletter.item.component.ItemMenuCategory;
 import dev.opencollab.paletter.item.component.Tags;
@@ -58,7 +59,7 @@ public final class CustomItem {
         this.components = List.copyOf(components);
         this.menuCategory = menuCategory;
         this.creative = creative;
-        this.type = BedrockItemType.custom(identifier);
+        this.type = Access.vanilla().customItemType(identifier);
     }
 
     /**

@@ -139,8 +139,8 @@ public final class CustomBlock {
             converted.put(entry.getKey(), value);
         }
         this.defaultStates = Map.copyOf(converted);
-        this.type = BedrockBlockType.custom(identifier, stateProperties, this.defaultStates);
-        this.itemType = this.item instanceof BlockItem.Custom custom ? custom.item().type() : BedrockItemType.custom(identifier);
+        this.type = Access.vanilla().customBlockType(identifier, stateProperties, this.defaultStates);
+        this.itemType = this.item instanceof BlockItem.Custom custom ? custom.item().type() : Access.vanilla().customItemType(identifier);
     }
 
     /**

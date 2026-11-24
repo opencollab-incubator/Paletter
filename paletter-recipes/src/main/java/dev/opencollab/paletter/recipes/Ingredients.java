@@ -4,6 +4,7 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import dev.opencollab.paletter.Palette;
 import dev.opencollab.paletter.Lookup;
+import dev.opencollab.paletter.internal.access.Access;
 import dev.opencollab.paletter.vanilla.BedrockItemType;
 import dev.opencollab.paletter.vanilla.BedrockItemVariant;
 import dev.opencollab.paletter.vanilla.ItemKey;
@@ -133,7 +134,7 @@ public final class Ingredients {
             for (Map.Entry<String, List<String>> entry : palette.itemTags().entrySet()) {
                 Set<BedrockItemType> members = new HashSet<>();
                 for (String identifier : entry.getValue()) {
-                    members.add(BedrockItemType.fromIdentifier(identifier));
+                    members.add(Access.vanilla().itemType(identifier));
                 }
                 Tag tag = new Tag(entry.getKey(), entry.getValue().size(), Set.copyOf(members));
                 for (BedrockItemType member : members) {

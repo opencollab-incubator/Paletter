@@ -148,7 +148,7 @@ public final class RegisteredItem implements ItemDefinition {
     public @NonNull BedrockItemType type() {
         BedrockItemType result = key;
         if (result == null) {
-            result = BedrockItemType.fromIdentifier(identifier);
+            result = Access.vanilla().itemType(identifier);
             key = result;
         }
         return result;

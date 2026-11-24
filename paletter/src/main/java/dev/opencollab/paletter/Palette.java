@@ -4,6 +4,7 @@ import dev.opencollab.paletter.internal.PaletteReportBuilder;
 import dev.opencollab.paletter.internal.block.BlockInterner;
 import dev.opencollab.paletter.internal.access.PaletteAccess;
 import dev.opencollab.paletter.internal.access.Access;
+import dev.opencollab.paletter.internal.access.VanillaAccess;
 import dev.opencollab.paletter.internal.behaviour.Behaviour;
 import dev.opencollab.paletter.internal.behaviour.VanillaBehaviour;
 import dev.opencollab.paletter.internal.Canonicals;
@@ -181,6 +182,8 @@ public final class Palette {
     }
 
     private static final String[] NO_STRINGS = new String[0];
+    /** The vanilla keys' internals, read on hot paths. */
+    private static final VanillaAccess VANILLA = Access.vanilla();
 
     private final VanillaData data;
     private final List<PaletteLayer> layers;
@@ -362,7 +365,7 @@ public final class Palette {
         creativeIdentifiers.get();
         items.loadEagerly();
         // The handles of the blocks a preview added or changed are made with the first handle of such a palette
-        BedrockBlockState.fromCanonical(blocks.canonical(), 0);
+        VANILLA.blockState(blocks.canonical(), 0);
         Behaviour values = behaviour();
         if (withBehaviour) {
             values.loadAll();
@@ -392,7 +395,7 @@ public final class Palette {
      * @since 1.0.0
      */
     public @NonNull ResolvedBlock resolve(@NonNull BedrockBlockState state) {
-        int canonical = state.canonicalIn(blocks.canonical());
+        int canonical = VANILLA.canonicalId(state, blocks.canonical());
         return canonical != -1 ? resolveCanonical(canonical) : requireUnavailable(state);
     }
 
@@ -407,7 +410,7 @@ public final class Palette {
      * @since 1.0.0
      */
     public @Nullable ResolvedBlock resolve(@NonNull BedrockBlockState state, @Nullable ResolvedBlock orElse) {
-        int canonical = state.canonicalIn(blocks.canonical());
+        int canonical = VANILLA.canonicalId(state, blocks.canonical());
         if (canonical != -1) {
             return resolveCanonical(canonical);
         }
@@ -633,7 +636,7 @@ public final class Palette {
         if (custom != null) {
             return custom.stateOf(values);
         }
-        BedrockBlockType vanilla = BedrockBlockType.vanillaType(identifier);
+        BedrockBlockType vanilla = VANILLA.vanillaBlockType(identifier);
         BedrockBlockState state = vanilla == null ? null : vanilla.stateOf(values);
         if (state == null) {
             // Not a state of the newest version: older ones and renames are found by their NBT
@@ -889,7 +892,7 @@ public final class Palette {
      * @since 1.0.0
      */
     public @NonNull RegisteredBlockState blockDefinition(@NonNull BedrockBlockState state) {
-        int canonical = state.canonicalIn(blocks.canonical());
+        int canonical = VANILLA.canonicalId(state, blocks.canonical());
         return canonical != -1 ? blocks.block(canonical) : requireUnavailable(state).definition();
     }
 
@@ -905,7 +908,7 @@ public final class Palette {
      */
     public @Nullable RegisteredBlockState blockDefinition(@NonNull BedrockBlockState state,
                                                           @Nullable RegisteredBlockState orElse) {
-        int canonical = state.canonicalIn(blocks.canonical());
+        int canonical = VANILLA.canonicalId(state, blocks.canonical());
         if (canonical != -1) {
             return blocks.block(canonical);
         }
@@ -924,7 +927,7 @@ public final class Palette {
      * @since 1.0.0
      */
     public int runtimeId(@NonNull BedrockBlockState state) {
-        int canonical = state.canonicalIn(blocks.canonical());
+        int canonical = VANILLA.canonicalId(state, blocks.canonical());
         return canonical != -1 ? blocks.runtimeId(canonical) : requireUnavailable(state).definition().getRuntimeId();
     }
 
@@ -938,7 +941,7 @@ public final class Palette {
      * @since 1.0.0
      */
     public int runtimeId(@NonNull BedrockBlockState state, int orElse) {
-        int canonical = state.canonicalIn(blocks.canonical());
+        int canonical = VANILLA.canonicalId(state, blocks.canonical());
         if (canonical != -1) {
             return blocks.runtimeId(canonical);
         }
@@ -984,7 +987,7 @@ public final class Palette {
             return custom.type();
         }
         String item = data.blockItems().get(block.identifier());
-        return item == null || items.getDefinition(item) == null ? null : BedrockItemType.fromIdentifier(item);
+        return item == null || items.getDefinition(item) == null ? null : VANILLA.itemType(item);
     }
 
     /**

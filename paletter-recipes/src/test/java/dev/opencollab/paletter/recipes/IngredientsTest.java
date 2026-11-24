@@ -9,6 +9,7 @@ import dev.opencollab.paletter.item.component.Tags;
 import dev.opencollab.paletter.Palette;
 import dev.opencollab.paletter.Paletter;
 import dev.opencollab.paletter.data.DataVersion;
+import dev.opencollab.paletter.internal.access.Access;
 import dev.opencollab.paletter.vanilla.BedrockItemType;
 import dev.opencollab.paletter.vanilla.BedrockItemVariant;
 import dev.opencollab.paletter.vanilla.BedrockItems;
@@ -33,7 +34,7 @@ class IngredientsTest {
 
     private static Set<BedrockItemType> members(Palette palette, String tag) {
         Set<BedrockItemType> members = new HashSet<>();
-        palette.itemTags().get(tag).forEach(identifier -> members.add(BedrockItemType.fromIdentifier(identifier)));
+        palette.itemTags().get(tag).forEach(identifier -> members.add(Access.vanilla().itemType(identifier)));
         return members;
     }
 
@@ -161,7 +162,7 @@ class IngredientsTest {
         for (Map.Entry<String, List<String>> tag : palette.itemTags().entrySet()) {
             Set<BedrockItemType> members = new HashSet<>();
             for (String identifier : tag.getValue()) {
-                BedrockItemType member = BedrockItemType.fromIdentifier(identifier);
+                BedrockItemType member = Access.vanilla().itemType(identifier);
                 if (!unobtainable.test(member)) {
                     members.add(member);
                 }
@@ -229,9 +230,9 @@ class IngredientsTest {
             .item(item("x", "example:a", "example:b", "example:c", "example:d"))
             .item(item("y", "example:a", "example:b", "example:c", "example:d"))
             .item(item("z", "example:a")).build());
-        BedrockItemType x = BedrockItemType.fromIdentifier("example:x");
-        BedrockItemType y = BedrockItemType.fromIdentifier("example:y");
-        BedrockItemType z = BedrockItemType.fromIdentifier("example:z");
+        BedrockItemType x = Access.vanilla().itemType("example:x");
+        BedrockItemType y = Access.vanilla().itemType("example:y");
+        BedrockItemType z = Access.vanilla().itemType("example:z");
         assertEquals("example:b", Ingredients.tagOf(palette, Set.of(x, y), item -> false).tag(), "tie on 2 members: the first name");
         // With z unobtainable a matches too, and sorts first by name, but has more members
         assertEquals("example:b", Ingredients.tagOf(palette, Set.of(x, y), z::equals).tag());

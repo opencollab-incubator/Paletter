@@ -11,6 +11,7 @@ import dev.opencollab.paletter.vanilla.BedrockItemType;
 import dev.opencollab.paletter.vanilla.ItemKey;
 import dev.opencollab.paletter.item.CustomItem;
 import dev.opencollab.paletter.annotation.Experimental;
+import dev.opencollab.paletter.internal.access.Access;
 import dev.opencollab.paletter.item.ItemOverride;
 import dev.opencollab.paletter.internal.item.ItemVariant;
 
@@ -345,7 +346,7 @@ public final class PaletteLayer {
          * @since 1.0.0
          */
         public @NonNull Builder variant(@NonNull ItemKey key) {
-            return variant(key.variant().toItemVariant());
+            return variant(Access.vanilla().toItemVariant(key.variant()));
         }
 
         /**

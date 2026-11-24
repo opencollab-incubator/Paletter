@@ -15,6 +15,7 @@ public final class Access {
     private static volatile PaletteAccess palette;
     private static volatile BlockAccess block;
     private static volatile ItemAccess item;
+    private static volatile VanillaAccess vanilla;
 
     private Access() {
     }
@@ -62,6 +63,21 @@ public final class Access {
     public static void setItem(@NonNull ItemAccess access) {
         check(item);
         item = Objects.requireNonNull(access);
+    }
+
+    /**
+     * @return the accessor of {@code dev.opencollab.paletter.vanilla}, set by {@code BedrockBlockType}
+     */
+    public static @NonNull VanillaAccess vanilla() {
+        return get(() -> vanilla, "dev.opencollab.paletter.vanilla.BedrockBlockType");
+    }
+
+    /**
+     * @param access the accessor of {@code dev.opencollab.paletter.vanilla}; set once
+     */
+    public static void setVanilla(@NonNull VanillaAccess access) {
+        check(vanilla);
+        vanilla = Objects.requireNonNull(access);
     }
 
     private static <T> T get(Supplier<T> field, String owner) {

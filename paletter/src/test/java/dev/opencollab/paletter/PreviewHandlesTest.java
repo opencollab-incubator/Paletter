@@ -4,6 +4,7 @@ import org.cloudburstmc.nbt.NbtMap;
 import dev.opencollab.paletter.annotation.SincePreview;
 import dev.opencollab.paletter.block.ResolvedBlock;
 import dev.opencollab.paletter.internal.CanonicalBlocks;
+import dev.opencollab.paletter.internal.access.Access;
 import dev.opencollab.paletter.internal.data.VanillaData;
 import dev.opencollab.paletter.internal.data.VanillaItem;
 import dev.opencollab.paletter.item.ResolvedItem;
@@ -57,7 +58,7 @@ class PreviewHandlesTest {
         BedrockBlockState handle = palette.blockState(state, Lookup.EXACT);
         assertNotNull(handle);
         CanonicalBlocks canonical = palette.blocks().canonical();
-        assertEquals(canonical.index(state), handle.canonicalIn(canonical));
+        assertEquals(canonical.index(state), Access.vanilla().canonicalId(handle, canonical));
         assertEquals(canonical.index(state), canonical.index(handle.toNbt()));
     }
 
@@ -206,7 +207,7 @@ class PreviewHandlesTest {
                 assertEquals(canonical.index(nbt), canonical.index(state.toNbt()), state.toString());
                 assertSame(state, palette.blockState(nbt, Lookup.EXACT), state.toString());
                 assertSame(state, palette.blockState(constant.identifier(), state.values(), Lookup.EXACT), state.toString());
-                assertEquals(canonical.index(nbt), state.canonicalIn(canonical), state.toString());
+                assertEquals(canonical.index(nbt), Access.vanilla().canonicalId(state, canonical), state.toString());
                 ResolvedBlock resolved = palette.resolve(state);
                 assertFalse(resolved.fallback(), state.toString());
                 assertEquals(canonical.index(nbt), canonical.index(resolved.definition().getState()), state.toString());
@@ -237,7 +238,7 @@ class PreviewHandlesTest {
         for (BedrockBlockType constant : previewBlockConstants()) {
             String expected = constant == BedrockBlocks.BRITTLE_ICE ? "minecraft:ice" : "minecraft:unknown";
             for (BedrockBlockState state : constant.states()) {
-                assertEquals(-1, state.canonicalIn(entry.blocks().canonical()), state.toString());
+                assertEquals(-1, Access.vanilla().canonicalId(state, entry.blocks().canonical()), state.toString());
                 ResolvedBlock resolved = entry.resolve(state);
                 assertTrue(resolved.fallback(), state.toString());
                 assertEquals(expected, resolved.definition().getState().getString("name"), state.toString());
@@ -301,7 +302,7 @@ class PreviewHandlesTest {
     void keysEqualTheReleaseConstantsByValue() {
         for (NbtMap state : data.blockStates()) {
             BedrockBlockState handle = palette.blockState(state, Lookup.EXACT);
-            BedrockBlockType release = BedrockBlockType.vanillaType(handle.type().identifier());
+            BedrockBlockType release = Access.vanilla().vanillaBlockType(handle.type().identifier());
             if (release != null) {
                 // Equality does not depend on previews: the type is its identifier, a state its values
                 assertEquals(release, handle.type(), handle.toString());

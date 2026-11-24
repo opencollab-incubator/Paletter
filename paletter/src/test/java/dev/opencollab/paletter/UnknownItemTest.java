@@ -1,5 +1,6 @@
 package dev.opencollab.paletter;
 
+import dev.opencollab.paletter.internal.access.Access;
 import org.cloudburstmc.nbt.NbtMap;
 import org.cloudburstmc.protocol.bedrock.data.inventory.ItemData;
 import dev.opencollab.paletter.internal.item.ItemVariant;
@@ -47,7 +48,7 @@ class UnknownItemTest {
     void unknownAndMissingItemsAreSentAsTheSameStandIn() {
         Palette oldest = PALETTER.palette(OLDEST);
         BedrockItemVariant missing = missingInOldest(oldest);
-        BedrockItemVariant nobody = BedrockItemVariant.fromIdentifier("nobody:item", 0);
+        BedrockItemVariant nobody = Access.vanilla().itemVariant("nobody:item", 0);
         ItemData fromMissing = oldest.encode(BedrockItemStack.of(missing, 3));
         ItemData fromNobody = oldest.encode(BedrockItemStack.of(nobody, 3));
         assertEquals("minecraft:unknown", fromMissing.getDefinition().getIdentifier());
@@ -63,7 +64,7 @@ class UnknownItemTest {
     @Test
     void unknownIsTheExactBaseVariantWhateverAuxWasAsked() {
         Palette oldest = PALETTER.palette(OLDEST);
-        BedrockItemVariant nobody = BedrockItemVariant.fromIdentifier("nobody:item", 7);
+        BedrockItemVariant nobody = Access.vanilla().itemVariant("nobody:item", 7);
         assertEquals(0, oldest.resolve(nobody).variant().aux());
         assertEquals(BedrockItems.UNKNOWN.variant(), oldest.resolve(nobody).variant());
     }
@@ -73,7 +74,7 @@ class UnknownItemTest {
         Paletter stick = Paletter.builder().fallbacks(Fallbacks.builder().defaultItem(ItemFallback.of(BedrockItems.STICK)).build()).build();
         Palette oldest = stick.palette(OLDEST);
         BedrockItemVariant missing = missingInOldest(oldest);
-        BedrockItemVariant nobody = BedrockItemVariant.fromIdentifier("nobody:item", 7);
+        BedrockItemVariant nobody = Access.vanilla().itemVariant("nobody:item", 7);
         assertEquals("minecraft:stick", oldest.encode(BedrockItemStack.of(missing)).getDefinition().getIdentifier());
         assertEquals("minecraft:stick", oldest.encode(BedrockItemStack.of(nobody)).getDefinition().getIdentifier());
         assertEquals(BedrockItems.STICK.variant(), oldest.resolve(nobody).variant());
@@ -84,7 +85,7 @@ class UnknownItemTest {
         Paletter none = Paletter.builder().fallbacks(Fallbacks.NONE).build();
         Palette oldest = none.palette(OLDEST);
         BedrockItemVariant missing = missingInOldest(oldest);
-        BedrockItemVariant nobody = BedrockItemVariant.fromIdentifier("nobody:item", 0);
+        BedrockItemVariant nobody = Access.vanilla().itemVariant("nobody:item", 0);
         assertEquals(ItemData.AIR, oldest.encode(BedrockItemStack.of(missing)));
         assertEquals(ItemData.AIR, oldest.encode(BedrockItemStack.of(nobody)));
         assertNull(oldest.resolve(nobody, null));
@@ -150,7 +151,7 @@ class UnknownItemTest {
             items.resolve(ItemVariant.of("minecraft:oak_log", i));
             items.resolve(new ItemVariant("minecraft:oak_log", 0, NbtMap.builder().putString("name", "chosen:block_" + i)
                 .putCompound("states", NbtMap.EMPTY).build()));
-            palette.encode(BedrockItemStack.of(BedrockItemType.fromIdentifier("chosen:stack_" + i).variant(i)));
+            palette.encode(BedrockItemStack.of(Access.vanilla().itemType("chosen:stack_" + i).variant(i)));
         }
         assertEquals(cached, size(blocks, "resolutions"), "what a caller asks is not kept");
     }

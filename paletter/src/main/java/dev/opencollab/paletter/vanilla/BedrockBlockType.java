@@ -2,10 +2,14 @@ package dev.opencollab.paletter.vanilla;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
-import dev.opencollab.paletter.annotation.Internal;
 import dev.opencollab.paletter.internal.data.Renames;
 import dev.opencollab.paletter.block.BlockProperty;
 import dev.opencollab.paletter.block.CustomBlock;
+import dev.opencollab.paletter.internal.CanonicalBlocks;
+import dev.opencollab.paletter.internal.CanonicalItems;
+import dev.opencollab.paletter.internal.access.Access;
+import dev.opencollab.paletter.internal.access.VanillaAccess;
+import dev.opencollab.paletter.internal.item.ItemVariant;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -44,6 +48,75 @@ import java.util.Objects;
  * @since 1.0.0
  */
 public final class BedrockBlockType {
+    static {
+        Access.setVanilla(new VanillaAccess() {
+            @Override
+            public BedrockBlockType customBlockType(String identifier, List<BlockProperty<?>> properties, Map<String, Object> defaultStates) {
+                return custom(identifier, properties, defaultStates);
+            }
+
+            @Override
+            public BedrockBlockType blockType(String identifier) {
+                return fromIdentifier(identifier);
+            }
+
+            @Override
+            public @Nullable BedrockBlockType vanillaBlockType(String identifier) {
+                return vanillaType(identifier);
+            }
+
+            @Override
+            public @Nullable BedrockBlockState blockState(CanonicalBlocks canonical, int id) {
+                return BedrockBlockState.fromCanonical(canonical, id);
+            }
+
+            @Override
+            public int canonicalId(BedrockBlockState state, CanonicalBlocks canonical) {
+                return state.canonicalIn(canonical);
+            }
+
+            @Override
+            public BedrockItemType customItemType(String identifier) {
+                return BedrockItemType.custom(identifier);
+            }
+
+            @Override
+            public BedrockItemType itemType(String identifier) {
+                return BedrockItemType.fromIdentifier(identifier);
+            }
+
+            @Override
+            public BedrockItemVariant itemVariant(String identifier, int aux) {
+                return BedrockItemVariant.fromIdentifier(identifier, aux);
+            }
+
+            @Override
+            public BedrockItemVariant itemVariant(CanonicalItems canonical, int id) {
+                return BedrockItemVariant.fromCanonical(canonical, id);
+            }
+
+            @Override
+            public ItemVariant toItemVariant(BedrockItemType type) {
+                return type.toItemVariant();
+            }
+
+            @Override
+            public ItemVariant toItemVariant(BedrockItemVariant variant) {
+                return variant.toItemVariant();
+            }
+
+            @Override
+            public int canonicalId(BedrockItemType type, CanonicalItems canonical) {
+                return type.canonicalIn(canonical);
+            }
+
+            @Override
+            public int canonicalId(BedrockItemVariant variant, CanonicalItems canonical) {
+                return variant.canonicalIn(canonical);
+            }
+        });
+    }
+
     private final @Nullable String constantName;
     private final String identifier;
     private final @Nullable String fallback;
@@ -93,7 +166,7 @@ public final class BedrockBlockType {
     }
 
     /**
-     * Internal: plumbing of {@link CustomBlock}, which creates its type once and owns it: use
+     * Plumbing of {@link CustomBlock}, which creates its type once and owns it: use
      * {@link CustomBlock#type()}.
      *
      * @param identifier the block identifier
@@ -101,14 +174,13 @@ public final class BedrockBlockType {
      * @param defaultStates the values of the default state; properties not listed use their first value
      * @return a new custom type. Loads no data
      */
-    @Internal
-    public static @NonNull BedrockBlockType custom(@NonNull String identifier, @NonNull List<BlockProperty<?>> properties,
+    static @NonNull BedrockBlockType custom(@NonNull String identifier, @NonNull List<BlockProperty<?>> properties,
                                                    @NonNull Map<String, Object> defaultStates) {
         return new BedrockBlockType(identifier, properties, defaultStates);
     }
 
     /**
-     * Internal: the key of an identifier: the vanilla constant if the identifier (after renames) is a vanilla block of
+     * The key of an identifier: the vanilla constant if the identifier (after renames) is a vanilla block of
      * the newest bundled data or has a generated constant, else a custom type known by its identifier only (no
      * states). Such types are not interned: equal for equal identifiers, not identical, so compare them with
      * {@code equals}, and unknown identifiers never accumulate. Use {@link #byIdentifier(String)}. The type of a
@@ -117,8 +189,7 @@ public final class BedrockBlockType {
      * @param identifier a block identifier
      * @return the type of the identifier
      */
-    @Internal
-    public static @NonNull BedrockBlockType fromIdentifier(@NonNull String identifier) {
+    static @NonNull BedrockBlockType fromIdentifier(@NonNull String identifier) {
         BedrockBlockType known = byIdentifier(identifier);
         return known != null ? known : new BedrockBlockType(identifier, true);
     }
@@ -155,8 +226,7 @@ public final class BedrockBlockType {
      * @param identifier the block identifier
      * @return the vanilla type of the newest bundled data with an identifier, or null
      */
-    @Internal
-    public static @Nullable BedrockBlockType vanillaType(@NonNull String identifier) {
+    static @Nullable BedrockBlockType vanillaType(@NonNull String identifier) {
         return VanillaIndex.get().block(identifier);
     }
 

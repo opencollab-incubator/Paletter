@@ -1,5 +1,6 @@
 package dev.opencollab.paletter;
 
+import dev.opencollab.paletter.internal.access.Access;
 import dev.opencollab.paletter.item.BedrockItemStack;
 import dev.opencollab.paletter.item.ItemFallback;
 import dev.opencollab.paletter.item.ResolvedItem;
@@ -144,7 +145,7 @@ class FallbackQueryTest {
         assertNull(none.itemDefinition(missing.type().identifier()));
 
         // A key Paletter has never heard of
-        BedrockItemVariant custom = BedrockItemType.fromIdentifier("paletter:nothing").variant();
+        BedrockItemVariant custom = Access.vanilla().itemType("paletter:nothing").variant();
         assertNull(none.resolve(custom, null));
     }
 

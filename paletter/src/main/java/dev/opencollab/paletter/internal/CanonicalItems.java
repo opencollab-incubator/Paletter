@@ -9,6 +9,7 @@ import dev.opencollab.paletter.internal.item.ItemVariant;
 import dev.opencollab.paletter.vanilla.BedrockItemType;
 import dev.opencollab.paletter.vanilla.BedrockItemVariant;
 import dev.opencollab.paletter.annotation.Internal;
+import dev.opencollab.paletter.internal.access.Access;
 import dev.opencollab.paletter.internal.data.Renames;
 import dev.opencollab.paletter.internal.data.VanillaData;
 import dev.opencollab.paletter.internal.data.VanillaItem;
@@ -289,7 +290,7 @@ public final class CanonicalItems {
         int local = canonical - current.offset;
         BedrockItemVariant handle = current.handles[local];
         if (handle == null) {
-            handle = BedrockItemVariant.fromCanonical(this, canonical);
+            handle = Access.vanilla().itemVariant(this, canonical);
             current.handles[local] = handle;
         }
         return handle;

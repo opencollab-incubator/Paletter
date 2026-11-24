@@ -3,6 +3,7 @@ package dev.opencollab.paletter;
 import dev.opencollab.paletter.block.CustomBlock;
 import dev.opencollab.paletter.block.RegisteredBlockState;
 import dev.opencollab.paletter.creative.CreativeCategory;
+import dev.opencollab.paletter.internal.access.Access;
 import dev.opencollab.paletter.vanilla.BedrockBlockState;
 import dev.opencollab.paletter.vanilla.BedrockBlocks;
 import dev.opencollab.paletter.vanilla.BedrockItemType;
@@ -59,7 +60,7 @@ class VariantBlockTest {
             .menuCategory(CreativeCategory.CONSTRUCTION).build();
         PaletteLayer layer = PaletteLayer.builder("test:custom").block(lamp).build();
         Palette palette = Palettes.palette(PALETTER.latest().protocolVersion(), layer);
-        BedrockItemVariant item = BedrockItemType.fromIdentifier("variant:lamp").variant();
+        BedrockItemVariant item = Access.vanilla().itemType("variant:lamp").variant();
         RegisteredBlockState block = palette.resolve(item).block();
         assertNotNull(block);
         assertEquals("variant:lamp", block.identifier());
@@ -115,7 +116,7 @@ class VariantBlockTest {
         CustomBlock lamp = CustomBlock.builder("variant:keyed")
             .menuCategory(CreativeCategory.CONSTRUCTION).build();
         Palette palette = Palettes.palette(PALETTER.latest().protocolVersion(), PaletteLayer.builder("test:keyed").block(lamp).build());
-        BedrockItemVariant item = BedrockItemType.fromIdentifier("variant:keyed").variant();
+        BedrockItemVariant item = Access.vanilla().itemType("variant:keyed").variant();
         BedrockBlockState key = palette.blockOf(item);
         assertNotNull(key);
         assertSame(lamp.type(), key.type());

@@ -11,6 +11,7 @@ import dev.opencollab.paletter.creative.CreativeOrdering;
 import dev.opencollab.paletter.creative.CreativePlacement;
 import dev.opencollab.paletter.creative.Placements;
 import dev.opencollab.paletter.creative.ItemMatcher;
+import dev.opencollab.paletter.internal.access.Access;
 import dev.opencollab.paletter.item.BedrockItemStack;
 import dev.opencollab.paletter.vanilla.BedrockItemType;
 import org.junit.jupiter.api.Test;
@@ -35,7 +36,7 @@ class CreativeEditorTest {
     private static final BedrockItemStack NEW = stack("test:new");
 
     private static BedrockItemStack stack(String identifier) {
-        return BedrockItemStack.of(BedrockItemType.fromIdentifier(identifier));
+        return BedrockItemStack.of(Access.vanilla().itemType(identifier));
     }
 
     /**

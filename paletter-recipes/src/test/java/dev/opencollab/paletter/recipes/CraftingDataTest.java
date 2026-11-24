@@ -16,6 +16,7 @@ import org.cloudburstmc.protocol.bedrock.packet.CraftingDataPacket;
 import dev.opencollab.paletter.Palette;
 import dev.opencollab.paletter.Paletter;
 import dev.opencollab.paletter.data.DataVersion;
+import dev.opencollab.paletter.internal.access.Access;
 import dev.opencollab.paletter.vanilla.BedrockItemType;
 import dev.opencollab.paletter.vanilla.BedrockItems;
 import org.junit.jupiter.api.Test;
@@ -40,7 +41,7 @@ class CraftingDataTest {
     @Test
     void missingContentDropsTheRecipeAndNetIdsSkipIt() {
         Recipe good = shapeless("test:good", new Ingredient.AnyVariant(BedrockItems.STICK, 1));
-        Recipe missingItem = shapeless("test:item", new Ingredient.AnyVariant(BedrockItemType.fromIdentifier("test:missing"), 1));
+        Recipe missingItem = shapeless("test:item", new Ingredient.AnyVariant(Access.vanilla().itemType("test:missing"), 1));
         Recipe emptyTag = shapeless("test:tag", new Ingredient.Tag("test:no_such_tag", 1));
         Recipe later = shapeless("test:later", new Ingredient.Item(BedrockItems.COAL.variant(), 1));
 
@@ -59,7 +60,7 @@ class CraftingDataTest {
 
     @Test
     void mixesWithMissingItemsAreReported() {
-        BedrockItemType missing = BedrockItemType.fromIdentifier("test:missing");
+        BedrockItemType missing = Access.vanilla().itemType("test:missing");
         PotionMix badPotion = new PotionMix(missing.variant(), BedrockItems.STICK.variant(), BedrockItems.STICK.variant());
         PotionMix goodPotion = new PotionMix(BedrockItems.STICK.variant(), BedrockItems.COAL.variant(), BedrockItems.TORCH.variant());
         ContainerMix badContainer = new ContainerMix(BedrockItems.STICK, missing, BedrockItems.COAL);
@@ -146,9 +147,9 @@ class CraftingDataTest {
             .menuCategory(CreativeCategory.CONSTRUCTION)
             .build();
         Palette palette = PALETTE.extend(PaletteLayer.builder("content").item(ruby).block(lamp).build());
-        Result lampResult = Result.builder().item(BedrockItemType.fromIdentifier("example:lamp").variant()).blockState(lamp.defaultState()).build();
+        Result lampResult = Result.builder().item(Access.vanilla().itemType("example:lamp").variant()).blockState(lamp.defaultState()).build();
         Recipe.Shapeless recipe = Recipe.Shapeless.builder().id("test:lamp")
-            .ingredients(List.of(new Ingredient.AnyVariant(BedrockItemType.fromIdentifier("example:ruby"), 1))).results(List.of(lampResult))
+            .ingredients(List.of(new Ingredient.AnyVariant(Access.vanilla().itemType("example:ruby"), 1))).results(List.of(lampResult))
             .station(RecipeStations.CRAFTING_TABLE).build();
 
         CraftingData data = CraftingData.builder(palette).recipes(List.of(recipe)).build();

@@ -14,6 +14,7 @@ import dev.opencollab.paletter.annotation.Internal;
 import dev.opencollab.paletter.block.BlockFallback;
 import dev.opencollab.paletter.internal.block.BlockStates;
 import dev.opencollab.paletter.creative.CreativeCategory;
+import dev.opencollab.paletter.internal.access.Access;
 import dev.opencollab.paletter.internal.creative.RawGroup;
 import dev.opencollab.paletter.internal.creative.RawLayout;
 import dev.opencollab.paletter.internal.creative.RawNode;
@@ -184,7 +185,7 @@ public final class PaletteDataCodec {
         Map<String, BlockFallback> blockFallbacks = new HashMap<>();
         fallbacksNbt.getCompound("blocks", NbtMap.EMPTY).forEach((name, value) -> {
             NbtMap fallback = (NbtMap) value;
-            BedrockBlockType target = BedrockBlockType.fromIdentifier(fallback.getString("target"));
+            BedrockBlockType target = Access.vanilla().blockType(fallback.getString("target"));
             BlockFallback parsed = fallback.getBoolean("clear_states") ? BlockFallback.of(target.defaultState()) : BlockFallback.of(target);
             blockFallbacks.put(name, fallback.getBoolean("force") ? parsed.forced() : parsed);
         });
@@ -192,7 +193,7 @@ public final class PaletteDataCodec {
         fallbacksNbt.getCompound("items", NbtMap.EMPTY).forEach((name, value) -> {
             NbtMap fallback = (NbtMap) value;
             // Bundled data names the target type only: the base variant, aux 0
-            BedrockItemType target = BedrockItemType.fromIdentifier(fallback.getString("target"));
+            BedrockItemType target = Access.vanilla().itemType(fallback.getString("target"));
             itemFallbacks.put(name, fallback.getBoolean("force") ? ItemFallback.of(target).forced() : ItemFallback.of(target));
         });
         Set<String> unmapped = new HashSet<>(fallbacksNbt.getList("unmapped", NbtType.STRING, List.of()));

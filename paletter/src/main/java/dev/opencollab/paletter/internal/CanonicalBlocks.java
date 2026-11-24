@@ -10,6 +10,7 @@ import dev.opencollab.paletter.internal.block.BlockStates;
 import dev.opencollab.paletter.internal.block.StateIndex;
 import dev.opencollab.paletter.block.CustomBlock;
 import dev.opencollab.paletter.annotation.Internal;
+import dev.opencollab.paletter.internal.access.Access;
 import dev.opencollab.paletter.internal.data.Renames;
 import dev.opencollab.paletter.internal.data.VanillaData;
 import dev.opencollab.paletter.vanilla.BedrockBlockState;
@@ -220,7 +221,7 @@ public final class CanonicalBlocks {
      * @return the handle of a canonical id, or null if there is no such id
      */
     public @Nullable BedrockBlockState handle(int canonical) {
-        return BedrockBlockState.fromCanonical(this, canonical);
+        return Access.vanilla().blockState(this, canonical);
     }
 
     /**

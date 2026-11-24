@@ -10,6 +10,7 @@ import dev.opencollab.paletter.block.component.BlockTags;
 import dev.opencollab.paletter.block.component.LightEmission;
 import dev.opencollab.paletter.creative.CreativeCategory;
 import dev.opencollab.paletter.data.DataVersion;
+import dev.opencollab.paletter.internal.access.Access;
 import dev.opencollab.paletter.item.CustomItem;
 import dev.opencollab.paletter.item.RegisteredItem;
 import dev.opencollab.paletter.item.component.MaxStackSize;
@@ -101,7 +102,7 @@ class PropertiesTest {
         RegisteredItem item = palette.items().getDefinition("server:ruby");
         assertNotNull(item);
         assertTrue(item.properties().get(PropertyKind.COMPONENT, "minecraft:max_stack_size") != null);
-        assertEquals(Properties.EMPTY, PALETTER.properties(BedrockItemType.fromIdentifier("server:ruby"), PALETTER.latest()));
+        assertEquals(Properties.EMPTY, PALETTER.properties(Access.vanilla().itemType("server:ruby"), PALETTER.latest()));
     }
 
     @Test

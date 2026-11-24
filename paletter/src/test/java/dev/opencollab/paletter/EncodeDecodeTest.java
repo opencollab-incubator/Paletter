@@ -4,6 +4,7 @@ import org.cloudburstmc.nbt.NbtMap;
 import org.cloudburstmc.protocol.bedrock.data.inventory.ItemData;
 import dev.opencollab.paletter.creative.CreativeCategory;
 import dev.opencollab.paletter.data.DataVersion;
+import dev.opencollab.paletter.internal.access.Access;
 import dev.opencollab.paletter.internal.block.BlockStates;
 import dev.opencollab.paletter.item.BedrockItemStack;
 import dev.opencollab.paletter.item.CustomItem;
@@ -91,7 +92,7 @@ class EncodeDecodeTest {
     @Test
     void aBlockStateOfTheStackIsKeptOnlyIfItDiffersFromTheItemsBlock() {
         Palette palette = latest();
-        BedrockItemVariant log = BedrockItemVariant.fromIdentifier("minecraft:oak_log", 0);
+        BedrockItemVariant log = Access.vanilla().itemVariant("minecraft:oak_log", 0);
         BedrockItemStack plain = BedrockItemStack.of(log);
         ItemData plainData = palette.encode(plain);
         assertNotNull(plainData.getBlockDefinition());
@@ -100,7 +101,7 @@ class EncodeDecodeTest {
         BedrockBlockState sideways = PALETTER.vanilla(PALETTER.latest()).blockState(BlockStates.of("minecraft:oak_log", Map.of("pillar_axis", "x")), Lookup.RENAMED);
         assertNotNull(sideways);
         ItemData data = palette.encode(plain.withBlockState(sideways));
-        assertEquals(sideways.canonicalIn(palette.blocks().canonical()), palette.blocks().canonical(data.getBlockDefinition()));
+        assertEquals(Access.vanilla().canonicalId(sideways, palette.blocks().canonical()), palette.blocks().canonical(data.getBlockDefinition()));
         assertTrue(data.getBlockDefinition().getRuntimeId() != plainData.getBlockDefinition().getRuntimeId());
         BedrockItemStack decoded = palette.decode(data);
         assertNotNull(decoded);
@@ -116,7 +117,7 @@ class EncodeDecodeTest {
             .build();
         Paletter paletter = Paletter.builder().fallbacks(fallbacks).build();
         Palette palette = paletter.palette(OLDEST);
-        BedrockItemStack boat = BedrockItemStack.of(BedrockItemVariant.fromIdentifier("minecraft:poplar_boat", 0), 2);
+        BedrockItemStack boat = BedrockItemStack.of(Access.vanilla().itemVariant("minecraft:poplar_boat", 0), 2);
         ItemData data = palette.encode(boat);
         assertEquals("minecraft:stick", data.getDefinition().getIdentifier());
         assertEquals(2, data.getCount());

@@ -3,7 +3,6 @@ package dev.opencollab.paletter.vanilla;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.cloudburstmc.nbt.NbtMap;
-import dev.opencollab.paletter.annotation.Internal;
 import dev.opencollab.paletter.internal.block.BlockStates;
 import dev.opencollab.paletter.internal.CanonicalBlocks;
 
@@ -46,14 +45,13 @@ public final class BedrockBlockState {
     }
 
     /**
-     * Internal: the handle of a canonical id, for {@link dev.opencollab.paletter.Palette}.
+     * The handle of a canonical id, for {@link dev.opencollab.paletter.Palette}.
      *
      * @param canonical the canonical blocks of a palette
      * @param id the canonical id
      * @return the state of a canonical id of any palette lineage, or null if there is no such id
      */
-    @Internal
-    public static @Nullable BedrockBlockState fromCanonical(@NonNull CanonicalBlocks canonical, int id) {
+    static @Nullable BedrockBlockState fromCanonical(@NonNull CanonicalBlocks canonical, int id) {
         if (id < 0 || id >= canonical.size()) {
             return null;
         }
@@ -214,7 +212,7 @@ public final class BedrockBlockState {
     }
 
     /**
-     * Internal: the canonical id of this state in a palette's canonical blocks: the precomputed vanilla id for vanilla
+     * The canonical id of this state in a palette's canonical blocks: the precomputed vanilla id for vanilla
      * states of
      * palettes of the bundled newest version, an array lookup in the palette's own table for the others, the custom
      * block's id in that lineage, else a hash lookup.
@@ -222,8 +220,7 @@ public final class BedrockBlockState {
      * @param canonical the canonical blocks of a palette
      * @return the canonical id, or -1 if the state is not in it
      */
-    @Internal
-    public int canonicalIn(@NonNull CanonicalBlocks canonical) {
+    int canonicalIn(@NonNull CanonicalBlocks canonical) {
         if (id >= 0) {
             // A state of the bundled constants (only those have an id). This is checked before the root below because no bundled
             // constant has a root of its own (BundledLayoutRootTest): only preview constants do, and they have no id.

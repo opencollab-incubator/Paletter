@@ -6,6 +6,7 @@ import org.cloudburstmc.nbt.NbtType;
 import org.cloudburstmc.nbt.NbtUtils;
 import org.cloudburstmc.protocol.bedrock.data.inventory.crafting.RecipeUnlockingRequirement.UnlockingContext;
 import dev.opencollab.paletter.data.DataVersion;
+import dev.opencollab.paletter.internal.access.Access;
 import dev.opencollab.paletter.vanilla.BedrockItemType;
 import dev.opencollab.paletter.vanilla.BedrockItemVariant;
 
@@ -108,7 +109,7 @@ final class RecipeBundle {
         if (ingredient.containsKey("item")) {
             int aux = ingredient.getInt("aux");
             return aux == ANY_AUX ? new Ingredient.AnyVariant(type(ingredient.getString("item")), count)
-                : new Ingredient.Item(BedrockItemVariant.fromIdentifier(ingredient.getString("item"), aux), count);
+                : new Ingredient.Item(Access.vanilla().itemVariant(ingredient.getString("item"), aux), count);
         }
         if (ingredient.containsKey("tag")) {
             return new Ingredient.Tag(ingredient.getString("tag"), count);
@@ -134,10 +135,10 @@ final class RecipeBundle {
 
     /** The variant of an {@code {id, aux}} compound. */
     private static BedrockItemVariant variant(NbtMap item) {
-        return BedrockItemVariant.fromIdentifier(item.getString("id"), item.getInt("aux"));
+        return Access.vanilla().itemVariant(item.getString("id"), item.getInt("aux"));
     }
 
     private static BedrockItemType type(String identifier) {
-        return BedrockItemType.fromIdentifier(identifier);
+        return Access.vanilla().itemType(identifier);
     }
 }

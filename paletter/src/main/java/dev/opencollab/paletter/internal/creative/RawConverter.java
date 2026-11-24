@@ -11,6 +11,7 @@ import dev.opencollab.paletter.creative.CreativeLayout;
 import dev.opencollab.paletter.creative.CreativeNode;
 import dev.opencollab.paletter.internal.CanonicalBlocks;
 import dev.opencollab.paletter.internal.Canonicals;
+import dev.opencollab.paletter.internal.access.Access;
 import dev.opencollab.paletter.item.BedrockItemStack;
 import dev.opencollab.paletter.vanilla.BedrockBlockState;
 import dev.opencollab.paletter.vanilla.BedrockItemVariant;
@@ -22,7 +23,7 @@ import java.util.Map;
 
 /**
  * Converts the identifier based creative data of a version to a layout of stacks. Item identifiers go through the
- * renames and splits of {@link BedrockItemVariant#fromIdentifier}. Block states are mapped forward to the newest
+ * renames and splits of {@code BedrockItemVariant.fromIdentifier}. Block states are mapped forward to the newest
  * version like {@link dev.opencollab.paletter.Palette#blockDefinition}; a state without an equivalent is dropped from the stack
  * (it then places the item's default block) and reported.
  */
@@ -62,7 +63,7 @@ public final class RawConverter {
                     + Canonicals.forwardBlock(blocks, stack.blockState()).detail());
             }
         }
-        return BedrockItemStack.builder(BedrockItemVariant.fromIdentifier(stack.identifier(), stack.damage())).count(stack.count())
+        return BedrockItemStack.builder(Access.vanilla().itemVariant(stack.identifier(), stack.damage())).count(stack.count())
             .nbt(stack.tag()).blockState(state).build();
     }
 }

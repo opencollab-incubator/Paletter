@@ -10,6 +10,7 @@ import dev.opencollab.paletter.creative.CreativePlacement;
 import dev.opencollab.paletter.item.BedrockItemStack;
 import dev.opencollab.paletter.vanilla.BedrockItemType;
 import dev.opencollab.paletter.creative.ItemMatcher;
+import dev.opencollab.paletter.internal.access.Access;
 import dev.opencollab.paletter.item.CustomItem;
 import org.junit.jupiter.api.Test;
 
@@ -74,10 +75,10 @@ class CreativeOrderingTest {
         List<CreativeNode> items = palette.creativeLayout().nodes(CreativeCategory.ITEMS);
         CreativeGroup sword = assertInstanceOf(CreativeGroup.class, items.getLast());
         assertEquals("itemGroup.name.sword", sword.name());
-        assertEquals(List.of(BedrockItemStack.of(BedrockItemType.fromIdentifier("test:wrong_category"))), sword.stacks());
+        assertEquals(List.of(BedrockItemStack.of(Access.vanilla().itemType("test:wrong_category"))), sword.stacks());
 
         List<CreativeNode> nature = palette.creativeLayout().nodes(CreativeCategory.NATURE);
-        assertEquals(new CreativeItem(BedrockItemStack.of(BedrockItemType.fromIdentifier("test:loose"))), nature.getLast());
+        assertEquals(new CreativeItem(BedrockItemStack.of(Access.vanilla().itemType("test:loose"))), nature.getLast());
         CreativeGroup created = assertInstanceOf(CreativeGroup.class, nature.get(nature.size() - 2));
         assertEquals("test:itemGroup.new", created.name());
     }

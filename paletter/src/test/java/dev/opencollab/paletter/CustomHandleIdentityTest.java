@@ -6,6 +6,7 @@ import dev.opencollab.paletter.block.CustomBlock;
 import dev.opencollab.paletter.block.RegisteredBlockState;
 import dev.opencollab.paletter.creative.CreativeCategory;
 import dev.opencollab.paletter.data.DataVersion;
+import dev.opencollab.paletter.internal.access.Access;
 import dev.opencollab.paletter.item.BedrockItemStack;
 import dev.opencollab.paletter.item.CustomItem;
 import dev.opencollab.paletter.item.ItemFallback;
@@ -240,7 +241,7 @@ class CustomHandleIdentityTest {
             assertSame(state, palette.blockState(state.toNbt(), Lookup.RENAMED), where);
             RegisteredBlockState registered = palette.blockDefinition(state);
             assertSame(state, palette.blocks().key(registered), where);
-            assertSame(state, BedrockBlockState.fromCanonical(palette.blocks().canonical(), palette.blocks().canonical().index(state.toNbt())), where);
+            assertSame(state, Access.vanilla().blockState(palette.blocks().canonical(), palette.blocks().canonical().index(state.toNbt())), where);
             assertSame(state, palette.explain(state.toNbt()).handle(), where);
         }
         assertSame(block.type().defaultState(), palette.blockOf(blockItem.variant()), where);
