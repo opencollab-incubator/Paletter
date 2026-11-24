@@ -1,5 +1,6 @@
 package dev.opencollab.paletter.item.component;
 
+import dev.opencollab.paletter.Vec3;
 import dev.opencollab.paletter.annotation.Experimental;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
@@ -454,28 +455,6 @@ public final class RenderOffsets implements WireOnlyItemComponent {
             public @NonNull Offset build() {
                 return new Offset(this);
             }
-        }
-    }
-
-    /**
-     * Three floats, sent as a list of three.
-     *
-     * @param x the first float
-     * @param y the second float
-     * @param z the third float
-     * @since 1.0.0
-     */
-    public record Vec3(float x, float y, float z) {
-        /**
-         * Creates the three floats.
-         *
-         * @param x the first float
-         * @param y the second float
-         * @param z the third float
-         * @return the three floats
-         */
-        public static @NonNull Vec3 of(float x, float y, float z) {
-            return new Vec3(x, y, z);
         }
     }
 }

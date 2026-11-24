@@ -234,18 +234,6 @@ final class ValueClassSource {
                 type.addType(sentinel(sentinelName(unionName(u)), unionName(u), false));
             }
         }
-        if (c.usesVec3) {
-            // A record: three floats is the shape of a vector, not of anything Bedrock can extend
-            ClassName vec3 = className(c).nestedClass("Vec3");
-            type.addType(TypeSpec.recordBuilder("Vec3").addModifiers(Modifier.PUBLIC).addJavadoc("An add-on JSON vector {@code [x, y, z]}.\n\n@param x the x component\n@param y the y component\n@param z the z component\n")
-                .recordConstructor(MethodSpec.constructorBuilder().addParameter(float.class, "x").addParameter(float.class, "y")
-                    .addParameter(float.class, "z").build())
-                .addMethod(MethodSpec.methodBuilder("of").addModifiers(Modifier.PUBLIC, Modifier.STATIC).returns(nonNull(vec3))
-                    .addJavadoc("Creates a vector.\n\n@param x the x component\n@param y the y component\n@param z the z component\n@return the vector\n")
-                    .addParameter(float.class, "x").addParameter(float.class, "y").addParameter(float.class, "z")
-                    .addStatement("return new $T(x, y, z)", vec3).build())
-                .build());
-        }
     }
 
     // ---- Renamed and removed fields ---------------------------------------------------------------------------------------

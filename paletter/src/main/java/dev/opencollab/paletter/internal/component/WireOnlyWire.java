@@ -170,7 +170,7 @@ public final class WireOnlyWire {
         return n;
     }
 
-    private static void vec(WireNode n, String key, RenderOffsets.@Nullable Vec3 v) {
+    private static void vec(WireNode n, String key, dev.opencollab.paletter.@Nullable Vec3 v) {
         if (v != null) {
             n.put(key, Wire.floats(List.of(v.x(), v.y(), v.z())));
         }

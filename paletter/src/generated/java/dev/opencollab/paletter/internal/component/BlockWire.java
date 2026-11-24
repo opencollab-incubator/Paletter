@@ -3,6 +3,7 @@
 // data/model/ATTRIBUTION.md.
 package dev.opencollab.paletter.internal.component;
 
+import dev.opencollab.paletter.Vec3;
 import dev.opencollab.paletter.block.component.BlockComponent;
 import dev.opencollab.paletter.block.component.BlockDisplayName;
 import dev.opencollab.paletter.block.component.BlockEntity;
@@ -379,7 +380,7 @@ public final class BlockWire {
     }
 
     private static void leashable(Leashable c, WireContext ctx, WireNode out) {
-        Leashable.Vec3 v0 = c.offset();
+        Vec3 v0 = c.offset();
         out.put("minecraft:leashable.offset", Wire.floats(List.of(v0.x(), v0.y(), v0.z())));
     }
 
@@ -555,23 +556,23 @@ public final class BlockWire {
 
     private static void transformation(Transformation c, WireContext ctx, WireNode out) {
         out.put("minecraft:transformation.hasJsonVersionBeforeValidation", (byte) 0);
-        Transformation.Vec3 v0 = c.rotation();
+        Vec3 v0 = c.rotation();
         out.put("minecraft:transformation.RX", Wire.toInt(Math.floorMod(Math.round(((double) v0.x() / 90.0 + 0.0)), 4L)));
         out.put("minecraft:transformation.RY", Wire.toInt(Math.floorMod(Math.round(((double) v0.y() / 90.0 + 0.0)), 4L)));
         out.put("minecraft:transformation.RZ", Wire.toInt(Math.floorMod(Math.round(((double) v0.z() / 90.0 + 0.0)), 4L)));
-        Transformation.Vec3 v1 = c.rotationPivot();
+        Vec3 v1 = c.rotationPivot();
         out.put("minecraft:transformation.RXP", Wire.toFloat(v1.x()));
         out.put("minecraft:transformation.RYP", Wire.toFloat(v1.y()));
         out.put("minecraft:transformation.RZP", Wire.toFloat(v1.z()));
-        Transformation.Vec3 v2 = c.scale();
+        Vec3 v2 = c.scale();
         out.put("minecraft:transformation.SX", Wire.toFloat(v2.x()));
         out.put("minecraft:transformation.SY", Wire.toFloat(v2.y()));
         out.put("minecraft:transformation.SZ", Wire.toFloat(v2.z()));
-        Transformation.Vec3 v3 = c.scalePivot();
+        Vec3 v3 = c.scalePivot();
         out.put("minecraft:transformation.SXP", Wire.toFloat(v3.x()));
         out.put("minecraft:transformation.SYP", Wire.toFloat(v3.y()));
         out.put("minecraft:transformation.SZP", Wire.toFloat(v3.z()));
-        Transformation.Vec3 v4 = c.translation();
+        Vec3 v4 = c.translation();
         out.put("minecraft:transformation.TX", Wire.toFloat(v4.x()));
         out.put("minecraft:transformation.TY", Wire.toFloat(v4.y()));
         out.put("minecraft:transformation.TZ", Wire.toFloat(v4.z()));

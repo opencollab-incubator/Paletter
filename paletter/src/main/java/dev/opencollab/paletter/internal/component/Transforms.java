@@ -5,6 +5,7 @@ import org.checkerframework.checker.nullness.qual.Nullable;
 import org.cloudburstmc.nbt.NbtMap;
 import org.cloudburstmc.nbt.NbtMapBuilder;
 import dev.opencollab.paletter.Molang;
+import dev.opencollab.paletter.Vec3;
 import dev.opencollab.paletter.block.CustomBlock;
 import dev.opencollab.paletter.block.component.BlockComponent;
 import dev.opencollab.paletter.block.component.CollisionBox;
@@ -94,8 +95,8 @@ public final class Transforms {
         out.put("minecraft:collision_box.enabled", (byte) 1);
         out.list("minecraft:collision_box.boxes");
         for (CollisionBox.Entry box : c.boxes()) {
-            CollisionBox.Vec3 origin = box.origin() == null ? new CollisionBox.Vec3(-8, 0, -8) : box.origin();
-            CollisionBox.Vec3 size = box.size() == null ? new CollisionBox.Vec3(16, 16, 16) : box.size();
+            Vec3 origin = box.origin() == null ? new Vec3(-8, 0, -8) : box.origin();
+            Vec3 size = box.size() == null ? new Vec3(16, 16, 16) : box.size();
             WireNode b = out.element("minecraft:collision_box.boxes");
             float x1 = mirrorX ? 8f - origin.x() - size.x() : 8f + origin.x();
             float x2 = x1 + size.x();
@@ -682,8 +683,8 @@ public final class Transforms {
      * the captures, so {@code origin} has no inferred rule.
      */
     public static void selectionBox(@NonNull WireContext ctx, @NonNull WireNode out, @NonNull SelectionBox c) {
-        SelectionBox.Vec3 origin = c.origin() == null ? new SelectionBox.Vec3(-8, 0, -8) : c.origin();
-        SelectionBox.Vec3 size = c.size() == null ? new SelectionBox.Vec3(16, 16, 16) : c.size();
+        Vec3 origin = c.origin() == null ? new Vec3(-8, 0, -8) : c.origin();
+        Vec3 size = c.size() == null ? new Vec3(16, 16, 16) : c.size();
         out.put("minecraft:selection_box.enabled", Wire.bool(c.enabled() == null || c.enabled()));
         out.put("minecraft:selection_box.origin", Wire.floats(List.of(origin.x(), origin.y(), origin.z())));
         out.put("minecraft:selection_box.size", Wire.floats(List.of(size.x(), size.y(), size.z())));

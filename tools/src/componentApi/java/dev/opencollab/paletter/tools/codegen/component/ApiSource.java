@@ -49,6 +49,8 @@ final class ApiSource {
     /** The hand-written value of a Molang expression field ({@link ApiModel.MolangRef}). */
     static final ClassName MOLANG = ClassName.get("dev.opencollab.paletter", "Molang");
     static final ClassName BEDROCK_FORMAT = ClassName.get("dev.opencollab.paletter.annotation", "BedrockFormat");
+    /** The shared vector of every vec3 field (hand-written, next to Molang). */
+    static final ClassName VEC3 = ClassName.get("dev.opencollab.paletter", "Vec3");
     static final ClassName BEDROCK_EXPERIMENT = ClassName.get("dev.opencollab.paletter.annotation", "BedrockExperiment");
     static final ClassName SERVER_ONLY = ClassName.get("dev.opencollab.paletter.annotation", "ServerOnly");
     static final ClassName SINCE_PREVIEW = ClassName.get("dev.opencollab.paletter.annotation", "SincePreview");
@@ -236,7 +238,7 @@ final class ApiSource {
             };
             case EnumRef e -> className(c).nestedClass(e.type().name);
             case ObjRef r -> className(c).nestedClass(r.type().name);
-            case Vec3 v -> className(c).nestedClass("Vec3");
+            case Vec3 v -> VEC3;
             case ListOf l -> ParameterizedTypeName.get(LIST, typeName(c, l.element(), true));
             case MapOf m -> ParameterizedTypeName.get(MAP, STRING, typeName(c, m.value(), true));
             case States s -> ParameterizedTypeName.get(MAP, STRING, ClassName.get(Object.class));
@@ -278,7 +280,7 @@ final class ApiSource {
                         xyz.add(Docs.floatLiteral(v.getAsJsonObject().has(k) ? v.getAsJsonObject().get(k).getAsDouble() : 0));
                     }
                 }
-                yield CodeBlock.of("new $T($L)", className(c).nestedClass("Vec3"), String.join(", ", xyz));
+                yield CodeBlock.of("new $T($L)", VEC3, String.join(", ", xyz));
             }
             case ListOf l -> {
                 List<CodeBlock> items = new ArrayList<>();

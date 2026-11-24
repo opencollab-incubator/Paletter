@@ -3,6 +3,7 @@
 // data/model/ATTRIBUTION.md.
 package dev.opencollab.paletter.block.component;
 
+import dev.opencollab.paletter.Vec3;
 import dev.opencollab.paletter.annotation.BedrockFormat;
 import dev.opencollab.paletter.internal.component.Check;
 import java.util.Objects;
@@ -301,27 +302,6 @@ public final class Transformation implements BlockComponent {
          */
         public @NonNull Transformation build() {
             return new Transformation(rotation, rotationPivot, scale, scalePivot, translation);
-        }
-    }
-
-    /**
-     * An add-on JSON vector {@code [x, y, z]}.
-     *
-     * @param x the x component
-     * @param y the y component
-     * @param z the z component
-     */
-    public record Vec3(float x, float y, float z) {
-        /**
-         * Creates a vector.
-         *
-         * @param x the x component
-         * @param y the y component
-         * @param z the z component
-         * @return the vector
-         */
-        public static @NonNull Vec3 of(float x, float y, float z) {
-            return new Vec3(x, y, z);
         }
     }
 }

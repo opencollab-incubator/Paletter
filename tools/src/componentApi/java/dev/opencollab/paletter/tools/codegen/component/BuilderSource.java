@@ -140,7 +140,7 @@ final class BuilderSource {
         if (f.type instanceof Vec3) {
             type.addMethod(MethodSpec.methodBuilder(f.java).addModifiers(Modifier.PUBLIC).returns(nonNull(builder))
                 .addJavadoc("Sets {@code $L}.\n\n@param x the x component\n@param y the y component\n@param z the z component\n@return this builder\n", json).addParameter(float.class, "x").addParameter(float.class, "y").addParameter(float.class, "z")
-                .addStatement("return $N(new $T(x, y, z))", f.java, className(c).nestedClass("Vec3")).build());
+                .addStatement("return $N(new $T(x, y, z))", f.java, ApiSource.VEC3).build());
         }
         if (f.type instanceof ObjRef r && r.type().shorthand != null) {
             Field target = r.type().shorthand;

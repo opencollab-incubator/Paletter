@@ -262,6 +262,17 @@ public enum dev.opencollab.paletter.ResolutionKind {
     public static dev.opencollab.paletter.ResolutionKind[] values()
 }
 
+public record dev.opencollab.paletter.Vec3 {
+    public <init>(float, float, float)
+    public final boolean equals(java.lang.Object)
+    public final int hashCode()
+    public static dev.opencollab.paletter.Vec3 of(float, float, float)
+    public final java.lang.String toString()
+    public float x()
+    public float y()
+    public float z()
+}
+
 public @interface dev.opencollab.paletter.annotation.BedrockExperiment {
     public abstract java.lang.String value()
 }
@@ -813,8 +824,8 @@ public static final class dev.opencollab.paletter.block.component.CollisionBox$E
     public static dev.opencollab.paletter.block.component.CollisionBox$Entry$Builder builder()
     public boolean equals(java.lang.Object)
     public int hashCode()
-    public dev.opencollab.paletter.block.component.CollisionBox$Vec3 origin()
-    public dev.opencollab.paletter.block.component.CollisionBox$Vec3 size()
+    public dev.opencollab.paletter.Vec3 origin()
+    public dev.opencollab.paletter.Vec3 size()
     public dev.opencollab.paletter.block.component.CollisionBox$Entry$Builder toBuilder()
     public java.lang.String toString()
 }
@@ -822,20 +833,9 @@ public static final class dev.opencollab.paletter.block.component.CollisionBox$E
 public static final class dev.opencollab.paletter.block.component.CollisionBox$Entry$Builder {
     public dev.opencollab.paletter.block.component.CollisionBox$Entry build()
     public dev.opencollab.paletter.block.component.CollisionBox$Entry$Builder origin(float, float, float)
-    public dev.opencollab.paletter.block.component.CollisionBox$Entry$Builder origin(dev.opencollab.paletter.block.component.CollisionBox$Vec3)
+    public dev.opencollab.paletter.block.component.CollisionBox$Entry$Builder origin(dev.opencollab.paletter.Vec3)
     public dev.opencollab.paletter.block.component.CollisionBox$Entry$Builder size(float, float, float)
-    public dev.opencollab.paletter.block.component.CollisionBox$Entry$Builder size(dev.opencollab.paletter.block.component.CollisionBox$Vec3)
-}
-
-public record dev.opencollab.paletter.block.component.CollisionBox$Vec3 {
-    public <init>(float, float, float)
-    public final boolean equals(java.lang.Object)
-    public final int hashCode()
-    public static dev.opencollab.paletter.block.component.CollisionBox$Vec3 of(float, float, float)
-    public final java.lang.String toString()
-    public float x()
-    public float y()
-    public float z()
+    public dev.opencollab.paletter.block.component.CollisionBox$Entry$Builder size(dev.opencollab.paletter.Vec3)
 }
 
 public final class dev.opencollab.paletter.block.component.Connection implements dev.opencollab.paletter.block.component.BlockTrait {
@@ -1411,7 +1411,7 @@ public final class dev.opencollab.paletter.block.component.Leashable implements 
     public boolean equals(java.lang.Object)
     public int hashCode()
     public java.lang.String name()
-    public dev.opencollab.paletter.block.component.Leashable$Vec3 offset()
+    public dev.opencollab.paletter.Vec3 offset()
     public dev.opencollab.paletter.block.component.Leashable$Builder toBuilder()
     public java.lang.String toString()
 }
@@ -1419,18 +1419,7 @@ public final class dev.opencollab.paletter.block.component.Leashable implements 
 public static final class dev.opencollab.paletter.block.component.Leashable$Builder {
     public dev.opencollab.paletter.block.component.Leashable build()
     public dev.opencollab.paletter.block.component.Leashable$Builder offset(float, float, float)
-    public dev.opencollab.paletter.block.component.Leashable$Builder offset(dev.opencollab.paletter.block.component.Leashable$Vec3)
-}
-
-public record dev.opencollab.paletter.block.component.Leashable$Vec3 {
-    public <init>(float, float, float)
-    public final boolean equals(java.lang.Object)
-    public final int hashCode()
-    public static dev.opencollab.paletter.block.component.Leashable$Vec3 of(float, float, float)
-    public final java.lang.String toString()
-    public float x()
-    public float y()
-    public float z()
+    public dev.opencollab.paletter.block.component.Leashable$Builder offset(dev.opencollab.paletter.Vec3)
 }
 
 public final class dev.opencollab.paletter.block.component.LightDampening implements dev.opencollab.paletter.block.component.BlockComponent {
@@ -2209,8 +2198,8 @@ public final class dev.opencollab.paletter.block.component.SelectionBox implemen
     public int hashCode()
     public java.lang.String name()
     public static dev.opencollab.paletter.block.component.SelectionBox of(boolean)
-    public dev.opencollab.paletter.block.component.SelectionBox$Vec3 origin()
-    public dev.opencollab.paletter.block.component.SelectionBox$Vec3 size()
+    public dev.opencollab.paletter.Vec3 origin()
+    public dev.opencollab.paletter.Vec3 size()
     public dev.opencollab.paletter.block.component.SelectionBox$Builder toBuilder()
     public java.lang.String toString()
 }
@@ -2219,20 +2208,9 @@ public static final class dev.opencollab.paletter.block.component.SelectionBox$B
     public dev.opencollab.paletter.block.component.SelectionBox build()
     public dev.opencollab.paletter.block.component.SelectionBox$Builder enabled(java.lang.Boolean)
     public dev.opencollab.paletter.block.component.SelectionBox$Builder origin(float, float, float)
-    public dev.opencollab.paletter.block.component.SelectionBox$Builder origin(dev.opencollab.paletter.block.component.SelectionBox$Vec3)
+    public dev.opencollab.paletter.block.component.SelectionBox$Builder origin(dev.opencollab.paletter.Vec3)
     public dev.opencollab.paletter.block.component.SelectionBox$Builder size(float, float, float)
-    public dev.opencollab.paletter.block.component.SelectionBox$Builder size(dev.opencollab.paletter.block.component.SelectionBox$Vec3)
-}
-
-public record dev.opencollab.paletter.block.component.SelectionBox$Vec3 {
-    public <init>(float, float, float)
-    public final boolean equals(java.lang.Object)
-    public final int hashCode()
-    public static dev.opencollab.paletter.block.component.SelectionBox$Vec3 of(float, float, float)
-    public final java.lang.String toString()
-    public float x()
-    public float y()
-    public float z()
+    public dev.opencollab.paletter.block.component.SelectionBox$Builder size(dev.opencollab.paletter.Vec3)
 }
 
 public final class dev.opencollab.paletter.block.component.Sound implements dev.opencollab.paletter.block.component.BlockComponent {
@@ -2306,38 +2284,27 @@ public final class dev.opencollab.paletter.block.component.Transformation implem
     public boolean equals(java.lang.Object)
     public int hashCode()
     public java.lang.String name()
-    public dev.opencollab.paletter.block.component.Transformation$Vec3 rotation()
-    public dev.opencollab.paletter.block.component.Transformation$Vec3 rotationPivot()
-    public dev.opencollab.paletter.block.component.Transformation$Vec3 scale()
-    public dev.opencollab.paletter.block.component.Transformation$Vec3 scalePivot()
+    public dev.opencollab.paletter.Vec3 rotation()
+    public dev.opencollab.paletter.Vec3 rotationPivot()
+    public dev.opencollab.paletter.Vec3 scale()
+    public dev.opencollab.paletter.Vec3 scalePivot()
     public dev.opencollab.paletter.block.component.Transformation$Builder toBuilder()
     public java.lang.String toString()
-    public dev.opencollab.paletter.block.component.Transformation$Vec3 translation()
+    public dev.opencollab.paletter.Vec3 translation()
 }
 
 public static final class dev.opencollab.paletter.block.component.Transformation$Builder {
     public dev.opencollab.paletter.block.component.Transformation build()
     public dev.opencollab.paletter.block.component.Transformation$Builder rotation(float, float, float)
-    public dev.opencollab.paletter.block.component.Transformation$Builder rotation(dev.opencollab.paletter.block.component.Transformation$Vec3)
+    public dev.opencollab.paletter.block.component.Transformation$Builder rotation(dev.opencollab.paletter.Vec3)
     public dev.opencollab.paletter.block.component.Transformation$Builder rotationPivot(float, float, float)
-    public dev.opencollab.paletter.block.component.Transformation$Builder rotationPivot(dev.opencollab.paletter.block.component.Transformation$Vec3)
+    public dev.opencollab.paletter.block.component.Transformation$Builder rotationPivot(dev.opencollab.paletter.Vec3)
     public dev.opencollab.paletter.block.component.Transformation$Builder scale(float, float, float)
-    public dev.opencollab.paletter.block.component.Transformation$Builder scale(dev.opencollab.paletter.block.component.Transformation$Vec3)
+    public dev.opencollab.paletter.block.component.Transformation$Builder scale(dev.opencollab.paletter.Vec3)
     public dev.opencollab.paletter.block.component.Transformation$Builder scalePivot(float, float, float)
-    public dev.opencollab.paletter.block.component.Transformation$Builder scalePivot(dev.opencollab.paletter.block.component.Transformation$Vec3)
+    public dev.opencollab.paletter.block.component.Transformation$Builder scalePivot(dev.opencollab.paletter.Vec3)
     public dev.opencollab.paletter.block.component.Transformation$Builder translation(float, float, float)
-    public dev.opencollab.paletter.block.component.Transformation$Builder translation(dev.opencollab.paletter.block.component.Transformation$Vec3)
-}
-
-public record dev.opencollab.paletter.block.component.Transformation$Vec3 {
-    public <init>(float, float, float)
-    public final boolean equals(java.lang.Object)
-    public final int hashCode()
-    public static dev.opencollab.paletter.block.component.Transformation$Vec3 of(float, float, float)
-    public final java.lang.String toString()
-    public float x()
-    public float y()
-    public float z()
+    public dev.opencollab.paletter.block.component.Transformation$Builder translation(dev.opencollab.paletter.Vec3)
 }
 
 public sealed interface dev.opencollab.paletter.block.component.UvLock permits dev.opencollab.paletter.block.component.FutureUvLock, dev.opencollab.paletter.block.component.UvLock$Bones, dev.opencollab.paletter.block.component.UvLock$Flag {
@@ -3728,9 +3695,9 @@ public static final class dev.opencollab.paletter.item.component.RenderOffsets$O
     public static dev.opencollab.paletter.item.component.RenderOffsets$Offset$Builder builder()
     public boolean equals(java.lang.Object)
     public int hashCode()
-    public dev.opencollab.paletter.item.component.RenderOffsets$Vec3 position()
-    public dev.opencollab.paletter.item.component.RenderOffsets$Vec3 rotation()
-    public dev.opencollab.paletter.item.component.RenderOffsets$Vec3 scale()
+    public dev.opencollab.paletter.Vec3 position()
+    public dev.opencollab.paletter.Vec3 rotation()
+    public dev.opencollab.paletter.Vec3 scale()
     public static dev.opencollab.paletter.item.component.RenderOffsets$Offset scale(float, float, float)
     public dev.opencollab.paletter.item.component.RenderOffsets$Offset$Builder toBuilder()
     public java.lang.String toString()
@@ -3738,9 +3705,9 @@ public static final class dev.opencollab.paletter.item.component.RenderOffsets$O
 
 public static final class dev.opencollab.paletter.item.component.RenderOffsets$Offset$Builder {
     public dev.opencollab.paletter.item.component.RenderOffsets$Offset build()
-    public dev.opencollab.paletter.item.component.RenderOffsets$Offset$Builder position(dev.opencollab.paletter.item.component.RenderOffsets$Vec3)
-    public dev.opencollab.paletter.item.component.RenderOffsets$Offset$Builder rotation(dev.opencollab.paletter.item.component.RenderOffsets$Vec3)
-    public dev.opencollab.paletter.item.component.RenderOffsets$Offset$Builder scale(dev.opencollab.paletter.item.component.RenderOffsets$Vec3)
+    public dev.opencollab.paletter.item.component.RenderOffsets$Offset$Builder position(dev.opencollab.paletter.Vec3)
+    public dev.opencollab.paletter.item.component.RenderOffsets$Offset$Builder rotation(dev.opencollab.paletter.Vec3)
+    public dev.opencollab.paletter.item.component.RenderOffsets$Offset$Builder scale(dev.opencollab.paletter.Vec3)
 }
 
 public enum dev.opencollab.paletter.item.component.RenderOffsets$Preset {
@@ -3751,17 +3718,6 @@ public enum dev.opencollab.paletter.item.component.RenderOffsets$Preset {
     public java.lang.String value()
     public static dev.opencollab.paletter.item.component.RenderOffsets$Preset valueOf(java.lang.String)
     public static dev.opencollab.paletter.item.component.RenderOffsets$Preset[] values()
-}
-
-public record dev.opencollab.paletter.item.component.RenderOffsets$Vec3 {
-    public <init>(float, float, float)
-    public final boolean equals(java.lang.Object)
-    public final int hashCode()
-    public static dev.opencollab.paletter.item.component.RenderOffsets$Vec3 of(float, float, float)
-    public final java.lang.String toString()
-    public float x()
-    public float y()
-    public float z()
 }
 
 public sealed interface dev.opencollab.paletter.item.component.RepairAmount permits dev.opencollab.paletter.item.component.FutureRepairAmount, dev.opencollab.paletter.item.component.RepairAmount$Expression, dev.opencollab.paletter.item.component.RepairAmount$Fixed {

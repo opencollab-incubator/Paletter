@@ -112,8 +112,8 @@ class WireOnlyComponentTest {
     void renderOffsetsWritePositionRotationScaleAndLeaveOutEmptyParts() {
         RenderOffsets offsets = RenderOffsets.builder()
             .mainHand(RenderOffsets.Hand.builder()
-                .firstPerson(RenderOffsets.Offset.builder().position(RenderOffsets.Vec3.of(1, 2, 3)).rotation(RenderOffsets.Vec3.of(4, 5, 6))
-                    .scale(RenderOffsets.Vec3.of(7, 8, 9)).build())
+                .firstPerson(RenderOffsets.Offset.builder().position(dev.opencollab.paletter.Vec3.of(1, 2, 3)).rotation(dev.opencollab.paletter.Vec3.of(4, 5, 6))
+                    .scale(dev.opencollab.paletter.Vec3.of(7, 8, 9)).build())
                 .thirdPerson(RenderOffsets.Offset.builder().build()).build())
             .offHand(RenderOffsets.Hand.builder().build()).build();
         NbtMap node = components(base().component(offsets).build(), PALETTER.latest()).getCompound("minecraft:render_offsets");

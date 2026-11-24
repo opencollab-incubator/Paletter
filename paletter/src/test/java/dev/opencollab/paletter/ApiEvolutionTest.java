@@ -56,7 +56,7 @@ class ApiEvolutionTest {
             }
         }
         assertEquals(List.of(), records, "a component or one of its objects is a record: make it a final class with a builder");
-        assertTrue(allowed > 10, "only " + allowed + " vectors and union forms found");
+        assertTrue(allowed >= 10, "only " + allowed + " union forms found");
     }
 
     @Test

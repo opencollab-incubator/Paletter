@@ -3,6 +3,7 @@
 // data/model/ATTRIBUTION.md.
 package dev.opencollab.paletter.block.component;
 
+import dev.opencollab.paletter.Vec3;
 import java.util.Objects;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
@@ -121,27 +122,6 @@ public final class Leashable implements BlockComponent {
          */
         public @NonNull Leashable build() {
             return new Leashable(offset);
-        }
-    }
-
-    /**
-     * An add-on JSON vector {@code [x, y, z]}.
-     *
-     * @param x the x component
-     * @param y the y component
-     * @param z the z component
-     */
-    public record Vec3(float x, float y, float z) {
-        /**
-         * Creates a vector.
-         *
-         * @param x the x component
-         * @param y the y component
-         * @param z the z component
-         * @return the vector
-         */
-        public static @NonNull Vec3 of(float x, float y, float z) {
-            return new Vec3(x, y, z);
         }
     }
 }
