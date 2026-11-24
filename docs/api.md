@@ -49,7 +49,8 @@ generator finds those names itself, and never renames an existing type for a new
 Not API:
 
 - anything under `dev.opencollab.paletter.internal`;
-- public members marked `@Internal` (plumbing that has to be public, such as the `BlockValues` constructor);
+- anything marked `@Internal`. The exported packages have none (a test checks it): what Paletter's packages share
+  is package-private, and its other packages and tools reach it through `dev.opencollab.paletter.internal.access`;
 - the bundled data format and the `tools` module.
 
 `@Experimental` means only that the API itself is unstable. `@BedrockExperiment("<toggle>")` is separate: it marks a

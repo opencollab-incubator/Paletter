@@ -105,6 +105,39 @@ class ApiBoundaryTest {
         return true;
     }
 
+    /**
+     * What is not API is package-private, or in an internal package (other packages reach it through
+     * {@code internal.access}): nothing public in an exported package is marked {@link Internal}.
+     */
+    @Test
+    void exportedPackagesHaveNoInternalTypeOrMember() throws Exception {
+        Path classes = Path.of(Paletter.class.getProtectionDomain().getCodeSource().getLocation().toURI());
+        List<String> internal = new ArrayList<>();
+        for (String pkg : exportedPackages()) {
+            try (Stream<Path> files = Files.list(classes.resolve(pkg.replace('.', '/')))) {
+                for (Path file : files.filter(f -> f.toString().endsWith(".class")).sorted().toList()) {
+                    String name = file.getFileName().toString();
+                    Class<?> type = Class.forName(pkg + "." + name.substring(0, name.length() - ".class".length()), false,
+                        ApiBoundaryTest.class.getClassLoader());
+                    if (type.isAnnotationPresent(Internal.class)) {
+                        internal.add(type.getName());
+                    }
+                    List<Member> members = new ArrayList<>(List.of(type.getDeclaredFields()));
+                    members.addAll(List.of(type.getDeclaredMethods()));
+                    members.addAll(List.of(type.getDeclaredConstructors()));
+                    for (Member member : members) {
+                        int modifiers = member.getModifiers();
+                        if ((Modifier.isPublic(modifiers) || Modifier.isProtected(modifiers))
+                            && ((AnnotatedElement) member).isAnnotationPresent(Internal.class)) {
+                            internal.add(type.getName() + "#" + member.getName());
+                        }
+                    }
+                }
+            }
+        }
+        assertTrue(internal.isEmpty(), "Public @Internal types and members in exported packages:\n  " + String.join("\n  ", internal));
+    }
+
     @Test
     void exportedSignaturesReferenceNoInternalType() throws Exception {
         Set<String> exported = exportedPackages();
