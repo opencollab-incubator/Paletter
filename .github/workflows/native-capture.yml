@@ -28,7 +28,7 @@ jobs:
     if: false # disabled: nothing exists to run yet
     runs-on: windows-2025
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         with:
           persist-credentials: false
       # TODO: install MSVC and xmake, lip install LeviLamina and the dump mod, start bedrock_server_mod.exe for
