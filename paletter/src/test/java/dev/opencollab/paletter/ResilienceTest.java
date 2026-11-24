@@ -164,6 +164,7 @@ class ResilienceTest {
         PaletteException loud = assertThrows(PaletteException.class, () -> Paletter.builder().versions(LATEST::equals).layer(duplicate).build());
         assertTrue(loud.getMessage().contains("global") && loud.getMessage().contains(LATEST.toString()), loud.getMessage());
         assertEquals("global", loud.layer());
+        assertEquals(LATEST, loud.version());
         assertEquals("minecraft:stone", loud.identifier());
 
         IllegalStateException cause = new IllegalStateException("boom");

@@ -124,11 +124,11 @@ class ExperimentGatingTest {
     void aVersionThatIsNotServedIsRejected() {
         DataVersion first = Paletter.builder().build().versions().getFirst();
         DataVersion other = new DataVersion("0.0", 1);
-        PaletteException unknown = assertThrows(PaletteException.class, () -> Paletter.builder().experiments(other, TOGGLE).build());
+        IllegalArgumentException unknown = assertThrows(IllegalArgumentException.class, () -> Paletter.builder().experiments(other, TOGGLE).build());
         assertTrue(unknown.getMessage().contains(other.toString()), unknown.getMessage());
         // A version the predicate leaves out is not served either
         Paletter.Builder narrowed = Paletter.builder().versions(version -> version.equals(first));
-        assertThrows(PaletteException.class, () -> narrowed.experiments(Paletter.builder().build().latest(), TOGGLE).build());
+        assertThrows(IllegalArgumentException.class, () -> narrowed.experiments(Paletter.builder().build().latest(), TOGGLE).build());
     }
 
     @Test

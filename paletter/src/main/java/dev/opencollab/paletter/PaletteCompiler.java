@@ -81,7 +81,7 @@ final class PaletteCompiler {
             // BDS sends the voxel shapes packet to every client (protocol 924 and later), so a palette needs them
             throw new PaletteException("No vanilla voxel shapes for " + data.version() + " in the data source (no registry"
                 + " of the version among the generated shapes or in its voxel_shapes.nbt): the palette cannot build the voxel shapes packet, which BDS sends"
-                + " to every client before start game");
+                + " to every client before start game", data.version(), null, null, null);
         }
         Palette.Shapes shapes = new Palette.Shapes(vanillaShapes, VoxelShapeCompiler.compile(vanillaShapes, Map.of(), blocks, report));
         VanillaContent.ExperimentGating gating = shapeExperiment ? applied.gating().withEnabled(VoxelShapeStore.EXPERIMENT) : applied.gating();
@@ -105,11 +105,11 @@ final class PaletteCompiler {
             return extendLayer(parent, layer, report, source);
         } catch (PaletteException e) {
             throw new PaletteException("Unable to compile layer " + source + " for " + data.version() + ": " + e.getMessage(),
-                source, e.identifier(), e);
+                data.version(), source, e.identifier(), e);
         } catch (RuntimeException e) {
             // A component encoder or a consumer callback (override modifier, creative edit) failed
             throw new PaletteException("Unable to compile layer " + source + " for " + data.version() + ": "
-                + e.getClass().getSimpleName() + (e.getMessage() == null ? "" : ": " + e.getMessage()), source, null, e);
+                + e.getClass().getSimpleName() + (e.getMessage() == null ? "" : ": " + e.getMessage()), data.version(), source, null, e);
         }
     }
 

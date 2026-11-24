@@ -137,11 +137,13 @@ public final class dev.opencollab.paletter.Palette {
     public org.cloudburstmc.protocol.bedrock.packet.VoxelShapesPacket voxelShapesPacket()
 }
 
-public class dev.opencollab.paletter.PaletteException extends java.lang.RuntimeException {
+public final class dev.opencollab.paletter.PaletteException extends java.lang.RuntimeException {
     public <init>(java.lang.String)
+    public <init>(java.lang.String, dev.opencollab.paletter.data.DataVersion, java.lang.String, java.lang.String, java.lang.Throwable)
     public <init>(java.lang.String, java.lang.String, java.lang.String, java.lang.Throwable)
     public java.lang.String identifier()
     public java.lang.String layer()
+    public dev.opencollab.paletter.data.DataVersion version()
 }
 
 public final class dev.opencollab.paletter.PaletteLayer {

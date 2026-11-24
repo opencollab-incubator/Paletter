@@ -114,7 +114,7 @@ public final class Paletter {
         this.vanillaContent = builder.vanillaContent.copy();
         for (DataVersion version : vanillaContent.experimentVersions()) {
             if (!versions.contains(version)) {
-                throw new PaletteException("Experiments are enabled for " + version + ", which this Paletter does not serve (served: "
+                throw new IllegalArgumentException("Experiments are enabled for " + version + ", which this Paletter does not serve (served: "
                     + versions + ")");
             }
         }
@@ -814,7 +814,7 @@ public final class Paletter {
 
         /**
          * Enables experiment toggles in one version only, in addition to those of {@link #experiments(String...)}.
-         * The version must be one this instance serves, or {@link #build()} throws a {@link PaletteException}.
+         * The version must be one this instance serves, or {@link #build()} throws an {@link IllegalArgumentException}.
          * Every call adds to the toggles of the earlier ones. Toggles that gate nothing in a version are ignored there; for
          * a toggle enabled for one version the palette's report says so.
          *
@@ -914,7 +914,8 @@ public final class Paletter {
          * versions with {@link #versions(Predicate)} to compile fewer.
          *
          * @return the Paletter
-         * @throws IllegalArgumentException if {@link #versions(Predicate)} accepts no data version
+         * @throws IllegalArgumentException if {@link #versions(Predicate)} accepts no data version, or experiments are
+         *                                  enabled for a version it does not accept
          * @throws PaletteException if a layer cannot be compiled: the first version's failure, after the palettes that
          *                          compiled were reported
          * @throws java.io.UncheckedIOException if the data source cannot be read

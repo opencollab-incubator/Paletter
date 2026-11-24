@@ -420,7 +420,7 @@ resolves through the fallbacks, and the creative content leaves it out. Its item
 (`Palette#itemDefinitions()`, `itemDefinition(int)`), because BDS registers them in a world without experiments too; only
 `itemDefinition(String)` and `itemDefinition(BedrockItemType)` treat them as missing.
 `Paletter.builder().experiments("y_2026_drop_3")` enables it in every version; `experiments(version, "y_2026_drop_3")`
-enables it in one version (a version that is not served makes `build()` throw a `PaletteException`). Every call adds to
+enables it in one version (a version that is not served makes `build()` throw an `IllegalArgumentException`). Every call adds to
 the earlier ones, like `removeItems(...)`, which hides vanilla items. `allExperiments()` enables every toggle
 the version gates content with, except the voxel shape experiment, which only comes with an explicit
 `experiments("voxel_shapes")`; the palette lists them in `Palette#experiments()`.
@@ -544,8 +544,9 @@ throws `PaletteException` from `build()` (the first version's failure, after the
 `Palette#extend(layer)` throws a
 `PaletteException` too, and changes nothing: the palette is unchanged, no palette or failure is cached, and the same palette can
 still be extended by another layer. Duplicate identifiers (blocks, items, voxel shapes) and duplicate block runtime ids
-are rejected, across layers and within one. `PaletteException#layer()` is the id of the layer and `#identifier()` the
-content it is about (null when it is not about one). The message names both, and the version. `PaletteReport` also
+are rejected, across layers and within one. `PaletteException#version()` is the data version, `#layer()` the id of the layer
+and `#identifier()` the content it is about (each null when it is not about one). The message names them. A configuration
+that is wrong in itself (a version that is not served, a predicate that serves none) is an `IllegalArgumentException`. `PaletteReport` also
 lists what was adapted, replaced or dropped per version. A report never changes (a palette extended with a layer has a new
 one) and knows its `version()`; `unknownBlocks()` (block types) and `unknownItems()` (item variants, so a missing aux is
 exact) are the content of the newest data that the
