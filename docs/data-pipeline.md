@@ -486,9 +486,9 @@ hold nothing Paletter needs.
   and the zips) are tried twice at most; a 429 or 503 waits its `Retry-After` up to five minutes, else a minute; a 403
   or 404 is final. `bds fetch` exits with 4 when minecraft.net refuses and 5 when a zip is gone (a kept build is then
   frozen by hand: `builds record --freeze <build>=<reason>`). The user agent names the project, `Paletter-tools/<version>
-  (+https://github.com/opencollab-incubator/Paletter)`, and the zips are asked for as `Mozilla/5.0 (compatible;
-  Paletter-tools/<version>; +<url>)` (`BdsDistribution.ZIP_AGENT`). Whether minecraft.net serves that form is
-  unverified until the first CI download with it; if it refuses, `ZIP_AGENT` goes back to `Mozilla/5.0 Paletter` (one line).
+  (+https://github.com/opencollab-incubator/Paletter)`, and the zips are asked for as `Mozilla/5.0 Paletter`
+  (`BdsDistribution.ZIP_AGENT`): minecraft.net never answered the longer `Mozilla/5.0 (compatible; Paletter-tools/<version>;
+  +<url>)` in CI (the download timed out on read).
 - `javadoc.yml` publishes the Javadoc of `main` and of each release to GitHub Pages.
 - [releasing.md](releasing.md) lists the repository settings, secrets and Pages setup these workflows need.
 

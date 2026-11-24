@@ -35,11 +35,11 @@ import java.util.zip.ZipInputStream;
 public record BdsDistribution(String version, boolean preview, String platform, String url) {
     static final String LINKS = "https://net-secondary.web.minecraft-services.net/api/v1.0/download/links";
     /**
-     * The zips have been downloaded with a browser-like agent from the start; a plain one is not known to work. Whether
-     * minecraft.net serves this form is unverified until a CI download with it (docs/data-pipeline.md, "CI"); if it is
-     * refused, this one line goes back to the agent used before: {@code "Mozilla/5.0 Paletter"}.
+     * The agent the zips have been downloaded with from the start. A longer, descriptive form ({@code Mozilla/5.0
+     * (compatible; Paletter-tools/<version>; +<url>)}) was tried in CI and minecraft.net never answered it: the download
+     * timed out on read twice (recapture rehearsal of 2026-11-24), while this one is served.
      */
-    static final String ZIP_AGENT = "Mozilla/5.0 (compatible; " + Http.PRODUCT + "; +" + Http.PROJECT_URL + ")";
+    static final String ZIP_AGENT = "Mozilla/5.0 Paletter";
     private static final Map<String, String> ZIP_HEADERS = Map.of("User-Agent", ZIP_AGENT);
 
     /**
