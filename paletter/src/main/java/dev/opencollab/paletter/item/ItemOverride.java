@@ -193,6 +193,6 @@ public final class ItemOverride {
         return new RegisteredItem(original.getIdentifier(), original.getRuntimeId(),
             version != null ? version : original.getVersion(),
             componentBased != null ? componentBased : original.isComponentBased(),
-            componentData, original.origin(), merged, original.customItem(), original.isCustom() ? original.key() : null);
+            componentData, original.origin(), merged, original.customItem(), original.isCustom() ? original.type() : null);
     }
 }

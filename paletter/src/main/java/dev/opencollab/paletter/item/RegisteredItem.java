@@ -85,13 +85,14 @@ public final class RegisteredItem implements ItemDefinition {
     }
 
     /**
-     * Returns the key of the item.
+     * Returns the type of the item: the key of its base variant. A definition is the item, whatever variant a stack of
+     * it has, so it has no variant of its own; {@link dev.opencollab.paletter.Palette#resolve} gives the variant sent.
      *
-     * @return the key of this item: the vanilla constant, or for a custom item or block item the type the
+     * @return the type of this item: the vanilla constant, or for a custom item or block item the type the
      *         {@link CustomItem} or {@link dev.opencollab.paletter.block.CustomBlock} owns ({@link CustomItem#type()},
      *         {@link dev.opencollab.paletter.block.CustomBlock#itemType()})
      */
-    public @NonNull BedrockItemType key() {
+    public @NonNull BedrockItemType type() {
         BedrockItemType result = key;
         if (result == null) {
             result = BedrockItemType.fromIdentifier(identifier);

@@ -87,7 +87,7 @@ public final class RegisteredBlock {
      *
      * @return the key of this block: a vanilla type, or the type of its {@link CustomBlock}
      */
-    public @NonNull BedrockBlockType key() {
+    public @NonNull BedrockBlockType type() {
         BedrockBlockType key = this.key;
         if (key == null) {
             key = customBlock != null ? customBlock.type() : BedrockBlockType.fromIdentifier(identifier);

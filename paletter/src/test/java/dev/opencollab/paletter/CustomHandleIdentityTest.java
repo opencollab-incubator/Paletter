@@ -119,7 +119,7 @@ class CustomHandleIdentityTest {
         ResolvedItem resolved = palette.resolve(BedrockItems.DIAMOND_SWORD);
         assertNotNull(resolved);
         assertTrue(resolved.fallback());
-        assertSame(ruby.type(), resolved.definition().key());
+        assertSame(ruby.type(), resolved.definition().type());
         assertSame(ruby.type().variant(), palette.resolve(BedrockItems.DIAMOND_SWORD).variant());
         assertSame(ruby.type().variant(), palette.decode(palette.encode(BedrockItemStack.of(BedrockItems.DIAMOND_SWORD))).variant());
     }
@@ -137,7 +137,7 @@ class CustomHandleIdentityTest {
         BedrockItemType itemType = lamp.itemType();
         assertSame(itemType, palette.itemOf(lamp.type()));
         assertSame(itemType.variant(), palette.itemVariant("example:lamp", 0, Lookup.RENAMED));
-        assertSame(itemType, palette.itemDefinition(itemType).key());
+        assertSame(itemType, palette.itemDefinition(itemType).type());
         BedrockItemStack decoded = palette.decode(palette.encode(BedrockItemStack.of(itemType)));
         assertNotNull(decoded);
         assertSame(itemType.variant(), decoded.variant());
@@ -216,8 +216,8 @@ class CustomHandleIdentityTest {
         BedrockItemStack decoded = palette.decode(encoded);
         assertNotNull(decoded, where);
         assertSame(base, decoded.variant(), where);
-        assertSame(type, palette.itemDefinition(type).key(), where);
-        assertSame(type, palette.resolve(base).definition().key(), where);
+        assertSame(type, palette.itemDefinition(type).type(), where);
+        assertSame(type, palette.resolve(base).definition().type(), where);
         assertSame(item, palette.itemDefinition(type).customItem(), where);
         assertSame(base, palette.explain(item.identifier(), 0, null).handle(), where);
         assertSame(base, palette.itemVariants().stream().filter(v -> v.type().identifier().equals(item.identifier())).findFirst().orElseThrow(), where);
@@ -230,12 +230,12 @@ class CustomHandleIdentityTest {
         BedrockItemStack decodedBlockItem = palette.decode(palette.encode(BedrockItemStack.of(blockItem)));
         assertNotNull(decodedBlockItem, where);
         assertSame(blockItem.variant(), decodedBlockItem.variant(), where);
-        assertSame(blockItem, palette.itemDefinition(blockItem).key(), where);
+        assertSame(blockItem, palette.itemDefinition(blockItem).type(), where);
         assertSame(blockItem, palette.creativeLayout().stacks().filter(stack -> stack.type().identifier().equals(block.identifier()))
             .findFirst().orElseThrow().type(), where);
 
         // Blocks
-        assertSame(block.type(), palette.blocks().block(block.identifier()).key(), where);
+        assertSame(block.type(), palette.blocks().block(block.identifier()).type(), where);
         for (BedrockBlockState state : block.type().states()) {
             assertSame(state, palette.blockState(state.toNbt(), Lookup.RENAMED), where);
             RegisteredBlockState registered = palette.blockDefinition(state);

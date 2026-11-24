@@ -183,7 +183,7 @@ What still happens on first use, and is thread safe (built once under a lock, re
 Keys (`BedrockBlockType`, `BedrockBlockState`, `BedrockItemType`, `BedrockItemVariant`) are identities. `equals` always
 works. `==` works too for vanilla keys, which are singletons, and for registered custom content: a `CustomItem` or
 `CustomBlock` creates its types, their base item variant and its block states once and owns them, and a palette it is
-registered in hands back exactly those (`decode`, `block(NbtMap)`, `RegisteredItem#key`, `Palette#blockState`,
+registered in hands back exactly those (`decode`, `block(NbtMap)`, `RegisteredItem#type`, `Palette#blockState`,
 ...). Other variants of a custom item (`layer.variant(ruby.type().variant(5))`) are equal to the one the layer was
 given, not identical: compare them with `equals`. A key for an identifier Paletter does
 not know is a plain value, equal by identifier and not interned, so memory is bounded by registered content. Equal custom

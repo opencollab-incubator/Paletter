@@ -93,7 +93,7 @@ class PreviewHandlesTest {
             BedrockItemType constant = BedrockItemType.byIdentifier(item.identifier());
             assertNotNull(constant, item.identifier() + " has no constant");
             assertFalse(constant.isCustom(), item.identifier());
-            BedrockItemType key = palette.items().getDefinition(item.identifier()).key();
+            BedrockItemType key = palette.items().getDefinition(item.identifier()).type();
             assertSame(constant, key, item.identifier());
             assertSame(constant, palette.itemVariant(item.identifier(), 0, Lookup.EXACT).type(), item.identifier());
             assertEquals(item.identifier(), palette.items().resolve(key).definition().getIdentifier(), item.identifier());

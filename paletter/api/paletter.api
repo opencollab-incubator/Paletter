@@ -2628,10 +2628,10 @@ public final class dev.opencollab.paletter.item.RegisteredItem implements org.cl
     public org.cloudburstmc.protocol.bedrock.data.inventory.ItemVersion getVersion()
     public boolean isComponentBased()
     public boolean isCustom()
-    public dev.opencollab.paletter.vanilla.BedrockItemType key()
     public dev.opencollab.paletter.Origin origin()
     public dev.opencollab.paletter.property.Properties properties()
     public java.lang.String toString()
+    public dev.opencollab.paletter.vanilla.BedrockItemType type()
 }
 
 public final class dev.opencollab.paletter.item.ResolvedItem {

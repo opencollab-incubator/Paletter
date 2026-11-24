@@ -58,12 +58,12 @@ class PropertiesTest {
         var palette = PALETTER.vanilla(version);
         int checked = 0;
         for (RegisteredItem item : palette.items().definitions()) {
-            assertEquals(PALETTER.properties(item.key(), version), item.properties(), item.getIdentifier());
+            assertEquals(PALETTER.properties(item.type(), version), item.properties(), item.getIdentifier());
             checked += item.properties().isEmpty() ? 0 : 1;
         }
         assertTrue(checked > 50);
         for (RegisteredBlock block : palette.blocks().blocks()) {
-            assertEquals(PALETTER.properties(block.key(), version), block.properties(), block.identifier());
+            assertEquals(PALETTER.properties(block.type(), version), block.properties(), block.identifier());
             if (block.properties().get(PropertyKind.WIRE, "permutations") == null) {
                 assertSame(block.properties(), block.properties(block.states().getFirst()));
             }

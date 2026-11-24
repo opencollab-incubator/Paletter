@@ -875,7 +875,7 @@ public final class Palette {
     public @Nullable BedrockItemType itemOf(@NonNull BedrockBlockType block) {
         RegisteredItem custom = items.customBlockItem(block.identifier());
         if (custom != null) {
-            return custom.key();
+            return custom.type();
         }
         String item = data.blockItems().get(block.identifier());
         return item == null || items.getDefinition(item) == null ? null : BedrockItemType.fromIdentifier(item);

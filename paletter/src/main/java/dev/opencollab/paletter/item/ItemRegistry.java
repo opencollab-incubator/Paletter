@@ -1061,7 +1061,7 @@ public final class ItemRegistry implements DefinitionRegistry<ItemDefinition> {
                         componentData = componentData.toBuilder().putInt("id", runtimeId).build();
                     }
                     put(new RegisteredItem(identifier, runtimeId, item.getVersion(), item.isComponentBased(), componentData, item.origin(),
-                        item.components(), item.customItem(), item.key()));
+                        item.components(), item.customItem(), item.type()));
                 }
             }
         }

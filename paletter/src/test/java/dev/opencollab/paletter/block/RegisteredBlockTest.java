@@ -61,7 +61,7 @@ class RegisteredBlockTest {
             assertNotNull(blocks.key(state));
             assertEquals(state.getState(), blocks.key(state).toNbt());
         }
-        assertEquals(wheat.identifier(), wheat.key().identifier());
+        assertEquals(wheat.identifier(), wheat.type().identifier());
     }
 
     @Test
@@ -105,7 +105,7 @@ class RegisteredBlockTest {
             assertEquals("example:lamp", block.propertyData() == null ? null : blocks.blockProperties().stream()
                 .filter(data -> data.getProperties().equals(block.propertyData())).findFirst().orElseThrow().getName());
             assertSame(block.states().getFirst(), block.defaultState());
-            assertEquals(block.key(), lamp().type());
+            assertEquals(block.type(), lamp().type());
 
             for (RegisteredBlockState state : block.states()) {
                 assertSame(block, blocks.block(state));

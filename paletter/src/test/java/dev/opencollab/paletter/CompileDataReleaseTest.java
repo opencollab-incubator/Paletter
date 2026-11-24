@@ -119,11 +119,11 @@ class CompileDataReleaseTest {
         Palette vanilla = paletter.vanilla(latest);
         Map<BedrockItemType, Properties> items = new HashMap<>();
         for (RegisteredItem item : vanilla.items().definitions()) {
-            items.put(item.key(), paletter.properties(item.key(), latest));
+            items.put(item.type(), paletter.properties(item.type(), latest));
         }
         Map<BedrockBlockType, Properties> blocks = new HashMap<>();
         for (RegisteredBlock block : vanilla.blocks().blocks()) {
-            blocks.put(block.key(), paletter.properties(block.key(), latest));
+            blocks.put(block.type(), paletter.properties(block.type(), latest));
         }
         assertTrue(items.values().stream().anyMatch(properties -> !properties.isEmpty()));
         assertTrue(blocks.values().stream().anyMatch(properties -> !properties.isEmpty()));

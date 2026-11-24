@@ -65,7 +65,7 @@ class ItemPatchTest {
 
         assertEquals(Origin.custom("session"), ruby.origin());
         assertTrue(ruby.isCustom());
-        assertEquals("server:ruby", ruby.key().identifier());
+        assertEquals("server:ruby", ruby.type().identifier());
         assertNotNull(ruby.customItem());
         assertTrue(base.items().getDefinition("minecraft:apple").origin().isVanilla());
         assertTrue(base.items().getDefinition("minecraft:apple").components().isEmpty());
