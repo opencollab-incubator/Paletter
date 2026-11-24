@@ -77,6 +77,7 @@ class CliTest {
         cli.parseArgs("update", "--channel", "release", "--version", "1.26.63.1", "--capture-only", "out", "--against", "1.26.36.1");
         cli.parseArgs("builds", "resolve", "--channel", "preview", "--output", "build.txt");
         cli.parseArgs("builds", "plan", "--output", "matrix.json");
+        cli.parseArgs("builds", "plan", "--output", "matrix.json", "--build", "1.26.63.1", "--build", "1.26.70.24");
         cli.parseArgs("behaviour", "import", "--cloudburst-data", "cb", "--allay", "allay");
         cli.parseArgs("whitebox-coverage");
         cli.parseArgs("voxel-shapes", "import");

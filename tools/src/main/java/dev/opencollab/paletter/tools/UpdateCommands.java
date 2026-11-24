@@ -193,18 +193,19 @@ final class UpdateCommands {
             }
         }
 
-        @Command(name = "plan", description = "The builds a full recapture captures (every kept release build, the newest unchecked build after "
-            + "each data version's newest kept build, and the preview with captures in data/bds) as a GitHub Actions matrix, written to --output (one line of JSON) and listed on stdout.")
+        @Command(name = "plan", description = "The builds a full recapture captures (every kept release build and the preview with captures in "
+            + "data/bds, read from the checkout without the network) as a GitHub Actions matrix, written to --output (one line of JSON) and listed on stdout.")
         static final class Plan extends Rooted implements Callable<Integer> {
             @Option(names = "--output", required = true, description = "File for the matrix JSON") Path output;
+            @Option(names = "--build", description = "Only this build of the plan (repeatable; a rehearsal); a build the plan lacks fails")
+            List<String> builds;
 
             @Override
             public Integer call() throws Exception {
-                List<RecapturePlan.Leg> legs = RecapturePlan.of(root(), BuildHistory.fetchWithCurrentRelease());
+                List<RecapturePlan.Leg> legs = RecapturePlan.only(RecapturePlan.of(root()), builds);
                 Files.writeString(output, RecapturePlan.matrix(legs) + "\n");
                 RecapturePlan.frozen(root()).forEach(line -> System.out.println("SKIPPED " + line));
-                legs.forEach(leg -> System.out.println(leg.build() + (leg.preview() ? " (preview)" : "")
-                    + (leg.against() == null ? "" : leg.against().equals(leg.build()) ? " (history check)" : " (not checked yet, compared with " + leg.against() + ")")));
+                legs.forEach(leg -> System.out.println(leg.build() + (leg.preview() ? " (preview)" : "") + (leg.against() == null ? "" : " (history check)")));
                 return legs.isEmpty() ? 1 : 0;
             }
         }

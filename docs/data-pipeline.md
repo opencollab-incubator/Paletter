@@ -248,7 +248,8 @@ changes, every kept build has to be captured again, or the model describes some 
 with the new one. `recapture.yml` does that in parallel and opens **one** pull request.
 
 **When it runs.** By hand (Actions > Recapture > Run workflow; the `ref` input names the branch to recapture, empty is
-the branch the run was started on); on a pull request, by adding the `recapture` label, which recaptures the pull
+the branch the run was started on; `builds` narrows the plan to the builds named and `dry-run` stops before the pull
+request, so `builds: 1.26.63.1` with `dry-run` is a rehearsal of one Windows leg); on a pull request, by adding the `recapture` label, which recaptures the pull
 request's branch and opens the recapture pull request against it (only for branches of this repository, since a fork's
 pull request gets no write token; remove and add the label to run it again); and from `bds-data.yml` when the data update's patch changes an add-on input
 (`data/model/components.json`, `fixtures.json`, `bds-feedback.json`, `bds-keys.json`), read from git: the pull request of the update was created or updated by this run, and its pushed branch changes one of them against the base: the daily workflow then calls it
@@ -259,13 +260,11 @@ workflow by hand on `bds-data/preview` for the other.
 **What it does.**
 
 1. `plan` runs `builds plan`: every kept release build (`data/bds/builds.json`, plus builds with captures the record
-   lacks), the newest unrecorded build of each line with a kept build (read from the build list, so a hotfix nobody ran
-   `builds check` on is looked at: its leg is compared with the newest kept build of its line, and capture-only keeps
-   its captures, which the next `builds check` verifies), and the newest preview with captures in `data/bds`, as a
-   matrix. A line is a data version of `versions.txt`: `26.60` is the builds `1.26.60.x` to `1.26.69.x`, since the
-   protocol of an unchecked build is not known. A line without a kept build is a new data version, which `update`
-   imports. It pins the commit all jobs use.
-2. `capture`, one Windows job per build (`fail-fast: false`, at most 6 at a time), runs
+   lacks) and the newest preview with captures in `data/bds`, as a matrix, read from the checkout with no request to the
+   network. A build without committed captures is never planned: a new release is the daily check's work, a hotfix in
+   between `builds check`'s. The `builds` input (`builds plan --build <build>`) narrows the plan to a rehearsal; a build
+   the plan lacks fails. It pins the commit all jobs use.
+2. `capture`, one Windows job per build (`fail-fast: false`, at most 3 at a time), runs
    `update --channel <channel> --version <build> --capture-only <dir>`, with the add-on generated from the checked-out
    commit. `--capture-only` is the capture half of `update`: the same captures and the same comparison with the committed
    captures of that build, but nothing is written into the repository; the files that would go to `data/bds/<build>` (and
@@ -274,11 +273,12 @@ workflow by hand on `bds-data/preview` for the other.
    per build (the daily check's cache keys). The captures and the run's report are uploaded as the artifact
    `captures-<build>`; a failed leg uploads its report and logs, never captures. Under `--capture-only` an `--against` add-on mismatch is information, not a failure (the captures are of the new add-on by design), nothing deletes a directory of the repository, and the Gradle cache is read-only in the capture jobs.
 3. `assemble` (only when every leg succeeded: captures of two add-ons never share a pull request) validates the
-   artifacts, copies them over `data/bds/<build>/` (overlaying, deleting nothing; a build without committed captures fails,
-   so the unchecked build of a line the plan adds fails here: see the open point below) and runs what `update` does after the
-   captures, with no BDS: `experiment-marks` (the marks of the bundled versions from the new experiment records), `inferMappings`, `whitebox-coverage` (from the committed `whitebox.json`; the binary did not
-   change), `generateComponentApi`, `:paletter:apiDump`, `generateConstants`, `voxel-shapes import` (as `update` does),
-   `recipes-import` (the bundled recipes from the new recipe captures). It also runs `check-mappings --strict` and puts its verdict (residual bits, unclassified wire paths, linked fields) into the report, without failing on it. It fails when the inference changed
+   artifacts, copies every one over `data/bds/<build>/` (overlaying, deleting nothing; a build kept by a history check
+   too; a build without committed captures fails) and runs what `update` does after the
+   captures, with no BDS: `experiment-marks` (the marks of the bundled versions from the new experiment records), `inferMappings`, `behaviour import`, `whitebox-coverage` (from the committed `whitebox.json`; the binary did not
+   change), `generateComponentApi`, `voxel-shapes import` (as `update` does),
+   `recipes-import` (the bundled recipes from the new recipe captures), `variant-names`, `generateConstants` and last
+   `:paletter:apiDump`, which compiles what both generators wrote. It also runs `check-mappings --strict` and puts its verdict (residual bits, unclassified wire paths, linked fields) into the report, without failing on it. It fails when the inference changed
    `bds-feedback.json`, `fixtures.json`, `components.json` or `bds-keys.json` (and uploads `git diff -- data/model` as the artifact `recapture-guard-diff`): those captures were made with an add-on that is not the
    final one, so the change is committed and the workflow runs again until a pass changes nothing. It writes a patch of
    the data paths and a report (one verdict line and the collapsed report per build).
@@ -289,12 +289,6 @@ The builds are not checked against each other again: the set of kept builds does
 `builds check`, which stays a separate step), and each leg compared its capture with the committed captures of its own
 build, which is what the pull request shows as the effect of the add-on change. Files that an earlier capture had and the
 new one lacks stay in `data/bds/<build>`; the patch has no deletions of them.
-
-**The unchecked build of a line.** `builds plan` adds the newest unrecorded build of each line. The probed keys of
-`bds-keys.json` apply to every build of the line (protocol window) of the build they were probed on (`Fixtures#forBuild`): 1.26.66.1
-gets the add-on of 1.26.63.1, key variants included, so its spec capture compares variant by variant with the window's import
-build. The staging still refuses a build without committed captures: such a build is compared (`builds check`, a history check),
-not committed.
 
 **Security.** The jobs that run the BDS binary and Gradle over captures (`capture`, and `assemble`, which runs Gradle on
 data from the capture jobs) have `contents: read`, no credentials in the checkout and no secrets. Only `publish` has write
@@ -312,11 +306,10 @@ a build whose add-on did not change is a bug to find before the pull request is 
 
 **Cost** (estimates, not measurements of this workflow). A leg is about the time of a `builds check` run, which was about
 8 minutes per build locally, plus 3 to 6 minutes of runner start, checkout and Gradle build and the BDS download on a
-cache miss: 15 to 30 minutes per leg. With 5 builds today (4 kept releases and the preview) and 6 jobs in parallel the
-capture phase takes as long as the slowest leg, then `assemble` takes 10 to 20 minutes (Gradle builds, inference, code
-generation): about 30 to 60 minutes of wall-clock time and about 2 to 3 runner hours in total, most of it on Windows
-runners. The matrix grows with the kept builds, so wall-clock time stays flat up to 6 builds and then grows by the slowest
-leg per 6 builds.
+cache miss: 15 to 30 minutes per leg. With 5 builds today (4 kept releases and the preview) and 3 jobs in parallel the
+capture phase takes about two slowest legs, then `assemble` takes 10 to 20 minutes (Gradle builds, inference, code
+generation): about 45 to 80 minutes of wall-clock time and about 2 to 3 runner hours in total, most of it on Windows
+runners. Wall-clock time grows by the slowest leg per 3 builds; 3 at a time keeps the downloads from minecraft.net polite.
 
 **The trade-off and the merge order.** A change to the model that changes the add-on is complete only with its recapture: merging the model change alone leaves captures of the old add-on next to the new model. So the recapture pull request targets the branch of the data pull request: merge the recapture into `bds-data/<channel>` first (it adds its commit to the data pull request, which then carries model and recapture together), then merge the data pull request into the base branch. Nothing of the model change reaches the base without its recapture, and there is one review of the whole, in the data pull request. In exchange nobody recaptures by hand. If the daily run updates the data pull request between the two merges, it force-pushes the branch and the merged recapture is gone from it; the run then also starts a new recapture, so merge both on the same day.
 
@@ -335,7 +328,8 @@ the bundled order (`PaletteIdsTest`); `creativeWithoutBlock` sends 26.40's door,
 without a block with `y_2026_drop_3` on. What it showed is still open:
 
 - **`packetOrder`** in `capture.json`: a recapture does not rewrite a build's `vanilla/capture.json` (only the import does).
-- **The unchecked build of a line** (see Full recapture): 1.26.66.1 was captured but cannot join the data.
+- **1.26.66.1** is not in `builds.json`: the recapture no longer plans unrecorded builds, so it waits for the daily
+  check or `builds check --from 1.26.66.1`.
 The recapture of 2026-11-24 (CI run 45312734413, the same builds) settled:
 
 - **`connected_faces` order**: with the values reversed BDS sends the set in its own order (down, up, north, south, west, east):

@@ -36,6 +36,14 @@ on:
         description: "Branch to recapture and open the pull request against (empty: the branch this run was started on)"
         required: false
         type: string
+      builds:
+        description: "Only these builds of the plan, separated by spaces or commas (a rehearsal; empty: every build of the plan)"
+        required: false
+        type: string
+      dry-run:
+        description: "Capture and assemble only: no pull request (the patch and the report stay artifacts)"
+        type: boolean
+        default: false
   workflow_call:
     inputs:
       ref:
@@ -77,6 +85,7 @@ jobs:
       # A pull request's run captures its head branch (github.ref_name is the merge ref there)
       INPUT_REF: ${{ inputs.ref || github.head_ref }}
       RUN_REF: ${{ github.ref_name }}
+      INPUT_BUILDS: ${{ inputs.builds }}
     steps:
       # The branch name is checked before anything uses it
       - name: Check the branch name
@@ -95,17 +104,25 @@ jobs:
           distribution: temurin
           java-version: 21
       - uses: gradle/actions/setup-gradle@8da46b539cd8fe6ab27ca75128919a18d757604c # v6.4.1
-      # The build list is the one `builds` keeps: the kept releases and the preview with captures in data/bds
+        with:
+          cache-read-only: true
+      # The committed builds of the checkout only (the kept releases and the preview with captures in data/bds), with no
+      # request to the network; the `builds` input narrows them to a rehearsal
       - name: List the builds
         id: plan
         run: |
-          ./gradlew :tools:run --args="builds plan --output $RUNNER_TEMP/matrix.json" | tee "$RUNNER_TEMP/plan.log"
+          ONLY=""
+          for B in $(echo "$INPUT_BUILDS" | tr ',' ' '); do
+            echo "$B" | grep -Eq "$BUILD_RE" || { echo "Not a build: '$B'"; exit 1; }
+            ONLY="$ONLY --build $B"
+          done
+          ./gradlew :tools:run --args="builds plan --output $RUNNER_TEMP/matrix.json$ONLY" | tee "$RUNNER_TEMP/plan.log"
           MATRIX=$(cat "$RUNNER_TEMP/matrix.json")
           # Frozen builds (their zip is gone from minecraft.net) are left out of the plan, and said so
           grep '^SKIPPED ' "$RUNNER_TEMP/plan.log" | sed 's/^/- /' >> "$GITHUB_STEP_SUMMARY" || true
           # Every value that a later job puts into a command line is checked here and again there
           echo "$MATRIX" | jq -e --arg re "$BUILD_RE" '(.include | length) > 0 and ([.include[] | (.build | test($re))
-            and (.channel | IN("release", "preview")) and (.against | . == "" or test($re))] | all)' > /dev/null \
+            and (.channel | IN("release", "preview")) and (.against == "" or .against == .build)] | all)' > /dev/null \
             || { echo "The build plan is not valid: $MATRIX"; exit 1; }
           {
             echo "matrix=$MATRIX"
@@ -124,7 +141,7 @@ jobs:
     strategy:
       fail-fast: false
       # The runners are shared: a few builds at a time keeps the downloads from minecraft.net and the queue polite
-      max-parallel: 6
+      max-parallel: 3
       matrix: ${{ fromJSON(needs.plan.outputs.matrix) }}
     defaults:
       run:
@@ -138,7 +155,7 @@ jobs:
       - name: Check the matrix values
         run: |
           echo "$BUILD" | grep -Eq "$BUILD_RE" || { echo "Bad build"; exit 1; }
-          [ -z "$AGAINST" ] || echo "$AGAINST" | grep -Eq "$BUILD_RE" || { echo "Bad against"; exit 1; }
+          [ -z "$AGAINST" ] || [ "$AGAINST" = "$BUILD" ] || { echo "Bad against"; exit 1; }
           echo "$CHANNEL" | grep -Eqx 'release|preview' || { echo "Bad channel"; exit 1; }
       # Everything temporary lives in the runner's temp directory, never in the checkout (see bds-data.yml)
       - name: Set the temp and BDS cache directories
@@ -259,6 +276,9 @@ jobs:
           distribution: temurin
           java-version: 21
       - uses: gradle/actions/setup-gradle@8da46b539cd8fe6ab27ca75128919a18d757604c # v6.4.1
+        with:
+          # Gradle runs over data from the capture jobs here: it must not write the Gradle cache that other jobs restore
+          cache-read-only: true
       - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
         with:
           pattern: captures-*
@@ -292,14 +312,7 @@ jobs:
             fi
             [ -f "$C/spec/capture.json" ] || { echo "$BUILD: no spec capture"; exit 1; }
             [ "$(du -sm "$C" | cut -f1)" -le 400 ] || { echo "$BUILD: the captures are larger than 400 MB"; exit 1; }
-            # A leg checked against another build of its line is an unrecorded build: its capture passed the history check,
-            # and adding it to the data is the daily update's job. A recapture refreshes committed builds only
-            AGAINST_BUILD=$(printf '%s' "$MATRIX" | jq -r --arg b "$BUILD" '.include[] | select(.build == $b) | .against // ""')
-            if [ -n "$AGAINST_BUILD" ]; then
-              echo "$BUILD: checked against $AGAINST_BUILD, not staged (an unrecorded build)"
-              echo "- $BUILD: captured and checked against $AGAINST_BUILD; not staged (an unrecorded build, added by the daily update)" >> "$GITHUB_STEP_SUMMARY"
-              continue
-            fi
+            # Every leg is a committed build (a build kept by a history check too): all are staged
             [ -f "data/bds/$BUILD/spec/capture.json" ] || { echo "$BUILD: no committed captures to refresh"; exit 1; }
             cp -R "$C/." "data/bds/$BUILD/"
             echo "Staged $(wc -l < "$RUNNER_TEMP/files.txt") files into data/bds/$BUILD"
@@ -335,13 +348,14 @@ jobs:
           # What the captures show of the code of each build (the committed whitebox.json stays: the binary did not change)
           ./gradlew :tools:run --args="whitebox-coverage"
           ./gradlew :tools:generateComponentApi
-          ./gradlew :paletter:apiDump
           ./gradlew :tools:run --args="voxel-shapes import"
           # The bundled recipes from the new recipe captures (checkRecipes, part of the build, fails while they are stale)
           ./gradlew :tools:run --args="recipes-import"
           # The item variant names from the new Script API dumps (each leg wrote its build's dump, none the names)
           ./gradlew :tools:run --args="variant-names"
           ./gradlew :tools:generateConstants
+          # Last: the API dump compiles what both generators wrote
+          ./gradlew :paletter:apiDump
           # What update fails on: bits no field explains, wire paths nothing classifies, linked fields. Reported in the pull
           # request instead (the guard below is what blocks); check-mappings --strict prints them
           if ./gradlew :tools:run --args="check-mappings --strict" > "$RUNNER_TEMP/strict.log" 2>&1; then
@@ -411,7 +425,7 @@ jobs:
 
   publish:
     needs: [plan, assemble]
-    if: ${{ !cancelled() && needs.assemble.result == 'success' }}
+    if: ${{ !cancelled() && needs.assemble.result == 'success' && inputs.dry-run != true }}
     runs-on: ubuntu-latest
     timeout-minutes: 15
     permissions:
