@@ -27,7 +27,8 @@ The Gradle tasks are the commands with their usual arguments:
 `bds-data.yml` runs daily (05:17 UTC) for both channels: `update --channel release|preview`, then `generateComponentApi`
 and `:paletter:apiDump`. A clean day writes nothing and closes the channel's open issue. Otherwise it opens an issue and
 a pull request from `bds-data/<channel>` with data and generated paths only. If the patch changes an add-on input
-(`components.json`, `fixtures.json`, `bds-feedback.json`, `bds-keys.json`) it calls `recapture.yml` on that branch (section b).
+(`components.json`, `fixtures.json`, `bds-feedback.json`, `bds-keys.json`) the pull request says so at the top: label it
+`recapture` before merging (section b). Nothing recaptures by itself.
 
 Reviewing the pull request:
 
@@ -84,10 +85,12 @@ When it reports decisions or FAILs:
 Captures answer for the add-on they were made with, and history checks refuse to compare spec captures of different
 add-ons. After a change to the model, fixtures, `bds-feedback.json` or the add-on generator, every kept build is captured again.
 
-- CI: Actions > Recapture > Run workflow, `ref` = the branch (empty: the branch you started it on). It runs `plan`
-  (`builds plan`), one Windows `capture` job per build (`update --capture-only <dir> --version <build>`), `assemble`
+- CI: the `recapture` label on the pull request that changes the add-on, or Actions > Recapture > Run workflow, `ref` =
+  the branch (empty: the branch you started it on). Nothing starts it by itself. It runs `plan` (`builds plan`, the
+  committed builds only), one Windows `capture` job per build (`update --capture-only <dir> --version <build>`), `assemble`
   (inference, white-box coverage, code generation, `voxel-shapes import`) and `publish` (one PR `recapture/<base>`).
-- Merge order: recapture PR into `bds-data/<channel>` first, then the data PR into `main`.
+  Rehearsal: `builds: 1.26.63.1` and `dry-run` (one Windows leg, no pull request).
+- Merge order: recapture PR into its branch first (for a data update `bds-data/<channel>`), then that branch into `main`.
 - If `assemble` fails because inference changed `bds-feedback.json`, `fixtures.json`, `components.json` or
   `bds-keys.json`, commit that change and run again until a pass changes nothing.
 - Local equivalent, per build: `builds plan --output plan.json` lists the legs, then

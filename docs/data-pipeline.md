@@ -252,11 +252,10 @@ with the new one. `recapture.yml` does that in parallel and opens **one** pull r
 the branch the run was started on; `builds` narrows the plan to the builds named and `dry-run` stops before the pull
 request, so `builds: 1.26.63.1` with `dry-run` is a rehearsal of one Windows leg); on a pull request, by adding the `recapture` label, which recaptures the pull
 request's branch and opens the recapture pull request against it (only for branches of this repository, since a fork's
-pull request gets no write token; remove and add the label to run it again); and from `bds-data.yml` when the data update's patch changes an add-on input
-(`data/model/components.json`, `fixtures.json`, `bds-feedback.json`, `bds-keys.json`), read from git: the pull request of the update was created or updated by this run, and its pushed branch changes one of them against the base: the daily workflow then calls it
-on the update's own branch, `bds-data/<channel>`, and the recapture pull request is opened against that branch. A run that leaves the data pull request as it was starts nothing, so a day without news neither recaptures nor force-pushes away a recapture merged into the branch. Nothing
-starts it on a push. If both channels change the add-on in one run, only the release one is recaptured; start the
-workflow by hand on `bds-data/preview` for the other.
+pull request gets no write token; remove and add the label to run it again). Nothing starts it by itself: not a push, not
+the schedule, not the daily check. When a data update changes an add-on input (`data/model/components.json`,
+`fixtures.json`, `bds-feedback.json`, `bds-keys.json`), the data pull request says so at the top of its body: label it
+`recapture` before merging.
 
 **What it does.**
 
@@ -312,7 +311,7 @@ capture phase takes about two slowest legs, then `assemble` takes 10 to 20 minut
 generation): about 45 to 80 minutes of wall-clock time and about 2 to 3 runner hours in total, most of it on Windows
 runners. Wall-clock time grows by the slowest leg per 3 builds; 3 at a time keeps the downloads from minecraft.net polite.
 
-**The trade-off and the merge order.** A change to the model that changes the add-on is complete only with its recapture: merging the model change alone leaves captures of the old add-on next to the new model. So the recapture pull request targets the branch of the data pull request: merge the recapture into `bds-data/<channel>` first (it adds its commit to the data pull request, which then carries model and recapture together), then merge the data pull request into the base branch. Nothing of the model change reaches the base without its recapture, and there is one review of the whole, in the data pull request. In exchange nobody recaptures by hand. If the daily run updates the data pull request between the two merges, it force-pushes the branch and the merged recapture is gone from it; the run then also starts a new recapture, so merge both on the same day.
+**The trade-off and the merge order.** A change to the model that changes the add-on is complete only with its recapture: merging the model change alone leaves captures of the old add-on next to the new model. So a recapture is started on the branch that changes the add-on (the `recapture` label on its pull request, or a dispatch with `ref`), and its pull request targets that branch: merge the recapture into the branch first, then the branch into the base. For a data pull request that is `bds-data/<channel>`; if the daily run updates that pull request between the two merges, it force-pushes the branch and the merged recapture is gone from it, so merge both on the same day. A capture-code change that leaves the add-on as it was needs no recapture to be correct: the author rehearses one build and recaptures with every build on that pull request when the captures should show the change.
 
 ### Recapture to-do
 

@@ -2,9 +2,8 @@
 # the checked-out commit, and turned into ONE pull request. Run it whenever the add-on changes (the model, the fixtures,
 # `bds-feedback.json`, the add-on generator): the captures of a build only answer for the add-on they were made with
 # (a history check refuses to compare spec captures of different add-ons), so a change to the add-on is only complete once every build was captured with it. See
-# docs/data-pipeline.md, "Full recapture". Started by hand (workflow_dispatch), by the `recapture` label on a pull request
-# of a branch of this repository, or by bds-data.yml (workflow_call) when a new build changes the add-on inputs; nothing
-# starts it on a push.
+# docs/data-pipeline.md, "Full recapture". Started by hand (workflow_dispatch) or by the `recapture` label on a pull
+# request of a branch of this repository; nothing starts it on a push or a schedule.
 #
 # Security: the same split as bds-data.yml, in four jobs.
 #   plan      read-only. Lists the builds from the checkout (`builds plan`) and pins the commit every job uses.
@@ -44,15 +43,6 @@ on:
         description: "Capture and assemble only: no pull request (the patch and the report stay artifacts)"
         type: boolean
         default: false
-  workflow_call:
-    inputs:
-      ref:
-        description: "Branch to recapture and open the pull request against (empty: the branch of the calling run)"
-        required: false
-        type: string
-    secrets:
-      BDS_DATA_TOKEN:
-        required: false
   # On a pull request: adding the `recapture` label runs it against the pull request's branch (remove and add the label
   # to run it again). Only for branches of this repository: a fork's pull request has no write token for the publish job.
   pull_request:
