@@ -304,7 +304,7 @@ public final class ComponentIndex {
         keys(Support.class, "shape", "shape");
         BLOCK.put("minecraft:tags", BlockTags.class);
         keys(BlockTags.class);
-        FORMS.put(BlockTags.class, Map.of("array<string>", "value"));
+        FORMS.put(BlockTags.class, Map.of("array<string>", "tags"));
         BLOCK.put("minecraft:tick", Tick.class);
         keys(Tick.class, "interval_range", "intervalRange", "looping", "looping");
         BLOCK.put("minecraft:transformation", Transformation.class);

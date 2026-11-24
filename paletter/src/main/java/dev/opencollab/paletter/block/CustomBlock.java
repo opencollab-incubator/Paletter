@@ -206,7 +206,7 @@ public final class CustomBlock {
      */
     public @NonNull List<String> tags() {
         BlockTags tags = component(BlockTags.class);
-        return tags == null ? List.of() : tags.value();
+        return tags == null ? List.of() : tags.tags();
     }
 
     /**
@@ -928,7 +928,7 @@ public final class CustomBlock {
             List<String> merged = new ArrayList<>();
             for (BlockComponent component : components) {
                 if (component instanceof BlockTags existing) {
-                    merged.addAll(existing.value());
+                    merged.addAll(existing.tags());
                 }
             }
             for (String tag : tags) {
@@ -936,7 +936,7 @@ public final class CustomBlock {
                     merged.add(tag);
                 }
             }
-            return merged.isEmpty() ? this : component(BlockTags.builder().value(merged).build());
+            return merged.isEmpty() ? this : component(BlockTags.builder().tags(merged).build());
         }
 
         /**

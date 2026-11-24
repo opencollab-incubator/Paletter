@@ -112,7 +112,7 @@ public final class BlockWire {
             case SelectionBox c -> Transforms.selectionBox(ctx, out, c);
             case Sound c -> sound(c, ctx, out);
             case Support c -> out.put("minecraft:support.shape", c.shape().value());
-            case BlockTags c -> out.put("blockTags", Wire.strings(c.value()));
+            case BlockTags c -> out.put("blockTags", Wire.strings(c.tags()));
             case Tick c -> { } // server only: BDS sends nothing to clients
             case Transformation c -> transformation(c, ctx, out);
             case VibrationProperties c -> vibrationProperties(c, ctx, out);

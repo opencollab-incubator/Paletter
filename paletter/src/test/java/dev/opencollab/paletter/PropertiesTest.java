@@ -53,7 +53,7 @@ class PropertiesTest {
         assertEquals(lit, CustomBlock.Permutation.of("q.block_state('example:on')", List.of(MaxLight.DAMPENING, LightEmission.of(15))),
             "components are one per name: their order does not matter");
         assertThrows(IllegalArgumentException.class, () -> CustomBlock.Permutation.of("q.block_state('example:on')",
-            BlockTags.builder().value(List.of("example:tag")).build()));
+            BlockTags.builder().tags(List.of("example:tag")).build()));
     }
 
     private static final class MaxLight {

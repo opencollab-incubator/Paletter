@@ -284,7 +284,7 @@ class CustomContentTest {
     @Test
     void tagsAreTheTagsComponentAndCopiesKeepTheDefinition() {
         CustomBlock block = CustomBlock.builder("example:tagged").tag("example:a")
-            .component(dev.opencollab.paletter.block.component.BlockTags.builder().value("example:b").build())
+            .component(dev.opencollab.paletter.block.component.BlockTags.builder().tags("example:b").build())
             .tags("example:c", "example:b").component(LightEmission.of(3)).build();
         assertEquals(List.of("example:b", "example:c"), block.tags(), "the component replaced the earlier tags; tag() merges");
         assertEquals(block, block.toBuilder().build());

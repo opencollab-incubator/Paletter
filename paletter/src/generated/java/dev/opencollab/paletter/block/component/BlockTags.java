@@ -22,11 +22,11 @@ public final class BlockTags implements BlockComponent {
      */
     public static final String NAME = "minecraft:tags";
 
-    private final @NonNull List<String> value;
+    private final @NonNull List<String> tags;
 
-    private BlockTags(@NonNull List<String> value) {
-        value = List.copyOf(Objects.requireNonNull(value, "BlockTags.value"));
-        this.value = value;
+    private BlockTags(@NonNull List<String> tags) {
+        tags = List.copyOf(Objects.requireNonNull(tags, "BlockTags.tags"));
+        this.tags = tags;
     }
 
     /**
@@ -34,25 +34,25 @@ public final class BlockTags implements BlockComponent {
      *
      * @return the value
      */
-    public @NonNull List<String> value() {
-        return value;
+    public @NonNull List<String> tags() {
+        return tags;
     }
 
     @Override
     public boolean equals(Object o) {
         return this == o || o instanceof BlockTags other
-                && Objects.equals(value, other.value);
+                && Objects.equals(tags, other.tags);
     }
 
     @Override
     public int hashCode() {
-        int h = Objects.hashCode(value);
+        int h = Objects.hashCode(tags);
         return h;
     }
 
     @Override
     public String toString() {
-        return "BlockTags[value=" + value + "]";
+        return "BlockTags[tags=" + tags + "]";
     }
 
     @Override
@@ -76,7 +76,7 @@ public final class BlockTags implements BlockComponent {
      */
     public @NonNull Builder toBuilder() {
         Builder builder = new Builder();
-        builder.value = value;
+        builder.tags = tags;
         return builder;
     }
 
@@ -84,37 +84,37 @@ public final class BlockTags implements BlockComponent {
      * Builds {@link BlockTags}: defaults applied, required fields and ranges checked by {@link #build()}.
      */
     public static final class Builder {
-        private @Nullable List<String> value = List.of();
+        private @Nullable List<String> tags = List.of();
 
         private Builder() {
         }
 
         /**
-         * Sets {@code value}.
+         * Sets {@code tags}.
          *
-         * @param value the value
+         * @param tags the value
          * @return this builder
          * @throws NullPointerException if the value is null
          */
-        public @NonNull Builder value(@NonNull List<String> value) {
-            this.value = Objects.requireNonNull(value, "BlockTags.value");
+        public @NonNull Builder tags(@NonNull List<String> tags) {
+            this.tags = Objects.requireNonNull(tags, "BlockTags.tags");
             return this;
         }
 
         /**
-         * Sets {@code value} to the values (at least one value).
+         * Sets {@code tags} to the values (at least one value).
          *
          * @param first the first value
          * @param rest the other values
          * @return this builder
          */
-        public @NonNull Builder value(@NonNull String first, @NonNull String... rest) {
+        public @NonNull Builder tags(@NonNull String first, @NonNull String... rest) {
             List<String> values = new ArrayList<>();
             values.add(first);
             for (String x : rest) {
                 values.add(x);
             }
-            return value(values);
+            return tags(values);
         }
 
         /**
@@ -125,7 +125,7 @@ public final class BlockTags implements BlockComponent {
          * @throws IllegalArgumentException if a value is out of range
          */
         public @NonNull BlockTags build() {
-            return new BlockTags(value);
+            return new BlockTags(tags);
         }
     }
 }

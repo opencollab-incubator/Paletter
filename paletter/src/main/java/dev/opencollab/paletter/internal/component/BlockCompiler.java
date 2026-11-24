@@ -30,7 +30,7 @@ public final class BlockCompiler {
         java.util.List<String> tags = new java.util.ArrayList<>();
         for (BlockComponent component : WireOnlyWire.rawLast(block.components())) {
             if (component instanceof dev.opencollab.paletter.block.component.BlockTags blockTags) {
-                tags.addAll(blockTags.value());
+                tags.addAll(blockTags.tags());
                 continue;
             }
             BlockWire.write(component, ctx, components);

@@ -2,6 +2,7 @@
   "_comment": "Hand-written Java shaping of the generated component API; never a source of wire behaviour. See docs/data-pipeline.md. Rule: a top level name collision gets a Block/Item prefix automatically; a nested type that would shadow a top level public type fails the generator and is named by hand in typeNames/enums (VisualGeometry, MultiBlockDirection).",
   "rootLists": {
     "block:minecraft:collision_box": "boxes",
+    "block:minecraft:tags": "tags",
     "block:minecraft:map_color": "rgb"
   },
   "forms": {

@@ -754,15 +754,15 @@ public final class dev.opencollab.paletter.block.component.BlockTags implements 
     public boolean equals(java.lang.Object)
     public int hashCode()
     public java.lang.String name()
+    public java.util.List<java.lang.String> tags()
     public dev.opencollab.paletter.block.component.BlockTags$Builder toBuilder()
     public java.lang.String toString()
-    public java.util.List<java.lang.String> value()
 }
 
 public static final class dev.opencollab.paletter.block.component.BlockTags$Builder {
     public dev.opencollab.paletter.block.component.BlockTags build()
-    public dev.opencollab.paletter.block.component.BlockTags$Builder value(java.lang.String, java.lang.String...)
-    public dev.opencollab.paletter.block.component.BlockTags$Builder value(java.util.List<java.lang.String>)
+    public dev.opencollab.paletter.block.component.BlockTags$Builder tags(java.lang.String, java.lang.String...)
+    public dev.opencollab.paletter.block.component.BlockTags$Builder tags(java.util.List<java.lang.String>)
 }
 
 public sealed interface dev.opencollab.paletter.block.component.BlockTrait permits dev.opencollab.paletter.block.component.Connection, dev.opencollab.paletter.block.component.FutureBlockTrait, dev.opencollab.paletter.block.component.MultiBlock, dev.opencollab.paletter.block.component.PlacementDirection, dev.opencollab.paletter.block.component.PlacementPosition {
