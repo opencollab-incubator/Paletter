@@ -160,6 +160,22 @@ public final class WireNode {
         return value instanceof WireNode node ? node.get(path.substring(dot + 1)) : null;
     }
 
+    /**
+     * Merges NBT into the compound at a path (created if missing): a compound into a compound key by key, any other value
+     * replacing what is there.
+     */
+    public @NonNull WireNode merge(@NonNull String path, @NonNull NbtMap value) {
+        WireNode node = child(path);
+        value.forEach((key, v) -> {
+            if (v instanceof NbtMap map) {
+                node.merge(key, map);
+            } else {
+                node.entries.put(key, v);
+            }
+        });
+        return this;
+    }
+
     public boolean isEmpty() {
         return entries.isEmpty();
     }

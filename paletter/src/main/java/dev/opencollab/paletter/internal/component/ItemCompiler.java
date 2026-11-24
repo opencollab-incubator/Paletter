@@ -49,7 +49,7 @@ public final class ItemCompiler {
     }
 
     private static void write(WireNode out, List<ItemComponent> components, WireContext ctx) {
-        for (ItemComponent component : components) {
+        for (ItemComponent component : WireOnlyWire.rawLast(components)) {
             ItemWire.write(component, ctx, out);
         }
     }

@@ -2073,6 +2073,17 @@ public static final class dev.opencollab.paletter.block.component.RandomOffset$R
     public dev.opencollab.paletter.block.component.RandomOffset$Range$Builder min(float)
 }
 
+@Experimental public final class dev.opencollab.paletter.block.component.RawBlockComponent implements dev.opencollab.paletter.block.component.WireOnlyBlockComponent {
+    public static final java.lang.String NAME_PREFIX = "raw:"
+    public boolean equals(java.lang.Object)
+    public int hashCode()
+    public java.lang.String key()
+    public java.lang.String name()
+    public static dev.opencollab.paletter.block.component.RawBlockComponent of(java.lang.String, org.cloudburstmc.nbt.NbtMap)
+    public java.lang.String toString()
+    public org.cloudburstmc.nbt.NbtMap value()
+}
+
 public final class dev.opencollab.paletter.block.component.RedstoneConductivity implements dev.opencollab.paletter.block.component.BlockComponent {
     public static final java.lang.String NAME = "minecraft:redstone_conductivity"
     public boolean allowsWireToStepDown()
@@ -2368,7 +2379,7 @@ public static final class dev.opencollab.paletter.block.component.VibrationPrope
     public dev.opencollab.paletter.block.component.VibrationProperties$Builder occludeVibrations(boolean)
 }
 
-public sealed interface dev.opencollab.paletter.block.component.WireOnlyBlockComponent extends dev.opencollab.paletter.block.component.BlockComponent permits dev.opencollab.paletter.block.component.FutureWireOnlyBlockComponent, dev.opencollab.paletter.block.component.OnPlayerPlacing, dev.opencollab.paletter.block.component.ScriptHooks {
+public sealed interface dev.opencollab.paletter.block.component.WireOnlyBlockComponent extends dev.opencollab.paletter.block.component.BlockComponent permits dev.opencollab.paletter.block.component.FutureWireOnlyBlockComponent, dev.opencollab.paletter.block.component.OnPlayerPlacing, dev.opencollab.paletter.block.component.RawBlockComponent, dev.opencollab.paletter.block.component.ScriptHooks {
 }
 
 public enum dev.opencollab.paletter.creative.CreativeCategory {
@@ -3665,6 +3676,17 @@ public static final class dev.opencollab.paletter.item.component.Rarity$Builder 
     public dev.opencollab.paletter.item.component.Rarity$Builder value(java.lang.String)
 }
 
+@Experimental public final class dev.opencollab.paletter.item.component.RawItemComponent implements dev.opencollab.paletter.item.component.WireOnlyItemComponent {
+    public static final java.lang.String NAME_PREFIX = "raw:"
+    public boolean equals(java.lang.Object)
+    public int hashCode()
+    public java.lang.String key()
+    public java.lang.String name()
+    public static dev.opencollab.paletter.item.component.RawItemComponent of(java.lang.String, org.cloudburstmc.nbt.NbtMap)
+    public java.lang.String toString()
+    public org.cloudburstmc.nbt.NbtMap value()
+}
+
 @Experimental public final class dev.opencollab.paletter.item.component.RenderOffsets implements dev.opencollab.paletter.item.component.WireOnlyItemComponent {
     public static final java.lang.String NAME = "minecraft:render_offsets"
     public static dev.opencollab.paletter.item.component.RenderOffsets$Builder builder()
@@ -4156,7 +4178,7 @@ public static final class dev.opencollab.paletter.item.component.Wearable$Slot {
     public java.lang.String value()
 }
 
-public sealed interface dev.opencollab.paletter.item.component.WireOnlyItemComponent extends dev.opencollab.paletter.item.component.ItemComponent permits dev.opencollab.paletter.item.component.FrameCount, dev.opencollab.paletter.item.component.FutureWireOnlyItemComponent, dev.opencollab.paletter.item.component.MiningSpeed, dev.opencollab.paletter.item.component.RenderOffsets, dev.opencollab.paletter.item.component.UseOnHook {
+public sealed interface dev.opencollab.paletter.item.component.WireOnlyItemComponent extends dev.opencollab.paletter.item.component.ItemComponent permits dev.opencollab.paletter.item.component.FrameCount, dev.opencollab.paletter.item.component.FutureWireOnlyItemComponent, dev.opencollab.paletter.item.component.MiningSpeed, dev.opencollab.paletter.item.component.RawItemComponent, dev.opencollab.paletter.item.component.RenderOffsets, dev.opencollab.paletter.item.component.UseOnHook {
 }
 
 public final class dev.opencollab.paletter.property.Properties {

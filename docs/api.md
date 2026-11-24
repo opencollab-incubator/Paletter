@@ -410,6 +410,11 @@ never reach the wire; the spec capture will check them against BDS after the nex
 `OnPlayerPlacing` are retired from the add-on format. All four are `@Experimental`: they can change or go in a minor
 release if clients stop honouring them.
 
+For a wire field Paletter does not model, or sends with a fixed value, `RawItemComponent.of(key, nbt)` and
+`RawBlockComponent.of(key, nbt)` (`@Experimental`) merge NBT into the item's or block's component data at a path,
+after every other component, so their keys win: `RawItemComponent.of("minecraft:block_placer", {canUseBlockAsIcon: 0b})`
+turns off what BDS always sends as 1. Nothing checks raw NBT against a version.
+
 ## The creative inventory
 
 `CreativeLayout` holds, per category, an ordered list of `CreativeGroup`s and loose `CreativeItem`s. Items are stacks, not

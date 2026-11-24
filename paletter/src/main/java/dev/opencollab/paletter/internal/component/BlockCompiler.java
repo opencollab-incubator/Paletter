@@ -28,7 +28,7 @@ public final class BlockCompiler {
         // minecraft:tags is no component on the wire: BDS 1.26.36.1 to 1.26.70.24 send its tags as the block's top level
         // blockTags, as written (duplicates kept), and nothing for an empty list
         java.util.List<String> tags = new java.util.ArrayList<>();
-        for (BlockComponent component : block.components()) {
+        for (BlockComponent component : WireOnlyWire.rawLast(block.components())) {
             if (component instanceof dev.opencollab.paletter.block.component.BlockTags blockTags) {
                 tags.addAll(blockTags.value());
                 continue;

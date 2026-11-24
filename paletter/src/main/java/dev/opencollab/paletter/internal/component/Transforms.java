@@ -723,7 +723,7 @@ public final class Transforms {
             return;
         }
         WireNode components = new WireNode();
-        for (BlockComponent component : p.components()) {
+        for (BlockComponent component : WireOnlyWire.rawLast(p.components())) {
             BlockWire.write(component, ctx, components);
         }
         WireNode entry = out.element("permutations");

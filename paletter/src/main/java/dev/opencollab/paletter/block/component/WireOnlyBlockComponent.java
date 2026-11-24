@@ -5,11 +5,12 @@ package dev.opencollab.paletter.block.component;
  * have no source in the component model, so they are not generated. They go through the same {@code CustomBlock} and
  * compile path as the generated components.
  * <ul>
+ *     <li>{@link RawBlockComponent}: any NBT, merged over what the other components wrote</li>
  *     <li>{@link OnPlayerPlacing}: {@code minecraft:on_player_placing}, retired from the add-on format</li>
  *     <li>{@link ScriptHooks}: {@code minecraft:custom_components}, the flags of the script custom components</li>
  * </ul>
  *
  * @since 1.0.0
  */
-public sealed interface WireOnlyBlockComponent extends BlockComponent permits OnPlayerPlacing, ScriptHooks, FutureWireOnlyBlockComponent {
+public sealed interface WireOnlyBlockComponent extends BlockComponent permits RawBlockComponent, OnPlayerPlacing, ScriptHooks, FutureWireOnlyBlockComponent {
 }

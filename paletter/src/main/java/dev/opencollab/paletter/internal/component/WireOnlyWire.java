@@ -3,10 +3,12 @@ package dev.opencollab.paletter.internal.component;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import dev.opencollab.paletter.block.component.OnPlayerPlacing;
+import dev.opencollab.paletter.block.component.RawBlockComponent;
 import dev.opencollab.paletter.block.component.ScriptHooks;
 import dev.opencollab.paletter.block.component.WireOnlyBlockComponent;
 import dev.opencollab.paletter.item.component.FrameCount;
 import dev.opencollab.paletter.item.component.MiningSpeed;
+import dev.opencollab.paletter.item.component.RawItemComponent;
 import dev.opencollab.paletter.item.component.RenderOffsets;
 import dev.opencollab.paletter.item.component.UseOnHook;
 import dev.opencollab.paletter.item.component.WireOnlyItemComponent;
@@ -48,6 +50,7 @@ public final class WireOnlyWire {
 
     public static void write(@NonNull WireOnlyItemComponent component, @NonNull WireContext ctx, @NonNull WireNode out) {
         switch (component) {
+            case RawItemComponent c -> out.merge(c.key(), c.value());
             case RenderOffsets c -> {
                 if (check(ctx, RENDER_OFFSETS_FROM, c.name())) {
                     renderOffsets(c, out);
@@ -77,6 +80,7 @@ public final class WireOnlyWire {
      */
     public static void write(@NonNull WireOnlyBlockComponent component, @NonNull WireContext ctx, @NonNull WireNode out) {
         switch (component) {
+            case RawBlockComponent c -> out.merge(c.key(), c.value());
             case OnPlayerPlacing c -> {
                 if (check(ctx, ON_PLAYER_PLACING_FROM, c.name())) {
                     out.remove(OnPlayerPlacing.NAME);
@@ -93,6 +97,23 @@ public final class WireOnlyWire {
             }
             default -> throw new IllegalArgumentException(component.toString());
         }
+    }
+
+    /**
+     * The components in the order they are written: the raw ones last, so that they merge over what the others wrote
+     * ({@link RawItemComponent}, {@link RawBlockComponent}).
+     */
+    public static <C> @NonNull List<C> rawLast(@NonNull List<C> components) {
+        if (components.stream().noneMatch(WireOnlyWire::raw)) {
+            return components;
+        }
+        List<C> ordered = new java.util.ArrayList<>(components.stream().filter(c -> !raw(c)).toList());
+        components.stream().filter(WireOnlyWire::raw).forEach(ordered::add);
+        return ordered;
+    }
+
+    private static boolean raw(Object component) {
+        return component instanceof RawItemComponent || component instanceof RawBlockComponent;
     }
 
     private static boolean check(WireContext ctx, int from, String name) {

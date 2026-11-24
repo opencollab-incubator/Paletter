@@ -225,6 +225,34 @@ class WireOnlyComponentTest {
     }
 
     @Test
+    void rawComponentsMergeOverTheGeneratedKeys() {
+        NbtMap noIcon = NbtMap.builder().putByte("canUseBlockAsIcon", (byte) 0).build();
+        for (DataVersion version : PALETTER.versions()) {
+            // Written last whatever the order: the raw byte wins over the block placer's 1, its other keys stay
+            NbtMap placer = components(base().component(dev.opencollab.paletter.item.component.RawItemComponent.of("minecraft:block_placer", noIcon))
+                .component(dev.opencollab.paletter.item.component.BlockPlacer.of("minecraft:stone")).build(), version)
+                .getCompound("minecraft:block_placer");
+            assertEquals((byte) 0, placer.getByte("canUseBlockAsIcon"), version.toString());
+            assertTrue(placer.containsKey("use_on"), version.toString());
+            NbtMap shape = NbtMap.builder().putString("shape", "example:post").putByte("useVoxelShapes", (byte) 1).build();
+            Palette palette = Palettes.palette(version.protocolVersion(), PaletteLayer.builder("raw")
+                .block(CustomBlock.builder("example:post").property(dev.opencollab.paletter.block.BlockProperty.bool("example:on"))
+                    .component(dev.opencollab.paletter.block.component.RawBlockComponent.of("minecraft:collision_box", shape))
+                    .component(dev.opencollab.paletter.block.component.CollisionBox.of(true))
+                    .permutation("q.block_state('example:on')", dev.opencollab.paletter.block.component.RawBlockComponent.of("example:flag", shape))
+                    .build()).build());
+            NbtMap properties = palette.blocks().blockProperties().stream().filter(b -> b.getName().equals("example:post")).findFirst()
+                .orElseThrow().getProperties();
+            NbtMap box = properties.getCompound("components").getCompound("minecraft:collision_box");
+            assertEquals("example:post", box.getString("shape"), version.toString());
+            assertEquals((byte) 1, box.getByte("enabled"), version.toString());
+            assertEquals(shape, properties.getList("permutations", NbtType.COMPOUND).getFirst().getCompound("components").getCompound("example:flag"));
+        }
+        assertEquals("raw:minecraft:block_placer", dev.opencollab.paletter.item.component.RawItemComponent.of("minecraft:block_placer", noIcon).name());
+        assertThrows(IllegalArgumentException.class, () -> dev.opencollab.paletter.item.component.RawItemComponent.of("a..b", noIcon));
+    }
+
+    @Test
     void useOnHookIsThePublisherByte() {
         for (DataVersion version : PALETTER.versions()) {
             NbtMap hook = components(base().component(UseOnHook.of(true)).build(), version).getCompound("minecraft:publisher_on_use_on");

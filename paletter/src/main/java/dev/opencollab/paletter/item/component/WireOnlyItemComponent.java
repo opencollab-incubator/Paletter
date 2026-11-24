@@ -5,6 +5,7 @@ package dev.opencollab.paletter.item.component;
  * have no source in the component model, so they are not generated. They go through the same {@code CustomItem} and
  * compile path as the generated components, and are encoded per protocol window by Paletter.
  * <ul>
+ *     <li>{@link RawItemComponent}: any NBT, merged over what the other components wrote</li>
  *     <li>{@link RenderOffsets}: {@code minecraft:render_offsets}, retired from the add-on format</li>
  *     <li>{@link MiningSpeed}: {@code item_properties.mining_speed}</li>
  *     <li>{@link FrameCount}: {@code item_properties.frame_count}</li>
@@ -13,6 +14,6 @@ package dev.opencollab.paletter.item.component;
  *
  * @since 1.0.0
  */
-public sealed interface WireOnlyItemComponent extends ItemComponent permits RenderOffsets, MiningSpeed, FrameCount, UseOnHook,
+public sealed interface WireOnlyItemComponent extends ItemComponent permits RawItemComponent, RenderOffsets, MiningSpeed, FrameCount, UseOnHook,
     FutureWireOnlyItemComponent {
 }
