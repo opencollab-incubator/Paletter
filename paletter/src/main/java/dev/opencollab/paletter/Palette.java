@@ -581,7 +581,10 @@ public final class Palette {
      * @param aux the aux value; 0 is the base variant
      * @param lookup whether the variant must exist as is in this palette's version, see {@link Lookup}
      * @return its handle, or null if the lookup does not accept the variant, for the reasons of
-     *         {@link #blockState(NbtMap, Lookup)}. Aux 0 is the base variant, which every item has
+     *         {@link #blockState(NbtMap, Lookup)}. Aux 0 is the base variant, which every item has. An aux that names no
+     *         variant of the item here (a legacy damage value, a number nobody listed) is no variant either, so
+     *         untrusted input never makes keys: send such a value as a stack's aux
+     *         ({@code BedrockItemStack.builder(type).aux(aux)}), as {@link #decode} gives it
      * @since 1.0.0
      */
     public @Nullable BedrockItemVariant itemVariant(@NonNull String identifier, int aux, @NonNull Lookup lookup) {
