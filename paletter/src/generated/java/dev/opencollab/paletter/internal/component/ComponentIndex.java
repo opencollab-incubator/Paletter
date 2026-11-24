@@ -131,6 +131,12 @@ public final class ComponentIndex {
     public static final Map<Class<?>, Map<String, String>> DESCRIPTORS = new LinkedHashMap<>();
 
     /**
+     * The components a captured BDS took only with an experiment toggle ({@code spec-gating}): class -> first protocol of
+     * the capture window -> toggle id. A palette of such a window reports the component when it does not enable the toggle.
+     */
+    public static final Map<Class<?>, Map<Integer, String>> GATED = new LinkedHashMap<>();
+
+    /**
      * The oldest protocol a spec capture of BDS exists for: the shapes in {@code data/model/mappings.json} were observed from here.
      */
     public static final int OLDEST_CAPTURED_PROTOCOL = 1001;
@@ -309,6 +315,7 @@ public final class ComponentIndex {
         keys(Connection.class, "enabled_states", "enabledStates");
         TRAIT.put("minecraft:multi_block", MultiBlock.class);
         keys(MultiBlock.class, "enabled_states", "enabledStates", "parts", "parts", "direction", "direction");
+        GATED.put(MultiBlock.class, Map.of(1001, "upcoming_creator_features"));
         TRAIT.put("minecraft:placement_direction", PlacementDirection.class);
         keys(PlacementDirection.class, "enabled_states", "enabledStates", "y_rotation_offset", "yRotationOffset", "blocks_to_corner_with", "blocksToCornerWith");
         keys(PlacementDirection.BlocksToCornerWith.class, "tags", "tags", "name", "name", "states", "states");

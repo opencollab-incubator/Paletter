@@ -469,7 +469,9 @@ resolves through the fallbacks, and the creative content leaves it out. Its item
 enables it in one version (a version that is not served makes `build()` throw an `IllegalArgumentException`). Every call adds to
 the earlier ones, like `removeItems(...)`, which hides vanilla items. `allExperiments()` enables every toggle
 the version gates content with, except the voxel shape experiment, which only comes with an explicit
-`experiments("voxel_shapes")`; the palette lists them in `Palette#experiments()`.
+`experiments("voxel_shapes")`; the palette lists them in `Palette#experiments()`. A component a version's BDS takes only with a toggle
+(by the `spec-gating` captures: `minecraft:multi_block` in 26.30) counts as content of that
+toggle: custom content using it in a palette without the toggle is still sent, with a report warning.
 
 ## Previews
 

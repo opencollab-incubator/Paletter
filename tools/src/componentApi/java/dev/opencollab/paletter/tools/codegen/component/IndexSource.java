@@ -73,6 +73,13 @@ final class IndexSource {
             .addJavadoc("The item and block descriptor fields (api.json {@code descriptors}) that are a name: record class -> record component ->\n"
                 + "{@code item} or {@code block}. Add-on JSON writes a descriptor as a name or as an object with {@code name}.\n")
             .initializer("new $T<>()", linked).build());
+        type.addField(FieldSpec.builder(ParameterizedTypeName.get(ApiSource.MAP,
+                ParameterizedTypeName.get(ClassName.get(Class.class), com.palantir.javapoet.WildcardTypeName.subtypeOf(Object.class)),
+                ParameterizedTypeName.get(ApiSource.MAP, ClassName.get(Integer.class), ApiSource.STRING)), "GATED",
+                Modifier.PUBLIC, Modifier.STATIC, Modifier.FINAL)
+            .addJavadoc("The components a captured BDS took only with an experiment toggle ({@code spec-gating}): class -> first protocol of\n"
+                + "the capture window -> toggle id. A palette of such a window reports the component when it does not enable the toggle.\n")
+            .initializer("new $T<>()", linked).build());
         CodeBlock.Builder init = CodeBlock.builder();
         for (Comp c : model.components) {
             String map = c.standalone ? "STANDALONE" : c.kind.name();
@@ -91,6 +98,18 @@ final class IndexSource {
             c.elementForms.forEach((form, list) -> forms.add(CodeBlock.of("$S, $S", form, list + "[]")));
             if (!forms.isEmpty()) {
                 init.addStatement("FORMS.put($T.class, $L)", cls, mapOf(forms));
+            }
+            List<CodeBlock> gated = new ArrayList<>();
+            if (c.experiment != null) {
+                for (Gating.Result r : c.gating) {
+                    Integer window = model.windowProtocols.get(r.build());
+                    if (window != null && r.gated(c.serverOnly != null)) {
+                        gated.add(CodeBlock.of("$L, $S", window, c.experiment));
+                    }
+                }
+            }
+            if (!gated.isEmpty()) {
+                init.addStatement("GATED.put($T.class, $L)", cls, mapOf(gated));
             }
             descriptors(init, cls, c.root);
             for (ObjType o : c.types.values()) {

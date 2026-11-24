@@ -110,6 +110,17 @@ final class VanillaContent {
             }
         });
 
+        // A toggle that gates a component in this version (spec-gating) is enabled too, though no vanilla content needs it
+        Set<String> componentToggles = new TreeSet<>();
+        dev.opencollab.paletter.internal.component.ComponentIndex.GATED.values()
+            .forEach(windows -> { String toggle = windows.get(data.version().protocolVersion()); if (toggle != null) { componentToggles.add(toggle); } });
+        componentToggles.forEach(toggle -> {
+            if (!enabled.contains(toggle) && requests(data.version(), toggle)) {
+                enabled.add(toggle);
+            }
+        });
+        enabled.sort(null);
+
         // A block whose item only exists behind a toggle is gated with it (poplar planks and the poplar boat)
         data.blockItems().forEach((block, item) -> {
             String toggle = enabledItems.get(item);
@@ -150,7 +161,7 @@ final class VanillaContent {
         });
         // A toggle enabled for this version alone that gates nothing in it is most likely a mistake
         new TreeSet<>(versionExperiments.getOrDefault(data.version(), Set.of())).forEach(toggle -> {
-            if (!marks.containsKey(toggle) && !toggle.equals(VoxelShapeStore.EXPERIMENT)) {
+            if (!marks.containsKey(toggle) && !componentToggles.contains(toggle) && !toggle.equals(VoxelShapeStore.EXPERIMENT)) {
                 notes.add(data.version().name() + ": the experiment `" + toggle + "` is enabled for this version, but gates no content in it");
             }
         });

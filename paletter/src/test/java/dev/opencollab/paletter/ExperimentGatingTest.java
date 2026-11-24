@@ -117,7 +117,8 @@ class ExperimentGatingTest {
         assertNotNull(all.itemDefinition(BedrockItems.BLACK_CUSHION.identifier()));
         assertTrue(all.experiments().contains(TOGGLE));
         assertFalse(all.experiments().contains(VoxelShapeStore.EXPERIMENT));
-        assertEquals(List.of(), paletter.palette(1001).experiments());
+        // 26.30 gates no vanilla content, but BDS 1.26.36.1 takes minecraft:multi_block only with upcoming_creator_features
+        assertEquals(List.of("upcoming_creator_features"), paletter.palette(1001).experiments());
     }
 
     @Test
@@ -142,8 +143,8 @@ class ExperimentGatingTest {
 
     @Test
     void allExperimentsAddsToExperimentsAndOnlyNamingTheVoxelShapesEnablesThem() {
-        assertEquals(List.of(), Paletter.builder().allExperiments().build().palette(1001).experiments());
-        assertEquals(List.of(VoxelShapeStore.EXPERIMENT),
+        assertEquals(List.of("upcoming_creator_features"), Paletter.builder().allExperiments().build().palette(1001).experiments());
+        assertEquals(List.of("upcoming_creator_features", VoxelShapeStore.EXPERIMENT),
             Paletter.builder().allExperiments().experiments(VoxelShapeStore.EXPERIMENT).build().palette(1001).experiments());
         Palette both = Paletter.builder().experiments(VoxelShapeStore.EXPERIMENT).allExperiments().build().palette(OLDEST);
         assertTrue(both.experiments().contains(TOGGLE));

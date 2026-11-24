@@ -329,4 +329,22 @@ class CustomContentTest {
         assertEquals(250, Durability.of(250).maxDurability());
         assertEquals(Durability.builder().maxDurability(250).build(), Durability.of(250));
     }
+
+    @Test
+    void aComponentGatedInTheVersionIsReportedWithoutItsExperiment() {
+        // BDS 1.26.36.1 (26.30) rejects minecraft:multi_block without upcoming_creator_features (spec-gating)
+        CustomBlock door = CustomBlock.builder("example:tall").component(dev.opencollab.paletter.block.component.Movable.of(
+                dev.opencollab.paletter.block.component.Movable.MovementType.PUSH_PULL))
+            .trait(dev.opencollab.paletter.block.component.MultiBlock.builder()
+                .enabledStates(dev.opencollab.paletter.block.component.MultiBlock.EnabledStates.MULTI_BLOCK_PART)
+                .direction(dev.opencollab.paletter.block.component.MultiBlock.MultiBlockDirection.UP).build()).build();
+        DataVersion oldest = PALETTER.versions().getFirst();
+        PaletteLayer layer = PaletteLayer.builder("gated").block(door).build();
+        java.util.function.Predicate<Palette> warned = palette -> palette.report().warnings().stream()
+            .anyMatch(e -> e.message().contains("MultiBlock needs the experiment upcoming_creator_features"));
+        assertTrue(warned.test(Palettes.palette(oldest.protocolVersion(), layer)));
+        assertFalse(warned.test(Paletter.builder().versions(oldest::equals).experiments(oldest, "upcoming_creator_features").layer(layer).build()
+            .palette(oldest.protocolVersion())));
+        assertFalse(warned.test(Palettes.palette(PALETTER.latest().protocolVersion(), layer)), "taken without it in newer versions");
+    }
 }

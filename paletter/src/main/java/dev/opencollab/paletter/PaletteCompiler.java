@@ -121,6 +121,9 @@ final class PaletteCompiler {
         BlockRegistry blocks = parent.blocks()
             .withCustomBlocks(data, layer, layer.blocks(), report, source, layer.minEngineVersion());
 
+        dev.opencollab.paletter.internal.component.ExperimentChecks.report(layer.blocks(), items(layer), data.version().protocolVersion(),
+            parent.experiments(), report, source);
+
         // Items of the layer that replace the item of one of its blocks: they are the blocks' items
         Map<String, CustomItem> replacements = new LinkedHashMap<>();
         for (CustomItem item : items(layer)) {
