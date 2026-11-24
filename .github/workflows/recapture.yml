@@ -292,7 +292,14 @@ jobs:
             fi
             [ -f "$C/spec/capture.json" ] || { echo "$BUILD: no spec capture"; exit 1; }
             [ "$(du -sm "$C" | cut -f1)" -le 400 ] || { echo "$BUILD: the captures are larger than 400 MB"; exit 1; }
-            # A recapture refreshes committed builds only
+            # A leg checked against another build of its line is an unrecorded build: its capture passed the history check,
+            # and adding it to the data is the daily update's job. A recapture refreshes committed builds only
+            AGAINST_BUILD=$(printf '%s' "$MATRIX" | jq -r --arg b "$BUILD" '.include[] | select(.build == $b) | .against // ""')
+            if [ -n "$AGAINST_BUILD" ]; then
+              echo "$BUILD: checked against $AGAINST_BUILD, not staged (an unrecorded build)"
+              echo "- $BUILD: captured and checked against $AGAINST_BUILD; not staged (an unrecorded build, added by the daily update)" >> "$GITHUB_STEP_SUMMARY"
+              continue
+            fi
             [ -f "data/bds/$BUILD/spec/capture.json" ] || { echo "$BUILD: no committed captures to refresh"; exit 1; }
             cp -R "$C/." "data/bds/$BUILD/"
             echo "Staged $(wc -l < "$RUNNER_TEMP/files.txt") files into data/bds/$BUILD"
