@@ -129,23 +129,13 @@ public final class PaletteLayer {
         return blocks;
     }
 
-    /**
-     * Lists the vanilla item overrides of this layer (experimental, see {@link Builder#overrideItem(String, Consumer)}).
-     *
-     * @return the overrides, in registration order, unmodifiable
-     * @since 1.0.0
-     */
-    public @NonNull List<Override> overrides() {
+    /** The vanilla item overrides of this layer, in registration order, for the compiler. */
+    List<Override> overrides() {
         return overrides;
     }
 
-    /**
-     * Lists the creative inventory edits of this layer, in registration order.
-     *
-     * @return the edits, unmodifiable
-     * @since 1.0.0
-     */
-    public @NonNull List<BiConsumer<CreativeEditor, DataVersion>> creativeEdits() {
+    /** The creative inventory edits of this layer, in registration order, for the compiler. */
+    List<BiConsumer<CreativeEditor, DataVersion>> creativeEdits() {
         return creativeEdits;
     }
 
@@ -195,20 +185,13 @@ public final class PaletteLayer {
     }
 
     /**
-     * A change to a vanilla item, registered with {@link Builder#overrideItem(String, Consumer)}. Experimental, and
-     * unverified on a client.
+     * A change to a vanilla item, registered with {@link Builder#overrideItem(String, Consumer)}.
      *
      * @param identifier the identifier of the vanilla item
      * @param modifier called with the override to configure while a palette is compiled
-     * @since 1.0.0
      */
-    public record Override(@NonNull String identifier, @NonNull Consumer<ItemOverride> modifier) {
-        /**
-         * Creates the override.
-         *
-         * @throws NullPointerException if the identifier or the modifier is null
-         */
-        public Override {
+    record Override(String identifier, Consumer<ItemOverride> modifier) {
+        Override {
             Objects.requireNonNull(identifier, "identifier");
             Objects.requireNonNull(modifier, "modifier");
         }

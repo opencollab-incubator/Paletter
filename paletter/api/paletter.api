@@ -150,11 +150,9 @@ public final class dev.opencollab.paletter.PaletteLayer {
     public java.util.List<dev.opencollab.paletter.block.CustomBlock> blocks()
     public static dev.opencollab.paletter.PaletteLayer$Builder builder(java.lang.String)
     public boolean changesBlocks()
-    public java.util.List<java.util.function.BiConsumer<dev.opencollab.paletter.creative.CreativeEditor, dev.opencollab.paletter.data.DataVersion>> creativeEdits()
     public java.lang.String id()
     public java.util.List<dev.opencollab.paletter.item.CustomItem> items()
     public java.lang.String minEngineVersion()
-    public java.util.List<dev.opencollab.paletter.PaletteLayer$Override> overrides()
     public java.util.Map<java.lang.String, java.util.List<java.lang.String>> tags()
     public java.lang.String toString()
     public java.util.Map<java.lang.String, dev.opencollab.paletter.block.VoxelShape> voxelShapes()
@@ -172,15 +170,6 @@ public static final class dev.opencollab.paletter.PaletteLayer$Builder {
     public dev.opencollab.paletter.PaletteLayer$Builder tag(java.lang.String, java.lang.String...)
     public dev.opencollab.paletter.PaletteLayer$Builder variant(dev.opencollab.paletter.vanilla.ItemKey)
     public dev.opencollab.paletter.PaletteLayer$Builder voxelShape(java.lang.String, dev.opencollab.paletter.block.VoxelShape)
-}
-
-public record dev.opencollab.paletter.PaletteLayer$Override {
-    public <init>(java.lang.String, java.util.function.Consumer<dev.opencollab.paletter.item.ItemOverride>)
-    public final boolean equals(java.lang.Object)
-    public final int hashCode()
-    public java.lang.String identifier()
-    public java.util.function.Consumer<dev.opencollab.paletter.item.ItemOverride> modifier()
-    public final java.lang.String toString()
 }
 
 public final class dev.opencollab.paletter.PaletteReport {
