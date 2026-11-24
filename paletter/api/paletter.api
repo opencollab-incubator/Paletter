@@ -2671,7 +2671,8 @@ public final class dev.opencollab.paletter.item.ResolvedItem {
     public boolean fallback()
     public int hashCode()
     public dev.opencollab.paletter.ResolutionKind kind()
-    public org.cloudburstmc.protocol.bedrock.data.inventory.ItemData$Builder toItemData()
+    public org.cloudburstmc.protocol.bedrock.data.inventory.ItemData toItemData()
+    public org.cloudburstmc.protocol.bedrock.data.inventory.ItemData toItemData(int)
     public java.lang.String toString()
     public dev.opencollab.paletter.vanilla.BedrockItemVariant variant()
 }

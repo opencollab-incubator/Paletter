@@ -141,6 +141,26 @@ the compiler enforces for the sealed types: a new variant of a sealed type Bedro
 vanilla state enum. API marked `@SincePreview`, `@Experimental` or `@Internal` is outside the promise. Once
 `paletter/api/released.version` names a release, `:paletter:apiCompat` (japicmp) checks it with the same exclusions.
 
+### Cloudburst types
+
+Paletter is built on Cloudburst's protocol library (`bedrock-codec`, `common`, with its `nbt`), an `api` dependency:
+its types are in Paletter's signatures (`NbtMap`, `ItemData`, packets) and in its hierarchy (`RegisteredBlockState`
+is a `BlockDefinition`, `RegisteredItem` an `ItemDefinition`, the palette's registries are `DefinitionRegistry`s, so
+`Palette#applyTo(BedrockCodecHelper)` can hand them to the codec). The rule:
+
+- Paletter's promise covers Paletter's types. The Cloudburst types keep Cloudburst's own compatibility, which for the
+  `3.0.0.Beta` snapshots Paletter depends on is none.
+- Each Paletter release names one Cloudburst build, the one Geyser uses (`gradle/libs.versions.toml`); a consumer gets it
+  transitively and should not pick another.
+- A minor Paletter release moves to a newer Cloudburst build only when the Cloudburst types in Paletter's signatures
+  stay binary compatible. A change that breaks them goes into a major release, or, while Cloudburst has no release,
+  into a minor one named in its release notes.
+- To keep that surface small, Paletter implements Cloudburst interfaces only where the codec needs its objects
+  (definitions and registries), and hands out finished, immutable Cloudburst values (`ResolvedItem#toItemData()`
+  returns an `ItemData`, not a builder; `toBuilder()` changes it).
+
+No Paletter release is made while the dependency is a snapshot ([releasing.md](releasing.md)).
+
 ### Lifecycle of versioned content
 
 Annotations describe where Bedrock has something; `@Deprecated` and the Paletter version describe the Java API.

@@ -284,7 +284,7 @@ class LayerTest {
         for (DataVersion version : PALETTER.versions()) {
             Palette palette = forcing.palette(version.protocolVersion());
             ResolvedItem resolved = Ids.itemAt(palette, paleOak);
-            assertEquals(paleOak, Ids.match(palette, resolved.toItemData().build()), version.toString());
+            assertEquals(paleOak, Ids.match(palette, resolved.toItemData()), version.toString());
         }
         Palette oldest = forcing.palette(PALETTER.version(OLDEST).protocolVersion());
         assertTrue(Ids.itemAt(oldest, poplar).fallback());

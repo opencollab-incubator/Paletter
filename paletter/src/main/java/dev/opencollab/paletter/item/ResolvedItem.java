@@ -131,16 +131,29 @@ public final class ResolvedItem {
     }
 
     /**
-     * Builds the client item data of this resolution.
+     * Builds the client item data of one item of this resolution.
      *
-     * @return an item data builder with definition, aux, block and a count of 1 filled in
+     * @return the item data with definition, aux, block and a count of 1; {@code toBuilder()} changes the rest
+     * @since 1.0.0
      */
-    public ItemData.@NonNull Builder toItemData() {
+    public @NonNull ItemData toItemData() {
+        return toItemData(1);
+    }
+
+    /**
+     * Builds the client item data of a stack of this resolution.
+     *
+     * @param count the stack size
+     * @return the item data with definition, aux, block and the count; {@code toBuilder()} changes the rest
+     * @since 1.0.0
+     */
+    public @NonNull ItemData toItemData(int count) {
         return ItemData.builder()
             .definition(definition)
             .damage(aux)
             .blockDefinition(block)
-            .count(1);
+            .count(count)
+            .build();
     }
 
     @Override

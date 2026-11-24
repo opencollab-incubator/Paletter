@@ -188,7 +188,7 @@ class CanonicalTest {
                         missing++;
                         continue;
                     }
-                    int matched = Ids.match(palette, item.toItemData().build());
+                    int matched = Ids.match(palette, item.toItemData());
                     if (matched != i) {
                         mismatches++;
                         // Only allowed if both resolve to exactly the same stack (e.g. fallbacks or adapted states)
@@ -213,11 +213,11 @@ class CanonicalTest {
         int planks = Ids.item(PALETTER, ItemVariant.of("minecraft:oak_planks"));
         ResolvedItem resolved = Ids.itemAt(palette, planks);
         assertEquals("minecraft:oak_planks", resolved.block().identifier());
-        assertEquals(planks, Ids.match(palette, resolved.toItemData().build()));
+        assertEquals(planks, Ids.match(palette, resolved.toItemData()));
         // Vanilla has no item placing several blocks in the creative inventory, so the block only matters for
         // variants that name one; spelling out the default state is the same variant
         assertEquals(planks, Ids.item(PALETTER, new ItemVariant("minecraft:oak_planks", 0, resolved.block().getState())));
-        assertEquals(planks, Ids.match(palette, resolved.toItemData().blockDefinition(palette.blocks().air()).build()));
+        assertEquals(planks, Ids.match(palette, resolved.toItemData().toBuilder().blockDefinition(palette.blocks().air()).build()));
     }
 
     @Test

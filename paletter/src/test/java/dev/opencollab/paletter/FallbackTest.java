@@ -211,15 +211,15 @@ class FallbackTest {
         // The client sending minecraft:unknown is no claim on either of them. If minecraft:unknown is a canonical item
         // of its own, that direct variant matches
         int unknown = Ids.item(PALETTER, ItemVariant.of("minecraft:unknown"));
-        int matched = Ids.match(palette, first.toItemData().build());
+        int matched = Ids.match(palette, first.toItemData());
         assertEquals(unknown, matched);
         assertTrue(matched != missing.get(0) && matched != missing.get(1));
 
         // A fallback reached by one canonical id only still matches it, and direct variants are unaffected
         Palette single = with(broken(vanilla, missing.get(0))).palette(OLDEST);
         int apple = Ids.item(PALETTER, ItemVariant.of("minecraft:apple"));
-        assertEquals(apple, Ids.match(single, Ids.itemAt(single, apple).toItemData().build()));
-        assertEquals(unknown == -1 ? missing.get(0) : unknown, Ids.match(single, Ids.itemAt(single, missing.get(0)).toItemData().build()));
+        assertEquals(apple, Ids.match(single, Ids.itemAt(single, apple).toItemData()));
+        assertEquals(unknown == -1 ? missing.get(0) : unknown, Ids.match(single, Ids.itemAt(single, missing.get(0)).toItemData()));
     }
 
     private static ItemVariant spelled(BedrockItemStack stack) {
