@@ -41,16 +41,24 @@ import java.util.stream.Stream;
  * }
  * </pre>
  * Types are written with their generic signature; nested classes keep their binary name ({@code Outer$Inner}). A
- * {@code @Deprecated} or {@code @Experimental} member says so in front.
+ * {@code @Deprecated}, {@code @Experimental} or {@code @SincePreview} member says so in front, with the annotation's values
+ * ({@code @Deprecated(forRemoval = true)}).
  */
 public final class ApiDump {
     /** First line of every dump: the file is output, never edited by hand. */
     public static final String HEADER = header("paletter");
 
     private static final String INTERNAL = "Ldev/opencollab/paletter/annotation/Internal;";
-    private static final Map<String, String> MARKERS = Map.of(
-        "Ljava/lang/Deprecated;", "@Deprecated",
-        "Ldev/opencollab/paletter/annotation/Experimental;", "@Experimental");
+    /** The annotations a dump line shows, in this order, with their element values (they change what the API promises). */
+    private static final Map<String, String> MARKERS = markers();
+
+    private static Map<String, String> markers() {
+        Map<String, String> markers = new LinkedHashMap<>();
+        markers.put("Ljava/lang/Deprecated;", "@Deprecated");
+        markers.put("Ldev/opencollab/paletter/annotation/Experimental;", "@Experimental");
+        markers.put("Ldev/opencollab/paletter/annotation/SincePreview;", "@SincePreview");
+        return markers;
+    }
 
     private ApiDump() {
     }
@@ -194,7 +202,7 @@ public final class ApiDump {
         String superName;
         String[] interfaces = new String[0];
         final List<String> permitted = new ArrayList<>();
-        final Set<String> annotations = new LinkedHashSet<>();
+        final Map<String, String> annotations = new LinkedHashMap<>();
         String outer;
         int innerAccess = -1;
         final List<Member> members = new ArrayList<>();
@@ -225,8 +233,7 @@ public final class ApiDump {
 
                 @Override
                 public AnnotationVisitor visitAnnotation(String descriptor, boolean visible) {
-                    annotations.add(descriptor);
-                    return null;
+                    return mark(annotations, descriptor);
                 }
 
                 @Override
@@ -234,17 +241,16 @@ public final class ApiDump {
                     if (!visible(access) || (access & Opcodes.ACC_SYNTHETIC) != 0) {
                         return null;
                     }
-                    Set<String> marks = new LinkedHashSet<>();
+                    Map<String, String> marks = new LinkedHashMap<>();
                     return new FieldVisitor(Opcodes.ASM9) {
                         @Override
                         public AnnotationVisitor visitAnnotation(String annotation, boolean visible) {
-                            marks.add(annotation);
-                            return null;
+                            return mark(marks, annotation);
                         }
 
                         @Override
                         public void visitEnd() {
-                            if (marks.contains(INTERNAL)) {
+                            if (marks.containsKey(INTERNAL)) {
                                 return;
                             }
                             String type = signature != null ? field(signature, access) : type(Type.getType(descriptor));
@@ -260,17 +266,16 @@ public final class ApiDump {
                     if (!visible(access) || (access & (Opcodes.ACC_SYNTHETIC | Opcodes.ACC_BRIDGE)) != 0 || methodName.equals("<clinit>")) {
                         return null;
                     }
-                    Set<String> marks = new LinkedHashSet<>();
+                    Map<String, String> marks = new LinkedHashMap<>();
                     return new MethodVisitor(Opcodes.ASM9) {
                         @Override
                         public AnnotationVisitor visitAnnotation(String annotation, boolean visible) {
-                            marks.add(annotation);
-                            return null;
+                            return mark(marks, annotation);
                         }
 
                         @Override
                         public void visitEnd() {
-                            if (marks.contains(INTERNAL)) {
+                            if (marks.containsKey(INTERNAL)) {
                                 return;
                             }
                             boolean constructor = methodName.equals("<init>");
@@ -321,7 +326,7 @@ public final class ApiDump {
 
         /** Whether the class is API: public or protected (and so its enclosing classes), in an exported package, not internal. */
         boolean isApi(Map<String, Model> models, Set<String> packages) {
-            if (!visible(effectiveAccess()) || annotations.contains(INTERNAL)) {
+            if (!visible(effectiveAccess()) || annotations.containsKey(INTERNAL)) {
                 return false;
             }
             if (outer != null) {
@@ -410,14 +415,45 @@ public final class ApiDump {
             return out.toString();
         }
 
-        private static String prefix(Set<String> annotations) {
+        private static String prefix(Map<String, String> annotations) {
             StringBuilder out = new StringBuilder();
-            MARKERS.forEach((descriptor, marker) -> {
-                if (annotations.contains(descriptor)) {
+            MARKERS.keySet().forEach(descriptor -> {
+                String marker = annotations.get(descriptor);
+                if (marker != null) {
                     out.append(marker).append(' ');
                 }
             });
             return out.toString();
+        }
+
+        /**
+         * Records an annotation: a marker with its element values as written in source ({@code @Deprecated(forRemoval = true)},
+         * {@code @SincePreview("26.70")}), any other annotation by its descriptor only.
+         */
+        private static AnnotationVisitor mark(Map<String, String> marks, String descriptor) {
+            String marker = MARKERS.get(descriptor);
+            marks.put(descriptor, descriptor);
+            if (marker == null) {
+                return null;
+            }
+            Map<String, String> values = new TreeMap<>();
+            marks.put(descriptor, marker);
+            return new AnnotationVisitor(Opcodes.ASM9) {
+                @Override
+                public void visit(String name, Object value) {
+                    values.put(name, value instanceof String text ? '"' + text + '"' : String.valueOf(value));
+                }
+
+                @Override
+                public void visitEnd() {
+                    if (values.isEmpty()) {
+                        return;
+                    }
+                    List<String> parts = new ArrayList<>();
+                    values.forEach((name, value) -> parts.add(values.size() == 1 && name.equals("value") ? value : name + " = " + value));
+                    marks.put(descriptor, marker + "(" + String.join(", ", parts) + ")");
+                }
+            };
         }
 
         private static String modifiers(int access, boolean method) {

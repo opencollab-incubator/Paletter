@@ -631,7 +631,7 @@ public static final class dev.opencollab.paletter.block.component.BlockEntity$Co
     public static dev.opencollab.paletter.block.component.BlockEntity$Container$Builder builder()
     public boolean equals(java.lang.Object)
     public int hashCode()
-    public boolean showUiOnInteraction()
+    @SincePreview("26.70") public boolean showUiOnInteraction()
     public int slotCount()
     public java.lang.String title()
     public dev.opencollab.paletter.block.component.BlockEntity$Container$Builder toBuilder()
@@ -734,7 +734,7 @@ public sealed interface dev.opencollab.paletter.block.component.BlockTrait permi
     public abstract java.lang.String name()
 }
 
-@Deprecated public final class dev.opencollab.paletter.block.component.BoneVisibility implements dev.opencollab.paletter.block.component.BlockComponent {
+@Deprecated(forRemoval = true) public final class dev.opencollab.paletter.block.component.BoneVisibility implements dev.opencollab.paletter.block.component.BlockComponent {
     public static final java.lang.String NAME = "minecraft:bone_visibility"
     public static dev.opencollab.paletter.block.component.BoneVisibility$Builder builder()
     public boolean equals(java.lang.Object)
@@ -748,7 +748,7 @@ public static final class dev.opencollab.paletter.block.component.BoneVisibility
     public dev.opencollab.paletter.block.component.BoneVisibility build()
 }
 
-@Deprecated public final class dev.opencollab.paletter.block.component.Breathability implements dev.opencollab.paletter.block.component.BlockComponent {
+@Deprecated(forRemoval = true) public final class dev.opencollab.paletter.block.component.Breathability implements dev.opencollab.paletter.block.component.BlockComponent {
     public static final java.lang.String NAME = "minecraft:breathability"
     public static dev.opencollab.paletter.block.component.Breathability$Builder builder()
     public boolean equals(java.lang.Object)
@@ -2326,7 +2326,7 @@ public record dev.opencollab.paletter.block.component.Transformation$Vec3 {
     public float z()
 }
 
-@Deprecated public final class dev.opencollab.paletter.block.component.UnitCube implements dev.opencollab.paletter.block.component.BlockComponent {
+@Deprecated(forRemoval = true) public final class dev.opencollab.paletter.block.component.UnitCube implements dev.opencollab.paletter.block.component.BlockComponent {
     public static final java.lang.String NAME = "minecraft:unit_cube"
     public static dev.opencollab.paletter.block.component.UnitCube$Builder builder()
     public boolean equals(java.lang.Object)
@@ -4358,7 +4358,7 @@ public final class dev.opencollab.paletter.vanilla.BedrockBlocks {
     public static final dev.opencollab.paletter.vanilla.BedrockBlockType BRICK_SLAB
     public static final dev.opencollab.paletter.vanilla.BedrockBlockType BRICK_STAIRS
     public static final dev.opencollab.paletter.vanilla.BedrockBlockType BRICK_WALL
-    public static final dev.opencollab.paletter.vanilla.BedrockBlockType BRITTLE_ICE
+    @SincePreview("26.70") public static final dev.opencollab.paletter.vanilla.BedrockBlockType BRITTLE_ICE
     public static final dev.opencollab.paletter.vanilla.BedrockBlockType BROWN_CANDLE
     public static final dev.opencollab.paletter.vanilla.BedrockBlockType BROWN_CANDLE_CAKE
     public static final dev.opencollab.paletter.vanilla.BedrockBlockType BROWN_CARPET
@@ -4389,11 +4389,11 @@ public final class dev.opencollab.paletter.vanilla.BedrockBlocks {
     public static final dev.opencollab.paletter.vanilla.BedrockBlockType CACTUS_FLOWER
     public static final dev.opencollab.paletter.vanilla.BedrockBlockType CAKE
     public static final dev.opencollab.paletter.vanilla.BedrockBlockType CALCITE
-    public static final dev.opencollab.paletter.vanilla.BedrockBlockType CALCITE_DOUBLE_SLAB
-    public static final dev.opencollab.paletter.vanilla.BedrockBlockType CALCITE_PILLAR
-    public static final dev.opencollab.paletter.vanilla.BedrockBlockType CALCITE_SLAB
-    public static final dev.opencollab.paletter.vanilla.BedrockBlockType CALCITE_STAIRS
-    public static final dev.opencollab.paletter.vanilla.BedrockBlockType CALCITE_WALL
+    @SincePreview("26.70") public static final dev.opencollab.paletter.vanilla.BedrockBlockType CALCITE_DOUBLE_SLAB
+    @SincePreview("26.70") public static final dev.opencollab.paletter.vanilla.BedrockBlockType CALCITE_PILLAR
+    @SincePreview("26.70") public static final dev.opencollab.paletter.vanilla.BedrockBlockType CALCITE_SLAB
+    @SincePreview("26.70") public static final dev.opencollab.paletter.vanilla.BedrockBlockType CALCITE_STAIRS
+    @SincePreview("26.70") public static final dev.opencollab.paletter.vanilla.BedrockBlockType CALCITE_WALL
     public static final dev.opencollab.paletter.vanilla.BedrockBlockType CALIBRATED_SCULK_SENSOR
     public static final dev.opencollab.paletter.vanilla.BedrockBlockType CAMERA
     public static final dev.opencollab.paletter.vanilla.BedrockBlockType CAMPFIRE
@@ -4434,13 +4434,13 @@ public final class dev.opencollab.paletter.vanilla.BedrockBlocks {
     public static final dev.opencollab.paletter.vanilla.BedrockBlockType CHISELED_COPPER
     public static final dev.opencollab.paletter.vanilla.BedrockBlockType CHISELED_DEEPSLATE
     public static final dev.opencollab.paletter.vanilla.BedrockBlockType CHISELED_NETHER_BRICKS
-    public static final dev.opencollab.paletter.vanilla.BedrockBlockType CHISELED_PACKED_ICE
+    @SincePreview("26.70") public static final dev.opencollab.paletter.vanilla.BedrockBlockType CHISELED_PACKED_ICE
     public static final dev.opencollab.paletter.vanilla.BedrockBlockType CHISELED_POLISHED_BLACKSTONE
     public static final dev.opencollab.paletter.vanilla.BedrockBlockType CHISELED_QUARTZ_BLOCK
     public static final dev.opencollab.paletter.vanilla.BedrockBlockType CHISELED_RED_SANDSTONE
     public static final dev.opencollab.paletter.vanilla.BedrockBlockType CHISELED_RESIN_BRICKS
     public static final dev.opencollab.paletter.vanilla.BedrockBlockType CHISELED_SANDSTONE
-    public static final dev.opencollab.paletter.vanilla.BedrockBlockType CHISELED_SOULSHALE
+    @SincePreview("26.70") public static final dev.opencollab.paletter.vanilla.BedrockBlockType CHISELED_SOULSHALE
     public static final dev.opencollab.paletter.vanilla.BedrockBlockType CHISELED_STONE_BRICKS
     public static final dev.opencollab.paletter.vanilla.BedrockBlockType CHISELED_SULFUR
     public static final dev.opencollab.paletter.vanilla.BedrockBlockType CHISELED_TUFF
@@ -5170,11 +5170,11 @@ public final class dev.opencollab.paletter.vanilla.BedrockBlocks {
     public static final dev.opencollab.paletter.vanilla.BedrockBlockType OXIDIZED_DOUBLE_CUT_COPPER_SLAB
     public static final dev.opencollab.paletter.vanilla.BedrockBlockType OXIDIZED_LIGHTNING_ROD
     public static final dev.opencollab.paletter.vanilla.BedrockBlockType PACKED_ICE
-    public static final dev.opencollab.paletter.vanilla.BedrockBlockType PACKED_ICE_BRICKS
-    public static final dev.opencollab.paletter.vanilla.BedrockBlockType PACKED_ICE_BRICK_DOUBLE_SLAB
-    public static final dev.opencollab.paletter.vanilla.BedrockBlockType PACKED_ICE_BRICK_SLAB
-    public static final dev.opencollab.paletter.vanilla.BedrockBlockType PACKED_ICE_BRICK_STAIRS
-    public static final dev.opencollab.paletter.vanilla.BedrockBlockType PACKED_ICE_BRICK_WALL
+    @SincePreview("26.70") public static final dev.opencollab.paletter.vanilla.BedrockBlockType PACKED_ICE_BRICKS
+    @SincePreview("26.70") public static final dev.opencollab.paletter.vanilla.BedrockBlockType PACKED_ICE_BRICK_DOUBLE_SLAB
+    @SincePreview("26.70") public static final dev.opencollab.paletter.vanilla.BedrockBlockType PACKED_ICE_BRICK_SLAB
+    @SincePreview("26.70") public static final dev.opencollab.paletter.vanilla.BedrockBlockType PACKED_ICE_BRICK_STAIRS
+    @SincePreview("26.70") public static final dev.opencollab.paletter.vanilla.BedrockBlockType PACKED_ICE_BRICK_WALL
     public static final dev.opencollab.paletter.vanilla.BedrockBlockType PACKED_MUD
     public static final dev.opencollab.paletter.vanilla.BedrockBlockType PALE_HANGING_MOSS
     public static final dev.opencollab.paletter.vanilla.BedrockBlockType PALE_MOSS_BLOCK
@@ -5245,16 +5245,16 @@ public final class dev.opencollab.paletter.vanilla.BedrockBlocks {
     public static final dev.opencollab.paletter.vanilla.BedrockBlockType POLISHED_BLACKSTONE_SLAB
     public static final dev.opencollab.paletter.vanilla.BedrockBlockType POLISHED_BLACKSTONE_STAIRS
     public static final dev.opencollab.paletter.vanilla.BedrockBlockType POLISHED_BLACKSTONE_WALL
-    public static final dev.opencollab.paletter.vanilla.BedrockBlockType POLISHED_CALCITE
-    public static final dev.opencollab.paletter.vanilla.BedrockBlockType POLISHED_CALCITE_BRICKS
-    public static final dev.opencollab.paletter.vanilla.BedrockBlockType POLISHED_CALCITE_BRICK_DOUBLE_SLAB
-    public static final dev.opencollab.paletter.vanilla.BedrockBlockType POLISHED_CALCITE_BRICK_SLAB
-    public static final dev.opencollab.paletter.vanilla.BedrockBlockType POLISHED_CALCITE_BRICK_STAIRS
-    public static final dev.opencollab.paletter.vanilla.BedrockBlockType POLISHED_CALCITE_BRICK_WALL
-    public static final dev.opencollab.paletter.vanilla.BedrockBlockType POLISHED_CALCITE_DOUBLE_SLAB
-    public static final dev.opencollab.paletter.vanilla.BedrockBlockType POLISHED_CALCITE_SLAB
-    public static final dev.opencollab.paletter.vanilla.BedrockBlockType POLISHED_CALCITE_STAIRS
-    public static final dev.opencollab.paletter.vanilla.BedrockBlockType POLISHED_CALCITE_WALL
+    @SincePreview("26.70") public static final dev.opencollab.paletter.vanilla.BedrockBlockType POLISHED_CALCITE
+    @SincePreview("26.70") public static final dev.opencollab.paletter.vanilla.BedrockBlockType POLISHED_CALCITE_BRICKS
+    @SincePreview("26.70") public static final dev.opencollab.paletter.vanilla.BedrockBlockType POLISHED_CALCITE_BRICK_DOUBLE_SLAB
+    @SincePreview("26.70") public static final dev.opencollab.paletter.vanilla.BedrockBlockType POLISHED_CALCITE_BRICK_SLAB
+    @SincePreview("26.70") public static final dev.opencollab.paletter.vanilla.BedrockBlockType POLISHED_CALCITE_BRICK_STAIRS
+    @SincePreview("26.70") public static final dev.opencollab.paletter.vanilla.BedrockBlockType POLISHED_CALCITE_BRICK_WALL
+    @SincePreview("26.70") public static final dev.opencollab.paletter.vanilla.BedrockBlockType POLISHED_CALCITE_DOUBLE_SLAB
+    @SincePreview("26.70") public static final dev.opencollab.paletter.vanilla.BedrockBlockType POLISHED_CALCITE_SLAB
+    @SincePreview("26.70") public static final dev.opencollab.paletter.vanilla.BedrockBlockType POLISHED_CALCITE_STAIRS
+    @SincePreview("26.70") public static final dev.opencollab.paletter.vanilla.BedrockBlockType POLISHED_CALCITE_WALL
     public static final dev.opencollab.paletter.vanilla.BedrockBlockType POLISHED_CINNABAR
     public static final dev.opencollab.paletter.vanilla.BedrockBlockType POLISHED_CINNABAR_DOUBLE_SLAB
     public static final dev.opencollab.paletter.vanilla.BedrockBlockType POLISHED_CINNABAR_SLAB
@@ -5446,11 +5446,11 @@ public final class dev.opencollab.paletter.vanilla.BedrockBlocks {
     public static final dev.opencollab.paletter.vanilla.BedrockBlockType SMOOTH_STONE_SLAB
     public static final dev.opencollab.paletter.vanilla.BedrockBlockType SNIFFER_EGG
     public static final dev.opencollab.paletter.vanilla.BedrockBlockType SNOW
-    public static final dev.opencollab.paletter.vanilla.BedrockBlockType SNOW_BRICKS
-    public static final dev.opencollab.paletter.vanilla.BedrockBlockType SNOW_BRICK_DOUBLE_SLAB
-    public static final dev.opencollab.paletter.vanilla.BedrockBlockType SNOW_BRICK_SLAB
-    public static final dev.opencollab.paletter.vanilla.BedrockBlockType SNOW_BRICK_STAIRS
-    public static final dev.opencollab.paletter.vanilla.BedrockBlockType SNOW_BRICK_WALL
+    @SincePreview("26.70") public static final dev.opencollab.paletter.vanilla.BedrockBlockType SNOW_BRICKS
+    @SincePreview("26.70") public static final dev.opencollab.paletter.vanilla.BedrockBlockType SNOW_BRICK_DOUBLE_SLAB
+    @SincePreview("26.70") public static final dev.opencollab.paletter.vanilla.BedrockBlockType SNOW_BRICK_SLAB
+    @SincePreview("26.70") public static final dev.opencollab.paletter.vanilla.BedrockBlockType SNOW_BRICK_STAIRS
+    @SincePreview("26.70") public static final dev.opencollab.paletter.vanilla.BedrockBlockType SNOW_BRICK_WALL
     public static final dev.opencollab.paletter.vanilla.BedrockBlockType SNOW_LAYER
     public static final dev.opencollab.paletter.vanilla.BedrockBlockType SOUL_CAMPFIRE
     public static final dev.opencollab.paletter.vanilla.BedrockBlockType SOUL_FIRE
@@ -5730,10 +5730,10 @@ public final class dev.opencollab.paletter.vanilla.BedrockBlocks {
 
 public final class dev.opencollab.paletter.vanilla.BedrockExperiments {
     public static final java.lang.String CREATOR_WORLD_CLOCKS = "creator_world_clocks"
-    public static final java.lang.String DEFERRED_TECHNICAL_PREVIEW = "deferred_technical_preview"
+    @SincePreview("26.70") public static final java.lang.String DEFERRED_TECHNICAL_PREVIEW = "deferred_technical_preview"
     public static final java.lang.String EXPERIMENTAL_CREATOR_CAMERAS = "experimental_creator_cameras"
     public static final java.lang.String GAMETEST = "gametest"
-    public static final java.lang.String NETHER_SPAWNING_BALANCE = "nether_spawning_balance"
+    @SincePreview("26.70") public static final java.lang.String NETHER_SPAWNING_BALANCE = "nether_spawning_balance"
     public static final java.lang.String POI = "poi"
     public static final java.lang.String UPCOMING_CREATOR_FEATURES = "upcoming_creator_features"
     public static final java.lang.String VILLAGER_TRADES_REBALANCE = "villager_trades_rebalance"
@@ -5773,14 +5773,14 @@ public final class dev.opencollab.paletter.vanilla.BedrockItemVariant implements
 
 public final class dev.opencollab.paletter.vanilla.BedrockItemVariants {
     public static final dev.opencollab.paletter.vanilla.BedrockItemVariant ARROW_FIRE_RESISTANCE
-    public static final dev.opencollab.paletter.vanilla.BedrockItemVariant ARROW_FREEZING
+    @SincePreview("26.70") public static final dev.opencollab.paletter.vanilla.BedrockItemVariant ARROW_FREEZING
     public static final dev.opencollab.paletter.vanilla.BedrockItemVariant ARROW_HARMING
     public static final dev.opencollab.paletter.vanilla.BedrockItemVariant ARROW_HEALING
     public static final dev.opencollab.paletter.vanilla.BedrockItemVariant ARROW_INFESTED
     public static final dev.opencollab.paletter.vanilla.BedrockItemVariant ARROW_INVISIBILITY
     public static final dev.opencollab.paletter.vanilla.BedrockItemVariant ARROW_LEAPING
     public static final dev.opencollab.paletter.vanilla.BedrockItemVariant ARROW_LONG_FIRE_RESISTANCE
-    public static final dev.opencollab.paletter.vanilla.BedrockItemVariant ARROW_LONG_FREEZING
+    @SincePreview("26.70") public static final dev.opencollab.paletter.vanilla.BedrockItemVariant ARROW_LONG_FREEZING
     public static final dev.opencollab.paletter.vanilla.BedrockItemVariant ARROW_LONG_INVISIBILITY
     public static final dev.opencollab.paletter.vanilla.BedrockItemVariant ARROW_LONG_LEAPING
     public static final dev.opencollab.paletter.vanilla.BedrockItemVariant ARROW_LONG_NIGHTVISION
@@ -5850,14 +5850,14 @@ public final class dev.opencollab.paletter.vanilla.BedrockItemVariants {
     public static final dev.opencollab.paletter.vanilla.BedrockItemVariant BED_YELLOW
     public static final dev.opencollab.paletter.vanilla.BedrockItemVariant LINGERING_POTION_AWKWARD
     public static final dev.opencollab.paletter.vanilla.BedrockItemVariant LINGERING_POTION_FIRE_RESISTANCE
-    public static final dev.opencollab.paletter.vanilla.BedrockItemVariant LINGERING_POTION_FREEZING
+    @SincePreview("26.70") public static final dev.opencollab.paletter.vanilla.BedrockItemVariant LINGERING_POTION_FREEZING
     public static final dev.opencollab.paletter.vanilla.BedrockItemVariant LINGERING_POTION_HARMING
     public static final dev.opencollab.paletter.vanilla.BedrockItemVariant LINGERING_POTION_HEALING
     public static final dev.opencollab.paletter.vanilla.BedrockItemVariant LINGERING_POTION_INFESTED
     public static final dev.opencollab.paletter.vanilla.BedrockItemVariant LINGERING_POTION_INVISIBILITY
     public static final dev.opencollab.paletter.vanilla.BedrockItemVariant LINGERING_POTION_LEAPING
     public static final dev.opencollab.paletter.vanilla.BedrockItemVariant LINGERING_POTION_LONG_FIRE_RESISTANCE
-    public static final dev.opencollab.paletter.vanilla.BedrockItemVariant LINGERING_POTION_LONG_FREEZING
+    @SincePreview("26.70") public static final dev.opencollab.paletter.vanilla.BedrockItemVariant LINGERING_POTION_LONG_FREEZING
     public static final dev.opencollab.paletter.vanilla.BedrockItemVariant LINGERING_POTION_LONG_INVISIBILITY
     public static final dev.opencollab.paletter.vanilla.BedrockItemVariant LINGERING_POTION_LONG_LEAPING
     public static final dev.opencollab.paletter.vanilla.BedrockItemVariant LINGERING_POTION_LONG_MUNDANE
@@ -5899,14 +5899,14 @@ public final class dev.opencollab.paletter.vanilla.BedrockItemVariants {
     public static final dev.opencollab.paletter.vanilla.BedrockItemVariant LINGERING_POTION_WITHER
     public static final dev.opencollab.paletter.vanilla.BedrockItemVariant POTION_AWKWARD
     public static final dev.opencollab.paletter.vanilla.BedrockItemVariant POTION_FIRE_RESISTANCE
-    public static final dev.opencollab.paletter.vanilla.BedrockItemVariant POTION_FREEZING
+    @SincePreview("26.70") public static final dev.opencollab.paletter.vanilla.BedrockItemVariant POTION_FREEZING
     public static final dev.opencollab.paletter.vanilla.BedrockItemVariant POTION_HARMING
     public static final dev.opencollab.paletter.vanilla.BedrockItemVariant POTION_HEALING
     public static final dev.opencollab.paletter.vanilla.BedrockItemVariant POTION_INFESTED
     public static final dev.opencollab.paletter.vanilla.BedrockItemVariant POTION_INVISIBILITY
     public static final dev.opencollab.paletter.vanilla.BedrockItemVariant POTION_LEAPING
     public static final dev.opencollab.paletter.vanilla.BedrockItemVariant POTION_LONG_FIRE_RESISTANCE
-    public static final dev.opencollab.paletter.vanilla.BedrockItemVariant POTION_LONG_FREEZING
+    @SincePreview("26.70") public static final dev.opencollab.paletter.vanilla.BedrockItemVariant POTION_LONG_FREEZING
     public static final dev.opencollab.paletter.vanilla.BedrockItemVariant POTION_LONG_INVISIBILITY
     public static final dev.opencollab.paletter.vanilla.BedrockItemVariant POTION_LONG_LEAPING
     public static final dev.opencollab.paletter.vanilla.BedrockItemVariant POTION_LONG_MUNDANE
@@ -5948,14 +5948,14 @@ public final class dev.opencollab.paletter.vanilla.BedrockItemVariants {
     public static final dev.opencollab.paletter.vanilla.BedrockItemVariant POTION_WITHER
     public static final dev.opencollab.paletter.vanilla.BedrockItemVariant SPLASH_POTION_AWKWARD
     public static final dev.opencollab.paletter.vanilla.BedrockItemVariant SPLASH_POTION_FIRE_RESISTANCE
-    public static final dev.opencollab.paletter.vanilla.BedrockItemVariant SPLASH_POTION_FREEZING
+    @SincePreview("26.70") public static final dev.opencollab.paletter.vanilla.BedrockItemVariant SPLASH_POTION_FREEZING
     public static final dev.opencollab.paletter.vanilla.BedrockItemVariant SPLASH_POTION_HARMING
     public static final dev.opencollab.paletter.vanilla.BedrockItemVariant SPLASH_POTION_HEALING
     public static final dev.opencollab.paletter.vanilla.BedrockItemVariant SPLASH_POTION_INFESTED
     public static final dev.opencollab.paletter.vanilla.BedrockItemVariant SPLASH_POTION_INVISIBILITY
     public static final dev.opencollab.paletter.vanilla.BedrockItemVariant SPLASH_POTION_LEAPING
     public static final dev.opencollab.paletter.vanilla.BedrockItemVariant SPLASH_POTION_LONG_FIRE_RESISTANCE
-    public static final dev.opencollab.paletter.vanilla.BedrockItemVariant SPLASH_POTION_LONG_FREEZING
+    @SincePreview("26.70") public static final dev.opencollab.paletter.vanilla.BedrockItemVariant SPLASH_POTION_LONG_FREEZING
     public static final dev.opencollab.paletter.vanilla.BedrockItemVariant SPLASH_POTION_LONG_INVISIBILITY
     public static final dev.opencollab.paletter.vanilla.BedrockItemVariant SPLASH_POTION_LONG_LEAPING
     public static final dev.opencollab.paletter.vanilla.BedrockItemVariant SPLASH_POTION_LONG_MUNDANE
@@ -6198,7 +6198,7 @@ public final class dev.opencollab.paletter.vanilla.BedrockItems {
     public static final dev.opencollab.paletter.vanilla.BedrockItemType BRICK_SLAB
     public static final dev.opencollab.paletter.vanilla.BedrockItemType BRICK_STAIRS
     public static final dev.opencollab.paletter.vanilla.BedrockItemType BRICK_WALL
-    public static final dev.opencollab.paletter.vanilla.BedrockItemType BRITTLE_ICE
+    @SincePreview("26.70") public static final dev.opencollab.paletter.vanilla.BedrockItemType BRITTLE_ICE
     public static final dev.opencollab.paletter.vanilla.BedrockItemType BROWN_BUNDLE
     public static final dev.opencollab.paletter.vanilla.BedrockItemType BROWN_CANDLE
     public static final dev.opencollab.paletter.vanilla.BedrockItemType BROWN_CANDLE_CAKE
@@ -6238,11 +6238,11 @@ public final class dev.opencollab.paletter.vanilla.BedrockItems {
     public static final dev.opencollab.paletter.vanilla.BedrockItemType CACTUS_FLOWER
     public static final dev.opencollab.paletter.vanilla.BedrockItemType CAKE
     public static final dev.opencollab.paletter.vanilla.BedrockItemType CALCITE
-    public static final dev.opencollab.paletter.vanilla.BedrockItemType CALCITE_DOUBLE_SLAB
-    public static final dev.opencollab.paletter.vanilla.BedrockItemType CALCITE_PILLAR
-    public static final dev.opencollab.paletter.vanilla.BedrockItemType CALCITE_SLAB
-    public static final dev.opencollab.paletter.vanilla.BedrockItemType CALCITE_STAIRS
-    public static final dev.opencollab.paletter.vanilla.BedrockItemType CALCITE_WALL
+    @SincePreview("26.70") public static final dev.opencollab.paletter.vanilla.BedrockItemType CALCITE_DOUBLE_SLAB
+    @SincePreview("26.70") public static final dev.opencollab.paletter.vanilla.BedrockItemType CALCITE_PILLAR
+    @SincePreview("26.70") public static final dev.opencollab.paletter.vanilla.BedrockItemType CALCITE_SLAB
+    @SincePreview("26.70") public static final dev.opencollab.paletter.vanilla.BedrockItemType CALCITE_STAIRS
+    @SincePreview("26.70") public static final dev.opencollab.paletter.vanilla.BedrockItemType CALCITE_WALL
     public static final dev.opencollab.paletter.vanilla.BedrockItemType CALIBRATED_SCULK_SENSOR
     public static final dev.opencollab.paletter.vanilla.BedrockItemType CAMEL_HUSK_SPAWN_EGG
     public static final dev.opencollab.paletter.vanilla.BedrockItemType CAMEL_SPAWN_EGG
@@ -6303,13 +6303,13 @@ public final class dev.opencollab.paletter.vanilla.BedrockItems {
     public static final dev.opencollab.paletter.vanilla.BedrockItemType CHISELED_COPPER
     public static final dev.opencollab.paletter.vanilla.BedrockItemType CHISELED_DEEPSLATE
     public static final dev.opencollab.paletter.vanilla.BedrockItemType CHISELED_NETHER_BRICKS
-    public static final dev.opencollab.paletter.vanilla.BedrockItemType CHISELED_PACKED_ICE
+    @SincePreview("26.70") public static final dev.opencollab.paletter.vanilla.BedrockItemType CHISELED_PACKED_ICE
     public static final dev.opencollab.paletter.vanilla.BedrockItemType CHISELED_POLISHED_BLACKSTONE
     public static final dev.opencollab.paletter.vanilla.BedrockItemType CHISELED_QUARTZ_BLOCK
     public static final dev.opencollab.paletter.vanilla.BedrockItemType CHISELED_RED_SANDSTONE
     public static final dev.opencollab.paletter.vanilla.BedrockItemType CHISELED_RESIN_BRICKS
     public static final dev.opencollab.paletter.vanilla.BedrockItemType CHISELED_SANDSTONE
-    public static final dev.opencollab.paletter.vanilla.BedrockItemType CHISELED_SOULSHALE
+    @SincePreview("26.70") public static final dev.opencollab.paletter.vanilla.BedrockItemType CHISELED_SOULSHALE
     public static final dev.opencollab.paletter.vanilla.BedrockItemType CHISELED_STONE_BRICKS
     public static final dev.opencollab.paletter.vanilla.BedrockItemType CHISELED_SULFUR
     public static final dev.opencollab.paletter.vanilla.BedrockItemType CHISELED_TUFF
@@ -6952,7 +6952,7 @@ public final class dev.opencollab.paletter.vanilla.BedrockItems {
     public static final dev.opencollab.paletter.vanilla.BedrockItemType HOWL_POTTERY_SHERD
     public static final dev.opencollab.paletter.vanilla.BedrockItemType HUSK_SPAWN_EGG
     public static final dev.opencollab.paletter.vanilla.BedrockItemType ICE
-    public static final dev.opencollab.paletter.vanilla.BedrockItemType ICE_BALL
+    @SincePreview("26.70") public static final dev.opencollab.paletter.vanilla.BedrockItemType ICE_BALL
     public static final dev.opencollab.paletter.vanilla.BedrockItemType ICE_BOMB
     public static final dev.opencollab.paletter.vanilla.BedrockItemType ICE_CRYSTAL
     public static final dev.opencollab.paletter.vanilla.BedrockItemType ICICLE
@@ -7244,7 +7244,7 @@ public final class dev.opencollab.paletter.vanilla.BedrockItems {
     public static final dev.opencollab.paletter.vanilla.BedrockItemType MUSIC_DISC_CREATOR
     public static final dev.opencollab.paletter.vanilla.BedrockItemType MUSIC_DISC_CREATOR_MUSIC_BOX
     public static final dev.opencollab.paletter.vanilla.BedrockItemType MUSIC_DISC_FAR
-    public static final dev.opencollab.paletter.vanilla.BedrockItemType MUSIC_DISC_FLURRY
+    @SincePreview("26.70") public static final dev.opencollab.paletter.vanilla.BedrockItemType MUSIC_DISC_FLURRY
     public static final dev.opencollab.paletter.vanilla.BedrockItemType MUSIC_DISC_LAVA_CHICKEN
     public static final dev.opencollab.paletter.vanilla.BedrockItemType MUSIC_DISC_MALL
     public static final dev.opencollab.paletter.vanilla.BedrockItemType MUSIC_DISC_MELLOHI
@@ -7359,11 +7359,11 @@ public final class dev.opencollab.paletter.vanilla.BedrockItems {
     public static final dev.opencollab.paletter.vanilla.BedrockItemType OXIDIZED_DOUBLE_CUT_COPPER_SLAB
     public static final dev.opencollab.paletter.vanilla.BedrockItemType OXIDIZED_LIGHTNING_ROD
     public static final dev.opencollab.paletter.vanilla.BedrockItemType PACKED_ICE
-    public static final dev.opencollab.paletter.vanilla.BedrockItemType PACKED_ICE_BRICKS
-    public static final dev.opencollab.paletter.vanilla.BedrockItemType PACKED_ICE_BRICK_DOUBLE_SLAB
-    public static final dev.opencollab.paletter.vanilla.BedrockItemType PACKED_ICE_BRICK_SLAB
-    public static final dev.opencollab.paletter.vanilla.BedrockItemType PACKED_ICE_BRICK_STAIRS
-    public static final dev.opencollab.paletter.vanilla.BedrockItemType PACKED_ICE_BRICK_WALL
+    @SincePreview("26.70") public static final dev.opencollab.paletter.vanilla.BedrockItemType PACKED_ICE_BRICKS
+    @SincePreview("26.70") public static final dev.opencollab.paletter.vanilla.BedrockItemType PACKED_ICE_BRICK_DOUBLE_SLAB
+    @SincePreview("26.70") public static final dev.opencollab.paletter.vanilla.BedrockItemType PACKED_ICE_BRICK_SLAB
+    @SincePreview("26.70") public static final dev.opencollab.paletter.vanilla.BedrockItemType PACKED_ICE_BRICK_STAIRS
+    @SincePreview("26.70") public static final dev.opencollab.paletter.vanilla.BedrockItemType PACKED_ICE_BRICK_WALL
     public static final dev.opencollab.paletter.vanilla.BedrockItemType PACKED_MUD
     public static final dev.opencollab.paletter.vanilla.BedrockItemType PAINTING
     public static final dev.opencollab.paletter.vanilla.BedrockItemType PALE_HANGING_MOSS
@@ -7459,16 +7459,16 @@ public final class dev.opencollab.paletter.vanilla.BedrockItems {
     public static final dev.opencollab.paletter.vanilla.BedrockItemType POLISHED_BLACKSTONE_SLAB
     public static final dev.opencollab.paletter.vanilla.BedrockItemType POLISHED_BLACKSTONE_STAIRS
     public static final dev.opencollab.paletter.vanilla.BedrockItemType POLISHED_BLACKSTONE_WALL
-    public static final dev.opencollab.paletter.vanilla.BedrockItemType POLISHED_CALCITE
-    public static final dev.opencollab.paletter.vanilla.BedrockItemType POLISHED_CALCITE_BRICKS
-    public static final dev.opencollab.paletter.vanilla.BedrockItemType POLISHED_CALCITE_BRICK_DOUBLE_SLAB
-    public static final dev.opencollab.paletter.vanilla.BedrockItemType POLISHED_CALCITE_BRICK_SLAB
-    public static final dev.opencollab.paletter.vanilla.BedrockItemType POLISHED_CALCITE_BRICK_STAIRS
-    public static final dev.opencollab.paletter.vanilla.BedrockItemType POLISHED_CALCITE_BRICK_WALL
-    public static final dev.opencollab.paletter.vanilla.BedrockItemType POLISHED_CALCITE_DOUBLE_SLAB
-    public static final dev.opencollab.paletter.vanilla.BedrockItemType POLISHED_CALCITE_SLAB
-    public static final dev.opencollab.paletter.vanilla.BedrockItemType POLISHED_CALCITE_STAIRS
-    public static final dev.opencollab.paletter.vanilla.BedrockItemType POLISHED_CALCITE_WALL
+    @SincePreview("26.70") public static final dev.opencollab.paletter.vanilla.BedrockItemType POLISHED_CALCITE
+    @SincePreview("26.70") public static final dev.opencollab.paletter.vanilla.BedrockItemType POLISHED_CALCITE_BRICKS
+    @SincePreview("26.70") public static final dev.opencollab.paletter.vanilla.BedrockItemType POLISHED_CALCITE_BRICK_DOUBLE_SLAB
+    @SincePreview("26.70") public static final dev.opencollab.paletter.vanilla.BedrockItemType POLISHED_CALCITE_BRICK_SLAB
+    @SincePreview("26.70") public static final dev.opencollab.paletter.vanilla.BedrockItemType POLISHED_CALCITE_BRICK_STAIRS
+    @SincePreview("26.70") public static final dev.opencollab.paletter.vanilla.BedrockItemType POLISHED_CALCITE_BRICK_WALL
+    @SincePreview("26.70") public static final dev.opencollab.paletter.vanilla.BedrockItemType POLISHED_CALCITE_DOUBLE_SLAB
+    @SincePreview("26.70") public static final dev.opencollab.paletter.vanilla.BedrockItemType POLISHED_CALCITE_SLAB
+    @SincePreview("26.70") public static final dev.opencollab.paletter.vanilla.BedrockItemType POLISHED_CALCITE_STAIRS
+    @SincePreview("26.70") public static final dev.opencollab.paletter.vanilla.BedrockItemType POLISHED_CALCITE_WALL
     public static final dev.opencollab.paletter.vanilla.BedrockItemType POLISHED_CINNABAR
     public static final dev.opencollab.paletter.vanilla.BedrockItemType POLISHED_CINNABAR_DOUBLE_SLAB
     public static final dev.opencollab.paletter.vanilla.BedrockItemType POLISHED_CINNABAR_SLAB
@@ -7732,11 +7732,11 @@ public final class dev.opencollab.paletter.vanilla.BedrockItems {
     public static final dev.opencollab.paletter.vanilla.BedrockItemType SNOUT_ARMOR_TRIM_SMITHING_TEMPLATE
     public static final dev.opencollab.paletter.vanilla.BedrockItemType SNOW
     public static final dev.opencollab.paletter.vanilla.BedrockItemType SNOWBALL
-    public static final dev.opencollab.paletter.vanilla.BedrockItemType SNOW_BRICKS
-    public static final dev.opencollab.paletter.vanilla.BedrockItemType SNOW_BRICK_DOUBLE_SLAB
-    public static final dev.opencollab.paletter.vanilla.BedrockItemType SNOW_BRICK_SLAB
-    public static final dev.opencollab.paletter.vanilla.BedrockItemType SNOW_BRICK_STAIRS
-    public static final dev.opencollab.paletter.vanilla.BedrockItemType SNOW_BRICK_WALL
+    @SincePreview("26.70") public static final dev.opencollab.paletter.vanilla.BedrockItemType SNOW_BRICKS
+    @SincePreview("26.70") public static final dev.opencollab.paletter.vanilla.BedrockItemType SNOW_BRICK_DOUBLE_SLAB
+    @SincePreview("26.70") public static final dev.opencollab.paletter.vanilla.BedrockItemType SNOW_BRICK_SLAB
+    @SincePreview("26.70") public static final dev.opencollab.paletter.vanilla.BedrockItemType SNOW_BRICK_STAIRS
+    @SincePreview("26.70") public static final dev.opencollab.paletter.vanilla.BedrockItemType SNOW_BRICK_WALL
     public static final dev.opencollab.paletter.vanilla.BedrockItemType SNOW_GOLEM_SPAWN_EGG
     public static final dev.opencollab.paletter.vanilla.BedrockItemType SNOW_LAYER
     public static final dev.opencollab.paletter.vanilla.BedrockItemType SOUL_CAMPFIRE
@@ -8132,7 +8132,7 @@ public final class dev.opencollab.paletter.vanilla.BedrockStates {
     public static final dev.opencollab.paletter.vanilla.EnumState<dev.opencollab.paletter.vanilla.state.Direction> BLOCK_FACE
     public static final dev.opencollab.paletter.vanilla.BoolState BLOOM
     public static final dev.opencollab.paletter.vanilla.IntState BOOKS_STORED
-    public static final dev.opencollab.paletter.vanilla.BoolState BOTTOM
+    @SincePreview("26.70") public static final dev.opencollab.paletter.vanilla.BoolState BOTTOM
     public static final dev.opencollab.paletter.vanilla.BoolState BREWING_STAND_SLOT_A_BIT
     public static final dev.opencollab.paletter.vanilla.BoolState BREWING_STAND_SLOT_B_BIT
     public static final dev.opencollab.paletter.vanilla.BoolState BREWING_STAND_SLOT_C_BIT
@@ -8186,7 +8186,7 @@ public final class dev.opencollab.paletter.vanilla.BedrockStates {
     public static final dev.opencollab.paletter.vanilla.EnumState<dev.opencollab.paletter.vanilla.state.LeverDirection> LEVER_DIRECTION
     public static final dev.opencollab.paletter.vanilla.IntState LIQUID_DEPTH
     public static final dev.opencollab.paletter.vanilla.BoolState LIT
-    public static final dev.opencollab.paletter.vanilla.BoolState LOCKED
+    @SincePreview("26.70") public static final dev.opencollab.paletter.vanilla.BoolState LOCKED
     public static final dev.opencollab.paletter.vanilla.EnumState<dev.opencollab.paletter.vanilla.state.Direction> MINECRAFT_FACING_DIRECTION
     public static final dev.opencollab.paletter.vanilla.IntState MOISTURIZED_AMOUNT
     public static final dev.opencollab.paletter.vanilla.IntState MULTI_FACE_DIRECTION_BITS

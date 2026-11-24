@@ -59,6 +59,7 @@ public class fix.api.Widget<T extends java.lang.Comparable<T>> extends fix.api.B
     protected <init>(T)
     public <init>(java.lang.String, int...)
     public int compareTo(fix.api.Widget<T>)
+    @Deprecated(forRemoval = true, since = "0.9") public void doomed()
     @Experimental public java.lang.String[] experimental(int[][])
     public T first()
     public static <K, V extends java.util.List<K>> java.util.Map<K, V> group(V...)

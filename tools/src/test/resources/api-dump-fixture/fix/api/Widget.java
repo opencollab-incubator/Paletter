@@ -57,6 +57,10 @@ public class Widget<T extends Comparable<T>> extends Base<T> implements Comparab
     public void old() {
     }
 
+    @Deprecated(since = "0.9", forRemoval = true)
+    public void doomed() {
+    }
+
     @Experimental
     public String[] experimental(int[][] matrix) {
         return null;

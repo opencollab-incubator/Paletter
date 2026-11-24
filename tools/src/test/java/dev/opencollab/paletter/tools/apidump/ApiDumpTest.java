@@ -59,7 +59,7 @@ class ApiDumpTest {
         // Public, protected, constants, generics
         for (String listed : List.of("public static final int LIMIT = 4", "protected int level", "protected static final class fix.api.Widget$Guarded",
             "public static class fix.api.Widget$Nested", "public sealed interface fix.api.Shape permits fix.api.Circle, fix.api.Square",
-            "@Deprecated public void old()", "@Experimental public java.lang.String[] experimental(int[][])",
+            "@Deprecated public void old()", "@Deprecated(forRemoval = true, since = \"0.9\") public void doomed()", "@Experimental public java.lang.String[] experimental(int[][])",
             "public java.lang.Object raw(java.util.List<?>)")) {
             assertTrue(dump.contains(listed), listed + " is API:\n" + dump);
         }
