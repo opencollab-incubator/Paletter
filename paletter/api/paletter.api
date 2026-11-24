@@ -459,17 +459,19 @@ public final class dev.opencollab.paletter.block.BlockHashes {
     public static int hash(org.cloudburstmc.nbt.NbtMap)
 }
 
-public record dev.opencollab.paletter.block.BlockProperty<T> extends java.lang.Record {
-    public <init>(java.lang.String, dev.opencollab.paletter.block.BlockProperty$Type, java.util.List<T>)
+public final class dev.opencollab.paletter.block.BlockProperty<T> {
     public static dev.opencollab.paletter.block.BlockProperty<java.lang.Byte> bool(java.lang.String)
-    public static dev.opencollab.paletter.block.BlockProperty<java.lang.Byte> bools(java.lang.String, boolean...)
-    public final boolean equals(java.lang.Object)
-    public final int hashCode()
-    public static dev.opencollab.paletter.block.BlockProperty<java.lang.Integer> ints(java.lang.String, java.lang.Integer...)
+    public static dev.opencollab.paletter.block.BlockProperty<java.lang.Byte> bools(java.lang.String, java.util.List<java.lang.Boolean>)
+    public static dev.opencollab.paletter.block.BlockProperty<java.lang.Byte> bools(java.lang.String, boolean, boolean...)
+    public boolean equals(java.lang.Object)
+    public int hashCode()
+    public static dev.opencollab.paletter.block.BlockProperty<java.lang.Integer> ints(java.lang.String, int, int...)
+    public static dev.opencollab.paletter.block.BlockProperty<java.lang.Integer> ints(java.lang.String, java.util.List<java.lang.Integer>)
     public java.lang.String name()
     public static dev.opencollab.paletter.block.BlockProperty<java.lang.Integer> range(java.lang.String, int, int)
-    public static dev.opencollab.paletter.block.BlockProperty<java.lang.String> strings(java.lang.String, java.lang.String...)
-    public final java.lang.String toString()
+    public static dev.opencollab.paletter.block.BlockProperty<java.lang.String> strings(java.lang.String, java.lang.String, java.lang.String...)
+    public static dev.opencollab.paletter.block.BlockProperty<java.lang.String> strings(java.lang.String, java.util.List<java.lang.String>)
+    public java.lang.String toString()
     public dev.opencollab.paletter.block.BlockProperty$Type type()
     public java.util.List<T> values()
 }
@@ -547,13 +549,14 @@ public static final class dev.opencollab.paletter.block.CustomBlock$Builder {
     public dev.opencollab.paletter.block.CustomBlock$Builder trait(dev.opencollab.paletter.block.component.BlockTrait)
 }
 
-public record dev.opencollab.paletter.block.CustomBlock$Permutation {
-    public <init>(java.lang.String, java.util.List<dev.opencollab.paletter.block.component.BlockComponent>)
+public static final class dev.opencollab.paletter.block.CustomBlock$Permutation {
     public java.util.List<dev.opencollab.paletter.block.component.BlockComponent> components()
     public java.lang.String condition()
-    public final boolean equals(java.lang.Object)
-    public final int hashCode()
-    public final java.lang.String toString()
+    public boolean equals(java.lang.Object)
+    public int hashCode()
+    public static dev.opencollab.paletter.block.CustomBlock$Permutation of(java.lang.String, dev.opencollab.paletter.block.component.BlockComponent, dev.opencollab.paletter.block.component.BlockComponent...)
+    public static dev.opencollab.paletter.block.CustomBlock$Permutation of(java.lang.String, java.util.List<? extends dev.opencollab.paletter.block.component.BlockComponent>)
+    public java.lang.String toString()
 }
 
 public final class dev.opencollab.paletter.block.RegisteredBlockState implements org.cloudburstmc.protocol.bedrock.data.definitions.BlockDefinition {

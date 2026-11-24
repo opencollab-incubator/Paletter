@@ -171,7 +171,7 @@ public final class RegisteredBlock {
             List<Object> list = new ArrayList<>(values.get(i));
             BlockProperty.Type type = list.getFirst() instanceof Byte ? BlockProperty.Type.BOOLEAN
                 : list.getFirst() instanceof Integer ? BlockProperty.Type.INTEGER : BlockProperty.Type.STRING;
-            result.add(new BlockProperty<>(names.get(i), type, list));
+            result.add(BlockProperty.of(names.get(i), type, list));
         }
         return Collections.unmodifiableList(result);
     }

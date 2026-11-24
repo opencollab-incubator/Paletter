@@ -12,6 +12,7 @@ import dev.opencollab.paletter.block.component.EmbeddedVisual;
 import dev.opencollab.paletter.block.component.Geometry;
 import dev.opencollab.paletter.block.component.ItemVisual;
 import dev.opencollab.paletter.block.component.BlockMenuCategory;
+import dev.opencollab.paletter.block.component.BlockTags;
 import dev.opencollab.paletter.block.component.UvLock;
 import dev.opencollab.paletter.creative.CreativeCategory;
 import dev.opencollab.paletter.creative.CreativePlacement;
@@ -22,10 +23,12 @@ import dev.opencollab.paletter.vanilla.BedrockBlockType;
 import dev.opencollab.paletter.vanilla.BedrockItemType;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 import java.util.function.UnaryOperator;
 
 /**
@@ -262,23 +265,98 @@ public final class CustomBlock {
     }
 
     /**
-     * An entry of {@code permutations}.
+     * An entry of {@code permutations}: components applied when a Molang condition on the state holds. A final class, not a
+     * record, so that it can grow with Bedrock (docs/api.md, "Evolution").
      *
-     * @param condition a Molang condition, e.g. {@code q.block_state('geyser:lit') == 1}
-     * @param components the components applied when it holds
+     * @since 1.0.0
      */
-    public record Permutation(@NonNull String condition, @NonNull List<BlockComponent> components) {
-        /**
-         * Creates a permutation; the components are copied.
-         *
-         * @throws NullPointerException if {@code condition} is null
-         * @throws IllegalArgumentException if two components have the same name
-         */
-        public Permutation {
-            Objects.requireNonNull(condition, "condition");
-            components = List.copyOf(components);
-            checkUnique("permutation '" + condition + "'", components);
+    public static final class Permutation {
+        private final String condition;
+        private final List<BlockComponent> components;
+
+        private Permutation(String condition, List<? extends BlockComponent> components) {
+            this.condition = Objects.requireNonNull(condition, "condition");
+            this.components = List.copyOf(components);
+            checkUnique("permutation '" + condition + "'", this.components);
+            for (BlockComponent component : this.components) {
+                if (component instanceof BlockTags) {
+                    // BDS sends minecraft:tags as the block's top level blockTags; a permutation has no such field
+                    throw new IllegalArgumentException("permutation '" + condition + "' has minecraft:tags: block tags belong"
+                        + " to the block, not to a permutation");
+                }
+            }
         }
+
+        /**
+         * Creates a permutation.
+         *
+         * @param condition a Molang condition, e.g. {@code q.block_state('example:lit')}
+         * @param components the components applied when it holds, one per component name
+         * @return the permutation
+         * @throws NullPointerException if an argument or a component is null
+         * @throws IllegalArgumentException if two components have the same name, or one is {@code minecraft:tags}
+         */
+        public static @NonNull Permutation of(@NonNull String condition, @NonNull List<? extends BlockComponent> components) {
+            return new Permutation(condition, components);
+        }
+
+        /**
+         * Creates a permutation.
+         *
+         * @param condition a Molang condition, e.g. {@code q.block_state('example:lit')}
+         * @param first the first component applied when it holds
+         * @param rest the other components, one per component name
+         * @return the permutation
+         * @throws NullPointerException if an argument or a component is null
+         * @throws IllegalArgumentException if two components have the same name, or one is {@code minecraft:tags}
+         */
+        public static @NonNull Permutation of(@NonNull String condition, @NonNull BlockComponent first, @NonNull BlockComponent... rest) {
+            List<BlockComponent> components = new ArrayList<>(rest.length + 1);
+            components.add(first);
+            components.addAll(Arrays.asList(rest));
+            return new Permutation(condition, components);
+        }
+
+        /**
+         * Returns the condition.
+         *
+         * @return a Molang condition, e.g. {@code q.block_state('example:lit') == 1}
+         */
+        public @NonNull String condition() {
+            return condition;
+        }
+
+        /**
+         * Returns the components.
+         *
+         * @return the components applied when the condition holds, in the order they were given
+         */
+        public @NonNull List<BlockComponent> components() {
+            return components;
+        }
+
+        /**
+         * @return true for a permutation with the same condition and components, in any order
+         */
+        @Override
+        public boolean equals(Object o) {
+            return this == o || o instanceof Permutation other && condition.equals(other.condition) && sameComponents(components, other.components);
+        }
+
+        @Override
+        public int hashCode() {
+            return 31 * condition.hashCode() + Set.copyOf(components).hashCode();
+        }
+
+        @Override
+        public String toString() {
+            return "Permutation[condition=" + condition + ", components=" + components + "]";
+        }
+    }
+
+    /** Components are one per name: two lists are the same components in any order. */
+    static boolean sameComponents(List<?> a, List<?> b) {
+        return a.size() == b.size() && Set.copyOf(a).equals(Set.copyOf(b));
     }
 
     /**
@@ -659,7 +737,7 @@ public final class CustomBlock {
          * @throws IllegalArgumentException if two components have the same name
          */
         public @NonNull Builder permutation(@NonNull String condition, @NonNull BlockComponent... components) {
-            permutations.add(new Permutation(condition, List.of(components)));
+            permutations.add(Permutation.of(condition, List.of(components)));
             return this;
         }
 

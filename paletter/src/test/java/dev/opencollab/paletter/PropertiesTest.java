@@ -6,6 +6,7 @@ import dev.opencollab.paletter.block.BlockProperty;
 import dev.opencollab.paletter.block.CustomBlock;
 import dev.opencollab.paletter.block.RegisteredBlock;
 import dev.opencollab.paletter.block.RegisteredBlockState;
+import dev.opencollab.paletter.block.component.BlockTags;
 import dev.opencollab.paletter.block.component.LightEmission;
 import dev.opencollab.paletter.creative.CreativeCategory;
 import dev.opencollab.paletter.data.DataVersion;
@@ -25,6 +26,7 @@ import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class PropertiesTest {
@@ -33,6 +35,29 @@ class PropertiesTest {
     private static CustomItem ruby() {
         return CustomItem.builder("server:ruby").menuCategory(CreativeCategory.ITEMS)
             .components(MaxStackSize.of(16)).build();
+    }
+
+    @Test
+    void blockPropertiesCheckTheirValues() {
+        assertEquals(List.of((byte) 1, (byte) 0), BlockProperty.bools("example:b", List.of(true, false)).values());
+        assertEquals(List.of(3, 1), BlockProperty.ints("example:i", List.of(3, 1)).values());
+        assertEquals(BlockProperty.strings("example:s", "a", "b"), BlockProperty.strings("example:s", List.of("a", "b")));
+        assertThrows(IllegalArgumentException.class, () -> BlockProperty.ints("example:i", List.of()));
+        assertThrows(IllegalArgumentException.class, () -> BlockProperty.ints("example:i", 1, 1));
+        assertThrows(NullPointerException.class, () -> BlockProperty.strings("example:s", java.util.Arrays.asList("a", null)));
+    }
+
+    @Test
+    void permutationsAreValuesAndRefuseTags() {
+        CustomBlock.Permutation lit = CustomBlock.Permutation.of("q.block_state('example:on')", LightEmission.of(15), MaxLight.DAMPENING);
+        assertEquals(lit, CustomBlock.Permutation.of("q.block_state('example:on')", List.of(MaxLight.DAMPENING, LightEmission.of(15))),
+            "components are one per name: their order does not matter");
+        assertThrows(IllegalArgumentException.class, () -> CustomBlock.Permutation.of("q.block_state('example:on')",
+            BlockTags.builder().value(List.of("example:tag")).build()));
+    }
+
+    private static final class MaxLight {
+        static final dev.opencollab.paletter.block.component.LightDampening DAMPENING = dev.opencollab.paletter.block.component.LightDampening.of(15);
     }
 
     @Test

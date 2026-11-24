@@ -143,6 +143,6 @@ public final class TraitStates {
     @SuppressWarnings("unchecked")
     private static BlockProperty<?> firstParts(BlockProperty<?> state, int parts) {
         List<Integer> values = ((List<Integer>) state.values()).subList(0, parts);
-        return BlockProperty.ints(state.name(), values.toArray(Integer[]::new));
+        return BlockProperty.ints(state.name(), values);
     }
 }

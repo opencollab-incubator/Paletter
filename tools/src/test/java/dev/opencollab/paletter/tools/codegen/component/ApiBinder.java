@@ -168,7 +168,7 @@ public final class ApiBinder {
                 }
                 List<BlockComponent> components = permutation.has("components")
                     ? blockComponents(permutation.getAsJsonObject("components")) : List.of();
-                builder.permutation(new CustomBlock.Permutation(permutation.get("condition").getAsString(), components));
+                builder.permutation(CustomBlock.Permutation.of(permutation.get("condition").getAsString(), components));
             }
         }
         return builder.build();
@@ -222,16 +222,12 @@ public final class ApiBinder {
         }
         JsonPrimitive first = array.get(0).getAsJsonPrimitive();
         if (first.isBoolean()) {
-            boolean[] bools = new boolean[array.size()];
-            for (int i = 0; i < bools.length; i++) {
-                bools[i] = array.get(i).getAsBoolean();
-            }
-            return BlockProperty.bools(name, bools);
+            return BlockProperty.bools(name, array.asList().stream().map(JsonElement::getAsBoolean).toList());
         }
         if (first.isNumber()) {
-            return BlockProperty.ints(name, array.asList().stream().map(JsonElement::getAsInt).toArray(Integer[]::new));
+            return BlockProperty.ints(name, array.asList().stream().map(JsonElement::getAsInt).toList());
         }
-        return BlockProperty.strings(name, array.asList().stream().map(JsonElement::getAsString).toArray(String[]::new));
+        return BlockProperty.strings(name, array.asList().stream().map(JsonElement::getAsString).toList());
     }
 
     // ---- Records -------------------------------------------------------------------------------------------------------

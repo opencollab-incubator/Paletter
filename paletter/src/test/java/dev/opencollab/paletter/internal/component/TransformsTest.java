@@ -514,8 +514,8 @@ class TransformsTest {
     @Test
     void permutationComponents() {
         WireNode block = new WireNode();
-        Transforms.permutationComponents(ctx, block, new CustomBlock.Permutation("q.block_state('a')", List.of(LightEmission.of(15))));
-        Transforms.permutationComponents(ctx, block, new CustomBlock.Permutation("q.block_state('b')", List.of()));
+        Transforms.permutationComponents(ctx, block, CustomBlock.Permutation.of("q.block_state('a')", List.of(LightEmission.of(15))));
+        Transforms.permutationComponents(ctx, block, CustomBlock.Permutation.of("q.block_state('b')", List.of()));
         NbtList<NbtMap> permutations = (NbtList<NbtMap>) block.build().getList("permutations", NbtType.COMPOUND);
         assertEquals(1, permutations.size(), "a permutation without components is not sent");
         assertEquals((byte) 15, permutations.getFirst().getCompound("components").getCompound("minecraft:light_emission").getByte("emission"));
