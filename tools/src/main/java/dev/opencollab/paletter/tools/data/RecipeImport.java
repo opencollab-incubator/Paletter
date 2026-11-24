@@ -14,6 +14,7 @@ import dev.opencollab.paletter.tools.Versions;
 import dev.opencollab.paletter.tools.Layout;
 import dev.opencollab.paletter.tools.client.RecipeCapture;
 import dev.opencollab.paletter.tools.codegen.constants.ConstantsGenerator;
+import dev.opencollab.paletter.tools.update.BuildHistory;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -37,7 +38,8 @@ import java.util.stream.Stream;
  * {@code recipes-import}: the recipe captures of {@code data/bds/<build>/vanilla} ({@code crafting_data.json.gz},
  * {@code trim_data.json}) to the bundled {@code recipes/<data version>.nbt} of the {@code paletter-recipes} module, in the
  * format {@code RecipeBundle} reads. A capture belongs to the data version of its protocol (the one in the build's
- * {@code experiments.json}); of several captures of a version the last build counts. Items stay the identifiers and aux
+ * {@code experiments.json}); of several captures of a version the last build counts
+ * that a history check did not keep. Items stay the identifiers and aux
  * values BDS sent; net ids and UUIDs (except the fixed ones of the multi recipes) are left out. The bundle also holds the trim
  * patterns and materials, which the library does not expose. {@code RecipeStations} is generated from the stations of the captures.
  * <p>
@@ -58,9 +60,13 @@ public final class RecipeImport {
     private RecipeImport() {
     }
 
-    /** The capture directory (a build's {@code vanilla}) each data version's bundle comes from, by data version name; the newest build of a version wins. */
+    /**
+     * The capture directory (a build's {@code vanilla}) each data version's bundle comes from, by data version name: the
+     * newest build of a version that a history check did not keep (the build the version was imported from), else the newest.
+     */
     public static Map<String, Path> captures(Path root) throws IOException {
         List<ConstantsGenerator.Bundle> versions = ConstantsGenerator.readIndex(root.resolve(ConstantsGenerator.DATA));
+        Set<String> historyKept = BuildHistory.keptByHistoryCheck(root);
         Map<String, Path> builds = new TreeMap<>();
         try (Stream<Path> list = Files.list(root.resolve(Layout.BDS))) {
             for (Path build : list.filter(Files::isDirectory).sorted(Comparator.comparing(path -> path.getFileName().toString(), Versions.ORDER)).toList()) {
@@ -69,12 +75,17 @@ public final class RecipeImport {
                     JsonObject json = Json.objectOrEmpty(record);
                     String version = ConstantsGenerator.Sources.releaseOf(versions, json.get("protocol").getAsInt());
                     if (version != null) {
-                        builds.put(version, build.resolve("vanilla"));
+                        builds.merge(version, build.resolve("vanilla"), (before, newer) -> historyKept.contains(buildOf(newer))
+                            && !historyKept.contains(buildOf(before)) ? before : newer);
                     }
                 }
             }
         }
         return builds;
+    }
+
+    private static String buildOf(Path vanilla) {
+        return vanilla.getParent().getFileName().toString();
     }
 
     /** The bundles the captures give, by data version name. */

@@ -323,6 +323,20 @@ public final class BuildHistory {
     // ---------------------------------------------------------------------------------------------------------------
     // The record
 
+    /**
+     * The builds a history check kept: never the build a data version was imported from, so the imports that pick a capture
+     * per data version prefer the other builds of its window (like {@code SpecCaptures.windowCaptures} and {@link BuildTable}).
+     */
+    public static java.util.Set<String> keptByHistoryCheck(Path root) throws IOException {
+        java.util.Set<String> builds = new java.util.TreeSet<>(Versions.ORDER);
+        read(root).forEach((build, entry) -> {
+            if (entry.keptByHistoryCheck()) {
+                builds.add(build);
+            }
+        });
+        return builds;
+    }
+
     /** The builds of the record, oldest first. */
     public static Map<String, Entry> read(Path root) throws IOException {
         Map<String, Entry> builds = new TreeMap<>(Versions.ORDER);

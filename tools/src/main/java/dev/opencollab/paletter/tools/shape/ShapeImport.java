@@ -10,9 +10,11 @@ import dev.opencollab.paletter.internal.data.PaletteDataCodec;
 import dev.opencollab.paletter.internal.shape.VoxelGrid;
 import dev.opencollab.paletter.internal.shape.VoxelShapeStore;
 import dev.opencollab.paletter.tools.Layout;
+import dev.opencollab.paletter.tools.Versions;
 import dev.opencollab.paletter.tools.client.VoxelShapeCapture;
 import dev.opencollab.paletter.tools.codegen.GeneratedSources;
 import dev.opencollab.paletter.tools.codegen.constants.ConstantsGenerator;
+import dev.opencollab.paletter.tools.update.BuildHistory;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -25,6 +27,7 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.stream.Stream;
@@ -33,7 +36,8 @@ import java.util.zip.GZIPInputStream;
 /**
  * {@code voxel-shapes import}: the captures of {@code data/bds/<build>/voxel-shapes} ({@link ShapeProbe}) to the
  * generated shape classes ({@link ShapeCode}, the {@link VoxelShapeStore} the bundled data source serves). Per bundled
- * data version, from the newest capture of its protocols:
+ * data version, from the newest capture of its protocols that a history check did not keep (the build the version was
+ * imported from; the newest of all when a history check kept every one):
  * <ul>
  *     <li>the shapes and names of the vanilla packet, as sent;</li>
  *     <li>for every shape without a name the vanilla block BDS makes it for, read from the anchor capture: the shape
@@ -81,7 +85,7 @@ public final class ShapeImport {
                 }
             }
         }
-        captures.sort(Comparator.comparingInt(Captured::protocol).thenComparing(Captured::bdsVersion));
+        captures.sort(Comparator.comparingInt(Captured::protocol).thenComparing(Captured::bdsVersion, Versions.ORDER));
         return captures;
     }
 
@@ -89,6 +93,7 @@ public final class ShapeImport {
     public static VoxelShapeStore store(Path root) throws IOException {
         Path data = root.resolve(ConstantsGenerator.DATA);
         List<ConstantsGenerator.Bundle> bundles = ConstantsGenerator.readIndex(data);
+        Set<String> historyKept = BuildHistory.keptByHistoryCheck(root);
         Map<String, Captured> byVersion = new TreeMap<>();
         for (Captured capture : captures(root)) {
             ConstantsGenerator.Bundle version = null;
@@ -98,8 +103,9 @@ public final class ShapeImport {
                 }
             }
             if (version != null) {
-                // The newest capture of a version wins
-                byVersion.put(version.name(), capture);
+                // The newest capture of a version wins, unless only a history check kept it and not the one before
+                byVersion.merge(version.name(), capture, (before, newer) ->
+                    historyKept.contains(newer.bdsVersion()) && !historyKept.contains(before.bdsVersion()) ? before : newer);
             }
         }
         List<VoxelShapeStore.Registry> registries = new ArrayList<>();
