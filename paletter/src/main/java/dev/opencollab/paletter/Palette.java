@@ -520,7 +520,9 @@ public final class Palette {
      * @param lookup whether the state must exist as is in this palette's version, see {@link Lookup}
      * @return its key, or null if the lookup does not accept the state: it is newer than this palette's version,
      *         removed, or behind an experiment this palette does not enable (see {@link #explainUnknown(NbtMap, Lookup)}).
-     *         Custom blocks of the palette's layers are always accepted
+     *         Custom blocks of the palette's layers are always accepted. With {@link Lookup#EXACT} the key round trips:
+     *         {@code blockDefinition(key)} is the state's own block (null if no key is sent as it, e.g. a state whose
+     *         block the newest data renamed)
      * @since 1.0.0
      */
     public @Nullable BedrockBlockState blockState(@NonNull NbtMap state, @NonNull Lookup lookup) {
@@ -534,6 +536,12 @@ public final class Palette {
         }
         if (!(newestVersion ? id != -1 : inVersion(state)) && (lookup == Lookup.EXACT || id != -1)) {
             return null;
+        }
+        if (id == -1 && lookup == Lookup.EXACT) {
+            // A state of this version that the newest data lacks: its forward mapping may be sent as another block here
+            // (a renamed block this version does not have), so the key is the one this palette sends as exactly the state
+            int sent = blocks.canonical(blocks.exact(state));
+            return sent == -1 || blocks.isFallback(sent) ? null : canonical.handle(sent);
         }
         return canonical.handle(Canonicals.lookupBlock(canonical, state));
     }

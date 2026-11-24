@@ -163,6 +163,19 @@ class LookupTest {
     }
 
     @Test
+    void exactKeysOfEveryVersionRoundTrip() {
+        for (DataVersion version : PALETTER.versions()) {
+            Palette palette = PALETTER.palette(version);
+            for (NbtMap state : palette.vanillaData().blockStates()) {
+                BedrockBlockState key = palette.blockState(state, Lookup.EXACT);
+                if (key != null) {
+                    assertSame(palette.blocks().exact(state), palette.blockDefinition(key), version + " " + state);
+                }
+            }
+        }
+    }
+
+    @Test
     void customBlockTypesAreFound() {
         CustomBlock lamp = CustomBlock.builder("lookup:lamp").property(dev.opencollab.paletter.block.BlockProperty.bool("lookup:lit")).build();
         Palette extended = LATEST.extend(PaletteLayer.builder("custom-types").block(lamp).build());
