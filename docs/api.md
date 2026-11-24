@@ -194,8 +194,9 @@ version.
 
 What still happens on first use, and is thread safe (built once under a lock, read without one):
 
-- `Paletter.bundled()` builds the shared instance on its first call; `vanilla(version)` of a version that is not served
-  compiles it on its first call.
+- `Paletter.bundled()` builds the shared instance on its first call: every bundled release with behaviour, kept for the
+  life of the JVM. It is for tools and tests; a server builds its own Paletter with the versions it serves.
+  `vanilla(version)` and `palette(version)` only take served versions, so nothing else compiles later.
 - `Palette#extend(layer)` compiles the extension when called (and caches it per layer); the behaviour columns of the
   states it adds are built on the first value asked for, from data already loaded.
 - A `ResolvedBlock` is made, once, the first time its state is resolved (one small object, nothing is read).

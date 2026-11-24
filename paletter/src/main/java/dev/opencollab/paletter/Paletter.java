@@ -53,8 +53,8 @@ import java.util.function.Predicate;
  * Palette sessionPalette = palette.extend(sessionLayer);
  * }</pre>
  * {@link Builder#build()} compiles the palette of every served version, with everything its lookups use, so no later
- * call waits for data ({@link #vanilla(DataVersion)} of a version that is not served compiles on its first call, and
- * {@link Palette#extend} compiles when called). Instances are thread safe. Block states and item components that are equal
+ * call waits for data ({@link Palette#extend} compiles when called). Narrow the versions with
+ * {@link Builder#versions(Predicate)}: every served version costs its palette's memory for the life of the instance. Instances are thread safe. Block states and item components that are equal
  * across versions are the same instances. Share one instance for the whole application: every per-version palette it
  * compiles is cached in it.
  * <p>
@@ -141,8 +141,10 @@ public final class Paletter {
     /**
      * Returns the shared Paletter over the data bundled in the library, with the defaults of {@link #builder()}.
      * <p>
-     * Its first call compiles every bundled version, behaviour included, and the instance is kept for the life of the
-     * JVM. To look up versions only, use {@link #bundledVersions()} or {@link #bundledVersion(int)}, which compile nothing.
+     * A convenience for tools and tests, not for servers: its first call compiles every bundled release, behaviour
+     * included (tens of megabytes, seconds of CPU), and the instance is kept for the life of the JVM. A server builds its
+     * own with the versions it serves. To look up versions only, use {@link #bundledVersions()} or
+     * {@link #bundledVersion(int)}, which compile nothing.
      *
      * @return a Paletter reading the data bundled in the library
      * @since 1.0.0
@@ -438,15 +440,21 @@ public final class Paletter {
     // ---- Palettes ----
 
     /**
-     * Returns the vanilla palette of a version, compiled once and cached.
+     * Returns the vanilla palette of a version this instance serves: compiled by {@link Builder#build()}, as the base of
+     * the version's {@link #palette(DataVersion) palette}.
      *
-     * @param version a data version of this instance's data source
+     * @param version a data version of {@link #versions()}
      * @return the plain vanilla palette of a data version (with this instance's fallbacks and vanilla content, but
      *         without its layers)
-     * @throws java.io.UncheckedIOException if the data of the version cannot be read
+     * @throws IllegalArgumentException if this instance does not serve the version: build a Paletter that does
      * @since 1.0.0
      */
     public @NonNull Palette vanilla(@NonNull DataVersion version) {
+        requireServed(version);
+        return vanillaPalette(version);
+    }
+
+    private Palette vanillaPalette(DataVersion version) {
         return vanilla.computeIfAbsent(version,
             key -> PaletteCompiler.vanilla(vanillaData(key), canonicalBlocks(), canonicalItems(), blockInterner,
                 fallbacks, vanillaContent, creativeOrdering, behaviour ? VanillaBehaviour::bundled : Paletter::noBehaviour,
@@ -462,33 +470,35 @@ public final class Paletter {
     }
 
     /**
-     * Finds the key of a vanilla item type in the newest data of this instance. The name an older version gave an item
-     * finds it too (see {@link Lookup#RENAMED}). Content of this instance's layers is not found: use the {@code type()} of
-     * the custom item.
+     * Finds the key of a vanilla item type in the newest data this instance serves, as
+     * {@code vanilla(latest()).itemType(identifier, lookup)}. Content of this instance's layers is not found: use the
+     * {@code type()} of the custom item.
      *
      * @param identifier an item identifier
-     * @return the item type, or null if the newest data has no such item
-     * @throws NullPointerException if the identifier is null
-     * @throws java.io.UncheckedIOException if the data of the newest version cannot be read
+     * @param lookup whether the item must exist as is in the newest version, or may have an older version's name (see
+     *               {@link Lookup})
+     * @return the item type, or null if the lookup does not accept the identifier
+     * @throws NullPointerException if an argument is null
      * @since 1.0.0
      */
-    public @Nullable BedrockItemType itemType(@NonNull String identifier) {
-        return vanilla(latest()).itemType(Objects.requireNonNull(identifier), Lookup.RENAMED);
+    public @Nullable BedrockItemType itemType(@NonNull String identifier, @NonNull Lookup lookup) {
+        return vanilla(latest()).itemType(Objects.requireNonNull(identifier), Objects.requireNonNull(lookup));
     }
 
     /**
-     * Finds the key of a vanilla block type in the newest data of this instance. The name an older version gave a block
-     * finds it too (see {@link Lookup#RENAMED}). Content of this instance's layers is not found: use the {@code type()}
-     * of the custom block.
+     * Finds the key of a vanilla block type in the newest data this instance serves, as
+     * {@code vanilla(latest()).blockType(identifier, lookup)}. Content of this instance's layers is not found: use the
+     * {@code type()} of the custom block.
      *
      * @param identifier a block identifier
-     * @return the block type, or null if the newest data has no such block
-     * @throws NullPointerException if the identifier is null
-     * @throws java.io.UncheckedIOException if the data of the newest version cannot be read
+     * @param lookup whether the block must exist as is in the newest version, or may have an older version's name (see
+     *               {@link Lookup})
+     * @return the block type, or null if the lookup does not accept the identifier
+     * @throws NullPointerException if an argument is null
      * @since 1.0.0
      */
-    public @Nullable BedrockBlockType blockType(@NonNull String identifier) {
-        return vanilla(latest()).blockType(Objects.requireNonNull(identifier), Lookup.RENAMED);
+    public @Nullable BedrockBlockType blockType(@NonNull String identifier, @NonNull Lookup lookup) {
+        return vanilla(latest()).blockType(Objects.requireNonNull(identifier), Objects.requireNonNull(lookup));
     }
 
     /**
@@ -634,7 +644,7 @@ public final class Paletter {
         boolean[] created = {false};
         Palette palette = compiled.computeIfAbsent(version, v -> {
             created[0] = true;
-            Palette result = vanilla(v);
+            Palette result = vanillaPalette(v);
             for (PaletteLayer layer : globalLayers) {
                 result = PaletteCompiler.extend(result, layer);
             }
@@ -661,9 +671,7 @@ public final class Paletter {
     /**
      * Once every palette this instance serves is compiled, drops what only compiling them uses (about 2.8 MB with the
      * bundled data): the properties the data source put into the data of each version, the value sets that forward
-     * and resolve states of other versions, and the maps that share blocks and pages between versions. What a palette
-     * compiled later needs is built again: a version not served ({@link #vanilla(DataVersion)}) loads and compiles as
-     * before, only its blocks and pages are copies of its own (see {@link BlockInterner#releaseCompileMaps()}).
+     * and resolve states of other versions, and the maps that share blocks and pages between versions.
      * {@link Palette#extend} does not use any of it. The data source and the canonical ids may be shared with other
      * Paletters over the bundled data: they read or build what they need again.
      */

@@ -22,6 +22,7 @@ import java.util.function.Function;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
@@ -99,16 +100,10 @@ class CompileDataReleaseTest {
     }
 
     @Test
-    void aVersionCompiledAfterTheReleaseIsTheSame() {
+    void aVersionThatIsNotServedIsNotCompiled() {
         Paletter paletter = released();
-        Palette late = paletter.vanilla(OLDEST);
-        PaletteComparison.assertSameContent(lazy(Paletter.builder()).vanilla(OLDEST), late);
-        // Its vanilla states are those of the other versions, only its blocks and pages are its own
-        assertSame(paletter.palette(paletter.latest().protocolVersion()).blockDefinition(BedrockBlocks.AIR.defaultState()),
-            late.blockDefinition(BedrockBlocks.AIR.defaultState()));
-        // And extending it works too
-        PaletteComparison.assertSameContent(lazy(Paletter.builder()).vanilla(OLDEST).extend(sessionLayer("late")),
-            late.extend(sessionLayer("late")));
+        assertThrows(IllegalArgumentException.class, () -> paletter.vanilla(OLDEST));
+        assertThrows(IllegalArgumentException.class, () -> paletter.palette(OLDEST));
     }
 
     @Test

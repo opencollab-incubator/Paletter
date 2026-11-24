@@ -1,5 +1,6 @@
 package dev.opencollab.paletter.vanilla;
 
+import dev.opencollab.paletter.Lookup;
 import dev.opencollab.paletter.Paletter;
 import dev.opencollab.paletter.internal.data.Renames;
 import org.junit.jupiter.api.Test;
@@ -56,11 +57,11 @@ class ByIdentifierTest {
     @Test
     void paletterResolvesTypesAgainstItsNewestData() {
         Paletter paletter = Paletter.bundled();
-        assertSame(BedrockItems.APPLE, paletter.itemType("minecraft:apple"));
-        assertSame(BedrockBlocks.STONE, paletter.blockType("minecraft:stone"));
-        assertNull(paletter.itemType("nobody:item"));
-        assertNull(paletter.blockType("nobody:block"));
-        assertThrows(NullPointerException.class, () -> paletter.itemType(null));
-        assertThrows(NullPointerException.class, () -> paletter.blockType(null));
+        assertSame(BedrockItems.APPLE, paletter.itemType("minecraft:apple", Lookup.RENAMED));
+        assertSame(BedrockBlocks.STONE, paletter.blockType("minecraft:stone", Lookup.EXACT));
+        assertNull(paletter.itemType("nobody:item", Lookup.RENAMED));
+        assertNull(paletter.blockType("nobody:block", Lookup.RENAMED));
+        assertThrows(NullPointerException.class, () -> paletter.itemType(null, Lookup.EXACT));
+        assertThrows(NullPointerException.class, () -> paletter.blockType(null, Lookup.EXACT));
     }
 }
