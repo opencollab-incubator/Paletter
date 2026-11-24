@@ -2525,19 +2525,18 @@ public sealed interface dev.opencollab.paletter.creative.ItemMatcher permits dev
     public static dev.opencollab.paletter.creative.ItemMatcher of(java.lang.String, java.util.function.Predicate<dev.opencollab.paletter.item.BedrockItemStack>)
 }
 
-public record dev.opencollab.paletter.data.DataVersion extends java.lang.Record implements java.lang.Comparable<dev.opencollab.paletter.data.DataVersion> {
-    public <init>(java.lang.String, int)
-    public <init>(java.lang.String, int, boolean)
-    public <init>(java.lang.String, int, boolean, java.lang.Integer)
+public final class dev.opencollab.paletter.data.DataVersion implements java.lang.Comparable<dev.opencollab.paletter.data.DataVersion> {
     public java.lang.Integer codecProtocol()
     public int compareTo(dev.opencollab.paletter.data.DataVersion)
     public boolean equals(java.lang.Object)
     public int hashCode()
     public boolean isPreview()
     public java.lang.String name()
-    public boolean preview()
+    public static dev.opencollab.paletter.data.DataVersion of(java.lang.String, int)
+    public static dev.opencollab.paletter.data.DataVersion preview(java.lang.String, int)
     public int protocolVersion()
     public java.lang.String toString()
+    public dev.opencollab.paletter.data.DataVersion withCodecProtocol(java.lang.Integer)
 }
 
 public interface dev.opencollab.paletter.data.PaletteDataSource {

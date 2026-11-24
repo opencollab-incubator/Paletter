@@ -35,7 +35,7 @@ public final class BundledFiles {
 
     /** The bundled version {@code name} from the library jar. */
     public static VanillaData bundled(String name) throws IOException {
-        return dev.opencollab.paletter.data.PaletteDataSource.bundled().load(new dev.opencollab.paletter.data.DataVersion(name, 0));
+        return dev.opencollab.paletter.data.PaletteDataSource.bundled().load(dev.opencollab.paletter.data.DataVersion.of(name, 0));
     }
 
     /** The name of the newest bundled release version (what {@code versions.txt} lists last, previews left out). */

@@ -26,9 +26,9 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class BehaviourImportTest {
-    private static final DataVersion V1 = new DataVersion("1.0", 10);
-    private static final DataVersion V2 = new DataVersion("2.0", 20);
-    private static final DataVersion V3 = new DataVersion("3.0", 30);
+    private static final DataVersion V1 = DataVersion.of("1.0", 10);
+    private static final DataVersion V2 = DataVersion.of("2.0", 20);
+    private static final DataVersion V3 = DataVersion.of("3.0", 30);
 
     /** V1 has states 1-100, V2 adds 101, V3 has the same states as V2. */
     private static List<BehaviourImport.Bundled> bundled() {

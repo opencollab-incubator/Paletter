@@ -14,8 +14,9 @@ import dev.opencollab.paletter.data.DataVersion;
  * @since 1.0.0
  */
 public final class PaletteException extends RuntimeException {
-    /** The data version of the palette, or null. */
-    private final DataVersion version;
+    private static final long serialVersionUID = 1L;
+    /** The data version of the palette, or null; not serialized. */
+    private final transient DataVersion version;
     /** The id of the layer, or null. */
     private final String layer;
     /** The identifier of the content, or null. */

@@ -61,7 +61,7 @@ public final class BlockGeneratorFixture {
 
     /** A version file of a palette, with its block states, as an import writes it. */
     public static void write(Path file, String version, int protocol, BlockDefinitions.Palette palette) throws IOException {
-        VanillaData data = new VanillaData(new DataVersion(version, protocol), palette.states(), List.of(), List.of(), RawLayout.of(Map.of()),
+        VanillaData data = new VanillaData(DataVersion.of(version, protocol), palette.states(), List.of(), List.of(), RawLayout.of(Map.of()),
             Map.of(), VersionFallbacks.NONE, palette.defaults());
         try (OutputStream out = Files.newOutputStream(file)) {
             PaletteDataCodec.write(data, out, true);

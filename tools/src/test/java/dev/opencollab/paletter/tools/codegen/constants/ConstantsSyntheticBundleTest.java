@@ -118,7 +118,7 @@ class ConstantsSyntheticBundleTest {
             RawStack.of("minecraft:potion").withDamage(7)));
         List<NbtMap> states = new ArrayList<>();
         blocks.forEach(states::addAll);
-        return new VanillaData(new DataVersion(name, protocol), states, items, List.of(), RawLayout.of(creative), Map.of(),
+        return new VanillaData(DataVersion.of(name, protocol), states, items, List.of(), RawLayout.of(creative), Map.of(),
             VersionFallbacks.NONE, Map.of());
     }
 

@@ -140,7 +140,7 @@ final class BehaviourCode {
         model.store.captures().forEach(c -> versions.putIfAbsent(c.version().name(), c.version()));
         model.versions.forEach(v -> versions.putIfAbsent(v.version().name(), v.version()));
         names.versions.forEach((name, constant) -> type.addField(FieldSpec.builder(DATA_VERSION, constant, Modifier.STATIC, Modifier.FINAL)
-            .initializer("new $T($S, $L)", DATA_VERSION, name, versions.get(name).protocolVersion()).build()));
+            .initializer("$T.of($S, $L)", DATA_VERSION, name, versions.get(name).protocolVersion()).build()));
         for (BehaviourStore.Capture capture : model.store.captures()) {
             type.addField(FieldSpec.builder(BehaviourSetters.CAPTURE, names.captures.get(capture.index()), Modifier.STATIC, Modifier.FINAL)
                 .addJavadoc("$L$L.\n", BehaviourComments.safe(BehaviourComments.label(capture)), capture.source().thirdParty() ? " (third party)" : "")

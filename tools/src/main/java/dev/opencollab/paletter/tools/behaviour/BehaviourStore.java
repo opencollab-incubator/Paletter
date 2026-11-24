@@ -683,7 +683,7 @@ public final class BehaviourStore {
             items.removeAll(entry.getList("items_removed", NbtType.STRING));
             items.addAll(entry.getList("items_added", NbtType.STRING));
             int versionIndex = versions.indexOf(entry.getString("version"));
-            Capture capture = new Capture(captures.size(), new DataVersion(versions.get(versionIndex), protocols[versionIndex]), versionIndex, source, entry.getString("reference"),
+            Capture capture = new Capture(captures.size(), DataVersion.of(versions.get(versionIndex), protocols[versionIndex]), versionIndex, source, entry.getString("reference"),
                 base, order(before, entry.getIntArray("blocks_removed"), entry.getIntArray("blocks_added")), Set.copyOf(items));
             captures.add(capture);
         }

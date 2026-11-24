@@ -37,9 +37,9 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class PropertyStoreTest {
-    private static final DataVersion V1 = new DataVersion("1.0", 100);
-    private static final DataVersion V2 = new DataVersion("1.1", 200);
-    private static final DataVersion V3 = new DataVersion("1.2", 300);
+    private static final DataVersion V1 = DataVersion.of("1.0", 100);
+    private static final DataVersion V2 = DataVersion.of("1.1", 200);
+    private static final DataVersion V3 = DataVersion.of("1.2", 300);
 
     private static NbtMap stack(int size) {
         return NbtMap.builder().putInt("max_stack_size", size).build();
@@ -130,7 +130,7 @@ class PropertyStoreTest {
         assertEquals("w", wire.value());
         assertEquals("wire:wire_key", wire.fullName());
         assertEquals(Properties.EMPTY, store.item("test:missing", V1));
-        assertEquals(Properties.EMPTY, store.item("test:a", new DataVersion("9.9", 999)));
+        assertEquals(Properties.EMPTY, store.item("test:a", DataVersion.of("9.9", 999)));
     }
 
     @Test
@@ -165,7 +165,7 @@ class PropertyStoreTest {
         VanillaData own = data(V1, List.of(), List.of(new BlockPropertyData("test:own", NbtMap.EMPTY)));
         assertEquals(own.dataDrivenBlocks(), store.attach(own).dataDrivenBlocks());
         // versions the store does not cover are not touched
-        VanillaData other = data(new DataVersion("7.0", 700), List.of(vanillaItem("test:a", null)), List.of());
+        VanillaData other = data(DataVersion.of("7.0", 700), List.of(vanillaItem("test:a", null)), List.of());
         assertEquals(other, store.attach(other));
     }
 

@@ -27,8 +27,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /** The importer writes version files and keeps {@code properties.nbt} up to date across versions. */
 class ImporterPropertiesTest {
-    private static final DataVersion A = new DataVersion("1.0", 100);
-    private static final DataVersion B = new DataVersion("1.1", 200);
+    private static final DataVersion A = DataVersion.of("1.0", 100);
+    private static final DataVersion B = DataVersion.of("1.1", 200);
 
     @TempDir
     Path directory;

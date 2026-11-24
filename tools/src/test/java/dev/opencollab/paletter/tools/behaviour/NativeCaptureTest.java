@@ -27,7 +27,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /** The reader and its merge into the importer, on the synthetic fixtures in {@code resources/native} (invented values, not BDS data). */
 class NativeCaptureTest {
-    private static final DataVersion V1 = new DataVersion("1.0", 10);
+    private static final DataVersion V1 = DataVersion.of("1.0", 10);
     private static final String BUILD = "1.0.0.1";
     private static final String CAPTURED = "synthetic-captured.json";
     private static final String NOT_CAPTURED = "synthetic-not-captured.json";

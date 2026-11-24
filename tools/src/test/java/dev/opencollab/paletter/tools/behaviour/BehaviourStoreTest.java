@@ -21,10 +21,10 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class BehaviourStoreTest {
-    private static final DataVersion V1 = new DataVersion("1", 10);
-    private static final DataVersion V2 = new DataVersion("2", 20);
-    private static final DataVersion V3 = new DataVersion("3", 30);
-    private static final DataVersion NEWER = new DataVersion("4", 40);
+    private static final DataVersion V1 = DataVersion.of("1", 10);
+    private static final DataVersion V2 = DataVersion.of("2", 20);
+    private static final DataVersion V3 = DataVersion.of("3", 30);
+    private static final DataVersion NEWER = DataVersion.of("4", 40);
     private static final BlockShape SLAB = BlockShape.of(0, 0, 0, 1, 0.5f, 1);
 
     /** V1: two sources, V2: nothing, V3: the strong source changes one value and adds a state. */
@@ -52,7 +52,7 @@ class BehaviourStoreTest {
         assertEquals(0.9f, store.block(BlockBehaviour.FRICTION, 2, NEWER).value(), "a newer unknown version inherits the newest");
         assertNull(store.block(BlockBehaviour.FRICTION, -7, V2), "added in V3");
         assertEquals(BlockShape.EMPTY, store.block(BlockBehaviour.COLLISION_SHAPE, -7, V3).value());
-        assertNull(store.block(BlockBehaviour.FRICTION, 2, new DataVersion("0", 5)), "older than every capture");
+        assertNull(store.block(BlockBehaviour.FRICTION, 2, DataVersion.of("0", 5)), "older than every capture");
     }
 
     @Test

@@ -36,14 +36,14 @@ class VanillaRecipesTest {
 
     @Test
     void aVersionWithoutABundleThrowsOrFallsBack() {
-        DataVersion unknown = new DataVersion("custom", 1);
+        DataVersion unknown = DataVersion.of("custom", 1);
         assertThrows(IllegalArgumentException.class, () -> VanillaRecipes.of(unknown));
         assertNull(VanillaRecipes.of(unknown, null));
         VanillaRecipes fallback = VanillaRecipes.of(VERSIONS.getFirst());
         assertSame(fallback, VanillaRecipes.of(unknown, fallback));
         assertSame(fallback, VanillaRecipes.of(VERSIONS.getFirst(), null));
         // Exact: the same name with another protocol is not that version
-        assertNull(VanillaRecipes.of(new DataVersion(VERSIONS.getFirst().name(), 1), null));
+        assertNull(VanillaRecipes.of(DataVersion.of(VERSIONS.getFirst().name(), 1), null));
     }
 
     @Test

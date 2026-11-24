@@ -207,7 +207,7 @@ class DiffSourceTest {
     /** The bundled data exported into the layout must verify as identical: the importer and verify agree. */
     @Test
     void bundledRoundTrip() throws Exception {
-        VanillaData data = dev.opencollab.paletter.data.PaletteDataSource.bundled().load(new DataVersion(NAME, 0));
+        VanillaData data = dev.opencollab.paletter.data.PaletteDataSource.bundled().load(DataVersion.of(NAME, 0));
         write(data, directory, true);
         Diff verify = Diff.source(directory, NAME, data, "bundled");
         assertTrue(verify.identical(), verify.markdown(20));
@@ -266,7 +266,7 @@ class DiffSourceTest {
             .putList("properties", NbtType.COMPOUND, NbtMap.builder().putString("name", "power").putList("enum", NbtType.INT, 0, 1, 2).build())
             .putCompound("vanilla_block_data", NbtMap.builder().putInt("block_id", 9000).build())
             .build()));
-        return new VanillaData(new DataVersion(NAME, 2225), states, items, dataDriven, RawLayout.of(creative), Map.of(),
+        return new VanillaData(DataVersion.of(NAME, 2225), states, items, dataDriven, RawLayout.of(creative), Map.of(),
             VersionFallbacks.NONE, Map.of());
     }
 

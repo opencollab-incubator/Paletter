@@ -19,7 +19,7 @@ class VersionIndexTest {
     @Test
     void aLineGivesTheVersionItsPreviewFlagAndCodec() {
         DataVersion release = FileDataSource.indexLine("26.60 2225");
-        assertEquals(new DataVersion("26.60", 2225), release);
+        assertEquals(DataVersion.of("26.60", 2225), release);
         assertFalse(release.isPreview());
         assertNull(release.codecProtocol());
 
@@ -27,7 +27,7 @@ class VersionIndexTest {
         assertTrue(preview.isPreview());
         assertEquals(2225, preview.codecProtocol());
         // The codec does not identify the version
-        assertEquals(new DataVersion("26.70", 2259), preview);
+        assertEquals(DataVersion.of("26.70", 2259), preview);
 
         assertEquals(2259, FileDataSource.indexLine("26.80 2300 codec=2259").codecProtocol());
     }
@@ -44,7 +44,7 @@ class VersionIndexTest {
     void aDirectorySourceReadsTheCodec(@TempDir Path directory) throws IOException {
         Files.writeString(directory.resolve("versions.txt"), "# comment\n26.60 2225\n26.70 2259 preview codec=2225\n");
         List<DataVersion> versions = PaletteDataSource.directory(directory).versions();
-        assertEquals(List.of(new DataVersion("26.60", 2225), new DataVersion("26.70", 2259)), versions);
+        assertEquals(List.of(DataVersion.of("26.60", 2225), DataVersion.of("26.70", 2259)), versions);
         assertNull(versions.getFirst().codecProtocol());
         assertEquals(2225, versions.getLast().codecProtocol());
 

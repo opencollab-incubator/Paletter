@@ -98,7 +98,7 @@ class PaletteDataCodecBlocksTest {
     void theBlockToItemRelationKeepsOnlyWhatThePaletteDoesNotGive() throws IOException {
         List<NbtMap> states = List.of(BlockStates.of("test:same"), BlockStates.of("test:other"), BlockStates.of("test:none"));
         Map<String, String> blockItems = Map.of("test:same", "test:same", "test:other", "test:item", "test:elsewhere", "test:elsewhere");
-        VanillaData data = new VanillaData(new DataVersion("1.1", 1), states, List.of(), List.of(), RawLayout.of(Map.of()), Map.of(),
+        VanillaData data = new VanillaData(DataVersion.of("1.1", 1), states, List.of(), List.of(), RawLayout.of(Map.of()), Map.of(),
             VersionFallbacks.NONE, Map.of(), Map.of(), blockItems);
         byte[] bytes = bytes(data);
         NbtMap root = PaletteDataCodec.readGzip(new ByteArrayInputStream(bytes));

@@ -115,7 +115,7 @@ final class ReferencePalette {
                     generated.stream().map(block -> "- " + block).toList());
             }
         }
-        return new VanillaData(new DataVersion(latest.name() + "+", 0), states, data.items(), data.dataDrivenBlocks(), data.creative(),
+        return new VanillaData(DataVersion.of(latest.name() + "+", 0), states, data.items(), data.dataDrivenBlocks(), data.creative(),
             data.itemTags(), data.fallbacks(), data.blockDefaults(), data.experiments(), data.blockItems());
     }
 

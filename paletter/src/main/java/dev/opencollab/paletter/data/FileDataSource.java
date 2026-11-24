@@ -148,7 +148,8 @@ final class FileDataSource implements PaletteDataSource {
                 throw new IllegalArgumentException("unknown or repeated field `" + parts[i] + "` in `" + line + "`");
             }
         }
-        return new DataVersion(parts[0], Integer.parseInt(parts[1]), preview, codec);
+        DataVersion version = preview ? DataVersion.preview(parts[0], Integer.parseInt(parts[1])) : DataVersion.of(parts[0], Integer.parseInt(parts[1]));
+        return version.withCodecProtocol(codec);
     }
 
     @Override

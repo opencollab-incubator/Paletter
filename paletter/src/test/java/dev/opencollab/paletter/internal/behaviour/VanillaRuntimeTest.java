@@ -18,8 +18,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /** The hand-written runtime of the generated behaviour data: cells, schemas, the version builder and the version lookup. */
 class VanillaRuntimeTest {
-    private static final DataVersion V1 = new DataVersion("1.0", 10);
-    private static final DataVersion V2 = new DataVersion("2.0", 20);
+    private static final DataVersion V1 = DataVersion.of("1.0", 10);
+    private static final DataVersion V2 = DataVersion.of("2.0", 20);
 
     private static NbtMap states(Object... pairs) {
         var builder = NbtMap.builder();
@@ -92,9 +92,9 @@ class VanillaRuntimeTest {
         behaviour.version(V1);
         behaviour.version(V2);
         VanillaBehaviour built = behaviour.build();
-        assertSame(built.versions().get(1), built.version(new DataVersion("2.5", 25, true)));
-        assertSame(built.versions().get(0), built.version(new DataVersion("1.0", 99)), "by name first");
-        assertNull(built.version(new DataVersion("0.5", 5)));
+        assertSame(built.versions().get(1), built.version(DataVersion.preview("2.5", 25)));
+        assertSame(built.versions().get(0), built.version(DataVersion.of("1.0", 99)), "by name first");
+        assertNull(built.version(DataVersion.of("0.5", 5)));
     }
 
     @Test

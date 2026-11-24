@@ -84,7 +84,7 @@ deprecation warnings, not compile errors. The API is shaped so that the compiler
   objects, the hand-written wire-only components and the recipes (`Recipe.*`, `Result`, `Unlock`) have a private
   constructor, a `builder()` (or `of(...)`), record-style accessors, `toBuilder()` and value `equals`/`hashCode`/`toString`.
   A new field is a new accessor and builder setter. Records stay only where the shape is fixed by definition, not by
-  Bedrock: the vectors (`Vec3`, with `Vec3.of`), `BlockShape.Box`, `DataVersion`, `PotionMix`, `ContainerMix`, the
+  Bedrock: the vectors (`Vec3`, with `Vec3.of`), `BlockShape.Box`, `PotionMix`, `ContainerMix`, the
   one-value forms of a union and the `Ingredient` forms.
 - **Documented string values are open value classes, not enums.** `Wearable.Slot`, `ItemMenuCategory.Category` and
   every other generated one have a constant per documented value, `of(String)` for any value (a known one returns its constant, so `==`

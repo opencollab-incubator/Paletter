@@ -109,7 +109,7 @@ public final class PaletteDataCodec {
         if (format != FORMAT) {
             throw new IOException("Unsupported Paletter data format " + format + ", expected " + FORMAT);
         }
-        DataVersion version = new DataVersion(root.getString("name"), root.getInt("protocol"));
+        DataVersion version = DataVersion.of(root.getString("name"), root.getInt("protocol"));
 
         // States repeat a lot between blocks (e.g. every log has the same pillar_axis compound); share instances
         Map<NbtMap, NbtMap> interner = new HashMap<>();

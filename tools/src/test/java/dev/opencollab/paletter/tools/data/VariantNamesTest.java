@@ -60,7 +60,7 @@ class VariantNamesTest {
             nodes.add(RawStack.of(stack.substring(0, at)).withDamage(Integer.parseInt(stack.substring(at + 1))));
         }
         creative.put(CreativeCategory.ITEMS, nodes);
-        return new VanillaData(new DataVersion("1.0", 100), List.of(), List.of(), List.of(), RawLayout.of(creative), Map.of(),
+        return new VanillaData(DataVersion.of("1.0", 100), List.of(), List.of(), List.of(), RawLayout.of(creative), Map.of(),
             VersionFallbacks.NONE, Map.of());
     }
 

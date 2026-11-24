@@ -163,7 +163,7 @@ class ExperimentAttributionTest {
     @Test
     void checkerListsContentOlderVersionsLack() {
         VanillaData latest = data("27.0", Map.of(), VersionFallbacks.NONE);
-        VanillaData older = new VanillaData(new DataVersion("26.50", 1), List.of(BlockStates.of("minecraft:stone", NbtMap.EMPTY)),
+        VanillaData older = new VanillaData(DataVersion.of("26.50", 1), List.of(BlockStates.of("minecraft:stone", NbtMap.EMPTY)),
             List.of(new VanillaItem("minecraft:stone", 1, 2, false, null)), List.of(), RawLayout.of(Map.of()), Map.of(),
             VersionFallbacks.NONE, Map.of(), Map.of());
         assertEquals(List.of("block minecraft:icicle", "item minecraft:icicle"), FallbackGaps.missing(older, latest));
@@ -172,7 +172,7 @@ class ExperimentAttributionTest {
     private static VanillaData data(String name, Map<String, ExperimentContent> experiments, VersionFallbacks fallbacks) {
         List<NbtMap> states = List.of(BlockStates.of("minecraft:stone", NbtMap.EMPTY), BlockStates.of("minecraft:icicle", NbtMap.EMPTY));
         List<VanillaItem> items = List.of(new VanillaItem("minecraft:stone", 1, 2, false, null), new VanillaItem("minecraft:icicle", 2, 2, false, null));
-        return new VanillaData(new DataVersion(name, 1), states, items, List.of(), RawLayout.of(Map.of()), Map.of(), fallbacks, Map.of(),
+        return new VanillaData(DataVersion.of(name, 1), states, items, List.of(), RawLayout.of(Map.of()), Map.of(), fallbacks, Map.of(),
             experiments);
     }
 }

@@ -62,7 +62,7 @@ public final class Importer {
      * @param preview mark the version as a preview in {@code versions.txt}: consumers only see it when they opt in
      */
     public void run(Path source, String name, int protocol, Path itemTagsFile, Path bdsDump, boolean preview) throws IOException {
-        DataVersion version = new DataVersion(name, protocol);
+        DataVersion version = DataVersion.of(name, protocol);
         System.out.println("Importing " + version + " from " + source);
 
         Source read = readSource(source, name);

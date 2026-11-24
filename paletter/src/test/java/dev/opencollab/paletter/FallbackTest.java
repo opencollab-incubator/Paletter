@@ -153,7 +153,7 @@ class FallbackTest {
         Fallbacks fallbacks = Fallbacks.builder()
             .block(BedrockBlockType.fromIdentifier(name), BlockFallback.of(BedrockBlocks.DIRT))                  // every version
             .block(oldest, BedrockBlockType.fromIdentifier(name), BlockFallback.of(BedrockBlocks.STONE))         // this version: wins
-            .block(new DataVersion("1.0", 1), BedrockBlockType.fromIdentifier(missingName), BlockFallback.of(BedrockBlocks.STONE))   // another version: ignored
+            .block(DataVersion.of("1.0", 1), BedrockBlockType.fromIdentifier(missingName), BlockFallback.of(BedrockBlocks.STONE))   // another version: ignored
             .build();
         Palette palette = Paletter.builder().fallbacks(fallbacks).build().palette(OLDEST);
         assertEquals("minecraft:stone", BlockStates.name(Ids.blockAt(palette, block).getState()));

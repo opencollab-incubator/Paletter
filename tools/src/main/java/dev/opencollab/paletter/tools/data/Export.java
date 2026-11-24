@@ -142,7 +142,7 @@ public final class Export {
 
     static Read read(Path directory, String name) throws IOException {
         Importer.Source source = Importer.readSource(directory, name);
-        VanillaData data = new VanillaData(new dev.opencollab.paletter.data.DataVersion(name, 0), source.blocks(), source.items(),
+        VanillaData data = new VanillaData(dev.opencollab.paletter.data.DataVersion.of(name, 0), source.blocks(), source.items(),
             source.dataDriven() == null ? List.of() : source.dataDriven(), source.creative(), Map.of(), VersionFallbacks.NONE, Map.of());
         return new Read(data, source);
     }

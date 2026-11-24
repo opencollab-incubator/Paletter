@@ -65,7 +65,7 @@ class ConstantsGeneratorTest {
     }
 
     private static VanillaData version(String name, int protocol, String... items) {
-        return new VanillaData(new DataVersion(name, protocol), List.of(BlockStates.of("minecraft:air", Map.of()), BlockStates.of("minecraft:unknown", Map.of())),
+        return new VanillaData(DataVersion.of(name, protocol), List.of(BlockStates.of("minecraft:air", Map.of()), BlockStates.of("minecraft:unknown", Map.of())),
             java.util.stream.IntStream.range(0, items.length).mapToObj(i -> new VanillaItem(items[i], i + 1, 0, false, null)).toList(),
             List.of(), dev.opencollab.paletter.internal.creative.RawLayout.empty(), Map.of(),
             dev.opencollab.paletter.internal.data.VersionFallbacks.NONE, Map.of());
@@ -262,7 +262,7 @@ class ConstantsGeneratorTest {
         states.add(BlockStates.of("minecraft:preview_block", Map.of("preview_bit", (byte) 1)));
         List<VanillaItem> items = new ArrayList<>(release.items());
         items.add(new VanillaItem("minecraft:preview_item", 30000, 0, false, null));
-        VanillaData preview = new VanillaData(new DataVersion("26.70", 9999), states, items, release.dataDrivenBlocks(), release.creative(),
+        VanillaData preview = new VanillaData(DataVersion.of("26.70", 9999), states, items, release.dataDrivenBlocks(), release.creative(),
             release.itemTags(), release.fallbacks(), release.blockDefaults());
 
         ConstantsGenerator.Result result = ConstantsGenerator.generate(release, preview, names, new JsonObject(), "1.0.0");
@@ -320,7 +320,7 @@ class ConstantsGeneratorTest {
         List<NbtMap> states = new ArrayList<>(release.blockStates());
         states.add(BlockStates.of("minecraft:going_block", Map.of("going_bit", (byte) 0)));
         states.add(BlockStates.of("minecraft:going_block", Map.of("going_bit", (byte) 1)));
-        VanillaData older = new VanillaData(new DataVersion("26.10", 1), states, release.items(), release.dataDrivenBlocks(),
+        VanillaData older = new VanillaData(DataVersion.of("26.10", 1), states, release.items(), release.dataDrivenBlocks(),
             release.creative(), release.itemTags(), release.fallbacks(), release.blockDefaults());
         JsonObject first = history(ConstantsGenerator.generate(older, null, names, new JsonObject(), "1.0.0"));
         assertNull(first.getAsJsonObject("blocks").getAsJsonObject("GOING_BLOCK").get("states"), "a release block records no states");
@@ -359,7 +359,7 @@ class ConstantsGeneratorTest {
         states.addAll(block);
         Map<String, NbtMap> defaults = new java.util.HashMap<>(release.blockDefaults());
         defaults.put("minecraft:preview_block", block.get(4));
-        VanillaData preview = new VanillaData(new DataVersion("26.70", 9999), states, release.items(), release.dataDrivenBlocks(),
+        VanillaData preview = new VanillaData(DataVersion.of("26.70", 9999), states, release.items(), release.dataDrivenBlocks(),
             release.creative(), release.itemTags(), release.fallbacks(), defaults);
 
         ConstantsGenerator.Result result = ConstantsGenerator.generate(release, preview, names, new JsonObject(), "1.0.0");
@@ -380,7 +380,7 @@ class ConstantsGeneratorTest {
         states.add(BlockStates.of("minecraft:preview_block", Map.of("a", 0, "b", 0)));
         states.add(BlockStates.of("minecraft:preview_block", Map.of("a", 1, "b", 0)));
         states.add(BlockStates.of("minecraft:preview_block", Map.of("a", 0, "b", 1)));
-        VanillaData preview = new VanillaData(new DataVersion("26.70", 9999), states, release.items(), release.dataDrivenBlocks(),
+        VanillaData preview = new VanillaData(DataVersion.of("26.70", 9999), states, release.items(), release.dataDrivenBlocks(),
             release.creative(), release.itemTags(), release.fallbacks(), release.blockDefaults());
         IllegalStateException e = assertThrows(IllegalStateException.class,
             () -> ConstantsGenerator.generate(release, preview, names, new JsonObject(), "1.0.0"));

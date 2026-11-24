@@ -27,9 +27,9 @@ import java.util.Set;
  * </ul>
  */
 final class BehaviourFixture {
-    static final DataVersion V1 = new DataVersion("1.1", 10);
-    static final DataVersion V2 = new DataVersion("1.2", 20);
-    static final DataVersion V3 = new DataVersion("1.3", 30);
+    static final DataVersion V1 = DataVersion.of("1.1", 10);
+    static final DataVersion V2 = DataVersion.of("1.2", 20);
+    static final DataVersion V3 = DataVersion.of("1.3", 30);
     static final BlockShape SLAB = BlockShape.of(0, 0, 0, 1, 0.5f, 1);
     static final BlockShape PANEL = BlockShape.of(0, 0, 0, 1, 1, 0.1875f);
     /** A tint that ends a {@code //} comment twice: a raw line break, and a Unicode escape javac would read as one. */

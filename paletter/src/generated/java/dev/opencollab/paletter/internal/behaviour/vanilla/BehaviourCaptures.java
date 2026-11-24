@@ -10,13 +10,13 @@ import dev.opencollab.paletter.internal.behaviour.Provenance;
  * The data versions of the generated behaviour data and every capture of a source it was generated from.
  */
 final class BehaviourCaptures {
-    static final DataVersion V26_30 = new DataVersion("26.30", 1001);
+    static final DataVersion V26_30 = DataVersion.of("26.30", 1001);
 
-    static final DataVersion V26_40 = new DataVersion("26.40", 2168);
+    static final DataVersion V26_40 = DataVersion.of("26.40", 2168);
 
-    static final DataVersion V26_50 = new DataVersion("26.50", 2193);
+    static final DataVersion V26_50 = DataVersion.of("26.50", 2193);
 
-    static final DataVersion V26_60 = new DataVersion("26.60", 2225);
+    static final DataVersion V26_60 = DataVersion.of("26.60", 2225);
 
     /**
      * AllayMC/Allay cf68fe1 (third party).

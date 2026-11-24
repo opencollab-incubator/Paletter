@@ -110,9 +110,9 @@ class RetireTest {
     void theBehaviourStoreRetiresTheVersion(@TempDir Path root) throws IOException {
         Path model = Files.createDirectories(root.resolve("data/model"));
         Files.writeString(model.resolve("mappings.json"), MAPPINGS);
-        DataVersion v11 = new DataVersion("1.1", 10);
-        DataVersion v12 = new DataVersion("1.2", 20);
-        DataVersion v13 = new DataVersion("1.3", 30);
+        DataVersion v11 = DataVersion.of("1.1", 10);
+        DataVersion v12 = DataVersion.of("1.2", 20);
+        DataVersion v13 = DataVersion.of("1.3", 30);
         BehaviourStore.Builder builder = new BehaviourStore.Builder(List.of(v11, v12, v13));
         int capture = builder.capture(v12, Provenance.Source.CLOUDBURST_DATA, "c", List.of(1), List.of());
         builder.blocks(BlockBehaviour.FRICTION, capture, Map.of(1, 0.5f));
