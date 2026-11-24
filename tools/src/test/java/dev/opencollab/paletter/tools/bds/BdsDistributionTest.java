@@ -174,4 +174,25 @@ class BdsDistributionTest {
         assertFalse(Files.exists(directory.resolve("tree")));
         assertEquals("kept", Files.readString(outside.resolve("keep.txt")));
     }
+
+    @Test
+    void onlyAFinishedExtractionIsReused(@TempDir Path directory) throws IOException {
+        Path zip = directory.resolve("server.zip");
+        try (ZipOutputStream out = new ZipOutputStream(Files.newOutputStream(zip))) {
+            out.putNextEntry(new ZipEntry(BdsServer.executable(Path.of("")).toString()));
+            out.write(new byte[] {1});
+            out.putNextEntry(new ZipEntry("server.properties"));
+            out.write("level-name=x".getBytes(StandardCharsets.UTF_8));
+        }
+        Path server = directory.resolve("server");
+        // What an interrupted extraction leaves: the executable, not the rest
+        Files.createDirectories(server);
+        Files.write(BdsServer.executable(server), new byte[] {1});
+        Files.writeString(server.resolve("stale.txt"), "left over");
+        assertFalse(BdsDistribution.extracted(server));
+        BdsDistribution.extract(zip, server);
+        assertTrue(BdsDistribution.extracted(server));
+        assertTrue(Files.exists(server.resolve("server.properties")));
+        assertFalse(Files.exists(server.resolve("stale.txt")), "extracted into an emptied directory");
+    }
 }

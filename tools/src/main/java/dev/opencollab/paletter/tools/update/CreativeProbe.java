@@ -57,7 +57,7 @@ public final class CreativeProbe {
         }
         BdsDistribution distribution = options.bds().distribution();
         Path server = distribution.serverDirectory(cache, "creative-probe-");
-        if (!Files.exists(BdsServer.executable(server))) {
+        if (!BdsDistribution.extracted(server)) {
             BdsDistribution.extract(distribution.zip(cache, root), server);
         }
         int port = options.bds().port();

@@ -69,7 +69,7 @@ public final class ShapeProbe {
         int timeout = options.timeout();
         BdsDistribution.deleteRecursively(work);
         Files.createDirectories(work);
-        if (!Files.exists(BdsServer.executable(server))) {
+        if (!BdsDistribution.extracted(server)) {
             BdsDistribution.extract(distribution.zip(cache, root), server);
         }
         try {

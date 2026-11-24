@@ -118,7 +118,7 @@ public final class EducationProbe {
         int timeout = options.timeout();
         BdsDistribution.deleteRecursively(out);
         Files.createDirectories(out);
-        if (!Files.exists(BdsServer.executable(server))) {
+        if (!BdsDistribution.extracted(server)) {
             BdsDistribution.extract(distribution.zip(cache, root), server);
         }
         try {

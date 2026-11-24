@@ -192,7 +192,7 @@ public record BdsDistribution(String version, boolean preview, String platform, 
      */
     public Path extract(Path cache, Path root, boolean fresh) throws IOException, InterruptedException {
         Path server = server(cache);
-        if (!fresh && Files.exists(BdsServer.executable(server))) {
+        if (!fresh && extracted(server)) {
             System.out.println("Using the extracted BDS " + version + " in " + server);
             return server;
         }
@@ -223,7 +223,7 @@ public record BdsDistribution(String version, boolean preview, String platform, 
      * {@code --keep-server}) is used and kept; one extracted for the task is removed afterwards.
      */
     public void onServer(Path cache, Path root, ServerTask task) throws IOException, InterruptedException {
-        boolean extracted = Files.notExists(BdsServer.executable(server(cache)));
+        boolean extracted = !extracted(server(cache));
         Path server = extract(cache, root, false);
         try {
             task.run(server);
@@ -238,7 +238,18 @@ public record BdsDistribution(String version, boolean preview, String platform, 
         }
     }
 
+    /** Written last by {@link #extract(Path, Path)}: without it a server directory is an interrupted extraction. */
+    static final String EXTRACTED = ".paletter-extracted";
+
+    /** Whether {@link #extract(Path, Path)} finished in this directory, so that the server can be reused. */
+    public static boolean extracted(Path server) {
+        return Files.exists(server.resolve(EXTRACTED)) && Files.exists(BdsServer.executable(server));
+    }
+
+    /** Extracts the zip into an emptied {@code server} directory, and marks it {@link #extracted(Path) extracted} when done. */
     public static void extract(Path zip, Path server) throws IOException {
+        // What an interrupted extraction left goes first
+        deleteRecursively(server);
         Files.createDirectories(server);
         try (InputStream stream = Files.newInputStream(zip); ZipInputStream input = new ZipInputStream(stream)) {
             ZipEntry entry;
@@ -258,6 +269,7 @@ public record BdsDistribution(String version, boolean preview, String platform, 
         if (!BdsServer.WINDOWS) {
             BdsServer.executable(server).toFile().setExecutable(true);
         }
+        Files.writeString(server.resolve(EXTRACTED), "");
     }
 
     /**
