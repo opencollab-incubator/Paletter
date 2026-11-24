@@ -171,7 +171,7 @@ final class BehaviourMarksPart2 {
         b.note(V26_60, V26_60, BDS_PROBE_26_60_DOORS, BlockBehaviour.COLLISION_SHAPE, "minecraft:waxed_weathered_copper_door", "composed: the axis the panel is thin on is measured (bodies stopped at both faces); its length and height are the block's 0 to 1, not measured");
         b.note(V26_60, V26_60, BDS_PROBE_26_60_DOORS, BlockBehaviour.COLLISION_SHAPE, "minecraft:weathered_copper_door", "composed: the axis the panel is thin on is measured (bodies stopped at both faces); its length and height are the block's 0 to 1, not measured");
         b.note(V26_60, V26_60, BDS_PROBE_26_60_DOORS, BlockBehaviour.COLLISION_SHAPE, "minecraft:wooden_door", "composed: the axis the panel is thin on is measured (bodies stopped at both faces); its length and height are the block's 0 to 1, not measured");
-        b.customDefault(BlockBehaviour.EXPLOSION_RESISTANCE, 0.0f, Provenance.Source.BDS_PROBE, "data/bds/1.26.70.24/behaviour-probe/capture.json (BDS 1.26.70-beta24, Build ID 53380423)");
+        b.customDefault(BlockBehaviour.EXPLOSION_RESISTANCE, 0.0f, Provenance.Source.BDS_PROBE, "data/bds/1.26.63.1/behaviour-probe/capture.json (BDS 1.26.63.1, Build ID 53340801)");
         b.customDefault(BlockBehaviour.FRICTION, 0.6f, Provenance.Source.BDS_PROBE, "data/bds/1.26.70.24/behaviour-probe/capture.json (BDS 1.26.70-beta24, Build ID 53380423)");
         b.customDefault(BlockBehaviour.COLLISION_SHAPE, BlockShape.FULL_CUBE, Provenance.Source.BDS_PROBE, "data/bds/1.26.70.24/behaviour-probe/capture.json (BDS 1.26.70-beta24, Build ID 53380423)");
         b.customDefault(BlockBehaviour.LIGHT_EMISSION, 0, Provenance.Source.BDS_PROBE, "data/bds/1.26.70.24/behaviour-probe/capture.json (BDS 1.26.70-beta24, Build ID 53380423)");

@@ -3,6 +3,7 @@
 // data/model/ATTRIBUTION.md.
 package dev.opencollab.paletter.block.component;
 
+import dev.opencollab.paletter.Molang;
 import dev.opencollab.paletter.annotation.BedrockFormat;
 import dev.opencollab.paletter.internal.component.Check;
 import java.util.ArrayList;
@@ -30,7 +31,7 @@ public final class Geometry implements BlockComponent {
      */
     public static final String NAME = "minecraft:geometry";
 
-    private final @Nullable Map<String, String> boneVisibility;
+    private final @Nullable Map<String, Molang> boneVisibility;
 
     private final @Nullable String culling;
 
@@ -44,7 +45,7 @@ public final class Geometry implements BlockComponent {
 
     private final @Nullable UvLock uvLock;
 
-    private Geometry(@Nullable Map<String, String> boneVisibility, @Nullable String culling,
+    private Geometry(@Nullable Map<String, Molang> boneVisibility, @Nullable String culling,
             @NonNull String cullingLayer, @NonNull String cullingShape, @NonNull String identifier,
             @Nullable NWayVisualRotation nWayVisualRotation, @Nullable UvLock uvLock) {
         boneVisibility = boneVisibility == null ? null : Check.copy(boneVisibility, "Geometry.boneVisibility");
@@ -76,7 +77,7 @@ public final class Geometry implements BlockComponent {
      * @return the value
      */
     @BedrockFormat("1.19.80")
-    public @Nullable Map<String, String> boneVisibility() {
+    public @Nullable Map<String, Molang> boneVisibility() {
         return boneVisibility;
     }
 
@@ -243,7 +244,7 @@ public final class Geometry implements BlockComponent {
      * Builds {@link Geometry}: defaults applied, required fields and ranges checked by {@link #build()}.
      */
     public static final class Builder {
-        private @Nullable Map<String, String> boneVisibility;
+        private @Nullable Map<String, Molang> boneVisibility;
 
         private @Nullable String culling;
 
@@ -266,7 +267,7 @@ public final class Geometry implements BlockComponent {
          * @param boneVisibility the value
          * @return this builder
          */
-        public @NonNull Builder boneVisibility(@Nullable Map<String, String> boneVisibility) {
+        public @NonNull Builder boneVisibility(@Nullable Map<String, Molang> boneVisibility) {
             this.boneVisibility = boneVisibility;
             return this;
         }

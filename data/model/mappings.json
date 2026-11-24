@@ -7,8 +7,8 @@
       "protocol": 1001,
       "windowProtocol": 1001,
       "dataVersion": "26.30",
-      "variants": 6817,
-      "accepted": 5854,
+      "variants": 6918,
+      "accepted": 5924,
       "firstCustomBlockId": 10000,
       "blockItemIdPlusBlockId": 255
     },
@@ -18,8 +18,8 @@
       "protocol": 2169,
       "windowProtocol": 2168,
       "dataVersion": "26.40",
-      "variants": 6845,
-      "accepted": 5908,
+      "variants": 6946,
+      "accepted": 5978,
       "firstCustomBlockId": 10000,
       "blockItemIdPlusBlockId": 255
     },
@@ -29,8 +29,8 @@
       "protocol": 2193,
       "windowProtocol": 2193,
       "dataVersion": "26.50",
-      "variants": 6847,
-      "accepted": 5913,
+      "variants": 6948,
+      "accepted": 5983,
       "firstCustomBlockId": 10000,
       "blockItemIdPlusBlockId": 255
     },
@@ -40,8 +40,8 @@
       "protocol": 2225,
       "windowProtocol": 2225,
       "dataVersion": "26.60",
-      "variants": 4120,
-      "accepted": 3174,
+      "variants": 4222,
+      "accepted": 3244,
       "firstCustomBlockId": 10000,
       "blockItemIdPlusBlockId": 255
     },
@@ -52,8 +52,8 @@
       "windowProtocol": 2259,
       "dataVersion": "26.70",
       "preview": "26.70",
-      "variants": 3982,
-      "accepted": 3099,
+      "variants": 4084,
+      "accepted": 3169,
       "firstCustomBlockId": 10000,
       "blockItemIdPlusBlockId": 255
     }
@@ -3707,8 +3707,8 @@
             1001
           ],
           "variants": {
-            "accepted": 153,
-            "rejected": 118
+            "accepted": 160,
+            "rejected": 141
           },
           "wire": [
             "minecraft:embedded_visual"
@@ -4209,7 +4209,7 @@
             "geometry": {
               "verified": {
                 "build": "1.26.36.1",
-                "variants": 149
+                "variants": 156
               }
             },
             "material_instances": {
@@ -4226,8 +4226,8 @@
             2193
           ],
           "variants": {
-            "accepted": 153,
-            "rejected": 118
+            "accepted": 160,
+            "rejected": 141
           },
           "wire": [
             "minecraft:embedded_visual"
@@ -4684,7 +4684,7 @@
             "geometry": {
               "verified": {
                 "build": "1.26.45.1",
-                "variants": 149
+                "variants": 156
               }
             },
             "material_instances": {
@@ -4701,8 +4701,8 @@
             2259
           ],
           "variants": {
-            "accepted": 156,
-            "rejected": 115
+            "accepted": 163,
+            "rejected": 138
           },
           "wire": [
             "minecraft:embedded_visual"
@@ -5467,7 +5467,7 @@
             "geometry": {
               "verified": {
                 "build": "1.26.63.1",
-                "variants": 152
+                "variants": 159
               }
             },
             "material_instances": {
@@ -5671,8 +5671,8 @@
             1001
           ],
           "variants": {
-            "accepted": 133,
-            "rejected": 38
+            "accepted": 140,
+            "rejected": 46
           },
           "wire": [
             "minecraft:geometry"
@@ -5877,7 +5877,7 @@
             "": {
               "verified": {
                 "build": "1.26.36.1",
-                "variants": 130
+                "variants": 137
               },
               "rejectedFields": [
                 "n_way_visual_rotation",
@@ -5894,8 +5894,8 @@
             2193
           ],
           "variants": {
-            "accepted": 133,
-            "rejected": 38
+            "accepted": 140,
+            "rejected": 46
           },
           "wire": [
             "minecraft:geometry"
@@ -6056,7 +6056,7 @@
             "": {
               "verified": {
                 "build": "1.26.45.1",
-                "variants": 130
+                "variants": 137
               },
               "rejectedFields": [
                 "n_way_visual_rotation",
@@ -6072,8 +6072,8 @@
             2225
           ],
           "variants": {
-            "accepted": 147,
-            "rejected": 29
+            "accepted": 154,
+            "rejected": 37
           },
           "wire": [
             "minecraft:geometry"
@@ -6295,7 +6295,7 @@
             "": {
               "verified": {
                 "build": "1.26.63.1",
-                "variants": 140
+                "variants": 147
               }
             }
           }
@@ -6305,8 +6305,8 @@
             2259
           ],
           "variants": {
-            "accepted": 136,
-            "rejected": 35
+            "accepted": 143,
+            "rejected": 43
           },
           "wire": [
             "minecraft:geometry"
@@ -6457,7 +6457,7 @@
             "": {
               "verified": {
                 "build": "1.26.70.24",
-                "variants": 133
+                "variants": 140
               },
               "rejectedFields": [
                 "n_way_visual_rotation",
@@ -6507,8 +6507,8 @@
             1001
           ],
           "variants": {
-            "accepted": 151,
-            "rejected": 113
+            "accepted": 158,
+            "rejected": 136
           },
           "wire": [
             "minecraft:item_visual"
@@ -6944,7 +6944,7 @@
             "geometry.bone_visibility": {
               "verified": {
                 "build": "1.26.36.1",
-                "variants": 95
+                "variants": 102
               }
             },
             "geometry.uv_lock": {
@@ -6967,8 +6967,8 @@
             2193
           ],
           "variants": {
-            "accepted": 151,
-            "rejected": 113
+            "accepted": 158,
+            "rejected": 136
           },
           "wire": [
             "minecraft:item_visual"
@@ -7360,7 +7360,7 @@
             "geometry.bone_visibility": {
               "verified": {
                 "build": "1.26.45.1",
-                "variants": 95
+                "variants": 102
               }
             },
             "geometry.uv_lock": {
@@ -7383,8 +7383,8 @@
             2259
           ],
           "variants": {
-            "accepted": 154,
-            "rejected": 110
+            "accepted": 161,
+            "rejected": 133
           },
           "wire": [
             "minecraft:item_visual"
@@ -8084,7 +8084,7 @@
             "geometry.bone_visibility": {
               "verified": {
                 "build": "1.26.63.1",
-                "variants": 98
+                "variants": 105
               }
             },
             "geometry.uv_lock": {
@@ -8214,8 +8214,8 @@
             2259
           ],
           "variants": {
-            "accepted": 20,
-            "rejected": 29
+            "accepted": 21,
+            "rejected": 30
           },
           "wire": [
             "minecraft:liquid_detection"
@@ -13099,7 +13099,7 @@
             2259
           ],
           "variants": {
-            "accepted": 45,
+            "accepted": 46,
             "rejected": 20
           },
           "wire": [
@@ -13744,7 +13744,7 @@
             2259
           ],
           "variants": {
-            "accepted": 25,
+            "accepted": 26,
             "rejected": 14
           },
           "wire": [
@@ -13757,6 +13757,14 @@
               "rules": [
                 {
                   "kind": "ordered-set",
+                  "order": [
+                    "down",
+                    "up",
+                    "north",
+                    "south",
+                    "west",
+                    "east"
+                  ],
                   "nbt": "string",
                   "tags": [],
                   "wire": "minecraft:redstone_producer.connected_faces[]"
@@ -18861,7 +18869,7 @@
             1001
           ],
           "variants": {
-            "accepted": 31,
+            "accepted": 47,
             "rejected": 29
           },
           "wire": [
@@ -19113,7 +19121,7 @@
             "repair_items": {
               "verified": {
                 "build": "1.26.36.1",
-                "variants": 30
+                "variants": 46
               }
             }
           }
@@ -19126,7 +19134,7 @@
             2259
           ],
           "variants": {
-            "accepted": 31,
+            "accepted": 47,
             "rejected": 29
           },
           "wire": [
@@ -19327,7 +19335,7 @@
             "repair_items": {
               "verified": {
                 "build": "1.26.45.1",
-                "variants": 30
+                "variants": 46
               }
             }
           }
@@ -21236,7 +21244,7 @@
             2259
           ],
           "variants": {
-            "accepted": 585,
+            "accepted": 591,
             "rejected": 7
           },
           "wire": [
@@ -21310,6 +21318,8 @@
                   "kind": "linear",
                   "scale": 20.0,
                   "offset": 0.0,
+                  "arithmetic": "float32",
+                  "rounding": "truncate",
                   "nbt": "int",
                   "tags": [
                     "item_properties",
@@ -21714,7 +21724,7 @@
           ],
           "variants": {
             "accepted": 9,
-            "rejected": 3
+            "rejected": 4
           },
           "wire": [],
           "status": "server-only",

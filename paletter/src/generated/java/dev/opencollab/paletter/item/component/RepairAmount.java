@@ -3,6 +3,7 @@
 // data/model/ATTRIBUTION.md.
 package dev.opencollab.paletter.item.component;
 
+import dev.opencollab.paletter.Molang;
 import java.util.Objects;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
@@ -27,7 +28,7 @@ public sealed interface RepairAmount permits RepairAmount.Expression, RepairAmou
      * @param value a Molang expression for the amount
      * @return the form that is a Molang expression for the amount
      */
-    static @NonNull RepairAmount expression(@NonNull String value) {
+    static @NonNull RepairAmount expression(@NonNull Molang value) {
         return new Expression(value);
     }
 
@@ -46,7 +47,7 @@ public sealed interface RepairAmount permits RepairAmount.Expression, RepairAmou
      *
      * @param value a Molang expression for the amount
      */
-    record Expression(@NonNull String value) implements RepairAmount {
+    record Expression(@NonNull Molang value) implements RepairAmount {
         /**
          * Checks the value and copies a list or map, so the form is immutable.
          *

@@ -1629,8 +1629,8 @@
               ]
             },
             "geometry.bone_visibility": {
-              "accepted": 95,
-              "rejected": 103,
+              "accepted": 102,
+              "rejected": 126,
               "rejectedValues": [
                 "map<string>:{1}",
                 "map<string>:{2}",
@@ -1723,6 +1723,29 @@
                 "map<string>:{1 object} 1e-50",
                 "map<string>:{1 object} \t1",
                 "map<string>:{1 object} 00.5",
+                "map<string>:{1 object} version 0",
+                "map<string>:{1 object} version 2",
+                "map<string>:{1 object} version 6",
+                "map<string>:{1 object} version 7",
+                "map<string>:{1 object} version 8",
+                "map<string>:{1 object} version 12",
+                "map<string>:{1 object} version 13",
+                "map<string>:{1 object} version 14",
+                "map<string>:{1 object} version 14 linked geometry.identifier",
+                "map<string>:{1 object} version 15",
+                "map<string>:{1 object} version 15 linked geometry.identifier",
+                "map<string>:{1 object} version 16",
+                "map<string>:{1 object} version 16 linked geometry.identifier",
+                "map<string>:{1 object} version 20",
+                "map<string>:{1 object} version 20 linked geometry.identifier",
+                "map<string>:{1 object} version 50",
+                "map<string>:{1 object} version 50 linked geometry.identifier",
+                "map<string>:{1 object} version 99",
+                "map<string>:{1 object} version 99 linked geometry.identifier",
+                "map<string>:{1 object} version 100",
+                "map<string>:{1 object} version 100 linked geometry.identifier",
+                "map<string>:{1 object} version -1",
+                "map<string>:{1 object} version -1 linked geometry.identifier",
                 "map<string>:{1 number} 0",
                 "map<string>:{1 number} 0.5",
                 "map<string>:{1 number} 1",
@@ -1869,8 +1892,8 @@
               ]
             },
             "geometry.bone_visibility": {
-              "accepted": 95,
-              "rejected": 103,
+              "accepted": 102,
+              "rejected": 126,
               "rejectedValues": [
                 "map<string>:{1}",
                 "map<string>:{2}",
@@ -1963,6 +1986,29 @@
                 "map<string>:{1 object} 1e-50",
                 "map<string>:{1 object} \t1",
                 "map<string>:{1 object} 00.5",
+                "map<string>:{1 object} version 0",
+                "map<string>:{1 object} version 2",
+                "map<string>:{1 object} version 6",
+                "map<string>:{1 object} version 7",
+                "map<string>:{1 object} version 8",
+                "map<string>:{1 object} version 12",
+                "map<string>:{1 object} version 13",
+                "map<string>:{1 object} version 14",
+                "map<string>:{1 object} version 14 linked geometry.identifier",
+                "map<string>:{1 object} version 15",
+                "map<string>:{1 object} version 15 linked geometry.identifier",
+                "map<string>:{1 object} version 16",
+                "map<string>:{1 object} version 16 linked geometry.identifier",
+                "map<string>:{1 object} version 20",
+                "map<string>:{1 object} version 20 linked geometry.identifier",
+                "map<string>:{1 object} version 50",
+                "map<string>:{1 object} version 50 linked geometry.identifier",
+                "map<string>:{1 object} version 99",
+                "map<string>:{1 object} version 99 linked geometry.identifier",
+                "map<string>:{1 object} version 100",
+                "map<string>:{1 object} version 100 linked geometry.identifier",
+                "map<string>:{1 object} version -1",
+                "map<string>:{1 object} version -1 linked geometry.identifier",
                 "map<string>:{1 number} 0",
                 "map<string>:{1 number} 0.5",
                 "map<string>:{1 number} 1",
@@ -2098,8 +2144,8 @@
               ]
             },
             "geometry.bone_visibility": {
-              "accepted": 98,
-              "rejected": 100,
+              "accepted": 105,
+              "rejected": 123,
               "rejectedValues": [
                 "map<string>:{1}",
                 "map<string>:{2}",
@@ -2192,6 +2238,29 @@
                 "map<string>:{1 object} 1e-50",
                 "map<string>:{1 object} \t1",
                 "map<string>:{1 object} 00.5",
+                "map<string>:{1 object} version 0",
+                "map<string>:{1 object} version 2",
+                "map<string>:{1 object} version 6",
+                "map<string>:{1 object} version 7",
+                "map<string>:{1 object} version 8",
+                "map<string>:{1 object} version 12",
+                "map<string>:{1 object} version 13",
+                "map<string>:{1 object} version 14",
+                "map<string>:{1 object} version 14 linked geometry.identifier",
+                "map<string>:{1 object} version 15",
+                "map<string>:{1 object} version 15 linked geometry.identifier",
+                "map<string>:{1 object} version 16",
+                "map<string>:{1 object} version 16 linked geometry.identifier",
+                "map<string>:{1 object} version 20",
+                "map<string>:{1 object} version 20 linked geometry.identifier",
+                "map<string>:{1 object} version 50",
+                "map<string>:{1 object} version 50 linked geometry.identifier",
+                "map<string>:{1 object} version 99",
+                "map<string>:{1 object} version 99 linked geometry.identifier",
+                "map<string>:{1 object} version 100",
+                "map<string>:{1 object} version 100 linked geometry.identifier",
+                "map<string>:{1 object} version -1",
+                "map<string>:{1 object} version -1 linked geometry.identifier",
                 "map<string>:{1 number} 0",
                 "map<string>:{1 number} 0.5",
                 "map<string>:{1 number} 1",
@@ -2520,13 +2589,21 @@
           ],
           "fields": {
             "bone_visibility": {
-              "accepted": 92,
-              "rejected": 7,
+              "accepted": 99,
+              "rejected": 15,
               "rejectedValues": [
                 "map<string>:{1} +1",
                 "map<string>:{3 keys} 1. / +1 /  1 ",
                 "map<string>:{3 keys} +1 /  1  / 1e3",
                 "map<string>:{1 object} +1",
+                "map<string>:{1 object} version 14",
+                "map<string>:{1 object} version 15",
+                "map<string>:{1 object} version 16",
+                "map<string>:{1 object} version 20",
+                "map<string>:{1 object} version 50",
+                "map<string>:{1 object} version 99",
+                "map<string>:{1 object} version 100",
+                "map<string>:{1 object} version -1",
                 "map<boolean>:{1}",
                 "map<boolean>:{2}",
                 "map<boolean>:{unknown key}"
@@ -2641,8 +2718,8 @@
                 "string:minecraft:paletter_unknown"
               ],
               "bdsErrors": [
-                "[Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_158.json | minecraft:geometry n_way_visual_rotation.x references unknown state paletter_a.",
-                "[Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_159.json | minecraft:geometry n_way_visual_rotation.x references unknown state paletter_b.",
+                "[Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_173.json | minecraft:geometry n_way_visual_rotation.x references unknown state paletter_a.",
+                "[Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_174.json | minecraft:geometry n_way_visual_rotation.x references unknown state paletter_b.",
                 "minecraft:geometry: n_way_visual_rotation must define at least one axis (x, y, or z)",
                 "minecraft:geometry: invalid string"
               ]
@@ -2658,8 +2735,8 @@
                 "string:minecraft:paletter_unknown"
               ],
               "bdsErrors": [
-                "[Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_163.json | minecraft:geometry n_way_visual_rotation.y references unknown state paletter_a.",
-                "[Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_164.json | minecraft:geometry n_way_visual_rotation.y references unknown state paletter_b.",
+                "[Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_178.json | minecraft:geometry n_way_visual_rotation.y references unknown state paletter_a.",
+                "[Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_179.json | minecraft:geometry n_way_visual_rotation.y references unknown state paletter_b.",
                 "minecraft:geometry: n_way_visual_rotation must define at least one axis (x, y, or z)",
                 "minecraft:geometry: invalid string"
               ]
@@ -2675,8 +2752,8 @@
                 "string:minecraft:paletter_unknown"
               ],
               "bdsErrors": [
-                "[Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_168.json | minecraft:geometry n_way_visual_rotation.z references unknown state paletter_a.",
-                "[Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_169.json | minecraft:geometry n_way_visual_rotation.z references unknown state paletter_b.",
+                "[Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_183.json | minecraft:geometry n_way_visual_rotation.z references unknown state paletter_a.",
+                "[Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_184.json | minecraft:geometry n_way_visual_rotation.z references unknown state paletter_b.",
                 "minecraft:geometry: n_way_visual_rotation must define at least one axis (x, y, or z)",
                 "minecraft:geometry: invalid string"
               ]
@@ -2696,13 +2773,21 @@
           ],
           "fields": {
             "bone_visibility": {
-              "accepted": 92,
-              "rejected": 7,
+              "accepted": 99,
+              "rejected": 15,
               "rejectedValues": [
                 "map<string>:{1} +1",
                 "map<string>:{3 keys} 1. / +1 /  1 ",
                 "map<string>:{3 keys} +1 /  1  / 1e3",
                 "map<string>:{1 object} +1",
+                "map<string>:{1 object} version 14",
+                "map<string>:{1 object} version 15",
+                "map<string>:{1 object} version 16",
+                "map<string>:{1 object} version 20",
+                "map<string>:{1 object} version 50",
+                "map<string>:{1 object} version 99",
+                "map<string>:{1 object} version 100",
+                "map<string>:{1 object} version -1",
                 "map<boolean>:{1}",
                 "map<boolean>:{2}",
                 "map<boolean>:{unknown key}"
@@ -2806,8 +2891,8 @@
                 "string:minecraft:paletter_unknown"
               ],
               "bdsErrors": [
-                "[Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_158.json | minecraft:geometry field n_way_visual_rotation.x references unknown state paletter_a",
-                "[Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_159.json | minecraft:geometry field n_way_visual_rotation.x references unknown state paletter_b",
+                "[Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_173.json | minecraft:geometry field n_way_visual_rotation.x references unknown state paletter_a",
+                "[Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_174.json | minecraft:geometry field n_way_visual_rotation.x references unknown state paletter_b",
                 "minecraft:geometry: n_way_visual_rotation must define at least one axis (x, y, or z)",
                 "minecraft:geometry: invalid string"
               ]
@@ -2823,8 +2908,8 @@
                 "string:minecraft:paletter_unknown"
               ],
               "bdsErrors": [
-                "[Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_163.json | minecraft:geometry field n_way_visual_rotation.y references unknown state paletter_a",
-                "[Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_164.json | minecraft:geometry field n_way_visual_rotation.y references unknown state paletter_b",
+                "[Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_178.json | minecraft:geometry field n_way_visual_rotation.y references unknown state paletter_a",
+                "[Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_179.json | minecraft:geometry field n_way_visual_rotation.y references unknown state paletter_b",
                 "minecraft:geometry: n_way_visual_rotation must define at least one axis (x, y, or z)",
                 "minecraft:geometry: invalid string"
               ]
@@ -2840,8 +2925,8 @@
                 "string:minecraft:paletter_unknown"
               ],
               "bdsErrors": [
-                "[Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_168.json | minecraft:geometry field n_way_visual_rotation.z references unknown state paletter_a",
-                "[Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_169.json | minecraft:geometry field n_way_visual_rotation.z references unknown state paletter_b",
+                "[Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_183.json | minecraft:geometry field n_way_visual_rotation.z references unknown state paletter_a",
+                "[Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_184.json | minecraft:geometry field n_way_visual_rotation.z references unknown state paletter_b",
                 "minecraft:geometry: n_way_visual_rotation must define at least one axis (x, y, or z)",
                 "minecraft:geometry: invalid string"
               ]
@@ -2860,13 +2945,21 @@
           ],
           "fields": {
             "bone_visibility": {
-              "accepted": 95,
-              "rejected": 4,
+              "accepted": 102,
+              "rejected": 12,
               "rejectedValues": [
                 "map<string>:{1} +1",
                 "map<string>:{3 keys} 1. / +1 /  1 ",
                 "map<string>:{3 keys} +1 /  1  / 1e3",
-                "map<string>:{1 object} +1"
+                "map<string>:{1 object} +1",
+                "map<string>:{1 object} version 14",
+                "map<string>:{1 object} version 15",
+                "map<string>:{1 object} version 16",
+                "map<string>:{1 object} version 20",
+                "map<string>:{1 object} version 50",
+                "map<string>:{1 object} version 99",
+                "map<string>:{1 object} version 100",
+                "map<string>:{1 object} version -1"
               ],
               "bdsErrors": [
                 "[Components] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_26.json | Bad expression: +1, for bone visibilities of bone bone_a of geometry geometry.paletter_cube",
@@ -2987,9 +3080,9 @@
                 "string:minecraft:paletter_unknown"
               ],
               "bdsErrors": [
-                "[Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_162.json | minecraft:geometry field n_way_visual_rotation.x references unknown state paletter_b",
-                "[Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_164.json | minecraft:geometry field n_way_visual_rotation.x references unknown state cardinal_direction",
-                "[Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_165.json | minecraft:geometry field n_way_visual_rotation.x references unknown state minecraft:paletter_unknown"
+                "[Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_177.json | minecraft:geometry field n_way_visual_rotation.x references unknown state paletter_b",
+                "[Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_179.json | minecraft:geometry field n_way_visual_rotation.x references unknown state cardinal_direction",
+                "[Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_180.json | minecraft:geometry field n_way_visual_rotation.x references unknown state minecraft:paletter_unknown"
               ]
             },
             "n_way_visual_rotation.y": {
@@ -3001,9 +3094,9 @@
                 "string:minecraft:paletter_unknown"
               ],
               "bdsErrors": [
-                "[Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_168.json | minecraft:geometry field n_way_visual_rotation.y references unknown state paletter_b",
-                "[Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_170.json | minecraft:geometry field n_way_visual_rotation.y references unknown state cardinal_direction",
-                "[Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_171.json | minecraft:geometry field n_way_visual_rotation.y references unknown state minecraft:paletter_unknown"
+                "[Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_183.json | minecraft:geometry field n_way_visual_rotation.y references unknown state paletter_b",
+                "[Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_185.json | minecraft:geometry field n_way_visual_rotation.y references unknown state cardinal_direction",
+                "[Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_186.json | minecraft:geometry field n_way_visual_rotation.y references unknown state minecraft:paletter_unknown"
               ]
             },
             "n_way_visual_rotation.z": {
@@ -3015,9 +3108,9 @@
                 "string:minecraft:paletter_unknown"
               ],
               "bdsErrors": [
-                "[Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_174.json | minecraft:geometry field n_way_visual_rotation.z references unknown state paletter_b",
-                "[Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_176.json | minecraft:geometry field n_way_visual_rotation.z references unknown state cardinal_direction",
-                "[Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_177.json | minecraft:geometry field n_way_visual_rotation.z references unknown state minecraft:paletter_unknown"
+                "[Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_189.json | minecraft:geometry field n_way_visual_rotation.z references unknown state paletter_b",
+                "[Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_191.json | minecraft:geometry field n_way_visual_rotation.z references unknown state cardinal_direction",
+                "[Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_192.json | minecraft:geometry field n_way_visual_rotation.z references unknown state minecraft:paletter_unknown"
               ]
             }
           },
@@ -3034,13 +3127,21 @@
           ],
           "fields": {
             "bone_visibility": {
-              "accepted": 95,
-              "rejected": 4,
+              "accepted": 102,
+              "rejected": 12,
               "rejectedValues": [
                 "map<string>:{1} +1",
                 "map<string>:{3 keys} 1. / +1 /  1 ",
                 "map<string>:{3 keys} +1 /  1  / 1e3",
-                "map<string>:{1 object} +1"
+                "map<string>:{1 object} +1",
+                "map<string>:{1 object} version 14",
+                "map<string>:{1 object} version 15",
+                "map<string>:{1 object} version 16",
+                "map<string>:{1 object} version 20",
+                "map<string>:{1 object} version 50",
+                "map<string>:{1 object} version 99",
+                "map<string>:{1 object} version 100",
+                "map<string>:{1 object} version -1"
               ],
               "bdsErrors": [
                 "[Components] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_26.json | Bad expression: +1, for bone visibilities of bone bone_a of geometry geometry.paletter_cube",
@@ -3163,8 +3264,8 @@
                 "string:minecraft:paletter_unknown"
               ],
               "bdsErrors": [
-                "[Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_158.json | minecraft:geometry field n_way_visual_rotation.x references unknown state paletter_a",
-                "[Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_159.json | minecraft:geometry field n_way_visual_rotation.x references unknown state paletter_b",
+                "[Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_173.json | minecraft:geometry field n_way_visual_rotation.x references unknown state paletter_a",
+                "[Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_174.json | minecraft:geometry field n_way_visual_rotation.x references unknown state paletter_b",
                 "minecraft:geometry: n_way_visual_rotation must define at least one axis (x, y, or z)",
                 "minecraft:geometry: invalid string"
               ]
@@ -3180,8 +3281,8 @@
                 "string:minecraft:paletter_unknown"
               ],
               "bdsErrors": [
-                "[Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_163.json | minecraft:geometry field n_way_visual_rotation.y references unknown state paletter_a",
-                "[Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_164.json | minecraft:geometry field n_way_visual_rotation.y references unknown state paletter_b",
+                "[Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_178.json | minecraft:geometry field n_way_visual_rotation.y references unknown state paletter_a",
+                "[Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_179.json | minecraft:geometry field n_way_visual_rotation.y references unknown state paletter_b",
                 "minecraft:geometry: n_way_visual_rotation must define at least one axis (x, y, or z)",
                 "minecraft:geometry: invalid string"
               ]
@@ -3197,8 +3298,8 @@
                 "string:minecraft:paletter_unknown"
               ],
               "bdsErrors": [
-                "[Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_168.json | minecraft:geometry field n_way_visual_rotation.z references unknown state paletter_a",
-                "[Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_169.json | minecraft:geometry field n_way_visual_rotation.z references unknown state paletter_b",
+                "[Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_183.json | minecraft:geometry field n_way_visual_rotation.z references unknown state paletter_a",
+                "[Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_184.json | minecraft:geometry field n_way_visual_rotation.z references unknown state paletter_b",
                 "minecraft:geometry: n_way_visual_rotation must define at least one axis (x, y, or z)",
                 "minecraft:geometry: invalid string"
               ]
@@ -3269,8 +3370,8 @@
               ]
             },
             "geometry.bone_visibility": {
-              "accepted": 95,
-              "rejected": 103,
+              "accepted": 102,
+              "rejected": 126,
               "rejectedValues": [
                 "map<string>:{1}",
                 "map<string>:{2}",
@@ -3363,6 +3464,29 @@
                 "map<string>:{1 object} 1e-50",
                 "map<string>:{1 object} \t1",
                 "map<string>:{1 object} 00.5",
+                "map<string>:{1 object} version 0",
+                "map<string>:{1 object} version 2",
+                "map<string>:{1 object} version 6",
+                "map<string>:{1 object} version 7",
+                "map<string>:{1 object} version 8",
+                "map<string>:{1 object} version 12",
+                "map<string>:{1 object} version 13",
+                "map<string>:{1 object} version 14",
+                "map<string>:{1 object} version 14 linked geometry.identifier",
+                "map<string>:{1 object} version 15",
+                "map<string>:{1 object} version 15 linked geometry.identifier",
+                "map<string>:{1 object} version 16",
+                "map<string>:{1 object} version 16 linked geometry.identifier",
+                "map<string>:{1 object} version 20",
+                "map<string>:{1 object} version 20 linked geometry.identifier",
+                "map<string>:{1 object} version 50",
+                "map<string>:{1 object} version 50 linked geometry.identifier",
+                "map<string>:{1 object} version 99",
+                "map<string>:{1 object} version 99 linked geometry.identifier",
+                "map<string>:{1 object} version 100",
+                "map<string>:{1 object} version 100 linked geometry.identifier",
+                "map<string>:{1 object} version -1",
+                "map<string>:{1 object} version -1 linked geometry.identifier",
                 "map<string>:{1 number} 0",
                 "map<string>:{1 number} 0.5",
                 "map<string>:{1 number} 1",
@@ -3533,8 +3657,8 @@
               ]
             },
             "geometry.bone_visibility": {
-              "accepted": 95,
-              "rejected": 103,
+              "accepted": 102,
+              "rejected": 126,
               "rejectedValues": [
                 "map<string>:{1}",
                 "map<string>:{2}",
@@ -3627,6 +3751,29 @@
                 "map<string>:{1 object} 1e-50",
                 "map<string>:{1 object} \t1",
                 "map<string>:{1 object} 00.5",
+                "map<string>:{1 object} version 0",
+                "map<string>:{1 object} version 2",
+                "map<string>:{1 object} version 6",
+                "map<string>:{1 object} version 7",
+                "map<string>:{1 object} version 8",
+                "map<string>:{1 object} version 12",
+                "map<string>:{1 object} version 13",
+                "map<string>:{1 object} version 14",
+                "map<string>:{1 object} version 14 linked geometry.identifier",
+                "map<string>:{1 object} version 15",
+                "map<string>:{1 object} version 15 linked geometry.identifier",
+                "map<string>:{1 object} version 16",
+                "map<string>:{1 object} version 16 linked geometry.identifier",
+                "map<string>:{1 object} version 20",
+                "map<string>:{1 object} version 20 linked geometry.identifier",
+                "map<string>:{1 object} version 50",
+                "map<string>:{1 object} version 50 linked geometry.identifier",
+                "map<string>:{1 object} version 99",
+                "map<string>:{1 object} version 99 linked geometry.identifier",
+                "map<string>:{1 object} version 100",
+                "map<string>:{1 object} version 100 linked geometry.identifier",
+                "map<string>:{1 object} version -1",
+                "map<string>:{1 object} version -1 linked geometry.identifier",
                 "map<string>:{1 number} 0",
                 "map<string>:{1 number} 0.5",
                 "map<string>:{1 number} 1",
@@ -3786,8 +3933,8 @@
               ]
             },
             "geometry.bone_visibility": {
-              "accepted": 98,
-              "rejected": 100,
+              "accepted": 105,
+              "rejected": 123,
               "rejectedValues": [
                 "map<string>:{1}",
                 "map<string>:{2}",
@@ -3880,6 +4027,29 @@
                 "map<string>:{1 object} 1e-50",
                 "map<string>:{1 object} \t1",
                 "map<string>:{1 object} 00.5",
+                "map<string>:{1 object} version 0",
+                "map<string>:{1 object} version 2",
+                "map<string>:{1 object} version 6",
+                "map<string>:{1 object} version 7",
+                "map<string>:{1 object} version 8",
+                "map<string>:{1 object} version 12",
+                "map<string>:{1 object} version 13",
+                "map<string>:{1 object} version 14",
+                "map<string>:{1 object} version 14 linked geometry.identifier",
+                "map<string>:{1 object} version 15",
+                "map<string>:{1 object} version 15 linked geometry.identifier",
+                "map<string>:{1 object} version 16",
+                "map<string>:{1 object} version 16 linked geometry.identifier",
+                "map<string>:{1 object} version 20",
+                "map<string>:{1 object} version 20 linked geometry.identifier",
+                "map<string>:{1 object} version 50",
+                "map<string>:{1 object} version 50 linked geometry.identifier",
+                "map<string>:{1 object} version 99",
+                "map<string>:{1 object} version 99 linked geometry.identifier",
+                "map<string>:{1 object} version 100",
+                "map<string>:{1 object} version 100 linked geometry.identifier",
+                "map<string>:{1 object} version -1",
+                "map<string>:{1 object} version -1 linked geometry.identifier",
                 "map<string>:{1 number} 0",
                 "map<string>:{1 number} 0.5",
                 "map<string>:{1 number} 1",
@@ -4165,7 +4335,7 @@
               ]
             },
             "detection_rules[].stops_liquid_flowing_from_direction": {
-              "accepted": 9,
+              "accepted": 10,
               "rejected": 3,
               "rejectedValues": [
                 "array<any>:[wrong type]",
@@ -4174,7 +4344,7 @@
               ],
               "bdsErrors": [
                 "stops_liquid_flowing_from_direction[0]: This value is bound to Facing and expects one of the following strings: down, up, north, ... (3 others)",
-                "[Components] block_definitions | behavior_packs/paletter_spec | blocks/b_liquid_detection_28.json | Detected duplicate direction in \"stops_liquid_flowing_from_direction\" field: \"down\"",
+                "[Components] block_definitions | behavior_packs/paletter_spec | blocks/b_liquid_detection_29.json | Detected duplicate direction in \"stops_liquid_flowing_from_direction\" field: \"down\"",
                 "stops_liquid_flowing_from_direction: expected an array"
               ]
             },
@@ -4208,7 +4378,7 @@
             },
             "stops_liquid_flowing_from_direction": {
               "accepted": 0,
-              "rejected": 11,
+              "rejected": 12,
               "rejectedValues": [
                 "array<string>:[]",
                 "array<string>:[wrong type]",
@@ -4220,6 +4390,7 @@
                 "array<string>:[west]",
                 "array<string>:[up,down]",
                 "array<string>:[all]",
+                "array<string>:[all reversed]",
                 "array<string>:[2x]"
               ],
               "bdsErrors": [
@@ -5884,7 +6055,7 @@
               ]
             },
             "conditions[].allowed_faces": {
-              "accepted": 9,
+              "accepted": 10,
               "rejected": 3,
               "rejectedValues": [
                 "array<string>:[wrong type]",
@@ -5893,7 +6064,7 @@
               ],
               "bdsErrors": [
                 "allowed_faces[0]: This value is bound to Facing and expects one of the following strings: down, up, north, ... (3 others)",
-                "[Components] block_definitions | behavior_packs/paletter_spec | blocks/b_placement_filter_18.json | Detected duplicate direction in \"stops_liquid_flowing_from_direction\" field: \"down\"",
+                "[Components] block_definitions | behavior_packs/paletter_spec | blocks/b_placement_filter_19.json | Detected duplicate direction in \"stops_liquid_flowing_from_direction\" field: \"down\"",
                 "allowed_faces: expected an array"
               ]
             },
@@ -6401,7 +6572,7 @@
           ],
           "fields": {
             "connected_faces": {
-              "accepted": 10,
+              "accepted": 11,
               "rejected": 8,
               "rejectedValues": [
                 "array<string>:[wrong type]",
@@ -9205,7 +9376,7 @@
               ]
             },
             "repair_items[].repair_amount.version": {
-              "accepted": 6,
+              "accepted": 22,
               "rejected": 1,
               "rejectedValues": [
                 "integer:1.5"
@@ -9349,7 +9520,7 @@
               "rejected": 0
             },
             "repair_items[].repair_amount.version": {
-              "accepted": 6,
+              "accepted": 22,
               "rejected": 1,
               "rejectedValues": [
                 "integer:1.5"
@@ -10014,7 +10185,7 @@
               ]
             },
             "use_duration": {
-              "accepted": 8,
+              "accepted": 14,
               "rejected": 1,
               "rejectedValues": [
                 "number:-1"
@@ -10218,16 +10389,18 @@
           "fields": {
             "neighbor_directions": {
               "accepted": 8,
-              "rejected": 3,
+              "rejected": 4,
               "rejectedValues": [
                 "array<string>:[]",
                 "array<string>:[wrong type]",
-                "array<string>:[all,up]"
+                "array<string>:[all,up]",
+                "array<string>:[all reversed]"
               ],
               "bdsErrors": [
                 "neighbor_directions: expected object with at least 1 elements",
                 "neighbor_directions[0]: This value is bound to Neighbor Change Direction and expects one of the following strings: down, up, north, ... (4 others)",
-                "[Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_neighbor_change_12.json | The all neighbor direction must be used alone"
+                "[Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_neighbor_change_12.json | The all neighbor direction must be used alone",
+                "neighbor_directions: too many input elements, expected no more than 6"
               ]
             }
           }

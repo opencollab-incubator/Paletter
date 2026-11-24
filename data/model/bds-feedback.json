@@ -334,6 +334,7 @@
   },
   "block:minecraft:neighbor_change": {
     "neighbor_directions": [
+      "maxItems 6",
       "minItems 1"
     ],
     "neighbor_directions[]": [

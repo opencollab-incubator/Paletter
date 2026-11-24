@@ -301,11 +301,11 @@ Behaviour of custom blocks and items matches BDS: `explain` tells a component th
 - `block:friction` = 0.6 (BDS_PROBE: data/bds/1.26.70.24/behaviour-probe/capture.json (BDS 1.26.70-beta24, Build ID 53380423))
 - `block:light_dampening` = 15 (BDS_PROBE: data/bds/1.26.70.24/behaviour-probe/capture.json (BDS 1.26.70-beta24, Build ID 53380423))
 - `block:light_emission` = 0 (BDS_PROBE: data/bds/1.26.70.24/behaviour-probe/capture.json (BDS 1.26.70-beta24, Build ID 53380423))
-- `block:explosion_resistance` = 0.0 (BDS_PROBE: data/bds/1.26.70.24/behaviour-probe/capture.json (BDS 1.26.70-beta24, Build ID 53380423))
 - `block:collision_shape` = [0.0, 0.0, 0.0, 1.0, 1.0, 1.0] (BDS_PROBE: data/bds/1.26.70.24/behaviour-probe/capture.json (BDS 1.26.70-beta24, Build ID 53380423))
 - `block:burn_odds` = 0 (BDS_PROBE: data/bds/1.26.70.24/behaviour-probe/capture.json (BDS 1.26.70-beta24, Build ID 53380423))
 - `block:flame_odds` = 0 (BDS_PROBE: data/bds/1.26.70.24/behaviour-probe/capture.json (BDS 1.26.70-beta24, Build ID 53380423))
 - `block:climbable` = false (BDS_PROBE: data/bds/1.26.70.24/behaviour-probe/capture.json (BDS 1.26.70-beta24, Build ID 53380423))
+- `block:explosion_resistance` = 0.0 (BDS_PROBE: data/bds/1.26.63.1/behaviour-probe/capture.json (BDS 1.26.63.1, Build ID 53340801))
 
 The friction of a custom block is 1 minus the `minecraft:friction` value, confirmed on BDS by the probe (`friction.components` of its capture).
 
@@ -452,6 +452,7 @@ None.
 - SCRIPT_API 1.26.52.3: 118 colours of [Block.getMapColor] are no whole bytes (BDS keeps colours as floats; Education Edition elements): not stored, rounding would be a guess
 - SCRIPT_API 1.26.63.1: 12 palette states the Script API did not list: [minecraft:chalkboard{direction=10}, minecraft:chalkboard{direction=11}, minecraft:chalkboard{direction=12}, minecraft:chalkboard{direction=13}, minecraft:chalkboard{direction=14}, minecraft:chalkboard{direction=15}, minecraft:chalkboard{direction=4}, minecraft:chalkboard{direction=5}, minecraft:chalkboard{direction=6}, minecraft:chalkboard{direction=7}, minecraft:chalkboard{direction=8}, minecraft:chalkboard{direction=9}]
 - SCRIPT_API 1.26.63.1: 118 colours of [Block.getMapColor] are no whole bytes (BDS keeps colours as floats; Education Edition elements): not stored, rounding would be a guess
+- BDS_PROBE 1.26.70-beta24: the default of block:explosion_resistance is unverified: Explosion resistance of probe:plain is not decided: against minecraft:dirt p = 0.030527108190639966 (minecraft:dirt 1/48, minecraft:sand 0/48, probe:plain 8/48, probe:explosion_resistance_0 14/48, probe:destructible_by_explosion 20/48, probe:explosion_resistance_3 0/48)
 - CLOUDBURST_DATA 0021592b1 2026-10-28 (More 26.60 data): 26.60, blocks.json, same block states
 - CLOUDBURST_DATA 88a2436a2 2026-10-20 (Restructure block geometry data and include native position samples): 26.50, blocks.json, same block states
 - CLOUDBURST_DATA 659ce1e2e 2026-09-28 (Fix bad data dump): 26.50, older than the commit used

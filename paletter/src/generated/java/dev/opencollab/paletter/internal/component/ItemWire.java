@@ -531,7 +531,7 @@ public final class ItemWire {
             out.put("minecraft:use_modifiers.start_using", "if_first");
         }
         float v3 = c.useDuration();
-        out.put("item_properties.use_duration", Wire.toInt((20.0 * (double) v3 + 0.0)));
+        out.put("item_properties.use_duration", Wire.toInt((double) ((float) (double) v3 * 20.0f + 0.0f)));
         out.put("minecraft:use_modifiers.use_duration", Wire.toFloat(v3));
     }
 

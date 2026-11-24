@@ -3,6 +3,7 @@
 // data/model/ATTRIBUTION.md.
 package dev.opencollab.paletter.block.component;
 
+import dev.opencollab.paletter.Molang;
 import dev.opencollab.paletter.annotation.BedrockFormat;
 import dev.opencollab.paletter.internal.component.Check;
 import java.util.ArrayList;
@@ -324,7 +325,7 @@ public final class EmbeddedVisual implements BlockComponent {
      *
      */
     public static final class VisualGeometry {
-        private final @NonNull Map<String, String> boneVisibility;
+        private final @NonNull Map<String, Molang> boneVisibility;
 
         private final @Nullable String culling;
 
@@ -338,7 +339,7 @@ public final class EmbeddedVisual implements BlockComponent {
 
         private final @NonNull UvLock uvLock;
 
-        private VisualGeometry(@NonNull Map<String, String> boneVisibility,
+        private VisualGeometry(@NonNull Map<String, Molang> boneVisibility,
                 @Nullable String culling, @Nullable String cullingLayer,
                 @Nullable String cullingShape, @NonNull String identifier,
                 @Nullable NWayVisualRotation nWayVisualRotation, @NonNull UvLock uvLock) {
@@ -366,7 +367,7 @@ public final class EmbeddedVisual implements BlockComponent {
          *
          * @return the value
          */
-        public @NonNull Map<String, String> boneVisibility() {
+        public @NonNull Map<String, Molang> boneVisibility() {
             return boneVisibility;
         }
 
@@ -516,7 +517,7 @@ public final class EmbeddedVisual implements BlockComponent {
          * Builds {@link VisualGeometry}: defaults applied, required fields and ranges checked by {@link #build()}.
          */
         public static final class Builder {
-            private @Nullable Map<String, String> boneVisibility = Map.of();
+            private @Nullable Map<String, Molang> boneVisibility = Map.of();
 
             private @Nullable String culling;
 
@@ -540,7 +541,7 @@ public final class EmbeddedVisual implements BlockComponent {
              * @return this builder
              * @throws NullPointerException if the value is null
              */
-            public @NonNull Builder boneVisibility(@NonNull Map<String, String> boneVisibility) {
+            public @NonNull Builder boneVisibility(@NonNull Map<String, Molang> boneVisibility) {
                 this.boneVisibility = Objects.requireNonNull(boneVisibility, "EmbeddedVisual.VisualGeometry.boneVisibility");
                 return this;
             }

@@ -62,6 +62,18 @@ public enum dev.opencollab.paletter.Lookup {
     public static dev.opencollab.paletter.Lookup[] values()
 }
 
+public final class dev.opencollab.paletter.Molang {
+    public static final int MAX_VERSION = 100
+    public static final int MIN_VERSION = -1
+    public boolean equals(java.lang.Object)
+    public java.lang.String expression()
+    public int hashCode()
+    public static dev.opencollab.paletter.Molang of(java.lang.String)
+    public static dev.opencollab.paletter.Molang of(java.lang.String, int)
+    public java.lang.String toString()
+    public java.lang.Integer version()
+}
+
 public record dev.opencollab.paletter.Origin {
     public static final dev.opencollab.paletter.Origin VANILLA
     public <init>(java.lang.String)
@@ -1059,7 +1071,7 @@ public static final class dev.opencollab.paletter.block.component.EmbeddedVisual
 }
 
 public static final class dev.opencollab.paletter.block.component.EmbeddedVisual$VisualGeometry {
-    public java.util.Map<java.lang.String, java.lang.String> boneVisibility()
+    public java.util.Map<java.lang.String, dev.opencollab.paletter.Molang> boneVisibility()
     public static dev.opencollab.paletter.block.component.EmbeddedVisual$VisualGeometry$Builder builder()
     public java.lang.String culling()
     public java.lang.String cullingLayer()
@@ -1075,7 +1087,7 @@ public static final class dev.opencollab.paletter.block.component.EmbeddedVisual
 }
 
 public static final class dev.opencollab.paletter.block.component.EmbeddedVisual$VisualGeometry$Builder {
-    public dev.opencollab.paletter.block.component.EmbeddedVisual$VisualGeometry$Builder boneVisibility(java.util.Map<java.lang.String, java.lang.String>)
+    public dev.opencollab.paletter.block.component.EmbeddedVisual$VisualGeometry$Builder boneVisibility(java.util.Map<java.lang.String, dev.opencollab.paletter.Molang>)
     public dev.opencollab.paletter.block.component.EmbeddedVisual$VisualGeometry build()
     public dev.opencollab.paletter.block.component.EmbeddedVisual$VisualGeometry$Builder culling(java.lang.String)
     public dev.opencollab.paletter.block.component.EmbeddedVisual$VisualGeometry$Builder cullingLayer(java.lang.String)
@@ -1177,7 +1189,7 @@ public static final class dev.opencollab.paletter.block.component.Friction$Build
 
 public final class dev.opencollab.paletter.block.component.Geometry implements dev.opencollab.paletter.block.component.BlockComponent {
     public static final java.lang.String NAME = "minecraft:geometry"
-    public java.util.Map<java.lang.String, java.lang.String> boneVisibility()
+    public java.util.Map<java.lang.String, dev.opencollab.paletter.Molang> boneVisibility()
     public static dev.opencollab.paletter.block.component.Geometry$Builder builder()
     public java.lang.String culling()
     public java.lang.String cullingLayer()
@@ -1194,7 +1206,7 @@ public final class dev.opencollab.paletter.block.component.Geometry implements d
 }
 
 public static final class dev.opencollab.paletter.block.component.Geometry$Builder {
-    public dev.opencollab.paletter.block.component.Geometry$Builder boneVisibility(java.util.Map<java.lang.String, java.lang.String>)
+    public dev.opencollab.paletter.block.component.Geometry$Builder boneVisibility(java.util.Map<java.lang.String, dev.opencollab.paletter.Molang>)
     public dev.opencollab.paletter.block.component.Geometry build()
     public dev.opencollab.paletter.block.component.Geometry$Builder culling(java.lang.String)
     public dev.opencollab.paletter.block.component.Geometry$Builder cullingLayer(java.lang.String)
@@ -1354,7 +1366,7 @@ public static final class dev.opencollab.paletter.block.component.ItemVisual$NWa
 }
 
 public static final class dev.opencollab.paletter.block.component.ItemVisual$VisualGeometry {
-    public java.util.Map<java.lang.String, java.lang.String> boneVisibility()
+    public java.util.Map<java.lang.String, dev.opencollab.paletter.Molang> boneVisibility()
     public static dev.opencollab.paletter.block.component.ItemVisual$VisualGeometry$Builder builder()
     public java.lang.String culling()
     public java.lang.String cullingLayer()
@@ -1370,7 +1382,7 @@ public static final class dev.opencollab.paletter.block.component.ItemVisual$Vis
 }
 
 public static final class dev.opencollab.paletter.block.component.ItemVisual$VisualGeometry$Builder {
-    public dev.opencollab.paletter.block.component.ItemVisual$VisualGeometry$Builder boneVisibility(java.util.Map<java.lang.String, java.lang.String>)
+    public dev.opencollab.paletter.block.component.ItemVisual$VisualGeometry$Builder boneVisibility(java.util.Map<java.lang.String, dev.opencollab.paletter.Molang>)
     public dev.opencollab.paletter.block.component.ItemVisual$VisualGeometry build()
     public dev.opencollab.paletter.block.component.ItemVisual$VisualGeometry$Builder culling(java.lang.String)
     public dev.opencollab.paletter.block.component.ItemVisual$VisualGeometry$Builder cullingLayer(java.lang.String)
@@ -3685,16 +3697,16 @@ public record dev.opencollab.paletter.item.component.RenderOffsets$Vec3 {
 }
 
 public sealed interface dev.opencollab.paletter.item.component.RepairAmount permits dev.opencollab.paletter.item.component.FutureRepairAmount, dev.opencollab.paletter.item.component.RepairAmount$Expression, dev.opencollab.paletter.item.component.RepairAmount$Fixed {
-    public static dev.opencollab.paletter.item.component.RepairAmount expression(java.lang.String)
+    public static dev.opencollab.paletter.item.component.RepairAmount expression(dev.opencollab.paletter.Molang)
     public static dev.opencollab.paletter.item.component.RepairAmount fixed(float)
 }
 
 public record dev.opencollab.paletter.item.component.RepairAmount$Expression implements dev.opencollab.paletter.item.component.RepairAmount {
-    public <init>(java.lang.String)
+    public <init>(dev.opencollab.paletter.Molang)
     public final boolean equals(java.lang.Object)
     public final int hashCode()
     public final java.lang.String toString()
-    public java.lang.String value()
+    public dev.opencollab.paletter.Molang value()
 }
 
 public record dev.opencollab.paletter.item.component.RepairAmount$Fixed implements dev.opencollab.paletter.item.component.RepairAmount {

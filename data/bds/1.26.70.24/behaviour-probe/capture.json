@@ -41,7 +41,7 @@
     }
   ],
   "unverified_defaults": {
-    "block:explosion_resistance": "Explosion resistance of probe:plain is not decided: against minecraft:dirt p = 0.030527108190639966 ({minecraft:dirt=[I@3d3a28b5, minecraft:sand=[I@1ee22768, probe:plain=[I@38a52072, probe:explosion_resistance_0=[I@306bf4c3, probe:destructible_by_explosion=[I@5cf80dfb, probe:explosion_resistance_3=[I@532ea86b})"
+    "block:explosion_resistance": "Explosion resistance of probe:plain is not decided: against minecraft:dirt p = 0.030527108190639966 (minecraft:dirt 1/48, minecraft:sand 0/48, probe:plain 8/48, probe:explosion_resistance_0 14/48, probe:destructible_by_explosion 20/48, probe:explosion_resistance_3 0/48)"
   },
   "friction": {
     "method": "Entity speed loss per tick (median over the slide) divided by 0.91, 3 decimals; the floor of every lane is a block of one kind",
