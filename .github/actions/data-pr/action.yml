@@ -55,7 +55,7 @@ runs:
       shell: bash
       run: |
         # Plain relative paths only: they become a regular expression and the add-paths of the pull request
-        if grep -Ev '^[a-z][a-z/]*[a-z]$' .github/data-paths.txt; then echo "Not a data path (above)"; exit 1; fi
+        if grep -Ev '^[a-z][a-z/-]*[a-z]$' .github/data-paths.txt; then echo "Not a data path (above)"; exit 1; fi
         echo "prefixes=($(sed 's|$|/|' .github/data-paths.txt | paste -sd'|'))" >> "$GITHUB_OUTPUT"
         echo "add-paths=$(sed 's|$|/**|' .github/data-paths.txt | paste -sd,)" >> "$GITHUB_OUTPUT"
     - name: Apply the data
@@ -81,7 +81,7 @@ runs:
           echo "The patch adds a symlink or submodule"; exit 1
         fi
         # Generated code is reviewed only after the build ran on it, and a pull request opened with GITHUB_TOKEN gets no build
-        if [ "$HAS_TOKEN" != true ] && grep -q '^paletter/src/generated/' "$RUNNER_TEMP/paths.txt"; then
+        if [ "$HAS_TOKEN" != true ] && grep -Eq '^[a-z-]+/src/generated/' "$RUNNER_TEMP/paths.txt"; then
           echo "::error::The data changes generated code, and no BDS_DATA_TOKEN secret is set, so the build would not run on the pull request. Set BDS_DATA_TOKEN (see docs/releasing.md) and run this workflow again."
           exit 1
         fi

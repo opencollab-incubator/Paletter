@@ -217,10 +217,10 @@ jobs:
             ${{ runner.temp }}/out/model.diff
           if-no-files-found: ignore
 
-      # The API dump compiles what the generators wrote; then the patch of the data paths, which publish reads
+      # The API dumps compile what the generators wrote; then the patch of the data paths, which publish reads
       - name: Write the patch
         run: |
-          ./gradlew :paletter:apiDump
+          ./gradlew :paletter:apiDump :paletter-recipes:apiDump
           git add -A -- $(cat .github/data-paths.txt)
           git diff --cached --binary --no-renames -- $(cat .github/data-paths.txt) > "$RUNNER_TEMP/out/data.patch"
 

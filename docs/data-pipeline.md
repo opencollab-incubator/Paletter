@@ -289,14 +289,14 @@ the schedule, not the daily check. When a data update changes an add-on input (`
    the run. When a step changed an input of the spec add-on (`DataPaths.ADDON_INPUTS`, compared byte for byte) it exits
    with 3 and leaves `addon-inputs/` and `model.diff` (uploaded as `recapture-guard-diff`): those captures were made with an
    add-on that is not the final one, so the change is committed and the workflow runs again until a pass changes
-   nothing. The job then runs `:paletter:apiDump` (it compiles what both generators wrote) and writes a patch of the data
+   nothing. The job then runs `:paletter:apiDump :paletter-recipes:apiDump` (they compile what the generators wrote) and writes a patch of the data
    paths; the report has one verdict line and the collapsed report per build.
 4. `publish` applies the patch with `.github/actions/data-pr` (the checks of `bds-data.yml`) and opens or updates the pull request
    `recapture/<base>` (for the data update of the release channel: `recapture/bds-data/release`), with the report as its body. `assemble` hands over the id of its artifact and `publish` downloads exactly that one.
 
 The local equivalent is the same commands: `recapture plan --output plan.json`, then per leg
 `update --channel <channel> --version <build> --capture-only <in>/captures-<build>/captures --report <in>/captures-<build>/report.md`,
-then `recapture assemble --plan plan.json --in <in> --out <out> --fetch-sources <dir>` and `./gradlew :paletter:apiDump`.
+then `recapture assemble --plan plan.json --in <in> --out <out> --fetch-sources <dir>` and `./gradlew :paletter:apiDump :paletter-recipes:apiDump`.
 
 The builds are not checked against each other again: the set of kept builds does not change in a recapture (that is
 `builds check`, which stays a separate step), and each leg compared its capture with the committed captures of its own
@@ -433,7 +433,7 @@ ids, no random UUIDs; the trim patterns and materials are in the bundle but not 
 station tag of the captures, in `paletter-recipes/src/generated`). A capture belongs to the data version of the protocol in its
 build's `experiments.json`. The import fails for a recipe kind or ingredient descriptor the bundle has no place for, an item that is
 not in the palette of its data version, an unknown unlock context, a malformed UUID, and a container mix with an aux value or an
-empty block state or tag.
+empty block state or tag. `update` runs it after writing a build's captures, and a recapture's `assemble` runs it as a step.
 
 ### Previews
 
@@ -515,7 +515,7 @@ hand (`channel`, `version`, `force`, `verify-only`), in three jobs:
    always writes its spec capture to `data/bds/<build>/spec`, so once its pull request is merged row 2 knows it, even
    when its data equals the build before.
 2. `capture` (Windows, `contents: read`, one job per build to capture) runs `update` on Windows BDS (like the committed
-   captures), then `generateComponentApi` and `:paletter:apiDump`, writes a patch of the data paths
+   captures; it also runs `recipes-import`), then `generateComponentApi`, `:paletter:apiDump` and `:paletter-recipes:apiDump`, writes a patch of the data paths
    (`.github/data-paths.txt`, kept equal to `DataPaths.ALL` by `WorkflowConsistencyTest`), and `daily result` turns the
    exit codes, the report and the patch into the values the publish job reads (`update`: the exit code, 3 when the code
    generation failed on written data; `differs`; `hash`: the report without its date and path lines; `addon`: whether

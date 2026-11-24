@@ -10,8 +10,9 @@ import java.util.List;
 public final class DataPaths {
     /** The list the workflows read, one path per line, relative to the repository root. */
     public static final String FILE = ".github/data-paths.txt";
-    /** The committed data, the bundled resources, the generated code and the API dump. */
-    public static final List<String> ALL = List.of("data", "paletter/src/main/resources/paletter", "paletter/src/generated", "paletter/api");
+    /** The committed data, the bundled resources, the generated code and the API dumps of paletter and paletter-recipes. */
+    public static final List<String> ALL = List.of("data", "paletter/src/main/resources/paletter", "paletter/src/generated", "paletter/api",
+        "paletter-recipes/src/main/resources/paletter", "paletter-recipes/src/generated", "paletter-recipes/api");
     /**
      * What the spec add-on is generated from besides the code and a build's schema: when one of them changes, the captures of
      * every kept build answer for an add-on that is no longer the current one.

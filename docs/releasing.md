@@ -15,7 +15,7 @@ What the workflows in `.github/workflows` need from the GitHub repository settin
 - `BDS_DATA_TOKEN` (optional, recommended): a fine-grained personal access token for this repository only, with
   contents and pull requests read and write. `bds-data.yml` opens its pull requests with it, so `build.yml` runs on
   them; a pull request opened with `GITHUB_TOKEN` starts no other workflow. Without it, a data update that changes
-  generated code (`paletter/src/generated`) fails the publish job instead of opening a pull request nobody built. Only
+  generated code (`paletter/src/generated`, `paletter-recipes/src/generated`) fails the publish job instead of opening a pull request nobody built. Only
   the publish job sees the secret, never the job that runs BDS and Gradle.
 
   **Rotation.** A fine-grained token expires after at most a year, and the workflows cannot tell: an expired token still

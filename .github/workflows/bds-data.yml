@@ -150,13 +150,13 @@ jobs:
           if [ "$VERIFY_ONLY" = true ]; then ARGS+=(--verify-only); fi
           "$TOOLS" "${ARGS[@]}"
           echo "exit=$?" >> "$GITHUB_OUTPUT"
-      # The component API follows the inferred mappings; the API dump compiles what the generator wrote
+      # The component API follows the inferred mappings; the API dumps compile what the generators wrote
       - name: Generate the code
         id: codegen
         if: inputs.verify-only != true && (steps.run.outputs.exit == '0' || steps.run.outputs.exit == '2')
         run: |
           set +e
-          ./gradlew :tools:generateComponentApi && ./gradlew :paletter:apiDump
+          ./gradlew :tools:generateComponentApi && ./gradlew :paletter:apiDump :paletter-recipes:apiDump
           echo "exit=$?" >> "$GITHUB_OUTPUT"
       # What publish reads (`daily result`: values only, checked again there). Written last, after the patch exists, so a
       # failure on the way can never look like "no changes"; a step that died before its exit code counts as a failure

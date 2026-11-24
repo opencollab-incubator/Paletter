@@ -7,6 +7,7 @@ import dev.opencollab.paletter.tools.bds.CapturePlatform;
 import dev.opencollab.paletter.tools.Layout;
 import dev.opencollab.paletter.tools.model.addon.AddonGenerator;
 import dev.opencollab.paletter.tools.model.addon.FixedAddons;
+import dev.opencollab.paletter.tools.data.RecipeImport;
 import dev.opencollab.paletter.tools.shape.ShapeImport;
 import dev.opencollab.paletter.tools.client.Capture;
 
@@ -294,6 +295,10 @@ public final class Update {
             if (runs.voxelShapesWritten) {
                 // After the data of the version is in place: the import reads the block names of the bundled versions
                 ShapeImport.run(ctx.root);
+            }
+            if (runs.vanilla != null) {
+                // The recipe bundles of paletter-recipes follow the recipe captures, the new build's among them
+                RecipeImport.run(ctx.root);
             }
         } finally {
             // Last: the block states leave the version files, the staged definitions give them

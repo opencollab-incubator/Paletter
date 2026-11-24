@@ -2,3 +2,6 @@ data
 paletter/src/main/resources/paletter
 paletter/src/generated
 paletter/api
+paletter-recipes/src/main/resources/paletter
+paletter-recipes/src/generated
+paletter-recipes/api

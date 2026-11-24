@@ -25,8 +25,8 @@ The Gradle tasks are the commands with their usual arguments:
 ## a. A new BDS release or preview appeared
 
 `bds-data.yml` runs daily (05:17 UTC) and captures only a build it does not know yet (`daily decide`, see
-[data-pipeline.md](data-pipeline.md#the-daily-check)): `update --channel release|preview`, then `generateComponentApi`
-and `:paletter:apiDump`. New data becomes a pull request from `bds-data/<channel>` with data and generated paths only; a
+[data-pipeline.md](data-pipeline.md#the-daily-check)): `update --channel release|preview`, then `generateComponentApi`,
+`:paletter:apiDump` and `:paletter-recipes:apiDump`. New data becomes a pull request from `bds-data/<channel>` with data and generated paths only; a
 failure becomes an issue, retried once the next day and then left until a new commit or build (`force` re-runs it). If the patch changes an add-on input
 (`components.json`, `fixtures.json`, `bds-feedback.json`, `bds-keys.json`) the pull request says so at the top: label it
 `recapture` before merging (section b). Nothing recaptures by itself.
@@ -96,7 +96,7 @@ add-ons. After a change to the model, fixtures, `bds-feedback.json` or the add-o
   `components.json` or `bds-keys.json`; the artifact `recapture-guard-diff` has them), commit that change and run again
   until a pass changes nothing.
 - Local equivalent: the same commands ([data-pipeline.md](data-pipeline.md#full-recapture)): `recapture plan --output
-  plan.json`, `update --capture-only` per leg, `recapture assemble`, `./gradlew :paletter:apiDump`.
+  plan.json`, `update --capture-only` per leg, `recapture assemble`, `./gradlew :paletter:apiDump :paletter-recipes:apiDump`.
   `./gradlew :tools:generateAddon` rebuilds the add-on.
 
 ## c. A new data version line (e.g. 26.80)
