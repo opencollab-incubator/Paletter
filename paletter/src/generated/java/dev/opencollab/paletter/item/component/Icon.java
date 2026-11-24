@@ -32,6 +32,7 @@ public final class Icon implements ItemComponent {
 
     private Icon(@Nullable Map<String, String> textures, @Nullable String texture) {
         textures = textures == null ? null : Check.copy(textures, "Icon.textures");
+        Check.oneForm("Icon", "texture", texture != null, textures != null && !textures.isEmpty());
         this.textures = textures;
         this.texture = texture;
     }

@@ -59,6 +59,16 @@ public final class Check {
         }
     }
 
+    /**
+     * A value form of the component (add-on JSON {@code "minecraft:collision_box": true}) set together with the fields of
+     * another form: add-on JSON has one value, so one of them would be dropped.
+     */
+    public static void oneForm(@NonNull String owner, @NonNull String form, boolean used, boolean othersUsed) {
+        if (used && othersUsed) {
+            throw new IllegalArgumentException(owner + "." + form + " is a value form of its own: set it or the other fields, not both");
+        }
+    }
+
     /** A value BDS takes only in whole steps (degrees in quarter turns): a multiple of {@code step}. */
     public static void multipleOf(@NonNull String field, double value, double step) {
         double steps = value / step;

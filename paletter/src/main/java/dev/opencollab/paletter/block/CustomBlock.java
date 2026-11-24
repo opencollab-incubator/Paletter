@@ -1,6 +1,7 @@
 package dev.opencollab.paletter.block;
 
 import dev.opencollab.paletter.internal.block.BlockStates;
+import dev.opencollab.paletter.internal.block.StateConditions;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
@@ -98,6 +99,14 @@ public final class CustomBlock {
             combinations *= property.values().size();
             if (combinations > MAX_STATES) {
                 throw new IllegalArgumentException(identifier + " has more than 2^24 state combinations");
+            }
+        }
+        for (Permutation permutation : this.permutations) {
+            for (String state : StateConditions.stateNames(permutation.condition())) {
+                if (stateProperties.stream().noneMatch(p -> p.name().equals(state))) {
+                    throw new IllegalArgumentException(identifier + "'s permutation '" + permutation.condition() + "' reads the state "
+                        + state + ", which the block does not have");
+                }
             }
         }
         Map<String, Object> converted = new LinkedHashMap<>();

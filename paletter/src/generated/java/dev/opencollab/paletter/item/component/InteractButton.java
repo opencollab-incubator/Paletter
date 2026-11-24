@@ -3,6 +3,7 @@
 // data/model/ATTRIBUTION.md.
 package dev.opencollab.paletter.item.component;
 
+import dev.opencollab.paletter.internal.component.Check;
 import java.util.Objects;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
@@ -27,6 +28,8 @@ public final class InteractButton implements ItemComponent {
     private final @Nullable String text;
 
     private InteractButton(@Nullable Boolean enabled, @Nullable String text) {
+        Check.oneForm("InteractButton", "enabled", enabled != null, text != null);
+        Check.oneForm("InteractButton", "text", text != null, enabled != null);
         this.enabled = enabled;
         this.text = text;
     }

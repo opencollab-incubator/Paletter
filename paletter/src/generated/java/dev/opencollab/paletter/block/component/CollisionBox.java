@@ -4,6 +4,7 @@
 package dev.opencollab.paletter.block.component;
 
 import dev.opencollab.paletter.annotation.BedrockFormat;
+import dev.opencollab.paletter.internal.component.Check;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -37,6 +38,7 @@ public final class CollisionBox implements BlockComponent {
 
     private CollisionBox(@NonNull List<Entry> boxes, @Nullable Boolean enabled) {
         boxes = List.copyOf(Objects.requireNonNull(boxes, "CollisionBox.boxes"));
+        Check.oneForm("CollisionBox", "enabled", enabled != null, !boxes.isEmpty());
         this.boxes = boxes;
         this.enabled = enabled;
     }

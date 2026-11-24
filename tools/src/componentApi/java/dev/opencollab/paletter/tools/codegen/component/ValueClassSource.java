@@ -416,7 +416,40 @@ final class ValueClassSource {
                     (nullable ? f.java + " != null && " : "") + "!" + f.java + ".isEmpty()", f.conflictsWith.java, f.conflictsWith.java, f.conflictValue);
             }
         }
+        if (o == c.root) {
+            oneForm(body, owner, o);
+        }
         return body.build();
+    }
+
+    /**
+     * A value form flattened into the component as a field of its own ({@code CollisionBox.enabled}) excludes the other
+     * fields: add-on JSON has one value, and the encoder would write one form and drop the other. A field whose being set
+     * cannot be told (a primitive with a default, a list with a default that is not empty) is not checked.
+     */
+    private void oneForm(CodeBlock.Builder body, String owner, ObjType o) {
+        for (Field form : o.fields) {
+            if (form.form == null || !nullable(form) || !(form.type instanceof Scalar)) {
+                continue;
+            }
+            List<String> others = new ArrayList<>();
+            for (Field other : o.fields) {
+                if (other == form) {
+                    continue;
+                }
+                boolean container = other.type instanceof ListOf || other.type instanceof MapOf || other.type instanceof States;
+                if (nullable(other)) {
+                    others.add(other.java + " != null" + (container ? " && !" + other.java + ".isEmpty()" : ""));
+                } else if (container && (other.defaultValue == null || other.defaultValue.isJsonArray() && other.defaultValue.getAsJsonArray().isEmpty()
+                    || other.defaultValue.isJsonObject() && other.defaultValue.getAsJsonObject().isEmpty())) {
+                    others.add("!" + other.java + ".isEmpty()");
+                }
+            }
+            if (!others.isEmpty()) {
+                body.addStatement("$T.oneForm($S, $S, $N != null, $L)", CHECK, owner, form.java, form.java,
+                    others.size() == 1 ? others.getFirst() : "(" + String.join(") || (", others) + ")");
+            }
+        }
     }
 
     private static String bound(Double d) {

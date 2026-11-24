@@ -39,6 +39,7 @@ public final class DestructibleByMining implements BlockComponent {
             float secondsToDestroy, @Nullable Boolean enabled) {
         itemSpecificSpeeds = itemSpecificSpeeds == null ? null : List.copyOf(itemSpecificSpeeds);
         Check.range("DestructibleByMining.secondsToDestroy", secondsToDestroy, 0.0, null);
+        Check.oneForm("DestructibleByMining", "enabled", enabled != null, itemSpecificSpeeds != null && !itemSpecificSpeeds.isEmpty());
         this.itemSpecificSpeeds = itemSpecificSpeeds;
         this.secondsToDestroy = secondsToDestroy;
         this.enabled = enabled;

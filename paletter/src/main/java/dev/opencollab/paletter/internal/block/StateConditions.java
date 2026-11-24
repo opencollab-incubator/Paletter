@@ -29,6 +29,28 @@ public final class StateConditions {
         }
     }
 
+    /**
+     * @return the names a condition reads with {@code q.block_state('name')}, in order; empty if it cannot be read
+     */
+    public static @NonNull List<String> stateNames(@NonNull String condition) {
+        List<String> tokens;
+        try {
+            tokens = tokenize(condition);
+        } catch (RuntimeException e) {
+            return List.of();
+        }
+        List<String> names = new ArrayList<>();
+        for (int i = 0; i + 2 < tokens.size(); i++) {
+            String lower = tokens.get(i).toLowerCase(java.util.Locale.ROOT);
+            if ((lower.equals("q.block_state") || lower.equals("query.block_state")) && tokens.get(i + 1).equals("(")
+                && tokens.get(i + 2).startsWith("'")) {
+                String name = tokens.get(i + 2);
+                names.add(name.substring(1, name.length() - 1));
+            }
+        }
+        return names;
+    }
+
     private static boolean truthy(Object value) {
         return value instanceof Double number && number != 0;
     }

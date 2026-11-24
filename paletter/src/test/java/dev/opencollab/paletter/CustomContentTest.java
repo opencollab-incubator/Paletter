@@ -292,4 +292,18 @@ class CustomContentTest {
         assertEquals(item, item.toBuilder().build());
         assertEquals(item, CustomItem.builder("example:tagged").component(Icon.of("x")).tags("minecraft:is_food", "example:x").build());
     }
+
+    @Test
+    void flattenedFormsAndPermutationStatesAreChecked() {
+        dev.opencollab.paletter.block.component.CollisionBox.Entry box = dev.opencollab.paletter.block.component.CollisionBox.Entry.builder().build();
+        IllegalArgumentException e = assertThrows(IllegalArgumentException.class,
+            () -> dev.opencollab.paletter.block.component.CollisionBox.builder().enabled(true).boxes(box).build());
+        assertTrue(e.getMessage().contains("CollisionBox.enabled"), e.getMessage());
+        assertThrows(IllegalArgumentException.class, () -> CustomBlock.builder("example:p")
+            .property(BlockProperty.bool("example:on")).permutation("q.block_state('example:off')", LightEmission.of(3)).build());
+        CustomBlock.builder("example:p").property(BlockProperty.bool("example:on"))
+            .trait(PlacementDirection.builder().enabledStates(PlacementDirection.EnabledStates.CARDINAL_DIRECTION).build())
+            .permutation("q.block_state('example:on') && query.block_state('minecraft:cardinal_direction') == 'north'", LightEmission.of(3))
+            .build();
+    }
 }
