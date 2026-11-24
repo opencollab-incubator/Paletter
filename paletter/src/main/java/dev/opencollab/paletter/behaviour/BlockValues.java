@@ -16,7 +16,7 @@ import dev.opencollab.paletter.internal.behaviour.Column;
  * {@code get} returns the value: what the user's component sets, else the vanilla value, else BDS's default for custom
  * content. It throws {@link IllegalStateException} where no value is known: a custom block that does not set
  * a key whose BDS default is not captured ({@link BlockBehaviour#DESTROY_TIME}, {@link BlockBehaviour#OUTLINE_SHAPE}).
- * {@code getOrElse} returns its fallback there instead. Both throw {@link IllegalArgumentException} for an {@link ItemBehaviour} key.
+ * {@code getOrElse} returns its fallback there instead. The keys are typed by whose values they read: the compiler rejects an {@link ItemBehaviour} key here.
  *
  * @since 1.0.0
  */
@@ -52,9 +52,8 @@ public final class BlockValues {
      * @param key a float key of blocks
      * @return the value
      * @throws IllegalStateException if no value is known
-     * @throws IllegalArgumentException if the key is not a block key
      */
-    public float get(@NonNull FloatKey key) {
+    public float get(@NonNull FloatKey<BlockValues> key) {
         Column column = behaviour.blockColumn(key);
         if (!column.known(index)) {
             throw behaviour.missing(state(), key);
@@ -68,9 +67,8 @@ public final class BlockValues {
      * @param key an int key of blocks
      * @return the value
      * @throws IllegalStateException if no value is known
-     * @throws IllegalArgumentException if the key is not a block key
      */
-    public int get(@NonNull IntKey key) {
+    public int get(@NonNull IntKey<BlockValues> key) {
         Column column = behaviour.blockColumn(key);
         if (!column.known(index)) {
             throw behaviour.missing(state(), key);
@@ -84,9 +82,8 @@ public final class BlockValues {
      * @param key a boolean key of blocks
      * @return the value
      * @throws IllegalStateException if no value is known
-     * @throws IllegalArgumentException if the key is not a block key
      */
-    public boolean get(@NonNull BooleanKey key) {
+    public boolean get(@NonNull BooleanKey<BlockValues> key) {
         Column column = behaviour.blockColumn(key);
         if (!column.known(index)) {
             throw behaviour.missing(state(), key);
@@ -101,10 +98,9 @@ public final class BlockValues {
      * @param key an object key of blocks
      * @return the value, never null
      * @throws IllegalStateException if no value is known
-     * @throws IllegalArgumentException if the key is not a block key
      */
     @SuppressWarnings("unchecked")
-    public <T> @NonNull T get(@NonNull ObjectKey<T> key) {
+    public <T> @NonNull T get(@NonNull ObjectKey<BlockValues, T> key) {
         Object value = behaviour.blockColumn(key).get(index);
         if (value == null) {
             throw behaviour.missing(state(), key);
@@ -118,9 +114,8 @@ public final class BlockValues {
      * @param key a float key of blocks
      * @param fallback what to return if no value is known
      * @return the value, or {@code fallback} if no value is known
-     * @throws IllegalArgumentException if the key is not a block key
      */
-    public float getOrElse(@NonNull FloatKey key, float fallback) {
+    public float getOrElse(@NonNull FloatKey<BlockValues> key, float fallback) {
         Column column = behaviour.blockColumn(key);
         return column.known(index) ? column.getFloat(index) : fallback;
     }
@@ -131,9 +126,8 @@ public final class BlockValues {
      * @param key an int key of blocks
      * @param fallback what to return if no value is known
      * @return the value, or {@code fallback} if no value is known
-     * @throws IllegalArgumentException if the key is not a block key
      */
-    public int getOrElse(@NonNull IntKey key, int fallback) {
+    public int getOrElse(@NonNull IntKey<BlockValues> key, int fallback) {
         Column column = behaviour.blockColumn(key);
         return column.known(index) ? column.getInt(index) : fallback;
     }
@@ -144,9 +138,8 @@ public final class BlockValues {
      * @param key a boolean key of blocks
      * @param fallback what to return if no value is known
      * @return the value, or {@code fallback} if no value is known
-     * @throws IllegalArgumentException if the key is not a block key
      */
-    public boolean getOrElse(@NonNull BooleanKey key, boolean fallback) {
+    public boolean getOrElse(@NonNull BooleanKey<BlockValues> key, boolean fallback) {
         Column column = behaviour.blockColumn(key);
         return column.known(index) ? column.getBoolean(index) : fallback;
     }
@@ -158,12 +151,24 @@ public final class BlockValues {
      * @param key an object key of blocks
      * @param fallback what to return if no value is known; may be null
      * @return the value, or {@code fallback} if no value is known
-     * @throws IllegalArgumentException if the key is not a block key
      */
     @SuppressWarnings("unchecked")
-    public <T> T getOrElse(@NonNull ObjectKey<T> key, T fallback) {
+    public <T> T getOrElse(@NonNull ObjectKey<BlockValues, T> key, T fallback) {
         Object value = behaviour.blockColumn(key).get(index);
         return value == null ? fallback : (T) value;
+    }
+
+    /**
+     * Tells whether a value is known for a key, that is whether {@code get} returns one instead of throwing.
+     *
+     * @param key a key of blocks
+     * @return true if a value is known
+     * @throws IllegalArgumentException if the key is not a block key
+     * @throws IllegalStateException if behaviour values are switched off ({@code Paletter.Builder#behaviour(false)})
+     * @since 1.0.0
+     */
+    public boolean has(@NonNull BehaviourKey<?> key) {
+        return behaviour.blockColumn(key).known(index);
     }
 
     /**

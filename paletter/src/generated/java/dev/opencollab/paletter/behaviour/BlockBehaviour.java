@@ -22,12 +22,12 @@ public final class BlockBehaviour {
      * <p>
      * Custom blocks set it with {@code minecraft:destructible_by_mining}.
      */
-    public static final FloatKey DESTROY_TIME = new FloatKey("destroy_time", BehaviourKey.Owner.BLOCK, 0);
+    public static final FloatKey<BlockValues> DESTROY_TIME = new FloatKey<>("destroy_time", BehaviourKey.Owner.BLOCK, 0);
 
     /**
      * BDS: {@code BlockComponentDirectData.mExplosionResistance} (native; from third-party dumps until Paletter captures it).
      */
-    public static final FloatKey EXPLOSION_RESISTANCE = new FloatKey("explosion_resistance", BehaviourKey.Owner.BLOCK, 1);
+    public static final FloatKey<BlockValues> EXPLOSION_RESISTANCE = new FloatKey<>("explosion_resistance", BehaviourKey.Owner.BLOCK, 1);
 
     /**
      * Friction of an entity standing on the block: 0.6 for most blocks, 0.98 ice, 0.989 blue ice.
@@ -36,14 +36,14 @@ public final class BlockBehaviour {
      * <p>
      * Custom blocks set it with {@code minecraft:friction}.
      */
-    public static final FloatKey FRICTION = new FloatKey("friction", BehaviourKey.Owner.BLOCK, 2);
+    public static final FloatKey<BlockValues> FRICTION = new FloatKey<>("friction", BehaviourKey.Owner.BLOCK, 2);
 
     /**
      * Whether the block is solid and impassable ({@code Block.isSolid}: BDS's cached {@code Block::_isSolid()}).
      * <p>
      * BDS: the Script API's {@code Block.isSolid}.
      */
-    public static final BooleanKey SOLID = new BooleanKey("solid", BehaviourKey.Owner.BLOCK, 3);
+    public static final BooleanKey<BlockValues> SOLID = new BooleanKey<>("solid", BehaviourKey.Owner.BLOCK, 3);
 
     /**
      * The boxes entities collide with, without neighbours or position offsets (see {@link BlockShape}).
@@ -52,7 +52,7 @@ public final class BlockBehaviour {
      * <p>
      * Custom blocks set it with {@code minecraft:collision_box} and {@code minecraft:transformation}.
      */
-    public static final ObjectKey<BlockShape> COLLISION_SHAPE = new ObjectKey<>("collision_shape", BehaviourKey.Owner.BLOCK, 4, BlockShape.class);
+    public static final ObjectKey<BlockValues, BlockShape> COLLISION_SHAPE = new ObjectKey<>("collision_shape", BehaviourKey.Owner.BLOCK, 4, BlockShape.class);
 
     /**
      * The selection outline, one box, without the random offset some plants have.
@@ -61,151 +61,151 @@ public final class BlockBehaviour {
      * <p>
      * Custom blocks set it with {@code minecraft:selection_box} and {@code minecraft:transformation}.
      */
-    public static final ObjectKey<BlockShape> OUTLINE_SHAPE = new ObjectKey<>("outline_shape", BehaviourKey.Owner.BLOCK, 5, BlockShape.class);
+    public static final ObjectKey<BlockValues, BlockShape> OUTLINE_SHAPE = new ObjectKey<>("outline_shape", BehaviourKey.Owner.BLOCK, 5, BlockShape.class);
 
     /**
      * BDS: {@code BlockComponentDirectData.mLightEmission} (native; from third-party dumps until Paletter captures it).
      * <p>
      * Custom blocks set it with {@code minecraft:light_emission}.
      */
-    public static final IntKey LIGHT_EMISSION = new IntKey("light_emission", BehaviourKey.Owner.BLOCK, 6);
+    public static final IntKey<BlockValues> LIGHT_EMISSION = new IntKey<>("light_emission", BehaviourKey.Owner.BLOCK, 6);
 
     /**
      * BDS: {@code BlockComponentDirectData.mLight} (native; from third-party dumps until Paletter captures it).
      * <p>
      * Custom blocks set it with {@code minecraft:light_dampening}.
      */
-    public static final IntKey LIGHT_DAMPENING = new IntKey("light_dampening", BehaviourKey.Owner.BLOCK, 7);
+    public static final IntKey<BlockValues> LIGHT_DAMPENING = new IntKey<>("light_dampening", BehaviourKey.Owner.BLOCK, 7);
 
     /**
      * Whether water can share the block (waterlogging).
      * <p>
      * BDS: the Script API's {@code BlockPermutation.canContainLiquid(Water)}.
      */
-    public static final BooleanKey CAN_CONTAIN_LIQUID = new BooleanKey("can_contain_liquid", BehaviourKey.Owner.BLOCK, 8);
+    public static final BooleanKey<BlockValues> CAN_CONTAIN_LIQUID = new BooleanKey<>("can_contain_liquid", BehaviourKey.Owner.BLOCK, 8);
 
     /**
      * Whether the block stops flowing water.
      * <p>
      * BDS: the Script API's {@code BlockPermutation.isLiquidBlocking(Water)}.
      */
-    public static final BooleanKey LIQUID_BLOCKING = new BooleanKey("liquid_blocking", BehaviourKey.Owner.BLOCK, 9);
+    public static final BooleanKey<BlockValues> LIQUID_BLOCKING = new BooleanKey<>("liquid_blocking", BehaviourKey.Owner.BLOCK, 9);
 
     /**
      * Whether flowing water destroys the block (without dropping it).
      * <p>
      * BDS: the Script API's {@code BlockPermutation.canBeDestroyedByLiquidSpread(Water)}.
      */
-    public static final BooleanKey DESTROYED_BY_LIQUID = new BooleanKey("destroyed_by_liquid", BehaviourKey.Owner.BLOCK, 10);
+    public static final BooleanKey<BlockValues> DESTROYED_BY_LIQUID = new BooleanKey<>("destroyed_by_liquid", BehaviourKey.Owner.BLOCK, 10);
 
     /**
      * Whether flowing water breaks the block and it drops as an item.
      * <p>
      * BDS: the Script API's {@code BlockPermutation.liquidSpreadCausesSpawn(Water)}.
      */
-    public static final BooleanKey LIQUID_SPREAD_CAUSES_SPAWN = new BooleanKey("liquid_spread_causes_spawn", BehaviourKey.Owner.BLOCK, 11);
+    public static final BooleanKey<BlockValues> LIQUID_SPREAD_CAUSES_SPAWN = new BooleanKey<>("liquid_spread_causes_spawn", BehaviourKey.Owner.BLOCK, 11);
 
     /**
      * The directions water can flow into the block from: bit 0 down, 1 up, 2 north, 3 south, 4 west, 5 east.
      * <p>
      * BDS: the Script API's {@code Block.liquidCanFlowFromDirection(Water,<direction>)}.
      */
-    public static final IntKey LIQUID_FLOW_DIRECTIONS = new IntKey("liquid_flow_directions", BehaviourKey.Owner.BLOCK, 12);
+    public static final IntKey<BlockValues> LIQUID_FLOW_DIRECTIONS = new IntKey<>("liquid_flow_directions", BehaviourKey.Owner.BLOCK, 12);
 
     /**
      * BDS: {@code BlockType.mRequiresCorrectToolForDrops} (native; from third-party dumps until Paletter captures it).
      */
-    public static final BooleanKey REQUIRES_CORRECT_TOOL = new BooleanKey("requires_correct_tool", BehaviourKey.Owner.BLOCK, 13);
+    public static final BooleanKey<BlockValues> REQUIRES_CORRECT_TOOL = new BooleanKey<>("requires_correct_tool", BehaviourKey.Owner.BLOCK, 13);
 
     /**
      * The base map colour as {@code 0xRRGGBBAA}, before any biome tint ({@link #TINT_METHOD}); the tinted colour depends on the biome and is no property of the state.
      * <p>
      * BDS: the Script API's {@code BlockMapColorComponent.color} and the Script API's {@code Block.getMapColor}.
      */
-    public static final IntKey MAP_COLOR = new IntKey("map_color", BehaviourKey.Owner.BLOCK, 14);
+    public static final IntKey<BlockValues> MAP_COLOR = new IntKey<>("map_color", BehaviourKey.Owner.BLOCK, 14);
 
     /**
      * Biome tint of the map colour and texture, e.g. {@code None}, {@code Grass}, {@code DefaultFoliage}.
      * <p>
      * BDS: the Script API's {@code BlockMapColorComponent.tintMethod}.
      */
-    public static final ObjectKey<String> TINT_METHOD = new ObjectKey<>("tint_method", BehaviourKey.Owner.BLOCK, 15, String.class);
+    public static final ObjectKey<BlockValues, String> TINT_METHOD = new ObjectKey<>("tint_method", BehaviourKey.Owner.BLOCK, 15, String.class);
 
     /**
      * Chance modifier of catching fire.
      * <p>
      * BDS: {@code BlockComponentDirectData.mFlameOdds} (native; from third-party dumps until Paletter captures it).
      */
-    public static final IntKey FLAME_ODDS = new IntKey("flame_odds", BehaviourKey.Owner.BLOCK, 16);
+    public static final IntKey<BlockValues> FLAME_ODDS = new IntKey<>("flame_odds", BehaviourKey.Owner.BLOCK, 16);
 
     /**
      * Chance modifier of burning away.
      * <p>
      * BDS: {@code BlockComponentDirectData.mBurnOdds} (native; from third-party dumps until Paletter captures it).
      */
-    public static final IntKey BURN_ODDS = new IntKey("burn_odds", BehaviourKey.Owner.BLOCK, 17);
+    public static final IntKey<BlockValues> BURN_ODDS = new IntKey<>("burn_odds", BehaviourKey.Owner.BLOCK, 17);
 
     /**
      * BDS: {@code BlockType.mTranslucency} (native; from third-party dumps until Paletter captures it).
      */
-    public static final FloatKey TRANSLUCENCY = new FloatKey("translucency", BehaviourKey.Owner.BLOCK, 18);
+    public static final FloatKey<BlockValues> TRANSLUCENCY = new FloatKey<>("translucency", BehaviourKey.Owner.BLOCK, 18);
 
     /**
      * BDS: {@code BlockType.mThickness} (native; from third-party dumps until Paletter captures it).
      */
-    public static final FloatKey THICKNESS = new FloatKey("thickness", BehaviourKey.Owner.BLOCK, 19);
+    public static final FloatKey<BlockValues> THICKNESS = new FloatKey<>("thickness", BehaviourKey.Owner.BLOCK, 19);
 
     /**
      * Whether an entity that can climb ({@code minecraft:can_climb}) climbs in the block, like in a ladder: {@code BlockProperty::Climbable} of the block type, measured with {@code Entity.isClimbing}. No add-on component sets it.
      * <p>
      * BDS: measured by {@code behaviour-probe} ({@code climbing}) and {@code BlockType.mProperties.Climbable} (native; from third-party dumps until Paletter captures it).
      */
-    public static final BooleanKey CLIMBABLE = new BooleanKey("climbable", BehaviourKey.Owner.BLOCK, 20);
+    public static final BooleanKey<BlockValues> CLIMBABLE = new BooleanKey<>("climbable", BehaviourKey.Owner.BLOCK, 20);
 
     /**
      * What a piston does with the block: {@code Push}, {@code PushPull}, {@code Popped} or {@code Immovable}.
      * <p>
      * BDS: the Script API's {@code BlockMovableComponent.movementType}.
      */
-    public static final ObjectKey<String> MOVEMENT_TYPE = new ObjectKey<>("movement_type", BehaviourKey.Owner.BLOCK, 21, String.class);
+    public static final ObjectKey<BlockValues, String> MOVEMENT_TYPE = new ObjectKey<>("movement_type", BehaviourKey.Owner.BLOCK, 21, String.class);
 
     /**
      * Whether the block pulls its neighbours along when moved ({@code Same}, as slime and honey) or not ({@code None}).
      * <p>
      * BDS: the Script API's {@code BlockMovableComponent.stickyType}.
      */
-    public static final ObjectKey<String> STICKY_TYPE = new ObjectKey<>("sticky_type", BehaviourKey.Owner.BLOCK, 22, String.class);
+    public static final ObjectKey<BlockValues, String> STICKY_TYPE = new ObjectKey<>("sticky_type", BehaviourKey.Owner.BLOCK, 22, String.class);
 
     /**
      * BDS: the Script API's {@code BlockPrecipitationInteractionsComponent.accumulatesSnow}.
      */
-    public static final BooleanKey ACCUMULATES_SNOW = new BooleanKey("accumulates_snow", BehaviourKey.Owner.BLOCK, 23);
+    public static final BooleanKey<BlockValues> ACCUMULATES_SNOW = new BooleanKey<>("accumulates_snow", BehaviourKey.Owner.BLOCK, 23);
 
     /**
      * Whether snow can share the block.
      * <p>
      * BDS: the Script API's {@code BlockPrecipitationInteractionsComponent.isSnowLoggable}.
      */
-    public static final BooleanKey SNOW_LOGGABLE = new BooleanKey("snow_loggable", BehaviourKey.Owner.BLOCK, 24);
+    public static final BooleanKey<BlockValues> SNOW_LOGGABLE = new BooleanKey<>("snow_loggable", BehaviourKey.Owner.BLOCK, 24);
 
     /**
      * BDS: the Script API's {@code BlockPrecipitationInteractionsComponent.obstructsRain}.
      */
-    public static final BooleanKey OBSTRUCTS_RAIN = new BooleanKey("obstructs_rain", BehaviourKey.Owner.BLOCK, 25);
+    public static final BooleanKey<BlockValues> OBSTRUCTS_RAIN = new BooleanKey<>("obstructs_rain", BehaviourKey.Owner.BLOCK, 25);
 
     /**
      * Whether the block dampens vibrations (wool).
      * <p>
      * BDS: the Script API's {@code BlockVibrationPropertiesComponent.getCanDampenVibrations}.
      */
-    public static final BooleanKey DAMPENS_VIBRATIONS = new BooleanKey("dampens_vibrations", BehaviourKey.Owner.BLOCK, 26);
+    public static final BooleanKey<BlockValues> DAMPENS_VIBRATIONS = new BooleanKey<>("dampens_vibrations", BehaviourKey.Owner.BLOCK, 26);
 
     /**
      * Whether the block stops vibrations passing through it.
      * <p>
      * BDS: the Script API's {@code BlockVibrationPropertiesComponent.getCanOccludeVibrations}.
      */
-    public static final BooleanKey OCCLUDES_VIBRATIONS = new BooleanKey("occludes_vibrations", BehaviourKey.Owner.BLOCK, 27);
+    public static final BooleanKey<BlockValues> OCCLUDES_VIBRATIONS = new BooleanKey<>("occludes_vibrations", BehaviourKey.Owner.BLOCK, 27);
 
     private static final List<BehaviourKey<?>> KEYS = List.of(DESTROY_TIME, EXPLOSION_RESISTANCE,
             FRICTION, SOLID, COLLISION_SHAPE, OUTLINE_SHAPE, LIGHT_EMISSION, LIGHT_DAMPENING,

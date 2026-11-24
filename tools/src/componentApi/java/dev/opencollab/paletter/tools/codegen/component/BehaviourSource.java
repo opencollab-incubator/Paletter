@@ -115,14 +115,22 @@ final class BehaviourSource {
         return key.type().equals("BlockShape") ? ClassName.get(API_PKG, "BlockShape") : ClassName.get("java.lang", key.type());
     }
 
-    /** @return the key class of a key: {@code FloatKey}, {@code IntKey} and {@code BooleanKey} return primitives */
-    private static TypeName keyType(Key key) {
+    /** @return the raw key class of a key: {@code FloatKey}, {@code IntKey} and {@code BooleanKey} return primitives */
+    private static ClassName keyClass(Key key) {
         return switch (key.type()) {
             case "Float" -> ClassName.get(API_PKG, "FloatKey");
             case "Integer" -> ClassName.get(API_PKG, "IntKey");
             case "Boolean" -> ClassName.get(API_PKG, "BooleanKey");
-            default -> ParameterizedTypeName.get(ClassName.get(API_PKG, "ObjectKey"), type(key));
+            default -> ClassName.get(API_PKG, "ObjectKey");
         };
+    }
+
+    /** @return the type of a key's constant: its key class, typed by the values class of its owner (and its value type) */
+    private static TypeName keyType(Key key, Owner owner) {
+        ClassName values = ClassName.get(API_PKG, owner == Owner.BLOCK ? "BlockValues" : "ItemValues");
+        ClassName keyClass = keyClass(key);
+        return keyClass.simpleName().equals("ObjectKey") ? ParameterizedTypeName.get(keyClass, values, type(key))
+            : ParameterizedTypeName.get(keyClass, values);
     }
 
     // ---- BlockBehaviour, ItemBehaviour ---------------------------------------------------------------------------------
@@ -135,10 +143,10 @@ final class BehaviourSource {
         for (Key key : keys) {
             // the ordinal is the position among every key, block and item ones alike
             CodeBlock initializer = key.type().equals("Float") || key.type().equals("Integer") || key.type().equals("Boolean")
-                ? CodeBlock.of("new $T($S, $T.Owner.$L, $L)", keyType(key), key.name(), BEHAVIOUR_KEY, owner.name(), all.indexOf(key))
+                ? CodeBlock.of("new $T<>($S, $T.Owner.$L, $L)", keyClass(key), key.name(), BEHAVIOUR_KEY, owner.name(), all.indexOf(key))
                 : CodeBlock.of("new $T<>($S, $T.Owner.$L, $L, $T.class)", ClassName.get(API_PKG, "ObjectKey"), key.name(), BEHAVIOUR_KEY,
                     owner.name(), all.indexOf(key), type(key));
-            FieldSpec.Builder field = FieldSpec.builder(keyType(key), constant(key), Modifier.PUBLIC, Modifier.STATIC, Modifier.FINAL)
+            FieldSpec.Builder field = FieldSpec.builder(keyType(key, owner), constant(key), Modifier.PUBLIC, Modifier.STATIC, Modifier.FINAL)
                 .initializer(initializer);
             String doc = doc(key);
             if (!doc.isEmpty()) {

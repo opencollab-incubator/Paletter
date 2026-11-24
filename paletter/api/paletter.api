@@ -302,7 +302,6 @@ public @interface dev.opencollab.paletter.annotation.SincePreview {
 
 public sealed abstract class dev.opencollab.paletter.behaviour.BehaviourKey<T> permits dev.opencollab.paletter.behaviour.BooleanKey, dev.opencollab.paletter.behaviour.FloatKey, dev.opencollab.paletter.behaviour.IntKey, dev.opencollab.paletter.behaviour.ObjectKey {
     public java.lang.String name()
-    public int ordinal()
     public dev.opencollab.paletter.behaviour.BehaviourKey$Owner owner()
     public java.lang.String toString()
     public java.lang.Class<T> type()
@@ -316,34 +315,34 @@ public enum dev.opencollab.paletter.behaviour.BehaviourKey$Owner {
 }
 
 public final class dev.opencollab.paletter.behaviour.BlockBehaviour {
-    public static final dev.opencollab.paletter.behaviour.BooleanKey ACCUMULATES_SNOW
-    public static final dev.opencollab.paletter.behaviour.IntKey BURN_ODDS
-    public static final dev.opencollab.paletter.behaviour.BooleanKey CAN_CONTAIN_LIQUID
-    public static final dev.opencollab.paletter.behaviour.BooleanKey CLIMBABLE
-    public static final dev.opencollab.paletter.behaviour.ObjectKey<dev.opencollab.paletter.behaviour.BlockShape> COLLISION_SHAPE
-    public static final dev.opencollab.paletter.behaviour.BooleanKey DAMPENS_VIBRATIONS
-    public static final dev.opencollab.paletter.behaviour.BooleanKey DESTROYED_BY_LIQUID
-    public static final dev.opencollab.paletter.behaviour.FloatKey DESTROY_TIME
-    public static final dev.opencollab.paletter.behaviour.FloatKey EXPLOSION_RESISTANCE
-    public static final dev.opencollab.paletter.behaviour.IntKey FLAME_ODDS
-    public static final dev.opencollab.paletter.behaviour.FloatKey FRICTION
-    public static final dev.opencollab.paletter.behaviour.IntKey LIGHT_DAMPENING
-    public static final dev.opencollab.paletter.behaviour.IntKey LIGHT_EMISSION
-    public static final dev.opencollab.paletter.behaviour.BooleanKey LIQUID_BLOCKING
-    public static final dev.opencollab.paletter.behaviour.IntKey LIQUID_FLOW_DIRECTIONS
-    public static final dev.opencollab.paletter.behaviour.BooleanKey LIQUID_SPREAD_CAUSES_SPAWN
-    public static final dev.opencollab.paletter.behaviour.IntKey MAP_COLOR
-    public static final dev.opencollab.paletter.behaviour.ObjectKey<java.lang.String> MOVEMENT_TYPE
-    public static final dev.opencollab.paletter.behaviour.BooleanKey OBSTRUCTS_RAIN
-    public static final dev.opencollab.paletter.behaviour.BooleanKey OCCLUDES_VIBRATIONS
-    public static final dev.opencollab.paletter.behaviour.ObjectKey<dev.opencollab.paletter.behaviour.BlockShape> OUTLINE_SHAPE
-    public static final dev.opencollab.paletter.behaviour.BooleanKey REQUIRES_CORRECT_TOOL
-    public static final dev.opencollab.paletter.behaviour.BooleanKey SNOW_LOGGABLE
-    public static final dev.opencollab.paletter.behaviour.BooleanKey SOLID
-    public static final dev.opencollab.paletter.behaviour.ObjectKey<java.lang.String> STICKY_TYPE
-    public static final dev.opencollab.paletter.behaviour.FloatKey THICKNESS
-    public static final dev.opencollab.paletter.behaviour.ObjectKey<java.lang.String> TINT_METHOD
-    public static final dev.opencollab.paletter.behaviour.FloatKey TRANSLUCENCY
+    public static final dev.opencollab.paletter.behaviour.BooleanKey<dev.opencollab.paletter.behaviour.BlockValues> ACCUMULATES_SNOW
+    public static final dev.opencollab.paletter.behaviour.IntKey<dev.opencollab.paletter.behaviour.BlockValues> BURN_ODDS
+    public static final dev.opencollab.paletter.behaviour.BooleanKey<dev.opencollab.paletter.behaviour.BlockValues> CAN_CONTAIN_LIQUID
+    public static final dev.opencollab.paletter.behaviour.BooleanKey<dev.opencollab.paletter.behaviour.BlockValues> CLIMBABLE
+    public static final dev.opencollab.paletter.behaviour.ObjectKey<dev.opencollab.paletter.behaviour.BlockValues, dev.opencollab.paletter.behaviour.BlockShape> COLLISION_SHAPE
+    public static final dev.opencollab.paletter.behaviour.BooleanKey<dev.opencollab.paletter.behaviour.BlockValues> DAMPENS_VIBRATIONS
+    public static final dev.opencollab.paletter.behaviour.BooleanKey<dev.opencollab.paletter.behaviour.BlockValues> DESTROYED_BY_LIQUID
+    public static final dev.opencollab.paletter.behaviour.FloatKey<dev.opencollab.paletter.behaviour.BlockValues> DESTROY_TIME
+    public static final dev.opencollab.paletter.behaviour.FloatKey<dev.opencollab.paletter.behaviour.BlockValues> EXPLOSION_RESISTANCE
+    public static final dev.opencollab.paletter.behaviour.IntKey<dev.opencollab.paletter.behaviour.BlockValues> FLAME_ODDS
+    public static final dev.opencollab.paletter.behaviour.FloatKey<dev.opencollab.paletter.behaviour.BlockValues> FRICTION
+    public static final dev.opencollab.paletter.behaviour.IntKey<dev.opencollab.paletter.behaviour.BlockValues> LIGHT_DAMPENING
+    public static final dev.opencollab.paletter.behaviour.IntKey<dev.opencollab.paletter.behaviour.BlockValues> LIGHT_EMISSION
+    public static final dev.opencollab.paletter.behaviour.BooleanKey<dev.opencollab.paletter.behaviour.BlockValues> LIQUID_BLOCKING
+    public static final dev.opencollab.paletter.behaviour.IntKey<dev.opencollab.paletter.behaviour.BlockValues> LIQUID_FLOW_DIRECTIONS
+    public static final dev.opencollab.paletter.behaviour.BooleanKey<dev.opencollab.paletter.behaviour.BlockValues> LIQUID_SPREAD_CAUSES_SPAWN
+    public static final dev.opencollab.paletter.behaviour.IntKey<dev.opencollab.paletter.behaviour.BlockValues> MAP_COLOR
+    public static final dev.opencollab.paletter.behaviour.ObjectKey<dev.opencollab.paletter.behaviour.BlockValues, java.lang.String> MOVEMENT_TYPE
+    public static final dev.opencollab.paletter.behaviour.BooleanKey<dev.opencollab.paletter.behaviour.BlockValues> OBSTRUCTS_RAIN
+    public static final dev.opencollab.paletter.behaviour.BooleanKey<dev.opencollab.paletter.behaviour.BlockValues> OCCLUDES_VIBRATIONS
+    public static final dev.opencollab.paletter.behaviour.ObjectKey<dev.opencollab.paletter.behaviour.BlockValues, dev.opencollab.paletter.behaviour.BlockShape> OUTLINE_SHAPE
+    public static final dev.opencollab.paletter.behaviour.BooleanKey<dev.opencollab.paletter.behaviour.BlockValues> REQUIRES_CORRECT_TOOL
+    public static final dev.opencollab.paletter.behaviour.BooleanKey<dev.opencollab.paletter.behaviour.BlockValues> SNOW_LOGGABLE
+    public static final dev.opencollab.paletter.behaviour.BooleanKey<dev.opencollab.paletter.behaviour.BlockValues> SOLID
+    public static final dev.opencollab.paletter.behaviour.ObjectKey<dev.opencollab.paletter.behaviour.BlockValues, java.lang.String> STICKY_TYPE
+    public static final dev.opencollab.paletter.behaviour.FloatKey<dev.opencollab.paletter.behaviour.BlockValues> THICKNESS
+    public static final dev.opencollab.paletter.behaviour.ObjectKey<dev.opencollab.paletter.behaviour.BlockValues, java.lang.String> TINT_METHOD
+    public static final dev.opencollab.paletter.behaviour.FloatKey<dev.opencollab.paletter.behaviour.BlockValues> TRANSLUCENCY
     public static dev.opencollab.paletter.behaviour.BehaviourKey<?> key(java.lang.String)
     public static java.util.List<dev.opencollab.paletter.behaviour.BehaviourKey<?>> keys()
 }
@@ -377,46 +376,47 @@ public record dev.opencollab.paletter.behaviour.BlockShape$Box {
 public final class dev.opencollab.paletter.behaviour.BlockValues {
     public boolean equals(java.lang.Object)
     public java.lang.String explain(dev.opencollab.paletter.behaviour.BehaviourKey<?>)
-    public boolean get(dev.opencollab.paletter.behaviour.BooleanKey)
-    public float get(dev.opencollab.paletter.behaviour.FloatKey)
-    public int get(dev.opencollab.paletter.behaviour.IntKey)
-    public <T> T get(dev.opencollab.paletter.behaviour.ObjectKey<T>)
-    public boolean getOrElse(dev.opencollab.paletter.behaviour.BooleanKey, boolean)
-    public float getOrElse(dev.opencollab.paletter.behaviour.FloatKey, float)
-    public int getOrElse(dev.opencollab.paletter.behaviour.IntKey, int)
-    public <T> T getOrElse(dev.opencollab.paletter.behaviour.ObjectKey<T>, T)
+    public boolean get(dev.opencollab.paletter.behaviour.BooleanKey<dev.opencollab.paletter.behaviour.BlockValues>)
+    public float get(dev.opencollab.paletter.behaviour.FloatKey<dev.opencollab.paletter.behaviour.BlockValues>)
+    public int get(dev.opencollab.paletter.behaviour.IntKey<dev.opencollab.paletter.behaviour.BlockValues>)
+    public <T> T get(dev.opencollab.paletter.behaviour.ObjectKey<dev.opencollab.paletter.behaviour.BlockValues, T>)
+    public boolean getOrElse(dev.opencollab.paletter.behaviour.BooleanKey<dev.opencollab.paletter.behaviour.BlockValues>, boolean)
+    public float getOrElse(dev.opencollab.paletter.behaviour.FloatKey<dev.opencollab.paletter.behaviour.BlockValues>, float)
+    public int getOrElse(dev.opencollab.paletter.behaviour.IntKey<dev.opencollab.paletter.behaviour.BlockValues>, int)
+    public <T> T getOrElse(dev.opencollab.paletter.behaviour.ObjectKey<dev.opencollab.paletter.behaviour.BlockValues, T>, T)
+    public boolean has(dev.opencollab.paletter.behaviour.BehaviourKey<?>)
     public int hashCode()
     public dev.opencollab.paletter.block.RegisteredBlockState state()
     public java.lang.String toString()
 }
 
-public final class dev.opencollab.paletter.behaviour.BooleanKey extends dev.opencollab.paletter.behaviour.BehaviourKey<java.lang.Boolean> {
+public final class dev.opencollab.paletter.behaviour.BooleanKey<O> extends dev.opencollab.paletter.behaviour.BehaviourKey<java.lang.Boolean> {
 }
 
-public final class dev.opencollab.paletter.behaviour.FloatKey extends dev.opencollab.paletter.behaviour.BehaviourKey<java.lang.Float> {
+public final class dev.opencollab.paletter.behaviour.FloatKey<O> extends dev.opencollab.paletter.behaviour.BehaviourKey<java.lang.Float> {
 }
 
-public final class dev.opencollab.paletter.behaviour.IntKey extends dev.opencollab.paletter.behaviour.BehaviourKey<java.lang.Integer> {
+public final class dev.opencollab.paletter.behaviour.IntKey<O> extends dev.opencollab.paletter.behaviour.BehaviourKey<java.lang.Integer> {
 }
 
 public final class dev.opencollab.paletter.behaviour.ItemBehaviour {
-    public static final dev.opencollab.paletter.behaviour.IntKey ARMOR_VALUE
-    public static final dev.opencollab.paletter.behaviour.IntKey ATTACK_DAMAGE
-    public static final dev.opencollab.paletter.behaviour.BooleanKey CAN_ALWAYS_EAT
-    public static final dev.opencollab.paletter.behaviour.IntKey COMPOST_CHANCE
-    public static final dev.opencollab.paletter.behaviour.ObjectKey<java.lang.String> COOLDOWN_CATEGORY
-    public static final dev.opencollab.paletter.behaviour.IntKey COOLDOWN_TICKS
-    public static final dev.opencollab.paletter.behaviour.IntKey ENCHANT_VALUE
-    public static final dev.opencollab.paletter.behaviour.IntKey FURNACE_BURN_DURATION
-    public static final dev.opencollab.paletter.behaviour.FloatKey FURNACE_XP_MULTIPLIER
-    public static final dev.opencollab.paletter.behaviour.IntKey MAX_DAMAGE
-    public static final dev.opencollab.paletter.behaviour.IntKey MAX_STACK_SIZE
-    public static final dev.opencollab.paletter.behaviour.IntKey NUTRITION
-    public static final dev.opencollab.paletter.behaviour.FloatKey SATURATION_MODIFIER
-    public static final dev.opencollab.paletter.behaviour.IntKey TOUGHNESS
-    public static final dev.opencollab.paletter.behaviour.IntKey USE_ANIMATION
-    public static final dev.opencollab.paletter.behaviour.IntKey USE_DURATION
-    public static final dev.opencollab.paletter.behaviour.IntKey WEIGHT
+    public static final dev.opencollab.paletter.behaviour.IntKey<dev.opencollab.paletter.behaviour.ItemValues> ARMOR_VALUE
+    public static final dev.opencollab.paletter.behaviour.IntKey<dev.opencollab.paletter.behaviour.ItemValues> ATTACK_DAMAGE
+    public static final dev.opencollab.paletter.behaviour.BooleanKey<dev.opencollab.paletter.behaviour.ItemValues> CAN_ALWAYS_EAT
+    public static final dev.opencollab.paletter.behaviour.IntKey<dev.opencollab.paletter.behaviour.ItemValues> COMPOST_CHANCE
+    public static final dev.opencollab.paletter.behaviour.ObjectKey<dev.opencollab.paletter.behaviour.ItemValues, java.lang.String> COOLDOWN_CATEGORY
+    public static final dev.opencollab.paletter.behaviour.IntKey<dev.opencollab.paletter.behaviour.ItemValues> COOLDOWN_TICKS
+    public static final dev.opencollab.paletter.behaviour.IntKey<dev.opencollab.paletter.behaviour.ItemValues> ENCHANT_VALUE
+    public static final dev.opencollab.paletter.behaviour.IntKey<dev.opencollab.paletter.behaviour.ItemValues> FURNACE_BURN_DURATION
+    public static final dev.opencollab.paletter.behaviour.FloatKey<dev.opencollab.paletter.behaviour.ItemValues> FURNACE_XP_MULTIPLIER
+    public static final dev.opencollab.paletter.behaviour.IntKey<dev.opencollab.paletter.behaviour.ItemValues> MAX_DAMAGE
+    public static final dev.opencollab.paletter.behaviour.IntKey<dev.opencollab.paletter.behaviour.ItemValues> MAX_STACK_SIZE
+    public static final dev.opencollab.paletter.behaviour.IntKey<dev.opencollab.paletter.behaviour.ItemValues> NUTRITION
+    public static final dev.opencollab.paletter.behaviour.FloatKey<dev.opencollab.paletter.behaviour.ItemValues> SATURATION_MODIFIER
+    public static final dev.opencollab.paletter.behaviour.IntKey<dev.opencollab.paletter.behaviour.ItemValues> TOUGHNESS
+    public static final dev.opencollab.paletter.behaviour.IntKey<dev.opencollab.paletter.behaviour.ItemValues> USE_ANIMATION
+    public static final dev.opencollab.paletter.behaviour.IntKey<dev.opencollab.paletter.behaviour.ItemValues> USE_DURATION
+    public static final dev.opencollab.paletter.behaviour.IntKey<dev.opencollab.paletter.behaviour.ItemValues> WEIGHT
     public static dev.opencollab.paletter.behaviour.BehaviourKey<?> key(java.lang.String)
     public static java.util.List<dev.opencollab.paletter.behaviour.BehaviourKey<?>> keys()
 }
@@ -424,20 +424,21 @@ public final class dev.opencollab.paletter.behaviour.ItemBehaviour {
 public final class dev.opencollab.paletter.behaviour.ItemValues {
     public boolean equals(java.lang.Object)
     public java.lang.String explain(dev.opencollab.paletter.behaviour.BehaviourKey<?>)
-    public boolean get(dev.opencollab.paletter.behaviour.BooleanKey)
-    public float get(dev.opencollab.paletter.behaviour.FloatKey)
-    public int get(dev.opencollab.paletter.behaviour.IntKey)
-    public <T> T get(dev.opencollab.paletter.behaviour.ObjectKey<T>)
-    public boolean getOrElse(dev.opencollab.paletter.behaviour.BooleanKey, boolean)
-    public float getOrElse(dev.opencollab.paletter.behaviour.FloatKey, float)
-    public int getOrElse(dev.opencollab.paletter.behaviour.IntKey, int)
-    public <T> T getOrElse(dev.opencollab.paletter.behaviour.ObjectKey<T>, T)
+    public boolean get(dev.opencollab.paletter.behaviour.BooleanKey<dev.opencollab.paletter.behaviour.ItemValues>)
+    public float get(dev.opencollab.paletter.behaviour.FloatKey<dev.opencollab.paletter.behaviour.ItemValues>)
+    public int get(dev.opencollab.paletter.behaviour.IntKey<dev.opencollab.paletter.behaviour.ItemValues>)
+    public <T> T get(dev.opencollab.paletter.behaviour.ObjectKey<dev.opencollab.paletter.behaviour.ItemValues, T>)
+    public boolean getOrElse(dev.opencollab.paletter.behaviour.BooleanKey<dev.opencollab.paletter.behaviour.ItemValues>, boolean)
+    public float getOrElse(dev.opencollab.paletter.behaviour.FloatKey<dev.opencollab.paletter.behaviour.ItemValues>, float)
+    public int getOrElse(dev.opencollab.paletter.behaviour.IntKey<dev.opencollab.paletter.behaviour.ItemValues>, int)
+    public <T> T getOrElse(dev.opencollab.paletter.behaviour.ObjectKey<dev.opencollab.paletter.behaviour.ItemValues, T>, T)
+    public boolean has(dev.opencollab.paletter.behaviour.BehaviourKey<?>)
     public int hashCode()
     public dev.opencollab.paletter.item.RegisteredItem item()
     public java.lang.String toString()
 }
 
-public final class dev.opencollab.paletter.behaviour.ObjectKey<T> extends dev.opencollab.paletter.behaviour.BehaviourKey<T> {
+public final class dev.opencollab.paletter.behaviour.ObjectKey<O, T> extends dev.opencollab.paletter.behaviour.BehaviourKey<T> {
 }
 
 public final class dev.opencollab.paletter.block.BlockFallback {

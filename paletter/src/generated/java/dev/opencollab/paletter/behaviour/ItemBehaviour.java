@@ -19,7 +19,7 @@ public final class ItemBehaviour {
      * <p>
      * Custom items set it with {@code minecraft:max_stack_size}.
      */
-    public static final IntKey MAX_STACK_SIZE = new IntKey("max_stack_size", BehaviourKey.Owner.ITEM, 28);
+    public static final IntKey<ItemValues> MAX_STACK_SIZE = new IntKey<>("max_stack_size", BehaviourKey.Owner.ITEM, 28);
 
     /**
      * Durability; 0 for items that take no damage.
@@ -28,41 +28,41 @@ public final class ItemBehaviour {
      * <p>
      * Custom items set it with {@code minecraft:durability}.
      */
-    public static final IntKey MAX_DAMAGE = new IntKey("max_damage", BehaviourKey.Owner.ITEM, 29);
+    public static final IntKey<ItemValues> MAX_DAMAGE = new IntKey<>("max_damage", BehaviourKey.Owner.ITEM, 29);
 
     /**
      * BDS: {@code Item.getAttackDamage} (native; from third-party dumps until Paletter captures it).
      * <p>
      * Custom items set it with {@code minecraft:damage}.
      */
-    public static final IntKey ATTACK_DAMAGE = new IntKey("attack_damage", BehaviourKey.Owner.ITEM, 30);
+    public static final IntKey<ItemValues> ATTACK_DAMAGE = new IntKey<>("attack_damage", BehaviourKey.Owner.ITEM, 30);
 
     /**
      * BDS: {@code Item.getArmorValue} (native; from third-party dumps until Paletter captures it).
      */
-    public static final IntKey ARMOR_VALUE = new IntKey("armor_value", BehaviourKey.Owner.ITEM, 31);
+    public static final IntKey<ItemValues> ARMOR_VALUE = new IntKey<>("armor_value", BehaviourKey.Owner.ITEM, 31);
 
     /**
      * BDS: {@code Item.getToughnessValue} (native; from third-party dumps until Paletter captures it).
      */
-    public static final IntKey TOUGHNESS = new IntKey("toughness", BehaviourKey.Owner.ITEM, 32);
+    public static final IntKey<ItemValues> TOUGHNESS = new IntKey<>("toughness", BehaviourKey.Owner.ITEM, 32);
 
     /**
      * BDS: {@code Item.getEnchantValue} (native; from third-party dumps until Paletter captures it).
      */
-    public static final IntKey ENCHANT_VALUE = new IntKey("enchant_value", BehaviourKey.Owner.ITEM, 33);
+    public static final IntKey<ItemValues> ENCHANT_VALUE = new IntKey<>("enchant_value", BehaviourKey.Owner.ITEM, 33);
 
     /**
      * Ticks the item burns in a furnace; 0 if it is no fuel.
      * <p>
      * BDS: {@code FurnaceBlockActor.getBurnDuration} (native; from third-party dumps until Paletter captures it).
      */
-    public static final IntKey FURNACE_BURN_DURATION = new IntKey("furnace_burn_duration", BehaviourKey.Owner.ITEM, 34);
+    public static final IntKey<ItemValues> FURNACE_BURN_DURATION = new IntKey<>("furnace_burn_duration", BehaviourKey.Owner.ITEM, 34);
 
     /**
      * BDS: {@code Item.mFurnaceXPmultiplier} (native; from third-party dumps until Paletter captures it).
      */
-    public static final FloatKey FURNACE_XP_MULTIPLIER = new FloatKey("furnace_xp_multiplier", BehaviourKey.Owner.ITEM, 35);
+    public static final FloatKey<ItemValues> FURNACE_XP_MULTIPLIER = new FloatKey<>("furnace_xp_multiplier", BehaviourKey.Owner.ITEM, 35);
 
     /**
      * Ticks of using the item (eating, drinking, ...). Known for component based items (from what BDS sends); null for
@@ -72,7 +72,7 @@ public final class ItemBehaviour {
      * <p>
      * Custom items set it with {@code minecraft:use_modifiers}.
      */
-    public static final IntKey USE_DURATION = new IntKey("use_duration", BehaviourKey.Owner.ITEM, 36);
+    public static final IntKey<ItemValues> USE_DURATION = new IntKey<>("use_duration", BehaviourKey.Owner.ITEM, 36);
 
     /**
      * The use animation id BDS sends ({@code item_properties.use_animation}: 1 eat, 2 drink, 6 spear, ...).
@@ -81,56 +81,56 @@ public final class ItemBehaviour {
      * <p>
      * Custom items set it with {@code minecraft:use_animation}.
      */
-    public static final IntKey USE_ANIMATION = new IntKey("use_animation", BehaviourKey.Owner.ITEM, 37);
+    public static final IntKey<ItemValues> USE_ANIMATION = new IntKey<>("use_animation", BehaviourKey.Owner.ITEM, 37);
 
     /**
      * How much of a bundle one item fills, in 64ths.
      * <p>
      * BDS: the Script API's {@code ItemStack.weight}.
      */
-    public static final IntKey WEIGHT = new IntKey("weight", BehaviourKey.Owner.ITEM, 38);
+    public static final IntKey<ItemValues> WEIGHT = new IntKey<>("weight", BehaviourKey.Owner.ITEM, 38);
 
     /**
      * Hunger points eating the item restores. The Script API has it only for component based food.
      * <p>
      * BDS: the Script API's {@code ItemFoodComponent.nutrition}.
      */
-    public static final IntKey NUTRITION = new IntKey("nutrition", BehaviourKey.Owner.ITEM, 39);
+    public static final IntKey<ItemValues> NUTRITION = new IntKey<>("nutrition", BehaviourKey.Owner.ITEM, 39);
 
     /**
      * The saturation modifier of food. The Script API has it only for component based food.
      * <p>
      * BDS: the Script API's {@code ItemFoodComponent.saturationModifier}.
      */
-    public static final FloatKey SATURATION_MODIFIER = new FloatKey("saturation_modifier", BehaviourKey.Owner.ITEM, 40);
+    public static final FloatKey<ItemValues> SATURATION_MODIFIER = new FloatKey<>("saturation_modifier", BehaviourKey.Owner.ITEM, 40);
 
     /**
      * Whether the food can be eaten when not hungry. The Script API has it only for component based food.
      * <p>
      * BDS: the Script API's {@code ItemFoodComponent.canAlwaysEat}.
      */
-    public static final BooleanKey CAN_ALWAYS_EAT = new BooleanKey("can_always_eat", BehaviourKey.Owner.ITEM, 41);
+    public static final BooleanKey<ItemValues> CAN_ALWAYS_EAT = new BooleanKey<>("can_always_eat", BehaviourKey.Owner.ITEM, 41);
 
     /**
      * The cooldown category the item shares its cooldown with, e.g. {@code minecraft:ender_pearl}.
      * <p>
      * BDS: the Script API's {@code ItemCooldownComponent.cooldownCategory}.
      */
-    public static final ObjectKey<String> COOLDOWN_CATEGORY = new ObjectKey<>("cooldown_category", BehaviourKey.Owner.ITEM, 42, String.class);
+    public static final ObjectKey<ItemValues, String> COOLDOWN_CATEGORY = new ObjectKey<>("cooldown_category", BehaviourKey.Owner.ITEM, 42, String.class);
 
     /**
      * Ticks of cooldown after using the item.
      * <p>
      * BDS: the Script API's {@code ItemCooldownComponent.cooldownTicks}.
      */
-    public static final IntKey COOLDOWN_TICKS = new IntKey("cooldown_ticks", BehaviourKey.Owner.ITEM, 43);
+    public static final IntKey<ItemValues> COOLDOWN_TICKS = new IntKey<>("cooldown_ticks", BehaviourKey.Owner.ITEM, 43);
 
     /**
      * Chance in percent that the item adds a layer to a composter; null if it cannot be composted.
      * <p>
      * BDS: the Script API's {@code ItemCompostableComponent.compostingChance}.
      */
-    public static final IntKey COMPOST_CHANCE = new IntKey("compost_chance", BehaviourKey.Owner.ITEM, 44);
+    public static final IntKey<ItemValues> COMPOST_CHANCE = new IntKey<>("compost_chance", BehaviourKey.Owner.ITEM, 44);
 
     private static final List<BehaviourKey<?>> KEYS = List.of(MAX_STACK_SIZE, MAX_DAMAGE,
             ATTACK_DAMAGE, ARMOR_VALUE, TOUGHNESS, ENCHANT_VALUE, FURNACE_BURN_DURATION,

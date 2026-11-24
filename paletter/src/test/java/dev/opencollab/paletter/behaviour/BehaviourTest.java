@@ -69,7 +69,7 @@ class BehaviourTest {
             case FloatKey k -> Float.isNaN(values.getOrElse(k, Float.NaN)) ? null : values.getOrElse(k, Float.NaN);
             case IntKey k -> values.getOrElse(k, Integer.MIN_VALUE) == Integer.MIN_VALUE ? null : values.getOrElse(k, 0);
             case BooleanKey k -> values.getOrElse(k, false) != values.getOrElse(k, true) ? null : values.getOrElse(k, false);
-            case ObjectKey<?> k -> values.getOrElse(k, null);
+            case ObjectKey k -> values.getOrElse(k, null);
         };
     }
 
@@ -78,7 +78,7 @@ class BehaviourTest {
             case FloatKey k -> Float.isNaN(values.getOrElse(k, Float.NaN)) ? null : values.getOrElse(k, Float.NaN);
             case IntKey k -> values.getOrElse(k, Integer.MIN_VALUE) == Integer.MIN_VALUE ? null : values.getOrElse(k, 0);
             case BooleanKey k -> values.getOrElse(k, false) != values.getOrElse(k, true) ? null : values.getOrElse(k, false);
-            case ObjectKey<?> k -> values.getOrElse(k, null);
+            case ObjectKey k -> values.getOrElse(k, null);
         };
     }
 
@@ -246,9 +246,10 @@ class BehaviourTest {
     @Test
     void keysAreChecked() {
         BlockValues stone = latest().resolve(BedrockBlocks.STONE.defaultState()).behaviour();
-        assertThrows(IllegalArgumentException.class, () -> stone.get(ItemBehaviour.MAX_STACK_SIZE));
-        assertThrows(IllegalArgumentException.class, () -> stone.getOrElse(ItemBehaviour.MAX_STACK_SIZE, 1));
-        assertThrows(IllegalArgumentException.class, () -> latest().resolve(BedrockItems.APPLE).behaviour().get(BlockBehaviour.FRICTION));
+        // get and getOrElse with a key of the other owner do not compile; the untyped methods check at run time
+        assertThrows(IllegalArgumentException.class, () -> stone.has(ItemBehaviour.MAX_STACK_SIZE));
+        assertThrows(IllegalArgumentException.class, () -> stone.explain(ItemBehaviour.MAX_STACK_SIZE));
+        assertThrows(IllegalArgumentException.class, () -> latest().resolve(BedrockItems.APPLE).behaviour().has(BlockBehaviour.FRICTION));
         assertSame(BlockBehaviour.FRICTION, BlockBehaviour.key("friction"));
         assertEquals(null, BlockBehaviour.key("max_stack_size"));
         // A custom block that sets nothing has no value for a key whose BDS default was never captured
@@ -369,7 +370,7 @@ class BehaviourTest {
             case FloatKey k -> value.getAsFloat();
             case IntKey k -> value.getAsInt();
             case BooleanKey k -> value.getAsBoolean();
-            case ObjectKey<?> k -> {
+            case ObjectKey k -> {
                 // a shape: one [minX, minY, minZ, maxX, maxY, maxZ] per box
                 List<Float> coordinates = new ArrayList<>();
                 value.getAsJsonArray().forEach(box -> box.getAsJsonArray().forEach(c -> coordinates.add(c.getAsFloat())));
@@ -433,7 +434,7 @@ class BehaviourTest {
             case FloatKey k -> values.get(k);
             case IntKey k -> values.get(k);
             case BooleanKey k -> values.get(k);
-            case ObjectKey<?> k -> values.get(k);
+            case ObjectKey k -> values.get(k);
         };
     }
 

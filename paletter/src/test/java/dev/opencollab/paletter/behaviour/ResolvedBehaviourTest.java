@@ -199,4 +199,12 @@ class ResolvedBehaviourTest {
         assertFalse(direct.fallback());
         assertEquals(direct.behaviour().item(), values.item());
     }
+
+    @Test
+    void hasTellsWhetherGetWouldAnswer() {
+        BlockValues stone = Paletter.bundled().palette(Paletter.bundled().latest()).resolve(BedrockBlocks.STONE.defaultState()).behaviour();
+        assertTrue(stone.has(BlockBehaviour.FRICTION));
+        assertEquals(stone.get(BlockBehaviour.FRICTION), stone.getOrElse(BlockBehaviour.FRICTION, -1f));
+        assertThrows(IllegalArgumentException.class, () -> stone.has(ItemBehaviour.MAX_STACK_SIZE));
+    }
 }

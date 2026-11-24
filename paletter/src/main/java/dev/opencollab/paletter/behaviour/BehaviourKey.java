@@ -1,5 +1,6 @@
 package dev.opencollab.paletter.behaviour;
 
+import dev.opencollab.paletter.annotation.Internal;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.util.Objects;
@@ -9,7 +10,8 @@ import java.util.Objects;
  * sends to clients (friction, destroy time, collision shapes, attack damage, ...). The keys are the constants of
  * {@link BlockBehaviour} and {@link ItemBehaviour}. Their type says what {@code get} returns: a {@link FloatKey} a
  * {@code float}, an {@link IntKey} an {@code int}, a {@link BooleanKey} a {@code boolean} (none of them boxed) and an
- * {@link ObjectKey} its object.
+ * {@link ObjectKey} its object. Each of those is typed by the values it reads ({@link BlockValues} or {@link ItemValues}),
+ * so {@code get} with a key of the other owner does not compile.
  *
  * @param <T> the value type: {@link Float}, {@link Integer}, {@link Boolean}, {@link String} or {@link BlockShape}
  * @since 1.0.0
@@ -67,10 +69,11 @@ public abstract sealed class BehaviourKey<T> permits FloatKey, IntKey, BooleanKe
     }
 
     /**
-     * The position of the key, which is where its values are kept.
+     * Internal: the position of the key, which is where its values are kept.
      *
      * @return the position of the key among every block and item key, {@code 0} to their count - 1
      */
+    @Internal
     public int ordinal() {
         return ordinal;
     }

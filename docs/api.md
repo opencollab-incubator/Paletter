@@ -499,7 +499,9 @@ block.behaviour();    // the values of the block that is sent
   `resolveBlock(int runtimeId)` takes the runtime id of a block this palette sends (from a packet or a chunk palette) and
   returns null if there is none; it is never a fallback. `resolve(ItemKey)` throws only for an item that is not
   sent at all (`Fallbacks.NONE`), and `resolve(key, orElse)` returns `orElse` there.
-- `get` throws `IllegalStateException` when no value is known; `getOrElse(key, fallback)` returns the fallback instead.
+- `get` throws `IllegalStateException` when no value is known; `getOrElse(key, fallback)` returns the fallback instead,
+  and `has(key)` tells beforehand. A key is typed by whose values it reads (`FloatKey<BlockValues>`), so a block key does
+  not compile against `ItemValues` and the other way around.
 - Values belong to the palette, not the state: a newer capture can change a value for one version only. An extended
   palette shares the values of its base for what they have in common, and the handles: one item has one handle in a
   palette, whichever variant resolved to it, and an extension has the base's handle for the items it did not change.
