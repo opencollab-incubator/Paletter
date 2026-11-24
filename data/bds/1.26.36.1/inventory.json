@@ -147,7 +147,9 @@
     },
     "BlockLeashableDescription": {
       "name": "minecraft:leashable",
-      "keys": []
+      "keys": [
+        "offset"
+      ]
     },
     "BlockLightDampeningDescription": {
       "name": "minecraft:light_dampening",

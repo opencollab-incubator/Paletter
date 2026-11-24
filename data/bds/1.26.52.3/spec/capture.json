@@ -8,7 +8,7 @@
     "item:description menu_category.group (string): kept 32 of 121, cut: itemGroup.name.coral_decorations, itemGroup.name.craftingTables, itemGroup.name.crop, itemGroup.name.door, itemGroup.name.dirt, itemGroup.name.dye, itemGroup.name.eggBlocks, itemGroup.name.element, itemGroup.name.enchantedBook, itemGroup.name.enchantingTable, itemGroup.name.endPortalFrame, itemGroup.name.endRod, ... (77 more)",
     "item:minecraft:record sound_event (string): kept 32 of 571, cut: squish.small, fall.big, fall.small, splash, fizz, flap, swim, drink, drink.honey, drink.milk, eat, takeoff, ... (527 more)"
   ],
-  "resolvedHashes": 5470,
+  "resolvedHashes": 5582,
   "unresolvedHashes": 0,
   "experiments": [
     "upcoming_creator_features=true",

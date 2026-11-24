@@ -22,7 +22,7 @@
     {
       "key": "block:explosion_resistance",
       "value": 0,
-      "method": "Destroyed beside explosions (power 4) at distance 7: a custom block that sets no resistance 12/48, the same as explosion_resistance 0 and more often than the others (Fisher's exact test, against each: dirt 0/48 p<0.001; sand 0/48 p<0.001; explosion_resistance_0 14/48 p=0.819; explosion_resistance_3 0/48 p<0.001). The unit is the component's."
+      "method": "Destroyed beside explosions (power 4) at distance 7: a custom block that sets no resistance 16/48, the same as explosion_resistance 0 and more often than the others (Fisher's exact test, against each: dirt 1/48 p<0.001; sand 0/48 p<0.001; explosion_resistance_0 16/48 p=1.000; explosion_resistance_3 0/48 p<0.001). The unit is the component's."
     },
     {
       "key": "block:collision_shape",
