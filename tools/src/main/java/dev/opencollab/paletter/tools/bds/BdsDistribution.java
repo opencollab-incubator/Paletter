@@ -66,12 +66,24 @@ public record BdsDistribution(String version, boolean preview, String platform, 
     }
 
     private static String newest(boolean linux, boolean preview) throws IOException, InterruptedException {
-        return downloadUrl(Http.MINECRAFT.get(LINKS),"serverBedrock" + (preview ? "Preview" : "") + (linux ? "Linux" : "Windows"));
+        return downloadUrl(links(), "serverBedrock" + (preview ? "Preview" : "") + (linux ? "Linux" : "Windows"));
+    }
+
+    /** One answer of the download links API, which names the newest build of every channel and platform. */
+    public static String links() throws IOException, InterruptedException {
+        return Http.MINECRAFT.get(LINKS);
+    }
+
+    /** The newest Windows build of a channel in an answer of {@link #links()}. */
+    public static String newestBuild(String links, boolean preview) throws IOException {
+        String url = downloadUrl(links, "serverBedrock" + (preview ? "Preview" : "") + "Windows");
+        String file = url.substring(url.lastIndexOf('/') + 1);
+        return BuildNumber.require(file.replace("bedrock-server-", "").replace(".zip", ""));
     }
 
     /**
      * The download url of a type in an answer of the links API ({@code result.links[]} of {@code downloadType} and
-     * {@code downloadUrl}). The one parser of that API: the BDS data workflow calls {@code builds resolve}, which uses it.
+     * {@code downloadUrl}). The one parser of that API: the BDS data workflow calls {@code daily decide}, which uses it.
      *
      * @throws IOException when the answer has another shape or no such type, quoting the answer
      */

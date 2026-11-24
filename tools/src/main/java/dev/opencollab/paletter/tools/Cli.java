@@ -11,7 +11,7 @@ import picocli.CommandLine.Command;
  * {@link GeneratorCommands}.
  */
 @Command(name = "paletter-tools", mixinStandardHelpOptions = true, subcommands = {
-    DataCommands.Import.class, BdsCommands.Bds.class, BdsCommands.BdsInventoryCommand.class, BdsCommands.BdsSchemaCommand.class, BdsCommands.WhiteboxCommand.class,
+    DataCommands.Import.class, BdsCommands.Bds.class, DailyCommands.Daily.class, BdsCommands.BdsInventoryCommand.class, BdsCommands.BdsSchemaCommand.class, BdsCommands.WhiteboxCommand.class,
     BdsCommands.WhiteboxCoverageCommand.class, BdsCommands.BdsCompareCommand.class, UpdateCommands.UpdateCommand.class, UpdateCommands.Builds.class,
     UpdateCommands.SpecCaptureCommand.class,
     DataCommands.VerifyCommand.class, DataCommands.ExportCommand.class, DataCommands.BaselineCommand.class, DataCommands.CheckData.class,

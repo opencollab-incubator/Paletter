@@ -78,6 +78,10 @@ class CliTest {
         cli.parseArgs("builds", "resolve", "--channel", "preview", "--output", "build.txt");
         cli.parseArgs("bds", "cache-key", "--channel", "preview", "--version", "1.26.70.24", "--output", "key.txt");
         cli.parseArgs("bds", "fetch", "--channel", "release", "--version", "1.26.63.1");
+        cli.parseArgs("daily", "decide", "--channel", "both", "--commit", "a".repeat(40), "--issues", "issues.json", "--pulls", "pulls.json",
+            "--outputs", "out.txt", "--summary", "summary.md");
+        cli.parseArgs("daily", "decide", "--channel", "preview", "--version", "1.26.70.24", "--force", "--commit", "a".repeat(40),
+            "--issues", "issues.json", "--pulls", "pulls.json", "--outputs", "out.txt");
         cli.parseArgs("builds", "plan", "--output", "matrix.json");
         cli.parseArgs("builds", "plan", "--output", "matrix.json", "--build", "1.26.63.1", "--build", "1.26.70.24");
         cli.parseArgs("behaviour", "import", "--cloudburst-data", "cb", "--allay", "allay");

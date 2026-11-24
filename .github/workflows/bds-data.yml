@@ -1,31 +1,18 @@
-# Security: the job that runs untrusted code (the downloaded BDS binary, Gradle and its dependencies, the tools) is
-# `capture`. It can only read the repository, keeps no credentials in the checkout and sees no secrets. It hands over the
-# report and a patch of the data paths as artifacts. `publish` holds the write permissions and BDS_DATA_TOKEN, runs no
-# Gradle or BDS and no repository code but the patch checks of .github/actions/apply-data-patch (from its own checkout
-# of the branch, never from an artifact), applies only patches confined to the data paths and passes report text as files.
+# Daily check of the newest Bedrock Dedicated Server release and preview: docs/data-pipeline.md, "The daily check".
 #
-# Daily check of the newest Bedrock Dedicated Server release and preview against the committed data.
+# `decide` asks the download links API once for both channels and captures only a build that is new: not recorded in
+# data/bds/builds.json, without data/bds/<build>, not waiting in the open data pull request, not failed twice at this
+# commit. `capture` runs `update` on Windows BDS (downloaded from minecraft.net; that means accepting the Minecraft EULA,
+# https://minecraft.net/eula). `publish` turns new data into a pull request from `bds-data/<channel>` and a failure into
+# an issue; it closes the channel's failure issue after a clean run. A manual run can pick one channel, an explicit
+# `version`, `force` (capture a known build) and `verify-only` (`update --verify-only`, which also forces; no issue,
+# no pull request).
 #
-# Per channel: resolves the newest build (or the `version` input), then runs `update` once on Windows BDS (downloaded
-# from minecraft.net; that means accepting the Minecraft EULA, https://minecraft.net/eula). The committed captures come
-# from Windows BDS, and Linux BDS numbers custom blocks, orders the creative inventory and encodes some component NBT
-# differently, so the captures run on Windows too (`update` refuses to compare captures of different platforms). The
-# update writes into the checkout and its report says whether anything differs; the component API and the API dump are
-# regenerated from the result. When the run fails or finds differences:
-#   - an issue labelled `bds-data` + `<channel>` is opened, or the open one gets a comment when the report changed
-#     (dates and paths ignored), so a standing difference does not spam;
-#   - `peter-evans/create-pull-request` opens (or updates) a pull request from branch `bds-data/<channel>` with the new
-#     data. Releases and previews are imported alike: a preview is bundled as a preview version (served with
-#     `Builder.previews(true)`, its API marked `@SincePreview`) and replaces the preview before it; its release drops it. The
-#     update writes its report to `data/bds/<build>/update-report.md` (committed with the data, and the body of the
-#     pull request). It exits with 2 when the report lists decisions: the pull request is still opened, for a human to
-#     decide them; any other failure fails the run after the issue is updated. The tools run through the launcher of
-#     `./gradlew :tools:installDist`, which passes their exit code on (Gradle's run task reports every non-zero exit as 1).
-# When a run is clean (no failure, no difference, no data file changed), the open issue of its channel that this workflow
-# opened (author github-actions, its exact title) is closed with a comment; a manual run of an explicit `version` closes
-# nothing. An update that changes no data file does not write its report into the data, so a clean run has no patch.
-# A manual run can check one channel only, and with `verify-only` runs `update --verify-only` and stops after the report
-# (nothing written, no issue, no pull request).
+# Security: `decide` runs repository code with read scopes; its token is in the environment of the `gh` step only,
+# which runs before any repository code. `capture` runs untrusted code (the BDS binary, Gradle, the tools) with
+# `contents: read`, no credentials in the checkout and no secrets, and hands over the report and a patch as artifacts.
+# `publish` holds the write permissions and BDS_DATA_TOKEN, runs no Gradle or BDS and no repository code but the patch
+# checks of .github/actions/apply-data-patch from its own checkout, and reads artifact values against strict patterns.
 #
 # Windows runner assumptions: BDS and the capture client talk over loopback only (127.0.0.1: RakNet and NetherNet
 # signaling on server-port, NetherNet LAN discovery on UDP 7551). Windows Firewall does not filter loopback, and nothing
@@ -33,11 +20,8 @@
 # host candidates only (no STUN/TURN), and libdatachannel ships a Windows x64 native. No WSL is needed: the tools run
 # the Windows BDS directly; only the BDS inventory step downloads the Linux zip to read its binary.
 #
-# Pull requests opened with GITHUB_TOKEN do not trigger other workflows; to run the build on them, use a fine grained
-# PAT (contents + pull requests: read and write) in a `BDS_DATA_TOKEN` secret, which `publish` prefers when it exists.
-# A patch that changes generated code (paletter/src/generated) is only turned into a pull request with that token, so
-# the build always checks generated code before review; without it `publish` fails and says so. The repository setting
-# "Allow GitHub Actions to create and approve pull requests" must be enabled. See docs/releasing.md.
+# Pull requests opened with GITHUB_TOKEN do not trigger other workflows: set BDS_DATA_TOKEN (docs/releasing.md) to run
+# the build on them. A patch that changes generated code is only turned into a pull request with it.
 
 name: BDS data
 
@@ -52,10 +36,14 @@ on:
         options: [both, release, preview]
         default: both
       version:
-        description: "BDS version (empty: newest of each channel)"
+        description: "BDS version (empty: newest of the channel; one channel only)"
         required: false
+      force:
+        description: "Capture the build even when it is known, waits in the data pull request or failed twice"
+        type: boolean
+        default: false
       verify-only:
-        description: "Only verify and upload the report (no issue, no pull request)"
+        description: "Only verify and upload the report (no issue, no pull request; captures known builds too)"
         type: boolean
         default: false
 
@@ -70,7 +58,47 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
+  decide:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: read
+      issues: read
+      pull-requests: read
+    outputs:
+      matrix: ${{ steps.decide.outputs.matrix }}
+      captures: ${{ steps.decide.outputs.captures }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      # The only step with the token, before any repository code runs: gh and nothing else
+      - name: List the open issues and pull requests
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh issue list --repo "$GITHUB_REPOSITORY" --label bds-data --state open --limit 100 \
+            --json number,title,author,body > "$RUNNER_TEMP/issues.json"
+          gh pr list --repo "$GITHUB_REPOSITORY" --state open --limit 100 \
+            --json number,headRefName,isCrossRepository,body > "$RUNNER_TEMP/pulls.json"
+      - uses: ./.github/actions/setup-tools
+      - name: Decide
+        id: decide
+        env:
+          CHANNEL: ${{ inputs.channel || 'both' }}
+          INPUT_VERSION: ${{ inputs.version }}
+          FORCE: ${{ inputs.force == true || inputs.verify-only == true }}
+          COMMIT: ${{ github.sha }}
+        run: |
+          ARGS=(daily decide --channel "$CHANNEL" --commit "$COMMIT" --issues "$RUNNER_TEMP/issues.json"
+            --pulls "$RUNNER_TEMP/pulls.json" --outputs "$GITHUB_OUTPUT" --summary "$GITHUB_STEP_SUMMARY")
+          if [ -n "$INPUT_VERSION" ]; then ARGS+=(--version "$INPUT_VERSION"); fi
+          if [ "$FORCE" = true ]; then ARGS+=(--force); fi
+          "$TOOLS" "${ARGS[@]}"
+
   capture:
+    needs: decide
+    if: needs.decide.outputs.captures != '0'
     # A fixed image: the captures are compared byte for byte with captures from earlier runs, so a runner image bump
     # (file listing order, locale) must be a deliberate change (docs/updating.md, "Pins")
     runs-on: windows-2025
@@ -79,65 +107,37 @@ jobs:
       contents: read
     strategy:
       fail-fast: false
-      matrix:
-        channel: ${{ fromJSON(inputs.channel == 'release' && '["release"]' || inputs.channel == 'preview' && '["preview"]' || '["release","preview"]') }}
+      matrix: ${{ fromJSON(needs.decide.outputs.matrix) }}
+    # One job at a time per build across both data workflows, so no two download the same zip
+    concurrency:
+      group: bds-zip-${{ matrix.build }}
+      cancel-in-progress: false
     defaults:
       run:
         # Git Bash on the Windows runner
         shell: bash
     env:
       CHANNEL: ${{ matrix.channel }}
-      INPUT_VERSION: ${{ inputs.version }}
+      BDS_VERSION: ${{ matrix.build }}
       # Scheduled runs have no inputs: false
       VERIFY_ONLY: ${{ inputs.verify-only == true }}
     steps:
+      - name: Check the matrix values
+        run: |
+          echo "$BDS_VERSION" | grep -Eq "$BUILD_RE" || { echo "Bad build"; exit 1; }
+          echo "$CHANNEL" | grep -Eqx 'release|preview' || { echo "Bad channel"; exit 1; }
       # The data is compared byte for byte: keep the checkout's line endings as committed (LF)
       - name: Check out with LF line endings
         run: git config --global core.autocrlf false
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
-      # Java, Gradle with a read-only cache (untrusted code runs here), $CI_TEMP, $PALETTER_BDS_CACHE and the tools
-      # launcher $TOOLS, which passes their exit code on (2: decisions open)
+      # Java, Gradle with a read-only cache (untrusted code runs here), $CI_TEMP, $PALETTER_BDS_CACHE, the tools launcher
+      # $TOOLS (it passes their exit code on; 2: decisions open) and the zips of the build, saved before BDS runs
       - uses: ./.github/actions/setup-tools
-      # The build every step uses, also the key of the download cache. Only the tools read the download links API
-      # (`builds resolve`), so a change of the API fails in one place, with the answer quoted
-      - name: Resolve the BDS version
-        id: bds
-        run: |
-          if [ -n "$INPUT_VERSION" ]; then
-            VERSION="$INPUT_VERSION"
-          else
-            "$TOOLS" builds resolve --channel "$CHANNEL" --output "$CI_TEMP/bds-version.txt" || exit 1
-            VERSION=$(head -n1 "$CI_TEMP/bds-version.txt")
-          fi
-          if ! echo "$VERSION" | grep -Eq "$BUILD_RE"; then echo "No BDS version: '$VERSION'"; exit 1; fi
-          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
-          echo "BDS_VERSION=$VERSION" >> "$GITHUB_ENV"
-      # The zip cache of .github/actions/setup-tools (its key, restored by build, saved before BDS runs); here until the
-      # build is known before the job starts
-      - name: Name the zip cache
-        id: key
-        run: |
-          "$TOOLS" bds cache-key --channel "$CHANNEL" --version "$BDS_VERSION" --output "$CI_TEMP/zip-key.txt"
-          KEY=$(head -n1 "$CI_TEMP/zip-key.txt")
-          echo "$KEY" | grep -Eq '^bds-zips-1(\.[0-9]{1,9}){3}-([0-9a-f]{16}|new)$' || { echo "Bad cache key: '$KEY'"; exit 1; }
-          echo "key=$KEY" >> "$GITHUB_OUTPUT"
-      - name: Restore the BDS zips
-        id: restore
-        uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         with:
-          path: ${{ env.PALETTER_BDS_CACHE }}/zips
-          key: ${{ steps.key.outputs.key }}
-          restore-keys: bds-zips-${{ steps.bds.outputs.version }}-
-      - name: Fetch the BDS zips
-        run: '"$TOOLS" bds fetch --channel "$CHANNEL" --version "$BDS_VERSION"'
-      - name: Save the BDS zips
-        if: steps.restore.outputs.cache-hit != 'true'
-        uses: actions/cache/save@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
-        with:
-          path: ${{ env.PALETTER_BDS_CACHE }}/zips
-          key: ${{ steps.key.outputs.key }}
+          build: ${{ matrix.build }}
+          channel: ${{ matrix.channel }}
 
       # One pass: verify-only for a manual verify-only run, else update, which writes into the checkout only (publish
       # turns the patch into a pull request). The result is written last, after the patch exists, so a failure on the
@@ -212,20 +212,21 @@ jobs:
           HASH: ${{ steps.run.outputs.hash || github.run_id }}
           ADDON: ${{ steps.run.outputs.addon || 'false' }}
         run: |
+          mkdir -p "$RUNNER_TEMP/out"
           {
             echo "version=$BDS_VERSION"
             echo "update=$UPDATE_EXIT"
             echo "differs=$DIFFERS"
             echo "hash=$HASH"
             echo "addon=$ADDON"
-          } > "$CI_TEMP/out/result.txt"
+          } > "$RUNNER_TEMP/out/result.txt"
 
       - name: Upload the result
         if: always()
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: bds-data-${{ matrix.channel }}
-          path: ${{ env.CI_TEMP }}/out/
+          path: ${{ runner.temp }}/out/
           if-no-files-found: ignore
 
       - name: Upload logs
@@ -239,8 +240,8 @@ jobs:
           if-no-files-found: ignore
 
   publish:
-    needs: capture
-    if: ${{ !cancelled() && inputs.verify-only != true }}
+    needs: [decide, capture]
+    if: ${{ !cancelled() && needs.decide.result == 'success' && needs.decide.outputs.captures != '0' && inputs.verify-only != true }}
     runs-on: ubuntu-latest
     timeout-minutes: 15
     permissions:
@@ -249,13 +250,14 @@ jobs:
       issues: write
     strategy:
       fail-fast: false
-      matrix:
-        channel: ${{ fromJSON(inputs.channel == 'release' && '["release"]' || inputs.channel == 'preview' && '["preview"]' || '["release","preview"]') }}
+      matrix: ${{ fromJSON(needs.decide.outputs.matrix) }}
     env:
       CHANNEL: ${{ matrix.channel }}
-      # The issue this workflow opens; only an open issue with this title by github-actions is commented on or closed,
-      # never one a human filed with the same labels (OWN_ISSUE: jq over `gh issue list --json number,title,author`)
-      ISSUE_TITLE: "BDS data: ${{ matrix.channel }} differs from the committed data"
+      BUILD: ${{ matrix.build }}
+      ATTEMPT: ${{ matrix.attempt }}
+      # The issue of a failed check (DailyDecide.issueTitle); only an open issue with this title by github-actions is
+      # updated or closed, never one a human filed (OWN_ISSUE: jq over `gh issue list --json number,title,author`)
+      ISSUE_TITLE: "BDS data: the ${{ matrix.channel }} check failed"
       OWN_ISSUE: >-
         [.[] | select(.title == $title and (.author.login | IN("app/github-actions", "github-actions", "github-actions[bot]")))][0].number // empty
     steps:
@@ -267,65 +269,72 @@ jobs:
           name: bds-data-${{ matrix.channel }}
           path: ${{ runner.temp }}/in
 
-      # Values from the capture job are data: checked against strict patterns, never sourced or interpolated
+      # Values from the capture job and the matrix are data: checked against strict patterns, never sourced or interpolated
       - name: Read the result
         id: result
+        env:
+          GH_TOKEN: ${{ github.token }}
         run: |
+          echo "$BUILD" | grep -Eq "$BUILD_RE" || { echo "Bad build"; exit 1; }
+          echo "$CHANNEL" | grep -Eqx 'release|preview' || { echo "Bad channel"; exit 1; }
+          echo "$ATTEMPT" | grep -Eq '^[12]$' || { echo "Bad attempt"; exit 1; }
           IN="$RUNNER_TEMP/in"
           value() { grep -m1 "^$1=" "$IN/result.txt" | cut -d= -f2-; }
           VERSION=$(value version); UPDATE=$(value update); DIFFERS=$(value differs); HASH=$(value hash); ADDON=$(value addon)
-          echo "$VERSION" | grep -Eq "$BUILD_RE" || { echo "Bad version"; exit 1; }
+          [ "$VERSION" = "$BUILD" ] || { echo "The result is not of $BUILD"; exit 1; }
           echo "$UPDATE" | grep -Eq '^[0-9]+$' || { echo "Bad update exit code"; exit 1; }
           echo "$DIFFERS" | grep -Eq '^(true|false)$' || { echo "Bad differs"; exit 1; }
           echo "$HASH" | grep -Eq '^[0-9a-f]+$' || { echo "Bad hash"; exit 1; }
           echo "$ADDON" | grep -Eq '^(true|false)$' || { echo "Bad addon"; exit 1; }
+          ISSUE=$(gh issue list --label bds-data --label "$CHANNEL" --state open --json number,title,author | jq -r --arg title "$ISSUE_TITLE" "$OWN_ISSUE")
           {
-            echo "version=$VERSION"
             echo "update=$UPDATE"
             echo "differs=$DIFFERS"
             echo "hash=$HASH"
             echo "addon=$ADDON"
+            echo "issue=$ISSUE"
           } >> "$GITHUB_OUTPUT"
 
+      # A failure only: new data is a pull request alone. The marker is what `daily decide` reads (one retry per build and
+      # commit); the report hash keeps a standing failure from commenting every day
       - name: Open or update the issue
-        if: steps.result.outputs.differs == 'true'
+        if: steps.result.outputs.update != '0' && steps.result.outputs.update != '2'
         env:
           GH_TOKEN: ${{ github.token }}
           HASH: ${{ steps.result.outputs.hash }}
+          NUMBER: ${{ steps.result.outputs.issue }}
+          COMMIT: ${{ github.sha }}
           RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
         run: |
           gh label create bds-data --color 1d76db --description "Automated BDS data check" 2>/dev/null || true
           gh label create "$CHANNEL" --color c5def5 2>/dev/null || true
-          ISSUE="$RUNNER_TEMP/issue.md"
-          MARKER="<!-- report-hash: $HASH -->"
+          BODY="$RUNNER_TEMP/issue.md"
           {
-            echo "$MARKER"
-            echo "Run: $RUN_URL"
+            echo "<!-- bds-check: $BUILD $COMMIT $ATTEMPT -->"
+            echo "<!-- report-hash: $HASH -->"
+            echo "BDS $BUILD failed (attempt $ATTEMPT at $COMMIT). Run: $RUN_URL"
             echo
             # GitHub limits bodies to 65536 characters
             if [ -f "$RUNNER_TEMP/in/report.md" ]; then head -c 60000 "$RUNNER_TEMP/in/report.md"; else echo "The run wrote no report; see the logs."; fi
-          } > "$ISSUE"
-          NUMBER=$(gh issue list --label bds-data --label "$CHANNEL" --state open --json number,title,author | jq -r --arg title "$ISSUE_TITLE" "$OWN_ISSUE")
+          } > "$BODY"
           if [ -z "$NUMBER" ]; then
-            gh issue create --title "$ISSUE_TITLE" --label bds-data --label "$CHANNEL" --body-file "$ISSUE"
-          elif ! gh issue view "$NUMBER" --json body,comments --jq '[.body] + [.comments[].body] | join("\n")' | grep -qF "$MARKER"; then
-            gh issue comment "$NUMBER" --body-file "$ISSUE"
+            gh issue create --title "$ISSUE_TITLE" --label bds-data --label "$CHANNEL" --body-file "$BODY"
           else
-            echo "Issue #$NUMBER already has this report"
+            # The body carries the newest marker; a comment only when the report says something new
+            if ! gh issue view "$NUMBER" --json body --jq .body | grep -qF "<!-- report-hash: $HASH -->"; then
+              gh issue comment "$NUMBER" --body "BDS $BUILD failed again, with another report (attempt $ATTEMPT). Run: $RUN_URL"
+            fi
+            gh issue edit "$NUMBER" --body-file "$BODY"
           fi
 
       # Not on a manual run of an explicit version: an older or other build being clean says nothing about the newest
       - name: Close the issue of a clean run
-        if: steps.result.outputs.differs == 'false' && !inputs.version
+        if: steps.result.outputs.update == '0' && steps.result.outputs.differs == 'false' && steps.result.outputs.issue != '' && !inputs.version
         env:
           GH_TOKEN: ${{ github.token }}
-          VERSION: ${{ steps.result.outputs.version }}
+          NUMBER: ${{ steps.result.outputs.issue }}
           RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
-        run: |
-          NUMBER=$(gh issue list --label bds-data --label "$CHANNEL" --state open --json number,title,author | jq -r --arg title "$ISSUE_TITLE" "$OWN_ISSUE")
-          if [ -n "$NUMBER" ]; then
-            gh issue close "$NUMBER" --comment "BDS $VERSION matches the committed data. Run: $RUN_URL"
-          fi
+        run: gh issue close "$NUMBER" --comment "BDS $BUILD matches the committed data (run $RUN_URL)"
 
       # Only patches confined to the data paths (the checks shared with recapture.yml); anything else fails the job before
       # the working tree changes
@@ -339,22 +348,24 @@ jobs:
           has-token: ${{ secrets.BDS_DATA_TOKEN != '' }}
 
       # The versioned report, committed with the data, is the pull request body; when the patch has none (only
-      # regenerated code changed), the run's own copy of it
+      # regenerated code changed), the run's own copy of it. The marker tells `daily decide` that the build waits here
       - name: Write the pull request body
         if: steps.apply.outputs.changed == 'true'
         env:
-          VERSION: ${{ steps.result.outputs.version }}
           ADDON: ${{ steps.result.outputs.addon }}
+          NUMBER: ${{ steps.result.outputs.issue }}
         run: |
-          BODY="data/bds/$VERSION/update-report.md"
-          grep -qxF "$BODY" "$RUNNER_TEMP/paths.txt" || BODY="$RUNNER_TEMP/in/report.md"
+          REPORT="data/bds/$BUILD/update-report.md"
+          grep -qxF "$REPORT" "$RUNNER_TEMP/paths.txt" || REPORT="$RUNNER_TEMP/in/report.md"
           {
+            echo "<!-- bds-check: $BUILD -->"
+            if [ -n "$NUMBER" ]; then echo "Closes #$NUMBER"; echo; fi
             # Nothing recaptures by itself: the kept builds answer for the old add-on until someone does (docs/data-pipeline.md)
             if [ "$ADDON" = true ]; then
               echo "**The update changed an input of the spec add-on.** Label this pull request \`recapture\` before merging, so the kept builds are captured with the new add-on."
               echo
             fi
-            head -c 60000 "$BODY"
+            head -c 60000 "$REPORT"
           } > "$RUNNER_TEMP/pr-body.md"
 
       - name: Open or update the pull request
@@ -365,7 +376,7 @@ jobs:
           branch: bds-data/${{ matrix.channel }}
           delete-branch: true
           title: "Update bundled data from the newest BDS ${{ matrix.channel }}"
-          commit-message: "Update bundled data from the newest BDS ${{ matrix.channel }}"
+          commit-message: "Update bundled data from BDS ${{ matrix.build }}"
           body-path: ${{ runner.temp }}/pr-body.md
           labels: bds-data
           add-paths: |

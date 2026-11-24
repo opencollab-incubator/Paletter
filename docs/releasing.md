@@ -25,8 +25,9 @@ What the workflows in `.github/workflows` need from the GitHub repository settin
   1. GitHub > Settings > Developer settings > Fine-grained tokens > Generate new token: resource owner the repository's
      owner, only this repository, permissions Contents and Pull requests read and write, an expiry date.
   2. Repository Settings > Secrets and variables > Actions > `BDS_DATA_TOKEN` > Update secret, paste the new token.
-  3. Run `bds-data.yml` by hand (Actions > BDS data > Run workflow, `verify-only` off) or wait for the next daily run, and
-     check that the publish job opens or updates its pull request.
+  3. Run `bds-data.yml` by hand (Actions > BDS data > Run workflow, `verify-only` off; `force` on when the newest build is
+     already known, or the run ends after `decide`) or wait for the next new build, and check that the publish job opens
+     or updates its pull request.
   4. Revoke the old token.
 
   A failed publish with an authentication error means this step is due. It is listed with the other manual bumps in

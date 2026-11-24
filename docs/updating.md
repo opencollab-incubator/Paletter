@@ -24,9 +24,10 @@ The Gradle tasks are the commands with their usual arguments:
 
 ## a. A new BDS release or preview appeared
 
-`bds-data.yml` runs daily (05:17 UTC) for both channels: `update --channel release|preview`, then `generateComponentApi`
-and `:paletter:apiDump`. A clean day writes nothing and closes the channel's open issue. Otherwise it opens an issue and
-a pull request from `bds-data/<channel>` with data and generated paths only. If the patch changes an add-on input
+`bds-data.yml` runs daily (05:17 UTC) and captures only a build it does not know yet (`daily decide`, see
+[data-pipeline.md](data-pipeline.md#the-daily-check)): `update --channel release|preview`, then `generateComponentApi`
+and `:paletter:apiDump`. New data becomes a pull request from `bds-data/<channel>` with data and generated paths only; a
+failure becomes an issue, retried once the next day and then left until a new commit or build (`force` re-runs it). If the patch changes an add-on input
 (`components.json`, `fixtures.json`, `bds-feedback.json`, `bds-keys.json`) the pull request says so at the top: label it
 `recapture` before merging (section b). Nothing recaptures by itself.
 

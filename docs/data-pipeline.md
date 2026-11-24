@@ -54,6 +54,7 @@ command takes `--help`. Paths are relative to the repository root (`--root` over
 |---|---|
 | `update` | The whole BDS pipeline (below). |
 | `builds list\|check\|table\|resolve\|record\|plan` | Every release build, one by one, against the previous kept build ([below](#every-release-build)): `table` writes what `builds.json` says per data version, `resolve` names the newest build of a channel, `record` brings `builds.json` up to date without BDS, `plan` lists the builds of a [full recapture](#full-recapture). |
+| `daily decide` | Which new builds the daily check captures ([The daily check](#the-daily-check)). |
 | `bds fetch\|cache-key` | The zips of one build in the cache, nothing else, and the workflows' cache key of them ([CI](#ci)). |
 | `capture`, `compare`, `experiments` | The headless client: record what a server sends, diff a capture with a bundled version, toggle experiments in a `level.dat`. |
 | `import`, `bds-compare`, `verify`, `baseline`, `check-data` | Import and check bundled data. `check-data` lists what older versions lack. |
@@ -158,8 +159,8 @@ checked one by one:
 ./gradlew :tools:run --args="builds resolve --channel preview"        # the newest build the download links API names
 ```
 
-The download links API is parsed in one place, `BdsDistribution.downloadUrl`; the BDS data workflow asks `builds resolve`
-for the build it checks, so an API change fails there with the answer quoted.
+The download links API is parsed in one place, `BdsDistribution.downloadUrl`; the BDS data workflow asks `daily decide`
+for the builds it checks (`builds resolve` is the same for local use), so an API change fails there with the answer quoted.
 
 **Zip checksums and frozen builds.** `data/bds/builds.json` records, per kept build and platform (`win`, `linux`), the
 sha256 and size of its zip from minecraft.net (`zips`), computed from a downloaded zip and `unknown` when none was at hand;
@@ -462,15 +463,7 @@ hold nothing Paletter needs.
 - `build.yml` runs `./gradlew build` on pushes to `main` and on pull requests. Its `check` includes `:tools:checkMappings`
   (`check-mappings --strict`: every captured bit and wire path is explained), `:tools:checkData` (`check-data`) and
   `:tools:checkWhitebox`.
-- `bds-data.yml` runs `update` once a day for the release and preview channels on Windows BDS (a Windows runner, like
-  the committed captures), then `generateComponentApi` and `:paletter:apiDump`. On a failure or a difference it opens
-  or comments on an issue and opens a pull request from `bds-data/<channel>` with the updated data (only data and
-  generated paths; the issue and pull request bodies are written to the runner's temp directory). A clean run (no
-  failure, no difference, no data file changed) closes the channel's open issue that the workflow opened; a manual run
-  of an explicit version closes nothing. A manual run can pick one channel and stop after the report (`verify-only`).
-  The capture job runs BDS and Gradle with a read-only token and no secrets; a separate publish job, which runs no
-  build, applies the data patch (rejected if it touches other paths) and writes the issue and pull request. A patch
-  that changes generated code needs the `BDS_DATA_TOKEN` secret, so the build runs on its pull request.
+- `bds-data.yml` is the daily check of new builds ([below](#the-daily-check)).
 - `recapture.yml` captures every kept build again after the add-on changed ([Full recapture](#full-recapture)).
 - **Downloads from Mojang.** Every read-only job that runs the tools uses `.github/actions/setup-tools` (Java, Gradle
   with a read-only cache, `$TOOLS`). A capture job gives it its build: the zips come from the Actions cache, key
@@ -486,6 +479,43 @@ hold nothing Paletter needs.
   unverified until the first CI download with it; if it refuses, `ZIP_AGENT` goes back to `Mozilla/5.0 Paletter` (one line).
 - `javadoc.yml` publishes the Javadoc of `main` and of each release to GitHub Pages.
 - [releasing.md](releasing.md) lists the repository settings, secrets and Pages setup these workflows need.
+
+### The daily check
+
+`bds-data.yml` reacts to new builds only; it never captures a build it already knows again. It runs at 05:17 UTC and by
+hand (`channel`, `version`, `force`, `verify-only`), in three jobs:
+
+1. `decide` (ubuntu, read scopes) lists the open issues and pull requests with `gh` (the one step with the token, before
+   any repository code runs), then runs `daily decide`: one request to the download links API names the newest build B
+   of both channels (none with an explicit `version`). Per channel, the first row that applies decides:
+
+   | # | The newest build B | Result |
+   |---|---|---|
+   | 1 | `force` (also `verify-only`) | capture |
+   | 2 | B has an entry in `data/bds/builds.json` or a `data/bds/B` directory | skip: known |
+   | 3 | the open pull request of `bds-data/<channel>` (not from a fork) carries `<!-- bds-check: B -->` | skip: waiting in #n |
+   | 4 | the workflow's own open issue (its exact title, by github-actions) carries `<!-- bds-check: B <this commit> 2 -->` | skip: failed twice at this commit |
+   | 5 | otherwise | capture, attempt 2 after one failure at this commit, else 1 |
+
+   Only a marker on a line of its own counts; issues of other authors and pull requests from forks decide nothing.
+   Every decision goes into the job summary. With nothing to capture the run ends here, in a few minutes. A known build
+   whose add-on is stale is not captured: that is a [full recapture](#full-recapture). A plain `update` of a new build
+   always writes its spec capture to `data/bds/<build>/spec`, so once its pull request is merged row 2 knows it, even
+   when its data equals the build before.
+2. `capture` (Windows, `contents: read`, one job per build to capture) runs `update` on Windows BDS (like the committed
+   captures), then `generateComponentApi` and `:paletter:apiDump`, and hands over the report, a patch of the data
+   paths and its result. The zips come from the cache ([CI](#ci)).
+3. `publish` (the only job with write permissions and `BDS_DATA_TOKEN`; it runs no build) reads the result against
+   strict patterns. New data (exit 0 or 2) becomes a pull request from `bds-data/<channel>` (only data and generated
+   paths), whose body starts with `<!-- bds-check: <build> -->`, `Closes #n` when the channel's failure issue is open,
+   and a notice when an add-on input changed. A failure opens the channel's issue (`BDS data: the <channel> check
+   failed`) or rewrites its body, with `<!-- bds-check: <build> <commit> <attempt> -->`; it comments only when the report
+   changed. A failure is retried once on the next day, then skipped until a new commit (a fix) or a new build; `force`
+   always runs. A clean run closes the issue (not a run of an explicit `version`). A patch that changes generated code
+   needs the `BDS_DATA_TOKEN` secret, so the build runs on its pull request.
+
+A build that became known by a pull request made by hand leaves its failure issue open: `decide` has no write scope, so
+a person closes it.
 
 ## The component model
 
