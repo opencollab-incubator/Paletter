@@ -63,8 +63,8 @@ class BuildNumberTest {
         for (String text : List.of("1.26.63.1", "1.21.73.01", "1.26.63", "2.26.63.1", "1.26.63.1.2", "1.26.70-beta24")) {
             assertEquals(BuildNumber.isBuild(text), regex.matcher(text).matches(), text);
         }
-        for (String workflow : List.of("recapture.yml", "bds-data.yml")) {
-            String text = Files.readString(ROOT.resolve(".github/workflows").resolve(workflow));
+        for (String workflow : List.of("workflows/recapture.yml", "workflows/bds-data.yml", "actions/setup-tools/action.yml")) {
+            String text = Files.readString(ROOT.resolve(".github").resolve(workflow));
             Matcher m = Pattern.compile("(?m)^\\s*BUILD_RE: '([^']*)'$").matcher(text);
             assertTrue(m.find(), workflow + " defines no BUILD_RE");
             assertEquals(BuildNumber.REGEX, m.group(1), workflow);

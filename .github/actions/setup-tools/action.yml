@@ -1,0 +1,88 @@
+# The setup of every read-only job that runs the tools: Java, Gradle with a read-only cache (these jobs run untrusted code
+# or Gradle over data from such jobs, so they never write the Gradle cache other jobs restore), the temp and BDS cache
+# directories outside the checkout and the tools launcher ($TOOLS, which passes the tools' exit codes on).
+#
+# With a build: its BDS zips from the Actions cache, or from minecraft.net (`tools bds fetch`: no request when the
+# cached zips are whole and match the sha256 of data/bds/builds.json; exit 4 when minecraft.net refuses, 5 when the zip
+# is gone). The cache is saved right after the download, before BDS ever runs, so a job that fails later does not
+# download the zips again the next day, and nothing BDS does reaches a cached zip.
+
+name: Set up the tools
+description: Java, Gradle (read-only cache), the tools launcher and, for a build, its BDS zips
+
+inputs:
+  build:
+    description: The BDS build whose zips the job needs (empty for none)
+    required: false
+    default: ""
+  channel:
+    description: The channel of the build, release or preview
+    required: false
+    default: release
+
+runs:
+  using: composite
+  steps:
+    - uses: actions/setup-java@d1374f8ac74474200d16ef8ecee22c7ae7a51880 # v6.3.0
+      with:
+        distribution: temurin
+        java-version: 21
+    - uses: gradle/actions/setup-gradle@8da46b539cd8fe6ab27ca75128919a18d757604c # v6.4.1
+      with:
+        cache-read-only: true
+    # Everything temporary lives in the runner's temp directory, never in the checkout. Forward slashes on Windows: Java,
+    # bash and the actions all read them; an absolute path, as upload-artifact rejects '..'
+    - name: Set the temp and BDS cache directories
+      shell: bash
+      run: |
+        CI_TEMP="$RUNNER_TEMP"
+        if command -v cygpath > /dev/null; then CI_TEMP=$(cygpath -m "$RUNNER_TEMP"); fi
+        {
+          echo "CI_TEMP=$CI_TEMP"
+          echo "PALETTER_BDS_CACHE=$CI_TEMP/bds-cache"
+          echo "TOOLS=tools/build/install/tools/bin/tools"
+        } >> "$GITHUB_ENV"
+        mkdir -p "$CI_TEMP/out"
+    # The launcher passes the tools' own exit code on (Gradle's run task reports every non-zero exit as 1)
+    - name: Build the tools
+      shell: bash
+      run: ./gradlew :tools:installDist
+
+    - name: Name the zip cache
+      id: key
+      if: inputs.build != ''
+      shell: bash
+      env:
+        # A BDS build number: the format of `BuildNumber` (tools), whose test keeps this regex equal to BuildNumber.REGEX
+        BUILD_RE: '^1(\.[0-9]{1,9}){3}$'
+        BUILD: ${{ inputs.build }}
+        CHANNEL: ${{ inputs.channel }}
+      run: |
+        echo "$BUILD" | grep -Eq "$BUILD_RE" || { echo "Not a build: '$BUILD'"; exit 1; }
+        echo "$CHANNEL" | grep -Eqx 'release|preview' || { echo "Not a channel: '$CHANNEL'"; exit 1; }
+        "$TOOLS" bds cache-key --channel "$CHANNEL" --version "$BUILD" --output "$CI_TEMP/zip-key.txt"
+        KEY=$(head -n1 "$CI_TEMP/zip-key.txt")
+        echo "$KEY" | grep -Eq '^bds-zips-1(\.[0-9]{1,9}){3}-([0-9a-f]{16}|new)$' || { echo "Bad cache key: '$KEY'"; exit 1; }
+        echo "key=$KEY" >> "$GITHUB_OUTPUT"
+    # Any entry of the build: one saved before its sha256 was recorded is verified against it by `bds fetch`
+    - name: Restore the BDS zips
+      id: restore
+      if: inputs.build != ''
+      uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+      with:
+        path: ${{ env.PALETTER_BDS_CACHE }}/zips
+        key: ${{ steps.key.outputs.key }}
+        restore-keys: bds-zips-${{ inputs.build }}-
+    - name: Fetch the BDS zips
+      if: inputs.build != ''
+      shell: bash
+      env:
+        BUILD: ${{ inputs.build }}
+        CHANNEL: ${{ inputs.channel }}
+      run: '"$TOOLS" bds fetch --channel "$CHANNEL" --version "$BUILD"'
+    - name: Save the BDS zips
+      if: inputs.build != '' && steps.restore.outputs.cache-hit != 'true'
+      uses: actions/cache/save@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+      with:
+        path: ${{ env.PALETTER_BDS_CACHE }}/zips
+        key: ${{ steps.key.outputs.key }}

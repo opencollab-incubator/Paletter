@@ -99,6 +99,71 @@ class HttpTest {
         assertEquals(List.of(Http.USER_AGENT), agents);
     }
 
+    /** The agent names the project, never a person or an address. */
+    @Test
+    void theAgentNamesTheProjectOnly() {
+        assertTrue(Http.USER_AGENT.startsWith("Paletter-tools/"), Http.USER_AGENT);
+        assertTrue(Http.USER_AGENT.contains(Http.PROJECT_URL), Http.USER_AGENT);
+        assertFalse(Http.USER_AGENT.contains("@"), Http.USER_AGENT);
+        String user = System.getProperty("user.name");
+        assertFalse(user != null && !user.isBlank() && Http.USER_AGENT.toLowerCase().contains(user.toLowerCase()), Http.USER_AGENT);
+    }
+
+    /** The policy of {@link Http#MINECRAFT}, with the waits counted instead of spent. */
+    private static Http minecraft(List<Long> waits) {
+        return new Http(Duration.ofSeconds(2), Duration.ofMillis(300), Http.MINECRAFT.tries(), Http.MINECRAFT.backoff(), Duration.ofMinutes(30),
+            Http.MINECRAFT.retryAfterLimit(), waits::add);
+    }
+
+    private static Answer refused(int status, String retryAfter) {
+        return exchange -> {
+            if (retryAfter != null) {
+                exchange.getResponseHeaders().add("Retry-After", retryAfter);
+            }
+            exchange.sendResponseHeaders(status, -1);
+        };
+    }
+
+    @Test
+    void aForbiddenIsAskedOnce() {
+        answers.add(status(403));
+        List<Long> waits = new ArrayList<>();
+        Http.NetworkException e = assertThrows(Http.NetworkException.class, () -> minecraft(waits).get(url()));
+        assertEquals(403, e.status());
+        assertEquals(1, requests.get());
+        assertEquals(List.of(), waits);
+    }
+
+    @Test
+    void aRateLimitWaitsItsRetryAfterOnce() throws Exception {
+        answers.add(refused(429, "1"));
+        answers.add(body("hello"));
+        List<Long> waits = new ArrayList<>();
+        assertEquals("hello", minecraft(waits).get(url()));
+        assertEquals(2, requests.get());
+        assertEquals(List.of(1000L), waits);
+    }
+
+    @Test
+    void aRateLimitWithoutRetryAfterWaitsAMinuteOnceAndThenFails() {
+        answers.add(refused(429, null));
+        List<Long> waits = new ArrayList<>();
+        Http.NetworkException e = assertThrows(Http.NetworkException.class, () -> minecraft(waits).get(url()));
+        assertEquals(429, e.status());
+        assertEquals(2, requests.get(), "two tries at most");
+        assertEquals(List.of(60_000L), waits);
+    }
+
+    @Test
+    void aRetryAfterBeyondFiveMinutesWaitsTheFixedTime() {
+        answers.add(refused(503, "3600"));
+        List<Long> waits = new ArrayList<>();
+        assertThrows(Http.NetworkException.class, () -> minecraft(waits).get(url()));
+        assertEquals(List.of(60_000L), waits);
+        assertEquals(-1, Http.retryAfter("Wed, 21 Oct 2026 07:28:00 GMT", Duration.ofMinutes(5)));
+        assertEquals(300_000, Http.retryAfter("300", Duration.ofMinutes(5)));
+    }
+
     @Test
     void aHeaderReplacesTheAgent() throws Exception {
         answers.add(body("hello"));

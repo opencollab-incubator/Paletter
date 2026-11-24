@@ -57,9 +57,9 @@ tasks.test {
     // -PupdateShapeDisagreements=true rewrites data/model/vanilla-shapes-known-<protocol>.txt (VanillaShapeOracleTest)
     systemProperty("paletter.updateShapeDisagreements", (findProperty("updateShapeDisagreements") as String?) ?: "false")
     // Beyond the repository inputs of every test (paletter.base-conventions): LocaleRootTest reads the sources of every
-    // module, DeprecatedDocsTest reads docs/api.md
+    // module, DeprecatedDocsTest reads docs/api.md, the workflow tests read .github (BuildNumberTest, BehaviourSourcesTest)
     val root = layout.settingsDirectory
-    for (dir in listOf("paletter-recipes/src", "examples/src")) {
+    for (dir in listOf("paletter-recipes/src", "examples/src", ".github")) {
         inputs.dir(root.dir(dir)).withPathSensitivity(PathSensitivity.RELATIVE).withPropertyName("repository $dir")
     }
     inputs.file(root.file("docs/api.md")).withPathSensitivity(PathSensitivity.RELATIVE).withPropertyName("repository docs/api.md")
@@ -67,6 +67,11 @@ tasks.test {
 
 application {
     mainClass.set("dev.opencollab.paletter.tools.Cli")
+}
+
+// The version the tools name in their HTTP user agent (Http.PRODUCT)
+tasks.jar {
+    manifest { attributes("Implementation-Version" to project.version.toString()) }
 }
 
 // installDist is what the workflows and scripts use (tools/build/install); the archives are about 94 MB nobody reads

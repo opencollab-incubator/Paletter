@@ -99,13 +99,7 @@ jobs:
         with:
           ref: ${{ env.BASE }}
           persist-credentials: false
-      - uses: actions/setup-java@d1374f8ac74474200d16ef8ecee22c7ae7a51880 # v6.3.0
-        with:
-          distribution: temurin
-          java-version: 21
-      - uses: gradle/actions/setup-gradle@8da46b539cd8fe6ab27ca75128919a18d757604c # v6.4.1
-        with:
-          cache-read-only: true
+      - uses: ./.github/actions/setup-tools
       # The committed builds of the checkout only (the kept releases and the preview with captures in data/bds), with no
       # request to the network; the `builds` input narrows them to a rehearsal
       - name: List the builds
@@ -116,7 +110,8 @@ jobs:
             echo "$B" | grep -Eq "$BUILD_RE" || { echo "Not a build: '$B'"; exit 1; }
             ONLY="$ONLY --build $B"
           done
-          ./gradlew :tools:run --args="builds plan --output $RUNNER_TEMP/matrix.json$ONLY" | tee "$RUNNER_TEMP/plan.log"
+          # shellcheck disable=SC2086 (checked build numbers)
+          "$TOOLS" builds plan --output "$RUNNER_TEMP/matrix.json" $ONLY | tee "$RUNNER_TEMP/plan.log"
           MATRIX=$(cat "$RUNNER_TEMP/matrix.json")
           # Frozen builds (their zip is gone from minecraft.net) are left out of the plan, and said so
           grep '^SKIPPED ' "$RUNNER_TEMP/plan.log" | sed 's/^/- /' >> "$GITHUB_STEP_SUMMARY" || true
@@ -143,6 +138,10 @@ jobs:
       # The runners are shared: a few builds at a time keeps the downloads from minecraft.net and the queue polite
       max-parallel: 3
       matrix: ${{ fromJSON(needs.plan.outputs.matrix) }}
+    # One job at a time per build across both data workflows, so no two download the same zip
+    concurrency:
+      group: bds-zip-${{ matrix.build }}
+      cancel-in-progress: false
     defaults:
       run:
         # Git Bash on the Windows runner
@@ -157,13 +156,6 @@ jobs:
           echo "$BUILD" | grep -Eq "$BUILD_RE" || { echo "Bad build"; exit 1; }
           [ -z "$AGAINST" ] || [ "$AGAINST" = "$BUILD" ] || { echo "Bad against"; exit 1; }
           echo "$CHANNEL" | grep -Eqx 'release|preview' || { echo "Bad channel"; exit 1; }
-      # Everything temporary lives in the runner's temp directory, never in the checkout (see bds-data.yml)
-      - name: Set the temp and BDS cache directories
-        run: |
-          CI_TEMP=$(cygpath -m "$RUNNER_TEMP")
-          echo "CI_TEMP=$CI_TEMP" >> "$GITHUB_ENV"
-          echo "PALETTER_BDS_CACHE=$CI_TEMP/bds-cache" >> "$GITHUB_ENV"
-          mkdir -p "$CI_TEMP/out"
       # The data is compared byte for byte: keep the checkout's line endings as committed (LF)
       - name: Check out with LF line endings
         run: git config --global core.autocrlf false
@@ -172,20 +164,11 @@ jobs:
         with:
           ref: ${{ needs.plan.outputs.sha }}
           persist-credentials: false
-      - uses: actions/setup-java@d1374f8ac74474200d16ef8ecee22c7ae7a51880 # v6.3.0
+      # The zips of the build (the daily check's cache entries too), saved before BDS runs
+      - uses: ./.github/actions/setup-tools
         with:
-          distribution: temurin
-          java-version: 21
-      - uses: gradle/actions/setup-gradle@8da46b539cd8fe6ab27ca75128919a18d757604c # v6.4.1
-        with:
-          # Untrusted code runs here: it must not write the Gradle cache that other jobs restore
-          cache-read-only: true
-      # Same key as the daily check, so the two share the downloads
-      - name: Cache BDS downloads
-        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
-        with:
-          path: ${{ env.PALETTER_BDS_CACHE }}/zips
-          key: bds-zips-windows-${{ matrix.channel }}-${{ matrix.build }}
+          build: ${{ matrix.build }}
+          channel: ${{ matrix.channel }}
 
       # The capture half of `update` (--capture-only): the captures of this build, written into a directory of their own;
       # nothing goes into the checkout. The spec add-on is generated here from the checked-out model. The behaviour dump,
@@ -198,9 +181,7 @@ jobs:
           OUT="$CI_TEMP/out"
           ARGS="update --channel $CHANNEL --version $BUILD --capture-only $OUT/captures"
           if [ -n "$AGAINST" ]; then ARGS="$ARGS --against $AGAINST"; fi
-          # The launcher passes the tool's own exit code on (Gradle's run task reports every non-zero exit as 1)
-          ./gradlew :tools:installDist || exit 1
-          tools/build/install/tools/bin/tools $ARGS
+          "$TOOLS" $ARGS
           CODE=$?
           # The work directory of the run holds its report
           for f in "$PALETTER_BDS_CACHE"/runs/*-"$BUILD"/report.md; do
@@ -271,14 +252,8 @@ jobs:
         with:
           ref: ${{ needs.plan.outputs.sha }}
           persist-credentials: false
-      - uses: actions/setup-java@d1374f8ac74474200d16ef8ecee22c7ae7a51880 # v6.3.0
-        with:
-          distribution: temurin
-          java-version: 21
-      - uses: gradle/actions/setup-gradle@8da46b539cd8fe6ab27ca75128919a18d757604c # v6.4.1
-        with:
-          # Gradle runs over data from the capture jobs here: it must not write the Gradle cache that other jobs restore
-          cache-read-only: true
+      # Gradle runs over data from the capture jobs here: the Gradle cache is read only (setup-tools)
+      - uses: ./.github/actions/setup-tools
       - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
         with:
           pattern: captures-*

@@ -1,6 +1,7 @@
 package dev.opencollab.paletter.tools.bds;
 
 import com.sun.net.httpserver.HttpServer;
+import dev.opencollab.paletter.tools.Http;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
@@ -11,6 +12,7 @@ import java.net.InetSocketAddress;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.time.Duration;
 import java.util.Arrays;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
@@ -105,7 +107,9 @@ class BdsDistributionTest {
             String url = "http://" + server.getAddress().getHostString() + ":" + server.getAddress().getPort() + "/bedrock-server-1.0.0.1.zip";
             BdsDistribution distribution = new BdsDistribution("1.0.0.1", false, "linux", url);
             Path cached = distribution.zipFile(cache);
-            IOException wrong = assertThrows(IOException.class, () -> distribution.zip(cache, "00".repeat(32)));
+            // Without the minute minecraft.net waits between tries
+            Http fast = new Http(Duration.ofSeconds(2), Duration.ofSeconds(2), 2, Duration.ofMillis(1), Duration.ofSeconds(30));
+            IOException wrong = assertThrows(IOException.class, () -> distribution.zip(cache, "00".repeat(32), fast));
             assertTrue(wrong.getMessage().contains(sha256) && wrong.getMessage().contains("00".repeat(32)), wrong.getMessage());
             assertFalse(Files.exists(cached), "a zip with another checksum is never kept");
             assertArrayEquals(whole, Files.readAllBytes(distribution.zip(cache, sha256)));

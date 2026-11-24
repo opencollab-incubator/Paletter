@@ -54,6 +54,7 @@ command takes `--help`. Paths are relative to the repository root (`--root` over
 |---|---|
 | `update` | The whole BDS pipeline (below). |
 | `builds list\|check\|table\|resolve\|record\|plan` | Every release build, one by one, against the previous kept build ([below](#every-release-build)): `table` writes what `builds.json` says per data version, `resolve` names the newest build of a channel, `record` brings `builds.json` up to date without BDS, `plan` lists the builds of a [full recapture](#full-recapture). |
+| `bds fetch\|cache-key` | The zips of one build in the cache, nothing else, and the workflows' cache key of them ([CI](#ci)). |
 | `capture`, `compare`, `experiments` | The headless client: record what a server sends, diff a capture with a bundled version, toggle experiments in a `level.dat`. |
 | `import`, `bds-compare`, `verify`, `baseline`, `check-data` | Import and check bundled data. `check-data` lists what older versions lack. |
 | `export` | Writes what a compiled palette of a data version sends in the file formats of CloudburstMC/Data, to compare with `verify --against` ([updating.md](updating.md), section a). |
@@ -270,7 +271,7 @@ workflow by hand on `bds-data/preview` for the other.
    captures of that build, but nothing is written into the repository; the files that would go to `data/bds/<build>` (and
    `spec/`) are written to `<dir>` instead, and the bundled data, constants, model, white-box and build table are left to
    the next job. A release kept by a history check is recaptured as one (`--against <build>`). The BDS zips are cached
-   per build (the daily check's cache keys). The captures and the run's report are uploaded as the artifact
+   per build, shared with the daily check ([CI](#ci)). The captures and the run's report are uploaded as the artifact
    `captures-<build>`; a failed leg uploads its report and logs, never captures. Under `--capture-only` an `--against` add-on mismatch is information, not a failure (the captures are of the new add-on by design), nothing deletes a directory of the repository, and the Gradle cache is read-only in the capture jobs.
 3. `assemble` (only when every leg succeeded: captures of two add-ons never share a pull request) validates the
    artifacts, copies every one over `data/bds/<build>/` (overlaying, deleting nothing; a build kept by a history check
@@ -472,6 +473,18 @@ hold nothing Paletter needs.
   build, applies the data patch (rejected if it touches other paths) and writes the issue and pull request. A patch
   that changes generated code needs the `BDS_DATA_TOKEN` secret, so the build runs on its pull request.
 - `recapture.yml` captures every kept build again after the add-on changed ([Full recapture](#full-recapture)).
+- **Downloads from Mojang.** Every read-only job that runs the tools uses `.github/actions/setup-tools` (Java, Gradle
+  with a read-only cache, `$TOOLS`). A capture job gives it its build: the zips come from the Actions cache, key
+  `bds-zips-<build>-<first 16 hex digits of the Windows zip's sha256 in builds.json, or new>` (`bds cache-key`), restored
+  by the prefix `bds-zips-<build>-`; `bds fetch` downloads only what the cache lacks or holds with another sha256, and
+  the cache is saved right after, before BDS runs, so a job that fails later does not download again the next day. Capture
+  jobs of one build run one at a time (`concurrency: bds-zip-<build>`). Requests to Mojang (`Http.MINECRAFT`: the links API
+  and the zips) are tried twice at most; a 429 or 503 waits its `Retry-After` up to five minutes, else a minute; a 403
+  or 404 is final. `bds fetch` exits with 4 when minecraft.net refuses and 5 when a zip is gone (a kept build is then
+  frozen by hand: `builds record --freeze <build>=<reason>`). The user agent names the project, `Paletter-tools/<version>
+  (+https://github.com/opencollab-incubator/Paletter)`, and the zips are asked for as `Mozilla/5.0 (compatible;
+  Paletter-tools/<version>; +<url>)` (`BdsDistribution.ZIP_AGENT`). Whether minecraft.net serves that form is
+  unverified until the first CI download with it; if it refuses, `ZIP_AGENT` goes back to `Mozilla/5.0 Paletter` (one line).
 - `javadoc.yml` publishes the Javadoc of `main` and of each release to GitHub Pages.
 - [releasing.md](releasing.md) lists the repository settings, secrets and Pages setup these workflows need.
 

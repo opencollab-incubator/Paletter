@@ -4,6 +4,7 @@ import com.google.gson.JsonObject;
 import dev.opencollab.paletter.internal.data.VanillaData;
 import dev.opencollab.paletter.tools.bds.BdsDistribution;
 import dev.opencollab.paletter.tools.bds.BdsDump;
+import dev.opencollab.paletter.tools.bds.BdsFetch;
 import dev.opencollab.paletter.tools.bds.BdsInventory;
 import dev.opencollab.paletter.tools.bds.BdsRun;
 import dev.opencollab.paletter.tools.bds.ScriptApiDump;
@@ -35,6 +36,44 @@ import java.util.concurrent.Callable;
  */
 final class BdsCommands {
     private BdsCommands() {
+    }
+
+    @Command(name = "bds", description = "The BDS zips of a build in the cache: `fetch` downloads what the cache lacks, `cache-key` names the "
+        + "workflows' cache entry. Downloading BDS means accepting the Minecraft EULA.", subcommands = {Bds.Fetch.class, Bds.CacheKey.class})
+    static final class Bds implements Runnable {
+        @Override
+        public void run() {
+            CommandLine.usage(this, System.out);
+        }
+
+        @Command(name = "fetch", description = "Downloads and verifies the Windows and Linux zips of a build into the cache, nothing else; no "
+            + "request when the cached zips are whole and match the recorded sha256. Exit 4: minecraft.net refused (403, 429); 5: the zip is gone (404).")
+        static final class Fetch extends Rooted implements Callable<Integer> {
+            @Mixin BuildOptions build;
+            @Option(names = "--cache", description = BdsOptions.CACHE) Path cache;
+
+            @Override
+            public Integer call() throws Exception {
+                return BdsFetch.fetch(root(), BdsOptions.cache(cache), BdsFetch.distributions(build.preview(), build.requireVersion()), Http.MINECRAFT);
+            }
+        }
+
+        @Command(name = "cache-key", description = "Prints the key of the workflows' zip cache of a build (from the sha256 data/bds/builds.json "
+            + "records for its Windows zip, `new` without one), and writes it to --output. No network.")
+        static final class CacheKey extends Rooted implements Callable<Integer> {
+            @Mixin BuildOptions build;
+            @Option(names = "--output", description = "File for the key") Path output;
+
+            @Override
+            public Integer call() throws Exception {
+                String key = BdsFetch.cacheKey(root(), build.preview(), build.requireVersion());
+                if (output != null) {
+                    Files.writeString(output, key + "\n");
+                }
+                System.out.println(key);
+                return 0;
+            }
+        }
     }
 
     @Command(name = "bds-inventory", description = "Reads the strings of the Linux bedrock_server of a BDS build (downloaded into the cache, not run) "

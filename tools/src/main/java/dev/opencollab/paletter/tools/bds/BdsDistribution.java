@@ -34,8 +34,13 @@ import java.util.zip.ZipInputStream;
  */
 public record BdsDistribution(String version, boolean preview, String platform, String url) {
     static final String LINKS = "https://net-secondary.web.minecraft-services.net/api/v1.0/download/links";
-    /** The zips have been downloaded with a browser-like agent from the start; a plain one is not known to work. */
-    private static final Map<String, String> ZIP_HEADERS = Map.of("User-Agent", "Mozilla/5.0 " + Http.USER_AGENT);
+    /**
+     * The zips have been downloaded with a browser-like agent from the start; a plain one is not known to work. Whether
+     * minecraft.net serves this form is unverified until a CI download with it (docs/data-pipeline.md, "CI"); if it is
+     * refused, this one line goes back to the agent used before: {@code "Mozilla/5.0 Paletter"}.
+     */
+    static final String ZIP_AGENT = "Mozilla/5.0 (compatible; " + Http.PRODUCT + "; +" + Http.PROJECT_URL + ")";
+    private static final Map<String, String> ZIP_HEADERS = Map.of("User-Agent", ZIP_AGENT);
 
     /**
      * @param version a BDS version such as {@code 1.26.51.1}, or {@code null} for the newest one of the channel. Older
@@ -61,7 +66,7 @@ public record BdsDistribution(String version, boolean preview, String platform, 
     }
 
     private static String newest(boolean linux, boolean preview) throws IOException, InterruptedException {
-        return downloadUrl(Http.DEFAULT.get(LINKS), "serverBedrock" + (preview ? "Preview" : "") + (linux ? "Linux" : "Windows"));
+        return downloadUrl(Http.MINECRAFT.get(LINKS),"serverBedrock" + (preview ? "Preview" : "") + (linux ? "Linux" : "Windows"));
     }
 
     /**
@@ -106,6 +111,11 @@ public record BdsDistribution(String version, boolean preview, String platform, 
      * @throws IOException when the downloaded zip has another sha256 than the expected one
      */
     public Path zip(Path cache, String sha256) throws IOException, InterruptedException {
+        return zip(cache, sha256, Http.MINECRAFT);
+    }
+
+    /** {@link #zip(Path, String)} with the requests of {@code http}. */
+    Path zip(Path cache, String sha256, Http http) throws IOException, InterruptedException {
         Path zip = zipFile(cache);
         if (Files.exists(zip)) {
             try {
@@ -118,7 +128,7 @@ public record BdsDistribution(String version, boolean preview, String platform, 
         }
         Files.createDirectories(zip.getParent());
         System.out.println("Downloading " + url + (sha256 == null ? " (no recorded sha256 to check it against)" : ""));
-        Http.DEFAULT.download(url, zip, ZIP_HEADERS, part -> {
+        http.download(url, zip, ZIP_HEADERS, part -> {
             checkZip(part);
             ZipChecksums.verify(part, sha256, "The download of " + url);
         });
