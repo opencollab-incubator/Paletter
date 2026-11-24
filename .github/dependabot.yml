@@ -2,7 +2,8 @@
 version: 2
 updates:
   - package-ecosystem: github-actions
-    directory: /
+    # The workflows (/ reads .github/workflows) and the composite actions, which / does not cover
+    directories: ["/", "/.github/actions/*"]
     schedule:
       interval: weekly
     groups:
