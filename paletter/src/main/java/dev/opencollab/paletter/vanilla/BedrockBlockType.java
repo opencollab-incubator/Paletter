@@ -35,9 +35,11 @@ import java.util.Objects;
  * default.
  * <p>
  * Equality: like its states (see {@link BedrockBlockState}), {@code equals} always works, and {@code ==} works for the
- * vanilla constants, the preview's blocks among them, and for the type a registered {@link CustomBlock} owns. Not in a
- * Paletter with previews, for the blocks of the release the preview changed: those have types of their own, equal to the
- * constant if the states are the same.
+ * vanilla constants, the preview's blocks among them, and for the type a registered {@link CustomBlock} owns. A vanilla
+ * type is equal to another by identifier, so equality never depends on the version or on
+ * {@link dev.opencollab.paletter.Paletter.Builder#previews(boolean) previews}, and never loads data: in a Paletter with
+ * previews, a block of the release that the preview changed has a type of its own (not {@code ==} the constant), which
+ * equals the constant. A custom type is equal to one with the same identifier and properties.
  *
  * @since 1.0.0
  */
@@ -396,10 +398,10 @@ public final class BedrockBlockType {
         if (!(o instanceof BedrockBlockType other) || custom != other.custom || !identifier.equals(other.identifier)) {
             return false;
         }
-        // Vanilla types are singletons, except those of blocks a preview changed (see PreviewBlocks): equal to the
-        // constant of the identifier if they have the same states. Custom types likewise. A block only a preview has is
-        // its constant in every palette, so it has no second type
-        return Arrays.equals(layout().properties, other.layout().properties)
+        // A vanilla type is its identifier, whatever states the version that made it has: the type a preview palette makes
+        // for a block the preview changed (see PreviewBlocks) equals the constant, and this loads no data. Its states
+        // tell the versions apart (BedrockBlockState#equals). Custom types carry their properties, set when they are made
+        return !custom || Arrays.equals(layout().properties, other.layout().properties)
             && Arrays.deepEquals(layout().values, other.layout().values);
     }
 

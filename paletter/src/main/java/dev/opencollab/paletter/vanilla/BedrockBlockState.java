@@ -17,7 +17,9 @@ import java.util.Map;
  * Equality: {@code equals} always works. {@code ==} works too for the states of vanilla types (the constants) and of
  * registered custom blocks: a {@link dev.opencollab.paletter.block.CustomBlock} owns its {@link
  * dev.opencollab.paletter.block.CustomBlock#type() type} and states, and a palette it is registered in hands back exactly
- * those ({@code Palette#blockState(NbtMap, Lookup)}, ...). The states
+ * those ({@code Palette#blockState(NbtMap, Lookup)}, ...). Two states are equal when their types are equal and they
+ * have the same {@link #values()}, whichever version or palette made them: a state a preview palette decodes for a block
+ * the preview changed equals the constant's state with the same values (it is not {@code ==} it). The states
  * of a type made for an identifier the bundled data does not know are equal by value, not identical.
  * Equal custom blocks registered by different layers each own their states; those are equal, not identical.
  * <p>
@@ -35,6 +37,7 @@ public final class BedrockBlockState {
     private final int id;
     private volatile @Nullable NbtMap nbt;
     private volatile @Nullable Map<String, Object> values;
+    private int hash;
 
     BedrockBlockState(BlockTypeLayout layout, int combination, int id) {
         this.layout = layout;
@@ -249,12 +252,29 @@ public final class BedrockBlockState {
 
     @Override
     public boolean equals(Object o) {
-        return this == o || o instanceof BedrockBlockState other && combination == other.combination && type().equals(other.type());
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof BedrockBlockState other)) {
+            return false;
+        }
+        if (layout == other.layout) {
+            return combination == other.combination;
+        }
+        // Another layout of the same block (the one a preview palette makes for a block the preview changed, or an equal
+        // custom block of another layer): equal by values, so equality never depends on the version that made the state
+        return type().equals(other.type()) && values().equals(other.values());
     }
 
     @Override
     public int hashCode() {
-        return 31 * type().hashCode() + combination;
+        int hash = this.hash;
+        if (hash == 0) {
+            // From the values, not the combination: states of different layouts of one block are equal by their values
+            hash = 31 * type().hashCode() + values().hashCode();
+            this.hash = hash;
+        }
+        return hash;
     }
 
     @Override

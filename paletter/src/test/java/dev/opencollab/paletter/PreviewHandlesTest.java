@@ -28,9 +28,9 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertNotSame;
 import static org.junit.jupiter.api.Assertions.assertSame;
 
 /** In a Paletter with previews, content only the preview has is reached by the public lookups like any other. */
@@ -298,20 +298,28 @@ class PreviewHandlesTest {
     }
 
     @Test
-    void typesEqualTheReleaseConstantOnlyForTheSameStates() {
+    void keysEqualTheReleaseConstantsByValue() {
         for (NbtMap state : data.blockStates()) {
             BedrockBlockState handle = palette.blockState(state, Lookup.EXACT);
             BedrockBlockType release = BedrockBlockType.vanillaType(handle.type().identifier());
             if (release != null) {
-                assertEquals(release.properties().equals(handle.type().properties())
-                    && release.stateCount() == handle.type().stateCount(), release.equals(handle.type()), handle.toString());
+                // Equality does not depend on previews: the type is its identifier, a state its values
+                assertEquals(release, handle.type(), handle.toString());
+                assertEquals(release.hashCode(), handle.type().hashCode(), handle.toString());
+                BedrockBlockState same = release.stateOf(handle.values());
+                if (same != null) {
+                    assertEquals(same, handle, handle.toString());
+                    assertEquals(same.hashCode(), handle.hashCode(), handle.toString());
+                } else {
+                    assertFalse(release.states().contains(handle), handle.toString());
+                }
             }
         }
         BedrockBlockState scaffolding = palette.blockState(
             data.blockStates().stream().filter(s -> s.getString("name").equals("minecraft:scaffolding")).findFirst().orElseThrow(),
             Lookup.EXACT);
-        assertNotEquals(BedrockBlocks.SCAFFOLDING, scaffolding.type());
-        assertNotEquals(BedrockBlocks.SCAFFOLDING.defaultState(), scaffolding.type().defaultState());
+        assertNotSame(BedrockBlocks.SCAFFOLDING, scaffolding.type());
+        assertEquals(BedrockBlocks.SCAFFOLDING, scaffolding.type());
     }
 
     @Test
