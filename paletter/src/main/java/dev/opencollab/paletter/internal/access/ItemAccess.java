@@ -5,6 +5,7 @@ import dev.opencollab.paletter.ResolutionKind;
 import dev.opencollab.paletter.block.RegisteredBlockState;
 import dev.opencollab.paletter.internal.component.WireContext;
 import dev.opencollab.paletter.internal.item.ItemRegistry;
+import dev.opencollab.paletter.internal.item.ItemVariant;
 import dev.opencollab.paletter.item.CustomItem;
 import dev.opencollab.paletter.item.ItemOverride;
 import dev.opencollab.paletter.item.RegisteredItem;
@@ -46,4 +47,7 @@ public interface ItemAccess {
 
     /** {@code ItemOverride#apply(WireContext)}. */
     @NonNull RegisteredItem apply(@NonNull ItemOverride override, @NonNull WireContext context);
+
+    /** {@code CustomItem#variant()}: the internal variant of a custom item. */
+    @NonNull ItemVariant variant(@NonNull CustomItem item);
 }

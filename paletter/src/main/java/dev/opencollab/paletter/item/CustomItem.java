@@ -1,6 +1,5 @@
 package dev.opencollab.paletter.item;
 
-import dev.opencollab.paletter.annotation.Internal;
 import dev.opencollab.paletter.internal.component.Check;
 import dev.opencollab.paletter.internal.item.ItemVariant;
 import org.checkerframework.checker.nullness.qual.NonNull;
@@ -167,12 +166,11 @@ public final class CustomItem {
     }
 
     /**
-     * Internal: the internal variant of the item, for its identifier.
+     * The internal variant of the item, for its identifier.
      *
      * @return the internal variant with aux value 0 and no block state
      */
-    @Internal
-    public @NonNull ItemVariant variant() {
+    @NonNull ItemVariant variant() {
         return ItemVariant.of(identifier);
     }
 

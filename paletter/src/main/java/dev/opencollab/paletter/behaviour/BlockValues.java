@@ -2,8 +2,9 @@ package dev.opencollab.paletter.behaviour;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
 import dev.opencollab.paletter.Palette;
-import dev.opencollab.paletter.annotation.Internal;
 import dev.opencollab.paletter.block.RegisteredBlockState;
+import dev.opencollab.paletter.internal.access.Access;
+import dev.opencollab.paletter.internal.access.BehaviourAccess;
 import dev.opencollab.paletter.internal.behaviour.Behaviour;
 import dev.opencollab.paletter.internal.behaviour.Column;
 
@@ -21,18 +22,36 @@ import dev.opencollab.paletter.internal.behaviour.Column;
  * @since 1.0.0
  */
 public final class BlockValues {
+    static {
+        Access.setBehaviour(new BehaviourAccess() {
+            @Override
+            public BlockValues blockValues(Behaviour behaviour, int index) {
+                return new BlockValues(behaviour, index);
+            }
+
+            @Override
+            public ItemValues itemValues(Behaviour behaviour, int index) {
+                return new ItemValues(behaviour, index);
+            }
+
+            @Override
+            public int ordinal(BehaviourKey<?> key) {
+                return key.ordinal();
+            }
+        });
+    }
+
     private final Behaviour behaviour;
     private final int index;
 
     /**
-     * Internal: plumbing of
+     * Plumbing of
      * {@link Palette#resolve(dev.opencollab.paletter.vanilla.BedrockBlockState)}: public for it, not part of the API.
      *
      * @param behaviour the palette's behaviour values
      * @param index the position of the state in them
      */
-    @Internal
-    public BlockValues(@NonNull Behaviour behaviour, int index) {
+    BlockValues(@NonNull Behaviour behaviour, int index) {
         this.behaviour = behaviour;
         this.index = index;
     }

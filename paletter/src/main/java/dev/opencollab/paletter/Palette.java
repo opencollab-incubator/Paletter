@@ -4,6 +4,7 @@ import dev.opencollab.paletter.internal.PaletteReportBuilder;
 import dev.opencollab.paletter.internal.block.BlockInterner;
 import dev.opencollab.paletter.internal.access.PaletteAccess;
 import dev.opencollab.paletter.internal.access.Access;
+import dev.opencollab.paletter.internal.access.BlockAccess;
 import dev.opencollab.paletter.internal.access.VanillaAccess;
 import dev.opencollab.paletter.internal.behaviour.Behaviour;
 import dev.opencollab.paletter.internal.behaviour.VanillaBehaviour;
@@ -182,8 +183,9 @@ public final class Palette {
     }
 
     private static final String[] NO_STRINGS = new String[0];
-    /** The vanilla keys' internals, read on hot paths. */
+    /** The internals of the keys and blocks, read on hot paths. */
     private static final VanillaAccess VANILLA = Access.vanilla();
+    private static final BlockAccess BLOCK = Access.block();
 
     private final VanillaData data;
     private final List<PaletteLayer> layers;
@@ -437,7 +439,7 @@ public final class Palette {
             RegisteredBlockState block = resolution.block();
             ResolutionKind kind = resolution.kind() == BlockResolution.Kind.DEFAULT && blocks.defaultFallback() == null
                 ? ResolutionKind.MISSING : ResolutionKind.valueOf(resolution.kind().name());
-            resolved = new ResolvedBlock(block, kind, behaviour().block(blocks.indexOfRuntimeId(block.getRuntimeId())));
+            resolved = BLOCK.resolvedBlock(block, kind, behaviour().block(blocks.indexOfRuntimeId(block.getRuntimeId())));
             ResolvedBlock raced = cache.putIfAbsent(state, resolved);
             if (raced != null) {
                 resolved = raced;
@@ -469,7 +471,7 @@ public final class Palette {
             int index = blocks.indexOfRuntimeId(block.getRuntimeId());
             // A state that is the block's own resolves to what its block resolves to by index: one instance for both lookups
             ResolutionKind kind = kindOf(canonical, block);
-            cache[own] = resolved = kind == ResolutionKind.EXACT ? resolveIndex(index) : new ResolvedBlock(block, kind, behaviour().block(index));
+            cache[own] = resolved = kind == ResolutionKind.EXACT ? resolveIndex(index) : BLOCK.resolvedBlock(block, kind, behaviour().block(index));
         }
         return resolved;
     }
@@ -512,7 +514,7 @@ public final class Palette {
         }
         ResolvedBlock resolved = cache[own];
         if (resolved == null) {
-            cache[own] = resolved = new ResolvedBlock(blocks.byIndex(index), ResolutionKind.EXACT, behaviour().block(index));
+            cache[own] = resolved = BLOCK.resolvedBlock(blocks.byIndex(index), ResolutionKind.EXACT, behaviour().block(index));
         }
         return resolved;
     }
@@ -1493,7 +1495,7 @@ public final class Palette {
      * @since 1.0.0
      */
     public @NonNull VoxelShapesPacket voxelShapesPacket() {
-        return shapes.compiled().toPacket();
+        return Access.block().toPacket(shapes.compiled());
     }
 
     /**
@@ -1513,7 +1515,7 @@ public final class Palette {
      * @since 1.0.0
      */
     public @NonNull CreativeContentPacket creativeContentPacket() {
-        return creative.toPacket();
+        return Access.creative().toPacket(creative);
     }
 
     @Override

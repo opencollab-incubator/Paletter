@@ -8,11 +8,13 @@ import org.cloudburstmc.protocol.bedrock.data.inventory.CreativeItemGroup;
 import org.cloudburstmc.protocol.bedrock.data.inventory.ItemData;
 import org.cloudburstmc.protocol.bedrock.packet.CreativeContentPacket;
 import dev.opencollab.paletter.internal.PaletteReportBuilder;
-import dev.opencollab.paletter.annotation.Internal;
+import dev.opencollab.paletter.internal.access.Access;
+import dev.opencollab.paletter.internal.access.CreativeAccess;
 import dev.opencollab.paletter.item.BedrockItemStack;
 import dev.opencollab.paletter.internal.item.ItemRegistry;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -31,6 +33,31 @@ import java.util.List;
  * @since 1.0.0
  */
 public final class CreativeContent {
+    static {
+        Access.setCreative(new CreativeAccess() {
+            @Override
+            public CreativeContent compile(CreativeLayout layout, ItemRegistry items, PaletteReportBuilder report) {
+                return CreativeContent.compile(layout, items, report);
+            }
+
+            @Override
+            public CreativeContentPacket toPacket(CreativeContent content) {
+                return content.toPacket();
+            }
+
+            @Override
+            public List<String> blockOrder(CreativeOrdering ordering, List<String> customBlocks, Collection<String> vanillaDataDrivenBlocks) {
+                return ordering.blockOrder(customBlocks, vanillaDataDrivenBlocks);
+            }
+
+            @Override
+            public boolean place(CreativePlacement placement, CreativeEditor editor, BedrockItemStack stack, CreativeCategory category,
+                                 @Nullable String group, CreativeOrdering ordering) {
+                return Placements.apply(placement, editor, stack, category, group, ordering);
+            }
+        });
+    }
+
     private final List<CreativeItemGroup> groups;
     private final List<CreativeItemData> items;
     private final CreativeEntry[] entries;
@@ -42,15 +69,14 @@ public final class CreativeContent {
     }
 
     /**
-     * Internal: compiles a layout for one palette.
+     * Compiles a layout for one palette.
      *
      * @param layout the layout
      * @param items the item registry of the palette
      * @param report where left out stacks and groups are reported
      * @return the compiled content
      */
-    @Internal
-    public static @NonNull CreativeContent compile(@NonNull CreativeLayout layout, @NonNull ItemRegistry items, @NonNull PaletteReportBuilder report) {
+    static @NonNull CreativeContent compile(@NonNull CreativeLayout layout, @NonNull ItemRegistry items, @NonNull PaletteReportBuilder report) {
         List<CreativeItemGroup> groups = new ArrayList<>();
         List<CreativeItemData> contents = new ArrayList<>();
         List<CreativeEntry> entries = new ArrayList<>();
@@ -113,12 +139,11 @@ public final class CreativeContent {
     }
 
     /**
-     * Internal: builds the packet.
+     * Builds the packet.
      *
      * @return a new packet with the groups and items
      */
-    @Internal
-    public @NonNull CreativeContentPacket toPacket() {
+    @NonNull CreativeContentPacket toPacket() {
         CreativeContentPacket packet = new CreativeContentPacket();
         packet.getGroups().addAll(groups);
         packet.getContents().addAll(items);

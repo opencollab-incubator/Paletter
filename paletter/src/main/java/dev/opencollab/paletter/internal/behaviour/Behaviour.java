@@ -10,6 +10,7 @@ import dev.opencollab.paletter.behaviour.BlockValues;
 import dev.opencollab.paletter.behaviour.ItemBehaviour;
 import dev.opencollab.paletter.behaviour.ItemValues;
 import dev.opencollab.paletter.internal.access.Access;
+import dev.opencollab.paletter.internal.access.BehaviourAccess;
 import dev.opencollab.paletter.internal.block.BlockRegistry;
 import dev.opencollab.paletter.internal.block.RegisteredBlock;
 import dev.opencollab.paletter.block.RegisteredBlockState;
@@ -45,6 +46,8 @@ import java.util.function.Supplier;
  */
 @Internal
 public final class Behaviour {
+    /** The behaviour packages' internals, read on hot paths. */
+    private static final BehaviourAccess BEHAVIOUR = Access.behaviour();
     private static final int KEYS = BlockBehaviour.keys().size() + ItemBehaviour.keys().size();
 
     private final Palette palette;
@@ -125,7 +128,7 @@ public final class Behaviour {
         while (index < owner.base) {
             owner = owner.parent;
         }
-        return new BlockValues(owner, index - owner.base);
+        return Access.behaviour().blockValues(owner, index - owner.base);
     }
 
     /**
@@ -163,7 +166,7 @@ public final class Behaviour {
     private ItemValues itemHandle(int position) {
         ItemValues handle = itemHandles[position];
         if (handle == null) {
-            itemHandles[position] = handle = new ItemValues(this, position);
+            itemHandles[position] = handle = Access.behaviour().itemValues(this, position);
         }
         return handle;
     }
@@ -186,7 +189,7 @@ public final class Behaviour {
      * @throws IllegalArgumentException if the key is not a block key
      */
     public @NonNull Column blockColumn(@NonNull BehaviourKey<?> key) {
-        Column column = blockColumns[key.ordinal()];
+        Column column = blockColumns[BEHAVIOUR.ordinal(key)];
         return column != null ? column : buildBlocks(key);
     }
 
@@ -207,12 +210,12 @@ public final class Behaviour {
     /** For tests: whether every column is built. */
     public boolean loaded() {
         for (BehaviourKey<?> key : BlockBehaviour.keys()) {
-            if (blockColumns[key.ordinal()] == null) {
+            if (blockColumns[BEHAVIOUR.ordinal(key)] == null) {
                 return false;
             }
         }
         for (BehaviourKey<?> key : ItemBehaviour.keys()) {
-            if (itemColumns[key.ordinal()] == null) {
+            if (itemColumns[BEHAVIOUR.ordinal(key)] == null) {
                 return false;
             }
         }
@@ -223,14 +226,14 @@ public final class Behaviour {
         require(key, BehaviourKey.Owner.BLOCK);
         // Throws here, for every key alike, when the Paletter has no behaviour values (Builder#behaviour(false))
         data.get();
-        Column column = blockColumns[key.ordinal()];
+        Column column = blockColumns[BEHAVIOUR.ordinal(key)];
         if (column == null) {
             BlockRegistry registry = blocks;
             Object[] values = new Object[registry.size() - base];
             for (int i = 0; i < values.length; i++) {
                 values[i] = value(registry.byIndex(base + i), key);
             }
-            blockColumns[key.ordinal()] = column = Column.of(key.type(), values);
+            blockColumns[BEHAVIOUR.ordinal(key)] = column = Column.of(key.type(), values);
         }
         return column;
     }
@@ -240,20 +243,20 @@ public final class Behaviour {
      * @throws IllegalArgumentException if the key is not an item key
      */
     public @NonNull Column itemColumn(@NonNull BehaviourKey<?> key) {
-        Column column = itemColumns[key.ordinal()];
+        Column column = itemColumns[BEHAVIOUR.ordinal(key)];
         return column != null ? column : buildItems(key);
     }
 
     private synchronized Column buildItems(BehaviourKey<?> key) {
         require(key, BehaviourKey.Owner.ITEM);
         data.get();
-        Column column = itemColumns[key.ordinal()];
+        Column column = itemColumns[BEHAVIOUR.ordinal(key)];
         if (column == null) {
             Object[] values = new Object[items.size()];
             for (int i = 0; i < values.length; i++) {
                 values[i] = value(items.get(i), key);
             }
-            itemColumns[key.ordinal()] = column = Column.of(key.type(), values);
+            itemColumns[BEHAVIOUR.ordinal(key)] = column = Column.of(key.type(), values);
         }
         return column;
     }

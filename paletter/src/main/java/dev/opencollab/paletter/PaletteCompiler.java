@@ -10,7 +10,6 @@ import dev.opencollab.paletter.internal.shape.VoxelShapeStore;
 import dev.opencollab.paletter.internal.block.BlockInterner;
 import dev.opencollab.paletter.internal.block.BlockStates;
 import dev.opencollab.paletter.internal.PaletteReportBuilder;
-import dev.opencollab.paletter.creative.Placements;
 import dev.opencollab.paletter.internal.block.BlockRegistry;
 import dev.opencollab.paletter.internal.CanonicalBlocks;
 import dev.opencollab.paletter.internal.Canonicals;
@@ -29,6 +28,7 @@ import dev.opencollab.paletter.vanilla.BedrockItemType;
 import dev.opencollab.paletter.data.DataVersion;
 import dev.opencollab.paletter.internal.data.VanillaData;
 import dev.opencollab.paletter.internal.CanonicalItems;
+import dev.opencollab.paletter.internal.access.Access;
 import dev.opencollab.paletter.item.CustomItem;
 import dev.opencollab.paletter.internal.component.Wire;
 import dev.opencollab.paletter.item.component.BlockPlacer;
@@ -72,7 +72,7 @@ final class PaletteCompiler {
         builder.defaultFallback(fallbacks.defaultItem());
         CreativeLayout layout = RawConverter.convert(data.creative(), blocks, report);
         ItemRegistry items = builder.build(layout, report);
-        CreativeContent creative = CreativeContent.compile(layout, items, report);
+        CreativeContent creative = Access.creative().compile(layout, items, report);
         prepareCanonical(blocks, null, items, null, report);
         // The experiment changes the vanilla voxel shapes of some versions: those palettes need the toggle
         boolean shapeExperiment = content.requests(data.version(), VoxelShapeStore.EXPERIMENT) && shapeStore.experimentMatters(data.version());
@@ -162,7 +162,7 @@ final class PaletteCompiler {
         layer.blocks().forEach(block -> registers.add(block.identifier()));
         registers.addAll(items.renumberedBlockItems());
         CreativeContent content = sameLayout && !parent.creativeMentions(registers)
-            ? parent.creative() : CreativeContent.compile(layout, itemPalette, report);
+            ? parent.creative() : Access.creative().compile(layout, itemPalette, report);
         prepareCanonical(blocks, parent.blocks(), itemPalette, parent.items(), report);
 
         List<PaletteLayer> layers = new ArrayList<>(parent.layers());
@@ -187,7 +187,7 @@ final class PaletteCompiler {
         List<BedrockItemType> customTypes = new ArrayList<>();
         blocks.customBlocks().forEach(block -> customTypes.add(block.itemType()));
         for (CustomItem item : items(layer)) {
-            newVariants.add(item.variant());
+            newVariants.add(Access.item().variant(item));
             customTypes.add(item.type());
         }
         for (CustomBlock block : layer.blocks()) {
@@ -276,7 +276,7 @@ final class PaletteCompiler {
             List<String> byBlockId = new ArrayList<>();
             blocks.customBlocks().forEach(block -> byBlockId.add(block.identifier()));
             byBlockId.sort(dev.opencollab.paletter.internal.BlockIdOrder.DESCENDING);
-            for (String identifier : ordering.blockOrder(byBlockId,
+            for (String identifier : Access.creative().blockOrder(ordering, byBlockId,
                 data.dataDrivenBlocks().stream().map(BlockPropertyData::getName).toList())) {
                 Placed entry = blockItems.get(identifier);
                 if (entry != null) {
@@ -299,7 +299,7 @@ final class PaletteCompiler {
     /** A creative placement to apply; {@code block} is the custom block if the stack is a block item. */
     private record Placed(@Nullable String block, BedrockItemStack stack, CreativePlacement placement, Menu menu) {
         void apply(CreativeEditor creative, CreativeOrdering ordering, PaletteReportBuilder report, String source) {
-            if (!Placements.apply(placement, creative, stack, menu.category(), menu.group(), ordering)) {
+            if (!Access.creative().place(placement, creative, stack, menu.category(), menu.group(), ordering)) {
                 report.warn(source, PaletteReport.ANCHOR_UNMATCHED, stack.type().identifier(), "The creative placement of " + stack.type().identifier() + " is after a stack that does not exist; "
                     + "it is at the default position");
             }

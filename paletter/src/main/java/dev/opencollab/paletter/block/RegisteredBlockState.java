@@ -3,7 +3,6 @@ package dev.opencollab.paletter.block;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.cloudburstmc.nbt.NbtMap;
 import org.cloudburstmc.protocol.bedrock.data.definitions.BlockDefinition;
-import dev.opencollab.paletter.annotation.Internal;
 
 /**
  * A block state definition in a compiled palette: the runtime id of a state. Instances are unique per palette and
@@ -22,14 +21,13 @@ public final class RegisteredBlockState implements BlockDefinition {
     private final boolean custom;
 
     /**
-     * Internal: creates the definition of a state, done by the palette compiler.
+     * Creates the definition of a state, done by the palette compiler.
      *
      * @param runtimeId the runtime id, the hash of the state or the next free id after it
      * @param state the state as {@code {name, states}}
      * @param custom whether the state belongs to a custom block added by a layer
      */
-    @Internal
-    public RegisteredBlockState(int runtimeId, NbtMap state, boolean custom) {
+    RegisteredBlockState(int runtimeId, NbtMap state, boolean custom) {
         this.runtimeId = runtimeId;
         this.state = state;
         this.custom = custom;

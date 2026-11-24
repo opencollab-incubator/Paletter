@@ -2,15 +2,13 @@ package dev.opencollab.paletter.creative;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
-import dev.opencollab.paletter.annotation.Internal;
 import dev.opencollab.paletter.item.BedrockItemStack;
 
 /**
  * Puts the stack of an item or block item in the creative inventory, where its {@link CreativePlacement} says within the
  * category and group of its menu category.
  */
-@Internal
-public final class Placements {
+final class Placements {
     private Placements() {
     }
 

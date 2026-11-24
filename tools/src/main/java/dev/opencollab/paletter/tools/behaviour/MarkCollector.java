@@ -1,6 +1,7 @@
 package dev.opencollab.paletter.tools.behaviour;
 
 import dev.opencollab.paletter.behaviour.BehaviourKey;
+import dev.opencollab.paletter.internal.access.Access;
 import dev.opencollab.paletter.internal.behaviour.BlockSchema;
 import dev.opencollab.paletter.tools.behaviour.CellFit.Fit;
 import org.cloudburstmc.nbt.NbtMap;
@@ -59,7 +60,7 @@ final class MarkCollector {
         List<BehaviourModel.Mark> result = new ArrayList<>();
         List<Map.Entry<Key, TreeMap<Integer, Marks>>> sorted = new ArrayList<>(marks.entrySet());
         sorted.sort(Comparator.comparingInt((Map.Entry<Key, TreeMap<Integer, Marks>> e) -> e.getKey().capture())
-            .thenComparingInt(e -> e.getKey().key().ordinal()).thenComparing(e -> e.getKey().id()));
+            .thenComparingInt(e -> Access.behaviour().ordinal(e.getKey().key())).thenComparing(e -> e.getKey().id()));
         for (Map.Entry<Key, TreeMap<Integer, Marks>> entry : sorted) {
             Key key = entry.getKey();
             int from = -1;

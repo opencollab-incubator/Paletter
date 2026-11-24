@@ -1,7 +1,6 @@
 package dev.opencollab.paletter.creative;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
-import dev.opencollab.paletter.annotation.Internal;
 
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
@@ -66,8 +65,7 @@ public enum CreativeOrdering {
      * @return {@code customBlocks} in placement order
      * @since 1.0.0
      */
-    @Internal
-    public @NonNull List<String> blockOrder(@NonNull List<String> customBlocks, @NonNull Collection<String> vanillaDataDrivenBlocks) {
+    @NonNull List<String> blockOrder(@NonNull List<String> customBlocks, @NonNull Collection<String> vanillaDataDrivenBlocks) {
         if (this == APPEND) {
             return List.copyOf(customBlocks);
         }

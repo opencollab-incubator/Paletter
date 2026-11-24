@@ -33,6 +33,7 @@ import dev.opencollab.paletter.block.RegisteredBlockState;
 import dev.opencollab.paletter.creative.CreativeLayout;
 import dev.opencollab.paletter.data.DataVersion;
 import dev.opencollab.paletter.internal.access.Access;
+import dev.opencollab.paletter.internal.access.ItemAccess;
 import dev.opencollab.paletter.internal.access.VanillaAccess;
 import dev.opencollab.paletter.vanilla.BedrockBlockState;
 import dev.opencollab.paletter.vanilla.BedrockItemType;
@@ -83,8 +84,9 @@ import java.util.function.Consumer;
  * @since 1.0.0
  */
 public final class ItemRegistry implements DefinitionRegistry<ItemDefinition> {
-    /** The vanilla keys' internals, read on hot paths. */
+    /** The internals of the keys and items, read on hot paths. */
     private static final VanillaAccess VANILLA = Access.vanilla();
+    private static final ItemAccess ITEM = Access.item();
     private static final NbtMap NO_BLOCK = NbtMap.builder().putString("name", "paletter:no_block").build();
 
     private final @Nullable ItemRegistry parent;
@@ -221,7 +223,7 @@ public final class ItemRegistry implements DefinitionRegistry<ItemDefinition> {
     private static RegisteredItem registered(VanillaItem item) {
         ItemVersion itemVersion = ItemVersion.from(item.version());
         return ItemInterner.intern(item.identifier(), item.runtimeId(), itemVersion, item.componentBased(), item.componentData(),
-            () -> Access.item().registeredItem(item.identifier(), item.runtimeId(), itemVersion, item.componentBased(), item.componentData(),
+            () -> ITEM.registeredItem(item.identifier(), item.runtimeId(), itemVersion, item.componentBased(), item.componentData(),
                 Origin.VANILLA, List.of(), null, null));
     }
 
@@ -533,7 +535,7 @@ public final class ItemRegistry implements DefinitionRegistry<ItemDefinition> {
         if (result == null && defaultFallback != null) {
             RegisteredItem fallback = getDefinition(defaultFallback.target().identifier());
             if (fallback != null) {
-                defaultResolved = result = Access.item().resolvedItem(fallback, defaultFallback.variant().aux(),
+                defaultResolved = result = ITEM.resolvedItem(fallback, defaultFallback.variant().aux(),
                     defaultBlockOf(fallback.getIdentifier()), ResolutionKind.DEFAULT, this);
             }
         }
@@ -561,7 +563,7 @@ public final class ItemRegistry implements DefinitionRegistry<ItemDefinition> {
                 block = resolution.block();
             }
         }
-        return Access.item().resolvedItem(item, damage, block, fallback ? ResolutionKind.FALLBACK : ResolutionKind.EXACT, this);
+        return ITEM.resolvedItem(item, damage, block, fallback ? ResolutionKind.FALLBACK : ResolutionKind.EXACT, this);
     }
 
     // ---- Canonical ids ----
@@ -784,7 +786,7 @@ public final class ItemRegistry implements DefinitionRegistry<ItemDefinition> {
     }
 
     private static boolean sameResolution(@Nullable ResolvedItem a, @Nullable ResolvedItem b) {
-        return a == b || a != null && b != null && Access.item().sameAs(a, b);
+        return a == b || a != null && b != null && ITEM.sameAs(a, b);
     }
 
     /**
@@ -1078,7 +1080,7 @@ public final class ItemRegistry implements DefinitionRegistry<ItemDefinition> {
                     if (componentData != null && componentData.containsKey("id")) {
                         componentData = componentData.toBuilder().putInt("id", runtimeId).build();
                     }
-                    put(Access.item().registeredItem(identifier, runtimeId, item.getVersion(), item.isComponentBased(), componentData, item.origin(),
+                    put(ITEM.registeredItem(identifier, runtimeId, item.getVersion(), item.isComponentBased(), componentData, item.origin(),
                         item.components(), item.customItem(), item.type()));
                 }
             }
@@ -1153,13 +1155,13 @@ public final class ItemRegistry implements DefinitionRegistry<ItemDefinition> {
             if (original == null) {
                 return false;
             }
-            ItemOverride override = Access.item().override(original);
+            ItemOverride override = ITEM.override(original);
             modifier.accept(override);
-            if (Access.item().changesDefinition(override)) {
-                put(Access.item().apply(override, context(report, source)));
+            if (ITEM.changesDefinition(override)) {
+                put(ITEM.apply(override, context(report, source)));
             }
-            if (Access.item().setsBlock(override)) {
-                NbtMap block = Access.item().block(override);
+            if (ITEM.setsBlock(override)) {
+                NbtMap block = ITEM.block(override);
                 blockOverrides.put(identifier, block == null ? NO_BLOCK : block);
             }
             return true;
@@ -1179,7 +1181,7 @@ public final class ItemRegistry implements DefinitionRegistry<ItemDefinition> {
             int runtimeId = nextRuntimeId;
             NbtMap componentData = ItemCompiler.componentData(custom.identifier(), runtimeId, custom.components(), custom.menuCategory(),
                 context(report, source));
-            RegisteredItem item = Access.item().registeredItem(custom.identifier(), runtimeId, ItemVersion.DATA_DRIVEN, true, componentData,
+            RegisteredItem item = ITEM.registeredItem(custom.identifier(), runtimeId, ItemVersion.DATA_DRIVEN, true, componentData,
                 Origin.custom(source), custom.components(), custom, custom.type());
             put(item);
             customItems.add(custom);
@@ -1224,7 +1226,7 @@ public final class ItemRegistry implements DefinitionRegistry<ItemDefinition> {
                 return null;
             }
             checkUnused(block.identifier());
-            RegisteredItem item = Access.item().registeredItem(block.identifier(), plainBlockItemId(block.identifier()), ItemVersion.NONE, false, null,
+            RegisteredItem item = ITEM.registeredItem(block.identifier(), plainBlockItemId(block.identifier()), ItemVersion.NONE, false, null,
                 Origin.custom(source), List.of(), null, block.itemType());
             put(item);
             customBlockItems.add(block.identifier());

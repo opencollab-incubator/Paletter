@@ -5,6 +5,8 @@ import dev.opencollab.paletter.behaviour.BehaviourKey;
 import dev.opencollab.paletter.behaviour.BlockBehaviour;
 import dev.opencollab.paletter.behaviour.ItemBehaviour;
 import dev.opencollab.paletter.data.DataVersion;
+import dev.opencollab.paletter.internal.access.Access;
+import dev.opencollab.paletter.internal.access.BehaviourAccess;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.cloudburstmc.nbt.NbtMap;
@@ -25,6 +27,8 @@ import java.util.Map;
  */
 @Internal
 public final class VanillaVersion {
+    /** The behaviour packages' internals, read on hot paths. */
+    private static final BehaviourAccess BEHAVIOUR = Access.behaviour();
     /** The position of a key in the values of its owner, by {@link BehaviourKey#ordinal()}. */
     private static final int[] INDEX = index();
 
@@ -112,17 +116,17 @@ public final class VanillaVersion {
         List<BehaviourKey<?>> items = ItemBehaviour.keys();
         int[] index = new int[blocks.size() + items.size()];
         for (int i = 0; i < blocks.size(); i++) {
-            index[blocks.get(i).ordinal()] = i;
+            index[BEHAVIOUR.ordinal(blocks.get(i))] = i;
         }
         for (int i = 0; i < items.size(); i++) {
-            index[items.get(i).ordinal()] = i;
+            index[BEHAVIOUR.ordinal(items.get(i))] = i;
         }
         return index;
     }
 
     /** @return the position of a key among the keys of its owner ({@link BlockBehaviour#keys()} or {@link ItemBehaviour#keys()}) */
     public static int index(@NonNull BehaviourKey<?> key) {
-        return INDEX[key.ordinal()];
+        return INDEX[BEHAVIOUR.ordinal(key)];
     }
 
     public @NonNull DataVersion version() {

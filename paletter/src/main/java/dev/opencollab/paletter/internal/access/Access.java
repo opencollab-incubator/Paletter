@@ -16,6 +16,8 @@ public final class Access {
     private static volatile BlockAccess block;
     private static volatile ItemAccess item;
     private static volatile VanillaAccess vanilla;
+    private static volatile BehaviourAccess behaviour;
+    private static volatile CreativeAccess creative;
 
     private Access() {
     }
@@ -78,6 +80,36 @@ public final class Access {
     public static void setVanilla(@NonNull VanillaAccess access) {
         check(vanilla);
         vanilla = Objects.requireNonNull(access);
+    }
+
+    /**
+     * @return the accessor of {@code dev.opencollab.paletter.behaviour}, set by {@code BlockValues}
+     */
+    public static @NonNull BehaviourAccess behaviour() {
+        return get(() -> behaviour, "dev.opencollab.paletter.behaviour.BlockValues");
+    }
+
+    /**
+     * @param access the accessor of {@code dev.opencollab.paletter.behaviour}; set once
+     */
+    public static void setBehaviour(@NonNull BehaviourAccess access) {
+        check(behaviour);
+        behaviour = Objects.requireNonNull(access);
+    }
+
+    /**
+     * @return the accessor of {@code dev.opencollab.paletter.creative}, set by {@code CreativeContent}
+     */
+    public static @NonNull CreativeAccess creative() {
+        return get(() -> creative, "dev.opencollab.paletter.creative.CreativeContent");
+    }
+
+    /**
+     * @param access the accessor of {@code dev.opencollab.paletter.creative}; set once
+     */
+    public static void setCreative(@NonNull CreativeAccess access) {
+        check(creative);
+        creative = Objects.requireNonNull(access);
     }
 
     private static <T> T get(Supplier<T> field, String owner) {

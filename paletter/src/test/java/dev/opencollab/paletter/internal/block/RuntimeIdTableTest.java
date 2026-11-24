@@ -1,6 +1,7 @@
 package dev.opencollab.paletter.internal.block;
 
 import dev.opencollab.paletter.block.RegisteredBlockState;
+import dev.opencollab.paletter.internal.access.Access;
 import org.junit.jupiter.api.Test;
 
 import java.util.Random;
@@ -12,7 +13,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class RuntimeIdTableTest {
     private static RegisteredBlockState state(int id) {
-        return new RegisteredBlockState(id, BlockStates.of("test:block_" + id), true);
+        return Access.block().registeredBlockState(id, BlockStates.of("test:block_" + id), true);
     }
 
     @Test

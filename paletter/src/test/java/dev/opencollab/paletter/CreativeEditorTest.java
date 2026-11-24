@@ -9,7 +9,6 @@ import dev.opencollab.paletter.creative.CreativeItem;
 import dev.opencollab.paletter.creative.CreativeNode;
 import dev.opencollab.paletter.creative.CreativeOrdering;
 import dev.opencollab.paletter.creative.CreativePlacement;
-import dev.opencollab.paletter.creative.Placements;
 import dev.opencollab.paletter.creative.ItemMatcher;
 import dev.opencollab.paletter.internal.access.Access;
 import dev.opencollab.paletter.item.BedrockItemStack;
@@ -145,16 +144,16 @@ class CreativeEditorTest {
     @Test
     void placementPrefersAnchorThenGroupThenLoose() {
         CreativeEditor editor = layout().edit();
-        Placements.apply(CreativePlacement.after(ItemMatcher.id("test:c")), editor, NEW, CreativeCategory.ITEMS, "g1", CreativeOrdering.APPEND);
+        Access.creative().place(CreativePlacement.after(ItemMatcher.id("test:c")), editor, NEW, CreativeCategory.ITEMS, "g1", CreativeOrdering.APPEND);
         assertEquals(List.of(C, NEW), editor.build().group("g2").orElseThrow().stacks());
 
         BedrockItemStack other = stack("test:other");
-        assertFalse(Placements.apply(CreativePlacement.after(ItemMatcher.id("test:missing")), editor, other, CreativeCategory.NATURE, "new_group",
+        assertFalse(Access.creative().place(CreativePlacement.after(ItemMatcher.id("test:missing")), editor, other, CreativeCategory.NATURE, "new_group",
             CreativeOrdering.APPEND), "a missing anchor is told");
         assertEquals(List.of(other), editor.build().group("new_group").orElseThrow().stacks());
 
         BedrockItemStack third = stack("test:third");
-        assertTrue(Placements.apply(CreativePlacement.DEFAULT, editor, third, CreativeCategory.ITEMS, null, CreativeOrdering.APPEND));
+        assertTrue(Access.creative().place(CreativePlacement.DEFAULT, editor, third, CreativeCategory.ITEMS, null, CreativeOrdering.APPEND));
         assertEquals(new CreativeItem(third), editor.view(CreativeCategory.ITEMS).getLast());
     }
 

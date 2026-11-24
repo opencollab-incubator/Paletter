@@ -126,10 +126,10 @@ class CreativeOrderingTest {
             "exp:block_none", "exp:block_a", "exp:block_g1");
         List<String> vanilla = PALETTER.vanilla(PALETTER.version(LATEST)).vanillaData().dataDrivenBlocks().stream()
             .map(block -> block.getName()).toList();
-        List<String> order = CreativeOrdering.BDS.blockOrder(registered, vanilla);
+        List<String> order = Access.creative().blockOrder(CreativeOrdering.BDS, registered, vanilla);
         assertEquals(List.of("exp:block_hidden", "exp:block_sword", "exp:block_planks", "exp:block_g3", "exp:block_nomenu",
             "zzz:block_c", "exp:block_with_item", "exp:block_b", "exp:block_placed", "aaa:block_d", "exp:block_items",
             "exp:block_g1", "exp:block_none", "exp:block_a"), order);
-        assertEquals(registered, CreativeOrdering.APPEND.blockOrder(registered, vanilla));
+        assertEquals(registered, Access.creative().blockOrder(CreativeOrdering.APPEND, registered, vanilla));
     }
 }

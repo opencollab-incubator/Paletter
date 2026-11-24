@@ -10,6 +10,7 @@ import dev.opencollab.paletter.internal.block.RegisteredBlock;
 import dev.opencollab.paletter.block.RegisteredBlockState;
 import dev.opencollab.paletter.block.VoxelShape;
 import dev.opencollab.paletter.block.VoxelShapes;
+import dev.opencollab.paletter.internal.access.Access;
 import dev.opencollab.paletter.property.Properties;
 
 import java.util.ArrayList;
@@ -65,7 +66,7 @@ public final class VoxelShapeCompiler {
             if (compiler.names.containsKey(identifier)) {
                 throw new PaletteException("The voxel shape " + identifier + " is defined twice", null, identifier, null);
             }
-            compiler.names.put(identifier, compiler.add(shape.grid()));
+            compiler.names.put(identifier, compiler.add(Access.block().grid(shape)));
         });
 
         List<RegisteredBlock> customBlocks = new ArrayList<>();
@@ -98,7 +99,7 @@ public final class VoxelShapeCompiler {
         for (String name : hashMapOrder(new ArrayList<>(compiler.names.keySet()))) {
             ordered.put(name, compiler.names.get(name));
         }
-        return new VoxelShapes(compiler.shapes, ordered, compiler.shapes.size() - vanilla.size());
+        return Access.block().voxelShapes(compiler.shapes, ordered, compiler.shapes.size() - vanilla.size());
     }
 
     private int add(VoxelGrid grid) {

@@ -146,7 +146,7 @@ public final class CreativeOrderCheck {
         }
         List<String> wire = blocks.stream().map(block -> block.getString("name")).toList();
         List<String> byId = paletterIds.entrySet().stream().sorted(Map.Entry.comparingByValue()).map(Map.Entry::getKey).toList();
-        List<String> order = CreativeOrdering.BDS.blockOrder(byId,
+        List<String> order = Access.creative().blockOrder(CreativeOrdering.BDS, byId,
             Access.palette().vanillaData(palette).dataDrivenBlocks().stream().map(block -> block.getName()).toList());
         for (int i = 0; i < Math.max(wire.size(), order.size()) && differences.size() < 20; i++) {
             String bds = i < wire.size() ? wire.get(i) : null;

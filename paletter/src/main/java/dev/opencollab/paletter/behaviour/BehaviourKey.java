@@ -1,6 +1,5 @@
 package dev.opencollab.paletter.behaviour;
 
-import dev.opencollab.paletter.annotation.Internal;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.util.Objects;
@@ -72,12 +71,11 @@ public abstract sealed class BehaviourKey<T> permits FloatKey, IntKey, BooleanKe
     }
 
     /**
-     * Internal: the position of the key, which is where its values are kept.
+     * The position of the key, which is where its values are kept.
      *
      * @return the position of the key among every block and item key, {@code 0} to their count - 1
      */
-    @Internal
-    public int ordinal() {
+    int ordinal() {
         return ordinal;
     }
 

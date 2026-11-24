@@ -2,7 +2,6 @@ package dev.opencollab.paletter.block;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
 import dev.opencollab.paletter.ResolutionKind;
-import dev.opencollab.paletter.annotation.Internal;
 import dev.opencollab.paletter.behaviour.BlockValues;
 
 import java.util.Objects;
@@ -23,14 +22,13 @@ public final class ResolvedBlock {
     private final BlockValues behaviour;
 
     /**
-     * Internal: plumbing of the palette's {@code resolve}, not part of the API.
+     * Plumbing of the palette's {@code resolve}, not part of the API.
      *
      * @param definition the block to send
      * @param kind how the state was resolved, see {@link #kind()}
      * @param behaviour the behaviour values of {@code definition}
      */
-    @Internal
-    public ResolvedBlock(@NonNull RegisteredBlockState definition, @NonNull ResolutionKind kind, @NonNull BlockValues behaviour) {
+    ResolvedBlock(@NonNull RegisteredBlockState definition, @NonNull ResolutionKind kind, @NonNull BlockValues behaviour) {
         this.definition = definition;
         this.kind = Objects.requireNonNull(kind);
         this.behaviour = behaviour;

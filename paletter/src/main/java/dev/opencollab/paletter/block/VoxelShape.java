@@ -1,7 +1,6 @@
 package dev.opencollab.paletter.block;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
-import dev.opencollab.paletter.annotation.Internal;
 import dev.opencollab.paletter.behaviour.BlockShape;
 import dev.opencollab.paletter.internal.shape.VoxelGrid;
 import dev.opencollab.paletter.internal.shape.VoxelShapeRules;
@@ -30,12 +29,11 @@ public final class VoxelShape {
     private final VoxelGrid grid;
 
     /**
-     * Internal: wraps a grid, which is the shape's content.
+     * Wraps a grid, which is the shape's content.
      *
      * @param grid the grid
      */
-    @Internal
-    public VoxelShape(@NonNull VoxelGrid grid) {
+    VoxelShape(@NonNull VoxelGrid grid) {
         this.grid = grid;
     }
 
@@ -156,12 +154,11 @@ public final class VoxelShape {
     }
 
     /**
-     * Internal: the grid this shape wraps.
+     * The grid this shape wraps.
      *
      * @return the grid
      */
-    @Internal
-    public @NonNull VoxelGrid grid() {
+    @NonNull VoxelGrid grid() {
         return grid;
     }
 

@@ -994,7 +994,7 @@ public final class BlockRegistry implements DefinitionRegistry<BlockDefinition> 
                 for (NbtMap state : versionStates.get(custom.identifier())) {
                     int index = customIndex.getInt(state);
                     int id = HashedIds.assign(BlockHashes.hash(state), candidate -> isFree(candidate, state, blockId, byHash));
-                    RegisteredBlockState block = new RegisteredBlockState(id, state, true);
+                    RegisteredBlockState block = Access.block().registeredBlockState(id, state, true);
                     customByState.put(state, block);
                     byHash.put(id, index, block);
                     own[index] = block;

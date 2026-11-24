@@ -2,7 +2,6 @@ package dev.opencollab.paletter.behaviour;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
 import dev.opencollab.paletter.Palette;
-import dev.opencollab.paletter.annotation.Internal;
 import dev.opencollab.paletter.item.RegisteredItem;
 import dev.opencollab.paletter.internal.behaviour.Behaviour;
 import dev.opencollab.paletter.internal.behaviour.Column;
@@ -25,14 +24,13 @@ public final class ItemValues {
     private final int index;
 
     /**
-     * Internal: plumbing of {@link dev.opencollab.paletter.item.ResolvedItem#behaviour()}: public for it, not part of the
+     * Plumbing of {@link dev.opencollab.paletter.item.ResolvedItem#behaviour()}: public for it, not part of the
      * API.
      *
      * @param behaviour the palette's behaviour values
      * @param index the position of the item in them
      */
-    @Internal
-    public ItemValues(@NonNull Behaviour behaviour, int index) {
+    ItemValues(@NonNull Behaviour behaviour, int index) {
         this.behaviour = behaviour;
         this.index = index;
     }

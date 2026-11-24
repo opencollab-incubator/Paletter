@@ -1,5 +1,7 @@
 package dev.opencollab.paletter.block;
 
+import dev.opencollab.paletter.ResolutionKind;
+import dev.opencollab.paletter.behaviour.BlockValues;
 import dev.opencollab.paletter.internal.block.BlockStates;
 import dev.opencollab.paletter.internal.block.StateConditions;
 
@@ -19,6 +21,7 @@ import dev.opencollab.paletter.item.CustomItem;
 import dev.opencollab.paletter.item.component.BlockPlacer;
 import dev.opencollab.paletter.internal.component.Check;
 import dev.opencollab.paletter.internal.component.TraitStates;
+import dev.opencollab.paletter.internal.shape.VoxelGrid;
 import dev.opencollab.paletter.vanilla.BedrockBlockType;
 import dev.opencollab.paletter.vanilla.BedrockItemType;
 
@@ -30,6 +33,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.function.UnaryOperator;
+import org.cloudburstmc.protocol.bedrock.packet.VoxelShapesPacket;
 
 /**
  * A custom (data driven) block: an add-on JSON {@code minecraft:block} in Java. Registering one in a layer generates its
@@ -73,6 +77,31 @@ public final class CustomBlock {
             @Override
             public BlockProperty<?> property(String name, BlockProperty.Type type, List<?> values) {
                 return BlockProperty.of(name, type, values);
+            }
+
+            @Override
+            public RegisteredBlockState registeredBlockState(int runtimeId, NbtMap state, boolean custom) {
+                return new RegisteredBlockState(runtimeId, state, custom);
+            }
+
+            @Override
+            public ResolvedBlock resolvedBlock(RegisteredBlockState definition, ResolutionKind kind, BlockValues behaviour) {
+                return new ResolvedBlock(definition, kind, behaviour);
+            }
+
+            @Override
+            public VoxelShapes voxelShapes(List<VoxelGrid> shapes, Map<String, Integer> names, int customShapeCount) {
+                return new VoxelShapes(shapes, names, customShapeCount);
+            }
+
+            @Override
+            public VoxelShapesPacket toPacket(VoxelShapes shapes) {
+                return shapes.toPacket();
+            }
+
+            @Override
+            public VoxelGrid grid(VoxelShape shape) {
+                return shape.grid();
             }
         });
     }

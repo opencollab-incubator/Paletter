@@ -12,6 +12,7 @@ import dev.opencollab.paletter.internal.access.Access;
 import dev.opencollab.paletter.internal.access.ItemAccess;
 import dev.opencollab.paletter.internal.component.WireContext;
 import dev.opencollab.paletter.internal.item.ItemRegistry;
+import dev.opencollab.paletter.internal.item.ItemVariant;
 import dev.opencollab.paletter.internal.property.PropertySplit;
 import dev.opencollab.paletter.item.component.ItemComponent;
 import dev.opencollab.paletter.property.Properties;
@@ -71,6 +72,11 @@ public final class RegisteredItem implements ItemDefinition {
             @Override
             public RegisteredItem apply(ItemOverride override, WireContext context) {
                 return override.apply(context);
+            }
+
+            @Override
+            public ItemVariant variant(CustomItem item) {
+                return item.variant();
             }
         });
     }

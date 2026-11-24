@@ -7,6 +7,7 @@ import dev.opencollab.paletter.Origin;
 import dev.opencollab.paletter.annotation.Internal;
 import dev.opencollab.paletter.block.BlockHashes;
 import dev.opencollab.paletter.block.RegisteredBlockState;
+import dev.opencollab.paletter.internal.access.Access;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -49,7 +50,7 @@ public final class BlockInterner {
         }
         // The network hash allocates and is most of the work: not under the lock. Threads that race make equal blocks and
         // agree on the first
-        RegisteredBlockState made = new RegisteredBlockState(BlockHashes.hash(state), state, false);
+        RegisteredBlockState made = Access.block().registeredBlockState(BlockHashes.hash(state), state, false);
         synchronized (this) {
             Slots current = blocks;
             block = current.find(state, hash);

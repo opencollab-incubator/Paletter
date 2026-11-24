@@ -4,7 +4,6 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.cloudburstmc.protocol.bedrock.data.SerializableVoxelShape;
 import org.cloudburstmc.protocol.bedrock.packet.VoxelShapesPacket;
-import dev.opencollab.paletter.annotation.Internal;
 import dev.opencollab.paletter.internal.shape.VoxelGrid;
 
 import java.util.ArrayList;
@@ -34,14 +33,13 @@ public final class VoxelShapes {
     private final List<SerializableVoxelShape> wire;
 
     /**
-     * Internal: creates the shapes of a palette, done by the palette compiler.
+     * Creates the shapes of a palette, done by the palette compiler.
      *
      * @param shapes the shapes; the position of a shape is its id
      * @param names name to id, in the order Bedrock sends the names
      * @param customShapeCount how many shapes the palette has more than vanilla
      */
-    @Internal
-    public VoxelShapes(@NonNull List<VoxelGrid> shapes, @NonNull Map<String, Integer> names, int customShapeCount) {
+    VoxelShapes(@NonNull List<VoxelGrid> shapes, @NonNull Map<String, Integer> names, int customShapeCount) {
         this.shapes = List.copyOf(shapes);
         this.names = Collections.unmodifiableMap(new LinkedHashMap<>(names));
         this.customShapeCount = customShapeCount;
@@ -83,12 +81,11 @@ public final class VoxelShapes {
     }
 
     /**
-     * Internal: builds the packet of these shapes.
+     * Builds the packet of these shapes.
      *
      * @return the packet to send a client before start game, identical to the one BDS sends for the same content
      */
-    @Internal
-    public @NonNull VoxelShapesPacket toPacket() {
+    @NonNull VoxelShapesPacket toPacket() {
         VoxelShapesPacket packet = new VoxelShapesPacket();
         packet.setShapes(new ArrayList<>(wire));
         packet.setNameMap(new LinkedHashMap<>(names));
