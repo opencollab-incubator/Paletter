@@ -353,22 +353,47 @@ public final class CreativeEditor {
          * @return true if the stacks were placed, false if they were placed already
          */
         boolean intoCategoryGroup(CreativeCategory category, String group) {
+            return intoCategoryGroup(category, group, true, false);
+        }
+
+        /**
+         * Places the stacks at the end or the start of a group, creating the group at the end of the category if it is
+         * missing.
+         *
+         * @param inCategory whether only a group of the category counts (BDS), else one of any category ({@link #intoGroup})
+         * @param first whether the stacks go to the start of the group
+         */
+        boolean intoCategoryGroup(CreativeCategory category, String group, boolean inCategory, boolean first) {
             if (done) {
                 return false;
             }
             removeMoving();
             MutableGroup target = null;
-            for (Object node : categories.get(category)) {
-                if (node instanceof MutableGroup candidate && candidate.name.equals(group)) {
-                    target = candidate;
-                    break;
+            if (inCategory) {
+                for (Object node : categories.get(category)) {
+                    if (node instanceof MutableGroup candidate && candidate.name.equals(group)) {
+                        target = candidate;
+                        break;
+                    }
                 }
+            } else {
+                target = findGroup(group);
             }
             if (target == null) {
                 target = new MutableGroup(group, null, new ArrayList<>());
                 categories.get(category).add(target);
             }
-            target.stacks.addAll(stacks);
+            target.stacks.addAll(first ? 0 : target.stacks.size(), stacks);
+            return done = true;
+        }
+
+        /** Places the stacks as loose stacks at the start of a category. */
+        boolean looseFirst(CreativeCategory category) {
+            if (done) {
+                return false;
+            }
+            removeMoving();
+            categories.get(category).addAll(0, items(stacks));
             return done = true;
         }
 

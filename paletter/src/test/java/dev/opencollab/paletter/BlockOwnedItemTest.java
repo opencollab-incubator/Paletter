@@ -83,6 +83,30 @@ class BlockOwnedItemTest {
     }
 
     @Test
+    void placementsGoBeforeAnAnchorOrFirst() {
+        CustomItem before = CustomItem.builder("own:before_hopper").menuCategory(CreativeCategory.ITEMS)
+            .creativePlacement(CreativePlacement.before(BedrockItems.HOPPER_MINECART)).build();
+        CustomItem first = CustomItem.builder("own:first").menuCategory(CreativeCategory.ITEMS)
+            .creativePlacement(CreativePlacement.FIRST).build();
+        CustomItem last = CustomItem.builder("own:last").menuCategory(CreativeCategory.ITEMS).build();
+        CustomItem firstInGroup = CustomItem.builder("own:first_sword").menuCategory(CreativeCategory.EQUIPMENT, "itemGroup.name.sword")
+            .creativePlacement(CreativePlacement.FIRST).build();
+        for (CreativeOrdering ordering : CreativeOrdering.values()) {
+            Palette palette = Paletter.builder().creativeOrdering(ordering).layer(PaletteLayer.builder("anchors")
+                .item(before).item(first).item(last).item(firstInGroup).build()).build().palette(PROTOCOL);
+            List<String> ids = palette.creativeLayout().stacks().map(stack -> stack.type().identifier()).toList();
+            assertEquals(ids.indexOf("minecraft:hopper_minecart") - 1, ids.indexOf("own:before_hopper"), ordering.toString());
+            CreativeItem start = (CreativeItem) palette.creativeLayout().nodes(CreativeCategory.ITEMS).getFirst();
+            CreativeGroup sword = palette.creativeLayout().nodes(CreativeCategory.EQUIPMENT).stream()
+                .filter(node -> node instanceof CreativeGroup group && group.name().equals("itemGroup.name.sword"))
+                .map(CreativeGroup.class::cast).findFirst().orElseThrow();
+            assertEquals("own:first_sword", sword.stacks().getFirst().type().identifier(), ordering.toString());
+            assertTrue(ids.indexOf("own:first") < ids.indexOf("own:last"), ordering.toString());
+            assertEquals("own:first", start.stack().type().identifier(), ordering.toString());
+        }
+    }
+
+    @Test
     void anItemThatReplacesTheBlockItemIsAnOrdinaryItemInItsOwnCategory() {
         // BDS 1.26.63.1 (data/bds/1.26.63.1/addon, paletter:plain_block): block construction, item items, plain stack
         CustomBlock block = CustomBlock.builder("own:driven").menuCategory(CreativeCategory.CONSTRUCTION).build();

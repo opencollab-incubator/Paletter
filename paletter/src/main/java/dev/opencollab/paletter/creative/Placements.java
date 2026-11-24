@@ -15,8 +15,9 @@ public final class Placements {
     }
 
     /**
-     * Inserts a stack: after the anchor if there is one and it matches, else at the end of the group (created at the end of
-     * the category if missing), else loose at the end of the category.
+     * Inserts a stack: after or before the anchor if there is one and it matches, else at the end of the group (the start for
+     * {@link CreativePlacement#FIRST}; the group is created at the end of the category if missing), else loose at the end
+     * (or the start) of the category.
      *
      * @param placement where the stack goes
      * @param editor the creative editor of the palette being compiled
@@ -29,18 +30,19 @@ public final class Placements {
     public static boolean apply(@NonNull CreativePlacement placement, @NonNull CreativeEditor editor, @NonNull BedrockItemStack stack,
                                 @NonNull CreativeCategory category, @Nullable String group, @NonNull CreativeOrdering ordering) {
         CreativeEditor.Insertion insertion = editor.insert(stack);
-        boolean anchored = placement instanceof CreativePlacement.After;
+        boolean anchored = placement instanceof CreativePlacement.After || placement instanceof CreativePlacement.Before;
         if (placement instanceof CreativePlacement.After after && insertion.after(after.anchor())) {
             return true;
         }
-        if (ordering == CreativeOrdering.BDS) {
-            if (group != null) {
-                insertion.intoCategoryGroup(category, bdsGroupName(group));
-            } else {
-                insertion.loose(category);
-            }
-        } else if (group != null) {
-            insertion.intoGroup(category, group);
+        if (placement instanceof CreativePlacement.Before before && insertion.before(before.anchor())) {
+            return true;
+        }
+        boolean first = placement == CreativePlacement.FIRST;
+        if (group != null) {
+            boolean bds = ordering == CreativeOrdering.BDS;
+            insertion.intoCategoryGroup(category, bds ? bdsGroupName(group) : group, bds, first);
+        } else if (first) {
+            insertion.looseFirst(category);
         } else {
             insertion.loose(category);
         }

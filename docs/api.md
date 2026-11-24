@@ -428,8 +428,9 @@ Custom items and blocks have a `menu_category` (the generated `ItemMenuCategory`
 creative inventory and in which category and group, under every ordering: absent or category `none` means not in it.
 `menuCategory(CreativeCategory)` and `menuCategory(CreativeCategory, group)` on both builders are shortcuts. A block and the
 item that replaces its item each have a menu category of their own. A `CreativePlacement` adjusts only the position within
-that category and group: `CreativePlacement.DEFAULT` (the default) or `CreativePlacement.after(ItemMatcher | ItemKey)` /
-`afterAnyVariantOf(type)`, set with `creativePlacement(placement)`. An anchor that matches nothing falls back to the default position
+that category and group: `CreativePlacement.DEFAULT` (the default), `FIRST` (the start of its group or category),
+`CreativePlacement.after(ItemMatcher | ItemKey)` / `afterAnyVariantOf(type)` or `before(...)` / `beforeAnyVariantOf(type)`,
+set with `creativePlacement(placement)`. An anchor that matches nothing falls back to the default position
 and adds a warning to the palette report. `CreativeOrdering` (set on `Paletter.Builder`) only decides the order, never presence. The default, `BDS`, puts
 content exactly where BDS puts add-on content; [wire-notes.md](wire-notes.md#creative-inventory-order) has the rule.
 `CreativeContent` turns the layout into a valid packet: categories in client order, items the version lacks dropped,

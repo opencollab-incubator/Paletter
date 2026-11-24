@@ -1,14 +1,18 @@
 package dev.opencollab.paletter.creative;
 
 /**
- * {@link CreativePlacement#DEFAULT}: the position the layer's ordering gives. Not public, there is only the constant.
+ * {@link CreativePlacement#DEFAULT} and {@link CreativePlacement#FIRST}: positions the menu category alone decides. Not
+ * public, there are only the constants.
  */
 final class DefaultPlacement implements CreativePlacement {
-    DefaultPlacement() {
+    private final boolean first;
+
+    DefaultPlacement(boolean first) {
+        this.first = first;
     }
 
     @Override
     public String toString() {
-        return "CreativePlacement.DEFAULT";
+        return first ? "CreativePlacement.FIRST" : "CreativePlacement.DEFAULT";
     }
 }
