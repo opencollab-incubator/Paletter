@@ -261,7 +261,7 @@ public final class PropertyStore {
     private static @Nullable Property toProperty(String fullName, Object value) {
         for (PropertyKind kind : PropertyKind.values()) {
             if (fullName.startsWith(kind.prefix())) {
-                return new Property(kind, fullName.substring(kind.prefix().length()), value);
+                return Property.of(kind, fullName.substring(kind.prefix().length()), value);
             }
         }
         return null;

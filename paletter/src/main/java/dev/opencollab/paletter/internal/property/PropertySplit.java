@@ -33,7 +33,7 @@ public final class PropertySplit {
         for (NbtMap components : overlay) {
             components.forEach((name, value) -> {
                 result.removeIf(p -> p.kind() == PropertyKind.COMPONENT && p.name().equals(name));
-                result.add(new Property(PropertyKind.COMPONENT, name, value));
+                result.add(Property.of(PropertyKind.COMPONENT, name, value));
             });
         }
         return Properties.of(result);
@@ -46,9 +46,9 @@ public final class PropertySplit {
         }
         data.forEach((key, value) -> {
             if (key.equals("components") && value instanceof NbtMap components) {
-                components.forEach((name, component) -> result.add(new Property(PropertyKind.COMPONENT, name, component)));
+                components.forEach((name, component) -> result.add(Property.of(PropertyKind.COMPONENT, name, component)));
             } else {
-                result.add(new Property(PropertyKind.WIRE, key, value));
+                result.add(Property.of(PropertyKind.WIRE, key, value));
             }
         });
         return result;

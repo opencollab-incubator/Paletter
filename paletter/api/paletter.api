@@ -4142,14 +4142,14 @@ public final class dev.opencollab.paletter.property.Properties {
     public java.lang.String toString()
 }
 
-public record dev.opencollab.paletter.property.Property {
-    public <init>(dev.opencollab.paletter.property.PropertyKind, java.lang.String, java.lang.Object)
-    public final boolean equals(java.lang.Object)
+public final class dev.opencollab.paletter.property.Property {
+    public boolean equals(java.lang.Object)
     public java.lang.String fullName()
-    public final int hashCode()
+    public int hashCode()
     public dev.opencollab.paletter.property.PropertyKind kind()
     public java.lang.String name()
-    public final java.lang.String toString()
+    public static dev.opencollab.paletter.property.Property of(dev.opencollab.paletter.property.PropertyKind, java.lang.String, java.lang.Object)
+    public java.lang.String toString()
     public java.lang.Object value()
 }
 
