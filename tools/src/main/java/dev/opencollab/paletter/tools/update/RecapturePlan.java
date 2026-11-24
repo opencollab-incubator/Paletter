@@ -1,6 +1,7 @@
 package dev.opencollab.paletter.tools.update;
 
 import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import dev.opencollab.paletter.tools.BuildNumber;
@@ -13,6 +14,7 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Stream;
 
 /**
@@ -21,16 +23,14 @@ import java.util.stream.Stream;
  * workflow captures always has committed captures to compare with.
  */
 public final class RecapturePlan {
-    /**
-     * One leg of the matrix. {@code against} is the build itself for a release kept by a history check (it is recaptured as
-     * one), else null.
-     */
-    public record Leg(String build, boolean preview, String against) {
+    /** One leg of the matrix: a committed build and its channel. */
+    public record Leg(String build, boolean preview) {
         public Leg {
             BuildNumber.require(build);
-            if (against != null && !against.equals(build)) {
-                throw new IllegalArgumentException("A recapture leg is compared with its own build only, not " + against);
-            }
+        }
+
+        public String channel() {
+            return preview ? "preview" : "release";
         }
     }
 
@@ -49,7 +49,7 @@ public final class RecapturePlan {
         // A frozen build's zip can no longer be downloaded: its captures stay as they are ({@link #frozen} says so)
         kept.forEach((build, entry) -> {
             if (!entry.isFrozen()) {
-                legs.add(new Leg(build, false, entry.keptByHistoryCheck() ? build : null));
+                legs.add(new Leg(build, false));
             }
         });
         String preview = null;
@@ -67,9 +67,18 @@ public final class RecapturePlan {
             }
         }
         if (preview != null) {
-            legs.add(new Leg(preview, true, null));
+            legs.add(new Leg(preview, true));
         }
         return legs;
+    }
+
+    /**
+     * Whether a committed build was kept by a history check: its leg is captured as one ({@code update --capture-only}
+     * compares it with its own committed captures under {@code --against <build>}), which the leg finds out by itself.
+     */
+    public static boolean historyCheck(Path root, String build) throws IOException {
+        BuildHistory.Entry entry = BuildHistory.read(root).get(build);
+        return entry != null && entry.keptByHistoryCheck();
     }
 
     /**
@@ -104,18 +113,48 @@ public final class RecapturePlan {
         return lines;
     }
 
-    /** The legs as the {@code include} list of a GitHub Actions matrix: {@code build}, {@code channel}, {@code against} ("" for none). */
+    /** The legs as the {@code include} list of a GitHub Actions matrix: {@code build} and {@code channel}. */
     public static String matrix(List<Leg> legs) {
         JsonArray include = new JsonArray();
         for (Leg leg : legs) {
             JsonObject entry = new JsonObject();
             entry.addProperty("build", leg.build());
-            entry.addProperty("channel", leg.preview() ? "preview" : "release");
-            entry.addProperty("against", leg.against() == null ? "" : leg.against());
+            entry.addProperty("channel", leg.channel());
             include.add(entry);
         }
         JsonObject matrix = new JsonObject();
         matrix.add("include", include);
         return matrix.toString();
+    }
+
+    /**
+     * The legs of a matrix {@link #matrix} wrote, read back as data: an object with an {@code include} list of objects with
+     * exactly a build number and a channel, each build once.
+     *
+     * @throws IllegalArgumentException for anything else
+     */
+    public static List<Leg> read(String matrix) {
+        List<Leg> legs = new ArrayList<>();
+        try {
+            JsonObject object = JsonParser.parseString(matrix).getAsJsonObject();
+            if (!object.keySet().equals(Set.of("include"))) {
+                throw new IllegalArgumentException("not a recapture plan: " + object.keySet());
+            }
+            for (JsonElement element : object.getAsJsonArray("include")) {
+                JsonObject entry = element.getAsJsonObject();
+                String channel = entry.get("channel").getAsString();
+                if (!entry.keySet().equals(Set.of("build", "channel")) || !(channel.equals("release") || channel.equals("preview"))) {
+                    throw new IllegalArgumentException("not a leg of a recapture plan: " + entry);
+                }
+                Leg leg = new Leg(entry.get("build").getAsString(), channel.equals("preview"));
+                if (legs.stream().anyMatch(other -> other.build().equals(leg.build()))) {
+                    throw new IllegalArgumentException(leg.build() + " is twice in the plan");
+                }
+                legs.add(leg);
+            }
+        } catch (RuntimeException e) {
+            throw e instanceof IllegalArgumentException illegal ? illegal : new IllegalArgumentException("not a recapture plan: " + e.getMessage(), e);
+        }
+        return legs;
     }
 }

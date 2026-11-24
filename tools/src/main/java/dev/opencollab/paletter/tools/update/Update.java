@@ -131,6 +131,10 @@ public final class Update {
         if (kept) {
             ctx.keep(work);
         }
+        if (ctx.captureOnly != null && !ctx.report.failed() && !Files.isRegularFile(ctx.captureOnly.resolve("spec/capture.json"))) {
+            // A recapture leg is its spec capture above all: without it there is nothing to stage
+            ctx.report.check(Report.Status.FAIL, "Capture only", "no spec capture in " + ctx.captureOnly);
+        }
         // An update keeps its report with the data of its build, so a later run can be diffed against it; an update that
         // changed no data file keeps the committed report, so the report is never the only change. A history check keeps
         // its report with the captures of a kept build

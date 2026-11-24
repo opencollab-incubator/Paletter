@@ -63,6 +63,8 @@ tasks.test {
         inputs.dir(root.dir(dir)).withPathSensitivity(PathSensitivity.RELATIVE).withPropertyName("repository $dir")
     }
     inputs.file(root.file("docs/api.md")).withPathSensitivity(PathSensitivity.RELATIVE).withPropertyName("repository docs/api.md")
+    // RecaptureAssembleTest reads the documented step list
+    inputs.file(root.file("docs/data-pipeline.md")).withPathSensitivity(PathSensitivity.RELATIVE).withPropertyName("repository docs/data-pipeline.md")
 }
 
 application {

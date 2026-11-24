@@ -36,4 +36,4 @@ jobs:
       # What publish.yml uploads, into the local repository only: the POMs, sources and Javadoc jars build here too
       - run: ./gradlew publishToMavenLocal
       # The launcher the data workflows run (recapture.yml, bds-data.yml): it must start with its own classpath
-      - run: ./gradlew :tools:installDist && tools/build/install/tools/bin/tools --help
+      - run: ./gradlew :tools:installDist && tools/build/install/tools/bin/tools --help && tools/build/install/tools/bin/tools recapture --help

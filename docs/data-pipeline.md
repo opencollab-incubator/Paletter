@@ -53,7 +53,8 @@ command takes `--help`. Paths are relative to the repository root (`--root` over
 | Command | Does |
 |---|---|
 | `update` | The whole BDS pipeline (below). |
-| `builds list\|check\|table\|resolve\|record\|plan` | Every release build, one by one, against the previous kept build ([below](#every-release-build)): `table` writes what `builds.json` says per data version, `resolve` names the newest build of a channel, `record` brings `builds.json` up to date without BDS, `plan` lists the builds of a [full recapture](#full-recapture). |
+| `builds list\|check\|table\|resolve\|record` | Every release build, one by one, against the previous kept build ([below](#every-release-build)): `table` writes what `builds.json` says per data version, `resolve` names the newest build of a channel, `record` brings `builds.json` up to date without BDS. |
+| `recapture plan\|assemble` | The two halves of a [full recapture](#full-recapture) around its capture legs. |
 | `daily decide\|result` | Which new builds the daily check captures, and what its capture job hands to the publish job ([The daily check](#the-daily-check)). |
 | `bds fetch\|cache-key` | The zips of one build in the cache, nothing else, and the workflows' cache key of them ([CI](#ci)). |
 | `capture`, `compare`, `experiments` | The headless client: record what a server sends, diff a capture with a bundled version, toggle experiments in a `level.dat`. |
@@ -168,7 +169,7 @@ nothing is guessed. `BdsDistribution.zip` checks a download, and a cached zip, a
 differently under the same name fails instead of being captured. `builds check` records them for the builds it keeps;
 `builds record` brings the record up to date with the committed data without BDS or the network (release builds with
 captures it lacks, checksums from the cache). A kept build whose zip can no longer be downloaded is frozen with the reason
-(`builds record --freeze <build>=<reason>`, `--unfreeze <build>`): its captures stay, and `builds plan` leaves it out of a
+(`builds record --freeze <build>=<reason>`, `--unfreeze <build>`): its captures stay, and `recapture plan` leaves it out of a
 full recapture with a `SKIPPED` line in the plan's summary.
 
 The list of builds comes from [Bedrock-OSS/BDS-Versions](https://github.com/Bedrock-OSS/BDS-Versions), since the
@@ -260,31 +261,42 @@ the schedule, not the daily check. When a data update changes an add-on input (`
 
 **What it does.**
 
-1. `plan` runs `builds plan`: every kept release build (`data/bds/builds.json`, plus builds with captures the record
+1. `plan` runs `recapture plan`: every kept release build (`data/bds/builds.json`, plus builds with captures the record
    lacks) and the newest preview with captures in `data/bds`, as a matrix, read from the checkout with no request to the
-   network. A build without committed captures is never planned: a new release is the daily check's work, a hotfix in
-   between `builds check`'s. The `builds` input (`builds plan --build <build>`) narrows the plan to a rehearsal; a build
-   the plan lacks fails. It pins the commit all jobs use.
+   network; frozen builds are listed as skipped. A build without committed captures is never planned: a new release is
+   the daily check's work, a hotfix in between `builds check`'s. The `builds` input (`recapture plan --build <build>`)
+   narrows the plan to a rehearsal; a build the plan lacks fails. It pins the commit all jobs use.
 2. `capture`, one Windows job per build (`fail-fast: false`, at most 3 at a time), runs
-   `update --channel <channel> --version <build> --capture-only <dir>`, with the add-on generated from the checked-out
-   commit. `--capture-only` is the capture half of `update`: the same captures and the same comparison with the committed
-   captures of that build, but nothing is written into the repository; the files that would go to `data/bds/<build>` (and
-   `spec/`) are written to `<dir>` instead, and the bundled data, constants, model, white-box and build table are left to
-   the next job. A release kept by a history check is recaptured as one (`--against <build>`). The BDS zips are cached
-   per build, shared with the daily check ([CI](#ci)). The captures and the run's report are uploaded as the artifact
-   `captures-<build>`; a failed leg uploads its report and logs, never captures. Under `--capture-only` an `--against` add-on mismatch is information, not a failure (the captures are of the new add-on by design), nothing deletes a directory of the repository, and the Gradle cache is read-only in the capture jobs.
-3. `assemble` (only when every leg succeeded: captures of two add-ons never share a pull request) validates the
-   artifacts, copies every one over `data/bds/<build>/` (overlaying, deleting nothing; a build kept by a history check
-   too; a build without committed captures fails) and runs what `update` does after the
-   captures, with no BDS: `experiment-marks` (the marks of the bundled versions from the new experiment records), `inferMappings`, `behaviour import`, `whitebox-coverage` (from the committed `whitebox.json`; the binary did not
-   change), `generateComponentApi`, `voxel-shapes import` (as `update` does),
-   `recipes-import` (the bundled recipes from the new recipe captures), `variant-names`, `generateConstants` and last
-   `:paletter:apiDump`, which compiles what both generators wrote. It also runs `check-mappings --strict` and puts its verdict (residual bits, unclassified wire paths, linked fields) into the report, without failing on it. It fails when the inference changed
-   `bds-feedback.json`, `fixtures.json`, `components.json` or `bds-keys.json` (and uploads `git diff -- data/model` as the artifact `recapture-guard-diff`): those captures were made with an add-on that is not the
-   final one, so the change is committed and the workflow runs again until a pass changes nothing. It writes a patch of
-   the data paths and a report (one verdict line and the collapsed report per build).
-4. `publish` applies the patch with the checks of `bds-data.yml` and opens or updates the pull request
+   `update --channel <channel> --version <build> --capture-only <dir>/captures --report <dir>/report.md`, with the add-on
+   generated from the checked-out commit. `--capture-only` is the capture half of `update`: the same captures and the same
+   comparison with the committed captures of that build, but nothing is written into the repository; the files that would
+   go to `data/bds/<build>` (and `spec/`) are written to `<dir>/captures` instead, and the bundled data, constants, model,
+   white-box and build table are left to the next job. A release kept by a history check is recaptured as one: `update`
+   reads that from `builds.json` and compares under `--against <build>`. A run that writes no spec capture fails. The BDS
+   zips are cached per build, shared with the daily check ([CI](#ci)). The captures and the report are uploaded as the
+   artifact `captures-<build>`; a failed leg uploads its logs, never captures. Under `--capture-only` an `--against` add-on mismatch is information, not a failure (the captures are of the new add-on by design), nothing deletes a directory of the repository, and the Gradle cache is read-only in the capture jobs.
+3. `assemble` (only when every leg succeeded: captures of two add-ons never share a pull request) runs `recapture
+   assemble`. It validates every artifact before it copies anything: the artifacts are the builds of the plan, each holds
+   only `captures/` and `report.md`, the captures only regular files and directories (a link is refused without following
+   it), every path matches `[A-Za-z0-9._-]+(/[A-Za-z0-9._-]+)*` with no segment starting with `.`, `spec/capture.json` is
+   there, at most 400 MB per build, and the build has committed captures; one invalid leg stages nothing. Then it lays
+   every leg over `data/bds/<build>/` (overlaying, deleting nothing; a build kept by a history check too), clones the
+   third-party behaviour dumps at the pins of `data/behaviour/sources.json` (`BehaviourSources.fetch`: a partial clone
+   without a checkout, HEAD at the pin) and runs what `update` does after the captures, with no BDS, in-process
+   (`RecaptureAssemble.STEPS`), and runs, in this order: `experiment-marks`, `infer`, `behaviour import`, `whitebox-coverage`, `components generate`, `voxel-shapes import`, `recipes-import`, `variant-names`, `constants generate`, then `check-mappings --strict`
+   (the white-box coverage from the committed `whitebox.json`: the binary did not change). The verdict of
+   `check-mappings --strict` (residual bits, unclassified wire paths, linked fields) goes into the report without failing
+   the run. When a step changed an input of the spec add-on (`DataPaths.ADDON_INPUTS`, compared byte for byte) it exits
+   with 3 and leaves `addon-inputs/` and `model.diff` (uploaded as `recapture-guard-diff`): those captures were made with an
+   add-on that is not the final one, so the change is committed and the workflow runs again until a pass changes
+   nothing. The job then runs `:paletter:apiDump` (it compiles what both generators wrote) and writes a patch of the data
+   paths; the report has one verdict line and the collapsed report per build.
+4. `publish` applies the patch with `.github/actions/data-pr` (the checks of `bds-data.yml`) and opens or updates the pull request
    `recapture/<base>` (for the data update of the release channel: `recapture/bds-data/release`), with the report as its body. `assemble` hands over the id of its artifact and `publish` downloads exactly that one.
+
+The local equivalent is the same commands: `recapture plan --output plan.json`, then per leg
+`update --channel <channel> --version <build> --capture-only <in>/captures-<build>/captures --report <in>/captures-<build>/report.md`,
+then `recapture assemble --plan plan.json --in <in> --out <out> --fetch-sources <dir>` and `./gradlew :paletter:apiDump`.
 
 The builds are not checked against each other again: the set of kept builds does not change in a recapture (that is
 `builds check`, which stays a separate step), and each leg compared its capture with the committed captures of its own

@@ -25,8 +25,8 @@ class WorkflowConsistencyTest {
     private static final Path ROOT = Path.of(System.getProperty("paletter.root", ".."));
     /** The workflows that publish data. */
     static final List<String> DATA_WORKFLOWS = List.of("bds-data.yml", "recapture.yml");
-    /** The workflows whose logic lives in the tools (recapture.yml joins with `recapture assemble`). */
-    static final List<String> TOOL_LOGIC = List.of("bds-data.yml");
+    /** The workflows whose logic lives in the tools. */
+    static final List<String> TOOL_LOGIC = DATA_WORKFLOWS;
     private static final Pattern JOB = Pattern.compile("(?m)^  ([A-Za-z0-9_-]+):\\s*$");
 
     private static String workflow(String name) throws IOException {

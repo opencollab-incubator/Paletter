@@ -33,6 +33,7 @@ runs:
     # Everything temporary lives in the runner's temp directory, never in the checkout. Forward slashes on Windows: Java,
     # bash and the actions all read them; an absolute path, as upload-artifact rejects '..'
     - name: Set the temp and BDS cache directories
+      id: dirs
       shell: bash
       run: |
         CI_TEMP="$RUNNER_TEMP"
@@ -42,6 +43,8 @@ runs:
           echo "PALETTER_BDS_CACHE=$CI_TEMP/bds-cache"
           echo "TOOLS=tools/build/install/tools/bin/tools"
         } >> "$GITHUB_ENV"
+        # For the cache steps below: the env context of a composite action's own `with:` is not relied on
+        echo "zips=$CI_TEMP/bds-cache/zips" >> "$GITHUB_OUTPUT"
         mkdir -p "$CI_TEMP/out"
     # The launcher passes the tools' own exit code on (Gradle's run task reports every non-zero exit as 1)
     - name: Build the tools
@@ -70,7 +73,7 @@ runs:
       if: inputs.build != ''
       uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
       with:
-        path: ${{ env.PALETTER_BDS_CACHE }}/zips
+        path: ${{ steps.dirs.outputs.zips }}
         key: ${{ steps.key.outputs.key }}
         restore-keys: bds-zips-${{ inputs.build }}-
     - name: Fetch the BDS zips
@@ -84,5 +87,5 @@ runs:
       if: inputs.build != '' && steps.restore.outputs.cache-hit != 'true'
       uses: actions/cache/save@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
       with:
-        path: ${{ env.PALETTER_BDS_CACHE }}/zips
+        path: ${{ steps.dirs.outputs.zips }}
         key: ${{ steps.key.outputs.key }}

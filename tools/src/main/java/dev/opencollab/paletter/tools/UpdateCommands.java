@@ -55,12 +55,19 @@ final class UpdateCommands {
         @Option(names = "--against", description = "A history check (see `builds`): compare with the committed captures of this build "
             + "instead of the newest, and write only data/bds/VERSION, when anything differs") String against;
         @Option(names = "--capture-only", description = "The capture half of a full recapture: write the captures of the build (the files that "
-            + "would go to data/bds/VERSION, and spec/) into this directory and nothing into the repository; the report goes to the work directory") Path captureOnly;
+            + "would go to data/bds/VERSION, and spec/) into this directory and nothing into the repository; the report goes to the work directory "
+            + "(or --report). A build kept by a history check is captured as one; a run that writes no spec capture fails") Path captureOnly;
 
         @Override
         public Integer call() throws Exception {
             BdsRun run = bds.run(19260, 300, keepServer);
-            return new Update(root(), new UpdateOptions(run, report, dataVersion, toggles(experiments), attribution, against, captureOnly, verifyOnly)).run();
+            String compared = against;
+            if (captureOnly != null && compared == null && run.version() != null && RecapturePlan.historyCheck(root(), run.version())) {
+                // data/bds/builds.json says how the build was kept: a recapture leg needs no flag for it
+                System.out.println(run.version() + " was kept by a history check: captured as one (--against " + run.version() + ")");
+                compared = run.version();
+            }
+            return new Update(root(), new UpdateOptions(run, report, dataVersion, toggles(experiments), attribution, compared, captureOnly, verifyOnly)).run();
         }
     }
 
@@ -145,7 +152,7 @@ final class UpdateCommands {
 
     @Command(name = "builds", description = "Every BDS release build, one by one: list them, or check the ones data/bds/builds.json lacks "
         + "against the previous kept build (captures kept only when they differ).",
-        subcommands = {Builds.ListBuilds.class, Builds.Check.class, Builds.Table.class, Builds.Plan.class, Builds.Resolve.class, Builds.Record.class})
+        subcommands = {Builds.ListBuilds.class, Builds.Check.class, Builds.Table.class, Builds.Resolve.class, Builds.Record.class})
     static final class Builds implements Runnable {
         @Override
         public void run() {
@@ -190,23 +197,6 @@ final class UpdateCommands {
                 BdsRun run = new BdsRun(null, false, cache, port, timeout, false);
                 return BuildHistory.check(root(), list, list.range(from, to), run.cache(), BuildHistory.updates(root(), run),
                     limit == null ? Integer.MAX_VALUE : limit, (minFreeMb == null ? 1536 : minFreeMb) << 20);
-            }
-        }
-
-        @Command(name = "plan", description = "The builds a full recapture captures (every kept release build and the preview with captures in "
-            + "data/bds, read from the checkout without the network) as a GitHub Actions matrix, written to --output (one line of JSON) and listed on stdout.")
-        static final class Plan extends Rooted implements Callable<Integer> {
-            @Option(names = "--output", required = true, description = "File for the matrix JSON") Path output;
-            @Option(names = "--build", description = "Only this build of the plan (repeatable; a rehearsal); a build the plan lacks fails")
-            List<String> builds;
-
-            @Override
-            public Integer call() throws Exception {
-                List<RecapturePlan.Leg> legs = RecapturePlan.only(RecapturePlan.of(root()), builds);
-                Files.writeString(output, RecapturePlan.matrix(legs) + "\n");
-                RecapturePlan.frozen(root()).forEach(line -> System.out.println("SKIPPED " + line));
-                legs.forEach(leg -> System.out.println(leg.build() + (leg.preview() ? " (preview)" : "") + (leg.against() == null ? "" : " (history check)")));
-                return legs.isEmpty() ? 1 : 0;
             }
         }
 

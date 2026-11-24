@@ -74,7 +74,7 @@ class CliTest {
     void theWorkflowsInvocationsParse() {
         CommandLine cli = Cli.commandLine();
         cli.parseArgs("update", "--channel", "preview", "--version", "1.26.70.24", "--verify-only");
-        cli.parseArgs("update", "--channel", "release", "--version", "1.26.63.1", "--capture-only", "out", "--against", "1.26.36.1");
+        cli.parseArgs("update", "--channel", "release", "--version", "1.26.63.1", "--capture-only", "out/captures", "--report", "out/report.md");
         cli.parseArgs("builds", "resolve", "--channel", "preview", "--output", "build.txt");
         cli.parseArgs("bds", "cache-key", "--channel", "preview", "--version", "1.26.70.24", "--output", "key.txt");
         cli.parseArgs("bds", "fetch", "--channel", "release", "--version", "1.26.63.1");
@@ -84,12 +84,16 @@ class CliTest {
             "--issues", "issues.json", "--pulls", "pulls.json", "--outputs", "out.txt");
         cli.parseArgs("daily", "result", "--channel", "release", "--version", "1.26.66.1", "--update-exit", "2", "--codegen-exit", "0",
             "--patch", "out/data.patch", "--out", "out", "--run-id", "123", "--summary", "summary.md", "--verify-only");
-        cli.parseArgs("builds", "plan", "--output", "matrix.json");
-        cli.parseArgs("builds", "plan", "--output", "matrix.json", "--build", "1.26.63.1", "--build", "1.26.70.24");
-        cli.parseArgs("behaviour", "import", "--cloudburst-data", "cb", "--allay", "allay");
-        cli.parseArgs("whitebox-coverage");
-        cli.parseArgs("voxel-shapes", "import");
-        cli.parseArgs("check-mappings", "--strict");
+        cli.parseArgs("recapture", "plan", "--output", "matrix.json", "--outputs", "out.txt", "--summary", "summary.md");
+        cli.parseArgs("recapture", "plan", "--output", "matrix.json", "--build", "1.26.63.1", "--build", "1.26.70.24");
+        cli.parseArgs("recapture", "assemble", "--plan", "plan.json", "--in", "in", "--out", "out", "--fetch-sources", "sources", "--commit", "a".repeat(40));
+        // The steps of recapture assemble, in-process
+        for (var step : dev.opencollab.paletter.tools.update.RecaptureAssemble.STEPS) {
+            List<String> arguments = new ArrayList<>(step.arguments().stream().map(a -> a.startsWith("{") ? "dir" : a).toList());
+            arguments.addAll(List.of("--root", "."));
+            cli.parseArgs(arguments.toArray(String[]::new));
+        }
+        cli.parseArgs("check-mappings", "--strict", "--root", ".");
         cli.parseArgs("export", "--data-version", "26.60", "--out", "out", "--all-experiments");
         cli.parseArgs("verify", "--source", "cb", "--data-version", "26.60", "--against", "out", "--report", "r.md");
     }

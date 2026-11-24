@@ -106,7 +106,7 @@ class HttpTest {
         assertTrue(Http.USER_AGENT.contains(Http.PROJECT_URL), Http.USER_AGENT);
         assertFalse(Http.USER_AGENT.contains("@"), Http.USER_AGENT);
         String user = System.getProperty("user.name");
-        assertFalse(user != null && !user.isBlank() && Http.USER_AGENT.toLowerCase().contains(user.toLowerCase()), Http.USER_AGENT);
+        assertFalse(user != null && !user.isBlank() && Http.USER_AGENT.toLowerCase(java.util.Locale.ROOT).contains(user.toLowerCase(java.util.Locale.ROOT)), Http.USER_AGENT);
     }
 
     /** The policy of {@link Http#MINECRAFT}, with the waits counted instead of spent. */

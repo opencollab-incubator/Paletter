@@ -87,17 +87,17 @@ Captures answer for the add-on they were made with, and history checks refuse to
 add-ons. After a change to the model, fixtures, `bds-feedback.json` or the add-on generator, every kept build is captured again.
 
 - CI: the `recapture` label on the pull request that changes the add-on, or Actions > Recapture > Run workflow, `ref` =
-  the branch (empty: the branch you started it on). Nothing starts it by itself. It runs `plan` (`builds plan`, the
+  the branch (empty: the branch you started it on). Nothing starts it by itself. It runs `plan` (`recapture plan`, the
   committed builds only), one Windows `capture` job per build (`update --capture-only <dir> --version <build>`), `assemble`
-  (inference, white-box coverage, code generation, `voxel-shapes import`) and `publish` (one PR `recapture/<base>`).
-  Rehearsal: `builds: 1.26.63.1` and `dry-run` (one Windows leg, no pull request).
+  (`recapture assemble`: staging, inference, behaviour, white-box coverage, code generation) and `publish` (one PR
+  `recapture/<base>`). Rehearsal: `builds: 1.26.63.1` and `dry-run` (one Windows leg, no pull request).
 - Merge order: recapture PR into its branch first (for a data update `bds-data/<channel>`), then that branch into `main`.
-- If `assemble` fails because inference changed `bds-feedback.json`, `fixtures.json`, `components.json` or
-  `bds-keys.json`, commit that change and run again until a pass changes nothing.
-- Local equivalent, per build: `builds plan --output plan.json` lists the legs, then
-  `update --channel <release|preview> --version <build> --capture-only <dir> [--against <build>]`. Copy the files over
-  `data/bds/<build>/`, then run `infer`, `whitebox-coverage`, `components generate`, `constants generate`,
-  `voxel-shapes import` (the same steps `assemble` runs). `./gradlew :tools:generateAddon` rebuilds the add-on.
+- If `assemble` exits with 3 because the inference changed an add-on input (`bds-feedback.json`, `fixtures.json`,
+  `components.json` or `bds-keys.json`; the artifact `recapture-guard-diff` has them), commit that change and run again
+  until a pass changes nothing.
+- Local equivalent: the same commands ([data-pipeline.md](data-pipeline.md#full-recapture)): `recapture plan --output
+  plan.json`, `update --capture-only` per leg, `recapture assemble`, `./gradlew :paletter:apiDump`.
+  `./gradlew :tools:generateAddon` rebuilds the add-on.
 
 ## c. A new data version line (e.g. 26.80)
 

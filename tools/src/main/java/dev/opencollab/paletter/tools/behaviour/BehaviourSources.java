@@ -6,14 +6,16 @@ import com.google.gson.JsonParser;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
 
 /**
  * The pins of the third-party behaviour dumps, {@code data/behaviour/sources.json}: per source its repository and the commit
  * the committed {@code data/behaviour/captures.nbt} was built from. The one place they are written: {@code behaviour import} requires its
- * checkouts to be at them, and the recapture workflow fetches exactly them.
+ * checkouts to be at them, and {@code recapture assemble} fetches exactly them ({@link #fetch}).
  */
 public final class BehaviourSources {
     public static final String FILE = "data/behaviour/sources.json";
@@ -48,6 +50,41 @@ public final class BehaviourSources {
             }
         }
         return result;
+    }
+
+    /** Runs one git command (its arguments without {@code git}). */
+    @FunctionalInterface
+    public interface Git {
+        void run(List<String> arguments) throws IOException, InterruptedException;
+    }
+
+    /** {@link #fetch(Path, Path, Git)} with the git of the machine; a failed command fails the fetch. */
+    public static final Git GIT = arguments -> {
+        List<String> command = new ArrayList<>();
+        command.add("git");
+        command.addAll(arguments);
+        Process process = new ProcessBuilder(command).inheritIO().start();
+        if (process.waitFor() != 0) {
+            throw new IOException(String.join(" ", command) + " failed with " + process.exitValue());
+        }
+    };
+
+    /**
+     * Clones every pinned source into {@code directory} at its pin: a partial clone without a checkout (only what the import
+     * reads is fetched later), HEAD set to the pinned commit. Read as data: nothing in them is run. Each command is an
+     * argument array, never a shell line.
+     *
+     * @return the checkouts by source name
+     */
+    public static Map<String, Path> fetch(Path root, Path directory, Git git) throws IOException, InterruptedException {
+        Map<String, Path> checkouts = new LinkedHashMap<>();
+        for (Source source : read(root).values()) {
+            Path checkout = directory.resolve(source.name().replace('/', '-'));
+            git.run(List.of("clone", "--quiet", "--filter=blob:none", "--no-checkout", source.repository(), checkout.toString()));
+            git.run(List.of("-C", checkout.toString(), "update-ref", "HEAD", source.commit()));
+            checkouts.put(source.name(), checkout);
+        }
+        return checkouts;
     }
 
     /**

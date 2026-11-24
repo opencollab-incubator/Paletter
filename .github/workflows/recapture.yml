@@ -1,27 +1,24 @@
 # Full recapture: every kept BDS build and the newest preview, captured again in parallel with the add-on generated from
-# the checked-out commit, and turned into ONE pull request. Run it whenever the add-on changes (the model, the fixtures,
-# `bds-feedback.json`, the add-on generator): the captures of a build only answer for the add-on they were made with
-# (a history check refuses to compare spec captures of different add-ons), so a change to the add-on is only complete once every build was captured with it. See
-# docs/data-pipeline.md, "Full recapture". Started by hand (workflow_dispatch) or by the `recapture` label on a pull
-# request of a branch of this repository; nothing starts it on a push or a schedule.
+# the checked-out commit, and turned into ONE pull request: docs/data-pipeline.md, "Full recapture". Started by hand
+# (workflow_dispatch: `ref`, `builds`, `dry-run`) or by the `recapture` label on a pull request of a branch of this
+# repository; nothing starts it on a push or a schedule.
 #
 # Security: the same split as bds-data.yml, in four jobs.
-#   plan      read-only. Lists the builds from the checkout (`builds plan`) and pins the commit every job uses.
+#   plan      read-only. `recapture plan` lists the committed builds of the checkout (no network) and the commit every
+#             job uses.
 #   capture   read-only, one Windows job per build. Runs the downloaded BDS binary and Gradle: untrusted code, so it has
 #             `contents: read`, no credentials in the checkout and no secrets. It can only hand over files as an artifact.
-#   assemble  read-only. Treats the artifacts as data: checks the build names, the file types (no links) and every path
-#             (an allow-list of characters, no `..`), copies them into `data/bds/<build>/` and runs the sequential half
-#             (inference, white-box coverage, code generation). It runs Gradle over data from the capture jobs, so it has
-#             no write permission and no secret either; it hands over a patch of the data paths and a report.
+#   assemble  read-only. `recapture assemble` treats the artifacts as data (the builds of the plan, only plain files and
+#             directories, every path on an allow-list, a size cap; all valid or nothing staged), lays them over
+#             data/bds/<build> and runs the sequential half. It runs Gradle over data from the capture jobs, so it has no
+#             write permission and no secret either; it hands over a patch of the data paths and a report.
 #   publish   the only job with write permissions and BDS_DATA_TOKEN. Runs no Gradle or BDS and no repository code but
-#             the patch checks and the pull request step of .github/actions/data-pr (shared with bds-data.yml, from the pinned checkout of
-#             the branch), and applies only a patch confined to the data paths.
-# No script of an artifact is ever run, and no value of an artifact reaches a shell as code: values are read as data
-# and matched against strict patterns.
+#             .github/actions/data-pr from the pinned checkout of the branch, and applies only a patch confined to the
+#             data paths. Skipped with `dry-run`.
+# No script of an artifact is ever run, and no value of an artifact reaches a shell as code.
 #
 # The capture platform stays Windows (`CapturePlatform`): the committed captures come from Windows BDS, and the daily
-# check captures on GitHub's Windows runners too. Linux BDS numbers custom blocks and orders the creative inventory
-# differently. `update` refuses to run against committed captures of another platform, so a leg that would mix them fails.
+# check captures on GitHub's Windows runners too. `update` refuses to run against committed captures of another platform.
 #
 # Pull requests opened with GITHUB_TOKEN do not start other workflows: set BDS_DATA_TOKEN (docs/releasing.md) to run the
 # build on the recapture pull request. A patch that changes generated code is only turned into a pull request with it.
@@ -69,6 +66,7 @@ jobs:
       contents: read
     outputs:
       matrix: ${{ steps.plan.outputs.matrix }}
+      legs: ${{ steps.plan.outputs.legs }}
       sha: ${{ steps.plan.outputs.sha }}
       base: ${{ steps.plan.outputs.base }}
     env:
@@ -90,34 +88,23 @@ jobs:
           ref: ${{ env.BASE }}
           persist-credentials: false
       - uses: ./.github/actions/setup-tools
-      # The committed builds of the checkout only (the kept releases and the preview with captures in data/bds), with no
-      # request to the network; the `builds` input narrows them to a rehearsal
+      # The committed builds of the checkout only, with no request to the network; `builds` narrows them to a rehearsal.
+      # Frozen builds (their zip is gone from minecraft.net) are left out, and said so in the summary
       - name: List the builds
         id: plan
         run: |
-          ONLY=""
+          set -f
+          ARGS=(recapture plan --outputs "$GITHUB_OUTPUT" --summary "$GITHUB_STEP_SUMMARY")
           for B in $(echo "$INPUT_BUILDS" | tr ',' ' '); do
             echo "$B" | grep -Eq "$BUILD_RE" || { echo "Not a build: '$B'"; exit 1; }
-            ONLY="$ONLY --build $B"
+            ARGS+=(--build "$B")
           done
-          # shellcheck disable=SC2086 (checked build numbers)
-          "$TOOLS" builds plan --output "$RUNNER_TEMP/matrix.json" $ONLY | tee "$RUNNER_TEMP/plan.log"
-          MATRIX=$(cat "$RUNNER_TEMP/matrix.json")
-          # Frozen builds (their zip is gone from minecraft.net) are left out of the plan, and said so
-          grep '^SKIPPED ' "$RUNNER_TEMP/plan.log" | sed 's/^/- /' >> "$GITHUB_STEP_SUMMARY" || true
-          # Every value that a later job puts into a command line is checked here and again there
-          echo "$MATRIX" | jq -e --arg re "$BUILD_RE" '(.include | length) > 0 and ([.include[] | (.build | test($re))
-            and (.channel | IN("release", "preview")) and (.against == "" or .against == .build)] | all)' > /dev/null \
-            || { echo "The build plan is not valid: $MATRIX"; exit 1; }
-          {
-            echo "matrix=$MATRIX"
-            echo "sha=$(git rev-parse HEAD)"
-            echo "base=$BASE"
-          } >> "$GITHUB_OUTPUT"
-          echo "$MATRIX" | jq -r '.include[] | "- \(.build) (\(.channel))"' >> "$GITHUB_STEP_SUMMARY"
+          "$TOOLS" "${ARGS[@]}"
+          { echo "sha=$(git rev-parse HEAD)"; echo "base=$BASE"; } >> "$GITHUB_OUTPUT"
 
   capture:
     needs: plan
+    if: needs.plan.outputs.legs != '0'
     # The image of the daily check (bds-data.yml), fixed for the same reason
     runs-on: windows-2025
     timeout-minutes: 120
@@ -139,13 +126,7 @@ jobs:
     env:
       BUILD: ${{ matrix.build }}
       CHANNEL: ${{ matrix.channel }}
-      AGAINST: ${{ matrix.against }}
     steps:
-      - name: Check the matrix values
-        run: |
-          echo "$BUILD" | grep -Eq "$BUILD_RE" || { echo "Bad build"; exit 1; }
-          [ -z "$AGAINST" ] || [ "$AGAINST" = "$BUILD" ] || { echo "Bad against"; exit 1; }
-          echo "$CHANNEL" | grep -Eqx 'release|preview' || { echo "Bad channel"; exit 1; }
       # The data is compared byte for byte: keep the checkout's line endings as committed (LF)
       - name: Check out with LF line endings
         run: git config --global core.autocrlf false
@@ -154,57 +135,28 @@ jobs:
         with:
           ref: ${{ needs.plan.outputs.sha }}
           persist-credentials: false
-      # The zips of the build (the daily check's cache entries too), saved before BDS runs
+      # The zips of the build (the daily check's cache entries too), saved before BDS runs; checks the build and channel
       - uses: ./.github/actions/setup-tools
         with:
           build: ${{ matrix.build }}
           channel: ${{ matrix.channel }}
 
-      # The capture half of `update` (--capture-only): the captures of this build, written into a directory of their own;
-      # nothing goes into the checkout. The spec add-on is generated here from the checked-out model. The behaviour dump,
-      # the behaviour probe and the education capture run in the same job (about six more starts of BDS; only a failure of
-      # the optional behaviour probe is a skipped row in the report instead of a failed leg)
+      # The capture half of `update`: the captures of this build into a directory of their own, nothing into the
+      # checkout; a build kept by a history check is captured as one, and a run without a spec capture fails
       - name: Capture the build
         id: run
-        run: |
-          set +e
-          OUT="$CI_TEMP/out"
-          ARGS="update --channel $CHANNEL --version $BUILD --capture-only $OUT/captures"
-          if [ -n "$AGAINST" ]; then ARGS="$ARGS --against $AGAINST"; fi
-          "$TOOLS" $ARGS
-          CODE=$?
-          # The work directory of the run holds its report
-          for f in "$PALETTER_BDS_CACHE"/runs/*-"$BUILD"/report.md; do
-            if [ -f "$f" ]; then cp "$f" "$OUT/report.md"; head -c 60000 "$f" >> "$GITHUB_STEP_SUMMARY"; fi
-          done
-          # A capture that wrote no spec capture is no capture
-          if [ "$CODE" = 0 ] && [ ! -f "$OUT/captures/spec/capture.json" ]; then
-            echo "::error::The run wrote no spec capture"; CODE=1
-          fi
-          echo "exit=$CODE" >> "$GITHUB_OUTPUT"
-          exit 0
-
-      # What assemble reads: values only, checked there. A step that died before its outputs counts as a failure
-      - name: Write the result
+        run: '"$TOOLS" update --channel "$CHANNEL" --version "$BUILD" --capture-only "$CI_TEMP/out/captures" --report "$CI_TEMP/out/report.md"'
+      - name: Summarize
         if: always()
-        env:
-          CAPTURE_EXIT: ${{ steps.run.outputs.exit || '1' }}
-        run: |
-          {
-            echo "build=$BUILD"
-            echo "exit=$CAPTURE_EXIT"
-          } > "$CI_TEMP/out/result.txt"
-          # A failed leg hands over no captures: nothing half captured is ever assembled
-          if [ "$CAPTURE_EXIT" != 0 ]; then rm -rf "$CI_TEMP/out/captures"; fi
+        run: if [ -f "$CI_TEMP/out/report.md" ]; then head -c 60000 "$CI_TEMP/out/report.md" >> "$GITHUB_STEP_SUMMARY"; fi
 
-      # Only a leg that succeeded hands over captures; a failed one leaves its report and logs (below)
+      # Only a leg that succeeded hands over captures: nothing half captured is ever assembled
       - name: Upload the captures
-        if: always() && steps.run.outputs.exit == '0'
+        if: steps.run.outcome == 'success'
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: captures-${{ matrix.build }}
           path: ${{ env.CI_TEMP }}/out/
-          if-no-files-found: ignore
 
       - name: Upload logs
         if: always()
@@ -215,13 +167,6 @@ jobs:
             ${{ env.PALETTER_BDS_CACHE }}/runs/*/*.log
             ${{ env.PALETTER_BDS_CACHE }}/runs/*/report.md
           if-no-files-found: ignore
-
-      # Last, so that the artifacts above exist for a failed leg too
-      - name: Fail a failed capture
-        if: steps.run.outputs.exit != '0'
-        run: |
-          echo "The capture of $BUILD failed; see the report in the job summary and the capture-logs-$BUILD artifact"
-          exit 1
 
   # All legs or none: captures of different add-ons must never end up in one pull request. A failed leg is re-run
   # from the Actions page ("Re-run failed jobs"), which starts this job again.
@@ -234,9 +179,6 @@ jobs:
       contents: read
     outputs:
       artifact-id: ${{ steps.result.outputs.artifact-id }}
-    env:
-      MATRIX: ${{ needs.plan.outputs.matrix }}
-      SHA: ${{ needs.plan.outputs.sha }}
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
@@ -249,143 +191,47 @@ jobs:
           pattern: captures-*
           path: ${{ runner.temp }}/in
 
-      # The artifacts are data. Each is checked against the plan and copied into the committed directory of its build;
-      # nothing in them is run, and nothing is deleted from data/bds (a file the new capture no longer has stays: the
-      # review of the patch shows what changed)
-      - name: Stage the captures
+      # Validates and stages the artifacts, clones the third-party behaviour dumps at the pins of
+      # data/behaviour/sources.json, runs the steps after the captures in their order and writes the report. Exit 3: a step
+      # changed an input of the spec add-on; commit that change and run this workflow again
+      - name: Assemble
+        env:
+          MATRIX: ${{ needs.plan.outputs.matrix }}
+          SHA: ${{ needs.plan.outputs.sha }}
         run: |
-          IN="$RUNNER_TEMP/in"
-          EXPECTED=$(printf '%s' "$MATRIX" | jq -r '.include[].build' | sort)
-          FOUND=$(ls "$IN" | sed -n 's/^captures-//p' | sort)
-          if [ "$EXPECTED" != "$FOUND" ]; then
-            echo "The artifacts are not the builds of the plan"; echo "plan:"; echo "$EXPECTED"; echo "artifacts:"; echo "$FOUND"; exit 1
-          fi
-          for BUILD in $EXPECTED; do
-            echo "$BUILD" | grep -Eq "$BUILD_RE" || { echo "Bad build"; exit 1; }
-            D="$IN/captures-$BUILD"
-            C="$D/captures"
-            grep -qx 'exit=0' "$D/result.txt" || { echo "$BUILD: the capture did not succeed"; exit 1; }
-            [ -d "$C" ] || { echo "$BUILD: no captures"; exit 1; }
-            # Only regular files and directories: a link could point anywhere
-            if [ -n "$(find "$C" -mindepth 1 \( -type l -o ! \( -type f -o -type d \) \) -print -quit)" ]; then
-              echo "$BUILD: the captures hold something that is no file or directory"; exit 1
-            fi
-            (cd "$C" && find . -mindepth 1 -type f | sed 's|^\./||') > "$RUNNER_TEMP/files.txt"
-            if grep -Ev '^[A-Za-z0-9._-]+(/[A-Za-z0-9._-]+)*$' "$RUNNER_TEMP/files.txt" \
-                || grep -E '(^|/)\.' "$RUNNER_TEMP/files.txt"; then
-              echo "$BUILD: a path of the captures is not a plain relative path"; exit 1
-            fi
-            [ -f "$C/spec/capture.json" ] || { echo "$BUILD: no spec capture"; exit 1; }
-            [ "$(du -sm "$C" | cut -f1)" -le 400 ] || { echo "$BUILD: the captures are larger than 400 MB"; exit 1; }
-            # Every leg is a committed build (a build kept by a history check too): all are staged
-            [ -f "data/bds/$BUILD/spec/capture.json" ] || { echo "$BUILD: no committed captures to refresh"; exit 1; }
-            cp -R "$C/." "data/bds/$BUILD/"
-            echo "Staged $(wc -l < "$RUNNER_TEMP/files.txt") files into data/bds/$BUILD"
-          done
-
-      # The third-party behaviour dumps that `behaviour import` ranks below Paletter's own captures. Public repositories,
-      # read as data (their git history is parsed, nothing in them is run), each at the commit the committed
-      # data/behaviour/captures.nbt was built from: the pins of data/behaviour/sources.json, which `behaviour import` checks the checkouts against
-      # (BehaviourSourcesTest keeps this step reading them). The same sources at the same commits give the same bytes. A
-      # partial clone without a checkout: only the files the import reads are fetched
-      - name: Fetch the third-party behaviour dumps
-        run: |
-          fetch() {
-            REPO=$(jq -r --arg s "$1" '.sources[$s].repository' data/behaviour/sources.json)
-            SHA=$(jq -r --arg s "$1" '.sources[$s].commit' data/behaviour/sources.json)
-            echo "$REPO" | grep -Eq '^https://github\.com/[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+\.git$' || { echo "Bad repository for $1: '$REPO'"; exit 1; }
-            echo "$SHA" | grep -Eq '^[0-9a-f]{40}$' || { echo "Bad commit for $1: '$SHA'"; exit 1; }
-            git clone --quiet --filter=blob:none --no-checkout "$REPO" "$2"
-            git -C "$2" update-ref HEAD "$SHA"
-          }
-          fetch CloudburstMC/Data "$RUNNER_TEMP/cloudburst-data"
-          fetch AllayMC/Allay "$RUNNER_TEMP/allay"
-
-      # The sequential half, with no BDS: what `update` does after the captures. Gradle runs one task at a time, as in
-      # the daily check (the API dump compiles what the generator wrote)
-      - name: Infer, generate and report
-        run: |
-          # The experiment marks of the bundled versions from the new experiment records (what update does for its own build)
-          ./gradlew :tools:run --args="experiment-marks"
-          ./gradlew :tools:inferMappings
-          # The behaviour data from the new behaviour dumps, probes and education captures (and the third-party dumps above)
-          ./gradlew :tools:run --args="behaviour import --cloudburst-data $RUNNER_TEMP/cloudburst-data --allay $RUNNER_TEMP/allay"
-          # What the captures show of the code of each build (the committed whitebox.json stays: the binary did not change)
-          ./gradlew :tools:run --args="whitebox-coverage"
-          ./gradlew :tools:generateComponentApi
-          ./gradlew :tools:run --args="voxel-shapes import"
-          # The bundled recipes from the new recipe captures (checkRecipes, part of the build, fails while they are stale)
-          ./gradlew :tools:run --args="recipes-import"
-          # The item variant names from the new Script API dumps (each leg wrote its build's dump, none the names)
-          ./gradlew :tools:run --args="variant-names"
-          ./gradlew :tools:generateConstants
-          # Last: the API dump compiles what both generators wrote
-          ./gradlew :paletter:apiDump
-          # What update fails on: bits no field explains, wire paths nothing classifies, linked fields. Reported in the pull
-          # request instead (the guard below is what blocks); check-mappings --strict prints them
-          if ./gradlew :tools:run --args="check-mappings --strict" > "$RUNNER_TEMP/strict.log" 2>&1; then
-            echo "no residual bits, unclassified wire paths or linked fields" > "$RUNNER_TEMP/strict.txt"
-          else
-            { echo "residual bits, unclassified wire paths or linked fields (check-mappings --strict):"; grep -E '^UNEXPLAINED' "$RUNNER_TEMP/strict.log" | head -n 40; } > "$RUNNER_TEMP/strict.txt"
-          fi
-          # The inference feeds the add-on generator: when it changed the add-on inputs, these captures answer for the
-          # old add-on and the next pass has to capture again, which no pull request may hide
-          if ! git diff --quiet -- data/model/bds-feedback.json data/model/fixtures.json data/model/components.json data/model/bds-keys.json; then
-            mkdir -p "$RUNNER_TEMP/guard"
-            git diff -- data/model > "$RUNNER_TEMP/guard/model.diff"
-            echo "::error::The inference changed the add-on inputs (data/model/bds-feedback.json, fixtures.json, components.json or bds-keys.json), so these captures were made with an add-on that is not the final one. Commit that change and run this workflow again."
-            git diff --stat -- data/model
-            exit 1
-          fi
+          printf '%s' "$MATRIX" > "$RUNNER_TEMP/plan.json"
+          set +e
+          "$TOOLS" recapture assemble --plan "$RUNNER_TEMP/plan.json" --in "$RUNNER_TEMP/in" --out "$RUNNER_TEMP/out" \
+            --fetch-sources "$RUNNER_TEMP/sources" --commit "$SHA"
+          CODE=$?
+          if [ -f "$RUNNER_TEMP/out/report.md" ]; then head -c 60000 "$RUNNER_TEMP/out/report.md" >> "$GITHUB_STEP_SUMMARY"; fi
+          exit $CODE
 
       - name: Upload what the inference changed
         if: failure()
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: recapture-guard-diff
-          path: ${{ runner.temp }}/guard/
+          path: |
+            ${{ runner.temp }}/out/addon-inputs/
+            ${{ runner.temp }}/out/model.diff
           if-no-files-found: ignore
 
-      # What publish reads: the patch of the data paths, and the report
-      - name: Write the patch and the report
+      # The API dump compiles what the generators wrote; then the patch of the data paths, which publish reads
+      - name: Write the patch
         run: |
-          OUT="$RUNNER_TEMP/out"
-          mkdir -p "$OUT"
+          ./gradlew :paletter:apiDump
           git add -A -- $(cat .github/data-paths.txt)
-          git diff --cached --binary --no-renames -- $(cat .github/data-paths.txt) > "$OUT/data.patch"
-          {
-            echo "Every kept BDS build and the newest preview, captured again with the add-on generated from \`$SHA\`."
-            echo
-            echo "| Build | Channel | Verdict of its capture against the committed captures |"
-            echo "|---|---|---|"
-            for BUILD in $(printf '%s' "$MATRIX" | jq -r '.include[].build'); do
-              CHANNEL=$(printf '%s' "$MATRIX" | jq -r --arg b "$BUILD" '.include[] | select(.build == $b) | .channel')
-              R="$RUNNER_TEMP/in/captures-$BUILD/report.md"
-              VERDICT=$( [ -f "$R" ] && grep -m1 -E '^(OK|Changed|Failed): ' "$R" || echo "no verdict" )
-              echo "| $BUILD | $CHANNEL | $VERDICT |"
-            done
-            echo "Mappings: $(head -c 3000 "$RUNNER_TEMP/strict.txt")"
-            echo
-            echo "The patch holds the refreshed captures and what follows from them (mappings, coverage, white-box coverage, generated code). Merge it only with the model change it recaptures."
-            for BUILD in $(printf '%s' "$MATRIX" | jq -r '.include[].build'); do
-              R="$RUNNER_TEMP/in/captures-$BUILD/report.md"
-              if [ -f "$R" ]; then
-                echo
-                echo "<details><summary>BDS $BUILD</summary>"
-                echo
-                head -c 5000 "$R"
-                echo
-                echo "</details>"
-              fi
-            done
-          } | head -c 60000 > "$OUT/report.md"
+          git diff --cached --binary --no-renames -- $(cat .github/data-paths.txt) > "$RUNNER_TEMP/out/data.patch"
 
       - name: Upload the result
         id: result
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: recapture-result
-          path: ${{ runner.temp }}/out/
+          path: |
+            ${{ runner.temp }}/out/report.md
+            ${{ runner.temp }}/out/data.patch
 
   publish:
     needs: [plan, assemble]
