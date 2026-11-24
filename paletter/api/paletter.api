@@ -2636,13 +2636,14 @@ public final class dev.opencollab.paletter.item.ItemFallback {
 }
 
 @Experimental public final class dev.opencollab.paletter.item.ItemOverride {
-    public dev.opencollab.paletter.item.ItemOverride block(org.cloudburstmc.nbt.NbtMap)
+    public dev.opencollab.paletter.item.ItemOverride block(dev.opencollab.paletter.vanilla.BedrockBlockState)
     public dev.opencollab.paletter.item.ItemOverride componentBased(boolean)
+    public dev.opencollab.paletter.item.ItemOverride dataDriven()
+    public dev.opencollab.paletter.item.ItemOverride legacy()
     public dev.opencollab.paletter.item.ItemOverride modifyComponents(dev.opencollab.paletter.item.component.ItemComponent...)
     public dev.opencollab.paletter.item.ItemOverride noBlock()
     public dev.opencollab.paletter.item.RegisteredItem original()
     public dev.opencollab.paletter.item.ItemOverride replaceComponents(dev.opencollab.paletter.item.component.ItemComponent...)
-    public dev.opencollab.paletter.item.ItemOverride version(org.cloudburstmc.protocol.bedrock.data.inventory.ItemVersion)
 }
 
 public final class dev.opencollab.paletter.item.RegisteredItem implements org.cloudburstmc.protocol.bedrock.data.definitions.ItemDefinition {

@@ -9,9 +9,11 @@ import dev.opencollab.paletter.internal.block.BlockStates;
 import dev.opencollab.paletter.internal.component.ItemCompiler;
 import dev.opencollab.paletter.internal.component.WireContext;
 import dev.opencollab.paletter.item.component.ItemComponent;
+import dev.opencollab.paletter.vanilla.BedrockBlockState;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Changes to a vanilla (or earlier layer's) item definition, applied in a layer. Received in
@@ -23,7 +25,7 @@ import java.util.List;
  * layer.overrideItem("minecraft:apple", item -> item.replaceComponents(MaxStackSize.of(3)));
  * // Make the firework rocket data driven and merge onto its current data; whether that stops the client's
  * // own firework boosting is unverified on a client
- * layer.overrideItem("minecraft:firework_rocket", item -> item.version(ItemVersion.DATA_DRIVEN).modifyComponents(MaxStackSize.of(64)));
+ * layer.overrideItem("minecraft:firework_rocket", item -> item.dataDriven().modifyComponents(MaxStackSize.of(64)));
  * }</pre>
  * <p>
  * <b>Experimental.</b> BDS overrides of a vanilla data driven item (such as {@code minecraft:apple}, format 1.26.60)
@@ -60,13 +62,22 @@ public final class ItemOverride {
     }
 
     /**
-     * Sets the item version of the definition, e.g. {@link ItemVersion#DATA_DRIVEN}.
+     * Sends the item as a data driven item (item version {@code DATA_DRIVEN}), as BDS registers an add-on item.
      *
-     * @param version the version to send
      * @return this override
      */
-    public @NonNull ItemOverride version(@NonNull ItemVersion version) {
-        this.version = version;
+    public @NonNull ItemOverride dataDriven() {
+        this.version = ItemVersion.DATA_DRIVEN;
+        return this;
+    }
+
+    /**
+     * Sends the item as a legacy item (item version {@code LEGACY}), as BDS made the feather overridden at format 1.10.
+     *
+     * @return this override
+     */
+    public @NonNull ItemOverride legacy() {
+        this.version = ItemVersion.LEGACY;
         return this;
     }
 
@@ -116,7 +127,7 @@ public final class ItemOverride {
      * @return this override
      */
     public @NonNull ItemOverride replaceComponents(@NonNull ItemComponent... components) {
-        version(ItemVersion.DATA_DRIVEN);
+        dataDriven();
         this.components.clear();
         this.fresh = true;
         return modifyComponents(components);
@@ -124,13 +135,15 @@ public final class ItemOverride {
 
     /**
      * Sets the block this item is sent with. By default, the block is derived from the creative inventory and the palette.
+     * A state the palette does not have leaves the block as it was, with a report warning.
      *
-     * @param state the block state, or null to send the item without a block
+     * @param state the block state
      * @return this override
+     * @throws NullPointerException if the state is null; {@link #noBlock()} sends the item without a block
      */
-    public @NonNull ItemOverride block(@Nullable NbtMap state) {
+    public @NonNull ItemOverride block(@NonNull BedrockBlockState state) {
         this.blockSet = true;
-        this.block = state == null ? null : BlockStates.normalize(state);
+        this.block = BlockStates.normalize(Objects.requireNonNull(state, "state").toNbt());
         return this;
     }
 
@@ -140,7 +153,9 @@ public final class ItemOverride {
      * @return this override
      */
     public @NonNull ItemOverride noBlock() {
-        return block(null);
+        this.blockSet = true;
+        this.block = null;
+        return this;
     }
 
     boolean changesDefinition() {

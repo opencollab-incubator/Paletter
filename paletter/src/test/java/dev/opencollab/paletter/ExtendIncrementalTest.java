@@ -37,20 +37,17 @@ class ExtendIncrementalTest {
             .block(CustomBlock.builder("inc:hidden").item(CustomBlock.BlockItem.NONE).build())
             .item(CustomItem.builder("inc:gem").component(MaxStackSize.of(16)).build())
             .overrideItem("minecraft:apple", item -> item.replaceComponents(MaxStackSize.of(3)))
-            .overrideItem("minecraft:stone", item -> item.block(NbtMap.builder().putString("name", "minecraft:dirt")
-                .putCompound("states", NbtMap.EMPTY).build()))
-            .overrideItem("minecraft:oak_door", item -> item.block(NbtMap.builder().putString("name", "minecraft:not_a_block")
-                .putCompound("states", NbtMap.EMPTY).build()))
+            .overrideItem("minecraft:stone", item -> item.block(BedrockBlocks.DIRT.defaultState()))
+            .overrideItem("minecraft:oak_door", item -> item.block(MISSING.type().defaultState()))
             // Several warnings: their order is the full path's, not the alphabetical one
-            .overrideItem("minecraft:acacia_door", item -> item.block(NbtMap.builder().putString("name", "minecraft:not_a_block")
-                .putCompound("states", NbtMap.EMPTY).build()))
-            .overrideItem("minecraft:stick", item -> item.block(NbtMap.builder().putString("name", "minecraft:not_a_block")
-                .putCompound("states", NbtMap.EMPTY).build()))
-            .overrideItem("minecraft:zombie_spawn_egg", item -> item.block(NbtMap.builder().putString("name", "minecraft:not_a_block")
-                .putCompound("states", NbtMap.EMPTY).build()))
-            .overrideItem("minecraft:bread", item -> item.block(NbtMap.builder().putString("name", "minecraft:not_a_block")
-                .putCompound("states", NbtMap.EMPTY).build()));
+            .overrideItem("minecraft:acacia_door", item -> item.block(MISSING.type().defaultState()))
+            .overrideItem("minecraft:stick", item -> item.block(MISSING.type().defaultState()))
+            .overrideItem("minecraft:zombie_spawn_egg", item -> item.block(MISSING.type().defaultState()))
+            .overrideItem("minecraft:bread", item -> item.block(MISSING.type().defaultState()));
     }
+
+    /** A block no palette has: its states are not in the palette, as a block no layer registered. */
+    private static final CustomBlock MISSING = CustomBlock.builder("minecraft:not_a_block").build();
 
     private static List<DataVersion> versions() {
         return List.of(PALETTER.latest(), PALETTER.versions().getFirst());
