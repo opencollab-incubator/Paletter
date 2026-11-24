@@ -195,6 +195,10 @@ version.
 
 What still happens on first use, and is thread safe (built once under a lock, read without one):
 
+- Once every served palette is compiled, what only compiling uses is dropped (about 2.8 MB). A lookup that needs part of
+  it builds that part again on its first call and keeps it: one that maps a state of an older version forward
+  (`Lookup.RENAMED`, `explain`, `explainUnknown`) the forwarding tables, `Paletter#properties` the properties.
+
 - `Paletter.bundled()` builds the shared instance on its first call: every bundled release with behaviour, kept for the
   life of the JVM. It is for tools and tests; a server builds its own Paletter with the versions it serves.
   `vanilla(version)` and `palette(version)` only take served versions, so nothing else compiles later.

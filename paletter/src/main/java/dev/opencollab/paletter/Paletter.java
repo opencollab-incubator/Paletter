@@ -106,6 +106,8 @@ public final class Paletter {
      * are loaded. Guarded by {@link #internLock}.
      */
     private final Set<DataVersion> wanted = new HashSet<>();
+    /** Whether {@link #compileAll} runs. */
+    private volatile boolean compilingAll;
     /** Whether {@link #releaseCompileData} ran. */
     private volatile boolean compileDataReleased;
     private final BlockInterner blockInterner = new BlockInterner();
@@ -588,6 +590,22 @@ public final class Paletter {
      *                          that compiled were reported
      */
     private void compileAll(boolean sequential) {
+        boolean bundledData = source == PaletteDataSource.bundled();
+        if (bundledData) {
+            Loaders.COMPILING.incrementAndGet();
+        }
+        compilingAll = true;
+        try {
+            compileVersions(sequential);
+        } finally {
+            compilingAll = false;
+            if (bundledData) {
+                Loaders.COMPILING.decrementAndGet();
+            }
+        }
+    }
+
+    private void compileVersions(boolean sequential) {
         // The one file of the data source no palette reads: loaded here too, so verifiedBuilds(...) does not wait either
         if (!versions.isEmpty()) {
             source.verifiedBuilds(versions.getFirst());
@@ -701,13 +719,20 @@ public final class Paletter {
      * bundled data): the properties the data source put into the data of each version, the value sets that forward
      * and resolve states of other versions, and the maps that share blocks and pages between versions.
      * {@link Palette#extend} does not use any of it. The data source and the canonical ids may be shared with other
-     * Paletters over the bundled data: they read or build what they need again.
+     * Paletters over the bundled data: those are kept while another of them compiles. What a later lookup needs is built
+     * again on its first use and kept: the canonical schemas by a lookup that maps a state of an older version forward
+     * ({@link Lookup#RENAMED}, {@code explain}, {@code explainUnknown}), a block's schema by one that adapts a state to a
+     * version, the properties by {@link #properties(BedrockItemType, DataVersion)}.
      */
     private void releaseCompileData() {
         compileDataReleased = true;
         blockInterner.releaseCompileMaps();
+        // What is shared with other Paletters over the bundled data is dropped only while none of them compiles: one that
+        // still compiles would build it again at once
+        boolean shared = source == PaletteDataSource.bundled();
+        boolean othersCompiling = shared && Loaders.COMPILING.get() > (compilingAll ? 1 : 0);
         CanonicalBlocks blocks = canonicalBlocks;
-        if (blocks != null) {
+        if (blocks != null && !(othersCompiling && sharedCanonicals() != null)) {
             blocks.releaseSchemas();
         }
         // A compiled palette's block tables are over those of its vanilla palette: both are cleared
@@ -717,7 +742,9 @@ public final class Paletter {
         for (Palette palette : vanilla.values()) {
             palette.blocks().releaseSchemas();
         }
-        source.releaseProperties();
+        if (!othersCompiling) {
+            source.releaseProperties();
+        }
     }
 
     /**
@@ -1019,6 +1046,8 @@ public final class Paletter {
     private static final class Loaders {
         private static final Paletter BUNDLED = new Paletter(builder());
         private static final Paletter WITH_PREVIEWS = new Paletter(builder().previews(true));
+        /** How many Paletters over the bundled data are in {@link #compileAll} now. */
+        private static final AtomicInteger COMPILING = new AtomicInteger();
     }
 
     // ---- Properties ----
