@@ -120,8 +120,11 @@ class ResilienceTest {
     @Test
     void aDuplicateItemThrows() {
         Palette base = PALETTER.palette(LATEST.protocolVersion());
-        CustomItem stick = CustomItem.builder("minecraft:stick").component(MaxStackSize.of(4)).build();
-        assertRejected(base, PaletteLayer.builder("items").item(stick).build(), "minecraft:stick", "minecraft:stick");
+        CustomItem twin = CustomItem.builder("example:twin").component(MaxStackSize.of(4)).build();
+        assertRejected(base, PaletteLayer.builder("items").item(twin).item(twin.toBuilder().build()).build(), "example:twin", "example:twin");
+        assertThrows(IllegalArgumentException.class, () -> CustomItem.builder("minecraft:stick"));
+        assertThrows(IllegalArgumentException.class, () -> CustomBlock.builder("no_namespace"));
+        assertThrows(IllegalArgumentException.class, () -> CustomBlock.builder("a:b:c"));
     }
 
     @Test

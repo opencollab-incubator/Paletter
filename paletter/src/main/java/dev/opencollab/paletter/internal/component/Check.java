@@ -69,6 +69,28 @@ public final class Check {
         }
     }
 
+    /**
+     * The identifier of a custom item or block: {@code namespace:name}, both parts non-empty, no second {@code :} and no
+     * white space. BDS rejects custom items in the {@code minecraft} namespace (vanilla items are changed with an override).
+     *
+     * @param item whether it is an item's
+     * @return the identifier
+     */
+    public static @NonNull String customIdentifier(@NonNull String identifier, boolean item) {
+        Objects.requireNonNull(identifier, "identifier");
+        int colon = identifier.indexOf(':');
+        if (colon <= 0 || colon == identifier.length() - 1 || identifier.indexOf(':', colon + 1) >= 0
+            || identifier.chars().anyMatch(c -> Character.isWhitespace(c) || Character.isISOControl(c))) {
+            throw new IllegalArgumentException("A custom " + (item ? "item" : "block") + " identifier is namespace:name, was '"
+                + identifier + "'");
+        }
+        if (item && identifier.substring(0, colon).equals("minecraft")) {
+            throw new IllegalArgumentException("BDS rejects custom items in the minecraft namespace (override a vanilla item"
+                + " instead): " + identifier);
+        }
+        return identifier;
+    }
+
     /** A value BDS takes only in whole steps (degrees in quarter turns): a multiple of {@code step}. */
     public static void multipleOf(@NonNull String field, double value, double step) {
         double steps = value / step;

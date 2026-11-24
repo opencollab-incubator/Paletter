@@ -311,4 +311,15 @@ class CustomContentTest {
             .permutation("q.block_state('example:on') && query.block_state('minecraft:cardinal_direction') == 'north'", LightEmission.of(3))
             .build();
     }
+
+    @Test
+    void thePropertyListFollowsTheBlockIds() {
+        // Upper case compares '_' after letters: b_x has the lower block id, as BDS numbers the files
+        Palette palette = Palettes.palette(PALETTER.latest().protocolVersion(), PaletteLayer.builder("order")
+            .block(CustomBlock.builder("example:block_x").build()).block(CustomBlock.builder("example:b_x").build()).build());
+        List<String> names = palette.blocks().blockProperties().stream().map(BlockPropertyData::getName)
+            .filter(name -> name.startsWith("example:")).toList();
+        assertEquals(List.of("example:b_x", "example:block_x"), names);
+        assertTrue(palette.blocks().customBlockId("example:b_x") < palette.blocks().customBlockId("example:block_x"));
+    }
 }

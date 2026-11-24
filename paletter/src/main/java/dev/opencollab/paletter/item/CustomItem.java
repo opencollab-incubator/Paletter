@@ -1,6 +1,7 @@
 package dev.opencollab.paletter.item;
 
 import dev.opencollab.paletter.annotation.Internal;
+import dev.opencollab.paletter.internal.component.Check;
 import dev.opencollab.paletter.internal.item.ItemVariant;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
@@ -103,6 +104,8 @@ public final class CustomItem {
      * @param identifier the item identifier, e.g. {@code geysermc:furnace_minecart}
      * @return a new builder
      * @throws NullPointerException if the identifier is null
+     * @throws IllegalArgumentException if it is not {@code namespace:name}, or in the {@code minecraft} namespace, which BDS
+     *         rejects for custom items
      */
     public static @NonNull Builder builder(@NonNull String identifier) {
         return new Builder(identifier);
@@ -206,7 +209,7 @@ public final class CustomItem {
         private CreativePlacement creative = CreativePlacement.DEFAULT;
 
         private Builder(String identifier) {
-            this.identifier = Objects.requireNonNull(identifier);
+            this.identifier = Check.customIdentifier(identifier, true);
         }
 
         /**

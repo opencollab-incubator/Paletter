@@ -15,6 +15,7 @@ import dev.opencollab.paletter.creative.CreativeCategory;
 import dev.opencollab.paletter.creative.CreativePlacement;
 import dev.opencollab.paletter.item.CustomItem;
 import dev.opencollab.paletter.item.component.BlockPlacer;
+import dev.opencollab.paletter.internal.component.Check;
 import dev.opencollab.paletter.internal.component.TraitStates;
 import dev.opencollab.paletter.vanilla.BedrockBlockType;
 import dev.opencollab.paletter.vanilla.BedrockItemType;
@@ -483,6 +484,7 @@ public final class CustomBlock {
      * @param identifier the block identifier, e.g. {@code example:lamp}
      * @return a builder with the {@link BlockItem#SIMPLE simple} block item and no creative placement
      * @throws NullPointerException if {@code identifier} is null
+     * @throws IllegalArgumentException if it is not {@code namespace:name}
      */
     public static @NonNull Builder builder(@NonNull String identifier) {
         return new Builder(identifier);
@@ -665,7 +667,7 @@ public final class CustomBlock {
         private final Map<String, Object> defaultStates = new LinkedHashMap<>();
 
         private Builder(String identifier) {
-            this.identifier = Objects.requireNonNull(identifier);
+            this.identifier = Check.customIdentifier(identifier, false);
         }
 
         /**

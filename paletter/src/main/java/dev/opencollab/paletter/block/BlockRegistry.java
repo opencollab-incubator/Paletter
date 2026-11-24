@@ -224,8 +224,8 @@ public final class BlockRegistry implements DefinitionRegistry<BlockDefinition> 
             encoded.add(kept != null ? kept : new BlockPropertyData(block.identifier(), BlockCompiler.propertyData(block, blockId,
                 (isEarlier ? earlier : context).minEngineVersion(engineVersions.get(block.identifier())))));
         }
-        // The property list BDS sends follows its block ids too
-        encoded.sort(java.util.Comparator.comparing(BlockPropertyData::getName).reversed());
+        // The property list follows the block ids, in the same order (BlockIdOrder, not plain String order)
+        encoded.sort(java.util.Comparator.comparing(BlockPropertyData::getName, dev.opencollab.paletter.internal.BlockIdOrder.DESCENDING));
         Map<String, Origin> origins = new HashMap<>(table.origins);
         additional.forEach(block -> origins.put(block.identifier(), Origin.custom(source)));
         // Hashed ids of the states here do not change (a collision that would change them throws): only the added states get a
