@@ -10388,19 +10388,20 @@
           ],
           "fields": {
             "neighbor_directions": {
-              "accepted": 8,
-              "rejected": 4,
+              "accepted": 9,
+              "rejected": 5,
               "rejectedValues": [
                 "array<string>:[]",
+                "array<string>:[7x]",
                 "array<string>:[wrong type]",
                 "array<string>:[all,up]",
                 "array<string>:[all reversed]"
               ],
               "bdsErrors": [
                 "neighbor_directions: expected object with at least 1 elements",
+                "neighbor_directions: too many input elements, expected no more than 6",
                 "neighbor_directions[0]: This value is bound to Neighbor Change Direction and expects one of the following strings: down, up, north, ... (4 others)",
-                "[Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_neighbor_change_12.json | The all neighbor direction must be used alone",
-                "neighbor_directions: too many input elements, expected no more than 6"
+                "[Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_neighbor_change_14.json | The all neighbor direction must be used alone"
               ]
             }
           }

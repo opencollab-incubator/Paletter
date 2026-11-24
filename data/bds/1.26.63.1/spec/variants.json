@@ -109265,6 +109265,62 @@
     "component": "block:minecraft:neighbor_change",
     "role": "field",
     "path": "neighbor_directions",
+    "label": "array<string>:[6x]",
+    "value": [
+      "all",
+      "all",
+      "all",
+      "all",
+      "all",
+      "all"
+    ],
+    "json": {
+      "neighbor_directions": [
+        "all",
+        "all",
+        "all",
+        "all",
+        "all",
+        "all"
+      ]
+    }
+  },
+  {
+    "identifier": "paletter:b_neighbor_change_5",
+    "kind": "block",
+    "file": "blocks/b_neighbor_change_5.json",
+    "component": "block:minecraft:neighbor_change",
+    "role": "field",
+    "path": "neighbor_directions",
+    "label": "array<string>:[7x]",
+    "value": [
+      "all",
+      "all",
+      "all",
+      "all",
+      "all",
+      "all",
+      "all"
+    ],
+    "json": {
+      "neighbor_directions": [
+        "all",
+        "all",
+        "all",
+        "all",
+        "all",
+        "all",
+        "all"
+      ]
+    }
+  },
+  {
+    "identifier": "paletter:b_neighbor_change_6",
+    "kind": "block",
+    "file": "blocks/b_neighbor_change_6.json",
+    "component": "block:minecraft:neighbor_change",
+    "role": "field",
+    "path": "neighbor_directions",
     "label": "array<string>:[wrong type]",
     "value": [
       1
@@ -109276,9 +109332,9 @@
     }
   },
   {
-    "identifier": "paletter:b_neighbor_change_5",
+    "identifier": "paletter:b_neighbor_change_7",
     "kind": "block",
-    "file": "blocks/b_neighbor_change_5.json",
+    "file": "blocks/b_neighbor_change_7.json",
     "component": "block:minecraft:neighbor_change",
     "role": "field",
     "path": "neighbor_directions",
@@ -109293,9 +109349,9 @@
     }
   },
   {
-    "identifier": "paletter:b_neighbor_change_6",
+    "identifier": "paletter:b_neighbor_change_8",
     "kind": "block",
-    "file": "blocks/b_neighbor_change_6.json",
+    "file": "blocks/b_neighbor_change_8.json",
     "component": "block:minecraft:neighbor_change",
     "role": "field",
     "path": "neighbor_directions",
@@ -109310,9 +109366,9 @@
     }
   },
   {
-    "identifier": "paletter:b_neighbor_change_7",
+    "identifier": "paletter:b_neighbor_change_9",
     "kind": "block",
-    "file": "blocks/b_neighbor_change_7.json",
+    "file": "blocks/b_neighbor_change_9.json",
     "component": "block:minecraft:neighbor_change",
     "role": "field",
     "path": "neighbor_directions",
@@ -109327,9 +109383,9 @@
     }
   },
   {
-    "identifier": "paletter:b_neighbor_change_8",
+    "identifier": "paletter:b_neighbor_change_10",
     "kind": "block",
-    "file": "blocks/b_neighbor_change_8.json",
+    "file": "blocks/b_neighbor_change_10.json",
     "component": "block:minecraft:neighbor_change",
     "role": "field",
     "path": "neighbor_directions",
@@ -109344,9 +109400,9 @@
     }
   },
   {
-    "identifier": "paletter:b_neighbor_change_9",
+    "identifier": "paletter:b_neighbor_change_11",
     "kind": "block",
-    "file": "blocks/b_neighbor_change_9.json",
+    "file": "blocks/b_neighbor_change_11.json",
     "component": "block:minecraft:neighbor_change",
     "role": "field",
     "path": "neighbor_directions",
@@ -109361,9 +109417,9 @@
     }
   },
   {
-    "identifier": "paletter:b_neighbor_change_10",
+    "identifier": "paletter:b_neighbor_change_12",
     "kind": "block",
-    "file": "blocks/b_neighbor_change_10.json",
+    "file": "blocks/b_neighbor_change_12.json",
     "component": "block:minecraft:neighbor_change",
     "role": "field",
     "path": "neighbor_directions",
@@ -109378,9 +109434,9 @@
     }
   },
   {
-    "identifier": "paletter:b_neighbor_change_11",
+    "identifier": "paletter:b_neighbor_change_13",
     "kind": "block",
-    "file": "blocks/b_neighbor_change_11.json",
+    "file": "blocks/b_neighbor_change_13.json",
     "component": "block:minecraft:neighbor_change",
     "role": "field",
     "path": "neighbor_directions",
@@ -109395,9 +109451,9 @@
     }
   },
   {
-    "identifier": "paletter:b_neighbor_change_12",
+    "identifier": "paletter:b_neighbor_change_14",
     "kind": "block",
-    "file": "blocks/b_neighbor_change_12.json",
+    "file": "blocks/b_neighbor_change_14.json",
     "component": "block:minecraft:neighbor_change",
     "role": "field",
     "path": "neighbor_directions",
@@ -109414,9 +109470,9 @@
     }
   },
   {
-    "identifier": "paletter:b_neighbor_change_13",
+    "identifier": "paletter:b_neighbor_change_15",
     "kind": "block",
-    "file": "blocks/b_neighbor_change_13.json",
+    "file": "blocks/b_neighbor_change_15.json",
     "component": "block:minecraft:neighbor_change",
     "role": "field",
     "path": "neighbor_directions",
@@ -109443,9 +109499,9 @@
     }
   },
   {
-    "identifier": "paletter:b_neighbor_change_14",
+    "identifier": "paletter:b_neighbor_change_16",
     "kind": "block",
-    "file": "blocks/b_neighbor_change_14.json",
+    "file": "blocks/b_neighbor_change_16.json",
     "component": "block:minecraft:neighbor_change",
     "role": "field",
     "path": "neighbor_directions",

@@ -40,8 +40,8 @@
       "protocol": 2225,
       "windowProtocol": 2225,
       "dataVersion": "26.60",
-      "variants": 4222,
-      "accepted": 3244,
+      "variants": 4224,
+      "accepted": 3245,
       "firstCustomBlockId": 10000,
       "blockItemIdPlusBlockId": 255
     },
@@ -52,8 +52,8 @@
       "windowProtocol": 2259,
       "dataVersion": "26.70",
       "preview": "26.70",
-      "variants": 4084,
-      "accepted": 3169,
+      "variants": 4086,
+      "accepted": 3170,
       "firstCustomBlockId": 10000,
       "blockItemIdPlusBlockId": 255
     }
@@ -21723,8 +21723,8 @@
             2259
           ],
           "variants": {
-            "accepted": 9,
-            "rejected": 4
+            "accepted": 10,
+            "rejected": 5
           },
           "wire": [],
           "status": "server-only",

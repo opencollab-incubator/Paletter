@@ -20,6 +20,11 @@
       "method": "The light next to a custom block that sets no light_emission is 0, as next to stone; next to light_emission 15 it is 14. An emission of 1 would light nothing next to it either, so 0 is the value that lights nothing."
     },
     {
+      "key": "block:explosion_resistance",
+      "value": 0,
+      "method": "Destroyed beside explosions (power 4) at distance 7: a custom block that sets no resistance 12/48, the same as explosion_resistance 0 and more often than the others (Fisher's exact test, against each: dirt 1/48 p=0.002; sand 2/48 p=0.007; explosion_resistance_0 8/48 p=0.452; explosion_resistance_3 0/48 p<0.001). The unit is the component's."
+    },
+    {
       "key": "block:collision_shape",
       "value": [[0.0,0.0,0.0,1.0,1.0,1.0]],
       "method": "Bodies pushed at a custom block that sets no collision_box from the four sides stopped at x 0 to 1 and z 0 to 1 exactly as at stone (bodies 0.5 tall level with its bottom half), and a body dropped onto it landed on its top, 1 above its bottom, as on stone (a block with collision_box false let it fall through)."
@@ -40,9 +45,6 @@
       "method": "A body that can climb, at the feet of a custom block that sets no component: Entity.isClimbing was false, as in stone and air (and true in a ladder and a vine). No add-on component sets it."
     }
   ],
-  "unverified_defaults": {
-    "block:explosion_resistance": "Explosion resistance of probe:plain is not decided: against minecraft:dirt p = 0.030527108190639966 (minecraft:dirt 1/48, minecraft:sand 0/48, probe:plain 8/48, probe:explosion_resistance_0 14/48, probe:destructible_by_explosion 20/48, probe:explosion_resistance_3 0/48)"
-  },
   "friction": {
     "method": "Entity speed loss per tick (median over the slide) divided by 0.91, 3 decimals; the floor of every lane is a block of one kind",
     "engine_friction_is": "1 - the value of minecraft:friction (every probed value, within 0.002)",
