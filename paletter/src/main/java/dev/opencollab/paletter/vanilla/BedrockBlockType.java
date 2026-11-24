@@ -188,13 +188,18 @@ public final class BedrockBlockType {
     }
 
     /**
-     * Plumbing of {@link dev.opencollab.paletter.Palette}.
+     * Finds a state of this type by its values, without a palette: the inverse of {@link BedrockBlockState#values()},
+     * so {@code type.stateOf(state.values())} is {@code state}. For a vanilla type these are the states of the newest
+     * bundled release (loads the data); {@link dev.opencollab.paletter.Palette#blockState(String, Map,
+     * dev.opencollab.paletter.Lookup)} finds those of a palette's version.
      *
-     * @param values the state values by state name
-     * @return the state with exactly these values (see {@link BedrockBlockState#values()}), or null if the block has no
-     *         such state: a missing or extra name, a value of another type or one the block does not have
+     * @param values the state values by state name: {@link Boolean}, {@link Integer} or {@link String}, every state of
+     *               the block
+     * @return the state with exactly these values, or null if the block has no such state: a missing or extra name, a
+     *         value of another type or one the block does not have
+     * @throws NullPointerException if the values are null
+     * @since 1.0.0
      */
-    @Internal
     public @Nullable BedrockBlockState stateOf(@NonNull Map<String, ?> values) {
         BlockTypeLayout layout = layout();
         if (values.size() != layout.properties.length) {

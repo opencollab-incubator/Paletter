@@ -4170,6 +4170,7 @@ public final class dev.opencollab.paletter.vanilla.BedrockBlockType {
     public dev.opencollab.paletter.vanilla.BedrockBlockType resolved()
     public dev.opencollab.paletter.vanilla.BedrockBlockType$StateBuilder state()
     public int stateCount()
+    public dev.opencollab.paletter.vanilla.BedrockBlockState stateOf(java.util.Map<java.lang.String, ?>)
     public java.util.List<dev.opencollab.paletter.vanilla.BedrockBlockState> states()
     public java.lang.String toString()
     public <T> java.util.List<T> values(dev.opencollab.paletter.vanilla.BedrockState<T>)
