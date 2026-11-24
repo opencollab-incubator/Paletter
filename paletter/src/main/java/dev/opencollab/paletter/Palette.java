@@ -189,16 +189,6 @@ public final class Palette {
     }
 
     /**
-     * Copies this palette with another report, sharing everything else.
-     *
-     * @param report the report of the copy
-     * @return this palette with another report, sharing everything else
-     */
-    Palette withReport(PaletteReportBuilder report) {
-        return new Palette(data, layers, blocks, items, creativeLayout, creative, report, ordering, gating, behaviourData, shapes, this);
-    }
-
-    /**
      * The voxel shapes of a palette and what they were compiled from.
      *
      * @param vanilla the vanilla shapes of the palette's version

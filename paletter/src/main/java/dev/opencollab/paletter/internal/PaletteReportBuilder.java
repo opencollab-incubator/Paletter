@@ -1,6 +1,7 @@
 package dev.opencollab.paletter.internal;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
 import dev.opencollab.paletter.PaletteReport;
 import dev.opencollab.paletter.data.DataVersion;
 import dev.opencollab.paletter.vanilla.BedrockBlockType;
@@ -21,12 +22,20 @@ public final class PaletteReportBuilder {
     private final Set<BedrockBlockType> unknownBlocks = new LinkedHashSet<>();
     private final Set<BedrockItemVariant> unknownItems = new LinkedHashSet<>();
 
-    public void info(@NonNull String source, @NonNull String message) {
-        entries.add(new PaletteReport.Entry(PaletteReport.Level.INFO, source, message));
+    /**
+     * @param code a code constant of {@link PaletteReport}
+     * @param subject the identifier the entry is about, or null
+     */
+    public void info(@NonNull String source, @NonNull String code, @Nullable String subject, @NonNull String message) {
+        entries.add(PaletteReport.Entry.of(PaletteReport.Level.INFO, source, code, subject, message));
     }
 
-    public void warn(@NonNull String source, @NonNull String message) {
-        entries.add(new PaletteReport.Entry(PaletteReport.Level.WARNING, source, message));
+    /**
+     * @param code a code constant of {@link PaletteReport}
+     * @param subject the identifier the entry is about, or null
+     */
+    public void warn(@NonNull String source, @NonNull String code, @Nullable String subject, @NonNull String message) {
+        entries.add(PaletteReport.Entry.of(PaletteReport.Level.WARNING, source, code, subject, message));
     }
 
     public void unknownBlocks(@NonNull Collection<BedrockBlockType> types) {

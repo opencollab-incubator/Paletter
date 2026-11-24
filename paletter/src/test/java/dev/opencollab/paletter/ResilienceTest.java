@@ -14,6 +14,9 @@ import dev.opencollab.paletter.block.CustomBlock;
 import dev.opencollab.paletter.block.VoxelShape;
 import dev.opencollab.paletter.data.DataVersion;
 import dev.opencollab.paletter.internal.block.BlockStates;
+import dev.opencollab.paletter.creative.CreativeCategory;
+import dev.opencollab.paletter.creative.CreativePlacement;
+import dev.opencollab.paletter.creative.ItemMatcher;
 import dev.opencollab.paletter.item.CustomItem;
 import dev.opencollab.paletter.item.ItemRegistry;
 import dev.opencollab.paletter.item.component.MaxStackSize;
@@ -197,13 +200,29 @@ class ResilienceTest {
         PaletteReport note = reports.get(1);
         assertEquals(1, note.entries().size());
         assertEquals(PaletteReport.Level.INFO, note.entries().getFirst().level());
-        assertTrue(note.entries().getFirst().message().contains("newer than the newest bundled data"));
-        assertTrue(palette.report().warnings().isEmpty());
-        assertEquals(note.entries().getFirst(), palette.report().entries().getLast());
-        // Once per palette, however often it is asked for
-        assertSame(palette, paletter.palette(newer));
-        paletter.palette(LATEST.protocolVersion());
+        assertEquals(PaletteReport.NEWER_PROTOCOL, note.entries().getFirst().code());
+        assertTrue(note.entries().getFirst().message().contains("newer than the newest data"));
+        // The same palette as for the newest data's protocol, so its sessions share extensions; noted once
+        assertSame(paletter.palette(LATEST.protocolVersion()), palette);
+        assertSame(palette, paletter.palette(newer + 1));
         assertEquals(2, reports.size());
+    }
+
+    @Test
+    void failOnMakesEntriesFatal() {
+        PaletteLayer anchored = PaletteLayer.builder("anchored")
+            .item(CustomItem.builder("fail:gem").menuCategory(CreativeCategory.ITEMS)
+                .creativePlacement(CreativePlacement.after(ItemMatcher.id("fail:nothing"))).build())
+            .build();
+        Paletter lenient = Paletter.builder().versions(LATEST::equals).layer(anchored).build();
+        PaletteReport.Entry entry = lenient.palette(LATEST).report().warnings().stream()
+            .filter(warning -> warning.code().equals(PaletteReport.ANCHOR_UNMATCHED)).findFirst().orElseThrow();
+        assertEquals("fail:gem", entry.subject());
+        assertEquals("anchored", entry.source());
+        PaletteException strict = assertThrows(PaletteException.class, () -> Paletter.builder().versions(LATEST::equals).layer(anchored)
+            .failOn(warning -> warning.level() == PaletteReport.Level.WARNING).build());
+        assertEquals(LATEST, strict.version());
+        assertEquals("fail:gem", strict.identifier());
     }
 
     @Test

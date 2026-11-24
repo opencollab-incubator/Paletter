@@ -547,7 +547,13 @@ still be extended by another layer. Duplicate identifiers (blocks, items, voxel 
 are rejected, across layers and within one. `PaletteException#version()` is the data version, `#layer()` the id of the layer
 and `#identifier()` the content it is about (each null when it is not about one). The message names them. A configuration
 that is wrong in itself (a version that is not served, a predicate that serves none) is an `IllegalArgumentException`. `PaletteReport` also
-lists what was adapted, replaced or dropped per version. A report never changes (a palette extended with a layer has a new
+lists what was adapted, replaced or dropped per version: each `PaletteReport.Entry` has a level, a `code()` to filter by
+(the code constants of `PaletteReport`, such as `ANCHOR_UNMATCHED`; a later release may add codes), the `subject()` it is
+about (an identifier, or null) and a message for people. `Paletter.Builder#reports` gets the report of every palette the
+Paletter compiles; the default logs the entries to the `System.Logger` `dev.opencollab.paletter` (warnings at `WARNING`, the
+rest at `DEBUG`). `Paletter.Builder#failOn(predicate)` makes matching entries fatal: `build()` throws a `PaletteException`.
+A protocol newer than the newest data gets the newest data's palette itself, and the consumer one note
+(`NEWER_PROTOCOL`). A report never changes (a palette extended with a layer has a new
 one) and knows its `version()`; `unknownBlocks()` (block types) and `unknownItems()` (item variants, so a missing aux is
 exact) are the content of the newest data that the
 version lacks and no specific fallback covers (a default fallback does not count; content behind a disabled experiment or

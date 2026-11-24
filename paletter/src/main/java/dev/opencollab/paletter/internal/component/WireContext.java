@@ -1,5 +1,6 @@
 package dev.opencollab.paletter.internal.component;
 
+import dev.opencollab.paletter.PaletteReport;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.cloudburstmc.nbt.NbtMap;
@@ -67,7 +68,7 @@ public final class WireContext {
     /** A version newer than every capture gets the newest observed shape: said once per context, not silently. */
     private static void extrapolated(DataVersion version, PaletteReportBuilder report, String source) {
         if (version.protocolVersion() > ComponentIndex.NEWEST_CAPTURED_PROTOCOL) {
-            report.info(source, "custom item and block components of " + version + " are encoded with the shape observed at protocol "
+            report.info(source, PaletteReport.UNCAPTURED_PROTOCOL, null, "custom item and block components of " + version + " are encoded with the shape observed at protocol "
                 + ComponentIndex.NEWEST_CAPTURED_PROTOCOL + ", the newest captured; " + version + " is newer and was not captured");
         }
     }
@@ -179,13 +180,13 @@ public final class WireContext {
      * Reports a value that is left out of this version.
      */
     public void drop(@NonNull String component, @NonNull String message) {
-        report.warn(source, subject + ": " + component + " " + message + " in " + version + "; left out");
+        report.warn(source, PaletteReport.COMPONENT_CHANGED, subject.isEmpty() ? null : subject, subject + ": " + component + " " + message + " in " + version + "; left out");
     }
 
     /**
      * Reports a value that is sent, but not as it was given ({@code message} says as what).
      */
     public void changed(@NonNull String component, @NonNull String message) {
-        report.warn(source, subject + ": " + component + " " + message + " in " + version);
+        report.warn(source, PaletteReport.COMPONENT_CHANGED, subject.isEmpty() ? null : subject, subject + ": " + component + " " + message + " in " + version);
     }
 }

@@ -1,5 +1,6 @@
 package dev.opencollab.paletter.item;
 
+import dev.opencollab.paletter.PaletteReport;
 import dev.opencollab.paletter.Origin;
 import dev.opencollab.paletter.Palette;
 import dev.opencollab.paletter.internal.behaviour.Behaviour;
@@ -1390,7 +1391,7 @@ public final class ItemRegistry implements DefinitionRegistry<ItemDefinition> {
                     if (override != NO_BLOCK) {
                         block = blocks.resolve(override).block();
                         if (block == null) {
-                            report.warn("items", "Block override " + override + " of " + identifier + " does not exist in " + version);
+                            report.warn("items", PaletteReport.OVERRIDE_BLOCK_MISSING, identifier, "Block override " + override + " of " + identifier + " does not exist in " + version);
                         }
                     }
                 } else if (placed != null) {

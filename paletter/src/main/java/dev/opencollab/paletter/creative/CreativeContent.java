@@ -1,5 +1,6 @@
 package dev.opencollab.paletter.creative;
 
+import dev.opencollab.paletter.PaletteReport;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.cloudburstmc.protocol.bedrock.data.inventory.CreativeItemData;
@@ -136,7 +137,7 @@ public final class CreativeContent {
             for (BedrockItemStack stack : stacks) {
                 ItemData data = items.toItemData(stack);
                 if (data == null) {
-                    report.info("creative", "Left out " + stack + (name.isEmpty() ? "" : " from group " + name)
+                    report.info("creative", PaletteReport.CREATIVE_LEFT_OUT, stack.type().identifier(), "Left out " + stack + (name.isEmpty() ? "" : " from group " + name)
                         + ": the item does not exist in " + items.version());
                     continue;
                 }
@@ -145,7 +146,7 @@ public final class CreativeContent {
             }
             if (resolved.isEmpty()) {
                 if (!name.isEmpty()) {
-                    report.info("creative", "Left out group " + name + ": none of its stacks exist in " + items.version());
+                    report.info("creative", PaletteReport.CREATIVE_LEFT_OUT, name, "Left out group " + name + ": none of its stacks exist in " + items.version());
                 }
                 return;
             }

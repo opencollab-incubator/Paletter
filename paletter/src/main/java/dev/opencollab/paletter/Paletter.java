@@ -36,6 +36,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
@@ -89,7 +90,9 @@ public final class Paletter {
     private final Map<DataVersion, Palette> compiled = new ConcurrentHashMap<>();
     private final Map<DataVersion, VanillaData> data = new ConcurrentHashMap<>();
     private final Map<DataVersion, Palette> vanilla = new ConcurrentHashMap<>();
-    private final Map<Palette, Palette> newerThanData = new ConcurrentHashMap<>();
+    /** Whether the note for a protocol newer than the data was reported. */
+    private final AtomicBoolean newerThanDataNoted = new AtomicBoolean();
+    private final Predicate<PaletteReport.Entry> failOn;
     private final Object internLock = new Object();
     /** Equal states and component data of the versions loaded so far, see {@link #intern}; dropped when all are loaded. */
     private @Nullable Map<NbtMap, NbtMap> interned = new HashMap<>();
@@ -120,6 +123,7 @@ public final class Paletter {
         }
         this.creativeOrdering = builder.creativeOrdering;
         this.reports = builder.reports;
+        this.failOn = builder.failOn;
         this.globalLayers = List.copyOf(builder.layers);
     }
 
@@ -490,8 +494,9 @@ public final class Paletter {
     /**
      * The palette of a protocol version: vanilla content plus this instance's layers, compiled once per data version
      * and cached. Session content goes on top of it with {@link Palette#extend(PaletteLayer)}. A protocol newer than all
-     * data gets the newest data, with an info entry in the report; content the client has that the data lacks is then
-     * missing.
+     * data gets the palette of the newest data, the same instance as for that version's protocol; content the client has
+     * that the data lacks is then missing, which the first such call reports to the {@link Builder#reports reports}
+     * consumer ({@link PaletteReport#NEWER_PROTOCOL}).
      *
      * @param protocolVersion a Bedrock protocol version number
      * @return the palette serving it, never null
@@ -503,26 +508,14 @@ public final class Paletter {
     public @NonNull Palette palette(int protocolVersion) {
         DataVersion version = version(protocolVersion);
         Palette palette = compiled(version);
-        if (protocolVersion > version.protocolVersion() && version.equals(latest())) {
-            // Newer than all data: the latest data is used, and content the client has may be missing
-            String message = "The requested protocol is newer than the newest bundled data (" + version + ", protocol "
-                + version.protocolVersion() + "); its data is used, so content the client has that this version lacks is missing";
-            boolean[] created = {false};
-            Palette noted = newerThanData.computeIfAbsent(palette, p -> {
-                created[0] = true;
-                PaletteReportBuilder report = new PaletteReportBuilder();
-                report.addAll(p.report());
-                report.info("paletter", message);
-                return p.withReport(report);
-            });
-            if (created[0]) {
-                // Reported outside the computation, so the consumer may use this Paletter; only the note: the rest of
-                // the report went to the consumer with the palette itself
-                PaletteReportBuilder note = new PaletteReportBuilder();
-                note.info("paletter", message);
-                reports.accept(note.build(palette.version()));
-            }
-            return noted;
+        if (protocolVersion > version.protocolVersion() && version.equals(latest()) && newerThanDataNoted.compareAndSet(false, true)) {
+            // Newer than all data: the latest data is used, and content the client has may be missing. The palette is the
+            // same as for the latest protocol, so sessions of both share its extensions: the note goes to the consumer only
+            PaletteReportBuilder note = new PaletteReportBuilder();
+            note.info("paletter", PaletteReport.NEWER_PROTOCOL, null, "The requested protocol " + protocolVersion
+                + " is newer than the newest data (" + version + ", protocol " + version.protocolVersion()
+                + "); its data is used, so content the client has that this version lacks is missing");
+            reports.accept(note.build(palette.version()));
         }
         return palette;
     }
@@ -655,6 +648,11 @@ public final class Paletter {
     /** Outside computeIfAbsent: a consumer that asks for another palette would update the map recursively. */
     private void reported(Palette palette) {
         reports.accept(palette.report());
+        List<PaletteReport.Entry> failing = palette.report().entries().stream().filter(failOn).toList();
+        if (!failing.isEmpty()) {
+            throw new PaletteException("The report of " + palette.version() + " has entries the Paletter fails on (failOn): "
+                + failing, palette.version(), null, failing.getFirst().subject(), null);
+        }
         if (!compileDataReleased && compiled.keySet().containsAll(versions)) {
             releaseCompileData();
         }
@@ -735,8 +733,8 @@ public final class Paletter {
         private Fallbacks fallbacks = Fallbacks.UNKNOWN;
         private final VanillaContent vanillaContent = new VanillaContent();
         private CreativeOrdering creativeOrdering = CreativeOrdering.BDS;
-        private Consumer<PaletteReport> reports = report -> {
-        };
+        private Consumer<PaletteReport> reports = Builder::log;
+        private Predicate<PaletteReport.Entry> failOn = entry -> false;
         private final List<PaletteLayer> layers = new ArrayList<>();
 
         private Builder() {
@@ -870,14 +868,44 @@ public final class Paletter {
          * Sets where the compilation reports go.
          *
          * @param reports called once for each palette compiled (with this instance's layers applied), with its report, and
-         *                once with a one entry report for a palette served for a protocol newer than the newest data (that
-         *                note has no {@code unknownBlocks} or {@code unknownItems}).
-         *                Called outside any internal lock: it may use this Paletter
+         *                once with a one entry report for the first palette served for a protocol newer than the newest
+         *                data ({@link PaletteReport#NEWER_PROTOCOL}; that note has no {@code unknownBlocks} or
+         *                {@code unknownItems}). Called outside any internal lock: it may use this Paletter. The default
+         *                logs each entry to the {@link System.Logger} {@code dev.opencollab.paletter}: warnings at
+         *                {@code WARNING}, the rest at {@code DEBUG}
          * @return this builder
+         * @since 1.0.0
          */
         public @NonNull Builder reports(@NonNull Consumer<PaletteReport> reports) {
             this.reports = Objects.requireNonNull(reports);
             return this;
+        }
+
+        /**
+         * Makes report entries fatal: {@link #build()} throws a {@link PaletteException} for a palette whose report has an
+         * entry the predicate accepts, after the {@link #reports(Consumer) reports} consumer got the report. For example
+         * {@code failOn(entry -> entry.level() == PaletteReport.Level.WARNING)} fails on every warning. It applies to
+         * the palettes this instance compiles; the report of {@link Palette#extend} is the caller's to check.
+         *
+         * @param failOn which entries are fatal; default none
+         * @return this builder
+         * @since 1.0.0
+         */
+        public @NonNull Builder failOn(@NonNull Predicate<PaletteReport.Entry> failOn) {
+            this.failOn = Objects.requireNonNull(failOn);
+            return this;
+        }
+
+        /** The default reports consumer. */
+        private static void log(PaletteReport report) {
+            System.Logger logger = System.getLogger("dev.opencollab.paletter");
+            for (PaletteReport.Entry entry : report.entries()) {
+                System.Logger.Level level = entry.level() == PaletteReport.Level.WARNING ? System.Logger.Level.WARNING
+                    : System.Logger.Level.DEBUG;
+                if (logger.isLoggable(level)) {
+                    logger.log(level, "{0}: {1}", report.version(), entry);
+                }
+            }
         }
 
         /**
@@ -916,6 +944,7 @@ public final class Paletter {
          * @return the Paletter
          * @throws IllegalArgumentException if {@link #versions(Predicate)} accepts no data version, or experiments are
          *                                  enabled for a version it does not accept
+         * @throws PaletteException if a report has an entry {@link #failOn(Predicate)} accepts
          * @throws PaletteException if a layer cannot be compiled: the first version's failure, after the palettes that
          *                          compiled were reported
          * @throws java.io.UncheckedIOException if the data source cannot be read

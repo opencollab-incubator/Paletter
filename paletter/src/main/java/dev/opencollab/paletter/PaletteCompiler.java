@@ -62,7 +62,7 @@ final class PaletteCompiler {
         VanillaContent.Applied applied = content.apply(loaded);
         VanillaData data = applied.data();
         PaletteReportBuilder report = new PaletteReportBuilder();
-        applied.gating().notes().forEach(note -> report.info("vanilla", note));
+        applied.gating().notes().forEach(note -> report.info("vanilla", PaletteReport.EXPERIMENT, null, note));
         BlockRegistry blocks = BlockRegistry.build(data, canonicalBlocks, interner)
             .withMissing(applied.gating().missingBlocks())
             .withFallbacks(fallbacks.blocks(data.version()))
@@ -135,7 +135,7 @@ final class PaletteCompiler {
         newItems.registered().forEach(items::declare);
         for (PaletteLayer.Override override : layer.overrides()) {
             if (!items.override(override.identifier(), override.modifier(), report, source)) {
-                report.info(source, "Not overriding " + override.identifier() + ": the item does not exist in " + data.version());
+                report.info(source, PaletteReport.OVERRIDE_SKIPPED, override.identifier(), "Not overriding " + override.identifier() + ": the item does not exist in " + data.version());
             }
         }
         List<Placed> placed = registerItems(layer, blocks, replacements, items, report, source);
@@ -297,7 +297,7 @@ final class PaletteCompiler {
     private record Placed(@Nullable String block, BedrockItemStack stack, CreativePlacement placement, Menu menu) {
         void apply(CreativeEditor creative, CreativeOrdering ordering, PaletteReportBuilder report, String source) {
             if (!Placements.apply(placement, creative, stack, menu.category(), menu.group(), ordering)) {
-                report.warn(source, "The creative placement of " + stack.type().identifier() + " is after a stack that does not exist; "
+                report.warn(source, PaletteReport.ANCHOR_UNMATCHED, stack.type().identifier(), "The creative placement of " + stack.type().identifier() + " is after a stack that does not exist; "
                     + "it is at the default position");
             }
         }
@@ -344,7 +344,7 @@ final class PaletteCompiler {
                 throw new PaletteException("The item " + item.identifier() + " replaces the item of the block of the same name, which an earlier layer "
                     + "registered: a replacing item must be in its block's layer", layer.id(), item.identifier(), null);
             }
-            report.warn(source, "The item " + item.identifier() + " has replace_block_item, but there is no custom block of that name; "
+            report.warn(source, PaletteReport.REPLACED_BLOCK_MISSING, item.identifier(), "The item " + item.identifier() + " has replace_block_item, but there is no custom block of that name; "
                 + "it is registered as an ordinary item");
             return false;
         }
@@ -372,7 +372,7 @@ final class PaletteCompiler {
                 // Content the generated constants do not know (a preview) has no handle yet
                 report.unknownBlocks(missing.stream().map(state -> canonicalBlocks.handle(canonicalBlocks.index(state)))
                     .filter(Objects::nonNull).map(BedrockBlockState::type).toList());
-                report.info("canonical", missing.size() + " canonical block states have no " + blocks.version()
+                report.info("canonical", PaletteReport.CANONICAL_MISSING, null, missing.size() + " canonical block states have no " + blocks.version()
                     + " block and no fallback, and are sent as " + (blocks.defaultFallback() == null ? "air"
                     : blocks.defaultFallback().target().identifier()) + ": " + names);
             }
@@ -381,7 +381,7 @@ final class PaletteCompiler {
         if (!missingItems.isEmpty() && (parentItems == null || !missingItems.equals(parentItems.missingCanonical()))) {
             CanonicalItems canonicalItems = items.canonical();
             report.unknownItems(missingItems.stream().map(variant -> canonicalItems.handle(canonicalItems.index(variant))).filter(Objects::nonNull).toList());
-            report.info("canonical", missingItems.size() + " canonical item variants do not exist in " + items.version()
+            report.info("canonical", PaletteReport.CANONICAL_MISSING, null, missingItems.size() + " canonical item variants do not exist in " + items.version()
                 + " and have no fallback" + (items.defaultFallback() == null ? "" : ", and are sent as "
                 + items.defaultFallback().target().identifier()) + ": " + missingItems);
         }

@@ -1,5 +1,6 @@
 package dev.opencollab.paletter.internal.shape;
 
+import dev.opencollab.paletter.PaletteReport;
 import org.cloudburstmc.nbt.NbtMap;
 import dev.opencollab.paletter.PaletteException;
 import dev.opencollab.paletter.internal.PaletteReportBuilder;
@@ -82,7 +83,7 @@ public final class VoxelShapeCompiler {
                 }
                 if (next < customBlocks.size() && !entry.block().equals(entry.lastBlock())
                     && Long.compareUnsigned(BlockRegistry.nameHash(customBlocks.get(next).identifier()), BlockRegistry.nameHash(entry.lastBlock())) < 0) {
-                    report.warn(SOURCE, "The shapes of the block " + customBlocks.get(next).identifier() + " may be numbered differently than BDS "
+                    report.warn(SOURCE, PaletteReport.VOXEL_SHAPE_UNVERIFIED, customBlocks.get(next).identifier(), "The shapes of the block " + customBlocks.get(next).identifier() + " may be numbered differently than BDS "
                         + "numbers them: its name hash lies between those of " + entry.block() + " and " + entry.lastBlock()
                         + ", and no capture tells for which of the blocks from one to the other BDS makes a shape");
                 }
@@ -128,7 +129,7 @@ public final class VoxelShapeCompiler {
             if (geometry.getString("identifier", "").equals(FULL_BLOCK)) {
                 // BDS: "A full block geometry cannot have a custom culling shape ... the unit cube shape will be used instead"
                 if (!ShapeTransformation.of(transformation).isIdentity()) {
-                    report.info(SOURCE, "The block " + block.identifier() + " is a full block with a culling shape and a transformation: "
+                    report.info(SOURCE, PaletteReport.VOXEL_SHAPE_UNVERIFIED, block.identifier(), "The block " + block.identifier() + " is a full block with a culling shape and a transformation: "
                         + "no capture of BDS shows whether it transforms the unit cube it uses instead; Paletter sends no shape for it");
                 }
                 continue;
@@ -136,12 +137,12 @@ public final class VoxelShapeCompiler {
                 grid = shapes.get(names.get(name));
             } else {
                 // BDS: "Voxel shape with name ... doesn't exist in the registry. Defaulting to minecraft:empty"
-                report.warn(SOURCE, "The block " + block.identifier() + " names the culling shape " + name
+                report.warn(SOURCE, PaletteReport.CULLING_SHAPE_MISSING, block.identifier(), "The block " + block.identifier() + " names the culling shape " + name
                     + ", which no layer defines; Bedrock uses " + EMPTY + " for it");
                 grid = VoxelGrid.EMPTY;
             }
             if (ShapeTransformation.of(transformation).hasRotationPivot()) {
-                report.info(SOURCE, "The block " + block.identifier() + " turns around a rotation pivot: its culling shape follows the one "
+                report.info(SOURCE, PaletteReport.VOXEL_SHAPE_UNVERIFIED, block.identifier(), "The block " + block.identifier() + " turns around a rotation pivot: its culling shape follows the one "
                     + "capture of BDS with such a pivot (a quarter turn around y)");
             }
             grid = grid.transformed(ShapeTransformation.of(transformation));

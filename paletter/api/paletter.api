@@ -173,6 +173,21 @@ public static final class dev.opencollab.paletter.PaletteLayer$Builder {
 }
 
 public final class dev.opencollab.paletter.PaletteReport {
+    public static final java.lang.String ANCHOR_UNMATCHED = "anchor_unmatched"
+    public static final java.lang.String BLOCKS_RESOLVED = "blocks_resolved"
+    public static final java.lang.String BLOCK_MISSING = "block_missing"
+    public static final java.lang.String CANONICAL_MISSING = "canonical_missing"
+    public static final java.lang.String COMPONENT_CHANGED = "component_changed"
+    public static final java.lang.String CREATIVE_BLOCK_STATE_DROPPED = "creative_block_state_dropped"
+    public static final java.lang.String CREATIVE_LEFT_OUT = "creative_left_out"
+    public static final java.lang.String CULLING_SHAPE_MISSING = "culling_shape_missing"
+    public static final java.lang.String EXPERIMENT = "experiment"
+    public static final java.lang.String NEWER_PROTOCOL = "newer_protocol"
+    public static final java.lang.String OVERRIDE_BLOCK_MISSING = "override_block_missing"
+    public static final java.lang.String OVERRIDE_SKIPPED = "override_skipped"
+    public static final java.lang.String REPLACED_BLOCK_MISSING = "replaced_block_missing"
+    public static final java.lang.String UNCAPTURED_PROTOCOL = "uncaptured_protocol"
+    public static final java.lang.String VOXEL_SHAPE_UNVERIFIED = "voxel_shape_unverified"
     public java.util.List<dev.opencollab.paletter.PaletteReport$Entry> entries()
     public java.util.Set<dev.opencollab.paletter.vanilla.BedrockBlockType> unknownBlocks()
     public java.util.Set<dev.opencollab.paletter.vanilla.BedrockItemVariant> unknownItems()
@@ -180,13 +195,14 @@ public final class dev.opencollab.paletter.PaletteReport {
     public java.util.List<dev.opencollab.paletter.PaletteReport$Entry> warnings()
 }
 
-public record dev.opencollab.paletter.PaletteReport$Entry {
-    public <init>(dev.opencollab.paletter.PaletteReport$Level, java.lang.String, java.lang.String)
-    public final boolean equals(java.lang.Object)
-    public final int hashCode()
+public static final class dev.opencollab.paletter.PaletteReport$Entry {
+    public java.lang.String code()
+    public boolean equals(java.lang.Object)
+    public int hashCode()
     public dev.opencollab.paletter.PaletteReport$Level level()
     public java.lang.String message()
     public java.lang.String source()
+    public java.lang.String subject()
     public java.lang.String toString()
 }
 
@@ -226,6 +242,7 @@ public static final class dev.opencollab.paletter.Paletter$Builder {
     public dev.opencollab.paletter.Paletter$Builder data(dev.opencollab.paletter.data.PaletteDataSource)
     public dev.opencollab.paletter.Paletter$Builder experiments(dev.opencollab.paletter.data.DataVersion, java.lang.String...)
     public dev.opencollab.paletter.Paletter$Builder experiments(java.lang.String...)
+    public dev.opencollab.paletter.Paletter$Builder failOn(java.util.function.Predicate<dev.opencollab.paletter.PaletteReport$Entry>)
     public dev.opencollab.paletter.Paletter$Builder fallbacks(dev.opencollab.paletter.Fallbacks)
     public dev.opencollab.paletter.Paletter$Builder layer(dev.opencollab.paletter.PaletteLayer)
     public dev.opencollab.paletter.Paletter$Builder previews(boolean)

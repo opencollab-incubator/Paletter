@@ -185,22 +185,13 @@ class VanillaPaletteTest {
         }
     }
 
-    private static boolean hasNote(Palette palette) {
-        return palette.report().entries().stream().anyMatch(entry -> entry.level() == PaletteReport.Level.INFO
-            && entry.message().contains("newer than the newest bundled data"));
-    }
-
     @Test
-    void aProtocolNewerThanTheDataIsReported() {
+    void aProtocolNewerThanTheDataGetsTheNewestPalette() {
         Paletter paletter = Paletter.bundled();
         int latest = paletter.latest().protocolVersion();
-        assertTrue(paletter.palette(latest).report().warnings().isEmpty());
         Palette newer = paletter.palette(latest + 1000);
-        assertEquals(paletter.latest(), newer.version());
-        assertTrue(newer.report().warnings().isEmpty());
-        assertTrue(hasNote(newer));
-        assertSame(newer, paletter.palette(latest + 1000));
-        assertTrue(hasNote(newer.extend(PaletteLayer.builder("session").build())));
-        assertFalse(hasNote(paletter.palette(latest)));
+        // The same palette, so sessions of both protocols share its extensions; the note goes to the reports consumer
+        assertSame(paletter.palette(latest), newer);
+        assertTrue(newer.report().entries().stream().noneMatch(entry -> entry.code().equals(PaletteReport.NEWER_PROTOCOL)));
     }
 }

@@ -1,5 +1,6 @@
 package dev.opencollab.paletter.internal.creative;
 
+import dev.opencollab.paletter.PaletteReport;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import dev.opencollab.paletter.internal.PaletteReportBuilder;
 import dev.opencollab.paletter.block.BlockRegistry;
@@ -57,7 +58,7 @@ public final class RawConverter {
         if (stack.blockState() != null) {
             state = blocks.handle(Canonicals.block(blocks, stack.blockState()));
             if (state == null) {
-                report.info("creative", "Dropped the block state of " + stack.identifier() + ": "
+                report.info("creative", PaletteReport.CREATIVE_BLOCK_STATE_DROPPED, stack.identifier(), "Dropped the block state of " + stack.identifier() + ": "
                     + Canonicals.forwardBlock(blocks, stack.blockState()).detail());
             }
         }

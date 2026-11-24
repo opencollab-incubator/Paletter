@@ -1,5 +1,6 @@
 package dev.opencollab.paletter.block;
 
+import dev.opencollab.paletter.PaletteReport;
 import dev.opencollab.paletter.Origin;
 import dev.opencollab.paletter.internal.block.BlockStates;
 import dev.opencollab.paletter.internal.block.HashedIds;
@@ -689,11 +690,11 @@ public final class BlockRegistry implements DefinitionRegistry<BlockDefinition> 
             }
             counts.merge(resolution.kind(), 1, Integer::sum);
             if (resolution.kind() == BlockResolution.Kind.MISSING) {
-                report.warn("blocks", "No " + version() + " block for " + resolution.requested() + ", and no fallback; using " + missing.getState());
+                report.warn("blocks", PaletteReport.BLOCK_MISSING, BlockStates.name(resolution.requested()), "No " + version() + " block for " + resolution.requested() + ", and no fallback; using " + missing.getState());
             }
             result[i] = resolution.block() != null ? resolution.block() : missing;
         }
-        report.info("blocks", "Resolved " + result.length + " states for " + version() + ": " + counts);
+        report.info("blocks", PaletteReport.BLOCKS_RESOLVED, null, "Resolved " + result.length + " states for " + version() + ": " + counts);
         return result;
     }
 
