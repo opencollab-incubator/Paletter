@@ -1,0 +1,131 @@
+# Turns a data patch from a job that ran untrusted code into a pull request, in a job that holds write permissions: the
+# one copy of the checks and the pull request step the publish jobs of bds-data.yml and recapture.yml share. Runs no
+# Gradle, BDS or repository code, only git, grep and gh on the patch. The data paths come from .github/data-paths.txt of
+# the job's own checkout (never from an artifact); only a patch confined to them is applied, and anything else fails
+# before the working tree changes. Writes the paths of the patch to $RUNNER_TEMP/paths.txt.
+
+name: Data pull request
+description: Checks a patch against the data paths, applies it and opens or updates the pull request
+
+inputs:
+  patch:
+    description: The patch file (an empty or missing file is no change)
+    required: true
+  has-token:
+    description: Whether BDS_DATA_TOKEN is set ("true"), which a patch that changes generated code needs
+    required: true
+  token:
+    description: The token create-pull-request pushes and opens the pull request with
+    required: true
+  branch:
+    description: The branch of the pull request
+    required: true
+  base:
+    description: "The branch the pull request targets (empty: the checked-out branch)"
+    required: false
+    default: ""
+  title:
+    description: The title of the pull request
+    required: true
+  commit-message:
+    description: The message of its commit
+    required: true
+  header:
+    description: Text put at the top of the body (markers, notices), checked values only
+    required: false
+    default: ""
+  report:
+    description: The report file that is the body
+    required: true
+  report-in-patch:
+    description: A repository path that is the body instead of `report` when the patch has it
+    required: false
+    default: ""
+
+outputs:
+  changed:
+    description: Whether the patch changed the checkout ("true" or "false")
+    value: ${{ steps.apply.outputs.changed }}
+
+runs:
+  using: composite
+  steps:
+    - name: Read the data paths
+      id: paths
+      shell: bash
+      run: |
+        # Plain relative paths only: they become a regular expression and the add-paths of the pull request
+        if grep -Ev '^[a-z][a-z/]*[a-z]$' .github/data-paths.txt; then echo "Not a data path (above)"; exit 1; fi
+        echo "prefixes=($(sed 's|$|/|' .github/data-paths.txt | paste -sd'|'))" >> "$GITHUB_OUTPUT"
+        echo "add-paths=$(sed 's|$|/**|' .github/data-paths.txt | paste -sd,)" >> "$GITHUB_OUTPUT"
+    - name: Apply the data
+      id: apply
+      shell: bash
+      env:
+        PATCH: ${{ inputs.patch }}
+        HAS_TOKEN: ${{ inputs.has-token }}
+        PREFIXES: ${{ steps.paths.outputs.prefixes }}
+      run: |
+        if [ ! -s "$PATCH" ]; then echo "No data changes"; echo "changed=false" >> "$GITHUB_OUTPUT"; exit 0; fi
+        # One path per file (renames are rejected below); a quoted path with unusual characters fails the check below
+        git apply --numstat "$PATCH" | cut -f3 > "$RUNNER_TEMP/paths.txt"
+        if grep -Ev "^$PREFIXES" "$RUNNER_TEMP/paths.txt" || grep -E '(^|/)\.' "$RUNNER_TEMP/paths.txt"; then
+          echo "The patch touches paths outside the data paths or a hidden path"; exit 1
+        fi
+        # No renames or copies: --numstat lists only their new path, so the old one would go unchecked
+        if grep -Eq '^(rename|copy) (from|to) ' "$PATCH"; then
+          echo "The patch renames or copies a file"; exit 1
+        fi
+        # No symlinks or submodules: a link inside data/ could point anywhere
+        if grep -Eq '^(new file|new|old|deleted file) mode (120000|160000)' "$PATCH"; then
+          echo "The patch adds a symlink or submodule"; exit 1
+        fi
+        # Generated code is reviewed only after the build ran on it, and a pull request opened with GITHUB_TOKEN gets no build
+        if [ "$HAS_TOKEN" != true ] && grep -q '^paletter/src/generated/' "$RUNNER_TEMP/paths.txt"; then
+          echo "::error::The data changes generated code, and no BDS_DATA_TOKEN secret is set, so the build would not run on the pull request. Set BDS_DATA_TOKEN (see docs/releasing.md) and run this workflow again."
+          exit 1
+        fi
+        git apply --check "$PATCH"
+        git apply "$PATCH"
+        # Check what the patch did, not only its headers: a patch whose --- and +++ paths differ moves a file without
+        # rename lines, so every changed path of the working tree must be a data path
+        git status --porcelain --untracked-files=all | cut -c4- | sed 's/^.* -> //' > "$RUNNER_TEMP/changed.txt"
+        if grep -Ev "^\"?$PREFIXES" "$RUNNER_TEMP/changed.txt"; then
+          echo "The patch changed paths outside the data paths"; exit 1
+        fi
+        echo "changed=true" >> "$GITHUB_OUTPUT"
+    - name: Write the pull request body
+      if: steps.apply.outputs.changed == 'true'
+      shell: bash
+      env:
+        HEADER: ${{ inputs.header }}
+        REPORT: ${{ inputs.report }}
+        REPORT_IN_PATCH: ${{ inputs.report-in-patch }}
+      run: |
+        BODY="$REPORT"
+        if [ -n "$REPORT_IN_PATCH" ] && grep -qxF "$REPORT_IN_PATCH" "$RUNNER_TEMP/paths.txt"; then BODY="$REPORT_IN_PATCH"; fi
+        {
+          if [ -n "$HEADER" ]; then printf '%s\n\n' "$HEADER"; fi
+          # GitHub limits bodies to 65536 characters
+          head -c 60000 "$BODY"
+        } > "$RUNNER_TEMP/pr-body.md"
+    # create-pull-request needs the label to exist
+    - name: Create the label
+      if: steps.apply.outputs.changed == 'true'
+      shell: bash
+      env:
+        GH_TOKEN: ${{ github.token }}
+      run: gh label create bds-data --color 1d76db --description "Automated BDS data check" 2>/dev/null || true
+    - name: Open or update the pull request
+      if: steps.apply.outputs.changed == 'true'
+      uses: peter-evans/create-pull-request@3ffccacd46053766916f087ce41d627c0b8cf2d1 # v8.1.3
+      with:
+        token: ${{ inputs.token }}
+        base: ${{ inputs.base }}
+        branch: ${{ inputs.branch }}
+        delete-branch: true
+        title: ${{ inputs.title }}
+        commit-message: ${{ inputs.commit-message }}
+        body-path: ${{ runner.temp }}/pr-body.md
+        labels: bds-data
+        add-paths: ${{ steps.paths.outputs.add-paths }}

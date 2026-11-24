@@ -54,7 +54,7 @@ command takes `--help`. Paths are relative to the repository root (`--root` over
 |---|---|
 | `update` | The whole BDS pipeline (below). |
 | `builds list\|check\|table\|resolve\|record\|plan` | Every release build, one by one, against the previous kept build ([below](#every-release-build)): `table` writes what `builds.json` says per data version, `resolve` names the newest build of a channel, `record` brings `builds.json` up to date without BDS, `plan` lists the builds of a [full recapture](#full-recapture). |
-| `daily decide` | Which new builds the daily check captures ([The daily check](#the-daily-check)). |
+| `daily decide\|result` | Which new builds the daily check captures, and what its capture job hands to the publish job ([The daily check](#the-daily-check)). |
 | `bds fetch\|cache-key` | The zips of one build in the cache, nothing else, and the workflows' cache key of them ([CI](#ci)). |
 | `capture`, `compare`, `experiments` | The headless client: record what a server sends, diff a capture with a bundled version, toggle experiments in a `level.dat`. |
 | `import`, `bds-compare`, `verify`, `baseline`, `check-data` | Import and check bundled data. `check-data` lists what older versions lack. |
@@ -503,11 +503,15 @@ hand (`channel`, `version`, `force`, `verify-only`), in three jobs:
    always writes its spec capture to `data/bds/<build>/spec`, so once its pull request is merged row 2 knows it, even
    when its data equals the build before.
 2. `capture` (Windows, `contents: read`, one job per build to capture) runs `update` on Windows BDS (like the committed
-   captures), then `generateComponentApi` and `:paletter:apiDump`, and hands over the report, a patch of the data
-   paths and its result. The zips come from the cache ([CI](#ci)).
+   captures), then `generateComponentApi` and `:paletter:apiDump`, writes a patch of the data paths
+   (`.github/data-paths.txt`, kept equal to `DataPaths.ALL` by `WorkflowConsistencyTest`), and `daily result` turns the
+   exit codes, the report and the patch into the values the publish job reads (`update`: the exit code, 3 when the code
+   generation failed on written data; `differs`; `hash`: the report without its date and path lines; `addon`: whether
+   the patch changes an add-on input), deleting the patch when there is nothing to publish. The zips come from the
+   cache ([CI](#ci)).
 3. `publish` (the only job with write permissions and `BDS_DATA_TOKEN`; it runs no build) reads the result against
-   strict patterns. New data (exit 0 or 2) becomes a pull request from `bds-data/<channel>` (only data and generated
-   paths), whose body starts with `<!-- bds-check: <build> -->`, `Closes #n` when the channel's failure issue is open,
+   strict patterns. New data (exit 0 or 2) becomes a pull request from `bds-data/<channel>` through
+   `.github/actions/data-pr` (shared with the recapture: only a patch confined to the data paths is applied), whose body starts with `<!-- bds-check: <build> -->`, `Closes #n` when the channel's failure issue is open,
    and a notice when an add-on input changed. A failure opens the channel's issue (`BDS data: the <channel> check
    failed`) or rewrites its body, with `<!-- bds-check: <build> <commit> <attempt> -->`; it comments only when the report
    changed. A failure is retried once on the next day, then skipped until a new commit (a fix) or a new build; `force`

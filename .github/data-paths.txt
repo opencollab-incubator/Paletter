@@ -1,0 +1,4 @@
+data
+paletter/src/main/resources/paletter
+paletter/src/generated
+paletter/api

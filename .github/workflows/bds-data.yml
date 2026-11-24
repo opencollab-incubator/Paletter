@@ -12,7 +12,8 @@
 # which runs before any repository code. `capture` runs untrusted code (the BDS binary, Gradle, the tools) with
 # `contents: read`, no credentials in the checkout and no secrets, and hands over the report and a patch as artifacts.
 # `publish` holds the write permissions and BDS_DATA_TOKEN, runs no Gradle or BDS and no repository code but the patch
-# checks of .github/actions/apply-data-patch from its own checkout, and reads artifact values against strict patterns.
+# checks and the pull request step of .github/actions/data-pr from its own checkout, and reads artifact values against
+# strict patterns.
 #
 # Windows runner assumptions: BDS and the capture client talk over loopback only (127.0.0.1: RakNet and NetherNet
 # signaling on server-port, NetherNet LAN discovery on UDP 7551). Windows Firewall does not filter loopback, and nothing
@@ -139,87 +140,43 @@ jobs:
           build: ${{ matrix.build }}
           channel: ${{ matrix.channel }}
 
-      # One pass: verify-only for a manual verify-only run, else update, which writes into the checkout only (publish
-      # turns the patch into a pull request). The result is written last, after the patch exists, so a failure on the
-      # way (including the code generation) can never look like "no changes".
+      # verify-only for a manual verify-only run, else update, which writes into the checkout only (publish turns the
+      # patch into a pull request). Its own exit code: 2 tells decisions from failures
       - name: Run the update
         id: run
         run: |
           set +e
-          OUT="$CI_TEMP/out"
-          DATA_PATHS="data paletter/src/main/resources/paletter paletter/src/generated paletter/api"
-          if [ "$VERIFY_ONLY" = true ]; then
-            "$TOOLS" update --channel "$CHANNEL" --version "$BDS_VERSION" --verify-only
-          else
-            "$TOOLS" update --channel "$CHANNEL" --version "$BDS_VERSION"
-          fi
-          # The tool's own exit code: 2 tells decisions from failures
-          CODE=$?
-          # Every run also writes its report into its work directory, which starts empty
-          for f in "$PALETTER_BDS_CACHE"/runs/*-"$BDS_VERSION"/report.md; do
-            if [ -f "$f" ]; then cp "$f" "$OUT/report.md"; fi
-          done
-          VERDICT=""
-          ADDON=false
-          if [ -f "$OUT/report.md" ]; then
-            # The report without the lines that change every run (date, paths)
-            HASH=$(grep -v -e '^- \*\*Date\*\*' -e '^- \*\*Work directory' -e '^- \*\*Server' "$OUT/report.md" | sha256sum | cut -c1-16)
-            VERDICT=$(grep -m1 -E '^(OK|Changed|Failed): ' "$OUT/report.md")
-            head -c 60000 "$OUT/report.md" >> "$GITHUB_STEP_SUMMARY"
-          else
-            # No report to compare: every such failure is new
-            HASH="$GITHUB_RUN_ID"
-          fi
-          DIFFERS=true
-          if [ "$VERIFY_ONLY" != true ] && { [ "$CODE" = 0 ] || [ "$CODE" = 2 ]; }; then
-            # The component API follows the inferred mappings, the API dump follows the component API. Separate runs:
-            # the dump compiles what the generator wrote
-            if ! { ./gradlew :tools:generateComponentApi && ./gradlew :paletter:apiDump; }; then
-              echo "::error::The data was updated, but generateComponentApi or apiDump failed"
-              CODE=3
-            fi
-            # Only the data paths, new files included, without renames (publish checks every path)
-            git add -A -- $DATA_PATHS
-            # Clean: the report has nothing to say and no data file changed. update writes its report into the data only
-            # with a data change; the exclusion keeps a report alone from ever counting as one
-            if [ "$CODE" = 0 ] && [ "$VERDICT" = "OK: no changes" ] \
-                && git diff --cached --quiet -- $DATA_PATHS ':(exclude)data/bds/*/update-report.md'; then
-              DIFFERS=false
-            elif [ "$CODE" = 0 ] || [ "$CODE" = 2 ]; then
-              git diff --cached --binary --no-renames -- $DATA_PATHS > "$OUT/data.patch"
-              # An add-on input changed: the kept builds answer for the old add-on until a recapture (said in the pull request)
-              if git diff --cached --name-only -- data/model | grep -Eq '^data/model/(components|fixtures|bds-feedback|bds-keys)\.json$'; then
-                ADDON=true
-              fi
-            fi
-          elif [ "$CODE" = 0 ]; then
-            DIFFERS=false
-          fi
-          {
-            echo "exit=$CODE"
-            echo "differs=$DIFFERS"
-            echo "hash=$HASH"
-            echo "addon=$ADDON"
-          } >> "$GITHUB_OUTPUT"
-          exit 0
-
-      # What publish reads: values only, checked again there. A step that died before its outputs counts as a failure
-      - name: Write the result
+          ARGS=(update --channel "$CHANNEL" --version "$BDS_VERSION")
+          if [ "$VERIFY_ONLY" = true ]; then ARGS+=(--verify-only); fi
+          "$TOOLS" "${ARGS[@]}"
+          echo "exit=$?" >> "$GITHUB_OUTPUT"
+      # The component API follows the inferred mappings; the API dump compiles what the generator wrote
+      - name: Generate the code
+        id: codegen
+        if: inputs.verify-only != true && (steps.run.outputs.exit == '0' || steps.run.outputs.exit == '2')
+        run: |
+          set +e
+          ./gradlew :tools:generateComponentApi && ./gradlew :paletter:apiDump
+          echo "exit=$?" >> "$GITHUB_OUTPUT"
+      # What publish reads (`daily result`: values only, checked again there). Written last, after the patch exists, so a
+      # failure on the way can never look like "no changes"; a step that died before its exit code counts as a failure
+      - name: Write the patch and the result
         if: always()
         env:
           UPDATE_EXIT: ${{ steps.run.outputs.exit || '1' }}
-          DIFFERS: ${{ steps.run.outputs.differs || 'true' }}
-          HASH: ${{ steps.run.outputs.hash || github.run_id }}
-          ADDON: ${{ steps.run.outputs.addon || 'false' }}
+          CODEGEN_EXIT: ${{ steps.codegen.outputs.exit || '0' }}
         run: |
-          mkdir -p "$RUNNER_TEMP/out"
-          {
-            echo "version=$BDS_VERSION"
-            echo "update=$UPDATE_EXIT"
-            echo "differs=$DIFFERS"
-            echo "hash=$HASH"
-            echo "addon=$ADDON"
-          } > "$RUNNER_TEMP/out/result.txt"
+          set +e
+          OUT="${CI_TEMP:-$RUNNER_TEMP}/out"
+          mkdir -p "$OUT"
+          # Only the data paths, new files included, without renames (publish checks every path)
+          git add -A -- $(cat .github/data-paths.txt)
+          git diff --cached --binary --no-renames -- $(cat .github/data-paths.txt) > "$OUT/data.patch"
+          ARGS=(daily result --channel "$CHANNEL" --version "$BDS_VERSION" --update-exit "$UPDATE_EXIT" --codegen-exit "$CODEGEN_EXIT"
+            --patch "$OUT/data.patch" --out "$OUT" --run-id "$GITHUB_RUN_ID" --summary "$GITHUB_STEP_SUMMARY")
+          if [ "$VERIFY_ONLY" = true ]; then ARGS+=(--verify-only); fi
+          # Without the tools (the setup failed) the run is a failure with no report
+          "$TOOLS" "${ARGS[@]}" || printf 'version=%s\nupdate=1\ndiffers=true\nhash=%s\naddon=false\n' "$BDS_VERSION" "$GITHUB_RUN_ID" > "$OUT/result.txt"
 
       - name: Upload the result
         if: always()
@@ -336,54 +293,43 @@ jobs:
           RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
         run: gh issue close "$NUMBER" --comment "BDS $BUILD matches the committed data (run $RUN_URL)"
 
-      # Only patches confined to the data paths (the checks shared with recapture.yml); anything else fails the job before
-      # the working tree changes
-      - name: Apply the data
-        id: apply
+      # The top of the pull request body: the marker that tells `daily decide` the build waits here, the failure issue it
+      # closes and, when an add-on input changed, the notice (nothing recaptures by itself)
+      - name: Write the pull request header
+        id: header
         if: steps.result.outputs.differs == 'true' && (steps.result.outputs.update == '0' || steps.result.outputs.update == '2')
-        uses: ./.github/actions/apply-data-patch
-        with:
-          patch: ${{ runner.temp }}/in/data.patch
-          # Whether the token that makes the build run on the pull request is set (never the token itself)
-          has-token: ${{ secrets.BDS_DATA_TOKEN != '' }}
-
-      # The versioned report, committed with the data, is the pull request body; when the patch has none (only
-      # regenerated code changed), the run's own copy of it. The marker tells `daily decide` that the build waits here
-      - name: Write the pull request body
-        if: steps.apply.outputs.changed == 'true'
         env:
           ADDON: ${{ steps.result.outputs.addon }}
           NUMBER: ${{ steps.result.outputs.issue }}
         run: |
-          REPORT="data/bds/$BUILD/update-report.md"
-          grep -qxF "$REPORT" "$RUNNER_TEMP/paths.txt" || REPORT="$RUNNER_TEMP/in/report.md"
           {
+            echo "header<<HEADER_END"
             echo "<!-- bds-check: $BUILD -->"
-            if [ -n "$NUMBER" ]; then echo "Closes #$NUMBER"; echo; fi
-            # Nothing recaptures by itself: the kept builds answer for the old add-on until someone does (docs/data-pipeline.md)
+            if [ -n "$NUMBER" ]; then echo "Closes #$NUMBER"; fi
             if [ "$ADDON" = true ]; then
-              echo "**The update changed an input of the spec add-on.** Label this pull request \`recapture\` before merging, so the kept builds are captured with the new add-on."
               echo
+              echo "**The update changed an input of the spec add-on.** Label this pull request \`recapture\` before merging, so the kept builds are captured with the new add-on."
             fi
-            head -c 60000 "$REPORT"
-          } > "$RUNNER_TEMP/pr-body.md"
+            echo "HEADER_END"
+          } >> "$GITHUB_OUTPUT"
 
+      # Only patches confined to the data paths (the checks shared with recapture.yml); anything else fails the job before
+      # the working tree changes. The versioned report, committed with the data, is the body; when the patch has none
+      # (only regenerated code changed), the run's own copy of it
       - name: Open or update the pull request
-        if: steps.apply.outputs.changed == 'true'
-        uses: peter-evans/create-pull-request@3ffccacd46053766916f087ce41d627c0b8cf2d1 # v8.1.3
+        if: steps.header.outcome == 'success'
+        uses: ./.github/actions/data-pr
         with:
+          patch: ${{ runner.temp }}/in/data.patch
+          # Whether the token that makes the build run on the pull request is set (never the token itself)
+          has-token: ${{ secrets.BDS_DATA_TOKEN != '' }}
           token: ${{ secrets.BDS_DATA_TOKEN || github.token }}
           branch: bds-data/${{ matrix.channel }}
-          delete-branch: true
           title: "Update bundled data from the newest BDS ${{ matrix.channel }}"
           commit-message: "Update bundled data from BDS ${{ matrix.build }}"
-          body-path: ${{ runner.temp }}/pr-body.md
-          labels: bds-data
-          add-paths: |
-            data/**
-            paletter/src/main/resources/paletter/**
-            paletter/src/generated/**
-            paletter/api/**
+          header: ${{ steps.header.outputs.header }}
+          report: ${{ runner.temp }}/in/report.md
+          report-in-patch: data/bds/${{ matrix.build }}/update-report.md
 
       - name: Fail on a failed update
         if: steps.result.outputs.update != '0' && steps.result.outputs.update != '2'

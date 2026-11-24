@@ -2,6 +2,7 @@ package dev.opencollab.paletter.tools;
 
 import dev.opencollab.paletter.tools.bds.BdsDistribution;
 import dev.opencollab.paletter.tools.daily.DailyDecide;
+import dev.opencollab.paletter.tools.daily.DailyResult;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
@@ -12,7 +13,7 @@ import java.nio.file.StandardOpenOption;
 import java.util.List;
 import java.util.concurrent.Callable;
 
-/** The steps of the daily BDS data workflow (bds-data.yml) that are logic, not plumbing: {@code daily decide}. */
+/** The steps of the daily BDS data workflow (bds-data.yml) that are logic, not plumbing: {@code daily decide} and {@code daily result}. */
 final class DailyCommands {
     private DailyCommands() {
     }
@@ -27,7 +28,7 @@ final class DailyCommands {
     }
 
     @Command(name = "daily", description = "The decisions of the daily BDS data workflow (docs/data-pipeline.md, \"The daily check\").",
-        subcommands = {Daily.Decide.class})
+        subcommands = {Daily.Decide.class, Daily.Result.class})
     static final class Daily implements Runnable {
         @Override
         public void run() {
@@ -63,6 +64,42 @@ final class DailyCommands {
                 if (summary != null) {
                     Files.writeString(summary, table, StandardOpenOption.CREATE, StandardOpenOption.APPEND);
                 }
+                return 0;
+            }
+        }
+
+        @Command(name = "result", description = "What the daily capture job hands to its publish job: copies the run's report to --out, "
+            + "writes --out/result.txt (version, update, differs, hash, addon) and deletes the patch when there is nothing to publish.")
+        static final class Result implements Callable<Integer> {
+            @CommandLine.Mixin BuildOptions build;
+            @Option(names = "--cache", description = BdsOptions.CACHE) Path cache;
+            @Option(names = "--update-exit", required = true, description = "The exit code of update") int updateExit;
+            @Option(names = "--codegen-exit", defaultValue = "0", description = "The exit code of the code generation after it (default: 0)")
+            int codegenExit;
+            @Option(names = "--verify-only", description = "The update was a verification") boolean verifyOnly;
+            @Option(names = "--patch", required = true, description = "The patch of the data paths (deleted when there is nothing to publish)")
+            Path patch;
+            @Option(names = "--out", required = true, description = "Where report.md and result.txt go") Path out;
+            @Option(names = "--run-id", required = true, description = "The workflow run's id, the hash of a run without a report") String runId;
+            @Option(names = "--summary", description = "File the report is appended to (at most 60000 bytes)") Path summary;
+
+            @Override
+            public Integer call() throws Exception {
+                String version = build.requireVersion();
+                // update writes the report of every run into its work directory as well
+                Path runReport = BdsDistribution.resolve(build.preview(), version).runDirectory(BdsOptions.cache(cache), "").resolve("report.md");
+                Files.createDirectories(out);
+                Path report = out.resolve("report.md");
+                if (Files.isRegularFile(runReport)) {
+                    Files.copy(runReport, report, java.nio.file.StandardCopyOption.REPLACE_EXISTING);
+                    if (summary != null) {
+                        byte[] bytes = Files.readAllBytes(report);
+                        Files.write(summary, java.util.Arrays.copyOf(bytes, Math.min(bytes.length, 60000)), StandardOpenOption.CREATE, StandardOpenOption.APPEND);
+                    }
+                }
+                DailyResult.Result result = DailyResult.of(version, updateExit, codegenExit, verifyOnly, report, patch, runId);
+                Files.writeString(out.resolve("result.txt"), result.text());
+                System.out.print(result.text());
                 return 0;
             }
         }

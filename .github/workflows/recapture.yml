@@ -14,7 +14,7 @@
 #             (inference, white-box coverage, code generation). It runs Gradle over data from the capture jobs, so it has
 #             no write permission and no secret either; it hands over a patch of the data paths and a report.
 #   publish   the only job with write permissions and BDS_DATA_TOKEN. Runs no Gradle or BDS and no repository code but
-#             the patch checks of .github/actions/apply-data-patch (shared with bds-data.yml, from the pinned checkout of
+#             the patch checks and the pull request step of .github/actions/data-pr (shared with bds-data.yml, from the pinned checkout of
 #             the branch), and applies only a patch confined to the data paths.
 # No script of an artifact is ever run, and no value of an artifact reaches a shell as code: values are read as data
 # and matched against strict patterns.
@@ -351,9 +351,8 @@ jobs:
         run: |
           OUT="$RUNNER_TEMP/out"
           mkdir -p "$OUT"
-          DATA_PATHS="data paletter/src/main/resources/paletter paletter/src/generated paletter/api"
-          git add -A -- $DATA_PATHS
-          git diff --cached --binary --no-renames -- $DATA_PATHS > "$OUT/data.patch"
+          git add -A -- $(cat .github/data-paths.txt)
+          git diff --cached --binary --no-renames -- $(cat .github/data-paths.txt) > "$OUT/data.patch"
           {
             echo "Every kept BDS build and the newest preview, captured again with the add-on generated from \`$SHA\`."
             echo
@@ -425,41 +424,16 @@ jobs:
           merge-multiple: true
 
       # Only patches confined to the data paths (the checks shared with bds-data.yml); anything else fails the job before
-      # the working tree changes
-      - name: Apply the data
-        id: apply
-        uses: ./.github/actions/apply-data-patch
+      # the working tree changes. The report of the run (written by assemble) is the pull request body
+      - name: Open or update the pull request
+        uses: ./.github/actions/data-pr
         with:
           patch: ${{ runner.temp }}/in/data.patch
           # Whether the token that makes the build run on the pull request is set (never the token itself)
           has-token: ${{ secrets.BDS_DATA_TOKEN != '' }}
-
-      # The report of the run (written by assemble from the reports of the captures) is the pull request body
-      - name: Write the pull request body
-        if: steps.apply.outputs.changed == 'true'
-        run: head -c 60000 "$RUNNER_TEMP/in/report.md" > "$RUNNER_TEMP/pr-body.md"
-
-      # create-pull-request needs the label to exist (the daily workflow creates it when it opens an issue)
-      - name: Create the label
-        if: steps.apply.outputs.changed == 'true'
-        env:
-          GH_TOKEN: ${{ github.token }}
-        run: gh label create bds-data --color 1d76db --description "Automated BDS data check" 2>/dev/null || true
-
-      - name: Open or update the pull request
-        if: steps.apply.outputs.changed == 'true'
-        uses: peter-evans/create-pull-request@3ffccacd46053766916f087ce41d627c0b8cf2d1 # v8.1.3
-        with:
           token: ${{ secrets.BDS_DATA_TOKEN || github.token }}
           base: ${{ needs.plan.outputs.base }}
           branch: recapture/${{ needs.plan.outputs.base }}
-          delete-branch: true
           title: "Recapture every BDS build with the current add-on"
           commit-message: "Recapture every BDS build with the current add-on"
-          body-path: ${{ runner.temp }}/pr-body.md
-          labels: bds-data
-          add-paths: |
-            data/**
-            paletter/src/main/resources/paletter/**
-            paletter/src/generated/**
-            paletter/api/**
+          report: ${{ runner.temp }}/in/report.md
