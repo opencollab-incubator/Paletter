@@ -578,7 +578,7 @@ public final class Palette {
      * Finds the key of an item variant (an item type and its aux value).
      *
      * @param identifier the item identifier such as {@code minecraft:stick}
-     * @param aux the aux value (damage); 0 is the base variant
+     * @param aux the aux value; 0 is the base variant
      * @param lookup whether the variant must exist as is in this palette's version, see {@link Lookup}
      * @return its handle, or null if the lookup does not accept the variant, for the reasons of
      *         {@link #blockState(NbtMap, Lookup)}. Aux 0 is the base variant, which every item has
@@ -882,9 +882,9 @@ public final class Palette {
     }
 
     /**
-     * What this palette sends for an item variant, without building an {@link ItemData}: the item definition, damage
+     * What this palette sends for an item variant, without building an {@link ItemData}: the item definition, aux value
      * and block of {@link #encode} (fallbacks applied), as one cached record. For the variants of the newest version it
-     * is a field read and an array load, it does not allocate. Use it to read the definition or damage of many items;
+     * is a field read and an array load, it does not allocate. Use it to read the definition or aux value of many items;
      * a stack's own block state, count and NBT are not part of it. {@link ResolvedItem#fallback()} tells whether the
      * variant is sent as another item, {@link ResolvedItem#variant()} which.
      *
@@ -1161,13 +1161,13 @@ public final class Palette {
                 block = own;
             }
         }
-        ItemMatcher matcher = ItemMatcher.id(identifier).and(ItemMatcher.damage(aux));
+        ItemMatcher matcher = ItemMatcher.id(identifier).and(ItemMatcher.aux(aux));
         if (blockState != null) {
             matcher = matcher.and(ItemMatcher.blockState(blockState));
         }
         return new ItemExplanation(identifier, aux, blockState == null ? null : BlockStates.normalize(blockState),
             items.canonical().handle(canonical), kind, List.copyOf(chain), item,
-            sent == null ? -1 : sent.definition().getRuntimeId(), sent == null ? 0 : sent.damage(),
+            sent == null ? -1 : sent.definition().getRuntimeId(), sent == null ? 0 : sent.aux(),
             block == null ? null : BlockExplanation.describe(block.getState()), block == null ? -1 : block.getRuntimeId(),
             creativeLayout().contains(matcher), creativeLayout().groupOf(matcher));
     }

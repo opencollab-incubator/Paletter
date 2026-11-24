@@ -120,7 +120,7 @@ class LayerTest {
         assertEquals(base, Ids.match(palette, ItemData.builder().definition(potion).damage(9999).count(1).build()));
         ResolvedItem resolved = Ids.itemAt(palette, five);
         assertSame(potion, resolved.definition());
-        assertEquals(5, resolved.damage());
+        assertEquals(5, resolved.aux());
     }
 
     @Test
@@ -294,12 +294,12 @@ class LayerTest {
     @Test
     void creativeEditsRunPerVersionAndDropMissingItems() {
         PaletteLayer layer = PaletteLayer.builder("creative")
-            .creative(editor -> editor.remove(ItemMatcher.id("minecraft:empty_map").and(ItemMatcher.damage(2))))
+            .creative(editor -> editor.remove(ItemMatcher.id("minecraft:empty_map").and(ItemMatcher.aux(2))))
             .creative(editor -> editor.insert(BedrockItemStack.of(BedrockItemType.fromIdentifier("minecraft:poplar_boat"))).loose(CreativeCategory.ITEMS))
             .build();
         Palette latest = Palettes.palette(LATEST, layer);
         Palette oldest = Palettes.palette(OLDEST, layer);
-        assertFalse(latest.creativeLayout().contains(ItemMatcher.id("minecraft:empty_map").and(ItemMatcher.damage(2))));
+        assertFalse(latest.creativeLayout().contains(ItemMatcher.id("minecraft:empty_map").and(ItemMatcher.aux(2))));
         assertEquals("minecraft:poplar_boat", latest.creative().items().getLast().getItem().getDefinition().getIdentifier());
         // Poplar boats exist in 26.40's item list (experimental), so they are kept; unknown items would be dropped
         PaletteLayer unknown = PaletteLayer.builder("unknown")

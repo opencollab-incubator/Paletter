@@ -203,7 +203,7 @@ class ExtendIncrementalTest {
     }
 
     private static String describe(ResolvedItem item) {
-        return item == null ? "unresolved" : item.definition().getRuntimeId() + " " + item.damage() + " " + item.fallback() + " "
+        return item == null ? "unresolved" : item.definition().getRuntimeId() + " " + item.aux() + " " + item.fallback() + " "
             + (item.block() == null ? "no block" : item.block().getRuntimeId());
     }
 

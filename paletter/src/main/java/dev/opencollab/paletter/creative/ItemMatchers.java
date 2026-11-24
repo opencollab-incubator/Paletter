@@ -26,15 +26,15 @@ final class ItemMatchers {
         }
     }
 
-    record Damage(int damage) implements ItemMatcher {
+    record Aux(int aux) implements ItemMatcher {
         @Override
         public boolean matches(@NonNull BedrockItemStack stack) {
-            return stack.variant().aux() == damage;
+            return stack.variant().aux() == aux;
         }
 
         @Override
         public String toString() {
-            return "damage=" + damage;
+            return "aux=" + aux;
         }
     }
 

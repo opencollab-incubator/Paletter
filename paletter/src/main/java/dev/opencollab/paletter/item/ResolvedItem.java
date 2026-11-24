@@ -19,15 +19,15 @@ import java.util.Objects;
  */
 public final class ResolvedItem {
     private final RegisteredItem definition;
-    private final int damage;
+    private final int aux;
     private final @Nullable RegisteredBlockState block;
     private final boolean fallback;
     private final ItemRegistry registry;
 
-    ResolvedItem(@NonNull RegisteredItem definition, int damage, @Nullable RegisteredBlockState block, boolean fallback,
+    ResolvedItem(@NonNull RegisteredItem definition, int aux, @Nullable RegisteredBlockState block, boolean fallback,
                  @NonNull ItemRegistry registry) {
         this.definition = definition;
-        this.damage = damage;
+        this.aux = aux;
         this.block = block;
         this.fallback = fallback;
         this.registry = registry;
@@ -43,12 +43,12 @@ public final class ResolvedItem {
     }
 
     /**
-     * The damage (aux) value to send.
+     * The aux value to send.
      *
-     * @return the damage value to send
+     * @return the aux value to send (the {@code damage} of the {@code ItemData})
      */
-    public int damage() {
-        return damage;
+    public int aux() {
+        return aux;
     }
 
     /**
@@ -91,7 +91,7 @@ public final class ResolvedItem {
 
     /** @return whether another resolution has the same parts, whichever palette made it */
     boolean sameAs(ResolvedItem other) {
-        return damage == other.damage && fallback == other.fallback && definition.equals(other.definition)
+        return aux == other.aux && fallback == other.fallback && definition.equals(other.definition)
             && Objects.equals(block, other.block);
     }
 
@@ -104,24 +104,24 @@ public final class ResolvedItem {
      * @since 1.0.0
      */
     public @NonNull BedrockItemVariant variant() {
-        return definition.type().variant(damage);
+        return definition.type().variant(aux);
     }
 
     /**
      * Builds the client item data of this resolution.
      *
-     * @return an item data builder with definition, damage, block and a count of 1 filled in
+     * @return an item data builder with definition, aux, block and a count of 1 filled in
      */
     public ItemData.@NonNull Builder toItemData() {
         return ItemData.builder()
             .definition(definition)
-            .damage(damage)
+            .damage(aux)
             .blockDefinition(block)
             .count(1);
     }
 
     @Override
     public String toString() {
-        return "ResolvedItem{" + definition + ", damage=" + damage + ", block=" + block + ", fallback=" + fallback + '}';
+        return "ResolvedItem{" + definition + ", aux=" + aux + ", block=" + block + ", fallback=" + fallback + '}';
     }
 }

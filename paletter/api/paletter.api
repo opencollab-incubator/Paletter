@@ -44,7 +44,6 @@ public static final class dev.opencollab.paletter.Fallbacks$Builder {
     public java.util.List<java.lang.String> chain()
     public boolean creative()
     public java.lang.String creativeGroup()
-    public int damage()
     public final boolean equals(java.lang.Object)
     public dev.opencollab.paletter.vanilla.BedrockItemVariant handle()
     public final int hashCode()
@@ -52,6 +51,7 @@ public static final class dev.opencollab.paletter.Fallbacks$Builder {
     public java.lang.String item()
     public dev.opencollab.paletter.ResolutionKind kind()
     public int runtimeId()
+    public int sentAux()
     public java.lang.String toString()
 }
 
@@ -2506,12 +2506,12 @@ public record dev.opencollab.paletter.creative.CreativePlacement$After implement
     public final java.lang.String toString()
 }
 
-public sealed interface dev.opencollab.paletter.creative.ItemMatcher permits dev.opencollab.paletter.creative.ItemMatchers$And, dev.opencollab.paletter.creative.ItemMatchers$BlockState, dev.opencollab.paletter.creative.ItemMatchers$Custom, dev.opencollab.paletter.creative.ItemMatchers$Damage, dev.opencollab.paletter.creative.ItemMatchers$Exact, dev.opencollab.paletter.creative.ItemMatchers$Id, dev.opencollab.paletter.creative.ItemMatchers$Namespace, dev.opencollab.paletter.creative.ItemMatchers$Not {
+public sealed interface dev.opencollab.paletter.creative.ItemMatcher permits dev.opencollab.paletter.creative.ItemMatchers$And, dev.opencollab.paletter.creative.ItemMatchers$Aux, dev.opencollab.paletter.creative.ItemMatchers$BlockState, dev.opencollab.paletter.creative.ItemMatchers$Custom, dev.opencollab.paletter.creative.ItemMatchers$Exact, dev.opencollab.paletter.creative.ItemMatchers$Id, dev.opencollab.paletter.creative.ItemMatchers$Namespace, dev.opencollab.paletter.creative.ItemMatchers$Not {
     public default dev.opencollab.paletter.creative.ItemMatcher and(dev.opencollab.paletter.creative.ItemMatcher)
     public static dev.opencollab.paletter.creative.ItemMatcher anyVariantOf(dev.opencollab.paletter.vanilla.BedrockItemType)
+    public static dev.opencollab.paletter.creative.ItemMatcher aux(int)
     public static dev.opencollab.paletter.creative.ItemMatcher blockState(dev.opencollab.paletter.vanilla.BedrockBlockState)
     public static dev.opencollab.paletter.creative.ItemMatcher blockState(org.cloudburstmc.nbt.NbtMap)
-    public static dev.opencollab.paletter.creative.ItemMatcher damage(int)
     public static dev.opencollab.paletter.creative.ItemMatcher exact(dev.opencollab.paletter.item.BedrockItemStack)
     public static dev.opencollab.paletter.creative.ItemMatcher id(java.lang.String)
     public abstract boolean matches(dev.opencollab.paletter.item.BedrockItemStack)
@@ -2652,9 +2652,9 @@ public final class dev.opencollab.paletter.item.RegisteredItem implements org.cl
 }
 
 public final class dev.opencollab.paletter.item.ResolvedItem {
+    public int aux()
     public dev.opencollab.paletter.behaviour.ItemValues behaviour()
     public dev.opencollab.paletter.block.RegisteredBlockState block()
-    public int damage()
     public dev.opencollab.paletter.item.RegisteredItem definition()
     public boolean fallback()
     public org.cloudburstmc.protocol.bedrock.data.inventory.ItemData$Builder toItemData()

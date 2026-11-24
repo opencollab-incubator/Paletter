@@ -133,7 +133,7 @@ class HandleTest {
                     continue;
                 }
                 assertSame(resolved.definition(), sent.getDefinition(), version.toString());
-                assertEquals(resolved.damage(), sent.getDamage(), version.toString());
+                assertEquals(resolved.aux(), sent.getDamage(), version.toString());
                 assertSame(resolved.block(), sent.getBlockDefinition(), version.toString());
                 assertEquals(resolved.fallback(), !variant.equals(resolved.variant()), version.toString());
             }
@@ -147,7 +147,7 @@ class HandleTest {
         long sum = 0;
         for (int warmup = 0; warmup < 30; warmup++) {
             for (BedrockItemVariant variant : variants) {
-                sum += palette.resolve(variant).damage();
+                sum += palette.resolve(variant).aux();
             }
         }
         ThreadMXBean threads = (ThreadMXBean) ManagementFactory.getThreadMXBean();
@@ -155,7 +155,7 @@ class HandleTest {
         long before = threads.getThreadAllocatedBytes(thread);
         for (int round = 0; round < 20; round++) {
             for (BedrockItemVariant variant : variants) {
-                sum += palette.resolve(variant).damage();
+                sum += palette.resolve(variant).aux();
             }
         }
         long allocated = threads.getThreadAllocatedBytes(thread) - before;

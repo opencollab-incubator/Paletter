@@ -15,12 +15,12 @@ import java.util.function.Predicate;
  * Selects creative stacks, e.g. as an anchor to insert after, or to remove. Matchers print readably, so a placement
  * that found nothing can be reported as {@code after(minecraft:hopper_minecart) matched nothing}.
  * <pre>{@code
- * ItemMatcher.id("minecraft:empty_map").and(ItemMatcher.damage(2))
+ * ItemMatcher.id("minecraft:empty_map").and(ItemMatcher.aux(2))
  * }</pre>
  *
  * @since 1.0.0
  */
-public sealed interface ItemMatcher permits ItemMatchers.Id, ItemMatchers.Damage, ItemMatchers.BlockState,
+public sealed interface ItemMatcher permits ItemMatchers.Id, ItemMatchers.Aux, ItemMatchers.BlockState,
         ItemMatchers.Exact, ItemMatchers.Namespace, ItemMatchers.And, ItemMatchers.Not, ItemMatchers.Custom {
 
     /**
@@ -51,7 +51,7 @@ public sealed interface ItemMatcher permits ItemMatchers.Id, ItemMatchers.Damage
     }
 
     /**
-     * Matches every stack of an item, regardless of damage, block state or NBT.
+     * Matches every stack of an item, regardless of aux, block state or NBT.
      *
      * @param identifier the item identifier, e.g. {@code minecraft:empty_map}
      * @return the matcher
@@ -81,17 +81,17 @@ public sealed interface ItemMatcher permits ItemMatchers.Id, ItemMatchers.Damage
      */
     static @NonNull ItemMatcher of(@NonNull ItemKey key) {
         BedrockItemVariant variant = key.variant();
-        return new ItemMatchers.Id(variant.type().identifier()).and(new ItemMatchers.Damage(variant.aux()));
+        return new ItemMatchers.Id(variant.type().identifier()).and(new ItemMatchers.Aux(variant.aux()));
     }
 
     /**
-     * Matches the stacks with a damage (aux) value.
+     * Matches the stacks whose variant has an aux value.
      *
-     * @param damage the damage value
+     * @param aux the aux value
      * @return the matcher
      */
-    static @NonNull ItemMatcher damage(int damage) {
-        return new ItemMatchers.Damage(damage);
+    static @NonNull ItemMatcher aux(int aux) {
+        return new ItemMatchers.Aux(aux);
     }
 
     /**

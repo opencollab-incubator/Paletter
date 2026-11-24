@@ -194,7 +194,7 @@ class CanonicalTest {
                         // Only allowed if both resolve to exactly the same stack (e.g. fallbacks or adapted states)
                         ResolvedItem other = Ids.itemAt(palette, matched);
                         assertSame(item.definition(), other.definition(), Ids.canonicalItems(palette).variant(i).toString());
-                        assertEquals(item.damage(), other.damage());
+                        assertEquals(item.aux(), other.aux());
                         assertSame(item.block(), other.block(), Ids.canonicalItems(palette).variant(i) + " vs " + Ids.canonicalItems(palette).variant(matched));
                     }
                 }
@@ -242,7 +242,7 @@ class CanonicalTest {
                 assertEquals(Ids.item(PALETTER, ItemVariant.of("minecraft:apple")), Ids.item(palette, ItemVariant.of("minecraft:apple")));
 
                 RegisteredItem apple = palette.items().getDefinition("minecraft:apple");
-                assertEquals(3, Ids.itemAt(palette, vanilla).damage());
+                assertEquals(3, Ids.itemAt(palette, vanilla).aux());
                 assertEquals(vanilla, Ids.match(palette, ItemData.builder().definition(apple).damage(3).count(1).build()));
                 assertEquals(Ids.item(PALETTER, ItemVariant.of("minecraft:apple")),
                     Ids.match(palette, ItemData.builder().definition(apple).damage(4).count(1).build()));

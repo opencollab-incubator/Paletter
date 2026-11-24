@@ -19,7 +19,7 @@ import java.util.Objects;
  * ItemData potion = palette.item(BedrockItems.POTION.variant(5)).toItemData().build();
  * }</pre>
  * A type is an {@link ItemKey} for its base variant, so it can be passed to the methods that take a variant. Items whose
- * variants differ by damage (potions, banners, goat horns, ...) expose them with {@link #variant(int)}.
+ * variants differ by aux value (potions, banners, goat horns, ...) expose them with {@link #variant(int)}.
  * The potions, tipped arrows, beds and banners have constants for them in {@link BedrockItemVariants}.
  * <p>
  * Equality: {@code equals} always works, and types are map keys. {@code ==} works too for vanilla types, which are
@@ -278,7 +278,7 @@ public final class BedrockItemType implements ItemKey {
     /**
      * The base variant of the type.
      *
-     * @return the base variant: damage 0, no block state. Loads no data
+     * @return the base variant: aux 0, no block state. Loads no data
      */
     @Override
     public @NonNull BedrockItemVariant variant() {
@@ -291,49 +291,49 @@ public final class BedrockItemType implements ItemKey {
     }
 
     /**
-     * The variant of this type with a damage value, never null, and always of this type (also for a type that is not
+     * The variant of this type with an aux value, never null, and always of this type (also for a type that is not
      * {@link #isAvailable() available}: it resolves like any variant of it). The named constants of
      * {@link BedrockItemVariants} and the variants the bundled data lists are the same instance every time, so {@code ==}
      * holds for them whenever the key was made. An aux nobody named gives a new variant without a canonical id (a layer can
      * give it one with {@link dev.opencollab.paletter.PaletteLayer.Builder#variant(ItemKey)}); those are not kept, so
      * arbitrary auxes cannot grow memory. Loads no bundled data: only the constants of {@link BedrockItemVariants}.
      *
-     * @param damage the aux (damage) value
+     * @param aux the aux value
      * @return the variant of this type with this aux value
      */
-    public @NonNull BedrockItemVariant variant(int damage) {
-        if (damage == 0) {
+    public @NonNull BedrockItemVariant variant(int aux) {
+        if (aux == 0) {
             return base;
         }
         if (!custom) {
             VanillaTypes.loadNamedVariants();
         }
-        BedrockItemVariant known = named(damage);
+        BedrockItemVariant known = named(aux);
         if (known != null) {
             return known;
         }
         Linked linked = this.linked;
         if (linked != null) {
             for (BedrockItemVariant variant : linked.variants) {
-                if (variant.aux() == damage && variant.type() == this) {
+                if (variant.aux() == aux && variant.type() == this) {
                     return variant;
                 }
             }
         }
-        return new BedrockItemVariant(this, damage, -1);
+        return new BedrockItemVariant(this, aux, -1);
     }
 
     /**
-     * Whether the bundled data names a variant with a damage value.
+     * Whether the bundled data names a variant with an aux value.
      *
-     * @param damage the aux (damage) value
-     * @return whether the newest bundled data names a variant with this damage value, i.e. it is one of
+     * @param aux the aux value
+     * @return whether the newest bundled data names a variant with this aux value, i.e. it is one of
      *         {@link #variants()}. Loads the data
      * @since 1.0.0
      */
-    public boolean hasVariant(int damage) {
+    public boolean hasVariant(int aux) {
         for (BedrockItemVariant variant : linked().variants) {
-            if (variant.aux() == damage) {
+            if (variant.aux() == aux) {
                 return true;
             }
         }

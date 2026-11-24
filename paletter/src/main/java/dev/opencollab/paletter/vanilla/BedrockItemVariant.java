@@ -8,7 +8,8 @@ import dev.opencollab.paletter.internal.data.Renames;
 import dev.opencollab.paletter.internal.item.ItemVariant;
 
 /**
- * A variant of a {@link BedrockItemType}: the type and its aux (damage) value. The block a stack places is not part of
+ * A variant of a {@link BedrockItemType}: the type and its aux value. Paletter says "aux" for the value that names a
+ * variant (BDS's aux value, the {@code damage} field of Cloudburst's {@code ItemData}); "damage" is only an item's wear. The block a stack places is not part of
  * the variant, it belongs to the stack ({@link dev.opencollab.paletter.item.BedrockItemStack#blockState()}). Obtained from
  * {@link BedrockItemType#variant(int)} and {@link BedrockItemType#variants()}, or {@link BedrockItemType#variant()} for the base variant. It is an {@link ItemKey}, as is a type (for its base variant).
  * <p>
@@ -62,7 +63,7 @@ public final class BedrockItemVariant implements ItemKey {
      * (a legacy variant that became its own type) and renames of the bundled data are applied first. Loads the data.
      *
      * @param identifier an item identifier
-     * @param aux the aux (damage) value
+     * @param aux the aux value
      * @return the variant of a vanilla constant, or null if the identifier (after splits and renames) is not an item of
      *         the newest bundled data and has no generated constant
      * @throws NullPointerException if the identifier is null
@@ -79,7 +80,7 @@ public final class BedrockItemVariant implements ItemKey {
      * became its own type). Loads the data. Use {@link dev.opencollab.paletter.Palette#itemVariant} or {@code type.variant(aux)}.
      *
      * @param identifier an item identifier
-     * @param aux the aux (damage) value
+     * @param aux the aux value
      * @return the variant, a plain value if Paletter does not know the identifier
      */
     @Internal
@@ -111,7 +112,7 @@ public final class BedrockItemVariant implements ItemKey {
     /**
      * The aux value of the variant.
      *
-     * @return the aux (damage) value
+     * @return the aux value
      */
     public int aux() {
         return aux;

@@ -648,7 +648,7 @@ public final class ItemRegistry implements DefinitionRegistry<ItemDefinition> {
             }
         }
         // The stack's own aux names no variant (see BedrockItemStack#aux): it goes with the item, not with a fallback
-        int aux = !resolved.fallback() && stack.aux() != stack.variant().aux() ? stack.aux() : resolved.damage();
+        int aux = !resolved.fallback() && stack.aux() != stack.variant().aux() ? stack.aux() : resolved.aux();
         ItemData.Builder data = ItemData.builder()
             .definition(resolved.definition())
             .damage(aux)
@@ -707,7 +707,7 @@ public final class ItemRegistry implements DefinitionRegistry<ItemDefinition> {
         }
         BedrockItemVariant variant = canonical.handle(canonicalId);
         BedrockItemStack.Builder stack = BedrockItemStack.builder(variant);
-        if (data.getDamage() != item(canonicalId).damage()) {
+        if (data.getDamage() != item(canonicalId).aux()) {
             // Only the item matched: its base variant stood in for an aux value no variant has (a legacy damage value, a
             // number nobody listed). Keep the value on the stack instead of losing it or making a variant for it
             stack.variant(variant.type().variant()).aux(data.getDamage());
@@ -960,15 +960,15 @@ public final class ItemRegistry implements DefinitionRegistry<ItemDefinition> {
                 }
                 int taken = -1;
                 for (int c = 0; c < list.size(); c++) {
-                    if (list.get(c).damage == item.damage()) {
+                    if (list.get(c).damage == item.aux()) {
                         taken = c;
                     }
                 }
                 if (taken == -1) {
-                    list.add(new Candidate(item.damage(), i, fallback));
+                    list.add(new Candidate(item.aux(), i, fallback));
                 } else if (fallback && list.get(taken).fallback) {
                     // Shared by the fallbacks of several canonical ids: claiming any of them would be arbitrary
-                    list.set(taken, new Candidate(item.damage(), -1, true));
+                    list.set(taken, new Candidate(item.aux(), -1, true));
                 }
             }
         }

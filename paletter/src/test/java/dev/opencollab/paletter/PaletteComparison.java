@@ -70,7 +70,7 @@ final class PaletteComparison {
             assertEquals(item == null, other == null, at + " canonical item " + canonical);
             if (item != null) {
                 assertEquals(item.definition().getRuntimeId(), other.definition().getRuntimeId(), at + " canonical item " + canonical);
-                assertEquals(item.damage(), other.damage(), at + " canonical item " + canonical);
+                assertEquals(item.aux(), other.aux(), at + " canonical item " + canonical);
                 assertEquals(item.fallback(), other.fallback(), at + " canonical item " + canonical);
                 assertEquals(item.block() == null ? null : item.block().getRuntimeId(),
                     other.block() == null ? null : other.block().getRuntimeId(), at + " canonical item " + canonical);

@@ -31,7 +31,7 @@ class ItemPatchTest {
     }
 
     private static ItemData data(ResolvedItem resolved) {
-        return ItemData.builder().definition(resolved.definition()).damage(resolved.damage()).count(1)
+        return ItemData.builder().definition(resolved.definition()).damage(resolved.aux()).count(1)
             .blockDefinition(resolved.block()).build();
     }
 
