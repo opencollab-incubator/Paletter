@@ -30,7 +30,7 @@ class CustomItemRoundTripTest {
         Palette palette = paletter.palette(paletter.latest().protocolVersion());
 
         NbtMap tag = NbtMap.builder().putString("custom", "value").build();
-        BedrockItemStack stack = new BedrockItemStack(ruby.type().variant(), 3, tag, null);
+        BedrockItemStack stack = BedrockItemStack.builder(ruby.type()).count(3).nbt(tag).build();
         ItemData data = palette.encode(stack);
         assertEquals("example:ruby", data.getDefinition().getIdentifier());
 

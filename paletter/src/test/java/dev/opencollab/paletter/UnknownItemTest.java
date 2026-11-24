@@ -91,14 +91,15 @@ class UnknownItemTest {
     }
 
     @Test
-    void decodeKeepsTheDamageOfAnItemWithoutThatVariant() {
+    void decodeKeepsTheAuxOfAnItemWithoutThatVariant() {
         Palette palette = latest();
         BedrockItemVariant sword = BedrockItems.DIAMOND_SWORD.variant();
         ItemData worn = palette.encode(BedrockItemStack.of(sword, 2)).toBuilder().damage(17).build();
         BedrockItemStack decoded = palette.decode(worn);
         assertNotNull(decoded);
         assertEquals(BedrockItems.DIAMOND_SWORD, decoded.type());
-        assertEquals(17, decoded.variant().aux(), "the damage must not be lost");
+        assertSame(sword, decoded.variant(), "client input makes no variant");
+        assertEquals(17, decoded.aux(), "the aux must not be lost");
         assertEquals(2, decoded.count());
         // And it goes back out as it came
         ItemData again = palette.encode(decoded);
@@ -113,7 +114,8 @@ class UnknownItemTest {
         BedrockItemStack oddStack = palette.decode(odd);
         assertNotNull(oddStack);
         assertEquals(BedrockItems.POTION, oddStack.type());
-        assertEquals(9999, oddStack.variant().aux());
+        assertSame(BedrockItems.POTION.variant(), oddStack.variant());
+        assertEquals(9999, oddStack.aux());
         // The base variant itself decodes to itself
         assertSame(sword, palette.decode(palette.encode(BedrockItemStack.of(sword))).variant());
     }

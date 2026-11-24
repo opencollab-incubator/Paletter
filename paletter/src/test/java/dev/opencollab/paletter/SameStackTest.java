@@ -30,7 +30,7 @@ class SameStackTest {
     }
 
     private static BedrockItemStack sword(int count, NbtMap nbt) {
-        return new BedrockItemStack(BedrockItems.DIAMOND_SWORD.variant(), count, nbt, null);
+        return BedrockItemStack.builder(BedrockItems.DIAMOND_SWORD).count(count).nbt(nbt).build();
     }
 
     @Test

@@ -58,11 +58,14 @@ public final class TranslatorExample {
             System.out.println(protocol + ": java -> runtime ids " + Arrays.toString(javaToRuntime));
         }
 
-        // Items, both directions: handle <-> the translator's own item table
+        // Items, both directions: variant <-> the translator's own item table. Decoding only gives variants the palette
+        // knows, so a map keyed by them stays bounded whatever a client sends; an aux no variant has stays on the stack
         Map<BedrockItemVariant, String> bedrockToJava = new HashMap<>();
         bedrockToJava.put(ruby.type().variant(), "java:ruby");
         ItemData toClient = shared.encode(BedrockItemStack.of(ruby.type(), 2));
         System.out.println("from client: " + bedrockToJava.get(shared.decode(toClient).variant()));
+        BedrockItemStack odd = shared.decode(toClient.toBuilder().damage(12345).build());
+        System.out.println("from client with aux " + odd.aux() + ": " + bedrockToJava.get(odd.variant()));
 
         // A session: a short lived layer on top of the shared palette; what it does not touch stays identical
         CustomItem sessionItem = CustomItem.builder("example:session_item").component(Icon.of("session_item")).build();

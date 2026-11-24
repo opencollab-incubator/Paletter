@@ -625,9 +625,10 @@ public final class ItemRegistry implements DefinitionRegistry<ItemDefinition> {
     }
 
     /**
-     * What to send for a stack: its item resolved for this version (fallbacks applied), the aux value, count and NBT,
-     * and the block the stack places: its own block state if it has one and the item places blocks here, else the item's
-     * default block.
+     * What to send for a stack: its item resolved for this version (fallbacks applied), the aux value (the stack's own
+     * unless a fallback replaces the item), count, NBT, the adventure mode lists and blocking ticks, and the block the
+     * stack places: its own block state if it has one and the item places blocks here, else the default block of the
+     * item sent (of the fallback item, for a fallback).
      *
      * @param stack the stack to send
      * @return the item data, or {@link ItemData#AIR} if the item does not exist in this version and neither it nor the
@@ -646,13 +647,23 @@ public final class ItemRegistry implements DefinitionRegistry<ItemDefinition> {
                 block = own;
             }
         }
-        return ItemData.builder()
+        // The stack's own aux names no variant (see BedrockItemStack#aux): it goes with the item, not with a fallback
+        int aux = !resolved.fallback() && stack.aux() != stack.variant().aux() ? stack.aux() : resolved.damage();
+        ItemData.Builder data = ItemData.builder()
             .definition(resolved.definition())
-            .damage(resolved.damage())
+            .damage(aux)
             .count(stack.count())
             .tag(stack.nbt())
-            .blockDefinition(block)
-            .build();
+            .blockingTicks(stack.blockingTicks())
+            .blockDefinition(block);
+        // Only when there are any: the builder's own empty arrays allocate nothing per stack
+        if (!stack.canPlace().isEmpty()) {
+            data.canPlace(stack.canPlace().toArray(String[]::new));
+        }
+        if (!stack.canBreak().isEmpty()) {
+            data.canBreak(stack.canBreak().toArray(String[]::new));
+        }
+        return data.build();
     }
 
     /**
@@ -672,8 +683,9 @@ public final class ItemRegistry implements DefinitionRegistry<ItemDefinition> {
 
     /**
      * Identifies a stack the client sent, see {@link #match(ItemData)}. The block state is set only if the stack's
-     * block differs from the item's default block. If the item matched but not its damage value, the variant is the
-     * item's variant for the damage the client sent ({@link BedrockItemType#variant(int)}), so the damage is not lost.
+     * block differs from the item's default block. The variant is always one of the canonical variants: if the item
+     * matched but not its aux value, the variant is the item's base variant and the aux the client sent is kept in
+     * {@link BedrockItemStack#aux()}, so client input never makes a variant of its own.
      *
      * @param data the item data the client sent
      * @return the stack, or null for air or a stack that is no variant of the newest version
@@ -694,12 +706,32 @@ public final class ItemRegistry implements DefinitionRegistry<ItemDefinition> {
             }
         }
         BedrockItemVariant variant = canonical.handle(canonicalId);
+        BedrockItemStack.Builder stack = BedrockItemStack.builder(variant);
         if (data.getDamage() != item(canonicalId).damage()) {
-            // Only the item matched: its base variant stood in for a damage value the newest version has no variant
-            // for (a map id, a wear value, a number nobody listed). Keep the damage instead of losing it
-            variant = variant.type().variant(data.getDamage());
+            // Only the item matched: its base variant stood in for an aux value no variant has (a legacy damage value, a
+            // number nobody listed). Keep the value on the stack instead of losing it or making a variant for it
+            stack.variant(variant.type().variant()).aux(data.getDamage());
         }
-        return new BedrockItemStack(variant, Math.max(1, data.getCount()), data.getTag(), state);
+        return stack.count(Math.max(1, data.getCount()))
+            .nbt(data.getTag())
+            .blockState(state)
+            .canPlace(list(data.getCanPlace()))
+            .canBreak(list(data.getCanBreak()))
+            .blockingTicks(Math.max(0, data.getBlockingTicks()))
+            .build();
+    }
+
+    private static List<String> list(String @Nullable [] identifiers) {
+        if (identifiers == null || identifiers.length == 0) {
+            return List.of();
+        }
+        List<String> list = new ArrayList<>(identifiers.length);
+        for (String identifier : identifiers) {
+            if (identifier != null) {
+                list.add(identifier);
+            }
+        }
+        return list;
     }
 
     /**

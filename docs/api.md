@@ -212,7 +212,7 @@ Methods named `blockState`, `itemVariant` or `...Of` return keys; methods named 
 | `Palette#blockOf(ItemKey)` | The key of the block an item is sent with, or null. `blockDefinition(blockOf(v))` is what is sent. |
 | `Palette#itemOf(BedrockBlockType)` | The item the Script API gives for the block's default permutation: the block's own item for a custom block, else the bundled block to item relation. Null if there is none here. Whether the client's pick block gives this item is unverified. |
 | `Palette#encode(BedrockItemStack)` | The `ItemData` for the client, with fallbacks applied. |
-| `Palette#decode(ItemData)` | The stack a client sent, or null if unknown. |
+| `Palette#decode(ItemData)` | The stack a client sent, or null if unknown. Its variant is always one the palette knows: an aux that names no variant gives the base variant, and the stack keeps the client's value in `BedrockItemStack#aux()`, so client input never makes keys of its own. |
 | `Palette#explain(...)` | A readable explanation of how a block state or item resolves. |
 
 Lookups are on `Palette`, because the palette is the version. `Palette#blockState(NbtMap, Lookup)`, `blockState(identifier, values, Lookup)`, `itemVariant(identifier, aux, Lookup)`,

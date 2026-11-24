@@ -16,6 +16,8 @@ import org.junit.jupiter.api.Test;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
@@ -34,7 +36,7 @@ class EncodeDecodeTest {
     void vanillaStacksRoundTrip() {
         Palette palette = latest();
         NbtMap tag = NbtMap.builder().putString("custom", "value").build();
-        BedrockItemStack stack = new BedrockItemStack(BedrockItems.DIAMOND_SWORD.variant(), 1, tag, null);
+        BedrockItemStack stack = BedrockItemStack.builder(BedrockItems.DIAMOND_SWORD).nbt(tag).build();
         ItemData data = palette.encode(stack);
         assertEquals("minecraft:diamond_sword", data.getDefinition().getIdentifier());
         assertEquals(tag, data.getTag());
@@ -56,6 +58,22 @@ class EncodeDecodeTest {
         assertNotNull(decoded);
         assertSame(potion, decoded.variant());
         assertEquals(5, decoded.variant().aux());
+    }
+
+    @Test
+    void adventureFieldsAndAuxRoundTrip() {
+        Palette palette = latest();
+        BedrockItemStack stack = BedrockItemStack.builder(BedrockItems.DIAMOND_PICKAXE).aux(3).count(2)
+            .canPlace("minecraft:stone").canBreak("minecraft:dirt", "minecraft:grass_block").blockingTicks(40).build();
+        ItemData data = palette.encode(stack);
+        assertEquals(3, data.getDamage());
+        assertArrayEquals(new String[] {"minecraft:stone"}, data.getCanPlace());
+        assertArrayEquals(new String[] {"minecraft:dirt", "minecraft:grass_block"}, data.getCanBreak());
+        assertEquals(40, data.getBlockingTicks());
+        assertEquals(stack, palette.decode(data));
+        assertEquals(stack, stack.toBuilder().build());
+        // A named variant takes no other aux
+        assertThrows(IllegalArgumentException.class, () -> BedrockItemStack.builder(BedrockItems.POTION.variant(5)).aux(6).build());
     }
 
     @Test

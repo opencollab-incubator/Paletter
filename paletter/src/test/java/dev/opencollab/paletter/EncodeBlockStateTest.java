@@ -47,7 +47,7 @@ class EncodeBlockStateTest {
     }
 
     private static void assertSameAsResolve(Palette palette, String item, BedrockBlockState state) {
-        BedrockItemStack stack = new BedrockItemStack(BedrockItemVariant.fromIdentifier(item, 0), 3, null, state);
+        BedrockItemStack stack = BedrockItemStack.builder(BedrockItemVariant.fromIdentifier(item, 0)).count(3).blockState(state).build();
         assertEquals(viaResolve(palette, stack), palette.encode(stack), item + " " + state);
     }
 
@@ -65,7 +65,7 @@ class EncodeBlockStateTest {
     void theBlockOfTheStateIsSent() {
         Palette palette = PALETTER.palette(PALETTER.latest().protocolVersion());
         BedrockBlockState sideways = state("minecraft:oak_log", Map.of("pillar_axis", "x"));
-        BedrockItemStack stack = new BedrockItemStack(BedrockItemVariant.fromIdentifier("minecraft:oak_log", 0), 1, null, sideways);
+        BedrockItemStack stack = BedrockItemStack.builder(BedrockItemVariant.fromIdentifier("minecraft:oak_log", 0)).blockState(sideways).build();
         assertEquals(palette.runtimeId(sideways), palette.encode(stack).getBlockDefinition().getRuntimeId());
     }
 
@@ -100,7 +100,7 @@ class EncodeBlockStateTest {
         Palette session = base.extend(layer);
         BedrockBlockState lit = LAMP.type().states().getLast();
         BedrockItemVariant lamp = BedrockItemVariant.fromIdentifier(LAMP.identifier(), 0);
-        BedrockItemStack stack = new BedrockItemStack(lamp, 2, null, lit);
+        BedrockItemStack stack = BedrockItemStack.builder(lamp).count(2).blockState(lit).build();
 
         ItemData data = session.encode(stack);
         assertEquals(viaResolve(session, stack), data);

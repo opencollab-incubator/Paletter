@@ -61,6 +61,7 @@ public final class RawConverter {
                     + Canonicals.forwardBlock(blocks, stack.blockState()).detail());
             }
         }
-        return new BedrockItemStack(BedrockItemVariant.fromIdentifier(stack.identifier(), stack.damage()), stack.count(), stack.tag(), state);
+        return BedrockItemStack.builder(BedrockItemVariant.fromIdentifier(stack.identifier(), stack.damage())).count(stack.count())
+            .nbt(stack.tag()).blockState(state).build();
     }
 }

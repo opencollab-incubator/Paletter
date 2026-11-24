@@ -76,7 +76,7 @@ and an anticheat.
 constants (`BedrockBlocks.STONE`, `BedrockItems.APPLE`); custom content gets its keys from `CustomBlock#type()` and
 `CustomItem#type()`. A registered entry (`RegisteredItem`, `RegisteredBlockState`) is a key inside one palette, with its
 runtime id and components; these implement Cloudburst's `ItemDefinition` and `BlockDefinition`. A stack
-(`BedrockItemStack`) is a variant with a count, NBT and an optional block state. Cloudburst's `ItemData` only appears
+(`BedrockItemStack`) is a variant with a count, NBT, an optional block state and the rest of what a client stack carries (an aux that names no variant, the adventure mode lists, blocking ticks). Cloudburst's `ItemData` only appears
 where a packet needs it, through `Palette#encode` and `Palette#decode`.
 
 **Paletter, palettes and layers.** `Paletter` holds the settings shared by every version: the data source, fallbacks,
