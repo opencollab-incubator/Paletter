@@ -91,6 +91,16 @@ public final class Movable implements BlockComponent {
     }
 
     /**
+     * Creates the component with {@code movement_type} set. Every other field is at its default.
+     *
+     * @param value the value of that field
+     * @return the component
+     */
+    public static @NonNull Movable of(@NonNull MovementType value) {
+        return builder().movementType(value).build();
+    }
+
+    /**
      * Creates a builder with every optional field at its default; required fields must be set before
      * {@code build()}.
      *

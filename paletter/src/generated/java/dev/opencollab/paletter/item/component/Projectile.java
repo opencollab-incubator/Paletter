@@ -81,6 +81,16 @@ public final class Projectile implements ItemComponent {
     }
 
     /**
+     * Creates the component with {@code projectile_entity} set. Every other field is at its default.
+     *
+     * @param value the value of that field
+     * @return the component
+     */
+    public static @NonNull Projectile of(@NonNull String value) {
+        return builder().projectileEntity(value).build();
+    }
+
+    /**
      * Creates a builder with every optional field at its default; required fields must be set before
      * {@code build()}.
      *

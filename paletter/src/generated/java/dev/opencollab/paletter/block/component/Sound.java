@@ -64,6 +64,16 @@ public final class Sound implements BlockComponent {
     }
 
     /**
+     * Creates the component with {@code sound} set.
+     *
+     * @param value the value of that field
+     * @return the component
+     */
+    public static @NonNull Sound of(@NonNull String value) {
+        return builder().sound(value).build();
+    }
+
+    /**
      * Creates a builder with every field at its default.
      *
      * @return a builder with the defaults applied

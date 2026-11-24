@@ -64,6 +64,16 @@ public final class BundleInteraction implements ItemComponent {
     }
 
     /**
+     * Creates the component with {@code num_viewable_slots} set.
+     *
+     * @param value the value of that field
+     * @return the component
+     */
+    public static @NonNull BundleInteraction of(int value) {
+        return builder().numViewableSlots(value).build();
+    }
+
+    /**
      * Creates a builder with every field at its default.
      *
      * @return a builder with the defaults applied

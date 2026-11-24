@@ -322,4 +322,11 @@ class CustomContentTest {
         assertEquals(List.of("example:b_x", "example:block_x"), names);
         assertTrue(palette.blocks().customBlockId("example:b_x") < palette.blocks().customBlockId("example:block_x"));
     }
+
+    @Test
+    void aComponentWithOneValueHasAFactoryForIt() {
+        assertEquals("Ruby", ItemDisplayName.of("Ruby").value());
+        assertEquals(250, Durability.of(250).maxDurability());
+        assertEquals(Durability.builder().maxDurability(250).build(), Durability.of(250));
+    }
 }

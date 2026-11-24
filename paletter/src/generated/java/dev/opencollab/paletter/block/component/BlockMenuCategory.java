@@ -94,6 +94,16 @@ public final class BlockMenuCategory {
     }
 
     /**
+     * Creates the component with {@code category} set. Every other field is at its default.
+     *
+     * @param value the value of that field
+     * @return the component
+     */
+    public static @NonNull BlockMenuCategory of(@NonNull Category value) {
+        return builder().category(value).build();
+    }
+
+    /**
      * Creates a builder with every optional field at its default; required fields must be set before
      * {@code build()}.
      *

@@ -63,6 +63,16 @@ public final class StorageWeightLimit implements ItemComponent {
     }
 
     /**
+     * Creates the component with {@code max_weight_limit} set.
+     *
+     * @param value the value of that field
+     * @return the component
+     */
+    public static @NonNull StorageWeightLimit of(int value) {
+        return builder().maxWeightLimit(value).build();
+    }
+
+    /**
      * Creates a builder with every field at its default.
      *
      * @return a builder with the defaults applied

@@ -70,6 +70,16 @@ public final class PrecipitationInteractions implements BlockComponent {
     }
 
     /**
+     * Creates the component with {@code precipitation_behavior} set.
+     *
+     * @param value the value of that field
+     * @return the component
+     */
+    public static @NonNull PrecipitationInteractions of(@NonNull PrecipitationBehavior value) {
+        return builder().precipitationBehavior(value).build();
+    }
+
+    /**
      * Creates a builder with every optional field at its default; required fields must be set before
      * {@code build()}.
      *

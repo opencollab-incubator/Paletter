@@ -62,6 +62,16 @@ public final class ItemDisplayName implements ItemComponent {
     }
 
     /**
+     * Creates the component with {@code value} set.
+     *
+     * @param value the value of that field
+     * @return the component
+     */
+    public static @NonNull ItemDisplayName of(@NonNull String value) {
+        return builder().value(value).build();
+    }
+
+    /**
      * Creates a builder with every field at its default.
      *
      * @return a builder with the defaults applied

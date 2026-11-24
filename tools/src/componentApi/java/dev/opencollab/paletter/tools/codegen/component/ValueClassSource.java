@@ -473,6 +473,9 @@ final class ValueClassSource {
         if (o.shorthand != null) {
             shorthand(type, o, o.shorthand, o.shorthandType, signatures);
         }
+        if (top && signatures.isEmpty()) {
+            singleValue(type, o, signatures);
+        }
         if (o.blockDescriptor) {
             Field name = o.fields.stream().filter(f -> "name".equals(f.json)).findFirst().orElse(null);
             Field states = o.fields.stream().filter(f -> f.type instanceof States).findFirst().orElse(null);
@@ -512,6 +515,30 @@ final class ValueClassSource {
             .addJavadoc(Docs.bedrock(model, doc.toString()) + "\n\n@param entry the one entry\n@return the value with everything else at its default\n", jsonType, target.java)
             .addParameter(nonNull(entry), "entry").returns(nonNull(name(o)))
             .addStatement("return builder().$N(entry).build()", target.java).build());
+    }
+
+    /**
+     * {@code of(value)} for a component without a value form whose object has one field, or one required field (the others
+     * have defaults): {@code ItemDisplayName.of("Ruby")}, {@code Durability.of(250)}. The factories follow what a component
+     * needs, not only the shape of its add-on JSON.
+     */
+    private void singleValue(TypeSpec.Builder type, ObjType o, Set<String> signatures) {
+        List<Field> fields = o.fields.stream().filter(f -> f.form == null).toList();
+        List<Field> required = fields.stream().filter(f -> f.required).toList();
+        Field target = fields.size() == 1 ? fields.getFirst() : required.size() == 1 ? required.getFirst() : null;
+        if (target == null || !(target.type instanceof Scalar || target.type instanceof EnumRef)) {
+            return;
+        }
+        TypeName param = typeName(target.type, false);
+        if (!signatures.add(param.toString())) {
+            return;
+        }
+        String others = fields.size() == 1 ? "" : " Every other field is at its default.";
+        type.addMethod(MethodSpec.methodBuilder("of").addModifiers(Modifier.PUBLIC, Modifier.STATIC)
+            .addJavadoc("Creates the component with {@code $L} set.$L\n\n@param value the value of that field\n@return the component\n",
+                target.json == null ? target.java : target.json, others)
+            .addParameter(param.isPrimitive() ? param : nonNull(param), "value").returns(nonNull(name(o)))
+            .addStatement("return builder().$N(value).build()", target.java).build());
     }
 
     private void shorthand(TypeSpec.Builder type, ObjType o, Field target, String jsonType, Set<String> signatures) {

@@ -76,6 +76,16 @@ public final class ChestObstruction implements BlockComponent {
     }
 
     /**
+     * Creates the component with {@code obstruction_rule} set.
+     *
+     * @param value the value of that field
+     * @return the component
+     */
+    public static @NonNull ChestObstruction of(@NonNull ObstructionRule value) {
+        return builder().obstructionRule(value).build();
+    }
+
+    /**
      * Creates a builder with every field at its default.
      *
      * @return a builder with the defaults applied

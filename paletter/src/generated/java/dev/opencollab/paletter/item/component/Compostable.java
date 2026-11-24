@@ -64,6 +64,16 @@ public final class Compostable implements ItemComponent {
     }
 
     /**
+     * Creates the component with {@code composting_chance} set.
+     *
+     * @param value the value of that field
+     * @return the component
+     */
+    public static @NonNull Compostable of(int value) {
+        return builder().compostingChance(value).build();
+    }
+
+    /**
      * Creates a builder with every optional field at its default; required fields must be set before
      * {@code build()}.
      *

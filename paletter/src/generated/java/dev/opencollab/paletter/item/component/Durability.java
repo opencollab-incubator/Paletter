@@ -83,6 +83,16 @@ public final class Durability implements ItemComponent {
     }
 
     /**
+     * Creates the component with {@code max_durability} set. Every other field is at its default.
+     *
+     * @param value the value of that field
+     * @return the component
+     */
+    public static @NonNull Durability of(int value) {
+        return builder().maxDurability(value).build();
+    }
+
+    /**
      * Creates a builder with every optional field at its default; required fields must be set before
      * {@code build()}.
      *

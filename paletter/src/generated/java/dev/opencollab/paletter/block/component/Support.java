@@ -72,6 +72,16 @@ public final class Support implements BlockComponent {
     }
 
     /**
+     * Creates the component with {@code shape} set.
+     *
+     * @param value the value of that field
+     * @return the component
+     */
+    public static @NonNull Support of(@NonNull Shape value) {
+        return builder().shape(value).build();
+    }
+
+    /**
      * Creates a builder with every optional field at its default; required fields must be set before
      * {@code build()}.
      *

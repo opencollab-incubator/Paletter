@@ -121,6 +121,16 @@ public final class RedstoneProducer implements BlockComponent {
     }
 
     /**
+     * Creates the component with {@code power} set. Every other field is at its default.
+     *
+     * @param value the value of that field
+     * @return the component
+     */
+    public static @NonNull RedstoneProducer of(int value) {
+        return builder().power(value).build();
+    }
+
+    /**
      * Creates a builder with every optional field at its default; required fields must be set before
      * {@code build()}.
      *

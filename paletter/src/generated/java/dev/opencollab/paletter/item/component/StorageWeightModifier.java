@@ -63,6 +63,16 @@ public final class StorageWeightModifier implements ItemComponent {
     }
 
     /**
+     * Creates the component with {@code weight_in_storage_item} set.
+     *
+     * @param value the value of that field
+     * @return the component
+     */
+    public static @NonNull StorageWeightModifier of(int value) {
+        return builder().weightInStorageItem(value).build();
+    }
+
+    /**
      * Creates a builder with every field at its default.
      *
      * @return a builder with the defaults applied

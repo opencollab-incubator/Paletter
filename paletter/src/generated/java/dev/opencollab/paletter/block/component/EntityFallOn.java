@@ -66,6 +66,16 @@ public final class EntityFallOn implements BlockComponent {
     }
 
     /**
+     * Creates the component with {@code min_fall_distance} set.
+     *
+     * @param value the value of that field
+     * @return the component
+     */
+    public static @NonNull EntityFallOn of(float value) {
+        return builder().minFallDistance(value).build();
+    }
+
+    /**
      * Creates a builder with every field at its default.
      *
      * @return a builder with the defaults applied
