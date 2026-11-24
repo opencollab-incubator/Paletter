@@ -129,8 +129,8 @@ class SpecCaptureTest {
         Files.writeString(root.resolve("data/bds/1.26.99.1/schema.json"), "{\"bdsVersion\": \"1.26.99.1\", \"formats\": {}}");
         Schema extracted = Schema.of(JsonParser.parseString("{\"bdsVersion\": \"1.26.99.2\", \"formats\": {\"block\": [\"1.26.60\"]}, \"block\": "
             + "{\"minecraft:box\": [{\"formats\": [\"1.26.60\"], \"root\": {\"types\": [\"object\"]}, \"fields\": {}}]}}").getAsJsonObject());
-        assertEquals("1.26.99.2", SpecCapture.fixtures(model, "1.26.99.2", extracted, true).schemaBuild(), "the run's own schema wins");
-        assertEquals(null, SpecCapture.fixtures(model, "1.26.99.2", extracted, false).schemaBuild(), "with the switch off the run's schema is ignored");
+        assertEquals("1.26.99.2", SpecCapture.fixtures(model, "1.26.99.2", extracted).schemaBuild(), "the run's own schema wins");
+        assertEquals("1.26.99.1", SpecCapture.fixtures(model, "1.26.99.2", null).schemaBuild(), "without one, the newest committed schema");
     }
 
     private static void pack(Path directory, String uuid) throws IOException {

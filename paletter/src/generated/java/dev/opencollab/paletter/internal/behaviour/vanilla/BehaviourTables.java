@@ -32,12 +32,33 @@ final class BehaviourTables {
     /**
      * Used by:
      * - minecraft:acacia_door collision_shape
-     * - minecraft:acacia_door outline_shape
      * - minecraft:bamboo_door collision_shape
-     * - minecraft:bamboo_door outline_shape
      * - minecraft:birch_door collision_shape
+     * - minecraft:cherry_door collision_shape
+     * - minecraft:copper_door collision_shape
+     * - minecraft:crimson_door collision_shape
+     * - and 16 more
+     */
+    static final Cell TABLE_DOOR_HINGE_BIT_CARDINAL_DIRECTION_OPEN_BIT_C89710 = Cell.table(new String[] {"door_hinge_bit", "minecraft:cardinal_direction", "open_bit"},
+    new Object[][] {{false, true}, {"east", "north", "south", "west"}, {false, true}},
+    SHAPE_ACACIA_DOOR_COLLISION_SHAPE, SHAPE_ACACIA_DOOR_COLLISION_SHAPE_2,
+            SHAPE_ACACIA_DOOR_COLLISION_SHAPE_3, SHAPE_ACACIA_DOOR_COLLISION_SHAPE,
+            SHAPE_ACACIA_DOOR_COLLISION_SHAPE_2, SHAPE_ACACIA_DOOR_COLLISION_SHAPE_4,
+            SHAPE_ACACIA_DOOR_COLLISION_SHAPE_4, SHAPE_ACACIA_DOOR_COLLISION_SHAPE_3,
+            SHAPE_ACACIA_DOOR_COLLISION_SHAPE, SHAPE_ACACIA_DOOR_COLLISION_SHAPE_3,
+            SHAPE_ACACIA_DOOR_COLLISION_SHAPE_3, SHAPE_ACACIA_DOOR_COLLISION_SHAPE_4,
+            SHAPE_ACACIA_DOOR_COLLISION_SHAPE_2, SHAPE_ACACIA_DOOR_COLLISION_SHAPE,
+            SHAPE_ACACIA_DOOR_COLLISION_SHAPE_4, SHAPE_ACACIA_DOOR_COLLISION_SHAPE_2);
+
+    /**
+     * Used by:
+     * - minecraft:acacia_door outline_shape
+     * - minecraft:bamboo_door outline_shape
      * - minecraft:birch_door outline_shape
-     * - and 38 more
+     * - minecraft:cherry_door outline_shape
+     * - minecraft:copper_door outline_shape
+     * - minecraft:crimson_door outline_shape
+     * - and 16 more
      */
     static final Cell TABLE_DOOR_HINGE_BIT_CARDINAL_DIRECTION_OPEN_BIT_C4BD10 = Cell.table(new String[] {"door_hinge_bit", "minecraft:cardinal_direction", "open_bit"},
     new Object[][] {{false, true}, {"east", "north", "south", "west"}, {false, true}},
@@ -121,13 +142,13 @@ final class BehaviourTables {
     static final Cell TABLE_DIRECTION_OPEN_BIT_UPSIDE_DOWN_BIT_A554C9 = Cell.table(new String[] {"direction", "open_bit", "upside_down_bit"},
     new Object[][] {{0, 1, 2, 3}, {false, true}, {false, true}},
     SHAPE_ACACIA_TRAPDOOR_COLLISION_SHAPE, SHAPE_ACACIA_TRAPDOOR_COLLISION_SHAPE_2,
-            SHAPE_ACACIA_TRAPDOOR_COLLISION_SHAPE_3, SHAPE_ACACIA_TRAPDOOR_COLLISION_SHAPE_3,
+            SHAPE_ACACIA_DOOR_COLLISION_SHAPE_2, SHAPE_ACACIA_DOOR_COLLISION_SHAPE_2,
             SHAPE_ACACIA_TRAPDOOR_COLLISION_SHAPE, SHAPE_ACACIA_TRAPDOOR_COLLISION_SHAPE_2,
-            SHAPE_ACACIA_TRAPDOOR_COLLISION_SHAPE_4, SHAPE_ACACIA_TRAPDOOR_COLLISION_SHAPE_4,
+            SHAPE_ACACIA_DOOR_COLLISION_SHAPE_3, SHAPE_ACACIA_DOOR_COLLISION_SHAPE_3,
             SHAPE_ACACIA_TRAPDOOR_COLLISION_SHAPE, SHAPE_ACACIA_TRAPDOOR_COLLISION_SHAPE_2,
-            SHAPE_ACACIA_TRAPDOOR_COLLISION_SHAPE_5, SHAPE_ACACIA_TRAPDOOR_COLLISION_SHAPE_5,
+            SHAPE_ACACIA_DOOR_COLLISION_SHAPE_4, SHAPE_ACACIA_DOOR_COLLISION_SHAPE_4,
             SHAPE_ACACIA_TRAPDOOR_COLLISION_SHAPE, SHAPE_ACACIA_TRAPDOOR_COLLISION_SHAPE_2,
-            SHAPE_ACACIA_TRAPDOOR_COLLISION_SHAPE_6, SHAPE_ACACIA_TRAPDOOR_COLLISION_SHAPE_6);
+            SHAPE_ACACIA_DOOR_COLLISION_SHAPE, SHAPE_ACACIA_DOOR_COLLISION_SHAPE);
 
     /**
      * Used by:
@@ -524,7 +545,7 @@ final class BehaviourTables {
      * Used by:
      * - minecraft:trip_wire solid (captures)
      */
-    static final Cell SOURCES_ATTACHED_BIT_DISARMED_BIT_POWERED_BIT_SUSPENDED_BIT_17ADA0 = Cell.table(new String[] {"attached_bit", "disarmed_bit", "powered_bit", "suspended_bit"},
+    static final Cell SOURCES_ATTACHED_BIT_DISARMED_BIT_POWERED_BIT_SUSPENDED_BIT_5932A2 = Cell.table(new String[] {"attached_bit", "disarmed_bit", "powered_bit", "suspended_bit"},
     new Object[][] {{false, true}, {false, true}, {false, true}, {false, true}},
     CLOUDBURST_DATA_26_30, SCRIPT_API_26_30_SOLID, CLOUDBURST_DATA_26_30, CLOUDBURST_DATA_26_30,
             CLOUDBURST_DATA_26_30, CLOUDBURST_DATA_26_30, CLOUDBURST_DATA_26_30,
@@ -553,7 +574,7 @@ final class BehaviourTables {
      * Used by:
      * - minecraft:trip_wire map_color (captures)
      */
-    static final Cell SOURCES_ATTACHED_BIT_DISARMED_BIT_POWERED_BIT_SUSPENDED_BIT_5932A2 = Cell.table(new String[] {"attached_bit", "disarmed_bit", "powered_bit", "suspended_bit"},
+    static final Cell SOURCES_ATTACHED_BIT_DISARMED_BIT_POWERED_BIT_SUSPENDED_BIT_9AB7A4 = Cell.table(new String[] {"attached_bit", "disarmed_bit", "powered_bit", "suspended_bit"},
     new Object[][] {{false, true}, {false, true}, {false, true}, {false, true}},
     CLOUDBURST_DATA_26_30, SCRIPT_API_26_30_MAP_COLOR, CLOUDBURST_DATA_26_30, CLOUDBURST_DATA_26_30,
             CLOUDBURST_DATA_26_30, CLOUDBURST_DATA_26_30, CLOUDBURST_DATA_26_30,
@@ -594,7 +615,7 @@ final class BehaviourTables {
      * Used by:
      * - minecraft:tripwire_hook solid (captures)
      */
-    static final Cell SOURCES_ATTACHED_BIT_POWERED_BIT_EE72E6 = Cell.table(new String[] {"attached_bit", "powered_bit"},
+    static final Cell SOURCES_ATTACHED_BIT_POWERED_BIT_51BDA4 = Cell.table(new String[] {"attached_bit", "powered_bit"},
     new Object[][] {{false, true}, {false, true}},
     SCRIPT_API_26_30_SOLID, CLOUDBURST_DATA_26_30, CLOUDBURST_DATA_26_30, CLOUDBURST_DATA_26_30);
 
@@ -610,7 +631,7 @@ final class BehaviourTables {
      * Used by:
      * - minecraft:tripwire_hook map_color (captures)
      */
-    static final Cell SOURCES_ATTACHED_BIT_POWERED_BIT_51BDA4 = Cell.table(new String[] {"attached_bit", "powered_bit"},
+    static final Cell SOURCES_ATTACHED_BIT_POWERED_BIT_B50862 = Cell.table(new String[] {"attached_bit", "powered_bit"},
     new Object[][] {{false, true}, {false, true}},
     SCRIPT_API_26_30_MAP_COLOR, CLOUDBURST_DATA_26_30, CLOUDBURST_DATA_26_30,
             CLOUDBURST_DATA_26_30);
@@ -647,7 +668,7 @@ final class BehaviourTables {
      * Used by:
      * - minecraft:trip_wire solid (captures)
      */
-    static final Cell SOURCES_ATTACHED_BIT_DISARMED_BIT_POWERED_BIT_SUSPENDED_BIT_5FCC10 = Cell.table(new String[] {"attached_bit", "disarmed_bit", "powered_bit", "suspended_bit"},
+    static final Cell SOURCES_ATTACHED_BIT_DISARMED_BIT_POWERED_BIT_SUSPENDED_BIT_B7E5B2 = Cell.table(new String[] {"attached_bit", "disarmed_bit", "powered_bit", "suspended_bit"},
     new Object[][] {{false, true}, {false, true}, {false, true}, {false, true}},
     CLOUDBURST_DATA_26_40, SCRIPT_API_26_40_SOLID, CLOUDBURST_DATA_26_40, CLOUDBURST_DATA_26_40,
             CLOUDBURST_DATA_26_40, CLOUDBURST_DATA_26_40, CLOUDBURST_DATA_26_40,
@@ -659,7 +680,7 @@ final class BehaviourTables {
      * Used by:
      * - minecraft:trip_wire map_color (captures)
      */
-    static final Cell SOURCES_ATTACHED_BIT_DISARMED_BIT_POWERED_BIT_SUSPENDED_BIT_CB6592 = Cell.table(new String[] {"attached_bit", "disarmed_bit", "powered_bit", "suspended_bit"},
+    static final Cell SOURCES_ATTACHED_BIT_DISARMED_BIT_POWERED_BIT_SUSPENDED_BIT_237F34 = Cell.table(new String[] {"attached_bit", "disarmed_bit", "powered_bit", "suspended_bit"},
     new Object[][] {{false, true}, {false, true}, {false, true}, {false, true}},
     CLOUDBURST_DATA_26_40, SCRIPT_API_26_40_MAP_COLOR, CLOUDBURST_DATA_26_40, CLOUDBURST_DATA_26_40,
             CLOUDBURST_DATA_26_40, CLOUDBURST_DATA_26_40, CLOUDBURST_DATA_26_40,
@@ -671,7 +692,7 @@ final class BehaviourTables {
      * Used by:
      * - minecraft:tripwire_hook solid (captures)
      */
-    static final Cell SOURCES_ATTACHED_BIT_POWERED_BIT_C27CD4 = Cell.table(new String[] {"attached_bit", "powered_bit"},
+    static final Cell SOURCES_ATTACHED_BIT_POWERED_BIT_C6095E = Cell.table(new String[] {"attached_bit", "powered_bit"},
     new Object[][] {{false, true}, {false, true}},
     SCRIPT_API_26_40_SOLID, CLOUDBURST_DATA_26_40, CLOUDBURST_DATA_26_40, CLOUDBURST_DATA_26_40);
 
@@ -679,7 +700,7 @@ final class BehaviourTables {
      * Used by:
      * - minecraft:tripwire_hook map_color (captures)
      */
-    static final Cell SOURCES_ATTACHED_BIT_POWERED_BIT_795156 = Cell.table(new String[] {"attached_bit", "powered_bit"},
+    static final Cell SOURCES_ATTACHED_BIT_POWERED_BIT_7CDDE0 = Cell.table(new String[] {"attached_bit", "powered_bit"},
     new Object[][] {{false, true}, {false, true}},
     SCRIPT_API_26_40_MAP_COLOR, CLOUDBURST_DATA_26_40, CLOUDBURST_DATA_26_40,
             CLOUDBURST_DATA_26_40);
@@ -694,7 +715,7 @@ final class BehaviourTables {
      * - minecraft:brown_stained_glass_pane solid (captures)
      * - and 51 more
      */
-    static final Cell SOURCES_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_98458C = Cell.table(new String[] {"minecraft:connection_east", "minecraft:connection_north", "minecraft:connection_south", "minecraft:connection_west"},
+    static final Cell SOURCES_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_904E4E = Cell.table(new String[] {"minecraft:connection_east", "minecraft:connection_north", "minecraft:connection_south", "minecraft:connection_west"},
     new Object[][] {{false, true}, {false, true}, {false, true}, {false, true}},
     SCRIPT_API_26_50_SOLID, CLOUDBURST_DATA_26_50, CLOUDBURST_DATA_26_50, CLOUDBURST_DATA_26_50,
             CLOUDBURST_DATA_26_50, CLOUDBURST_DATA_26_50, CLOUDBURST_DATA_26_50,
@@ -762,7 +783,7 @@ final class BehaviourTables {
      * - minecraft:brown_stained_glass_pane map_color (captures)
      * - and 51 more
      */
-    static final Cell SOURCES_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_B74E0E = Cell.table(new String[] {"minecraft:connection_east", "minecraft:connection_north", "minecraft:connection_south", "minecraft:connection_west"},
+    static final Cell SOURCES_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_AF56D0 = Cell.table(new String[] {"minecraft:connection_east", "minecraft:connection_north", "minecraft:connection_south", "minecraft:connection_west"},
     new Object[][] {{false, true}, {false, true}, {false, true}, {false, true}},
     SCRIPT_API_26_50_MAP_COLOR, CLOUDBURST_DATA_26_50, CLOUDBURST_DATA_26_50, CLOUDBURST_DATA_26_50,
             CLOUDBURST_DATA_26_50, CLOUDBURST_DATA_26_50, CLOUDBURST_DATA_26_50,
@@ -964,7 +985,7 @@ final class BehaviourTables {
      * Used by:
      * - minecraft:trip_wire solid (captures)
      */
-    static final Cell SOURCES_ATTACHED_BIT_DISARMED_BIT_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_POWERED_BIT_SUSPENDED_BIT_BCC5E0 = Cell.table(new String[] {"attached_bit", "disarmed_bit", "minecraft:connection_east", "minecraft:connection_north", "minecraft:connection_south", "minecraft:connection_west", "powered_bit", "suspended_bit"},
+    static final Cell SOURCES_ATTACHED_BIT_DISARMED_BIT_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_POWERED_BIT_SUSPENDED_BIT_847362 = Cell.table(new String[] {"attached_bit", "disarmed_bit", "minecraft:connection_east", "minecraft:connection_north", "minecraft:connection_south", "minecraft:connection_west", "powered_bit", "suspended_bit"},
     new Object[][] {{false, true}, {false, true}, {false, true}, {false, true}, {false, true}, {false, true}, {false, true}, {false, true}},
     CLOUDBURST_DATA_26_50, SCRIPT_API_26_50_SOLID, CLOUDBURST_DATA_26_50, CLOUDBURST_DATA_26_50,
             CLOUDBURST_DATA_26_50, CLOUDBURST_DATA_26_50, CLOUDBURST_DATA_26_50,
@@ -1051,32 +1072,6 @@ final class BehaviourTables {
             CLOUDBURST_DATA_26_50, CLOUDBURST_DATA_26_50, CLOUDBURST_DATA_26_50,
             CLOUDBURST_DATA_26_50, CLOUDBURST_DATA_26_50, CLOUDBURST_DATA_26_50,
             CLOUDBURST_DATA_26_50, CLOUDBURST_DATA_26_50, CLOUDBURST_DATA_26_50);
-
-    /**
-     * Used by:
-     * - minecraft:trip_wire liquid_flow_directions
-     */
-    static final Cell TABLE_ATTACHED_BIT_DISARMED_BIT_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_POWERED_BIT_SUSPENDED_BIT_2F4A55 = Cell.table(new String[] {"attached_bit", "disarmed_bit", "minecraft:connection_east", "minecraft:connection_north", "minecraft:connection_south", "minecraft:connection_west", "powered_bit", "suspended_bit"},
-    new Object[][] {{false, true}, {false, true}, {false, true}, {false, true}, {false, true}, {false, true}, {false, true}, {false, true}},
-    null, 63, null, null, null, null, null, null, null, null, null, null, null, null, null, null,
-            null, null, null, null, null, null, null, null, null, null, null, null, null, null,
-            null, null, null, null, null, null, null, null, null, null, null, null, null, null,
-            null, null, null, null, null, null, null, null, null, null, null, null, null, null,
-            null, null, null, null, null, null, null, null, null, null, null, null, null, null,
-            null, null, null, null, null, null, null, null, null, null, null, null, null, null,
-            null, null, null, null, null, null, null, null, null, null, null, null, null, null,
-            null, null, null, null, null, null, null, null, null, null, null, null, null, null,
-            null, null, null, null, null, null, null, null, null, null, null, null, null, null,
-            null, null, null, null, null, null, null, null, null, null, null, null, null, null,
-            null, null, null, null, null, null, null, null, null, null, null, null, null, null,
-            null, null, null, null, null, null, null, null, null, null, null, null, null, null,
-            null, null, null, null, null, null, null, null, null, null, null, null, null, null,
-            null, null, null, null, null, null, null, null, null, null, null, null, null, null,
-            null, null, null, null, null, null, null, null, null, null, null, null, null, null,
-            null, null, null, null, null, null, null, null, null, null, null, null, null, null,
-            null, null, null, null, null, null, null, null, null, null, null, null, null, null,
-            null, null, null, null, null, null, null, null, null, null, null, null, null, null,
-            null, null);
 
     private BehaviourTables() {
     }

@@ -121,11 +121,16 @@ class ComponentGeneratorTest {
                          {"capture": "data/bds/9.9.9/spec", "bdsVersion": "9.9.9", "dataVersion": "9.9", "protocol": 200, "windowProtocol": 200,
                            "firstCustomBlockId": 10000, "blockItemIdPlusBlockId": 255}],
              "traitStates": {"test:turn": {
-               "test:facing": [{"name": "test:facing", "type": "string", "values": ["south", "north"],
-                                "valuesFrom": "the vanilla state test:facing", "default": "verified (name and default): a hash"}],
-               "test:links": [{"name": "test:link_a", "type": "bool", "values": [0, 1], "valuesFrom": "the vanilla state test:link_a",
+               "test:facing": {"windows": [{"protocols": [100, 200], "states": [{"name": "test:facing", "type": "string", "values": ["south", "north"],
+                                "valuesFrom": "the vanilla state test:facing", "default": "verified (name and default): a hash"}]}]},
+               "test:links": {"windows": [{"protocols": [100, 200], "states": [
+                               {"name": "test:link_a", "type": "bool", "values": [0, 1], "valuesFrom": "the vanilla state test:link_a",
                                "default": "unverified: no hash"},
-                              {"name": "test:part", "type": "int", "values": [0, 1, 2], "valuesFrom": "the docs", "default": "unverified: no hash"}]}},
+                              {"name": "test:part", "type": "int", "values": [0, 1, 2], "valuesFrom": "the docs", "default": "unverified: no hash"}]}]},
+               "test:spin": {"windows": [{"protocols": [100], "unsupported": {"state": "test:spin", "reason": "BDS 8.8.8 lists test:spin as [a, a]",
+                               "evidence": ["BDS 8.8.8's Script API dump lists test:spin as [a, a]"]}},
+                             {"protocols": [200], "states": [{"name": "test:spin", "type": "int", "values": [0, 1], "valuesFrom": "BDS 9.9.9",
+                               "default": "unverified: no hash"}]}]}}},
              "components": {
               "item:test:widget": {"windows": [{"protocols": [100, 200], "status": "sent", "wire": ["test:widget"], "constants": {"test:widget.version": "2 (int)"},
                 "fields": {
@@ -325,6 +330,37 @@ class ComponentGeneratorTest {
             .getAsJsonArray("rules").get(0).getAsJsonObject().addProperty("scale", 0.011111);
         String source = ComponentGenerator.generate(in).get("dev/opencollab/paletter/internal/component/ItemWire.java");
         assertTrue(source.contains(" / 90.0 + 0.0)"), source);
+    }
+
+    @Test
+    void aMolangTypeIsTheHandWrittenMolangValue() {
+        // api.json types "map<molang>": a map of Molang expressions with their optional version
+        Inputs in = inputs();
+        if (!in.api().has("types")) {
+            in.api().add("types", new JsonObject());
+        }
+        in.api().getAsJsonObject("types").addProperty("item:test:widget:colors", "map<molang>");
+        String source = ComponentGenerator.generate(in).get("dev/opencollab/paletter/item/component/Widget.java");
+        assertTrue(source.contains("import dev.opencollab.paletter.Molang;"), source);
+        assertTrue(source.contains("Map<String, Molang> colors()"), source);
+    }
+
+    @Test
+    void aRoundedLineComputesAsBdsDoes() {
+        // use_duration: the float product, truncated by the integral conversion (BDS sends 0.35 seconds as 7 ticks)
+        Inputs in = inputs();
+        JsonObject rule = window(in.mappings(), "item:test:widget").getAsJsonObject("fields").getAsJsonObject("speed")
+            .getAsJsonArray("rules").get(0).getAsJsonObject();
+        rule.addProperty("arithmetic", "float32");
+        rule.addProperty("rounding", "truncate");
+        String source = ComponentGenerator.generate(in).get("dev/opencollab/paletter/internal/component/ItemWire.java");
+        assertTrue(source.contains("Wire.toInt((double) ((float) "), source);
+        assertTrue(source.contains(" * 20.0f + 0.0f))"), source);
+        // a rounding other than truncation rounds before the conversion
+        rule.addProperty("arithmetic", "double");
+        rule.addProperty("rounding", "half-even");
+        source = ComponentGenerator.generate(in).get("dev/opencollab/paletter/internal/component/ItemWire.java");
+        assertTrue(source.contains("Wire.toInt(Math.rint((20.0 * "), source);
     }
 
     @Test
@@ -690,6 +726,25 @@ class ComponentGeneratorTest {
             JsonObject forms = in.api().getAsJsonObject("forms").getAsJsonObject("block:test:slab");
             forms.add("boolean", forms.remove("object"));
         });
+    }
+
+    /**
+     * The trait state table per protocol window: a value the same in every window has one case, one unsupported in the older
+     * window adds no states there (null) and says why ({@code unsupported}), the newer window its own states.
+     */
+    @Test
+    void traitStatesArePerProtocolWindowWithUnsupportedValues() {
+        String table = ComponentGenerator.generate(inputs()).get("dev/opencollab/paletter/internal/component/TraitStateTable.java");
+        assertTrue(table.contains("case \"test:turn test:facing\" -> List.of(\n"
+            + "                    BlockProperty.strings(\"test:facing\", \"south\", \"north\"));"), table);
+        assertTrue(table.contains("case \"test:turn test:spin\" -> protocol < 200 ? null : List.of(\n"
+            + "                    BlockProperty.ints(\"test:spin\", 0, 1));"), table);
+        assertTrue(table.contains("// protocols [100]: unsupported: BDS 8.8.8 lists test:spin as [a, a]"), table);
+        assertTrue(table.contains("// evidence: BDS 8.8.8's Script API dump lists test:spin as [a, a]"), table);
+        // Only the value with an unsupported window is a case of unsupported()
+        String unsupported = table.substring(table.indexOf("String unsupported("));
+        assertTrue(unsupported.contains("case \"test:turn test:spin\" -> protocol < 200 ? \"BDS 8.8.8 lists test:spin as [a, a]\" : null;"), unsupported);
+        assertFalse(unsupported.contains("test:facing"), unsupported);
     }
 
     @Test

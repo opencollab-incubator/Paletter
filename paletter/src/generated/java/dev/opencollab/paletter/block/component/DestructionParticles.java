@@ -34,6 +34,7 @@ public final class DestructionParticles implements BlockComponent {
 
     private DestructionParticles(int particleCount, @Nullable String texture,
             @NonNull TintMethod tintMethod) {
+        Check.range("DestructionParticles.particleCount", particleCount, 0.0, 255.0);
         Objects.requireNonNull(tintMethod, "DestructionParticles.tintMethod");
         this.particleCount = particleCount;
         this.texture = texture;
@@ -42,7 +43,7 @@ public final class DestructionParticles implements BlockComponent {
 
     /**
      * Sets number of particles to spawn on block destruction. Value must be &lt;= 255. Add-on JSON {@code
-     * particle_count}. Default: <code>100</code>.
+     * particle_count}. Default: <code>100</code>. Range [0, 255] (docs).
      *
      * @return the value
      */

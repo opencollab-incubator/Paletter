@@ -113,7 +113,12 @@ A run downloads BDS and, in `<cache>/runs/<platform>-<version>/`:
 2. Captures a vanilla world with the headless client: item registry, creative inventory and block properties. Every
    creative block id is checked against the computed state hash. It captures again with sequential ids.
 3. Discovers the build's experiment toggles (below) and captures with each one.
-4. Captures the creative order probe world (`data/addons/creative`), hashed and with sequential block ids.
+4. Captures the creative order probe world (`data/addons/creative`), hashed and with sequential block ids. Then the palette
+   probe (`data/addons/palette-probe`): in a world with sequential block ids and the build's current toggles on, its script
+   places every state of every block type into a barrier-walled cell of its own next to the spawned capture client, which
+   records the block update BDS sends for each cell. The pairs are `vanilla/sequential-ids.json.gz` (`PaletteIds`): the id of
+   every state, not only of the creative stacks, so the order of the states within each block is BDS's (`PaletteIdsTest`
+   holds the committed files to the bundled palettes; the run reports them against its reference palette, INFO only).
 5. Checks the assumptions the library relies on: sequential block ids sorted by name hash, custom block ids from 10000
    in descending identifier order, custom block items at `255 - block_id`, and the creative order rule.
 6. Compares everything against the committed data: a build with committed captures against its own, a build not
@@ -269,9 +274,11 @@ workflow by hand on `bds-data/preview` for the other.
    per build (the daily check's cache keys). The captures and the run's report are uploaded as the artifact
    `captures-<build>`; a failed leg uploads its report and logs, never captures. Under `--capture-only` an `--against` add-on mismatch is information, not a failure (the captures are of the new add-on by design), nothing deletes a directory of the repository, and the Gradle cache is read-only in the capture jobs.
 3. `assemble` (only when every leg succeeded: captures of two add-ons never share a pull request) validates the
-   artifacts, copies them over `data/bds/<build>/` (overlaying, deleting nothing) and runs what `update` does after the
-   captures, with no BDS: `inferMappings`, `whitebox-coverage` (from the committed `whitebox.json`; the binary did not
-   change), `generateComponentApi`, `:paletter:apiDump`, `generateConstants`, `voxel-shapes import` (as `update` does). It also runs `check-mappings --strict` and puts its verdict (residual bits, unclassified wire paths, linked fields) into the report, without failing on it. It fails when the inference changed
+   artifacts, copies them over `data/bds/<build>/` (overlaying, deleting nothing; a build without committed captures fails,
+   so the unchecked build of a line the plan adds fails here: see the open point below) and runs what `update` does after the
+   captures, with no BDS: `experiment-marks` (the marks of the bundled versions from the new experiment records), `inferMappings`, `whitebox-coverage` (from the committed `whitebox.json`; the binary did not
+   change), `generateComponentApi`, `:paletter:apiDump`, `generateConstants`, `voxel-shapes import` (as `update` does),
+   `recipes-import` (the bundled recipes from the new recipe captures). It also runs `check-mappings --strict` and puts its verdict (residual bits, unclassified wire paths, linked fields) into the report, without failing on it. It fails when the inference changed
    `bds-feedback.json`, `fixtures.json`, `components.json` or `bds-keys.json` (and uploads `git diff -- data/model` as the artifact `recapture-guard-diff`): those captures were made with an add-on that is not the
    final one, so the change is committed and the workflow runs again until a pass changes nothing. It writes a patch of
    the data paths and a report (one verdict line and the collapsed report per build).
@@ -282,6 +289,12 @@ The builds are not checked against each other again: the set of kept builds does
 `builds check`, which stays a separate step), and each leg compared its capture with the committed captures of its own
 build, which is what the pull request shows as the effect of the add-on change. Files that an earlier capture had and the
 new one lacks stay in `data/bds/<build>`; the patch has no deletions of them.
+
+**The unchecked build of a line.** `builds plan` adds the newest unrecorded build of each line. The probed keys of
+`bds-keys.json` apply to every build of the line (protocol window) of the build they were probed on (`Fixtures#forBuild`): 1.26.66.1
+gets the add-on of 1.26.63.1, key variants included, so its spec capture compares variant by variant with the window's import
+build. The staging still refuses a build without committed captures: such a build is compared (`builds check`, a history check),
+not committed.
 
 **Security.** The jobs that run the BDS binary and Gradle over captures (`capture`, and `assemble`, which runs Gradle on
 data from the capture jobs) have `contents: read`, no credentials in the checkout and no secrets. Only `publish` has write
@@ -313,68 +326,60 @@ Everything that waits for the next full recapture, in one list. The other sectio
 that names a pending item is named in its line, and it is removed in the commit that settles the item. After the recapture
 nothing on this list may remain.
 
-**Captures the committed builds lack.** Each is gated by a test that lists the builds captured before the current add-on
-(`CommittedBuilds.BEFORE_CURRENT_ADDON`, one list for all of them); it fails for a build that has the file while listed and
-for one that lacks it while not listed, so a recapture removes the builds from the list as it captures them.
+The recapture of 2026-11-23 (1.26.36.1, 1.26.45.1, 1.26.52.3, 1.26.63.1 and the preview 1.26.70.24, with the current add-on)
+settled what this list held: every build has `script-modules.json`, `spec-gating/gating.json`, `vanilla/block-items.json`, the
+engine pack blocks, the hash collision pair, `recipe-probe/crafting_data.json.gz` and `content.recipes`
+(`CommittedBuilds.BEFORE_CURRENT_ADDON` is empty); the conformance test compares every captured variant; the 26.70 recipe capture
+is current; `vanilla/sequential-ids.json.gz` (the palette probe) holds the shelves and the straw bed of 1.26.36.1 and 1.26.45.1 in
+the bundled order (`PaletteIdsTest`); `creativeWithoutBlock` sends 26.40's door, signs, straw bed, red shrub and shelf mushroom
+without a block with `y_2026_drop_3` on. What it showed is still open:
 
-- `script-modules.json` (`ScriptModulesTest`): `update` writes it from each build's docgen output. The layout of
-  `script_modules` is read as `@minecraft/server/<version>` or `@minecraft/server_<version>` and is unverified against a real tree.
-- `spec-gating/gating.json` (`GatingTest`): `@BedrockExperiment` stays unverified without it, never a failure.
-- `vanilla/block-items.json` (`BlockItemsCaptureTest`): the `/give` start.
-- Engine pack blocks in the spec capture (`MolangVersionTest`).
-- The hash collision pair in the spec capture (`HashCollisionCaptureTest`): until it is captured, that block ids are assigned in
-  block id order is an assumption from the registration order ([wire-notes.md](wire-notes.md), Hash collisions).
-- `recipe-probe/crafting_data.json.gz` (the unlock forms, wire-notes.md, Recipe unlock) and `packetOrder` in `capture.json`
-  (Join sequence): no build has them.
-- `content.recipes` in `experiments.json`: no committed record has it, and until then a history check does not count a
-  toggle's recipes as a difference when the earlier record lacks them.
+- **`packetOrder`** in `capture.json`: a recapture does not rewrite a build's `vanilla/capture.json` (only the import does).
+- **The unchecked build of a line** (see Full recapture): 1.26.66.1 was captured but cannot join the data.
+The recapture of 2026-11-24 (CI run 45312734413, the same builds) settled:
 
-**Components the committed captures do not cover.** `ComponentConformanceTest.RECAPTURE_PENDING` lists the components whose
-variants the add-on generates now and the committed captures do not hold (the schema's enum values are also varied, none cut at
-`MAX_VALUES`); `SWEEP_PENDING` lists the components whose format sweep (`spec-format/format-sweep.json`) is not captured, so
-nothing says whether BDS upgrades their old formats, sends them only in old-style items, never sends them or rejects them at
-every format. `breathability`, `unit_cube`, `render_offsets`, `block_light_emission`, `bone_visibility` and `destroy_time` stay
-generated in the API until the sweep decides. The conformance test fails for an entry that is captured now.
+- **`connected_faces` order**: with the values reversed BDS sends the set in its own order (down, up, north, south, west, east):
+  an ordered-set rule.
+- **use_duration rounding**: every captured build sends `use_modifiers` `use_duration` as the float product truncated (the
+  linear rule's `"arithmetic": "float32", "rounding": "truncate"`, `Linear.Rounding`, fitted by the inference):
 
-**The 26.70 recipes.** The committed recipe capture of the preview could not resolve the block states of the results that place
-blocks new in 26.70 (it used 26.60's palette); the capture code is fixed. `CraftingDataConformanceTest.PENDING_RECAPTURE` expects
-exactly those differences and fails the moment there are none, and `RecipeDataTest.theCommittedCapturesHoldTheRecipeAssumptions`
-leaves the bundled preview out until then.
+  | seconds | float times 20 | BDS | truncated double product | half up | half even | ceiling |
+  |---|---|---|---|---|---|---|
+  | 0.35 | 7.0 | 7 | 6 | 7 | 7 | 7 |
+  | 0.7 | 14.0 | 14 | 13 | 14 | 14 | 14 |
+  | 0.95 | 19.0 | 19 | 18 | 19 | 19 | 19 |
+  | 0.33 | 6.6 | 6 | 6 | 7 | 7 | 7 |
+  | 0.38 | 7.6 | 7 | 7 | 8 | 8 | 8 |
+  | 0.025 | 0.5 | 0 | 0 | 1 | 0 | 1 |
+  | 0.075 | 1.5 | 1 | 1 | 2 | 2 | 2 |
+  | 0.125 | 2.5 | 2 | 2 | 3 | 2 | 3 |
+  | 0.31 | 6.2 | 6 | 6 | 6 | 6 | 7 |
 
-**The state order within blocks of 26.30 and 26.40.** The order of the states of the `*_shelf` blocks (and in 26.40 of
-`poplar_shelf` and `straw_bed`) rests on CloudburstMC/Data, which the bundled palettes descend from; an independent network
-dump has another order, and no BDS capture can tell: the sequential-id captures only check creative stacks, whose default
-state is index 0 in both orders. The recapture has to record the sequential block id of every state of the full palette (not
-only of the creative stacks), so the order of 1.26.36.1 and 1.26.45.1 is checked against BDS.
+  (0, 0.5, 1, 2.25 and 30 are 0, 10, 20, 45 and 600; -1 is refused.) Floor and truncation differ only below zero, which BDS
+  refuses.
+- **The version of a Molang expression** (`repair_amount` and `bone_visibility` as `{expression, version}`, versions 0 to 16,
+  20, 50, 99, 100 and -1, `dev.opencollab.paletter.Molang`): the newest version is 13 in every build (the newest of
+  `molangVersions`). `repair_amount` takes -1 to 13 (1.26.36.1 sends them as written in its compound, the later builds the
+  expression alone) and sends an expression of 14 to 100 as the amount 0.0, with no log line. `bone_visibility` takes 0 to
+  13 (as written in 1.26.36.1, a number or boolean with the block's version); for -1 and 14 to 100 BDS logs "Bad expression"
+  and sends it all the same. Without a version the string form's: 0 for `repair_amount`, the block's for `bone_visibility`.
 
-**The blocks of experiment creative stacks.** An item is sent without a block where its captured creative stacks carry none
-(doors, signs, beds, seeds, ...). The creative stacks a toggle adds are recorded as identifiers only (`creativeAdded` in
-`experiments.json`), so in 26.40 with `y_2026_drop_3` on, `poplar_door`, `poplar_sign`, `poplar_hanging_sign`,
-`red_shrub`, `shelf_mushroom` and `straw_bed` still get the block of the block to item relation (26.50, where they are
-regular content, sends them without one). The recapture has to record the toggle's creative stacks with their blocks.
+Decided: `molangVersion` follows the layer's `min_engine_version` (`PaletteLayer.Builder#minEngineVersion`, `molangVersions` of
+`mappings.json` from the engine pack blocks: 1.16.100 gives 0, 1.19.40 gives 6, the add-on's format 13); probed keys apply to
+the builds of the probed build's line; the api-history field-shape breaks of the recapture stand.
 
-**The schema in the add-on.** `Fixtures.SCHEMA_IN_ADDON` is off, so the add-on, the spec capture, the mapping inference, the
-coverage and the component API still read the model without BDS's schema (the tests read it with the schema,
-`Fixtures.read(model, true)`). The recapture is made with it on: turn it on, delete the switch with both `Fixtures.read`
-overloads and the two comments that describe its removal (`Fixtures#withSchema`, `SpecCapture.fixtures`: the fallback becomes
-`throw new IOException("no schema extracted for " + build)`), and correct the sentence of `SpecCapture` that says the add-on is
-the one place that takes BDS's schema.
+**What the generated code assumed without a capture**, marked `TODO(recapture)` where it is used, and what the captures say:
 
-**What the generated code assumes without a capture**, each marked `TODO(recapture)` where it is used. The spec add-on has to
-gain these variants (`fixtures.json` probe values or the add-on generator), then the next recapture settles them:
-
-- **Two components onto one leaf** (`SharedLeaves`, `WireNode.own`): `minecraft:wearable` with `minecraft:max_stack_size`
-  (`item_properties.max_stack_size`) and with `minecraft:allow_off_hand` (`item_properties.allow_off_hand`). The encoders
-  keep the value of the component the leaf carries unchanged, whatever the order; which one BDS keeps is unverified.
-- **Linear rules onto integral leaves** (`Linear`, `Wire.toInt`): the captures only hold values exact in binary
-  (`use_modifiers.use_duration` 0, -1, 0.5, 1, 2.25, 30), so how BDS rounds `20 * 0.7` is unknown; the encoder truncates
-  the double product (`0.7` -> 13, where 14 is as likely). Capture non-exact values (0.35, 0.7, 0.95) and fit the rounding.
-- **`minecraft:enchantable` slots**: one accepted value (`sword`) is captured, so `slot` is sent as that constant
-  whatever it says. Capture the 25 slots BDS's error lists; the field will most likely become a value class, a type
-  change the history check then reports (record it in `api-history.json` before 1.0).
-- **`collision_box` limit**: a component without a box limit fact in `bds-feedback.json` gets one box past any limit, so that BDS
-  says it; until the recapture has run its boxes stay inside the tightest limit of the other components (borrowed, unverified;
-  a test checks the fallback).
+- **Two components onto one leaf** (`SharedLeaves`, `WireNode.own`): BDS keeps `max_stack_size`'s and `allow_off_hand`'s value
+  over `wearable`'s slot table, in both orders of the file (`wearable` combination variants, every build): the owner the encoders
+  keep. Settled.
+- **Linear rules onto integral leaves** (`Linear`, `Wire.toInt`): `use_duration` is the float product truncated (above); the
+  encoder computes it so. A linear rule whose captures only hold whole results keeps truncating the double product, unverified.
+  Settled for `use_duration`.
+- **`minecraft:enchantable` slots**: all 25 slots are captured; the inference fits a table (`cosmetic_head` is sent as an empty
+  string). Settled in the data; the API's constant goes with the regenerated code.
+- **`collision_box` limit**: still no box limit fact in `bds-feedback.json`; the boxes stay inside the tightest limit of the other
+  components (borrowed, unverified).
 
 ### Experiments
 
@@ -384,7 +389,9 @@ identifier-like strings from the server binary plus the ids of the committed `ex
 current, the others retired. Each current toggle is then captured on its own to attribute content to it.
 
 The result is committed as `data/bds/<build>/experiments.json`, and the bundled version gets experiment marks: per
-toggle, the items, blocks and creative stacks it adds. The bundle itself is captured without experiments.
+toggle, the items, blocks and creative stacks it adds, and the items of those stacks none of which carries a block in the
+capture with the toggle (`creativeWithoutBlock`; doors, signs, beds): a palette with the toggle sends such an item without a
+block, as it does for the items of the regular creative inventory. The bundle itself is captured without experiments.
 
 The record also lists, per toggle, the recipes it adds, removes or changes (`content.recipes`, the recipe diff of the
 toggle's capture against the one without experiments). They are not part of the bundle's marks: the recipes module
@@ -518,11 +525,15 @@ generator adds them, and `SamplesTest` checks each against a model of its own an
   (`(past any limit)`), so that BDS says its limit and the next `infer` records it; until then its boxes stay inside the tightest limit
   of the other components: **borrowed, unverified** for it ([Recapture to-do](#recapture-to-do): `collision_box`; a test checks the fallback).
 - *Vectors* the schema also describes by `x`, `y`, `z` stay vectors in the base (as an object they would have no member without a default).
+- *Fractions not exact in binary* (`fixtures.json` `probeValues` of a number field): `use_modifiers.use_duration` 0.35, 0.7 and 0.95, which
+  its linear rule scales by 20 onto an integer, so the capture says how BDS rounds the product.
+- *Two components onto one leaf* (`fixtures.json` `combinations`, role `combination`): whole component maps that put a component next to
+  another one writing the same wire leaf (`wearable`'s slot table with `max_stack_size` and with `allow_off_hand`, disagreeing on the
+  leaf, in both orders of the file), so the capture says which value BDS keeps (`SharedLeaves`).
 
-**Known gap: enums of an old format.** BDS's schema lists some enums only for format 1.26.30 (`swing_sounds`, `use_modifiers.start_sound`,
-`durability_sensor.durability_thresholds[].sound_event`, ...): the add-on's format 1.26.50 definitions do not have them, so their values are
-not varied. The format sweep varies a key at its boundaries only, not its enum values. TODO: vary them in the sweep at 1.26.30 (a generator
-for that format reads the schema's 1.26.30 definitions already, `AddonGenerator(model, fixtures, "1.26.30")`).
+**Enums of an old format.** BDS's schema lists some enums only for format 1.26.30 (`swing_sounds`, `use_modifiers.start_sound`,
+`durability_sensor.durability_thresholds[].sound_event`, ...): the add-on's newer definitions take any string there, so their values are not
+varied. Deliberately: they are sound event names, which no palette feature needs.
 
 **Script API module.** The beta add-ons (`behaviour-dump`) depend on the `@minecraft/server` beta of the build. `update` reads the versions from
 the `script_modules` of BDS's own documentation generator (`ScriptModules.parse`) into `data/bds/<build>/script-modules.json` (marked
@@ -740,7 +751,8 @@ so it runs even when `paletter` does not compile.
 Inputs, all in `data/model` except the last:
 
 - `components.json`: components, fields, defaults, docs text.
-- `fixtures.json` (hand): errata, samples, `replacedBy` with evidence.
+- `fixtures.json` (hand): errata, samples, `replacedBy` with evidence. An erratum holds only what BDS's schema does not give
+  (its `schema` member says why): `HandInputTest` fails on one without which the merged model is the same (`Fixtures#redundantErrata`).
 - `bds-feedback.json`: required fields and ranges BDS enforces, which win over the docs.
 
   These three and `bds-keys.json` are read as one model, built once (`Fixtures#apply`) for the add-on generator, the
@@ -941,7 +953,8 @@ writes the capture store `data/behaviour/captures.nbt`, the generated behaviour 
 `education-capture` on the server of its other captures, six more starts of BDS, and stages their files like the other
 captures: only when they differ from the committed ones of the build. A step that fails is a FAIL, except the optional
 probes (`BehaviourStage.OPTIONAL`, listed in the report header: the behaviour probe, whose measurements come from one
-reference build), which are a skipped row and a TODO. The recapture's assemble job then runs `behaviour import` on the staged captures and on CloudburstMC/Data and
+reference build; and the behaviour dump of a preview, as BDS 1.26.70.24 and 1.26.70.26 exit without a word in its world sample,
+around `minecraft:straw_bed`, cause unverified), which are a skipped row and a TODO. The recapture's assemble job then runs `behaviour import` on the staged captures and on CloudburstMC/Data and
 AllayMC/Allay at the commits pinned in `data/behaviour/sources.json`. That file is the one place of the pins: the workflow
 fetches those commits, `behaviour import` fails when a checkout is at another one, and `BehaviourSourcesTest` fails when the
 workflow writes a commit of its own. Move a pin together with the regenerated `captures.nbt`, generated classes and
@@ -1021,16 +1034,15 @@ are in [wire-notes.md](wire-notes.md#voxel-shapes).
 
 `update` runs BDS's documentation generator first (its own start: BDS stops by itself), moves the generated `docs/` into the
 cache and writes `data/bds/<build>/schema.json` from `docs/json_schemas/server`. The extract starts at the entry points
-(`Item Components`, `Block Components`, `Traits`; the directory is the format version, `beta` last), follows the `$ref`s and
+(`Item Components`, `Block Components`, `Traits`, and `block/<format>/Components`, the only block one of 1.26.45.1 and 1.26.52.3;
+the directory is the format version, `beta` last), follows the `$ref`s and
 writes per component and field path (`a.b`, `a[]`, `a{}`) the facts: types, enum, default, minimum and maximum, string and
 list limits, pattern, required, deprecated, underlying type and runtime constraint text. A definition that is the same in
 several formats is written once with its formats. The file is generated and facts only: the descriptions and the raw tree
 stay out of the repository.
 
-`Fixtures#apply` merges the schema into the model, schema before feedback before errata before docs, when
-`Fixtures.SCHEMA_IN_ADDON` is on (one switch for the add-on, the spec capture, the mapping inference, the coverage and the
-component API: one model). It is off until every build is captured again with the add-on the schema shapes, so the committed
-captures and the conformance test stay valid until then ([Recapture to-do](#recapture-to-do)).
+`Fixtures#apply` merges the schema into the model, schema before feedback before errata before docs. The schema is part of the add-on, the spec capture, the mapping inference,
+the coverage and the component API: one model.
 
 - Per component the newest stable format at or below the add-on's format version counts; `beta` and beta-only components do
   not. Enum values (also of list elements), limits, `step` and `required` replace the docs'; the schema's types are added (first
@@ -1052,3 +1064,14 @@ captures and the conformance test stay valid until then ([Recapture to-do](#reca
   without one the trait state table skips (and reports) it. Its default is checked against the hash BDS sent, as every other.
   A spec capture made before the table has it leaves the value's states out, reports it ("Trait states") and keeps those
   blocks' creative block ids out of the hash check (`traitStatesUnknown` in `capture.json`).
+- The trait state table (`traitStates` in `mappings.json`) has protocol windows, like the component mappings: per spec
+  capture's build, a state with BDS's values has the values of that build's own dump. Where a build's dump gives no
+  well-defined state set (duplicate values, or no state of the name), the value is `unsupported` in its window, with the
+  build's dump values and the hashes BDS sent (with the dump's first value) as `evidence`. BDS 1.26.36.1 (26.30) lists
+  `minecraft:sixteen_way_rotation` as `[down, up, north, south, west, east, down, ...]` (16 values, 11 of them `down`;
+  1.26.45.1 and newer 0 to 15), a BDS bug; it hashed the default states of those blocks with `down`. The library leaves an
+  unsupported value out of the trait and of the block's states in that version (a custom block's type keeps the newest
+  states, which resolve to the version's, adapted) and reports it as left out with the reason; it never sends states the
+  client may lack. A capture of such a protocol keeps those blocks' creative block ids apart, unverified, with an INFO line
+  naming them ("Trait states"; `creativeBlockIdsOfUnsupportedTraitStates`, `traitStatesUnsupported` and
+  `traitStatesUnsupportedBlocks` in `capture.json`).

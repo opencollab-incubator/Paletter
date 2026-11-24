@@ -10,6 +10,8 @@ final class BehaviourChanges26_40Part2 {
     }
 
     static void part8(Changes v) {
+        // requires_correct_tool true -> false: CloudburstMC/Data 7046791; SOURCE ONLY (no BDS capture)
+        v.change("minecraft:waxed_cut_copper_stairs").requiresCorrectTool(false);
         // requires_correct_tool true -> false: CloudburstMC/Data 7046791; SOURCE ONLY (no BDS capture); undone in 26.50 by the same source: suspected dump artefact
         v.change("minecraft:waxed_double_cut_copper_slab").requiresCorrectTool(false);
         // requires_correct_tool true -> false: CloudburstMC/Data 7046791; SOURCE ONLY (no BDS capture); undone in 26.50 by the same source: suspected dump artefact
@@ -108,7 +110,7 @@ final class BehaviourChanges26_40Part2 {
         v.change("minecraft:yellow_concrete").requiresCorrectTool(false);
         // requires_correct_tool true -> false: CloudburstMC/Data 7046791; SOURCE ONLY (no BDS capture); undone in 26.50 by the same source: suspected dump artefact
         v.change("minecraft:yellow_glazed_terracotta").requiresCorrectTool(false);
-        // new in 26.40: values from BDS Script API dump 1.26.45.1, CloudburstMC/Data 7046791
+        // new in 26.40: values from BDS Script API dump 1.26.45.1, BDS behaviour probe 1.26.45.1 (climbing), CloudburstMC/Data 7046791
         v.block("minecraft:yellow_poplar_leaves", "persistent_bit=false|true,update_bit=false|true")
                 .destroyTime(0.2f)
                 .explosionResistance(0.2f)

@@ -2,6 +2,7 @@ package dev.opencollab.paletter;
 
 import dev.opencollab.paletter.annotation.Internal;
 import org.checkerframework.checker.nullness.qual.NonNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
 import dev.opencollab.paletter.internal.shape.VoxelShapeRules;
 import dev.opencollab.paletter.block.CustomBlock;
 import dev.opencollab.paletter.block.VoxelShape;
@@ -61,9 +62,11 @@ public final class PaletteLayer {
     private final Map<String, List<String>> tags;
     private final List<ItemVariant> variants;
     private final Map<String, VoxelShape> voxelShapes;
+    private final @Nullable String minEngineVersion;
 
     private PaletteLayer(Builder builder) {
         this.id = builder.id;
+        this.minEngineVersion = builder.minEngineVersion;
         this.items = List.copyOf(builder.items);
         this.blocks = List.copyOf(builder.blocks);
         this.overrides = List.copyOf(builder.overrides);
@@ -94,6 +97,16 @@ public final class PaletteLayer {
      */
     public @NonNull String id() {
         return id;
+    }
+
+    /**
+     * Returns the {@code min_engine_version} of the pack this layer stands for ({@link Builder#minEngineVersion}).
+     *
+     * @return the engine version, or null for the newest
+     * @since 1.0.0
+     */
+    public @Nullable String minEngineVersion() {
+        return minEngineVersion;
     }
 
     /**
@@ -216,9 +229,29 @@ public final class PaletteLayer {
         private final Map<String, List<String>> tags = new LinkedHashMap<>();
         private final List<ItemVariant> variants = new ArrayList<>();
         private final Map<String, VoxelShape> voxelShapes = new LinkedHashMap<>();
+        private @Nullable String minEngineVersion;
 
         private Builder(String id) {
             this.id = Objects.requireNonNull(id);
+        }
+
+        /**
+         * Sets the {@code min_engine_version} of the pack this layer stands for. BDS writes a {@code molangVersion} into every
+         * block of a pack that follows it (captured from 1.26.36.1 on: 1.16.100 gives 0, 1.19.40 gives 6, the packs of the
+         * current formats 13); the blocks of this layer get the one of this version. Unset, the layer is of the newest engine.
+         *
+         * @param minEngineVersion the pack's engine version, dotted numbers such as {@code 1.19.40}
+         * @return this builder
+         * @throws NullPointerException if the version is null
+         * @throws IllegalArgumentException if it is not dotted numbers
+         * @since 1.0.0
+         */
+        public @NonNull Builder minEngineVersion(@NonNull String minEngineVersion) {
+            if (!minEngineVersion.matches("\\d+(\\.\\d+)*")) {
+                throw new IllegalArgumentException("min_engine_version " + minEngineVersion + " is not dotted numbers such as 1.19.40");
+            }
+            this.minEngineVersion = minEngineVersion;
+            return this;
         }
 
         /**

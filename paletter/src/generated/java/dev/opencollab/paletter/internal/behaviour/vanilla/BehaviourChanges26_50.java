@@ -14,7 +14,7 @@ final class BehaviourChanges26_50 {
     }
 
     static void part0(Changes v) {
-        // other states than in 26.40 (none): values from BDS Script API dump 1.26.52.3, CloudburstMC/Data 88a2436
+        // other states than in 26.40 (none): values from BDS Script API dump 1.26.52.3, BDS behaviour probe 1.26.52.3 (climbing), CloudburstMC/Data 88a2436
         v.block("minecraft:acacia_fence", "minecraft:connection_east=false|true,minecraft:connection_north=false|true,minecraft:connection_south=false|true,minecraft:connection_west=false|true")
                 .destroyTime(2.0f)
                 .explosionResistance(3.0f)
@@ -31,7 +31,7 @@ final class BehaviourChanges26_50 {
                 .accumulatesSnow(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_9B2762)
                 .snowLoggable(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_1AB959)
                 .obstructsRain(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_9B2762);
-        // other states than in 26.40 (upside_down_bit=false|true,weirdo_direction=0..3): values from BDS Script API dump 1.26.52.3, CloudburstMC/Data 88a2436
+        // other states than in 26.40 (upside_down_bit=false|true,weirdo_direction=0..3): values from BDS Script API dump 1.26.52.3, BDS behaviour probe 1.26.52.3 (climbing), CloudburstMC/Data 88a2436
         v.block("minecraft:acacia_stairs", "minecraft:corner='inner_left'|'inner_right'|'none'|'outer_left'|'outer_right',upside_down_bit=false|true,weirdo_direction=0..3")
                 .destroyTime(2.0f)
                 .explosionResistance(3.0f)
@@ -65,7 +65,7 @@ final class BehaviourChanges26_50 {
         v.change("minecraft:andesite_double_slab").requiresCorrectTool(true);
         // requires_correct_tool false -> true: CloudburstMC/Data 88a2436; SOURCE ONLY (no BDS capture); undoes the change of 26.40 by the same source: suspected dump artefact
         v.change("minecraft:andesite_slab").requiresCorrectTool(true);
-        // other states than in 26.40 (upside_down_bit=false|true,weirdo_direction=0..3): values from BDS Script API dump 1.26.52.3, CloudburstMC/Data 88a2436
+        // other states than in 26.40 (upside_down_bit=false|true,weirdo_direction=0..3): values from BDS Script API dump 1.26.52.3, BDS behaviour probe 1.26.52.3 (climbing), CloudburstMC/Data 88a2436
         v.block("minecraft:andesite_stairs", "minecraft:corner='inner_left'|'inner_right'|'none'|'outer_left'|'outer_right',upside_down_bit=false|true,weirdo_direction=0..3")
                 .destroyTime(1.5f)
                 .collisionShape(TABLE_CORNER_UPSIDE_DOWN_BIT_WEIRDO_DIRECTION_BD8305)
@@ -100,7 +100,7 @@ final class BehaviourChanges26_50 {
                         "thin", BOX_8_0_8_10_16_10)
                 .outlineShape("bamboo_stalk_thickness", "thick", BOX_8_0_8_11_16_11,
                         "thin", BOX_8_0_8_10_16_10);
-        // other states than in 26.40 (none): values from BDS Script API dump 1.26.52.3, CloudburstMC/Data 88a2436
+        // other states than in 26.40 (none): values from BDS Script API dump 1.26.52.3, BDS behaviour probe 1.26.52.3 (climbing), CloudburstMC/Data 88a2436
         v.block("minecraft:bamboo_fence", "minecraft:connection_east=false|true,minecraft:connection_north=false|true,minecraft:connection_south=false|true,minecraft:connection_west=false|true")
                 .destroyTime(2.0f)
                 .explosionResistance(3.0f)
@@ -117,7 +117,7 @@ final class BehaviourChanges26_50 {
                 .accumulatesSnow(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_9B2762)
                 .snowLoggable(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_1AB959)
                 .obstructsRain(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_9B2762);
-        // other states than in 26.40 (upside_down_bit=false|true,weirdo_direction=0..3): values from BDS Script API dump 1.26.52.3, CloudburstMC/Data 88a2436
+        // other states than in 26.40 (upside_down_bit=false|true,weirdo_direction=0..3): values from BDS Script API dump 1.26.52.3, BDS behaviour probe 1.26.52.3 (climbing), CloudburstMC/Data 88a2436
         v.block("minecraft:bamboo_mosaic_stairs", "minecraft:corner='inner_left'|'inner_right'|'none'|'outer_left'|'outer_right',upside_down_bit=false|true,weirdo_direction=0..3")
                 .destroyTime(2.0f)
                 .explosionResistance(3.0f)
@@ -141,7 +141,7 @@ final class BehaviourChanges26_50 {
         // outline_shape SHAPE_BAMBOO_SAPLING_OUTLINE_SHAPE -> SHAPE_ACACIA_SAPLING_OUTLINE_SHAPE: CloudburstMC/Data 88a2436; SOURCE ONLY (no BDS capture)
         v.change("minecraft:bamboo_sapling")
                 .outlineShape(SHAPE_ACACIA_SAPLING_OUTLINE_SHAPE);
-        // other states than in 26.40 (upside_down_bit=false|true,weirdo_direction=0..3): values from BDS Script API dump 1.26.52.3, CloudburstMC/Data 88a2436
+        // other states than in 26.40 (upside_down_bit=false|true,weirdo_direction=0..3): values from BDS Script API dump 1.26.52.3, BDS behaviour probe 1.26.52.3 (climbing), CloudburstMC/Data 88a2436
         v.block("minecraft:bamboo_stairs", "minecraft:corner='inner_left'|'inner_right'|'none'|'outer_left'|'outer_right',upside_down_bit=false|true,weirdo_direction=0..3")
                 .destroyTime(2.0f)
                 .explosionResistance(3.0f)
@@ -166,7 +166,7 @@ final class BehaviourChanges26_50 {
         v.change("minecraft:basalt").requiresCorrectTool(true);
         // requires_correct_tool false -> true: CloudburstMC/Data 88a2436; SOURCE ONLY (no BDS capture); undoes the change of 26.40 by the same source: suspected dump artefact
         v.change("minecraft:bedrock").requiresCorrectTool(true);
-        // other states than in 26.40 (none): values from BDS Script API dump 1.26.52.3, CloudburstMC/Data 88a2436
+        // other states than in 26.40 (none): values from BDS Script API dump 1.26.52.3, BDS behaviour probe 1.26.52.3 (climbing), CloudburstMC/Data 88a2436
         v.block("minecraft:birch_fence", "minecraft:connection_east=false|true,minecraft:connection_north=false|true,minecraft:connection_south=false|true,minecraft:connection_west=false|true")
                 .destroyTime(2.0f)
                 .explosionResistance(3.0f)
@@ -186,7 +186,7 @@ final class BehaviourChanges26_50 {
     }
 
     static void part1(Changes v) {
-        // other states than in 26.40 (upside_down_bit=false|true,weirdo_direction=0..3): values from BDS Script API dump 1.26.52.3, CloudburstMC/Data 88a2436
+        // other states than in 26.40 (upside_down_bit=false|true,weirdo_direction=0..3): values from BDS Script API dump 1.26.52.3, BDS behaviour probe 1.26.52.3 (climbing), CloudburstMC/Data 88a2436
         v.block("minecraft:birch_stairs", "minecraft:corner='inner_left'|'inner_right'|'none'|'outer_left'|'outer_right',upside_down_bit=false|true,weirdo_direction=0..3")
                 .destroyTime(2.0f)
                 .explosionResistance(3.0f)
@@ -209,7 +209,7 @@ final class BehaviourChanges26_50 {
                         "none", true, "outer_left", null, "outer_right", null);
         // requires_correct_tool false -> true: CloudburstMC/Data 88a2436; SOURCE ONLY (no BDS capture); undoes the change of 26.40 by the same source: suspected dump artefact
         v.change("minecraft:black_concrete").requiresCorrectTool(true);
-        // new in 26.50: values from BDS Script API dump 1.26.52.3, CloudburstMC/Data 88a2436
+        // new in 26.50: values from BDS Script API dump 1.26.52.3, BDS behaviour probe 1.26.52.3 (climbing), CloudburstMC/Data 88a2436
         v.block("minecraft:black_concrete_double_slab", "minecraft:vertical_half='bottom'|'top'")
                 .destroyTime(1.8f)
                 .explosionResistance(0.359999f)
@@ -217,7 +217,7 @@ final class BehaviourChanges26_50 {
                 .lightDampening(15)
                 .requiresCorrectTool(true)
                 .mapColor(0x191919FF);
-        // new in 26.50: values from BDS Script API dump 1.26.52.3, CloudburstMC/Data 88a2436
+        // new in 26.50: values from BDS Script API dump 1.26.52.3, BDS behaviour probe 1.26.52.3 (climbing), CloudburstMC/Data 88a2436
         v.block("minecraft:black_concrete_slab", "minecraft:vertical_half='bottom'|'top'")
                 .destroyTime(1.8f)
                 .explosionResistance(0.359999f)
@@ -229,7 +229,7 @@ final class BehaviourChanges26_50 {
                 .liquidFlowDirections("minecraft:vertical_half", "bottom", 62, "top", 61)
                 .requiresCorrectTool(true)
                 .mapColor(0x191919FF);
-        // new in 26.50: values from BDS Script API dump 1.26.52.3, CloudburstMC/Data 88a2436
+        // new in 26.50: values from BDS Script API dump 1.26.52.3, BDS behaviour probe 1.26.52.3 (climbing), CloudburstMC/Data 88a2436
         v.block("minecraft:black_concrete_stairs", "minecraft:corner='inner_left'|'inner_right'|'none'|'outer_left'|'outer_right',upside_down_bit=false|true,weirdo_direction=0..3")
                 .destroyTime(1.8f)
                 .explosionResistance(0.359999f)
@@ -252,7 +252,7 @@ final class BehaviourChanges26_50 {
                         "none", true, "outer_left", null, "outer_right", null);
         // requires_correct_tool false -> true: CloudburstMC/Data 88a2436; SOURCE ONLY (no BDS capture); undoes the change of 26.40 by the same source: suspected dump artefact
         v.change("minecraft:black_glazed_terracotta").requiresCorrectTool(true);
-        // other states than in 26.40 (none): values from BDS Script API dump 1.26.52.3, CloudburstMC/Data 88a2436
+        // other states than in 26.40 (none): values from BDS Script API dump 1.26.52.3, BDS behaviour probe 1.26.52.3 (climbing), CloudburstMC/Data 88a2436
         v.block("minecraft:black_stained_glass_pane", "minecraft:connection_east=false|true,minecraft:connection_north=false|true,minecraft:connection_south=false|true,minecraft:connection_west=false|true")
                 .destroyTime(0.3f)
                 .explosionResistance(0.3f)
@@ -268,7 +268,7 @@ final class BehaviourChanges26_50 {
                 .obstructsRain(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_9B2762);
         // requires_correct_tool false -> true: CloudburstMC/Data 88a2436; SOURCE ONLY (no BDS capture); undoes the change of 26.40 by the same source: suspected dump artefact
         v.change("minecraft:black_terracotta").requiresCorrectTool(true);
-        // new in 26.50: values from BDS Script API dump 1.26.52.3, CloudburstMC/Data 88a2436
+        // new in 26.50: values from BDS Script API dump 1.26.52.3, BDS behaviour probe 1.26.52.3 (climbing), CloudburstMC/Data 88a2436
         v.block("minecraft:black_wool_double_slab", "minecraft:vertical_half='bottom'|'top'")
                 .destroyTime(0.8f)
                 .explosionResistance(0.16f)
@@ -277,7 +277,7 @@ final class BehaviourChanges26_50 {
                 .mapColor(0x1D1D21FF)
                 .flameOdds(30)
                 .burnOdds(60);
-        // new in 26.50: values from BDS Script API dump 1.26.52.3, CloudburstMC/Data 88a2436
+        // new in 26.50: values from BDS Script API dump 1.26.52.3, BDS behaviour probe 1.26.52.3 (climbing), CloudburstMC/Data 88a2436
         v.block("minecraft:black_wool_slab", "minecraft:vertical_half='bottom'|'top'")
                 .destroyTime(0.8f)
                 .explosionResistance(0.16f)
@@ -291,7 +291,7 @@ final class BehaviourChanges26_50 {
                 .flameOdds(30)
                 .burnOdds(60)
                 .translucency(0.8f);
-        // new in 26.50: values from BDS Script API dump 1.26.52.3, CloudburstMC/Data 88a2436
+        // new in 26.50: values from BDS Script API dump 1.26.52.3, BDS behaviour probe 1.26.52.3 (climbing), CloudburstMC/Data 88a2436
         v.block("minecraft:black_wool_stairs", "minecraft:corner='inner_left'|'inner_right'|'none'|'outer_left'|'outer_right',upside_down_bit=false|true,weirdo_direction=0..3")
                 .destroyTime(0.8f)
                 .explosionResistance(0.16f)
@@ -319,7 +319,7 @@ final class BehaviourChanges26_50 {
         v.change("minecraft:blackstone_double_slab").requiresCorrectTool(true);
         // requires_correct_tool false -> true: CloudburstMC/Data 88a2436; SOURCE ONLY (no BDS capture); undoes the change of 26.40 by the same source: suspected dump artefact
         v.change("minecraft:blackstone_slab").requiresCorrectTool(true);
-        // other states than in 26.40 (upside_down_bit=false|true,weirdo_direction=0..3): values from BDS Script API dump 1.26.52.3, CloudburstMC/Data 88a2436
+        // other states than in 26.40 (upside_down_bit=false|true,weirdo_direction=0..3): values from BDS Script API dump 1.26.52.3, BDS behaviour probe 1.26.52.3 (climbing), CloudburstMC/Data 88a2436
         v.block("minecraft:blackstone_stairs", "minecraft:corner='inner_left'|'inner_right'|'none'|'outer_left'|'outer_right',upside_down_bit=false|true,weirdo_direction=0..3")
                 .destroyTime(1.5f)
                 .collisionShape(TABLE_CORNER_UPSIDE_DOWN_BIT_WEIRDO_DIRECTION_BD8305)
@@ -344,7 +344,7 @@ final class BehaviourChanges26_50 {
         v.change("minecraft:blast_furnace").requiresCorrectTool(true);
         // requires_correct_tool false -> true: CloudburstMC/Data 88a2436; SOURCE ONLY (no BDS capture); undoes the change of 26.40 by the same source: suspected dump artefact
         v.change("minecraft:blue_concrete").requiresCorrectTool(true);
-        // new in 26.50: values from BDS Script API dump 1.26.52.3, CloudburstMC/Data 88a2436
+        // new in 26.50: values from BDS Script API dump 1.26.52.3, BDS behaviour probe 1.26.52.3 (climbing), CloudburstMC/Data 88a2436
         v.block("minecraft:blue_concrete_double_slab", "minecraft:vertical_half='bottom'|'top'")
                 .destroyTime(1.8f)
                 .explosionResistance(0.359999f)
@@ -352,7 +352,7 @@ final class BehaviourChanges26_50 {
                 .lightDampening(15)
                 .requiresCorrectTool(true)
                 .mapColor(0x334CB2FF);
-        // new in 26.50: values from BDS Script API dump 1.26.52.3, CloudburstMC/Data 88a2436
+        // new in 26.50: values from BDS Script API dump 1.26.52.3, BDS behaviour probe 1.26.52.3 (climbing), CloudburstMC/Data 88a2436
         v.block("minecraft:blue_concrete_slab", "minecraft:vertical_half='bottom'|'top'")
                 .destroyTime(1.8f)
                 .explosionResistance(0.359999f)
@@ -364,7 +364,7 @@ final class BehaviourChanges26_50 {
                 .liquidFlowDirections("minecraft:vertical_half", "bottom", 62, "top", 61)
                 .requiresCorrectTool(true)
                 .mapColor(0x334CB2FF);
-        // new in 26.50: values from BDS Script API dump 1.26.52.3, CloudburstMC/Data 88a2436
+        // new in 26.50: values from BDS Script API dump 1.26.52.3, BDS behaviour probe 1.26.52.3 (climbing), CloudburstMC/Data 88a2436
         v.block("minecraft:blue_concrete_stairs", "minecraft:corner='inner_left'|'inner_right'|'none'|'outer_left'|'outer_right',upside_down_bit=false|true,weirdo_direction=0..3")
                 .destroyTime(1.8f)
                 .explosionResistance(0.359999f)
@@ -387,13 +387,13 @@ final class BehaviourChanges26_50 {
                         "none", true, "outer_left", null, "outer_right", null);
         // requires_correct_tool false -> true: CloudburstMC/Data 88a2436; SOURCE ONLY (no BDS capture); undoes the change of 26.40 by the same source: suspected dump artefact
         v.change("minecraft:blue_glazed_terracotta").requiresCorrectTool(true);
-        // outline_shape SHAPE_ALLIUM_OUTLINE_SHAPE -> SHAPE_TORCHFLOWER_CROP_OUTLINE_SHAPE: CloudburstMC/Data 88a2436; SOURCE ONLY (no BDS capture)
-        v.change("minecraft:blue_orchid")
-                .outlineShape(SHAPE_TORCHFLOWER_CROP_OUTLINE_SHAPE);
     }
 
     static void part2(Changes v) {
-        // other states than in 26.40 (none): values from BDS Script API dump 1.26.52.3, CloudburstMC/Data 88a2436
+        // outline_shape SHAPE_ALLIUM_OUTLINE_SHAPE -> SHAPE_TORCHFLOWER_CROP_OUTLINE_SHAPE: CloudburstMC/Data 88a2436; SOURCE ONLY (no BDS capture)
+        v.change("minecraft:blue_orchid")
+                .outlineShape(SHAPE_TORCHFLOWER_CROP_OUTLINE_SHAPE);
+        // other states than in 26.40 (none): values from BDS Script API dump 1.26.52.3, BDS behaviour probe 1.26.52.3 (climbing), CloudburstMC/Data 88a2436
         v.block("minecraft:blue_stained_glass_pane", "minecraft:connection_east=false|true,minecraft:connection_north=false|true,minecraft:connection_south=false|true,minecraft:connection_west=false|true")
                 .destroyTime(0.3f)
                 .explosionResistance(0.3f)
@@ -409,7 +409,7 @@ final class BehaviourChanges26_50 {
                 .obstructsRain(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_9B2762);
         // requires_correct_tool false -> true: CloudburstMC/Data 88a2436; SOURCE ONLY (no BDS capture); undoes the change of 26.40 by the same source: suspected dump artefact
         v.change("minecraft:blue_terracotta").requiresCorrectTool(true);
-        // new in 26.50: values from BDS Script API dump 1.26.52.3, CloudburstMC/Data 88a2436
+        // new in 26.50: values from BDS Script API dump 1.26.52.3, BDS behaviour probe 1.26.52.3 (climbing), CloudburstMC/Data 88a2436
         v.block("minecraft:blue_wool_double_slab", "minecraft:vertical_half='bottom'|'top'")
                 .destroyTime(0.8f)
                 .explosionResistance(0.16f)
@@ -418,7 +418,7 @@ final class BehaviourChanges26_50 {
                 .mapColor(0x2E388DFF)
                 .flameOdds(30)
                 .burnOdds(60);
-        // new in 26.50: values from BDS Script API dump 1.26.52.3, CloudburstMC/Data 88a2436
+        // new in 26.50: values from BDS Script API dump 1.26.52.3, BDS behaviour probe 1.26.52.3 (climbing), CloudburstMC/Data 88a2436
         v.block("minecraft:blue_wool_slab", "minecraft:vertical_half='bottom'|'top'")
                 .destroyTime(0.8f)
                 .explosionResistance(0.16f)
@@ -432,7 +432,7 @@ final class BehaviourChanges26_50 {
                 .flameOdds(30)
                 .burnOdds(60)
                 .translucency(0.8f);
-        // new in 26.50: values from BDS Script API dump 1.26.52.3, CloudburstMC/Data 88a2436
+        // new in 26.50: values from BDS Script API dump 1.26.52.3, BDS behaviour probe 1.26.52.3 (climbing), CloudburstMC/Data 88a2436
         v.block("minecraft:blue_wool_stairs", "minecraft:corner='inner_left'|'inner_right'|'none'|'outer_left'|'outer_right',upside_down_bit=false|true,weirdo_direction=0..3")
                 .destroyTime(0.8f)
                 .explosionResistance(0.16f)
@@ -472,7 +472,7 @@ final class BehaviourChanges26_50 {
         v.change("minecraft:brick_double_slab").requiresCorrectTool(true);
         // requires_correct_tool false -> true: CloudburstMC/Data 88a2436; SOURCE ONLY (no BDS capture); undoes the change of 26.40 by the same source: suspected dump artefact
         v.change("minecraft:brick_slab").requiresCorrectTool(true);
-        // other states than in 26.40 (upside_down_bit=false|true,weirdo_direction=0..3): values from BDS Script API dump 1.26.52.3, CloudburstMC/Data 88a2436
+        // other states than in 26.40 (upside_down_bit=false|true,weirdo_direction=0..3): values from BDS Script API dump 1.26.52.3, BDS behaviour probe 1.26.52.3 (climbing), CloudburstMC/Data 88a2436
         v.block("minecraft:brick_stairs", "minecraft:corner='inner_left'|'inner_right'|'none'|'outer_left'|'outer_right',upside_down_bit=false|true,weirdo_direction=0..3")
                 .destroyTime(2.0f)
                 .collisionShape(TABLE_CORNER_UPSIDE_DOWN_BIT_WEIRDO_DIRECTION_BD8305)
@@ -495,7 +495,7 @@ final class BehaviourChanges26_50 {
         v.change("minecraft:brick_wall").requiresCorrectTool(true);
         // requires_correct_tool false -> true: CloudburstMC/Data 88a2436; SOURCE ONLY (no BDS capture); undoes the change of 26.40 by the same source: suspected dump artefact
         v.change("minecraft:brown_concrete").requiresCorrectTool(true);
-        // new in 26.50: values from BDS Script API dump 1.26.52.3, CloudburstMC/Data 88a2436
+        // new in 26.50: values from BDS Script API dump 1.26.52.3, BDS behaviour probe 1.26.52.3 (climbing), CloudburstMC/Data 88a2436
         v.block("minecraft:brown_concrete_double_slab", "minecraft:vertical_half='bottom'|'top'")
                 .destroyTime(1.8f)
                 .explosionResistance(0.359999f)
@@ -503,7 +503,7 @@ final class BehaviourChanges26_50 {
                 .lightDampening(15)
                 .requiresCorrectTool(true)
                 .mapColor(0x664C33FF);
-        // new in 26.50: values from BDS Script API dump 1.26.52.3, CloudburstMC/Data 88a2436
+        // new in 26.50: values from BDS Script API dump 1.26.52.3, BDS behaviour probe 1.26.52.3 (climbing), CloudburstMC/Data 88a2436
         v.block("minecraft:brown_concrete_slab", "minecraft:vertical_half='bottom'|'top'")
                 .destroyTime(1.8f)
                 .explosionResistance(0.359999f)
@@ -515,7 +515,7 @@ final class BehaviourChanges26_50 {
                 .liquidFlowDirections("minecraft:vertical_half", "bottom", 62, "top", 61)
                 .requiresCorrectTool(true)
                 .mapColor(0x664C33FF);
-        // new in 26.50: values from BDS Script API dump 1.26.52.3, CloudburstMC/Data 88a2436
+        // new in 26.50: values from BDS Script API dump 1.26.52.3, BDS behaviour probe 1.26.52.3 (climbing), CloudburstMC/Data 88a2436
         v.block("minecraft:brown_concrete_stairs", "minecraft:corner='inner_left'|'inner_right'|'none'|'outer_left'|'outer_right',upside_down_bit=false|true,weirdo_direction=0..3")
                 .destroyTime(1.8f)
                 .explosionResistance(0.359999f)
@@ -538,7 +538,7 @@ final class BehaviourChanges26_50 {
                         "none", true, "outer_left", null, "outer_right", null);
         // requires_correct_tool false -> true: CloudburstMC/Data 88a2436; SOURCE ONLY (no BDS capture); undoes the change of 26.40 by the same source: suspected dump artefact
         v.change("minecraft:brown_glazed_terracotta").requiresCorrectTool(true);
-        // other states than in 26.40 (none): values from BDS Script API dump 1.26.52.3, CloudburstMC/Data 88a2436
+        // other states than in 26.40 (none): values from BDS Script API dump 1.26.52.3, BDS behaviour probe 1.26.52.3 (climbing), CloudburstMC/Data 88a2436
         v.block("minecraft:brown_stained_glass_pane", "minecraft:connection_east=false|true,minecraft:connection_north=false|true,minecraft:connection_south=false|true,minecraft:connection_west=false|true")
                 .destroyTime(0.3f)
                 .explosionResistance(0.3f)
@@ -554,7 +554,7 @@ final class BehaviourChanges26_50 {
                 .obstructsRain(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_9B2762);
         // requires_correct_tool false -> true: CloudburstMC/Data 88a2436; SOURCE ONLY (no BDS capture); undoes the change of 26.40 by the same source: suspected dump artefact
         v.change("minecraft:brown_terracotta").requiresCorrectTool(true);
-        // new in 26.50: values from BDS Script API dump 1.26.52.3, CloudburstMC/Data 88a2436
+        // new in 26.50: values from BDS Script API dump 1.26.52.3, BDS behaviour probe 1.26.52.3 (climbing), CloudburstMC/Data 88a2436
         v.block("minecraft:brown_wool_double_slab", "minecraft:vertical_half='bottom'|'top'")
                 .destroyTime(0.8f)
                 .explosionResistance(0.16f)
@@ -563,7 +563,7 @@ final class BehaviourChanges26_50 {
                 .mapColor(0x835432FF)
                 .flameOdds(30)
                 .burnOdds(60);
-        // new in 26.50: values from BDS Script API dump 1.26.52.3, CloudburstMC/Data 88a2436
+        // new in 26.50: values from BDS Script API dump 1.26.52.3, BDS behaviour probe 1.26.52.3 (climbing), CloudburstMC/Data 88a2436
         v.block("minecraft:brown_wool_slab", "minecraft:vertical_half='bottom'|'top'")
                 .destroyTime(0.8f)
                 .explosionResistance(0.16f)
@@ -580,7 +580,7 @@ final class BehaviourChanges26_50 {
     }
 
     static void part3(Changes v) {
-        // new in 26.50: values from BDS Script API dump 1.26.52.3, CloudburstMC/Data 88a2436
+        // new in 26.50: values from BDS Script API dump 1.26.52.3, BDS behaviour probe 1.26.52.3 (climbing), CloudburstMC/Data 88a2436
         v.block("minecraft:brown_wool_stairs", "minecraft:corner='inner_left'|'inner_right'|'none'|'outer_left'|'outer_right',upside_down_bit=false|true,weirdo_direction=0..3")
                 .destroyTime(0.8f)
                 .explosionResistance(0.16f)
@@ -620,7 +620,7 @@ final class BehaviourChanges26_50 {
         v.change("minecraft:chain_command_block").requiresCorrectTool(true);
         // requires_correct_tool false -> true: CloudburstMC/Data 88a2436; SOURCE ONLY (no BDS capture); undoes the change of 26.40 by the same source: suspected dump artefact
         v.change("minecraft:chemical_heat").requiresCorrectTool(true);
-        // other states than in 26.40 (none): values from BDS Script API dump 1.26.52.3, CloudburstMC/Data 88a2436
+        // other states than in 26.40 (none): values from BDS Script API dump 1.26.52.3, BDS behaviour probe 1.26.52.3 (climbing), CloudburstMC/Data 88a2436
         v.block("minecraft:cherry_fence", "minecraft:connection_east=false|true,minecraft:connection_north=false|true,minecraft:connection_south=false|true,minecraft:connection_west=false|true")
                 .destroyTime(2.0f)
                 .explosionResistance(3.0f)
@@ -642,7 +642,7 @@ final class BehaviourChanges26_50 {
         // flame_odds 5 -> 0: CloudburstMC/Data 88a2436; SOURCE ONLY (no BDS capture)
         // burn_odds 20 -> 0: CloudburstMC/Data 88a2436; SOURCE ONLY (no BDS capture)
         v.change("minecraft:cherry_sapling").flameOdds(0).burnOdds(0);
-        // other states than in 26.40 (upside_down_bit=false|true,weirdo_direction=0..3): values from BDS Script API dump 1.26.52.3, CloudburstMC/Data 88a2436
+        // other states than in 26.40 (upside_down_bit=false|true,weirdo_direction=0..3): values from BDS Script API dump 1.26.52.3, BDS behaviour probe 1.26.52.3 (climbing), CloudburstMC/Data 88a2436
         v.block("minecraft:cherry_stairs", "minecraft:corner='inner_left'|'inner_right'|'none'|'outer_left'|'outer_right',upside_down_bit=false|true,weirdo_direction=0..3")
                 .destroyTime(2.0f)
                 .explosionResistance(3.0f)
@@ -695,7 +695,7 @@ final class BehaviourChanges26_50 {
         v.change("minecraft:cinnabar_brick_double_slab").requiresCorrectTool(true);
         // requires_correct_tool false -> true: CloudburstMC/Data 88a2436; SOURCE ONLY (no BDS capture); undoes the change of 26.40 by the same source: suspected dump artefact
         v.change("minecraft:cinnabar_brick_slab").requiresCorrectTool(true);
-        // other states than in 26.40 (upside_down_bit=false|true,weirdo_direction=0..3): values from BDS Script API dump 1.26.52.3, CloudburstMC/Data 88a2436
+        // other states than in 26.40 (upside_down_bit=false|true,weirdo_direction=0..3): values from BDS Script API dump 1.26.52.3, BDS behaviour probe 1.26.52.3 (climbing), CloudburstMC/Data 88a2436
         v.block("minecraft:cinnabar_brick_stairs", "minecraft:corner='inner_left'|'inner_right'|'none'|'outer_left'|'outer_right',upside_down_bit=false|true,weirdo_direction=0..3")
                 .destroyTime(1.5f)
                 .collisionShape(TABLE_CORNER_UPSIDE_DOWN_BIT_WEIRDO_DIRECTION_BD8305)
@@ -722,7 +722,7 @@ final class BehaviourChanges26_50 {
         v.change("minecraft:cinnabar_double_slab").requiresCorrectTool(true);
         // requires_correct_tool false -> true: CloudburstMC/Data 88a2436; SOURCE ONLY (no BDS capture); undoes the change of 26.40 by the same source: suspected dump artefact
         v.change("minecraft:cinnabar_slab").requiresCorrectTool(true);
-        // other states than in 26.40 (upside_down_bit=false|true,weirdo_direction=0..3): values from BDS Script API dump 1.26.52.3, CloudburstMC/Data 88a2436
+        // other states than in 26.40 (upside_down_bit=false|true,weirdo_direction=0..3): values from BDS Script API dump 1.26.52.3, BDS behaviour probe 1.26.52.3 (climbing), CloudburstMC/Data 88a2436
         v.block("minecraft:cinnabar_stairs", "minecraft:corner='inner_left'|'inner_right'|'none'|'outer_left'|'outer_right',upside_down_bit=false|true,weirdo_direction=0..3")
                 .destroyTime(1.5f)
                 .collisionShape(TABLE_CORNER_UPSIDE_DOWN_BIT_WEIRDO_DIRECTION_BD8305)
@@ -748,18 +748,18 @@ final class BehaviourChanges26_50 {
                 .outlineShape(SHAPE_TORCHFLOWER_CROP_OUTLINE_SHAPE);
         // requires_correct_tool false -> true: CloudburstMC/Data 88a2436; SOURCE ONLY (no BDS capture); undoes the change of 26.40 by the same source: suspected dump artefact
         v.change("minecraft:coal_block").requiresCorrectTool(true);
-        // requires_correct_tool false -> true: CloudburstMC/Data 88a2436; SOURCE ONLY (no BDS capture); undoes the change of 26.40 by the same source: suspected dump artefact
-        v.change("minecraft:coal_ore").requiresCorrectTool(true);
     }
 
     static void part4(Changes v) {
+        // requires_correct_tool false -> true: CloudburstMC/Data 88a2436; SOURCE ONLY (no BDS capture); undoes the change of 26.40 by the same source: suspected dump artefact
+        v.change("minecraft:coal_ore").requiresCorrectTool(true);
         // requires_correct_tool false -> true: CloudburstMC/Data 88a2436; SOURCE ONLY (no BDS capture); undoes the change of 26.40 by the same source: suspected dump artefact
         v.change("minecraft:cobbled_deepslate").requiresCorrectTool(true);
         // requires_correct_tool false -> true: CloudburstMC/Data 88a2436; SOURCE ONLY (no BDS capture); undoes the change of 26.40 by the same source: suspected dump artefact
         v.change("minecraft:cobbled_deepslate_double_slab").requiresCorrectTool(true);
         // requires_correct_tool false -> true: CloudburstMC/Data 88a2436; SOURCE ONLY (no BDS capture); undoes the change of 26.40 by the same source: suspected dump artefact
         v.change("minecraft:cobbled_deepslate_slab").requiresCorrectTool(true);
-        // other states than in 26.40 (upside_down_bit=false|true,weirdo_direction=0..3): values from BDS Script API dump 1.26.52.3, CloudburstMC/Data 88a2436
+        // other states than in 26.40 (upside_down_bit=false|true,weirdo_direction=0..3): values from BDS Script API dump 1.26.52.3, BDS behaviour probe 1.26.52.3 (climbing), CloudburstMC/Data 88a2436
         v.block("minecraft:cobbled_deepslate_stairs", "minecraft:corner='inner_left'|'inner_right'|'none'|'outer_left'|'outer_right',upside_down_bit=false|true,weirdo_direction=0..3")
                 .destroyTime(3.5f)
                 .collisionShape(TABLE_CORNER_UPSIDE_DOWN_BIT_WEIRDO_DIRECTION_BD8305)
@@ -788,7 +788,7 @@ final class BehaviourChanges26_50 {
         v.change("minecraft:cobblestone_wall").requiresCorrectTool(true);
         // requires_correct_tool false -> true: CloudburstMC/Data 88a2436; SOURCE ONLY (no BDS capture); undoes the change of 26.40 by the same source: suspected dump artefact
         v.change("minecraft:command_block").requiresCorrectTool(true);
-        // other states than in 26.40 (none): values from BDS Script API dump 1.26.52.3, CloudburstMC/Data 88a2436
+        // other states than in 26.40 (none): values from BDS Script API dump 1.26.52.3, BDS behaviour probe 1.26.52.3 (climbing), CloudburstMC/Data 88a2436
         v.block("minecraft:copper_bars", "minecraft:connection_east=false|true,minecraft:connection_north=false|true,minecraft:connection_south=false|true,minecraft:connection_west=false|true")
                 .destroyTime(5.0f)
                 .collisionShape(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_B233D5)
@@ -827,7 +827,7 @@ final class BehaviourChanges26_50 {
         v.change("minecraft:cracked_polished_blackstone_bricks").requiresCorrectTool(true);
         // requires_correct_tool false -> true: CloudburstMC/Data 88a2436; SOURCE ONLY (no BDS capture); undoes the change of 26.40 by the same source: suspected dump artefact
         v.change("minecraft:cracked_stone_bricks").requiresCorrectTool(true);
-        // other states than in 26.40 (none): values from BDS Script API dump 1.26.52.3, CloudburstMC/Data 88a2436
+        // other states than in 26.40 (none): values from BDS Script API dump 1.26.52.3, BDS behaviour probe 1.26.52.3 (climbing), CloudburstMC/Data 88a2436
         v.block("minecraft:crimson_fence", "minecraft:connection_east=false|true,minecraft:connection_north=false|true,minecraft:connection_south=false|true,minecraft:connection_west=false|true")
                 .destroyTime(2.0f)
                 .explosionResistance(3.0f)
@@ -847,7 +847,7 @@ final class BehaviourChanges26_50 {
         // outline_shape SHAPE_ALLIUM_OUTLINE_SHAPE -> SHAPE_TORCHFLOWER_CROP_OUTLINE_SHAPE: CloudburstMC/Data 88a2436; SOURCE ONLY (no BDS capture)
         v.change("minecraft:crimson_roots")
                 .outlineShape(SHAPE_TORCHFLOWER_CROP_OUTLINE_SHAPE);
-        // other states than in 26.40 (upside_down_bit=false|true,weirdo_direction=0..3): values from BDS Script API dump 1.26.52.3, CloudburstMC/Data 88a2436
+        // other states than in 26.40 (upside_down_bit=false|true,weirdo_direction=0..3): values from BDS Script API dump 1.26.52.3, BDS behaviour probe 1.26.52.3 (climbing), CloudburstMC/Data 88a2436
         v.block("minecraft:crimson_stairs", "minecraft:corner='inner_left'|'inner_right'|'none'|'outer_left'|'outer_right',upside_down_bit=false|true,weirdo_direction=0..3")
                 .destroyTime(2.0f)
                 .explosionResistance(3.0f)
@@ -872,7 +872,7 @@ final class BehaviourChanges26_50 {
         v.change("minecraft:cut_copper").requiresCorrectTool(true);
         // requires_correct_tool false -> true: CloudburstMC/Data 88a2436; SOURCE ONLY (no BDS capture); undoes the change of 26.40 by the same source: suspected dump artefact
         v.change("minecraft:cut_copper_slab").requiresCorrectTool(true);
-        // other states than in 26.40 (upside_down_bit=false|true,weirdo_direction=0..3): values from BDS Script API dump 1.26.52.3, CloudburstMC/Data 88a2436
+        // other states than in 26.40 (upside_down_bit=false|true,weirdo_direction=0..3): values from BDS Script API dump 1.26.52.3, BDS behaviour probe 1.26.52.3 (climbing), CloudburstMC/Data 88a2436
         v.block("minecraft:cut_copper_stairs", "minecraft:corner='inner_left'|'inner_right'|'none'|'outer_left'|'outer_right',upside_down_bit=false|true,weirdo_direction=0..3")
                 .destroyTime(3.0f)
                 .collisionShape(TABLE_CORNER_UPSIDE_DOWN_BIT_WEIRDO_DIRECTION_BD8305)
@@ -905,7 +905,10 @@ final class BehaviourChanges26_50 {
         v.change("minecraft:cut_sandstone_slab").requiresCorrectTool(true);
         // requires_correct_tool false -> true: CloudburstMC/Data 88a2436; SOURCE ONLY (no BDS capture); undoes the change of 26.40 by the same source: suspected dump artefact
         v.change("minecraft:cyan_concrete").requiresCorrectTool(true);
-        // new in 26.50: values from BDS Script API dump 1.26.52.3, CloudburstMC/Data 88a2436
+    }
+
+    static void part5(Changes v) {
+        // new in 26.50: values from BDS Script API dump 1.26.52.3, BDS behaviour probe 1.26.52.3 (climbing), CloudburstMC/Data 88a2436
         v.block("minecraft:cyan_concrete_double_slab", "minecraft:vertical_half='bottom'|'top'")
                 .destroyTime(1.8f)
                 .explosionResistance(0.359999f)
@@ -913,10 +916,7 @@ final class BehaviourChanges26_50 {
                 .lightDampening(15)
                 .requiresCorrectTool(true)
                 .mapColor(0x4C7F99FF);
-    }
-
-    static void part5(Changes v) {
-        // new in 26.50: values from BDS Script API dump 1.26.52.3, CloudburstMC/Data 88a2436
+        // new in 26.50: values from BDS Script API dump 1.26.52.3, BDS behaviour probe 1.26.52.3 (climbing), CloudburstMC/Data 88a2436
         v.block("minecraft:cyan_concrete_slab", "minecraft:vertical_half='bottom'|'top'")
                 .destroyTime(1.8f)
                 .explosionResistance(0.359999f)
@@ -928,7 +928,7 @@ final class BehaviourChanges26_50 {
                 .liquidFlowDirections("minecraft:vertical_half", "bottom", 62, "top", 61)
                 .requiresCorrectTool(true)
                 .mapColor(0x4C7F99FF);
-        // new in 26.50: values from BDS Script API dump 1.26.52.3, CloudburstMC/Data 88a2436
+        // new in 26.50: values from BDS Script API dump 1.26.52.3, BDS behaviour probe 1.26.52.3 (climbing), CloudburstMC/Data 88a2436
         v.block("minecraft:cyan_concrete_stairs", "minecraft:corner='inner_left'|'inner_right'|'none'|'outer_left'|'outer_right',upside_down_bit=false|true,weirdo_direction=0..3")
                 .destroyTime(1.8f)
                 .explosionResistance(0.359999f)
@@ -951,7 +951,7 @@ final class BehaviourChanges26_50 {
                         "none", true, "outer_left", null, "outer_right", null);
         // requires_correct_tool false -> true: CloudburstMC/Data 88a2436; SOURCE ONLY (no BDS capture); undoes the change of 26.40 by the same source: suspected dump artefact
         v.change("minecraft:cyan_glazed_terracotta").requiresCorrectTool(true);
-        // other states than in 26.40 (none): values from BDS Script API dump 1.26.52.3, CloudburstMC/Data 88a2436
+        // other states than in 26.40 (none): values from BDS Script API dump 1.26.52.3, BDS behaviour probe 1.26.52.3 (climbing), CloudburstMC/Data 88a2436
         v.block("minecraft:cyan_stained_glass_pane", "minecraft:connection_east=false|true,minecraft:connection_north=false|true,minecraft:connection_south=false|true,minecraft:connection_west=false|true")
                 .destroyTime(0.3f)
                 .explosionResistance(0.3f)
@@ -967,7 +967,7 @@ final class BehaviourChanges26_50 {
                 .obstructsRain(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_9B2762);
         // requires_correct_tool false -> true: CloudburstMC/Data 88a2436; SOURCE ONLY (no BDS capture); undoes the change of 26.40 by the same source: suspected dump artefact
         v.change("minecraft:cyan_terracotta").requiresCorrectTool(true);
-        // new in 26.50: values from BDS Script API dump 1.26.52.3, CloudburstMC/Data 88a2436
+        // new in 26.50: values from BDS Script API dump 1.26.52.3, BDS behaviour probe 1.26.52.3 (climbing), CloudburstMC/Data 88a2436
         v.block("minecraft:cyan_wool_double_slab", "minecraft:vertical_half='bottom'|'top'")
                 .destroyTime(0.8f)
                 .explosionResistance(0.16f)
@@ -976,7 +976,7 @@ final class BehaviourChanges26_50 {
                 .mapColor(0x169C9CFF)
                 .flameOdds(30)
                 .burnOdds(60);
-        // new in 26.50: values from BDS Script API dump 1.26.52.3, CloudburstMC/Data 88a2436
+        // new in 26.50: values from BDS Script API dump 1.26.52.3, BDS behaviour probe 1.26.52.3 (climbing), CloudburstMC/Data 88a2436
         v.block("minecraft:cyan_wool_slab", "minecraft:vertical_half='bottom'|'top'")
                 .destroyTime(0.8f)
                 .explosionResistance(0.16f)
@@ -990,7 +990,7 @@ final class BehaviourChanges26_50 {
                 .flameOdds(30)
                 .burnOdds(60)
                 .translucency(0.8f);
-        // new in 26.50: values from BDS Script API dump 1.26.52.3, CloudburstMC/Data 88a2436
+        // new in 26.50: values from BDS Script API dump 1.26.52.3, BDS behaviour probe 1.26.52.3 (climbing), CloudburstMC/Data 88a2436
         v.block("minecraft:cyan_wool_stairs", "minecraft:corner='inner_left'|'inner_right'|'none'|'outer_left'|'outer_right',upside_down_bit=false|true,weirdo_direction=0..3")
                 .destroyTime(0.8f)
                 .explosionResistance(0.16f)
@@ -1017,7 +1017,7 @@ final class BehaviourChanges26_50 {
         // outline_shape SHAPE_ALLIUM_OUTLINE_SHAPE -> SHAPE_TORCHFLOWER_CROP_OUTLINE_SHAPE: CloudburstMC/Data 88a2436; SOURCE ONLY (no BDS capture)
         v.change("minecraft:dandelion")
                 .outlineShape(SHAPE_TORCHFLOWER_CROP_OUTLINE_SHAPE);
-        // other states than in 26.40 (none): values from BDS Script API dump 1.26.52.3, CloudburstMC/Data 88a2436
+        // other states than in 26.40 (none): values from BDS Script API dump 1.26.52.3, BDS behaviour probe 1.26.52.3 (climbing), CloudburstMC/Data 88a2436
         v.block("minecraft:dark_oak_fence", "minecraft:connection_east=false|true,minecraft:connection_north=false|true,minecraft:connection_south=false|true,minecraft:connection_west=false|true")
                 .destroyTime(2.0f)
                 .explosionResistance(3.0f)
@@ -1034,7 +1034,7 @@ final class BehaviourChanges26_50 {
                 .accumulatesSnow(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_9B2762)
                 .snowLoggable(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_1AB959)
                 .obstructsRain(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_9B2762);
-        // other states than in 26.40 (upside_down_bit=false|true,weirdo_direction=0..3): values from BDS Script API dump 1.26.52.3, CloudburstMC/Data 88a2436
+        // other states than in 26.40 (upside_down_bit=false|true,weirdo_direction=0..3): values from BDS Script API dump 1.26.52.3, BDS behaviour probe 1.26.52.3 (climbing), CloudburstMC/Data 88a2436
         v.block("minecraft:dark_oak_stairs", "minecraft:corner='inner_left'|'inner_right'|'none'|'outer_left'|'outer_right',upside_down_bit=false|true,weirdo_direction=0..3")
                 .destroyTime(2.0f)
                 .explosionResistance(3.0f)
@@ -1061,7 +1061,7 @@ final class BehaviourChanges26_50 {
         v.change("minecraft:dark_prismarine_double_slab").requiresCorrectTool(true);
         // requires_correct_tool false -> true: CloudburstMC/Data 88a2436; SOURCE ONLY (no BDS capture); undoes the change of 26.40 by the same source: suspected dump artefact
         v.change("minecraft:dark_prismarine_slab").requiresCorrectTool(true);
-        // other states than in 26.40 (upside_down_bit=false|true,weirdo_direction=0..3): values from BDS Script API dump 1.26.52.3, CloudburstMC/Data 88a2436
+        // other states than in 26.40 (upside_down_bit=false|true,weirdo_direction=0..3): values from BDS Script API dump 1.26.52.3, BDS behaviour probe 1.26.52.3 (climbing), CloudburstMC/Data 88a2436
         v.block("minecraft:dark_prismarine_stairs", "minecraft:corner='inner_left'|'inner_right'|'none'|'outer_left'|'outer_right',upside_down_bit=false|true,weirdo_direction=0..3")
                 .destroyTime(1.5f)
                 .collisionShape(TABLE_CORNER_UPSIDE_DOWN_BIT_WEIRDO_DIRECTION_BD8305)
@@ -1093,6 +1093,9 @@ final class BehaviourChanges26_50 {
                 .outlineShape(SHAPE_BRAIN_CORAL_OUTLINE_SHAPE);
         // requires_correct_tool false -> true: CloudburstMC/Data 88a2436; SOURCE ONLY (no BDS capture); undoes the change of 26.40 by the same source: suspected dump artefact
         v.change("minecraft:dead_bubble_coral_block").requiresCorrectTool(true);
+    }
+
+    static void part6(Changes v) {
         // outline_shape SHAPE_BRAIN_CORAL_FAN_OUTLINE_SHAPE -> SHAPE_BRAIN_CORAL_FAN_OUTLINE_SHAPE_2: CloudburstMC/Data 88a2436; SOURCE ONLY (no BDS capture)
         v.change("minecraft:dead_bubble_coral_fan")
                 .outlineShape(SHAPE_BRAIN_CORAL_FAN_OUTLINE_SHAPE_2);
@@ -1102,9 +1105,6 @@ final class BehaviourChanges26_50 {
         // outline_shape SHAPE_BRAIN_CORAL_FAN_OUTLINE_SHAPE -> SHAPE_BRAIN_CORAL_FAN_OUTLINE_SHAPE_2: CloudburstMC/Data 88a2436; SOURCE ONLY (no BDS capture)
         v.change("minecraft:dead_fire_coral_fan")
                 .outlineShape(SHAPE_BRAIN_CORAL_FAN_OUTLINE_SHAPE_2);
-    }
-
-    static void part6(Changes v) {
         // outline_shape SHAPE_BAMBOO_SAPLING_OUTLINE_SHAPE -> SHAPE_BRAIN_CORAL_OUTLINE_SHAPE: CloudburstMC/Data 88a2436; SOURCE ONLY (no BDS capture)
         v.change("minecraft:dead_horn_coral")
                 .outlineShape(SHAPE_BRAIN_CORAL_OUTLINE_SHAPE);
@@ -1127,7 +1127,7 @@ final class BehaviourChanges26_50 {
         v.change("minecraft:deepslate_brick_double_slab").requiresCorrectTool(true);
         // requires_correct_tool false -> true: CloudburstMC/Data 88a2436; SOURCE ONLY (no BDS capture); undoes the change of 26.40 by the same source: suspected dump artefact
         v.change("minecraft:deepslate_brick_slab").requiresCorrectTool(true);
-        // other states than in 26.40 (upside_down_bit=false|true,weirdo_direction=0..3): values from BDS Script API dump 1.26.52.3, CloudburstMC/Data 88a2436
+        // other states than in 26.40 (upside_down_bit=false|true,weirdo_direction=0..3): values from BDS Script API dump 1.26.52.3, BDS behaviour probe 1.26.52.3 (climbing), CloudburstMC/Data 88a2436
         v.block("minecraft:deepslate_brick_stairs", "minecraft:corner='inner_left'|'inner_right'|'none'|'outer_left'|'outer_right',upside_down_bit=false|true,weirdo_direction=0..3")
                 .destroyTime(3.5f)
                 .collisionShape(TABLE_CORNER_UPSIDE_DOWN_BIT_WEIRDO_DIRECTION_BD8305)
@@ -1170,7 +1170,7 @@ final class BehaviourChanges26_50 {
         v.change("minecraft:deepslate_tile_double_slab").requiresCorrectTool(true);
         // requires_correct_tool false -> true: CloudburstMC/Data 88a2436; SOURCE ONLY (no BDS capture); undoes the change of 26.40 by the same source: suspected dump artefact
         v.change("minecraft:deepslate_tile_slab").requiresCorrectTool(true);
-        // other states than in 26.40 (upside_down_bit=false|true,weirdo_direction=0..3): values from BDS Script API dump 1.26.52.3, CloudburstMC/Data 88a2436
+        // other states than in 26.40 (upside_down_bit=false|true,weirdo_direction=0..3): values from BDS Script API dump 1.26.52.3, BDS behaviour probe 1.26.52.3 (climbing), CloudburstMC/Data 88a2436
         v.block("minecraft:deepslate_tile_stairs", "minecraft:corner='inner_left'|'inner_right'|'none'|'outer_left'|'outer_right',upside_down_bit=false|true,weirdo_direction=0..3")
                 .destroyTime(3.5f)
                 .collisionShape(TABLE_CORNER_UPSIDE_DOWN_BIT_WEIRDO_DIRECTION_BD8305)
@@ -1209,7 +1209,7 @@ final class BehaviourChanges26_50 {
         v.change("minecraft:diorite_double_slab").requiresCorrectTool(true);
         // requires_correct_tool false -> true: CloudburstMC/Data 88a2436; SOURCE ONLY (no BDS capture); undoes the change of 26.40 by the same source: suspected dump artefact
         v.change("minecraft:diorite_slab").requiresCorrectTool(true);
-        // other states than in 26.40 (upside_down_bit=false|true,weirdo_direction=0..3): values from BDS Script API dump 1.26.52.3, CloudburstMC/Data 88a2436
+        // other states than in 26.40 (upside_down_bit=false|true,weirdo_direction=0..3): values from BDS Script API dump 1.26.52.3, BDS behaviour probe 1.26.52.3 (climbing), CloudburstMC/Data 88a2436
         v.block("minecraft:diorite_stairs", "minecraft:corner='inner_left'|'inner_right'|'none'|'outer_left'|'outer_right',upside_down_bit=false|true,weirdo_direction=0..3")
                 .destroyTime(1.5f)
                 .collisionShape(TABLE_CORNER_UPSIDE_DOWN_BIT_WEIRDO_DIRECTION_BD8305)
@@ -1242,7 +1242,10 @@ final class BehaviourChanges26_50 {
         v.change("minecraft:emerald_ore").requiresCorrectTool(true);
         // requires_correct_tool false -> true: CloudburstMC/Data 88a2436; SOURCE ONLY (no BDS capture); undoes the change of 26.40 by the same source: suspected dump artefact
         v.change("minecraft:enchanting_table").requiresCorrectTool(true);
-        // other states than in 26.40 (upside_down_bit=false|true,weirdo_direction=0..3): values from BDS Script API dump 1.26.52.3, CloudburstMC/Data 88a2436
+    }
+
+    static void part7(Changes v) {
+        // other states than in 26.40 (upside_down_bit=false|true,weirdo_direction=0..3): values from BDS Script API dump 1.26.52.3, BDS behaviour probe 1.26.52.3 (climbing), CloudburstMC/Data 88a2436
         v.block("minecraft:end_brick_stairs", "minecraft:corner='inner_left'|'inner_right'|'none'|'outer_left'|'outer_right',upside_down_bit=false|true,weirdo_direction=0..3")
                 .destroyTime(3.0f)
                 .explosionResistance(9.0f)
@@ -1268,9 +1271,6 @@ final class BehaviourChanges26_50 {
         v.change("minecraft:end_portal_frame").requiresCorrectTool(true);
         // requires_correct_tool false -> true: CloudburstMC/Data 88a2436; SOURCE ONLY (no BDS capture); undoes the change of 26.40 by the same source: suspected dump artefact
         v.change("minecraft:end_stone").requiresCorrectTool(true);
-    }
-
-    static void part7(Changes v) {
         // requires_correct_tool false -> true: CloudburstMC/Data 88a2436; SOURCE ONLY (no BDS capture); undoes the change of 26.40 by the same source: suspected dump artefact
         v.change("minecraft:end_stone_brick_slab").requiresCorrectTool(true);
         // requires_correct_tool false -> true: CloudburstMC/Data 88a2436; SOURCE ONLY (no BDS capture); undoes the change of 26.40 by the same source: suspected dump artefact
@@ -1279,7 +1279,7 @@ final class BehaviourChanges26_50 {
         v.change("minecraft:exposed_chiseled_copper").requiresCorrectTool(true);
         // requires_correct_tool false -> true: CloudburstMC/Data 88a2436; SOURCE ONLY (no BDS capture); undoes the change of 26.40 by the same source: suspected dump artefact
         v.change("minecraft:exposed_copper").requiresCorrectTool(true);
-        // other states than in 26.40 (none): values from BDS Script API dump 1.26.52.3, CloudburstMC/Data 88a2436
+        // other states than in 26.40 (none): values from BDS Script API dump 1.26.52.3, BDS behaviour probe 1.26.52.3 (climbing), CloudburstMC/Data 88a2436
         v.block("minecraft:exposed_copper_bars", "minecraft:connection_east=false|true,minecraft:connection_north=false|true,minecraft:connection_south=false|true,minecraft:connection_west=false|true")
                 .destroyTime(5.0f)
                 .collisionShape(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_B233D5)
@@ -1307,7 +1307,7 @@ final class BehaviourChanges26_50 {
         v.change("minecraft:exposed_cut_copper").requiresCorrectTool(true);
         // requires_correct_tool false -> true: CloudburstMC/Data 88a2436; SOURCE ONLY (no BDS capture); undoes the change of 26.40 by the same source: suspected dump artefact
         v.change("minecraft:exposed_cut_copper_slab").requiresCorrectTool(true);
-        // other states than in 26.40 (upside_down_bit=false|true,weirdo_direction=0..3): values from BDS Script API dump 1.26.52.3, CloudburstMC/Data 88a2436
+        // other states than in 26.40 (upside_down_bit=false|true,weirdo_direction=0..3): values from BDS Script API dump 1.26.52.3, BDS behaviour probe 1.26.52.3 (climbing), CloudburstMC/Data 88a2436
         v.block("minecraft:exposed_cut_copper_stairs", "minecraft:corner='inner_left'|'inner_right'|'none'|'outer_left'|'outer_right',upside_down_bit=false|true,weirdo_direction=0..3")
                 .destroyTime(3.0f)
                 .collisionShape(TABLE_CORNER_UPSIDE_DOWN_BIT_WEIRDO_DIRECTION_BD8305)
@@ -1343,7 +1343,7 @@ final class BehaviourChanges26_50 {
         v.change("minecraft:furnace").requiresCorrectTool(true);
         // requires_correct_tool false -> true: CloudburstMC/Data 88a2436; SOURCE ONLY (no BDS capture); undoes the change of 26.40 by the same source: suspected dump artefact
         v.change("minecraft:gilded_blackstone").requiresCorrectTool(true);
-        // other states than in 26.40 (none): values from BDS Script API dump 1.26.52.3, CloudburstMC/Data 88a2436
+        // other states than in 26.40 (none): values from BDS Script API dump 1.26.52.3, BDS behaviour probe 1.26.52.3 (climbing), CloudburstMC/Data 88a2436
         v.block("minecraft:glass_pane", "minecraft:connection_east=false|true,minecraft:connection_north=false|true,minecraft:connection_south=false|true,minecraft:connection_west=false|true")
                 .destroyTime(0.3f)
                 .explosionResistance(0.3f)
@@ -1372,7 +1372,7 @@ final class BehaviourChanges26_50 {
         v.change("minecraft:granite_double_slab").requiresCorrectTool(true);
         // requires_correct_tool false -> true: CloudburstMC/Data 88a2436; SOURCE ONLY (no BDS capture); undoes the change of 26.40 by the same source: suspected dump artefact
         v.change("minecraft:granite_slab").requiresCorrectTool(true);
-        // other states than in 26.40 (upside_down_bit=false|true,weirdo_direction=0..3): values from BDS Script API dump 1.26.52.3, CloudburstMC/Data 88a2436
+        // other states than in 26.40 (upside_down_bit=false|true,weirdo_direction=0..3): values from BDS Script API dump 1.26.52.3, BDS behaviour probe 1.26.52.3 (climbing), CloudburstMC/Data 88a2436
         v.block("minecraft:granite_stairs", "minecraft:corner='inner_left'|'inner_right'|'none'|'outer_left'|'outer_right',upside_down_bit=false|true,weirdo_direction=0..3")
                 .destroyTime(1.5f)
                 .collisionShape(TABLE_CORNER_UPSIDE_DOWN_BIT_WEIRDO_DIRECTION_BD8305)
@@ -1395,7 +1395,7 @@ final class BehaviourChanges26_50 {
         v.change("minecraft:granite_wall").requiresCorrectTool(true);
         // requires_correct_tool false -> true: CloudburstMC/Data 88a2436; SOURCE ONLY (no BDS capture); undoes the change of 26.40 by the same source: suspected dump artefact
         v.change("minecraft:gray_concrete").requiresCorrectTool(true);
-        // new in 26.50: values from BDS Script API dump 1.26.52.3, CloudburstMC/Data 88a2436
+        // new in 26.50: values from BDS Script API dump 1.26.52.3, BDS behaviour probe 1.26.52.3 (climbing), CloudburstMC/Data 88a2436
         v.block("minecraft:gray_concrete_double_slab", "minecraft:vertical_half='bottom'|'top'")
                 .destroyTime(1.8f)
                 .explosionResistance(0.359999f)
@@ -1403,39 +1403,6 @@ final class BehaviourChanges26_50 {
                 .lightDampening(15)
                 .requiresCorrectTool(true)
                 .mapColor(0x4C4C4CFF);
-        // new in 26.50: values from BDS Script API dump 1.26.52.3, CloudburstMC/Data 88a2436
-        v.block("minecraft:gray_concrete_slab", "minecraft:vertical_half='bottom'|'top'")
-                .destroyTime(1.8f)
-                .explosionResistance(0.359999f)
-                .collisionShape("minecraft:vertical_half", "bottom", BOX_0_0_0_16_8_16,
-                        "top", BOX_0_8_0_16_16_16)
-                .outlineShape("minecraft:vertical_half", "bottom", BOX_0_0_0_16_8_16,
-                        "top", BOX_0_8_0_16_16_16)
-                .canContainLiquid(true)
-                .liquidFlowDirections("minecraft:vertical_half", "bottom", 62, "top", 61)
-                .requiresCorrectTool(true)
-                .mapColor(0x4C4C4CFF);
-        // new in 26.50: values from BDS Script API dump 1.26.52.3, CloudburstMC/Data 88a2436
-        v.block("minecraft:gray_concrete_stairs", "minecraft:corner='inner_left'|'inner_right'|'none'|'outer_left'|'outer_right',upside_down_bit=false|true,weirdo_direction=0..3")
-                .destroyTime(1.8f)
-                .explosionResistance(0.359999f)
-                .collisionShape(TABLE_CORNER_UPSIDE_DOWN_BIT_WEIRDO_DIRECTION_BD8305)
-                .canContainLiquid(true)
-                .liquidFlowDirections(TABLE_CORNER_UPSIDE_DOWN_BIT_WEIRDO_DIRECTION_91C7B2)
-                .requiresCorrectTool(true)
-                .mapColor("minecraft:corner", "inner_left", 0x00000000, "inner_right", 0x00000000,
-                        "none", 0x4C4C4CFF, "outer_left", 0x00000000, "outer_right", 0x00000000)
-                .translucency(0.8f)
-                .movementType("minecraft:corner", "inner_left", null, "inner_right", null,
-                        "none", "PushPull", "outer_left", null, "outer_right", null)
-                .stickyType("minecraft:corner", "inner_left", null, "inner_right", null,
-                        "none", "None", "outer_left", null, "outer_right", null)
-                .accumulatesSnow("minecraft:corner", "inner_left", null, "inner_right", null,
-                        "none", true, "outer_left", null, "outer_right", null)
-                .snowLoggable("minecraft:corner", "inner_left", null, "inner_right", null,
-                        "none", false, "outer_left", null, "outer_right", null)
-                .obstructsRain("minecraft:corner", "inner_left", null, "inner_right", null,
-                        "none", true, "outer_left", null, "outer_right", null);
     }
 
     static void load(Changes v) {
@@ -1468,5 +1435,6 @@ final class BehaviourChanges26_50 {
         BehaviourChanges26_50Part4.part26(v);
         BehaviourChanges26_50Part4.part27(v);
         BehaviourChanges26_50Part4.part28(v);
+        BehaviourChanges26_50Part4.part29(v);
     }
 }

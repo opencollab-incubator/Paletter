@@ -368,6 +368,8 @@ final class VariantValues {
                 }
             }
         }
+        // Probes: values no limit or sample gives, such as fractions not exact in binary for a rule that scales onto an integer
+        fixtures.probeValues(c.id(), path).forEach(v -> numbers.add(v.getAsDouble()));
         List<Labeled> values = new ArrayList<>();
         for (double d : numbers) {
             if (integer && d != Math.rint(d)) {
@@ -637,6 +639,11 @@ final class VariantValues {
                         JsonArray all = new JsonArray();
                         listed.forEach(all::add);
                         values.add(new Labeled("[all]", all));
+                        // The values in the other order: the schema lists them in BDS's own order (connected_faces), so only a
+                        // list in another order shows whether BDS sends the set in its order or in the JSON's
+                        JsonArray reversed = new JsonArray();
+                        listed.reversed().forEach(reversed::add);
+                        values.add(new Labeled("[all reversed]", reversed));
                     }
                 } else {
                     values.add(new Labeled("[1]", arrayOf(first)));
@@ -797,6 +804,27 @@ final class VariantValues {
                 JsonObject single = new JsonObject();
                 single.add(key, element);
                 values.add(new Labeled("{1 object} " + expression.getAsString(), single, true));
+            }
+            // Further values of the other members (probeValues of '<path>{}.<member>': the Molang version), with the sample
+            // expression: what BDS does with a version it does not take as written
+            JsonElement expression = sample(c, path + "{}", items, null);
+            for (Schema.Member member : members) {
+                if (member.types().contains("string")) {
+                    continue;
+                }
+                for (JsonElement probe : fixtures.probeValues(c.id(), path + "{}." + member.name())) {
+                    JsonObject element = new JsonObject();
+                    for (Schema.Member other : members) {
+                        JsonElement given = other == member ? probe.deepCopy()
+                            : other.types().contains("string") ? expression.deepCopy() : memberSample(c, path, other);
+                        if (given != null) {
+                            element.add(other.name(), given);
+                        }
+                    }
+                    JsonObject single = new JsonObject();
+                    single.add(key, element);
+                    values.add(new Labeled("{1 object} " + member.name() + " " + probe, single, true));
+                }
             }
         }
         if (types.contains("number") || types.contains("integer")) {

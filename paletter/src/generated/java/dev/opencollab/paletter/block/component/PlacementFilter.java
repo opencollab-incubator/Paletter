@@ -318,11 +318,11 @@ public final class PlacementFilter implements BlockComponent {
      *
      */
     public static final class Conditions {
-        private final @NonNull List<String> allowedFaces;
+        private final @NonNull List<AllowedFaces> allowedFaces;
 
         private final @NonNull List<BlockFilter> blockFilter;
 
-        private Conditions(@NonNull List<String> allowedFaces,
+        private Conditions(@NonNull List<AllowedFaces> allowedFaces,
                 @NonNull List<BlockFilter> blockFilter) {
             allowedFaces = List.copyOf(Objects.requireNonNull(allowedFaces, "PlacementFilter.Conditions.allowedFaces"));
             blockFilter = List.copyOf(Objects.requireNonNull(blockFilter, "PlacementFilter.Conditions.blockFilter"));
@@ -336,7 +336,7 @@ public final class PlacementFilter implements BlockComponent {
          *
          * @return the value
          */
-        public @NonNull List<String> allowedFaces() {
+        public @NonNull List<AllowedFaces> allowedFaces() {
             return allowedFaces;
         }
 
@@ -395,7 +395,7 @@ public final class PlacementFilter implements BlockComponent {
          * Builds {@link Conditions}: defaults applied, required fields and ranges checked by {@link #build()}.
          */
         public static final class Builder {
-            private @Nullable List<String> allowedFaces = List.of("down", "up", "north", "south", "west", "east");
+            private @Nullable List<AllowedFaces> allowedFaces = List.of(AllowedFaces.DOWN, AllowedFaces.UP, AllowedFaces.NORTH, AllowedFaces.SOUTH, AllowedFaces.WEST, AllowedFaces.EAST);
 
             private @Nullable List<BlockFilter> blockFilter = List.of();
 
@@ -409,7 +409,7 @@ public final class PlacementFilter implements BlockComponent {
              * @return this builder
              * @throws NullPointerException if the value is null
              */
-            public @NonNull Builder allowedFaces(@NonNull List<String> allowedFaces) {
+            public @NonNull Builder allowedFaces(@NonNull List<AllowedFaces> allowedFaces) {
                 this.allowedFaces = Objects.requireNonNull(allowedFaces, "PlacementFilter.Conditions.allowedFaces");
                 return this;
             }
@@ -421,10 +421,11 @@ public final class PlacementFilter implements BlockComponent {
              * @param rest the other values
              * @return this builder
              */
-            public @NonNull Builder allowedFaces(@NonNull String first, @NonNull String... rest) {
-                List<String> values = new ArrayList<>();
+            public @NonNull Builder allowedFaces(@NonNull AllowedFaces first,
+                    @NonNull AllowedFaces... rest) {
+                List<AllowedFaces> values = new ArrayList<>();
                 values.add(first);
-                for (String x : rest) {
+                for (AllowedFaces x : rest) {
                     values.add(x);
                 }
                 return allowedFaces(values);
@@ -469,6 +470,106 @@ public final class PlacementFilter implements BlockComponent {
             public @NonNull Conditions build() {
                 return new Conditions(allowedFaces, blockFilter);
             }
+        }
+    }
+
+    /**
+     * A value of an add-on JSON string: a constant per documented value, {@link #of} for any other.
+     * {@link #value()} is the add-on JSON string. Not an enum: Bedrock adds values, so a {@code switch} over
+     * {@link #value()} needs a {@code default}.
+     */
+    public static final class AllowedFaces {
+        /**
+         * {@code down}
+         */
+        public static final AllowedFaces DOWN = new AllowedFaces("down");
+
+        /**
+         * {@code up}
+         */
+        public static final AllowedFaces UP = new AllowedFaces("up");
+
+        /**
+         * {@code north}
+         */
+        public static final AllowedFaces NORTH = new AllowedFaces("north");
+
+        /**
+         * {@code south}
+         */
+        public static final AllowedFaces SOUTH = new AllowedFaces("south");
+
+        /**
+         * {@code west}
+         */
+        public static final AllowedFaces WEST = new AllowedFaces("west");
+
+        /**
+         * {@code east}
+         */
+        public static final AllowedFaces EAST = new AllowedFaces("east");
+
+        private static final List<AllowedFaces> KNOWN = List.of(DOWN, UP, NORTH, SOUTH, WEST, EAST);
+
+        private static final Map<String, AllowedFaces> BY_VALUE = Check.index(KNOWN, AllowedFaces::value);
+
+        private final String value;
+
+        private AllowedFaces(String value) {
+            this.value = value;
+        }
+
+        /**
+         * Returns the value of an add-on JSON string: the constant of a documented value, else a new value.
+         *
+         * @param value the value in add-on JSON
+         * @return the constant of the value, or a value Paletter does not know
+         */
+        public static @NonNull AllowedFaces of(@NonNull String value) {
+            AllowedFaces known = BY_VALUE.get(Objects.requireNonNull(value, "AllowedFaces.value"));
+            return known != null ? known : new AllowedFaces(value);
+        }
+
+        /**
+         * Returns the documented values, the constants of this class.
+         *
+         * @return the constants, in the order of the documentation
+         */
+        public static @NonNull List<AllowedFaces> known() {
+            return KNOWN;
+        }
+
+        /**
+         * Returns the value in add-on JSON.
+         *
+         * @return the value in add-on JSON
+         */
+        public @NonNull String value() {
+            return value;
+        }
+
+        /**
+         * Returns whether the value is documented, one of the constants.
+         *
+         * @return whether this is one of {@link #known()}
+         */
+        public boolean isKnown() {
+            return BY_VALUE.get(value) == this;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            return this == o || o instanceof AllowedFaces other && value.equals(other.value);
+        }
+
+        @Override
+        public int hashCode() {
+            return value.hashCode();
+        }
+
+        @Override
+        public String toString() {
+            return value;
         }
     }
 }

@@ -42,6 +42,8 @@ final class ApiModel {
      * kind ({@code item}, {@code block}): protocol windows, oldest first, each {@code {protocols, leaves}}.
      */
     final Map<String, com.google.gson.JsonArray> envelope = new LinkedHashMap<>();
+    /** {@code molangVersions} of {@code mappings.json}: engine version -> molangVersion where it changes, oldest first; empty without. */
+    com.google.gson.JsonObject molangVersions = new com.google.gson.JsonObject();
     /** Protocol and BDS version of every capture, oldest first (the bounds of the windows are protocols). */
     final java.util.TreeMap<Integer, String> captureVersions = new java.util.TreeMap<>();
     /** The sealed union types by name (api.json {@code unions}), shared by every field of the same shape. */
@@ -77,7 +79,7 @@ final class ApiModel {
      */
     Integer firstCustomBlockId;
     Integer blockItemIdPlusBlockId;
-    /** {@code mappings.json} {@code traitStates}: trait -> enabled_states value -> the states it adds. */
+    /** {@code mappings.json} {@code traitStates}: trait -> enabled_states value -> per protocol window the states it adds, or why none. */
     JsonObject traitStates = new JsonObject();
 
 
@@ -239,7 +241,7 @@ final class ApiModel {
         boolean removed;
     }
 
-    sealed interface Type permits Scalar, EnumRef, ObjRef, Vec3, ListOf, MapOf, States, ComponentRef, UnionRef {
+    sealed interface Type permits Scalar, EnumRef, ObjRef, Vec3, ListOf, MapOf, States, ComponentRef, UnionRef, MolangRef {
     }
 
     enum ScalarKind {
@@ -334,6 +336,13 @@ final class ApiModel {
 
     /** Block descriptor states: state name to an int, string or boolean value. */
     record States() implements Type {
+    }
+
+    /**
+     * A Molang expression with an optional version ({@code dev.opencollab.paletter.Molang}): add-on JSON's string, or its
+     * {@code {expression, version}} object (api.json {@code types} {@code molang}).
+     */
+    record MolangRef() implements Type {
     }
 
     static final class EnumType {

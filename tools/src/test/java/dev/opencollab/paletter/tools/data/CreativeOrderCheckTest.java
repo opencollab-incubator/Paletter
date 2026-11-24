@@ -4,6 +4,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import dev.opencollab.paletter.tools.CommittedBuilds;
+import dev.opencollab.paletter.tools.model.addon.AddonWriter;
 import org.cloudburstmc.nbt.NbtMap;
 import org.cloudburstmc.nbt.NbtType;
 import org.cloudburstmc.protocol.bedrock.data.inventory.CreativeItemData;
@@ -74,13 +75,16 @@ class CreativeOrderCheckTest {
         assertTrue(result.customStacks() >= customStacks, "only " + result.customStacks() + " custom stacks compared");
     }
 
-    /** Every spec capture of a build: BDS numbers the custom blocks and puts them in the block pass in Paletter's order. */
+    /**
+     * Every spec capture of a build: BDS numbers the custom blocks and puts them in the block pass in Paletter's order. The
+     * blocks of the engine packs come from packs after the main one in the world's pack list, as in the spec stage of update.
+     */
     @ParameterizedTest
     @MethodSource("specCaptures")
     void blockMapOrderMatchesTheSpecCaptures(String build, int protocol) throws Exception {
         Path directory = CommittedBuilds.directory(build).resolve("spec");
         CreativeOrderCheck.Result result = CreativeOrderCheck.blockOrder(protocol, DATA, directory.resolve("custom_item_registry.nbt"),
-            directory.resolve("custom_block_properties.nbt"), List.of());
+            directory.resolve("custom_block_properties.nbt"), AddonWriter.enginePacks().stream().map(AddonWriter.EnginePack::identifier).toList());
         // A hotfix build of a protocol that no data version starts with has no layout to compare with (1.26.45.1)
         org.junit.jupiter.api.Assumptions.assumeTrue(result.skipped() == null, result.skipped());
         assertTrue(result.matches(), String.join("\n", result.differences()));

@@ -3,6 +3,7 @@
 // data/model/ATTRIBUTION.md.
 package dev.opencollab.paletter.block.component;
 
+import dev.opencollab.paletter.Molang;
 import dev.opencollab.paletter.annotation.BedrockFormat;
 import dev.opencollab.paletter.internal.component.Check;
 import java.util.ArrayList;
@@ -321,7 +322,7 @@ public final class ItemVisual implements BlockComponent {
      *
      */
     public static final class VisualGeometry {
-        private final @NonNull Map<String, String> boneVisibility;
+        private final @NonNull Map<String, Molang> boneVisibility;
 
         private final @Nullable String culling;
 
@@ -329,18 +330,19 @@ public final class ItemVisual implements BlockComponent {
 
         private final @Nullable String cullingShape;
 
-        private final @Nullable String identifier;
+        private final @NonNull String identifier;
 
         private final @Nullable NWayVisualRotation nWayVisualRotation;
 
         private final @NonNull UvLock uvLock;
 
-        private VisualGeometry(@NonNull Map<String, String> boneVisibility,
+        private VisualGeometry(@NonNull Map<String, Molang> boneVisibility,
                 @Nullable String culling, @Nullable String cullingLayer,
-                @Nullable String cullingShape, @Nullable String identifier,
+                @Nullable String cullingShape, @NonNull String identifier,
                 @Nullable NWayVisualRotation nWayVisualRotation, @NonNull UvLock uvLock) {
             boneVisibility = Check.copy(boneVisibility, "ItemVisual.VisualGeometry.boneVisibility");
             Check.conflict("ItemVisual.VisualGeometry", "boneVisibility", !boneVisibility.isEmpty(), "identifier", identifier, "minecraft:geometry.full_block");
+            Objects.requireNonNull(identifier, "ItemVisual.VisualGeometry.identifier");
             Objects.requireNonNull(uvLock, "ItemVisual.VisualGeometry.uvLock");
             this.boneVisibility = boneVisibility;
             this.culling = culling;
@@ -362,7 +364,7 @@ public final class ItemVisual implements BlockComponent {
          *
          * @return the value
          */
-        public @NonNull Map<String, String> boneVisibility() {
+        public @NonNull Map<String, Molang> boneVisibility() {
             return boneVisibility;
         }
 
@@ -412,11 +414,11 @@ public final class ItemVisual implements BlockComponent {
          * The description identifier of the geometry to use to render this block. This identifier must either match an
          * existing geometry identifier in any of the loaded resource packs or be one of the currently supported Vanilla
          * identifiers: "minecraft:geometry.full_block" or "minecraft:geometry.cross". Value must have at most 256 items.
-         * Add-on JSON {@code identifier}. Optional (null: not set).
+         * Add-on JSON {@code identifier}. Required.
          *
          * @return the value
          */
-        public @Nullable String identifier() {
+        public @NonNull String identifier() {
             return identifier;
         }
 
@@ -482,7 +484,8 @@ public final class ItemVisual implements BlockComponent {
         }
 
         /**
-         * Creates a builder with every field at its default.
+         * Creates a builder with every optional field at its default; required fields must be set before
+         * {@code build()}.
          *
          * @return a builder with the defaults applied
          */
@@ -511,7 +514,7 @@ public final class ItemVisual implements BlockComponent {
          * Builds {@link VisualGeometry}: defaults applied, required fields and ranges checked by {@link #build()}.
          */
         public static final class Builder {
-            private @Nullable Map<String, String> boneVisibility = Map.of();
+            private @Nullable Map<String, Molang> boneVisibility = Map.of();
 
             private @Nullable String culling;
 
@@ -535,7 +538,7 @@ public final class ItemVisual implements BlockComponent {
              * @return this builder
              * @throws NullPointerException if the value is null
              */
-            public @NonNull Builder boneVisibility(@NonNull Map<String, String> boneVisibility) {
+            public @NonNull Builder boneVisibility(@NonNull Map<String, Molang> boneVisibility) {
                 this.boneVisibility = Objects.requireNonNull(boneVisibility, "ItemVisual.VisualGeometry.boneVisibility");
                 return this;
             }
@@ -578,9 +581,10 @@ public final class ItemVisual implements BlockComponent {
              *
              * @param identifier the value
              * @return this builder
+             * @throws NullPointerException if the value is null
              */
-            public @NonNull Builder identifier(@Nullable String identifier) {
-                this.identifier = identifier;
+            public @NonNull Builder identifier(@NonNull String identifier) {
+                this.identifier = Objects.requireNonNull(identifier, "ItemVisual.VisualGeometry.identifier");
                 return this;
             }
 
@@ -652,6 +656,9 @@ public final class ItemVisual implements BlockComponent {
              * @throws IllegalArgumentException if a value is out of range
              */
             public @NonNull VisualGeometry build() {
+                if (identifier == null) {
+                    throw new IllegalStateException("ItemVisual.VisualGeometry.identifier is required");
+                }
                 return new VisualGeometry(boneVisibility, culling, cullingLayer, cullingShape, identifier, nWayVisualRotation, uvLock);
             }
         }

@@ -137,7 +137,9 @@ public final class BehaviourProbe {
      */
     public static Path write(Path root, Path console) throws IOException {
         Measured measured = fromConsole(root, console);
-        Path directory = root.resolve("data/bds").resolve(measured.version()).resolve(DIRECTORY);
+        // the build's directory: a preview reports itself as 1.26.70-beta24, its build is 1.26.70.24
+        Path directory = root.resolve("data/bds").resolve(dev.opencollab.paletter.tools.BuildNumber.parseReported(measured.version()).toString())
+            .resolve(DIRECTORY);
         Files.createDirectories(directory);
         Files.writeString(directory.resolve(LOG), measured.log());
         Files.writeString(directory.resolve(CAPTURE), measured.capture());
@@ -363,7 +365,9 @@ public final class BehaviourProbe {
             double p = fisher(plain[0], plain[1], entry.getValue()[0], entry.getValue()[1]);
             boolean zero = block.equals("probe:explosion_resistance_0");
             if (zero ? p < 0.05 : p >= 0.01) {
-                throw new IllegalStateException("Explosion resistance of probe:plain is not decided: against " + block + " p = " + p + " (" + pooled + ")");
+                StringBuilder counts = new StringBuilder();
+                pooled.forEach((b, c) -> counts.append(counts.length() == 0 ? "" : ", ").append(b).append(' ').append(c[0]).append('/').append(c[1]));
+                throw new IllegalStateException("Explosion resistance of probe:plain is not decided: against " + block + " p = " + p + " (" + counts + ")");
             }
             evidence.append(evidence.length() == 0 ? "" : "; ").append(block.replace("probe:", "").replace("minecraft:", "")).append(' ')
                 .append(entry.getValue()[0]).append('/').append(entry.getValue()[1])

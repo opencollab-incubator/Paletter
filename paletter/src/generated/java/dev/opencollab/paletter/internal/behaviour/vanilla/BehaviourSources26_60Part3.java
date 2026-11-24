@@ -47,11 +47,11 @@ final class BehaviourSources26_60Part3 {
                         "top", SCRIPT_API_26_60_MAP_COLOR, "unknown", CLOUDBURST_DATA_26_60,
                         "west", SCRIPT_API_26_60_MAP_COLOR);
         v.blockSources("minecraft:trip_wire")
-                .solid(SOURCES_ATTACHED_BIT_DISARMED_BIT_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_POWERED_BIT_SUSPENDED_BIT_ACEC37)
-                .mapColor(SOURCES_ATTACHED_BIT_DISARMED_BIT_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_POWERED_BIT_SUSPENDED_BIT_D495B9);
+                .solid(SOURCES_ATTACHED_BIT_DISARMED_BIT_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_POWERED_BIT_SUSPENDED_BIT_849362)
+                .mapColor(SOURCES_ATTACHED_BIT_DISARMED_BIT_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_POWERED_BIT_SUSPENDED_BIT_CCB0B9);
         v.blockSources("minecraft:tripwire_hook")
-                .solid(SOURCES_ATTACHED_BIT_POWERED_BIT_77694B)
-                .mapColor(SOURCES_ATTACHED_BIT_POWERED_BIT_2E3DCD);
+                .solid(SOURCES_ATTACHED_BIT_POWERED_BIT_036662)
+                .mapColor(SOURCES_ATTACHED_BIT_POWERED_BIT_B9F239);
         v.blockSources("minecraft:tube_coral")
                 .tintMethod(SCRIPT_API_26_60_TINT_METHOD);
         v.blockSources("minecraft:tube_coral_fan")
@@ -117,8 +117,8 @@ final class BehaviourSources26_60Part3 {
         v.blockSources("minecraft:warped_door")
                 .collisionShape(BDS_PROBE_26_60_DOORS);
         v.blockSources("minecraft:warped_fence")
-                .solid(SOURCES_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_A567F3)
-                .mapColor(SOURCES_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_C47075);
+                .solid(SOURCES_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_58504E)
+                .mapColor(SOURCES_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_3D3225);
         v.blockSources("minecraft:warped_fence_gate")
                 .solid("in_wall_bit", false, SCRIPT_API_26_60_SOLID, true, CLOUDBURST_DATA_26_60)
                 .mapColor("in_wall_bit", false, SCRIPT_API_26_60_MAP_COLOR,
@@ -133,8 +133,8 @@ final class BehaviourSources26_60Part3 {
         v.blockSources("minecraft:water")
                 .tintMethod(SCRIPT_API_26_60_TINT_METHOD);
         v.blockSources("minecraft:waxed_copper_bars")
-                .solid(SOURCES_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_A567F3)
-                .mapColor(SOURCES_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_C47075);
+                .solid(SOURCES_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_58504E)
+                .mapColor(SOURCES_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_3D3225);
         v.blockSources("minecraft:waxed_copper_door")
                 .collisionShape(BDS_PROBE_26_60_DOORS);
         v.blockSources("minecraft:waxed_cut_copper_stairs")
@@ -145,8 +145,8 @@ final class BehaviourSources26_60Part3 {
                         "inner_right", CLOUDBURST_DATA_26_60, "none", SCRIPT_API_26_60_MAP_COLOR,
                         "outer_left", CLOUDBURST_DATA_26_60, "outer_right", CLOUDBURST_DATA_26_60);
         v.blockSources("minecraft:waxed_exposed_copper_bars")
-                .solid(SOURCES_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_A567F3)
-                .mapColor(SOURCES_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_C47075);
+                .solid(SOURCES_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_58504E)
+                .mapColor(SOURCES_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_3D3225);
         v.blockSources("minecraft:waxed_exposed_copper_door")
                 .collisionShape(BDS_PROBE_26_60_DOORS);
         v.blockSources("minecraft:waxed_exposed_cut_copper_stairs")
@@ -157,8 +157,8 @@ final class BehaviourSources26_60Part3 {
                         "inner_right", CLOUDBURST_DATA_26_60, "none", SCRIPT_API_26_60_MAP_COLOR,
                         "outer_left", CLOUDBURST_DATA_26_60, "outer_right", CLOUDBURST_DATA_26_60);
         v.blockSources("minecraft:waxed_oxidized_copper_bars")
-                .solid(SOURCES_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_A567F3)
-                .mapColor(SOURCES_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_C47075);
+                .solid(SOURCES_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_58504E)
+                .mapColor(SOURCES_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_3D3225);
         v.blockSources("minecraft:waxed_oxidized_copper_door")
                 .collisionShape(BDS_PROBE_26_60_DOORS);
         v.blockSources("minecraft:waxed_oxidized_cut_copper_stairs")
@@ -169,8 +169,8 @@ final class BehaviourSources26_60Part3 {
                         "inner_right", CLOUDBURST_DATA_26_60, "none", SCRIPT_API_26_60_MAP_COLOR,
                         "outer_left", CLOUDBURST_DATA_26_60, "outer_right", CLOUDBURST_DATA_26_60);
         v.blockSources("minecraft:waxed_weathered_copper_bars")
-                .solid(SOURCES_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_A567F3)
-                .mapColor(SOURCES_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_C47075);
+                .solid(SOURCES_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_58504E)
+                .mapColor(SOURCES_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_3D3225);
         v.blockSources("minecraft:waxed_weathered_copper_door")
                 .collisionShape(BDS_PROBE_26_60_DOORS);
         v.blockSources("minecraft:waxed_weathered_cut_copper_stairs")
@@ -181,8 +181,8 @@ final class BehaviourSources26_60Part3 {
                         "inner_right", CLOUDBURST_DATA_26_60, "none", SCRIPT_API_26_60_MAP_COLOR,
                         "outer_left", CLOUDBURST_DATA_26_60, "outer_right", CLOUDBURST_DATA_26_60);
         v.blockSources("minecraft:weathered_copper_bars")
-                .solid(SOURCES_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_A567F3)
-                .mapColor(SOURCES_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_C47075);
+                .solid(SOURCES_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_58504E)
+                .mapColor(SOURCES_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_3D3225);
         v.blockSources("minecraft:weathered_copper_door")
                 .collisionShape(BDS_PROBE_26_60_DOORS);
         v.blockSources("minecraft:weathered_cut_copper_stairs")
@@ -209,20 +209,6 @@ final class BehaviourSources26_60Part3 {
                         20, SCRIPT_API_26_60_SOLID, 21, SCRIPT_API_26_60_SOLID,
                         22, SCRIPT_API_26_60_SOLID, 23, SCRIPT_API_26_60_SOLID,
                         24, SCRIPT_API_26_60_SOLID, 25, SCRIPT_API_26_60_SOLID)
-                .liquidFlowDirections("weeping_vines_age", 0, SCRIPT_API_26_30_SOLID,
-                        1, SCRIPT_API_26_60_SOLID, 2, SCRIPT_API_26_60_SOLID,
-                        3, SCRIPT_API_26_60_SOLID, 4, SCRIPT_API_26_60_SOLID,
-                        5, SCRIPT_API_26_60_SOLID, 6, SCRIPT_API_26_60_SOLID,
-                        7, SCRIPT_API_26_60_SOLID, 8, SCRIPT_API_26_60_SOLID,
-                        9, SCRIPT_API_26_60_SOLID, 10, SCRIPT_API_26_60_SOLID,
-                        11, SCRIPT_API_26_60_SOLID, 12, SCRIPT_API_26_60_SOLID,
-                        13, SCRIPT_API_26_60_SOLID, 14, SCRIPT_API_26_60_SOLID,
-                        15, SCRIPT_API_26_60_SOLID, 16, SCRIPT_API_26_60_SOLID,
-                        17, SCRIPT_API_26_60_SOLID, 18, SCRIPT_API_26_60_SOLID,
-                        19, SCRIPT_API_26_60_SOLID, 20, SCRIPT_API_26_60_SOLID,
-                        21, SCRIPT_API_26_60_SOLID, 22, SCRIPT_API_26_60_SOLID,
-                        23, SCRIPT_API_26_60_SOLID, 24, SCRIPT_API_26_60_SOLID,
-                        25, SCRIPT_API_26_60_SOLID)
                 .mapColor("weeping_vines_age", 0, CLOUDBURST_DATA_26_60,
                         1, SCRIPT_API_26_60_MAP_COLOR, 2, SCRIPT_API_26_60_MAP_COLOR,
                         3, SCRIPT_API_26_60_MAP_COLOR, 4, SCRIPT_API_26_60_MAP_COLOR,
@@ -236,80 +222,7 @@ final class BehaviourSources26_60Part3 {
                         19, SCRIPT_API_26_60_MAP_COLOR, 20, SCRIPT_API_26_60_MAP_COLOR,
                         21, SCRIPT_API_26_60_MAP_COLOR, 22, SCRIPT_API_26_60_MAP_COLOR,
                         23, SCRIPT_API_26_60_MAP_COLOR, 24, SCRIPT_API_26_60_MAP_COLOR,
-                        25, SCRIPT_API_26_60_MAP_COLOR)
-                .movementType("weeping_vines_age", 0, SCRIPT_API_26_30_SOLID,
-                        1, SCRIPT_API_26_60_SOLID, 2, SCRIPT_API_26_60_SOLID,
-                        3, SCRIPT_API_26_60_SOLID, 4, SCRIPT_API_26_60_SOLID,
-                        5, SCRIPT_API_26_60_SOLID, 6, SCRIPT_API_26_60_SOLID,
-                        7, SCRIPT_API_26_60_SOLID, 8, SCRIPT_API_26_60_SOLID,
-                        9, SCRIPT_API_26_60_SOLID, 10, SCRIPT_API_26_60_SOLID,
-                        11, SCRIPT_API_26_60_SOLID, 12, SCRIPT_API_26_60_SOLID,
-                        13, SCRIPT_API_26_60_SOLID, 14, SCRIPT_API_26_60_SOLID,
-                        15, SCRIPT_API_26_60_SOLID, 16, SCRIPT_API_26_60_SOLID,
-                        17, SCRIPT_API_26_60_SOLID, 18, SCRIPT_API_26_60_SOLID,
-                        19, SCRIPT_API_26_60_SOLID, 20, SCRIPT_API_26_60_SOLID,
-                        21, SCRIPT_API_26_60_SOLID, 22, SCRIPT_API_26_60_SOLID,
-                        23, SCRIPT_API_26_60_SOLID, 24, SCRIPT_API_26_60_SOLID,
-                        25, SCRIPT_API_26_60_SOLID)
-                .stickyType("weeping_vines_age", 0, SCRIPT_API_26_30_SOLID,
-                        1, SCRIPT_API_26_60_SOLID, 2, SCRIPT_API_26_60_SOLID,
-                        3, SCRIPT_API_26_60_SOLID, 4, SCRIPT_API_26_60_SOLID,
-                        5, SCRIPT_API_26_60_SOLID, 6, SCRIPT_API_26_60_SOLID,
-                        7, SCRIPT_API_26_60_SOLID, 8, SCRIPT_API_26_60_SOLID,
-                        9, SCRIPT_API_26_60_SOLID, 10, SCRIPT_API_26_60_SOLID,
-                        11, SCRIPT_API_26_60_SOLID, 12, SCRIPT_API_26_60_SOLID,
-                        13, SCRIPT_API_26_60_SOLID, 14, SCRIPT_API_26_60_SOLID,
-                        15, SCRIPT_API_26_60_SOLID, 16, SCRIPT_API_26_60_SOLID,
-                        17, SCRIPT_API_26_60_SOLID, 18, SCRIPT_API_26_60_SOLID,
-                        19, SCRIPT_API_26_60_SOLID, 20, SCRIPT_API_26_60_SOLID,
-                        21, SCRIPT_API_26_60_SOLID, 22, SCRIPT_API_26_60_SOLID,
-                        23, SCRIPT_API_26_60_SOLID, 24, SCRIPT_API_26_60_SOLID,
-                        25, SCRIPT_API_26_60_SOLID)
-                .accumulatesSnow("weeping_vines_age", 0, SCRIPT_API_26_30_SOLID,
-                        1, SCRIPT_API_26_60_SOLID, 2, SCRIPT_API_26_60_SOLID,
-                        3, SCRIPT_API_26_60_SOLID, 4, SCRIPT_API_26_60_SOLID,
-                        5, SCRIPT_API_26_60_SOLID, 6, SCRIPT_API_26_60_SOLID,
-                        7, SCRIPT_API_26_60_SOLID, 8, SCRIPT_API_26_60_SOLID,
-                        9, SCRIPT_API_26_60_SOLID, 10, SCRIPT_API_26_60_SOLID,
-                        11, SCRIPT_API_26_60_SOLID, 12, SCRIPT_API_26_60_SOLID,
-                        13, SCRIPT_API_26_60_SOLID, 14, SCRIPT_API_26_60_SOLID,
-                        15, SCRIPT_API_26_60_SOLID, 16, SCRIPT_API_26_60_SOLID,
-                        17, SCRIPT_API_26_60_SOLID, 18, SCRIPT_API_26_60_SOLID,
-                        19, SCRIPT_API_26_60_SOLID, 20, SCRIPT_API_26_60_SOLID,
-                        21, SCRIPT_API_26_60_SOLID, 22, SCRIPT_API_26_60_SOLID,
-                        23, SCRIPT_API_26_60_SOLID, 24, SCRIPT_API_26_60_SOLID,
-                        25, SCRIPT_API_26_60_SOLID)
-                .snowLoggable("weeping_vines_age", 0, SCRIPT_API_26_30_SOLID,
-                        1, SCRIPT_API_26_60_SOLID, 2, SCRIPT_API_26_60_SOLID,
-                        3, SCRIPT_API_26_60_SOLID, 4, SCRIPT_API_26_60_SOLID,
-                        5, SCRIPT_API_26_60_SOLID, 6, SCRIPT_API_26_60_SOLID,
-                        7, SCRIPT_API_26_60_SOLID, 8, SCRIPT_API_26_60_SOLID,
-                        9, SCRIPT_API_26_60_SOLID, 10, SCRIPT_API_26_60_SOLID,
-                        11, SCRIPT_API_26_60_SOLID, 12, SCRIPT_API_26_60_SOLID,
-                        13, SCRIPT_API_26_60_SOLID, 14, SCRIPT_API_26_60_SOLID,
-                        15, SCRIPT_API_26_60_SOLID, 16, SCRIPT_API_26_60_SOLID,
-                        17, SCRIPT_API_26_60_SOLID, 18, SCRIPT_API_26_60_SOLID,
-                        19, SCRIPT_API_26_60_SOLID, 20, SCRIPT_API_26_60_SOLID,
-                        21, SCRIPT_API_26_60_SOLID, 22, SCRIPT_API_26_60_SOLID,
-                        23, SCRIPT_API_26_60_SOLID, 24, SCRIPT_API_26_60_SOLID,
-                        25, SCRIPT_API_26_60_SOLID)
-                .obstructsRain("weeping_vines_age", 0, SCRIPT_API_26_30_SOLID,
-                        1, SCRIPT_API_26_60_SOLID, 2, SCRIPT_API_26_60_SOLID,
-                        3, SCRIPT_API_26_60_SOLID, 4, SCRIPT_API_26_60_SOLID,
-                        5, SCRIPT_API_26_60_SOLID, 6, SCRIPT_API_26_60_SOLID,
-                        7, SCRIPT_API_26_60_SOLID, 8, SCRIPT_API_26_60_SOLID,
-                        9, SCRIPT_API_26_60_SOLID, 10, SCRIPT_API_26_60_SOLID,
-                        11, SCRIPT_API_26_60_SOLID, 12, SCRIPT_API_26_60_SOLID,
-                        13, SCRIPT_API_26_60_SOLID, 14, SCRIPT_API_26_60_SOLID,
-                        15, SCRIPT_API_26_60_SOLID, 16, SCRIPT_API_26_60_SOLID,
-                        17, SCRIPT_API_26_60_SOLID, 18, SCRIPT_API_26_60_SOLID,
-                        19, SCRIPT_API_26_60_SOLID, 20, SCRIPT_API_26_60_SOLID,
-                        21, SCRIPT_API_26_60_SOLID, 22, SCRIPT_API_26_60_SOLID,
-                        23, SCRIPT_API_26_60_SOLID, 24, SCRIPT_API_26_60_SOLID,
-                        25, SCRIPT_API_26_60_SOLID);
-    }
-
-    static void part19(Changes v) {
+                        25, SCRIPT_API_26_60_MAP_COLOR);
         v.blockSources("minecraft:white_concrete_double_slab")
                 .tintMethod(SCRIPT_API_26_60_TINT_METHOD);
         v.blockSources("minecraft:white_concrete_slab")
@@ -325,8 +238,8 @@ final class BehaviourSources26_60Part3 {
                         "inner_right", CLOUDBURST_DATA_26_60, "none", SCRIPT_API_26_60_TINT_METHOD,
                         "outer_left", CLOUDBURST_DATA_26_60, "outer_right", CLOUDBURST_DATA_26_60);
         v.blockSources("minecraft:white_stained_glass_pane")
-                .solid(SOURCES_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_A567F3)
-                .mapColor(SOURCES_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_C47075);
+                .solid(SOURCES_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_58504E)
+                .mapColor(SOURCES_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_3D3225);
         v.blockSources("minecraft:white_wool_double_slab")
                 .tintMethod(SCRIPT_API_26_60_TINT_METHOD);
         v.blockSources("minecraft:white_wool_slab")
@@ -358,8 +271,8 @@ final class BehaviourSources26_60Part3 {
                         "inner_right", CLOUDBURST_DATA_26_60, "none", SCRIPT_API_26_60_TINT_METHOD,
                         "outer_left", CLOUDBURST_DATA_26_60, "outer_right", CLOUDBURST_DATA_26_60);
         v.blockSources("minecraft:yellow_stained_glass_pane")
-                .solid(SOURCES_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_A567F3)
-                .mapColor(SOURCES_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_C47075);
+                .solid(SOURCES_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_58504E)
+                .mapColor(SOURCES_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_3D3225);
         v.blockSources("minecraft:yellow_wool_double_slab")
                 .tintMethod(SCRIPT_API_26_60_TINT_METHOD);
         v.blockSources("minecraft:yellow_wool_slab")
@@ -374,6 +287,9 @@ final class BehaviourSources26_60Part3 {
                 .tintMethod("minecraft:corner", "inner_left", CLOUDBURST_DATA_26_60,
                         "inner_right", CLOUDBURST_DATA_26_60, "none", SCRIPT_API_26_60_TINT_METHOD,
                         "outer_left", CLOUDBURST_DATA_26_60, "outer_right", CLOUDBURST_DATA_26_60);
+    }
+
+    static void part19(Changes v) {
         v.itemSources()
                 .maxStackSize(SCRIPT_API_26_60_MAX_STACK_SIZE)
                 .maxDamage(SCRIPT_API_26_60_MAX_STACK_SIZE)

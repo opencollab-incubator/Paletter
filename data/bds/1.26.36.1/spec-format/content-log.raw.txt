@@ -1,0 +1,1104 @@
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_unit_cube_9.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_unit_cube_73.json |  -> components -> minecraft:unit_cube: member "minecraft:unit_cube" is deprecated
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_unit_cube_71.json |  -> components -> minecraft:unit_cube: member "minecraft:unit_cube" is deprecated
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_unit_cube_7.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_unit_cube_69.json |  -> components -> minecraft:unit_cube: member "minecraft:unit_cube" is deprecated
+ERROR [Json] block_definitions | behavior_packs/paletter_spec | blocks/b_unit_cube_67.json | upgrade blocks/b_unit_cube_67.json | minecraft:block | components | minecraft:unit_cube component is not valid from 1.20.60 onward.
+ERROR [Json] block_definitions | behavior_packs/paletter_spec | blocks/b_unit_cube_65.json | upgrade blocks/b_unit_cube_65.json | minecraft:block | components | minecraft:unit_cube component is not valid from 1.20.60 onward.
+ERROR [Json] block_definitions | behavior_packs/paletter_spec | blocks/b_unit_cube_63.json | upgrade blocks/b_unit_cube_63.json | minecraft:block | components | minecraft:unit_cube component is not valid from 1.20.60 onward.
+ERROR [Json] block_definitions | behavior_packs/paletter_spec | blocks/b_unit_cube_61.json | upgrade blocks/b_unit_cube_61.json | minecraft:block | components | minecraft:unit_cube component is not valid from 1.20.60 onward.
+ERROR [Json] block_definitions | behavior_packs/paletter_spec | blocks/b_unit_cube_59.json | upgrade blocks/b_unit_cube_59.json | minecraft:block | components | minecraft:unit_cube component is not valid from 1.20.60 onward.
+ERROR [Json] block_definitions | behavior_packs/paletter_spec | blocks/b_unit_cube_57.json | upgrade blocks/b_unit_cube_57.json | minecraft:block | components | minecraft:unit_cube component is not valid from 1.20.60 onward.
+ERROR [Json] block_definitions | behavior_packs/paletter_spec | blocks/b_unit_cube_55.json | upgrade blocks/b_unit_cube_55.json | minecraft:block | components | minecraft:unit_cube component is not valid from 1.20.60 onward.
+ERROR [Json] block_definitions | behavior_packs/paletter_spec | blocks/b_unit_cube_53.json | upgrade blocks/b_unit_cube_53.json | minecraft:block | components | minecraft:unit_cube component is not valid from 1.20.60 onward.
+ERROR [Json] block_definitions | behavior_packs/paletter_spec | blocks/b_unit_cube_51.json | upgrade blocks/b_unit_cube_51.json | minecraft:block | components | minecraft:unit_cube component is not valid from 1.20.60 onward.
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_unit_cube_5.json | Block definition parsing failed
+ERROR [Json] block_definitions | behavior_packs/paletter_spec | blocks/b_unit_cube_49.json | upgrade blocks/b_unit_cube_49.json | minecraft:block | components | minecraft:unit_cube component is not valid from 1.20.60 onward.
+ERROR [Json] block_definitions | behavior_packs/paletter_spec | blocks/b_unit_cube_47.json | upgrade blocks/b_unit_cube_47.json | minecraft:block | components | minecraft:unit_cube component is not valid from 1.20.60 onward.
+ERROR [Json] block_definitions | behavior_packs/paletter_spec | blocks/b_unit_cube_45.json | upgrade blocks/b_unit_cube_45.json | minecraft:block | components | minecraft:unit_cube component is not valid from 1.20.60 onward.
+ERROR [Json] block_definitions | behavior_packs/paletter_spec | blocks/b_unit_cube_43.json | upgrade blocks/b_unit_cube_43.json | minecraft:block | components | minecraft:unit_cube component is not valid from 1.20.60 onward.
+ERROR [Json] block_definitions | behavior_packs/paletter_spec | blocks/b_unit_cube_41.json | upgrade blocks/b_unit_cube_41.json | minecraft:block | components | minecraft:unit_cube component is not valid from 1.20.60 onward.
+ERROR [Json] block_definitions | behavior_packs/paletter_spec | blocks/b_unit_cube_39.json | upgrade blocks/b_unit_cube_39.json | minecraft:block | components | minecraft:unit_cube component is not valid from 1.20.60 onward.
+ERROR [Json] block_definitions | behavior_packs/paletter_spec | blocks/b_unit_cube_37.json | upgrade blocks/b_unit_cube_37.json | minecraft:block | components | minecraft:unit_cube component is not valid from 1.20.60 onward.
+ERROR [Json] block_definitions | behavior_packs/paletter_spec | blocks/b_unit_cube_35.json | upgrade blocks/b_unit_cube_35.json | minecraft:block | components | minecraft:unit_cube component is not valid from 1.20.60 onward.
+ERROR [Json] block_definitions | behavior_packs/paletter_spec | blocks/b_unit_cube_33.json | upgrade blocks/b_unit_cube_33.json | minecraft:block | components | minecraft:unit_cube component is not valid from 1.20.60 onward.
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_unit_cube_31.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_unit_cube_3.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_unit_cube_29.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_unit_cube_27.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_unit_cube_25.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_unit_cube_23.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_unit_cube_21.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_unit_cube_19.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_unit_cube_17.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_unit_cube_15.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_unit_cube_13.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_unit_cube_11.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_unit_cube_1.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_tags_3.json | behavior_packs/paletter_spec | blocks/b_tags_3.json | paletter:b_tags_3 | components | minecraft:tags | child 'minecraft:tags' not valid here.
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_tags_3.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_tags_2.json | behavior_packs/paletter_spec | blocks/b_tags_2.json | paletter:b_tags_2 | components | minecraft:tags | child 'minecraft:tags' not valid here.
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_tags_2.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_tags_1.json | behavior_packs/paletter_spec | blocks/b_tags_1.json | paletter:b_tags_1 | components | minecraft:tags | child 'minecraft:tags' not valid here.
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_tags_1.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_random_ticking_99.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_random_ticking_97.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_random_ticking_96.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_random_ticking_94.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_random_ticking_93.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_random_ticking_91.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_random_ticking_90.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_random_ticking_9.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_random_ticking_88.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_random_ticking_87.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_random_ticking_85.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_random_ticking_84.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_random_ticking_82.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_random_ticking_81.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_random_ticking_79.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_random_ticking_78.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_random_ticking_76.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_random_ticking_75.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_random_ticking_73.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_random_ticking_72.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_random_ticking_70.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_random_ticking_7.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_random_ticking_69.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_random_ticking_67.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_random_ticking_66.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_random_ticking_64.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_random_ticking_63.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_random_ticking_61.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_random_ticking_60.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_random_ticking_6.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_random_ticking_58.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_random_ticking_57.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_random_ticking_55.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_random_ticking_54.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_random_ticking_52.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_random_ticking_51.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_random_ticking_49.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_random_ticking_48.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_random_ticking_46.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_random_ticking_45.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_random_ticking_43.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_random_ticking_42.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_random_ticking_40.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_random_ticking_4.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_random_ticking_39.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_random_ticking_37.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_random_ticking_36.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_random_ticking_34.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_random_ticking_33.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_random_ticking_31.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_random_ticking_30.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_random_ticking_3.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_random_ticking_28.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_random_ticking_27.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_random_ticking_25.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_random_ticking_24.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_random_ticking_22.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_random_ticking_21.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_random_ticking_19.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_random_ticking_18.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_random_ticking_16.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_random_ticking_15.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_random_ticking_13.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_random_ticking_12.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_random_ticking_111.json |  -> components -> minecraft:random_ticking: member "minecraft:random_ticking" is deprecated
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_random_ticking_109.json |  -> components -> minecraft:random_ticking: member "minecraft:random_ticking" is deprecated
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_random_ticking_108.json |  -> components -> minecraft:random_ticking: member "minecraft:random_ticking" is deprecated
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_random_ticking_106.json |  -> components -> minecraft:random_ticking: member "minecraft:random_ticking" is deprecated
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_random_ticking_105.json |  -> components -> minecraft:random_ticking: member "minecraft:random_ticking" is deprecated
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_random_ticking_103.json |  -> components -> minecraft:random_ticking: member "minecraft:random_ticking" is deprecated
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_random_ticking_102.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_random_ticking_100.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_random_ticking_10.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_random_ticking_1.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_queued_ticking_9.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_queued_ticking_73.json |  -> components -> minecraft:queued_ticking: member "minecraft:queued_ticking" is deprecated
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_queued_ticking_71.json |  -> components -> minecraft:queued_ticking: member "minecraft:queued_ticking" is deprecated
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_queued_ticking_7.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_queued_ticking_69.json |  -> components -> minecraft:queued_ticking: member "minecraft:queued_ticking" is deprecated
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_queued_ticking_67.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_queued_ticking_65.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_queued_ticking_63.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_queued_ticking_61.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_queued_ticking_59.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_queued_ticking_57.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_queued_ticking_55.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_queued_ticking_53.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_queued_ticking_51.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_queued_ticking_5.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_queued_ticking_49.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_queued_ticking_47.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_queued_ticking_45.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_queued_ticking_43.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_queued_ticking_41.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_queued_ticking_39.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_queued_ticking_37.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_queued_ticking_35.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_queued_ticking_33.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_queued_ticking_31.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_queued_ticking_3.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_queued_ticking_29.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_queued_ticking_27.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_queued_ticking_25.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_queued_ticking_23.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_queued_ticking_21.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_queued_ticking_19.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_queued_ticking_17.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_queued_ticking_15.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_queued_ticking_13.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_queued_ticking_11.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_queued_ticking_1.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_precipitation_interactions_2.json |  -> components -> minecraft:precipitation_interactions -> precipitation_behavior: This value is bound to 'Precipitation Behavior' and expects one of the following strings: 'none', 'obstruct_rain', 'obstruct_rain_accumulate_snow', ... (1 others). Found: 'accumulate snow'
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_precipitation_interactions_1.json | behavior_packs/paletter_spec | blocks/b_precipitation_interactions_1.json | paletter:b_precipitation_interactions_1 | components | Failed to parse block 'paletter:b_precipitation_interactions_1' 
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_precipitation_interactions_1.json | behavior_packs/paletter_spec | blocks/b_precipitation_interactions_1.json | paletter:b_precipitation_interactions_1 | components |  -> components -> minecraft:precipitation_interactions -> precipitation_behavior:  This value is bound to 'PrecipitationBehavior' and expects one of the following strings: 'none', 'obstruct_rain', 'obstruct_rain_accumulate_snow', ... (1 others). Found: 'accumulate snow'
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_precipitation_interactions_1.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_99.json | behavior_packs/paletter_spec | blocks/b_material_instances_99.json | paletter:b_material_instances_99 | components | Failed to parse block 'paletter:b_material_instances_99' 
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_99.json | behavior_packs/paletter_spec | blocks/b_material_instances_99.json | paletter:b_material_instances_99 | components |  -> components -> minecraft:material_instances:  Invalid material name
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_99.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_98.json | behavior_packs/paletter_spec | blocks/b_material_instances_98.json | paletter:b_material_instances_98 | components | Failed to parse block 'paletter:b_material_instances_98' 
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_98.json | behavior_packs/paletter_spec | blocks/b_material_instances_98.json | paletter:b_material_instances_98 | components |  -> components -> minecraft:material_instances:  Invalid material name
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_98.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_97.json | behavior_packs/paletter_spec | blocks/b_material_instances_97.json | paletter:b_material_instances_97 | components | Failed to parse block 'paletter:b_material_instances_97' 
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_97.json | behavior_packs/paletter_spec | blocks/b_material_instances_97.json | paletter:b_material_instances_97 | components |  -> components -> minecraft:material_instances:  Invalid material name
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_97.json | Block definition parsing failed
+ERROR [Components] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_85.json | behavior_packs/paletter_spec | blocks/b_material_instances_85.json | paletter:b_material_instances_85 | components | 'minecraft:material_instances' cannot use 'isotropic' member with 'format_version' < 1.21.70
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_85.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_79.json |  -> components -> minecraft:material_instances -> east: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_79.json |  -> components -> minecraft:material_instances -> east -> tint_method: This value is bound to 'Tint Method' and expects one of the following strings: 'none', 'default_foliage', 'birch_foliage', ... (4 others)
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_78.json | behavior_packs/paletter_spec | blocks/b_material_instances_78.json | paletter:b_material_instances_78 | components | Failed to parse block 'paletter:b_material_instances_78' 
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_78.json | behavior_packs/paletter_spec | blocks/b_material_instances_78.json | paletter:b_material_instances_78 | components |  -> components -> minecraft:material_instances:  Invalid material name
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_78.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_77.json | behavior_packs/paletter_spec | blocks/b_material_instances_77.json | paletter:b_material_instances_77 | components | Failed to parse block 'paletter:b_material_instances_77' 
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_77.json | behavior_packs/paletter_spec | blocks/b_material_instances_77.json | paletter:b_material_instances_77 | components |  -> components -> minecraft:material_instances:  Invalid material name
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_77.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_76.json | behavior_packs/paletter_spec | blocks/b_material_instances_76.json | paletter:b_material_instances_76 | components | Failed to parse block 'paletter:b_material_instances_76' 
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_76.json | behavior_packs/paletter_spec | blocks/b_material_instances_76.json | paletter:b_material_instances_76 | components |  -> components -> minecraft:material_instances:  Invalid material name
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_76.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_75.json | behavior_packs/paletter_spec | blocks/b_material_instances_75.json | paletter:b_material_instances_75 | components | Failed to parse block 'paletter:b_material_instances_75' 
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_75.json | behavior_packs/paletter_spec | blocks/b_material_instances_75.json | paletter:b_material_instances_75 | components |  -> components -> minecraft:material_instances:  Invalid material name
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_75.json | Block definition parsing failed
+ERROR [Components] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_63.json | behavior_packs/paletter_spec | blocks/b_material_instances_63.json | paletter:b_material_instances_63 | components | 'minecraft:material_instances' cannot use 'isotropic' member with 'format_version' < 1.21.70
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_63.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_57.json |  -> components -> minecraft:material_instances -> down: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_57.json |  -> components -> minecraft:material_instances -> down -> tint_method: This value is bound to 'Tint Method' and expects one of the following strings: 'none', 'default_foliage', 'birch_foliage', ... (4 others)
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_56.json | behavior_packs/paletter_spec | blocks/b_material_instances_56.json | paletter:b_material_instances_56 | components | Failed to parse block 'paletter:b_material_instances_56' 
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_56.json | behavior_packs/paletter_spec | blocks/b_material_instances_56.json | paletter:b_material_instances_56 | components |  -> components -> minecraft:material_instances:  Invalid material name
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_56.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_55.json | behavior_packs/paletter_spec | blocks/b_material_instances_55.json | paletter:b_material_instances_55 | components | Failed to parse block 'paletter:b_material_instances_55' 
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_55.json | behavior_packs/paletter_spec | blocks/b_material_instances_55.json | paletter:b_material_instances_55 | components |  -> components -> minecraft:material_instances:  Invalid material name
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_55.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_54.json | behavior_packs/paletter_spec | blocks/b_material_instances_54.json | paletter:b_material_instances_54 | components | Failed to parse block 'paletter:b_material_instances_54' 
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_54.json | behavior_packs/paletter_spec | blocks/b_material_instances_54.json | paletter:b_material_instances_54 | components |  -> components -> minecraft:material_instances:  Invalid material name
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_54.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_53.json | behavior_packs/paletter_spec | blocks/b_material_instances_53.json | paletter:b_material_instances_53 | components | Failed to parse block 'paletter:b_material_instances_53' 
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_53.json | behavior_packs/paletter_spec | blocks/b_material_instances_53.json | paletter:b_material_instances_53 | components |  -> components -> minecraft:material_instances:  Invalid material name
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_53.json | Block definition parsing failed
+ERROR [Components] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_41.json | behavior_packs/paletter_spec | blocks/b_material_instances_41.json | paletter:b_material_instances_41 | components | 'minecraft:material_instances' cannot use 'isotropic' member with 'format_version' < 1.21.70
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_41.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_35.json |  -> components -> minecraft:material_instances -> *: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_35.json |  -> components -> minecraft:material_instances -> * -> tint_method: This value is bound to 'Tint Method' and expects one of the following strings: 'none', 'default_foliage', 'birch_foliage', ... (4 others)
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_34.json | behavior_packs/paletter_spec | blocks/b_material_instances_34.json | paletter:b_material_instances_34 | components | Failed to parse block 'paletter:b_material_instances_34' 
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_34.json | behavior_packs/paletter_spec | blocks/b_material_instances_34.json | paletter:b_material_instances_34 | components |  -> components -> minecraft:material_instances:  Invalid material name
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_34.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_33.json | behavior_packs/paletter_spec | blocks/b_material_instances_33.json | paletter:b_material_instances_33 | components | Failed to parse block 'paletter:b_material_instances_33' 
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_33.json | behavior_packs/paletter_spec | blocks/b_material_instances_33.json | paletter:b_material_instances_33 | components |  -> components -> minecraft:material_instances:  Invalid material name
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_33.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_32.json | behavior_packs/paletter_spec | blocks/b_material_instances_32.json | paletter:b_material_instances_32 | components | Failed to parse block 'paletter:b_material_instances_32' 
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_32.json | behavior_packs/paletter_spec | blocks/b_material_instances_32.json | paletter:b_material_instances_32 | components |  -> components -> minecraft:material_instances:  Invalid material name
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_32.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_31.json | behavior_packs/paletter_spec | blocks/b_material_instances_31.json | paletter:b_material_instances_31 | components | Failed to parse block 'paletter:b_material_instances_31' 
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_31.json | behavior_packs/paletter_spec | blocks/b_material_instances_31.json | paletter:b_material_instances_31 | components |  -> components -> minecraft:material_instances:  Invalid material name
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_31.json | Block definition parsing failed
+ERROR [Components] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_19.json | behavior_packs/paletter_spec | blocks/b_material_instances_19.json | paletter:b_material_instances_19 | components | 'minecraft:material_instances' cannot use 'isotropic' member with 'format_version' < 1.21.70
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_19.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_167.json |  -> components -> minecraft:material_instances -> west: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_167.json |  -> components -> minecraft:material_instances -> west -> tint_method: This value is bound to 'Tint Method' and expects one of the following strings: 'none', 'default_foliage', 'birch_foliage', ... (4 others)
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_166.json | behavior_packs/paletter_spec | blocks/b_material_instances_166.json | paletter:b_material_instances_166 | components | Failed to parse block 'paletter:b_material_instances_166' 
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_166.json | behavior_packs/paletter_spec | blocks/b_material_instances_166.json | paletter:b_material_instances_166 | components |  -> components -> minecraft:material_instances:  Invalid material name
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_166.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_165.json | behavior_packs/paletter_spec | blocks/b_material_instances_165.json | paletter:b_material_instances_165 | components | Failed to parse block 'paletter:b_material_instances_165' 
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_165.json | behavior_packs/paletter_spec | blocks/b_material_instances_165.json | paletter:b_material_instances_165 | components |  -> components -> minecraft:material_instances:  Invalid material name
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_165.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_164.json | behavior_packs/paletter_spec | blocks/b_material_instances_164.json | paletter:b_material_instances_164 | components | Failed to parse block 'paletter:b_material_instances_164' 
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_164.json | behavior_packs/paletter_spec | blocks/b_material_instances_164.json | paletter:b_material_instances_164 | components |  -> components -> minecraft:material_instances:  Invalid material name
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_164.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_163.json | behavior_packs/paletter_spec | blocks/b_material_instances_163.json | paletter:b_material_instances_163 | components | Failed to parse block 'paletter:b_material_instances_163' 
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_163.json | behavior_packs/paletter_spec | blocks/b_material_instances_163.json | paletter:b_material_instances_163 | components |  -> components -> minecraft:material_instances:  Invalid material name
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_163.json | Block definition parsing failed
+ERROR [Components] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_151.json | behavior_packs/paletter_spec | blocks/b_material_instances_151.json | paletter:b_material_instances_151 | components | 'minecraft:material_instances' cannot use 'isotropic' member with 'format_version' < 1.21.70
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_151.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_145.json |  -> components -> minecraft:material_instances -> up: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_145.json |  -> components -> minecraft:material_instances -> up -> tint_method: This value is bound to 'Tint Method' and expects one of the following strings: 'none', 'default_foliage', 'birch_foliage', ... (4 others)
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_144.json | behavior_packs/paletter_spec | blocks/b_material_instances_144.json | paletter:b_material_instances_144 | components | Failed to parse block 'paletter:b_material_instances_144' 
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_144.json | behavior_packs/paletter_spec | blocks/b_material_instances_144.json | paletter:b_material_instances_144 | components |  -> components -> minecraft:material_instances:  Invalid material name
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_144.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_143.json | behavior_packs/paletter_spec | blocks/b_material_instances_143.json | paletter:b_material_instances_143 | components | Failed to parse block 'paletter:b_material_instances_143' 
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_143.json | behavior_packs/paletter_spec | blocks/b_material_instances_143.json | paletter:b_material_instances_143 | components |  -> components -> minecraft:material_instances:  Invalid material name
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_143.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_142.json | behavior_packs/paletter_spec | blocks/b_material_instances_142.json | paletter:b_material_instances_142 | components | Failed to parse block 'paletter:b_material_instances_142' 
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_142.json | behavior_packs/paletter_spec | blocks/b_material_instances_142.json | paletter:b_material_instances_142 | components |  -> components -> minecraft:material_instances:  Invalid material name
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_142.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_141.json | behavior_packs/paletter_spec | blocks/b_material_instances_141.json | paletter:b_material_instances_141 | components | Failed to parse block 'paletter:b_material_instances_141' 
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_141.json | behavior_packs/paletter_spec | blocks/b_material_instances_141.json | paletter:b_material_instances_141 | components |  -> components -> minecraft:material_instances:  Invalid material name
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_141.json | Block definition parsing failed
+ERROR [Components] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_129.json | behavior_packs/paletter_spec | blocks/b_material_instances_129.json | paletter:b_material_instances_129 | components | 'minecraft:material_instances' cannot use 'isotropic' member with 'format_version' < 1.21.70
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_129.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_123.json |  -> components -> minecraft:material_instances -> south: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_123.json |  -> components -> minecraft:material_instances -> south -> tint_method: This value is bound to 'Tint Method' and expects one of the following strings: 'none', 'default_foliage', 'birch_foliage', ... (4 others)
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_122.json | behavior_packs/paletter_spec | blocks/b_material_instances_122.json | paletter:b_material_instances_122 | components | Failed to parse block 'paletter:b_material_instances_122' 
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_122.json | behavior_packs/paletter_spec | blocks/b_material_instances_122.json | paletter:b_material_instances_122 | components |  -> components -> minecraft:material_instances:  Invalid material name
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_122.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_121.json | behavior_packs/paletter_spec | blocks/b_material_instances_121.json | paletter:b_material_instances_121 | components | Failed to parse block 'paletter:b_material_instances_121' 
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_121.json | behavior_packs/paletter_spec | blocks/b_material_instances_121.json | paletter:b_material_instances_121 | components |  -> components -> minecraft:material_instances:  Invalid material name
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_121.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_120.json | behavior_packs/paletter_spec | blocks/b_material_instances_120.json | paletter:b_material_instances_120 | components | Failed to parse block 'paletter:b_material_instances_120' 
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_120.json | behavior_packs/paletter_spec | blocks/b_material_instances_120.json | paletter:b_material_instances_120 | components |  -> components -> minecraft:material_instances:  Invalid material name
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_120.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_119.json | behavior_packs/paletter_spec | blocks/b_material_instances_119.json | paletter:b_material_instances_119 | components | Failed to parse block 'paletter:b_material_instances_119' 
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_119.json | behavior_packs/paletter_spec | blocks/b_material_instances_119.json | paletter:b_material_instances_119 | components |  -> components -> minecraft:material_instances:  Invalid material name
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_119.json | Block definition parsing failed
+ERROR [Components] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_107.json | behavior_packs/paletter_spec | blocks/b_material_instances_107.json | paletter:b_material_instances_107 | components | 'minecraft:material_instances' cannot use 'isotropic' member with 'format_version' < 1.21.70
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_107.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_101.json |  -> components -> minecraft:material_instances -> north: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_101.json |  -> components -> minecraft:material_instances -> north -> tint_method: This value is bound to 'Tint Method' and expects one of the following strings: 'none', 'default_foliage', 'birch_foliage', ... (4 others)
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_100.json | behavior_packs/paletter_spec | blocks/b_material_instances_100.json | paletter:b_material_instances_100 | components | Failed to parse block 'paletter:b_material_instances_100' 
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_100.json | behavior_packs/paletter_spec | blocks/b_material_instances_100.json | paletter:b_material_instances_100 | components |  -> components -> minecraft:material_instances:  Invalid material name
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_material_instances_100.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_liquid_detection_10.json |  -> components -> minecraft:liquid_detection -> use_liquid_clipping: this member was found in the input, but is not present in the Schema
+ERROR [Components] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_3.json | upgrade blocks/b_geometry_3.json | minecraft:block | components | minecraft:geometry | bone_visibility | bone_a: Only boolean values are supported for bone visibilities in format versions before 1.20.10.
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_21.json |  -> components -> minecraft:geometry: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_21.json |  -> components -> minecraft:geometry: 'n_way_visual_rotation' must define at least one axis (x, y, or z)
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_2.json | behavior_packs/paletter_spec | blocks/b_geometry_2.json | paletter:b_geometry_2 | To use custom block properties, use format version 1.19.70 or higher
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_2.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_18.json | behavior_packs/paletter_spec | blocks/b_geometry_18.json | paletter:b_geometry_18 | components | "minecraft:geometry": Cannot use field "uv_lock" before 'format_version' 1.21.90 when 'minecraft:transformation' component was released.
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_18.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_17.json |  -> components -> minecraft:geometry: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_17.json |  -> components -> minecraft:geometry: 'n_way_visual_rotation' must define at least one axis (x, y, or z)
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_16.json |  -> components -> minecraft:geometry: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_16.json |  -> components -> minecraft:geometry: 'n_way_visual_rotation' must define at least one axis (x, y, or z)
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_14.json |  -> components -> minecraft:geometry: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_14.json |  -> components -> minecraft:geometry: 'n_way_visual_rotation' must define at least one axis (x, y, or z)
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_11.json |  -> components -> minecraft:geometry: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_11.json |  -> components -> minecraft:geometry: 'n_way_visual_rotation' must define at least one axis (x, y, or z)
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_10.json |  -> components -> minecraft:geometry: invalid string
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_10.json |  -> components -> minecraft:geometry: 'n_way_visual_rotation' must define at least one axis (x, y, or z)
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_flammable_8.json |  -> components -> minecraft:flammable: invalid numeric value
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_flammable_8.json |  -> components -> minecraft:flammable -> lava_flammable: This value is bound to 'Lava Flammable' and expects one of the following strings: 'never', 'always'
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_flammable_7.json |  -> components -> minecraft:flammable: invalid numeric value
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_flammable_7.json |  -> components -> minecraft:flammable -> lava_flammable: This value is bound to 'Lava Flammable' and expects one of the following strings: 'never', 'always'
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_flammable_6.json |  -> components -> minecraft:flammable: invalid numeric value
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_flammable_6.json |  -> components -> minecraft:flammable -> lava_flammable: This value is bound to 'Lava Flammable' and expects one of the following strings: 'never', 'always'
+ERROR [Json] block_definitions | behavior_packs/paletter_spec | blocks/b_flammable_1.json | upgrade blocks/b_flammable_1.json | minecraft:block | components | Component minecraft:flammable is missing required field flame_odds, component will be discarded
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_explosion_resistance_73.json |  -> components -> minecraft:explosion_resistance: this component was found in the input, but is not present in the Schema
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_explosion_resistance_71.json |  -> components -> minecraft:explosion_resistance: this component was found in the input, but is not present in the Schema
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_explosion_resistance_69.json |  -> components -> minecraft:explosion_resistance: this component was found in the input, but is not present in the Schema
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_explosion_resistance_67.json | behavior_packs/paletter_spec | blocks/b_explosion_resistance_67.json | paletter:b_explosion_resistance_67 | components | minecraft:explosion_resistance | child 'minecraft:explosion_resistance' not valid here.
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_explosion_resistance_67.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_explosion_resistance_65.json | behavior_packs/paletter_spec | blocks/b_explosion_resistance_65.json | paletter:b_explosion_resistance_65 | components | minecraft:explosion_resistance | child 'minecraft:explosion_resistance' not valid here.
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_explosion_resistance_65.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_explosion_resistance_63.json | behavior_packs/paletter_spec | blocks/b_explosion_resistance_63.json | paletter:b_explosion_resistance_63 | components | minecraft:explosion_resistance | child 'minecraft:explosion_resistance' not valid here.
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_explosion_resistance_63.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_explosion_resistance_61.json | behavior_packs/paletter_spec | blocks/b_explosion_resistance_61.json | paletter:b_explosion_resistance_61 | components | minecraft:explosion_resistance | child 'minecraft:explosion_resistance' not valid here.
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_explosion_resistance_61.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_explosion_resistance_59.json | behavior_packs/paletter_spec | blocks/b_explosion_resistance_59.json | paletter:b_explosion_resistance_59 | components | minecraft:explosion_resistance | child 'minecraft:explosion_resistance' not valid here.
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_explosion_resistance_59.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_explosion_resistance_57.json | behavior_packs/paletter_spec | blocks/b_explosion_resistance_57.json | paletter:b_explosion_resistance_57 | components | minecraft:explosion_resistance | child 'minecraft:explosion_resistance' not valid here.
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_explosion_resistance_57.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_explosion_resistance_55.json | behavior_packs/paletter_spec | blocks/b_explosion_resistance_55.json | paletter:b_explosion_resistance_55 | components | minecraft:explosion_resistance | child 'minecraft:explosion_resistance' not valid here.
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_explosion_resistance_55.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_explosion_resistance_53.json | behavior_packs/paletter_spec | blocks/b_explosion_resistance_53.json | paletter:b_explosion_resistance_53 | components | minecraft:explosion_resistance | child 'minecraft:explosion_resistance' not valid here.
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_explosion_resistance_53.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_explosion_resistance_51.json | behavior_packs/paletter_spec | blocks/b_explosion_resistance_51.json | paletter:b_explosion_resistance_51 | components | minecraft:explosion_resistance | child 'minecraft:explosion_resistance' not valid here.
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_explosion_resistance_51.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_explosion_resistance_49.json | behavior_packs/paletter_spec | blocks/b_explosion_resistance_49.json | paletter:b_explosion_resistance_49 | components | minecraft:explosion_resistance | child 'minecraft:explosion_resistance' not valid here.
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_explosion_resistance_49.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_explosion_resistance_47.json | behavior_packs/paletter_spec | blocks/b_explosion_resistance_47.json | paletter:b_explosion_resistance_47 | components | minecraft:explosion_resistance | child 'minecraft:explosion_resistance' not valid here.
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_explosion_resistance_47.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_explosion_resistance_45.json | behavior_packs/paletter_spec | blocks/b_explosion_resistance_45.json | paletter:b_explosion_resistance_45 | components | minecraft:explosion_resistance | child 'minecraft:explosion_resistance' not valid here.
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_explosion_resistance_45.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_explosion_resistance_43.json | behavior_packs/paletter_spec | blocks/b_explosion_resistance_43.json | paletter:b_explosion_resistance_43 | components | minecraft:explosion_resistance | child 'minecraft:explosion_resistance' not valid here.
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_explosion_resistance_43.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_explosion_resistance_41.json | behavior_packs/paletter_spec | blocks/b_explosion_resistance_41.json | paletter:b_explosion_resistance_41 | components | minecraft:explosion_resistance | child 'minecraft:explosion_resistance' not valid here.
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_explosion_resistance_41.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_explosion_resistance_39.json | behavior_packs/paletter_spec | blocks/b_explosion_resistance_39.json | paletter:b_explosion_resistance_39 | components | minecraft:explosion_resistance | child 'minecraft:explosion_resistance' not valid here.
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_explosion_resistance_39.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_explosion_resistance_37.json | behavior_packs/paletter_spec | blocks/b_explosion_resistance_37.json | paletter:b_explosion_resistance_37 | components | minecraft:explosion_resistance | child 'minecraft:explosion_resistance' not valid here.
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_explosion_resistance_37.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_explosion_resistance_35.json | behavior_packs/paletter_spec | blocks/b_explosion_resistance_35.json | paletter:b_explosion_resistance_35 | components | minecraft:explosion_resistance | child 'minecraft:explosion_resistance' not valid here.
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_explosion_resistance_35.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_explosion_resistance_33.json | behavior_packs/paletter_spec | blocks/b_explosion_resistance_33.json | paletter:b_explosion_resistance_33 | components | minecraft:explosion_resistance | child 'minecraft:explosion_resistance' not valid here.
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_explosion_resistance_33.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_explosion_resistance_31.json | behavior_packs/paletter_spec | blocks/b_explosion_resistance_31.json | paletter:b_explosion_resistance_31 | components | minecraft:explosion_resistance | child 'minecraft:explosion_resistance' not valid here.
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_explosion_resistance_31.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_explosion_resistance_29.json | behavior_packs/paletter_spec | blocks/b_explosion_resistance_29.json | paletter:b_explosion_resistance_29 | components | minecraft:explosion_resistance | child 'minecraft:explosion_resistance' not valid here.
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_explosion_resistance_29.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_explosion_resistance_27.json | behavior_packs/paletter_spec | blocks/b_explosion_resistance_27.json | paletter:b_explosion_resistance_27 | components | minecraft:explosion_resistance | child 'minecraft:explosion_resistance' not valid here.
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_explosion_resistance_27.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_explosion_resistance_25.json | behavior_packs/paletter_spec | blocks/b_explosion_resistance_25.json | paletter:b_explosion_resistance_25 | components | minecraft:explosion_resistance | child 'minecraft:explosion_resistance' not valid here.
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_explosion_resistance_25.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_explosion_resistance_23.json | behavior_packs/paletter_spec | blocks/b_explosion_resistance_23.json | paletter:b_explosion_resistance_23 | components | minecraft:explosion_resistance | child 'minecraft:explosion_resistance' not valid here.
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_explosion_resistance_23.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_explosion_resistance_21.json | behavior_packs/paletter_spec | blocks/b_explosion_resistance_21.json | paletter:b_explosion_resistance_21 | components | minecraft:explosion_resistance | child 'minecraft:explosion_resistance' not valid here.
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_explosion_resistance_21.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_explosion_resistance_19.json | behavior_packs/paletter_spec | blocks/b_explosion_resistance_19.json | paletter:b_explosion_resistance_19 | components | minecraft:explosion_resistance | child 'minecraft:explosion_resistance' not valid here.
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_explosion_resistance_19.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_explosion_resistance_17.json | behavior_packs/paletter_spec | blocks/b_explosion_resistance_17.json | paletter:b_explosion_resistance_17 | components | minecraft:explosion_resistance | child 'minecraft:explosion_resistance' not valid here.
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_explosion_resistance_17.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_explosion_resistance_15.json | behavior_packs/paletter_spec | blocks/b_explosion_resistance_15.json | paletter:b_explosion_resistance_15 | components | minecraft:explosion_resistance | child 'minecraft:explosion_resistance' not valid here.
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_explosion_resistance_15.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_explosion_resistance_13.json | behavior_packs/paletter_spec | blocks/b_explosion_resistance_13.json | paletter:b_explosion_resistance_13 | components | minecraft:explosion_resistance | child 'minecraft:explosion_resistance' not valid here.
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_explosion_resistance_13.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_explosion_resistance_11.json | behavior_packs/paletter_spec | blocks/b_explosion_resistance_11.json | paletter:b_explosion_resistance_11 | components | minecraft:explosion_resistance | child 'minecraft:explosion_resistance' not valid here.
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_explosion_resistance_11.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_destruction_particles_7.json | behavior_packs/paletter_spec | blocks/b_destruction_particles_7.json | paletter:b_destruction_particles_7 | components | Format version 1.21.90 is at least required to use particle_count and experimental creator features
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_destruction_particles_7.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_destroy_time_73.json |  -> components -> minecraft:destroy_time: this component was found in the input, but is not present in the Schema
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_destroy_time_71.json |  -> components -> minecraft:destroy_time: this component was found in the input, but is not present in the Schema
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_destroy_time_69.json |  -> components -> minecraft:destroy_time: this component was found in the input, but is not present in the Schema
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_destroy_time_67.json | behavior_packs/paletter_spec | blocks/b_destroy_time_67.json | paletter:b_destroy_time_67 | components | minecraft:destroy_time | child 'minecraft:destroy_time' not valid here.
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_destroy_time_67.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_destroy_time_65.json | behavior_packs/paletter_spec | blocks/b_destroy_time_65.json | paletter:b_destroy_time_65 | components | minecraft:destroy_time | child 'minecraft:destroy_time' not valid here.
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_destroy_time_65.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_destroy_time_63.json | behavior_packs/paletter_spec | blocks/b_destroy_time_63.json | paletter:b_destroy_time_63 | components | minecraft:destroy_time | child 'minecraft:destroy_time' not valid here.
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_destroy_time_63.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_destroy_time_61.json | behavior_packs/paletter_spec | blocks/b_destroy_time_61.json | paletter:b_destroy_time_61 | components | minecraft:destroy_time | child 'minecraft:destroy_time' not valid here.
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_destroy_time_61.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_destroy_time_59.json | behavior_packs/paletter_spec | blocks/b_destroy_time_59.json | paletter:b_destroy_time_59 | components | minecraft:destroy_time | child 'minecraft:destroy_time' not valid here.
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_destroy_time_59.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_destroy_time_57.json | behavior_packs/paletter_spec | blocks/b_destroy_time_57.json | paletter:b_destroy_time_57 | components | minecraft:destroy_time | child 'minecraft:destroy_time' not valid here.
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_destroy_time_57.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_destroy_time_55.json | behavior_packs/paletter_spec | blocks/b_destroy_time_55.json | paletter:b_destroy_time_55 | components | minecraft:destroy_time | child 'minecraft:destroy_time' not valid here.
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_destroy_time_55.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_destroy_time_53.json | behavior_packs/paletter_spec | blocks/b_destroy_time_53.json | paletter:b_destroy_time_53 | components | minecraft:destroy_time | child 'minecraft:destroy_time' not valid here.
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_destroy_time_53.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_destroy_time_51.json | behavior_packs/paletter_spec | blocks/b_destroy_time_51.json | paletter:b_destroy_time_51 | components | minecraft:destroy_time | child 'minecraft:destroy_time' not valid here.
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_destroy_time_51.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_destroy_time_49.json | behavior_packs/paletter_spec | blocks/b_destroy_time_49.json | paletter:b_destroy_time_49 | components | minecraft:destroy_time | child 'minecraft:destroy_time' not valid here.
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_destroy_time_49.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_destroy_time_47.json | behavior_packs/paletter_spec | blocks/b_destroy_time_47.json | paletter:b_destroy_time_47 | components | minecraft:destroy_time | child 'minecraft:destroy_time' not valid here.
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_destroy_time_47.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_destroy_time_45.json | behavior_packs/paletter_spec | blocks/b_destroy_time_45.json | paletter:b_destroy_time_45 | components | minecraft:destroy_time | child 'minecraft:destroy_time' not valid here.
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_destroy_time_45.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_destroy_time_43.json | behavior_packs/paletter_spec | blocks/b_destroy_time_43.json | paletter:b_destroy_time_43 | components | minecraft:destroy_time | child 'minecraft:destroy_time' not valid here.
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_destroy_time_43.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_destroy_time_41.json | behavior_packs/paletter_spec | blocks/b_destroy_time_41.json | paletter:b_destroy_time_41 | components | minecraft:destroy_time | child 'minecraft:destroy_time' not valid here.
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_destroy_time_41.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_destroy_time_39.json | behavior_packs/paletter_spec | blocks/b_destroy_time_39.json | paletter:b_destroy_time_39 | components | minecraft:destroy_time | child 'minecraft:destroy_time' not valid here.
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_destroy_time_39.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_destroy_time_37.json | behavior_packs/paletter_spec | blocks/b_destroy_time_37.json | paletter:b_destroy_time_37 | components | minecraft:destroy_time | child 'minecraft:destroy_time' not valid here.
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_destroy_time_37.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_destroy_time_35.json | behavior_packs/paletter_spec | blocks/b_destroy_time_35.json | paletter:b_destroy_time_35 | components | minecraft:destroy_time | child 'minecraft:destroy_time' not valid here.
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_destroy_time_35.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_destroy_time_33.json | behavior_packs/paletter_spec | blocks/b_destroy_time_33.json | paletter:b_destroy_time_33 | components | minecraft:destroy_time | child 'minecraft:destroy_time' not valid here.
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_destroy_time_33.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_destroy_time_31.json | behavior_packs/paletter_spec | blocks/b_destroy_time_31.json | paletter:b_destroy_time_31 | components | minecraft:destroy_time | child 'minecraft:destroy_time' not valid here.
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_destroy_time_31.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_destroy_time_29.json | behavior_packs/paletter_spec | blocks/b_destroy_time_29.json | paletter:b_destroy_time_29 | components | minecraft:destroy_time | child 'minecraft:destroy_time' not valid here.
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_destroy_time_29.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_destroy_time_27.json | behavior_packs/paletter_spec | blocks/b_destroy_time_27.json | paletter:b_destroy_time_27 | components | minecraft:destroy_time | child 'minecraft:destroy_time' not valid here.
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_destroy_time_27.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_destroy_time_25.json | behavior_packs/paletter_spec | blocks/b_destroy_time_25.json | paletter:b_destroy_time_25 | components | minecraft:destroy_time | child 'minecraft:destroy_time' not valid here.
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_destroy_time_25.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_destroy_time_23.json | behavior_packs/paletter_spec | blocks/b_destroy_time_23.json | paletter:b_destroy_time_23 | components | minecraft:destroy_time | child 'minecraft:destroy_time' not valid here.
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_destroy_time_23.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_destroy_time_21.json | behavior_packs/paletter_spec | blocks/b_destroy_time_21.json | paletter:b_destroy_time_21 | components | minecraft:destroy_time | child 'minecraft:destroy_time' not valid here.
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_destroy_time_21.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_destroy_time_19.json | behavior_packs/paletter_spec | blocks/b_destroy_time_19.json | paletter:b_destroy_time_19 | components | minecraft:destroy_time | child 'minecraft:destroy_time' not valid here.
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_destroy_time_19.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_destroy_time_17.json | behavior_packs/paletter_spec | blocks/b_destroy_time_17.json | paletter:b_destroy_time_17 | components | minecraft:destroy_time | child 'minecraft:destroy_time' not valid here.
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_destroy_time_17.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_destroy_time_15.json | behavior_packs/paletter_spec | blocks/b_destroy_time_15.json | paletter:b_destroy_time_15 | components | minecraft:destroy_time | child 'minecraft:destroy_time' not valid here.
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_destroy_time_15.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_destroy_time_13.json | behavior_packs/paletter_spec | blocks/b_destroy_time_13.json | paletter:b_destroy_time_13 | components | minecraft:destroy_time | child 'minecraft:destroy_time' not valid here.
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_destroy_time_13.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_destroy_time_11.json | behavior_packs/paletter_spec | blocks/b_destroy_time_11.json | paletter:b_destroy_time_11 | components | minecraft:destroy_time | child 'minecraft:destroy_time' not valid here.
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_destroy_time_11.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_custom_components_6.json |  -> components -> minecraft:custom_components: this component was found in the input, but is not present in the Schema
+ERROR [Json] block_definitions | behavior_packs/paletter_spec | blocks/b_custom_components_5.json | upgrade blocks/b_custom_components_5.json | minecraft:block | components | minecraft:custom_components component is not valid from 1.21.90 onward.
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_custom_components_4.json | behavior_packs/paletter_spec | blocks/b_custom_components_4.json | paletter:b_custom_components_4 | components | Failed to parse block 'paletter:b_custom_components_4' 
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_custom_components_4.json | behavior_packs/paletter_spec | blocks/b_custom_components_4.json | paletter:b_custom_components_4 | components |  -> components -> minecraft:custom_components:  expected an array
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_custom_components_4.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_custom_components_3.json | behavior_packs/paletter_spec | blocks/b_custom_components_3.json | paletter:b_custom_components_3 | components | Failed to parse block 'paletter:b_custom_components_3' 
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_custom_components_3.json | behavior_packs/paletter_spec | blocks/b_custom_components_3.json | paletter:b_custom_components_3 | components |  -> components -> minecraft:custom_components:  expected an array
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_custom_components_3.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_custom_components_2.json | behavior_packs/paletter_spec | blocks/b_custom_components_2.json | paletter:b_custom_components_2 | components | Failed to parse block 'paletter:b_custom_components_2' 
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_custom_components_2.json | behavior_packs/paletter_spec | blocks/b_custom_components_2.json | paletter:b_custom_components_2 | components |  -> components -> minecraft:custom_components:  expected an array
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_custom_components_2.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_custom_components_1.json | behavior_packs/paletter_spec | blocks/b_custom_components_1.json | paletter:b_custom_components_1 | components | Failed to parse block 'paletter:b_custom_components_1' 
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_custom_components_1.json | behavior_packs/paletter_spec | blocks/b_custom_components_1.json | paletter:b_custom_components_1 | components |  -> components -> minecraft:custom_components:  expected an array
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_custom_components_1.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_collision_box_2.json |  -> components -> minecraft:collision_box: invalid numeric value
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_collision_box_2.json |  -> components -> minecraft:collision_box: expected an object
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_collision_box_2.json |  -> components -> minecraft:collision_box: expected an array
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_collision_box_1.json | behavior_packs/paletter_spec | blocks/b_collision_box_1.json | paletter:b_collision_box_1 | components | Failed to parse block 'paletter:b_collision_box_1' 
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_collision_box_1.json | behavior_packs/paletter_spec | blocks/b_collision_box_1.json | paletter:b_collision_box_1 | components |  -> components -> minecraft:collision_box:  invalid numeric value
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_collision_box_1.json | behavior_packs/paletter_spec | blocks/b_collision_box_1.json | paletter:b_collision_box_1 | components |  -> components -> minecraft:collision_box:  expected an object
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_collision_box_1.json | behavior_packs/paletter_spec | blocks/b_collision_box_1.json | paletter:b_collision_box_1 | components |  -> components -> minecraft:collision_box:  expected an array
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_collision_box_1.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_breathability_99.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_breathability_97.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_breathability_96.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_breathability_95.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_breathability_93.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_breathability_92.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_breathability_91.json | Block definition parsing failed
+ERROR [Json] block_definitions | behavior_packs/paletter_spec | blocks/b_breathability_9.json | upgrade blocks/b_breathability_9.json |  -> minecraft:block -> components -> minecraft:breathability:  invalid component
+ERROR [Json] block_definitions | behavior_packs/paletter_spec | blocks/b_breathability_9.json | upgrade blocks/b_breathability_9.json | Failed to upgrade to version '1.19.10' from document version '1.16.100'
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_breathability_9.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_breathability_89.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_breathability_88.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_breathability_87.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_breathability_85.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_breathability_84.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_breathability_83.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_breathability_81.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_breathability_80.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_breathability_8.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_breathability_79.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_breathability_77.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_breathability_76.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_breathability_75.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_breathability_73.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_breathability_72.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_breathability_71.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_breathability_7.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_breathability_69.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_breathability_68.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_breathability_67.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_breathability_65.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_breathability_64.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_breathability_63.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_breathability_61.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_breathability_60.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_breathability_59.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_breathability_57.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_breathability_56.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_breathability_55.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_breathability_53.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_breathability_52.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_breathability_51.json | Block definition parsing failed
+ERROR [Json] block_definitions | behavior_packs/paletter_spec | blocks/b_breathability_5.json | upgrade blocks/b_breathability_5.json |  -> minecraft:block -> components -> minecraft:breathability:  invalid component
+ERROR [Json] block_definitions | behavior_packs/paletter_spec | blocks/b_breathability_5.json | upgrade blocks/b_breathability_5.json | Failed to upgrade to version '1.19.10' from document version '1.16.0'
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_breathability_5.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_breathability_49.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_breathability_48.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_breathability_47.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_breathability_45.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_breathability_44.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_breathability_43.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_breathability_41.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_breathability_40.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_breathability_4.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_breathability_39.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_breathability_37.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_breathability_36.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_breathability_35.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_breathability_33.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_breathability_32.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_breathability_31.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_breathability_3.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_breathability_29.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_breathability_28.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_breathability_27.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_breathability_25.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_breathability_24.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_breathability_23.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_breathability_21.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_breathability_20.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_breathability_19.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_breathability_17.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_breathability_16.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_breathability_15.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_breathability_148.json |  -> components -> minecraft:breathability: member "minecraft:breathability" is deprecated
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_breathability_147.json |  -> components -> minecraft:breathability: member "minecraft:breathability" is deprecated
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_breathability_145.json |  -> components -> minecraft:breathability: member "minecraft:breathability" is deprecated
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_breathability_144.json |  -> components -> minecraft:breathability: member "minecraft:breathability" is deprecated
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_breathability_143.json |  -> components -> minecraft:breathability: member "minecraft:breathability" is deprecated
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_breathability_141.json |  -> components -> minecraft:breathability: member "minecraft:breathability" is deprecated
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_breathability_140.json |  -> components -> minecraft:breathability: member "minecraft:breathability" is deprecated
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_breathability_139.json |  -> components -> minecraft:breathability: member "minecraft:breathability" is deprecated
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_breathability_137.json |  -> components -> minecraft:breathability: member "minecraft:breathability" is deprecated
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_breathability_136.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_breathability_135.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_breathability_133.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_breathability_132.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_breathability_131.json | Block definition parsing failed
+ERROR [Json] block_definitions | behavior_packs/paletter_spec | blocks/b_breathability_13.json | upgrade blocks/b_breathability_13.json |  -> minecraft:block -> components -> minecraft:breathability:  invalid component
+ERROR [Json] block_definitions | behavior_packs/paletter_spec | blocks/b_breathability_13.json | upgrade blocks/b_breathability_13.json | Failed to upgrade to version '1.19.10' from document version '1.18.10'
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_breathability_13.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_breathability_129.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_breathability_128.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_breathability_127.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_breathability_125.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_breathability_124.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_breathability_123.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_breathability_121.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_breathability_120.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_breathability_12.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_breathability_119.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_breathability_117.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_breathability_116.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_breathability_115.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_breathability_113.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_breathability_112.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_breathability_111.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_breathability_11.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_breathability_109.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_breathability_108.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_breathability_107.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_breathability_105.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_breathability_104.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_breathability_103.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_breathability_101.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_breathability_100.json | Block definition parsing failed
+ERROR [Json] block_definitions | behavior_packs/paletter_spec | blocks/b_breathability_1.json | upgrade blocks/b_breathability_1.json |  -> minecraft:block -> components -> minecraft:breathability:  invalid component
+ERROR [Json] block_definitions | behavior_packs/paletter_spec | blocks/b_breathability_1.json | upgrade blocks/b_breathability_1.json | Failed to upgrade to version '1.19.10' from document version '1.10.0'
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_breathability_1.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_bone_visibility_9.json | behavior_packs/paletter_spec | blocks/b_bone_visibility_9.json | paletter:b_bone_visibility_9 | components | minecraft:bone_visibility | child 'minecraft:bone_visibility' not valid here.
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_bone_visibility_9.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_bone_visibility_73.json |  -> components -> minecraft:bone_visibility: this component was found in the input, but is not present in the Schema
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_bone_visibility_71.json |  -> components -> minecraft:bone_visibility: this component was found in the input, but is not present in the Schema
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_bone_visibility_7.json | behavior_packs/paletter_spec | blocks/b_bone_visibility_7.json | paletter:b_bone_visibility_7 | components | minecraft:bone_visibility | child 'minecraft:bone_visibility' not valid here.
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_bone_visibility_7.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_bone_visibility_69.json |  -> components -> minecraft:bone_visibility: this component was found in the input, but is not present in the Schema
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_bone_visibility_67.json | behavior_packs/paletter_spec | blocks/b_bone_visibility_67.json | paletter:b_bone_visibility_67 | components | minecraft:bone_visibility | child 'minecraft:bone_visibility' not valid here.
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_bone_visibility_67.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_bone_visibility_65.json | behavior_packs/paletter_spec | blocks/b_bone_visibility_65.json | paletter:b_bone_visibility_65 | components | minecraft:bone_visibility | child 'minecraft:bone_visibility' not valid here.
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_bone_visibility_65.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_bone_visibility_63.json | behavior_packs/paletter_spec | blocks/b_bone_visibility_63.json | paletter:b_bone_visibility_63 | components | minecraft:bone_visibility | child 'minecraft:bone_visibility' not valid here.
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_bone_visibility_63.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_bone_visibility_61.json | behavior_packs/paletter_spec | blocks/b_bone_visibility_61.json | paletter:b_bone_visibility_61 | components | minecraft:bone_visibility | child 'minecraft:bone_visibility' not valid here.
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_bone_visibility_61.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_bone_visibility_59.json | behavior_packs/paletter_spec | blocks/b_bone_visibility_59.json | paletter:b_bone_visibility_59 | components | minecraft:bone_visibility | child 'minecraft:bone_visibility' not valid here.
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_bone_visibility_59.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_bone_visibility_57.json | behavior_packs/paletter_spec | blocks/b_bone_visibility_57.json | paletter:b_bone_visibility_57 | components | minecraft:bone_visibility | child 'minecraft:bone_visibility' not valid here.
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_bone_visibility_57.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_bone_visibility_55.json | behavior_packs/paletter_spec | blocks/b_bone_visibility_55.json | paletter:b_bone_visibility_55 | components | minecraft:bone_visibility | child 'minecraft:bone_visibility' not valid here.
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_bone_visibility_55.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_bone_visibility_53.json | behavior_packs/paletter_spec | blocks/b_bone_visibility_53.json | paletter:b_bone_visibility_53 | components | minecraft:bone_visibility | child 'minecraft:bone_visibility' not valid here.
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_bone_visibility_53.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_bone_visibility_51.json | behavior_packs/paletter_spec | blocks/b_bone_visibility_51.json | paletter:b_bone_visibility_51 | components | minecraft:bone_visibility | child 'minecraft:bone_visibility' not valid here.
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_bone_visibility_51.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_bone_visibility_5.json | behavior_packs/paletter_spec | blocks/b_bone_visibility_5.json | paletter:b_bone_visibility_5 | components | minecraft:bone_visibility | child 'minecraft:bone_visibility' not valid here.
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_bone_visibility_5.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_bone_visibility_49.json | behavior_packs/paletter_spec | blocks/b_bone_visibility_49.json | paletter:b_bone_visibility_49 | components | minecraft:bone_visibility | child 'minecraft:bone_visibility' not valid here.
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_bone_visibility_49.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_bone_visibility_47.json | behavior_packs/paletter_spec | blocks/b_bone_visibility_47.json | paletter:b_bone_visibility_47 | components | minecraft:bone_visibility | child 'minecraft:bone_visibility' not valid here.
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_bone_visibility_47.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_bone_visibility_45.json | behavior_packs/paletter_spec | blocks/b_bone_visibility_45.json | paletter:b_bone_visibility_45 | components | minecraft:bone_visibility | child 'minecraft:bone_visibility' not valid here.
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_bone_visibility_45.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_bone_visibility_43.json | behavior_packs/paletter_spec | blocks/b_bone_visibility_43.json | paletter:b_bone_visibility_43 | components | minecraft:bone_visibility | child 'minecraft:bone_visibility' not valid here.
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_bone_visibility_43.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_bone_visibility_41.json | behavior_packs/paletter_spec | blocks/b_bone_visibility_41.json | paletter:b_bone_visibility_41 | components | minecraft:bone_visibility | child 'minecraft:bone_visibility' not valid here.
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_bone_visibility_41.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_bone_visibility_39.json | behavior_packs/paletter_spec | blocks/b_bone_visibility_39.json | paletter:b_bone_visibility_39 | components | minecraft:bone_visibility | child 'minecraft:bone_visibility' not valid here.
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_bone_visibility_39.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_bone_visibility_37.json | behavior_packs/paletter_spec | blocks/b_bone_visibility_37.json | paletter:b_bone_visibility_37 | components | minecraft:bone_visibility | child 'minecraft:bone_visibility' not valid here.
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_bone_visibility_37.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_bone_visibility_35.json | behavior_packs/paletter_spec | blocks/b_bone_visibility_35.json | paletter:b_bone_visibility_35 | components | minecraft:bone_visibility | child 'minecraft:bone_visibility' not valid here.
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_bone_visibility_35.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_bone_visibility_33.json | behavior_packs/paletter_spec | blocks/b_bone_visibility_33.json | paletter:b_bone_visibility_33 | components | minecraft:bone_visibility | child 'minecraft:bone_visibility' not valid here.
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_bone_visibility_33.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_bone_visibility_31.json | behavior_packs/paletter_spec | blocks/b_bone_visibility_31.json | paletter:b_bone_visibility_31 | components | minecraft:bone_visibility | child 'minecraft:bone_visibility' not valid here.
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_bone_visibility_31.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_bone_visibility_3.json | behavior_packs/paletter_spec | blocks/b_bone_visibility_3.json | paletter:b_bone_visibility_3 | components | minecraft:bone_visibility | child 'minecraft:bone_visibility' not valid here.
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_bone_visibility_3.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_bone_visibility_29.json | behavior_packs/paletter_spec | blocks/b_bone_visibility_29.json | paletter:b_bone_visibility_29 | components | minecraft:bone_visibility | child 'minecraft:bone_visibility' not valid here.
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_bone_visibility_29.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_bone_visibility_27.json | behavior_packs/paletter_spec | blocks/b_bone_visibility_27.json | paletter:b_bone_visibility_27 | components | minecraft:bone_visibility | child 'minecraft:bone_visibility' not valid here.
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_bone_visibility_27.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_bone_visibility_25.json | behavior_packs/paletter_spec | blocks/b_bone_visibility_25.json | paletter:b_bone_visibility_25 | components | minecraft:bone_visibility | child 'minecraft:bone_visibility' not valid here.
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_bone_visibility_25.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_bone_visibility_23.json | behavior_packs/paletter_spec | blocks/b_bone_visibility_23.json | paletter:b_bone_visibility_23 | components | minecraft:bone_visibility | child 'minecraft:bone_visibility' not valid here.
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_bone_visibility_23.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_bone_visibility_21.json | behavior_packs/paletter_spec | blocks/b_bone_visibility_21.json | paletter:b_bone_visibility_21 | components | minecraft:bone_visibility | child 'minecraft:bone_visibility' not valid here.
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_bone_visibility_21.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_bone_visibility_19.json | behavior_packs/paletter_spec | blocks/b_bone_visibility_19.json | paletter:b_bone_visibility_19 | components | minecraft:bone_visibility | child 'minecraft:bone_visibility' not valid here.
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_bone_visibility_19.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_bone_visibility_17.json | behavior_packs/paletter_spec | blocks/b_bone_visibility_17.json | paletter:b_bone_visibility_17 | components | minecraft:bone_visibility | child 'minecraft:bone_visibility' not valid here.
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_bone_visibility_17.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_bone_visibility_15.json | behavior_packs/paletter_spec | blocks/b_bone_visibility_15.json | paletter:b_bone_visibility_15 | components | minecraft:bone_visibility | child 'minecraft:bone_visibility' not valid here.
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_bone_visibility_15.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_bone_visibility_13.json | behavior_packs/paletter_spec | blocks/b_bone_visibility_13.json | paletter:b_bone_visibility_13 | components | minecraft:bone_visibility | child 'minecraft:bone_visibility' not valid here.
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_bone_visibility_13.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_bone_visibility_11.json | behavior_packs/paletter_spec | blocks/b_bone_visibility_11.json | paletter:b_bone_visibility_11 | components | minecraft:bone_visibility | child 'minecraft:bone_visibility' not valid here.
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_bone_visibility_11.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_bone_visibility_1.json | behavior_packs/paletter_spec | blocks/b_bone_visibility_1.json | paletter:b_bone_visibility_1 | components | minecraft:bone_visibility | child 'minecraft:bone_visibility' not valid here.
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_bone_visibility_1.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_block_light_emission_9.json | behavior_packs/paletter_spec | blocks/b_block_light_emission_9.json | paletter:b_block_light_emission_9 | components | minecraft:block_light_emission | child 'minecraft:block_light_emission' not valid here.
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_block_light_emission_9.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_block_light_emission_73.json |  -> components -> minecraft:block_light_emission: this component was found in the input, but is not present in the Schema
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_block_light_emission_71.json |  -> components -> minecraft:block_light_emission: this component was found in the input, but is not present in the Schema
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_block_light_emission_69.json |  -> components -> minecraft:block_light_emission: this component was found in the input, but is not present in the Schema
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_block_light_emission_67.json | behavior_packs/paletter_spec | blocks/b_block_light_emission_67.json | paletter:b_block_light_emission_67 | components | minecraft:block_light_emission | child 'minecraft:block_light_emission' not valid here.
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_block_light_emission_67.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_block_light_emission_65.json | behavior_packs/paletter_spec | blocks/b_block_light_emission_65.json | paletter:b_block_light_emission_65 | components | minecraft:block_light_emission | child 'minecraft:block_light_emission' not valid here.
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_block_light_emission_65.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_block_light_emission_63.json | behavior_packs/paletter_spec | blocks/b_block_light_emission_63.json | paletter:b_block_light_emission_63 | components | minecraft:block_light_emission | child 'minecraft:block_light_emission' not valid here.
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_block_light_emission_63.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_block_light_emission_61.json | behavior_packs/paletter_spec | blocks/b_block_light_emission_61.json | paletter:b_block_light_emission_61 | components | minecraft:block_light_emission | child 'minecraft:block_light_emission' not valid here.
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_block_light_emission_61.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_block_light_emission_59.json | behavior_packs/paletter_spec | blocks/b_block_light_emission_59.json | paletter:b_block_light_emission_59 | components | minecraft:block_light_emission | child 'minecraft:block_light_emission' not valid here.
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_block_light_emission_59.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_block_light_emission_57.json | behavior_packs/paletter_spec | blocks/b_block_light_emission_57.json | paletter:b_block_light_emission_57 | components | minecraft:block_light_emission | child 'minecraft:block_light_emission' not valid here.
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_block_light_emission_57.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_block_light_emission_55.json | behavior_packs/paletter_spec | blocks/b_block_light_emission_55.json | paletter:b_block_light_emission_55 | components | minecraft:block_light_emission | child 'minecraft:block_light_emission' not valid here.
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_block_light_emission_55.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_block_light_emission_53.json | behavior_packs/paletter_spec | blocks/b_block_light_emission_53.json | paletter:b_block_light_emission_53 | components | minecraft:block_light_emission | child 'minecraft:block_light_emission' not valid here.
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_block_light_emission_53.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_block_light_emission_51.json | behavior_packs/paletter_spec | blocks/b_block_light_emission_51.json | paletter:b_block_light_emission_51 | components | minecraft:block_light_emission | child 'minecraft:block_light_emission' not valid here.
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_block_light_emission_51.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_block_light_emission_49.json | behavior_packs/paletter_spec | blocks/b_block_light_emission_49.json | paletter:b_block_light_emission_49 | components | minecraft:block_light_emission | child 'minecraft:block_light_emission' not valid here.
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_block_light_emission_49.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_block_light_emission_47.json | behavior_packs/paletter_spec | blocks/b_block_light_emission_47.json | paletter:b_block_light_emission_47 | components | minecraft:block_light_emission | child 'minecraft:block_light_emission' not valid here.
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_block_light_emission_47.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_block_light_emission_45.json | behavior_packs/paletter_spec | blocks/b_block_light_emission_45.json | paletter:b_block_light_emission_45 | components | minecraft:block_light_emission | child 'minecraft:block_light_emission' not valid here.
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_block_light_emission_45.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_block_light_emission_43.json | behavior_packs/paletter_spec | blocks/b_block_light_emission_43.json | paletter:b_block_light_emission_43 | components | minecraft:block_light_emission | child 'minecraft:block_light_emission' not valid here.
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_block_light_emission_43.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_block_light_emission_41.json | behavior_packs/paletter_spec | blocks/b_block_light_emission_41.json | paletter:b_block_light_emission_41 | components | minecraft:block_light_emission | child 'minecraft:block_light_emission' not valid here.
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_block_light_emission_41.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_block_light_emission_39.json | behavior_packs/paletter_spec | blocks/b_block_light_emission_39.json | paletter:b_block_light_emission_39 | components | minecraft:block_light_emission | child 'minecraft:block_light_emission' not valid here.
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_block_light_emission_39.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_block_light_emission_37.json | behavior_packs/paletter_spec | blocks/b_block_light_emission_37.json | paletter:b_block_light_emission_37 | components | minecraft:block_light_emission | child 'minecraft:block_light_emission' not valid here.
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_block_light_emission_37.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_block_light_emission_35.json | behavior_packs/paletter_spec | blocks/b_block_light_emission_35.json | paletter:b_block_light_emission_35 | components | minecraft:block_light_emission | child 'minecraft:block_light_emission' not valid here.
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_block_light_emission_35.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_block_light_emission_33.json | behavior_packs/paletter_spec | blocks/b_block_light_emission_33.json | paletter:b_block_light_emission_33 | components | minecraft:block_light_emission | child 'minecraft:block_light_emission' not valid here.
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_block_light_emission_33.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_block_light_emission_31.json | behavior_packs/paletter_spec | blocks/b_block_light_emission_31.json | paletter:b_block_light_emission_31 | components | minecraft:block_light_emission | child 'minecraft:block_light_emission' not valid here.
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_block_light_emission_31.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_block_light_emission_29.json | behavior_packs/paletter_spec | blocks/b_block_light_emission_29.json | paletter:b_block_light_emission_29 | components | minecraft:block_light_emission | child 'minecraft:block_light_emission' not valid here.
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_block_light_emission_29.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_block_light_emission_27.json | behavior_packs/paletter_spec | blocks/b_block_light_emission_27.json | paletter:b_block_light_emission_27 | components | minecraft:block_light_emission | child 'minecraft:block_light_emission' not valid here.
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_block_light_emission_27.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_block_light_emission_25.json | behavior_packs/paletter_spec | blocks/b_block_light_emission_25.json | paletter:b_block_light_emission_25 | components | minecraft:block_light_emission | child 'minecraft:block_light_emission' not valid here.
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_block_light_emission_25.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_block_light_emission_23.json | behavior_packs/paletter_spec | blocks/b_block_light_emission_23.json | paletter:b_block_light_emission_23 | components | minecraft:block_light_emission | child 'minecraft:block_light_emission' not valid here.
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_block_light_emission_23.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_block_light_emission_21.json | behavior_packs/paletter_spec | blocks/b_block_light_emission_21.json | paletter:b_block_light_emission_21 | components | minecraft:block_light_emission | child 'minecraft:block_light_emission' not valid here.
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_block_light_emission_21.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_block_light_emission_19.json | behavior_packs/paletter_spec | blocks/b_block_light_emission_19.json | paletter:b_block_light_emission_19 | components | minecraft:block_light_emission | child 'minecraft:block_light_emission' not valid here.
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_block_light_emission_19.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_block_light_emission_17.json | behavior_packs/paletter_spec | blocks/b_block_light_emission_17.json | paletter:b_block_light_emission_17 | components | minecraft:block_light_emission | child 'minecraft:block_light_emission' not valid here.
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_block_light_emission_17.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_block_light_emission_15.json | behavior_packs/paletter_spec | blocks/b_block_light_emission_15.json | paletter:b_block_light_emission_15 | components | minecraft:block_light_emission | child 'minecraft:block_light_emission' not valid here.
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_block_light_emission_15.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_block_light_emission_13.json | behavior_packs/paletter_spec | blocks/b_block_light_emission_13.json | paletter:b_block_light_emission_13 | components | minecraft:block_light_emission | child 'minecraft:block_light_emission' not valid here.
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_block_light_emission_13.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_block_light_emission_11.json | behavior_packs/paletter_spec | blocks/b_block_light_emission_11.json | paletter:b_block_light_emission_11 | components | minecraft:block_light_emission | child 'minecraft:block_light_emission' not valid here.
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_block_light_emission_11.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_block_light_absorption_9.json | behavior_packs/paletter_spec | blocks/b_block_light_absorption_9.json | paletter:b_block_light_absorption_9 | components | minecraft:block_light_absorption | child 'minecraft:block_light_absorption' not valid here.
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_block_light_absorption_9.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_block_light_absorption_73.json |  -> components -> minecraft:block_light_absorption: this component was found in the input, but is not present in the Schema
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_block_light_absorption_71.json |  -> components -> minecraft:block_light_absorption: this component was found in the input, but is not present in the Schema
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_block_light_absorption_7.json | behavior_packs/paletter_spec | blocks/b_block_light_absorption_7.json | paletter:b_block_light_absorption_7 | components | minecraft:block_light_absorption | child 'minecraft:block_light_absorption' not valid here.
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_block_light_absorption_7.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_block_light_absorption_69.json |  -> components -> minecraft:block_light_absorption: this component was found in the input, but is not present in the Schema
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_block_light_absorption_67.json | behavior_packs/paletter_spec | blocks/b_block_light_absorption_67.json | paletter:b_block_light_absorption_67 | components | minecraft:block_light_absorption | child 'minecraft:block_light_absorption' not valid here.
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_block_light_absorption_67.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_block_light_absorption_65.json | behavior_packs/paletter_spec | blocks/b_block_light_absorption_65.json | paletter:b_block_light_absorption_65 | components | minecraft:block_light_absorption | child 'minecraft:block_light_absorption' not valid here.
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_block_light_absorption_65.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_block_light_absorption_63.json | behavior_packs/paletter_spec | blocks/b_block_light_absorption_63.json | paletter:b_block_light_absorption_63 | components | minecraft:block_light_absorption | child 'minecraft:block_light_absorption' not valid here.
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_block_light_absorption_63.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_block_light_absorption_61.json | behavior_packs/paletter_spec | blocks/b_block_light_absorption_61.json | paletter:b_block_light_absorption_61 | components | minecraft:block_light_absorption | child 'minecraft:block_light_absorption' not valid here.
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_block_light_absorption_61.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_block_light_absorption_59.json | behavior_packs/paletter_spec | blocks/b_block_light_absorption_59.json | paletter:b_block_light_absorption_59 | components | minecraft:block_light_absorption | child 'minecraft:block_light_absorption' not valid here.
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_block_light_absorption_59.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_block_light_absorption_57.json | behavior_packs/paletter_spec | blocks/b_block_light_absorption_57.json | paletter:b_block_light_absorption_57 | components | minecraft:block_light_absorption | child 'minecraft:block_light_absorption' not valid here.
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_block_light_absorption_57.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_block_light_absorption_55.json | behavior_packs/paletter_spec | blocks/b_block_light_absorption_55.json | paletter:b_block_light_absorption_55 | components | minecraft:block_light_absorption | child 'minecraft:block_light_absorption' not valid here.
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_block_light_absorption_55.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_block_light_absorption_53.json | behavior_packs/paletter_spec | blocks/b_block_light_absorption_53.json | paletter:b_block_light_absorption_53 | components | minecraft:block_light_absorption | child 'minecraft:block_light_absorption' not valid here.
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_block_light_absorption_53.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_block_light_absorption_51.json | behavior_packs/paletter_spec | blocks/b_block_light_absorption_51.json | paletter:b_block_light_absorption_51 | components | minecraft:block_light_absorption | child 'minecraft:block_light_absorption' not valid here.
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_block_light_absorption_51.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_block_light_absorption_49.json | behavior_packs/paletter_spec | blocks/b_block_light_absorption_49.json | paletter:b_block_light_absorption_49 | components | minecraft:block_light_absorption | child 'minecraft:block_light_absorption' not valid here.
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_block_light_absorption_49.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_block_light_absorption_47.json | behavior_packs/paletter_spec | blocks/b_block_light_absorption_47.json | paletter:b_block_light_absorption_47 | components | minecraft:block_light_absorption | child 'minecraft:block_light_absorption' not valid here.
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_block_light_absorption_47.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_block_light_absorption_45.json | behavior_packs/paletter_spec | blocks/b_block_light_absorption_45.json | paletter:b_block_light_absorption_45 | components | minecraft:block_light_absorption | child 'minecraft:block_light_absorption' not valid here.
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_block_light_absorption_45.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_block_light_absorption_43.json | behavior_packs/paletter_spec | blocks/b_block_light_absorption_43.json | paletter:b_block_light_absorption_43 | components | minecraft:block_light_absorption | child 'minecraft:block_light_absorption' not valid here.
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_block_light_absorption_43.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_block_light_absorption_41.json | behavior_packs/paletter_spec | blocks/b_block_light_absorption_41.json | paletter:b_block_light_absorption_41 | components | minecraft:block_light_absorption | child 'minecraft:block_light_absorption' not valid here.
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_block_light_absorption_41.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_block_light_absorption_39.json | behavior_packs/paletter_spec | blocks/b_block_light_absorption_39.json | paletter:b_block_light_absorption_39 | components | minecraft:block_light_absorption | child 'minecraft:block_light_absorption' not valid here.
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_block_light_absorption_39.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_block_light_absorption_37.json | behavior_packs/paletter_spec | blocks/b_block_light_absorption_37.json | paletter:b_block_light_absorption_37 | components | minecraft:block_light_absorption | child 'minecraft:block_light_absorption' not valid here.
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_block_light_absorption_37.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_block_light_absorption_35.json | behavior_packs/paletter_spec | blocks/b_block_light_absorption_35.json | paletter:b_block_light_absorption_35 | components | minecraft:block_light_absorption | child 'minecraft:block_light_absorption' not valid here.
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_block_light_absorption_35.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_block_light_absorption_33.json | behavior_packs/paletter_spec | blocks/b_block_light_absorption_33.json | paletter:b_block_light_absorption_33 | components | minecraft:block_light_absorption | child 'minecraft:block_light_absorption' not valid here.
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_block_light_absorption_33.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_block_light_absorption_31.json | behavior_packs/paletter_spec | blocks/b_block_light_absorption_31.json | paletter:b_block_light_absorption_31 | components | minecraft:block_light_absorption | child 'minecraft:block_light_absorption' not valid here.
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_block_light_absorption_31.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_block_light_absorption_29.json | behavior_packs/paletter_spec | blocks/b_block_light_absorption_29.json | paletter:b_block_light_absorption_29 | components | minecraft:block_light_absorption | child 'minecraft:block_light_absorption' not valid here.
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_block_light_absorption_29.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_block_light_absorption_27.json | behavior_packs/paletter_spec | blocks/b_block_light_absorption_27.json | paletter:b_block_light_absorption_27 | components | minecraft:block_light_absorption | child 'minecraft:block_light_absorption' not valid here.
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_block_light_absorption_27.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_block_light_absorption_25.json | behavior_packs/paletter_spec | blocks/b_block_light_absorption_25.json | paletter:b_block_light_absorption_25 | components | minecraft:block_light_absorption | child 'minecraft:block_light_absorption' not valid here.
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_block_light_absorption_25.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_block_light_absorption_23.json | behavior_packs/paletter_spec | blocks/b_block_light_absorption_23.json | paletter:b_block_light_absorption_23 | components | minecraft:block_light_absorption | child 'minecraft:block_light_absorption' not valid here.
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_block_light_absorption_23.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_block_light_absorption_21.json | behavior_packs/paletter_spec | blocks/b_block_light_absorption_21.json | paletter:b_block_light_absorption_21 | components | minecraft:block_light_absorption | child 'minecraft:block_light_absorption' not valid here.
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_block_light_absorption_21.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_block_light_absorption_19.json | behavior_packs/paletter_spec | blocks/b_block_light_absorption_19.json | paletter:b_block_light_absorption_19 | components | minecraft:block_light_absorption | child 'minecraft:block_light_absorption' not valid here.
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_block_light_absorption_19.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_block_light_absorption_17.json | behavior_packs/paletter_spec | blocks/b_block_light_absorption_17.json | paletter:b_block_light_absorption_17 | components | minecraft:block_light_absorption | child 'minecraft:block_light_absorption' not valid here.
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_block_light_absorption_17.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_block_light_absorption_15.json | behavior_packs/paletter_spec | blocks/b_block_light_absorption_15.json | paletter:b_block_light_absorption_15 | components | minecraft:block_light_absorption | child 'minecraft:block_light_absorption' not valid here.
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_block_light_absorption_15.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_block_light_absorption_13.json | behavior_packs/paletter_spec | blocks/b_block_light_absorption_13.json | paletter:b_block_light_absorption_13 | components | minecraft:block_light_absorption | child 'minecraft:block_light_absorption' not valid here.
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_block_light_absorption_13.json | Block definition parsing failed
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_block_light_absorption_11.json | behavior_packs/paletter_spec | blocks/b_block_light_absorption_11.json | paletter:b_block_light_absorption_11 | components | minecraft:block_light_absorption | child 'minecraft:block_light_absorption' not valid here.
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_block_light_absorption_11.json | Block definition parsing failed
+ERROR [VoxelShape] Voxel shape with name "paletter_a" doesn't exist in the registry. Defaulting to minecraft:empty for identifier.
+WARN [Json] upgrade items/seed_11.json | "minecraft:seed has been deprecated in format versions 1.16.100 and 1.17.0 and above. Use minecraft:block_placer instead"
+WARN [Json] upgrade items/seed_11.json | Final json version '1.19.20' raised warnings upgrading from document version '1.19.20'
+WARN [Json] upgrade items/seed_13.json | "minecraft:seed has been deprecated in format versions 1.16.100 and 1.17.0 and above. Use minecraft:block_placer instead"
+WARN [Json] upgrade items/seed_13.json | Final json version '1.19.40' raised warnings upgrading from document version '1.19.40'
+WARN [Json] upgrade items/seed_15.json | "minecraft:seed has been deprecated in format versions 1.16.100 and 1.17.0 and above. Use minecraft:block_placer instead"
+WARN [Json] upgrade items/seed_15.json | Final json version '1.19.50' raised warnings upgrading from document version '1.19.50'
+WARN [Json] upgrade items/seed_17.json | "minecraft:seed has been deprecated in format versions 1.16.100 and 1.17.0 and above. Use minecraft:block_placer instead"
+WARN [Json] upgrade items/seed_17.json | Final json version '1.19.60' raised warnings upgrading from document version '1.19.60'
+WARN [Json] upgrade items/seed_19.json | "minecraft:seed has been deprecated in format versions 1.16.100 and 1.17.0 and above. Use minecraft:block_placer instead"
+WARN [Json] upgrade items/seed_19.json | Final json version '1.19.80' raised warnings upgrading from document version '1.19.80'
+WARN [Json] upgrade items/seed_21.json | "minecraft:seed has been deprecated in format versions 1.16.100 and 1.17.0 and above. Use minecraft:block_placer instead"
+WARN [Json] upgrade items/seed_21.json | Final json version '1.20.0' raised warnings upgrading from document version '1.20.0'
+WARN [Json] upgrade items/seed_23.json | "minecraft:seed has been deprecated in format versions 1.16.100 and 1.17.0 and above. Use minecraft:block_placer instead"
+WARN [Json] upgrade items/seed_23.json | Final json version '1.20.10' raised warnings upgrading from document version '1.20.10'
+WARN [Json] upgrade items/seed_25.json | "minecraft:seed has been deprecated in format versions 1.16.100 and 1.17.0 and above. Use minecraft:block_placer instead"
+WARN [Json] upgrade items/seed_25.json | Final json version '1.20.20' raised warnings upgrading from document version '1.20.20'
+WARN [Json] upgrade items/seed_27.json | "minecraft:seed has been deprecated in format versions 1.16.100 and 1.17.0 and above. Use minecraft:block_placer instead"
+WARN [Json] upgrade items/seed_27.json | Final json version '1.20.30' raised warnings upgrading from document version '1.20.30'
+WARN [Json] upgrade items/seed_29.json | "minecraft:seed has been deprecated in format versions 1.16.100 and 1.17.0 and above. Use minecraft:block_placer instead"
+WARN [Json] upgrade items/seed_29.json | Final json version '1.20.40' raised warnings upgrading from document version '1.20.40'
+WARN [Json] upgrade items/seed_31.json | "minecraft:seed has been deprecated in format versions 1.16.100 and 1.17.0 and above. Use minecraft:block_placer instead"
+WARN [Json] upgrade items/seed_31.json | Final json version '1.20.50' raised warnings upgrading from document version '1.20.50'
+WARN [Json] upgrade items/seed_33.json | "minecraft:seed has been deprecated in format versions 1.16.100 and 1.17.0 and above. Use minecraft:block_placer instead"
+WARN [Json] upgrade items/seed_33.json | Final json version '1.20.60' raised warnings upgrading from document version '1.20.60'
+WARN [Json] upgrade items/seed_35.json | "minecraft:seed has been deprecated in format versions 1.16.100 and 1.17.0 and above. Use minecraft:block_placer instead"
+WARN [Json] upgrade items/seed_35.json | Final json version '1.20.80' raised warnings upgrading from document version '1.20.80'
+WARN [Json] upgrade items/seed_37.json | "minecraft:seed has been deprecated in format versions 1.16.100 and 1.17.0 and above. Use minecraft:block_placer instead"
+WARN [Json] upgrade items/seed_37.json | Final json version '1.21.0' raised warnings upgrading from document version '1.21.0'
+WARN [Json] upgrade items/seed_39.json | "minecraft:seed has been deprecated in format versions 1.16.100 and 1.17.0 and above. Use minecraft:block_placer instead"
+WARN [Json] upgrade items/seed_39.json | Final json version '1.21.10' raised warnings upgrading from document version '1.21.10'
+WARN [Json] upgrade items/seed_41.json | "minecraft:seed has been deprecated in format versions 1.16.100 and 1.17.0 and above. Use minecraft:block_placer instead"
+WARN [Json] upgrade items/seed_41.json | Final json version '1.21.20' raised warnings upgrading from document version '1.21.20'
+WARN [Json] upgrade items/seed_43.json | "minecraft:seed has been deprecated in format versions 1.16.100 and 1.17.0 and above. Use minecraft:block_placer instead"
+WARN [Json] upgrade items/seed_43.json | Final json version '1.21.30' raised warnings upgrading from document version '1.21.30'
+WARN [Json] upgrade items/seed_45.json | "minecraft:seed has been deprecated in format versions 1.16.100 and 1.17.0 and above. Use minecraft:block_placer instead"
+WARN [Json] upgrade items/seed_45.json | Final json version '1.21.40' raised warnings upgrading from document version '1.21.40'
+WARN [Json] upgrade items/seed_47.json | "minecraft:seed has been deprecated in format versions 1.16.100 and 1.17.0 and above. Use minecraft:block_placer instead"
+WARN [Json] upgrade items/seed_47.json | Final json version '1.21.50' raised warnings upgrading from document version '1.21.50'
+WARN [Json] upgrade items/seed_49.json | "minecraft:seed has been deprecated in format versions 1.16.100 and 1.17.0 and above. Use minecraft:block_placer instead"
+WARN [Json] upgrade items/seed_49.json | Final json version '1.21.60' raised warnings upgrading from document version '1.21.60'
+WARN [Json] upgrade items/seed_51.json | "minecraft:seed has been deprecated in format versions 1.16.100 and 1.17.0 and above. Use minecraft:block_placer instead"
+WARN [Json] upgrade items/seed_51.json | Final json version '1.21.70' raised warnings upgrading from document version '1.21.70'
+WARN [Json] upgrade items/seed_53.json | "minecraft:seed has been deprecated in format versions 1.16.100 and 1.17.0 and above. Use minecraft:block_placer instead"
+WARN [Json] upgrade items/seed_53.json | Final json version '1.21.80' raised warnings upgrading from document version '1.21.80'
+WARN [Json] upgrade items/seed_55.json | "minecraft:seed has been deprecated in format versions 1.16.100 and 1.17.0 and above. Use minecraft:block_placer instead"
+WARN [Json] upgrade items/seed_55.json | Final json version '1.21.90' raised warnings upgrading from document version '1.21.90'
+WARN [Json] upgrade items/seed_57.json | "minecraft:seed has been deprecated in format versions 1.16.100 and 1.17.0 and above. Use minecraft:block_placer instead"
+WARN [Json] upgrade items/seed_57.json | Final json version '1.21.100' raised warnings upgrading from document version '1.21.100'
+WARN [Json] upgrade items/seed_59.json | "minecraft:seed has been deprecated in format versions 1.16.100 and 1.17.0 and above. Use minecraft:block_placer instead"
+WARN [Json] upgrade items/seed_59.json | Final json version '1.21.110' raised warnings upgrading from document version '1.21.110'
+WARN [Json] upgrade items/seed_61.json | "minecraft:seed has been deprecated in format versions 1.16.100 and 1.17.0 and above. Use minecraft:block_placer instead"
+WARN [Json] upgrade items/seed_61.json | Final json version '1.21.120' raised warnings upgrading from document version '1.21.120'
+WARN [Json] upgrade items/seed_63.json | "minecraft:seed has been deprecated in format versions 1.16.100 and 1.17.0 and above. Use minecraft:block_placer instead"
+WARN [Json] upgrade items/seed_63.json | Final json version '1.21.130' raised warnings upgrading from document version '1.21.130'
+WARN [Json] upgrade items/seed_65.json | "minecraft:seed has been deprecated in format versions 1.16.100 and 1.17.0 and above. Use minecraft:block_placer instead"
+WARN [Json] upgrade items/seed_65.json | Final json version '1.26.0' raised warnings upgrading from document version '1.26.0'
+WARN [Json] upgrade items/seed_67.json | "minecraft:seed has been deprecated in format versions 1.16.100 and 1.17.0 and above. Use minecraft:block_placer instead"
+WARN [Json] upgrade items/seed_67.json | Final json version '1.26.10' raised warnings upgrading from document version '1.26.10'
+WARN [Json] upgrade items/seed_69.json | "minecraft:seed has been deprecated in format versions 1.16.100 and 1.17.0 and above. Use minecraft:block_placer instead"
+WARN [Json] upgrade items/seed_69.json | Final json version '1.26.20' raised warnings upgrading from document version '1.26.20'
+WARN [Json] upgrade items/seed_7.json | "minecraft:seed has been deprecated in format versions 1.16.100 and 1.17.0 and above. Use minecraft:block_placer instead"
+WARN [Json] upgrade items/seed_7.json | Final json version '1.18.10' raised warnings upgrading from document version '1.18.10'
+WARN [Json] upgrade items/seed_71.json | "minecraft:seed has been deprecated in format versions 1.16.100 and 1.17.0 and above. Use minecraft:block_placer instead"
+WARN [Json] upgrade items/seed_71.json | Final json version '1.26.30' raised warnings upgrading from document version '1.26.30'
+WARN [Json] upgrade items/seed_73.json | "minecraft:seed has been deprecated in format versions 1.16.100 and 1.17.0 and above. Use minecraft:block_placer instead"
+WARN [Json] upgrade items/seed_73.json | Final json version '1.26.36' raised warnings upgrading from document version '1.26.36'
+WARN [Json] upgrade items/seed_9.json | "minecraft:seed has been deprecated in format versions 1.16.100 and 1.17.0 and above. Use minecraft:block_placer instead"
+WARN [Json] upgrade items/seed_9.json | Final json version '1.19.10' raised warnings upgrading from document version '1.19.10'
+WARN [Item] "minecraft:block_placer": Item identifier paletter:block_placer_10 does not match the block identifier minecraft:dirt. Cannot replace the block item.
+WARN [Item] "minecraft:block_placer": Item identifier paletter:block_placer_11 does not match the block identifier minecraft:dirt. Cannot replace the block item.
+WARN [Item] "minecraft:block_placer": Item identifier paletter:block_placer_9 does not match the block identifier minecraft:dirt. Cannot replace the block item.
+ERROR [Item]  Error Parsing Item 'paletter:bundle_interaction_1':
+ERROR [Item] The "minecraft:storage_item" component requires a "minecraft:max_stack_size" component set to 1.
+ERROR [Item] minecraft:chargeable has been deprecated and is not available in json format 1.21.0
+ERROR [Item] minecraft:chargeable has been deprecated and is not available in json format 1.21.10
+ERROR [Item] minecraft:chargeable has been deprecated and is not available in json format 1.21.20
+ERROR [Item] minecraft:chargeable has been deprecated and is not available in json format 1.21.30
+ERROR [Item] minecraft:chargeable has been deprecated and is not available in json format 1.21.40
+ERROR [Item] minecraft:chargeable has been deprecated and is not available in json format 1.21.50
+ERROR [Item] minecraft:chargeable has been deprecated and is not available in json format 1.21.60
+ERROR [Item] minecraft:chargeable has been deprecated and is not available in json format 1.21.70
+ERROR [Item] minecraft:chargeable has been deprecated and is not available in json format 1.21.80
+ERROR [Item] minecraft:chargeable has been deprecated and is not available in json format 1.21.90
+ERROR [Item] minecraft:chargeable has been deprecated and is not available in json format 1.21.100
+ERROR [Item] minecraft:chargeable has been deprecated and is not available in json format 1.21.110
+ERROR [Item] minecraft:chargeable has been deprecated and is not available in json format 1.21.120
+ERROR [Item] minecraft:chargeable has been deprecated and is not available in json format 1.21.130
+ERROR [Item] minecraft:chargeable has been deprecated and is not available in json format 1.26.0
+ERROR [Item] minecraft:chargeable has been deprecated and is not available in json format 1.26.10
+ERROR [Item] minecraft:chargeable has been deprecated and is not available in json format 1.26.20
+ERROR [Item]  Error Parsing Item 'paletter:chargeable_45':
+ERROR [Item]  Failed to parse field ' -> components -> minecraft:chargeable: this component was found in the input, but is not present in the Schema'
+ERROR [Item]  Error Parsing Item 'paletter:chargeable_47':
+ERROR [Item]  Failed to parse field ' -> components -> minecraft:chargeable: this component was found in the input, but is not present in the Schema'
+ERROR [Item] minecraft:chargeable has been deprecated and is not available in json format 1.20.50
+ERROR [Item] minecraft:chargeable has been deprecated and is not available in json format 1.20.60
+ERROR [Item] minecraft:chargeable has been deprecated and is not available in json format 1.20.80
+ERROR [Item]  Error Parsing Item 'paletter:custom_components_1':
+ERROR [Item]  Failed to parse field ' -> components -> minecraft:custom_components: expected an array'
+ERROR [Item]  Error Parsing Item 'paletter:custom_components_2':
+ERROR [Item]  Failed to parse field ' -> components -> minecraft:custom_components: expected an array'
+ERROR [Item]  Error Parsing Item 'paletter:custom_components_3':
+ERROR [Item]  Failed to parse field ' -> components -> minecraft:custom_components: expected an array'
+ERROR [Item]  Error Parsing Item 'paletter:custom_components_4':
+ERROR [Item]  Failed to parse field ' -> components -> minecraft:custom_components: expected an array'
+ERROR [Item]  Error Parsing Item 'paletter:custom_components_5':
+ERROR [Item]  Failed to parse field ' -> components -> minecraft:custom_components: member "minecraft:custom_components" is deprecated'
+ERROR [Item]  Error Parsing Item 'paletter:custom_components_6':
+ERROR [Item]  Failed to parse field ' -> components -> minecraft:custom_components: this component was found in the input, but is not present in the Schema'
+WARN [Item] The "minecraft:food" component requires "minecraft:use_duration > use_duration" to be set with a non-zero value.
+WARN [Item] paletter:icon_10 -> components -> minecraft:icon -> texture: this member was found in the input, but is not present in the Schema
+WARN [Item] paletter:icon_11 -> components -> minecraft:icon -> texture: this member was found in the input, but is not present in the Schema
+WARN [Item] paletter:icon_12 -> components -> minecraft:icon -> texture: this member was found in the input, but is not present in the Schema
+ERROR [Item]  Error Parsing Item 'paletter:icon_13':
+ERROR [Item]  Failed to parse field ' -> components -> minecraft:icon: invalid string'
+ERROR [Item]  Failed to parse field ' -> components -> minecraft:icon -> texture: this member was found in the input, but is not present in the Schema'
+ERROR [Item]  Error Parsing Item 'paletter:interact_button_2':
+ERROR [Item]  Failed to parse field ' -> components -> minecraft:interact_button: invalid numeric value'
+ERROR [Item]  Failed to parse field ' -> components -> minecraft:interact_button: invalid string'
+ERROR [Item]  Error Parsing Item 'paletter:interact_button_3':
+ERROR [Item]  Failed to parse field ' -> components -> minecraft:interact_button: invalid numeric value'
+ERROR [Item]  Failed to parse field ' -> components -> minecraft:interact_button: invalid string'
+ERROR [Item]  Error Parsing Item 'paletter:kinetic_weapon_1':
+ERROR [Item] The "minecraft:kinetic_weapon" component requires a "minecraft:use_modifiers" component.
+ERROR [Item]  Error Parsing Item 'paletter:record_1':
+ERROR [Item]  -> components -> minecraft:record -> sound_event: failed to copy/move from source type 'std::basic_string<char>' to destination type 'SharedTypes::Legacy::LevelSoundEvent'
+ERROR [Item] To use item 'paletter:render_offsets_10', use json format version 1.20.0 or higher
+ERROR [Item] minecraft:render_offsets has been deprecated and is not available in json format 1.21.60
+ERROR [Item] minecraft:render_offsets has been deprecated and is not available in json format 1.21.70
+ERROR [Item] minecraft:render_offsets has been deprecated and is not available in json format 1.21.70
+ERROR [Item] minecraft:render_offsets has been deprecated and is not available in json format 1.21.70
+ERROR [Item] minecraft:render_offsets has been deprecated and is not available in json format 1.21.80
+ERROR [Item] minecraft:render_offsets has been deprecated and is not available in json format 1.21.80
+ERROR [Item] minecraft:render_offsets has been deprecated and is not available in json format 1.21.80
+ERROR [Item] minecraft:render_offsets has been deprecated and is not available in json format 1.21.90
+ERROR [Item] To use item 'paletter:render_offsets_11', use json format version 1.20.0 or higher
+ERROR [Item] minecraft:render_offsets has been deprecated and is not available in json format 1.21.90
+ERROR [Item] minecraft:render_offsets has been deprecated and is not available in json format 1.21.90
+ERROR [Item] minecraft:render_offsets has been deprecated and is not available in json format 1.21.100
+ERROR [Item] minecraft:render_offsets has been deprecated and is not available in json format 1.21.100
+ERROR [Item] minecraft:render_offsets has been deprecated and is not available in json format 1.21.100
+ERROR [Item] minecraft:render_offsets has been deprecated and is not available in json format 1.21.110
+ERROR [Item] minecraft:render_offsets has been deprecated and is not available in json format 1.21.110
+ERROR [Item] To use item 'paletter:render_offsets_12', use json format version 1.20.0 or higher
+ERROR [Item] minecraft:render_offsets has been deprecated and is not available in json format 1.21.110
+ERROR [Item] minecraft:render_offsets has been deprecated and is not available in json format 1.21.120
+ERROR [Item] minecraft:render_offsets has been deprecated and is not available in json format 1.21.120
+ERROR [Item] minecraft:render_offsets has been deprecated and is not available in json format 1.21.120
+ERROR [Item] minecraft:render_offsets has been deprecated and is not available in json format 1.21.130
+ERROR [Item] minecraft:render_offsets has been deprecated and is not available in json format 1.21.130
+ERROR [Item] minecraft:render_offsets has been deprecated and is not available in json format 1.21.130
+ERROR [Item] minecraft:render_offsets has been deprecated and is not available in json format 1.26.0
+ERROR [Item] To use item 'paletter:render_offsets_13', use json format version 1.20.0 or higher
+ERROR [Item] minecraft:render_offsets has been deprecated and is not available in json format 1.26.0
+ERROR [Item] minecraft:render_offsets has been deprecated and is not available in json format 1.26.0
+ERROR [Item] minecraft:render_offsets has been deprecated and is not available in json format 1.26.10
+ERROR [Item] minecraft:render_offsets has been deprecated and is not available in json format 1.26.10
+ERROR [Item] minecraft:render_offsets has been deprecated and is not available in json format 1.26.10
+ERROR [Item] minecraft:render_offsets has been deprecated and is not available in json format 1.26.20
+ERROR [Item] minecraft:render_offsets has been deprecated and is not available in json format 1.26.20
+ERROR [Item] To use item 'paletter:render_offsets_14', use json format version 1.20.0 or higher
+ERROR [Item] minecraft:render_offsets has been deprecated and is not available in json format 1.26.20
+ERROR [Item]  Error Parsing Item 'paletter:render_offsets_141':
+ERROR [Item]  Failed to parse field ' -> components -> minecraft:render_offsets: this component was found in the input, but is not present in the Schema'
+ERROR [Item]  Error Parsing Item 'paletter:render_offsets_143':
+ERROR [Item]  Failed to parse field ' -> components -> minecraft:render_offsets: this component was found in the input, but is not present in the Schema'
+ERROR [Item]  Error Parsing Item 'paletter:render_offsets_144':
+ERROR [Item]  Failed to parse field ' -> components -> minecraft:render_offsets: this component was found in the input, but is not present in the Schema'
+ERROR [Item]  Error Parsing Item 'paletter:render_offsets_145':
+ERROR [Item]  Failed to parse field ' -> components -> minecraft:render_offsets: this component was found in the input, but is not present in the Schema'
+ERROR [Item]  Error Parsing Item 'paletter:render_offsets_147':
+ERROR [Item]  Failed to parse field ' -> components -> minecraft:render_offsets: this component was found in the input, but is not present in the Schema'
+ERROR [Item]  Error Parsing Item 'paletter:render_offsets_148':
+ERROR [Item]  Failed to parse field ' -> components -> minecraft:render_offsets: this component was found in the input, but is not present in the Schema'
+ERROR [Item] To use item 'paletter:render_offsets_15', use json format version 1.20.0 or higher
+ERROR [Item] To use item 'paletter:render_offsets_16', use json format version 1.20.0 or higher
+ERROR [Item] To use item 'paletter:render_offsets_17', use json format version 1.20.0 or higher
+ERROR [Item] To use item 'paletter:render_offsets_18', use json format version 1.20.0 or higher
+ERROR [Item] To use item 'paletter:render_offsets_19', use json format version 1.20.0 or higher
+ERROR [Item] To use item 'paletter:render_offsets_20', use json format version 1.20.0 or higher
+ERROR [Item] To use item 'paletter:render_offsets_21', use json format version 1.20.0 or higher
+ERROR [Item] To use item 'paletter:render_offsets_22', use json format version 1.20.0 or higher
+ERROR [Item] To use item 'paletter:render_offsets_23', use json format version 1.20.0 or higher
+ERROR [Item] To use item 'paletter:render_offsets_24', use json format version 1.20.0 or higher
+ERROR [Item] To use item 'paletter:render_offsets_25', use json format version 1.20.0 or higher
+ERROR [Item] To use item 'paletter:render_offsets_26', use json format version 1.20.0 or higher
+ERROR [Item] To use item 'paletter:render_offsets_27', use json format version 1.20.0 or higher
+ERROR [Item] To use item 'paletter:render_offsets_28', use json format version 1.20.0 or higher
+ERROR [Item] To use item 'paletter:render_offsets_29', use json format version 1.20.0 or higher
+ERROR [Item] To use item 'paletter:render_offsets_30', use json format version 1.20.0 or higher
+ERROR [Item] To use item 'paletter:render_offsets_31', use json format version 1.20.0 or higher
+ERROR [Item] To use item 'paletter:render_offsets_32', use json format version 1.20.0 or higher
+ERROR [Item] To use item 'paletter:render_offsets_33', use json format version 1.20.0 or higher
+ERROR [Item] To use item 'paletter:render_offsets_34', use json format version 1.20.0 or higher
+ERROR [Item] To use item 'paletter:render_offsets_35', use json format version 1.20.0 or higher
+ERROR [Item] To use item 'paletter:render_offsets_36', use json format version 1.20.0 or higher
+ERROR [Item] To use item 'paletter:render_offsets_37', use json format version 1.20.0 or higher
+ERROR [Item] To use item 'paletter:render_offsets_38', use json format version 1.20.0 or higher
+ERROR [Item] To use item 'paletter:render_offsets_39', use json format version 1.20.0 or higher
+ERROR [Item] To use item 'paletter:render_offsets_40', use json format version 1.20.0 or higher
+ERROR [Item] minecraft:render_offsets has been deprecated and is not available in json format 1.20.10
+ERROR [Item] minecraft:render_offsets has been deprecated and is not available in json format 1.20.10
+ERROR [Item] minecraft:render_offsets has been deprecated and is not available in json format 1.20.10
+ERROR [Item] minecraft:render_offsets has been deprecated and is not available in json format 1.20.20
+ERROR [Item] minecraft:render_offsets has been deprecated and is not available in json format 1.20.20
+ERROR [Item] minecraft:render_offsets has been deprecated and is not available in json format 1.20.20
+ERROR [Item] minecraft:render_offsets has been deprecated and is not available in json format 1.20.30
+ERROR [Item] minecraft:render_offsets has been deprecated and is not available in json format 1.20.30
+ERROR [Item] minecraft:render_offsets has been deprecated and is not available in json format 1.20.30
+ERROR [Item] minecraft:render_offsets has been deprecated and is not available in json format 1.20.40
+ERROR [Item] minecraft:render_offsets has been deprecated and is not available in json format 1.20.40
+ERROR [Item] minecraft:render_offsets has been deprecated and is not available in json format 1.20.40
+ERROR [Item] minecraft:render_offsets has been deprecated and is not available in json format 1.20.50
+ERROR [Item] minecraft:render_offsets has been deprecated and is not available in json format 1.20.50
+ERROR [Item] minecraft:render_offsets has been deprecated and is not available in json format 1.20.50
+ERROR [Item] minecraft:render_offsets has been deprecated and is not available in json format 1.20.60
+ERROR [Item] minecraft:render_offsets has been deprecated and is not available in json format 1.20.60
+ERROR [Item] minecraft:render_offsets has been deprecated and is not available in json format 1.20.60
+ERROR [Item] minecraft:render_offsets has been deprecated and is not available in json format 1.20.80
+ERROR [Item] minecraft:render_offsets has been deprecated and is not available in json format 1.20.80
+ERROR [Item] minecraft:render_offsets has been deprecated and is not available in json format 1.20.80
+ERROR [Item] minecraft:render_offsets has been deprecated and is not available in json format 1.21.0
+ERROR [Item] minecraft:render_offsets has been deprecated and is not available in json format 1.21.0
+ERROR [Item] minecraft:render_offsets has been deprecated and is not available in json format 1.21.0
+ERROR [Item] minecraft:render_offsets has been deprecated and is not available in json format 1.21.10
+ERROR [Item] minecraft:render_offsets has been deprecated and is not available in json format 1.21.10
+ERROR [Item] minecraft:render_offsets has been deprecated and is not available in json format 1.21.10
+ERROR [Item] minecraft:render_offsets has been deprecated and is not available in json format 1.21.20
+ERROR [Item] minecraft:render_offsets has been deprecated and is not available in json format 1.21.20
+ERROR [Item] minecraft:render_offsets has been deprecated and is not available in json format 1.21.20
+ERROR [Item] minecraft:render_offsets has been deprecated and is not available in json format 1.21.30
+ERROR [Item] minecraft:render_offsets has been deprecated and is not available in json format 1.21.30
+ERROR [Item] minecraft:render_offsets has been deprecated and is not available in json format 1.21.30
+ERROR [Item] minecraft:render_offsets has been deprecated and is not available in json format 1.21.40
+ERROR [Item] To use item 'paletter:render_offsets_9', use json format version 1.20.0 or higher
+ERROR [Item] minecraft:render_offsets has been deprecated and is not available in json format 1.21.40
+ERROR [Item] minecraft:render_offsets has been deprecated and is not available in json format 1.21.40
+ERROR [Item] minecraft:render_offsets has been deprecated and is not available in json format 1.21.50
+ERROR [Item] minecraft:render_offsets has been deprecated and is not available in json format 1.21.50
+ERROR [Item] minecraft:render_offsets has been deprecated and is not available in json format 1.21.50
+ERROR [Item] minecraft:render_offsets has been deprecated and is not available in json format 1.21.60
+ERROR [Item] minecraft:render_offsets has been deprecated and is not available in json format 1.21.60
+ERROR [Item] To use item 'paletter:seed_10', use json format version 1.20.0 or higher
+ERROR [Item] To use item 'paletter:seed_12', use json format version 1.20.0 or higher
+ERROR [Item] To use item 'paletter:seed_14', use json format version 1.20.0 or higher
+ERROR [Item] To use item 'paletter:seed_16', use json format version 1.20.0 or higher
+ERROR [Item] To use item 'paletter:seed_18', use json format version 1.20.0 or higher
+ERROR [Item] To use item 'paletter:seed_20', use json format version 1.20.0 or higher
+ERROR [Item] To use item 'paletter:seed_6', use json format version 1.20.0 or higher
+ERROR [Item] To use item 'paletter:seed_8', use json format version 1.20.0 or higher
+WARN [Item] The "minecraft:shooter" component requires "minecraft:use_duration > use_duration" to be set with a non-zero value.
+ERROR [Item]  Error Parsing Item 'paletter:storage_item_1':
+ERROR [Item] The "minecraft:storage_item" component requires a "minecraft:max_stack_size" component set to 1.
+ERROR [Item]  Error Parsing Item 'paletter:storage_item_2':
+ERROR [Item] The "minecraft:storage_item" component requires a "minecraft:max_stack_size" component set to 1.
+ERROR [Item]  Error Parsing Item 'paletter:storage_item_3':
+ERROR [Item] The "minecraft:storage_item" component requires a "minecraft:max_stack_size" component set to 1.
+ERROR [Item]  Error Parsing Item 'paletter:storage_weight_limit_1':
+ERROR [Item] The "minecraft:storage_item" component requires a "minecraft:max_stack_size" component set to 1.
+ERROR [Item] To use item 'paletter:use_duration_10', use json format version 1.20.0 or higher
+ERROR [Item] To use item 'paletter:use_duration_11', use json format version 1.20.0 or higher
+ERROR [Item] To use item 'paletter:use_duration_12', use json format version 1.20.0 or higher
+ERROR [Item] To use item 'paletter:use_duration_13', use json format version 1.20.0 or higher
+ERROR [Item] To use item 'paletter:use_duration_14', use json format version 1.20.0 or higher
+ERROR [Item] To use item 'paletter:use_duration_15', use json format version 1.20.0 or higher
+ERROR [Item] To use item 'paletter:use_duration_16', use json format version 1.20.0 or higher
+ERROR [Item] To use item 'paletter:use_duration_17', use json format version 1.20.0 or higher
+ERROR [Item] To use item 'paletter:use_duration_18', use json format version 1.20.0 or higher
+ERROR [Item] To use item 'paletter:use_duration_19', use json format version 1.20.0 or higher
+ERROR [Item] To use item 'paletter:use_duration_20', use json format version 1.20.0 or higher
+WARN [Item] paletter:use_duration_33 -> components -> minecraft:use_duration: this member was found in the input, but is not present in the Schema
+WARN [Item] paletter:use_duration_35 -> components -> minecraft:use_duration: this member was found in the input, but is not present in the Schema
+WARN [Item] paletter:use_duration_37 -> components -> minecraft:use_duration: this member was found in the input, but is not present in the Schema
+WARN [Item] paletter:use_duration_39 -> components -> minecraft:use_duration: this member was found in the input, but is not present in the Schema
+WARN [Item] paletter:use_duration_41 -> components -> minecraft:use_duration: this member was found in the input, but is not present in the Schema
+WARN [Item] paletter:use_duration_43 -> components -> minecraft:use_duration: this member was found in the input, but is not present in the Schema
+WARN [Item] paletter:use_duration_45 -> components -> minecraft:use_duration: this member was found in the input, but is not present in the Schema
+WARN [Item] paletter:use_duration_47 -> components -> minecraft:use_duration: this member was found in the input, but is not present in the Schema
+WARN [Item] paletter:use_duration_49 -> components -> minecraft:use_duration: this member was found in the input, but is not present in the Schema
+ERROR [Item] To use item 'paletter:use_duration_5', use json format version 1.20.0 or higher
+WARN [Item] paletter:use_duration_51 -> components -> minecraft:use_duration: this member was found in the input, but is not present in the Schema
+WARN [Item] paletter:use_duration_53 -> components -> minecraft:use_duration: this member was found in the input, but is not present in the Schema
+WARN [Item] paletter:use_duration_55 -> components -> minecraft:use_duration: this member was found in the input, but is not present in the Schema
+WARN [Item] paletter:use_duration_57 -> components -> minecraft:use_duration: this member was found in the input, but is not present in the Schema
+WARN [Item] paletter:use_duration_59 -> components -> minecraft:use_duration: this member was found in the input, but is not present in the Schema
+ERROR [Item] To use item 'paletter:use_duration_6', use json format version 1.20.0 or higher
+WARN [Item] paletter:use_duration_61 -> components -> minecraft:use_duration: this member was found in the input, but is not present in the Schema
+WARN [Item] paletter:use_duration_63 -> components -> minecraft:use_duration: this member was found in the input, but is not present in the Schema
+WARN [Item] paletter:use_duration_65 -> components -> minecraft:use_duration: this member was found in the input, but is not present in the Schema
+WARN [Item] paletter:use_duration_67 -> components -> minecraft:use_duration: this member was found in the input, but is not present in the Schema
+WARN [Item] paletter:use_duration_69 -> components -> minecraft:use_duration: this member was found in the input, but is not present in the Schema
+ERROR [Item] To use item 'paletter:use_duration_7', use json format version 1.20.0 or higher
+ERROR [Item]  Error Parsing Item 'paletter:use_duration_71':
+ERROR [Item]  Failed to parse field ' -> components -> minecraft:use_duration: this component was found in the input, but is not present in the Schema'
+ERROR [Item]  Error Parsing Item 'paletter:use_duration_73':
+ERROR [Item]  Failed to parse field ' -> components -> minecraft:use_duration: this component was found in the input, but is not present in the Schema'
+ERROR [Item] To use item 'paletter:use_duration_8', use json format version 1.20.0 or higher
+ERROR [Item] To use item 'paletter:use_duration_9', use json format version 1.20.0 or higher
+WARN [Item] paletter:use_modifiers_5 -> components -> minecraft:use_modifiers -> start_using: this member was found in the input, but is not present in the Schema
+ERROR [Item] To use item 'paletter:weapon_10', use json format version 1.20.0 or higher
+ERROR [Item] To use item 'paletter:weapon_11', use json format version 1.20.0 or higher
+ERROR [Item] To use item 'paletter:weapon_12', use json format version 1.20.0 or higher
+ERROR [Item] To use item 'paletter:weapon_13', use json format version 1.20.0 or higher
+ERROR [Item] To use item 'paletter:weapon_14', use json format version 1.20.0 or higher
+ERROR [Item] To use item 'paletter:weapon_15', use json format version 1.20.0 or higher
+ERROR [Item] To use item 'paletter:weapon_16', use json format version 1.20.0 or higher
+ERROR [Item] To use item 'paletter:weapon_17', use json format version 1.20.0 or higher
+ERROR [Item] To use item 'paletter:weapon_18', use json format version 1.20.0 or higher
+ERROR [Item] To use item 'paletter:weapon_19', use json format version 1.20.0 or higher
+ERROR [Item] To use item 'paletter:weapon_20', use json format version 1.20.0 or higher
+ERROR [Item] minecraft:weapon has been deprecated and is not available in json format 1.20.40
+ERROR [Item] minecraft:weapon has been deprecated and is not available in json format 1.20.50
+ERROR [Item] minecraft:weapon has been deprecated and is not available in json format 1.20.60
+ERROR [Item] minecraft:weapon has been deprecated and is not available in json format 1.20.80
+ERROR [Item] minecraft:weapon has been deprecated and is not available in json format 1.21.0
+ERROR [Item] minecraft:weapon has been deprecated and is not available in json format 1.21.10
+ERROR [Item] minecraft:weapon has been deprecated and is not available in json format 1.21.20
+ERROR [Item] minecraft:weapon has been deprecated and is not available in json format 1.21.30
+ERROR [Item] minecraft:weapon has been deprecated and is not available in json format 1.21.40
+ERROR [Item] minecraft:weapon has been deprecated and is not available in json format 1.21.50
+ERROR [Item] minecraft:weapon has been deprecated and is not available in json format 1.21.60
+ERROR [Item] To use item 'paletter:weapon_5', use json format version 1.20.0 or higher
+ERROR [Item] minecraft:weapon has been deprecated and is not available in json format 1.21.70
+ERROR [Item] minecraft:weapon has been deprecated and is not available in json format 1.21.80
+ERROR [Item] minecraft:weapon has been deprecated and is not available in json format 1.21.90
+ERROR [Item] minecraft:weapon has been deprecated and is not available in json format 1.21.100
+ERROR [Item] minecraft:weapon has been deprecated and is not available in json format 1.21.110
+ERROR [Item] To use item 'paletter:weapon_6', use json format version 1.20.0 or higher
+ERROR [Item] minecraft:weapon has been deprecated and is not available in json format 1.21.120
+ERROR [Item] minecraft:weapon has been deprecated and is not available in json format 1.21.130
+ERROR [Item] minecraft:weapon has been deprecated and is not available in json format 1.26.0
+ERROR [Item] minecraft:weapon has been deprecated and is not available in json format 1.26.10
+ERROR [Item] minecraft:weapon has been deprecated and is not available in json format 1.26.20
+ERROR [Item] To use item 'paletter:weapon_7', use json format version 1.20.0 or higher
+ERROR [Item]  Error Parsing Item 'paletter:weapon_71':
+ERROR [Item]  Failed to parse field ' -> components -> minecraft:weapon: this component was found in the input, but is not present in the Schema'
+ERROR [Item]  Error Parsing Item 'paletter:weapon_73':
+ERROR [Item]  Failed to parse field ' -> components -> minecraft:weapon: this component was found in the input, but is not present in the Schema'
+ERROR [Item] To use item 'paletter:weapon_8', use json format version 1.20.0 or higher
+ERROR [Item] To use item 'paletter:weapon_9', use json format version 1.20.0 or higher
+ERROR [Item]  Error Parsing Item 'paletter:seed_71':
+ERROR [Item]  Failed to parse field ' -> components -> minecraft:seed: this component was found in the input, but is not present in the Schema'
+ERROR [Item]  Error Parsing Item 'paletter:seed_73':
+ERROR [Item]  Failed to parse field ' -> components -> minecraft:seed: this component was found in the input, but is not present in the Schema'

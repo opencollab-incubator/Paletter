@@ -64,6 +64,16 @@ public final class RegisteredBlock {
     }
 
     /**
+     * A custom block with the state properties of the palette's version, which can lack states of its type (a trait value the
+     * version's client adds no well-defined states for, see {@code TraitStates}).
+     */
+    RegisteredBlock(String identifier, Origin origin, List<RegisteredBlockState> states, CustomBlock customBlock,
+                    @Nullable NbtMap propertyData, NbtMap defaultStateNbt, List<BlockProperty<?>> stateProperties) {
+        this(identifier, origin, states, customBlock, propertyData, defaultStateNbt);
+        this.properties = List.copyOf(stateProperties);
+    }
+
+    /**
      * Internal: the block identifier.
      *
      * @return the identifier, e.g. {@code minecraft:stone}
@@ -131,7 +141,7 @@ public final class RegisteredBlock {
      * Internal: the state properties of this block.
      *
      * @return the properties that make up the states. Vanilla: derived from the states, values in palette order;
-     * custom: the {@link CustomBlock#stateProperties()}
+     * custom: the {@link CustomBlock#stateProperties()} as the palette's version has them
      */
     public @NonNull List<BlockProperty<?>> stateProperties() {
         List<BlockProperty<?>> result = properties;

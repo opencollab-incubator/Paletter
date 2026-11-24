@@ -233,8 +233,17 @@ public final class PlacementDirection implements BlockTrait {
     public static final class BlocksToCornerWith {
         private final @Nullable String tags;
 
-        private BlocksToCornerWith(@Nullable String tags) {
+        private final @NonNull String name;
+
+        private final @NonNull Map<String, Integer> states;
+
+        private BlocksToCornerWith(@Nullable String tags, @NonNull String name,
+                @NonNull Map<String, Integer> states) {
+            Objects.requireNonNull(name, "PlacementDirection.BlocksToCornerWith.name");
+            states = Check.copy(states, "PlacementDirection.BlocksToCornerWith.states");
             this.tags = tags;
+            this.name = name;
+            this.states = states;
         }
 
         /**
@@ -246,21 +255,45 @@ public final class PlacementDirection implements BlockTrait {
             return tags;
         }
 
+        /**
+         * (bds-schema 26.70) BDS accepts this key; the creator docs do not list it. Add-on JSON {@code name}. Default:
+         * <code>""</code>.
+         *
+         * @return the value
+         */
+        public @NonNull String name() {
+            return name;
+        }
+
+        /**
+         * (bds-schema 26.70) BDS accepts this key; the creator docs do not list it. Add-on JSON {@code states}. Default:
+         * <code>&#123;&#125;</code>.
+         *
+         * @return the value
+         */
+        public @NonNull Map<String, Integer> states() {
+            return states;
+        }
+
         @Override
         public boolean equals(Object o) {
             return this == o || o instanceof BlocksToCornerWith other
-                    && Objects.equals(tags, other.tags);
+                    && Objects.equals(tags, other.tags)
+                    && Objects.equals(name, other.name)
+                    && Objects.equals(states, other.states);
         }
 
         @Override
         public int hashCode() {
             int h = Objects.hashCode(tags);
+            h = 31 * h + Objects.hashCode(name);
+            h = 31 * h + Objects.hashCode(states);
             return h;
         }
 
         @Override
         public String toString() {
-            return "BlocksToCornerWith[tags=" + tags + "]";
+            return "BlocksToCornerWith[tags=" + tags + ", name=" + name + ", states=" + states + "]";
         }
 
         /**
@@ -280,6 +313,8 @@ public final class PlacementDirection implements BlockTrait {
         public @NonNull Builder toBuilder() {
             Builder builder = new Builder();
             builder.tags = tags;
+            builder.name = name;
+            builder.states = states;
             return builder;
         }
 
@@ -288,6 +323,10 @@ public final class PlacementDirection implements BlockTrait {
          */
         public static final class Builder {
             private @Nullable String tags;
+
+            private @Nullable String name = "";
+
+            private @Nullable Map<String, Integer> states = Map.of();
 
             private Builder() {
             }
@@ -304,6 +343,30 @@ public final class PlacementDirection implements BlockTrait {
             }
 
             /**
+             * Sets {@code name}.
+             *
+             * @param name the value
+             * @return this builder
+             * @throws NullPointerException if the value is null
+             */
+            public @NonNull Builder name(@NonNull String name) {
+                this.name = Objects.requireNonNull(name, "PlacementDirection.BlocksToCornerWith.name");
+                return this;
+            }
+
+            /**
+             * Sets {@code states}.
+             *
+             * @param states the value
+             * @return this builder
+             * @throws NullPointerException if the value is null
+             */
+            public @NonNull Builder states(@NonNull Map<String, Integer> states) {
+                this.states = Objects.requireNonNull(states, "PlacementDirection.BlocksToCornerWith.states");
+                return this;
+            }
+
+            /**
              * Builds the value from the fields set and the defaults.
              *
              * @return the value
@@ -311,7 +374,7 @@ public final class PlacementDirection implements BlockTrait {
              * @throws IllegalArgumentException if a value is out of range
              */
             public @NonNull BlocksToCornerWith build() {
-                return new BlocksToCornerWith(tags);
+                return new BlocksToCornerWith(tags, name, states);
             }
         }
     }
@@ -337,7 +400,12 @@ public final class PlacementDirection implements BlockTrait {
          */
         public static final EnabledStates FACING_DIRECTION = new EnabledStates("minecraft:facing_direction");
 
-        private static final List<EnabledStates> KNOWN = List.of(CARDINAL_DIRECTION, CORNER_AND_CARDINAL_DIRECTION, FACING_DIRECTION);
+        /**
+         * {@code minecraft:sixteen_way_rotation}
+         */
+        public static final EnabledStates SIXTEEN_WAY_ROTATION = new EnabledStates("minecraft:sixteen_way_rotation");
+
+        private static final List<EnabledStates> KNOWN = List.of(CARDINAL_DIRECTION, CORNER_AND_CARDINAL_DIRECTION, FACING_DIRECTION, SIXTEEN_WAY_ROTATION);
 
         private static final Map<String, EnabledStates> BY_VALUE = Check.index(KNOWN, EnabledStates::value);
 

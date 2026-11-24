@@ -17,7 +17,8 @@ import org.checkerframework.checker.nullness.qual.Nullable;
  * obstruct_rain_accumulate_snow and none.
  * <p>
  * Add-on JSON: {@code "minecraft:precipitation_interactions"}.
- * The creator docs name the experiment Upcoming Creator Features for it (in some format versions); unverified against BDS.
+ * The creator docs name the experiment Upcoming Creator Features for it (in some format versions);
+ * BDS rejects it even with the experiments on in 26.30, 26.40, 26.50, 26.60, 1.26.70.24.
  *
  * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/blockreference/examples/blockcomponents/minecraftblock_precipitation_interactions?view=minecraft-bedrock-stable">Microsoft Learn: minecraft:precipitation_interactions</a>
  * @since 1.0.0
@@ -30,20 +31,20 @@ public final class PrecipitationInteractions implements BlockComponent {
      */
     public static final String NAME = "minecraft:precipitation_interactions";
 
-    private final @Nullable PrecipitationBehavior precipitationBehavior;
+    private final @NonNull PrecipitationBehavior precipitationBehavior;
 
-    private PrecipitationInteractions(@Nullable PrecipitationBehavior precipitationBehavior) {
+    private PrecipitationInteractions(@NonNull PrecipitationBehavior precipitationBehavior) {
+        Objects.requireNonNull(precipitationBehavior, "PrecipitationInteractions.precipitationBehavior");
         this.precipitationBehavior = precipitationBehavior;
     }
 
     /**
      * What behavior should the block have. Possible values: obrain, obstruct_rain_accumulate_snow, snowlogging, and
-     * none Add-on JSON {@code precipitation_behavior}. Optional (null: not set). The docs give the default
-     * "accumulate snow", which is not a value of this type; unset, BDS's behaviour applies.
+     * none Add-on JSON {@code precipitation_behavior}. Required.
      *
      * @return the value
      */
-    public @Nullable PrecipitationBehavior precipitationBehavior() {
+    public @NonNull PrecipitationBehavior precipitationBehavior() {
         return precipitationBehavior;
     }
 
@@ -70,7 +71,8 @@ public final class PrecipitationInteractions implements BlockComponent {
     }
 
     /**
-     * Creates a builder with every field at its default.
+     * Creates a builder with every optional field at its default; required fields must be set before
+     * {@code build()}.
      *
      * @return a builder with the defaults applied
      */
@@ -103,10 +105,11 @@ public final class PrecipitationInteractions implements BlockComponent {
          *
          * @param precipitationBehavior the value
          * @return this builder
+         * @throws NullPointerException if the value is null
          */
         public @NonNull Builder precipitationBehavior(
-                @Nullable PrecipitationBehavior precipitationBehavior) {
-            this.precipitationBehavior = precipitationBehavior;
+                @NonNull PrecipitationBehavior precipitationBehavior) {
+            this.precipitationBehavior = Objects.requireNonNull(precipitationBehavior, "PrecipitationInteractions.precipitationBehavior");
             return this;
         }
 
@@ -118,6 +121,9 @@ public final class PrecipitationInteractions implements BlockComponent {
          * @throws IllegalArgumentException if a value is out of range
          */
         public @NonNull PrecipitationInteractions build() {
+            if (precipitationBehavior == null) {
+                throw new IllegalStateException("PrecipitationInteractions.precipitationBehavior is required");
+            }
             return new PrecipitationInteractions(precipitationBehavior);
         }
     }

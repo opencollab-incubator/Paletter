@@ -250,16 +250,16 @@ public final class UseModifiers implements ItemComponent {
      */
     public static final class StartUsing {
         /**
-         * {@code always}
-         */
-        public static final StartUsing ALWAYS = new StartUsing("always");
-
-        /**
          * {@code if_first}
          */
         public static final StartUsing IF_FIRST = new StartUsing("if_first");
 
-        private static final List<StartUsing> KNOWN = List.of(ALWAYS, IF_FIRST);
+        /**
+         * {@code always}
+         */
+        public static final StartUsing ALWAYS = new StartUsing("always");
+
+        private static final List<StartUsing> KNOWN = List.of(IF_FIRST, ALWAYS);
 
         private static final Map<String, StartUsing> BY_VALUE = Check.index(KNOWN, StartUsing::value);
 

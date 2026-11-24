@@ -36,13 +36,15 @@ class BlockHashesTest {
     @Test
     void aBlockWithUnknownTraitStatesHasNoStatesNoDefaultHashAndNoDefault() {
         List<NbtMap> states = List.of(state("minecraft:dirt", Map.of()));
-        JsonObject known = CaptureWriter.customState(states, null);
+        JsonObject known = CaptureWriter.customState(states, null, null);
         assertEquals(1, known.get("states").getAsInt());
         assertTrue(known.has("defaultHash") && known.has("default"));
         assertFalse(known.has("traitStatesUnknown"));
-        JsonObject unknown = CaptureWriter.customState(states, Set.of("minecraft:x y"));
+        JsonObject unknown = CaptureWriter.customState(states, Set.of("minecraft:x y"), null);
         assertEquals(List.of("traitStatesUnknown"), List.copyOf(unknown.keySet()), "what is known to be wrong is omitted");
         assertEquals("minecraft:x y", unknown.getAsJsonArray("traitStatesUnknown").get(0).getAsString());
+        JsonObject unsupported = CaptureWriter.customState(states, null, Set.of("minecraft:x z"));
+        assertEquals(List.of("traitStatesUnsupported"), List.copyOf(unsupported.keySet()), "what is known to be wrong is omitted");
     }
 
     @Test
@@ -58,8 +60,47 @@ class BlockHashesTest {
      */
     @Test
     void customDefaultStatesAreTheOnesBdsSent() throws IOException {
+        Map<String, Set<String>> unsupported = customDefaultStatesAreTheOnesBdsSent(SPEC, 2225);
+        assertEquals(Map.of(), unsupported, "every enabled_states value is supported in 1.26.63.1");
+    }
+
+    /**
+     * BDS 1.26.36.1 (protocol 1001) lists minecraft:sixteen_way_rotation with duplicate values: the trait state table marks it
+     * unsupported there, so its blocks (the 8 placement_direction variants with it) are set apart, and every other block's
+     * default is the one BDS sent. From 26.40 (1.26.45.1, protocol 2169) on the value adds its states.
+     */
+    @Test
+    void sixteenWayRotationBlocksOf26_30AreSetApart() throws IOException {
+        Path spec = SPEC.getParent().resolveSibling("1.26.36.1").resolve("spec");
+        Map<String, Set<String>> unsupported = customDefaultStatesAreTheOnesBdsSent(spec, 1001);
+        assertEquals(8, unsupported.size(), unsupported.toString());
+        unsupported.forEach((block, values) -> {
+            assertTrue(block.startsWith("paletter:b_trait_placement_direction_"), block);
+            assertEquals(Set.of("minecraft:placement_direction minecraft:sixteen_way_rotation"), values, block);
+        });
+        assertTrue(dev.opencollab.paletter.internal.component.TraitStateTable.unsupported("minecraft:placement_direction",
+            "minecraft:sixteen_way_rotation", 1001).startsWith("BDS 1.26.36.1 lists minecraft:sixteen_way_rotation as [down, up,"));
+        assertEquals(null, dev.opencollab.paletter.internal.component.TraitStateTable.unsupported("minecraft:placement_direction",
+            "minecraft:sixteen_way_rotation", 2169));
+        // In 26.40 the same blocks have the states 0 to 15
+        NbtMap properties = NbtMap.builder().putList("traits", NbtType.COMPOUND, NbtMap.builder().putString("name", "minecraft:placement_direction")
+            .putCompound("enabled_states", NbtMap.builder().putByte("sixteen_way_rotation", (byte) 1).build()).build()).build();
+        assertEquals(16, BlockHashes.customStates("test:block", properties, 2169).size());
+        Set<String> unknown = new TreeSet<>();
+        Set<String> unsupportedHere = new TreeSet<>();
+        assertEquals(1, BlockHashes.customStates("test:block", properties, 1001, unknown, unsupportedHere).size());
+        assertEquals(Set.of("minecraft:placement_direction minecraft:sixteen_way_rotation"), unsupportedHere);
+    }
+
+    /**
+     * Every custom block of a spec capture BDS put in the creative inventory, the trait variants (every combination of
+     * {@code enabled_states}) among them: the first state the client derives is the default BDS sent the hash of.
+     *
+     * @return the blocks set apart for a value unsupported in the protocol, to those values
+     */
+    private static Map<String, Set<String>> customDefaultStatesAreTheOnesBdsSent(Path spec, int protocol) throws IOException {
         Map<String, Long> sent = new HashMap<>();
-        try (Reader reader = new InputStreamReader(new GZIPInputStream(Files.newInputStream(SPEC.resolve(SpecCapture.CREATIVE_ITEMS))), StandardCharsets.UTF_8)) {
+        try (Reader reader = new InputStreamReader(new GZIPInputStream(Files.newInputStream(spec.resolve(SpecCapture.CREATIVE_ITEMS))), StandardCharsets.UTF_8)) {
             for (JsonElement e : JsonParser.parseReader(reader).getAsJsonObject().getAsJsonArray("items")) {
                 JsonObject item = e.getAsJsonObject();
                 if (item.has("block_runtime_id")) {
@@ -70,17 +111,26 @@ class BlockHashesTest {
         // The pair chosen to collide: one of them has the next id, which HashCollisionCaptureTest checks
         List<String> colliding = Fixtures.read(SPEC.getParent().getParent().resolveSibling("model")).hashCollision();
         int traitBlocks = 0;
-        for (NbtMap block : Nbt.readGzip(SPEC.resolve("custom_block_properties.nbt")).getList("blocks", NbtType.COMPOUND)) {
+        Map<String, Set<String>> setApart = new java.util.TreeMap<>();
+        for (NbtMap block : Nbt.readGzip(spec.resolve("custom_block_properties.nbt")).getList("blocks", NbtType.COMPOUND)) {
             String name = block.getString("name");
             if (!sent.containsKey(name) || colliding.contains(name)) {
                 continue;
             }
-            List<NbtMap> states = BlockHashes.customStates(name, block.getCompound("properties"));
+            Set<String> unknown = new TreeSet<>();
+            Set<String> unsupported = new TreeSet<>();
+            List<NbtMap> states = BlockHashes.customStates(name, block.getCompound("properties"), protocol, unknown, unsupported);
+            assertEquals(Set.of(), unknown, name);
+            if (!unsupported.isEmpty()) {
+                setApart.put(name, unsupported);
+                continue;
+            }
             assertEquals(sent.get(name), Integer.toUnsignedLong(BlockHashes.hash(states.getFirst())), name);
             assertEquals(states.size(), states.stream().map(BlockHashes::hash).distinct().count(), name);
             traitBlocks += block.getCompound("properties").containsKey("traits") ? 1 : 0;
         }
         assertTrue(traitBlocks >= 7 + 3 + 1 + 1, "a block per combination of every trait's enabled_states: " + traitBlocks);
+        return setApart;
     }
 
     /**
@@ -99,7 +149,7 @@ class BlockHashesTest {
                     .putCompound("enabled_states", NbtMap.builder().putByte(value.substring(value.indexOf(':') + 1), (byte) 1).build()).build())
                     .build();
                 Set<String> unknown = new TreeSet<>();
-                List<NbtMap> states = BlockHashes.customStates("test:block", properties, unknown);
+                List<NbtMap> states = BlockHashes.customStates("test:block", properties, 2225, unknown, new TreeSet<>());
                 if (unknown.isEmpty()) {
                     assertTrue(states.size() > 1, trait + " " + value + " adds no state");
                 } else {

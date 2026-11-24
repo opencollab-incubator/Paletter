@@ -315,6 +315,7 @@ public final class RandomOffset implements BlockComponent {
 
         private Axis(@NonNull Range range, int steps) {
             Objects.requireNonNull(range, "RandomOffset.Axis.range");
+            Check.range("RandomOffset.Axis.steps", steps, 0.0, null);
             this.range = range;
             this.steps = steps;
         }
@@ -331,7 +332,7 @@ public final class RandomOffset implements BlockComponent {
 
         /**
          * The number of steps between the range. Specify 0 for all possible values between the range. Add-on JSON {@code
-         * steps}. Default: <code>0</code>.
+         * steps}. Default: <code>0</code>. At least 0 (docs).
          *
          * @return the value
          */

@@ -2,9 +2,6 @@
 // and the bundled palettes. Do not edit; see docs/data-pipeline.md.
 package dev.opencollab.paletter.internal.behaviour.vanilla;
 
-import static dev.opencollab.paletter.internal.behaviour.vanilla.BehaviourTables.*;
-import static dev.opencollab.paletter.internal.behaviour.vanilla.BehaviourTablesPart2.*;
-
 /**
  * What changed in 26.60 against 26.50, each change with the capture that decided it and the captures of the version that confirm it. SOURCE ONLY: no direct BDS capture decided the change, only a third-party dump; first coverage: nothing was known before; a block that is new or has other states says where its values come from. data/behaviour/REPORT.md lists what to check. (continued)
  */
@@ -13,92 +10,6 @@ final class BehaviourChanges26_60Part2 {
     }
 
     static void part8(Changes v) {
-        // first coverage, dampens_vibrations per state (1 of 16 states): BDS Script API dump 1.26.63.1
-        // first coverage, occludes_vibrations per state (1 of 16 states): BDS Script API dump 1.26.63.1
-        v.change("minecraft:weathered_copper_bars")
-                .dampensVibrations(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_1AB959)
-                .occludesVibrations(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_1AB959);
-        // collision_shape per state (32 of 32 states): BDS behaviour probe 1.26.63.1 (doors); CloudburstMC/Data 0021592 says otherwise
-        v.change("minecraft:weathered_copper_door")
-                .collisionShape(TABLE_DOOR_HINGE_BIT_CARDINAL_DIRECTION_OPEN_BIT_C89710);
-        // first coverage, dampens_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
-        // first coverage, occludes_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
-        v.change("minecraft:weathered_cut_copper_stairs")
-                .dampensVibrations("minecraft:corner", "inner_left", null, "inner_right", null,
-                        "none", false, "outer_left", null, "outer_right", null)
-                .occludesVibrations("minecraft:corner", "inner_left", null, "inner_right", null,
-                        "none", false, "outer_left", null, "outer_right", null);
-        // first coverage, climbable = true: BDS behaviour probe 1.26.63.1 (climbing)
-        // first coverage, dampens_vibrations per state (25 of 26 states): BDS Script API dump 1.26.63.1
-        // first coverage, occludes_vibrations per state (25 of 26 states): BDS Script API dump 1.26.63.1
-        v.change("minecraft:weeping_vines")
-                .climbable(true)
-                .dampensVibrations("weeping_vines_age", 0, null, 1, false, 2, false, 3, false,
-                        4, false, 5, false, 6, false, 7, false, 8, false, 9, false, 10, false,
-                        11, false, 12, false, 13, false, 14, false, 15, false, 16, false, 17, false,
-                        18, false, 19, false, 20, false, 21, false, 22, false, 23, false, 24, false,
-                        25, false)
-                .occludesVibrations("weeping_vines_age", 0, null, 1, false, 2, false, 3, false,
-                        4, false, 5, false, 6, false, 7, false, 8, false, 9, false, 10, false,
-                        11, false, 12, false, 13, false, 14, false, 15, false, 16, false, 17, false,
-                        18, false, 19, false, 20, false, 21, false, 22, false, 23, false, 24, false,
-                        25, false);
-        // first coverage, dampens_vibrations = true: BDS Script API dump 1.26.63.1
-        v.change("minecraft:white_carpet").dampensVibrations(true);
-        // first coverage, dampens_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
-        // first coverage, occludes_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
-        v.change("minecraft:white_concrete_stairs")
-                .dampensVibrations("minecraft:corner", "inner_left", null, "inner_right", null,
-                        "none", false, "outer_left", null, "outer_right", null)
-                .occludesVibrations("minecraft:corner", "inner_left", null, "inner_right", null,
-                        "none", false, "outer_left", null, "outer_right", null);
-        // first coverage, dampens_vibrations per state (1 of 16 states): BDS Script API dump 1.26.63.1
-        // first coverage, occludes_vibrations per state (1 of 16 states): BDS Script API dump 1.26.63.1
-        v.change("minecraft:white_stained_glass_pane")
-                .dampensVibrations(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_1AB959)
-                .occludesVibrations(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_1AB959);
-        // first coverage, dampens_vibrations = true: BDS Script API dump 1.26.63.1
-        // first coverage, occludes_vibrations = true: BDS Script API dump 1.26.63.1
-        v.change("minecraft:white_wool").dampensVibrations(true).occludesVibrations(true);
-        // first coverage, dampens_vibrations = true: BDS Script API dump 1.26.63.1
-        // first coverage, occludes_vibrations = true: BDS Script API dump 1.26.63.1
-        v.change("minecraft:white_wool_double_slab").dampensVibrations(true).occludesVibrations(true);
-        // first coverage, dampens_vibrations = true: BDS Script API dump 1.26.63.1
-        // first coverage, occludes_vibrations = true: BDS Script API dump 1.26.63.1
-        v.change("minecraft:white_wool_slab").dampensVibrations(true).occludesVibrations(true);
-        // first coverage, dampens_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
-        // first coverage, occludes_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
-        v.change("minecraft:white_wool_stairs")
-                .dampensVibrations("minecraft:corner", "inner_left", null, "inner_right", null,
-                        "none", true, "outer_left", null, "outer_right", null)
-                .occludesVibrations("minecraft:corner", "inner_left", null, "inner_right", null,
-                        "none", true, "outer_left", null, "outer_right", null);
-        // collision_shape per state (32 of 32 states): BDS behaviour probe 1.26.63.1 (doors); CloudburstMC/Data 0021592 says otherwise
-        v.change("minecraft:wooden_door")
-                .collisionShape(TABLE_DOOR_HINGE_BIT_CARDINAL_DIRECTION_OPEN_BIT_C89710);
-        // first coverage, dampens_vibrations = true: BDS Script API dump 1.26.63.1
-        v.change("minecraft:yellow_carpet").dampensVibrations(true);
-        // first coverage, dampens_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
-        // first coverage, occludes_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
-        v.change("minecraft:yellow_concrete_stairs")
-                .dampensVibrations("minecraft:corner", "inner_left", null, "inner_right", null,
-                        "none", false, "outer_left", null, "outer_right", null)
-                .occludesVibrations("minecraft:corner", "inner_left", null, "inner_right", null,
-                        "none", false, "outer_left", null, "outer_right", null);
-        // first coverage, dampens_vibrations per state (1 of 16 states): BDS Script API dump 1.26.63.1
-        // first coverage, occludes_vibrations per state (1 of 16 states): BDS Script API dump 1.26.63.1
-        v.change("minecraft:yellow_stained_glass_pane")
-                .dampensVibrations(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_1AB959)
-                .occludesVibrations(TABLE_CONNECTION_EAST_CONNECTION_NORTH_CONNECTION_SOUTH_CONNECTION_WEST_1AB959);
-        // first coverage, dampens_vibrations = true: BDS Script API dump 1.26.63.1
-        // first coverage, occludes_vibrations = true: BDS Script API dump 1.26.63.1
-        v.change("minecraft:yellow_wool").dampensVibrations(true).occludesVibrations(true);
-        // first coverage, dampens_vibrations = true: BDS Script API dump 1.26.63.1
-        // first coverage, occludes_vibrations = true: BDS Script API dump 1.26.63.1
-        v.change("minecraft:yellow_wool_double_slab").dampensVibrations(true).occludesVibrations(true);
-        // first coverage, dampens_vibrations = true: BDS Script API dump 1.26.63.1
-        // first coverage, occludes_vibrations = true: BDS Script API dump 1.26.63.1
-        v.change("minecraft:yellow_wool_slab").dampensVibrations(true).occludesVibrations(true);
         // first coverage, dampens_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
         // first coverage, occludes_vibrations per state (8 of 40 states): BDS Script API dump 1.26.63.1
         v.change("minecraft:yellow_wool_stairs")

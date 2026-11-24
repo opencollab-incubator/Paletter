@@ -3,6 +3,7 @@
   "bdsVersion": "1.26.70.24",
   "platform": "windows",
   "protocol": 2259,
+  "codecProtocol": 2225,
   "formatVersion": "1.26.60",
   "experimentChangesPacket": false
 }

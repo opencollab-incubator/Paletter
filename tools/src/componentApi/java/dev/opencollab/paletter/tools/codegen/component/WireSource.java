@@ -133,6 +133,11 @@ final class WireSource {
                 }
             }
             for (Map.Entry<String, JsonElement> leaf : window.getAsJsonObject("leaves").entrySet()) {
+                if (leaf.getKey().equals("molangVersion") && !model.molangVersions.isEmpty()) {
+                    // what the controls send is the main pack's: the pack's engine version decides (molangVersions)
+                    body.addStatement("out.put($S, $T.molangVersion(ctx.minEngineVersion()))", leaf.getKey(), ClassName.get(PKG, "ComponentIndex"));
+                    continue;
+                }
                 body.addStatement("out.put($S, $L)", leaf.getKey(), WireValues.literal(leaf.getValue().getAsString()));
             }
         }

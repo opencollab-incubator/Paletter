@@ -152,6 +152,16 @@ final class DataCommands {
         }
     }
 
+    @Command(name = "variant-names", description = "Writes data/model/variant_names.txt from the item variants of the committed Script API dumps "
+        + "(data/bds/*/dump.json.gz) of the bundled versions.")
+    static final class VariantNamesCommand extends Rooted implements Callable<Integer> {
+        @Override
+        public Integer call() throws Exception {
+            System.out.println("Variant names of " + dev.opencollab.paletter.tools.data.VariantNames.regenerate(root()));
+            return 0;
+        }
+    }
+
     @Command(name = "recipes-diff", description = "Diffs the recipe captures of two builds in data/bds (normalised: list layout, net ids and random UUIDs ignored). "
         + "Exits with 1 on any difference.")
     static final class RecipesDiffCommand extends Rooted implements Callable<Integer> {

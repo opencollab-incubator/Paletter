@@ -10,6 +10,23 @@ final class BehaviourBasePart8 {
     }
 
     static void part56(Changes v) {
+        v.item("minecraft:gunpowder");
+        v.item("minecraft:guster_banner_pattern").maxStackSize(1).weight(64);
+        v.item("minecraft:guster_pottery_sherd");
+        v.item("minecraft:hanging_roots").compostChance(30);
+        v.item("minecraft:happy_ghast_spawn_egg");
+        v.item("minecraft:hard_black_stained_glass").weightUnknown();
+        v.item("minecraft:hard_black_stained_glass_pane").weightUnknown();
+        v.item("minecraft:hard_blue_stained_glass").weightUnknown();
+        v.item("minecraft:hard_blue_stained_glass_pane").weightUnknown();
+        v.item("minecraft:hard_brown_stained_glass").weightUnknown();
+        v.item("minecraft:hard_brown_stained_glass_pane").weightUnknown();
+        v.item("minecraft:hard_cyan_stained_glass").weightUnknown();
+        v.item("minecraft:hard_cyan_stained_glass_pane").weightUnknown();
+        v.item("minecraft:hard_glass").weightUnknown();
+        v.item("minecraft:hard_glass_pane").weightUnknown();
+        v.item("minecraft:hard_gray_stained_glass").weightUnknown();
+        v.item("minecraft:hard_gray_stained_glass_pane").weightUnknown();
         v.item("minecraft:hard_green_stained_glass").weightUnknown();
         v.item("minecraft:hard_green_stained_glass_pane").weightUnknown();
         v.item("minecraft:hard_light_blue_stained_glass").weightUnknown();
@@ -53,6 +70,9 @@ final class BehaviourBasePart8 {
         v.item("minecraft:horn_coral_fan");
         v.item("minecraft:horn_coral_wall_fan").weightUnknown();
         v.item("minecraft:horse_spawn_egg");
+    }
+
+    static void part57(Changes v) {
         v.item("minecraft:host_armor_trim_smithing_template");
         v.item("minecraft:howl_pottery_sherd");
         v.item("minecraft:husk_spawn_egg");
@@ -75,9 +95,6 @@ final class BehaviourBasePart8 {
                 .attackDamage(5)
                 .enchantValue(14)
                 .weight(64);
-    }
-
-    static void part57(Changes v) {
         v.item("minecraft:iron_bars");
         v.item("minecraft:iron_block");
         v.item("minecraft:iron_boots")
@@ -168,6 +185,9 @@ final class BehaviourBasePart8 {
         v.item("minecraft:jungle_button").furnaceBurnDuration(100);
         v.item("minecraft:jungle_chest_boat").maxStackSize(1).furnaceBurnDuration(1200).weight(64);
         v.item("minecraft:jungle_door").furnaceBurnDuration(200);
+    }
+
+    static void part58(Changes v) {
         v.item("minecraft:jungle_double_slab").furnaceBurnDuration(300).weightUnknown();
         v.item("minecraft:jungle_fence").furnaceBurnDuration(300);
         v.item("minecraft:jungle_fence_gate").furnaceBurnDuration(300);
@@ -185,9 +205,6 @@ final class BehaviourBasePart8 {
         v.item("minecraft:jungle_trapdoor").furnaceBurnDuration(300);
         v.item("minecraft:jungle_wall_sign").furnaceBurnDuration(300).weightUnknown();
         v.item("minecraft:jungle_wood").furnaceBurnDuration(300);
-    }
-
-    static void part58(Changes v) {
         v.item("minecraft:kelp").compostChance(30);
         v.item("minecraft:lab_table").weightUnknown();
         v.item("minecraft:ladder").furnaceBurnDuration(300);
@@ -251,6 +268,9 @@ final class BehaviourBasePart8 {
         v.item("minecraft:light_blue_bundle").maxStackSize(1).weight(4);
         v.item("minecraft:light_blue_candle");
         v.item("minecraft:light_blue_candle_cake").weightUnknown();
+    }
+
+    static void part59(Changes v) {
         v.item("minecraft:light_blue_carpet");
         v.item("minecraft:light_blue_concrete");
         v.item("minecraft:light_blue_concrete_powder");
@@ -268,9 +288,6 @@ final class BehaviourBasePart8 {
         v.item("minecraft:light_gray_carpet");
         v.item("minecraft:light_gray_concrete");
         v.item("minecraft:light_gray_concrete_powder");
-    }
-
-    static void part59(Changes v) {
         v.item("minecraft:light_gray_dye").furnaceXpMultiplier(0.2f);
         v.item("minecraft:light_gray_harness").maxStackSize(1).weight(64);
         v.item("minecraft:light_gray_shulker_box").maxStackSize(1).weight(64);
@@ -319,6 +336,9 @@ final class BehaviourBasePart8 {
         v.item("minecraft:magenta_bundle").maxStackSize(1).weight(4);
         v.item("minecraft:magenta_candle");
         v.item("minecraft:magenta_candle_cake").weightUnknown();
+    }
+
+    static void part60(Changes v) {
         v.item("minecraft:magenta_carpet");
         v.item("minecraft:magenta_concrete");
         v.item("minecraft:magenta_concrete_powder");
@@ -336,9 +356,6 @@ final class BehaviourBasePart8 {
         v.item("minecraft:mangrove_boat").maxStackSize(1).furnaceBurnDuration(1200).weight(64);
         v.item("minecraft:mangrove_button").furnaceBurnDuration(100);
         v.item("minecraft:mangrove_chest_boat").maxStackSize(1).furnaceBurnDuration(1200).weight(64);
-    }
-
-    static void part60(Changes v) {
         v.item("minecraft:mangrove_door").furnaceBurnDuration(200);
         v.item("minecraft:mangrove_double_slab").furnaceBurnDuration(300).weightUnknown();
         v.item("minecraft:mangrove_fence").furnaceBurnDuration(300);
@@ -382,6 +399,9 @@ final class BehaviourBasePart8 {
         v.item("minecraft:mossy_stone_brick_double_slab").weightUnknown();
         v.item("minecraft:mossy_stone_brick_slab");
         v.item("minecraft:mossy_stone_brick_stairs");
+    }
+
+    static void part61(Changes v) {
         v.item("minecraft:mossy_stone_brick_wall");
         v.item("minecraft:mossy_stone_bricks");
         v.item("minecraft:mourner_pottery_sherd");
@@ -399,9 +419,6 @@ final class BehaviourBasePart8 {
         v.item("minecraft:music_disc_11").maxStackSize(1).weight(64);
         v.item("minecraft:music_disc_13").maxStackSize(1).weight(64);
         v.item("minecraft:music_disc_5").maxStackSize(1).weight(64);
-    }
-
-    static void part61(Changes v) {
         v.item("minecraft:music_disc_blocks").maxStackSize(1).weight(64);
         v.item("minecraft:music_disc_bounce").maxStackSize(1).weight(64);
         v.item("minecraft:music_disc_cat").maxStackSize(1).weight(64);
@@ -477,6 +494,9 @@ final class BehaviourBasePart8 {
                 .armorValue(19)
                 .toughness(3)
                 .weight(64);
+    }
+
+    static void part62(Changes v) {
         v.item("minecraft:netherite_ingot");
         v.item("minecraft:netherite_leggings")
                 .maxStackSize(1)
@@ -526,9 +546,6 @@ final class BehaviourBasePart8 {
         v.item("minecraft:noteblock").furnaceBurnDuration(300);
         v.item("minecraft:npc_spawn_egg").weightUnknown();
         v.item("minecraft:oak_boat").maxStackSize(1).furnaceBurnDuration(1200).weight(64);
-    }
-
-    static void part62(Changes v) {
         v.item("minecraft:oak_chest_boat").maxStackSize(1).furnaceBurnDuration(1200).weight(64);
         v.item("minecraft:oak_double_slab").furnaceBurnDuration(300).weightUnknown();
         v.item("minecraft:oak_fence").furnaceBurnDuration(300);
@@ -572,6 +589,9 @@ final class BehaviourBasePart8 {
         v.item("minecraft:oxidized_copper_chain");
         v.item("minecraft:oxidized_copper_chest");
         v.item("minecraft:oxidized_copper_door");
+    }
+
+    static void part63(Changes v) {
         v.item("minecraft:oxidized_copper_golem_statue");
         v.item("minecraft:oxidized_copper_grate");
         v.item("minecraft:oxidized_copper_lantern");
@@ -589,9 +609,6 @@ final class BehaviourBasePart8 {
         v.item("minecraft:pale_moss_carpet").compostChance(30);
         v.item("minecraft:pale_oak_boat").maxStackSize(1).furnaceBurnDuration(1200).weight(64);
         v.item("minecraft:pale_oak_button").furnaceBurnDuration(100);
-    }
-
-    static void part63(Changes v) {
         v.item("minecraft:pale_oak_chest_boat").maxStackSize(1).furnaceBurnDuration(1200).weight(64);
         v.item("minecraft:pale_oak_door").furnaceBurnDuration(200);
         v.item("minecraft:pale_oak_double_slab").furnaceBurnDuration(300).weightUnknown();
@@ -635,22 +652,5 @@ final class BehaviourBasePart8 {
         v.item("minecraft:pink_concrete_powder");
         v.item("minecraft:pink_dye").furnaceXpMultiplier(0.2f);
         v.item("minecraft:pink_glazed_terracotta");
-        v.item("minecraft:pink_harness").maxStackSize(1).weight(64);
-        v.item("minecraft:pink_petals").compostChance(65);
-        v.item("minecraft:pink_shulker_box").maxStackSize(1).weight(64);
-        v.item("minecraft:pink_stained_glass");
-        v.item("minecraft:pink_stained_glass_pane");
-        v.item("minecraft:pink_terracotta");
-        v.item("minecraft:pink_tulip").compostChance(65);
-        v.item("minecraft:pink_wool");
-        v.item("minecraft:piston");
-        v.item("minecraft:piston_arm_collision").weightUnknown();
-        v.item("minecraft:pitcher_crop").weightUnknown();
-        v.item("minecraft:pitcher_plant").compostChance(85);
-        v.item("minecraft:pitcher_pod").compostChance(30);
-        v.item("minecraft:planks").furnaceBurnDuration(300).weightUnknown();
-        v.item("minecraft:player_head");
-        v.item("minecraft:plenty_pottery_sherd");
-        v.item("minecraft:podzol");
     }
 }

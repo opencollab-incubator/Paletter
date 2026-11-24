@@ -83,6 +83,11 @@ final class SpecStage {
             copyRecursively(previous, committed);
             previous = committed;
         }
+        // The add-ons of an update leg are made from the schema of its own run: without one, the leg would capture a different
+        // add-on than the other legs (the committed schema can be older or from an older reader), so it fails
+        if (runs.schema == null) {
+            throw new IOException("the run extracted no BDS schema, so its add-ons cannot be made from it; see the BDS schema row");
+        }
         SpecCapture spec = new SpecCapture(ctx.root, specOptions, runs.schema);
         try {
             // Only the files whose bytes changed are repository changes: a capture identical to the committed one is none

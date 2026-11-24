@@ -23,7 +23,6 @@ import java.util.Map;
 import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
@@ -36,15 +35,6 @@ class CraftingDataConformanceTest {
     private static final Path ROOT = Path.of(System.getProperty("paletter.root", ".."));
     /** The first protocol with a list per recipe kind. */
     private static final int SPLIT_LISTS_FROM = 2168;
-    /**
-     * Versions whose committed capture is known to be stale: the 1.26.70.24 capture could not resolve the block states of
-     * the results that place the blocks new in 26.70 (it used 26.60's palette: they are only a {@code block_runtime_id}
-     * without a state, where the encoder, with the palette of 26.70, writes the state). The capture code is fixed, the
-     * committed file updates with the recapture. Until then these differences, and only these, are expected; the
-     * version fails the moment there are none, so this entry has to go with the recapture.
-     */
-    private static final Set<String> PENDING_RECAPTURE = Set.of("26.70");
-
     @TempDir
     Path directory;
 
@@ -88,14 +78,7 @@ class CraftingDataConformanceTest {
         assertEquals(capture.crafting().get("cleanRecipes"), actual.crafting().get("cleanRecipes"));
         Set<String> tagged = RecipeData.duplicateKeys(expected);
         List<String> differences = differences(RecipeData.normalize(expected, tagged), RecipeData.normalize(actual, tagged));
-        if (PENDING_RECAPTURE.contains(version.name())) {
-            assertFalse(differences.isEmpty(), "the capture of " + version + " is current: remove it from PENDING_RECAPTURE");
-            expected = withoutUnresolvedStates(expected);
-            List<String> others = differences(RecipeData.normalize(expected, tagged), RecipeData.normalize(actual, tagged));
-            assertTrue(others.isEmpty(), others.size() + " differences besides the stale capture, the first ones: " + others.subList(0, Math.min(10, others.size())));
-        } else {
-            assertTrue(differences.isEmpty(), differences.size() + " differences, the first ones: " + differences.subList(0, Math.min(10, differences.size())));
-        }
+        assertTrue(differences.isEmpty(), differences.size() + " differences, the first ones: " + differences.subList(0, Math.min(10, differences.size())));
         if (!legacy) {
             assertEquals(sequence(expected), sequence(actual), "the order of the recipes");
         }
@@ -105,22 +88,6 @@ class CraftingDataConformanceTest {
         for (var recipe : vanilla.recipes()) {
             assertEquals(netId++, data.netId(recipe), recipe.toString());
         }
-    }
-
-    /** The capture as a recapture with the palette of its version would not leave it: a result block without its state has no runtime id either. */
-    private static RecipeCapture.Recipes withoutUnresolvedStates(RecipeCapture.Recipes recipes) {
-        RecipeCapture.Recipes copy = new RecipeCapture.Recipes(recipes.crafting().deepCopy(), null);
-        RecipeData.each(copy, (kind, entry) -> {
-            if (entry.has("results")) {
-                for (var result : entry.getAsJsonArray("results")) {
-                    JsonObject json = result.getAsJsonObject();
-                    if (json.has("block_runtime_id") && !json.has("block_state_b64")) {
-                        json.remove("block_runtime_id");
-                    }
-                }
-            }
-        });
-        return copy;
     }
 
     private static List<String> differences(Map<String, Map<String, JsonObject>> expected, Map<String, Map<String, JsonObject>> actual) {

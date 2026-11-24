@@ -169,14 +169,9 @@ public final class Movable implements BlockComponent {
      */
     public static final class MovementType {
         /**
-         * {@code immovable}
+         * {@code push_pull}
          */
-        public static final MovementType IMMOVABLE = new MovementType("immovable");
-
-        /**
-         * {@code popped}
-         */
-        public static final MovementType POPPED = new MovementType("popped");
+        public static final MovementType PUSH_PULL = new MovementType("push_pull");
 
         /**
          * {@code push}
@@ -184,11 +179,16 @@ public final class Movable implements BlockComponent {
         public static final MovementType PUSH = new MovementType("push");
 
         /**
-         * {@code push_pull}
+         * {@code popped}
          */
-        public static final MovementType PUSH_PULL = new MovementType("push_pull");
+        public static final MovementType POPPED = new MovementType("popped");
 
-        private static final List<MovementType> KNOWN = List.of(IMMOVABLE, POPPED, PUSH, PUSH_PULL);
+        /**
+         * {@code immovable}
+         */
+        public static final MovementType IMMOVABLE = new MovementType("immovable");
+
+        private static final List<MovementType> KNOWN = List.of(PUSH_PULL, PUSH, POPPED, IMMOVABLE);
 
         private static final Map<String, MovementType> BY_VALUE = Check.index(KNOWN, MovementType::value);
 

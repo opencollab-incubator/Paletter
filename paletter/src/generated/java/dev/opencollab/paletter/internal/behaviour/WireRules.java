@@ -80,7 +80,7 @@ public final class WireRules {
         }
         if (key == BlockBehaviour.FRICTION) {
             // minecraft:friction (value form) -> minecraft:friction.value (identity): read back
-            // engine = 1.0 - component, measured by behaviour-probe (data/bds/1.26.63.1/behaviour-probe/capture.json friction.components)
+            // engine = 1.0 - component, measured by behaviour-probe (data/bds/1.26.70.24/behaviour-probe/capture.json friction.components)
             Float value = floatOf(properties.component("minecraft:friction"), "value");
             return value == null ? null : 1.0f - value;
         }
@@ -115,7 +115,7 @@ public final class WireRules {
             return intOf(properties.component("item_properties"), "use_duration");
         }
         if (key == ItemBehaviour.USE_ANIMATION) {
-            // minecraft:use_animation value -> item_properties.use_animation (table): the engine's item property, read as sent
+            // minecraft:use_animation value -> item_properties.use_animation (enum-table): the engine's item property, read as sent
             return intOf(properties.component("item_properties"), "use_animation");
         }
         return null;

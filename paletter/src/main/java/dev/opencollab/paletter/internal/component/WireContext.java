@@ -29,6 +29,7 @@ public final class WireContext {
     private final String source;
     private final String subject;
     private final Registry registry;
+    private final @Nullable String minEngineVersion;
 
     /**
      * Item and block lookups for descriptors.
@@ -42,23 +43,25 @@ public final class WireContext {
         @Nullable NbtMap blockStates(@NonNull String identifier);
     }
 
-    private WireContext(DataVersion version, PaletteReportBuilder report, String source, String subject, Registry registry) {
+    private WireContext(DataVersion version, PaletteReportBuilder report, String source, String subject, Registry registry,
+                        @Nullable String minEngineVersion) {
         this.version = version;
         this.report = report;
         this.source = source;
         this.subject = subject;
         this.registry = registry;
+        this.minEngineVersion = minEngineVersion;
     }
 
     public static @NonNull WireContext of(@NonNull VanillaData data, @NonNull PaletteReportBuilder report, @NonNull String source) {
         extrapolated(data.version(), report, source);
-        return new WireContext(data.version(), report, source, "", registry(data));
+        return new WireContext(data.version(), report, source, "", registry(data), null);
     }
 
     public static @NonNull WireContext of(@NonNull DataVersion version, @NonNull PaletteReportBuilder report, @NonNull String source,
                                           @NonNull Registry registry) {
         extrapolated(version, report, source);
-        return new WireContext(version, report, source, "", registry);
+        return new WireContext(version, report, source, "", registry, null);
     }
 
     /** A version newer than every capture gets the newest observed shape: said once per context, not silently. */
@@ -140,7 +143,20 @@ public final class WireContext {
      * @return a context for one item or block
      */
     public @NonNull WireContext subject(@NonNull String subject) {
-        return new WireContext(version, report, source, subject, registry);
+        return new WireContext(version, report, source, subject, registry, minEngineVersion);
+    }
+
+    /**
+     * @param minEngineVersion the {@code min_engine_version} of the pack the content is of (its layer's), null for the newest
+     * @return a context for the content of such a pack
+     */
+    public @NonNull WireContext minEngineVersion(@Nullable String minEngineVersion) {
+        return new WireContext(version, report, source, subject, registry, minEngineVersion);
+    }
+
+    /** @return the {@code min_engine_version} of the content's pack, null for the newest */
+    public @Nullable String minEngineVersion() {
+        return minEngineVersion;
     }
 
     public int protocol() {

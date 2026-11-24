@@ -17,7 +17,8 @@ import org.checkerframework.checker.nullness.qual.Nullable;
  * through. If this component is omitted, default values are used.
  * <p>
  * Add-on JSON: {@code "minecraft:collision_box"}.
- * The creator docs name the experiments Holiday Creator Features, Upcoming Creator Features for it (in some format versions); unverified against BDS.
+ * The creator docs name the experiments Holiday Creator Features, Upcoming Creator Features for it (in some format versions);
+ * BDS rejects it even with the experiments on in 26.30, 26.40, 26.50, 26.60, 1.26.70.24.
  * Unverified: the creator docs name experiment "Holiday Creator Features", which is in no capture.
  *
  * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/blockreference/examples/blockcomponents/minecraftblock_collision_box?view=minecraft-bedrock-stable">Microsoft Learn: minecraft:collision_box</a>
@@ -193,30 +194,34 @@ public final class CollisionBox implements BlockComponent {
      *
      */
     public static final class Entry {
-        private final @Nullable Vec3 origin;
+        private final @NonNull Vec3 origin;
 
-        private final @Nullable Vec3 size;
+        private final @NonNull Vec3 size;
 
-        private Entry(@Nullable Vec3 origin, @Nullable Vec3 size) {
+        private Entry(@NonNull Vec3 origin, @NonNull Vec3 size) {
+            Objects.requireNonNull(origin, "CollisionBox.Entry.origin");
+            Objects.requireNonNull(size, "CollisionBox.Entry.size");
             this.origin = origin;
             this.size = size;
         }
 
         /**
-         * Add-on JSON {@code origin}. Optional (null: not set).
+         * (bds-schema 26.70) BDS accepts this key; the creator docs do not list it. Add-on JSON {@code origin}. Default:
+         * <code>[-8.0,0.0,-8.0]</code>.
          *
          * @return the value
          */
-        public @Nullable Vec3 origin() {
+        public @NonNull Vec3 origin() {
             return origin;
         }
 
         /**
-         * Add-on JSON {@code size}. Optional (null: not set).
+         * (bds-schema 26.70) BDS accepts this key; the creator docs do not list it. Add-on JSON {@code size}. Default:
+         * <code>[16.0,16.0,16.0]</code>.
          *
          * @return the value
          */
-        public @Nullable Vec3 size() {
+        public @NonNull Vec3 size() {
             return size;
         }
 
@@ -264,9 +269,9 @@ public final class CollisionBox implements BlockComponent {
          * Builds {@link Entry}: defaults applied, required fields and ranges checked by {@link #build()}.
          */
         public static final class Builder {
-            private @Nullable Vec3 origin;
+            private @Nullable Vec3 origin = new Vec3(-8.0f, 0.0f, -8.0f);
 
-            private @Nullable Vec3 size;
+            private @Nullable Vec3 size = new Vec3(16.0f, 16.0f, 16.0f);
 
             private Builder() {
             }
@@ -276,9 +281,10 @@ public final class CollisionBox implements BlockComponent {
              *
              * @param origin the value
              * @return this builder
+             * @throws NullPointerException if the value is null
              */
-            public @NonNull Builder origin(@Nullable Vec3 origin) {
-                this.origin = origin;
+            public @NonNull Builder origin(@NonNull Vec3 origin) {
+                this.origin = Objects.requireNonNull(origin, "CollisionBox.Entry.origin");
                 return this;
             }
 
@@ -299,9 +305,10 @@ public final class CollisionBox implements BlockComponent {
              *
              * @param size the value
              * @return this builder
+             * @throws NullPointerException if the value is null
              */
-            public @NonNull Builder size(@Nullable Vec3 size) {
-                this.size = size;
+            public @NonNull Builder size(@NonNull Vec3 size) {
+                this.size = Objects.requireNonNull(size, "CollisionBox.Entry.size");
                 return this;
             }
 

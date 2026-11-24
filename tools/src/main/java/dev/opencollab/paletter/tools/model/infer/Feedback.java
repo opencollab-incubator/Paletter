@@ -173,10 +173,12 @@ public final class Feedback {
             return;
         }
         // a line that quotes what the variant gives its own field is about that value ("Bad expression: +1, for bone visibilities
-        // of bone bone_a of geometry geometry.paletter_cube"), wherever it says the value sits
+        // of bone bone_a of geometry geometry.paletter_cube"), wherever it says the value sits; the value as the message writes
+        // it ("q.block_state('paletter:flag')" is "q.block_state(<id>)")
         JsonElement varied = variant.path().isEmpty() ? variant.json() : SpecCaptures.jsonAt(variant.json(), variant.path());
         List<String> ownValues = new ArrayList<>();
         leaves(varied, ownValues);
+        ownValues.replaceAll(SpecCaptures::anonymised);
         boolean aboutOwnValue = ownValues.stream().anyMatch(value -> !value.isBlank()
             && Pattern.compile("(?<![\\w.:])" + Pattern.quote(value) + "(?![\\w:])").matcher(message).find());
         for (String other : aboutOwnValue ? List.<String>of() : quoted(variant.json(), variant.path(), message)) {

@@ -190,8 +190,12 @@ class BehaviourTest {
         String sword = behaviour.explain(diamondSword, ItemBehaviour.ATTACK_DAMAGE);
         assertTrue(sword.contains("(ALLAY_DATA, third party)") && sword.endsWith("inherited by " + LATEST.name()), sword);
 
-        String door = PALETTER.vanilla(PALETTER.versions().getFirst()).resolve(BedrockBlocks.IRON_DOOR.defaultState()).behaviour().explain(BlockBehaviour.COLLISION_SHAPE);
-        assertTrue(door.contains("; post-processed: ") && door.contains("; disputed: ") && door.contains("(ALLAY_DATA)"), door);
+        // the probe measured the collision of a door in every version, and composed the box; the outline stays the dumps', disputed
+        var oldestDoor = PALETTER.vanilla(PALETTER.versions().getFirst()).resolve(BedrockBlocks.IRON_DOOR.defaultState()).behaviour();
+        String door = oldestDoor.explain(BlockBehaviour.COLLISION_SHAPE);
+        assertTrue(door.contains("(BDS_PROBE)") && door.contains("; post-processed: composed: "), door);
+        String outline = oldestDoor.explain(BlockBehaviour.OUTLINE_SHAPE);
+        assertTrue(outline.contains("; disputed: ") && outline.contains("(ALLAY_DATA)"), outline);
 
         CustomBlock plain = CustomBlock.builder("test:plain").build();
         Palette custom = palette.extend(PaletteLayer.builder("test").block(plain).build());
@@ -283,35 +287,7 @@ class BehaviourTest {
         assertTrue(Provenance.Source.BDS_PROBE.ordinal() < Provenance.Source.CLOUDBURST_DATA.ordinal(), "the probe is direct BDS evidence");
     }
 
-    @Test
-    void doorsAreDisputedAndPostProcessedInEveryVersionTheProbeDidNotMeasure() {
-        for (DataVersion version : PALETTER.versions()) {
-            if (version.equals(LATEST)) {
-                continue; // measured: doorsAreWhereTheProbeMeasuredThem
-            }
-            Palette palette = PALETTER.vanilla(version);
-            boolean disputed = false;
-            for (RegisteredBlockState state : palette.blocks().states("minecraft:iron_door")) {
-                Provenance provenance = palette.behaviour().provenance(state, BlockBehaviour.COLLISION_SHAPE);
-                assertEquals(Provenance.Source.CLOUDBURST_DATA, provenance.source(), version.name());
-                assertTrue(provenance.postProcessed(), version.name());
-                assertTrue(provenance.postProcessing().contains("door_state_correction"), provenance.postProcessing());
-                if (provenance.disputed()) {
-                    disputed = true;
-                    Provenance.Alternative alternative = provenance.alternatives().getFirst();
-                    assertEquals(Provenance.Source.ALLAY_DATA, alternative.source());
-                    assertTrue(alternative.value() instanceof BlockShape);
-                    assertTrue(!alternative.value().equals(palette.resolveBlock(state.getRuntimeId()).behaviour().get(BlockBehaviour.COLLISION_SHAPE)));
-                }
-            }
-            assertTrue(disputed, "doors are disputed in " + version.name());
-            Provenance stone = palette.behaviour().provenance(palette.blockDefinition(BedrockBlocks.STONE.defaultState()), BlockBehaviour.COLLISION_SHAPE);
-            assertFalse(stone.disputed());
-            assertFalse(stone.postProcessed());
-        }
-    }
-
-    /** Where a door's panel is, by what the probe measured on BDS 1.26.63.1: the 0.1825 thick panel in every state. */
+    /** Where a door's panel is, by what the probe measured on BDS 1.26.36.1 to 1.26.70.24: the 0.1825 thick panel in every state. */
     private static BlockShape probedPanel(String direction, boolean open, boolean hinge) {
         float high = 1 - 0.1825f;
         float low = 0.1825f;
@@ -325,8 +301,13 @@ class BehaviourTest {
     }
 
     @Test
-    void doorsAreWhereTheProbeMeasuredThem() {
-        Palette palette = latest();
+    void doorsAreWhereTheProbeMeasuredThemInEveryVersion() {
+        for (DataVersion version : PALETTER.versions()) {
+            doorsAreWhereTheProbeMeasuredThem(PALETTER.vanilla(version));
+        }
+    }
+
+    private static void doorsAreWhereTheProbeMeasuredThem(Palette palette) {
         int checked = 0;
         for (String door : List.of("minecraft:wooden_door", "minecraft:iron_door", "minecraft:copper_door", "minecraft:crimson_door")) {
             for (RegisteredBlockState state : palette.blocks().states(door)) {
@@ -357,8 +338,9 @@ class BehaviourTest {
         RegisteredBlockState door = newest.blocks().states("minecraft:iron_door").getFirst();
         assertSame(door, oldest.resolveBlock(door.getRuntimeId()).behaviour().state());
         assertNotEquals(newest.resolveBlock(door.getRuntimeId()).behaviour(), oldest.resolveBlock(door.getRuntimeId()).behaviour());
-        assertFalse(newest.resolveBlock(door.getRuntimeId()).behaviour().get(BlockBehaviour.COLLISION_SHAPE)
-            .equals(oldest.resolveBlock(door.getRuntimeId()).behaviour().get(BlockBehaviour.COLLISION_SHAPE)), "measured in the newest version only");
+        // every version has its own probe capture (the recapture of 2026-11-23): the value of each comes from its own build
+        assertNotEquals(newest.behaviour().provenance(door, BlockBehaviour.COLLISION_SHAPE).captured(),
+            oldest.behaviour().provenance(door, BlockBehaviour.COLLISION_SHAPE).captured(), "measured by the probe of each version");
     }
 
     /** @return {@code data/bds/<build>/behaviour-probe} of the newest build that has one */

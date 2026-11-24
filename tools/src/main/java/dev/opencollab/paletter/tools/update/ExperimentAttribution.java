@@ -31,14 +31,16 @@ public final class ExperimentAttribution {
      * @param blocksAdded blocks the Script API ({@code BlockTypes}) only lists with the toggles
      * @param dataDrivenBlocks blocks whose start game block properties are new or changed
      * @param creativeAdded creative stacks only sent with the toggles, as {@code id} or {@code id:damage}
+     * @param creativeWithoutBlock the items of {@code creativeAdded} none of whose stacks carries a block (doors, signs, beds:
+     *                             BDS sends such an item without one, although it places one)
      * @param removed anything that is gone with the toggles, prefixed with its kind
      */
     record Diff(List<String> itemsAdded, List<String> itemsChanged, List<String> scriptItemsAdded, List<String> blocksAdded,
-                List<String> dataDrivenBlocks, List<String> creativeAdded, List<String> removed) {
+                List<String> dataDrivenBlocks, List<String> creativeAdded, List<String> creativeWithoutBlock, List<String> removed) {
 
         boolean isEmpty() {
             return itemsAdded.isEmpty() && itemsChanged.isEmpty() && scriptItemsAdded.isEmpty() && blocksAdded.isEmpty()
-                && dataDrivenBlocks.isEmpty() && creativeAdded.isEmpty() && removed.isEmpty();
+                && dataDrivenBlocks.isEmpty() && creativeAdded.isEmpty() && creativeWithoutBlock.isEmpty() && removed.isEmpty();
         }
 
         /** What goes into the bundle: every item and block the toggles add or turn on. */
@@ -54,7 +56,7 @@ public final class ExperimentAttribution {
             }
             Set<String> blocks = new TreeSet<>(blocksAdded);
             blocks.addAll(dataDrivenBlocks);
-            return new ExperimentContent(List.copyOf(items), List.copyOf(blocks), creativeAdded);
+            return new ExperimentContent(List.copyOf(items), List.copyOf(blocks), creativeAdded, creativeWithoutBlock);
         }
 
         List<String> lines() {
@@ -65,6 +67,7 @@ public final class ExperimentAttribution {
             add(lines, "Script API blocks added", blocksAdded);
             add(lines, "data driven blocks new or changed", dataDrivenBlocks);
             add(lines, "creative stacks added", creativeAdded);
+            add(lines, "of those, items sent without a block", creativeWithoutBlock);
             add(lines, "removed", removed);
             return lines;
         }
@@ -116,9 +119,15 @@ public final class ExperimentAttribution {
         Set<String> creativeAfter = creativeKeys(with);
         List<String> creativeAdded = creativeAfter.stream().filter(key -> !creativeBefore.contains(key)).toList();
         creativeBefore.stream().filter(key -> !creativeAfter.contains(key)).forEach(key -> removed.add("creative " + key));
+        Set<String> withoutBlock = new TreeSet<>();
+        with.creative().stacks().forEach(stack -> {
+            if (creativeAdded.contains(key(stack)) && !with.creativeWithBlock().contains(stack.identifier())) {
+                withoutBlock.add(stack.identifier());
+            }
+        });
 
         return new Diff(sorted(itemsAdded), sorted(itemsChanged), sorted(scriptItems), sorted(blocks), sorted(dataDriven),
-            creativeAdded, sorted(removed));
+            creativeAdded, List.copyOf(withoutBlock), sorted(removed));
     }
 
     /**
@@ -176,6 +185,7 @@ public final class ExperimentAttribution {
         diff.blocksAdded().forEach(v -> entries.add("Script API block " + v));
         diff.dataDrivenBlocks().forEach(v -> entries.add("data driven block " + v));
         diff.creativeAdded().forEach(v -> entries.add("creative " + v));
+        diff.creativeWithoutBlock().forEach(v -> entries.add("creative without a block " + v));
         diff.removed().forEach(v -> entries.add("removed " + v));
         return entries;
     }

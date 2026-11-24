@@ -51,11 +51,13 @@ final class OldFormats {
             if (!successors.isEmpty()) {
                 return verified.containsAll(successors) ? REPLACED : null;
             }
-            if (entries.stream().anyMatch(e -> e.has("legacyEnvelope"))) {
-                return OLD_STYLE_ITEM;
-            }
+            // Nothing of it on the wire at any format, inside an old-style envelope or not: it reaches no client (explosion_resistance and
+            // weapon in the format sweep of the recapture)
             if (entries.stream().allMatch(e -> e.getAsJsonArray("wire").isEmpty())) {
                 return SERVER_ONLY;
+            }
+            if (entries.stream().anyMatch(e -> e.has("legacyEnvelope"))) {
+                return OLD_STYLE_ITEM;
             }
             return null;
         }

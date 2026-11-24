@@ -19,7 +19,8 @@ import org.checkerframework.checker.nullness.qual.Nullable;
  * "Upcoming Creator Features" and Minecraft version 1.21.130.
  * <p>
  * Add-on JSON: {@code "minecraft:connection"}.
- * The creator docs name the experiment Upcoming Creator Features for it (in some format versions); unverified against BDS.
+ * The creator docs name the experiment Upcoming Creator Features for it (in some format versions);
+ * BDS takes it without any experiment in 26.30, 26.40, 26.50, 26.60, 26.70: the docs' gating does not hold there.
  *
  * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/blockreference/examples/traits/connection?view=minecraft-bedrock-stable">Microsoft Learn: minecraft:connection</a>
  * @since 1.0.0

@@ -22,8 +22,8 @@ import java.util.TreeSet;
  * {@code identity} rule); the encoder of the owner writes it with {@code WireNode.own}, the others with
  * {@code putUnowned}, which keeps the owner's value whatever the order.
  * <p>
- * Unverified: no capture has the owner together with another writer, so which value BDS keeps is not known; the owner's is
- * the one kept. TODO(recapture): capture the combinations (docs/data-pipeline.md, "Recapture to-do") and follow BDS.
+ * BDS keeps the owner's value as well: max_stack_size and allow_off_hand over wearable's slot table, in both orders of the file
+ * (item_properties of the combination variants of the spec captures, 1.26.36.1 to 1.26.70.24).
  */
 final class SharedLeaves {
     private SharedLeaves() {

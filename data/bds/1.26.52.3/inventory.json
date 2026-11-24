@@ -5,7 +5,10 @@
     "BlockBlockEntityDescription": {
       "name": "minecraft:block_entity",
       "keys": [
-        "dynamic_properties"
+        "container",
+        "dynamic_properties",
+        "slot_count",
+        "title"
       ]
     },
     "BlockBreathabilityDescription": {
@@ -149,7 +152,9 @@
     },
     "BlockLeashableDescription": {
       "name": "minecraft:leashable",
-      "keys": []
+      "keys": [
+        "offset"
+      ]
     },
     "BlockLightDampeningDescription": {
       "name": "minecraft:light_dampening",
@@ -278,7 +283,9 @@
     },
     "BlockSoundDescription": {
       "name": "minecraft:sound",
-      "keys": []
+      "keys": [
+        "sound"
+      ]
     },
     "BlockSupportDescription": {
       "name": "minecraft:support",

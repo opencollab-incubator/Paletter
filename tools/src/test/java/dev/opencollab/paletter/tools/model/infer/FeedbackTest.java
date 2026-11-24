@@ -88,6 +88,14 @@ class FeedbackTest {
             + "for bone visibilities of bone bone_a of geometry geometry.paletter_cube",
             variant("bone_visibility", "{\"identifier\": \"geometry.paletter_cube\", \"uv_lock\": [\"bone_a\"], \"bone_visibility\": {\"bone_a\": \"+1\"}}"));
         assertEquals(1, expression.json().size(), "only the generated marker");
+        // also when the value names the add-on's own identifiers, which the message writes as <id> without apostrophes (a
+        // version BDS calls bad, 1.26.36.1 to 1.26.70.24)
+        Feedback versioned = new Feedback();
+        versioned.add("block", "ERROR [Components] block_definitions | behavior_packs/paletter_spec | blocks/b_geometry_1.json | Bad expression: "
+            + "q.block_state('paletter:flag'), for bone visibilities of bone bone_a of geometry geometry.paletter_cube",
+            variant("bone_visibility", "{\"identifier\": \"geometry.paletter_cube\", \"uv_lock\": [\"bone_a\"], \"bone_visibility\": "
+                + "{\"bone_a\": {\"expression\": \"q.block_state('paletter:flag')\", \"version\": 50}}}"));
+        assertEquals(1, versioned.json().size(), "only the generated marker");
         // a message that names no other field says nothing about one
         Feedback unnamed = new Feedback();
         unnamed.add("block", BLOCK + "minecraft:geometry: no geometry minecraft:geometry.full_block", variant("identifier",

@@ -403,22 +403,9 @@ final class WindowWire {
             JsonObject m = WireRules.mappingOf(window, f);
             String status = m == null ? "none" : m.get("status").getAsString();
             if (!status.equals("dropped")) {
-                if (!replacedByConstant(f, prefix)) {
-                    unmapped(f, null, var, m);
-                } else {
-                    replaced(f, var, prefix);
-                }
+                unmapped(f, null, var, m);
             }
         }
-    }
-
-    /**
-     * Whether the window sends a constant in the place of the field: the leaf the component's own compound has for it
-     * ({@code minecraft:enchantable.slot}), which an encoder writes whatever the field says. The value is replaced, not
-     * dropped, so the encoder reports it as changed.
-     */
-    private boolean replacedByConstant(Field f, String prefix) {
-        return prefix.isEmpty() && window.constants().keySet().stream().anyMatch(leaf -> strip(leaf).equals(c.name + "." + f.path));
     }
 
     /**
@@ -428,34 +415,6 @@ final class WindowWire {
      * @param var     the field's value (a local or the accessor call)
      * @param mapping the field's mapping in the window, or null
      */
-    /**
-     * The report of a field the window sends as a constant ({@link #replacedByConstant}): for a value other than the
-     * constant (a string field and a string constant: {@code slot("sword")} is no change), else for a value other than the
-     * default, else always.
-     * <p>
-     * TODO(recapture): {@code minecraft:enchantable.slot} is the one such field, with one accepted value captured
-     * (docs/data-pipeline.md, "Recapture to-do"); with its slots captured it becomes a value rule.
-     */
-    private void replaced(Field f, String var, String prefix) {
-        String constant = window.constants().entrySet().stream().filter(e -> strip(e.getKey()).equals(c.name + "." + f.path))
-            .map(Map.Entry::getValue).findFirst().orElseThrow();
-        java.util.regex.Matcher typed = Pattern.compile("^(.*) \\(string\\)$").matcher(constant);
-        CodeBlock condition = null;
-        if (f.type instanceof Scalar s && s.kind() == ScalarKind.STRING && typed.matches()) {
-            condition = CodeBlock.of("!$S.equals($L)", typed.group(1), var);
-        } else if (f.defaultValue != null) {
-            CodeBlock literal = ApiSource.literal(c, f.type, f.defaultValue);
-            condition = ApiSource.primitive(f) ? CodeBlock.of("$L != $L", var, literal) : CodeBlock.of("!$T.equals($L, $L)", Objects.class, var, literal);
-        }
-        if (condition != null) {
-            b.beginControlFlow("if ($L)", condition);
-        }
-        b.addStatement("ctx.changed($L, $S)", name(), (f.json == null ? f.java : f.path) + " is sent as a constant, whatever its value");
-        if (condition != null) {
-            b.endControlFlow();
-        }
-    }
-
     private void unmapped(Field f, String emptyCheck, String var, JsonObject mapping) {
         String json = f.json == null ? f.java : f.path;
         // BDS of this window does not know the member (it rejects a definition with it), as opposed to no capture showing it

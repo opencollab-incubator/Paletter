@@ -60,8 +60,9 @@ import java.util.zip.GZIPInputStream;
  *                                  optional, and not part of the bundled data (consumers define fallbacks);
  *                                  custom data sources may carry it
  * block_defaults: {name: states}   optional, only with blocks: the defaults that are not the first state of their block
- * experiments: {toggle: {items: [name], blocks: [name], creative: [id or id:damage]}}
- *                                  optional; only written when the version was captured with experiments
+ * experiments: {toggle: {items: [name], blocks: [name], creative: [id or id:damage], creative_without_block?: [name]}}
+ *                                  optional; only written when the version was captured with experiments.
+ *                                  creative_without_block: the items of the toggle's stacks BDS sends without a block
  * block_items: {block: item}       optional: the item that places each block. With blocks_without_item only the blocks
  *                                  whose item has another identifier (or that are not in the palette)
  * blocks_without_item: [block]     optional: the blocks of the palette no item places; with it, every other block of the
@@ -200,7 +201,8 @@ public final class PaletteDataCodec {
         root.getCompound("experiments", NbtMap.EMPTY).forEach((toggle, value) -> {
             NbtMap content = (NbtMap) value;
             experiments.put(toggle, new ExperimentContent(content.getList("items", NbtType.STRING, List.of()),
-                content.getList("blocks", NbtType.STRING, List.of()), content.getList("creative", NbtType.STRING, List.of())));
+                content.getList("blocks", NbtType.STRING, List.of()), content.getList("creative", NbtType.STRING, List.of()),
+                content.getList("creative_without_block", NbtType.STRING, List.of())));
         });
 
         Map<String, String> blockItems = new HashMap<>();
@@ -366,11 +368,17 @@ public final class PaletteDataCodec {
         // Only when present, so versions captured without experiments keep their bytes
         if (!data.experiments().isEmpty()) {
             NbtMapBuilder experiments = NbtMap.builder();
-            new TreeMap<>(data.experiments()).forEach((toggle, content) -> experiments.putCompound(toggle, NbtMap.builder()
-                .putList("items", NbtType.STRING, new ArrayList<>(new TreeSet<>(content.items())))
-                .putList("blocks", NbtType.STRING, new ArrayList<>(new TreeSet<>(content.blocks())))
-                .putList("creative", NbtType.STRING, new ArrayList<>(new TreeSet<>(content.creative())))
-                .build()));
+            new TreeMap<>(data.experiments()).forEach((toggle, content) -> {
+                NbtMapBuilder entry = NbtMap.builder()
+                    .putList("items", NbtType.STRING, new ArrayList<>(new TreeSet<>(content.items())))
+                    .putList("blocks", NbtType.STRING, new ArrayList<>(new TreeSet<>(content.blocks())))
+                    .putList("creative", NbtType.STRING, new ArrayList<>(new TreeSet<>(content.creative())));
+                // Only when present, so content without such items keeps its bytes
+                if (!content.creativeWithoutBlock().isEmpty()) {
+                    entry.putList("creative_without_block", NbtType.STRING, new ArrayList<>(new TreeSet<>(content.creativeWithoutBlock())));
+                }
+                experiments.putCompound(toggle, entry.build());
+            });
             root.putCompound("experiments", experiments.build());
         }
 

@@ -46,6 +46,8 @@ final class ApiSource {
         + "data/model/ATTRIBUTION.md.";
     static final ClassName NON_NULL = ClassName.get("org.checkerframework.checker.nullness.qual", "NonNull");
     static final ClassName NULLABLE = ClassName.get("org.checkerframework.checker.nullness.qual", "Nullable");
+    /** The hand-written value of a Molang expression field ({@link ApiModel.MolangRef}). */
+    static final ClassName MOLANG = ClassName.get("dev.opencollab.paletter", "Molang");
     static final ClassName BEDROCK_FORMAT = ClassName.get("dev.opencollab.paletter.annotation", "BedrockFormat");
     static final ClassName BEDROCK_EXPERIMENT = ClassName.get("dev.opencollab.paletter.annotation", "BedrockExperiment");
     static final ClassName SERVER_ONLY = ClassName.get("dev.opencollab.paletter.annotation", "ServerOnly");
@@ -240,6 +242,7 @@ final class ApiSource {
             case States s -> ParameterizedTypeName.get(MAP, STRING, ClassName.get(Object.class));
             case ComponentRef r -> ClassName.get(c.kind.pkg(), r.className());
             case UnionRef u -> unionName(u.union());
+            case ApiModel.MolangRef m -> MOLANG;
         };
     }
 
@@ -289,6 +292,7 @@ final class ApiSource {
             }
             case States s -> CodeBlock.of("$T.of()", MAP);
             case ComponentRef r -> CodeBlock.of("null");
+            case ApiModel.MolangRef m -> CodeBlock.of("$T.of($S)", MOLANG, v.isJsonObject() ? v.getAsJsonObject().get("expression").getAsString() : v.getAsString());
             case UnionRef u -> {
                 Variant form = u.union().variants.stream().filter(x -> Defaults.fits(x.type, v)).findFirst()
                     .orElseThrow(() -> new GenerationException("the default " + v + " fits no form of the union " + u.union().name));

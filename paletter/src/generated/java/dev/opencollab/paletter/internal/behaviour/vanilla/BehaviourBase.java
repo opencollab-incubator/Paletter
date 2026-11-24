@@ -36,6 +36,7 @@ final class BehaviourBase {
                 .burnOdds(0)
                 .translucency(0.0f)
                 .thickness(0.0f)
+                .climbable(false)
                 .movementType("PushPull")
                 .stickyType("None")
                 .accumulatesSnow(true)
@@ -51,7 +52,7 @@ final class BehaviourBase {
         v.block("minecraft:acacia_door", "door_hinge_bit=false|true,minecraft:cardinal_direction='east'|'north'|'south'|'west',open_bit=false|true,upper_block_bit=false|true")
                 .destroyTime(3.0f)
                 .explosionResistance(3.0f)
-                .collisionShape(TABLE_DOOR_HINGE_BIT_CARDINAL_DIRECTION_OPEN_BIT_C4BD10)
+                .collisionShape(TABLE_DOOR_HINGE_BIT_CARDINAL_DIRECTION_OPEN_BIT_C89710)
                 .outlineShape(TABLE_DOOR_HINGE_BIT_CARDINAL_DIRECTION_OPEN_BIT_C4BD10)
                 .canContainLiquid(true)
                 .mapColor(0xD87F33FF)
@@ -450,7 +451,7 @@ final class BehaviourBase {
         v.block("minecraft:bamboo_door", "door_hinge_bit=false|true,minecraft:cardinal_direction='east'|'north'|'south'|'west',open_bit=false|true,upper_block_bit=false|true")
                 .destroyTime(3.0f)
                 .explosionResistance(3.0f)
-                .collisionShape(TABLE_DOOR_HINGE_BIT_CARDINAL_DIRECTION_OPEN_BIT_C4BD10)
+                .collisionShape(TABLE_DOOR_HINGE_BIT_CARDINAL_DIRECTION_OPEN_BIT_C89710)
                 .outlineShape(TABLE_DOOR_HINGE_BIT_CARDINAL_DIRECTION_OPEN_BIT_C4BD10)
                 .canContainLiquid(true)
                 .mapColor(0xE5E533FF)
@@ -769,7 +770,7 @@ final class BehaviourBase {
         v.block("minecraft:birch_door", "door_hinge_bit=false|true,minecraft:cardinal_direction='east'|'north'|'south'|'west',open_bit=false|true,upper_block_bit=false|true")
                 .destroyTime(3.0f)
                 .explosionResistance(3.0f)
-                .collisionShape(TABLE_DOOR_HINGE_BIT_CARDINAL_DIRECTION_OPEN_BIT_C4BD10)
+                .collisionShape(TABLE_DOOR_HINGE_BIT_CARDINAL_DIRECTION_OPEN_BIT_C89710)
                 .outlineShape(TABLE_DOOR_HINGE_BIT_CARDINAL_DIRECTION_OPEN_BIT_C4BD10)
                 .canContainLiquid(true)
                 .mapColor(0xF7E9A3FF)
@@ -1668,6 +1669,7 @@ final class BehaviourBase {
                 .flameOdds(15)
                 .burnOdds(100)
                 .translucency(1.0f)
+                .climbable(true)
                 .movementType("growing_plant_age", 0, null, 1, "Popped", 2, "Popped", 3, "Popped",
                         4, "Popped", 5, "Popped", 6, "Popped", 7, "Popped", 8, "Popped",
                         9, "Popped", 10, "Popped", 11, "Popped", 12, "Popped", 13, "Popped",
@@ -1707,6 +1709,7 @@ final class BehaviourBase {
                 .flameOdds(15)
                 .burnOdds(100)
                 .translucency(1.0f)
+                .climbable(true)
                 .movementType("growing_plant_age", 0, null, 1, "Popped", 2, "Popped", 3, "Popped",
                         4, "Popped", 5, "Popped", 6, "Popped", 7, "Popped", 8, "Popped",
                         9, "Popped", 10, "Popped", 11, "Popped", 12, "Popped", 13, "Popped",
@@ -1749,6 +1752,7 @@ final class BehaviourBase {
                 .flameOdds(15)
                 .burnOdds(100)
                 .translucency(1.0f)
+                .climbable(true)
                 .movementType("growing_plant_age", 0, null, 1, "Popped", 2, "Popped", 3, "Popped",
                         4, "Popped", 5, "Popped", 6, "Popped", 7, "Popped", 8, "Popped",
                         9, "Popped", 10, "Popped", 11, "Popped", 12, "Popped", 13, "Popped",
@@ -1825,7 +1829,7 @@ final class BehaviourBase {
         v.block("minecraft:cherry_door", "door_hinge_bit=false|true,minecraft:cardinal_direction='east'|'north'|'south'|'west',open_bit=false|true,upper_block_bit=false|true")
                 .destroyTime(3.0f)
                 .explosionResistance(3.0f)
-                .collisionShape(TABLE_DOOR_HINGE_BIT_CARDINAL_DIRECTION_OPEN_BIT_C4BD10)
+                .collisionShape(TABLE_DOOR_HINGE_BIT_CARDINAL_DIRECTION_OPEN_BIT_C89710)
                 .outlineShape(TABLE_DOOR_HINGE_BIT_CARDINAL_DIRECTION_OPEN_BIT_C4BD10)
                 .canContainLiquid(true)
                 .mapColor(0xD1B1A1FF)
@@ -2408,5 +2412,6 @@ final class BehaviourBase {
         BehaviourBasePart9.part71(v);
         BehaviourBasePart10.part72(v);
         BehaviourBasePart10.part73(v);
+        BehaviourBasePart10.part74(v);
     }
 }

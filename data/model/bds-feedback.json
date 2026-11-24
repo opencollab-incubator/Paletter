@@ -14,11 +14,18 @@
   },
   "block:minecraft:block_light_absorption": {
     "": [
+      "format 1.10.0",
+      "format 1.16.0",
+      "format 1.16.100",
       "unknown"
     ]
   },
   "block:minecraft:block_light_emission": {
     "": [
+      "format 1.10.0",
+      "format 1.16.0",
+      "format 1.16.100",
+      "format 1.18.10",
       "unknown"
     ]
   },
@@ -40,7 +47,8 @@
   "block:minecraft:collision_box": {
     "": [
       "array",
-      "constraint \"origin\"/\"size\" cannot be combined with \"min\"/\"max\""
+      "constraint \"origin\"/\"size\" cannot be combined with \"min\"/\"max\"",
+      "maxItems 16"
     ]
   },
   "block:minecraft:connection_rule": {
@@ -56,11 +64,17 @@
   },
   "block:minecraft:crafting_table": {
     "crafting_tags": [
+      "maxItems 64",
       "required"
     ]
   },
   "block:minecraft:destroy_time": {
     "": [
+      "format 1.10.0",
+      "format 1.16.0",
+      "format 1.16.100",
+      "format 1.18.10",
+      "format 1.19.10",
       "unknown"
     ]
   },
@@ -124,12 +138,18 @@
   },
   "block:minecraft:explosion_resistance": {
     "": [
+      "format 1.10.0",
+      "format 1.16.0",
+      "format 1.16.100",
+      "format 1.18.10",
+      "format 1.19.10",
       "unknown"
     ]
   },
   "block:minecraft:flammable": {
     "lava_flammable": [
-      "values 'never', 'always"
+      "values 'never', 'always",
+      "values 'never', 'always'"
     ]
   },
   "block:minecraft:friction": {
@@ -228,6 +248,9 @@
     ]
   },
   "block:minecraft:map_color": {
+    "": [
+      "object"
+    ],
     "color": [
       "required"
     ],
@@ -309,7 +332,19 @@
       "values 'none', 'same'"
     ]
   },
+  "block:minecraft:neighbor_change": {
+    "neighbor_directions": [
+      "maxItems 6",
+      "minItems 1"
+    ],
+    "neighbor_directions[]": [
+      "values 'down', 'up', 'north', ... (4 others)"
+    ]
+  },
   "block:minecraft:placement_filter": {
+    "conditions": [
+      "maxItems 64"
+    ],
     "conditions[].allowed_faces": [
       "array"
     ],
@@ -317,7 +352,8 @@
       "values 'down', 'up', 'north', ... (3 others)"
     ],
     "conditions[].block_filter": [
-      "array"
+      "array",
+      "maxItems 64"
     ]
   },
   "block:minecraft:precipitation_interactions": {
@@ -447,6 +483,11 @@
       "required"
     ]
   },
+  "block:tag:paletter:tag_a": {
+    "": [
+      "unknown"
+    ]
+  },
   "block:trait:minecraft:connection": {
     "enabled_states": [
       "minItems 1",
@@ -475,6 +516,9 @@
   "block:trait:minecraft:placement_direction": {
     "": [
       "constraint \"blocks_to_corner_with\" can only be used when \"minecraft:corner_and_cardinal_direction\" is enabled in \"enabled_states\"."
+    ],
+    "blocks_to_corner_with[]": [
+      "constraint Cannot have both a tag expression and block states in a block descriptor for block:"
     ],
     "enabled_states": [
       "minItems 1",
@@ -509,7 +553,8 @@
       "identifier block block"
     ],
     "use_on": [
-      "array"
+      "array",
+      "maxItems 256"
     ]
   },
   "item:minecraft:bundle_interaction": {
@@ -519,6 +564,28 @@
   },
   "item:minecraft:chargeable": {
     "": [
+      "format 1.20.30",
+      "format 1.20.40",
+      "format 1.20.50",
+      "format 1.20.60",
+      "format 1.20.80",
+      "format 1.21.0",
+      "format 1.21.10",
+      "format 1.21.100",
+      "format 1.21.110",
+      "format 1.21.120",
+      "format 1.21.130",
+      "format 1.21.20",
+      "format 1.21.30",
+      "format 1.21.40",
+      "format 1.21.50",
+      "format 1.21.60",
+      "format 1.21.70",
+      "format 1.21.80",
+      "format 1.21.90",
+      "format 1.26.0",
+      "format 1.26.10",
+      "format 1.26.20",
       "unknown"
     ]
   },
@@ -667,6 +734,33 @@
   },
   "item:minecraft:render_offsets": {
     "": [
+      "format 1.10.0",
+      "format 1.16.0",
+      "format 1.20.0",
+      "format 1.20.10",
+      "format 1.20.20",
+      "format 1.20.30",
+      "format 1.20.40",
+      "format 1.20.50",
+      "format 1.20.60",
+      "format 1.20.80",
+      "format 1.21.0",
+      "format 1.21.10",
+      "format 1.21.100",
+      "format 1.21.110",
+      "format 1.21.120",
+      "format 1.21.130",
+      "format 1.21.20",
+      "format 1.21.30",
+      "format 1.21.40",
+      "format 1.21.50",
+      "format 1.21.60",
+      "format 1.21.70",
+      "format 1.21.80",
+      "format 1.21.90",
+      "format 1.26.0",
+      "format 1.26.10",
+      "format 1.26.20",
       "unknown"
     ]
   },
@@ -679,11 +773,49 @@
     ],
     "repair_items[].items[]": [
       "object"
+    ],
+    "repair_items[].repair_amount.expression": [
+      "required"
+    ],
+    "repair_items[].repair_amount.version": [
+      "required"
     ]
   },
   "item:minecraft:seed": {
     "": [
+      "format 1.10.0",
+      "format 1.16.0",
+      "format 1.20.0",
+      "format 1.20.10",
+      "format 1.20.20",
+      "format 1.20.30",
+      "format 1.20.40",
+      "format 1.20.50",
+      "format 1.20.60",
+      "format 1.20.80",
+      "format 1.21.0",
+      "format 1.21.10",
+      "format 1.21.100",
+      "format 1.21.110",
+      "format 1.21.120",
+      "format 1.21.130",
+      "format 1.21.20",
+      "format 1.21.30",
+      "format 1.21.40",
+      "format 1.21.50",
+      "format 1.21.60",
+      "format 1.21.70",
+      "format 1.21.80",
+      "format 1.21.90",
+      "format 1.26.0",
+      "format 1.26.10",
+      "format 1.26.20",
       "unknown"
+    ]
+  },
+  "item:minecraft:shooter": {
+    "ammunition[].item": [
+      "required"
     ]
   },
   "item:minecraft:storage_item": {
@@ -729,6 +861,33 @@
   },
   "item:minecraft:use_duration": {
     "": [
+      "format 1.10.0",
+      "format 1.16.0",
+      "format 1.20.0",
+      "format 1.20.10",
+      "format 1.20.20",
+      "format 1.20.30",
+      "format 1.20.40",
+      "format 1.20.50",
+      "format 1.20.60",
+      "format 1.20.80",
+      "format 1.21.0",
+      "format 1.21.10",
+      "format 1.21.100",
+      "format 1.21.110",
+      "format 1.21.120",
+      "format 1.21.130",
+      "format 1.21.20",
+      "format 1.21.30",
+      "format 1.21.40",
+      "format 1.21.50",
+      "format 1.21.60",
+      "format 1.21.70",
+      "format 1.21.80",
+      "format 1.21.90",
+      "format 1.26.0",
+      "format 1.26.10",
+      "format 1.26.20",
       "unknown"
     ]
   },
@@ -745,6 +904,33 @@
   },
   "item:minecraft:weapon": {
     "": [
+      "format 1.10.0",
+      "format 1.16.0",
+      "format 1.20.0",
+      "format 1.20.10",
+      "format 1.20.20",
+      "format 1.20.30",
+      "format 1.20.40",
+      "format 1.20.50",
+      "format 1.20.60",
+      "format 1.20.80",
+      "format 1.21.0",
+      "format 1.21.10",
+      "format 1.21.100",
+      "format 1.21.110",
+      "format 1.21.120",
+      "format 1.21.130",
+      "format 1.21.20",
+      "format 1.21.30",
+      "format 1.21.40",
+      "format 1.21.50",
+      "format 1.21.60",
+      "format 1.21.70",
+      "format 1.21.80",
+      "format 1.21.90",
+      "format 1.26.0",
+      "format 1.26.10",
+      "format 1.26.20",
       "unknown"
     ]
   },

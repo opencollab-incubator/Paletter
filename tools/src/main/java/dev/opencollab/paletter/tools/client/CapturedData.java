@@ -22,10 +22,32 @@ import java.util.Base64;
 import java.util.EnumMap;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 import java.util.Map;
 
-/** A capture directory read back: raw item registry, raw block properties and the creative layout. */
-public record CapturedData(Map<String, NbtMap> items, Map<String, NbtMap> blockProperties, RawLayout creative) {
+/**
+ * A capture directory read back: raw item registry, raw block properties and the creative layout.
+ *
+ * @param creativeWithBlock the items of which a creative stack carries a block runtime id, resolved to a state or not (a block
+ *                          a toggle marks as experiment content without states is sent, but resolves to none)
+ */
+public record CapturedData(Map<String, NbtMap> items, Map<String, NbtMap> blockProperties, RawLayout creative, Set<String> creativeWithBlock) {
+
+    /** The data of a capture whose stacks carry a block exactly where they carry a resolved one. */
+    public CapturedData(Map<String, NbtMap> items, Map<String, NbtMap> blockProperties, RawLayout creative) {
+        this(items, blockProperties, creative, withBlock(creative));
+    }
+
+    private static Set<String> withBlock(RawLayout creative) {
+        Set<String> items = new TreeSet<>();
+        creative.stacks().forEach(stack -> {
+            if (stack.blockState() != null) {
+                items.add(stack.identifier());
+            }
+        });
+        return items;
+    }
 
     public static CapturedData read(Path directory) throws IOException {
         Map<String, NbtMap> items = new LinkedHashMap<>();
@@ -40,7 +62,13 @@ public record CapturedData(Map<String, NbtMap> items, Map<String, NbtMap> blockP
         try (var reader = Files.newBufferedReader(directory.resolve("creative_items.json"))) {
             creative = JsonParser.parseReader(reader).getAsJsonObject();
         }
-        return new CapturedData(items, blocks, creativeLayout(creative));
+        Set<String> withBlock = new TreeSet<>();
+        for (JsonElement item : creative.getAsJsonArray("items")) {
+            if (item.getAsJsonObject().has("block_runtime_id")) {
+                withBlock.add(item.getAsJsonObject().get("id").getAsString());
+            }
+        }
+        return new CapturedData(items, blocks, creativeLayout(creative), Set.copyOf(withBlock));
     }
 
     /** The recipe files of a capture directory ({@link RecipeCapture}). */

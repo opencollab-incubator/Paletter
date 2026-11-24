@@ -56,7 +56,8 @@ final class BehaviourStage {
      */
     void behaviour(BdsDistribution distribution, Path server, Path work, Runs runs) {
         String build = distribution.version();
-        ctx.report.header.put("Optional probes", String.join(", ", new java.util.TreeSet<>(OPTIONAL)) + " (a failure is a skipped row, the committed file stays)");
+        ctx.report.header.put("Optional probes", String.join(", ", new java.util.TreeSet<>(OPTIONAL)) + (ctx.preview ? ", Behaviour dump (a preview)" : "")
+            + " (a failure is a skipped row, the committed file stays)");
         try {
             step("Behaviour dump", () -> dump(build, server, work, runs));
             step("Behaviour probe", () -> probe(build, server, work));
@@ -91,8 +92,17 @@ final class BehaviourStage {
         }
     }
 
+    /**
+     * The behaviour dump of a preview is optional too: BDS 1.26.70.24 and 1.26.70.26 exit without a word in its world sample (after
+     * about 1840 of 2144 samples, ten seconds in, around minecraft:straw_bed; the cause is unverified), and the bundled preview has
+     * no behaviour dump to lose. TODO: find what ends BDS there and drop this exception.
+     */
+    private boolean optional(String name) {
+        return OPTIONAL.contains(name) || (ctx.preview && name.equals("Behaviour dump"));
+    }
+
     private void skipped(String name, Exception error) {
-        if (OPTIONAL.contains(name)) {
+        if (optional(name)) {
             ctx.report.check(Report.Status.SKIP, name, "failed (optional), the committed data stays: " + error);
         } else {
             ctx.report.fail(name, error);

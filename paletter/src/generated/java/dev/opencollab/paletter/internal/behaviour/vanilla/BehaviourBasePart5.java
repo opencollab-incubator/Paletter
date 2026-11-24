@@ -446,7 +446,7 @@ final class BehaviourBasePart5 {
         v.block("minecraft:spruce_door", "door_hinge_bit=false|true,minecraft:cardinal_direction='east'|'north'|'south'|'west',open_bit=false|true,upper_block_bit=false|true")
                 .destroyTime(3.0f)
                 .explosionResistance(3.0f)
-                .collisionShape(TABLE_DOOR_HINGE_BIT_CARDINAL_DIRECTION_OPEN_BIT_C4BD10)
+                .collisionShape(TABLE_DOOR_HINGE_BIT_CARDINAL_DIRECTION_OPEN_BIT_C89710)
                 .outlineShape(TABLE_DOOR_HINGE_BIT_CARDINAL_DIRECTION_OPEN_BIT_C4BD10)
                 .canContainLiquid(true)
                 .mapColor(0x815631FF)
@@ -1386,6 +1386,7 @@ final class BehaviourBasePart5 {
                         24, 63, 25, 63)
                 .mapColor(0x4C7F99FF)
                 .translucency(1.0f)
+                .climbable(true)
                 .movementType("twisting_vines_age", 0, null, 1, "Popped", 2, "Popped", 3, "Popped",
                         4, "Popped", 5, "Popped", 6, "Popped", 7, "Popped", 8, "Popped",
                         9, "Popped", 10, "Popped", 11, "Popped", 12, "Popped", 13, "Popped",
@@ -1531,6 +1532,7 @@ final class BehaviourBasePart5 {
                 .flameOdds(15)
                 .burnOdds(100)
                 .translucency(1.0f)
+                .climbable(true)
                 .movementType("Popped")
                 .accumulatesSnow(false)
                 .obstructsRain(false);
@@ -1568,7 +1570,7 @@ final class BehaviourBasePart5 {
         v.block("minecraft:warped_door", "door_hinge_bit=false|true,minecraft:cardinal_direction='east'|'north'|'south'|'west',open_bit=false|true,upper_block_bit=false|true")
                 .destroyTime(3.0f)
                 .explosionResistance(3.0f)
-                .collisionShape(TABLE_DOOR_HINGE_BIT_CARDINAL_DIRECTION_OPEN_BIT_C4BD10)
+                .collisionShape(TABLE_DOOR_HINGE_BIT_CARDINAL_DIRECTION_OPEN_BIT_C89710)
                 .outlineShape(TABLE_DOOR_HINGE_BIT_CARDINAL_DIRECTION_OPEN_BIT_C4BD10)
                 .canContainLiquid(true)
                 .mapColor(0x3A8E8CFF)
@@ -1827,7 +1829,7 @@ final class BehaviourBasePart5 {
                 .translucency(0.5f);
         v.block("minecraft:waxed_copper_door", "door_hinge_bit=false|true,minecraft:cardinal_direction='east'|'north'|'south'|'west',open_bit=false|true,upper_block_bit=false|true")
                 .destroyTime(3.0f)
-                .collisionShape(TABLE_DOOR_HINGE_BIT_CARDINAL_DIRECTION_OPEN_BIT_C4BD10)
+                .collisionShape(TABLE_DOOR_HINGE_BIT_CARDINAL_DIRECTION_OPEN_BIT_C89710)
                 .outlineShape(TABLE_DOOR_HINGE_BIT_CARDINAL_DIRECTION_OPEN_BIT_C4BD10)
                 .canContainLiquid(true)
                 .mapColor(0xD87F33FF)
@@ -1939,7 +1941,7 @@ final class BehaviourBasePart5 {
                 .translucency(0.5f);
         v.block("minecraft:waxed_exposed_copper_door", "door_hinge_bit=false|true,minecraft:cardinal_direction='east'|'north'|'south'|'west',open_bit=false|true,upper_block_bit=false|true")
                 .destroyTime(3.0f)
-                .collisionShape(TABLE_DOOR_HINGE_BIT_CARDINAL_DIRECTION_OPEN_BIT_C4BD10)
+                .collisionShape(TABLE_DOOR_HINGE_BIT_CARDINAL_DIRECTION_OPEN_BIT_C89710)
                 .outlineShape(TABLE_DOOR_HINGE_BIT_CARDINAL_DIRECTION_OPEN_BIT_C4BD10)
                 .canContainLiquid(true)
                 .mapColor(0x876B62FF)
@@ -2078,7 +2080,7 @@ final class BehaviourBasePart5 {
                 .translucency(0.5f);
         v.block("minecraft:waxed_oxidized_copper_door", "door_hinge_bit=false|true,minecraft:cardinal_direction='east'|'north'|'south'|'west',open_bit=false|true,upper_block_bit=false|true")
                 .destroyTime(3.0f)
-                .collisionShape(TABLE_DOOR_HINGE_BIT_CARDINAL_DIRECTION_OPEN_BIT_C4BD10)
+                .collisionShape(TABLE_DOOR_HINGE_BIT_CARDINAL_DIRECTION_OPEN_BIT_C89710)
                 .outlineShape(TABLE_DOOR_HINGE_BIT_CARDINAL_DIRECTION_OPEN_BIT_C4BD10)
                 .canContainLiquid(true)
                 .mapColor(0x167E86FF)
@@ -2202,7 +2204,7 @@ final class BehaviourBasePart5 {
                 .translucency(0.5f);
         v.block("minecraft:waxed_weathered_copper_door", "door_hinge_bit=false|true,minecraft:cardinal_direction='east'|'north'|'south'|'west',open_bit=false|true,upper_block_bit=false|true")
                 .destroyTime(3.0f)
-                .collisionShape(TABLE_DOOR_HINGE_BIT_CARDINAL_DIRECTION_OPEN_BIT_C4BD10)
+                .collisionShape(TABLE_DOOR_HINGE_BIT_CARDINAL_DIRECTION_OPEN_BIT_C89710)
                 .outlineShape(TABLE_DOOR_HINGE_BIT_CARDINAL_DIRECTION_OPEN_BIT_C4BD10)
                 .canContainLiquid(true)
                 .mapColor(0x3A8E8CFF)

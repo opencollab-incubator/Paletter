@@ -354,30 +354,31 @@ public final class Digger implements ItemComponent {
      *
      */
     public static final class DestroySpeeds {
-        private final @Nullable Block block;
+        private final @NonNull Block block;
 
-        private final @Nullable Integer speed;
+        private final int speed;
 
-        private DestroySpeeds(@Nullable Block block, @Nullable Integer speed) {
+        private DestroySpeeds(@NonNull Block block, int speed) {
+            Objects.requireNonNull(block, "Digger.DestroySpeeds.block");
             this.block = block;
             this.speed = speed;
         }
 
         /**
-         * Block to be dug. Add-on JSON {@code block}. Optional (null: not set).
+         * Block to be dug. Add-on JSON {@code block}. Required.
          *
          * @return the value
          */
-        public @Nullable Block block() {
+        public @NonNull Block block() {
             return block;
         }
 
         /**
-         * Digging speed for the correlating block(s). Add-on JSON {@code speed}. Optional (null: not set).
+         * Digging speed for the correlating block(s). Add-on JSON {@code speed}. Required.
          *
          * @return the value
          */
-        public @Nullable Integer speed() {
+        public int speed() {
             return speed;
         }
 
@@ -385,13 +386,13 @@ public final class Digger implements ItemComponent {
         public boolean equals(Object o) {
             return this == o || o instanceof DestroySpeeds other
                     && Objects.equals(block, other.block)
-                    && Objects.equals(speed, other.speed);
+                    && speed == other.speed;
         }
 
         @Override
         public int hashCode() {
             int h = Objects.hashCode(block);
-            h = 31 * h + Objects.hashCode(speed);
+            h = 31 * h + speed;
             return h;
         }
 
@@ -401,7 +402,8 @@ public final class Digger implements ItemComponent {
         }
 
         /**
-         * Creates a builder with every field at its default.
+         * Creates a builder with every optional field at its default; required fields must be set before
+         * {@code build()}.
          *
          * @return a builder with the defaults applied
          */
@@ -437,10 +439,21 @@ public final class Digger implements ItemComponent {
              *
              * @param block the value
              * @return this builder
+             * @throws NullPointerException if the value is null
              */
-            public @NonNull Builder block(@Nullable Block block) {
-                this.block = block;
+            public @NonNull Builder block(@NonNull Block block) {
+                this.block = Objects.requireNonNull(block, "Digger.DestroySpeeds.block");
                 return this;
+            }
+
+            /**
+             * Sets {@code block} with its shorthand: {@code name}.
+             *
+             * @param name the value
+             * @return this builder
+             */
+            public @NonNull Builder block(@NonNull String name) {
+                return block(Block.of(name));
             }
 
             /**
@@ -449,7 +462,7 @@ public final class Digger implements ItemComponent {
              * @param speed the value
              * @return this builder
              */
-            public @NonNull Builder speed(@Nullable Integer speed) {
+            public @NonNull Builder speed(int speed) {
                 this.speed = speed;
                 return this;
             }
@@ -462,6 +475,12 @@ public final class Digger implements ItemComponent {
              * @throws IllegalArgumentException if a value is out of range
              */
             public @NonNull DestroySpeeds build() {
+                if (block == null) {
+                    throw new IllegalStateException("Digger.DestroySpeeds.block is required");
+                }
+                if (speed == null) {
+                    throw new IllegalStateException("Digger.DestroySpeeds.speed is required");
+                }
                 return new DestroySpeeds(block, speed);
             }
         }

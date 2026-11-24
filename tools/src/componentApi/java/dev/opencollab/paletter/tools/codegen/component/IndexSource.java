@@ -4,6 +4,7 @@ import com.palantir.javapoet.ClassName;
 import com.palantir.javapoet.CodeBlock;
 import com.palantir.javapoet.FieldSpec;
 import com.palantir.javapoet.MethodSpec;
+import com.palantir.javapoet.ParameterSpec;
 import com.palantir.javapoet.ParameterizedTypeName;
 import com.palantir.javapoet.TypeName;
 import com.palantir.javapoet.TypeSpec;
@@ -18,6 +19,7 @@ import javax.lang.model.element.Modifier;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Writes {@code ComponentIndex}: every generated component type by add-on JSON name, the JSON keys, value forms and
@@ -25,6 +27,28 @@ import java.util.List;
  */
 final class IndexSource {
     private IndexSource() {
+    }
+
+    /**
+     * {@code molangVersion(minEngineVersion)}: the {@code molangVersion} of {@code molangVersions} in {@code mappings.json} for a
+     * pack's {@code min_engine_version}, the newest entry at or below it (the oldest below all); null is the newest.
+     */
+    private static MethodSpec molangVersion(ApiModel model) {
+        List<Map.Entry<String, com.google.gson.JsonElement>> entries = new ArrayList<>(model.molangVersions.entrySet());
+        CodeBlock.Builder body = CodeBlock.builder();
+        body.beginControlFlow("if (minEngineVersion == null)").addStatement("return $L", entries.getLast().getValue().getAsInt()).endControlFlow();
+        for (int i = entries.size() - 1; i > 0; i--) {
+            body.beginControlFlow("if ($T.compareVersions(minEngineVersion, $S) >= 0)", WireSource.WIRE, entries.get(i).getKey())
+                .addStatement("return $L", entries.get(i).getValue().getAsInt()).endControlFlow();
+        }
+        body.addStatement("return $L", entries.getFirst().getValue().getAsInt());
+        return MethodSpec.methodBuilder("molangVersion").addModifiers(Modifier.PUBLIC, Modifier.STATIC).returns(int.class)
+            .addJavadoc("The {@code molangVersion} BDS writes into every block of a pack of this {@code min_engine_version}"
+                + " ({@code molangVersions} of\n{@code data/model/mappings.json}: " + model.molangVersions + ", each from that engine version on;"
+                + " the oldest\nalso below it, unverified).\n\n@param minEngineVersion the pack's engine version, e.g. {@code 1.19.40}; null for"
+                + " the newest\n@return the molangVersion\n")
+            .addParameter(ParameterSpec.builder(String.class, "minEngineVersion").addAnnotation(ClassName.get("org.checkerframework.checker.nullness.qual", "Nullable")).build())
+            .addCode(body.build()).build();
     }
 
     static TypeSpec index(ApiModel model) {
@@ -75,6 +99,9 @@ final class IndexSource {
         }
         type.addStaticBlock(init.build());
         type.addMethod(MethodSpec.constructorBuilder().addModifiers(Modifier.PRIVATE).build());
+        if (!model.molangVersions.isEmpty()) {
+            type.addMethod(molangVersion(model));
+        }
         type.addField(FieldSpec.builder(int.class, "OLDEST_CAPTURED_PROTOCOL", Modifier.PUBLIC, Modifier.STATIC, Modifier.FINAL)
             .addJavadoc("The oldest protocol a spec capture of BDS exists for: the shapes in {@code data/model/mappings.json} were observed from here.\n")
             .initializer("$L", model.oldestCaptured == Integer.MIN_VALUE ? "Integer.MIN_VALUE" : String.valueOf(model.oldestCaptured)).build());

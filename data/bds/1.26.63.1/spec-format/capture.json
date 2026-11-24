@@ -4,13 +4,15 @@
   "protocol": 2225,
   "preview": false,
   "formatVersion": "1.26.60",
+  "resolvedHashes": 3402,
+  "unresolvedHashes": 0,
   "experiments": [
-    "upcoming_creator_features\u003dtrue",
-    "gametest\u003dtrue",
-    "experimental_creator_cameras\u003dtrue",
-    "villager_trades_rebalance\u003dtrue",
-    "voxel_shapes\u003dtrue",
-    "poi\u003dtrue",
-    "y_2026_drop_4\u003dtrue"
+    "upcoming_creator_features=true",
+    "gametest=true",
+    "experimental_creator_cameras=true",
+    "villager_trades_rebalance=true",
+    "voxel_shapes=true",
+    "poi=true",
+    "y_2026_drop_4=true"
   ]
 }

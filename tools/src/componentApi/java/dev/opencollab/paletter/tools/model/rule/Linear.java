@@ -12,7 +12,9 @@ import java.util.TreeSet;
 
 /**
  * {@code leaf = scale * value + offset} over numbers (booleans as 0 and 1): unit conversions. With {@code modulo} the line
- * is wrapped into {@code [0, modulo)} ({@code -90} degrees as 3 quarter turns).
+ * is wrapped into {@code [0, modulo)} ({@code -90} degrees as 3 quarter turns). With {@code rounding} the line lands on an
+ * integral leaf the way BDS computes it ({@link Rounding}): {@code use_duration} 0.35 seconds is 7 ticks, not the 6 the
+ * double product 6.99999988 truncates to.
  */
 public final class Linear extends Rule {
     static final String KIND = "linear";
@@ -21,16 +23,101 @@ public final class Linear extends Rule {
     public final double offset;
     /** The modulus the line is wrapped into; null if it is not. */
     public final Long modulo;
+    /**
+     * How a value off the whole numbers lands on the integral leaf, as the captures show it; null if every observation
+     * was a whole number of the line (the encoder then truncates the double product, unverified).
+     */
+    public final Rounding rounding;
 
     public Linear(double scale, double offset, Long modulo) {
+        this(scale, offset, modulo, null);
+    }
+
+    public Linear(double scale, double offset, Long modulo, Rounding rounding) {
         this.scale = scale;
         this.offset = offset;
         this.modulo = modulo;
+        this.rounding = rounding;
     }
 
     static Linear read(JsonObject json) {
         return new Linear(json.get("scale").getAsDouble(), json.get("offset").getAsDouble(),
-            json.has("modulo") ? json.get("modulo").getAsLong() : null);
+            json.has("modulo") ? json.get("modulo").getAsLong() : null,
+            json.has("rounding") ? Rounding.of(json.get("arithmetic").getAsString(), json.get("rounding").getAsString()) : null);
+    }
+
+    /**
+     * How BDS turns the line into the whole number of an integral leaf: the arithmetic of the product (the value and the
+     * scale as doubles, or as floats in float arithmetic: BDS's own fields are floats) and the rounding of the result.
+     * {@code mappings.json} writes it as {@code "arithmetic"} and {@code "rounding"}. The candidates are tried in the order of
+     * the constants; {@code floor} differs from {@code truncate} only below zero.
+     */
+    public enum Rounding {
+        DOUBLE_TRUNCATE("double", "truncate"),
+        DOUBLE_FLOOR("double", "floor"),
+        DOUBLE_HALF_UP("double", "half-up"),
+        DOUBLE_HALF_EVEN("double", "half-even"),
+        DOUBLE_CEILING("double", "ceiling"),
+        FLOAT_TRUNCATE("float32", "truncate"),
+        FLOAT_FLOOR("float32", "floor"),
+        FLOAT_HALF_UP("float32", "half-up"),
+        FLOAT_HALF_EVEN("float32", "half-even"),
+        FLOAT_CEILING("float32", "ceiling");
+
+        public final String arithmetic;
+        public final String mode;
+
+        Rounding(String arithmetic, String mode) {
+            this.arithmetic = arithmetic;
+            this.mode = mode;
+        }
+
+        static Rounding of(String arithmetic, String mode) {
+            for (Rounding r : values()) {
+                if (r.arithmetic.equals(arithmetic) && r.mode.equals(mode)) {
+                    return r;
+                }
+            }
+            throw new IllegalArgumentException("unknown rounding " + arithmetic + " " + mode);
+        }
+
+        boolean float32() {
+            return arithmetic.equals("float32");
+        }
+
+        /**
+         * The line at x in this arithmetic, before rounding. The input is the float the API holds for a JSON number (BDS
+         * keeps it as a float too: it sends {@code use_modifiers.use_duration} 0.35 as 0.3499999940395355), so the double
+         * arithmetic is that of the float: 0.35 times 20 is 6.99999988 there, 7 in float arithmetic.
+         */
+        double line(double scale, double offset, double x) {
+            float value = (float) x;
+            return float32() ? (double) (value * (float) scale + (float) offset) : scale * value + offset;
+        }
+
+        /** The whole number the leaf gets for the line's value v. */
+        double round(double v) {
+            return switch (mode) {
+                case "truncate" -> v < 0 ? Math.ceil(v) : Math.floor(v);
+                case "floor" -> Math.floor(v);
+                case "half-up" -> Math.floor(v + 0.5);
+                case "half-even" -> Math.rint(v);
+                case "ceiling" -> Math.ceil(v);
+                default -> throw new IllegalStateException(mode);
+            };
+        }
+
+        /** The code of {@link #round} around a double expression; truncation is the integral conversion's own ({@code Wire.toInt}). */
+        CodeBlock emit(CodeBlock v) {
+            return switch (mode) {
+                case "truncate" -> v;
+                case "floor" -> CodeBlock.of("$T.floor($L)", Math.class, v);
+                case "half-up" -> CodeBlock.of("$T.floor($L + 0.5)", Math.class, v);
+                case "half-even" -> CodeBlock.of("$T.rint($L)", Math.class, v);
+                case "ceiling" -> CodeBlock.of("$T.ceil($L)", Math.class, v);
+                default -> throw new IllegalStateException(mode);
+            };
+        }
     }
 
     /**
@@ -72,7 +159,60 @@ public final class Linear extends Rule {
         if (fits && Math.abs(a) > 1e-9) { // scale 0 is a constant
             return new Linear(round(a), round(b), null);
         }
-        return wrapped(xs, ys);
+        Linear wrapped = wrapped(xs, ys);
+        return wrapped != null ? wrapped : rounded(xs, ys);
+    }
+
+    /**
+     * A line onto an integral leaf that some inputs leave off the whole numbers, rounded as BDS rounds ({@link Rounding}).
+     * The line itself must be shown by at least {@link #MIN_DISTINCT_POINTS} inputs it maps onto whole numbers exactly, in
+     * double arithmetic; the other inputs decide the rounding. Of the lines through two of those points, the one nearest
+     * to passing through 0 wins ({@code 20x} over {@code 20x - 0.5}, which rounded half up is the same function), and of
+     * the roundings the first in {@link Rounding}'s order that reproduces every observation.
+     *
+     * @return the rounded line, or null if no line and rounding reproduce every observation
+     */
+    static Linear rounded(List<JsonElement> xs, List<Leaf> ys) {
+        if (ys.stream().anyMatch(y -> !INTEGRAL.contains(y.type()))) {
+            return null;
+        }
+        List<Linear> lines = new java.util.ArrayList<>();
+        for (int i = 0; i < xs.size(); i++) {
+            for (int j = i + 1; j < xs.size(); j++) {
+                double dx = xs.get(j).getAsDouble() - xs.get(i).getAsDouble();
+                if (dx == 0) {
+                    continue;
+                }
+                double a = round((ys.get(j).number() - ys.get(i).number()) / dx);
+                double b = round(ys.get(i).number() - a * xs.get(i).getAsDouble());
+                if (Math.abs(a) > 1e-9 && lines.stream().noneMatch(l -> l.scale == a && l.offset == b)) {
+                    lines.add(new Linear(a, b, null));
+                }
+            }
+        }
+        lines.sort(java.util.Comparator.comparingDouble((Linear l) -> Math.abs(l.offset)).thenComparingDouble(l -> Math.abs(l.scale)));
+        for (Linear line : lines) {
+            Set<Double> exact = new TreeSet<>();
+            for (int k = 0; k < xs.size(); k++) {
+                double v = line.scale * xs.get(k).getAsDouble() + line.offset;
+                if (close(v, ys.get(k).number()) && close(v, Math.rint(v))) {
+                    exact.add(xs.get(k).getAsDouble());
+                }
+            }
+            if (exact.size() < MIN_DISTINCT_POINTS) {
+                continue;
+            }
+            for (Rounding r : Rounding.values()) {
+                boolean all = true;
+                for (int k = 0; k < xs.size() && all; k++) {
+                    all = r.round(r.line(line.scale, line.offset, xs.get(k).getAsDouble())) == ys.get(k).number();
+                }
+                if (all) {
+                    return new Linear(line.scale, line.offset, null, r);
+                }
+            }
+        }
+        return null;
     }
 
     /**
@@ -149,6 +289,10 @@ public final class Linear extends Rule {
         if (modulo != null) {
             out.addProperty("modulo", modulo);
         }
+        if (rounding != null) {
+            out.addProperty("arithmetic", rounding.arithmetic);
+            out.addProperty("rounding", rounding.mode);
+        }
     }
 
     /**
@@ -164,10 +308,13 @@ public final class Linear extends Rule {
      * The leaf of a value before its NBT type, computed as the encoder ({@link #emit}) computes it: the evaluation and the
      * encoder are one function.
      * <p>
-     * TODO(recapture): an integral leaf truncates the result ({@code Wire.toInt}), so {@code 20 * 0.7f} sends 13 where BDS
-     * may send 14; the captures only hold values exact in binary (docs/data-pipeline.md, "Recapture to-do").
+     * Without a {@link #rounding} an integral leaf truncates the double result ({@code Wire.toInt}); that is unverified
+     * for such a rule, whose captures only hold inputs the line maps onto whole numbers.
      */
     double apply(double x) {
+        if (rounding != null) {
+            return rounding.round(rounding.line(scale, offset, x));
+        }
         Double divisor = divisor();
         double v = divisor != null ? x / divisor + offset : scale * x + offset;
         // wrapped into [0, modulo): BDS sends -90 degrees as 3 quarter turns
@@ -176,6 +323,13 @@ public final class Linear extends Rule {
 
     @Override
     public void emit(Emitter e) {
+        if (rounding != null) {
+            CodeBlock line = rounding.float32()
+                ? CodeBlock.of("(double) ((float) $L * $Lf + $Lf)", e.number(), decimal(scale), decimal(offset))
+                : CodeBlock.of("($L * $L + $L)", decimal(scale), e.number(), decimal(offset));
+            e.put(e.fromNumber(nbt, rounding.emit(line)));
+            return;
+        }
         Double divisor = divisor();
         CodeBlock number = divisor != null
             ? CodeBlock.of("($L / $L + $L)", e.number(), decimal(divisor), decimal(offset))

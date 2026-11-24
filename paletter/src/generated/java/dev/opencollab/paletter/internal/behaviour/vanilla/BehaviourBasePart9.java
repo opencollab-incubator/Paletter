@@ -10,6 +10,23 @@ final class BehaviourBasePart9 {
     }
 
     static void part64(Changes v) {
+        v.item("minecraft:pink_harness").maxStackSize(1).weight(64);
+        v.item("minecraft:pink_petals").compostChance(65);
+        v.item("minecraft:pink_shulker_box").maxStackSize(1).weight(64);
+        v.item("minecraft:pink_stained_glass");
+        v.item("minecraft:pink_stained_glass_pane");
+        v.item("minecraft:pink_terracotta");
+        v.item("minecraft:pink_tulip").compostChance(65);
+        v.item("minecraft:pink_wool");
+        v.item("minecraft:piston");
+        v.item("minecraft:piston_arm_collision").weightUnknown();
+        v.item("minecraft:pitcher_crop").weightUnknown();
+        v.item("minecraft:pitcher_plant").compostChance(85);
+        v.item("minecraft:pitcher_pod").compostChance(30);
+        v.item("minecraft:planks").furnaceBurnDuration(300).weightUnknown();
+        v.item("minecraft:player_head");
+        v.item("minecraft:plenty_pottery_sherd");
+        v.item("minecraft:podzol");
         v.item("minecraft:pointed_dripstone");
         v.item("minecraft:poisonous_potato");
         v.item("minecraft:polar_bear_spawn_egg");
@@ -53,6 +70,9 @@ final class BehaviourBasePart9 {
         v.item("minecraft:polished_sulfur_slab");
         v.item("minecraft:polished_sulfur_stairs");
         v.item("minecraft:polished_sulfur_wall");
+    }
+
+    static void part65(Changes v) {
         v.item("minecraft:polished_tuff");
         v.item("minecraft:polished_tuff_double_slab").weightUnknown();
         v.item("minecraft:polished_tuff_slab");
@@ -70,9 +90,6 @@ final class BehaviourBasePart9 {
         v.item("minecraft:powder_snow_bucket").maxStackSize(1).weight(64);
         v.item("minecraft:powered_comparator").weightUnknown();
         v.item("minecraft:powered_repeater").weightUnknown();
-    }
-
-    static void part65(Changes v) {
         v.item("minecraft:prismarine");
         v.item("minecraft:prismarine_brick_double_slab").weightUnknown();
         v.item("minecraft:prismarine_brick_slab");
@@ -116,6 +133,9 @@ final class BehaviourBasePart9 {
         v.item("minecraft:quartz_bricks");
         v.item("minecraft:quartz_double_slab").weightUnknown();
         v.item("minecraft:quartz_ore");
+    }
+
+    static void part66(Changes v) {
         v.item("minecraft:quartz_pillar");
         v.item("minecraft:quartz_slab");
         v.item("minecraft:quartz_stairs");
@@ -133,9 +153,6 @@ final class BehaviourBasePart9 {
         v.item("minecraft:raw_gold");
         v.item("minecraft:raw_gold_block");
         v.item("minecraft:raw_iron");
-    }
-
-    static void part66(Changes v) {
         v.item("minecraft:raw_iron_block");
         v.item("minecraft:recovery_compass");
         v.item("minecraft:red_bundle").maxStackSize(1).weight(4);
@@ -179,6 +196,9 @@ final class BehaviourBasePart9 {
         v.item("minecraft:reserved6").weightUnknown();
         v.item("minecraft:resin_block");
         v.item("minecraft:resin_brick").furnaceXpMultiplier(0.1f);
+    }
+
+    static void part67(Changes v) {
         v.item("minecraft:resin_brick_double_slab").weightUnknown();
         v.item("minecraft:resin_brick_slab");
         v.item("minecraft:resin_brick_stairs");
@@ -196,9 +216,6 @@ final class BehaviourBasePart9 {
         v.item("minecraft:sand");
         v.item("minecraft:sandstone");
         v.item("minecraft:sandstone_double_slab").weightUnknown();
-    }
-
-    static void part67(Changes v) {
         v.item("minecraft:sandstone_slab");
         v.item("minecraft:sandstone_stairs");
         v.item("minecraft:sandstone_wall");
@@ -247,6 +264,9 @@ final class BehaviourBasePart9 {
         v.item("minecraft:small_dripleaf_block").compostChance(65);
         v.item("minecraft:smithing_table").furnaceBurnDuration(300);
         v.item("minecraft:smoker");
+    }
+
+    static void part68(Changes v) {
         v.item("minecraft:smooth_basalt");
         v.item("minecraft:smooth_quartz");
         v.item("minecraft:smooth_quartz_double_slab").weightUnknown();
@@ -264,9 +284,6 @@ final class BehaviourBasePart9 {
         v.item("minecraft:smooth_stone_double_slab").weightUnknown();
         v.item("minecraft:smooth_stone_slab");
         v.item("minecraft:sniffer_egg");
-    }
-
-    static void part68(Changes v) {
         v.item("minecraft:sniffer_spawn_egg");
         v.item("minecraft:snort_pottery_sherd");
         v.item("minecraft:snout_armor_trim_smithing_template");
@@ -310,6 +327,9 @@ final class BehaviourBasePart9 {
         v.item("minecraft:spruce_wall_sign").furnaceBurnDuration(300).weightUnknown();
         v.item("minecraft:spruce_wood").furnaceBurnDuration(300);
         v.item("minecraft:spyglass").maxStackSize(1).weight(64);
+    }
+
+    static void part69(Changes v) {
         v.item("minecraft:squid_spawn_egg");
         v.item("minecraft:stained_glass").weightUnknown();
         v.item("minecraft:stained_glass_pane").weightUnknown();
@@ -332,9 +352,6 @@ final class BehaviourBasePart9 {
         v.item("minecraft:stone_block_slab4").weightUnknown();
         v.item("minecraft:stone_brick_double_slab").weightUnknown();
         v.item("minecraft:stone_brick_slab");
-    }
-
-    static void part69(Changes v) {
         v.item("minecraft:stone_brick_stairs");
         v.item("minecraft:stone_brick_wall");
         v.item("minecraft:stone_bricks");
@@ -405,6 +422,9 @@ final class BehaviourBasePart9 {
         v.item("minecraft:structure_block");
         v.item("minecraft:structure_void");
         v.item("minecraft:sugar");
+    }
+
+    static void part70(Changes v) {
         v.item("minecraft:sugar_cane").compostChance(50);
         v.item("minecraft:sulfur");
         v.item("minecraft:sulfur_brick_double_slab").weightUnknown();
@@ -422,9 +442,6 @@ final class BehaviourBasePart9 {
         v.item("minecraft:sunflower").compostChance(65);
         v.item("minecraft:suspicious_gravel");
         v.item("minecraft:suspicious_sand");
-    }
-
-    static void part70(Changes v) {
         v.item("minecraft:suspicious_stew").maxStackSize(1).weight(64);
         v.item("minecraft:sweet_berries").compostChance(30);
         v.item("minecraft:sweet_berry_bush").weightUnknown();
@@ -473,6 +490,9 @@ final class BehaviourBasePart9 {
         v.item("minecraft:tuff_slab");
         v.item("minecraft:tuff_stairs");
         v.item("minecraft:tuff_wall");
+    }
+
+    static void part71(Changes v) {
         v.item("minecraft:turtle_egg");
         v.item("minecraft:turtle_helmet")
                 .maxStackSize(1)
@@ -495,9 +515,6 @@ final class BehaviourBasePart9 {
         v.item("minecraft:vex_armor_trim_smithing_template");
         v.item("minecraft:vex_spawn_egg");
         v.item("minecraft:villager_spawn_egg");
-    }
-
-    static void part71(Changes v) {
         v.item("minecraft:vindicator_spawn_egg");
         v.item("minecraft:vine").compostChance(50);
         v.item("minecraft:wall_banner").furnaceBurnDuration(300).weightUnknown();
@@ -545,22 +562,5 @@ final class BehaviourBasePart9 {
         v.item("minecraft:waxed_copper_grate");
         v.item("minecraft:waxed_copper_lantern");
         v.item("minecraft:waxed_copper_trapdoor");
-        v.item("minecraft:waxed_cut_copper");
-        v.item("minecraft:waxed_cut_copper_slab");
-        v.item("minecraft:waxed_cut_copper_stairs");
-        v.item("minecraft:waxed_double_cut_copper_slab").weightUnknown();
-        v.item("minecraft:waxed_exposed_chiseled_copper");
-        v.item("minecraft:waxed_exposed_copper");
-        v.item("minecraft:waxed_exposed_copper_bars");
-        v.item("minecraft:waxed_exposed_copper_bulb");
-        v.item("minecraft:waxed_exposed_copper_chain");
-        v.item("minecraft:waxed_exposed_copper_chest");
-        v.item("minecraft:waxed_exposed_copper_door");
-        v.item("minecraft:waxed_exposed_copper_golem_statue");
-        v.item("minecraft:waxed_exposed_copper_grate");
-        v.item("minecraft:waxed_exposed_copper_lantern");
-        v.item("minecraft:waxed_exposed_copper_trapdoor");
-        v.item("minecraft:waxed_exposed_cut_copper");
-        v.item("minecraft:waxed_exposed_cut_copper_slab");
     }
 }

@@ -64,7 +64,10 @@ final class Unions {
                 object = (ObjRef) builder.single(c, d, form, fields);
                 type = object;
             } else {
-                type = variantType(c, e.getKey(), JavaNames.camel(ModelFields.token(d.path)));
+                // {name, doc, type}: the form's Java type in api.json's words (a string form that is "molang")
+                String typed = e.getValue().isJsonObject() && e.getValue().getAsJsonObject().has("type")
+                    ? e.getValue().getAsJsonObject().get("type").getAsString() : e.getKey();
+                type = variantType(c, typed, JavaNames.camel(ModelFields.token(d.path)));
             }
             // A record name, or {name, doc}
             String variant = e.getValue().isJsonObject() ? e.getValue().getAsJsonObject().get("name").getAsString() : e.getValue().getAsString();

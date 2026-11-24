@@ -4,6 +4,7 @@ import org.cloudburstmc.nbt.NbtList;
 import org.cloudburstmc.nbt.NbtMap;
 import org.cloudburstmc.nbt.NbtType;
 import dev.opencollab.paletter.internal.PaletteReportBuilder;
+import dev.opencollab.paletter.Molang;
 import dev.opencollab.paletter.Paletter;
 import dev.opencollab.paletter.block.CustomBlock;
 import dev.opencollab.paletter.block.component.CollisionBox;
@@ -106,7 +107,7 @@ class TransformsTest {
     @Test
     void molangRepairAmountBefore26_40IsACompound() {
         Repairable repairable = Repairable.builder().repairItems(Repairable.RepairItems.builder().items(ItemsOrTags.items(List.of("minecraft:stick")))
-            .repairAmount(RepairAmount.expression("q.max_durability * 0.25")).build()).build();
+            .repairAmount(RepairAmount.expression(Molang.of("q.max_durability * 0.25"))).build()).build();
         WireNode now = new WireNode();
         Transforms.itemDescriptorList(ctx, now, repairable);
         assertEquals("q.max_durability * 0.25", now.build().getCompound("minecraft:repairable").getList("repair_items", NbtType.COMPOUND).getFirst().getString("repair_amount"));
@@ -115,6 +116,77 @@ class TransformsTest {
         NbtMap amount = before.build().getCompound("minecraft:repairable").getList("repair_items", NbtType.COMPOUND).getFirst().getCompound("repair_amount");
         assertEquals("q.max_durability * 0.25", amount.getString("expression"));
         assertEquals((short) 0, amount.getShort("version"));
+    }
+
+    private static Object repairAmount(WireContext at, Molang amount) {
+        WireNode out = new WireNode();
+        Transforms.itemDescriptorList(at, out, Repairable.builder().repairItems(Repairable.RepairItems.builder().items("minecraft:stick")
+            .repairAmount(RepairAmount.expression(amount)).build()).build());
+        return compound(out, "minecraft:repairable").getList("repair_items", NbtType.COMPOUND).getFirst().get("repair_amount");
+    }
+
+    /** The version of a repair amount, as BDS 1.26.36.1 to 1.26.70.24 send {"expression": "paletter_a", "version": n}. */
+    @Test
+    void theVersionOfARepairAmount() {
+        // -1 to 13 as written in 1.26.36.1's compound; later builds send the expression alone
+        for (int version : new int[] {-1, 0, 1, 7, 13}) {
+            assertEquals(NbtMap.builder().putString("expression", "paletter_a").putShort("version", (short) version).build(),
+                repairAmount(ctx26_30, Molang.of("paletter_a", version)));
+            assertEquals("paletter_a", repairAmount(ctx, Molang.of("paletter_a", version)));
+        }
+        // an empty expression is version -1 whatever its version
+        assertEquals((short) -1, ((NbtMap) repairAmount(ctx26_30, Molang.of("", 1))).getShort("version"));
+        assertTrue(report.entries().isEmpty(), report.entries().toString());
+        // past the newest Molang version (13): the fixed amount 0.0, in every build
+        for (int version : new int[] {14, 20, 100}) {
+            assertEquals(0.0f, repairAmount(ctx26_30, Molang.of("paletter_a", version)));
+            assertEquals(0.0f, repairAmount(ctx, Molang.of("paletter_a", version)));
+        }
+        assertEquals(6, report.warnings().size(), report.entries().toString());
+    }
+
+    @Test
+    void aMolangVersionOutsideTheTriedRangeIsRefused() {
+        assertEquals(Molang.of("a", -1).version(), -1);
+        assertEquals(Molang.of("a", 100).version(), 100);
+        assertNull(Molang.of("a").version());
+        org.junit.jupiter.api.Assertions.assertThrows(IllegalArgumentException.class, () -> Molang.of("a", -2));
+        org.junit.jupiter.api.Assertions.assertThrows(IllegalArgumentException.class, () -> Molang.of("a", 101));
+    }
+
+    /** bone_visibility {"expression": ..., "version": n} as BDS 1.26.36.1 to 1.26.70.24 send it. */
+    @Test
+    void theVersionOfABoneVisibility() {
+        Map<String, Molang> bones = new java.util.LinkedHashMap<>();
+        bones.put("arm", Molang.of("q.block_state('lit')", 7));
+        bones.put("lid", Molang.of("q.block_state('lit')"));
+        bones.put("base", Molang.of("1", 1));
+        WireNode oldest = new WireNode();
+        Transforms.geometry(ctx26_30, oldest, Geometry.builder().identifier("geometry.lamp").boneVisibility(bones).build());
+        NbtMap sent = compound(oldest, "minecraft:geometry").getCompound("bone_visibility");
+        // an expression keeps its version; one without and a number get the block's Molang version (13)
+        assertEquals((short) 7, sent.getCompound("arm").getShort("version"));
+        assertEquals((short) 13, sent.getCompound("lid").getShort("version"));
+        assertEquals(NbtMap.builder().putString("expression", "1.000000").putShort("version", (short) 13).build(), sent.getCompound("base"));
+        assertTrue(report.entries().isEmpty(), report.entries().toString());
+        // later builds send the expression alone
+        WireNode now = new WireNode();
+        Transforms.geometry(ctx, now, Geometry.builder().identifier("geometry.lamp").boneVisibility(bones).build());
+        assertEquals("q.block_state('lit')", compound(now, "minecraft:geometry").getCompound("bone_visibility").getString("arm"));
+        // BDS logs a bad expression for -1 and past 13, and sends it as written
+        WireNode bad = new WireNode();
+        Transforms.geometry(ctx26_30, bad, Geometry.builder().identifier("geometry.lamp")
+            .boneVisibility(Map.of("arm", Molang.of("q.block_state('lit')", 14), "lid", Molang.of("q.block_state('lit')", -1))).build());
+        assertEquals((short) 14, compound(bad, "minecraft:geometry").getCompound("bone_visibility").getCompound("arm").getShort("version"));
+        assertEquals((short) -1, compound(bad, "minecraft:geometry").getCompound("bone_visibility").getCompound("lid").getShort("version"));
+        assertEquals(2, report.warnings().size(), report.entries().toString());
+    }
+
+    /** A map of Molang expressions without versions. */
+    private static Map<String, Molang> molang(Map<String, String> texts) {
+        Map<String, Molang> out = new java.util.LinkedHashMap<>();
+        texts.forEach((bone, text) -> out.put(bone, Molang.of(text)));
+        return out;
     }
 
     @Test
@@ -152,7 +224,7 @@ class TransformsTest {
 
     @Test
     void boneVisibilityIsMolangTextInEveryGeometry() {
-        Map<String, String> bones = Map.of("shade", "true", "bulb", "false", "arm", "q.block_state('lit')", "base", "1.0");
+        Map<String, Molang> bones = molang(Map.of("shade", "true", "bulb", "false", "arm", "q.block_state('lit')", "base", "1.0"));
         ItemVisual.VisualGeometry geometry = ItemVisual.VisualGeometry.builder().identifier("geometry.lamp").boneVisibility(bones).build();
         WireNode out = new WireNode();
         Transforms.itemVisualBoneVisibility(ctx, out, geometry);
@@ -173,7 +245,7 @@ class TransformsTest {
 
     @Test
     void boneVisibilityIsTheSameInEveryBuildAndACompoundBefore26_40() {
-        Map<String, String> bones = Map.of("shade", "true", "bulb", "false", "arm", "q.block_state('lit')", "base", "1.0");
+        Map<String, Molang> bones = molang(Map.of("shade", "true", "bulb", "false", "arm", "q.block_state('lit')", "base", "1.0"));
         Map<String, String> sent = Map.of("shade", "1.000000", "bulb", "0.000000", "arm", "q.block_state('lit')", "base", "1.000000");
         // BDS 1.26.45.1 and 1.26.52.3 refuse the JSON boolean and take the text for it, which is what the map holds
         WireNode before = new WireNode();
@@ -226,7 +298,7 @@ class TransformsTest {
     void anExpressionWithoutAQueryIsSentAsWrittenWithAWarning() {
         Map<String, String> bones = Map.of("arm", "+1", "lid", "!query.block_state('lit')", "base", "math.pi");
         WireNode out = new WireNode();
-        Transforms.geometry(ctx, out, Geometry.builder().identifier("geometry.lamp").boneVisibility(bones).build());
+        Transforms.geometry(ctx, out, Geometry.builder().identifier("geometry.lamp").boneVisibility(molang(bones)).build());
         assertEquals(bones, compound(out, "minecraft:geometry").getCompound("bone_visibility"));
         // BDS sends "+1" as written too (a bad expression, says its log); what it can compute it sends as a number
         assertEquals(2, report.warnings().size(), report.entries().toString());
@@ -255,7 +327,7 @@ class TransformsTest {
     @Test
     void geometry() {
         WireNode out = new WireNode();
-        Transforms.geometry(ctx, out, Geometry.builder().identifier("geometry.lamp").boneVisibility(Map.of("lid", "false", "door", "q.block_property('open') == 'true'", "base", "true")).uvLock(true).build());
+        Transforms.geometry(ctx, out, Geometry.builder().identifier("geometry.lamp").boneVisibility(molang(Map.of("lid", "false", "door", "q.block_property('open') == 'true'", "base", "true"))).uvLock(true).build());
         NbtMap g = compound(out, "minecraft:geometry");
         assertEquals("geometry.lamp", g.getString("identifier"));
         assertEquals("0.000000", g.getCompound("bone_visibility").getString("lid"));
@@ -332,13 +404,18 @@ class TransformsTest {
     }
 
     @Test
-    void descriptorStatesOfAnUnknownBlockOrStateAreReported() {
-        Wire.blockDescriptor(ctx, new WireNode(), "", "minecraft:oak_log", Map.of("paletter_state", 1), null);
-        assertEquals(1, report.warnings().size());
+    void descriptorStatesAreIntsAndAStringIsReportedAsZero() {
+        // BDS 1.26.36.1 to 1.26.70.24: names the block lacks and blocks the registry lacks are sent as given
+        WireNode unknown = new WireNode();
+        Wire.blockDescriptor(ctx, unknown, "", "minecraft:oak_log", Map.of("paletter_state", 1), null);
         Wire.blockDescriptor(ctx, new WireNode(), "", "minecraft:paletter_unknown", Map.of("a", 1), null);
-        assertEquals(2, report.warnings().size());
-        Wire.blockDescriptor(ctx, new WireNode(), "", "minecraft:oak_log", Map.of("pillar_axis", "y"), null);
-        assertEquals(3, report.warnings().size(), "an enum state is sent as the string until its BDS index can be derived");
+        assertEquals(1, unknown.build().getCompound("states").getInt("paletter_state"));
+        assertTrue(report.entries().isEmpty(), report.entries().toString());
+        // a string is 0 (pillar_axis x, y, z and w alike), a boolean 1 or 0
+        WireNode lossy = new WireNode();
+        Wire.blockDescriptor(ctx, lossy, "", "minecraft:lever", Map.of("lever_direction", "east", "open_bit", true), null);
+        assertEquals(NbtMap.builder().putInt("lever_direction", 0).putInt("open_bit", 1).build(), lossy.build().getCompound("states"));
+        assertEquals(1, report.warnings().size(), "the string's value is lost");
     }
 
     @Test
@@ -364,14 +441,14 @@ class TransformsTest {
     }
 
     @Test
-    void blockDescriptorsAreTypedByTheRegistry() {
+    void blockDescriptorsAreTheFullTriple() {
         WireNode placer = new WireNode();
-        BlockPlacer.UseOn use = BlockPlacer.UseOn.of(BedrockBlocks.OAK_LOG.defaultState());
+        BlockPlacer.UseOn use = BlockPlacer.UseOn.of(BedrockBlocks.WHITE_CANDLE.defaultState());
         Wire.blockDescriptor(ctx, placer, "", use.name(), use.states(), use.tags());
         NbtMap states = placer.build().getCompound("states");
-        assertEquals("minecraft:oak_log", placer.build().getString("name"));
+        assertEquals("minecraft:white_candle", placer.build().getString("name"));
         assertEquals("", placer.build().getString("tags"), "item descriptors are always the full triple");
-        assertEquals(BedrockBlocks.OAK_LOG.defaultState().toNbt().getCompound("states"), states);
+        assertEquals(NbtMap.builder().putInt("candles", 0).putInt("lit", 0).build(), states);
 
         WireNode entity = new WireNode();
         Wire.blockDescriptor(ctx, entity, "", null, Map.of(), "q.any_tag('stone')");
@@ -388,6 +465,18 @@ class TransformsTest {
         assertEquals("x", entry.getString("state"));
         assertEquals(2, entry.getInt("type"));
         assertEquals(1, entry.getInt("value"));
+        // BDS 1.26.36.1 to 1.26.70.24: a boolean is an int (type 2), a string type 1 with the string
+        WireNode typed = new WireNode();
+        Transforms.blockDescriptorStates(ctx, typed, PlacementFilter.BlockFilter.builder().name("minecraft:lever")
+            .states(new java.util.LinkedHashMap<>(Map.of("open_bit", true))).build());
+        NbtMap bool = typed.build().getList("states", NbtType.COMPOUND).getFirst();
+        assertEquals(2, bool.getInt("type"));
+        assertEquals(1, bool.get("value"));
+        WireNode text = new WireNode();
+        Transforms.blockDescriptorStates(ctx, text, PlacementFilter.BlockFilter.builder().name("minecraft:oak_log").states(Map.of("pillar_axis", "x")).build());
+        NbtMap string = text.build().getList("states", NbtType.COMPOUND).getFirst();
+        assertEquals(1, string.getInt("type"));
+        assertEquals("x", string.getString("value"));
         WireNode empty = new WireNode();
         Transforms.blockDescriptorStates(ctx, empty, PlacementFilter.BlockFilter.builder().name("minecraft:dirt").build());
         assertTrue(empty.isEmpty(), "placement filters send no states when there are none");
@@ -398,7 +487,7 @@ class TransformsTest {
         WireNode repair = new WireNode();
         Transforms.itemDescriptorList(ctx, repair, Repairable.builder().repairItems(
             Repairable.RepairItems.builder().items("minecraft:stick").repairAmount(1.5f).build(),
-            Repairable.RepairItems.builder().items(ItemsOrTags.items(List.of())).repairAmount(RepairAmount.expression("q.max_durability * 0.25")).build(),
+            Repairable.RepairItems.builder().items(ItemsOrTags.items(List.of())).repairAmount(RepairAmount.expression(Molang.of("q.max_durability * 0.25"))).build(),
             Repairable.RepairItems.builder().items(ItemsOrTags.tagQuery("1")).repairAmount(1f).build()).build());
         NbtList<NbtMap> entries = (NbtList<NbtMap>) compound(repair, "minecraft:repairable").getList("repair_items", NbtType.COMPOUND);
         assertEquals("minecraft:stick", entries.get(0).getList("items", NbtType.COMPOUND).getFirst().getString("name"));
@@ -462,7 +551,7 @@ class TransformsTest {
         assertEquals((byte) 0, compound(selection, "minecraft:selection_box").getByte("enabled"));
 
         WireNode animation = new WireNode();
-        Transforms.useAnimationId(ctx, animation, UseAnimation.of("spear"));
+        Transforms.useAnimationId(ctx, animation, UseAnimation.of(UseAnimation.Value.of("spear")));
         assertEquals(6, compound(animation, "item_properties").getInt("use_animation"));
         assertEquals("spear", compound(animation, "minecraft:use_animation").getString("value"));
         WireNode none = new WireNode();
@@ -546,20 +635,16 @@ class TransformsTest {
 
     @Test
     void anAmmunitionItemIsADescriptorThatIsEmptyWhenItNamesNoKnownItem() {
+        // An entry always names an item: BDS's schema requires it (Shooter.Ammunition.item is required)
         WireNode known = new WireNode();
         Transforms.ammunitionItemDescriptor(ctx, known, Shooter.Ammunition.builder().item("minecraft:stick").build());
         assertEquals("minecraft:stick", compound(known, "item").getString("name"));
         assertTrue(report.entries().isEmpty());
 
-        WireNode none = new WireNode();
-        Transforms.ammunitionItemDescriptor(ctx, none, Shooter.Ammunition.builder().build());
-        assertTrue(compound(none, "item").isEmpty());
-        assertTrue(none.build().containsKey("item"), "{} is sent, not left out");
-        assertTrue(report.entries().isEmpty());
-
         WireNode unknown = new WireNode();
         Transforms.ammunitionItemDescriptor(ctx, unknown, Shooter.Ammunition.builder().item("minecraft:no_such_item").build());
         assertTrue(compound(unknown, "item").isEmpty());
+        assertTrue(unknown.build().containsKey("item"), "{} is sent, not left out");
         assertEquals(1, report.warnings().size());
     }
 }

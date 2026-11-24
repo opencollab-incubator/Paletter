@@ -91,9 +91,10 @@ final class FieldAnalysis {
         }
         String filler = component.kind().equals("item") && fixtures.requires(component.id()).isEmpty()
             && !fixtures.filler.has(component.name()) ? fixtures.filler.keySet().iterator().next() : null;
+        List<Obs> own = own(observations);
         // Footprint: what any accepted variant changes against the control
         Set<String> footprint = new TreeSet<>();
-        for (Obs o : observations) {
+        for (Obs o : own) {
             if (o == control || !o.accepted()) {
                 continue;
             }
@@ -175,7 +176,7 @@ final class FieldAnalysis {
             fields.add(field.path(), f);
         }
         result.add("fields", fields);
-        JsonObject constants = constants(result, observations, control);
+        JsonObject constants = constants(result, own, control);
         if (!constants.isEmpty()) {
             result.add("constants", constants);
         }
@@ -185,6 +186,19 @@ final class FieldAnalysis {
         }
         transformEvidence(capture, component, result, observations, controlVariant);
         return result;
+    }
+
+    /**
+     * The observations of the component on its own: without the variants that set it next to other components (roles
+     * {@code script}, {@code tag} and {@code combination}), which write leaves of their own into the item or block (a script
+     * component's {@code onUseOn} sends {@code publisher_on_use_on.autoSucceedOnClient} 1 next to a placer, {@code max_stack_size}
+     * next to {@code wearable} its {@code minecraft:max_stack_size}). Those are evidence of how components combine
+     * ({@code SharedLeaves}, {@code UseOnHook}), not of the component's footprint or constants. A component with no other
+     * variants ({@code custom_components}, whose variants are all script ones) keeps them all.
+     */
+    private static List<Obs> own(List<Obs> observations) {
+        List<Obs> alone = observations.stream().filter(o -> !List.of("script", "tag", "combination").contains(o.variant().role())).toList();
+        return alone.stream().anyMatch(o -> o.accepted() && !o.variant().role().equals("control")) ? alone : observations;
     }
 
     /**
@@ -450,8 +464,11 @@ final class FieldAnalysis {
         // (a field whose leaves only follow its presence, under a transform, is the transform's too). A fit that explains
         // every leaf is the transform's as well: the encoder calls the transform, not the rules, so the field is recorded
         // the same whether the fit happened to succeed or not
-        if ((status.equals("inferred") || status.equals("unresolved") || status.equals("partial")
-            || ((status.equals("dropped") || status.equals("linked")) && !rules.isEmpty())) && transformKey != null) {
+        // A linked field under a transform is the transform's even where no leaf follows it: the encoder of the transform decides
+        // what goes on the wire, and the messages that link it (selection_box's object form of origin: "Invalid box size "origin"
+        // + "size"") are the transform's to honour
+        if ((status.equals("inferred") || status.equals("unresolved") || status.equals("partial") || status.equals("linked")
+            || (status.equals("dropped") && !rules.isEmpty())) && transformKey != null) {
             out.addProperty("transform", transforms.get(transformKey));
             out.remove("linkedTo");
             status = "hand-rule";

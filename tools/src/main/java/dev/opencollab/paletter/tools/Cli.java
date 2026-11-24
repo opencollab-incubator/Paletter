@@ -16,7 +16,7 @@ import picocli.CommandLine.Command;
     UpdateCommands.SpecCaptureCommand.class,
     DataCommands.VerifyCommand.class, DataCommands.ExportCommand.class, DataCommands.BaselineCommand.class, DataCommands.CheckData.class,
     DataCommands.DataDiffCommand.class, UpdateCommands.CreativeProbeCommand.class, UpdateCommands.EducationCaptureCommand.class,
-    DataCommands.ExperimentMarksCommand.class,
+    DataCommands.ExperimentMarksCommand.class, DataCommands.VariantNamesCommand.class,
     CaptureCommands.CaptureCommand.class, CaptureCommands.Experiments.class, CaptureCommands.CompareCommand.class,
     ModelCommands.Docs.class, ModelCommands.Addon.class, ModelCommands.Infer.class, ModelCommands.CheckMappings.class, ModelCommands.Retire.class,
     GeneratorCommands.Constants.class, GeneratorCommands.Components.class, GeneratorCommands.Blocks.class, GeneratorCommands.InspectCommand.class,

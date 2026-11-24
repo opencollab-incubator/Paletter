@@ -196,6 +196,22 @@ class SchemaTest {
         assertTrue(definition(schema, "block", "minecraft:b", 0).getAsJsonObject("root").get("deprecated").getAsBoolean());
     }
 
+    /**
+     * BDS 1.26.45.1 and 1.26.52.3 name their block component entry point {@code block/1.26.20/Components.json}; 1.26.63.1 has that one
+     * and {@code block_components/1.26.60/Block Components.json}. Item formats of that name are not block components.
+     */
+    @Test
+    void theBlockComponentsOfTheBlockDirectoryAreAnEntryPoint() throws IOException {
+        file("block/1.26.20/Components.json", "{\"title\": \"Components\", \"properties\": {\"minecraft:a\": {\"type\": \"boolean\"}}}");
+        file("block_components/1.26.60/Block Components.json", "{\"properties\": {\"minecraft:a\": {\"type\": \"integer\"}}}");
+        file("item/1.21.10/Components.json", "{\"properties\": {\"minecraft:i\": {\"type\": \"boolean\"}}}");
+        file("item/1.26.30/Item Components.json", "{\"properties\": {\"minecraft:j\": {\"type\": \"boolean\"}}}");
+        JsonObject schema = SchemaExtract.extract(docs, "1.26.99.1");
+        assertEquals("[\"1.26.20\",\"1.26.60\"]", schema.getAsJsonObject("formats").get("block").toString());
+        assertEquals("[\"1.26.30\"]", schema.getAsJsonObject("formats").get("item").toString());
+        assertEquals(2, schema.getAsJsonObject("block").getAsJsonArray("minecraft:a").size(), "one definition per format");
+    }
+
     @Test
     void aKindWithOnlyBetaIsNothingToMerge() throws IOException {
         file("item/beta/Item Components (Beta).json", "{\"properties\": {\"minecraft:newer\": {\"type\": \"boolean\"}}}");
@@ -320,6 +336,42 @@ class SchemaTest {
         assertSame(docs, Schema.NONE.apply(docs));
     }
 
+    /** The forms of the root, the members of the component's own list and lists of three numbers, as the schema has them. */
+    @Test
+    void theSchemaGivesFormsListMembersAndVectors() {
+        Model docs = Model.GSON.fromJson("""
+            {"source": "test", "commit": "test", "license": "test", "formatNotes": [], "components": [
+              {"id": "block:minecraft:boxes", "kind": "block", "category": "component", "name": "minecraft:boxes", "status": "active",
+               "doc": "", "page": "", "experiments": [], "notes": [], "forms": [{"type": "boolean"}, {"type": "array", "items": {"type": "object"}}],
+               "fields": [{"path": "[].min", "types": [{"type": "vec3"}], "required": false, "enumValues": [], "examples": [], "doc": ""}]},
+              {"id": "item:minecraft:button", "kind": "item", "category": "component", "name": "minecraft:button", "status": "active",
+               "doc": "", "page": "", "experiments": [], "notes": [], "forms": [{"type": "object"}], "fields": []},
+              {"id": "block:minecraft:gone", "kind": "block", "category": "component", "name": "minecraft:gone", "status": "active",
+               "doc": "", "page": "", "experiments": [], "notes": [], "forms": [{"type": "string"}], "fields": []}
+            ]}""", Model.class);
+        String vector = "{\"types\": [\"array\", \"object\"], \"minItems\": 3, \"maxItems\": 3}";
+        Schema schema = Schema.of(JsonParser.parseString("""
+            {"bdsVersion": "1.26.99.1", "formats": {"block": ["1.26.60"], "item": ["1.26.50"]},
+             "block": {"minecraft:boxes": [{"formats": ["1.26.60"], "root": {"types": ["boolean", "array"], "maxItems": 16},
+                         "fields": {"[]": {"types": ["object"]}, "[].min": %s, "[].min[]": {"types": ["number"]}, "[].min.x": {"types": ["number"]},
+                                    "[].origin": %s, "[].origin[]": {"types": ["number"]}, "[].origin.x": {"types": ["number"]},
+                                    "[].pair": {"types": ["array"], "minItems": 2, "maxItems": 2}, "[].pair[]": {"types": ["number"]}}}],
+                       "minecraft:gone": [{"formats": ["1.26.60"], "root": {"deprecated": true, "types": ["object"]}, "fields": {}}]},
+             "item": {"minecraft:button": [{"formats": ["1.26.50"], "root": {"types": ["boolean", "string"]}, "fields": {}}]}}"""
+            .formatted(vector, vector)).getAsJsonObject());
+        Model merged = schema.apply(docs);
+        Component boxes = merged.component("block:minecraft:boxes");
+        // A member of the component's own list the docs lack; three numbers are a vector, two are a list
+        assertEquals(List.of("vec3", "object"), boxes.field("[].origin").types().stream().map(Object::toString).toList());
+        assertEquals("[].origin.x", boxes.field("[].origin.x").path());
+        assertEquals("array<number>", boxes.field("[].pair").types().getFirst().toString());
+        assertEquals(List.of("vec3", "object"), boxes.field("[].min").types().stream().map(Object::toString).toList());
+        // The root's types the forms lack, after the documented forms; nothing of a deprecated root
+        assertEquals(List.of("object", "boolean", "string"), merged.component("item:minecraft:button").forms().stream().map(Object::toString).toList());
+        assertEquals(List.of("boolean", "array<object>"), boxes.forms().stream().map(Object::toString).toList());
+        assertEquals(List.of("string"), merged.component("block:minecraft:gone").forms().stream().map(Object::toString).toList());
+    }
+
     @Test
     void theSchemasFactsReplaceTheContentLogsOfTheSameKind() throws IOException {
         Schema schema = Schema.of(extract());
@@ -374,15 +426,20 @@ class SchemaTest {
         Path root = Path.of(System.getProperty("paletter.root", ".."));
         Path modelDir = root.resolve("data/model");
         Model docs = Model.read(modelDir.resolve("components.json"));
-        Fixtures fixtures = Fixtures.read(modelDir, true);
+        Fixtures fixtures = Fixtures.read(modelDir);
         assertNotNull(fixtures.schemaBuild(), "no data/bds/<build>/schema.json");
         Model with = fixtures.apply(docs);
-        Model without = Fixtures.read(modelDir, false).apply(docs);
+        Model without = docs;
         // The content log cut this list short ("... (7 others)"), the docs have none
         assertEquals(0, without.component("item:minecraft:use_animation").field("value").enumValues().size());
         assertTrue(with.component("item:minecraft:use_animation").field("value").enumValues().size() >= 10);
         assertEquals(15.0, with.component("block:minecraft:redstone_producer").field("power").range().max());
         assertTrue(fixtures.facts("block:minecraft:liquid_detection", "detection_rules").contains("maxItems 1"));
+        // Formerly errata: the origin and size boxes of collision_box, the boolean or string of interact_button
+        for (String box : List.of("[].origin", "[].size")) {
+            assertEquals("vec3", with.component("block:minecraft:collision_box").field(box).types().getFirst().toString(), box);
+        }
+        assertTrue(with.component("item:minecraft:interact_button").forms().stream().map(Object::toString).toList().containsAll(List.of("boolean", "string")));
         // The docs' fields and components all stay
         assertTrue(with.components().size() >= without.components().size());
         for (Component c : without.components()) {
@@ -391,11 +448,16 @@ class SchemaTest {
     }
 
 
-    /** The committed content log and the committed schema say the same where they speak of the same thing. */
+    /**
+     * The committed content log and the committed schema say the same where they speak of the same thing, at the format of the
+     * add-on whose content log it is (as the add-on reads the schema): a newer format may say otherwise (collision_box's
+     * {@code maxItems} is 16 at format 1.26.60 and 32 at 1.26.70 in BDS 1.26.70.24's schema).
+     */
     @Test
     void theCommittedDataHasNoDisputes() throws IOException {
         Path root = Path.of(System.getProperty("paletter.root", ".."));
-        Schema schema = Schema.newest(root.resolve("data/bds"), null);
+        String format = JsonParser.parseString(Files.readString(root.resolve("data/model/fixtures.json"))).getAsJsonObject().get("formatVersion").getAsString();
+        Schema schema = Schema.newest(root.resolve("data/bds"), null).forFormat(format);
         assertNotNull(schema.build());
         JsonObject log = JsonParser.parseString(Files.readString(root.resolve("data/model/bds-feedback.json"))).getAsJsonObject();
         assertEquals(List.of(), schema.disputes(log));

@@ -178,6 +178,9 @@ public final class ComponentGenerator {
         if (in.mappings().has("traitStates")) {
             model.traitStates = in.mappings().getAsJsonObject("traitStates");
         }
+        if (in.mappings().has("molangVersions")) {
+            model.molangVersions = in.mappings().getAsJsonObject("molangVersions");
+        }
         if (in.mappings().has("envelope")) {
             in.mappings().getAsJsonObject("envelope").entrySet().forEach(e -> model.envelope.put(e.getKey(), e.getValue().getAsJsonArray()));
         }

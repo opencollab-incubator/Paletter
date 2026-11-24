@@ -244,14 +244,19 @@ public final class RedstoneProducer implements BlockComponent {
      */
     public static final class ConnectedFaces {
         /**
+         * {@code down}
+         */
+        public static final ConnectedFaces DOWN = new ConnectedFaces("down");
+
+        /**
+         * {@code up}
+         */
+        public static final ConnectedFaces UP = new ConnectedFaces("up");
+
+        /**
          * {@code north}
          */
         public static final ConnectedFaces NORTH = new ConnectedFaces("north");
-
-        /**
-         * {@code east}
-         */
-        public static final ConnectedFaces EAST = new ConnectedFaces("east");
 
         /**
          * {@code south}
@@ -264,16 +269,11 @@ public final class RedstoneProducer implements BlockComponent {
         public static final ConnectedFaces WEST = new ConnectedFaces("west");
 
         /**
-         * {@code up}
+         * {@code east}
          */
-        public static final ConnectedFaces UP = new ConnectedFaces("up");
+        public static final ConnectedFaces EAST = new ConnectedFaces("east");
 
-        /**
-         * {@code down}
-         */
-        public static final ConnectedFaces DOWN = new ConnectedFaces("down");
-
-        private static final List<ConnectedFaces> KNOWN = List.of(NORTH, EAST, SOUTH, WEST, UP, DOWN);
+        private static final List<ConnectedFaces> KNOWN = List.of(DOWN, UP, NORTH, SOUTH, WEST, EAST);
 
         private static final Map<String, ConnectedFaces> BY_VALUE = Check.index(KNOWN, ConnectedFaces::value);
 
@@ -344,14 +344,19 @@ public final class RedstoneProducer implements BlockComponent {
      */
     public static final class StronglyPoweredFace {
         /**
+         * {@code down}
+         */
+        public static final StronglyPoweredFace DOWN = new StronglyPoweredFace("down");
+
+        /**
+         * {@code up}
+         */
+        public static final StronglyPoweredFace UP = new StronglyPoweredFace("up");
+
+        /**
          * {@code north}
          */
         public static final StronglyPoweredFace NORTH = new StronglyPoweredFace("north");
-
-        /**
-         * {@code east}
-         */
-        public static final StronglyPoweredFace EAST = new StronglyPoweredFace("east");
 
         /**
          * {@code south}
@@ -364,16 +369,11 @@ public final class RedstoneProducer implements BlockComponent {
         public static final StronglyPoweredFace WEST = new StronglyPoweredFace("west");
 
         /**
-         * {@code up}
+         * {@code east}
          */
-        public static final StronglyPoweredFace UP = new StronglyPoweredFace("up");
+        public static final StronglyPoweredFace EAST = new StronglyPoweredFace("east");
 
-        /**
-         * {@code down}
-         */
-        public static final StronglyPoweredFace DOWN = new StronglyPoweredFace("down");
-
-        private static final List<StronglyPoweredFace> KNOWN = List.of(NORTH, EAST, SOUTH, WEST, UP, DOWN);
+        private static final List<StronglyPoweredFace> KNOWN = List.of(DOWN, UP, NORTH, SOUTH, WEST, EAST);
 
         private static final Map<String, StronglyPoweredFace> BY_VALUE = Check.index(KNOWN, StronglyPoweredFace::value);
 

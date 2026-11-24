@@ -105,7 +105,8 @@ class ExperimentAttributionTest {
             List.of(item("minecraft:stone", 1, 2, false), item("minecraft:ice_ball", 900, 1, true), item("minecraft:icicle", 901, 1, true),
                 item("minecraft:arrow", 300, 2, false)),
             Map.of("minecraft:old_block", NbtMap.builder().putInt("x", 1).build(), "minecraft:icicle", NbtMap.EMPTY),
-            List.of(stack("minecraft:stone", 0), stack("minecraft:arrow", 0), stack("minecraft:arrow", 48), stack("minecraft:ice_ball", 0),
+            List.of(stack("minecraft:stone", 0), stack("minecraft:arrow", 0), stack("minecraft:arrow", 48),
+                new RawStack("minecraft:ice_ball", 0, 1, NbtMap.builder().putString("name", "minecraft:ice_ball").build(), null),
                 stack("minecraft:frostbite_spawn_egg", 0)));
         ExperimentAttribution.Diff diff = ExperimentAttribution.diff(BASE, with,
             dump(Set.of("minecraft:stone"), Set.of("minecraft:stone")),
@@ -116,6 +117,8 @@ class ExperimentAttributionTest {
         assertEquals(List.of("minecraft:frost_block"), diff.blocksAdded());
         assertEquals(List.of("minecraft:icicle"), diff.dataDrivenBlocks());
         assertEquals(List.of("minecraft:arrow:48", "minecraft:frostbite_spawn_egg", "minecraft:ice_ball"), diff.creativeAdded());
+        // ice_ball's stack carries a block: sent with it
+        assertEquals(List.of("minecraft:arrow", "minecraft:frostbite_spawn_egg"), diff.creativeWithoutBlock());
         assertEquals(List.of(), diff.removed());
 
         ExperimentContent content = diff.content(ExperimentAttribution.creativeItems(BASE));
@@ -123,6 +126,7 @@ class ExperimentAttributionTest {
         assertEquals(List.of("minecraft:frostbite_spawn_egg", "minecraft:ice_ball", "minecraft:icicle"), content.items());
         assertEquals(List.of("minecraft:frost_block", "minecraft:icicle"), content.blocks());
         assertEquals(diff.creativeAdded(), content.creative());
+        assertEquals(diff.creativeWithoutBlock(), content.creativeWithoutBlock());
         assertTrue(diff.lines().stream().anyMatch(line -> line.startsWith("items added (1)")));
     }
 
@@ -137,8 +141,8 @@ class ExperimentAttributionTest {
 
     @Test
     void interactions() {
-        ExperimentAttribution.Diff a = new ExperimentAttribution.Diff(List.of("x:a"), List.of(), List.of(), List.of(), List.of(), List.of(), List.of());
-        ExperimentAttribution.Diff both = new ExperimentAttribution.Diff(List.of("x:a", "x:ab"), List.of(), List.of(), List.of(), List.of(), List.of(), List.of());
+        ExperimentAttribution.Diff a = new ExperimentAttribution.Diff(List.of("x:a"), List.of(), List.of(), List.of(), List.of(), List.of(), List.of(), List.of());
+        ExperimentAttribution.Diff both = new ExperimentAttribution.Diff(List.of("x:a", "x:ab"), List.of(), List.of(), List.of(), List.of(), List.of(), List.of(), List.of());
         assertEquals(List.of("item added x:ab"), ExperimentAttribution.unexplained(both, Map.of("a", a)));
         assertEquals(List.of(), ExperimentAttribution.unexplained(a, Map.of("a", a)));
     }

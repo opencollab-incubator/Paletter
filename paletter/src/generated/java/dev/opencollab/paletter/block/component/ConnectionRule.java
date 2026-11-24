@@ -18,7 +18,8 @@ import org.checkerframework.checker.nullness.qual.Nullable;
  * block.
  * <p>
  * Add-on JSON: {@code "minecraft:connection_rule"}.
- * The creator docs name the experiment Upcoming Creator Features for it (in some format versions); unverified against BDS.
+ * The creator docs name the experiment Upcoming Creator Features for it (in some format versions);
+ * BDS takes it without any experiment in 26.30, 26.40, 26.50, 26.60, 26.70: the docs' gating does not hold there.
  *
  * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/blockreference/examples/blockcomponents/minecraftblock_connection_rule?view=minecraft-bedrock-stable">Microsoft Learn: minecraft:connection_rule</a>
  * @since 1.0.0
@@ -183,11 +184,6 @@ public final class ConnectionRule implements BlockComponent {
      */
     public static final class AcceptsConnectionsFrom {
         /**
-         * {@code all}
-         */
-        public static final AcceptsConnectionsFrom ALL = new AcceptsConnectionsFrom("all");
-
-        /**
          * {@code none}
          */
         public static final AcceptsConnectionsFrom NONE = new AcceptsConnectionsFrom("none");
@@ -197,7 +193,12 @@ public final class ConnectionRule implements BlockComponent {
          */
         public static final AcceptsConnectionsFrom ONLY_FENCES = new AcceptsConnectionsFrom("only_fences");
 
-        private static final List<AcceptsConnectionsFrom> KNOWN = List.of(ALL, NONE, ONLY_FENCES);
+        /**
+         * {@code all}
+         */
+        public static final AcceptsConnectionsFrom ALL = new AcceptsConnectionsFrom("all");
+
+        private static final List<AcceptsConnectionsFrom> KNOWN = List.of(NONE, ONLY_FENCES, ALL);
 
         private static final Map<String, AcceptsConnectionsFrom> BY_VALUE = Check.index(KNOWN, AcceptsConnectionsFrom::value);
 
@@ -268,16 +269,6 @@ public final class ConnectionRule implements BlockComponent {
      */
     public static final class EnabledDirections {
         /**
-         * {@code east}
-         */
-        public static final EnabledDirections EAST = new EnabledDirections("east");
-
-        /**
-         * {@code north}
-         */
-        public static final EnabledDirections NORTH = new EnabledDirections("north");
-
-        /**
          * {@code south}
          */
         public static final EnabledDirections SOUTH = new EnabledDirections("south");
@@ -287,7 +278,17 @@ public final class ConnectionRule implements BlockComponent {
          */
         public static final EnabledDirections WEST = new EnabledDirections("west");
 
-        private static final List<EnabledDirections> KNOWN = List.of(EAST, NORTH, SOUTH, WEST);
+        /**
+         * {@code north}
+         */
+        public static final EnabledDirections NORTH = new EnabledDirections("north");
+
+        /**
+         * {@code east}
+         */
+        public static final EnabledDirections EAST = new EnabledDirections("east");
+
+        private static final List<EnabledDirections> KNOWN = List.of(SOUTH, WEST, NORTH, EAST);
 
         private static final Map<String, EnabledDirections> BY_VALUE = Check.index(KNOWN, EnabledDirections::value);
 

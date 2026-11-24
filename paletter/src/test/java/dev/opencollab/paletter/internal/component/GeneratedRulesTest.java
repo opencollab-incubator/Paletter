@@ -41,9 +41,11 @@ class GeneratedRulesTest {
 
     @Test
     void faceListsAndFaceBits() {
-        // ordered-set: BDS sends the faces of the set in its own order
-        NbtMap producer = block(RedstoneProducer.builder().power(15).connectedFaces(RedstoneProducer.ConnectedFaces.EAST,
-            RedstoneProducer.ConnectedFaces.UP, RedstoneProducer.ConnectedFaces.NORTH).build(), ctx);
+        // ordered-set without an order of BDS's own: the faces as given, without duplicates. The recapture's add-on writes the
+        // faces in the schema's order (down, up, north, south, west, east), which is BDS's, so it cannot show a reordering;
+        // TODO(recapture): a list in another order settles it (docs/data-pipeline.md, "Recapture to-do")
+        NbtMap producer = block(RedstoneProducer.builder().power(15).connectedFaces(RedstoneProducer.ConnectedFaces.UP,
+            RedstoneProducer.ConnectedFaces.NORTH, RedstoneProducer.ConnectedFaces.EAST, RedstoneProducer.ConnectedFaces.NORTH).build(), ctx);
         assertEquals(List.of("up", "north", "east"),
             producer.getCompound("minecraft:redstone_producer").getList("connected_faces", NbtType.STRING));
         // list identity: the directions as given
@@ -51,11 +53,12 @@ class GeneratedRulesTest {
             ConnectionRule.EnabledDirections.NORTH).build(), ctx);
         assertEquals(List.of("east", "north"), rule.getCompound("minecraft:connection_rule").getList("enabled_directions", NbtType.STRING));
         // bitsets: down 1, up 2, north 4, south 8, west 16, east 32
-        NbtMap filter = block(PlacementFilter.builder().conditions(PlacementFilter.Conditions.builder().allowedFaces("up", "east").build()).build(), ctx);
+        NbtMap filter = block(PlacementFilter.builder().conditions(PlacementFilter.Conditions.builder().allowedFaces(PlacementFilter.AllowedFaces.UP, PlacementFilter.AllowedFaces.EAST).build()).build(), ctx);
         assertEquals((byte) 34, filter.getCompound("minecraft:placement_filter").getList("conditions", NbtType.COMPOUND).getFirst()
             .getByte("allowed_faces"));
         NbtMap liquid = block(LiquidDetection.builder().detectionRules(LiquidDetection.DetectionRules.builder()
-            .stopsLiquidFlowingFromDirection("up", "north").build()).build(), ctx);
+            .stopsLiquidFlowingFromDirection(LiquidDetection.StopsLiquidFlowingFromDirection.UP, LiquidDetection.StopsLiquidFlowingFromDirection.NORTH)
+            .build()).build(), ctx);
         assertEquals((byte) 6, liquid.getCompound("minecraft:liquid_detection").getList("detectionRules", NbtType.COMPOUND).getFirst()
             .getByte("stopsLiquidFromDirection"));
     }

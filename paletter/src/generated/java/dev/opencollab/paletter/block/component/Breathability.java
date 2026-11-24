@@ -3,62 +3,41 @@
 // data/model/ATTRIBUTION.md.
 package dev.opencollab.paletter.block.component;
 
-import java.util.Objects;
 import org.checkerframework.checker.nullness.qual.NonNull;
-import org.checkerframework.checker.nullness.qual.Nullable;
 
 /**
- * Determines whether the block is breathable by defining if the block is treated as a <code>solid</code> or as
- * <code>air</code>. The default is <code>solid</code> if this component is omitted.
- * <p>
- * Add-on JSON: {@code "minecraft:breathability"}.
- * Retired: rejected by every captured BDS (oldest: Bedrock 26.30, protocol 1001): minecraft:breathability:
- * member "minecraft:breathability" is deprecated. Its encoder writes nothing and adds a report warning, as BDS
- * would never send it to a client.
+ * Removed: Bedrock no longer has {@code minecraft:breathability}. This stand-in keeps code that uses it
+ * compiling until the next major release; its fields return their defaults, its builder ignores what it is
+ * given, and every palette leaves it out with a report warning.
  *
- * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/blockreference/examples/blockcomponents/minecraftblock_breathability?view=minecraft-bedrock-stable">Microsoft Learn: minecraft:breathability</a>
  * @since 1.0.0
- * @deprecated rejected by every captured BDS (oldest: Bedrock 26.30, protocol 1001): minecraft:breathability: member
- *        "minecraft:breathability" is deprecated
+ * @deprecated Bedrock no longer has it; it goes in the next major release
  */
-@Deprecated
+@Deprecated(
+        forRemoval = true
+)
 public final class Breathability implements BlockComponent {
     /**
      * The component name in add-on JSON.
      */
     public static final String NAME = "minecraft:breathability";
 
-    private final @NonNull String value;
-
-    private Breathability(@NonNull String value) {
-        Objects.requireNonNull(value, "Breathability.value");
-        this.value = value;
-    }
-
-    /**
-     * The string form of the component (add-on JSON {@code "minecraft:breathability": <string>}). Required.
-     *
-     * @return the value
-     */
-    public @NonNull String value() {
-        return value;
+    private Breathability() {
     }
 
     @Override
     public boolean equals(Object o) {
-        return this == o || o instanceof Breathability other
-                && Objects.equals(value, other.value);
+        return o instanceof Breathability;
     }
 
     @Override
     public int hashCode() {
-        int h = Objects.hashCode(value);
-        return h;
+        return 0;
     }
 
     @Override
     public String toString() {
-        return "Breathability[value=" + value + "]";
+        return "Breathability[]";
     }
 
     @Override
@@ -67,18 +46,7 @@ public final class Breathability implements BlockComponent {
     }
 
     /**
-     * The string shorthand: sets {@code value}.
-     *
-     * @param value the value of that field
-     * @return the value with everything else at its default
-     */
-    public static @NonNull Breathability of(@NonNull String value) {
-        return builder().value(value).build();
-    }
-
-    /**
-     * Creates a builder with every optional field at its default; required fields must be set before
-     * {@code build()}.
+     * Creates a builder with every field at its default.
      *
      * @return a builder with the defaults applied
      */
@@ -93,7 +61,6 @@ public final class Breathability implements BlockComponent {
      */
     public @NonNull Builder toBuilder() {
         Builder builder = new Builder();
-        builder.value = value;
         return builder;
     }
 
@@ -101,21 +68,7 @@ public final class Breathability implements BlockComponent {
      * Builds {@link Breathability}: defaults applied, required fields and ranges checked by {@link #build()}.
      */
     public static final class Builder {
-        private @Nullable String value;
-
         private Builder() {
-        }
-
-        /**
-         * Sets {@code value}.
-         *
-         * @param value the value
-         * @return this builder
-         * @throws NullPointerException if the value is null
-         */
-        public @NonNull Builder value(@NonNull String value) {
-            this.value = Objects.requireNonNull(value, "Breathability.value");
-            return this;
         }
 
         /**
@@ -126,10 +79,7 @@ public final class Breathability implements BlockComponent {
          * @throws IllegalArgumentException if a value is out of range
          */
         public @NonNull Breathability build() {
-            if (value == null) {
-                throw new IllegalStateException("Breathability.value is required");
-            }
-            return new Breathability(value);
+            return new Breathability();
         }
     }
 }

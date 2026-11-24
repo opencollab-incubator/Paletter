@@ -23,6 +23,9 @@ class BehaviourProbeCaptureTest {
     private static final Path DIRECTORY = newest();
     /** The BDS build of the capture: the name of its {@code data/bds} directory. */
     private static final String BUILD = DIRECTORY.getParent().getFileName().toString();
+    /** The version BDS reports for it: a preview's as a beta ({@code 1.26.70-beta24}). */
+    private static final String REPORTED = dev.opencollab.paletter.tools.BuildNumber.parse(BUILD)
+        .reported(dev.opencollab.paletter.tools.CommittedBuilds.preview().contains(BUILD));
 
     /** @return {@code data/bds/<build>/behaviour-probe} of the newest build that has one */
     private static Path newest() {
@@ -42,7 +45,7 @@ class BehaviourProbeCaptureTest {
     @Test
     void theCaptureIsWhatTheCommittedConsoleGives() throws IOException {
         ProbeLog log = ProbeLog.parse(Files.readAllLines(DIRECTORY.resolve(BehaviourProbe.LOG)));
-        assertEquals(BUILD, log.version());
+        assertEquals(REPORTED, log.version());
         assertEquals(committed().getAsJsonObject("bds").get("build").getAsString(), log.build());
         assertEquals(committed(), BehaviourProbe.measure(log, committed().get("block_format_version").getAsString()),
             "run behaviour-probe --from-log again");
@@ -60,13 +63,21 @@ class BehaviourProbeCaptureTest {
             }
             assertTrue(object.get("method").getAsString().length() > 40, "every value says how it was measured");
         }
-        assertEquals(java.util.Map.of("block:friction", 0.6, "block:explosion_resistance", 0.0, "block:light_dampening", 15.0,
-            "block:light_emission", 0.0, "block:burn_odds", 0.0, "block:flame_odds", 0.0), values);
+        // The explosion test is statistical: a run that falls short of its threshold leaves the value unverified (the
+        // newest capture, 1.26.70.24 of 2026-11-24; behaviour import then takes an older build's measurement)
+        boolean explosionDecided = !committed().has("unverified_defaults")
+            || !committed().getAsJsonObject("unverified_defaults").has("block:explosion_resistance");
+        java.util.Map<String, Double> expected = new java.util.TreeMap<>(java.util.Map.of("block:friction", 0.6, "block:light_dampening", 15.0,
+            "block:light_emission", 0.0, "block:burn_odds", 0.0, "block:flame_odds", 0.0));
+        if (explosionDecided) {
+            expected.put("block:explosion_resistance", 0.0);
+        }
+        assertEquals(expected, values);
         assertEquals("[[0.0,0.0,0.0,1.0,1.0,1.0]]", defaults.asList().stream().map(JsonElement::getAsJsonObject)
             .filter(entry -> entry.get("key").getAsString().equals("block:collision_shape")).findFirst().orElseThrow().get("value").toString());
         assertEquals("false", defaults.asList().stream().map(JsonElement::getAsJsonObject)
             .filter(entry -> entry.get("key").getAsString().equals("block:climbable")).findFirst().orElseThrow().get("value").toString());
-        assertEquals(8, defaults.size(), "the selection box and the destroy time were not measured");
+        assertEquals(explosionDecided ? 8 : 7, defaults.size(), "the selection box and the destroy time were not measured");
     }
 
     @Test
@@ -87,7 +98,7 @@ class BehaviourProbeCaptureTest {
     @Test
     void theBuildIsThereForTheNextReader() throws IOException {
         JsonObject bds = committed().getAsJsonObject("bds");
-        assertEquals(BUILD, bds.get("version").getAsString());
+        assertEquals(REPORTED, bds.get("version").getAsString());
         assertTrue(bds.get("build").getAsString().matches("[0-9]+"), bds.toString());
         assertTrue(committed().get("generated").getAsString().contains("Do not edit"));
     }

@@ -5,6 +5,7 @@ import dev.opencollab.paletter.tools.data.VariantNames;
 import dev.opencollab.paletter.tools.bds.BdsDistribution;
 import dev.opencollab.paletter.tools.bds.BdsDump;
 import dev.opencollab.paletter.tools.client.GiveCapture;
+import dev.opencollab.paletter.tools.client.PaletteIds;
 import dev.opencollab.paletter.tools.data.FallbackGaps;
 import dev.opencollab.paletter.tools.data.Diff;
 import dev.opencollab.paletter.tools.data.Importer;
@@ -65,6 +66,19 @@ final class NetworkDataStage {
         }
     }
 
+    /** Commits the sequential ids of the palette probe ({@link PaletteIds}) with the build's vanilla captures; nothing without them. */
+    private void stagePaletteIds(BdsDistribution distribution, Runs runs) {
+        if (runs.paletteIds == null) {
+            return;
+        }
+        try {
+            ctx.stageCopy(ctx.bdsData.resolve(distribution.version()).resolve("vanilla").resolve(PaletteIds.FILE), runs.paletteIds,
+                "sequential ids " + PaletteIds.FILE);
+        } catch (Exception e) {
+            ctx.report.check(Report.Status.INFO, "Sequential ids (palette probe)", "not recorded: " + e);
+        }
+    }
+
     void networkData(BdsDistribution distribution, BdsDump dump, Runs runs, Staging staging) throws Exception {
         String name = runs.existing != null ? runs.existing : (ctx.options.dataVersion() != null ? ctx.options.dataVersion() : BuildNumber.parse(distribution.version()).dataVersion());
         ctx.report.header.put("Bundled version", runs.existing != null ? name + " (existing, same protocol)" : name + " (new protocol)");
@@ -84,6 +98,7 @@ final class NetworkDataStage {
             ctx.report.fail("Recipes", e);
         }
         stageBlockItems(distribution, runs);
+        stagePaletteIds(distribution, runs);
 
         if (runs.existing != null) {
             VanillaData bundled = BundledFiles.read(ctx.resources.resolve(name + ".nbt"));

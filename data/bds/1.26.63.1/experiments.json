@@ -35,6 +35,7 @@
         "blocksAdded": [],
         "dataDrivenBlocks": [],
         "creativeAdded": [],
+        "creativeWithoutBlock": [],
         "removed": []
       }
     },
@@ -56,6 +57,7 @@
         "blocksAdded": [],
         "dataDrivenBlocks": [],
         "creativeAdded": [],
+        "creativeWithoutBlock": [],
         "removed": []
       }
     },
@@ -80,6 +82,7 @@
         "blocksAdded": [],
         "dataDrivenBlocks": [],
         "creativeAdded": [],
+        "creativeWithoutBlock": [],
         "removed": []
       }
     },
@@ -104,6 +107,7 @@
         "blocksAdded": [],
         "dataDrivenBlocks": [],
         "creativeAdded": [],
+        "creativeWithoutBlock": [],
         "removed": []
       }
     },
@@ -125,6 +129,7 @@
         "blocksAdded": [],
         "dataDrivenBlocks": [],
         "creativeAdded": [],
+        "creativeWithoutBlock": [],
         "removed": []
       }
     },
@@ -140,6 +145,7 @@
         "blocksAdded": [],
         "dataDrivenBlocks": [],
         "creativeAdded": [],
+        "creativeWithoutBlock": [],
         "removed": []
       }
     },
@@ -199,7 +205,24 @@
           "minecraft:splash_potion:47",
           "minecraft:splash_potion:48"
         ],
-        "removed": []
+        "creativeWithoutBlock": [
+          "minecraft:arrow",
+          "minecraft:frostbite_spawn_egg",
+          "minecraft:ice_ball",
+          "minecraft:ice_crystal",
+          "minecraft:icicle",
+          "minecraft:lingering_potion",
+          "minecraft:potion",
+          "minecraft:splash_potion"
+        ],
+        "removed": [],
+        "recipes": {
+          "mixes added": [
+            "potion_mix minecraft:lingering_potion:4 + minecraft:ice_ball:0 + minecraft:lingering_potion:47",
+            "potion_mix minecraft:potion:4 + minecraft:ice_ball:0 + minecraft:potion:47",
+            "potion_mix minecraft:splash_potion:4 + minecraft:ice_ball:0 + minecraft:splash_potion:47"
+          ]
+        }
       }
     }
   },

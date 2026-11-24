@@ -162,7 +162,7 @@ class VanillaPaletteTest {
         assertEquals(java.util.Arrays.toString(plain.toByteArray()), java.util.Arrays.toString(again.toByteArray()));
 
         ExperimentContent drop = new ExperimentContent(List.of("minecraft:ice_ball", "minecraft:icicle"), List.of("minecraft:icicle"),
-            List.of("minecraft:arrow:48", "minecraft:ice_ball"));
+            List.of("minecraft:arrow:48", "minecraft:ice_ball"), List.of("minecraft:ice_ball"));
         ByteArrayOutputStream marked = new ByteArrayOutputStream();
         PaletteDataCodec.write(data.withExperiments(java.util.Map.of("y_2026_drop_4", drop)), marked);
         VanillaData read = PaletteDataCodec.read(new ByteArrayInputStream(marked.toByteArray()));

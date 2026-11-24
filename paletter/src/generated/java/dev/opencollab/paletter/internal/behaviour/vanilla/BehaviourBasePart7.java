@@ -10,6 +10,60 @@ final class BehaviourBasePart7 {
     }
 
     static void part48(Changes v) {
+        v.item("minecraft:copper_golem_statue");
+        v.item("minecraft:copper_grate");
+        v.item("minecraft:copper_helmet")
+                .maxStackSize(1)
+                .maxDamage(121)
+                .armorValue(2)
+                .enchantValue(8)
+                .weight(64);
+        v.item("minecraft:copper_hoe")
+                .maxStackSize(1)
+                .maxDamage(190)
+                .attackDamage(3)
+                .enchantValue(13)
+                .weight(64);
+        v.item("minecraft:copper_horse_armor").maxStackSize(1).armorValue(4).weight(64);
+        v.item("minecraft:copper_ingot").furnaceXpMultiplier(0.7f);
+        v.item("minecraft:copper_lantern");
+        v.item("minecraft:copper_leggings")
+                .maxStackSize(1)
+                .maxDamage(165)
+                .armorValue(3)
+                .enchantValue(8)
+                .weight(64);
+        v.item("minecraft:copper_nautilus_armor").maxStackSize(1).armorValue(4).weight(64);
+        v.item("minecraft:copper_nugget").furnaceXpMultiplier(0.1f);
+        v.item("minecraft:copper_ore");
+        v.item("minecraft:copper_pickaxe")
+                .maxStackSize(1)
+                .maxDamage(190)
+                .attackDamage(3)
+                .enchantValue(13)
+                .weight(64);
+        v.item("minecraft:copper_shovel")
+                .maxStackSize(1)
+                .maxDamage(190)
+                .attackDamage(2)
+                .enchantValue(13)
+                .weight(64);
+        v.item("minecraft:copper_spear")
+                .maxStackSize(1)
+                .maxDamage(190)
+                .attackDamage(2)
+                .enchantValue(13)
+                .weight(64)
+                .cooldownCategory("minecraft:spear")
+                .cooldownTicks(17);
+        v.item("minecraft:copper_sword")
+                .maxStackSize(1)
+                .maxDamage(190)
+                .attackDamage(5)
+                .enchantValue(13)
+                .weight(64);
+        v.item("minecraft:copper_torch");
+        v.item("minecraft:copper_trapdoor");
         v.item("minecraft:coral").weightUnknown();
         v.item("minecraft:coral_block").weightUnknown();
         v.item("minecraft:coral_fan").weightUnknown();
@@ -58,6 +112,9 @@ final class BehaviourBasePart7 {
         v.item("minecraft:cut_copper");
         v.item("minecraft:cut_copper_slab");
         v.item("minecraft:cut_copper_stairs");
+    }
+
+    static void part49(Changes v) {
         v.item("minecraft:cut_red_sandstone");
         v.item("minecraft:cut_red_sandstone_double_slab").weightUnknown();
         v.item("minecraft:cut_red_sandstone_slab");
@@ -75,9 +132,6 @@ final class BehaviourBasePart7 {
         v.item("minecraft:cyan_harness").maxStackSize(1).weight(64);
         v.item("minecraft:cyan_shulker_box").maxStackSize(1).weight(64);
         v.item("minecraft:cyan_stained_glass");
-    }
-
-    static void part49(Changes v) {
         v.item("minecraft:cyan_stained_glass_pane");
         v.item("minecraft:cyan_terracotta");
         v.item("minecraft:cyan_wool");
@@ -121,6 +175,9 @@ final class BehaviourBasePart7 {
         v.item("minecraft:dead_bubble_coral_wall_fan").weightUnknown();
         v.item("minecraft:dead_fire_coral");
         v.item("minecraft:dead_fire_coral_block");
+    }
+
+    static void part50(Changes v) {
         v.item("minecraft:dead_fire_coral_fan");
         v.item("minecraft:dead_fire_coral_wall_fan").weightUnknown();
         v.item("minecraft:dead_horn_coral");
@@ -138,9 +195,6 @@ final class BehaviourBasePart7 {
         v.item("minecraft:deepslate_brick_slab");
         v.item("minecraft:deepslate_brick_stairs");
         v.item("minecraft:deepslate_brick_wall");
-    }
-
-    static void part50(Changes v) {
         v.item("minecraft:deepslate_bricks");
         v.item("minecraft:deepslate_coal_ore");
         v.item("minecraft:deepslate_copper_ore");
@@ -248,6 +302,9 @@ final class BehaviourBasePart7 {
         v.item("minecraft:dirt_with_roots");
         v.item("minecraft:disc_fragment_5");
         v.item("minecraft:dispenser");
+    }
+
+    static void part51(Changes v) {
         v.item("minecraft:dolphin_spawn_egg");
         v.item("minecraft:donkey_spawn_egg");
         v.item("minecraft:double_cut_copper_slab").weightUnknown();
@@ -265,9 +322,6 @@ final class BehaviourBasePart7 {
         v.item("minecraft:dripstone_block");
         v.item("minecraft:dropper");
         v.item("minecraft:drowned_spawn_egg");
-    }
-
-    static void part51(Changes v) {
         v.item("minecraft:dune_armor_trim_smithing_template");
         v.item("minecraft:dye").weightUnknown();
         v.item("minecraft:echo_shard");
@@ -311,6 +365,9 @@ final class BehaviourBasePart7 {
         v.item("minecraft:element_23").weightUnknown();
         v.item("minecraft:element_24").weightUnknown();
         v.item("minecraft:element_25").weightUnknown();
+    }
+
+    static void part52(Changes v) {
         v.item("minecraft:element_26").weightUnknown();
         v.item("minecraft:element_27").weightUnknown();
         v.item("minecraft:element_28").weightUnknown();
@@ -328,9 +385,6 @@ final class BehaviourBasePart7 {
         v.item("minecraft:element_39").weightUnknown();
         v.item("minecraft:element_4").weightUnknown();
         v.item("minecraft:element_40").weightUnknown();
-    }
-
-    static void part52(Changes v) {
         v.item("minecraft:element_41").weightUnknown();
         v.item("minecraft:element_42").weightUnknown();
         v.item("minecraft:element_43").weightUnknown();
@@ -374,6 +428,9 @@ final class BehaviourBasePart7 {
         v.item("minecraft:element_78").weightUnknown();
         v.item("minecraft:element_79").weightUnknown();
         v.item("minecraft:element_8").weightUnknown();
+    }
+
+    static void part53(Changes v) {
         v.item("minecraft:element_80").weightUnknown();
         v.item("minecraft:element_81").weightUnknown();
         v.item("minecraft:element_82").weightUnknown();
@@ -391,9 +448,6 @@ final class BehaviourBasePart7 {
         v.item("minecraft:element_93").weightUnknown();
         v.item("minecraft:element_94").weightUnknown();
         v.item("minecraft:element_95").weightUnknown();
-    }
-
-    static void part53(Changes v) {
         v.item("minecraft:element_96").weightUnknown();
         v.item("minecraft:element_97").weightUnknown();
         v.item("minecraft:element_98").weightUnknown();
@@ -441,6 +495,9 @@ final class BehaviourBasePart7 {
         v.item("minecraft:exposed_copper_golem_statue");
         v.item("minecraft:exposed_copper_grate");
         v.item("minecraft:exposed_copper_lantern");
+    }
+
+    static void part54(Changes v) {
         v.item("minecraft:exposed_copper_trapdoor");
         v.item("minecraft:exposed_cut_copper");
         v.item("minecraft:exposed_cut_copper_slab");
@@ -458,9 +515,6 @@ final class BehaviourBasePart7 {
         v.item("minecraft:filled_map");
         v.item("minecraft:fire").weightUnknown();
         v.item("minecraft:fire_charge");
-    }
-
-    static void part54(Changes v) {
         v.item("minecraft:fire_coral");
         v.item("minecraft:fire_coral_block");
         v.item("minecraft:fire_coral_fan");
@@ -509,6 +563,9 @@ final class BehaviourBasePart7 {
         v.item("minecraft:glowingobsidian").weightUnknown();
         v.item("minecraft:glowstone");
         v.item("minecraft:glowstone_dust");
+    }
+
+    static void part55(Changes v) {
         v.item("minecraft:goat_horn")
                 .maxStackSize(1)
                 .weight(64)
@@ -560,9 +617,6 @@ final class BehaviourBasePart7 {
                 .enchantValue(25)
                 .weight(64);
         v.item("minecraft:golden_nautilus_armor").maxStackSize(1).armorValue(7).weight(64);
-    }
-
-    static void part55(Changes v) {
         v.item("minecraft:golden_pickaxe")
                 .maxStackSize(1)
                 .maxDamage(32)
@@ -628,22 +682,5 @@ final class BehaviourBasePart7 {
         v.item("minecraft:green_wool");
         v.item("minecraft:grindstone");
         v.item("minecraft:guardian_spawn_egg");
-        v.item("minecraft:gunpowder");
-        v.item("minecraft:guster_banner_pattern").maxStackSize(1).weight(64);
-        v.item("minecraft:guster_pottery_sherd");
-        v.item("minecraft:hanging_roots").compostChance(30);
-        v.item("minecraft:happy_ghast_spawn_egg");
-        v.item("minecraft:hard_black_stained_glass").weightUnknown();
-        v.item("minecraft:hard_black_stained_glass_pane").weightUnknown();
-        v.item("minecraft:hard_blue_stained_glass").weightUnknown();
-        v.item("minecraft:hard_blue_stained_glass_pane").weightUnknown();
-        v.item("minecraft:hard_brown_stained_glass").weightUnknown();
-        v.item("minecraft:hard_brown_stained_glass_pane").weightUnknown();
-        v.item("minecraft:hard_cyan_stained_glass").weightUnknown();
-        v.item("minecraft:hard_cyan_stained_glass_pane").weightUnknown();
-        v.item("minecraft:hard_glass").weightUnknown();
-        v.item("minecraft:hard_glass_pane").weightUnknown();
-        v.item("minecraft:hard_gray_stained_glass").weightUnknown();
-        v.item("minecraft:hard_gray_stained_glass_pane").weightUnknown();
     }
 }

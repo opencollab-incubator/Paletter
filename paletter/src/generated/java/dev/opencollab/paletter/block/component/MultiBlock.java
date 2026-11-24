@@ -21,7 +21,9 @@ import org.checkerframework.checker.nullness.qual.Nullable;
  * experimental toggle "Upcoming Creator Features" is required.
  * <p>
  * Add-on JSON: {@code "minecraft:multi_block"}.
- * The creator docs name the experiment Upcoming Creator Features for it (in some format versions); unverified against BDS.
+ * The creator docs name the experiment Upcoming Creator Features for it (in some format versions);
+ * BDS-verified: in a world without experiments BDS rejects it in 1.26.36.1.
+ * BDS takes it without any experiment in 26.40, 26.50, 26.60, 26.70: the docs' gating does not hold there.
  *
  * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/blockreference/examples/traits/multi_block?view=minecraft-bedrock-stable">Microsoft Learn: minecraft:multi_block</a>
  * @since 1.0.0
@@ -295,14 +297,14 @@ public final class MultiBlock implements BlockTrait {
      */
     public static final class MultiBlockDirection {
         /**
-         * {@code up}
-         */
-        public static final MultiBlockDirection UP = new MultiBlockDirection("up");
-
-        /**
          * {@code down}
          */
         public static final MultiBlockDirection DOWN = new MultiBlockDirection("down");
+
+        /**
+         * {@code up}
+         */
+        public static final MultiBlockDirection UP = new MultiBlockDirection("up");
 
         /**
          * {@code north}
@@ -324,7 +326,7 @@ public final class MultiBlock implements BlockTrait {
          */
         public static final MultiBlockDirection EAST = new MultiBlockDirection("east");
 
-        private static final List<MultiBlockDirection> KNOWN = List.of(UP, DOWN, NORTH, SOUTH, WEST, EAST);
+        private static final List<MultiBlockDirection> KNOWN = List.of(DOWN, UP, NORTH, SOUTH, WEST, EAST);
 
         private static final Map<String, MultiBlockDirection> BY_VALUE = Check.index(KNOWN, MultiBlockDirection::value);
 

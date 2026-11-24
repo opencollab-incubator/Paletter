@@ -20,117 +20,45 @@ final class BehaviourMarksPart2 {
     }
 
     static void part8(VanillaBehaviour.Builder b) {
-        b.dispute(V26_50, V26_50, CLOUDBURST_DATA_26_50, BlockBehaviour.OUTLINE_SHAPE, "minecraft:exposed_copper_door", ALLAY_DATA_26_50, SHAPE_ACACIA_TRAPDOOR_COLLISION_SHAPE_3);
-        b.dispute(V26_50, V26_50, CLOUDBURST_DATA_26_50, BlockBehaviour.OUTLINE_SHAPE, "minecraft:fern", ALLAY_DATA_26_50, SHAPE_FERN_OUTLINE_SHAPE);
-        b.dispute(V26_50, V26_50, CLOUDBURST_DATA_26_50, BlockBehaviour.OUTLINE_SHAPE, "minecraft:fire_coral", ALLAY_DATA_26_50, SHAPE_BAMBOO_SAPLING_OUTLINE_SHAPE);
-        b.dispute(V26_50, V26_50, CLOUDBURST_DATA_26_50, BlockBehaviour.OUTLINE_SHAPE, "minecraft:fire_coral_fan", ALLAY_DATA_26_50, SHAPE_BRAIN_CORAL_FAN_OUTLINE_SHAPE);
-        b.dispute(V26_50, V26_50, CLOUDBURST_DATA_26_50, BlockBehaviour.OUTLINE_SHAPE, "minecraft:golden_dandelion", ALLAY_DATA_26_50, SHAPE_ALLIUM_OUTLINE_SHAPE);
-        b.dispute(V26_50, V26_50, CLOUDBURST_DATA_26_50, BlockBehaviour.OUTLINE_SHAPE, "minecraft:hanging_roots", ALLAY_DATA_26_50, SHAPE_HANGING_ROOTS_OUTLINE_SHAPE);
-        b.dispute(V26_50, V26_50, CLOUDBURST_DATA_26_50, BlockBehaviour.OUTLINE_SHAPE, "minecraft:horn_coral", ALLAY_DATA_26_50, SHAPE_BAMBOO_SAPLING_OUTLINE_SHAPE);
-        b.dispute(V26_50, V26_50, CLOUDBURST_DATA_26_50, BlockBehaviour.OUTLINE_SHAPE, "minecraft:horn_coral_fan", ALLAY_DATA_26_50, SHAPE_BRAIN_CORAL_FAN_OUTLINE_SHAPE);
-        b.note(V26_50, V26_50, CLOUDBURST_DATA_26_50, BlockBehaviour.OUTLINE_SHAPE, "minecraft:iron_door", "shapeSource: door_state_correction");
-        b.dispute(V26_50, V26_50, CLOUDBURST_DATA_26_50, BlockBehaviour.OUTLINE_SHAPE, "minecraft:iron_door", ALLAY_DATA_26_50, SHAPE_ACACIA_TRAPDOOR_COLLISION_SHAPE_3);
-        b.note(V26_50, V26_50, CLOUDBURST_DATA_26_50, BlockBehaviour.OUTLINE_SHAPE, "minecraft:jungle_door", "shapeSource: door_state_correction");
-        b.dispute(V26_50, V26_50, CLOUDBURST_DATA_26_50, BlockBehaviour.OUTLINE_SHAPE, "minecraft:jungle_door", ALLAY_DATA_26_50, SHAPE_ACACIA_TRAPDOOR_COLLISION_SHAPE_3);
-        b.dispute(V26_50, V26_50, CLOUDBURST_DATA_26_50, BlockBehaviour.OUTLINE_SHAPE, "minecraft:large_fern", ALLAY_DATA_26_50, Cell.map("upper_block_bit",
-                false, SHAPE_LARGE_FERN_OUTLINE_SHAPE, true, SHAPE_LARGE_FERN_OUTLINE_SHAPE_2));
-        b.dispute(V26_50, V26_50, CLOUDBURST_DATA_26_50, BlockBehaviour.OUTLINE_SHAPE, "minecraft:lilac", ALLAY_DATA_26_50, Cell.map("upper_block_bit",
-                false, SHAPE_LARGE_FERN_OUTLINE_SHAPE, true, SHAPE_LARGE_FERN_OUTLINE_SHAPE_2));
-        b.dispute(V26_50, V26_50, CLOUDBURST_DATA_26_50, BlockBehaviour.OUTLINE_SHAPE, "minecraft:lily_of_the_valley", ALLAY_DATA_26_50, SHAPE_ALLIUM_OUTLINE_SHAPE);
-        b.note(V26_50, V26_50, CLOUDBURST_DATA_26_50, BlockBehaviour.OUTLINE_SHAPE, "minecraft:mangrove_door", "shapeSource: door_state_correction");
-        b.dispute(V26_50, V26_50, CLOUDBURST_DATA_26_50, BlockBehaviour.OUTLINE_SHAPE, "minecraft:mangrove_door", ALLAY_DATA_26_50, SHAPE_ACACIA_TRAPDOOR_COLLISION_SHAPE_3);
-        b.dispute(V26_50, V26_50, CLOUDBURST_DATA_26_50, BlockBehaviour.OUTLINE_SHAPE, "minecraft:mangrove_propagule", ALLAY_DATA_26_50, MARKS_HANGING_PROPAGULE_STAGE_355CDB);
-        b.dispute(V26_50, V26_50, CLOUDBURST_DATA_26_50, BlockBehaviour.OUTLINE_SHAPE, "minecraft:nether_sprouts", ALLAY_DATA_26_50, SHAPE_NETHER_SPROUTS_OUTLINE_SHAPE);
-        b.dispute(V26_50, V26_50, CLOUDBURST_DATA_26_50, BlockBehaviour.OUTLINE_SHAPE, "minecraft:open_eyeblossom", ALLAY_DATA_26_50, SHAPE_ALLIUM_OUTLINE_SHAPE);
-        b.dispute(V26_50, V26_50, CLOUDBURST_DATA_26_50, BlockBehaviour.OUTLINE_SHAPE, "minecraft:orange_tulip", ALLAY_DATA_26_50, SHAPE_ALLIUM_OUTLINE_SHAPE);
-        b.dispute(V26_50, V26_50, CLOUDBURST_DATA_26_50, BlockBehaviour.OUTLINE_SHAPE, "minecraft:oxeye_daisy", ALLAY_DATA_26_50, SHAPE_ALLIUM_OUTLINE_SHAPE);
-        b.note(V26_50, V26_50, CLOUDBURST_DATA_26_50, BlockBehaviour.OUTLINE_SHAPE, "minecraft:oxidized_copper_door", "shapeSource: door_state_correction");
-        b.dispute(V26_50, V26_50, CLOUDBURST_DATA_26_50, BlockBehaviour.OUTLINE_SHAPE, "minecraft:oxidized_copper_door", ALLAY_DATA_26_50, SHAPE_ACACIA_TRAPDOOR_COLLISION_SHAPE_3);
-        b.note(V26_50, V26_50, CLOUDBURST_DATA_26_50, BlockBehaviour.OUTLINE_SHAPE, "minecraft:pale_oak_door", "shapeSource: door_state_correction");
-        b.dispute(V26_50, V26_50, CLOUDBURST_DATA_26_50, BlockBehaviour.OUTLINE_SHAPE, "minecraft:pale_oak_door", ALLAY_DATA_26_50, SHAPE_ACACIA_TRAPDOOR_COLLISION_SHAPE_3);
-        b.dispute(V26_50, V26_50, CLOUDBURST_DATA_26_50, BlockBehaviour.OUTLINE_SHAPE, "minecraft:peony", ALLAY_DATA_26_50, Cell.map("upper_block_bit",
-                false, SHAPE_LARGE_FERN_OUTLINE_SHAPE, true, SHAPE_LARGE_FERN_OUTLINE_SHAPE_2));
-        b.dispute(V26_50, V26_50, CLOUDBURST_DATA_26_50, BlockBehaviour.OUTLINE_SHAPE, "minecraft:pink_tulip", ALLAY_DATA_26_50, SHAPE_ALLIUM_OUTLINE_SHAPE);
-        b.dispute(V26_50, V26_50, CLOUDBURST_DATA_26_50, BlockBehaviour.OUTLINE_SHAPE, "minecraft:pitcher_plant", ALLAY_DATA_26_50, Cell.map("upper_block_bit",
-                false, SHAPE_LARGE_FERN_OUTLINE_SHAPE, true, SHAPE_LARGE_FERN_OUTLINE_SHAPE_2));
-    }
-
-    static void part9(VanillaBehaviour.Builder b) {
-        b.dispute(V26_50, V26_50, CLOUDBURST_DATA_26_50, BlockBehaviour.OUTLINE_SHAPE, "minecraft:pointed_dripstone", ALLAY_DATA_26_50, MARKS_DRIPSTONE_THICKNESS_HANGING_456F2E);
-        b.note(V26_50, V26_50, CLOUDBURST_DATA_26_50, BlockBehaviour.OUTLINE_SHAPE, "minecraft:poplar_door", "shapeSource: door_state_correction");
-        b.dispute(V26_50, V26_50, CLOUDBURST_DATA_26_50, BlockBehaviour.OUTLINE_SHAPE, "minecraft:poplar_door", ALLAY_DATA_26_50, SHAPE_ACACIA_TRAPDOOR_COLLISION_SHAPE_3);
-        b.dispute(V26_50, V26_50, CLOUDBURST_DATA_26_50, BlockBehaviour.OUTLINE_SHAPE, "minecraft:poppy", ALLAY_DATA_26_50, SHAPE_ALLIUM_OUTLINE_SHAPE);
-        b.dispute(V26_50, V26_50, CLOUDBURST_DATA_26_50, BlockBehaviour.OUTLINE_SHAPE, "minecraft:red_tulip", ALLAY_DATA_26_50, SHAPE_ALLIUM_OUTLINE_SHAPE);
-        b.dispute(V26_50, V26_50, CLOUDBURST_DATA_26_50, BlockBehaviour.OUTLINE_SHAPE, "minecraft:rose_bush", ALLAY_DATA_26_50, Cell.map("upper_block_bit",
-                false, SHAPE_LARGE_FERN_OUTLINE_SHAPE, true, SHAPE_LARGE_FERN_OUTLINE_SHAPE_2));
-        b.dispute(V26_50, V26_50, CLOUDBURST_DATA_26_50, BlockBehaviour.OUTLINE_SHAPE, "minecraft:short_dry_grass", ALLAY_DATA_26_50, SHAPE_SHORT_DRY_GRASS_OUTLINE_SHAPE);
-        b.dispute(V26_50, V26_50, CLOUDBURST_DATA_26_50, BlockBehaviour.OUTLINE_SHAPE, "minecraft:short_grass", ALLAY_DATA_26_50, SHAPE_FERN_OUTLINE_SHAPE);
-        b.note(V26_50, V26_50, CLOUDBURST_DATA_26_50, BlockBehaviour.OUTLINE_SHAPE, "minecraft:spruce_door", "shapeSource: door_state_correction");
-        b.dispute(V26_50, V26_50, CLOUDBURST_DATA_26_50, BlockBehaviour.OUTLINE_SHAPE, "minecraft:spruce_door", ALLAY_DATA_26_50, SHAPE_ACACIA_TRAPDOOR_COLLISION_SHAPE_3);
-        b.dispute(V26_50, V26_50, CLOUDBURST_DATA_26_50, BlockBehaviour.OUTLINE_SHAPE, "minecraft:sulfur_spike", ALLAY_DATA_26_50, MARKS_DRIPSTONE_THICKNESS_HANGING_456F2E);
-        b.dispute(V26_50, V26_50, CLOUDBURST_DATA_26_50, BlockBehaviour.OUTLINE_SHAPE, "minecraft:sunflower", ALLAY_DATA_26_50, Cell.map("upper_block_bit",
-                false, SHAPE_LARGE_FERN_OUTLINE_SHAPE, true, SHAPE_LARGE_FERN_OUTLINE_SHAPE_2));
-        b.dispute(V26_50, V26_50, CLOUDBURST_DATA_26_50, BlockBehaviour.OUTLINE_SHAPE, "minecraft:tall_dry_grass", ALLAY_DATA_26_50, SHAPE_TALL_DRY_GRASS_OUTLINE_SHAPE);
-        b.dispute(V26_50, V26_50, CLOUDBURST_DATA_26_50, BlockBehaviour.OUTLINE_SHAPE, "minecraft:tall_grass", ALLAY_DATA_26_50, Cell.map("upper_block_bit",
-                false, SHAPE_LARGE_FERN_OUTLINE_SHAPE, true, SHAPE_LARGE_FERN_OUTLINE_SHAPE_2));
-        b.dispute(V26_50, V26_50, CLOUDBURST_DATA_26_50, BlockBehaviour.OUTLINE_SHAPE, "minecraft:torchflower", ALLAY_DATA_26_50, SHAPE_ALLIUM_OUTLINE_SHAPE);
-        b.dispute(V26_50, V26_50, CLOUDBURST_DATA_26_50, BlockBehaviour.OUTLINE_SHAPE, "minecraft:tube_coral", ALLAY_DATA_26_50, SHAPE_BAMBOO_SAPLING_OUTLINE_SHAPE);
-        b.dispute(V26_50, V26_50, CLOUDBURST_DATA_26_50, BlockBehaviour.OUTLINE_SHAPE, "minecraft:tube_coral_fan", ALLAY_DATA_26_50, SHAPE_BRAIN_CORAL_FAN_OUTLINE_SHAPE);
-        b.note(V26_50, V26_50, CLOUDBURST_DATA_26_50, BlockBehaviour.OUTLINE_SHAPE, "minecraft:warped_door", "shapeSource: door_state_correction");
-        b.dispute(V26_50, V26_50, CLOUDBURST_DATA_26_50, BlockBehaviour.OUTLINE_SHAPE, "minecraft:warped_door", ALLAY_DATA_26_50, SHAPE_ACACIA_TRAPDOOR_COLLISION_SHAPE_3);
-        b.dispute(V26_50, V26_50, CLOUDBURST_DATA_26_50, BlockBehaviour.OUTLINE_SHAPE, "minecraft:warped_roots", ALLAY_DATA_26_50, SHAPE_ALLIUM_OUTLINE_SHAPE);
-        b.note(V26_50, V26_50, CLOUDBURST_DATA_26_50, BlockBehaviour.OUTLINE_SHAPE, "minecraft:waxed_copper_door", "shapeSource: door_state_correction");
-        b.dispute(V26_50, V26_50, CLOUDBURST_DATA_26_50, BlockBehaviour.OUTLINE_SHAPE, "minecraft:waxed_copper_door", ALLAY_DATA_26_50, SHAPE_ACACIA_TRAPDOOR_COLLISION_SHAPE_3);
-        b.note(V26_50, V26_50, CLOUDBURST_DATA_26_50, BlockBehaviour.OUTLINE_SHAPE, "minecraft:waxed_exposed_copper_door", "shapeSource: door_state_correction");
-        b.dispute(V26_50, V26_50, CLOUDBURST_DATA_26_50, BlockBehaviour.OUTLINE_SHAPE, "minecraft:waxed_exposed_copper_door", ALLAY_DATA_26_50, SHAPE_ACACIA_TRAPDOOR_COLLISION_SHAPE_3);
-        b.note(V26_50, V26_50, CLOUDBURST_DATA_26_50, BlockBehaviour.OUTLINE_SHAPE, "minecraft:waxed_oxidized_copper_door", "shapeSource: door_state_correction");
-        b.dispute(V26_50, V26_50, CLOUDBURST_DATA_26_50, BlockBehaviour.OUTLINE_SHAPE, "minecraft:waxed_oxidized_copper_door", ALLAY_DATA_26_50, SHAPE_ACACIA_TRAPDOOR_COLLISION_SHAPE_3);
-        b.note(V26_50, V26_50, CLOUDBURST_DATA_26_50, BlockBehaviour.OUTLINE_SHAPE, "minecraft:waxed_weathered_copper_door", "shapeSource: door_state_correction");
-        b.dispute(V26_50, V26_50, CLOUDBURST_DATA_26_50, BlockBehaviour.OUTLINE_SHAPE, "minecraft:waxed_weathered_copper_door", ALLAY_DATA_26_50, SHAPE_ACACIA_TRAPDOOR_COLLISION_SHAPE_3);
-        b.note(V26_50, V26_50, CLOUDBURST_DATA_26_50, BlockBehaviour.OUTLINE_SHAPE, "minecraft:weathered_copper_door", "shapeSource: door_state_correction");
-        b.dispute(V26_50, V26_50, CLOUDBURST_DATA_26_50, BlockBehaviour.OUTLINE_SHAPE, "minecraft:weathered_copper_door", ALLAY_DATA_26_50, SHAPE_ACACIA_TRAPDOOR_COLLISION_SHAPE_3);
-    }
-
-    static void part10(VanillaBehaviour.Builder b) {
-        b.dispute(V26_50, V26_50, CLOUDBURST_DATA_26_50, BlockBehaviour.OUTLINE_SHAPE, "minecraft:white_tulip", ALLAY_DATA_26_50, SHAPE_ALLIUM_OUTLINE_SHAPE);
-        b.dispute(V26_50, V26_50, CLOUDBURST_DATA_26_50, BlockBehaviour.OUTLINE_SHAPE, "minecraft:wither_rose", ALLAY_DATA_26_50, SHAPE_ALLIUM_OUTLINE_SHAPE);
-        b.note(V26_50, V26_50, CLOUDBURST_DATA_26_50, BlockBehaviour.OUTLINE_SHAPE, "minecraft:wooden_door", "shapeSource: door_state_correction");
-        b.dispute(V26_50, V26_50, CLOUDBURST_DATA_26_50, BlockBehaviour.OUTLINE_SHAPE, "minecraft:wooden_door", ALLAY_DATA_26_50, SHAPE_ACACIA_TRAPDOOR_COLLISION_SHAPE_3);
+        b.note(V26_50, V26_50, BDS_PROBE_26_50_DOORS, BlockBehaviour.COLLISION_SHAPE, "minecraft:waxed_oxidized_copper_door", "composed: the axis the panel is thin on is measured (bodies stopped at both faces); its length and height are the block's 0 to 1, not measured");
+        b.note(V26_50, V26_50, BDS_PROBE_26_50_DOORS, BlockBehaviour.COLLISION_SHAPE, "minecraft:waxed_weathered_copper_door", "composed: the axis the panel is thin on is measured (bodies stopped at both faces); its length and height are the block's 0 to 1, not measured");
+        b.note(V26_50, V26_50, BDS_PROBE_26_50_DOORS, BlockBehaviour.COLLISION_SHAPE, "minecraft:weathered_copper_door", "composed: the axis the panel is thin on is measured (bodies stopped at both faces); its length and height are the block's 0 to 1, not measured");
+        b.note(V26_50, V26_50, BDS_PROBE_26_50_DOORS, BlockBehaviour.COLLISION_SHAPE, "minecraft:wooden_door", "composed: the axis the panel is thin on is measured (bodies stopped at both faces); its length and height are the block's 0 to 1, not measured");
         b.dispute(V26_60, V26_60, CLOUDBURST_DATA_26_60, BlockBehaviour.COLLISION_SHAPE, "minecraft:bamboo", ALLAY_DATA_26_50, Cell.map("bamboo_stalk_thickness",
                 "thick", SHAPE_BAMBOO_COLLISION_SHAPE, "thin", SHAPE_BAMBOO_COLLISION_SHAPE_2));
         b.dispute(V26_60, V26_60, CLOUDBURST_DATA_26_60, BlockBehaviour.COLLISION_SHAPE, "minecraft:pointed_dripstone", ALLAY_DATA_26_50, MARKS_DRIPSTONE_THICKNESS_HANGING_456F2E);
         b.dispute(V26_60, V26_60, CLOUDBURST_DATA_26_60, BlockBehaviour.COLLISION_SHAPE, "minecraft:sulfur_spike", ALLAY_DATA_26_50, MARKS_DRIPSTONE_THICKNESS_HANGING_456F2E);
         b.note(V26_60, V26_60, CLOUDBURST_DATA_26_60, BlockBehaviour.OUTLINE_SHAPE, "minecraft:acacia_door", "shapeSource: door_state_correction");
-        b.dispute(V26_60, V26_60, CLOUDBURST_DATA_26_60, BlockBehaviour.OUTLINE_SHAPE, "minecraft:acacia_door", ALLAY_DATA_26_50, SHAPE_ACACIA_TRAPDOOR_COLLISION_SHAPE_3);
+        b.dispute(V26_60, V26_60, CLOUDBURST_DATA_26_60, BlockBehaviour.OUTLINE_SHAPE, "minecraft:acacia_door", ALLAY_DATA_26_50, SHAPE_ACACIA_DOOR_COLLISION_SHAPE_2);
         b.dispute(V26_60, V26_60, CLOUDBURST_DATA_26_60, BlockBehaviour.OUTLINE_SHAPE, "minecraft:allium", ALLAY_DATA_26_50, SHAPE_ALLIUM_OUTLINE_SHAPE);
         b.dispute(V26_60, V26_60, CLOUDBURST_DATA_26_60, BlockBehaviour.OUTLINE_SHAPE, "minecraft:azure_bluet", ALLAY_DATA_26_50, SHAPE_ALLIUM_OUTLINE_SHAPE);
         b.dispute(V26_60, V26_60, CLOUDBURST_DATA_26_60, BlockBehaviour.OUTLINE_SHAPE, "minecraft:bamboo", ALLAY_DATA_26_50, Cell.map("bamboo_stalk_thickness",
                 "thick", SHAPE_BAMBOO_COLLISION_SHAPE, "thin", SHAPE_BAMBOO_COLLISION_SHAPE_2));
         b.note(V26_60, V26_60, CLOUDBURST_DATA_26_60, BlockBehaviour.OUTLINE_SHAPE, "minecraft:bamboo_door", "shapeSource: door_state_correction");
-        b.dispute(V26_60, V26_60, CLOUDBURST_DATA_26_60, BlockBehaviour.OUTLINE_SHAPE, "minecraft:bamboo_door", ALLAY_DATA_26_50, SHAPE_ACACIA_TRAPDOOR_COLLISION_SHAPE_3);
+        b.dispute(V26_60, V26_60, CLOUDBURST_DATA_26_60, BlockBehaviour.OUTLINE_SHAPE, "minecraft:bamboo_door", ALLAY_DATA_26_50, SHAPE_ACACIA_DOOR_COLLISION_SHAPE_2);
         b.dispute(V26_60, V26_60, CLOUDBURST_DATA_26_60, BlockBehaviour.OUTLINE_SHAPE, "minecraft:bamboo_sapling", ALLAY_DATA_26_50, SHAPE_BAMBOO_SAPLING_OUTLINE_SHAPE);
         b.note(V26_60, V26_60, CLOUDBURST_DATA_26_60, BlockBehaviour.OUTLINE_SHAPE, "minecraft:birch_door", "shapeSource: door_state_correction");
-        b.dispute(V26_60, V26_60, CLOUDBURST_DATA_26_60, BlockBehaviour.OUTLINE_SHAPE, "minecraft:birch_door", ALLAY_DATA_26_50, SHAPE_ACACIA_TRAPDOOR_COLLISION_SHAPE_3);
+        b.dispute(V26_60, V26_60, CLOUDBURST_DATA_26_60, BlockBehaviour.OUTLINE_SHAPE, "minecraft:birch_door", ALLAY_DATA_26_50, SHAPE_ACACIA_DOOR_COLLISION_SHAPE_2);
         b.dispute(V26_60, V26_60, CLOUDBURST_DATA_26_60, BlockBehaviour.OUTLINE_SHAPE, "minecraft:blue_orchid", ALLAY_DATA_26_50, SHAPE_ALLIUM_OUTLINE_SHAPE);
         b.dispute(V26_60, V26_60, CLOUDBURST_DATA_26_60, BlockBehaviour.OUTLINE_SHAPE, "minecraft:brain_coral", ALLAY_DATA_26_50, SHAPE_BAMBOO_SAPLING_OUTLINE_SHAPE);
         b.dispute(V26_60, V26_60, CLOUDBURST_DATA_26_60, BlockBehaviour.OUTLINE_SHAPE, "minecraft:brain_coral_fan", ALLAY_DATA_26_50, SHAPE_BRAIN_CORAL_FAN_OUTLINE_SHAPE);
         b.dispute(V26_60, V26_60, CLOUDBURST_DATA_26_60, BlockBehaviour.OUTLINE_SHAPE, "minecraft:bubble_coral", ALLAY_DATA_26_50, SHAPE_BAMBOO_SAPLING_OUTLINE_SHAPE);
         b.dispute(V26_60, V26_60, CLOUDBURST_DATA_26_60, BlockBehaviour.OUTLINE_SHAPE, "minecraft:bubble_coral_fan", ALLAY_DATA_26_50, SHAPE_BRAIN_CORAL_FAN_OUTLINE_SHAPE);
         b.note(V26_60, V26_60, CLOUDBURST_DATA_26_60, BlockBehaviour.OUTLINE_SHAPE, "minecraft:cherry_door", "shapeSource: door_state_correction");
-        b.dispute(V26_60, V26_60, CLOUDBURST_DATA_26_60, BlockBehaviour.OUTLINE_SHAPE, "minecraft:cherry_door", ALLAY_DATA_26_50, SHAPE_ACACIA_TRAPDOOR_COLLISION_SHAPE_3);
+        b.dispute(V26_60, V26_60, CLOUDBURST_DATA_26_60, BlockBehaviour.OUTLINE_SHAPE, "minecraft:cherry_door", ALLAY_DATA_26_50, SHAPE_ACACIA_DOOR_COLLISION_SHAPE_2);
         b.dispute(V26_60, V26_60, CLOUDBURST_DATA_26_60, BlockBehaviour.OUTLINE_SHAPE, "minecraft:closed_eyeblossom", ALLAY_DATA_26_50, SHAPE_ALLIUM_OUTLINE_SHAPE);
         b.note(V26_60, V26_60, CLOUDBURST_DATA_26_60, BlockBehaviour.OUTLINE_SHAPE, "minecraft:copper_door", "shapeSource: door_state_correction");
-        b.dispute(V26_60, V26_60, CLOUDBURST_DATA_26_60, BlockBehaviour.OUTLINE_SHAPE, "minecraft:copper_door", ALLAY_DATA_26_50, SHAPE_ACACIA_TRAPDOOR_COLLISION_SHAPE_3);
+        b.dispute(V26_60, V26_60, CLOUDBURST_DATA_26_60, BlockBehaviour.OUTLINE_SHAPE, "minecraft:copper_door", ALLAY_DATA_26_50, SHAPE_ACACIA_DOOR_COLLISION_SHAPE_2);
         b.dispute(V26_60, V26_60, CLOUDBURST_DATA_26_60, BlockBehaviour.OUTLINE_SHAPE, "minecraft:cornflower", ALLAY_DATA_26_50, SHAPE_ALLIUM_OUTLINE_SHAPE);
         b.note(V26_60, V26_60, CLOUDBURST_DATA_26_60, BlockBehaviour.OUTLINE_SHAPE, "minecraft:crimson_door", "shapeSource: door_state_correction");
-        b.dispute(V26_60, V26_60, CLOUDBURST_DATA_26_60, BlockBehaviour.OUTLINE_SHAPE, "minecraft:crimson_door", ALLAY_DATA_26_50, SHAPE_ACACIA_TRAPDOOR_COLLISION_SHAPE_3);
+        b.dispute(V26_60, V26_60, CLOUDBURST_DATA_26_60, BlockBehaviour.OUTLINE_SHAPE, "minecraft:crimson_door", ALLAY_DATA_26_50, SHAPE_ACACIA_DOOR_COLLISION_SHAPE_2);
         b.dispute(V26_60, V26_60, CLOUDBURST_DATA_26_60, BlockBehaviour.OUTLINE_SHAPE, "minecraft:crimson_roots", ALLAY_DATA_26_50, SHAPE_ALLIUM_OUTLINE_SHAPE);
     }
 
-    static void part11(VanillaBehaviour.Builder b) {
+    static void part9(VanillaBehaviour.Builder b) {
         b.dispute(V26_60, V26_60, CLOUDBURST_DATA_26_60, BlockBehaviour.OUTLINE_SHAPE, "minecraft:dandelion", ALLAY_DATA_26_50, SHAPE_ALLIUM_OUTLINE_SHAPE);
         b.note(V26_60, V26_60, CLOUDBURST_DATA_26_60, BlockBehaviour.OUTLINE_SHAPE, "minecraft:dark_oak_door", "shapeSource: door_state_correction");
-        b.dispute(V26_60, V26_60, CLOUDBURST_DATA_26_60, BlockBehaviour.OUTLINE_SHAPE, "minecraft:dark_oak_door", ALLAY_DATA_26_50, SHAPE_ACACIA_TRAPDOOR_COLLISION_SHAPE_3);
+        b.dispute(V26_60, V26_60, CLOUDBURST_DATA_26_60, BlockBehaviour.OUTLINE_SHAPE, "minecraft:dark_oak_door", ALLAY_DATA_26_50, SHAPE_ACACIA_DOOR_COLLISION_SHAPE_2);
         b.dispute(V26_60, V26_60, CLOUDBURST_DATA_26_60, BlockBehaviour.OUTLINE_SHAPE, "minecraft:dead_brain_coral", ALLAY_DATA_26_50, SHAPE_BAMBOO_SAPLING_OUTLINE_SHAPE);
         b.dispute(V26_60, V26_60, CLOUDBURST_DATA_26_60, BlockBehaviour.OUTLINE_SHAPE, "minecraft:dead_brain_coral_fan", ALLAY_DATA_26_50, SHAPE_BRAIN_CORAL_FAN_OUTLINE_SHAPE);
         b.dispute(V26_60, V26_60, CLOUDBURST_DATA_26_60, BlockBehaviour.OUTLINE_SHAPE, "minecraft:dead_bubble_coral", ALLAY_DATA_26_50, SHAPE_BAMBOO_SAPLING_OUTLINE_SHAPE);
@@ -142,7 +70,7 @@ final class BehaviourMarksPart2 {
         b.dispute(V26_60, V26_60, CLOUDBURST_DATA_26_60, BlockBehaviour.OUTLINE_SHAPE, "minecraft:dead_tube_coral", ALLAY_DATA_26_50, SHAPE_BAMBOO_SAPLING_OUTLINE_SHAPE);
         b.dispute(V26_60, V26_60, CLOUDBURST_DATA_26_60, BlockBehaviour.OUTLINE_SHAPE, "minecraft:dead_tube_coral_fan", ALLAY_DATA_26_50, SHAPE_BRAIN_CORAL_FAN_OUTLINE_SHAPE);
         b.note(V26_60, V26_60, CLOUDBURST_DATA_26_60, BlockBehaviour.OUTLINE_SHAPE, "minecraft:exposed_copper_door", "shapeSource: door_state_correction");
-        b.dispute(V26_60, V26_60, CLOUDBURST_DATA_26_60, BlockBehaviour.OUTLINE_SHAPE, "minecraft:exposed_copper_door", ALLAY_DATA_26_50, SHAPE_ACACIA_TRAPDOOR_COLLISION_SHAPE_3);
+        b.dispute(V26_60, V26_60, CLOUDBURST_DATA_26_60, BlockBehaviour.OUTLINE_SHAPE, "minecraft:exposed_copper_door", ALLAY_DATA_26_50, SHAPE_ACACIA_DOOR_COLLISION_SHAPE_2);
         b.dispute(V26_60, V26_60, CLOUDBURST_DATA_26_60, BlockBehaviour.OUTLINE_SHAPE, "minecraft:fern", ALLAY_DATA_26_50, SHAPE_FERN_OUTLINE_SHAPE);
         b.dispute(V26_60, V26_60, CLOUDBURST_DATA_26_60, BlockBehaviour.OUTLINE_SHAPE, "minecraft:fire_coral", ALLAY_DATA_26_50, SHAPE_BAMBOO_SAPLING_OUTLINE_SHAPE);
         b.dispute(V26_60, V26_60, CLOUDBURST_DATA_26_60, BlockBehaviour.OUTLINE_SHAPE, "minecraft:fire_coral_fan", ALLAY_DATA_26_50, SHAPE_BRAIN_CORAL_FAN_OUTLINE_SHAPE);
@@ -151,9 +79,9 @@ final class BehaviourMarksPart2 {
         b.dispute(V26_60, V26_60, CLOUDBURST_DATA_26_60, BlockBehaviour.OUTLINE_SHAPE, "minecraft:horn_coral", ALLAY_DATA_26_50, SHAPE_BAMBOO_SAPLING_OUTLINE_SHAPE);
         b.dispute(V26_60, V26_60, CLOUDBURST_DATA_26_60, BlockBehaviour.OUTLINE_SHAPE, "minecraft:horn_coral_fan", ALLAY_DATA_26_50, SHAPE_BRAIN_CORAL_FAN_OUTLINE_SHAPE);
         b.note(V26_60, V26_60, CLOUDBURST_DATA_26_60, BlockBehaviour.OUTLINE_SHAPE, "minecraft:iron_door", "shapeSource: door_state_correction");
-        b.dispute(V26_60, V26_60, CLOUDBURST_DATA_26_60, BlockBehaviour.OUTLINE_SHAPE, "minecraft:iron_door", ALLAY_DATA_26_50, SHAPE_ACACIA_TRAPDOOR_COLLISION_SHAPE_3);
+        b.dispute(V26_60, V26_60, CLOUDBURST_DATA_26_60, BlockBehaviour.OUTLINE_SHAPE, "minecraft:iron_door", ALLAY_DATA_26_50, SHAPE_ACACIA_DOOR_COLLISION_SHAPE_2);
         b.note(V26_60, V26_60, CLOUDBURST_DATA_26_60, BlockBehaviour.OUTLINE_SHAPE, "minecraft:jungle_door", "shapeSource: door_state_correction");
-        b.dispute(V26_60, V26_60, CLOUDBURST_DATA_26_60, BlockBehaviour.OUTLINE_SHAPE, "minecraft:jungle_door", ALLAY_DATA_26_50, SHAPE_ACACIA_TRAPDOOR_COLLISION_SHAPE_3);
+        b.dispute(V26_60, V26_60, CLOUDBURST_DATA_26_60, BlockBehaviour.OUTLINE_SHAPE, "minecraft:jungle_door", ALLAY_DATA_26_50, SHAPE_ACACIA_DOOR_COLLISION_SHAPE_2);
         b.dispute(V26_60, V26_60, CLOUDBURST_DATA_26_60, BlockBehaviour.OUTLINE_SHAPE, "minecraft:large_fern", ALLAY_DATA_26_50, Cell.map("upper_block_bit",
                 false, SHAPE_LARGE_FERN_OUTLINE_SHAPE, true, SHAPE_LARGE_FERN_OUTLINE_SHAPE_2));
         b.dispute(V26_60, V26_60, CLOUDBURST_DATA_26_60, BlockBehaviour.OUTLINE_SHAPE, "minecraft:lilac", ALLAY_DATA_26_50, Cell.map("upper_block_bit",
@@ -162,17 +90,17 @@ final class BehaviourMarksPart2 {
         b.note(V26_60, V26_60, CLOUDBURST_DATA_26_60, BlockBehaviour.OUTLINE_SHAPE, "minecraft:mangrove_door", "shapeSource: door_state_correction");
     }
 
-    static void part12(VanillaBehaviour.Builder b) {
-        b.dispute(V26_60, V26_60, CLOUDBURST_DATA_26_60, BlockBehaviour.OUTLINE_SHAPE, "minecraft:mangrove_door", ALLAY_DATA_26_50, SHAPE_ACACIA_TRAPDOOR_COLLISION_SHAPE_3);
+    static void part10(VanillaBehaviour.Builder b) {
+        b.dispute(V26_60, V26_60, CLOUDBURST_DATA_26_60, BlockBehaviour.OUTLINE_SHAPE, "minecraft:mangrove_door", ALLAY_DATA_26_50, SHAPE_ACACIA_DOOR_COLLISION_SHAPE_2);
         b.dispute(V26_60, V26_60, CLOUDBURST_DATA_26_60, BlockBehaviour.OUTLINE_SHAPE, "minecraft:mangrove_propagule", ALLAY_DATA_26_50, MARKS_HANGING_PROPAGULE_STAGE_355CDB);
         b.dispute(V26_60, V26_60, CLOUDBURST_DATA_26_60, BlockBehaviour.OUTLINE_SHAPE, "minecraft:nether_sprouts", ALLAY_DATA_26_50, SHAPE_NETHER_SPROUTS_OUTLINE_SHAPE);
         b.dispute(V26_60, V26_60, CLOUDBURST_DATA_26_60, BlockBehaviour.OUTLINE_SHAPE, "minecraft:open_eyeblossom", ALLAY_DATA_26_50, SHAPE_ALLIUM_OUTLINE_SHAPE);
         b.dispute(V26_60, V26_60, CLOUDBURST_DATA_26_60, BlockBehaviour.OUTLINE_SHAPE, "minecraft:orange_tulip", ALLAY_DATA_26_50, SHAPE_ALLIUM_OUTLINE_SHAPE);
         b.dispute(V26_60, V26_60, CLOUDBURST_DATA_26_60, BlockBehaviour.OUTLINE_SHAPE, "minecraft:oxeye_daisy", ALLAY_DATA_26_50, SHAPE_ALLIUM_OUTLINE_SHAPE);
         b.note(V26_60, V26_60, CLOUDBURST_DATA_26_60, BlockBehaviour.OUTLINE_SHAPE, "minecraft:oxidized_copper_door", "shapeSource: door_state_correction");
-        b.dispute(V26_60, V26_60, CLOUDBURST_DATA_26_60, BlockBehaviour.OUTLINE_SHAPE, "minecraft:oxidized_copper_door", ALLAY_DATA_26_50, SHAPE_ACACIA_TRAPDOOR_COLLISION_SHAPE_3);
+        b.dispute(V26_60, V26_60, CLOUDBURST_DATA_26_60, BlockBehaviour.OUTLINE_SHAPE, "minecraft:oxidized_copper_door", ALLAY_DATA_26_50, SHAPE_ACACIA_DOOR_COLLISION_SHAPE_2);
         b.note(V26_60, V26_60, CLOUDBURST_DATA_26_60, BlockBehaviour.OUTLINE_SHAPE, "minecraft:pale_oak_door", "shapeSource: door_state_correction");
-        b.dispute(V26_60, V26_60, CLOUDBURST_DATA_26_60, BlockBehaviour.OUTLINE_SHAPE, "minecraft:pale_oak_door", ALLAY_DATA_26_50, SHAPE_ACACIA_TRAPDOOR_COLLISION_SHAPE_3);
+        b.dispute(V26_60, V26_60, CLOUDBURST_DATA_26_60, BlockBehaviour.OUTLINE_SHAPE, "minecraft:pale_oak_door", ALLAY_DATA_26_50, SHAPE_ACACIA_DOOR_COLLISION_SHAPE_2);
         b.dispute(V26_60, V26_60, CLOUDBURST_DATA_26_60, BlockBehaviour.OUTLINE_SHAPE, "minecraft:peony", ALLAY_DATA_26_50, Cell.map("upper_block_bit",
                 false, SHAPE_LARGE_FERN_OUTLINE_SHAPE, true, SHAPE_LARGE_FERN_OUTLINE_SHAPE_2));
         b.dispute(V26_60, V26_60, CLOUDBURST_DATA_26_60, BlockBehaviour.OUTLINE_SHAPE, "minecraft:pink_tulip", ALLAY_DATA_26_50, SHAPE_ALLIUM_OUTLINE_SHAPE);
@@ -180,7 +108,7 @@ final class BehaviourMarksPart2 {
                 false, SHAPE_LARGE_FERN_OUTLINE_SHAPE, true, SHAPE_LARGE_FERN_OUTLINE_SHAPE_2));
         b.dispute(V26_60, V26_60, CLOUDBURST_DATA_26_60, BlockBehaviour.OUTLINE_SHAPE, "minecraft:pointed_dripstone", ALLAY_DATA_26_50, MARKS_DRIPSTONE_THICKNESS_HANGING_456F2E);
         b.note(V26_60, V26_60, CLOUDBURST_DATA_26_60, BlockBehaviour.OUTLINE_SHAPE, "minecraft:poplar_door", "shapeSource: door_state_correction");
-        b.dispute(V26_60, V26_60, CLOUDBURST_DATA_26_60, BlockBehaviour.OUTLINE_SHAPE, "minecraft:poplar_door", ALLAY_DATA_26_50, SHAPE_ACACIA_TRAPDOOR_COLLISION_SHAPE_3);
+        b.dispute(V26_60, V26_60, CLOUDBURST_DATA_26_60, BlockBehaviour.OUTLINE_SHAPE, "minecraft:poplar_door", ALLAY_DATA_26_50, SHAPE_ACACIA_DOOR_COLLISION_SHAPE_2);
         b.dispute(V26_60, V26_60, CLOUDBURST_DATA_26_60, BlockBehaviour.OUTLINE_SHAPE, "minecraft:poppy", ALLAY_DATA_26_50, SHAPE_ALLIUM_OUTLINE_SHAPE);
         b.dispute(V26_60, V26_60, CLOUDBURST_DATA_26_60, BlockBehaviour.OUTLINE_SHAPE, "minecraft:red_tulip", ALLAY_DATA_26_50, SHAPE_ALLIUM_OUTLINE_SHAPE);
         b.dispute(V26_60, V26_60, CLOUDBURST_DATA_26_60, BlockBehaviour.OUTLINE_SHAPE, "minecraft:rose_bush", ALLAY_DATA_26_50, Cell.map("upper_block_bit",
@@ -188,7 +116,7 @@ final class BehaviourMarksPart2 {
         b.dispute(V26_60, V26_60, CLOUDBURST_DATA_26_60, BlockBehaviour.OUTLINE_SHAPE, "minecraft:short_dry_grass", ALLAY_DATA_26_50, SHAPE_SHORT_DRY_GRASS_OUTLINE_SHAPE);
         b.dispute(V26_60, V26_60, CLOUDBURST_DATA_26_60, BlockBehaviour.OUTLINE_SHAPE, "minecraft:short_grass", ALLAY_DATA_26_50, SHAPE_FERN_OUTLINE_SHAPE);
         b.note(V26_60, V26_60, CLOUDBURST_DATA_26_60, BlockBehaviour.OUTLINE_SHAPE, "minecraft:spruce_door", "shapeSource: door_state_correction");
-        b.dispute(V26_60, V26_60, CLOUDBURST_DATA_26_60, BlockBehaviour.OUTLINE_SHAPE, "minecraft:spruce_door", ALLAY_DATA_26_50, SHAPE_ACACIA_TRAPDOOR_COLLISION_SHAPE_3);
+        b.dispute(V26_60, V26_60, CLOUDBURST_DATA_26_60, BlockBehaviour.OUTLINE_SHAPE, "minecraft:spruce_door", ALLAY_DATA_26_50, SHAPE_ACACIA_DOOR_COLLISION_SHAPE_2);
         b.dispute(V26_60, V26_60, CLOUDBURST_DATA_26_60, BlockBehaviour.OUTLINE_SHAPE, "minecraft:sulfur_spike", ALLAY_DATA_26_50, MARKS_DRIPSTONE_THICKNESS_HANGING_456F2E);
         b.dispute(V26_60, V26_60, CLOUDBURST_DATA_26_60, BlockBehaviour.OUTLINE_SHAPE, "minecraft:sunflower", ALLAY_DATA_26_50, Cell.map("upper_block_bit",
                 false, SHAPE_LARGE_FERN_OUTLINE_SHAPE, true, SHAPE_LARGE_FERN_OUTLINE_SHAPE_2));
@@ -199,25 +127,25 @@ final class BehaviourMarksPart2 {
         b.dispute(V26_60, V26_60, CLOUDBURST_DATA_26_60, BlockBehaviour.OUTLINE_SHAPE, "minecraft:tube_coral", ALLAY_DATA_26_50, SHAPE_BAMBOO_SAPLING_OUTLINE_SHAPE);
     }
 
-    static void part13(VanillaBehaviour.Builder b) {
+    static void part11(VanillaBehaviour.Builder b) {
         b.dispute(V26_60, V26_60, CLOUDBURST_DATA_26_60, BlockBehaviour.OUTLINE_SHAPE, "minecraft:tube_coral_fan", ALLAY_DATA_26_50, SHAPE_BRAIN_CORAL_FAN_OUTLINE_SHAPE);
         b.note(V26_60, V26_60, CLOUDBURST_DATA_26_60, BlockBehaviour.OUTLINE_SHAPE, "minecraft:warped_door", "shapeSource: door_state_correction");
-        b.dispute(V26_60, V26_60, CLOUDBURST_DATA_26_60, BlockBehaviour.OUTLINE_SHAPE, "minecraft:warped_door", ALLAY_DATA_26_50, SHAPE_ACACIA_TRAPDOOR_COLLISION_SHAPE_3);
+        b.dispute(V26_60, V26_60, CLOUDBURST_DATA_26_60, BlockBehaviour.OUTLINE_SHAPE, "minecraft:warped_door", ALLAY_DATA_26_50, SHAPE_ACACIA_DOOR_COLLISION_SHAPE_2);
         b.dispute(V26_60, V26_60, CLOUDBURST_DATA_26_60, BlockBehaviour.OUTLINE_SHAPE, "minecraft:warped_roots", ALLAY_DATA_26_50, SHAPE_ALLIUM_OUTLINE_SHAPE);
         b.note(V26_60, V26_60, CLOUDBURST_DATA_26_60, BlockBehaviour.OUTLINE_SHAPE, "minecraft:waxed_copper_door", "shapeSource: door_state_correction");
-        b.dispute(V26_60, V26_60, CLOUDBURST_DATA_26_60, BlockBehaviour.OUTLINE_SHAPE, "minecraft:waxed_copper_door", ALLAY_DATA_26_50, SHAPE_ACACIA_TRAPDOOR_COLLISION_SHAPE_3);
+        b.dispute(V26_60, V26_60, CLOUDBURST_DATA_26_60, BlockBehaviour.OUTLINE_SHAPE, "minecraft:waxed_copper_door", ALLAY_DATA_26_50, SHAPE_ACACIA_DOOR_COLLISION_SHAPE_2);
         b.note(V26_60, V26_60, CLOUDBURST_DATA_26_60, BlockBehaviour.OUTLINE_SHAPE, "minecraft:waxed_exposed_copper_door", "shapeSource: door_state_correction");
-        b.dispute(V26_60, V26_60, CLOUDBURST_DATA_26_60, BlockBehaviour.OUTLINE_SHAPE, "minecraft:waxed_exposed_copper_door", ALLAY_DATA_26_50, SHAPE_ACACIA_TRAPDOOR_COLLISION_SHAPE_3);
+        b.dispute(V26_60, V26_60, CLOUDBURST_DATA_26_60, BlockBehaviour.OUTLINE_SHAPE, "minecraft:waxed_exposed_copper_door", ALLAY_DATA_26_50, SHAPE_ACACIA_DOOR_COLLISION_SHAPE_2);
         b.note(V26_60, V26_60, CLOUDBURST_DATA_26_60, BlockBehaviour.OUTLINE_SHAPE, "minecraft:waxed_oxidized_copper_door", "shapeSource: door_state_correction");
-        b.dispute(V26_60, V26_60, CLOUDBURST_DATA_26_60, BlockBehaviour.OUTLINE_SHAPE, "minecraft:waxed_oxidized_copper_door", ALLAY_DATA_26_50, SHAPE_ACACIA_TRAPDOOR_COLLISION_SHAPE_3);
+        b.dispute(V26_60, V26_60, CLOUDBURST_DATA_26_60, BlockBehaviour.OUTLINE_SHAPE, "minecraft:waxed_oxidized_copper_door", ALLAY_DATA_26_50, SHAPE_ACACIA_DOOR_COLLISION_SHAPE_2);
         b.note(V26_60, V26_60, CLOUDBURST_DATA_26_60, BlockBehaviour.OUTLINE_SHAPE, "minecraft:waxed_weathered_copper_door", "shapeSource: door_state_correction");
-        b.dispute(V26_60, V26_60, CLOUDBURST_DATA_26_60, BlockBehaviour.OUTLINE_SHAPE, "minecraft:waxed_weathered_copper_door", ALLAY_DATA_26_50, SHAPE_ACACIA_TRAPDOOR_COLLISION_SHAPE_3);
+        b.dispute(V26_60, V26_60, CLOUDBURST_DATA_26_60, BlockBehaviour.OUTLINE_SHAPE, "minecraft:waxed_weathered_copper_door", ALLAY_DATA_26_50, SHAPE_ACACIA_DOOR_COLLISION_SHAPE_2);
         b.note(V26_60, V26_60, CLOUDBURST_DATA_26_60, BlockBehaviour.OUTLINE_SHAPE, "minecraft:weathered_copper_door", "shapeSource: door_state_correction");
-        b.dispute(V26_60, V26_60, CLOUDBURST_DATA_26_60, BlockBehaviour.OUTLINE_SHAPE, "minecraft:weathered_copper_door", ALLAY_DATA_26_50, SHAPE_ACACIA_TRAPDOOR_COLLISION_SHAPE_3);
+        b.dispute(V26_60, V26_60, CLOUDBURST_DATA_26_60, BlockBehaviour.OUTLINE_SHAPE, "minecraft:weathered_copper_door", ALLAY_DATA_26_50, SHAPE_ACACIA_DOOR_COLLISION_SHAPE_2);
         b.dispute(V26_60, V26_60, CLOUDBURST_DATA_26_60, BlockBehaviour.OUTLINE_SHAPE, "minecraft:white_tulip", ALLAY_DATA_26_50, SHAPE_ALLIUM_OUTLINE_SHAPE);
         b.dispute(V26_60, V26_60, CLOUDBURST_DATA_26_60, BlockBehaviour.OUTLINE_SHAPE, "minecraft:wither_rose", ALLAY_DATA_26_50, SHAPE_ALLIUM_OUTLINE_SHAPE);
         b.note(V26_60, V26_60, CLOUDBURST_DATA_26_60, BlockBehaviour.OUTLINE_SHAPE, "minecraft:wooden_door", "shapeSource: door_state_correction");
-        b.dispute(V26_60, V26_60, CLOUDBURST_DATA_26_60, BlockBehaviour.OUTLINE_SHAPE, "minecraft:wooden_door", ALLAY_DATA_26_50, SHAPE_ACACIA_TRAPDOOR_COLLISION_SHAPE_3);
+        b.dispute(V26_60, V26_60, CLOUDBURST_DATA_26_60, BlockBehaviour.OUTLINE_SHAPE, "minecraft:wooden_door", ALLAY_DATA_26_50, SHAPE_ACACIA_DOOR_COLLISION_SHAPE_2);
         b.note(V26_60, V26_60, BDS_PROBE_26_60_DOORS, BlockBehaviour.COLLISION_SHAPE, "minecraft:acacia_door", "composed: the axis the panel is thin on is measured (bodies stopped at both faces); its length and height are the block's 0 to 1, not measured");
         b.note(V26_60, V26_60, BDS_PROBE_26_60_DOORS, BlockBehaviour.COLLISION_SHAPE, "minecraft:bamboo_door", "composed: the axis the panel is thin on is measured (bodies stopped at both faces); its length and height are the block's 0 to 1, not measured");
         b.note(V26_60, V26_60, BDS_PROBE_26_60_DOORS, BlockBehaviour.COLLISION_SHAPE, "minecraft:birch_door", "composed: the axis the panel is thin on is measured (bodies stopped at both faces); its length and height are the block's 0 to 1, not measured");
@@ -234,7 +162,7 @@ final class BehaviourMarksPart2 {
         b.note(V26_60, V26_60, BDS_PROBE_26_60_DOORS, BlockBehaviour.COLLISION_SHAPE, "minecraft:poplar_door", "composed: the axis the panel is thin on is measured (bodies stopped at both faces); its length and height are the block's 0 to 1, not measured");
     }
 
-    static void part14(VanillaBehaviour.Builder b) {
+    static void part12(VanillaBehaviour.Builder b) {
         b.note(V26_60, V26_60, BDS_PROBE_26_60_DOORS, BlockBehaviour.COLLISION_SHAPE, "minecraft:spruce_door", "composed: the axis the panel is thin on is measured (bodies stopped at both faces); its length and height are the block's 0 to 1, not measured");
         b.note(V26_60, V26_60, BDS_PROBE_26_60_DOORS, BlockBehaviour.COLLISION_SHAPE, "minecraft:warped_door", "composed: the axis the panel is thin on is measured (bodies stopped at both faces); its length and height are the block's 0 to 1, not measured");
         b.note(V26_60, V26_60, BDS_PROBE_26_60_DOORS, BlockBehaviour.COLLISION_SHAPE, "minecraft:waxed_copper_door", "composed: the axis the panel is thin on is measured (bodies stopped at both faces); its length and height are the block's 0 to 1, not measured");
@@ -243,13 +171,13 @@ final class BehaviourMarksPart2 {
         b.note(V26_60, V26_60, BDS_PROBE_26_60_DOORS, BlockBehaviour.COLLISION_SHAPE, "minecraft:waxed_weathered_copper_door", "composed: the axis the panel is thin on is measured (bodies stopped at both faces); its length and height are the block's 0 to 1, not measured");
         b.note(V26_60, V26_60, BDS_PROBE_26_60_DOORS, BlockBehaviour.COLLISION_SHAPE, "minecraft:weathered_copper_door", "composed: the axis the panel is thin on is measured (bodies stopped at both faces); its length and height are the block's 0 to 1, not measured");
         b.note(V26_60, V26_60, BDS_PROBE_26_60_DOORS, BlockBehaviour.COLLISION_SHAPE, "minecraft:wooden_door", "composed: the axis the panel is thin on is measured (bodies stopped at both faces); its length and height are the block's 0 to 1, not measured");
-        b.customDefault(BlockBehaviour.EXPLOSION_RESISTANCE, 0.0f, Provenance.Source.BDS_PROBE, "data/bds/1.26.63.1/behaviour-probe/capture.json (BDS 1.26.63.1, Build ID 53340801)");
-        b.customDefault(BlockBehaviour.FRICTION, 0.6f, Provenance.Source.BDS_PROBE, "data/bds/1.26.63.1/behaviour-probe/capture.json (BDS 1.26.63.1, Build ID 53340801)");
-        b.customDefault(BlockBehaviour.COLLISION_SHAPE, BlockShape.FULL_CUBE, Provenance.Source.BDS_PROBE, "data/bds/1.26.63.1/behaviour-probe/capture.json (BDS 1.26.63.1, Build ID 53340801)");
-        b.customDefault(BlockBehaviour.LIGHT_EMISSION, 0, Provenance.Source.BDS_PROBE, "data/bds/1.26.63.1/behaviour-probe/capture.json (BDS 1.26.63.1, Build ID 53340801)");
-        b.customDefault(BlockBehaviour.LIGHT_DAMPENING, 15, Provenance.Source.BDS_PROBE, "data/bds/1.26.63.1/behaviour-probe/capture.json (BDS 1.26.63.1, Build ID 53340801)");
-        b.customDefault(BlockBehaviour.FLAME_ODDS, 0, Provenance.Source.BDS_PROBE, "data/bds/1.26.63.1/behaviour-probe/capture.json (BDS 1.26.63.1, Build ID 53340801)");
-        b.customDefault(BlockBehaviour.BURN_ODDS, 0, Provenance.Source.BDS_PROBE, "data/bds/1.26.63.1/behaviour-probe/capture.json (BDS 1.26.63.1, Build ID 53340801)");
-        b.customDefault(BlockBehaviour.CLIMBABLE, false, Provenance.Source.BDS_PROBE, "data/bds/1.26.63.1/behaviour-probe/capture.json (BDS 1.26.63.1, Build ID 53340801)");
+        b.customDefault(BlockBehaviour.EXPLOSION_RESISTANCE, 0.0f, Provenance.Source.BDS_PROBE, "data/bds/1.26.70.24/behaviour-probe/capture.json (BDS 1.26.70-beta24, Build ID 53380423)");
+        b.customDefault(BlockBehaviour.FRICTION, 0.6f, Provenance.Source.BDS_PROBE, "data/bds/1.26.70.24/behaviour-probe/capture.json (BDS 1.26.70-beta24, Build ID 53380423)");
+        b.customDefault(BlockBehaviour.COLLISION_SHAPE, BlockShape.FULL_CUBE, Provenance.Source.BDS_PROBE, "data/bds/1.26.70.24/behaviour-probe/capture.json (BDS 1.26.70-beta24, Build ID 53380423)");
+        b.customDefault(BlockBehaviour.LIGHT_EMISSION, 0, Provenance.Source.BDS_PROBE, "data/bds/1.26.70.24/behaviour-probe/capture.json (BDS 1.26.70-beta24, Build ID 53380423)");
+        b.customDefault(BlockBehaviour.LIGHT_DAMPENING, 15, Provenance.Source.BDS_PROBE, "data/bds/1.26.70.24/behaviour-probe/capture.json (BDS 1.26.70-beta24, Build ID 53380423)");
+        b.customDefault(BlockBehaviour.FLAME_ODDS, 0, Provenance.Source.BDS_PROBE, "data/bds/1.26.70.24/behaviour-probe/capture.json (BDS 1.26.70-beta24, Build ID 53380423)");
+        b.customDefault(BlockBehaviour.BURN_ODDS, 0, Provenance.Source.BDS_PROBE, "data/bds/1.26.70.24/behaviour-probe/capture.json (BDS 1.26.70-beta24, Build ID 53380423)");
+        b.customDefault(BlockBehaviour.CLIMBABLE, false, Provenance.Source.BDS_PROBE, "data/bds/1.26.70.24/behaviour-probe/capture.json (BDS 1.26.70-beta24, Build ID 53380423)");
     }
 }

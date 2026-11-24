@@ -195,16 +195,16 @@ public final class Cooldown implements ItemComponent {
      */
     public static final class Type {
         /**
-         * {@code attack}
-         */
-        public static final Type ATTACK = new Type("attack");
-
-        /**
          * {@code use}
          */
         public static final Type USE = new Type("use");
 
-        private static final List<Type> KNOWN = List.of(ATTACK, USE);
+        /**
+         * {@code attack}
+         */
+        public static final Type ATTACK = new Type("attack");
+
+        private static final List<Type> KNOWN = List.of(USE, ATTACK);
 
         private static final Map<String, Type> BY_VALUE = Check.index(KNOWN, Type::value);
 

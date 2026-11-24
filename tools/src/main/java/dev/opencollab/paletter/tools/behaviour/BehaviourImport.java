@@ -148,43 +148,44 @@ public final class BehaviourImport {
     }
 
     /**
-     * The defaults of custom blocks and items (what BDS uses when the component is absent): every default that the newest
-     * {@code data/bds/<bds>/behaviour-probe/capture.json} measured, that capture being the reference. The value is a number,
-     * a boolean, a string, or a list of boxes of six coordinates for shapes. A key the probe did not measure stays unknown.
+     * The defaults of custom blocks and items (what BDS uses when the component is absent): each default as the newest
+     * {@code data/bds/<bds>/behaviour-probe/capture.json} that measured it has it, that capture being the reference. The
+     * newest capture decides; an older one only fills a key the newer ones left undecided (the explosion test of a probe
+     * is statistical, and a run can fall short of its threshold: {@code unverified_defaults}). The value is a number, a
+     * boolean, a string, or a list of boxes of six coordinates for shapes. A key no probe measured stays unknown.
      */
     void customDefaults(Path bds) throws IOException {
         if (!Files.isDirectory(bds)) {
             return;
         }
-        Path newest = null;
+        List<Path> probed;
         try (Stream<Path> dirs = Files.list(bds)) {
-            for (Path dir : dirs.sorted((a, b) -> compare(bdsOrder(a), bdsOrder(b))).toList()) {
-                if (Files.isRegularFile(dir.resolve(BehaviourProbe.DIRECTORY).resolve(BehaviourProbe.CAPTURE))) {
-                    newest = dir;
+            probed = dirs.filter(dir -> Files.isRegularFile(dir.resolve(BehaviourProbe.DIRECTORY).resolve(BehaviourProbe.CAPTURE)))
+                .sorted((a, b) -> compare(bdsOrder(b), bdsOrder(a))).toList();
+        }
+        Set<BehaviourKey<?>> decided = new HashSet<>();
+        for (Path dir : probed) {
+            Path file = dir.resolve(BehaviourProbe.DIRECTORY).resolve(BehaviourProbe.CAPTURE);
+            JsonObject measured = JsonParser.parseString(Files.readString(file)).getAsJsonObject();
+            JsonObject build = measured.getAsJsonObject("bds");
+            String reference = "data/bds/" + dir.getFileName() + "/" + BehaviourProbe.DIRECTORY + "/" + BehaviourProbe.CAPTURE
+                + " (BDS " + build.get("version").getAsString() + ", Build ID " + build.get("build").getAsString() + ")";
+            if (dir.equals(probed.getFirst()) && measured.has("unverified_defaults")) {
+                measured.getAsJsonObject("unverified_defaults").entrySet().forEach(entry -> log.add(Provenance.Source.BDS_PROBE + " "
+                    + build.get("version").getAsString() + ": the default of " + entry.getKey() + " is unverified: " + entry.getValue().getAsString()));
+            }
+            for (JsonElement element : measured.getAsJsonArray("defaults")) {
+                JsonObject entry = element.getAsJsonObject();
+                String name = entry.get("key").getAsString();
+                BehaviourKey<?> key = name.startsWith("block:") ? BlockBehaviour.key(name.substring(6))
+                    : name.startsWith("item:") ? ItemBehaviour.key(name.substring(5)) : null;
+                if (key == null) {
+                    throw new IOException(file + ": unknown key " + name);
+                }
+                if (decided.add(key)) {
+                    customDefaults.add(new CustomDefault(key, typed(key, entry.get("value"), file), Provenance.Source.BDS_PROBE, reference));
                 }
             }
-        }
-        if (newest == null) {
-            return;
-        }
-        Path file = newest.resolve(BehaviourProbe.DIRECTORY).resolve(BehaviourProbe.CAPTURE);
-        JsonObject measured = JsonParser.parseString(Files.readString(file)).getAsJsonObject();
-        JsonObject build = measured.getAsJsonObject("bds");
-        String reference = "data/bds/" + newest.getFileName() + "/" + BehaviourProbe.DIRECTORY + "/" + BehaviourProbe.CAPTURE
-            + " (BDS " + build.get("version").getAsString() + ", Build ID " + build.get("build").getAsString() + ")";
-        if (measured.has("unverified_defaults")) {
-            measured.getAsJsonObject("unverified_defaults").entrySet().forEach(entry -> log.add(Provenance.Source.BDS_PROBE + " "
-                + build.get("version").getAsString() + ": the default of " + entry.getKey() + " is unverified: " + entry.getValue().getAsString()));
-        }
-        for (JsonElement element : measured.getAsJsonArray("defaults")) {
-            JsonObject entry = element.getAsJsonObject();
-            String name = entry.get("key").getAsString();
-            BehaviourKey<?> key = name.startsWith("block:") ? BlockBehaviour.key(name.substring(6))
-                : name.startsWith("item:") ? ItemBehaviour.key(name.substring(5)) : null;
-            if (key == null) {
-                throw new IOException(file + ": unknown key " + name);
-            }
-            customDefaults.add(new CustomDefault(key, typed(key, entry.get("value"), file), Provenance.Source.BDS_PROBE, reference));
         }
     }
 

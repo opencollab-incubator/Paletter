@@ -81,6 +81,30 @@ final class BehaviourShapes {
             0.625f, 0.6875f);
 
     /**
+     * [0, 0, 13.08, 16, 16, 16] (in pixels).
+     */
+    static final BlockShape SHAPE_ACACIA_DOOR_COLLISION_SHAPE = BlockShape.of(0.0f, 0.0f, 0.8175f,
+            1.0f, 1.0f, 1.0f);
+
+    /**
+     * [0, 0, 0, 2.92, 16, 16] (in pixels).
+     */
+    static final BlockShape SHAPE_ACACIA_DOOR_COLLISION_SHAPE_2 = BlockShape.of(0.0f, 0.0f, 0.0f,
+            0.1825f, 1.0f, 1.0f);
+
+    /**
+     * [13.08, 0, 0, 16, 16, 16] (in pixels).
+     */
+    static final BlockShape SHAPE_ACACIA_DOOR_COLLISION_SHAPE_3 = BlockShape.of(0.8175f, 0.0f, 0.0f,
+            1.0f, 1.0f, 1.0f);
+
+    /**
+     * [0, 0, 0, 16, 16, 2.92] (in pixels).
+     */
+    static final BlockShape SHAPE_ACACIA_DOOR_COLLISION_SHAPE_4 = BlockShape.of(0.0f, 0.0f, 0.0f,
+            1.0f, 1.0f, 0.1825f);
+
+    /**
      * [0, 0, 13, 16, 16, 16] (in pixels).
      */
     static final BlockShape BOX_0_0_13_16_16_16 = BlockShape.of(0.0f, 0.0f, 0.8125f, 1.0f, 1.0f,
@@ -269,30 +293,6 @@ final class BehaviourShapes {
      */
     static final BlockShape SHAPE_ACACIA_TRAPDOOR_COLLISION_SHAPE_2 = BlockShape.of(0.0f, 0.8175f,
             0.0f, 1.0f, 1.0f, 1.0f);
-
-    /**
-     * [0, 0, 0, 2.92, 16, 16] (in pixels).
-     */
-    static final BlockShape SHAPE_ACACIA_TRAPDOOR_COLLISION_SHAPE_3 = BlockShape.of(0.0f, 0.0f,
-            0.0f, 0.1825f, 1.0f, 1.0f);
-
-    /**
-     * [13.08, 0, 0, 16, 16, 16] (in pixels).
-     */
-    static final BlockShape SHAPE_ACACIA_TRAPDOOR_COLLISION_SHAPE_4 = BlockShape.of(0.8175f, 0.0f,
-            0.0f, 1.0f, 1.0f, 1.0f);
-
-    /**
-     * [0, 0, 0, 16, 16, 2.92] (in pixels).
-     */
-    static final BlockShape SHAPE_ACACIA_TRAPDOOR_COLLISION_SHAPE_5 = BlockShape.of(0.0f, 0.0f,
-            0.0f, 1.0f, 1.0f, 0.1825f);
-
-    /**
-     * [0, 0, 13.08, 16, 16, 16] (in pixels).
-     */
-    static final BlockShape SHAPE_ACACIA_TRAPDOOR_COLLISION_SHAPE_6 = BlockShape.of(0.0f, 0.0f,
-            0.8175f, 1.0f, 1.0f, 1.0f);
 
     /**
      * [0.008, 0.008, 0.008, 15.992, 2.92, 15.992] (in pixels).

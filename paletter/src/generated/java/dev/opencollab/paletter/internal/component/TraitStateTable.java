@@ -5,12 +5,14 @@ package dev.opencollab.paletter.internal.component;
 
 import dev.opencollab.paletter.block.BlockProperty;
 import java.util.List;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 /**
- * The block states each trait adds, per value of its {@code enabled_states}, in order; the first value of a state
- * is its default. The client adds them (they are not on the wire). From {@code data/model/mappings.json}
- * {@code traitStates}: the names from the docs, the values from the vanilla state of the same name, the defaults
- * checked against the hashes BDS sent where a capture has one (each case says). Not API.
+ * The block states each trait adds, per value of its {@code enabled_states} and protocol window, in order; the
+ * first value of a state is its default. The client adds them (they are not on the wire). From
+ * {@code data/model/mappings.json} {@code traitStates}: the names from the docs, the values from the vanilla state of
+ * the same name or from each window's own BDS dump, the defaults checked against the hashes BDS sent where a capture
+ * has one (each case says). A window where BDS's data defines no state set for a value marks it unsupported. Not API.
  */
 public final class TraitStateTable {
     private TraitStateTable() {
@@ -19,9 +21,10 @@ public final class TraitStateTable {
     /**
      * @param trait the trait name, e.g. {@code minecraft:placement_direction}
      * @param value a value of its {@code enabled_states}, e.g. {@code minecraft:cardinal_direction}
-     * @return the states it adds
+     * @param protocol the protocol of the palette's version
+     * @return the states it adds, or null if it is {@link #unsupported} in that protocol
      */
-    public static List<BlockProperty<?>> of(String trait, String value) {
+    public static @Nullable List<BlockProperty<?>> of(String trait, String value, int protocol) {
         return switch (trait + " " + value) {
             // minecraft:connection_north: values from the vanilla state minecraft:connection_north; verified (name and default): BDS 1.26.36.1 sent hash 1337243528 for the default state of paletter:b_trait_connection_7 (enabled_states ["minecraft:cardinal_connections","minecraft:cardinal_connections"])
             // minecraft:connection_east: values from the vanilla state minecraft:connection_east; verified (name and default): BDS 1.26.36.1 sent hash 1337243528 for the default state of paletter:b_trait_connection_7 (enabled_states ["minecraft:cardinal_connections","minecraft:cardinal_connections"])
@@ -38,7 +41,7 @@ public final class TraitStateTable {
             // minecraft:cardinal_direction: values from the vanilla state minecraft:cardinal_direction (CardinalDirection); verified (name and default): BDS 1.26.36.1 sent hash 3632260284 for the default state of paletter:b_trait_placement_direction_2 (enabled_states ["minecraft:cardinal_direction"])
             case "minecraft:placement_direction minecraft:cardinal_direction" -> List.of(
                     BlockProperty.strings("minecraft:cardinal_direction", "south", "west", "north", "east"));
-            // minecraft:corner: values from the vanilla state minecraft:corner (Corner); verified (name and default): BDS 1.26.36.1 sent hash 3681099873 for the default state of paletter:b_trait_placement_direction_9 (enabled_states ["minecraft:cardinal_direction","minecraft:corner_and_cardinal_direction"])
+            // minecraft:corner: values from the vanilla state minecraft:corner (Corner); verified (name and default): BDS 1.26.36.1 sent hash 1212458603 for the default state of paletter:b_trait_placement_direction_7 (enabled_states ["minecraft:corner_and_cardinal_direction"])
             // minecraft:cardinal_direction: values from the vanilla state minecraft:cardinal_direction (CardinalDirection); verified (name and default): BDS 1.26.36.1 sent hash 3632260284 for the default state of paletter:b_trait_placement_direction_2 (enabled_states ["minecraft:cardinal_direction"])
             case "minecraft:placement_direction minecraft:corner_and_cardinal_direction" -> List.of(
                     BlockProperty.strings("minecraft:corner", "none", "inner_left", "inner_right", "outer_left", "outer_right"),
@@ -46,13 +49,39 @@ public final class TraitStateTable {
             // minecraft:facing_direction: values from the vanilla state minecraft:facing_direction (Direction); verified (name and default): BDS 1.26.36.1 sent hash 2490069912 for the default state of paletter:b_trait_placement_direction_8 (enabled_states ["minecraft:facing_direction"])
             case "minecraft:placement_direction minecraft:facing_direction" -> List.of(
                     BlockProperty.strings("minecraft:facing_direction", "down", "up", "north", "south", "west", "east"));
-            // minecraft:block_face: values from the vanilla state minecraft:block_face (Direction); verified (name and default): BDS 1.26.36.1 sent hash 2157981570 for the default state of paletter:b_trait_placement_position_6 (enabled_states ["minecraft:block_face"])
+            // protocols [1001]: unsupported: BDS 1.26.36.1 lists minecraft:sixteen_way_rotation as [down, up, north, south, west, east, down, down, down, down, down, down, down, down, down, down] (its Script API dump, BlockStates.getAll()): duplicate values, a BDS bug, so the states the client adds for it are not well defined
+            // evidence: BDS 1.26.36.1's Script API dump (BlockStates.getAll()) lists minecraft:sixteen_way_rotation as [down, up, north, south, west, east, down, down, down, down, down, down, down, down, down, down]
+            // evidence: BDS 1.26.36.1 sent hash 3334546540 for the default state of paletter:b_trait_placement_direction_9 (enabled_states ["minecraft:sixteen_way_rotation"]) with minecraft:sixteen_way_rotation = down, the first value of its dump
+            // evidence: BDS 1.26.36.1 sent hash 292243736 for the default state of paletter:b_trait_placement_direction_20 (enabled_states ["minecraft:cardinal_direction","minecraft:corner_and_cardinal_direction","minecraft:facing_direction","minecraft:sixteen_way_rotation"]) with minecraft:sixteen_way_rotation = down, the first value of its dump
+            // evidence: BDS 1.26.36.1 sent hash 3908027720 for the default state of paletter:b_trait_placement_direction_19 (enabled_states ["minecraft:corner_and_cardinal_direction","minecraft:facing_direction","minecraft:sixteen_way_rotation"]) with minecraft:sixteen_way_rotation = down, the first value of its dump
+            // evidence: BDS 1.26.36.1 sent hash 4058860031 for the default state of paletter:b_trait_placement_direction_18 (enabled_states ["minecraft:cardinal_direction","minecraft:facing_direction","minecraft:sixteen_way_rotation"]) with minecraft:sixteen_way_rotation = down, the first value of its dump
+            // evidence: BDS 1.26.36.1 sent hash 569768907 for the default state of paletter:b_trait_placement_direction_17 (enabled_states ["minecraft:cardinal_direction","minecraft:corner_and_cardinal_direction","minecraft:sixteen_way_rotation"]) with minecraft:sixteen_way_rotation = down, the first value of its dump
+            // evidence: BDS 1.26.36.1 sent hash 537129971 for the default state of paletter:b_trait_placement_direction_15 (enabled_states ["minecraft:facing_direction","minecraft:sixteen_way_rotation"]) with minecraft:sixteen_way_rotation = down, the first value of its dump
+            // evidence: BDS 1.26.36.1 sent hash 4045600192 for the default state of paletter:b_trait_placement_direction_14 (enabled_states ["minecraft:corner_and_cardinal_direction","minecraft:sixteen_way_rotation"]) with minecraft:sixteen_way_rotation = down, the first value of its dump
+            // evidence: BDS 1.26.36.1 sent hash 1501745685 for the default state of paletter:b_trait_placement_direction_13 (enabled_states ["minecraft:cardinal_direction","minecraft:sixteen_way_rotation"]) with minecraft:sixteen_way_rotation = down, the first value of its dump
+            // protocols [2168,2193,2225,2259]: minecraft:sixteen_way_rotation: values from BDS 1.26.45.1, 1.26.52.3, 1.26.63.1, 1.26.70.24 (the Script API BlockStates.getAll() of each, in its order; the docs name no state for it); verified (name and default): BDS 1.26.45.1 sent hash 510796997 for the default state of paletter:b_trait_placement_direction_9 (enabled_states ["minecraft:sixteen_way_rotation"])
+            case "minecraft:placement_direction minecraft:sixteen_way_rotation" -> protocol < 2168 ? null : List.of(
+                    BlockProperty.ints("minecraft:sixteen_way_rotation", 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15));
+            // minecraft:block_face: values from the vanilla state minecraft:block_face (Direction); verified (name and default): BDS 1.26.36.1 sent hash 20442302 for the default state of paletter:b_trait_placement_position_2 (enabled_states ["minecraft:block_face"])
             case "minecraft:placement_position minecraft:block_face" -> List.of(
                     BlockProperty.strings("minecraft:block_face", "down", "up", "north", "south", "west", "east"));
             // minecraft:vertical_half: values from the vanilla state minecraft:vertical_half (VerticalHalf); verified (name and default): BDS 1.26.36.1 sent hash 2948113812 for the default state of paletter:b_trait_placement_position_7 (enabled_states ["minecraft:vertical_half"])
             case "minecraft:placement_position minecraft:vertical_half" -> List.of(
                     BlockProperty.strings("minecraft:vertical_half", "bottom", "top"));
             default -> throw new IllegalArgumentException(trait + " has no enabled state " + value);
+        };
+    }
+
+    /**
+     * @param trait the trait name
+     * @param value a value of its {@code enabled_states}
+     * @param protocol the protocol of the palette's version
+     * @return why the value adds no well-defined states in that protocol (the BDS data), or null if it does
+     */
+    public static @Nullable String unsupported(String trait, String value, int protocol) {
+        return switch (trait + " " + value) {
+            case "minecraft:placement_direction minecraft:sixteen_way_rotation" -> protocol < 2168 ? "BDS 1.26.36.1 lists minecraft:sixteen_way_rotation as [down, up, north, south, west, east, down, down, down, down, down, down, down, down, down, down] (its Script API dump, BlockStates.getAll()): duplicate values, a BDS bug, so the states the client adds for it are not well defined" : null;
+            default -> null;
         };
     }
 }

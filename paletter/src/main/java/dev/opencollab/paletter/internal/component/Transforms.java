@@ -4,6 +4,7 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.cloudburstmc.nbt.NbtMap;
 import org.cloudburstmc.nbt.NbtMapBuilder;
+import dev.opencollab.paletter.Molang;
 import dev.opencollab.paletter.block.CustomBlock;
 import dev.opencollab.paletter.block.component.BlockComponent;
 import dev.opencollab.paletter.block.component.CollisionBox;
@@ -18,6 +19,7 @@ import dev.opencollab.paletter.block.component.UvLock;
 import dev.opencollab.paletter.item.component.BlockPlacer;
 import dev.opencollab.paletter.item.component.ColorValue;
 import dev.opencollab.paletter.item.component.Dyeable;
+import dev.opencollab.paletter.item.component.Food;
 import dev.opencollab.paletter.item.component.HoverTextColor;
 import dev.opencollab.paletter.item.component.Icon;
 import dev.opencollab.paletter.item.component.ItemsOrTags;
@@ -179,24 +181,34 @@ public final class Transforms {
      *     not kept, see {@code mapValues} of {@code fixtures.json}) and sends as written where it cannot ({@code "+1"},
      *     with an error in its log). Paletter does not compute Molang: it sends the text as written, with a warning.</li>
      * </ul>
-     * BDS 1.26.36.1 sends each entry as a compound {@code {expression, version}}, the version being the
-     * {@code molangVersion} it sends for every block; 1.26.45.1 and later send the expression as a string.
+     * BDS 1.26.36.1 sends each entry as a compound {@code {expression, version}}; 1.26.45.1 and later send the expression as
+     * a string. The version of the compound is the {@code molangVersion} BDS sends for every block, for an expression
+     * without a version and for a number or a boolean (the captures have those with version 1 only); another expression
+     * with a version (the JSON object {@code {expression, version}}, {@link Molang#of(String, int)}) keeps it. BDS logs "Bad expression" for a version
+     * below 0 or past the newest Molang version ({@code -1} and 14 to 100 in every captured build, where 13 is the newest)
+     * and sends it all the same; so does Paletter, with a warning.
      */
-    private static @NonNull NbtMap boneVisibility(@NonNull WireContext ctx, @NonNull String component, @Nullable Map<String, String> bones) {
+    private static @NonNull NbtMap boneVisibility(@NonNull WireContext ctx, @NonNull String component, @Nullable Map<String, Molang> bones) {
         NbtMapBuilder visibility = NbtMap.builder();
         if (bones == null || bones.isEmpty()) {
             return visibility.build();
         }
         boolean compound = ctx.protocol() < ComponentIndex.V26_40;
-        short version = 0;
+        short blockVersion = 0;
         if (compound) {
             WireNode envelope = new WireNode();
             BlockWire.envelope(ctx, envelope);
-            version = (short) envelope.build().getInt("molangVersion");
+            blockVersion = (short) envelope.build().getInt("molangVersion");
         }
-        for (Map.Entry<String, String> bone : bones.entrySet()) {
-            String value = bone.getValue();
-            String expression = value.equals("true") ? "1.000000" : value.equals("false") ? "0.000000" : Wire.molangNumber(value);
+        for (Map.Entry<String, Molang> bone : bones.entrySet()) {
+            String value = bone.getValue().expression();
+            Integer written = bone.getValue().version();
+            if (written != null && (written < 0 || written > ComponentIndex.molangVersion(null))) {
+                ctx.changed(component, "bone_visibility " + bone.getKey() + ": version " + written + " is outside 0 to "
+                    + ComponentIndex.molangVersion(null) + ", for which BDS logs a bad expression; sent as written, as BDS does");
+            }
+            String constant = value.equals("true") ? "1.000000" : value.equals("false") ? "0.000000" : Wire.molangNumber(value);
+            String expression = constant;
             if (expression == null) {
                 expression = value;
                 if (!MOLANG_QUERY.matcher(value).find()) {
@@ -205,6 +217,7 @@ public final class Transforms {
                 }
             }
             if (compound) {
+                short version = constant != null || written == null ? blockVersion : written.shortValue();
                 visibility.putCompound(bone.getKey(), NbtMap.builder().putString("expression", expression).putShort("version", version).build());
             } else {
                 visibility.putString(bone.getKey(), expression);
@@ -376,29 +389,27 @@ public final class Transforms {
     // ---- block_descriptor_states -------------------------------------------------------------------------------------
 
     /**
-     * Placement filter descriptors send their states as a list of {@code {state, type, value}}, only when there are any.
+     * Placement filter descriptors send their states as a list of {@code {state, type, value}}, only when there are any, in
+     * the order given. BDS 1.26.36.1 to 1.26.70.24 send a string as type 1 with the string ({@code pillar_axis "x"},
+     * {@code open_bit "true"}), and an int as type 2 with the int; a boolean is an int too (type 2, 1 or 0), whatever the
+     * named block's states are.
      */
     public static void blockDescriptorStates(@NonNull WireContext ctx, @NonNull WireNode out, PlacementFilter.BlockFilter d) {
         if (d.states().isEmpty()) {
             return;
         }
-        NbtMap typed = Wire.states(ctx, d.name(), d.states());
         out.list("states");
-        typed.forEach((state, value) -> {
+        d.states().forEach((state, value) -> {
             WireNode entry = out.element("states");
             entry.put("state", state);
-            entry.put("type", stateType(value));
-            entry.put("value", value);
+            if (value instanceof String text) {
+                entry.put("type", 1);
+                entry.put("value", text);
+            } else {
+                entry.put("type", 2);
+                entry.put("value", value instanceof Boolean b ? (b ? 1 : 0) : value);
+            }
         });
-    }
-
-    /**
-     * The {@code type} of a placement filter state: 2 for an int state, as BDS 1.26.63.1 sent it. 1 for a string and 0 for
-     * a boolean state follow the same order but are unverified: no accepted variant has a string or boolean state, so the
-     * conformance suite does not check them.
-     */
-    private static int stateType(Object value) {
-        return value instanceof Integer ? 2 : value instanceof Byte ? 0 : 1;
     }
 
     // ---- block_name ----------------------------------------------------------------------------------------------------
@@ -444,10 +455,23 @@ public final class Transforms {
     // ---- item descriptors --------------------------------------------------------------------------------------------
 
     /**
+     * {@code food.using_converts_to}: {@code {name}} with the name as written (BDS 1.26.36.1 to 1.26.70.24 neither namespace it
+     * nor check it against the registry: {@code "bowl"} and {@code "minecraft:paletter_unknown"} are sent as given), {@code {}}
+     * for an empty name or none. The add-on JSON's object form {@code {"name": X}} is the same value X.
+     */
+    public static void usingConvertsTo(@NonNull WireContext ctx, @NonNull WireNode out, @NonNull Food c) {
+        String item = c.usingConvertsTo();
+        out.put("minecraft:food.using_converts_to", NbtMap.EMPTY);
+        if (item != null && !item.isEmpty()) {
+            out.put("minecraft:food.using_converts_to.name", item);
+        }
+    }
+
+    /**
      * {@code ammunition[].item}: an item descriptor: {@code {name}} for an item the
      * registry knows, {@code {}} for any other descriptor (the captures send {@code "item": {}} and objects without a
-     * {@code name} as {@code {}}, where the inferred identity of {@code item.name} would leave the compound out); an entry
-     * without item is sent with the empty descriptor too.
+     * {@code name} as {@code {}}, where the inferred identity of {@code item.name} would leave the compound out). BDS's schema
+     * requires the item, so every entry has one.
      */
     public static void ammunitionItemDescriptor(@NonNull WireContext ctx, @NonNull WireNode out, Shooter.@NonNull Ammunition c) {
         Wire.itemDescriptor(ctx, out, "item", Shooter.NAME, "ammunition[].item", c.item());
@@ -457,8 +481,12 @@ public final class Transforms {
      * {@code repair_items}: items as {@code [{name}]} (names as written, not namespaced; or one {@code {tags}} Molang
      * query), an entry without known items dropped with its repair amount. The repair amount is a float for a number and
      * Molang for a string: the two JSON types land on the same leaf with different NBT types, which no single rule fits.
-     * BDS 1.26.36.1 sends the Molang as a compound {@code {expression, version: 0s}} ({@code -1s} for an empty expression),
-     * 1.26.45.1 and later as a string.
+     * BDS 1.26.36.1 sends the Molang as a compound {@code {expression, version}}, 1.26.45.1 and later as a string. The
+     * version is 0 for an expression without one (the JSON string), the expression's own ({@link Molang#of(String, int)},
+     * the JSON object) otherwise, and {@code -1} for an empty expression whatever its version. An expression whose version
+     * is past the newest Molang version ({@link ComponentIndex#molangVersion} of the newest engine: 13; tried with 14 to 100)
+     * is sent as the fixed amount 0.0 in every captured build (1.26.36.1 to 1.26.70.24), without a log line; so does
+     * Paletter, with a warning.
      */
     public static void itemDescriptorList(@NonNull WireContext ctx, @NonNull WireNode out, @NonNull Repairable c) {
         boolean molangCompound = ctx.protocol() < ComponentIndex.V26_40;
@@ -483,11 +511,19 @@ public final class Transforms {
                 case null -> {
                 }
                 case RepairAmount.Fixed fixed -> e.put("repair_amount", fixed.value());
-                case RepairAmount.Expression expression when molangCompound ->
-                    // version -1 for an empty expression (BDS 1.26.36.1: repair_amount "")
-                    e.child("repair_amount").put("expression", expression.value())
-                        .put("version", (short) (expression.value().isEmpty() ? -1 : 0));
-                case RepairAmount.Expression expression -> e.put("repair_amount", expression.value());
+                case RepairAmount.Expression expression when expression.value().version() != null
+                    && expression.value().version() > ComponentIndex.molangVersion(null) -> {
+                    ctx.changed(Repairable.NAME, "repair_amount " + expression.value().expression() + ": version " + expression.value().version()
+                        + " is past the newest Molang version " + ComponentIndex.molangVersion(null) + ", which BDS sends as the amount 0.0");
+                    e.put("repair_amount", 0.0f);
+                }
+                case RepairAmount.Expression expression when molangCompound -> {
+                    // version -1 for an empty expression (BDS 1.26.36.1: repair_amount "" and {"expression": "", "version": 1})
+                    Molang molang = expression.value();
+                    int version = molang.expression().isEmpty() ? -1 : molang.version() == null ? 0 : molang.version();
+                    e.child("repair_amount").put("expression", molang.expression()).put("version", (short) version);
+                }
+                case RepairAmount.Expression expression -> e.put("repair_amount", expression.value().expression());
                 default -> throw new IllegalArgumentException(entry.repairAmount().toString());
             }
         }
@@ -613,13 +649,12 @@ public final class Transforms {
 
 
     /**
-     * A permutation's Molang condition as BDS sends it: a number constant like any Molang number ({@link Wire#molangNumber}),
-     * anything else as written. Only {@code "1"} and {@code "0"} are captured as conditions (BDS 1.26.36.1 to 1.26.70.24);
-     * that BDS prints the other number shapes the same way here is unverified.
+     * A permutation's Molang condition as BDS sends it ({@link Wire#molang}): {@code true} and a number constant as a Molang
+     * number, anything else as written. BDS 1.26.36.1 to 1.26.70.24 send {@code "true"} and {@code "1"} as {@code "1.000000"},
+     * {@code "0"} as {@code "0.000000"}; {@code "false"} and the other number shapes are unverified as conditions.
      */
     static String condition(String condition) {
-        String number = Wire.molangNumber(condition);
-        return number != null ? number : condition;
+        return Wire.molang(condition);
     }
 
     // ---- selection_box -----------------------------------------------------------------------------------------------
@@ -640,19 +675,19 @@ public final class Transforms {
     // ---- use_animation_id --------------------------------------------------------------------------------------------
 
     /**
-     * Animation name -> {@code item_properties.use_animation}, hand-entered. The captures have none, eat, drink and spear;
-     * HandTransformsTest lists every other entry as unverified.
+     * Animation name -> {@code item_properties.use_animation}, hand-entered; every entry is captured (HandTransformsTest holds it
+     * to the inference's table).
      */
     private static final Map<String, Integer> USE_ANIMATIONS = Map.of("none", 0, "eat", 1, "drink", 2, "block", 3, "bow", 4,
         "camera", 5, "spear", 6, "crossbow", 9, "spyglass", 10, "brush", 12);
 
     /**
      * {@code minecraft:use_animation}: the component keeps the name, {@code item_properties.use_animation} numbers it
-     * (none, eat, drink and spear are captured, see {@link #USE_ANIMATIONS}); unknown names are 0. BDS's error truncates the
-     * enum ("none, eat, drink, ... (7 others)"), so the other names and ids are not BDS data yet.
+     * ({@link #USE_ANIMATIONS}: every name of BDS's schema enum is captured, from 1.26.36.1 to 1.26.70.24); unknown names are 0.
      */
     public static void useAnimationId(@NonNull WireContext ctx, @NonNull WireNode out, @NonNull UseAnimation c) {
-        String value = c.value() == null ? "none" : c.value();
+        // The value's add-on string (an enum of the schema's names, whose toString is that string)
+        String value = java.util.Objects.toString(c.value(), "none");
         out.put("minecraft:use_animation.value", value);
         out.put("item_properties.use_animation", USE_ANIMATIONS.getOrDefault(value, 0));
     }

@@ -66,7 +66,7 @@ public final class ExperimentMarks {
             TreeSet<String> blocks = new TreeSet<>();
             blocks.addAll(strings(content, "blocksAdded"));
             blocks.addAll(strings(content, "dataDrivenBlocks"));
-            ExperimentContent mark = new ExperimentContent(List.copyOf(items), List.copyOf(blocks), creative);
+            ExperimentContent mark = new ExperimentContent(List.copyOf(items), List.copyOf(blocks), creative, strings(content, "creativeWithoutBlock"));
             if (!mark.isEmpty()) {
                 marks.put(toggle.getKey(), mark);
             }

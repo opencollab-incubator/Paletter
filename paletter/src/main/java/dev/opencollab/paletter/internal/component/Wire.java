@@ -31,8 +31,9 @@ public final class Wire {
     }
 
     /*
-     * The integral conversions truncate toward zero (TODO(recapture): unverified that BDS does, docs/data-pipeline.md,
-     * "Recapture to-do") and refuse a value whose whole part does not fit the leaf's bits: a value past a limit the
+     * The integral conversions truncate toward zero and refuse a value whose whole part does not fit the leaf's bits. A
+     * rule that rounds otherwise, or computes in float as BDS does (use_duration: the float product truncated, BDS
+     * 1.26.36.1 to 1.26.70.24), rounds before it calls them (the linear rule's rounding); a value past a limit the
      * builder does not check would otherwise wrap silently (300 as a byte is 44). An unsigned bit pattern (255 as a byte)
      * fits.
      */
@@ -88,15 +89,35 @@ public final class Wire {
     }
 
     /**
+     * Compares two dotted versions number by number ({@code 1.19.40} before {@code 1.26.60}); a missing number is 0.
+     *
+     * @throws IllegalArgumentException if a version is not dotted numbers
+     */
+    public static int compareVersions(@NonNull String a, @NonNull String b) {
+        String[] x = a.split("\\.");
+        String[] y = b.split("\\.");
+        try {
+            for (int i = 0; i < Math.max(x.length, y.length); i++) {
+                int c = Integer.compare(i < x.length ? Integer.parseInt(x[i]) : 0, i < y.length ? Integer.parseInt(y[i]) : 0);
+                if (c != 0) {
+                    return c;
+                }
+            }
+        } catch (NumberFormatException e) {
+            throw new IllegalArgumentException("not a version of dotted numbers: " + a + " or " + b, e);
+        }
+        return 0;
+    }
+
+    /**
      * A block descriptor as item components send it: the full {@code {name, states, tags}} triple at {@code path} ("" for the
-     * node itself), "" for what is not set, the states typed like the named block's states in the palette's registry
-     * ({@link #states}).
+     * node itself), "" for what is not set, the states as ints ({@link #states}).
      */
     public static void blockDescriptor(@NonNull WireContext ctx, @NonNull WireNode out, @NonNull String path, @Nullable String name,
                                        @NonNull Map<String, Object> states, @Nullable String tags) {
         String prefix = path.isEmpty() ? "" : path + ".";
         out.put(prefix + "name", name == null ? "" : name);
-        out.put(prefix + "states", states(ctx, name, states));
+        out.put(prefix + "states", states(ctx, states));
         out.put(prefix + "tags", tags == null ? "" : tags);
     }
 
@@ -116,35 +137,25 @@ public final class Wire {
     }
 
     /**
-     * The states of a block descriptor: a compound of state values, typed like the named block's states in the registry
-     * (booleans as bytes, ints as the registry's type). BDS 1.26.63.1 sends an enum state as its index, which the registry
-     * does not give, so a string state is sent as given and reported; a state the block lacks is reported too.
+     * The states of an item component's block descriptor, as BDS 1.26.36.1 to 1.26.70.24 send them (the placers' {@code use_on}
+     * and {@code dispense_on}, digger's {@code block}): every value an int, whatever the named block's states are. An int is
+     * sent as given, a boolean as 1 or 0, and a string as 0 ({@code pillar_axis} {@code "x"}, {@code "y"}, {@code "z"} and
+     * {@code "w"}, {@code candles} {@code "2"}: all 0), which loses the value, so a string is reported. Names the block does
+     * not have, and blocks the registry lacks, are sent as given (oak_log {@code paletter_unknown}, stone {@code paletter:k}).
      */
-    public static @NonNull NbtMap states(WireContext ctx, @Nullable String block, Map<String, Object> states) {
-        NbtMap known = block == null ? null : ctx.registry().blockStates(block);
-        if (!states.isEmpty() && block != null && known == null && (block.indexOf(':') < 0 || block.startsWith("minecraft:"))) {
-            ctx.changed("block descriptor", "block " + block + " is not a block of this version; BDS drops a descriptor it cannot resolve");
-        }
+    public static @NonNull NbtMap states(WireContext ctx, Map<String, Object> states) {
         NbtMapBuilder out = NbtMap.builder();
         states.forEach((name, value) -> {
-            Object type = known == null ? null : known.get(name);
-            if (known != null && type == null) {
-                // the capture's evidence is a vanilla block without states (stone) and invented state names: BDS dropped them
-                ctx.changed("block descriptor", known.isEmpty()
-                    ? "block " + block + " has no states, so state " + name + " names none; BDS dropped such descriptors of a stateless block"
-                    : "block " + block + " has no state " + name + "; unverified for a block with states, BDS dropped the descriptors of a stateless one");
-            } else if (value instanceof String) {
-                ctx.changed("block descriptor", "state " + name + " is sent as the string " + value + "; BDS sends an enum state as its index (unverified beyond pillar_axis y = 0)");
-            }
-            Object converted;
+            int converted;
             if (value instanceof Boolean b) {
-                converted = Wire.bool(b);
+                converted = b ? 1 : 0;
             } else if (value instanceof Integer i) {
-                converted = type instanceof Byte ? (Object) i.byteValue() : i;
+                converted = i;
             } else {
-                converted = value;
+                converted = 0;
+                ctx.changed("block descriptor", "state " + name + " = " + value + " is sent as 0: BDS sends every state of an item's block descriptor as an int, a string as 0");
             }
-            out.put(name, converted);
+            out.putInt(name, converted);
         });
         return out.build();
     }

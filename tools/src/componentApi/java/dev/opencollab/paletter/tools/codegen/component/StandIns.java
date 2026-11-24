@@ -99,6 +99,7 @@ final class StandIns {
             case ObjRef r -> "object:" + r.type().name;
             case UnionRef u -> "union:" + u.union().name;
             case ComponentRef r -> "component:" + r.className();
+            case ApiModel.MolangRef m -> "molang";
             case ListOf l -> "list<" + describe(l.element()) + ">";
             case MapOf m -> "map<" + describe(m.value()) + ">";
         };
@@ -190,6 +191,7 @@ final class StandIns {
             case "float" -> new Scalar(ScalarKind.FLOAT);
             case "string" -> new Scalar(ScalarKind.STRING);
             case "states" -> new States();
+            case "molang" -> new ApiModel.MolangRef();
             case "vec3" -> {
                 c.usesVec3 = true;
                 yield new Vec3();

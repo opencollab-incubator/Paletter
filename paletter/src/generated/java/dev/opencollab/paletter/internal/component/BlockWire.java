@@ -9,6 +9,7 @@ import dev.opencollab.paletter.block.component.BlockEntity;
 import dev.opencollab.paletter.block.component.BlockLightAbsorption;
 import dev.opencollab.paletter.block.component.BlockLightEmission;
 import dev.opencollab.paletter.block.component.BlockMenuCategory;
+import dev.opencollab.paletter.block.component.BlockTags;
 import dev.opencollab.paletter.block.component.BoneVisibility;
 import dev.opencollab.paletter.block.component.Breathability;
 import dev.opencollab.paletter.block.component.ChestObstruction;
@@ -20,6 +21,7 @@ import dev.opencollab.paletter.block.component.DestructibleByExplosion;
 import dev.opencollab.paletter.block.component.DestructibleByMining;
 import dev.opencollab.paletter.block.component.DestructionParticles;
 import dev.opencollab.paletter.block.component.EmbeddedVisual;
+import dev.opencollab.paletter.block.component.EnchantmentPowerTransmitter;
 import dev.opencollab.paletter.block.component.EntityFallOn;
 import dev.opencollab.paletter.block.component.Flammable;
 import dev.opencollab.paletter.block.component.FlowerPottable;
@@ -27,6 +29,7 @@ import dev.opencollab.paletter.block.component.Friction;
 import dev.opencollab.paletter.block.component.Geometry;
 import dev.opencollab.paletter.block.component.InstrumentSound;
 import dev.opencollab.paletter.block.component.ItemVisual;
+import dev.opencollab.paletter.block.component.Leashable;
 import dev.opencollab.paletter.block.component.LightDampening;
 import dev.opencollab.paletter.block.component.LightEmission;
 import dev.opencollab.paletter.block.component.LiquidDetection;
@@ -34,6 +37,7 @@ import dev.opencollab.paletter.block.component.Loot;
 import dev.opencollab.paletter.block.component.MapColor;
 import dev.opencollab.paletter.block.component.MaterialInstances;
 import dev.opencollab.paletter.block.component.Movable;
+import dev.opencollab.paletter.block.component.NeighborChange;
 import dev.opencollab.paletter.block.component.PlacementFilter;
 import dev.opencollab.paletter.block.component.PrecipitationInteractions;
 import dev.opencollab.paletter.block.component.RandomOffset;
@@ -42,10 +46,12 @@ import dev.opencollab.paletter.block.component.RedstoneConsumer;
 import dev.opencollab.paletter.block.component.RedstoneProducer;
 import dev.opencollab.paletter.block.component.Replaceable;
 import dev.opencollab.paletter.block.component.SelectionBox;
+import dev.opencollab.paletter.block.component.Sound;
 import dev.opencollab.paletter.block.component.Support;
 import dev.opencollab.paletter.block.component.Tick;
 import dev.opencollab.paletter.block.component.Transformation;
 import dev.opencollab.paletter.block.component.UnitCube;
+import dev.opencollab.paletter.block.component.VibrationProperties;
 import dev.opencollab.paletter.block.component.WireOnlyBlockComponent;
 import java.util.List;
 import org.checkerframework.checker.nullness.qual.NonNull;
@@ -56,7 +62,7 @@ import org.cloudburstmc.nbt.NbtMap;
  * Encoders of the generated {@link BlockComponent} types: the rules of {@code data/model/mappings.json} per
  * protocol window, hand transforms by name. Not API.
  */
-@SuppressWarnings({"unused", "deprecation"})
+@SuppressWarnings({"unused", "deprecation", "removal"})
 public final class BlockWire {
     private BlockWire() {
     }
@@ -71,8 +77,6 @@ public final class BlockWire {
             case BlockEntity c -> blockEntity(c, ctx, out);
             case BlockLightAbsorption c -> ctx.drop(BlockLightAbsorption.NAME, "is not sent to clients (BDS: rejected)");
             case BlockLightEmission c -> ctx.drop(BlockLightEmission.NAME, "is not sent to clients (BDS: rejected)");
-            case BoneVisibility c -> ctx.drop(BoneVisibility.NAME, "is not sent to clients (BDS: rejected)");
-            case Breathability c -> ctx.drop(Breathability.NAME, "is not sent to clients (BDS: rejected)");
             case ChestObstruction c -> { } // server only: BDS sends nothing to clients
             case CollisionBox c -> collisionBox(c, ctx, out);
             case ConnectionRule c -> connectionRule(c, ctx, out);
@@ -83,6 +87,7 @@ public final class BlockWire {
             case DestructionParticles c -> destructionParticles(c, ctx, out);
             case BlockDisplayName c -> out.put("minecraft:display_name.value", c.value());
             case EmbeddedVisual c -> embeddedVisual(c, ctx, out);
+            case EnchantmentPowerTransmitter c -> enchantmentPowerTransmitter(c, ctx, out);
             case EntityFallOn c -> { } // server only: BDS sends nothing to clients
             case Flammable c -> { } // server only: BDS sends nothing to clients
             case FlowerPottable c -> out.put("minecraft:flower_pottable.usePreR26U2FlowerPotOffset", (byte) 0);
@@ -90,6 +95,7 @@ public final class BlockWire {
             case Geometry c -> geometry(c, ctx, out);
             case InstrumentSound c -> { } // server only: BDS sends nothing to clients
             case ItemVisual c -> itemVisual(c, ctx, out);
+            case Leashable c -> leashable(c, ctx, out);
             case LightDampening c -> out.put("minecraft:light_dampening.lightLevel", Wire.toByte(c.value()));
             case LightEmission c -> out.put("minecraft:light_emission.emission", Wire.toByte(c.value()));
             case LiquidDetection c -> liquidDetection(c, ctx, out);
@@ -97,18 +103,24 @@ public final class BlockWire {
             case MapColor c -> { } // server only: BDS sends nothing to clients
             case MaterialInstances c -> Transforms.materialInstances(ctx, out, c);
             case Movable c -> { } // server only: BDS sends nothing to clients
+            case NeighborChange c -> neighborChange(c, ctx, out);
             case PlacementFilter c -> placementFilter(c, ctx, out);
-            case PrecipitationInteractions c -> precipitationInteractions(c, ctx, out);
+            case PrecipitationInteractions c -> out.put("minecraft:precipitation_interactions.precipitation_behavior", c.precipitationBehavior().value());
             case RandomOffset c -> randomOffset(c, ctx, out);
             case RedstoneConductivity c -> redstoneConductivity(c, ctx, out);
             case RedstoneConsumer c -> { } // server only: BDS sends nothing to clients
             case RedstoneProducer c -> redstoneProducer(c, ctx, out);
             case Replaceable c -> replaceable(c, ctx, out);
             case SelectionBox c -> Transforms.selectionBox(ctx, out, c);
+            case Sound c -> sound(c, ctx, out);
             case Support c -> out.put("minecraft:support.shape", c.shape().value());
+            case BlockTags c -> out.put("blockTags", Wire.strings(c.value()));
             case Tick c -> { } // server only: BDS sends nothing to clients
             case Transformation c -> transformation(c, ctx, out);
-            case UnitCube c -> ctx.drop(UnitCube.NAME, "is not sent to clients (BDS: rejected)");
+            case VibrationProperties c -> vibrationProperties(c, ctx, out);
+            case BoneVisibility c -> ctx.drop(BoneVisibility.NAME, "was removed from Bedrock (a deprecated stand-in)");
+            case Breathability c -> ctx.drop(Breathability.NAME, "was removed from Bedrock (a deprecated stand-in)");
+            case UnitCube c -> ctx.drop(UnitCube.NAME, "was removed from Bedrock (a deprecated stand-in)");
             case WireOnlyBlockComponent c -> WireOnlyWire.write(c, ctx, out);
             default -> throw new IllegalArgumentException(component.toString());
         }
@@ -184,9 +196,6 @@ public final class BlockWire {
             out.remove("minecraft:container.slot_count");
             out.remove("minecraft:container.title");
         }
-        if (c.entityStorage() != null) {
-            ctx.drop(BlockEntity.NAME, "entity_storage has no known wire mapping");
-        }
     }
 
     private static void collisionBox(CollisionBox c, WireContext ctx, WireNode out) {
@@ -251,6 +260,26 @@ public final class BlockWire {
         Transforms.materialInstancesInline(ctx, out, c);
     }
 
+    private static void enchantmentPowerTransmitter(EnchantmentPowerTransmitter c, WireContext ctx,
+            WireNode out) {
+        int protocol = ctx.protocol();
+        if (protocol < 2225) {
+            enchantmentPowerTransmitterUntil2225(c, ctx, out);
+        } else {
+            enchantmentPowerTransmitterFrom2225(c, ctx, out);
+        }
+    }
+
+    private static void enchantmentPowerTransmitterUntil2225(EnchantmentPowerTransmitter c,
+            WireContext ctx, WireNode out) {
+        ctx.drop(EnchantmentPowerTransmitter.NAME, "does not exist in this Bedrock version");
+    }
+
+    private static void enchantmentPowerTransmitterFrom2225(EnchantmentPowerTransmitter c,
+            WireContext ctx, WireNode out) {
+        ctx.drop(EnchantmentPowerTransmitter.NAME, "is not sent to clients (BDS: server-only)");
+    }
+
     private static void geometry(Geometry c, WireContext ctx, WireNode out) {
         out.put("minecraft:geometry.ignoreGeometryForIsSolid", (byte) 0);
         out.put("minecraft:geometry.isV1Fullblock", (byte) 0);
@@ -293,12 +322,7 @@ public final class BlockWire {
         } else {
             out.put("minecraft:item_visual.geometryDescription.culling_shape", "");
         }
-        String v4 = v0.identifier();
-        if (v4 != null) {
-            out.put("minecraft:item_visual.geometryDescription.identifier", v4);
-        } else {
-            out.put("minecraft:item_visual.geometryDescription.identifier", "minecraft:geometry.full_block");
-        }
+        out.put("minecraft:item_visual.geometryDescription.identifier", v0.identifier());
         Transforms.itemVisualBoneVisibility(ctx, out, v0);
         Transforms.itemVisualUvLock(ctx, out, v0);
         Transforms.materialInstancesPacked(ctx, out, c);
@@ -329,29 +353,24 @@ public final class BlockWire {
         } else {
             out.put("minecraft:item_visual.geometryDescription.culling_shape", "");
         }
-        String v4 = v0.identifier();
+        out.put("minecraft:item_visual.geometryDescription.identifier", v0.identifier());
+        ItemVisual.NWayVisualRotation v4 = v0.nWayVisualRotation();
         if (v4 != null) {
-            out.put("minecraft:item_visual.geometryDescription.identifier", v4);
-        } else {
-            out.put("minecraft:item_visual.geometryDescription.identifier", "minecraft:geometry.full_block");
-        }
-        ItemVisual.NWayVisualRotation v5 = v0.nWayVisualRotation();
-        if (v5 != null) {
-            String v6 = v5.x();
-            if (v6 != null) {
-                out.put("minecraft:item_visual.geometryDescription.n_way_visual_rotation.x", v6);
+            String v5 = v4.x();
+            if (v5 != null) {
+                out.put("minecraft:item_visual.geometryDescription.n_way_visual_rotation.x", v5);
             } else {
                 out.remove("minecraft:item_visual.geometryDescription.n_way_visual_rotation.x");
             }
-            String v7 = v5.y();
-            if (v7 != null) {
-                out.put("minecraft:item_visual.geometryDescription.n_way_visual_rotation.y", v7);
+            String v6 = v4.y();
+            if (v6 != null) {
+                out.put("minecraft:item_visual.geometryDescription.n_way_visual_rotation.y", v6);
             } else {
                 out.remove("minecraft:item_visual.geometryDescription.n_way_visual_rotation.y");
             }
-            String v8 = v5.z();
-            if (v8 != null) {
-                out.put("minecraft:item_visual.geometryDescription.n_way_visual_rotation.z", v8);
+            String v7 = v4.z();
+            if (v7 != null) {
+                out.put("minecraft:item_visual.geometryDescription.n_way_visual_rotation.z", v7);
             } else {
                 out.remove("minecraft:item_visual.geometryDescription.n_way_visual_rotation.z");
             }
@@ -365,6 +384,11 @@ public final class BlockWire {
         Transforms.materialInstancesPacked(ctx, out, c);
     }
 
+    private static void leashable(Leashable c, WireContext ctx, WireNode out) {
+        Leashable.Vec3 v0 = c.offset();
+        out.put("minecraft:leashable.offset", Wire.floats(List.of(v0.x(), v0.y(), v0.z())));
+    }
+
     private static void liquidDetection(LiquidDetection c, WireContext ctx, WireNode out) {
         out.list("minecraft:liquid_detection.detectionRules");
         for (LiquidDetection.DetectionRules e0 : c.detectionRules()) {
@@ -373,8 +397,8 @@ public final class BlockWire {
             n1.put("canContainLiquid", Wire.bool(e0.canContainLiquid()));
             n1.put("onLiquidTouches", e0.onLiquidTouches().value());
             int bits2 = 0;
-            for (String x3 : e0.stopsLiquidFlowingFromDirection()) {
-                bits2 |= switch (String.valueOf(x3)) {
+            for (LiquidDetection.StopsLiquidFlowingFromDirection x3 : e0.stopsLiquidFlowingFromDirection()) {
+                bits2 |= switch (x3.value()) {
                             case "down" -> 1;
                             case "east" -> 32;
                             case "north" -> 4;
@@ -382,7 +406,7 @@ public final class BlockWire {
                             case "up" -> 2;
                             case "west" -> 16;
                             default -> {
-                                ctx.drop(LiquidDetection.NAME, "detection_rules[].stops_liquid_flowing_from_direction = " + String.valueOf(x3) + " has no known wire value");
+                                ctx.drop(LiquidDetection.NAME, "detection_rules[].stops_liquid_flowing_from_direction = " + x3.value() + " has no known wire value");
                                 yield 0;
                             }
                         };
@@ -392,13 +416,30 @@ public final class BlockWire {
         }
     }
 
+    private static void neighborChange(NeighborChange c, WireContext ctx, WireNode out) {
+        int protocol = ctx.protocol();
+        if (protocol < 2225) {
+            neighborChangeUntil2225(c, ctx, out);
+        } else {
+            neighborChangeFrom2225(c, ctx, out);
+        }
+    }
+
+    private static void neighborChangeUntil2225(NeighborChange c, WireContext ctx, WireNode out) {
+        ctx.drop(NeighborChange.NAME, "does not exist in this Bedrock version");
+    }
+
+    private static void neighborChangeFrom2225(NeighborChange c, WireContext ctx, WireNode out) {
+        ctx.drop(NeighborChange.NAME, "is not sent to clients (BDS: server-only)");
+    }
+
     private static void placementFilter(PlacementFilter c, WireContext ctx, WireNode out) {
         out.list("minecraft:placement_filter.conditions");
         for (PlacementFilter.Conditions e0 : c.conditions()) {
             WireNode n1 = out.element("minecraft:placement_filter.conditions");
             int bits2 = 0;
-            for (String x3 : e0.allowedFaces()) {
-                bits2 |= switch (String.valueOf(x3)) {
+            for (PlacementFilter.AllowedFaces x3 : e0.allowedFaces()) {
+                bits2 |= switch (x3.value()) {
                             case "down" -> 1;
                             case "east" -> 32;
                             case "north" -> 4;
@@ -406,7 +447,7 @@ public final class BlockWire {
                             case "up" -> 2;
                             case "west" -> 16;
                             default -> {
-                                ctx.drop(PlacementFilter.NAME, "conditions[].allowed_faces = " + String.valueOf(x3) + " has no known wire value");
+                                ctx.drop(PlacementFilter.NAME, "conditions[].allowed_faces = " + x3.value() + " has no known wire value");
                                 yield 0;
                             }
                         };
@@ -432,16 +473,6 @@ public final class BlockWire {
                 }
                 Transforms.blockDescriptorStates(ctx, n5, e4);
             }
-        }
-    }
-
-    private static void precipitationInteractions(PrecipitationInteractions c, WireContext ctx,
-            WireNode out) {
-        PrecipitationInteractions.PrecipitationBehavior v0 = c.precipitationBehavior();
-        if (v0 != null) {
-            out.put("minecraft:precipitation_interactions.precipitation_behavior", v0.value());
-        } else {
-            out.remove("minecraft:precipitation_interactions.precipitation_behavior");
         }
     }
 
@@ -511,6 +542,23 @@ public final class BlockWire {
         out.put("minecraft:replaceable", NbtMap.EMPTY);
     }
 
+    private static void sound(Sound c, WireContext ctx, WireNode out) {
+        int protocol = ctx.protocol();
+        if (protocol < 2168) {
+            soundUntil2168(c, ctx, out);
+        } else {
+            soundFrom2168(c, ctx, out);
+        }
+    }
+
+    private static void soundUntil2168(Sound c, WireContext ctx, WireNode out) {
+        ctx.drop(Sound.NAME, "does not exist in this Bedrock version");
+    }
+
+    private static void soundFrom2168(Sound c, WireContext ctx, WireNode out) {
+        out.put("minecraft:sound.sound", c.sound());
+    }
+
     private static void transformation(Transformation c, WireContext ctx, WireNode out) {
         out.put("minecraft:transformation.hasJsonVersionBeforeValidation", (byte) 0);
         Transformation.Vec3 v0 = c.rotation();
@@ -533,6 +581,25 @@ public final class BlockWire {
         out.put("minecraft:transformation.TX", Wire.toFloat(v4.x()));
         out.put("minecraft:transformation.TY", Wire.toFloat(v4.y()));
         out.put("minecraft:transformation.TZ", Wire.toFloat(v4.z()));
+    }
+
+    private static void vibrationProperties(VibrationProperties c, WireContext ctx, WireNode out) {
+        int protocol = ctx.protocol();
+        if (protocol < 2225) {
+            vibrationPropertiesUntil2225(c, ctx, out);
+        } else {
+            vibrationPropertiesFrom2225(c, ctx, out);
+        }
+    }
+
+    private static void vibrationPropertiesUntil2225(VibrationProperties c, WireContext ctx,
+            WireNode out) {
+        ctx.drop(VibrationProperties.NAME, "does not exist in this Bedrock version");
+    }
+
+    private static void vibrationPropertiesFrom2225(VibrationProperties c, WireContext ctx,
+            WireNode out) {
+        ctx.drop(VibrationProperties.NAME, "is not sent to clients (BDS: server-only)");
     }
 
     /**
@@ -562,7 +629,7 @@ public final class BlockWire {
      * the spec captures sends alike). The description and the components write over it.
      */
     public static void envelope(@NonNull WireContext ctx, @NonNull WireNode out) {
-        out.put("molangVersion", 13);
+        out.put("molangVersion", ComponentIndex.molangVersion(ctx.minEngineVersion()));
         out.put("vanilla_block_data.material", "dirt");
     }
 }
