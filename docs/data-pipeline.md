@@ -1050,3 +1050,14 @@ the coverage and the component API: one model.
   without one the trait state table skips (and reports) it. Its default is checked against the hash BDS sent, as every other.
   A spec capture made before the table has it leaves the value's states out, reports it ("Trait states") and keeps those
   blocks' creative block ids out of the hash check (`traitStatesUnknown` in `capture.json`).
+- The trait state table (`traitStates` in `mappings.json`) has protocol windows, like the component mappings: per spec
+  capture's build, a state with BDS's values has the values of that build's own dump. Where a build's dump gives no
+  well-defined state set (duplicate values, or no state of the name), the value is `unsupported` in its window, with the
+  build's dump values and the hashes BDS sent (with the dump's first value) as `evidence`. BDS 1.26.36.1 (26.30) lists
+  `minecraft:sixteen_way_rotation` as `[down, up, north, south, west, east, down, ...]` (16 values, 11 of them `down`;
+  1.26.45.1 and newer 0 to 15), a BDS bug; it hashed the default states of those blocks with `down`. The library leaves an
+  unsupported value out of the trait and of the block's states in that version (a custom block's type keeps the newest
+  states, which resolve to the version's, adapted) and reports it as left out with the reason; it never sends states the
+  client may lack. A capture of such a protocol keeps those blocks' creative block ids apart, unverified, with an INFO line
+  naming them ("Trait states"; `creativeBlockIdsOfUnsupportedTraitStates`, `traitStatesUnsupported` and
+  `traitStatesUnsupportedBlocks` in `capture.json`).

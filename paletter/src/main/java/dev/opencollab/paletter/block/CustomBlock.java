@@ -352,8 +352,37 @@ public final class CustomBlock {
      * @return all states, in the order Bedrock enumerates them: the first property changes fastest
      */
     public @NonNull List<NbtMap> states() {
-        List<BlockProperty<?>> properties = stateProperties();
-        int total = stateCount();
+        return states(stateProperties());
+    }
+
+    /**
+     * The state properties in one protocol: without the states of trait values that protocol's client adds no well-defined
+     * states for ({@link TraitStates#of(List, int)}). The palette of a version registers the block with these.
+     */
+    List<BlockProperty<?>> stateProperties(int protocol) {
+        if (traits.isEmpty()) {
+            return properties;
+        }
+        List<BlockProperty<?>> all = new ArrayList<>(properties);
+        all.addAll(TraitStates.of(traits, protocol));
+        return all;
+    }
+
+    /** All states over {@link #stateProperties(int)}, in the order of {@link #states()}. */
+    List<NbtMap> states(int protocol) {
+        return states(stateProperties(protocol));
+    }
+
+    /** The default state over {@link #stateProperties(int)}: a default value of a state left out there goes with it. */
+    NbtMap defaultState(int protocol) {
+        return defaultState(stateProperties(protocol));
+    }
+
+    private List<NbtMap> states(List<BlockProperty<?>> properties) {
+        int total = 1;
+        for (BlockProperty<?> property : properties) {
+            total *= property.values().size();
+        }
         List<NbtMap> states = new ArrayList<>(total);
         for (int i = 0; i < total; i++) {
             NbtMapBuilder builder = NbtMap.builder();
@@ -404,8 +433,12 @@ public final class CustomBlock {
      * @return the state with the {@link #defaultStates()} values and the first value of every other property
      */
     public @NonNull NbtMap defaultState() {
+        return defaultState(stateProperties());
+    }
+
+    private NbtMap defaultState(List<BlockProperty<?>> properties) {
         NbtMapBuilder builder = NbtMap.builder();
-        for (BlockProperty<?> property : stateProperties()) {
+        for (BlockProperty<?> property : properties) {
             Object value = defaultStates.get(property.name());
             builder.put(property.name(), value != null ? value : property.values().getFirst());
         }

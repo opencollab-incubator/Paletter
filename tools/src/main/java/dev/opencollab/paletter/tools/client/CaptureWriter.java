@@ -18,6 +18,7 @@ import org.cloudburstmc.protocol.bedrock.data.inventory.CreativeItemData;
 import org.cloudburstmc.protocol.bedrock.data.inventory.CreativeItemGroup;
 import org.cloudburstmc.protocol.bedrock.data.inventory.ItemData;
 import org.cloudburstmc.protocol.bedrock.packet.StartGamePacket;
+import dev.opencollab.paletter.internal.component.TraitStateTable;
 import dev.opencollab.paletter.internal.data.VanillaData;
 
 import java.io.IOException;
@@ -63,6 +64,14 @@ public final class CaptureWriter {
     private final Map<String, Set<String>> unknownTraitStates = new TreeMap<>();
     private final Set<Integer> pendingHashes = new LinkedHashSet<>();
     /**
+     * Blocks with an {@code enabled_states} value the trait state table marks unsupported in the client's protocol, to those
+     * values: BDS's data defines no state set for it there (BDS 1.26.36.1 lists {@code minecraft:sixteen_way_rotation} with
+     * duplicate values), so Paletter leaves it out and these blocks' states cannot be checked. Their creative block ids are kept
+     * apart ({@link #unsupportedHashes}), unverified; the mapping inference checked BDS's hashes against the build's own dump.
+     */
+    private final Map<String, Set<String>> unsupportedTraitStates = new TreeMap<>();
+    private final Set<Integer> unsupportedHashes = new LinkedHashSet<>();
+    /**
      * Blocks with a state whose hash a state of another block has: BDS gives one of them another id (docs/wire-notes.md, hash
      * collisions), so their creative block ids are kept apart ({@link #collidingHashes}) and not resolved to a state.
      */
@@ -79,20 +88,21 @@ public final class CaptureWriter {
     private final Set<String> experimentBlocksSent = new TreeSet<>();
     /** Whether the capture ran {@code /give}: then {@link GiveCapture#FILE} is written, with the unanswered blocks unverified. */
     private boolean giveRequested;
-    /** The protocol the client announced and that of the codec that decoded the packets; 0 until {@link #withProtocol}. */
-    private int protocol;
+    /** The protocol the client announced and that of the codec that decoded the packets (the same unless {@link #withCodecProtocol}). */
+    private final int protocol;
     private int codecProtocol;
 
-    public CaptureWriter(CaptureClient.Result result, VanillaData reference, String bdsVersion) {
-        this(result, reference, bdsVersion, CapturePlatform.host());
-    }
-
-    /** @param platform the OS the server runs on ({@link CapturePlatform}), recorded in {@code capture.json} */
-    public CaptureWriter(CaptureClient.Result result, VanillaData reference, String bdsVersion, String platform) {
+    /**
+     * @param platform the OS the server runs on ({@link CapturePlatform}), recorded in {@code capture.json}
+     * @param protocol the protocol the client announced: it picks the trait states the client adds
+     */
+    public CaptureWriter(CaptureClient.Result result, VanillaData reference, String bdsVersion, String platform, int protocol) {
         this.result = result;
         this.reference = reference;
         this.bdsVersion = bdsVersion;
         this.platform = platform;
+        this.protocol = protocol;
+        this.codecProtocol = protocol;
         Set<String> referenceBlocks = new LinkedHashSet<>();
         for (NbtMap state : reference.blockStates()) {
             palette.add(state);
@@ -102,9 +112,13 @@ public final class CaptureWriter {
         for (BlockPropertyData block : result.startGame.getBlockProperties()) {
             if (!referenceBlocks.contains(block.getName())) {
                 Set<String> unknown = new TreeSet<>();
-                palette.addAll(BlockHashes.customStates(block.getName(), block.getProperties(), unknown));
+                Set<String> unsupported = new TreeSet<>();
+                palette.addAll(BlockHashes.customStates(block.getName(), block.getProperties(), protocol, unknown, unsupported));
                 if (!unknown.isEmpty()) {
                     unknownTraitStates.put(block.getName(), unknown);
+                }
+                if (!unsupported.isEmpty()) {
+                    unsupportedTraitStates.put(block.getName(), unsupported);
                 }
             }
         }
@@ -120,11 +134,10 @@ public final class CaptureWriter {
     }
 
     /**
-     * Records the protocol in {@code capture.json}, and {@code codecProtocol} next to it when another codec decoded the
-     * packets than the protocol's own (the library has none for it yet, so the decoding may be wrong).
+     * Records {@code codecProtocol} in {@code capture.json} next to the protocol when another codec decoded the packets than
+     * the protocol's own (the library has none for it yet, so the decoding may be wrong).
      */
-    public CaptureWriter withProtocol(int protocol, int codecProtocol) {
-        this.protocol = protocol;
+    public CaptureWriter withCodecProtocol(int codecProtocol) {
         this.codecProtocol = codecProtocol;
         return this;
     }
@@ -239,22 +252,31 @@ public final class CaptureWriter {
         // network hash; every hash the server sent in the creative inventory is checked in capture.json
         JsonObject customStates = new JsonObject();
         for (BlockPropertyData block : blocks) {
-            List<NbtMap> states = BlockHashes.customStates(block.getName(), block.getProperties(), new TreeSet<>());
-            customStates.add(block.getName(), customState(states, unknownTraitStates.get(block.getName())));
+            List<NbtMap> states = BlockHashes.customStates(block.getName(), block.getProperties(), protocol, new TreeSet<>(), new TreeSet<>());
+            customStates.add(block.getName(), customState(states, unknownTraitStates.get(block.getName()),
+                unsupportedTraitStates.get(block.getName())));
         }
         Files.writeString(directory.resolve("custom_block_states.json"), GSON.toJson(customStates));
     }
 
     /**
      * One block's entry of {@code custom_block_states.json}. For a block with trait states the table does not know
-     * ({@code unknown} not null) the states, the default hash and the default state are known to be wrong, so they are left out.
+     * ({@code unknown} not null) or marks unsupported in the protocol ({@code unsupported} not null) the states, the default
+     * hash and the default state are known to be wrong, so they are left out.
      */
-    static JsonObject customState(List<NbtMap> states, Set<String> unknown) {
+    static JsonObject customState(List<NbtMap> states, Set<String> unknown, Set<String> unsupported) {
         JsonObject entry = new JsonObject();
-        if (unknown != null) {
-            JsonArray values = new JsonArray();
-            unknown.forEach(values::add);
-            entry.add("traitStatesUnknown", values);
+        if (unknown != null || unsupported != null) {
+            if (unknown != null) {
+                JsonArray values = new JsonArray();
+                unknown.forEach(values::add);
+                entry.add("traitStatesUnknown", values);
+            }
+            if (unsupported != null) {
+                JsonArray values = new JsonArray();
+                unsupported.forEach(values::add);
+                entry.add("traitStatesUnsupported", values);
+            }
             return entry;
         }
         entry.addProperty("states", states.size());
@@ -325,6 +347,8 @@ public final class CaptureWriter {
                 json.addProperty("block_state_b64", Nbt.writeLeBase64(state));
             } else if (unknownTraitStates.containsKey(item.getDefinition().getIdentifier())) {
                 pendingHashes.add(block.getRuntimeId());
+            } else if (unsupportedTraitStates.containsKey(item.getDefinition().getIdentifier())) {
+                unsupportedHashes.add(block.getRuntimeId());
             } else if (collidingBlocks.contains(item.getDefinition().getIdentifier())) {
                 collidingHashes.add(block.getRuntimeId());
             } else if (statelessExperimentBlocks.contains(item.getDefinition().getIdentifier())) {
@@ -397,6 +421,17 @@ public final class CaptureWriter {
             traitStatesUnknown().forEach(values::add);
             json.add("traitStatesUnknown", values);
         }
+        if (!unsupportedTraitStates.isEmpty()) {
+            JsonArray ids = new JsonArray();
+            unsupportedHashes.forEach(hash -> ids.add(Integer.toUnsignedString(hash)));
+            json.add("creativeBlockIdsOfUnsupportedTraitStates", ids);
+            JsonArray values = new JsonArray();
+            traitStatesUnsupported().forEach(values::add);
+            json.add("traitStatesUnsupported", values);
+            JsonArray blocks = new JsonArray();
+            unsupportedTraitStates.keySet().forEach(blocks::add);
+            json.add("traitStatesUnsupportedBlocks", blocks);
+        }
         if (result.packStack != null) {
             JsonArray packs = new JsonArray();
             result.packStack.getBehaviorPacks().forEach(pack -> packs.add("behavior " + pack.getPackId() + " " + pack.getPackVersion()));
@@ -457,6 +492,22 @@ public final class CaptureWriter {
         Set<String> values = new TreeSet<>();
         unknownTraitStates.values().forEach(values::addAll);
         return List.copyOf(values);
+    }
+
+    /**
+     * @return each {@code <trait> <value>} the trait state table marks unsupported in the protocol that BDS sent, with the
+     *         table's reason ({@code <trait> <value>: <reason>}), sorted
+     */
+    List<String> traitStatesUnsupported() {
+        Set<String> values = new TreeSet<>();
+        unsupportedTraitStates.values().forEach(values::addAll);
+        return values.stream().map(value -> value + ": " + TraitStateTable.unsupported(value.substring(0, value.indexOf(' ')),
+            value.substring(value.indexOf(' ') + 1), protocol)).toList();
+    }
+
+    /** @return the blocks whose creative block ids were kept apart for an unsupported trait value, sorted */
+    List<String> traitStatesUnsupportedBlocks() {
+        return List.copyOf(unsupportedTraitStates.keySet());
     }
 
     private static NbtMap blockPropertiesList(List<BlockPropertyData> blocks) {

@@ -124,10 +124,14 @@ public final class Capture {
      * @param experimentBlocksUnverified blocks the reference marks as experiment content without having states for them
      *                                   that the server sent creative block ids for; those ids are in neither count
      * @param unresolvedBlocks each unresolved creative block id as {@code <item of its creative stack> <id>}
+     * @param traitStatesUnsupported the {@code <trait> <value>: <reason>}s of {@code enabled_states} BDS sent that the trait
+     *                               state table marks unsupported in the protocol
+     * @param traitStatesUnsupportedBlocks the blocks with such a value; their creative block ids are in neither count
      */
     public record Summary(int protocol, int codecProtocol, String minecraftVersion, boolean blockNetworkIdsHashed,
                           int resolvedHashes, int unresolvedHashes, List<String> experiments, List<String> packStackExperiments,
-                          List<String> traitStatesUnknown, List<String> experimentBlocksUnverified, List<String> unresolvedBlocks) {
+                          List<String> traitStatesUnknown, List<String> experimentBlocksUnverified, List<String> unresolvedBlocks,
+                          List<String> traitStatesUnsupported, List<String> traitStatesUnsupportedBlocks) {
         /** Names of the experiments start game reported as enabled. */
         public List<String> enabledExperiments() {
             return experiments.stream().filter(e -> e.endsWith("=true")).map(e -> e.substring(0, e.length() - 5)).sorted().toList();
@@ -184,7 +188,7 @@ public final class Capture {
             + (codecProtocol != protocol ? " (decoded with the " + codecProtocol + " codec)" : ""));
         CaptureClient.Result result = new CaptureClient(codec, address, netherNet)
             .give(give ? GiveCapture.identifiers(reference.blockItems()) : List.of(), reference.blockItems()).run(timeoutSeconds);
-        CaptureWriter writer = new CaptureWriter(result, reference, bdsVersion, platform).withProtocol(protocol, codecProtocol);
+        CaptureWriter writer = new CaptureWriter(result, reference, bdsVersion, platform, protocol).withCodecProtocol(codecProtocol);
         if (give) {
             writer.withGives();
         }
@@ -195,7 +199,7 @@ public final class Capture {
             .map(experiment -> experiment.getName() + "=" + experiment.isEnabled()).toList();
         return new Summary(protocol, codecProtocol, codec.getMinecraftVersion(), result.startGame.isBlockNetworkIdsHashed(),
             writer.resolvedHashes(), writer.unresolvedHashes(), experiments, packStackExperiments, writer.traitStatesUnknown(),
-            writer.experimentBlocksUnverified(), writer.unresolvedBlocks());
+            writer.experimentBlocksUnverified(), writer.unresolvedBlocks(), writer.traitStatesUnsupported(), writer.traitStatesUnsupportedBlocks());
     }
 
     /**

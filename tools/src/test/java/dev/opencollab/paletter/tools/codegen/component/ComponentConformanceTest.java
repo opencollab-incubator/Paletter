@@ -62,8 +62,9 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * <p>
  * Outcomes per variant: {@code pass}, {@code fail} (different NBT), {@code unbindable} (the generated API cannot express
  * the JSON), {@code not-generated} (it uses a component that is not generated), {@code missing} (BDS neither sent it nor
- * logged an error for it). Only {@code pass} is accepted: BDS always wins, so nothing is waived and there is no list of
- * known exceptions. The only variants not compared are those the content log has an ERROR line for (counted in the report),
+ * logged an error for it), {@code unsupported} (it differs only in {@code enabled_states} flags the generated trait state
+ * table marks unsupported in the protocol from BDS's own data, each reported as left out). Only {@code pass} and
+ * {@code unsupported} are accepted: BDS always wins, so nothing else is waived and there is no list of known exceptions. The only variants not compared are those the content log has an ERROR line for (counted in the report),
  * and every component of a capture needs at least one compared variant, or an account from the data of the format sweep
  * ({@link OldFormats}: replaced, old-style item, server-only, rejected at every format). The table goes to
  * {@code build/reports/component-conformance-<protocol>.md}.
@@ -236,16 +237,16 @@ class ComponentConformanceTest {
         Map<String, int[]> perComponent = new TreeMap<>();
         Map<String, Integer> totals = new TreeMap<>();
         for (Outcome o : outcomes) {
-            int[] counts = perComponent.computeIfAbsent(o.component(), k -> new int[5]);
-            counts[List.of("pass", "fail", "unbindable", "not-generated", "missing").indexOf(o.status())]++;
+            int[] counts = perComponent.computeIfAbsent(o.component(), k -> new int[6]);
+            counts[List.of("pass", "fail", "unbindable", "not-generated", "missing", "unsupported").indexOf(o.status())]++;
             totals.merge(o.status(), 1, Integer::sum);
         }
         StringBuilder report = new StringBuilder("# Component conformance against " + capture.getParent().getFileName() + " (protocol " + protocol + ")\n\n");
         report.append("Accepted variants: ").append(outcomes.size()).append(". ").append(totals).append(". Rejected by BDS (content log ERROR, not compared): ")
             .append(rejected).append(". Accepted old-form custom_components (not in the API, not compared): ").append(oldForm).append("\n\n");
-        report.append("| component | pass | fail | unbindable | not generated | missing |\n|---|---|---|---|---|---|\n");
+        report.append("| component | pass | fail | unbindable | not generated | missing | unsupported trait state |\n|---|---|---|---|---|---|---|\n");
         perComponent.forEach((c, n) -> report.append("| `").append(c).append("` | ").append(n[0]).append(" | ").append(n[1]).append(" | ")
-            .append(n[2]).append(" | ").append(n[3]).append(" | ").append(n[4]).append(" |\n"));
+            .append(n[2]).append(" | ").append(n[3]).append(" | ").append(n[4]).append(" | ").append(n[5]).append(" |\n"));
         report.append("\n## Not passing\n\n");
         for (Outcome o : outcomes) {
             if (!o.status().equals("pass")) {
@@ -258,8 +259,10 @@ class ComponentConformanceTest {
         System.out.println(report.substring(0, report.indexOf("\n## Not passing")));
 
         // No waivers: BDS decides, so every accepted variant must be reproduced exactly. Only a pending decision of the user is
-        // checked apart (useDurationRoundingIsBds, disabled until it is decided)
-        List<String> notPassing = outcomes.stream().filter(o -> !o.status().equals("pass") && decisions == useDurationOnly(o))
+        // checked apart (useDurationRoundingIsBds, disabled until it is decided), and an enabled_states value the trait state
+        // table marks unsupported (from BDS's own data), which Paletter leaves out with a report: counted in the report table
+        List<String> notPassing = outcomes.stream().filter(o -> !o.status().equals("pass") && !o.status().equals("unsupported")
+                && decisions == useDurationOnly(o))
             .map(o -> o.identifier() + " " + o.status() + ": " + o.detail()).toList();
         assertTrue(notPassing.isEmpty(), "protocol " + protocol + ": " + notPassing.size() + " variants BDS accepted are not reproduced by the generated API"
             + " (see build/reports/component-conformance-" + protocol + ".md):\n  " + String.join("\n  ", notPassing));
@@ -335,7 +338,36 @@ private static void checkRetirements(JsonObject mappings, Set<String> compared) 
         if (actual.equals(expected)) {
             return new Outcome(identifier, componentId, "pass", "");
         }
-        return new Outcome(identifier, componentId, "fail", diff(expected, actual) + (report.entries().isEmpty() ? "" : " report: " + report.entries()));
+        String diff = diff(expected, actual);
+        if (block && onlyUnsupportedTraitStates(diff, expected, protocol, report)) {
+            return new Outcome(identifier, componentId, "unsupported", diff + " report: " + report.entries());
+        }
+        return new Outcome(identifier, componentId, "fail", diff + (report.entries().isEmpty() ? "" : " report: " + report.entries()));
+    }
+
+    private static final java.util.regex.Pattern TRAIT_FLAG =
+        java.util.regex.Pattern.compile("traits\\[(\\d+)]\\.enabled_states\\.([a-z_]+): BDS 1 \\(Byte\\), Paletter 0 \\(Byte\\)");
+
+    /**
+     * Whether the block differs from BDS only in {@code enabled_states} flags the generated trait state table marks unsupported in
+     * the protocol, each reported as left out: BDS 1.26.36.1 accepts {@code minecraft:sixteen_way_rotation} but lists its state with
+     * duplicate values, so Paletter does not send it in 26.30 (docs/wire-notes.md). Decided by the data, not a list of variants.
+     */
+    static boolean onlyUnsupportedTraitStates(String diff, NbtMap expected, int protocol, PaletteReportBuilder report) {
+        List<NbtMap> traits = expected.getList("traits", NbtType.COMPOUND, List.of());
+        for (String leaf : diff.split("; ")) {
+            java.util.regex.Matcher m = TRAIT_FLAG.matcher(leaf);
+            if (!m.matches() || Integer.parseInt(m.group(1)) >= traits.size()) {
+                return false;
+            }
+            String trait = traits.get(Integer.parseInt(m.group(1))).getString("name");
+            String value = "minecraft:" + m.group(2);
+            if (dev.opencollab.paletter.internal.component.TraitStateTable.unsupported(trait, value, protocol) == null
+                || report.warnings().stream().noneMatch(w -> w.message().contains("enabled_states = " + value))) {
+                return false;
+            }
+        }
+        return true;
     }
 
     private static NbtMap withoutBlockId(NbtMap properties) {

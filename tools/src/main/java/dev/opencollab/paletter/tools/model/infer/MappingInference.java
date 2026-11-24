@@ -19,6 +19,7 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -209,7 +210,10 @@ public final class MappingInference {
         }
         mappings.add("captures", sources);
         mappings.addProperty("formatVersion", fixtures.formatVersion);
-        JsonObject traitStates = TraitStateTable.infer(root, model);
+        // Per protocol window, as the components: each capture's build is its window's
+        Map<String, Integer> traitWindows = new LinkedHashMap<>();
+        captures.forEach(capture -> traitWindows.put(capture.bdsVersion(), dataProtocol(capture.protocol())));
+        JsonObject traitStates = TraitStateTable.infer(root, model, traitWindows);
         if (!traitStates.isEmpty()) {
             mappings.add("traitStates", traitStates);
         }

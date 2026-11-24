@@ -167,6 +167,52 @@ class CustomContentTest {
             .defaultState("minecraft:cardinal_direction", "up").build());
     }
 
+    /**
+     * BDS 1.26.36.1 lists minecraft:sixteen_way_rotation with duplicate values (its Script API dump), so the states a 26.30
+     * client adds for it are not well defined: the 26.30 palette leaves the value out of the trait and the states, with a
+     * report warning naming the BDS bug, and sends the block's states without it. 26.40 and newer keep it, 0 to 15.
+     */
+    @Test
+    void sixteenWayRotationIsLeftOutOf26_30WithAReport() {
+        CustomBlock statue = CustomBlock.builder("example:statue")
+            .trait(PlacementDirection.builder().enabledStates(PlacementDirection.EnabledStates.CARDINAL_DIRECTION,
+                PlacementDirection.EnabledStates.SIXTEEN_WAY_ROTATION).build())
+            .defaultState("minecraft:sixteen_way_rotation", 4)
+            .menuCategory(CreativeCategory.CONSTRUCTION)
+            .build();
+        assertEquals(4 * 16, statue.states().size(), "the type has the newest states");
+        var turned = statue.type().stateOf(java.util.Map.of("minecraft:cardinal_direction", "east", "minecraft:sixteen_way_rotation", 5));
+        PaletteLayer layer = PaletteLayer.builder("content").block(statue).build();
+        int checked26_30 = 0;
+        for (DataVersion version : PALETTER.versions()) {
+            Palette palette = Palettes.palette(version.protocolVersion(), layer);
+            NbtMap trait = palette.blocks().blockProperties().stream().filter(b -> b.getName().equals("example:statue")).findFirst()
+                .orElseThrow().getProperties().getList("traits", NbtType.COMPOUND).getFirst();
+            NbtMap sent = palette.blockDefinition(turned).getState().getCompound("states");
+            List<String> warnings = palette.report().warnings().stream().map(PaletteReport.Entry::message).toList();
+            if (version.protocolVersion() < dev.opencollab.paletter.internal.component.ComponentIndex.V26_40) {
+                checked26_30++;
+                assertEquals((byte) 0, trait.getCompound("enabled_states").getByte("sixteen_way_rotation"), version.toString());
+                assertEquals((byte) 1, trait.getCompound("enabled_states").getByte("cardinal_direction"), version.toString());
+                assertEquals(4, palette.blocks().states("example:statue").size(), version.toString());
+                assertEquals(NbtMap.builder().putString("minecraft:cardinal_direction", "east").build(), sent, version.toString());
+                assertEquals(1, warnings.size(), warnings.toString());
+                assertTrue(warnings.getFirst().contains("enabled_states = minecraft:sixteen_way_rotation")
+                    && warnings.getFirst().contains("BDS 1.26.36.1") && warnings.getFirst().contains("left out"), warnings.getFirst());
+                assertFalse(palette.blocks().block("example:statue").defaultState().getState().getCompound("states")
+                    .containsKey("minecraft:sixteen_way_rotation"));
+            } else {
+                assertEquals((byte) 1, trait.getCompound("enabled_states").getByte("sixteen_way_rotation"), version.toString());
+                assertEquals(64, palette.blocks().states("example:statue").size(), version.toString());
+                assertEquals(5, sent.getInt("minecraft:sixteen_way_rotation"), version.toString());
+                assertTrue(warnings.isEmpty(), version + ": " + warnings);
+                assertEquals(4, palette.blocks().block("example:statue").defaultState().getState().getCompound("states")
+                    .getInt("minecraft:sixteen_way_rotation"));
+            }
+        }
+        assertEquals(1, checked26_30, "26.30 is bundled");
+    }
+
     @Test
     void blocksWithTooManyStateCombinationsAreRejected() {
         assertEquals(1 << 24, CustomBlock.builder("example:big")

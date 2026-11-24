@@ -957,13 +957,19 @@ public final class BlockRegistry implements DefinitionRegistry<BlockDefinition> 
                 }
             }
             Map<String, CustomBlock> customByName = new HashMap<>();
+            // The states of this version: a trait value its client adds no well-defined states for adds none here
+            // (TraitStates), and the canonical states with them resolve to these, adapted
+            int protocol = data.version().protocolVersion();
+            Map<String, List<NbtMap>> versionStates = new HashMap<>();
             for (CustomBlock block : ownCustom) {
                 if (vanillaNames.contains(block.identifier()) || customByName.containsKey(block.identifier())
                     || parent != null && parent.block(block.identifier()) != null) {
                     throw new PaletteException("Custom block " + block.identifier() + " is registered twice, or collides with a vanilla block",
                         null, block.identifier(), null);
                 }
-                customStates.addAll(block.states());
+                List<NbtMap> blockStates = block.states(protocol);
+                versionStates.put(block.identifier(), blockStates);
+                customStates.addAll(blockStates);
                 customByName.put(block.identifier(), block);
             }
 
@@ -1013,7 +1019,7 @@ public final class BlockRegistry implements DefinitionRegistry<BlockDefinition> 
             byBlockId.sort(java.util.Comparator.comparingInt(block -> customBlockIds.get(block.identifier())));
             for (CustomBlock custom : byBlockId) {
                 int blockId = customBlockIds.get(custom.identifier());
-                for (NbtMap state : custom.states()) {
+                for (NbtMap state : versionStates.get(custom.identifier())) {
                     int index = customIndex.getInt(state);
                     int id = HashedIds.assign(BlockHashes.hash(state), candidate -> isFree(candidate, state, blockId, byHash));
                     RegisteredBlockState block = new RegisteredBlockState(id, state, true);
@@ -1044,7 +1050,8 @@ public final class BlockRegistry implements DefinitionRegistry<BlockDefinition> 
                 String name = entry.getKey();
                 CustomBlock custom = customByName.get(name);
                 if (custom != null) {
-                    blocks.put(name, new RegisteredBlock(name, origins.get(name), entry.getValue(), custom, propertyData.get(name), custom.defaultState()));
+                    blocks.put(name, new RegisteredBlock(name, origins.get(name), entry.getValue(), custom, propertyData.get(name),
+                        custom.defaultState(protocol), custom.stateProperties(protocol)));
                 } else {
                     blocks.put(name, interner.vanillaType(name, entry.getValue(), propertyData.get(name), data.blockDefaults().get(name)));
                 }
@@ -1055,7 +1062,8 @@ public final class BlockRegistry implements DefinitionRegistry<BlockDefinition> 
                 for (CustomBlock custom : this.customBlocks.subList(0, parent.customBlocks.size())) {
                     RegisteredBlock earlier = parent.block(custom.identifier());
                     blocks.put(custom.identifier(), new RegisteredBlock(custom.identifier(), origins.get(custom.identifier()),
-                        earlier.states(), custom, propertyData.get(custom.identifier()), custom.defaultState()));
+                        earlier.states(), custom, propertyData.get(custom.identifier()), custom.defaultState(protocol),
+                        custom.stateProperties(protocol)));
                 }
             }
             this.ownBlocks = Collections.unmodifiableMap(blocks);

@@ -61,189 +61,302 @@
   "formatVersion": "1.26.60",
   "traitStates": {
     "minecraft:connection": {
-      "minecraft:cardinal_connections": [
-        {
-          "name": "minecraft:connection_north",
-          "type": "bool",
-          "values": [
-            0,
-            1
-          ],
-          "valuesFrom": "the vanilla state minecraft:connection_north",
-          "default": "verified (name and default): BDS 1.26.36.1 sent hash 1337243528 for the default state of paletter:b_trait_connection_7 (enabled_states [\"minecraft:cardinal_connections\",\"minecraft:cardinal_connections\"])"
-        },
-        {
-          "name": "minecraft:connection_east",
-          "type": "bool",
-          "values": [
-            0,
-            1
-          ],
-          "valuesFrom": "the vanilla state minecraft:connection_east",
-          "default": "verified (name and default): BDS 1.26.36.1 sent hash 1337243528 for the default state of paletter:b_trait_connection_7 (enabled_states [\"minecraft:cardinal_connections\",\"minecraft:cardinal_connections\"])"
-        },
-        {
-          "name": "minecraft:connection_south",
-          "type": "bool",
-          "values": [
-            0,
-            1
-          ],
-          "valuesFrom": "the vanilla state minecraft:connection_south",
-          "default": "verified (name and default): BDS 1.26.36.1 sent hash 1337243528 for the default state of paletter:b_trait_connection_7 (enabled_states [\"minecraft:cardinal_connections\",\"minecraft:cardinal_connections\"])"
-        },
-        {
-          "name": "minecraft:connection_west",
-          "type": "bool",
-          "values": [
-            0,
-            1
-          ],
-          "valuesFrom": "the vanilla state minecraft:connection_west",
-          "default": "verified (name and default): BDS 1.26.36.1 sent hash 1337243528 for the default state of paletter:b_trait_connection_7 (enabled_states [\"minecraft:cardinal_connections\",\"minecraft:cardinal_connections\"])"
-        }
-      ]
+      "minecraft:cardinal_connections": {
+        "windows": [
+          {
+            "protocols": [
+              1001,
+              2168,
+              2193,
+              2225,
+              2259
+            ],
+            "states": [
+              {
+                "name": "minecraft:connection_north",
+                "type": "bool",
+                "values": [
+                  0,
+                  1
+                ],
+                "valuesFrom": "the vanilla state minecraft:connection_north",
+                "default": "verified (name and default): BDS 1.26.36.1 sent hash 1337243528 for the default state of paletter:b_trait_connection_7 (enabled_states [\"minecraft:cardinal_connections\",\"minecraft:cardinal_connections\"])"
+              },
+              {
+                "name": "minecraft:connection_east",
+                "type": "bool",
+                "values": [
+                  0,
+                  1
+                ],
+                "valuesFrom": "the vanilla state minecraft:connection_east",
+                "default": "verified (name and default): BDS 1.26.36.1 sent hash 1337243528 for the default state of paletter:b_trait_connection_7 (enabled_states [\"minecraft:cardinal_connections\",\"minecraft:cardinal_connections\"])"
+              },
+              {
+                "name": "minecraft:connection_south",
+                "type": "bool",
+                "values": [
+                  0,
+                  1
+                ],
+                "valuesFrom": "the vanilla state minecraft:connection_south",
+                "default": "verified (name and default): BDS 1.26.36.1 sent hash 1337243528 for the default state of paletter:b_trait_connection_7 (enabled_states [\"minecraft:cardinal_connections\",\"minecraft:cardinal_connections\"])"
+              },
+              {
+                "name": "minecraft:connection_west",
+                "type": "bool",
+                "values": [
+                  0,
+                  1
+                ],
+                "valuesFrom": "the vanilla state minecraft:connection_west",
+                "default": "verified (name and default): BDS 1.26.36.1 sent hash 1337243528 for the default state of paletter:b_trait_connection_7 (enabled_states [\"minecraft:cardinal_connections\",\"minecraft:cardinal_connections\"])"
+              }
+            ]
+          }
+        ]
+      }
     },
     "minecraft:multi_block": {
-      "minecraft:multi_block_part": [
-        {
-          "name": "minecraft:multi_block_part",
-          "type": "int",
-          "values": [
-            0,
-            1,
-            2,
-            3
-          ],
-          "valuesFrom": "the docs (no vanilla block has the state)",
-          "default": "verified (name and default): BDS 1.26.36.1 sent hash 655612139 for the default state of paletter:b_trait_multi_block_7 (enabled_states [\"minecraft:multi_block_part\",\"minecraft:multi_block_part\"])"
-        }
-      ]
+      "minecraft:multi_block_part": {
+        "windows": [
+          {
+            "protocols": [
+              1001,
+              2168,
+              2193,
+              2225,
+              2259
+            ],
+            "states": [
+              {
+                "name": "minecraft:multi_block_part",
+                "type": "int",
+                "values": [
+                  0,
+                  1,
+                  2,
+                  3
+                ],
+                "valuesFrom": "the docs (no vanilla block has the state)",
+                "default": "verified (name and default): BDS 1.26.36.1 sent hash 655612139 for the default state of paletter:b_trait_multi_block_7 (enabled_states [\"minecraft:multi_block_part\",\"minecraft:multi_block_part\"])"
+              }
+            ]
+          }
+        ]
+      }
     },
     "minecraft:placement_direction": {
-      "minecraft:cardinal_direction": [
-        {
-          "name": "minecraft:cardinal_direction",
-          "type": "string",
-          "values": [
-            "south",
-            "west",
-            "north",
-            "east"
-          ],
-          "valuesFrom": "the vanilla state minecraft:cardinal_direction (CardinalDirection)",
-          "default": "verified (name and default): BDS 1.26.36.1 sent hash 3632260284 for the default state of paletter:b_trait_placement_direction_2 (enabled_states [\"minecraft:cardinal_direction\"])"
-        }
-      ],
-      "minecraft:corner_and_cardinal_direction": [
-        {
-          "name": "minecraft:corner",
-          "type": "string",
-          "values": [
-            "none",
-            "inner_left",
-            "inner_right",
-            "outer_left",
-            "outer_right"
-          ],
-          "valuesFrom": "the vanilla state minecraft:corner (Corner)",
-          "default": "verified (name and default): BDS 1.26.36.1 sent hash 1212458603 for the default state of paletter:b_trait_placement_direction_7 (enabled_states [\"minecraft:corner_and_cardinal_direction\"])"
-        },
-        {
-          "name": "minecraft:cardinal_direction",
-          "type": "string",
-          "values": [
-            "south",
-            "west",
-            "north",
-            "east"
-          ],
-          "valuesFrom": "the vanilla state minecraft:cardinal_direction (CardinalDirection)",
-          "default": "verified (name and default): BDS 1.26.36.1 sent hash 3632260284 for the default state of paletter:b_trait_placement_direction_2 (enabled_states [\"minecraft:cardinal_direction\"])"
-        }
-      ],
-      "minecraft:facing_direction": [
-        {
-          "name": "minecraft:facing_direction",
-          "type": "string",
-          "values": [
-            "down",
-            "up",
-            "north",
-            "south",
-            "west",
-            "east"
-          ],
-          "valuesFrom": "the vanilla state minecraft:facing_direction (Direction)",
-          "default": "verified (name and default): BDS 1.26.36.1 sent hash 2490069912 for the default state of paletter:b_trait_placement_direction_8 (enabled_states [\"minecraft:facing_direction\"])"
-        }
-      ],
-      "minecraft:sixteen_way_rotation": [
-        {
-          "name": "minecraft:sixteen_way_rotation",
-          "type": "int",
-          "values": [
-            0,
-            1,
-            2,
-            3,
-            4,
-            5,
-            6,
-            7,
-            8,
-            9,
-            10,
-            11,
-            12,
-            13,
-            14,
-            15
-          ],
-          "valuesFrom": "BDS 1.26.70.24 (Script API BlockStates.getAll(), in its order; the docs name no state for it)",
-          "default": "verified (name and default): BDS 1.26.45.1 sent hash 510796997 for the default state of paletter:b_trait_placement_direction_9 (enabled_states [\"minecraft:sixteen_way_rotation\"])",
-          "disputes": [
-            "BDS 1.26.36.1 has the values [down, up, north, south, west, east, down, down, down, down, down, down, down, down, down, down] (its Script API dump) and sent hash 1501745685 for the default state of paletter:b_trait_placement_direction_13 with the first of them: the table holds the values of the newest dump",
-            "BDS 1.26.36.1 has the values [down, up, north, south, west, east, down, down, down, down, down, down, down, down, down, down] (its Script API dump) and sent hash 292243736 for the default state of paletter:b_trait_placement_direction_20 with the first of them: the table holds the values of the newest dump",
-            "BDS 1.26.36.1 has the values [down, up, north, south, west, east, down, down, down, down, down, down, down, down, down, down] (its Script API dump) and sent hash 3334546540 for the default state of paletter:b_trait_placement_direction_9 with the first of them: the table holds the values of the newest dump",
-            "BDS 1.26.36.1 has the values [down, up, north, south, west, east, down, down, down, down, down, down, down, down, down, down] (its Script API dump) and sent hash 3908027720 for the default state of paletter:b_trait_placement_direction_19 with the first of them: the table holds the values of the newest dump",
-            "BDS 1.26.36.1 has the values [down, up, north, south, west, east, down, down, down, down, down, down, down, down, down, down] (its Script API dump) and sent hash 4045600192 for the default state of paletter:b_trait_placement_direction_14 with the first of them: the table holds the values of the newest dump",
-            "BDS 1.26.36.1 has the values [down, up, north, south, west, east, down, down, down, down, down, down, down, down, down, down] (its Script API dump) and sent hash 4058860031 for the default state of paletter:b_trait_placement_direction_18 with the first of them: the table holds the values of the newest dump",
-            "BDS 1.26.36.1 has the values [down, up, north, south, west, east, down, down, down, down, down, down, down, down, down, down] (its Script API dump) and sent hash 537129971 for the default state of paletter:b_trait_placement_direction_15 with the first of them: the table holds the values of the newest dump",
-            "BDS 1.26.36.1 has the values [down, up, north, south, west, east, down, down, down, down, down, down, down, down, down, down] (its Script API dump) and sent hash 569768907 for the default state of paletter:b_trait_placement_direction_17 with the first of them: the table holds the values of the newest dump"
-          ]
-        }
-      ]
+      "minecraft:cardinal_direction": {
+        "windows": [
+          {
+            "protocols": [
+              1001,
+              2168,
+              2193,
+              2225,
+              2259
+            ],
+            "states": [
+              {
+                "name": "minecraft:cardinal_direction",
+                "type": "string",
+                "values": [
+                  "south",
+                  "west",
+                  "north",
+                  "east"
+                ],
+                "valuesFrom": "the vanilla state minecraft:cardinal_direction (CardinalDirection)",
+                "default": "verified (name and default): BDS 1.26.36.1 sent hash 3632260284 for the default state of paletter:b_trait_placement_direction_2 (enabled_states [\"minecraft:cardinal_direction\"])"
+              }
+            ]
+          }
+        ]
+      },
+      "minecraft:corner_and_cardinal_direction": {
+        "windows": [
+          {
+            "protocols": [
+              1001,
+              2168,
+              2193,
+              2225,
+              2259
+            ],
+            "states": [
+              {
+                "name": "minecraft:corner",
+                "type": "string",
+                "values": [
+                  "none",
+                  "inner_left",
+                  "inner_right",
+                  "outer_left",
+                  "outer_right"
+                ],
+                "valuesFrom": "the vanilla state minecraft:corner (Corner)",
+                "default": "verified (name and default): BDS 1.26.36.1 sent hash 1212458603 for the default state of paletter:b_trait_placement_direction_7 (enabled_states [\"minecraft:corner_and_cardinal_direction\"])"
+              },
+              {
+                "name": "minecraft:cardinal_direction",
+                "type": "string",
+                "values": [
+                  "south",
+                  "west",
+                  "north",
+                  "east"
+                ],
+                "valuesFrom": "the vanilla state minecraft:cardinal_direction (CardinalDirection)",
+                "default": "verified (name and default): BDS 1.26.36.1 sent hash 3632260284 for the default state of paletter:b_trait_placement_direction_2 (enabled_states [\"minecraft:cardinal_direction\"])"
+              }
+            ]
+          }
+        ]
+      },
+      "minecraft:facing_direction": {
+        "windows": [
+          {
+            "protocols": [
+              1001,
+              2168,
+              2193,
+              2225,
+              2259
+            ],
+            "states": [
+              {
+                "name": "minecraft:facing_direction",
+                "type": "string",
+                "values": [
+                  "down",
+                  "up",
+                  "north",
+                  "south",
+                  "west",
+                  "east"
+                ],
+                "valuesFrom": "the vanilla state minecraft:facing_direction (Direction)",
+                "default": "verified (name and default): BDS 1.26.36.1 sent hash 2490069912 for the default state of paletter:b_trait_placement_direction_8 (enabled_states [\"minecraft:facing_direction\"])"
+              }
+            ]
+          }
+        ]
+      },
+      "minecraft:sixteen_way_rotation": {
+        "windows": [
+          {
+            "protocols": [
+              1001
+            ],
+            "unsupported": {
+              "state": "minecraft:sixteen_way_rotation",
+              "reason": "BDS 1.26.36.1 lists minecraft:sixteen_way_rotation as [down, up, north, south, west, east, down, down, down, down, down, down, down, down, down, down] (its Script API dump, BlockStates.getAll()): duplicate values, a BDS bug, so the states the client adds for it are not well defined",
+              "evidence": [
+                "BDS 1.26.36.1's Script API dump (BlockStates.getAll()) lists minecraft:sixteen_way_rotation as [down, up, north, south, west, east, down, down, down, down, down, down, down, down, down, down]",
+                "BDS 1.26.36.1 sent hash 3334546540 for the default state of paletter:b_trait_placement_direction_9 (enabled_states [\"minecraft:sixteen_way_rotation\"]) with minecraft:sixteen_way_rotation = down, the first value of its dump",
+                "BDS 1.26.36.1 sent hash 292243736 for the default state of paletter:b_trait_placement_direction_20 (enabled_states [\"minecraft:cardinal_direction\",\"minecraft:corner_and_cardinal_direction\",\"minecraft:facing_direction\",\"minecraft:sixteen_way_rotation\"]) with minecraft:sixteen_way_rotation = down, the first value of its dump",
+                "BDS 1.26.36.1 sent hash 3908027720 for the default state of paletter:b_trait_placement_direction_19 (enabled_states [\"minecraft:corner_and_cardinal_direction\",\"minecraft:facing_direction\",\"minecraft:sixteen_way_rotation\"]) with minecraft:sixteen_way_rotation = down, the first value of its dump",
+                "BDS 1.26.36.1 sent hash 4058860031 for the default state of paletter:b_trait_placement_direction_18 (enabled_states [\"minecraft:cardinal_direction\",\"minecraft:facing_direction\",\"minecraft:sixteen_way_rotation\"]) with minecraft:sixteen_way_rotation = down, the first value of its dump",
+                "BDS 1.26.36.1 sent hash 569768907 for the default state of paletter:b_trait_placement_direction_17 (enabled_states [\"minecraft:cardinal_direction\",\"minecraft:corner_and_cardinal_direction\",\"minecraft:sixteen_way_rotation\"]) with minecraft:sixteen_way_rotation = down, the first value of its dump",
+                "BDS 1.26.36.1 sent hash 537129971 for the default state of paletter:b_trait_placement_direction_15 (enabled_states [\"minecraft:facing_direction\",\"minecraft:sixteen_way_rotation\"]) with minecraft:sixteen_way_rotation = down, the first value of its dump",
+                "BDS 1.26.36.1 sent hash 4045600192 for the default state of paletter:b_trait_placement_direction_14 (enabled_states [\"minecraft:corner_and_cardinal_direction\",\"minecraft:sixteen_way_rotation\"]) with minecraft:sixteen_way_rotation = down, the first value of its dump",
+                "BDS 1.26.36.1 sent hash 1501745685 for the default state of paletter:b_trait_placement_direction_13 (enabled_states [\"minecraft:cardinal_direction\",\"minecraft:sixteen_way_rotation\"]) with minecraft:sixteen_way_rotation = down, the first value of its dump"
+              ]
+            }
+          },
+          {
+            "protocols": [
+              2168,
+              2193,
+              2225,
+              2259
+            ],
+            "states": [
+              {
+                "name": "minecraft:sixteen_way_rotation",
+                "type": "int",
+                "values": [
+                  0,
+                  1,
+                  2,
+                  3,
+                  4,
+                  5,
+                  6,
+                  7,
+                  8,
+                  9,
+                  10,
+                  11,
+                  12,
+                  13,
+                  14,
+                  15
+                ],
+                "valuesFrom": "BDS 1.26.45.1, 1.26.52.3, 1.26.63.1, 1.26.70.24 (the Script API BlockStates.getAll() of each, in its order; the docs name no state for it)",
+                "default": "verified (name and default): BDS 1.26.45.1 sent hash 510796997 for the default state of paletter:b_trait_placement_direction_9 (enabled_states [\"minecraft:sixteen_way_rotation\"])"
+              }
+            ]
+          }
+        ]
+      }
     },
     "minecraft:placement_position": {
-      "minecraft:block_face": [
-        {
-          "name": "minecraft:block_face",
-          "type": "string",
-          "values": [
-            "down",
-            "up",
-            "north",
-            "south",
-            "west",
-            "east"
-          ],
-          "valuesFrom": "the vanilla state minecraft:block_face (Direction)",
-          "default": "verified (name and default): BDS 1.26.36.1 sent hash 20442302 for the default state of paletter:b_trait_placement_position_2 (enabled_states [\"minecraft:block_face\"])"
-        }
-      ],
-      "minecraft:vertical_half": [
-        {
-          "name": "minecraft:vertical_half",
-          "type": "string",
-          "values": [
-            "bottom",
-            "top"
-          ],
-          "valuesFrom": "the vanilla state minecraft:vertical_half (VerticalHalf)",
-          "default": "verified (name and default): BDS 1.26.36.1 sent hash 2948113812 for the default state of paletter:b_trait_placement_position_7 (enabled_states [\"minecraft:vertical_half\"])"
-        }
-      ]
+      "minecraft:block_face": {
+        "windows": [
+          {
+            "protocols": [
+              1001,
+              2168,
+              2193,
+              2225,
+              2259
+            ],
+            "states": [
+              {
+                "name": "minecraft:block_face",
+                "type": "string",
+                "values": [
+                  "down",
+                  "up",
+                  "north",
+                  "south",
+                  "west",
+                  "east"
+                ],
+                "valuesFrom": "the vanilla state minecraft:block_face (Direction)",
+                "default": "verified (name and default): BDS 1.26.36.1 sent hash 20442302 for the default state of paletter:b_trait_placement_position_2 (enabled_states [\"minecraft:block_face\"])"
+              }
+            ]
+          }
+        ]
+      },
+      "minecraft:vertical_half": {
+        "windows": [
+          {
+            "protocols": [
+              1001,
+              2168,
+              2193,
+              2225,
+              2259
+            ],
+            "states": [
+              {
+                "name": "minecraft:vertical_half",
+                "type": "string",
+                "values": [
+                  "bottom",
+                  "top"
+                ],
+                "valuesFrom": "the vanilla state minecraft:vertical_half (VerticalHalf)",
+                "default": "verified (name and default): BDS 1.26.36.1 sent hash 2948113812 for the default state of paletter:b_trait_placement_position_7 (enabled_states [\"minecraft:vertical_half\"])"
+              }
+            ]
+          }
+        ]
+      }
     }
   },
   "envelope": {

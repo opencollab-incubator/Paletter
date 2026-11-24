@@ -20,6 +20,13 @@ components are never sent.
 creative block id. Custom blocks hash the same way, including their trait states, which `properties` does not list. The
 default state is the first value of every property, then every trait state at its first value.
 
+**`minecraft:sixteen_way_rotation` in 1.26.36.1.** The state the `minecraft:placement_direction` value
+`minecraft:sixteen_way_rotation` adds is listed by BDS 1.26.36.1's Script API (`BlockStates.getAll()`) as
+`["down", "up", "north", "south", "west", "east", "down", ...]`: 16 values, 11 of them `"down"`; 1.26.45.1 and newer list
+the ints 0 to 15. BDS 1.26.36.1 hashed the default state of such a block with `"down"` (a string), so the 26.30 state set of
+the value is not well defined. Paletter leaves the value out in 26.30 and reports it (`unsupported` in the trait state
+table, see [data-pipeline.md](data-pipeline.md)).
+
 **Hash collisions.** Observed in the public BDS 1.26.63.1 binary (Linux): when a state's hash is already the id of a state
 of a different block type, BDS takes the hash + 1, and again until the id is free; once the probe reaches the top values
 (unsigned `>= 0xFFFFFFFD`) it goes on from 0. `minecraft:unknown` is always `0xFFFFFFFE`. Which state gets the hash and

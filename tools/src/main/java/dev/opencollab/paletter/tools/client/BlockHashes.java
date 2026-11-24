@@ -50,24 +50,29 @@ public final class BlockHashes {
     /**
      * Every state of a custom block, from the {@code properties} list of its block property data, in the order the
      * client enumerates them (first property varies slowest).
+     *
+     * @param protocol the protocol of the client: it picks the window of the trait state table
      */
-    static List<NbtMap> customStates(String name, NbtMap blockProperties) {
+    static List<NbtMap> customStates(String name, NbtMap blockProperties, int protocol) {
         Set<String> unknown = new TreeSet<>();
-        List<NbtMap> states = customStates(name, blockProperties, unknown);
-        if (!unknown.isEmpty()) {
-            throw new IllegalArgumentException(name + ": the trait state table has no states for " + unknown);
+        Set<String> unsupported = new TreeSet<>();
+        List<NbtMap> states = customStates(name, blockProperties, protocol, unknown, unsupported);
+        if (!unknown.isEmpty() || !unsupported.isEmpty()) {
+            throw new IllegalArgumentException(name + ": the trait state table has no states for " + unknown + unsupported);
         }
         return states;
     }
 
     /**
-     * {@link #customStates(String, NbtMap)}, leaving out the states of an {@code enabled_states} value the trait state table does
-     * not have yet (BDS accepts more values than the docs name a state for, such as {@code minecraft:sixteen_way_rotation}; the
-     * mapping inference adds them from BDS's data): the value goes into {@code unknown} as {@code <trait> <value>}.
+     * {@link #customStates(String, NbtMap, int)}, leaving out the states of an {@code enabled_states} value the trait state
+     * table does not have yet (BDS accepts more values than the docs name a state for, such as
+     * {@code minecraft:sixteen_way_rotation}; the mapping inference adds them from BDS's data), which goes into {@code unknown},
+     * and of one it marks unsupported in the protocol (BDS's data defines no state set for it there, as 1.26.36.1's for
+     * {@code minecraft:sixteen_way_rotation}), which goes into {@code unsupported}; both as {@code <trait> <value>}.
      */
-    static List<NbtMap> customStates(String name, NbtMap blockProperties, Set<String> unknown) {
+    static List<NbtMap> customStates(String name, NbtMap blockProperties, int protocol, Set<String> unknown, Set<String> unsupported) {
         List<NbtMap> properties = new ArrayList<>(blockProperties.getList("properties", NbtType.COMPOUND, List.of()));
-        properties.addAll(traitProperties(blockProperties, unknown));
+        properties.addAll(traitProperties(blockProperties, protocol, unknown, unsupported));
         List<NbtMap> states = new ArrayList<>();
         expand(name, properties, 0, new java.util.LinkedHashMap<>(), states);
         return states;
@@ -75,12 +80,12 @@ public final class BlockHashes {
 
     /**
      * The wire sends traits, not the states they add; the client adds those. The states of each {@code enabled_states}
-     * value come from the generated {@link TraitStateTable} (the table Paletter's palettes use, checked against the hashes
-     * BDS sent); only reading the value from the wire is done here: a flag per value
+     * value come from the generated {@link TraitStateTable} in the client's protocol (the table Paletter's palettes use,
+     * checked against the hashes BDS sent); only reading the value from the wire is done here: a flag per value
      * ({@code enabled_states.cardinal_direction: 1b}), the {@code multi_block} flag, or the bit set of
      * {@code minecraft:connection}.
      */
-    static List<NbtMap> traitProperties(NbtMap blockProperties, Set<String> unknown) {
+    static List<NbtMap> traitProperties(NbtMap blockProperties, int protocol, Set<String> unknown, Set<String> unsupported) {
         List<NbtMap> out = new ArrayList<>();
         for (NbtMap trait : blockProperties.getList("traits", NbtType.COMPOUND, List.of())) {
             String name = trait.getString("name");
@@ -97,9 +102,13 @@ public final class BlockHashes {
             for (String value : values) {
                 List<BlockProperty<?>> added;
                 try {
-                    added = TraitStateTable.of(name, value);
+                    added = TraitStateTable.of(name, value, protocol);
                 } catch (IllegalArgumentException e) { // the table's answer for a value it has no states for
                     unknown.add(name + " " + value);
+                    continue;
+                }
+                if (added == null) { // unsupported in this protocol: TraitStateTable.unsupported says why
+                    unsupported.add(name + " " + value);
                     continue;
                 }
                 for (BlockProperty<?> state : added) {

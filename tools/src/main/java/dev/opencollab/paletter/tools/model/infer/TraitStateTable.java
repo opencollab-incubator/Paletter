@@ -53,11 +53,19 @@ import java.util.zip.GZIPInputStream;
  *     creative inventory of a spec capture ({@code data/bds/<build>/spec}) holds one block per combination of every
  *     trait's {@code enabled_states}. A hash that differs from the table's default state fails the inference.</li>
  * </ul>
+ * Per protocol window (the window of each spec capture's build, as the component mappings), a state with BDS's values has
+ * the values of that build's own dump: BDS 1.26.36.1 lists {@code minecraft:sixteen_way_rotation} as
+ * {@code [down, up, north, south, west, east, down, ...]}, the newer builds as 0 to 15. Where a build's own dump gives no
+ * well-defined state set (duplicate values, or no state of that name), the value is unsupported in its window, with the
+ * build's dump values and the hashes BDS sent as evidence: the library leaves it out there and reports it.
  */
 final class TraitStateTable {
     private static final Pattern ADDS_STATE = Pattern.compile("adds state ([a-z_]+:[a-z_]+): (Boolean|Integer|String) (.+)");
 
-    record State(String name, String type, List<JsonPrimitive> values, String valuesFrom) {
+    /**
+     * @param perBuild whether the values are BDS's ({@link BdsStates}): then every window has the values of its own build's dump
+     */
+    record State(String name, String type, List<JsonPrimitive> values, String valuesFrom, boolean perBuild) {
         Object first() {
             JsonPrimitive value = values.getFirst();
             return switch (type) {
@@ -103,8 +111,69 @@ final class TraitStateTable {
                 case Integer i -> new JsonPrimitive(i);
                 default -> new JsonPrimitive(value.toString());
             }).toList();
-            return new State(name, type, json, "BDS " + build + " (Script API BlockStates.getAll(), in its order; the docs name no state for it)");
+            return new State(name, type, json, "BDS " + build + " (Script API BlockStates.getAll(), in its order; the docs name no state for it)", true);
         }
+    }
+
+    /**
+     * What an {@code enabled_states} value adds in one build: its states, or why it adds no well-defined states there.
+     *
+     * @param states the states, null when unsupported
+     * @param unsupported the state whose values the build's own dump does not define, null when supported
+     * @param dumpValues that state's values in the build's own dump (empty: it has none)
+     * @param hashes the hashes BDS sent for default states with that state at the first of {@code dumpValues}
+     */
+    record Version(List<State> states, String unsupported, List<Object> dumpValues, List<String> hashes) {
+        static Version supported(List<State> states) {
+            return new Version(states, null, List.of(), List.of());
+        }
+
+        /** What makes two builds one window: the same states and values, or the same unsupported state with the same dump values. */
+        String key() {
+            if (unsupported != null) {
+                return "unsupported " + unsupported + " " + dumpValues;
+            }
+            StringBuilder key = new StringBuilder();
+            for (State state : states) {
+                key.append(state.name()).append(' ').append(state.type()).append(' ').append(state.values())
+                    .append(' ').append(state.perBuild() ? "BDS" : state.valuesFrom()).append(';');
+            }
+            return key.toString();
+        }
+    }
+
+    /**
+     * The states a value adds in one build: those with BDS's values take the build's own dump's ({@code dump}); a state the dump
+     * does not define (no state of the name, or duplicate values) makes the value unsupported in the build.
+     */
+    static Version versionOf(List<State> states, BdsStates dump) {
+        List<State> own = new ArrayList<>();
+        for (State state : states) {
+            if (!state.perBuild()) {
+                own.add(state);
+                continue;
+            }
+            List<Object> values = dump.types().get(state.name());
+            if (values == null || values.isEmpty() || Set.copyOf(values).size() != values.size()) {
+                return new Version(null, state.name(), values == null ? List.of() : List.copyOf(values), new ArrayList<>());
+            }
+            own.add(dump.state(state.name()));
+        }
+        return Version.supported(own);
+    }
+
+    /** The reason the library reports for an unsupported value: the BDS data that makes it so. */
+    static String reason(String state, Map<String, List<Object>> dumpValues) {
+        StringBuilder reason = new StringBuilder();
+        dumpValues.forEach((build, values) -> {
+            if (!reason.isEmpty()) {
+                reason.append("; ");
+            }
+            reason.append("BDS ").append(build).append(values.isEmpty()
+                ? " has no block state " + state + " (its Script API dump)"
+                : " lists " + state + " as " + values + " (its Script API dump, BlockStates.getAll()): duplicate values, a BDS bug");
+        });
+        return reason.append(", so the states the client adds for it are not well defined").toString();
     }
 
     private static final String DUMP = "dump.json.gz";
@@ -113,9 +182,12 @@ final class TraitStateTable {
     }
 
     /**
-     * @return trait -> enabled_states value -> the states it adds, each with its values and where its default is verified
+     * @param windows the build of each spec capture to its protocol window, oldest first (the {@code captures} of
+     *                {@code mappings.json})
+     * @return trait -> enabled_states value -> {@code windows}: per protocol window the states it adds, each with its values and
+     *         where its default is verified, or why it is unsupported there
      */
-    static JsonObject infer(Path root, Model model) throws IOException {
+    static JsonObject infer(Path root, Model model, Map<String, Integer> windows) throws IOException {
         if (model.components().stream().noneMatch(c -> c.category().equals("trait"))) {
             return new JsonObject();
         }
@@ -130,35 +202,104 @@ final class TraitStateTable {
                 skipped.forEach(line -> System.out.println("Skipped: " + line + " (no dump of BDS's block states has a state of its name: not in the trait state table)"));
             }
         }
-        Map<String, Set<String>> disputes = new TreeMap<>();
-        Map<String, String> verified = verify(root, table, disputes);
+        // build -> trait -> value -> what it adds there
+        Map<String, Map<String, Map<String, Version>>> versions = new LinkedHashMap<>();
+        for (String build : windows.keySet()) {
+            BdsStates dump = buildStates(root, build);
+            Map<String, Map<String, Version>> byTrait = new TreeMap<>();
+            table.forEach((trait, byValue) -> {
+                Map<String, Version> own = new LinkedHashMap<>();
+                byValue.forEach((value, states) -> own.put(value, versionOf(states, dump)));
+                byTrait.put(trait, own);
+            });
+            versions.put(build, byTrait);
+        }
+        Map<String, String> verified = verify(root, table, versions);
         JsonObject out = new JsonObject();
         table.forEach((trait, byValue) -> {
             JsonObject values = new JsonObject();
             byValue.forEach((value, states) -> {
                 JsonArray list = new JsonArray();
-                for (State state : states) {
-                    JsonObject json = new JsonObject();
-                    json.addProperty("name", state.name());
-                    json.addProperty("type", state.type());
-                    JsonArray stateValues = new JsonArray();
-                    state.values().forEach(stateValues::add);
-                    json.add("values", stateValues);
-                    json.addProperty("valuesFrom", state.valuesFrom());
-                    json.addProperty("default", verified.getOrDefault(state.name(),
-                        "unverified: no capture holds the hash of a default state with it"));
-                    if (disputes.containsKey(state.name())) {
-                        JsonArray disputed = new JsonArray();
-                        disputes.get(state.name()).forEach(disputed::add);
-                        json.add("disputes", disputed);
+                if (windows.isEmpty()) {
+                    list.add(window(List.of(), List.of(), Version.supported(states), verified));
+                } else {
+                    // Consecutive builds that add the same are one window
+                    List<String> builds = new ArrayList<>();
+                    List<Integer> protocols = new ArrayList<>();
+                    String key = null;
+                    for (Map.Entry<String, Integer> entry : windows.entrySet()) {
+                        Version version = versions.get(entry.getKey()).get(trait).get(value);
+                        if (key != null && !key.equals(version.key())) {
+                            list.add(window(builds, protocols, versions.get(builds.getFirst()).get(trait).get(value), verified, versions, trait, value));
+                            builds = new ArrayList<>();
+                            protocols = new ArrayList<>();
+                        }
+                        key = version.key();
+                        builds.add(entry.getKey());
+                        protocols.add(entry.getValue());
                     }
-                    list.add(json);
+                    list.add(window(builds, protocols, versions.get(builds.getFirst()).get(trait).get(value), verified, versions, trait, value));
                 }
-                values.add(value, list);
+                JsonObject entry = new JsonObject();
+                entry.add("windows", list);
+                values.add(value, entry);
             });
             out.add(trait, values);
         });
         return out;
+    }
+
+    private static JsonObject window(List<String> builds, List<Integer> protocols, Version version, Map<String, String> verified,
+                                     Map<String, Map<String, Map<String, Version>>> versions, String trait, String value) {
+        if (version.unsupported() == null) {
+            return window(builds, protocols, version, verified);
+        }
+        JsonObject json = new JsonObject();
+        JsonArray protocolList = new JsonArray();
+        protocols.forEach(protocolList::add);
+        json.add("protocols", protocolList);
+        Map<String, List<Object>> dumpValues = new LinkedHashMap<>();
+        JsonArray evidence = new JsonArray();
+        for (String build : builds) {
+            Version own = versions.get(build).get(trait).get(value);
+            dumpValues.put(build, own.dumpValues());
+            evidence.add("BDS " + build + "'s Script API dump (BlockStates.getAll()) lists " + own.unsupported() + " as " + own.dumpValues());
+            own.hashes().forEach(evidence::add);
+        }
+        JsonObject unsupported = new JsonObject();
+        unsupported.addProperty("state", version.unsupported());
+        unsupported.addProperty("reason", reason(version.unsupported(), dumpValues));
+        unsupported.add("evidence", evidence);
+        json.add("unsupported", unsupported);
+        return json;
+    }
+
+    /** A window where the value adds states: those of its first build, a state with BDS's values naming every build's dump. */
+    private static JsonObject window(List<String> builds, List<Integer> protocols, Version version, Map<String, String> verified) {
+        JsonObject json = new JsonObject();
+        JsonArray protocolList = new JsonArray();
+        protocols.forEach(protocolList::add);
+        json.add("protocols", protocolList);
+        JsonArray list = new JsonArray();
+        for (State state : version.states()) {
+            JsonObject stateJson = new JsonObject();
+            stateJson.addProperty("name", state.name());
+            stateJson.addProperty("type", state.type());
+            JsonArray stateValues = new JsonArray();
+            state.values().forEach(stateValues::add);
+            stateJson.add("values", stateValues);
+            stateJson.addProperty("valuesFrom", state.perBuild() && !builds.isEmpty()
+                ? "BDS " + String.join(", ", builds) + " (the Script API BlockStates.getAll() of each, in its order; the docs name no state for it)"
+                : state.valuesFrom());
+            String verifiedBy = null;
+            for (String build : builds) {
+                verifiedBy = verifiedBy != null ? verifiedBy : verified.get(build + " " + state.name());
+            }
+            stateJson.addProperty("default", verifiedBy != null ? verifiedBy : "unverified: no capture of the window holds the hash of a default state with it");
+            list.add(stateJson);
+        }
+        json.add("states", list);
+        return json;
     }
 
     static Map<String, List<State>> statesOf(Model.Component trait, JsonObject history) {
@@ -249,7 +390,7 @@ final class TraitStateTable {
         List<JsonPrimitive> values = new ArrayList<>();
         if (vanilla == null) {
             docsValues.forEach(v -> values.add(type.equals("int") ? new JsonPrimitive(Integer.parseInt(v)) : new JsonPrimitive(v)));
-            return new State(name, type, values, "the docs (no vanilla block has the state)");
+            return new State(name, type, values, "the docs (no vanilla block has the state)", false);
         }
         String kind = vanilla.get("kind").getAsString();
         List<String> vanillaValues = new ArrayList<>();
@@ -271,27 +412,26 @@ final class TraitStateTable {
             throw new IllegalStateException(trait.id() + ": the docs' " + name + " (" + docsType + " " + docsValues
                 + ") is not the vanilla state (" + kind + " " + vanillaValues + ")");
         }
-        return new State(name, type, values, "the vanilla state " + name + (kind.equals("enum") ? " (" + vanilla.get("enum").getAsString() + ")" : ""));
+        return new State(name, type, values, "the vanilla state " + name + (kind.equals("enum") ? " (" + vanilla.get("enum").getAsString() + ")" : ""), false);
     }
 
     /**
      * Compares the default state of every trait variant BDS accepted in a spec capture ({@code data/bds/<build>/spec}: one
      * variant per combination of {@code enabled_states}) with the hash BDS sent for it in the creative inventory.
      *
-     * @param disputes gets, per state, the builds whose own Script API dump gives it other values than the table (from the newest
-     *                 dump), whose hashes are checked with those
-     * @return state name -> where its default is verified
+     * Each build's own states ({@code versions}) give the default; a value unsupported in the build has the first value of its
+     * build's dump for the undefined state (what BDS hashed), and the hash goes into the value's evidence.
+     *
+     * @return {@code <build> <state name>} -> where its default is verified
      */
     private static Map<String, String> verify(Path root, Map<String, Map<String, List<State>>> table,
-                                              Map<String, Set<String>> disputes) throws IOException {
+                                              Map<String, Map<String, Map<String, Version>>> versions) throws IOException {
         Map<String, String> verified = new TreeMap<>();
-        List<Path> captures;
-        try (Stream<Path> builds = Files.list(root.resolve(Layout.BDS))) {
-            captures = builds.map(build -> build.resolve("spec")).filter(dir -> Files.exists(dir.resolve(SpecCapture.CREATIVE_ITEMS))).sorted().toList();
-        }
-        for (Path capture : captures) {
-            String build = capture.getParent().getFileName().toString();
-            BdsStates dump = buildStates(root, build);
+        for (String build : versions.keySet()) {
+            Path capture = root.resolve(Layout.BDS).resolve(build).resolve("spec");
+            if (!Files.exists(capture.resolve(SpecCapture.CREATIVE_ITEMS))) {
+                continue;
+            }
             Map<String, Long> sent = new LinkedHashMap<>();
             try (Reader reader = new InputStreamReader(new GZIPInputStream(Files.newInputStream(capture.resolve(SpecCapture.CREATIVE_ITEMS))), StandardCharsets.UTF_8)) {
                 for (JsonElement e : JsonParser.parseReader(reader).getAsJsonObject().getAsJsonArray("items")) {
@@ -321,24 +461,35 @@ final class TraitStateTable {
                     states.put(property.getString("name"), ((NbtList<?>) property.get("enum")).getFirst());
                 }
                 List<String> added = new ArrayList<>();
-                Map<String, String> own = new TreeMap<>();
+                List<Version> unsupported = new ArrayList<>();
                 for (JsonElement value : variant.getAsJsonObject("json").getAsJsonArray("enabled_states")) {
-                    for (State state : table.get(trait).getOrDefault(value.getAsString(), List.of())) {
-                        // A state the table has from BDS's newest dump can have other values in this build's own dump: BDS 1.26.36.1
-                        // lists minecraft:sixteen_way_rotation as strings, the newer builds as 0 to 15. The build's own decide here
-                        List<Object> ownValues = state.valuesFrom().startsWith("BDS ") ? dump.types().get(state.name()) : null;
-                        if (ownValues != null && !ownValues.isEmpty() && !sameValues(ownValues, state)) {
-                            states.put(state.name(), switch (ownValues.getFirst()) {
+                    Version version = versions.get(build).get(trait).get(value.getAsString());
+                    if (version == null) {
+                        continue;
+                    }
+                    if (version.unsupported() == null) {
+                        for (State state : version.states()) {
+                            states.put(state.name(), state.first());
+                            added.add(state.name());
+                        }
+                        continue;
+                    }
+                    // What BDS hashed: the first value its own dump lists for the undefined state, as for every other state
+                    if (version.dumpValues().isEmpty()) {
+                        continue;
+                    }
+                    for (State state : table.get(trait).get(value.getAsString())) {
+                        if (state.name().equals(version.unsupported())) {
+                            states.put(state.name(), switch (version.dumpValues().getFirst()) {
                                 case Boolean b -> (byte) (b ? 1 : 0);
                                 case Number n -> n.intValue();
-                                default -> ownValues.getFirst().toString();
+                                default -> version.dumpValues().getFirst().toString();
                             });
-                            own.put(state.name(), ownValues.toString());
                         } else {
                             states.put(state.name(), state.first());
                         }
-                        added.add(state.name());
                     }
+                    unsupported.add(version);
                 }
                 long hash = Integer.toUnsignedLong(BlockHashes.hash(NbtMap.builder().putString("name", name).putCompound("states", states.build()).build()));
                 if (hash != sent.get(name)) {
@@ -346,35 +497,18 @@ final class TraitStateTable {
                         + " (" + trait + " " + variant.get("label").getAsString() + "), the trait states' first values give " + hash
                         + " (" + states.build() + "): data/model/mappings.json traitStates is wrong");
                 }
+                for (Version version : unsupported) {
+                    version.hashes().add("BDS " + build + " sent hash " + hash + " for the default state of " + name + " (enabled_states "
+                        + variant.getAsJsonObject("json").getAsJsonArray("enabled_states") + ") with " + version.unsupported() + " = "
+                        + version.dumpValues().getFirst() + ", the first value of its dump");
+                }
                 for (String state : added) {
-                    if (own.containsKey(state)) {
-                        disputes.computeIfAbsent(state, s -> new java.util.TreeSet<>()).add("BDS " + build + " has the values " + own.get(state)
-                            + " (its Script API dump) and sent hash " + hash + " for the default state of " + name + " with the first of them:"
-                            + " the table holds the values of the newest dump");
-                    } else {
-                        verified.putIfAbsent(state, "verified (name and default): BDS " + build + " sent hash " + hash + " for the default state of "
-                            + name + " (enabled_states " + variant.getAsJsonObject("json").getAsJsonArray("enabled_states") + ")");
-                    }
+                    verified.putIfAbsent(build + " " + state, "verified (name and default): BDS " + build + " sent hash " + hash
+                        + " for the default state of " + name + " (enabled_states " + variant.getAsJsonObject("json").getAsJsonArray("enabled_states") + ")");
                 }
             }
         }
         return verified;
-    }
-
-    /** Whether a build's dump lists the same values as a state of the table, in the same order. */
-    private static boolean sameValues(List<Object> values, State state) {
-        if (values.size() != state.values().size()) {
-            return false;
-        }
-        for (int i = 0; i < values.size(); i++) {
-            Object value = values.get(i);
-            JsonPrimitive expected = state.values().get(i);
-            String given = value instanceof Boolean b ? (b ? "1" : "0") : value instanceof Number n ? String.valueOf(n.intValue()) : value.toString();
-            if (!given.equals(expected.isNumber() ? String.valueOf(expected.getAsInt()) : expected.getAsString())) {
-                return false;
-            }
-        }
-        return true;
     }
 
     /** The block states of a build's own Script API dump, none without one. */

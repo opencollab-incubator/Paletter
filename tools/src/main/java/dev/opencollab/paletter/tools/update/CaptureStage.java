@@ -313,6 +313,16 @@ final class CaptureStage {
             ctx.report.action("infer the mappings and run :tools:generateComponentApi (the trait state table gains "
                 + summary.traitStatesUnknown() + ")");
         }
+        if (!summary.traitStatesUnsupportedBlocks().isEmpty()) {
+            // BDS's own data defines no state set for these values in this protocol (BDS 1.26.36.1's sixteen_way_rotation): Paletter
+            // leaves them out, so the states of these blocks are not Paletter's to check; the inference checked BDS's hashes
+            ctx.report.check(Report.Status.INFO, "Trait states (" + label + ")", "the creative block ids of "
+                + summary.traitStatesUnsupportedBlocks().size() + " blocks are unverified: the trait state table marks enabled_states "
+                + "unsupported in protocol " + summary.protocol() + ", " + summary.traitStatesUnsupported() + "; blocks: "
+                + summary.traitStatesUnsupportedBlocks());
+            ctx.report.notCompared.add("Block hashes (" + label + "): the creative block ids of " + summary.traitStatesUnsupportedBlocks().size()
+                + " blocks with enabled_states the trait state table marks unsupported in protocol " + summary.protocol());
+        }
         if (!summary.experimentBlocksUnverified().isEmpty()) {
             // The bundled data version marks these blocks as experiment content but has no states for them
             ctx.report.check(Report.Status.INFO, "Experiment block hashes (" + label + ")", "the creative block ids of "

@@ -47,9 +47,18 @@ public final class BlockCompiler {
                 out.element("properties").put("name", property.name()).put("enum", values(property));
             }
         }
-        if (!block.traits().isEmpty()) {
+        // Without the enabled_states this version's client adds no well-defined states for (reported): the palette's states of
+        // the block leave them out too (TraitStates)
+        java.util.List<BlockTrait> traits = new java.util.ArrayList<>();
+        for (BlockTrait trait : block.traits()) {
+            BlockTrait sent = TraitStates.supported(trait, ctx);
+            if (sent != null) {
+                traits.add(sent);
+            }
+        }
+        if (!traits.isEmpty()) {
             out.list("traits");
-            for (BlockTrait trait : block.traits()) {
+            for (BlockTrait trait : traits) {
                 TraitWire.write(trait, ctx, out.element("traits"));
             }
         }

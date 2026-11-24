@@ -79,7 +79,7 @@ final class ApiModel {
      */
     Integer firstCustomBlockId;
     Integer blockItemIdPlusBlockId;
-    /** {@code mappings.json} {@code traitStates}: trait -> enabled_states value -> the states it adds. */
+    /** {@code mappings.json} {@code traitStates}: trait -> enabled_states value -> per protocol window the states it adds, or why none. */
     JsonObject traitStates = new JsonObject();
 
 

@@ -72,8 +72,8 @@ final class CaptureCommands {
             System.out.printf("Captured: %d block properties, %d items, %d creative groups, %d creative items, packets %s%n",
                 result.startGame.getBlockProperties().size(), result.items.size(), result.creative.getGroups().size(),
                 result.creative.getContents().size(), result.packetCounts);
-            CaptureWriter writer = new CaptureWriter(result, BundledFiles.bundled(reference), bdsVersion, platform())
-                .withProtocol(codec.getProtocolVersion(), wanted);
+            CaptureWriter writer = new CaptureWriter(result, BundledFiles.bundled(reference), bdsVersion, platform(), codec.getProtocolVersion())
+                .withCodecProtocol(wanted);
             writer.write(out, customOut);
             System.out.println("Wrote " + out + (writer.unresolvedHashes() > 0
                 ? "; WARNING: " + writer.unresolvedHashes() + " creative block ids do not match any palette hash" : "; all creative block ids match palette hashes"));
