@@ -14,6 +14,8 @@ import java.util.Objects;
 public record Origin(@Nullable String layer) {
     /**
      * Content of the vanilla data.
+     *
+     * @since 1.0.0
      */
     public static final Origin VANILLA = new Origin(null);
 

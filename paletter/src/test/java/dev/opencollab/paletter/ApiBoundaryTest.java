@@ -165,6 +165,53 @@ class ApiBoundaryTest {
         assertTrue(missing.isEmpty(), "Exported types without @since in their javadoc:\n  " + String.join("\n  ", missing));
     }
 
+    /**
+     * Hand-written files whose members do not document {@code @since} yet: they are being reworked elsewhere and get it
+     * there. Remove a file once it is done; do not add one.
+     */
+    private static final Set<String> MEMBERS_WITHOUT_SINCE = Set.of(
+        "Fallbacks", "block/BlockFallback", "block/BlockHashes", "block/BlockProperty", "block/BlockRegistry",
+        "block/CustomBlock", "block/RegisteredBlock", "block/RegisteredBlockState", "block/VoxelShape", "block/VoxelShapes",
+        "block/component/OnPlayerPlacing", "block/component/ScriptHooks", "creative/CreativeCategory",
+        "creative/CreativeContent", "creative/CreativeEditor", "creative/CreativeGroup", "creative/CreativeLayout",
+        "creative/Placements", "item/BedrockItemStack", "item/CustomItem", "item/ItemFallback", "item/ItemOverride",
+        "item/ItemRegistry", "item/RegisteredItem", "item/component/FrameCount", "item/component/MiningSpeed",
+        "item/component/RenderOffsets", "item/component/UseOnHook", "vanilla/BedrockBlockState", "vanilla/BedrockBlockType",
+        "vanilla/BedrockItemType", "vanilla/BedrockItemVariant", "vanilla/BedrockState", "vanilla/BoolState",
+        "vanilla/EnumState", "vanilla/IntState", "vanilla/StringState");
+
+    /** A Javadoc comment, the annotations after it, and the public or protected declaration it documents. */
+    private static final Pattern MEMBER = Pattern.compile(
+        "/\\*\\*(.*?)\\*/\\s*((?:@[\\w.]+(?:\\([^)]*\\))?\\s*)*)(?:public|protected)\\s+([^;{=]*)", Pattern.DOTALL);
+
+    /**
+     * Every public member of the hand-written API says since when it exists (docs/api.md "Evolution"); a member added to
+     * a type after its first release must not seem as old as the type. Generated sources are not checked here.
+     */
+    @Test
+    void everyHandWrittenMemberDocumentsSince() throws IOException {
+        Path root = Path.of("src/main/java").resolve(ROOT.replace('.', '/'));
+        List<String> missing = new ArrayList<>();
+        try (Stream<Path> files = Files.walk(root)) {
+            for (Path file : files.filter(f -> f.toString().endsWith(".java")).toList()) {
+                String relative = root.relativize(file).toString().replace('\\', '/').replaceAll("\\.java$", "");
+                if (relative.startsWith("internal/") || relative.endsWith("package-info") || MEMBERS_WITHOUT_SINCE.contains(relative)) {
+                    continue;
+                }
+                Matcher matcher = MEMBER.matcher(Files.readString(file, StandardCharsets.UTF_8));
+                while (matcher.find()) {
+                    String declaration = matcher.group(3);
+                    boolean type = Pattern.compile("\\b(class|interface|record|enum|@interface)\\b").matcher(declaration.split("\\(")[0]).find();
+                    String annotations = matcher.group(2);
+                    if (!type && !annotations.contains("Internal") && !annotations.contains("Override") && !matcher.group(1).contains("@since")) {
+                        missing.add(relative + ": " + declaration.strip());
+                    }
+                }
+            }
+        }
+        assertTrue(missing.isEmpty(), "Public members without @since in their javadoc:\n  " + String.join("\n  ", missing));
+    }
+
     private static int indexOfDeclaration(String text, String simpleName) {
         Matcher matcher = Pattern.compile("^public .*\\b(class|interface|record|enum|@interface) " + Pattern.quote(simpleName) + "\\b",
             Pattern.MULTILINE).matcher(text);

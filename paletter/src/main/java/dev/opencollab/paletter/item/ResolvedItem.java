@@ -38,6 +38,7 @@ public final class ResolvedItem {
      * The item definition this resolution sends.
      *
      * @return the item definition
+     * @since 1.0.0
      */
     public @NonNull RegisteredItem definition() {
         return definition;
@@ -47,6 +48,7 @@ public final class ResolvedItem {
      * The aux value to send.
      *
      * @return the aux value to send (the {@code damage} of the {@code ItemData})
+     * @since 1.0.0
      */
     public int aux() {
         return aux;
@@ -56,6 +58,7 @@ public final class ResolvedItem {
      * The block the item is sent with.
      *
      * @return the block to send, or null
+     * @since 1.0.0
      */
     public @Nullable RegisteredBlockState block() {
         return block;
@@ -77,6 +80,7 @@ public final class ResolvedItem {
      *
      * @return true if an {@code ItemFallback} or the default fallback item was used ({@link #kind()} is {@code FALLBACK}
      *         or {@code DEFAULT}): the variant has no item of its own in this version, or is forcibly replaced
+     * @since 1.0.0
      */
     public boolean fallback() {
         return kind.isReplacement();

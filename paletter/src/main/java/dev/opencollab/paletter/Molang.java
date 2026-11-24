@@ -15,10 +15,10 @@ import java.util.Objects;
  * @since 1.0.0
  */
 public final class Molang {
-    /** The lowest version the captures tried: BDS takes {@code -1}; lower ones were never tried. */
-    public static final int MIN_VERSION = -1;
-    /** The highest version the captures tried. */
-    public static final int MAX_VERSION = 100;
+    /** See {@link #minVersion()}; not a public constant, so a later release can change it without recompiling users. */
+    private static final int MIN_VERSION = -1;
+    /** See {@link #maxVersion()}. */
+    private static final int MAX_VERSION = 100;
 
     private final String expression;
     private final @Nullable Integer version;
@@ -33,10 +33,33 @@ public final class Molang {
     }
 
     /**
+     * The lowest Molang version {@link #of(String, int)} takes: the lowest the captures tried (BDS takes {@code -1};
+     * lower ones were never tried). A later release may lower it.
+     *
+     * @return the lowest version
+     * @since 1.0.0
+     */
+    public static int minVersion() {
+        return MIN_VERSION;
+    }
+
+    /**
+     * The highest Molang version {@link #of(String, int)} takes: the highest the captures tried. A later release may
+     * raise it.
+     *
+     * @return the highest version
+     * @since 1.0.0
+     */
+    public static int maxVersion() {
+        return MAX_VERSION;
+    }
+
+    /**
      * An expression without a version: the field's default version.
      *
      * @param expression the expression as add-on JSON writes it
      * @return the expression
+     * @since 1.0.0
      */
     public static @NonNull Molang of(@NonNull String expression) {
         return new Molang(expression, null);
@@ -46,9 +69,10 @@ public final class Molang {
      * An expression with the Molang version it is written for.
      *
      * @param expression the expression as add-on JSON writes it
-     * @param version    the Molang version, {@value #MIN_VERSION} to {@value #MAX_VERSION}
+     * @param version    the Molang version, {@link #minVersion()} to {@link #maxVersion()}
      * @return the expression
      * @throws IllegalArgumentException if the version is outside that range
+     * @since 1.0.0
      */
     public static @NonNull Molang of(@NonNull String expression, int version) {
         return new Molang(expression, version);
@@ -58,6 +82,7 @@ public final class Molang {
      * Returns the expression.
      *
      * @return the expression as add-on JSON writes it
+     * @since 1.0.0
      */
     public @NonNull String expression() {
         return expression;
@@ -67,6 +92,7 @@ public final class Molang {
      * Returns the version.
      *
      * @return the Molang version, or null for the field's default
+     * @since 1.0.0
      */
     public @Nullable Integer version() {
         return version;

@@ -264,6 +264,7 @@ public final class PaletteReport {
      * Returns the data version of the palette this report belongs to.
      *
      * @return the data version
+     * @since 1.0.0
      */
     public @NonNull DataVersion version() {
         return version;
@@ -276,6 +277,7 @@ public final class PaletteReport {
      * them; the one-entry notes handed to the {@code reports} consumer have none.
      *
      * @return the blocks of the newest canonical set that are missing, in canonical order
+     * @since 1.0.0
      */
     public @NonNull Set<BedrockBlockType> unknownBlocks() {
         return unknownBlocks;
@@ -288,6 +290,7 @@ public final class PaletteReport {
      * {@code reports} consumer have none.
      *
      * @return the item variants of the newest canonical set that are missing, in canonical order
+     * @since 1.0.0
      */
     public @NonNull Set<BedrockItemVariant> unknownItems() {
         return unknownItems;
@@ -297,6 +300,7 @@ public final class PaletteReport {
      * Lists all entries.
      *
      * @return all entries, in the order they happened
+     * @since 1.0.0
      */
     public @NonNull List<Entry> entries() {
         return entries;
@@ -306,6 +310,7 @@ public final class PaletteReport {
      * Lists the entries of level {@link Level#WARNING}.
      *
      * @return the warnings, in the order they happened
+     * @since 1.0.0
      */
     public @NonNull List<Entry> warnings() {
         return entries.stream().filter(entry -> entry.level() == Level.WARNING).toList();

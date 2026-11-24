@@ -41,6 +41,7 @@ public final class ItemValues {
      * The item these values are of.
      *
      * @return the registered item (the definition sent to the client) these values are of
+     * @since 1.0.0
      */
     public @NonNull RegisteredItem item() {
         return behaviour.itemAt(index);
@@ -52,6 +53,7 @@ public final class ItemValues {
      * @param key a float key of items
      * @return the value
      * @throws IllegalStateException if no value is known
+     * @since 1.0.0
      */
     public float get(@NonNull FloatKey<ItemValues> key) {
         Column column = behaviour.itemColumn(key);
@@ -67,6 +69,7 @@ public final class ItemValues {
      * @param key an int key of items
      * @return the value
      * @throws IllegalStateException if no value is known
+     * @since 1.0.0
      */
     public int get(@NonNull IntKey<ItemValues> key) {
         Column column = behaviour.itemColumn(key);
@@ -82,6 +85,7 @@ public final class ItemValues {
      * @param key a boolean key of items
      * @return the value
      * @throws IllegalStateException if no value is known
+     * @since 1.0.0
      */
     public boolean get(@NonNull BooleanKey<ItemValues> key) {
         Column column = behaviour.itemColumn(key);
@@ -98,6 +102,7 @@ public final class ItemValues {
      * @param key an object key of items
      * @return the value, never null
      * @throws IllegalStateException if no value is known
+     * @since 1.0.0
      */
     @SuppressWarnings("unchecked")
     public <T> @NonNull T get(@NonNull ObjectKey<ItemValues, T> key) {
@@ -114,6 +119,7 @@ public final class ItemValues {
      * @param key a float key of items
      * @param fallback what to return if no value is known
      * @return the value, or {@code fallback} if no value is known
+     * @since 1.0.0
      */
     public float getOrElse(@NonNull FloatKey<ItemValues> key, float fallback) {
         Column column = behaviour.itemColumn(key);
@@ -126,6 +132,7 @@ public final class ItemValues {
      * @param key an int key of items
      * @param fallback what to return if no value is known
      * @return the value, or {@code fallback} if no value is known
+     * @since 1.0.0
      */
     public int getOrElse(@NonNull IntKey<ItemValues> key, int fallback) {
         Column column = behaviour.itemColumn(key);
@@ -138,6 +145,7 @@ public final class ItemValues {
      * @param key a boolean key of items
      * @param fallback what to return if no value is known
      * @return the value, or {@code fallback} if no value is known
+     * @since 1.0.0
      */
     public boolean getOrElse(@NonNull BooleanKey<ItemValues> key, boolean fallback) {
         Column column = behaviour.itemColumn(key);
@@ -151,6 +159,7 @@ public final class ItemValues {
      * @param key an object key of items
      * @param fallback what to return if no value is known; may be null
      * @return the value, or {@code fallback} if no value is known
+     * @since 1.0.0
      */
     @SuppressWarnings("unchecked")
     public <T> T getOrElse(@NonNull ObjectKey<ItemValues, T> key, T fallback) {
@@ -180,6 +189,7 @@ public final class ItemValues {
      * @param key the key to explain, of items
      * @return the explanation
      * @throws IllegalArgumentException if the key is not an item key
+     * @since 1.0.0
      */
     public @NonNull String explain(@NonNull BehaviourKey<?> key) {
         return behaviour.explain(item(), key);

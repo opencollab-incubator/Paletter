@@ -63,11 +63,11 @@ public enum dev.opencollab.paletter.Lookup {
 }
 
 public final class dev.opencollab.paletter.Molang {
-    public static final int MAX_VERSION = 100
-    public static final int MIN_VERSION = -1
     public boolean equals(java.lang.Object)
     public java.lang.String expression()
     public int hashCode()
+    public static int maxVersion()
+    public static int minVersion()
     public static dev.opencollab.paletter.Molang of(java.lang.String)
     public static dev.opencollab.paletter.Molang of(java.lang.String, int)
     public java.lang.String toString()

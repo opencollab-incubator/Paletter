@@ -41,6 +41,7 @@ public final class BlockValues {
      * The block these values are of.
      *
      * @return the registered block state (the definition sent to the client) these values are of
+     * @since 1.0.0
      */
     public @NonNull RegisteredBlockState state() {
         return behaviour.stateAt(index);
@@ -52,6 +53,7 @@ public final class BlockValues {
      * @param key a float key of blocks
      * @return the value
      * @throws IllegalStateException if no value is known
+     * @since 1.0.0
      */
     public float get(@NonNull FloatKey<BlockValues> key) {
         Column column = behaviour.blockColumn(key);
@@ -67,6 +69,7 @@ public final class BlockValues {
      * @param key an int key of blocks
      * @return the value
      * @throws IllegalStateException if no value is known
+     * @since 1.0.0
      */
     public int get(@NonNull IntKey<BlockValues> key) {
         Column column = behaviour.blockColumn(key);
@@ -82,6 +85,7 @@ public final class BlockValues {
      * @param key a boolean key of blocks
      * @return the value
      * @throws IllegalStateException if no value is known
+     * @since 1.0.0
      */
     public boolean get(@NonNull BooleanKey<BlockValues> key) {
         Column column = behaviour.blockColumn(key);
@@ -98,6 +102,7 @@ public final class BlockValues {
      * @param key an object key of blocks
      * @return the value, never null
      * @throws IllegalStateException if no value is known
+     * @since 1.0.0
      */
     @SuppressWarnings("unchecked")
     public <T> @NonNull T get(@NonNull ObjectKey<BlockValues, T> key) {
@@ -114,6 +119,7 @@ public final class BlockValues {
      * @param key a float key of blocks
      * @param fallback what to return if no value is known
      * @return the value, or {@code fallback} if no value is known
+     * @since 1.0.0
      */
     public float getOrElse(@NonNull FloatKey<BlockValues> key, float fallback) {
         Column column = behaviour.blockColumn(key);
@@ -126,6 +132,7 @@ public final class BlockValues {
      * @param key an int key of blocks
      * @param fallback what to return if no value is known
      * @return the value, or {@code fallback} if no value is known
+     * @since 1.0.0
      */
     public int getOrElse(@NonNull IntKey<BlockValues> key, int fallback) {
         Column column = behaviour.blockColumn(key);
@@ -138,6 +145,7 @@ public final class BlockValues {
      * @param key a boolean key of blocks
      * @param fallback what to return if no value is known
      * @return the value, or {@code fallback} if no value is known
+     * @since 1.0.0
      */
     public boolean getOrElse(@NonNull BooleanKey<BlockValues> key, boolean fallback) {
         Column column = behaviour.blockColumn(key);
@@ -151,6 +159,7 @@ public final class BlockValues {
      * @param key an object key of blocks
      * @param fallback what to return if no value is known; may be null
      * @return the value, or {@code fallback} if no value is known
+     * @since 1.0.0
      */
     @SuppressWarnings("unchecked")
     public <T> T getOrElse(@NonNull ObjectKey<BlockValues, T> key, T fallback) {
@@ -180,6 +189,7 @@ public final class BlockValues {
      * @param key the key to explain, of blocks
      * @return the explanation
      * @throws IllegalArgumentException if the key is not a block key
+     * @since 1.0.0
      */
     public @NonNull String explain(@NonNull BehaviourKey<?> key) {
         return behaviour.explain(state(), key);

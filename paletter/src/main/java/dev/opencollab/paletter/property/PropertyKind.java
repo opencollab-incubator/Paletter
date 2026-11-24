@@ -23,6 +23,7 @@ public enum PropertyKind {
      * The prefix of full names of this kind.
      *
      * @return the prefix of {@link Property#fullName()}, including the colon
+     * @since 1.0.0
      */
     public @NonNull String prefix() {
         return prefix;

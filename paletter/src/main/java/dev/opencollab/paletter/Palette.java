@@ -1233,6 +1233,7 @@ public final class Palette {
      * @param layer the layer to add
      * @return the palette with the layer
      * @throws PaletteException if the layer cannot be compiled
+     * @since 1.0.0
      */
     public @NonNull Palette extend(@NonNull PaletteLayer layer) {
         synchronized (extensions) {

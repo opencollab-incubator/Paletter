@@ -753,6 +753,7 @@ public final class Paletter {
          *
          * @param source where the vanilla data comes from; default the data bundled in the library
          * @return this builder
+         * @since 1.0.0
          */
         public @NonNull Builder data(@NonNull PaletteDataSource source) {
             this.source = Objects.requireNonNull(source);
@@ -767,6 +768,7 @@ public final class Paletter {
          * @param versions which data versions are served; default all. It must accept at least one, or {@link #build()}
          *                 throws {@link IllegalArgumentException}
          * @return this builder
+         * @since 1.0.0
          */
         public @NonNull Builder versions(@NonNull Predicate<DataVersion> versions) {
             this.versions = Objects.requireNonNull(versions);
@@ -781,6 +783,7 @@ public final class Paletter {
          *
          * @param previews whether preview data is served; default {@code false}
          * @return this builder
+         * @since 1.0.0
          */
         public @NonNull Builder previews(boolean previews) {
             this.previews = previews;
@@ -792,6 +795,7 @@ public final class Paletter {
          *
          * @param fallbacks the fallbacks; default {@link Fallbacks#UNKNOWN}
          * @return this builder
+         * @since 1.0.0
          */
         public @NonNull Builder fallbacks(@NonNull Fallbacks fallbacks) {
             this.fallbacks = Objects.requireNonNull(fallbacks);
@@ -812,6 +816,7 @@ public final class Paletter {
          *
          * @param toggles the toggle ids, as BDS names them
          * @return this builder
+         * @since 1.0.0
          */
         public @NonNull Builder experiments(@NonNull String... toggles) {
             vanillaContent.experiments(toggles);
@@ -827,6 +832,7 @@ public final class Paletter {
          * @param version the data version
          * @param toggles the toggle ids, as BDS names them
          * @return this builder
+         * @since 1.0.0
          */
         public @NonNull Builder experiments(@NonNull DataVersion version, @NonNull String... toggles) {
             vanillaContent.experiments(Objects.requireNonNull(version), toggles);
@@ -841,6 +847,7 @@ public final class Paletter {
          * shape experiment is enabled only by naming it: {@code experiments("voxel_shapes")}.
          *
          * @return this builder
+         * @since 1.0.0
          */
         public @NonNull Builder allExperiments() {
             vanillaContent.allExperiments();
@@ -853,6 +860,7 @@ public final class Paletter {
          *
          * @param items the vanilla item types to remove
          * @return this builder
+         * @since 1.0.0
          */
         public @NonNull Builder removeItems(@NonNull BedrockItemType... items) {
             vanillaContent.remove(items);
@@ -866,6 +874,7 @@ public final class Paletter {
          *                 inventory; {@link CreativeOrdering#BDS} (the default) puts them exactly where BDS puts
          *                 add-on content
          * @return this builder
+         * @since 1.0.0
          */
         public @NonNull Builder creativeOrdering(@NonNull CreativeOrdering ordering) {
             this.creativeOrdering = Objects.requireNonNull(ordering);
@@ -921,6 +930,7 @@ public final class Paletter {
          *
          * @param layer the layer to add
          * @return this builder
+         * @since 1.0.0
          */
         public @NonNull Builder layer(@NonNull PaletteLayer layer) {
             layers.add(Objects.requireNonNull(layer));
@@ -935,6 +945,7 @@ public final class Paletter {
          *
          * @param behaviour whether behaviour values are loaded; default {@code true}
          * @return this builder
+         * @since 1.0.0
          */
         public @NonNull Builder behaviour(boolean behaviour) {
             this.behaviour = behaviour;
@@ -956,6 +967,7 @@ public final class Paletter {
          * @throws PaletteException if a layer cannot be compiled: the first version's failure, after the palettes that
          *                          compiled were reported
          * @throws java.io.UncheckedIOException if the data source cannot be read
+         * @since 1.0.0
          */
         public @NonNull Paletter build() {
             Paletter paletter = new Paletter(this);

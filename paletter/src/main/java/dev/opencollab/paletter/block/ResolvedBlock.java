@@ -40,6 +40,7 @@ public final class ResolvedBlock {
      * The block this resolution sends.
      *
      * @return the block to send, with its fallbacks applied, see {@link dev.opencollab.paletter.Palette#blockDefinition(dev.opencollab.paletter.vanilla.BedrockBlockState)}
+     * @since 1.0.0
      */
     public @NonNull RegisteredBlockState definition() {
         return definition;
@@ -74,6 +75,7 @@ public final class ResolvedBlock {
      * The behaviour of the block sent.
      *
      * @return the behaviour values (friction, destroy time, collision shape, ...) of {@link #definition()} in the palette that resolved it
+     * @since 1.0.0
      */
     public @NonNull BlockValues behaviour() {
         return behaviour;

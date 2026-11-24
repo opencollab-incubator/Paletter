@@ -69,7 +69,8 @@ changes visible:
   commit the file.
 - `:paletter:apiCompat` runs japicmp against the release named in `paletter/api/released.version`. The file does not
   exist yet, so the check is skipped.
-- `ApiBoundaryTest` checks that no exported signature uses an internal type and that every exported type has `@since`.
+- `ApiBoundaryTest` checks that no exported signature uses an internal type, that every exported type has `@since`, and
+  that every public member of the hand-written API has one too (a member added later names its own release).
 
 The jar declares `Automatic-Module-Name: dev.opencollab.paletter`. `module-info.java` is compiled to check the exports but
 is not packaged, because Cloudburst's dependencies split packages across jars.

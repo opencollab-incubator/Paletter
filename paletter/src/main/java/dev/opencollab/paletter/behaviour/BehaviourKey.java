@@ -45,7 +45,8 @@ public abstract sealed class BehaviourKey<T> permits FloatKey, IntKey, BooleanKe
      * The name of the key.
      *
      * @return the name, unique per owner and the key of the bundled data, e.g. {@code friction}
-     */
+         * @since 1.0.0
+         */
     public @NonNull String name() {
         return name;
     }
@@ -54,6 +55,7 @@ public abstract sealed class BehaviourKey<T> permits FloatKey, IntKey, BooleanKe
      * Whose property the key is.
      *
      * @return whether this is a block or an item key
+     * @since 1.0.0
      */
     public @NonNull Owner owner() {
         return owner;
@@ -63,6 +65,7 @@ public abstract sealed class BehaviourKey<T> permits FloatKey, IntKey, BooleanKe
      * The type of the values of the key.
      *
      * @return the class of the value type: {@link Float}, {@link Integer}, {@link Boolean}, {@link String} or {@link BlockShape}
+     * @since 1.0.0
      */
     public @NonNull Class<T> type() {
         return type;

@@ -16,7 +16,11 @@ import java.util.Map;
  * @since 1.0.0
  */
 public final class Properties {
-    /** No properties. */
+    /**
+     * No properties.
+     *
+     * @since 1.0.0
+     */
     public static final Properties EMPTY = new Properties(Map.of());
 
     private final Map<String, Property> byName;
@@ -31,6 +35,7 @@ public final class Properties {
      * @param properties the properties, in the order {@link #all()} returns them
      * @return the properties
      * @throws IllegalArgumentException if two properties have the same {@link Property#fullName()}
+     * @since 1.0.0
      */
     public static @NonNull Properties of(@NonNull Collection<Property> properties) {
         if (properties.isEmpty()) {
@@ -51,6 +56,7 @@ public final class Properties {
      * @param kind the kind of the property
      * @param name the name within the kind, e.g. {@code minecraft:max_stack_size} for a component
      * @return the property, or null if there is none
+     * @since 1.0.0
      */
     public @Nullable Property get(@NonNull PropertyKind kind, @NonNull String name) {
         return byName.get(kind.prefix() + name);
@@ -61,6 +67,7 @@ public final class Properties {
      *
      * @param name the component name, e.g. {@code minecraft:max_stack_size}
      * @return the value of a component property if it is a compound, or null
+     * @since 1.0.0
      */
     public @Nullable NbtMap component(@NonNull String name) {
         Property property = get(PropertyKind.COMPONENT, name);
@@ -71,6 +78,7 @@ public final class Properties {
      * All properties.
      *
      * @return all properties
+     * @since 1.0.0
      */
     public @NonNull List<Property> all() {
         return List.copyOf(byName.values());
@@ -81,6 +89,7 @@ public final class Properties {
      *
      * @param kind the kind to select
      * @return the properties of one kind
+     * @since 1.0.0
      */
     public @NonNull List<Property> of(@NonNull PropertyKind kind) {
         List<Property> result = new ArrayList<>();
@@ -96,6 +105,7 @@ public final class Properties {
      * Whether there are no properties.
      *
      * @return true if there are no properties
+     * @since 1.0.0
      */
     public boolean isEmpty() {
         return byName.isEmpty();

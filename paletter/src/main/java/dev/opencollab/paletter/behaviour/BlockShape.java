@@ -15,10 +15,14 @@ import java.util.List;
 public record BlockShape(@NonNull List<Box> boxes) {
     /**
      * No boxes: a shape without collision.
+     *
+     * @since 1.0.0
      */
     public static final BlockShape EMPTY = new BlockShape(List.of());
     /**
      * One box that fills the whole block.
+     *
+     * @since 1.0.0
      */
     public static final BlockShape FULL_CUBE = new BlockShape(List.of(new Box(0, 0, 0, 1, 1, 1)));
 
@@ -26,6 +30,7 @@ public record BlockShape(@NonNull List<Box> boxes) {
      * Creates a shape.
      *
      * @throws NullPointerException if {@code boxes} or one of its elements is null
+     * @since 1.0.0
      */
     public BlockShape {
         boxes = List.copyOf(boxes);
@@ -37,6 +42,7 @@ public record BlockShape(@NonNull List<Box> boxes) {
      * @param coordinates six floats per box: {@code minX, minY, minZ, maxX, maxY, maxZ}
      * @return the shape; empty if there are no coordinates
      * @throws IllegalArgumentException if the number of coordinates is not a multiple of six
+     * @since 1.0.0
      */
     public static @NonNull BlockShape of(float @NonNull ... coordinates) {
         if (coordinates.length % 6 != 0) {
@@ -55,6 +61,7 @@ public record BlockShape(@NonNull List<Box> boxes) {
      * Whether the shape has no boxes.
      *
      * @return true if there are no boxes
+     * @since 1.0.0
      */
     public boolean isEmpty() {
         return boxes.isEmpty();
@@ -64,6 +71,7 @@ public record BlockShape(@NonNull List<Box> boxes) {
      * Returns the boxes as raw coordinates.
      *
      * @return the coordinates, six per box, as {@link #of(float...)} takes them
+     * @since 1.0.0
      */
     public float @NonNull [] coordinates() {
         float[] coordinates = new float[boxes.size() * 6];
