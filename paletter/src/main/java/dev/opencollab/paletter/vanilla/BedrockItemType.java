@@ -15,8 +15,8 @@ import java.util.Objects;
  * A Bedrock item type. Vanilla types are the constants of {@link BedrockItems}; a {@link CustomItem} (and the item of a
  * {@link dev.opencollab.paletter.block.CustomBlock}) has one too, so both are used alike:
  * <pre>{@code
- * ItemData apple = palette.item(BedrockItems.APPLE).toItemData().count(3).build();
- * ItemData potion = palette.item(BedrockItems.POTION.variant(5)).toItemData().build();
+ * ItemData apples = palette.encode(BedrockItemStack.of(BedrockItems.APPLE, 3));
+ * ItemData potion = palette.encode(BedrockItemStack.of(BedrockItems.POTION.variant(5)));
  * }</pre>
  * A type is an {@link ItemKey} for its base variant, so it can be passed to the methods that take a variant. Items whose
  * variants differ by aux value (potions, banners, goat horns, ...) expose them with {@link #variant(int)}.
@@ -296,11 +296,13 @@ public final class BedrockItemType implements ItemKey {
 
     /**
      * The variant of this type with an aux value, never null, and always of this type (also for a type that is not
-     * {@link #isAvailable() available}: it resolves like any variant of it). The named constants of
-     * {@link BedrockItemVariants} and the variants the bundled data lists are the same instance every time, so {@code ==}
-     * holds for them whenever the key was made. An aux nobody named gives a new variant without a canonical id (a layer can
-     * give it one with {@link dev.opencollab.paletter.PaletteLayer.Builder#variant(ItemKey)}); those are not kept, so
-     * arbitrary auxes cannot grow memory. Loads no bundled data: only the constants of {@link BedrockItemVariants}.
+     * {@link #isAvailable() available}: it resolves like any variant of it). The base variant and the named constants of
+     * {@link BedrockItemVariants} are the same instance every time, so {@code ==} holds for them whenever the key was
+     * made. Any other aux gives a new variant until the bundled data is loaded; after that, the other variants the data
+     * lists are its instances. Compare those with {@code equals}, which always works. An aux nobody named gives a new
+     * variant without a canonical id (a layer can give it one with
+     * {@link dev.opencollab.paletter.PaletteLayer.Builder#variant(ItemKey)}); those are not kept, so arbitrary auxes cannot
+     * grow memory. Loads no bundled data: only the constants of {@link BedrockItemVariants}.
      *
      * @param aux the aux value
      * @return the variant of this type with this aux value

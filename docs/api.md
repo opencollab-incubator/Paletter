@@ -148,14 +148,15 @@ Annotations describe where Bedrock has something; `@Deprecated` and the Paletter
 | Event | Java API | Runtime |
 |---|---|---|
 | Content appears in a preview | `@SincePreview("26.70")`, outside the promise | served only with `previews(true)` |
-| It ships in a release | `@SincePreview` goes, `@BedrockSince("26.70")` where older bundled versions lack it | served from 26.70 |
-| Bedrock removes or renames it | `@Deprecated` and `@BedrockUntil("26.90")` (a renamed field: a delegate, a renamed component: `@ReplacedBy`) | older palettes still serve it; newer ones leave it out (or resolve a constant to unknown) with a report warning |
+| It ships in a release | `@SincePreview` goes, `@BedrockSince("26.70")` where older bundled versions lack it (a vanilla constant: the Javadoc line `First in Bedrock 26.70`) | served from 26.70 |
+| Bedrock removes or renames it | `@Deprecated` and `@BedrockUntil("26.90")` (a renamed field: a delegate, a renamed component: `@ReplacedBy`; a vanilla constant: `@Deprecated` only, a renamed one an alias) | older palettes still serve it; newer ones leave it out (or resolve a constant through the fallbacks) with a report warning |
 | It leaves the component model (no bundled version has it) | `@Deprecated(forRemoval = true)` stand-in: a field returns its default and ignores its setter, a component keeps its class with such fields | every palette leaves a stand-in component out with a report warning |
 | The last bundled version that has it is retired | `@Deprecated(forRemoval = true)` | as above |
 | Next major Paletter release | removed | - |
 
-`@BedrockUntil` annotates constants, components (generated for a component BDS rejects from a bundled version on) and
-members. Setting `forRemoval` when the last bundled version that has the content is retired is a follow-up: a `tools
+`@BedrockUntil` annotates the experiment constants, components (generated for a component BDS rejects from a bundled
+version on) and members. The block and item constants carry neither annotation: their Javadoc names the first Bedrock
+release, and `@Deprecated(since)` the Paletter version that saw them go. Setting `forRemoval` when the last bundled version that has the content is retired is a follow-up: a `tools
 retire` command will do it, so users get a `javac` warning at every use well before the major release. Until then it is
 set by hand.
 
@@ -282,7 +283,8 @@ An `ItemKey` is a `BedrockItemType` or a `BedrockItemVariant`, and the methods t
 an aux, never null (an aux the data does not name gives a plain variant without a canonical id). A key is a type and an
 aux, so creating or using one loads no bundled data, and a key made before any palette resolves exactly like one made
 after. The base variant and the named constants of `BedrockItemVariants` are the same object whenever they are asked for,
-so `==` holds for them; other auxes are new variants, compare those with `equals`. An `ItemKey` always means exactly that
+so `==` holds for them; other auxes are new variants until the data is loaded (then the data's own for the auxes it
+lists), so compare those with `equals`. An `ItemKey` always means exactly that
 variant, and a type means aux 0, in every method that takes one (`ItemFallback.of`, `ItemMatcher.of`,
 `CreativePlacement.after` too); where a type means every aux, the name says so (`ItemMatcher.anyVariantOf`,
 `CreativePlacement.afterAnyVariantOf`). Keys for an identifier are made with `Palette#itemType` and
