@@ -156,7 +156,7 @@ final class TypeBuilder {
 
     static boolean isScalar(String type) {
         return switch (type) {
-            case "string", "boolean", "integer", "number" -> true;
+            case "string", "boolean", "integer", "number", "molang" -> true;
             default -> false;
         };
     }
@@ -249,6 +249,8 @@ final class TypeBuilder {
             case "boolean" -> new Scalar(ScalarKind.BOOL);
             case "integer" -> new Scalar(ScalarKind.INT);
             case "number" -> new Scalar(ScalarKind.FLOAT);
+            // a Molang expression with its optional version: an api.json type of a string field, never the docs'
+            case "molang" -> new ApiModel.MolangRef();
             case "string" -> {
                 if (enumValues.isEmpty()) {
                     yield new Scalar(ScalarKind.STRING);

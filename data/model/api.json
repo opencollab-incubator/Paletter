@@ -63,9 +63,9 @@
   "types": {
     "block:minecraft:flammable:lava_flammable": "boolean",
     "block:minecraft:map_color:color": "string",
-    "block:minecraft:geometry:bone_visibility": "map<string>",
-    "block:minecraft:embedded_visual:geometry.bone_visibility": "map<string>",
-    "block:minecraft:item_visual:geometry.bone_visibility": "map<string>",
+    "block:minecraft:geometry:bone_visibility": "map<molang>",
+    "block:minecraft:embedded_visual:geometry.bone_visibility": "map<molang>",
+    "block:minecraft:item_visual:geometry.bone_visibility": "map<molang>",
     "block:minecraft:embedded_visual:material_instances": "component:MaterialInstances",
     "block:minecraft:item_visual:material_instances": "component:MaterialInstances",
     "block:minecraft:liquid_detection:detection_rules[].stops_liquid_flowing_from_direction": "array<string>",
@@ -184,7 +184,7 @@
       "name": "RepairAmount",
       "variants": {
         "number": {"name": "Fixed", "doc": "a fixed amount of durability"},
-        "string": {"name": "Expression", "doc": "a Molang expression for the amount"}
+        "string": {"name": "Expression", "doc": "a Molang expression for the amount", "type": "molang"}
       }
     },
     "item:minecraft:repairable:repair_items[].items": {

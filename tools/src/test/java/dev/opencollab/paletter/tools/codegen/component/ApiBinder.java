@@ -5,6 +5,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonNull;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
+import dev.opencollab.paletter.Molang;
 import dev.opencollab.paletter.block.BlockProperty;
 import dev.opencollab.paletter.block.CustomBlock;
 import dev.opencollab.paletter.block.component.BlockComponent;
@@ -46,8 +47,8 @@ import java.util.Set;
  * <li>an empty list for an object is that object with nothing set;</li>
  * <li>the JSON constants {@code true} and {@code false} where a Molang expression (a string) is taken are the strings
  * {@code "true"} and {@code "false"}, and a number there is its text;</li>
- * <li>a Molang expression object {@code {expression, version}} is its expression (1.26.36.1 sends the version too, a pending
- * decision of docs/data-pipeline.md);</li>
+ * <li>a Molang expression ({@code dev.opencollab.paletter.Molang}) is its string (a JSON constant in a map as its text, as
+ * above), or the object {@code {expression, version}} with its version;</li>
  * <li>a vector object with some axes has the others from the field's default, or 0 for 1.26.63.1;</li>
  * <li>a descriptor that names nothing, for a required name, is the empty name;</li>
  * <li>{@code "always"} and {@code "never"} for a boolean are true and false (flammable {@code lava_flammable}).</li>
@@ -424,8 +425,26 @@ public final class ApiBinder {
             }
             return value.getAsFloat();
         }
+        if (raw == Molang.class) {
+            // the string, or the object {expression, version}
+            if (value.isJsonPrimitive() && value.getAsJsonPrimitive().isString()) {
+                return Molang.of(value.getAsString());
+            }
+            if (!value.isJsonObject() || !value.getAsJsonObject().has("expression") || !value.getAsJsonObject().get("expression").isJsonPrimitive()) {
+                throw new Unbindable("not a Molang expression");
+            }
+            JsonObject o = value.getAsJsonObject();
+            if (!o.has("version")) {
+                return Molang.of(o.get("expression").getAsString());
+            }
+            JsonElement version = o.get("version");
+            if (!version.isJsonPrimitive() || !version.getAsJsonPrimitive().isNumber() || version.getAsDouble() != Math.rint(version.getAsDouble())) {
+                throw new Unbindable("a Molang version that is no integer: " + version);
+            }
+            return Molang.of(o.get("expression").getAsString(), version.getAsInt());
+        }
         if (raw == String.class) {
-            // a Molang expression object is its expression (its version is a pending decision: docs/data-pipeline.md)
+            // a Molang expression object where the API takes a plain string is its expression
             if (value.isJsonObject() && value.getAsJsonObject().has("expression") && value.getAsJsonObject().get("expression").isJsonPrimitive()) {
                 return value.getAsJsonObject().get("expression").getAsString();
             }
@@ -470,7 +489,7 @@ public final class ApiBinder {
             Map<String, Object> out = new LinkedHashMap<>();
             for (Map.Entry<String, JsonElement> e : value.getAsJsonObject().entrySet()) {
                 JsonElement entry = e.getValue();
-                if (v == String.class && entry.isJsonPrimitive() && !entry.getAsJsonPrimitive().isString()) {
+                if ((v == String.class || v == Molang.class) && entry.isJsonPrimitive() && !entry.getAsJsonPrimitive().isString()) {
                     entry = new JsonPrimitive(entry.getAsString()); // a Molang constant: a boolean or a number as its text
                 }
                 out.put(e.getKey(), v == Object.class ? stateValue(entry) : convert(v, entry));

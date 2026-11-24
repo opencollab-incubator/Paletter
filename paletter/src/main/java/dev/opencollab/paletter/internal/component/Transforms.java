@@ -4,6 +4,7 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.cloudburstmc.nbt.NbtMap;
 import org.cloudburstmc.nbt.NbtMapBuilder;
+import dev.opencollab.paletter.Molang;
 import dev.opencollab.paletter.block.CustomBlock;
 import dev.opencollab.paletter.block.component.BlockComponent;
 import dev.opencollab.paletter.block.component.CollisionBox;
@@ -180,24 +181,34 @@ public final class Transforms {
      *     not kept, see {@code mapValues} of {@code fixtures.json}) and sends as written where it cannot ({@code "+1"},
      *     with an error in its log). Paletter does not compute Molang: it sends the text as written, with a warning.</li>
      * </ul>
-     * BDS 1.26.36.1 sends each entry as a compound {@code {expression, version}}, the version being the
-     * {@code molangVersion} it sends for every block; 1.26.45.1 and later send the expression as a string.
+     * BDS 1.26.36.1 sends each entry as a compound {@code {expression, version}}; 1.26.45.1 and later send the expression as
+     * a string. The version of the compound is the {@code molangVersion} BDS sends for every block, for an expression
+     * without a version and for a number or a boolean (the captures have those with version 1 only); another expression
+     * with a version (the JSON object {@code {expression, version}}, {@link Molang#of(String, int)}) keeps it. BDS logs "Bad expression" for a version
+     * below 0 or past the newest Molang version ({@code -1} and 14 to 100 in every captured build, where 13 is the newest)
+     * and sends it all the same; so does Paletter, with a warning.
      */
-    private static @NonNull NbtMap boneVisibility(@NonNull WireContext ctx, @NonNull String component, @Nullable Map<String, String> bones) {
+    private static @NonNull NbtMap boneVisibility(@NonNull WireContext ctx, @NonNull String component, @Nullable Map<String, Molang> bones) {
         NbtMapBuilder visibility = NbtMap.builder();
         if (bones == null || bones.isEmpty()) {
             return visibility.build();
         }
         boolean compound = ctx.protocol() < ComponentIndex.V26_40;
-        short version = 0;
+        short blockVersion = 0;
         if (compound) {
             WireNode envelope = new WireNode();
             BlockWire.envelope(ctx, envelope);
-            version = (short) envelope.build().getInt("molangVersion");
+            blockVersion = (short) envelope.build().getInt("molangVersion");
         }
-        for (Map.Entry<String, String> bone : bones.entrySet()) {
-            String value = bone.getValue();
-            String expression = value.equals("true") ? "1.000000" : value.equals("false") ? "0.000000" : Wire.molangNumber(value);
+        for (Map.Entry<String, Molang> bone : bones.entrySet()) {
+            String value = bone.getValue().expression();
+            Integer written = bone.getValue().version();
+            if (written != null && (written < 0 || written > ComponentIndex.molangVersion(null))) {
+                ctx.changed(component, "bone_visibility " + bone.getKey() + ": version " + written + " is outside 0 to "
+                    + ComponentIndex.molangVersion(null) + ", for which BDS logs a bad expression; sent as written, as BDS does");
+            }
+            String constant = value.equals("true") ? "1.000000" : value.equals("false") ? "0.000000" : Wire.molangNumber(value);
+            String expression = constant;
             if (expression == null) {
                 expression = value;
                 if (!MOLANG_QUERY.matcher(value).find()) {
@@ -206,6 +217,7 @@ public final class Transforms {
                 }
             }
             if (compound) {
+                short version = constant != null || written == null ? blockVersion : written.shortValue();
                 visibility.putCompound(bone.getKey(), NbtMap.builder().putString("expression", expression).putShort("version", version).build());
             } else {
                 visibility.putString(bone.getKey(), expression);
@@ -469,8 +481,12 @@ public final class Transforms {
      * {@code repair_items}: items as {@code [{name}]} (names as written, not namespaced; or one {@code {tags}} Molang
      * query), an entry without known items dropped with its repair amount. The repair amount is a float for a number and
      * Molang for a string: the two JSON types land on the same leaf with different NBT types, which no single rule fits.
-     * BDS 1.26.36.1 sends the Molang as a compound {@code {expression, version: 0s}} ({@code -1s} for an empty expression),
-     * 1.26.45.1 and later as a string.
+     * BDS 1.26.36.1 sends the Molang as a compound {@code {expression, version}}, 1.26.45.1 and later as a string. The
+     * version is 0 for an expression without one (the JSON string), the expression's own ({@link Molang#of(String, int)},
+     * the JSON object) otherwise, and {@code -1} for an empty expression whatever its version. An expression whose version
+     * is past the newest Molang version ({@link ComponentIndex#molangVersion} of the newest engine: 13; tried with 14 to 100)
+     * is sent as the fixed amount 0.0 in every captured build (1.26.36.1 to 1.26.70.24), without a log line; so does
+     * Paletter, with a warning.
      */
     public static void itemDescriptorList(@NonNull WireContext ctx, @NonNull WireNode out, @NonNull Repairable c) {
         boolean molangCompound = ctx.protocol() < ComponentIndex.V26_40;
@@ -495,11 +511,19 @@ public final class Transforms {
                 case null -> {
                 }
                 case RepairAmount.Fixed fixed -> e.put("repair_amount", fixed.value());
-                case RepairAmount.Expression expression when molangCompound ->
-                    // version -1 for an empty expression (BDS 1.26.36.1: repair_amount "")
-                    e.child("repair_amount").put("expression", expression.value())
-                        .put("version", (short) (expression.value().isEmpty() ? -1 : 0));
-                case RepairAmount.Expression expression -> e.put("repair_amount", expression.value());
+                case RepairAmount.Expression expression when expression.value().version() != null
+                    && expression.value().version() > ComponentIndex.molangVersion(null) -> {
+                    ctx.changed(Repairable.NAME, "repair_amount " + expression.value().expression() + ": version " + expression.value().version()
+                        + " is past the newest Molang version " + ComponentIndex.molangVersion(null) + ", which BDS sends as the amount 0.0");
+                    e.put("repair_amount", 0.0f);
+                }
+                case RepairAmount.Expression expression when molangCompound -> {
+                    // version -1 for an empty expression (BDS 1.26.36.1: repair_amount "" and {"expression": "", "version": 1})
+                    Molang molang = expression.value();
+                    int version = molang.expression().isEmpty() ? -1 : molang.version() == null ? 0 : molang.version();
+                    e.child("repair_amount").put("expression", molang.expression()).put("version", (short) version);
+                }
+                case RepairAmount.Expression expression -> e.put("repair_amount", expression.value().expression());
                 default -> throw new IllegalArgumentException(entry.repairAmount().toString());
             }
         }

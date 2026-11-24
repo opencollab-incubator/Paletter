@@ -166,7 +166,7 @@ class GeneratedApiTest {
         assertThrows(IllegalArgumentException.class, () -> Durability.DamageChance.builder().min(50).max(10).build());
         assertEquals(10, Durability.DamageChance.builder().min(10).max(10).build().max(), "equal is in order");
         // and a value of another field BDS refuses a map with ("Cannot use bone visibility feature with: minecraft:geometry.full_block")
-        Map<String, String> bone = Map.of("arm", "q.block_state('test:lit')");
+        Map<String, dev.opencollab.paletter.Molang> bone = Map.of("arm", dev.opencollab.paletter.Molang.of("q.block_state('test:lit')"));
         assertThrows(IllegalArgumentException.class, () -> ItemVisual.VisualGeometry.builder().identifier("minecraft:geometry.full_block").boneVisibility(bone).build());
         assertThrows(IllegalArgumentException.class, () -> EmbeddedVisual.VisualGeometry.builder().identifier("minecraft:geometry.full_block").boneVisibility(bone).build());
         assertThrows(IllegalArgumentException.class, () -> Geometry.builder().identifier("minecraft:geometry.full_block").boneVisibility(bone).build());

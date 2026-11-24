@@ -63,13 +63,21 @@ class BehaviourProbeCaptureTest {
             }
             assertTrue(object.get("method").getAsString().length() > 40, "every value says how it was measured");
         }
-        assertEquals(java.util.Map.of("block:friction", 0.6, "block:explosion_resistance", 0.0, "block:light_dampening", 15.0,
-            "block:light_emission", 0.0, "block:burn_odds", 0.0, "block:flame_odds", 0.0), values);
+        // The explosion test is statistical: a run that falls short of its threshold leaves the value unverified (the
+        // newest capture, 1.26.70.24 of 2026-11-24; behaviour import then takes an older build's measurement)
+        boolean explosionDecided = !committed().has("unverified_defaults")
+            || !committed().getAsJsonObject("unverified_defaults").has("block:explosion_resistance");
+        java.util.Map<String, Double> expected = new java.util.TreeMap<>(java.util.Map.of("block:friction", 0.6, "block:light_dampening", 15.0,
+            "block:light_emission", 0.0, "block:burn_odds", 0.0, "block:flame_odds", 0.0));
+        if (explosionDecided) {
+            expected.put("block:explosion_resistance", 0.0);
+        }
+        assertEquals(expected, values);
         assertEquals("[[0.0,0.0,0.0,1.0,1.0,1.0]]", defaults.asList().stream().map(JsonElement::getAsJsonObject)
             .filter(entry -> entry.get("key").getAsString().equals("block:collision_shape")).findFirst().orElseThrow().get("value").toString());
         assertEquals("false", defaults.asList().stream().map(JsonElement::getAsJsonObject)
             .filter(entry -> entry.get("key").getAsString().equals("block:climbable")).findFirst().orElseThrow().get("value").toString());
-        assertEquals(8, defaults.size(), "the selection box and the destroy time were not measured");
+        assertEquals(explosionDecided ? 8 : 7, defaults.size(), "the selection box and the destroy time were not measured");
     }
 
     @Test

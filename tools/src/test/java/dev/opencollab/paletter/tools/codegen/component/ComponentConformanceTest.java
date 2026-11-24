@@ -23,7 +23,6 @@ import dev.opencollab.paletter.item.CustomItem;
 import dev.opencollab.paletter.tools.model.Fixtures;
 import dev.opencollab.paletter.tools.model.Model;
 import dev.opencollab.paletter.tools.model.addon.AddonGenerator;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DynamicTest;
 import org.junit.jupiter.api.TestFactory;
 
@@ -123,28 +122,10 @@ class ComponentConformanceTest {
         assertFalse(captures.isEmpty(), "no spec capture in data/bds");
         return captures.stream().map(capture -> DynamicTest.dynamicTest(
             capture.getParent().getFileName() + " (protocol " + protocolOf(capture) + ")",
-            () -> conformance(capture, capture.equals(captures.getLast()), false)));
+            () -> conformance(capture, capture.equals(captures.getLast()))));
     }
 
-    /**
-     * The variants left out of {@link #everyAcceptedVariantReproducesBdsWire} while the user decides how the encoder rounds
-     * {@code use_duration} (docs/data-pipeline.md, "Decisions pending"): those whose only difference is that leaf.
-     */
-    @TestFactory
-    @Disabled("decision pending: use_duration rounding (docs/data-pipeline.md, Recapture to-do, Decisions pending)")
-    Stream<DynamicTest> useDurationRoundingIsBds() throws IOException {
-        List<Path> captures = captures();
-        return captures.stream().map(capture -> DynamicTest.dynamicTest(capture.getParent().getFileName().toString(),
-            () -> conformance(capture, capture.equals(captures.getLast()), true)));
-    }
-
-    /** Whether the outcome differs from BDS only in {@code item_properties.use_duration}: a pending decision. */
-    private static boolean useDurationOnly(Outcome o) {
-        return o.status().equals("fail") && o.detail().matches("item_properties\\.use_duration: BDS -?\\d+ \\(Integer\\), Paletter -?\\d+ \\(Integer\\)");
-    }
-
-    /** @param decisions whether the variants of a pending decision count ({@link #useDurationRoundingIsBds}) */
-    private void conformance(Path capture, boolean newest, boolean decisions) throws IOException {
+    private void conformance(Path capture, boolean newest) throws IOException {
         JsonObject meta = JsonParser.parseString(Files.readString(capture.resolve("capture.json"))).getAsJsonObject();
         int protocol = meta.get("protocol").getAsInt();
 
@@ -258,11 +239,10 @@ class ComponentConformanceTest {
         Files.writeString(out, report.toString(), StandardCharsets.UTF_8);
         System.out.println(report.substring(0, report.indexOf("\n## Not passing")));
 
-        // No waivers: BDS decides, so every accepted variant must be reproduced exactly. Only a pending decision of the user is
-        // checked apart (useDurationRoundingIsBds, disabled until it is decided), and an enabled_states value the trait state
-        // table marks unsupported (from BDS's own data), which Paletter leaves out with a report: counted in the report table
-        List<String> notPassing = outcomes.stream().filter(o -> !o.status().equals("pass") && !o.status().equals("unsupported")
-                && decisions == useDurationOnly(o))
+        // No waivers: BDS decides, so every accepted variant must be reproduced exactly. Only an enabled_states value the trait
+        // state table marks unsupported (from BDS's own data), which Paletter leaves out with a report, is counted in the
+        // report table instead
+        List<String> notPassing = outcomes.stream().filter(o -> !o.status().equals("pass") && !o.status().equals("unsupported"))
             .map(o -> o.identifier() + " " + o.status() + ": " + o.detail()).toList();
         assertTrue(notPassing.isEmpty(), "protocol " + protocol + ": " + notPassing.size() + " variants BDS accepted are not reproduced by the generated API"
             + " (see build/reports/component-conformance-" + protocol + ".md):\n  " + String.join("\n  ", notPassing));

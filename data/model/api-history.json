@@ -712,7 +712,7 @@
         "minecraft:embedded_visual.geometry.n_way_visual_rotation.y",
         "minecraft:embedded_visual.geometry.n_way_visual_rotation.z"
       ],
-      "type": "map<string>",
+      "type": "map<molang>",
       "default": {}
     },
     "block:minecraft:embedded_visual:geometry.culling": {
@@ -870,7 +870,7 @@
         "minecraft:geometry.bone_visibility",
         "minecraft:geometry.bone_visibility.bone_a_3"
       ],
-      "type": "map<string>",
+      "type": "map<molang>",
       "nullable": true
     },
     "block:minecraft:geometry:culling": {
@@ -972,7 +972,7 @@
         "minecraft:item_visual.geometryDescription.n_way_visual_rotation.y",
         "minecraft:item_visual.geometryDescription.n_way_visual_rotation.z"
       ],
-      "type": "map<string>",
+      "type": "map<molang>",
       "default": {}
     },
     "block:minecraft:item_visual:geometry.culling": {

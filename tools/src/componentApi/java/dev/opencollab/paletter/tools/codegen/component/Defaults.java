@@ -104,6 +104,7 @@ final class Defaults {
             case States s -> d.isJsonObject();
             case ApiModel.UnionRef u -> u.union().variants.stream().anyMatch(v -> fits(v.type, d));
             case ApiModel.ComponentRef r -> false;
+            case ApiModel.MolangRef m -> d.isJsonPrimitive() && d.getAsJsonPrimitive().isString() || d.isJsonObject() && d.getAsJsonObject().has("expression");
         };
     }
 

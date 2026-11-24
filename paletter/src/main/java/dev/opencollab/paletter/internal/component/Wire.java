@@ -31,8 +31,9 @@ public final class Wire {
     }
 
     /*
-     * The integral conversions truncate toward zero (TODO(recapture): unverified that BDS does, docs/data-pipeline.md,
-     * "Recapture to-do") and refuse a value whose whole part does not fit the leaf's bits: a value past a limit the
+     * The integral conversions truncate toward zero and refuse a value whose whole part does not fit the leaf's bits. A
+     * rule that rounds otherwise, or computes in float as BDS does (use_duration: the float product truncated, BDS
+     * 1.26.36.1 to 1.26.70.24), rounds before it calls them (the linear rule's rounding); a value past a limit the
      * builder does not check would otherwise wrap silently (300 as a byte is 44). An unsigned bit pattern (255 as a byte)
      * fits.
      */

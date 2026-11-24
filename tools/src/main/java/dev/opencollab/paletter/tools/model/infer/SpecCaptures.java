@@ -250,7 +250,12 @@ final class SpecCaptures {
         if (arrow >= 0) {
             text = text.substring(arrow + 3);
         }
-        return text.replaceAll("paletter:[a-z0-9_]+", "<id>").replace("'", "").trim();
+        return anonymised(text).trim();
+    }
+
+    /** Text as {@link #errorText} writes it: the add-on's identifiers as {@code <id>}, without apostrophes. */
+    static String anonymised(String text) {
+        return text.replaceAll("paletter:[a-z0-9_]+", "<id>").replace("'", "");
     }
 
 }

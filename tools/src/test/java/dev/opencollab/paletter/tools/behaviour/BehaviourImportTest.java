@@ -300,6 +300,24 @@ class BehaviourImportTest {
         assertEquals(BlockShape.FULL_CUBE, read.defaultOf(BlockBehaviour.COLLISION_SHAPE).value(), "shapes survive the file");
     }
 
+    @Test
+    void anOlderProbeFillsOnlyADefaultTheNewestLeftUndecided(@TempDir Path bds) throws IOException {
+        probeDirectory(bds);
+        Path newer = Files.createDirectories(bds.resolve("1.0.0.2").resolve("behaviour-probe"));
+        Files.writeString(newer.resolve("capture.json"), """
+            {"bds": {"version": "1.0.0.2", "build": "43"},
+             "defaults": [{"key": "block:light_dampening", "value": 14, "method": "m"}],
+             "unverified_defaults": {"block:friction": "not decided"}}""");
+        BehaviourImport importer = new BehaviourImport(bundled());
+        importer.customDefaults(bds);
+        BehaviourStore store = importer.build();
+        assertEquals(14, store.defaultOf(BlockBehaviour.LIGHT_DAMPENING).value(), "the newest decides");
+        assertEquals("data/bds/1.0.0.2/behaviour-probe/capture.json (BDS 1.0.0.2, Build ID 43)", store.defaultOf(BlockBehaviour.LIGHT_DAMPENING).reference());
+        assertEquals(0.6f, store.defaultOf(BlockBehaviour.FRICTION).value(), "undecided in the newest: the older measurement");
+        assertEquals("data/bds/1.0.0.1/behaviour-probe/capture.json (BDS 1.0.0.1, Build ID 42)", store.defaultOf(BlockBehaviour.FRICTION).reference());
+        assertTrue(importer.log.stream().anyMatch(line -> line.contains("block:friction is unverified")), importer.log.toString());
+    }
+
     private static byte[] bytes(BehaviourStore store) throws IOException {
         java.io.ByteArrayOutputStream out = new java.io.ByteArrayOutputStream();
         store.write(out);

@@ -241,7 +241,7 @@ final class ApiModel {
         boolean removed;
     }
 
-    sealed interface Type permits Scalar, EnumRef, ObjRef, Vec3, ListOf, MapOf, States, ComponentRef, UnionRef {
+    sealed interface Type permits Scalar, EnumRef, ObjRef, Vec3, ListOf, MapOf, States, ComponentRef, UnionRef, MolangRef {
     }
 
     enum ScalarKind {
@@ -336,6 +336,13 @@ final class ApiModel {
 
     /** Block descriptor states: state name to an int, string or boolean value. */
     record States() implements Type {
+    }
+
+    /**
+     * A Molang expression with an optional version ({@code dev.opencollab.paletter.Molang}): add-on JSON's string, or its
+     * {@code {expression, version}} object (api.json {@code types} {@code molang}).
+     */
+    record MolangRef() implements Type {
     }
 
     static final class EnumType {

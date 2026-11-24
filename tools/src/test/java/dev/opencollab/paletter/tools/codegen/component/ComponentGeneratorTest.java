@@ -333,6 +333,37 @@ class ComponentGeneratorTest {
     }
 
     @Test
+    void aMolangTypeIsTheHandWrittenMolangValue() {
+        // api.json types "map<molang>": a map of Molang expressions with their optional version
+        Inputs in = inputs();
+        if (!in.api().has("types")) {
+            in.api().add("types", new JsonObject());
+        }
+        in.api().getAsJsonObject("types").addProperty("item:test:widget:colors", "map<molang>");
+        String source = ComponentGenerator.generate(in).get("dev/opencollab/paletter/item/component/Widget.java");
+        assertTrue(source.contains("import dev.opencollab.paletter.Molang;"), source);
+        assertTrue(source.contains("Map<String, Molang> colors()"), source);
+    }
+
+    @Test
+    void aRoundedLineComputesAsBdsDoes() {
+        // use_duration: the float product, truncated by the integral conversion (BDS sends 0.35 seconds as 7 ticks)
+        Inputs in = inputs();
+        JsonObject rule = window(in.mappings(), "item:test:widget").getAsJsonObject("fields").getAsJsonObject("speed")
+            .getAsJsonArray("rules").get(0).getAsJsonObject();
+        rule.addProperty("arithmetic", "float32");
+        rule.addProperty("rounding", "truncate");
+        String source = ComponentGenerator.generate(in).get("dev/opencollab/paletter/internal/component/ItemWire.java");
+        assertTrue(source.contains("Wire.toInt((double) ((float) "), source);
+        assertTrue(source.contains(" * 20.0f + 0.0f))"), source);
+        // a rounding other than truncation rounds before the conversion
+        rule.addProperty("arithmetic", "double");
+        rule.addProperty("rounding", "half-even");
+        source = ComponentGenerator.generate(in).get("dev/opencollab/paletter/internal/component/ItemWire.java");
+        assertTrue(source.contains("Wire.toInt(Math.rint((20.0 * "), source);
+    }
+
+    @Test
     void theConstructorChecksTheLimitsOfAValueForm() {
         // What BDS says about the component's value itself (path "") limits the field of its value form
         Inputs in = inputs();

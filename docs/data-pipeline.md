@@ -336,18 +336,33 @@ without a block with `y_2026_drop_3` on. What it showed is still open:
 
 - **`packetOrder`** in `capture.json`: a recapture does not rewrite a build's `vanilla/capture.json` (only the import does).
 - **The unchecked build of a line** (see Full recapture): 1.26.66.1 was captured but cannot join the data.
-- **`connected_faces` order**: the add-on writes enum lists in the schema's order, which is BDS's own (down, up, north, south,
-  west, east), so no capture shows BDS reordering a set; the inference keeps the JSON's order (`GeneratedRulesTest`). The add-on
-  needs a list in another order (the values reversed) to settle it.
+The recapture of 2026-11-24 (CI run 45312734413, the same builds) settled:
 
-#### Waiting for a capture
+- **`connected_faces` order**: with the values reversed BDS sends the set in its own order (down, up, north, south, west, east):
+  an ordered-set rule.
+- **use_duration rounding**: every captured build sends `use_modifiers` `use_duration` as the float product truncated (the
+  linear rule's `"arithmetic": "float32", "rounding": "truncate"`, `Linear.Rounding`, fitted by the inference):
 
-- **use_duration rounding**: BDS 1.26.63.1 and 1.26.70.24 send `use_modifiers` `use_duration` 0.35, 0.7 and 0.95 as 7, 14 and 19;
-  the encoder truncates the double product and sends 6, 13 and 18. A float product truncated and a rounded product both give
-  7, 14 and 19. Values that tell them apart (float32 of the value times 20): 0.33 (6.6: truncated 6, rounded 7), 0.38 (7.6: 7 or
-  8); ties 0.025, 0.075, 0.125 (0.5, 1.5, 2.5: truncated 0, 1, 2; half up 1, 2, 3; half even 0, 2, 2); 0.31 (6.2: rounded 6,
-  ceiling 7). Until a capture with them, the variants that differ only there are checked apart
-  (`ComponentConformanceTest.useDurationRoundingIsBds`, disabled).
+  | seconds | float times 20 | BDS | truncated double product | half up | half even | ceiling |
+  |---|---|---|---|---|---|---|
+  | 0.35 | 7.0 | 7 | 6 | 7 | 7 | 7 |
+  | 0.7 | 14.0 | 14 | 13 | 14 | 14 | 14 |
+  | 0.95 | 19.0 | 19 | 18 | 19 | 19 | 19 |
+  | 0.33 | 6.6 | 6 | 6 | 7 | 7 | 7 |
+  | 0.38 | 7.6 | 7 | 7 | 8 | 8 | 8 |
+  | 0.025 | 0.5 | 0 | 0 | 1 | 0 | 1 |
+  | 0.075 | 1.5 | 1 | 1 | 2 | 2 | 2 |
+  | 0.125 | 2.5 | 2 | 2 | 3 | 2 | 3 |
+  | 0.31 | 6.2 | 6 | 6 | 6 | 6 | 7 |
+
+  (0, 0.5, 1, 2.25 and 30 are 0, 10, 20, 45 and 600; -1 is refused.) Floor and truncation differ only below zero, which BDS
+  refuses.
+- **The version of a Molang expression** (`repair_amount` and `bone_visibility` as `{expression, version}`, versions 0 to 16,
+  20, 50, 99, 100 and -1, `dev.opencollab.paletter.Molang`): the newest version is 13 in every build (the newest of
+  `molangVersions`). `repair_amount` takes -1 to 13 (1.26.36.1 sends them as written in its compound, the later builds the
+  expression alone) and sends an expression of 14 to 100 as the amount 0.0, with no log line. `bone_visibility` takes 0 to
+  13 (as written in 1.26.36.1, a number or boolean with the block's version); for -1 and 14 to 100 BDS logs "Bad expression"
+  and sends it all the same. Without a version the string form's: 0 for `repair_amount`, the block's for `bone_visibility`.
 
 Decided: `molangVersion` follows the layer's `min_engine_version` (`PaletteLayer.Builder#minEngineVersion`, `molangVersions` of
 `mappings.json` from the engine pack blocks: 1.16.100 gives 0, 1.19.40 gives 6, the add-on's format 13); probed keys apply to
@@ -358,10 +373,9 @@ the builds of the probed build's line; the api-history field-shape breaks of the
 - **Two components onto one leaf** (`SharedLeaves`, `WireNode.own`): BDS keeps `max_stack_size`'s and `allow_off_hand`'s value
   over `wearable`'s slot table, in both orders of the file (`wearable` combination variants, every build): the owner the encoders
   keep. Settled.
-- **Linear rules onto integral leaves** (`Linear`, `Wire.toInt`): BDS 1.26.63.1 and 1.26.70.24 send `use_duration` 0.35, 0.7 and
-  0.95 as 7, 14 and 19 (the older builds send 0 for every value);
-  the encoder truncates the double product of the float and sends 6, 13 and 18. Both a float product truncated and a rounded
-  product fit; which one BDS computes is unverified. Open: the encoder has to follow.
+- **Linear rules onto integral leaves** (`Linear`, `Wire.toInt`): `use_duration` is the float product truncated (above); the
+  encoder computes it so. A linear rule whose captures only hold whole results keeps truncating the double product, unverified.
+  Settled for `use_duration`.
 - **`minecraft:enchantable` slots**: all 25 slots are captured; the inference fits a table (`cosmetic_head` is sent as an empty
   string). Settled in the data; the API's constant goes with the regenerated code.
 - **`collision_box` limit**: still no box limit fact in `bds-feedback.json`; the boxes stay inside the tightest limit of the other
