@@ -8,7 +8,8 @@ public final class Versions {
     /**
      * Number by number ({@code 1.26.9.0} before {@code 1.26.63.1}); a version before the longer ones it starts
      * ({@code 1.26.70} before {@code 1.26.70.23}). Parts are split at dots and dashes, and a part that is not a number
-     * counts as 0.
+     * counts as 0. Versions equal by those rules ({@code 1.26.01} and {@code 1.26.1}, {@code 1.26.70-beta24} and
+     * {@code 1.26.70.0}) are ordered by their text, so the order is consistent with equals and sorted maps keep both.
      */
     public static final Comparator<String> ORDER = Versions::compare;
     /** A build or a line ({@code 1.26}, {@code 1.26.30}, {@code 1.26.30.5}), as a bound of a range of builds; builds are {@link BuildNumber}s. */
@@ -34,7 +35,8 @@ public final class Versions {
                 return c;
             }
         }
-        return Integer.compare(x.length, y.length);
+        int c = Integer.compare(x.length, y.length);
+        return c != 0 ? c : a.compareTo(b);
     }
 
     private static long number(String part) {
