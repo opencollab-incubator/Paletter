@@ -7,6 +7,7 @@ import org.cloudburstmc.nbt.NbtMapBuilder;
 import dev.opencollab.paletter.internal.block.BlockStates;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -24,28 +25,48 @@ final class VanillaTypes {
     private VanillaTypes() {
     }
 
+    /**
+     * The block and item types the generated constants made, in the order of their fields: {@link VanillaIndex} links
+     * these, without reflecting over the constants classes. Each list is only added to by the static initializer of its
+     * class, which the JVM runs once.
+     */
+    static final List<BedrockBlockType> BLOCK_CONSTANTS = Collections.synchronizedList(new ArrayList<>());
+    static final List<BedrockItemType> ITEM_CONSTANTS = Collections.synchronizedList(new ArrayList<>());
+
     /** What a block or item resolves to if the bundled data does not have it (a removed or preview one): {@code minecraft:unknown}. */
-    static @NonNull BedrockBlockType block(@NonNull String identifier) {
-        // Runs for every constant in the (interpreted) static initializers: no map, VanillaIndex registers the fields
-        return new BedrockBlockType(identifier, UNKNOWN);
+    static @NonNull BedrockBlockType block(@NonNull String name, @NonNull String identifier) {
+        // Runs for every constant in the (interpreted) static initializers: no map, VanillaIndex links the list
+        return register(new BedrockBlockType(name, identifier, UNKNOWN, false, null));
     }
 
-    static @NonNull BedrockBlockType educationBlock(@NonNull String identifier) {
-        return new BedrockBlockType(identifier, UNKNOWN, true);
+    static @NonNull BedrockBlockType educationBlock(@NonNull String name, @NonNull String identifier) {
+        return register(new BedrockBlockType(name, identifier, UNKNOWN, true, null));
     }
 
     /**
-     * A block only the bundled preview has ({@code @SincePreview}), with the properties the generator read from the
-     * preview's data: the constant has these states in every palette, without any preview data being loaded.
+     * A block the newest bundled release does not have, with the properties the generator wrote: a block only the bundled
+     * preview has ({@code @SincePreview}), as the preview has it, or a block Bedrock removed, as the newest release that had
+     * it had it. The constant has these states in every palette, without any data being loaded for them.
      *
      * @param defaultOffset the position of the default state among the states, as enumerated from the properties
-     * @param properties the properties in the preview's state order: the first one varies fastest
+     * @param properties the properties in the data's state order: the first one varies fastest
      */
-    static @NonNull BedrockBlockType previewBlock(@NonNull String identifier, int defaultOffset, @NonNull PreviewProperty... properties) {
-        return new BedrockBlockType(identifier, UNKNOWN, new PreviewStates(defaultOffset, properties));
+    static @NonNull BedrockBlockType blockWithStates(@NonNull String name, @NonNull String identifier, int defaultOffset,
+                                                     @NonNull PreviewProperty... properties) {
+        return register(new BedrockBlockType(name, identifier, UNKNOWN, false, new PreviewStates(defaultOffset, properties)));
     }
 
-    /** A property of a preview block: its name and its values as NBT ({@code Byte}, {@code Integer} or {@code String}). */
+    private static BedrockBlockType register(BedrockBlockType type) {
+        BLOCK_CONSTANTS.add(type);
+        return type;
+    }
+
+    private static BedrockItemType register(BedrockItemType type) {
+        ITEM_CONSTANTS.add(type);
+        return type;
+    }
+
+    /** A property of a block of {@link #blockWithStates}: its name and its values as NBT ({@code Byte}, {@code Integer} or {@code String}). */
     static @NonNull PreviewProperty property(@NonNull String name, @NonNull Object... values) {
         return new PreviewProperty(name, values);
     }
@@ -53,7 +74,7 @@ final class VanillaTypes {
     record PreviewProperty(String name, Object[] values) {
     }
 
-    /** The states of a preview block, as {@link #previewBlock} describes them. */
+    /** The states of a block of {@link #blockWithStates}. */
     record PreviewStates(int defaultOffset, PreviewProperty[] properties) {
         /** @return the states as {@code {name, states}}, in the preview's order: the full product, the first property fastest */
         List<NbtMap> states(String identifier) {
@@ -75,12 +96,12 @@ final class VanillaTypes {
         }
     }
 
-    static @NonNull BedrockItemType educationItem(@NonNull String identifier) {
-        return new BedrockItemType(identifier, UNKNOWN, true);
+    static @NonNull BedrockItemType educationItem(@NonNull String name, @NonNull String identifier) {
+        return register(new BedrockItemType(name, identifier, UNKNOWN, true));
     }
 
-    static @NonNull BedrockItemType item(@NonNull String identifier) {
-        return new BedrockItemType(identifier, UNKNOWN);
+    static @NonNull BedrockItemType item(@NonNull String name, @NonNull String identifier) {
+        return register(new BedrockItemType(name, identifier, UNKNOWN, false));
     }
 
     /**

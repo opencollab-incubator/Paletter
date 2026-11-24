@@ -46,7 +46,9 @@ final class PreviewBlocks {
                 }
                 continue;
             }
-            BedrockBlockType type = new BedrockBlockType(source.identifier(), VanillaTypes.UNKNOWN);
+            // Equal to the constant (a vanilla type is its identifier), which names it
+            BedrockBlockType type = new BedrockBlockType(constant == null ? null : constant.constantName(), source.identifier(),
+                VanillaTypes.UNKNOWN, false, null);
             NbtMap defaultState = root.defaultState(source.identifier());
             int defaultOffset = defaultState == null ? 0 : root.index(defaultState) - source.first();
             if (defaultOffset < 0 || defaultOffset >= source.count()) {

@@ -44,6 +44,7 @@ import java.util.Objects;
  * @since 1.0.0
  */
 public final class BedrockBlockType {
+    private final @Nullable String constantName;
     private final String identifier;
     private final @Nullable String fallback;
     private final boolean custom;
@@ -53,28 +54,24 @@ public final class BedrockBlockType {
     /** The states of a block only the bundled preview has, as generated; null for any other type. */
     private final VanillaTypes.@Nullable PreviewStates previewStates;
 
-    /** A vanilla type, linked by {@link VanillaIndex}. */
-    BedrockBlockType(String identifier, String fallback) {
-        this(identifier, fallback, false);
-    }
-
-    BedrockBlockType(String identifier, String fallback, boolean education) {
+    /**
+     * A vanilla type, linked by {@link VanillaIndex}.
+     *
+     * @param constantName the name of the generated constant that made it, or null for a type the data alone has
+     * @param ownStates the states of a block the newest bundled release lacks, as generated, or null
+     */
+    BedrockBlockType(@Nullable String constantName, String identifier, String fallback, boolean education,
+                     VanillaTypes.@Nullable PreviewStates ownStates) {
+        this.constantName = constantName;
         this.identifier = Objects.requireNonNull(identifier);
         this.fallback = fallback;
         this.custom = false;
         this.education = education;
-        this.previewStates = null;
-    }
-
-    BedrockBlockType(String identifier, String fallback, VanillaTypes.PreviewStates previewStates) {
-        this.identifier = Objects.requireNonNull(identifier);
-        this.fallback = fallback;
-        this.custom = false;
-        this.education = false;
-        this.previewStates = Objects.requireNonNull(previewStates);
+        this.previewStates = ownStates;
     }
 
     private BedrockBlockType(String identifier, boolean bare) {
+        this.constantName = null;
         this.identifier = Objects.requireNonNull(identifier);
         this.fallback = null;
         this.custom = true;
@@ -85,6 +82,7 @@ public final class BedrockBlockType {
     }
 
     private BedrockBlockType(String identifier, List<BlockProperty<?>> properties, Map<String, Object> defaultStates) {
+        this.constantName = null;
         this.identifier = Objects.requireNonNull(identifier);
         this.fallback = null;
         this.custom = true;
@@ -253,7 +251,7 @@ public final class BedrockBlockType {
      * @since 1.0.0
      */
     public @Nullable String constantName() {
-        return ConstantNames.of(this);
+        return constantName;
     }
 
     /**

@@ -217,7 +217,8 @@ public final class ConstantsSource {
             CodeBlock value;
             if (preview != null) {
                 // No release has the block: the constant carries the preview's states, so a release palette needs no preview data
-                CodeBlock.Builder call = CodeBlock.builder().add("$T.previewBlock($S, $L$>", VANILLA_TYPES, constant.identifier(), preview.defaultOffset());
+                CodeBlock.Builder call = CodeBlock.builder().add("$T.blockWithStates($S, $S, $L$>", VANILLA_TYPES, constant.name(),
+                    constant.identifier(), preview.defaultOffset());
                 for (int p = 0; p < preview.properties().size(); p++) {
                     call.add(",\n$T.property($S", VANILLA_TYPES, preview.properties().get(p));
                     for (Object property : preview.values().get(p)) {
@@ -227,7 +228,8 @@ public final class ConstantsSource {
                 }
                 value = call.add("$<)").build();
             } else {
-                value = CodeBlock.of("$T.$L($S)", VANILLA_TYPES, constant.education() ? "educationBlock" : "block", constant.identifier());
+                value = CodeBlock.of("$T.$L($S, $S)", VANILLA_TYPES, constant.education() ? "educationBlock" : "block", constant.name(),
+                    constant.identifier());
             }
             type.addField(constantField(BEDROCK_BLOCK_TYPE, constant, memberDoc).initializer(value).build());
         }
@@ -264,7 +266,8 @@ public final class ConstantsSource {
                 memberDoc.add("@deprecated Bedrock removed the item; resolves to {@code minecraft:unknown}");
             }
             type.addField(constantField(BEDROCK_ITEM_TYPE, constant, memberDoc)
-                .initializer("$T.$L($S)", VANILLA_TYPES, constant.education() ? "educationItem" : "item", constant.identifier()).build());
+                .initializer("$T.$L($S, $S)", VANILLA_TYPES, constant.education() ? "educationItem" : "item", constant.name(),
+                    constant.identifier()).build());
         }
         addAliases(type, aliases, constants, BEDROCK_ITEM_TYPE);
         type.addMethod(privateConstructor());

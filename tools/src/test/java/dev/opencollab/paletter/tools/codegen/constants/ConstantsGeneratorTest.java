@@ -185,7 +185,7 @@ class ConstantsGeneratorTest {
                 @Deprecated(
                         since = "2.1.0"
                 )
-                public static final BedrockBlockType REMOVED_BLOCK = VanillaTypes.block("minecraft:removed_block");
+                public static final BedrockBlockType REMOVED_BLOCK = VanillaTypes.block("REMOVED_BLOCK", "minecraft:removed_block");
             """), blocks.substring(0, 200));
         assertTrue(blocks.contains("@deprecated Bedrock removed the block; resolves to {@code minecraft:unknown}"));
         assertTrue(blocks.contains("""
@@ -200,12 +200,12 @@ class ConstantsGeneratorTest {
                  *
                  * @since 2.1.0
                  */
-                public static final BedrockBlockType STONE = VanillaTypes.block("minecraft:stone");
+                public static final BedrockBlockType STONE = VanillaTypes.block("STONE", "minecraft:stone");
             """.formatted(release.version().name())));
         String items = second.files().get(ITEMS);
         assertTrue(items.contains("public static final BedrockItemType OLD_ITEM = APPLE;"));
         assertTrue(items.contains("@deprecated Bedrock renamed it to {@link #APPLE}"));
-        assertTrue(items.contains("REMOVED_ITEM = VanillaTypes.item(\"minecraft:removed_item\");"));
+        assertTrue(items.contains("REMOVED_ITEM = VanillaTypes.item(\"REMOVED_ITEM\", \"minecraft:removed_item\");"));
         assertFalse(blocks.contains("forRemoval") || items.contains("forRemoval"), "names are never removed");
         String states = second.files().get(STATES);
         assertTrue(states.contains("""
@@ -269,9 +269,9 @@ class ConstantsGeneratorTest {
         assertFalse(result.files().containsKey(ConstantsGenerator.PACKAGE_DIR + "/BedrockPreviewBlocks.java"));
         // The constant carries the preview's states: a release palette has no data for the block
         assertTrue(result.files().get(BLOCKS).contains("    @SincePreview(\"26.70\")\n    public static final BedrockBlockType PREVIEW_BLOCK = "
-            + "VanillaTypes.previewBlock(\"minecraft:preview_block\", 0,\n        VanillaTypes.property(\"preview_bit\", (byte) 0, (byte) 1));"));
+            + "VanillaTypes.blockWithStates(\"PREVIEW_BLOCK\", \"minecraft:preview_block\", 0,\n        VanillaTypes.property(\"preview_bit\", (byte) 0, (byte) 1));"));
         assertTrue(result.files().get(ConstantsGenerator.PACKAGE_DIR + "/BedrockItems.java")
-            .contains("    @SincePreview(\"26.70\")\n    public static final BedrockItemType PREVIEW_ITEM = VanillaTypes.item(\"minecraft:preview_item\");"));
+            .contains("    @SincePreview(\"26.70\")\n    public static final BedrockItemType PREVIEW_ITEM = VanillaTypes.item(\"PREVIEW_ITEM\", \"minecraft:preview_item\");"));
         assertTrue(result.files().get(ConstantsGenerator.PACKAGE_DIR + "/BedrockStates.java")
             .contains("    @SincePreview(\"26.70\")\n    public static final BoolState PREVIEW_BIT = "));
         // Previews are not part of the history: they come and go with the preview
@@ -303,7 +303,7 @@ class ConstantsGeneratorTest {
             release.creative(), release.itemTags(), release.fallbacks(), defaults);
 
         ConstantsGenerator.Result result = ConstantsGenerator.generate(release, preview, names, new JsonObject(), "1.0.0");
-        assertTrue(result.files().get(BLOCKS).contains("VanillaTypes.previewBlock(\"minecraft:preview_block\", 4,\n"
+        assertTrue(result.files().get(BLOCKS).contains("VanillaTypes.blockWithStates(\"PREVIEW_BLOCK\", \"minecraft:preview_block\", 4,\n"
             + "        VanillaTypes.property(\"b_size\", 2, 0, 1),\n"
             + "        VanillaTypes.property(\"a_facing\", \"south\", \"north\"));"), result.files().get(BLOCKS));
         ConstantsGenerator.PreviewStates read = ConstantsGenerator.previewStates(preview,
@@ -432,7 +432,7 @@ class ConstantsGeneratorTest {
         renamed.add("items minecraft:apple FRUIT");
         String items = ConstantsGenerator.generate(release, null, ConstantsGenerator.Names.of(Renames.NONE, renamed, new JsonObject()),
             new JsonObject(), "1.0.0").files().get(ITEMS);
-        assertTrue(items.contains("BedrockItemType FRUIT = VanillaTypes.item(\"minecraft:apple\")"));
+        assertTrue(items.contains("BedrockItemType FRUIT = VanillaTypes.item(\"FRUIT\", \"minecraft:apple\")"));
         assertFalse(items.contains(" APPLE = "));
 
         // A line that matches nothing fails, and so do malformed ones

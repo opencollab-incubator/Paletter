@@ -238,7 +238,7 @@ class VanillaConstantsTest {
     @Test
     void absentConstantsResolveViaFallback() {
         // What a deprecated constant of a removed block or item is: registered by identifier, not in the data
-        BedrockBlockType removed = VanillaTypes.block("minecraft:paletter_test_removed_block");
+        BedrockBlockType removed = VanillaTypes.block("PALETTER_TEST_REMOVED_BLOCK", "minecraft:paletter_test_removed_block");
         assertFalse(removed.isAvailable());
         assertEquals("minecraft:paletter_test_removed_block", removed.identifier());
         assertSame(BedrockBlocks.UNKNOWN, removed.resolved());
@@ -264,7 +264,7 @@ class VanillaConstantsTest {
         assertSame(preview, preview.defaultState().type());
         assertSame(preview.defaultState(), preview.state().with(BedrockStates.AGE, preview.defaultState().get(BedrockStates.AGE)).build());
 
-        BedrockItemType removedItem = VanillaTypes.item("minecraft:paletter_test_removed_item");
+        BedrockItemType removedItem = VanillaTypes.item("PALETTER_TEST_REMOVED_ITEM", "minecraft:paletter_test_removed_item");
         assertFalse(removedItem.isAvailable());
         // No canonical id of its own: the palette resolves it by identifier, to the default fallback
         assertEquals(-1, Ids.item(PALETTER, removedItem));

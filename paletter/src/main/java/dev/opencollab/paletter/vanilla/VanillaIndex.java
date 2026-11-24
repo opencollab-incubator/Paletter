@@ -12,8 +12,6 @@ import dev.opencollab.paletter.internal.vanilla.BlockLayout;
 import dev.opencollab.paletter.internal.CanonicalItems;
 import dev.opencollab.paletter.internal.item.ItemVariant;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -63,22 +61,14 @@ final class VanillaIndex {
         initialize("BedrockStates");
         Map<String, BedrockBlockType> constantBlocks = new HashMap<>();
         Map<String, BedrockItemType> constantItems = new HashMap<>();
-        for (String name : List.of("BedrockBlocks", "BedrockItems")) {
-            Class<?> constants = initialize(name);
-            for (Field field : constants.getFields()) {
-                if (!Modifier.isStatic(field.getModifiers())) {
-                    continue;
-                }
-                try {
-                    if (field.get(null) instanceof BedrockBlockType type) {
-                        constantBlocks.putIfAbsent(type.identifier(), type);
-                    } else if (field.get(null) instanceof BedrockItemType type) {
-                        constantItems.putIfAbsent(type.identifier(), type);
-                    }
-                } catch (IllegalAccessException e) {
-                    throw new IllegalStateException(e);
-                }
-            }
+        initialize("BedrockBlocks");
+        initialize("BedrockItems");
+        // The constants classes registered the types they made (aliases make none): no reflection over their fields
+        synchronized (VanillaTypes.BLOCK_CONSTANTS) {
+            VanillaTypes.BLOCK_CONSTANTS.forEach(type -> constantBlocks.putIfAbsent(type.identifier(), type));
+        }
+        synchronized (VanillaTypes.ITEM_CONSTANTS) {
+            VanillaTypes.ITEM_CONSTANTS.forEach(type -> constantItems.putIfAbsent(type.identifier(), type));
         }
 
         // The named variants register on their types, which the data's variants of them adopt
@@ -86,7 +76,7 @@ final class VanillaIndex {
 
         this.itemConstants = constantItems;
         this.blockConstants = constantBlocks;
-        // The constants of a preview are not in the data of the release: they carry their states (see VanillaTypes.previewBlock)
+        // The constants of a preview are not in the data of the release: they carry their states (see VanillaTypes.blockWithStates)
         // The loader, not Paletter.bundled(): that compiles every version, which links these constants
         Paletter paletter = Paletter.bundledLoader();
         VanillaData latest = paletter.vanillaData(paletter.latest());
@@ -98,7 +88,7 @@ final class VanillaIndex {
         Map<String, BedrockBlockType> blocksById = new LinkedHashMap<>();
         List<String> tableBlocks = new ArrayList<>();
         for (BlockLayout source : BlockLayout.of(states)) {
-            BedrockBlockType type = constantBlocks.computeIfAbsent(source.identifier(), id -> new BedrockBlockType(id, VanillaTypes.UNKNOWN));
+            BedrockBlockType type = constantBlocks.computeIfAbsent(source.identifier(), id -> new BedrockBlockType(null, id, VanillaTypes.UNKNOWN, false, null));
             NbtMap defaultState = latest.blockDefaults().get(source.identifier());
             int defaultOffset = defaultState == null ? 0 : blocks.index(defaultState) - source.first();
             if (defaultOffset < 0 || defaultOffset >= source.count()) {
@@ -125,7 +115,7 @@ final class VanillaIndex {
         for (int i = 0; i < items.vanillaSize(); i++) {
             ItemVariant variant = items.variant(i);
             BedrockItemType type = itemsById.computeIfAbsent(variant.identifier(),
-                id -> constantItems.computeIfAbsent(id, key -> new BedrockItemType(key, VanillaTypes.UNKNOWN)));
+                id -> constantItems.computeIfAbsent(id, key -> new BedrockItemType(null, key, VanillaTypes.UNKNOWN, false)));
             // The base and the named variants belong to the type and have no id of their own: the type's link has it
             BedrockItemVariant handle = variant.damage() == 0 ? type.variant() : type.named(variant.damage());
             if (handle == null) {

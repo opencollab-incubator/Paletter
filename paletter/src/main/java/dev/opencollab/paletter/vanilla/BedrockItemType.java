@@ -40,6 +40,7 @@ import java.util.Objects;
  * @since 1.0.0
  */
 public final class BedrockItemType implements ItemKey {
+    private final @Nullable String constantName;
     private final String identifier;
     private final @Nullable String fallback;
     private final boolean custom;
@@ -50,11 +51,13 @@ public final class BedrockItemType implements ItemKey {
     /** The named variants with a nonzero aux, registered by the generated constants of {@link BedrockItemVariants}. */
     private volatile BedrockItemVariant[] named = new BedrockItemVariant[0];
 
-    BedrockItemType(String identifier, String fallback) {
-        this(identifier, fallback, false);
-    }
-
-    BedrockItemType(String identifier, String fallback, boolean education) {
+    /**
+     * A vanilla type, linked by {@link VanillaIndex}.
+     *
+     * @param constantName the name of the generated constant that made it, or null for a type the data alone has
+     */
+    BedrockItemType(@Nullable String constantName, String identifier, String fallback, boolean education) {
+        this.constantName = constantName;
         this.identifier = Objects.requireNonNull(identifier);
         this.fallback = fallback;
         this.custom = false;
@@ -62,6 +65,7 @@ public final class BedrockItemType implements ItemKey {
     }
 
     private BedrockItemType(String identifier) {
+        this.constantName = null;
         this.identifier = Objects.requireNonNull(identifier);
         this.fallback = null;
         this.custom = true;
@@ -229,7 +233,7 @@ public final class BedrockItemType implements ItemKey {
      * @since 1.0.0
      */
     public @Nullable String constantName() {
-        return ConstantNames.of(this);
+        return constantName;
     }
 
     /**
