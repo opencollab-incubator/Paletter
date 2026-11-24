@@ -28,9 +28,11 @@ import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
@@ -99,6 +101,11 @@ public final class Paletter {
     /** The same for block states, compared by their two values ({@link BlockStates#STRATEGY}): the states themselves are not iterated. */
     private @Nullable Map<NbtMap, NbtMap> internedStates = new Object2ObjectOpenCustomHashMap<>(BlockStates.STRATEGY);
     private volatile boolean internedReleased;
+    /**
+     * The versions the Paletters that load through this one serve (see {@link #want()}): interning ends once all of them
+     * are loaded. Guarded by {@link #internLock}.
+     */
+    private final Set<DataVersion> wanted = new HashSet<>();
     /** Whether {@link #releaseCompileData} ran. */
     private volatile boolean compileDataReleased;
     private final BlockInterner blockInterner = new BlockInterner();
@@ -313,8 +320,9 @@ public final class Paletter {
      */
     @Internal
     public @NonNull VanillaData vanillaData(@NonNull DataVersion version) {
-        // A Paletter over the bundled data loads through the shared one, but only its own versions decide when interning ends
-        Paletter loader = sharesBundledData() ? Loaders.BUNDLED : this;
+        // A Paletter over the bundled data loads through the shared one; the versions of every such Paletter decide when
+        // interning ends
+        Paletter loader = loader();
         VanillaData loaded = loader.data.computeIfAbsent(version, v -> {
             try {
                 return loader.intern(loader.source.load(v));
@@ -322,31 +330,51 @@ public final class Paletter {
                 throw new UncheckedIOException("Unable to load Bedrock data " + v, e);
             }
         });
-        if (!loader.internedReleased && loader.data.keySet().containsAll(versions)) {
-            loader.releaseInterned();
+        if (!loader.internedReleased) {
+            loader.releaseInternedIfLoaded();
         }
         return loaded;
     }
 
+    /** The Paletter whose data and intern maps this one loads through: the shared one for the bundled data, else itself. */
+    private Paletter loader() {
+        return sharesBundledData() ? Loaders.BUNDLED : this;
+    }
+
     /**
-     * Interning only matters while versions are still to be loaded: once all versions the asking Paletter serves are, the map
-     * (about a megabyte) is not needed. For a Paletter over the bundled data that is its own versions, not every bundled one:
-     * an application that serves a few versions releases it once those are loaded.
-     * A version loaded after that (one outside the versions served, or one another Paletter over the bundled data serves)
-     * gets a throwaway map instead, so it loses the sharing with the other versions: its states and components are separate
-     * copies. The values stay the same, only the memory is not shared.
+     * Registers the versions this instance serves with the Paletter it loads through, before it loads any: interning goes
+     * on until they are loaded too, also while another Paletter over the bundled data with fewer versions is done.
      */
-    private void releaseInterned() {
+    private void want() {
+        Paletter loader = loader();
+        synchronized (loader.internLock) {
+            if (!loader.internedReleased) {
+                loader.wanted.addAll(versions);
+            }
+        }
+    }
+
+    /**
+     * Interning only matters while versions are still to be loaded: once all versions the Paletters loading through this
+     * one serve are, the map (about a megabyte) is not needed. For the bundled data that is the versions of the Paletters
+     * built so far, not every bundled one: an application that serves a few versions releases it once those are loaded.
+     * A version loaded after that (by a Paletter built later) gets a throwaway map instead, so it loses the sharing with
+     * the other versions: its states and components are separate copies. The values stay the same, only the memory is
+     * not shared.
+     */
+    private void releaseInternedIfLoaded() {
         synchronized (internLock) {
-            interned = null;
-            internedStates = null;
-            internedReleased = true;
+            if (!internedReleased && !wanted.isEmpty() && data.keySet().containsAll(wanted)) {
+                interned = null;
+                internedStates = null;
+                internedReleased = true;
+            }
         }
     }
 
     /** For tests: whether the intern map this instance loads through was dropped. */
     boolean internReleased() {
-        Paletter loader = sharesBundledData() ? Loaders.BUNDLED : this;
+        Paletter loader = loader();
         synchronized (loader.internLock) {
             return loader.interned == null;
         }
@@ -971,6 +999,7 @@ public final class Paletter {
          */
         public @NonNull Paletter build() {
             Paletter paletter = new Paletter(this);
+            paletter.want();
             if (compileOnBuild) {
                 paletter.compileAll(sequential);
             }

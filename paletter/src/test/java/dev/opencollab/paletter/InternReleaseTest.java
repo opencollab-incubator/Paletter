@@ -24,8 +24,18 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 class InternReleaseTest {
     @Test
     void releasedOnceTheServedVersionsAreLoaded() throws Exception {
+        assertEquals("before=false after=true later=ok", run(Check.class));
+    }
+
+    @Test
+    void keptWhileAnotherPaletterStillLoads() throws Exception {
+        assertEquals("narrow=false wide=true", run(TwoPaletters.class));
+    }
+
+    /** Runs a checking JVM and returns its last line. */
+    private static String run(Class<?> check) throws Exception {
         List<String> command = List.of(Path.of(System.getProperty("java.home"), "bin", "java").toString(), "-Xmx1g",
-            "-cp", System.getProperty("java.class.path"), Check.class.getName());
+            "-cp", System.getProperty("java.class.path"), check.getName());
         Process process = new ProcessBuilder(command).redirectErrorStream(true).start();
         try {
             CompletableFuture<String> output = CompletableFuture.supplyAsync(() -> {
@@ -40,9 +50,27 @@ class InternReleaseTest {
             }
             String text = output.get(10, TimeUnit.SECONDS);
             assertEquals(0, process.exitValue(), text);
-            assertEquals("before=false after=true later=ok", text.lines().reduce((first, second) -> second).orElseThrow(), text);
+            return text.lines().reduce((first, second) -> second).orElseThrow();
         } finally {
             process.destroyForcibly();
+        }
+    }
+
+    /** The checking JVM: a Paletter of every version, then one of the newest alone, both built before either loads. */
+    public static final class TwoPaletters {
+        public static void main(String[] args) {
+            Paletter.Builder wideBuilder = Paletter.builder();
+            wideBuilder.compileOnBuild = false;
+            Paletter wide = wideBuilder.build();
+            Paletter.Builder narrowBuilder = Paletter.builder().versions(version -> version.equals(wide.latest()));
+            narrowBuilder.compileOnBuild = false;
+            Paletter narrow = narrowBuilder.build();
+            narrow.palette(narrow.latest());
+            boolean afterNarrow = narrow.internReleased();
+            for (DataVersion version : wide.versions()) {
+                wide.palette(version);
+            }
+            System.out.println("narrow=" + afterNarrow + " wide=" + wide.internReleased());
         }
     }
 
