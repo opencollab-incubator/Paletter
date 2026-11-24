@@ -8,7 +8,15 @@ val libs = extensions.getByType<VersionCatalogsExtension>().named("libs")
 
 repositories {
     mavenCentral()
-    maven("https://repo.opencollab.dev/main")
+    // Only what Maven Central does not have: the Cloudburst and opencollab artifacts (their releases and snapshots) and
+    // the natives Cloudburst's network library needs; everything else must resolve from Maven Central
+    maven("https://repo.opencollab.dev/main") {
+        content {
+            includeGroupAndSubgroups("org.cloudburstmc")
+            includeGroupAndSubgroups("dev.opencollab")
+            includeGroup("com.nukkitx")
+        }
+    }
     // Only the Cloudburst and opencollab snapshots come from here; everything else must resolve elsewhere
     maven("https://repo.opencollab.dev/maven-snapshots") {
         content {
