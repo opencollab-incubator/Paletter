@@ -15,6 +15,8 @@ import dev.opencollab.paletter.block.component.BlockMenuCategory;
 import dev.opencollab.paletter.block.component.UvLock;
 import dev.opencollab.paletter.creative.CreativeCategory;
 import dev.opencollab.paletter.creative.CreativePlacement;
+import dev.opencollab.paletter.item.CustomItem;
+import dev.opencollab.paletter.item.component.BlockPlacer;
 import dev.opencollab.paletter.internal.component.TraitStates;
 import dev.opencollab.paletter.vanilla.BedrockBlockType;
 import dev.opencollab.paletter.vanilla.BedrockItemType;
@@ -24,6 +26,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.function.UnaryOperator;
 
 /**
  * A custom (data driven) block: an add-on JSON {@code minecraft:block} in Java. Registering one in a layer generates its
@@ -82,7 +85,7 @@ public final class CustomBlock {
         this.components = List.copyOf(components);
         this.permutations = List.copyOf(permutations);
         this.menuCategory = menuCategory;
-        this.item = Objects.requireNonNull(item, "item");
+        this.item = item instanceof BlockItem.Custom custom ? custom.resolve(identifier) : Objects.requireNonNull(item, "item");
         this.creative = creative;
         this.tags = List.copyOf(tags);
         checkUvLock(identifier, this.components);
@@ -109,7 +112,7 @@ public final class CustomBlock {
         }
         this.defaultStates = Map.copyOf(converted);
         this.type = BedrockBlockType.custom(identifier, stateProperties, this.defaultStates);
-        this.itemType = BedrockItemType.custom(identifier);
+        this.itemType = this.item instanceof BlockItem.Custom custom ? custom.item().type() : BedrockItemType.custom(identifier);
     }
 
     /**
@@ -279,21 +282,124 @@ public final class CustomBlock {
     }
 
     /**
-     * How the item of a custom block is registered. An item of its own that replaces it, e.g. to give the block an icon, is
-     * an ordinary {@link dev.opencollab.paletter.item.CustomItem} with the identifier of the block and a
-     * {@code block_placer} with {@code replace_block_item}, registered in the same layer: the block's item is then that item.
+     * How the item of a custom block is registered: {@link #NONE}, {@link #SIMPLE} (the default) or
+     * {@link #custom(UnaryOperator) custom}, an item of its own that the block owns. Closed: Paletter defines the variants.
+     *
+     * @since 1.0.0
      */
-    public enum BlockItem {
+    public sealed interface BlockItem permits BlockItem.None, BlockItem.Simple, BlockItem.Custom {
         /**
          * No item; the block cannot be held.
          */
-        NONE,
+        BlockItem NONE = new None();
         /**
          * A plain block item. The client renders it as its block. Like BDS, the palette gives it the runtime id
          * {@code 255 - block_id} (negative: block ids start at 10000), so it moves when a later layer adds blocks and
          * the palette numbers all custom blocks again.
          */
-        SIMPLE
+        BlockItem SIMPLE = new Simple();
+
+        /**
+         * An item of its own that replaces the block item, e.g. to give the block an icon: an ordinary data driven item with
+         * the block's identifier and a {@code block_placer} for the block with {@code replace_block_item}, as BDS takes it.
+         * The block owns it, so registering the block registers the item in the same layer, with the next sequential id
+         * after the layer's custom items. Its {@code menu_category} is its own; the block keeps its own too.
+         *
+         * @param item configures the item: the builder starts with the block's identifier and that {@code block_placer},
+         *             which the item must keep (other fields of it may change)
+         * @return the block item, resolved when the block is built
+         * @throws NullPointerException if {@code item} is null
+         */
+        static @NonNull BlockItem custom(@NonNull UnaryOperator<CustomItem.@NonNull Builder> item) {
+            return new Custom(Objects.requireNonNull(item, "item"), null);
+        }
+
+        /** {@link BlockItem#NONE}. */
+        final class None implements BlockItem {
+            private None() {
+            }
+
+            @Override
+            public String toString() {
+                return "NONE";
+            }
+        }
+
+        /** {@link BlockItem#SIMPLE}. */
+        final class Simple implements BlockItem {
+            private Simple() {
+            }
+
+            @Override
+            public String toString() {
+                return "SIMPLE";
+            }
+        }
+
+        /**
+         * {@link BlockItem#custom}: the item the block owns. The {@link CustomBlock#item()} of a built block holds the item;
+         * equal when the items are equal.
+         */
+        final class Custom implements BlockItem {
+            private final @Nullable UnaryOperator<CustomItem.Builder> configure;
+            private final @Nullable CustomItem item;
+
+            private Custom(@Nullable UnaryOperator<CustomItem.Builder> configure, @Nullable CustomItem item) {
+                this.configure = configure;
+                this.item = item;
+            }
+
+            /**
+             * Returns the item.
+             *
+             * @return the item of the block
+             * @throws IllegalStateException if this is not the item of a built block ({@link CustomBlock#item()})
+             */
+            public @NonNull CustomItem item() {
+                if (item == null) {
+                    throw new IllegalStateException("The item is built with its block: use CustomBlock#item()");
+                }
+                return item;
+            }
+
+            /** Builds the item for a block. */
+            private Custom resolve(String identifier) {
+                if (item != null) {
+                    if (!item.identifier().equals(identifier)) {
+                        throw new IllegalArgumentException(item.identifier() + "'s item cannot be the item of " + identifier);
+                    }
+                    return this;
+                }
+                CustomItem.Builder builder = configure.apply(CustomItem.builder(identifier).component(placer(identifier)));
+                CustomItem built = Objects.requireNonNull(builder, "the item's builder").build();
+                BlockPlacer placer = built.component(BlockPlacer.class);
+                if (!built.identifier().equals(identifier) || placer == null || !placer.replaceBlockItem()
+                    || !identifier.equals(placer.block())) {
+                    throw new IllegalArgumentException(identifier + "'s custom item must keep its identifier and its block_placer for "
+                        + identifier + " with replace_block_item");
+                }
+                return new Custom(null, built);
+            }
+
+            private static BlockPlacer placer(String identifier) {
+                return BlockPlacer.builder().block(identifier).replaceBlockItem(true).build();
+            }
+
+            @Override
+            public boolean equals(Object o) {
+                return this == o || o instanceof Custom other && item != null && item.equals(other.item);
+            }
+
+            @Override
+            public int hashCode() {
+                return Objects.hashCode(item);
+            }
+
+            @Override
+            public String toString() {
+                return "Custom[" + (item == null ? "unbuilt" : item) + "]";
+            }
+        }
     }
 
     /**
@@ -417,8 +523,9 @@ public final class CustomBlock {
     /**
      * The type of the block item, owned by the block like {@link #type()}: a palette hands back this type and its base
      * variant for the block item. A palette has the item if it is registered: with the block unless {@link #item()} is
-     * {@link BlockItem#NONE}. When a custom item of the layer replaces the block item, the palette's item has that item's type
-     * instead, not this one: {@link dev.opencollab.paletter.Palette#itemOf} always gives the right one.
+     * {@link BlockItem#NONE}. For a {@link BlockItem#custom custom} item it is that item's type. When a separate custom item
+     * of the layer replaces the block item, the palette's item has that item's type instead, not this one:
+     * {@link dev.opencollab.paletter.Palette#itemOf} always gives the right one.
      *
      * @return the type of the block item
      * @since 1.0.0
@@ -605,14 +712,15 @@ public final class CustomBlock {
         }
 
         /**
-         * Sets how the block item is registered. The default is {@link BlockItem#SIMPLE}.
+         * Sets how the block item is registered. The default is {@link BlockItem#SIMPLE}; {@link BlockItem#custom} gives the
+         * block an item of its own.
          *
          * @param item how the block item is registered
          * @return this builder
          * @throws NullPointerException if the item is null
          */
         public @NonNull Builder item(@NonNull BlockItem item) {
-            this.item = Objects.requireNonNull(item, "item");
+            this.item = item instanceof BlockItem.Custom custom ? custom.resolve(identifier) : Objects.requireNonNull(item, "item");
             return this;
         }
 

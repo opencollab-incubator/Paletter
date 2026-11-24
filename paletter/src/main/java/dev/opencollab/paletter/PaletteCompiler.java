@@ -123,7 +123,7 @@ final class PaletteCompiler {
 
         // Items of the layer that replace the item of one of its blocks: they are the blocks' items
         Map<String, CustomItem> replacements = new LinkedHashMap<>();
-        for (CustomItem item : layer.items()) {
+        for (CustomItem item : items(layer)) {
             if (replacesBlockItem(item, blocks, layer, report, source)) {
                 replacements.put(item.identifier(), item);
             }
@@ -183,7 +183,7 @@ final class PaletteCompiler {
         // The handles of the new variants are the types the custom items and blocks own
         List<BedrockItemType> customTypes = new ArrayList<>();
         blocks.customBlocks().forEach(block -> customTypes.add(block.itemType()));
-        for (CustomItem item : layer.items()) {
+        for (CustomItem item : items(layer)) {
             newVariants.add(item.variant());
             customTypes.add(item.type());
         }
@@ -206,7 +206,7 @@ final class PaletteCompiler {
     private static List<Placed> registerItems(PaletteLayer layer, BlockRegistry blocks, Map<String, CustomItem> replacements,
                                               ItemRegistry.Builder items, PaletteReportBuilder report, String source) {
         List<Placed> placed = new ArrayList<>();
-        for (CustomItem custom : layer.items()) {
+        for (CustomItem custom : items(layer)) {
             if (replacements.containsKey(custom.identifier())) {
                 items.addBlockItemReplacement(custom, report, source);
                 continue;
@@ -323,6 +323,17 @@ final class PaletteCompiler {
             return null;
         }
         return new Menu(CreativeCategory.fromBedrockName(category), group == null || group.isEmpty() ? null : group);
+    }
+
+    /** The custom items of a layer, then the items its blocks own ({@link CustomBlock.BlockItem#custom}), in block order. */
+    private static List<CustomItem> items(PaletteLayer layer) {
+        List<CustomItem> items = new ArrayList<>(layer.items());
+        for (CustomBlock block : layer.blocks()) {
+            if (block.item() instanceof CustomBlock.BlockItem.Custom custom) {
+                items.add(custom.item());
+            }
+        }
+        return items;
     }
 
     /**

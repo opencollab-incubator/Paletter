@@ -506,11 +506,25 @@ public final class dev.opencollab.paletter.block.CustomBlock {
     public dev.opencollab.paletter.vanilla.BedrockBlockType type()
 }
 
-public enum dev.opencollab.paletter.block.CustomBlock$BlockItem {
+public sealed interface dev.opencollab.paletter.block.CustomBlock$BlockItem permits dev.opencollab.paletter.block.CustomBlock$BlockItem$Custom, dev.opencollab.paletter.block.CustomBlock$BlockItem$None, dev.opencollab.paletter.block.CustomBlock$BlockItem$Simple {
     public static final dev.opencollab.paletter.block.CustomBlock$BlockItem NONE
     public static final dev.opencollab.paletter.block.CustomBlock$BlockItem SIMPLE
-    public static dev.opencollab.paletter.block.CustomBlock$BlockItem valueOf(java.lang.String)
-    public static dev.opencollab.paletter.block.CustomBlock$BlockItem[] values()
+    public static dev.opencollab.paletter.block.CustomBlock$BlockItem custom(java.util.function.UnaryOperator<dev.opencollab.paletter.item.CustomItem$Builder>)
+}
+
+public static final class dev.opencollab.paletter.block.CustomBlock$BlockItem$Custom implements dev.opencollab.paletter.block.CustomBlock$BlockItem {
+    public boolean equals(java.lang.Object)
+    public int hashCode()
+    public dev.opencollab.paletter.item.CustomItem item()
+    public java.lang.String toString()
+}
+
+public static final class dev.opencollab.paletter.block.CustomBlock$BlockItem$None implements dev.opencollab.paletter.block.CustomBlock$BlockItem {
+    public java.lang.String toString()
+}
+
+public static final class dev.opencollab.paletter.block.CustomBlock$BlockItem$Simple implements dev.opencollab.paletter.block.CustomBlock$BlockItem {
+    public java.lang.String toString()
 }
 
 public static final class dev.opencollab.paletter.block.CustomBlock$Builder {

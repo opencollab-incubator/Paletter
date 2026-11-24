@@ -101,6 +101,27 @@ class BlockOwnedItemTest {
         assertTrue(palette.itemDefinition(item.type().identifier()).getRuntimeId() > 0, "a data driven item, numbered with the items");
     }
 
+    @Test
+    void aCustomBlockItemIsOwnedByTheBlockAndRegisteredWithIt() {
+        CustomBlock block = CustomBlock.builder("own:owned").menuCategory(CreativeCategory.CONSTRUCTION)
+            .item(CustomBlock.BlockItem.custom(item -> item.component(Icon.of("owned")).menuCategory(CreativeCategory.ITEMS)))
+            .build();
+        CustomItem item = ((CustomBlock.BlockItem.Custom) block.item()).item();
+        assertEquals("own:owned", item.identifier());
+        assertTrue(item.component(BlockPlacer.class).replaceBlockItem());
+        assertSame(item.type(), block.itemType());
+        Palette palette = Palettes.palette(PROTOCOL, PaletteLayer.builder("owned").block(block).build());
+        assertSame(item.type(), palette.itemOf(block.type()));
+        assertNull(stacksOf(palette, "own:owned").getFirst().blockState(), "a plain stack, as a replacing item");
+        assertTrue(palette.itemDefinition(item.type().identifier()).getRuntimeId() > 0);
+        // The block_placer for the block stays
+        assertThrows(IllegalArgumentException.class, () -> CustomBlock.builder("own:lost")
+            .item(CustomBlock.BlockItem.custom(builder -> CustomItem.builder("own:lost"))).build());
+        assertThrows(IllegalStateException.class, () -> ((CustomBlock.BlockItem.Custom) CustomBlock.BlockItem.custom(b -> b)).item());
+        assertEquals(block, CustomBlock.builder("own:owned").menuCategory(CreativeCategory.CONSTRUCTION)
+            .item(CustomBlock.BlockItem.custom(b -> b.component(Icon.of("owned")).menuCategory(CreativeCategory.ITEMS))).build());
+    }
+
     private static CustomItem replacing(String identifier) {
         return CustomItem.builder(identifier).component(Icon.of("x"))
             .component(BlockPlacer.builder().block(identifier).replaceBlockItem(true).build()).build();

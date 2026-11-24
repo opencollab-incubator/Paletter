@@ -277,8 +277,10 @@ captured from the Script API, then the block states in the creative inventory. A
 creative stacks carry none (doors, signs, beds, seeds, redstone, hoppers, campfires, ...) carries no block, as BDS sends it.
 
 A custom block owns its item, as in BDS, so a layer never registers it separately: `CustomBlock.Builder#item` chooses
-`BlockItem.SIMPLE` or `NONE`. An item of its own that replaces the block item is an ordinary `CustomItem` with the block's
-identifier and a `block_placer` with `replace_block_item` (BDS takes the flag only for that identifier), registered in the
+`BlockItem.SIMPLE`, `NONE` or `BlockItem.custom(item -> item.component(...))`, an item of its own that the block owns and
+registers with it. Such an item, which replaces the block item, is an ordinary `CustomItem` with the block's
+identifier and a `block_placer` with `replace_block_item` (BDS takes the flag only for that identifier). `custom(...)` starts
+it that way; written as a separate `CustomItem`, it has to be registered in the
 same layer with `layer.item(...)` (in another layer, or for a block with `BlockItem.NONE`, compiling throws a `PaletteException`
 naming the cause; a flag for a block that does not exist is reported and the item stays an ordinary one): its category, components and id come from the item, and `Palette#itemOf` gives it for
 the block. In the creative inventory it is a plain stack (no block state) in the item's own category, placed in the block
