@@ -17,6 +17,7 @@ import dev.opencollab.paletter.block.component.MaterialInstances;
 import dev.opencollab.paletter.block.component.PlacementFilter;
 import dev.opencollab.paletter.block.component.SelectionBox;
 import dev.opencollab.paletter.block.component.UvLock;
+import dev.opencollab.paletter.internal.access.Access;
 import dev.opencollab.paletter.internal.data.VanillaData;
 import dev.opencollab.paletter.item.component.BlockPlacer;
 import dev.opencollab.paletter.item.component.Dyeable;
@@ -46,7 +47,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  */
 class TransformsTest {
     private static final Paletter PALETTER = Paletter.bundled();
-    private static final VanillaData DATA = PALETTER.vanillaData(PALETTER.latest());
+    private static final VanillaData DATA = Access.palette().vanillaData(PALETTER, PALETTER.latest());
 
     private final PaletteReportBuilder report = new PaletteReportBuilder();
     private final WireContext ctx = WireContext.of(DATA, report, "test").subject("test:thing");
@@ -56,7 +57,7 @@ class TransformsTest {
     private final WireContext ctx26_30 = at(ComponentIndex.V26_30);
 
     private WireContext at(int protocol) {
-        return WireContext.of(PALETTER.vanillaData(PALETTER.version(protocol)), report, "test").subject("test:thing");
+        return WireContext.of(Access.palette().vanillaData(PALETTER, PALETTER.version(protocol)), report, "test").subject("test:thing");
     }
 
     private static NbtMap compound(WireNode node, String path) {

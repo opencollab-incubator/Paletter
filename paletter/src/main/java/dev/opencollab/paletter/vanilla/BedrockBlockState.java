@@ -23,7 +23,7 @@ import java.util.Map;
  * of a type made for an identifier the bundled data does not know are equal by value, not identical.
  * Equal custom blocks registered by different layers each own their states; those are equal, not identical.
  * <p>
- * Canonical ids come from {@link dev.opencollab.paletter.Paletter#canonicalBlocks()} (vanilla states) and
+ * Canonical ids come from the canonical block ids of the {@code Paletter} (vanilla states) and
  * {@link dev.opencollab.paletter.Palette#runtimeId(BedrockBlockState)} (vanilla and custom states). For a vanilla
  * state both are an addition, not a hash lookup: the first state of its block plus the sum of each value's index times
  * the stride of its property, computed once (Bedrock enumerates every block's states as the full product of its values;

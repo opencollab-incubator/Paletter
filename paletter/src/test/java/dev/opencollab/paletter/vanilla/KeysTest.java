@@ -4,6 +4,7 @@ import dev.opencollab.paletter.Ids;
 import dev.opencollab.paletter.Paletter;
 import dev.opencollab.paletter.internal.CanonicalItems;
 import dev.opencollab.paletter.internal.Forwarding;
+import dev.opencollab.paletter.internal.access.Access;
 import dev.opencollab.paletter.internal.data.Renames;
 import org.junit.jupiter.api.Test;
 
@@ -72,7 +73,7 @@ class KeysTest {
     void renamesForward() {
         Renames renames = Renames.parse(List.of("item test:old_apple minecraft:apple"));
         assertEquals("minecraft:apple", renames.item("test:old_apple"));
-        CanonicalItems items = CanonicalItems.of(PALETTER.vanillaData(PALETTER.latest()), renames);
+        CanonicalItems items = CanonicalItems.of(Access.palette().vanillaData(PALETTER, PALETTER.latest()), renames);
         Forwarding forwarding = items.forward(item("test:old_apple", 0));
         assertEquals(Forwarding.Kind.RENAMED, forwarding.kind());
         assertEquals(BedrockItems.APPLE.variant().canonicalIn(items), forwarding.canonical());
@@ -86,7 +87,7 @@ class KeysTest {
         assertNull(renames.split("minecraft:apple", 4));
         assertNull(renames.item("minecraft:apple"));
 
-        CanonicalItems items = CanonicalItems.of(PALETTER.vanillaData(PALETTER.latest()), renames);
+        CanonicalItems items = CanonicalItems.of(Access.palette().vanillaData(PALETTER, PALETTER.latest()), renames);
         Forwarding forwarding = items.forward(item("minecraft:apple", 5));
         assertEquals(Forwarding.Kind.RENAMED, forwarding.kind());
         assertEquals(BedrockItems.GOLDEN_APPLE.variant().canonicalIn(items), forwarding.canonical());

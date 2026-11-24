@@ -21,6 +21,7 @@ import dev.opencollab.paletter.creative.CreativeOrdering;
 import dev.opencollab.paletter.item.CustomItem;
 import dev.opencollab.paletter.item.component.BlockPlacer;
 import dev.opencollab.paletter.block.component.BlockMenuCategory;
+import dev.opencollab.paletter.internal.access.Access;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -127,7 +128,7 @@ public final class CreativeOrderCheck {
         Palette palette = capture.palette(protocol);
         List<String> differences = new ArrayList<>();
         Map<String, Integer> paletterIds = new LinkedHashMap<>();
-        palette.blocks().blockProperties().stream().filter(block -> !block.getName().startsWith("minecraft:"))
+        Access.palette().blocks(palette).blockProperties().stream().filter(block -> !block.getName().startsWith("minecraft:"))
             .forEach(block -> paletterIds.put(block.getName(), blockId(block.getProperties())));
         Set<String> captured = new HashSet<>();
         blocks.forEach(block -> captured.add(block.getString("name")));
@@ -146,7 +147,7 @@ public final class CreativeOrderCheck {
         List<String> wire = blocks.stream().map(block -> block.getString("name")).toList();
         List<String> byId = paletterIds.entrySet().stream().sorted(Map.Entry.comparingByValue()).map(Map.Entry::getKey).toList();
         List<String> order = CreativeOrdering.BDS.blockOrder(byId,
-            palette.vanillaData().dataDrivenBlocks().stream().map(block -> block.getName()).toList());
+            Access.palette().vanillaData(palette).dataDrivenBlocks().stream().map(block -> block.getName()).toList());
         for (int i = 0; i < Math.max(wire.size(), order.size()) && differences.size() < 20; i++) {
             String bds = i < wire.size() ? wire.get(i) : null;
             String ours = i < order.size() ? order.get(i) : null;

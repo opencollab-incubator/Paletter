@@ -9,6 +9,7 @@ import dev.opencollab.paletter.internal.PaletteReportBuilder;
 import dev.opencollab.paletter.Paletter;
 import dev.opencollab.paletter.block.CustomBlock;
 import dev.opencollab.paletter.data.DataVersion;
+import dev.opencollab.paletter.internal.access.Access;
 import dev.opencollab.paletter.internal.component.BlockCompiler;
 import dev.opencollab.paletter.internal.component.ItemCompiler;
 import dev.opencollab.paletter.internal.component.WireContext;
@@ -61,7 +62,7 @@ class VanillaShapeOracleTest {
         int protocol = meta.get("protocol").getAsInt();
         Paletter paletter = Paletter.bundled();
         DataVersion version = paletter.version(protocol);
-        VanillaData data = paletter.vanillaData(version);
+        VanillaData data = Access.palette().vanillaData(paletter, version);
 
         WireShapes vanilla = WireShapes.ofData(data);
         WireShapes compiled = new WireShapes();

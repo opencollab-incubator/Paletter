@@ -1,7 +1,9 @@
 package dev.opencollab.paletter;
 
-import dev.opencollab.paletter.annotation.Internal;
 import dev.opencollab.paletter.internal.PaletteReportBuilder;
+import dev.opencollab.paletter.internal.block.BlockInterner;
+import dev.opencollab.paletter.internal.access.PaletteAccess;
+import dev.opencollab.paletter.internal.access.Access;
 import dev.opencollab.paletter.internal.behaviour.Behaviour;
 import dev.opencollab.paletter.internal.behaviour.VanillaBehaviour;
 import dev.opencollab.paletter.internal.Canonicals;
@@ -108,6 +110,76 @@ import java.util.function.Supplier;
  * @since 1.0.0
  */
 public final class Palette {
+    static {
+        Access.setPalette(new PaletteAccess() {
+            @Override
+            public Behaviour behaviour(Palette palette) {
+                return palette.behaviour();
+            }
+
+            @Override
+            public VanillaData vanillaData(Palette palette) {
+                return palette.vanillaData();
+            }
+
+            @Override
+            public BlockRegistry blocks(Palette palette) {
+                return palette.blocks();
+            }
+
+            @Override
+            public ItemRegistry items(Palette palette) {
+                return palette.items();
+            }
+
+            @Override
+            public VanillaData vanillaData(Paletter paletter, DataVersion version) {
+                return paletter.vanillaData(version);
+            }
+
+            @Override
+            public CanonicalBlocks canonicalBlocks(Paletter paletter) {
+                return paletter.canonicalBlocks();
+            }
+
+            @Override
+            public CanonicalItems canonicalItems(Paletter paletter) {
+                return paletter.canonicalItems();
+            }
+
+            @Override
+            public BlockInterner blockInterner(Paletter paletter) {
+                return paletter.blockInterner();
+            }
+
+            @Override
+            public Paletter bundledLoader() {
+                return Paletter.bundledLoader();
+            }
+
+            @Override
+            public PaletteReport report(DataVersion version, List<PaletteReport.Entry> entries, Set<BedrockBlockType> unknownBlocks,
+                                        Set<BedrockItemVariant> unknownItems) {
+                return new PaletteReport(version, entries, unknownBlocks, unknownItems);
+            }
+
+            @Override
+            public PaletteReport.Entry entry(PaletteReport.Level level, String source, String code, @Nullable String subject, String message) {
+                return PaletteReport.Entry.of(level, source, code, subject, message);
+            }
+
+            @Override
+            public List<ItemVariant> variants(PaletteLayer layer) {
+                return layer.variants();
+            }
+
+            @Override
+            public void addVariants(PaletteLayer.Builder builder, List<ItemVariant> variants) {
+                builder.variants(variants);
+            }
+        });
+    }
+
     private static final String[] NO_STRINGS = new String[0];
 
     private final VanillaData data;
@@ -253,13 +325,12 @@ public final class Palette {
     }
 
     /**
-     * Internal: returns the behaviour values of this palette, behind {@link #resolve(BedrockBlockState)} and
+     * Returns the behaviour values of this palette, behind {@link #resolve(BedrockBlockState)} and
      * {@link ResolvedItem#behaviour()}. Built on first use.
      *
      * @return the behaviour values
      */
-    @Internal
-    public @NonNull Behaviour behaviour() {
+    @NonNull Behaviour behaviour() {
         Behaviour result = behaviour;
         return result != null ? result : buildBehaviour();
     }
@@ -470,12 +541,11 @@ public final class Palette {
     }
 
     /**
-     * Internal: returns the bundled vanilla data of this palette's version.
+     * Returns the bundled vanilla data of this palette's version.
      *
      * @return the vanilla data
      */
-    @Internal
-    public @NonNull VanillaData vanillaData() {
+    @NonNull VanillaData vanillaData() {
         return data;
     }
 
@@ -490,24 +560,22 @@ public final class Palette {
     }
 
     /**
-     * Internal: the block registry. Use {@link #blockDefinition(BedrockBlockState)},
+     * The block registry. Use {@link #blockDefinition(BedrockBlockState)},
      * {@link #blockState(BlockDefinition)} and the other methods of this class.
      *
      * @return the block registry
      */
-    @Internal
-    public @NonNull BlockRegistry blocks() {
+    @NonNull BlockRegistry blocks() {
         return blocks;
     }
 
     /**
-     * Internal: the item registry. Use {@link #itemDefinition(String)}, {@link #itemDefinitions()}, {@link #itemTags()}
+     * The item registry. Use {@link #itemDefinition(String)}, {@link #itemDefinitions()}, {@link #itemTags()}
      * and the other methods of this class.
      *
      * @return the item registry
      */
-    @Internal
-    public @NonNull ItemRegistry items() {
+    @NonNull ItemRegistry items() {
         return items;
     }
 

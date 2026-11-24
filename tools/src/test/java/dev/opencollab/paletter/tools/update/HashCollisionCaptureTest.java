@@ -7,6 +7,7 @@ import dev.opencollab.paletter.Palette;
 import dev.opencollab.paletter.PaletteLayer;
 import dev.opencollab.paletter.Paletter;
 import dev.opencollab.paletter.block.CustomBlock;
+import dev.opencollab.paletter.internal.access.Access;
 import dev.opencollab.paletter.tools.CommittedBuilds;
 import dev.opencollab.paletter.tools.model.Fixtures;
 import org.junit.jupiter.api.Test;
@@ -54,7 +55,7 @@ class HashCollisionCaptureTest {
             int protocol = JsonParser.parseString(Files.readString(spec.resolve("capture.json"))).getAsJsonObject().get("protocol").getAsInt();
             Palette palette = paletter.vanilla(paletter.version(protocol)).extend(layer);
             for (String block : pair) {
-                assertEquals(sent.get(block), Integer.toUnsignedLong(palette.blocks().defaultState(block).getRuntimeId()),
+                assertEquals(sent.get(block), Integer.toUnsignedLong(Access.palette().blocks(palette).defaultState(block).getRuntimeId()),
                     "BDS " + name + " gave " + block + " another id than Paletter");
             }
         }

@@ -2,6 +2,7 @@ package dev.opencollab.paletter.item;
 
 import dev.opencollab.paletter.Paletter;
 import dev.opencollab.paletter.data.DataVersion;
+import dev.opencollab.paletter.internal.access.Access;
 import dev.opencollab.paletter.internal.item.ItemRegistry;
 import org.junit.jupiter.api.Test;
 
@@ -17,8 +18,8 @@ class ItemInternerTest {
     @Test
     void unchangedItemsAreSharedAcrossVersions() {
         List<DataVersion> versions = PALETTER.versions();
-        ItemRegistry older = PALETTER.vanilla(versions.get(0)).items();
-        ItemRegistry newer = PALETTER.vanilla(versions.get(versions.size() - 1)).items();
+        ItemRegistry older = Access.palette().items(PALETTER.vanilla(versions.get(0)));
+        ItemRegistry newer = Access.palette().items(PALETTER.vanilla(versions.get(versions.size() - 1)));
         int shared = 0;
         for (RegisteredItem item : older.definitions()) {
             RegisteredItem other = newer.getDefinition(item.getRuntimeId());

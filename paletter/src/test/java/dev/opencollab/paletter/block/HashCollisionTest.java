@@ -6,6 +6,7 @@ import dev.opencollab.paletter.PaletteLayer;
 import dev.opencollab.paletter.Palettes;
 import dev.opencollab.paletter.Paletter;
 import dev.opencollab.paletter.internal.BlockIdOrder;
+import dev.opencollab.paletter.internal.access.Access;
 import dev.opencollab.paletter.internal.block.BlockRegistry;
 import org.junit.jupiter.api.Test;
 
@@ -45,7 +46,7 @@ class HashCollisionTest {
         int protocol = PALETTER.latest().protocolVersion();
         // Whatever order they are registered in
         for (PaletteLayer layer : List.of(PaletteLayer.builder("ab").block(A).block(B).build(), PaletteLayer.builder("ba").block(B).block(A).build())) {
-            BlockRegistry blocks = Palettes.palette(protocol, layer).blocks();
+            BlockRegistry blocks = Access.palette().blocks(Palettes.palette(protocol, layer));
             RegisteredBlockState first = blocks.defaultState(FIRST);
             RegisteredBlockState second = blocks.defaultState(SECOND);
             assertEquals(HASH, first.getRuntimeId(), layer.id());
@@ -62,8 +63,8 @@ class HashCollisionTest {
         int protocol = PALETTER.latest().protocolVersion();
         Palette stacked = Palettes.palette(protocol).extend(PaletteLayer.builder("first").block(A).build())
             .extend(PaletteLayer.builder("second").block(B).build());
-        assertEquals(HASH, stacked.blocks().defaultState(FIRST).getRuntimeId());
-        assertEquals(HASH + 1, stacked.blocks().defaultState(SECOND).getRuntimeId());
+        assertEquals(HASH, Access.palette().blocks(stacked).defaultState(FIRST).getRuntimeId());
+        assertEquals(HASH + 1, Access.palette().blocks(stacked).defaultState(SECOND).getRuntimeId());
     }
 
     @Test
@@ -71,7 +72,7 @@ class HashCollisionTest {
         // BDS would give the hash to the later layer's block, which changes the id of the earlier one: Paletter does not
         int protocol = PALETTER.latest().protocolVersion();
         Palette first = Palettes.palette(protocol).extend(PaletteLayer.builder("second").block(B).build());
-        assertEquals(HASH, first.blocks().defaultState(SECOND).getRuntimeId());
+        assertEquals(HASH, Access.palette().blocks(first).defaultState(SECOND).getRuntimeId());
         PaletteException thrown = assertThrows(PaletteException.class, () -> first.extend(PaletteLayer.builder("first").block(A).build()));
         assertEquals(FIRST, thrown.identifier());
     }

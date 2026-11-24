@@ -144,7 +144,7 @@ public final class ItemRegistry implements DefinitionRegistry<ItemDefinition> {
         if (palette == null) {
             throw new IllegalStateException("no palette owns this item registry");
         }
-        return palette.behaviour();
+        return Access.palette().behaviour(palette);
     }
 
     private ItemRegistry(Builder builder, Map<String, RegisteredBlockState> defaultBlocks, Set<String> multiStateBlockItems) {

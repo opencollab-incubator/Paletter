@@ -1,6 +1,5 @@
 package dev.opencollab.paletter;
 
-import dev.opencollab.paletter.annotation.Internal;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import dev.opencollab.paletter.internal.shape.VoxelShapeRules;
@@ -150,12 +149,11 @@ public final class PaletteLayer {
     }
 
     /**
-     * Internal: the item variants this layer gives canonical ids to.
+     * The item variants this layer gives canonical ids to.
      *
      * @return item variants this layer gives canonical ids to, besides its custom items
      */
-    @Internal
-    public @NonNull List<ItemVariant> variants() {
+    @NonNull List<ItemVariant> variants() {
         return variants;
     }
 
@@ -323,7 +321,7 @@ public final class PaletteLayer {
         }
 
         /**
-         * Internal: gives an item variant a canonical id, so that {@link Palette#decode} recognizes it. Needed for
+         * Gives an item variant a canonical id, so that {@link Palette#decode} recognizes it. Needed for
          * variants of the newest version that are neither an item's base variant nor in the creative inventory, e.g. a
          * damage value or block state a consumer maps to. Ids are appended after the custom items of this layer, in
          * call order; variants that already have one keep it. Like every canonical id they are the same in every
@@ -332,8 +330,7 @@ public final class PaletteLayer {
          * @param variant the variant
          * @return this builder
          */
-        @Internal
-        public @NonNull Builder variant(@NonNull ItemVariant variant) {
+        @NonNull Builder variant(@NonNull ItemVariant variant) {
             variants.add(Objects.requireNonNull(variant));
             return this;
         }
@@ -352,13 +349,12 @@ public final class PaletteLayer {
         }
 
         /**
-         * Internal: gives several variants canonical ids, as {@link #variant(ItemVariant)}.
+         * Gives several variants canonical ids, as {@link #variant(ItemVariant)}.
          *
          * @param variants the variants
          * @return this builder
          */
-        @Internal
-        public @NonNull Builder variants(@NonNull Collection<ItemVariant> variants) {
+        @NonNull Builder variants(@NonNull Collection<ItemVariant> variants) {
             variants.forEach(this::variant);
             return this;
         }

@@ -5,6 +5,7 @@ import dev.opencollab.paletter.Palette;
 import dev.opencollab.paletter.PaletteLayer;
 import dev.opencollab.paletter.Paletter;
 import dev.opencollab.paletter.block.CustomBlock;
+import dev.opencollab.paletter.internal.access.Access;
 import dev.opencollab.paletter.internal.component.ComponentIndex;
 import org.cloudburstmc.nbt.NbtMap;
 import org.cloudburstmc.nbt.NbtType;
@@ -80,7 +81,7 @@ class MolangVersionTest {
                 layer.minEngineVersion(engine);
             }
             Palette palette = paletter.palette(protocol).extend(layer.build());
-            BlockPropertyData data = palette.blocks().blockProperties().stream().filter(b -> b.getName().equals("test:block")).findFirst().orElseThrow();
+            BlockPropertyData data = Access.palette().blocks(palette).blockProperties().stream().filter(b -> b.getName().equals("test:block")).findFirst().orElseThrow();
             assertEquals(ComponentIndex.molangVersion(engine), data.getProperties().getInt("molangVersion"), String.valueOf(engine));
         }
     }

@@ -2,7 +2,6 @@ package dev.opencollab.paletter;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
-import dev.opencollab.paletter.annotation.Internal;
 import dev.opencollab.paletter.data.DataVersion;
 import dev.opencollab.paletter.vanilla.BedrockBlockType;
 import dev.opencollab.paletter.vanilla.BedrockItemVariant;
@@ -28,15 +27,14 @@ public final class PaletteReport {
     private final Set<BedrockItemVariant> unknownItems;
 
     /**
-     * Internal: made by the compiler; copies what it is given.
+     * Made by the compiler; copies what it is given.
      *
      * @param version the data version of the palette the report belongs to
      * @param entries the entries, in the order they happened
      * @param unknownBlocks see {@link #unknownBlocks()}
      * @param unknownItems see {@link #unknownItems()}
      */
-    @Internal
-    public PaletteReport(@NonNull DataVersion version, @NonNull List<Entry> entries, @NonNull Set<BedrockBlockType> unknownBlocks,
+    PaletteReport(@NonNull DataVersion version, @NonNull List<Entry> entries, @NonNull Set<BedrockBlockType> unknownBlocks,
                          @NonNull Set<BedrockItemVariant> unknownItems) {
         this.version = version;
         this.entries = List.copyOf(entries);
@@ -177,7 +175,7 @@ public final class PaletteReport {
         }
 
         /**
-         * Internal: made by the compiler.
+         * Made by the compiler.
          *
          * @param level the severity
          * @param source see {@link #source()}
@@ -186,8 +184,7 @@ public final class PaletteReport {
          * @param message the description
          * @return the entry
          */
-        @Internal
-        public static @NonNull Entry of(@NonNull Level level, @NonNull String source, @NonNull String code,
+        static @NonNull Entry of(@NonNull Level level, @NonNull String source, @NonNull String code,
                                         @Nullable String subject, @NonNull String message) {
             return new Entry(level, source, code, subject, message);
         }

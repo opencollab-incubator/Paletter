@@ -4,7 +4,6 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.cloudburstmc.nbt.NbtMap;
 import org.cloudburstmc.protocol.bedrock.codec.BedrockCodec;
-import dev.opencollab.paletter.annotation.Internal;
 import dev.opencollab.paletter.internal.PaletteReportBuilder;
 import dev.opencollab.paletter.internal.block.BlockInterner;
 import dev.opencollab.paletter.internal.block.BlockStates;
@@ -72,9 +71,6 @@ import java.util.function.Predicate;
  * Concepts: a {@link Palette} is the compiled content of one client version. Content is named by keys (version independent
  * identities, such as {@link BedrockBlockType}); a palette hands out definitions (what is sent) and resolutions (what it
  * makes of a key). See {@link Palette}.
- * <p>
- * Canonical ids ({@link #canonicalBlocks()}, {@link #canonicalItems()}) are defined by the newest
- * version, and valid in every palette of this instance.
  *
  * @since 1.0.0
  */
@@ -314,14 +310,13 @@ public final class Paletter {
     }
 
     /**
-     * Internal: loads the bundled data of a version, interned across versions.
+     * Loads the bundled data of a version, interned across versions.
      *
      * @param version a data version of this instance's data source
      * @return the vanilla data
      * @throws java.io.UncheckedIOException if the data cannot be read
      */
-    @Internal
-    public @NonNull VanillaData vanillaData(@NonNull DataVersion version) {
+    @NonNull VanillaData vanillaData(@NonNull DataVersion version) {
         // A Paletter over the bundled data loads through the shared one; the versions of every such Paletter decide when
         // interning ends
         Paletter loader = loader();
@@ -418,12 +413,11 @@ public final class Paletter {
     // ---- Lookups ----
 
     /**
-     * Internal: the canonical block ids.
+     * The canonical block ids.
      *
      * @return canonical block ids: every state of the newest version, in its vanilla palette order
      */
-    @Internal
-    public @NonNull CanonicalBlocks canonicalBlocks() {
+    @NonNull CanonicalBlocks canonicalBlocks() {
         CanonicalBlocks blocks = canonicalBlocks;
         if (blocks == null) {
             synchronized (this) {
@@ -438,12 +432,11 @@ public final class Paletter {
     }
 
     /**
-     * Internal: the canonical item ids.
+     * The canonical item ids.
      *
      * @return canonical item ids: every item of the newest version, then its other creative variants
      */
-    @Internal
-    public @NonNull CanonicalItems canonicalItems() {
+    @NonNull CanonicalItems canonicalItems() {
         CanonicalItems items = canonicalItems;
         if (items == null) {
             synchronized (this) {
@@ -458,12 +451,11 @@ public final class Paletter {
     }
 
     /**
-     * Internal: the block interner.
+     * The block interner.
      *
      * @return what hashed palettes of this instance share between versions
      */
-    @Internal
-    public @NonNull BlockInterner blockInterner() {
+    @NonNull BlockInterner blockInterner() {
         return blockInterner;
     }
 
@@ -748,13 +740,12 @@ public final class Paletter {
     }
 
     /**
-     * Internal: the loader every Paletter over the bundled data shares its data and canonical ids through. It compiles no
+     * The loader every Paletter over the bundled data shares its data and canonical ids through. It compiles no
      * palette, so the vanilla constants link to its data without compiling {@link #bundled()}.
      *
      * @return the loader of the bundled data, without previews
      */
-    @Internal
-    public static @NonNull Paletter bundledLoader() {
+    static @NonNull Paletter bundledLoader() {
         return Loaders.BUNDLED;
     }
 

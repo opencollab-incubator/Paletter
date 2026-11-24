@@ -2,6 +2,7 @@ package dev.opencollab.paletter.vanilla;
 
 import dev.opencollab.paletter.Paletter;
 import dev.opencollab.paletter.internal.CanonicalItems;
+import dev.opencollab.paletter.internal.access.Access;
 import dev.opencollab.paletter.internal.item.ItemVariant;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
@@ -119,7 +120,7 @@ class ItemVariantsTest {
 
     @Test
     void aVariantWithoutAnIdResolvesToTheRightId() {
-        CanonicalItems canonical = Paletter.bundled().canonicalItems();
+        CanonicalItems canonical = Access.palette().canonicalItems(Paletter.bundled());
         // Named constants and the base have no id of their own: the type's link knows it
         assertEquals(canonical.index(ItemVariant.of("minecraft:potion", 19)), BedrockItemVariants.POTION_WATER_BREATHING.canonicalIn(canonical));
         assertEquals(canonical.index(ItemVariant.of("minecraft:bed", 0)), BedrockItems.BED.variant().canonicalIn(canonical));
@@ -188,7 +189,7 @@ class ItemVariantsTest {
                 missing.add(field.getName());
             } else if (named) {
                 assertSame(variant, variant.type().variant(variant.aux()), field.getName());
-                assertTrue(variant.canonicalIn(paletter.canonicalItems()) >= 0, field.getName());
+                assertTrue(variant.canonicalIn(Access.palette().canonicalItems(paletter)) >= 0, field.getName());
             }
         }
         assertTrue(count > 0);

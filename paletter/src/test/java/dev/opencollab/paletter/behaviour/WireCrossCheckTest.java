@@ -5,6 +5,7 @@ import dev.opencollab.paletter.Paletter;
 import dev.opencollab.paletter.internal.block.RegisteredBlock;
 import dev.opencollab.paletter.block.RegisteredBlockState;
 import dev.opencollab.paletter.data.DataVersion;
+import dev.opencollab.paletter.internal.access.Access;
 import dev.opencollab.paletter.internal.behaviour.Behaviour;
 import dev.opencollab.paletter.internal.behaviour.WireRules;
 import dev.opencollab.paletter.item.RegisteredItem;
@@ -39,9 +40,9 @@ class WireCrossCheckTest {
         int compared = 0;
         for (DataVersion version : PALETTER.versions()) {
             Palette palette = PALETTER.vanilla(version);
-            Behaviour behaviour = palette.behaviour();
-            for (var data : palette.blocks().blockProperties()) {
-                RegisteredBlock block = palette.blocks().block(data.getName());
+            Behaviour behaviour = Access.palette().behaviour(palette);
+            for (var data : Access.palette().blocks(palette).blockProperties()) {
+                RegisteredBlock block = Access.palette().blocks(palette).block(data.getName());
                 for (RegisteredBlockState state : block.states()) {
                     for (BehaviourKey<?> key : BlockBehaviour.keys()) {
                         Object wire = WireRules.value(key, block.properties(state));
@@ -55,7 +56,7 @@ class WireCrossCheckTest {
                     }
                 }
             }
-            for (RegisteredItem item : palette.items().items()) {
+            for (RegisteredItem item : Access.palette().items(palette).items()) {
                 for (BehaviourKey<?> key : ItemBehaviour.keys()) {
                     Object wire = WireRules.value(key, item.properties());
                     Object dump = value(behaviour.resolve(item, key));

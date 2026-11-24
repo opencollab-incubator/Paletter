@@ -7,6 +7,7 @@ import dev.opencollab.paletter.behaviour.BlockBehaviour;
 import dev.opencollab.paletter.behaviour.ItemBehaviour;
 import dev.opencollab.paletter.block.RegisteredBlockState;
 import dev.opencollab.paletter.data.DataVersion;
+import dev.opencollab.paletter.internal.access.Access;
 import dev.opencollab.paletter.internal.behaviour.Capture;
 import dev.opencollab.paletter.internal.behaviour.VanillaBehaviour;
 import dev.opencollab.paletter.internal.behaviour.VanillaVersion;
@@ -49,8 +50,8 @@ class GeneratedBehaviourTest {
         for (DataVersion version : paletter.versions()) {
             Palette palette = paletter.vanilla(version);
             VanillaVersion values = data.version(version);
-            for (int i = 0; i < palette.blocks().size(); i++) {
-                RegisteredBlockState state = palette.blocks().byIndex(i);
+            for (int i = 0; i < Access.palette().blocks(palette).size(); i++) {
+                RegisteredBlockState state = Access.palette().blocks(palette).byIndex(i);
                 VanillaVersion.BlockEntry entry = values == null ? null : values.block(state.identifier());
                 boolean covered = entry != null && entry.covers(state.states());
                 for (BehaviourKey<?> key : BlockBehaviour.keys()) {
@@ -66,7 +67,7 @@ class GeneratedBehaviourTest {
                     known += value == null ? 0 : 1;
                 }
             }
-            for (RegisteredItem item : palette.items().ownDefinitions()) {
+            for (RegisteredItem item : Access.palette().items(palette).ownDefinitions()) {
                 for (BehaviourKey<?> key : ItemBehaviour.keys()) {
                     BehaviourStore.Resolved expected = BdsFirst.item(store, key, item.getIdentifier(), version);
                     if (BdsFirst.itemKept(store, key, item.getIdentifier(), version) != null) {

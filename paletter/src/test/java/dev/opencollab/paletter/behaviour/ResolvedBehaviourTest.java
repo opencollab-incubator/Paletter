@@ -10,6 +10,7 @@ import dev.opencollab.paletter.block.RegisteredBlockState;
 import dev.opencollab.paletter.block.ResolvedBlock;
 import dev.opencollab.paletter.block.component.Friction;
 import dev.opencollab.paletter.internal.CanonicalBlocks;
+import dev.opencollab.paletter.internal.access.Access;
 import dev.opencollab.paletter.internal.block.BlockResolution;
 import dev.opencollab.paletter.item.CustomItem;
 import dev.opencollab.paletter.item.ItemFallback;
@@ -52,7 +53,7 @@ class ResolvedBehaviourTest {
             assertSame(definition, resolved.definition());
             assertFalse(resolved.fallback(), state.toString());
             // The values the removed blockBehaviour gave: the position of the block in the palette's values
-            assertEquals(palette.behaviour().block(palette.blocks().indexOf(definition)), resolved.behaviour());
+            assertEquals(Access.palette().behaviour(palette).block(Access.palette().blocks(palette).indexOf(definition)), resolved.behaviour());
             assertSame(definition, resolved.behaviour().state());
             assertEquals(resolved.behaviour(), palette.resolveBlock(definition.getRuntimeId()).behaviour());
         }
@@ -87,10 +88,10 @@ class ResolvedBehaviourTest {
     @Test
     void aStateTheOldestVersionLacksIsAFallbackThere() {
         Palette oldest = PALETTER.vanilla(PALETTER.versions().getFirst());
-        CanonicalBlocks canonical = oldest.blocks().canonical();
+        CanonicalBlocks canonical = Access.palette().blocks(oldest).canonical();
         int found = 0;
         for (int id = 0; id < canonical.size() && found < 50; id++) {
-            if (!oldest.blocks().isMissing(id)) {
+            if (!Access.palette().blocks(oldest).isMissing(id)) {
                 continue;
             }
             found++;
@@ -107,10 +108,10 @@ class ResolvedBehaviourTest {
     @Test
     void aStateOnlyAdaptedToTheVersionIsNotAFallback() {
         Palette oldest = PALETTER.vanilla(PALETTER.versions().getFirst());
-        CanonicalBlocks canonical = oldest.blocks().canonical();
+        CanonicalBlocks canonical = Access.palette().blocks(oldest).canonical();
         int found = 0;
         for (int id = 0; id < canonical.size() && found < 50; id++) {
-            if (oldest.blocks().resolve(canonical.state(id)).kind() != BlockResolution.Kind.ADAPTED) {
+            if (Access.palette().blocks(oldest).resolve(canonical.state(id)).kind() != BlockResolution.Kind.ADAPTED) {
                 continue;
             }
             found++;
@@ -167,7 +168,7 @@ class ResolvedBehaviourTest {
         assertFalse(resolved.fallback());
         RegisteredItem apple = Objects.requireNonNull(session.itemDefinition(BedrockItems.APPLE.identifier()));
         assertSame(apple, resolved.behaviour().item());
-        assertEquals(session.behaviour().item(apple).get(ItemBehaviour.MAX_STACK_SIZE), resolved.behaviour().get(ItemBehaviour.MAX_STACK_SIZE));
+        assertEquals(Access.palette().behaviour(session).item(apple).get(ItemBehaviour.MAX_STACK_SIZE), resolved.behaviour().get(ItemBehaviour.MAX_STACK_SIZE));
     }
 
     @Test

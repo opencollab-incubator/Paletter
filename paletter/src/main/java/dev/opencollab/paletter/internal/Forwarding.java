@@ -4,7 +4,7 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 
 /**
  * How a block state or item variant of <em>any</em> bundled version maps to the canonical ids, which the newest
- * version defines (see {@link dev.opencollab.paletter.Paletter#canonicalBlocks} and {@link dev.opencollab.paletter.Paletter#canonicalItems}).
+ * version defines (see {@code Paletter#canonicalBlocks} and {@code Paletter#canonicalItems}).
  *
  * @param canonical the canonical id, or -1 if the content does not exist (anymore) in the newest version
  * @param kind how it was found

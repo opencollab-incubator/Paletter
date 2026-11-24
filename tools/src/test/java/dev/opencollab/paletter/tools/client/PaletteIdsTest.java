@@ -3,6 +3,7 @@ package dev.opencollab.paletter.tools.client;
 import com.google.gson.JsonObject;
 import dev.opencollab.paletter.Paletter;
 import dev.opencollab.paletter.data.DataVersion;
+import dev.opencollab.paletter.internal.access.Access;
 import dev.opencollab.paletter.internal.block.BlockStates;
 import dev.opencollab.paletter.tools.CommittedBuilds;
 import dev.opencollab.paletter.tools.Json;
@@ -114,7 +115,7 @@ class PaletteIdsTest {
             }
             DataVersion version = bundled.version(Json.object(file).get("protocol").getAsInt());
             List<PaletteIds.Entry> observed = PaletteIds.read(file);
-            List<String> wrong = PaletteIds.compare(bundled.vanillaData(version).blockStates(), observed).wrong();
+            List<String> wrong = PaletteIds.compare(Access.palette().vanillaData(bundled, version).blockStates(), observed).wrong();
             if (!wrong.isEmpty()) {
                 problems.add(build + " against " + version.name() + ": " + wrong.size() + " of " + observed.size() + " states, e.g. "
                     + String.join("; ", wrong.subList(0, Math.min(10, wrong.size()))));

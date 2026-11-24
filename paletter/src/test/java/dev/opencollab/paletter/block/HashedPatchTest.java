@@ -8,6 +8,7 @@ import dev.opencollab.paletter.PaletteLayer;
 import dev.opencollab.paletter.Paletter;
 import dev.opencollab.paletter.block.component.Geometry;
 import dev.opencollab.paletter.data.DataVersion;
+import dev.opencollab.paletter.internal.access.Access;
 import dev.opencollab.paletter.internal.block.BlockRegistry;
 import org.junit.jupiter.api.Test;
 
@@ -40,9 +41,9 @@ class HashedPatchTest {
         for (DataVersion version : PALETTER.versions()) {
             int protocol = version.protocolVersion();
             Palette base = HASHED.palette(protocol);
-            BlockRegistry vanilla = base.blocks();
+            BlockRegistry vanilla = Access.palette().blocks(base);
             Palette patched = base.extend(PaletteLayer.builder("content").block(LAMP).build());
-            BlockRegistry blocks = patched.blocks();
+            BlockRegistry blocks = Access.palette().blocks(patched);
 
             assertEquals(vanilla.size() + 4, blocks.size(), version.toString());
             assertEquals(4, blocks.ownStateCount(), version.toString());
@@ -76,8 +77,8 @@ class HashedPatchTest {
     void canonicalTablesReuseTheParentsPages() {
         DataVersion latest = PALETTER.latest();
         Palette base = HASHED.palette(latest.protocolVersion());
-        BlockRegistry vanilla = base.blocks();
-        BlockRegistry blocks = base.extend(PaletteLayer.builder("content").block(LAMP).build()).blocks();
+        BlockRegistry vanilla = Access.palette().blocks(base);
+        BlockRegistry blocks = Access.palette().blocks(base.extend(PaletteLayer.builder("content").block(LAMP).build()));
         for (int id = 0; id < vanilla.canonical().size(); id++) {
             assertSame(vanilla.block(id), blocks.block(id), "canonical " + id);
             assertEquals(vanilla.runtimeId(id), blocks.runtimeId(id));
@@ -94,9 +95,9 @@ class HashedPatchTest {
         for (DataVersion version : PALETTER.versions()) {
             int protocol = version.protocolVersion();
             Palette base = HASHED.palette(protocol);
-            BlockRegistry stacked = base.extend(PaletteLayer.builder("a").block(LAMP).build())
-                .extend(PaletteLayer.builder("b").block(ZEBRA).block(APPLE).build()).blocks();
-            BlockRegistry single = base.extend(PaletteLayer.builder("all").block(LAMP).block(ZEBRA).block(APPLE).build()).blocks();
+            BlockRegistry stacked = Access.palette().blocks(base.extend(PaletteLayer.builder("a").block(LAMP).build())
+                .extend(PaletteLayer.builder("b").block(ZEBRA).block(APPLE).build()));
+            BlockRegistry single = Access.palette().blocks(base.extend(PaletteLayer.builder("all").block(LAMP).block(ZEBRA).block(APPLE).build()));
 
             assertEquals(single.size(), stacked.size());
             assertEquals(single.blockProperties(), stacked.blockProperties(), version.toString());

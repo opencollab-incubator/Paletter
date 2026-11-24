@@ -8,6 +8,7 @@ import dev.opencollab.paletter.Paletter;
 import dev.opencollab.paletter.internal.block.BlockStates;
 import dev.opencollab.paletter.block.RegisteredBlockState;
 import dev.opencollab.paletter.data.DataVersion;
+import dev.opencollab.paletter.internal.access.Access;
 import dev.opencollab.paletter.internal.item.ItemVariant;
 
 import java.io.PrintStream;
@@ -55,7 +56,7 @@ public final class Inspect {
         if (!name.contains(":")) {
             name = "minecraft:" + name;
         }
-        RegisteredBlockState defaults = newest.blocks().defaultState(name);
+        RegisteredBlockState defaults = Access.palette().blocks(newest).defaultState(name);
         NbtMap states = defaults == null ? NbtMap.EMPTY : defaults.states();
         if (bracket != -1) {
             if (!spec.endsWith("]")) {

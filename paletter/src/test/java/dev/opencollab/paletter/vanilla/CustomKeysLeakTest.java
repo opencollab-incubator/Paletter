@@ -7,6 +7,7 @@ import dev.opencollab.paletter.Palette;
 import dev.opencollab.paletter.Paletter;
 import dev.opencollab.paletter.block.BlockProperty;
 import dev.opencollab.paletter.block.CustomBlock;
+import dev.opencollab.paletter.internal.access.Access;
 import dev.opencollab.paletter.item.BedrockItemStack;
 import org.junit.jupiter.api.Test;
 
@@ -71,7 +72,7 @@ class CustomKeysLeakTest {
             block.defaultState();
             palette.itemVariant("attacker:lookup_" + i, i, Lookup.RENAMED);
             palette.encode(BedrockItemStack.of(type.variant(i)));
-            palette.blocks().resolve(NbtMap.builder().putString("name", "attacker:state_" + i).putCompound("states", NbtMap.EMPTY).build());
+            Access.palette().blocks(palette).resolve(NbtMap.builder().putString("name", "attacker:state_" + i).putCompound("states", NbtMap.EMPTY).build());
             if (i % 1000 == 0) {
                 kept.add(type);
                 assertEquals(variant.type(), BedrockItemType.fromIdentifier("attacker:variant_" + i));

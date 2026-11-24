@@ -12,10 +12,26 @@ import java.util.function.Supplier;
  * accessor is always there when asked for. Not API.
  */
 public final class Access {
+    private static volatile PaletteAccess palette;
     private static volatile BlockAccess block;
     private static volatile ItemAccess item;
 
     private Access() {
+    }
+
+    /**
+     * @return the accessor of {@code dev.opencollab.paletter}, set by {@code Palette}
+     */
+    public static @NonNull PaletteAccess palette() {
+        return get(() -> palette, "dev.opencollab.paletter.Palette");
+    }
+
+    /**
+     * @param access the accessor of {@code dev.opencollab.paletter}; set once
+     */
+    public static void setPalette(@NonNull PaletteAccess access) {
+        check(palette);
+        palette = Objects.requireNonNull(access);
     }
 
     /**

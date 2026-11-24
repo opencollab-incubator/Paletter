@@ -18,6 +18,7 @@ import dev.opencollab.paletter.block.CustomBlock;
 import dev.opencollab.paletter.creative.CreativeCategory;
 import dev.opencollab.paletter.creative.CreativePlacement;
 import dev.opencollab.paletter.creative.ItemMatcher;
+import dev.opencollab.paletter.internal.access.Access;
 import dev.opencollab.paletter.item.CustomItem;
 import dev.opencollab.paletter.internal.item.ItemVariant;
 import dev.opencollab.paletter.vanilla.state.CardinalDirection;
@@ -250,7 +251,7 @@ class VanillaConstantsTest {
         assertFalse(own.equals(BedrockBlocks.UNKNOWN.defaultState()));
         // No canonical id of its own: the palette resolves it by identifier, to the default fallback
         Palette palette = PALETTER.vanilla(PALETTER.latest());
-        assertEquals(-1, own.canonicalIn(palette.blocks().canonical()));
+        assertEquals(-1, own.canonicalIn(Access.palette().blocks(palette).canonical()));
         assertTrue(palette.resolve(own).fallback());
         assertEquals("minecraft:unknown", palette.blockDefinition(own).getState().getString("name"));
         Paletter withEntry = Paletter.builder().fallbacks(Fallbacks.builder().block(removed, BedrockBlocks.STONE).build()).build();
@@ -268,7 +269,7 @@ class VanillaConstantsTest {
         assertFalse(removedItem.isAvailable());
         // No canonical id of its own: the palette resolves it by identifier, to the default fallback
         assertEquals(-1, Ids.item(PALETTER, removedItem));
-        ResolvedItem resolved = PALETTER.vanilla(PALETTER.latest()).items().resolve(removedItem);
+        ResolvedItem resolved = Access.palette().items(PALETTER.vanilla(PALETTER.latest())).resolve(removedItem);
         assertTrue(resolved.fallback());
         assertEquals("minecraft:unknown", resolved.definition().getIdentifier());
     }

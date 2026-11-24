@@ -2,6 +2,7 @@ package dev.opencollab.paletter.block;
 
 import dev.opencollab.paletter.Paletter;
 import dev.opencollab.paletter.data.DataVersion;
+import dev.opencollab.paletter.internal.access.Access;
 import dev.opencollab.paletter.internal.block.BlockRegistry;
 import dev.opencollab.paletter.internal.block.RegisteredBlock;
 import dev.opencollab.paletter.vanilla.BedrockBlockState;
@@ -19,7 +20,7 @@ class BlockKeyTest {
 
     @Test
     void everyStateOfTheNewestVersionIsItsOwnKey() {
-        BlockRegistry blocks = PALETTER.vanilla(PALETTER.latest()).blocks();
+        BlockRegistry blocks = Access.palette().blocks(PALETTER.vanilla(PALETTER.latest()));
         for (RegisteredBlock block : blocks.blocks()) {
             for (RegisteredBlockState state : block.states()) {
                 BedrockBlockState key = blocks.key(state);
@@ -32,7 +33,7 @@ class BlockKeyTest {
     @Test
     void anOlderVersionKeysItsStatesToTheNewestOnes() {
         DataVersion oldest = PALETTER.versions().getFirst();
-        BlockRegistry blocks = PALETTER.vanilla(oldest).blocks();
+        BlockRegistry blocks = Access.palette().blocks(PALETTER.vanilla(oldest));
         int keyed = 0;
         for (RegisteredBlock block : blocks.blocks()) {
             for (RegisteredBlockState state : block.states()) {
@@ -49,7 +50,7 @@ class BlockKeyTest {
 
     @Test
     void aStateOfAnotherRegistryHasNoKey() {
-        BlockRegistry newest = PALETTER.vanilla(PALETTER.latest()).blocks();
+        BlockRegistry newest = Access.palette().blocks(PALETTER.vanilla(PALETTER.latest()));
         RegisteredBlockState stranger = new RegisteredBlockState(1234567, newest.air().getState(), false);
         assertNull(newest.key(stranger));
     }

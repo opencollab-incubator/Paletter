@@ -1,5 +1,6 @@
 package dev.opencollab.paletter.tools;
 
+import dev.opencollab.paletter.internal.access.Access;
 import dev.opencollab.paletter.tools.client.CapturedData;
 import dev.opencollab.paletter.tools.codegen.constants.Baseline;
 import dev.opencollab.paletter.tools.data.BundledFiles;
@@ -127,7 +128,7 @@ final class DataCommands {
             }
             dev.opencollab.paletter.Palette palette = paletter.vanilla(version);
             Export.write(palette, out);
-            System.out.println("Wrote " + palette.blocks().size() + " block states, " + palette.itemDefinitions().size() + " items and "
+            System.out.println("Wrote " + Access.palette().blocks(palette).size() + " block states, " + palette.itemDefinitions().size() + " items and "
                 + palette.creative().size() + " creative entries of " + name + " to " + out);
             return 0;
         }

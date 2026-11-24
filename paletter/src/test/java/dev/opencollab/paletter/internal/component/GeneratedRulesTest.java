@@ -11,6 +11,7 @@ import dev.opencollab.paletter.block.component.PlacementDirection;
 import dev.opencollab.paletter.block.component.PlacementFilter;
 import dev.opencollab.paletter.block.component.RedstoneProducer;
 import dev.opencollab.paletter.block.component.Transformation;
+import dev.opencollab.paletter.internal.access.Access;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -30,7 +31,7 @@ class GeneratedRulesTest {
     private final WireContext ctx = at(ComponentIndex.NEWEST_CAPTURED_PROTOCOL);
 
     private WireContext at(int protocol) {
-        return WireContext.of(PALETTER.vanillaData(PALETTER.version(protocol)), report, "test").subject("test:thing");
+        return WireContext.of(Access.palette().vanillaData(PALETTER, PALETTER.version(protocol)), report, "test").subject("test:thing");
     }
 
     private NbtMap block(dev.opencollab.paletter.block.component.BlockComponent component, WireContext context) {

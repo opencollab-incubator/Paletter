@@ -4,6 +4,7 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import dev.opencollab.paletter.PaletteReport;
 import dev.opencollab.paletter.data.DataVersion;
+import dev.opencollab.paletter.internal.access.Access;
 import dev.opencollab.paletter.vanilla.BedrockBlockType;
 import dev.opencollab.paletter.vanilla.BedrockItemVariant;
 
@@ -27,7 +28,7 @@ public final class PaletteReportBuilder {
      * @param subject the identifier the entry is about, or null
      */
     public void info(@NonNull String source, @NonNull String code, @Nullable String subject, @NonNull String message) {
-        entries.add(PaletteReport.Entry.of(PaletteReport.Level.INFO, source, code, subject, message));
+        entries.add(Access.palette().entry(PaletteReport.Level.INFO, source, code, subject, message));
     }
 
     /**
@@ -35,7 +36,7 @@ public final class PaletteReportBuilder {
      * @param subject the identifier the entry is about, or null
      */
     public void warn(@NonNull String source, @NonNull String code, @Nullable String subject, @NonNull String message) {
-        entries.add(PaletteReport.Entry.of(PaletteReport.Level.WARNING, source, code, subject, message));
+        entries.add(Access.palette().entry(PaletteReport.Level.WARNING, source, code, subject, message));
     }
 
     public void unknownBlocks(@NonNull Collection<BedrockBlockType> types) {
@@ -62,6 +63,6 @@ public final class PaletteReportBuilder {
     }
 
     public @NonNull PaletteReport build(@NonNull DataVersion version) {
-        return new PaletteReport(version, entries, unknownBlocks, unknownItems);
+        return Access.palette().report(version, entries, unknownBlocks, unknownItems);
     }
 }

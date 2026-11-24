@@ -15,6 +15,7 @@ import dev.opencollab.paletter.internal.PaletteReportBuilder;
 import dev.opencollab.paletter.Paletter;
 import dev.opencollab.paletter.block.CustomBlock;
 import dev.opencollab.paletter.data.DataVersion;
+import dev.opencollab.paletter.internal.access.Access;
 import dev.opencollab.paletter.internal.component.BlockCompiler;
 import dev.opencollab.paletter.internal.component.ItemCompiler;
 import dev.opencollab.paletter.internal.component.WireContext;
@@ -162,7 +163,7 @@ class ComponentConformanceTest {
 
         boolean preview = isPreview(capture);
         DataVersion version = versionOf(protocol, preview);
-        VanillaData data = (preview ? withPreviews() : Paletter.bundled()).vanillaData(version);
+        VanillaData data = Access.palette().vanillaData(preview ? withPreviews() : Paletter.bundled(), version);
 
         List<Outcome> outcomes = new ArrayList<>();
         Set<String> components = new TreeSet<>();

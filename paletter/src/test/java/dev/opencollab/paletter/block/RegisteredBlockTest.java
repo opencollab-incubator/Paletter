@@ -8,6 +8,7 @@ import dev.opencollab.paletter.PaletteLayer;
 import dev.opencollab.paletter.Paletter;
 import dev.opencollab.paletter.block.component.Geometry;
 import dev.opencollab.paletter.block.component.LightEmission;
+import dev.opencollab.paletter.internal.access.Access;
 import dev.opencollab.paletter.internal.block.BlockRegistry;
 import dev.opencollab.paletter.internal.block.RegisteredBlock;
 import org.junit.jupiter.api.Test;
@@ -43,7 +44,7 @@ class RegisteredBlockTest {
 
     @Test
     void vanillaBlocksDeriveTheirProperties() {
-        BlockRegistry blocks = PALETTER.vanilla(PALETTER.latest()).blocks();
+        BlockRegistry blocks = Access.palette().blocks(PALETTER.vanilla(PALETTER.latest()));
         RegisteredBlock wheat = blocks.block("minecraft:wheat");
         assertNotNull(wheat);
         assertEquals("minecraft:wheat", wheat.identifier());
@@ -69,7 +70,7 @@ class RegisteredBlockTest {
     @Test
     void everyStateBelongsToABlockOfTheRegistry() {
         {
-            BlockRegistry blocks = Palettes.palette(PALETTER.latest().protocolVersion()).blocks();
+            BlockRegistry blocks = Access.palette().blocks(Palettes.palette(PALETTER.latest().protocolVersion()));
             int states = 0;
             for (RegisteredBlock block : blocks.blocks()) {
                 assertSame(block, blocks.block(block.identifier()));
@@ -82,7 +83,7 @@ class RegisteredBlockTest {
 
     @Test
     void propertyDataIsThereForDataDrivenBlocksOnly() {
-        BlockRegistry blocks = PALETTER.vanilla(PALETTER.latest()).blocks();
+        BlockRegistry blocks = Access.palette().blocks(PALETTER.vanilla(PALETTER.latest()));
         Set<String> dataDriven = new HashSet<>();
         for (BlockPropertyData data : blocks.blockProperties()) {
             dataDriven.add(data.getName());
@@ -96,7 +97,7 @@ class RegisteredBlockTest {
     @Test
     void customBlocksCarryTheirComponentsPermutationsAndOrigin() {
         {
-            BlockRegistry blocks = palette().blocks();
+            BlockRegistry blocks = Access.palette().blocks(palette());
             RegisteredBlock block = blocks.block("example:lamp");
             assertNotNull(block);
             assertEquals(Origin.custom("content"), block.origin());
@@ -129,7 +130,7 @@ class RegisteredBlockTest {
             .permutation("q.block_state('example:on')", LightEmission.of(15))
             .build();
         Palette palette = Palettes.palette(PALETTER.latest().protocolVersion(), PaletteLayer.builder("x").block(block).build());
-        RegisteredBlock glow = palette.blocks().block("example:glow");
+        RegisteredBlock glow = Access.palette().blocks(palette).block("example:glow");
         for (RegisteredBlockState state : glow.states()) {
             assertEquals(1, glow.components(state).size());
             LightEmission emission = (LightEmission) glow.components(state).getFirst();
@@ -142,15 +143,15 @@ class RegisteredBlockTest {
         // A hashed state is the same instance in every version, so only the palette can say which block it is in
         Paletter paletter = Paletter.builder().build();
         for (dev.opencollab.paletter.data.DataVersion version : paletter.versions()) {
-            BlockRegistry blocks = paletter.palette(version.protocolVersion()).blocks();
+            BlockRegistry blocks = Access.palette().blocks(paletter.palette(version.protocolVersion()));
             for (RegisteredBlock block : blocks.blocks()) {
                 for (RegisteredBlockState state : block.states()) {
                     assertSame(block, blocks.block(state), version + " " + state);
                 }
             }
         }
-        BlockRegistry oldest = paletter.palette(paletter.versions().getFirst().protocolVersion()).blocks();
-        BlockRegistry latest = paletter.palette(paletter.latest().protocolVersion()).blocks();
+        BlockRegistry oldest = Access.palette().blocks(paletter.palette(paletter.versions().getFirst().protocolVersion()));
+        BlockRegistry latest = Access.palette().blocks(paletter.palette(paletter.latest().protocolVersion()));
         int shared = 0;
         for (RegisteredBlockState state : oldest.block("minecraft:stone").states()) {
             RegisteredBlockState same = latest.exact(state.getState());
@@ -178,20 +179,20 @@ class RegisteredBlockTest {
         // Block ids follow the identifiers in descending order: zebra comes before the lamp, so the lamp's id moves
         Palette patched = base.extend(PaletteLayer.builder("session").block(zebra).build());
 
-        RegisteredBlock before = base.blocks().block("example:lamp");
-        RegisteredBlock after = patched.blocks().block("example:lamp");
+        RegisteredBlock before = Access.palette().blocks(base).block("example:lamp");
+        RegisteredBlock after = Access.palette().blocks(patched).block("example:lamp");
         assertNotEquals(before.propertyData(), after.propertyData());
-        for (BlockPropertyData data : patched.blocks().blockProperties()) {
+        for (BlockPropertyData data : Access.palette().blocks(patched).blockProperties()) {
             if (data.getName().startsWith("example:")) {
-                assertEquals(data.getProperties(), patched.blocks().block(data.getName()).propertyData(), data.getName());
+                assertEquals(data.getProperties(), Access.palette().blocks(patched).block(data.getName()).propertyData(), data.getName());
             }
         }
-        for (BlockPropertyData data : base.blocks().blockProperties()) {
-            assertEquals(data.getProperties(), base.blocks().block(data.getName()).propertyData());
+        for (BlockPropertyData data : Access.palette().blocks(base).blockProperties()) {
+            assertEquals(data.getProperties(), Access.palette().blocks(base).block(data.getName()).propertyData());
         }
         // The states are the same instances: only the block is new
         assertEquals(before.states(), after.states());
-        assertEquals(1, patched.blocks().blocks().stream().filter(block -> block.identifier().equals("example:lamp")).count());
-        assertSame(after, patched.blocks().block(after.states().getFirst()));
+        assertEquals(1, Access.palette().blocks(patched).blocks().stream().filter(block -> block.identifier().equals("example:lamp")).count());
+        assertSame(after, Access.palette().blocks(patched).block(after.states().getFirst()));
     }
 }

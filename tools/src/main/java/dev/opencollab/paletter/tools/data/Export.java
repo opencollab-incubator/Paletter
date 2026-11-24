@@ -5,6 +5,7 @@ import com.google.gson.JsonObject;
 import dev.opencollab.paletter.Palette;
 import dev.opencollab.paletter.block.RegisteredBlockState;
 import dev.opencollab.paletter.creative.CreativeCategory;
+import dev.opencollab.paletter.internal.access.Access;
 import dev.opencollab.paletter.internal.block.BlockStates;
 import dev.opencollab.paletter.internal.creative.RawGroup;
 import dev.opencollab.paletter.internal.creative.RawLayout;
@@ -78,11 +79,11 @@ public final class Export {
 
     /** What the palette sends, as data: states in registry index order, items by definition, the creative packet's layout. */
     static Compiled compiled(Palette palette) {
-        int size = palette.blocks().size();
+        int size = Access.palette().blocks(palette).size();
         List<NbtMap> states = new ArrayList<>(size);
         int[] networkIds = new int[size];
         for (int i = 0; i < size; i++) {
-            RegisteredBlockState block = palette.blocks().byIndex(i);
+            RegisteredBlockState block = Access.palette().blocks(palette).byIndex(i);
             states.add(state(block));
             networkIds[i] = block.getRuntimeId();
         }
@@ -93,7 +94,7 @@ public final class Export {
                 item.getComponentData() == null ? NbtMap.EMPTY : item.getComponentData()));
         }
 
-        List<BlockPropertyData> dataDriven = palette.blocks().blockProperties();
+        List<BlockPropertyData> dataDriven = Access.palette().blocks(palette).blockProperties();
         VanillaData data = new VanillaData(palette.version(), states, items, dataDriven, creative(palette), Map.of(), VersionFallbacks.NONE, Map.of());
         return new Compiled(data, networkIds);
     }

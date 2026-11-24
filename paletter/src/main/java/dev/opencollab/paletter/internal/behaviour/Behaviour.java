@@ -9,6 +9,7 @@ import dev.opencollab.paletter.behaviour.BlockBehaviour;
 import dev.opencollab.paletter.behaviour.BlockValues;
 import dev.opencollab.paletter.behaviour.ItemBehaviour;
 import dev.opencollab.paletter.behaviour.ItemValues;
+import dev.opencollab.paletter.internal.access.Access;
 import dev.opencollab.paletter.internal.block.BlockRegistry;
 import dev.opencollab.paletter.internal.block.RegisteredBlock;
 import dev.opencollab.paletter.block.RegisteredBlockState;
@@ -47,6 +48,7 @@ public final class Behaviour {
     private static final int KEYS = BlockBehaviour.keys().size() + ItemBehaviour.keys().size();
 
     private final Palette palette;
+    private final BlockRegistry blocks;
     /**
      * The vanilla values, asked for only when a column or a provenance is built: a resolution and its handle need none.
      * A {@code Paletter} built with {@code behaviour(false)} gives a supplier that throws, so nothing loads or keeps them
@@ -79,12 +81,12 @@ public final class Behaviour {
     private Behaviour(Palette palette, Supplier<VanillaBehaviour> data, @Nullable Behaviour parent) {
         this.palette = palette;
         this.data = data;
-        BlockRegistry registry = palette.blocks();
-        boolean extending = parent != null && registry.extendsStatesOf(parent.palette.blocks());
+        this.blocks = Access.palette().blocks(palette);
+        boolean extending = parent != null && blocks.extendsStatesOf(parent.blocks);
         this.parent = extending ? parent : null;
         this.itemParent = parent;
-        this.base = extending ? parent.palette.blocks().size() : 0;
-        this.items = palette.items().ownDefinitions();
+        this.base = extending ? parent.blocks.size() : 0;
+        this.items = Access.palette().items(palette).ownDefinitions();
         this.positions = new IntIndex(items.size());
         this.itemHandles = new ItemValues[items.size()];
         for (int i = 0; i < items.size(); i++) {
@@ -131,7 +133,7 @@ public final class Behaviour {
      * @return its state
      */
     public @NonNull RegisteredBlockState stateAt(int index) {
-        return palette.blocks().byIndex(base + index);
+        return blocks.byIndex(base + index);
     }
 
     /**
@@ -223,7 +225,7 @@ public final class Behaviour {
         data.get();
         Column column = blockColumns[key.ordinal()];
         if (column == null) {
-            BlockRegistry registry = palette.blocks();
+            BlockRegistry registry = blocks;
             Object[] values = new Object[registry.size() - base];
             for (int i = 0; i < values.length; i++) {
                 values[i] = value(registry.byIndex(base + i), key);
@@ -387,7 +389,7 @@ public final class Behaviour {
     }
 
     private @Nullable Value vanilla(RegisteredBlockState state, BehaviourKey<?> key) {
-        RegisteredBlock block = palette.blocks().block(state.identifier());
+        RegisteredBlock block = blocks.block(state.identifier());
         Value wire = block == null ? null : vanillaWire(key, block.properties(state));
         return choose(blockHit(state, key), wire);
     }
@@ -397,7 +399,7 @@ public final class Behaviour {
     }
 
     private @Nullable Value customBlock(RegisteredBlockState state, BehaviourKey<?> key) {
-        RegisteredBlock block = palette.blocks().block(state.identifier());
+        RegisteredBlock block = blocks.block(state.identifier());
         if (block == null) {
             return null;
         }
@@ -508,7 +510,7 @@ public final class Behaviour {
     // costs more than the value and is not needed for a column. BehaviourTest.theHandlesHoldTheValuesOfTheProvenancePath holds the two to the same values. ----
 
     private @Nullable Object value(RegisteredBlockState state, BehaviourKey<?> key) {
-        RegisteredBlock block = palette.blocks().block(state.identifier());
+        RegisteredBlock block = blocks.block(state.identifier());
         if (state.isCustom()) {
             return block == null ? null
                 : customValue(key, block.properties(state), block.components(state).stream().map(c -> c.name()).toList());

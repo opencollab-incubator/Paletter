@@ -2,6 +2,7 @@ package dev.opencollab.paletter.tools.data;
 
 import dev.opencollab.paletter.Palette;
 import dev.opencollab.paletter.Paletter;
+import dev.opencollab.paletter.internal.access.Access;
 import dev.opencollab.paletter.internal.data.VanillaData;
 import dev.opencollab.paletter.internal.data.VanillaItem;
 import org.junit.jupiter.api.Test;
@@ -70,7 +71,7 @@ class ExportTest {
         Palette palette = paletter.vanilla(paletter.latest());
         Path export = Files.createDirectory(directory.resolve("export"));
         Export.write(palette, export);
-        Diff diff = Diff.source(export, palette.version().name(), paletter.vanillaData(palette.version()), "bundled");
+        Diff diff = Diff.source(export, palette.version().name(), Access.palette().vanillaData(paletter, palette.version()), "bundled");
         diff.sections.values().forEach(section -> assertTrue(section.differences.isEmpty(), section.title + "\n" + diff.markdown(30)));
     }
 }

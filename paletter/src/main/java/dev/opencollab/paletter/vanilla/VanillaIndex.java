@@ -10,6 +10,8 @@ import dev.opencollab.paletter.internal.data.Renames;
 import dev.opencollab.paletter.internal.data.VanillaData;
 import dev.opencollab.paletter.internal.vanilla.BlockLayout;
 import dev.opencollab.paletter.internal.CanonicalItems;
+import dev.opencollab.paletter.internal.access.Access;
+import dev.opencollab.paletter.internal.access.PaletteAccess;
 import dev.opencollab.paletter.internal.item.ItemVariant;
 
 import java.util.ArrayList;
@@ -78,10 +80,11 @@ final class VanillaIndex {
         this.blockConstants = constantBlocks;
         // The constants of a preview are not in the data of the release: they carry their states (see VanillaTypes.blockWithStates)
         // The loader, not Paletter.bundled(): that compiles every version, which links these constants
-        Paletter paletter = Paletter.bundledLoader();
-        VanillaData latest = paletter.vanillaData(paletter.latest());
-        this.blocks = paletter.canonicalBlocks();
-        this.items = paletter.canonicalItems();
+        PaletteAccess access = Access.palette();
+        Paletter paletter = access.bundledLoader();
+        VanillaData latest = access.vanillaData(paletter, paletter.latest());
+        this.blocks = access.canonicalBlocks(paletter);
+        this.items = access.canonicalItems(paletter);
 
         List<NbtMap> states = latest.blockStates();
         this.byCanonical = new BlockTypeLayout[states.size()];
