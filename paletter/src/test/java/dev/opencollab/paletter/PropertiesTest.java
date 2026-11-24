@@ -39,7 +39,7 @@ class PropertiesTest {
 
     @Test
     void blockPropertiesCheckTheirValues() {
-        assertEquals(List.of((byte) 1, (byte) 0), BlockProperty.bools("example:b", List.of(true, false)).values());
+        assertEquals(List.of(true, false), BlockProperty.bools("example:b", List.of(true, false)).values());
         assertEquals(List.of(3, 1), BlockProperty.ints("example:i", List.of(3, 1)).values());
         assertEquals(BlockProperty.strings("example:s", "a", "b"), BlockProperty.strings("example:s", List.of("a", "b")));
         assertThrows(IllegalArgumentException.class, () -> BlockProperty.ints("example:i", List.of()));

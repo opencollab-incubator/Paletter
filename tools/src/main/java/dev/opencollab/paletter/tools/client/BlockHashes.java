@@ -119,7 +119,7 @@ public final class BlockHashes {
                     if (trait.containsKey("part_count")) { // one minecraft:multi_block_part value per part
                         stateValues = stateValues.subList(0, ((Number) trait.get("part_count")).intValue());
                     }
-                    out.add(property(state.name(), stateValues));
+                    out.add(property(state.name(), stateValues.stream().map(dev.opencollab.paletter.internal.block.BlockStates::nbtValue).toList()));
                 }
             }
         }

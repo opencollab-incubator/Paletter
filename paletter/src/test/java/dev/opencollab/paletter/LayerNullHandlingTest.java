@@ -54,9 +54,9 @@ class LayerNullHandlingTest {
             .defaultState("test:level", 2)
             .defaultState("test:open", 1)
             .build();
-        assertEquals((byte) 1, block.defaultStates().get("test:lit"));
+        assertEquals(true, block.defaultStates().get("test:lit"));
         assertEquals(2, block.defaultStates().get("test:level"));
-        assertEquals((byte) 1, block.defaultStates().get("test:open"));
+        assertEquals(true, block.defaultStates().get("test:open"));
         BedrockBlockState state = block.type().defaultState();
         assertEquals(true, state.values().get("test:lit"));
         assertEquals(2, state.values().get("test:level"));

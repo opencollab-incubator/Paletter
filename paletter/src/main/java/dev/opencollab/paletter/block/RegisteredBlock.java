@@ -169,8 +169,15 @@ public final class RegisteredBlock {
         List<BlockProperty<?>> result = new ArrayList<>(names.size());
         for (int i = 0; i < names.size(); i++) {
             List<Object> list = new ArrayList<>(values.get(i));
-            BlockProperty.Type type = list.getFirst() instanceof Byte ? BlockProperty.Type.BOOLEAN
-                : list.getFirst() instanceof Integer ? BlockProperty.Type.INTEGER : BlockProperty.Type.STRING;
+            // Booleans are the bytes 0 and 1 in NBT, and Boolean in a property
+            boolean bool = list.stream().allMatch(v -> v instanceof Byte b && (b == 0 || b == 1));
+            BlockProperty.Type type = bool ? BlockProperty.Type.BOOLEAN
+                : list.getFirst() instanceof Byte || list.getFirst() instanceof Integer ? BlockProperty.Type.INTEGER : BlockProperty.Type.STRING;
+            if (bool) {
+                list.replaceAll(v -> (Byte) v == 1);
+            } else if (type == BlockProperty.Type.INTEGER) {
+                list.replaceAll(v -> ((Number) v).intValue());
+            }
             result.add(BlockProperty.of(names.get(i), type, list));
         }
         return Collections.unmodifiableList(result);

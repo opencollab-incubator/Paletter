@@ -74,7 +74,7 @@ public final class BlockCompiler {
     private static Object values(BlockProperty<?> property) {
         return switch (property.type()) {
             // Booleans are a byte list on the wire
-            case BOOLEAN -> new org.cloudburstmc.nbt.NbtList<>(NbtType.BYTE, property.values().stream().map(Byte.class::cast).toList());
+            case BOOLEAN -> new org.cloudburstmc.nbt.NbtList<>(NbtType.BYTE, property.values().stream().map(v -> (Byte) dev.opencollab.paletter.internal.block.BlockStates.nbtValue(v)).toList());
             case INTEGER -> new org.cloudburstmc.nbt.NbtList<>(NbtType.INT, property.values().stream().map(Integer.class::cast).toList());
             case STRING -> new org.cloudburstmc.nbt.NbtList<>(NbtType.STRING, property.values().stream().map(String.class::cast).toList());
         };

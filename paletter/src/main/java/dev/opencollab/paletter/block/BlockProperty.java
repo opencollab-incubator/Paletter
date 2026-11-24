@@ -14,7 +14,8 @@ import java.util.Objects;
  * A final class, not a record (docs/api.md, "Evolution"): made with {@link #bool}, {@link #bools}, {@link #ints},
  * {@link #range} or {@link #strings}, which check that the values match the {@link #type()}.
  *
- * @param <T> the value type: {@link Byte} for booleans (0 and 1, as Bedrock stores them), {@link Integer} or {@link String}
+ * @param <T> the value type: {@link Boolean}, {@link Integer} or {@link String}, as the keys hold them
+ *            ({@code BedrockBlockState#values()}); booleans are the bytes 0 and 1 only on the wire
  * @since 1.0.0
  */
 public final class BlockProperty<T> {
@@ -53,8 +54,8 @@ public final class BlockProperty<T> {
      * @since 1.0.0
      */
     public enum Type {
-        /** Boolean values, stored as the bytes 0 and 1. */
-        BOOLEAN(Byte.class),
+        /** Boolean values, sent as the bytes 0 and 1. */
+        BOOLEAN(Boolean.class),
         /** Integer values. */
         INTEGER(Integer.class),
         /** String values. */
@@ -101,8 +102,8 @@ public final class BlockProperty<T> {
      * @return the property
      * @since 1.0.0
      */
-    public static @NonNull BlockProperty<Byte> bool(@NonNull String name) {
-        return new BlockProperty<>(name, Type.BOOLEAN, List.of((byte) 0, (byte) 1));
+    public static @NonNull BlockProperty<Boolean> bool(@NonNull String name) {
+        return new BlockProperty<>(name, Type.BOOLEAN, List.of(false, true));
     }
 
     /**
@@ -115,7 +116,7 @@ public final class BlockProperty<T> {
      * @throws IllegalArgumentException if a value is given twice
      * @since 1.0.0
      */
-    public static @NonNull BlockProperty<Byte> bools(@NonNull String name, boolean first, boolean @NonNull ... rest) {
+    public static @NonNull BlockProperty<Boolean> bools(@NonNull String name, boolean first, boolean @NonNull ... rest) {
         List<Boolean> values = new ArrayList<>(rest.length + 1);
         values.add(first);
         for (boolean value : rest) {
@@ -134,12 +135,8 @@ public final class BlockProperty<T> {
      * @throws NullPointerException if a value is null
      * @since 1.0.0
      */
-    public static @NonNull BlockProperty<Byte> bools(@NonNull String name, @NonNull List<Boolean> values) {
-        List<Byte> bytes = new ArrayList<>(values.size());
-        for (Boolean value : values) {
-            bytes.add((byte) (Objects.requireNonNull(value, "value") ? 1 : 0));
-        }
-        return new BlockProperty<>(name, Type.BOOLEAN, bytes);
+    public static @NonNull BlockProperty<Boolean> bools(@NonNull String name, @NonNull List<Boolean> values) {
+        return new BlockProperty<>(name, Type.BOOLEAN, values);
     }
 
     /**

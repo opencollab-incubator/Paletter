@@ -239,15 +239,10 @@ public final class CustomBlock {
         return all;
     }
 
-    /** A default state value as the property stores it: a boolean property has the bytes 0 and 1. */
+    /** A default state value as the property holds it: a boolean property takes the integers 0 and 1 too. */
     private static Object valueOf(BlockProperty<?> property, Object value) {
-        if (property.type() == BlockProperty.Type.BOOLEAN) {
-            if (value instanceof Boolean flag) {
-                return (byte) (flag ? 1 : 0);
-            }
-            if (value instanceof Integer number && (number == 0 || number == 1)) {
-                return number.byteValue();
-            }
+        if (property.type() == BlockProperty.Type.BOOLEAN && value instanceof Integer number && (number == 0 || number == 1)) {
+            return number == 1;
         }
         return value;
     }
@@ -571,7 +566,7 @@ public final class CustomBlock {
             NbtMapBuilder builder = NbtMap.builder();
             int index = i;
             for (BlockProperty<?> property : properties) {
-                builder.put(property.name(), property.values().get(index % property.values().size()));
+                builder.put(property.name(), BlockStates.nbtValue(property.values().get(index % property.values().size())));
                 index /= property.values().size();
             }
             states.add(BlockStates.of(identifier, builder.build()));
@@ -624,7 +619,7 @@ public final class CustomBlock {
         NbtMapBuilder builder = NbtMap.builder();
         for (BlockProperty<?> property : properties) {
             Object value = defaultStates.get(property.name());
-            builder.put(property.name(), value != null ? value : property.values().getFirst());
+            builder.put(property.name(), BlockStates.nbtValue(value != null ? value : property.values().getFirst()));
         }
         return BlockStates.of(identifier, builder.build());
     }
@@ -870,7 +865,7 @@ public final class CustomBlock {
          *
          * @param property the property name
          * @param value the value, one of the values of the property; a {@link Boolean} or the integer 0 or 1 for a boolean
-         *              property, which stores the bytes 0 and 1
+         *              property
          * @return this builder
          * @throws NullPointerException if the property or the value is null
          */
@@ -880,7 +875,7 @@ public final class CustomBlock {
         }
 
         /**
-         * Sets a boolean value of the default state: the value of a boolean property, which stores the bytes 0 and 1.
+         * Sets a boolean value of the default state: the value of a boolean property ({@link Boolean} values).
          * {@link #build()} rejects a property that is not a boolean one.
          *
          * @param property the property name
@@ -894,7 +889,7 @@ public final class CustomBlock {
 
         /**
          * Sets an integer value of the default state: the value of an integer property, or the 0 or 1 of a boolean
-         * property, which stores the bytes 0 and 1. {@link #build()} rejects a value the property does not list.
+         * property. {@link #build()} rejects a value the property does not list.
          *
          * @param property the property name
          * @param value the value

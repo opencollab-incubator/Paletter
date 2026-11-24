@@ -105,11 +105,13 @@ final class BlockTypeLayout {
         int radix = 1;
         for (int p = 0; p < declared.size(); p++) {
             BlockProperty<?> property = declared.get(p);
-            List<Object> list = new ArrayList<>(property.values());
+            List<Object> list = new ArrayList<>();
+            property.values().forEach(v -> list.add(dev.opencollab.paletter.internal.block.BlockStates.nbtValue(v)));
             values[p] = list.toArray();
             properties[p] = state(property.name(), list);
             Object value = defaultStates.get(property.name());
             if (value != null) {
+                value = dev.opencollab.paletter.internal.block.BlockStates.nbtValue(value);
                 defaultOffset += list.indexOf(value) * radix;
             }
             radix *= list.size();

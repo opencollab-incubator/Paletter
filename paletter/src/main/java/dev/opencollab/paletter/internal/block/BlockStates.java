@@ -16,6 +16,15 @@ import java.util.Objects;
  * @since 1.0.0
  */
 public final class BlockStates {
+    /**
+     * A state value as NBT holds it: a {@link Boolean} (as keys and {@code BlockProperty} hold it) is the byte 0 or 1,
+     * anything else is itself.
+     */
+    public static @org.checkerframework.checker.nullness.qual.NonNull Object nbtValue(
+            @org.checkerframework.checker.nullness.qual.NonNull Object value) {
+        return value instanceof Boolean flag ? (byte) (flag ? 1 : 0) : value;
+    }
+
 
     private BlockStates() {
     }
