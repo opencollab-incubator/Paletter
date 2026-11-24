@@ -267,6 +267,20 @@ class ResilienceTest {
     }
 
     @Test
+    void applyToAStartGamePacketKeepsOneEntryPerBlock() {
+        Palette first = Palettes.palette(LATEST.protocolVersion(), PaletteLayer.builder("first").block(block("example:lamp")).build());
+        Palette second = Palettes.palette(LATEST.protocolVersion(), PaletteLayer.builder("second")
+            .block(CustomBlock.builder("example:lamp").property(BlockProperty.bool("example:lit")).build()).build());
+        StartGamePacket packet = new StartGamePacket();
+        first.applyTo(packet);
+        second.applyTo(packet);
+        List<BlockPropertyData> lamps = packet.getBlockProperties().stream().filter(data -> data.getName().equals("example:lamp")).toList();
+        assertEquals(1, lamps.size());
+        assertEquals(second.blocks().blockProperties().stream().filter(data -> data.getName().equals("example:lamp")).toList(), lamps);
+        assertEquals(packet.getBlockProperties().size(), packet.getBlockProperties().stream().map(BlockPropertyData::getName).distinct().count());
+    }
+
+    @Test
     void theBuiltPaletterDoesNotShareItsExperimentsWithTheBuilder() {
         Paletter.Builder builder = Paletter.builder();
         Paletter paletter = builder.build();

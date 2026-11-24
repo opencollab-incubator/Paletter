@@ -1275,18 +1275,26 @@ public final class Palette {
 
     /**
      * Adds the block properties (vanilla data driven and custom blocks) to a start game packet, and sets
-     * {@code blockNetworkIdsHashed}: block runtime ids are always hashed. Applying a palette again to the same packet
-     * changes nothing.
+     * {@code blockNetworkIdsHashed}: block runtime ids are always hashed. The packet keeps one entry per block name: an
+     * entry it already has for a block of this palette (from another palette, say) is replaced by this palette's, in
+     * place. Applying a palette again to the same packet changes nothing.
      *
      * @param packet the start game packet to send; it is modified
      * @since 1.0.0
      */
     public void applyTo(@NonNull StartGamePacket packet) {
         List<BlockPropertyData> existing = packet.getBlockProperties();
-        Set<BlockPropertyData> present = new HashSet<>(existing);
+        Map<String, Integer> byName = new HashMap<>();
+        for (int i = 0; i < existing.size(); i++) {
+            byName.putIfAbsent(existing.get(i).getName(), i);
+        }
         for (BlockPropertyData property : blocks.blockProperties()) {
-            if (present.add(property)) {
+            Integer index = byName.get(property.getName());
+            if (index == null) {
+                byName.put(property.getName(), existing.size());
                 existing.add(property);
+            } else if (!existing.get(index).equals(property)) {
+                existing.set(index, property);
             }
         }
         packet.setBlockNetworkIdsHashed(true);
