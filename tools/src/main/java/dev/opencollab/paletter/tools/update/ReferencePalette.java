@@ -4,7 +4,7 @@ import dev.opencollab.paletter.tools.bds.BdsDump;
 import dev.opencollab.paletter.tools.data.Importer;
 import dev.opencollab.paletter.tools.Versions;
 import org.cloudburstmc.nbt.NbtMap;
-import dev.opencollab.paletter.block.BlockRegistry;
+import dev.opencollab.paletter.internal.block.BlockRegistry;
 import dev.opencollab.paletter.internal.block.BlockStates;
 import dev.opencollab.paletter.data.DataVersion;
 import dev.opencollab.paletter.tools.data.BundledFiles;

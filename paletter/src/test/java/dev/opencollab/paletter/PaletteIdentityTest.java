@@ -1,14 +1,14 @@
 package dev.opencollab.paletter;
 
 import dev.opencollab.paletter.block.BlockProperty;
-import dev.opencollab.paletter.block.BlockRegistry;
+import dev.opencollab.paletter.internal.block.BlockRegistry;
 import dev.opencollab.paletter.block.CustomBlock;
 import dev.opencollab.paletter.block.RegisteredBlockState;
 import dev.opencollab.paletter.block.component.Geometry;
 import dev.opencollab.paletter.creative.CreativeCategory;
 import dev.opencollab.paletter.data.DataVersion;
 import dev.opencollab.paletter.item.CustomItem;
-import dev.opencollab.paletter.item.ItemRegistry;
+import dev.opencollab.paletter.internal.item.ItemRegistry;
 import dev.opencollab.paletter.item.RegisteredItem;
 import dev.opencollab.paletter.item.component.MaxStackSize;
 import dev.opencollab.paletter.vanilla.BedrockBlockState;

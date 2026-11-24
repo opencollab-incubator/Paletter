@@ -6,7 +6,7 @@ import org.cloudburstmc.nbt.NbtList;
 import org.cloudburstmc.nbt.NbtMap;
 import org.cloudburstmc.nbt.NbtMapBuilder;
 import org.cloudburstmc.nbt.NbtType;
-import dev.opencollab.paletter.block.BlockRegistry;
+import dev.opencollab.paletter.internal.block.BlockRegistry;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;

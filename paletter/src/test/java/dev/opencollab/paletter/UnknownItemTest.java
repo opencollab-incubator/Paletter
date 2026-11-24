@@ -5,11 +5,11 @@ import org.cloudburstmc.protocol.bedrock.data.inventory.ItemData;
 import dev.opencollab.paletter.internal.item.ItemVariant;
 import dev.opencollab.paletter.item.BedrockItemStack;
 import dev.opencollab.paletter.item.ItemFallback;
-import dev.opencollab.paletter.item.ItemRegistry;
+import dev.opencollab.paletter.internal.item.ItemRegistry;
 import dev.opencollab.paletter.vanilla.BedrockItemType;
 import dev.opencollab.paletter.vanilla.BedrockItemVariant;
 import dev.opencollab.paletter.vanilla.BedrockItems;
-import dev.opencollab.paletter.block.BlockRegistry;
+import dev.opencollab.paletter.internal.block.BlockRegistry;
 import org.junit.jupiter.api.Test;
 
 import java.lang.reflect.Field;

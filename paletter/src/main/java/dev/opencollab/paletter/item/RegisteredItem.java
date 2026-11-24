@@ -6,6 +6,12 @@ import org.cloudburstmc.nbt.NbtMap;
 import org.cloudburstmc.protocol.bedrock.data.definitions.ItemDefinition;
 import org.cloudburstmc.protocol.bedrock.data.inventory.ItemVersion;
 import dev.opencollab.paletter.Origin;
+import dev.opencollab.paletter.ResolutionKind;
+import dev.opencollab.paletter.block.RegisteredBlockState;
+import dev.opencollab.paletter.internal.access.Access;
+import dev.opencollab.paletter.internal.access.ItemAccess;
+import dev.opencollab.paletter.internal.component.WireContext;
+import dev.opencollab.paletter.internal.item.ItemRegistry;
 import dev.opencollab.paletter.internal.property.PropertySplit;
 import dev.opencollab.paletter.item.component.ItemComponent;
 import dev.opencollab.paletter.property.Properties;
@@ -22,6 +28,53 @@ import java.util.List;
  * @since 1.0.0
  */
 public final class RegisteredItem implements ItemDefinition {
+    static {
+        Access.setItem(new ItemAccess() {
+            @Override
+            public RegisteredItem registeredItem(String identifier, int runtimeId, ItemVersion version, boolean componentBased,
+                                                 @Nullable NbtMap componentData, Origin origin, List<ItemComponent> components,
+                                                 @Nullable CustomItem customItem, @Nullable BedrockItemType type) {
+                return new RegisteredItem(identifier, runtimeId, version, componentBased, componentData, origin, components, customItem, type);
+            }
+
+            @Override
+            public ResolvedItem resolvedItem(RegisteredItem definition, int aux, @Nullable RegisteredBlockState block, ResolutionKind kind,
+                                             ItemRegistry registry) {
+                return new ResolvedItem(definition, aux, block, kind, registry);
+            }
+
+            @Override
+            public boolean sameAs(ResolvedItem a, ResolvedItem b) {
+                return a.sameAs(b);
+            }
+
+            @Override
+            public ItemOverride override(RegisteredItem original) {
+                return new ItemOverride(original);
+            }
+
+            @Override
+            public boolean changesDefinition(ItemOverride override) {
+                return override.changesDefinition();
+            }
+
+            @Override
+            public boolean setsBlock(ItemOverride override) {
+                return override.setsBlock();
+            }
+
+            @Override
+            public @Nullable NbtMap block(ItemOverride override) {
+                return override.block();
+            }
+
+            @Override
+            public RegisteredItem apply(ItemOverride override, WireContext context) {
+                return override.apply(context);
+            }
+        });
+    }
+
     private final String identifier;
     private final int runtimeId;
     private final ItemVersion version;

@@ -2,7 +2,7 @@ package dev.opencollab.paletter.internal.shape;
 
 import org.cloudburstmc.nbt.NbtMap;
 import org.cloudburstmc.protocol.bedrock.data.SerializableVoxelShape;
-import dev.opencollab.paletter.block.BlockRegistry;
+import dev.opencollab.paletter.internal.block.BlockRegistry;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;

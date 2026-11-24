@@ -1,9 +1,9 @@
 package dev.opencollab.paletter;
 
-import dev.opencollab.paletter.block.BlockRegistry;
-import dev.opencollab.paletter.block.RegisteredBlock;
+import dev.opencollab.paletter.internal.block.BlockRegistry;
+import dev.opencollab.paletter.internal.block.RegisteredBlock;
 import dev.opencollab.paletter.block.RegisteredBlockState;
-import dev.opencollab.paletter.item.ItemRegistry;
+import dev.opencollab.paletter.internal.item.ItemRegistry;
 import dev.opencollab.paletter.item.RegisteredItem;
 import dev.opencollab.paletter.item.ResolvedItem;
 

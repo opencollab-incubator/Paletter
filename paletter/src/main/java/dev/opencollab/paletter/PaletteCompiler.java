@@ -11,7 +11,7 @@ import dev.opencollab.paletter.internal.block.BlockInterner;
 import dev.opencollab.paletter.internal.block.BlockStates;
 import dev.opencollab.paletter.internal.PaletteReportBuilder;
 import dev.opencollab.paletter.creative.Placements;
-import dev.opencollab.paletter.block.BlockRegistry;
+import dev.opencollab.paletter.internal.block.BlockRegistry;
 import dev.opencollab.paletter.internal.CanonicalBlocks;
 import dev.opencollab.paletter.internal.Canonicals;
 import dev.opencollab.paletter.block.CustomBlock;
@@ -32,7 +32,7 @@ import dev.opencollab.paletter.internal.CanonicalItems;
 import dev.opencollab.paletter.item.CustomItem;
 import dev.opencollab.paletter.internal.component.Wire;
 import dev.opencollab.paletter.item.component.BlockPlacer;
-import dev.opencollab.paletter.item.ItemRegistry;
+import dev.opencollab.paletter.internal.item.ItemRegistry;
 import dev.opencollab.paletter.internal.item.ItemVariant;
 
 import java.util.ArrayList;

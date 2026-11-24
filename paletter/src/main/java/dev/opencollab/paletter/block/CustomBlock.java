@@ -13,6 +13,8 @@ import dev.opencollab.paletter.block.component.BlockMenuCategory;
 import dev.opencollab.paletter.block.component.BlockTags;
 import dev.opencollab.paletter.creative.CreativeCategory;
 import dev.opencollab.paletter.creative.CreativePlacement;
+import dev.opencollab.paletter.internal.access.Access;
+import dev.opencollab.paletter.internal.access.BlockAccess;
 import dev.opencollab.paletter.item.CustomItem;
 import dev.opencollab.paletter.item.component.BlockPlacer;
 import dev.opencollab.paletter.internal.component.Check;
@@ -51,6 +53,30 @@ import java.util.function.UnaryOperator;
  * @since 1.0.0
  */
 public final class CustomBlock {
+    static {
+        Access.setBlock(new BlockAccess() {
+            @Override
+            public List<BlockProperty<?>> stateProperties(CustomBlock block, int protocol) {
+                return block.stateProperties(protocol);
+            }
+
+            @Override
+            public List<NbtMap> states(CustomBlock block, int protocol) {
+                return block.states(protocol);
+            }
+
+            @Override
+            public NbtMap defaultState(CustomBlock block, int protocol) {
+                return block.defaultState(protocol);
+            }
+
+            @Override
+            public BlockProperty<?> property(String name, BlockProperty.Type type, List<?> values) {
+                return BlockProperty.of(name, type, values);
+            }
+        });
+    }
+
     private final String identifier;
     private final List<BlockProperty<?>> properties;
     private final List<BlockTrait> traits;

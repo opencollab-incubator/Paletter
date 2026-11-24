@@ -77,7 +77,7 @@ class BlockOfTest {
 
     /**
      * Command blocks and jigsaws: a creative state of the item wins over the block's default state (per the precedence
-     * of {@link dev.opencollab.paletter.item.ItemRegistry#blockOf}). The bundled creative data has no stack of them (they are
+     * of {@link dev.opencollab.paletter.internal.item.ItemRegistry#blockOf}). The bundled creative data has no stack of them (they are
      * operator items), so the default state is what is sent.
      */
     @Test

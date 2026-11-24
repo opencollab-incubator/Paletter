@@ -6,6 +6,7 @@ import org.cloudburstmc.protocol.bedrock.data.inventory.ItemData;
 import dev.opencollab.paletter.ResolutionKind;
 import dev.opencollab.paletter.behaviour.ItemValues;
 import dev.opencollab.paletter.block.RegisteredBlockState;
+import dev.opencollab.paletter.internal.item.ItemRegistry;
 import dev.opencollab.paletter.vanilla.BedrockItemVariant;
 
 import java.util.Objects;

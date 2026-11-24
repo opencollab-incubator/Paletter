@@ -7,6 +7,7 @@ import dev.opencollab.paletter.Palette;
 import dev.opencollab.paletter.PaletteLayer;
 import dev.opencollab.paletter.Paletter;
 import dev.opencollab.paletter.creative.CreativeCategory;
+import dev.opencollab.paletter.internal.item.ItemRegistry;
 import dev.opencollab.paletter.item.component.MaxStackSize;
 import org.junit.jupiter.api.Test;
 

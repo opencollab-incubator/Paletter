@@ -2,6 +2,8 @@ package dev.opencollab.paletter.block;
 
 import dev.opencollab.paletter.Paletter;
 import dev.opencollab.paletter.data.DataVersion;
+import dev.opencollab.paletter.internal.block.BlockRegistry;
+import dev.opencollab.paletter.internal.block.RegisteredBlock;
 import dev.opencollab.paletter.vanilla.BedrockBlockState;
 import org.junit.jupiter.api.Test;
 

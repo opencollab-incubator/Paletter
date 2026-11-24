@@ -6,7 +6,6 @@ import org.checkerframework.checker.nullness.qual.Nullable;
 import dev.opencollab.paletter.Origin;
 import dev.opencollab.paletter.annotation.Internal;
 import dev.opencollab.paletter.block.BlockHashes;
-import dev.opencollab.paletter.block.RegisteredBlock;
 import dev.opencollab.paletter.block.RegisteredBlockState;
 
 import java.util.Arrays;

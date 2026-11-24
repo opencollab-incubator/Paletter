@@ -1,6 +1,6 @@
 package dev.opencollab.paletter.internal.vanilla;
 
-import dev.opencollab.paletter.block.BlockRegistry;
+import dev.opencollab.paletter.internal.block.BlockRegistry;
 import dev.opencollab.paletter.internal.block.BlockStates;
 import org.cloudburstmc.nbt.NbtMap;
 import org.junit.jupiter.api.Test;

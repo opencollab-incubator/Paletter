@@ -3,7 +3,7 @@ package dev.opencollab.paletter;
 import org.cloudburstmc.nbt.NbtMap;
 import org.cloudburstmc.protocol.bedrock.data.inventory.ItemData;
 import dev.opencollab.paletter.block.BlockProperty;
-import dev.opencollab.paletter.block.BlockRegistry;
+import dev.opencollab.paletter.internal.block.BlockRegistry;
 import dev.opencollab.paletter.block.CustomBlock;
 import dev.opencollab.paletter.block.RegisteredBlockState;
 import dev.opencollab.paletter.block.component.Geometry;

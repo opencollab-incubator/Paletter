@@ -4,7 +4,7 @@ import org.cloudburstmc.nbt.NbtMap;
 import dev.opencollab.paletter.block.BlockHashes;
 import dev.opencollab.paletter.block.BlockProperty;
 import dev.opencollab.paletter.block.CustomBlock;
-import dev.opencollab.paletter.block.RegisteredBlock;
+import dev.opencollab.paletter.internal.block.RegisteredBlock;
 import dev.opencollab.paletter.block.RegisteredBlockState;
 import dev.opencollab.paletter.block.component.BlockTags;
 import dev.opencollab.paletter.block.component.LightEmission;

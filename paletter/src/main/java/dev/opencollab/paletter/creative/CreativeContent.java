@@ -10,7 +10,7 @@ import org.cloudburstmc.protocol.bedrock.packet.CreativeContentPacket;
 import dev.opencollab.paletter.internal.PaletteReportBuilder;
 import dev.opencollab.paletter.annotation.Internal;
 import dev.opencollab.paletter.item.BedrockItemStack;
-import dev.opencollab.paletter.item.ItemRegistry;
+import dev.opencollab.paletter.internal.item.ItemRegistry;
 
 import java.util.ArrayList;
 import java.util.List;

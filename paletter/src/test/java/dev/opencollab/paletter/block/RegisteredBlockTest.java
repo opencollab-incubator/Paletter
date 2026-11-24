@@ -8,6 +8,8 @@ import dev.opencollab.paletter.PaletteLayer;
 import dev.opencollab.paletter.Paletter;
 import dev.opencollab.paletter.block.component.Geometry;
 import dev.opencollab.paletter.block.component.LightEmission;
+import dev.opencollab.paletter.internal.block.BlockRegistry;
+import dev.opencollab.paletter.internal.block.RegisteredBlock;
 import org.junit.jupiter.api.Test;
 
 import java.util.HashSet;

@@ -2,7 +2,7 @@ package dev.opencollab.paletter;
 
 import dev.opencollab.paletter.block.BlockProperty;
 import dev.opencollab.paletter.block.CustomBlock;
-import dev.opencollab.paletter.block.RegisteredBlock;
+import dev.opencollab.paletter.internal.block.RegisteredBlock;
 import dev.opencollab.paletter.creative.CreativeCategory;
 import dev.opencollab.paletter.data.DataVersion;
 import dev.opencollab.paletter.item.CustomItem;

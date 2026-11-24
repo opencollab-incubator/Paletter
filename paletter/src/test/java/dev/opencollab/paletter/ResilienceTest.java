@@ -9,7 +9,7 @@ import dev.opencollab.paletter.vanilla.BedrockBlocks;
 import dev.opencollab.paletter.vanilla.BedrockItems;
 import dev.opencollab.paletter.block.BlockHashes;
 import dev.opencollab.paletter.block.BlockProperty;
-import dev.opencollab.paletter.block.BlockRegistry;
+import dev.opencollab.paletter.internal.block.BlockRegistry;
 import dev.opencollab.paletter.block.CustomBlock;
 import dev.opencollab.paletter.block.VoxelShape;
 import dev.opencollab.paletter.data.DataVersion;
@@ -18,7 +18,7 @@ import dev.opencollab.paletter.creative.CreativeCategory;
 import dev.opencollab.paletter.creative.CreativePlacement;
 import dev.opencollab.paletter.creative.ItemMatcher;
 import dev.opencollab.paletter.item.CustomItem;
-import dev.opencollab.paletter.item.ItemRegistry;
+import dev.opencollab.paletter.internal.item.ItemRegistry;
 import dev.opencollab.paletter.item.component.MaxStackSize;
 import org.junit.jupiter.api.Test;
 

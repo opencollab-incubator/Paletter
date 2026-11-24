@@ -9,7 +9,7 @@ import org.cloudburstmc.protocol.bedrock.data.inventory.ItemVersion;
 import dev.opencollab.paletter.block.component.Geometry;
 import dev.opencollab.paletter.block.component.LightEmission;
 import dev.opencollab.paletter.block.BlockHashes;
-import dev.opencollab.paletter.block.BlockRegistry;
+import dev.opencollab.paletter.internal.block.BlockRegistry;
 import dev.opencollab.paletter.block.BlockProperty;
 import dev.opencollab.paletter.block.BlockFallback;
 import dev.opencollab.paletter.internal.block.BlockResolution;

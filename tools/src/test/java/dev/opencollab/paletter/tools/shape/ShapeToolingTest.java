@@ -1,7 +1,7 @@
 package dev.opencollab.paletter.tools.shape;
 
 import com.google.gson.JsonObject;
-import dev.opencollab.paletter.block.BlockRegistry;
+import dev.opencollab.paletter.internal.block.BlockRegistry;
 import org.junit.jupiter.api.Test;
 
 import java.io.ByteArrayOutputStream;

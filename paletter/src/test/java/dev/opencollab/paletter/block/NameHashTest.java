@@ -1,5 +1,6 @@
 package dev.opencollab.paletter.block;
 
+import dev.opencollab.paletter.internal.block.BlockRegistry;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;

@@ -5,7 +5,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import org.cloudburstmc.protocol.bedrock.data.SerializableVoxelShape;
 import org.cloudburstmc.protocol.bedrock.packet.VoxelShapesPacket;
-import dev.opencollab.paletter.block.BlockRegistry;
+import dev.opencollab.paletter.internal.block.BlockRegistry;
 import dev.opencollab.paletter.internal.data.PaletteDataCodec;
 import dev.opencollab.paletter.internal.shape.VoxelGrid;
 import dev.opencollab.paletter.internal.shape.VoxelShapeStore;

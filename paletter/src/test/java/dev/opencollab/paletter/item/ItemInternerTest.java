@@ -2,6 +2,7 @@ package dev.opencollab.paletter.item;
 
 import dev.opencollab.paletter.Paletter;
 import dev.opencollab.paletter.data.DataVersion;
+import dev.opencollab.paletter.internal.item.ItemRegistry;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;

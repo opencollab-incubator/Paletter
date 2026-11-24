@@ -170,12 +170,12 @@ class ApiBoundaryTest {
      * there. Remove a file once it is done; do not add one.
      */
     private static final Set<String> MEMBERS_WITHOUT_SINCE = Set.of(
-        "Fallbacks", "block/BlockFallback", "block/BlockHashes", "block/BlockProperty", "block/BlockRegistry",
-        "block/CustomBlock", "block/RegisteredBlock", "block/RegisteredBlockState", "block/VoxelShape", "block/VoxelShapes",
+        "Fallbacks", "block/BlockFallback", "block/BlockHashes", "block/BlockProperty",
+        "block/CustomBlock", "block/RegisteredBlockState", "block/VoxelShape", "block/VoxelShapes",
         "block/component/OnPlayerPlacing", "block/component/ScriptHooks", "creative/CreativeCategory",
         "creative/CreativeContent", "creative/CreativeEditor", "creative/CreativeGroup", "creative/CreativeLayout",
         "creative/Placements", "item/BedrockItemStack", "item/CustomItem", "item/ItemFallback", "item/ItemOverride",
-        "item/ItemRegistry", "item/RegisteredItem", "item/component/FrameCount", "item/component/MiningSpeed",
+        "item/RegisteredItem", "item/component/FrameCount", "item/component/MiningSpeed",
         "item/component/RenderOffsets", "item/component/UseOnHook", "vanilla/BedrockBlockState", "vanilla/BedrockBlockType",
         "vanilla/BedrockItemType", "vanilla/BedrockItemVariant", "vanilla/BedrockState", "vanilla/BoolState",
         "vanilla/EnumState", "vanilla/IntState", "vanilla/StringState");

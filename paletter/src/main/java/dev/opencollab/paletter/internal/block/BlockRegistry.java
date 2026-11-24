@@ -1,16 +1,11 @@
-package dev.opencollab.paletter.block;
+package dev.opencollab.paletter.internal.block;
 
 import dev.opencollab.paletter.PaletteReport;
 import dev.opencollab.paletter.Origin;
-import dev.opencollab.paletter.internal.block.BlockStates;
-import dev.opencollab.paletter.internal.block.HashedIds;
-import dev.opencollab.paletter.internal.block.RuntimeIdTable;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 
 import dev.opencollab.paletter.internal.CanonicalBlocks;
 import dev.opencollab.paletter.internal.Lazy;
-import dev.opencollab.paletter.internal.block.BlockInterner;
-import dev.opencollab.paletter.internal.block.BlockResolution;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenCustomHashMap;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
@@ -21,8 +16,12 @@ import org.cloudburstmc.protocol.bedrock.data.definitions.BlockDefinition;
 import org.cloudburstmc.protocol.common.DefinitionRegistry;
 import dev.opencollab.paletter.PaletteException;
 import dev.opencollab.paletter.internal.PaletteReportBuilder;
-import dev.opencollab.paletter.annotation.Internal;
+import dev.opencollab.paletter.block.BlockFallback;
+import dev.opencollab.paletter.block.BlockHashes;
+import dev.opencollab.paletter.block.CustomBlock;
+import dev.opencollab.paletter.block.RegisteredBlockState;
 import dev.opencollab.paletter.data.DataVersion;
+import dev.opencollab.paletter.internal.access.Access;
 import dev.opencollab.paletter.internal.data.VanillaData;
 import dev.opencollab.paletter.internal.component.BlockCompiler;
 import dev.opencollab.paletter.internal.component.ComponentIndex;
@@ -57,7 +56,6 @@ import java.util.concurrent.ConcurrentHashMap;
  *
  * @since 1.0.0
  */
-@Internal
 public final class BlockRegistry implements DefinitionRegistry<BlockDefinition> {
     /**
      * Numeric ids of custom blocks start here, to stay clear of vanilla block ids: where BDS starts them in every spec capture.
@@ -106,7 +104,6 @@ public final class BlockRegistry implements DefinitionRegistry<BlockDefinition> 
      * @param data the vanilla data of the version
      * @return the vanilla palette of the version
      */
-    @Internal
     public static @NonNull BlockRegistry build(@NonNull VanillaData data, @NonNull CanonicalBlocks canonical,
                                               @NonNull BlockInterner interner) {
         return new BlockRegistry(new Table(null, data, List.of(), Map.of(), List.of(), Map.of(), interner, Map.of()), canonical, data.fallbacks().blocks(),
@@ -114,13 +111,12 @@ public final class BlockRegistry implements DefinitionRegistry<BlockDefinition> 
     }
 
     /**
-     * Internal: marks blocks as missing in this palette.
+     * Marks blocks as missing in this palette.
      *
      * @param blocks blocks of this palette that count as missing although their states are in the palette (a disabled
      *               experiment gates them): they resolve through their fallback like blocks the version lacks
      * @return a palette sharing all states with this one, or this palette if nothing is missing
      */
-    @Internal
     public @NonNull BlockRegistry withMissing(@NonNull Set<String> blocks) {
         if (blocks.isEmpty()) {
             return this;
@@ -129,12 +125,11 @@ public final class BlockRegistry implements DefinitionRegistry<BlockDefinition> 
     }
 
     /**
-     * Internal: adds fallbacks.
+     * Adds fallbacks.
      *
      * @param extraFallbacks fallbacks by block identifier; they replace fallbacks of the same block
      * @return a palette sharing all states with this one, with additional fallbacks, or this palette if there are none
      */
-    @Internal
     public @NonNull BlockRegistry withFallbacks(@NonNull Map<String, BlockFallback> extraFallbacks) {
         if (extraFallbacks.isEmpty()) {
             return this;
@@ -145,12 +140,11 @@ public final class BlockRegistry implements DefinitionRegistry<BlockDefinition> 
     }
 
     /**
-     * Internal: sets the default fallback.
+     * Sets the default fallback.
      *
      * @param fallback what canonical states without a block or fallback of their own use, or null for air
      * @return a palette sharing all states with this one, with this default fallback, or this palette if it has it
      */
-    @Internal
     public @NonNull BlockRegistry withDefaultFallback(@Nullable BlockFallback fallback) {
         if (java.util.Objects.equals(fallback, defaultFallback)) {
             return this;
@@ -159,17 +153,16 @@ public final class BlockRegistry implements DefinitionRegistry<BlockDefinition> 
     }
 
     /**
-     * Internal: the default fallback.
+     * The default fallback.
      *
      * @return what canonical states without a block or fallback of their own use, or null if they are sent as air
      */
-    @Internal
     public @Nullable BlockFallback defaultFallback() {
         return defaultFallback;
     }
 
     /**
-     * Internal: adds custom blocks. Ids of custom blocks already here can change, see the code comments.
+     * Adds custom blocks. Ids of custom blocks already here can change, see the code comments.
      *
      * @param data the vanilla data of this palette's version
      * @param key what adds the blocks, typically the layer; canonical ids of custom blocks are cached per key, so
@@ -181,7 +174,6 @@ public final class BlockRegistry implements DefinitionRegistry<BlockDefinition> 
      *                         of the blocks follows it
      * @return a palette with these custom blocks added, keeping this palette's fallbacks, or this palette if there are none
      */
-    @Internal
     public @NonNull BlockRegistry withCustomBlocks(@NonNull VanillaData data, @NonNull Object key, @NonNull List<CustomBlock> additional,
                                                   @NonNull PaletteReportBuilder report, @NonNull String source,
                                                   @Nullable String minEngineVersion) {
@@ -235,13 +227,12 @@ public final class BlockRegistry implements DefinitionRegistry<BlockDefinition> 
     }
 
     /**
-     * Internal: whether another palette is a base of this one.
+     * Whether another palette is a base of this one.
      *
      * @param other the registry to compare with
      * @return true if this registry is the other one, or the other one with custom blocks added: every state of the other
      * one is here as the same instance and resolves the same way, unless it names a block that was added
      */
-    @Internal
     public boolean extendsWithBlocks(@NonNull BlockRegistry other) {
         return this == other || parent == other && fallbacks.equals(other.fallbacks)
             && java.util.Objects.equals(defaultFallback, other.defaultFallback) && missing.equals(other.missing);
@@ -257,11 +248,10 @@ public final class BlockRegistry implements DefinitionRegistry<BlockDefinition> 
     }
 
     /**
-     * Internal: the canonical ids of this palette.
+     * The canonical ids of this palette.
      *
      * @return the canonical ids this palette resolves: states of the newest version plus custom blocks of its layers
      */
-    @Internal
     public @NonNull CanonicalBlocks canonical() {
         return canonical;
     }
@@ -338,7 +328,6 @@ public final class BlockRegistry implements DefinitionRegistry<BlockDefinition> 
      * @return the block to send
      * @throws IndexOutOfBoundsException if the id is not one of {@link #canonical()}
      */
-    @Internal
     public @NonNull RegisteredBlockState block(int canonical) {
         return canonicalTable().blocks[canonical >>> PAGE_BITS][canonical & PAGE_MASK];
     }
@@ -350,7 +339,6 @@ public final class BlockRegistry implements DefinitionRegistry<BlockDefinition> 
      * @return whether {@link #block(int)} is a stand-in for this canonical id (the default fallback or air) because the
      *         state has no block of its own in this version, see {@link #missingCanonical()}
      */
-    @Internal
     public boolean isMissing(int canonical) {
         return canonicalTable().missingIds.get(canonical);
     }
@@ -362,7 +350,6 @@ public final class BlockRegistry implements DefinitionRegistry<BlockDefinition> 
      * @return whether {@link #block(int)} is a replacement for this canonical id: a fallback (also a forced one) or the
      *         default fallback was used, see {@link #isMissing}; not for a state that is only adapted to this version
      */
-    @Internal
     public boolean isFallback(int canonical) {
         return canonicalTable().fallbackIds.get(canonical);
     }
@@ -373,7 +360,6 @@ public final class BlockRegistry implements DefinitionRegistry<BlockDefinition> 
      * @param canonical a canonical id
      * @return the runtime id of {@code block(canonical)}
      */
-    @Internal
     public int runtimeId(int canonical) {
         return canonicalTable().runtimeIds[canonical >>> PAGE_BITS][canonical & PAGE_MASK];
     }
@@ -385,7 +371,6 @@ public final class BlockRegistry implements DefinitionRegistry<BlockDefinition> 
      * @param definition the block, may be null
      * @return the canonical id, or -1 for null, a definition of another palette, or a state nothing resolves to
      */
-    @Internal
     public int canonical(@Nullable BlockDefinition definition) {
         if (definition == null) {
             return -1;
@@ -399,7 +384,6 @@ public final class BlockRegistry implements DefinitionRegistry<BlockDefinition> 
      * @param runtimeId the runtime id
      * @return the canonical id, or -1 if this palette has no state with the runtime id or nothing resolves to it
      */
-    @Internal
     public int canonicalOfRuntimeId(int runtimeId) {
         int index = indexOfRuntimeId(runtimeId);
         return index == -1 ? -1 : canonicalTable().reverse[index >>> PAGE_BITS][index & PAGE_MASK];
@@ -419,12 +403,11 @@ public final class BlockRegistry implements DefinitionRegistry<BlockDefinition> 
     }
 
     /**
-     * Internal: the canonical states without a block of their own.
+     * The canonical states without a block of their own.
      *
      * @return the canonical states that have no block (or fallback) of their own in this version and use the default
      *         fallback ({@link #defaultFallback()}), or air without one
      */
-    @Internal
     public @NonNull List<NbtMap> missingCanonical() {
         return canonicalTable().missing;
     }
@@ -432,16 +415,14 @@ public final class BlockRegistry implements DefinitionRegistry<BlockDefinition> 
     /**
      * Builds the canonical tables now instead of on first use. Called by the palette compiler.
      */
-    @Internal
     public void prepareCanonical() {
         canonicalTable();
     }
 
     /**
-     * Internal: drops the value sets of the blocks that resolving states built (about 0.2 MB per version), here and in
+     * Drops the value sets of the blocks that resolving states built (about 0.2 MB per version), here and in
      * the tables this one is over. Mostly the compilation needs them; a later lookup builds those of its block again.
      */
-    @Internal
     public void releaseSchemas() {
         for (Table current = table; current != null; current = current.parent) {
             current.schemas.clear();
@@ -453,7 +434,6 @@ public final class BlockRegistry implements DefinitionRegistry<BlockDefinition> 
      *
      * @return how many blocks have value sets built, here and in the tables this one is over
      */
-    @Internal
     public int schemaCount() {
         int count = 0;
         for (Table current = table; current != null; current = current.parent) {
@@ -572,12 +552,11 @@ public final class BlockRegistry implements DefinitionRegistry<BlockDefinition> 
     // ---- States ----
 
     /**
-     * Internal: looks up exactly one state.
+     * Looks up exactly one state.
      *
      * @param state a block state as {@code {name, states}}
      * @return the definition of exactly this state, or null
      */
-    @Internal
     public @Nullable RegisteredBlockState exact(@NonNull NbtMap state) {
         return table.byState(BlockStates.normalize(state));
     }
@@ -595,19 +574,17 @@ public final class BlockRegistry implements DefinitionRegistry<BlockDefinition> 
      * @param state a block state as {@code {name, states}}
      * @return the resolution
      */
-    @Internal
     public @NonNull BlockResolution resolve(@NonNull NbtMap state) {
         return resolve(state, true);
     }
 
     /**
-     * Internal: resolves a state like {@link #resolve(NbtMap)}, and where that finds no block, sends what the canonical
+     * Resolves a state like {@link #resolve(NbtMap)}, and where that finds no block, sends what the canonical
      * table sends for a state without a block: the default fallback, else air.
      *
      * @param state a block state as {@code {name, states}}
      * @return the resolution, with a block
      */
-    @Internal
     public @NonNull BlockResolution resolveOrDefault(@NonNull NbtMap state) {
         BlockResolution resolution = resolve(state, true);
         if (resolution.block() != null) {
@@ -679,7 +656,6 @@ public final class BlockRegistry implements DefinitionRegistry<BlockDefinition> 
      * @param report receives a warning for each such state and a summary
      * @return the block to send for each state, in the order of {@code states}
      */
-    @Internal
     public @NonNull RegisteredBlockState[] table(@NonNull List<NbtMap> states, @NonNull RegisteredBlockState missing, @NonNull PaletteReportBuilder report) {
         RegisteredBlockState[] result = new RegisteredBlockState[states.size()];
         Map<BlockResolution.Kind, Integer> counts = new LinkedHashMap<>();
@@ -775,8 +751,7 @@ public final class BlockRegistry implements DefinitionRegistry<BlockDefinition> 
      * @return the amount of states in this palette's own table: all of them, except in a patch over another palette
      *         (hashed palettes with added custom blocks), which holds only the added ones
      */
-    @Internal
-    int ownStateCount() {
+    public int ownStateCount() {
         return table.own.length;
     }
 
@@ -799,13 +774,12 @@ public final class BlockRegistry implements DefinitionRegistry<BlockDefinition> 
     }
 
     /**
-     * Internal: the numeric id of a custom block.
+     * The numeric id of a custom block.
      *
      * @param identifier a custom block of this palette
      * @return its {@code block_id}, the one in {@link #blockProperties()}; item ids of plain block items derive from it
      * @throws PaletteException if there is no such custom block
      */
-    @Internal
     public int customBlockId(@NonNull String identifier) {
         Integer id = table.customBlockIds.get(identifier);
         if (id == null) {
@@ -833,24 +807,22 @@ public final class BlockRegistry implements DefinitionRegistry<BlockDefinition> 
     }
 
     /**
-     * Internal: whether this palette has the same states as another.
+     * Whether this palette has the same states as another.
      *
      * @param other the registry to compare with
      * @return true if this palette has exactly the states (and runtime ids) of the other one
      */
-    @Internal
     public boolean sharesStatesWith(@NonNull BlockRegistry other) {
         return table == other.table;
     }
 
     /**
-     * Internal: whether this palette extends the states of another.
+     * Whether this palette extends the states of another.
      *
      * @param other the registry to compare with
      * @return true if this palette has the states of the other one, in the same dense positions ({@link #indexOf}), and
      * possibly more after them: it is the other palette or was built by adding custom blocks to it
      */
-    @Internal
     public boolean extendsStatesOf(@NonNull BlockRegistry other) {
         for (Table t = table; t != null; t = t.parent) {
             if (t == other.table) {
@@ -873,7 +845,6 @@ public final class BlockRegistry implements DefinitionRegistry<BlockDefinition> 
      * @param identifier the block identifier
      * @return the hash
      */
-    @Internal
     public static long nameHash(@NonNull String identifier) {
         if (identifier.isEmpty()) {
             return 0;
@@ -968,7 +939,7 @@ public final class BlockRegistry implements DefinitionRegistry<BlockDefinition> 
                     throw new PaletteException("Custom block " + block.identifier() + " is registered twice, or collides with a vanilla block",
                         null, block.identifier(), null);
                 }
-                List<NbtMap> blockStates = block.states(protocol);
+                List<NbtMap> blockStates = Access.block().states(block, protocol);
                 versionStates.put(block.identifier(), blockStates);
                 customStates.addAll(blockStates);
                 customByName.put(block.identifier(), block);
@@ -1052,7 +1023,7 @@ public final class BlockRegistry implements DefinitionRegistry<BlockDefinition> 
                 CustomBlock custom = customByName.get(name);
                 if (custom != null) {
                     blocks.put(name, new RegisteredBlock(name, origins.get(name), entry.getValue(), custom, propertyData.get(name),
-                        custom.defaultState(protocol), custom.stateProperties(protocol)));
+                        Access.block().defaultState(custom, protocol), Access.block().stateProperties(custom, protocol)));
                 } else {
                     blocks.put(name, interner.vanillaType(name, entry.getValue(), propertyData.get(name), data.blockDefaults().get(name)));
                 }
@@ -1063,8 +1034,8 @@ public final class BlockRegistry implements DefinitionRegistry<BlockDefinition> 
                 for (CustomBlock custom : this.customBlocks.subList(0, parent.customBlocks.size())) {
                     RegisteredBlock earlier = parent.block(custom.identifier());
                     blocks.put(custom.identifier(), new RegisteredBlock(custom.identifier(), origins.get(custom.identifier()),
-                        earlier.states(), custom, propertyData.get(custom.identifier()), custom.defaultState(protocol),
-                        custom.stateProperties(protocol)));
+                        earlier.states(), custom, propertyData.get(custom.identifier()), Access.block().defaultState(custom, protocol),
+                        Access.block().stateProperties(custom, protocol)));
                 }
             }
             this.ownBlocks = Collections.unmodifiableMap(blocks);

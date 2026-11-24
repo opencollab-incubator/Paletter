@@ -2,7 +2,7 @@ package dev.opencollab.paletter.behaviour;
 
 import dev.opencollab.paletter.Palette;
 import dev.opencollab.paletter.Paletter;
-import dev.opencollab.paletter.block.RegisteredBlock;
+import dev.opencollab.paletter.internal.block.RegisteredBlock;
 import dev.opencollab.paletter.block.RegisteredBlockState;
 import dev.opencollab.paletter.data.DataVersion;
 import dev.opencollab.paletter.internal.behaviour.Behaviour;

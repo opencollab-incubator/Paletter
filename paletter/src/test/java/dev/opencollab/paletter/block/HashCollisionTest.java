@@ -6,6 +6,7 @@ import dev.opencollab.paletter.PaletteLayer;
 import dev.opencollab.paletter.Palettes;
 import dev.opencollab.paletter.Paletter;
 import dev.opencollab.paletter.internal.BlockIdOrder;
+import dev.opencollab.paletter.internal.block.BlockRegistry;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;

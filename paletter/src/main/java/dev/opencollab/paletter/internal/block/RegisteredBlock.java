@@ -1,13 +1,14 @@
-package dev.opencollab.paletter.block;
+package dev.opencollab.paletter.internal.block;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.cloudburstmc.nbt.NbtMap;
 import dev.opencollab.paletter.Origin;
-import dev.opencollab.paletter.annotation.Internal;
+import dev.opencollab.paletter.block.BlockProperty;
+import dev.opencollab.paletter.block.CustomBlock;
+import dev.opencollab.paletter.block.RegisteredBlockState;
 import dev.opencollab.paletter.block.component.BlockComponent;
-import dev.opencollab.paletter.internal.block.BlockStates;
-import dev.opencollab.paletter.internal.block.StateConditions;
+import dev.opencollab.paletter.internal.access.Access;
 import dev.opencollab.paletter.internal.property.PropertySplit;
 import dev.opencollab.paletter.property.Properties;
 import dev.opencollab.paletter.vanilla.BedrockBlockType;
@@ -29,7 +30,6 @@ import java.util.Set;
  * {@link BlockRegistry#block(String)} and {@link BlockRegistry#block(RegisteredBlockState)} give the block of the
  * palette you ask.
  */
-@Internal
 public final class RegisteredBlock {
     private final String identifier;
     private final Origin origin;
@@ -43,7 +43,7 @@ public final class RegisteredBlock {
     private volatile @Nullable Properties propertiesCache;
 
     /**
-     * Internal: creates the block of a palette, done by the palette compiler.
+     * Creates the block of a palette, done by the palette compiler.
      *
      * @param identifier the block identifier
      * @param origin where the block comes from
@@ -52,7 +52,6 @@ public final class RegisteredBlock {
      * @param propertyData the block property data sent for the block, or null if it has none
      * @param defaultStateNbt the {@code {name, states}} of the default state, or null to take the first state
      */
-    @Internal
     public RegisteredBlock(String identifier, Origin origin, List<RegisteredBlockState> states, @Nullable CustomBlock customBlock,
                     @Nullable NbtMap propertyData, @Nullable NbtMap defaultStateNbt) {
         this.identifier = identifier;
@@ -74,7 +73,7 @@ public final class RegisteredBlock {
     }
 
     /**
-     * Internal: the block identifier.
+     * The block identifier.
      *
      * @return the identifier, e.g. {@code minecraft:stone}
      */
@@ -83,7 +82,7 @@ public final class RegisteredBlock {
     }
 
     /**
-     * Internal: the identity of this block.
+     * The identity of this block.
      *
      * @return the key of this block: a vanilla type, or the type of its {@link CustomBlock}
      */
@@ -97,7 +96,7 @@ public final class RegisteredBlock {
     }
 
     /**
-     * Internal: where this block comes from.
+     * Where this block comes from.
      *
      * @return {@link Origin#VANILLA}, or for custom blocks the layer id passed as {@code source} when they were added
      */
@@ -106,7 +105,7 @@ public final class RegisteredBlock {
     }
 
     /**
-     * Internal: the states of this block.
+     * The states of this block.
      *
      * @return the states, in palette order
      */
@@ -115,7 +114,7 @@ public final class RegisteredBlock {
     }
 
     /**
-     * Internal: the default state of this block.
+     * The default state of this block.
      *
      * @return the state matching the default state of the block data, else the first state
      */
@@ -138,7 +137,7 @@ public final class RegisteredBlock {
     }
 
     /**
-     * Internal: the state properties of this block.
+     * The state properties of this block.
      *
      * @return the properties that make up the states. Vanilla: derived from the states, values in palette order;
      * custom: the {@link CustomBlock#stateProperties()} as the palette's version has them
@@ -178,13 +177,13 @@ public final class RegisteredBlock {
             } else if (type == BlockProperty.Type.INTEGER) {
                 list.replaceAll(v -> ((Number) v).intValue());
             }
-            result.add(BlockProperty.of(names.get(i), type, list));
+            result.add(Access.block().property(names.get(i), type, list));
         }
         return Collections.unmodifiableList(result);
     }
 
     /**
-     * Internal: the type-level components of this block.
+     * The type-level components of this block.
      *
      * @return the components of the type: those of the {@link CustomBlock}, empty for vanilla blocks. See
      * {@link RegisteredBlock#components(RegisteredBlockState)} for what applies to one state
@@ -194,7 +193,7 @@ public final class RegisteredBlock {
     }
 
     /**
-     * Internal: the custom block this was made from.
+     * The custom block this was made from.
      *
      * @return the custom block, or null for a vanilla block
      */
@@ -203,7 +202,7 @@ public final class RegisteredBlock {
     }
 
     /**
-     * Internal: the properties of the block type.
+     * The properties of the block type.
      *
      * @return the component and wire properties of this block, from its {@link #propertyData()} (named like the bundled
      * property store: {@code component:}, {@code wire:}); empty for blocks without property data
@@ -217,7 +216,7 @@ public final class RegisteredBlock {
     }
 
     /**
-     * Internal: the components that apply to one state.
+     * The components that apply to one state.
      *
      * @param state a state of this block
      * @return the components in effect for a state of this block: those of the block, plus those of the permutations of
@@ -240,7 +239,7 @@ public final class RegisteredBlock {
     }
 
     /**
-     * Internal: the properties that apply to one state.
+     * The properties that apply to one state.
      *
      * @param state a state of this block
      * @return the properties in effect for a state of this block: those of the block, with the components of the
@@ -261,7 +260,7 @@ public final class RegisteredBlock {
     }
 
     /**
-     * Internal: the raw block property data.
+     * The raw block property data.
      *
      * @return the block property data sent for this block in this palette (data driven vanilla blocks and custom
      * blocks), else null. A palette patched with more custom blocks has a {@code RegisteredBlock} of its own for every

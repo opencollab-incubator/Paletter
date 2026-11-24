@@ -3,7 +3,7 @@ package dev.opencollab.paletter.internal.creative;
 import dev.opencollab.paletter.PaletteReport;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import dev.opencollab.paletter.internal.PaletteReportBuilder;
-import dev.opencollab.paletter.block.BlockRegistry;
+import dev.opencollab.paletter.internal.block.BlockRegistry;
 import dev.opencollab.paletter.creative.CreativeCategory;
 import dev.opencollab.paletter.creative.CreativeGroup;
 import dev.opencollab.paletter.creative.CreativeItem;
