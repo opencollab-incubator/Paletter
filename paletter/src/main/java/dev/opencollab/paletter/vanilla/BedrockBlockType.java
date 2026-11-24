@@ -28,11 +28,11 @@ import java.util.Objects;
  * dev.opencollab.paletter.Paletter#bundled()} on first use. A vanilla constant the newest bundled release does not have
  * (deprecated because Bedrock removed the block, or a
  * {@link dev.opencollab.paletter.annotation.SincePreview @SincePreview} block) is not {@link #isAvailable() available},
- * but has states of its own, like an item constant: a preview block those of the preview, written into the constant
- * when it was generated (no preview data is loaded for them), a removed block one state without properties. A palette
- * whose newest version has the block (a preview block in a Paletter with previews) sends the block itself; any other
- * palette resolves its states through its {@link dev.opencollab.paletter.Fallbacks}, {@code minecraft:unknown} by
- * default.
+ * but has states of its own, written into the constant when it was generated (no data is loaded for them): a preview
+ * block those of the preview, a removed block those it last had in a bundled release (one state without properties if
+ * none could be written). A palette that has the block (a preview block in a Paletter with previews, a removed one in
+ * an older version) sends the block itself; any other palette resolves its states through its
+ * {@link dev.opencollab.paletter.Fallbacks}, {@code minecraft:unknown} by default.
  * <p>
  * Equality: like its states (see {@link BedrockBlockState}), {@code equals} always works, and {@code ==} works for the
  * vanilla constants, the preview's blocks among them, and for the type a registered {@link CustomBlock} owns. A vanilla
@@ -51,7 +51,7 @@ public final class BedrockBlockType {
     private volatile @Nullable BlockTypeLayout layout;
     private volatile boolean available;
     private final boolean education;
-    /** The states of a block only the bundled preview has, as generated; null for any other type. */
+    /** The states of a block the newest bundled release lacks (a preview's, a removed one), as generated; null for any other type. */
     private final VanillaTypes.@Nullable PreviewStates previewStates;
 
     /**
@@ -176,8 +176,8 @@ public final class BedrockBlockType {
 
     /**
      * Links a vanilla type the newest bundled release does not have to states of its own: those the generator wrote
-     * for a preview block, else (a removed block, whose properties no data has anymore) a single state without
-     * properties. Palettes that lack the block resolve them through their {@link dev.opencollab.paletter.Fallbacks}.
+     * (a preview block's, a removed block's last ones), else a single state without properties. Palettes that lack the
+     * block resolve them through their {@link dev.opencollab.paletter.Fallbacks}.
      */
     void linkUnavailable() {
         VanillaTypes.PreviewStates preview = previewStates;

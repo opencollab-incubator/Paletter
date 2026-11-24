@@ -169,16 +169,19 @@ public final class ConstantsSource {
     }
 
     /**
-     * @param previewStates the states of each block only the preview has, which its constant carries
+     * @param ownStates by constant name, the states of each block constant the newest release lacks (a preview's block, a
+     *                  removed one), which the constant carries
      */
-    static String blocks(List<Constant> constants, Map<String, BlockLayout> layouts, Map<String, ConstantsGenerator.PreviewStates> previewStates,
+    static String blocks(List<Constant> constants, Map<String, BlockLayout> layouts, Map<String, ConstantsGenerator.PreviewStates> ownStates,
                          StateModel states, String version, String oldest) {
         List<String> doc = new ArrayList<>(List.of(
             "Every block type of Bedrock " + version + ", the newest bundled release. The constants are resolved against",
             "the newest data of {@link dev.opencollab.paletter.Paletter#bundled()} on first use; referencing them loads nothing.",
             "<p>",
-            "Constants are added when Bedrock adds blocks (binary compatible). Blocks Bedrock removes stay, deprecated, and",
-            "resolve to {@code minecraft:unknown}; renamed blocks keep their old constant, deprecated, as an alias of the new one."));
+            "Constants are added when Bedrock adds blocks (binary compatible). Blocks Bedrock removes stay, deprecated, with the",
+            "states they last had: palettes that have the block send it, the others resolve it through their",
+            "{@link dev.opencollab.paletter.Fallbacks} ({@code minecraft:unknown} by default). Renamed blocks keep their old",
+            "constant, deprecated, as an alias of the new one."));
         doc.addAll(sinceDoc(oldest));
         doc.addAll(PREVIEW_DOC);
         doc.add("");
@@ -190,7 +193,7 @@ public final class ConstantsSource {
                 aliases.add(constant);
                 continue;
             }
-            BlockLayout layout = layouts.get(constant.identifier());
+            BlockLayout layout = constant.deprecated() == null ? layouts.get(constant.identifier()) : null;
             StringBuilder first = new StringBuilder("{@code " + constant.identifier() + "}");
             if (layout != null) {
                 List<String> stateLinks = new ArrayList<>();
@@ -207,16 +210,18 @@ public final class ConstantsSource {
                 }
                 first.append('.');
             } else {
-                first.append(", no longer in the bundled data.");
+                first.append(", no longer in the bundled data")
+                    .append(ownStates.containsKey(constant.name()) ? ": it keeps the states it last had." : ".");
             }
             List<String> memberDoc = memberDoc(first.toString(), constant);
             if (constant.deprecated() != null) {
-                memberDoc.add("@deprecated Bedrock removed the block; resolves to {@code minecraft:unknown}");
+                memberDoc.add("@deprecated " + (constant.preview() != null ? "a newer Bedrock preview dropped the block" : "Bedrock removed the block")
+                    + "; palettes without it resolve it through their {@link dev.opencollab.paletter.Fallbacks}");
             }
-            ConstantsGenerator.PreviewStates preview = constant.preview() == null ? null : previewStates.get(constant.identifier());
+            ConstantsGenerator.PreviewStates preview = ownStates.get(constant.name());
             CodeBlock value;
             if (preview != null) {
-                // No release has the block: the constant carries the preview's states, so a release palette needs no preview data
+                // The newest release lacks the block: the constant carries its states, so no palette needs data for them
                 CodeBlock.Builder call = CodeBlock.builder().add("$T.blockWithStates($S, $S, $L$>", VANILLA_TYPES, constant.name(),
                     constant.identifier(), preview.defaultOffset());
                 for (int p = 0; p < preview.properties().size(); p++) {
@@ -242,11 +247,12 @@ public final class ConstantsSource {
         List<String> doc = new ArrayList<>(List.of(
             "Every item type of Bedrock " + version + ", the newest bundled release. The constants are resolved against",
             "the newest data of {@link dev.opencollab.paletter.Paletter#bundled()} on first use; referencing them loads nothing.",
-            "Variants that differ by damage are {@link BedrockItemType#variant(int)}; the named ones are the constants of",
+            "Variants that differ by aux are {@link BedrockItemType#variant(int)}; the named ones are the constants of",
             "{@link BedrockItemVariants}.",
             "<p>",
-            "Constants are added when Bedrock adds items (binary compatible). Items Bedrock removes stay, deprecated, and",
-            "resolve to {@code minecraft:unknown}; renamed items keep their old constant, deprecated, as an alias of the new one."));
+            "Constants are added when Bedrock adds items (binary compatible). Items Bedrock removes stay, deprecated: palettes",
+            "that have the item send it, the others resolve it through their {@link dev.opencollab.paletter.Fallbacks}",
+            "({@code minecraft:unknown} by default). Renamed items keep their old constant, deprecated, as an alias of the new one."));
         doc.addAll(sinceDoc(oldest));
         doc.addAll(PREVIEW_DOC);
         doc.add("");
@@ -260,10 +266,11 @@ public final class ConstantsSource {
             }
             Integer count = variants.get(constant.identifier());
             String first = "{@code " + constant.identifier() + "}" + (constant.deprecated() != null ? ", no longer in the bundled data."
-                : count != null ? ": " + count + " more variants by damage, see {@link BedrockItemType#variant(int)}." : ".");
+                : count != null ? ": " + count + " more variants by aux, see {@link BedrockItemType#variant(int)}." : ".");
             List<String> memberDoc = memberDoc(first, constant);
             if (constant.deprecated() != null) {
-                memberDoc.add("@deprecated Bedrock removed the item; resolves to {@code minecraft:unknown}");
+                memberDoc.add("@deprecated " + (constant.preview() != null ? "a newer Bedrock preview dropped the item" : "Bedrock removed the item")
+                    + "; palettes without it resolve it through their {@link dev.opencollab.paletter.Fallbacks}");
             }
             type.addField(constantField(BEDROCK_ITEM_TYPE, constant, memberDoc)
                 .initializer("$T.$L($S, $S)", VANILLA_TYPES, constant.education() ? "educationItem" : "item", constant.name(),
@@ -410,7 +417,8 @@ public final class ConstantsSource {
     private static final List<String> PREVIEW_DOC = List.of(
         "{@link dev.opencollab.paletter.annotation.SincePreview @SincePreview} marks content only the bundled Bedrock preview",
         "has. The constants are linked to the newest release, so it is never {@code isAvailable()}; what a palette sends for",
-        "it, with previews and without, is told by the annotation. The mark goes when a release has it; the constant goes if a newer preview drops it.");
+        "it, with previews and without, is told by the annotation. The mark goes when a release has it. A constant a newer",
+        "preview drops stays, deprecated and still marked, like removed content: code compiled against it keeps linking.");
 
     private static String file(String packageName, TypeSpec type) {
         return JavaFile.builder(packageName, type).addFileComment(HEADER).indent("    ").skipJavaLangImports(true).build().toString();
@@ -449,7 +457,8 @@ public final class ConstantsSource {
         List<String> doc = new ArrayList<>();
         doc.add(first);
         if (constant.preview() != null) {
-            doc.add("Only in the bundled preview " + constant.preview() + ".");
+            doc.add(constant.deprecated() != null ? "Was only in the bundled preview " + constant.preview() + ", and never in a release."
+                : "Only in the bundled preview " + constant.preview() + ".");
             return doc;
         }
         if (constant.education()) {

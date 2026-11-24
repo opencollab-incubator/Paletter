@@ -8,11 +8,12 @@ import dev.opencollab.paletter.annotation.SincePreview;
 /**
  * Every item type of Bedrock 26.60, the newest bundled release. The constants are resolved against
  * the newest data of {@link dev.opencollab.paletter.Paletter#bundled()} on first use; referencing them loads nothing.
- * Variants that differ by damage are {@link BedrockItemType#variant(int)}; the named ones are the constants of
+ * Variants that differ by aux are {@link BedrockItemType#variant(int)}; the named ones are the constants of
  * {@link BedrockItemVariants}.
  * <p>
- * Constants are added when Bedrock adds items (binary compatible). Items Bedrock removes stay, deprecated, and
- * resolve to {@code minecraft:unknown}; renamed items keep their old constant, deprecated, as an alias of the new one.
+ * Constants are added when Bedrock adds items (binary compatible). Items Bedrock removes stay, deprecated: palettes
+ * that have the item send it, the others resolve it through their {@link dev.opencollab.paletter.Fallbacks}
+ * ({@code minecraft:unknown} by default). Renamed items keep their old constant, deprecated, as an alias of the new one.
  * <p>
  * {@code @since} is the Paletter version that added a constant, and only written if newer than the class. The line
  * {@code First in Bedrock} is the bundled Bedrock release it first appears in, without an experiment toggle (decided from
@@ -22,7 +23,8 @@ import dev.opencollab.paletter.annotation.SincePreview;
  * Edition features, which {@code isEducation()} of the type answers at runtime.
  * {@link dev.opencollab.paletter.annotation.SincePreview @SincePreview} marks content only the bundled Bedrock preview
  * has. The constants are linked to the newest release, so it is never {@code isAvailable()}; what a palette sends for
- * it, with previews and without, is told by the annotation. The mark goes when a release has it; the constant goes if a newer preview drops it.
+ * it, with previews and without, is told by the annotation. The mark goes when a release has it. A constant a newer
+ * preview drops stays, deprecated and still marked, like removed content: code compiled against it keeps linking.
  *
  * @since 1.0.0
  */
@@ -248,7 +250,7 @@ public final class BedrockItems {
     public static final BedrockItemType ARMS_UP_POTTERY_SHERD = VanillaTypes.item("ARMS_UP_POTTERY_SHERD", "minecraft:arms_up_pottery_sherd");
 
     /**
-     * {@code minecraft:arrow}: 42 more variants by damage, see {@link BedrockItemType#variant(int)}.
+     * {@code minecraft:arrow}: 42 more variants by aux, see {@link BedrockItemType#variant(int)}.
      */
     public static final BedrockItemType ARROW = VanillaTypes.item("ARROW", "minecraft:arrow");
 
@@ -415,7 +417,7 @@ public final class BedrockItems {
     public static final BedrockItemType BAMBOO_WALL_SIGN = VanillaTypes.item("BAMBOO_WALL_SIGN", "minecraft:bamboo_wall_sign");
 
     /**
-     * {@code minecraft:banner}: 15 more variants by damage, see {@link BedrockItemType#variant(int)}.
+     * {@code minecraft:banner}: 15 more variants by aux, see {@link BedrockItemType#variant(int)}.
      */
     public static final BedrockItemType BANNER = VanillaTypes.item("BANNER", "minecraft:banner");
 
@@ -450,7 +452,7 @@ public final class BedrockItems {
     public static final BedrockItemType BEACON = VanillaTypes.item("BEACON", "minecraft:beacon");
 
     /**
-     * {@code minecraft:bed}: 15 more variants by damage, see {@link BedrockItemType#variant(int)}.
+     * {@code minecraft:bed}: 15 more variants by aux, see {@link BedrockItemType#variant(int)}.
      */
     public static final BedrockItemType BED = VanillaTypes.item("BED", "minecraft:bed");
 
@@ -3940,7 +3942,7 @@ public final class BedrockItems {
     public static final BedrockItemType EMERALD_ORE = VanillaTypes.item("EMERALD_ORE", "minecraft:emerald_ore");
 
     /**
-     * {@code minecraft:empty_map}: 1 more variants by damage, see {@link BedrockItemType#variant(int)}.
+     * {@code minecraft:empty_map}: 1 more variants by aux, see {@link BedrockItemType#variant(int)}.
      */
     public static final BedrockItemType EMPTY_MAP = VanillaTypes.item("EMPTY_MAP", "minecraft:empty_map");
 
@@ -4200,7 +4202,7 @@ public final class BedrockItems {
     public static final BedrockItemType FIREWORK_ROCKET = VanillaTypes.item("FIREWORK_ROCKET", "minecraft:firework_rocket");
 
     /**
-     * {@code minecraft:firework_star}: 15 more variants by damage, see {@link BedrockItemType#variant(int)}.
+     * {@code minecraft:firework_star}: 15 more variants by aux, see {@link BedrockItemType#variant(int)}.
      */
     public static final BedrockItemType FIREWORK_STAR = VanillaTypes.item("FIREWORK_STAR", "minecraft:firework_star");
 
@@ -4419,7 +4421,7 @@ public final class BedrockItems {
     public static final BedrockItemType GLOW_STICK = VanillaTypes.educationItem("GLOW_STICK", "minecraft:glow_stick");
 
     /**
-     * {@code minecraft:goat_horn}: 7 more variants by damage, see {@link BedrockItemType#variant(int)}.
+     * {@code minecraft:goat_horn}: 7 more variants by aux, see {@link BedrockItemType#variant(int)}.
      */
     public static final BedrockItemType GOAT_HORN = VanillaTypes.item("GOAT_HORN", "minecraft:goat_horn");
 
@@ -6143,7 +6145,7 @@ public final class BedrockItems {
     public static final BedrockItemType LIME_WOOL_STAIRS = VanillaTypes.item("LIME_WOOL_STAIRS", "minecraft:lime_wool_stairs");
 
     /**
-     * {@code minecraft:lingering_potion}: 46 more variants by damage, see {@link BedrockItemType#variant(int)}.
+     * {@code minecraft:lingering_potion}: 46 more variants by aux, see {@link BedrockItemType#variant(int)}.
      */
     public static final BedrockItemType LINGERING_POTION = VanillaTypes.item("LINGERING_POTION", "minecraft:lingering_potion");
 
@@ -7058,7 +7060,7 @@ public final class BedrockItems {
     public static final BedrockItemType OCHRE_FROGLIGHT = VanillaTypes.item("OCHRE_FROGLIGHT", "minecraft:ochre_froglight");
 
     /**
-     * {@code minecraft:ominous_bottle}: 4 more variants by damage, see {@link BedrockItemType#variant(int)}.
+     * {@code minecraft:ominous_bottle}: 4 more variants by aux, see {@link BedrockItemType#variant(int)}.
      */
     public static final BedrockItemType OMINOUS_BOTTLE = VanillaTypes.item("OMINOUS_BOTTLE", "minecraft:ominous_bottle");
 
@@ -8195,7 +8197,7 @@ public final class BedrockItems {
     public static final BedrockItemType POTENT_SULFUR = VanillaTypes.item("POTENT_SULFUR", "minecraft:potent_sulfur");
 
     /**
-     * {@code minecraft:potion}: 46 more variants by damage, see {@link BedrockItemType#variant(int)}.
+     * {@code minecraft:potion}: 46 more variants by aux, see {@link BedrockItemType#variant(int)}.
      */
     public static final BedrockItemType POTION = VanillaTypes.item("POTION", "minecraft:potion");
 
@@ -9354,7 +9356,7 @@ public final class BedrockItems {
     public static final BedrockItemType SPIRE_ARMOR_TRIM_SMITHING_TEMPLATE = VanillaTypes.item("SPIRE_ARMOR_TRIM_SMITHING_TEMPLATE", "minecraft:spire_armor_trim_smithing_template");
 
     /**
-     * {@code minecraft:splash_potion}: 46 more variants by damage, see {@link BedrockItemType#variant(int)}.
+     * {@code minecraft:splash_potion}: 46 more variants by aux, see {@link BedrockItemType#variant(int)}.
      */
     public static final BedrockItemType SPLASH_POTION = VanillaTypes.item("SPLASH_POTION", "minecraft:splash_potion");
 
@@ -9886,7 +9888,7 @@ public final class BedrockItems {
     public static final BedrockItemType SUSPICIOUS_SAND = VanillaTypes.item("SUSPICIOUS_SAND", "minecraft:suspicious_sand");
 
     /**
-     * {@code minecraft:suspicious_stew}: 12 more variants by damage, see {@link BedrockItemType#variant(int)}.
+     * {@code minecraft:suspicious_stew}: 12 more variants by aux, see {@link BedrockItemType#variant(int)}.
      */
     public static final BedrockItemType SUSPICIOUS_STEW = VanillaTypes.item("SUSPICIOUS_STEW", "minecraft:suspicious_stew");
 

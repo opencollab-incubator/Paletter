@@ -261,8 +261,9 @@ public final class ConstantsGenerator {
             previewStates.put(identifier, previewStates(g.preview, byId.get(identifier)));
         }
         ContentConstants content = new ContentConstants(g);
-        List<Constant> blocks = content.constants("blocks", releaseBlocks, previewBlocks, "BedrockBlocks");
-        files.put(PACKAGE_DIR + "/BedrockBlocks.java", ConstantsSource.blocks(blocks, byId, previewStates, states, g.release.version().name(), oldest));
+        List<Constant> blocks = content.constants("blocks", releaseBlocks, previewBlocks, "BedrockBlocks",
+            (identifier, old) -> ownStates(identifier, old, previewStates, byId));
+        files.put(PACKAGE_DIR + "/BedrockBlocks.java", ConstantsSource.blocks(blocks, byId, content.states, states, g.release.version().name(), oldest));
         counts.put("BedrockBlocks", blocks.size());
 
         List<String> itemIds = new ArrayList<>();
@@ -275,7 +276,7 @@ public final class ConstantsGenerator {
                 .filter(id -> !releaseItems.contains(id)).forEach(previewItemIds::add);
             variantCounts(g.preview).forEach(variantCounts::putIfAbsent);
         }
-        List<Constant> items = content.constants("items", itemIds, previewItemIds, "BedrockItems");
+        List<Constant> items = new ContentConstants(g).constants("items", itemIds, previewItemIds, "BedrockItems", null);
         files.put(PACKAGE_DIR + "/BedrockItems.java", ConstantsSource.items(items, variantCounts, g.release.version().name(), oldest));
         counts.put("BedrockItems", items.size());
         if (g.preview != null) {
@@ -313,6 +314,53 @@ public final class ConstantsGenerator {
      * @param defaultOffset the position of the default state among the states
      */
     record PreviewStates(List<String> properties, List<List<Object>> values, int defaultOffset) {
+        /** As the history records it: {@code {"default": n, "properties": [{"name", "type": byte|int|string, "values"}]}}. */
+        JsonObject toJson() {
+            JsonObject json = new JsonObject();
+            json.addProperty("default", defaultOffset);
+            com.google.gson.JsonArray list = new com.google.gson.JsonArray();
+            for (int p = 0; p < properties.size(); p++) {
+                JsonObject property = new JsonObject();
+                property.addProperty("name", properties.get(p));
+                Object first = values.get(p).getFirst();
+                property.addProperty("type", first instanceof Byte ? "byte" : first instanceof Integer ? "int" : "string");
+                com.google.gson.JsonArray array = new com.google.gson.JsonArray();
+                for (Object value : values.get(p)) {
+                    if (value instanceof Number number) {
+                        array.add(number.intValue());
+                    } else {
+                        array.add((String) value);
+                    }
+                }
+                property.add("values", array);
+                list.add(property);
+            }
+            json.add("properties", list);
+            return json;
+        }
+
+        /** Reads what {@link #toJson} wrote. */
+        static PreviewStates fromJson(JsonObject json, String where) {
+            List<String> properties = new ArrayList<>();
+            List<List<Object>> values = new ArrayList<>();
+            for (com.google.gson.JsonElement element : json.getAsJsonArray("properties")) {
+                JsonObject property = element.getAsJsonObject();
+                properties.add(ConstantsHistory.required(property, "name", where));
+                String type = ConstantsHistory.required(property, "type", where);
+                List<Object> list = new ArrayList<>();
+                for (com.google.gson.JsonElement value : property.getAsJsonArray("values")) {
+                    list.add(switch (type) {
+                        case "byte" -> (byte) value.getAsInt();
+                        case "int" -> value.getAsInt();
+                        case "string" -> value.getAsString();
+                        default -> throw new IllegalStateException(HISTORY + ": " + where + " has a state of type " + type);
+                    });
+                }
+                values.add(List.copyOf(list));
+            }
+            return new PreviewStates(List.copyOf(properties), List.copyOf(values), json.get("default").getAsInt());
+        }
+
         /** @return the {@code states} compound of each state, in the order of the properties' product, the first fastest */
         List<NbtMap> enumerate() {
             int count = 1;
@@ -334,6 +382,39 @@ public final class ConstantsGenerator {
     }
 
     /**
+     * The states of a block constant the newest release lacks: a preview block's from the preview; a removed one's from
+     * the newest bundled release that has it, else as the history recorded them (its last bundled release was retired),
+     * so its constant keeps its states and older palettes still send it.
+     *
+     * @param byId the layouts of the release and the preview, by identifier
+     * @return the states, or null if they are unknown or no full product describes them (the constant then has one
+     *         state without properties)
+     */
+    private PreviewStates ownStates(String identifier, JsonObject old, Map<String, PreviewStates> previewStates, Map<String, BlockLayout> byId) {
+        PreviewStates preview = previewStates.get(identifier);
+        if (preview != null) {
+            return preview;
+        }
+        List<VanillaData> releases = g.sources.releases();
+        for (int r = releases.size() - 1; r >= 0; r--) {
+            VanillaData release = releases.get(r);
+            if (release == g.release && byId.containsKey(identifier)) {
+                continue;
+            }
+            BlockLayout layout = layouts(release).stream().filter(l -> l.identifier().equals(identifier)).findFirst().orElse(null);
+            if (layout != null) {
+                try {
+                    return previewStates(release, layout);
+                } catch (IllegalStateException e) {
+                    // Not a full product in a stride order: the constant cannot carry these states
+                    return null;
+                }
+            }
+        }
+        return old != null && old.has("states") ? PreviewStates.fromJson(old.getAsJsonObject("states"), "blocks." + identifier) : null;
+    }
+
+    /**
      * Reads a preview block's states from the preview's data, and checks that its constant, enumerating them, gives
      * the preview's states in the preview's order.
      *
@@ -344,8 +425,8 @@ public final class ConstantsGenerator {
         String identifier = layout.identifier();
         int[] strides = layout.strides();
         if (strides == null) {
-            throw new IllegalStateException("The preview block " + identifier + " needs a lookup table (" + layout.problem()
-                + "), which its constant cannot describe");
+            throw new IllegalStateException("The block " + identifier + " of " + preview.version().name() + " needs a lookup table ("
+                + layout.problem() + "), which its constant cannot describe");
         }
         List<Integer> order = new ArrayList<>();
         for (int p = 0; p < strides.length; p++) {
@@ -366,8 +447,8 @@ public final class ConstantsGenerator {
         int defaultOffset = defaultState == null ? 0 : data.indexOf(defaultState.getCompound("states", NbtMap.EMPTY));
         PreviewStates states = new PreviewStates(List.copyOf(properties), List.copyOf(values), Math.max(defaultOffset, 0));
         if (!states.enumerate().equals(data)) {
-            throw new IllegalStateException("The states of the preview block " + identifier + " are not the product of its properties "
-                + properties + " in that order");
+            throw new IllegalStateException("The states of the block " + identifier + " of " + preview.version().name()
+                + " are not the product of its properties " + properties + " in that order");
         }
         return states;
     }

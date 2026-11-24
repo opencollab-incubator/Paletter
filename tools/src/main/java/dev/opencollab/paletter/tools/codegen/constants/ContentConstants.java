@@ -45,12 +45,30 @@ final class ContentConstants {
     }
 
     /**
-     * @param previewIdentifiers what only the bundled preview has: constants marked with the preview and not recorded in
-     *                           the history (they come and go with the preview until a release has them)
+     * The states each block constant the newest release lacks carries, by constant name: a preview block's, and a
+     * removed or dropped block's last known ones. Filled by {@link #constants} for blocks.
      */
-    List<Constant> constants(String kind, List<String> identifiers, List<String> previewIdentifiers, String className) {
+    final Map<String, ConstantsGenerator.PreviewStates> states = new HashMap<>();
+
+    /** Where a block constant the newest release lacks gets its states. */
+    interface StatesSource {
+        /**
+         * @param old its history entry, or null
+         * @return the states, or null if nothing knows them (a block whose states no full product describes)
+         */
+        ConstantsGenerator.PreviewStates of(String identifier, JsonObject old);
+    }
+
+    /**
+     * @param previewIdentifiers what only the bundled preview has: constants marked with the preview, and recorded in the
+     *                           history with it, so a constant a newer preview drops stays, deprecated, like removed content
+     * @param statesSource for blocks: the states of a constant the newest release lacks; null for items
+     */
+    List<Constant> constants(String kind, List<String> identifiers, List<String> previewIdentifiers, String className,
+                             StatesSource statesSource) {
         Map<String, String> overrides = g.names.overrides(kind);
         JsonObject previous = ConstantsHistory.object(g.history, kind);
+        Set<String> stillPreview = new java.util.HashSet<>(previewIdentifiers);
 
         previous.entrySet().forEach(entry -> ConstantsHistory.entry(entry, kind));
         Map<String, String> current = new TreeMap<>();
@@ -92,6 +110,11 @@ final class ContentConstants {
             }
             JsonObject old = ConstantsHistory.entry(entry, kind);
             String identifier = ConstantsHistory.required(old, "identifier", kind + "." + name);
+            String droppedPreview = old.has("preview") ? old.get("preview").getAsString() : null;
+            if (droppedPreview != null && stillPreview.contains(identifier)) {
+                // Still only the preview's: made below
+                continue;
+            }
             String since = ConstantsHistory.required(old, "since", kind + "." + name);
             String bedrock = bedrock(old, kind, identifier);
             boolean education = old.has("education") && old.get("education").getAsBoolean() || g.sources.isEducation(kind, identifier);
@@ -108,9 +131,17 @@ final class ContentConstants {
                 }
             }
             if (!old.has("deprecated")) {
-                g.deprecated.add(className + "." + name + " (" + identifier + (target != null ? ", now " + target : ", removed; resolves to minecraft:unknown") + ")");
+                g.deprecated.add(className + "." + name + " (" + identifier + (target != null ? ", now " + target
+                    : droppedPreview != null ? ", dropped by the preview; resolves through the fallbacks" : ", removed; resolves through the fallbacks") + ")");
             }
-            constants.put(name, new Constant(name, identifier, since, deprecatedSince, target, bedrock, education, g.sources.gating(kind, identifier), null));
+            constants.put(name, new Constant(name, identifier, since, deprecatedSince, target, bedrock, education, g.sources.gating(kind, identifier),
+                target == null ? droppedPreview : null));
+            if (target == null && statesSource != null) {
+                ConstantsGenerator.PreviewStates own = statesSource.of(identifier, old);
+                if (own != null) {
+                    states.put(name, own);
+                }
+            }
         }
         // An alias points at the constant at the end of its chain: a static field cannot refer to one declared after it
         for (String name : new ArrayList<>(constants.keySet())) {
@@ -134,6 +165,29 @@ final class ContentConstants {
             }
         }
 
+        for (String identifier : previewIdentifiers) {
+            String name = overrides.getOrDefault(identifier, constantName(identifier));
+            if (overrides.containsKey(identifier)) {
+                g.usedNames.add(kind + " " + identifier);
+            }
+            if (!CONSTANT.matcher(name).matches()) {
+                throw new IllegalStateException("Preview " + identifier + " gives the constant name " + name + "; " + addName(kind, identifier, "<NAME>"));
+            }
+            if (constants.containsKey(name)) {
+                throw new IllegalStateException("Duplicate constant " + className + "." + name + " for " + constants.get(name).identifier()
+                    + " and the preview's " + identifier + "; give one a name: " + addName(kind, identifier, "<NAME>"));
+            }
+            JsonObject old = previous.has(name) ? previous.getAsJsonObject(name) : null;
+            String since = old != null && old.has("since") ? old.get("since").getAsString() : g.version;
+            constants.put(name, new Constant(name, identifier, since, null, null, null, false, null, g.previewName()));
+            if (statesSource != null) {
+                ConstantsGenerator.PreviewStates own = statesSource.of(identifier, old);
+                if (own != null) {
+                    states.put(name, own);
+                }
+            }
+        }
+
         JsonObject out = new JsonObject();
         for (Constant constant : constants.values()) {
             JsonObject entry = new JsonObject();
@@ -151,23 +205,18 @@ final class ContentConstants {
                     entry.addProperty("replacement", constant.replacement());
                 }
             }
+            if (constant.preview() != null) {
+                // Recorded, so a newer preview that drops it keeps the constant (deprecated) instead of removing the field
+                entry.addProperty("preview", constant.preview());
+            }
+            ConstantsGenerator.PreviewStates own = states.get(constant.name());
+            if (own != null) {
+                // The release lacks the block: its states are kept for when no bundled data has them anymore
+                entry.add("states", own.toJson());
+            }
             out.add(constant.name(), entry);
         }
         g.newHistory.add(kind, out);
-        for (String identifier : previewIdentifiers) {
-            String name = overrides.getOrDefault(identifier, constantName(identifier));
-            if (overrides.containsKey(identifier)) {
-                g.usedNames.add(kind + " " + identifier);
-            }
-            if (!CONSTANT.matcher(name).matches()) {
-                throw new IllegalStateException("Preview " + identifier + " gives the constant name " + name + "; " + addName(kind, identifier, "<NAME>"));
-            }
-            if (constants.containsKey(name)) {
-                throw new IllegalStateException("Duplicate constant " + className + "." + name + " for " + constants.get(name).identifier()
-                    + " and the preview's " + identifier + "; give one a name: " + addName(kind, identifier, "<NAME>"));
-            }
-            constants.put(name, new Constant(name, identifier, g.version, null, null, null, false, null, g.previewName()));
-        }
         return List.copyOf(constants.values());
     }
 

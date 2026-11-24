@@ -26,6 +26,7 @@ import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -187,7 +188,7 @@ class ConstantsGeneratorTest {
                 )
                 public static final BedrockBlockType REMOVED_BLOCK = VanillaTypes.block("REMOVED_BLOCK", "minecraft:removed_block");
             """), blocks.substring(0, 200));
-        assertTrue(blocks.contains("@deprecated Bedrock removed the block; resolves to {@code minecraft:unknown}"));
+        assertTrue(blocks.contains("@deprecated Bedrock removed the block; palettes without it resolve it through their {@link dev.opencollab.paletter.Fallbacks}"));
         assertTrue(blocks.contains("""
                 @Deprecated(
                         since = "2.1.0"
@@ -274,11 +275,70 @@ class ConstantsGeneratorTest {
             .contains("    @SincePreview(\"26.70\")\n    public static final BedrockItemType PREVIEW_ITEM = VanillaTypes.item(\"PREVIEW_ITEM\", \"minecraft:preview_item\");"));
         assertTrue(result.files().get(ConstantsGenerator.PACKAGE_DIR + "/BedrockStates.java")
             .contains("    @SincePreview(\"26.70\")\n    public static final BoolState PREVIEW_BIT = "));
-        // Previews are not part of the history: they come and go with the preview
-        assertNull(history(result).getAsJsonObject("blocks").get("PREVIEW_BLOCK"));
-        assertNull(history(result).getAsJsonObject("items").get("PREVIEW_ITEM"));
-        assertNull(history(result).getAsJsonObject("states").get("PREVIEW_BIT"));
+        // Preview blocks and items are recorded with their preview (and a block with its states), states are not
+        JsonObject history = history(result);
+        assertEquals("26.70", history.getAsJsonObject("blocks").getAsJsonObject("PREVIEW_BLOCK").get("preview").getAsString());
+        assertNotNull(history.getAsJsonObject("blocks").getAsJsonObject("PREVIEW_BLOCK").get("states"));
+        assertEquals("26.70", history.getAsJsonObject("items").getAsJsonObject("PREVIEW_ITEM").get("preview").getAsString());
+        assertNull(history.getAsJsonObject("states").get("PREVIEW_BIT"));
         compile(result, temp);
+
+        // The same preview again changes nothing
+        assertEquals(result.files(), ConstantsGenerator.generate(release, preview, names, history, "1.0.0").files());
+
+        // A newer preview that drops them: the constants stay, deprecated and still marked, the block with its states
+        ConstantsGenerator.Result dropped = ConstantsGenerator.generate(release, null, names, history, "2.1.0");
+        String blocks = dropped.files().get(BLOCKS);
+        assertTrue(blocks.contains("""
+                @SincePreview("26.70")
+                @Deprecated(
+                        since = "2.1.0"
+                )
+                public static final BedrockBlockType PREVIEW_BLOCK = VanillaTypes.blockWithStates("PREVIEW_BLOCK", "minecraft:preview_block", 0,
+                    VanillaTypes.property("preview_bit", (byte) 0, (byte) 1));
+            """), blocks);
+        assertTrue(blocks.contains("@deprecated a newer Bedrock preview dropped the block"));
+        String droppedItems = dropped.files().get(ITEMS);
+        assertTrue(droppedItems.contains("PREVIEW_ITEM = VanillaTypes.item(\"PREVIEW_ITEM\", \"minecraft:preview_item\");"), droppedItems);
+        assertTrue(dropped.deprecated().stream().anyMatch(d -> d.contains("PREVIEW_ITEM")), dropped.deprecated().toString());
+        compile(dropped, temp.resolve("dropped"));
+        // And so on: the next generation keeps them as they are
+        assertEquals(dropped.files(), ConstantsGenerator.generate(release, null, names, history(dropped), "2.2.0").files());
+
+        // A release that ships them: plain constants, out of the preview
+        ConstantsGenerator.Result shipped = ConstantsGenerator.generate(preview, null, names, history, "2.1.0");
+        assertTrue(shipped.files().get(BLOCKS).contains("    public static final BedrockBlockType PREVIEW_BLOCK = VanillaTypes.block("),
+            "a plain constant, without a preview mark");
+        assertFalse(shipped.files().get(BLOCKS).contains("@SincePreview(\"26.70\")\n    public static final BedrockBlockType PREVIEW_BLOCK"));
+        assertNull(history(shipped).getAsJsonObject("blocks").getAsJsonObject("PREVIEW_BLOCK").get("preview"));
+        assertNull(history(shipped).getAsJsonObject("blocks").getAsJsonObject("PREVIEW_BLOCK").get("states"));
+    }
+
+    /** A block Bedrock removes keeps the states it last had: from an older bundled release, then from the history. */
+    @Test
+    void removedBlocksKeepTheirStates(@TempDir Path temp) throws IOException {
+        List<NbtMap> states = new ArrayList<>(release.blockStates());
+        states.add(BlockStates.of("minecraft:going_block", Map.of("going_bit", (byte) 0)));
+        states.add(BlockStates.of("minecraft:going_block", Map.of("going_bit", (byte) 1)));
+        VanillaData older = new VanillaData(new DataVersion("26.10", 1), states, release.items(), release.dataDrivenBlocks(),
+            release.creative(), release.itemTags(), release.fallbacks(), release.blockDefaults());
+        JsonObject first = history(ConstantsGenerator.generate(older, null, names, new JsonObject(), "1.0.0"));
+        assertNull(first.getAsJsonObject("blocks").getAsJsonObject("GOING_BLOCK").get("states"), "a release block records no states");
+
+        String expected = "GOING_BLOCK = VanillaTypes.blockWithStates(\"GOING_BLOCK\", \"minecraft:going_block\", 0,\n"
+            + "        VanillaTypes.property(\"going_bit\", (byte) 0, (byte) 1));";
+        // Removed in the newest release, still in the older bundled one
+        ConstantsGenerator.Result removed = ConstantsGenerator.generate(release, null, names, first, "2.1.0",
+            new ConstantsGenerator.Sources(List.of(older, release), Map.of(), Map.of(), java.util.Set.of(), java.util.Set.of(), Map.of()));
+        assertTrue(removed.files().get(BLOCKS).contains(expected), removed.files().get(BLOCKS));
+        JsonObject recorded = history(removed);
+        assertNotNull(recorded.getAsJsonObject("blocks").getAsJsonObject("GOING_BLOCK").get("states"));
+        compile(removed, temp);
+
+        // The older release retired: the history still has the states
+        ConstantsGenerator.Result retired = ConstantsGenerator.generate(release, null, names, recorded, "2.2.0");
+        assertTrue(retired.files().get(BLOCKS).contains(expected));
+        assertEquals(recorded, history(retired));
     }
 
     /**

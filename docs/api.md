@@ -271,8 +271,9 @@ States are interned per block, so `with()` does not allocate. Byte states with v
 states `IntState` and string states `EnumState`. Custom block properties can use the same state constants when they have
 the same name.
 
-When Bedrock removes content, its constant stays, deprecated, and resolves to `minecraft:unknown` (`isAvailable()` is
-false). A renamed identifier keeps its old constant as a deprecated alias. `@since` on a constant is the Paletter version that
+When Bedrock removes content, its constant stays, deprecated (`isAvailable()` is false): palettes that still have it send
+it, the others resolve it through the fallbacks (`minecraft:unknown` by default). A removed block constant keeps the states
+it last had. A renamed identifier keeps its old constant as a deprecated alias. `@since` on a constant is the Paletter version that
 added it; the line `First in Bedrock` names the first bundled Bedrock release that has the content without an experiment (none for content older than the oldest bundled release). `@Education` marks Education Edition content.
 
 An `ItemKey` is a `BedrockItemType` or a `BedrockItemVariant`, and the methods that take a variant (`Palette#resolve`,
@@ -429,7 +430,8 @@ preview has (constants, states, enum values, components and fields) sits with th
 `isAvailable()`. Items and blocks behave alike: the preview's palette sends the item or block itself, and every palette
 that lacks it (all of them without previews) resolves it through the fallbacks (normally to `minecraft:unknown`). A
 preview block constant carries the preview's states, generated into it, so no preview data is loaded for it. The mark
-goes away when the release has it.
+goes away when the release has it. A block or item constant a newer preview drops stays, deprecated and still marked
+`@SincePreview`, and resolves through the fallbacks, so code compiled against it keeps linking.
 
 ## Behaviour
 

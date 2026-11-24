@@ -9,8 +9,10 @@ import dev.opencollab.paletter.annotation.SincePreview;
  * Every block type of Bedrock 26.60, the newest bundled release. The constants are resolved against
  * the newest data of {@link dev.opencollab.paletter.Paletter#bundled()} on first use; referencing them loads nothing.
  * <p>
- * Constants are added when Bedrock adds blocks (binary compatible). Blocks Bedrock removes stay, deprecated, and
- * resolve to {@code minecraft:unknown}; renamed blocks keep their old constant, deprecated, as an alias of the new one.
+ * Constants are added when Bedrock adds blocks (binary compatible). Blocks Bedrock removes stay, deprecated, with the
+ * states they last had: palettes that have the block send it, the others resolve it through their
+ * {@link dev.opencollab.paletter.Fallbacks} ({@code minecraft:unknown} by default). Renamed blocks keep their old
+ * constant, deprecated, as an alias of the new one.
  * <p>
  * {@code @since} is the Paletter version that added a constant, and only written if newer than the class. The line
  * {@code First in Bedrock} is the bundled Bedrock release it first appears in, without an experiment toggle (decided from
@@ -20,7 +22,8 @@ import dev.opencollab.paletter.annotation.SincePreview;
  * Edition features, which {@code isEducation()} of the type answers at runtime.
  * {@link dev.opencollab.paletter.annotation.SincePreview @SincePreview} marks content only the bundled Bedrock preview
  * has. The constants are linked to the newest release, so it is never {@code isAvailable()}; what a palette sends for
- * it, with previews and without, is told by the annotation. The mark goes when a release has it; the constant goes if a newer preview drops it.
+ * it, with previews and without, is told by the annotation. The mark goes when a release has it. A constant a newer
+ * preview drops stays, deprecated and still marked, like removed content: code compiled against it keeps linking.
  *
  * @since 1.0.0
  */

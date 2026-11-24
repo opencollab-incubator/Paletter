@@ -258,8 +258,8 @@ class ConstantsSyntheticBundleTest {
 
         assertEquals(List.of("minecraft:test_sparse: 3 states, but its values have 6 combinations: not a full product"), result.tableBlocks());
         assertEquals(List.of("BedrockBlocks.OLD_DOOR (minecraft:old_door, now TEST_DOOR)",
-            "BedrockBlocks.REMOVED_BLOCK (minecraft:removed_block, removed; resolves to minecraft:unknown)",
-            "BedrockItems.OLD_STICK (minecraft:old_stick, removed; resolves to minecraft:unknown)",
+            "BedrockBlocks.REMOVED_BLOCK (minecraft:removed_block, removed; resolves through the fallbacks)",
+            "BedrockItems.OLD_STICK (minecraft:old_stick, removed; resolves through the fallbacks)",
             "BedrockItemVariants.OLD_POTION (minecraft:potion@9, removed)",
             "BedrockItemVariants.NIGHT_VISION (minecraft:potion@5, now POTION_NIGHTVISION)"), result.deprecated());
         assertEquals(List.of("BedrockStates.LEVEL = level", "BedrockBlocks.TEST_LAMP = minecraft:test_lamp", "BedrockItems.TEST_LAMP = minecraft:test_lamp",

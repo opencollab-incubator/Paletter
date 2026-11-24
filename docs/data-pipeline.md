@@ -444,7 +444,11 @@ preview newer than every codec of the protocol library is captured with the newe
 `codecProtocol` from the capture's `capture.json` and writes it as `codec=<protocol>` on the version's line
 (`DataVersion#codecProtocol()`), e.g. `26.70 2259 preview codec=2225`. Generated API that only the
 preview has (constants, states, enum values, components and fields BDS releases reject) is marked
-`@SincePreview("<version>")` and is kept out of `constants-history.json`. Importing a newer preview, or the preview's
+`@SincePreview("<version>")`. States, enum values, item variants and components are kept out of `constants-history.json`;
+block and item constants are recorded with `"preview"` (a block with its states), so a constant a newer preview drops stays,
+deprecated and still marked, like removed content, instead of failing code compiled against it with `NoSuchFieldError`. A
+block constant Bedrock removes likewise keeps the states it last had (`"states"` in the history), so older palettes still send
+it. Importing a newer preview, or the preview's
 release, drops the bundled preview and its `data/bds/<build>` captures. Release runs never compare against a preview's
 captures.
 
