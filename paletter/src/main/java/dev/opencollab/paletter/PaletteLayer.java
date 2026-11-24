@@ -48,7 +48,7 @@ import java.util.function.Consumer;
  * <p>
  * Null handling: everything is {@code @NonNull} unless marked; the builder methods throw {@link NullPointerException} for
  * null. Problems with the content (a duplicate identifier, a hash collision) are not found here but when a palette
- * compiles the layer: {@link Paletter} throws {@link PaletteException}, {@link Palette#extend} reports them. Content is
+ * compiles the layer: {@link Paletter.Builder#build()} and {@link Palette#extend} throw a {@link PaletteException}. Content is
  * named by keys, custom items and blocks create their own (see {@link CustomItem}, {@link CustomBlock}).
  *
  * @since 1.0.0

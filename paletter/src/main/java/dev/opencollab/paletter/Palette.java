@@ -95,11 +95,12 @@ import java.util.function.Supplier;
  * session.sendPacket(palette.itemComponentPacket());
  * session.sendPacket(palette.creativeContentPacket());
  * }</pre>
- * Translating content uses handles, version independent and interned objects ({@link BedrockBlockState},
- * {@link BedrockItemVariant}): {@link #blockState(NbtMap, Lookup)} and {@link #itemVariant(String, int, Lookup)} find them once, then
+ * Translating content uses keys, version independent objects ({@link BedrockBlockState}, {@link BedrockItemVariant}):
+ * {@link #blockState(NbtMap, Lookup)} and {@link #itemVariant(String, int, Lookup)} find them once, then
  * {@link #runtimeId(BedrockBlockState)} and {@link #blockDefinition(BedrockBlockState)} for blocks, {@link #resolve(ItemKey)}
- * for items. {@link #encode} and {@link #decode} translate whole stacks at the protocol boundary. They are field reads and array lookups that do not allocate. The ids behind
- * the handles are not API.
+ * for items: field reads and array lookups that do not allocate. {@link #encode} and {@link #decode} translate whole
+ * stacks at the protocol boundary; {@code encode} builds the {@link ItemData} it returns. The ids behind the keys are not
+ * API.
  *
  * @since 1.0.0
  */
@@ -267,8 +268,8 @@ public final class Palette {
 
     /**
      * Builds now everything a lookup on this palette (and on the palette it extends) would build on first use: the
-     * behaviour values and their columns, the resolution tables, the item tables, the preview handles of a preview
-     * version. Called for the palettes a {@link Paletter} compiles, so no lookup on them waits for data. Without
+     * behaviour values and their columns, the resolution tables, the item tables, the keys of the blocks a preview
+     * version adds or changes. Called for the palettes a {@link Paletter} compiles, so no lookup on them waits for data. Without
      * {@code behaviour} the behaviour values are left out (they are switched off).
      */
     void loadEagerly(boolean withBehaviour) {
@@ -503,14 +504,14 @@ public final class Palette {
         return items;
     }
 
-    // ---- Content handles ----
+    // ---- Keys ----
 
     /**
-     * Finds the key of a block state, the handle used for everything else about blocks.
+     * Finds the key of a block state, which everything else about blocks takes.
      *
      * @param state a block state as {@code {name, states}}; extra keys are ignored
      * @param lookup whether the state must exist as is in this palette's version, see {@link Lookup}
-     * @return its handle, or null if the lookup does not accept the state: it is newer than this palette's version,
+     * @return its key, or null if the lookup does not accept the state: it is newer than this palette's version,
      *         removed, or behind an experiment this palette does not enable (see {@link #explainUnknown(NbtMap, Lookup)}).
      *         Custom blocks of the palette's layers are always accepted
      * @since 1.0.0
@@ -540,7 +541,7 @@ public final class Palette {
      * @param values the state values by state name: {@link Boolean}, {@link Integer} or {@link String}, as the block
      *               has them. All of the block's states must be there, and no others; a value of another type is no
      *               match
-     * @return its handle, or null if there is no such state or the lookup does not accept it
+     * @return its key, or null if there is no such state or the lookup does not accept it
      * @since 1.0.0
      */
     public @Nullable BedrockBlockState blockState(@NonNull String identifier, @NonNull Map<String, ?> values, @NonNull Lookup lookup) {
@@ -584,7 +585,7 @@ public final class Palette {
      * @param identifier the item identifier such as {@code minecraft:stick}
      * @param aux the aux value; 0 is the base variant
      * @param lookup whether the variant must exist as is in this palette's version, see {@link Lookup}
-     * @return its handle, or null if the lookup does not accept the variant, for the reasons of
+     * @return its key, or null if the lookup does not accept the variant, for the reasons of
      *         {@link #blockState(NbtMap, Lookup)}. Aux 0 is the base variant, which every item has. An aux that names no
      *         variant of the item here (a legacy damage value, a number nobody listed) is no variant either, so
      *         untrusted input never makes keys: send such a value as a stack's aux
@@ -639,11 +640,11 @@ public final class Palette {
     }
 
     /**
-     * Explains why a block state has no handle, for logs and error messages.
+     * Explains why a block state has no key, for logs and error messages.
      *
      * @param state the block state, as for {@link #blockState(NbtMap, Lookup)}
      * @param lookup the lookup that refused it
-     * @return why a block state has no handle under a lookup (see {@link #blockState(NbtMap, Lookup)}), or null if it has one
+     * @return why a block state has no key under a lookup (see {@link #blockState(NbtMap, Lookup)}), or null if it has one
      * @since 1.0.0
      */
     public @Nullable String explainUnknown(@NonNull NbtMap state, @NonNull Lookup lookup) {
@@ -665,12 +666,12 @@ public final class Palette {
     }
 
     /**
-     * Explains why an item variant has no handle, for logs and error messages.
+     * Explains why an item variant has no key, for logs and error messages.
      *
      * @param identifier the item identifier
      * @param aux the aux value
      * @param lookup the lookup that refused it
-     * @return why an item has no handle under a lookup (see {@link #itemVariant(String, int, Lookup)}), or null if it has one
+     * @return why an item has no key under a lookup (see {@link #itemVariant(String, int, Lookup)}), or null if it has one
      * @since 1.0.0
      */
     public @Nullable String explainUnknown(@NonNull String identifier, int aux, @NonNull Lookup lookup) {

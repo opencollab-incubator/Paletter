@@ -8,7 +8,7 @@ package dev.opencollab.paletter;
  * palette.blockState(state, Lookup.EXACT);    // exactly as this palette's version has it
  * palette.blockState(state, Lookup.RENAMED);  // also as an older version had it, if this version renamed or changed it
  * }</pre>
- * Custom content of the palette's layers is always accepted. What is returned is the palette's own handle.
+ * Custom content of the palette's layers is always accepted. What is returned is a key: the same object a constant or a custom item or block hands out.
  * <p>
  * A palette sees exactly what it has: a lookup returns null for content newer than the palette's version, content
  * removed with {@code Paletter.Builder#removeItems}, and content behind an experiment the palette does not enable. To get keys

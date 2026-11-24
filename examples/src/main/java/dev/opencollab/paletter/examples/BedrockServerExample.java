@@ -19,7 +19,7 @@ import dev.opencollab.paletter.vanilla.BedrockBlocks;
 import dev.opencollab.paletter.vanilla.BedrockItems;
 
 /**
- * A Bedrock-only server: one palette per client version, block and item content stored as handles, converted at the
+ * A Bedrock-only server: one palette per client version, block and item content stored as keys, converted at the
  * network edge. Run: {@code ./gradlew :examples:run}.
  */
 public final class BedrockServerExample {
@@ -56,7 +56,7 @@ public final class BedrockServerExample {
         System.out.println("items in the component packet: " + palette.itemComponentPacket().getItems().size());
         System.out.println("creative entries: " + palette.creativeContentPacket().getContents().size());
 
-        // Content is held as handles, independent of the client version; a palette turns one into what its client needs
+        // Content is held as keys, independent of the client version; a palette turns one into what its client needs
         BedrockBlockState stone = BedrockBlocks.STONE.defaultState();
         System.out.println("stone: runtime id " + palette.runtimeId(stone));
 

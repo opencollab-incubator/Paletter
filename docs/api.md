@@ -184,7 +184,7 @@ set by hand.
 ## Loading
 
 `Paletter.builder()...build()` compiles the palette of every served version, in parallel, before it returns: the vanilla
-data, the voxel shapes, the canonical, item, creative and resolution tables, the preview handles of a preview version, and
+data, the voxel shapes, the canonical, item, creative and resolution tables, the keys of the blocks a preview version adds or changes, and
 the behaviour values with every behaviour column (unless `behaviour(false)`; the values are generated classes, loaded the
 first time a Paletter with behaviour builds, and never loaded with `behaviour(false)`). After that no lookup on those palettes reads or
 builds data: `palette(...)` is a map read, and `resolve`, `behaviour().get`, `encode`, `decode` and the packet builders
@@ -514,7 +514,7 @@ block.behaviour();    // the values of the block that is sent
 - Shapes are those of one state. Shapes that depend on neighbours or position, such as plant offsets, are up to you.
 - `Paletter.builder().behaviour(false)` switches behaviour values off, for consumers that never read them: the behaviour
   data is never loaded or kept (its generated classes are not even loaded), resolutions work as before, and `get`,
-  `getOrElse`, `provenance` and `explain` throw `IllegalStateException` naming the switch.
+  `getOrElse`, `has` and `explain` throw `IllegalStateException` naming the switch.
 - The vanilla values are part of the library: generated Java code (`internal.behaviour.vanilla`), one class per bundled
   version with what changed, built once per JVM. They do not come from the `PaletteDataSource`: a custom data source
   serves its palettes with the bundled values of the same version (by name, else the newest older one by protocol), and
