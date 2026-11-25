@@ -33,11 +33,10 @@ public final class RedstoneProducer implements BlockComponent {
 
     private final @Nullable StronglyPoweredFace stronglyPoweredFace;
 
-    private final @Nullable Boolean transformRelative;
+    private final boolean transformRelative;
 
     private RedstoneProducer(@NonNull List<ConnectedFaces> connectedFaces, int power,
-            @Nullable StronglyPoweredFace stronglyPoweredFace,
-            @Nullable Boolean transformRelative) {
+            @Nullable StronglyPoweredFace stronglyPoweredFace, boolean transformRelative) {
         connectedFaces = List.copyOf(Objects.requireNonNull(connectedFaces, "RedstoneProducer.connectedFaces"));
         Check.range("RedstoneProducer.power", power, 0.0, 15.0);
         this.connectedFaces = connectedFaces;
@@ -81,14 +80,13 @@ public final class RedstoneProducer implements BlockComponent {
 
     /**
      * If true, the <code>strongly_powered_face</code> and <code>connected_faces</code> properties will be rotated
-     * according to the 'minecraft:transformation' component. Add-on JSON {@code transform_relative}. Optional (null:
-     * not set). The docs give the default <code>false</code>, but BDS sends
-     * minecraft:redstone_producer.transform_relative = 1 (byte) when it is omitted; so it is unset by default, and
-     * the encoder sends what BDS sends then.
+     * according to the 'minecraft:transformation' component. Add-on JSON {@code transform_relative}. Default:
+     * <code>true</code>. The docs give the default <code>false</code>, but BDS sends what this default sends when
+     * the field is omitted.
      *
      * @return the value
      */
-    public @Nullable Boolean transformRelative() {
+    public boolean transformRelative() {
         return transformRelative;
     }
 
@@ -98,7 +96,7 @@ public final class RedstoneProducer implements BlockComponent {
                 && Objects.equals(connectedFaces, other.connectedFaces)
                 && power == other.power
                 && Objects.equals(stronglyPoweredFace, other.stronglyPoweredFace)
-                && Objects.equals(transformRelative, other.transformRelative);
+                && transformRelative == other.transformRelative;
     }
 
     @Override
@@ -106,7 +104,7 @@ public final class RedstoneProducer implements BlockComponent {
         int h = Objects.hashCode(connectedFaces);
         h = 31 * h + power;
         h = 31 * h + Objects.hashCode(stronglyPoweredFace);
-        h = 31 * h + Objects.hashCode(transformRelative);
+        h = 31 * h + Boolean.hashCode(transformRelative);
         return h;
     }
 
@@ -164,7 +162,7 @@ public final class RedstoneProducer implements BlockComponent {
 
         private @Nullable StronglyPoweredFace stronglyPoweredFace;
 
-        private @Nullable Boolean transformRelative;
+        private @Nullable Boolean transformRelative = true;
 
         private Builder() {
         }
@@ -227,7 +225,7 @@ public final class RedstoneProducer implements BlockComponent {
          * @param transformRelative the value
          * @return this builder
          */
-        public @NonNull Builder transformRelative(@Nullable Boolean transformRelative) {
+        public @NonNull Builder transformRelative(boolean transformRelative) {
             this.transformRelative = transformRelative;
             return this;
         }

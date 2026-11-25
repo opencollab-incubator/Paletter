@@ -5,7 +5,6 @@ package dev.opencollab.paletter.item.component;
 
 import dev.opencollab.paletter.annotation.BedrockFormat;
 import dev.opencollab.paletter.internal.component.Check;
-import java.util.Objects;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
@@ -24,34 +23,33 @@ public final class Fuel implements ItemComponent {
      */
     public static final String NAME = "minecraft:fuel";
 
-    private final @Nullable Float duration;
+    private final float duration;
 
-    private Fuel(@Nullable Float duration) {
-        if (duration != null) {
-            Check.range("Fuel.duration", duration, 0.05, null);
-        }
+    private Fuel(float duration) {
+        Check.range("Fuel.duration", duration, 0.05, null);
         this.duration = duration;
     }
 
     /**
      * How long in seconds will this fuel cook items for. Value must be &gt;= 0.05. Add-on JSON {@code duration}.
-     * Optional (null: not set). At least 0.05 (Bedrock 26.60).
+     * Default: <code>0.05</code>. The docs give no default; this is what BDS sends when the field is omitted. At
+     * least 0.05 (Bedrock 26.60).
      *
      * @return the value
      */
-    public @Nullable Float duration() {
+    public float duration() {
         return duration;
     }
 
     @Override
     public boolean equals(Object o) {
         return this == o || o instanceof Fuel other
-                && Objects.equals(duration, other.duration);
+                && Float.compare(duration, other.duration) == 0;
     }
 
     @Override
     public int hashCode() {
-        int h = Objects.hashCode(duration);
+        int h = Float.hashCode(duration);
         return h;
     }
 
@@ -99,7 +97,7 @@ public final class Fuel implements ItemComponent {
      * Builds {@link Fuel}: defaults applied, required fields and ranges checked by {@link #build()}.
      */
     public static final class Builder {
-        private @Nullable Float duration;
+        private @Nullable Float duration = 0.05f;
 
         private Builder() {
         }
@@ -110,7 +108,7 @@ public final class Fuel implements ItemComponent {
          * @param duration the value
          * @return this builder
          */
-        public @NonNull Builder duration(@Nullable Float duration) {
+        public @NonNull Builder duration(float duration) {
             this.duration = duration;
             return this;
         }

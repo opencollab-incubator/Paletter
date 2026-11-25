@@ -388,6 +388,8 @@ public final class ApiBinder {
     }
 
     private static final Object NO = new Object();
+    /** How deep the binding is in the forms of a union, where an open value class takes its documented values only. */
+    private static final ThreadLocal<Integer> IN_UNION = ThreadLocal.withInitial(() -> 0);
 
     private static Object tryConvert(Type type, JsonElement value) {
         try {
@@ -469,8 +471,9 @@ public final class ApiBinder {
             }
             try {
                 Object constant = raw.getMethod("of", String.class).invoke(null, value.getAsString());
-                // A documented value only, as the docs' enum: another string is a different form of the field
-                if (!(boolean) raw.getMethod("isKnown").invoke(constant)) {
+                // In a union, a documented value only: another string is a different form of the field. A plain field
+                // takes any string, as the value class does (BDS takes and maps strings the docs do not list)
+                if (IN_UNION.get() > 0 && !(boolean) raw.getMethod("isKnown").invoke(constant)) {
                     throw new Unbindable("not a documented value of " + raw.getSimpleName() + ": " + value);
                 }
                 return constant;
@@ -513,12 +516,15 @@ public final class ApiBinder {
                     continue; // the sentinel that keeps the union open (docs/api.md, "Evolution")
                 }
                 Type component = form.getRecordComponents()[0].getGenericType();
+                IN_UNION.set(IN_UNION.get() + 1);
                 try {
                     Object converted = convert(component, value);
                     return form.getDeclaredConstructors()[0].newInstance(converted);
                 } catch (Unbindable | IllegalStateException | IllegalArgumentException | UnsupportedOperationException | ClassCastException
                          | ReflectiveOperationException e) {
                     // the next form
+                } finally {
+                    IN_UNION.set(IN_UNION.get() - 1);
                 }
             }
             throw new Unbindable(raw.getSimpleName() + " has no form for " + value);

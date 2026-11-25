@@ -24,18 +24,20 @@ public final class ItemDisplayName implements ItemComponent {
      */
     public static final String NAME = "minecraft:display_name";
 
-    private final @Nullable String value;
+    private final @NonNull String value;
 
-    private ItemDisplayName(@Nullable String value) {
+    private ItemDisplayName(@NonNull String value) {
+        Objects.requireNonNull(value, "ItemDisplayName.value");
         this.value = value;
     }
 
     /**
-     * Name shown for an item. Add-on JSON {@code value}. Optional (null: not set).
+     * Name shown for an item. Add-on JSON {@code value}. Default: <code>""</code>. The docs give no default; this is
+     * what BDS sends when the field is omitted.
      *
      * @return the value
      */
-    public @Nullable String value() {
+    public @NonNull String value() {
         return value;
     }
 
@@ -95,7 +97,7 @@ public final class ItemDisplayName implements ItemComponent {
      * Builds {@link ItemDisplayName}: defaults applied, required fields and ranges checked by {@link #build()}.
      */
     public static final class Builder {
-        private @Nullable String value;
+        private @Nullable String value = "";
 
         private Builder() {
         }
@@ -105,9 +107,10 @@ public final class ItemDisplayName implements ItemComponent {
          *
          * @param value the value
          * @return this builder
+         * @throws NullPointerException if the value is null
          */
-        public @NonNull Builder value(@Nullable String value) {
-            this.value = value;
+        public @NonNull Builder value(@NonNull String value) {
+            this.value = Objects.requireNonNull(value, "ItemDisplayName.value");
             return this;
         }
 

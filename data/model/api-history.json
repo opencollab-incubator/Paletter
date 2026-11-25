@@ -173,6 +173,7 @@
     "block:trait:minecraft:placement_position:enabled_states": "EnabledStates",
     "item:minecraft:cooldown:type": "Type",
     "item:minecraft:durability_sensor:durability_thresholds[].particle_type": "ParticleType",
+    "item:minecraft:rarity:value": "Value",
     "item:minecraft:use_animation:value": "Value",
     "item:minecraft:use_modifiers:start_using": "StartUsing",
     "item:minecraft:wearable:slot": "Slot"
@@ -426,6 +427,10 @@
     "item:minecraft:durability_sensor:durability_thresholds[].particle_type=witchspell": "WITCHSPELL",
     "item:minecraft:durability_sensor:durability_thresholds[].particle_type=wolfarmorcrack": "WOLFARMORCRACK",
     "item:minecraft:durability_sensor:durability_thresholds[].particle_type=yellowpoplarleaves": "YELLOWPOPLARLEAVES",
+    "item:minecraft:rarity:value=common": "COMMON",
+    "item:minecraft:rarity:value=epic": "EPIC",
+    "item:minecraft:rarity:value=rare": "RARE",
+    "item:minecraft:rarity:value=uncommon": "UNCOMMON",
     "item:minecraft:use_animation:value=block": "BLOCK",
     "item:minecraft:use_animation:value=bow": "BOW",
     "item:minecraft:use_animation:value=brush": "BRUSH",
@@ -1926,7 +1931,7 @@
         "minecraft:redstone_producer.transform_relative"
       ],
       "type": "boolean",
-      "nullable": true
+      "default": true
     },
     "block:minecraft:selection_box:origin": {
       "name": "origin",
@@ -2129,7 +2134,7 @@
         "traits[].y_rotation_offset"
       ],
       "type": "float",
-      "nullable": true
+      "default": 0.0
     },
     "block:trait:minecraft:placement_position:enabled_states": {
       "name": "enabledStates",
@@ -2161,7 +2166,7 @@
         "item_properties.hidden_in_commands"
       ],
       "type": "boolean",
-      "nullable": true
+      "default": false
     },
     "item:minecraft:allow_off_hand:value": {
       "name": "value",
@@ -2170,7 +2175,7 @@
         "minecraft:allow_off_hand.value"
       ],
       "type": "boolean",
-      "nullable": true
+      "default": false
     },
     "item:minecraft:block_placer:aligned_placement": {
       "name": "alignedPlacement",
@@ -2254,7 +2259,7 @@
         "minecraft:can_destroy_in_creative.value"
       ],
       "type": "boolean",
-      "nullable": true
+      "default": false
     },
     "item:minecraft:compostable:composting_chance": {
       "name": "compostingChance",
@@ -2292,7 +2297,7 @@
         "minecraft:damage.value"
       ],
       "type": "int",
-      "nullable": true
+      "default": 0
     },
     "item:minecraft:damage_absorption:absorbable_causes": {
       "name": "absorbableCauses",
@@ -2387,7 +2392,7 @@
         "minecraft:display_name.value"
       ],
       "type": "string",
-      "nullable": true
+      "default": ""
     },
     "item:minecraft:durability:damage_chance": {
       "name": "damageChance",
@@ -2618,7 +2623,7 @@
         "minecraft:fuel.duration"
       ],
       "type": "float",
-      "nullable": true
+      "default": 0.05
     },
     "item:minecraft:glint:value": {
       "name": "value",
@@ -2627,7 +2632,7 @@
         "minecraft:glint.value"
       ],
       "type": "boolean",
-      "nullable": true
+      "default": false
     },
     "item:minecraft:hand_equipped:value": {
       "name": "value",
@@ -2636,7 +2641,7 @@
         "minecraft:hand_equipped.value"
       ],
       "type": "boolean",
-      "nullable": true
+      "default": false
     },
     "item:minecraft:hover_text_color:value": {
       "name": "value",
@@ -2846,7 +2851,7 @@
         "minecraft:liquid_clipped.value"
       ],
       "type": "boolean",
-      "nullable": true
+      "default": false
     },
     "item:minecraft:max_stack_size:value": {
       "name": "value",
@@ -2855,7 +2860,7 @@
         "minecraft:max_stack_size.value"
       ],
       "type": "int",
-      "nullable": true
+      "default": 1
     },
     "item:minecraft:piercing_weapon:creative_reach": {
       "name": "creativeReach",
@@ -2935,8 +2940,8 @@
       "wire": [
         "minecraft:rarity.value"
       ],
-      "type": "string",
-      "nullable": true
+      "type": "enum:Value",
+      "default": "common"
     },
     "item:minecraft:record:comparator_signal": {
       "name": "comparatorSignal",
@@ -3081,7 +3086,7 @@
         "minecraft:should_despawn.value"
       ],
       "type": "boolean",
-      "nullable": true
+      "default": false
     },
     "item:minecraft:stacked_by_data:value": {
       "name": "value",
@@ -3090,7 +3095,7 @@
         "minecraft:stacked_by_data.value"
       ],
       "type": "boolean",
-      "nullable": true
+      "default": false
     },
     "item:minecraft:storage_item:allow_nested_storage_items": {
       "name": "allowNestedStorageItems",

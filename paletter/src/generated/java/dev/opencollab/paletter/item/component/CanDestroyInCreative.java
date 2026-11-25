@@ -4,7 +4,6 @@
 package dev.opencollab.paletter.item.component;
 
 import dev.opencollab.paletter.annotation.BedrockFormat;
-import java.util.Objects;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
@@ -24,31 +23,31 @@ public final class CanDestroyInCreative implements ItemComponent {
      */
     public static final String NAME = "minecraft:can_destroy_in_creative";
 
-    private final @Nullable Boolean value;
+    private final boolean value;
 
-    private CanDestroyInCreative(@Nullable Boolean value) {
+    private CanDestroyInCreative(boolean value) {
         this.value = value;
     }
 
     /**
      * Determines whether the item can be used to destroy blocks while in creative mode. Add-on JSON {@code value}.
-     * Optional (null: not set).
+     * Default: <code>false</code>. The docs give no default; this is what BDS sends when the field is omitted.
      *
      * @return the value
      */
-    public @Nullable Boolean value() {
+    public boolean value() {
         return value;
     }
 
     @Override
     public boolean equals(Object o) {
         return this == o || o instanceof CanDestroyInCreative other
-                && Objects.equals(value, other.value);
+                && value == other.value;
     }
 
     @Override
     public int hashCode() {
-        int h = Objects.hashCode(value);
+        int h = Boolean.hashCode(value);
         return h;
     }
 
@@ -96,7 +95,7 @@ public final class CanDestroyInCreative implements ItemComponent {
      * Builds {@link CanDestroyInCreative}: defaults applied, required fields and ranges checked by {@link #build()}.
      */
     public static final class Builder {
-        private @Nullable Boolean value;
+        private @Nullable Boolean value = false;
 
         private Builder() {
         }
@@ -107,7 +106,7 @@ public final class CanDestroyInCreative implements ItemComponent {
          * @param value the value
          * @return this builder
          */
-        public @NonNull Builder value(@Nullable Boolean value) {
+        public @NonNull Builder value(boolean value) {
             this.value = value;
             return this;
         }

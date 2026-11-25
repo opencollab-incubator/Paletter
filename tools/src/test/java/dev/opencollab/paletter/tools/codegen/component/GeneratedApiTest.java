@@ -181,8 +181,9 @@ class GeneratedApiTest {
         CollisionBox.Entry entry = CollisionBox.Entry.builder().size(1, 2, 3).build();
         assertEquals(CollisionBox.builder().boxes(entry).build(), CollisionBox.of(entry));
         assertEquals("boxes[]", ComponentIndex.FORMS.get(CollisionBox.class).get("object"));
-        // An open enum takes any string
-        assertEquals("paletter_value", Rarity.of("paletter_value").value());
+        // An open value class takes any string
+        assertEquals("paletter_value", Rarity.of(Rarity.Value.of("paletter_value")).value().value());
+        assertFalse(Rarity.Value.of("paletter_value").isKnown());
         // The kinetic conditions are optional: BDS reads a missing speed as 0
         KineticWeapon.Conditions conditions = KineticWeapon.Conditions.builder().build();
         assertEquals(0f, conditions.minSpeed());
@@ -242,7 +243,8 @@ class GeneratedApiTest {
     private static Object normalize(Object v) throws ReflectiveOperationException {
         if (v instanceof JsonElement j) {
             if (j.isJsonPrimitive()) {
-                return j.getAsJsonPrimitive().isNumber() ? (Object) j.getAsDouble() : j.getAsJsonPrimitive().isBoolean() ? j.getAsBoolean() : j.getAsString();
+                // Numbers at float precision: the API holds floats (0.05 is 0.05f)
+                return j.getAsJsonPrimitive().isNumber() ? (Object) (double) j.getAsFloat() : j.getAsJsonPrimitive().isBoolean() ? j.getAsBoolean() : j.getAsString();
             }
             if (j.isJsonArray()) {
                 List<Object> out = new ArrayList<>();
@@ -258,7 +260,7 @@ class GeneratedApiTest {
             return out;
         }
         if (v instanceof Number n) {
-            return n.doubleValue();
+            return (double) n.floatValue();
         }
         if (v != null && ApiBinder.openValueClass(v.getClass())) {
             return v.getClass().getMethod("value").invoke(v);
@@ -294,5 +296,38 @@ class GeneratedApiTest {
             return out;
         }
         return v;
+    }
+
+    /** The same field of a block and an item component has one Java shape: type and nullability (C3). */
+    @Test
+    void blockAndItemFieldsOfOneNameHaveOneShape() {
+        int compared = 0;
+        for (String name : List.of("DisplayName", "MenuCategory")) {
+            Class<?> block = component("block", "Block" + name);
+            Class<?> item = component("item", "Item" + name);
+            for (Method b : block.getDeclaredMethods()) {
+                if (b.getParameterCount() != 0 || !java.lang.reflect.Modifier.isPublic(b.getModifiers()) || java.lang.reflect.Modifier.isStatic(b.getModifiers())
+                    || Set.of("hashCode", "toString", "toBuilder").contains(b.getName())) {
+                    continue;
+                }
+                Method i;
+                try {
+                    i = item.getMethod(b.getName());
+                } catch (NoSuchMethodException e) {
+                    continue;
+                }
+                assertEquals(b.getAnnotatedReturnType().toString(), i.getAnnotatedReturnType().toString(), name + "." + b.getName());
+                compared++;
+            }
+        }
+        assertTrue(compared >= 4, "compared " + compared);
+    }
+
+    private static Class<?> component(String kind, String name) {
+        try {
+            return Class.forName("dev.opencollab.paletter." + kind + ".component." + name);
+        } catch (ClassNotFoundException e) {
+            throw new AssertionError(e);
+        }
     }
 }

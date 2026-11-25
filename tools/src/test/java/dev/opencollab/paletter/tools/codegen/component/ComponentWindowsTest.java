@@ -45,6 +45,9 @@ class ComponentWindowsTest {
         // these windows use protocols of their own, not the ones of the captures
         mappings.getAsJsonArray("captures").forEach(capture -> capture.getAsJsonObject().remove("windowProtocol"));
         Inputs base = ComponentGeneratorTest.inputs();
+        // Optional by hand: these windows show nothing of what BDS sends without them, which would make them required
+        base.api().getAsJsonArray("optional").add("item:test:gadget:value");
+        base.api().getAsJsonArray("optional").add("item:test:gadget:level");
         return new Inputs(base.components(), base.fixtures(), base.feedback(), mappings, base.transforms(), base.api(), base.since());
     }
 

@@ -4,6 +4,9 @@
 package dev.opencollab.paletter.item.component;
 
 import dev.opencollab.paletter.annotation.BedrockFormat;
+import dev.opencollab.paletter.internal.component.Check;
+import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
@@ -24,21 +27,21 @@ public final class Rarity implements ItemComponent {
      */
     public static final String NAME = "minecraft:rarity";
 
-    private final @Nullable String value;
+    private final @NonNull Value value;
 
-    private Rarity(@Nullable String value) {
+    private Rarity(@NonNull Value value) {
+        Objects.requireNonNull(value, "Rarity.value");
         this.value = value;
     }
 
     /**
      * Sets the base rarity of the item. The rarity of an item automatically increases when enchanted, either to Rare
      * when the base rarity is Common or Uncommon, or Epic when the base rarity is Rare. Add-on JSON {@code value}.
-     * Optional (null: not set). Documented values: {@code common}, {@code uncommon}, {@code rare}, {@code epic}; BDS
-     * takes other strings too.
+     * Default: <code>"common"</code>. The docs give no default; this is what BDS sends when the field is omitted.
      *
      * @return the value
      */
-    public @Nullable String value() {
+    public @NonNull Value value() {
         return value;
     }
 
@@ -70,7 +73,7 @@ public final class Rarity implements ItemComponent {
      * @param value the value of that field
      * @return the value with everything else at its default
      */
-    public static @NonNull Rarity of(@NonNull String value) {
+    public static @NonNull Rarity of(@NonNull Value value) {
         return builder().value(value).build();
     }
 
@@ -98,7 +101,7 @@ public final class Rarity implements ItemComponent {
      * Builds {@link Rarity}: defaults applied, required fields and ranges checked by {@link #build()}.
      */
     public static final class Builder {
-        private @Nullable String value;
+        private @Nullable Value value = Value.COMMON;
 
         private Builder() {
         }
@@ -108,9 +111,10 @@ public final class Rarity implements ItemComponent {
          *
          * @param value the value
          * @return this builder
+         * @throws NullPointerException if the value is null
          */
-        public @NonNull Builder value(@Nullable String value) {
-            this.value = value;
+        public @NonNull Builder value(@NonNull Value value) {
+            this.value = Objects.requireNonNull(value, "Rarity.value");
             return this;
         }
 
@@ -123,6 +127,96 @@ public final class Rarity implements ItemComponent {
          */
         public @NonNull Rarity build() {
             return new Rarity(value);
+        }
+    }
+
+    /**
+     * A value of an add-on JSON string: a constant per documented value, {@link #of} for any other.
+     * {@link #value()} is the add-on JSON string. Not an enum: Bedrock adds values, so a {@code switch} over
+     * {@link #value()} needs a {@code default}.
+     */
+    public static final class Value {
+        /**
+         * {@code common}
+         */
+        public static final Value COMMON = new Value("common");
+
+        /**
+         * {@code uncommon}
+         */
+        public static final Value UNCOMMON = new Value("uncommon");
+
+        /**
+         * {@code rare}
+         */
+        public static final Value RARE = new Value("rare");
+
+        /**
+         * {@code epic}
+         */
+        public static final Value EPIC = new Value("epic");
+
+        private static final List<Value> KNOWN = List.of(COMMON, UNCOMMON, RARE, EPIC);
+
+        private static final Map<String, Value> BY_VALUE = Check.index(KNOWN, Value::value);
+
+        private final String value;
+
+        private Value(String value) {
+            this.value = value;
+        }
+
+        /**
+         * Returns the value of an add-on JSON string: the constant of a documented value, else a new value.
+         *
+         * @param value the value in add-on JSON
+         * @return the constant of the value, or a value Paletter does not know
+         */
+        public static @NonNull Value of(@NonNull String value) {
+            Value known = BY_VALUE.get(Objects.requireNonNull(value, "Value.value"));
+            return known != null ? known : new Value(value);
+        }
+
+        /**
+         * Returns the documented values, the constants of this class.
+         *
+         * @return the constants, in the order of the documentation
+         */
+        public static @NonNull List<Value> known() {
+            return KNOWN;
+        }
+
+        /**
+         * Returns the value in add-on JSON.
+         *
+         * @return the value in add-on JSON
+         */
+        public @NonNull String value() {
+            return value;
+        }
+
+        /**
+         * Returns whether the value is documented, one of the constants.
+         *
+         * @return whether this is one of {@link #known()}
+         */
+        public boolean isKnown() {
+            return BY_VALUE.get(value) == this;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            return this == o || o instanceof Value other && value.equals(other.value);
+        }
+
+        @Override
+        public int hashCode() {
+            return value.hashCode();
+        }
+
+        @Override
+        public String toString() {
+            return value;
         }
     }
 }

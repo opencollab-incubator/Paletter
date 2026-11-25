@@ -131,15 +131,10 @@ public final class TraitWire {
                     };
         }
         out.put("enabled_states.sixteen_way_rotation", Wire.toByte(bits7));
-        Float v9 = c.yRotationOffset();
+        out.put("y_rotation_offset", Wire.toFloat(c.yRotationOffset()));
+        List<PlacementDirection.BlocksToCornerWith> v9 = c.blocksToCornerWith();
         if (v9 != null) {
-            out.put("y_rotation_offset", Wire.toFloat(v9));
-        } else {
-            out.put("y_rotation_offset", 0.0f);
-        }
-        List<PlacementDirection.BlocksToCornerWith> v10 = c.blocksToCornerWith();
-        if (v10 != null) {
-            if (!v10.isEmpty()) {
+            if (!v9.isEmpty()) {
                 ctx.drop(PlacementDirection.NAME, "blocks_to_corner_with has no known wire mapping");
             }
         }

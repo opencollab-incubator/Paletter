@@ -29,17 +29,14 @@ public final class PlacementDirection implements BlockTrait {
 
     private final @NonNull List<EnabledStates> enabledStates;
 
-    private final @Nullable Float yRotationOffset;
+    private final float yRotationOffset;
 
     private final @Nullable List<BlocksToCornerWith> blocksToCornerWith;
 
-    private PlacementDirection(@NonNull List<EnabledStates> enabledStates,
-            @Nullable Float yRotationOffset,
+    private PlacementDirection(@NonNull List<EnabledStates> enabledStates, float yRotationOffset,
             @Nullable List<BlocksToCornerWith> blocksToCornerWith) {
         enabledStates = List.copyOf(Objects.requireNonNull(enabledStates, "PlacementDirection.enabledStates"));
-        if (yRotationOffset != null) {
-            Check.range("PlacementDirection.yRotationOffset", yRotationOffset, 0.0, 360.0);
-        }
+        Check.range("PlacementDirection.yRotationOffset", yRotationOffset, 0.0, 360.0);
         blocksToCornerWith = blocksToCornerWith == null ? null : List.copyOf(blocksToCornerWith);
         this.enabledStates = enabledStates;
         this.yRotationOffset = yRotationOffset;
@@ -60,11 +57,12 @@ public final class PlacementDirection implements BlockTrait {
     /**
      * The y rotation offset to apply to the block. Must be [0.0, 90.0, 180.0, 270.0]. Default is 0, meaning if the
      * player is facing north, the "minecraft:cardinal_direction" and/or minecraft:facing_direction state will be
-     * north. Add-on JSON {@code y_rotation_offset}. Optional (null: not set). Range [0, 360] (Bedrock 26.60).
+     * north. Add-on JSON {@code y_rotation_offset}. Default: <code>0.0</code>. The docs give no default; this is
+     * what BDS sends when the field is omitted. Range [0, 360] (Bedrock 26.60).
      *
      * @return the value
      */
-    public @Nullable Float yRotationOffset() {
+    public float yRotationOffset() {
         return yRotationOffset;
     }
 
@@ -83,14 +81,14 @@ public final class PlacementDirection implements BlockTrait {
     public boolean equals(Object o) {
         return this == o || o instanceof PlacementDirection other
                 && Objects.equals(enabledStates, other.enabledStates)
-                && Objects.equals(yRotationOffset, other.yRotationOffset)
+                && Float.compare(yRotationOffset, other.yRotationOffset) == 0
                 && Objects.equals(blocksToCornerWith, other.blocksToCornerWith);
     }
 
     @Override
     public int hashCode() {
         int h = Objects.hashCode(enabledStates);
-        h = 31 * h + Objects.hashCode(yRotationOffset);
+        h = 31 * h + Float.hashCode(yRotationOffset);
         h = 31 * h + Objects.hashCode(blocksToCornerWith);
         return h;
     }
@@ -134,7 +132,7 @@ public final class PlacementDirection implements BlockTrait {
     public static final class Builder {
         private @Nullable List<EnabledStates> enabledStates;
 
-        private @Nullable Float yRotationOffset;
+        private @Nullable Float yRotationOffset = 0.0f;
 
         private @Nullable List<BlocksToCornerWith> blocksToCornerWith;
 
@@ -176,7 +174,7 @@ public final class PlacementDirection implements BlockTrait {
          * @param yRotationOffset the value
          * @return this builder
          */
-        public @NonNull Builder yRotationOffset(@Nullable Float yRotationOffset) {
+        public @NonNull Builder yRotationOffset(float yRotationOffset) {
             this.yRotationOffset = yRotationOffset;
             return this;
         }

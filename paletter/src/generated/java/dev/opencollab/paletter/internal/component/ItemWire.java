@@ -81,7 +81,7 @@ public final class ItemWire {
             case Damage c -> damage(c, ctx, out);
             case DamageAbsorption c -> { } // server only: BDS sends nothing to clients
             case Digger c -> digger(c, ctx, out);
-            case ItemDisplayName c -> displayName(c, ctx, out);
+            case ItemDisplayName c -> out.put("minecraft:display_name.value", c.value());
             case Durability c -> durability(c, ctx, out);
             case DurabilitySensor c -> { } // server only: BDS sends nothing to clients
             case Dyeable c -> Transforms.rgbColor(ctx, out, c);
@@ -89,7 +89,7 @@ public final class ItemWire {
             case EntityPlacer c -> entityPlacer(c, ctx, out);
             case FireResistant c -> out.put("minecraft:fire_resistant.value", Wire.bool(c.value()));
             case Food c -> food(c, ctx, out);
-            case Fuel c -> fuel(c, ctx, out);
+            case Fuel c -> out.put("minecraft:fuel.duration", Wire.toFloat(c.duration()));
             case Glint c -> glint(c, ctx, out);
             case HandEquipped c -> handEquipped(c, ctx, out);
             case HoverTextColor c -> Transforms.formattingCode(ctx, out, c);
@@ -123,14 +123,9 @@ public final class ItemWire {
     }
 
     private static void allowOffHand(AllowOffHand c, WireContext ctx, WireNode out) {
-        Boolean v0 = c.value();
-        if (v0 != null) {
-            out.own("item_properties.allow_off_hand", Wire.bool(v0));
-            out.put("minecraft:allow_off_hand.value", Wire.bool(v0));
-        } else {
-            out.own("item_properties.allow_off_hand", (byte) 0);
-            out.put("minecraft:allow_off_hand.value", (byte) 0);
-        }
+        boolean v0 = c.value();
+        out.own("item_properties.allow_off_hand", Wire.bool(v0));
+        out.put("minecraft:allow_off_hand.value", Wire.bool(v0));
     }
 
     private static void blockPlacer(BlockPlacer c, WireContext ctx, WireNode out) {
@@ -148,14 +143,9 @@ public final class ItemWire {
 
     private static void canDestroyInCreative(CanDestroyInCreative c, WireContext ctx,
             WireNode out) {
-        Boolean v0 = c.value();
-        if (v0 != null) {
-            out.put("item_properties.can_destroy_in_creative", Wire.bool(v0));
-            out.put("minecraft:can_destroy_in_creative.value", Wire.bool(v0));
-        } else {
-            out.put("item_properties.can_destroy_in_creative", (byte) 0);
-            out.put("minecraft:can_destroy_in_creative.value", (byte) 0);
-        }
+        boolean v0 = c.value();
+        out.put("item_properties.can_destroy_in_creative", Wire.bool(v0));
+        out.put("minecraft:can_destroy_in_creative.value", Wire.bool(v0));
     }
 
     private static void cooldown(Cooldown c, WireContext ctx, WireNode out) {
@@ -165,14 +155,9 @@ public final class ItemWire {
     }
 
     private static void damage(Damage c, WireContext ctx, WireNode out) {
-        Integer v0 = c.value();
-        if (v0 != null) {
-            out.put("item_properties.damage", Wire.toInt(v0));
-            out.put("minecraft:damage.value", Wire.toShort(v0));
-        } else {
-            out.put("item_properties.damage", 0);
-            out.put("minecraft:damage.value", (short) 0);
-        }
+        int v0 = c.value();
+        out.put("item_properties.damage", Wire.toInt(v0));
+        out.put("minecraft:damage.value", Wire.toShort(v0));
     }
 
     private static void digger(Digger c, WireContext ctx, WireNode out) {
@@ -190,15 +175,6 @@ public final class ItemWire {
             n1.put("speed", Wire.toInt(e0.speed()));
         }
         out.put("minecraft:digger.use_efficiency", Wire.bool(c.useEfficiency()));
-    }
-
-    private static void displayName(ItemDisplayName c, WireContext ctx, WireNode out) {
-        String v0 = c.value();
-        if (v0 != null) {
-            out.put("minecraft:display_name.value", v0);
-        } else {
-            out.put("minecraft:display_name.value", "");
-        }
     }
 
     private static void durability(Durability c, WireContext ctx, WireNode out) {
@@ -271,35 +247,16 @@ public final class ItemWire {
         Transforms.usingConvertsTo(ctx, out, c);
     }
 
-    private static void fuel(Fuel c, WireContext ctx, WireNode out) {
-        Float v0 = c.duration();
-        if (v0 != null) {
-            out.put("minecraft:fuel.duration", Wire.toFloat(v0));
-        } else {
-            out.put("minecraft:fuel.duration", 0.05f);
-        }
-    }
-
     private static void glint(Glint c, WireContext ctx, WireNode out) {
-        Boolean v0 = c.value();
-        if (v0 != null) {
-            out.put("item_properties.foil", Wire.bool(v0));
-            out.put("minecraft:glint.value", Wire.bool(v0));
-        } else {
-            out.put("item_properties.foil", (byte) 0);
-            out.put("minecraft:glint.value", (byte) 0);
-        }
+        boolean v0 = c.value();
+        out.put("item_properties.foil", Wire.bool(v0));
+        out.put("minecraft:glint.value", Wire.bool(v0));
     }
 
     private static void handEquipped(HandEquipped c, WireContext ctx, WireNode out) {
-        Boolean v0 = c.value();
-        if (v0 != null) {
-            out.put("item_properties.hand_equipped", Wire.bool(v0));
-            out.put("minecraft:hand_equipped.value", Wire.bool(v0));
-        } else {
-            out.put("item_properties.hand_equipped", (byte) 0);
-            out.put("minecraft:hand_equipped.value", (byte) 0);
-        }
+        boolean v0 = c.value();
+        out.put("item_properties.hand_equipped", Wire.bool(v0));
+        out.put("minecraft:hand_equipped.value", Wire.bool(v0));
     }
 
     private static void interactButton(InteractButton c, WireContext ctx, WireNode out) {
@@ -364,25 +321,15 @@ public final class ItemWire {
     }
 
     private static void liquidClipped(LiquidClipped c, WireContext ctx, WireNode out) {
-        Boolean v0 = c.value();
-        if (v0 != null) {
-            out.put("item_properties.liquid_clipped", Wire.bool(v0));
-            out.put("minecraft:liquid_clipped.value", Wire.bool(v0));
-        } else {
-            out.put("item_properties.liquid_clipped", (byte) 0);
-            out.put("minecraft:liquid_clipped.value", (byte) 0);
-        }
+        boolean v0 = c.value();
+        out.put("item_properties.liquid_clipped", Wire.bool(v0));
+        out.put("minecraft:liquid_clipped.value", Wire.bool(v0));
     }
 
     private static void maxStackSize(MaxStackSize c, WireContext ctx, WireNode out) {
-        Integer v0 = c.value();
-        if (v0 != null) {
-            out.own("item_properties.max_stack_size", Wire.toInt(v0));
-            out.put("minecraft:max_stack_size.value", Wire.toByte(v0));
-        } else {
-            out.own("item_properties.max_stack_size", 1);
-            out.put("minecraft:max_stack_size.value", (byte) 1);
-        }
+        int v0 = c.value();
+        out.own("item_properties.max_stack_size", Wire.toInt(v0));
+        out.put("minecraft:max_stack_size.value", Wire.toByte(v0));
     }
 
     private static void piercingWeapon(PiercingWeapon c, WireContext ctx, WireNode out) {
@@ -406,17 +353,12 @@ public final class ItemWire {
     }
 
     private static void rarity(Rarity c, WireContext ctx, WireNode out) {
-        String v0 = c.value();
-        if (v0 != null) {
-            switch (v0) {
-                case "common" -> out.put("minecraft:rarity.value", "common");
-                case "epic" -> out.put("minecraft:rarity.value", "epic");
-                case "rare" -> out.put("minecraft:rarity.value", "rare");
-                case "uncommon" -> out.put("minecraft:rarity.value", "uncommon");
-                default -> out.put("minecraft:rarity.value", "common");
-            }
-        } else {
-            out.put("minecraft:rarity.value", "common");
+        switch (c.value().value()) {
+            case "common" -> out.put("minecraft:rarity.value", "common");
+            case "epic" -> out.put("minecraft:rarity.value", "epic");
+            case "rare" -> out.put("minecraft:rarity.value", "rare");
+            case "uncommon" -> out.put("minecraft:rarity.value", "uncommon");
+            default -> out.put("minecraft:rarity.value", "common");
         }
     }
 
@@ -441,25 +383,15 @@ public final class ItemWire {
     }
 
     private static void shouldDespawn(ShouldDespawn c, WireContext ctx, WireNode out) {
-        Boolean v0 = c.value();
-        if (v0 != null) {
-            out.put("item_properties.should_despawn", Wire.bool(v0));
-            out.put("minecraft:should_despawn.value", Wire.bool(v0));
-        } else {
-            out.put("item_properties.should_despawn", (byte) 0);
-            out.put("minecraft:should_despawn.value", (byte) 0);
-        }
+        boolean v0 = c.value();
+        out.put("item_properties.should_despawn", Wire.bool(v0));
+        out.put("minecraft:should_despawn.value", Wire.bool(v0));
     }
 
     private static void stackedByData(StackedByData c, WireContext ctx, WireNode out) {
-        Boolean v0 = c.value();
-        if (v0 != null) {
-            out.put("item_properties.stacked_by_data", Wire.bool(v0));
-            out.put("minecraft:stacked_by_data.value", Wire.bool(v0));
-        } else {
-            out.put("item_properties.stacked_by_data", (byte) 0);
-            out.put("minecraft:stacked_by_data.value", (byte) 0);
-        }
+        boolean v0 = c.value();
+        out.put("item_properties.stacked_by_data", Wire.bool(v0));
+        out.put("minecraft:stacked_by_data.value", Wire.bool(v0));
     }
 
     private static void storageItem(StorageItem c, WireContext ctx, WireNode out) {
@@ -592,15 +524,11 @@ public final class ItemWire {
         } else {
             out.put("item_properties.creative_group", "");
         }
-        Boolean v2 = c.hiddenInCommands();
-        if (v2 != null) {
-            switch (String.valueOf(v2)) {
-                case "false" -> out.put("item_properties.hidden_in_commands", (byte) 2);
-                case "true" -> out.put("item_properties.hidden_in_commands", (byte) 1);
-                default -> ctx.drop(ItemMenuCategory.NAME, "is_hidden_in_commands = " + String.valueOf(v2) + " has no known wire value");
-            }
-        } else {
-            out.put("item_properties.hidden_in_commands", (byte) 2);
+        boolean v2 = c.hiddenInCommands();
+        switch (String.valueOf(v2)) {
+            case "false" -> out.put("item_properties.hidden_in_commands", (byte) 2);
+            case "true" -> out.put("item_properties.hidden_in_commands", (byte) 1);
+            default -> ctx.drop(ItemMenuCategory.NAME, "is_hidden_in_commands = " + String.valueOf(v2) + " has no known wire value");
         }
     }
 

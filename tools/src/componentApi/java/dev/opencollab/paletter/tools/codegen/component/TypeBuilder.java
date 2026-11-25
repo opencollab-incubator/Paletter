@@ -79,6 +79,9 @@ final class TypeBuilder {
         }
         if (isOpenEnum(c, d) && !d.enumValues.isEmpty() && f.type instanceof Scalar s && s.kind() == ScalarKind.STRING) {
             f.documentedValues = d.enumValues.stream().map(JsonElement::getAsString).toList();
+        } else if (f.type instanceof EnumRef r && r.type().external == null) {
+            // An open value class takes any string too: a table rule may know what BDS sends for the others
+            f.documentedValues = r.type().values;
         }
         f.docsDefault = d.defaultValue;
         String feedbackPath = c.standalone ? hand.standalonePrefix(c.id) + "." + d.path : d.path;

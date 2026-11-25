@@ -24,10 +24,10 @@ public final class ItemMenuCategory {
 
     private final @Nullable String group;
 
-    private final @Nullable Boolean hiddenInCommands;
+    private final boolean hiddenInCommands;
 
     private ItemMenuCategory(@Nullable CreativeCategory category, @Nullable String group,
-            @Nullable Boolean hiddenInCommands) {
+            boolean hiddenInCommands) {
         this.category = category;
         this.group = group;
         this.hiddenInCommands = hiddenInCommands;
@@ -56,11 +56,12 @@ public final class ItemMenuCategory {
 
     /**
      * Determines whether or not this item can be used with commands. Commands can use items by default. Add-on JSON
-     * {@code is_hidden_in_commands}. Optional (null: not set).
+     * {@code is_hidden_in_commands}. Default: <code>false</code>. The docs give no default; this is what BDS sends
+     * when the field is omitted.
      *
      * @return the value
      */
-    public @Nullable Boolean hiddenInCommands() {
+    public boolean hiddenInCommands() {
         return hiddenInCommands;
     }
 
@@ -69,14 +70,14 @@ public final class ItemMenuCategory {
         return this == o || o instanceof ItemMenuCategory other
                 && Objects.equals(category, other.category)
                 && Objects.equals(group, other.group)
-                && Objects.equals(hiddenInCommands, other.hiddenInCommands);
+                && hiddenInCommands == other.hiddenInCommands;
     }
 
     @Override
     public int hashCode() {
         int h = Objects.hashCode(category);
         h = 31 * h + Objects.hashCode(group);
-        h = 31 * h + Objects.hashCode(hiddenInCommands);
+        h = 31 * h + Boolean.hashCode(hiddenInCommands);
         return h;
     }
 
@@ -115,7 +116,7 @@ public final class ItemMenuCategory {
 
         private @Nullable String group;
 
-        private @Nullable Boolean hiddenInCommands;
+        private @Nullable Boolean hiddenInCommands = false;
 
         private Builder() {
         }
@@ -148,7 +149,7 @@ public final class ItemMenuCategory {
          * @param hiddenInCommands the value
          * @return this builder
          */
-        public @NonNull Builder hiddenInCommands(@Nullable Boolean hiddenInCommands) {
+        public @NonNull Builder hiddenInCommands(boolean hiddenInCommands) {
             this.hiddenInCommands = hiddenInCommands;
             return this;
         }

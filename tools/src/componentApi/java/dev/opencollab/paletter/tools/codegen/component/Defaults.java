@@ -2,6 +2,7 @@ package dev.opencollab.paletter.tools.codegen.component;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
+import com.google.gson.JsonPrimitive;
 import dev.opencollab.paletter.tools.codegen.component.ApiModel.Comp;
 import dev.opencollab.paletter.tools.codegen.component.ApiModel.EnumRef;
 import dev.opencollab.paletter.tools.codegen.component.ApiModel.Field;
@@ -10,11 +11,15 @@ import dev.opencollab.paletter.tools.codegen.component.ApiModel.MapOf;
 import dev.opencollab.paletter.tools.codegen.component.ApiModel.ObjRef;
 import dev.opencollab.paletter.tools.codegen.component.ApiModel.ObjType;
 import dev.opencollab.paletter.tools.codegen.component.ApiModel.Scalar;
+import dev.opencollab.paletter.tools.codegen.component.ApiModel.ScalarKind;
 import dev.opencollab.paletter.tools.codegen.component.ApiModel.States;
 import dev.opencollab.paletter.tools.codegen.component.ApiModel.Type;
 import dev.opencollab.paletter.tools.codegen.component.ApiModel.Vec3;
 import dev.opencollab.paletter.tools.codegen.component.ApiModel.Window;
+import dev.opencollab.paletter.tools.model.rule.Linear;
 import dev.opencollab.paletter.tools.model.rule.Rule;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -28,10 +33,21 @@ final class Defaults {
     }
 
     /**
-     * Applies the docs default unless BDS sends something else when the field is omitted; then the field stays unset
-     * (nullable) and the encoder writes what BDS sends.
+     * Applies the docs default unless BDS sends something else when the field is omitted, then settles the shape of every
+     * boolean and number field without one ({@link #settle}).
      */
     void apply(Comp c, ObjType o) {
+        docsDefaults(c, o);
+        for (Field f : o.fields) {
+            settle(c, o, f);
+        }
+    }
+
+    /**
+     * Applies the docs default unless BDS sends something else when the field is omitted; then the field stays unset
+     * and {@link #settle} decides.
+     */
+    private void docsDefaults(Comp c, ObjType o) {
         for (Field f : o.fields) {
             Window w = c.evidence(f.mappingKey);
             ObjType child = WireRules.objectOf(f.type);
@@ -64,6 +80,107 @@ final class Defaults {
             }
             f.defaultValue = d;
         }
+    }
+
+    /**
+     * A boolean or number field the docs give no usable default, or the one value of a component, is not nullable unless
+     * leaving it out differs on the wire:
+     * <ul>
+     *     <li>nullable where BDS sends nothing for it when it is omitted, which no value can say, or where it writes
+     *     nothing at all;</li>
+     *     <li>else defaulting to the value whose encoding is what BDS sends when it is omitted (captured, data/model);</li>
+     *     <li>required where that is unknown. A default is never guessed.</li>
+     * </ul>
+     * Fields api.json lists as {@code optional}, value forms and hand-encoded fields keep their shape.
+     */
+    private void settle(Comp c, ObjType o, Field f) {
+        boolean only = o == c.root && o.fields.stream().filter(x -> x.form == null).count() == 1;
+        boolean number = f.type instanceof Scalar s && s.kind() != ScalarKind.STRING;
+        boolean value = only && (f.type instanceof Scalar || f.type instanceof EnumRef);
+        if (!(number || value) || f.required || f.defaultValue != null || f.form != null
+            || f.keyedExtraOf != null || f.transform != null || c.transform != null || hand.listed("optional", c.id + ":" + f.path)) {
+            return;
+        }
+        Window w = c.evidence(f.mappingKey);
+        Map<String, String> absent = w == null ? Map.of() : WireRules.whenAbsent(w, f);
+        if (absent.containsValue("omitted") || w == null || WireRules.rulesOf(w, f).stream().noneMatch(Rule::writesValue)) {
+            // Omitting it differs on the wire, or it writes nothing at all: its shape says nothing about the wire
+            return;
+        }
+        JsonElement sent = whenOmitted(w, f);
+        if (sent == null) {
+            f.required = true;
+            return;
+        }
+        f.defaultValue = sent;
+        f.defaultNote = f.docsDefault == null ? "The docs give no default; this is what BDS sends when the field is omitted."
+            : "The docs give the default " + render(f.docsDefault) + ", but BDS sends what this default sends when the field is omitted.";
+    }
+
+    /**
+     * The value whose encoding is what BDS sends when the field is omitted, by every value rule; null if none is (or nothing
+     * shows what BDS sends).
+     */
+    static JsonElement whenOmitted(Window w, Field f) {
+        Map<String, String> absent = WireRules.whenAbsent(w, f);
+        List<Rule> rules = WireRules.rulesOf(w, f).stream().filter(Rule::writesValue).toList();
+        if (absent.isEmpty() || rules.isEmpty()) {
+            return null;
+        }
+        List<JsonElement> candidates = new ArrayList<>();
+        if (f.type instanceof EnumRef e) {
+            e.type().values.forEach(v -> candidates.add(new JsonPrimitive(v)));
+        } else if (f.type instanceof Scalar s && s.kind() == ScalarKind.STRING) {
+            for (String literal : absent.values()) {
+                int unit = literal.lastIndexOf(" (");
+                if (unit >= 0) {
+                    candidates.add(new JsonPrimitive(literal.substring(0, unit)));
+                }
+            }
+        } else if (((Scalar) f.type).kind() == ScalarKind.BOOL) {
+            candidates.add(new JsonPrimitive(false));
+            candidates.add(new JsonPrimitive(true));
+        } else {
+            // The value a leaf BDS sends when it is omitted comes from: the leaf itself, or back through a unit conversion
+            for (Rule rule : rules) {
+                String literal = absent.get(rule.wire);
+                int unit = literal == null ? -1 : literal.lastIndexOf(" (");
+                if (unit < 0) {
+                    continue;
+                }
+                double v;
+                try {
+                    v = Double.parseDouble(literal.substring(0, unit));
+                } catch (NumberFormatException e) {
+                    continue;
+                }
+                if (rule instanceof Linear l) {
+                    v = (v - l.offset) / l.scale;
+                }
+                if (((Scalar) f.type).kind() == ScalarKind.FLOAT) {
+                    candidates.add(new JsonPrimitive(v));
+                } else if (v == Math.rint(v)) {
+                    candidates.add(new JsonPrimitive((long) v));
+                }
+            }
+        }
+        for (JsonElement candidate : candidates) {
+            boolean compared = false;
+            boolean same = true;
+            for (Rule rule : rules) {
+                String expected = absent.get(rule.wire);
+                if (expected == null) {
+                    continue;
+                }
+                String actual = rule.evaluate(candidate);
+                compared = true;
+                same &= actual != null && sameLiteral(expected, actual);
+            }
+            if (compared && same) {
+                return candidate;
+            }
+        }
+        return null;
     }
 
     /** An object's documented default names its fields' values; they win over the fields' own defaults. */

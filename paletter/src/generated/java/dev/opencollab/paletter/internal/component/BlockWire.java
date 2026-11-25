@@ -513,12 +513,7 @@ public final class BlockWire {
         } else {
             out.remove("minecraft:redstone_producer.strongly_powered_face");
         }
-        Boolean v3 = c.transformRelative();
-        if (v3 != null) {
-            out.put("minecraft:redstone_producer.transform_relative", Wire.bool(v3));
-        } else {
-            out.put("minecraft:redstone_producer.transform_relative", (byte) 1);
-        }
+        out.put("minecraft:redstone_producer.transform_relative", Wire.bool(c.transformRelative()));
     }
 
     private static void replaceable(Replaceable c, WireContext ctx, WireNode out) {

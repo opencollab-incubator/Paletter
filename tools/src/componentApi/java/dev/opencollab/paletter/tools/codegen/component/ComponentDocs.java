@@ -211,7 +211,7 @@ final class ComponentDocs {
         if (f.multipleOf != null) {
             s.append(" Multiples of ").append(Docs.number(f.multipleOf)).append(" only (BDS refuses the others).");
         }
-        if (f.documentedValues != null && f.documentedValues.size() <= 10 && !f.documentedValues.stream().allMatch(f.doc::contains)) {
+        if (f.documentedValues != null && f.type instanceof ApiModel.Scalar && f.documentedValues.size() <= 10 && !f.documentedValues.stream().allMatch(f.doc::contains)) {
             s.append(" Documented values: ").append(String.join(", ", f.documentedValues.stream().map(v -> "{@code " + Docs.escape(v) + "}").toList()))
                 .append("; BDS takes other strings too.");
         }

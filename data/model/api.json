@@ -269,8 +269,7 @@
     "block:minecraft:embedded_visual:geometry.culling_layer",
     "block:minecraft:item_visual:geometry.culling_layer",
     "item:minecraft:record:sound_event",
-    "item:description:group",
-    "item:minecraft:rarity:value"
+    "item:description:group"
   ],
   "exclude": [
     "block:minecraft:collision_box:[].min",

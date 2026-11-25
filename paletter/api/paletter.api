@@ -1822,7 +1822,7 @@ public final class dev.opencollab.paletter.block.component.PlacementDirection im
     public java.lang.String name()
     public dev.opencollab.paletter.block.component.PlacementDirection$Builder toBuilder()
     public java.lang.String toString()
-    public java.lang.Float yRotationOffset()
+    public float yRotationOffset()
 }
 
 public static final class dev.opencollab.paletter.block.component.PlacementDirection$BlocksToCornerWith {
@@ -1849,7 +1849,7 @@ public static final class dev.opencollab.paletter.block.component.PlacementDirec
     public dev.opencollab.paletter.block.component.PlacementDirection build()
     public dev.opencollab.paletter.block.component.PlacementDirection$Builder enabledStates(dev.opencollab.paletter.block.component.PlacementDirection$EnabledStates, dev.opencollab.paletter.block.component.PlacementDirection$EnabledStates...)
     public dev.opencollab.paletter.block.component.PlacementDirection$Builder enabledStates(java.util.List<dev.opencollab.paletter.block.component.PlacementDirection$EnabledStates>)
-    public dev.opencollab.paletter.block.component.PlacementDirection$Builder yRotationOffset(java.lang.Float)
+    public dev.opencollab.paletter.block.component.PlacementDirection$Builder yRotationOffset(float)
 }
 
 public static final class dev.opencollab.paletter.block.component.PlacementDirection$EnabledStates {
@@ -2108,7 +2108,7 @@ public final class dev.opencollab.paletter.block.component.RedstoneProducer impl
     public dev.opencollab.paletter.block.component.RedstoneProducer$StronglyPoweredFace stronglyPoweredFace()
     public dev.opencollab.paletter.block.component.RedstoneProducer$Builder toBuilder()
     public java.lang.String toString()
-    public java.lang.Boolean transformRelative()
+    public boolean transformRelative()
 }
 
 public static final class dev.opencollab.paletter.block.component.RedstoneProducer$Builder {
@@ -2117,7 +2117,7 @@ public static final class dev.opencollab.paletter.block.component.RedstoneProduc
     public dev.opencollab.paletter.block.component.RedstoneProducer$Builder connectedFaces(java.util.List<dev.opencollab.paletter.block.component.RedstoneProducer$ConnectedFaces>)
     public dev.opencollab.paletter.block.component.RedstoneProducer$Builder power(int)
     public dev.opencollab.paletter.block.component.RedstoneProducer$Builder stronglyPoweredFace(dev.opencollab.paletter.block.component.RedstoneProducer$StronglyPoweredFace)
-    public dev.opencollab.paletter.block.component.RedstoneProducer$Builder transformRelative(java.lang.Boolean)
+    public dev.opencollab.paletter.block.component.RedstoneProducer$Builder transformRelative(boolean)
 }
 
 public static final class dev.opencollab.paletter.block.component.RedstoneProducer$ConnectedFaces {
@@ -2657,12 +2657,12 @@ public final class dev.opencollab.paletter.item.component.AllowOffHand implement
     public static dev.opencollab.paletter.item.component.AllowOffHand of(boolean)
     public dev.opencollab.paletter.item.component.AllowOffHand$Builder toBuilder()
     public java.lang.String toString()
-    public java.lang.Boolean value()
+    public boolean value()
 }
 
 public static final class dev.opencollab.paletter.item.component.AllowOffHand$Builder {
     public dev.opencollab.paletter.item.component.AllowOffHand build()
-    public dev.opencollab.paletter.item.component.AllowOffHand$Builder value(java.lang.Boolean)
+    public dev.opencollab.paletter.item.component.AllowOffHand$Builder value(boolean)
 }
 
 public final class dev.opencollab.paletter.item.component.BlockPlacer implements dev.opencollab.paletter.item.component.ItemComponent {
@@ -2736,12 +2736,12 @@ public final class dev.opencollab.paletter.item.component.CanDestroyInCreative i
     public static dev.opencollab.paletter.item.component.CanDestroyInCreative of(boolean)
     public dev.opencollab.paletter.item.component.CanDestroyInCreative$Builder toBuilder()
     public java.lang.String toString()
-    public java.lang.Boolean value()
+    public boolean value()
 }
 
 public static final class dev.opencollab.paletter.item.component.CanDestroyInCreative$Builder {
     public dev.opencollab.paletter.item.component.CanDestroyInCreative build()
-    public dev.opencollab.paletter.item.component.CanDestroyInCreative$Builder value(java.lang.Boolean)
+    public dev.opencollab.paletter.item.component.CanDestroyInCreative$Builder value(boolean)
 }
 
 public sealed interface dev.opencollab.paletter.item.component.ColorValue permits dev.opencollab.paletter.item.component.ColorValue$Channels, dev.opencollab.paletter.item.component.ColorValue$Hex, dev.opencollab.paletter.item.component.FutureColorValue {
@@ -2823,12 +2823,12 @@ public final class dev.opencollab.paletter.item.component.Damage implements dev.
     public static dev.opencollab.paletter.item.component.Damage of(int)
     public dev.opencollab.paletter.item.component.Damage$Builder toBuilder()
     public java.lang.String toString()
-    public java.lang.Integer value()
+    public int value()
 }
 
 public static final class dev.opencollab.paletter.item.component.Damage$Builder {
     public dev.opencollab.paletter.item.component.Damage build()
-    public dev.opencollab.paletter.item.component.Damage$Builder value(java.lang.Integer)
+    public dev.opencollab.paletter.item.component.Damage$Builder value(int)
 }
 
 public final class dev.opencollab.paletter.item.component.DamageAbsorption implements dev.opencollab.paletter.item.component.ItemComponent {
@@ -3214,7 +3214,7 @@ public static final class dev.opencollab.paletter.item.component.Food$Builder {
 public final class dev.opencollab.paletter.item.component.Fuel implements dev.opencollab.paletter.item.component.ItemComponent {
     public static final java.lang.String NAME = "minecraft:fuel"
     public static dev.opencollab.paletter.item.component.Fuel$Builder builder()
-    public java.lang.Float duration()
+    public float duration()
     public boolean equals(java.lang.Object)
     public int hashCode()
     public java.lang.String name()
@@ -3225,7 +3225,7 @@ public final class dev.opencollab.paletter.item.component.Fuel implements dev.op
 
 public static final class dev.opencollab.paletter.item.component.Fuel$Builder {
     public dev.opencollab.paletter.item.component.Fuel build()
-    public dev.opencollab.paletter.item.component.Fuel$Builder duration(java.lang.Float)
+    public dev.opencollab.paletter.item.component.Fuel$Builder duration(float)
 }
 
 public final class dev.opencollab.paletter.item.component.Glint implements dev.opencollab.paletter.item.component.ItemComponent {
@@ -3237,12 +3237,12 @@ public final class dev.opencollab.paletter.item.component.Glint implements dev.o
     public static dev.opencollab.paletter.item.component.Glint of(boolean)
     public dev.opencollab.paletter.item.component.Glint$Builder toBuilder()
     public java.lang.String toString()
-    public java.lang.Boolean value()
+    public boolean value()
 }
 
 public static final class dev.opencollab.paletter.item.component.Glint$Builder {
     public dev.opencollab.paletter.item.component.Glint build()
-    public dev.opencollab.paletter.item.component.Glint$Builder value(java.lang.Boolean)
+    public dev.opencollab.paletter.item.component.Glint$Builder value(boolean)
 }
 
 public final class dev.opencollab.paletter.item.component.HandEquipped implements dev.opencollab.paletter.item.component.ItemComponent {
@@ -3254,12 +3254,12 @@ public final class dev.opencollab.paletter.item.component.HandEquipped implement
     public static dev.opencollab.paletter.item.component.HandEquipped of(boolean)
     public dev.opencollab.paletter.item.component.HandEquipped$Builder toBuilder()
     public java.lang.String toString()
-    public java.lang.Boolean value()
+    public boolean value()
 }
 
 public static final class dev.opencollab.paletter.item.component.HandEquipped$Builder {
     public dev.opencollab.paletter.item.component.HandEquipped build()
-    public dev.opencollab.paletter.item.component.HandEquipped$Builder value(java.lang.Boolean)
+    public dev.opencollab.paletter.item.component.HandEquipped$Builder value(boolean)
 }
 
 public final class dev.opencollab.paletter.item.component.HoverTextColor implements dev.opencollab.paletter.item.component.ItemComponent {
@@ -3346,7 +3346,7 @@ public final class dev.opencollab.paletter.item.component.ItemMenuCategory {
     public boolean equals(java.lang.Object)
     public java.lang.String group()
     public int hashCode()
-    public java.lang.Boolean hiddenInCommands()
+    public boolean hiddenInCommands()
     public dev.opencollab.paletter.item.component.ItemMenuCategory$Builder toBuilder()
     public java.lang.String toString()
 }
@@ -3355,7 +3355,7 @@ public static final class dev.opencollab.paletter.item.component.ItemMenuCategor
     public dev.opencollab.paletter.item.component.ItemMenuCategory build()
     public dev.opencollab.paletter.item.component.ItemMenuCategory$Builder category(dev.opencollab.paletter.creative.CreativeCategory)
     public dev.opencollab.paletter.item.component.ItemMenuCategory$Builder group(java.lang.String)
-    public dev.opencollab.paletter.item.component.ItemMenuCategory$Builder hiddenInCommands(java.lang.Boolean)
+    public dev.opencollab.paletter.item.component.ItemMenuCategory$Builder hiddenInCommands(boolean)
 }
 
 public sealed interface dev.opencollab.paletter.item.component.ItemsOrTags permits dev.opencollab.paletter.item.component.FutureItemsOrTags, dev.opencollab.paletter.item.component.ItemsOrTags$Items, dev.opencollab.paletter.item.component.ItemsOrTags$TagQuery {
@@ -3471,12 +3471,12 @@ public final class dev.opencollab.paletter.item.component.LiquidClipped implemen
     public static dev.opencollab.paletter.item.component.LiquidClipped of(boolean)
     public dev.opencollab.paletter.item.component.LiquidClipped$Builder toBuilder()
     public java.lang.String toString()
-    public java.lang.Boolean value()
+    public boolean value()
 }
 
 public static final class dev.opencollab.paletter.item.component.LiquidClipped$Builder {
     public dev.opencollab.paletter.item.component.LiquidClipped build()
-    public dev.opencollab.paletter.item.component.LiquidClipped$Builder value(java.lang.Boolean)
+    public dev.opencollab.paletter.item.component.LiquidClipped$Builder value(boolean)
 }
 
 public final class dev.opencollab.paletter.item.component.MaxStackSize implements dev.opencollab.paletter.item.component.ItemComponent {
@@ -3488,12 +3488,12 @@ public final class dev.opencollab.paletter.item.component.MaxStackSize implement
     public static dev.opencollab.paletter.item.component.MaxStackSize of(int)
     public dev.opencollab.paletter.item.component.MaxStackSize$Builder toBuilder()
     public java.lang.String toString()
-    public java.lang.Integer value()
+    public int value()
 }
 
 public static final class dev.opencollab.paletter.item.component.MaxStackSize$Builder {
     public dev.opencollab.paletter.item.component.MaxStackSize build()
-    public dev.opencollab.paletter.item.component.MaxStackSize$Builder value(java.lang.Integer)
+    public dev.opencollab.paletter.item.component.MaxStackSize$Builder value(int)
 }
 
 @Experimental public final class dev.opencollab.paletter.item.component.MiningSpeed implements dev.opencollab.paletter.item.component.WireOnlyItemComponent {
@@ -3603,15 +3603,29 @@ public final class dev.opencollab.paletter.item.component.Rarity implements dev.
     public boolean equals(java.lang.Object)
     public int hashCode()
     public java.lang.String name()
-    public static dev.opencollab.paletter.item.component.Rarity of(java.lang.String)
+    public static dev.opencollab.paletter.item.component.Rarity of(dev.opencollab.paletter.item.component.Rarity$Value)
     public dev.opencollab.paletter.item.component.Rarity$Builder toBuilder()
     public java.lang.String toString()
-    public java.lang.String value()
+    public dev.opencollab.paletter.item.component.Rarity$Value value()
 }
 
 public static final class dev.opencollab.paletter.item.component.Rarity$Builder {
     public dev.opencollab.paletter.item.component.Rarity build()
-    public dev.opencollab.paletter.item.component.Rarity$Builder value(java.lang.String)
+    public dev.opencollab.paletter.item.component.Rarity$Builder value(dev.opencollab.paletter.item.component.Rarity$Value)
+}
+
+public static final class dev.opencollab.paletter.item.component.Rarity$Value {
+    public static final dev.opencollab.paletter.item.component.Rarity$Value COMMON
+    public static final dev.opencollab.paletter.item.component.Rarity$Value EPIC
+    public static final dev.opencollab.paletter.item.component.Rarity$Value RARE
+    public static final dev.opencollab.paletter.item.component.Rarity$Value UNCOMMON
+    public boolean equals(java.lang.Object)
+    public int hashCode()
+    public boolean isKnown()
+    public static java.util.List<dev.opencollab.paletter.item.component.Rarity$Value> known()
+    public static dev.opencollab.paletter.item.component.Rarity$Value of(java.lang.String)
+    public java.lang.String toString()
+    public java.lang.String value()
 }
 
 @Experimental public final class dev.opencollab.paletter.item.component.RawItemComponent implements dev.opencollab.paletter.item.component.WireOnlyItemComponent {
@@ -3802,12 +3816,12 @@ public final class dev.opencollab.paletter.item.component.ShouldDespawn implemen
     public static dev.opencollab.paletter.item.component.ShouldDespawn of(boolean)
     public dev.opencollab.paletter.item.component.ShouldDespawn$Builder toBuilder()
     public java.lang.String toString()
-    public java.lang.Boolean value()
+    public boolean value()
 }
 
 public static final class dev.opencollab.paletter.item.component.ShouldDespawn$Builder {
     public dev.opencollab.paletter.item.component.ShouldDespawn build()
-    public dev.opencollab.paletter.item.component.ShouldDespawn$Builder value(java.lang.Boolean)
+    public dev.opencollab.paletter.item.component.ShouldDespawn$Builder value(boolean)
 }
 
 public final class dev.opencollab.paletter.item.component.StackedByData implements dev.opencollab.paletter.item.component.ItemComponent {
@@ -3819,12 +3833,12 @@ public final class dev.opencollab.paletter.item.component.StackedByData implemen
     public static dev.opencollab.paletter.item.component.StackedByData of(boolean)
     public dev.opencollab.paletter.item.component.StackedByData$Builder toBuilder()
     public java.lang.String toString()
-    public java.lang.Boolean value()
+    public boolean value()
 }
 
 public static final class dev.opencollab.paletter.item.component.StackedByData$Builder {
     public dev.opencollab.paletter.item.component.StackedByData build()
-    public dev.opencollab.paletter.item.component.StackedByData$Builder value(java.lang.Boolean)
+    public dev.opencollab.paletter.item.component.StackedByData$Builder value(boolean)
 }
 
 public final class dev.opencollab.paletter.item.component.StorageItem implements dev.opencollab.paletter.item.component.ItemComponent {

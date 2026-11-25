@@ -5,7 +5,6 @@ package dev.opencollab.paletter.item.component;
 
 import dev.opencollab.paletter.annotation.BedrockFormat;
 import dev.opencollab.paletter.internal.component.Check;
-import java.util.Objects;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
@@ -24,35 +23,33 @@ public final class MaxStackSize implements ItemComponent {
      */
     public static final String NAME = "minecraft:max_stack_size";
 
-    private final @Nullable Integer value;
+    private final int value;
 
-    private MaxStackSize(@Nullable Integer value) {
-        if (value != null) {
-            Check.range("MaxStackSize.value", value, 1.0, 64.0);
-        }
+    private MaxStackSize(int value) {
+        Check.range("MaxStackSize.value", value, 1.0, 64.0);
         this.value = value;
     }
 
     /**
-     * How many of an item that can be stacked together. Add-on JSON {@code value}. Optional (null: not set). The
-     * docs give the default <code>64</code>, but BDS sends item_properties.max_stack_size = 1 (int) when it is
-     * omitted; so it is unset by default, and the encoder sends what BDS sends then. Range [1, 64] (Bedrock 26.60).
+     * How many of an item that can be stacked together. Add-on JSON {@code value}. Default: <code>1</code>. The docs
+     * give the default <code>64</code>, but BDS sends what this default sends when the field is omitted. Range [1,
+     * 64] (Bedrock 26.60).
      *
      * @return the value
      */
-    public @Nullable Integer value() {
+    public int value() {
         return value;
     }
 
     @Override
     public boolean equals(Object o) {
         return this == o || o instanceof MaxStackSize other
-                && Objects.equals(value, other.value);
+                && value == other.value;
     }
 
     @Override
     public int hashCode() {
-        int h = Objects.hashCode(value);
+        int h = value;
         return h;
     }
 
@@ -100,7 +97,7 @@ public final class MaxStackSize implements ItemComponent {
      * Builds {@link MaxStackSize}: defaults applied, required fields and ranges checked by {@link #build()}.
      */
     public static final class Builder {
-        private @Nullable Integer value;
+        private @Nullable Integer value = 1;
 
         private Builder() {
         }
@@ -111,7 +108,7 @@ public final class MaxStackSize implements ItemComponent {
          * @param value the value
          * @return this builder
          */
-        public @NonNull Builder value(@Nullable Integer value) {
+        public @NonNull Builder value(int value) {
             this.value = value;
             return this;
         }

@@ -5,7 +5,6 @@ package dev.opencollab.paletter.item.component;
 
 import dev.opencollab.paletter.annotation.BedrockFormat;
 import dev.opencollab.paletter.internal.component.Check;
-import java.util.Objects;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
@@ -24,34 +23,33 @@ public final class Damage implements ItemComponent {
      */
     public static final String NAME = "minecraft:damage";
 
-    private final @Nullable Integer value;
+    private final int value;
 
-    private Damage(@Nullable Integer value) {
-        if (value != null) {
-            Check.range("Damage.value", value, 0.0, 32767.0);
-        }
+    private Damage(int value) {
+        Check.range("Damage.value", value, 0.0, 32767.0);
         this.value = value;
     }
 
     /**
      * The amount of extra damage this item deals when attacking. This value is added to the base attack damage. Must
-     * be a positive integer. Add-on JSON {@code value}. Optional (null: not set). Range [0, 32767] (Bedrock 26.60).
+     * be a positive integer. Add-on JSON {@code value}. Default: <code>0</code>. The docs give no default; this is
+     * what BDS sends when the field is omitted. Range [0, 32767] (Bedrock 26.60).
      *
      * @return the value
      */
-    public @Nullable Integer value() {
+    public int value() {
         return value;
     }
 
     @Override
     public boolean equals(Object o) {
         return this == o || o instanceof Damage other
-                && Objects.equals(value, other.value);
+                && value == other.value;
     }
 
     @Override
     public int hashCode() {
-        int h = Objects.hashCode(value);
+        int h = value;
         return h;
     }
 
@@ -99,7 +97,7 @@ public final class Damage implements ItemComponent {
      * Builds {@link Damage}: defaults applied, required fields and ranges checked by {@link #build()}.
      */
     public static final class Builder {
-        private @Nullable Integer value;
+        private @Nullable Integer value = 0;
 
         private Builder() {
         }
@@ -110,7 +108,7 @@ public final class Damage implements ItemComponent {
          * @param value the value
          * @return this builder
          */
-        public @NonNull Builder value(@Nullable Integer value) {
+        public @NonNull Builder value(int value) {
             this.value = value;
             return this;
         }

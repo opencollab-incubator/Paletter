@@ -286,7 +286,9 @@ class ComponentGeneratorTest {
         assertEquals(null, old.serverOnly);
         ApiModel.Comp widget = model.components.stream().filter(c -> c.id.equals("item:test:widget")).findFirst().orElseThrow();
         ApiModel.Field speed = widget.root.fields.stream().filter(f -> f.json.equals("speed")).findFirst().orElseThrow();
-        assertEquals(null, speed.defaultValue, "BDS contradicts the docs default: left unset");
+        // BDS contradicts the docs default 2: the default is what BDS sends when it is omitted, back through the line (30 / 20)
+        assertEquals(1.5, speed.defaultValue.getAsDouble());
+        assertFalse(speed.nullable());
         ApiModel.Field count = widget.root.fields.stream().filter(f -> f.json.equals("count")).findFirst().orElseThrow();
         assertEquals(1.0, count.min);
         assertEquals(64.0, count.max);
@@ -367,6 +369,39 @@ class ComponentGeneratorTest {
         assertTrue(encoder.contains(".id())"), encoder);
         // null is written as slow: the table's 1
         assertTrue(encoder.substring(encoder.indexOf("} else {")).contains("(byte) 1)"), encoder);
+    }
+
+    @Test
+    void aNumberWithoutAUsableDefaultIsNullableOnlyWhereOmittingItDiffersOnTheWire() {
+        // BDS sends nothing for the leaf when the field is omitted: no value says that, so the field stays nullable
+        Inputs in = inputs();
+        speedMappings(in).forEach(m -> m.add("whenAbsent", json("{\"test:widget.ticks\": \"omitted\"}")));
+        ApiModel.Field speed = ComponentGenerator.model(in).component("item:test:widget").root.fields.stream()
+            .filter(f -> "speed".equals(f.json)).findFirst().orElseThrow();
+        assertTrue(speed.nullable());
+        // No docs default and nothing shows what BDS sends: the default is unknown, so the field is required
+        in = inputs();
+        speedMappings(in).forEach(m -> m.remove("whenAbsent"));
+        for (JsonElement field : in.components().getAsJsonArray("components").get(0).getAsJsonObject().getAsJsonArray("fields")) {
+            if (field.getAsJsonObject().get("path").getAsString().equals("speed")) {
+                field.getAsJsonObject().remove("defaultValue");
+            }
+        }
+        speed = ComponentGenerator.model(in).component("item:test:widget").root.fields.stream()
+            .filter(f -> "speed".equals(f.json)).findFirst().orElseThrow();
+        assertTrue(speed.required);
+    }
+
+    /** The mapping of the widget's speed in every window. */
+    private static List<JsonObject> speedMappings(Inputs in) {
+        List<JsonObject> out = new ArrayList<>();
+        for (JsonElement w : in.mappings().getAsJsonObject("components").getAsJsonObject("item:test:widget").getAsJsonArray("windows")) {
+            JsonObject fields = w.getAsJsonObject().getAsJsonObject("fields");
+            if (fields != null && fields.has("speed")) {
+                out.add(fields.getAsJsonObject("speed"));
+            }
+        }
+        return out;
     }
 
     @Test
@@ -468,6 +503,8 @@ class ComponentGeneratorTest {
                   {"path": "geo.span.max", "types": [{"type": "integer"}], "required": false, "enumValues": [], "examples": [], "doc": ""}
                 ]}""").getAsJsonArray("fields"));
         in.feedback().add("block:test:lamp", json("{\"geo.span\": [\"order min max\"]}"));
+        // Optional by hand: nothing shows what BDS sends without max, which would make it required
+        in.api().getAsJsonArray("optional").add("block:test:lamp:geo.span.max");
         String lamp = ComponentGenerator.generate(in).get("dev/opencollab/paletter/block/component/Lamp.java");
         // max is not required, so it can be unset: checked only when it is set
         assertTrue(lamp.contains("""
